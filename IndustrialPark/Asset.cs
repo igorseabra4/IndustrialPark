@@ -42,6 +42,28 @@ namespace IndustrialPark
         public abstract void Draw(SharpDevice device, SharpShader shader, SharpDX.Direct3D11.Buffer buffer, Matrix viewProjection);
     }
 
+    public class AssetBSP : RenderableAsset
+    {
+        public AssetBSP(int assetID, string name, byte[] data) : base(assetID, name, data) { }
+
+        RenderWareModelFile model;
+
+        public override void Setup()
+        {
+            model = new RenderWareModelFile(Name)
+            {
+                rwChunkList = RenderWareFile.ReadFileMethods.ReadRenderWareFile(Data)
+            };
+            model.SetForRendering();
+            HipHopFunctions.renderableAssetList.Add(this);
+        }
+
+        public override void Draw(SharpDevice device, SharpShader shader, SharpDX.Direct3D11.Buffer buffer, Matrix viewProjection)
+        {
+            model.Render(device, shader, buffer, viewProjection);
+        }
+    }
+
     public class AssetJSP : RenderableAsset
     {
         public AssetJSP(int assetID, string name, byte[] data) : base(assetID, name, data) { }
@@ -169,11 +191,22 @@ namespace IndustrialPark
 
         public override void Draw(SharpDevice device, SharpShader shader, SharpDX.Direct3D11.Buffer buffer, Matrix viewProjection)
         {
-            if (AssetPICK.pick.pickEntries.ContainsKey(pickEntryID))
+            if (AssetPICK.pick != null)
             {
-                if (HipHopFunctions.assetDictionary.ContainsKey(AssetPICK.pick.pickEntries[pickEntryID].unknown4))
+                if (AssetPICK.pick.pickEntries.ContainsKey(pickEntryID))
                 {
-                    (HipHopFunctions.assetDictionary[AssetPICK.pick.pickEntries[pickEntryID].unknown4] as AssetMODL).Draw(device, shader, buffer, world * viewProjection);
+                    if (HipHopFunctions.assetDictionary.ContainsKey(AssetPICK.pick.pickEntries[pickEntryID].unknown4))
+                    {
+                        (HipHopFunctions.assetDictionary[AssetPICK.pick.pickEntries[pickEntryID].unknown4] as AssetMODL).Draw(device, shader, buffer, world * viewProjection);
+                    }
+                    else
+                    {
+                        SharpRenderer.DrawCube(world);
+                    }
+                }
+                else
+                {
+                    SharpRenderer.DrawCube(world);
                 }
             }
             else

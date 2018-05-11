@@ -71,7 +71,14 @@ namespace IndustrialPark
                     else if (i is Section_STRM strm) hipSTRM = strm;
                     else throw new Exception();
                 }
-            else currentlyOpenHip = null;
+            else
+            {
+                currentlyOpenHip = null;
+                hipHIPA = null;
+                hipPACK = null;
+                hipDICT = null;
+                hipSTRM = null;
+            }
 
             if (File.Exists(currentlyOpenHop))
                 foreach (HipSection i in HipFileToHipArray(currentlyOpenHop))
@@ -82,7 +89,14 @@ namespace IndustrialPark
                     else if (i is Section_STRM strm) hopSTRM = strm;
                     else throw new Exception();
                 }
-            else currentlyOpenHop = null;
+            else
+            {
+                currentlyOpenHop = null;
+                hopHIPA = null;
+                hopPACK = null;
+                hopDICT = null;
+                hopSTRM = null;
+            }
 
             if (File.Exists(currentlyOpenBoot))
                 foreach (HipSection i in HipFileToHipArray(currentlyOpenBoot))
@@ -93,7 +107,14 @@ namespace IndustrialPark
                     else if (i is Section_STRM strm) bootSTRM = strm;
                     else throw new Exception();
                 }
-            else currentlyOpenBoot = null;
+            else
+            {
+                currentlyOpenBoot = null;
+                bootHIPA = null;
+                bootPACK = null;
+                bootDICT = null;
+                bootSTRM = null;
+            }
             
             foreach (SharpMesh mesh in RenderWareModelFile.completeMeshList)
                 mesh.Dispose();
@@ -122,6 +143,13 @@ namespace IndustrialPark
 
             switch (AHDR.fileType)
             {
+                case "BSP ":
+                    {
+                        AssetBSP newAsset = new AssetBSP(AHDR.assetID, AHDR.ADBG.assetName, AHDR.containedFile);
+                        newAsset.Setup();
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
                 case "JSP ":
                     {
                         AssetJSP newAsset = new AssetJSP(AHDR.assetID, AHDR.ADBG.assetName, AHDR.containedFile);

@@ -98,6 +98,10 @@ namespace IndustrialPark
                 ToggleCulling();
             else if (e.KeyCode == Keys.F)
                 ToggleWireFrame();
+            else if (e.KeyCode == Keys.X)
+                ToggleLevelModel();
+            else if (e.KeyCode == Keys.G)
+                ToggleObjects();
 
             if (e.KeyCode == Keys.F1)
                 Program.viewConfig.Show();
@@ -196,5 +200,28 @@ namespace IndustrialPark
         {
             Program.viewConfig.Show();
         }
+
+        private void levelModelToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ToggleLevelModel();
+        }
+
+        private void ToggleLevelModel()
+        {
+            levelModelToolStripMenuItem.Checked = !levelModelToolStripMenuItem.Checked;
+            SharpRenderer.SetLevelModel(levelModelToolStripMenuItem.Checked);
+        }
+
+        private void objectModelsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ToggleObjects();
+        }
+
+        private void ToggleObjects()
+        {
+            objectModelsToolStripMenuItem.Checked = !objectModelsToolStripMenuItem.Checked;
+            SharpRenderer.SetObjects(objectModelsToolStripMenuItem.Checked);
+        }
+
     }
 }

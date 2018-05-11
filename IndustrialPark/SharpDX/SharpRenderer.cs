@@ -73,37 +73,20 @@ namespace IndustrialPark
             defaultBuffer = defaultShader.CreateBuffer<Matrix>();
         }
 
-        private static bool showChunkBoxes = false;
-        private static bool showCollision = false;
-        private static bool showQuadtree = false;
-        private static bool showStartPositions = true;
-        private static bool showSplines = true;
+        private static bool showLevel = true;
+        private static bool showObjects = true;
         
-        public static void SetChunkBoxes(bool value)
+        public static void SetLevelModel(bool value)
         {
-            showChunkBoxes = value;
+            showLevel = value;
         }
 
-        public static void SetShowCollision(bool value)
+        public static void SetObjects(bool value)
         {
-            showCollision = value;
+            showObjects = value;
         }
 
-        public static void SetShowQuadtree(bool value)
-        {
-            showQuadtree = value;
-        }
 
-        public static void SetShowStartPos(bool value)
-        {
-            showStartPositions = value;
-        }
-
-        public static void SetSplines(bool value)
-        {
-            showSplines = value;
-        }
-        
         public static SharpMesh Cube;
         public static SharpMesh Cylinder;
         public static SharpMesh Pyramid;
@@ -137,7 +120,7 @@ namespace IndustrialPark
                 else Pyramid = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
             }
         }
-
+        
         public static void DrawCube(Matrix world)
         {
             DefaultRenderData renderData;
@@ -153,9 +136,18 @@ namespace IndustrialPark
 
             device.UpdateData(basicBuffer, renderData);
             device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer);
-            defaultShader.Apply();
+            basicShader.Apply();
 
             Cube.Draw();
+
+            device.SetCullModeDefault();
+            device.SetBlendStateAlphaBlend();
+            device.ApplyRasterState();
+            device.UpdateAllStates();
+
+            device.UpdateData(defaultBuffer, renderData);
+            device.DeviceContext.VertexShader.SetConstantBuffer(0, defaultBuffer);
+            defaultShader.Apply();
         }
 
         public static Dictionary<string, ShaderResourceView> TextureStream = new Dictionary<string, ShaderResourceView>();
@@ -220,16 +212,18 @@ namespace IndustrialPark
                 device.ApplyRasterState();
                 device.UpdateAllStates();
 
-                foreach (RenderableAsset a in HipHopFunctions.renderableAssetList)
-                {
-                    if (a is AssetJSP)
-                        a.Draw(device, defaultShader, defaultBuffer, viewProjection);
-                }
-                foreach (RenderableAsset a in HipHopFunctions.renderableAssetList)
-                {
-                    if (!(a is AssetJSP))
-                        a.Draw(device, defaultShader, defaultBuffer, viewProjection);
-                }
+                if (showLevel)
+                    foreach (RenderableAsset a in HipHopFunctions.renderableAssetList)
+                    {
+                        if (a is AssetJSP | a is AssetBSP)
+                            a.Draw(device, defaultShader, defaultBuffer, viewProjection);
+                    }
+                if (showObjects)
+                    foreach (RenderableAsset a in HipHopFunctions.renderableAssetList)
+                    {
+                        if (!(a is AssetJSP | a is AssetBSP))
+                            a.Draw(device, defaultShader, defaultBuffer, viewProjection);
+                    }
 
                 //present
                 device.Present();

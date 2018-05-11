@@ -31,8 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HipHopFile">
-      <HintPath>..\..\HipHopTool\HipHopFile\bin\Debug\HipHopFile.dll</HintPath>
+    <Reference Include="HipHopFile, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\HipHopTool\HipHopFile\bin\Release\HipHopFile.dll</HintPath>
     </Reference>
     <Reference Include="RenderWareFile">
       <HintPath>..\..\RenderWareBSP\RenderWareFile\bin\Debug\RenderWareFile.dll</HintPath>

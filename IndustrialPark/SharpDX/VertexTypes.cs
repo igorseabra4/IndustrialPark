@@ -21,7 +21,6 @@ namespace IndustrialPark
         /// Constructor
         /// </summary>
         /// <param name="position">Position</param>
-        /// <param name="textureCoordinate">Texture Coordinate</param>
         public Vertex(Vector3 position)
         {
             Position = position;
