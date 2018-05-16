@@ -1,21 +1,20 @@
-﻿using RenderWareFile;
-using SharpDX;
+﻿using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using RenderWareFile;
+using RenderWareFile.Sections;
 
 namespace IndustrialPark
 {
     public class RenderWareModelFile
     {
-        public string FileName;
+        public string fileName;
 
         private const string DefaultTexture = "default";
         public RWSection[] rwChunkList;
         
         public List<string> MaterialList = new List<string>();
-        public string ChunkName;
-        public int ChunkNumber;
         public bool isNoCulling = false;
         public bool isCollision = false;
 
@@ -27,7 +26,7 @@ namespace IndustrialPark
 
         public RenderWareModelFile(string fileName)
         {
-            FileName = fileName;
+            this.fileName = fileName;
         }
 
         public void SetForRendering()
@@ -57,11 +56,11 @@ namespace IndustrialPark
                             MaterialList.Add(DefaultTexture);
                         }
                     }
-                    if (w.firstWorldChunk is AtomicSection_0009 a)
+                    if (w.firstWorldChunk is AtomicSector_0009 a)
                     {
                         AddAtomic(a);
                     }
-                    else if (w.firstWorldChunk is PlaneSection_000A p)
+                    else if (w.firstWorldChunk is PlaneSector_000A p)
                     {
                         AddPlane(p);
                     }
@@ -76,30 +75,30 @@ namespace IndustrialPark
             }
         }
 
-        void AddPlane(PlaneSection_000A planeSection)
+        void AddPlane(PlaneSector_000A PlaneSector)
         {
-            if (planeSection.leftSection is AtomicSection_0009 al)
+            if (PlaneSector.leftSection is AtomicSector_0009 al)
             {
                 AddAtomic(al);
             }
-            else if (planeSection.leftSection is PlaneSection_000A pl)
+            else if (PlaneSector.leftSection is PlaneSector_000A pl)
             {
                 AddPlane(pl);
             }
             else throw new Exception();
 
-            if (planeSection.rightSection is AtomicSection_0009 ar)
+            if (PlaneSector.rightSection is AtomicSector_0009 ar)
             {
                 AddAtomic(ar);
             }
-            else if (planeSection.rightSection is PlaneSection_000A pr)
+            else if (PlaneSector.rightSection is PlaneSector_000A pr)
             {
                 AddPlane(pr);
             }
             else throw new Exception();
         }
 
-        void AddAtomic(AtomicSection_0009 atomicSection)
+        void AddAtomic(AtomicSector_0009 atomicSection)
         {
             if (atomicSection.atomicStruct.isNativeData)
             {
@@ -314,7 +313,7 @@ namespace IndustrialPark
                 }
             }
 
-            if (n == null) throw new Exception(ChunkName + ChunkNumber.ToString());
+            if (n == null) throw new Exception("Could not find native data in correct format");
 
             List<Vertex3> vertexList1 = new List<Vertex3>();
             List<RenderWareFile.Color> colorList = new List<RenderWareFile.Color>();

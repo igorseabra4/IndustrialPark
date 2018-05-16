@@ -819,9 +819,7 @@ namespace IndustrialPark
         private static ShaderResourceView CreateTextureFromBitmap(Device device, DeviceContext context, string filename)
         {
             System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(filename);
-            System.Drawing.Bitmap bitmap2 = new System.Drawing.Bitmap("Resources\\WhiteDefault.png");
 
-            // Describe and create a Texture2D.
             Texture2DDescription textureDesc = new Texture2DDescription()
             {
                 MipLevels = (int)Math.Log(Math.Max(bitmap.Width, bitmap.Height), 2),
@@ -834,40 +832,22 @@ namespace IndustrialPark
                 SampleDescription = new SampleDescription(1, 0),
                 OptionFlags = ResourceOptionFlags.GenerateMipMaps
             };
-
-            //System.Drawing.Imaging.BitmapData data = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            //DataRectangle dataRectangle = new DataRectangle(data.Scan0, data.Stride);
-            //Texture2D buffer = new Texture2D(device, textureDesc, dataRectangle);
-            //bitmap.UnlockBits(data);
-
-            //ShaderResourceView resourceView = new ShaderResourceView(device, buffer);
-
-            //buffer.Dispose();
             
             System.Drawing.Imaging.BitmapData data = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             DataRectangle[] dataRectangle = new DataRectangle[textureDesc.MipLevels];
 
-            dataRectangle[0] = new DataRectangle(data.Scan0, data.Stride);
-
-            System.Drawing.Imaging.BitmapData data2 = bitmap2.LockBits(new System.Drawing.Rectangle(0, 0, bitmap2.Width, bitmap2.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            
-            for (int i = 0; i < textureDesc.MipLevels - 1; i++)
-                dataRectangle[i + 1] = new DataRectangle(data2.Scan0, data2.Stride);
+            for (int i = 0; i < textureDesc.MipLevels; i++)
+                dataRectangle[i] = new DataRectangle(data.Scan0, data.Stride);
 
             Texture2D buffer = new Texture2D(device, textureDesc, dataRectangle);
-            
             bitmap.UnlockBits(data);
-            bitmap2.UnlockBits(data2);
-
             ShaderResourceView resourceView = new ShaderResourceView(device, buffer);
-            
-            device.ImmediateContext.GenerateMips(resourceView);
-            
-            buffer.Dispose();
 
+            device.ImmediateContext.GenerateMips(resourceView);
+
+            buffer.Dispose();
             bitmap.Dispose();
-            bitmap2.Dispose();
-            
+
             return resourceView;
         }
 

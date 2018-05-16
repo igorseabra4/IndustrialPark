@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using RenderWareFile;
+using RenderWareFile.Sections;
 using SharpDX;
 
 namespace IndustrialPark
@@ -405,13 +406,13 @@ namespace IndustrialPark
                     OBJWriter.WriteLine("# Exported by Heroes Power Plant");
                     OBJWriter.WriteLine("mtllib " + Path.GetFileName(materialLibrary));
                     OBJWriter.WriteLine();
-                    if (w.firstWorldChunk.sectionIdentifier == Section.AtomicSection)
+                    if (w.firstWorldChunk.sectionIdentifier == Section.AtomicSector)
                     {
-                        GetAtomicTriangleList(OBJWriter, (AtomicSection_0009)w.firstWorldChunk, ref triangleList, ref totalVertexIndices);
+                        GetAtomicTriangleList(OBJWriter, (AtomicSector_0009)w.firstWorldChunk, ref triangleList, ref totalVertexIndices);
                     }
-                    else if (w.firstWorldChunk.sectionIdentifier == Section.PlaneSection)
+                    else if (w.firstWorldChunk.sectionIdentifier == Section.PlaneSector)
                     {
-                        GetPlaneTriangleList(OBJWriter, (PlaneSection_000A)w.firstWorldChunk, ref triangleList, ref totalVertexIndices);
+                        GetPlaneTriangleList(OBJWriter, (PlaneSector_000A)w.firstWorldChunk, ref triangleList, ref totalVertexIndices);
                     }
                 }
             }
@@ -445,28 +446,28 @@ namespace IndustrialPark
             WriteMaterialLib(bspFile.MaterialList.ToArray(), materialLibrary);
         }
 
-        private static void GetPlaneTriangleList(StreamWriter OBJWriter, PlaneSection_000A planeSection, ref List<Triangle> triangleList, ref int totalVertexIndices)
+        private static void GetPlaneTriangleList(StreamWriter OBJWriter, PlaneSector_000A PlaneSector, ref List<Triangle> triangleList, ref int totalVertexIndices)
         {
-            if (planeSection.leftSection is AtomicSection_0009 a1)
+            if (PlaneSector.leftSection is AtomicSector_0009 a1)
             {
                 GetAtomicTriangleList(OBJWriter, a1, ref triangleList, ref totalVertexIndices);
             }
-            else if (planeSection.leftSection is PlaneSection_000A p1)
+            else if (PlaneSector.leftSection is PlaneSector_000A p1)
             {
                 GetPlaneTriangleList(OBJWriter, p1, ref  triangleList, ref totalVertexIndices);
             }
 
-            if (planeSection.rightSection is AtomicSection_0009 a2)
+            if (PlaneSector.rightSection is AtomicSector_0009 a2)
             {
                 GetAtomicTriangleList(OBJWriter, a2, ref triangleList, ref totalVertexIndices);
             }
-            else if (planeSection.rightSection is PlaneSection_000A p2)
+            else if (PlaneSector.rightSection is PlaneSector_000A p2)
             {
                 GetPlaneTriangleList(OBJWriter, p2, ref triangleList, ref totalVertexIndices);
             }
         }
 
-        private static void GetAtomicTriangleList(StreamWriter OBJWriter, AtomicSection_0009 atomicSection, ref List<Triangle> triangleList, ref int totalVertexIndices)
+        private static void GetAtomicTriangleList(StreamWriter OBJWriter, AtomicSector_0009 atomicSection, ref List<Triangle> triangleList, ref int totalVertexIndices)
         {
             //Write vertex list to obj
             if (atomicSection.atomicStruct.vertexArray != null)

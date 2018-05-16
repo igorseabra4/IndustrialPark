@@ -74,20 +74,20 @@ namespace IndustrialPark
         public SharpDevice(System.Windows.Forms.Control control, bool debug = false)
         {
             Control = control;
-            
+
             // SwapChain description
-            var desc = new SwapChainDescription()
+            SwapChainDescription desc = new SwapChainDescription()
             {
-                BufferCount = 1,//buffer count
-                ModeDescription = new ModeDescription(Control.ClientSize.Width, Control.ClientSize.Height, new Rational(60, 1), Format.R8G8B8A8_UNorm),//sview
+                BufferCount = 1,
+                ModeDescription = new ModeDescription(Control.ClientSize.Width, Control.ClientSize.Height, new Rational(60, 1), Format.R8G8B8A8_UNorm),
                 IsWindowed = true,
                 OutputHandle = Control.Handle,
-                SampleDescription = multisampleDesc,
+                SampleDescription = new SampleDescription(1, 0),
                 SwapEffect = SwapEffect.Discard,
-                Usage = Usage.RenderTargetOutput
+                Usage = Usage.RenderTargetOutput,
             };
 
-            FeatureLevel[] levels = new FeatureLevel[] { FeatureLevel.Level_11_1 };
+            FeatureLevel[] levels = new FeatureLevel[] { FeatureLevel.Level_11_0 };
 
             //create device and swapchain
             DeviceCreationFlags flag = DeviceCreationFlags.None | DeviceCreationFlags.BgraSupport;
@@ -95,10 +95,10 @@ namespace IndustrialPark
                 flag = DeviceCreationFlags.Debug;
 
             Device11.CreateWithSwapChain(DriverType.Hardware, flag, levels, desc, out _device, out _swapchain);
-            
+
             //get context to device
             _deviceContext = Device.ImmediateContext;
-            
+
             //Ignore all windows events
             var factory = SwapChain.GetParent<Factory>();
             factory.MakeWindowAssociation(Control.Handle, WindowAssociationFlags.IgnoreAll);
@@ -110,8 +110,7 @@ namespace IndustrialPark
             ApplyRasterState();
             SetDefaultDepthState();
             SetDefaultBlendState();
-            SetDefaultSamplerState();
-            
+
             //Resize all items
             Resize();
         }
@@ -121,10 +120,11 @@ namespace IndustrialPark
         /// </summary>
         public void Resize()
         {
+            SetDefaultSamplerState();
             // Dispose all previous allocated resources
             Utilities.Dispose(ref _backbufferView);
             Utilities.Dispose(ref _zbufferView);
-            
+
             if (Control.Width == 0 || Control.Height == 0)
                 return;
 
@@ -137,7 +137,7 @@ namespace IndustrialPark
             // Backbuffer
             _backbufferView = new RenderTargetView(Device, _backBufferTexture);
             _backBufferTexture.Dispose();
-            
+
             // Depth buffer
 
             // Create a descriptor for the depth/stencil buffer.
@@ -145,40 +145,23 @@ namespace IndustrialPark
             // Create a DepthStencil view on this surface to use on bind.
             var depthBuffer = new Texture2D(Device, new Texture2DDescription
             {
-                Format = Format.D16_UNorm,
+                Format = currentMode ? Format.D32_Float : Format.D16_UNorm,
                 ArraySize = 1,
                 MipLevels = 1,
                 Width = Control.Width,
                 Height = Control.Height,
-                SampleDescription = multisampleDesc,
-                BindFlags = BindFlags.DepthStencil,
+                SampleDescription = new SampleDescription(1, 0),
+                BindFlags = BindFlags.DepthStencil
             });
-            
+
             // Create the view for binding to the device.
             _zbufferView = new DepthStencilView(Device, depthBuffer,
                 new DepthStencilViewDescription()
                 {
-                    Format = Format.D16_UNorm,
-                    Dimension = multisampleDesc.Count > 1 ? DepthStencilViewDimension.Texture2DMultisampled : DepthStencilViewDimension.Texture2D
+                    Format = currentMode ? Format.D32_Float : Format.D16_UNorm,
+                    //Dimension = DepthStencilViewDimension.Texture2D
+                    Dimension = currentMode ? DepthStencilViewDimension.Texture2DMultisampled : DepthStencilViewDimension.Texture2D
                 });
-            
-            //var _zbufferTexture = new Texture2D(Device, new Texture2DDescription()
-            //{
-            //    Format = Format.D16_UNorm,
-            //    ArraySize = 1,
-            //    MipLevels = 1,
-            //    Width = Control.Width,
-            //    Height = Control.Height,
-            //    SampleDescription = new SampleDescription(1, 0),
-            //    Usage = ResourceUsage.Default,
-            //    BindFlags = BindFlags.DepthStencil,
-            //    //CpuAccessFlags = CpuAccessFlags.None,
-            //    //OptionFlags = ResourceOptionFlags.None
-            //});
-
-            //// Create the depth buffer view
-            //_zbufferView = new DepthStencilView(Device, _zbufferTexture);
-            //_zbufferTexture.Dispose();
 
             SetDefaultTargers();
 
@@ -228,7 +211,7 @@ namespace IndustrialPark
         /// </summary>
         public void Present()
         {
-            SwapChain.Present(1, PresentFlags.None);
+            SwapChain.Present(VSync, PresentFlags.UseDuration);
         }
 
         /// <summary>
@@ -245,11 +228,11 @@ namespace IndustrialPark
                 IsFrontCounterClockwise = true,
                 DepthBias = 0,
                 DepthBiasClamp = 0,
-                IsAntialiasedLineEnabled = true,
+                IsAntialiasedLineEnabled = currentMode,
                 SlopeScaledDepthBias = 0,
-                IsDepthClipEnabled = true,
+                IsDepthClipEnabled = currentMode,
                 IsScissorEnabled = false,
-                IsMultisampleEnabled = true
+                IsMultisampleEnabled = currentMode
             });
             DeviceContext.Rasterizer.State = _rasterState;
         }
@@ -294,7 +277,7 @@ namespace IndustrialPark
         {
             currentFillMode = normalFillMode;
         }
-        
+
         public void SetFillModeSolid()
         {
             currentFillMode = FillMode.Solid;
@@ -304,7 +287,7 @@ namespace IndustrialPark
         {
             currentFillMode = FillMode.Wireframe;
         }
-        
+
         public FillMode GetFillMode()
         {
             return normalFillMode;
@@ -317,7 +300,7 @@ namespace IndustrialPark
         {
             Utilities.Dispose(ref _blendState);
             BlendStateDescription description = BlendStateDescription.Default();
-            
+
             _blendState = new BlendState(Device, description);
         }
 
@@ -347,8 +330,8 @@ namespace IndustrialPark
 
             description.RenderTarget[0].IsBlendEnabled = true;
             description.RenderTarget[0].BlendOperation = BlendOperation.Add;
-            description.RenderTarget[0].SourceBlend = BlendOption.One;
-            description.RenderTarget[0].SourceAlphaBlend = BlendOption.One;
+            description.RenderTarget[0].SourceBlend = BlendOption.SourceAlpha;
+            description.RenderTarget[0].SourceAlphaBlend = BlendOption.SourceAlpha;
             description.RenderTarget[0].DestinationBlend = BlendOption.InverseSourceAlpha;
             description.RenderTarget[0].DestinationAlphaBlend = BlendOption.InverseSourceAlpha;
 
@@ -377,19 +360,6 @@ namespace IndustrialPark
         {
             Utilities.Dispose(ref _depthState);
             DepthStencilStateDescription description = DepthStencilStateDescription.Default();
-            description.DepthComparison = Comparison.LessEqual;
-            description.IsDepthEnabled = true;
-
-            _depthState = new DepthStencilState(Device, description);
-        }
-
-        public void SetDepthReadDepthState()
-        {
-            Utilities.Dispose(ref _depthState);
-            DepthStencilStateDescription description = DepthStencilStateDescription.Default();
-            description.DepthComparison = Comparison.LessEqual;
-            //description.DepthWriteMask = DepthWriteMask.Zero;
-            description.IsDepthEnabled = true;
 
             _depthState = new DepthStencilState(Device, description);
         }
@@ -401,7 +371,7 @@ namespace IndustrialPark
         {
             Utilities.Dispose(ref _samplerState);
             SamplerStateDescription description = SamplerStateDescription.Default();
-            description.Filter = Filter.Anisotropic;
+            description.Filter = currentMode ? Filter.Anisotropic : Filter.MinMagMipPoint;
             description.AddressU = TextureAddressMode.Wrap;
             description.AddressV = TextureAddressMode.Wrap;
             _samplerState = new SamplerState(Device, description);
@@ -412,7 +382,6 @@ namespace IndustrialPark
         /// </summary>
         public void UpdateAllStates()
         {
-            DeviceContext.Rasterizer.State = _rasterState;
             DeviceContext.OutputMerger.SetBlendState(_blendState);
             DeviceContext.OutputMerger.SetDepthStencilState(_depthState);
             DeviceContext.PixelShader.SetSampler(0, _samplerState);
@@ -436,6 +405,23 @@ namespace IndustrialPark
         public static bool IsDirectX11Supported()
         {
             return SharpDX.Direct3D11.Device.GetSupportedFeatureLevel() == FeatureLevel.Level_11_0;
+        }
+
+        private bool currentMode = true;
+
+        public void SetGraphicsMode(bool value)
+        {
+            currentMode = value;
+            Resize();
+        }
+
+        private int VSync = 1;
+
+        public void SetVSync(bool value)
+        {
+            if (value) VSync = 1;
+            else VSync = 0;
+            Resize();
         }
     }
 }
