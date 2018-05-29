@@ -2,6 +2,7 @@
 using SharpDX.Direct3D11;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 
 namespace IndustrialPark
@@ -15,16 +16,6 @@ namespace IndustrialPark
             InitializeComponent();
 
             new SharpRenderer(renderPanel);
-        }
-        
-        private void openHIPHOPToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            HipHopFunctions.openFilePair();
-        }
-
-        private void exportTexturesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            HipHopFunctions.ExportAllTextures();
         }
         
         public void SetToolStripStatusLabel(string Text)
@@ -147,6 +138,37 @@ namespace IndustrialPark
                 SharpRenderer.Camera.Reset();
         }
 
+        public List<ArchiveEditor> archiveEditors = new List<ArchiveEditor>();
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ArchiveEditor temp = new ArchiveEditor();
+            archiveEditors.Add(temp);
+            temp.Show();
+
+            ToolStripMenuItem tempMenuItem = new ToolStripMenuItem("Empty");
+            tempMenuItem.Click += new EventHandler(ToolStripClick);
+
+            archiveEditorToolStripMenuItem.DropDownItems.Add(tempMenuItem);
+        }
+
+        public void ToolStripClick(object sender, EventArgs e)
+        {
+            archiveEditors[archiveEditorToolStripMenuItem.DropDownItems.IndexOf(sender as ToolStripItem) - 2].Show();
+        }
+
+        public void SetToolStripItemName(ArchiveEditor sender, string newName)
+        {
+            archiveEditorToolStripMenuItem.DropDownItems[archiveEditors.IndexOf(sender) + 2].Text = newName;
+        }
+
+        public void CloseAssetEditor(ArchiveEditor sender)
+        {
+            int index = archiveEditors.IndexOf(sender);
+            archiveEditorToolStripMenuItem.DropDownItems.RemoveAt(index + 2);
+            archiveEditors.RemoveAt(index);
+        }
+
         private void noCullingCToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ToggleCulling();
@@ -222,6 +244,5 @@ namespace IndustrialPark
             objectModelsToolStripMenuItem.Checked = !objectModelsToolStripMenuItem.Checked;
             SharpRenderer.SetObjects(objectModelsToolStripMenuItem.Checked);
         }
-
     }
 }

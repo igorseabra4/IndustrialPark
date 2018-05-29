@@ -57,6 +57,9 @@ namespace IndustrialPark
 
         private void UpdateCamera()
         {
+            Pitch = Pitch % 360;
+            Yaw = Yaw % 360;
+
             Forward = (Vector3)Vector3.Transform(Vector3.ForwardRH, Matrix.RotationYawPitchRoll(MathUtil.DegreesToRadians(Yaw), MathUtil.DegreesToRadians(Pitch), 0));
             Right = Vector3.Normalize(Vector3.Cross(Forward, Vector3.Up));
             Up = Vector3.Normalize(Vector3.Cross(Right, Forward));

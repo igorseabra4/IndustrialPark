@@ -1,5 +1,4 @@
 ﻿using SharpDX;
-using System;
 using System.Windows.Forms;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
@@ -85,8 +84,7 @@ namespace IndustrialPark
         {
             showObjects = value;
         }
-
-
+        
         public static SharpMesh Cube;
         public static SharpMesh Cylinder;
         public static SharpMesh Pyramid;
@@ -127,6 +125,7 @@ namespace IndustrialPark
 
             renderData.worldViewProjection = world * viewProjection;
             renderData.Color = new Vector4(0.75f, 0.75f, 1f, 0.01f);
+            //renderData.Color = new Vector4(0.75f, 1f, 0.75f, 0.01f);
 
             device.SetFillModeDefault();
             device.SetCullModeReverse();
@@ -153,17 +152,10 @@ namespace IndustrialPark
         public static Dictionary<string, ShaderResourceView> TextureStream = new Dictionary<string, ShaderResourceView>();
         public static ShaderResourceView whiteDefault;
 
-        public static void LoadTextures(string fileNamePrefix, bool Reloading)
+        public static void LoadTextures(string fileNamePrefix)
         {
-            foreach (ShaderResourceView texture in TextureStream.Values)
-                texture.Dispose();
-
-            if (!Reloading)
-                TextureStream.Clear();
-
-            if (whiteDefault != null)
-                whiteDefault.Dispose();
-            whiteDefault = device.LoadTextureFromFile("Resources\\WhiteDefault.png");
+            if (whiteDefault == null)
+                whiteDefault = device.LoadTextureFromFile("Resources\\WhiteDefault.png");
             
             List<string> FilesToLoad = new List<string>();
             if (Directory.Exists(Application.StartupPath + "\\Textures\\" + fileNamePrefix))
@@ -171,17 +163,26 @@ namespace IndustrialPark
 
             foreach (string i in FilesToLoad)
             {
-                string textureName = (Path.GetFileNameWithoutExtension(i).Trim('_'));
-                textureName = textureName.Trim('_');
+                string textureName = TreatTextureName(i);
 
                 if (TextureStream.ContainsKey(textureName))
+                {
+                    TextureStream[textureName].Dispose();
                     TextureStream[textureName] = device.LoadTextureFromFile(i);
+                }
                 else
                     TextureStream.Add(textureName, device.LoadTextureFromFile(i));
             }
         }
 
-        private static Matrix viewProjection;
+        public static string TreatTextureName(string entry)
+        {
+            entry = (Path.GetFileNameWithoutExtension(entry).Trim('_'));
+            entry = entry.Trim('_');
+            return entry;
+        }
+
+        public static Matrix viewProjection;
         public static Color4 backgroundColor = new Color4(0.05f, 0.05f, 0.15f, 1f);
 
         public static void RunMainLoop(Panel Panel)
@@ -213,16 +214,16 @@ namespace IndustrialPark
                 device.UpdateAllStates();
 
                 if (showLevel)
-                    foreach (RenderableAsset a in HipHopFunctions.renderableAssetList)
+                    foreach (RenderableAsset a in ArchiveEditorFunctions.renderableAssetSet)
                     {
-                        if (a is AssetJSP | a is AssetBSP)
-                            a.Draw(device, defaultShader, defaultBuffer, viewProjection);
+                        if (a is AssetLevelModel)
+                            (a as AssetLevelModel).Draw();
                     }
                 if (showObjects)
-                    foreach (RenderableAsset a in HipHopFunctions.renderableAssetList)
+                    foreach (RenderableAsset a in ArchiveEditorFunctions.renderableAssetSet)
                     {
-                        if (!(a is AssetJSP | a is AssetBSP))
-                            a.Draw(device, defaultShader, defaultBuffer, viewProjection);
+                        if (!(a is AssetLevelModel))
+                            a.Draw();
                     }
 
                 //present

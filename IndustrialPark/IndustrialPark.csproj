@@ -8,8 +8,9 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>IndustrialPark</RootNamespace>
     <AssemblyName>IndustrialPark</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -35,8 +36,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\HipHopTool\HipHopFile\bin\Release\HipHopFile.dll</HintPath>
     </Reference>
-    <Reference Include="RenderWareFile">
-      <HintPath>..\..\RenderWareBSP\RenderWareFile\bin\Debug\RenderWareFile.dll</HintPath>
+    <Reference Include="RenderWareFile, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\RenderWareBSP\RenderWareFile\bin\Release\RenderWareFile.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpDX.4.0.1\lib\net45\SharpDX.dll</HintPath>
@@ -69,9 +71,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Asset.cs" />
+    <Compile Include="AddAssetDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddAssetDialog.Designer.cs">
+      <DependentUpon>AddAssetDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ArchiveEditorFunctions.cs" />
+    <Compile Include="Assets\Asset.cs" />
+    <Compile Include="Assets\AssetMINF.cs" />
+    <Compile Include="Assets\AssetMODL.cs" />
+    <Compile Include="Assets\AssetPICK.cs" />
+    <Compile Include="Assets\AssetLevelModel.cs" />
+    <Compile Include="Assets\AssetPKUP.cs" />
+    <Compile Include="Assets\AssetRWTX.cs" />
     <Compile Include="ConvertionFunctions.cs" />
-    <Compile Include="HipHopFunctions.cs" />
+    <Compile Include="ArchiveEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor.Designer.cs">
+      <DependentUpon>ArchiveEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -97,6 +117,12 @@
     <Compile Include="ViewConfig.designer.cs">
       <DependentUpon>ViewConfig.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="AddAssetDialog.resx">
+      <DependentUpon>AddAssetDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveEditor.resx">
+      <DependentUpon>ArchiveEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -108,6 +134,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <EmbeddedResource Include="ViewConfig.resx">
       <DependentUpon>ViewConfig.cs</DependentUpon>
@@ -158,5 +185,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

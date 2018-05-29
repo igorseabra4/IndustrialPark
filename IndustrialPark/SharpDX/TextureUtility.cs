@@ -16,7 +16,6 @@ namespace IndustrialPark
     /// </summary>
     public static class TextureUtilities
     {
-
         const int DDS_MAGIC = 0x20534444;// "DDS "
 
         [StructLayout(LayoutKind.Sequential)]

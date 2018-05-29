@@ -384,11 +384,11 @@ namespace IndustrialPark
                 meshList.Add(SharpMesh.Create(SharpRenderer.device, vertexList.ToArray(), indexList.ToArray(), subSetList, SharpDX.Direct3D.PrimitiveTopology.TriangleStrip));
         }
 
-        public void Render(SharpDevice device, SharpShader shader, SharpDX.Direct3D11.Buffer buffer, Matrix worldViewProjection)
+        public void Render(Matrix world)
         {
-            device.UpdateData(buffer, worldViewProjection);
-            device.DeviceContext.VertexShader.SetConstantBuffer(0, buffer);
-            shader.Apply();
+            SharpRenderer.device.UpdateData(SharpRenderer.defaultBuffer, world * SharpRenderer.viewProjection);
+            SharpRenderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, SharpRenderer.defaultBuffer);
+            SharpRenderer.defaultShader.Apply();
 
             foreach (SharpMesh mesh in meshList)
             {

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
@@ -10,7 +6,7 @@ using SharpDX.DXGI;
 
 using Device11 = SharpDX.Direct3D11.Device;
 using Buffer11 = SharpDX.Direct3D11.Buffer;
-using SharpDX.Windows;
+using System.Linq;
 
 namespace IndustrialPark
 {

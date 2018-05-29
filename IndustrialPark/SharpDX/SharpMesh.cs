@@ -14,7 +14,7 @@ using Device = SharpDX.Direct3D11.Device;
 namespace IndustrialPark
 {
     /// <summary>
-    /// To Render Static Object
+    /// To Render  Object
     /// </summary>
     public class SharpMesh : IDisposable
     {

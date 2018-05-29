@@ -10,7 +10,7 @@ using SharpDX;
 
 namespace IndustrialPark
 {
-    public partial class OBJFunctions
+    public class OBJFunctions
     {
         public struct Vertex
         {
