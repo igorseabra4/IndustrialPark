@@ -259,6 +259,14 @@ namespace IndustrialPark
             listBoxAssets.Items.Remove(listBoxAssets.SelectedItem);
         }
 
+        private void buttonView_Click(object sender, EventArgs e)
+        {
+            if (listBoxAssets.SelectedIndex < 0) return;
+
+            if (archive.GetFromAssetID(CurrentlySelectedAssetID()) is RenderableAsset a)
+                SharpRenderer.Camera.SetPosition(a.Position - 8 * SharpRenderer.Camera.GetForward());
+        }
+
         private void buttonEditAsset_Click(object sender, EventArgs e)
         {
             Section_AHDR AHDR = AddAssetDialog.GetAsset(archive.GetFromAssetID(CurrentlySelectedAssetID()).AHDR, out bool success);

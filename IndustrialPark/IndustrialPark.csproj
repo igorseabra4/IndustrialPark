@@ -34,7 +34,7 @@
   <ItemGroup>
     <Reference Include="HipHopFile, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\HipHopTool\HipHopFile\bin\Release\HipHopFile.dll</HintPath>
+      <HintPath>..\..\HipHopTool\HipHopFile\bin\Debug\HipHopFile.dll</HintPath>
     </Reference>
     <Reference Include="RenderWareFile, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

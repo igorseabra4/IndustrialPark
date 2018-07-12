@@ -55,6 +55,7 @@
             this.buttonAddAsset = new System.Windows.Forms.Button();
             this.comboBoxAssetTypes = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.buttonView = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -224,6 +225,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.buttonView);
             this.groupBox2.Controls.Add(this.buttonExportRaw);
             this.groupBox2.Controls.Add(this.buttonEditAsset);
             this.groupBox2.Controls.Add(this.buttonCopy);
@@ -307,6 +309,16 @@
             this.label2.TabIndex = 4;
             this.label2.Text = "Show by Type:";
             // 
+            // buttonView
+            // 
+            this.buttonView.Location = new System.Drawing.Point(502, 184);
+            this.buttonView.Name = "buttonView";
+            this.buttonView.Size = new System.Drawing.Size(75, 23);
+            this.buttonView.TabIndex = 14;
+            this.buttonView.Text = "View";
+            this.buttonView.UseVisualStyleBackColor = true;
+            this.buttonView.Click += new System.EventHandler(this.buttonView_Click);
+            // 
             // ArchiveEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -364,5 +376,6 @@
         private System.Windows.Forms.Button buttonEditAsset;
         private System.Windows.Forms.Button buttonExportRaw;
         private System.Windows.Forms.ToolStripMenuItem exportKnowlifesINIToolStripMenuItem;
+        private System.Windows.Forms.Button buttonView;
     }
 }

@@ -38,13 +38,20 @@ namespace IndustrialPark
             checkSourceVirtual.Checked = (AHDR.flags & AHDRFlags.SOURCE_VIRTUAL) != 0;
             checkReadT.Checked = (AHDR.flags & AHDRFlags.READ_TRANSFORM) != 0;
             checkWriteT.Checked = (AHDR.flags & AHDRFlags.WRITE_TRANSFORM) != 0;
+
+            assetID = AHDR.assetID;
+            assetType = AHDR.assetType;
+            assetName = AHDR.ADBG.assetName;
+            assetFileName = AHDR.ADBG.assetFileName;
+            checksum = AHDR.ADBG.checksum;
             data = AHDR.containedFile;
+
             textBoxAssetName.Text = AHDR.ADBG.assetName;
             textBoxAssetFileName.Text = AHDR.ADBG.assetFileName;
             labelRawDataSize.Text = "Raw Data Size: " + AHDR.fileSize.ToString();
             textBoxChecksum.Text = AHDR.ADBG.checksum.ToString("X8");
         }
-        
+
         private string GetMiscSettingsString(byte[] MiscSettings)
         {
             if (MiscSettings.Length == 0) return "";
@@ -64,7 +71,8 @@ namespace IndustrialPark
 
         public static Section_AHDR GetAsset(AddAssetDialog a, out bool success)
         {
-            if (a.ShowDialog() == DialogResult.OK)
+            DialogResult d = a.ShowDialog();
+            if (d == DialogResult.OK)
             {
                 Section_AHDR AHDR = new Section_AHDR(
                     a.assetID,
@@ -102,6 +110,7 @@ namespace IndustrialPark
             }
             else
             {
+                MessageBox.Show(d.ToString());
                 success = false;
                 return null;
             }
@@ -172,6 +181,11 @@ namespace IndustrialPark
                 textBoxChecksum.BackColor = System.Drawing.Color.Red;
                 checksum = 0;
             }
+        }
+
+        private void buttonOK_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }

@@ -102,13 +102,13 @@ namespace IndustrialPark
         {
             Device = device;
             // Compile Vertex and Pixel shaders
-            var vertexShaderByteCode = ShaderBytecode.CompileFromFile(filename, description.VertexShaderFunction, "vs_4_0");
+            var vertexShaderByteCode = ShaderBytecode.CompileFromFile(filename, description.VertexShaderFunction, "vs_5_0");
             VertexShader = new VertexShader(Device.Device, vertexShaderByteCode);
 
             //create pixel shader
             if (!string.IsNullOrEmpty(description.PixelShaderFunction))
             {
-                var pixelShaderByteCode = ShaderBytecode.CompileFromFile(filename, description.PixelShaderFunction, "ps_4_0");
+                var pixelShaderByteCode = ShaderBytecode.CompileFromFile(filename, description.PixelShaderFunction, "ps_5_0");
                 PixelShader = new PixelShader(Device.Device, pixelShaderByteCode);
             }
 

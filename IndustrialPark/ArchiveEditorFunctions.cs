@@ -62,6 +62,8 @@ namespace IndustrialPark
                         
             fileNamePrefix = Path.GetFileNameWithoutExtension(fileName);
 
+            HipSection[] HipFile = HipFileToHipArray(fileName);
+
             foreach (HipSection i in HipFileToHipArray(fileName))
             {
                 if (i is Section_HIPA hipa) HIPA = hipa;
@@ -248,7 +250,7 @@ namespace IndustrialPark
 
             STRM.DPAK.data = newStream.ToArray();
             PACK.PCNT = new Section_PCNT(DICT.ATOC.AHDRList.Count, DICT.LTOC.LHDRList.Count, 0, 0, 0);
-
+            
             File.WriteAllBytes(currentlyOpenFilePath, HipArrayToFile(new HipSection[] { HIPA, PACK, DICT, STRM }));
         }
     }

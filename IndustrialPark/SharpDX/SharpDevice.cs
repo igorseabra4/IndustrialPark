@@ -86,7 +86,7 @@ namespace IndustrialPark
             FeatureLevel[] levels = new FeatureLevel[] { FeatureLevel.Level_11_0 };
 
             //create device and swapchain
-            DeviceCreationFlags flag = DeviceCreationFlags.None | DeviceCreationFlags.BgraSupport;
+            DeviceCreationFlags flag = DeviceCreationFlags.None;
             if (debug)
                 flag = DeviceCreationFlags.Debug;
 

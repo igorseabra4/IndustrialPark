@@ -20,7 +20,7 @@ namespace IndustrialPark
             base.Setup(defaultMode);
         }
 
-        public new void Draw()
+        public override void Draw()
         {
             if (AssetPICK.pick != null)
             {

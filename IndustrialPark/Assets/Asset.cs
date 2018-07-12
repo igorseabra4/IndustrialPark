@@ -47,9 +47,7 @@ namespace IndustrialPark
         }
 
         public Vector3 Position;
-        public int RotationX;
-        public int RotationY;
-        public int RotationZ;
+        public Vector3 Rotation;
         public Vector3 Scale;
 
         public Matrix world;
@@ -60,9 +58,9 @@ namespace IndustrialPark
             if (defaultMode)
                 modelAssetID = Switch(BitConverter.ToInt32(AHDR.containedFile, 0x4C));
 
-            RotationX = Switch(BitConverter.ToInt32(AHDR.containedFile, 0x14));
-            RotationY = Switch(BitConverter.ToInt32(AHDR.containedFile, 0x18));
-            RotationZ = Switch(BitConverter.ToInt32(AHDR.containedFile, 0x1C));
+            Rotation.Y = Switch(BitConverter.ToSingle(AHDR.containedFile, 0x14));
+            Rotation.X = Switch(BitConverter.ToSingle(AHDR.containedFile, 0x18));
+            Rotation.Z = Switch(BitConverter.ToSingle(AHDR.containedFile, 0x1C));
 
             Position.X = Switch(BitConverter.ToSingle(AHDR.containedFile, 0x20));
             Position.Y = Switch(BitConverter.ToSingle(AHDR.containedFile, 0x24));
@@ -73,15 +71,15 @@ namespace IndustrialPark
             Scale.Z = Switch(BitConverter.ToSingle(AHDR.containedFile, 0x34));
 
             world = Matrix.Scaling(Scale)
-            //* Matrix.CreateRotationY((float)(Switch(BitConverter.ToSingle(data, 0x14)) * Math.PI))
-            //* Matrix.CreateRotationX((float)(Switch(BitConverter.ToSingle(data, 0x18)) * Math.PI))
-            //* Matrix.CreateRotationZ((float)(Switch(BitConverter.ToSingle(data, 0x1C)) * Math.PI))
+            * Matrix.RotationY(Rotation.Y)
+            * Matrix.RotationX(Rotation.X)
+            * Matrix.RotationZ(Rotation.Z)
             * Matrix.Translation(Position);
 
             ArchiveEditorFunctions.renderableAssetSet.Add(this);
         }
 
-        public void Draw()
+        public virtual void Draw()
         {
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(modelAssetID))
             {
