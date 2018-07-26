@@ -13,17 +13,14 @@ namespace IndustrialPark
 
         public override void Setup(bool defaultMode = true)
         {
-            model = new RenderWareModelFile(AHDR.ADBG.assetName)
-            {
-                rwChunkList = RenderWareFile.ReadFileMethods.ReadRenderWareFile(AHDR.containedFile)
-            };
-            model.SetForRendering();
+            model = new RenderWareModelFile(AHDR.ADBG.assetName);
+            model.SetForRendering(RenderWareFile.ReadFileMethods.ReadRenderWareFile(AHDR.containedFile), AHDR.containedFile);
             ArchiveEditorFunctions.renderableAssetSet.Add(this);
         }
 
         public new void Draw()
         {
-            model.Render(Matrix.Identity);
+            model.Render(Matrix.Identity, isSelected);
         }
     }
 }

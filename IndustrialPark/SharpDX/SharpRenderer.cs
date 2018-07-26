@@ -6,6 +6,7 @@ using SharpDX.Windows;
 using System.Collections.Generic;
 using static IndustrialPark.OBJFunctions;
 using System.IO;
+using System;
 
 namespace IndustrialPark
 {
@@ -51,6 +52,9 @@ namespace IndustrialPark
         public static SharpShader defaultShader;
         public static SharpDX.Direct3D11.Buffer defaultBuffer;
 
+        public static SharpShader tintedShader;
+        public static SharpDX.Direct3D11.Buffer tintedBuffer;
+
         public static void SetSharpShaders(SharpDevice device)
         {
             basicShader = new SharpShader(device, "Resources/SharpDX/Shader_Basic.hlsl",
@@ -70,6 +74,16 @@ namespace IndustrialPark
                 });
 
             defaultBuffer = defaultShader.CreateBuffer<Matrix>();
+
+            tintedShader = new SharpShader(device, "Resources/SharpDX/Shader_Tinted.hlsl",
+                new SharpShaderDescription() { VertexShaderFunction = "VS", PixelShaderFunction = "PS" },
+                new InputElement[] {
+                        new InputElement("POSITION", 0, Format.R32G32B32_Float, 0, 0),
+                        new InputElement("COLOR", 0, Format.R8G8B8A8_UNorm, 12, 0),
+                        new InputElement("TEXCOORD", 0, Format.R32G32_Float, 16, 0)
+                });
+
+            tintedBuffer = defaultShader.CreateBuffer<DefaultRenderData>();
         }
 
         private static bool showLevel = true;
@@ -91,6 +105,8 @@ namespace IndustrialPark
         
         public static void LoadModels()
         {
+            cubeVertices = new List<Vector3>();
+
             for (int i = 0; i < 3; i++)// 3; i++)
             {
                 ModelConverterData objData;
@@ -103,6 +119,7 @@ namespace IndustrialPark
                 foreach (OBJFunctions.Vertex v in objData.VertexStream)
                 {
                     vertexList.Add(new Vertex(v.Position));
+                    if (i == 0) cubeVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z) * 0.5f);
                 }
 
                 List<int> indexList = new List<int>();
@@ -118,18 +135,25 @@ namespace IndustrialPark
                 else Pyramid = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
             }
         }
-        
-        public static void DrawCube(Matrix world)
+
+        public static Vector4 normalColor = new Vector4(0.2f, 0.6f, 0.8f, 0.8f);
+        public static Vector4 selectedColor = new Vector4(1f, 0.5f, 0.1f, 0.8f);
+        public static Vector4 selectedObjectColor = new Vector4(1f, 0f, 0f, 1f);
+
+        public static void DrawCube(Matrix world, bool isSelected)
         {
             DefaultRenderData renderData;
 
-            renderData.worldViewProjection = world * viewProjection;
-            renderData.Color = new Vector4(0.75f, 0.75f, 1f, 0.01f);
-            //renderData.Color = new Vector4(0.75f, 1f, 0.75f, 0.01f);
+            renderData.worldViewProjection = Matrix.Scaling(0.5F) * world * viewProjection;
+
+            if (isSelected)
+                renderData.Color = selectedColor;
+            else
+                renderData.Color = normalColor;
 
             device.SetFillModeDefault();
-            device.SetCullModeReverse();
-            device.SetBlend(BlendOperation.Subtract, BlendOption.SourceColor, BlendOption.InverseSourceColor);
+            device.SetCullModeNone();
+            device.SetBlendStateAlphaBlend();
             device.ApplyRasterState();
             device.UpdateAllStates();
 
@@ -138,15 +162,6 @@ namespace IndustrialPark
             basicShader.Apply();
 
             Cube.Draw();
-
-            device.SetCullModeDefault();
-            device.SetBlendStateAlphaBlend();
-            device.ApplyRasterState();
-            device.UpdateAllStates();
-
-            device.UpdateData(defaultBuffer, renderData);
-            device.DeviceContext.VertexShader.SetConstantBuffer(0, defaultBuffer);
-            defaultShader.Apply();
         }
 
         public static Dictionary<string, ShaderResourceView> TextureStream = new Dictionary<string, ShaderResourceView>();
@@ -184,6 +199,7 @@ namespace IndustrialPark
 
         public static Matrix viewProjection;
         public static Color4 backgroundColor = new Color4(0.05f, 0.05f, 0.15f, 1f);
+        public static List<Vector3> cubeVertices;
 
         public static void RunMainLoop(Panel Panel)
         {

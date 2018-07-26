@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using HipHopFile;
+using SharpDX;
 using static HipHopFile.Functions;
 
 namespace IndustrialPark
@@ -77,6 +78,9 @@ namespace IndustrialPark
 
             foreach (Section_AHDR AHDR in DICT.ATOC.AHDRList)
                 AddAssetToDictionary(AHDR);
+
+            foreach (RenderableAsset a in renderableAssetSet)
+                a.Setup();
         }
 
         public void Dispose()
@@ -159,6 +163,13 @@ namespace IndustrialPark
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
+                case AssetType.MVPT:
+                    {
+                        AssetMVPT newAsset = new AssetMVPT(AHDR);
+                        newAsset.Setup();
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
                 case AssetType.PICK:
                     {
                         AssetPICK newAsset = new AssetPICK(AHDR);
@@ -209,6 +220,58 @@ namespace IndustrialPark
                     break;
                 }
             }
+        }
+
+        private int currentlySelectedAssetID = 0;
+
+        public int getCurrentlySelectedAssetID()
+        {
+            return currentlySelectedAssetID;
+        }
+
+        public void SelectAsset(int assetID)
+        {
+            if (assetDictionary.ContainsKey(currentlySelectedAssetID))
+                assetDictionary[currentlySelectedAssetID].isSelected = false;
+            currentlySelectedAssetID = assetID;
+            if (currentlySelectedAssetID != 0)
+                assetDictionary[currentlySelectedAssetID].isSelected = true;
+        }
+
+        public int GetSelectedLayerIndex()
+        {
+            if (currentlySelectedAssetID == 0)
+                throw new Exception();
+
+            for (int i = 0; i < DICT.LTOC.LHDRList.Count; i++)
+            {
+                if (DICT.LTOC.LHDRList[i].assetIDlist.Contains(currentlySelectedAssetID))
+                    return i;
+            }
+            throw new Exception();
+        }
+
+        public int ScreenClicked(Ray ray)
+        {
+            int assetID = 0;
+
+            float smallerDistance = 1000f;
+            foreach (RenderableAsset ra in renderableAssetSet)
+            {
+                if (ra.isSelected) continue;
+
+                float? distance = ra.IntersectsWith(ray);
+                if (distance != null)
+                    if (distance < smallerDistance)
+                    {
+                        smallerDistance = (float)distance;
+                        assetID = ra.AHDR.assetID;
+                    }
+            }
+
+            if (assetID != 0 & assetDictionary.ContainsKey(assetID))
+                SelectAsset(assetID);
+            return assetID;
         }
 
         public void Save()

@@ -79,12 +79,16 @@
     </Compile>
     <Compile Include="ArchiveEditorFunctions.cs" />
     <Compile Include="Assets\Asset.cs" />
+    <Compile Include="Assets\AssetGeneric.cs" />
     <Compile Include="Assets\AssetMINF.cs" />
     <Compile Include="Assets\AssetMODL.cs" />
+    <Compile Include="Assets\AssetMVPT.cs" />
     <Compile Include="Assets\AssetPICK.cs" />
     <Compile Include="Assets\AssetLevelModel.cs" />
     <Compile Include="Assets\AssetPKUP.cs" />
     <Compile Include="Assets\AssetRWTX.cs" />
+    <Compile Include="Assets\AssetWithModel.cs" />
+    <Compile Include="Assets\RenderableAsset.cs" />
     <Compile Include="ConvertionFunctions.cs" />
     <Compile Include="ArchiveEditor.cs">
       <SubType>Form</SubType>
@@ -176,6 +180,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\SharpDX\Shader_Basic.hlsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\SharpDX\Shader_Tinted.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\SharpDX\Shader_Default.hlsl">

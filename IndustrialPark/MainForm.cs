@@ -244,5 +244,26 @@ namespace IndustrialPark
             objectModelsToolStripMenuItem.Checked = !objectModelsToolStripMenuItem.Checked;
             SharpRenderer.SetObjects(objectModelsToolStripMenuItem.Checked);
         }
+
+        private void renderPanel_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                ScreenClicked(new Rectangle(
+                    renderPanel.ClientRectangle.X,
+                    renderPanel.ClientRectangle.Y,
+                    renderPanel.ClientRectangle.Width,
+                    renderPanel.ClientRectangle.Height), e.X, e.Y);
+            }
+        }
+
+        public void ScreenClicked(Rectangle viewRectangle, int X, int Y)
+        {
+            Ray ray = Ray.GetPickRay(X, Y, new Viewport(viewRectangle), SharpRenderer.viewProjection);
+            foreach (ArchiveEditor ae in archiveEditors)
+            {
+                ae.ScreenClicked(ray);
+            }
+        }
     }
 }

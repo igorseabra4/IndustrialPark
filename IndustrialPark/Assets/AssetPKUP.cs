@@ -28,21 +28,21 @@ namespace IndustrialPark
                 {
                     if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(AssetPICK.pick.pickEntries[pickEntryID].unknown4))
                     {
-                        ArchiveEditorFunctions.renderingDictionary[AssetPICK.pick.pickEntries[pickEntryID].unknown4].Draw(world);
+                        ArchiveEditorFunctions.renderingDictionary[AssetPICK.pick.pickEntries[pickEntryID].unknown4].Draw(world, isSelected);
                     }
                     else
                     {
-                        SharpRenderer.DrawCube(world);
+                        SharpRenderer.DrawCube(world, isSelected);
                     }
                 }
                 else
                 {
-                    SharpRenderer.DrawCube(world);
+                    SharpRenderer.DrawCube(world, isSelected);
                 }
             }
             else
             {
-                SharpRenderer.DrawCube(world);
+                SharpRenderer.DrawCube(world, isSelected);
             }
         }
     }

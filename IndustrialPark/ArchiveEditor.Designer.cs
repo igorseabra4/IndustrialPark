@@ -48,6 +48,7 @@
             this.comboBoxLayers = new System.Windows.Forms.ComboBox();
             this.listBoxAssets = new System.Windows.Forms.ListBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.buttonView = new System.Windows.Forms.Button();
             this.buttonExportRaw = new System.Windows.Forms.Button();
             this.buttonEditAsset = new System.Windows.Forms.Button();
             this.buttonCopy = new System.Windows.Forms.Button();
@@ -55,7 +56,6 @@
             this.buttonAddAsset = new System.Windows.Forms.Button();
             this.comboBoxAssetTypes = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.buttonView = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -222,6 +222,7 @@
             this.listBoxAssets.Name = "listBoxAssets";
             this.listBoxAssets.Size = new System.Drawing.Size(490, 225);
             this.listBoxAssets.TabIndex = 3;
+            this.listBoxAssets.SelectedIndexChanged += new System.EventHandler(this.listBoxAssets_SelectedIndexChanged);
             // 
             // groupBox2
             // 
@@ -240,6 +241,16 @@
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Assets";
+            // 
+            // buttonView
+            // 
+            this.buttonView.Location = new System.Drawing.Point(502, 184);
+            this.buttonView.Name = "buttonView";
+            this.buttonView.Size = new System.Drawing.Size(75, 23);
+            this.buttonView.TabIndex = 14;
+            this.buttonView.Text = "View";
+            this.buttonView.UseVisualStyleBackColor = true;
+            this.buttonView.Click += new System.EventHandler(this.buttonView_Click);
             // 
             // buttonExportRaw
             // 
@@ -308,16 +319,6 @@
             this.label2.Size = new System.Drawing.Size(78, 13);
             this.label2.TabIndex = 4;
             this.label2.Text = "Show by Type:";
-            // 
-            // buttonView
-            // 
-            this.buttonView.Location = new System.Drawing.Point(502, 184);
-            this.buttonView.Name = "buttonView";
-            this.buttonView.Size = new System.Drawing.Size(75, 23);
-            this.buttonView.TabIndex = 14;
-            this.buttonView.Text = "View";
-            this.buttonView.UseVisualStyleBackColor = true;
-            this.buttonView.Click += new System.EventHandler(this.buttonView_Click);
             // 
             // ArchiveEditor
             // 

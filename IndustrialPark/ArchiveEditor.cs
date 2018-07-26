@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -290,7 +291,14 @@ namespace IndustrialPark
 
         private int CurrentlySelectedAssetID()
         {
-            return Convert.ToInt32((listBoxAssets.SelectedItem as string).Substring((listBoxAssets.SelectedItem as string).IndexOf('[') + 1, 8), 16);
+            if (listBoxAssets.SelectedItem != null)
+                return GetAssetIDFromName(listBoxAssets.SelectedItem as string);
+            else return 0;
+        }
+
+        private int GetAssetIDFromName(string name)
+        {
+            return Convert.ToInt32(name.Substring(name.IndexOf('[') + 1, 8), 16);
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -345,6 +353,40 @@ namespace IndustrialPark
                 //streamWriter.Close();
             }
 
+        }
+
+        private void listBoxAssets_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            archive.SelectAsset(CurrentlySelectedAssetID());
+        }
+
+        public void ScreenClicked(Ray ray)
+        {
+            int index = archive.ScreenClicked(ray);
+            if (index != 0)
+                SetSelectedIndex(index);
+        }
+
+        private void SetSelectedIndex(int assetID)
+        {
+            try
+            {
+                comboBoxLayers.SelectedIndex = archive.GetSelectedLayerIndex();
+                for (int i = 0; i < listBoxAssets.Items.Count; i++)
+                {
+                    if (GetAssetIDFromName(listBoxAssets.Items[i] as string) == assetID)
+                    {
+                        listBoxAssets.SelectedIndex = i;
+                        return;
+                    }
+                }
+                if (comboBoxAssetTypes.SelectedIndex != 0)
+                {
+                    comboBoxAssetTypes.SelectedIndex = 0;
+                    SetSelectedIndex(assetID);
+                }
+            }
+            catch { }
         }
     }
 }

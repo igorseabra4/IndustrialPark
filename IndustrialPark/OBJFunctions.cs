@@ -399,7 +399,7 @@ namespace IndustrialPark
 
             List<Triangle> triangleList = new List<Triangle>();
 
-            foreach (RWSection rw in bspFile.rwChunkList)
+            foreach (RWSection rw in bspFile.GetAsRWSectionArray())
             {
                 if (rw is World_000B w)
                 {
