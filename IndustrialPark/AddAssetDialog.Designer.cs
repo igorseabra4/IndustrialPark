@@ -175,7 +175,7 @@
             this.groupBox3.Size = new System.Drawing.Size(158, 50);
             this.groupBox3.TabIndex = 3;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Asset ID";
+            this.groupBox3.Text = "Asset ID (hex)";
             // 
             // textBoxAssetID
             // 
@@ -229,7 +229,7 @@
             this.groupBox6.Size = new System.Drawing.Size(184, 50);
             this.groupBox6.TabIndex = 6;
             this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "Checksum";
+            this.groupBox6.Text = "Checksum (hex)";
             // 
             // textBoxChecksum
             // 
@@ -260,7 +260,7 @@
             this.MinimizeBox = false;
             this.Name = "AddAssetDialog";
             this.ShowIcon = false;
-            this.Text = "Asset";
+            this.Text = "Asset Dialog";
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();

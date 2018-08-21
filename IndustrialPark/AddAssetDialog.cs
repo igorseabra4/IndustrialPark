@@ -110,7 +110,6 @@ namespace IndustrialPark
             }
             else
             {
-                MessageBox.Show(d.ToString());
                 success = false;
                 return null;
             }

@@ -56,6 +56,7 @@
             this.buttonAddAsset = new System.Windows.Forms.Button();
             this.comboBoxAssetTypes = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.clickThisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -65,7 +66,8 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
+            this.fileToolStripMenuItem,
+            this.clickThisToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(607, 24);
@@ -86,6 +88,7 @@
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
+            this.fileToolStripMenuItem.Click += new System.EventHandler(this.fileToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem
             // 
@@ -320,6 +323,12 @@
             this.label2.TabIndex = 4;
             this.label2.Text = "Show by Type:";
             // 
+            // clickThisToolStripMenuItem
+            // 
+            this.clickThisToolStripMenuItem.Name = "clickThisToolStripMenuItem";
+            this.clickThisToolStripMenuItem.Size = new System.Drawing.Size(81, 20);
+            this.clickThisToolStripMenuItem.Text = "<- click this";
+            // 
             // ArchiveEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -378,5 +387,6 @@
         private System.Windows.Forms.Button buttonExportRaw;
         private System.Windows.Forms.ToolStripMenuItem exportKnowlifesINIToolStripMenuItem;
         private System.Windows.Forms.Button buttonView;
+        private System.Windows.Forms.ToolStripMenuItem clickThisToolStripMenuItem;
     }
 }

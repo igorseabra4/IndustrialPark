@@ -139,14 +139,20 @@ namespace IndustrialPark
         private void buttonAddLayer_Click(object sender, EventArgs e)
         {
             programIsChangingStuff = true;
-
-            archive.DICT.LTOC.LHDRList.Add(new Section_LHDR()
+            try
+            { 
+                archive.DICT.LTOC.LHDRList.Add(new Section_LHDR()
+                {
+                    assetIDlist = new List<int>(),
+                    LDBG = new Section_LDBG(-1)
+                });
+                comboBoxLayers.Items.Add(LayerToString(archive.DICT.LTOC.LHDRList.Count - 1));
+                comboBoxLayers.SelectedIndex = comboBoxLayers.Items.Count - 1;
+            }
+            catch (Exception ex)
             {
-                assetIDlist = new List<int>(),
-                LDBG = new Section_LDBG(-1)
-            });
-            comboBoxLayers.Items.Add(LayerToString(archive.DICT.LTOC.LHDRList.Count - 1));
-            comboBoxLayers.SelectedIndex = comboBoxLayers.Items.Count - 1;
+                MessageBox.Show("Unable to add layer: " + ex.Message);
+            }
 
             programIsChangingStuff = false;
         }
@@ -154,16 +160,22 @@ namespace IndustrialPark
         private void buttonRemoveLayer_Click(object sender, EventArgs e)
         {
             programIsChangingStuff = true;
-            
-            archive.RemoveLayer(comboBoxLayers.SelectedIndex);
 
-            comboBoxLayers.Items.RemoveAt(comboBoxLayers.SelectedIndex);
-
-            for (int i = 0; i < archive.DICT.LTOC.LHDRList.Count; i++)
+            try
             {
-                comboBoxLayers.Items[i] = LayerToString(i);
-            }
+                archive.RemoveLayer(comboBoxLayers.SelectedIndex);
 
+                comboBoxLayers.Items.RemoveAt(comboBoxLayers.SelectedIndex);
+
+                for (int i = 0; i < archive.DICT.LTOC.LHDRList.Count; i++)
+                {
+                    comboBoxLayers.Items[i] = LayerToString(i);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to remove layer: " + ex.Message);
+            }
             programIsChangingStuff = false;
         }
         
@@ -229,8 +241,15 @@ namespace IndustrialPark
 
             if (success)
             {
-                archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR);
-                PopulateAssetsComboAndListBox();
+                try
+                {
+                    archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR);
+                    PopulateAssetsComboAndListBox();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Unable to add asset: " + ex.Message);
+                }
             }
         }
 
@@ -270,13 +289,20 @@ namespace IndustrialPark
 
         private void buttonEditAsset_Click(object sender, EventArgs e)
         {
-            Section_AHDR AHDR = AddAssetDialog.GetAsset(archive.GetFromAssetID(CurrentlySelectedAssetID()).AHDR, out bool success);
-
-            if (success)
+            try
             {
-                archive.RemoveAsset(comboBoxLayers.SelectedIndex, CurrentlySelectedAssetID());
-                archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR);
-                PopulateAssetsComboAndListBox();
+                Section_AHDR AHDR = AddAssetDialog.GetAsset(archive.GetFromAssetID(CurrentlySelectedAssetID()).AHDR, out bool success);
+
+                if (success)
+                {
+                    archive.RemoveAsset(comboBoxLayers.SelectedIndex, CurrentlySelectedAssetID());
+                    archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR);
+                    PopulateAssetsComboAndListBox();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to edit asset: " + ex.Message);
             }
         }
 
@@ -285,7 +311,14 @@ namespace IndustrialPark
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-               File.WriteAllBytes(saveFileDialog.FileName, archive.GetFromAssetID(CurrentlySelectedAssetID()).AHDR.containedFile);
+                try
+                {
+                    File.WriteAllBytes(saveFileDialog.FileName, archive.GetFromAssetID(CurrentlySelectedAssetID()).AHDR.containedFile);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Unable to export asset raw data: " + ex.Message);
+                }
             }
         }
 
@@ -387,6 +420,11 @@ namespace IndustrialPark
                 }
             }
             catch { }
+        }
+
+        private void fileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            clickThisToolStripMenuItem.Visible = false;
         }
     }
 }
