@@ -1,0 +1,6 @@
+[submodule "RenderWareFile"]
+	path = RenderWareFile
+	url = https://github.com/igorseabra4/RenderWareFile
+[submodule "HipHopTool"]
+	path = HipHopTool
+	url = https://github.com/igorseabra4/HipHopTool

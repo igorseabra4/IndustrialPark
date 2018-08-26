@@ -120,15 +120,15 @@ namespace IndustrialPark
 
         void AddAtomic(AtomicSector_0009 AtomicSector)
         {
-            if (AtomicSector.atomicStruct.isNativeData)
+            if (AtomicSector.atomicSectorStruct.isNativeData)
             {
-                AddNativeData(AtomicSector.atomicExtension, MaterialList);
+                AddNativeData(AtomicSector.atomicSectorExtension, MaterialList);
                 return;
             }
 
             List<VertexColoredTextured> vertexList = new List<VertexColoredTextured>();
 
-            foreach (Vertex3 v in AtomicSector.atomicStruct.vertexArray)
+            foreach (Vertex3 v in AtomicSector.atomicSectorStruct.vertexArray)
             {
                 vertexList.Add(new VertexColoredTextured(new Vector3(v.X, v.Y, v.Z), new Vector2(), new SharpDX.Color()));
                 this.vertexList.Add(new Vector3(v.X, v.Y, v.Z));
@@ -136,7 +136,7 @@ namespace IndustrialPark
 
             for (int i = 0; i < vertexList.Count; i++)
             {
-                RenderWareFile.Color c = AtomicSector.atomicStruct.colorArray[i];
+                RenderWareFile.Color c = AtomicSector.atomicSectorStruct.colorArray[i];
 
                 VertexColoredTextured v = vertexList[i];
                 v.Color = new SharpDX.Color(c.R, c.G, c.B, c.A);
@@ -145,7 +145,7 @@ namespace IndustrialPark
 
             for (int i = 0; i < vertexList.Count; i++)
             {
-                TextCoord tc = AtomicSector.atomicStruct.uvArray[i];
+                Vertex2 tc = AtomicSector.atomicSectorStruct.uvArray[i];
 
                 VertexColoredTextured v = vertexList[i];
                 v.TextureCoordinate = new Vector2(tc.X, tc.Y);
@@ -159,9 +159,9 @@ namespace IndustrialPark
 
             for (int i = 0; i < MaterialList.Count; i++)
             {
-                for (int j = 0; j < AtomicSector.atomicStruct.triangleArray.Length; j++) // each (Triangle t in AtomicSector.atomicStruct.triangleArray)
+                for (int j = 0; j < AtomicSector.atomicSectorStruct.triangleArray.Length; j++) // each (Triangle t in AtomicSector.atomicSectorStruct.triangleArray)
                 {
-                    Triangle t = AtomicSector.atomicStruct.triangleArray[j];
+                    Triangle t = AtomicSector.atomicSectorStruct.triangleArray[j];
                     if (t.materialIndex == i)
                     {
                         indexList.Add(t.vertex1);
@@ -247,7 +247,7 @@ namespace IndustrialPark
             {
                 for (int i = 0; i < vertexList.Count; i++)
                 {
-                    TextCoord tc = g.geometryStruct.textCoords[i];
+                    Vertex2 tc = g.geometryStruct.textCoords[i];
 
                     VertexColoredTextured v = vertexList[i];
                     v.TextureCoordinate = new Vector2(tc.X, tc.Y);
@@ -309,7 +309,7 @@ namespace IndustrialPark
 
             List<Vertex3> vertexList1 = new List<Vertex3>();
             List<RenderWareFile.Color> colorList = new List<RenderWareFile.Color>();
-            List<TextCoord> textCoordList = new List<TextCoord>();
+            List<Vertex2> textCoordList = new List<Vertex2>();
 
             foreach (Declaration d in n.declarations)
             {
@@ -319,7 +319,7 @@ namespace IndustrialPark
                         vertexList1.Add(v);
                     else if (o is RenderWareFile.Color c)
                         colorList.Add(c);
-                    else if (o is TextCoord t)
+                    else if (o is Vertex2 t)
                         textCoordList.Add(t);
                     else throw new Exception();
                 }

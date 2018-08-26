@@ -470,33 +470,33 @@ namespace IndustrialPark
         private static void GetAtomicTriangleList(StreamWriter OBJWriter, AtomicSector_0009 atomicSection, ref List<Triangle> triangleList, ref int totalVertexIndices)
         {
             //Write vertex list to obj
-            if (atomicSection.atomicStruct.vertexArray != null)
-                foreach (Vertex3 i in atomicSection.atomicStruct.vertexArray)
+            if (atomicSection.atomicSectorStruct.vertexArray != null)
+                foreach (Vertex3 i in atomicSection.atomicSectorStruct.vertexArray)
                     OBJWriter.WriteLine("v " + i.X.ToString() + " " + i.Y.ToString() + " " + i.Z.ToString());
 
             OBJWriter.WriteLine();
 
             //Write uv list to obj
-            if (atomicSection.atomicStruct.uvArray != null)
+            if (atomicSection.atomicSectorStruct.uvArray != null)
             {
                 if (flipUVs)
-                    foreach (TextCoord i in atomicSection.atomicStruct.uvArray)
+                    foreach (Vertex2 i in atomicSection.atomicSectorStruct.uvArray)
                         OBJWriter.WriteLine("vt " + i.X.ToString() + " " + (-i.Y).ToString());
                 else
-                    foreach (TextCoord i in atomicSection.atomicStruct.uvArray)
+                    foreach (Vertex2 i in atomicSection.atomicSectorStruct.uvArray)
                         OBJWriter.WriteLine("vt " + i.X.ToString() + " " + i.Y.ToString());
             }
             OBJWriter.WriteLine();
 
             // Write vcolors to obj
-            if (atomicSection.atomicStruct.colorArray != null)
-                foreach (RenderWareFile.Color i in atomicSection.atomicStruct.colorArray)
+            if (atomicSection.atomicSectorStruct.colorArray != null)
+                foreach (RenderWareFile.Color i in atomicSection.atomicSectorStruct.colorArray)
                 OBJWriter.WriteLine("vc " + i.R.ToString() + " " + i.G.ToString() + " " + i.B.ToString() + " " + i.A.ToString());
 
             OBJWriter.WriteLine();
 
-            if (atomicSection.atomicStruct.triangleArray != null)
-                foreach (RenderWareFile.Triangle i in atomicSection.atomicStruct.triangleArray)
+            if (atomicSection.atomicSectorStruct.triangleArray != null)
+                foreach (RenderWareFile.Triangle i in atomicSection.atomicSectorStruct.triangleArray)
                 {
                     triangleList.Add(new Triangle
                     {
@@ -507,8 +507,8 @@ namespace IndustrialPark
                     });
                 }
 
-            if (atomicSection.atomicStruct.vertexArray != null)
-                totalVertexIndices += atomicSection.atomicStruct.vertexArray.Count();
+            if (atomicSection.atomicSectorStruct.vertexArray != null)
+                totalVertexIndices += atomicSection.atomicSectorStruct.vertexArray.Count();
         }
 
         private static void WriteMaterialLib(string[] MaterialStream, string materialLibrary)
