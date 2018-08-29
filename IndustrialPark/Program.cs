@@ -8,9 +8,9 @@ namespace IndustrialPark
 {
     static class Program
     {
-        public static MainForm mainForm;
+        public static MainForm MainForm;
 
-        public static ViewConfig viewConfig;
+        public static ViewConfig ViewConfig;
 
         /// <summary>
         /// Ponto de entrada principal para o aplicativo.
@@ -23,10 +23,10 @@ namespace IndustrialPark
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            mainForm = new MainForm();
-            viewConfig = new ViewConfig();
+            MainForm = new MainForm();
+            ViewConfig = new ViewConfig();
 
-            Application.Run(mainForm);
+            Application.Run(MainForm);
         }
     }
 }

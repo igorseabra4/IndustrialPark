@@ -94,7 +94,7 @@ namespace IndustrialPark
         /// <summary>
         /// Position
         /// </summary>
-        public Vector3 Position;
+        public Vector4 Position;
 
         /// <summary>
         /// Color
@@ -113,9 +113,84 @@ namespace IndustrialPark
         /// <param name="color">Vertex Color</param>
         public VertexColoredTextured(Vector3 position, Vector2 textureCoordinate, Color color)
         {
+            Position = (Vector4)position;
+            Position.W = 1f;
+            TextureCoordinate = textureCoordinate;
+            Color = color;
+        }
+    }
+
+    /// <summary>
+    /// Colored Textured Vertex
+    /// </summary>
+    public struct VertexColoredTexturedNormalized
+    {
+        /// <summary>
+        /// Position
+        /// </summary>
+        public Vector3 Position;
+
+        /// <summary>
+        /// Color
+        /// </summary>
+        public Color Color;
+
+        /// <summary>
+        /// Texture coordinate
+        /// </summary>
+        public Vector2 TextureCoordinate;
+
+        /// <summary>
+        /// Normal
+        /// </summary>
+        public Vector4 Normal;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="position">Position XYZ</param>
+        /// <param name="color">Vertex Color</param>
+        public VertexColoredTexturedNormalized(Vector3 position, Vector2 textureCoordinate, Color color, Vector3 normal)
+        {
             Position = position;
             TextureCoordinate = textureCoordinate;
             Color = color;
+            Normal = (Vector4)normal;
+            Normal.W = 1F;
+        }
+    }
+
+    /// <summary>
+    /// Colored Textured Vertex
+    /// </summary>
+    public struct VertexTexturedNormalized
+    {
+        /// <summary>
+        /// Position
+        /// </summary>
+        public Vector3 Position;
+        
+        /// <summary>
+        /// Texture coordinate
+        /// </summary>
+        public Vector2 TextureCoordinate;
+
+        /// <summary>
+        /// Normal
+        /// </summary>
+        public Vector4 Normal;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="position">Position XYZ</param>
+        /// <param name="color">Vertex Color</param>
+        public VertexTexturedNormalized(Vector3 position, Vector2 textureCoordinate, Vector3 normal)
+        {
+            Position = position;
+            TextureCoordinate = textureCoordinate;
+            Normal = (Vector4)normal;
+            Normal.W = 1F;
         }
     }
 

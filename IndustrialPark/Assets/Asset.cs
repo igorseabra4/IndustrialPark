@@ -12,7 +12,7 @@ namespace IndustrialPark
             this.AHDR = AHDR;
         }
 
-        public abstract void Setup(bool defaultMode);
+        public abstract void Setup(SharpRenderer renderer, bool defaultMode);
 
         public override string ToString()
         {

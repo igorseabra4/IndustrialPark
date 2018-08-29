@@ -11,16 +11,16 @@ namespace IndustrialPark
         {
         }
 
-        public override void Setup(bool defaultMode = true)
+        public override void Setup(SharpRenderer renderer, bool defaultMode = true)
         {
             model = new RenderWareModelFile(AHDR.ADBG.assetName);
-            model.SetForRendering(RenderWareFile.ReadFileMethods.ReadRenderWareFile(AHDR.containedFile), AHDR.containedFile);
+            model.SetForRendering(renderer.device, RenderWareFile.ReadFileMethods.ReadRenderWareFile(AHDR.containedFile), AHDR.containedFile);
             ArchiveEditorFunctions.AddToRenderingDictionary(AHDR.assetID, this);
         }
 
-        public override void Draw(Matrix world, bool isSelected)
+        public override void Draw(SharpRenderer renderer, Matrix world, bool isSelected)
         {
-            model.Render(world, isSelected);
+            model.Render(renderer, world, isSelected);
         }
 
         public override RenderWareModelFile GetRenderWareModelFile()

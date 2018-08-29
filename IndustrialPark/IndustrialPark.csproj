@@ -97,6 +97,9 @@
     <Compile Include="OBJFunctions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SharpDX\Camera\CameraVectors.cs" />
+    <Compile Include="SharpDX\Camera\ProjectionMatrix.cs" />
+    <Compile Include="SharpDX\Camera\ViewMatrix.cs" />
     <Compile Include="SharpDX\RenderWareModelFile.cs" />
     <Compile Include="SharpDX\SharpCamera.cs" />
     <Compile Include="SharpDX\SharpDevice.cs" />
@@ -105,6 +108,7 @@
     <Compile Include="SharpDX\SharpRenderer.cs" />
     <Compile Include="SharpDX\SharpShader.cs" />
     <Compile Include="SharpDX\SharpSubSet.cs" />
+    <Compile Include="SharpDX\TextureManager.cs" />
     <Compile Include="SharpDX\TextureUtility.cs" />
     <Compile Include="SharpDX\VertexTypes.cs" />
     <Compile Include="ViewConfig.cs">

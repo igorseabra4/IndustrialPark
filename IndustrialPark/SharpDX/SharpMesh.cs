@@ -1,28 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SharpDX;
 using SharpDX.DXGI;
 using SharpDX.Direct3D11;
 using SharpDX.Direct3D;
 
 using Buffer11 = SharpDX.Direct3D11.Buffer;
-using Device = SharpDX.Direct3D11.Device;
 
 namespace IndustrialPark
 {
     /// <summary>
-    /// To Render  Object
+    /// To Render Static Object
     /// </summary>
     public class SharpMesh : IDisposable
     {
-        /// <summary>
-        /// Device pointer
-        /// </summary>
-        public SharpDevice Device { get; private set; }
-
         /// <summary>
         /// Vertex Buffer
         /// </summary>
@@ -43,15 +34,10 @@ namespace IndustrialPark
         /// </summary>
         public List<SharpSubSet> SubSets { get; private set; }
 
-        private SharpMesh(SharpDevice device)
-        {
-            Device = device;
-        }
-        
         /// <summary>
         /// Draw Mesh
         /// </summary>
-        public void Draw()
+        public void Draw(SharpDevice Device)
         {
             Device.DeviceContext.InputAssembler.PrimitiveTopology = primitiveTopology;
             Device.DeviceContext.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(VertexBuffer, VertexSize, 0));
@@ -72,31 +58,31 @@ namespace IndustrialPark
         public static SharpMesh Create<VType>(SharpDevice device, VType[] vertices, int[] indices, List<SharpSubSet> SubSets,
             PrimitiveTopology topology = PrimitiveTopology.TriangleList) where VType : struct
         {
-            return new SharpMesh(device)
+            return new SharpMesh()
             {
                 VertexBuffer = Buffer11.Create<VType>(device.Device, BindFlags.VertexBuffer, vertices),
                 IndexBuffer = Buffer11.Create(device.Device, BindFlags.IndexBuffer, indices),
                 VertexSize = Utilities.SizeOf<VType>(),
                 SubSets = SubSets,
-                primitiveTopology = topology
+                primitiveTopology = topology,
             };
         }
-        
+
         /// <summary>
         /// Set all buffer and topology property to speed up rendering
         /// </summary>
-        public void Begin()
+        public void Begin(SharpDevice Device)
         {
             Device.DeviceContext.InputAssembler.PrimitiveTopology = primitiveTopology;
             Device.DeviceContext.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(VertexBuffer, VertexSize, 0));
             Device.DeviceContext.InputAssembler.SetIndexBuffer(IndexBuffer, Format.R32_UInt, 0);
         }
-        
+
         /// <summary>
         /// Draw subset
         /// </summary>
         /// <param name="subset">Subsets</param>
-        public void Draw(int subset)
+        public void Draw(SharpDevice Device, int subset)
         {
             Device.DeviceContext.PixelShader.SetShaderResource(0, SubSets[subset].DiffuseMap);
             Device.DeviceContext.DrawIndexed(SubSets[subset].IndexCount, SubSets[subset].StartIndex, 0);
@@ -106,14 +92,14 @@ namespace IndustrialPark
         /// Draw all vertices as points
         /// </summary>
         /// <param name="count"></param>
-        public void DrawPoints(int count = int.MaxValue)
+        public void DrawPoints(SharpDevice Device, int count = int.MaxValue)
         {
             Device.DeviceContext.InputAssembler.PrimitiveTopology = PrimitiveTopology.PointList;
             Device.DeviceContext.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(VertexBuffer, VertexSize, 0));
             Device.DeviceContext.InputAssembler.SetIndexBuffer(IndexBuffer, Format.R32_UInt, 0);
             Device.DeviceContext.DrawIndexed(Math.Min(count, SubSets[0].IndexCount), 0, 0);
         }
-        
+
         /// <summary>
         /// Release resource
         /// </summary>
@@ -121,6 +107,16 @@ namespace IndustrialPark
         {
             VertexBuffer.Dispose();
             IndexBuffer.Dispose();
+        }
+
+        /// <summary>
+        /// Release resource
+        /// </summary>
+        public void DisposeWithTextures()
+        {
+            VertexBuffer.Dispose();
+            IndexBuffer.Dispose();
+
             foreach (var s in SubSets)
             {
                 if (s.DiffuseMap != null)

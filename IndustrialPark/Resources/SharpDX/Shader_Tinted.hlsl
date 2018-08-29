@@ -33,7 +33,7 @@ PS_IN VS(VS_IN input)
 
 	output.position = mul(worldViewProj, input.position);
 	output.texcoord = input.texcoord;
-	output.color = input.color + color;
+	output.color = input.color * color;
 
 	return output;
 }

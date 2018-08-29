@@ -1,38 +1,62 @@
-﻿using SharpDX;
-using System;
+﻿using System;
+using System.Diagnostics;
+using System.Threading;
 using System.Windows.Forms;
+using SharpDX;
 
 namespace IndustrialPark
 {
     public partial class ViewConfig : Form
     {
+        public static bool ProgramIsUpdatingValues { get; set; } = true;
+        private static bool _invalidCameraValues { get; set; } = false;
+        private Thread _updateViewValuesThread;
+
+        /*
+            ------------
+            Constructors
+            ------------
+        */
+
+        // Default value assignments moved to Program.MainForm.renderer.
+
         public ViewConfig()
         {
             InitializeComponent();
-
-            NumericCameraX.Maximum = Decimal.MaxValue;
-            NumericCameraY.Maximum = Decimal.MaxValue;
-            NumericCameraZ.Maximum = Decimal.MaxValue;
-            NumericCameraPitch.Maximum = Decimal.MaxValue;
-            NumericCameraYaw.Maximum = Decimal.MaxValue;
-            NumericInterval.Maximum = Decimal.MaxValue;
-            NumericDrawD.Maximum = Decimal.MaxValue;
-            NumericFOV.Maximum = 179.9999M;
-
-            NumericCameraX.Minimum = Decimal.MinValue;
-            NumericCameraY.Minimum = Decimal.MinValue;
-            NumericCameraZ.Minimum = Decimal.MinValue;
-            NumericCameraPitch.Minimum = Decimal.MinValue;
-            NumericCameraYaw.Minimum = Decimal.MinValue;
-            NumericInterval.Minimum = 0.0001M;
-            NumericDrawD.Minimum = 1;
-            NumericFOV.Minimum = 0.0001M;
-
-            NumericFOV.Value = (decimal)MathUtil.RadiansToDegrees(MathUtil.PiOverFour);
-            NumericDrawD.Value = 50000;
+            Program.MainForm.renderer.Camera.CameraChangedEvent += CameraChanged;
         }
 
-        public bool programIsUpdatingValues = false;
+        /// <summary>
+        /// Updates the GUI if the invalid flag has been set.
+        /// </summary>
+        /// <param name="obj"></param>
+        private void UpdateGUIValues(object obj)
+        {
+            while (true)
+            {
+                if (_invalidCameraValues)
+                {
+                    NumericFOV.Invoke((MethodInvoker)UpdateValues);
+                }
+
+                Thread.Sleep(33);
+            }
+        }
+
+        /// <summary>
+        /// Signal no longer valid camera values when event thrown.
+        /// </summary>
+        private void CameraChanged(SharpCamera camera)
+        {
+            _invalidCameraValues = true;
+        }
+
+
+        /*
+             ------
+             Events
+             ------
+        */
 
         private void ViewConfig_Load(object sender, EventArgs e)
         {
@@ -47,28 +71,88 @@ namespace IndustrialPark
             e.Cancel = true;
             Hide();
         }
-        
+
         private void NumericCamera_ValueChanged(object sender, EventArgs e)
         {
-            if (!programIsUpdatingValues)
-                SharpRenderer.Camera.SetPosition(new Vector3((float)NumericCameraX.Value, (float)NumericCameraY.Value, (float)NumericCameraZ.Value));
+            if (!ProgramIsUpdatingValues)
+                Program.MainForm.renderer.Camera.SetPosition(new Vector3((float)NumericCameraX.Value, (float)NumericCameraY.Value, (float)NumericCameraZ.Value));
         }
 
         private void NumericCameraRot_ValueChanged(object sender, EventArgs e)
         {
-            if (!programIsUpdatingValues)
-                SharpRenderer.Camera.SetRotation((float)NumericCameraPitch.Value, (float)NumericCameraYaw.Value);
+            if (!ProgramIsUpdatingValues)
+            {
+                Program.MainForm.renderer.Camera.Pitch = (float)NumericCameraPitch.Value;
+                Program.MainForm.renderer.Camera.Yaw = (float)NumericCameraYaw.Value;
+            }
         }
 
         private void NumericInterval_ValueChanged(object sender, EventArgs e)
         {
-            if (!programIsUpdatingValues)
-                SharpRenderer.Camera.SetSpeed((float)NumericInterval.Value);
+            if (!ProgramIsUpdatingValues)
+                Program.MainForm.renderer.Camera.Speed = (float)NumericInterval.Value;
         }
 
-        public void UpdateValues(Vector3 position, float yaw, float pitch, float speed)
+        private void NumericDrawD_ValueChanged(object sender, EventArgs e)
         {
-            programIsUpdatingValues = true;
+            Program.MainForm.renderer.Camera.FarPlane = (float)NumericDrawD.Value;
+        }
+
+        private void NumericFOV_ValueChanged(object sender, EventArgs e)
+        {
+            if (NumericFOV.Value < 1)
+                NumericFOV.Value = 1;
+            Program.MainForm.renderer.Camera.FieldOfView = (float)NumericFOV.Value;
+        }
+        
+        private void ViewConfig_VisibleChanged(object sender, EventArgs e)
+        {
+            if (Visible)
+            {
+                UpdateValues();
+                _updateViewValuesThread = new Thread(UpdateGUIValues);
+                _updateViewValuesThread.IsBackground = true;
+                _updateViewValuesThread.Start();
+            }
+            else
+            {
+                _updateViewValuesThread?.Abort();
+            }
+
+        }
+
+        /*
+            -------
+            Methods
+            -------
+        */
+
+        /// <summary>
+        /// Obtains the values from the current Power Plant instance and applies them to the
+        /// View Config.
+        /// </summary>
+        public void UpdateValues()
+        {
+            ProgramIsUpdatingValues = true;
+            NumericFOV.Value = (decimal)Program.MainForm.renderer.Camera.FieldOfView;
+            NumericDrawD.Value = (decimal)Program.MainForm.renderer.Camera.FarPlane;
+            NumericInterval.Value = (decimal)Program.MainForm.renderer.Camera.Speed;
+            NumericCameraX.Value = (decimal)Program.MainForm.renderer.Camera.Position.X;
+            NumericCameraY.Value = (decimal)Program.MainForm.renderer.Camera.Position.Y;
+            NumericCameraZ.Value = (decimal)Program.MainForm.renderer.Camera.Position.Z;
+
+            NumericCameraYaw.Value = (decimal)Program.MainForm.renderer.Camera.Yaw;
+            NumericCameraPitch.Value = (decimal)Program.MainForm.renderer.Camera.Pitch;
+            ProgramIsUpdatingValues = false;
+            _invalidCameraValues = false;
+        }
+
+        public void SetValues(Vector3 position, float yaw, float pitch, float speed)
+        {
+            if (!Visible)
+                return;
+
+            ProgramIsUpdatingValues = true;
 
             NumericCameraX.Value = (decimal)position.X;
             NumericCameraY.Value = (decimal)position.Y;
@@ -77,19 +161,8 @@ namespace IndustrialPark
             NumericCameraPitch.Value = (decimal)pitch;
             NumericCameraYaw.Value = (decimal)yaw;
 
-            programIsUpdatingValues = false;
-        }
-
-        private void NumericDrawD_ValueChanged(object sender, EventArgs e)
-        {
-            SharpRenderer.far = (float)NumericDrawD.Value;
-        }
-
-        private void NumericFOV_ValueChanged(object sender, EventArgs e)
-        {
-            if (NumericFOV.Value < 1)
-                NumericFOV.Value = 1;
-            SharpRenderer.fovAngle = MathUtil.DegreesToRadians((float)NumericFOV.Value);
+            ProgramIsUpdatingValues = false;
+            _invalidCameraValues = false;
         }
     }
 }

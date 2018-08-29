@@ -62,13 +62,13 @@ namespace IndustrialPark
             }
 
             archive.Dispose();
-            Program.mainForm.CloseAssetEditor(this);
+            Program.MainForm.CloseAssetEditor(this);
             Close();
         }
 
         private void exportTexturesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            foreach (ArchiveEditor editor in Program.mainForm.archiveEditors)
+            foreach (ArchiveEditor editor in Program.MainForm.archiveEditors)
                 foreach (Asset asset in editor.archive.GetAllAssets())
                 {
                     if (asset is AssetRWTX texture)
@@ -81,7 +81,7 @@ namespace IndustrialPark
             archive.OpenFile(fileName);
             toolStripStatusLabel1.Text = "File: " + fileName;
             Text = Path.GetFileName(fileName);
-            Program.mainForm.SetToolStripItemName(this, Text);
+            Program.MainForm.SetToolStripItemName(this, Text);
             unsavedChanges = false;
             PopulateLayerComboBox();
         }
@@ -284,7 +284,7 @@ namespace IndustrialPark
             if (listBoxAssets.SelectedIndex < 0) return;
 
             if (archive.GetFromAssetID(CurrentlySelectedAssetID()) is RenderableAsset a)
-                SharpRenderer.Camera.SetPosition(a.Position - 8 * SharpRenderer.Camera.GetForward());
+                Program.MainForm.renderer.Camera.SetPosition(a.Position - 8 * Program.MainForm.renderer.Camera.GetForward());
         }
 
         private void buttonEditAsset_Click(object sender, EventArgs e)

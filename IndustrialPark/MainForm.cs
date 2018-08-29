@@ -15,13 +15,15 @@ namespace IndustrialPark
 
             InitializeComponent();
 
-            new SharpRenderer(renderPanel);
+            renderer = new SharpRenderer(renderPanel);
         }
         
         public void SetToolStripStatusLabel(string Text)
         {
             toolStripStatusLabel1.Text = Text;
         }
+
+        public SharpRenderer renderer;
 
         private bool mouseMode = false;
         private System.Drawing.Point MouseCenter = new System.Drawing.Point();
@@ -33,8 +35,8 @@ namespace IndustrialPark
         {
             if (mouseMode)
             {
-                SharpRenderer.Camera.AddYaw(MathUtil.DegreesToRadians(Cursor.Position.X - MouseCenter.X) / 4);
-                SharpRenderer.Camera.AddPitch(MathUtil.DegreesToRadians(Cursor.Position.Y - MouseCenter.Y) / 4);
+                renderer.Camera.AddYaw(MathUtil.DegreesToRadians(Cursor.Position.X - MouseCenter.X) / 4);
+                renderer.Camera.AddPitch(MathUtil.DegreesToRadians(Cursor.Position.Y - MouseCenter.Y) / 4);
 
                 Cursor.Position = MouseCenter;
             }
@@ -42,23 +44,23 @@ namespace IndustrialPark
             {
                 if (e.Button == MouseButtons.Middle)
                 {
-                    SharpRenderer.Camera.AddYaw(MathUtil.DegreesToRadians(e.X - oldMousePosition.X));
-                    SharpRenderer.Camera.AddPitch(MathUtil.DegreesToRadians(e.Y - oldMousePosition.Y));
+                    renderer.Camera.AddYaw(MathUtil.DegreesToRadians(e.X - oldMousePosition.X));
+                    renderer.Camera.AddPitch(MathUtil.DegreesToRadians(e.Y - oldMousePosition.Y));
                 }
                 if (e.Button == MouseButtons.Right)
                 {
-                    SharpRenderer.Camera.AddPositionSideways(e.X - oldMousePosition.X);
-                    SharpRenderer.Camera.AddPositionUp(e.Y - oldMousePosition.Y);
+                    renderer.Camera.AddPositionSideways(e.X - oldMousePosition.X);
+                    renderer.Camera.AddPositionUp(e.Y - oldMousePosition.Y);
                 }
             }
 
-            SharpRenderer.Camera.AddPositionForward(e.Delta / 24);
+            renderer.Camera.AddPositionForward(e.Delta / 24);
             oldMousePosition = e;
 
             if (loopNotStarted)
             {
                 loopNotStarted = false;
-                SharpRenderer.RunMainLoop(renderPanel);
+                renderer.RunMainLoop(renderPanel);
             }
         }
 
@@ -82,9 +84,9 @@ namespace IndustrialPark
             if (e.KeyCode == Keys.Z)
                 MouseModeToggle();
             else if (e.KeyCode == Keys.Q)
-                SharpRenderer.Camera.IncreaseCameraSpeed(-1);
+                renderer.Camera.IncreaseCameraSpeed(-1);
             else if (e.KeyCode == Keys.E)
-                SharpRenderer.Camera.IncreaseCameraSpeed(1);
+                renderer.Camera.IncreaseCameraSpeed(1);
             else if (e.KeyCode == Keys.C)
                 ToggleCulling();
             else if (e.KeyCode == Keys.F)
@@ -95,7 +97,7 @@ namespace IndustrialPark
                 ToggleObjects();
 
             if (e.KeyCode == Keys.F1)
-                Program.viewConfig.Show();
+                Program.ViewConfig.Show();
         }
 
         private void MainForm_KeyUp(object sender, KeyEventArgs e)
@@ -111,31 +113,31 @@ namespace IndustrialPark
         public void KeyboardController()
         {
             if (PressedKeys.Contains(Keys.A) & PressedKeys.Contains(Keys.ControlKey))
-                SharpRenderer.Camera.AddYaw(-0.05f);
+                renderer.Camera.AddYaw(-0.05f);
             else if (PressedKeys.Contains(Keys.A))
-                SharpRenderer.Camera.AddPositionSideways(0.25f);
+                renderer.Camera.AddPositionSideways(0.25f);
 
             if (PressedKeys.Contains(Keys.D) & PressedKeys.Contains(Keys.ControlKey))
-                SharpRenderer.Camera.AddYaw(0.05f);
+                renderer.Camera.AddYaw(0.05f);
             else if (PressedKeys.Contains(Keys.D))
-                SharpRenderer.Camera.AddPositionSideways(-0.25f);
+                renderer.Camera.AddPositionSideways(-0.25f);
 
             if (PressedKeys.Contains(Keys.W) & PressedKeys.Contains(Keys.ControlKey))
-                SharpRenderer.Camera.AddPitch(-0.05f);
+                renderer.Camera.AddPitch(-0.05f);
             else if (PressedKeys.Contains(Keys.W) & PressedKeys.Contains(Keys.ShiftKey))
-                SharpRenderer.Camera.AddPositionUp(0.25f);
+                renderer.Camera.AddPositionUp(0.25f);
             else if (PressedKeys.Contains(Keys.W))
-                SharpRenderer.Camera.AddPositionForward(0.25f);
+                renderer.Camera.AddPositionForward(0.25f);
 
             if (PressedKeys.Contains(Keys.S) & PressedKeys.Contains(Keys.ControlKey))
-                SharpRenderer.Camera.AddPitch(0.05f);
+                renderer.Camera.AddPitch(0.05f);
             else if (PressedKeys.Contains(Keys.S) & PressedKeys.Contains(Keys.ShiftKey))
-                SharpRenderer.Camera.AddPositionUp(-0.25f);
+                renderer.Camera.AddPositionUp(-0.25f);
             else if (PressedKeys.Contains(Keys.S))
-                SharpRenderer.Camera.AddPositionForward(-0.25f);
+                renderer.Camera.AddPositionForward(-0.25f);
 
             if (PressedKeys.Contains(Keys.R))
-                SharpRenderer.Camera.Reset();
+                renderer.Camera.Reset();
         }
 
         public List<ArchiveEditor> archiveEditors = new List<ArchiveEditor>();
@@ -178,9 +180,9 @@ namespace IndustrialPark
         {
             noCullingCToolStripMenuItem.Checked = !noCullingCToolStripMenuItem.Checked;
             if (noCullingCToolStripMenuItem.Checked)
-                SharpRenderer.device.SetNormalCullMode(CullMode.None);
+                renderer.device.SetNormalCullMode(CullMode.None);
             else
-                SharpRenderer.device.SetNormalCullMode(CullMode.Back);
+                renderer.device.SetNormalCullMode(CullMode.Back);
         }
 
         private void wireframeFToolStripMenuItem_Click(object sender, EventArgs e)
@@ -193,11 +195,11 @@ namespace IndustrialPark
             wireframeFToolStripMenuItem.Checked = !wireframeFToolStripMenuItem.Checked;
             if (wireframeFToolStripMenuItem.Checked)
             {
-                SharpRenderer.device.SetNormalFillMode(FillMode.Wireframe);
+                renderer.device.SetNormalFillMode(FillMode.Wireframe);
             }
             else
             {
-                SharpRenderer.device.SetNormalFillMode(FillMode.Solid);
+                renderer.device.SetNormalFillMode(FillMode.Solid);
             }
         }
 
@@ -205,12 +207,12 @@ namespace IndustrialPark
         {
             ColorDialog colorDialog = new ColorDialog();
             if (colorDialog.ShowDialog() == DialogResult.OK)
-                SharpRenderer.backgroundColor = new Color(colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B, colorDialog.Color.A);
+                renderer.backgroundColor = new Color(colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B, colorDialog.Color.A);
         }
         
         private void toolStripStatusLabel1_Click(object sender, EventArgs e)
         {
-            Program.viewConfig.Show();
+            Program.ViewConfig.Show();
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -220,7 +222,7 @@ namespace IndustrialPark
 
         private void viewConfigToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.viewConfig.Show();
+            Program.ViewConfig.Show();
         }
 
         private void levelModelToolStripMenuItem_Click(object sender, EventArgs e)
@@ -231,7 +233,7 @@ namespace IndustrialPark
         private void ToggleLevelModel()
         {
             levelModelToolStripMenuItem.Checked = !levelModelToolStripMenuItem.Checked;
-            SharpRenderer.SetLevelModel(levelModelToolStripMenuItem.Checked);
+            renderer.SetLevelModel(levelModelToolStripMenuItem.Checked);
         }
 
         private void objectModelsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -242,7 +244,7 @@ namespace IndustrialPark
         private void ToggleObjects()
         {
             objectModelsToolStripMenuItem.Checked = !objectModelsToolStripMenuItem.Checked;
-            SharpRenderer.SetObjects(objectModelsToolStripMenuItem.Checked);
+            renderer.SetObjects(objectModelsToolStripMenuItem.Checked);
         }
 
         private void renderPanel_MouseClick(object sender, MouseEventArgs e)
@@ -259,11 +261,23 @@ namespace IndustrialPark
 
         public void ScreenClicked(Rectangle viewRectangle, int X, int Y)
         {
-            Ray ray = Ray.GetPickRay(X, Y, new Viewport(viewRectangle), SharpRenderer.viewProjection);
+            Ray ray = Ray.GetPickRay(X, Y, new Viewport(viewRectangle), renderer.viewProjection);
             foreach (ArchiveEditor ae in archiveEditors)
             {
                 ae.ScreenClicked(ray);
             }
+        }
+
+        private void addTextureFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog openFile = new FolderBrowserDialog();
+            if (openFile.ShowDialog() == DialogResult.OK)
+                TextureManager.LoadTexturesFromFolder(openFile.SelectedPath);
+        }
+
+        private void clearTexturesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TextureManager.ClearTextures();
         }
     }
 }

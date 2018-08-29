@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Runtime.InteropServices;
+using SharpDX;
 using SharpDX.DXGI;
 
 namespace IndustrialPark
 {
-    using SharpDX;
+    using RenderWareFile;
+    using RenderWareFile.Sections;
     using SharpDX.Direct3D11;
 
     /// <summary>
@@ -16,6 +16,7 @@ namespace IndustrialPark
     /// </summary>
     public static class TextureUtilities
     {
+
         const int DDS_MAGIC = 0x20534444;// "DDS "
 
         [StructLayout(LayoutKind.Sequential)]
@@ -303,7 +304,7 @@ namespace IndustrialPark
             else
             {
                 int bpp = BitsPerPixel(fmt);
-                rowBytes = (width * bpp + 7) / 8; // round up to nearest byte
+                rowBytes = (width * bpp) / 8;
                 numRows = height;
             }
 
@@ -312,8 +313,6 @@ namespace IndustrialPark
             outNumBytes = numBytes;
             outRowBytes = rowBytes;
             outNumRows = numRows;
-
-
         }
 
 
@@ -543,6 +542,75 @@ namespace IndustrialPark
             return stuff;
         }
 
+        private static DataRectangle[] FillInitData(MipMapEntry[] mipMaps, int width, int height, int depth, byte mipMapCount, Format format)
+        {
+            List<DataRectangle> rects = new List<DataRectangle>();
+
+            int NumBytes = 0;
+            int RowBytes = 0;
+            int NumRows = 0;
+
+            for (int i = 0; i < mipMaps.Length; i++)
+            {
+                GetSurfaceInfo(width, height, format, out NumBytes, out RowBytes, out NumRows);
+
+                GCHandle pinnedArray = GCHandle.Alloc(mipMaps[i].data, GCHandleType.Pinned);
+                IntPtr pointer = pinnedArray.AddrOfPinnedObject();
+
+                rects.Add(new DataRectangle(pointer, RowBytes));
+
+                width = width >> 1;
+                if (width == 0)
+                    width = 1;
+
+                height = height >> 1;
+                if (height == 0)
+                    height = 1;
+
+                depth = depth >> 1;
+                if (depth == 0)
+                    depth = 1;
+
+                pinnedArray.Free();
+            }
+
+            return rects.ToArray();
+        }
+
+        private static MipMapEntry[] ConvertFromPalette(MipMapEntry[] mipMaps, byte mipMapCount, TextureRasterFormat format, Color[] palette)
+        {
+            MipMapEntry[] newMipMaps = new MipMapEntry[mipMapCount];
+
+            for (int i = 0; i < mipMapCount; i++)
+            {
+                List<byte> newData = new List<byte>();
+                foreach (byte j in mipMaps[i].data)
+                {
+                    byte color = j;
+                    if ((format & TextureRasterFormat.RASTER_PAL4) != 0)
+                    {
+                        color = (byte)(j & 0x0F);
+                        newData.Add(palette[color].B);
+                        newData.Add(palette[color].G);
+                        newData.Add(palette[color].R);
+                        newData.Add(palette[color].A);
+                    }
+                    else
+                    {
+                        newData.Add(palette[color].B);
+                        newData.Add(palette[color].G);
+                        newData.Add(palette[color].R);
+                        newData.Add(palette[color].A);
+                    }
+                }
+
+                newMipMaps[i].dataSize = newData.Count;
+                newMipMaps[i].data = newData.ToArray();
+            }
+
+            return newMipMaps;
+        }
+
         private static List<DataBox> FillInitData(IntPtr pointer, int width, int height, int depth, int mipCount, int arraySize, Format format, int maxsize, int bitSize, int offset)
         {
             pointer += offset;
@@ -766,7 +834,7 @@ namespace IndustrialPark
 
             return resourceView;
         }
-        
+
         private static ShaderResourceView CreateTextureFromDDS(Device device, DeviceContext context, byte[] data, out bool isCubeMap)
         {
             // Validate DDS file in memory
@@ -814,11 +882,12 @@ namespace IndustrialPark
 
             return InitTextureFromData(device, context, header, null, data, offset, 0, out isCubeMap);
         }
-        
-        private static ShaderResourceView CreateTextureFromBitmap(Device device, DeviceContext context, string filename)
+
+        private static ShaderResourceView CreateTextureFromBitmap(Device device, string filename)
         {
             System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(filename);
 
+            // Describe and create a Texture2D.
             Texture2DDescription textureDesc = new Texture2DDescription()
             {
                 MipLevels = (int)Math.Log(Math.Max(bitmap.Width, bitmap.Height), 2),
@@ -831,20 +900,34 @@ namespace IndustrialPark
                 SampleDescription = new SampleDescription(1, 0),
                 OptionFlags = ResourceOptionFlags.GenerateMipMaps
             };
-            
+
             System.Drawing.Imaging.BitmapData data = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            DataRectangle[] dataRectangle = new DataRectangle[textureDesc.MipLevels];
+            DataRectangle[] dataRectangles = new DataRectangle[textureDesc.MipLevels];
 
             for (int i = 0; i < textureDesc.MipLevels; i++)
-                dataRectangle[i] = new DataRectangle(data.Scan0, data.Stride);
+                dataRectangles[i] = new DataRectangle(data.Scan0, data.Stride);
 
-            Texture2D buffer = new Texture2D(device, textureDesc, dataRectangle);
+            Texture2D buffer = null;
+            while (buffer == null)
+            {
+                try
+                {
+                    buffer = new Texture2D(device, textureDesc, dataRectangles);
+                }
+                catch
+                {
+
+                }
+            }
+
             bitmap.UnlockBits(data);
+
             ShaderResourceView resourceView = new ShaderResourceView(device, buffer);
 
             device.ImmediateContext.GenerateMips(resourceView);
 
             buffer.Dispose();
+
             bitmap.Dispose();
 
             return resourceView;
@@ -864,10 +947,94 @@ namespace IndustrialPark
             {
                 return CreateTextureFromDDS(device.Device, device.DeviceContext, System.IO.File.ReadAllBytes(filename), out bool isCube);
             }
-            else
+            else if (ext.ToLower() == ".png")
             {
-                return CreateTextureFromBitmap(device.Device, device.DeviceContext, filename);
+                return CreateTextureFromBitmap(device.Device, filename);
             }
+            else throw new Exception("Unsupported image format: " + filename);
+        }
+
+        public static ShaderResourceView LoadTextureFromRenderWareNative(this SharpDevice device, TextureNativeStruct_0001 tnStruct)
+        {
+            Format format = Format.Unknown;
+
+            if (tnStruct.compression == 0)
+            {
+                //if ((tnStruct.rasterFormatFlags & TextureRasterFormat.RASTER_C1555) != 0)
+                //    format = Format.B5G5R5A1_UNorm;
+                //if ((tnStruct.rasterFormatFlags & TextureRasterFormat.RASTER_C4444) != 0)
+                //    format = Format.B4G4R4A4_UNorm;
+                //else if ((tnStruct.rasterFormatFlags & TextureRasterFormat.RASTER_C555) != 0)
+                //    format = Format.B5G5R5A1_UNorm;
+                if ((tnStruct.rasterFormatFlags & (TextureRasterFormat)0x0F00) == TextureRasterFormat.RASTER_C565)
+                    format = Format.B5G6R5_UNorm;
+                if ((tnStruct.rasterFormatFlags & (TextureRasterFormat)0x0F00) == TextureRasterFormat.RASTER_C8888)
+                    format = Format.B8G8R8A8_UNorm;
+                if ((tnStruct.rasterFormatFlags & (TextureRasterFormat)0x0F00) == TextureRasterFormat.RASTER_C888)
+                    format = Format.B8G8R8A8_UNorm;
+                //else if ((tnStruct.rasterFormatFlags & TextureRasterFormat.RASTER_D16) != 0)
+                //    format = Format.D16_UNorm;
+                //else if ((tnStruct.rasterFormatFlags & TextureRasterFormat.RASTER_D24) != 0)
+                //    format = Format.D24_UNorm_S8_UInt;
+                //else if ((tnStruct.rasterFormatFlags & TextureRasterFormat.RASTER_D32) != 0)
+                //    format = Format.D32_Float;
+                //else if ((tnStruct.rasterFormatFlags & TextureRasterFormat.RASTER_PAL4) != 0)
+                //    format = Format.P8;
+                //else if ((tnStruct.rasterFormatFlags & TextureRasterFormat.RASTER_PAL8) != 0)
+                //    format = Format.P8;
+            }
+            else if (tnStruct.compression == 1)
+            {
+                format = Format.BC1_UNorm;
+            }
+            else
+                return null;
+
+            if (format == Format.Unknown)
+                throw new Exception(tnStruct.textureName);
+
+            MipMapEntry[] mipMaps;
+
+            if ((tnStruct.rasterFormatFlags & TextureRasterFormat.RASTER_PAL4) != 0 | (tnStruct.rasterFormatFlags & TextureRasterFormat.RASTER_PAL8) != 0)
+            {
+                mipMaps = ConvertFromPalette(tnStruct.mipMaps, tnStruct.mipMapCount, tnStruct.rasterFormatFlags, tnStruct.palette);
+                if (tnStruct.platformType == 5)
+                    format = Format.R8G8B8A8_UNorm;
+            }
+            else
+                mipMaps = tnStruct.mipMaps;
+
+            DataRectangle[] dataRectangles = FillInitData(mipMaps, tnStruct.width, tnStruct.height, tnStruct.bitDepth, tnStruct.mipMapCount, format);
+            Texture2D buffer = null;
+
+            while (buffer == null)
+            {
+                try
+                {
+                    buffer = new Texture2D(device.Device, new Texture2DDescription()
+                    {
+                        MipLevels = tnStruct.mipMapCount,
+                        Format = format,
+                        Width = tnStruct.width,
+                        Height = tnStruct.height,
+                        ArraySize = 1,
+                        BindFlags = BindFlags.ShaderResource,
+                        Usage = ResourceUsage.Default,
+                        SampleDescription = new SampleDescription(1, 0),
+                        OptionFlags = ResourceOptionFlags.None,
+                    }, dataRectangles);
+                }
+                catch
+                {
+
+                }
+            }
+
+            ShaderResourceView resourceView = new ShaderResourceView(device.Device, buffer);
+
+            buffer.Dispose();
+
+            return resourceView;
         }
     }
 }

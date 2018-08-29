@@ -13,7 +13,7 @@ namespace IndustrialPark
 
         int[] pairAssetIDs;
 
-        public override void Setup(bool defaultMode = true)
+        public override void Setup(SharpRenderer renderer, bool defaultMode = true)
         {
             Position.X = Switch(BitConverter.ToSingle(AHDR.containedFile, 0x8));
             Position.Y = Switch(BitConverter.ToSingle(AHDR.containedFile, 0xC));
@@ -23,7 +23,7 @@ namespace IndustrialPark
             Scale.Y = Switch(BitConverter.ToSingle(AHDR.containedFile, 0x20));
             Scale.Z = Switch(BitConverter.ToSingle(AHDR.containedFile, 0x24));
 
-            int amountOfPairs = Switch(BitConverter.ToInt32(AHDR.containedFile, 0x18));
+            int amountOfPairs = Switch(BitConverter.ToInt16(AHDR.containedFile, 0x1A));
 
             pairAssetIDs = new int[amountOfPairs];
             for (int i = 0; i < amountOfPairs; i++)
@@ -31,22 +31,22 @@ namespace IndustrialPark
 
             world = Matrix.Translation(Position);
 
-            boundingBox = BoundingBox.FromPoints(SharpRenderer.cubeVertices.ToArray());
+            boundingBox = BoundingBox.FromPoints(Program.MainForm.renderer.cubeVertices.ToArray());
             boundingBox.Maximum = (Vector3)Vector3.Transform(boundingBox.Maximum, world);
             boundingBox.Minimum = (Vector3)Vector3.Transform(boundingBox.Minimum, world);
 
             ArchiveEditorFunctions.renderableAssetSet.Add(this);
         }
 
-        public override void Draw()
+        public override void Draw(SharpRenderer renderer)
         {
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(modelAssetID))
             {
-                ArchiveEditorFunctions.renderingDictionary[modelAssetID].Draw(world, isSelected);
+                ArchiveEditorFunctions.renderingDictionary[modelAssetID].Draw(renderer, world, isSelected);
             }
             else
             {
-                SharpRenderer.DrawCube(world, isSelected);
+                renderer.DrawCube(world, isSelected);
             }
         }
     }

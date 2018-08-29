@@ -9,13 +9,25 @@ namespace IndustrialPark
 {
     public class SharpCamera
     {
-        private Vector3 Position = Vector3.Zero;
+        public Vector3 Position = Vector3.Zero;
         private Vector3 Forward = Vector3.ForwardRH;
         private Vector3 Right = Vector3.Right;
         private Vector3 Up = Vector3.Up;
-        private float Yaw = 0;
-        private float Pitch = 0;
-        private float Speed = 5f;
+        public float Yaw = 0;
+        public float Pitch = 0;
+        public float Speed = 5f;
+
+        public float FieldOfView = MathUtil.PiOverFour;
+        public float AspectRatio;
+        public float NearPlane = 0.1F;
+        public float FarPlane = 80000F;
+
+        public event CameraChangedDelegate CameraChangedEvent;
+        public delegate void CameraChangedDelegate(SharpCamera camera);
+        public void RaiseCameraChangedEvent()
+        {
+            CameraChangedEvent?.Invoke(this);
+        }
 
         internal void AddPositionForward(float factor)
         {
@@ -63,8 +75,7 @@ namespace IndustrialPark
             Forward = (Vector3)Vector3.Transform(Vector3.ForwardRH, Matrix.RotationYawPitchRoll(MathUtil.DegreesToRadians(Yaw), MathUtil.DegreesToRadians(Pitch), 0));
             Right = Vector3.Normalize(Vector3.Cross(Forward, Vector3.Up));
             Up = Vector3.Normalize(Vector3.Cross(Right, Forward));
-
-            Program.viewConfig.UpdateValues(Position, Yaw, Pitch, Speed);
+            RaiseCameraChangedEvent();
         }
 
         internal void Reset()
@@ -114,9 +125,14 @@ namespace IndustrialPark
             UpdateCamera();
         }
 
-        public Matrix GenerateLookAtRH()
+        public Matrix GetViewMatrix()
         {
             return Matrix.LookAtRH(Position, Position + Forward, Up);
+        }
+
+        public Matrix GetProjectionMatrix()
+        {
+            return Matrix.PerspectiveFovRH(FieldOfView, AspectRatio, NearPlane, FarPlane);
         }
 
         public string GetInformation()

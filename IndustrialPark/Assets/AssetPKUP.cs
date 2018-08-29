@@ -13,14 +13,14 @@ namespace IndustrialPark
         {
         }
 
-        public override void Setup(bool defaultMode = false)
+        public override void Setup(SharpRenderer renderer, bool defaultMode = false)
         {
             pickEntryID = Switch(BitConverter.ToInt32(AHDR.containedFile, 0x54));
 
-            base.Setup(defaultMode);
+            base.Setup(renderer, defaultMode);
         }
 
-        public override void Draw()
+        public override void Draw(SharpRenderer renderer)
         {
             if (AssetPICK.pick != null)
             {
@@ -28,21 +28,21 @@ namespace IndustrialPark
                 {
                     if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(AssetPICK.pick.pickEntries[pickEntryID].unknown4))
                     {
-                        ArchiveEditorFunctions.renderingDictionary[AssetPICK.pick.pickEntries[pickEntryID].unknown4].Draw(world, isSelected);
+                        ArchiveEditorFunctions.renderingDictionary[AssetPICK.pick.pickEntries[pickEntryID].unknown4].Draw(renderer, world, isSelected);
                     }
                     else
                     {
-                        SharpRenderer.DrawCube(world, isSelected);
+                        renderer.DrawCube(world, isSelected);
                     }
                 }
                 else
                 {
-                    SharpRenderer.DrawCube(world, isSelected);
+                    renderer.DrawCube(world, isSelected);
                 }
             }
             else
             {
-                SharpRenderer.DrawCube(world, isSelected);
+                renderer.DrawCube(world, isSelected);
             }
         }
     }

@@ -69,6 +69,16 @@
             // 
             this.NumericCameraYaw.DecimalPlaces = 4;
             resources.ApplyResources(this.NumericCameraYaw, "NumericCameraYaw");
+            this.NumericCameraYaw.Maximum = new decimal(new int[] {
+            -1,
+            -1,
+            -1,
+            0});
+            this.NumericCameraYaw.Minimum = new decimal(new int[] {
+            -1,
+            -1,
+            -1,
+            -2147483648});
             this.NumericCameraYaw.Name = "NumericCameraYaw";
             this.NumericCameraYaw.ValueChanged += new System.EventHandler(this.NumericCameraRot_ValueChanged);
             // 
@@ -76,6 +86,16 @@
             // 
             this.NumericCameraPitch.DecimalPlaces = 4;
             resources.ApplyResources(this.NumericCameraPitch, "NumericCameraPitch");
+            this.NumericCameraPitch.Maximum = new decimal(new int[] {
+            -1,
+            -1,
+            -1,
+            0});
+            this.NumericCameraPitch.Minimum = new decimal(new int[] {
+            -1,
+            -1,
+            -1,
+            -2147483648});
             this.NumericCameraPitch.Name = "NumericCameraPitch";
             this.NumericCameraPitch.ValueChanged += new System.EventHandler(this.NumericCameraRot_ValueChanged);
             // 
@@ -90,9 +110,14 @@
             // 
             this.NumericInterval.DecimalPlaces = 4;
             resources.ApplyResources(this.NumericInterval, "NumericInterval");
+            this.NumericInterval.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            262144});
             this.NumericInterval.Name = "NumericInterval";
             this.NumericInterval.Value = new decimal(new int[] {
-            10,
+            20,
             0,
             0,
             0});
@@ -114,7 +139,17 @@
             0,
             0,
             0});
+            this.NumericDrawD.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.NumericDrawD.Name = "NumericDrawD";
+            this.NumericDrawD.Value = new decimal(new int[] {
+            500000,
+            0,
+            0,
+            0});
             this.NumericDrawD.ValueChanged += new System.EventHandler(this.NumericDrawD_ValueChanged);
             // 
             // groupBox1
@@ -130,6 +165,16 @@
             // 
             this.NumericCameraZ.DecimalPlaces = 4;
             resources.ApplyResources(this.NumericCameraZ, "NumericCameraZ");
+            this.NumericCameraZ.Maximum = new decimal(new int[] {
+            -1,
+            -1,
+            -1,
+            0});
+            this.NumericCameraZ.Minimum = new decimal(new int[] {
+            -1,
+            -1,
+            -1,
+            -2147483648});
             this.NumericCameraZ.Name = "NumericCameraZ";
             this.NumericCameraZ.ValueChanged += new System.EventHandler(this.NumericCamera_ValueChanged);
             // 
@@ -137,6 +182,16 @@
             // 
             this.NumericCameraY.DecimalPlaces = 4;
             resources.ApplyResources(this.NumericCameraY, "NumericCameraY");
+            this.NumericCameraY.Maximum = new decimal(new int[] {
+            -1,
+            -1,
+            -1,
+            0});
+            this.NumericCameraY.Minimum = new decimal(new int[] {
+            -1,
+            -1,
+            -1,
+            -2147483648});
             this.NumericCameraY.Name = "NumericCameraY";
             this.NumericCameraY.ValueChanged += new System.EventHandler(this.NumericCamera_ValueChanged);
             // 
@@ -144,6 +199,16 @@
             // 
             this.NumericCameraX.DecimalPlaces = 4;
             resources.ApplyResources(this.NumericCameraX, "NumericCameraX");
+            this.NumericCameraX.Maximum = new decimal(new int[] {
+            -1,
+            -1,
+            -1,
+            0});
+            this.NumericCameraX.Minimum = new decimal(new int[] {
+            -1,
+            -1,
+            -1,
+            -2147483648});
             this.NumericCameraX.Name = "NumericCameraX";
             this.NumericCameraX.ValueChanged += new System.EventHandler(this.NumericCamera_ValueChanged);
             // 
@@ -158,7 +223,22 @@
             // 
             this.NumericFOV.DecimalPlaces = 4;
             resources.ApplyResources(this.NumericFOV, "NumericFOV");
+            this.NumericFOV.Maximum = new decimal(new int[] {
+            1799999,
+            0,
+            0,
+            262144});
+            this.NumericFOV.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            262144});
             this.NumericFOV.Name = "NumericFOV";
+            this.NumericFOV.Value = new decimal(new int[] {
+            45,
+            0,
+            0,
+            0});
             this.NumericFOV.ValueChanged += new System.EventHandler(this.NumericFOV_ValueChanged);
             // 
             // ViewConfig
@@ -175,6 +255,7 @@
             this.Name = "ViewConfig";
             this.ShowIcon = false;
             this.Load += new System.EventHandler(this.ViewConfig_Load);
+            this.VisibleChanged += new System.EventHandler(this.ViewConfig_VisibleChanged);
             this.groupBox2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.NumericCameraYaw)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.NumericCameraPitch)).EndInit();

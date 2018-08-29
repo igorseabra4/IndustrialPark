@@ -18,6 +18,8 @@ namespace IndustrialPark
         public List<string> MaterialList = new List<string>();
         public bool isNoCulling = false;
         public bool isCollision = false;
+        public bool containsNormals = false;
+        public bool ignoreNormals = false;
 
         public List<SharpMesh> meshList;
         public static List<SharpMesh> completeMeshList = new List<SharpMesh>();
@@ -25,17 +27,17 @@ namespace IndustrialPark
         public uint vertexAmount;
         public uint triangleAmount;
 
-        public List<Vector3> vertexList;
+        public List<Vector3> vertexListG;
         public List<Triangle> triangleList;
         
         public RenderWareModelFile(string fileName)
         {
             this.fileName = fileName;
         }
-
+        
         public List<Vector3> GetVertexList()
         {
-            return vertexList;
+            return vertexListG;
         }
 
         public byte[] GetAsByteArray()
@@ -47,15 +49,25 @@ namespace IndustrialPark
         {
             return rwSectionArray;
         }
+        
+        public DefaultRenderData renderData;
 
-        public void SetForRendering(RWSection[] rwChunkList, byte[] rwByteArray)
+        public void SetForRendering(SharpDevice device, RWSection[] rwChunkList, byte[] rwByteArray)
         {
-            rwSectionByteArray = rwByteArray;
             rwSectionArray = rwChunkList;
 
+            if (rwByteArray == null)
+            {
+                rwSectionByteArray = ReadFileMethods.ExportRenderWareFile(rwSectionArray, 0x1400FFFF);
+
+                if (rwSectionByteArray.Length > 450 * 1024)
+                    System.Windows.Forms.MessageBox.Show(fileName + " is larger than 450 kb. I will still import it for you, but be warned that files too large might make the game crash.");
+            }
+            else
+                rwSectionByteArray = rwByteArray;
             meshList = new List<SharpMesh>();
 
-            vertexList = new List<Vector3>();
+            vertexListG = new List<Vector3>();
             triangleList = new List<Triangle>();
 
             foreach (RWSection rwSection in rwSectionArray)
@@ -78,51 +90,79 @@ namespace IndustrialPark
                     }
                     if (w.firstWorldChunk is AtomicSector_0009 a)
                     {
-                        AddAtomic(a);
+                        AddAtomic(device, a);
                     }
                     else if (w.firstWorldChunk is PlaneSector_000A p)
                     {
-                        AddPlane(p);
+                        AddPlane(device, p);
                     }
                 }
                 else if (rwSection is Clump_0010 c)
                 {
-                    foreach (Geometry_000F g in c.geometryList.geometryList)
+                    for (int g = 0; g < c.geometryList.geometryList.Count; g++)
                     {
-                        AddGeometry(g);
+                        AddGeometry(device, c.geometryList.geometryList[g], CreateMatrix(c.frameList, c.atomicList[g].atomicStruct.frameIndex));
                     }
                 }
             }
         }
 
-        void AddPlane(PlaneSector_000A planeSection)
+        private Matrix CreateMatrix(FrameList_000E frameList, int frameIndex)
+        {
+            Matrix transform = Matrix.Identity;
+
+            for (int f = 0; f < frameList.frameListStruct.frames.Count; f++)
+            {
+                if (frameIndex == f)
+                {
+                    Frame cf = frameList.frameListStruct.frames[f];
+
+                    transform.M11 = cf.rotationMatrix.M11;
+                    transform.M12 = cf.rotationMatrix.M12;
+                    transform.M13 = cf.rotationMatrix.M13;
+                    transform.M21 = cf.rotationMatrix.M21;
+                    transform.M22 = cf.rotationMatrix.M22;
+                    transform.M23 = cf.rotationMatrix.M23;
+                    transform.M31 = cf.rotationMatrix.M31;
+                    transform.M32 = cf.rotationMatrix.M32;
+                    transform.M33 = cf.rotationMatrix.M33;
+
+                    transform *= Matrix.Translation(cf.position.X, cf.position.Y, cf.position.Z);
+                    break;
+                }
+            }
+
+            return transform;
+        }
+
+        private void AddPlane(SharpDevice device, PlaneSector_000A planeSection)
         {
             if (planeSection.leftSection is AtomicSector_0009 al)
             {
-                AddAtomic(al);
+                AddAtomic(device, al);
             }
             else if (planeSection.leftSection is PlaneSector_000A pl)
             {
-                AddPlane(pl);
+                AddPlane(device, pl);
             }
             else throw new Exception();
 
             if (planeSection.rightSection is AtomicSector_0009 ar)
             {
-                AddAtomic(ar);
+                AddAtomic(device, ar);
             }
             else if (planeSection.rightSection is PlaneSector_000A pr)
             {
-                AddPlane(pr);
+                AddPlane(device, pr);
             }
             else throw new Exception();
         }
 
-        void AddAtomic(AtomicSector_0009 AtomicSector)
+        void AddAtomic(SharpDevice device, AtomicSector_0009 AtomicSector)
         {
             if (AtomicSector.atomicSectorStruct.isNativeData)
             {
-                AddNativeData(AtomicSector.atomicSectorExtension, MaterialList);
+                AddNativeData(device, AtomicSector.atomicSectorExtension, MaterialList, Matrix.Identity);
                 return;
             }
 
@@ -131,7 +171,7 @@ namespace IndustrialPark
             foreach (Vertex3 v in AtomicSector.atomicSectorStruct.vertexArray)
             {
                 vertexList.Add(new VertexColoredTextured(new Vector3(v.X, v.Y, v.Z), new Vector2(), new SharpDX.Color()));
-                this.vertexList.Add(new Vector3(v.X, v.Y, v.Z));
+                this.vertexListG.Add(new Vector3(v.X, v.Y, v.Z));
             }
 
             for (int i = 0; i < vertexList.Count; i++)
@@ -152,14 +192,13 @@ namespace IndustrialPark
                 vertexList[i] = v;
             }
 
-
             List<SharpSubSet> SubsetList = new List<SharpSubSet>();
             List<int> indexList = new List<int>();
             int previousIndexCount = 0;
 
             for (int i = 0; i < MaterialList.Count; i++)
             {
-                for (int j = 0; j < AtomicSector.atomicSectorStruct.triangleArray.Length; j++) // each (Triangle t in AtomicSector.atomicSectorStruct.triangleArray)
+                for (int j = 0; j < AtomicSector.atomicSectorStruct.triangleArray.Length; j++) // each (Triangle t in AtomicSector.atomicStruct.triangleArray)
                 {
                     Triangle t = AtomicSector.atomicSectorStruct.triangleArray[j];
                     if (t.materialIndex == i)
@@ -174,20 +213,18 @@ namespace IndustrialPark
 
                 if (indexList.Count - previousIndexCount > 0)
                 {
-                    if (SharpRenderer.TextureStream.ContainsKey(MaterialList[i]))
-                        SubsetList.Add(new SharpSubSet(previousIndexCount, indexList.Count - previousIndexCount, SharpRenderer.TextureStream[MaterialList[i]]));
-                    else
-                        SubsetList.Add(new SharpSubSet(previousIndexCount, indexList.Count - previousIndexCount, SharpRenderer.whiteDefault));
+                    SubsetList.Add(new SharpSubSet(previousIndexCount, indexList.Count - previousIndexCount,
+                        TextureManager.GetTextureFromDictionary(MaterialList[i]), MaterialList[i]));
                 }
 
                 previousIndexCount = indexList.Count();
             }
 
             if (SubsetList.Count > 0)
-                meshList.Add(SharpMesh.Create(SharpRenderer.device, vertexList.ToArray(), indexList.ToArray(), SubsetList));
+                meshList.Add(SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), SubsetList));
         }
 
-        void AddGeometry(Geometry_000F g)
+        private void AddGeometry(SharpDevice device, Geometry_000F g, Matrix transformMatrix)
         {
             List<string> MaterialList = new List<string>();
             foreach (Material_0007 m in g.materialList.materialList)
@@ -195,7 +232,6 @@ namespace IndustrialPark
                 if (m.texture != null)
                 {
                     string textureName = m.texture.diffuseTextureName.stringString;
-
                     MaterialList.Add(textureName);
                 }
                 else
@@ -204,54 +240,64 @@ namespace IndustrialPark
 
             if (g.geometryStruct.geometryFlags2 == 0x0101)
             {
-                AddNativeData(g.geometryExtension, MaterialList);
+                AddNativeData(device, g.geometryExtension, MaterialList, transformMatrix);
                 return;
             }
 
-            List<VertexColoredTextured> vertexList = new List<VertexColoredTextured>();
+            List<Vector3> vertexList1 = new List<Vector3>();
+            List<Vector3> normalList = new List<Vector3>();
+            List<Vector2> textCoordList = new List<Vector2>();
+            List<SharpDX.Color> colorList = new List<SharpDX.Color>();
 
             if ((g.geometryStruct.geometryFlags & (int)GeometryFlags.hasVertexPositions) != 0)
             {
                 foreach (Vertex3 v in g.geometryStruct.morphTargets[0].vertices)
                 {
-                    vertexList.Add(new VertexColoredTextured(new Vector3(v.X, v.Y, v.Z),
-                        new Vector2(),
-                        SharpDX.Color.White
-                    ));
-                    this.vertexList.Add(new Vector3(v.X, v.Y, v.Z));
+                    Vector3 pos = (Vector3)Vector3.Transform(new Vector3(v.X, v.Y, v.Z), transformMatrix);
+                    vertexList1.Add(pos);
+                    vertexListG.Add(pos);
                 }
             }
 
-            if ((g.geometryStruct.geometryFlags & (int)GeometryFlags.hasVertexColors) != 0)
+            if ((g.geometryStruct.geometryFlags & (int)GeometryFlags.hasNormals) != 0)
             {
-                for (int i = 0; i < vertexList.Count; i++)
+                containsNormals = true;
+                for (int i = 0; i < vertexList1.Count; i++)
+                {
+                    normalList.Add(new Vector3(g.geometryStruct.morphTargets[0].normals[i].X, g.geometryStruct.morphTargets[0].normals[i].Y, g.geometryStruct.morphTargets[0].normals[i].Z));
+                }
+            }
+
+            if (((g.geometryStruct.geometryFlags & (int)GeometryFlags.hasVertexColors) != 0) & (!(containsNormals & !ignoreNormals)))
+            {
+                for (int i = 0; i < vertexList1.Count; i++)
                 {
                     RenderWareFile.Color c = g.geometryStruct.vertexColors[i];
-
-                    VertexColoredTextured v = vertexList[i];
-                    v.Color = new SharpDX.Color(c.R, c.G, c.B, c.A);
-                    vertexList[i] = v;
+                    colorList.Add(new SharpDX.Color(c.R, c.G, c.B, c.A));
                 }
             }
             else
             {
-                for (int i = 0; i < vertexList.Count; i++)
+                for (int i = 0; i < vertexList1.Count; i++)
                 {
-                    VertexColoredTextured v = vertexList[i];
-                    v.Color = SharpDX.Color.White;
-                    vertexList[i] = v;
+                    colorList.Add(new SharpDX.Color(1f, 1f, 1f, 1f));
                 }
             }
 
             if ((g.geometryStruct.geometryFlags & (int)GeometryFlags.hasTextCoords) != 0)
             {
-                for (int i = 0; i < vertexList.Count; i++)
+                for (int i = 0; i < vertexList1.Count; i++)
                 {
                     Vertex2 tc = g.geometryStruct.textCoords[i];
 
-                    VertexColoredTextured v = vertexList[i];
-                    v.TextureCoordinate = new Vector2(tc.X, tc.Y);
-                    vertexList[i] = v;
+                    textCoordList.Add(new Vector2(tc.X, tc.Y));
+                }
+            }
+            else
+            {
+                for (int i = 0; i < vertexList1.Count; i++)
+                {
+                    textCoordList.Add(new Vector2());
                 }
             }
 
@@ -275,20 +321,23 @@ namespace IndustrialPark
 
                 if (indexList.Count - previousIndexCount > 0)
                 {
-                    if (SharpRenderer.TextureStream.ContainsKey(MaterialList[i]))
-                        SubsetList.Add(new SharpSubSet(previousIndexCount, indexList.Count - previousIndexCount, SharpRenderer.TextureStream[MaterialList[i]]));
-                    else
-                        SubsetList.Add(new SharpSubSet(previousIndexCount, indexList.Count - previousIndexCount, SharpRenderer.whiteDefault));
+                    SubsetList.Add(new SharpSubSet(previousIndexCount, indexList.Count - previousIndexCount,
+                        TextureManager.GetTextureFromDictionary(MaterialList[i]), MaterialList[i]));
                 }
 
                 previousIndexCount = indexList.Count();
             }
 
             if (SubsetList.Count > 0)
-                meshList.Add(SharpMesh.Create(SharpRenderer.device, vertexList.ToArray(), indexList.ToArray(), SubsetList));
+            {
+                VertexColoredTextured[] vertices = new VertexColoredTextured[vertexList1.Count];
+                for (int i = 0; i < vertices.Length; i++)
+                    vertices[i] = new VertexColoredTextured(vertexList1[i], textCoordList[i], colorList[i]);
+                meshList.Add(SharpMesh.Create(device, vertices, indexList.ToArray(), SubsetList));
+            }
         }
 
-        void AddNativeData(Extension_0003 extension, List<string> MaterialStream)
+        void AddNativeData(SharpDevice device, Extension_0003 extension, List<string> MaterialStream, Matrix transformMatrix)
         {
             NativeDataGC n = null;
 
@@ -308,6 +357,7 @@ namespace IndustrialPark
             if (n == null) throw new Exception();
 
             List<Vertex3> vertexList1 = new List<Vertex3>();
+            List<Vertex3> normalList = new List<Vertex3>();
             List<RenderWareFile.Color> colorList = new List<RenderWareFile.Color>();
             List<Vertex2> textCoordList = new List<Vertex2>();
 
@@ -315,12 +365,14 @@ namespace IndustrialPark
             {
                 foreach (object o in d.entryList)
                 {
-                    if (o is Vertex3 v)
-                        vertexList1.Add(v);
-                    else if (o is RenderWareFile.Color c)
-                        colorList.Add(c);
-                    else if (o is Vertex2 t)
-                        textCoordList.Add(t);
+                    if (d.declarationType == Declarations.Vertex)
+                        vertexList1.Add((Vertex3)o);
+                    else if (d.declarationType == Declarations.Color)
+                        colorList.Add((RenderWareFile.Color)o);
+                    else if (d.declarationType == Declarations.TextCoord)
+                        textCoordList.Add((Vertex2)o);
+                    else if (d.declarationType == Declarations.Normal)
+                        normalList.Add((Vertex3)o);
                     else throw new Exception();
                 }
             }
@@ -337,70 +389,101 @@ namespace IndustrialPark
                 {
                     foreach (int[] objectList in tl.entries)
                     {
-                        VertexColoredTextured v = new VertexColoredTextured();
+                        Vector3 position = new Vector3();
+                        SharpDX.Color color = new SharpDX.Color();
+                        Vector2 textureCoordinate = new Vector2();
+                        Vector3 normal = new Vector3();
 
                         for (int j = 0; j < objectList.Count(); j++)
                         {
                             if (n.declarations[j].declarationType == Declarations.Vertex)
                             {
-                                v.Position.X = vertexList1[objectList[j]].X;
-                                v.Position.Y = vertexList1[objectList[j]].Y;
-                                v.Position.Z = vertexList1[objectList[j]].Z;
+                                position = (Vector3)Vector3.Transform(
+                                    new Vector3(
+                                        vertexList1[objectList[j]].X,
+                                        vertexList1[objectList[j]].Y,
+                                        vertexList1[objectList[j]].Z),
+                                    transformMatrix);
                             }
                             else if (n.declarations[j].declarationType == Declarations.Color)
                             {
-                                v.Color = new SharpDX.Color(colorList[objectList[j]].R, colorList[objectList[j]].G, colorList[objectList[j]].B, colorList[objectList[j]].A);
+                                color = new SharpDX.Color(colorList[objectList[j]].R, colorList[objectList[j]].G, colorList[objectList[j]].B, colorList[objectList[j]].A);
+                                if (color.A == 0)
+                                    color.A = 255;
                             }
                             else if (n.declarations[j].declarationType == Declarations.TextCoord)
                             {
-                                v.TextureCoordinate.X = textCoordList[objectList[j]].X;
-                                v.TextureCoordinate.Y = textCoordList[objectList[j]].Y;
+                                textureCoordinate.X = textCoordList[objectList[j]].X;
+                                textureCoordinate.Y = textCoordList[objectList[j]].Y;
+                            }
+                            else if (n.declarations[j].declarationType == Declarations.Normal)
+                            {
+                                normal = new Vector3(
+                                        normalList[objectList[j]].X,
+                                        normalList[objectList[j]].Y,
+                                        normalList[objectList[j]].Z);
+                                containsNormals = true;
                             }
                         }
 
-                        vertexList.Add(v);
+                        vertexList.Add(new VertexColoredTextured(position, textureCoordinate, color));
+
                         indexList.Add(k);
                         k++;
 
-                        this.vertexList.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
+                        vertexListG.Add(position);
                     }
 
-                    if (SharpRenderer.TextureStream.ContainsKey(MaterialStream[td.MaterialIndex]))
-                        subSetList.Add(new SharpSubSet(previousAmount, vertexList.Count() - previousAmount, SharpRenderer.TextureStream[MaterialStream[td.MaterialIndex]]));
-                    else
-                        subSetList.Add(new SharpSubSet(previousAmount, vertexList.Count() - previousAmount, SharpRenderer.whiteDefault));
+                    subSetList.Add(new SharpSubSet(previousAmount, vertexList.Count() - previousAmount,
+                        TextureManager.GetTextureFromDictionary(MaterialStream[td.MaterialIndex]), MaterialStream[td.MaterialIndex]));
 
                     previousAmount = vertexList.Count();
                 }
             }
 
             if (vertexList.Count > 0)
-                meshList.Add(SharpMesh.Create(SharpRenderer.device, vertexList.ToArray(), indexList.ToArray(), subSetList, SharpDX.Direct3D.PrimitiveTopology.TriangleStrip));
+            {
+                for (int i = 2; i < indexList.Count; i++)
+                    triangleList.Add(new Triangle(0, (ushort)(i - 2), (ushort)(i - 1), (ushort)i));
+
+                VertexColoredTextured[] vertices = vertexList.ToArray();
+                if (containsNormals & !ignoreNormals)
+                    for (int i = 0; i < vertices.Length; i++)
+                    {
+                        VertexColoredTextured v = vertices[i];
+                        v.Color = new SharpDX.Color(1f, 1f, 1f, 1f);
+                        vertices[i] = v;
+                    }
+                meshList.Add(SharpMesh.Create(device, vertices, indexList.ToArray(), subSetList, SharpDX.Direct3D.PrimitiveTopology.TriangleStrip));
+            }
         }
 
-        public DefaultRenderData renderData;
-
-        public void Render(Matrix world, bool isSelected)
+        public void Render(SharpRenderer renderer, Matrix world, bool isSelected)
         {
-            renderData.worldViewProjection = world * SharpRenderer.viewProjection;
+            renderData.worldViewProjection = world * renderer.viewProjection;
+
             if (isSelected)
-                renderData.Color = SharpRenderer.selectedObjectColor;
+            {
+                renderData.Color = renderer.selectedObjectColor;
+            }
             else
-                renderData.Color = Vector4.Zero;
+            {
+                renderData.Color = Vector4.One;
+            }
 
-            SharpRenderer.device.UpdateData(SharpRenderer.tintedBuffer, renderData);
-            SharpRenderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, SharpRenderer.tintedBuffer);
-            SharpRenderer.tintedShader.Apply();
-
+            renderer.device.UpdateData(renderer.tintedBuffer, renderData);
+            renderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, renderer.tintedBuffer);
+            renderer.tintedShader.Apply();
+            
             foreach (SharpMesh mesh in meshList)
             {
                 if (mesh == null) continue;
 
-                mesh.Begin();
+                mesh.Begin(renderer.device);
                 for (int i = 0; i < mesh.SubSets.Count(); i++)
                 {
-                    SharpRenderer.device.DeviceContext.PixelShader.SetShaderResource(0, mesh.SubSets[i].DiffuseMap);
-                    mesh.Draw(i);
+                    renderer.device.DeviceContext.PixelShader.SetShaderResource(0, mesh.SubSets[i].DiffuseMap);
+                    mesh.Draw(renderer.device, i);
                 }
             }
         }

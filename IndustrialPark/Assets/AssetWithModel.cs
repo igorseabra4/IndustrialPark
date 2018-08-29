@@ -9,7 +9,7 @@ namespace IndustrialPark
         {
         }
 
-        public abstract void Draw(Matrix worldViewProjection, bool isSelected);
+        public abstract void Draw(SharpRenderer renderer, Matrix worldViewProjection, bool isSelected);
 
         public abstract RenderWareModelFile GetRenderWareModelFile();
     }

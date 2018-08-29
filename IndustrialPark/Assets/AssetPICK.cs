@@ -24,7 +24,7 @@ namespace IndustrialPark
         {
         }
 
-        public override void Setup(bool defaultMode = true)
+        public override void Setup(SharpRenderer renderer, bool defaultMode = true)
         {
             pickEntries = new Dictionary<int, PICKentry>();
             pickAmount = Switch(BitConverter.ToInt32(AHDR.containedFile, 0x4));

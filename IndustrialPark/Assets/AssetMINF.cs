@@ -13,22 +13,22 @@ namespace IndustrialPark
         {
         }
 
-        public override void Setup(bool defaultMode = true)
+        public override void Setup(SharpRenderer renderer, bool defaultMode = true)
         {
             if (AHDR.containedFile.Length >= 0x18)
                 modelAssetID = Switch(BitConverter.ToInt32(AHDR.containedFile, 0x14));
             ArchiveEditorFunctions.AddToRenderingDictionary(AHDR.assetID, this);
         }
 
-        public override void Draw(Matrix world, bool isSelected)
+        public override void Draw(SharpRenderer renderer, Matrix world, bool isSelected)
         {
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(modelAssetID))
             {
-                ArchiveEditorFunctions.renderingDictionary[modelAssetID].Draw(world, isSelected);
+                ArchiveEditorFunctions.renderingDictionary[modelAssetID].Draw(renderer, world, isSelected);
             }
             else
             {
-                SharpRenderer.DrawCube(world, isSelected);
+                renderer.DrawCube(world, isSelected);
                 //throw new Exception("Error: MINF asset " + AHDR.ADBG.assetName + " could not find its MODL asset ID");
             }
         }

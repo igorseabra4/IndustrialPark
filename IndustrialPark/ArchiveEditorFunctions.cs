@@ -73,14 +73,12 @@ namespace IndustrialPark
                 else if (i is Section_STRM strm) STRM = strm;
                 else throw new Exception();
             }
-                        
-            SharpRenderer.LoadTextures(fileNamePrefix);
 
             foreach (Section_AHDR AHDR in DICT.ATOC.AHDRList)
                 AddAssetToDictionary(AHDR);
 
             foreach (RenderableAsset a in renderableAssetSet)
-                a.Setup();
+                a.Setup(Program.MainForm.renderer);
         }
 
         public void Dispose()
@@ -122,7 +120,7 @@ namespace IndustrialPark
                 case AssetType.JSP:
                     {
                         AssetLevelModel newAsset = new AssetLevelModel(AHDR);
-                        newAsset.Setup();
+                        newAsset.Setup(Program.MainForm.renderer);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
@@ -138,42 +136,42 @@ namespace IndustrialPark
                 case AssetType.VIL:
                     {
                         RenderableAsset newAsset = new RenderableAsset(AHDR); ;
-                        newAsset.Setup();
+                        newAsset.Setup(Program.MainForm.renderer);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
                 case AssetType.PKUP:
                     {
                         AssetPKUP newAsset = new AssetPKUP(AHDR);
-                        newAsset.Setup();
+                        newAsset.Setup(Program.MainForm.renderer);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
                 case AssetType.MINF:
                     {
                         AssetMINF newAsset = new AssetMINF(AHDR); ;
-                        newAsset.Setup();
+                        newAsset.Setup(Program.MainForm.renderer);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
                 case AssetType.MODL:
                     {
                         AssetMODL newAsset = new AssetMODL(AHDR);
-                        newAsset.Setup();
+                        newAsset.Setup(Program.MainForm.renderer);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
                 case AssetType.MVPT:
                     {
                         AssetMVPT newAsset = new AssetMVPT(AHDR);
-                        newAsset.Setup();
+                        newAsset.Setup(Program.MainForm.renderer);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
                 case AssetType.PICK:
                     {
                         AssetPICK newAsset = new AssetPICK(AHDR);
-                        newAsset.Setup();
+                        newAsset.Setup(Program.MainForm.renderer);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
