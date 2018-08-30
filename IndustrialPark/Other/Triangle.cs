@@ -4,9 +4,9 @@
     {
         public int MaterialIndex;
 
-        public int Vertex1;
-        public int Vertex2;
-        public int Vertex3;
+        public int vertex1;
+        public int vertex2;
+        public int vertex3;
 
         public int UVCoord1;
         public int UVCoord2;

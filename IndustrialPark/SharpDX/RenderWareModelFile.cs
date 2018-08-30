@@ -19,7 +19,7 @@ namespace IndustrialPark
         public bool isNoCulling = false;
         public bool isCollision = false;
         public bool containsNormals = false;
-        public bool ignoreNormals = false;
+        //public bool ignoreNormals = false;
 
         public List<SharpMesh> meshList;
         public static List<SharpMesh> completeMeshList = new List<SharpMesh>();
@@ -268,7 +268,7 @@ namespace IndustrialPark
                 }
             }
 
-            if (((g.geometryStruct.geometryFlags & (int)GeometryFlags.hasVertexColors) != 0) & (!(containsNormals & !ignoreNormals)))
+            if ((g.geometryStruct.geometryFlags & (int)GeometryFlags.hasVertexColors) != 0)
             {
                 for (int i = 0; i < vertexList1.Count; i++)
                 {
@@ -390,7 +390,7 @@ namespace IndustrialPark
                     foreach (int[] objectList in tl.entries)
                     {
                         Vector3 position = new Vector3();
-                        SharpDX.Color color = new SharpDX.Color();
+                        SharpDX.Color color = new SharpDX.Color(255, 255, 255, 255);
                         Vector2 textureCoordinate = new Vector2();
                         Vector3 normal = new Vector3();
 
@@ -409,7 +409,7 @@ namespace IndustrialPark
                             {
                                 color = new SharpDX.Color(colorList[objectList[j]].R, colorList[objectList[j]].G, colorList[objectList[j]].B, colorList[objectList[j]].A);
                                 if (color.A == 0)
-                                    color.A = 255;
+                                    color = new SharpDX.Color(255, 255, 255, 255);
                             }
                             else if (n.declarations[j].declarationType == Declarations.TextCoord)
                             {
@@ -447,13 +447,6 @@ namespace IndustrialPark
                     triangleList.Add(new Triangle(0, (ushort)(i - 2), (ushort)(i - 1), (ushort)i));
 
                 VertexColoredTextured[] vertices = vertexList.ToArray();
-                if (containsNormals & !ignoreNormals)
-                    for (int i = 0; i < vertices.Length; i++)
-                    {
-                        VertexColoredTextured v = vertices[i];
-                        v.Color = new SharpDX.Color(1f, 1f, 1f, 1f);
-                        vertices[i] = v;
-                    }
                 meshList.Add(SharpMesh.Create(device, vertices, indexList.ToArray(), subSetList, SharpDX.Direct3D.PrimitiveTopology.TriangleStrip));
             }
         }

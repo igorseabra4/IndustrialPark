@@ -45,6 +45,11 @@ namespace IndustrialPark
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.levelModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.objectModelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.displayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.assetsWithModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mVPTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pKUPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tRIGToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.renderPanel = new System.Windows.Forms.Panel();
@@ -57,7 +62,8 @@ namespace IndustrialPark
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.archiveEditorToolStripMenuItem,
-            this.optionsToolStripMenuItem});
+            this.optionsToolStripMenuItem,
+            this.displayToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1263, 24);
@@ -76,14 +82,14 @@ namespace IndustrialPark
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.newToolStripMenuItem.Text = "Open New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(127, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
             // 
             // optionsToolStripMenuItem
             // 
@@ -172,6 +178,53 @@ namespace IndustrialPark
             this.objectModelsToolStripMenuItem.Text = "Object Models";
             this.objectModelsToolStripMenuItem.Click += new System.EventHandler(this.objectModelsToolStripMenuItem_Click);
             // 
+            // displayToolStripMenuItem
+            // 
+            this.displayToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.assetsWithModelToolStripMenuItem,
+            this.mVPTToolStripMenuItem,
+            this.pKUPToolStripMenuItem,
+            this.tRIGToolStripMenuItem});
+            this.displayToolStripMenuItem.Name = "displayToolStripMenuItem";
+            this.displayToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
+            this.displayToolStripMenuItem.Text = "Display";
+            // 
+            // assetsWithModelToolStripMenuItem
+            // 
+            this.assetsWithModelToolStripMenuItem.Checked = true;
+            this.assetsWithModelToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.assetsWithModelToolStripMenuItem.Name = "assetsWithModelToolStripMenuItem";
+            this.assetsWithModelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.assetsWithModelToolStripMenuItem.Text = "Placeable Assets";
+            this.assetsWithModelToolStripMenuItem.Click += new System.EventHandler(this.assetsWithModelToolStripMenuItem_Click);
+            // 
+            // mVPTToolStripMenuItem
+            // 
+            this.mVPTToolStripMenuItem.Checked = true;
+            this.mVPTToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.mVPTToolStripMenuItem.Name = "mVPTToolStripMenuItem";
+            this.mVPTToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.mVPTToolStripMenuItem.Text = "MVPT";
+            this.mVPTToolStripMenuItem.Click += new System.EventHandler(this.mVPTToolStripMenuItem_Click);
+            // 
+            // pKUPToolStripMenuItem
+            // 
+            this.pKUPToolStripMenuItem.Checked = true;
+            this.pKUPToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.pKUPToolStripMenuItem.Name = "pKUPToolStripMenuItem";
+            this.pKUPToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pKUPToolStripMenuItem.Text = "PKUP";
+            this.pKUPToolStripMenuItem.Click += new System.EventHandler(this.pKUPToolStripMenuItem_Click);
+            // 
+            // tRIGToolStripMenuItem
+            // 
+            this.tRIGToolStripMenuItem.Checked = true;
+            this.tRIGToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.tRIGToolStripMenuItem.Name = "tRIGToolStripMenuItem";
+            this.tRIGToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.tRIGToolStripMenuItem.Text = "TRIG";
+            this.tRIGToolStripMenuItem.Click += new System.EventHandler(this.tRIGToolStripMenuItem_Click);
+            // 
             // statusStrip1
             // 
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
@@ -248,6 +301,11 @@ namespace IndustrialPark
         private ToolStripSeparator toolStripSeparator3;
         private ToolStripMenuItem addTextureFolderToolStripMenuItem;
         private ToolStripMenuItem clearTexturesToolStripMenuItem;
+        private ToolStripMenuItem displayToolStripMenuItem;
+        private ToolStripMenuItem assetsWithModelToolStripMenuItem;
+        private ToolStripMenuItem mVPTToolStripMenuItem;
+        private ToolStripMenuItem tRIGToolStripMenuItem;
+        private ToolStripMenuItem pKUPToolStripMenuItem;
     }
 }
 

@@ -258,7 +258,12 @@ namespace IndustrialPark
             if (listBoxAssets.SelectedIndex < 0) return;
             
             Section_AHDR AHDR = archive.GetFromAssetID(CurrentlySelectedAssetID()).AHDR;
-            Section_AHDR newAHDR = new Section_AHDR(AHDR.assetID + 1, AHDR.assetType, AHDR.flags, new Section_ADBG(AHDR.ADBG.alignment, AHDR.ADBG.assetName, AHDR.ADBG.assetFileName, AHDR.ADBG.checksum))
+
+            uint newAssetId = AHDR.assetID;
+            do { newAssetId++; }
+            while (archive.DictionaryHasKey(newAssetId));
+
+            Section_AHDR newAHDR = new Section_AHDR(newAssetId, AHDR.assetType, AHDR.flags, new Section_ADBG(AHDR.ADBG.alignment, AHDR.ADBG.assetName, AHDR.ADBG.assetFileName, AHDR.ADBG.checksum))
             {
                 fileOffset = AHDR.fileOffset,
                 fileSize = AHDR.fileSize,
@@ -283,7 +288,7 @@ namespace IndustrialPark
         {
             if (listBoxAssets.SelectedIndex < 0) return;
 
-            if (archive.GetFromAssetID(CurrentlySelectedAssetID()) is RenderableAsset a)
+            if (archive.GetFromAssetID(CurrentlySelectedAssetID()) is PlaceableAsset a)
                 Program.MainForm.renderer.Camera.SetPosition(a.Position - 8 * Program.MainForm.renderer.Camera.GetForward());
         }
 
@@ -291,11 +296,12 @@ namespace IndustrialPark
         {
             try
             {
-                Section_AHDR AHDR = AddAssetDialog.GetAsset(archive.GetFromAssetID(CurrentlySelectedAssetID()).AHDR, out bool success);
+                uint aid = CurrentlySelectedAssetID();
+                Section_AHDR AHDR = AddAssetDialog.GetAsset(archive.GetFromAssetID(aid).AHDR, out bool success);
 
                 if (success)
                 {
-                    archive.RemoveAsset(comboBoxLayers.SelectedIndex, CurrentlySelectedAssetID());
+                    archive.RemoveAsset(comboBoxLayers.SelectedIndex, aid);
                     archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR);
                     PopulateAssetsComboAndListBox();
                 }
@@ -368,7 +374,7 @@ namespace IndustrialPark
             {
                 Dictionary<string, List<SharpDX.Vector3[]>> knowlifesDictionary = new Dictionary<string, List<SharpDX.Vector3[]>>();
 
-                foreach (RenderableAsset ra in ArchiveEditorFunctions.renderableAssetSet)
+                foreach (PlaceableAsset ra in ArchiveEditorFunctions.renderableAssetSet)
                 {
                     string objectName = ra.AHDR.ADBG.assetName.Trim(new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_', ' '});
 

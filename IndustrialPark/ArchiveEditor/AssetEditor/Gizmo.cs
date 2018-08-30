@@ -44,15 +44,15 @@ namespace IndustrialPark
             {
                 case GizmoType.X:
                     Position.X += distance;
-                    transformMatrix = Matrix.Scaling(distance / 1.5f) * Matrix.RotationY(MathUtil.Pi / 2) * Matrix.Translation(Position);
+                    transformMatrix = Matrix.Scaling(distance / 2f) * Matrix.RotationY(MathUtil.Pi / 2) * Matrix.Translation(Position);
                     break;
                 case GizmoType.Y:
                     Position.Y += distance;
-                    transformMatrix = Matrix.Scaling(distance / 1.5f) * Matrix.RotationX(-MathUtil.Pi / 2) * Matrix.Translation(Position);
+                    transformMatrix = Matrix.Scaling(distance / 2f) * Matrix.RotationX(-MathUtil.Pi / 2) * Matrix.Translation(Position);
                     break;
                 case GizmoType.Z:
                     Position.Z += distance;
-                    transformMatrix = Matrix.Scaling(distance / 1.5f) * Matrix.Translation(Position);
+                    transformMatrix = Matrix.Scaling(distance / 2f) * Matrix.Translation(Position);
                     break;
             }
 
@@ -100,9 +100,9 @@ namespace IndustrialPark
 
             foreach (Models.Triangle t in SharpRenderer.pyramidTriangles)
             {
-                Vector3 v1 = (Vector3)Vector3.Transform(pyramidVertices[t.Vertex1], transformMatrix);
-                Vector3 v2 = (Vector3)Vector3.Transform(pyramidVertices[t.Vertex2], transformMatrix);
-                Vector3 v3 = (Vector3)Vector3.Transform(pyramidVertices[t.Vertex3], transformMatrix);
+                Vector3 v1 = (Vector3)Vector3.Transform(pyramidVertices[t.vertex1], transformMatrix);
+                Vector3 v2 = (Vector3)Vector3.Transform(pyramidVertices[t.vertex2], transformMatrix);
+                Vector3 v3 = (Vector3)Vector3.Transform(pyramidVertices[t.vertex3], transformMatrix);
 
                 if (r.Intersects(ref v1, ref v2, ref v3))
                     return true;

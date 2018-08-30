@@ -86,7 +86,9 @@
     <Compile Include="Assets\AssetLevelModel.cs" />
     <Compile Include="Assets\AssetPKUP.cs" />
     <Compile Include="Assets\AssetRWTX.cs" />
+    <Compile Include="Assets\AssetTRIG.cs" />
     <Compile Include="Assets\AssetWithModel.cs" />
+    <Compile Include="Assets\PlaceableAsset.cs" />
     <Compile Include="Assets\RenderableAsset.cs" />
     <Compile Include="Other\ConvertionFunctions.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditor.cs">

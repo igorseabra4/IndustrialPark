@@ -90,9 +90,9 @@ namespace IndustrialPark.Models
                         Triangle TempTriangle = new Triangle
                         {
                             MaterialIndex = CurrentMaterial,
-                            Vertex1 = Convert.ToInt32(SubStrings[1].Split('/')[0]) - 1,
-                            Vertex2 = Convert.ToInt32(SubStrings[2].Split('/')[0]) - 1,
-                            Vertex3 = Convert.ToInt32(SubStrings[3].Split('/')[0]) - 1
+                            vertex1 = Convert.ToInt32(SubStrings[1].Split('/')[0]) - 1,
+                            vertex2 = Convert.ToInt32(SubStrings[2].Split('/')[0]) - 1,
+                            vertex3 = Convert.ToInt32(SubStrings[3].Split('/')[0]) - 1
                         };
                         if (hasUVCoords)
                         {
@@ -170,18 +170,18 @@ namespace IndustrialPark.Models
         {
             for (int i = 0; i < data.TriangleList.Count; i++)
             {
-                if (data.VertexList[data.TriangleList[i].Vertex1].HasUV == false)
+                if (data.VertexList[data.TriangleList[i].vertex1].HasUV == false)
                 {
-                    Vertex TempVertex = data.VertexList[data.TriangleList[i].Vertex1];
+                    Vertex TempVertex = data.VertexList[data.TriangleList[i].vertex1];
 
                     TempVertex.TexCoord.X = data.UVList[data.TriangleList[i].UVCoord1].X;
                     TempVertex.TexCoord.Y = data.UVList[data.TriangleList[i].UVCoord1].Y;
                     TempVertex.HasUV = true;
-                    data.VertexList[data.TriangleList[i].Vertex1] = TempVertex;
+                    data.VertexList[data.TriangleList[i].vertex1] = TempVertex;
                 }
                 else
                 {
-                    Vertex TempVertex = data.VertexList[data.TriangleList[i].Vertex1];
+                    Vertex TempVertex = data.VertexList[data.TriangleList[i].vertex1];
 
                     if ((TempVertex.TexCoord.X != data.UVList[data.TriangleList[i].UVCoord1].X) | (TempVertex.TexCoord.Y != data.UVList[data.TriangleList[i].UVCoord1].Y))
                     {
@@ -189,23 +189,23 @@ namespace IndustrialPark.Models
                         TempVertex.TexCoord.Y = data.UVList[data.TriangleList[i].UVCoord1].Y;
 
                         Triangle TempTriangle = data.TriangleList[i];
-                        TempTriangle.Vertex1 = data.VertexList.Count;
+                        TempTriangle.vertex1 = data.VertexList.Count;
                         data.TriangleList[i] = TempTriangle;
                         data.VertexList.Add(TempVertex);
                     }
                 }
-                if (data.VertexList[data.TriangleList[i].Vertex2].HasUV == false)
+                if (data.VertexList[data.TriangleList[i].vertex2].HasUV == false)
                 {
-                    Vertex TempVertex = data.VertexList[data.TriangleList[i].Vertex2];
+                    Vertex TempVertex = data.VertexList[data.TriangleList[i].vertex2];
 
                     TempVertex.TexCoord.X = data.UVList[data.TriangleList[i].UVCoord2].X;
                     TempVertex.TexCoord.Y = data.UVList[data.TriangleList[i].UVCoord2].Y;
                     TempVertex.HasUV = true;
-                    data.VertexList[data.TriangleList[i].Vertex2] = TempVertex;
+                    data.VertexList[data.TriangleList[i].vertex2] = TempVertex;
                 }
                 else
                 {
-                    Vertex TempVertex = data.VertexList[data.TriangleList[i].Vertex2];
+                    Vertex TempVertex = data.VertexList[data.TriangleList[i].vertex2];
 
                     if ((TempVertex.TexCoord.X != data.UVList[data.TriangleList[i].UVCoord2].X) | (TempVertex.TexCoord.Y != data.UVList[data.TriangleList[i].UVCoord2].Y))
                     {
@@ -213,23 +213,23 @@ namespace IndustrialPark.Models
                         TempVertex.TexCoord.Y = data.UVList[data.TriangleList[i].UVCoord2].Y;
 
                         Triangle TempTriangle = data.TriangleList[i];
-                        TempTriangle.Vertex2 = data.VertexList.Count;
+                        TempTriangle.vertex2 = data.VertexList.Count;
                         data.TriangleList[i] = TempTriangle;
                         data.VertexList.Add(TempVertex);
                     }
                 }
-                if (data.VertexList[data.TriangleList[i].Vertex3].HasUV == false)
+                if (data.VertexList[data.TriangleList[i].vertex3].HasUV == false)
                 {
-                    Vertex TempVertex = data.VertexList[data.TriangleList[i].Vertex3];
+                    Vertex TempVertex = data.VertexList[data.TriangleList[i].vertex3];
 
                     TempVertex.TexCoord.X = data.UVList[data.TriangleList[i].UVCoord3].X;
                     TempVertex.TexCoord.Y = data.UVList[data.TriangleList[i].UVCoord3].Y;
                     TempVertex.HasUV = true;
-                    data.VertexList[data.TriangleList[i].Vertex3] = TempVertex;
+                    data.VertexList[data.TriangleList[i].vertex3] = TempVertex;
                 }
                 else
                 {
-                    Vertex TempVertex = data.VertexList[data.TriangleList[i].Vertex3];
+                    Vertex TempVertex = data.VertexList[data.TriangleList[i].vertex3];
 
                     if ((TempVertex.TexCoord.X != data.UVList[data.TriangleList[i].UVCoord3].X) | (TempVertex.TexCoord.Y != data.UVList[data.TriangleList[i].UVCoord3].Y))
                     {
@@ -237,7 +237,7 @@ namespace IndustrialPark.Models
                         TempVertex.TexCoord.Y = data.UVList[data.TriangleList[i].UVCoord3].Y;
 
                         Triangle TempTriangle = data.TriangleList[i];
-                        TempTriangle.Vertex3 = data.VertexList.Count;
+                        TempTriangle.vertex3 = data.VertexList.Count;
                         data.TriangleList[i] = TempTriangle;
                         data.VertexList.Add(TempVertex);
                     }
@@ -253,9 +253,9 @@ namespace IndustrialPark.Models
             {
                 new List<int>()
             };
-            indexLists.Last().Add(triangleStream2[0].Vertex1);
-            indexLists.Last().Add(triangleStream2[0].Vertex2);
-            indexLists.Last().Add(triangleStream2[0].Vertex3);
+            indexLists.Last().Add(triangleStream2[0].vertex1);
+            indexLists.Last().Add(triangleStream2[0].vertex2);
+            indexLists.Last().Add(triangleStream2[0].vertex3);
             triangleStream2[0].MaterialIndex = -1;
 
             bool allAreDone = false;
@@ -270,28 +270,28 @@ namespace IndustrialPark.Models
 
                     if (!inverted)
                     {
-                        if (indexLists.Last()[indexLists.Last().Count - 2] == triangleStream2[i].Vertex1 &
-                            indexLists.Last()[indexLists.Last().Count - 1] == triangleStream2[i].Vertex2)
+                        if (indexLists.Last()[indexLists.Last().Count - 2] == triangleStream2[i].vertex1 &
+                            indexLists.Last()[indexLists.Last().Count - 1] == triangleStream2[i].vertex2)
                         {
-                            indexLists.Last().Add(triangleStream2[i].Vertex3);
+                            indexLists.Last().Add(triangleStream2[i].vertex3);
                             triangleStream2[i].MaterialIndex = -1;
                             inverted = !inverted;
                             i = 0;
                             continue;
                         }
-                        else if (indexLists.Last()[indexLists.Last().Count - 2] == triangleStream2[i].Vertex2 &
-                            indexLists.Last()[indexLists.Last().Count - 1] == triangleStream2[i].Vertex3)
+                        else if (indexLists.Last()[indexLists.Last().Count - 2] == triangleStream2[i].vertex2 &
+                            indexLists.Last()[indexLists.Last().Count - 1] == triangleStream2[i].vertex3)
                         {
-                            indexLists.Last().Add(triangleStream2[i].Vertex1);
+                            indexLists.Last().Add(triangleStream2[i].vertex1);
                             triangleStream2[i].MaterialIndex = -1;
                             inverted = !inverted;
                             i = 0;
                             continue;
                         }
-                        else if (indexLists.Last()[indexLists.Last().Count - 2] == triangleStream2[i].Vertex3 &
-                            indexLists.Last()[indexLists.Last().Count - 1] == triangleStream2[i].Vertex1)
+                        else if (indexLists.Last()[indexLists.Last().Count - 2] == triangleStream2[i].vertex3 &
+                            indexLists.Last()[indexLists.Last().Count - 1] == triangleStream2[i].vertex1)
                         {
-                            indexLists.Last().Add(triangleStream2[i].Vertex2);
+                            indexLists.Last().Add(triangleStream2[i].vertex2);
                             triangleStream2[i].MaterialIndex = -1;
                             inverted = !inverted;
                             i = 0;
@@ -300,28 +300,28 @@ namespace IndustrialPark.Models
                     }
                     else
                     {
-                        if (indexLists.Last()[indexLists.Last().Count - 2] == triangleStream2[i].Vertex2 &
-                            indexLists.Last()[indexLists.Last().Count - 1] == triangleStream2[i].Vertex1)
+                        if (indexLists.Last()[indexLists.Last().Count - 2] == triangleStream2[i].vertex2 &
+                            indexLists.Last()[indexLists.Last().Count - 1] == triangleStream2[i].vertex1)
                         {
-                            indexLists.Last().Add(triangleStream2[i].Vertex3);
+                            indexLists.Last().Add(triangleStream2[i].vertex3);
                             triangleStream2[i].MaterialIndex = -1;
                             inverted = !inverted;
                             i = 0;
                             continue;
                         }
-                        else if (indexLists.Last()[indexLists.Last().Count - 2] == triangleStream2[i].Vertex3 &
-                            indexLists.Last()[indexLists.Last().Count - 1] == triangleStream2[i].Vertex2)
+                        else if (indexLists.Last()[indexLists.Last().Count - 2] == triangleStream2[i].vertex3 &
+                            indexLists.Last()[indexLists.Last().Count - 1] == triangleStream2[i].vertex2)
                         {
-                            indexLists.Last().Add(triangleStream2[i].Vertex1);
+                            indexLists.Last().Add(triangleStream2[i].vertex1);
                             triangleStream2[i].MaterialIndex = -1;
                             inverted = !inverted;
                             i = 0;
                             continue;
                         }
-                        else if (indexLists.Last()[indexLists.Last().Count - 2] == triangleStream2[i].Vertex1 &
-                            indexLists.Last()[indexLists.Last().Count - 1] == triangleStream2[i].Vertex3)
+                        else if (indexLists.Last()[indexLists.Last().Count - 2] == triangleStream2[i].vertex1 &
+                            indexLists.Last()[indexLists.Last().Count - 1] == triangleStream2[i].vertex3)
                         {
-                            indexLists.Last().Add(triangleStream2[i].Vertex2);
+                            indexLists.Last().Add(triangleStream2[i].vertex2);
                             triangleStream2[i].MaterialIndex = -1;
                             inverted = !inverted;
                             i = 0;
@@ -339,9 +339,9 @@ namespace IndustrialPark.Models
                     else
                     {
                         indexLists.Add(new List<int>());
-                        indexLists.Last().Add(triangleStream2[i].Vertex1);
-                        indexLists.Last().Add(triangleStream2[i].Vertex2);
-                        indexLists.Last().Add(triangleStream2[i].Vertex3);
+                        indexLists.Last().Add(triangleStream2[i].vertex1);
+                        indexLists.Last().Add(triangleStream2[i].vertex2);
+                        indexLists.Last().Add(triangleStream2[i].vertex3);
                         triangleStream2[i].MaterialIndex = -1;
                         allAreDone = false;
                         break;
@@ -391,17 +391,17 @@ namespace IndustrialPark.Models
                     foreach (Triangle j in triangleList)
                         if (j.MaterialIndex == i)
                             OBJWriter.WriteLine("f "
-                                + (j.Vertex1 + 1).ToString() + " "
-                                + (j.Vertex2 + 1).ToString() + " "
-                                + (j.Vertex3 + 1).ToString());
+                                + (j.vertex1 + 1).ToString() + " "
+                                + (j.vertex2 + 1).ToString() + " "
+                                + (j.vertex3 + 1).ToString());
                 }
                 else
                 foreach (Triangle j in triangleList)
                     if (j.MaterialIndex == i)
                         OBJWriter.WriteLine("f "
-                            + (j.Vertex1 + 1).ToString() + "/" + (j.Vertex1 + 1).ToString() + " "
-                            + (j.Vertex2 + 1).ToString() + "/" + (j.Vertex2 + 1).ToString() + " "
-                            + (j.Vertex3 + 1).ToString() + "/" + (j.Vertex3 + 1).ToString());
+                            + (j.vertex1 + 1).ToString() + "/" + (j.vertex1 + 1).ToString() + " "
+                            + (j.vertex2 + 1).ToString() + "/" + (j.vertex2 + 1).ToString() + " "
+                            + (j.vertex3 + 1).ToString() + "/" + (j.vertex3 + 1).ToString());
 
                 OBJWriter.WriteLine();
             }
@@ -465,9 +465,9 @@ namespace IndustrialPark.Models
                     triangleList.Add(new Triangle
                     {
                         MaterialIndex = i.materialIndex,
-                        Vertex1 = i.vertex1 + totalVertexIndices,
-                        Vertex2 = i.vertex2 + totalVertexIndices,
-                        Vertex3 = i.vertex3 + totalVertexIndices
+                        vertex1 = i.vertex1 + totalVertexIndices,
+                        vertex2 = i.vertex2 + totalVertexIndices,
+                        vertex3 = i.vertex3 + totalVertexIndices
                     });
                 }
 

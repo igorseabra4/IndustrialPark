@@ -135,6 +135,11 @@ namespace IndustrialPark
             return Matrix.PerspectiveFovRH(FieldOfView, AspectRatio, NearPlane, FarPlane);
         }
 
+        public Matrix GetBiggerFovProjectionMatrix()
+        {
+            return Matrix.PerspectiveFovRH(1.5f * FieldOfView, AspectRatio, NearPlane, FarPlane);
+        }
+
         public string GetInformation()
         {
             return String.Format("Position: [{0:0.0000}, {1:0.0000}, {2:0.0000}] Rotation: [{3:0.0000}, {4:0.0000}]",

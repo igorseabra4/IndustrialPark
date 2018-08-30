@@ -17,7 +17,7 @@ namespace IndustrialPark
 
             renderer = new SharpRenderer(renderPanel);
         }
-        
+
         public void SetToolStripStatusLabel(string Text)
         {
             toolStripStatusLabel1.Text = Text;
@@ -82,7 +82,7 @@ namespace IndustrialPark
         {
             MouseCenter = renderPanel.PointToScreen(new System.Drawing.Point(renderPanel.Width / 2, renderPanel.Height / 2));
         }
-
+                
         private HashSet<Keys> PressedKeys = new HashSet<Keys>();
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
@@ -309,6 +309,30 @@ namespace IndustrialPark
         private void clearTexturesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TextureManager.ClearTextures();
+        }
+
+        private void assetsWithModelToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            assetsWithModelToolStripMenuItem.Checked = !assetsWithModelToolStripMenuItem.Checked;
+            PlaceableAsset.dontRender = !assetsWithModelToolStripMenuItem.Checked;
+        }
+
+        private void mVPTToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            mVPTToolStripMenuItem.Checked = !mVPTToolStripMenuItem.Checked;
+            AssetMVPT.dontRender = !mVPTToolStripMenuItem.Checked;
+        }
+
+        private void pKUPToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            pKUPToolStripMenuItem.Checked = !pKUPToolStripMenuItem.Checked;
+            AssetPKUP.dontRender = !pKUPToolStripMenuItem.Checked;
+        }
+
+        private void tRIGToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tRIGToolStripMenuItem.Checked = !tRIGToolStripMenuItem.Checked;
+            AssetTRIG.dontRender = !tRIGToolStripMenuItem.Checked;
         }
     }
 }

@@ -5,7 +5,6 @@ using SharpDX.DXGI;
 using SharpDX.Windows;
 using System.Collections.Generic;
 using static IndustrialPark.Models.OBJFunctions;
-using System.IO;
 
 namespace IndustrialPark
 {
@@ -34,6 +33,7 @@ namespace IndustrialPark
 
             sharpFPS = new SharpFPS();
             Camera.AspectRatio = (float)control.ClientSize.Width / control.ClientSize.Height;
+            Camera.Reset();
 
             SetSharpShader();
             LoadTexture();
@@ -117,6 +117,8 @@ namespace IndustrialPark
         public static List<Models.Triangle> cylinderTriangles;
         public static List<Vector3> pyramidVertices;
         public static List<Models.Triangle> pyramidTriangles;
+        public static List<Vector3> sphereVertices;
+        public static List<Models.Triangle> sphereTriangles;
 
         public void LoadModels()
         {
@@ -128,6 +130,9 @@ namespace IndustrialPark
 
             pyramidVertices = new List<Vector3>();
             pyramidTriangles = new List<Models.Triangle>();
+
+            sphereVertices = new List<Vector3>();
+            sphereTriangles = new List<Models.Triangle>();
 
             for (int i = 0; i < 4; i++)// 3; i++)
             {
@@ -145,17 +150,19 @@ namespace IndustrialPark
                     if (i == 0) cubeVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
                     else if (i == 1) cylinderVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
                     else if (i == 2) pyramidVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
+                    else if (i == 3) sphereVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
                 }
 
                 List<int> indexList = new List<int>();
                 foreach (Models.Triangle t in objData.TriangleList)
                 {
-                    indexList.Add(t.Vertex1);
-                    indexList.Add(t.Vertex2);
-                    indexList.Add(t.Vertex3);
+                    indexList.Add(t.vertex1);
+                    indexList.Add(t.vertex2);
+                    indexList.Add(t.vertex3);
                     if (i == 0) cubeTriangles.Add(t);
                     else if (i == 1) cylinderTriangles.Add(t);
                     else if (i == 2) pyramidTriangles.Add(t);
+                    else if (i == 3) sphereTriangles.Add(t);
                 }
 
                 if (i == 0) Cube = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
@@ -164,17 +171,16 @@ namespace IndustrialPark
                 else Sphere = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
             }
         }
-
-
+        
         public Vector4 normalColor = new Vector4(0.2f, 0.6f, 0.8f, 0.8f);
         public Vector4 selectedColor = new Vector4(1f, 0.5f, 0.1f, 0.8f);
         public Vector4 selectedObjectColor = new Vector4(1f, 0f, 0f, 1f);
 
-        public void DrawCube(Matrix world, bool isSelected)
+        public void DrawCube(Matrix world, bool isSelected, float multiplier = 0.5f)
         {
             DefaultRenderData renderData;
 
-            renderData.worldViewProjection = Matrix.Scaling(0.5f) * world * viewProjection;
+            renderData.worldViewProjection = Matrix.Scaling(multiplier) * world * viewProjection;
 
             if (isSelected)
                 renderData.Color = selectedColor;
@@ -193,7 +199,31 @@ namespace IndustrialPark
 
             Cube.Draw(device);
         }
-        
+
+        public void DrawSphere(Matrix world, bool isSelected)
+        {
+            DefaultRenderData renderData;
+
+            renderData.worldViewProjection = world * viewProjection;
+
+            if (isSelected)
+                renderData.Color = selectedColor;
+            else
+                renderData.Color = normalColor;
+
+            device.SetFillModeDefault();
+            device.SetCullModeNone();
+            device.SetBlendStateAlphaBlend();
+            device.ApplyRasterState();
+            device.UpdateAllStates();
+
+            device.UpdateData(basicBuffer, renderData);
+            device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer);
+            basicShader.Apply();
+
+            Sphere.Draw(device);
+        }
+
         public Matrix viewProjection;
         public Color4 backgroundColor = new Color4(0.05f, 0.05f, 0.15f, 1f);
         public BoundingFrustum frustum;
@@ -217,8 +247,9 @@ namespace IndustrialPark
 
                 device.Clear(backgroundColor);
 
-                viewProjection = Camera.GetViewMatrix() * Camera.GetProjectionMatrix();
-                frustum = new BoundingFrustum(viewProjection);
+                Matrix view = Camera.GetViewMatrix();
+                viewProjection = view * Camera.GetProjectionMatrix();
+                frustum = new BoundingFrustum(view * Camera.GetBiggerFovProjectionMatrix());
 
                 device.SetFillModeDefault();
                 device.SetCullModeDefault();

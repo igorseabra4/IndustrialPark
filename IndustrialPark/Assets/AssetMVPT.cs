@@ -3,8 +3,10 @@ using SharpDX;
 
 namespace IndustrialPark
 {
-    public class AssetMVPT : RenderableAsset
+    public class AssetMVPT : PlaceableAsset
     {
+        public static new bool dontRender = false;
+
         public AssetMVPT(Section_AHDR AHDR) : base(AHDR)
         {
         }
@@ -89,6 +91,8 @@ namespace IndustrialPark
 
         public override void Draw(SharpRenderer renderer)
         {
+            if (dontRender) return;
+
             renderer.DrawCube(world, isSelected);
         }
     }

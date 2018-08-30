@@ -1,12 +1,11 @@
 ﻿using HipHopFile;
-using SharpDX;
-using System;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
-    public class AssetPKUP : RenderableAsset
+    public class AssetPKUP : PlaceableAsset
     {
+        public static new bool dontRender = false;
+
         private uint _pickEntryID;
         public uint PickEntryID
         {
@@ -31,6 +30,8 @@ namespace IndustrialPark
 
         public override void Draw(SharpRenderer renderer)
         {
+            if (dontRender) return;
+
             if (AssetPICK.pick != null)
             {
                 if (AssetPICK.pick.pickEntries.ContainsKey(_pickEntryID))

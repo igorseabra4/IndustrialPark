@@ -143,7 +143,7 @@ namespace IndustrialPark
                 case AssetType.SIMP:
                 case AssetType.VIL:
                     {
-                        RenderableAsset newAsset = new RenderableAsset(AHDR); ;
+                        PlaceableAsset newAsset = new PlaceableAsset(AHDR); ;
                         newAsset.Setup(Program.MainForm.renderer);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
@@ -179,6 +179,13 @@ namespace IndustrialPark
                 case AssetType.PICK:
                     {
                         AssetPICK newAsset = new AssetPICK(AHDR);
+                        newAsset.Setup(Program.MainForm.renderer);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
+                case AssetType.TRIG:
+                    {
+                        AssetTRIG newAsset = new AssetTRIG(AHDR);
                         newAsset.Setup(Program.MainForm.renderer);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
@@ -243,7 +250,7 @@ namespace IndustrialPark
             if (currentlySelectedAssetID != 0)
             {
                 assetDictionary[currentlySelectedAssetID].isSelected = true;
-                if (assetDictionary[currentlySelectedAssetID] is RenderableAsset ra)
+                if (assetDictionary[currentlySelectedAssetID] is PlaceableAsset ra)
                     UpdateGizmoPosition();
                 else
                     ClearGizmos();
@@ -308,8 +315,8 @@ namespace IndustrialPark
 
         public void UpdateGizmoPosition()
         {
-            RenderableAsset currentAsset = ((RenderableAsset)assetDictionary[currentlySelectedAssetID]);
-            UpdateGizmoPosition(currentAsset.Position, currentAsset.boundingBox.Size.Length() * 0.85f);
+            PlaceableAsset currentAsset = ((PlaceableAsset)assetDictionary[currentlySelectedAssetID]);
+            UpdateGizmoPosition(currentAsset.GetGizmoCenter(), currentAsset.GetGizmoRadius());
         }
         
         private void UpdateGizmoPosition(Vector3 position, float distance)
@@ -362,7 +369,7 @@ namespace IndustrialPark
             if (currentlySelectedAssetID == 0) return;
 
             Asset currentAsset = assetDictionary[currentlySelectedAssetID];
-            if (currentAsset is RenderableAsset ra)
+            if (currentAsset is PlaceableAsset ra)
             {
                 if (gizmos[0].isSelected)
                 {
@@ -389,7 +396,7 @@ namespace IndustrialPark
             if (currentlySelectedAssetID == 0) return;
 
             Asset currentAsset = assetDictionary[currentlySelectedAssetID];
-            if (currentAsset is RenderableAsset ra)
+            if (currentAsset is PlaceableAsset ra)
                 if (gizmos[1].isSelected)
                 {
                     ra.PositionY -= distance / 10f;
