@@ -143,7 +143,7 @@ namespace IndustrialPark
             { 
                 archive.DICT.LTOC.LHDRList.Add(new Section_LHDR()
                 {
-                    assetIDlist = new List<int>(),
+                    assetIDlist = new List<uint>(),
                     LDBG = new Section_LDBG(-1)
                 });
                 comboBoxLayers.Items.Add(LayerToString(archive.DICT.LTOC.LHDRList.Count - 1));
@@ -185,7 +185,7 @@ namespace IndustrialPark
 
             programIsChangingStuff = true;
 
-            List<int> assetIDs = archive.DICT.LTOC.LHDRList[comboBoxLayers.SelectedIndex].assetIDlist;
+            List<uint> assetIDs = archive.DICT.LTOC.LHDRList[comboBoxLayers.SelectedIndex].assetIDlist;
             List <AssetType> assetTypeList = new List<AssetType>();
             for (int i = 0; i < assetIDs.Count(); i++)
             {
@@ -207,7 +207,7 @@ namespace IndustrialPark
         {
             listBoxAssets.Items.Clear();
 
-            List<int> assetIDs = archive.DICT.LTOC.LHDRList[comboBoxLayers.SelectedIndex].assetIDlist;
+            List<uint> assetIDs = archive.DICT.LTOC.LHDRList[comboBoxLayers.SelectedIndex].assetIDlist;
             List<string> assetList = new List<string>();
             for (int i = 0; i < assetIDs.Count(); i++)
             {
@@ -306,6 +306,15 @@ namespace IndustrialPark
             }
         }
 
+        private void buttonInternalEdit_Click(object sender, EventArgs e)
+        {
+            if (listBoxAssets.SelectedItem != null)
+            {
+                Program.InternalEditor.SelectAsset(archive.GetFromAssetID(CurrentlySelectedAssetID()));
+                Program.InternalEditor.Show();
+            }
+        }
+
         private void buttonExportRaw_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -322,16 +331,16 @@ namespace IndustrialPark
             }
         }
 
-        private int CurrentlySelectedAssetID()
+        private uint CurrentlySelectedAssetID()
         {
             if (listBoxAssets.SelectedItem != null)
                 return GetAssetIDFromName(listBoxAssets.SelectedItem as string);
             else return 0;
         }
 
-        private int GetAssetIDFromName(string name)
+        private uint GetAssetIDFromName(string name)
         {
-            return Convert.ToInt32(name.Substring(name.IndexOf('[') + 1, 8), 16);
+            return Convert.ToUInt32(name.Substring(name.IndexOf('[') + 1, 8), 16);
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -393,14 +402,29 @@ namespace IndustrialPark
             archive.SelectAsset(CurrentlySelectedAssetID());
         }
 
-        public void ScreenClicked(Ray ray)
+        public void ScreenClicked(Ray ray, bool isMouseDown)
         {
-            int index = archive.ScreenClicked(ray);
-            if (index != 0)
-                SetSelectedIndex(index);
+            if (isMouseDown)
+                archive.GizmoSelect(ray);
+            else
+            {
+                uint index = archive.ScreenClicked(ray);
+                if (index != 0)
+                    SetSelectedIndex(index);
+            }
         }
 
-        private void SetSelectedIndex(int assetID)
+        public void MouseMoveX(SharpCamera camera, int deltaX)
+        {
+            archive.MouseMoveX(camera, deltaX);
+        }
+
+        public void MouseMoveY(SharpCamera camera, int deltaY)
+        {
+            archive.MouseMoveY(camera, deltaY);
+        }
+
+        private void SetSelectedIndex(uint assetID)
         {
             try
             {

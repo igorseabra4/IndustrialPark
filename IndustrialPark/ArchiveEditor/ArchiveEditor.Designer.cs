@@ -38,6 +38,7 @@
             this.exportKnowlifesINIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clickThisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -48,6 +49,7 @@
             this.comboBoxLayers = new System.Windows.Forms.ComboBox();
             this.listBoxAssets = new System.Windows.Forms.ListBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.buttonInternalEdit = new System.Windows.Forms.Button();
             this.buttonView = new System.Windows.Forms.Button();
             this.buttonExportRaw = new System.Windows.Forms.Button();
             this.buttonEditAsset = new System.Windows.Forms.Button();
@@ -56,7 +58,6 @@
             this.buttonAddAsset = new System.Windows.Forms.Button();
             this.comboBoxAssetTypes = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.clickThisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -141,6 +142,12 @@
             this.closeToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
+            // 
+            // clickThisToolStripMenuItem
+            // 
+            this.clickThisToolStripMenuItem.Name = "clickThisToolStripMenuItem";
+            this.clickThisToolStripMenuItem.Size = new System.Drawing.Size(81, 20);
+            this.clickThisToolStripMenuItem.Text = "<- click this";
             // 
             // statusStrip1
             // 
@@ -229,6 +236,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.buttonInternalEdit);
             this.groupBox2.Controls.Add(this.buttonView);
             this.groupBox2.Controls.Add(this.buttonExportRaw);
             this.groupBox2.Controls.Add(this.buttonEditAsset);
@@ -245,9 +253,19 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Assets";
             // 
+            // buttonInternalEdit
+            // 
+            this.buttonInternalEdit.Location = new System.Drawing.Point(502, 242);
+            this.buttonInternalEdit.Name = "buttonInternalEdit";
+            this.buttonInternalEdit.Size = new System.Drawing.Size(75, 23);
+            this.buttonInternalEdit.TabIndex = 15;
+            this.buttonInternalEdit.Text = "Int. Edit...";
+            this.buttonInternalEdit.UseVisualStyleBackColor = true;
+            this.buttonInternalEdit.Click += new System.EventHandler(this.buttonInternalEdit_Click);
+            // 
             // buttonView
             // 
-            this.buttonView.Location = new System.Drawing.Point(502, 184);
+            this.buttonView.Location = new System.Drawing.Point(502, 155);
             this.buttonView.Name = "buttonView";
             this.buttonView.Size = new System.Drawing.Size(75, 23);
             this.buttonView.TabIndex = 14;
@@ -257,7 +275,7 @@
             // 
             // buttonExportRaw
             // 
-            this.buttonExportRaw.Location = new System.Drawing.Point(502, 213);
+            this.buttonExportRaw.Location = new System.Drawing.Point(502, 184);
             this.buttonExportRaw.Name = "buttonExportRaw";
             this.buttonExportRaw.Size = new System.Drawing.Size(75, 23);
             this.buttonExportRaw.TabIndex = 13;
@@ -267,7 +285,7 @@
             // 
             // buttonEditAsset
             // 
-            this.buttonEditAsset.Location = new System.Drawing.Point(502, 242);
+            this.buttonEditAsset.Location = new System.Drawing.Point(502, 213);
             this.buttonEditAsset.Name = "buttonEditAsset";
             this.buttonEditAsset.Size = new System.Drawing.Size(75, 23);
             this.buttonEditAsset.TabIndex = 12;
@@ -322,12 +340,6 @@
             this.label2.Size = new System.Drawing.Size(78, 13);
             this.label2.TabIndex = 4;
             this.label2.Text = "Show by Type:";
-            // 
-            // clickThisToolStripMenuItem
-            // 
-            this.clickThisToolStripMenuItem.Name = "clickThisToolStripMenuItem";
-            this.clickThisToolStripMenuItem.Size = new System.Drawing.Size(81, 20);
-            this.clickThisToolStripMenuItem.Text = "<- click this";
             // 
             // ArchiveEditor
             // 
@@ -388,5 +400,6 @@
         private System.Windows.Forms.ToolStripMenuItem exportKnowlifesINIToolStripMenuItem;
         private System.Windows.Forms.Button buttonView;
         private System.Windows.Forms.ToolStripMenuItem clickThisToolStripMenuItem;
+        private System.Windows.Forms.Button buttonInternalEdit;
     }
 }

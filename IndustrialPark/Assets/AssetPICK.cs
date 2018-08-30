@@ -1,23 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using HipHopFile;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
     public struct PICKentry
     {
-        public int unknown1;
-        public int unknown2;
-        public int unknown3;
-        public int unknown4;
-        public int unknown5;
+        public uint unknown1;
+        public uint unknown2;
+        public uint unknown3;
+        public uint unknown4;
+        public uint unknown5;
     }
 
     public class AssetPICK : Asset
     {
         public int pickAmount;
-        public Dictionary<int, PICKentry> pickEntries;
+        public Dictionary<uint, PICKentry> pickEntries;
         public static AssetPICK pick;
 
         public AssetPICK(Section_AHDR AHDR) : base(AHDR)
@@ -26,17 +25,18 @@ namespace IndustrialPark
 
         public override void Setup(SharpRenderer renderer, bool defaultMode = true)
         {
-            pickEntries = new Dictionary<int, PICKentry>();
-            pickAmount = Switch(BitConverter.ToInt32(AHDR.containedFile, 0x4));
+            pickEntries = new Dictionary<uint, PICKentry>();
+            pickAmount = ReadInt(0x4);
+
             for (int i = 0; i < pickAmount; i++)
             {
                 PICKentry entry = new PICKentry()
                 {
-                    unknown1 = Switch(BitConverter.ToInt32(AHDR.containedFile, 8 + i * 0x14)),
-                    unknown2 = Switch(BitConverter.ToInt32(AHDR.containedFile, 12 + i * 0x14)),
-                    unknown3 = Switch(BitConverter.ToInt32(AHDR.containedFile, 16 + i * 0x14)),
-                    unknown4 = Switch(BitConverter.ToInt32(AHDR.containedFile, 20 + i * 0x14)),
-                    unknown5 = Switch(BitConverter.ToInt32(AHDR.containedFile, 24 + i * 0x14)),
+                    unknown1 = ReadUInt((uint)(8 + i * 0x14)),
+                    unknown2 = ReadUInt((uint)(12 + i * 0x14)),
+                    unknown3 = ReadUInt((uint)(16 + i * 0x14)),
+                    unknown4 = ReadUInt((uint)(20 + i * 0x14)),
+                    unknown5 = ReadUInt((uint)(24 + i * 0x14))
                 };
 
                 pickEntries.Add(entry.unknown1, entry);

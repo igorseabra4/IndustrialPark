@@ -1,7 +1,5 @@
 ﻿using HipHopFile;
 using SharpDX;
-using System;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
@@ -11,43 +9,87 @@ namespace IndustrialPark
         {
         }
 
-        int[] pairAssetIDs;
+        public override float PositionX
+        {
+            get { return _position.X; }
+            set
+            {
+                _position.X = value;
+                Write(0x8, _position.X);
+                CreateTransformMatrix();
+            }
+        }
+
+        public override float PositionY
+        {
+            get { return _position.Y; }
+            set
+            {
+                _position.Y = value;
+                Write(0xC, _position.Y);
+                CreateTransformMatrix();
+            }
+        }
+
+        public override float PositionZ
+        {
+            get { return _position.Z; }
+            set
+            {
+                _position.Z = value;
+                Write(0x10, _position.Z);
+                CreateTransformMatrix();
+            }
+        }
+
+        public override Vector3 Rotation
+        {
+            get { return _rotation; }
+            set { _rotation = value; }
+        }
+
+        public override Vector3 Scale
+        {
+            get { return _scale; }
+            set
+            {
+                _scale = value;
+                Write(0x1C, value.X);
+                Write(0x20, value.Y);
+                Write(0x24, value.Z);
+            }
+        }
+        
+        public int[] PairAssetIDs { get; set; }
 
         public override void Setup(SharpRenderer renderer, bool defaultMode = true)
         {
-            Position.X = Switch(BitConverter.ToSingle(AHDR.containedFile, 0x8));
-            Position.Y = Switch(BitConverter.ToSingle(AHDR.containedFile, 0xC));
-            Position.Z = Switch(BitConverter.ToSingle(AHDR.containedFile, 0x10));
+            _position = new Vector3(ReadFloat(0x8), ReadFloat(0xC), ReadFloat(0x10));
+            _scale = new Vector3(ReadFloat(0x1C), ReadFloat(0x20), ReadFloat(0x24));
 
-            Scale.X = Switch(BitConverter.ToSingle(AHDR.containedFile, 0x1C));
-            Scale.Y = Switch(BitConverter.ToSingle(AHDR.containedFile, 0x20));
-            Scale.Z = Switch(BitConverter.ToSingle(AHDR.containedFile, 0x24));
+            int amountOfPairs = ReadShort(0x1A);
 
-            int amountOfPairs = Switch(BitConverter.ToInt16(AHDR.containedFile, 0x1A));
-
-            pairAssetIDs = new int[amountOfPairs];
+            PairAssetIDs = new int[amountOfPairs];
             for (int i = 0; i < amountOfPairs; i++)
-                pairAssetIDs[i] = Switch(BitConverter.ToInt32(AHDR.containedFile, 0x28 + 4 * i));
+                PairAssetIDs[i] = ReadInt(0x28 + 4 * i);
 
-            world = Matrix.Translation(Position);
-
-            boundingBox = BoundingBox.FromPoints(Program.MainForm.renderer.cubeVertices.ToArray());
-            boundingBox.Maximum = (Vector3)Vector3.Transform(boundingBox.Maximum, world);
-            boundingBox.Minimum = (Vector3)Vector3.Transform(boundingBox.Minimum, world);
+            CreateTransformMatrix();
 
             ArchiveEditorFunctions.renderableAssetSet.Add(this);
         }
 
+        public override void CreateTransformMatrix()
+        {
+            world = Matrix.Translation(_position);
+
+            boundingBox = BoundingBox.FromPoints(SharpRenderer.cubeVertices.ToArray());
+            boundingBox.Maximum = (Vector3)Vector3.Transform(boundingBox.Maximum, world);
+            boundingBox.Minimum = (Vector3)Vector3.Transform(boundingBox.Minimum, world);
+        }
+
         public override void Draw(SharpRenderer renderer)
         {
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(modelAssetID))
-            {
-                ArchiveEditorFunctions.renderingDictionary[modelAssetID].Draw(renderer, world, isSelected);
-            }
-            else
-            {
-                renderer.DrawCube(world, isSelected);
-            }
+            renderer.DrawCube(world, isSelected);
         }
     }
 }

@@ -120,7 +120,7 @@ namespace IndustrialPark
             return GetAsset(new AddAssetDialog(AHDR), out success);
         }
         
-        int assetID;
+        uint assetID;
         AssetType assetType;
         string assetName;
         string assetFileName;
@@ -138,7 +138,7 @@ namespace IndustrialPark
             try
             {
                 textBoxAssetID.BackColor = defaultColor;
-                assetID = Convert.ToInt32(textBoxAssetID.Text, 16);
+                assetID = Convert.ToUInt32(textBoxAssetID.Text, 16);
             }
             catch
             {

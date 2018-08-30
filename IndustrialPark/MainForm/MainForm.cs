@@ -27,7 +27,7 @@ namespace IndustrialPark
 
         private bool mouseMode = false;
         private System.Drawing.Point MouseCenter = new System.Drawing.Point();
-        private MouseEventArgs oldMousePosition;
+        private MouseEventArgs oldMousePosition = new MouseEventArgs(MouseButtons.None, 0, 0, 0, 0);
 
         private bool loopNotStarted = true;
 
@@ -42,6 +42,9 @@ namespace IndustrialPark
             }
             else
             {
+                int deltaX = e.X - oldMousePosition.X;
+                int deltaY = e.Y - oldMousePosition.Y;
+
                 if (e.Button == MouseButtons.Middle)
                 {
                     renderer.Camera.AddYaw(MathUtil.DegreesToRadians(e.X - oldMousePosition.X));
@@ -51,6 +54,12 @@ namespace IndustrialPark
                 {
                     renderer.Camera.AddPositionSideways(e.X - oldMousePosition.X);
                     renderer.Camera.AddPositionUp(e.Y - oldMousePosition.Y);
+                }
+
+                foreach (ArchiveEditor ae in archiveEditors)
+                {
+                    ae.MouseMoveX(renderer.Camera, deltaX);
+                    ae.MouseMoveY(renderer.Camera, deltaY);
                 }
             }
 
@@ -259,13 +268,23 @@ namespace IndustrialPark
             }
         }
 
-        public void ScreenClicked(Rectangle viewRectangle, int X, int Y)
+        private void renderPanel_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                ScreenClicked(new Rectangle(
+                    renderPanel.ClientRectangle.X,
+                    renderPanel.ClientRectangle.Y,
+                    renderPanel.ClientRectangle.Width,
+                    renderPanel.ClientRectangle.Height), e.X, e.Y, true);
+            }
+        }
+
+        public void ScreenClicked(Rectangle viewRectangle, int X, int Y, bool isMouseDown = false)
         {
             Ray ray = Ray.GetPickRay(X, Y, new Viewport(viewRectangle), renderer.viewProjection);
             foreach (ArchiveEditor ae in archiveEditors)
-            {
-                ae.ScreenClicked(ray);
-            }
+                ae.ScreenClicked(ray, isMouseDown);
         }
 
         private void addTextureFolderToolStripMenuItem_Click(object sender, EventArgs e)

@@ -4,7 +4,7 @@ using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Windows;
 using System.Collections.Generic;
-using static IndustrialPark.OBJFunctions;
+using static IndustrialPark.Models.OBJFunctions;
 using System.IO;
 
 namespace IndustrialPark
@@ -105,43 +105,66 @@ namespace IndustrialPark
         {
             showObjects = value;
         }
-        
-        public SharpMesh Cube;
-        public SharpMesh Cylinder;
-        public SharpMesh Pyramid;
-        
+
+        public static SharpMesh Cube { get; private set; }
+        public static SharpMesh Cylinder { get; private set; }
+        public static SharpMesh Pyramid { get; private set; }
+        public static SharpMesh Sphere { get; private set; }
+
+        public static List<Vector3> cubeVertices;
+        public static List<Models.Triangle> cubeTriangles;
+        public static List<Vector3> cylinderVertices;
+        public static List<Models.Triangle> cylinderTriangles;
+        public static List<Vector3> pyramidVertices;
+        public static List<Models.Triangle> pyramidTriangles;
+
         public void LoadModels()
         {
             cubeVertices = new List<Vector3>();
+            cubeTriangles = new List<Models.Triangle>();
 
-            for (int i = 0; i < 3; i++)// 3; i++)
+            cylinderVertices = new List<Vector3>();
+            cylinderTriangles = new List<Models.Triangle>();
+
+            pyramidVertices = new List<Vector3>();
+            pyramidTriangles = new List<Models.Triangle>();
+
+            for (int i = 0; i < 4; i++)// 3; i++)
             {
-                ModelConverterData objData;
+                Models.ModelConverterData objData;
 
-                if (i == 0) objData = ReadOBJFile("Resources/Models/Box.obj");
-                else if (i == 1) objData = ReadOBJFile("Resources/Models/Cylinder.obj");
-                else objData = ReadOBJFile("Resources/Models/Pyramid.obj");
+                if (i == 0) objData = ReadOBJFile("Resources/Models/Box.obj", false);
+                else if (i == 1) objData = ReadOBJFile("Resources/Models/Cylinder.obj", false);
+                else if (i == 2) objData = ReadOBJFile("Resources/Models/Pyramid.obj", false);
+                else objData = ReadOBJFile("Resources/Models/Sphere.obj", false);
 
                 List<Vertex> vertexList = new List<Vertex>();
-                foreach (OBJFunctions.Vertex v in objData.VertexStream)
+                foreach (Models.Vertex v in objData.VertexList)
                 {
                     vertexList.Add(new Vertex(v.Position));
-                    if (i == 0) cubeVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z) * 0.5f);
+                    if (i == 0) cubeVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z) * 5);
+                    else if (i == 1) cylinderVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
+                    else if (i == 2) pyramidVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
                 }
 
                 List<int> indexList = new List<int>();
-                foreach (Triangle t in objData.TriangleStream)
+                foreach (Models.Triangle t in objData.TriangleList)
                 {
                     indexList.Add(t.Vertex1);
                     indexList.Add(t.Vertex2);
                     indexList.Add(t.Vertex3);
+                    if (i == 0) cubeTriangles.Add(t);
+                    else if (i == 1) cylinderTriangles.Add(t);
+                    else if (i == 2) pyramidTriangles.Add(t);
                 }
 
                 if (i == 0) Cube = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
                 else if (i == 1) Cylinder = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
-                else Pyramid = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
+                else if (i == 2) Pyramid = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
+                else Sphere = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
             }
         }
+
 
         public Vector4 normalColor = new Vector4(0.2f, 0.6f, 0.8f, 0.8f);
         public Vector4 selectedColor = new Vector4(1f, 0.5f, 0.1f, 0.8f);
@@ -180,7 +203,6 @@ namespace IndustrialPark
 
         public Matrix viewProjection;
         public Color4 backgroundColor = new Color4(0.05f, 0.05f, 0.15f, 1f);
-        public List<Vector3> cubeVertices;
         public BoundingFrustum frustum;
 
         public void RunMainLoop(Panel Panel)
@@ -222,9 +244,10 @@ namespace IndustrialPark
                     foreach (RenderableAsset a in ArchiveEditorFunctions.renderableAssetSet)
                     {
                         if (!(a is AssetLevelModel))
-                            //if (frustum.Intersects(ref a.boundingBox))
+                            if (frustum.Intersects(ref a.boundingBox))
                                 a.Draw(this);
                     }
+                ArchiveEditorFunctions.RenderGizmos(this);
 
                 //present
                 device.Present();
@@ -249,7 +272,7 @@ namespace IndustrialPark
                         
             foreach (SharpMesh mesh in RenderWareModelFile.completeMeshList)
                 mesh.Dispose();
-                                    
+
             device.Dispose();
         }
     }

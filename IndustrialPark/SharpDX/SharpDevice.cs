@@ -361,6 +361,17 @@ namespace IndustrialPark
         }
 
         /// <summary>
+        /// Set current depth state to default
+        /// </summary>
+        public void SetDepthStateNone()
+        {
+            Utilities.Dispose(ref _depthState);
+            DepthStencilStateDescription description = DepthStencilStateDescription.Default();
+            description.IsDepthEnabled = false;
+            _depthState = new DepthStencilState(Device, description);
+        }
+
+        /// <summary>
         /// Set current sampler state to default
         /// </summary>
         public void SetDefaultSamplerState()

@@ -12,9 +12,9 @@ namespace IndustrialPark
     public class ArchiveEditorFunctions
     {
         public static HashSet<RenderableAsset> renderableAssetSet = new HashSet<RenderableAsset>();
-        public static Dictionary<int, AssetWithModel> renderingDictionary = new Dictionary<int, AssetWithModel>();
+        public static Dictionary<uint, AssetWithModel> renderingDictionary = new Dictionary<uint, AssetWithModel>();
 
-        public static void AddToRenderingDictionary(int key, AssetWithModel value)
+        public static void AddToRenderingDictionary(uint key, AssetWithModel value)
         {
             if (!renderingDictionary.ContainsKey(key))
                 renderingDictionary.Add(key, value);
@@ -22,14 +22,22 @@ namespace IndustrialPark
                 renderingDictionary[key] = value;
         }
 
-        private Dictionary<int, Asset> assetDictionary = new Dictionary<int, Asset>();
+        public ArchiveEditorFunctions()
+        {
+            gizmos = new Gizmo[3];
+            gizmos[0] = new Gizmo(GizmoType.X);
+            gizmos[1] = new Gizmo(GizmoType.Y);
+            gizmos[2] = new Gizmo(GizmoType.Z);
+        }
 
-        public bool DictionaryHasKey(int key)
+        private Dictionary<uint, Asset> assetDictionary = new Dictionary<uint, Asset>();
+
+        public bool DictionaryHasKey(uint key)
         {
             return assetDictionary.ContainsKey(key);
         }
 
-        public Asset GetFromAssetID(int key)
+        public Asset GetFromAssetID(uint key)
         {
             if (DictionaryHasKey(key))
                 return assetDictionary[key];
@@ -37,7 +45,7 @@ namespace IndustrialPark
                 throw new KeyNotFoundException();
         }
 
-        public Dictionary<int, Asset>.ValueCollection GetAllAssets()
+        public Dictionary<uint, Asset>.ValueCollection GetAllAssets()
         {
             return assetDictionary.Values;
         }
@@ -83,7 +91,7 @@ namespace IndustrialPark
 
         public void Dispose()
         {
-            foreach (int key in assetDictionary.Keys)
+            foreach (uint key in assetDictionary.Keys)
             {
                 if (assetDictionary[key] is RenderableAsset ra)
                     if (renderableAssetSet.Contains(ra))
@@ -199,7 +207,7 @@ namespace IndustrialPark
             AddAssetToDictionary(AHDR);
         }
 
-        public void RemoveAsset(int layerIndex, int assetID)
+        public void RemoveAsset(int layerIndex, uint assetID)
         {
             DICT.LTOC.LHDRList[layerIndex].assetIDlist.Remove(assetID);
 
@@ -220,20 +228,25 @@ namespace IndustrialPark
             }
         }
 
-        private int currentlySelectedAssetID = 0;
+        private uint currentlySelectedAssetID = 0;
 
-        public int getCurrentlySelectedAssetID()
+        public uint getCurrentlySelectedAssetID()
         {
             return currentlySelectedAssetID;
         }
 
-        public void SelectAsset(int assetID)
+        public void SelectAsset(uint assetID)
         {
             if (assetDictionary.ContainsKey(currentlySelectedAssetID))
                 assetDictionary[currentlySelectedAssetID].isSelected = false;
             currentlySelectedAssetID = assetID;
             if (currentlySelectedAssetID != 0)
+            {
                 assetDictionary[currentlySelectedAssetID].isSelected = true;
+                if (assetDictionary[currentlySelectedAssetID] is RenderableAsset ra)
+                    UpdateGizmoPosition();
+                else ClearGizmos();
+            }
         }
 
         public int GetSelectedLayerIndex()
@@ -249,9 +262,9 @@ namespace IndustrialPark
             throw new Exception();
         }
 
-        public int ScreenClicked(Ray ray)
+        public uint ScreenClicked(Ray ray)
         {
-            int assetID = 0;
+            uint assetID = 0;
 
             float smallerDistance = 1000f;
             foreach (RenderableAsset ra in renderableAssetSet)
@@ -274,45 +287,100 @@ namespace IndustrialPark
 
         public void Save()
         {
-            List<byte> newStream = new List<byte>();
-            for (int j = 0; j < STRM.DPAK.firstPadding; j++)
-                newStream.Add(0x33);
+            HipSection[] hipFile = SetupStream(ref HIPA, ref PACK, ref DICT, ref STRM);
+            byte[] file = HipArrayToFile(hipFile);
+            File.WriteAllBytes(currentlyOpenFilePath, file);
+        }
 
-            foreach (Section_AHDR AHDR in DICT.ATOC.AHDRList)
+        // Gizmos
+        private static Gizmo[] gizmos;
+        private static bool DrawGizmos = false;
+
+        public static void RenderGizmos(SharpRenderer renderer)
+        {
+            if (DrawGizmos)
+                foreach (Gizmo g in gizmos)
+                    g.Draw(renderer);
+        }
+
+        public void UpdateGizmoPosition()
+        {
+            RenderableAsset currentAsset = ((RenderableAsset)assetDictionary[currentlySelectedAssetID]);
+            UpdateGizmoPosition(currentAsset.Position, currentAsset.boundingBox.Size);
+        }
+        
+        private void UpdateGizmoPosition(Vector3 position, Vector3 distance)
+        {
+            DrawGizmos = true;
+            foreach (Gizmo g in gizmos)
+                g.SetPosition(position, distance);
+        }
+
+        private void ClearGizmos()
+        {
+            DrawGizmos = false;
+        }
+
+        public void GizmoSelect(Ray r)
+        {
+            if (!DrawGizmos)
+                return;
+
+            float dist = 1000f;
+            int index = -1;
+
+            for (int g = 0; g < gizmos.Length; g++)
             {
-                AHDR.fileOffset = newStream.Count();
-                AHDR.fileSize = AHDR.containedFile.Length;
-                newStream.AddRange(AHDR.containedFile);
-
-                AHDR.plusValue = 0;
-
-                int alignment = 16;
-                if (currentGame == Game.BFBB)
+                float? distance = gizmos[g].IntersectsWith(r);
+                if (distance != null)
                 {
-                    if (AHDR.assetType == AssetType.CSN |
-                        AHDR.assetType == AssetType.SND |
-                        AHDR.assetType == AssetType.SNDS)
-                        alignment = 32;
-                    else if (AHDR.assetType == AssetType.CRDT)
-                        alignment = 4;
+                    if (distance < dist)
+                    {
+                        dist = (float)distance;
+                        index = g;
+                    }
                 }
-
-                int value = AHDR.fileSize % alignment;
-                if (value != 0)
-                    AHDR.plusValue = alignment - value;
-                for (int j = 0; j < AHDR.plusValue; j++)
-                    newStream.Add(0x33);
             }
 
-            int value2 = (newStream.Count - STRM.DPAK.firstPadding) % 0x20;
-            if (value2 != 0)
-                for (int j = 0; j < 0x20 - value2; j++)
-                    newStream.Add(0x33);
+            if (index == -1)
+                return;
 
-            STRM.DPAK.data = newStream.ToArray();
-            PACK.PCNT = new Section_PCNT(DICT.ATOC.AHDRList.Count, DICT.LTOC.LHDRList.Count, 0, 0, 0);
-            
-            File.WriteAllBytes(currentlyOpenFilePath, HipArrayToFile(new HipSection[] { HIPA, PACK, DICT, STRM }));
+            gizmos[index].isSelected = true;
+        }
+
+        public void ScreenUnclicked()
+        {
+            foreach (Gizmo g in gizmos)
+                g.isSelected = false;
+        }
+
+        public void MouseMoveX(SharpCamera camera, int distance)
+        {
+            if (currentlySelectedAssetID == 0) return;
+
+            Asset currentAsset = assetDictionary[currentlySelectedAssetID];
+            if (currentAsset is RenderableAsset ra)
+            {
+                if (gizmos[0].isSelected)
+                    ra.PositionX += (
+                        (camera.Yaw >= -360 & camera.Yaw < -270) |
+                        (camera.Yaw >= -90 & camera.Yaw < 90) |
+                        (camera.Yaw >= 270)) ? distance / 2 : -distance / 2;
+                else if (gizmos[2].isSelected)
+                    ra.PositionZ += (
+                        (camera.Yaw >= -180 & camera.Yaw < 0) |
+                        (camera.Yaw >= 180)) ? distance / 2 : -distance / 2;
+            }
+        }
+
+        public void MouseMoveY(SharpCamera camera, int distance)
+        {
+            if (currentlySelectedAssetID == 0) return;
+
+            Asset currentAsset = assetDictionary[currentlySelectedAssetID];
+            if (currentAsset is RenderableAsset ra)
+                if (gizmos[1].isSelected)
+                    ra.PositionY -= distance / 2;
         }
     }
 }

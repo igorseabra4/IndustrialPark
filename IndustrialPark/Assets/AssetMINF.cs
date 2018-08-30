@@ -1,13 +1,23 @@
 ﻿using HipHopFile;
 using SharpDX;
 using System;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
     public class AssetMINF : AssetWithModel
     {
-        public int modelAssetID;
+        private uint _modelAssetID;
+        public uint ModelAssetID
+        {
+            get { return _modelAssetID; }
+
+            set
+            {
+                _modelAssetID = value;
+                if (AHDR.containedFile.Length >= 0x18)
+                    Write(0x14, value);
+            }
+        }
 
         public AssetMINF(Section_AHDR AHDR) : base(AHDR)
         {
@@ -15,16 +25,15 @@ namespace IndustrialPark
 
         public override void Setup(SharpRenderer renderer, bool defaultMode = true)
         {
-            if (AHDR.containedFile.Length >= 0x18)
-                modelAssetID = Switch(BitConverter.ToInt32(AHDR.containedFile, 0x14));
+            _modelAssetID = ReadUInt(0x14);
             ArchiveEditorFunctions.AddToRenderingDictionary(AHDR.assetID, this);
         }
 
         public override void Draw(SharpRenderer renderer, Matrix world, bool isSelected)
         {
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(modelAssetID))
+            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
             {
-                ArchiveEditorFunctions.renderingDictionary[modelAssetID].Draw(renderer, world, isSelected);
+                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected);
             }
             else
             {
@@ -35,9 +44,9 @@ namespace IndustrialPark
 
         public override RenderWareModelFile GetRenderWareModelFile()
         {
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(modelAssetID))
+            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
             {
-                return ArchiveEditorFunctions.renderingDictionary[modelAssetID].GetRenderWareModelFile();
+                return ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile();
             }
             else
             {
@@ -47,7 +56,7 @@ namespace IndustrialPark
 
         public bool HasRenderWareModelFile()
         {
-            return ArchiveEditorFunctions.renderingDictionary.ContainsKey(modelAssetID);
+            return ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID);
         }
     }
 }

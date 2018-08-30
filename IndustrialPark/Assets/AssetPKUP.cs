@@ -7,7 +7,16 @@ namespace IndustrialPark
 {
     public class AssetPKUP : RenderableAsset
     {
-        public int pickEntryID;
+        private uint _pickEntryID;
+        public uint PickEntryID
+        {
+            get { return _pickEntryID; }
+            set
+            {
+                _pickEntryID = value;
+                Write(0x54, value);
+            }
+        }
 
         public AssetPKUP(Section_AHDR AHDR) : base(AHDR)
         {
@@ -15,7 +24,7 @@ namespace IndustrialPark
 
         public override void Setup(SharpRenderer renderer, bool defaultMode = false)
         {
-            pickEntryID = Switch(BitConverter.ToInt32(AHDR.containedFile, 0x54));
+            _pickEntryID = ReadUInt(0x54);
 
             base.Setup(renderer, defaultMode);
         }
@@ -24,11 +33,11 @@ namespace IndustrialPark
         {
             if (AssetPICK.pick != null)
             {
-                if (AssetPICK.pick.pickEntries.ContainsKey(pickEntryID))
+                if (AssetPICK.pick.pickEntries.ContainsKey(_pickEntryID))
                 {
-                    if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(AssetPICK.pick.pickEntries[pickEntryID].unknown4))
+                    if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(AssetPICK.pick.pickEntries[_pickEntryID].unknown4))
                     {
-                        ArchiveEditorFunctions.renderingDictionary[AssetPICK.pick.pickEntries[pickEntryID].unknown4].Draw(renderer, world, isSelected);
+                        ArchiveEditorFunctions.renderingDictionary[AssetPICK.pick.pickEntries[_pickEntryID].unknown4].Draw(renderer, world, isSelected);
                     }
                     else
                     {

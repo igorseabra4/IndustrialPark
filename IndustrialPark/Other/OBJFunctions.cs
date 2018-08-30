@@ -8,58 +8,21 @@ using RenderWareFile;
 using RenderWareFile.Sections;
 using SharpDX;
 
-namespace IndustrialPark
+namespace IndustrialPark.Models
 {
     public class OBJFunctions
     {
-        public struct Vertex
-        {
-            public Vector3 Position;
-            public SharpDX.Color Color;
-            public Vector2 TexCoord;
-
-            public bool HasUV;
-            public bool HasColor;
-        }
-
-        public class Triangle
-        {
-            public int MaterialIndex;
-
-            public int Vertex1;
-            public int Vertex2;
-            public int Vertex3;
-
-            public int UVCoord1;
-            public int UVCoord2;
-            public int UVCoord3;
-
-            public int Color1;
-            public int Color2;
-            public int Color3;
-        }
-
         public static bool flipUVs = false;
-
-        public struct ModelConverterData
-        {
-            public List<string> MaterialStream;
-            public List<Vertex> VertexStream;
-            public List<Vector2> UVStream;
-            public List<SharpDX.Color> ColorStream;
-            public List<Triangle> TriangleStream;
-            public string MTLLib;
-        }
-        
-        public static ModelConverterData ReadOBJFile(string InputFile)
+                
+        public static ModelConverterData ReadOBJFile(string InputFile, bool hasUVCoords = true)
         {
             ModelConverterData objData = new ModelConverterData()
             {
-                MaterialStream = new List<string>(),
-                VertexStream = new List<Vertex>(),
-                UVStream = new List<Vector2>(),
-                ColorStream = new List<SharpDX.Color>(),
-                TriangleStream = new List<Triangle>(),
+                MaterialList = new List<string>(),
+                VertexList = new List<Vertex>(),
+                UVList = new List<Vector2>(),
+                ColorList = new List<SharpDX.Color>(),
+                TriangleList = new List<Triangle>(),
                 MTLLib = null
             };
 
@@ -68,9 +31,7 @@ namespace IndustrialPark
             int CurrentMaterial = -1;
 
             List<SharpDX.Color> ColorStream = new List<SharpDX.Color>();
-
-            bool hasUVCoords = true;
-
+            
             foreach (string j in OBJFile)
             {
                 if (j.Length > 2)
@@ -87,7 +48,7 @@ namespace IndustrialPark
 
                         TempVertex.Color = SharpDX.Color.White;
 
-                        objData.VertexStream.Add(TempVertex);
+                        objData.VertexList.Add(TempVertex);
                     }
                     else if (j.Substring(0, 3) == "vt ")
                     {
@@ -97,7 +58,7 @@ namespace IndustrialPark
                             X = Convert.ToSingle(SubStrings[1]),
                             Y = Convert.ToSingle(SubStrings[2])
                         };
-                        objData.UVStream.Add(TempUV);
+                        objData.UVList.Add(TempUV);
                     }
                     else if (j.Substring(0, 3) == "vc ") // Special code
                     {
@@ -120,7 +81,7 @@ namespace IndustrialPark
                         {
                             MessageBox.Show("Apparently you're trying to import an object which doesn't have texture coordinates.");
                             hasUVCoords = false;
-                            objData.UVStream = new List<Vector2>() { new Vector2() };
+                            objData.UVList = new List<Vector2>() { new Vector2() };
                         }
 
                         Triangle TempTriangle = new Triangle
@@ -137,12 +98,12 @@ namespace IndustrialPark
                             TempTriangle.UVCoord3 = Convert.ToInt32(SubStrings[3].Split('/')[1]) - 1;
                         }
 
-                        objData.TriangleStream.Add(TempTriangle);
+                        objData.TriangleList.Add(TempTriangle);
                     }
                     else if (j.Length > 7)
                         if (j.Substring(0, 7) == "usemtl ")
                         {
-                            objData.MaterialStream.Add(Regex.Replace(j.Substring(7), @"\s+", ""));
+                            objData.MaterialList.Add(Regex.Replace(j.Substring(7), @"\s+", ""));
                             CurrentMaterial += 1;
                         }
                         else if (j.Substring(0, 7) == "mtllib ")
@@ -151,17 +112,17 @@ namespace IndustrialPark
             }
 
             // Special code
-            if (ColorStream.Count == objData.VertexStream.Count)
-                for (int i = 0; i < objData.VertexStream.Count; i++)
+            if (ColorStream.Count == objData.VertexList.Count)
+                for (int i = 0; i < objData.VertexList.Count; i++)
                 {
-                    Vertex v = objData.VertexStream[i];
+                    Vertex v = objData.VertexList[i];
                     v.Color = ColorStream[i];
-                    objData.VertexStream[i] = v;
+                    objData.VertexList[i] = v;
                 }
 
             try
             {
-                objData.MaterialStream = ReplaceMaterialNames(InputFile, objData.MTLLib, objData.MaterialStream);
+                objData.MaterialList = ReplaceMaterialNames(InputFile, objData.MTLLib, objData.MaterialList);
             }
             catch
             {
@@ -204,78 +165,78 @@ namespace IndustrialPark
 
         public static ModelConverterData FixUVCoords(ModelConverterData data)
         {
-            for (int i = 0; i < data.TriangleStream.Count; i++)
+            for (int i = 0; i < data.TriangleList.Count; i++)
             {
-                if (data.VertexStream[data.TriangleStream[i].Vertex1].HasUV == false)
+                if (data.VertexList[data.TriangleList[i].Vertex1].HasUV == false)
                 {
-                    Vertex TempVertex = data.VertexStream[data.TriangleStream[i].Vertex1];
+                    Vertex TempVertex = data.VertexList[data.TriangleList[i].Vertex1];
 
-                    TempVertex.TexCoord.X = data.UVStream[data.TriangleStream[i].UVCoord1].X;
-                    TempVertex.TexCoord.Y = data.UVStream[data.TriangleStream[i].UVCoord1].Y;
+                    TempVertex.TexCoord.X = data.UVList[data.TriangleList[i].UVCoord1].X;
+                    TempVertex.TexCoord.Y = data.UVList[data.TriangleList[i].UVCoord1].Y;
                     TempVertex.HasUV = true;
-                    data.VertexStream[data.TriangleStream[i].Vertex1] = TempVertex;
+                    data.VertexList[data.TriangleList[i].Vertex1] = TempVertex;
                 }
                 else
                 {
-                    Vertex TempVertex = data.VertexStream[data.TriangleStream[i].Vertex1];
+                    Vertex TempVertex = data.VertexList[data.TriangleList[i].Vertex1];
 
-                    if ((TempVertex.TexCoord.X != data.UVStream[data.TriangleStream[i].UVCoord1].X) | (TempVertex.TexCoord.Y != data.UVStream[data.TriangleStream[i].UVCoord1].Y))
+                    if ((TempVertex.TexCoord.X != data.UVList[data.TriangleList[i].UVCoord1].X) | (TempVertex.TexCoord.Y != data.UVList[data.TriangleList[i].UVCoord1].Y))
                     {
-                        TempVertex.TexCoord.X = data.UVStream[data.TriangleStream[i].UVCoord1].X;
-                        TempVertex.TexCoord.Y = data.UVStream[data.TriangleStream[i].UVCoord1].Y;
+                        TempVertex.TexCoord.X = data.UVList[data.TriangleList[i].UVCoord1].X;
+                        TempVertex.TexCoord.Y = data.UVList[data.TriangleList[i].UVCoord1].Y;
 
-                        Triangle TempTriangle = data.TriangleStream[i];
-                        TempTriangle.Vertex1 = data.VertexStream.Count;
-                        data.TriangleStream[i] = TempTriangle;
-                        data.VertexStream.Add(TempVertex);
+                        Triangle TempTriangle = data.TriangleList[i];
+                        TempTriangle.Vertex1 = data.VertexList.Count;
+                        data.TriangleList[i] = TempTriangle;
+                        data.VertexList.Add(TempVertex);
                     }
                 }
-                if (data.VertexStream[data.TriangleStream[i].Vertex2].HasUV == false)
+                if (data.VertexList[data.TriangleList[i].Vertex2].HasUV == false)
                 {
-                    Vertex TempVertex = data.VertexStream[data.TriangleStream[i].Vertex2];
+                    Vertex TempVertex = data.VertexList[data.TriangleList[i].Vertex2];
 
-                    TempVertex.TexCoord.X = data.UVStream[data.TriangleStream[i].UVCoord2].X;
-                    TempVertex.TexCoord.Y = data.UVStream[data.TriangleStream[i].UVCoord2].Y;
+                    TempVertex.TexCoord.X = data.UVList[data.TriangleList[i].UVCoord2].X;
+                    TempVertex.TexCoord.Y = data.UVList[data.TriangleList[i].UVCoord2].Y;
                     TempVertex.HasUV = true;
-                    data.VertexStream[data.TriangleStream[i].Vertex2] = TempVertex;
+                    data.VertexList[data.TriangleList[i].Vertex2] = TempVertex;
                 }
                 else
                 {
-                    Vertex TempVertex = data.VertexStream[data.TriangleStream[i].Vertex2];
+                    Vertex TempVertex = data.VertexList[data.TriangleList[i].Vertex2];
 
-                    if ((TempVertex.TexCoord.X != data.UVStream[data.TriangleStream[i].UVCoord2].X) | (TempVertex.TexCoord.Y != data.UVStream[data.TriangleStream[i].UVCoord2].Y))
+                    if ((TempVertex.TexCoord.X != data.UVList[data.TriangleList[i].UVCoord2].X) | (TempVertex.TexCoord.Y != data.UVList[data.TriangleList[i].UVCoord2].Y))
                     {
-                        TempVertex.TexCoord.X = data.UVStream[data.TriangleStream[i].UVCoord2].X;
-                        TempVertex.TexCoord.Y = data.UVStream[data.TriangleStream[i].UVCoord2].Y;
+                        TempVertex.TexCoord.X = data.UVList[data.TriangleList[i].UVCoord2].X;
+                        TempVertex.TexCoord.Y = data.UVList[data.TriangleList[i].UVCoord2].Y;
 
-                        Triangle TempTriangle = data.TriangleStream[i];
-                        TempTriangle.Vertex2 = data.VertexStream.Count;
-                        data.TriangleStream[i] = TempTriangle;
-                        data.VertexStream.Add(TempVertex);
+                        Triangle TempTriangle = data.TriangleList[i];
+                        TempTriangle.Vertex2 = data.VertexList.Count;
+                        data.TriangleList[i] = TempTriangle;
+                        data.VertexList.Add(TempVertex);
                     }
                 }
-                if (data.VertexStream[data.TriangleStream[i].Vertex3].HasUV == false)
+                if (data.VertexList[data.TriangleList[i].Vertex3].HasUV == false)
                 {
-                    Vertex TempVertex = data.VertexStream[data.TriangleStream[i].Vertex3];
+                    Vertex TempVertex = data.VertexList[data.TriangleList[i].Vertex3];
 
-                    TempVertex.TexCoord.X = data.UVStream[data.TriangleStream[i].UVCoord3].X;
-                    TempVertex.TexCoord.Y = data.UVStream[data.TriangleStream[i].UVCoord3].Y;
+                    TempVertex.TexCoord.X = data.UVList[data.TriangleList[i].UVCoord3].X;
+                    TempVertex.TexCoord.Y = data.UVList[data.TriangleList[i].UVCoord3].Y;
                     TempVertex.HasUV = true;
-                    data.VertexStream[data.TriangleStream[i].Vertex3] = TempVertex;
+                    data.VertexList[data.TriangleList[i].Vertex3] = TempVertex;
                 }
                 else
                 {
-                    Vertex TempVertex = data.VertexStream[data.TriangleStream[i].Vertex3];
+                    Vertex TempVertex = data.VertexList[data.TriangleList[i].Vertex3];
 
-                    if ((TempVertex.TexCoord.X != data.UVStream[data.TriangleStream[i].UVCoord3].X) | (TempVertex.TexCoord.Y != data.UVStream[data.TriangleStream[i].UVCoord3].Y))
+                    if ((TempVertex.TexCoord.X != data.UVList[data.TriangleList[i].UVCoord3].X) | (TempVertex.TexCoord.Y != data.UVList[data.TriangleList[i].UVCoord3].Y))
                     {
-                        TempVertex.TexCoord.X = data.UVStream[data.TriangleStream[i].UVCoord3].X;
-                        TempVertex.TexCoord.Y = data.UVStream[data.TriangleStream[i].UVCoord3].Y;
+                        TempVertex.TexCoord.X = data.UVList[data.TriangleList[i].UVCoord3].X;
+                        TempVertex.TexCoord.Y = data.UVList[data.TriangleList[i].UVCoord3].Y;
 
-                        Triangle TempTriangle = data.TriangleStream[i];
-                        TempTriangle.Vertex3 = data.VertexStream.Count;
-                        data.TriangleStream[i] = TempTriangle;
-                        data.VertexStream.Add(TempVertex);
+                        Triangle TempTriangle = data.TriangleList[i];
+                        TempTriangle.Vertex3 = data.VertexList.Count;
+                        data.TriangleList[i] = TempTriangle;
+                        data.VertexList.Add(TempVertex);
                     }
                 }
             }
