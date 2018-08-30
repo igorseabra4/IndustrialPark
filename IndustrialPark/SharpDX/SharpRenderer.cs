@@ -142,7 +142,7 @@ namespace IndustrialPark
                 foreach (Models.Vertex v in objData.VertexList)
                 {
                     vertexList.Add(new Vertex(v.Position));
-                    if (i == 0) cubeVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z) * 5);
+                    if (i == 0) cubeVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
                     else if (i == 1) cylinderVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
                     else if (i == 2) pyramidVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
                 }
@@ -174,7 +174,7 @@ namespace IndustrialPark
         {
             DefaultRenderData renderData;
 
-            renderData.worldViewProjection = Matrix.Scaling(0.5F) * world * viewProjection;
+            renderData.worldViewProjection = Matrix.Scaling(0.5f) * world * viewProjection;
 
             if (isSelected)
                 renderData.Color = selectedColor;
@@ -194,13 +194,6 @@ namespace IndustrialPark
             Cube.Draw(device);
         }
         
-        public string TreatTextureName(string entry)
-        {
-            entry = (Path.GetFileNameWithoutExtension(entry).Trim('_'));
-            entry = entry.Trim('_');
-            return entry;
-        }
-
         public Matrix viewProjection;
         public Color4 backgroundColor = new Color4(0.05f, 0.05f, 0.15f, 1f);
         public BoundingFrustum frustum;

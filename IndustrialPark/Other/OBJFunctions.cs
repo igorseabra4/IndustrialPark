@@ -26,6 +26,9 @@ namespace IndustrialPark.Models
                 MTLLib = null
             };
 
+            if (!hasUVCoords)
+                objData.UVList = new List<Vector2>() { new Vector2() };
+
             string[] OBJFile = File.ReadAllLines(InputFile);
 
             int CurrentMaterial = -1;

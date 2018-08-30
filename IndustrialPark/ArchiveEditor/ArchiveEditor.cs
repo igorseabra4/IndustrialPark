@@ -305,7 +305,7 @@ namespace IndustrialPark
                 MessageBox.Show("Unable to edit asset: " + ex.Message);
             }
         }
-
+        
         private void buttonInternalEdit_Click(object sender, EventArgs e)
         {
             if (listBoxAssets.SelectedItem != null)
@@ -406,12 +406,19 @@ namespace IndustrialPark
         {
             if (isMouseDown)
                 archive.GizmoSelect(ray);
+            else if (archive.FinishedMovingGizmo)
+                archive.FinishedMovingGizmo = false;
             else
             {
                 uint index = archive.ScreenClicked(ray);
                 if (index != 0)
                     SetSelectedIndex(index);
             }
+        }
+
+        public void ScreenUnclicked()
+        {
+            archive.ScreenUnclicked();
         }
 
         public void MouseMoveX(SharpCamera camera, int deltaX)

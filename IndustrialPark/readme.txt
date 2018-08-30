@@ -19,7 +19,6 @@ Mouse controls:
 
 *Mouse mode: similar to a first person camera. The view rotates automatically as you move the mouse. Use the keyboard to move around.
 
-
 = Options =
 - View Config (F1): displays the View Config box.
 - No culling (C): toggles backface culling
@@ -36,7 +35,7 @@ The archive editor is the main way to edit HIP/HOP archives in Industrial Park. 
 If you wish to edit both HIP and HOP files for a level, for example, you can open two Archive Editors each with one of the files.
 Also, opening a third one with boot.HIP will allow you to view the objects whose models are contained there (such as spatula, underwear and shiny objects).
 
-* File: yes, File is a button and although some people don't realize it, you have to click it before doing anything.
+* File Menu:
 ** Open: choose a HIP/HOP file to open in this Archive Editor.
 ** Save: saves the currently open file and overwrites it.
 ** Save As: allows you to pick a new destination to save the file.
@@ -59,3 +58,7 @@ Closing the Archive Editor through the X button will not close it, only hide it.
 ** View: will try to show you where the selected asset is. Some assets don't have a position in the world and thus this button will do nothing.
 ** Export raw: allows you to export an asset's raw data to a file.
 ** Edit: allows you to edit an existing asset's ID, name and other information, and also replace the raw data with a new file.
+** Internal Edit: opens the selected asset in the internal editor. This allows you to edit some of the asset's data, but it still being implemented and not very useful at this point.
+
+* You can click on an asset in the view to select it in the Archive Editor.
+* For some assets, a transform gizmo will be displayed when it's selected. You can click and drag on these arrows to move the object around the world.

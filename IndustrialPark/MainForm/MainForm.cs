@@ -287,6 +287,18 @@ namespace IndustrialPark
                 ae.ScreenClicked(ray, isMouseDown);
         }
 
+        private void renderPanel_MouseUp(object sender, MouseEventArgs e)
+        {
+            foreach (ArchiveEditor ae in archiveEditors)
+                ae.ScreenUnclicked();
+        }
+
+        private void renderPanel_MouseLeave(object sender, EventArgs e)
+        {
+            foreach (ArchiveEditor ae in archiveEditors)
+                ae.ScreenUnclicked();
+        }
+
         private void addTextureFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog openFile = new FolderBrowserDialog();

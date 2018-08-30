@@ -124,22 +124,19 @@ namespace IndustrialPark
 
         protected virtual BoundingBox CreateBoundingBox()
         {
-            List<Vector3> list = new List<Vector3>();
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
+            try
             {
-                try
-                {
-                    list.AddRange(ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile().GetVertexList());
-                }
-                catch
-                {
-                    return BoundingBox.FromPoints(SharpRenderer.cubeVertices.ToArray());
-                }
+                return BoundingBox.FromPoints(ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile().GetVertexList().ToArray());
             }
-            else
-                return BoundingBox.FromPoints(SharpRenderer.cubeVertices.ToArray());
+            catch
+            {
+                List<Vector3> list = new List<Vector3>();
+                list.AddRange(SharpRenderer.cubeVertices);
+                for (int i = 0; i < list.Count; i++)
+                    list[i] *= 0.5f;
 
-            return BoundingBox.FromPoints(list.ToArray());
+                return BoundingBox.FromPoints(list.ToArray());
+            }
         }
 
         public virtual void Draw(SharpRenderer renderer)

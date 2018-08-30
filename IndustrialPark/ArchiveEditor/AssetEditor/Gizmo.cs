@@ -34,36 +34,28 @@ namespace IndustrialPark
                     break;
             }
             isSelected = false;
-            SetPosition(Vector3.Zero, Vector3.Zero);
+            SetPosition(Vector3.Zero, 0);
         }
 
-        public void SetPosition(Vector3 Position, Vector3 distance)
+        public void SetPosition(Vector3 Position, float distance)
         {
-            float dist;
+            if (distance < 1f) distance = 1f;
             switch (type)
             {
                 case GizmoType.X:
-                    dist = Math.Abs(distance.X) + 0.2f;
-                    if (dist < 1f) dist = 1f;
-
-                    Position.X += dist;
-                    transformMatrix = Matrix.Scaling(dist > 1f ? dist : 1f) * Matrix.RotationY(MathUtil.Pi / 2) * Matrix.Translation(Position);
+                    Position.X += distance;
+                    transformMatrix = Matrix.Scaling(distance / 1.5f) * Matrix.RotationY(MathUtil.Pi / 2) * Matrix.Translation(Position);
                     break;
                 case GizmoType.Y:
-                    dist = Math.Abs(distance.Y) + 0.2f;
-                    if (dist < 1f) dist = 1f;
-
-                    Position.Y += dist;
-                    transformMatrix = Matrix.Scaling(dist > 1f ? dist : 1f) * Matrix.RotationX(-MathUtil.Pi / 2) * Matrix.Translation(Position);
+                    Position.Y += distance;
+                    transformMatrix = Matrix.Scaling(distance / 1.5f) * Matrix.RotationX(-MathUtil.Pi / 2) * Matrix.Translation(Position);
                     break;
                 case GizmoType.Z:
-                    dist = Math.Abs(distance.Z) + 0.2f;
-                    if (dist < 1f) dist = 1f;
-
-                    Position.Z += dist;
-                    transformMatrix = Matrix.Scaling(dist > 1f ? dist : 1f) * Matrix.Translation(Position);
+                    Position.Z += distance;
+                    transformMatrix = Matrix.Scaling(distance / 1.5f) * Matrix.Translation(Position);
                     break;
             }
+
             boundingBox = BoundingBox.FromPoints(SharpRenderer.pyramidVertices.ToArray());
             boundingBox.Maximum = (Vector3)Vector3.Transform(boundingBox.Maximum, transformMatrix);
             boundingBox.Minimum = (Vector3)Vector3.Transform(boundingBox.Minimum, transformMatrix);

@@ -245,8 +245,10 @@ namespace IndustrialPark
                 assetDictionary[currentlySelectedAssetID].isSelected = true;
                 if (assetDictionary[currentlySelectedAssetID] is RenderableAsset ra)
                     UpdateGizmoPosition();
-                else ClearGizmos();
+                else
+                    ClearGizmos();
             }
+            else ClearGizmos();
         }
 
         public int GetSelectedLayerIndex()
@@ -295,6 +297,7 @@ namespace IndustrialPark
         // Gizmos
         private static Gizmo[] gizmos;
         private static bool DrawGizmos = false;
+        public bool FinishedMovingGizmo = false;
 
         public static void RenderGizmos(SharpRenderer renderer)
         {
@@ -306,10 +309,10 @@ namespace IndustrialPark
         public void UpdateGizmoPosition()
         {
             RenderableAsset currentAsset = ((RenderableAsset)assetDictionary[currentlySelectedAssetID]);
-            UpdateGizmoPosition(currentAsset.Position, currentAsset.boundingBox.Size);
+            UpdateGizmoPosition(currentAsset.Position, currentAsset.boundingBox.Size.Length() * 0.85f);
         }
         
-        private void UpdateGizmoPosition(Vector3 position, Vector3 distance)
+        private void UpdateGizmoPosition(Vector3 position, float distance)
         {
             DrawGizmos = true;
             foreach (Gizmo g in gizmos)
@@ -362,14 +365,22 @@ namespace IndustrialPark
             if (currentAsset is RenderableAsset ra)
             {
                 if (gizmos[0].isSelected)
+                {
                     ra.PositionX += (
                         (camera.Yaw >= -360 & camera.Yaw < -270) |
                         (camera.Yaw >= -90 & camera.Yaw < 90) |
-                        (camera.Yaw >= 270)) ? distance / 2 : -distance / 2;
+                        (camera.Yaw >= 270)) ? distance / 10f : -distance / 10f;
+                    UpdateGizmoPosition();
+                    FinishedMovingGizmo = true;
+                }
                 else if (gizmos[2].isSelected)
+                {
                     ra.PositionZ += (
                         (camera.Yaw >= -180 & camera.Yaw < 0) |
-                        (camera.Yaw >= 180)) ? distance / 2 : -distance / 2;
+                        (camera.Yaw >= 180)) ? distance / 10f : -distance / 10f;
+                    UpdateGizmoPosition();
+                    FinishedMovingGizmo = true;
+                }
             }
         }
 
@@ -380,7 +391,11 @@ namespace IndustrialPark
             Asset currentAsset = assetDictionary[currentlySelectedAssetID];
             if (currentAsset is RenderableAsset ra)
                 if (gizmos[1].isSelected)
-                    ra.PositionY -= distance / 2;
+                {
+                    ra.PositionY -= distance / 10f;
+                    UpdateGizmoPosition();
+                    FinishedMovingGizmo = true;
+                }
         }
     }
 }

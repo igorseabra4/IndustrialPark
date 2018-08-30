@@ -9,6 +9,13 @@ namespace IndustrialPark
 {
     public static class TextureManager
     {
+        public static string TreatTextureName(string entry)
+        {
+            entry = (Path.GetFileNameWithoutExtension(entry).Trim('_'));
+            entry = entry.Trim('_');
+            return entry;
+        }
+
         public const string DefaultTexture = "default";
         private static Dictionary<string, ShaderResourceView> Textures = new Dictionary<string, ShaderResourceView>();
 
@@ -69,7 +76,7 @@ namespace IndustrialPark
 
         private static void AddTexturePNG(string path)
         {
-            string textureName = Path.GetFileNameWithoutExtension(path);
+            string textureName = TreatTextureName(Path.GetFileNameWithoutExtension(path));
 
             if (Textures.ContainsKey(textureName))
             {
