@@ -137,7 +137,7 @@ namespace IndustrialPark
 
         public Matrix GetBiggerFovProjectionMatrix()
         {
-            return Matrix.PerspectiveFovRH(1.5f * FieldOfView, AspectRatio, NearPlane, FarPlane);
+            return Matrix.PerspectiveFovRH(1.3f * FieldOfView, AspectRatio, NearPlane, FarPlane);
         }
 
         public string GetInformation()

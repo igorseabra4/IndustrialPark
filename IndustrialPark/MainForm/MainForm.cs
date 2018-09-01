@@ -100,10 +100,6 @@ namespace IndustrialPark
                 ToggleCulling();
             else if (e.KeyCode == Keys.F)
                 ToggleWireFrame();
-            else if (e.KeyCode == Keys.X)
-                ToggleLevelModel();
-            else if (e.KeyCode == Keys.G)
-                ToggleObjects();
 
             if (e.KeyCode == Keys.F1)
                 Program.ViewConfig.Show();
@@ -149,6 +145,7 @@ namespace IndustrialPark
                 renderer.Camera.Reset();
         }
 
+        public static bool alternateNamingMode = false;
         public List<ArchiveEditor> archiveEditors = new List<ArchiveEditor>();
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
@@ -234,28 +231,6 @@ namespace IndustrialPark
             Program.ViewConfig.Show();
         }
 
-        private void levelModelToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ToggleLevelModel();
-        }
-
-        private void ToggleLevelModel()
-        {
-            levelModelToolStripMenuItem.Checked = !levelModelToolStripMenuItem.Checked;
-            renderer.SetLevelModel(levelModelToolStripMenuItem.Checked);
-        }
-
-        private void objectModelsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ToggleObjects();
-        }
-
-        private void ToggleObjects()
-        {
-            objectModelsToolStripMenuItem.Checked = !objectModelsToolStripMenuItem.Checked;
-            renderer.SetObjects(objectModelsToolStripMenuItem.Checked);
-        }
-
         private void renderPanel_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -311,10 +286,22 @@ namespace IndustrialPark
             TextureManager.ClearTextures();
         }
 
-        private void assetsWithModelToolStripMenuItem_Click(object sender, EventArgs e)
+        private void levelModelToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            assetsWithModelToolStripMenuItem.Checked = !assetsWithModelToolStripMenuItem.Checked;
-            PlaceableAsset.dontRender = !assetsWithModelToolStripMenuItem.Checked;
+            levelModelToolStripMenuItem.Checked = !levelModelToolStripMenuItem.Checked;
+            AssetJSP.dontRender = !levelModelToolStripMenuItem.Checked;
+        }
+
+        private void collisionModelToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            collisionModelToolStripMenuItem.Checked = !collisionModelToolStripMenuItem.Checked;
+            AssetJSP.dontRenderCollision = !collisionModelToolStripMenuItem.Checked;
+        }
+
+        private void bUTNToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            bUTNToolStripMenuItem.Checked = !bUTNToolStripMenuItem.Checked;
+            AssetBUTN.dontRender = !bUTNToolStripMenuItem.Checked;
         }
 
         private void mVPTToolStripMenuItem_Click(object sender, EventArgs e)
@@ -333,6 +320,30 @@ namespace IndustrialPark
         {
             tRIGToolStripMenuItem.Checked = !tRIGToolStripMenuItem.Checked;
             AssetTRIG.dontRender = !tRIGToolStripMenuItem.Checked;
+        }
+
+        private void pLATToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            pLATToolStripMenuItem.Checked = !pLATToolStripMenuItem.Checked;
+            AssetPLAT.dontRender = !pLATToolStripMenuItem.Checked;
+        }
+
+        private void sIMPToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            sIMPToolStripMenuItem.Checked = !sIMPToolStripMenuItem.Checked;
+            AssetSIMP.dontRender = !sIMPToolStripMenuItem.Checked;
+        }
+
+        private void vILToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            vILToolStripMenuItem.Checked = !vILToolStripMenuItem.Checked;
+            AssetVIL.dontRender = !vILToolStripMenuItem.Checked;
+        }
+
+        private void mRKRToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            mRKRToolStripMenuItem.Checked = !mRKRToolStripMenuItem.Checked;
+            AssetMRKR.dontRender = !mRKRToolStripMenuItem.Checked;
         }
     }
 }

@@ -1,23 +1,19 @@
 ﻿using HipHopFile;
 using SharpDX;
+using System;
 using System.Collections.Generic;
 
 namespace IndustrialPark
 {
     public abstract class RenderableAsset : Asset
     {
+        public Matrix world;
+        public BoundingBox boundingBox;
+
         public RenderableAsset(Section_AHDR AHDR) : base(AHDR)
         {
         }
 
-        public byte[] Data
-        {
-            get { return AHDR.containedFile; }
-            set { AHDR.containedFile = value; }
-        }
-                
-        public Matrix world;
-                
         public override void Setup(SharpRenderer renderer, bool defaultMode = true)
         {
             CreateTransformMatrix();
@@ -25,20 +21,14 @@ namespace IndustrialPark
             ArchiveEditorFunctions.renderableAssetSet.Add(this);
         }
 
-        public virtual void CreateTransformMatrix()
+        public abstract void CreateTransformMatrix();
+
+        protected abstract void CreateBoundingBox();
+        
+        public virtual void Draw(SharpRenderer renderer)
         {
-            world = Matrix.Identity;
-
-            boundingBox = CreateBoundingBox();
-            boundingBox.Maximum = (Vector3)Vector3.Transform(boundingBox.Maximum, world);
-            boundingBox.Minimum = (Vector3)Vector3.Transform(boundingBox.Minimum, world);
+            renderer.DrawCube(world, isSelected);
         }
-
-        protected abstract BoundingBox CreateBoundingBox();
-
-        public abstract void Draw(SharpRenderer renderer);
-
-        public BoundingBox boundingBox;
 
         public virtual float? IntersectsWith(Ray ray)
         {
@@ -46,6 +36,8 @@ namespace IndustrialPark
                 return TriangleIntersection(ray, distance);
             return null;
         }
+
+        protected abstract float? TriangleIntersection(Ray r, float distance);
 
         protected float? TriangleIntersection(Ray r, float initialDistance, List<Models.Triangle> triangles, List<Vector3> vertices, float multiplier = 1f)
         {
@@ -72,6 +64,14 @@ namespace IndustrialPark
             else return null;
         }
 
-        protected abstract float? TriangleIntersection(Ray r, float initialDistance);
+        public virtual Vector3 GetGizmoCenter()
+        {
+            return boundingBox.Center;
+        }
+
+        public virtual float GetGizmoRadius()
+        {
+            return Math.Max(Math.Max(boundingBox.Size.X, boundingBox.Size.Y), boundingBox.Size.Z) * 0.9f;
+        }
     }
 }

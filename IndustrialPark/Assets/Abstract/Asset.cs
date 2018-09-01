@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace IndustrialPark
@@ -16,12 +17,20 @@ namespace IndustrialPark
 
         public abstract void Setup(SharpRenderer renderer, bool defaultMode);
 
+        public byte[] Data
+        {
+            get { return AHDR.containedFile; }
+            set { AHDR.containedFile = value; }
+        }
+
         public override string ToString()
         {
-            return AHDR.ADBG.assetName + " [" + AHDR.assetID.ToString("X8") + "]";
+            return MainForm.alternateNamingMode ?
+                "[" + AHDR.assetID.ToString("X8") + "] " + AHDR.ADBG.assetName :
+                AHDR.ADBG.assetName + " [" + AHDR.assetID.ToString("X8") + "]";
         }
-        
-        public float ReadFloat(int j)
+
+        protected float ReadFloat(int j)
         {
             return BitConverter.ToSingle(new byte[] {
                 AHDR.containedFile[j + 3],
@@ -30,26 +39,26 @@ namespace IndustrialPark
                 AHDR.containedFile[j] }, 0);
         }
 
-        public byte ReadByte(int j)
+        protected byte ReadByte(int j)
         {
             return AHDR.containedFile[j];
         }
 
-        public short ReadShort(int j)
+        protected short ReadShort(int j)
         {
             return BitConverter.ToInt16(new byte[] {
                 AHDR.containedFile[j + 1],
                 AHDR.containedFile[j] }, 0);
         }
 
-        public ushort ReadUshort(ushort j)
+        protected ushort ReadUshort(int j)
         {
             return BitConverter.ToUInt16(new byte[] {
                 AHDR.containedFile[j + 1],
                 AHDR.containedFile[j] }, 0);
         }
 
-        public int ReadInt(int j)
+        protected int ReadInt(int j)
         {
             return BitConverter.ToInt32(new byte[] {
                 AHDR.containedFile[j + 3],
@@ -58,7 +67,7 @@ namespace IndustrialPark
                 AHDR.containedFile[j] }, 0);
         }
 
-        public uint ReadUInt(uint j)
+        protected uint ReadUInt(int j)
         {
             try
             {
@@ -74,44 +83,64 @@ namespace IndustrialPark
             }
         }
 
-        public void Write(int j, float value)
+        protected void Write(int j, float value)
         {
             byte[] split = BitConverter.GetBytes(value).Reverse().ToArray();
             for (int i = 0; i < 4; i++)
                 AHDR.containedFile[j + i] = split[i];
         }
 
-        public void Write(int j, byte value)
+        protected void Write(int j, byte value)
         {
             AHDR.containedFile[j] = value;
         }
 
-        public void Write(int j, short value)
+        protected void Write(int j, short value)
         {
             byte[] split = BitConverter.GetBytes(value).Reverse().ToArray();
             for (int i = 0; i < 2; i++)
                 AHDR.containedFile[j + i] = split[i];
         }
 
-        public void Write(int j, ushort value)
+        protected void Write(int j, ushort value)
         {
             byte[] split = BitConverter.GetBytes(value).Reverse().ToArray();
             for (int i = 0; i < 2; i++)
                 AHDR.containedFile[j + i] = split[i];
         }
 
-        public void Write(int j, int value)
+        protected void Write(int j, int value)
         {
             byte[] split = BitConverter.GetBytes(value).Reverse().ToArray();
             for (int i = 0; i < 4; i++)
                 AHDR.containedFile[j + i] = split[i];
         }
 
-        public void Write(int j, uint value)
+        protected void Write(int j, uint value)
         {
             byte[] split = BitConverter.GetBytes(value).Reverse().ToArray();
             for (int i = 0; i < 4; i++)
                 AHDR.containedFile[j + i] = split[i];
+        }
+
+        protected AssetEvent[] ReadEvents(int eventsStart)
+        {
+            byte amount = ReadByte(0x05);
+            AssetEvent[] events = new AssetEvent[amount];
+            for (int i = 0; i < amount; i++)
+                events[i] = AssetEvent.From(Data, eventsStart + i * AssetEvent.sizeOfStruct);
+            return events;
+        }
+
+        protected void WriteEvents(int eventsStart, AssetEvent[] value)
+        {
+            Write(0x05, (byte)value.Length);
+            for (int i = 0; i < value.Length; i++)
+            {
+                List<byte> bytes = Data.ToList();
+                value[i].WriteTo(ref bytes, eventsStart + i * AssetEvent.sizeOfStruct);
+                Data = bytes.ToArray();
+            }
         }
     }
 }

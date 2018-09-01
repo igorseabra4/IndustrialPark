@@ -37,11 +37,10 @@
             this.propertyGridAsset.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.propertyGridAsset.HelpVisible = false;
             this.propertyGridAsset.Location = new System.Drawing.Point(12, 25);
             this.propertyGridAsset.Name = "propertyGridAsset";
             this.propertyGridAsset.PropertySort = System.Windows.Forms.PropertySort.NoSort;
-            this.propertyGridAsset.Size = new System.Drawing.Size(260, 324);
+            this.propertyGridAsset.Size = new System.Drawing.Size(282, 441);
             this.propertyGridAsset.TabIndex = 5;
             this.propertyGridAsset.ToolbarVisible = false;
             // 
@@ -57,7 +56,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 361);
+            this.ClientSize = new System.Drawing.Size(306, 478);
             this.Controls.Add(this.labelAssetName);
             this.Controls.Add(this.propertyGridAsset);
             this.MaximizeBox = false;
@@ -65,7 +64,6 @@
             this.ShowIcon = false;
             this.Text = "Internal Asset Editor";
             this.TopMost = true;
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.InternalAssetEditor_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 

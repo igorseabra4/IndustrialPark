@@ -65,6 +65,8 @@ namespace IndustrialPark
 
         public void OpenFile(string fileName)
         {
+            currentlySelectedAssetID = 0;
+
             Dispose();
 
             currentlyOpenFilePath = fileName;
@@ -84,9 +86,14 @@ namespace IndustrialPark
 
             foreach (Section_AHDR AHDR in DICT.ATOC.AHDRList)
                 AddAssetToDictionary(AHDR);
+            RecalculateAllMatrices();
+        }
 
-            foreach (RenderableAsset a in renderableAssetSet)
-                a.Setup(Program.MainForm.renderer);
+        public void Save()
+        {
+            HipSection[] hipFile = SetupStream(ref HIPA, ref PACK, ref DICT, ref STRM);
+            byte[] file = HipArrayToFile(hipFile);
+            File.WriteAllBytes(currentlyOpenFilePath, file);
         }
 
         public void Dispose()
@@ -127,30 +134,14 @@ namespace IndustrialPark
                 case AssetType.BSP:
                 case AssetType.JSP:
                     {
-                        AssetLevelModel newAsset = new AssetLevelModel(AHDR);
+                        AssetJSP newAsset = new AssetJSP(AHDR);
                         newAsset.Setup(Program.MainForm.renderer);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.RWTX:
-                    {
-                        AssetRWTX newAsset = new AssetRWTX(AHDR);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
                 case AssetType.BUTN:
-                case AssetType.PLAT:
-                case AssetType.SIMP:
-                case AssetType.VIL:
                     {
-                        PlaceableAsset newAsset = new PlaceableAsset(AHDR); ;
-                        newAsset.Setup(Program.MainForm.renderer);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.PKUP:
-                    {
-                        AssetPKUP newAsset = new AssetPKUP(AHDR);
+                        AssetBUTN newAsset = new AssetBUTN(AHDR); ;
                         newAsset.Setup(Program.MainForm.renderer);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
@@ -169,6 +160,13 @@ namespace IndustrialPark
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
+                case AssetType.MRKR:
+                    {
+                        AssetMRKR newAsset = new AssetMRKR(AHDR);
+                        newAsset.Setup(Program.MainForm.renderer);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
                 case AssetType.MVPT:
                     {
                         AssetMVPT newAsset = new AssetMVPT(AHDR);
@@ -183,9 +181,44 @@ namespace IndustrialPark
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
+                case AssetType.PKUP:
+                    {
+                        AssetPKUP newAsset = new AssetPKUP(AHDR);
+                        newAsset.Setup(Program.MainForm.renderer);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
+                case AssetType.PLAT:
+                    {
+                        AssetPLAT newAsset = new AssetPLAT(AHDR); ;
+                        newAsset.Setup(Program.MainForm.renderer);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
+                case AssetType.RWTX:
+                    {
+                        AssetRWTX newAsset = new AssetRWTX(AHDR);
+                        newAsset.Setup(Program.MainForm.renderer);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
+                case AssetType.SIMP:
+                    {
+                        AssetSIMP newAsset = new AssetSIMP(AHDR); ;
+                        newAsset.Setup(Program.MainForm.renderer);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
                 case AssetType.TRIG:
                     {
                         AssetTRIG newAsset = new AssetTRIG(AHDR);
+                        newAsset.Setup(Program.MainForm.renderer);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
+                case AssetType.VIL:
+                    {
+                        AssetVIL newAsset = new AssetVIL(AHDR); ;
                         newAsset.Setup(Program.MainForm.renderer);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
@@ -250,7 +283,7 @@ namespace IndustrialPark
             if (currentlySelectedAssetID != 0)
             {
                 assetDictionary[currentlySelectedAssetID].isSelected = true;
-                if (assetDictionary[currentlySelectedAssetID] is PlaceableAsset ra)
+                if (assetDictionary[currentlySelectedAssetID] is RenderableAssetWithPosition ra)
                     UpdateGizmoPosition();
                 else
                     ClearGizmos();
@@ -293,14 +326,13 @@ namespace IndustrialPark
                 SelectAsset(assetID);
             return assetID;
         }
-
-        public void Save()
+        
+        public void RecalculateAllMatrices()
         {
-            HipSection[] hipFile = SetupStream(ref HIPA, ref PACK, ref DICT, ref STRM);
-            byte[] file = HipArrayToFile(hipFile);
-            File.WriteAllBytes(currentlyOpenFilePath, file);
+            foreach (RenderableAsset a in renderableAssetSet)
+                a.CreateTransformMatrix();
         }
-
+        
         // Gizmos
         private static Gizmo[] gizmos;
         private static bool DrawGizmos = false;
@@ -315,7 +347,7 @@ namespace IndustrialPark
 
         public void UpdateGizmoPosition()
         {
-            PlaceableAsset currentAsset = ((PlaceableAsset)assetDictionary[currentlySelectedAssetID]);
+            RenderableAssetWithPosition currentAsset = ((RenderableAssetWithPosition)assetDictionary[currentlySelectedAssetID]);
             UpdateGizmoPosition(currentAsset.GetGizmoCenter(), currentAsset.GetGizmoRadius());
         }
         
@@ -369,7 +401,7 @@ namespace IndustrialPark
             if (currentlySelectedAssetID == 0) return;
 
             Asset currentAsset = assetDictionary[currentlySelectedAssetID];
-            if (currentAsset is PlaceableAsset ra)
+            if (currentAsset is RenderableAssetWithPosition ra)
             {
                 if (gizmos[0].isSelected)
                 {
@@ -396,7 +428,7 @@ namespace IndustrialPark
             if (currentlySelectedAssetID == 0) return;
 
             Asset currentAsset = assetDictionary[currentlySelectedAssetID];
-            if (currentAsset is PlaceableAsset ra)
+            if (currentAsset is RenderableAssetWithPosition ra)
                 if (gizmos[1].isSelected)
                 {
                     ra.PositionY -= distance / 10f;

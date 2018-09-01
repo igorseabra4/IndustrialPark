@@ -100,7 +100,7 @@ namespace IndustrialPark
                 }
                 catch { }
             foreach (RenderableAsset awm in ArchiveEditorFunctions.renderableAssetSet)
-                if (awm is AssetLevelModel alm)
+                if (awm is AssetJSP alm)
                     try
                     {
                         models.Add(alm.model);

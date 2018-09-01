@@ -42,17 +42,20 @@ namespace IndustrialPark
             this.noCullingCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.wireframeFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.BackgroundColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.levelModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.objectModelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.displayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.assetsWithModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.levelModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.collisionModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bUTNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mVPTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pKUPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pLATToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sIMPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tRIGToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.vILToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.renderPanel = new System.Windows.Forms.Panel();
+            this.mRKRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -82,14 +85,14 @@ namespace IndustrialPark
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
             this.newToolStripMenuItem.Text = "Open New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(127, 6);
             // 
             // optionsToolStripMenuItem
             // 
@@ -100,10 +103,7 @@ namespace IndustrialPark
             this.toolStripSeparator1,
             this.noCullingCToolStripMenuItem,
             this.wireframeFToolStripMenuItem,
-            this.BackgroundColorToolStripMenuItem,
-            this.toolStripSeparator2,
-            this.levelModelToolStripMenuItem,
-            this.objectModelsToolStripMenuItem});
+            this.BackgroundColorToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.optionsToolStripMenuItem.Text = "Options";
@@ -155,48 +155,49 @@ namespace IndustrialPark
             this.BackgroundColorToolStripMenuItem.Text = "Background Color...";
             this.BackgroundColorToolStripMenuItem.Click += new System.EventHandler(this.BackgroundColorToolStripMenuItem_Click);
             // 
-            // toolStripSeparator2
+            // displayToolStripMenuItem
             // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(176, 6);
+            this.displayToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.levelModelToolStripMenuItem,
+            this.collisionModelToolStripMenuItem,
+            this.bUTNToolStripMenuItem,
+            this.mRKRToolStripMenuItem,
+            this.mVPTToolStripMenuItem,
+            this.pKUPToolStripMenuItem,
+            this.pLATToolStripMenuItem,
+            this.sIMPToolStripMenuItem,
+            this.tRIGToolStripMenuItem,
+            this.vILToolStripMenuItem});
+            this.displayToolStripMenuItem.Name = "displayToolStripMenuItem";
+            this.displayToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
+            this.displayToolStripMenuItem.Text = "Display";
             // 
             // levelModelToolStripMenuItem
             // 
             this.levelModelToolStripMenuItem.Checked = true;
             this.levelModelToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.levelModelToolStripMenuItem.Name = "levelModelToolStripMenuItem";
-            this.levelModelToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.levelModelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.levelModelToolStripMenuItem.Text = "Level Model";
             this.levelModelToolStripMenuItem.Click += new System.EventHandler(this.levelModelToolStripMenuItem_Click);
             // 
-            // objectModelsToolStripMenuItem
+            // collisionModelToolStripMenuItem
             // 
-            this.objectModelsToolStripMenuItem.Checked = true;
-            this.objectModelsToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.objectModelsToolStripMenuItem.Name = "objectModelsToolStripMenuItem";
-            this.objectModelsToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
-            this.objectModelsToolStripMenuItem.Text = "Object Models";
-            this.objectModelsToolStripMenuItem.Click += new System.EventHandler(this.objectModelsToolStripMenuItem_Click);
+            this.collisionModelToolStripMenuItem.Checked = true;
+            this.collisionModelToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.collisionModelToolStripMenuItem.Name = "collisionModelToolStripMenuItem";
+            this.collisionModelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.collisionModelToolStripMenuItem.Text = "Collision Model";
+            this.collisionModelToolStripMenuItem.Click += new System.EventHandler(this.collisionModelToolStripMenuItem_Click);
             // 
-            // displayToolStripMenuItem
+            // bUTNToolStripMenuItem
             // 
-            this.displayToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.assetsWithModelToolStripMenuItem,
-            this.mVPTToolStripMenuItem,
-            this.pKUPToolStripMenuItem,
-            this.tRIGToolStripMenuItem});
-            this.displayToolStripMenuItem.Name = "displayToolStripMenuItem";
-            this.displayToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
-            this.displayToolStripMenuItem.Text = "Display";
-            // 
-            // assetsWithModelToolStripMenuItem
-            // 
-            this.assetsWithModelToolStripMenuItem.Checked = true;
-            this.assetsWithModelToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.assetsWithModelToolStripMenuItem.Name = "assetsWithModelToolStripMenuItem";
-            this.assetsWithModelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.assetsWithModelToolStripMenuItem.Text = "Placeable Assets";
-            this.assetsWithModelToolStripMenuItem.Click += new System.EventHandler(this.assetsWithModelToolStripMenuItem_Click);
+            this.bUTNToolStripMenuItem.Checked = true;
+            this.bUTNToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.bUTNToolStripMenuItem.Name = "bUTNToolStripMenuItem";
+            this.bUTNToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.bUTNToolStripMenuItem.Text = "BUTN";
+            this.bUTNToolStripMenuItem.Click += new System.EventHandler(this.bUTNToolStripMenuItem_Click);
             // 
             // mVPTToolStripMenuItem
             // 
@@ -216,6 +217,24 @@ namespace IndustrialPark
             this.pKUPToolStripMenuItem.Text = "PKUP";
             this.pKUPToolStripMenuItem.Click += new System.EventHandler(this.pKUPToolStripMenuItem_Click);
             // 
+            // pLATToolStripMenuItem
+            // 
+            this.pLATToolStripMenuItem.Checked = true;
+            this.pLATToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.pLATToolStripMenuItem.Name = "pLATToolStripMenuItem";
+            this.pLATToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pLATToolStripMenuItem.Text = "PLAT";
+            this.pLATToolStripMenuItem.Click += new System.EventHandler(this.pLATToolStripMenuItem_Click);
+            // 
+            // sIMPToolStripMenuItem
+            // 
+            this.sIMPToolStripMenuItem.Checked = true;
+            this.sIMPToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.sIMPToolStripMenuItem.Name = "sIMPToolStripMenuItem";
+            this.sIMPToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.sIMPToolStripMenuItem.Text = "SIMP";
+            this.sIMPToolStripMenuItem.Click += new System.EventHandler(this.sIMPToolStripMenuItem_Click);
+            // 
             // tRIGToolStripMenuItem
             // 
             this.tRIGToolStripMenuItem.Checked = true;
@@ -224,6 +243,15 @@ namespace IndustrialPark
             this.tRIGToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.tRIGToolStripMenuItem.Text = "TRIG";
             this.tRIGToolStripMenuItem.Click += new System.EventHandler(this.tRIGToolStripMenuItem_Click);
+            // 
+            // vILToolStripMenuItem
+            // 
+            this.vILToolStripMenuItem.Checked = true;
+            this.vILToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.vILToolStripMenuItem.Name = "vILToolStripMenuItem";
+            this.vILToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.vILToolStripMenuItem.Text = "VIL";
+            this.vILToolStripMenuItem.Click += new System.EventHandler(this.vILToolStripMenuItem_Click);
             // 
             // statusStrip1
             // 
@@ -255,6 +283,15 @@ namespace IndustrialPark
             this.renderPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMoveControl);
             this.renderPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.renderPanel_MouseUp);
             this.renderPanel.Resize += new System.EventHandler(this.ResetMouseCenter);
+            // 
+            // mRKRToolStripMenuItem
+            // 
+            this.mRKRToolStripMenuItem.Checked = true;
+            this.mRKRToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.mRKRToolStripMenuItem.Name = "mRKRToolStripMenuItem";
+            this.mRKRToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.mRKRToolStripMenuItem.Text = "MRKR";
+            this.mRKRToolStripMenuItem.Click += new System.EventHandler(this.mRKRToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -293,19 +330,22 @@ namespace IndustrialPark
         private ToolStripMenuItem BackgroundColorToolStripMenuItem;
         private ToolStripMenuItem viewConfigToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator1;
-        private ToolStripSeparator toolStripSeparator2;
-        private ToolStripMenuItem levelModelToolStripMenuItem;
-        private ToolStripMenuItem objectModelsToolStripMenuItem;
         private ToolStripMenuItem archiveEditorToolStripMenuItem;
         private ToolStripMenuItem newToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator3;
         private ToolStripMenuItem addTextureFolderToolStripMenuItem;
         private ToolStripMenuItem clearTexturesToolStripMenuItem;
         private ToolStripMenuItem displayToolStripMenuItem;
-        private ToolStripMenuItem assetsWithModelToolStripMenuItem;
+        private ToolStripMenuItem bUTNToolStripMenuItem;
         private ToolStripMenuItem mVPTToolStripMenuItem;
         private ToolStripMenuItem tRIGToolStripMenuItem;
         private ToolStripMenuItem pKUPToolStripMenuItem;
+        private ToolStripMenuItem collisionModelToolStripMenuItem;
+        private ToolStripMenuItem levelModelToolStripMenuItem;
+        private ToolStripMenuItem pLATToolStripMenuItem;
+        private ToolStripMenuItem sIMPToolStripMenuItem;
+        private ToolStripMenuItem vILToolStripMenuItem;
+        private ToolStripMenuItem mRKRToolStripMenuItem;
     }
 }
 

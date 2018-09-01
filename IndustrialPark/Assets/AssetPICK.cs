@@ -32,11 +32,11 @@ namespace IndustrialPark
             {
                 PICKentry entry = new PICKentry()
                 {
-                    unknown1 = ReadUInt((uint)(8 + i * 0x14)),
-                    unknown2 = ReadUInt((uint)(12 + i * 0x14)),
-                    unknown3 = ReadUInt((uint)(16 + i * 0x14)),
-                    unknown4 = ReadUInt((uint)(20 + i * 0x14)),
-                    unknown5 = ReadUInt((uint)(24 + i * 0x14))
+                    unknown1 = ReadUInt(8 + i * 0x14),
+                    unknown2 = ReadUInt(12 + i * 0x14),
+                    unknown3 = ReadUInt(16 + i * 0x14),
+                    unknown4 = ReadUInt(20 + i * 0x14),
+                    unknown5 = ReadUInt(24 + i * 0x14)
                 };
 
                 pickEntries.Add(entry.unknown1, entry);

@@ -7,7 +7,7 @@ namespace IndustrialPark
     public class AssetMINF : AssetWithModel
     {
         private uint _modelAssetID;
-        public uint ModelAssetID
+        public AssetID ModelAssetID
         {
             get { return _modelAssetID; }
 

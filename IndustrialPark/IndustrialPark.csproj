@@ -77,20 +77,28 @@
     <Compile Include="ArchiveEditor\AssetEditor\InternalAssetEditor.Designer.cs">
       <DependentUpon>InternalAssetEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Assets\Asset.cs" />
+    <Compile Include="Assets\Abstract\Asset.cs" />
+    <Compile Include="Assets\AssetEvent.cs" />
+    <Compile Include="Assets\EventType.cs" />
+    <Compile Include="Assets\Renderable\RenderableWithPosition\AssetBUTN.cs" />
     <Compile Include="Assets\AssetGeneric.cs" />
-    <Compile Include="Assets\AssetMINF.cs" />
-    <Compile Include="Assets\AssetMODL.cs" />
-    <Compile Include="Assets\AssetMVPT.cs" />
+    <Compile Include="Assets\AssetID.cs" />
+    <Compile Include="Assets\Renderable\RenderableWithPosition\AssetMRKR.cs" />
+    <Compile Include="Assets\WithModel\AssetMINF.cs" />
+    <Compile Include="Assets\WithModel\AssetMODL.cs" />
+    <Compile Include="Assets\Renderable\RenderableWithPosition\AssetMVPT.cs" />
     <Compile Include="Assets\AssetPICK.cs" />
-    <Compile Include="Assets\AssetLevelModel.cs" />
-    <Compile Include="Assets\AssetPKUP.cs" />
+    <Compile Include="Assets\Renderable\AssetLevelModel.cs" />
+    <Compile Include="Assets\Renderable\RenderableWithPosition\AssetPKUP.cs" />
+    <Compile Include="Assets\Renderable\RenderableWithPosition\AssetPLAT.cs" />
     <Compile Include="Assets\AssetRWTX.cs" />
-    <Compile Include="Assets\AssetTRIG.cs" />
-    <Compile Include="Assets\AssetWithModel.cs" />
-    <Compile Include="Assets\PlaceableAsset.cs" />
-    <Compile Include="Assets\RenderableAsset.cs" />
-    <Compile Include="Other\ConvertionFunctions.cs" />
+    <Compile Include="Assets\Renderable\RenderableWithPosition\AssetSIMP.cs" />
+    <Compile Include="Assets\Renderable\RenderableWithPosition\AssetTRIG.cs" />
+    <Compile Include="Assets\Renderable\RenderableWithPosition\AssetVIL.cs" />
+    <Compile Include="Assets\Abstract\AssetWithModel.cs" />
+    <Compile Include="Other\AssetIDTypeConverter.cs" />
+    <Compile Include="Assets\Abstract\RenderableAsset.cs" />
+    <Compile Include="Assets\Abstract\RenderableAssetWithPosition.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -103,6 +111,7 @@
     <Compile Include="MainForm\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Other\ConverterFunctions.cs" />
     <Compile Include="Other\ModelConverterData.cs" />
     <Compile Include="Other\OBJFunctions.cs" />
     <Compile Include="Other\Triangle.cs" />

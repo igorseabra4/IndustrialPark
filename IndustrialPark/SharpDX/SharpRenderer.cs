@@ -93,19 +93,6 @@ namespace IndustrialPark
                 whiteDefault = device.LoadTextureFromFile("Resources\\WhiteDefault.png");
         }
 
-        private bool showLevel = true;
-        private bool showObjects = true;
-        
-        public void SetLevelModel(bool value)
-        {
-            showLevel = value;
-        }
-
-        public void SetObjects(bool value)
-        {
-            showObjects = value;
-        }
-
         public static SharpMesh Cube { get; private set; }
         public static SharpMesh Cylinder { get; private set; }
         public static SharpMesh Pyramid { get; private set; }
@@ -175,11 +162,10 @@ namespace IndustrialPark
         public Vector4 normalColor = new Vector4(0.2f, 0.6f, 0.8f, 0.8f);
         public Vector4 selectedColor = new Vector4(1f, 0.5f, 0.1f, 0.8f);
         public Vector4 selectedObjectColor = new Vector4(1f, 0f, 0f, 1f);
+        DefaultRenderData renderData;
 
         public void DrawCube(Matrix world, bool isSelected, float multiplier = 0.5f)
         {
-            DefaultRenderData renderData;
-
             renderData.worldViewProjection = Matrix.Scaling(multiplier) * world * viewProjection;
 
             if (isSelected)
@@ -200,10 +186,30 @@ namespace IndustrialPark
             Cube.Draw(device);
         }
 
+        public void DrawPyramid(Matrix world, bool isSelected, float multiplier = 0.5f)
+        {
+            renderData.worldViewProjection = Matrix.Scaling(multiplier) * world * viewProjection;
+
+            if (isSelected)
+                renderData.Color = selectedColor;
+            else
+                renderData.Color = normalColor;
+
+            device.SetFillModeDefault();
+            device.SetCullModeNone();
+            device.SetBlendStateAlphaBlend();
+            device.ApplyRasterState();
+            device.UpdateAllStates();
+
+            device.UpdateData(basicBuffer, renderData);
+            device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer);
+            basicShader.Apply();
+
+            Pyramid.Draw(device);
+        }
+
         public void DrawSphere(Matrix world, bool isSelected)
         {
-            DefaultRenderData renderData;
-
             renderData.worldViewProjection = world * viewProjection;
 
             if (isSelected)
@@ -258,19 +264,17 @@ namespace IndustrialPark
                 device.ApplyRasterState();
                 device.UpdateAllStates();
 
-                if (showLevel)
-                    foreach (RenderableAsset a in ArchiveEditorFunctions.renderableAssetSet)
-                    {
-                        if (a is AssetLevelModel)
-                            (a as AssetLevelModel).Draw(this);
-                    }
-                if (showObjects)
-                    foreach (RenderableAsset a in ArchiveEditorFunctions.renderableAssetSet)
-                    {
-                        if (!(a is AssetLevelModel))
-                            if (frustum.Intersects(ref a.boundingBox))
-                                a.Draw(this);
-                    }
+                foreach (RenderableAsset a in ArchiveEditorFunctions.renderableAssetSet)
+                {
+                    if (a is AssetJSP)
+                        (a as AssetJSP).Draw(this);
+                }
+                foreach (RenderableAsset a in ArchiveEditorFunctions.renderableAssetSet)
+                {
+                    if (!(a is AssetJSP))
+                        if (frustum.Intersects(ref a.boundingBox))
+                            a.Draw(this);
+                }
                 ArchiveEditorFunctions.RenderGizmos(this);
 
                 //present

@@ -19,7 +19,6 @@ namespace IndustrialPark
         public bool isNoCulling = false;
         public bool isCollision = false;
         public bool containsNormals = false;
-        //public bool ignoreNormals = false;
 
         public List<SharpMesh> meshList;
         public static List<SharpMesh> completeMeshList = new List<SharpMesh>();
@@ -51,7 +50,7 @@ namespace IndustrialPark
         }
         
         public DefaultRenderData renderData;
-
+        
         public void SetForRendering(SharpDevice device, RWSection[] rwChunkList, byte[] rwByteArray)
         {
             rwSectionArray = rwChunkList;
@@ -69,7 +68,7 @@ namespace IndustrialPark
 
             vertexListG = new List<Vector3>();
             triangleList = new List<Triangle>();
-
+            
             foreach (RWSection rwSection in rwSectionArray)
             {
                 if (rwSection is World_000B w)
@@ -158,7 +157,7 @@ namespace IndustrialPark
             else throw new Exception();
         }
 
-        void AddAtomic(SharpDevice device, AtomicSector_0009 AtomicSector)
+        private void AddAtomic(SharpDevice device, AtomicSector_0009 AtomicSector)
         {
             if (AtomicSector.atomicSectorStruct.isNativeData)
             {
@@ -337,7 +336,7 @@ namespace IndustrialPark
             }
         }
 
-        void AddNativeData(SharpDevice device, Extension_0003 extension, List<string> MaterialStream, Matrix transformMatrix)
+        private void AddNativeData(SharpDevice device, Extension_0003 extension, List<string> MaterialStream, Matrix transformMatrix)
         {
             NativeDataGC n = null;
 

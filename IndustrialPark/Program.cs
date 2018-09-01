@@ -10,7 +10,6 @@ namespace IndustrialPark
     {
         public static MainForm MainForm;
         public static ViewConfig ViewConfig;
-        public static InternalAssetEditor InternalEditor;
 
         /// <summary>
         /// Ponto de entrada principal para o aplicativo.
@@ -25,7 +24,6 @@ namespace IndustrialPark
 
             MainForm = new MainForm();
             ViewConfig = new ViewConfig();
-            InternalEditor = new InternalAssetEditor();
 
             Application.Run(MainForm);
         }

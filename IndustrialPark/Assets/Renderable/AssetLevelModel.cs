@@ -1,36 +1,44 @@
 ﻿using HipHopFile;
 using SharpDX;
-using System.Collections.Generic;
 
 namespace IndustrialPark
 {
-    public class AssetLevelModel : RenderableAsset
+    public class AssetJSP : RenderableAsset
     { 
         public RenderWareModelFile model;
+        public static bool dontRender = false;
+        public static bool dontRenderCollision;
 
-        public AssetLevelModel(Section_AHDR AHDR) : base(AHDR)
+        public AssetJSP(Section_AHDR AHDR) : base(AHDR)
         {
         }
 
         public override void Setup(SharpRenderer renderer, bool defaultMode = true)
         {
             model = new RenderWareModelFile(AHDR.ADBG.assetName);
-            //model.ignoreNormals = true;
             model.SetForRendering(renderer.device, RenderWareFile.ReadFileMethods.ReadRenderWareFile(AHDR.containedFile), AHDR.containedFile);
 
-            boundingBox = CreateBoundingBox();
+            CreateTransformMatrix();
 
             ArchiveEditorFunctions.renderableAssetSet.Add(this);
         }
 
-        public override void Draw(SharpRenderer renderer)
+        public override void CreateTransformMatrix()
         {
-            model.Render(renderer, Matrix.Identity, isSelected);
+            world = Matrix.Identity;
+            CreateBoundingBox();
         }
 
-        protected override BoundingBox CreateBoundingBox()
+        protected override void CreateBoundingBox()
         {
-            return BoundingBox.FromPoints(model.GetVertexList().ToArray());
+            boundingBox = BoundingBox.FromPoints(model.GetVertexList().ToArray());
+        }
+
+        public override void Draw(SharpRenderer renderer)
+        {
+            if ((dontRender & !model.isCollision) | (dontRenderCollision & model.isCollision)) return;
+
+            model.Render(renderer, world, isSelected);
         }
         
         protected override float? TriangleIntersection(Ray r, float initialDistance)

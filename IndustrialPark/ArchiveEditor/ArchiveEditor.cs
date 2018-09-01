@@ -18,6 +18,7 @@ namespace IndustrialPark
             InitializeComponent();
             TopMost = true;
             archive = new ArchiveEditorFunctions();
+            defaultColor = textBoxFindAsset.BackColor;
 
             programIsChangingStuff = true;
 
@@ -58,7 +59,7 @@ namespace IndustrialPark
                 DialogResult result = MessageBox.Show("You have unsaved changes. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 
                 if (result == DialogResult.Cancel) return;
-                //if (result == DialogResult.Yes) SaveFile();
+                if (result == DialogResult.Yes) archive.Save();
             }
 
             archive.Dispose();
@@ -82,6 +83,8 @@ namespace IndustrialPark
             toolStripStatusLabel1.Text = "File: " + fileName;
             Text = Path.GetFileName(fileName);
             Program.MainForm.SetToolStripItemName(this, Text);
+            saveToolStripMenuItem.Enabled = true;
+            saveAsToolStripMenuItem.Enabled = true;
             unsavedChanges = false;
             PopulateLayerComboBox();
         }
@@ -243,6 +246,7 @@ namespace IndustrialPark
             {
                 try
                 {
+                    unsavedChanges = true;
                     archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR);
                     PopulateAssetsComboAndListBox();
                 }
@@ -256,7 +260,9 @@ namespace IndustrialPark
         private void buttonCopy_Click(object sender, EventArgs e)
         {
             if (listBoxAssets.SelectedIndex < 0) return;
-            
+
+            unsavedChanges = true;
+
             Section_AHDR AHDR = archive.GetFromAssetID(CurrentlySelectedAssetID()).AHDR;
 
             uint newAssetId = AHDR.assetID;
@@ -267,10 +273,13 @@ namespace IndustrialPark
             {
                 fileOffset = AHDR.fileOffset,
                 fileSize = AHDR.fileSize,
-                containedFile = AHDR.containedFile,
                 plusValue = AHDR.plusValue
             };
-            
+
+            newAHDR.containedFile = new byte[AHDR.containedFile.Length];
+            for (int i = 0; i < newAHDR.containedFile.Length; i++)
+                newAHDR.containedFile[i] = AHDR.containedFile[i];
+
             archive.AddAsset(comboBoxLayers.SelectedIndex, newAHDR);
             PopulateAssetsComboAndListBox();
         }
@@ -281,6 +290,8 @@ namespace IndustrialPark
 
             archive.RemoveAsset(comboBoxLayers.SelectedIndex, CurrentlySelectedAssetID());
 
+            unsavedChanges = true;
+
             listBoxAssets.Items.Remove(listBoxAssets.SelectedItem);
         }
 
@@ -288,7 +299,7 @@ namespace IndustrialPark
         {
             if (listBoxAssets.SelectedIndex < 0) return;
 
-            if (archive.GetFromAssetID(CurrentlySelectedAssetID()) is PlaceableAsset a)
+            if (archive.GetFromAssetID(CurrentlySelectedAssetID()) is RenderableAssetWithPosition a)
                 Program.MainForm.renderer.Camera.SetPosition(a.Position - 8 * Program.MainForm.renderer.Camera.GetForward());
         }
 
@@ -301,6 +312,7 @@ namespace IndustrialPark
 
                 if (success)
                 {
+                    unsavedChanges = true;
                     archive.RemoveAsset(comboBoxLayers.SelectedIndex, aid);
                     archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR);
                     PopulateAssetsComboAndListBox();
@@ -316,14 +328,20 @@ namespace IndustrialPark
         {
             if (listBoxAssets.SelectedItem != null)
             {
-                Program.InternalEditor.SelectAsset(archive.GetFromAssetID(CurrentlySelectedAssetID()));
-                Program.InternalEditor.Show();
+                new InternalAssetEditor(archive.GetFromAssetID(CurrentlySelectedAssetID())).Show();
+                unsavedChanges = true;
             }
         }
 
         private void buttonExportRaw_Click(object sender, EventArgs e)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            if (listBoxAssets.SelectedItem == null)
+                return;
+
+            SaveFileDialog saveFileDialog = new SaveFileDialog()
+            {
+                FileName = archive.GetFromAssetID(CurrentlySelectedAssetID()).AHDR.ADBG.assetName
+            };
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 try
@@ -352,6 +370,7 @@ namespace IndustrialPark
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             archive.Save();
+            unsavedChanges = false;
         }
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -361,6 +380,7 @@ namespace IndustrialPark
             {
                 archive.currentlyOpenFilePath = saveFileDialog.FileName;
                 archive.Save();
+                unsavedChanges = false;
             }
         }
 
@@ -372,16 +392,22 @@ namespace IndustrialPark
             };
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                Dictionary<string, List<SharpDX.Vector3[]>> knowlifesDictionary = new Dictionary<string, List<SharpDX.Vector3[]>>();
+                Dictionary<string, List<Vector3[]>> knowlifesDictionary = new Dictionary<string, List<Vector3[]>>();
 
-                foreach (PlaceableAsset ra in ArchiveEditorFunctions.renderableAssetSet)
+                foreach (RenderableAsset ra in ArchiveEditorFunctions.renderableAssetSet)
                 {
-                    string objectName = ra.AHDR.ADBG.assetName.Trim(new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_', ' '});
+                    if (ra is RenderableAssetWithPosition rawp)
+                    {
+                        string objectName = rawp.AHDR.ADBG.assetName.Trim(new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_', ' ' });
 
-                    if (!knowlifesDictionary.ContainsKey(objectName))
-                        knowlifesDictionary.Add(objectName, new List<SharpDX.Vector3[]>());
+                        if (!knowlifesDictionary.ContainsKey(objectName))
+                            knowlifesDictionary.Add(objectName, new List<Vector3[]>());
 
-                    knowlifesDictionary[objectName].Add(new SharpDX.Vector3[] { ra.Position, ra.Scale });
+                        knowlifesDictionary[objectName].Add(new Vector3[] {
+                            rawp.Position,
+                            rawp.Scale,
+                        });
+                    }
                 }
 
                 //StreamWriter streamWriter = new StreamWriter(new FileStream(saveFileDialog.FileName, FileMode.Create));
@@ -405,7 +431,10 @@ namespace IndustrialPark
 
         private void listBoxAssets_SelectedIndexChanged(object sender, EventArgs e)
         {
-            archive.SelectAsset(CurrentlySelectedAssetID());
+            if (listBoxAssets.SelectedItem != null)
+            {
+                archive.SelectAsset(CurrentlySelectedAssetID());
+            }
         }
 
         public void ScreenClicked(Ray ray, bool isMouseDown)
@@ -459,9 +488,49 @@ namespace IndustrialPark
             catch { }
         }
 
+        System.Drawing.Color defaultColor;
+        private void textBoxFindAsset_TextChanged(object sender, EventArgs e)
+        {
+            uint assetID = 0;
+            try
+            {
+                textBoxFindAsset.BackColor = defaultColor;
+                assetID = Convert.ToUInt32(textBoxFindAsset.Text, 16);
+                SetSelectedIndex(assetID);
+            }
+            catch
+            {
+                textBoxFindAsset.BackColor = System.Drawing.Color.Red;
+            }
+        }
+
         private void fileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             clickThisToolStripMenuItem.Visible = false;
+            if (MainForm.alternateNamingMode)
+            {
+                assetIDAssetNameToolStripMenuItem.Checked = true;
+                assetNameAssetIDToolStripMenuItem.Checked = false;
+            }
+            else
+            {
+                assetIDAssetNameToolStripMenuItem.Checked = false;
+                assetNameAssetIDToolStripMenuItem.Checked = true;
+            }
+        }
+        
+        private void assetNameAssetIDToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            assetIDAssetNameToolStripMenuItem.Checked = false;
+            assetNameAssetIDToolStripMenuItem.Checked = true;
+            MainForm.alternateNamingMode = false;
+        }
+
+        private void assetIDAssetNameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            assetIDAssetNameToolStripMenuItem.Checked = true;
+            assetNameAssetIDToolStripMenuItem.Checked = false;
+            MainForm.alternateNamingMode = true;
         }
     }
 }

@@ -34,6 +34,9 @@
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.displayModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.assetNameAssetIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.assetIDAssetNameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportTexturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportKnowlifesINIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -49,6 +52,8 @@
             this.comboBoxLayers = new System.Windows.Forms.ComboBox();
             this.listBoxAssets = new System.Windows.Forms.ListBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.textBoxFindAsset = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.buttonInternalEdit = new System.Windows.Forms.Button();
             this.buttonView = new System.Windows.Forms.Button();
             this.buttonExportRaw = new System.Windows.Forms.Button();
@@ -82,6 +87,7 @@
             this.saveToolStripMenuItem,
             this.saveAsToolStripMenuItem,
             this.toolStripSeparator1,
+            this.displayModeToolStripMenuItem,
             this.exportTexturesToolStripMenuItem,
             this.exportKnowlifesINIToolStripMenuItem,
             this.toolStripSeparator2,
@@ -100,6 +106,7 @@
             // 
             // saveToolStripMenuItem
             // 
+            this.saveToolStripMenuItem.Enabled = false;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.saveToolStripMenuItem.Text = "Save";
@@ -107,6 +114,7 @@
             // 
             // saveAsToolStripMenuItem
             // 
+            this.saveAsToolStripMenuItem.Enabled = false;
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
             this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.saveAsToolStripMenuItem.Text = "Save As...";
@@ -116,6 +124,31 @@
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(184, 6);
+            // 
+            // displayModeToolStripMenuItem
+            // 
+            this.displayModeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.assetNameAssetIDToolStripMenuItem,
+            this.assetIDAssetNameToolStripMenuItem});
+            this.displayModeToolStripMenuItem.Name = "displayModeToolStripMenuItem";
+            this.displayModeToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.displayModeToolStripMenuItem.Text = "Display Mode";
+            // 
+            // assetNameAssetIDToolStripMenuItem
+            // 
+            this.assetNameAssetIDToolStripMenuItem.Checked = true;
+            this.assetNameAssetIDToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.assetNameAssetIDToolStripMenuItem.Name = "assetNameAssetIDToolStripMenuItem";
+            this.assetNameAssetIDToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.assetNameAssetIDToolStripMenuItem.Text = "AssetName [AssetID]";
+            this.assetNameAssetIDToolStripMenuItem.Click += new System.EventHandler(this.assetNameAssetIDToolStripMenuItem_Click);
+            // 
+            // assetIDAssetNameToolStripMenuItem
+            // 
+            this.assetIDAssetNameToolStripMenuItem.Name = "assetIDAssetNameToolStripMenuItem";
+            this.assetIDAssetNameToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.assetIDAssetNameToolStripMenuItem.Text = "[AssetID] AssetName";
+            this.assetIDAssetNameToolStripMenuItem.Click += new System.EventHandler(this.assetIDAssetNameToolStripMenuItem_Click);
             // 
             // exportTexturesToolStripMenuItem
             // 
@@ -236,6 +269,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.textBoxFindAsset);
+            this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.buttonInternalEdit);
             this.groupBox2.Controls.Add(this.buttonView);
             this.groupBox2.Controls.Add(this.buttonExportRaw);
@@ -252,6 +287,23 @@
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Assets";
+            // 
+            // textBoxFindAsset
+            // 
+            this.textBoxFindAsset.Location = new System.Drawing.Point(349, 13);
+            this.textBoxFindAsset.Name = "textBoxFindAsset";
+            this.textBoxFindAsset.Size = new System.Drawing.Size(147, 20);
+            this.textBoxFindAsset.TabIndex = 17;
+            this.textBoxFindAsset.TextChanged += new System.EventHandler(this.textBoxFindAsset_TextChanged);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(284, 16);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(59, 13);
+            this.label3.TabIndex = 16;
+            this.label3.Text = "Find Asset:";
             // 
             // buttonInternalEdit
             // 
@@ -401,5 +453,10 @@
         private System.Windows.Forms.Button buttonView;
         private System.Windows.Forms.ToolStripMenuItem clickThisToolStripMenuItem;
         private System.Windows.Forms.Button buttonInternalEdit;
+        private System.Windows.Forms.ToolStripMenuItem displayModeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem assetNameAssetIDToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem assetIDAssetNameToolStripMenuItem;
+        private System.Windows.Forms.TextBox textBoxFindAsset;
+        private System.Windows.Forms.Label label3;
     }
 }
