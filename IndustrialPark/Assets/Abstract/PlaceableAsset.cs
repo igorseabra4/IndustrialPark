@@ -128,36 +128,42 @@ namespace IndustrialPark
             return boundingBox;
         }
 
+        [Category("Placement")]
         public byte VisibilityFlag
         {
             get { return ReadByte(0x8); }
             set { Write(0x8, value); }
         }
 
+        [Category("Placement")]
         public byte UnknownFlag09
         {
             get { return ReadByte(0x9); }
             set { Write(0x9, value); }
         }
 
+        [Category("Placement")]
         public byte UnknownFlag0A
         {
             get { return ReadByte(0xA); }
             set { Write(0xA, value); }
         }
 
+        [Category("Placement")]
         public byte SolidityFlag
         {
             get { return ReadByte(0xB); }
             set { Write(0xB, value); }
         }
 
+        [Category("Placement")]
         public AssetID UnknownAssetID_C
         {
             get { return ReadUInt(0xC); }
             set { Write(0xC, value); }
         }
 
+        [Category("Placement")]
         public AssetID UnknownAssetID_10
         {
             get { return ReadUInt(0x10); }
@@ -165,6 +171,7 @@ namespace IndustrialPark
         }
         
         protected Vector3 _position;
+        [Category("Placement")]
         public virtual float PositionX
         {
             get { return _position.X; }
@@ -176,6 +183,7 @@ namespace IndustrialPark
             }
         }
 
+        [Category("Placement")]
         public virtual float PositionY
         {
             get { return _position.Y; }
@@ -187,6 +195,7 @@ namespace IndustrialPark
             }
         }
 
+        [Category("Placement")]
         public virtual float PositionZ
         {
             get { return _position.Z; }
@@ -199,6 +208,7 @@ namespace IndustrialPark
         }
 
         protected Vector3 _rotation;
+        [Category("Placement")]
         public float RotationX
         {
             get { return MathUtil.RadiansToDegrees(_rotation.X); }
@@ -210,6 +220,7 @@ namespace IndustrialPark
             }
         }
 
+        [Category("Placement")]
         public float RotationY
         {
             get { return MathUtil.RadiansToDegrees(_rotation.Y); }
@@ -221,6 +232,7 @@ namespace IndustrialPark
             }
         }
 
+        [Category("Placement")]
         public float RotationZ
         {
             get { return MathUtil.RadiansToDegrees(_rotation.Z); }
@@ -233,6 +245,7 @@ namespace IndustrialPark
         }
 
         protected Vector3 _scale;
+        [Category("Placement")]
         public float ScaleX
         {
             get { return _scale.X; }
@@ -244,6 +257,7 @@ namespace IndustrialPark
             }
         }
 
+        [Category("Placement")]
         public float ScaleY
         {
             get { return _scale.Y; }
@@ -255,6 +269,7 @@ namespace IndustrialPark
             }
         }
 
+        [Category("Placement")]
         public float ScaleZ
         {
             get { return _scale.Z; }
@@ -266,30 +281,35 @@ namespace IndustrialPark
             }
         }
 
+        [Category("Placement")]
         public float ColorX
         {
             get { return ReadFloat(0x38); }
             set { Write(0x38, value); }
         }
 
+        [Category("Placement")]
         public float ColorY
         {
             get { return ReadFloat(0x3C); }
             set { Write(0x3C, value); }
         }
 
+        [Category("Placement")]
         public float ColorZ
         {
             get { return ReadFloat(0x40); }
             set { Write(0x40, value); }
         }
 
+        [Category("Placement")]
         public float ColorAlpha
         {
             get { return ReadFloat(0x44); }
             set { Write(0x44, value); }
         }
 
+        [Category("Placement")]
         public float UnknownFloat48
         {
             get { return ReadFloat(0x48); }
@@ -297,6 +317,7 @@ namespace IndustrialPark
         }
 
         protected uint _modelAssetID;
+        [Category("Placement")]
         public AssetID ModelAssetID
         {
             get { return _modelAssetID; }
@@ -307,15 +328,16 @@ namespace IndustrialPark
             }
         }
 
+        [Category("Placement")]
         public AssetID UnknownAssetID_50
         {
             get { return ReadUInt(0x50); }
             set { Write(0x50, value); }
         }
 
-        [Browsable(false)]
+        [Browsable(false), Category("Placement")]
         public Vector3 Position { get => _position; set { } }
-        [Browsable(false)]
+        [Browsable(false), Category("Placement")]
         public Vector3 Scale { get => _scale; set { } }
     }
 }

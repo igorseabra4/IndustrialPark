@@ -395,6 +395,11 @@ namespace IndustrialPark
             if (listBoxAssets.SelectedItem != null)
             {
                 archive.SelectAsset(CurrentlySelectedAssetID());
+
+                if (archive.GetFromAssetID(CurrentlySelectedAssetID()) is IClickableAsset a)
+                    buttonView.Visible = true;
+                else
+                    buttonView.Visible = false;
             }
         }
 

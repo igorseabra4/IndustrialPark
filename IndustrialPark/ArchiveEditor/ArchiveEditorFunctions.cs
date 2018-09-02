@@ -325,17 +325,19 @@ namespace IndustrialPark
             uint assetID = 0;
 
             float smallerDistance = 1000f;
-            foreach (PlaceableAsset ra in renderableAssetSet)
+            foreach (Asset ra in renderableAssetSet)
             {
-                if (ra.isSelected) continue;
+                if (!ra.isSelected & ra is IClickableAsset)
+                {
+                    float? distance = ((IClickableAsset)ra).IntersectsWith(ray);
+                    if (distance != null)
+                        if (distance < smallerDistance)
+                        {
+                            smallerDistance = (float)distance;
+                            assetID = ra.AHDR.assetID;
+                        }
+                }
 
-                float? distance = ra.IntersectsWith(ray);
-                if (distance != null)
-                    if (distance < smallerDistance)
-                    {
-                        smallerDistance = (float)distance;
-                        assetID = ra.AHDR.assetID;
-                    }
             }
 
             if (assetID != 0 & assetDictionary.ContainsKey(assetID))
