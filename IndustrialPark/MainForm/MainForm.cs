@@ -291,13 +291,7 @@ namespace IndustrialPark
             levelModelToolStripMenuItem.Checked = !levelModelToolStripMenuItem.Checked;
             AssetJSP.dontRender = !levelModelToolStripMenuItem.Checked;
         }
-
-        private void collisionModelToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            collisionModelToolStripMenuItem.Checked = !collisionModelToolStripMenuItem.Checked;
-            AssetJSP.dontRenderCollision = !collisionModelToolStripMenuItem.Checked;
-        }
-
+        
         private void bUTNToolStripMenuItem_Click(object sender, EventArgs e)
         {
             bUTNToolStripMenuItem.Checked = !bUTNToolStripMenuItem.Checked;
@@ -344,6 +338,12 @@ namespace IndustrialPark
         {
             mRKRToolStripMenuItem.Checked = !mRKRToolStripMenuItem.Checked;
             AssetMRKR.dontRender = !mRKRToolStripMenuItem.Checked;
+        }
+
+        private void pLYRToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            pLYRToolStripMenuItem.Checked = !pLYRToolStripMenuItem.Checked;
+            AssetPLYR.dontRender = !pLYRToolStripMenuItem.Checked;
         }
     }
 }

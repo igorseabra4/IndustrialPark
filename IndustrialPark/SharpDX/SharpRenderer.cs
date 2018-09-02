@@ -264,16 +264,19 @@ namespace IndustrialPark
                 device.ApplyRasterState();
                 device.UpdateAllStates();
 
-                foreach (RenderableAsset a in ArchiveEditorFunctions.renderableAssetSet)
+                foreach (IRenderableAsset a in ArchiveEditorFunctions.renderableAssetSet)
                 {
                     if (a is AssetJSP)
                         (a as AssetJSP).Draw(this);
                 }
-                foreach (RenderableAsset a in ArchiveEditorFunctions.renderableAssetSet)
+                foreach (IRenderableAsset a in ArchiveEditorFunctions.renderableAssetSet)
                 {
                     if (!(a is AssetJSP))
-                        if (frustum.Intersects(ref a.boundingBox))
+                    {
+                        BoundingBox bb = a.GetBoundingBox();
+                        if (frustum.Intersects(ref bb))
                             a.Draw(this);
+                    }
                 }
                 ArchiveEditorFunctions.RenderGizmos(this);
 

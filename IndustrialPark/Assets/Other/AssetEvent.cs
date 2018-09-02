@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
@@ -50,7 +48,7 @@ namespace IndustrialPark
             arguments = new float[6];
         }
 
-        public static AssetEvent From(byte[] data, int offset)
+        public static AssetEvent FromByteArray(byte[] data, int offset)
         {
             AssetEvent newEvent = new AssetEvent()
             {
@@ -64,28 +62,29 @@ namespace IndustrialPark
             return newEvent;
         }
 
-        public void WriteTo(ref List<byte> data, int offset)
+        public byte[] ToByteArray()
         {
-            while (data.Count < offset + sizeOfStruct)
-                data.Add(0);
+            byte[] data = new byte[sizeOfStruct];
 
-            data[offset + 0] = BitConverter.GetBytes((ushort)EventReceiveID)[1];
-            data[offset + 1] = BitConverter.GetBytes((ushort)EventReceiveID)[0];
-            data[offset + 2] = BitConverter.GetBytes((ushort)EventSendID)[1];
-            data[offset + 3] = BitConverter.GetBytes((ushort)EventSendID)[0];
-            data[offset + 4] = BitConverter.GetBytes(TargetAssetID)[3];
-            data[offset + 5] = BitConverter.GetBytes(TargetAssetID)[2];
-            data[offset + 6] = BitConverter.GetBytes(TargetAssetID)[1];
-            data[offset + 7] = BitConverter.GetBytes(TargetAssetID)[0];
+            data[0] = BitConverter.GetBytes((ushort)EventReceiveID)[1];
+            data[1] = BitConverter.GetBytes((ushort)EventReceiveID)[0];
+            data[2] = BitConverter.GetBytes((ushort)EventSendID)[1];
+            data[3] = BitConverter.GetBytes((ushort)EventSendID)[0];
+            data[4] = BitConverter.GetBytes(TargetAssetID)[3];
+            data[5] = BitConverter.GetBytes(TargetAssetID)[2];
+            data[6] = BitConverter.GetBytes(TargetAssetID)[1];
+            data[7] = BitConverter.GetBytes(TargetAssetID)[0];
 
             for (int i = 0; i < arguments.Length; i++)
             {
                 byte[] getBytes = BitConverter.GetBytes(arguments[i]);
-                data[offset + i * 4 + 8] = getBytes[3];
-                data[offset + i * 4 + 9] = getBytes[2];
-                data[offset + i * 4 + 10] = getBytes[1];
-                data[offset + i * 4 + 11] = getBytes[0];
+                data[i * 4 + 8] = getBytes[3];
+                data[i * 4 + 9] = getBytes[2];
+                data[i * 4 + 10] = getBytes[1];
+                data[i * 4 + 11] = getBytes[0];
             }
+
+            return data;
         }
 
         public override string ToString()

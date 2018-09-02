@@ -119,13 +119,13 @@ namespace IndustrialPark
             return GetAsset(new AddAssetDialog(AHDR), out success);
         }
         
-        uint assetID;
-        AssetType assetType;
-        string assetName;
-        string assetFileName;
+        uint assetID = 0;
+        AssetType assetType = (AssetType)0;
+        string assetName = "";
+        string assetFileName = "";
 
-        int checksum;
-        byte[] data;
+        int checksum = 0;
+        byte[] data = new byte[0];
 
         private void comboBoxAssetTypes_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -160,6 +160,7 @@ namespace IndustrialPark
         private void textBoxAssetName_TextChanged(object sender, EventArgs e)
         {
             assetName = textBoxAssetName.Text;
+            textBoxAssetID.Text = ConverterFunctions.BKDRHash(assetName).ToString("X8");
         }
 
         private void textBoxAssetFilename_TextChanged(object sender, EventArgs e)

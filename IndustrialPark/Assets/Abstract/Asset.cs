@@ -14,9 +14,7 @@ namespace IndustrialPark
         {
             this.AHDR = AHDR;
         }
-
-        public abstract void Setup(SharpRenderer renderer, bool defaultMode);
-
+        
         public byte[] Data
         {
             get { return AHDR.containedFile; }
@@ -128,19 +126,34 @@ namespace IndustrialPark
             byte amount = ReadByte(0x05);
             AssetEvent[] events = new AssetEvent[amount];
             for (int i = 0; i < amount; i++)
-                events[i] = AssetEvent.From(Data, eventsStart + i * AssetEvent.sizeOfStruct);
+                events[i] = AssetEvent.FromByteArray(Data, eventsStart + i * AssetEvent.sizeOfStruct);
             return events;
         }
 
         protected void WriteEvents(int eventsStart, AssetEvent[] value)
         {
-            Write(0x05, (byte)value.Length);
+            List<byte> newData = Data.Take(eventsStart).ToList();
+            List<byte> bytesAfterEvents = Data.Skip(eventsStart + ReadByte(0x05) * AssetEvent.sizeOfStruct).ToList();
+
             for (int i = 0; i < value.Length; i++)
-            {
-                List<byte> bytes = Data.ToList();
-                value[i].WriteTo(ref bytes, eventsStart + i * AssetEvent.sizeOfStruct);
-                Data = bytes.ToArray();
-            }
+                newData.AddRange(value[i].ToByteArray());
+
+            newData.AddRange(bytesAfterEvents);
+            newData[0x05] = (byte)value.Length;
+
+            Data = newData.ToArray();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Asset a)
+                return a.GetHashCode() == GetHashCode();
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return -1452371666 + AHDR.assetID.GetHashCode();
         }
     }
 }

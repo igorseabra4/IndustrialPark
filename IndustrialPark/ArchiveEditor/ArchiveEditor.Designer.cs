@@ -162,7 +162,6 @@
             this.exportKnowlifesINIToolStripMenuItem.Name = "exportKnowlifesINIToolStripMenuItem";
             this.exportKnowlifesINIToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.exportKnowlifesINIToolStripMenuItem.Text = "Export knowlife\'s TXT";
-            this.exportKnowlifesINIToolStripMenuItem.Click += new System.EventHandler(this.exportKnowlifesINIToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 

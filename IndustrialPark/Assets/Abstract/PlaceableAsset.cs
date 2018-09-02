@@ -1,33 +1,31 @@
 ﻿using HipHopFile;
 using SharpDX;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class AssetVIL : RenderableAssetWithPosition
+    public abstract class PlaceableAsset : ObjectAsset, IRenderableAsset, IClickableAsset
     {
-        public static bool dontRender = false;
+        protected Matrix world;
+        protected BoundingBox boundingBox;
 
-        public AssetVIL(Section_AHDR AHDR) : base(AHDR)
+        public PlaceableAsset(Section_AHDR AHDR) : base(AHDR) { }
+
+        public virtual void Setup(SharpRenderer renderer)
         {
-        }
-
-        public override void Setup(SharpRenderer renderer, bool defaultMode = true)
-        {
-            _modelAssetID = ReadUInt(0x4C);
-
-            _position = new Vector3(ReadFloat(0x20), ReadFloat(0x24), ReadFloat(0x28));
             _rotation = new Vector3(ReadFloat(0x18), ReadFloat(0x14), ReadFloat(0x1C));
+            _position = new Vector3(ReadFloat(0x20), ReadFloat(0x24), ReadFloat(0x28));
             _scale = new Vector3(ReadFloat(0x2C), ReadFloat(0x30), ReadFloat(0x34));
 
-            CreateTransformMatrix();
+            _modelAssetID = ReadUInt(0x4C);
 
-            ArchiveEditorFunctions.renderableAssetSet.Add(this);
+            CreateTransformMatrix();
+            if (!ArchiveEditorFunctions.renderableAssetSet.Contains(this))
+                ArchiveEditorFunctions.renderableAssetSet.Add(this);
         }
 
-        public override void CreateTransformMatrix()
+        public virtual void CreateTransformMatrix()
         {
             world = Matrix.Scaling(_scale)
             * Matrix.RotationY(_rotation.Y)
@@ -38,7 +36,7 @@ namespace IndustrialPark
             CreateBoundingBox();
         }
 
-        protected override void CreateBoundingBox()
+        protected virtual void CreateBoundingBox()
         {
             try
             {
@@ -52,10 +50,12 @@ namespace IndustrialPark
             boundingBox.Maximum = (Vector3)Vector3.Transform(boundingBox.Maximum, world);
             boundingBox.Minimum = (Vector3)Vector3.Transform(boundingBox.Minimum, world);
         }
-        
-        public override void Draw(SharpRenderer renderer)
+
+        protected abstract bool DontRender();
+
+        public virtual void Draw(SharpRenderer renderer)
         {
-            if (dontRender) return;
+            if (DontRender()) return;
 
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
                 ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected);
@@ -63,11 +63,18 @@ namespace IndustrialPark
                 renderer.DrawCube(world, isSelected);
         }
 
-        protected override float? TriangleIntersection(Ray r, float initialDistance)
+        public virtual float? IntersectsWith(Ray ray)
         {
-            if (dontRender)
+            if (DontRender())
                 return null;
 
+            if (ray.Intersects(ref boundingBox, out float distance))
+                return TriangleIntersection(ray, distance);
+            return null;
+        }
+        
+        protected virtual float? TriangleIntersection(Ray r, float initialDistance)
+        {
             bool hasIntersected = false;
             float smallestDistance = 1000f;
 
@@ -106,14 +113,59 @@ namespace IndustrialPark
             return initialDistance;
         }
 
-        public AssetID AssetID
+        public virtual Vector3 GetGizmoCenter()
         {
-            get { return ReadUInt(0); }
-            set { Write(0, value); }
+            return boundingBox.Center;
         }
 
-        private Vector3 _position;
-        public override float PositionX
+        public virtual float GetGizmoRadius()
+        {
+            return Math.Max(Math.Max(boundingBox.Size.X, boundingBox.Size.Y), boundingBox.Size.Z) * 0.9f;
+        }
+
+        public BoundingBox GetBoundingBox()
+        {
+            return boundingBox;
+        }
+
+        public byte VisibilityFlag
+        {
+            get { return ReadByte(0x8); }
+            set { Write(0x8, value); }
+        }
+
+        public byte UnknownFlag09
+        {
+            get { return ReadByte(0x9); }
+            set { Write(0x9, value); }
+        }
+
+        public byte UnknownFlag0A
+        {
+            get { return ReadByte(0xA); }
+            set { Write(0xA, value); }
+        }
+
+        public byte SolidityFlag
+        {
+            get { return ReadByte(0xB); }
+            set { Write(0xB, value); }
+        }
+
+        public AssetID UnknownAssetID_C
+        {
+            get { return ReadUInt(0xC); }
+            set { Write(0xC, value); }
+        }
+
+        public AssetID UnknownAssetID_10
+        {
+            get { return ReadUInt(0x10); }
+            set { Write(0x10, value); }
+        }
+        
+        protected Vector3 _position;
+        public virtual float PositionX
         {
             get { return _position.X; }
             set
@@ -124,7 +176,7 @@ namespace IndustrialPark
             }
         }
 
-        public override float PositionY
+        public virtual float PositionY
         {
             get { return _position.Y; }
             set
@@ -135,7 +187,7 @@ namespace IndustrialPark
             }
         }
 
-        public override float PositionZ
+        public virtual float PositionZ
         {
             get { return _position.Z; }
             set
@@ -145,8 +197,8 @@ namespace IndustrialPark
                 CreateTransformMatrix();
             }
         }
-        
-        private Vector3 _rotation;
+
+        protected Vector3 _rotation;
         public float RotationX
         {
             get { return MathUtil.RadiansToDegrees(_rotation.X); }
@@ -180,8 +232,8 @@ namespace IndustrialPark
             }
         }
 
-        private Vector3 _scale;
-        public override float ScaleX
+        protected Vector3 _scale;
+        public float ScaleX
         {
             get { return _scale.X; }
             set
@@ -192,7 +244,7 @@ namespace IndustrialPark
             }
         }
 
-        public override float ScaleY
+        public float ScaleY
         {
             get { return _scale.Y; }
             set
@@ -203,7 +255,7 @@ namespace IndustrialPark
             }
         }
 
-        public override float ScaleZ
+        public float ScaleZ
         {
             get { return _scale.Z; }
             set
@@ -214,7 +266,37 @@ namespace IndustrialPark
             }
         }
 
-        private uint _modelAssetID;
+        public float ColorX
+        {
+            get { return ReadFloat(0x38); }
+            set { Write(0x38, value); }
+        }
+
+        public float ColorY
+        {
+            get { return ReadFloat(0x3C); }
+            set { Write(0x3C, value); }
+        }
+
+        public float ColorZ
+        {
+            get { return ReadFloat(0x40); }
+            set { Write(0x40, value); }
+        }
+
+        public float ColorAlpha
+        {
+            get { return ReadFloat(0x44); }
+            set { Write(0x44, value); }
+        }
+
+        public float UnknownFloat48
+        {
+            get { return ReadFloat(0x48); }
+            set { Write(0x48, value); }
+        }
+
+        protected uint _modelAssetID;
         public AssetID ModelAssetID
         {
             get { return _modelAssetID; }
@@ -225,34 +307,15 @@ namespace IndustrialPark
             }
         }
 
-        public AssetID Unknown
+        public AssetID UnknownAssetID_50
         {
-            get { return ReadUInt(0x58); }
-            set { Write(0x58, value); }
+            get { return ReadUInt(0x50); }
+            set { Write(0x50, value); }
         }
 
-        public AssetID MVPTAssetID
-        {
-            get { return ReadUInt(0x60); }
-            set { Write(0x60, value); }
-        }
-
-        public AssetID DYNAAssetID_0
-        {
-            get { return ReadUInt(0x64); }
-            set { Write(0x64, value); }
-        }
-
-        public AssetID DYNAAssetID_1
-        {
-            get { return ReadUInt(0x68); }
-            set { Write(0x68, value); }
-        }
-
-        public AssetEvent[] Events
-        {
-            get { return ReadEvents(0x6C); }
-            set { WriteEvents(0x6C, value); }
-        }
+        [Browsable(false)]
+        public Vector3 Position { get => _position; set { } }
+        [Browsable(false)]
+        public Vector3 Scale { get => _scale; set { } }
     }
 }

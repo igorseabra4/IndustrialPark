@@ -7,7 +7,5 @@ namespace IndustrialPark
         public AssetGeneric(Section_AHDR AHDR) : base(AHDR)
         {
         }
-
-        public override void Setup(SharpRenderer renderer, bool defaultMode = true) { }
     }
 }

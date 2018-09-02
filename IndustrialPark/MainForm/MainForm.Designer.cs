@@ -44,18 +44,18 @@ namespace IndustrialPark
             this.BackgroundColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.displayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.levelModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.collisionModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bUTNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mRKRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mVPTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pKUPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pLATToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pLYRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sIMPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tRIGToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.vILToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.renderPanel = new System.Windows.Forms.Panel();
-            this.mRKRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -159,12 +159,12 @@ namespace IndustrialPark
             // 
             this.displayToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.levelModelToolStripMenuItem,
-            this.collisionModelToolStripMenuItem,
             this.bUTNToolStripMenuItem,
             this.mRKRToolStripMenuItem,
             this.mVPTToolStripMenuItem,
             this.pKUPToolStripMenuItem,
             this.pLATToolStripMenuItem,
+            this.pLYRToolStripMenuItem,
             this.sIMPToolStripMenuItem,
             this.tRIGToolStripMenuItem,
             this.vILToolStripMenuItem});
@@ -178,17 +178,8 @@ namespace IndustrialPark
             this.levelModelToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.levelModelToolStripMenuItem.Name = "levelModelToolStripMenuItem";
             this.levelModelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.levelModelToolStripMenuItem.Text = "Level Model";
+            this.levelModelToolStripMenuItem.Text = "BSP/JSP";
             this.levelModelToolStripMenuItem.Click += new System.EventHandler(this.levelModelToolStripMenuItem_Click);
-            // 
-            // collisionModelToolStripMenuItem
-            // 
-            this.collisionModelToolStripMenuItem.Checked = true;
-            this.collisionModelToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.collisionModelToolStripMenuItem.Name = "collisionModelToolStripMenuItem";
-            this.collisionModelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.collisionModelToolStripMenuItem.Text = "Collision Model";
-            this.collisionModelToolStripMenuItem.Click += new System.EventHandler(this.collisionModelToolStripMenuItem_Click);
             // 
             // bUTNToolStripMenuItem
             // 
@@ -198,6 +189,15 @@ namespace IndustrialPark
             this.bUTNToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.bUTNToolStripMenuItem.Text = "BUTN";
             this.bUTNToolStripMenuItem.Click += new System.EventHandler(this.bUTNToolStripMenuItem_Click);
+            // 
+            // mRKRToolStripMenuItem
+            // 
+            this.mRKRToolStripMenuItem.Checked = true;
+            this.mRKRToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.mRKRToolStripMenuItem.Name = "mRKRToolStripMenuItem";
+            this.mRKRToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.mRKRToolStripMenuItem.Text = "MRKR";
+            this.mRKRToolStripMenuItem.Click += new System.EventHandler(this.mRKRToolStripMenuItem_Click);
             // 
             // mVPTToolStripMenuItem
             // 
@@ -225,6 +225,15 @@ namespace IndustrialPark
             this.pLATToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.pLATToolStripMenuItem.Text = "PLAT";
             this.pLATToolStripMenuItem.Click += new System.EventHandler(this.pLATToolStripMenuItem_Click);
+            // 
+            // pLYRToolStripMenuItem
+            // 
+            this.pLYRToolStripMenuItem.Checked = true;
+            this.pLYRToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.pLYRToolStripMenuItem.Name = "pLYRToolStripMenuItem";
+            this.pLYRToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pLYRToolStripMenuItem.Text = "PLYR";
+            this.pLYRToolStripMenuItem.Click += new System.EventHandler(this.pLYRToolStripMenuItem_Click);
             // 
             // sIMPToolStripMenuItem
             // 
@@ -284,15 +293,6 @@ namespace IndustrialPark
             this.renderPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.renderPanel_MouseUp);
             this.renderPanel.Resize += new System.EventHandler(this.ResetMouseCenter);
             // 
-            // mRKRToolStripMenuItem
-            // 
-            this.mRKRToolStripMenuItem.Checked = true;
-            this.mRKRToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.mRKRToolStripMenuItem.Name = "mRKRToolStripMenuItem";
-            this.mRKRToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.mRKRToolStripMenuItem.Text = "MRKR";
-            this.mRKRToolStripMenuItem.Click += new System.EventHandler(this.mRKRToolStripMenuItem_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -340,12 +340,12 @@ namespace IndustrialPark
         private ToolStripMenuItem mVPTToolStripMenuItem;
         private ToolStripMenuItem tRIGToolStripMenuItem;
         private ToolStripMenuItem pKUPToolStripMenuItem;
-        private ToolStripMenuItem collisionModelToolStripMenuItem;
         private ToolStripMenuItem levelModelToolStripMenuItem;
         private ToolStripMenuItem pLATToolStripMenuItem;
         private ToolStripMenuItem sIMPToolStripMenuItem;
         private ToolStripMenuItem vILToolStripMenuItem;
         private ToolStripMenuItem mRKRToolStripMenuItem;
+        private ToolStripMenuItem pLYRToolStripMenuItem;
     }
 }
 

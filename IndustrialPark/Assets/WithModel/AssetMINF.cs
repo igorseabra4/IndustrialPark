@@ -4,7 +4,7 @@ using System;
 
 namespace IndustrialPark
 {
-    public class AssetMINF : AssetWithModel
+    public class AssetMINF : Asset, IAssetWithModel
     {
         private uint _modelAssetID;
         public AssetID ModelAssetID
@@ -23,13 +23,13 @@ namespace IndustrialPark
         {
         }
 
-        public override void Setup(SharpRenderer renderer, bool defaultMode = true)
+        public void Setup()
         {
             _modelAssetID = ReadUInt(0x14);
             ArchiveEditorFunctions.AddToRenderingDictionary(AHDR.assetID, this);
         }
 
-        public override void Draw(SharpRenderer renderer, Matrix world, bool isSelected)
+        public void Draw(SharpRenderer renderer, Matrix world, bool isSelected)
         {
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
             {
@@ -42,7 +42,7 @@ namespace IndustrialPark
             }
         }
 
-        public override RenderWareModelFile GetRenderWareModelFile()
+        public RenderWareModelFile GetRenderWareModelFile()
         {
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
             {

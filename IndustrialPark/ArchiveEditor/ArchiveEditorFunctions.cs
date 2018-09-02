@@ -11,10 +11,10 @@ namespace IndustrialPark
 {
     public class ArchiveEditorFunctions
     {
-        public static HashSet<RenderableAsset> renderableAssetSet = new HashSet<RenderableAsset>();
-        public static Dictionary<uint, AssetWithModel> renderingDictionary = new Dictionary<uint, AssetWithModel>();
+        public static HashSet<IRenderableAsset> renderableAssetSet = new HashSet<IRenderableAsset>();
+        public static Dictionary<uint, IAssetWithModel> renderingDictionary = new Dictionary<uint, IAssetWithModel>();
 
-        public static void AddToRenderingDictionary(uint key, AssetWithModel value)
+        public static void AddToRenderingDictionary(uint key, IAssetWithModel value)
         {
             if (!renderingDictionary.ContainsKey(key))
                 renderingDictionary.Add(key, value);
@@ -100,7 +100,7 @@ namespace IndustrialPark
         {
             foreach (uint key in assetDictionary.Keys)
             {
-                if (assetDictionary[key] is RenderableAsset ra)
+                if (assetDictionary[key] is IRenderableAsset ra)
                     if (renderableAssetSet.Contains(ra))
                     {
                         renderableAssetSet.Remove(ra);
@@ -141,15 +141,21 @@ namespace IndustrialPark
                     break;
                 case AssetType.BUTN:
                     {
-                        AssetBUTN newAsset = new AssetBUTN(AHDR); ;
+                        AssetBUTN newAsset = new AssetBUTN(AHDR);
                         newAsset.Setup(Program.MainForm.renderer);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
+                case AssetType.GRUP:
+                    {
+                        AssetGRUP newAsset = new AssetGRUP(AHDR);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
                 case AssetType.MINF:
                     {
-                        AssetMINF newAsset = new AssetMINF(AHDR); ;
-                        newAsset.Setup(Program.MainForm.renderer);
+                        AssetMINF newAsset = new AssetMINF(AHDR);
+                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
@@ -177,7 +183,7 @@ namespace IndustrialPark
                 case AssetType.PICK:
                     {
                         AssetPICK newAsset = new AssetPICK(AHDR);
-                        newAsset.Setup(Program.MainForm.renderer);
+                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
@@ -190,7 +196,14 @@ namespace IndustrialPark
                     break;
                 case AssetType.PLAT:
                     {
-                        AssetPLAT newAsset = new AssetPLAT(AHDR); ;
+                        AssetPLAT newAsset = new AssetPLAT(AHDR);
+                        newAsset.Setup(Program.MainForm.renderer);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
+                case AssetType.PLYR:
+                    {
+                        AssetPLYR newAsset = new AssetPLYR(AHDR);
                         newAsset.Setup(Program.MainForm.renderer);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
@@ -198,13 +211,13 @@ namespace IndustrialPark
                 case AssetType.RWTX:
                     {
                         AssetRWTX newAsset = new AssetRWTX(AHDR);
-                        newAsset.Setup(Program.MainForm.renderer);
+                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
                 case AssetType.SIMP:
                     {
-                        AssetSIMP newAsset = new AssetSIMP(AHDR); ;
+                        AssetSIMP newAsset = new AssetSIMP(AHDR);
                         newAsset.Setup(Program.MainForm.renderer);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
@@ -218,7 +231,7 @@ namespace IndustrialPark
                     break;
                 case AssetType.VIL:
                     {
-                        AssetVIL newAsset = new AssetVIL(AHDR); ;
+                        AssetVIL newAsset = new AssetVIL(AHDR);
                         newAsset.Setup(Program.MainForm.renderer);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
@@ -253,8 +266,9 @@ namespace IndustrialPark
 
             if (renderingDictionary.ContainsKey(assetID))
                 renderingDictionary.Remove(assetID);
-            if (renderableAssetSet.Contains(assetDictionary[assetID]))
-                renderableAssetSet.Remove(assetDictionary[assetID] as RenderableAsset);
+            if (assetDictionary[assetID] is IRenderableAsset ra)
+                if (renderableAssetSet.Contains(ra))
+                    renderableAssetSet.Remove(ra);
 
             assetDictionary.Remove(assetID);
 
@@ -266,6 +280,8 @@ namespace IndustrialPark
                     break;
                 }
             }
+
+            currentlySelectedAssetID = 0;
         }
 
         private uint currentlySelectedAssetID = 0;
@@ -283,7 +299,7 @@ namespace IndustrialPark
             if (currentlySelectedAssetID != 0)
             {
                 assetDictionary[currentlySelectedAssetID].isSelected = true;
-                if (assetDictionary[currentlySelectedAssetID] is RenderableAssetWithPosition ra)
+                if (assetDictionary[currentlySelectedAssetID] is IClickableAsset ra)
                     UpdateGizmoPosition();
                 else
                     ClearGizmos();
@@ -309,7 +325,7 @@ namespace IndustrialPark
             uint assetID = 0;
 
             float smallerDistance = 1000f;
-            foreach (RenderableAsset ra in renderableAssetSet)
+            foreach (PlaceableAsset ra in renderableAssetSet)
             {
                 if (ra.isSelected) continue;
 
@@ -329,7 +345,7 @@ namespace IndustrialPark
         
         public void RecalculateAllMatrices()
         {
-            foreach (RenderableAsset a in renderableAssetSet)
+            foreach (IRenderableAsset a in renderableAssetSet)
                 a.CreateTransformMatrix();
         }
         
@@ -347,7 +363,7 @@ namespace IndustrialPark
 
         public void UpdateGizmoPosition()
         {
-            RenderableAssetWithPosition currentAsset = ((RenderableAssetWithPosition)assetDictionary[currentlySelectedAssetID]);
+            IClickableAsset currentAsset = ((IClickableAsset)assetDictionary[currentlySelectedAssetID]);
             UpdateGizmoPosition(currentAsset.GetGizmoCenter(), currentAsset.GetGizmoRadius());
         }
         
@@ -401,7 +417,7 @@ namespace IndustrialPark
             if (currentlySelectedAssetID == 0) return;
 
             Asset currentAsset = assetDictionary[currentlySelectedAssetID];
-            if (currentAsset is RenderableAssetWithPosition ra)
+            if (currentAsset is IClickableAsset ra)
             {
                 if (gizmos[0].isSelected)
                 {
@@ -428,7 +444,7 @@ namespace IndustrialPark
             if (currentlySelectedAssetID == 0) return;
 
             Asset currentAsset = assetDictionary[currentlySelectedAssetID];
-            if (currentAsset is RenderableAssetWithPosition ra)
+            if (currentAsset is IClickableAsset ra)
                 if (gizmos[1].isSelected)
                 {
                     ra.PositionY -= distance / 10f;

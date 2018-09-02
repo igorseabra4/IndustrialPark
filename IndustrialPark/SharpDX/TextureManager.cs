@@ -93,13 +93,13 @@ namespace IndustrialPark
         public static void ReapplyTextures()
         {
             List<RenderWareModelFile> models = new List<RenderWareModelFile>();
-            foreach (AssetWithModel awm in ArchiveEditorFunctions.renderingDictionary.Values)
+            foreach (IAssetWithModel awm in ArchiveEditorFunctions.renderingDictionary.Values)
                 try
                 {
                     models.Add(awm.GetRenderWareModelFile());
                 }
                 catch { }
-            foreach (RenderableAsset awm in ArchiveEditorFunctions.renderableAssetSet)
+            foreach (IRenderableAsset awm in ArchiveEditorFunctions.renderableAssetSet)
                 if (awm is AssetJSP alm)
                     try
                     {
@@ -138,7 +138,7 @@ namespace IndustrialPark
         public static void SetTextureForAnimation(string diffuseMapName, string newMapName)
         {
             List<RenderWareModelFile> models = new List<RenderWareModelFile>();
-            foreach (AssetWithModel awm in ArchiveEditorFunctions.renderingDictionary.Values)
+            foreach (IAssetWithModel awm in ArchiveEditorFunctions.renderingDictionary.Values)
                 models.Add(awm.GetRenderWareModelFile());
 
             foreach (RenderWareModelFile m in models)

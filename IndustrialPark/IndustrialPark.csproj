@@ -78,27 +78,31 @@
       <DependentUpon>InternalAssetEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Assets\Abstract\Asset.cs" />
-    <Compile Include="Assets\AssetEvent.cs" />
-    <Compile Include="Assets\EventType.cs" />
-    <Compile Include="Assets\Renderable\RenderableWithPosition\AssetBUTN.cs" />
-    <Compile Include="Assets\AssetGeneric.cs" />
-    <Compile Include="Assets\AssetID.cs" />
-    <Compile Include="Assets\Renderable\RenderableWithPosition\AssetMRKR.cs" />
+    <Compile Include="Assets\Interfaces\IClickableAsset.cs" />
+    <Compile Include="Assets\Abstract\ObjectAsset.cs" />
+    <Compile Include="Assets\Abstract\PlaceableAsset.cs" />
+    <Compile Include="Assets\Other\AssetEvent.cs" />
+    <Compile Include="Assets\Other\EventType.cs" />
+    <Compile Include="Assets\Interfaces\IAssetWithModel.cs" />
+    <Compile Include="Assets\Interfaces\IRenderableAsset.cs" />
+    <Compile Include="Assets\ObjectAssets\AssetGRUP.cs" />
+    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetBUTN.cs" />
+    <Compile Include="Assets\Other\AssetGeneric.cs" />
+    <Compile Include="Assets\Other\AssetID.cs" />
+    <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetMRKR.cs" />
+    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetPLYR.cs" />
+    <Compile Include="Assets\Renderable\AssetJSP.cs" />
     <Compile Include="Assets\WithModel\AssetMINF.cs" />
     <Compile Include="Assets\WithModel\AssetMODL.cs" />
-    <Compile Include="Assets\Renderable\RenderableWithPosition\AssetMVPT.cs" />
-    <Compile Include="Assets\AssetPICK.cs" />
-    <Compile Include="Assets\Renderable\AssetLevelModel.cs" />
-    <Compile Include="Assets\Renderable\RenderableWithPosition\AssetPKUP.cs" />
-    <Compile Include="Assets\Renderable\RenderableWithPosition\AssetPLAT.cs" />
-    <Compile Include="Assets\AssetRWTX.cs" />
-    <Compile Include="Assets\Renderable\RenderableWithPosition\AssetSIMP.cs" />
-    <Compile Include="Assets\Renderable\RenderableWithPosition\AssetTRIG.cs" />
-    <Compile Include="Assets\Renderable\RenderableWithPosition\AssetVIL.cs" />
-    <Compile Include="Assets\Abstract\AssetWithModel.cs" />
+    <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetMVPT.cs" />
+    <Compile Include="Assets\Normal\AssetPICK.cs" />
+    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetPKUP.cs" />
+    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetPLAT.cs" />
+    <Compile Include="Assets\Normal\AssetRWTX.cs" />
+    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetSIMP.cs" />
+    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetTRIG.cs" />
+    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetVIL.cs" />
     <Compile Include="Other\AssetIDTypeConverter.cs" />
-    <Compile Include="Assets\Abstract\RenderableAsset.cs" />
-    <Compile Include="Assets\Abstract\RenderableAssetWithPosition.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -202,9 +206,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="readme.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Resources\SharpDX\Shader_Basic.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

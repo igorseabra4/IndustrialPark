@@ -3,7 +3,7 @@ using SharpDX;
 
 namespace IndustrialPark
 {
-    public class AssetMODL : AssetWithModel
+    public class AssetMODL : Asset, IAssetWithModel
     {
         RenderWareModelFile model;
 
@@ -11,19 +11,19 @@ namespace IndustrialPark
         {
         }
 
-        public override void Setup(SharpRenderer renderer, bool defaultMode = true)
+        public void Setup(SharpRenderer renderer)
         {
             model = new RenderWareModelFile(AHDR.ADBG.assetName);
             model.SetForRendering(renderer.device, RenderWareFile.ReadFileMethods.ReadRenderWareFile(AHDR.containedFile), AHDR.containedFile);
             ArchiveEditorFunctions.AddToRenderingDictionary(AHDR.assetID, this);
         }
 
-        public override void Draw(SharpRenderer renderer, Matrix world, bool isSelected)
+        public void Draw(SharpRenderer renderer, Matrix world, bool isSelected)
         {
             model.Render(renderer, world, isSelected);
         }
 
-        public override RenderWareModelFile GetRenderWareModelFile()
+        public RenderWareModelFile GetRenderWareModelFile()
         {
             return model;
         }

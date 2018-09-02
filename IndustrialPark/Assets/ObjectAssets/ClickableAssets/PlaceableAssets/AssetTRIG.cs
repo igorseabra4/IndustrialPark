@@ -1,8 +1,7 @@
 ﻿using HipHopFile;
+using IndustrialPark.Models;
 using SharpDX;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace IndustrialPark
 {
@@ -12,30 +11,29 @@ namespace IndustrialPark
         Sphere = 1
     }
 
-    public class AssetTRIG : RenderableAssetWithPosition
+    public class AssetTRIG : PlaceableAsset
     {
         public static bool dontRender = false;
 
+        protected override bool DontRender()
+        {
+            return dontRender;
+        }
+
         public BoundingSphere boundingSphere;
 
-        public AssetTRIG(Section_AHDR AHDR) : base(AHDR)
-        {
-        }
-        
-        public override void Setup(SharpRenderer renderer, bool defaultMode = true)
+        public AssetTRIG(Section_AHDR AHDR) : base(AHDR) { }
+
+        public override void Setup(SharpRenderer renderer)
         {
             _shape = ReadByte(9);
-            _position = new Vector3(ReadFloat(0x20), ReadFloat(0x24), ReadFloat(0x28));
-            _rotation = new Vector3(ReadFloat(0x18), ReadFloat(0x14), ReadFloat(0x1C));
-            _scale = new Vector3(ReadFloat(0x2C), ReadFloat(0x30), ReadFloat(0x34));
+
             _trigPos0 = new Vector3(ReadFloat(0x54), ReadFloat(0x58), ReadFloat(0x5C));
             _trigPos1 = new Vector3(ReadFloat(0x60), ReadFloat(0x64), ReadFloat(0x68));
             _trigPos2 = new Vector3(ReadFloat(0x6C), ReadFloat(0x70), ReadFloat(0x74));
             _trigPos3 = new Vector3(ReadFloat(0x78), ReadFloat(0x7C), ReadFloat(0x80));
 
-            CreateTransformMatrix();
-
-            ArchiveEditorFunctions.renderableAssetSet.Add(this);
+            base.Setup(renderer);
         }
 
         public override void CreateTransformMatrix()
@@ -53,7 +51,7 @@ namespace IndustrialPark
             }
             else
             {
-                world = Matrix.Scaling(Position1X_Radius) * Matrix.Translation(_trigPos0);
+                world = Matrix.Scaling(Position1X_Radius * 2f) * Matrix.Translation(_trigPos0);
             }
 
             CreateBoundingBox();
@@ -70,7 +68,7 @@ namespace IndustrialPark
             }
             else
             {
-                boundingSphere = new BoundingSphere(_trigPos0, Position1X_Radius / 2f);
+                boundingSphere = new BoundingSphere(_trigPos0, Position1X_Radius);
                 boundingBox = BoundingBox.FromSphere(boundingSphere);
             }
         }
@@ -99,6 +97,31 @@ namespace IndustrialPark
             return null;
         }
 
+        protected float? TriangleIntersection(Ray r, float initialDistance, List<Triangle> triangles, List<Vector3> vertices, float multiplier = 1f)
+        {
+            bool hasIntersected = false;
+            float smallestDistance = 1000f;
+
+            foreach (Triangle t in triangles)
+            {
+                Vector3 v1 = (Vector3)Vector3.Transform(vertices[t.vertex1], world) * multiplier;
+                Vector3 v2 = (Vector3)Vector3.Transform(vertices[t.vertex2], world) * multiplier;
+                Vector3 v3 = (Vector3)Vector3.Transform(vertices[t.vertex3], world) * multiplier;
+
+                if (r.Intersects(ref v1, ref v2, ref v3, out float distance))
+                {
+                    hasIntersected = true;
+
+                    if (distance < smallestDistance)
+                        smallestDistance = distance;
+                }
+            }
+
+            if (hasIntersected)
+                return smallestDistance;
+            else return null;
+        }
+
         protected override float? TriangleIntersection(Ray r, float distance)
         {
             return null;
@@ -119,12 +142,6 @@ namespace IndustrialPark
             else
                 return boundingSphere.Radius;
         }
-        
-        public AssetID AssetID
-        {
-            get { return ReadUInt(0); }
-            set { Write(0, value); }
-        }
 
         private byte _shape;
         public TriggerShape Shape
@@ -137,7 +154,6 @@ namespace IndustrialPark
             }
         }
 
-        private Vector3 _position;
         public override float PositionX
         {
             get { return _position.X; }
@@ -200,75 +216,7 @@ namespace IndustrialPark
                 Position0Z = value;
             }
         }
-
-        private Vector3 _rotation;
-        public float RotationX
-        {
-            get { return MathUtil.RadiansToDegrees(_rotation.X); }
-            set
-            {
-                _rotation.X = MathUtil.DegreesToRadians(value);
-                Write(0x18, _rotation.X);
-                CreateTransformMatrix();
-            }
-        }
-
-        public float RotationY
-        {
-            get { return MathUtil.RadiansToDegrees(_rotation.Y); }
-            set
-            {
-                _rotation.Y = MathUtil.DegreesToRadians(value);
-                Write(0x14, _rotation.Y);
-                CreateTransformMatrix();
-            }
-        }
-
-        public float RotationZ
-        {
-            get { return MathUtil.RadiansToDegrees(_rotation.Z); }
-            set
-            {
-                _rotation.Z = MathUtil.DegreesToRadians(value);
-                Write(0x1C, _rotation.Z);
-                CreateTransformMatrix();
-            }
-        }
-
-        private Vector3 _scale;
-        public override float ScaleX
-        {
-            get { return _scale.X; }
-            set
-            {
-                _scale.X = value;
-                Write(0x2C, _scale.X);
-                CreateTransformMatrix();
-            }
-        }
-
-        public override float ScaleY
-        {
-            get { return _scale.Y; }
-            set
-            {
-                _scale.Y = value;
-                Write(0x30, _scale.Y);
-                CreateTransformMatrix();
-            }
-        }
-
-        public override float ScaleZ
-        {
-            get { return _scale.Z; }
-            set
-            {
-                _scale.Z = value;
-                Write(0x34, _scale.Z);
-                CreateTransformMatrix();
-            }
-        }
-
+        
         private Vector3 _trigPos0;
         private Vector3 _trigPos1;
         private Vector3 _trigPos2;
@@ -389,28 +337,28 @@ namespace IndustrialPark
             }
         }
 
-        public float UnknownFloat0
+        public float UnknownTriggerFloat1
         {
             get { return ReadFloat(0x84); }
             set
             { Write(0x84, value); }
         }
 
-        public float UnknownFloat1
+        public float UnknownTriggerFloat2
         {
             get { return ReadFloat(0x88); }
             set
             { Write(0x88, value); }
         }
 
-        public float UnknownFloat2
+        public float UnknownTriggerFloat3
         {
             get { return ReadFloat(0x8C); }
             set
             { Write(0x8C, value); }
         }
 
-        public float UnknownFloat3
+        public float UnknownTriggerFloat4
         {
             get { return ReadFloat(0x90); }
             set

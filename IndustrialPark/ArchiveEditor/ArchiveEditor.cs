@@ -257,6 +257,8 @@ namespace IndustrialPark
             }
         }
 
+        private int numCopies = 0;
+
         private void buttonCopy_Click(object sender, EventArgs e)
         {
             if (listBoxAssets.SelectedIndex < 0) return;
@@ -265,11 +267,13 @@ namespace IndustrialPark
 
             Section_AHDR AHDR = archive.GetFromAssetID(CurrentlySelectedAssetID()).AHDR;
 
-            uint newAssetId = AHDR.assetID;
-            do { newAssetId++; }
-            while (archive.DictionaryHasKey(newAssetId));
+            string newAssetName = AHDR.ADBG.assetName + "_COPY_" + numCopies.ToString();
 
-            Section_AHDR newAHDR = new Section_AHDR(newAssetId, AHDR.assetType, AHDR.flags, new Section_ADBG(AHDR.ADBG.alignment, AHDR.ADBG.assetName, AHDR.ADBG.assetFileName, AHDR.ADBG.checksum))
+            uint newAssetId = ConverterFunctions.BKDRHash(newAssetName);
+            while (archive.DictionaryHasKey(newAssetId))
+                newAssetId++;
+
+            Section_AHDR newAHDR = new Section_AHDR(newAssetId, AHDR.assetType, AHDR.flags, new Section_ADBG(AHDR.ADBG.alignment, newAssetName, AHDR.ADBG.assetFileName, AHDR.ADBG.checksum))
             {
                 fileOffset = AHDR.fileOffset,
                 fileSize = AHDR.fileSize,
@@ -282,6 +286,8 @@ namespace IndustrialPark
 
             archive.AddAsset(comboBoxLayers.SelectedIndex, newAHDR);
             PopulateAssetsComboAndListBox();
+
+            numCopies++;
         }
 
         private void buttonRemoveAsset_Click(object sender, EventArgs e)
@@ -299,8 +305,8 @@ namespace IndustrialPark
         {
             if (listBoxAssets.SelectedIndex < 0) return;
 
-            if (archive.GetFromAssetID(CurrentlySelectedAssetID()) is RenderableAssetWithPosition a)
-                Program.MainForm.renderer.Camera.SetPosition(a.Position - 8 * Program.MainForm.renderer.Camera.GetForward());
+            if (archive.GetFromAssetID(CurrentlySelectedAssetID()) is IClickableAsset a)
+                Program.MainForm.renderer.Camera.SetPosition(new Vector3(a.PositionX, a.PositionY, a.PositionZ) - 8 * Program.MainForm.renderer.Camera.GetForward());
         }
 
         private void buttonEditAsset_Click(object sender, EventArgs e)
@@ -383,52 +389,7 @@ namespace IndustrialPark
                 unsavedChanges = false;
             }
         }
-
-        private void exportKnowlifesINIToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SaveFileDialog saveFileDialog = new SaveFileDialog()
-            {
-                Filter = "TXT files|*.txt"
-            };
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                Dictionary<string, List<Vector3[]>> knowlifesDictionary = new Dictionary<string, List<Vector3[]>>();
-
-                foreach (RenderableAsset ra in ArchiveEditorFunctions.renderableAssetSet)
-                {
-                    if (ra is RenderableAssetWithPosition rawp)
-                    {
-                        string objectName = rawp.AHDR.ADBG.assetName.Trim(new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_', ' ' });
-
-                        if (!knowlifesDictionary.ContainsKey(objectName))
-                            knowlifesDictionary.Add(objectName, new List<Vector3[]>());
-
-                        knowlifesDictionary[objectName].Add(new Vector3[] {
-                            rawp.Position,
-                            rawp.Scale,
-                        });
-                    }
-                }
-
-                //StreamWriter streamWriter = new StreamWriter(new FileStream(saveFileDialog.FileName, FileMode.Create));
-
-                foreach (string key in knowlifesDictionary.Keys)
-                {
-                    StreamWriter streamWriter = new StreamWriter(new FileStream(Path.Combine(Path.GetDirectoryName(saveFileDialog.FileName), key + ".txt"), FileMode.Create));
-
-                    foreach (SharpDX.Vector3[] v in knowlifesDictionary[key])
-                        streamWriter.WriteLine(v[0].X.ToString() + ", " + v[0].Y.ToString() + ", " + v[0].Z.ToString() + " , " + v[1].X.ToString() + ", " + v[1].Y.ToString() + ", " + v[1].Z.ToString());
-                    streamWriter.Write(key);
-                    //streamWriter.WriteLine();
-                    
-                    streamWriter.Close();
-                }
-
-                //streamWriter.Close();
-            }
-
-        }
-
+        
         private void listBoxAssets_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (listBoxAssets.SelectedItem != null)
@@ -503,7 +464,7 @@ namespace IndustrialPark
                 textBoxFindAsset.BackColor = System.Drawing.Color.Red;
             }
         }
-
+        
         private void fileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             clickThisToolStripMenuItem.Visible = false;
@@ -532,5 +493,6 @@ namespace IndustrialPark
             assetNameAssetIDToolStripMenuItem.Checked = false;
             MainForm.alternateNamingMode = true;
         }
+
     }
 }

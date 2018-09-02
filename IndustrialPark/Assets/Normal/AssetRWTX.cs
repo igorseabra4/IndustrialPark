@@ -8,6 +8,6 @@ namespace IndustrialPark
         {
         }
 
-        public override void Setup(SharpRenderer renderer, bool defaultMode = true) { }
+        public void Setup() { }
     }
 }

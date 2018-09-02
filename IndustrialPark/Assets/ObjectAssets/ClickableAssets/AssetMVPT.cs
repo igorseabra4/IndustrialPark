@@ -4,60 +4,102 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using System.ComponentModel;
+using IndustrialPark.Models;
 
 namespace IndustrialPark
 {
-    public class AssetMVPT : RenderableAssetWithPosition
+    public class AssetMVPT : ObjectAsset, IRenderableAsset, IClickableAsset
     {
+        private Matrix world;
+        private BoundingBox boundingBox;
+
         public static bool dontRender = false;
 
         public AssetMVPT(Section_AHDR AHDR) : base(AHDR)
         {
         }
 
-        public override void Setup(SharpRenderer renderer, bool defaultMode = true)
+        public void Setup(SharpRenderer renderer)
         {
             _position = new Vector3(ReadFloat(0x8), ReadFloat(0xC), ReadFloat(0x10));
             _scale = new Vector3(ReadFloat(0x1C), ReadFloat(0x20), ReadFloat(0x24));
-                        
+
             CreateTransformMatrix();
 
-            ArchiveEditorFunctions.renderableAssetSet.Add(this);
+            if (!ArchiveEditorFunctions.renderableAssetSet.Contains(this))
+                ArchiveEditorFunctions.renderableAssetSet.Add(this);
         }
 
-        public override void CreateTransformMatrix()
+        public void CreateTransformMatrix()
         {
             world = Matrix.Translation(_position);
 
             CreateBoundingBox();
         }
 
-        protected override void CreateBoundingBox()
+        protected void CreateBoundingBox()
         {
             boundingBox = BoundingBox.FromPoints(SharpRenderer.cubeVertices.ToArray());
             boundingBox.Maximum = (Vector3)Vector3.Transform(boundingBox.Maximum, world);
             boundingBox.Minimum = (Vector3)Vector3.Transform(boundingBox.Minimum, world);
         }
 
-        protected override float? TriangleIntersection(Ray r, float distance)
+        public float? IntersectsWith(Ray ray)
         {
-            return TriangleIntersection(r, distance, SharpRenderer.cubeTriangles, SharpRenderer.cubeVertices);
+            if (ray.Intersects(ref boundingBox, out float distance))
+                return TriangleIntersection(ray, distance, SharpRenderer.cubeTriangles, SharpRenderer.cubeVertices);
+            return null;
+        }
+        
+        private float? TriangleIntersection(Ray ray, float initialDistance, List<Triangle> triangles, List<Vector3> vertices)
+        {
+            bool hasIntersected = false;
+            float smallestDistance = 1000f;
+
+            foreach (Triangle t in triangles)
+            {
+                Vector3 v1 = (Vector3)Vector3.Transform(vertices[t.vertex1], world);
+                Vector3 v2 = (Vector3)Vector3.Transform(vertices[t.vertex2], world);
+                Vector3 v3 = (Vector3)Vector3.Transform(vertices[t.vertex3], world);
+
+                if (ray.Intersects(ref v1, ref v2, ref v3, out float distance))
+                {
+                    hasIntersected = true;
+
+                    if (distance < smallestDistance)
+                        smallestDistance = distance;
+                }
+            }
+
+            if (hasIntersected)
+                return smallestDistance;
+            else return null;
         }
 
-        public override void Draw(SharpRenderer renderer)
+        public void Draw(SharpRenderer renderer)
         {
             if (dontRender) return;
-            base.Draw(renderer);
+
+            renderer.DrawCube(world, isSelected);
         }
 
-        public AssetID AssetID
+        public virtual Vector3 GetGizmoCenter()
         {
-            get { return ReadUInt(0); }
-            set { Write(0, value); }
+            return boundingBox.Center;
+        }
+
+        public virtual float GetGizmoRadius()
+        {
+            return Math.Max(Math.Max(boundingBox.Size.X, boundingBox.Size.Y), boundingBox.Size.Z) * 0.9f;
+        }
+
+        public BoundingBox GetBoundingBox()
+        {
+            return boundingBox;
         }
 
         private Vector3 _position;
-        public override float PositionX
+        public float PositionX
         {
             get { return _position.X; }
             set
@@ -68,7 +110,7 @@ namespace IndustrialPark
             }
         }
 
-        public override float PositionY
+        public float PositionY
         {
             get { return _position.Y; }
             set
@@ -79,7 +121,7 @@ namespace IndustrialPark
             }
         }
 
-        public override float PositionZ
+        public float PositionZ
         {
             get { return _position.Z; }
             set
@@ -91,7 +133,7 @@ namespace IndustrialPark
         }
 
         private Vector3 _scale;
-        public override float ScaleX
+        public float ScaleX
         {
             get { return _scale.X; }
             set
@@ -102,7 +144,7 @@ namespace IndustrialPark
             }
         }
 
-        public override float ScaleY
+        public float ScaleY
         {
             get { return _position.Y; }
             set
@@ -113,7 +155,7 @@ namespace IndustrialPark
             }
         }
 
-        public override float ScaleZ
+        public float ScaleZ
         {
             get { return _position.Z; }
             set
@@ -153,5 +195,10 @@ namespace IndustrialPark
                 Data = newData.ToArray();
             }
         }
+
+        [Browsable(false)]
+        public Vector3 Position { get => _position; set { } }
+        [Browsable(false)]
+        public Vector3 Scale { get => _scale; set { } }
     }
 }

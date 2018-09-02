@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using HipHopFile;
 
 namespace IndustrialPark
@@ -23,7 +22,7 @@ namespace IndustrialPark
         {
         }
 
-        public override void Setup(SharpRenderer renderer, bool defaultMode = true)
+        public void Setup()
         {
             pickEntries = new Dictionary<uint, PICKentry>();
             pickAmount = ReadInt(0x4);
