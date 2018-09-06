@@ -14,6 +14,11 @@ namespace IndustrialPark
         private BoundingBox boundingBox;
 
         public static bool dontRender = false;
+        
+        protected override int getEventStartOffset()
+        {
+            return 0x74 + ReadShort(0x1A) * 4;
+        }
 
         public AssetMVPT(Section_AHDR AHDR) : base(AHDR)
         {
@@ -195,10 +200,5 @@ namespace IndustrialPark
                 Data = newData.ToArray();
             }
         }
-
-        [Browsable(false)]
-        public Vector3 Position { get => _position; set { } }
-        [Browsable(false)]
-        public Vector3 Scale { get => _scale; set { } }
     }
 }

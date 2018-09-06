@@ -12,13 +12,16 @@ namespace IndustrialPark
             return dontRender;
         }
 
-        public AssetPKUP(Section_AHDR AHDR) : base(AHDR)
+        protected override int getEventStartOffset()
         {
+            return 0x5C + Offset;
         }
+
+        public AssetPKUP(Section_AHDR AHDR) : base(AHDR) { }
 
         public override void Setup(SharpRenderer renderer)
         {
-            _pickEntryID = ReadUInt(0x54);
+            _pickEntryID = ReadUInt(0x54 + Offset);
 
             base.Setup(renderer);
         }
@@ -29,7 +32,7 @@ namespace IndustrialPark
                 return null;
 
             uint _modelAssetId;
-            try { _modelAssetId = AssetPICK.pick.pickEntries[_pickEntryID].unknown4; }
+            try { _modelAssetId = AssetPICK.pick.pickEntries[_pickEntryID].ModelAssetID; }
             catch { return initialDistance; }
 
             bool hasIntersected = false;
@@ -78,9 +81,9 @@ namespace IndustrialPark
             {
                 if (AssetPICK.pick.pickEntries.ContainsKey(_pickEntryID))
                 {
-                    if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(AssetPICK.pick.pickEntries[_pickEntryID].unknown4))
+                    if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(AssetPICK.pick.pickEntries[_pickEntryID].ModelAssetID))
                     {
-                        ArchiveEditorFunctions.renderingDictionary[AssetPICK.pick.pickEntries[_pickEntryID].unknown4].Draw(renderer, world, isSelected);
+                        ArchiveEditorFunctions.renderingDictionary[AssetPICK.pick.pickEntries[_pickEntryID].ModelAssetID].Draw(renderer, world, isSelected);
                     }
                     else
                     {
@@ -97,7 +100,13 @@ namespace IndustrialPark
                 renderer.DrawCube(world, isSelected);
             }
         }
-        
+
+        public byte Shape
+        {
+            get { return ReadByte(0x09); }
+            set { Write(0x09, value); }
+        }
+
         private uint _pickEntryID;
         public AssetID PickEntryID
         {
@@ -105,8 +114,20 @@ namespace IndustrialPark
             set
             {
                 _pickEntryID = value;
-                Write(0x54, value);
+                Write(0x54 + Offset, value);
             }
+        }
+
+        public short Unknown1
+        {
+            get { return ReadShort(0x58 + Offset); }
+            set { Write(0x58 + Offset, value); }
+        }
+
+        public short Unknown2
+        {
+            get { return ReadShort(0x5C + Offset); }
+            set { Write(0x5C + Offset, value); }
         }
     }
 }

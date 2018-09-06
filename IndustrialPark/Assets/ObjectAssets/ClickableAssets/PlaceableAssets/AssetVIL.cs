@@ -11,36 +11,47 @@ namespace IndustrialPark
             return dontRender;
         }
 
-        public AssetVIL(Section_AHDR AHDR) : base(AHDR) { }
-        
-        public AssetID Unknown
+        protected override int getEventStartOffset()
         {
-            get { return ReadUInt(0x58); }
-            set { Write(0x58, value); }
+            return 0x6C + Offset;
+        }
+
+        public AssetVIL(Section_AHDR AHDR) : base(AHDR) { }
+
+        public int Unknown1
+        {
+            get { return ReadInt(0x54 + Offset); }
+            set { Write(0x54 + Offset, value); }
+        }
+        
+        public AssetID UnknownAssetID
+        {
+            get { return ReadUInt(0x58 + Offset); }
+            set { Write(0x58 + Offset, value); }
+        }
+
+        public int Unknown2
+        {
+            get { return ReadInt(0x5C + Offset); }
+            set { Write(0x5C + Offset, value); }
         }
 
         public AssetID MVPTAssetID
         {
-            get { return ReadUInt(0x60); }
-            set { Write(0x60, value); }
+            get { return ReadUInt(0x60 + Offset); }
+            set { Write(0x60 + Offset, value); }
         }
 
         public AssetID DYNAAssetID_0
         {
-            get { return ReadUInt(0x64); }
-            set { Write(0x64, value); }
+            get { return ReadUInt(0x64 + Offset); }
+            set { Write(0x64 + Offset, value); }
         }
 
         public AssetID DYNAAssetID_1
         {
-            get { return ReadUInt(0x68); }
-            set { Write(0x68, value); }
-        }
-
-        public AssetEvent[] Events
-        {
-            get { return ReadEvents(0x6C); }
-            set { WriteEvents(0x6C, value); }
+            get { return ReadUInt(0x68 + Offset); }
+            set { Write(0x68 + Offset, value); }
         }
     }
 }

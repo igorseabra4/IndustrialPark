@@ -87,6 +87,7 @@ namespace IndustrialPark
             saveAsToolStripMenuItem.Enabled = true;
             unsavedChanges = false;
             PopulateLayerComboBox();
+            PopulateAssetsComboBox();
         }
 
         private bool programIsChangingStuff = false;
@@ -209,6 +210,7 @@ namespace IndustrialPark
         private void PopulateAssetsComboBox(AssetType type = AssetType.Null)
         {
             listBoxAssets.Items.Clear();
+            if (comboBoxLayers.SelectedItem == null) return;
 
             List<uint> assetIDs = archive.DICT.LTOC.LHDRList[comboBoxLayers.SelectedIndex].assetIDlist;
             List<string> assetList = new List<string>();
@@ -269,7 +271,7 @@ namespace IndustrialPark
 
             string newAssetName = AHDR.ADBG.assetName + "_COPY_" + numCopies.ToString();
 
-            uint newAssetId = ConverterFunctions.BKDRHash(newAssetName);
+            uint newAssetId = Functions.BKDRHash(newAssetName);
             while (archive.DictionaryHasKey(newAssetId))
                 newAssetId++;
 
@@ -499,5 +501,15 @@ namespace IndustrialPark
             MainForm.alternateNamingMode = true;
         }
 
+        private void importTXDArchiveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openTXD = new OpenFileDialog() { Filter = "TXD archives|*.txd" };
+            if (openTXD.ShowDialog() == DialogResult.OK)
+            {
+                archive.AddTextureDictionary(openTXD.FileName);
+                //comboBoxLayers.Items.Add(LayerToString(archive.DICT.LTOC.LHDRList.Count - 1));
+                //comboBoxLayers.SelectedIndex = comboBoxLayers.Items.Count - 1;
+            }
+        }
     }
 }

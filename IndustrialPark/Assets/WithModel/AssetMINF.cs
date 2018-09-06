@@ -25,7 +25,14 @@ namespace IndustrialPark
 
         public void Setup()
         {
-            _modelAssetID = ReadUInt(0x14);
+            try
+            {
+                _modelAssetID = ReadUInt(0x14);
+            }
+            catch
+            {
+                _modelAssetID = 0;
+            }
             ArchiveEditorFunctions.AddToRenderingDictionary(AHDR.assetID, this);
         }
 

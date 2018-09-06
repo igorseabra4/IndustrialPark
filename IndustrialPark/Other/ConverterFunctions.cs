@@ -59,21 +59,5 @@ namespace IndustrialPark
             }
             else return a;
         }
-
-        public static uint BKDRHash(string str)
-        {
-            str = str.ToUpper();
-            uint seed = 131;
-            uint hash = 0;
-            int length = str.Length;
-
-            if (length > 31)
-                length = 31;
-
-            for (int i = 0; i < length; i++)
-                hash = (hash * seed) + str[i];
-
-            return hash;
-        }
     }
 }

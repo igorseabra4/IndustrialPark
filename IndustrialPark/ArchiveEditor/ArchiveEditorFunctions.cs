@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using HipHopFile;
+using RenderWareFile;
+using RenderWareFile.Sections;
 using SharpDX;
 using static HipHopFile.Functions;
 
@@ -175,9 +177,17 @@ namespace IndustrialPark
                     break;
                 case AssetType.MVPT:
                     {
-                        AssetMVPT newAsset = new AssetMVPT(AHDR);
-                        newAsset.Setup(Program.MainForm.renderer);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
+                        if (currentGame == Game.Scooby)
+                        {
+                            AssetGeneric newAsset = new AssetGeneric(AHDR);
+                            assetDictionary.Add(AHDR.assetID, newAsset);
+                        }
+                        else
+                        {
+                            AssetMVPT newAsset = new AssetMVPT(AHDR);
+                            newAsset.Setup(Program.MainForm.renderer);
+                            assetDictionary.Add(AHDR.assetID, newAsset);
+                        }
                     }
                     break;
                 case AssetType.PICK:
@@ -453,6 +463,50 @@ namespace IndustrialPark
                     UpdateGizmoPosition();
                     FinishedMovingGizmo = true;
                 }
+        }
+
+        public void AddTextureDictionary(string fileName)
+        {
+            // Add a new layer for the textures
+            //int layerIndex = DICT.LTOC.LHDRList.Count;
+            int layerIndex = 2;
+
+            //DICT.LTOC.LHDRList.Add(new Section_LHDR()
+            //{
+            //   layerType = LayerType.TEXTURE,
+            //    assetIDlist = new List<uint>(),
+            //    LDBG = new Section_LDBG(-1)
+            //});
+
+            ReadFileMethods.treatTexturesAsByteArray = true;
+
+            foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(fileName))
+            {
+                if (rw is TextureDictionary_0016 td)
+                {
+                    // For each texture in the dictionary...
+                    foreach (TextureNative_0015 tn in td.textureNativeList)
+                    {
+                        string textureName = tn.textureNativeStruct.textureName + ".RW3";
+
+                        // Create a new dictionary that has only that texture.
+                        byte[] data = ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016()
+                        {
+                            textureDictionaryStruct = new TextureDictionaryStruct_0001() { textureCount = 1, unknown = 0 },
+                            textureDictionaryExtension = new Extension_0003(),
+                            textureNativeList = new List<TextureNative_0015>() { tn }
+                        }, tn.renderWareVersion);
+                        
+                        // And add the new dictionary as an asset.
+                        Section_ADBG ADBG = new Section_ADBG(0, textureName, "", (int)(BKDRHash(textureName) / 2 + 1));
+                        Section_AHDR AHDR = new Section_AHDR(BKDRHash(textureName), AssetType.RWTX, AHDRFlags.SOURCE_VIRTUAL | AHDRFlags.READ_TRANSFORM, ADBG, data);
+                        
+                        AddAsset(layerIndex, AHDR);
+                    }
+                }
+            }
+
+            ReadFileMethods.treatTexturesAsByteArray = false;
         }
     }
 }

@@ -237,7 +237,7 @@ namespace IndustrialPark
                     MaterialList.Add(DefaultTexture);
             }
 
-            if (g.geometryStruct.geometryFlags2 == 0x0101)
+            if ((g.geometryStruct.geometryFlags2 & (int)GeometryFlags2.isNativeGeometry) != 0)
             {
                 AddNativeData(device, g.geometryExtension, MaterialList, transformMatrix);
                 return;
@@ -250,7 +250,8 @@ namespace IndustrialPark
 
             if ((g.geometryStruct.geometryFlags & (int)GeometryFlags.hasVertexPositions) != 0)
             {
-                foreach (Vertex3 v in g.geometryStruct.morphTargets[0].vertices)
+                MorphTarget m = g.geometryStruct.morphTargets[0];
+                foreach (Vertex3 v in m.vertices)
                 {
                     Vector3 pos = (Vector3)Vector3.Transform(new Vector3(v.X, v.Y, v.Z), transformMatrix);
                     vertexList1.Add(pos);

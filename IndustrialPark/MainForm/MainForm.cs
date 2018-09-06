@@ -345,5 +345,10 @@ namespace IndustrialPark
             pLYRToolStripMenuItem.Checked = !pLYRToolStripMenuItem.Checked;
             AssetPLYR.dontRender = !pLYRToolStripMenuItem.Checked;
         }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.AboutBox.Show();
+        }
     }
 }

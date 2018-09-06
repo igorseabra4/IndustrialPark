@@ -14,11 +14,11 @@ namespace IndustrialPark
 
         public virtual void Setup(SharpRenderer renderer)
         {
-            _rotation = new Vector3(ReadFloat(0x18), ReadFloat(0x14), ReadFloat(0x1C));
-            _position = new Vector3(ReadFloat(0x20), ReadFloat(0x24), ReadFloat(0x28));
-            _scale = new Vector3(ReadFloat(0x2C), ReadFloat(0x30), ReadFloat(0x34));
+            _rotation = new Vector3(ReadFloat(0x18 + Offset), ReadFloat(0x14 + Offset), ReadFloat(0x1C + Offset));
+            _position = new Vector3(ReadFloat(0x20 + Offset), ReadFloat(0x24 + Offset), ReadFloat(0x28 + Offset));
+            _scale = new Vector3(ReadFloat(0x2C + Offset), ReadFloat(0x30 + Offset), ReadFloat(0x34 + Offset));
 
-            _modelAssetID = ReadUInt(0x4C);
+            _modelAssetID = ReadUInt(0x4C + Offset);
 
             CreateTransformMatrix();
             if (!ArchiveEditorFunctions.renderableAssetSet.Contains(this))
@@ -128,28 +128,28 @@ namespace IndustrialPark
             return boundingBox;
         }
 
-        [Category("Placement")]
+        [Category("Flags")]
         public byte VisibilityFlag
         {
             get { return ReadByte(0x8); }
             set { Write(0x8, value); }
         }
 
-        [Category("Placement")]
-        public byte UnknownFlag09
+        [Category("Flags"), ReadOnly(true)]
+        public byte TypeFlag
         {
             get { return ReadByte(0x9); }
             set { Write(0x9, value); }
         }
 
-        [Category("Placement")]
+        [Category("Flags")]
         public byte UnknownFlag0A
         {
             get { return ReadByte(0xA); }
             set { Write(0xA, value); }
         }
 
-        [Category("Placement")]
+        [Category("Flags")]
         public byte SolidityFlag
         {
             get { return ReadByte(0xB); }
@@ -166,8 +166,8 @@ namespace IndustrialPark
         [Category("Placement")]
         public AssetID UnknownAssetID_10
         {
-            get { return ReadUInt(0x10); }
-            set { Write(0x10, value); }
+            get { return ReadUInt(0x10 + Offset); }
+            set { Write(0x10 + Offset, value); }
         }
         
         protected Vector3 _position;
@@ -178,7 +178,7 @@ namespace IndustrialPark
             set
             {
                 _position.X = value;
-                Write(0x20, _position.X);
+                Write(0x20 + Offset, _position.X);
                 CreateTransformMatrix();
             }
         }
@@ -190,7 +190,7 @@ namespace IndustrialPark
             set
             {
                 _position.Y = value;
-                Write(0x24, _position.Y);
+                Write(0x24 + Offset, _position.Y);
                 CreateTransformMatrix();
             }
         }
@@ -202,7 +202,7 @@ namespace IndustrialPark
             set
             {
                 _position.Z = value;
-                Write(0x28, _position.Z);
+                Write(0x28 + Offset, _position.Z);
                 CreateTransformMatrix();
             }
         }
@@ -215,7 +215,7 @@ namespace IndustrialPark
             set
             {
                 _rotation.X = MathUtil.DegreesToRadians(value);
-                Write(0x18, _rotation.X);
+                Write(0x18 + Offset, _rotation.X);
                 CreateTransformMatrix();
             }
         }
@@ -227,7 +227,7 @@ namespace IndustrialPark
             set
             {
                 _rotation.Y = MathUtil.DegreesToRadians(value);
-                Write(0x14, _rotation.Y);
+                Write(0x14 + Offset, _rotation.Y);
                 CreateTransformMatrix();
             }
         }
@@ -239,7 +239,7 @@ namespace IndustrialPark
             set
             {
                 _rotation.Z = MathUtil.DegreesToRadians(value);
-                Write(0x1C, _rotation.Z);
+                Write(0x1C + Offset, _rotation.Z);
                 CreateTransformMatrix();
             }
         }
@@ -252,7 +252,7 @@ namespace IndustrialPark
             set
             {
                 _scale.X = value;
-                Write(0x2C, _scale.X);
+                Write(0x2C + Offset, _scale.X);
                 CreateTransformMatrix();
             }
         }
@@ -264,7 +264,7 @@ namespace IndustrialPark
             set
             {
                 _scale.Y = value;
-                Write(0x30, _scale.Y);
+                Write(0x30 + Offset, _scale.Y);
                 CreateTransformMatrix();
             }
         }
@@ -276,44 +276,44 @@ namespace IndustrialPark
             set
             {
                 _scale.Z = value;
-                Write(0x34, _scale.Z);
+                Write(0x34 + Offset, _scale.Z);
                 CreateTransformMatrix();
             }
         }
 
         [Category("Placement")]
-        public float ColorX
+        public float ColorRed
         {
-            get { return ReadFloat(0x38); }
-            set { Write(0x38, value); }
+            get { return ReadFloat(0x38 + Offset); }
+            set { Write(0x38 + Offset, value); }
         }
 
         [Category("Placement")]
-        public float ColorY
+        public float ColorGreen
         {
-            get { return ReadFloat(0x3C); }
-            set { Write(0x3C, value); }
+            get { return ReadFloat(0x3C + Offset); }
+            set { Write(0x3C + Offset, value); }
         }
 
         [Category("Placement")]
-        public float ColorZ
+        public float ColorBlue
         {
-            get { return ReadFloat(0x40); }
-            set { Write(0x40, value); }
+            get { return ReadFloat(0x40 + Offset); }
+            set { Write(0x40 + Offset, value); }
         }
 
         [Category("Placement")]
         public float ColorAlpha
         {
-            get { return ReadFloat(0x44); }
-            set { Write(0x44, value); }
+            get { return ReadFloat(0x44 + Offset); }
+            set { Write(0x44 + Offset, value); }
         }
 
         [Category("Placement")]
         public float UnknownFloat48
         {
-            get { return ReadFloat(0x48); }
-            set { Write(0x48, value); }
+            get { return ReadFloat(0x48 + Offset); }
+            set { Write(0x48 + Offset, value); }
         }
 
         protected uint _modelAssetID;
@@ -324,20 +324,15 @@ namespace IndustrialPark
             set
             {
                 _modelAssetID = value;
-                Write(0x4C, _modelAssetID);
+                Write(0x4C + Offset, _modelAssetID);
             }
         }
 
         [Category("Placement")]
         public AssetID UnknownAssetID_50
         {
-            get { return ReadUInt(0x50); }
-            set { Write(0x50, value); }
+            get { return ReadUInt(0x50 + Offset); }
+            set { Write(0x50 + Offset, value); }
         }
-
-        [Browsable(false), Category("Placement")]
-        public Vector3 Position { get => _position; set { } }
-        [Browsable(false), Category("Placement")]
-        public Vector3 Scale { get => _scale; set { } }
     }
 }

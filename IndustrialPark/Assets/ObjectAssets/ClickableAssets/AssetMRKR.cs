@@ -129,31 +129,5 @@ namespace IndustrialPark
                 CreateTransformMatrix();
             }
         }
-
-        [Browsable(false)]
-        public float ScaleX
-        {
-            get { return 0f; }
-            set { }
-        }
-
-        [Browsable(false)]
-        public float ScaleY
-        {
-            get { return 0f; }
-            set { }
-        }
-
-        [Browsable(false)]
-        public float ScaleZ
-        {
-            get { return 0f; }
-            set { }
-        }
-
-        [Browsable(false)]
-        public Vector3 Position { get => _position; set { } }
-        [Browsable(false)]
-        public Vector3 Scale { get => Vector3.Zero; set { } }
     }
 }

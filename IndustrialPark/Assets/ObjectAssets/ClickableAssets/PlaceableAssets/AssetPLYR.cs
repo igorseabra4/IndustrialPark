@@ -14,6 +14,11 @@ namespace IndustrialPark
             return dontRender;
         }
 
+        protected override int getEventStartOffset()
+        {
+            return 0x54 + Offset;
+        }
+
         public AssetPLYR(Section_AHDR AHDR) : base(AHDR) { }
         
         protected override void CreateBoundingBox()
@@ -60,16 +65,10 @@ namespace IndustrialPark
             renderer.DrawCube(world, isSelected);
         }
 
-        public AssetEvent[] Events
-        {
-            get { return ReadEvents(0x54); }
-            set { WriteEvents(0x54, value); }
-        }
-
         public AssetID LightKitID
         {
-            get { return ReadUInt(0x54 + ReadByte(0x05) * AssetEvent.sizeOfStruct); }
-            set { Write(0x54 + ReadByte(0x05) * AssetEvent.sizeOfStruct, value); }
+            get { return ReadUInt(getEventStartOffset() + AmountOfEvents * AssetEvent.sizeOfStruct); }
+            set { Write(getEventStartOffset() + AmountOfEvents * AssetEvent.sizeOfStruct, value); }
         }
     }
 }

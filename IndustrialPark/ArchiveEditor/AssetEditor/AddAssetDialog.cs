@@ -152,6 +152,7 @@ namespace IndustrialPark
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 data = File.ReadAllBytes(openFileDialog.FileName);
+                textBoxAssetName.Text = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
                 labelRawDataSize.Text = "Raw Data Size: " + data.Length.ToString();
                 buttonOK.Enabled = true;
             }
@@ -160,7 +161,7 @@ namespace IndustrialPark
         private void textBoxAssetName_TextChanged(object sender, EventArgs e)
         {
             assetName = textBoxAssetName.Text;
-            textBoxAssetID.Text = ConverterFunctions.BKDRHash(assetName).ToString("X8");
+            textBoxAssetID.Text = Functions.BKDRHash(assetName).ToString("X8");
         }
 
         private void textBoxAssetFilename_TextChanged(object sender, EventArgs e)

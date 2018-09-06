@@ -1,12 +1,16 @@
 ﻿using HipHopFile;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using static HipHopFile.Functions;
 
 namespace IndustrialPark
 {
     public abstract class Asset
     {
+        public static int Offset { get { return currentGame == Game.BFBB ? 0x00 : -0x04; } }
+
         public Section_AHDR AHDR;
         public bool isSelected;
 
@@ -15,6 +19,7 @@ namespace IndustrialPark
             this.AHDR = AHDR;
         }
         
+        [Category("Data")]
         public byte[] Data
         {
             get { return AHDR.containedFile; }
@@ -27,14 +32,17 @@ namespace IndustrialPark
                 "[" + AHDR.assetID.ToString("X8") + "] " + AHDR.ADBG.assetName :
                 AHDR.ADBG.assetName + " [" + AHDR.assetID.ToString("X8") + "]";
         }
-
+        
         protected float ReadFloat(int j)
         {
-            return BitConverter.ToSingle(new byte[] {
+            if (currentPlatform == Platform.GameCube)
+                return BitConverter.ToSingle(new byte[] {
                 AHDR.containedFile[j + 3],
                 AHDR.containedFile[j + 2],
                 AHDR.containedFile[j + 1],
                 AHDR.containedFile[j] }, 0);
+
+            return BitConverter.ToSingle(AHDR.containedFile, j);
         }
 
         protected byte ReadByte(int j)
@@ -44,46 +52,55 @@ namespace IndustrialPark
 
         protected short ReadShort(int j)
         {
-            return BitConverter.ToInt16(new byte[] {
+            if (currentPlatform == Platform.GameCube)
+                return BitConverter.ToInt16(new byte[] {
                 AHDR.containedFile[j + 1],
                 AHDR.containedFile[j] }, 0);
+
+            return BitConverter.ToInt16(AHDR.containedFile, j);
         }
 
         protected ushort ReadUshort(int j)
         {
-            return BitConverter.ToUInt16(new byte[] {
+            if (currentPlatform == Platform.GameCube)
+                return BitConverter.ToUInt16(new byte[] {
                 AHDR.containedFile[j + 1],
                 AHDR.containedFile[j] }, 0);
+
+            return BitConverter.ToUInt16(AHDR.containedFile, j);
         }
 
         protected int ReadInt(int j)
         {
-            return BitConverter.ToInt32(new byte[] {
+            if (currentPlatform == Platform.GameCube)
+                return BitConverter.ToInt32(new byte[] {
                 AHDR.containedFile[j + 3],
                 AHDR.containedFile[j + 2],
                 AHDR.containedFile[j + 1],
                 AHDR.containedFile[j] }, 0);
+
+            return BitConverter.ToInt32(AHDR.containedFile, j);
         }
 
         protected uint ReadUInt(int j)
         {
-            try
-            {
+            if (currentPlatform == Platform.GameCube)
                 return BitConverter.ToUInt32(new byte[] {
                 AHDR.containedFile[j + 3],
                 AHDR.containedFile[j + 2],
                 AHDR.containedFile[j + 1],
                 AHDR.containedFile[j] }, 0);
-            }
-            catch
-            {
-                return 0;
-            }
+
+            return BitConverter.ToUInt32(AHDR.containedFile, j);
         }
 
         protected void Write(int j, float value)
         {
-            byte[] split = BitConverter.GetBytes(value).Reverse().ToArray();
+            byte[] split = BitConverter.GetBytes(value).ToArray();
+
+            if (currentPlatform == Platform.GameCube)
+                split = split.Reverse().ToArray();
+
             for (int i = 0; i < 4; i++)
                 AHDR.containedFile[j + i] = split[i];
         }
@@ -95,28 +112,44 @@ namespace IndustrialPark
 
         protected void Write(int j, short value)
         {
-            byte[] split = BitConverter.GetBytes(value).Reverse().ToArray();
+            byte[] split = BitConverter.GetBytes(value).ToArray();
+
+            if (currentPlatform == Platform.GameCube)
+                split = split.Reverse().ToArray();
+
             for (int i = 0; i < 2; i++)
                 AHDR.containedFile[j + i] = split[i];
         }
 
         protected void Write(int j, ushort value)
         {
-            byte[] split = BitConverter.GetBytes(value).Reverse().ToArray();
+            byte[] split = BitConverter.GetBytes(value).ToArray();
+
+            if (currentPlatform == Platform.GameCube)
+                split = split.Reverse().ToArray();
+
             for (int i = 0; i < 2; i++)
                 AHDR.containedFile[j + i] = split[i];
         }
 
         protected void Write(int j, int value)
         {
-            byte[] split = BitConverter.GetBytes(value).Reverse().ToArray();
+            byte[] split = BitConverter.GetBytes(value).ToArray();
+
+            if (currentPlatform == Platform.GameCube)
+                split = split.Reverse().ToArray();
+
             for (int i = 0; i < 4; i++)
                 AHDR.containedFile[j + i] = split[i];
         }
 
         protected void Write(int j, uint value)
         {
-            byte[] split = BitConverter.GetBytes(value).Reverse().ToArray();
+            byte[] split = BitConverter.GetBytes(value).ToArray();
+
+            if (currentPlatform == Platform.GameCube)
+                split = split.Reverse().ToArray();
+
             for (int i = 0; i < 4; i++)
                 AHDR.containedFile[j + i] = split[i];
         }

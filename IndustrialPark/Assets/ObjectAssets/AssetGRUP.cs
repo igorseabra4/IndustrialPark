@@ -8,7 +8,12 @@ namespace IndustrialPark
     public class AssetGRUP : ObjectAsset
     {
         public AssetGRUP(Section_AHDR AHDR) : base(AHDR) { }
-        
+
+        protected override int getEventStartOffset()
+        {
+            return 0x0C + ReadShort(0x08) * 4;
+        }
+
         public AssetID[] GroupAssetIDs
         {
             get
@@ -37,12 +42,6 @@ namespace IndustrialPark
 
                 Data = newData.ToArray();
             }
-        }
-
-        public AssetEvent[] Events
-        {
-            get { return ReadEvents(0x0C + ReadUshort(0x08) * 4); }
-            set { WriteEvents(0x0C + ReadUshort(0x08) * 4, value); }
         }
     }
 }

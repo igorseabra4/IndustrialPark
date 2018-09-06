@@ -20,6 +20,11 @@ namespace IndustrialPark
             return dontRender;
         }
 
+        protected override int getEventStartOffset()
+        {
+            return 0x94 + Offset;
+        }
+
         public BoundingSphere boundingSphere;
 
         public AssetTRIG(Section_AHDR AHDR) : base(AHDR) { }
@@ -28,10 +33,10 @@ namespace IndustrialPark
         {
             _shape = ReadByte(9);
 
-            _trigPos0 = new Vector3(ReadFloat(0x54), ReadFloat(0x58), ReadFloat(0x5C));
-            _trigPos1 = new Vector3(ReadFloat(0x60), ReadFloat(0x64), ReadFloat(0x68));
-            _trigPos2 = new Vector3(ReadFloat(0x6C), ReadFloat(0x70), ReadFloat(0x74));
-            _trigPos3 = new Vector3(ReadFloat(0x78), ReadFloat(0x7C), ReadFloat(0x80));
+            _trigPos0 = new Vector3(ReadFloat(0x54 + Offset), ReadFloat(0x58 + Offset), ReadFloat(0x5C + Offset));
+            _trigPos1 = new Vector3(ReadFloat(0x60 + Offset), ReadFloat(0x64 + Offset), ReadFloat(0x68 + Offset));
+            _trigPos2 = new Vector3(ReadFloat(0x6C + Offset), ReadFloat(0x70 + Offset), ReadFloat(0x74 + Offset));
+            _trigPos3 = new Vector3(ReadFloat(0x78) + Offset, ReadFloat(0x7C + Offset), ReadFloat(0x80 + Offset));
 
             base.Setup(renderer);
         }
@@ -170,7 +175,7 @@ namespace IndustrialPark
                 }
 
                 _position.X = value;
-                Write(0x20, _position.X);
+                Write(0x20 + Offset, _position.X);
                 CreateTransformMatrix();
             }
         }
@@ -191,7 +196,7 @@ namespace IndustrialPark
                 }
 
                 _position.Y = value;
-                Write(0x24, _position.Y);
+                Write(0x24 + Offset, _position.Y);
                 CreateTransformMatrix();
             }
         }
@@ -212,7 +217,7 @@ namespace IndustrialPark
                 }
 
                 _position.Z = value;
-                Write(0x28, _position.Z);
+                Write(0x28 + Offset, _position.Z);
                 Position0Z = value;
             }
         }
@@ -228,7 +233,7 @@ namespace IndustrialPark
             set
             {
                 _trigPos0.X = value;
-                Write(0x54, _trigPos0.X);
+                Write(0x54 + Offset, _trigPos0.X);
                 CreateTransformMatrix();
             }
         }
@@ -238,7 +243,7 @@ namespace IndustrialPark
             set
             {
                 _trigPos0.Y = value;
-                Write(0x58, _trigPos0.Y);
+                Write(0x58 + Offset, _trigPos0.Y);
                 CreateTransformMatrix();
             }
         }
@@ -248,7 +253,7 @@ namespace IndustrialPark
             set
             {
                 _trigPos0.Z = value;
-                Write(0x5C, _trigPos0.Z);
+                Write(0x5C + Offset, _trigPos0.Z);
                 CreateTransformMatrix();
             }
         }
@@ -258,7 +263,7 @@ namespace IndustrialPark
             set
             {
                 _trigPos1.X = value;
-                Write(0x60, _trigPos1.X);
+                Write(0x60 + Offset, _trigPos1.X);
                 CreateTransformMatrix();
             }
         }
@@ -278,7 +283,7 @@ namespace IndustrialPark
             set
             {
                 _trigPos1.Z = value;
-                Write(0x68, _trigPos1.Z);
+                Write(0x68 + Offset, _trigPos1.Z);
                 CreateTransformMatrix();
             }
         }
@@ -288,7 +293,7 @@ namespace IndustrialPark
             set
             {
                 _trigPos2.X = value;
-                Write(0x6C, _trigPos2.X);
+                Write(0x6C + Offset, _trigPos2.X);
             }
         }
         public float Position2Y
@@ -297,7 +302,7 @@ namespace IndustrialPark
             set
             {
                 _trigPos2.Y = value;
-                Write(0x70, _trigPos2.Y);
+                Write(0x70 + Offset, _trigPos2.Y);
             }
         }
         public float Position2Z
@@ -306,7 +311,7 @@ namespace IndustrialPark
             set
             {
                 _trigPos2.Z = value;
-                Write(0x74, _trigPos2.Z);
+                Write(0x74 + Offset, _trigPos2.Z);
             }
         }
         public float Position3X
@@ -315,7 +320,7 @@ namespace IndustrialPark
             set
             {
                 _trigPos3.X = value;
-                Write(0x78, _trigPos3.X);
+                Write(0x78 + Offset, _trigPos3.X);
             }
         }
         public float Position3Y
@@ -324,7 +329,7 @@ namespace IndustrialPark
             set
             {
                 _trigPos3.Y = value;
-                Write(0x7C, _trigPos3.Y);
+                Write(0x7C + Offset, _trigPos3.Y);
             }
         }
         public float Position3Z
@@ -333,42 +338,36 @@ namespace IndustrialPark
             set
             {
                 _trigPos3.Z = value;
-                Write(0x80, _trigPos3.Z);
+                Write(0x80 + Offset, _trigPos3.Z);
             }
         }
 
         public float UnknownTriggerFloat1
         {
-            get { return ReadFloat(0x84); }
+            get { return ReadFloat(0x84 + Offset); }
             set
-            { Write(0x84, value); }
+            { Write(0x84 + Offset, value); }
         }
 
         public float UnknownTriggerFloat2
         {
-            get { return ReadFloat(0x88); }
+            get { return ReadFloat(0x88 + Offset); }
             set
-            { Write(0x88, value); }
+            { Write(0x88 + Offset, value); }
         }
 
         public float UnknownTriggerFloat3
         {
-            get { return ReadFloat(0x8C); }
+            get { return ReadFloat(0x8C + Offset); }
             set
-            { Write(0x8C, value); }
+            { Write(0x8C + Offset, value); }
         }
 
         public float UnknownTriggerFloat4
         {
-            get { return ReadFloat(0x90); }
+            get { return ReadFloat(0x90 + Offset); }
             set
-            { Write(0x90, value); }
-        }
-
-        public AssetEvent[] Events
-        {
-            get { return ReadEvents(0x94); }
-            set { WriteEvents(0x94, value); }
+            { Write(0x90 + Offset, value); }
         }
     }
 }

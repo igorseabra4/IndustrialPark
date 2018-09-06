@@ -11,30 +11,29 @@ namespace IndustrialPark
             return dontRender;
         }
 
+        protected override int getEventStartOffset()
+        {
+            return 0x60 + Offset;
+        }
+
         public AssetSIMP(Section_AHDR AHDR) : base(AHDR) { }
         
         public float UnknownFloat_54
         {
-            get { return ReadFloat(0x54); }
-            set { Write(0x54, value); }
+            get { return ReadFloat(0x54 + Offset); }
+            set { Write(0x54 + Offset, value); }
         }
 
         public int Unknown_58
         {
-            get { return ReadInt(0x58); }
-            set { Write(0x58, value); }
+            get { return ReadInt(0x58 + Offset); }
+            set { Write(0x58 + Offset, value); }
         }
 
-        public int Unknown_5C
+        public AssetID Unknown_5C
         {
-            get { return ReadInt(0x5C); }
-            set { Write(0x5C, value); }
-        }
-
-        public AssetEvent[] Events
-        {
-            get { return ReadEvents(0x60); }
-            set { WriteEvents(0x60, value); }
+            get { return ReadUInt(0x5C + Offset); }
+            set { Write(0x5C + Offset, value); }
         }
     }
 }

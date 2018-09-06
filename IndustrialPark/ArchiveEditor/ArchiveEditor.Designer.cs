@@ -38,7 +38,6 @@
             this.assetNameAssetIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.assetIDAssetNameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportTexturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exportKnowlifesINIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clickThisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -63,6 +62,7 @@
             this.buttonAddAsset = new System.Windows.Forms.Button();
             this.comboBoxAssetTypes = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.importTXDArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -88,8 +88,8 @@
             this.saveAsToolStripMenuItem,
             this.toolStripSeparator1,
             this.displayModeToolStripMenuItem,
+            this.importTXDArchiveToolStripMenuItem,
             this.exportTexturesToolStripMenuItem,
-            this.exportKnowlifesINIToolStripMenuItem,
             this.toolStripSeparator2,
             this.closeToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -100,7 +100,7 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
@@ -108,7 +108,7 @@
             // 
             this.saveToolStripMenuItem.Enabled = false;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -116,14 +116,14 @@
             // 
             this.saveAsToolStripMenuItem.Enabled = false;
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveAsToolStripMenuItem.Text = "Save As...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(184, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // displayModeToolStripMenuItem
             // 
@@ -131,7 +131,7 @@
             this.assetNameAssetIDToolStripMenuItem,
             this.assetIDAssetNameToolStripMenuItem});
             this.displayModeToolStripMenuItem.Name = "displayModeToolStripMenuItem";
-            this.displayModeToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.displayModeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.displayModeToolStripMenuItem.Text = "Display Mode";
             // 
             // assetNameAssetIDToolStripMenuItem
@@ -153,25 +153,19 @@
             // exportTexturesToolStripMenuItem
             // 
             this.exportTexturesToolStripMenuItem.Name = "exportTexturesToolStripMenuItem";
-            this.exportTexturesToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.exportTexturesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exportTexturesToolStripMenuItem.Text = "Export Textures";
             this.exportTexturesToolStripMenuItem.Click += new System.EventHandler(this.exportTexturesToolStripMenuItem_Click);
-            // 
-            // exportKnowlifesINIToolStripMenuItem
-            // 
-            this.exportKnowlifesINIToolStripMenuItem.Name = "exportKnowlifesINIToolStripMenuItem";
-            this.exportKnowlifesINIToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
-            this.exportKnowlifesINIToolStripMenuItem.Text = "Export knowlife\'s TXT";
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(184, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
@@ -392,6 +386,13 @@
             this.label2.TabIndex = 4;
             this.label2.Text = "Show by Type:";
             // 
+            // importTXDArchiveToolStripMenuItem
+            // 
+            this.importTXDArchiveToolStripMenuItem.Name = "importTXDArchiveToolStripMenuItem";
+            this.importTXDArchiveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.importTXDArchiveToolStripMenuItem.Text = "Import TXD Archive";
+            this.importTXDArchiveToolStripMenuItem.Click += new System.EventHandler(this.importTXDArchiveToolStripMenuItem_Click);
+            // 
             // ArchiveEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -448,7 +449,6 @@
         private System.Windows.Forms.Button buttonRemoveAsset;
         private System.Windows.Forms.Button buttonEditAsset;
         private System.Windows.Forms.Button buttonExportRaw;
-        private System.Windows.Forms.ToolStripMenuItem exportKnowlifesINIToolStripMenuItem;
         private System.Windows.Forms.Button buttonView;
         private System.Windows.Forms.ToolStripMenuItem clickThisToolStripMenuItem;
         private System.Windows.Forms.Button buttonInternalEdit;
@@ -457,5 +457,6 @@
         private System.Windows.Forms.ToolStripMenuItem assetIDAssetNameToolStripMenuItem;
         private System.Windows.Forms.TextBox textBoxFindAsset;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ToolStripMenuItem importTXDArchiveToolStripMenuItem;
     }
 }

@@ -1,5 +1,4 @@
 ﻿using SharpDX;
-using System.ComponentModel;
 
 namespace IndustrialPark
 {

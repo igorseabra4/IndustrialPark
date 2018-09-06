@@ -7,40 +7,41 @@ namespace IndustrialPark
     {
         public ObjectAsset(Section_AHDR AHDR) : base(AHDR) { }
 
-        [Category("Common")]
+        [Category("Object")]
         public AssetID AssetID
         {
             get { return ReadUInt(0); }
             set { Write(0, value); }
         }
 
-        [Category("Common")]
-        public byte AssetType
+        [Category("Object")]
+        public ObjectAssetType AssetType
         {
-            get { return ReadByte(0x4); }
-            set { Write(0x4, value); }
+            get { return (ObjectAssetType)ReadByte(0x4); }
+            set { Write(0x4, (byte)value); }
         }
 
-        [Category("Common"),
-        ReadOnly(true)]
+        [Category("Object"), ReadOnly(true)]
         public byte AmountOfEvents
         {
             get { return ReadByte(0x5); }
             set { }
         }
 
-        [Category("Common")]
-        public byte UnknownFlag06
+        [Category("Object")]
+        public short UnknownFlag
         {
-            get { return ReadByte(0x6); }
+            get { return ReadShort(0x6); }
             set { Write(0x6, value); }
         }
 
-        [Category("Common")]
-        public byte UnknownFlag07
+        [Category("Object")]
+        public AssetEvent[] Events
         {
-            get { return ReadByte(0x7); }
-            set { Write(0x7, value); }
+            get { return ReadEvents(getEventStartOffset()); }
+            set { WriteEvents(getEventStartOffset(), value); }
         }
+
+        protected abstract int getEventStartOffset();
     }
 }

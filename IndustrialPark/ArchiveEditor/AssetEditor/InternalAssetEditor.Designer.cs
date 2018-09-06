@@ -37,9 +37,9 @@
             this.propertyGridAsset.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.propertyGridAsset.HelpVisible = false;
             this.propertyGridAsset.Location = new System.Drawing.Point(12, 25);
             this.propertyGridAsset.Name = "propertyGridAsset";
-            this.propertyGridAsset.PropertySort = System.Windows.Forms.PropertySort.Categorized;
             this.propertyGridAsset.Size = new System.Drawing.Size(282, 441);
             this.propertyGridAsset.TabIndex = 5;
             // 
