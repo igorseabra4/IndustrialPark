@@ -14,7 +14,7 @@ namespace IndustrialPark
         public void Setup(SharpRenderer renderer)
         {
             model = new RenderWareModelFile(AHDR.ADBG.assetName);
-            model.SetForRendering(renderer.device, RenderWareFile.ReadFileMethods.ReadRenderWareFile(AHDR.containedFile), AHDR.containedFile);
+            model.SetForRendering(renderer.device, RenderWareFile.ReadFileMethods.ReadRenderWareFile(AHDR.data), AHDR.data);
             ArchiveEditorFunctions.AddToRenderingDictionary(AHDR.assetID, this);
         }
 

@@ -282,9 +282,9 @@ namespace IndustrialPark
                 plusValue = AHDR.plusValue
             };
 
-            newAHDR.containedFile = new byte[AHDR.containedFile.Length];
-            for (int i = 0; i < newAHDR.containedFile.Length; i++)
-                newAHDR.containedFile[i] = AHDR.containedFile[i];
+            newAHDR.data = new byte[AHDR.data.Length];
+            for (int i = 0; i < newAHDR.data.Length; i++)
+                newAHDR.data[i] = AHDR.data[i];
 
             archive.AddAsset(comboBoxLayers.SelectedIndex, newAHDR);
             PopulateAssetsComboAndListBox();
@@ -354,7 +354,7 @@ namespace IndustrialPark
             {
                 try
                 {
-                    File.WriteAllBytes(saveFileDialog.FileName, archive.GetFromAssetID(CurrentlySelectedAssetID()).AHDR.containedFile);
+                    File.WriteAllBytes(saveFileDialog.FileName, archive.GetFromAssetID(CurrentlySelectedAssetID()).AHDR.data);
                 }
                 catch (Exception ex)
                 {

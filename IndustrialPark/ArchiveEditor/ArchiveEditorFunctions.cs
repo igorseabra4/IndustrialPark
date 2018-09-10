@@ -55,7 +55,7 @@ namespace IndustrialPark
         public static void ExportTextureAsset(AssetRWTX asset, string fileNamePrefix)
         {
             Directory.CreateDirectory(Application.StartupPath + "\\Export\\" + fileNamePrefix);
-            File.WriteAllBytes(Application.StartupPath + "\\Export\\" + fileNamePrefix + "\\" + Path.GetFileNameWithoutExtension(asset.AHDR.ADBG.assetName) + ".txd", asset.AHDR.containedFile);
+            File.WriteAllBytes(Application.StartupPath + "\\Export\\" + fileNamePrefix + "\\" + Path.GetFileNameWithoutExtension(asset.AHDR.ADBG.assetName) + ".txd", asset.AHDR.data);
         }
 
         public string fileNamePrefix;

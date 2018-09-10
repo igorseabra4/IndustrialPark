@@ -20,9 +20,9 @@ namespace IndustrialPark
             return dontRender;
         }
 
-        protected override int getEventStartOffset()
+        protected override int EventStartOffset
         {
-            return 0x94 + Offset;
+            get => 0x94 + Offset;
         }
 
         public BoundingSphere boundingSphere;
@@ -36,7 +36,7 @@ namespace IndustrialPark
             _trigPos0 = new Vector3(ReadFloat(0x54 + Offset), ReadFloat(0x58 + Offset), ReadFloat(0x5C + Offset));
             _trigPos1 = new Vector3(ReadFloat(0x60 + Offset), ReadFloat(0x64 + Offset), ReadFloat(0x68 + Offset));
             _trigPos2 = new Vector3(ReadFloat(0x6C + Offset), ReadFloat(0x70 + Offset), ReadFloat(0x74 + Offset));
-            _trigPos3 = new Vector3(ReadFloat(0x78) + Offset, ReadFloat(0x7C + Offset), ReadFloat(0x80 + Offset));
+            _trigPos3 = new Vector3(ReadFloat(0x78 + Offset), ReadFloat(0x7C + Offset), ReadFloat(0x80 + Offset));
 
             base.Setup(renderer);
         }
@@ -77,7 +77,7 @@ namespace IndustrialPark
                 boundingBox = BoundingBox.FromSphere(boundingSphere);
             }
         }
-        
+
         public override void Draw(SharpRenderer renderer)
         {
             if (dontRender) return;
@@ -95,23 +95,23 @@ namespace IndustrialPark
 
             if (Shape == TriggerShape.Box)
                 if (ray.Intersects(ref boundingBox, out float distance))
-                    return TriangleIntersection(ray, distance, SharpRenderer.cubeTriangles, SharpRenderer.cubeVertices);
+                    return TriangleIntersection(ray, SharpRenderer.cubeTriangles, SharpRenderer.cubeVertices);
             if (Shape == TriggerShape.Sphere)
                 if (ray.Intersects(ref boundingSphere, out float distance2))
-                    return TriangleIntersection(ray, distance2, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices);
+                    return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices);
             return null;
         }
 
-        protected float? TriangleIntersection(Ray r, float initialDistance, List<Triangle> triangles, List<Vector3> vertices, float multiplier = 1f)
+        private float? TriangleIntersection(Ray r, List<Triangle> triangles, List<Vector3> vertices)
         {
             bool hasIntersected = false;
             float smallestDistance = 1000f;
 
             foreach (Triangle t in triangles)
             {
-                Vector3 v1 = (Vector3)Vector3.Transform(vertices[t.vertex1], world) * multiplier;
-                Vector3 v2 = (Vector3)Vector3.Transform(vertices[t.vertex2], world) * multiplier;
-                Vector3 v3 = (Vector3)Vector3.Transform(vertices[t.vertex3], world) * multiplier;
+                Vector3 v1 = (Vector3)Vector3.Transform(vertices[t.vertex1], world);
+                Vector3 v2 = (Vector3)Vector3.Transform(vertices[t.vertex2], world);
+                Vector3 v3 = (Vector3)Vector3.Transform(vertices[t.vertex3], world);
 
                 if (r.Intersects(ref v1, ref v2, ref v3, out float distance))
                 {
@@ -151,7 +151,7 @@ namespace IndustrialPark
         private byte _shape;
         public TriggerShape Shape
         {
-            get { return (TriggerShape)_shape; }
+            get => (TriggerShape)_shape;
             set
             {
                 _shape = (byte)value;
@@ -161,7 +161,7 @@ namespace IndustrialPark
 
         public override float PositionX
         {
-            get { return _position.X; }
+            get => _position.X;
             set
             {
                 if (Shape == TriggerShape.Sphere)
@@ -182,7 +182,7 @@ namespace IndustrialPark
 
         public override float PositionY
         {
-            get { return _position.Y; }
+            get => _position.Y;
             set
             {
                 if (Shape == TriggerShape.Sphere)
@@ -203,7 +203,7 @@ namespace IndustrialPark
 
         public override float PositionZ
         {
-            get { return _trigPos0.Z; }
+            get => _trigPos0.Z;
             set
             {
                 if (Shape == TriggerShape.Sphere)
@@ -221,7 +221,7 @@ namespace IndustrialPark
                 Position0Z = value;
             }
         }
-        
+
         private Vector3 _trigPos0;
         private Vector3 _trigPos1;
         private Vector3 _trigPos2;
@@ -229,7 +229,7 @@ namespace IndustrialPark
 
         public float Position0X
         {
-            get { return _trigPos0.X; }
+            get => _trigPos0.X;
             set
             {
                 _trigPos0.X = value;
@@ -239,7 +239,7 @@ namespace IndustrialPark
         }
         public float Position0Y
         {
-            get { return _trigPos0.Y; }
+            get => _trigPos0.Y;
             set
             {
                 _trigPos0.Y = value;
@@ -249,7 +249,7 @@ namespace IndustrialPark
         }
         public float Position0Z
         {
-            get { return _trigPos0.Z; }
+            get => _trigPos0.Z;
             set
             {
                 _trigPos0.Z = value;
@@ -259,7 +259,7 @@ namespace IndustrialPark
         }
         public float Position1X_Radius
         {
-            get { return _trigPos1.X; }
+            get => _trigPos1.X;
             set
             {
                 _trigPos1.X = value;
@@ -269,7 +269,7 @@ namespace IndustrialPark
         }
         public float Position1Y
         {
-            get { return _trigPos1.Y; }
+            get => _trigPos1.Y;
             set
             {
                 _trigPos1.Y = value;
@@ -279,7 +279,7 @@ namespace IndustrialPark
         }
         public float Position1Z
         {
-            get { return _trigPos1.Z; }
+            get => _trigPos1.Z;
             set
             {
                 _trigPos1.Z = value;
@@ -289,7 +289,7 @@ namespace IndustrialPark
         }
         public float Position2X
         {
-            get { return _trigPos2.X; }
+            get => _trigPos2.X;
             set
             {
                 _trigPos2.X = value;
@@ -298,7 +298,7 @@ namespace IndustrialPark
         }
         public float Position2Y
         {
-            get { return _trigPos2.Y; }
+            get => _trigPos2.Y;
             set
             {
                 _trigPos2.Y = value;
@@ -307,7 +307,7 @@ namespace IndustrialPark
         }
         public float Position2Z
         {
-            get { return _trigPos2.Z; }
+            get => _trigPos2.Z;
             set
             {
                 _trigPos2.Z = value;
@@ -316,7 +316,7 @@ namespace IndustrialPark
         }
         public float Position3X
         {
-            get { return _trigPos3.X; }
+            get => _trigPos3.X;
             set
             {
                 _trigPos3.X = value;
@@ -325,7 +325,7 @@ namespace IndustrialPark
         }
         public float Position3Y
         {
-            get { return _trigPos3.Y; }
+            get => _trigPos3.Y;
             set
             {
                 _trigPos3.Y = value;
@@ -334,7 +334,7 @@ namespace IndustrialPark
         }
         public float Position3Z
         {
-            get { return _trigPos3.Z; }
+            get => _trigPos3.Z;
             set
             {
                 _trigPos3.Z = value;
@@ -344,30 +344,26 @@ namespace IndustrialPark
 
         public float UnknownTriggerFloat1
         {
-            get { return ReadFloat(0x84 + Offset); }
-            set
-            { Write(0x84 + Offset, value); }
+            get => ReadFloat(0x84 + Offset);
+            set => Write(0x84 + Offset, value);
         }
 
         public float UnknownTriggerFloat2
         {
-            get { return ReadFloat(0x88 + Offset); }
-            set
-            { Write(0x88 + Offset, value); }
+            get => ReadFloat(0x88 + Offset);
+            set => Write(0x88 + Offset, value);
         }
 
         public float UnknownTriggerFloat3
         {
-            get { return ReadFloat(0x8C + Offset); }
-            set
-            { Write(0x8C + Offset, value); }
+            get => ReadFloat(0x8C + Offset);
+            set => Write(0x8C + Offset, value);
         }
 
         public float UnknownTriggerFloat4
         {
-            get { return ReadFloat(0x90 + Offset); }
-            set
-            { Write(0x90 + Offset, value); }
+            get => ReadFloat(0x90 + Offset);
+            set => Write(0x90 + Offset, value);
         }
     }
 }

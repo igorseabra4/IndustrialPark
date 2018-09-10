@@ -14,10 +14,10 @@ namespace IndustrialPark
         private BoundingBox boundingBox;
 
         public static bool dontRender = false;
-        
-        protected override int getEventStartOffset()
+
+        protected override int EventStartOffset
         {
-            return 0x74 + ReadShort(0x1A) * 4;
+            get => 0x28 + 4 * SiblingAmount;
         }
 
         public AssetMVPT(Section_AHDR AHDR) : base(AHDR)
@@ -27,7 +27,7 @@ namespace IndustrialPark
         public void Setup(SharpRenderer renderer)
         {
             _position = new Vector3(ReadFloat(0x8), ReadFloat(0xC), ReadFloat(0x10));
-            _scale = new Vector3(ReadFloat(0x1C), ReadFloat(0x20), ReadFloat(0x24));
+            _distanceICanSeeYou = ReadFloat(0x24);
 
             CreateTransformMatrix();
 
@@ -37,7 +37,7 @@ namespace IndustrialPark
 
         public void CreateTransformMatrix()
         {
-            world = Matrix.Translation(_position);
+            world = Matrix.Scaling(_distanceICanSeeYou * 2f) * Matrix.Translation(_position);
 
             CreateBoundingBox();
         }
@@ -85,7 +85,7 @@ namespace IndustrialPark
         {
             if (dontRender) return;
 
-            renderer.DrawCube(world, isSelected);
+            renderer.DrawSphere(world, isSelected);
         }
 
         public virtual Vector3 GetGizmoCenter()
@@ -137,67 +137,88 @@ namespace IndustrialPark
             }
         }
 
-        private Vector3 _scale;
-        public float ScaleX
+        [TypeConverter(typeof(HexByteTypeConverter))]
+        public byte UnknownByte14
         {
-            get { return _scale.X; }
+            get => ReadByte(0x14);
+            set => Write(0x14, value);
+        }
+
+        [TypeConverter(typeof(HexByteTypeConverter))]
+        public byte UnknownByte15
+        {
+            get => ReadByte(0x15);
+            set => Write(0x15, value);
+        }
+
+        [TypeConverter(typeof(HexByteTypeConverter))]
+        public byte UnknownByte16
+        {
+            get => ReadByte(0x16);
+            set => Write(0x16, value);
+        }
+
+        [TypeConverter(typeof(HexByteTypeConverter))]
+        public byte PointType
+        {
+            get => ReadByte(0x17);
+            set => Write(0x17, value);
+        }
+
+        [ReadOnly(true)]
+        public int SiblingAmount
+        {
+            get => ReadInt(0x18);
+            set => Write(0x18, value);
+        }
+
+        public float MovementAngle
+        {
+            get => ReadFloat(0x1C);
+            set => Write(0x1C, value);
+        }
+
+        public float MovementRadius
+        {
+            get => ReadFloat(0x20);
+            set => Write(0x20, value);
+        }
+
+        private float _distanceICanSeeYou;
+        public float DistanceICanSeeYou
+        {
+            get => _distanceICanSeeYou;
             set
             {
-                _scale.X = value;
-                Write(0x1C, _scale.X);
+                _distanceICanSeeYou = value;
+                Write(0x24, _distanceICanSeeYou);
                 CreateTransformMatrix();
             }
         }
 
-        public float ScaleY
-        {
-            get { return _position.Y; }
-            set
-            {
-                _scale.Y = value;
-                Write(0x20, _scale.Y);
-                CreateTransformMatrix();
-            }
-        }
-
-        public float ScaleZ
-        {
-            get { return _position.Z; }
-            set
-            {
-                _scale.Z = value;
-                Write(0x24, _scale.Z);
-                CreateTransformMatrix();
-            }
-        }
-
-        public AssetID[] OtherMVPTAssetIDs
+        public AssetID[] SiblingMVPTs
         {
             get
             {
-                List<AssetID> _otherMVPTs = new List<AssetID>();
-                short amount = ReadShort(0x1A);
-                for (int i = 0; i < amount; i++)
-                    _otherMVPTs.Add(ReadUInt(0x28 + 4 * i));
+                AssetID[] _otherMVPTs = new AssetID[SiblingAmount];
+                for (int i = 0; i < SiblingAmount; i++)
+                    _otherMVPTs[i] = ReadUInt(0x28 + 4 * i);
 
-                return _otherMVPTs.ToArray();
+                return _otherMVPTs;
             }
             set
             {
-                List<AssetID> newValues = value.ToList();
-                short oldAmountOfPairs = ReadShort(0x1A);
-
                 List<byte> newData = Data.Take(0x28).ToList();
-                List<byte> restOfOldData = Data.Skip(0x28 + 4 * oldAmountOfPairs).ToList();
+                List<byte> restOfOldData = Data.Skip(0x28 + 4 * SiblingAmount).ToList();
 
-                foreach (AssetID i in newValues)
+                foreach (AssetID i in value)
                     newData.AddRange(BitConverter.GetBytes(i).Reverse());
 
                 newData.AddRange(restOfOldData);
-                newData[0x1A] = BitConverter.GetBytes((short)newValues.Count)[1];
-                newData[0x1B] = BitConverter.GetBytes((short)newValues.Count)[0];
-
+                
                 Data = newData.ToArray();
+
+                SiblingAmount = value.Length;
             }
         }
     }

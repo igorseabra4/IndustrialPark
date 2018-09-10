@@ -80,19 +80,21 @@
     <Compile Include="ArchiveEditor\AssetEditor\InternalAssetEditor.Designer.cs">
       <DependentUpon>InternalAssetEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Assets\Abstract\Asset.cs" />
-    <Compile Include="Assets\Abstract\ObjectAssetType.cs" />
-    <Compile Include="Assets\Interfaces\IClickableAsset.cs" />
-    <Compile Include="Assets\Abstract\ObjectAsset.cs" />
-    <Compile Include="Assets\Abstract\PlaceableAsset.cs" />
+    <Compile Include="Assets\Shared\Asset.cs" />
+    <Compile Include="Assets\Shared\HexByteTypeConverter.cs" />
+    <Compile Include="Assets\Shared\HexShortTypeConverter.cs" />
+    <Compile Include="Assets\Shared\Interfaces\IClickableAsset.cs" />
+    <Compile Include="Assets\Shared\ObjectAsset.cs" />
+    <Compile Include="Assets\Shared\Enums\ObjectAssetType.cs" />
+    <Compile Include="Assets\Shared\PlaceableAsset.cs" />
     <Compile Include="Assets\Shared\AssetEvent.cs" />
-    <Compile Include="Assets\Shared\EventType.cs" />
-    <Compile Include="Assets\Interfaces\IAssetWithModel.cs" />
-    <Compile Include="Assets\Interfaces\IRenderableAsset.cs" />
+    <Compile Include="Assets\Shared\Enums\EventType.cs" />
+    <Compile Include="Assets\Shared\Interfaces\IAssetWithModel.cs" />
+    <Compile Include="Assets\Shared\Interfaces\IRenderableAsset.cs" />
     <Compile Include="Assets\ObjectAssets\AssetGRUP.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetBUTN.cs" />
-    <Compile Include="Assets\Shared\AssetGeneric.cs" />
-    <Compile Include="Assets\Shared\AssetID.cs" />
+    <Compile Include="Assets\AssetGeneric.cs" />
+    <Compile Include="Assets\Shared\AssetID\AssetID.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetMRKR.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetPLYR.cs" />
     <Compile Include="Assets\Renderable\AssetJSP.cs" />
@@ -112,7 +114,7 @@
     <Compile Include="MainForm\AboutBox.Designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="Other\AssetIDTypeConverter.cs" />
+    <Compile Include="Assets\Shared\AssetID\AssetIDTypeConverter.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditor.cs">
       <SubType>Form</SubType>
     </Compile>

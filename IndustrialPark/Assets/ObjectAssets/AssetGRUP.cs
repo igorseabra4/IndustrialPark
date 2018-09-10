@@ -9,9 +9,9 @@ namespace IndustrialPark
     {
         public AssetGRUP(Section_AHDR AHDR) : base(AHDR) { }
 
-        protected override int getEventStartOffset()
+        protected override int EventStartOffset
         {
-            return 0x0C + ReadShort(0x08) * 4;
+            get => 0x0C + ReadShort(0x08) * 4;
         }
 
         public AssetID[] GroupAssetIDs

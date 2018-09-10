@@ -14,7 +14,7 @@ namespace IndustrialPark
             set
             {
                 _modelAssetID = value;
-                if (AHDR.containedFile.Length >= 0x18)
+                if (AHDR.data.Length >= 0x18)
                     Write(0x14, value);
             }
         }

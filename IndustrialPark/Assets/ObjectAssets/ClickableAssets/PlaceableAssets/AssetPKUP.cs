@@ -12,9 +12,9 @@ namespace IndustrialPark
             return dontRender;
         }
 
-        protected override int getEventStartOffset()
+        protected override int EventStartOffset
         {
-            return 0x5C + Offset;
+            get => 0x5C + Offset;
         }
 
         public AssetPKUP(Section_AHDR AHDR) : base(AHDR) { }
@@ -76,41 +76,26 @@ namespace IndustrialPark
         public override void Draw(SharpRenderer renderer)
         {
             if (dontRender) return;
-
             if (AssetPICK.pick != null)
-            {
                 if (AssetPICK.pick.pickEntries.ContainsKey(_pickEntryID))
-                {
                     if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(AssetPICK.pick.pickEntries[_pickEntryID].ModelAssetID))
                     {
                         ArchiveEditorFunctions.renderingDictionary[AssetPICK.pick.pickEntries[_pickEntryID].ModelAssetID].Draw(renderer, world, isSelected);
+                        return;
                     }
-                    else
-                    {
-                        renderer.DrawCube(world, isSelected);
-                    }
-                }
-                else
-                {
-                    renderer.DrawCube(world, isSelected);
-                }
-            }
-            else
-            {
-                renderer.DrawCube(world, isSelected);
-            }
+            renderer.DrawCube(world, isSelected);
         }
 
         public byte Shape
         {
-            get { return ReadByte(0x09); }
-            set { Write(0x09, value); }
+            get => ReadByte(0x09);
+            set => Write(0x09, value);
         }
 
         private uint _pickEntryID;
         public AssetID PickEntryID
         {
-            get { return _pickEntryID; }
+            get => _pickEntryID;
             set
             {
                 _pickEntryID = value;
@@ -120,14 +105,14 @@ namespace IndustrialPark
 
         public short Unknown1
         {
-            get { return ReadShort(0x58 + Offset); }
-            set { Write(0x58 + Offset, value); }
+            get => ReadShort(0x58 + Offset);
+            set => Write(0x58 + Offset, value);
         }
 
         public short Unknown2
         {
-            get { return ReadShort(0x5C + Offset); }
-            set { Write(0x5C + Offset, value); }
+            get => ReadShort(0x5C + Offset);
+            set => Write(0x5C + Offset, value);
         }
     }
 }

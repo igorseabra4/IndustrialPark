@@ -43,7 +43,7 @@ namespace IndustrialPark
             assetName = AHDR.ADBG.assetName;
             assetFileName = AHDR.ADBG.assetFileName;
             checksum = AHDR.ADBG.checksum;
-            data = AHDR.containedFile;
+            data = AHDR.data;
 
             textBoxAssetName.Text = AHDR.ADBG.assetName;
             textBoxAssetFileName.Text = AHDR.ADBG.assetFileName;
@@ -84,7 +84,7 @@ namespace IndustrialPark
 
                     new Section_ADBG(0, a.assetName, a.assetFileName, a.checksum))
                 {
-                    containedFile = a.data,
+                    data = a.data,
                     fileSize = a.data.Length,
                     plusValue = 0
                 };

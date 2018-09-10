@@ -71,12 +71,12 @@ namespace IndustrialPark
         
         private void button1_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("https://github.com/igorseabra4/HeroesPowerPlant");
+            System.Diagnostics.Process.Start("https://github.com/igorseabra4/IndustrialPark");
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("https://discordapp.com/invite/Ku9KRy6");
+            System.Diagnostics.Process.Start("https://discord.gg/9eAE6UB");
         }
 
         private void button4_Click(object sender, EventArgs e)
