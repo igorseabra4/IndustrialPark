@@ -12,7 +12,7 @@ namespace IndustrialPark
 
         public PlaceableAsset(Section_AHDR AHDR) : base(AHDR) { }
 
-        public virtual void Setup(SharpRenderer renderer)
+        public virtual void Setup()
         {
             _rotation = new Vector3(ReadFloat(0x18 + Offset), ReadFloat(0x14 + Offset), ReadFloat(0x1C + Offset));
             _position = new Vector3(ReadFloat(0x20 + Offset), ReadFloat(0x24 + Offset), ReadFloat(0x28 + Offset));

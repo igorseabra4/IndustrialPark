@@ -24,7 +24,7 @@ namespace IndustrialPark
             set => Write(0x54 + Offset, value);
         }
 
-        public AssetID UnknownAssetID
+        public AssetID VilType
         {
             get => ReadUInt(0x58 + Offset);
             set => Write(0x58 + Offset, value);

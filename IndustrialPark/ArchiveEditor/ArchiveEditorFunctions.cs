@@ -101,17 +101,8 @@ namespace IndustrialPark
         public void Dispose()
         {
             foreach (uint key in assetDictionary.Keys)
-            {
-                if (assetDictionary[key] is IRenderableAsset ra)
-                    if (renderableAssetSet.Contains(ra))
-                    {
-                        renderableAssetSet.Remove(ra);
-                    }
-                if (renderingDictionary.ContainsKey(key))
-                {
-                    renderingDictionary.Remove(key);
-                }
-            }
+                DisposeAsset(key);
+
             assetDictionary.Clear();
 
             if (DICT == null) return;
@@ -122,7 +113,7 @@ namespace IndustrialPark
             fileNamePrefix = null;
             currentlyOpenFilePath = null;
         }
-
+        
         private void AddAssetToDictionary(Section_AHDR AHDR)
         {
             if (assetDictionary.ContainsKey(AHDR.assetID))
@@ -141,10 +132,36 @@ namespace IndustrialPark
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
+                case AssetType.BOUL:
+                    {
+                        AssetBOUL newAsset = new AssetBOUL(AHDR);
+                        newAsset.Setup();
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
                 case AssetType.BUTN:
                     {
                         AssetBUTN newAsset = new AssetBUTN(AHDR);
-                        newAsset.Setup(Program.MainForm.renderer);
+                        newAsset.Setup();
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
+                case AssetType.CNTR:
+                    {
+                        AssetCNTR newAsset = new AssetCNTR(AHDR);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
+                case AssetType.DPAT:
+                    {
+                        AssetDPAT newAsset = new AssetDPAT(AHDR);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
+                case AssetType.DSTR:
+                    {
+                        AssetDSTR newAsset = new AssetDSTR(AHDR);
+                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
@@ -171,23 +188,15 @@ namespace IndustrialPark
                 case AssetType.MRKR:
                     {
                         AssetMRKR newAsset = new AssetMRKR(AHDR);
-                        newAsset.Setup(Program.MainForm.renderer);
+                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
                 case AssetType.MVPT:
                     {
-                        if (currentGame == Game.Scooby)
-                        {
-                            AssetGeneric newAsset = new AssetGeneric(AHDR);
-                            assetDictionary.Add(AHDR.assetID, newAsset);
-                        }
-                        else
-                        {
-                            AssetMVPT newAsset = new AssetMVPT(AHDR);
-                            newAsset.Setup(Program.MainForm.renderer);
-                            assetDictionary.Add(AHDR.assetID, newAsset);
-                        }
+                        AssetMVPT newAsset = new AssetMVPT(AHDR);
+                        newAsset.Setup(Program.MainForm.renderer);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
                 case AssetType.PICK:
@@ -200,21 +209,27 @@ namespace IndustrialPark
                 case AssetType.PKUP:
                     {
                         AssetPKUP newAsset = new AssetPKUP(AHDR);
-                        newAsset.Setup(Program.MainForm.renderer);
+                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
                 case AssetType.PLAT:
                     {
                         AssetPLAT newAsset = new AssetPLAT(AHDR);
-                        newAsset.Setup(Program.MainForm.renderer);
+                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
                 case AssetType.PLYR:
                     {
                         AssetPLYR newAsset = new AssetPLYR(AHDR);
-                        newAsset.Setup(Program.MainForm.renderer);
+                        newAsset.Setup();
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
+                case AssetType.PORT:
+                    {
+                        AssetPORT newAsset = new AssetPORT(AHDR);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
@@ -228,21 +243,27 @@ namespace IndustrialPark
                 case AssetType.SIMP:
                     {
                         AssetSIMP newAsset = new AssetSIMP(AHDR);
-                        newAsset.Setup(Program.MainForm.renderer);
+                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
                 case AssetType.TRIG:
                     {
                         AssetTRIG newAsset = new AssetTRIG(AHDR);
-                        newAsset.Setup(Program.MainForm.renderer);
+                        newAsset.Setup();
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
+                case AssetType.TIMR:
+                    {
+                        AssetTIMR newAsset = new AssetTIMR(AHDR);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
                 case AssetType.VIL:
                     {
                         AssetVIL newAsset = new AssetVIL(AHDR);
-                        newAsset.Setup(Program.MainForm.renderer);
+                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
@@ -258,7 +279,7 @@ namespace IndustrialPark
         public void RemoveLayer(int index)
         {
             for (int i = 0; i < DICT.LTOC.LHDRList[index].assetIDlist.Count(); i++)
-                RemoveAsset(index, DICT.LTOC.LHDRList[index].assetIDlist[i]);
+                RemoveAsset(DICT.LTOC.LHDRList[index].assetIDlist[i]);
 
             DICT.LTOC.LHDRList.RemoveAt(index);
         }
@@ -270,28 +291,32 @@ namespace IndustrialPark
             AddAssetToDictionary(AHDR);
         }
 
-        public void RemoveAsset(int layerIndex, uint assetID)
+        public void RemoveAsset(uint assetID)
         {
-            DICT.LTOC.LHDRList[layerIndex].assetIDlist.Remove(assetID);
+            for (int i = 0; i < DICT.LTOC.LHDRList.Count; i++)
+                if (DICT.LTOC.LHDRList[i].assetIDlist.Contains(assetID))
+                    DICT.LTOC.LHDRList[i].assetIDlist.Remove(assetID);
 
-            if (renderingDictionary.ContainsKey(assetID))
-                renderingDictionary.Remove(assetID);
-            if (assetDictionary[assetID] is IRenderableAsset ra)
+            DisposeAsset(assetID);
+
+            DICT.ATOC.AHDRList.Remove(assetDictionary[assetID].AHDR);
+
+            assetDictionary.Remove(assetID);
+            
+            currentlySelectedAssetID = 0;
+        }
+
+        private void DisposeAsset(uint key)
+        {
+            if (assetDictionary[key] is IRenderableAsset ra)
                 if (renderableAssetSet.Contains(ra))
                     renderableAssetSet.Remove(ra);
 
-            assetDictionary.Remove(assetID);
+            if (renderingDictionary.ContainsKey(key))
+                renderingDictionary.Remove(key);
 
-            for (int i = 0; i < DICT.ATOC.AHDRList.Count; i++)
-            {
-                if (DICT.ATOC.AHDRList[i].assetID == assetID)
-                {
-                    DICT.ATOC.AHDRList.RemoveAt(i);
-                    break;
-                }
-            }
-
-            currentlySelectedAssetID = 0;
+            if (assetDictionary[key] is AssetRWTX texture)
+                TextureManager.RemoveTexture(texture.Name);
         }
 
         private uint currentlySelectedAssetID = 0;

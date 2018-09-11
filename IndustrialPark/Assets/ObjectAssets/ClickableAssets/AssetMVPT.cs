@@ -37,26 +37,30 @@ namespace IndustrialPark
 
         public void CreateTransformMatrix()
         {
-            world = Matrix.Scaling(_distanceICanSeeYou * 2f) * Matrix.Translation(_position);
+            world = Matrix.Scaling(_distanceICanSeeYou == -1f ? 1f : _distanceICanSeeYou * 2f) * Matrix.Translation(_position);
 
             CreateBoundingBox();
         }
 
+        public BoundingSphere boundingSphere;
+
         protected void CreateBoundingBox()
         {
-            boundingBox = BoundingBox.FromPoints(SharpRenderer.cubeVertices.ToArray());
-            boundingBox.Maximum = (Vector3)Vector3.Transform(boundingBox.Maximum, world);
-            boundingBox.Minimum = (Vector3)Vector3.Transform(boundingBox.Minimum, world);
+            boundingSphere = new BoundingSphere(_position, _distanceICanSeeYou == -1f ? 1f : _distanceICanSeeYou);
+            boundingBox = BoundingBox.FromSphere(boundingSphere);
         }
 
         public float? IntersectsWith(Ray ray)
         {
-            if (ray.Intersects(ref boundingBox, out float distance))
-                return TriangleIntersection(ray, distance, SharpRenderer.cubeTriangles, SharpRenderer.cubeVertices);
+            if (dontRender)
+                return null;
+
+            if (ray.Intersects(ref boundingSphere, out float distance2))
+                    return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices);
             return null;
         }
-        
-        private float? TriangleIntersection(Ray ray, float initialDistance, List<Triangle> triangles, List<Vector3> vertices)
+
+        private float? TriangleIntersection(Ray r, List<Triangle> triangles, List<Vector3> vertices)
         {
             bool hasIntersected = false;
             float smallestDistance = 1000f;
@@ -67,7 +71,7 @@ namespace IndustrialPark
                 Vector3 v2 = (Vector3)Vector3.Transform(vertices[t.vertex2], world);
                 Vector3 v3 = (Vector3)Vector3.Transform(vertices[t.vertex3], world);
 
-                if (ray.Intersects(ref v1, ref v2, ref v3, out float distance))
+                if (r.Intersects(ref v1, ref v2, ref v3, out float distance))
                 {
                     hasIntersected = true;
 

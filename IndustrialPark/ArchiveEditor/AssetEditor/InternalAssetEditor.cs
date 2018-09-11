@@ -9,7 +9,7 @@ namespace IndustrialPark
             InitializeComponent();
             TopMost = true;
             propertyGridAsset.SelectedObject = asset;
-            labelAssetName.Text = asset.ToString();
+            labelAssetName.Text = $"[{asset.AHDR.assetType.ToString()}] {asset.ToString()}";
         }
     }
 }

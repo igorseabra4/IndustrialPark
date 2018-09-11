@@ -120,7 +120,7 @@ namespace IndustrialPark
         }
         
         uint assetID = 0;
-        AssetType assetType = (AssetType)0;
+        AssetType assetType = 0;
         string assetName = "";
         string assetFileName = "";
 

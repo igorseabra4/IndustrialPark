@@ -296,7 +296,7 @@ namespace IndustrialPark
         {
             if (listBoxAssets.SelectedIndex < 0) return;
 
-            archive.RemoveAsset(comboBoxLayers.SelectedIndex, CurrentlySelectedAssetID());
+            archive.RemoveAsset(CurrentlySelectedAssetID());
 
             unsavedChanges = true;
 
@@ -321,7 +321,7 @@ namespace IndustrialPark
                 if (success)
                 {
                     unsavedChanges = true;
-                    archive.RemoveAsset(comboBoxLayers.SelectedIndex, aid);
+                    archive.RemoveAsset(aid);
                     archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR);
                     PopulateAssetsComboAndListBox();
                 }

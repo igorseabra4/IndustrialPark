@@ -33,34 +33,54 @@ namespace IndustrialPark
             return SharpRenderer.whiteDefault;
         }
 
-        public static void LoadTexturesFromTXD(byte[] txdData)
+        public static void LoadTexturesFromTXD(byte[] txdData, string textureName = null)
         {
             RWSection[] file = ReadFileMethods.ReadRenderWareFile(txdData);
-            LoadTexturesFromTXD(file);
+            LoadTexturesFromTXD(file, textureName);
         }
 
-        public static void LoadTexturesFromTXD(RWSection[] txdFile)
+        public static void LoadTexturesFromTXD(RWSection[] txdFile, string textureName = null)
         {
             foreach (RWSection rw in txdFile)
                 if (rw is TextureDictionary_0016 td)
                     foreach (TextureNative_0015 tn in td.textureNativeList)
-                        AddTextureNative(tn.textureNativeStruct);
+                        AddTextureNative(tn.textureNativeStruct, textureName);
 
             ReapplyTextures();
         }
 
-        private static void AddTextureNative(TextureNativeStruct_0001 tnStruct)
+        private static void AddTextureNative(TextureNativeStruct_0001 tnStruct, string textureName = null)
         {
-            if (Textures.ContainsKey(tnStruct.textureName))
-            {
-                if (Textures[tnStruct.textureName] != null)
-                    if (!Textures[tnStruct.textureName].IsDisposed)
-                        Textures[tnStruct.textureName].Dispose();
+            if (textureName == null)
+                textureName = tnStruct.textureName;
 
-                Textures[tnStruct.textureName] = Program.MainForm.renderer.device.LoadTextureFromRenderWareNative(tnStruct);
+            ShaderResourceView texture;
+
+            try { texture = Program.MainForm.renderer.device.LoadTextureFromRenderWareNative(tnStruct); }
+            catch { return; }
+
+            if (Textures.ContainsKey(textureName))
+            {
+                if (Textures[textureName] != null)
+                    if (!Textures[textureName].IsDisposed)
+                        Textures[textureName].Dispose();
+
+                Textures[textureName] = texture;
             }
             else
-                Textures.Add(tnStruct.textureName, Program.MainForm.renderer.device.LoadTextureFromRenderWareNative(tnStruct));
+                Textures.Add(textureName, texture);
+        }
+
+        public static void RemoveTexture(string textureName)
+        {
+            if (Textures.ContainsKey(textureName))
+            {
+                if (Textures[textureName] != null)
+                    if (!Textures[textureName].IsDisposed)
+                        Textures[textureName].Dispose();
+
+                Textures.Remove(textureName);
+            }
         }
 
         public static void LoadTexturesFromFolder(string folderName)

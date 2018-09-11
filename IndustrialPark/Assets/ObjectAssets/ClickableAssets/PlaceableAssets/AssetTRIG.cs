@@ -29,7 +29,7 @@ namespace IndustrialPark
 
         public AssetTRIG(Section_AHDR AHDR) : base(AHDR) { }
 
-        public override void Setup(SharpRenderer renderer)
+        public override void Setup()
         {
             _shape = ReadByte(9);
 
@@ -38,7 +38,7 @@ namespace IndustrialPark
             _trigPos2 = new Vector3(ReadFloat(0x6C + Offset), ReadFloat(0x70 + Offset), ReadFloat(0x74 + Offset));
             _trigPos3 = new Vector3(ReadFloat(0x78 + Offset), ReadFloat(0x7C + Offset), ReadFloat(0x80 + Offset));
 
-            base.Setup(renderer);
+            base.Setup();
         }
 
         public override void CreateTransformMatrix()

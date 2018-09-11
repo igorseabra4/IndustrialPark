@@ -19,11 +19,11 @@ namespace IndustrialPark
 
         public AssetPKUP(Section_AHDR AHDR) : base(AHDR) { }
 
-        public override void Setup(SharpRenderer renderer)
+        public override void Setup()
         {
             _pickEntryID = ReadUInt(0x54 + Offset);
 
-            base.Setup(renderer);
+            base.Setup();
         }
         
         protected override float? TriangleIntersection(Ray r, float initialDistance)
@@ -32,7 +32,7 @@ namespace IndustrialPark
                 return null;
 
             uint _modelAssetId;
-            try { _modelAssetId = AssetPICK.pick.pickEntries[_pickEntryID].ModelAssetID; }
+            try { _modelAssetId = AssetPICK.pick.pickEntries[_pickEntryID]; }
             catch { return initialDistance; }
 
             bool hasIntersected = false;
@@ -78,9 +78,9 @@ namespace IndustrialPark
             if (dontRender) return;
             if (AssetPICK.pick != null)
                 if (AssetPICK.pick.pickEntries.ContainsKey(_pickEntryID))
-                    if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(AssetPICK.pick.pickEntries[_pickEntryID].ModelAssetID))
+                    if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(AssetPICK.pick.pickEntries[_pickEntryID]))
                     {
-                        ArchiveEditorFunctions.renderingDictionary[AssetPICK.pick.pickEntries[_pickEntryID].ModelAssetID].Draw(renderer, world, isSelected);
+                        ArchiveEditorFunctions.renderingDictionary[AssetPICK.pick.pickEntries[_pickEntryID]].Draw(renderer, world, isSelected);
                         return;
                     }
             renderer.DrawCube(world, isSelected);
@@ -93,7 +93,7 @@ namespace IndustrialPark
         }
 
         private uint _pickEntryID;
-        public AssetID PickEntryID
+        public AssetID PickReferenceID
         {
             get => _pickEntryID;
             set

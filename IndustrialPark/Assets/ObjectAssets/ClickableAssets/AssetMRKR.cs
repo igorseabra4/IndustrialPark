@@ -18,7 +18,7 @@ namespace IndustrialPark
         {
         }
 
-        public void Setup(SharpRenderer renderer)
+        public void Setup()
         {
             _position = new Vector3(ReadFloat(0x0), ReadFloat(0x4), ReadFloat(0x8));
 

@@ -298,6 +298,12 @@ namespace IndustrialPark
             AssetBUTN.dontRender = !bUTNToolStripMenuItem.Checked;
         }
 
+        private void bOULToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            bOULToolStripMenuItem.Checked = !bOULToolStripMenuItem.Checked;
+            AssetBOUL.dontRender = !bOULToolStripMenuItem.Checked;
+        }
+
         private void mVPTToolStripMenuItem_Click(object sender, EventArgs e)
         {
             mVPTToolStripMenuItem.Checked = !mVPTToolStripMenuItem.Checked;
@@ -308,6 +314,12 @@ namespace IndustrialPark
         {
             pKUPToolStripMenuItem.Checked = !pKUPToolStripMenuItem.Checked;
             AssetPKUP.dontRender = !pKUPToolStripMenuItem.Checked;
+        }
+
+        private void dSTRToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            dSTRToolStripMenuItem.Checked = !dSTRToolStripMenuItem.Checked;
+            AssetDSTR.dontRender = !dSTRToolStripMenuItem.Checked;
         }
 
         private void tRIGToolStripMenuItem_Click(object sender, EventArgs e)
