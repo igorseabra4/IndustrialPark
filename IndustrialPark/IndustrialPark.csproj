@@ -80,6 +80,9 @@
     <Compile Include="ArchiveEditor\AssetEditor\InternalAssetEditor.Designer.cs">
       <DependentUpon>InternalAssetEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Assets\Binary\AssetPIPT.cs" />
+    <Compile Include="Assets\Binary\EntryPICK.cs" />
+    <Compile Include="Assets\Binary\EntryPIPT.cs" />
     <Compile Include="Assets\ObjectAssets\AssetCNTR.cs" />
     <Compile Include="Assets\ObjectAssets\AssetDPAT.cs" />
     <Compile Include="Assets\ObjectAssets\AssetPORT.cs" />

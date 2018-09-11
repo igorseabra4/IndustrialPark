@@ -6,18 +6,6 @@ using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
-    public class PICKentry
-    {
-        public AssetID ReferenceID { get; set; }
-        public byte Unknown21 { get; set; }
-        public byte Unknown22 { get; set; }
-        public byte Unknown23 { get; set; }
-        public byte Unknown24 { get; set; }
-        public uint Unknown3 { get; set; }
-        public AssetID ModelAssetID { get; set; }
-        public uint Unknown5 { get; set; }
-    }
-
     public class AssetPICK : Asset
     {
         public Dictionary<AssetID, AssetID> pickEntries;
@@ -31,22 +19,22 @@ namespace IndustrialPark
         {
             pickEntries = new Dictionary<AssetID, AssetID>();
 
-            foreach (PICKentry p in PICKentries)
+            foreach (EntryPICK p in PICKentries)
                 pickEntries.Add(p.ReferenceID, p.ModelAssetID);
 
             pick = this;
         }
 
-        public PICKentry[] PICKentries
+        public EntryPICK[] PICKentries
         {
             get
             {
-                List<PICKentry> entries = new List<PICKentry>();
+                List<EntryPICK> entries = new List<EntryPICK>();
                 int amount = ReadInt(0x4);
 
                 for (int i = 0; i < amount; i++)
                 {
-                    entries.Add(new PICKentry()
+                    entries.Add(new EntryPICK()
                     {
                         ReferenceID = ReadUInt(8 + i * 0x14),
                         Unknown21 = ReadByte(12 + i * 0x14),
@@ -63,12 +51,12 @@ namespace IndustrialPark
             }
             set
             {
-                List<PICKentry> newValues = value.ToList();
+                List<EntryPICK> newValues = value.ToList();
 
                 List<byte> newData = Data.Take(4).ToList();
                 newData.AddRange(BitConverter.GetBytes(Switch(newValues.Count)));
 
-                foreach (PICKentry i in newValues)
+                foreach (EntryPICK i in newValues)
                 {
                     newData.AddRange(BitConverter.GetBytes(Switch(i.ReferenceID)));
                     newData.Add(i.Unknown21);

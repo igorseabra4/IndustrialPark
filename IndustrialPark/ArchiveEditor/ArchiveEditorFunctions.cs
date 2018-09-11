@@ -206,6 +206,12 @@ namespace IndustrialPark
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
+                case AssetType.PIPT:
+                    {
+                        AssetPIPT newAsset = new AssetPIPT(AHDR);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
                 case AssetType.PKUP:
                     {
                         AssetPKUP newAsset = new AssetPKUP(AHDR);
