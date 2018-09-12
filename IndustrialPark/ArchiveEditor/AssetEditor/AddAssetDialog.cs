@@ -73,18 +73,16 @@ namespace IndustrialPark
             DialogResult d = a.ShowDialog();
             if (d == DialogResult.OK)
             {
-                Section_AHDR AHDR = new Section_AHDR(
-                    a.assetID,
-                    a.assetType,
-
+                AHDRFlags flags =
                     (a.checkSourceFile.Checked ? AHDRFlags.SOURCE_FILE : 0) |
                     (a.checkSourceVirtual.Checked ? AHDRFlags.SOURCE_VIRTUAL : 0) |
                     (a.checkReadT.Checked ? AHDRFlags.READ_TRANSFORM : 0) |
-                    (a.checkWriteT.Checked ? AHDRFlags.WRITE_TRANSFORM : 0),
+                    (a.checkWriteT.Checked ? AHDRFlags.WRITE_TRANSFORM : 0);
 
-                    new Section_ADBG(0, a.assetName, a.assetFileName, a.checksum))
+                Section_ADBG ADBG = new Section_ADBG(0, a.assetName, a.assetFileName, a.checksum);
+
+                Section_AHDR AHDR = new Section_AHDR(a.assetID, a.assetType, flags, ADBG, a.data)
                 {
-                    data = a.data,
                     fileSize = a.data.Length,
                     plusValue = 0
                 };
@@ -130,6 +128,100 @@ namespace IndustrialPark
         private void comboBoxAssetTypes_SelectedIndexChanged(object sender, EventArgs e)
         {
             assetType = (AssetType)comboBoxAssetTypes.SelectedItem;
+
+            switch (assetType)
+            {
+                case AssetType.ALST:
+                case AssetType.BOUL:
+                case AssetType.BUTN:
+                case AssetType.CAM:
+                case AssetType.CNTR:
+                case AssetType.COLL:
+                case AssetType.COND:
+                case AssetType.CSNM:
+                case AssetType.CTOC:
+                case AssetType.DPAT:
+                case AssetType.DSCO:
+                case AssetType.DSTR:
+                case AssetType.DYNA:
+                case AssetType.EGEN:
+                case AssetType.ENV:
+                case AssetType.FOG:
+                case AssetType.GRUP:
+                case AssetType.JAW:
+                case AssetType.LODT:
+                case AssetType.MAPR:
+                case AssetType.MINF:
+                case AssetType.MRKR:
+                case AssetType.MVPT:
+                case AssetType.PARE:
+                case AssetType.PARP:
+                case AssetType.PARS:
+                case AssetType.PICK:
+                case AssetType.PIPT:
+                case AssetType.PKUP:
+                case AssetType.PLAT:
+                case AssetType.PLYR:
+                case AssetType.PORT:
+                case AssetType.SFX:
+                case AssetType.SHDW:
+                case AssetType.SHRP:
+                case AssetType.SIMP:
+                case AssetType.SNDI:
+                case AssetType.SURF:
+                case AssetType.TEXT:
+                case AssetType.TIMR:
+                case AssetType.TRIG:
+                case AssetType.UI:
+                case AssetType.UIFT:
+                case AssetType.VIL:
+                case AssetType.VILP:
+                    checkSourceVirtual.Checked = true;
+                    checkSourceFile.Checked = false;
+                    checkReadT.Checked = false;
+                    checkWriteT.Checked = false;
+                    break;
+                case AssetType.CSN:
+                case AssetType.FLY:
+                case AssetType.RAW:
+                    checkSourceVirtual.Checked = false;
+                    checkSourceFile.Checked = true;
+                    checkReadT.Checked = false;
+                    checkWriteT.Checked = false;
+                    break;
+                case AssetType.ANIM:
+                case AssetType.CRDT:
+                case AssetType.SND:
+                case AssetType.SNDS:
+                    checkSourceVirtual.Checked = false;
+                    checkSourceFile.Checked = true;
+                    checkReadT.Checked = false;
+                    checkWriteT.Checked = true;
+                    break;
+                case AssetType.MODL:
+                    checkSourceVirtual.Checked = false;
+                    checkSourceFile.Checked = true;
+                    checkReadT.Checked = true;
+                    checkWriteT.Checked = false;
+                    break;
+                case AssetType.ATBL:
+                case AssetType.JSP:
+                case AssetType.RWTX:
+                    checkSourceVirtual.Checked = true;
+                    checkSourceFile.Checked = false;
+                    checkReadT.Checked = true;
+                    checkWriteT.Checked = false;
+                    break;
+                case AssetType.LKIT:
+                    checkSourceVirtual.Checked = false;
+                    checkSourceFile.Checked = true;
+                    checkReadT.Checked = true;
+                    checkWriteT.Checked = true;
+                    break;
+                default:
+                    MessageBox.Show("Note: I have not been able to figure out the flags automatically for this asset type. I recommend leaving the same ones that are present in the original asset.");
+                    break;
+            }
         }
 
         private void textBoxAssetID_TextChanged(object sender, EventArgs e)

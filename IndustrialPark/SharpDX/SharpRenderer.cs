@@ -264,12 +264,22 @@ namespace IndustrialPark
                 device.ApplyRasterState();
                 device.UpdateAllStates();
 
-                foreach (IRenderableAsset a in ArchiveEditorFunctions.renderableAssetSet)
+                List<IRenderableAsset> renderableAssetSet = new List<IRenderableAsset>();
+                try
+                {
+                    renderableAssetSet.AddRange(ArchiveEditorFunctions.renderableAssetSet);
+                }
+                catch
+                {
+                    return;
+                }
+
+                foreach (IRenderableAsset a in renderableAssetSet)
                 {
                     if (a is AssetJSP)
                         (a as AssetJSP).Draw(this);
                 }
-                foreach (IRenderableAsset a in ArchiveEditorFunctions.renderableAssetSet)
+                foreach (IRenderableAsset a in renderableAssetSet)
                 {
                     if (!(a is AssetJSP))
                     {
@@ -279,7 +289,7 @@ namespace IndustrialPark
                     }
                 }
                 ArchiveEditorFunctions.RenderGizmos(this);
-
+                
                 //present
                 device.Present();
             });

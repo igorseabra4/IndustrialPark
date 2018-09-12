@@ -1,5 +1,7 @@
 ﻿using HipHopFile;
 using SharpDX;
+using System.ComponentModel;
+using System.IO;
 
 namespace IndustrialPark
 {
@@ -32,7 +34,7 @@ namespace IndustrialPark
                 return null;
 
             uint _modelAssetId;
-            try { _modelAssetId = AssetPICK.pick.pickEntries[_pickEntryID]; }
+            try { _modelAssetId = AssetPICK.pickEntries[_pickEntryID]; }
             catch { return initialDistance; }
 
             bool hasIntersected = false;
@@ -76,16 +78,16 @@ namespace IndustrialPark
         public override void Draw(SharpRenderer renderer)
         {
             if (dontRender) return;
-            if (AssetPICK.pick != null)
-                if (AssetPICK.pick.pickEntries.ContainsKey(_pickEntryID))
-                    if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(AssetPICK.pick.pickEntries[_pickEntryID]))
+                if (AssetPICK.pickEntries.ContainsKey(_pickEntryID))
+                    if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(AssetPICK.pickEntries[_pickEntryID]))
                     {
-                        ArchiveEditorFunctions.renderingDictionary[AssetPICK.pick.pickEntries[_pickEntryID]].Draw(renderer, world, isSelected);
+                        ArchiveEditorFunctions.renderingDictionary[AssetPICK.pickEntries[_pickEntryID]].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * _color : _color);
                         return;
                     }
             renderer.DrawCube(world, isSelected);
         }
 
+        [TypeConverter(typeof(HexByteTypeConverter))]
         public byte Shape
         {
             get => ReadByte(0x09);

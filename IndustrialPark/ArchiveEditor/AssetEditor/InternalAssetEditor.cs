@@ -11,5 +11,10 @@ namespace IndustrialPark
             propertyGridAsset.SelectedObject = asset;
             labelAssetName.Text = $"[{asset.AHDR.assetType.ToString()}] {asset.ToString()}";
         }
+
+        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }

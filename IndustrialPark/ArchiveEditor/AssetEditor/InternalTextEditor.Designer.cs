@@ -48,7 +48,7 @@
             this.richTextBoxAssetText.Font = new System.Drawing.Font("Courier New", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richTextBoxAssetText.Location = new System.Drawing.Point(12, 25);
             this.richTextBoxAssetText.Name = "richTextBoxAssetText";
-            this.richTextBoxAssetText.Size = new System.Drawing.Size(320, 202);
+            this.richTextBoxAssetText.Size = new System.Drawing.Size(539, 211);
             this.richTextBoxAssetText.TabIndex = 7;
             this.richTextBoxAssetText.Text = "";
             this.richTextBoxAssetText.TextChanged += new System.EventHandler(this.richTextBoxAssetText_TextChanged);
@@ -57,13 +57,13 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(344, 239);
+            this.ClientSize = new System.Drawing.Size(563, 248);
             this.Controls.Add(this.richTextBoxAssetText);
             this.Controls.Add(this.labelAssetName);
             this.MaximizeBox = false;
             this.Name = "InternalTextEditor";
             this.ShowIcon = false;
-            this.Text = "Internal Asset Editor";
+            this.Text = "Asset Data Editor";
             this.TopMost = true;
             this.ResumeLayout(false);
             this.PerformLayout();

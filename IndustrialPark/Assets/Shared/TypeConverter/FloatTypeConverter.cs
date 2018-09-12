@@ -27,7 +27,7 @@ namespace IndustrialPark
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
             if (destinationType == typeof(string))
-                return String.Format("{0:0.0000}", (float)value);
+                return string.Format("{0:0.000000}", (float)value);
 
             return base.ConvertTo(context, culture, value, destinationType);
         }

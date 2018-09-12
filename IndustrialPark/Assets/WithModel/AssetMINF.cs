@@ -36,11 +36,11 @@ namespace IndustrialPark
             ArchiveEditorFunctions.AddToRenderingDictionary(AHDR.assetID, this);
         }
 
-        public void Draw(SharpRenderer renderer, Matrix world, bool isSelected)
+        public void Draw(SharpRenderer renderer, Matrix world, Vector4 color)
         {
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
             {
-                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected);
+                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, world, color);
             }
             else
             {

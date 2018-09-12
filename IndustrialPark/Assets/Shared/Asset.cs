@@ -93,17 +93,7 @@ namespace IndustrialPark
 
             return BitConverter.ToUInt32(AHDR.data, j);
         }
-
-        protected string ReadString(int j, int length, bool dontReverse = false)
-        {
-            IEnumerable<char> chars = AHDR.data.Skip(j).Take(length).Cast<char>();
-
-            if (!dontReverse && (currentPlatform == Platform.GameCube))
-                chars = chars.Reverse();
-
-            return new string(chars.ToArray());
-        }
-
+        
         protected void Write(int j, float value)
         {
             byte[] split = BitConverter.GetBytes(value).ToArray();
@@ -162,24 +152,6 @@ namespace IndustrialPark
 
             for (int i = 0; i < 4; i++)
                 AHDR.data[j + i] = split[i];
-        }
-
-        protected void Write(int j, string value, int length = -1)
-        {
-            char[] chars = value.ToCharArray();
-
-            if (length == -1)
-                length = value.Length;
-            else if (length < value.Length)
-                chars = value.Take(length).ToArray();
-            else if (length > value.Length)
-                chars = value.PadRight(length, '\0').ToArray();
-
-            if (currentPlatform == Platform.GameCube)
-                chars = chars.Reverse().ToArray();
-
-            for (int i = 0; i < length; i++)
-                AHDR.data[j + i] = (byte)chars[i];
         }
 
         protected AssetEvent[] ReadEvents(int eventsStart)

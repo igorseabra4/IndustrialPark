@@ -34,17 +34,16 @@ namespace IndustrialPark
 
         private Dictionary<uint, Asset> assetDictionary = new Dictionary<uint, Asset>();
 
-        public bool DictionaryHasKey(uint key)
+        public bool ContainsAsset(uint key)
         {
             return assetDictionary.ContainsKey(key);
         }
 
         public Asset GetFromAssetID(uint key)
         {
-            if (DictionaryHasKey(key))
+            if (ContainsAsset(key))
                 return assetDictionary[key];
-            else
-                throw new KeyNotFoundException();
+            throw new KeyNotFoundException("Asset not present in dictionary.");
         }
 
         public Dictionary<uint, Asset>.ValueCollection GetAllAssets()
@@ -64,15 +63,13 @@ namespace IndustrialPark
         public Section_PACK PACK;
         public Section_DICT DICT;
         public Section_STRM STRM;
-
+        
         public void OpenFile(string fileName)
         {
-            currentlySelectedAssetID = 0;
-
             Dispose();
 
-            currentlyOpenFilePath = fileName;
-                        
+            currentlySelectedAssetID = 0;
+            currentlyOpenFilePath = fileName;                        
             fileNamePrefix = Path.GetFileNameWithoutExtension(fileName);
 
             HipSection[] HipFile = HipFileToHipArray(fileName);
@@ -174,6 +171,7 @@ namespace IndustrialPark
                 case AssetType.DYNA:
                     {
                         AssetDYNA newAsset = new AssetDYNA(AHDR);
+                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
@@ -285,12 +283,6 @@ namespace IndustrialPark
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
-                case AssetType.SURF:
-                    {
-                        ObjectAsset newAsset = new ObjectAsset(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
                 case AssetType.TEXT:
                     {
                         AssetTEXT newAsset = new AssetTEXT(AHDR);
@@ -314,6 +306,49 @@ namespace IndustrialPark
                     {
                         AssetVIL newAsset = new AssetVIL(AHDR);
                         newAsset.Setup();
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
+                case AssetType.CAM:
+                case AssetType.CCRV:
+                case AssetType.CSNM:
+                case AssetType.DSCO:
+                case AssetType.DTRK:
+                case AssetType.DUPC:
+                case AssetType.EGEN:
+                case AssetType.ENV:
+                case AssetType.GRSM:
+                case AssetType.GUST:
+                case AssetType.HANG:
+                case AssetType.LITE:
+                case AssetType.LOBM:
+                case AssetType.NGMS:
+                case AssetType.NPC:
+                case AssetType.PARE:
+                case AssetType.PARP:
+                case AssetType.PARS:
+                case AssetType.PEND:
+                case AssetType.PGRS:
+                case AssetType.PRJT:
+                case AssetType.RANM:
+                case AssetType.SCRP:
+                case AssetType.SDFX:
+                case AssetType.SFX:
+                case AssetType.SGRP:
+                case AssetType.SLID:
+                case AssetType.SPLN:
+                case AssetType.SSET:
+                case AssetType.SUBT:
+                case AssetType.SURF:
+                case AssetType.TPIK:
+                case AssetType.TRWT:
+                case AssetType.UIFT:
+                case AssetType.UI:
+                case AssetType.UIM:
+                case AssetType.VOLU:
+                case AssetType.ZLIN:
+                    {
+                        ObjectAsset newAsset = new ObjectAsset(AHDR);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
@@ -365,6 +400,12 @@ namespace IndustrialPark
             if (renderingDictionary.ContainsKey(key))
                 renderingDictionary.Remove(key);
 
+            if (assetDictionary[key] is AssetJSP jsp)
+                jsp.model.Dispose();
+
+            if (assetDictionary[key] is AssetMODL modl)
+                modl.GetRenderWareModelFile().Dispose();
+
             if (assetDictionary[key] is AssetRWTX texture)
                 TextureManager.RemoveTexture(texture.Name);
         }
@@ -392,41 +433,40 @@ namespace IndustrialPark
             else ClearGizmos();
         }
 
-        public int GetSelectedLayerIndex()
+        public int GetLayerFromAssetID(uint assetID)
         {
-            if (currentlySelectedAssetID == 0)
-                throw new Exception();
-
             for (int i = 0; i < DICT.LTOC.LHDRList.Count; i++)
-            {
-                if (DICT.LTOC.LHDRList[i].assetIDlist.Contains(currentlySelectedAssetID))
+                if (DICT.LTOC.LHDRList[i].assetIDlist.Contains(assetID))
                     return i;
-            }
-            throw new Exception();
+
+            throw new Exception($"Asset ID {assetID.ToString("X8")} is not present in any layer.");
         }
 
-        public uint ScreenClicked(Ray ray)
+        public uint GetClickedAssetID(Ray ray)
         {
-            uint assetID = 0;
+            List<IRenderableAsset> l = new List<IRenderableAsset>();
+            try
+            {
+                l.AddRange(renderableAssetSet);
+            }
+            catch { return 0; }
 
             float smallerDistance = 1000f;
-            foreach (Asset ra in renderableAssetSet)
+            uint assetID = 0;
+
+            foreach (Asset ra in l)
             {
-                if (!ra.isSelected & ra is IClickableAsset)
+                if (!ra.isSelected && ra is IClickableAsset)
                 {
                     float? distance = ((IClickableAsset)ra).IntersectsWith(ray);
-                    if (distance != null)
-                        if (distance < smallerDistance)
-                        {
-                            smallerDistance = (float)distance;
-                            assetID = ra.AHDR.assetID;
-                        }
+                    if (distance != null && distance < smallerDistance)
+                    {
+                        smallerDistance = (float)distance;
+                        assetID = ra.AHDR.assetID;
+                    }
                 }
-
             }
 
-            if (assetID != 0 & assetDictionary.ContainsKey(assetID))
-                SelectAsset(assetID);
             return assetID;
         }
         

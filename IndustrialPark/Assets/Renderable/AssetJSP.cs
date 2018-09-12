@@ -36,7 +36,7 @@ namespace IndustrialPark
         {
             if (dontRender) return;
 
-            model.Render(renderer, Matrix.Identity, isSelected);
+            model.Render(renderer, Matrix.Identity, isSelected ? renderer.selectedObjectColor : Vector4.One);
         }
     }
 }

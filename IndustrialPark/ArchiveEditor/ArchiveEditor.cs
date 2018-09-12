@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace IndustrialPark
@@ -48,8 +49,31 @@ namespace IndustrialPark
             };
             if (openFile.ShowDialog() == DialogResult.OK)
             {
-                OpenFile(openFile.FileName);
+                Thread t = new Thread(() => OpenFile(openFile.FileName));
+                t.Start();
             }
+        }
+
+        private void OpenFile(string fileName)
+        {
+            archive.OpenFile(fileName);
+
+            if (!InvokeRequired)
+                FinishedOpening(fileName);
+            else
+                Invoke(new Action<string>(FinishedOpening), fileName);
+        }
+
+        private void FinishedOpening(string fileName)
+        {
+            toolStripStatusLabel1.Text = "File: " + fileName;
+            Text = Path.GetFileName(fileName);
+            Program.MainForm.SetToolStripItemName(this, Text);
+            saveToolStripMenuItem.Enabled = true;
+            saveAsToolStripMenuItem.Enabled = true;
+            unsavedChanges = false;
+            PopulateLayerComboBox();
+            PopulateAssetList();
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -75,19 +99,6 @@ namespace IndustrialPark
                     if (asset is AssetRWTX texture)
                         ArchiveEditorFunctions.ExportTextureAsset(texture, editor.archive.fileNamePrefix);
                 }
-        }
-
-        private void OpenFile(string fileName)
-        {
-            archive.OpenFile(fileName);
-            toolStripStatusLabel1.Text = "File: " + fileName;
-            Text = Path.GetFileName(fileName);
-            Program.MainForm.SetToolStripItemName(this, Text);
-            saveToolStripMenuItem.Enabled = true;
-            saveAsToolStripMenuItem.Enabled = true;
-            unsavedChanges = false;
-            PopulateLayerComboBox();
-            PopulateAssetsComboBox();
         }
 
         private bool programIsChangingStuff = false;
@@ -118,7 +129,7 @@ namespace IndustrialPark
 
             comboBoxLayerTypes.SelectedItem = archive.DICT.LTOC.LHDRList[comboBoxLayers.SelectedIndex].layerType.ToString();
 
-            PopulateAssetsComboAndListBox();
+            PopulateAssetListAndComboBox();
 
             programIsChangingStuff = false;
         }
@@ -183,9 +194,9 @@ namespace IndustrialPark
             programIsChangingStuff = false;
         }
         
-        private void PopulateAssetsComboAndListBox()
+        private void PopulateAssetListAndComboBox()
         {
-            PopulateAssetsComboBox();
+            PopulateAssetList();
 
             programIsChangingStuff = true;
 
@@ -207,7 +218,7 @@ namespace IndustrialPark
             programIsChangingStuff = false;
         }
 
-        private void PopulateAssetsComboBox(AssetType type = AssetType.Null)
+        private void PopulateAssetList(AssetType type = AssetType.Null)
         {
             listBoxAssets.Items.Clear();
             if (comboBoxLayers.SelectedItem == null) return;
@@ -234,9 +245,9 @@ namespace IndustrialPark
             if (!programIsChangingStuff)
             {
                 if (comboBoxAssetTypes.SelectedIndex == 0)
-                    PopulateAssetsComboBox();
+                    PopulateAssetList();
                 else
-                    PopulateAssetsComboBox((AssetType)comboBoxAssetTypes.SelectedItem);
+                    PopulateAssetList((AssetType)comboBoxAssetTypes.SelectedItem);
             }
         }
 
@@ -250,7 +261,8 @@ namespace IndustrialPark
                 {
                     unsavedChanges = true;
                     archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR);
-                    PopulateAssetsComboAndListBox();
+                    PopulateAssetListAndComboBox();
+                    SetSelectedIndex(AHDR.assetID);
                 }
                 catch (Exception ex)
                 {
@@ -272,7 +284,7 @@ namespace IndustrialPark
             string newAssetName = AHDR.ADBG.assetName + "_COPY_" + numCopies.ToString();
 
             uint newAssetId = Functions.BKDRHash(newAssetName);
-            while (archive.DictionaryHasKey(newAssetId))
+            while (archive.ContainsAsset(newAssetId))
                 newAssetId++;
 
             Section_AHDR newAHDR = new Section_AHDR(newAssetId, AHDR.assetType, AHDR.flags, new Section_ADBG(AHDR.ADBG.alignment, newAssetName, AHDR.ADBG.assetFileName, AHDR.ADBG.checksum))
@@ -287,7 +299,9 @@ namespace IndustrialPark
                 newAHDR.data[i] = AHDR.data[i];
 
             archive.AddAsset(comboBoxLayers.SelectedIndex, newAHDR);
-            PopulateAssetsComboAndListBox();
+            PopulateAssetListAndComboBox();
+
+            SetSelectedIndex(newAssetId);
 
             numCopies++;
         }
@@ -323,7 +337,8 @@ namespace IndustrialPark
                     unsavedChanges = true;
                     archive.RemoveAsset(aid);
                     archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR);
-                    PopulateAssetsComboAndListBox();
+                    PopulateAssetListAndComboBox();
+                    SetSelectedIndex(AHDR.assetID);
                 }
             }
             catch (Exception ex)
@@ -339,6 +354,8 @@ namespace IndustrialPark
                 Asset asset = archive.GetFromAssetID(CurrentlySelectedAssetID());
                 if (asset is AssetTEXT TEXT)
                     new InternalTextEditor(TEXT).Show();
+                else if (asset is AssetDYNA DYNA)
+                    new InternalDynaEditor(DYNA).Show();
                 else
                     new InternalAssetEditor(asset).Show();
                 unsavedChanges = true;
@@ -381,7 +398,8 @@ namespace IndustrialPark
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            archive.Save();
+            Thread t = new Thread(archive.Save);
+            t.Start();
             unsavedChanges = false;
         }
 
@@ -418,9 +436,9 @@ namespace IndustrialPark
                 archive.FinishedMovingGizmo = false;
             else
             {
-                uint index = archive.ScreenClicked(ray);
-                if (index != 0)
-                    SetSelectedIndex(index);
+                uint assetID = archive.GetClickedAssetID(ray);
+                if (assetID != 0)
+                    SetSelectedIndex(assetID);
             }
         }
 
@@ -441,24 +459,27 @@ namespace IndustrialPark
 
         private void SetSelectedIndex(uint assetID)
         {
+            if (!archive.ContainsAsset(assetID))
+                return;
+
             try
             {
-                comboBoxLayers.SelectedIndex = archive.GetSelectedLayerIndex();
-                for (int i = 0; i < listBoxAssets.Items.Count; i++)
+                comboBoxLayers.SelectedIndex = archive.GetLayerFromAssetID(assetID);
+                comboBoxAssetTypes.SelectedItem = archive.GetFromAssetID(assetID).AHDR.assetType;
+            }
+            catch
+            {
+                PopulateAssetList();
+            }
+
+            for (int i = 0; i < listBoxAssets.Items.Count; i++)
+            {
+                if (GetAssetIDFromName(listBoxAssets.Items[i] as string) == assetID)
                 {
-                    if (GetAssetIDFromName(listBoxAssets.Items[i] as string) == assetID)
-                    {
-                        listBoxAssets.SelectedIndex = i;
-                        return;
-                    }
-                }
-                if (comboBoxAssetTypes.SelectedIndex != 0)
-                {
-                    comboBoxAssetTypes.SelectedIndex = 0;
-                    SetSelectedIndex(assetID);
+                    listBoxAssets.SelectedIndex = i;
+                    return;
                 }
             }
-            catch { }
         }
 
         System.Drawing.Color defaultColor;
@@ -515,6 +536,16 @@ namespace IndustrialPark
                 //comboBoxLayers.Items.Add(LayerToString(archive.DICT.LTOC.LHDRList.Count - 1));
                 //comboBoxLayers.SelectedIndex = comboBoxLayers.Items.Count - 1;
             }
+        }
+
+        public bool HasAsset(uint assetID)
+        {
+            return archive.ContainsAsset(assetID);
+        }
+
+        public string GetAssetNameFromID(uint assetID)
+        {
+            return archive.GetFromAssetID(assetID).AHDR.ADBG.assetName;
         }
     }
 }

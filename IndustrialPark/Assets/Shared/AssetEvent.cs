@@ -113,7 +113,7 @@ namespace IndustrialPark
 
         public override string ToString()
         {
-            return $"{EventReceiveID.ToString()} => {EventSendID.ToString()} => [{TargetAssetID.ToString()}]";
+            return $"{EventReceiveID.ToString()} => {EventSendID.ToString()} => {Program.MainForm.GetAssetNameFromID(TargetAssetID)}";
         }
     }
 }

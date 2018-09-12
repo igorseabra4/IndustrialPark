@@ -17,6 +17,7 @@ namespace IndustrialPark
             _rotation = new Vector3(ReadFloat(0x18 + Offset), ReadFloat(0x14 + Offset), ReadFloat(0x1C + Offset));
             _position = new Vector3(ReadFloat(0x20 + Offset), ReadFloat(0x24 + Offset), ReadFloat(0x28 + Offset));
             _scale = new Vector3(ReadFloat(0x2C + Offset), ReadFloat(0x30 + Offset), ReadFloat(0x34 + Offset));
+            _color = new Vector4(ReadFloat(0x38 + Offset), ReadFloat(0x3c + Offset), ReadFloat(0x40 + Offset), ReadFloat(0x44 + Offset));
 
             _modelAssetID = ReadUInt(0x4C + Offset);
 
@@ -58,7 +59,7 @@ namespace IndustrialPark
             if (DontRender()) return;
 
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
-                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected);
+                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * _color : _color);
             else
                 renderer.DrawCube(world, isSelected);
         }
@@ -171,7 +172,9 @@ namespace IndustrialPark
         }
         
         protected Vector3 _position;
+
         [Category("Placement")]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public virtual float PositionX
         {
             get { return _position.X; }
@@ -184,6 +187,7 @@ namespace IndustrialPark
         }
 
         [Category("Placement")]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public virtual float PositionY
         {
             get { return _position.Y; }
@@ -196,6 +200,7 @@ namespace IndustrialPark
         }
 
         [Category("Placement")]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public virtual float PositionZ
         {
             get { return _position.Z; }
@@ -208,7 +213,9 @@ namespace IndustrialPark
         }
 
         protected Vector3 _rotation;
+
         [Category("Placement")]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float RotationX
         {
             get { return MathUtil.RadiansToDegrees(_rotation.X); }
@@ -221,6 +228,7 @@ namespace IndustrialPark
         }
 
         [Category("Placement")]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float RotationY
         {
             get { return MathUtil.RadiansToDegrees(_rotation.Y); }
@@ -233,6 +241,7 @@ namespace IndustrialPark
         }
 
         [Category("Placement")]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float RotationZ
         {
             get { return MathUtil.RadiansToDegrees(_rotation.Z); }
@@ -245,7 +254,9 @@ namespace IndustrialPark
         }
 
         protected Vector3 _scale;
+
         [Category("Placement")]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float ScaleX
         {
             get { return _scale.X; }
@@ -258,6 +269,7 @@ namespace IndustrialPark
         }
 
         [Category("Placement")]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float ScaleY
         {
             get { return _scale.Y; }
@@ -270,6 +282,7 @@ namespace IndustrialPark
         }
 
         [Category("Placement")]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float ScaleZ
         {
             get { return _scale.Z; }
@@ -281,32 +294,50 @@ namespace IndustrialPark
             }
         }
 
+        protected Vector4 _color;
+
         [Category("Placement")]
         public float ColorRed
         {
-            get { return ReadFloat(0x38 + Offset); }
-            set { Write(0x38 + Offset, value); }
+            get => ReadFloat(0x38 + Offset);
+            set
+            {
+                _color.X = value;
+                Write(0x38 + Offset, _color.X);
+            }
         }
 
         [Category("Placement")]
         public float ColorGreen
         {
             get { return ReadFloat(0x3C + Offset); }
-            set { Write(0x3C + Offset, value); }
+            set
+            {
+                _color.Y = value;
+                Write(0x3C + Offset, _color.Y);
+            }
         }
 
         [Category("Placement")]
         public float ColorBlue
         {
             get { return ReadFloat(0x40 + Offset); }
-            set { Write(0x40 + Offset, value); }
+            set
+            {
+                _color.Z = value;
+                Write(0x40 + Offset, _color.Z);
+            }
         }
 
         [Category("Placement")]
         public float ColorAlpha
         {
             get { return ReadFloat(0x44 + Offset); }
-            set { Write(0x44 + Offset, value); }
+            set
+            {
+                _color.W = value;
+                Write(0x44 + Offset, _color.W);
+            }
         }
 
         [Category("Placement")]

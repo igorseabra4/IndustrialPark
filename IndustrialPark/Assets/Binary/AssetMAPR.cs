@@ -20,6 +20,8 @@ namespace IndustrialPark
     {
         public AssetMAPR(Section_AHDR AHDR) : base(AHDR)
         {
+            if (AssetID != AHDR.assetID)
+                AssetID = AHDR.assetID;
         }
 
         public AssetID AssetID

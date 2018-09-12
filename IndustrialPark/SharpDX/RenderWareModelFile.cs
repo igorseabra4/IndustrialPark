@@ -21,6 +21,11 @@ namespace IndustrialPark
         public bool containsNormals = false;
 
         public List<SharpMesh> meshList;
+        private void AddToMeshList(SharpMesh mesh)
+        {
+            meshList.Add(mesh);
+            completeMeshList.Add(mesh);
+        }
         public static List<SharpMesh> completeMeshList = new List<SharpMesh>();
 
         public uint vertexAmount;
@@ -220,7 +225,7 @@ namespace IndustrialPark
             }
 
             if (SubsetList.Count > 0)
-                meshList.Add(SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), SubsetList));
+                AddToMeshList(SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), SubsetList));
         }
 
         private void AddGeometry(SharpDevice device, Geometry_000F g, Matrix transformMatrix)
@@ -333,7 +338,7 @@ namespace IndustrialPark
                 VertexColoredTextured[] vertices = new VertexColoredTextured[vertexList1.Count];
                 for (int i = 0; i < vertices.Length; i++)
                     vertices[i] = new VertexColoredTextured(vertexList1[i], textCoordList[i], colorList[i]);
-                meshList.Add(SharpMesh.Create(device, vertices, indexList.ToArray(), SubsetList));
+                AddToMeshList(SharpMesh.Create(device, vertices, indexList.ToArray(), SubsetList));
             }
         }
 
@@ -447,22 +452,14 @@ namespace IndustrialPark
                     triangleList.Add(new Triangle(0, (ushort)(i - 2), (ushort)(i - 1), (ushort)i));
 
                 VertexColoredTextured[] vertices = vertexList.ToArray();
-                meshList.Add(SharpMesh.Create(device, vertices, indexList.ToArray(), subSetList, SharpDX.Direct3D.PrimitiveTopology.TriangleStrip));
+                AddToMeshList(SharpMesh.Create(device, vertices, indexList.ToArray(), subSetList, SharpDX.Direct3D.PrimitiveTopology.TriangleStrip));
             }
         }
 
-        public void Render(SharpRenderer renderer, Matrix world, bool isSelected)
-        {
+        public void Render(SharpRenderer renderer, Matrix world, Vector4 color)
+        { 
             renderData.worldViewProjection = world * renderer.viewProjection;
-
-            if (isSelected)
-            {
-                renderData.Color = renderer.selectedObjectColor;
-            }
-            else
-            {
-                renderData.Color = Vector4.One;
-            }
+            renderData.Color = color;
 
             renderer.device.UpdateData(renderer.tintedBuffer, renderData);
             renderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, renderer.tintedBuffer);
@@ -479,6 +476,16 @@ namespace IndustrialPark
                     mesh.Draw(renderer.device, i);
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            foreach (SharpMesh m in meshList)
+            {
+                completeMeshList.Remove(m);
+                m.Dispose();
+            }
+            meshList.Clear();
         }
     }
 }

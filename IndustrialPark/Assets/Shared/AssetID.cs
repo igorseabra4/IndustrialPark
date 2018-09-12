@@ -43,6 +43,20 @@ namespace IndustrialPark
             }
         }
 
+        public override int GetHashCode()
+        {
+            return (int)value;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is AssetID assetID)
+                return assetID.value == value;
+            if (obj is uint uinteger)
+                return uinteger == value;
+            return false;
+        }
+
         public override string ToString()
         {
             return value.ToString("X8");

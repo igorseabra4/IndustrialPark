@@ -1,4 +1,6 @@
 ﻿using HipHopFile;
+using System.Collections.Generic;
+using static HipHopFile.Functions;
 
 namespace IndustrialPark
 {
@@ -29,10 +31,34 @@ namespace IndustrialPark
             set => Write(0x10, value);
         }
 
-        public string Destination_Level
+        public string DestinationLevel
         {
-            get => ReadString(0x14, 4);
-            set => Write(0x14, value, 4);
+            get
+            {
+                List<byte> bytes = new List<byte>();
+                for (int i = 0; i < 4; i++)
+                    bytes.Add(Data[0x14 + i]);
+
+                if (currentPlatform == Platform.GameCube)
+                    bytes.Reverse();
+
+                return System.Text.Encoding.ASCII.GetString(bytes.ToArray(), 0, 4);
+            }
+            set
+            {
+                List<byte> bytes = new List<byte>();
+                foreach (char c in value)
+                    bytes.Add((byte)c);
+
+                while (bytes.Count < 4)
+                    bytes.Add((byte)' ');
+
+                if (currentPlatform == Platform.GameCube)
+                    bytes.Reverse();
+
+                for (int i = 0; i < 4; i++)
+                    Data[0x14 + i] = bytes[i];
+            }
         }
     }
 }

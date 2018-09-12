@@ -5,7 +5,11 @@ namespace IndustrialPark
 {
     public class ObjectAsset : Asset
     {
-        public ObjectAsset(Section_AHDR AHDR) : base(AHDR) { }
+        public ObjectAsset(Section_AHDR AHDR) : base(AHDR)
+        {
+            if (AssetID != AHDR.assetID)
+                AssetID = AHDR.assetID;
+        }
 
         [Category("Object")]
         public AssetID AssetID
@@ -41,6 +45,6 @@ namespace IndustrialPark
             set => WriteEvents(EventStartOffset, value);
         }
 
-        protected virtual int EventStartOffset { get => 0x8; }
+        protected virtual int EventStartOffset { get => Data.Length - AmountOfEvents * AssetEvent.sizeOfStruct; }
     }
 }

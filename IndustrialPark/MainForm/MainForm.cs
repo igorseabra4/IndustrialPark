@@ -362,5 +362,15 @@ namespace IndustrialPark
         {
             Program.AboutBox.Show();
         }
+
+        public string GetAssetNameFromID(uint assetID)
+        {
+            foreach (ArchiveEditor archiveEditor in archiveEditors)
+            {
+                if (archiveEditor.HasAsset(assetID))
+                    return archiveEditor.GetAssetNameFromID(assetID);
+            }
+            return assetID.ToString("X8");
+        }
     }
 }

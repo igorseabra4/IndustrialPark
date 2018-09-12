@@ -18,9 +18,9 @@ namespace IndustrialPark
             ArchiveEditorFunctions.AddToRenderingDictionary(AHDR.assetID, this);
         }
 
-        public void Draw(SharpRenderer renderer, Matrix world, bool isSelected)
+        public void Draw(SharpRenderer renderer, Matrix world, Vector4 color)
         {
-            model.Render(renderer, world, isSelected);
+            model.Render(renderer, world, color);
         }
 
         public RenderWareModelFile GetRenderWareModelFile()
