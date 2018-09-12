@@ -5,7 +5,7 @@ using System.Drawing.Design;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 
-namespace ColorDialogExample
+namespace AssetEditorColors
 {
     public class MyColorEditor : UITypeEditor
     {

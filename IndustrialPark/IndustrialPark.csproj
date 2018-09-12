@@ -102,7 +102,6 @@
     <Compile Include="Assets\ObjectAssets\Colors\MyColor.cs" />
     <Compile Include="Assets\ObjectAssets\Colors\MyColorConverter.cs" />
     <Compile Include="Assets\ObjectAssets\Colors\MyColorEditor.cs" />
-    <Compile Include="Assets\ObjectAssets\Colors\SelectableClass.cs" />
     <Compile Include="Assets\Shared\Asset.cs" />
     <Compile Include="Assets\Shared\FloatTypeConverter.cs" />
     <Compile Include="Assets\Shared\HexByteTypeConverter.cs" />

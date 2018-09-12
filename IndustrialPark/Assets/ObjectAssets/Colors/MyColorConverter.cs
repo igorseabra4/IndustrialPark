@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Globalization;
 
-namespace ColorDialogExample
+namespace AssetEditorColors
 {
     public class MyColorConverter : TypeConverter
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace ColorDialogExample
+namespace AssetEditorColors
 {
     [TypeConverter(typeof(MyColorConverter))]
     public class MyColor
