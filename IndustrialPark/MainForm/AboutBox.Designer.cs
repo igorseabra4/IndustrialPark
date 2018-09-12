@@ -209,7 +209,7 @@
             this.Padding = new System.Windows.Forms.Padding(9);
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "About Heroes Power Plant";
+            this.Text = "About Industrial Park";
             this.Load += new System.EventHandler(this.AboutBox_Load);
             this.tableLayoutPanel.ResumeLayout(false);
             this.tableLayoutPanel.PerformLayout();
