@@ -336,7 +336,11 @@ namespace IndustrialPark
         {
             if (listBoxAssets.SelectedItem != null)
             {
-                new InternalAssetEditor(archive.GetFromAssetID(CurrentlySelectedAssetID())).Show();
+                Asset asset = archive.GetFromAssetID(CurrentlySelectedAssetID());
+                if (asset is AssetTEXT TEXT)
+                    new InternalTextEditor(TEXT).Show();
+                else
+                    new InternalAssetEditor(asset).Show();
                 unsavedChanges = true;
             }
         }
@@ -388,6 +392,7 @@ namespace IndustrialPark
             {
                 archive.currentlyOpenFilePath = saveFileDialog.FileName;
                 archive.Save();
+                toolStripStatusLabel1.Text = "File: " + saveFileDialog.FileName;
                 unsavedChanges = false;
             }
         }

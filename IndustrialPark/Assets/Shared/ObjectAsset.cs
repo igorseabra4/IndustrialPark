@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public abstract class ObjectAsset : Asset
+    public class ObjectAsset : Asset
     {
         public ObjectAsset(Section_AHDR AHDR) : base(AHDR) { }
 
@@ -41,6 +41,6 @@ namespace IndustrialPark
             set => WriteEvents(EventStartOffset, value);
         }
 
-        protected abstract int EventStartOffset { get; }
+        protected virtual int EventStartOffset { get => 0x8; }
     }
 }

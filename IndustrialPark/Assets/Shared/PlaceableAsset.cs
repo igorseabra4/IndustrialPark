@@ -164,7 +164,7 @@ namespace IndustrialPark
         }
 
         [Category("Placement")]
-        public AssetID UnknownAssetID_10
+        public AssetID SURF_AssetID
         {
             get { return ReadUInt(0x10 + Offset); }
             set { Write(0x10 + Offset, value); }

@@ -161,7 +161,9 @@ namespace IndustrialPark
         private void textBoxAssetName_TextChanged(object sender, EventArgs e)
         {
             assetName = textBoxAssetName.Text;
-            textBoxAssetID.Text = Functions.BKDRHash(assetName).ToString("X8");
+
+            if (assetType != AssetType.BSP | assetType != AssetType.JSP)
+                textBoxAssetID.Text = Functions.BKDRHash(assetName).ToString("X8");
         }
 
         private void textBoxAssetFilename_TextChanged(object sender, EventArgs e)

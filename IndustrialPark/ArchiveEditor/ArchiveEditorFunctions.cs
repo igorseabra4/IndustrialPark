@@ -152,6 +152,12 @@ namespace IndustrialPark
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
+                case AssetType.COND:
+                    {
+                        AssetCOND newAsset = new AssetCOND(AHDR);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
                 case AssetType.DPAT:
                     {
                         AssetDPAT newAsset = new AssetDPAT(AHDR);
@@ -165,9 +171,27 @@ namespace IndustrialPark
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
+                case AssetType.DYNA:
+                    {
+                        AssetDYNA newAsset = new AssetDYNA(AHDR);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
+                case AssetType.FOG:
+                    {
+                        AssetFOG newAsset = new AssetFOG(AHDR);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
                 case AssetType.GRUP:
                     {
                         AssetGRUP newAsset = new AssetGRUP(AHDR);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
+                case AssetType.MAPR:
+                    {
+                        AssetMAPR newAsset = new AssetMAPR(AHDR);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
@@ -194,9 +218,17 @@ namespace IndustrialPark
                     break;
                 case AssetType.MVPT:
                     {
-                        AssetMVPT newAsset = new AssetMVPT(AHDR);
-                        newAsset.Setup(Program.MainForm.renderer);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
+                        if (currentGame == Game.BFBB)
+                        {
+                            AssetMVPT newAsset = new AssetMVPT(AHDR);
+                            newAsset.Setup(Program.MainForm.renderer);
+                            assetDictionary.Add(AHDR.assetID, newAsset);
+                        }
+                        else
+                        {
+                            Asset newAsset = new Asset(AHDR);
+                            assetDictionary.Add(AHDR.assetID, newAsset);
+                        }
                     }
                     break;
                 case AssetType.PICK:
@@ -253,6 +285,18 @@ namespace IndustrialPark
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
+                case AssetType.SURF:
+                    {
+                        ObjectAsset newAsset = new ObjectAsset(AHDR);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
+                case AssetType.TEXT:
+                    {
+                        AssetTEXT newAsset = new AssetTEXT(AHDR);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
                 case AssetType.TRIG:
                     {
                         AssetTRIG newAsset = new AssetTRIG(AHDR);
@@ -275,7 +319,7 @@ namespace IndustrialPark
                     break;
                 default:
                     {
-                        AssetGeneric newAsset = new AssetGeneric(AHDR);
+                        Asset newAsset = new Asset(AHDR);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;

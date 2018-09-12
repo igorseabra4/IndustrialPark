@@ -1,11 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.ComponentModel;
 using HipHopFile;
 using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
+    public class EntryPIPT
+    {
+        public AssetID ModelAssetID { get; set; }
+        public int MaybeMeshIndex { get; set; }
+        [TypeConverter(typeof(HexByteTypeConverter))]
+        public byte RelatedToVisibility { get; set; }
+        [TypeConverter(typeof(HexByteTypeConverter))]
+        public byte Culling { get; set; }
+        [TypeConverter(typeof(HexByteTypeConverter))]
+        public byte DestinationSourceBlend { get; set; }
+        [TypeConverter(typeof(HexByteTypeConverter))]
+        public byte Unknown34 { get; set; }
+
+        public override string ToString()
+        {
+            return $"[{ModelAssetID.ToString()}] - {MaybeMeshIndex}";
+        }
+    }
+
     public class AssetPIPT : Asset
     {
         public AssetPIPT(Section_AHDR AHDR) : base(AHDR)
@@ -37,12 +56,10 @@ namespace IndustrialPark
             }
             set
             {
-                List<EntryPIPT> newValues = value.ToList();
-
                 List<byte> newData = new List<byte>();
-                newData.AddRange(BitConverter.GetBytes(Switch(newValues.Count)));
+                newData.AddRange(BitConverter.GetBytes(Switch(value.Length)));
 
-                foreach (EntryPIPT i in newValues)
+                foreach (EntryPIPT i in value)
                 {
                     newData.AddRange(BitConverter.GetBytes(Switch(i.ModelAssetID)));
                     newData.AddRange(BitConverter.GetBytes(Switch(i.MaybeMeshIndex)));

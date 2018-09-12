@@ -7,7 +7,7 @@ using static HipHopFile.Functions;
 
 namespace IndustrialPark
 {
-    public abstract class Asset
+    public class Asset
     {
         public static int Offset { get { return currentGame == Game.BFBB ? 0x00 : -0x04; } }
 
@@ -94,11 +94,11 @@ namespace IndustrialPark
             return BitConverter.ToUInt32(AHDR.data, j);
         }
 
-        protected string ReadString(int j, int length)
+        protected string ReadString(int j, int length, bool dontReverse = false)
         {
             IEnumerable<char> chars = AHDR.data.Skip(j).Take(length).Cast<char>();
 
-            if (currentPlatform == Platform.GameCube)
+            if (!dontReverse && (currentPlatform == Platform.GameCube))
                 chars = chars.Reverse();
 
             return new string(chars.ToArray());

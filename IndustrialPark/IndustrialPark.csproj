@@ -80,15 +80,29 @@
     <Compile Include="ArchiveEditor\AssetEditor\InternalAssetEditor.Designer.cs">
       <DependentUpon>InternalAssetEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="ArchiveEditor\AssetEditor\InternalTextEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\AssetEditor\InternalTextEditor.designer.cs">
+      <DependentUpon>InternalTextEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Assets\Binary\AssetMAPR.cs" />
     <Compile Include="Assets\Binary\AssetPIPT.cs" />
-    <Compile Include="Assets\Binary\EntryPICK.cs" />
-    <Compile Include="Assets\Binary\EntryPIPT.cs" />
+    <Compile Include="Assets\Binary\AssetSHDW.cs" />
+    <Compile Include="Assets\Binary\AssetTEXT.cs" />
     <Compile Include="Assets\ObjectAssets\AssetCNTR.cs" />
+    <Compile Include="Assets\ObjectAssets\AssetCOND.cs" />
     <Compile Include="Assets\ObjectAssets\AssetDPAT.cs" />
+    <Compile Include="Assets\ObjectAssets\AssetDYNA.cs" />
+    <Compile Include="Assets\ObjectAssets\AssetFOG.cs" />
     <Compile Include="Assets\ObjectAssets\AssetPORT.cs" />
     <Compile Include="Assets\ObjectAssets\AssetTIMR.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetBOUL.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetDSTR.cs" />
+    <Compile Include="Assets\ObjectAssets\Colors\MyColor.cs" />
+    <Compile Include="Assets\ObjectAssets\Colors\MyColorConverter.cs" />
+    <Compile Include="Assets\ObjectAssets\Colors\MyColorEditor.cs" />
+    <Compile Include="Assets\ObjectAssets\Colors\SelectableClass.cs" />
     <Compile Include="Assets\Shared\Asset.cs" />
     <Compile Include="Assets\Shared\FloatTypeConverter.cs" />
     <Compile Include="Assets\Shared\HexByteTypeConverter.cs" />
@@ -103,7 +117,6 @@
     <Compile Include="Assets\Shared\Interfaces\IRenderableAsset.cs" />
     <Compile Include="Assets\ObjectAssets\AssetGRUP.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetBUTN.cs" />
-    <Compile Include="Assets\AssetGeneric.cs" />
     <Compile Include="Assets\Shared\AssetID\AssetID.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetMRKR.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetPLYR.cs" />
@@ -172,6 +185,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\AssetEditor\InternalAssetEditor.resx">
       <DependentUpon>InternalAssetEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveEditor\AssetEditor\InternalTextEditor.resx">
+      <DependentUpon>InternalTextEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm\AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
