@@ -28,6 +28,48 @@ namespace IndustrialPark
                 case DynaType.game_object__talk_box:
                     _dynaSpecific = reset ? new DynaTalkBox() : new DynaTalkBox(Data.Skip(0x10).Take(EventStartOffset));
                     break;
+                case DynaType.game_object__text_box:
+                    _dynaSpecific = reset ? new DynaTextBox() : new DynaTextBox(Data.Skip(0x10).Take(EventStartOffset));
+                    break;
+                case DynaType.game_object__NPCSettings:
+                    _dynaSpecific = reset ? new DynaNPCSettings() : new DynaNPCSettings(Data.Skip(0x10).Take(EventStartOffset));
+                    break;
+                case DynaType.game_object__BusStop:
+                    _dynaSpecific = reset ? new DynaBusStop() : new DynaBusStop(Data.Skip(0x10).Take(EventStartOffset));
+                    break;
+                case DynaType.game_object__Flythrough:
+                    _dynaSpecific = reset ? new DynaFlythrough() : new DynaFlythrough(Data.Skip(0x10).Take(EventStartOffset));
+                    break;
+                case DynaType.game_object__BoulderGenerator:
+                    _dynaSpecific = reset ? new DynaBoulderGen() : new DynaBoulderGen(Data.Skip(0x10).Take(EventStartOffset));
+                    break;
+                case DynaType.game_object__Teleport:
+                    _dynaSpecific = reset ? new DynaTeleport() : new DynaTeleport(Data.Skip(0x10).Take(EventStartOffset));
+                    break;
+                case DynaType.game_object__Taxi:
+                    _dynaSpecific = reset ? new DynaTaxi() : new DynaTaxi(Data.Skip(0x10).Take(EventStartOffset));
+                    break;
+                case DynaType.game_object__bungee_drop:
+                    _dynaSpecific = reset ? new DynaBungeeDrop() : new DynaBungeeDrop(Data.Skip(0x10).Take(EventStartOffset));
+                    break;
+                case DynaType.game_object__bungee_hook:
+                    _dynaSpecific = reset ? new DynaBungeeHook() : new DynaBungeeHook(Data.Skip(0x10).Take(EventStartOffset));
+                    break;
+                case DynaType.game_object__Camera_Tweak:
+                    _dynaSpecific = reset ? new DynaCamTweak() : new DynaCamTweak(Data.Skip(0x10).Take(EventStartOffset));
+                    break;
+                case DynaType.hud__model:
+                    _dynaSpecific = reset ? new DynaHudModel() : new DynaHudModel(Data.Skip(0x10).Take(EventStartOffset));
+                    break;
+                case DynaType.hud__meter__font:
+                    _dynaSpecific = reset ? new DynaHudMeterFont() : new DynaHudMeterFont(Data.Skip(0x10).Take(EventStartOffset));
+                    break;
+                case DynaType.hud__meter__unit:
+                    _dynaSpecific = reset ? new DynaHudMeterUnit() : new DynaHudMeterUnit(Data.Skip(0x10).Take(EventStartOffset));
+                    break;
+                case DynaType.hud__text:
+                    _dynaSpecific = reset ? new DynaHudText() : new DynaHudText(Data.Skip(0x10).Take(EventStartOffset));
+                    break;
                 default:
                     _dynaSpecific = reset ? new DynaBase() : new DynaBase(Data.Skip(0x10).Take(EventStartOffset));
                     break;

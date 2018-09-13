@@ -7,7 +7,6 @@ namespace IndustrialPark
 {
     public class DynaTalkBox : DynaBase
     {
-        public static int SectionSize => 0x38;
         public override string Note => "Version is always 11";
 
         public DynaTalkBox() : base()

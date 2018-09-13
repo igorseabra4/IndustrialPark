@@ -7,7 +7,6 @@ namespace IndustrialPark
 {
     public class DynaPointer : DynaBase
     {
-        public static int SectionSize => 24;
         public override string Note => "Version is always 1";
         
         public DynaPointer() : base()
@@ -16,12 +15,12 @@ namespace IndustrialPark
 
         public DynaPointer(IEnumerable<byte> enumerable) : base(enumerable)
         {
-            PositionX = Switch(BitConverter.ToInt32(data, 0));
-            PositionY = Switch(BitConverter.ToInt32(data, 4));
-            PositionZ = Switch(BitConverter.ToInt32(data, 8));
-            RotationX = Switch(BitConverter.ToInt32(data, 12));
-            RotationY = Switch(BitConverter.ToInt32(data, 16));
-            RotationZ = Switch(BitConverter.ToInt32(data, 20));
+            PositionX = Switch(BitConverter.ToSingle(data, 0));
+            PositionY = Switch(BitConverter.ToSingle(data, 4));
+            PositionZ = Switch(BitConverter.ToSingle(data, 8));
+            RotationX = Switch(BitConverter.ToSingle(data, 12));
+            RotationY = Switch(BitConverter.ToSingle(data, 16));
+            RotationZ = Switch(BitConverter.ToSingle(data, 20));
         }
 
         public override byte[] ToByteArray()
