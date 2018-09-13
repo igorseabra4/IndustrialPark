@@ -78,7 +78,7 @@ namespace IndustrialPark
         {
             if (dontRender) return;
 
-            renderer.DrawCube(world, isSelected);
+            renderer.DrawPyramid(world, isSelected);
         }
         
         public virtual Vector3 GetGizmoCenter()

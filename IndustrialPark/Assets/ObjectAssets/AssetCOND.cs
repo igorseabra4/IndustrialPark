@@ -2,6 +2,16 @@
 
 namespace IndustrialPark
 {
+    public enum CONDOperation
+    {
+        EQUAL_TO = 0,
+        GREATER_THAN = 1,
+        LESS_THAN = 2,
+        GREATER_THAN_OR_EQUAL_TO = 3,
+        LESS_THAN_OR_EQUAL_TO = 4,
+        NOT_EQUAL_TO = 5
+    }
+
     public class AssetCOND : ObjectAsset
     {
         public AssetCOND(Section_AHDR AHDR) : base(AHDR) { }
@@ -17,19 +27,19 @@ namespace IndustrialPark
             set => Write(0x8, value);
         }
 
-        public AssetID VariableCategory
+        public AssetID Variable
         {
             get => ReadUInt(0xC);
             set => Write(0xC, value);
         }
 
-        public int EvaluationMethod
+        public CONDOperation Operation
         {
-            get => ReadInt(0x10);
-            set => Write(0x10, value);
+            get => (CONDOperation)ReadInt(0x10);
+            set => Write(0x10, (int)value);
         }
 
-        public AssetID Variable
+        public AssetID SubVariable
         {
             get => ReadUInt(0x14);
             set => Write(0x14, value);

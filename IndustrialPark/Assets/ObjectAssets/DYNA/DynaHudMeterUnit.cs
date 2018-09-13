@@ -33,7 +33,7 @@ namespace IndustrialPark
             UnknownFloat12 = Switch(BitConverter.ToSingle(data, 0x30));
             UnknownFloat13 = Switch(BitConverter.ToSingle(data, 0x34));
             UnknownFloat14 = Switch(BitConverter.ToSingle(data, 0x38));
-            Unknown_ID1 = Switch(BitConverter.ToUInt32(data, 0x3C));
+            Unknown_ID2 = Switch(BitConverter.ToUInt32(data, 0x3C));
             UnknownFloat15 = Switch(BitConverter.ToSingle(data, 0x40));
             UnknownFloat16 = Switch(BitConverter.ToSingle(data, 0x44));
             UnknownFloat17 = Switch(BitConverter.ToSingle(data, 0x48));

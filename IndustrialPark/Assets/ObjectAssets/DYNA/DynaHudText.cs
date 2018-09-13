@@ -23,8 +23,8 @@ namespace IndustrialPark
             UnknownFloat4 = Switch(BitConverter.ToSingle(data, 0xC));
             UnknownFloat5 = Switch(BitConverter.ToSingle(data, 0x10));
             UnknownFloat6 = Switch(BitConverter.ToSingle(data, 0x14));
-            TextboxID = Switch(BitConverter.ToUInt32(data, 0x2C));
-            TextID = Switch(BitConverter.ToUInt32(data, 0x30));
+            TextboxID = Switch(BitConverter.ToUInt32(data, 0x18));
+            TextID = Switch(BitConverter.ToUInt32(data, 0x1C));
         }
 
         public override byte[] ToByteArray()

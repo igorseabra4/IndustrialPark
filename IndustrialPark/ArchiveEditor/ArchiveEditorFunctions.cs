@@ -143,6 +143,13 @@ namespace IndustrialPark
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
+                case AssetType.CAM:
+                    {
+                        AssetCAM newAsset = new AssetCAM(AHDR);
+                        newAsset.Setup(Program.MainForm.renderer);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
                 case AssetType.CNTR:
                     {
                         AssetCNTR newAsset = new AssetCNTR(AHDR);
@@ -309,7 +316,6 @@ namespace IndustrialPark
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
-                case AssetType.CAM:
                 case AssetType.CCRV:
                 case AssetType.CSNM:
                 case AssetType.DSCO:

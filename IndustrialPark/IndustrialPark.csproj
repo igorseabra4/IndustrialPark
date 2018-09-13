@@ -99,6 +99,7 @@
     <Compile Include="Assets\ObjectAssets\AssetCNTR.cs" />
     <Compile Include="Assets\ObjectAssets\AssetCOND.cs" />
     <Compile Include="Assets\ObjectAssets\AssetDPAT.cs" />
+    <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetCAM.cs" />
     <Compile Include="Assets\ObjectAssets\DYNA\AssetDYNA.cs" />
     <Compile Include="Assets\ObjectAssets\AssetFOG.cs" />
     <Compile Include="Assets\ObjectAssets\AssetPORT.cs" />
