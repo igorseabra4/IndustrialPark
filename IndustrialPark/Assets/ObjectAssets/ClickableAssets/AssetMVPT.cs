@@ -37,7 +37,10 @@ namespace IndustrialPark
 
         public void CreateTransformMatrix()
         {
-            world = Matrix.Scaling(_distanceICanSeeYou == -1f ? 1f : _distanceICanSeeYou * 2f) * Matrix.Translation(_position);
+            if (_distanceICanSeeYou == -1f)
+                world = Matrix.RotationX(MathUtil.PiOverTwo) * Matrix.Translation(_position + new Vector3(0f, 0.5f, 0f));
+            else
+                world = Matrix.Scaling(_distanceICanSeeYou * 2f) * Matrix.Translation(_position);
 
             CreateBoundingBox();
         }
@@ -46,8 +49,18 @@ namespace IndustrialPark
 
         protected void CreateBoundingBox()
         {
-            boundingSphere = new BoundingSphere(_position, _distanceICanSeeYou == -1f ? 1f : _distanceICanSeeYou);
-            boundingBox = BoundingBox.FromSphere(boundingSphere);
+            if (_distanceICanSeeYou == -1f)
+            {
+                boundingBox = BoundingBox.FromPoints(SharpRenderer.pyramidVertices.ToArray());
+                boundingBox.Maximum = (Vector3)Vector3.Transform(boundingBox.Maximum, world);
+                boundingBox.Minimum = (Vector3)Vector3.Transform(boundingBox.Minimum, world);
+                boundingSphere = BoundingSphere.FromBox(boundingBox);
+            }
+            else
+            {
+                boundingSphere = new BoundingSphere(_position, _distanceICanSeeYou);
+                boundingBox = BoundingBox.FromSphere(boundingSphere);
+            }
         }
 
         public float? IntersectsWith(Ray ray)
@@ -89,7 +102,10 @@ namespace IndustrialPark
         {
             if (dontRender) return;
 
-            renderer.DrawSphere(world, isSelected);
+            if (_distanceICanSeeYou == -1f)
+                renderer.DrawPyramid(world, isSelected, 1f);
+            else
+                renderer.DrawSphere(world, isSelected);
         }
 
         public virtual Vector3 GetGizmoCenter()

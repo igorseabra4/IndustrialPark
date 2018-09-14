@@ -259,6 +259,11 @@ namespace IndustrialPark
             {
                 try
                 {
+                    while (archive.ContainsAsset(AHDR.assetID))
+                    {
+                        MessageBox.Show($"Archive already contains asset id [{AHDR.assetID.ToString("X8")}]. Will change it to [{(AHDR.assetID + 1).ToString("X8")}].");
+                        AHDR.assetID++;
+                    }
                     unsavedChanges = true;
                     archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR);
                     PopulateAssetListAndComboBox();
@@ -281,7 +286,14 @@ namespace IndustrialPark
 
             Section_AHDR AHDR = archive.GetFromAssetID(CurrentlySelectedAssetID()).AHDR;
 
-            string newAssetName = AHDR.ADBG.assetName + "_COPY_" + numCopies.ToString();
+            string newAssetName;
+
+            if (AHDR.ADBG.assetName.Contains("_COPY"))            
+                newAssetName = AHDR.ADBG.assetName.Substring(0, AHDR.ADBG.assetName.LastIndexOf("_COPY")) + "_COPY" + numCopies.ToString();            
+            else
+                newAssetName = AHDR.ADBG.assetName + "_COPY" + numCopies.ToString();
+
+            numCopies++;
 
             uint newAssetId = Functions.BKDRHash(newAssetName);
             while (archive.ContainsAsset(newAssetId))
@@ -302,8 +314,6 @@ namespace IndustrialPark
             PopulateAssetListAndComboBox();
 
             SetSelectedIndex(newAssetId);
-
-            numCopies++;
         }
 
         private void buttonRemoveAsset_Click(object sender, EventArgs e)
@@ -321,7 +331,9 @@ namespace IndustrialPark
         {
             if (listBoxAssets.SelectedIndex < 0) return;
 
-            if (archive.GetFromAssetID(CurrentlySelectedAssetID()) is IClickableAsset a)
+            if (archive.GetFromAssetID(CurrentlySelectedAssetID()) is AssetCAM cam)
+                Program.MainForm.renderer.Camera.SetPositionCamera(cam);
+            else if (archive.GetFromAssetID(CurrentlySelectedAssetID()) is IClickableAsset a)
                 Program.MainForm.renderer.Camera.SetPosition(new Vector3(a.PositionX, a.PositionY, a.PositionZ) - 8 * Program.MainForm.renderer.Camera.GetForward());
         }
 
@@ -352,12 +364,16 @@ namespace IndustrialPark
             if (listBoxAssets.SelectedItem != null)
             {
                 Asset asset = archive.GetFromAssetID(CurrentlySelectedAssetID());
-                if (asset is AssetTEXT TEXT)
-                    new InternalTextEditor(TEXT).Show();
+
+                if (asset is AssetCAM CAM)
+                    new InternalCamEditor(CAM).Show();
                 else if (asset is AssetDYNA DYNA)
                     new InternalDynaEditor(DYNA).Show();
+                else if (asset is AssetTEXT TEXT)
+                    new InternalTextEditor(TEXT).Show();
                 else
                     new InternalAssetEditor(asset).Show();
+
                 unsavedChanges = true;
             }
         }

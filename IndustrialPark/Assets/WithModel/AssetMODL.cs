@@ -27,5 +27,10 @@ namespace IndustrialPark
         {
             return model;
         }
+
+        public bool HasRenderWareModelFile()
+        {
+            return model != null;
+        }
     }
 }

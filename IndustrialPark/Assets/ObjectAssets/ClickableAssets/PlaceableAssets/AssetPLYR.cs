@@ -21,16 +21,23 @@ namespace IndustrialPark
 
         public AssetPLYR(Section_AHDR AHDR) : base(AHDR) { }
 
+        public override void CreateTransformMatrix()
+        {
+            world = Matrix.RotationX(MathUtil.PiOverTwo) * Matrix.Translation(_position + new Vector3(0f, 0.5f, 0f));
+
+            CreateBoundingBox();
+        }
+
         protected override void CreateBoundingBox()
         {
-            boundingBox = BoundingBox.FromPoints(SharpRenderer.cubeVertices.ToArray());
+            boundingBox = BoundingBox.FromPoints(SharpRenderer.pyramidVertices.ToArray());
             boundingBox.Maximum = (Vector3)Vector3.Transform(boundingBox.Maximum, world);
             boundingBox.Minimum = (Vector3)Vector3.Transform(boundingBox.Minimum, world);
         }
 
         protected override float? TriangleIntersection(Ray r, float distance)
         {
-            return TriangleIntersection(r, distance, SharpRenderer.cubeTriangles, SharpRenderer.cubeVertices);
+            return TriangleIntersection(r, distance, SharpRenderer.pyramidTriangles, SharpRenderer.pyramidVertices);
         }
 
         private float? TriangleIntersection(Ray r, float initialDistance, List<Triangle> triangles, List<Vector3> vertices)
@@ -62,7 +69,7 @@ namespace IndustrialPark
         {
             if (dontRender) return;
 
-            renderer.DrawCube(world, isSelected);
+            renderer.DrawPyramid(world, isSelected, 1f);
         }
 
         public AssetID LightKitID

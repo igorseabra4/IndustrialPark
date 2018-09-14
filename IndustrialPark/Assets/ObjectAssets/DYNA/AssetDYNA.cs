@@ -71,6 +71,7 @@ namespace IndustrialPark
                     _dynaSpecific = reset ? new DynaHudText() : new DynaHudText(Data.Skip(0x10).Take(EventStartOffset));
                     break;
                 default:
+                    //System.Windows.Forms.MessageBox.Show("Unknown DYNA type found: [" + ((int)Type).ToString("X8") + "] on asset " + ToString() + ".");
                     _dynaSpecific = reset ? new DynaBase() : new DynaBase(Data.Skip(0x10).Take(EventStartOffset));
                     break;
             }

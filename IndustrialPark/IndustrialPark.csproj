@@ -74,6 +74,12 @@
     </Compile>
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions.cs" />
     <Compile Include="ArchiveEditor\AssetEditor\Gizmo.cs" />
+    <Compile Include="ArchiveEditor\AssetEditor\InternalCamEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\AssetEditor\InternalCamEditor.Designer.cs">
+      <DependentUpon>InternalCamEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="ArchiveEditor\AssetEditor\InternalAssetEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -206,6 +212,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\ArchiveEditor.resx">
       <DependentUpon>ArchiveEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveEditor\AssetEditor\InternalCamEditor.resx">
+      <DependentUpon>InternalCamEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\AssetEditor\InternalAssetEditor.resx">
       <DependentUpon>InternalAssetEditor.cs</DependentUpon>

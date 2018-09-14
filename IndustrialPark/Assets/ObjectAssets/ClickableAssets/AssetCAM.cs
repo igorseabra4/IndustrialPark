@@ -139,43 +139,43 @@ namespace IndustrialPark
         }
 
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float Float14
+        public float NormalizedForwardX
         {
             get => ReadFloat(0x14);
             set => Write(0x14, value);
         }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float Float18
+        public float NormalizedForwardY
         {
             get => ReadFloat(0x18);
             set => Write(0x18, value);
         }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float Float1C
+        public float NormalizedForwardZ
         {
             get => ReadFloat(0x1C);
             set => Write(0x1C, value);
         }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float Float20
+        public float NormalizedUpX
         {
             get => ReadFloat(0x20);
             set => Write(0x20, value);
         }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float Float24
+        public float NormalizedUpY
         {
             get => ReadFloat(0x24);
             set => Write(0x24, value);
         }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float Float28
+        public float NormalizedUpZ
         {
             get => ReadFloat(0x28);
             set => Write(0x28, value);
         }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float float2C
+        public float Float2C
         {
             get => ReadFloat(0x2C);
             set => Write(0x2C, value);

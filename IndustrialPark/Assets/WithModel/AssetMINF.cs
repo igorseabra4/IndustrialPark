@@ -57,13 +57,13 @@ namespace IndustrialPark
             }
             else
             {
-                throw new Exception("Error: MINF asset " + AHDR.ADBG.assetName + " could not find its MODL asset ID");
+                throw new Exception("Error: MINF asset " + AHDR.ADBG.assetName + " could not find its RenderWareModelFile");
             }
         }
 
         public bool HasRenderWareModelFile()
         {
-            return ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID);
+            return ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID) && ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile() != null;
         }
     }
 }

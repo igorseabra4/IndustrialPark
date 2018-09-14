@@ -168,13 +168,13 @@ namespace IndustrialPark
             set => Write(0x97 + Offset, value);
         }
 
-        public float UnknownFloat_98
+        public float MovementTranslationDistance
         {
             get => ReadFloat(0x98 + Offset);
             set => Write(0x98 + Offset, value);
         }
 
-        public float UnknownFloat_9C
+        public float MovementTranslationTime
         {
             get => ReadFloat(0x9C + Offset);
             set => Write(0x9C + Offset, value);
@@ -192,13 +192,13 @@ namespace IndustrialPark
             set => Write(0xA4 + Offset, value);
         }
 
-        public float UnknownFloat_A8
+        public float MovementRotationDegrees
         {
             get => ReadFloat(0xA8 + Offset);
             set => Write(0xA8 + Offset, value);
         }
 
-        public float UnknownFloat_AC
+        public float MovementRotationTime
         {
             get => ReadFloat(0xAC + Offset);
             set => Write(0xAC + Offset, value);
@@ -216,13 +216,13 @@ namespace IndustrialPark
             set => Write(0xB4 + Offset, value);
         }
 
-        public float UnknownFloat_B8
+        public float MovementEndPointTime
         {
             get => ReadFloat(0xB8 + Offset);
             set => Write(0xB8 + Offset, value);
         }
 
-        public float UnknownFloat_BC
+        public float MovementStartPointTime
         {
             get => ReadFloat(0xBC + Offset);
             set => Write(0xBC + Offset, value);

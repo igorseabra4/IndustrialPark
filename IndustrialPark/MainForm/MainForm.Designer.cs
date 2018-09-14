@@ -47,6 +47,7 @@ namespace IndustrialPark
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.displayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.levelModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bOULToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bUTNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dSTRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mRKRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -60,7 +61,7 @@ namespace IndustrialPark
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.renderPanel = new System.Windows.Forms.Panel();
-            this.bOULToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cAMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -180,6 +181,7 @@ namespace IndustrialPark
             this.levelModelToolStripMenuItem,
             this.bOULToolStripMenuItem,
             this.bUTNToolStripMenuItem,
+            this.cAMToolStripMenuItem,
             this.dSTRToolStripMenuItem,
             this.mRKRToolStripMenuItem,
             this.mVPTToolStripMenuItem,
@@ -201,6 +203,15 @@ namespace IndustrialPark
             this.levelModelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.levelModelToolStripMenuItem.Text = "BSP/JSP";
             this.levelModelToolStripMenuItem.Click += new System.EventHandler(this.levelModelToolStripMenuItem_Click);
+            // 
+            // bOULToolStripMenuItem
+            // 
+            this.bOULToolStripMenuItem.Checked = true;
+            this.bOULToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.bOULToolStripMenuItem.Name = "bOULToolStripMenuItem";
+            this.bOULToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.bOULToolStripMenuItem.Text = "BOUL";
+            this.bOULToolStripMenuItem.Click += new System.EventHandler(this.bOULToolStripMenuItem_Click);
             // 
             // bUTNToolStripMenuItem
             // 
@@ -323,14 +334,14 @@ namespace IndustrialPark
             this.renderPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.renderPanel_MouseUp);
             this.renderPanel.Resize += new System.EventHandler(this.ResetMouseCenter);
             // 
-            // bOULToolStripMenuItem
+            // cAMToolStripMenuItem
             // 
-            this.bOULToolStripMenuItem.Checked = true;
-            this.bOULToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.bOULToolStripMenuItem.Name = "bOULToolStripMenuItem";
-            this.bOULToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.bOULToolStripMenuItem.Text = "BOUL";
-            this.bOULToolStripMenuItem.Click += new System.EventHandler(this.bOULToolStripMenuItem_Click);
+            this.cAMToolStripMenuItem.Checked = true;
+            this.cAMToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cAMToolStripMenuItem.Name = "cAMToolStripMenuItem";
+            this.cAMToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.cAMToolStripMenuItem.Text = "CAM";
+            this.cAMToolStripMenuItem.Click += new System.EventHandler(this.cAMToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -390,6 +401,7 @@ namespace IndustrialPark
         private ToolStripMenuItem aboutToolStripMenuItem;
         private ToolStripMenuItem dSTRToolStripMenuItem;
         private ToolStripMenuItem bOULToolStripMenuItem;
+        private ToolStripMenuItem cAMToolStripMenuItem;
     }
 }
 

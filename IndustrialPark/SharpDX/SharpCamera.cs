@@ -13,8 +13,26 @@ namespace IndustrialPark
         private Vector3 Forward = Vector3.ForwardRH;
         private Vector3 Right = Vector3.Right;
         private Vector3 Up = Vector3.Up;
-        public float Yaw = 0;
-        public float Pitch = 0;
+        private float _yaw = 0;
+        public float Yaw
+        {
+            get => _yaw;
+            set
+            {
+                _yaw = value;
+                RaiseCameraChangedEvent();
+            }
+        }
+        private float _pitch = 0;
+        public float Pitch
+        {
+            get => _pitch;
+            set
+            {
+                _pitch = value;
+                RaiseCameraChangedEvent();
+            }
+        }
         public float Speed = 5f;
 
         public float FieldOfView = MathUtil.PiOverFour;
@@ -49,13 +67,13 @@ namespace IndustrialPark
 
         internal void AddYaw(float factor)
         {
-            Yaw -= Speed * factor;
+            _yaw -= Speed * factor;
             UpdateCamera();
         }
 
         internal void AddPitch(float factor)
         {
-            Pitch -= Speed * factor;
+            _pitch -= Speed * factor;
             UpdateCamera();
         }
 
@@ -64,13 +82,12 @@ namespace IndustrialPark
             Speed += v / 10f;
             if (Speed < 1f)
                 Speed = 1f;
-            UpdateCamera();
         }
 
         private void UpdateCamera()
         {
-            Pitch = Pitch % 360;
-            Yaw = Yaw % 360;
+            _pitch = _pitch % 360;
+            _yaw = _yaw % 360;
 
             Forward = (Vector3)Vector3.Transform(Vector3.ForwardRH, Matrix.RotationYawPitchRoll(MathUtil.DegreesToRadians(Yaw), MathUtil.DegreesToRadians(Pitch), 0));
             Right = Vector3.Normalize(Vector3.Cross(Forward, Vector3.Up));
@@ -84,8 +101,8 @@ namespace IndustrialPark
             Forward = Vector3.ForwardRH;
             Right = Vector3.Right;
             Up = Vector3.Up;
-            Yaw = 0;
-            Pitch = 0;
+            _yaw = 0;
+            _pitch = 0;
             Speed = 5f;
 
             UpdateCamera();
@@ -114,8 +131,8 @@ namespace IndustrialPark
 
         public void SetRotation(float Pitch, float Yaw)
         {
-            this.Pitch = Pitch;
-            this.Yaw = Yaw;
+            _pitch = Pitch;
+            _yaw = Yaw;
             UpdateCamera();
         }
 
@@ -142,9 +159,21 @@ namespace IndustrialPark
 
         public string GetInformation()
         {
-            return String.Format("Position: [{0:0.0000}, {1:0.0000}, {2:0.0000}] Rotation: [{3:0.0000}, {4:0.0000}]",
+            return string.Format("Position: [{0:0.0000}, {1:0.0000}, {2:0.0000}] Rotation: [{3:0.0000}, {4:0.0000}]",
                 Position.X, Position.Y, Position.Z, Yaw, Pitch);
         }
 
+        public void SetPositionCamera(AssetCAM cam)
+        {
+            Position = new Vector3(cam.PositionX, cam.PositionY, cam.PositionZ);
+            Forward = new Vector3(cam.NormalizedForwardX, cam.NormalizedForwardY, cam.NormalizedForwardZ);
+            Up = new Vector3(cam.NormalizedUpX, cam.NormalizedUpY, cam.NormalizedUpZ);
+            Right = Vector3.Normalize(Vector3.Cross(Forward, Up));
+            _pitch = MathUtil.RadiansToDegrees((float)Math.Asin(Forward.Y));
+            _yaw = 270f - MathUtil.RadiansToDegrees((float)Math.Atan2(Forward.Z, Forward.X));
+            _yaw = _yaw % 360f;
+
+            RaiseCameraChangedEvent();
+        }
     }
 }

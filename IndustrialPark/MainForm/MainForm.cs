@@ -63,7 +63,8 @@ namespace IndustrialPark
                 }
             }
 
-            renderer.Camera.AddPositionForward(e.Delta / 24);
+            if (e.Delta != 0)
+                renderer.Camera.AddPositionForward(e.Delta / 24);
             oldMousePosition = e;
 
             if (loopNotStarted)
@@ -302,6 +303,12 @@ namespace IndustrialPark
         {
             bOULToolStripMenuItem.Checked = !bOULToolStripMenuItem.Checked;
             AssetBOUL.dontRender = !bOULToolStripMenuItem.Checked;
+        }
+
+        private void cAMToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            cAMToolStripMenuItem.Checked = !cAMToolStripMenuItem.Checked;
+            AssetCAM.dontRender = !cAMToolStripMenuItem.Checked;
         }
 
         private void mVPTToolStripMenuItem_Click(object sender, EventArgs e)
