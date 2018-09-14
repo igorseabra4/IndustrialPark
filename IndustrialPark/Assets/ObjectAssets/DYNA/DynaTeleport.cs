@@ -20,7 +20,10 @@ namespace IndustrialPark
             UnknownInt = Switch(BitConverter.ToInt32(data, 0x4));
             Rotation1 = Switch(BitConverter.ToInt32(data, 0x8));
             Rotation2 = Switch(BitConverter.ToInt32(data, 0xC));
-            DYNA_Teleport_ID = Switch(BitConverter.ToUInt32(data, 0x10));
+            if(data.Length >= 0x14)
+                DYNA_Teleport_ID = Switch(BitConverter.ToUInt32(data, 0x10));
+            else
+                DYNA_Teleport_ID = 0x00000000;
         }
 
         public override byte[] ToByteArray()
