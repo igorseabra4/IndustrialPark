@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
@@ -24,25 +25,32 @@ namespace IndustrialPark
             set => Write(0x54 + Offset, value);
         }
 
-        public int MaybeType
+        public int ButtonType
         {
             get => ReadInt(0x58 + Offset);
             set => Write(0x58 + Offset, value);
         }
 
-        public int Unknown1
+        public int UnknownNull
+        {
+            get => ReadInt(0x5C + Offset);
+            set => Write(0x5C + Offset, value);
+        }
+
+        public int IsHoldEnabled
         {
             get => ReadInt(0x60 + Offset);
             set => Write(0x60 + Offset, value);
         }
 
-        public float UnknownFloat1
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float HoldTime
         {
             get => ReadFloat(0x64 + Offset);
             set => Write(0x64 + Offset, value);
         }
 
-        public int Unknown2
+        public int HitMask
         {
             get => ReadInt(0x68 + Offset);
             set => Write(0x68 + Offset, value);

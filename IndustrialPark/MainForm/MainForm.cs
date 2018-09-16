@@ -18,6 +18,18 @@ namespace IndustrialPark
             renderer = new SharpRenderer(renderPanel);
         }
 
+        private string pathToSettings = "ip_settings.json";
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            if (!File.Exists(pathToSettings))
+            {
+                File.Create(pathToSettings);
+                MessageBox.Show("It appears this is your first time using Industrial Park.\nPlease consult the documentation on the BFBB Modding Wiki to understand how to use the tool if you haven't already.\nAlso, be sure to check individual asset pages if you're not sure what one of them or their settings do.");
+                Program.AboutBox.Show();
+            }
+        }
+
         public void SetToolStripStatusLabel(string Text)
         {
             toolStripStatusLabel1.Text = Text;

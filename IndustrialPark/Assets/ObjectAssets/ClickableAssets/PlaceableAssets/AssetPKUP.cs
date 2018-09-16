@@ -1,7 +1,6 @@
 ﻿using HipHopFile;
 using SharpDX;
 using System.ComponentModel;
-using System.IO;
 
 namespace IndustrialPark
 {

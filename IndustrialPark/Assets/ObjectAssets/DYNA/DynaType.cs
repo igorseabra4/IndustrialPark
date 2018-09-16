@@ -5,6 +5,7 @@
         pointer​ = 0x2196C135,
         game_object__talk_box​ = 0x0934B196,
         game_object__text_box​ = 0x442E1337,
+        game_object__task_box​ = 0xE9D2C1BB,
         game_object__NPCSettings​ = 0x8768334A,
         game_object__BusStop​ = 0x8F012778,
         game_object__Flythrough​ = 0x85BFDF34,

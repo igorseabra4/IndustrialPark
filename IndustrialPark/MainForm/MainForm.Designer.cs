@@ -49,6 +49,7 @@ namespace IndustrialPark
             this.levelModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bOULToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bUTNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cAMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dSTRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mRKRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mVPTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -61,7 +62,6 @@ namespace IndustrialPark
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.renderPanel = new System.Windows.Forms.Panel();
-            this.cAMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -200,7 +200,7 @@ namespace IndustrialPark
             this.levelModelToolStripMenuItem.Checked = true;
             this.levelModelToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.levelModelToolStripMenuItem.Name = "levelModelToolStripMenuItem";
-            this.levelModelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.levelModelToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.levelModelToolStripMenuItem.Text = "BSP/JSP";
             this.levelModelToolStripMenuItem.Click += new System.EventHandler(this.levelModelToolStripMenuItem_Click);
             // 
@@ -209,7 +209,7 @@ namespace IndustrialPark
             this.bOULToolStripMenuItem.Checked = true;
             this.bOULToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.bOULToolStripMenuItem.Name = "bOULToolStripMenuItem";
-            this.bOULToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.bOULToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.bOULToolStripMenuItem.Text = "BOUL";
             this.bOULToolStripMenuItem.Click += new System.EventHandler(this.bOULToolStripMenuItem_Click);
             // 
@@ -218,16 +218,25 @@ namespace IndustrialPark
             this.bUTNToolStripMenuItem.Checked = true;
             this.bUTNToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.bUTNToolStripMenuItem.Name = "bUTNToolStripMenuItem";
-            this.bUTNToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.bUTNToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.bUTNToolStripMenuItem.Text = "BUTN";
             this.bUTNToolStripMenuItem.Click += new System.EventHandler(this.bUTNToolStripMenuItem_Click);
+            // 
+            // cAMToolStripMenuItem
+            // 
+            this.cAMToolStripMenuItem.Checked = true;
+            this.cAMToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cAMToolStripMenuItem.Name = "cAMToolStripMenuItem";
+            this.cAMToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.cAMToolStripMenuItem.Text = "CAM";
+            this.cAMToolStripMenuItem.Click += new System.EventHandler(this.cAMToolStripMenuItem_Click);
             // 
             // dSTRToolStripMenuItem
             // 
             this.dSTRToolStripMenuItem.Checked = true;
             this.dSTRToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.dSTRToolStripMenuItem.Name = "dSTRToolStripMenuItem";
-            this.dSTRToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.dSTRToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.dSTRToolStripMenuItem.Text = "DSTR";
             this.dSTRToolStripMenuItem.Click += new System.EventHandler(this.dSTRToolStripMenuItem_Click);
             // 
@@ -236,7 +245,7 @@ namespace IndustrialPark
             this.mRKRToolStripMenuItem.Checked = true;
             this.mRKRToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.mRKRToolStripMenuItem.Name = "mRKRToolStripMenuItem";
-            this.mRKRToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.mRKRToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.mRKRToolStripMenuItem.Text = "MRKR";
             this.mRKRToolStripMenuItem.Click += new System.EventHandler(this.mRKRToolStripMenuItem_Click);
             // 
@@ -245,7 +254,7 @@ namespace IndustrialPark
             this.mVPTToolStripMenuItem.Checked = true;
             this.mVPTToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.mVPTToolStripMenuItem.Name = "mVPTToolStripMenuItem";
-            this.mVPTToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.mVPTToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.mVPTToolStripMenuItem.Text = "MVPT";
             this.mVPTToolStripMenuItem.Click += new System.EventHandler(this.mVPTToolStripMenuItem_Click);
             // 
@@ -254,7 +263,7 @@ namespace IndustrialPark
             this.pKUPToolStripMenuItem.Checked = true;
             this.pKUPToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.pKUPToolStripMenuItem.Name = "pKUPToolStripMenuItem";
-            this.pKUPToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pKUPToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.pKUPToolStripMenuItem.Text = "PKUP";
             this.pKUPToolStripMenuItem.Click += new System.EventHandler(this.pKUPToolStripMenuItem_Click);
             // 
@@ -263,7 +272,7 @@ namespace IndustrialPark
             this.pLATToolStripMenuItem.Checked = true;
             this.pLATToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.pLATToolStripMenuItem.Name = "pLATToolStripMenuItem";
-            this.pLATToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pLATToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.pLATToolStripMenuItem.Text = "PLAT";
             this.pLATToolStripMenuItem.Click += new System.EventHandler(this.pLATToolStripMenuItem_Click);
             // 
@@ -272,7 +281,7 @@ namespace IndustrialPark
             this.pLYRToolStripMenuItem.Checked = true;
             this.pLYRToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.pLYRToolStripMenuItem.Name = "pLYRToolStripMenuItem";
-            this.pLYRToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pLYRToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.pLYRToolStripMenuItem.Text = "PLYR";
             this.pLYRToolStripMenuItem.Click += new System.EventHandler(this.pLYRToolStripMenuItem_Click);
             // 
@@ -281,7 +290,7 @@ namespace IndustrialPark
             this.sIMPToolStripMenuItem.Checked = true;
             this.sIMPToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.sIMPToolStripMenuItem.Name = "sIMPToolStripMenuItem";
-            this.sIMPToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.sIMPToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.sIMPToolStripMenuItem.Text = "SIMP";
             this.sIMPToolStripMenuItem.Click += new System.EventHandler(this.sIMPToolStripMenuItem_Click);
             // 
@@ -290,7 +299,7 @@ namespace IndustrialPark
             this.tRIGToolStripMenuItem.Checked = true;
             this.tRIGToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.tRIGToolStripMenuItem.Name = "tRIGToolStripMenuItem";
-            this.tRIGToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.tRIGToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.tRIGToolStripMenuItem.Text = "TRIG";
             this.tRIGToolStripMenuItem.Click += new System.EventHandler(this.tRIGToolStripMenuItem_Click);
             // 
@@ -299,7 +308,7 @@ namespace IndustrialPark
             this.vILToolStripMenuItem.Checked = true;
             this.vILToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.vILToolStripMenuItem.Name = "vILToolStripMenuItem";
-            this.vILToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.vILToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.vILToolStripMenuItem.Text = "VIL";
             this.vILToolStripMenuItem.Click += new System.EventHandler(this.vILToolStripMenuItem_Click);
             // 
@@ -334,15 +343,6 @@ namespace IndustrialPark
             this.renderPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.renderPanel_MouseUp);
             this.renderPanel.Resize += new System.EventHandler(this.ResetMouseCenter);
             // 
-            // cAMToolStripMenuItem
-            // 
-            this.cAMToolStripMenuItem.Checked = true;
-            this.cAMToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cAMToolStripMenuItem.Name = "cAMToolStripMenuItem";
-            this.cAMToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.cAMToolStripMenuItem.Text = "CAM";
-            this.cAMToolStripMenuItem.Click += new System.EventHandler(this.cAMToolStripMenuItem_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -357,6 +357,7 @@ namespace IndustrialPark
             this.Text = "Industrial Park";
             this.Deactivate += new System.EventHandler(this.MainForm_Deactivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyUp);
             this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.MouseMoveControl);

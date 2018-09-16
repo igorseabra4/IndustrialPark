@@ -16,7 +16,7 @@ namespace IndustrialPark
             UnknownInt = Switch(BitConverter.ToInt32(data, 0x0));
             UnknownFloat1 = Switch(BitConverter.ToSingle(data, 0x04));
             UnknownFloat2 = Switch(BitConverter.ToSingle(data, 0x08));
-            UnknownFloat3 = Switch(BitConverter.ToSingle(data, 0x10));
+            UnknownFloat3 = Switch(BitConverter.ToSingle(data, 0x0C));
         }
 
         public override byte[] ToByteArray()

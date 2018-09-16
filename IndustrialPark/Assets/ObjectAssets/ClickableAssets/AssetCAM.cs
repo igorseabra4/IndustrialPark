@@ -216,7 +216,7 @@ namespace IndustrialPark
             set => Write(0x46, value);
         }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float Float48
+        public float CameraSpeed
         {
             get => ReadFloat(0x48);
             set => Write(0x48, value);
@@ -287,27 +287,27 @@ namespace IndustrialPark
             set => Write(0x74, value);
         }
         [TypeConverter(typeof(HexByteTypeConverter))]
-        public float Flags1
+        public byte Flags1
         {
-            get => ReadFloat(0x78);
+            get => ReadByte(0x78);
             set => Write(0x78, value);
         }
         [TypeConverter(typeof(HexByteTypeConverter))]
-        public float Flags2
+        public byte Flags2
         {
-            get => ReadFloat(0x79);
+            get => ReadByte(0x79);
             set => Write(0x79, value);
         }
         [TypeConverter(typeof(HexByteTypeConverter))]
-        public float Flags3
+        public byte Flags3
         {
-            get => ReadFloat(0x7A);
+            get => ReadByte(0x7A);
             set => Write(0x7A, value);
         }
         [TypeConverter(typeof(HexByteTypeConverter))]
-        public float Flags4
+        public byte Flags4
         {
-            get => ReadFloat(0x7B);
+            get => ReadByte(0x7B);
             set => Write(0x7B, value);
         }
         public AssetID UnknownValue7C

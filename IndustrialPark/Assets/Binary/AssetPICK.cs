@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using HipHopFile;
 using static IndustrialPark.ConverterFunctions;
@@ -40,17 +39,6 @@ namespace IndustrialPark
         public void Setup()
         {
             pickEntries = new Dictionary<uint, AssetID>();
-
-            BinaryWriter b = new BinaryWriter(new FileStream("out.txt", FileMode.Create));
-
-            foreach (EntryPICK p in PICKentries)
-            {
-                pickEntries.Add(p.ReferenceID, p.ModelAssetID);
-                b.Write(p.ReferenceID);
-                b.Write(p.ModelAssetID);
-            }
-
-            b.Close();
         }
 
         public EntryPICK[] PICKentries

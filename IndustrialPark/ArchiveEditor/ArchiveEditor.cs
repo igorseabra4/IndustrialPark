@@ -12,7 +12,7 @@ namespace IndustrialPark
     public partial class ArchiveEditor : Form
     {
         public ArchiveEditorFunctions archive;
-        private bool unsavedChanges = false;
+        public bool UnsavedChanges { get; private set; } = false;
 
         public ArchiveEditor()
         {
@@ -71,14 +71,14 @@ namespace IndustrialPark
             Program.MainForm.SetToolStripItemName(this, Text);
             saveToolStripMenuItem.Enabled = true;
             saveAsToolStripMenuItem.Enabled = true;
-            unsavedChanges = false;
+            UnsavedChanges = false;
             PopulateLayerComboBox();
             PopulateAssetList();
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (unsavedChanges)
+            if (UnsavedChanges)
             {
                 DialogResult result = MessageBox.Show("You have unsaved changes. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 
@@ -264,7 +264,7 @@ namespace IndustrialPark
                         MessageBox.Show($"Archive already contains asset id [{AHDR.assetID.ToString("X8")}]. Will change it to [{(AHDR.assetID + 1).ToString("X8")}].");
                         AHDR.assetID++;
                     }
-                    unsavedChanges = true;
+                    UnsavedChanges = true;
                     archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR);
                     PopulateAssetListAndComboBox();
                     SetSelectedIndex(AHDR.assetID);
@@ -282,7 +282,7 @@ namespace IndustrialPark
         {
             if (listBoxAssets.SelectedIndex < 0) return;
 
-            unsavedChanges = true;
+            UnsavedChanges = true;
 
             Section_AHDR AHDR = archive.GetFromAssetID(CurrentlySelectedAssetID()).AHDR;
 
@@ -320,9 +320,10 @@ namespace IndustrialPark
         {
             if (listBoxAssets.SelectedIndex < 0) return;
 
+            RemoveInternalEditor(CurrentlySelectedAssetID());
             archive.RemoveAsset(CurrentlySelectedAssetID());
 
-            unsavedChanges = true;
+            UnsavedChanges = true;
 
             listBoxAssets.Items.Remove(listBoxAssets.SelectedItem);
         }
@@ -346,8 +347,16 @@ namespace IndustrialPark
 
                 if (success)
                 {
-                    unsavedChanges = true;
+                    UnsavedChanges = true;
+                    RemoveInternalEditor(aid);
                     archive.RemoveAsset(aid);
+
+                    while (archive.ContainsAsset(AHDR.assetID))
+                    {
+                        MessageBox.Show($"Archive already contains asset id [{AHDR.assetID.ToString("X8")}]. Will change it to [{(AHDR.assetID + 1).ToString("X8")}].");
+                        AHDR.assetID++;
+                    }
+
                     archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR);
                     PopulateAssetListAndComboBox();
                     SetSelectedIndex(AHDR.assetID);
@@ -358,23 +367,45 @@ namespace IndustrialPark
                 MessageBox.Show("Unable to edit asset: " + ex.Message);
             }
         }
-        
+
+        private List<IInternalEditor> internalEditors = new List<IInternalEditor>();
+
+        public void RemoveInternalEditor(IInternalEditor i)
+        {
+            internalEditors.Remove(i);
+        }
+
+        public void RemoveInternalEditor(uint assetID)
+        {
+            for (int i = 0; i < internalEditors.Count; i++)
+                if (internalEditors[i].GetAssetID() == assetID)
+                    internalEditors[i].Close();
+        }
+
         private void buttonInternalEdit_Click(object sender, EventArgs e)
         {
             if (listBoxAssets.SelectedItem != null)
             {
                 Asset asset = archive.GetFromAssetID(CurrentlySelectedAssetID());
 
-                if (asset is AssetCAM CAM)
-                    new InternalCamEditor(CAM).Show();
-                else if (asset is AssetDYNA DYNA)
-                    new InternalDynaEditor(DYNA).Show();
-                else if (asset is AssetTEXT TEXT)
-                    new InternalTextEditor(TEXT).Show();
-                else
-                    new InternalAssetEditor(asset).Show();
+                foreach (IInternalEditor i in internalEditors)
+                    if (i.GetAssetID() == asset.AHDR.assetID)
+                        i.Close();
 
-                unsavedChanges = true;
+                if (asset is AssetCAM CAM)
+                    internalEditors.Add(new InternalCamEditor(CAM, this));
+                else if (asset is AssetDYNA DYNA)
+                    internalEditors.Add(new InternalDynaEditor(DYNA, this));
+                else if (asset is AssetTEXT TEXT)
+                    internalEditors.Add(new InternalTextEditor(TEXT, this));
+                else if (asset.AHDR.assetType == AssetType.SND | asset.AHDR.assetType == AssetType.SNDS)
+                    internalEditors.Add(new InternalSoundEditor(asset, this));
+                else
+                    internalEditors.Add(new InternalAssetEditor(asset, this));
+
+                internalEditors.Last().Show();
+
+                UnsavedChanges = true;
             }
         }
 
@@ -400,6 +431,16 @@ namespace IndustrialPark
             }
         }
 
+        public void AddSoundToSNDI(byte[] headerData, uint assetID)
+        {
+            archive.AddSoundToSNDI(headerData, assetID);
+        }
+
+        public byte[] GetHeaderFromSNDI(uint assetID)
+        {
+            return archive.GetHeaderFromSNDI(assetID);
+        }
+
         private uint CurrentlySelectedAssetID()
         {
             if (listBoxAssets.SelectedItem != null)
@@ -416,7 +457,7 @@ namespace IndustrialPark
         {
             Thread t = new Thread(archive.Save);
             t.Start();
-            unsavedChanges = false;
+            UnsavedChanges = false;
         }
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -427,7 +468,7 @@ namespace IndustrialPark
                 archive.currentlyOpenFilePath = saveFileDialog.FileName;
                 archive.Save();
                 toolStripStatusLabel1.Text = "File: " + saveFileDialog.FileName;
-                unsavedChanges = false;
+                UnsavedChanges = false;
             }
         }
         

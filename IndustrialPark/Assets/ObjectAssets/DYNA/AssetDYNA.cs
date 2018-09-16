@@ -31,6 +31,9 @@ namespace IndustrialPark
                 case DynaType.game_object__text_box:
                     _dynaSpecific = reset ? new DynaTextBox() : new DynaTextBox(Data.Skip(0x10).Take(EventStartOffset));
                     break;
+                case DynaType.game_object__task_box:
+                    _dynaSpecific = reset ? new DynaBase() : new DynaBase(Data.Skip(0x10).Take(EventStartOffset));
+                    break;
                 case DynaType.game_object__NPCSettings:
                     _dynaSpecific = reset ? new DynaNPCSettings() : new DynaNPCSettings(Data.Skip(0x10).Take(EventStartOffset));
                     break;
@@ -44,7 +47,7 @@ namespace IndustrialPark
                     _dynaSpecific = reset ? new DynaBoulderGen() : new DynaBoulderGen(Data.Skip(0x10).Take(EventStartOffset));
                     break;
                 case DynaType.game_object__Teleport:
-                    _dynaSpecific = reset ? new DynaTeleport() : new DynaTeleport(Data.Skip(0x10).Take(EventStartOffset));
+                    _dynaSpecific = reset ? new DynaTeleport() : new DynaTeleport(Data.Skip(0x10).Take(EventStartOffset), Version);
                     break;
                 case DynaType.game_object__Taxi:
                     _dynaSpecific = reset ? new DynaTaxi() : new DynaTaxi(Data.Skip(0x10).Take(EventStartOffset));

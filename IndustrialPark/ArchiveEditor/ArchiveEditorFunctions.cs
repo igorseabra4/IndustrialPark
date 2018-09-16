@@ -283,10 +283,22 @@ namespace IndustrialPark
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
+                case AssetType.SFX:
+                    {
+                        AssetSFX newAsset = new AssetSFX(AHDR);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
                 case AssetType.SIMP:
                     {
                         AssetSIMP newAsset = new AssetSIMP(AHDR);
                         newAsset.Setup();
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
+                case AssetType.SNDI:
+                    {
+                        AssetSNDI newAsset = new AssetSNDI(AHDR);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
@@ -339,7 +351,6 @@ namespace IndustrialPark
                 case AssetType.RANM:
                 case AssetType.SCRP:
                 case AssetType.SDFX:
-                case AssetType.SFX:
                 case AssetType.SGRP:
                 case AssetType.SLID:
                 case AssetType.SPLN:
@@ -628,6 +639,25 @@ namespace IndustrialPark
             }
 
             ReadFileMethods.treatTexturesAsByteArray = false;
+        }
+
+        public void AddSoundToSNDI(byte[] headerData, uint assetID)
+        {
+            foreach (Asset a in assetDictionary.Values)
+                if (a.AHDR.assetType == AssetType.SNDI)
+                {
+                    ((AssetSNDI)a).AddEntry(headerData, assetID, GetFromAssetID(assetID).AHDR.assetType);
+                    break;
+                }
+        }
+
+        public byte[] GetHeaderFromSNDI(uint assetID)
+        {
+            foreach (Asset a in assetDictionary.Values)
+                if (a.AHDR.assetType == AssetType.SNDI)
+                    return ((AssetSNDI)a).GetHeader(assetID, GetFromAssetID(assetID).AHDR.assetType);
+
+            throw new Exception("Error: could not find SNDI asset in this archive.");
         }
     }
 }

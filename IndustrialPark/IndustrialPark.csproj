@@ -74,6 +74,12 @@
     </Compile>
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions.cs" />
     <Compile Include="ArchiveEditor\AssetEditor\Gizmo.cs" />
+    <Compile Include="ArchiveEditor\AssetEditor\InternalSoundEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\AssetEditor\InternalSoundEditor.Designer.cs">
+      <DependentUpon>InternalSoundEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="ArchiveEditor\AssetEditor\InternalCamEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -92,6 +98,7 @@
     <Compile Include="ArchiveEditor\AssetEditor\InternalDynaEditor.designer.cs">
       <DependentUpon>InternalDynaEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="ArchiveEditor\AssetEditor\InternalEditor.cs" />
     <Compile Include="ArchiveEditor\AssetEditor\InternalTextEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -101,10 +108,13 @@
     <Compile Include="Assets\Binary\AssetMAPR.cs" />
     <Compile Include="Assets\Binary\AssetPIPT.cs" />
     <Compile Include="Assets\Binary\AssetSHDW.cs" />
+    <Compile Include="Assets\Binary\AssetSNDI.cs" />
     <Compile Include="Assets\Binary\AssetTEXT.cs" />
+    <Compile Include="Assets\Binary\SoundHeaderEditor.cs" />
     <Compile Include="Assets\ObjectAssets\AssetCNTR.cs" />
     <Compile Include="Assets\ObjectAssets\AssetCOND.cs" />
     <Compile Include="Assets\ObjectAssets\AssetDPAT.cs" />
+    <Compile Include="Assets\ObjectAssets\AssetSFX.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetCAM.cs" />
     <Compile Include="Assets\ObjectAssets\DYNA\AssetDYNA.cs" />
     <Compile Include="Assets\ObjectAssets\AssetFOG.cs" />
@@ -112,9 +122,9 @@
     <Compile Include="Assets\ObjectAssets\AssetTIMR.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetBOUL.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetDSTR.cs" />
-    <Compile Include="Assets\ObjectAssets\Colors\MyColor.cs" />
-    <Compile Include="Assets\ObjectAssets\Colors\MyColorConverter.cs" />
-    <Compile Include="Assets\ObjectAssets\Colors\MyColorEditor.cs" />
+    <Compile Include="Assets\Shared\Colors\MyColor.cs" />
+    <Compile Include="Assets\Shared\Colors\MyColorConverter.cs" />
+    <Compile Include="Assets\Shared\Colors\MyColorEditor.cs" />
     <Compile Include="Assets\ObjectAssets\DYNA\DynaBase.cs" />
     <Compile Include="Assets\ObjectAssets\DYNA\DynaBoulderGen.cs" />
     <Compile Include="Assets\ObjectAssets\DYNA\DynaBungeeDrop.cs" />
@@ -213,6 +223,9 @@
     <EmbeddedResource Include="ArchiveEditor\ArchiveEditor.resx">
       <DependentUpon>ArchiveEditor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveEditor\AssetEditor\InternalSoundEditor.resx">
+      <DependentUpon>InternalSoundEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\AssetEditor\InternalCamEditor.resx">
       <DependentUpon>InternalCamEditor.cs</DependentUpon>
     </EmbeddedResource>
@@ -283,6 +296,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="AboutImage.png" />
     <Content Include="icon.ico" />
     <Content Include="Resources\SharpDX\Shader_Basic.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -2,9 +2,9 @@
 
 namespace IndustrialPark
 {
-    public partial class InternalCamEditor : Form
+    public partial class InternalCamEditor : Form, IInternalEditor
     {
-        public InternalCamEditor(AssetCAM asset)
+        public InternalCamEditor(AssetCAM asset, ArchiveEditor archiveEditor)
         {
             InitializeComponent();
             TopMost = true;
@@ -15,7 +15,13 @@ namespace IndustrialPark
             labelAssetName.Text = $"[{asset.AHDR.assetType.ToString()}] {asset.ToString()}";
         }
 
+        private void InternalCamEditor_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            archiveEditor.RemoveInternalEditor(this);
+        }
+
         private AssetCAM assetCAM;
+        private ArchiveEditor archiveEditor;
 
         private void buttonGetPos_Click(object sender, System.EventArgs e)
         {
@@ -32,6 +38,11 @@ namespace IndustrialPark
             assetCAM.NormalizedUpX = Program.MainForm.renderer.Camera.GetUp().X;
             assetCAM.NormalizedUpY = Program.MainForm.renderer.Camera.GetUp().Y;
             assetCAM.NormalizedUpZ = Program.MainForm.renderer.Camera.GetUp().Z;
+        }
+
+        public uint GetAssetID()
+        {
+            return assetCAM.AHDR.assetID;
         }
     }
 }
