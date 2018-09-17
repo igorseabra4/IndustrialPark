@@ -18,14 +18,7 @@ namespace IndustrialPark
         public short Ypos { get; set; }
         public short Zpos { get; set; }
     }
-
-    public class KeyFrameMap
-    {
-        public int Unknown { get; set; }
-        public short Unknown1 { get; set; }
-        public short Unknown2 { get; set; }
-    }
-
+    
     public class AssetANIM : Asset
     {
         public AssetANIM(Section_AHDR AHDR) : base(AHDR) { }
@@ -141,31 +134,31 @@ namespace IndustrialPark
 
         private int KeyFrameMapSectionStart { get => TimeMapSectionStart + NumFrames * 4; }
 
-        public KeyFrameMap[] KeyFrameMap
+        public short[][] KeyFrameMap
         {
             get
             {
-                List<KeyFrameMap> keyFrameMap = new List<KeyFrameMap>();
-                for (int i = KeyFrameMapSectionStart; i < KeyFrameMapSectionStart + 8 * (NumFrames - 1); i += 8)
+                List<short[]> keyFrameMap = new List<short[]>();
+                for (int i = KeyFrameMapSectionStart; i < KeyFrameMapSectionStart + NumBones * 2 * (NumFrames - 1); i += NumBones * 2)
                 {
-                    keyFrameMap.Add(new KeyFrameMap()
-                    {
-                        Unknown = ReadInt(i),
-                        Unknown1 = ReadShort(i + 4),
-                        Unknown2 = ReadShort(i + 6),
-                    });
+                    List<short> keyframes = new List<short>();
+                    for (int j = i; j < i + NumBones * 2; j += 2)
+                        keyframes.Add(ReadShort(j));
+
+                    keyFrameMap.Add(keyframes.ToArray());
                 }
                 return keyFrameMap.ToArray();
             }
             set
             {
                 List<byte> before = AHDR.data.Take(KeyFrameMapSectionStart).ToList();
-                foreach (KeyFrameMap i in value)
-                {
-                    before.AddRange(BitConverter.GetBytes(Switch(i.Unknown)));
-                    before.AddRange(BitConverter.GetBytes(Switch(i.Unknown1)));
-                    before.AddRange(BitConverter.GetBytes(Switch(i.Unknown2)));
-                }
+
+                foreach (short[] i in value)
+                    foreach (short j in i)
+                        before.AddRange(BitConverter.GetBytes(Switch(j)));
+
+                while (before.Count % 4 != 0)
+                    before.Add(0xCD);
 
                 Data = before.ToArray();
             }
