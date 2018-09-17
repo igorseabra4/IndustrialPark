@@ -105,6 +105,7 @@
     <Compile Include="ArchiveEditor\AssetEditor\InternalTextEditor.designer.cs">
       <DependentUpon>InternalTextEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Assets\Binary\AssetANIM.cs" />
     <Compile Include="Assets\Binary\AssetMAPR.cs" />
     <Compile Include="Assets\Binary\AssetPIPT.cs" />
     <Compile Include="Assets\Binary\AssetSHDW.cs" />

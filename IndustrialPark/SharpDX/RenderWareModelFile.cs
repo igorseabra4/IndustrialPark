@@ -242,7 +242,7 @@ namespace IndustrialPark
                     MaterialList.Add(DefaultTexture);
             }
 
-            if ((g.geometryStruct.geometryFlags2 & (int)GeometryFlags2.isNativeGeometry) != 0)
+            if ((g.geometryStruct.geometryFlags2 & GeometryFlags2.isNativeGeometry) != 0)
             {
                 AddNativeData(device, g.geometryExtension, MaterialList, transformMatrix);
                 return;
@@ -253,7 +253,7 @@ namespace IndustrialPark
             List<Vector2> textCoordList = new List<Vector2>();
             List<SharpDX.Color> colorList = new List<SharpDX.Color>();
 
-            if ((g.geometryStruct.geometryFlags & (int)GeometryFlags.hasVertexPositions) != 0)
+            if ((g.geometryStruct.geometryFlags & GeometryFlags.hasVertexPositions) != 0)
             {
                 MorphTarget m = g.geometryStruct.morphTargets[0];
                 foreach (Vertex3 v in m.vertices)
@@ -264,7 +264,7 @@ namespace IndustrialPark
                 }
             }
 
-            if ((g.geometryStruct.geometryFlags & (int)GeometryFlags.hasNormals) != 0)
+            if ((g.geometryStruct.geometryFlags & GeometryFlags.hasNormals) != 0)
             {
                 containsNormals = true;
                 for (int i = 0; i < vertexList1.Count; i++)
@@ -273,7 +273,7 @@ namespace IndustrialPark
                 }
             }
 
-            if ((g.geometryStruct.geometryFlags & (int)GeometryFlags.hasVertexColors) != 0)
+            if ((g.geometryStruct.geometryFlags & GeometryFlags.hasVertexColors) != 0)
             {
                 for (int i = 0; i < vertexList1.Count; i++)
                 {
@@ -289,7 +289,7 @@ namespace IndustrialPark
                 }
             }
 
-            if ((g.geometryStruct.geometryFlags & (int)GeometryFlags.hasTextCoords) != 0)
+            if ((g.geometryStruct.geometryFlags & GeometryFlags.hasTextCoords) != 0)
             {
                 for (int i = 0; i < vertexList1.Count; i++)
                 {

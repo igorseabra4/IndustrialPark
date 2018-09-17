@@ -1,7 +1,6 @@
 ﻿using HipHopFile;
 using System;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace IndustrialPark
@@ -253,10 +252,17 @@ namespace IndustrialPark
 
         private void textBoxAssetName_TextChanged(object sender, EventArgs e)
         {
-            assetName = textBoxAssetName.Text;
+            if (textBoxAssetName.Text.Contains(","))
+                textBoxAssetName.Text = textBoxAssetName.Text.Replace(",", "");
+            else if (textBoxAssetName.Text.Contains(";"))
+                textBoxAssetName.Text = textBoxAssetName.Text.Replace(";", "");
+            else
+            {
+                assetName = textBoxAssetName.Text;
 
-            if (assetType != AssetType.BSP | assetType != AssetType.JSP)
-                textBoxAssetID.Text = Functions.BKDRHash(assetName).ToString("X8");
+                if (assetType != AssetType.BSP | assetType != AssetType.JSP)
+                    textBoxAssetID.Text = Functions.BKDRHash(assetName).ToString("X8");
+            }
         }
 
         private void textBoxAssetFilename_TextChanged(object sender, EventArgs e)

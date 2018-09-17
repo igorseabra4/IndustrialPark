@@ -57,7 +57,8 @@ namespace IndustrialPark
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog()
             {
-                FileName = asset.AHDR.ADBG.assetName
+                FileName = asset.AHDR.ADBG.assetName + ".DSP",
+                Filter = "DSP Files|*.dsp|All files|*"
             };
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)

@@ -222,13 +222,30 @@ namespace IndustrialPark
             }
         }
 
-        private void BackgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
+        private void backgroundColorToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            ColorDialog colorDialog = new ColorDialog();
+            ColorDialog colorDialog = new ColorDialog
+            {
+                Color = System.Drawing.Color.FromArgb(ConverterFunctions.Switch(renderer.backgroundColor.ToBgra()))
+            };
             if (colorDialog.ShowDialog() == DialogResult.OK)
                 renderer.backgroundColor = new Color(colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B, colorDialog.Color.A);
         }
-        
+
+        private void widgetColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog colorDialog = new ColorDialog();
+            if (colorDialog.ShowDialog() == DialogResult.OK)
+                renderer.SetWidgetColor(colorDialog.Color);
+        }
+
+        private void selectionColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog colorDialog = new ColorDialog();
+            if (colorDialog.ShowDialog() == DialogResult.OK)
+                renderer.SetSelectionColor(colorDialog.Color);
+        }
+
         private void toolStripStatusLabel1_Click(object sender, EventArgs e)
         {
             Program.ViewConfig.Show();

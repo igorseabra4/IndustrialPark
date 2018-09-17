@@ -5,6 +5,8 @@ using SharpDX.DXGI;
 using SharpDX.Windows;
 using System.Collections.Generic;
 using static IndustrialPark.Models.OBJFunctions;
+using System;
+using System.Drawing;
 
 namespace IndustrialPark
 {
@@ -34,7 +36,7 @@ namespace IndustrialPark
             sharpFPS = new SharpFPS();
             Camera.AspectRatio = (float)control.ClientSize.Width / control.ClientSize.Height;
             Camera.Reset();
-
+            ResetSelectionColor();
             SetSharpShader();
             LoadTexture();
         }
@@ -158,7 +160,25 @@ namespace IndustrialPark
                 else Sphere = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
             }
         }
-        
+
+        public void SetSelectionColor(System.Drawing.Color color)
+        {
+            selectedColor = new Vector4(color.R / 255f, color.G / 255f, color.B / 255f, selectedColor.W);
+            selectedObjectColor = new Vector4(color.R / 255f, color.G / 255f, color.B / 255f, selectedObjectColor.W);
+        }
+
+        public void SetWidgetColor(System.Drawing.Color color)
+        {
+            normalColor = new Vector4(color.R / 255f, color.G / 255f, color.B / 255f, normalColor.W);
+        }
+
+        public void ResetSelectionColor()
+        {
+            normalColor = new Vector4(0.2f, 0.6f, 0.8f, 0.8f);
+            selectedColor = new Vector4(1f, 0.5f, 0.1f, 0.8f);
+            selectedObjectColor = new Vector4(1f, 0f, 0f, 1f);
+        }
+
         public Vector4 normalColor = new Vector4(0.2f, 0.6f, 0.8f, 0.8f);
         public Vector4 selectedColor = new Vector4(1f, 0.5f, 0.1f, 0.8f);
         public Vector4 selectedObjectColor = new Vector4(1f, 0f, 0f, 1f);

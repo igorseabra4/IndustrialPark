@@ -388,9 +388,9 @@ namespace IndustrialPark
             {
                 Asset asset = archive.GetFromAssetID(CurrentlySelectedAssetID());
 
-                foreach (IInternalEditor i in internalEditors)
-                    if (i.GetAssetID() == asset.AHDR.assetID)
-                        i.Close();
+                for (int i = 0; i < internalEditors.Count; i++)
+                    if (internalEditors[i].GetAssetID() == asset.AHDR.assetID)
+                        internalEditors[i].Close();
 
                 if (asset is AssetCAM CAM)
                     internalEditors.Add(new InternalCamEditor(CAM, this));
@@ -590,8 +590,8 @@ namespace IndustrialPark
             if (openTXD.ShowDialog() == DialogResult.OK)
             {
                 archive.AddTextureDictionary(openTXD.FileName);
-                //comboBoxLayers.Items.Add(LayerToString(archive.DICT.LTOC.LHDRList.Count - 1));
-                //comboBoxLayers.SelectedIndex = comboBoxLayers.Items.Count - 1;
+                comboBoxLayers.Items.Add(LayerToString(archive.DICT.LTOC.LHDRList.Count - 1));
+                comboBoxLayers.SelectedIndex = comboBoxLayers.Items.Count - 1;
             }
         }
 

@@ -40,11 +40,11 @@ namespace IndustrialPark
         {
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
             {
-                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, world, color);
+                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * color : color);
             }
             else
             {
-                renderer.DrawCube(world, isSelected);
+                renderer.DrawCube(world, isSelected |isSelected);
                 //throw new Exception("Error: MINF asset " + AHDR.ADBG.assetName + " could not find its MODL asset ID");
             }
         }

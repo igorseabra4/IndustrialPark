@@ -121,6 +121,12 @@ namespace IndustrialPark
 
             switch (AHDR.assetType)
             {
+                case AssetType.ANIM:
+                    {
+                        AssetANIM newAsset = new AssetANIM(AHDR);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
                 case AssetType.BSP:
                 case AssetType.JSP:
                     {
@@ -600,15 +606,14 @@ namespace IndustrialPark
         public void AddTextureDictionary(string fileName)
         {
             // Add a new layer for the textures
-            //int layerIndex = DICT.LTOC.LHDRList.Count;
-            int layerIndex = 2;
+            int layerIndex = DICT.LTOC.LHDRList.Count;
 
-            //DICT.LTOC.LHDRList.Add(new Section_LHDR()
-            //{
-            //   layerType = LayerType.TEXTURE,
-            //    assetIDlist = new List<uint>(),
-            //    LDBG = new Section_LDBG(-1)
-            //});
+            DICT.LTOC.LHDRList.Add(new Section_LHDR()
+            {
+                layerType = LayerType.TEXTURE,
+                assetIDlist = new List<uint>(),
+                LDBG = new Section_LDBG(-1)
+            });
 
             ReadFileMethods.treatTexturesAsByteArray = true;
 
@@ -630,9 +635,12 @@ namespace IndustrialPark
                         }, tn.renderWareVersion);
                         
                         // And add the new dictionary as an asset.
-                        Section_ADBG ADBG = new Section_ADBG(0, textureName, "", (int)(BKDRHash(textureName) / 2 + 1));
+                        Section_ADBG ADBG = new Section_ADBG(0, textureName, "", 0);
                         Section_AHDR AHDR = new Section_AHDR(BKDRHash(textureName), AssetType.RWTX, AHDRFlags.SOURCE_VIRTUAL | AHDRFlags.READ_TRANSFORM, ADBG, data);
-                        
+
+                        if (ContainsAsset(AHDR.assetID))
+                            RemoveAsset(AHDR.assetID);
+
                         AddAsset(layerIndex, AHDR);
                     }
                 }

@@ -14,13 +14,20 @@ namespace IndustrialPark
         public void Setup(SharpRenderer renderer)
         {
             model = new RenderWareModelFile(AHDR.ADBG.assetName);
-            model.SetForRendering(renderer.device, RenderWareFile.ReadFileMethods.ReadRenderWareFile(AHDR.data), AHDR.data);
+            try
+            {
+                model.SetForRendering(renderer.device, RenderWareFile.ReadFileMethods.ReadRenderWareFile(AHDR.data), AHDR.data);
+            }
+            catch
+            {
+                System.Windows.Forms.MessageBox.Show(ToString());
+            }
             ArchiveEditorFunctions.AddToRenderingDictionary(AHDR.assetID, this);
         }
 
         public void Draw(SharpRenderer renderer, Matrix world, Vector4 color)
         {
-            model.Render(renderer, world, color);
+            model.Render(renderer, world, isSelected ? renderer.selectedObjectColor * color : color);
         }
 
         public RenderWareModelFile GetRenderWareModelFile()
