@@ -10,10 +10,10 @@ using SharpDX;
 
 namespace IndustrialPark.Models
 {
-    public class OBJFunctions
+    public static class OBJFunctions
     {
         public static bool flipUVs = false;
-                
+
         public static ModelConverterData ReadOBJFile(string InputFile, bool hasUVCoords = true)
         {
             ModelConverterData objData = new ModelConverterData()
@@ -34,7 +34,7 @@ namespace IndustrialPark.Models
             int CurrentMaterial = -1;
 
             List<SharpDX.Color> ColorStream = new List<SharpDX.Color>();
-            
+
             foreach (string j in OBJFile)
             {
                 if (j.Length > 2)
@@ -89,7 +89,7 @@ namespace IndustrialPark.Models
 
                         Triangle TempTriangle = new Triangle
                         {
-                            MaterialIndex = CurrentMaterial,
+                            materialIndex = CurrentMaterial,
                             vertex1 = Convert.ToInt32(SubStrings[1].Split('/')[0]) - 1,
                             vertex2 = Convert.ToInt32(SubStrings[2].Split('/')[0]) - 1,
                             vertex3 = Convert.ToInt32(SubStrings[3].Split('/')[0]) - 1
@@ -131,7 +131,7 @@ namespace IndustrialPark.Models
             {
                 MessageBox.Show("Unable to load material lib. Will use material names as texture names.");
             }
-            
+
             return FixUVCoords(objData);
         }
 
@@ -256,7 +256,7 @@ namespace IndustrialPark.Models
             indexLists.Last().Add(triangleStream2[0].vertex1);
             indexLists.Last().Add(triangleStream2[0].vertex2);
             indexLists.Last().Add(triangleStream2[0].vertex3);
-            triangleStream2[0].MaterialIndex = -1;
+            triangleStream2[0].materialIndex = -1;
 
             bool allAreDone = false;
 
@@ -266,7 +266,7 @@ namespace IndustrialPark.Models
 
                 for (int i = 0; i < triangleStream2.Count(); i++)
                 {
-                    if (triangleStream2[i].MaterialIndex == -1) continue;
+                    if (triangleStream2[i].materialIndex == -1) continue;
 
                     if (!inverted)
                     {
@@ -274,7 +274,7 @@ namespace IndustrialPark.Models
                             indexLists.Last()[indexLists.Last().Count - 1] == triangleStream2[i].vertex2)
                         {
                             indexLists.Last().Add(triangleStream2[i].vertex3);
-                            triangleStream2[i].MaterialIndex = -1;
+                            triangleStream2[i].materialIndex = -1;
                             inverted = !inverted;
                             i = 0;
                             continue;
@@ -283,7 +283,7 @@ namespace IndustrialPark.Models
                             indexLists.Last()[indexLists.Last().Count - 1] == triangleStream2[i].vertex3)
                         {
                             indexLists.Last().Add(triangleStream2[i].vertex1);
-                            triangleStream2[i].MaterialIndex = -1;
+                            triangleStream2[i].materialIndex = -1;
                             inverted = !inverted;
                             i = 0;
                             continue;
@@ -292,7 +292,7 @@ namespace IndustrialPark.Models
                             indexLists.Last()[indexLists.Last().Count - 1] == triangleStream2[i].vertex1)
                         {
                             indexLists.Last().Add(triangleStream2[i].vertex2);
-                            triangleStream2[i].MaterialIndex = -1;
+                            triangleStream2[i].materialIndex = -1;
                             inverted = !inverted;
                             i = 0;
                             continue;
@@ -304,7 +304,7 @@ namespace IndustrialPark.Models
                             indexLists.Last()[indexLists.Last().Count - 1] == triangleStream2[i].vertex1)
                         {
                             indexLists.Last().Add(triangleStream2[i].vertex3);
-                            triangleStream2[i].MaterialIndex = -1;
+                            triangleStream2[i].materialIndex = -1;
                             inverted = !inverted;
                             i = 0;
                             continue;
@@ -313,7 +313,7 @@ namespace IndustrialPark.Models
                             indexLists.Last()[indexLists.Last().Count - 1] == triangleStream2[i].vertex2)
                         {
                             indexLists.Last().Add(triangleStream2[i].vertex1);
-                            triangleStream2[i].MaterialIndex = -1;
+                            triangleStream2[i].materialIndex = -1;
                             inverted = !inverted;
                             i = 0;
                             continue;
@@ -322,7 +322,7 @@ namespace IndustrialPark.Models
                             indexLists.Last()[indexLists.Last().Count - 1] == triangleStream2[i].vertex3)
                         {
                             indexLists.Last().Add(triangleStream2[i].vertex2);
-                            triangleStream2[i].MaterialIndex = -1;
+                            triangleStream2[i].materialIndex = -1;
                             inverted = !inverted;
                             i = 0;
                             continue;
@@ -334,7 +334,7 @@ namespace IndustrialPark.Models
 
                 for (int i = 0; i < triangleStream2.Count(); i++)
                 {
-                    if (triangleStream2[i].MaterialIndex == -1)
+                    if (triangleStream2[i].materialIndex == -1)
                         continue;
                     else
                     {
@@ -342,7 +342,7 @@ namespace IndustrialPark.Models
                         indexLists.Last().Add(triangleStream2[i].vertex1);
                         indexLists.Last().Add(triangleStream2[i].vertex2);
                         indexLists.Last().Add(triangleStream2[i].vertex3);
-                        triangleStream2[i].MaterialIndex = -1;
+                        triangleStream2[i].materialIndex = -1;
                         allAreDone = false;
                         break;
                     }
@@ -351,7 +351,7 @@ namespace IndustrialPark.Models
 
             return indexLists;
         }
-        
+
         public static void ConvertBSPtoOBJ(string fileName, RenderWareModelFile bspFile)
         {
             int totalVertexIndices = 0;
@@ -389,19 +389,19 @@ namespace IndustrialPark.Models
                 if (bspFile.isCollision)
                 {
                     foreach (Triangle j in triangleList)
-                        if (j.MaterialIndex == i)
+                        if (j.materialIndex == i)
                             OBJWriter.WriteLine("f "
                                 + (j.vertex1 + 1).ToString() + " "
                                 + (j.vertex2 + 1).ToString() + " "
                                 + (j.vertex3 + 1).ToString());
                 }
                 else
-                foreach (Triangle j in triangleList)
-                    if (j.MaterialIndex == i)
-                        OBJWriter.WriteLine("f "
-                            + (j.vertex1 + 1).ToString() + "/" + (j.vertex1 + 1).ToString() + " "
-                            + (j.vertex2 + 1).ToString() + "/" + (j.vertex2 + 1).ToString() + " "
-                            + (j.vertex3 + 1).ToString() + "/" + (j.vertex3 + 1).ToString());
+                    foreach (Triangle j in triangleList)
+                        if (j.materialIndex == i)
+                            OBJWriter.WriteLine("f "
+                                + (j.vertex1 + 1).ToString() + "/" + (j.vertex1 + 1).ToString() + " "
+                                + (j.vertex2 + 1).ToString() + "/" + (j.vertex2 + 1).ToString() + " "
+                                + (j.vertex3 + 1).ToString() + "/" + (j.vertex3 + 1).ToString());
 
                 OBJWriter.WriteLine();
             }
@@ -418,7 +418,7 @@ namespace IndustrialPark.Models
             }
             else if (PlaneSector.leftSection is PlaneSector_000A p1)
             {
-                GetPlaneTriangleList(OBJWriter, p1, ref  triangleList, ref totalVertexIndices);
+                GetPlaneTriangleList(OBJWriter, p1, ref triangleList, ref totalVertexIndices);
             }
 
             if (PlaneSector.rightSection is AtomicSector_0009 a2)
@@ -455,7 +455,7 @@ namespace IndustrialPark.Models
             // Write vcolors to obj
             if (atomicSection.atomicSectorStruct.colorArray != null)
                 foreach (RenderWareFile.Color i in atomicSection.atomicSectorStruct.colorArray)
-                OBJWriter.WriteLine("vc " + i.R.ToString() + " " + i.G.ToString() + " " + i.B.ToString() + " " + i.A.ToString());
+                    OBJWriter.WriteLine("vc " + i.R.ToString() + " " + i.G.ToString() + " " + i.B.ToString() + " " + i.A.ToString());
 
             OBJWriter.WriteLine();
 
@@ -464,7 +464,7 @@ namespace IndustrialPark.Models
                 {
                     triangleList.Add(new Triangle
                     {
-                        MaterialIndex = i.materialIndex,
+                        materialIndex = i.materialIndex,
                         vertex1 = i.vertex1 + totalVertexIndices,
                         vertex2 = i.vertex2 + totalVertexIndices,
                         vertex3 = i.vertex3 + totalVertexIndices
@@ -493,7 +493,7 @@ namespace IndustrialPark.Models
                 MTLWriter.WriteLine();
             }
 
-            MTLWriter.Close();            
+            MTLWriter.Close();
         }
     }
 }

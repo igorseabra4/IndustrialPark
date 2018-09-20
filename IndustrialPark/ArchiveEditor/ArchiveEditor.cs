@@ -590,8 +590,6 @@ namespace IndustrialPark
             if (openTXD.ShowDialog() == DialogResult.OK)
             {
                 archive.AddTextureDictionary(openTXD.FileName);
-                comboBoxLayers.Items.Add(LayerToString(archive.DICT.LTOC.LHDRList.Count - 1));
-                comboBoxLayers.SelectedIndex = comboBoxLayers.Items.Count - 1;
             }
         }
 

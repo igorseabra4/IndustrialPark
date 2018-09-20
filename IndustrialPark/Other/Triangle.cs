@@ -2,7 +2,7 @@
 {
     public class Triangle
     {
-        public int MaterialIndex;
+        public int materialIndex;
 
         public int vertex1;
         public int vertex2;

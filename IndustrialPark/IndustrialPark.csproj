@@ -123,6 +123,7 @@
     <Compile Include="Assets\ObjectAssets\AssetTIMR.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetBOUL.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetDSTR.cs" />
+    <Compile Include="Other\OBJFunctions.cs" />
     <Compile Include="Assets\Shared\Colors\MyColor.cs" />
     <Compile Include="Assets\Shared\Colors\MyColorConverter.cs" />
     <Compile Include="Assets\Shared\Colors\MyColorEditor.cs" />
@@ -193,7 +194,6 @@
     </Compile>
     <Compile Include="Other\ConverterFunctions.cs" />
     <Compile Include="Other\ModelConverterData.cs" />
-    <Compile Include="Other\OBJFunctions.cs" />
     <Compile Include="Other\Triangle.cs" />
     <Compile Include="Other\Vertex.cs" />
     <Compile Include="Program.cs" />

@@ -606,14 +606,15 @@ namespace IndustrialPark
         public void AddTextureDictionary(string fileName)
         {
             // Add a new layer for the textures
-            int layerIndex = DICT.LTOC.LHDRList.Count;
+            //int layerIndex = DICT.LTOC.LHDRList.Count;
+            int layerIndex = 2;
 
-            DICT.LTOC.LHDRList.Add(new Section_LHDR()
-            {
-                layerType = LayerType.TEXTURE,
-                assetIDlist = new List<uint>(),
-                LDBG = new Section_LDBG(-1)
-            });
+            //DICT.LTOC.LHDRList.Add(new Section_LHDR()
+            //{
+            //    layerType = LayerType.TEXTURE,
+            //    assetIDlist = new List<uint>(),
+            //    LDBG = new Section_LDBG(-1)
+            //});
 
             ReadFileMethods.treatTexturesAsByteArray = true;
 

@@ -5,8 +5,6 @@ using SharpDX.DXGI;
 using SharpDX.Windows;
 using System.Collections.Generic;
 using static IndustrialPark.Models.OBJFunctions;
-using System;
-using System.Drawing;
 
 namespace IndustrialPark
 {
