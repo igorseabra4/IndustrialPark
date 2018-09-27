@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.ComponentModel;
 using IndustrialPark.Models;
+using static HipHopFile.Functions;
 
 namespace IndustrialPark
 {
@@ -232,7 +233,12 @@ namespace IndustrialPark
                 List<byte> restOfOldData = Data.Skip(0x28 + 4 * SiblingAmount).ToList();
 
                 foreach (AssetID i in value)
-                    newData.AddRange(BitConverter.GetBytes(i).Reverse());
+                {
+                    if (currentPlatform == Platform.GameCube)
+                        newData.AddRange(BitConverter.GetBytes(i).Reverse());
+                    else
+                        newData.AddRange(BitConverter.GetBytes(i));
+                }
 
                 newData.AddRange(restOfOldData);
                 

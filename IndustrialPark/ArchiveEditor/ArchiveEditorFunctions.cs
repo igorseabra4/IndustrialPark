@@ -121,6 +121,12 @@ namespace IndustrialPark
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
+                case AssetType.ALST:
+                    {
+                        AssetALST newAsset = new AssetALST(AHDR);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
                 case AssetType.BSP:
                 case AssetType.JSP:
                     {
