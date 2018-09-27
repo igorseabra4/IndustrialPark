@@ -51,12 +51,6 @@ namespace IndustrialPark
             return assetDictionary.Values;
         }
         
-        public static void ExportTextureAsset(AssetRWTX asset, string fileNamePrefix)
-        {
-            Directory.CreateDirectory(Application.StartupPath + "\\Export\\" + fileNamePrefix);
-            File.WriteAllBytes(Application.StartupPath + "\\Export\\" + fileNamePrefix + "\\" + Path.GetFileNameWithoutExtension(asset.AHDR.ADBG.assetName) + ".txd", asset.AHDR.data);
-        }
-
         public string fileNamePrefix;
         public string currentlyOpenFilePath;
         public Section_HIPA HIPA;
@@ -399,6 +393,24 @@ namespace IndustrialPark
             AddAssetToDictionary(AHDR);
         }
 
+        public void AddAssetWithUniqueID(int layerIndex, Section_AHDR AHDR)
+        {
+            int numCopies = -1;
+
+            while (ContainsAsset(AHDR.assetID))
+            {
+                numCopies++;
+
+                if (AHDR.ADBG.assetName.Contains("_COPY"))
+                    AHDR.ADBG.assetName = AHDR.ADBG.assetName.Substring(0, AHDR.ADBG.assetName.LastIndexOf("_COPY"));
+
+                AHDR.ADBG.assetName += "_COPY" + numCopies.ToString();
+                AHDR.assetID = BKDRHash(AHDR.ADBG.assetName);
+            }
+
+            AddAsset(layerIndex, AHDR);
+        }
+
         public void RemoveAsset(uint assetID)
         {
             for (int i = 0; i < DICT.LTOC.LHDRList.Count; i++)
@@ -409,8 +421,11 @@ namespace IndustrialPark
 
             DICT.ATOC.AHDRList.Remove(assetDictionary[assetID].AHDR);
 
+            if (GetFromAssetID(assetID).AHDR.assetType == AssetType.SND | GetFromAssetID(assetID).AHDR.assetType == AssetType.SNDS)
+                RemoveSoundFromSNDI(assetID);
+
             assetDictionary.Remove(assetID);
-            
+
             currentlySelectedAssetID = 0;
         }
 
@@ -566,8 +581,7 @@ namespace IndustrialPark
         {
             if (currentlySelectedAssetID == 0) return;
 
-            Asset currentAsset = assetDictionary[currentlySelectedAssetID];
-            if (currentAsset is IClickableAsset ra)
+            if (assetDictionary[currentlySelectedAssetID] is IClickableAsset ra)
             {
                 if (gizmos[0].isSelected)
                 {
@@ -593,8 +607,7 @@ namespace IndustrialPark
         {
             if (currentlySelectedAssetID == 0) return;
 
-            Asset currentAsset = assetDictionary[currentlySelectedAssetID];
-            if (currentAsset is IClickableAsset ra)
+            if (assetDictionary[currentlySelectedAssetID] is IClickableAsset ra)
                 if (gizmos[1].isSelected)
                 {
                     ra.PositionY -= distance / 10f;
@@ -603,18 +616,63 @@ namespace IndustrialPark
                 }
         }
 
+        public void ExportTextureDictionary(string fileName)
+        {
+            ReadFileMethods.treatTexturesAsByteArray = true;
+
+            List<TextureNative_0015> textNativeList = new List<TextureNative_0015>();
+
+            int fileVersion = 0;
+
+            foreach (Asset a in assetDictionary.Values)
+                if (a is AssetRWTX RWTX && RWTX.AHDR.ADBG.assetName.Contains(".RW3"))
+                {
+                    foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(RWTX.Data))
+                        if (rw is TextureDictionary_0016 td)
+                            foreach (TextureNative_0015 tn in td.textureNativeList)
+                            {
+                                fileVersion = tn.renderWareVersion;
+                                tn.textureNativeStruct.textureName = RWTX.AHDR.ADBG.assetName;
+                                textNativeList.Add(tn);
+                            }
+                }
+
+            TextureDictionary_0016 rws = new TextureDictionary_0016()
+            {
+                textureDictionaryStruct = new TextureDictionaryStruct_0001()
+                {
+                    textureCount = (short)textNativeList.Count(),
+                    unknown = 0
+                },
+                textureNativeList = textNativeList,
+                textureDictionaryExtension = new Extension_0003()
+                {
+                    extensionSectionList = new List<RWSection>()
+                }
+            };
+
+            rws.textureNativeList = rws.textureNativeList.OrderBy(f => f.textureNativeStruct.textureName).ToList();
+
+            File.WriteAllBytes(fileName, ReadFileMethods.ExportRenderWareFile(rws, fileVersion));
+
+            ReadFileMethods.treatTexturesAsByteArray = false;
+        }
+
         public void AddTextureDictionary(string fileName)
         {
-            // Add a new layer for the textures
-            //int layerIndex = DICT.LTOC.LHDRList.Count;
-            int layerIndex = 2;
+            int layerIndex = 0;
 
-            //DICT.LTOC.LHDRList.Add(new Section_LHDR()
-            //{
-            //    layerType = LayerType.TEXTURE,
-            //    assetIDlist = new List<uint>(),
-            //    LDBG = new Section_LDBG(-1)
-            //});
+            List<Section_LHDR> LHDRs = new List<Section_LHDR>
+            {
+                new Section_LHDR()
+                {
+                    layerType = LayerType.TEXTURE,
+                    assetIDlist = new List<uint>(),
+                    LDBG = new Section_LDBG(-1)
+                }
+            };
+            LHDRs.AddRange(DICT.LTOC.LHDRList);
+            DICT.LTOC.LHDRList = LHDRs;
 
             ReadFileMethods.treatTexturesAsByteArray = true;
 
@@ -625,7 +683,9 @@ namespace IndustrialPark
                     // For each texture in the dictionary...
                     foreach (TextureNative_0015 tn in td.textureNativeList)
                     {
-                        string textureName = tn.textureNativeStruct.textureName + ".RW3";
+                        string textureName = tn.textureNativeStruct.textureName;
+                        if (!textureName.Contains(".RW3"))
+                            textureName += ".RW3";
 
                         // Create a new dictionary that has only that texture.
                         byte[] data = ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016()
@@ -656,6 +716,16 @@ namespace IndustrialPark
                 if (a.AHDR.assetType == AssetType.SNDI)
                 {
                     ((AssetSNDI)a).AddEntry(headerData, assetID, GetFromAssetID(assetID).AHDR.assetType);
+                    break;
+                }
+        }
+
+        public void RemoveSoundFromSNDI(uint assetID)
+        {
+            foreach (Asset a in assetDictionary.Values)
+                if (a.AHDR.assetType == AssetType.SNDI)
+                {
+                    ((AssetSNDI)a).RemoveEntry(assetID, GetFromAssetID(assetID).AHDR.assetType);
                     break;
                 }
         }

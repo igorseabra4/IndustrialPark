@@ -1,4 +1,5 @@
-﻿using SharpDX;
+﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using SharpDX;
 using SharpDX.Direct3D11;
 using System;
 using System.Collections.Generic;
@@ -306,9 +307,9 @@ namespace IndustrialPark
 
         private void addTextureFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog openFile = new FolderBrowserDialog();
-            if (openFile.ShowDialog() == DialogResult.OK)
-                TextureManager.LoadTexturesFromFolder(openFile.SelectedPath);
+            CommonOpenFileDialog openFile = new CommonOpenFileDialog() { IsFolderPicker = true };
+            if (openFile.ShowDialog() == CommonFileDialogResult.Ok)
+                TextureManager.LoadTexturesFromFolder(openFile.FileName);
         }
 
         private void clearTexturesToolStripMenuItem_Click(object sender, EventArgs e)

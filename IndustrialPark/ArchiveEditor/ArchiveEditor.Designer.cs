@@ -37,8 +37,8 @@
             this.displayModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.assetNameAssetIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.assetIDAssetNameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.importTXDArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportTexturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importTXDArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clickThisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -52,13 +52,15 @@
             this.comboBoxLayers = new System.Windows.Forms.ComboBox();
             this.listBoxAssets = new System.Windows.Forms.ListBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.buttonCopy = new System.Windows.Forms.Button();
+            this.buttonPaste = new System.Windows.Forms.Button();
             this.textBoxFindAsset = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.buttonInternalEdit = new System.Windows.Forms.Button();
             this.buttonView = new System.Windows.Forms.Button();
             this.buttonExportRaw = new System.Windows.Forms.Button();
             this.buttonEditAsset = new System.Windows.Forms.Button();
-            this.buttonCopy = new System.Windows.Forms.Button();
+            this.buttonDuplicate = new System.Windows.Forms.Button();
             this.buttonRemoveAsset = new System.Windows.Forms.Button();
             this.buttonAddAsset = new System.Windows.Forms.Button();
             this.comboBoxAssetTypes = new System.Windows.Forms.ComboBox();
@@ -76,7 +78,7 @@
             this.clickThisToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(607, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(624, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -88,8 +90,8 @@
             this.saveAsToolStripMenuItem,
             this.toolStripSeparator1,
             this.displayModeToolStripMenuItem,
-            this.importTXDArchiveToolStripMenuItem,
             this.exportTexturesToolStripMenuItem,
+            this.importTXDArchiveToolStripMenuItem,
             this.toolStripSeparator2,
             this.closeToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -131,8 +133,8 @@
             this.assetNameAssetIDToolStripMenuItem,
             this.assetIDAssetNameToolStripMenuItem});
             this.displayModeToolStripMenuItem.Name = "displayModeToolStripMenuItem";
-            this.displayModeToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
-            this.displayModeToolStripMenuItem.Text = "Display Mode";
+            this.displayModeToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.displayModeToolStripMenuItem.Text = "Name Display Mode";
             // 
             // assetNameAssetIDToolStripMenuItem
             // 
@@ -150,19 +152,19 @@
             this.assetIDAssetNameToolStripMenuItem.Text = "[AssetID] AssetName";
             this.assetIDAssetNameToolStripMenuItem.Click += new System.EventHandler(this.assetIDAssetNameToolStripMenuItem_Click);
             // 
+            // exportTexturesToolStripMenuItem
+            // 
+            this.exportTexturesToolStripMenuItem.Name = "exportTexturesToolStripMenuItem";
+            this.exportTexturesToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.exportTexturesToolStripMenuItem.Text = "Export TXD Archive";
+            this.exportTexturesToolStripMenuItem.Click += new System.EventHandler(this.exportTexturesToolStripMenuItem_Click);
+            // 
             // importTXDArchiveToolStripMenuItem
             // 
             this.importTXDArchiveToolStripMenuItem.Name = "importTXDArchiveToolStripMenuItem";
             this.importTXDArchiveToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
             this.importTXDArchiveToolStripMenuItem.Text = "Import TXD Archive";
             this.importTXDArchiveToolStripMenuItem.Click += new System.EventHandler(this.importTXDArchiveToolStripMenuItem_Click);
-            // 
-            // exportTexturesToolStripMenuItem
-            // 
-            this.exportTexturesToolStripMenuItem.Name = "exportTexturesToolStripMenuItem";
-            this.exportTexturesToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
-            this.exportTexturesToolStripMenuItem.Text = "Export Textures";
-            this.exportTexturesToolStripMenuItem.Click += new System.EventHandler(this.exportTexturesToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
@@ -186,9 +188,9 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 359);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 419);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(607, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(624, 22);
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -199,6 +201,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.comboBoxLayerTypes);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.buttonRemoveLayer);
@@ -206,15 +210,16 @@
             this.groupBox1.Controls.Add(this.comboBoxLayers);
             this.groupBox1.Location = new System.Drawing.Point(12, 27);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(583, 47);
+            this.groupBox1.Size = new System.Drawing.Size(600, 47);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Layer";
             // 
             // comboBoxLayerTypes
             // 
+            this.comboBoxLayerTypes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxLayerTypes.FormattingEnabled = true;
-            this.comboBoxLayerTypes.Location = new System.Drawing.Point(324, 18);
+            this.comboBoxLayerTypes.Location = new System.Drawing.Point(341, 19);
             this.comboBoxLayerTypes.Name = "comboBoxLayerTypes";
             this.comboBoxLayerTypes.Size = new System.Drawing.Size(91, 21);
             this.comboBoxLayerTypes.TabIndex = 3;
@@ -222,8 +227,9 @@
             // 
             // label1
             // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(284, 22);
+            this.label1.Location = new System.Drawing.Point(301, 22);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(34, 13);
             this.label1.TabIndex = 3;
@@ -231,9 +237,10 @@
             // 
             // buttonRemoveLayer
             // 
-            this.buttonRemoveLayer.Location = new System.Drawing.Point(502, 18);
+            this.buttonRemoveLayer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonRemoveLayer.Location = new System.Drawing.Point(519, 19);
             this.buttonRemoveLayer.Name = "buttonRemoveLayer";
-            this.buttonRemoveLayer.Size = new System.Drawing.Size(75, 21);
+            this.buttonRemoveLayer.Size = new System.Drawing.Size(75, 22);
             this.buttonRemoveLayer.TabIndex = 4;
             this.buttonRemoveLayer.Text = "Remove";
             this.buttonRemoveLayer.UseVisualStyleBackColor = true;
@@ -241,9 +248,10 @@
             // 
             // buttonAddLayer
             // 
-            this.buttonAddLayer.Location = new System.Drawing.Point(421, 18);
+            this.buttonAddLayer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonAddLayer.Location = new System.Drawing.Point(438, 19);
             this.buttonAddLayer.Name = "buttonAddLayer";
-            this.buttonAddLayer.Size = new System.Drawing.Size(75, 21);
+            this.buttonAddLayer.Size = new System.Drawing.Size(75, 22);
             this.buttonAddLayer.TabIndex = 3;
             this.buttonAddLayer.Text = "Add";
             this.buttonAddLayer.UseVisualStyleBackColor = true;
@@ -251,31 +259,41 @@
             // 
             // comboBoxLayers
             // 
+            this.comboBoxLayers.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxLayers.FormattingEnabled = true;
             this.comboBoxLayers.Location = new System.Drawing.Point(6, 19);
             this.comboBoxLayers.Name = "comboBoxLayers";
-            this.comboBoxLayers.Size = new System.Drawing.Size(272, 21);
+            this.comboBoxLayers.Size = new System.Drawing.Size(289, 21);
             this.comboBoxLayers.TabIndex = 3;
             this.comboBoxLayers.SelectedIndexChanged += new System.EventHandler(this.comboBoxLayers_SelectedIndexChanged);
             // 
             // listBoxAssets
             // 
+            this.listBoxAssets.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.listBoxAssets.FormattingEnabled = true;
             this.listBoxAssets.Location = new System.Drawing.Point(6, 40);
             this.listBoxAssets.Name = "listBoxAssets";
-            this.listBoxAssets.Size = new System.Drawing.Size(490, 225);
+            this.listBoxAssets.Size = new System.Drawing.Size(507, 277);
             this.listBoxAssets.TabIndex = 3;
             this.listBoxAssets.SelectedIndexChanged += new System.EventHandler(this.listBoxAssets_SelectedIndexChanged);
             // 
             // groupBox2
             // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.buttonCopy);
+            this.groupBox2.Controls.Add(this.buttonPaste);
             this.groupBox2.Controls.Add(this.textBoxFindAsset);
             this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.buttonInternalEdit);
             this.groupBox2.Controls.Add(this.buttonView);
             this.groupBox2.Controls.Add(this.buttonExportRaw);
             this.groupBox2.Controls.Add(this.buttonEditAsset);
-            this.groupBox2.Controls.Add(this.buttonCopy);
+            this.groupBox2.Controls.Add(this.buttonDuplicate);
             this.groupBox2.Controls.Add(this.buttonRemoveAsset);
             this.groupBox2.Controls.Add(this.buttonAddAsset);
             this.groupBox2.Controls.Add(this.comboBoxAssetTypes);
@@ -283,14 +301,37 @@
             this.groupBox2.Controls.Add(this.listBoxAssets);
             this.groupBox2.Location = new System.Drawing.Point(12, 80);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(583, 276);
+            this.groupBox2.Size = new System.Drawing.Size(600, 336);
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Assets";
             // 
+            // buttonCopy
+            // 
+            this.buttonCopy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCopy.Location = new System.Drawing.Point(519, 98);
+            this.buttonCopy.Name = "buttonCopy";
+            this.buttonCopy.Size = new System.Drawing.Size(75, 23);
+            this.buttonCopy.TabIndex = 19;
+            this.buttonCopy.Text = "Copy";
+            this.buttonCopy.UseVisualStyleBackColor = true;
+            this.buttonCopy.Click += new System.EventHandler(this.buttonCopy_Click);
+            // 
+            // buttonPaste
+            // 
+            this.buttonPaste.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonPaste.Location = new System.Drawing.Point(519, 127);
+            this.buttonPaste.Name = "buttonPaste";
+            this.buttonPaste.Size = new System.Drawing.Size(75, 23);
+            this.buttonPaste.TabIndex = 18;
+            this.buttonPaste.Text = "Paste";
+            this.buttonPaste.UseVisualStyleBackColor = true;
+            this.buttonPaste.Click += new System.EventHandler(this.buttonPaste_Click);
+            // 
             // textBoxFindAsset
             // 
-            this.textBoxFindAsset.Location = new System.Drawing.Point(349, 13);
+            this.textBoxFindAsset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxFindAsset.Location = new System.Drawing.Point(366, 13);
             this.textBoxFindAsset.Name = "textBoxFindAsset";
             this.textBoxFindAsset.Size = new System.Drawing.Size(147, 20);
             this.textBoxFindAsset.TabIndex = 17;
@@ -298,8 +339,9 @@
             // 
             // label3
             // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(284, 16);
+            this.label3.Location = new System.Drawing.Point(301, 16);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(59, 13);
             this.label3.TabIndex = 16;
@@ -307,7 +349,8 @@
             // 
             // buttonInternalEdit
             // 
-            this.buttonInternalEdit.Location = new System.Drawing.Point(502, 242);
+            this.buttonInternalEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonInternalEdit.Location = new System.Drawing.Point(519, 307);
             this.buttonInternalEdit.Name = "buttonInternalEdit";
             this.buttonInternalEdit.Size = new System.Drawing.Size(75, 23);
             this.buttonInternalEdit.TabIndex = 15;
@@ -317,17 +360,20 @@
             // 
             // buttonView
             // 
-            this.buttonView.Location = new System.Drawing.Point(502, 155);
+            this.buttonView.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonView.Location = new System.Drawing.Point(519, 220);
             this.buttonView.Name = "buttonView";
             this.buttonView.Size = new System.Drawing.Size(75, 23);
             this.buttonView.TabIndex = 14;
             this.buttonView.Text = "View";
             this.buttonView.UseVisualStyleBackColor = true;
+            this.buttonView.Visible = false;
             this.buttonView.Click += new System.EventHandler(this.buttonView_Click);
             // 
             // buttonExportRaw
             // 
-            this.buttonExportRaw.Location = new System.Drawing.Point(502, 184);
+            this.buttonExportRaw.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonExportRaw.Location = new System.Drawing.Point(519, 249);
             this.buttonExportRaw.Name = "buttonExportRaw";
             this.buttonExportRaw.Size = new System.Drawing.Size(75, 23);
             this.buttonExportRaw.TabIndex = 13;
@@ -337,7 +383,8 @@
             // 
             // buttonEditAsset
             // 
-            this.buttonEditAsset.Location = new System.Drawing.Point(502, 213);
+            this.buttonEditAsset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonEditAsset.Location = new System.Drawing.Point(519, 278);
             this.buttonEditAsset.Name = "buttonEditAsset";
             this.buttonEditAsset.Size = new System.Drawing.Size(75, 23);
             this.buttonEditAsset.TabIndex = 12;
@@ -345,19 +392,21 @@
             this.buttonEditAsset.UseVisualStyleBackColor = true;
             this.buttonEditAsset.Click += new System.EventHandler(this.buttonEditAsset_Click);
             // 
-            // buttonCopy
+            // buttonDuplicate
             // 
-            this.buttonCopy.Location = new System.Drawing.Point(502, 69);
-            this.buttonCopy.Name = "buttonCopy";
-            this.buttonCopy.Size = new System.Drawing.Size(75, 23);
-            this.buttonCopy.TabIndex = 8;
-            this.buttonCopy.Text = "Copy";
-            this.buttonCopy.UseVisualStyleBackColor = true;
-            this.buttonCopy.Click += new System.EventHandler(this.buttonCopy_Click);
+            this.buttonDuplicate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonDuplicate.Location = new System.Drawing.Point(519, 69);
+            this.buttonDuplicate.Name = "buttonDuplicate";
+            this.buttonDuplicate.Size = new System.Drawing.Size(75, 23);
+            this.buttonDuplicate.TabIndex = 8;
+            this.buttonDuplicate.Text = "Duplicate";
+            this.buttonDuplicate.UseVisualStyleBackColor = true;
+            this.buttonDuplicate.Click += new System.EventHandler(this.buttonDuplicate_Click);
             // 
             // buttonRemoveAsset
             // 
-            this.buttonRemoveAsset.Location = new System.Drawing.Point(502, 98);
+            this.buttonRemoveAsset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonRemoveAsset.Location = new System.Drawing.Point(519, 156);
             this.buttonRemoveAsset.Name = "buttonRemoveAsset";
             this.buttonRemoveAsset.Size = new System.Drawing.Size(75, 23);
             this.buttonRemoveAsset.TabIndex = 7;
@@ -367,7 +416,8 @@
             // 
             // buttonAddAsset
             // 
-            this.buttonAddAsset.Location = new System.Drawing.Point(502, 40);
+            this.buttonAddAsset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonAddAsset.Location = new System.Drawing.Point(519, 40);
             this.buttonAddAsset.Name = "buttonAddAsset";
             this.buttonAddAsset.Size = new System.Drawing.Size(75, 23);
             this.buttonAddAsset.TabIndex = 6;
@@ -377,10 +427,12 @@
             // 
             // comboBoxAssetTypes
             // 
+            this.comboBoxAssetTypes.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxAssetTypes.FormattingEnabled = true;
             this.comboBoxAssetTypes.Location = new System.Drawing.Point(90, 13);
             this.comboBoxAssetTypes.Name = "comboBoxAssetTypes";
-            this.comboBoxAssetTypes.Size = new System.Drawing.Size(188, 21);
+            this.comboBoxAssetTypes.Size = new System.Drawing.Size(205, 21);
             this.comboBoxAssetTypes.TabIndex = 5;
             this.comboBoxAssetTypes.SelectedIndexChanged += new System.EventHandler(this.comboBoxAssetTypes_SelectedIndexChanged);
             // 
@@ -397,12 +449,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(607, 381);
+            this.ClientSize = new System.Drawing.Size(624, 441);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
             this.Name = "ArchiveEditor";
@@ -445,7 +496,7 @@
         private System.Windows.Forms.Button buttonAddAsset;
         private System.Windows.Forms.ComboBox comboBoxAssetTypes;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button buttonCopy;
+        private System.Windows.Forms.Button buttonDuplicate;
         private System.Windows.Forms.Button buttonRemoveAsset;
         private System.Windows.Forms.Button buttonEditAsset;
         private System.Windows.Forms.Button buttonExportRaw;
@@ -458,5 +509,7 @@
         private System.Windows.Forms.TextBox textBoxFindAsset;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ToolStripMenuItem importTXDArchiveToolStripMenuItem;
+        private System.Windows.Forms.Button buttonCopy;
+        private System.Windows.Forms.Button buttonPaste;
     }
 }

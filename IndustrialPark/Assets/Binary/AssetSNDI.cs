@@ -189,6 +189,19 @@ namespace IndustrialPark
                 Entries_SNDS = entries.ToArray();
         }
 
+        public void RemoveEntry(uint assetID, AssetType assetType)
+        {
+            List<EntrySoundInfo> entries;
+            if (assetType == AssetType.SND)
+                entries = Entries_SND.ToList();
+            else
+                entries = Entries_SNDS.ToList();
+
+            for (int i = 0; i < entries.Count; i++)
+                if (entries[i].SoundAssetID == assetID)
+                    entries.Remove(entries[i]);
+        }
+
         public byte[] GetHeader(uint assetID, AssetType assetType)
         {
             List<EntrySoundInfo> entries;
