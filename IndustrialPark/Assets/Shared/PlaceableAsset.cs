@@ -160,14 +160,14 @@ namespace IndustrialPark
             set { Write(0xB, value); }
         }
 
-        [Category("Placement")]
+        [Category("References")]
         public AssetID UnknownAssetID_C
         {
             get { return ReadUInt(0xC); }
             set { Write(0xC, value); }
         }
 
-        [Category("Placement")]
+        [Category("References")]
         public AssetID SURF_AssetID
         {
             get { return ReadUInt(0x10 + Offset); }
@@ -299,7 +299,7 @@ namespace IndustrialPark
 
         protected Vector4 _color;
 
-        [Category("Placement")]
+        [Category("Color")]
         public float ColorRed
         {
             get => ReadFloat(0x38 + Offset);
@@ -310,7 +310,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement")]
+        [Category("Color")]
         public float ColorGreen
         {
             get { return ReadFloat(0x3C + Offset); }
@@ -321,7 +321,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement")]
+        [Category("Color")]
         public float ColorBlue
         {
             get { return ReadFloat(0x40 + Offset); }
@@ -332,7 +332,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement")]
+        [Category("Color")]
         public float ColorAlpha
         {
             get { return ReadFloat(0x44 + Offset); }
@@ -351,7 +351,7 @@ namespace IndustrialPark
         }
 
         protected uint _modelAssetID;
-        [Category("Placement")]
+        [Category("References")]
         public AssetID ModelAssetID
         {
             get { return _modelAssetID; }
@@ -362,7 +362,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement")]
+        [Category("References")]
         public AssetID UnknownAssetID_50
         {
             get { return ReadUInt(0x50 + Offset); }

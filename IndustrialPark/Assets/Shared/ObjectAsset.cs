@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using static HipHopFile.Functions;
 
 namespace IndustrialPark
 {
@@ -28,7 +27,7 @@ namespace IndustrialPark
             set => Write(0x4, (byte)value);
         }
 
-        [Category("Object"), ReadOnly(true)]
+        [Category("Events"), ReadOnly(true)]
         public byte AmountOfEvents
         {
             get => ReadByte(0x5);
@@ -41,30 +40,40 @@ namespace IndustrialPark
             set => Write(0x6, value);
         }
 
-        [Category("Object")]
-        public AssetEvent[] Events
+        [Category("Events")]
+        public AssetEventBFBB[] EventsBFBB
         {
-            get => ReadEvents();
+            get => ReadEventsBFBB();
+            set => WriteEvents(value);
+        }
+
+        [Category("Events")]
+        public AssetEventTSSM[] EventsTSSM
+        {
+            get => ReadEventsTSSM();
             set => WriteEvents(value);
         }
 
         protected virtual int EventStartOffset { get => Data.Length - AmountOfEvents * AssetEvent.sizeOfStruct; }
 
-        protected AssetEvent[] ReadEvents()
+        protected AssetEventBFBB[] ReadEventsBFBB()
         {
             byte amount = ReadByte(0x05);
-            AssetEvent[] events = new AssetEvent[amount];
+            AssetEventBFBB[] events = new AssetEventBFBB[amount];
 
-            if (currentGame == Game.BFBB | currentGame == Game.Scooby)
-            {
-                for (int i = 0; i < amount; i++)
-                    events[i] = new AssetEventBFBB(Data, EventStartOffset + i * AssetEvent.sizeOfStruct);
-            }
-            else if (currentGame == Game.Incredibles)
-            {
-                for (int i = 0; i < amount; i++)
-                    events[i] = new AssetEventTSSM(Data, EventStartOffset + i * AssetEvent.sizeOfStruct);
-            }
+            for (int i = 0; i < amount; i++)
+                events[i] = new AssetEventBFBB(Data, EventStartOffset + i * AssetEvent.sizeOfStruct);
+
+            return events;
+        }
+
+        protected AssetEventTSSM[] ReadEventsTSSM()
+        {
+            byte amount = ReadByte(0x05);
+            AssetEventTSSM[] events = new AssetEventTSSM[amount];
+
+            for (int i = 0; i < amount; i++)
+                events[i] = new AssetEventTSSM(Data, EventStartOffset + i * AssetEvent.sizeOfStruct);
 
             return events;
         }
