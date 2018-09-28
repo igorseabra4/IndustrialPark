@@ -4,12 +4,13 @@ namespace IndustrialPark
 {
     public partial class InternalCamEditor : Form, IInternalEditor
     {
-        public InternalCamEditor(AssetCAM asset, ArchiveEditor archiveEditor)
+        public InternalCamEditor(AssetCAM asset, ArchiveEditorFunctions archive)
         {
             InitializeComponent();
             TopMost = true;
 
-            assetCAM = asset;
+            this.asset = asset;
+            this.archive = archive;
 
             propertyGridAsset.SelectedObject = asset;
             labelAssetName.Text = $"[{asset.AHDR.assetType.ToString()}] {asset.ToString()}";
@@ -17,32 +18,32 @@ namespace IndustrialPark
 
         private void InternalCamEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
-            archiveEditor.RemoveInternalEditor(this);
+            archive.CloseInternalEditor(this);
         }
 
-        private AssetCAM assetCAM;
-        private ArchiveEditor archiveEditor;
+        private AssetCAM asset;
+        private ArchiveEditorFunctions archive;
 
         private void buttonGetPos_Click(object sender, System.EventArgs e)
         {
-            assetCAM.PositionX = Program.MainForm.renderer.Camera.Position.X;
-            assetCAM.PositionY = Program.MainForm.renderer.Camera.Position.Y;
-            assetCAM.PositionZ = Program.MainForm.renderer.Camera.Position.Z;
+            asset.PositionX = Program.MainForm.renderer.Camera.Position.X;
+            asset.PositionY = Program.MainForm.renderer.Camera.Position.Y;
+            asset.PositionZ = Program.MainForm.renderer.Camera.Position.Z;
         }
 
         private void buttonGetDir_Click(object sender, System.EventArgs e)
         {
-            assetCAM.NormalizedForwardX = Program.MainForm.renderer.Camera.GetForward().X;
-            assetCAM.NormalizedForwardY = Program.MainForm.renderer.Camera.GetForward().Y;
-            assetCAM.NormalizedForwardZ = Program.MainForm.renderer.Camera.GetForward().Z;
-            assetCAM.NormalizedUpX = Program.MainForm.renderer.Camera.GetUp().X;
-            assetCAM.NormalizedUpY = Program.MainForm.renderer.Camera.GetUp().Y;
-            assetCAM.NormalizedUpZ = Program.MainForm.renderer.Camera.GetUp().Z;
+            asset.NormalizedForwardX = Program.MainForm.renderer.Camera.GetForward().X;
+            asset.NormalizedForwardY = Program.MainForm.renderer.Camera.GetForward().Y;
+            asset.NormalizedForwardZ = Program.MainForm.renderer.Camera.GetForward().Z;
+            asset.NormalizedUpX = Program.MainForm.renderer.Camera.GetUp().X;
+            asset.NormalizedUpY = Program.MainForm.renderer.Camera.GetUp().Y;
+            asset.NormalizedUpZ = Program.MainForm.renderer.Camera.GetUp().Z;
         }
 
         public uint GetAssetID()
         {
-            return assetCAM.AHDR.assetID;
+            return asset.AHDR.assetID;
         }
     }
 }

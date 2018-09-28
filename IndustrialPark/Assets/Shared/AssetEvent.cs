@@ -5,17 +5,34 @@ using static HipHopFile.Functions;
 
 namespace IndustrialPark
 {
-    public class AssetEvent
+    public abstract class AssetEvent
     {
         public static readonly int sizeOfStruct = 32;
 
-        [DisplayName("Receive Event")]
-        public EventType EventReceiveID { get; set; }
-        [DisplayName("Send Event")]
-        public EventType EventSendID { get; set; }
         [DisplayName("Target Asset")]
         public AssetID TargetAssetID { get; set; }
-        private byte[] arguments;
+        protected ushort _eventReceiveID;
+        protected ushort _eventSendID;
+        protected byte[] arguments;
+
+        protected AssetEvent()
+        {
+            _eventReceiveID = 0;
+            _eventSendID = 0;
+            TargetAssetID = 0;
+            arguments = new byte[24];
+        }
+
+        protected AssetEvent(byte[] data, int offset)
+        {
+            _eventReceiveID = Switch(BitConverter.ToUInt16(data, offset));
+            _eventSendID = Switch(BitConverter.ToUInt16(data, offset + 2));
+            TargetAssetID = ConverterFunctions.Switch(BitConverter.ToUInt32(data, offset + 4));
+
+            arguments = new byte[24];
+            for (int i = 0; i < 24; i++)
+                arguments[i] = data[offset + 8 + i];
+        }
 
         public float[] Arguments_Float
         {
@@ -31,12 +48,7 @@ namespace IndustrialPark
             {
                 float[] result = new float[6];
 
-                for (int i = 0; i < 6; i++)
-                    result[i] = value[i];
-
-                if (value.Length > 6)
-                    System.Windows.Forms.MessageBox.Show("Arguments must have an exact length of 6. Your values will be trimmed.");
-                else if (value.Length < 6)
+                if (value.Length < 6)
                 {
                     System.Windows.Forms.MessageBox.Show("Arguments must have an exact length of 6. Your values will be padded.");
                     for (int i = 0; i < value.Length; i++)
@@ -44,10 +56,16 @@ namespace IndustrialPark
                     for (int i = value.Length; i < 6; i++)
                         result[i] = 0f;
                 }
+                else
+                    for (int i = 0; i < 6; i++)
+                        result[i] = value[i];
+
+                if (value.Length > 6)
+                    System.Windows.Forms.MessageBox.Show("Arguments must have an exact length of 6. Your values will be trimmed.");
 
                 for (int i = 0; i < 6; i++)
                 {
-                    byte[] r = BitConverter.GetBytes(ConverterFunctions.Switch(value[i]));
+                    byte[] r = BitConverter.GetBytes(ConverterFunctions.Switch(result[i]));
 
                     arguments[i * 4 + 0] = r[0];
                     arguments[i * 4 + 1] = r[1];
@@ -71,12 +89,7 @@ namespace IndustrialPark
             {
                 AssetID[] result = new AssetID[6];
 
-                for (int i = 0; i < 6; i++)
-                    result[i] = value[i];
-
-                if (value.Length > 6)
-                    System.Windows.Forms.MessageBox.Show("Arguments must have an exact length of 6. Your values will be trimmed.");
-                else if (value.Length < 6)
+                if (value.Length < 6)
                 {
                     System.Windows.Forms.MessageBox.Show("Arguments must have an exact length of 6. Your values will be padded.");
                     for (int i = 0; i < value.Length; i++)
@@ -84,10 +97,16 @@ namespace IndustrialPark
                     for (int i = value.Length; i < 6; i++)
                         result[i] = 0;
                 }
+                else
+                    for (int i = 0; i < 6; i++)
+                        result[i] = value[i];
+
+                if (value.Length > 6)
+                    System.Windows.Forms.MessageBox.Show("Arguments must have an exact length of 6. Your values will be trimmed.");
 
                 for (int i = 0; i < 6; i++)
                 {
-                    byte[] r = BitConverter.GetBytes(ConverterFunctions.Switch(value[i]));
+                    byte[] r = BitConverter.GetBytes(ConverterFunctions.Switch(result[i]));
 
                     arguments[i * 4 + 0] = r[0];
                     arguments[i * 4 + 1] = r[1];
@@ -97,28 +116,6 @@ namespace IndustrialPark
             }
         }
 
-        public AssetEvent()
-        {
-            EventReceiveID = 0;
-            EventSendID = 0;
-            TargetAssetID = 0;
-            arguments = new byte[24];
-        }
-
-        public static AssetEvent FromByteArray(byte[] data, int offset)
-        {
-            AssetEvent newEvent = new AssetEvent()
-            {
-                EventReceiveID = (EventType)Switch(BitConverter.ToUInt16(data, offset)),
-                EventSendID = (EventType)Switch(BitConverter.ToUInt16(data, offset + 2)),
-                TargetAssetID = ConverterFunctions.Switch(BitConverter.ToUInt32(data, offset + 4))
-            };
-            for (int i = 0; i < 24; i++)
-                newEvent.arguments[i] = data[offset + 8 + i];
-
-            return newEvent;
-        }
-
         public byte[] ToByteArray()
         {
             byte[] data = new byte[sizeOfStruct];
@@ -126,35 +123,30 @@ namespace IndustrialPark
             for (int i = 0; i < arguments.Length; i++)
                 data[i + 8] = arguments[i];
 
-            if (currentPlatform != HipHopFile.Platform.GameCube)
+            if (currentPlatform == HipHopFile.Platform.GameCube)
             {
-                data[0] = BitConverter.GetBytes((ushort)EventReceiveID)[0];
-                data[1] = BitConverter.GetBytes((ushort)EventReceiveID)[1];
-                data[2] = BitConverter.GetBytes((ushort)EventSendID)[0];
-                data[3] = BitConverter.GetBytes((ushort)EventSendID)[1];
-                data[4] = BitConverter.GetBytes(TargetAssetID)[0];
-                data[5] = BitConverter.GetBytes(TargetAssetID)[1];
-                data[6] = BitConverter.GetBytes(TargetAssetID)[2];
-                data[7] = BitConverter.GetBytes(TargetAssetID)[3];
-            }
-            else
-            {
-                data[0] = BitConverter.GetBytes((ushort)EventReceiveID)[1];
-                data[1] = BitConverter.GetBytes((ushort)EventReceiveID)[0];
-                data[2] = BitConverter.GetBytes((ushort)EventSendID)[1];
-                data[3] = BitConverter.GetBytes((ushort)EventSendID)[0];
+                data[0] = BitConverter.GetBytes(_eventReceiveID)[1];
+                data[1] = BitConverter.GetBytes(_eventReceiveID)[0];
+                data[2] = BitConverter.GetBytes(_eventSendID)[1];
+                data[3] = BitConverter.GetBytes(_eventSendID)[0];
                 data[4] = BitConverter.GetBytes(TargetAssetID)[3];
                 data[5] = BitConverter.GetBytes(TargetAssetID)[2];
                 data[6] = BitConverter.GetBytes(TargetAssetID)[1];
                 data[7] = BitConverter.GetBytes(TargetAssetID)[0];
             }
+            else
+            {
+                data[0] = BitConverter.GetBytes(_eventReceiveID)[0];
+                data[1] = BitConverter.GetBytes(_eventReceiveID)[1];
+                data[2] = BitConverter.GetBytes(_eventSendID)[0];
+                data[3] = BitConverter.GetBytes(_eventSendID)[1];
+                data[4] = BitConverter.GetBytes(TargetAssetID)[0];
+                data[5] = BitConverter.GetBytes(TargetAssetID)[1];
+                data[6] = BitConverter.GetBytes(TargetAssetID)[2];
+                data[7] = BitConverter.GetBytes(TargetAssetID)[3];
+            }
 
             return data;
-        }
-
-        public override string ToString()
-        {
-            return $"{EventReceiveID.ToString()} => {EventSendID.ToString()} => {Program.MainForm.GetAssetNameFromID(TargetAssetID)}";
         }
     }
 }

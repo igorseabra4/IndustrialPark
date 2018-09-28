@@ -464,7 +464,7 @@ namespace IndustrialPark
             renderer.device.UpdateData(renderer.tintedBuffer, renderData);
             renderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, renderer.tintedBuffer);
             renderer.tintedShader.Apply();
-            
+
             foreach (SharpMesh mesh in meshList)
             {
                 if (mesh == null) continue;

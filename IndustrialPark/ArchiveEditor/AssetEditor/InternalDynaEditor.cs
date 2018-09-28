@@ -4,13 +4,13 @@ namespace IndustrialPark
 {
     public partial class InternalDynaEditor : Form, IInternalEditor
     {
-        public InternalDynaEditor(AssetDYNA asset, ArchiveEditor archiveEditor)
+        public InternalDynaEditor(AssetDYNA asset, ArchiveEditorFunctions archive)
         {
             InitializeComponent();
             TopMost = true;
 
-            assetDYNA = asset;
-            this.archiveEditor = archiveEditor;
+            this.asset = asset;
+            this.archive = archive;
 
             propertyGridAsset.SelectedObject = asset;
             propertyGridDynaType.SelectedObject = asset.DynaBase;
@@ -19,25 +19,25 @@ namespace IndustrialPark
 
         private void InternalDynaEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
-            archiveEditor.RemoveInternalEditor(this);
+            archive.CloseInternalEditor(this);
         }
 
-        private AssetDYNA assetDYNA;
-        private ArchiveEditor archiveEditor;
+        private AssetDYNA asset;
+        private ArchiveEditorFunctions archive;
 
         public uint GetAssetID()
         {
-            return assetDYNA.AHDR.assetID;
+            return asset.AHDR.assetID;
         }
 
         private void propertyGridAsset_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
-            propertyGridDynaType.SelectedObject = assetDYNA.DynaBase;
+            propertyGridDynaType.SelectedObject = asset.DynaBase;
         }
 
         private void propertyGridDynaType_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
-            assetDYNA.DynaBase = (DynaBase)propertyGridDynaType.SelectedObject;
+            asset.DynaBase = (DynaBase)propertyGridDynaType.SelectedObject;
         }
     }
 }

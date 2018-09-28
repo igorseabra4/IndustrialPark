@@ -119,7 +119,7 @@ namespace IndustrialPark
                     models.Add(awm.GetRenderWareModelFile());
                 }
                 catch { }
-            foreach (IRenderableAsset awm in ArchiveEditorFunctions.renderableAssetSet)
+            foreach (IRenderableAsset awm in ArchiveEditorFunctions.renderableAssetSetJSP)
                 if (awm is AssetJSP alm)
                     try
                     {

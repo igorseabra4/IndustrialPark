@@ -13,7 +13,9 @@ namespace IndustrialPark
 {
     public class ArchiveEditorFunctions
     {
-        public static HashSet<IRenderableAsset> renderableAssetSet = new HashSet<IRenderableAsset>();
+        public static HashSet<IRenderableAsset> renderableAssetSetCommon = new HashSet<IRenderableAsset>();
+        public static HashSet<IRenderableAsset> renderableAssetSetTrans = new HashSet<IRenderableAsset>();
+        public static HashSet<AssetJSP> renderableAssetSetJSP = new HashSet<AssetJSP>();
         public static Dictionary<uint, IAssetWithModel> renderingDictionary = new Dictionary<uint, IAssetWithModel>();
 
         public static void AddToRenderingDictionary(uint key, IAssetWithModel value)
@@ -188,6 +190,12 @@ namespace IndustrialPark
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
+                case AssetType.ENV:
+                    {
+                        AssetENV newAsset = new AssetENV(AHDR);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
                 case AssetType.FOG:
                     {
                         AssetFOG newAsset = new AssetFOG(AHDR);
@@ -340,7 +348,6 @@ namespace IndustrialPark
                 case AssetType.DTRK:
                 case AssetType.DUPC:
                 case AssetType.EGEN:
-                case AssetType.ENV:
                 case AssetType.GRSM:
                 case AssetType.GUST:
                 case AssetType.HANG:
@@ -419,6 +426,8 @@ namespace IndustrialPark
 
         public void RemoveAsset(uint assetID)
         {
+            CloseInternalEditor(currentlySelectedAssetID);
+
             for (int i = 0; i < DICT.LTOC.LHDRList.Count; i++)
                 if (DICT.LTOC.LHDRList[i].assetIDlist.Contains(assetID))
                     DICT.LTOC.LHDRList[i].assetIDlist.Remove(assetID);
@@ -438,8 +447,14 @@ namespace IndustrialPark
         private void DisposeAsset(uint key)
         {
             if (assetDictionary[key] is IRenderableAsset ra)
-                if (renderableAssetSet.Contains(ra))
-                    renderableAssetSet.Remove(ra);
+            {
+                if (renderableAssetSetCommon.Contains(ra))
+                    renderableAssetSetCommon.Remove(ra);
+                else if (renderableAssetSetTrans.Contains(ra))
+                    renderableAssetSetTrans.Remove(ra);
+                else if (renderableAssetSetJSP.Contains(ra))
+                    renderableAssetSetJSP.Remove((AssetJSP)ra);
+            }
 
             if (renderingDictionary.ContainsKey(key))
                 renderingDictionary.Remove(key);
@@ -466,6 +481,7 @@ namespace IndustrialPark
             if (assetDictionary.ContainsKey(currentlySelectedAssetID))
                 assetDictionary[currentlySelectedAssetID].isSelected = false;
             currentlySelectedAssetID = assetID;
+
             if (currentlySelectedAssetID != 0)
             {
                 assetDictionary[currentlySelectedAssetID].isSelected = true;
@@ -474,7 +490,6 @@ namespace IndustrialPark
                 else
                     ClearGizmos();
             }
-            else ClearGizmos();
         }
 
         public int GetLayerFromAssetID(uint assetID)
@@ -486,12 +501,49 @@ namespace IndustrialPark
             throw new Exception($"Asset ID {assetID.ToString("X8")} is not present in any layer.");
         }
 
-        public uint GetClickedAssetID(Ray ray)
+        private List<IInternalEditor> internalEditors = new List<IInternalEditor>();
+
+        public void CloseInternalEditor(IInternalEditor i)
+        {
+            internalEditors.Remove(i);
+        }
+
+        public void CloseInternalEditor(uint assetID)
+        {
+            for (int i = 0; i < internalEditors.Count; i++)
+                if (internalEditors[i].GetAssetID() == assetID)
+                    internalEditors[i].Close();
+        }
+
+        public void OpenInternalEditor()
+        {
+            Asset asset = GetFromAssetID(currentlySelectedAssetID);
+
+            for (int i = 0; i < internalEditors.Count; i++)
+                if (internalEditors[i].GetAssetID() == asset.AHDR.assetID)
+                    internalEditors[i].Close();
+
+            if (asset is AssetCAM CAM)
+                internalEditors.Add(new InternalCamEditor(CAM, this));
+            else if (asset is AssetDYNA DYNA)
+                internalEditors.Add(new InternalDynaEditor(DYNA, this));
+            else if (asset is AssetTEXT TEXT)
+                internalEditors.Add(new InternalTextEditor(TEXT, this));
+            else if (asset.AHDR.assetType == AssetType.SND | asset.AHDR.assetType == AssetType.SNDS)
+                internalEditors.Add(new InternalSoundEditor(asset, this));
+            else
+                internalEditors.Add(new InternalAssetEditor(asset, this));
+
+            internalEditors.Last().Show();
+        }
+
+        public static uint GetClickedAssetID(Ray ray)
         {
             List<IRenderableAsset> l = new List<IRenderableAsset>();
             try
             {
-                l.AddRange(renderableAssetSet);
+                l.AddRange(renderableAssetSetCommon);
+                l.AddRange(renderableAssetSetTrans);
             }
             catch { return 0; }
 
@@ -516,14 +568,18 @@ namespace IndustrialPark
         
         public void RecalculateAllMatrices()
         {
-            foreach (IRenderableAsset a in renderableAssetSet)
+            foreach (IRenderableAsset a in renderableAssetSetCommon)
+                a.CreateTransformMatrix();
+            foreach (IRenderableAsset a in renderableAssetSetTrans)
+                a.CreateTransformMatrix();
+            foreach (AssetJSP a in renderableAssetSetJSP)
                 a.CreateTransformMatrix();
         }
         
         // Gizmos
-        private static Gizmo[] gizmos;
+        private static Gizmo[] gizmos = new Gizmo[0];
         private static bool DrawGizmos = false;
-        public bool FinishedMovingGizmo = false;
+        public static bool FinishedMovingGizmo = false;
 
         public static void RenderGizmos(SharpRenderer renderer)
         {
@@ -538,19 +594,19 @@ namespace IndustrialPark
             UpdateGizmoPosition(currentAsset.GetGizmoCenter(), currentAsset.GetGizmoRadius());
         }
         
-        private void UpdateGizmoPosition(Vector3 position, float distance)
+        private static void UpdateGizmoPosition(Vector3 position, float distance)
         {
             DrawGizmos = true;
             foreach (Gizmo g in gizmos)
                 g.SetPosition(position, distance);
         }
 
-        private void ClearGizmos()
+        private static void ClearGizmos()
         {
             DrawGizmos = false;
         }
 
-        public void GizmoSelect(Ray r)
+        public static void GizmoSelect(Ray r)
         {
             if (!DrawGizmos)
                 return;
@@ -577,7 +633,7 @@ namespace IndustrialPark
             gizmos[index].isSelected = true;
         }
 
-        public void ScreenUnclicked()
+        public static void ScreenUnclicked()
         {
             foreach (Gizmo g in gizmos)
                 g.isSelected = false;

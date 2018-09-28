@@ -5,6 +5,7 @@ using SharpDX.DXGI;
 using SharpDX.Windows;
 using System.Collections.Generic;
 using static IndustrialPark.Models.OBJFunctions;
+using System.Linq;
 
 namespace IndustrialPark
 {
@@ -172,30 +173,25 @@ namespace IndustrialPark
 
         public void ResetSelectionColor()
         {
-            normalColor = new Vector4(0.2f, 0.6f, 0.8f, 0.8f);
-            selectedColor = new Vector4(1f, 0.5f, 0.1f, 0.8f);
+            normalColor = new Vector4(0.2f, 0.6f, 0.8f, 0.55f);
+            selectedColor = new Vector4(1f, 0.5f, 0.1f, 0.55f);
             selectedObjectColor = new Vector4(1f, 0f, 0f, 1f);
         }
 
-        public Vector4 normalColor = new Vector4(0.2f, 0.6f, 0.8f, 0.8f);
-        public Vector4 selectedColor = new Vector4(1f, 0.5f, 0.1f, 0.8f);
-        public Vector4 selectedObjectColor = new Vector4(1f, 0f, 0f, 1f);
-        DefaultRenderData renderData;
+        public Vector4 normalColor;
+        public Vector4 selectedColor;
+        public Vector4 selectedObjectColor;
 
         public void DrawCube(Matrix world, bool isSelected, float multiplier = 0.5f)
         {
+            DefaultRenderData renderData;
+
             renderData.worldViewProjection = Matrix.Scaling(multiplier) * world * viewProjection;
 
             if (isSelected)
                 renderData.Color = selectedColor;
             else
                 renderData.Color = normalColor;
-
-            device.SetFillModeDefault();
-            device.SetCullModeNone();
-            device.SetBlendStateAlphaBlend();
-            device.ApplyRasterState();
-            device.UpdateAllStates();
 
             device.UpdateData(basicBuffer, renderData);
             device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer);
@@ -206,19 +202,15 @@ namespace IndustrialPark
 
         public void DrawPyramid(Matrix world, bool isSelected, float multiplier = 0.5f)
         {
+            DefaultRenderData renderData;
+
             renderData.worldViewProjection = Matrix.Scaling(multiplier) * world * viewProjection;
 
             if (isSelected)
                 renderData.Color = selectedColor;
             else
                 renderData.Color = normalColor;
-
-            device.SetFillModeDefault();
-            device.SetCullModeNone();
-            device.SetBlendStateAlphaBlend();
-            device.ApplyRasterState();
-            device.UpdateAllStates();
-
+            
             device.UpdateData(basicBuffer, renderData);
             device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer);
             basicShader.Apply();
@@ -228,18 +220,14 @@ namespace IndustrialPark
 
         public void DrawSphere(Matrix world, bool isSelected)
         {
+            DefaultRenderData renderData;
+
             renderData.worldViewProjection = world * viewProjection;
 
             if (isSelected)
                 renderData.Color = selectedColor;
             else
                 renderData.Color = normalColor;
-
-            device.SetFillModeDefault();
-            device.SetCullModeNone();
-            device.SetBlendStateAlphaBlend();
-            device.ApplyRasterState();
-            device.UpdateAllStates();
 
             device.UpdateData(basicBuffer, renderData);
             device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer);
@@ -277,40 +265,69 @@ namespace IndustrialPark
 
                 device.SetFillModeDefault();
                 device.SetCullModeDefault();
+                device.ApplyRasterState();
                 device.SetBlendStateAlphaBlend();
                 device.SetDefaultDepthState();
-                device.ApplyRasterState();
                 device.UpdateAllStates();
 
-                List<IRenderableAsset> renderableAssetSet = new List<IRenderableAsset>();
-                try
+                List<IRenderableAsset> renderJSP = new List<IRenderableAsset>();
+                List<IRenderableAsset> renderCommon = new List<IRenderableAsset>();
+                List<IRenderableAsset> renderTrans = new List<IRenderableAsset>();
+                List<IRenderableAsset> renderLarge = new List<IRenderableAsset>();
+
+                renderJSP.AddRange(ArchiveEditorFunctions.renderableAssetSetJSP);
+                renderCommon.AddRange(ArchiveEditorFunctions.renderableAssetSetCommon);
+                renderTrans.AddRange(ArchiveEditorFunctions.renderableAssetSetTrans);
+
+                renderCommon = renderCommon.OrderBy(f => f.GetDistance(Camera.Position)).Reverse().ToList();
+                renderTrans = renderTrans.OrderBy(f => f.GetDistance(Camera.Position)).Reverse().ToList();
+
+                foreach (IRenderableAsset a in renderJSP)
+                    a.Draw(this);
+
+                foreach (IRenderableAsset a in renderCommon)
                 {
-                    renderableAssetSet.AddRange(ArchiveEditorFunctions.renderableAssetSet);
-                }
-                catch
-                {
-                    return;
+                    BoundingBox bb = a.GetBoundingBox();
+                    if (bb.Width > 100)
+                        renderLarge.Add(a);
+                    else if (a is AssetPKUP assetPKUP && AssetPICK.pickEntries.Count == 0)
+                        renderTrans.Add(a);
+                    else if (frustum.Intersects(ref bb))
+                        a.Draw(this);
                 }
 
-                foreach (IRenderableAsset a in renderableAssetSet)
+                device.SetFillModeSolid();
+                device.SetCullModeNone();
+                device.ApplyRasterState();
+                device.SetBlendStateAlphaBlend();
+                device.SetDefaultDepthState();
+                device.UpdateAllStates();
+
+                foreach (IRenderableAsset a in renderTrans)
                 {
-                    if (a is AssetJSP)
-                        (a as AssetJSP).Draw(this);
+                    BoundingBox bb = a.GetBoundingBox();
+                    if (frustum.Intersects(ref bb))
+                        a.Draw(this);
                 }
-                foreach (IRenderableAsset a in renderableAssetSet)
+
+                device.SetFillModeDefault();
+                device.SetCullModeDefault();
+                device.ApplyRasterState();
+                device.SetBlendStateAlphaBlend();
+                device.SetDefaultDepthState();
+                device.UpdateAllStates();
+
+                foreach (IRenderableAsset a in renderLarge)
                 {
-                    if (!(a is AssetJSP))
-                    {
-                        BoundingBox bb = a.GetBoundingBox();
-                        if (frustum.Intersects(ref bb))
-                            a.Draw(this);
-                    }
+                    a.Draw(this);
                 }
                 ArchiveEditorFunctions.RenderGizmos(this);
                 
                 //present
                 device.Present();
             });
+
+            Program.MainForm.DisposeAllArchiveEditors();
 
             //release resources
             whiteDefault.Dispose();

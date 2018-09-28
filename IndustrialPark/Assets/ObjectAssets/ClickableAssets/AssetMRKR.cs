@@ -24,8 +24,8 @@ namespace IndustrialPark
 
             CreateTransformMatrix();
 
-            if (!ArchiveEditorFunctions.renderableAssetSet.Contains(this))
-                ArchiveEditorFunctions.renderableAssetSet.Add(this);
+            if (!ArchiveEditorFunctions.renderableAssetSetTrans.Contains(this))
+                ArchiveEditorFunctions.renderableAssetSetTrans.Add(this);
         }
 
         public void CreateTransformMatrix()
@@ -94,6 +94,11 @@ namespace IndustrialPark
         public BoundingBox GetBoundingBox()
         {
             return boundingBox;
+        }
+
+        public float GetDistance(Vector3 cameraPosition)
+        {
+            return Vector3.Distance(cameraPosition, _position);
         }
 
         private Vector3 _position;

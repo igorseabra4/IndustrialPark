@@ -1,6 +1,5 @@
 ﻿using HipHopFile;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using static HipHopFile.Functions;
@@ -152,41 +151,6 @@ namespace IndustrialPark
 
             for (int i = 0; i < 4; i++)
                 AHDR.data[j + i] = split[i];
-        }
-
-        protected AssetEvent[] ReadEvents(int eventsStart)
-        {
-            byte amount = ReadByte(0x05);
-            AssetEvent[] events = new AssetEvent[amount];
-            for (int i = 0; i < amount; i++)
-                events[i] = AssetEvent.FromByteArray(Data, eventsStart + i * AssetEvent.sizeOfStruct);
-            return events;
-        }
-
-        protected void WriteEvents(int eventsStart, AssetEvent[] value)
-        {
-            List<byte> newData = Data.Take(eventsStart).ToList();
-            List<byte> bytesAfterEvents = Data.Skip(eventsStart + ReadByte(0x05) * AssetEvent.sizeOfStruct).ToList();
-
-            for (int i = 0; i < value.Length; i++)
-                newData.AddRange(value[i].ToByteArray());
-
-            newData.AddRange(bytesAfterEvents);
-            newData[0x05] = (byte)value.Length;
-
-            Data = newData.ToArray();
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is Asset a)
-                return a.GetHashCode() == GetHashCode();
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return -1452371666 + AHDR.assetID.GetHashCode();
         }
     }
 }

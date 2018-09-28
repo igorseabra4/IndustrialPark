@@ -88,8 +88,14 @@ namespace IndustrialPark
             }
 
             archive.Dispose();
+            
             Program.MainForm.CloseAssetEditor(this);
             Close();
+        }
+
+        public void DisposeAll()
+        {
+            archive.Dispose();
         }
 
         private bool programIsChangingStuff = false;
@@ -330,7 +336,6 @@ namespace IndustrialPark
         {
             if (listBoxAssets.SelectedIndex < 0) return;
 
-            RemoveInternalEditor(CurrentlySelectedAssetID());
             archive.RemoveAsset(CurrentlySelectedAssetID());
             comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = LayerToString(comboBoxLayers.SelectedIndex);
 
@@ -359,7 +364,6 @@ namespace IndustrialPark
                 if (success)
                 {
                     UnsavedChanges = true;
-                    RemoveInternalEditor(oldAssetID);
                     archive.RemoveAsset(oldAssetID);
 
                     while (archive.ContainsAsset(AHDR.assetID))
@@ -382,43 +386,11 @@ namespace IndustrialPark
             }
         }
 
-        private List<IInternalEditor> internalEditors = new List<IInternalEditor>();
-
-        public void RemoveInternalEditor(IInternalEditor i)
-        {
-            internalEditors.Remove(i);
-        }
-
-        public void RemoveInternalEditor(uint assetID)
-        {
-            for (int i = 0; i < internalEditors.Count; i++)
-                if (internalEditors[i].GetAssetID() == assetID)
-                    internalEditors[i].Close();
-        }
-
         private void buttonInternalEdit_Click(object sender, EventArgs e)
         {
             if (listBoxAssets.SelectedItem != null)
             {
-                Asset asset = archive.GetFromAssetID(CurrentlySelectedAssetID());
-
-                for (int i = 0; i < internalEditors.Count; i++)
-                    if (internalEditors[i].GetAssetID() == asset.AHDR.assetID)
-                        internalEditors[i].Close();
-
-                if (asset is AssetCAM CAM)
-                    internalEditors.Add(new InternalCamEditor(CAM, this));
-                else if (asset is AssetDYNA DYNA)
-                    internalEditors.Add(new InternalDynaEditor(DYNA, this));
-                else if (asset is AssetTEXT TEXT)
-                    internalEditors.Add(new InternalTextEditor(TEXT, this));
-                else if (asset.AHDR.assetType == AssetType.SND | asset.AHDR.assetType == AssetType.SNDS)
-                    internalEditors.Add(new InternalSoundEditor(asset, this));
-                else
-                    internalEditors.Add(new InternalAssetEditor(asset, this));
-
-                internalEditors.Last().Show();
-
+                archive.OpenInternalEditor();
                 UnsavedChanges = true;
             }
         }
@@ -499,23 +471,21 @@ namespace IndustrialPark
             }
         }
 
-        public void ScreenClicked(Ray ray, bool isMouseDown)
+        public static void ScreenClicked(Ray ray, bool isMouseDown)
         {
             if (isMouseDown)
-                archive.GizmoSelect(ray);
-            else if (archive.FinishedMovingGizmo)
-                archive.FinishedMovingGizmo = false;
+                ArchiveEditorFunctions.GizmoSelect(ray);
             else
             {
-                uint assetID = archive.GetClickedAssetID(ray);
+                uint assetID = ArchiveEditorFunctions.GetClickedAssetID(ray);
                 if (assetID != 0)
-                    SetSelectedIndex(assetID);
+                    Program.MainForm.SetSelectedIndex(assetID);
             }
         }
 
-        public void ScreenUnclicked()
+        public static void ScreenUnclicked()
         {
-            archive.ScreenUnclicked();
+            ArchiveEditorFunctions.ScreenUnclicked();
         }
 
         public void MouseMoveX(SharpCamera camera, int deltaX)
@@ -528,10 +498,14 @@ namespace IndustrialPark
             archive.MouseMoveY(camera, deltaY);
         }
 
-        private void SetSelectedIndex(uint assetID)
+        public void SetSelectedIndex(uint assetID)
         {
             if (!archive.ContainsAsset(assetID))
+            {
+                archive.SelectAsset(0);
+                listBoxAssets.SelectedIndex = -1;
                 return;
+            }
 
             try
             {
@@ -554,6 +528,7 @@ namespace IndustrialPark
         }
 
         System.Drawing.Color defaultColor;
+
         private void textBoxFindAsset_TextChanged(object sender, EventArgs e)
         {
             uint assetID = 0;

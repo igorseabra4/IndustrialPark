@@ -4,34 +4,34 @@ namespace IndustrialPark
 {
     public partial class InternalTextEditor : Form, IInternalEditor
     {
-        public InternalTextEditor(AssetTEXT asset, ArchiveEditor archiveEditor)
+        public InternalTextEditor(AssetTEXT asset, ArchiveEditorFunctions archive)
         {
             InitializeComponent();
             TopMost = true;
 
-            assetTEXT = asset;
-            this.archiveEditor = archiveEditor;
+            this.asset = asset;
+            this.archive = archive;
 
-            labelAssetName.Text = $"[{assetTEXT.AHDR.assetType.ToString()}] {assetTEXT.ToString()}";
-            richTextBoxAssetText.Text = assetTEXT.Text;
+            labelAssetName.Text = $"[{this.asset.AHDR.assetType.ToString()}] {this.asset.ToString()}";
+            richTextBoxAssetText.Text = this.asset.Text;
         }
 
         private void InternalTextEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
-            archiveEditor.RemoveInternalEditor(this);
+            archive.CloseInternalEditor(this);
         }
 
-        private AssetTEXT assetTEXT;
-        private ArchiveEditor archiveEditor;
+        private AssetTEXT asset;
+        private ArchiveEditorFunctions archive;
 
         private void richTextBoxAssetText_TextChanged(object sender, System.EventArgs e)
         {
-            assetTEXT.Text = richTextBoxAssetText.Text;
+            asset.Text = richTextBoxAssetText.Text;
         }
 
         public uint GetAssetID()
         {
-            return assetTEXT.AHDR.assetID;
+            return asset.AHDR.assetID;
         }
     }
 }

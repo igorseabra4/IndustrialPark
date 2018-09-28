@@ -1,5 +1,8 @@
 ﻿using HipHopFile;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using static HipHopFile.Functions;
 
 namespace IndustrialPark
 {
@@ -41,10 +44,43 @@ namespace IndustrialPark
         [Category("Object")]
         public AssetEvent[] Events
         {
-            get => ReadEvents(EventStartOffset);
-            set => WriteEvents(EventStartOffset, value);
+            get => ReadEvents();
+            set => WriteEvents(value);
         }
 
         protected virtual int EventStartOffset { get => Data.Length - AmountOfEvents * AssetEvent.sizeOfStruct; }
+
+        protected AssetEvent[] ReadEvents()
+        {
+            byte amount = ReadByte(0x05);
+            AssetEvent[] events = new AssetEvent[amount];
+
+            if (currentGame == Game.BFBB | currentGame == Game.Scooby)
+            {
+                for (int i = 0; i < amount; i++)
+                    events[i] = new AssetEventBFBB(Data, EventStartOffset + i * AssetEvent.sizeOfStruct);
+            }
+            else if (currentGame == Game.Incredibles)
+            {
+                for (int i = 0; i < amount; i++)
+                    events[i] = new AssetEventTSSM(Data, EventStartOffset + i * AssetEvent.sizeOfStruct);
+            }
+
+            return events;
+        }
+
+        protected void WriteEvents(AssetEvent[] value)
+        {
+            List<byte> newData = Data.Take(EventStartOffset).ToList();
+            List<byte> bytesAfterEvents = Data.Skip(EventStartOffset + ReadByte(0x05) * AssetEvent.sizeOfStruct).ToList();
+
+            for (int i = 0; i < value.Length; i++)
+                newData.AddRange(value[i].ToByteArray());
+
+            newData.AddRange(bytesAfterEvents);
+            newData[0x05] = (byte)value.Length;
+
+            Data = newData.ToArray();
+        }
     }
 }

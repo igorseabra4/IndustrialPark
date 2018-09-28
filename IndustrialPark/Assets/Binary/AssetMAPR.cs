@@ -41,8 +41,8 @@ namespace IndustrialPark
                 {
                     entries.Add(new EntryMAPR()
                     {
-                        AssetID_SURF = ReadUInt(4 + i * 0x8),
-                        Unknown = ReadInt(8 + i * 0x8)
+                        AssetID_SURF = ReadUInt(8 + i * 8),
+                        Unknown = ReadInt(12 + i * 8)
                     });
                 }
                 

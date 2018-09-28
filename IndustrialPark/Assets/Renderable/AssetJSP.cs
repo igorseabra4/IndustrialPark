@@ -19,7 +19,7 @@ namespace IndustrialPark
             model = new RenderWareModelFile(AHDR.ADBG.assetName);
             model.SetForRendering(renderer.device, RenderWareFile.ReadFileMethods.ReadRenderWareFile(AHDR.data), AHDR.data);
 
-            ArchiveEditorFunctions.renderableAssetSet.Add(this);
+            ArchiveEditorFunctions.renderableAssetSetJSP.Add(this);
         }
 
         public void CreateTransformMatrix()
@@ -30,6 +30,11 @@ namespace IndustrialPark
         public BoundingBox GetBoundingBox()
         {
             return boundingBox;
+        }
+
+        public float GetDistance(Vector3 cameraPosition)
+        {
+            return 0f;
         }
 
         public void Draw(SharpRenderer renderer)

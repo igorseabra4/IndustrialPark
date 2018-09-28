@@ -4,13 +4,13 @@ namespace IndustrialPark
 {
     public partial class InternalAssetEditor : Form, IInternalEditor
     {
-        public InternalAssetEditor(Asset asset, ArchiveEditor archiveEditor)
+        public InternalAssetEditor(Asset asset, ArchiveEditorFunctions archive)
         {
             InitializeComponent();
             TopMost = true;
 
             this.asset = asset;
-            this.archiveEditor = archiveEditor;
+            this.archive = archive;
 
             propertyGridAsset.SelectedObject = asset;
             labelAssetName.Text = $"[{asset.AHDR.assetType.ToString()}] {asset.ToString()}";
@@ -18,11 +18,11 @@ namespace IndustrialPark
 
         private void InternalAssetEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
-            archiveEditor.RemoveInternalEditor(this);
+            archive.CloseInternalEditor(this);
         }
 
         private Asset asset;
-        private ArchiveEditor archiveEditor;
+        private ArchiveEditorFunctions archive;
 
         public uint GetAssetID()
         {

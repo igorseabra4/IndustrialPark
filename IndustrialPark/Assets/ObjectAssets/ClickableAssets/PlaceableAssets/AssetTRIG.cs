@@ -38,7 +38,16 @@ namespace IndustrialPark
             _trigPos2 = new Vector3(ReadFloat(0x6C + Offset), ReadFloat(0x70 + Offset), ReadFloat(0x74 + Offset));
             _trigPos3 = new Vector3(ReadFloat(0x78 + Offset), ReadFloat(0x7C + Offset), ReadFloat(0x80 + Offset));
 
-            base.Setup();
+            _rotation = new Vector3(ReadFloat(0x18 + Offset), ReadFloat(0x14 + Offset), ReadFloat(0x1C + Offset));
+            _position = new Vector3(ReadFloat(0x20 + Offset), ReadFloat(0x24 + Offset), ReadFloat(0x28 + Offset));
+            _scale = new Vector3(ReadFloat(0x2C + Offset), ReadFloat(0x30 + Offset), ReadFloat(0x34 + Offset));
+            _color = new Vector4(ReadFloat(0x38 + Offset), ReadFloat(0x3c + Offset), ReadFloat(0x40 + Offset), ReadFloat(0x44 + Offset));
+
+            _modelAssetID = ReadUInt(0x4C + Offset);
+
+            CreateTransformMatrix();
+            if (!ArchiveEditorFunctions.renderableAssetSetTrans.Contains(this))
+                ArchiveEditorFunctions.renderableAssetSetTrans.Add(this);
         }
 
         public override void CreateTransformMatrix()
@@ -146,6 +155,13 @@ namespace IndustrialPark
                 return base.GetGizmoRadius();
             else
                 return boundingSphere.Radius;
+        }
+
+        public override float GetDistance(Vector3 cameraPosition)
+        {
+            if (Shape == TriggerShape.Sphere)
+                return Vector3.Distance(cameraPosition, boundingSphere.Center) - boundingSphere.Radius;
+            return Vector3.Distance(cameraPosition, boundingBox.Center) - boundingSphere.Radius;
         }
 
         private byte _shape;

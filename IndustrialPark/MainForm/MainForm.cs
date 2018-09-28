@@ -188,7 +188,14 @@ namespace IndustrialPark
         {
             int index = archiveEditors.IndexOf(sender);
             archiveEditorToolStripMenuItem.DropDownItems.RemoveAt(index + 2);
+            archiveEditors[index].DisposeAll();
             archiveEditors.RemoveAt(index);
+        }
+
+        public void DisposeAllArchiveEditors()
+        {
+            foreach (ArchiveEditor ae in archiveEditors)
+                ae.DisposeAll();
         }
 
         private void noCullingCToolStripMenuItem_Click(object sender, EventArgs e)
@@ -289,20 +296,27 @@ namespace IndustrialPark
         public void ScreenClicked(Rectangle viewRectangle, int X, int Y, bool isMouseDown = false)
         {
             Ray ray = Ray.GetPickRay(X, Y, new Viewport(viewRectangle), renderer.viewProjection);
-            foreach (ArchiveEditor ae in archiveEditors)
-                ae.ScreenClicked(ray, isMouseDown);
+
+            if (ArchiveEditorFunctions.FinishedMovingGizmo)
+                ArchiveEditorFunctions.FinishedMovingGizmo = false;
+            else
+                ArchiveEditor.ScreenClicked(ray, isMouseDown);
         }
 
         private void renderPanel_MouseUp(object sender, MouseEventArgs e)
         {
-            foreach (ArchiveEditor ae in archiveEditors)
-                ae.ScreenUnclicked();
+            ArchiveEditor.ScreenUnclicked();
         }
 
         private void renderPanel_MouseLeave(object sender, EventArgs e)
         {
+            ArchiveEditor.ScreenUnclicked();
+        }
+
+        public void SetSelectedIndex(uint assetID)
+        {
             foreach (ArchiveEditor ae in archiveEditors)
-                ae.ScreenUnclicked();
+                ae.SetSelectedIndex(assetID);
         }
 
         private void addTextureFolderToolStripMenuItem_Click(object sender, EventArgs e)

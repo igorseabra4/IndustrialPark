@@ -39,6 +39,8 @@ namespace IndustrialPark
         public void Setup()
         {
             pickEntries = new Dictionary<uint, AssetID>();
+            foreach (EntryPICK entryPICK in PICKentries)
+                pickEntries.Add(entryPICK.ReferenceID, entryPICK.ModelAssetID);
         }
 
         public EntryPICK[] PICKentries

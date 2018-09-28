@@ -7,24 +7,24 @@ namespace IndustrialPark
 {
     public partial class InternalSoundEditor : Form, IInternalEditor
     {
-        public InternalSoundEditor(Asset asset, ArchiveEditor archiveEditor)
+        public InternalSoundEditor(Asset asset, ArchiveEditorFunctions archive)
         {
             InitializeComponent();
             TopMost = true;
 
             this.asset = asset;
-            this.archiveEditor = archiveEditor;
+            this.archive = archive;
 
             labelAssetName.Text = $"[{asset.AHDR.assetType.ToString()}] {asset.ToString()}";
         }
 
         private void InternalAssetEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
-            archiveEditor.RemoveInternalEditor(this);
+            archive.CloseInternalEditor(this);
         }
 
         private Asset asset;
-        private ArchiveEditor archiveEditor;
+        private ArchiveEditorFunctions archive;
 
         public uint GetAssetID()
         {
@@ -43,7 +43,7 @@ namespace IndustrialPark
                 byte[] file = File.ReadAllBytes(openFileDialog.FileName);
                 if (checkBoxSendToSNDI.Checked)
                 {
-                    archiveEditor.AddSoundToSNDI(file.Take(0x60).ToArray(), asset.AHDR.assetID);
+                    archive.AddSoundToSNDI(file.Take(0x60).ToArray(), asset.AHDR.assetID);
                     asset.AHDR.data = file.Skip(0x60).ToArray();
                 }
                 else
@@ -64,7 +64,7 @@ namespace IndustrialPark
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 List<byte> file = new List<byte>();
-                file.AddRange(archiveEditor.GetHeaderFromSNDI(asset.AHDR.assetID));
+                file.AddRange(archive.GetHeaderFromSNDI(asset.AHDR.assetID));
                 file.AddRange(asset.AHDR.data);
 
                 File.WriteAllBytes(saveFileDialog.FileName, file.ToArray());

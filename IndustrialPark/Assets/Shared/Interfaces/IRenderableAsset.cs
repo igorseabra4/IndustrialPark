@@ -9,5 +9,7 @@ namespace IndustrialPark
         void Draw(SharpRenderer renderer);
 
         BoundingBox GetBoundingBox();
+
+        float GetDistance(Vector3 cameraPosition);
     }
 }

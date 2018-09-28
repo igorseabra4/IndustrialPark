@@ -22,8 +22,8 @@ namespace IndustrialPark
             _modelAssetID = ReadUInt(0x4C + Offset);
 
             CreateTransformMatrix();
-            if (!ArchiveEditorFunctions.renderableAssetSet.Contains(this))
-                ArchiveEditorFunctions.renderableAssetSet.Add(this);
+            if (!ArchiveEditorFunctions.renderableAssetSetCommon.Contains(this))
+                ArchiveEditorFunctions.renderableAssetSetCommon.Add(this);
         }
 
         public virtual void CreateTransformMatrix()
@@ -125,6 +125,11 @@ namespace IndustrialPark
         public BoundingBox GetBoundingBox()
         {
             return boundingBox;
+        }
+
+        public virtual float GetDistance(Vector3 cameraPosition)
+        {
+            return Vector3.Distance(cameraPosition, _position);
         }
 
         [Category("Flags"), TypeConverter(typeof(HexByteTypeConverter))]
