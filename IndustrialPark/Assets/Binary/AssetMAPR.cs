@@ -10,6 +10,11 @@ namespace IndustrialPark
         public AssetID AssetID_SURF { get; set; }
         public int Unknown { get; set; }
 
+        public EntryMAPR()
+        {
+            AssetID_SURF = 0;
+        }
+
         public override string ToString()
         {
             return $"[{AssetID_SURF.ToString()}] - {Unknown}";
@@ -30,7 +35,7 @@ namespace IndustrialPark
             set => Write(0, value);
         }
 
-        public EntryMAPR[] Entries
+        public EntryMAPR[] MAPR_Entries
         {
             get
             {

@@ -22,6 +22,12 @@ namespace IndustrialPark
         public AssetID ModelAssetID { get; set; }
         public uint Unknown5 { get; set; }
 
+        public EntryPICK()
+        {
+            ReferenceID = 0;
+            ModelAssetID = 0;
+        }
+
         public override string ToString()
         {
             return $"[{ReferenceID.ToString()}] - [{ModelAssetID.ToString()}]";
@@ -39,11 +45,11 @@ namespace IndustrialPark
         public void Setup()
         {
             pickEntries = new Dictionary<uint, AssetID>();
-            foreach (EntryPICK entryPICK in PICKentries)
+            foreach (EntryPICK entryPICK in PICK_Entries)
                 pickEntries.Add(entryPICK.ReferenceID, entryPICK.ModelAssetID);
         }
 
-        public EntryPICK[] PICKentries
+        public EntryPICK[] PICK_Entries
         {
             get
             {

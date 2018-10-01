@@ -106,9 +106,13 @@ namespace IndustrialPark
             fileNamePrefix = null;
             currentlyOpenFilePath = null;
         }
-        
+
+        public static bool allowRender = true;
+
         private void AddAssetToDictionary(Section_AHDR AHDR)
         {
+            allowRender = false;
+
             if (assetDictionary.ContainsKey(AHDR.assetID))
             {
                 assetDictionary.Remove(AHDR.assetID);
@@ -389,6 +393,8 @@ namespace IndustrialPark
                     }
                     break;
             }
+
+            allowRender = true;
         }
 
         public void RemoveLayer(int index)

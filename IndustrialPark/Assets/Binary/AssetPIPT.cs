@@ -19,6 +19,11 @@ namespace IndustrialPark
         [TypeConverter(typeof(HexByteTypeConverter))]
         public byte Unknown34 { get; set; }
 
+        public EntryPIPT()
+        {
+            ModelAssetID = 0;
+        }
+
         public override string ToString()
         {
             return $"[{ModelAssetID.ToString()}] - {MaybeMeshIndex}";
@@ -31,7 +36,7 @@ namespace IndustrialPark
         {
         }
         
-        public EntryPIPT[] PICKentries
+        public EntryPIPT[] PIPT_Entries
         {
             get
             {

@@ -2,6 +2,7 @@
 using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
@@ -65,7 +66,11 @@ namespace IndustrialPark
             }
             else
             {
-                world = Matrix.Scaling(Position1X_Radius * 2f) * Matrix.Translation(_trigPos0);
+                world = Matrix.Scaling(Position1X_Radius * 2f) *
+                    Matrix.RotationY(_rotation.Y) *
+                    Matrix.RotationX(_rotation.X) *
+                    Matrix.RotationZ(_rotation.Z) *
+                    Matrix.Translation(_trigPos0);
             }
 
             CreateBoundingBox();
@@ -165,6 +170,7 @@ namespace IndustrialPark
         }
 
         private byte _shape;
+        [Category("Trigger")]
         public TriggerShape Shape
         {
             get => (TriggerShape)_shape;
@@ -175,6 +181,7 @@ namespace IndustrialPark
             }
         }
 
+        [Category("Trigger"), ReadOnly(true)]
         public override float PositionX
         {
             get => _position.X;
@@ -196,6 +203,7 @@ namespace IndustrialPark
             }
         }
 
+        [Category("Trigger"), ReadOnly(true)]
         public override float PositionY
         {
             get => _position.Y;
@@ -217,9 +225,10 @@ namespace IndustrialPark
             }
         }
 
+        [Category("Trigger"), ReadOnly(true)]
         public override float PositionZ
         {
-            get => _trigPos0.Z;
+            get => _position.Z;
             set
             {
                 if (Shape == TriggerShape.Sphere)
@@ -234,7 +243,7 @@ namespace IndustrialPark
 
                 _position.Z = value;
                 Write(0x28 + Offset, _position.Z);
-                Position0Z = value;
+                CreateTransformMatrix();
             }
         }
 
@@ -243,6 +252,7 @@ namespace IndustrialPark
         private Vector3 _trigPos2;
         private Vector3 _trigPos3;
 
+        [Category("Trigger")]
         public float Position0X
         {
             get => _trigPos0.X;
@@ -253,6 +263,7 @@ namespace IndustrialPark
                 CreateTransformMatrix();
             }
         }
+        [Category("Trigger")]
         public float Position0Y
         {
             get => _trigPos0.Y;
@@ -263,6 +274,7 @@ namespace IndustrialPark
                 CreateTransformMatrix();
             }
         }
+        [Category("Trigger")]
         public float Position0Z
         {
             get => _trigPos0.Z;
@@ -273,6 +285,7 @@ namespace IndustrialPark
                 CreateTransformMatrix();
             }
         }
+        [Category("Trigger")]
         public float Position1X_Radius
         {
             get => _trigPos1.X;
@@ -283,6 +296,7 @@ namespace IndustrialPark
                 CreateTransformMatrix();
             }
         }
+        [Category("Trigger")]
         public float Position1Y
         {
             get => _trigPos1.Y;
@@ -293,6 +307,7 @@ namespace IndustrialPark
                 CreateTransformMatrix();
             }
         }
+        [Category("Trigger")]
         public float Position1Z
         {
             get => _trigPos1.Z;
@@ -303,6 +318,7 @@ namespace IndustrialPark
                 CreateTransformMatrix();
             }
         }
+        [Category("Trigger")]
         public float Position2X
         {
             get => _trigPos2.X;
@@ -312,6 +328,7 @@ namespace IndustrialPark
                 Write(0x6C + Offset, _trigPos2.X);
             }
         }
+        [Category("Trigger")]
         public float Position2Y
         {
             get => _trigPos2.Y;
@@ -321,6 +338,7 @@ namespace IndustrialPark
                 Write(0x70 + Offset, _trigPos2.Y);
             }
         }
+        [Category("Trigger")]
         public float Position2Z
         {
             get => _trigPos2.Z;
@@ -330,6 +348,7 @@ namespace IndustrialPark
                 Write(0x74 + Offset, _trigPos2.Z);
             }
         }
+        [Category("Trigger")]
         public float Position3X
         {
             get => _trigPos3.X;
@@ -339,6 +358,7 @@ namespace IndustrialPark
                 Write(0x78 + Offset, _trigPos3.X);
             }
         }
+        [Category("Trigger")]
         public float Position3Y
         {
             get => _trigPos3.Y;
@@ -348,6 +368,7 @@ namespace IndustrialPark
                 Write(0x7C + Offset, _trigPos3.Y);
             }
         }
+        [Category("Trigger")]
         public float Position3Z
         {
             get => _trigPos3.Z;
@@ -358,24 +379,28 @@ namespace IndustrialPark
             }
         }
 
+        [Category("Trigger")]
         public float UnknownTriggerFloat1
         {
             get => ReadFloat(0x84 + Offset);
             set => Write(0x84 + Offset, value);
         }
 
+        [Category("Trigger")]
         public float UnknownTriggerFloat2
         {
             get => ReadFloat(0x88 + Offset);
             set => Write(0x88 + Offset, value);
         }
 
+        [Category("Trigger")]
         public float UnknownTriggerFloat3
         {
             get => ReadFloat(0x8C + Offset);
             set => Write(0x8C + Offset, value);
         }
 
+        [Category("Trigger")]
         public float UnknownTriggerFloat4
         {
             get => ReadFloat(0x90 + Offset);

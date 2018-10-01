@@ -1,9 +1,5 @@
 ﻿using SharpDX;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IndustrialPark
 {
@@ -20,6 +16,7 @@ namespace IndustrialPark
             set
             {
                 _yaw = value;
+                UpdateCamera();
                 RaiseCameraChangedEvent();
             }
         }
@@ -30,15 +27,17 @@ namespace IndustrialPark
             set
             {
                 _pitch = value;
+                UpdateCamera();
                 RaiseCameraChangedEvent();
             }
         }
-        public float Speed = 5f;
+        public float Speed;
+        public float SpeedRot;
 
-        public float FieldOfView = MathUtil.PiOverFour;
+        public float FieldOfView;
         public float AspectRatio;
-        public float NearPlane = 0.1F;
-        public float FarPlane = 80000F;
+        public float NearPlane;
+        public float FarPlane;
 
         public event CameraChangedDelegate CameraChangedEvent;
         public delegate void CameraChangedDelegate(SharpCamera camera);
@@ -67,13 +66,13 @@ namespace IndustrialPark
 
         internal void AddYaw(float factor)
         {
-            _yaw -= Speed * factor;
+            _yaw -= SpeedRot * factor;
             UpdateCamera();
         }
 
         internal void AddPitch(float factor)
         {
-            _pitch -= Speed * factor;
+            _pitch -= SpeedRot * factor;
             UpdateCamera();
         }
 
@@ -82,6 +81,13 @@ namespace IndustrialPark
             Speed += v / 10f;
             if (Speed < 1f)
                 Speed = 1f;
+        }
+
+        internal void IncreaseCameraRotationSpeed(float v)
+        {
+            SpeedRot += v / 10f;
+            if (SpeedRot < 1f)
+                SpeedRot = 1f;
         }
 
         private void UpdateCamera()
@@ -104,6 +110,11 @@ namespace IndustrialPark
             _yaw = 0;
             _pitch = 0;
             Speed = 5f;
+            SpeedRot = 5f;
+
+            FieldOfView = MathUtil.PiOverFour;
+            NearPlane = 0.1F;
+            FarPlane = 10000F;
 
             UpdateCamera();
         }
@@ -127,19 +138,6 @@ namespace IndustrialPark
         public Vector3 GetUp()
         {
             return Up;
-        }
-
-        public void SetRotation(float Pitch, float Yaw)
-        {
-            _pitch = Pitch;
-            _yaw = Yaw;
-            UpdateCamera();
-        }
-
-        public void SetSpeed(float Speed)
-        {
-            this.Speed = Speed;
-            UpdateCamera();
         }
 
         public Matrix GetViewMatrix()

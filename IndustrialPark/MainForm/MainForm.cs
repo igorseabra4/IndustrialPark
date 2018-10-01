@@ -110,6 +110,10 @@ namespace IndustrialPark
                 renderer.Camera.IncreaseCameraSpeed(-1);
             else if (e.KeyCode == Keys.E)
                 renderer.Camera.IncreaseCameraSpeed(1);
+            else if (e.KeyCode == Keys.D1)
+                renderer.Camera.IncreaseCameraRotationSpeed(-1);
+            else if (e.KeyCode == Keys.D3)
+                renderer.Camera.IncreaseCameraRotationSpeed(1);
             else if (e.KeyCode == Keys.C)
                 ToggleCulling();
             else if (e.KeyCode == Keys.F)

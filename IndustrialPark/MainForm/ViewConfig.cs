@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
 using SharpDX;
@@ -24,6 +23,9 @@ namespace IndustrialPark
         {
             InitializeComponent();
             Program.MainForm.renderer.Camera.CameraChangedEvent += CameraChanged;
+
+            NumericIntervalRotation.Maximum = decimal.MaxValue;
+            NumericInterval.Maximum = decimal.MaxValue;
         }
 
         /// <summary>
@@ -93,6 +95,12 @@ namespace IndustrialPark
                 Program.MainForm.renderer.Camera.Speed = (float)NumericInterval.Value;
         }
 
+        private void NumericIntervalRotation_ValueChanged(object sender, EventArgs e)
+        {
+            if (!ProgramIsUpdatingValues)
+                Program.MainForm.renderer.Camera.SpeedRot = (float)NumericIntervalRotation.Value;
+        }
+
         private void NumericDrawD_ValueChanged(object sender, EventArgs e)
         {
             Program.MainForm.renderer.Camera.FarPlane = (float)NumericDrawD.Value;
@@ -102,7 +110,7 @@ namespace IndustrialPark
         {
             if (NumericFOV.Value < 1)
                 NumericFOV.Value = 1;
-            Program.MainForm.renderer.Camera.FieldOfView = (float)NumericFOV.Value;
+            Program.MainForm.renderer.Camera.FieldOfView = MathUtil.DegreesToRadians((float)NumericFOV.Value);
         }
         
         private void ViewConfig_VisibleChanged(object sender, EventArgs e)
@@ -134,9 +142,10 @@ namespace IndustrialPark
         public void UpdateValues()
         {
             ProgramIsUpdatingValues = true;
-            NumericFOV.Value = (decimal)Program.MainForm.renderer.Camera.FieldOfView;
+            NumericFOV.Value = (decimal)MathUtil.RadiansToDegrees(Program.MainForm.renderer.Camera.FieldOfView);
             NumericDrawD.Value = (decimal)Program.MainForm.renderer.Camera.FarPlane;
             NumericInterval.Value = (decimal)Program.MainForm.renderer.Camera.Speed;
+            NumericIntervalRotation.Value = (decimal)Program.MainForm.renderer.Camera.SpeedRot;
             NumericCameraX.Value = (decimal)Program.MainForm.renderer.Camera.Position.X;
             NumericCameraY.Value = (decimal)Program.MainForm.renderer.Camera.Position.Y;
             NumericCameraZ.Value = (decimal)Program.MainForm.renderer.Camera.Position.Z;
@@ -147,7 +156,7 @@ namespace IndustrialPark
             _invalidCameraValues = false;
         }
 
-        public void SetValues(Vector3 position, float yaw, float pitch, float speed)
+        public void SetValues(Vector3 position, float yaw, float pitch, float speed, float speedrot)
         {
             if (!Visible)
                 return;
@@ -158,6 +167,7 @@ namespace IndustrialPark
             NumericCameraY.Value = (decimal)position.Y;
             NumericCameraZ.Value = (decimal)position.Z;
             NumericInterval.Value = (decimal)speed;
+            NumericIntervalRotation.Value = (decimal)speedrot;
             NumericCameraPitch.Value = (decimal)pitch;
             NumericCameraYaw.Value = (decimal)yaw;
 

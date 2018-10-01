@@ -42,6 +42,8 @@
             this.NumericCameraX = new System.Windows.Forms.NumericUpDown();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.NumericFOV = new System.Windows.Forms.NumericUpDown();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.NumericIntervalRotation = new System.Windows.Forms.NumericUpDown();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NumericCameraYaw)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NumericCameraPitch)).BeginInit();
@@ -55,6 +57,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.NumericCameraX)).BeginInit();
             this.groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NumericFOV)).BeginInit();
+            this.groupBox6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.NumericIntervalRotation)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox2
@@ -117,7 +121,7 @@
             262144});
             this.NumericInterval.Name = "NumericInterval";
             this.NumericInterval.Value = new decimal(new int[] {
-            20,
+            5,
             0,
             0,
             0});
@@ -241,10 +245,35 @@
             0});
             this.NumericFOV.ValueChanged += new System.EventHandler(this.NumericFOV_ValueChanged);
             // 
+            // groupBox6
+            // 
+            this.groupBox6.Controls.Add(this.NumericIntervalRotation);
+            resources.ApplyResources(this.groupBox6, "groupBox6");
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.TabStop = false;
+            // 
+            // NumericIntervalRotation
+            // 
+            this.NumericIntervalRotation.DecimalPlaces = 4;
+            resources.ApplyResources(this.NumericIntervalRotation, "NumericIntervalRotation");
+            this.NumericIntervalRotation.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            262144});
+            this.NumericIntervalRotation.Name = "NumericIntervalRotation";
+            this.NumericIntervalRotation.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.NumericIntervalRotation.ValueChanged += new System.EventHandler(this.NumericIntervalRotation_ValueChanged);
+            // 
             // ViewConfig
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox4);
@@ -269,6 +298,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.NumericCameraX)).EndInit();
             this.groupBox5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.NumericFOV)).EndInit();
+            this.groupBox6.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.NumericIntervalRotation)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -288,5 +319,7 @@
         public System.Windows.Forms.NumericUpDown NumericCameraZ;
         private System.Windows.Forms.GroupBox groupBox5;
         public System.Windows.Forms.NumericUpDown NumericFOV;
+        private System.Windows.Forms.GroupBox groupBox6;
+        public System.Windows.Forms.NumericUpDown NumericIntervalRotation;
     }
 }

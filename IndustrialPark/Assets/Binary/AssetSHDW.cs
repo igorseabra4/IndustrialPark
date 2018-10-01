@@ -11,6 +11,12 @@ namespace IndustrialPark
         public AssetID ShadowModelAssetID { get; set; }
         public int Unknown { get; set; }
 
+        public EntrySHDW()
+        {
+            ModelAssetID = 0;
+            ShadowModelAssetID = 0;
+        }
+
         public override string ToString()
         {
             return $"[{ModelAssetID.ToString()}] - {ShadowModelAssetID}";
@@ -23,7 +29,7 @@ namespace IndustrialPark
         {
         }
         
-        public EntrySHDW[] PICKentries
+        public EntrySHDW[] SHDW_Entries
         {
             get
             {

@@ -263,66 +263,68 @@ namespace IndustrialPark
                 viewProjection = view * Camera.GetProjectionMatrix();
                 frustum = new BoundingFrustum(view * Camera.GetBiggerFovProjectionMatrix());
 
-                device.SetFillModeDefault();
-                device.SetCullModeDefault();
-                device.ApplyRasterState();
-                device.SetBlendStateAlphaBlend();
-                device.SetDefaultDepthState();
-                device.UpdateAllStates();
-
-                List<IRenderableAsset> renderJSP = new List<IRenderableAsset>();
-                List<IRenderableAsset> renderCommon = new List<IRenderableAsset>();
-                List<IRenderableAsset> renderTrans = new List<IRenderableAsset>();
-                List<IRenderableAsset> renderLarge = new List<IRenderableAsset>();
-
-                renderJSP.AddRange(ArchiveEditorFunctions.renderableAssetSetJSP);
-                renderCommon.AddRange(ArchiveEditorFunctions.renderableAssetSetCommon);
-                renderTrans.AddRange(ArchiveEditorFunctions.renderableAssetSetTrans);
-
-                renderCommon = renderCommon.OrderBy(f => f.GetDistance(Camera.Position)).Reverse().ToList();
-                renderTrans = renderTrans.OrderBy(f => f.GetDistance(Camera.Position)).Reverse().ToList();
-
-                foreach (IRenderableAsset a in renderJSP)
-                    a.Draw(this);
-
-                foreach (IRenderableAsset a in renderCommon)
+                if (ArchiveEditorFunctions.allowRender)
                 {
-                    BoundingBox bb = a.GetBoundingBox();
-                    if (bb.Width > 100)
-                        renderLarge.Add(a);
-                    else if (a is AssetPKUP assetPKUP && AssetPICK.pickEntries.Count == 0)
-                        renderTrans.Add(a);
-                    else if (frustum.Intersects(ref bb))
+                    device.SetFillModeDefault();
+                    device.SetCullModeDefault();
+                    device.ApplyRasterState();
+                    device.SetBlendStateAlphaBlend();
+                    device.SetDefaultDepthState();
+                    device.UpdateAllStates();
+
+                    List<IRenderableAsset> renderJSP = new List<IRenderableAsset>();
+                    List<IRenderableAsset> renderCommon = new List<IRenderableAsset>();
+                    List<IRenderableAsset> renderTrans = new List<IRenderableAsset>();
+                    List<IRenderableAsset> renderLarge = new List<IRenderableAsset>();
+
+                    renderJSP.AddRange(ArchiveEditorFunctions.renderableAssetSetJSP);
+                    renderCommon.AddRange(ArchiveEditorFunctions.renderableAssetSetCommon);
+                    renderTrans.AddRange(ArchiveEditorFunctions.renderableAssetSetTrans);
+
+                    renderCommon = renderCommon.OrderBy(f => f.GetDistance(Camera.Position)).Reverse().ToList();
+                    renderTrans = renderTrans.OrderBy(f => f.GetDistance(Camera.Position)).Reverse().ToList();
+
+                    foreach (IRenderableAsset a in renderJSP)
                         a.Draw(this);
-                }
 
-                device.SetFillModeSolid();
-                device.SetCullModeNone();
-                device.ApplyRasterState();
-                device.SetBlendStateAlphaBlend();
-                device.SetDefaultDepthState();
-                device.UpdateAllStates();
+                    foreach (IRenderableAsset a in renderCommon)
+                    {
+                        BoundingBox bb = a.GetBoundingBox();
+                        if (bb.Width > 100)
+                            renderLarge.Add(a);
+                        else if (a is AssetPKUP assetPKUP && AssetPICK.pickEntries.Count == 0)
+                            renderTrans.Add(a);
+                        else if (frustum.Intersects(ref bb))
+                            a.Draw(this);
+                    }
 
-                foreach (IRenderableAsset a in renderTrans)
-                {
-                    BoundingBox bb = a.GetBoundingBox();
-                    if (frustum.Intersects(ref bb))
+                    device.SetFillModeSolid();
+                    device.SetCullModeNone();
+                    device.ApplyRasterState();
+                    device.SetBlendStateAlphaBlend();
+                    device.SetDefaultDepthState();
+                    device.UpdateAllStates();
+
+                    foreach (IRenderableAsset a in renderTrans)
+                    {
+                        BoundingBox bb = a.GetBoundingBox();
+                        if (frustum.Intersects(ref bb))
+                            a.Draw(this);
+                    }
+
+                    device.SetFillModeDefault();
+                    device.SetCullModeDefault();
+                    device.ApplyRasterState();
+                    device.SetBlendStateAlphaBlend();
+                    device.SetDefaultDepthState();
+                    device.UpdateAllStates();
+
+                    foreach (IRenderableAsset a in renderLarge)
+                    {
                         a.Draw(this);
+                    }
+                    ArchiveEditorFunctions.RenderGizmos(this);
                 }
-
-                device.SetFillModeDefault();
-                device.SetCullModeDefault();
-                device.ApplyRasterState();
-                device.SetBlendStateAlphaBlend();
-                device.SetDefaultDepthState();
-                device.UpdateAllStates();
-
-                foreach (IRenderableAsset a in renderLarge)
-                {
-                    a.Draw(this);
-                }
-                ArchiveEditorFunctions.RenderGizmos(this);
-                
                 //present
                 device.Present();
             });
