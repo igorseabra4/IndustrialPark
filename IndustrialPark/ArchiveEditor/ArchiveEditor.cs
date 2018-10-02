@@ -535,7 +535,7 @@ namespace IndustrialPark
             try
             {
                 textBoxFindAsset.BackColor = defaultColor;
-                assetID = Convert.ToUInt32(textBoxFindAsset.Text, 16);
+                assetID = AssetIDTypeConverter.AssetIDFromString(textBoxFindAsset.Text);
                 SetSelectedIndex(assetID);
             }
             catch

@@ -32,7 +32,7 @@ namespace IndustrialPark
             defaultColor = textBoxAssetID.BackColor;
 
             comboBoxAssetTypes.SelectedItem = AHDR.assetType;
-            textBoxAssetID.Text = AHDR.assetID.ToString("X8");
+            textBoxAssetID.Text = "0x" + AHDR.assetID.ToString("X8");
             checkSourceFile.Checked = (AHDR.flags & AHDRFlags.SOURCE_FILE) != 0;
             checkSourceVirtual.Checked = (AHDR.flags & AHDRFlags.SOURCE_VIRTUAL) != 0;
             checkReadT.Checked = (AHDR.flags & AHDRFlags.READ_TRANSFORM) != 0;
@@ -48,7 +48,7 @@ namespace IndustrialPark
             textBoxAssetName.Text = AHDR.ADBG.assetName;
             textBoxAssetFileName.Text = AHDR.ADBG.assetFileName;
             labelRawDataSize.Text = "Raw Data Size: " + AHDR.fileSize.ToString();
-            textBoxChecksum.Text = AHDR.ADBG.checksum.ToString("X8");
+            textBoxChecksum.Text = "0x"+ AHDR.ADBG.checksum.ToString("X8");
         }
 
         private string GetMiscSettingsString(byte[] MiscSettings)
@@ -252,16 +252,14 @@ namespace IndustrialPark
 
         private void textBoxAssetName_TextChanged(object sender, EventArgs e)
         {
-            if (textBoxAssetName.Text.Contains(","))
-                textBoxAssetName.Text = textBoxAssetName.Text.Replace(",", "");
-            else if (textBoxAssetName.Text.Contains(";"))
-                textBoxAssetName.Text = textBoxAssetName.Text.Replace(";", "");
+            if (textBoxAssetName.Text.Contains(";"))
+                textBoxAssetName.Text = textBoxAssetName.Text.Replace(";", "_");
             else
             {
                 assetName = textBoxAssetName.Text;
 
                 if (assetType != AssetType.BSP | assetType != AssetType.JSP)
-                    textBoxAssetID.Text = Functions.BKDRHash(assetName).ToString("X8");
+                    textBoxAssetID.Text = "0x" + Functions.BKDRHash(assetName).ToString("X8");
             }
         }
 

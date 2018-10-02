@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
@@ -30,9 +31,10 @@ namespace IndustrialPark
             set => Write(0x58 + Offset, value);
         }
 
-        public AssetID Unknown_5C
+        [TypeConverter(typeof(HexIntTypeConverter))]
+        public int Unknown_5C
         {
-            get => ReadUInt(0x5C + Offset);
+            get => ReadInt(0x5C + Offset);
             set => Write(0x5C + Offset, value);
         }
     }

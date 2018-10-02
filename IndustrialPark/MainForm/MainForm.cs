@@ -425,7 +425,13 @@ namespace IndustrialPark
                 if (archiveEditor.HasAsset(assetID))
                     return archiveEditor.GetAssetNameFromID(assetID);
             }
-            return assetID.ToString("X8");
+            return "0x" + assetID.ToString("X8");
+        }
+
+        private void useLegacyAssetIDFormatToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            useLegacyAssetIDFormatToolStripMenuItem.Checked = !useLegacyAssetIDFormatToolStripMenuItem.Checked;
+            AssetIDTypeConverter.Legacy = useLegacyAssetIDFormatToolStripMenuItem.Checked;
         }
     }
 }

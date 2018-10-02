@@ -185,14 +185,16 @@ namespace IndustrialPark
             get => ReadFloat(0x2C);
             set => Write(0x2C, value);
         }
-        public AssetID UnknownValue30
+        [TypeConverter(typeof(HexIntTypeConverter))]
+        public int UnknownValue30
         {
-            get => ReadUInt(0x30);
+            get => ReadInt(0x30);
             set => Write(0x30, value);
         }
-        public AssetID UnknownValue34
+        [TypeConverter(typeof(HexIntTypeConverter))]
+        public int UnknownValue34
         {
-            get => ReadUInt(0x34);
+            get => ReadInt(0x34);
             set => Write(0x34, value);
         }
         public int UnknownValue38
@@ -315,19 +317,22 @@ namespace IndustrialPark
             get => ReadByte(0x7B);
             set => Write(0x7B, value);
         }
-        public AssetID UnknownValue7C
+        [TypeConverter(typeof(HexIntTypeConverter))]
+        public int UnknownValue7C
         {
-            get => ReadUInt(0x7C);
+            get => ReadInt(0x7C);
             set => Write(0x7C, value);
         }
-        public AssetID UnknownValue80
+        [TypeConverter(typeof(HexIntTypeConverter))]
+        public int UnknownValue80
         {
-            get => ReadUInt(0x80);
+            get => ReadInt(0x80);
             set => Write(0x80, value);
         }
-        public AssetID UnknownValue84
+        [TypeConverter(typeof(HexIntTypeConverter))]
+        public int UnknownValue84
         {
-            get => ReadUInt(0x84);
+            get => ReadInt(0x84);
             set => Write(0x84, value);
         }
     }

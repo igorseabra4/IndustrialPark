@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
@@ -27,9 +28,10 @@ namespace IndustrialPark
             set => Write(0x8, value);
         }
 
-        public AssetID Variable
+        [TypeConverter(typeof(HexIntTypeConverter))]
+        public int Variable
         {
-            get => ReadUInt(0xC);
+            get => ReadInt(0xC);
             set => Write(0xC, value);
         }
 

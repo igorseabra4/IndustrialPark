@@ -1,13 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
 
 namespace IndustrialPark
 {
-    public class AssetIDTypeConverter : TypeConverter
+    public class HexIntTypeConverter : TypeConverter
     {
-        public static bool Legacy;
-
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
             return sourceType == typeof(string);
@@ -17,36 +16,21 @@ namespace IndustrialPark
         {
             if (value is string s)
             {
-                if (Legacy)
-                    return new AssetID(Convert.ToUInt32(s, 16));
-
-                return AssetIDFromString(s);
+                return Convert.ToInt32(s, 16);
             }
 
             return base.ConvertFrom(context, culture, value);
         }
 
-        public static AssetID AssetIDFromString(string s)
-        {
-            if (s.ToLower().StartsWith("0x"))
-                return Convert.ToUInt32(s, 16);
-            return HipHopFile.Functions.BKDRHash(s);
-        }
-
         public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
         {
-            return destinationType == typeof(AssetID);
+            return destinationType == typeof(short);
         }
 
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
             if (destinationType == typeof(string))
-            {
-                if (Legacy)
-                    return ((AssetID)value).ToString("X8");
-
-                return Program.MainForm.GetAssetNameFromID((AssetID)value);
-            }
+                return ((int)value).ToString("X8");
 
             return base.ConvertTo(context, culture, value, destinationType);
         }
