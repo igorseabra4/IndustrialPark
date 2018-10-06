@@ -24,25 +24,25 @@ namespace IndustrialPark
             set => Write(0x58 + Offset, value);
         }
 
-        public int Unknown2
+        public AssetID AssetID_DYNA_NPCSettings
         {
-            get => ReadInt(0x5C + Offset);
+            get => ReadUInt(0x5C + Offset);
             set => Write(0x5C + Offset, value);
         }
 
-        public AssetID MVPTAssetID
+        public AssetID AssetID_MVPT
         {
             get => ReadUInt(0x60 + Offset);
             set => Write(0x60 + Offset, value);
         }
 
-        public AssetID DYNAAssetID_0
+        public AssetID AssetID_DYNA_1
         {
             get => ReadUInt(0x64 + Offset);
             set => Write(0x64 + Offset, value);
         }
 
-        public AssetID DYNAAssetID_1
+        public AssetID AssetID_DYNA_2
         {
             get => ReadUInt(0x68 + Offset);
             set => Write(0x68 + Offset, value);
