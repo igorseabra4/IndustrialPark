@@ -178,14 +178,53 @@ namespace IndustrialPark
             normalColor = widgetColor;
         }
 
+        public void SetTrigColor(System.Drawing.Color color)
+        {
+            SetTrigColor(new Vector4(color.R / 255f, color.G / 255f, color.B / 255f, trigColor.W));
+        }
+
+        public void SetTrigColor(Vector4 widgetColor)
+        {
+            widgetColor.W = trigColor.W;
+            trigColor = widgetColor;
+        }
+
+        public void SetMvptColor(System.Drawing.Color color)
+        {
+            SetMvptColor(new Vector4(color.R / 255f, color.G / 255f, color.B / 255f, mvptColor.W));
+        }
+
+        public void SetMvptColor(Vector4 widgetColor)
+        {
+            widgetColor.W = mvptColor.W;
+            mvptColor = widgetColor;
+        }
+
+        public void SetSfxColor(System.Drawing.Color color)
+        {
+            SetSfxColor(new Vector4(color.R / 255f, color.G / 255f, color.B / 255f, sfxColor.W));
+        }
+
+        public void SetSfxColor(Vector4 widgetColor)
+        {
+            widgetColor.W = sfxColor.W;
+            sfxColor = widgetColor;
+        }
+
         public void ResetColors()
         {
             normalColor = new Vector4(0.2f, 0.6f, 0.8f, 0.55f);
-            selectedColor = new Vector4(1f, 0.5f, 0.1f, 0.55f);
+            trigColor = new Vector4(0.3f, 0.8f, 0.7f, 0.4f);
+            mvptColor = new Vector4(0.7f, 0.2f, 0.6f, 0.5f);
+            sfxColor = new Vector4(1f, 0.2f, 0.2f, 0.35f);
+            selectedColor = new Vector4(1f, 0.5f, 0.1f, 0.5f);
             selectedObjectColor = new Vector4(1f, 0f, 0f, 1f);
         }
 
         public Vector4 normalColor;
+        public Vector4 trigColor;
+        public Vector4 mvptColor;
+        public Vector4 sfxColor;
         public Vector4 selectedColor;
         public Vector4 selectedObjectColor;
 
@@ -195,10 +234,7 @@ namespace IndustrialPark
 
             renderData.worldViewProjection = Matrix.Scaling(multiplier) * world * viewProjection;
 
-            if (isSelected)
-                renderData.Color = selectedColor;
-            else
-                renderData.Color = normalColor;
+            renderData.Color = isSelected ? selectedColor : normalColor;
 
             device.UpdateData(basicBuffer, renderData);
             device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer);
@@ -213,11 +249,8 @@ namespace IndustrialPark
 
             renderData.worldViewProjection = Matrix.Scaling(multiplier) * world * viewProjection;
 
-            if (isSelected)
-                renderData.Color = selectedColor;
-            else
-                renderData.Color = normalColor;
-            
+            renderData.Color = isSelected ? selectedColor : normalColor;
+
             device.UpdateData(basicBuffer, renderData);
             device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer);
             basicShader.Apply();
@@ -225,16 +258,13 @@ namespace IndustrialPark
             Pyramid.Draw(device);
         }
 
-        public void DrawSphere(Matrix world, bool isSelected)
+        public void DrawSphere(Matrix world, bool isSelected, Vector4 normalColor)
         {
             DefaultRenderData renderData;
 
             renderData.worldViewProjection = world * viewProjection;
 
-            if (isSelected)
-                renderData.Color = selectedColor;
-            else
-                renderData.Color = normalColor;
+            renderData.Color = isSelected ? selectedColor : normalColor;
 
             device.UpdateData(basicBuffer, renderData);
             device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer);

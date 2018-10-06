@@ -244,7 +244,7 @@ namespace IndustrialPark
                         if (currentGame == Game.BFBB)
                         {
                             AssetMVPT newAsset = new AssetMVPT(AHDR);
-                            newAsset.Setup(Program.MainForm.renderer);
+                            newAsset.Setup();
                             assetDictionary.Add(AHDR.assetID, newAsset);
                         }
                         else
@@ -304,6 +304,7 @@ namespace IndustrialPark
                 case AssetType.SFX:
                     {
                         AssetSFX newAsset = new AssetSFX(AHDR);
+                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
@@ -521,9 +522,10 @@ namespace IndustrialPark
                     internalEditors[i].Close();
         }
 
-        public void OpenInternalEditor()
+        public void OpenInternalEditor(Asset asset = null)
         {
-            Asset asset = GetFromAssetID(currentlySelectedAssetID);
+            if (asset == null)
+                asset = GetFromAssetID(currentlySelectedAssetID);
 
             for (int i = 0; i < internalEditors.Count; i++)
                 if (internalEditors[i].GetAssetID() == asset.AHDR.assetID)
@@ -537,6 +539,8 @@ namespace IndustrialPark
                 internalEditors.Add(new InternalTextEditor(TEXT, this));
             else if (asset.AHDR.assetType == AssetType.SND | asset.AHDR.assetType == AssetType.SNDS)
                 internalEditors.Add(new InternalSoundEditor(asset, this));
+            else if (asset is ObjectAsset objectAsset)
+                internalEditors.Add(new InternalObjectAssetEditor(objectAsset, this));
             else
                 internalEditors.Add(new InternalAssetEditor(asset, this));
 
@@ -571,7 +575,19 @@ namespace IndustrialPark
 
             return assetID;
         }
-        
+
+        public void FindWhoTargets(uint assetID)
+        {
+            foreach (Asset asset in assetDictionary.Values)
+                if (asset is ObjectAsset objectAsset)
+                    foreach (AssetEvent assetEvent in objectAsset.EventsBFBB)
+                        if (assetEvent.TargetAssetID == assetID)
+                        {
+                            OpenInternalEditor(asset);
+                            break;
+                        }
+        }
+
         public void RecalculateAllMatrices()
         {
             foreach (IRenderableAsset a in renderableAssetSetCommon)

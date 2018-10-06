@@ -66,8 +66,6 @@ namespace IndustrialPark
 
             if (autoSaveOnClosingToolStripMenuItem.Checked & !string.IsNullOrWhiteSpace(currentProjectPath))
                 SaveProject();
-
-            Application.Exit();
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -125,10 +123,11 @@ namespace IndustrialPark
 
             return new ProjectJson(hips, TextureManager.OpenTextureFolders.ToList(), renderer.Camera.Position,
                 renderer.Camera.Yaw, renderer.Camera.Pitch, renderer.Camera.Speed, renderer.Camera.SpeedRot, renderer.Camera.FieldOfView,renderer.Camera.FarPlane,
-                noCullingCToolStripMenuItem.Checked, wireframeFToolStripMenuItem.Checked, renderer.backgroundColor, renderer.normalColor,
-                useLegacyAssetIDFormatToolStripMenuItem.Checked, alternateNamingMode, AssetJSP.dontRender, AssetBOUL.dontRender, AssetBUTN.dontRender,
-                AssetCAM.dontRender, AssetDSTR.dontRender, AssetMRKR.dontRender, AssetMVPT.dontRender, AssetPLAT.dontRender, AssetPLAT.dontRender,
-                AssetPLYR.dontRender, AssetSIMP.dontRender, AssetTRIG.dontRender, AssetVIL.dontRender);
+                noCullingCToolStripMenuItem.Checked, wireframeFToolStripMenuItem.Checked, renderer.backgroundColor, renderer.normalColor, renderer.trigColor,
+                renderer.mvptColor, renderer.sfxColor, useLegacyAssetIDFormatToolStripMenuItem.Checked, alternateNamingMode,
+                AssetJSP.dontRender, AssetBOUL.dontRender, AssetBUTN.dontRender, AssetCAM.dontRender, AssetDSTR.dontRender, AssetMRKR.dontRender,
+                AssetMVPT.dontRender, AssetPLAT.dontRender, AssetPLAT.dontRender, AssetPLYR.dontRender, AssetSFX.dontRender, AssetSIMP.dontRender,
+                AssetTRIG.dontRender, AssetVIL.dontRender);
         }
 
         private void ApplySettings(string ipSettingsPath)
@@ -178,6 +177,9 @@ namespace IndustrialPark
 
             renderer.backgroundColor = ipSettings.BackgroundColor;
             renderer.SetWidgetColor(ipSettings.WidgetColor);
+            renderer.SetMvptColor(ipSettings.MvptColor);
+            renderer.SetTrigColor(ipSettings.TrigColor);
+            renderer.SetSfxColor(ipSettings.SfxColor);
 
             useLegacyAssetIDFormatToolStripMenuItem.Checked = ipSettings.UseLegacyAssetIDFormat;
             alternateNamingMode = ipSettings.AlternateNameDisplayMode;
@@ -211,6 +213,9 @@ namespace IndustrialPark
 
             pLYRToolStripMenuItem.Checked = !ipSettings.renderPLYR;
             AssetPLYR.dontRender = ipSettings.renderPLYR;
+
+            sFXToolStripMenuItem.Checked = !ipSettings.renderSFX;
+            AssetSFX.dontRender = ipSettings.renderSFX;
 
             sIMPToolStripMenuItem.Checked = !ipSettings.renderSIMP;
             AssetSIMP.dontRender = ipSettings.renderSIMP;
@@ -459,6 +464,27 @@ namespace IndustrialPark
                 renderer.SetSelectionColor(colorDialog.Color);
         }
 
+        private void mVPTColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog colorDialog = new ColorDialog();
+            if (colorDialog.ShowDialog() == DialogResult.OK)
+                renderer.SetMvptColor(colorDialog.Color);
+        }
+
+        private void tRIGColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog colorDialog = new ColorDialog();
+            if (colorDialog.ShowDialog() == DialogResult.OK)
+                renderer.SetMvptColor(colorDialog.Color);
+        }
+
+        private void sFXInColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog colorDialog = new ColorDialog();
+            if (colorDialog.ShowDialog() == DialogResult.OK)
+                renderer.SetSfxColor(colorDialog.Color);
+        }
+
         private void resetColorsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             renderer.ResetColors();
@@ -505,17 +531,26 @@ namespace IndustrialPark
             if (ArchiveEditorFunctions.FinishedMovingGizmo)
                 ArchiveEditorFunctions.FinishedMovingGizmo = false;
             else
-                ArchiveEditor.ScreenClicked(ray, isMouseDown);
+            {
+                if (isMouseDown)
+                    ArchiveEditorFunctions.GizmoSelect(ray);
+                else
+                {
+                    uint assetID = ArchiveEditorFunctions.GetClickedAssetID(ray);
+                    if (assetID != 0)
+                        Program.MainForm.SetSelectedIndex(assetID);
+                }
+            }
         }
 
         private void renderPanel_MouseUp(object sender, MouseEventArgs e)
         {
-            ArchiveEditor.ScreenUnclicked();
+            ArchiveEditorFunctions.ScreenUnclicked();
         }
 
         private void renderPanel_MouseLeave(object sender, EventArgs e)
         {
-            ArchiveEditor.ScreenUnclicked();
+            ArchiveEditorFunctions.ScreenUnclicked();
         }
 
         public void SetSelectedIndex(uint assetID)
@@ -614,6 +649,12 @@ namespace IndustrialPark
             AssetPLYR.dontRender = !pLYRToolStripMenuItem.Checked;
         }
 
+        private void sFXToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            sFXToolStripMenuItem.Checked = !sFXToolStripMenuItem.Checked;
+            AssetSFX.dontRender = !sFXToolStripMenuItem.Checked;
+        }
+
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.AboutBox.Show();
@@ -627,6 +668,12 @@ namespace IndustrialPark
                     return archiveEditor.GetAssetNameFromID(assetID);
             }
             return "0x" + assetID.ToString("X8");
+        }
+
+        public void FindWhoTargets(uint assetID)
+        {
+            foreach (ArchiveEditor archiveEditor in archiveEditors)
+                archiveEditor.FindWhoTargets(assetID);
         }
 
         private void useLegacyAssetIDFormatToolStripMenuItem_Click(object sender, EventArgs e)

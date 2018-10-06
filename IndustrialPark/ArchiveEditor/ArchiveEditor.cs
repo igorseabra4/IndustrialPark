@@ -482,23 +482,6 @@ namespace IndustrialPark
             }
         }
 
-        public static void ScreenClicked(Ray ray, bool isMouseDown)
-        {
-            if (isMouseDown)
-                ArchiveEditorFunctions.GizmoSelect(ray);
-            else
-            {
-                uint assetID = ArchiveEditorFunctions.GetClickedAssetID(ray);
-                if (assetID != 0)
-                    Program.MainForm.SetSelectedIndex(assetID);
-            }
-        }
-
-        public static void ScreenUnclicked()
-        {
-            ArchiveEditorFunctions.ScreenUnclicked();
-        }
-
         public void MouseMoveX(SharpCamera camera, int deltaX)
         {
             archive.MouseMoveX(camera, deltaX);
@@ -536,6 +519,11 @@ namespace IndustrialPark
                     return;
                 }
             }
+        }
+
+        public void FindWhoTargets(uint assetID)
+        {
+            archive.FindWhoTargets(assetID);
         }
 
         System.Drawing.Color defaultColor;

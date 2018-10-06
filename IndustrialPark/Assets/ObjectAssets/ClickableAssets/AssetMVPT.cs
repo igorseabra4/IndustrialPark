@@ -25,7 +25,7 @@ namespace IndustrialPark
         {
         }
 
-        public void Setup(SharpRenderer renderer)
+        public void Setup()
         {
             _position = new Vector3(ReadFloat(0x8), ReadFloat(0xC), ReadFloat(0x10));
             _distanceICanSeeYou = ReadFloat(0x24);
@@ -69,7 +69,7 @@ namespace IndustrialPark
             if (dontRender)
                 return null;
 
-            if (ray.Intersects(ref boundingSphere, out float distance2))
+            if (ray.Intersects(ref boundingSphere))
                     return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices);
             return null;
         }
@@ -106,7 +106,7 @@ namespace IndustrialPark
             if (_distanceICanSeeYou == -1f)
                 renderer.DrawPyramid(world, isSelected, 1f);
             else
-                renderer.DrawSphere(world, isSelected);
+                renderer.DrawSphere(world, isSelected, renderer.mvptColor);
         }
 
         public virtual Vector3 GetGizmoCenter()

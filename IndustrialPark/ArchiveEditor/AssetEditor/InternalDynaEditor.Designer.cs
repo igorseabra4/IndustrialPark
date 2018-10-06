@@ -32,6 +32,7 @@
             this.labelAssetName = new System.Windows.Forms.Label();
             this.propertyGridDynaType = new System.Windows.Forms.PropertyGrid();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.buttonFindCallers = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -41,7 +42,8 @@
             this.propertyGridAsset.HelpVisible = false;
             this.propertyGridAsset.Location = new System.Drawing.Point(3, 23);
             this.propertyGridAsset.Name = "propertyGridAsset";
-            this.propertyGridAsset.Size = new System.Drawing.Size(324, 192);
+            this.propertyGridAsset.PropertySort = System.Windows.Forms.PropertySort.Categorized;
+            this.propertyGridAsset.Size = new System.Drawing.Size(324, 181);
             this.propertyGridAsset.TabIndex = 5;
             this.propertyGridAsset.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGridAsset_PropertyValueChanged);
             // 
@@ -59,9 +61,10 @@
             // 
             this.propertyGridDynaType.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGridDynaType.HelpVisible = false;
-            this.propertyGridDynaType.Location = new System.Drawing.Point(3, 221);
+            this.propertyGridDynaType.Location = new System.Drawing.Point(3, 210);
             this.propertyGridDynaType.Name = "propertyGridDynaType";
-            this.propertyGridDynaType.Size = new System.Drawing.Size(324, 292);
+            this.propertyGridDynaType.PropertySort = System.Windows.Forms.PropertySort.Categorized;
+            this.propertyGridDynaType.Size = new System.Drawing.Size(324, 274);
             this.propertyGridDynaType.TabIndex = 7;
             this.propertyGridDynaType.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGridDynaType_PropertyValueChanged);
             // 
@@ -69,18 +72,32 @@
             // 
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Controls.Add(this.buttonFindCallers, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.propertyGridAsset, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.labelAssetName, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.propertyGridDynaType, 0, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
+            this.tableLayoutPanel1.RowCount = 4;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(330, 516);
             this.tableLayoutPanel1.TabIndex = 8;
+            // 
+            // buttonFindCallers
+            // 
+            this.buttonFindCallers.AutoSize = true;
+            this.buttonFindCallers.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonFindCallers.Location = new System.Drawing.Point(3, 490);
+            this.buttonFindCallers.Name = "buttonFindCallers";
+            this.buttonFindCallers.Size = new System.Drawing.Size(324, 23);
+            this.buttonFindCallers.TabIndex = 8;
+            this.buttonFindCallers.Text = "Find Who Targets Me";
+            this.buttonFindCallers.UseVisualStyleBackColor = true;
+            this.buttonFindCallers.Click += new System.EventHandler(this.buttonFindCallers_Click);
             // 
             // InternalDynaEditor
             // 
@@ -105,5 +122,6 @@
         private System.Windows.Forms.Label labelAssetName;
         private System.Windows.Forms.PropertyGrid propertyGridDynaType;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.Button buttonFindCallers;
     }
 }

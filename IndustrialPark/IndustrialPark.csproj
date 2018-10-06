@@ -83,6 +83,18 @@
     </Compile>
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions.cs" />
     <Compile Include="ArchiveEditor\AssetEditor\Gizmo.cs" />
+    <Compile Include="ArchiveEditor\AssetEditor\InternalAssetEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\AssetEditor\InternalAssetEditor.Designer.cs">
+      <DependentUpon>InternalAssetEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ArchiveEditor\AssetEditor\InternalObjectAssetEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\AssetEditor\InternalObjectAssetEditor.Designer.cs">
+      <DependentUpon>InternalObjectAssetEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="ArchiveEditor\AssetEditor\InternalSoundEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -94,12 +106,6 @@
     </Compile>
     <Compile Include="ArchiveEditor\AssetEditor\InternalCamEditor.Designer.cs">
       <DependentUpon>InternalCamEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\AssetEditor\InternalAssetEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\AssetEditor\InternalAssetEditor.Designer.cs">
-      <DependentUpon>InternalAssetEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="ArchiveEditor\AssetEditor\InternalDynaEditor.cs">
       <SubType>Form</SubType>
@@ -126,7 +132,7 @@
     <Compile Include="Assets\ObjectAssets\AssetCOND.cs" />
     <Compile Include="Assets\ObjectAssets\AssetDPAT.cs" />
     <Compile Include="Assets\ObjectAssets\AssetENV.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetSFX.cs" />
+    <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetSFX.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetCAM.cs" />
     <Compile Include="Assets\ObjectAssets\DYNA\AssetDYNA.cs" />
     <Compile Include="Assets\ObjectAssets\AssetFOG.cs" />
@@ -241,14 +247,17 @@
     <EmbeddedResource Include="ArchiveEditor\ArchiveEditor.resx">
       <DependentUpon>ArchiveEditor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveEditor\AssetEditor\InternalAssetEditor.resx">
+      <DependentUpon>InternalAssetEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveEditor\AssetEditor\InternalObjectAssetEditor.resx">
+      <DependentUpon>InternalObjectAssetEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\AssetEditor\InternalSoundEditor.resx">
       <DependentUpon>InternalSoundEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\AssetEditor\InternalCamEditor.resx">
       <DependentUpon>InternalCamEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\AssetEditor\InternalAssetEditor.resx">
-      <DependentUpon>InternalAssetEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\AssetEditor\InternalDynaEditor.resx">
       <DependentUpon>InternalDynaEditor.cs</DependentUpon>

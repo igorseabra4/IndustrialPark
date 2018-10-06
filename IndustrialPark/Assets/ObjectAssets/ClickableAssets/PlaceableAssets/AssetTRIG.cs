@@ -93,7 +93,7 @@ namespace IndustrialPark
             if (Shape == TriggerShape.Box)
                 renderer.DrawCube(world, isSelected, 1f);
             else
-                renderer.DrawSphere(world, isSelected);
+                renderer.DrawSphere(world, isSelected, renderer.trigColor);
         }
 
         public override float? IntersectsWith(Ray ray)
@@ -102,10 +102,10 @@ namespace IndustrialPark
                 return null;
 
             if (Shape == TriggerShape.Box)
-                if (ray.Intersects(ref boundingBox, out float distance))
+                if (ray.Intersects(ref boundingBox))
                     return TriangleIntersection(ray, SharpRenderer.cubeTriangles, SharpRenderer.cubeVertices);
             if (Shape == TriggerShape.Sphere)
-                if (ray.Intersects(ref boundingSphere, out float distance2))
+                if (ray.Intersects(ref boundingSphere))
                     return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices);
             return null;
         }

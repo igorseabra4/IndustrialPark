@@ -2,9 +2,9 @@
 
 namespace IndustrialPark
 {
-    public partial class InternalDynaEditor : Form, IInternalEditor
+    public partial class InternalObjectAssetEditor : Form, IInternalEditor
     {
-        public InternalDynaEditor(AssetDYNA asset, ArchiveEditorFunctions archive)
+        public InternalObjectAssetEditor(ObjectAsset asset, ArchiveEditorFunctions archive)
         {
             InitializeComponent();
             TopMost = true;
@@ -13,31 +13,20 @@ namespace IndustrialPark
             this.archive = archive;
 
             propertyGridAsset.SelectedObject = asset;
-            propertyGridDynaType.SelectedObject = asset.DynaBase;
             labelAssetName.Text = $"[{asset.AHDR.assetType.ToString()}] {asset.ToString()}";
         }
 
-        private void InternalDynaEditor_FormClosing(object sender, FormClosingEventArgs e)
+        private void InternalAssetEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
             archive.CloseInternalEditor(this);
         }
 
-        private AssetDYNA asset;
+        private ObjectAsset asset;
         private ArchiveEditorFunctions archive;
 
         public uint GetAssetID()
         {
             return asset.AHDR.assetID;
-        }
-
-        private void propertyGridAsset_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
-        {
-            propertyGridDynaType.SelectedObject = asset.DynaBase;
-        }
-
-        private void propertyGridDynaType_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
-        {
-            asset.DynaBase = (DynaBase)propertyGridDynaType.SelectedObject;
         }
 
         private void buttonFindCallers_Click(object sender, System.EventArgs e)
