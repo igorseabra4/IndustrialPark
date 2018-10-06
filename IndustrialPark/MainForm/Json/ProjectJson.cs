@@ -28,32 +28,68 @@ namespace IndustrialPark
         public bool UseLegacyAssetIDFormat;
         public bool AlternateNameDisplayMode;
 
-        public bool renderLevelModel;
-        public bool renderBOUL;
-        public bool renderBUTN;
-        public bool renderCAM;
-        public bool renderDSTR;
-        public bool renderMRKR;
-        public bool renderMVPT;
-        public bool renderPKUP;
-        public bool renderPLAT;
-        public bool renderPLYR;
-        public bool renderSFX;
-        public bool renderSIMP;
-        public bool renderTRIG;
-        public bool renderVIL;
+        public bool dontRenderLevelModel;
+        public bool dontRenderBOUL;
+        public bool dontRenderBUTN;
+        public bool dontRenderCAM;
+        public bool dontRenderDSTR;
+        public bool dontRenderMRKR;
+        public bool dontRenderMVPT;
+        public bool dontRenderPKUP;
+        public bool dontRenderPLAT;
+        public bool dontRenderPLYR;
+        public bool dontRenderSFX;
+        public bool dontRenderSIMP;
+        public bool dontRenderTRIG;
+        public bool dontRenderVIL;
 
         public ProjectJson()
         {
             hipPaths = new List<string>();
             TextureFolderPaths = new List<string>();
+
+            CamPos = new Vector3();
+            Yaw = 0;
+            Pitch = 0;
+            Speed = 5f;
+            SpeedRot = 5f;
+
+            FieldOfView = MathUtil.PiOverFour;
+            FarPlane = 10000F;
+
+            NoCulling = false;
+            Wireframe = false;
+
+            BackgroundColor = new Color4(0.05f, 0.05f, 0.15f, 1f);
+            WidgetColor = new Vector4(0.2f, 0.6f, 0.8f, 0.55f);
+            TrigColor = new Vector4(0.3f, 0.8f, 0.7f, 0.4f);
+            MvptColor = new Vector4(0.7f, 0.2f, 0.6f, 0.5f);
+            SfxColor = new Vector4(1f, 0.2f, 0.2f, 0.35f);
+
+            UseLegacyAssetIDFormat = false;
+            AlternateNameDisplayMode = false;
+
+            dontRenderLevelModel = false;
+            dontRenderBOUL = false;
+            dontRenderBUTN = false;
+            dontRenderCAM = false;
+            dontRenderDSTR = false;
+            dontRenderMRKR = false;
+            dontRenderMVPT = false;
+            dontRenderPKUP = false;
+            dontRenderPLAT = false;
+            dontRenderPLYR = false;
+            dontRenderSFX = false;
+            dontRenderSIMP = false;
+            dontRenderTRIG = false;
+            dontRenderVIL = false;
         }
 
         public ProjectJson(List<string> hipPaths, List<string> textureFolderPaths, Vector3 camPos, float yaw, float pitch, float speed, float speedRot,
             float fieldOfView, float farPlane, bool noCulling, bool wireframe, Color4 backgroundColor, Vector4 widgetColor, Vector4 trigColor,
-            Vector4 mvptColor, Vector4 sfxColor, bool useLegacyAssetIDFormat, bool alternateNameDisplayMode, bool renderLevelModel,
-            bool renderBOUL, bool renderBUTN, bool renderCAM, bool renderDSTR, bool renderMRKR, bool renderMVPT, bool renderPKUP, bool renderPLAT,
-            bool renderPLYR, bool renderSFX, bool renderSIMP, bool renderTRIG, bool renderVIL)
+            Vector4 mvptColor, Vector4 sfxColor, bool useLegacyAssetIDFormat, bool alternateNameDisplayMode, bool dontRenderLevelModel,
+            bool dontRenderBOUL, bool dontRenderBUTN, bool dontRenderCAM, bool dontRenderDSTR, bool dontRenderMRKR, bool dontRenderMVPT, bool dontRenderPKUP, bool dontRenderPLAT,
+            bool dontRenderPLYR, bool dontRenderSFX, bool dontRenderSIMP, bool dontRenderTRIG, bool dontRenderVIL)
         {
             this.hipPaths = hipPaths;
             TextureFolderPaths = textureFolderPaths;
@@ -73,20 +109,20 @@ namespace IndustrialPark
             SfxColor = sfxColor;
             UseLegacyAssetIDFormat = useLegacyAssetIDFormat;
             AlternateNameDisplayMode = alternateNameDisplayMode;
-            this.renderLevelModel = renderLevelModel;
-            this.renderBOUL = renderBOUL;
-            this.renderBUTN = renderBUTN;
-            this.renderCAM = renderCAM;
-            this.renderDSTR = renderDSTR;
-            this.renderMRKR = renderMRKR;
-            this.renderMVPT = renderMVPT;
-            this.renderPKUP = renderPKUP;
-            this.renderPLAT = renderPLAT;
-            this.renderPLYR = renderPLYR;
-            this.renderSFX = renderSFX;
-            this.renderSIMP = renderSIMP;
-            this.renderTRIG = renderTRIG;
-            this.renderVIL = renderVIL;
+            this.dontRenderLevelModel = dontRenderLevelModel;
+            this.dontRenderBOUL = dontRenderBOUL;
+            this.dontRenderBUTN = dontRenderBUTN;
+            this.dontRenderCAM = dontRenderCAM;
+            this.dontRenderDSTR = dontRenderDSTR;
+            this.dontRenderMRKR = dontRenderMRKR;
+            this.dontRenderMVPT = dontRenderMVPT;
+            this.dontRenderPKUP = dontRenderPKUP;
+            this.dontRenderPLAT = dontRenderPLAT;
+            this.dontRenderPLYR = dontRenderPLYR;
+            this.dontRenderSFX = dontRenderSFX;
+            this.dontRenderSIMP = dontRenderSIMP;
+            this.dontRenderTRIG = dontRenderTRIG;
+            this.dontRenderVIL = dontRenderVIL;
         }
     }
 }

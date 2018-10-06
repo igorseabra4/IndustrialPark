@@ -22,7 +22,7 @@ namespace IndustrialPark
         }
 
         private string pathToSettings = "ip_settings.json";
-        private string currentProjectPath = "default_project.json";
+        private string currentProjectPath;
 
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -47,7 +47,7 @@ namespace IndustrialPark
         {
             if (UnsavedChanges())
             {
-                DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you still wish to close and lose unsaved data?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you still wish to close them and lose unsaved data?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (result == DialogResult.No)
                 {
                     e.Cancel = true;
@@ -65,11 +65,32 @@ namespace IndustrialPark
             File.WriteAllText(pathToSettings, JsonConvert.SerializeObject(settings, Formatting.Indented));
 
             if (autoSaveOnClosingToolStripMenuItem.Checked & !string.IsNullOrWhiteSpace(currentProjectPath))
-                SaveProject();
+            {
+                SaveProject(currentProjectPath);
+            }
+        }
+
+        private void newToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (UnsavedChanges())
+            {
+                DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you still wish to close the and lose unsaved data?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (result == DialogResult.No)
+                    return;
+            }
+
+            ApplySettings(new ProjectJson());
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (UnsavedChanges())
+            {
+                DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you still wish to close the and lose unsaved data?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (result == DialogResult.No)
+                    return;
+            }
+
             OpenFileDialog openFile = new OpenFileDialog()
             { Filter = "JSON files|*.json" };
 
@@ -96,6 +117,8 @@ namespace IndustrialPark
 
         private void SaveProject(string fileName)
         {
+            if (fileName == null)
+                fileName = "default_project.json";
             currentProjectPath = fileName;
             SaveProject();
         }
@@ -138,11 +161,18 @@ namespace IndustrialPark
 
         private void ApplySettings(ProjectJson ipSettings)
         {
+            TextureManager.ClearTextures();
+
             foreach (string s in ipSettings.TextureFolderPaths)
                 if (Directory.Exists(s))
                     TextureManager.LoadTexturesFromFolder(s);
                 else
                     MessageBox.Show("Error loading textures from " + s + ": folder not found");
+
+            List<ArchiveEditor> aeList = new List<ArchiveEditor>();
+            aeList.AddRange(archiveEditors);
+            foreach (ArchiveEditor ae in aeList)
+                ae.CloseArchiveEditor();
 
             foreach (string s in ipSettings.hipPaths)
                 if (s == "Empty")
@@ -184,47 +214,50 @@ namespace IndustrialPark
             useLegacyAssetIDFormatToolStripMenuItem.Checked = ipSettings.UseLegacyAssetIDFormat;
             alternateNamingMode = ipSettings.AlternateNameDisplayMode;
 
-            levelModelToolStripMenuItem.Checked = !ipSettings.renderLevelModel;
-            AssetJSP.dontRender = ipSettings.renderLevelModel;
+            assetIDAssetNameToolStripMenuItem.Checked = alternateNamingMode;
+            assetNameAssetIDToolStripMenuItem.Checked = !alternateNamingMode;
 
-            bOULToolStripMenuItem.Checked = !ipSettings.renderBOUL;
-            AssetBOUL.dontRender = ipSettings.renderBOUL;
+            levelModelToolStripMenuItem.Checked = !ipSettings.dontRenderLevelModel;
+            AssetJSP.dontRender = ipSettings.dontRenderLevelModel;
 
-            bUTNToolStripMenuItem.Checked = !ipSettings.renderBUTN;
-            AssetBUTN.dontRender = ipSettings.renderBUTN;
+            bOULToolStripMenuItem.Checked = !ipSettings.dontRenderBOUL;
+            AssetBOUL.dontRender = ipSettings.dontRenderBOUL;
 
-            cAMToolStripMenuItem.Checked = !ipSettings.renderCAM;
-            AssetCAM.dontRender = ipSettings.renderCAM;
+            bUTNToolStripMenuItem.Checked = !ipSettings.dontRenderBUTN;
+            AssetBUTN.dontRender = ipSettings.dontRenderBUTN;
 
-            dSTRToolStripMenuItem.Checked = !ipSettings.renderDSTR;
-            AssetDSTR.dontRender = ipSettings.renderDSTR;
+            cAMToolStripMenuItem.Checked = !ipSettings.dontRenderCAM;
+            AssetCAM.dontRender = ipSettings.dontRenderCAM;
 
-            mRKRToolStripMenuItem.Checked = !ipSettings.renderMRKR;
-            AssetMRKR.dontRender = ipSettings.renderMRKR;
+            dSTRToolStripMenuItem.Checked = !ipSettings.dontRenderDSTR;
+            AssetDSTR.dontRender = ipSettings.dontRenderDSTR;
 
-            mVPTToolStripMenuItem.Checked = !ipSettings.renderMVPT;
-            AssetMVPT.dontRender = ipSettings.renderMVPT;
+            mRKRToolStripMenuItem.Checked = !ipSettings.dontRenderMRKR;
+            AssetMRKR.dontRender = ipSettings.dontRenderMRKR;
 
-            pKUPToolStripMenuItem.Checked = !ipSettings.renderPKUP;
-            AssetPKUP.dontRender = ipSettings.renderPKUP;
+            mVPTToolStripMenuItem.Checked = !ipSettings.dontRenderMVPT;
+            AssetMVPT.dontRender = ipSettings.dontRenderMVPT;
 
-            pLATToolStripMenuItem.Checked = !ipSettings.renderPLAT;
-            AssetPLAT.dontRender = ipSettings.renderPLAT;
+            pKUPToolStripMenuItem.Checked = !ipSettings.dontRenderPKUP;
+            AssetPKUP.dontRender = ipSettings.dontRenderPKUP;
 
-            pLYRToolStripMenuItem.Checked = !ipSettings.renderPLYR;
-            AssetPLYR.dontRender = ipSettings.renderPLYR;
+            pLATToolStripMenuItem.Checked = !ipSettings.dontRenderPLAT;
+            AssetPLAT.dontRender = ipSettings.dontRenderPLAT;
 
-            sFXToolStripMenuItem.Checked = !ipSettings.renderSFX;
-            AssetSFX.dontRender = ipSettings.renderSFX;
+            pLYRToolStripMenuItem.Checked = !ipSettings.dontRenderPLYR;
+            AssetPLYR.dontRender = ipSettings.dontRenderPLYR;
 
-            sIMPToolStripMenuItem.Checked = !ipSettings.renderSIMP;
-            AssetSIMP.dontRender = ipSettings.renderSIMP;
+            sFXToolStripMenuItem.Checked = !ipSettings.dontRenderSFX;
+            AssetSFX.dontRender = ipSettings.dontRenderSFX;
 
-            tRIGToolStripMenuItem.Checked = !ipSettings.renderTRIG;
-            AssetTRIG.dontRender = ipSettings.renderTRIG;
+            sIMPToolStripMenuItem.Checked = !ipSettings.dontRenderSIMP;
+            AssetSIMP.dontRender = ipSettings.dontRenderSIMP;
 
-            vILToolStripMenuItem.Checked = !ipSettings.renderVIL;
-            AssetVIL.dontRender = ipSettings.renderVIL;
+            tRIGToolStripMenuItem.Checked = !ipSettings.dontRenderTRIG;
+            AssetTRIG.dontRender = ipSettings.dontRenderTRIG;
+
+            vILToolStripMenuItem.Checked = !ipSettings.dontRenderVIL;
+            AssetVIL.dontRender = ipSettings.dontRenderVIL;
         }
 
         public void SetToolStripStatusLabel(string Text)
@@ -680,6 +713,20 @@ namespace IndustrialPark
         {
             useLegacyAssetIDFormatToolStripMenuItem.Checked = !useLegacyAssetIDFormatToolStripMenuItem.Checked;
             AssetIDTypeConverter.Legacy = useLegacyAssetIDFormatToolStripMenuItem.Checked;
+        }
+
+        private void assetNameAssetIDToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            assetIDAssetNameToolStripMenuItem.Checked = false;
+            assetNameAssetIDToolStripMenuItem.Checked = true;
+            alternateNamingMode = false;
+        }
+
+        private void assetIDAssetNameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            assetIDAssetNameToolStripMenuItem.Checked = true;
+            assetNameAssetIDToolStripMenuItem.Checked = false;
+            alternateNamingMode = true;
         }
     }
 }

@@ -90,8 +90,13 @@ namespace IndustrialPark
                 if (result == DialogResult.Yes) archive.Save();
             }
 
+            CloseArchiveEditor();
+        }
+
+        public void CloseArchiveEditor()
+        {
             archive.Dispose();
-            
+
             Program.MainForm.CloseAssetEditor(this);
             Close();
         }
@@ -546,30 +551,6 @@ namespace IndustrialPark
         private void fileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             clickThisToolStripMenuItem.Visible = false;
-            if (MainForm.alternateNamingMode)
-            {
-                assetIDAssetNameToolStripMenuItem.Checked = true;
-                assetNameAssetIDToolStripMenuItem.Checked = false;
-            }
-            else
-            {
-                assetIDAssetNameToolStripMenuItem.Checked = false;
-                assetNameAssetIDToolStripMenuItem.Checked = true;
-            }
-        }
-        
-        private void assetNameAssetIDToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            assetIDAssetNameToolStripMenuItem.Checked = false;
-            assetNameAssetIDToolStripMenuItem.Checked = true;
-            MainForm.alternateNamingMode = false;
-        }
-
-        private void assetIDAssetNameToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            assetIDAssetNameToolStripMenuItem.Checked = true;
-            assetNameAssetIDToolStripMenuItem.Checked = false;
-            MainForm.alternateNamingMode = true;
         }
 
         private void exportTexturesToolStripMenuItem_Click(object sender, EventArgs e)

@@ -213,6 +213,7 @@ namespace IndustrialPark
 
         public void ResetColors()
         {
+            backgroundColor = new Color4(0.05f, 0.05f, 0.15f, 1f);
             normalColor = new Vector4(0.2f, 0.6f, 0.8f, 0.55f);
             trigColor = new Vector4(0.3f, 0.8f, 0.7f, 0.4f);
             mvptColor = new Vector4(0.7f, 0.2f, 0.6f, 0.5f);
@@ -274,7 +275,7 @@ namespace IndustrialPark
         }
 
         public Matrix viewProjection;
-        public Color4 backgroundColor = new Color4(0.05f, 0.05f, 0.15f, 1f);
+        public Color4 backgroundColor;
         public BoundingFrustum frustum;
 
         public void RunMainLoop(Panel Panel)

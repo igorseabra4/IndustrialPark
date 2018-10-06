@@ -36,6 +36,7 @@ namespace IndustrialPark
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.projectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -57,8 +58,10 @@ namespace IndustrialPark
             this.tRIGColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sFXInColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectionColorToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.useLegacyAssetIDFormatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.nameDisplayModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.assetNameAssetIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.assetIDAssetNameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.displayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -121,6 +124,7 @@ namespace IndustrialPark
             // projectToolStripMenuItem
             // 
             this.projectToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newToolStripMenuItem1,
             this.openToolStripMenuItem,
             this.saveToolStripMenuItem,
             this.saveAsToolStripMenuItem,
@@ -130,6 +134,13 @@ namespace IndustrialPark
             this.projectToolStripMenuItem.Name = "projectToolStripMenuItem";
             this.projectToolStripMenuItem.Size = new System.Drawing.Size(56, 20);
             this.projectToolStripMenuItem.Text = "Project";
+            // 
+            // newToolStripMenuItem1
+            // 
+            this.newToolStripMenuItem1.Name = "newToolStripMenuItem1";
+            this.newToolStripMenuItem1.Size = new System.Drawing.Size(191, 22);
+            this.newToolStripMenuItem1.Text = "New";
+            this.newToolStripMenuItem1.Click += new System.EventHandler(this.newToolStripMenuItem1_Click);
             // 
             // openToolStripMenuItem
             // 
@@ -182,11 +193,11 @@ namespace IndustrialPark
             this.addTextureFolderToolStripMenuItem,
             this.clearTexturesToolStripMenuItem,
             this.toolStripSeparator4,
+            this.colorsToolStripMenuItem,
             this.noCullingCToolStripMenuItem,
             this.wireframeFToolStripMenuItem,
-            this.colorsToolStripMenuItem,
-            this.toolStripSeparator1,
             this.useLegacyAssetIDFormatToolStripMenuItem,
+            this.nameDisplayModeToolStripMenuItem,
             this.toolStripSeparator2,
             this.aboutToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
@@ -296,17 +307,37 @@ namespace IndustrialPark
             this.selectionColorToolStripMenuItem1.Text = "Selection Color...";
             this.selectionColorToolStripMenuItem1.Click += new System.EventHandler(this.selectionColorToolStripMenuItem_Click);
             // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(216, 6);
-            // 
             // useLegacyAssetIDFormatToolStripMenuItem
             // 
             this.useLegacyAssetIDFormatToolStripMenuItem.Name = "useLegacyAssetIDFormatToolStripMenuItem";
             this.useLegacyAssetIDFormatToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
             this.useLegacyAssetIDFormatToolStripMenuItem.Text = "Use Legacy Asset ID Format";
             this.useLegacyAssetIDFormatToolStripMenuItem.Click += new System.EventHandler(this.useLegacyAssetIDFormatToolStripMenuItem_Click);
+            // 
+            // nameDisplayModeToolStripMenuItem
+            // 
+            this.nameDisplayModeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.assetNameAssetIDToolStripMenuItem,
+            this.assetIDAssetNameToolStripMenuItem});
+            this.nameDisplayModeToolStripMenuItem.Name = "nameDisplayModeToolStripMenuItem";
+            this.nameDisplayModeToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.nameDisplayModeToolStripMenuItem.Text = "Name Display Mode";
+            // 
+            // assetNameAssetIDToolStripMenuItem
+            // 
+            this.assetNameAssetIDToolStripMenuItem.Checked = true;
+            this.assetNameAssetIDToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.assetNameAssetIDToolStripMenuItem.Name = "assetNameAssetIDToolStripMenuItem";
+            this.assetNameAssetIDToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.assetNameAssetIDToolStripMenuItem.Text = "AssetName [AssetID]";
+            this.assetNameAssetIDToolStripMenuItem.Click += new System.EventHandler(this.assetNameAssetIDToolStripMenuItem_Click);
+            // 
+            // assetIDAssetNameToolStripMenuItem
+            // 
+            this.assetIDAssetNameToolStripMenuItem.Name = "assetIDAssetNameToolStripMenuItem";
+            this.assetIDAssetNameToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.assetIDAssetNameToolStripMenuItem.Text = "[AssetID] AssetName";
+            this.assetIDAssetNameToolStripMenuItem.Click += new System.EventHandler(this.assetIDAssetNameToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
@@ -535,7 +566,6 @@ namespace IndustrialPark
         private ToolStripMenuItem noCullingCToolStripMenuItem;
         private ToolStripMenuItem wireframeFToolStripMenuItem;
         private ToolStripMenuItem viewConfigToolStripMenuItem;
-        private ToolStripSeparator toolStripSeparator1;
         private ToolStripMenuItem archiveEditorToolStripMenuItem;
         private ToolStripMenuItem newToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator3;
@@ -575,6 +605,10 @@ namespace IndustrialPark
         private ToolStripMenuItem mVPTColorToolStripMenuItem;
         private ToolStripMenuItem tRIGColorToolStripMenuItem;
         private ToolStripMenuItem sFXInColorToolStripMenuItem;
+        private ToolStripMenuItem newToolStripMenuItem1;
+        private ToolStripMenuItem nameDisplayModeToolStripMenuItem;
+        private ToolStripMenuItem assetNameAssetIDToolStripMenuItem;
+        private ToolStripMenuItem assetIDAssetNameToolStripMenuItem;
     }
 }
 
