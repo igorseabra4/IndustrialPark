@@ -79,6 +79,7 @@ namespace IndustrialPark
                     return;
             }
 
+            currentProjectPath = null;
             ApplySettings(new ProjectJson());
         }
 
