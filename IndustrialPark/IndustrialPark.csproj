@@ -138,6 +138,8 @@
     <Compile Include="Assets\Shared\AssetEventTSSM.cs" />
     <Compile Include="Assets\Shared\Enums\EventTypeTSSM.cs" />
     <Compile Include="Assets\Shared\TypeConverter\HexIntTypeConverter.cs" />
+    <Compile Include="MainForm\Json\IPSettings.cs" />
+    <Compile Include="MainForm\Json\ProjectJson.cs" />
     <Compile Include="Other\OBJFunctions.cs" />
     <Compile Include="Assets\Shared\Colors\MyColor.cs" />
     <Compile Include="Assets\Shared\Colors\MyColorConverter.cs" />

@@ -16,15 +16,9 @@ namespace IndustrialPark
     {
         public static bool dontRender = false;
 
-        protected override bool DontRender()
-        {
-            return dontRender;
-        }
+        protected override bool DontRender { get => dontRender; }
 
-        protected override int EventStartOffset
-        {
-            get => 0x94 + Offset;
-        }
+        protected override int EventStartOffset { get => 0x94 + Offset; }
 
         public BoundingSphere boundingSphere;
 

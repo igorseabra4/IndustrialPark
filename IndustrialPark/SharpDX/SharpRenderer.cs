@@ -6,6 +6,7 @@ using SharpDX.Windows;
 using System.Collections.Generic;
 using static IndustrialPark.Models.OBJFunctions;
 using System.Linq;
+using System;
 
 namespace IndustrialPark
 {
@@ -35,7 +36,7 @@ namespace IndustrialPark
             sharpFPS = new SharpFPS();
             Camera.AspectRatio = (float)control.ClientSize.Width / control.ClientSize.Height;
             Camera.Reset();
-            ResetSelectionColor();
+            ResetColors();
             SetSharpShader();
             LoadTexture();
         }
@@ -168,10 +169,16 @@ namespace IndustrialPark
 
         public void SetWidgetColor(System.Drawing.Color color)
         {
-            normalColor = new Vector4(color.R / 255f, color.G / 255f, color.B / 255f, normalColor.W);
+            SetWidgetColor(new Vector4(color.R / 255f, color.G / 255f, color.B / 255f, normalColor.W));
         }
 
-        public void ResetSelectionColor()
+        public void SetWidgetColor(Vector4 widgetColor)
+        {
+            widgetColor.W = normalColor.W;
+            normalColor = widgetColor;
+        }
+
+        public void ResetColors()
         {
             normalColor = new Vector4(0.2f, 0.6f, 0.8f, 0.55f);
             selectedColor = new Vector4(1f, 0.5f, 0.1f, 0.55f);

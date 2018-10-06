@@ -6,15 +6,9 @@ namespace IndustrialPark
     {
         public static bool dontRender = false;
 
-        protected override bool DontRender()
-        {
-            return dontRender;
-        }
+        protected override bool DontRender { get => dontRender; }
 
-        protected override int EventStartOffset
-        {
-            get => 0xC0 + Offset;
-        }
+        protected override int EventStartOffset { get => 0xC0 + Offset; }
 
         public AssetPLAT(Section_AHDR AHDR) : base(AHDR) { }
 
@@ -30,7 +24,7 @@ namespace IndustrialPark
             set => Write(0x55 + Offset, value);
         }
 
-        public short UnknownShort_56
+        public short CollisionType
         {
             get => ReadShort(0x56 + Offset);
             set => Write(0x56 + Offset, value);

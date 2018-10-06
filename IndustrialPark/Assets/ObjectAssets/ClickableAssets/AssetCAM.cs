@@ -49,6 +49,9 @@ namespace IndustrialPark
 
         public float? IntersectsWith(Ray ray)
         {
+            if (dontRender)
+                return null;
+
             if (ray.Intersects(ref boundingBox, out float distance))
                 return TriangleIntersection(ray, distance, SharpRenderer.pyramidTriangles, SharpRenderer.pyramidVertices);
             return null;

@@ -15,7 +15,7 @@ namespace IndustrialPark
         public ArchiveEditorFunctions archive;
         public bool UnsavedChanges { get; private set; } = false;
 
-        public ArchiveEditor()
+        public ArchiveEditor(string filePath)
         {
             InitializeComponent();
             TopMost = true;
@@ -30,6 +30,9 @@ namespace IndustrialPark
             }
 
             programIsChangingStuff = false;
+
+            if (!string.IsNullOrWhiteSpace(filePath))
+                OpenFile(filePath);
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -108,6 +111,14 @@ namespace IndustrialPark
         public string GetAssetNameFromID(uint assetID)
         {
             return archive.GetFromAssetID(assetID).AHDR.ADBG.assetName;
+        }
+
+        public string GetCurrentlyOpenFileName()
+        {
+            if (string.IsNullOrWhiteSpace(archive.currentlyOpenFilePath))
+                return "Empty";
+            else
+                return archive.currentlyOpenFilePath;
         }
 
         private string LayerToString(int index)

@@ -4,7 +4,9 @@ using SharpDX.Direct3D11;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 
 namespace IndustrialPark
 {
@@ -20,15 +22,204 @@ namespace IndustrialPark
         }
 
         private string pathToSettings = "ip_settings.json";
+        private string currentProjectPath = "default_project.json";
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            if (!File.Exists(pathToSettings))
+            if (File.Exists(pathToSettings))
             {
-                File.Create(pathToSettings);
+                IPSettings settings = JsonConvert.DeserializeObject<IPSettings>(File.ReadAllText(pathToSettings));
+
+                autoSaveOnClosingToolStripMenuItem.Checked = settings.AutosaveOnClose;
+                autoLoadOnStartupToolStripMenuItem.Checked = settings.AutoloadOnStartup;
+
+                if (settings.AutoloadOnStartup)
+                    ApplySettings(settings.LastProjectPath);
+            }
+            else
+            {
                 MessageBox.Show("It appears this is your first time using Industrial Park.\nPlease consult the documentation on the BFBB Modding Wiki to understand how to use the tool if you haven't already.\nAlso, be sure to check individual asset pages if you're not sure what one of them or their settings do.");
                 Program.AboutBox.Show();
             }
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (UnsavedChanges())
+            {
+                DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you still wish to close and lose unsaved data?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (result == DialogResult.No)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+            }
+
+            IPSettings settings = new IPSettings
+            {
+                AutosaveOnClose = autoSaveOnClosingToolStripMenuItem.Checked,
+                AutoloadOnStartup = autoLoadOnStartupToolStripMenuItem.Checked,
+                LastProjectPath = currentProjectPath
+            };
+
+            File.WriteAllText(pathToSettings, JsonConvert.SerializeObject(settings, Formatting.Indented));
+
+            if (autoSaveOnClosingToolStripMenuItem.Checked & !string.IsNullOrWhiteSpace(currentProjectPath))
+                SaveProject();
+
+            Application.Exit();
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFile = new OpenFileDialog()
+            { Filter = "JSON files|*.json" };
+
+            if (openFile.ShowDialog() == DialogResult.OK)
+                ApplySettings(openFile.FileName);
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(currentProjectPath))
+                SaveProject();
+            else
+                saveAsToolStripMenuItem_Click(null, null);
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFile = new SaveFileDialog()
+            { Filter = "JSON files|*.json" };
+
+            if (saveFile.ShowDialog() == DialogResult.OK)
+                SaveProject(saveFile.FileName);
+        }
+
+        private void SaveProject(string fileName)
+        {
+            currentProjectPath = fileName;
+            SaveProject();
+        }
+
+        private void SaveProject()
+        {
+            File.WriteAllText(currentProjectPath, JsonConvert.SerializeObject(FromCurrentInstance(), Formatting.Indented));
+        }
+
+        private void autoLoadOnStartupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            autoLoadOnStartupToolStripMenuItem.Checked = !autoLoadOnStartupToolStripMenuItem.Checked;
+        }
+
+        private void autoSaveOnClosingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            autoSaveOnClosingToolStripMenuItem.Checked = !autoSaveOnClosingToolStripMenuItem.Checked;
+        }
+
+        public ProjectJson FromCurrentInstance()
+        {
+            List<string> hips = new List<string>();
+            foreach (ArchiveEditor ae in archiveEditors)
+                hips.Add(ae.GetCurrentlyOpenFileName());
+
+            return new ProjectJson(hips, TextureManager.OpenTextureFolders.ToList(), renderer.Camera.Position,
+                renderer.Camera.Yaw, renderer.Camera.Pitch, renderer.Camera.Speed, renderer.Camera.SpeedRot, renderer.Camera.FieldOfView,renderer.Camera.FarPlane,
+                noCullingCToolStripMenuItem.Checked, wireframeFToolStripMenuItem.Checked, renderer.backgroundColor, renderer.normalColor,
+                useLegacyAssetIDFormatToolStripMenuItem.Checked, alternateNamingMode, AssetJSP.dontRender, AssetBOUL.dontRender, AssetBUTN.dontRender,
+                AssetCAM.dontRender, AssetDSTR.dontRender, AssetMRKR.dontRender, AssetMVPT.dontRender, AssetPLAT.dontRender, AssetPLAT.dontRender,
+                AssetPLYR.dontRender, AssetSIMP.dontRender, AssetTRIG.dontRender, AssetVIL.dontRender);
+        }
+
+        private void ApplySettings(string ipSettingsPath)
+        {
+            currentProjectPath = ipSettingsPath;
+            ApplySettings(JsonConvert.DeserializeObject<ProjectJson>(File.ReadAllText(ipSettingsPath)));
+        }
+
+        private void ApplySettings(ProjectJson ipSettings)
+        {
+            foreach (string s in ipSettings.TextureFolderPaths)
+                if (Directory.Exists(s))
+                    TextureManager.LoadTexturesFromFolder(s);
+                else
+                    MessageBox.Show("Error loading textures from " + s + ": folder not found");
+
+            foreach (string s in ipSettings.hipPaths)
+                if (s == "Empty")
+                    AddArchiveEditor();
+                else
+                {
+                    if (File.Exists(s))
+                        AddArchiveEditor(s);
+                    else
+                        MessageBox.Show("Error opening " + s + ": file not found");
+                }
+
+            renderer.Camera.SetPosition(ipSettings.CamPos);
+            renderer.Camera.Yaw = ipSettings.Yaw;
+            renderer.Camera.Pitch = ipSettings.Pitch;
+            renderer.Camera.Speed = ipSettings.Speed;
+            renderer.Camera.SpeedRot = ipSettings.Speed;
+            renderer.Camera.FieldOfView = ipSettings.FieldOfView;
+            renderer.Camera.FarPlane = ipSettings.FarPlane;
+
+            noCullingCToolStripMenuItem.Checked = ipSettings.NoCulling;
+            if (noCullingCToolStripMenuItem.Checked)
+                renderer.device.SetNormalCullMode(CullMode.None);
+            else
+                renderer.device.SetNormalCullMode(CullMode.Back);
+
+            wireframeFToolStripMenuItem.Checked = ipSettings.Wireframe;
+            if (wireframeFToolStripMenuItem.Checked)
+                renderer.device.SetNormalFillMode(FillMode.Wireframe);
+            else
+                renderer.device.SetNormalFillMode(FillMode.Solid);
+
+            renderer.backgroundColor = ipSettings.BackgroundColor;
+            renderer.SetWidgetColor(ipSettings.WidgetColor);
+
+            useLegacyAssetIDFormatToolStripMenuItem.Checked = ipSettings.UseLegacyAssetIDFormat;
+            alternateNamingMode = ipSettings.AlternateNameDisplayMode;
+
+            levelModelToolStripMenuItem.Checked = !ipSettings.renderLevelModel;
+            AssetJSP.dontRender = ipSettings.renderLevelModel;
+
+            bOULToolStripMenuItem.Checked = !ipSettings.renderBOUL;
+            AssetBOUL.dontRender = ipSettings.renderBOUL;
+
+            bUTNToolStripMenuItem.Checked = !ipSettings.renderBUTN;
+            AssetBUTN.dontRender = ipSettings.renderBUTN;
+
+            cAMToolStripMenuItem.Checked = !ipSettings.renderCAM;
+            AssetCAM.dontRender = ipSettings.renderCAM;
+
+            dSTRToolStripMenuItem.Checked = !ipSettings.renderDSTR;
+            AssetDSTR.dontRender = ipSettings.renderDSTR;
+
+            mRKRToolStripMenuItem.Checked = !ipSettings.renderMRKR;
+            AssetMRKR.dontRender = ipSettings.renderMRKR;
+
+            mVPTToolStripMenuItem.Checked = !ipSettings.renderMVPT;
+            AssetMVPT.dontRender = ipSettings.renderMVPT;
+
+            pKUPToolStripMenuItem.Checked = !ipSettings.renderPKUP;
+            AssetPKUP.dontRender = ipSettings.renderPKUP;
+
+            pLATToolStripMenuItem.Checked = !ipSettings.renderPLAT;
+            AssetPLAT.dontRender = ipSettings.renderPLAT;
+
+            pLYRToolStripMenuItem.Checked = !ipSettings.renderPLYR;
+            AssetPLYR.dontRender = ipSettings.renderPLYR;
+
+            sIMPToolStripMenuItem.Checked = !ipSettings.renderSIMP;
+            AssetSIMP.dontRender = ipSettings.renderSIMP;
+
+            tRIGToolStripMenuItem.Checked = !ipSettings.renderTRIG;
+            AssetTRIG.dontRender = ipSettings.renderTRIG;
+
+            vILToolStripMenuItem.Checked = !ipSettings.renderVIL;
+            AssetVIL.dontRender = ipSettings.renderVIL;
         }
 
         public void SetToolStripStatusLabel(string Text)
@@ -168,11 +359,16 @@ namespace IndustrialPark
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ArchiveEditor temp = new ArchiveEditor();
+            AddArchiveEditor();
+        }
+
+        private void AddArchiveEditor(string filePath = null)
+        {
+            ArchiveEditor temp = new ArchiveEditor(filePath);
             archiveEditors.Add(temp);
             temp.Show();
 
-            ToolStripMenuItem tempMenuItem = new ToolStripMenuItem("Empty");
+            ToolStripMenuItem tempMenuItem = new ToolStripMenuItem(Path.GetFileName(temp.GetCurrentlyOpenFileName()));
             tempMenuItem.Click += new EventHandler(ToolStripClick);
 
             archiveEditorToolStripMenuItem.DropDownItems.Add(tempMenuItem);
@@ -202,6 +398,15 @@ namespace IndustrialPark
                 ae.DisposeAll();
         }
 
+        private bool UnsavedChanges()
+        {
+            foreach (ArchiveEditor ae in archiveEditors)
+                if (ae.UnsavedChanges)
+                    return true;
+
+            return false;
+        }
+
         private void noCullingCToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ToggleCulling();
@@ -225,13 +430,9 @@ namespace IndustrialPark
         {
             wireframeFToolStripMenuItem.Checked = !wireframeFToolStripMenuItem.Checked;
             if (wireframeFToolStripMenuItem.Checked)
-            {
                 renderer.device.SetNormalFillMode(FillMode.Wireframe);
-            }
             else
-            {
                 renderer.device.SetNormalFillMode(FillMode.Solid);
-            }
         }
 
         private void backgroundColorToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -258,14 +459,14 @@ namespace IndustrialPark
                 renderer.SetSelectionColor(colorDialog.Color);
         }
 
+        private void resetColorsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            renderer.ResetColors();
+        }
+
         private void toolStripStatusLabel1_Click(object sender, EventArgs e)
         {
             Program.ViewConfig.Show();
-        }
-
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            Application.Exit();
         }
 
         private void viewConfigToolStripMenuItem_Click(object sender, EventArgs e)

@@ -10,6 +10,8 @@ namespace IndustrialPark
         protected Matrix world;
         protected BoundingBox boundingBox;
 
+        protected abstract bool DontRender { get; }
+
         public PlaceableAsset(Section_AHDR AHDR) : base(AHDR) { }
 
         public virtual void Setup()
@@ -50,11 +52,9 @@ namespace IndustrialPark
             boundingBox.Minimum = (Vector3)Vector3.Transform(boundingBox.Minimum, world);
         }
 
-        protected abstract bool DontRender();
-
         public virtual void Draw(SharpRenderer renderer)
         {
-            if (DontRender()) return;
+            if (DontRender) return;
 
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
                 ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * _color : _color);
@@ -64,7 +64,7 @@ namespace IndustrialPark
 
         public virtual float? IntersectsWith(Ray ray)
         {
-            if (DontRender())
+            if (DontRender)
                 return null;
 
             if (ray.Intersects(ref boundingBox, out float distance))

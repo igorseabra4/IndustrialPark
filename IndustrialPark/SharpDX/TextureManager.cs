@@ -3,7 +3,6 @@ using System.IO;
 using SharpDX.Direct3D11;
 using RenderWareFile;
 using RenderWareFile.Sections;
-using System;
 
 namespace IndustrialPark
 {
