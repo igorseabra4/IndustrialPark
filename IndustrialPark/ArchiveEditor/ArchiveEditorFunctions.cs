@@ -93,10 +93,11 @@ namespace IndustrialPark
 
         public void Dispose()
         {
-            foreach (uint key in assetDictionary.Keys)
-                DisposeAsset(key);
+            List<uint> assetList = new List<uint>();
+            assetList.AddRange(assetDictionary.Keys);
 
-            assetDictionary.Clear();
+            foreach (uint assetID in assetList)
+                RemoveAsset(assetID);
 
             if (DICT == null) return;
             HIPA = null;
@@ -439,21 +440,7 @@ namespace IndustrialPark
                 if (DICT.LTOC.LHDRList[i].assetIDlist.Contains(assetID))
                     DICT.LTOC.LHDRList[i].assetIDlist.Remove(assetID);
 
-            DisposeAsset(assetID);
-
-            DICT.ATOC.AHDRList.Remove(assetDictionary[assetID].AHDR);
-
-            if (GetFromAssetID(assetID).AHDR.assetType == AssetType.SND | GetFromAssetID(assetID).AHDR.assetType == AssetType.SNDS)
-                RemoveSoundFromSNDI(assetID);
-
-            assetDictionary.Remove(assetID);
-
-            currentlySelectedAssetID = 0;
-        }
-
-        private void DisposeAsset(uint key)
-        {
-            if (assetDictionary[key] is IRenderableAsset ra)
+            if (assetDictionary[assetID] is IRenderableAsset ra)
             {
                 if (renderableAssetSetCommon.Contains(ra))
                     renderableAssetSetCommon.Remove(ra);
@@ -463,17 +450,24 @@ namespace IndustrialPark
                     renderableAssetSetJSP.Remove((AssetJSP)ra);
             }
 
-            if (renderingDictionary.ContainsKey(key))
-                renderingDictionary.Remove(key);
+            if (renderingDictionary.ContainsKey(assetID))
+                renderingDictionary.Remove(assetID);
 
-            if (assetDictionary[key] is AssetJSP jsp)
+            if (assetDictionary[assetID] is AssetJSP jsp)
                 jsp.model.Dispose();
 
-            if (assetDictionary[key] is AssetMODL modl)
+            if (assetDictionary[assetID] is AssetMODL modl)
                 modl.GetRenderWareModelFile().Dispose();
 
-            if (assetDictionary[key] is AssetRWTX texture)
-                TextureManager.RemoveTexture(texture.Name);
+            DICT.ATOC.AHDRList.Remove(assetDictionary[assetID].AHDR);
+
+            if (GetFromAssetID(assetID).AHDR.assetType == AssetType.SND | GetFromAssetID(assetID).AHDR.assetType == AssetType.SNDS)
+                RemoveSoundFromSNDI(assetID);
+
+            assetDictionary.Remove(assetID);
+
+            if (assetID == currentlySelectedAssetID)
+                currentlySelectedAssetID = 0;
         }
 
         private uint currentlySelectedAssetID = 0;

@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using SharpDX;
 
 namespace IndustrialPark
 {
@@ -36,13 +37,13 @@ namespace IndustrialPark
             set => Write(0x58 + Offset, value);
         }
 
-        public float UnknownFloat_5C
+        public float TeeterRotationAngle
         {
-            get => ReadFloat(0x5C + Offset);
-            set => Write(0x5C + Offset, value);
+            get => MathUtil.RadiansToDegrees(ReadFloat(0x54 + Offset));
+            set => Write(0x60 + Offset, MathUtil.DegreesToRadians(value));
         }
 
-        public float UnknownFloat_60
+        public float TeeterRotationSpeed
         {
             get => ReadFloat(0x60 + Offset);
             set => Write(0x60 + Offset, value);
@@ -54,15 +55,15 @@ namespace IndustrialPark
             set => Write(0x64 + Offset, value);
         }
 
-        public float UnknownFloat_68
+        public AssetID ANIM_AssetID_1
         {
-            get => ReadFloat(0x68 + Offset);
+            get => ReadUInt(0x68 + Offset);
             set => Write(0x68 + Offset, value);
         }
 
-        public float UnknownFloat_6C
+        public AssetID ANIM_AssetID_2
         {
-            get => ReadFloat(0x6C + Offset);
+            get => ReadUInt(0x6C + Offset);
             set => Write(0x6C + Offset, value);
         }
 
@@ -72,27 +73,27 @@ namespace IndustrialPark
             set => Write(0x70 + Offset, value);
         }
 
-        public float UnknownFloat_74
+        public float LaunchDirectionX
         {
             get => ReadFloat(0x74 + Offset);
             set => Write(0x74 + Offset, value);
         }
 
-        public float UnknownFloat_78
+        public float LaunchDirectionY
         {
             get => ReadFloat(0x78 + Offset);
             set => Write(0x78 + Offset, value);
         }
 
-        public float UnknownFloat_7C
+        public float LaunchDirectionZ
         {
             get => ReadFloat(0x7C + Offset);
             set => Write(0x7C + Offset, value);
         }
 
-        public float UnknownFloat_80
+        public int MovementLockMode
         {
-            get => ReadFloat(0x80 + Offset);
+            get => ReadInt(0x80 + Offset);
             set => Write(0x80 + Offset, value);
         }
 
@@ -174,13 +175,13 @@ namespace IndustrialPark
             set => Write(0x9C + Offset, value);
         }
 
-        public float UnknownFloat_A0
+        public float MovementTranslationUnknownA0
         {
             get => ReadFloat(0xA0 + Offset);
             set => Write(0xA0 + Offset, value);
         }
 
-        public float UnknownFloat_A4
+        public float MovementTranslationUnknownA4
         {
             get => ReadFloat(0xA4 + Offset);
             set => Write(0xA4 + Offset, value);
@@ -198,13 +199,13 @@ namespace IndustrialPark
             set => Write(0xAC + Offset, value);
         }
 
-        public float UnknownFloat_B0
+        public float MovementRotationUnknownB0
         {
             get => ReadFloat(0xB0 + Offset);
             set => Write(0xB0 + Offset, value);
         }
 
-        public float UnknownFloat_B4
+        public float MovementRotationUnknownB4
         {
             get => ReadFloat(0xB4 + Offset);
             set => Write(0xB4 + Offset, value);

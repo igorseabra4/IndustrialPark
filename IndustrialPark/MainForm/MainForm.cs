@@ -33,7 +33,7 @@ namespace IndustrialPark
                 autoSaveOnClosingToolStripMenuItem.Checked = settings.AutosaveOnClose;
                 autoLoadOnStartupToolStripMenuItem.Checked = settings.AutoloadOnStartup;
 
-                if (settings.AutoloadOnStartup)
+                if (settings.AutoloadOnStartup && !string.IsNullOrEmpty(settings.LastProjectPath))
                     ApplySettings(settings.LastProjectPath);
             }
             else
