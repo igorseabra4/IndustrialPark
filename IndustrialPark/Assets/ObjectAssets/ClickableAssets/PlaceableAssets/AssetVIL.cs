@@ -12,7 +12,7 @@ namespace IndustrialPark
 
         public AssetVIL(Section_AHDR AHDR) : base(AHDR) { }
 
-        public int Unknown1
+        public int Unknown54
         {
             get => ReadInt(0x54 + Offset);
             set => Write(0x54 + Offset, value);
