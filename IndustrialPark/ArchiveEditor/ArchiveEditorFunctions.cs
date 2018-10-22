@@ -79,6 +79,9 @@ namespace IndustrialPark
                 else throw new Exception();
             }
 
+            if (currentPlatform == Platform.Unknown)
+                new ChoosePlatformDialog().ShowDialog();
+
             foreach (Section_AHDR AHDR in DICT.ATOC.AHDRList)
                 AddAssetToDictionary(AHDR);
             RecalculateAllMatrices();
@@ -318,8 +321,21 @@ namespace IndustrialPark
                     break;
                 case AssetType.SNDI:
                     {
-                        AssetSNDI newAsset = new AssetSNDI(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
+                        if (currentGame == Game.BFBB && currentPlatform == Platform.GameCube)
+                        {
+                            AssetSNDI_BFBB_GCN newAsset = new AssetSNDI_BFBB_GCN(AHDR);
+                            assetDictionary.Add(AHDR.assetID, newAsset);
+                        }
+                        else if (currentPlatform == Platform.Xbox)
+                        {
+                            AssetSNDI_BFBB_GCN newAsset = new AssetSNDI_BFBB_GCN(AHDR);
+                            assetDictionary.Add(AHDR.assetID, newAsset);
+                        }
+                        else
+                        {
+                            Asset newAsset = new Asset(AHDR);
+                            assetDictionary.Add(AHDR.assetID, newAsset);
+                        }
                     }
                     break;
                 case AssetType.TEXT:
@@ -791,9 +807,9 @@ namespace IndustrialPark
         public void AddSoundToSNDI(byte[] headerData, uint assetID)
         {
             foreach (Asset a in assetDictionary.Values)
-                if (a.AHDR.assetType == AssetType.SNDI)
+                if (a is AssetSNDI_BFBB_GCN SNDI)
                 {
-                    ((AssetSNDI)a).AddEntry(headerData, assetID, GetFromAssetID(assetID).AHDR.assetType);
+                    SNDI.AddEntry(headerData, assetID, GetFromAssetID(assetID).AHDR.assetType);
                     break;
                 }
         }
@@ -801,9 +817,9 @@ namespace IndustrialPark
         public void RemoveSoundFromSNDI(uint assetID)
         {
             foreach (Asset a in assetDictionary.Values)
-                if (a.AHDR.assetType == AssetType.SNDI)
+                if (a is AssetSNDI_BFBB_GCN SNDI)
                 {
-                    ((AssetSNDI)a).RemoveEntry(assetID, GetFromAssetID(assetID).AHDR.assetType);
+                    SNDI.RemoveEntry(assetID, GetFromAssetID(assetID).AHDR.assetType);
                     break;
                 }
         }
@@ -811,8 +827,8 @@ namespace IndustrialPark
         public byte[] GetHeaderFromSNDI(uint assetID)
         {
             foreach (Asset a in assetDictionary.Values)
-                if (a.AHDR.assetType == AssetType.SNDI)
-                    return ((AssetSNDI)a).GetHeader(assetID, GetFromAssetID(assetID).AHDR.assetType);
+                if (a is AssetSNDI_BFBB_GCN SNDI)
+                    return SNDI.GetHeader(assetID, GetFromAssetID(assetID).AHDR.assetType);
 
             throw new Exception("Error: could not find SNDI asset in this archive.");
         }

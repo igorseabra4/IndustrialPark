@@ -65,7 +65,10 @@ namespace IndustrialPark
                     _dynaSpecific = reset ? new DynaHudModel() : new DynaHudModel(Data.Skip(0x10).Take(EventStartOffset));
                     break;
                 case DynaType.hud__meter__font:
-                    _dynaSpecific = reset ? new DynaHudMeterFont() : new DynaHudMeterFont(Data.Skip(0x10).Take(EventStartOffset));
+                    if (Version == 3)
+                        _dynaSpecific = reset ? new DynaHudMeterFontV3() : new DynaHudMeterFontV3(Data.Skip(0x10).Take(EventStartOffset));
+                    else
+                        _dynaSpecific = reset ? new DynaBase() : new DynaBase(Data.Skip(0x10).Take(EventStartOffset));
                     break;
                 case DynaType.hud__meter__unit:
                     _dynaSpecific = reset ? new DynaHudMeterUnit() : new DynaHudMeterUnit(Data.Skip(0x10).Take(EventStartOffset));

@@ -1,5 +1,7 @@
 ﻿using HipHopFile;
+using RenderWareFile;
 using SharpDX;
+using System;
 
 namespace IndustrialPark
 {
@@ -17,9 +19,15 @@ namespace IndustrialPark
         public void Setup(SharpRenderer renderer)
         {
             model = new RenderWareModelFile(AHDR.ADBG.assetName);
-            model.SetForRendering(renderer.device, RenderWareFile.ReadFileMethods.ReadRenderWareFile(AHDR.data), AHDR.data);
-
-            ArchiveEditorFunctions.renderableAssetSetJSP.Add(this);
+            try
+            {
+                model.SetForRendering(renderer.device, ReadFileMethods.ReadRenderWareFile(AHDR.data), AHDR.data);
+                ArchiveEditorFunctions.renderableAssetSetJSP.Add(this);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show("Error: " + ToString() + " (" + AHDR.assetType.ToString() + ") has an unsupported format and cannot be rendered. " + ex.Message);
+            }
         }
 
         public void CreateTransformMatrix()

@@ -480,6 +480,9 @@ namespace IndustrialPark
 
         public void Dispose()
         {
+            if (meshList == null)
+                return;
+
             foreach (SharpMesh m in meshList)
             {
                 completeMeshList.Remove(m);

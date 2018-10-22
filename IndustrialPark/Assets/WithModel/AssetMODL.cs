@@ -1,5 +1,7 @@
 ﻿using HipHopFile;
+using RenderWareFile;
 using SharpDX;
+using System;
 
 namespace IndustrialPark
 {
@@ -16,13 +18,14 @@ namespace IndustrialPark
             model = new RenderWareModelFile(AHDR.ADBG.assetName);
             try
             {
-                model.SetForRendering(renderer.device, RenderWareFile.ReadFileMethods.ReadRenderWareFile(AHDR.data), AHDR.data);
+                RWSection[] rw = ReadFileMethods.ReadRenderWareFile(AHDR.data);
+                model.SetForRendering(renderer.device, rw, AHDR.data);
+                ArchiveEditorFunctions.AddToRenderingDictionary(AHDR.assetID, this);
             }
-            catch
+            catch (Exception ex)
             {
-                System.Windows.Forms.MessageBox.Show(ToString());
+                System.Windows.Forms.MessageBox.Show("Error: " + ToString() + " (MODL) has an unsupported format and cannot be rendered. " + ex.Message);
             }
-            ArchiveEditorFunctions.AddToRenderingDictionary(AHDR.assetID, this);
         }
 
         public void Draw(SharpRenderer renderer, Matrix world, Vector4 color)

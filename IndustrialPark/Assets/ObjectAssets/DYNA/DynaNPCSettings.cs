@@ -27,8 +27,8 @@ namespace IndustrialPark
             Flags11 = data[0xE];
             Flags12 = data[0xF];
             Unknown2 = Switch(BitConverter.ToInt32(data, 0x10));
-            UnknownFloat = Switch(BitConverter.ToSingle(data, 0x14));
-            Unknown3 = Switch(BitConverter.ToInt32(data, 0x18));
+            DuploSpawnRate = Switch(BitConverter.ToSingle(data, 0x14));
+            DuploEnemyLimit = Switch(BitConverter.ToInt32(data, 0x18));
         }
 
         public override byte[] ToByteArray()
@@ -48,8 +48,8 @@ namespace IndustrialPark
             list.Add(Flags11);
             list.Add(Flags12);
             list.AddRange(BitConverter.GetBytes(Switch(Unknown2)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown3)));
+            list.AddRange(BitConverter.GetBytes(Switch(DuploSpawnRate)));
+            list.AddRange(BitConverter.GetBytes(Switch(DuploEnemyLimit)));
             return list.ToArray();
         }
 
@@ -80,7 +80,7 @@ namespace IndustrialPark
         public byte Flags12 { get; set; }
         public int Unknown2 { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat { get; set; }
-        public int Unknown3 { get; set; }
+        public float DuploSpawnRate { get; set; }
+        public int DuploEnemyLimit { get; set; }
     }
 }

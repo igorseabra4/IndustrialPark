@@ -7,11 +7,11 @@ using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
-    public class DynaHudMeterFont : DynaBase
+    public class DynaHudMeterFontV3 : DynaBase
     {
         public override string Note => "Version is always 3";
 
-        public DynaHudMeterFont() : base()
+        public DynaHudMeterFontV3() : base()
         {
             SoundID1 = 0;
             SoundID2 = 0;
@@ -20,7 +20,7 @@ namespace IndustrialPark
             Unknown3 = 0;
         }
 
-        public DynaHudMeterFont(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaHudMeterFontV3(IEnumerable<byte> enumerable) : base (enumerable)
         {
             UnknownFloat1 = Switch(BitConverter.ToSingle(data, 0x0));
             UnknownFloat2 = Switch(BitConverter.ToSingle(data, 0x4));
