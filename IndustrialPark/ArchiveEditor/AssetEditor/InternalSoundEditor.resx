@@ -118,8 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>The sound data is a GameCube DSP audio file stripped of its 0x60 byte header: all of a level's sound headers (SND and SNDS) are kept separate in the single SNDI asset in the HOP file.
-The Import Sound Data button allows you to choose a DSP to import. If you check the checkbox, I will trim the header and send it to the SNDI asset myself. If you leave it unchecked, I will only import the raw data, won't perform any operation on it and won't touch the SNDI.
-The Export Sound Data button will take the header from the SNDI asset and put it in the file before exporting it.</value>
+    <value>All of a file's sound headers are kept separate in the single SNDI asset in the HOP file. The SND and SNDS assets only contain a part of the data.
+The Import Sound Data button allows you to choose a sound file to import (GameCube DSP, XBOX WAV, PS2 VAG). If you check the checkbox, I will trim the header and send it to the SNDI asset myself. If you leave it unchecked, I will only import the raw data, won't perform any operation on it and won't touch the SNDI.
+The Export Sound Data button will take the header from the SNDI asset and put it in the file before exporting it.
+This is supported in all games and platforms except GameCube versions of TSSM, Incredibles and ROTU.</value>
   </data>
 </root>
