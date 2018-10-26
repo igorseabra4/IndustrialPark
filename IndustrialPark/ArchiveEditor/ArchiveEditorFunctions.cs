@@ -321,14 +321,19 @@ namespace IndustrialPark
                     break;
                 case AssetType.SNDI:
                     {
-                        if (currentGame == Game.BFBB && currentPlatform == Platform.GameCube)
+                        if (currentPlatform == Platform.GameCube && (currentGame == Game.BFBB || currentGame == Game.Scooby))
                         {
-                            AssetSNDI_BFBB_GCN newAsset = new AssetSNDI_BFBB_GCN(AHDR);
+                            AssetSNDI_GCN_V1 newAsset = new AssetSNDI_GCN_V1(AHDR);
                             assetDictionary.Add(AHDR.assetID, newAsset);
                         }
                         else if (currentPlatform == Platform.Xbox)
                         {
-                            AssetSNDI_BFBB_GCN newAsset = new AssetSNDI_BFBB_GCN(AHDR);
+                            AssetSNDI_XBOX newAsset = new AssetSNDI_XBOX(AHDR);
+                            assetDictionary.Add(AHDR.assetID, newAsset);
+                        }
+                        else if (currentPlatform == Platform.PS2)
+                        {
+                            AssetSNDI_PS2 newAsset = new AssetSNDI_PS2(AHDR);
                             assetDictionary.Add(AHDR.assetID, newAsset);
                         }
                         else
@@ -804,31 +809,63 @@ namespace IndustrialPark
             ReadFileMethods.treatTexturesAsByteArray = false;
         }
 
-        public void AddSoundToSNDI(byte[] headerData, uint assetID)
+        public void AddSoundToSNDI(byte[] soundData, uint assetID, out byte[] finalData)
         {
             foreach (Asset a in assetDictionary.Values)
-                if (a is AssetSNDI_BFBB_GCN SNDI)
+            {
+                if (a is AssetSNDI_GCN_V1 SNDI_G1)
                 {
-                    SNDI.AddEntry(headerData, assetID, GetFromAssetID(assetID).AHDR.assetType);
-                    break;
+                    SNDI_G1.AddEntry(soundData, assetID, GetFromAssetID(assetID).AHDR.assetType, out finalData);
+                    return;
                 }
+                else if (a is AssetSNDI_XBOX SNDI_X)
+                {
+                    SNDI_X.AddEntry(soundData, assetID, GetFromAssetID(assetID).AHDR.assetType, out finalData);
+                    return;
+                }
+                else if (a is AssetSNDI_PS2 SNDI_P)
+                {
+                    SNDI_P.AddEntry(soundData, assetID, GetFromAssetID(assetID).AHDR.assetType, out finalData);
+                    return;
+                }
+            }
+
+            throw new Exception("Unable to add sound: SNDI asset not found");
         }
 
         public void RemoveSoundFromSNDI(uint assetID)
         {
             foreach (Asset a in assetDictionary.Values)
-                if (a is AssetSNDI_BFBB_GCN SNDI)
+            {
+                if (a is AssetSNDI_GCN_V1 SNDI_G1)
                 {
-                    SNDI.RemoveEntry(assetID, GetFromAssetID(assetID).AHDR.assetType);
+                    SNDI_G1.RemoveEntry(assetID, GetFromAssetID(assetID).AHDR.assetType);
                     break;
                 }
+                else if (a is AssetSNDI_XBOX SNDI_X)
+                {
+                    SNDI_X.RemoveEntry(assetID, GetFromAssetID(assetID).AHDR.assetType);
+                    break;
+                }
+                else if (a is AssetSNDI_PS2 SNDI_P)
+                {
+                    SNDI_P.RemoveEntry(assetID, GetFromAssetID(assetID).AHDR.assetType);
+                    break;
+                }
+            }
         }
 
         public byte[] GetHeaderFromSNDI(uint assetID)
         {
             foreach (Asset a in assetDictionary.Values)
-                if (a is AssetSNDI_BFBB_GCN SNDI)
-                    return SNDI.GetHeader(assetID, GetFromAssetID(assetID).AHDR.assetType);
+            {
+                if (a is AssetSNDI_GCN_V1 SNDI_G1)
+                    return SNDI_G1.GetHeader(assetID, GetFromAssetID(assetID).AHDR.assetType);
+                else if (a is AssetSNDI_XBOX SNDI_X)
+                    return SNDI_X.GetHeader(assetID, GetFromAssetID(assetID).AHDR.assetType);
+                else if (a is AssetSNDI_PS2 SNDI_P)
+                    return SNDI_P.GetHeader(assetID, GetFromAssetID(assetID).AHDR.assetType);
+            }
 
             throw new Exception("Error: could not find SNDI asset in this archive.");
         }

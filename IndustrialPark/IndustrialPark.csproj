@@ -131,7 +131,9 @@
     <Compile Include="Assets\Binary\AssetMAPR.cs" />
     <Compile Include="Assets\Binary\AssetPIPT.cs" />
     <Compile Include="Assets\Binary\AssetSHDW.cs" />
-    <Compile Include="Assets\Binary\AssetSNDI.cs" />
+    <Compile Include="Assets\Binary\AssetSNDI_GCN_V1.cs" />
+    <Compile Include="Assets\Binary\AssetSNDI_PS2.cs" />
+    <Compile Include="Assets\Binary\AssetSNDI_XBOX.cs" />
     <Compile Include="Assets\Binary\AssetTEXT.cs" />
     <Compile Include="Assets\Binary\SoundHeaderEditor.cs" />
     <Compile Include="Assets\ObjectAssets\AssetCNTR.cs" />

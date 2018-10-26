@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -31,11 +32,11 @@ namespace IndustrialPark
             return asset.AHDR.assetID;
         }
 
-        private void button1_Click(object sender, System.EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog()
             {
-                Title = "Select your GameCube DSP audio file"
+                Title = "Select your audio file (GameCube DSP, XBOX PCM, PS2 VAG)"
             };
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
@@ -43,8 +44,15 @@ namespace IndustrialPark
                 byte[] file = File.ReadAllBytes(openFileDialog.FileName);
                 if (checkBoxSendToSNDI.Checked)
                 {
-                    archive.AddSoundToSNDI(file.Take(0x60).ToArray(), asset.AHDR.assetID);
-                    asset.AHDR.data = file.Skip(0x60).ToArray();
+                    try
+                    {
+                        archive.AddSoundToSNDI(file, asset.AHDR.assetID, out byte[] soundData);
+                        asset.AHDR.data = soundData;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
                 }
                 else
                 {
@@ -53,12 +61,12 @@ namespace IndustrialPark
             }
         }
 
-        private void button2_Click(object sender, System.EventArgs e)
+        private void button2_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog()
             {
-                FileName = asset.AHDR.ADBG.assetName + ".DSP",
-                Filter = "DSP Files|*.dsp|All files|*"
+                FileName = asset.AHDR.ADBG.assetName,
+                Filter = "All files|*"
             };
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
@@ -66,6 +74,16 @@ namespace IndustrialPark
                 List<byte> file = new List<byte>();
                 file.AddRange(archive.GetHeaderFromSNDI(asset.AHDR.assetID));
                 file.AddRange(asset.AHDR.data);
+
+                if (new string(new char[] { (char)file[0], (char)file[1], (char)file[2], (char)file[3] }) == "RIFF")
+                {
+                    byte[] chunkSizeArr = BitConverter.GetBytes(file.Count - 8);
+
+                    file[4] = chunkSizeArr[0];
+                    file[5] = chunkSizeArr[1];
+                    file[6] = chunkSizeArr[2];
+                    file[7] = chunkSizeArr[3];
+                }
 
                 File.WriteAllBytes(saveFileDialog.FileName, file.ToArray());
             }

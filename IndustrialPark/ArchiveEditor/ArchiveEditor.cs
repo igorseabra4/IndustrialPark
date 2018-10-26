@@ -391,9 +391,6 @@ namespace IndustrialPark
                     archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR);
                     PopulateAssetListAndComboBox();
                     SetSelectedIndex(AHDR.assetID);
-
-                    if (AHDR.assetType == AssetType.SND | AHDR.assetType == AssetType.SNDS)
-                        AddSoundToSNDI(AHDR.data.Take(0x60).ToArray(), AHDR.assetID);
                 }
             }
             catch (Exception ex)
@@ -431,16 +428,6 @@ namespace IndustrialPark
                     MessageBox.Show("Unable to export asset raw data: " + ex.Message);
                 }
             }
-        }
-
-        public void AddSoundToSNDI(byte[] headerData, uint assetID)
-        {
-            archive.AddSoundToSNDI(headerData, assetID);
-        }
-        
-        public byte[] GetHeaderFromSNDI(uint assetID)
-        {
-            return archive.GetHeaderFromSNDI(assetID);
         }
 
         private uint CurrentlySelectedAssetID()
