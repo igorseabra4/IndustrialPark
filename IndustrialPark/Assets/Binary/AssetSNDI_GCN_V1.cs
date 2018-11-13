@@ -32,6 +32,27 @@ namespace IndustrialPark
     {
         public AssetSNDI_GCN_V1(Section_AHDR AHDR) : base(AHDR) { }
 
+        public override bool HasReference(uint assetID)
+        {
+            foreach (EntrySoundInfo_GCN_V1 a in Entries_SND)
+            {
+                if (a.SoundAssetID == assetID)
+                    return true;
+            }
+            foreach (EntrySoundInfo_GCN_V1 a in Entries_SNDS)
+            {
+                if (a.SoundAssetID == assetID)
+                    return true;
+            }
+            foreach (EntrySoundInfo_GCN_V1 a in Entries_Sound_CIN)
+            {
+                if (a.SoundAssetID == assetID)
+                    return true;
+            }
+
+            return base.HasReference(assetID);
+        }
+
         private int Entries_SND_amount
         {
             get => ReadInt(0x0);

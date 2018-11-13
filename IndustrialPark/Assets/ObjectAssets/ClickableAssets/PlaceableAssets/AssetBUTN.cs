@@ -13,6 +13,14 @@ namespace IndustrialPark
 
         public AssetBUTN(Section_AHDR AHDR) : base(AHDR) { }
 
+        public override bool HasReference(uint assetID)
+        {
+            if (PressedModelAssetID == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
         [Category("Button")]
         public AssetID PressedModelAssetID
         {

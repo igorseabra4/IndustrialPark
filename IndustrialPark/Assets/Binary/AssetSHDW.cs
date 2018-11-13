@@ -28,7 +28,20 @@ namespace IndustrialPark
         public AssetSHDW(Section_AHDR AHDR) : base(AHDR)
         {
         }
-        
+
+        public override bool HasReference(uint assetID)
+        {
+            foreach (EntrySHDW a in SHDW_Entries)
+            {
+                if (a.ModelAssetID == assetID)
+                    return true;
+                if (a.ShadowModelAssetID == assetID)
+                    return true;
+            }
+
+            return base.HasReference(assetID);
+        }
+
         public EntrySHDW[] SHDW_Entries
         {
             get

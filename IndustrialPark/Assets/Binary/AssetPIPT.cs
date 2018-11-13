@@ -26,7 +26,7 @@ namespace IndustrialPark
 
         public override string ToString()
         {
-            return $"[{ModelAssetID.ToString()}] - {MaybeMeshIndex}";
+            return $"{Program.MainForm.GetAssetNameFromID(ModelAssetID)} - {MaybeMeshIndex}";
         }
     }
 
@@ -35,7 +35,18 @@ namespace IndustrialPark
         public AssetPIPT(Section_AHDR AHDR) : base(AHDR)
         {
         }
-        
+
+        public override bool HasReference(uint assetID)
+        {
+            foreach (EntryPIPT a in PIPT_Entries)
+            {
+                if (a.ModelAssetID == assetID)
+                    return true;
+            }
+
+            return base.HasReference(assetID);
+        }
+
         public EntryPIPT[] PIPT_Entries
         {
             get

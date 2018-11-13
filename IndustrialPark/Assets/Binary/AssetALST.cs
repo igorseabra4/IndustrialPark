@@ -10,6 +10,15 @@ namespace IndustrialPark
     {
         public AssetALST(Section_AHDR AHDR) : base(AHDR) { }
 
+        public override bool HasReference(uint assetID)
+        {
+            foreach (AssetID a in ANIM_AssetIDs)
+                if (a == assetID)
+                    return true;
+
+            return base.HasReference(assetID);
+        }
+
         public AssetID[] ANIM_AssetIDs
         {
             get

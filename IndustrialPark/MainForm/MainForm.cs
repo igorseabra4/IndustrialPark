@@ -148,10 +148,10 @@ namespace IndustrialPark
             return new ProjectJson(hips, TextureManager.OpenTextureFolders.ToList(), renderer.Camera.Position,
                 renderer.Camera.Yaw, renderer.Camera.Pitch, renderer.Camera.Speed, renderer.Camera.SpeedRot, renderer.Camera.FieldOfView,renderer.Camera.FarPlane,
                 noCullingCToolStripMenuItem.Checked, wireframeFToolStripMenuItem.Checked, renderer.backgroundColor, renderer.normalColor, renderer.trigColor,
-                renderer.mvptColor, renderer.sfxColor, useLegacyAssetIDFormatToolStripMenuItem.Checked, alternateNamingMode,
+                renderer.mvptColor, renderer.sfxColor, useLegacyAssetIDFormatToolStripMenuItem.Checked, alternateNamingMode, renderer.isDrawingUI,
                 AssetJSP.dontRender, AssetBOUL.dontRender, AssetBUTN.dontRender, AssetCAM.dontRender, AssetDSTR.dontRender, AssetMRKR.dontRender,
                 AssetMVPT.dontRender, AssetPLAT.dontRender, AssetPLAT.dontRender, AssetPLYR.dontRender, AssetSFX.dontRender, AssetSIMP.dontRender,
-                AssetTRIG.dontRender, AssetVIL.dontRender);
+                AssetTRIG.dontRender, AssetUI.dontRender, AssetUIFT.dontRender, AssetVIL.dontRender);
         }
 
         private void ApplySettings(string ipSettingsPath)
@@ -218,6 +218,9 @@ namespace IndustrialPark
             assetIDAssetNameToolStripMenuItem.Checked = alternateNamingMode;
             assetNameAssetIDToolStripMenuItem.Checked = !alternateNamingMode;
 
+            uIModeToolStripMenuItem.Checked = ipSettings.isDrawingUI;
+            renderer.isDrawingUI = ipSettings.isDrawingUI;
+
             levelModelToolStripMenuItem.Checked = !ipSettings.dontRenderLevelModel;
             AssetJSP.dontRender = ipSettings.dontRenderLevelModel;
 
@@ -256,6 +259,12 @@ namespace IndustrialPark
 
             tRIGToolStripMenuItem.Checked = !ipSettings.dontRenderTRIG;
             AssetTRIG.dontRender = ipSettings.dontRenderTRIG;
+
+            uIToolStripMenuItem.Checked = !ipSettings.dontRenderUI;
+            AssetUI.dontRender = ipSettings.dontRenderUI;
+
+            uIFTToolStripMenuItem.Checked = !ipSettings.dontRenderUIFT;
+            AssetUIFT.dontRender = ipSettings.dontRenderUIFT;
 
             vILToolStripMenuItem.Checked = !ipSettings.dontRenderVIL;
             AssetVIL.dontRender = ipSettings.dontRenderVIL;
@@ -570,7 +579,13 @@ namespace IndustrialPark
                     ArchiveEditorFunctions.GizmoSelect(ray);
                 else
                 {
-                    uint assetID = ArchiveEditorFunctions.GetClickedAssetID(ray);
+                    uint assetID = 0;
+                    if (renderer.isDrawingUI)
+                    {
+                        assetID = ArchiveEditorFunctions.GetClickedAssetID2D(ray, renderer.Camera.FarPlane);
+                    }
+                    else
+                        assetID = ArchiveEditorFunctions.GetClickedAssetID(ray);
                     if (assetID != 0)
                         Program.MainForm.SetSelectedIndex(assetID);
                 }
@@ -689,6 +704,24 @@ namespace IndustrialPark
             AssetSFX.dontRender = !sFXToolStripMenuItem.Checked;
         }
 
+        private void uIToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            uIToolStripMenuItem.Checked = !uIToolStripMenuItem.Checked;
+            AssetUI.dontRender = !uIToolStripMenuItem.Checked;
+        }
+
+        private void uIFTToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            uIFTToolStripMenuItem.Checked = !uIFTToolStripMenuItem.Checked;
+            AssetUIFT.dontRender = !uIFTToolStripMenuItem.Checked;
+        }
+
+        private void uIToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            uIModeToolStripMenuItem.Checked = !uIModeToolStripMenuItem.Checked;
+            renderer.isDrawingUI = uIModeToolStripMenuItem.Checked;
+        }
+
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.AboutBox.Show();
@@ -728,6 +761,11 @@ namespace IndustrialPark
             assetIDAssetNameToolStripMenuItem.Checked = true;
             assetNameAssetIDToolStripMenuItem.Checked = false;
             alternateNamingMode = true;
+        }
+
+        private void uIModeAutoSizeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Width =  (int)(Height * 656f / 565f);
         }
     }
 }

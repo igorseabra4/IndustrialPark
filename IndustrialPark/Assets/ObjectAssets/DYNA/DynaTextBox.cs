@@ -17,6 +17,16 @@ namespace IndustrialPark
             TextureID = 0;
         }
 
+        public override bool HasReference(uint assetID)
+        {
+            if (TextID == assetID)
+                return true;
+            if (TextureID == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
         public DynaTextBox(IEnumerable<byte> enumerable) : base (enumerable)
         {
             TextID = Switch(BitConverter.ToUInt32(data, 0x00));

@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -90,6 +91,15 @@ namespace IndustrialPark
             newData[0x05] = (byte)value.Length;
 
             Data = newData.ToArray();
+        }
+
+        public override bool HasReference(uint assetID)
+        {
+            foreach (AssetEvent assetEvent in EventsBFBB)
+                if (assetEvent.TargetAssetID == assetID)
+                    return true;
+
+            return base.HasReference(assetID);
         }
     }
 }

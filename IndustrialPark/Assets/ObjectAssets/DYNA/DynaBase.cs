@@ -6,7 +6,7 @@ namespace IndustrialPark
     public class DynaBase
     {
         public virtual string Note { get; }
-        public byte[] data;
+        public byte[] data { get; set; }
 
         public DynaBase()
         {
@@ -21,6 +21,11 @@ namespace IndustrialPark
         public virtual byte[] ToByteArray()
         {
             return data;
+        }
+
+        public virtual bool HasReference(uint assetID)
+        {
+            return false;
         }
     }
 }

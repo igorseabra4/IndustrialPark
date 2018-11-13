@@ -15,6 +15,14 @@ namespace IndustrialPark
 
         public AssetPLYR(Section_AHDR AHDR) : base(AHDR) { }
 
+        public override bool HasReference(uint assetID)
+        {
+            if (LightKitID == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
         public override void CreateTransformMatrix()
         {
             world = Matrix.RotationX(MathUtil.PiOverTwo) * Matrix.Translation(_position + new Vector3(0f, 0.5f, 0f));

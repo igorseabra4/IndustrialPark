@@ -3,6 +3,7 @@ using System.IO;
 using SharpDX.Direct3D11;
 using RenderWareFile;
 using RenderWareFile.Sections;
+using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -29,6 +30,15 @@ namespace IndustrialPark
         {
             if (Textures.ContainsKey(textureName))
                 return Textures[textureName];
+            return SharpRenderer.whiteDefault;
+        }
+
+        public static ShaderResourceView GetTextureFromDictionary(uint assetID)
+        {
+            foreach (string s in Textures.Keys)
+                if (Functions.BKDRHash(s) == assetID)
+                    return Textures[s];
+
             return SharpRenderer.whiteDefault;
         }
 

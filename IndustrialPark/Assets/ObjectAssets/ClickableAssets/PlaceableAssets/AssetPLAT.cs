@@ -14,6 +14,16 @@ namespace IndustrialPark
 
         public AssetPLAT(Section_AHDR AHDR) : base(AHDR) { }
 
+        public override bool HasReference(uint assetID)
+        {
+            if (ANIM_AssetID_1 == assetID)
+                return true;
+            if (ANIM_AssetID_2 == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
         [Category("Platform")]
         public byte PlatformType
         {

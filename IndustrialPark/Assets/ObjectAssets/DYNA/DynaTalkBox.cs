@@ -22,6 +22,30 @@ namespace IndustrialPark
             TextID5 = 0;
         }
 
+        public override bool HasReference(uint assetID)
+        {
+            if (TextBoxID1 == assetID)
+                return true;
+            if (TextBoxID2 == assetID)
+                return true;
+            if (TextBoxID3 == assetID)
+                return true;
+            if (PointerID == assetID)
+                return true;
+            if (TextID1 == assetID)
+                return true;
+            if (TextID2 == assetID)
+                return true;
+            if (TextID3 == assetID)
+                return true;
+            if (TextID4 == assetID)
+                return true;
+            if (TextID5 == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
         public DynaTalkBox(IEnumerable<byte> enumerable) : base (enumerable)
         {
             TextBoxID1 = Switch(BitConverter.ToUInt32(data, 0x0));

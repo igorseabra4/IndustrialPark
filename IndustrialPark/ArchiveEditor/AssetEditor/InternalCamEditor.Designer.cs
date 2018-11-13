@@ -109,13 +109,15 @@
             // buttonFindCallers
             // 
             this.buttonFindCallers.AutoSize = true;
+            this.tableLayoutPanel1.SetColumnSpan(this.buttonFindCallers, 2);
             this.buttonFindCallers.Dock = System.Windows.Forms.DockStyle.Fill;
             this.buttonFindCallers.Location = new System.Drawing.Point(3, 376);
             this.buttonFindCallers.Name = "buttonFindCallers";
-            this.buttonFindCallers.Size = new System.Drawing.Size(159, 22);
+            this.buttonFindCallers.Size = new System.Drawing.Size(324, 22);
             this.buttonFindCallers.TabIndex = 12;
             this.buttonFindCallers.Text = "Find Who Targets Me";
             this.buttonFindCallers.UseVisualStyleBackColor = true;
+            this.buttonFindCallers.Click += new System.EventHandler(this.buttonFindCallers_Click);
             // 
             // InternalCamEditor
             // 

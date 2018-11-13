@@ -20,6 +20,22 @@ namespace IndustrialPark
             Unknown3 = 0;
         }
 
+        public override bool HasReference(uint assetID)
+        {
+            if (SoundID1 == assetID)
+                return true;
+            if (SoundID2 == assetID)
+                return true;
+            if (SoundID3 == assetID)
+                return true;
+            if (SoundID4 == assetID)
+                return true;
+            if (Unknown3 == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
         public DynaHudMeterFontV3(IEnumerable<byte> enumerable) : base (enumerable)
         {
             UnknownFloat1 = Switch(BitConverter.ToSingle(data, 0x0));

@@ -6,19 +6,6 @@ namespace IndustrialPark
 {
     public class AssetMINF : Asset, IAssetWithModel
     {
-        private uint _modelAssetID;
-        public AssetID ModelAssetID
-        {
-            get { return _modelAssetID; }
-
-            set
-            {
-                _modelAssetID = value;
-                if (AHDR.data.Length >= 0x18)
-                    Write(0x14, value);
-            }
-        }
-
         public AssetMINF(Section_AHDR AHDR) : base(AHDR)
         {
         }
@@ -34,6 +21,14 @@ namespace IndustrialPark
                 _modelAssetID = 0;
             }
             ArchiveEditorFunctions.AddToRenderingDictionary(AHDR.assetID, this);
+        }
+
+        public override bool HasReference(uint assetID)
+        {
+            if (_modelAssetID == assetID)
+                return true;
+
+            return base.HasReference(assetID);
         }
 
         public void Draw(SharpRenderer renderer, Matrix world, Vector4 color)
@@ -64,6 +59,19 @@ namespace IndustrialPark
         public bool HasRenderWareModelFile()
         {
             return ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID) && ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile() != null;
+        }
+
+        private uint _modelAssetID;
+        public AssetID ModelAssetID
+        {
+            get { return _modelAssetID; }
+
+            set
+            {
+                _modelAssetID = value;
+                if (AHDR.data.Length >= 0x18)
+                    Write(0x14, value);
+            }
         }
     }
 }

@@ -8,6 +8,16 @@ namespace IndustrialPark
     {
         public AssetPORT(Section_AHDR AHDR) : base(AHDR) { }
 
+        public override bool HasReference(uint assetID)
+        {
+            if (Camera_Unknown == assetID)
+                return true;
+            if (Destination_MRKR == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
         protected override int EventStartOffset
         {
             get => 0x18;

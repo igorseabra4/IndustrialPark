@@ -12,6 +12,22 @@ namespace IndustrialPark
 
         public AssetVIL(Section_AHDR AHDR) : base(AHDR) { }
 
+        public override bool HasReference(uint assetID)
+        {
+            if (VilType == assetID)
+                return true;
+            if (AssetID_DYNA_NPCSettings == assetID)
+                return true;
+            if (AssetID_MVPT == assetID)
+                return true;
+            if (AssetID_DYNA_1 == assetID)
+                return true;
+            if (AssetID_DYNA_2 == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
         public int Unknown54
         {
             get => ReadInt(0x54 + Offset);

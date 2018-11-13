@@ -33,6 +33,16 @@ namespace IndustrialPark
             }
         }
 
+        public override bool HasReference(uint assetID)
+        {
+            if (MRKR_ID == assetID)
+                return true;
+            if (DYNA_Teleport_ID == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
         public override byte[] ToByteArray()
         {
             List<byte> list = new List<byte>();

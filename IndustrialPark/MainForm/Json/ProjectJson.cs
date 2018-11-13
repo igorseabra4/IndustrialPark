@@ -27,7 +27,8 @@ namespace IndustrialPark
 
         public bool UseLegacyAssetIDFormat;
         public bool AlternateNameDisplayMode;
-
+        public bool isDrawingUI;
+        
         public bool dontRenderLevelModel;
         public bool dontRenderBOUL;
         public bool dontRenderBUTN;
@@ -41,6 +42,8 @@ namespace IndustrialPark
         public bool dontRenderSFX;
         public bool dontRenderSIMP;
         public bool dontRenderTRIG;
+        public bool dontRenderUI;
+        public bool dontRenderUIFT;
         public bool dontRenderVIL;
 
         public ProjectJson()
@@ -68,6 +71,7 @@ namespace IndustrialPark
 
             UseLegacyAssetIDFormat = false;
             AlternateNameDisplayMode = false;
+            isDrawingUI = false;
 
             dontRenderLevelModel = false;
             dontRenderBOUL = false;
@@ -82,14 +86,16 @@ namespace IndustrialPark
             dontRenderSFX = false;
             dontRenderSIMP = false;
             dontRenderTRIG = false;
+            dontRenderUI = false;
+            dontRenderUIFT = false;
             dontRenderVIL = false;
         }
 
         public ProjectJson(List<string> hipPaths, List<string> textureFolderPaths, Vector3 camPos, float yaw, float pitch, float speed, float speedRot,
             float fieldOfView, float farPlane, bool noCulling, bool wireframe, Color4 backgroundColor, Vector4 widgetColor, Vector4 trigColor,
-            Vector4 mvptColor, Vector4 sfxColor, bool useLegacyAssetIDFormat, bool alternateNameDisplayMode, bool dontRenderLevelModel,
+            Vector4 mvptColor, Vector4 sfxColor, bool useLegacyAssetIDFormat, bool alternateNameDisplayMode, bool isDrawingUI, bool dontRenderLevelModel,
             bool dontRenderBOUL, bool dontRenderBUTN, bool dontRenderCAM, bool dontRenderDSTR, bool dontRenderMRKR, bool dontRenderMVPT, bool dontRenderPKUP, bool dontRenderPLAT,
-            bool dontRenderPLYR, bool dontRenderSFX, bool dontRenderSIMP, bool dontRenderTRIG, bool dontRenderVIL)
+            bool dontRenderPLYR, bool dontRenderSFX, bool dontRenderSIMP, bool dontRenderTRIG, bool dontRenderUI, bool dontRenderUIFT, bool dontRenderVIL)
         {
             this.hipPaths = hipPaths;
             TextureFolderPaths = textureFolderPaths;
@@ -109,6 +115,7 @@ namespace IndustrialPark
             SfxColor = sfxColor;
             UseLegacyAssetIDFormat = useLegacyAssetIDFormat;
             AlternateNameDisplayMode = alternateNameDisplayMode;
+            this.isDrawingUI = isDrawingUI;
             this.dontRenderLevelModel = dontRenderLevelModel;
             this.dontRenderBOUL = dontRenderBOUL;
             this.dontRenderBUTN = dontRenderBUTN;
@@ -122,6 +129,8 @@ namespace IndustrialPark
             this.dontRenderSFX = dontRenderSFX;
             this.dontRenderSIMP = dontRenderSIMP;
             this.dontRenderTRIG = dontRenderTRIG;
+            this.dontRenderUI = dontRenderUI;
+            this.dontRenderUIFT = dontRenderUIFT;
             this.dontRenderVIL = dontRenderVIL;
         }
     }

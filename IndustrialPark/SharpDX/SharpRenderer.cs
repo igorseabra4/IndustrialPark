@@ -99,6 +99,7 @@ namespace IndustrialPark
         public static SharpMesh Cylinder { get; private set; }
         public static SharpMesh Pyramid { get; private set; }
         public static SharpMesh Sphere { get; private set; }
+        public static SharpMesh Plane { get; private set; }
 
         public static List<Vector3> cubeVertices;
         public static List<Models.Triangle> cubeTriangles;
@@ -108,6 +109,8 @@ namespace IndustrialPark
         public static List<Models.Triangle> pyramidTriangles;
         public static List<Vector3> sphereVertices;
         public static List<Models.Triangle> sphereTriangles;
+        public static List<Vector3> planeVertices;
+        public static List<Models.Triangle> planeTriangles;
 
         public void LoadModels()
         {
@@ -123,7 +126,7 @@ namespace IndustrialPark
             sphereVertices = new List<Vector3>();
             sphereTriangles = new List<Models.Triangle>();
 
-            for (int i = 0; i < 4; i++)// 3; i++)
+            for (int i = 0; i < 5; i++)
             {
                 Models.ModelConverterData objData;
 
@@ -157,8 +160,37 @@ namespace IndustrialPark
                 if (i == 0) Cube = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
                 else if (i == 1) Cylinder = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
                 else if (i == 2) Pyramid = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
-                else Sphere = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
+                else if (i == 3) Sphere = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
             }
+
+            CreatePlaneMesh();
+        }
+
+        public void CreatePlaneMesh()
+        {
+            planeVertices = new List<Vector3>();
+            planeTriangles = new List<Models.Triangle>();
+
+            List<VertexColoredTextured> vertexList = new List<VertexColoredTextured>
+            {
+                new VertexColoredTextured(new Vector3(0f, 0f, 0), new Vector2(0, -1), new Color(255, 255, 255, 255)),
+                new VertexColoredTextured(new Vector3(0f, -1, 0), new Vector2(0, 0), new Color(255, 255, 255, 255)),
+                new VertexColoredTextured(new Vector3(1f, 0f, 0), new Vector2(1, -1), new Color(255, 255, 255, 255)),
+                new VertexColoredTextured(new Vector3(1f, -1f, 0), new Vector2(1, 0), new Color(255, 255, 255, 255))
+            };
+
+            foreach (VertexColoredTextured v in vertexList)
+                planeVertices.Add((Vector3)v.Position);
+
+            List<int> indexList = new List<int>
+            {
+                0, 1, 2, 3, 2, 1
+            };
+
+            planeTriangles.Add(new Models.Triangle() { vertex1 = 0, vertex2 = 1, vertex3 = 2, UVCoord1 = 0, UVCoord2 = 1, UVCoord3 = 2 });
+            planeTriangles.Add(new Models.Triangle() { vertex1 = 3, vertex2 = 2, vertex3 = 1, UVCoord1 = 3, UVCoord2 = 2, UVCoord3 = 1 });
+
+            Plane = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
         }
 
         public void SetSelectionColor(System.Drawing.Color color)
@@ -232,9 +264,7 @@ namespace IndustrialPark
         public void DrawCube(Matrix world, bool isSelected, float multiplier = 0.5f)
         {
             DefaultRenderData renderData;
-
             renderData.worldViewProjection = Matrix.Scaling(multiplier) * world * viewProjection;
-
             renderData.Color = isSelected ? selectedColor : normalColor;
 
             device.UpdateData(basicBuffer, renderData);
@@ -247,9 +277,7 @@ namespace IndustrialPark
         public void DrawPyramid(Matrix world, bool isSelected, float multiplier = 0.5f)
         {
             DefaultRenderData renderData;
-
             renderData.worldViewProjection = Matrix.Scaling(multiplier) * world * viewProjection;
-
             renderData.Color = isSelected ? selectedColor : normalColor;
 
             device.UpdateData(basicBuffer, renderData);
@@ -262,9 +290,7 @@ namespace IndustrialPark
         public void DrawSphere(Matrix world, bool isSelected, Vector4 normalColor)
         {
             DefaultRenderData renderData;
-
             renderData.worldViewProjection = world * viewProjection;
-
             renderData.Color = isSelected ? selectedColor : normalColor;
 
             device.UpdateData(basicBuffer, renderData);
@@ -274,9 +300,26 @@ namespace IndustrialPark
             Sphere.Draw(device);
         }
 
+        public void DrawPlane(Matrix world, bool isSelected, uint textureAssetID)
+        {
+            DefaultRenderData renderData;
+            renderData.worldViewProjection = world * viewProjection;
+            renderData.Color = isSelected ? selectedColor : Vector4.One;
+
+            device.UpdateData(tintedBuffer, renderData);
+            device.DeviceContext.VertexShader.SetConstantBuffer(0, tintedBuffer);
+            tintedShader.Apply();
+
+            device.DeviceContext.PixelShader.SetShaderResource(0, TextureManager.GetTextureFromDictionary(textureAssetID));
+            
+            Plane.Draw(device);
+        }
+
         public Matrix viewProjection;
         public Color4 backgroundColor;
         public BoundingFrustum frustum;
+
+        public bool isDrawingUI = false;
 
         public void RunMainLoop(Panel Panel)
         {
@@ -297,73 +340,105 @@ namespace IndustrialPark
 
                 device.Clear(backgroundColor);
 
-                Matrix view = Camera.GetViewMatrix();
-                viewProjection = view * Camera.GetProjectionMatrix();
-                frustum = new BoundingFrustum(view * Camera.GetBiggerFovProjectionMatrix());
-
-                if (ArchiveEditorFunctions.allowRender)
+                if (isDrawingUI)
                 {
-                    device.SetFillModeDefault();
-                    device.SetCullModeDefault();
-                    device.ApplyRasterState();
-                    device.SetBlendStateAlphaBlend();
-                    device.SetDefaultDepthState();
-                    device.UpdateAllStates();
+                    viewProjection = Matrix.OrthoOffCenterRH(0, 640, -480, 0, -Camera.FarPlane, Camera.FarPlane);
 
-                    List<IRenderableAsset> renderJSP = new List<IRenderableAsset>();
-                    List<IRenderableAsset> renderCommon = new List<IRenderableAsset>();
-                    List<IRenderableAsset> renderTrans = new List<IRenderableAsset>();
-                    List<IRenderableAsset> renderLarge = new List<IRenderableAsset>();
-
-                    renderJSP.AddRange(ArchiveEditorFunctions.renderableAssetSetJSP);
-                    renderCommon.AddRange(ArchiveEditorFunctions.renderableAssetSetCommon);
-                    renderTrans.AddRange(ArchiveEditorFunctions.renderableAssetSetTrans);
-
-                    renderCommon = renderCommon.OrderBy(f => f.GetDistance(Camera.Position)).Reverse().ToList();
-                    renderTrans = renderTrans.OrderBy(f => f.GetDistance(Camera.Position)).Reverse().ToList();
-
-                    foreach (IRenderableAsset a in renderJSP)
-                        a.Draw(this);
-
-                    foreach (IRenderableAsset a in renderCommon)
+                    if (ArchiveEditorFunctions.allowRender)
                     {
-                        BoundingBox bb = a.GetBoundingBox();
-                        if (bb.Width > 100)
-                            renderLarge.Add(a);
-                        else if (a is AssetPKUP assetPKUP && AssetPICK.pickEntries.Count == 0)
-                            renderTrans.Add(a);
-                        else if (frustum.Intersects(ref bb))
+                        device.SetFillModeDefault();
+                        device.SetCullModeDefault();
+                        device.ApplyRasterState();
+                        device.SetBlendStateAlphaBlend();
+                        device.SetDefaultDepthState();
+                        device.UpdateAllStates();
+
+                        List<AssetUI> renderCommon = new List<AssetUI>(ArchiveEditorFunctions.renderableAssetSetCommon.Count);
+
+                        foreach (IRenderableAsset a in ArchiveEditorFunctions.renderableAssetSetCommon)
+                            if (a is AssetUI ui)
+                                renderCommon.Add(ui);
+                            else if (a is AssetUIFT uift)
+                                renderCommon.Add(uift);
+
+                        renderCommon = renderCommon.OrderBy(f => -f.PositionZ).ToList();
+
+                        foreach (IRenderableAsset a in renderCommon)
                             a.Draw(this);
+
+                        ArchiveEditorFunctions.RenderGizmos(this);
                     }
-
-                    device.SetFillModeSolid();
-                    device.SetCullModeNone();
-                    device.ApplyRasterState();
-                    device.SetBlendStateAlphaBlend();
-                    device.SetDefaultDepthState();
-                    device.UpdateAllStates();
-
-                    foreach (IRenderableAsset a in renderTrans)
-                    {
-                        BoundingBox bb = a.GetBoundingBox();
-                        if (frustum.Intersects(ref bb))
-                            a.Draw(this);
-                    }
-
-                    device.SetFillModeDefault();
-                    device.SetCullModeDefault();
-                    device.ApplyRasterState();
-                    device.SetBlendStateAlphaBlend();
-                    device.SetDefaultDepthState();
-                    device.UpdateAllStates();
-
-                    foreach (IRenderableAsset a in renderLarge)
-                    {
-                        a.Draw(this);
-                    }
-                    ArchiveEditorFunctions.RenderGizmos(this);
                 }
-                //present
+                else
+                {
+                    Matrix view = Camera.GetViewMatrix();
+                    viewProjection = view * Camera.GetProjectionMatrix();
+                    frustum = new BoundingFrustum(view * Camera.GetBiggerFovProjectionMatrix());
+
+                    if (ArchiveEditorFunctions.allowRender)
+                    {
+                        device.SetFillModeDefault();
+                        device.SetCullModeDefault();
+                        device.ApplyRasterState();
+                        device.SetBlendStateAlphaBlend();
+                        device.SetDefaultDepthState();
+                        device.UpdateAllStates();
+
+                        List<IRenderableAsset> renderJSP = new List<IRenderableAsset>(ArchiveEditorFunctions.renderableAssetSetJSP.Count);
+                        List<IRenderableAsset> renderCommon = new List<IRenderableAsset>(ArchiveEditorFunctions.renderableAssetSetCommon.Count);
+                        List<IRenderableAsset> renderTrans = new List<IRenderableAsset>(ArchiveEditorFunctions.renderableAssetSetTrans.Count);
+                        List<IRenderableAsset> renderLarge = new List<IRenderableAsset>();
+
+                        renderJSP.AddRange(ArchiveEditorFunctions.renderableAssetSetJSP);
+                        renderCommon.AddRange(ArchiveEditorFunctions.renderableAssetSetCommon);
+                        renderTrans.AddRange(ArchiveEditorFunctions.renderableAssetSetTrans);
+
+                        renderCommon = renderCommon.OrderBy(f => f.GetDistance(Camera.Position)).Reverse().ToList();
+                        renderTrans = renderTrans.OrderBy(f => f.GetDistance(Camera.Position)).Reverse().ToList();
+
+                        foreach (IRenderableAsset a in renderJSP)
+                            a.Draw(this);
+
+                        foreach (IRenderableAsset a in renderCommon)
+                        {
+                            BoundingBox bb = a.GetBoundingBox();
+                            if (bb.Width > 100)
+                                renderLarge.Add(a);
+                            else if (a is AssetPKUP assetPKUP && AssetPICK.pickEntries.Count == 0)
+                                renderTrans.Add(a);
+                            else if (frustum.Intersects(ref bb))
+                                a.Draw(this);
+                        }
+
+                        device.SetFillModeSolid();
+                        device.SetCullModeNone();
+                        device.ApplyRasterState();
+                        device.SetBlendStateAlphaBlend();
+                        device.SetDefaultDepthState();
+                        device.UpdateAllStates();
+
+                        foreach (IRenderableAsset a in renderTrans)
+                        {
+                            BoundingBox bb = a.GetBoundingBox();
+                            if (frustum.Intersects(ref bb))
+                                a.Draw(this);
+                        }
+
+                        device.SetFillModeDefault();
+                        device.SetCullModeDefault();
+                        device.ApplyRasterState();
+                        device.SetBlendStateAlphaBlend();
+                        device.SetDefaultDepthState();
+                        device.UpdateAllStates();
+
+                        foreach (IRenderableAsset a in renderLarge)
+                        {
+                            a.Draw(this);
+                        }
+                        ArchiveEditorFunctions.RenderGizmos(this);
+                    }
+                }
+
                 device.Present();
             });
 

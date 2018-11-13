@@ -13,6 +13,14 @@ namespace IndustrialPark
             FLY_ID = 0;
         }
 
+        public override bool HasReference(uint assetID)
+        {
+            if (FLY_ID == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
         public DynaFlythrough(IEnumerable<byte> enumerable) : base (enumerable)
         {
             FLY_ID = Switch(BitConverter.ToUInt32(data, 0x0));

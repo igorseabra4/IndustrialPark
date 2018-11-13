@@ -31,6 +31,7 @@
             this.labelAssetName = new System.Windows.Forms.Label();
             this.richTextBoxAssetText = new System.Windows.Forms.RichTextBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.buttonFindCallers = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -48,7 +49,7 @@
             this.richTextBoxAssetText.Font = new System.Drawing.Font("Courier New", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richTextBoxAssetText.Location = new System.Drawing.Point(3, 23);
             this.richTextBoxAssetText.Name = "richTextBoxAssetText";
-            this.richTextBoxAssetText.Size = new System.Drawing.Size(557, 222);
+            this.richTextBoxAssetText.Size = new System.Drawing.Size(557, 196);
             this.richTextBoxAssetText.TabIndex = 7;
             this.richTextBoxAssetText.Text = "";
             this.richTextBoxAssetText.TextChanged += new System.EventHandler(this.richTextBoxAssetText_TextChanged);
@@ -57,22 +58,36 @@
             // 
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Controls.Add(this.buttonFindCallers, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.labelAssetName, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.richTextBoxAssetText, 0, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(563, 248);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(563, 250);
             this.tableLayoutPanel1.TabIndex = 8;
+            // 
+            // buttonFindCallers
+            // 
+            this.buttonFindCallers.AutoSize = true;
+            this.buttonFindCallers.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonFindCallers.Location = new System.Drawing.Point(3, 225);
+            this.buttonFindCallers.Name = "buttonFindCallers";
+            this.buttonFindCallers.Size = new System.Drawing.Size(557, 22);
+            this.buttonFindCallers.TabIndex = 8;
+            this.buttonFindCallers.Text = "Find Who Targets Me";
+            this.buttonFindCallers.UseVisualStyleBackColor = true;
+            this.buttonFindCallers.Click += new System.EventHandler(this.buttonFindCallers_Click);
             // 
             // InternalTextEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(563, 248);
+            this.ClientSize = new System.Drawing.Size(563, 250);
             this.Controls.Add(this.tableLayoutPanel1);
             this.MaximizeBox = false;
             this.Name = "InternalTextEditor";
@@ -90,5 +105,6 @@
         private System.Windows.Forms.Label labelAssetName;
         private System.Windows.Forms.RichTextBox richTextBoxAssetText;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.Button buttonFindCallers;
     }
 }

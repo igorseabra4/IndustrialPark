@@ -20,7 +20,15 @@ namespace IndustrialPark
 
             base.Setup();
         }
-        
+
+        public override bool HasReference(uint assetID)
+        {
+            if (PickReferenceID == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
         protected override float? TriangleIntersection(Ray r, float initialDistance)
         {
             if (dontRender)

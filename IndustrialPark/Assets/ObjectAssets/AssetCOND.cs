@@ -17,6 +17,16 @@ namespace IndustrialPark
     {
         public AssetCOND(Section_AHDR AHDR) : base(AHDR) { }
 
+        public override bool HasReference(uint assetID)
+        {
+            if (SubVariable == assetID)
+                return true;
+            if (Variable == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
         protected override int EventStartOffset
         {
             get => 0x18;

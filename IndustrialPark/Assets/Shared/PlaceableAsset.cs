@@ -132,6 +132,20 @@ namespace IndustrialPark
             return Vector3.Distance(cameraPosition, _position);
         }
 
+        public override bool HasReference(uint assetID)
+        {
+            if (UnknownAssetID_C == assetID)
+                return true;
+            if (SURF_AssetID == assetID)
+                return true;
+            if (ModelAssetID == assetID)
+                return true;
+            if (UnknownAssetID_50 == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
         [Category("Flags"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte VisibilityFlag
         {

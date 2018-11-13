@@ -13,19 +13,21 @@ namespace IndustrialPark
 
         public AssetSIMP(Section_AHDR AHDR) : base(AHDR) { }
 
+        [Category("SimpleObject")]
         public float UnknownFloat_54
         {
             get => ReadFloat(0x54 + Offset);
             set => Write(0x54 + Offset, value);
         }
 
+        [Category("SimpleObject")]
         public int Unknown_58
         {
             get => ReadInt(0x58 + Offset);
             set => Write(0x58 + Offset, value);
         }
 
-        [TypeConverter(typeof(HexIntTypeConverter))]
+        [Category("SimpleObject"), TypeConverter(typeof(HexIntTypeConverter))]
         public int Unknown_5C
         {
             get => ReadInt(0x5C + Offset);

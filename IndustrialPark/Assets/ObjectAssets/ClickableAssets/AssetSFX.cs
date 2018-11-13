@@ -31,6 +31,14 @@ namespace IndustrialPark
                 ArchiveEditorFunctions.renderableAssetSetTrans.Add(this);
         }
 
+        public override bool HasReference(uint assetID)
+        {
+            if (SoundAssetID == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
         public void CreateTransformMatrix()
         {
             world = Matrix.Scaling(_radius * 2f) * Matrix.Translation(_position);

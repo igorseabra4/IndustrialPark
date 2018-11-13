@@ -15,6 +15,16 @@ namespace IndustrialPark
             TextID = 0;
         }
 
+        public override bool HasReference(uint assetID)
+        {
+            if (TextboxID == assetID)
+                return true;
+            if (TextID == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
         public DynaHudText(IEnumerable<byte> enumerable) : base (enumerable)
         {
             UnknownFloat1 = Switch(BitConverter.ToSingle(data, 0x0));

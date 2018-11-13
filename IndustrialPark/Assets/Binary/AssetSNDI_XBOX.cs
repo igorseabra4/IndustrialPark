@@ -84,6 +84,27 @@ namespace IndustrialPark
     {
         public AssetSNDI_XBOX(Section_AHDR AHDR) : base(AHDR) { }
 
+        public override bool HasReference(uint assetID)
+        {
+            foreach (EntrySoundInfo_XBOX a in Entries_SND)
+            {
+                if (a.SoundAssetID == assetID)
+                    return true;
+            }
+            foreach (EntrySoundInfo_XBOX a in Entries_SNDS)
+            {
+                if (a.SoundAssetID == assetID)
+                    return true;
+            }
+            foreach (EntrySoundInfo_XBOX a in Entries_Sound_CIN)
+            {
+                if (a.SoundAssetID == assetID)
+                    return true;
+            }
+
+            return base.HasReference(assetID);
+        }
+        
         private int Entries_SND_amount
         {
             get => ReadInt(0x0);
@@ -274,7 +295,7 @@ namespace IndustrialPark
                 {
                     bytes.AddRange(BitConverter.GetBytes((short)0x0011));
                     bytes.AddRange(BitConverter.GetBytes(entry.fmtChannels));
-                    bytes.AddRange(BitConverter.GetBytes((int)(entry.fmtSampleRate * 65f / 64f)));
+                    bytes.AddRange(BitConverter.GetBytes(entry.fmtSampleRate * 65 / 64));
                     bytes.AddRange(BitConverter.GetBytes(entry.fmtBytesPerSecond));
                     bytes.AddRange(BitConverter.GetBytes(entry.fmtBlockAlignment));
                     bytes.AddRange(BitConverter.GetBytes(entry.fmtBitsPerSample));

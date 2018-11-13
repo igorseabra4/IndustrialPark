@@ -10,12 +10,9 @@ namespace IndustrialPark
     {
         public AssetFOG(Section_AHDR AHDR) : base(AHDR) { }
 
-        protected override int EventStartOffset
-        {
-            get => 0x24;
-        }
+        protected override int EventStartOffset { get => 0x24; }
 
-        [Editor(typeof(MyColorEditor), typeof(UITypeEditor))]
+        [Category("Fog"), Editor(typeof(MyColorEditor), typeof(UITypeEditor))]
         public MyColor Color1
         {
             get
@@ -27,7 +24,7 @@ namespace IndustrialPark
             set => Write(0x8, BitConverter.ToInt32(new byte[] { Color1Alpha, value.B, value.G, value.R }, 0));
         }
 
-        [TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("Fog"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Color1Alpha
         {
             get
@@ -39,7 +36,7 @@ namespace IndustrialPark
             set => Write(0x8, BitConverter.ToInt32(new byte[] { value, Color1.B, Color1.G, Color1.R }, 0));
         }
 
-        [Editor(typeof(MyColorEditor), typeof(UITypeEditor))]
+        [Category("Fog"), Editor(typeof(MyColorEditor), typeof(UITypeEditor))]
         public MyColor Color2
         {
             get
@@ -51,7 +48,7 @@ namespace IndustrialPark
             set => Write(0xC, BitConverter.ToInt32(new byte[] { Color2Alpha, value.B, value.G, value.R }, 0));
         }
 
-        [TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("Fog"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Color2Alpha
         {
             get
@@ -63,30 +60,35 @@ namespace IndustrialPark
             set => Write(0xC, BitConverter.ToInt32(new byte[] { value, Color2.B, Color2.G, Color2.R }, 0));
         }
 
+        [Category("Fog")]
         public float UnknownFloat1
         {
             get => ReadFloat(0x10);
             set => Write(0x10, value);
         }
 
+        [Category("Fog")]
         public float UnknownFloat2
         {
             get => ReadFloat(0x14);
             set => Write(0x14, value);
         }
 
+        [Category("Fog")]
         public float UnknownFloat3
         {
             get => ReadFloat(0x18);
             set => Write(0x18, value);
         }
 
+        [Category("Fog")]
         public float UnknownFloat4
         {
             get => ReadFloat(0x1C);
             set => Write(0x1C, value);
         }
 
+        [Category("Fog")]
         public int Unknown5
         {
             get => ReadInt(0x20);

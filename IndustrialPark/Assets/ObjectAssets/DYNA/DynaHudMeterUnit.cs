@@ -16,6 +16,18 @@ namespace IndustrialPark
             Unknown_ID3 = 0;
         }
 
+        public override bool HasReference(uint assetID)
+        {
+            if (Unknown_ID1 == assetID)
+                return true;
+            if (Unknown_ID2 == assetID)
+                return true;
+            if (Unknown_ID3 == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
         public DynaHudMeterUnit(IEnumerable<byte> enumerable) : base (enumerable)
         {
             UnknownFloat1 = Switch(BitConverter.ToSingle(data, 0x0));

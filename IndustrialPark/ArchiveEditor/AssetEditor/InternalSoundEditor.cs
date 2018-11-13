@@ -92,5 +92,10 @@ namespace IndustrialPark
                 File.WriteAllBytes(saveFileDialog.FileName, file.ToArray());
             }
         }
+
+        private void buttonFindCallers_Click(object sender, EventArgs e)
+        {
+            Program.MainForm.FindWhoTargets(GetAssetID());
+        }
     }
 }

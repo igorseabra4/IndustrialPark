@@ -12,6 +12,22 @@ namespace IndustrialPark
             get => 0x44;
         }
 
+        public override bool HasReference(uint assetID)
+        {
+            if (JSP_AssetID == assetID)
+                return true;
+            if (CAM_AssetID == assetID)
+                return true;
+            if (LKIT_AssetID_0 == assetID)
+                return true;
+            if (LKIT_AssetID_1 == assetID)
+                return true;
+            if (MAPR_AssetID == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
         public AssetID JSP_AssetID
         {
             get => ReadUInt(0x8);

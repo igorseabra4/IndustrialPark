@@ -12,6 +12,14 @@ namespace IndustrialPark
 
         public AssetDSTR(Section_AHDR AHDR) : base(AHDR) { }
 
+        public override bool HasReference(uint assetID)
+        {
+            if (UnknownAssetID74 == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
         public int UnknownInt54
         {
             get => ReadInt(0x54 + Offset);

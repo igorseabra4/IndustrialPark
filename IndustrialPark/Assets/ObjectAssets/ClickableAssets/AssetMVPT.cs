@@ -36,6 +36,15 @@ namespace IndustrialPark
                 ArchiveEditorFunctions.renderableAssetSetTrans.Add(this);
         }
 
+        public override bool HasReference(uint assetID)
+        {
+            foreach (AssetID a in SiblingMVPTs)
+                if (a == assetID)
+                    return true;
+
+            return base.HasReference(assetID);
+        }
+
         public void CreateTransformMatrix()
         {
             if (_distanceICanSeeYou == -1f)

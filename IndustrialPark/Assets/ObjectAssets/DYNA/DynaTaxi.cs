@@ -31,6 +31,24 @@ namespace IndustrialPark
             UnknownFloat2 = Switch(BitConverter.ToSingle(data, 0x1C));
         }
 
+        public override bool HasReference(uint assetID)
+        {
+            if (MRKR_ID == assetID)
+                return true;
+            if (CAM_ID == assetID)
+                return true;
+            if (PORT_ID == assetID)
+                return true;
+            if (DYNA_Talkbox_ID == assetID)
+                return true;
+            if (TEXT_ID == assetID)
+                return true;
+            if (SIMP_ID == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
         public override byte[] ToByteArray()
         {
             List<byte> list = new List<byte>();

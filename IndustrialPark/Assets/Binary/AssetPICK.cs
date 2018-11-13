@@ -49,6 +49,19 @@ namespace IndustrialPark
                 pickEntries.Add(entryPICK.ReferenceID, entryPICK.ModelAssetID);
         }
 
+        public override bool HasReference(uint assetID)
+        {
+            foreach (EntryPICK a in PICK_Entries)
+            {
+                if (a.ModelAssetID == assetID)
+                    return true;
+                if (a.ReferenceID == assetID)
+                    return true;
+            }
+
+            return base.HasReference(assetID);
+        }
+
         public EntryPICK[] PICK_Entries
         {
             get

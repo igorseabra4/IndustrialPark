@@ -14,6 +14,14 @@ namespace IndustrialPark
             MRKR_ID = 0;
         }
 
+        public override bool HasReference(uint assetID)
+        {
+            if (MRKR_ID == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
         public DynaBungeeDrop(IEnumerable<byte> enumerable) : base (enumerable)
         {
             MRKR_ID = Switch(BitConverter.ToUInt32(data, 0x0));

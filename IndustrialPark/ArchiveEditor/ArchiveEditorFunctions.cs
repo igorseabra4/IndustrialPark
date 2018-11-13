@@ -362,6 +362,20 @@ namespace IndustrialPark
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
+                case AssetType.UI:
+                    {
+                        AssetUI newAsset = new AssetUI(AHDR);
+                        newAsset.Setup();
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
+                case AssetType.UIFT:
+                    {
+                        AssetUIFT newAsset = new AssetUIFT(AHDR);
+                        newAsset.Setup();
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
                 case AssetType.VIL:
                     {
                         AssetVIL newAsset = new AssetVIL(AHDR);
@@ -399,8 +413,6 @@ namespace IndustrialPark
                 case AssetType.SURF:
                 case AssetType.TPIK:
                 case AssetType.TRWT:
-                case AssetType.UIFT:
-                case AssetType.UI:
                 case AssetType.UIM:
                 case AssetType.VOLU:
                 case AssetType.ZLIN:
@@ -554,8 +566,6 @@ namespace IndustrialPark
                 internalEditors.Add(new InternalTextEditor(TEXT, this));
             else if (asset.AHDR.assetType == AssetType.SND | asset.AHDR.assetType == AssetType.SNDS)
                 internalEditors.Add(new InternalSoundEditor(asset, this));
-            else if (asset is ObjectAsset objectAsset)
-                internalEditors.Add(new InternalObjectAssetEditor(objectAsset, this));
             else
                 internalEditors.Add(new InternalAssetEditor(asset, this));
 
@@ -591,16 +601,43 @@ namespace IndustrialPark
             return assetID;
         }
 
+        public static uint GetClickedAssetID2D(Ray ray, float farPlane)
+        {
+            List<IRenderableAsset> l = new List<IRenderableAsset>();
+            try
+            {
+                foreach (IRenderableAsset a in renderableAssetSetCommon)
+                    if (a is AssetUI ui)
+                        l.Add(ui);
+                    else if (a is AssetUIFT uift)
+                        l.Add(uift);
+            }
+            catch { return 0; }
+
+            float smallerDistance = 3 * farPlane;
+            uint assetID = 0;
+
+            foreach (Asset ra in l)
+            {
+                if (!ra.isSelected && ra is IClickableAsset)
+                {
+                    float? distance = ((IClickableAsset)ra).IntersectsWith(ray);
+                    if (distance != null && distance < smallerDistance)
+                    {
+                        smallerDistance = (float)distance;
+                        assetID = ra.AHDR.assetID;
+                    }
+                }
+            }
+
+            return assetID;
+        }
+
         public void FindWhoTargets(uint assetID)
         {
             foreach (Asset asset in assetDictionary.Values)
-                if (asset is ObjectAsset objectAsset)
-                    foreach (AssetEvent assetEvent in objectAsset.EventsBFBB)
-                        if (assetEvent.TargetAssetID == assetID)
-                        {
-                            OpenInternalEditor(asset);
-                            break;
-                        }
+                if (asset.HasReference(assetID))
+                    OpenInternalEditor(asset);
         }
 
         public void RecalculateAllMatrices()

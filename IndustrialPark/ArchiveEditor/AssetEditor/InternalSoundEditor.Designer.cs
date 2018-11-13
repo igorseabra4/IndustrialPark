@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InternalSoundEditor));
             this.labelAssetName = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.buttonFindCallers = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.button1 = new System.Windows.Forms.Button();
@@ -52,6 +53,7 @@
             // 
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Controls.Add(this.buttonFindCallers, 0, 5);
             this.tableLayoutPanel1.Controls.Add(this.button2, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.labelAssetName, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.richTextBox1, 0, 3);
@@ -60,19 +62,32 @@
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 5;
+            this.tableLayoutPanel1.RowCount = 6;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 22F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(293, 283);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(293, 307);
             this.tableLayoutPanel1.TabIndex = 7;
+            // 
+            // buttonFindCallers
+            // 
+            this.buttonFindCallers.AutoSize = true;
+            this.buttonFindCallers.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonFindCallers.Location = new System.Drawing.Point(3, 282);
+            this.buttonFindCallers.Name = "buttonFindCallers";
+            this.buttonFindCallers.Size = new System.Drawing.Size(287, 22);
+            this.buttonFindCallers.TabIndex = 11;
+            this.buttonFindCallers.Text = "Find Who Targets Me";
+            this.buttonFindCallers.UseVisualStyleBackColor = true;
+            this.buttonFindCallers.Click += new System.EventHandler(this.buttonFindCallers_Click);
             // 
             // button2
             // 
             this.button2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button2.Location = new System.Drawing.Point(3, 258);
+            this.button2.Location = new System.Drawing.Point(3, 254);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(287, 22);
             this.button2.TabIndex = 10;
@@ -86,7 +101,7 @@
             this.richTextBox1.Location = new System.Drawing.Point(3, 73);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(287, 179);
+            this.richTextBox1.Size = new System.Drawing.Size(287, 175);
             this.richTextBox1.TabIndex = 9;
             this.richTextBox1.Text = resources.GetString("richTextBox1.Text");
             // 
@@ -115,7 +130,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(293, 283);
+            this.ClientSize = new System.Drawing.Size(293, 307);
             this.Controls.Add(this.tableLayoutPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
@@ -137,5 +152,6 @@
         private System.Windows.Forms.CheckBox checkBoxSendToSNDI;
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button buttonFindCallers;
     }
 }

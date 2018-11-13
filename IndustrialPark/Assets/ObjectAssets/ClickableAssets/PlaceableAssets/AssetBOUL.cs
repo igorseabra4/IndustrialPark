@@ -13,6 +13,14 @@ namespace IndustrialPark
 
         public AssetBOUL(Section_AHDR AHDR) : base(AHDR) { }
 
+        public override bool HasReference(uint assetID)
+        {
+            if (SoundAssetID == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
         [Category("Boulder")]
         public float UnknownFloat54
         {
