@@ -48,26 +48,26 @@ namespace IndustrialPark
 
         public DynaTalkBox(IEnumerable<byte> enumerable) : base (enumerable)
         {
-            TextBoxID1 = Switch(BitConverter.ToUInt32(data, 0x0));
-            TextBoxID2 = Switch(BitConverter.ToUInt32(data, 0x4));
-            TextBoxID3 = Switch(BitConverter.ToUInt32(data, 0x8));
-            Flags1 = data[0xC];
-            Flags2 = data[0xD];
-            Flags3 = data[0xE];
-            Flags4 = data[0xF];
-            UnknownInt1 = Switch(BitConverter.ToInt32(data, 0x10));
-            PointerID = Switch(BitConverter.ToUInt32(data, 0x14));
-            Flags5 = data[0x18];
-            Flags6 = data[0x19];
-            Flags7 = data[0x1A];
-            Flags8 = data[0x1B];
-            UnknownFloat = Switch(BitConverter.ToSingle(data, 0x1C));
-            UnknownInt2 = Switch(BitConverter.ToInt32(data, 0x20));
-            TextID1 = Switch(BitConverter.ToUInt32(data, 0x24));
-            TextID2 = Switch(BitConverter.ToUInt32(data, 0x28));
-            TextID3 = Switch(BitConverter.ToUInt32(data, 0x2C));
-            TextID4 = Switch(BitConverter.ToUInt32(data, 0x30));
-            TextID5 = Switch(BitConverter.ToUInt32(data, 0x34));
+            TextBoxID1 = Switch(BitConverter.ToUInt32(Data, 0x0));
+            TextBoxID2 = Switch(BitConverter.ToUInt32(Data, 0x4));
+            TextBoxID3 = Switch(BitConverter.ToUInt32(Data, 0x8));
+            Flags1 = Data[0xC];
+            Flags2 = Data[0xD];
+            Flags3 = Data[0xE];
+            Flags4 = Data[0xF];
+            UnknownInt1 = Switch(BitConverter.ToInt32(Data, 0x10));
+            PointerID = Switch(BitConverter.ToUInt32(Data, 0x14));
+            Flags5 = Data[0x18];
+            Flags6 = Data[0x19];
+            Flags7 = Data[0x1A];
+            Flags8 = Data[0x1B];
+            UnknownFloat = Switch(BitConverter.ToSingle(Data, 0x1C));
+            UnknownInt2 = Switch(BitConverter.ToInt32(Data, 0x20));
+            TextID1 = Switch(BitConverter.ToUInt32(Data, 0x24));
+            TextID2 = Switch(BitConverter.ToUInt32(Data, 0x28));
+            TextID3 = Switch(BitConverter.ToUInt32(Data, 0x2C));
+            TextID4 = Switch(BitConverter.ToUInt32(Data, 0x30));
+            TextID5 = Switch(BitConverter.ToUInt32(Data, 0x34));
         }
 
         public override byte[] ToByteArray()

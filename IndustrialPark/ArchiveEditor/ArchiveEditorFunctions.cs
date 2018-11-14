@@ -162,7 +162,7 @@ namespace IndustrialPark
                 case AssetType.CAM:
                     {
                         AssetCAM newAsset = new AssetCAM(AHDR);
-                        newAsset.Setup(Program.MainForm.renderer);
+                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
@@ -198,6 +198,13 @@ namespace IndustrialPark
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
+                case AssetType.EGEN:
+                    {
+                        AssetEGEN newAsset = new AssetEGEN(AHDR);
+                        newAsset.Setup();
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
                 case AssetType.ENV:
                     {
                         AssetENV newAsset = new AssetENV(AHDR);
@@ -213,6 +220,13 @@ namespace IndustrialPark
                 case AssetType.GRUP:
                     {
                         AssetGRUP newAsset = new AssetGRUP(AHDR);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
+                case AssetType.HANG:
+                    {
+                        AssetHANG newAsset = new AssetHANG(AHDR);
+                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
@@ -256,6 +270,13 @@ namespace IndustrialPark
                             Asset newAsset = new Asset(AHDR);
                             assetDictionary.Add(AHDR.assetID, newAsset);
                         }
+                    }
+                    break;
+                case AssetType.PEND:
+                    {
+                        AssetPEND newAsset = new AssetPEND(AHDR);
+                        newAsset.Setup();
+                        assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
                 case AssetType.PICK:
@@ -388,10 +409,8 @@ namespace IndustrialPark
                 case AssetType.DSCO:
                 case AssetType.DTRK:
                 case AssetType.DUPC:
-                case AssetType.EGEN:
                 case AssetType.GRSM:
                 case AssetType.GUST:
-                case AssetType.HANG:
                 case AssetType.LITE:
                 case AssetType.LOBM:
                 case AssetType.NGMS:
@@ -399,7 +418,6 @@ namespace IndustrialPark
                 case AssetType.PARE:
                 case AssetType.PARP:
                 case AssetType.PARS:
-                case AssetType.PEND:
                 case AssetType.PGRS:
                 case AssetType.PRJT:
                 case AssetType.RANM:
@@ -519,7 +537,18 @@ namespace IndustrialPark
             if (currentlySelectedAssetID != 0)
             {
                 assetDictionary[currentlySelectedAssetID].isSelected = true;
+
+                bool updateGizmos = false;
+
                 if (assetDictionary[currentlySelectedAssetID] is IClickableAsset ra)
+                {
+                    if (ra is AssetDYNA dyna)
+                        updateGizmos = dyna.IsRenderableClickable;
+                    else
+                        updateGizmos = true;
+                }
+
+                if (updateGizmos)
                     UpdateGizmoPosition();
                 else
                     ClearGizmos();

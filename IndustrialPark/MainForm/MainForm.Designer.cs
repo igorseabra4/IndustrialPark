@@ -83,10 +83,11 @@ namespace IndustrialPark
             this.vILToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.uIModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.uIModeAutoSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.renderPanel = new System.Windows.Forms.Panel();
-            this.uIModeAutoSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dYNAToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -364,6 +365,7 @@ namespace IndustrialPark
             this.bUTNToolStripMenuItem,
             this.cAMToolStripMenuItem,
             this.dSTRToolStripMenuItem,
+            this.dYNAToolStripMenuItem,
             this.mRKRToolStripMenuItem,
             this.mVPTToolStripMenuItem,
             this.pKUPToolStripMenuItem,
@@ -538,6 +540,13 @@ namespace IndustrialPark
             this.uIModeToolStripMenuItem.Text = "UI Mode";
             this.uIModeToolStripMenuItem.Click += new System.EventHandler(this.uIToolStripMenuItem_Click);
             // 
+            // uIModeAutoSizeToolStripMenuItem
+            // 
+            this.uIModeAutoSizeToolStripMenuItem.Name = "uIModeAutoSizeToolStripMenuItem";
+            this.uIModeAutoSizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.uIModeAutoSizeToolStripMenuItem.Text = "UI Mode AutoSize";
+            this.uIModeAutoSizeToolStripMenuItem.Click += new System.EventHandler(this.uIModeAutoSizeToolStripMenuItem_Click);
+            // 
             // statusStrip1
             // 
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
@@ -569,12 +578,14 @@ namespace IndustrialPark
             this.renderPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.renderPanel_MouseUp);
             this.renderPanel.Resize += new System.EventHandler(this.ResetMouseCenter);
             // 
-            // uIModeAutoSizeToolStripMenuItem
+            // dYNAToolStripMenuItem
             // 
-            this.uIModeAutoSizeToolStripMenuItem.Name = "uIModeAutoSizeToolStripMenuItem";
-            this.uIModeAutoSizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.uIModeAutoSizeToolStripMenuItem.Text = "UI Mode AutoSize";
-            this.uIModeAutoSizeToolStripMenuItem.Click += new System.EventHandler(this.uIModeAutoSizeToolStripMenuItem_Click);
+            this.dYNAToolStripMenuItem.Checked = true;
+            this.dYNAToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.dYNAToolStripMenuItem.Name = "dYNAToolStripMenuItem";
+            this.dYNAToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.dYNAToolStripMenuItem.Text = "DYNA";
+            this.dYNAToolStripMenuItem.Click += new System.EventHandler(this.dYNAToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -661,6 +672,7 @@ namespace IndustrialPark
         private ToolStripMenuItem uIToolStripMenuItem;
         private ToolStripMenuItem uIFTToolStripMenuItem;
         private ToolStripMenuItem uIModeAutoSizeToolStripMenuItem;
+        private ToolStripMenuItem dYNAToolStripMenuItem;
     }
 }
 

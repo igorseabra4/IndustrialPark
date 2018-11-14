@@ -13,22 +13,22 @@ namespace IndustrialPark
 
         public DynaNPCSettings(IEnumerable<byte> enumerable) : base (enumerable)
         {
-            Unknown1 = Switch(BitConverter.ToInt32(data, 0x0));
-            Flags1 = data[0x4];
-            Flags2 = data[0x5];
-            Flags3 = data[0x6];
-            Flags4 = data[0x7];
-            Flags5 = data[0x8];
-            Flags6 = data[0x9];
-            Flags7 = data[0xA];
-            Flags8 = data[0xB];
-            Flags9 = data[0xC];
-            Flags10 = data[0xD];
-            Flags11 = data[0xE];
-            Flags12 = data[0xF];
-            Unknown2 = Switch(BitConverter.ToInt32(data, 0x10));
-            DuploSpawnRate = Switch(BitConverter.ToSingle(data, 0x14));
-            DuploEnemyLimit = Switch(BitConverter.ToInt32(data, 0x18));
+            Unknown1 = Switch(BitConverter.ToInt32(Data, 0x0));
+            Flags1 = Data[0x4];
+            Flags2 = Data[0x5];
+            Flags3 = Data[0x6];
+            Flags4 = Data[0x7];
+            Flags5 = Data[0x8];
+            Flags6 = Data[0x9];
+            Flags7 = Data[0xA];
+            Flags8 = Data[0xB];
+            Flags9 = Data[0xC];
+            Flags10 = Data[0xD];
+            Flags11 = Data[0xE];
+            Flags12 = Data[0xF];
+            Unknown2 = Switch(BitConverter.ToInt32(Data, 0x10));
+            DuploSpawnRate = Switch(BitConverter.ToSingle(Data, 0x14));
+            DuploEnemyLimit = Switch(BitConverter.ToInt32(Data, 0x18));
         }
 
         public override byte[] ToByteArray()

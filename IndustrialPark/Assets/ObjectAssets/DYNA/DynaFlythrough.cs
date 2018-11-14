@@ -23,7 +23,7 @@ namespace IndustrialPark
 
         public DynaFlythrough(IEnumerable<byte> enumerable) : base (enumerable)
         {
-            FLY_ID = Switch(BitConverter.ToUInt32(data, 0x0));
+            FLY_ID = Switch(BitConverter.ToUInt32(Data, 0x0));
         }
 
         public override byte[] ToByteArray()

@@ -147,6 +147,7 @@ namespace IndustrialPark
                 case AssetType.EGEN:
                 case AssetType.ENV:
                 case AssetType.FOG:
+                case AssetType.HANG:
                 case AssetType.GRUP:
                 case AssetType.JAW:
                 case AssetType.LODT:
@@ -157,6 +158,7 @@ namespace IndustrialPark
                 case AssetType.PARE:
                 case AssetType.PARP:
                 case AssetType.PARS:
+                case AssetType.PEND:
                 case AssetType.PICK:
                 case AssetType.PIPT:
                 case AssetType.PKUP:

@@ -24,9 +24,9 @@ namespace IndustrialPark
 
         public DynaBungeeDrop(IEnumerable<byte> enumerable) : base (enumerable)
         {
-            MRKR_ID = Switch(BitConverter.ToUInt32(data, 0x0));
-            Unknown = Switch(BitConverter.ToInt32(data, 0x4));
-            MaybeRotation = Switch(BitConverter.ToSingle(data, 0x8));
+            MRKR_ID = Switch(BitConverter.ToUInt32(Data, 0x0));
+            Unknown = Switch(BitConverter.ToInt32(Data, 0x4));
+            MaybeRotation = Switch(BitConverter.ToSingle(Data, 0x8));
         }
 
         public override byte[] ToByteArray()

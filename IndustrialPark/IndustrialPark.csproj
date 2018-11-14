@@ -136,6 +136,9 @@
     <Compile Include="Assets\ObjectAssets\AssetENV.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetSFX.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetCAM.cs" />
+    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetEGEN.cs" />
+    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetHANG.cs" />
+    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetPEND.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetUI.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetUIFT.cs" />
     <Compile Include="Assets\ObjectAssets\DYNA\AssetDYNA.cs" />
@@ -144,6 +147,8 @@
     <Compile Include="Assets\ObjectAssets\AssetTIMR.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetBOUL.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetDSTR.cs" />
+    <Compile Include="Assets\ObjectAssets\DYNA\DynaTeleport_BFBB.cs" />
+    <Compile Include="Assets\ObjectAssets\DYNA\DynaTeleport_MovieGame.cs" />
     <Compile Include="Assets\Shared\AssetEventBFBB.cs" />
     <Compile Include="Assets\Shared\AssetEventTSSM.cs" />
     <Compile Include="Assets\Shared\Enums\EventTypeTSSM.cs" />
@@ -169,7 +174,6 @@
     <Compile Include="Assets\ObjectAssets\DYNA\DynaPointer.cs" />
     <Compile Include="Assets\ObjectAssets\DYNA\DynaTalkBox.cs" />
     <Compile Include="Assets\ObjectAssets\DYNA\DynaTaxi.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\DynaTeleport.cs" />
     <Compile Include="Assets\ObjectAssets\DYNA\DynaTextBox.cs" />
     <Compile Include="Assets\ObjectAssets\DYNA\DynaType.cs" />
     <Compile Include="Assets\Shared\Asset.cs" />

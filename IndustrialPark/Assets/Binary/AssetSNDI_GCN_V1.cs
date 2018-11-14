@@ -65,13 +65,28 @@ namespace IndustrialPark
         }
         private int Entries_SND_CIN_amount
         {
-            get => ReadInt(0xC);
-            set => Write(0xC, value);
+            get
+            {
+                if (Functions.currentGame == Game.BFBB)
+                    return ReadInt(0xC);
+
+                return 0;
+            }
+            set
+            {
+                if (Functions.currentGame == Game.BFBB)
+                    Write(0xC, value);
+            }
         }
 
         private int Entries_SND_StartOffset
         {
-            get => 0x10;
+            get
+            {
+                if (Functions.currentGame == Game.BFBB)
+                    return 0x10;
+                return 0xC;
+            }
         }
         private int Entries_SNDS_StartOffset
         {
@@ -160,6 +175,9 @@ namespace IndustrialPark
         {
             get
             {
+                if (Functions.currentGame == Game.Scooby)
+                    return new EntrySoundInfo_GCN_V1[0];
+
                 List<EntrySoundInfo_GCN_V1> entries = new List<EntrySoundInfo_GCN_V1>();
 
                 for (int i = 0; i < Entries_SND_CIN_amount; i++)
@@ -175,6 +193,9 @@ namespace IndustrialPark
             }
             set
             {
+                if (Functions.currentGame == Game.Scooby)
+                    return;
+
                 List<EntrySoundInfo_GCN_V1> newValues = value.ToList();
 
                 List<byte> newData = Data.Take(Entries_SND_CIN_StartOffset).ToList();

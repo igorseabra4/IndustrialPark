@@ -21,14 +21,14 @@ namespace IndustrialPark
 
         public DynaTaxi(IEnumerable<byte> enumerable) : base (enumerable)
         {
-            MRKR_ID = Switch(BitConverter.ToUInt32(data, 0x0));
-            CAM_ID = Switch(BitConverter.ToUInt32(data, 0x4));
-            PORT_ID = Switch(BitConverter.ToUInt32(data, 0x8));
-            DYNA_Talkbox_ID = Switch(BitConverter.ToUInt32(data, 0xC));
-            TEXT_ID = Switch(BitConverter.ToUInt32(data, 0x10));
-            SIMP_ID = Switch(BitConverter.ToUInt32(data, 0x14));
-            UnknownFloat1 = Switch(BitConverter.ToSingle(data, 0x18));
-            UnknownFloat2 = Switch(BitConverter.ToSingle(data, 0x1C));
+            MRKR_ID = Switch(BitConverter.ToUInt32(Data, 0x0));
+            CAM_ID = Switch(BitConverter.ToUInt32(Data, 0x4));
+            PORT_ID = Switch(BitConverter.ToUInt32(Data, 0x8));
+            DYNA_Talkbox_ID = Switch(BitConverter.ToUInt32(Data, 0xC));
+            TEXT_ID = Switch(BitConverter.ToUInt32(Data, 0x10));
+            SIMP_ID = Switch(BitConverter.ToUInt32(Data, 0x14));
+            InvisibleTimer = Switch(BitConverter.ToSingle(Data, 0x18));
+            TeleportTimer = Switch(BitConverter.ToSingle(Data, 0x1C));
         }
 
         public override bool HasReference(uint assetID)
@@ -58,8 +58,8 @@ namespace IndustrialPark
             list.AddRange(BitConverter.GetBytes(Switch(DYNA_Talkbox_ID)));
             list.AddRange(BitConverter.GetBytes(Switch(TEXT_ID)));
             list.AddRange(BitConverter.GetBytes(Switch(SIMP_ID)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat1)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat2)));
+            list.AddRange(BitConverter.GetBytes(Switch(InvisibleTimer)));
+            list.AddRange(BitConverter.GetBytes(Switch(TeleportTimer)));
             return list.ToArray();
         }
 
@@ -70,8 +70,8 @@ namespace IndustrialPark
         public AssetID TEXT_ID { get; set; }
         public AssetID SIMP_ID { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat1{ get; set; }
+        public float InvisibleTimer{ get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat2{ get; set; }
+        public float TeleportTimer{ get; set; }
     }
 }

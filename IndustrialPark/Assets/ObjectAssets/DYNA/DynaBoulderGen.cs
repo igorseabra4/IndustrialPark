@@ -16,20 +16,20 @@ namespace IndustrialPark
 
         public DynaBoulderGen(IEnumerable<byte> enumerable) : base (enumerable)
         {
-            Unknown_ID = Switch(BitConverter.ToUInt32(data, 0x0));
-            Float1 = Switch(BitConverter.ToSingle(data, 0x04));
-            Float2 = Switch(BitConverter.ToSingle(data, 0x08));
-            Float3 = Switch(BitConverter.ToSingle(data, 0x0C));
-            Float4 = Switch(BitConverter.ToSingle(data, 0x10));
-            Float5 = Switch(BitConverter.ToSingle(data, 0x14));
-            Float6 = Switch(BitConverter.ToSingle(data, 0x18));
-            Float7 = Switch(BitConverter.ToSingle(data, 0x1C));
-            Float8 = Switch(BitConverter.ToSingle(data, 0x20));
-            Float9 = Switch(BitConverter.ToSingle(data, 0x24));
-            Float10 = Switch(BitConverter.ToSingle(data, 0x28));
-            Float11 = Switch(BitConverter.ToSingle(data, 0x2C));
-            Float12 = Switch(BitConverter.ToSingle(data, 0x30));
-            Float13 = Switch(BitConverter.ToSingle(data, 0x34));
+            Unknown_ID = Switch(BitConverter.ToUInt32(Data, 0x0));
+            Float1 = Switch(BitConverter.ToSingle(Data, 0x04));
+            Float2 = Switch(BitConverter.ToSingle(Data, 0x08));
+            Float3 = Switch(BitConverter.ToSingle(Data, 0x0C));
+            Float4 = Switch(BitConverter.ToSingle(Data, 0x10));
+            Float5 = Switch(BitConverter.ToSingle(Data, 0x14));
+            Float6 = Switch(BitConverter.ToSingle(Data, 0x18));
+            Float7 = Switch(BitConverter.ToSingle(Data, 0x1C));
+            Float8 = Switch(BitConverter.ToSingle(Data, 0x20));
+            Float9 = Switch(BitConverter.ToSingle(Data, 0x24));
+            Float10 = Switch(BitConverter.ToSingle(Data, 0x28));
+            Float11 = Switch(BitConverter.ToSingle(Data, 0x2C));
+            Float12 = Switch(BitConverter.ToSingle(Data, 0x30));
+            Float13 = Switch(BitConverter.ToSingle(Data, 0x34));
         }
 
         public override byte[] ToByteArray()

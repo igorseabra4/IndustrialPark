@@ -30,39 +30,39 @@ namespace IndustrialPark
 
         public DynaHudMeterUnit(IEnumerable<byte> enumerable) : base (enumerable)
         {
-            UnknownFloat1 = Switch(BitConverter.ToSingle(data, 0x0));
-            UnknownFloat2 = Switch(BitConverter.ToSingle(data, 0x4));
-            UnknownFloat3 = Switch(BitConverter.ToSingle(data, 0x8));
-            UnknownFloat4 = Switch(BitConverter.ToSingle(data, 0xC));
-            UnknownFloat5 = Switch(BitConverter.ToSingle(data, 0x10));
-            UnknownFloat6 = Switch(BitConverter.ToSingle(data, 0x14));
-            UnknownFloat7 = Switch(BitConverter.ToSingle(data, 0x18));
-            UnknownFloat8 = Switch(BitConverter.ToSingle(data, 0x1C));
-            UnknownFloat9 = Switch(BitConverter.ToSingle(data, 0x20));
-            UnknownFloat10 = Switch(BitConverter.ToSingle(data, 0x24));
-            UnknownFloat11 = Switch(BitConverter.ToSingle(data, 0x28));
-            Unknown_ID1 = Switch(BitConverter.ToUInt32(data, 0x2C));
-            UnknownFloat12 = Switch(BitConverter.ToSingle(data, 0x30));
-            UnknownFloat13 = Switch(BitConverter.ToSingle(data, 0x34));
-            UnknownFloat14 = Switch(BitConverter.ToSingle(data, 0x38));
-            Unknown_ID2 = Switch(BitConverter.ToUInt32(data, 0x3C));
-            UnknownFloat15 = Switch(BitConverter.ToSingle(data, 0x40));
-            UnknownFloat16 = Switch(BitConverter.ToSingle(data, 0x44));
-            UnknownFloat17 = Switch(BitConverter.ToSingle(data, 0x48));
-            UnknownFloat18 = Switch(BitConverter.ToSingle(data, 0x4C));
-            UnknownFloat19 = Switch(BitConverter.ToSingle(data, 0x50));
-            UnknownFloat20 = Switch(BitConverter.ToSingle(data, 0x54));
-            Unknown_ID3 = Switch(BitConverter.ToUInt32(data, 0x58));
-            UnknownFloat21 = Switch(BitConverter.ToSingle(data, 0x5C));
-            UnknownFloat22 = Switch(BitConverter.ToSingle(data, 0x60));
-            UnknownFloat23 = Switch(BitConverter.ToSingle(data, 0x64));
-            UnknownFloat24 = Switch(BitConverter.ToSingle(data, 0x68));
-            UnknownFloat25 = Switch(BitConverter.ToSingle(data, 0x6C));
-            UnknownFloat26 = Switch(BitConverter.ToSingle(data, 0x70));
-            UnknownFloat27 = Switch(BitConverter.ToSingle(data, 0x74));
-            UnknownFloat28 = Switch(BitConverter.ToSingle(data, 0x78));
-            UnknownFloat29 = Switch(BitConverter.ToSingle(data, 0x7C));
-            Unknown = Switch(BitConverter.ToInt32(data, 0x80));
+            UnknownFloat1 = Switch(BitConverter.ToSingle(Data, 0x0));
+            UnknownFloat2 = Switch(BitConverter.ToSingle(Data, 0x4));
+            UnknownFloat3 = Switch(BitConverter.ToSingle(Data, 0x8));
+            UnknownFloat4 = Switch(BitConverter.ToSingle(Data, 0xC));
+            UnknownFloat5 = Switch(BitConverter.ToSingle(Data, 0x10));
+            UnknownFloat6 = Switch(BitConverter.ToSingle(Data, 0x14));
+            UnknownFloat7 = Switch(BitConverter.ToSingle(Data, 0x18));
+            UnknownFloat8 = Switch(BitConverter.ToSingle(Data, 0x1C));
+            UnknownFloat9 = Switch(BitConverter.ToSingle(Data, 0x20));
+            UnknownFloat10 = Switch(BitConverter.ToSingle(Data, 0x24));
+            UnknownFloat11 = Switch(BitConverter.ToSingle(Data, 0x28));
+            Unknown_ID1 = Switch(BitConverter.ToUInt32(Data, 0x2C));
+            UnknownFloat12 = Switch(BitConverter.ToSingle(Data, 0x30));
+            UnknownFloat13 = Switch(BitConverter.ToSingle(Data, 0x34));
+            UnknownFloat14 = Switch(BitConverter.ToSingle(Data, 0x38));
+            Unknown_ID2 = Switch(BitConverter.ToUInt32(Data, 0x3C));
+            UnknownFloat15 = Switch(BitConverter.ToSingle(Data, 0x40));
+            UnknownFloat16 = Switch(BitConverter.ToSingle(Data, 0x44));
+            UnknownFloat17 = Switch(BitConverter.ToSingle(Data, 0x48));
+            UnknownFloat18 = Switch(BitConverter.ToSingle(Data, 0x4C));
+            UnknownFloat19 = Switch(BitConverter.ToSingle(Data, 0x50));
+            UnknownFloat20 = Switch(BitConverter.ToSingle(Data, 0x54));
+            Unknown_ID3 = Switch(BitConverter.ToUInt32(Data, 0x58));
+            UnknownFloat21 = Switch(BitConverter.ToSingle(Data, 0x5C));
+            UnknownFloat22 = Switch(BitConverter.ToSingle(Data, 0x60));
+            UnknownFloat23 = Switch(BitConverter.ToSingle(Data, 0x64));
+            UnknownFloat24 = Switch(BitConverter.ToSingle(Data, 0x68));
+            UnknownFloat25 = Switch(BitConverter.ToSingle(Data, 0x6C));
+            UnknownFloat26 = Switch(BitConverter.ToSingle(Data, 0x70));
+            UnknownFloat27 = Switch(BitConverter.ToSingle(Data, 0x74));
+            UnknownFloat28 = Switch(BitConverter.ToSingle(Data, 0x78));
+            UnknownFloat29 = Switch(BitConverter.ToSingle(Data, 0x7C));
+            Unknown = Switch(BitConverter.ToInt32(Data, 0x80));
         }
 
         public override byte[] ToByteArray()

@@ -468,7 +468,12 @@ namespace IndustrialPark
                 archive.SelectAsset(CurrentlySelectedAssetID());
 
                 if (archive.GetFromAssetID(CurrentlySelectedAssetID()) is IClickableAsset a)
-                    buttonView.Visible = true;
+                {
+                    if (a is AssetDYNA dyna)
+                        buttonView.Visible = dyna.IsRenderableClickable;
+                    else
+                        buttonView.Visible = true;
+                }
                 else
                     buttonView.Visible = false;
             }

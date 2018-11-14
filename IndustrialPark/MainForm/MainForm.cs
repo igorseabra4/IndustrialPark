@@ -149,9 +149,9 @@ namespace IndustrialPark
                 renderer.Camera.Yaw, renderer.Camera.Pitch, renderer.Camera.Speed, renderer.Camera.SpeedRot, renderer.Camera.FieldOfView,renderer.Camera.FarPlane,
                 noCullingCToolStripMenuItem.Checked, wireframeFToolStripMenuItem.Checked, renderer.backgroundColor, renderer.normalColor, renderer.trigColor,
                 renderer.mvptColor, renderer.sfxColor, useLegacyAssetIDFormatToolStripMenuItem.Checked, alternateNamingMode, renderer.isDrawingUI,
-                AssetJSP.dontRender, AssetBOUL.dontRender, AssetBUTN.dontRender, AssetCAM.dontRender, AssetDSTR.dontRender, AssetMRKR.dontRender,
-                AssetMVPT.dontRender, AssetPLAT.dontRender, AssetPLAT.dontRender, AssetPLYR.dontRender, AssetSFX.dontRender, AssetSIMP.dontRender,
-                AssetTRIG.dontRender, AssetUI.dontRender, AssetUIFT.dontRender, AssetVIL.dontRender);
+                AssetJSP.dontRender, AssetBOUL.dontRender, AssetBUTN.dontRender, AssetCAM.dontRender, AssetDSTR.dontRender, AssetDYNA.dontRender, AssetMRKR.dontRender,
+                AssetMVPT.dontRender, AssetPLAT.dontRender, AssetPLAT.dontRender, AssetPLYR.dontRender, AssetSFX.dontRender, AssetSIMP.dontRender, AssetTRIG.dontRender,
+                AssetUI.dontRender, AssetUIFT.dontRender, AssetVIL.dontRender);
         }
 
         private void ApplySettings(string ipSettingsPath)
@@ -235,6 +235,9 @@ namespace IndustrialPark
 
             dSTRToolStripMenuItem.Checked = !ipSettings.dontRenderDSTR;
             AssetDSTR.dontRender = ipSettings.dontRenderDSTR;
+
+            dYNAToolStripMenuItem.Checked = !ipSettings.dontRenderDYNA;
+            AssetDYNA.dontRender = ipSettings.dontRenderDYNA;
 
             mRKRToolStripMenuItem.Checked = !ipSettings.dontRenderMRKR;
             AssetMRKR.dontRender = ipSettings.dontRenderMRKR;
@@ -702,6 +705,12 @@ namespace IndustrialPark
         {
             sFXToolStripMenuItem.Checked = !sFXToolStripMenuItem.Checked;
             AssetSFX.dontRender = !sFXToolStripMenuItem.Checked;
+        }
+
+        private void dYNAToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            dYNAToolStripMenuItem.Checked = !dYNAToolStripMenuItem.Checked;
+            AssetDYNA.dontRender = !dYNAToolStripMenuItem.Checked;
         }
 
         private void uIToolStripMenuItem_Click_1(object sender, EventArgs e)

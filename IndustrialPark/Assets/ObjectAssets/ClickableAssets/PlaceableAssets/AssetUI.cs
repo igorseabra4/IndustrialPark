@@ -116,6 +116,13 @@ namespace IndustrialPark
             }
         }
 
+        [Browsable(false)]
+        public new AssetID UnknownAssetID_50
+        {
+            get { return ReadUInt(0x50 + Offset); }
+            set { Write(0x50 + Offset, value); }
+        }
+
         [Category("UserInterface")]
         public AssetID AnimListAssetID
         {

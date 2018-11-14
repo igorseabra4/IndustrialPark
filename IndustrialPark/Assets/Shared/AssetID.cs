@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace IndustrialPark
 {
@@ -17,31 +16,6 @@ namespace IndustrialPark
         }
 
         private uint value;
-        public string Value {
-            get
-            {
-                try
-                {
-                    return value.ToString("X8");
-                }
-                catch
-                {
-                    System.Windows.Forms.MessageBox.Show("Unable to display asset ID");
-                    return "";
-                }
-            }
-            set
-            {
-                try
-                {
-                    this.value = Convert.ToUInt32(value, 16);
-                }
-                catch
-                {
-                    System.Windows.Forms.MessageBox.Show("Incorrect format");
-                }
-            }
-        }
 
         public override int GetHashCode()
         {

@@ -153,9 +153,6 @@ namespace IndustrialPark
                 AHDR.data[j + i] = split[i];
         }
 
-        public virtual bool HasReference(uint assetID)
-        {
-            return false;
-        }
+        public virtual bool HasReference(uint assetID) => false;
     }
 }

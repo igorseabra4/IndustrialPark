@@ -38,38 +38,38 @@ namespace IndustrialPark
 
         public DynaHudMeterFontV3(IEnumerable<byte> enumerable) : base (enumerable)
         {
-            UnknownFloat1 = Switch(BitConverter.ToSingle(data, 0x0));
-            UnknownFloat2 = Switch(BitConverter.ToSingle(data, 0x4));
-            UnknownFloat3 = Switch(BitConverter.ToSingle(data, 0x8));
-            UnknownFloat4 = Switch(BitConverter.ToSingle(data, 0xC));
-            UnknownFloat5 = Switch(BitConverter.ToSingle(data, 0x10));
-            UnknownFloat6 = Switch(BitConverter.ToSingle(data, 0x14));
-            UnknownFloat7 = Switch(BitConverter.ToSingle(data, 0x18));
-            UnknownFloat8 = Switch(BitConverter.ToSingle(data, 0x1C));
-            UnknownFloat9 = Switch(BitConverter.ToSingle(data, 0x20));
-            UnknownFloat10 = Switch(BitConverter.ToSingle(data, 0x24));
-            UnknownFloat11 = Switch(BitConverter.ToSingle(data, 0x28));
-            SoundID1 = Switch(BitConverter.ToUInt32(data, 0x2C));
-            SoundID2 = Switch(BitConverter.ToUInt32(data, 0x30));
-            SoundID3 = Switch(BitConverter.ToUInt32(data, 0x34));
-            SoundID4 = Switch(BitConverter.ToUInt32(data, 0x38));
-            UnknownInt1 = Switch(BitConverter.ToInt32(data, 0x3C));
-            UnknownInt2 = Switch(BitConverter.ToInt32(data, 0x40));
-            UnknownFloat12 = Switch(BitConverter.ToSingle(data, 0x44));
-            UnknownFloat13 = Switch(BitConverter.ToSingle(data, 0x48));
-            UnknownFloat14 = Switch(BitConverter.ToSingle(data, 0x4C));
-            UnknownFloat15 = Switch(BitConverter.ToSingle(data, 0x50));
-            UnknownFloat16 = Switch(BitConverter.ToSingle(data, 0x54));
-            byte[] abgr = BitConverter.GetBytes(Switch(BitConverter.ToSingle(data, 0x58)));
+            UnknownFloat1 = Switch(BitConverter.ToSingle(Data, 0x0));
+            UnknownFloat2 = Switch(BitConverter.ToSingle(Data, 0x4));
+            UnknownFloat3 = Switch(BitConverter.ToSingle(Data, 0x8));
+            UnknownFloat4 = Switch(BitConverter.ToSingle(Data, 0xC));
+            UnknownFloat5 = Switch(BitConverter.ToSingle(Data, 0x10));
+            UnknownFloat6 = Switch(BitConverter.ToSingle(Data, 0x14));
+            UnknownFloat7 = Switch(BitConverter.ToSingle(Data, 0x18));
+            UnknownFloat8 = Switch(BitConverter.ToSingle(Data, 0x1C));
+            UnknownFloat9 = Switch(BitConverter.ToSingle(Data, 0x20));
+            UnknownFloat10 = Switch(BitConverter.ToSingle(Data, 0x24));
+            UnknownFloat11 = Switch(BitConverter.ToSingle(Data, 0x28));
+            SoundID1 = Switch(BitConverter.ToUInt32(Data, 0x2C));
+            SoundID2 = Switch(BitConverter.ToUInt32(Data, 0x30));
+            SoundID3 = Switch(BitConverter.ToUInt32(Data, 0x34));
+            SoundID4 = Switch(BitConverter.ToUInt32(Data, 0x38));
+            UnknownInt1 = Switch(BitConverter.ToInt32(Data, 0x3C));
+            UnknownInt2 = Switch(BitConverter.ToInt32(Data, 0x40));
+            UnknownFloat12 = Switch(BitConverter.ToSingle(Data, 0x44));
+            UnknownFloat13 = Switch(BitConverter.ToSingle(Data, 0x48));
+            UnknownFloat14 = Switch(BitConverter.ToSingle(Data, 0x4C));
+            UnknownFloat15 = Switch(BitConverter.ToSingle(Data, 0x50));
+            UnknownFloat16 = Switch(BitConverter.ToSingle(Data, 0x54));
+            byte[] abgr = BitConverter.GetBytes(Switch(BitConverter.ToSingle(Data, 0x58)));
             Color1R = abgr[3];
             Color1G = abgr[2];
             Color1B = abgr[1];
             Color1Alpha = abgr[0];
-            Unknown3 = Switch(BitConverter.ToUInt32(data, 0x5C));
-            Flag1 = data[0x60];
-            Flag2 = data[0x61];
-            Flag3 = data[0x62];
-            Flag4 = data[0x63];
+            Unknown3 = Switch(BitConverter.ToUInt32(Data, 0x5C));
+            Flag1 = Data[0x60];
+            Flag2 = Data[0x61];
+            Flag3 = Data[0x62];
+            Flag4 = Data[0x63];
         }
 
         public override byte[] ToByteArray()

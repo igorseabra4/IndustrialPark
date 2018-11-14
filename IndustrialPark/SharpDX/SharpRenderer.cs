@@ -15,7 +15,7 @@ namespace IndustrialPark
         public Matrix worldViewProjection;
         public Vector4 Color;
     }
-    
+
     public class SharpRenderer
     {
         public SharpDevice device;
@@ -29,7 +29,7 @@ namespace IndustrialPark
                 MessageBox.Show("DirectX11 Not Supported");
                 return;
             }
-            
+
             device = new SharpDevice(control, false);
             LoadModels();
 
@@ -49,7 +49,7 @@ namespace IndustrialPark
 
         public SharpShader tintedShader;
         public SharpDX.Direct3D11.Buffer tintedBuffer;
-        
+
         public void SetSharpShader()
         {
             basicShader = new SharpShader(device, "Resources/SharpDX/Shader_Basic.hlsl",
@@ -311,7 +311,7 @@ namespace IndustrialPark
             tintedShader.Apply();
 
             device.DeviceContext.PixelShader.SetShaderResource(0, TextureManager.GetTextureFromDictionary(textureAssetID));
-            
+
             Plane.Draw(device);
         }
 
@@ -340,12 +340,11 @@ namespace IndustrialPark
 
                 device.Clear(backgroundColor);
 
-                if (isDrawingUI)
-                {
-                    viewProjection = Matrix.OrthoOffCenterRH(0, 640, -480, 0, -Camera.FarPlane, Camera.FarPlane);
-
-                    if (ArchiveEditorFunctions.allowRender)
+                if (ArchiveEditorFunctions.allowRender)
+                    if (isDrawingUI)
                     {
+                        viewProjection = Matrix.OrthoOffCenterRH(0, 640, -480, 0, -Camera.FarPlane, Camera.FarPlane);
+
                         device.SetFillModeDefault();
                         device.SetCullModeDefault();
                         device.ApplyRasterState();
@@ -365,18 +364,13 @@ namespace IndustrialPark
 
                         foreach (IRenderableAsset a in renderCommon)
                             a.Draw(this);
-
-                        ArchiveEditorFunctions.RenderGizmos(this);
                     }
-                }
-                else
-                {
-                    Matrix view = Camera.GetViewMatrix();
-                    viewProjection = view * Camera.GetProjectionMatrix();
-                    frustum = new BoundingFrustum(view * Camera.GetBiggerFovProjectionMatrix());
-
-                    if (ArchiveEditorFunctions.allowRender)
+                    else
                     {
+                        Matrix view = Camera.GetViewMatrix();
+                        viewProjection = view * Camera.GetProjectionMatrix();
+                        frustum = new BoundingFrustum(view * Camera.GetBiggerFovProjectionMatrix());
+
                         device.SetFillModeDefault();
                         device.SetCullModeDefault();
                         device.ApplyRasterState();
@@ -401,6 +395,9 @@ namespace IndustrialPark
 
                         foreach (IRenderableAsset a in renderCommon)
                         {
+                            if (a is AssetUI | a is AssetUIFT)
+                                continue;
+
                             BoundingBox bb = a.GetBoundingBox();
                             if (bb.Width > 100)
                                 renderLarge.Add(a);
@@ -435,9 +432,9 @@ namespace IndustrialPark
                         {
                             a.Draw(this);
                         }
+
                         ArchiveEditorFunctions.RenderGizmos(this);
                     }
-                }
 
                 device.Present();
             });
@@ -447,7 +444,7 @@ namespace IndustrialPark
             //release resources
             whiteDefault.Dispose();
             TextureManager.DisposeTextures();
-            
+
             Cube.Dispose();
             Pyramid.Dispose();
             Cylinder.Dispose();
@@ -457,10 +454,10 @@ namespace IndustrialPark
 
             defaultBuffer.Dispose();
             defaultShader.Dispose();
-            
+
             tintedBuffer.Dispose();
             tintedShader.Dispose();
-                        
+
             foreach (SharpMesh mesh in RenderWareModelFile.completeMeshList)
                 mesh.Dispose();
 

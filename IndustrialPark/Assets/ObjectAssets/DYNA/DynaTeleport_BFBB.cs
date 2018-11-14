@@ -4,11 +4,11 @@ using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
-    public class DynaTeleport : DynaBase
+    public class DynaTeleport_BFBB : DynaBase
     {
         public override string Note => "Version is always 1 or 2. Version 2 doesn't use the Rotation2";
 
-        public DynaTeleport() : base()
+        public DynaTeleport_BFBB() : base()
         {
             MRKR_ID = 0;
             DYNA_Teleport_ID = 0;
@@ -16,20 +16,20 @@ namespace IndustrialPark
 
         private int version;
 
-        public DynaTeleport(IEnumerable<byte> enumerable, int version) : base (enumerable)
+        public DynaTeleport_BFBB(IEnumerable<byte> enumerable, int version) : base (enumerable)
         {
             this.version = version;
-            MRKR_ID = Switch(BitConverter.ToUInt32(data, 0x0));
-            UnknownInt = Switch(BitConverter.ToInt32(data, 0x4));
-            Rotation1 = Switch(BitConverter.ToInt32(data, 0x8));
+            MRKR_ID = Switch(BitConverter.ToUInt32(Data, 0x0));
+            UnknownInt = Switch(BitConverter.ToInt32(Data, 0x4));
+            Rotation1 = Switch(BitConverter.ToInt32(Data, 0x8));
             if (version == 2)
             {
-                Rotation2 = Switch(BitConverter.ToInt32(data, 0xC));
-                DYNA_Teleport_ID = Switch(BitConverter.ToUInt32(data, 0x10));
+                Rotation2 = Switch(BitConverter.ToInt32(Data, 0xC));
+                DYNA_Teleport_ID = Switch(BitConverter.ToUInt32(Data, 0x10));
             }
             else
             {
-                DYNA_Teleport_ID = Switch(BitConverter.ToUInt32(data, 0x0C));
+                DYNA_Teleport_ID = Switch(BitConverter.ToUInt32(Data, 0x0C));
             }
         }
 

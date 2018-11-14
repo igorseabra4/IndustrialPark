@@ -24,37 +24,37 @@ namespace IndustrialPark
 
         public DynaBungeeHook(IEnumerable<byte> enumerable) : base (enumerable)
         {
-            Unknown_ID = Switch(BitConverter.ToUInt32(data, 0x0));
-            Unknown1 = Switch(BitConverter.ToInt32(data, 0x4));
-            Unknown2 = Switch(BitConverter.ToInt32(data, 0x8));
-            Unknown3 = Switch(BitConverter.ToInt32(data, 0xC));
-            UnknownFloat1 = Switch(BitConverter.ToSingle(data, 0x10));
-            UnknownFloat2 = Switch(BitConverter.ToSingle(data, 0x14));
-            UnknownFloat3 = Switch(BitConverter.ToSingle(data, 0x18));
-            UnknownFloat4 = Switch(BitConverter.ToSingle(data, 0x1C));
-            UnknownFloat5 = Switch(BitConverter.ToSingle(data, 0x20));
-            UnknownFloat6 = Switch(BitConverter.ToSingle(data, 0x24));
-            UnknownFloat7 = Switch(BitConverter.ToSingle(data, 0x28));
-            UnknownFloat8 = Switch(BitConverter.ToSingle(data, 0x2C));
-            UnknownFloat9 = Switch(BitConverter.ToSingle(data, 0x30));
-            UnknownFloat10 = Switch(BitConverter.ToSingle(data, 0x34));
-            UnknownFloat11 = Switch(BitConverter.ToSingle(data, 0x38));
-            UnknownFloat12 = Switch(BitConverter.ToSingle(data, 0x3C));
-            UnknownFloat13 = Switch(BitConverter.ToSingle(data, 0x40));
-            UnknownFloat14 = Switch(BitConverter.ToSingle(data, 0x44));
-            UnknownFloat15 = Switch(BitConverter.ToSingle(data, 0x48));
-            UnknownFloat16 = Switch(BitConverter.ToSingle(data, 0x4C));
-            UnknownFloat17 = Switch(BitConverter.ToSingle(data, 0x50));
-            UnknownFloat18 = Switch(BitConverter.ToSingle(data, 0x54));
-            UnknownFloat19 = Switch(BitConverter.ToSingle(data, 0x58));
-            UnknownFloat20 = Switch(BitConverter.ToSingle(data, 0x5C));
-            UnknownFloat21 = Switch(BitConverter.ToSingle(data, 0x60));
-            UnknownFloat22 = Switch(BitConverter.ToSingle(data, 0x64));
-            UnknownFloat23 = Switch(BitConverter.ToSingle(data, 0x68));
-            UnknownFloat24 = Switch(BitConverter.ToSingle(data, 0x6C));
-            UnknownFloat25 = Switch(BitConverter.ToSingle(data, 0x70));
-            UnknownFloat26 = Switch(BitConverter.ToSingle(data, 0x74));
-            UnknownFloat27 = Switch(BitConverter.ToSingle(data, 0x78));
+            Unknown_ID = Switch(BitConverter.ToUInt32(Data, 0x0));
+            Unknown1 = Switch(BitConverter.ToInt32(Data, 0x4));
+            Unknown2 = Switch(BitConverter.ToInt32(Data, 0x8));
+            Unknown3 = Switch(BitConverter.ToInt32(Data, 0xC));
+            UnknownFloat1 = Switch(BitConverter.ToSingle(Data, 0x10));
+            UnknownFloat2 = Switch(BitConverter.ToSingle(Data, 0x14));
+            UnknownFloat3 = Switch(BitConverter.ToSingle(Data, 0x18));
+            UnknownFloat4 = Switch(BitConverter.ToSingle(Data, 0x1C));
+            UnknownFloat5 = Switch(BitConverter.ToSingle(Data, 0x20));
+            UnknownFloat6 = Switch(BitConverter.ToSingle(Data, 0x24));
+            UnknownFloat7 = Switch(BitConverter.ToSingle(Data, 0x28));
+            UnknownFloat8 = Switch(BitConverter.ToSingle(Data, 0x2C));
+            UnknownFloat9 = Switch(BitConverter.ToSingle(Data, 0x30));
+            UnknownFloat10 = Switch(BitConverter.ToSingle(Data, 0x34));
+            UnknownFloat11 = Switch(BitConverter.ToSingle(Data, 0x38));
+            UnknownFloat12 = Switch(BitConverter.ToSingle(Data, 0x3C));
+            UnknownFloat13 = Switch(BitConverter.ToSingle(Data, 0x40));
+            UnknownFloat14 = Switch(BitConverter.ToSingle(Data, 0x44));
+            UnknownFloat15 = Switch(BitConverter.ToSingle(Data, 0x48));
+            UnknownFloat16 = Switch(BitConverter.ToSingle(Data, 0x4C));
+            UnknownFloat17 = Switch(BitConverter.ToSingle(Data, 0x50));
+            UnknownFloat18 = Switch(BitConverter.ToSingle(Data, 0x54));
+            UnknownFloat19 = Switch(BitConverter.ToSingle(Data, 0x58));
+            UnknownFloat20 = Switch(BitConverter.ToSingle(Data, 0x5C));
+            UnknownFloat21 = Switch(BitConverter.ToSingle(Data, 0x60));
+            UnknownFloat22 = Switch(BitConverter.ToSingle(Data, 0x64));
+            UnknownFloat23 = Switch(BitConverter.ToSingle(Data, 0x68));
+            UnknownFloat24 = Switch(BitConverter.ToSingle(Data, 0x6C));
+            UnknownFloat25 = Switch(BitConverter.ToSingle(Data, 0x70));
+            UnknownFloat26 = Switch(BitConverter.ToSingle(Data, 0x74));
+            UnknownFloat27 = Switch(BitConverter.ToSingle(Data, 0x78));
         }
 
         public override byte[] ToByteArray()

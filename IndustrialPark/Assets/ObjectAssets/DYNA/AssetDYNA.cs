@@ -1,18 +1,25 @@
 ﻿using HipHopFile;
+using SharpDX;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace IndustrialPark
 {
-    public class AssetDYNA : ObjectAsset
+    public class AssetDYNA : ObjectAsset, IRenderableAsset, IClickableAsset
     {
         public AssetDYNA(Section_AHDR AHDR) : base(AHDR) { }
-
-        protected override int EventStartOffset { get => Data.Length - (AmountOfEvents * AssetEvent.sizeOfStruct); }
-
+        
         public void Setup()
         {
             SetDynaSpecific(false);
+            
+            if (IsRenderableClickable)
+            {
+                CreateTransformMatrix();
+                if (!ArchiveEditorFunctions.renderableAssetSetCommon.Contains(this))
+                    ArchiveEditorFunctions.renderableAssetSetCommon.Add(this);
+            }
         }
 
         public override bool HasReference(uint assetID)
@@ -55,7 +62,10 @@ namespace IndustrialPark
                     _dynaSpecific = reset ? new DynaBoulderGen() : new DynaBoulderGen(Data.Skip(0x10).Take(EventStartOffset));
                     break;
                 case DynaType.game_object__Teleport:
-                    _dynaSpecific = reset ? new DynaTeleport() : new DynaTeleport(Data.Skip(0x10).Take(EventStartOffset), Version);
+                    if (Functions.currentGame == Game.Incredibles)
+                        _dynaSpecific = reset ? new DynaTeleport_MovieGame() : new DynaTeleport_MovieGame(Data.Skip(0x10).Take(EventStartOffset));
+                    else
+                        _dynaSpecific = reset ? new DynaTeleport_BFBB() : new DynaTeleport_BFBB(Data.Skip(0x10).Take(EventStartOffset), Version);
                     break;
                 case DynaType.game_object__Taxi:
                     _dynaSpecific = reset ? new DynaTaxi() : new DynaTaxi(Data.Skip(0x10).Take(EventStartOffset));
@@ -96,6 +106,7 @@ namespace IndustrialPark
             Data = dataBefore.ToArray();
         }
 
+        [Category("Dynamic")]
         public DynaType Type
         {
             get => (DynaType)ReadUInt(0x8);
@@ -106,12 +117,14 @@ namespace IndustrialPark
             }
         }
 
+        [Category("Dynamic")]
         public short Version
         {
             get => ReadShort(0xC);
             set => Write(0xC, value);
         }
 
+        [Category("Dynamic")]
         public short Unknown
         {
             get => ReadShort(0xE);
@@ -119,6 +132,7 @@ namespace IndustrialPark
         }
 
         private DynaBase _dynaSpecific;
+        [Browsable(false)]
         public DynaBase DynaBase
         {
             get => _dynaSpecific;
@@ -133,6 +147,59 @@ namespace IndustrialPark
                 _dynaSpecific = value;
                 Data = dataBefore.ToArray();
             }
+        }
+
+        public static bool dontRender = false;
+
+        [Browsable(false)]
+        public bool IsRenderableClickable { get => _dynaSpecific.IsRenderableClickable; }
+
+        [Browsable(false)]
+        public float PositionX { get => _dynaSpecific.PositionX; set => _dynaSpecific.PositionX = value; }
+        [Browsable(false)]
+        public float PositionY { get => _dynaSpecific.PositionY; set => _dynaSpecific.PositionY = value; }
+        [Browsable(false)]
+        public float PositionZ { get => _dynaSpecific.PositionZ; set => _dynaSpecific.PositionZ = value; }
+
+        public float? IntersectsWith(Ray ray)
+        {
+            if (dontRender)
+                return null;
+
+            return _dynaSpecific.IntersectsWith(ray);
+        }
+
+        public Vector3 GetGizmoCenter()
+        {
+            return _dynaSpecific.GetGizmoCenter();
+        }
+
+        public float GetGizmoRadius()
+        {
+            return _dynaSpecific.GetGizmoRadius();
+        }
+
+        public void CreateTransformMatrix()
+        {
+            _dynaSpecific.CreateTransformMatrix();
+        }
+
+        public void Draw(SharpRenderer renderer)
+        {
+            if (dontRender)
+                return;
+
+            _dynaSpecific.Draw(renderer, isSelected);
+        }
+
+        public BoundingBox GetBoundingBox()
+        {
+            return _dynaSpecific.GetBoundingBox();
+        }
+
+        public float GetDistance(Vector3 cameraPosition)
+        {
+            return _dynaSpecific.GetDistance(cameraPosition);
         }
     }
 }

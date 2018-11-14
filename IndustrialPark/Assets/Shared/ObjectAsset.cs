@@ -14,41 +14,106 @@ namespace IndustrialPark
                 AssetID = AHDR.assetID;
         }
 
-        [Category("Object")]
+        [Category("Object Base")]
         public AssetID AssetID
         {
             get => ReadUInt(0);
             set => Write(0, value);
         }
 
-        [Category("Object")]
+        [Category("Object Base")]
         public ObjectAssetType AssetType
         {
             get => (ObjectAssetType)ReadByte(0x4);
             set => Write(0x4, (byte)value);
         }
 
-        [Category("Events"), ReadOnly(true)]
+        [Category("Object Base"), ReadOnly(true)]
         public byte AmountOfEvents
         {
             get => ReadByte(0x5);
         }
 
-        [Category("Object"), TypeConverter(typeof(HexShortTypeConverter))]
-        public short UnknownFlag
+        [Category("Object Base"), TypeConverter(typeof(HexShortTypeConverter))]
+        public short Flags
         {
             get => ReadShort(0x6);
             set => Write(0x6, value);
         }
 
-        [Category("Events")]
+        [Category("Object Base")]
+        public bool EnabledFlag
+        {
+            get => (Flags & 0x01) != 0;
+            set
+            {
+                if (value)
+                    Flags = (short)(Flags | 0x01);
+                else
+                    Flags = (short)(Flags & (0xFF - 0x01));
+            }
+        }
+
+        [Category("Object Base")]
+        public bool UnknownFlag2
+        {
+            get => (Flags & 0x02) != 0;
+            set
+            {
+                if (value)
+                    Flags = (short)(Flags | 0x02);
+                else
+                    Flags = (short)(Flags & (0xFF - 0x02));
+            }
+        }
+
+        [Category("Object Base")]
+        public bool UnknownFlag3
+        {
+            get => (Flags & 0x04) != 0;
+            set
+            {
+                if (value)
+                    Flags = (short)(Flags | 0x04);
+                else
+                    Flags = (short)(Flags & (0xFF - 0x04));
+            }
+        }
+
+        [Category("Object Base")]
+        public bool UnknownFlag4
+        {
+            get => (Flags & 0x08) != 0;
+            set
+            {
+                if (value)
+                    Flags = (short)(Flags | 0x08);
+                else
+                    Flags = (short)(Flags & (0xFF - 0x08));
+            }
+        }
+
+        [Category("Object Base")]
+        public bool ReceiveShadowsFlag
+        {
+            get => (Flags & 0x10) != 0;
+            set
+            {
+                if (value)
+                    Flags = (short)(Flags | 0x10);
+                else
+                    Flags = (short)(Flags & (0xFF - 0x10));
+            }
+        }
+
+        [Category("Object Base")]
         public AssetEventBFBB[] EventsBFBB
         {
             get => ReadEventsBFBB();
             set => WriteEvents(value);
         }
 
-        [Category("Events")]
+        [Category("Object Base")]
         public AssetEventTSSM[] EventsTSSM
         {
             get => ReadEventsTSSM();
@@ -99,7 +164,7 @@ namespace IndustrialPark
                 if (assetEvent.TargetAssetID == assetID)
                     return true;
 
-            return base.HasReference(assetID);
+            return false;
         }
     }
 }

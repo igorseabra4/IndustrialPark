@@ -24,13 +24,13 @@ namespace IndustrialPark
 
         public DynaHudModel(IEnumerable<byte> enumerable) : base (enumerable)
         {
-            UnknownFloat1 = Switch(BitConverter.ToSingle(data, 0x0));
-            UnknownFloat2 = Switch(BitConverter.ToSingle(data, 0x4));
-            UnknownFloat3 = Switch(BitConverter.ToSingle(data, 0x8));
-            UnknownFloat4 = Switch(BitConverter.ToSingle(data, 0xC));
-            UnknownFloat5 = Switch(BitConverter.ToSingle(data, 0x10));
-            UnknownFloat6 = Switch(BitConverter.ToSingle(data, 0x14));
-            Unknown_ID = Switch(BitConverter.ToUInt32(data, 0x18));
+            UnknownFloat1 = Switch(BitConverter.ToSingle(Data, 0x0));
+            UnknownFloat2 = Switch(BitConverter.ToSingle(Data, 0x4));
+            UnknownFloat3 = Switch(BitConverter.ToSingle(Data, 0x8));
+            UnknownFloat4 = Switch(BitConverter.ToSingle(Data, 0xC));
+            UnknownFloat5 = Switch(BitConverter.ToSingle(Data, 0x10));
+            UnknownFloat6 = Switch(BitConverter.ToSingle(Data, 0x14));
+            Unknown_ID = Switch(BitConverter.ToUInt32(Data, 0x18));
         }
 
         public override byte[] ToByteArray()

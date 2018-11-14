@@ -45,36 +45,32 @@ namespace IndustrialPark
             set => Write(0x84 + Offset, value);
         }
 
-        [Category("UIFont")]
-        public byte UnknownByte_88
+        [Category("UIFont"), Editor(typeof(MyColorEditor), typeof(UITypeEditor))]
+        public MyColor BackgroundColor
         {
-            get => ReadByte(0x88 + Offset);
-            set => Write(0x88 + Offset, value);
+            get
+            {
+                byte[] abgr = BitConverter.GetBytes(ReadInt(0x88));
+                return new MyColor(abgr[3], abgr[2], abgr[1], abgr[0]);
+            }
+
+            set => Write(0x88, BitConverter.ToInt32(new byte[] { BackgroundColorAlpha, value.B, value.G, value.R }, 0));
         }
 
-        [Category("UIFont")]
-        public byte UnknownByte_89
+        [Category("UIFont"), TypeConverter(typeof(HexByteTypeConverter))]
+        public byte BackgroundColorAlpha
         {
-            get => ReadByte(0x89 + Offset);
-            set => Write(0x89 + Offset, value);
-        }
+            get
+            {
+                byte[] abgr = BitConverter.GetBytes(ReadInt(0x88));
+                return abgr[0];
+            }
 
-        [Category("UIFont")]
-        public byte UnknownByte_8A
-        {
-            get => ReadByte(0x8A + Offset);
-            set => Write(0x8A + Offset, value);
-        }
-
-        [Category("UIFont")]
-        public byte UnknownByte_8B
-        {
-            get => ReadByte(0x8B + Offset);
-            set => Write(0x8B + Offset, value);
+            set => Write(0x88, BitConverter.ToInt32(new byte[] { value, BackgroundColor.B, BackgroundColor.G, BackgroundColor.R }, 0));
         }
 
         [Category("UIFont"), Editor(typeof(MyColorEditor), typeof(UITypeEditor))]
-        public MyColor UIColor
+        public MyColor FontColor
         {
             get
             {
@@ -82,11 +78,11 @@ namespace IndustrialPark
                 return new MyColor(abgr[3], abgr[2], abgr[1], abgr[0]);
             }
 
-            set => Write(0x8, BitConverter.ToInt32(new byte[] { UIColorAlpha, value.B, value.G, value.R }, 0));
+            set => Write(0x8C, BitConverter.ToInt32(new byte[] { FontColorAlpha, value.B, value.G, value.R }, 0));
         }
 
         [Category("UIFont"), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UIColorAlpha
+        public byte FontColorAlpha
         {
             get
             {
@@ -94,7 +90,7 @@ namespace IndustrialPark
                 return abgr[0];
             }
 
-            set => Write(0x8, BitConverter.ToInt32(new byte[] { value, UIColor.B, UIColor.G, UIColor.R }, 0));
+            set => Write(0x8C, BitConverter.ToInt32(new byte[] { value, FontColor.B, FontColor.G, FontColor.R }, 0));
         }
 
         [Category("UIFont")]

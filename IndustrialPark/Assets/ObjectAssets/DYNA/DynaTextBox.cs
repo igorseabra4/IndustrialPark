@@ -29,35 +29,35 @@ namespace IndustrialPark
 
         public DynaTextBox(IEnumerable<byte> enumerable) : base (enumerable)
         {
-            TextID = Switch(BitConverter.ToUInt32(data, 0x00));
-            UnknownFloat1 = Switch(BitConverter.ToSingle(data, 0x04));
-            UnknownFloat2 = Switch(BitConverter.ToSingle(data, 0x08));
-            UnknownFloat3 = Switch(BitConverter.ToSingle(data, 0x0C));
-            UnknownFloat4 = Switch(BitConverter.ToSingle(data, 0x10));
-            UnknownInt1 = Switch(BitConverter.ToInt32(data, 0x14));
-            UnknownFloat5 = Switch(BitConverter.ToSingle(data, 0x18));
-            UnknownFloat6 = Switch(BitConverter.ToSingle(data, 0x1C));
-            UnknownInt2 = Switch(BitConverter.ToInt32(data, 0x20));
-            UnknownInt3 = Switch(BitConverter.ToInt32(data, 0x24));
-            byte[] abgr = BitConverter.GetBytes(Switch(BitConverter.ToInt32(data, 0x28)));
+            TextID = Switch(BitConverter.ToUInt32(Data, 0x00));
+            UnknownFloat1 = Switch(BitConverter.ToSingle(Data, 0x04));
+            UnknownFloat2 = Switch(BitConverter.ToSingle(Data, 0x08));
+            UnknownFloat3 = Switch(BitConverter.ToSingle(Data, 0x0C));
+            UnknownFloat4 = Switch(BitConverter.ToSingle(Data, 0x10));
+            UnknownInt1 = Switch(BitConverter.ToInt32(Data, 0x14));
+            UnknownFloat5 = Switch(BitConverter.ToSingle(Data, 0x18));
+            UnknownFloat6 = Switch(BitConverter.ToSingle(Data, 0x1C));
+            UnknownInt2 = Switch(BitConverter.ToInt32(Data, 0x20));
+            UnknownInt3 = Switch(BitConverter.ToInt32(Data, 0x24));
+            byte[] abgr = BitConverter.GetBytes(Switch(BitConverter.ToInt32(Data, 0x28)));
             Color1R = abgr[3];
             Color1G = abgr[2];
             Color1B = abgr[1];
             Color1Alpha = abgr[0];
-            UnknownFloat7 = Switch(BitConverter.ToSingle(data, 0x2C));
-            UnknownFloat8 = Switch(BitConverter.ToSingle(data, 0x30));
-            UnknownFloat9 = Switch(BitConverter.ToSingle(data, 0x34));
-            UnknownFloat10 = Switch(BitConverter.ToSingle(data, 0x38));
-            UnknownInt4 = Switch(BitConverter.ToInt32(data, 0x3C));
-            UnknownInt5 = Switch(BitConverter.ToInt32(data, 0x40));
-            UnknownFloat11 = Switch(BitConverter.ToSingle(data, 0x44));
-            UnknownInt6 = Switch(BitConverter.ToInt32(data, 0x48));
-            byte[] abgr2 = BitConverter.GetBytes(Switch(BitConverter.ToInt32(data, 0x4C)));
+            UnknownFloat7 = Switch(BitConverter.ToSingle(Data, 0x2C));
+            UnknownFloat8 = Switch(BitConverter.ToSingle(Data, 0x30));
+            UnknownFloat9 = Switch(BitConverter.ToSingle(Data, 0x34));
+            UnknownFloat10 = Switch(BitConverter.ToSingle(Data, 0x38));
+            UnknownInt4 = Switch(BitConverter.ToInt32(Data, 0x3C));
+            UnknownInt5 = Switch(BitConverter.ToInt32(Data, 0x40));
+            UnknownFloat11 = Switch(BitConverter.ToSingle(Data, 0x44));
+            UnknownInt6 = Switch(BitConverter.ToInt32(Data, 0x48));
+            byte[] abgr2 = BitConverter.GetBytes(Switch(BitConverter.ToInt32(Data, 0x4C)));
             Color2R = abgr2[3];
             Color2G = abgr2[2];
             Color2B = abgr2[1];
             Color2Alpha = abgr2[0];
-            TextureID = Switch(BitConverter.ToUInt32(data, 0x50));
+            TextureID = Switch(BitConverter.ToUInt32(Data, 0x50));
         }
 
         public override byte[] ToByteArray()

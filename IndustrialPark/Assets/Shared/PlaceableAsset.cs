@@ -146,42 +146,42 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
-        [Category("Flags"), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("Placement Flags"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte VisibilityFlag
         {
             get { return ReadByte(0x8); }
             set { Write(0x8, value); }
         }
 
-        [Category("Flags"), ReadOnly(true), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("Placement Flags"), ReadOnly(true), TypeConverter(typeof(HexByteTypeConverter))]
         public byte TypeFlag
         {
             get { return ReadByte(0x9); }
             set { Write(0x9, value); }
         }
 
-        [Category("Flags"), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("Placement Flags"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte UnknownFlag0A
         {
             get { return ReadByte(0xA); }
             set { Write(0xA, value); }
         }
 
-        [Category("Flags"), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("Placement Flags"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte SolidityFlag
         {
             get { return ReadByte(0xB); }
             set { Write(0xB, value); }
         }
 
-        [Category("References")]
+        [Category("Placement References")]
         public AssetID UnknownAssetID_C
         {
             get { return ReadUInt(0xC); }
             set { Write(0xC, value); }
         }
 
-        [Category("References")]
+        [Category("Placement References")]
         public AssetID SURF_AssetID
         {
             get { return ReadUInt(0x10 + Offset); }
@@ -377,7 +377,7 @@ namespace IndustrialPark
         }
 
         [Category("References")]
-        public AssetID UnknownAssetID_50
+        public virtual AssetID UnknownAssetID_50
         {
             get { return ReadUInt(0x50 + Offset); }
             set { Write(0x50 + Offset, value); }
