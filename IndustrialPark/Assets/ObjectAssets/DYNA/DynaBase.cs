@@ -63,14 +63,9 @@ namespace IndustrialPark
             return null;
         }
 
-        public virtual Vector3 GetGizmoCenter()
+        public virtual BoundingSphere GetGizmoCenter()
         {
-            return new Vector3();
-        }
-
-        public virtual float GetGizmoRadius()
-        {
-            return 0;
+            return new BoundingSphere();
         }
     }
 }

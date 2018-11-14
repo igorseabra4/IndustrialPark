@@ -83,15 +83,12 @@ namespace IndustrialPark
 
             renderer.DrawPyramid(world, isSelected, 1f);
         }
-        
-        public virtual Vector3 GetGizmoCenter()
-        {
-            return boundingBox.Center;
-        }
 
-        public virtual float GetGizmoRadius()
+        public BoundingSphere GetGizmoCenter()
         {
-            return Math.Max(Math.Max(boundingBox.Size.X, boundingBox.Size.Y), boundingBox.Size.Z) * 0.9f;
+            BoundingSphere boundingSphere = BoundingSphere.FromBox(boundingBox);
+            boundingSphere.Radius *= 0.9f;
+            return boundingSphere;
         }
 
         public BoundingBox GetBoundingBox()

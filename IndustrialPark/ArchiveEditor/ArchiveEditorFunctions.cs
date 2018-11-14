@@ -33,25 +33,6 @@ namespace IndustrialPark
             gizmos[1] = new Gizmo(GizmoType.Y);
             gizmos[2] = new Gizmo(GizmoType.Z);
         }
-
-        private Dictionary<uint, Asset> assetDictionary = new Dictionary<uint, Asset>();
-
-        public bool ContainsAsset(uint key)
-        {
-            return assetDictionary.ContainsKey(key);
-        }
-
-        public Asset GetFromAssetID(uint key)
-        {
-            if (ContainsAsset(key))
-                return assetDictionary[key];
-            throw new KeyNotFoundException("Asset not present in dictionary.");
-        }
-
-        public Dictionary<uint, Asset>.ValueCollection GetAllAssets()
-        {
-            return assetDictionary.Values;
-        }
         
         public string fileNamePrefix;
         public string currentlyOpenFilePath;
@@ -92,6 +73,25 @@ namespace IndustrialPark
             HipSection[] hipFile = SetupStream(ref HIPA, ref PACK, ref DICT, ref STRM);
             byte[] file = HipArrayToFile(hipFile);
             File.WriteAllBytes(currentlyOpenFilePath, file);
+        }
+
+        private Dictionary<uint, Asset> assetDictionary = new Dictionary<uint, Asset>();
+
+        public bool ContainsAsset(uint key)
+        {
+            return assetDictionary.ContainsKey(key);
+        }
+
+        public Asset GetFromAssetID(uint key)
+        {
+            if (ContainsAsset(key))
+                return assetDictionary[key];
+            throw new KeyNotFoundException("Asset not present in dictionary.");
+        }
+
+        public Dictionary<uint, Asset>.ValueCollection GetAllAssets()
+        {
+            return assetDictionary.Values;
         }
 
         public void Dispose()
@@ -694,14 +694,14 @@ namespace IndustrialPark
         public void UpdateGizmoPosition()
         {
             IClickableAsset currentAsset = ((IClickableAsset)assetDictionary[currentlySelectedAssetID]);
-            UpdateGizmoPosition(currentAsset.GetGizmoCenter(), currentAsset.GetGizmoRadius());
+            UpdateGizmoPosition(currentAsset.GetGizmoCenter());
         }
         
-        private static void UpdateGizmoPosition(Vector3 position, float distance)
+        private static void UpdateGizmoPosition(BoundingSphere position)
         {
             DrawGizmos = true;
             foreach (Gizmo g in gizmos)
-                g.SetPosition(position, distance);
+                g.SetPosition(position);
         }
 
         private static void ClearGizmos()

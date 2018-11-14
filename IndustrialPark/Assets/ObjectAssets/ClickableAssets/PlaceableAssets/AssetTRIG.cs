@@ -140,20 +140,9 @@ namespace IndustrialPark
             return null;
         }
 
-        public override Vector3 GetGizmoCenter()
+        public BoundingSphere GetBoundingSphere()
         {
-            if (Shape == TriggerShape.Box)
-                return boundingBox.Center;
-            else
-                return boundingSphere.Center;
-        }
-
-        public override float GetGizmoRadius()
-        {
-            if (Shape == TriggerShape.Box)
-                return base.GetGizmoRadius();
-            else
-                return boundingSphere.Radius;
+            return boundingSphere;
         }
 
         public override float GetDistance(Vector3 cameraPosition)

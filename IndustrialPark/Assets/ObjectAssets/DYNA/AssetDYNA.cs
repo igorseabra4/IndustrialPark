@@ -169,14 +169,9 @@ namespace IndustrialPark
             return _dynaSpecific.IntersectsWith(ray);
         }
 
-        public Vector3 GetGizmoCenter()
+        public BoundingSphere GetGizmoCenter()
         {
             return _dynaSpecific.GetGizmoCenter();
-        }
-
-        public float GetGizmoRadius()
-        {
-            return _dynaSpecific.GetGizmoRadius();
         }
 
         public void CreateTransformMatrix()

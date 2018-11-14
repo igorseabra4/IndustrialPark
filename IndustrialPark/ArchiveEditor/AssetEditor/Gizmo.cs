@@ -34,25 +34,25 @@ namespace IndustrialPark
                     break;
             }
             isSelected = false;
-            SetPosition(Vector3.Zero, 0);
+            SetPosition(new BoundingSphere());
         }
 
-        public void SetPosition(Vector3 Position, float distance)
+        public void SetPosition(BoundingSphere Sphere)
         {
-            if (distance < 1f) distance = 1f;
+            if (Sphere.Radius < 1f) Sphere.Radius = 1f;
             switch (type)
             {
                 case GizmoType.X:
-                    Position.X += distance;
-                    transformMatrix = Matrix.Scaling(distance / 2f) * Matrix.RotationY(MathUtil.Pi / 2) * Matrix.Translation(Position);
+                    Sphere.Center.X += Sphere.Radius;
+                    transformMatrix = Matrix.Scaling(Sphere.Radius / 2f) * Matrix.RotationY(MathUtil.Pi / 2) * Matrix.Translation(Sphere.Center);
                     break;
                 case GizmoType.Y:
-                    Position.Y += distance;
-                    transformMatrix = Matrix.Scaling(distance / 2f) * Matrix.RotationX(-MathUtil.Pi / 2) * Matrix.Translation(Position);
+                    Sphere.Center.Y += Sphere.Radius;
+                    transformMatrix = Matrix.Scaling(Sphere.Radius / 2f) * Matrix.RotationX(-MathUtil.Pi / 2) * Matrix.Translation(Sphere.Center);
                     break;
                 case GizmoType.Z:
-                    Position.Z += distance;
-                    transformMatrix = Matrix.Scaling(distance / 2f) * Matrix.Translation(Position);
+                    Sphere.Center.Z += Sphere.Radius;
+                    transformMatrix = Matrix.Scaling(Sphere.Radius / 2f) * Matrix.Translation(Sphere.Center);
                     break;
             }
 
