@@ -499,30 +499,27 @@ namespace IndustrialPark
         
         private void listBoxAssets_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (listBoxAssets.SelectedItems != null)
+            archive.ClearSelectedAssets();
+            foreach (string s in listBoxAssets.SelectedItems)
+                archive.SelectAsset(GetAssetIDFromName(s), true);
+
+            if (listBoxAssets.SelectedItems.Count == 1)
             {
-                archive.ClearSelectedAssets();
-                foreach (string s in listBoxAssets.SelectedItems)
-                    archive.SelectAsset(GetAssetIDFromName(s), true);
+                buttonEditAsset.Enabled = true;
 
-                if (listBoxAssets.SelectedItems.Count == 1)
+                if (archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]) is IClickableAsset a)
                 {
-                    buttonEditAsset.Enabled = true;
-
-                    if (archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]) is IClickableAsset a)
-                    {
-                        if (a is AssetDYNA dyna)
-                            buttonView.Visible = dyna.IsRenderableClickable;
-                        else
-                            buttonView.Visible = true;
-                    }
+                    if (a is AssetDYNA dyna)
+                        buttonView.Visible = dyna.IsRenderableClickable;
                     else
-                        buttonView.Visible = false;
+                        buttonView.Visible = true;
                 }
                 else
-                {
-                    buttonEditAsset.Enabled = false;
-                }
+                    buttonView.Visible = false;
+            }
+            else
+            {
+                buttonEditAsset.Enabled = false;
             }
         }
 
@@ -538,20 +535,42 @@ namespace IndustrialPark
 
         public void SetSelectedIndexes(List<uint> assetIDs, bool add = false)
         {
-            if (!add)
+            if (assetIDs.Contains(0) && !add)
+            {
                 listBoxAssets.SelectedIndices.Clear();
+                archive.UpdateGizmoPosition();
+                return;
+            }
+
+            if (add)
+                assetIDs.AddRange(CurrentlySelectedAssetIDs());
+
+            listBoxAssets.SelectedIndices.Clear();
+
+            AssetType assetType = AssetType.Null;
+
+            foreach (uint u in assetIDs)
+                if (archive.ContainsAsset(u))
+                {
+                    assetType = archive.GetFromAssetID(u).AHDR.assetType;
+                    comboBoxLayers.SelectedIndex = archive.GetLayerFromAssetID(u);
+                    break;
+                }
+
+            foreach (uint u in assetIDs)
+                if (archive.ContainsAsset(u) && archive.GetFromAssetID(u).AHDR.assetType != assetType)
+                {
+                    assetType = AssetType.Null;
+                    break;
+                }
+
+            comboBoxAssetTypes.SelectedItem = assetType;
+            PopulateAssetList(assetType);
 
             foreach (uint u in assetIDs)
             {
-                try
-                {
-                    comboBoxLayers.SelectedIndex = archive.GetLayerFromAssetID(u);
-                    comboBoxAssetTypes.SelectedItem = archive.GetFromAssetID(u).AHDR.assetType;
-                }
-                catch
-                {
-                    PopulateAssetList();
-                }
+                if (!archive.ContainsAsset(u))
+                    continue;
 
                 for (int i = 0; i < listBoxAssets.Items.Count; i++)
                     if (GetAssetIDFromName(listBoxAssets.Items[i] as string) == u)

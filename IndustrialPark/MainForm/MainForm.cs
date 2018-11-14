@@ -598,8 +598,8 @@ namespace IndustrialPark
                     }
                     else
                         assetID = ArchiveEditorFunctions.GetClickedAssetID(ray);
-                    if (assetID != 0)
-                        Program.MainForm.SetSelectedIndex(assetID);
+
+                    Program.MainForm.SetSelectedIndex(assetID);
                 }
             }
         }

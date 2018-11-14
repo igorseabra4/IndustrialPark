@@ -247,7 +247,7 @@
             this.listBoxAssets.FormattingEnabled = true;
             this.listBoxAssets.Location = new System.Drawing.Point(6, 40);
             this.listBoxAssets.Name = "listBoxAssets";
-            this.listBoxAssets.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
+            this.listBoxAssets.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.listBoxAssets.Size = new System.Drawing.Size(507, 290);
             this.listBoxAssets.TabIndex = 3;
             this.listBoxAssets.SelectedIndexChanged += new System.EventHandler(this.listBoxAssets_SelectedIndexChanged);

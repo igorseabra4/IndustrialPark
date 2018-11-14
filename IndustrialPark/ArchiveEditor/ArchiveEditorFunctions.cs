@@ -625,20 +625,27 @@ namespace IndustrialPark
 
         private void OpenInternalEditor(Asset asset)
         {
-            for (int i = 0; i < internalEditors.Count; i++)
-                if (internalEditors[i].GetAssetID() == asset.AHDR.assetID)
-                    internalEditors[i].Close();
+            CloseInternalEditor(asset.AHDR.assetID);
 
-            if (asset is AssetCAM CAM)
-                internalEditors.Add(new InternalCamEditor(CAM, this));
-            else if (asset is AssetDYNA DYNA)
-                internalEditors.Add(new InternalDynaEditor(DYNA, this));
-            else if (asset is AssetTEXT TEXT)
-                internalEditors.Add(new InternalTextEditor(TEXT, this));
-            else if (asset.AHDR.assetType == AssetType.SND | asset.AHDR.assetType == AssetType.SNDS)
-                internalEditors.Add(new InternalSoundEditor(asset, this));
-            else
-                internalEditors.Add(new InternalAssetEditor(asset, this));
+            switch (asset.AHDR.assetType)
+            {
+                case AssetType.CAM:
+                    internalEditors.Add(new InternalCamEditor((AssetCAM)asset, this));
+                    break;
+                case AssetType.DYNA:
+                    internalEditors.Add(new InternalDynaEditor((AssetDYNA)asset, this));
+                    break;
+                case AssetType.TEXT:
+                    internalEditors.Add(new InternalTextEditor((AssetTEXT)asset, this));
+                    break;
+                case AssetType.SND:
+                case AssetType.SNDS:
+                    internalEditors.Add(new InternalSoundEditor(asset, this));
+                    break;
+                default:
+                    internalEditors.Add(new InternalAssetEditor(asset, this));
+                    break;
+            }
 
             internalEditors.Last().Show();
         }
