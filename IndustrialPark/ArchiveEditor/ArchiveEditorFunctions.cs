@@ -45,7 +45,7 @@ namespace IndustrialPark
         {
             Dispose();
 
-            currentlySelectedAssetID = 0;
+            currentlySelectedAssets = new List<Asset>();
             currentlyOpenFilePath = fileName;                        
             fileNamePrefix = Path.GetFileNameWithoutExtension(fileName);
 
@@ -483,9 +483,16 @@ namespace IndustrialPark
             AddAsset(layerIndex, AHDR);
         }
 
+        public void RemoveAsset(IEnumerable<uint> assetIDs)
+        {
+            foreach (uint u in assetIDs)
+                RemoveAsset(u);
+        }
+
         public void RemoveAsset(uint assetID)
         {
-            CloseInternalEditor(currentlySelectedAssetID);
+            UnselectAsset(assetID);
+            CloseInternalEditor(assetID);
 
             for (int i = 0; i < DICT.LTOC.LHDRList.Count; i++)
                 if (DICT.LTOC.LHDRList[i].assetIDlist.Contains(assetID))
@@ -516,43 +523,74 @@ namespace IndustrialPark
                 RemoveSoundFromSNDI(assetID);
 
             assetDictionary.Remove(assetID);
-
-            if (assetID == currentlySelectedAssetID)
-                currentlySelectedAssetID = 0;
         }
 
-        private uint currentlySelectedAssetID = 0;
+        private List<Asset> currentlySelectedAssets = new List<Asset>();
 
-        public uint getCurrentlySelectedAssetID()
+        public bool AssetIsSelected(uint assetID)
         {
-            return currentlySelectedAssetID;
+            for (int i = 0; i < currentlySelectedAssets.Count; i++)
+                if (currentlySelectedAssets[i].AHDR.assetID == assetID)
+                    return true;
+
+            return false;
         }
 
-        public void SelectAsset(uint assetID)
+        public void UnselectAsset(uint assetID)
         {
-            if (assetDictionary.ContainsKey(currentlySelectedAssetID))
-                assetDictionary[currentlySelectedAssetID].isSelected = false;
-            currentlySelectedAssetID = assetID;
-
-            if (currentlySelectedAssetID != 0)
+            for (int i = 0; i < currentlySelectedAssets.Count; i++)
             {
-                assetDictionary[currentlySelectedAssetID].isSelected = true;
-
-                bool updateGizmos = false;
-
-                if (assetDictionary[currentlySelectedAssetID] is IClickableAsset ra)
+                if (currentlySelectedAssets[i].AHDR.assetID == assetID)
                 {
-                    if (ra is AssetDYNA dyna)
-                        updateGizmos = dyna.IsRenderableClickable;
-                    else
-                        updateGizmos = true;
+                    currentlySelectedAssets[i].isSelected = false;
+                    currentlySelectedAssets.RemoveAt(i);
+                    return;
                 }
-
-                if (updateGizmos)
-                    UpdateGizmoPosition();
-                else
-                    ClearGizmos();
             }
+        }
+
+        public void ClearSelectedAssets()
+        {
+            for (int i = 0; i < currentlySelectedAssets.Count; i++)
+                currentlySelectedAssets[i].isSelected = false;
+
+            currentlySelectedAssets.Clear();
+        }
+
+        public List<uint> GetCurrentlySelectedAssetIDs()
+        {
+            List<uint> selectedAssetIDs = new List<uint>();
+            foreach (Asset a in currentlySelectedAssets)
+                selectedAssetIDs.Add(a.AHDR.assetID);
+
+            return selectedAssetIDs;
+        }
+
+        public void SelectAsset(uint assetID, bool add)
+        {
+            if (!add)
+                ClearSelectedAssets();
+
+            if (!assetDictionary.ContainsKey(assetID))
+                return;
+
+            assetDictionary[assetID].isSelected = true;
+            currentlySelectedAssets.Add(assetDictionary[assetID]);
+
+            bool updateGizmos = false;
+
+            if (assetDictionary[assetID] is IClickableAsset ra)
+            {
+                if (ra is AssetDYNA dyna)
+                    updateGizmos = dyna.IsRenderableClickable;
+                else
+                    updateGizmos = true;
+            }
+
+            if (updateGizmos)
+                UpdateGizmoPosition();
+            else
+                ClearGizmos();
         }
 
         public int GetLayerFromAssetID(uint assetID)
@@ -578,11 +616,15 @@ namespace IndustrialPark
                     internalEditors[i].Close();
         }
 
-        public void OpenInternalEditor(Asset asset = null)
+        public void OpenInternalEditor(List<uint> list)
         {
-            if (asset == null)
-                asset = GetFromAssetID(currentlySelectedAssetID);
+            foreach (uint u in list)
+                if (assetDictionary.ContainsKey(u))
+                    OpenInternalEditor(assetDictionary[u]);
+        }
 
+        private void OpenInternalEditor(Asset asset)
+        {
             for (int i = 0; i < internalEditors.Count; i++)
                 if (internalEditors[i].GetAssetID() == asset.AHDR.assetID)
                     internalEditors[i].Close();
@@ -693,8 +735,29 @@ namespace IndustrialPark
 
         public void UpdateGizmoPosition()
         {
-            IClickableAsset currentAsset = ((IClickableAsset)assetDictionary[currentlySelectedAssetID]);
-            UpdateGizmoPosition(currentAsset.GetGizmoCenter());
+            if (currentlySelectedAssets.Count == 0)
+                UpdateGizmoPosition(new BoundingSphere());
+            else
+            {
+                bool found = false;
+                BoundingSphere bs = new BoundingSphere();
+
+                foreach (Asset a in currentlySelectedAssets)
+                {
+                    if (a is IClickableAsset ica)
+                    {
+                        if (!found)
+                        {
+                            found = true;
+                            bs = ica.GetGizmoCenter();
+                        }
+                        else
+                            bs = BoundingSphere.Merge(bs, ica.GetGizmoCenter());
+                    }
+                }
+
+                UpdateGizmoPosition(bs);
+            }
         }
         
         private static void UpdateGizmoPosition(BoundingSphere position)
@@ -744,41 +807,39 @@ namespace IndustrialPark
 
         public void MouseMoveX(SharpCamera camera, int distance)
         {
-            if (currentlySelectedAssetID == 0) return;
-
-            if (assetDictionary[currentlySelectedAssetID] is IClickableAsset ra)
-            {
-                if (gizmos[0].isSelected)
+            foreach (Asset a in currentlySelectedAssets)
+                if (a is IClickableAsset ra)
                 {
-                    ra.PositionX += (
-                        (camera.Yaw >= -360 & camera.Yaw < -270) |
-                        (camera.Yaw >= -90 & camera.Yaw < 90) |
-                        (camera.Yaw >= 270)) ? distance / 10f : -distance / 10f;
-                    UpdateGizmoPosition();
-                    FinishedMovingGizmo = true;
+                    if (gizmos[0].isSelected)
+                    {
+                        ra.PositionX += (
+                            (camera.Yaw >= -360 & camera.Yaw < -270) |
+                            (camera.Yaw >= -90 & camera.Yaw < 90) |
+                            (camera.Yaw >= 270)) ? distance / 10f : -distance / 10f;
+                        UpdateGizmoPosition();
+                        FinishedMovingGizmo = true;
+                    }
+                    else if (gizmos[2].isSelected)
+                    {
+                        ra.PositionZ += (
+                            (camera.Yaw >= -180 & camera.Yaw < 0) |
+                            (camera.Yaw >= 180)) ? distance / 10f : -distance / 10f;
+                        UpdateGizmoPosition();
+                        FinishedMovingGizmo = true;
+                    }
                 }
-                else if (gizmos[2].isSelected)
-                {
-                    ra.PositionZ += (
-                        (camera.Yaw >= -180 & camera.Yaw < 0) |
-                        (camera.Yaw >= 180)) ? distance / 10f : -distance / 10f;
-                    UpdateGizmoPosition();
-                    FinishedMovingGizmo = true;
-                }
-            }
         }
 
         public void MouseMoveY(SharpCamera camera, int distance)
         {
-            if (currentlySelectedAssetID == 0) return;
-
-            if (assetDictionary[currentlySelectedAssetID] is IClickableAsset ra)
-                if (gizmos[1].isSelected)
-                {
-                    ra.PositionY -= distance / 10f;
-                    UpdateGizmoPosition();
-                    FinishedMovingGizmo = true;
-                }
+            foreach (Asset a in currentlySelectedAssets)
+                if (a is IClickableAsset ra)
+                    if (gizmos[1].isSelected)
+                    {
+                        ra.PositionY -= distance / 10f;
+                        UpdateGizmoPosition();
+                        FinishedMovingGizmo = true;
+                    }
         }
 
         public void ExportTextureDictionary(string fileName)

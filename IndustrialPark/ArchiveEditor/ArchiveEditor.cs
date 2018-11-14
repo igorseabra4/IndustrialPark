@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using Newtonsoft.Json;
 using SharpDX;
 using System;
@@ -291,7 +292,7 @@ namespace IndustrialPark
                     archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR);
                     comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = LayerToString(comboBoxLayers.SelectedIndex);
                     PopulateAssetListAndComboBox();
-                    SetSelectedIndex(AHDR.assetID);
+                    SetSelectedIndexes(new List<uint>() { AHDR.assetID });
                 }
                 catch (Exception ex)
                 {
@@ -306,33 +307,45 @@ namespace IndustrialPark
 
             UnsavedChanges = true;
 
-            string serializedObject = JsonConvert.SerializeObject(archive.GetFromAssetID(CurrentlySelectedAssetID()).AHDR);
-            Section_AHDR AHDR = JsonConvert.DeserializeObject<Section_AHDR>(serializedObject);
+            List<uint> finalIndexes = new List<uint>();
+            foreach (uint u in archive.GetCurrentlySelectedAssetIDs())
+            {
+                string serializedObject = JsonConvert.SerializeObject(archive.GetFromAssetID(u).AHDR);
+                Section_AHDR AHDR = JsonConvert.DeserializeObject<Section_AHDR>(serializedObject);
 
-            archive.AddAssetWithUniqueID(comboBoxLayers.SelectedIndex, AHDR);
+                archive.AddAssetWithUniqueID(comboBoxLayers.SelectedIndex, AHDR);
+
+                finalIndexes.Add(AHDR.assetID);
+            }
 
             comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = LayerToString(comboBoxLayers.SelectedIndex);
             PopulateAssetListAndComboBox();
 
-            SetSelectedIndex(AHDR.assetID);
+            SetSelectedIndexes(finalIndexes);
         }
 
         private void buttonCopy_Click(object sender, EventArgs e)
         {
             if (listBoxAssets.SelectedIndex < 0) return;
 
-            Clipboard.SetText(JsonConvert.SerializeObject(archive.GetFromAssetID(CurrentlySelectedAssetID()).AHDR, Formatting.Indented));
+            List<Section_AHDR> copiedAHDRs = new List<Section_AHDR>();
+
+            foreach (uint u in archive.GetCurrentlySelectedAssetIDs())
+                copiedAHDRs.Add(archive.GetFromAssetID(u).AHDR);
+
+            Clipboard.SetText(JsonConvert.SerializeObject(copiedAHDRs));
         }
 
         private void buttonPaste_Click(object sender, EventArgs e)
         {
-            Section_AHDR AHDR;
+            List<Section_AHDR> AHDRs;
+            List<uint> assetIDs = new List<uint>();
 
             UnsavedChanges = true;
 
             try
             {
-                AHDR = JsonConvert.DeserializeObject<Section_AHDR>(Clipboard.GetText());
+                AHDRs = JsonConvert.DeserializeObject<List<Section_AHDR>>(Clipboard.GetText());
             }
             catch (Exception ex)
             {
@@ -340,19 +353,23 @@ namespace IndustrialPark
                 return;
             }
 
-            archive.AddAssetWithUniqueID(comboBoxLayers.SelectedIndex, AHDR);
+            foreach (Section_AHDR AHDR in AHDRs)
+            {
+                archive.AddAssetWithUniqueID(comboBoxLayers.SelectedIndex, AHDR);
+                assetIDs.Add(AHDR.assetID);
+            }
 
             comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = LayerToString(comboBoxLayers.SelectedIndex);
             PopulateAssetListAndComboBox();
 
-            SetSelectedIndex(AHDR.assetID);
+            SetSelectedIndexes(assetIDs);
         }
 
         private void buttonRemoveAsset_Click(object sender, EventArgs e)
         {
             if (listBoxAssets.SelectedIndex < 0) return;
 
-            archive.RemoveAsset(CurrentlySelectedAssetID());
+            archive.RemoveAsset(CurrentlySelectedAssetIDs());
             comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = LayerToString(comboBoxLayers.SelectedIndex);
 
             UnsavedChanges = true;
@@ -364,9 +381,9 @@ namespace IndustrialPark
         {
             if (listBoxAssets.SelectedIndex < 0) return;
 
-            if (archive.GetFromAssetID(CurrentlySelectedAssetID()) is AssetCAM cam)
+            if (archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]) is AssetCAM cam)
                 Program.MainForm.renderer.Camera.SetPositionCamera(cam);
-            else if (archive.GetFromAssetID(CurrentlySelectedAssetID()) is IClickableAsset a)
+            else if (archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]) is IClickableAsset a)
                 Program.MainForm.renderer.Camera.SetPosition(new Vector3(a.PositionX, a.PositionY, a.PositionZ) - 8 * Program.MainForm.renderer.Camera.GetForward());
         }
 
@@ -374,7 +391,7 @@ namespace IndustrialPark
         {
             try
             {
-                uint oldAssetID = CurrentlySelectedAssetID();
+                uint oldAssetID = CurrentlySelectedAssetIDs()[0];
                 Section_AHDR AHDR = AddAssetDialog.GetAsset(archive.GetFromAssetID(oldAssetID).AHDR, out bool success);
 
                 if (success)
@@ -390,7 +407,7 @@ namespace IndustrialPark
 
                     archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR);
                     PopulateAssetListAndComboBox();
-                    SetSelectedIndex(AHDR.assetID);
+                    SetSelectedIndexes(new List<uint>() { AHDR.assetID });
                 }
             }
             catch (Exception ex)
@@ -403,7 +420,7 @@ namespace IndustrialPark
         {
             if (listBoxAssets.SelectedItem != null)
             {
-                archive.OpenInternalEditor();
+                archive.OpenInternalEditor(archive.GetCurrentlySelectedAssetIDs());
                 UnsavedChanges = true;
             }
         }
@@ -413,28 +430,47 @@ namespace IndustrialPark
             if (listBoxAssets.SelectedItem == null)
                 return;
 
-            SaveFileDialog saveFileDialog = new SaveFileDialog()
+            if (CurrentlySelectedAssetIDs().Count == 1)
             {
-                FileName = archive.GetFromAssetID(CurrentlySelectedAssetID()).AHDR.ADBG.assetName
-            };
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                SaveFileDialog saveFileDialog = new SaveFileDialog()
+                {
+                    FileName = archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]).AHDR.ADBG.assetName
+                };
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                    try
+                    {
+                        File.WriteAllBytes(saveFileDialog.FileName, archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]).AHDR.data);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Unable to export asset raw data: " + ex.Message);
+                    }
+            }
+            else
             {
-                try
+                CommonOpenFileDialog saveFileDialog = new CommonOpenFileDialog()
                 {
-                    File.WriteAllBytes(saveFileDialog.FileName, archive.GetFromAssetID(CurrentlySelectedAssetID()).AHDR.data);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Unable to export asset raw data: " + ex.Message);
-                }
+                    IsFolderPicker = true
+                };
+                if (saveFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
+                    foreach (uint u in CurrentlySelectedAssetIDs())
+                        try
+                        {
+                            File.WriteAllBytes(saveFileDialog.FileName + "\\" + archive.GetFromAssetID(u).AHDR.ADBG.assetName, archive.GetFromAssetID(u).AHDR.data);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Unable to export asset raw data: " + ex.Message);
+                        }
             }
         }
 
-        private uint CurrentlySelectedAssetID()
+        private List<uint> CurrentlySelectedAssetIDs()
         {
-            if (listBoxAssets.SelectedItem != null)
-                return GetAssetIDFromName(listBoxAssets.SelectedItem as string);
-            else return 0;
+            List<uint> list = new List<uint>();
+            foreach (object i in listBoxAssets.SelectedItems)
+                list.Add(GetAssetIDFromName(i as string));
+            return list;
         }
 
         private uint GetAssetIDFromName(string name)
@@ -463,19 +499,30 @@ namespace IndustrialPark
         
         private void listBoxAssets_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (listBoxAssets.SelectedItem != null)
+            if (listBoxAssets.SelectedItems != null)
             {
-                archive.SelectAsset(CurrentlySelectedAssetID());
+                archive.ClearSelectedAssets();
+                foreach (string s in listBoxAssets.SelectedItems)
+                    archive.SelectAsset(GetAssetIDFromName(s), true);
 
-                if (archive.GetFromAssetID(CurrentlySelectedAssetID()) is IClickableAsset a)
+                if (listBoxAssets.SelectedItems.Count == 1)
                 {
-                    if (a is AssetDYNA dyna)
-                        buttonView.Visible = dyna.IsRenderableClickable;
+                    buttonEditAsset.Enabled = true;
+
+                    if (archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]) is IClickableAsset a)
+                    {
+                        if (a is AssetDYNA dyna)
+                            buttonView.Visible = dyna.IsRenderableClickable;
+                        else
+                            buttonView.Visible = true;
+                    }
                     else
-                        buttonView.Visible = true;
+                        buttonView.Visible = false;
                 }
                 else
-                    buttonView.Visible = false;
+                {
+                    buttonEditAsset.Enabled = false;
+                }
             }
         }
 
@@ -489,32 +536,26 @@ namespace IndustrialPark
             archive.MouseMoveY(camera, deltaY);
         }
 
-        public void SetSelectedIndex(uint assetID)
+        public void SetSelectedIndexes(List<uint> assetIDs, bool add = false)
         {
-            if (!archive.ContainsAsset(assetID))
-            {
-                archive.SelectAsset(0);
-                listBoxAssets.SelectedIndex = -1;
-                return;
-            }
+            if (!add)
+                listBoxAssets.SelectedIndices.Clear();
 
-            try
+            foreach (uint u in assetIDs)
             {
-                comboBoxLayers.SelectedIndex = archive.GetLayerFromAssetID(assetID);
-                comboBoxAssetTypes.SelectedItem = archive.GetFromAssetID(assetID).AHDR.assetType;
-            }
-            catch
-            {
-                PopulateAssetList();
-            }
-
-            for (int i = 0; i < listBoxAssets.Items.Count; i++)
-            {
-                if (GetAssetIDFromName(listBoxAssets.Items[i] as string) == assetID)
+                try
                 {
-                    listBoxAssets.SelectedIndex = i;
-                    return;
+                    comboBoxLayers.SelectedIndex = archive.GetLayerFromAssetID(u);
+                    comboBoxAssetTypes.SelectedItem = archive.GetFromAssetID(u).AHDR.assetType;
                 }
+                catch
+                {
+                    PopulateAssetList();
+                }
+
+                for (int i = 0; i < listBoxAssets.Items.Count; i++)
+                    if (GetAssetIDFromName(listBoxAssets.Items[i] as string) == u)
+                        listBoxAssets.SelectedIndices.Add(i);
             }
         }
 
@@ -532,7 +573,7 @@ namespace IndustrialPark
             {
                 textBoxFindAsset.BackColor = defaultColor;
                 assetID = AssetIDTypeConverter.AssetIDFromString(textBoxFindAsset.Text);
-                SetSelectedIndex(assetID);
+                SetSelectedIndexes(new List<uint>() { assetID });
             }
             catch
             {

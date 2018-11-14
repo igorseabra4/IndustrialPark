@@ -617,7 +617,7 @@ namespace IndustrialPark
         public void SetSelectedIndex(uint assetID)
         {
             foreach (ArchiveEditor ae in archiveEditors)
-                ae.SetSelectedIndex(assetID);
+                ae.SetSelectedIndexes(new List<uint>() { assetID }, PressedKeys.Contains(Keys.ControlKey) || PressedKeys.Contains(Keys.Control));
         }
 
         private void addTextureFolderToolStripMenuItem_Click(object sender, EventArgs e)
