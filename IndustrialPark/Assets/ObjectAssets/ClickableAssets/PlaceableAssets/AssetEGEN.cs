@@ -11,6 +11,8 @@ namespace IndustrialPark
         
         public AssetEGEN(Section_AHDR AHDR) : base(AHDR) { }
 
+        protected override int EventStartOffset { get => 0x6C + Offset; }
+
         public override bool HasReference(uint assetID)
         {
             if (UnknownAssetID_68 == assetID)

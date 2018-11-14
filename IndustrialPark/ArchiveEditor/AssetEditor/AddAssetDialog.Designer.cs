@@ -47,6 +47,7 @@
             this.textBoxAssetFileName = new System.Windows.Forms.TextBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.textBoxChecksum = new System.Windows.Forms.TextBox();
+            this.buttonGrabTemplate = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -77,7 +78,7 @@
             // labelRawDataSize
             // 
             this.labelRawDataSize.AutoSize = true;
-            this.labelRawDataSize.Location = new System.Drawing.Point(179, 206);
+            this.labelRawDataSize.Location = new System.Drawing.Point(179, 235);
             this.labelRawDataSize.Name = "labelRawDataSize";
             this.labelRawDataSize.Size = new System.Drawing.Size(90, 13);
             this.labelRawDataSize.TabIndex = 3;
@@ -85,7 +86,7 @@
             // 
             // buttonImportRawData
             // 
-            this.buttonImportRawData.Location = new System.Drawing.Point(182, 180);
+            this.buttonImportRawData.Location = new System.Drawing.Point(182, 209);
             this.buttonImportRawData.Name = "buttonImportRawData";
             this.buttonImportRawData.Size = new System.Drawing.Size(172, 23);
             this.buttonImportRawData.TabIndex = 4;
@@ -149,7 +150,7 @@
             // buttonOK
             // 
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(271, 222);
+            this.buttonOK.Location = new System.Drawing.Point(271, 251);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(83, 23);
             this.buttonOK.TabIndex = 5;
@@ -160,7 +161,7 @@
             // buttonCancel
             // 
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(182, 222);
+            this.buttonCancel.Location = new System.Drawing.Point(182, 251);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(83, 23);
             this.buttonCancel.TabIndex = 6;
@@ -239,13 +240,25 @@
             this.textBoxChecksum.TabIndex = 0;
             this.textBoxChecksum.TextChanged += new System.EventHandler(this.textBoxChecksum_TextChanged);
             // 
+            // buttonGrabTemplate
+            // 
+            this.buttonGrabTemplate.Enabled = false;
+            this.buttonGrabTemplate.Location = new System.Drawing.Point(182, 180);
+            this.buttonGrabTemplate.Name = "buttonGrabTemplate";
+            this.buttonGrabTemplate.Size = new System.Drawing.Size(172, 23);
+            this.buttonGrabTemplate.TabIndex = 7;
+            this.buttonGrabTemplate.Text = "Grab Template";
+            this.buttonGrabTemplate.UseVisualStyleBackColor = true;
+            this.buttonGrabTemplate.Click += new System.EventHandler(this.buttonGrabTemplate_Click);
+            // 
             // AddAssetDialog
             // 
             this.AcceptButton = this.buttonOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(372, 254);
+            this.ClientSize = new System.Drawing.Size(372, 281);
+            this.Controls.Add(this.buttonGrabTemplate);
             this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
@@ -298,5 +311,6 @@
         private System.Windows.Forms.TextBox textBoxAssetFileName;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.TextBox textBoxChecksum;
+        private System.Windows.Forms.Button buttonGrabTemplate;
     }
 }

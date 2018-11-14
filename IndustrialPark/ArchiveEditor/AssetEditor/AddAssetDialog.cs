@@ -49,6 +49,8 @@ namespace IndustrialPark
             textBoxAssetFileName.Text = AHDR.ADBG.assetFileName;
             labelRawDataSize.Text = "Raw Data Size: " + AHDR.fileSize.ToString();
             textBoxChecksum.Text = "0x"+ AHDR.ADBG.checksum.ToString("X8");
+
+            VerifyTemplate();
         }
 
         private string GetMiscSettingsString(byte[] MiscSettings)
@@ -224,6 +226,8 @@ namespace IndustrialPark
                     MessageBox.Show("Note: I have not been able to figure out the flags automatically for this asset type. I recommend leaving the same ones that are present in the original asset.");
                     break;
             }
+
+            VerifyTemplate();
         }
 
         private void textBoxAssetID_TextChanged(object sender, EventArgs e)
@@ -287,6 +291,31 @@ namespace IndustrialPark
         private void buttonOK_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private byte[] Template = new byte[0];
+
+        private void VerifyTemplate()
+        {
+            string[] files = Directory.GetFiles("Resources\\Templates\\" + Functions.currentGame.ToString() + "\\");
+            foreach (string s in files)
+                if (Path.GetFileName(s) == assetType.ToString())
+                {
+                    Template = File.ReadAllBytes(s);
+                    buttonGrabTemplate.Enabled = true;
+                    return;
+                }
+
+            Template = new byte[0];
+            buttonGrabTemplate.Enabled = false;
+        }
+
+        private void buttonGrabTemplate_Click(object sender, EventArgs e)
+        {
+            data = Template;
+            textBoxAssetName.Text = assetType.ToString() + "_NEW";
+            labelRawDataSize.Text = "Raw Data Size: " + data.Length.ToString();
+            buttonOK.Enabled = true;
         }
     }
 }
