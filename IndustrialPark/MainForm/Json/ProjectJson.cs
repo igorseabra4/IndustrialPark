@@ -35,8 +35,11 @@ namespace IndustrialPark
         public bool dontRenderCAM;
         public bool dontRenderDSTR;
         public bool dontRenderDYNA;
+        public bool dontRenderEGEN;
+        public bool dontRenderHANG;
         public bool dontRenderMRKR;
         public bool dontRenderMVPT;
+        public bool dontRenderPEND;
         public bool dontRenderPKUP;
         public bool dontRenderPLAT;
         public bool dontRenderPLYR;
@@ -80,8 +83,11 @@ namespace IndustrialPark
             dontRenderCAM = false;
             dontRenderDSTR = false;
             dontRenderDYNA = false;
+            dontRenderEGEN = false;
+            dontRenderHANG = false;
             dontRenderMRKR = false;
             dontRenderMVPT = false;
+            dontRenderPEND = false;
             dontRenderPKUP = false;
             dontRenderPLAT = false;
             dontRenderPLYR = false;
@@ -96,9 +102,9 @@ namespace IndustrialPark
         public ProjectJson(List<string> hipPaths, List<string> textureFolderPaths, Vector3 camPos, float yaw, float pitch, float speed, float speedRot,
             float fieldOfView, float farPlane, bool noCulling, bool wireframe, Color4 backgroundColor, Vector4 widgetColor, Vector4 trigColor,
             Vector4 mvptColor, Vector4 sfxColor, bool useLegacyAssetIDFormat, bool alternateNameDisplayMode, bool isDrawingUI, bool dontRenderLevelModel,
-            bool dontRenderBOUL, bool dontRenderBUTN, bool dontRenderCAM, bool dontRenderDSTR, bool dontRenderDYNA, bool dontRenderMRKR, bool dontRenderMVPT,
-            bool dontRenderPKUP, bool dontRenderPLAT, bool dontRenderPLYR, bool dontRenderSFX, bool dontRenderSIMP, bool dontRenderTRIG, bool dontRenderUI,
-            bool dontRenderUIFT, bool dontRenderVIL)
+            bool dontRenderBOUL, bool dontRenderBUTN, bool dontRenderCAM, bool dontRenderDSTR, bool dontRenderDYNA, bool dontRenderEGEN, bool dontRenderHANG,
+            bool dontRenderMRKR, bool dontRenderMVPT, bool dontRenderPEND, bool dontRenderPKUP, bool dontRenderPLAT, bool dontRenderPLYR, bool dontRenderSFX,
+            bool dontRenderSIMP, bool dontRenderTRIG, bool dontRenderUI, bool dontRenderUIFT, bool dontRenderVIL)
         {
             this.hipPaths = hipPaths;
             TextureFolderPaths = textureFolderPaths;
@@ -125,8 +131,11 @@ namespace IndustrialPark
             this.dontRenderCAM = dontRenderCAM;
             this.dontRenderDSTR = dontRenderDSTR;
             this.dontRenderDYNA = dontRenderDYNA;
+            this.dontRenderEGEN = dontRenderEGEN;
+            this.dontRenderHANG = dontRenderHANG;
             this.dontRenderMRKR = dontRenderMRKR;
             this.dontRenderMVPT = dontRenderMVPT;
+            this.dontRenderPEND = dontRenderPEND;
             this.dontRenderPKUP = dontRenderPKUP;
             this.dontRenderPLAT = dontRenderPLAT;
             this.dontRenderPLYR = dontRenderPLYR;

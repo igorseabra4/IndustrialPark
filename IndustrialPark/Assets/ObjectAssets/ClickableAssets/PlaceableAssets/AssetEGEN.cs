@@ -11,7 +11,75 @@ namespace IndustrialPark
         
         public AssetEGEN(Section_AHDR AHDR) : base(AHDR) { }
 
-        [Category("EGEN")]
-        public string Note => "This asset type is not entirely supported yet...";
+        public override bool HasReference(uint assetID)
+        {
+            if (UnknownAssetID_68 == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
+        [Category("Eletric Arc")]
+        public int UnknownInt54
+        {
+            get => ReadInt(0x54 + Offset);
+            set => Write(0x54 + Offset, value);
+        }
+
+        [Category("Eletric Arc")]
+        public int UnknownInt58
+        {
+            get => ReadInt(0x58 + Offset);
+            set => Write(0x58 + Offset, value);
+        }
+
+        [Category("Eletric Arc")]
+        public int UnknownInt5C
+        {
+            get => ReadInt(0x5C + Offset);
+            set => Write(0x5C + Offset, value);
+        }
+
+        [Category("Eletric Arc")]
+        public byte UnknownByte60
+        {
+            get => ReadByte(0x60 + Offset);
+            set => Write(0x60 + Offset, value);
+        }
+
+        [Category("Eletric Arc")]
+        public byte UnknownByte61
+        {
+            get => ReadByte(0x61 + Offset);
+            set => Write(0x61 + Offset, value);
+        }
+
+        [Category("Eletric Arc")]
+        public byte UnknownByte62
+        {
+            get => ReadByte(0x62 + Offset);
+            set => Write(0x62 + Offset, value);
+        }
+
+        [Category("Eletric Arc")]
+        public byte UnknownByte63
+        {
+            get => ReadByte(0x63 + Offset);
+            set => Write(0x63 + Offset, value);
+        }
+
+        [Category("Eletric Arc")]
+        public float UnknownFloat64
+        {
+            get => ReadFloat(0x64 + Offset);
+            set => Write(0x64 + Offset, value);
+        }
+
+        [Category("Eletric Arc")]
+        public AssetID UnknownAssetID_68
+        {
+            get => ReadUInt(0x68 + Offset);
+            set => Write(0x68 + Offset, value);
+        }
     }
 }

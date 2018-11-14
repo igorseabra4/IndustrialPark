@@ -70,6 +70,7 @@ namespace IndustrialPark
             this.bUTNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cAMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dSTRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dYNAToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mRKRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mVPTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pKUPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -87,7 +88,9 @@ namespace IndustrialPark
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.renderPanel = new System.Windows.Forms.Panel();
-            this.dYNAToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.eGENToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hANGToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pENDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -366,8 +369,11 @@ namespace IndustrialPark
             this.cAMToolStripMenuItem,
             this.dSTRToolStripMenuItem,
             this.dYNAToolStripMenuItem,
+            this.eGENToolStripMenuItem,
+            this.hANGToolStripMenuItem,
             this.mRKRToolStripMenuItem,
             this.mVPTToolStripMenuItem,
+            this.pENDToolStripMenuItem,
             this.pKUPToolStripMenuItem,
             this.pLATToolStripMenuItem,
             this.pLYRToolStripMenuItem,
@@ -428,6 +434,15 @@ namespace IndustrialPark
             this.dSTRToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.dSTRToolStripMenuItem.Text = "DSTR";
             this.dSTRToolStripMenuItem.Click += new System.EventHandler(this.dSTRToolStripMenuItem_Click);
+            // 
+            // dYNAToolStripMenuItem
+            // 
+            this.dYNAToolStripMenuItem.Checked = true;
+            this.dYNAToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.dYNAToolStripMenuItem.Name = "dYNAToolStripMenuItem";
+            this.dYNAToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.dYNAToolStripMenuItem.Text = "DYNA";
+            this.dYNAToolStripMenuItem.Click += new System.EventHandler(this.dYNAToolStripMenuItem_Click);
             // 
             // mRKRToolStripMenuItem
             // 
@@ -578,14 +593,32 @@ namespace IndustrialPark
             this.renderPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.renderPanel_MouseUp);
             this.renderPanel.Resize += new System.EventHandler(this.ResetMouseCenter);
             // 
-            // dYNAToolStripMenuItem
+            // eGENToolStripMenuItem
             // 
-            this.dYNAToolStripMenuItem.Checked = true;
-            this.dYNAToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.dYNAToolStripMenuItem.Name = "dYNAToolStripMenuItem";
-            this.dYNAToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.dYNAToolStripMenuItem.Text = "DYNA";
-            this.dYNAToolStripMenuItem.Click += new System.EventHandler(this.dYNAToolStripMenuItem_Click);
+            this.eGENToolStripMenuItem.Checked = true;
+            this.eGENToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.eGENToolStripMenuItem.Name = "eGENToolStripMenuItem";
+            this.eGENToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.eGENToolStripMenuItem.Text = "EGEN";
+            this.eGENToolStripMenuItem.Click += new System.EventHandler(this.eGENToolStripMenuItem_Click);
+            // 
+            // hANGToolStripMenuItem
+            // 
+            this.hANGToolStripMenuItem.Checked = true;
+            this.hANGToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.hANGToolStripMenuItem.Name = "hANGToolStripMenuItem";
+            this.hANGToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.hANGToolStripMenuItem.Text = "HANG";
+            this.hANGToolStripMenuItem.Click += new System.EventHandler(this.hANGToolStripMenuItem_Click);
+            // 
+            // pENDToolStripMenuItem
+            // 
+            this.pENDToolStripMenuItem.Checked = true;
+            this.pENDToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.pENDToolStripMenuItem.Name = "pENDToolStripMenuItem";
+            this.pENDToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pENDToolStripMenuItem.Text = "PEND";
+            this.pENDToolStripMenuItem.Click += new System.EventHandler(this.pENDToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -673,6 +706,9 @@ namespace IndustrialPark
         private ToolStripMenuItem uIFTToolStripMenuItem;
         private ToolStripMenuItem uIModeAutoSizeToolStripMenuItem;
         private ToolStripMenuItem dYNAToolStripMenuItem;
+        private ToolStripMenuItem eGENToolStripMenuItem;
+        private ToolStripMenuItem hANGToolStripMenuItem;
+        private ToolStripMenuItem pENDToolStripMenuItem;
     }
 }
 

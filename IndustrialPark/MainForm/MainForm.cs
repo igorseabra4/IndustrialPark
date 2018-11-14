@@ -149,9 +149,9 @@ namespace IndustrialPark
                 renderer.Camera.Yaw, renderer.Camera.Pitch, renderer.Camera.Speed, renderer.Camera.SpeedRot, renderer.Camera.FieldOfView,renderer.Camera.FarPlane,
                 noCullingCToolStripMenuItem.Checked, wireframeFToolStripMenuItem.Checked, renderer.backgroundColor, renderer.normalColor, renderer.trigColor,
                 renderer.mvptColor, renderer.sfxColor, useLegacyAssetIDFormatToolStripMenuItem.Checked, alternateNamingMode, renderer.isDrawingUI,
-                AssetJSP.dontRender, AssetBOUL.dontRender, AssetBUTN.dontRender, AssetCAM.dontRender, AssetDSTR.dontRender, AssetDYNA.dontRender, AssetMRKR.dontRender,
-                AssetMVPT.dontRender, AssetPLAT.dontRender, AssetPLAT.dontRender, AssetPLYR.dontRender, AssetSFX.dontRender, AssetSIMP.dontRender, AssetTRIG.dontRender,
-                AssetUI.dontRender, AssetUIFT.dontRender, AssetVIL.dontRender);
+                AssetJSP.dontRender, AssetBOUL.dontRender, AssetBUTN.dontRender, AssetCAM.dontRender, AssetDSTR.dontRender, AssetDYNA.dontRender, AssetEGEN.dontRender,
+                AssetHANG.dontRender, AssetMRKR.dontRender, AssetMVPT.dontRender, AssetPEND.dontRender, AssetPLAT.dontRender, AssetPLAT.dontRender, AssetPLYR.dontRender,
+                AssetSFX.dontRender, AssetSIMP.dontRender, AssetTRIG.dontRender, AssetUI.dontRender, AssetUIFT.dontRender, AssetVIL.dontRender);
         }
 
         private void ApplySettings(string ipSettingsPath)
@@ -239,11 +239,20 @@ namespace IndustrialPark
             dYNAToolStripMenuItem.Checked = !ipSettings.dontRenderDYNA;
             AssetDYNA.dontRender = ipSettings.dontRenderDYNA;
 
+            eGENToolStripMenuItem.Checked = !ipSettings.dontRenderEGEN;
+            AssetEGEN.dontRender = ipSettings.dontRenderEGEN;
+
+            hANGToolStripMenuItem.Checked = !ipSettings.dontRenderHANG;
+            AssetHANG.dontRender = ipSettings.dontRenderHANG;
+
             mRKRToolStripMenuItem.Checked = !ipSettings.dontRenderMRKR;
             AssetMRKR.dontRender = ipSettings.dontRenderMRKR;
 
             mVPTToolStripMenuItem.Checked = !ipSettings.dontRenderMVPT;
             AssetMVPT.dontRender = ipSettings.dontRenderMVPT;
+
+            pENDToolStripMenuItem.Checked = !ipSettings.dontRenderPEND;
+            AssetPEND.dontRender = ipSettings.dontRenderPEND;
 
             pKUPToolStripMenuItem.Checked = !ipSettings.dontRenderPKUP;
             AssetPKUP.dontRender = ipSettings.dontRenderPKUP;
@@ -723,6 +732,24 @@ namespace IndustrialPark
         {
             uIFTToolStripMenuItem.Checked = !uIFTToolStripMenuItem.Checked;
             AssetUIFT.dontRender = !uIFTToolStripMenuItem.Checked;
+        }
+
+        private void eGENToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            eGENToolStripMenuItem.Checked = !eGENToolStripMenuItem.Checked;
+            AssetEGEN.dontRender = !eGENToolStripMenuItem.Checked;
+        }
+
+        private void hANGToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            hANGToolStripMenuItem.Checked = !hANGToolStripMenuItem.Checked;
+            AssetHANG.dontRender = !hANGToolStripMenuItem.Checked;
+        }
+
+        private void pENDToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            pENDToolStripMenuItem.Checked = !pENDToolStripMenuItem.Checked;
+            AssetPEND.dontRender = !pENDToolStripMenuItem.Checked;
         }
 
         private void uIToolStripMenuItem_Click(object sender, EventArgs e)
