@@ -395,9 +395,6 @@ namespace IndustrialPark
 
                         foreach (IRenderableAsset a in renderCommon)
                         {
-                            if (a is AssetUI | a is AssetUIFT)
-                                continue;
-
                             BoundingBox bb = a.GetBoundingBox();
                             if (bb.Width > 100)
                                 renderLarge.Add(a);
@@ -448,6 +445,8 @@ namespace IndustrialPark
             Cube.Dispose();
             Pyramid.Dispose();
             Cylinder.Dispose();
+            Sphere.Dispose();
+            Plane.Dispose();
 
             basicBuffer.Dispose();
             basicShader.Dispose();

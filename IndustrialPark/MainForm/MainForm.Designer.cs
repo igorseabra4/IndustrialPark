@@ -71,8 +71,11 @@ namespace IndustrialPark
             this.cAMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dSTRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dYNAToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.eGENToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hANGToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mRKRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mVPTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pENDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pKUPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pLATToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pLYRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -88,9 +91,6 @@ namespace IndustrialPark
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.renderPanel = new System.Windows.Forms.Panel();
-            this.eGENToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.hANGToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pENDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -444,6 +444,24 @@ namespace IndustrialPark
             this.dYNAToolStripMenuItem.Text = "DYNA";
             this.dYNAToolStripMenuItem.Click += new System.EventHandler(this.dYNAToolStripMenuItem_Click);
             // 
+            // eGENToolStripMenuItem
+            // 
+            this.eGENToolStripMenuItem.Checked = true;
+            this.eGENToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.eGENToolStripMenuItem.Name = "eGENToolStripMenuItem";
+            this.eGENToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.eGENToolStripMenuItem.Text = "EGEN";
+            this.eGENToolStripMenuItem.Click += new System.EventHandler(this.eGENToolStripMenuItem_Click);
+            // 
+            // hANGToolStripMenuItem
+            // 
+            this.hANGToolStripMenuItem.Checked = true;
+            this.hANGToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.hANGToolStripMenuItem.Name = "hANGToolStripMenuItem";
+            this.hANGToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.hANGToolStripMenuItem.Text = "HANG";
+            this.hANGToolStripMenuItem.Click += new System.EventHandler(this.hANGToolStripMenuItem_Click);
+            // 
             // mRKRToolStripMenuItem
             // 
             this.mRKRToolStripMenuItem.Checked = true;
@@ -461,6 +479,15 @@ namespace IndustrialPark
             this.mVPTToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.mVPTToolStripMenuItem.Text = "MVPT";
             this.mVPTToolStripMenuItem.Click += new System.EventHandler(this.mVPTToolStripMenuItem_Click);
+            // 
+            // pENDToolStripMenuItem
+            // 
+            this.pENDToolStripMenuItem.Checked = true;
+            this.pENDToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.pENDToolStripMenuItem.Name = "pENDToolStripMenuItem";
+            this.pENDToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pENDToolStripMenuItem.Text = "PEND";
+            this.pENDToolStripMenuItem.Click += new System.EventHandler(this.pENDToolStripMenuItem_Click);
             // 
             // pKUPToolStripMenuItem
             // 
@@ -552,7 +579,7 @@ namespace IndustrialPark
             // 
             this.uIModeToolStripMenuItem.Name = "uIModeToolStripMenuItem";
             this.uIModeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.uIModeToolStripMenuItem.Text = "UI Mode";
+            this.uIModeToolStripMenuItem.Text = "UI Mode (U)";
             this.uIModeToolStripMenuItem.Click += new System.EventHandler(this.uIToolStripMenuItem_Click);
             // 
             // uIModeAutoSizeToolStripMenuItem
@@ -592,33 +619,6 @@ namespace IndustrialPark
             this.renderPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMoveControl);
             this.renderPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.renderPanel_MouseUp);
             this.renderPanel.Resize += new System.EventHandler(this.ResetMouseCenter);
-            // 
-            // eGENToolStripMenuItem
-            // 
-            this.eGENToolStripMenuItem.Checked = true;
-            this.eGENToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.eGENToolStripMenuItem.Name = "eGENToolStripMenuItem";
-            this.eGENToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.eGENToolStripMenuItem.Text = "EGEN";
-            this.eGENToolStripMenuItem.Click += new System.EventHandler(this.eGENToolStripMenuItem_Click);
-            // 
-            // hANGToolStripMenuItem
-            // 
-            this.hANGToolStripMenuItem.Checked = true;
-            this.hANGToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.hANGToolStripMenuItem.Name = "hANGToolStripMenuItem";
-            this.hANGToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.hANGToolStripMenuItem.Text = "HANG";
-            this.hANGToolStripMenuItem.Click += new System.EventHandler(this.hANGToolStripMenuItem_Click);
-            // 
-            // pENDToolStripMenuItem
-            // 
-            this.pENDToolStripMenuItem.Checked = true;
-            this.pENDToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.pENDToolStripMenuItem.Name = "pENDToolStripMenuItem";
-            this.pENDToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.pENDToolStripMenuItem.Text = "PEND";
-            this.pENDToolStripMenuItem.Click += new System.EventHandler(this.pENDToolStripMenuItem_Click);
             // 
             // MainForm
             // 

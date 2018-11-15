@@ -371,6 +371,8 @@ namespace IndustrialPark
                 ToggleWireFrame();
             else if (e.KeyCode == Keys.G)
                 OpenInternalEditors();
+            else if (e.KeyCode == Keys.U)
+                uIToolStripMenuItem_Click(null, null);
 
             if (e.KeyCode == Keys.F1)
                 Program.ViewConfig.Show();
