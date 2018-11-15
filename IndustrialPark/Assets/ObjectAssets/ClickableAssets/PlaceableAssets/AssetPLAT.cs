@@ -24,11 +24,32 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
-        [Category("Platform")]
-        public byte PlatformType
+        [Browsable(false)]
+        public override AssetID ReferenceAssetID
         {
-            get => ReadByte(0x54 + Offset);
-            set => Write(0x54 + Offset, value);
+            get { return ReadUInt(0x50 + Offset); }
+            set { Write(0x50 + Offset, value); }
+        }
+
+        [Category("Platform")]
+        public AssetID AnimationAssetID
+        {
+            get { return ReadUInt(0x50 + Offset); }
+            set { Write(0x50 + Offset, value); }
+        }
+
+        [Category("Platform")]
+        public PlatType PlatformType_Header
+        {
+            get => (PlatType)ReadByte(0x09 + Offset);
+            set => Write(0x09 + Offset, (byte)value);
+        }
+
+        [Category("Platform")]
+        public PlatType PlatformType
+        {
+            get => (PlatType)ReadByte(0x54 + Offset);
+            set => Write(0x54 + Offset, (byte)value);
         }
 
         [Category("Platform")]

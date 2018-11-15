@@ -131,13 +131,11 @@ namespace IndustrialPark
 
         public override bool HasReference(uint assetID)
         {
-            if (UnknownAssetID_C == assetID)
-                return true;
-            if (SURF_AssetID == assetID)
+            if (SurfaceAssetID == assetID)
                 return true;
             if (ModelAssetID == assetID)
                 return true;
-            if (UnknownAssetID_50 == assetID)
+            if (ReferenceAssetID == assetID)
                 return true;
 
             return base.HasReference(assetID);
@@ -171,15 +169,15 @@ namespace IndustrialPark
             set { Write(0xB, value); }
         }
 
-        [Category("Placement References")]
-        public AssetID UnknownAssetID_C
+        [Category("Placement")]
+        public int UnknownIntC
         {
-            get { return ReadUInt(0xC); }
+            get { return ReadInt(0xC); }
             set { Write(0xC, value); }
         }
 
         [Category("Placement References")]
-        public AssetID SURF_AssetID
+        public AssetID SurfaceAssetID
         {
             get { return ReadUInt(0x10 + Offset); }
             set { Write(0x10 + Offset, value); }
@@ -374,7 +372,7 @@ namespace IndustrialPark
         }
 
         [Category("Placement References")]
-        public virtual AssetID UnknownAssetID_50
+        public virtual AssetID ReferenceAssetID
         {
             get { return ReadUInt(0x50 + Offset); }
             set { Write(0x50 + Offset, value); }

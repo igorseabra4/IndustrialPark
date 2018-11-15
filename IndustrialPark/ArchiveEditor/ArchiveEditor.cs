@@ -74,9 +74,14 @@ namespace IndustrialPark
             toolStripStatusLabel1.Text = "File: " + fileName;
             Text = Path.GetFileName(fileName);
             Program.MainForm.SetToolStripItemName(this, Text);
+            UnsavedChanges = false;
+
             saveToolStripMenuItem.Enabled = true;
             saveAsToolStripMenuItem.Enabled = true;
-            UnsavedChanges = false;
+            buttonAddLayer.Enabled = true;
+            importTXDArchiveToolStripMenuItem.Enabled = true;
+            exportTexturesToolStripMenuItem.Enabled = true;
+
             PopulateLayerComboBox();
             PopulateAssetList();
         }
@@ -140,9 +145,7 @@ namespace IndustrialPark
 
             comboBoxLayers.Items.Clear();
             for (int i = 0; i < archive.DICT.LTOC.LHDRList.Count; i++)
-            {
                 comboBoxLayers.Items.Add(LayerToString(i));
-            }
 
             programIsChangingStuff = false;
         }
@@ -155,11 +158,20 @@ namespace IndustrialPark
 
             PopulateAssetListAndComboBox();
 
+            buttonAddAsset.Enabled = true;
+            buttonPaste.Enabled = true;
+            buttonRemoveLayer.Enabled = true;
+            buttonArrowUp.Enabled = true;
+            buttonArrowDown.Enabled = true;
+
             programIsChangingStuff = false;
         }
         
         private void comboBoxLayerTypes_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (comboBoxLayerTypes.SelectedItem == null)
+                return;
+
             if (!programIsChangingStuff)
             {
                 foreach (LayerType o in Enum.GetValues(typeof(LayerType)))
@@ -200,24 +212,54 @@ namespace IndustrialPark
         {
             programIsChangingStuff = true;
 
-            try
-            {
-                archive.RemoveLayer(comboBoxLayers.SelectedIndex);
+            int previndex = comboBoxLayers.SelectedIndex;
 
-                comboBoxLayers.Items.RemoveAt(comboBoxLayers.SelectedIndex);
+            archive.RemoveLayer(comboBoxLayers.SelectedIndex);
 
-                for (int i = 0; i < archive.DICT.LTOC.LHDRList.Count; i++)
-                {
-                    comboBoxLayers.Items[i] = LayerToString(i);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Unable to remove layer: " + ex.Message);
-            }
+            PopulateLayerComboBox();
+
             programIsChangingStuff = false;
+
+            if (comboBoxLayers.Items.Count > 0)
+                comboBoxLayers.SelectedIndex = Math.Max(previndex - 1, 0);
+            else
+            {
+                comboBoxLayers.SelectedItem = null;
+                comboBoxLayerTypes.SelectedItem = null;
+
+                comboBoxAssetTypes.Items.Clear();
+                listBoxAssets.Items.Clear();
+
+                buttonAddAsset.Enabled = false;
+                buttonPaste.Enabled = false;
+                buttonRemoveLayer.Enabled = false;
+                buttonArrowUp.Enabled = false;
+                buttonArrowDown.Enabled = false;
+
+                buttonCopy.Enabled = false;
+                buttonDuplicate.Enabled = false;
+                buttonRemoveAsset.Enabled = false;
+                buttonExportRaw.Enabled = false;
+                buttonInternalEdit.Enabled = false;
+            }
         }
-        
+
+        private void buttonArrowUp_Click(object sender, EventArgs e)
+        {
+            int previndex = comboBoxLayers.SelectedIndex;
+            archive.MoveLayerUp(comboBoxLayers.SelectedIndex);
+            PopulateLayerComboBox();
+            comboBoxLayers.SelectedIndex = Math.Max(previndex - 1, 0);
+        }
+
+        private void buttonArrowDown_Click(object sender, EventArgs e)
+        {
+            int previndex = comboBoxLayers.SelectedIndex;
+            archive.MoveLayerDown(comboBoxLayers.SelectedIndex);
+            PopulateLayerComboBox();
+            comboBoxLayers.SelectedIndex = Math.Min(previndex + 1, comboBoxLayers.Items.Count - 1);
+        }
+
         private void PopulateAssetListAndComboBox()
         {
             PopulateAssetList();
@@ -418,11 +460,13 @@ namespace IndustrialPark
 
         private void buttonInternalEdit_Click(object sender, EventArgs e)
         {
-            if (listBoxAssets.SelectedItem != null)
-            {
-                archive.OpenInternalEditor(archive.GetCurrentlySelectedAssetIDs());
-                UnsavedChanges = true;
-            }
+            OpenInternalEditors();
+        }
+
+        public void OpenInternalEditors()
+        {
+            archive.OpenInternalEditor(archive.GetCurrentlySelectedAssetIDs());
+            UnsavedChanges = true;
         }
 
         private void buttonExportRaw_Click(object sender, EventArgs e)
@@ -503,6 +547,23 @@ namespace IndustrialPark
             foreach (string s in listBoxAssets.SelectedItems)
                 archive.SelectAsset(GetAssetIDFromName(s), true);
 
+            if (listBoxAssets.SelectedItems.Count == 0)
+            {
+                buttonCopy.Enabled = false;
+                buttonDuplicate.Enabled = false;
+                buttonRemoveAsset.Enabled = false;
+                buttonExportRaw.Enabled = false;
+                buttonInternalEdit.Enabled = false;
+            }
+            else
+            {
+                buttonCopy.Enabled = true;
+                buttonDuplicate.Enabled = true;
+                buttonRemoveAsset.Enabled = true;
+                buttonExportRaw.Enabled = true;
+                buttonInternalEdit.Enabled = true;
+            }
+
             if (listBoxAssets.SelectedItems.Count == 1)
             {
                 buttonEditAsset.Enabled = true;
@@ -510,16 +571,17 @@ namespace IndustrialPark
                 if (archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]) is IClickableAsset a)
                 {
                     if (a is AssetDYNA dyna)
-                        buttonView.Visible = dyna.IsRenderableClickable;
+                        buttonView.Enabled = dyna.IsRenderableClickable;
                     else
-                        buttonView.Visible = true;
+                        buttonView.Enabled = true;
                 }
                 else
-                    buttonView.Visible = false;
+                    buttonView.Enabled = false;
             }
             else
             {
                 buttonEditAsset.Enabled = false;
+                buttonView.Enabled = false;
             }
         }
 

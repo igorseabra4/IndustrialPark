@@ -133,6 +133,7 @@
     <Compile Include="Assets\ObjectAssets\AssetCNTR.cs" />
     <Compile Include="Assets\ObjectAssets\AssetCOND.cs" />
     <Compile Include="Assets\ObjectAssets\AssetDPAT.cs" />
+    <Compile Include="Assets\ObjectAssets\AssetDSCO.cs" />
     <Compile Include="Assets\ObjectAssets\AssetENV.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetSFX.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetCAM.cs" />
@@ -141,6 +142,7 @@
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetPEND.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetUI.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetUIFT.cs" />
+    <Compile Include="Assets\Shared\Enums\PlatType.cs" />
     <Compile Include="Assets\ObjectAssets\DYNA\AssetDYNA.cs" />
     <Compile Include="Assets\ObjectAssets\AssetFOG.cs" />
     <Compile Include="Assets\ObjectAssets\AssetPORT.cs" />

@@ -112,7 +112,7 @@ namespace IndustrialPark
             Speed = 5f;
             SpeedRot = 5f;
 
-            FieldOfView = MathUtil.PiOverFour;
+            FieldOfView = MathUtil.Pi / 3f;
             NearPlane = 0.1F;
             FarPlane = 10000F;
 

@@ -369,6 +369,8 @@ namespace IndustrialPark
                 ToggleCulling();
             else if (e.KeyCode == Keys.F)
                 ToggleWireFrame();
+            else if (e.KeyCode == Keys.G)
+                OpenInternalEditors();
 
             if (e.KeyCode == Keys.F1)
                 Program.ViewConfig.Show();
@@ -599,7 +601,7 @@ namespace IndustrialPark
                     else
                         assetID = ArchiveEditorFunctions.GetClickedAssetID(ray);
 
-                    Program.MainForm.SetSelectedIndex(assetID);
+                    SetSelectedIndex(assetID);
                 }
             }
         }
@@ -618,6 +620,12 @@ namespace IndustrialPark
         {
             foreach (ArchiveEditor ae in archiveEditors)
                 ae.SetSelectedIndexes(new List<uint>() { assetID }, PressedKeys.Contains(Keys.ControlKey) || PressedKeys.Contains(Keys.Control));
+        }
+
+        private void OpenInternalEditors()
+        {
+            foreach (ArchiveEditor ae in archiveEditors)
+                ae.OpenInternalEditors();
         }
 
         private void addTextureFolderToolStripMenuItem_Click(object sender, EventArgs e)

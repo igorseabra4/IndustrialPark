@@ -13,7 +13,7 @@ namespace IndustrialPark
         public void Setup()
         {
             SetDynaSpecific(false);
-            
+
             if (IsRenderableClickable)
             {
                 CreateTransformMatrix();

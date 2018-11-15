@@ -62,6 +62,8 @@
             this.buttonAddAsset = new System.Windows.Forms.Button();
             this.comboBoxAssetTypes = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.buttonArrowUp = new System.Windows.Forms.Button();
+            this.buttonArrowDown = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -98,7 +100,7 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
@@ -106,7 +108,7 @@
             // 
             this.saveToolStripMenuItem.Enabled = false;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -114,38 +116,40 @@
             // 
             this.saveAsToolStripMenuItem.Enabled = false;
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveAsToolStripMenuItem.Text = "Save As...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(175, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // exportTexturesToolStripMenuItem
             // 
+            this.exportTexturesToolStripMenuItem.Enabled = false;
             this.exportTexturesToolStripMenuItem.Name = "exportTexturesToolStripMenuItem";
-            this.exportTexturesToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.exportTexturesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exportTexturesToolStripMenuItem.Text = "Export TXD Archive";
             this.exportTexturesToolStripMenuItem.Click += new System.EventHandler(this.exportTexturesToolStripMenuItem_Click);
             // 
             // importTXDArchiveToolStripMenuItem
             // 
+            this.importTXDArchiveToolStripMenuItem.Enabled = false;
             this.importTXDArchiveToolStripMenuItem.Name = "importTXDArchiveToolStripMenuItem";
-            this.importTXDArchiveToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.importTXDArchiveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.importTXDArchiveToolStripMenuItem.Text = "Import TXD Archive";
             this.importTXDArchiveToolStripMenuItem.Click += new System.EventHandler(this.importTXDArchiveToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(175, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
@@ -174,6 +178,8 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.buttonArrowDown);
+            this.groupBox1.Controls.Add(this.buttonArrowUp);
             this.groupBox1.Controls.Add(this.comboBoxLayerTypes);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.buttonRemoveLayer);
@@ -190,7 +196,7 @@
             // 
             this.comboBoxLayerTypes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxLayerTypes.FormattingEnabled = true;
-            this.comboBoxLayerTypes.Location = new System.Drawing.Point(341, 19);
+            this.comboBoxLayerTypes.Location = new System.Drawing.Point(320, 19);
             this.comboBoxLayerTypes.Name = "comboBoxLayerTypes";
             this.comboBoxLayerTypes.Size = new System.Drawing.Size(91, 21);
             this.comboBoxLayerTypes.TabIndex = 3;
@@ -200,7 +206,7 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(301, 22);
+            this.label1.Location = new System.Drawing.Point(280, 22);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(34, 13);
             this.label1.TabIndex = 3;
@@ -209,9 +215,10 @@
             // buttonRemoveLayer
             // 
             this.buttonRemoveLayer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonRemoveLayer.Location = new System.Drawing.Point(519, 19);
+            this.buttonRemoveLayer.Enabled = false;
+            this.buttonRemoveLayer.Location = new System.Drawing.Point(471, 19);
             this.buttonRemoveLayer.Name = "buttonRemoveLayer";
-            this.buttonRemoveLayer.Size = new System.Drawing.Size(75, 22);
+            this.buttonRemoveLayer.Size = new System.Drawing.Size(63, 21);
             this.buttonRemoveLayer.TabIndex = 4;
             this.buttonRemoveLayer.Text = "Remove";
             this.buttonRemoveLayer.UseVisualStyleBackColor = true;
@@ -220,9 +227,10 @@
             // buttonAddLayer
             // 
             this.buttonAddLayer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonAddLayer.Location = new System.Drawing.Point(438, 19);
+            this.buttonAddLayer.Enabled = false;
+            this.buttonAddLayer.Location = new System.Drawing.Point(417, 19);
             this.buttonAddLayer.Name = "buttonAddLayer";
-            this.buttonAddLayer.Size = new System.Drawing.Size(75, 22);
+            this.buttonAddLayer.Size = new System.Drawing.Size(48, 21);
             this.buttonAddLayer.TabIndex = 3;
             this.buttonAddLayer.Text = "Add";
             this.buttonAddLayer.UseVisualStyleBackColor = true;
@@ -235,7 +243,7 @@
             this.comboBoxLayers.FormattingEnabled = true;
             this.comboBoxLayers.Location = new System.Drawing.Point(6, 19);
             this.comboBoxLayers.Name = "comboBoxLayers";
-            this.comboBoxLayers.Size = new System.Drawing.Size(289, 21);
+            this.comboBoxLayers.Size = new System.Drawing.Size(268, 21);
             this.comboBoxLayers.TabIndex = 3;
             this.comboBoxLayers.SelectedIndexChanged += new System.EventHandler(this.comboBoxLayers_SelectedIndexChanged);
             // 
@@ -281,6 +289,7 @@
             // buttonCopy
             // 
             this.buttonCopy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCopy.Enabled = false;
             this.buttonCopy.Location = new System.Drawing.Point(519, 98);
             this.buttonCopy.Name = "buttonCopy";
             this.buttonCopy.Size = new System.Drawing.Size(75, 23);
@@ -292,6 +301,7 @@
             // buttonPaste
             // 
             this.buttonPaste.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonPaste.Enabled = false;
             this.buttonPaste.Location = new System.Drawing.Point(519, 127);
             this.buttonPaste.Name = "buttonPaste";
             this.buttonPaste.Size = new System.Drawing.Size(75, 23);
@@ -322,6 +332,7 @@
             // buttonInternalEdit
             // 
             this.buttonInternalEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonInternalEdit.Enabled = false;
             this.buttonInternalEdit.Location = new System.Drawing.Point(519, 307);
             this.buttonInternalEdit.Name = "buttonInternalEdit";
             this.buttonInternalEdit.Size = new System.Drawing.Size(75, 23);
@@ -333,18 +344,19 @@
             // buttonView
             // 
             this.buttonView.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonView.Enabled = false;
             this.buttonView.Location = new System.Drawing.Point(519, 220);
             this.buttonView.Name = "buttonView";
             this.buttonView.Size = new System.Drawing.Size(75, 23);
             this.buttonView.TabIndex = 14;
             this.buttonView.Text = "View";
             this.buttonView.UseVisualStyleBackColor = true;
-            this.buttonView.Visible = false;
             this.buttonView.Click += new System.EventHandler(this.buttonView_Click);
             // 
             // buttonExportRaw
             // 
             this.buttonExportRaw.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonExportRaw.Enabled = false;
             this.buttonExportRaw.Location = new System.Drawing.Point(519, 249);
             this.buttonExportRaw.Name = "buttonExportRaw";
             this.buttonExportRaw.Size = new System.Drawing.Size(75, 23);
@@ -356,6 +368,7 @@
             // buttonEditAsset
             // 
             this.buttonEditAsset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonEditAsset.Enabled = false;
             this.buttonEditAsset.Location = new System.Drawing.Point(519, 278);
             this.buttonEditAsset.Name = "buttonEditAsset";
             this.buttonEditAsset.Size = new System.Drawing.Size(75, 23);
@@ -367,6 +380,7 @@
             // buttonDuplicate
             // 
             this.buttonDuplicate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonDuplicate.Enabled = false;
             this.buttonDuplicate.Location = new System.Drawing.Point(519, 69);
             this.buttonDuplicate.Name = "buttonDuplicate";
             this.buttonDuplicate.Size = new System.Drawing.Size(75, 23);
@@ -378,6 +392,7 @@
             // buttonRemoveAsset
             // 
             this.buttonRemoveAsset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonRemoveAsset.Enabled = false;
             this.buttonRemoveAsset.Location = new System.Drawing.Point(519, 156);
             this.buttonRemoveAsset.Name = "buttonRemoveAsset";
             this.buttonRemoveAsset.Size = new System.Drawing.Size(75, 23);
@@ -389,6 +404,7 @@
             // buttonAddAsset
             // 
             this.buttonAddAsset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonAddAsset.Enabled = false;
             this.buttonAddAsset.Location = new System.Drawing.Point(519, 40);
             this.buttonAddAsset.Name = "buttonAddAsset";
             this.buttonAddAsset.Size = new System.Drawing.Size(75, 23);
@@ -416,6 +432,30 @@
             this.label2.Size = new System.Drawing.Size(78, 13);
             this.label2.TabIndex = 4;
             this.label2.Text = "Show by Type:";
+            // 
+            // buttonArrowUp
+            // 
+            this.buttonArrowUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonArrowUp.Enabled = false;
+            this.buttonArrowUp.Location = new System.Drawing.Point(540, 19);
+            this.buttonArrowUp.Name = "buttonArrowUp";
+            this.buttonArrowUp.Size = new System.Drawing.Size(22, 22);
+            this.buttonArrowUp.TabIndex = 5;
+            this.buttonArrowUp.Text = "↑";
+            this.buttonArrowUp.UseVisualStyleBackColor = true;
+            this.buttonArrowUp.Click += new System.EventHandler(this.buttonArrowUp_Click);
+            // 
+            // buttonArrowDown
+            // 
+            this.buttonArrowDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonArrowDown.Enabled = false;
+            this.buttonArrowDown.Location = new System.Drawing.Point(568, 19);
+            this.buttonArrowDown.Name = "buttonArrowDown";
+            this.buttonArrowDown.Size = new System.Drawing.Size(22, 22);
+            this.buttonArrowDown.TabIndex = 6;
+            this.buttonArrowDown.Text = "↓";
+            this.buttonArrowDown.UseVisualStyleBackColor = true;
+            this.buttonArrowDown.Click += new System.EventHandler(this.buttonArrowDown_Click);
             // 
             // ArchiveEditor
             // 
@@ -480,5 +520,7 @@
         private System.Windows.Forms.ToolStripMenuItem importTXDArchiveToolStripMenuItem;
         private System.Windows.Forms.Button buttonCopy;
         private System.Windows.Forms.Button buttonPaste;
+        private System.Windows.Forms.Button buttonArrowDown;
+        private System.Windows.Forms.Button buttonArrowUp;
     }
 }

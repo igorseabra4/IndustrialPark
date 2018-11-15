@@ -117,7 +117,14 @@ namespace IndustrialPark
         }
 
         [Browsable(false)]
-        public new AssetID UnknownAssetID_50
+        public override AssetID ReferenceAssetID
+        {
+            get { return ReadUInt(0x50 + Offset); }
+            set { Write(0x50 + Offset, value); }
+        }
+
+        [Category("UserInterface")]
+        public AssetID SoundAssetID
         {
             get { return ReadUInt(0x50 + Offset); }
             set { Write(0x50 + Offset, value); }

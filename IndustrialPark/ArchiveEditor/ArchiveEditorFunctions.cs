@@ -184,6 +184,12 @@ namespace IndustrialPark
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
+                case AssetType.DSCO:
+                    {
+                        AssetDSCO newAsset = new AssetDSCO(AHDR);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
                 case AssetType.DSTR:
                     {
                         AssetDSTR newAsset = new AssetDSTR(AHDR);
@@ -406,7 +412,6 @@ namespace IndustrialPark
                     break;
                 case AssetType.CCRV:
                 case AssetType.CSNM:
-                case AssetType.DSCO:
                 case AssetType.DTRK:
                 case AssetType.DUPC:
                 case AssetType.GRSM:
@@ -452,10 +457,29 @@ namespace IndustrialPark
 
         public void RemoveLayer(int index)
         {
-            for (int i = 0; i < DICT.LTOC.LHDRList[index].assetIDlist.Count(); i++)
-                RemoveAsset(DICT.LTOC.LHDRList[index].assetIDlist[i]);
+            RemoveAsset(DICT.LTOC.LHDRList[index].assetIDlist);
 
             DICT.LTOC.LHDRList.RemoveAt(index);
+        }
+
+        public void MoveLayerUp(int selectedIndex)
+        {
+            if (selectedIndex > 0)
+            {
+                Section_LHDR previous = DICT.LTOC.LHDRList[selectedIndex - 1];
+                DICT.LTOC.LHDRList[selectedIndex - 1] = DICT.LTOC.LHDRList[selectedIndex];
+                DICT.LTOC.LHDRList[selectedIndex] = previous;
+            }
+        }
+
+        public void MoveLayerDown(int selectedIndex)
+        {
+            if (selectedIndex < DICT.LTOC.LHDRList.Count - 1)
+            {
+                Section_LHDR post = DICT.LTOC.LHDRList[selectedIndex + 1];
+                DICT.LTOC.LHDRList[selectedIndex + 1] = DICT.LTOC.LHDRList[selectedIndex];
+                DICT.LTOC.LHDRList[selectedIndex] = post;
+            }
         }
 
         public void AddAsset(int layerIndex, Section_AHDR AHDR)
@@ -485,7 +509,8 @@ namespace IndustrialPark
 
         public void RemoveAsset(IEnumerable<uint> assetIDs)
         {
-            foreach (uint u in assetIDs)
+            List<uint> assets = assetIDs.ToList();
+            foreach (uint u in assets)
                 RemoveAsset(u);
         }
 
@@ -495,8 +520,12 @@ namespace IndustrialPark
             CloseInternalEditor(assetID);
 
             for (int i = 0; i < DICT.LTOC.LHDRList.Count; i++)
-                if (DICT.LTOC.LHDRList[i].assetIDlist.Contains(assetID))
-                    DICT.LTOC.LHDRList[i].assetIDlist.Remove(assetID);
+                DICT.LTOC.LHDRList[i].assetIDlist.Remove(assetID);
+
+            renderingDictionary.Remove(assetID);
+
+            if (GetFromAssetID(assetID).AHDR.assetType == AssetType.SND | GetFromAssetID(assetID).AHDR.assetType == AssetType.SNDS)
+                RemoveSoundFromSNDI(assetID);
 
             if (assetDictionary[assetID] is IRenderableAsset ra)
             {
@@ -508,9 +537,6 @@ namespace IndustrialPark
                     renderableAssetSetJSP.Remove((AssetJSP)ra);
             }
 
-            if (renderingDictionary.ContainsKey(assetID))
-                renderingDictionary.Remove(assetID);
-
             if (assetDictionary[assetID] is AssetJSP jsp)
                 jsp.model.Dispose();
 
@@ -518,9 +544,6 @@ namespace IndustrialPark
                 modl.GetRenderWareModelFile().Dispose();
 
             DICT.ATOC.AHDRList.Remove(assetDictionary[assetID].AHDR);
-
-            if (GetFromAssetID(assetID).AHDR.assetType == AssetType.SND | GetFromAssetID(assetID).AHDR.assetType == AssetType.SNDS)
-                RemoveSoundFromSNDI(assetID);
 
             assetDictionary.Remove(assetID);
         }

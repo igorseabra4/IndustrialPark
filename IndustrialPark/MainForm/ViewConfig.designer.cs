@@ -239,7 +239,7 @@
             262144});
             this.NumericFOV.Name = "NumericFOV";
             this.NumericFOV.Value = new decimal(new int[] {
-            45,
+            60,
             0,
             0,
             0});
