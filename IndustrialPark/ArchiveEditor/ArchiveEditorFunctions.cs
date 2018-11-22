@@ -26,6 +26,8 @@ namespace IndustrialPark
                 renderingDictionary[key] = value;
         }
 
+        public bool UnsavedChanges { get; set; } = false;
+
         public ArchiveEditorFunctions()
         {
             gizmos = new Gizmo[3];

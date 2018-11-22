@@ -3,9 +3,10 @@
     public enum PlatType : byte
     {
         Platform = 0,
-        Type1 = 1,
+        ExtendRetract = 0,
+        Orbit = 1,
         Type2 = 2,
-        Type3 = 3,
+        MovePoint = 3,
         Mechanism = 4,
         Type5 = 5,
         ConveyorBelt = 6,
@@ -15,7 +16,7 @@
         Springboard = 10,
         TeeterTotter = 11,
         Paddle = 12,
-        Type13 = 13,
+        FullyManipulable = 13,
         Type14 = 14,
         Type15 = 15,
         Type16 = 16,

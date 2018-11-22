@@ -94,8 +94,8 @@ namespace IndustrialPark
             dontRenderSFX = false;
             dontRenderSIMP = false;
             dontRenderTRIG = false;
-            dontRenderUI = false;
-            dontRenderUIFT = false;
+            dontRenderUI = true;
+            dontRenderUIFT = true;
             dontRenderVIL = false;
         }
 

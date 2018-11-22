@@ -154,6 +154,7 @@
     <Compile Include="Assets\Shared\AssetEventBFBB.cs" />
     <Compile Include="Assets\Shared\AssetEventTSSM.cs" />
     <Compile Include="Assets\Shared\Enums\EventTypeTSSM.cs" />
+    <Compile Include="Assets\Shared\Enums\VilType.cs" />
     <Compile Include="Assets\Shared\TypeConverter\HexIntTypeConverter.cs" />
     <Compile Include="MainForm\Json\IPSettings.cs" />
     <Compile Include="MainForm\Json\ProjectJson.cs" />

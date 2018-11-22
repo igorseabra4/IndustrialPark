@@ -18,6 +18,9 @@ namespace IndustrialPark
 
             InitializeComponent();
 
+            uIToolStripMenuItem_Click(null, null);
+            uIFTToolStripMenuItem_Click(null, null);
+
             renderer = new SharpRenderer(renderPanel);
         }
 
@@ -41,6 +44,8 @@ namespace IndustrialPark
                 MessageBox.Show("It appears this is your first time using Industrial Park.\nPlease consult the documentation on the BFBB Modding Wiki to understand how to use the tool if you haven't already.\nAlso, be sure to check individual asset pages if you're not sure what one of them or their settings do.");
                 Program.AboutBox.Show();
             }
+
+            SetProjectToolStripStatusLabel();
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -64,10 +69,8 @@ namespace IndustrialPark
 
             File.WriteAllText(pathToSettings, JsonConvert.SerializeObject(settings, Formatting.Indented));
 
-            if (autoSaveOnClosingToolStripMenuItem.Checked & !string.IsNullOrWhiteSpace(currentProjectPath))
-            {
+            if (autoSaveOnClosingToolStripMenuItem.Checked)
                 SaveProject(currentProjectPath);
-            }
         }
 
         private void newToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -81,6 +84,7 @@ namespace IndustrialPark
 
             currentProjectPath = null;
             ApplySettings(new ProjectJson());
+            SetProjectToolStripStatusLabel();
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -118,7 +122,7 @@ namespace IndustrialPark
 
         private void SaveProject(string fileName)
         {
-            if (fileName == null)
+            if (string.IsNullOrWhiteSpace(fileName))
                 fileName = "default_project.json";
             currentProjectPath = fileName;
             SaveProject();
@@ -127,6 +131,7 @@ namespace IndustrialPark
         private void SaveProject()
         {
             File.WriteAllText(currentProjectPath, JsonConvert.SerializeObject(FromCurrentInstance(), Formatting.Indented));
+            SetProjectToolStripStatusLabel();
         }
 
         private void autoLoadOnStartupToolStripMenuItem_Click(object sender, EventArgs e)
@@ -157,6 +162,7 @@ namespace IndustrialPark
         private void ApplySettings(string ipSettingsPath)
         {
             currentProjectPath = ipSettingsPath;
+            SetProjectToolStripStatusLabel();
             ApplySettings(JsonConvert.DeserializeObject<ProjectJson>(File.ReadAllText(ipSettingsPath)));
         }
 
@@ -287,6 +293,11 @@ namespace IndustrialPark
             toolStripStatusLabel1.Text = Text;
         }
 
+        private void SetProjectToolStripStatusLabel()
+        {
+            toolStripStatusLabelProject.Text = "Project: " + (currentProjectPath ?? "None");
+        }
+
         public SharpRenderer renderer;
 
         private bool mouseMode = false;
@@ -297,38 +308,49 @@ namespace IndustrialPark
 
         private void MouseMoveControl(object sender, MouseEventArgs e)
         {
-            if (mouseMode)
+            if (renderer.isDrawingUI)
             {
-                renderer.Camera.AddYaw(MathUtil.DegreesToRadians(Cursor.Position.X - MouseCenter.X) / 4);
-                renderer.Camera.AddPitch(MathUtil.DegreesToRadians(Cursor.Position.Y - MouseCenter.Y) / 4);
+                float x = ((e.X - renderPanel.ClientRectangle.X) * 640f / renderPanel.ClientRectangle.Width);
+                float y = ((e.Y - renderPanel.ClientRectangle.Y) * 480f / renderPanel.ClientRectangle.Height);
 
-                Cursor.Position = MouseCenter;
+                SetToolStripStatusLabel(string.Format("Position: [{0:0.0000}, {1:0.0000}]", x, y) + " FPS: " + $"{renderer.sharpFPS.FPS:0.0000}");
             }
             else
             {
-                int deltaX = e.X - oldMousePosition.X;
-                int deltaY = e.Y - oldMousePosition.Y;
+                if (mouseMode)
+                {
+                    renderer.Camera.AddYaw(MathUtil.DegreesToRadians(Cursor.Position.X - MouseCenter.X) / 4);
+                    renderer.Camera.AddPitch(MathUtil.DegreesToRadians(Cursor.Position.Y - MouseCenter.Y) / 4);
 
-                if (e.Button == MouseButtons.Middle)
-                {
-                    renderer.Camera.AddYaw(MathUtil.DegreesToRadians(e.X - oldMousePosition.X));
-                    renderer.Camera.AddPitch(MathUtil.DegreesToRadians(e.Y - oldMousePosition.Y));
+                    Cursor.Position = MouseCenter;
                 }
-                if (e.Button == MouseButtons.Right)
+                else
                 {
-                    renderer.Camera.AddPositionSideways(e.X - oldMousePosition.X);
-                    renderer.Camera.AddPositionUp(e.Y - oldMousePosition.Y);
+                    int deltaX = e.X - oldMousePosition.X;
+                    int deltaY = e.Y - oldMousePosition.Y;
+
+                    if (e.Button == MouseButtons.Middle)
+                    {
+                        renderer.Camera.AddYaw(MathUtil.DegreesToRadians(e.X - oldMousePosition.X));
+                        renderer.Camera.AddPitch(MathUtil.DegreesToRadians(e.Y - oldMousePosition.Y));
+                    }
+                    if (e.Button == MouseButtons.Right)
+                    {
+                        renderer.Camera.AddPositionSideways(e.X - oldMousePosition.X);
+                        renderer.Camera.AddPositionUp(e.Y - oldMousePosition.Y);
+                    }
+
+                    foreach (ArchiveEditor ae in archiveEditors)
+                    {
+                        ae.MouseMoveX(renderer.Camera, deltaX);
+                        ae.MouseMoveY(renderer.Camera, deltaY);
+                    }
                 }
 
-                foreach (ArchiveEditor ae in archiveEditors)
-                {
-                    ae.MouseMoveX(renderer.Camera, deltaX);
-                    ae.MouseMoveY(renderer.Camera, deltaY);
-                }
+                if (e.Delta != 0)
+                    renderer.Camera.AddPositionForward(e.Delta / 24);
             }
 
-            if (e.Delta != 0)
-                renderer.Camera.AddPositionForward(e.Delta / 24);
             oldMousePosition = e;
 
             if (loopNotStarted)
@@ -372,7 +394,7 @@ namespace IndustrialPark
             else if (e.KeyCode == Keys.G)
                 OpenInternalEditors();
             else if (e.KeyCode == Keys.U)
-                uIToolStripMenuItem_Click(null, null);
+                uIModeToolStripMenuItem_Click(null, null);
 
             if (e.KeyCode == Keys.F1)
                 Program.ViewConfig.Show();
@@ -390,6 +412,9 @@ namespace IndustrialPark
 
         public void KeyboardController()
         {
+            if (renderer.isDrawingUI)
+                return;
+
             if (PressedKeys.Contains(Keys.A) & PressedKeys.Contains(Keys.ControlKey))
                 renderer.Camera.AddYaw(-0.05f);
             else if (PressedKeys.Contains(Keys.A))
@@ -465,7 +490,7 @@ namespace IndustrialPark
         private bool UnsavedChanges()
         {
             foreach (ArchiveEditor ae in archiveEditors)
-                if (ae.UnsavedChanges)
+                if (ae.archive.UnsavedChanges)
                     return true;
 
             return false;
@@ -479,10 +504,7 @@ namespace IndustrialPark
         public void ToggleCulling()
         {
             noCullingCToolStripMenuItem.Checked = !noCullingCToolStripMenuItem.Checked;
-            if (noCullingCToolStripMenuItem.Checked)
-                renderer.device.SetNormalCullMode(CullMode.None);
-            else
-                renderer.device.SetNormalCullMode(CullMode.Back);
+            renderer.device.SetNormalCullMode(noCullingCToolStripMenuItem.Checked ? CullMode.None : CullMode.Back);
         }
 
         private void wireframeFToolStripMenuItem_Click(object sender, EventArgs e)
@@ -493,10 +515,7 @@ namespace IndustrialPark
         public void ToggleWireFrame()
         {
             wireframeFToolStripMenuItem.Checked = !wireframeFToolStripMenuItem.Checked;
-            if (wireframeFToolStripMenuItem.Checked)
-                renderer.device.SetNormalFillMode(FillMode.Wireframe);
-            else
-                renderer.device.SetNormalFillMode(FillMode.Solid);
+            renderer.device.SetNormalFillMode(wireframeFToolStripMenuItem.Checked ? FillMode.Wireframe : FillMode.Solid);
         }
 
         private void backgroundColorToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -732,7 +751,7 @@ namespace IndustrialPark
             AssetDYNA.dontRender = !dYNAToolStripMenuItem.Checked;
         }
 
-        private void uIToolStripMenuItem_Click_1(object sender, EventArgs e)
+        private void uIToolStripMenuItem_Click(object sender, EventArgs e)
         {
             uIToolStripMenuItem.Checked = !uIToolStripMenuItem.Checked;
             AssetUI.dontRender = !uIToolStripMenuItem.Checked;
@@ -762,10 +781,21 @@ namespace IndustrialPark
             AssetPEND.dontRender = !pENDToolStripMenuItem.Checked;
         }
 
-        private void uIToolStripMenuItem_Click(object sender, EventArgs e)
+        private void uIModeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             uIModeToolStripMenuItem.Checked = !uIModeToolStripMenuItem.Checked;
             renderer.isDrawingUI = uIModeToolStripMenuItem.Checked;
+
+            if (renderer.isDrawingUI)
+            {
+                if (AssetUI.dontRender)
+                    uIToolStripMenuItem_Click(null, null);
+                if (AssetUIFT.dontRender)
+                    uIFTToolStripMenuItem_Click(null, null);
+            }
+
+            renderer.Camera.Reset();
+            mouseMode = false;
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)

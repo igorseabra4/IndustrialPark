@@ -33,11 +33,13 @@ namespace IndustrialPark
         private void propertyGridAsset_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             propertyGridDynaType.SelectedObject = asset.DynaBase;
+            archive.UnsavedChanges = true;
         }
 
         private void propertyGridDynaType_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             asset.DynaBase = (DynaBase)propertyGridDynaType.SelectedObject;
+            archive.UnsavedChanges = true;
         }
 
         private void buttonFindCallers_Click(object sender, System.EventArgs e)

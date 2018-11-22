@@ -49,21 +49,21 @@ namespace IndustrialPark
         }
 
         [Category("Pendulum")]
-        public float UnknownFloat5C
+        public float MovementDistance
         {
             get => ReadFloat(0x5C + Offset);
             set => Write(0x5C + Offset, value);
         }
 
         [Category("Pendulum")]
-        public float UnknownFloat60
+        public float Steepness
         {
             get => ReadFloat(0x60 + Offset);
             set => Write(0x60 + Offset, value);
         }
 
         [Category("Pendulum")]
-        public float UnknownFloat64
+        public float MovementTime
         {
             get => ReadFloat(0x64 + Offset);
             set => Write(0x64 + Offset, value);

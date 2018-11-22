@@ -50,5 +50,10 @@ namespace IndustrialPark
         {
             Program.MainForm.FindWhoTargets(GetAssetID());
         }
+
+        private void propertyGridAsset_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            archive.UnsavedChanges = true;
+        }
     }
 }

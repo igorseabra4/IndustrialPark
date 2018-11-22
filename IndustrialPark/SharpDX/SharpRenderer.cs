@@ -336,8 +336,6 @@ namespace IndustrialPark
 
                 sharpFPS.Update();
 
-                Program.MainForm.SetToolStripStatusLabel(Camera.GetInformation() + " FPS: " + $"{sharpFPS.FPS:0.0000}");
-
                 device.Clear(backgroundColor);
 
                 if (ArchiveEditorFunctions.allowRender)
@@ -367,6 +365,8 @@ namespace IndustrialPark
                     }
                     else
                     {
+                        Program.MainForm.SetToolStripStatusLabel(Camera.GetInformation() + " FPS: " + $"{sharpFPS.FPS:0.0000}");
+
                         Matrix view = Camera.GetViewMatrix();
                         viewProjection = view * Camera.GetProjectionMatrix();
                         frustum = new BoundingFrustum(view * Camera.GetBiggerFovProjectionMatrix());

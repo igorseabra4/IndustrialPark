@@ -17,7 +17,7 @@ namespace IndustrialPark
 
         public override string ToString()
         {
-            return $"[{AssetID_SURF.ToString()}] - {Unknown}";
+            return $"[{Program.MainForm.GetAssetNameFromID(AssetID_SURF)}] - {Unknown}";
         }
     }
 

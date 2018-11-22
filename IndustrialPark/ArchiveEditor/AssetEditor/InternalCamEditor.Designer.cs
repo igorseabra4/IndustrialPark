@@ -49,6 +49,7 @@
             this.propertyGridAsset.PropertySort = System.Windows.Forms.PropertySort.Categorized;
             this.propertyGridAsset.Size = new System.Drawing.Size(324, 319);
             this.propertyGridAsset.TabIndex = 5;
+            this.propertyGridAsset.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGridAsset_PropertyValueChanged);
             // 
             // labelAssetName
             // 

@@ -14,7 +14,6 @@ namespace IndustrialPark
     public partial class ArchiveEditor : Form
     {
         public ArchiveEditorFunctions archive;
-        public bool UnsavedChanges { get; private set; } = false;
 
         public ArchiveEditor(string filePath)
         {
@@ -71,10 +70,10 @@ namespace IndustrialPark
 
         private void FinishedOpening(string fileName)
         {
-            toolStripStatusLabel1.Text = "File: " + fileName;
+            toolStripStatusLabelCurrentFilename.Text = "File: " + fileName;
             Text = Path.GetFileName(fileName);
             Program.MainForm.SetToolStripItemName(this, Text);
-            UnsavedChanges = false;
+            archive.UnsavedChanges = false;
 
             saveToolStripMenuItem.Enabled = true;
             saveAsToolStripMenuItem.Enabled = true;
@@ -88,7 +87,7 @@ namespace IndustrialPark
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (UnsavedChanges)
+            if (archive.UnsavedChanges)
             {
                 DialogResult result = MessageBox.Show("You have unsaved changes. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 
@@ -180,6 +179,7 @@ namespace IndustrialPark
                     {
                         archive.DICT.LTOC.LHDRList[comboBoxLayers.SelectedIndex].layerType = o;
                         comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = LayerToString(comboBoxLayers.SelectedIndex);
+                        archive.UnsavedChanges = true;
                         return;
                     }
                 }
@@ -199,6 +199,7 @@ namespace IndustrialPark
                 });
                 comboBoxLayers.Items.Add(LayerToString(archive.DICT.LTOC.LHDRList.Count - 1));
                 comboBoxLayers.SelectedIndex = comboBoxLayers.Items.Count - 1;
+                archive.UnsavedChanges = true;
             }
             catch (Exception ex)
             {
@@ -215,6 +216,8 @@ namespace IndustrialPark
             int previndex = comboBoxLayers.SelectedIndex;
 
             archive.RemoveLayer(comboBoxLayers.SelectedIndex);
+
+            archive.UnsavedChanges = true;
 
             PopulateLayerComboBox();
 
@@ -248,6 +251,7 @@ namespace IndustrialPark
         {
             int previndex = comboBoxLayers.SelectedIndex;
             archive.MoveLayerUp(comboBoxLayers.SelectedIndex);
+            archive.UnsavedChanges = true;
             PopulateLayerComboBox();
             comboBoxLayers.SelectedIndex = Math.Max(previndex - 1, 0);
         }
@@ -256,6 +260,7 @@ namespace IndustrialPark
         {
             int previndex = comboBoxLayers.SelectedIndex;
             archive.MoveLayerDown(comboBoxLayers.SelectedIndex);
+            archive.UnsavedChanges = true;
             PopulateLayerComboBox();
             comboBoxLayers.SelectedIndex = Math.Min(previndex + 1, comboBoxLayers.Items.Count - 1);
         }
@@ -330,7 +335,7 @@ namespace IndustrialPark
                         MessageBox.Show($"Archive already contains asset id [{AHDR.assetID.ToString("X8")}]. Will change it to [{(AHDR.assetID + 1).ToString("X8")}].");
                         AHDR.assetID++;
                     }
-                    UnsavedChanges = true;
+                    archive.UnsavedChanges = true;
                     archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR);
                     comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = LayerToString(comboBoxLayers.SelectedIndex);
                     PopulateAssetListAndComboBox();
@@ -347,7 +352,7 @@ namespace IndustrialPark
         {
             if (listBoxAssets.SelectedIndex < 0) return;
 
-            UnsavedChanges = true;
+            archive.UnsavedChanges = true;
 
             List<uint> finalIndexes = new List<uint>();
             foreach (uint u in archive.GetCurrentlySelectedAssetIDs())
@@ -383,7 +388,7 @@ namespace IndustrialPark
             List<Section_AHDR> AHDRs;
             List<uint> assetIDs = new List<uint>();
 
-            UnsavedChanges = true;
+            archive.UnsavedChanges = true;
 
             try
             {
@@ -414,7 +419,7 @@ namespace IndustrialPark
             archive.RemoveAsset(CurrentlySelectedAssetIDs());
             comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = LayerToString(comboBoxLayers.SelectedIndex);
 
-            UnsavedChanges = true;
+            archive.UnsavedChanges = true;
 
             listBoxAssets.Items.Remove(listBoxAssets.SelectedItem);
         }
@@ -438,7 +443,7 @@ namespace IndustrialPark
 
                 if (success)
                 {
-                    UnsavedChanges = true;
+                    archive.UnsavedChanges = true;
                     archive.RemoveAsset(oldAssetID);
 
                     while (archive.ContainsAsset(AHDR.assetID))
@@ -466,7 +471,6 @@ namespace IndustrialPark
         public void OpenInternalEditors()
         {
             archive.OpenInternalEditor(archive.GetCurrentlySelectedAssetIDs());
-            UnsavedChanges = true;
         }
 
         private void buttonExportRaw_Click(object sender, EventArgs e)
@@ -526,7 +530,7 @@ namespace IndustrialPark
         {
             Thread t = new Thread(archive.Save);
             t.Start();
-            UnsavedChanges = false;
+            archive.UnsavedChanges = false;
         }
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -536,8 +540,8 @@ namespace IndustrialPark
             {
                 archive.currentlyOpenFilePath = saveFileDialog.FileName;
                 archive.Save();
-                toolStripStatusLabel1.Text = "File: " + saveFileDialog.FileName;
-                UnsavedChanges = false;
+                toolStripStatusLabelCurrentFilename.Text = "File: " + saveFileDialog.FileName;
+                archive.UnsavedChanges = false;
             }
         }
         
@@ -682,6 +686,7 @@ namespace IndustrialPark
             if (openTXD.ShowDialog() == DialogResult.OK)
             {
                 archive.AddTextureDictionary(openTXD.FileName);
+                archive.UnsavedChanges = true;
                 PopulateLayerComboBox();
             }
         }

@@ -20,6 +20,8 @@ namespace IndustrialPark
                 return true;
             if (ANIM_AssetID_2 == assetID)
                 return true;
+            if (MVPT_AssetID_98 == assetID)
+                return true;
 
             return base.HasReference(assetID);
         }
@@ -221,7 +223,14 @@ namespace IndustrialPark
         }
 
         [Category("Platform")]
-        public float MovementTranslation_Distance
+        public AssetID MVPT_AssetID_98
+        {
+            get { return ReadUInt(0x98 + Offset); }
+            set { Write(0x98 + Offset, value); }
+        }
+
+        [Category("Platform")]
+        public float MovementTranslation_Distance_98
         {
             get => ReadFloat(0x98 + Offset);
             set => Write(0x98 + Offset, value);

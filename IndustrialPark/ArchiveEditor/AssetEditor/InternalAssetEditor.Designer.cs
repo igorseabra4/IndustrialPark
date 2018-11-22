@@ -46,6 +46,7 @@
             this.propertyGridAsset.PropertySort = System.Windows.Forms.PropertySort.Categorized;
             this.propertyGridAsset.Size = new System.Drawing.Size(324, 347);
             this.propertyGridAsset.TabIndex = 5;
+            this.propertyGridAsset.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGridAsset_PropertyValueChanged);
             // 
             // labelAssetName
             // 
@@ -86,14 +87,14 @@
             this.buttonFindCallers.UseVisualStyleBackColor = true;
             this.buttonFindCallers.Click += new System.EventHandler(this.buttonFindCallers_Click);
             // 
-            // InternalObjectAssetEditor
+            // InternalAssetEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(330, 401);
             this.Controls.Add(this.tableLayoutPanel1);
             this.MaximizeBox = false;
-            this.Name = "InternalObjectAssetEditor";
+            this.Name = "InternalAssetEditor";
             this.ShowIcon = false;
             this.Text = "Asset Data Editor";
             this.TopMost = true;

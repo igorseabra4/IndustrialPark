@@ -19,7 +19,7 @@ namespace IndustrialPark
 
         public override string ToString()
         {
-            return $"[{ModelAssetID.ToString()}] - {ShadowModelAssetID}";
+            return $"[{Program.MainForm.GetAssetNameFromID(ModelAssetID)}] - [{Program.MainForm.GetAssetNameFromID(ShadowModelAssetID)}]";
         }
     }
 

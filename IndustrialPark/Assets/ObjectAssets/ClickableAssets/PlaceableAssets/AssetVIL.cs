@@ -14,7 +14,7 @@ namespace IndustrialPark
 
         public override bool HasReference(uint assetID)
         {
-            if (VilType == assetID)
+            if ((uint)VilType == assetID)
                 return true;
             if (AssetID_DYNA_NPCSettings == assetID)
                 return true;
@@ -34,10 +34,10 @@ namespace IndustrialPark
             set => Write(0x54 + Offset, value);
         }
 
-        public AssetID VilType
+        public VilType VilType
         {
-            get => ReadUInt(0x58 + Offset);
-            set => Write(0x58 + Offset, value);
+            get => (VilType)ReadUInt(0x58 + Offset);
+            set => Write(0x58 + Offset, (uint)value);
         }
 
         public AssetID AssetID_DYNA_NPCSettings

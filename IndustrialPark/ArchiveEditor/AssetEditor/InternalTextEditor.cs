@@ -27,6 +27,7 @@ namespace IndustrialPark
         private void richTextBoxAssetText_TextChanged(object sender, System.EventArgs e)
         {
             asset.Text = richTextBoxAssetText.Text;
+            archive.UnsavedChanges = true;
         }
 
         public uint GetAssetID()

@@ -58,6 +58,7 @@ namespace IndustrialPark
                 {
                     asset.AHDR.data = file;
                 }
+                archive.UnsavedChanges = true;
             }
         }
 
