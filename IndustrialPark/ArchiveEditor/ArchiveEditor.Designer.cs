@@ -151,6 +151,7 @@
             // 
             // hipHopToolExportToolStripMenuItem
             // 
+            this.hipHopToolExportToolStripMenuItem.Enabled = false;
             this.hipHopToolExportToolStripMenuItem.Name = "hipHopToolExportToolStripMenuItem";
             this.hipHopToolExportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.hipHopToolExportToolStripMenuItem.Text = "Export Assets + INI";
@@ -158,6 +159,7 @@
             // 
             // importHIPArchiveToolStripMenuItem
             // 
+            this.importHIPArchiveToolStripMenuItem.Enabled = false;
             this.importHIPArchiveToolStripMenuItem.Name = "importHIPArchiveToolStripMenuItem";
             this.importHIPArchiveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.importHIPArchiveToolStripMenuItem.Text = "Import HIP Archive";
@@ -165,6 +167,7 @@
             // 
             // exportTXDArchiveToolStripMenuItem
             // 
+            this.exportTXDArchiveToolStripMenuItem.Enabled = false;
             this.exportTXDArchiveToolStripMenuItem.Name = "exportTXDArchiveToolStripMenuItem";
             this.exportTXDArchiveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exportTXDArchiveToolStripMenuItem.Text = "Export TXD Archive";
@@ -172,6 +175,7 @@
             // 
             // importTXDArchiveToolStripMenuItem
             // 
+            this.importTXDArchiveToolStripMenuItem.Enabled = false;
             this.importTXDArchiveToolStripMenuItem.Name = "importTXDArchiveToolStripMenuItem";
             this.importTXDArchiveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.importTXDArchiveToolStripMenuItem.Text = "Import TXD Archive";

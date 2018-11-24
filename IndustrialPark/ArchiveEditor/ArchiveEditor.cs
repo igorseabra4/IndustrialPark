@@ -63,6 +63,8 @@ namespace IndustrialPark
                 buttonAddLayer.Enabled = true;
                 importTXDArchiveToolStripMenuItem.Enabled = true;
                 exportTXDArchiveToolStripMenuItem.Enabled = true;
+                hipHopToolExportToolStripMenuItem.Enabled = true;
+                importHIPArchiveToolStripMenuItem.Enabled = true;
 
                 PopulateLayerComboBox();
                 PopulateAssetList();
@@ -111,6 +113,8 @@ namespace IndustrialPark
             saveToolStripMenuItem.Enabled = true;
             saveAsToolStripMenuItem.Enabled = true;
             buttonAddLayer.Enabled = true;
+            hipHopToolExportToolStripMenuItem.Enabled = true;
+            importHIPArchiveToolStripMenuItem.Enabled = true;
             importTXDArchiveToolStripMenuItem.Enabled = true;
             exportTXDArchiveToolStripMenuItem.Enabled = true;
 
