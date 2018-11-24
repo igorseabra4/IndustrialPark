@@ -52,7 +52,7 @@ namespace IndustrialPark
 
         public void SetSharpShader()
         {
-            basicShader = new SharpShader(device, "Resources/SharpDX/Shader_Basic.hlsl",
+            basicShader = new SharpShader(device, Application.StartupPath + "/Resources/SharpDX/Shader_Basic.hlsl",
                 new SharpShaderDescription() { VertexShaderFunction = "VS", PixelShaderFunction = "PS" },
                 new InputElement[] {
                         new InputElement("POSITION", 0, Format.R32G32B32_Float, 0, 0)
@@ -60,7 +60,7 @@ namespace IndustrialPark
 
             basicBuffer = basicShader.CreateBuffer<DefaultRenderData>();
 
-            defaultShader = new SharpShader(device, "Resources/SharpDX/Shader_Default.hlsl",
+            defaultShader = new SharpShader(device, Application.StartupPath + "/Resources/SharpDX/Shader_Default.hlsl",
                 new SharpShaderDescription() { VertexShaderFunction = "VS", PixelShaderFunction = "PS" },
                 new InputElement[] {
                         new InputElement("POSITION", 0, Format.R32G32B32_Float, 0, 0),
@@ -70,7 +70,7 @@ namespace IndustrialPark
 
             defaultBuffer = defaultShader.CreateBuffer<Matrix>();
 
-            tintedShader = new SharpShader(device, "Resources/SharpDX/Shader_Tinted.hlsl",
+            tintedShader = new SharpShader(device, Application.StartupPath + "/Resources/SharpDX/Shader_Tinted.hlsl",
                 new SharpShaderDescription() { VertexShaderFunction = "VS", PixelShaderFunction = "PS" },
                 new InputElement[] {
                         new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
@@ -89,10 +89,10 @@ namespace IndustrialPark
             if (whiteDefault != null)
             {
                 if (whiteDefault.IsDisposed)
-                    whiteDefault = device.LoadTextureFromFile("Resources\\WhiteDefault.png");
+                    whiteDefault = device.LoadTextureFromFile(Application.StartupPath + "\\Resources\\WhiteDefault.png");
             }
             else
-                whiteDefault = device.LoadTextureFromFile("Resources\\WhiteDefault.png");
+                whiteDefault = device.LoadTextureFromFile(Application.StartupPath + "\\Resources\\WhiteDefault.png");
         }
 
         public static SharpMesh Cube { get; private set; }
@@ -130,10 +130,10 @@ namespace IndustrialPark
             {
                 Models.ModelConverterData objData;
 
-                if (i == 0) objData = ReadOBJFile("Resources/Models/Box.obj", false);
-                else if (i == 1) objData = ReadOBJFile("Resources/Models/Cylinder.obj", false);
-                else if (i == 2) objData = ReadOBJFile("Resources/Models/Pyramid.obj", false);
-                else objData = ReadOBJFile("Resources/Models/Sphere.obj", false);
+                if (i == 0) objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Box.obj", false);
+                else if (i == 1) objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Cylinder.obj", false);
+                else if (i == 2) objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Pyramid.obj", false);
+                else objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Sphere.obj", false);
 
                 List<Vertex> vertexList = new List<Vertex>();
                 foreach (Models.Vertex v in objData.VertexList)

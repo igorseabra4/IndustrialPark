@@ -297,7 +297,7 @@ namespace IndustrialPark
 
         private void VerifyTemplate()
         {
-            string[] files = Directory.GetFiles("Resources\\Templates\\" + Functions.currentGame.ToString() + "\\");
+            string[] files = Directory.GetFiles(Application.StartupPath + "\\Resources\\Templates\\" + Functions.currentGame.ToString() + "\\");
             foreach (string s in files)
                 if (Path.GetFileName(s) == assetType.ToString())
                 {

@@ -721,6 +721,7 @@ namespace IndustrialPark
 
             if (openFile.ShowDialog() == DialogResult.OK)
                 archive.ImportHip(openFile.FileName);
+            PopulateLayerComboBox();
         }
 
         private void exportTXDArchiveToolStripMenuItem_Click(object sender, EventArgs e)

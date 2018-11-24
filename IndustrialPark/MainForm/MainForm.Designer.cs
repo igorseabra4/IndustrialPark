@@ -63,6 +63,7 @@ namespace IndustrialPark
             this.assetNameAssetIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.assetIDAssetNameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.ensureAssociationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.displayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.levelModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -90,9 +91,9 @@ namespace IndustrialPark
             this.uIModeAutoSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.renderPanel = new System.Windows.Forms.Panel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabelProject = new System.Windows.Forms.ToolStripStatusLabel();
+            this.renderPanel = new System.Windows.Forms.Panel();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -123,14 +124,14 @@ namespace IndustrialPark
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
             this.newToolStripMenuItem.Text = "Open New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(127, 6);
             // 
             // projectToolStripMenuItem
             // 
@@ -210,6 +211,7 @@ namespace IndustrialPark
             this.useLegacyAssetIDFormatToolStripMenuItem,
             this.nameDisplayModeToolStripMenuItem,
             this.toolStripSeparator2,
+            this.ensureAssociationsToolStripMenuItem,
             this.aboutToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
@@ -354,6 +356,13 @@ namespace IndustrialPark
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(216, 6);
+            // 
+            // ensureAssociationsToolStripMenuItem
+            // 
+            this.ensureAssociationsToolStripMenuItem.Name = "ensureAssociationsToolStripMenuItem";
+            this.ensureAssociationsToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.ensureAssociationsToolStripMenuItem.Text = "Associate HIP/HOP Files";
+            this.ensureAssociationsToolStripMenuItem.Click += new System.EventHandler(this.ensureAssociationsToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
@@ -610,6 +619,17 @@ namespace IndustrialPark
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 17);
             this.toolStripStatusLabel1.Click += new System.EventHandler(this.toolStripStatusLabel1_Click);
             // 
+            // toolStripStatusLabel2
+            // 
+            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(10, 17);
+            this.toolStripStatusLabel2.Text = "|";
+            // 
+            // toolStripStatusLabelProject
+            // 
+            this.toolStripStatusLabelProject.Name = "toolStripStatusLabelProject";
+            this.toolStripStatusLabelProject.Size = new System.Drawing.Size(0, 17);
+            // 
             // renderPanel
             // 
             this.renderPanel.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -624,19 +644,9 @@ namespace IndustrialPark
             this.renderPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.renderPanel_MouseUp);
             this.renderPanel.Resize += new System.EventHandler(this.ResetMouseCenter);
             // 
-            // toolStripStatusLabel2
-            // 
-            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(10, 17);
-            this.toolStripStatusLabel2.Text = "|";
-            // 
-            // toolStripStatusLabelProject
-            // 
-            this.toolStripStatusLabelProject.Name = "toolStripStatusLabelProject";
-            this.toolStripStatusLabelProject.Size = new System.Drawing.Size(0, 17);
-            // 
             // MainForm
             // 
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1263, 838);
@@ -650,6 +660,8 @@ namespace IndustrialPark
             this.Deactivate += new System.EventHandler(this.MainForm_Deactivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
+            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyUp);
             this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.MouseMoveControl);
@@ -726,6 +738,7 @@ namespace IndustrialPark
         private ToolStripMenuItem pENDToolStripMenuItem;
         private ToolStripStatusLabel toolStripStatusLabel2;
         private ToolStripStatusLabel toolStripStatusLabelProject;
+        private ToolStripMenuItem ensureAssociationsToolStripMenuItem;
     }
 }
 

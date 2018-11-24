@@ -942,7 +942,10 @@ namespace IndustrialPark
                             RemoveAsset(AHDR.assetID);
 
                         if (!containsAsset || result == DialogResult.Yes)
+                        {
+                            DICT.ATOC.AHDRList.Add(AHDR);
                             AddAssetToDictionary(AHDR);
+                        }
                     }
                 }
             }

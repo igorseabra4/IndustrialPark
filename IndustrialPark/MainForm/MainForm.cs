@@ -24,7 +24,7 @@ namespace IndustrialPark
             renderer = new SharpRenderer(renderPanel);
         }
 
-        private string pathToSettings = "ip_settings.json";
+        private string pathToSettings => Application.StartupPath + "/ip_settings.json";
         private string currentProjectPath;
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -35,6 +35,17 @@ namespace IndustrialPark
 
                 autoSaveOnClosingToolStripMenuItem.Checked = settings.AutosaveOnClose;
                 autoLoadOnStartupToolStripMenuItem.Checked = settings.AutoloadOnStartup;
+
+                string[] args = Environment.GetCommandLineArgs();
+                if (args.Length > 1)
+                {
+                    if (Path.GetExtension(args[1]).ToLower() == ".hip" || Path.GetExtension(args[1]).ToLower() == ".hop")
+                    {
+                        AddArchiveEditor(args[1]);
+                        SetProjectToolStripStatusLabel();
+                        return;
+                    }
+                }
 
                 if (settings.AutoloadOnStartup && !string.IsNullOrEmpty(settings.LastProjectPath))
                     ApplySettings(settings.LastProjectPath);
@@ -73,6 +84,26 @@ namespace IndustrialPark
 
             if (autoSaveOnClosingToolStripMenuItem.Checked)
                 SaveProject(currentProjectPath);
+        }
+
+        private void MainForm_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            foreach (string file in files)
+                try
+                {
+                    AddArchiveEditor(file);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error opening file: " + ex.Message);
+                }
+        }
+
+        private void MainForm_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effect = DragDropEffects.Copy;
         }
 
         private void newToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -129,7 +160,7 @@ namespace IndustrialPark
         private void SaveProject(string fileName)
         {
             if (string.IsNullOrWhiteSpace(fileName))
-                fileName = "default_project.json";
+                fileName = Application.StartupPath + "/default_project.json";
             currentProjectPath = fileName;
             SaveProject();
         }
@@ -855,6 +886,11 @@ namespace IndustrialPark
         private void uIModeAutoSizeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Width =  (int)(Height * 656f / 565f);
+        }
+
+        private void ensureAssociationsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FileAssociations.FileAssociations.EnsureAssociationsSet();
         }
     }
 }
