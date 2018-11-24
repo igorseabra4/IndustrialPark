@@ -42,7 +42,7 @@ namespace IndustrialPark
         }
 
         [Category("Object Base")]
-        public bool EnabledFlag
+        public bool EnabledOnStart
         {
             get => (Flags & 0x01) != 0;
             set
@@ -55,7 +55,7 @@ namespace IndustrialPark
         }
 
         [Category("Object Base")]
-        public bool UnknownFlag2
+        public bool StateIsPersistent
         {
             get => (Flags & 0x02) != 0;
             set
@@ -68,7 +68,7 @@ namespace IndustrialPark
         }
 
         [Category("Object Base")]
-        public bool UnknownFlag3
+        public bool UnknownAlways1
         {
             get => (Flags & 0x04) != 0;
             set
@@ -81,7 +81,7 @@ namespace IndustrialPark
         }
 
         [Category("Object Base")]
-        public bool UnknownFlag4
+        public bool VisibleDuringCutscenes
         {
             get => (Flags & 0x08) != 0;
             set
@@ -94,7 +94,7 @@ namespace IndustrialPark
         }
 
         [Category("Object Base")]
-        public bool ReceiveShadowsFlag
+        public bool ReceiveShadows
         {
             get => (Flags & 0x10) != 0;
             set

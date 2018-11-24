@@ -52,8 +52,10 @@ namespace IndustrialPark
         {
             if (UnsavedChanges())
             {
-                DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you still wish to close them and lose unsaved data?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                if (result == DialogResult.No)
+                DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                if (result == DialogResult.Yes)
+                    SaveAllChanges();
+                else if (result == DialogResult.Cancel)
                 {
                     e.Cancel = true;
                     return;
@@ -77,8 +79,10 @@ namespace IndustrialPark
         {
             if (UnsavedChanges())
             {
-                DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you still wish to close the and lose unsaved data?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                if (result == DialogResult.No)
+                DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                if (result == DialogResult.Yes)
+                    SaveAllChanges();
+                else if (result == DialogResult.Cancel)
                     return;
             }
 
@@ -91,8 +95,10 @@ namespace IndustrialPark
         {
             if (UnsavedChanges())
             {
-                DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you still wish to close the and lose unsaved data?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                if (result == DialogResult.No)
+                DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                if (result == DialogResult.Yes)
+                    SaveAllChanges();
+                else if (result == DialogResult.Cancel)
                     return;
             }
 
@@ -494,6 +500,13 @@ namespace IndustrialPark
                     return true;
 
             return false;
+        }
+
+        private void SaveAllChanges()
+        {
+            foreach (ArchiveEditor ae in archiveEditors)
+                if (ae.archive.UnsavedChanges)
+                    ae.Save();
         }
 
         private void noCullingCToolStripMenuItem_Click(object sender, EventArgs e)

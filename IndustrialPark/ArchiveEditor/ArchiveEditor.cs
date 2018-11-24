@@ -43,9 +43,42 @@ namespace IndustrialPark
             e.Cancel = true;
             Hide();
         }
-        
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (archive.UnsavedChanges)
+            {
+                DialogResult result = MessageBox.Show("You have unsaved changes. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+
+                if (result == DialogResult.Cancel) return;
+                if (result == DialogResult.Yes) archive.Save();
+            }
+
+            if (archive.New())
+            {
+                archive.UnsavedChanges = true;
+
+                saveToolStripMenuItem.Enabled = true;
+                saveAsToolStripMenuItem.Enabled = true;
+                buttonAddLayer.Enabled = true;
+                importTXDArchiveToolStripMenuItem.Enabled = true;
+                exportTXDArchiveToolStripMenuItem.Enabled = true;
+
+                PopulateLayerComboBox();
+                PopulateAssetList();
+            }
+        }
+
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (archive.UnsavedChanges)
+            {
+                DialogResult result = MessageBox.Show("You have unsaved changes. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+
+                if (result == DialogResult.Cancel) return;
+                if (result == DialogResult.Yes) archive.Save();
+            }
+
             OpenFileDialog openFile = new OpenFileDialog()
             {
                 Filter = "HIP/HOP Files|*.hip;*.hop",
@@ -79,10 +112,41 @@ namespace IndustrialPark
             saveAsToolStripMenuItem.Enabled = true;
             buttonAddLayer.Enabled = true;
             importTXDArchiveToolStripMenuItem.Enabled = true;
-            exportTexturesToolStripMenuItem.Enabled = true;
+            exportTXDArchiveToolStripMenuItem.Enabled = true;
 
             PopulateLayerComboBox();
             PopulateAssetList();
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Save();
+        }
+
+        public void Save()
+        {
+            if (archive.currentlyOpenFilePath == null)
+                saveAsToolStripMenuItem_Click(null, null);
+            else
+            {
+                Thread t = new Thread(archive.Save);
+                t.Start();
+            }
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                archive.currentlyOpenFilePath = saveFileDialog.FileName;
+                archive.Save();
+
+                Text = Path.GetFileName(saveFileDialog.FileName);
+                Program.MainForm.SetToolStripItemName(this, Text);
+                toolStripStatusLabelCurrentFilename.Text = "File: " + saveFileDialog.FileName;
+                archive.UnsavedChanges = false;
+            }
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -217,8 +281,6 @@ namespace IndustrialPark
 
             archive.RemoveLayer(comboBoxLayers.SelectedIndex);
 
-            archive.UnsavedChanges = true;
-
             PopulateLayerComboBox();
 
             programIsChangingStuff = false;
@@ -251,7 +313,6 @@ namespace IndustrialPark
         {
             int previndex = comboBoxLayers.SelectedIndex;
             archive.MoveLayerUp(comboBoxLayers.SelectedIndex);
-            archive.UnsavedChanges = true;
             PopulateLayerComboBox();
             comboBoxLayers.SelectedIndex = Math.Max(previndex - 1, 0);
         }
@@ -260,7 +321,6 @@ namespace IndustrialPark
         {
             int previndex = comboBoxLayers.SelectedIndex;
             archive.MoveLayerDown(comboBoxLayers.SelectedIndex);
-            archive.UnsavedChanges = true;
             PopulateLayerComboBox();
             comboBoxLayers.SelectedIndex = Math.Min(previndex + 1, comboBoxLayers.Items.Count - 1);
         }
@@ -525,25 +585,6 @@ namespace IndustrialPark
         {
             return Convert.ToUInt32(name.Substring(name.IndexOf('[') + 1, 8), 16);
         }
-
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Thread t = new Thread(archive.Save);
-            t.Start();
-            archive.UnsavedChanges = false;
-        }
-
-        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                archive.currentlyOpenFilePath = saveFileDialog.FileName;
-                archive.Save();
-                toolStripStatusLabelCurrentFilename.Text = "File: " + saveFileDialog.FileName;
-                archive.UnsavedChanges = false;
-            }
-        }
         
         private void listBoxAssets_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -665,13 +706,24 @@ namespace IndustrialPark
                 textBoxFindAsset.BackColor = System.Drawing.Color.Red;
             }
         }
-        
-        private void fileToolStripMenuItem_Click(object sender, EventArgs e)
+
+        private void hipHopToolExportToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            clickThisToolStripMenuItem.Visible = false;
+            CommonOpenFileDialog openFile = new CommonOpenFileDialog() { IsFolderPicker = true };
+            if (openFile.ShowDialog() == CommonFileDialogResult.Ok)
+                archive.ExportHip(openFile.FileName);
         }
 
-        private void exportTexturesToolStripMenuItem_Click(object sender, EventArgs e)
+        private void importHIPArchiveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFile = new OpenFileDialog()
+            { Filter = "All supported file types|*.hip;*.hop;*.ini|HIP archives|*.hip|HOP archives|*.hop|HipHopTool INI|*.ini" };
+
+            if (openFile.ShowDialog() == DialogResult.OK)
+                archive.ImportHip(openFile.FileName);
+        }
+
+        private void exportTXDArchiveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveTXD = new SaveFileDialog() { Filter = "TXD archives|*.txd" };
 
@@ -679,14 +731,13 @@ namespace IndustrialPark
                 archive.ExportTextureDictionary(saveTXD.FileName);
         }
 
-        private void importTXDArchiveToolStripMenuItem_Click(object sender, EventArgs e)
+        private void importTXDArchiveToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             OpenFileDialog openTXD = new OpenFileDialog() { Filter = "TXD archives|*.txd" };
 
             if (openTXD.ShowDialog() == DialogResult.OK)
             {
                 archive.AddTextureDictionary(openTXD.FileName);
-                archive.UnsavedChanges = true;
                 PopulateLayerComboBox();
             }
         }

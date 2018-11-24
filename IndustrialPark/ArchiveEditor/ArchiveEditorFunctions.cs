@@ -36,20 +36,49 @@ namespace IndustrialPark
             gizmos[2] = new Gizmo(GizmoType.Z);
         }
         
-        public string fileNamePrefix;
         public string currentlyOpenFilePath;
         public Section_HIPA HIPA;
         public Section_PACK PACK;
         public Section_DICT DICT;
         public Section_STRM STRM;
-        
+
+        public bool New()
+        {
+            HipSection[] hipFile = NewArchive.GetNewArchive(out bool OK, out Platform platform, out Game game);
+
+            if (OK)
+            {
+                Dispose();
+
+                currentlySelectedAssets = new List<Asset>();
+                currentlyOpenFilePath = null;
+
+                foreach (HipSection i in hipFile)
+                {
+                    if (i is Section_HIPA hipa) HIPA = hipa;
+                    else if (i is Section_PACK pack) PACK = pack;
+                    else if (i is Section_DICT dict) DICT = dict;
+                    else if (i is Section_STRM strm) STRM = strm;
+                    else throw new Exception();
+                }
+
+                if (currentPlatform == Platform.Unknown)
+                    new ChoosePlatformDialog().ShowDialog();
+
+                foreach (Section_AHDR AHDR in DICT.ATOC.AHDRList)
+                    AddAssetToDictionary(AHDR);
+                RecalculateAllMatrices();
+            }
+
+            return OK;
+        }
+
         public void OpenFile(string fileName)
         {
             Dispose();
 
             currentlySelectedAssets = new List<Asset>();
             currentlyOpenFilePath = fileName;                        
-            fileNamePrefix = Path.GetFileNameWithoutExtension(fileName);
 
             HipSection[] HipFile = HipFileToHipArray(fileName);
 
@@ -75,6 +104,7 @@ namespace IndustrialPark
             HipSection[] hipFile = SetupStream(ref HIPA, ref PACK, ref DICT, ref STRM);
             byte[] file = HipArrayToFile(hipFile);
             File.WriteAllBytes(currentlyOpenFilePath, file);
+            UnsavedChanges = false;
         }
 
         private Dictionary<uint, Asset> assetDictionary = new Dictionary<uint, Asset>();
@@ -109,7 +139,6 @@ namespace IndustrialPark
             PACK = null;
             DICT = null;
             STRM = null;
-            fileNamePrefix = null;
             currentlyOpenFilePath = null;
         }
 
@@ -462,6 +491,8 @@ namespace IndustrialPark
             RemoveAsset(DICT.LTOC.LHDRList[index].assetIDlist);
 
             DICT.LTOC.LHDRList.RemoveAt(index);
+
+            UnsavedChanges = true;
         }
 
         public void MoveLayerUp(int selectedIndex)
@@ -471,6 +502,7 @@ namespace IndustrialPark
                 Section_LHDR previous = DICT.LTOC.LHDRList[selectedIndex - 1];
                 DICT.LTOC.LHDRList[selectedIndex - 1] = DICT.LTOC.LHDRList[selectedIndex];
                 DICT.LTOC.LHDRList[selectedIndex] = previous;
+                UnsavedChanges = true;
             }
         }
 
@@ -481,6 +513,7 @@ namespace IndustrialPark
                 Section_LHDR post = DICT.LTOC.LHDRList[selectedIndex + 1];
                 DICT.LTOC.LHDRList[selectedIndex + 1] = DICT.LTOC.LHDRList[selectedIndex];
                 DICT.LTOC.LHDRList[selectedIndex] = post;
+                UnsavedChanges = true;
             }
         }
 
@@ -874,6 +907,49 @@ namespace IndustrialPark
                     }
         }
 
+        public void ExportHip(string fileName)
+        {
+            HipSection[] hipFile = SetupStream(ref HIPA, ref PACK, ref DICT, ref STRM);
+            HipArrayToIni(hipFile, fileName, true, true);
+        }
+
+        public void ImportHip(string fileName)
+        {
+            if (Path.GetExtension(fileName).ToLower() == ".hip" || Path.GetExtension(fileName).ToLower() == ".hop")
+                ImportHip(HipFileToHipArray(fileName));
+            else if (Path.GetExtension(fileName).ToLower() == ".ini")
+                ImportHip(IniToHipArray(fileName));
+        }
+
+        public void ImportHip(HipSection[] hipSections)
+        {
+            foreach (HipSection i in hipSections)
+            {
+                if (i is Section_DICT dict)
+                {
+                    DICT.LTOC.LHDRList.AddRange(dict.LTOC.LHDRList);
+
+                    foreach (Section_AHDR AHDR in dict.ATOC.AHDRList)
+                    {
+                        DialogResult result = DialogResult.Yes;
+
+                        bool containsAsset = ContainsAsset(AHDR.assetID);
+
+                        if (containsAsset)
+                            result = MessageBox.Show($"Asset [{AHDR.assetID.ToString("X8")}] {AHDR.ADBG.assetName} already present in archive. Do you wish to overwrite it?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                        if (containsAsset && (result == DialogResult.Yes))
+                            RemoveAsset(AHDR.assetID);
+
+                        if (!containsAsset || result == DialogResult.Yes)
+                            AddAssetToDictionary(AHDR);
+                    }
+                }
+            }
+
+            RecalculateAllMatrices();
+        }
+
         public void ExportTextureDictionary(string fileName)
         {
             ReadFileMethods.treatTexturesAsByteArray = true;
@@ -918,6 +994,7 @@ namespace IndustrialPark
 
         public void AddTextureDictionary(string fileName)
         {
+            UnsavedChanges = true;
             int layerIndex = 0;
 
             List<Section_LHDR> LHDRs = new List<Section_LHDR>

@@ -120,6 +120,12 @@
     <Compile Include="ArchiveEditor\AssetEditor\InternalTextEditor.designer.cs">
       <DependentUpon>InternalTextEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="ArchiveEditor\NewArchive.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\NewArchive.Designer.cs">
+      <DependentUpon>NewArchive.cs</DependentUpon>
+    </Compile>
     <Compile Include="Assets\Binary\AssetALST.cs" />
     <Compile Include="Assets\Binary\AssetANIM.cs" />
     <Compile Include="Assets\Binary\AssetMAPR.cs" />
@@ -320,6 +326,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\AssetEditor\InternalTextEditor.resx">
       <DependentUpon>InternalTextEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveEditor\NewArchive.resx">
+      <DependentUpon>NewArchive.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm\AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>

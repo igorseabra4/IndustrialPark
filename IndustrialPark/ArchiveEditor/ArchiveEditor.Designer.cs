@@ -33,15 +33,15 @@
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.exportTexturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.importTXDArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.clickThisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportTXDArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importTXDArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabelCurrentFilename = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.buttonArrowDown = new System.Windows.Forms.Button();
+            this.buttonArrowUp = new System.Windows.Forms.Button();
             this.comboBoxLayerTypes = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.buttonRemoveLayer = new System.Windows.Forms.Button();
@@ -62,8 +62,10 @@
             this.buttonAddAsset = new System.Windows.Forms.Button();
             this.comboBoxAssetTypes = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.buttonArrowUp = new System.Windows.Forms.Button();
-            this.buttonArrowDown = new System.Windows.Forms.Button();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.importHIPArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hipHopToolExportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -74,7 +76,7 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.clickThisToolStripMenuItem});
+            this.editToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(624, 24);
@@ -84,23 +86,20 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newToolStripMenuItem,
             this.openToolStripMenuItem,
             this.saveToolStripMenuItem,
             this.saveAsToolStripMenuItem,
             this.toolStripSeparator1,
-            this.exportTexturesToolStripMenuItem,
-            this.importTXDArchiveToolStripMenuItem,
-            this.toolStripSeparator2,
             this.closeToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
-            this.fileToolStripMenuItem.Click += new System.EventHandler(this.fileToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
@@ -108,7 +107,7 @@
             // 
             this.saveToolStripMenuItem.Enabled = false;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -116,48 +115,41 @@
             // 
             this.saveAsToolStripMenuItem.Enabled = false;
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.saveAsToolStripMenuItem.Text = "Save As...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
-            // 
-            // exportTexturesToolStripMenuItem
-            // 
-            this.exportTexturesToolStripMenuItem.Enabled = false;
-            this.exportTexturesToolStripMenuItem.Name = "exportTexturesToolStripMenuItem";
-            this.exportTexturesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.exportTexturesToolStripMenuItem.Text = "Export TXD Archive";
-            this.exportTexturesToolStripMenuItem.Click += new System.EventHandler(this.exportTexturesToolStripMenuItem_Click);
-            // 
-            // importTXDArchiveToolStripMenuItem
-            // 
-            this.importTXDArchiveToolStripMenuItem.Enabled = false;
-            this.importTXDArchiveToolStripMenuItem.Name = "importTXDArchiveToolStripMenuItem";
-            this.importTXDArchiveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.importTXDArchiveToolStripMenuItem.Text = "Import TXD Archive";
-            this.importTXDArchiveToolStripMenuItem.Click += new System.EventHandler(this.importTXDArchiveToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
-            // clickThisToolStripMenuItem
+            // editToolStripMenuItem
             // 
-            this.clickThisToolStripMenuItem.Name = "clickThisToolStripMenuItem";
-            this.clickThisToolStripMenuItem.Size = new System.Drawing.Size(81, 20);
-            this.clickThisToolStripMenuItem.Text = "<- click this";
+            this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.hipHopToolExportToolStripMenuItem,
+            this.importHIPArchiveToolStripMenuItem,
+            this.exportTXDArchiveToolStripMenuItem,
+            this.importTXDArchiveToolStripMenuItem});
+            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
+            this.editToolStripMenuItem.Text = "Edit";
+            // 
+            // exportTXDArchiveToolStripMenuItem
+            // 
+            this.exportTXDArchiveToolStripMenuItem.Name = "exportTXDArchiveToolStripMenuItem";
+            this.exportTXDArchiveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportTXDArchiveToolStripMenuItem.Text = "Export TXD Archive";
+            this.exportTXDArchiveToolStripMenuItem.Click += new System.EventHandler(this.exportTXDArchiveToolStripMenuItem_Click);
+            // 
+            // importTXDArchiveToolStripMenuItem
+            // 
+            this.importTXDArchiveToolStripMenuItem.Name = "importTXDArchiveToolStripMenuItem";
+            this.importTXDArchiveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.importTXDArchiveToolStripMenuItem.Text = "Import TXD Archive";
+            this.importTXDArchiveToolStripMenuItem.Click += new System.EventHandler(this.importTXDArchiveToolStripMenuItem1_Click);
             // 
             // statusStrip1
             // 
@@ -169,9 +161,9 @@
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // toolStripStatusLabel1
+            // toolStripStatusLabelCurrentFilename
             // 
-            this.toolStripStatusLabelCurrentFilename.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabelCurrentFilename.Name = "toolStripStatusLabelCurrentFilename";
             this.toolStripStatusLabelCurrentFilename.Size = new System.Drawing.Size(0, 17);
             // 
             // groupBox1
@@ -191,6 +183,30 @@
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Layer";
+            // 
+            // buttonArrowDown
+            // 
+            this.buttonArrowDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonArrowDown.Enabled = false;
+            this.buttonArrowDown.Location = new System.Drawing.Point(568, 19);
+            this.buttonArrowDown.Name = "buttonArrowDown";
+            this.buttonArrowDown.Size = new System.Drawing.Size(22, 22);
+            this.buttonArrowDown.TabIndex = 6;
+            this.buttonArrowDown.Text = "↓";
+            this.buttonArrowDown.UseVisualStyleBackColor = true;
+            this.buttonArrowDown.Click += new System.EventHandler(this.buttonArrowDown_Click);
+            // 
+            // buttonArrowUp
+            // 
+            this.buttonArrowUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonArrowUp.Enabled = false;
+            this.buttonArrowUp.Location = new System.Drawing.Point(540, 19);
+            this.buttonArrowUp.Name = "buttonArrowUp";
+            this.buttonArrowUp.Size = new System.Drawing.Size(22, 22);
+            this.buttonArrowUp.TabIndex = 5;
+            this.buttonArrowUp.Text = "↑";
+            this.buttonArrowUp.UseVisualStyleBackColor = true;
+            this.buttonArrowUp.Click += new System.EventHandler(this.buttonArrowUp_Click);
             // 
             // comboBoxLayerTypes
             // 
@@ -433,29 +449,31 @@
             this.label2.TabIndex = 4;
             this.label2.Text = "Show by Type:";
             // 
-            // buttonArrowUp
+            // toolStripSeparator1
             // 
-            this.buttonArrowUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonArrowUp.Enabled = false;
-            this.buttonArrowUp.Location = new System.Drawing.Point(540, 19);
-            this.buttonArrowUp.Name = "buttonArrowUp";
-            this.buttonArrowUp.Size = new System.Drawing.Size(22, 22);
-            this.buttonArrowUp.TabIndex = 5;
-            this.buttonArrowUp.Text = "↑";
-            this.buttonArrowUp.UseVisualStyleBackColor = true;
-            this.buttonArrowUp.Click += new System.EventHandler(this.buttonArrowUp_Click);
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
-            // buttonArrowDown
+            // importHIPArchiveToolStripMenuItem
             // 
-            this.buttonArrowDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonArrowDown.Enabled = false;
-            this.buttonArrowDown.Location = new System.Drawing.Point(568, 19);
-            this.buttonArrowDown.Name = "buttonArrowDown";
-            this.buttonArrowDown.Size = new System.Drawing.Size(22, 22);
-            this.buttonArrowDown.TabIndex = 6;
-            this.buttonArrowDown.Text = "↓";
-            this.buttonArrowDown.UseVisualStyleBackColor = true;
-            this.buttonArrowDown.Click += new System.EventHandler(this.buttonArrowDown_Click);
+            this.importHIPArchiveToolStripMenuItem.Name = "importHIPArchiveToolStripMenuItem";
+            this.importHIPArchiveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.importHIPArchiveToolStripMenuItem.Text = "Import HIP Archive";
+            this.importHIPArchiveToolStripMenuItem.Click += new System.EventHandler(this.importHIPArchiveToolStripMenuItem_Click);
+            // 
+            // hipHopToolExportToolStripMenuItem
+            // 
+            this.hipHopToolExportToolStripMenuItem.Name = "hipHopToolExportToolStripMenuItem";
+            this.hipHopToolExportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.hipHopToolExportToolStripMenuItem.Text = "HipHopTool Export";
+            this.hipHopToolExportToolStripMenuItem.Click += new System.EventHandler(this.hipHopToolExportToolStripMenuItem_Click);
+            // 
+            // newToolStripMenuItem
+            // 
+            this.newToolStripMenuItem.Name = "newToolStripMenuItem";
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newToolStripMenuItem.Text = "New";
+            this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // ArchiveEditor
             // 
@@ -491,9 +509,6 @@
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripMenuItem exportTexturesToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelCurrentFilename;
@@ -513,14 +528,19 @@
         private System.Windows.Forms.Button buttonEditAsset;
         private System.Windows.Forms.Button buttonExportRaw;
         private System.Windows.Forms.Button buttonView;
-        private System.Windows.Forms.ToolStripMenuItem clickThisToolStripMenuItem;
         private System.Windows.Forms.Button buttonInternalEdit;
         private System.Windows.Forms.TextBox textBoxFindAsset;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ToolStripMenuItem importTXDArchiveToolStripMenuItem;
         private System.Windows.Forms.Button buttonCopy;
         private System.Windows.Forms.Button buttonPaste;
         private System.Windows.Forms.Button buttonArrowDown;
         private System.Windows.Forms.Button buttonArrowUp;
+        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportTXDArchiveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importTXDArchiveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem importHIPArchiveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hipHopToolExportToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
     }
 }
