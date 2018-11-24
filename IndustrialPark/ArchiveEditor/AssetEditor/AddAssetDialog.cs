@@ -53,23 +53,6 @@ namespace IndustrialPark
             VerifyTemplate();
         }
 
-        private string GetMiscSettingsString(byte[] MiscSettings)
-        {
-            if (MiscSettings.Length == 0) return "";
-
-            string output = String.Format("{0, 2:X2}", MiscSettings[0]) + String.Format("{0, 2:X2}", MiscSettings[1])
-                + String.Format("{0, 2:X2}", MiscSettings[2]) + String.Format("{0, 2:X2}", MiscSettings[3]);
-
-            for (int i = 4; i < MiscSettings.Length; i += 4)
-            {
-                output += " " +
-                String.Format("{0, 2:X2}", MiscSettings[i]) + String.Format("{0, 2:X2}", MiscSettings[i + 1]) +
-                String.Format("{0, 2:X2}", MiscSettings[i + 2]) + String.Format("{0, 2:X2}", MiscSettings[i + 3]);
-            }
-
-            return output;
-        }
-
         public static Section_AHDR GetAsset(AddAssetDialog a, out bool success)
         {
             DialogResult d = a.ShowDialog();

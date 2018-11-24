@@ -153,6 +153,16 @@ namespace IndustrialPark
                 AHDR.data[j + i] = split[i];
         }
 
+        protected static uint Mask(uint bit)
+        {
+            return (uint)Math.Pow(2, bit);
+        }
+
+        protected static uint InvMask(uint bit)
+        {
+            return uint.MaxValue - Mask(bit);
+        }
+
         public virtual bool HasReference(uint assetID) => false;
     }
 }

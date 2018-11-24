@@ -97,6 +97,7 @@ namespace IndustrialPark
             get => Entries_SNDS_StartOffset + Entries_SNDS_amount * EntrySoundInfo_GCN_V1.StructSize;
         }
 
+        [Category("Sound Info")]
         public EntrySoundInfo_GCN_V1[] Entries_SND
         {
             get
@@ -134,6 +135,7 @@ namespace IndustrialPark
             }
         }
 
+        [Category("Sound Info")]
         public EntrySoundInfo_GCN_V1[] Entries_SNDS
         {
             get
@@ -171,6 +173,7 @@ namespace IndustrialPark
             }
         }
 
+        [Category("Sound Info")]
         public EntrySoundInfo_GCN_V1[] Entries_Sound_CIN
         {
             get

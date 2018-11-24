@@ -2,6 +2,7 @@
 using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
@@ -74,6 +75,7 @@ namespace IndustrialPark
             renderer.DrawPyramid(world, isSelected, 1f);
         }
 
+        [Category("Player References")]
         public AssetID LightKitID
         {
             get => ReadUInt(EventStartOffset + AmountOfEvents * AssetEvent.sizeOfStruct);

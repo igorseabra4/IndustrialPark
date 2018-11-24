@@ -46,7 +46,7 @@ namespace IndustrialPark
                 {
                     try
                     {
-                        archive.AddSoundToSNDI(file, asset.AHDR.assetID, out byte[] soundData);
+                        archive.AddSoundToSNDI(file, asset.AHDR.assetID, asset.AHDR.assetType, out byte[] soundData);
                         asset.AHDR.data = soundData;
                     }
                     catch (Exception ex)

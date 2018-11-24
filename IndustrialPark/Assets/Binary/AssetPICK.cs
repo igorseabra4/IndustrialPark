@@ -62,6 +62,7 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        [Category("Pickup Table")]
         public EntryPICK[] PICK_Entries
         {
             get

@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace IndustrialPark
@@ -30,12 +31,14 @@ namespace IndustrialPark
             InOrder = 2
         }
 
+        [Category("Group")]
         public Delegation ReceiveEventDelegation
         {
             get => (Delegation)ReadShort(0x0A);
             set => Write(0x0A, (short)value);
         }
 
+        [Category("Group")]
         public AssetID[] GroupItems
         {
             get

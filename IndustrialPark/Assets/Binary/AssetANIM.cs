@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using HipHopFile;
 using static IndustrialPark.ConverterFunctions;
@@ -22,42 +23,49 @@ namespace IndustrialPark
     {
         public AssetANIM(Section_AHDR AHDR) : base(AHDR) { }
 
+        [Category("Animation")]
         public int Unknown_04
         {
             get => ReadInt(0x04);
             set => Write(0x04, value);
         }
 
+        [Category("Animation")]
         public short NumBones
         {
             get => ReadShort(0x08);
             set => Write(0x08, value);
         }
 
+        [Category("Animation")]
         public short NumFrames
         {
             get => ReadShort(0x0A);
             set => Write(0x0A, value);
         }
 
+        [Category("Animation")]
         public int NumKeyFrames
         {
             get => ReadInt(0xC);
             set => Write(0xC, value);
         }
 
+        [Category("Animation")]
         public int Unknown10
         {
             get => ReadInt(0x10);
             set => Write(0x10, value);
         }
 
+        [Category("Animation")]
         public int Unknown14
         {
             get => ReadInt(0x14);
             set => Write(0x14, value);
         }
 
+        [Category("Animation")]
         public int Unknown18
         {
             get => ReadInt(0x18);
@@ -66,6 +74,7 @@ namespace IndustrialPark
 
         private int KeyFramesSectionStart { get => 0x1C; }
 
+        [Category("Animation")]
         public KeyFrame[] KeyFrames
         {
             get
@@ -110,6 +119,7 @@ namespace IndustrialPark
 
         private int TimeMapSectionStart { get => KeyFramesSectionStart + NumKeyFrames * 0x10; }
 
+        [Category("Animation")]
         public float[] TimeMap
         {
             get
@@ -133,6 +143,7 @@ namespace IndustrialPark
 
         private int KeyFrameMapSectionStart { get => TimeMapSectionStart + NumFrames * 4; }
 
+        [Category("Animation")]
         public short[][] KeyFrameMap
         {
             get

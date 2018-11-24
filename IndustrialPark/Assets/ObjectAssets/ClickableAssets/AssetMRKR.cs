@@ -102,6 +102,9 @@ namespace IndustrialPark
         }
 
         private Vector3 _position;
+
+        [Category("Marker")]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float PositionX
         {
             get { return _position.X; }
@@ -113,6 +116,8 @@ namespace IndustrialPark
             }
         }
 
+        [Category("Marker")]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float PositionY
         {
             get { return _position.Y; }
@@ -124,6 +129,8 @@ namespace IndustrialPark
             }
         }
 
+        [Category("Marker")]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float PositionZ
         {
             get { return _position.Z; }

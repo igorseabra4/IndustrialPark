@@ -89,6 +89,7 @@ namespace IndustrialPark
         }
 
         [TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("Pickup")]
         public byte Shape
         {
             get => ReadByte(0x09);
@@ -96,6 +97,7 @@ namespace IndustrialPark
         }
 
         private uint _pickEntryID;
+        [Category("Pickup")]
         public AssetID PickReferenceID
         {
             get => _pickEntryID;
@@ -106,12 +108,14 @@ namespace IndustrialPark
             }
         }
 
+        [Category("Pickup")]
         public short Unknown1
         {
             get => ReadShort(0x58 + Offset);
             set => Write(0x58 + Offset, value);
         }
 
+        [Category("Pickup")]
         public short Unknown2
         {
             get => ReadShort(0x5C + Offset);

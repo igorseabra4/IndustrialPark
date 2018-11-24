@@ -107,7 +107,7 @@ namespace IndustrialPark
         }
 
         private Vector3 _position;
-        [TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
         public float PositionX
         {
             get { return _position.X; }
@@ -119,7 +119,7 @@ namespace IndustrialPark
             }
         }
 
-        [TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
         public float PositionY
         {
             get { return _position.Y; }
@@ -131,7 +131,7 @@ namespace IndustrialPark
             }
         }
 
-        [TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
         public float PositionZ
         {
             get { return _position.Z; }
@@ -143,193 +143,199 @@ namespace IndustrialPark
             }
         }
 
-        [TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
         public float NormalizedForwardX
         {
             get => ReadFloat(0x14);
             set => Write(0x14, value);
         }
-        [TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
         public float NormalizedForwardY
         {
             get => ReadFloat(0x18);
             set => Write(0x18, value);
         }
-        [TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
         public float NormalizedForwardZ
         {
             get => ReadFloat(0x1C);
             set => Write(0x1C, value);
         }
-        [TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
         public float NormalizedUpX
         {
             get => ReadFloat(0x20);
             set => Write(0x20, value);
         }
-        [TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
         public float NormalizedUpY
         {
             get => ReadFloat(0x24);
             set => Write(0x24, value);
         }
-        [TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
         public float NormalizedUpZ
         {
             get => ReadFloat(0x28);
             set => Write(0x28, value);
         }
-        [TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
         public float Float2C
         {
             get => ReadFloat(0x2C);
             set => Write(0x2C, value);
         }
-        [TypeConverter(typeof(HexIntTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(HexIntTypeConverter))]
         public int UnknownValue30
         {
             get => ReadInt(0x30);
             set => Write(0x30, value);
         }
-        [TypeConverter(typeof(HexIntTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(HexIntTypeConverter))]
         public int UnknownValue34
         {
             get => ReadInt(0x34);
             set => Write(0x34, value);
         }
+        [Category("Camera")]
         public int UnknownValue38
         {
             get => ReadInt(0x38);
             set => Write(0x38, value);
         }
+        [Category("Camera")]
         public int UnknownValue3C
         {
             get => ReadInt(0x3C);
             set => Write(0x3C, value);
         }
+        [Category("Camera")]
         public int UnknownValue40
         {
             get => ReadInt(0x40);
             set => Write(0x40, value);
         }
+        [Category("Camera")]
         public short UnknownShort44
         {
             get => ReadShort(0x44);
             set => Write(0x44, value);
         }
+        [Category("Camera")]
         public short UnknownShort46
         {
             get => ReadShort(0x46);
             set => Write(0x46, value);
         }
-        [TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
         public float CameraSpeed
         {
             get => ReadFloat(0x48);
             set => Write(0x48, value);
         }
-        [TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
         public float Float4C
         {
             get => ReadFloat(0x4C);
             set => Write(0x4C, value);
         }
+        [Category("Camera")]
         public int UnknownValue50
         {
             get => ReadInt(0x50);
             set => Write(0x50, value);
         }
-        [TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat54
         {
             get => ReadFloat(0x54);
             set => Write(0x54, value);
         }
-        [TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat58
         {
             get => ReadFloat(0x58);
             set => Write(0x58, value);
         }
-        [TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat5C
         {
             get => ReadFloat(0x5C);
             set => Write(0x5C, value);
         }
-        [TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat60
         {
             get => ReadFloat(0x60);
             set => Write(0x60, value);
         }
-        [TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat64
         {
             get => ReadFloat(0x64);
             set => Write(0x64, value);
         }
-        [TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat68
         {
             get => ReadFloat(0x68);
             set => Write(0x68, value);
         }
-        [TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat6C
         {
             get => ReadFloat(0x6C);
             set => Write(0x6C, value);
         }
-        [TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat70
         {
             get => ReadFloat(0x70);
             set => Write(0x70, value);
         }
-        [TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat74
         {
             get => ReadFloat(0x74);
             set => Write(0x74, value);
         }
-        [TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Flags1
         {
             get => ReadByte(0x78);
             set => Write(0x78, value);
         }
-        [TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Flags2
         {
             get => ReadByte(0x79);
             set => Write(0x79, value);
         }
-        [TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Flags3
         {
             get => ReadByte(0x7A);
             set => Write(0x7A, value);
         }
-        [TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Flags4
         {
             get => ReadByte(0x7B);
             set => Write(0x7B, value);
         }
-        [TypeConverter(typeof(HexIntTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(HexIntTypeConverter))]
         public int UnknownValue7C
         {
             get => ReadInt(0x7C);
             set => Write(0x7C, value);
         }
-        [TypeConverter(typeof(HexIntTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(HexIntTypeConverter))]
         public int UnknownValue80
         {
             get => ReadInt(0x80);
             set => Write(0x80, value);
         }
-        [TypeConverter(typeof(HexIntTypeConverter))]
+        [Category("Camera"), TypeConverter(typeof(HexIntTypeConverter))]
         public int UnknownValue84
         {
             get => ReadInt(0x84);

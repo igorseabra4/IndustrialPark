@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
@@ -53,24 +54,28 @@ namespace IndustrialPark
             get => 0x18;
         }
 
+        [Category("Conditional")]
         public CONDVariable Conditional
         {
             get => (CONDVariable)ReadUInt(0xC);
             set => Write(0xC, (uint)value);
         }
 
+        [Category("Conditional")]
         public CONDOperation Operation
         {
             get => (CONDOperation)ReadInt(0x10);
             set => Write(0x10, (int)value);
         }
 
+        [Category("Conditional")]
         public int EvaluationAmount
         {
             get => ReadInt(0x8);
             set => Write(0x8, value);
         }
 
+        [Category("Conditional")]
         public AssetID AssetUnderEvaluation
         {
             get => ReadUInt(0x14);

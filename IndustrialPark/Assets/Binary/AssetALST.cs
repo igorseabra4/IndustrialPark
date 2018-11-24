@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using static HipHopFile.Functions;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
@@ -19,6 +20,7 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        [Category("Animation List")]
         public AssetID[] ANIM_AssetIDs
         {
             get

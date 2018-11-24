@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using System.Collections.Generic;
+using System.ComponentModel;
 using static HipHopFile.Functions;
 
 namespace IndustrialPark
@@ -23,24 +24,28 @@ namespace IndustrialPark
             get => 0x18;
         }
 
+        [Category("Portal")]
         public AssetID Camera_Unknown
         {
             get => ReadUInt(0x8);
             set => Write(0x8, value);
         }
 
+        [Category("Portal")]
         public AssetID Destination_MRKR
         {
             get => ReadUInt(0xC);
             set => Write(0xC, value);
         }
 
+        [Category("Portal")]
         public float Rotation
         {
             get => ReadFloat(0x10);
             set => Write(0x10, value);
         }
 
+        [Category("Portal")]
         public string DestinationLevel
         {
             get

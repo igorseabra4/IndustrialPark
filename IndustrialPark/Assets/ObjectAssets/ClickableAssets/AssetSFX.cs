@@ -117,6 +117,7 @@ namespace IndustrialPark
             return Vector3.Distance(cameraPosition, _position) - _radius;
         }
 
+        [Category("Sound Effect")]
         [TypeConverter(typeof(HexByteTypeConverter))]
         public byte Flag08
         {
@@ -124,6 +125,7 @@ namespace IndustrialPark
             set => Write(0x8, value);
         }
 
+        [Category("Sound Effect")]
         [TypeConverter(typeof(HexByteTypeConverter))]
         public byte Flag09
         {
@@ -131,6 +133,7 @@ namespace IndustrialPark
             set => Write(0x9, value);
         }
 
+        [Category("Sound Effect")]
         [TypeConverter(typeof(HexByteTypeConverter))]
         public byte Flag0A
         {
@@ -138,6 +141,7 @@ namespace IndustrialPark
             set => Write(0xA, value);
         }
 
+        [Category("Sound Effect")]
         [TypeConverter(typeof(HexByteTypeConverter))]
         public byte Flag0B
         {
@@ -145,24 +149,28 @@ namespace IndustrialPark
             set => Write(0xA, value);
         }
 
+        [Category("Sound Effect")]
         public float UnknownFloat0C
         {
             get => ReadFloat(0xC);
             set => Write(0xC, value);
         }
 
+        [Category("Sound Effect")]
         public AssetID SoundAssetID
         {
             get => ReadUInt(0x10);
             set => Write(0x10, value);
         }
 
+        [Category("Sound Effect")]
         public float UnknownFloat14
         {
             get => ReadFloat(0x14);
             set => Write(0x14, value);
         }
 
+        [Category("Sound Effect")]
         public int UnknownInt18
         {
             get => ReadInt(0x18);
@@ -170,6 +178,7 @@ namespace IndustrialPark
         }
 
         private Vector3 _position;
+        [Category("Sound Effect")]
         public float PositionX
         {
             get { return _position.X; }
@@ -181,6 +190,7 @@ namespace IndustrialPark
             }
         }
 
+        [Category("Sound Effect")]
         public float PositionY
         {
             get { return _position.Y; }
@@ -192,6 +202,7 @@ namespace IndustrialPark
             }
         }
 
+        [Category("Sound Effect")]
         public float PositionZ
         {
             get { return _position.Z; }
@@ -204,6 +215,7 @@ namespace IndustrialPark
         }
 
         private float _radius;
+        [Category("Sound Effect")]
         public float RadiusMin
         {
             get => _radius;
@@ -216,6 +228,7 @@ namespace IndustrialPark
         }
 
         private float _radius2;
+        [Category("Sound Effect")]
         public float RadiusMax
         {
             get => _radius2;

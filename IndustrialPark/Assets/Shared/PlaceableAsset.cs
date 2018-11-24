@@ -148,6 +148,20 @@ namespace IndustrialPark
             set { Write(0x8, value); }
         }
 
+        [Category("Placement Flags")]
+        public bool Visible
+        {
+            get => (VisibilityFlag & Mask(0)) != 0;
+            set => VisibilityFlag = (byte)(value ? (VisibilityFlag | Mask(0)) : (VisibilityFlag & InvMask(0)));
+        }
+
+        [Category("Placement Flags")]
+        public bool UseGravity
+        {
+            get => (VisibilityFlag & Mask(1)) != 0;
+            set => VisibilityFlag = (byte)(value ? (VisibilityFlag | Mask(1)) : (VisibilityFlag & InvMask(1)));
+        }
+
         [Category("Placement Flags"), ReadOnly(true), TypeConverter(typeof(HexByteTypeConverter))]
         public byte TypeFlag
         {
@@ -167,6 +181,13 @@ namespace IndustrialPark
         {
             get { return ReadByte(0xB); }
             set { Write(0xB, value); }
+        }
+
+        [Category("Placement Flags")]
+        public bool PreciseCollision
+        {
+            get => (SolidityFlag & Mask(1)) != 0;
+            set => SolidityFlag = (byte)(value ? (VisibilityFlag | Mask(1)) : (VisibilityFlag & InvMask(1)));
         }
 
         [Category("Placement")]

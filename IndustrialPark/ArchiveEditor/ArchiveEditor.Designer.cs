@@ -30,11 +30,15 @@
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hipHopToolExportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importHIPArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportTXDArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importTXDArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -62,10 +66,6 @@
             this.buttonAddAsset = new System.Windows.Forms.Button();
             this.comboBoxAssetTypes = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.importHIPArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.hipHopToolExportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -96,10 +96,17 @@
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
+            // newToolStripMenuItem
+            // 
+            this.newToolStripMenuItem.Name = "newToolStripMenuItem";
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newToolStripMenuItem.Text = "New";
+            this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
+            // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
@@ -107,7 +114,7 @@
             // 
             this.saveToolStripMenuItem.Enabled = false;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -115,14 +122,19 @@
             // 
             this.saveAsToolStripMenuItem.Enabled = false;
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveAsToolStripMenuItem.Text = "Save As...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
@@ -136,6 +148,20 @@
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.editToolStripMenuItem.Text = "Edit";
+            // 
+            // hipHopToolExportToolStripMenuItem
+            // 
+            this.hipHopToolExportToolStripMenuItem.Name = "hipHopToolExportToolStripMenuItem";
+            this.hipHopToolExportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.hipHopToolExportToolStripMenuItem.Text = "Export Assets + INI";
+            this.hipHopToolExportToolStripMenuItem.Click += new System.EventHandler(this.hipHopToolExportToolStripMenuItem_Click);
+            // 
+            // importHIPArchiveToolStripMenuItem
+            // 
+            this.importHIPArchiveToolStripMenuItem.Name = "importHIPArchiveToolStripMenuItem";
+            this.importHIPArchiveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.importHIPArchiveToolStripMenuItem.Text = "Import HIP Archive";
+            this.importHIPArchiveToolStripMenuItem.Click += new System.EventHandler(this.importHIPArchiveToolStripMenuItem_Click);
             // 
             // exportTXDArchiveToolStripMenuItem
             // 
@@ -448,32 +474,6 @@
             this.label2.Size = new System.Drawing.Size(78, 13);
             this.label2.TabIndex = 4;
             this.label2.Text = "Show by Type:";
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
-            // 
-            // importHIPArchiveToolStripMenuItem
-            // 
-            this.importHIPArchiveToolStripMenuItem.Name = "importHIPArchiveToolStripMenuItem";
-            this.importHIPArchiveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.importHIPArchiveToolStripMenuItem.Text = "Import HIP Archive";
-            this.importHIPArchiveToolStripMenuItem.Click += new System.EventHandler(this.importHIPArchiveToolStripMenuItem_Click);
-            // 
-            // hipHopToolExportToolStripMenuItem
-            // 
-            this.hipHopToolExportToolStripMenuItem.Name = "hipHopToolExportToolStripMenuItem";
-            this.hipHopToolExportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.hipHopToolExportToolStripMenuItem.Text = "HipHopTool Export";
-            this.hipHopToolExportToolStripMenuItem.Click += new System.EventHandler(this.hipHopToolExportToolStripMenuItem_Click);
-            // 
-            // newToolStripMenuItem
-            // 
-            this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.newToolStripMenuItem.Text = "New";
-            this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // ArchiveEditor
             // 

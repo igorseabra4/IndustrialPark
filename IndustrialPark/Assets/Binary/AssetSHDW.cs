@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using HipHopFile;
 using static IndustrialPark.ConverterFunctions;
 
@@ -42,6 +43,7 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        [Category("Shadow Map")]
         public EntrySHDW[] SHDW_Entries
         {
             get

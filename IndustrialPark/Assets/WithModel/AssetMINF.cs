@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using SharpDX;
 using System;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
@@ -62,6 +63,7 @@ namespace IndustrialPark
         }
 
         private uint _modelAssetID;
+        [Category("Model Info")]
         public AssetID ModelAssetID
         {
             get { return _modelAssetID; }

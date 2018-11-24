@@ -41,69 +41,40 @@ namespace IndustrialPark
             set => Write(0x6, value);
         }
 
+
         [Category("Object Base")]
         public bool EnabledOnStart
         {
-            get => (Flags & 0x01) != 0;
-            set
-            {
-                if (value)
-                    Flags = (short)(Flags | 0x01);
-                else
-                    Flags = (short)(Flags & (0xFF - 0x01));
-            }
+            get => (Flags & Mask(0)) != 0;
+            set => Flags = (short)(value ? (Flags | (short)Mask(0)) : (Flags & (short)InvMask(0)));
         }
 
         [Category("Object Base")]
         public bool StateIsPersistent
         {
-            get => (Flags & 0x02) != 0;
-            set
-            {
-                if (value)
-                    Flags = (short)(Flags | 0x02);
-                else
-                    Flags = (short)(Flags & (0xFF - 0x02));
-            }
+            get => (Flags & Mask(1)) != 0;
+            set => Flags = (short)(value ? (Flags | (short)Mask(1)) : (Flags & (short)InvMask(1)));
         }
 
         [Category("Object Base")]
-        public bool UnknownAlways1
+        public bool UnknownAlwaysTrue
         {
-            get => (Flags & 0x04) != 0;
-            set
-            {
-                if (value)
-                    Flags = (short)(Flags | 0x04);
-                else
-                    Flags = (short)(Flags & (0xFF - 0x04));
-            }
+            get => (Flags & Mask(2)) != 0;
+            set => Flags = (short)(value ? (Flags | (short)Mask(2)) : (Flags & (short)InvMask(2)));
         }
 
         [Category("Object Base")]
         public bool VisibleDuringCutscenes
         {
-            get => (Flags & 0x08) != 0;
-            set
-            {
-                if (value)
-                    Flags = (short)(Flags | 0x08);
-                else
-                    Flags = (short)(Flags & (0xFF - 0x08));
-            }
+            get => (Flags & Mask(3)) != 0;
+            set => Flags = (short)(value ? (Flags | (short)Mask(3)) : (Flags & (short)InvMask(3)));
         }
 
         [Category("Object Base")]
         public bool ReceiveShadows
         {
-            get => (Flags & 0x10) != 0;
-            set
-            {
-                if (value)
-                    Flags = (short)(Flags | 0x10);
-                else
-                    Flags = (short)(Flags & (0xFF - 0x10));
-            }
+            get => (Flags & Mask(4)) != 0;
+            set => Flags = (short)(value ? (Flags | (short)Mask(4)) : (Flags & (short)InvMask(4)));
         }
 
         [Category("Object Base")]

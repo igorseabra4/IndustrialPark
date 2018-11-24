@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using HipHopFile;
 
@@ -80,6 +81,7 @@ namespace IndustrialPark
             get => Entries_SND_StartOffset + Entries_SND_amount * EntrySoundInfo_PS2.StructSize;
         }
 
+        [Category("Sound Info")]
         public EntrySoundInfo_PS2[] Entries_SND
         {
             get
@@ -108,6 +110,7 @@ namespace IndustrialPark
             }
         }
 
+        [Category("Sound Info")]
         public EntrySoundInfo_PS2[] Entries_SNDS
         {
             get

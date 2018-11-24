@@ -47,6 +47,7 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        [Category("Pipe Table")]
         public EntryPIPT[] PIPT_Entries
         {
             get

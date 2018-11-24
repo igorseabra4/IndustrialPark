@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using HipHopFile;
 using static IndustrialPark.ConverterFunctions;
 
@@ -38,12 +39,14 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        [Category("Material Map")]
         public AssetID AssetID
         {
             get => ReadUInt(0);
             set => Write(0, value);
         }
 
+        [Category("Material Map")]
         public EntryMAPR[] MAPR_Entries
         {
             get

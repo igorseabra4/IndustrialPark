@@ -136,6 +136,7 @@ namespace IndustrialPark
         }
 
         private Vector3 _position;
+        [Category("Move Point")]
         public float PositionX
         {
             get { return _position.X; }
@@ -147,6 +148,7 @@ namespace IndustrialPark
             }
         }
 
+        [Category("Move Point")]
         public float PositionY
         {
             get { return _position.Y; }
@@ -158,6 +160,7 @@ namespace IndustrialPark
             }
         }
 
+        [Category("Move Point")]
         public float PositionZ
         {
             get { return _position.Z; }
@@ -169,6 +172,7 @@ namespace IndustrialPark
             }
         }
 
+        [Category("Move Point")]
         [TypeConverter(typeof(HexByteTypeConverter))]
         public byte UnknownByte14
         {
@@ -176,6 +180,7 @@ namespace IndustrialPark
             set => Write(0x14, value);
         }
 
+        [Category("Move Point")]
         [TypeConverter(typeof(HexByteTypeConverter))]
         public byte UnknownByte15
         {
@@ -183,6 +188,7 @@ namespace IndustrialPark
             set => Write(0x15, value);
         }
 
+        [Category("Move Point")]
         [TypeConverter(typeof(HexByteTypeConverter))]
         public byte UnknownByte16
         {
@@ -190,6 +196,7 @@ namespace IndustrialPark
             set => Write(0x16, value);
         }
 
+        [Category("Move Point")]
         [TypeConverter(typeof(HexByteTypeConverter))]
         public byte PointType
         {
@@ -197,6 +204,7 @@ namespace IndustrialPark
             set => Write(0x17, value);
         }
 
+        [Category("Move Point")]
         [ReadOnly(true)]
         public int SiblingAmount
         {
@@ -204,12 +212,14 @@ namespace IndustrialPark
             set => Write(0x18, value);
         }
 
+        [Category("Move Point")]
         public float MovementAngle
         {
             get => ReadFloat(0x1C);
             set => Write(0x1C, value);
         }
 
+        [Category("Move Point")]
         public float MovementRadius
         {
             get => ReadFloat(0x20);
@@ -217,6 +227,7 @@ namespace IndustrialPark
         }
 
         private float _distanceICanSeeYou;
+        [Category("Move Point")]
         public float DistanceICanSeeYou
         {
             get => _distanceICanSeeYou;
@@ -228,6 +239,7 @@ namespace IndustrialPark
             }
         }
 
+        [Category("Move Point")]
         public AssetID[] SiblingMVPTs
         {
             get

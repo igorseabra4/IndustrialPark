@@ -438,7 +438,30 @@ namespace IndustrialPark
             List<Section_AHDR> copiedAHDRs = new List<Section_AHDR>();
 
             foreach (uint u in archive.GetCurrentlySelectedAssetIDs())
-                copiedAHDRs.Add(archive.GetFromAssetID(u).AHDR);
+            {
+                Section_AHDR AHDR = JsonConvert.DeserializeObject<Section_AHDR>(JsonConvert.SerializeObject(archive.GetFromAssetID(u).AHDR));
+
+                if (AHDR.assetType == AssetType.SND || AHDR.assetType == AssetType.SNDS)
+                {
+                    List<byte> file = new List<byte>();
+                    file.AddRange(archive.GetHeaderFromSNDI(AHDR.assetID));
+                    file.AddRange(AHDR.data);
+
+                    if (new string(new char[] { (char)file[0], (char)file[1], (char)file[2], (char)file[3] }) == "RIFF")
+                    {
+                        byte[] chunkSizeArr = BitConverter.GetBytes(file.Count - 8);
+
+                        file[4] = chunkSizeArr[0];
+                        file[5] = chunkSizeArr[1];
+                        file[6] = chunkSizeArr[2];
+                        file[7] = chunkSizeArr[3];
+                    }
+
+                    AHDR.data = file.ToArray();
+                }
+
+                copiedAHDRs.Add(AHDR);
+            }
 
             Clipboard.SetText(JsonConvert.SerializeObject(copiedAHDRs));
         }
@@ -462,6 +485,19 @@ namespace IndustrialPark
 
             foreach (Section_AHDR AHDR in AHDRs)
             {
+                if (AHDR.assetType == AssetType.SND || AHDR.assetType == AssetType.SNDS)
+                {
+                    try
+                    {
+                        archive.AddSoundToSNDI(AHDR.data, AHDR.assetID, AHDR.assetType, out byte[] soundData);
+                        AHDR.data = soundData;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                }
+
                 archive.AddAssetWithUniqueID(comboBoxLayers.SelectedIndex, AHDR);
                 assetIDs.Add(AHDR.assetID);
             }

@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
@@ -11,12 +12,14 @@ namespace IndustrialPark
             get => 0xC;
         }
 
+        [Category("Counter")]
         public short Count
         {
             get => ReadShort(0x8);
             set => Write(0x8, value);
         }
 
+        [Category("Counter")]
         public short Unknown
         {
             get => ReadShort(0xA);

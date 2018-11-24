@@ -1048,23 +1048,23 @@ namespace IndustrialPark
             ReadFileMethods.treatTexturesAsByteArray = false;
         }
 
-        public void AddSoundToSNDI(byte[] soundData, uint assetID, out byte[] finalData)
+        public void AddSoundToSNDI(byte[] soundData, uint assetID, AssetType assetType, out byte[] finalData)
         {
             foreach (Asset a in assetDictionary.Values)
             {
                 if (a is AssetSNDI_GCN_V1 SNDI_G1)
                 {
-                    SNDI_G1.AddEntry(soundData, assetID, GetFromAssetID(assetID).AHDR.assetType, out finalData);
+                    SNDI_G1.AddEntry(soundData, assetID, assetType, out finalData);
                     return;
                 }
                 else if (a is AssetSNDI_XBOX SNDI_X)
                 {
-                    SNDI_X.AddEntry(soundData, assetID, GetFromAssetID(assetID).AHDR.assetType, out finalData);
+                    SNDI_X.AddEntry(soundData, assetID, assetType, out finalData);
                     return;
                 }
                 else if (a is AssetSNDI_PS2 SNDI_P)
                 {
-                    SNDI_P.AddEntry(soundData, assetID, GetFromAssetID(assetID).AHDR.assetType, out finalData);
+                    SNDI_P.AddEntry(soundData, assetID, assetType, out finalData);
                     return;
                 }
             }
@@ -1078,18 +1078,18 @@ namespace IndustrialPark
             {
                 if (a is AssetSNDI_GCN_V1 SNDI_G1)
                 {
-                    SNDI_G1.RemoveEntry(assetID, GetFromAssetID(assetID).AHDR.assetType);
-                    break;
+                    if (SNDI_G1.HasReference(assetID))
+                        SNDI_G1.RemoveEntry(assetID, GetFromAssetID(assetID).AHDR.assetType);
                 }
                 else if (a is AssetSNDI_XBOX SNDI_X)
                 {
-                    SNDI_X.RemoveEntry(assetID, GetFromAssetID(assetID).AHDR.assetType);
-                    break;
+                    if (SNDI_X.HasReference(assetID))
+                        SNDI_X.RemoveEntry(assetID, GetFromAssetID(assetID).AHDR.assetType);
                 }
                 else if (a is AssetSNDI_PS2 SNDI_P)
                 {
-                    SNDI_P.RemoveEntry(assetID, GetFromAssetID(assetID).AHDR.assetType);
-                    break;
+                    if (SNDI_P.HasReference(assetID))
+                        SNDI_P.RemoveEntry(assetID, GetFromAssetID(assetID).AHDR.assetType);
                 }
             }
         }
@@ -1099,11 +1099,20 @@ namespace IndustrialPark
             foreach (Asset a in assetDictionary.Values)
             {
                 if (a is AssetSNDI_GCN_V1 SNDI_G1)
-                    return SNDI_G1.GetHeader(assetID, GetFromAssetID(assetID).AHDR.assetType);
+                {
+                    if (SNDI_G1.HasReference(assetID))
+                        return SNDI_G1.GetHeader(assetID, GetFromAssetID(assetID).AHDR.assetType);
+                }
                 else if (a is AssetSNDI_XBOX SNDI_X)
-                    return SNDI_X.GetHeader(assetID, GetFromAssetID(assetID).AHDR.assetType);
+                {
+                    if (SNDI_X.HasReference(assetID))
+                        return SNDI_X.GetHeader(assetID, GetFromAssetID(assetID).AHDR.assetType);
+                }
                 else if (a is AssetSNDI_PS2 SNDI_P)
-                    return SNDI_P.GetHeader(assetID, GetFromAssetID(assetID).AHDR.assetType);
+                {
+                    if (SNDI_P.HasReference(assetID))
+                        return SNDI_P.GetHeader(assetID, GetFromAssetID(assetID).AHDR.assetType);
+                }
             }
 
             throw new Exception("Error: could not find SNDI asset in this archive.");
