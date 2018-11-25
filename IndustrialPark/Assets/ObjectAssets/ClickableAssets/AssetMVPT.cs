@@ -244,11 +244,18 @@ namespace IndustrialPark
         {
             get
             {
-                AssetID[] _otherMVPTs = new AssetID[SiblingAmount];
-                for (int i = 0; i < SiblingAmount; i++)
-                    _otherMVPTs[i] = ReadUInt(0x28 + 4 * i);
+                try
+                {
+                    AssetID[] _otherMVPTs = new AssetID[SiblingAmount];
+                    for (int i = 0; i < SiblingAmount; i++)
+                        _otherMVPTs[i] = ReadUInt(0x28 + 4 * i);
 
-                return _otherMVPTs;
+                    return _otherMVPTs;
+                }
+                catch
+                {
+                    return new AssetID[0];
+                }
             }
             set
             {

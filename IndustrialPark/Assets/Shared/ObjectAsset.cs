@@ -41,7 +41,6 @@ namespace IndustrialPark
             set => Write(0x6, value);
         }
 
-
         [Category("Object Base")]
         public bool EnabledOnStart
         {
@@ -80,41 +79,37 @@ namespace IndustrialPark
         [Category("Object Base")]
         public AssetEventBFBB[] EventsBFBB
         {
-            get => ReadEventsBFBB();
+            get
+            {
+                byte amount = ReadByte(0x05);
+                AssetEventBFBB[] events = new AssetEventBFBB[amount];
+
+                for (int i = 0; i < amount; i++)
+                    events[i] = new AssetEventBFBB(Data, EventStartOffset + i * AssetEvent.sizeOfStruct);
+
+                return events;
+            }
             set => WriteEvents(value);
         }
 
         [Category("Object Base")]
         public AssetEventTSSM[] EventsTSSM
         {
-            get => ReadEventsTSSM();
+            get
+            {
+                byte amount = ReadByte(0x05);
+                AssetEventTSSM[] events = new AssetEventTSSM[amount];
+
+                for (int i = 0; i < amount; i++)
+                    events[i] = new AssetEventTSSM(Data, EventStartOffset + i * AssetEvent.sizeOfStruct);
+
+                return events;
+            }
             set => WriteEvents(value);
         }
 
         protected virtual int EventStartOffset { get => Data.Length - AmountOfEvents * AssetEvent.sizeOfStruct; }
-
-        protected AssetEventBFBB[] ReadEventsBFBB()
-        {
-            byte amount = ReadByte(0x05);
-            AssetEventBFBB[] events = new AssetEventBFBB[amount];
-
-            for (int i = 0; i < amount; i++)
-                events[i] = new AssetEventBFBB(Data, EventStartOffset + i * AssetEvent.sizeOfStruct);
-
-            return events;
-        }
-
-        protected AssetEventTSSM[] ReadEventsTSSM()
-        {
-            byte amount = ReadByte(0x05);
-            AssetEventTSSM[] events = new AssetEventTSSM[amount];
-
-            for (int i = 0; i < amount; i++)
-                events[i] = new AssetEventTSSM(Data, EventStartOffset + i * AssetEvent.sizeOfStruct);
-
-            return events;
-        }
-
+        
         protected void WriteEvents(AssetEvent[] value)
         {
             List<byte> newData = Data.Take(EventStartOffset).ToList();

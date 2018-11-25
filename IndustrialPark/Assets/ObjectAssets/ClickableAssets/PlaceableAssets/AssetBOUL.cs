@@ -22,21 +22,21 @@ namespace IndustrialPark
         }
 
         [Category("Boulder")]
-        public float UnknownFloat54
+        public float Gravity
         {
             get => ReadFloat(0x54 + Offset);
             set => Write(0x54 + Offset, value);
         }
 
         [Category("Boulder")]
-        public float UnknownFloat58
+        public float Mass
         {
             get => ReadFloat(0x58 + Offset);
             set => Write(0x58 + Offset, value);
         }
 
         [Category("Boulder")]
-        public float UnknownFloat5C
+        public float BounceFactor
         {
             get => ReadFloat(0x5C + Offset);
             set => Write(0x5C + Offset, value);

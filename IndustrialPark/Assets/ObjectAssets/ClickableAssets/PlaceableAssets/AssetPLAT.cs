@@ -90,7 +90,7 @@ namespace IndustrialPark
         }
 
         [Category("Platform")]
-        public float UnknownFloat_64
+        public float AdditionalSlamHeight
         {
             get => ReadFloat(0x64 + Offset);
             set => Write(0x64 + Offset, value);

@@ -757,10 +757,11 @@ namespace IndustrialPark
         private void importHIPArchiveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFile = new OpenFileDialog()
-            { Filter = "All supported file types|*.hip;*.hop;*.ini|HIP archives|*.hip|HOP archives|*.hop|HipHopTool INI|*.ini" };
+            { Filter = "All supported file types|*.hip;*.hop;*.ini|HIP archives|*.hip|HOP archives|*.hop|HipHopTool INI|*.ini",
+            Multiselect = true };
 
             if (openFile.ShowDialog() == DialogResult.OK)
-                archive.ImportHip(openFile.FileName);
+                archive.ImportHip(openFile.FileNames);
             PopulateLayerComboBox();
         }
 

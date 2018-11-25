@@ -168,6 +168,12 @@ namespace IndustrialPark
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
+                case AssetType.ATBL:
+                    {
+                        AssetATBL newAsset = new AssetATBL(AHDR);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
                 case AssetType.BSP:
                 case AssetType.JSP:
                     {
@@ -200,6 +206,12 @@ namespace IndustrialPark
                 case AssetType.CNTR:
                     {
                         AssetCNTR newAsset = new AssetCNTR(AHDR);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
+                case AssetType.COLL:
+                    {
+                        AssetCOLL newAsset = new AssetCOLL(AHDR);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
@@ -264,6 +276,18 @@ namespace IndustrialPark
                     {
                         AssetHANG newAsset = new AssetHANG(AHDR);
                         newAsset.Setup();
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
+                case AssetType.JAW:
+                    {
+                        AssetJAW newAsset = new AssetJAW(AHDR);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
+                case AssetType.LODT:
+                    {
+                        AssetLODT newAsset = new AssetLODT(AHDR);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
@@ -377,6 +401,12 @@ namespace IndustrialPark
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
+                case AssetType.SHDW:
+                    {
+                        AssetSHDW newAsset = new AssetSHDW(AHDR);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
                 case AssetType.SNDI:
                     {
                         if (currentPlatform == Platform.GameCube && (currentGame == Game.BFBB || currentGame == Game.Scooby))
@@ -475,12 +505,34 @@ namespace IndustrialPark
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
-                default:
+                case AssetType.ATKT:
+                case AssetType.BINK:
+                case AssetType.CRDT:
+                case AssetType.CSN:
+                case AssetType.CSSS:
+                case AssetType.CTOC:
+                case AssetType.DEST:
+                case AssetType.FLY:
+                case AssetType.LKIT:
+                case AssetType.MPHT:
+                case AssetType.NPCS:
+                case AssetType.ONEL:
+                case AssetType.RAW:
+                case AssetType.SHRP:
+                case AssetType.SND:
+                case AssetType.SNDS:
+                case AssetType.SPLP:
+                case AssetType.TEXS:
+                case AssetType.UIFN:
+                case AssetType.VILP:
+                case AssetType.WIRE:
                     {
                         Asset newAsset = new Asset(AHDR);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
+                default:
+                    throw new Exception("Unknown asset type: " + AHDR.assetType);
             }
 
             allowRender = true;
@@ -913,12 +965,20 @@ namespace IndustrialPark
             HipArrayToIni(hipFile, fileName, true, true);
         }
 
+        public void ImportHip(string[] fileNames)
+        {
+            foreach (string fileName in fileNames)
+                ImportHip(fileName);
+        }
+
         public void ImportHip(string fileName)
         {
             if (Path.GetExtension(fileName).ToLower() == ".hip" || Path.GetExtension(fileName).ToLower() == ".hop")
                 ImportHip(HipFileToHipArray(fileName));
             else if (Path.GetExtension(fileName).ToLower() == ".ini")
                 ImportHip(IniToHipArray(fileName));
+            else
+                MessageBox.Show("Invalid file: " + fileName);
         }
 
         public void ImportHip(HipSection[] hipSections)
@@ -927,26 +987,27 @@ namespace IndustrialPark
             {
                 if (i is Section_DICT dict)
                 {
-                    DICT.LTOC.LHDRList.AddRange(dict.LTOC.LHDRList);
-
                     foreach (Section_AHDR AHDR in dict.ATOC.AHDRList)
                     {
-                        DialogResult result = DialogResult.Yes;
-
-                        bool containsAsset = ContainsAsset(AHDR.assetID);
-
-                        if (containsAsset)
-                            result = MessageBox.Show($"Asset [{AHDR.assetID.ToString("X8")}] {AHDR.ADBG.assetName} already present in archive. Do you wish to overwrite it?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-
-                        if (containsAsset && (result == DialogResult.Yes))
-                            RemoveAsset(AHDR.assetID);
-
-                        if (!containsAsset || result == DialogResult.Yes)
+                        if (ContainsAsset(AHDR.assetID))
+                        {
+                            DialogResult result = MessageBox.Show($"Asset [{AHDR.assetID.ToString("X8")}] {AHDR.ADBG.assetName} already present in archive. Do you wish to overwrite it?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                            if (result == DialogResult.Yes)
+                            {
+                                RemoveAsset(AHDR.assetID);
+                                DICT.ATOC.AHDRList.Add(AHDR);
+                                AddAssetToDictionary(AHDR);
+                            }
+                        }
+                        else
                         {
                             DICT.ATOC.AHDRList.Add(AHDR);
                             AddAssetToDictionary(AHDR);
                         }
                     }
+
+                    DICT.LTOC.LHDRList.AddRange(dict.LTOC.LHDRList);
+                    break;
                 }
             }
 

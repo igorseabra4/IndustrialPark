@@ -39,14 +39,14 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
-        [Category("Material Map")]
+        [Category("Surface Map")]
         public AssetID AssetID
         {
             get => ReadUInt(0);
             set => Write(0, value);
         }
 
-        [Category("Material Map")]
+        [Category("Surface Map")]
         public EntryMAPR[] MAPR_Entries
         {
             get

@@ -61,35 +61,35 @@ namespace IndustrialPark
         }
 
         [Category("Fog")]
-        public float UnknownFloat1
+        public float UnknownFloat10
         {
             get => ReadFloat(0x10);
             set => Write(0x10, value);
         }
 
         [Category("Fog")]
-        public float UnknownFloat2
+        public float UnknownFloat14
         {
             get => ReadFloat(0x14);
             set => Write(0x14, value);
         }
 
         [Category("Fog")]
-        public float UnknownFloat3
+        public float UnknownFloat18
         {
             get => ReadFloat(0x18);
             set => Write(0x18, value);
         }
 
         [Category("Fog")]
-        public float UnknownFloat4
+        public float UnknownFloat1C
         {
             get => ReadFloat(0x1C);
             set => Write(0x1C, value);
         }
 
         [Category("Fog")]
-        public int Unknown5
+        public int UnknownInt20
         {
             get => ReadInt(0x20);
             set => Write(0x20, value);
