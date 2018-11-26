@@ -936,10 +936,13 @@ namespace IndustrialPark
             FileAssociations.FileAssociations.EnsureAssociationsSet();
         }
 
-        private void toolStripComboBoxAssetTemplate_Click(object sender, EventArgs e)
+        private void toolStripComboBoxAssetTemplate_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (toolStripComboBoxAssetTemplate.SelectedIndex != -1)
+            {
                 ArchiveEditorFunctions.CurrentAssetTemplate = (AssetTemplate)toolStripComboBoxAssetTemplate.SelectedItem;
+                toolStripStatusLabelTemplate.Text = "Template: " + ArchiveEditorFunctions.CurrentAssetTemplate.ToString();
+            }
         }
     }
 }
