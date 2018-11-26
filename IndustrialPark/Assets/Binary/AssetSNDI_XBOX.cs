@@ -316,5 +316,18 @@ namespace IndustrialPark
                 return bytes.ToArray();
             }
         }
+
+        public void Merge(AssetSNDI_XBOX assetSNDI)
+        {
+            List<EntrySoundInfo_XBOX> entriesSND = Entries_SND.ToList();
+            entriesSND.AddRange(assetSNDI.Entries_SND);
+            Entries_SND = entriesSND.ToArray();
+            List<EntrySoundInfo_XBOX> entriesSNDS = Entries_SNDS.ToList();
+            entriesSNDS.AddRange(assetSNDI.Entries_SNDS);
+            Entries_SNDS = entriesSNDS.ToArray();
+            List<EntrySoundInfo_XBOX> entriesSoundCIN = Entries_Sound_CIN.ToList();
+            entriesSoundCIN.AddRange(assetSNDI.Entries_Sound_CIN);
+            Entries_Sound_CIN = entriesSoundCIN.ToArray();
+        }
     }
 }

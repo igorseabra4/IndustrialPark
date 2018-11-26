@@ -188,5 +188,15 @@ namespace IndustrialPark
 
             throw new Exception($"Error: SNDI asset does not contain {assetType.ToString()} sound header for asset [{assetID.ToString("X8")}]");
         }
+
+        public void Merge(AssetSNDI_PS2 assetSNDI)
+        {
+            List<EntrySoundInfo_PS2> entriesSND = Entries_SND.ToList();
+            entriesSND.AddRange(assetSNDI.Entries_SND);
+            Entries_SND = entriesSND.ToArray();
+            List<EntrySoundInfo_PS2> entriesSNDS = Entries_SNDS.ToList();
+            entriesSNDS.AddRange(assetSNDI.Entries_SNDS);
+            Entries_SNDS = entriesSNDS.ToArray();
+        }
     }
 }

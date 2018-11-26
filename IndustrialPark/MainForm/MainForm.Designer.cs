@@ -30,6 +30,7 @@ namespace IndustrialPark
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.archiveEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -94,8 +95,12 @@ namespace IndustrialPark
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabelProject = new System.Windows.Forms.ToolStripStatusLabel();
             this.renderPanel = new System.Windows.Forms.Panel();
+            this.contextMenuStripMain = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItem_Templates = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripComboBoxAssetTemplate = new System.Windows.Forms.ToolStripComboBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            this.contextMenuStripMain.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -124,14 +129,14 @@ namespace IndustrialPark
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.newToolStripMenuItem.Text = "Open New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(127, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
             // 
             // projectToolStripMenuItem
             // 
@@ -644,6 +649,27 @@ namespace IndustrialPark
             this.renderPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.renderPanel_MouseUp);
             this.renderPanel.Resize += new System.EventHandler(this.ResetMouseCenter);
             // 
+            // contextMenuStripMain
+            // 
+            this.contextMenuStripMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem_Templates});
+            this.contextMenuStripMain.Name = "contextMenuStripMain";
+            this.contextMenuStripMain.Size = new System.Drawing.Size(124, 26);
+            // 
+            // toolStripMenuItem_Templates
+            // 
+            this.toolStripMenuItem_Templates.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripComboBoxAssetTemplate});
+            this.toolStripMenuItem_Templates.Name = "toolStripMenuItem_Templates";
+            this.toolStripMenuItem_Templates.Size = new System.Drawing.Size(123, 22);
+            this.toolStripMenuItem_Templates.Text = "Template";
+            // 
+            // toolStripComboBoxAssetTemplate
+            // 
+            this.toolStripComboBoxAssetTemplate.Name = "toolStripComboBoxAssetTemplate";
+            this.toolStripComboBoxAssetTemplate.Size = new System.Drawing.Size(121, 23);
+            this.toolStripComboBoxAssetTemplate.Click += new System.EventHandler(this.toolStripComboBoxAssetTemplate_Click);
+            // 
             // MainForm
             // 
             this.AllowDrop = true;
@@ -670,6 +696,7 @@ namespace IndustrialPark
             this.menuStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            this.contextMenuStripMain.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -739,6 +766,9 @@ namespace IndustrialPark
         private ToolStripStatusLabel toolStripStatusLabel2;
         private ToolStripStatusLabel toolStripStatusLabelProject;
         private ToolStripMenuItem ensureAssociationsToolStripMenuItem;
+        private ContextMenuStrip contextMenuStripMain;
+        private ToolStripMenuItem toolStripMenuItem_Templates;
+        private ToolStripComboBox toolStripComboBoxAssetTemplate;
     }
 }
 

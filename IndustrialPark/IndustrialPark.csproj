@@ -75,6 +75,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArchiveEditor\AssetTemplates\AssetTemplate.cs" />
     <Compile Include="ArchiveEditor\ChoosePlatform.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -274,6 +275,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\Templates\BFBB\MVPT">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Templates\BFBB\PKUP">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\Templates\BFBB\PLAT">

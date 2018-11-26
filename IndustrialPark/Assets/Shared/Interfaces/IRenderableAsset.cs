@@ -11,5 +11,7 @@ namespace IndustrialPark
         BoundingBox GetBoundingBox();
 
         float GetDistance(Vector3 cameraPosition);
+
+        float? IntersectsWith(Ray ray);
     }
 }

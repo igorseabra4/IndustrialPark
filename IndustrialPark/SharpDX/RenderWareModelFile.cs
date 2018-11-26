@@ -33,15 +33,11 @@ namespace IndustrialPark
 
         public List<Vector3> vertexListG;
         public List<Triangle> triangleList;
+        private int triangleListOffset;
         
         public RenderWareModelFile(string fileName)
         {
             this.fileName = fileName;
-        }
-        
-        public List<Vector3> GetVertexList()
-        {
-            return vertexListG;
         }
 
         public byte[] GetAsByteArray()
@@ -73,7 +69,8 @@ namespace IndustrialPark
 
             vertexListG = new List<Vector3>();
             triangleList = new List<Triangle>();
-            
+            triangleListOffset = 0;
+
             foreach (RWSection rwSection in rwSectionArray)
             {
                 if (rwSection is World_000B w)
@@ -175,7 +172,7 @@ namespace IndustrialPark
             foreach (Vertex3 v in AtomicSector.atomicSectorStruct.vertexArray)
             {
                 vertexList.Add(new VertexColoredTextured(new Vector3(v.X, v.Y, v.Z), new Vector2(), new SharpDX.Color()));
-                this.vertexListG.Add(new Vector3(v.X, v.Y, v.Z));
+                vertexListG.Add(new Vector3(v.X, v.Y, v.Z));
             }
 
             for (int i = 0; i < vertexList.Count; i++)
@@ -210,8 +207,8 @@ namespace IndustrialPark
                         indexList.Add(t.vertex1);
                         indexList.Add(t.vertex2);
                         indexList.Add(t.vertex3);
-                        
-                        triangleList.Add(t);
+
+                        triangleList.Add(new Triangle(t.materialIndex, (ushort)(t.vertex1 + triangleListOffset), (ushort)(t.vertex2 + triangleListOffset), (ushort)(t.vertex3 + triangleListOffset)));
                     }
                 }
 
@@ -223,6 +220,8 @@ namespace IndustrialPark
 
                 previousIndexCount = indexList.Count();
             }
+
+            triangleListOffset += AtomicSector.atomicSectorStruct.vertexArray.Length;
 
             if (SubsetList.Count > 0)
                 AddToMeshList(SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), SubsetList));
@@ -320,7 +319,7 @@ namespace IndustrialPark
                         indexList.Add(t.vertex2);
                         indexList.Add(t.vertex3);
 
-                        triangleList.Add(t);
+                        triangleList.Add(new Triangle(t.materialIndex, (ushort)(t.vertex1 + triangleListOffset), (ushort)(t.vertex2 + triangleListOffset), (ushort)(t.vertex3 + triangleListOffset)));
                     }
                 }
 
@@ -332,6 +331,8 @@ namespace IndustrialPark
 
                 previousIndexCount = indexList.Count();
             }
+
+            triangleListOffset += vertexList1.Count;
 
             if (SubsetList.Count > 0)
             {
@@ -449,7 +450,9 @@ namespace IndustrialPark
             if (vertexList.Count > 0)
             {
                 for (int i = 2; i < indexList.Count; i++)
-                    triangleList.Add(new Triangle(0, (ushort)(i - 2), (ushort)(i - 1), (ushort)i));
+                    triangleList.Add(new Triangle(0, (ushort)(i + triangleListOffset - 2), (ushort)(i + triangleListOffset - 1), (ushort)(i + triangleListOffset)));
+
+                triangleListOffset += vertexList.Count;
 
                 VertexColoredTextured[] vertices = vertexList.ToArray();
                 AddToMeshList(SharpMesh.Create(device, vertices, indexList.ToArray(), subSetList, SharpDX.Direct3D.PrimitiveTopology.TriangleStrip));

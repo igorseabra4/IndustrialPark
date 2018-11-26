@@ -32,7 +32,7 @@ namespace IndustrialPark
             if (!ArchiveEditorFunctions.renderableAssetSetTrans.Contains(this))
                 ArchiveEditorFunctions.renderableAssetSetTrans.Add(this);
         }
-                
+
         public void CreateTransformMatrix()
         {
             world = Matrix.Translation(_position);
@@ -340,6 +340,27 @@ namespace IndustrialPark
         {
             get => ReadInt(0x84);
             set => Write(0x84, value);
+        }
+
+        public void SetPosition(Vector3 position)
+        {
+            PositionX = position.X;
+            PositionY = position.Y;
+            PositionZ = position.Z;
+        }
+
+        public void SetNormalizedForward(Vector3 forward)
+        {
+            NormalizedForwardX = forward.X;
+            NormalizedForwardY = forward.Y;
+            NormalizedForwardZ = forward.Z;
+        }
+
+        public void SetNormalizedUp(Vector3 up)
+        {
+            NormalizedUpX = up.X;
+            NormalizedUpY = up.Y;
+            NormalizedUpZ = up.Z;
         }
     }
 }

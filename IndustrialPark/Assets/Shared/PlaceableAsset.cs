@@ -44,7 +44,7 @@ namespace IndustrialPark
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID) &&
                 ArchiveEditorFunctions.renderingDictionary[_modelAssetID].HasRenderWareModelFile() &&
                 ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile() != null)
-                boundingBox = BoundingBox.FromPoints(ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile().GetVertexList().ToArray());
+                boundingBox = BoundingBox.FromPoints(ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile().vertexListG.ToArray());
             else
                 boundingBox = BoundingBox.FromPoints(SharpRenderer.cubeVertices.ToArray());
             

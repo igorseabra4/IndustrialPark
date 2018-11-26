@@ -22,6 +22,7 @@ namespace IndustrialPark
             try
             {
                 model.SetForRendering(renderer.device, ReadFileMethods.ReadRenderWareFile(AHDR.data), AHDR.data);
+                CreateTransformMatrix();
                 ArchiveEditorFunctions.renderableAssetSetJSP.Add(this);
             }
             catch (Exception ex)
@@ -32,7 +33,7 @@ namespace IndustrialPark
 
         public void CreateTransformMatrix()
         {
-            boundingBox = BoundingBox.FromPoints(model.GetVertexList().ToArray());
+            boundingBox = BoundingBox.FromPoints(model.vertexListG.ToArray());
         }
 
         public BoundingBox GetBoundingBox()
@@ -50,6 +51,39 @@ namespace IndustrialPark
             if (dontRender) return;
 
             model.Render(renderer, Matrix.Identity, isSelected ? renderer.selectedObjectColor : Vector4.One);
+        }
+
+        public float? IntersectsWith(Ray ray)
+        {
+            if (dontRender)
+                return null;
+
+            return TriangleIntersection(ray);
+        }
+
+        private float? TriangleIntersection(Ray r)
+        {
+            bool hasIntersected = false;
+            float smallestDistance = 2000f;
+
+            foreach (Triangle t in model.triangleList)
+            {
+                Vector3 v1 = model.vertexListG[t.vertex1];
+                Vector3 v2 = model.vertexListG[t.vertex2];
+                Vector3 v3 = model.vertexListG[t.vertex3];
+
+                if (r.Intersects(ref v1, ref v2, ref v3, out float distance))
+                {
+                    hasIntersected = true;
+
+                    if (distance < smallestDistance)
+                        smallestDistance = distance;
+                }
+            }
+
+            if (hasIntersected)
+                return smallestDistance;
+            return null;
         }
     }
 }

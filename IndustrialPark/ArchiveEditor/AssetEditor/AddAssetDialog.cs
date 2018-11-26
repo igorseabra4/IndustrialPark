@@ -53,7 +53,7 @@ namespace IndustrialPark
             VerifyTemplate();
         }
 
-        public static Section_AHDR GetAsset(AddAssetDialog a, out bool success)
+        public static Section_AHDR GetAsset(AddAssetDialog a, out bool success, out bool setPosition)
         {
             DialogResult d = a.ShowDialog();
             if (d == DialogResult.OK)
@@ -87,19 +87,21 @@ namespace IndustrialPark
                 if (value != 0)
                     AHDR.plusValue = alignment - value;
 
+                setPosition = a.setPosition;
                 success = true;
                 return AHDR;
             }
             else
             {
                 success = false;
+                setPosition = false;
                 return null;
             }
         }
 
-        public static Section_AHDR GetAsset(Section_AHDR AHDR, out bool success)
+        public static Section_AHDR GetAsset(Section_AHDR AHDR, out bool success, out bool setPosition)
         {
-            return GetAsset(new AddAssetDialog(AHDR), out success);
+            return GetAsset(new AddAssetDialog(AHDR), out success, out setPosition);
         }
         
         uint assetID = 0;
@@ -114,102 +116,16 @@ namespace IndustrialPark
         {
             assetType = (AssetType)comboBoxAssetTypes.SelectedItem;
 
-            switch (assetType)
-            {
-                case AssetType.ALST:
-                case AssetType.BOUL:
-                case AssetType.BUTN:
-                case AssetType.CAM:
-                case AssetType.CNTR:
-                case AssetType.COLL:
-                case AssetType.COND:
-                case AssetType.CSNM:
-                case AssetType.CTOC:
-                case AssetType.DPAT:
-                case AssetType.DSCO:
-                case AssetType.DSTR:
-                case AssetType.DYNA:
-                case AssetType.EGEN:
-                case AssetType.ENV:
-                case AssetType.FOG:
-                case AssetType.HANG:
-                case AssetType.GRUP:
-                case AssetType.JAW:
-                case AssetType.LODT:
-                case AssetType.MAPR:
-                case AssetType.MINF:
-                case AssetType.MRKR:
-                case AssetType.MVPT:
-                case AssetType.PARE:
-                case AssetType.PARP:
-                case AssetType.PARS:
-                case AssetType.PEND:
-                case AssetType.PICK:
-                case AssetType.PIPT:
-                case AssetType.PKUP:
-                case AssetType.PLAT:
-                case AssetType.PLYR:
-                case AssetType.PORT:
-                case AssetType.SFX:
-                case AssetType.SHDW:
-                case AssetType.SHRP:
-                case AssetType.SIMP:
-                case AssetType.SNDI:
-                case AssetType.SURF:
-                case AssetType.TEXT:
-                case AssetType.TIMR:
-                case AssetType.TRIG:
-                case AssetType.UI:
-                case AssetType.UIFT:
-                case AssetType.VIL:
-                case AssetType.VILP:
-                    checkSourceVirtual.Checked = true;
-                    checkSourceFile.Checked = false;
-                    checkReadT.Checked = false;
-                    checkWriteT.Checked = false;
-                    break;
-                case AssetType.CSN:
-                case AssetType.FLY:
-                case AssetType.RAW:
-                    checkSourceVirtual.Checked = false;
-                    checkSourceFile.Checked = true;
-                    checkReadT.Checked = false;
-                    checkWriteT.Checked = false;
-                    break;
-                case AssetType.ANIM:
-                case AssetType.CRDT:
-                case AssetType.SND:
-                case AssetType.SNDS:
-                    checkSourceVirtual.Checked = false;
-                    checkSourceFile.Checked = true;
-                    checkReadT.Checked = false;
-                    checkWriteT.Checked = true;
-                    break;
-                case AssetType.MODL:
-                    checkSourceVirtual.Checked = false;
-                    checkSourceFile.Checked = true;
-                    checkReadT.Checked = true;
-                    checkWriteT.Checked = false;
-                    break;
-                case AssetType.ATBL:
-                case AssetType.JSP:
-                case AssetType.RWTX:
-                    checkSourceVirtual.Checked = true;
-                    checkSourceFile.Checked = false;
-                    checkReadT.Checked = true;
-                    checkWriteT.Checked = false;
-                    break;
-                case AssetType.LKIT:
-                    checkSourceVirtual.Checked = false;
-                    checkSourceFile.Checked = true;
-                    checkReadT.Checked = true;
-                    checkWriteT.Checked = true;
-                    break;
-                default:
-                    MessageBox.Show("Note: I have not been able to figure out the flags automatically for this asset type. I recommend leaving the same ones that are present in the original asset.");
-                    break;
-            }
+            AHDRFlags flags = ArchiveEditorFunctions.AHDRFlagsFromAssetType(assetType);
 
+            checkSourceFile.Checked = (flags & AHDRFlags.SOURCE_FILE) != 0;
+            checkSourceVirtual.Checked = (flags & AHDRFlags.SOURCE_VIRTUAL) != 0;
+            checkReadT.Checked = (flags & AHDRFlags.READ_TRANSFORM) != 0;
+            checkWriteT.Checked = (flags & AHDRFlags.WRITE_TRANSFORM) != 0;
+
+            label1.Visible = flags == 0;
+
+            setPosition = false;
             VerifyTemplate();
         }
 
@@ -236,6 +152,7 @@ namespace IndustrialPark
                 textBoxAssetName.Text = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
                 labelRawDataSize.Text = "Raw Data Size: " + data.Length.ToString();
                 buttonOK.Enabled = true;
+                setPosition = false;
             }
         }
 
@@ -280,18 +197,11 @@ namespace IndustrialPark
 
         private void VerifyTemplate()
         {
-            string[] files = Directory.GetFiles(Application.StartupPath + "\\Resources\\Templates\\" + Functions.currentGame.ToString() + "\\");
-            foreach (string s in files)
-                if (Path.GetFileName(s) == assetType.ToString())
-                {
-                    Template = File.ReadAllBytes(s);
-                    buttonGrabTemplate.Enabled = true;
-                    return;
-                }
-
-            Template = new byte[0];
-            buttonGrabTemplate.Enabled = false;
+            Template = ArchiveEditorFunctions.GetTemplate(assetType);
+            buttonGrabTemplate.Enabled = Template != null;
         }
+
+        private bool setPosition = false;
 
         private void buttonGrabTemplate_Click(object sender, EventArgs e)
         {
@@ -299,6 +209,8 @@ namespace IndustrialPark
             textBoxAssetName.Text = assetType.ToString() + "_NEW";
             labelRawDataSize.Text = "Raw Data Size: " + data.Length.ToString();
             buttonOK.Enabled = true;
+
+            setPosition = true;
         }
     }
 }

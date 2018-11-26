@@ -18,6 +18,9 @@ namespace IndustrialPark
 
             InitializeComponent();
 
+            foreach (AssetTemplate template in Enum.GetValues(typeof(AssetTemplate)))
+                toolStripComboBoxAssetTemplate.Items.Add(template);
+
             uIToolStripMenuItem_Click(null, null);
             uIFTToolStripMenuItem_Click(null, null);
 
@@ -371,7 +374,7 @@ namespace IndustrialPark
                         renderer.Camera.AddYaw(MathUtil.DegreesToRadians(e.X - oldMousePosition.X));
                         renderer.Camera.AddPitch(MathUtil.DegreesToRadians(e.Y - oldMousePosition.Y));
                     }
-                    if (e.Button == MouseButtons.Right)
+                    if (e.Button == MouseButtons.Right && PressedKeys.Contains(Keys.ControlKey))
                     {
                         renderer.Camera.AddPositionSideways(e.X - oldMousePosition.X);
                         renderer.Camera.AddPositionUp(e.Y - oldMousePosition.Y);
@@ -632,6 +635,23 @@ namespace IndustrialPark
                     renderPanel.ClientRectangle.Width,
                     renderPanel.ClientRectangle.Height), e.X, e.Y);
             }
+            else if (e.Button == MouseButtons.Right && PressedKeys.Contains(Keys.ShiftKey))
+            {
+                Vector3 Position = GetScreenClickedPosition(new Rectangle(
+                renderPanel.ClientRectangle.X,
+                renderPanel.ClientRectangle.Y,
+                renderPanel.ClientRectangle.Width,
+                renderPanel.ClientRectangle.Height), e.X, e.Y);
+
+                foreach (ArchiveEditor archiveEditor in archiveEditors)
+                    if (archiveEditor.TemplateFocus)
+                        archiveEditor.PlaceTemplate(Position);
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                if (SomeoneHasTemplateFocus)
+                    contextMenuStripMain.Show(renderPanel.PointToScreen(e.Location));
+            }
         }
 
         private void renderPanel_MouseDown(object sender, MouseEventArgs e)
@@ -669,6 +689,12 @@ namespace IndustrialPark
                     SetSelectedIndex(assetID);
                 }
             }
+        }
+
+        public Vector3 GetScreenClickedPosition(Rectangle viewRectangle, int X, int Y)
+        {
+            Ray ray = Ray.GetPickRay(X, Y, new Viewport(viewRectangle), renderer.viewProjection);
+            return ArchiveEditorFunctions.GetRayInterserctionPosition(ray);
         }
 
         private void renderPanel_MouseUp(object sender, MouseEventArgs e)
@@ -863,6 +889,23 @@ namespace IndustrialPark
                 archiveEditor.FindWhoTargets(assetID);
         }
 
+        public void ClearTemplateFocus()
+        {
+            foreach (ArchiveEditor archiveEditor in archiveEditors)
+                archiveEditor.TemplateFocusOff();
+        }
+
+        public bool SomeoneHasTemplateFocus
+        {
+            get
+            {
+                foreach (ArchiveEditor archiveEditor in archiveEditors)
+                    if (archiveEditor.TemplateFocus)
+                        return true;
+                return false;
+            }
+        }
+
         private void useLegacyAssetIDFormatToolStripMenuItem_Click(object sender, EventArgs e)
         {
             useLegacyAssetIDFormatToolStripMenuItem.Checked = !useLegacyAssetIDFormatToolStripMenuItem.Checked;
@@ -885,12 +928,18 @@ namespace IndustrialPark
 
         private void uIModeAutoSizeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Width =  (int)(Height * 656f / 565f);
+            Width = (int)(Height * 656f / 565f);
         }
 
         private void ensureAssociationsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FileAssociations.FileAssociations.EnsureAssociationsSet();
+        }
+
+        private void toolStripComboBoxAssetTemplate_Click(object sender, EventArgs e)
+        {
+            if (toolStripComboBoxAssetTemplate.SelectedIndex != -1)
+                ArchiveEditorFunctions.CurrentAssetTemplate = (AssetTemplate)toolStripComboBoxAssetTemplate.SelectedItem;
         }
     }
 }

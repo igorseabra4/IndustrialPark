@@ -26,19 +26,13 @@ namespace IndustrialPark
 
         private void buttonGetPos_Click(object sender, System.EventArgs e)
         {
-            asset.PositionX = Program.MainForm.renderer.Camera.Position.X;
-            asset.PositionY = Program.MainForm.renderer.Camera.Position.Y;
-            asset.PositionZ = Program.MainForm.renderer.Camera.Position.Z;
+            asset.SetPosition(Program.MainForm.renderer.Camera.Position);
         }
 
         private void buttonGetDir_Click(object sender, System.EventArgs e)
         {
-            asset.NormalizedForwardX = Program.MainForm.renderer.Camera.GetForward().X;
-            asset.NormalizedForwardY = Program.MainForm.renderer.Camera.GetForward().Y;
-            asset.NormalizedForwardZ = Program.MainForm.renderer.Camera.GetForward().Z;
-            asset.NormalizedUpX = Program.MainForm.renderer.Camera.GetUp().X;
-            asset.NormalizedUpY = Program.MainForm.renderer.Camera.GetUp().Y;
-            asset.NormalizedUpZ = Program.MainForm.renderer.Camera.GetUp().Z;
+            asset.SetNormalizedForward(Program.MainForm.renderer.Camera.GetForward());
+            asset.SetNormalizedUp(Program.MainForm.renderer.Camera.GetUp());
         }
 
         public uint GetAssetID()

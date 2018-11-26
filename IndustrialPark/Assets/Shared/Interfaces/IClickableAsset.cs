@@ -7,9 +7,9 @@ namespace IndustrialPark
         float PositionX { get; set; }
         float PositionY { get; set; }
         float PositionZ { get; set; }
-                        
+
         float? IntersectsWith(Ray ray);
-        
+
         BoundingSphere GetGizmoCenter();
     }
 }

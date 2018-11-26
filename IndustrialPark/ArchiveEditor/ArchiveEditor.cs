@@ -388,7 +388,7 @@ namespace IndustrialPark
 
         private void buttonAddAsset_Click(object sender, EventArgs e)
         {
-            Section_AHDR AHDR = AddAssetDialog.GetAsset(new AddAssetDialog(), out bool success);
+            Section_AHDR AHDR = AddAssetDialog.GetAsset(new AddAssetDialog(), out bool success, out bool setPosition);
 
             if (success)
             {
@@ -401,6 +401,9 @@ namespace IndustrialPark
                     }
                     archive.UnsavedChanges = true;
                     archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR);
+                    if (setPosition)
+                        archive.SetAssetPositionToView(AHDR.assetID);
+
                     comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = LayerToString(comboBoxLayers.SelectedIndex);
                     PopulateAssetListAndComboBox();
                     SetSelectedIndexes(new List<uint>() { AHDR.assetID });
@@ -516,12 +519,27 @@ namespace IndustrialPark
         {
             if (listBoxAssets.SelectedIndex < 0) return;
 
+            AssetType a = AssetType.Null;
+            if (comboBoxAssetTypes.SelectedIndex > 0)
+                a = (AssetType)comboBoxAssetTypes.SelectedItem;
+            int prevIndex = listBoxAssets.SelectedIndex;
+
             archive.RemoveAsset(CurrentlySelectedAssetIDs());
             comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = LayerToString(comboBoxLayers.SelectedIndex);
 
             archive.UnsavedChanges = true;
 
             listBoxAssets.Items.Remove(listBoxAssets.SelectedItem);
+
+            comboBoxAssetTypes.SelectedItem = a;
+
+            if (listBoxAssets.Items.Count > 0)
+                try { listBoxAssets.SelectedIndex = prevIndex; }
+                catch
+                {
+                    try { listBoxAssets.SelectedIndex = prevIndex - 1; }
+                    catch { }
+                }
         }
 
         private void buttonView_Click(object sender, EventArgs e)
@@ -539,7 +557,7 @@ namespace IndustrialPark
             try
             {
                 uint oldAssetID = CurrentlySelectedAssetIDs()[0];
-                Section_AHDR AHDR = AddAssetDialog.GetAsset(archive.GetFromAssetID(oldAssetID).AHDR, out bool success);
+                Section_AHDR AHDR = AddAssetDialog.GetAsset(archive.GetFromAssetID(oldAssetID).AHDR, out bool success, out bool setPosition);
 
                 if (success)
                 {
@@ -553,6 +571,9 @@ namespace IndustrialPark
                     }
 
                     archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR);
+                    if (setPosition)
+                        archive.SetAssetPositionToView(AHDR.assetID);
+
                     PopulateAssetListAndComboBox();
                     SetSelectedIndexes(new List<uint>() { AHDR.assetID });
                 }
@@ -782,6 +803,146 @@ namespace IndustrialPark
                 archive.AddTextureDictionary(openTXD.FileName);
                 PopulateLayerComboBox();
             }
+        }
+
+        private void toolStripMenuItem_Add_Click(object sender, EventArgs e)
+        {
+            buttonAddAsset_Click(null, null);
+        }
+
+        private void toolStripMenuItem_Duplicate_Click(object sender, EventArgs e)
+        {
+            buttonDuplicate_Click(null, null);
+        }
+
+        private void toolStripMenuItem_Copy_Click(object sender, EventArgs e)
+        {
+            buttonCopy_Click(null, null);
+        }
+
+        private void toolStripMenuItem_Paste_Click(object sender, EventArgs e)
+        {
+            buttonPaste_Click(null, null);
+        }
+
+        private void toolStripMenuItem_Remove_Click(object sender, EventArgs e)
+        {
+            buttonRemoveAsset_Click(null, null);
+        }
+
+        private void toolStripMenuItem_View_Click(object sender, EventArgs e)
+        {
+            buttonView_Click(null, null);
+        }
+
+        private void toolStripMenuItem_Export_Click(object sender, EventArgs e)
+        {
+            buttonExportRaw_Click(null, null);
+        }
+
+        private void toolStripMenuItem_EditHeader_Click(object sender, EventArgs e)
+        {
+            buttonEditAsset_Click(null, null);
+        }
+
+        private void toolStripMenuItem_EditData_Click(object sender, EventArgs e)
+        {
+            buttonInternalEdit_Click(null, null);
+        }
+
+        private void listBoxAssets_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.I && e.Modifiers == Keys.Control)
+            {
+                if (buttonAddAsset.Enabled)
+                    buttonAddAsset_Click(null, null);
+            }
+            else if (e.KeyCode == Keys.D && e.Modifiers == Keys.Control)
+            {
+                if (buttonDuplicate.Enabled)
+                    buttonDuplicate_Click(null, null);
+            }
+            else if (e.KeyCode == Keys.C && e.Modifiers == Keys.Control)
+            {
+                if (buttonCopy.Enabled)
+                    buttonCopy_Click(null, null);
+            }
+            else if (e.KeyCode == Keys.V && e.Modifiers == Keys.Control)
+            {
+                if (buttonPaste.Enabled)
+                    buttonPaste_Click(null, null);
+            }
+            else if (e.KeyCode == Keys.G && e.Modifiers == Keys.Control)
+            {
+                if (buttonInternalEdit.Enabled)
+                    buttonInternalEdit_Click(null, null);
+            }
+            else if (e.KeyCode == Keys.Delete)
+            {
+                if (buttonRemoveAsset.Enabled)
+                    buttonRemoveAsset_Click(null, null);
+            }
+        }
+
+        private void listBoxAssets_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                toolStripMenuItem_Add.Enabled = buttonAddAsset.Enabled;
+                toolStripMenuItem_Duplicate.Enabled = buttonDuplicate.Enabled;
+                toolStripMenuItem_Copy.Enabled = buttonCopy.Enabled;
+                toolStripMenuItem_Paste.Enabled = buttonPaste.Enabled;
+                toolStripMenuItem_Remove.Enabled = buttonRemoveAsset.Enabled;
+                toolStripMenuItem_View.Enabled = buttonView.Enabled;
+                toolStripMenuItem_Export.Enabled = buttonExportRaw.Enabled;
+                toolStripMenuItem_EditHeader.Enabled = buttonEditAsset.Enabled;
+                toolStripMenuItem_EditData.Enabled = buttonInternalEdit.Enabled;
+
+                contextMenuStrip_ListBoxAssets.Show(listBoxAssets.PointToScreen(e.Location));
+            }
+        }
+
+        public void PlaceTemplate(Vector3 position)
+        {
+            if (comboBoxLayers.SelectedIndex == -1)
+            {
+                MessageBox.Show("Please select a layer to place your asset in!");
+                return;
+            }
+
+            List<uint> assetIDs = new List<uint>();
+
+            archive.PlaceTemplate(position, comboBoxLayers.SelectedIndex, out bool success, ref assetIDs);
+
+            if (success)
+            {
+                archive.UnsavedChanges = true;
+
+                comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = LayerToString(comboBoxLayers.SelectedIndex);
+                PopulateAssetListAndComboBox();
+
+                SetSelectedIndexes(assetIDs);
+            }
+        }
+
+        public bool TemplateFocus { get; private set; } = false;
+
+        public void TemplateFocusOff()
+        {
+            TemplateFocus = false;
+
+            labelTemplateFocus.Text = "Template Focus\nOFF";
+            labelTemplateFocus.ForeColor = System.Drawing.Color.Red;
+        }
+
+        private void labelTemplateFocus_Click(object sender, EventArgs e)
+        {
+            Program.MainForm.ClearTemplateFocus();
+
+            TemplateFocus = true;
+
+            labelTemplateFocus.Text = "Template Focus\nON";
+            labelTemplateFocus.ForeColor = System.Drawing.Color.Green;
         }
     }
 }
