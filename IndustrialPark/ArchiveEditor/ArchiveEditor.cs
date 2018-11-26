@@ -927,6 +927,11 @@ namespace IndustrialPark
                 if (buttonInternalEdit.Enabled)
                     buttonInternalEdit_Click(null, null);
             }
+            else if (e.KeyCode == Keys.H && e.Modifiers == Keys.Control)
+            {
+                if (buttonEditAsset.Enabled)
+                    buttonEditAsset_Click(null, null);
+            }
             else if (e.KeyCode == Keys.Delete)
             {
                 if (buttonRemoveAsset.Enabled)
@@ -986,14 +991,25 @@ namespace IndustrialPark
             labelTemplateFocus.ForeColor = System.Drawing.Color.Red;
         }
 
-        private void labelTemplateFocus_Click(object sender, EventArgs e)
+        public void TemplateFocusOn()
         {
-            Program.MainForm.ClearTemplateFocus();
-
             TemplateFocus = true;
 
             labelTemplateFocus.Text = "Template Focus\nON";
             labelTemplateFocus.ForeColor = System.Drawing.Color.Green;
+        }
+
+        private void labelTemplateFocus_Click(object sender, EventArgs e)
+        {
+            if (TemplateFocus)
+            {
+                TemplateFocusOff();
+            }
+            else
+            {
+                Program.MainForm.ClearTemplateFocus();
+                TemplateFocusOn();
+            }
         }
     }
 }

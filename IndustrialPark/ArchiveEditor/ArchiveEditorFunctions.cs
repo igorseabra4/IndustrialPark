@@ -224,6 +224,12 @@ namespace IndustrialPark
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
+                case AssetType.CRDT:
+                    {
+                        AssetCRDT newAsset = new AssetCRDT(AHDR);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
                 case AssetType.DPAT:
                     {
                         AssetDPAT newAsset = new AssetDPAT(AHDR);
@@ -510,7 +516,6 @@ namespace IndustrialPark
                     break;
                 case AssetType.ATKT:
                 case AssetType.BINK:
-                case AssetType.CRDT:
                 case AssetType.CSN:
                 case AssetType.CSSS:
                 case AssetType.CTOC:

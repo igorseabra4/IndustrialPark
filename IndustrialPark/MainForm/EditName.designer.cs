@@ -1,6 +1,6 @@
 ﻿namespace IndustrialPark
 {
-    partial class EditBSPName
+    partial class EditName
     {
         /// <summary>
         /// Required designer variable.

@@ -21,7 +21,7 @@ namespace IndustrialPark
             foreach (AssetTemplate template in Enum.GetValues(typeof(AssetTemplate)))
                 toolStripComboBoxAssetTemplate.Items.Add(template);
             toolStripComboBoxAssetTemplate.Items.RemoveAt(0);
-            toolStripComboBoxAssetTemplate.Items.RemoveAt(1);
+            toolStripComboBoxAssetTemplate.Items.RemoveAt(0);
 
             uIToolStripMenuItem_Click(null, null);
             uIFTToolStripMenuItem_Click(null, null);

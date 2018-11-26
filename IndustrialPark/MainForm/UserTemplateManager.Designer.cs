@@ -108,7 +108,7 @@
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.buttonImportRawData);
             this.KeyPreview = true;
-            this.MinimizeBox = false;
+            this.MaximizeBox = false;
             this.Name = "UserTemplateManager";
             this.ShowIcon = false;
             this.Text = "User Template Manager";

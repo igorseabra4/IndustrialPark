@@ -75,11 +75,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MainForm\EditBSPName.cs">
+    <Compile Include="Assets\Binary\AssetCRDT.cs" />
+    <Compile Include="MainForm\EditName.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainForm\EditBSPName.designer.cs">
-      <DependentUpon>EditBSPName.cs</DependentUpon>
+    <Compile Include="MainForm\EditName.designer.cs">
+      <DependentUpon>EditName.cs</DependentUpon>
     </Compile>
     <Compile Include="MainForm\UserTemplateManager.cs">
       <SubType>Form</SubType>
@@ -265,6 +266,9 @@
     <None Include="Resources\Templates\BFBB\ALST">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Resources\Templates\BFBB\BOUL">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\Templates\BFBB\BUTN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -274,10 +278,16 @@
     <None Include="Resources\Templates\BFBB\CNTR">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Resources\Templates\BFBB\COLL">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\Templates\BFBB\COND">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\Templates\BFBB\DPAT">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Templates\BFBB\DSTR">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\Templates\BFBB\EGEN">
@@ -289,10 +299,22 @@
     <None Include="Resources\Templates\BFBB\GRUP">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Resources\Templates\BFBB\JAW">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Templates\BFBB\LODT">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Templates\BFBB\MAPR">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\Templates\BFBB\MRKR">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\Templates\BFBB\MVPT">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Templates\BFBB\PIPT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\Templates\BFBB\PKUP">
@@ -305,6 +327,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\Templates\BFBB\PORT">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Templates\BFBB\SHDW">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\Templates\BFBB\SIMP">
@@ -330,8 +355,8 @@
     <Compile Include="MainForm\ViewConfig.designer.cs">
       <DependentUpon>ViewConfig.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="MainForm\EditBSPName.resx">
-      <DependentUpon>EditBSPName.cs</DependentUpon>
+    <EmbeddedResource Include="MainForm\EditName.resx">
+      <DependentUpon>EditName.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm\UserTemplateManager.resx">
       <DependentUpon>UserTemplateManager.cs</DependentUpon>
@@ -418,6 +443,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\Models\Sphere.obj">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Templates\BFBB\SNDI">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\Templates\BFBB\TEXT">

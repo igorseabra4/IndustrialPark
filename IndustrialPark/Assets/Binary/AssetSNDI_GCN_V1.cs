@@ -18,7 +18,7 @@ namespace IndustrialPark
 
         public EntrySoundInfo_GCN_V1()
         {
-            SoundHeader = new byte[0];
+            SoundHeader = new byte[0x60];
             SoundAssetID = 0;
         }
 

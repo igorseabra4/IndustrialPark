@@ -120,7 +120,7 @@ namespace IndustrialPark
             string oldName = listBoxTemplates.SelectedItem.ToString();
             byte[] oldData = File.ReadAllBytes(Path.Combine(Program.MainForm.userTemplatesFolder, oldName));
 
-            string newName = EditBSPName.GetName(oldName);
+            string newName = EditName.GetName(oldName);
 
             File.Delete(Path.Combine(Program.MainForm.userTemplatesFolder, oldName));
             File.WriteAllBytes(Path.Combine(Program.MainForm.userTemplatesFolder, newName), oldData);

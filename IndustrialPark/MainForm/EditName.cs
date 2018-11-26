@@ -3,9 +3,9 @@ using System.Windows.Forms;
 
 namespace IndustrialPark
 {
-    public partial class EditBSPName : Form
+    public partial class EditName : Form
     {
-        public EditBSPName(string oldName)
+        public EditName(string oldName)
         {
             InitializeComponent();
             TopMost = true;
@@ -14,7 +14,7 @@ namespace IndustrialPark
 
         public static string GetName(string oldName)
         {
-            EditBSPName edit = new EditBSPName(oldName);
+            EditName edit = new EditName(oldName);
             edit.ShowDialog();
                         
             if (edit.OKed)
