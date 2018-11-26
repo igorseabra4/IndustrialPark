@@ -3,6 +3,7 @@
     public enum AssetTemplate
     {
         None,
+        UserTemplate,
         Shiny_Red,
         Shiny_Yellow,
         Shiny_Green,
@@ -41,6 +42,6 @@
         TaxiStand,
         TexasHitch,
         SphereTrigger,
-        EnemyMVPT
+        EnemyMVPT,
     }
 }

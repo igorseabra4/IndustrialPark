@@ -230,6 +230,7 @@ namespace IndustrialPark
             buttonRemoveLayer.Enabled = true;
             buttonArrowUp.Enabled = true;
             buttonArrowDown.Enabled = true;
+            importMultipleAssetsToolStripMenuItem.Enabled = true;
 
             programIsChangingStuff = false;
         }
@@ -304,6 +305,7 @@ namespace IndustrialPark
                 buttonRemoveLayer.Enabled = false;
                 buttonArrowUp.Enabled = false;
                 buttonArrowDown.Enabled = false;
+                importMultipleAssetsToolStripMenuItem.Enabled = false;
 
                 buttonCopy.Enabled = false;
                 buttonDuplicate.Enabled = false;
@@ -415,6 +417,49 @@ namespace IndustrialPark
             }
         }
 
+        private void importMultipleAssetsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            List<Section_AHDR> AHDRs = AddMultipleAssetDialog.GetAssets(out bool success);
+
+            if (success)
+            {
+                archive.UnsavedChanges = true;
+
+                try
+                {
+                    List<uint> assetIDs = new List<uint>();
+                    
+                    foreach (Section_AHDR AHDR in AHDRs)
+                    {
+                        if (AHDR.assetType == AssetType.SND || AHDR.assetType == AssetType.SNDS)
+                        {
+                            try
+                            {
+                                archive.AddSoundToSNDI(AHDR.data, AHDR.assetID, AHDR.assetType, out byte[] soundData);
+                                AHDR.data = soundData;
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show(ex.Message);
+                            }
+                        }
+
+                        archive.AddAssetWithUniqueID(comboBoxLayers.SelectedIndex, AHDR);
+                        assetIDs.Add(AHDR.assetID);
+                    }
+
+                    comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = LayerToString(comboBoxLayers.SelectedIndex);
+                    PopulateAssetListAndComboBox();
+
+                    SetSelectedIndexes(assetIDs);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Unable to add asset: " + ex.Message);
+                }
+            }
+        }
+
         private void buttonDuplicate_Click(object sender, EventArgs e)
         {
             if (listBoxAssets.SelectedIndex < 0) return;
@@ -486,7 +531,7 @@ namespace IndustrialPark
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error pasting object from clipboard: " + ex.Message + ". Are you sure you have an asset copied?");
+                MessageBox.Show("Error pasting objects from clipboard: " + ex.Message + ". Are you sure you have assets copied?");
                 return;
             }
 
@@ -850,6 +895,11 @@ namespace IndustrialPark
             buttonInternalEdit_Click(null, null);
         }
 
+        private void toolStripMenuItem_AddMulti_Click(object sender, EventArgs e)
+        {
+            importMultipleAssetsToolStripMenuItem_Click(null, null);
+        }
+
         private void listBoxAssets_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.I && e.Modifiers == Keys.Control)
@@ -889,6 +939,7 @@ namespace IndustrialPark
             if (e.Button == MouseButtons.Right)
             {
                 toolStripMenuItem_Add.Enabled = buttonAddAsset.Enabled;
+                toolStripMenuItem_AddMulti.Enabled = importMultipleAssetsToolStripMenuItem.Enabled;
                 toolStripMenuItem_Duplicate.Enabled = buttonDuplicate.Enabled;
                 toolStripMenuItem_Copy.Enabled = buttonCopy.Enabled;
                 toolStripMenuItem_Paste.Enabled = buttonPaste.Enabled;

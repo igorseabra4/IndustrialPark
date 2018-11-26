@@ -62,6 +62,9 @@ namespace IndustrialPark
                     else throw new Exception();
                 }
 
+                currentPlatform = platform;
+                currentGame = game;
+
                 if (currentPlatform == Platform.Unknown)
                     new ChoosePlatformDialog().ShowDialog();
 
@@ -1393,6 +1396,7 @@ namespace IndustrialPark
         }
 
         public static AssetTemplate CurrentAssetTemplate { get; set; } = AssetTemplate.None;
+        public static string CurrentUserTemplate { get; set; } = "";
 
         public uint PlaceTemplate(Vector3 position, int layerIndex, out bool success, ref List<uint> assetIDs, string customName = "", AssetTemplate template = AssetTemplate.None)
         {
@@ -1400,6 +1404,11 @@ namespace IndustrialPark
 
             if (template == AssetTemplate.None)
                 template = CurrentAssetTemplate;
+
+            if (template == AssetTemplate.UserTemplate)
+            {
+                return PlaceUserTemplate(position, layerIndex, out success, ref assetIDs);
+            }
 
             switch (template)
             {
@@ -1464,6 +1473,7 @@ namespace IndustrialPark
             Section_AHDR newAsset = new Section_AHDR
             {
                 assetType = newAssetType,
+                flags = AHDRFlagsFromAssetType(newAssetType),
                 data = GetTemplate(newAssetType)
             };
 
@@ -1799,6 +1809,86 @@ namespace IndustrialPark
                     ((AssetTRIG)asset).PositionZ = position.Z;
                     ((AssetTRIG)asset).Position1X_Radius = 10f;
                     break;
+            }
+
+            assetIDs.Add(asset.AHDR.assetID);
+
+            return asset.AHDR.assetID;
+        }
+
+        private uint PlaceUserTemplate(Vector3 Position, int layerIndex, out bool success, ref List<uint> assetIDs)
+        {
+            if (!File.Exists(Path.Combine(Program.MainForm.userTemplatesFolder, CurrentUserTemplate)))
+            {
+                success = false;
+                return 0;
+            }
+
+            string assetTypeName = CurrentUserTemplate.Substring(CurrentUserTemplate.IndexOf('[') + 1, CurrentUserTemplate.IndexOf(']') - CurrentUserTemplate.IndexOf('[') - 1);
+            AssetType assetType = AssetType.Null;
+
+            foreach (AssetType o in Enum.GetValues(typeof(AssetType)))
+            {
+                if (o.ToString() == assetTypeName.Trim().ToUpper())
+                {
+                    assetType = o;
+                    break;
+                }
+            }
+            if (assetType == AssetType.Null) throw new Exception("Unknown asset type: " + assetType);
+
+            Section_AHDR newAsset = new Section_AHDR
+            {
+                assetType = assetType,
+                flags = AHDRFlagsFromAssetType(assetType),
+                data = File.ReadAllBytes(Path.Combine(Program.MainForm.userTemplatesFolder, CurrentUserTemplate))
+            };
+
+            newAsset.ADBG = new Section_ADBG(0, CurrentUserTemplate.Substring(CurrentUserTemplate.IndexOf(']') + 2) + "_T001", "", 0);
+
+            Asset asset = GetFromAssetID(AddAssetWithUniqueID(layerIndex, newAsset, "_T", true));
+
+            success = true;
+
+            if (asset is AssetTRIG trig)
+            {
+                trig.PositionX = Position.X;
+                trig.PositionY = Position.Y;
+                trig.PositionZ = Position.Z;
+
+                trig.Position0X = Position.X;
+                trig.Position0Y = Position.Y;
+                trig.Position0Z = Position.Z;
+            }
+            if (asset is PlaceableAsset placeableAsset)
+            {
+                placeableAsset.PositionX = Position.X;
+                placeableAsset.PositionY = Position.Y;
+                placeableAsset.PositionZ = Position.Z;
+            }
+            else if (asset is AssetCAM cam)
+            {
+                cam.SetPosition(Program.MainForm.renderer.Camera.Position);
+                cam.SetNormalizedForward(Program.MainForm.renderer.Camera.GetForward());
+                cam.SetNormalizedUp(Program.MainForm.renderer.Camera.GetUp());
+            }
+            else if (asset is AssetMRKR mrkr)
+            {
+                mrkr.PositionX = Position.X;
+                mrkr.PositionY = Position.Y;
+                mrkr.PositionZ = Position.Z;
+            }
+            else if (asset is AssetMVPT mvpt)
+            {
+                mvpt.PositionX = Position.X;
+                mvpt.PositionY = Position.Y;
+                mvpt.PositionZ = Position.Z;
+            }
+            else if (asset is AssetSFX sfx)
+            {
+                sfx.PositionX = Position.X;
+                sfx.PositionY = Position.Y;
+                sfx.PositionZ = Position.Z;
             }
 
             assetIDs.Add(asset.AHDR.assetID);

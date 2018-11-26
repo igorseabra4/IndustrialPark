@@ -8,6 +8,7 @@ namespace IndustrialPark
         public static MainForm MainForm;
         public static ViewConfig ViewConfig;
         public static AboutBox AboutBox;
+        public static UserTemplateManager UserTemplateManager;
 
         /// <summary>
         /// Ponto de entrada principal para o aplicativo.
@@ -23,6 +24,7 @@ namespace IndustrialPark
             MainForm = new MainForm();
             ViewConfig = new ViewConfig();
             AboutBox = new AboutBox();
+            UserTemplateManager = new UserTemplateManager();
 
             Application.Run(MainForm);
         }

@@ -40,6 +40,7 @@
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hipHopToolExportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importHIPArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importMultipleAssetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportTXDArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importTXDArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -54,6 +55,7 @@
             this.comboBoxLayers = new System.Windows.Forms.ComboBox();
             this.listBoxAssets = new System.Windows.Forms.ListBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.labelTemplateFocus = new System.Windows.Forms.Label();
             this.buttonCopy = new System.Windows.Forms.Button();
             this.buttonPaste = new System.Windows.Forms.Button();
             this.textBoxFindAsset = new System.Windows.Forms.TextBox();
@@ -69,6 +71,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.contextMenuStrip_ListBoxAssets = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem_Add = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_AddMulti = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_Duplicate = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_Copy = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_Paste = new System.Windows.Forms.ToolStripMenuItem();
@@ -78,7 +81,6 @@
             this.toolStripMenuItem_Export = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_EditHeader = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_EditData = new System.Windows.Forms.ToolStripMenuItem();
-            this.labelTemplateFocus = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -157,6 +159,7 @@
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.hipHopToolExportToolStripMenuItem,
             this.importHIPArchiveToolStripMenuItem,
+            this.importMultipleAssetsToolStripMenuItem,
             this.exportTXDArchiveToolStripMenuItem,
             this.importTXDArchiveToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
@@ -167,7 +170,7 @@
             // 
             this.hipHopToolExportToolStripMenuItem.Enabled = false;
             this.hipHopToolExportToolStripMenuItem.Name = "hipHopToolExportToolStripMenuItem";
-            this.hipHopToolExportToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.hipHopToolExportToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.hipHopToolExportToolStripMenuItem.Text = "Export Assets + INI";
             this.hipHopToolExportToolStripMenuItem.Click += new System.EventHandler(this.hipHopToolExportToolStripMenuItem_Click);
             // 
@@ -175,15 +178,23 @@
             // 
             this.importHIPArchiveToolStripMenuItem.Enabled = false;
             this.importHIPArchiveToolStripMenuItem.Name = "importHIPArchiveToolStripMenuItem";
-            this.importHIPArchiveToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.importHIPArchiveToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.importHIPArchiveToolStripMenuItem.Text = "Import HIP Archive";
             this.importHIPArchiveToolStripMenuItem.Click += new System.EventHandler(this.importHIPArchiveToolStripMenuItem_Click);
+            // 
+            // importMultipleAssetsToolStripMenuItem
+            // 
+            this.importMultipleAssetsToolStripMenuItem.Enabled = false;
+            this.importMultipleAssetsToolStripMenuItem.Name = "importMultipleAssetsToolStripMenuItem";
+            this.importMultipleAssetsToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.importMultipleAssetsToolStripMenuItem.Text = "Import Multiple Assets";
+            this.importMultipleAssetsToolStripMenuItem.Click += new System.EventHandler(this.importMultipleAssetsToolStripMenuItem_Click);
             // 
             // exportTXDArchiveToolStripMenuItem
             // 
             this.exportTXDArchiveToolStripMenuItem.Enabled = false;
             this.exportTXDArchiveToolStripMenuItem.Name = "exportTXDArchiveToolStripMenuItem";
-            this.exportTXDArchiveToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.exportTXDArchiveToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.exportTXDArchiveToolStripMenuItem.Text = "Export TXD Archive";
             this.exportTXDArchiveToolStripMenuItem.Click += new System.EventHandler(this.exportTXDArchiveToolStripMenuItem_Click);
             // 
@@ -191,7 +202,7 @@
             // 
             this.importTXDArchiveToolStripMenuItem.Enabled = false;
             this.importTXDArchiveToolStripMenuItem.Name = "importTXDArchiveToolStripMenuItem";
-            this.importTXDArchiveToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.importTXDArchiveToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.importTXDArchiveToolStripMenuItem.Text = "Import TXD Archive";
             this.importTXDArchiveToolStripMenuItem.Click += new System.EventHandler(this.importTXDArchiveToolStripMenuItem1_Click);
             // 
@@ -349,6 +360,19 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Assets";
             // 
+            // labelTemplateFocus
+            // 
+            this.labelTemplateFocus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelTemplateFocus.AutoSize = true;
+            this.labelTemplateFocus.ForeColor = System.Drawing.Color.Red;
+            this.labelTemplateFocus.Location = new System.Drawing.Point(516, 11);
+            this.labelTemplateFocus.Name = "labelTemplateFocus";
+            this.labelTemplateFocus.Size = new System.Drawing.Size(83, 26);
+            this.labelTemplateFocus.TabIndex = 20;
+            this.labelTemplateFocus.Text = "Template Focus\r\nOFF\r\n";
+            this.labelTemplateFocus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.labelTemplateFocus.Click += new System.EventHandler(this.labelTemplateFocus_Click);
+            // 
             // buttonCopy
             // 
             this.buttonCopy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -500,6 +524,7 @@
             // 
             this.contextMenuStrip_ListBoxAssets.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem_Add,
+            this.toolStripMenuItem_AddMulti,
             this.toolStripMenuItem_Duplicate,
             this.toolStripMenuItem_Copy,
             this.toolStripMenuItem_Paste,
@@ -510,7 +535,7 @@
             this.toolStripMenuItem_EditHeader,
             this.toolStripMenuItem_EditData});
             this.contextMenuStrip_ListBoxAssets.Name = "contextMenuStrip_ListBoxAssets";
-            this.contextMenuStrip_ListBoxAssets.Size = new System.Drawing.Size(177, 208);
+            this.contextMenuStrip_ListBoxAssets.Size = new System.Drawing.Size(177, 230);
             // 
             // toolStripMenuItem_Add
             // 
@@ -518,6 +543,13 @@
             this.toolStripMenuItem_Add.Size = new System.Drawing.Size(176, 22);
             this.toolStripMenuItem_Add.Text = "Add (Ctrl + I)";
             this.toolStripMenuItem_Add.Click += new System.EventHandler(this.toolStripMenuItem_Add_Click);
+            // 
+            // toolStripMenuItem_AddMulti
+            // 
+            this.toolStripMenuItem_AddMulti.Name = "toolStripMenuItem_AddMulti";
+            this.toolStripMenuItem_AddMulti.Size = new System.Drawing.Size(176, 22);
+            this.toolStripMenuItem_AddMulti.Text = "Add Multiple";
+            this.toolStripMenuItem_AddMulti.Click += new System.EventHandler(this.toolStripMenuItem_AddMulti_Click);
             // 
             // toolStripMenuItem_Duplicate
             // 
@@ -579,18 +611,6 @@
             this.toolStripMenuItem_EditData.Size = new System.Drawing.Size(176, 22);
             this.toolStripMenuItem_EditData.Text = "Edit Data (Ctrl + G)";
             this.toolStripMenuItem_EditData.Click += new System.EventHandler(this.toolStripMenuItem_EditData_Click);
-            // 
-            // labelTemplateFocus
-            // 
-            this.labelTemplateFocus.AutoSize = true;
-            this.labelTemplateFocus.ForeColor = System.Drawing.Color.Red;
-            this.labelTemplateFocus.Location = new System.Drawing.Point(516, 11);
-            this.labelTemplateFocus.Name = "labelTemplateFocus";
-            this.labelTemplateFocus.Size = new System.Drawing.Size(83, 26);
-            this.labelTemplateFocus.TabIndex = 20;
-            this.labelTemplateFocus.Text = "Template Focus\r\nOFF\r\n";
-            this.labelTemplateFocus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.labelTemplateFocus.Click += new System.EventHandler(this.labelTemplateFocus_Click);
             // 
             // ArchiveEditor
             // 
@@ -673,5 +693,7 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_EditHeader;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_EditData;
         private System.Windows.Forms.Label labelTemplateFocus;
+        private System.Windows.Forms.ToolStripMenuItem importMultipleAssetsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_AddMulti;
     }
 }

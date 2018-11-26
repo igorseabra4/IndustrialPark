@@ -45,19 +45,6 @@ namespace IndustrialPark
         {
             OK = true;
 
-            if (comboBoxGame.SelectedIndex == 0)
-                game = Game.Scooby;
-            else if (comboBoxGame.SelectedIndex == 1)
-                game = Game.BFBB;
-            else if (comboBoxGame.SelectedIndex == 2)
-                game = Game.Incredibles;
-            if (comboBoxPlatform.SelectedIndex == 0)
-                platform = Platform.GameCube;
-            else if (comboBoxPlatform.SelectedIndex == 1)
-                platform = Platform.Xbox;
-            else if (comboBoxPlatform.SelectedIndex == 2)
-                platform = Platform.PS2;
-
             Section_HIPA HIPA = new Section_HIPA();
             Section_PACK PACK = new Section_PACK();
             Section_DICT DICT = new Section_DICT
@@ -148,6 +135,20 @@ namespace IndustrialPark
 
         private void comboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (comboBoxGame.SelectedIndex == 0)
+                game = Game.Scooby;
+            else if (comboBoxGame.SelectedIndex == 1)
+                game = Game.BFBB;
+            else if (comboBoxGame.SelectedIndex == 2)
+                game = Game.Incredibles;
+
+            if (comboBoxPlatform.SelectedIndex == 0)
+                platform = Platform.GameCube;
+            else if (comboBoxPlatform.SelectedIndex == 1)
+                platform = Platform.Xbox;
+            else if (comboBoxPlatform.SelectedIndex == 2)
+                platform = Platform.PS2;
+
             buttonOK.Enabled = comboBoxGame.SelectedIndex != -1 && comboBoxPlatform.SelectedIndex != -1;
         }
 

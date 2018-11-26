@@ -20,6 +20,8 @@ namespace IndustrialPark
 
             foreach (AssetTemplate template in Enum.GetValues(typeof(AssetTemplate)))
                 toolStripComboBoxAssetTemplate.Items.Add(template);
+            toolStripComboBoxAssetTemplate.Items.RemoveAt(0);
+            toolStripComboBoxAssetTemplate.Items.RemoveAt(1);
 
             uIToolStripMenuItem_Click(null, null);
             uIFTToolStripMenuItem_Click(null, null);
@@ -29,9 +31,15 @@ namespace IndustrialPark
 
         private string pathToSettings => Application.StartupPath + "/ip_settings.json";
         private string currentProjectPath;
+        public string userTemplatesFolder => Application.StartupPath + "\\Resources\\UserTemplates\\";
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            if (!Directory.Exists(userTemplatesFolder))
+                Directory.CreateDirectory(userTemplatesFolder);
+
+            UpdateUserTemplateComboBox();
+
             if (File.Exists(pathToSettings))
             {
                 IPSettings settings = JsonConvert.DeserializeObject<IPSettings>(File.ReadAllText(pathToSettings));
@@ -942,7 +950,41 @@ namespace IndustrialPark
             {
                 ArchiveEditorFunctions.CurrentAssetTemplate = (AssetTemplate)toolStripComboBoxAssetTemplate.SelectedItem;
                 toolStripStatusLabelTemplate.Text = "Template: " + ArchiveEditorFunctions.CurrentAssetTemplate.ToString();
+                toolStripComboBoxUserTemplate.SelectedItem = null;
             }
+        }
+
+        private void userTemplateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdateUserTemplateComboBox();
+        }
+
+        public void UpdateUserTemplateComboBox()
+        {
+            toolStripComboBoxUserTemplate.Items.Clear();
+
+            foreach (string s in Directory.GetFiles(userTemplatesFolder))
+            {
+                toolStripComboBoxUserTemplate.Items.Add(Path.GetFileName(s));
+
+                if (toolStripComboBoxUserTemplate.Size.Width < 8 * Path.GetFileName(s).Length)
+                    toolStripComboBoxUserTemplate.Size = new System.Drawing.Size(8 * Path.GetFileName(s).Length, toolStripComboBoxUserTemplate.Size.Height);
+            }
+        }
+
+        private void toolStripComboBoxUserTemplate_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (toolStripComboBoxUserTemplate.SelectedIndex != -1)
+            {
+                ArchiveEditorFunctions.CurrentAssetTemplate = AssetTemplate.UserTemplate;
+                ArchiveEditorFunctions.CurrentUserTemplate = toolStripComboBoxUserTemplate.SelectedItem.ToString();
+                toolStripStatusLabelTemplate.Text = $"Template: {toolStripComboBoxUserTemplate.SelectedItem.ToString()} (User)";
+            }
+        }
+
+        private void manageUserTemplatesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.UserTemplateManager.Show();
         }
     }
 }

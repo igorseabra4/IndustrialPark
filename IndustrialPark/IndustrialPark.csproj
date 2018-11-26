@@ -75,6 +75,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MainForm\EditBSPName.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm\EditBSPName.designer.cs">
+      <DependentUpon>EditBSPName.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MainForm\UserTemplateManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm\UserTemplateManager.Designer.cs">
+      <DependentUpon>UserTemplateManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ArchiveEditor\AssetEditor\AddMultipleAssetDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\AssetEditor\AddMultipleAssetDialog.Designer.cs">
+      <DependentUpon>AddMultipleAssetDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="ArchiveEditor\AssetTemplates\AssetTemplate.cs" />
     <Compile Include="ArchiveEditor\ChoosePlatform.cs">
       <SubType>Form</SubType>
@@ -312,6 +330,15 @@
     <Compile Include="MainForm\ViewConfig.designer.cs">
       <DependentUpon>ViewConfig.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="MainForm\EditBSPName.resx">
+      <DependentUpon>EditBSPName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm\UserTemplateManager.resx">
+      <DependentUpon>UserTemplateManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveEditor\AssetEditor\AddMultipleAssetDialog.resx">
+      <DependentUpon>AddMultipleAssetDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\ChoosePlatform.resx">
       <DependentUpon>ChoosePlatform.cs</DependentUpon>
     </EmbeddedResource>

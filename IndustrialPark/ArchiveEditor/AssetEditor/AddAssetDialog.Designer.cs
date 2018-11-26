@@ -283,7 +283,7 @@
             this.Controls.Add(this.buttonImportRawData);
             this.Controls.Add(this.labelRawDataSize);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.MinimizeBox = false;
+            this.MaximizeBox = false;
             this.Name = "AddAssetDialog";
             this.ShowIcon = false;
             this.Text = "Asset Header";
