@@ -151,11 +151,11 @@ namespace IndustrialPark
             };
 
             if (string.IsNullOrWhiteSpace(customName))
-                newAsset.ADBG = new Section_ADBG(0, template.ToString().ToUpper() + "_T001", "", 0);
+                newAsset.ADBG = new Section_ADBG(0, template.ToString().ToUpper() + "_01", "", 0);
             else
-                newAsset.ADBG = new Section_ADBG(0, customName + "_T001", "", 0);
+                newAsset.ADBG = new Section_ADBG(0, customName + "_01", "", 0);
 
-            Asset asset = GetFromAssetID(AddAssetWithUniqueID(layerIndex, newAsset, "_T", true));
+            Asset asset = GetFromAssetID(AddAssetWithUniqueID(layerIndex, newAsset, "_", true));
 
             success = true;
 
@@ -245,37 +245,37 @@ namespace IndustrialPark
                 case AssetTemplate.Fodder:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("robot_0a_fodder_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.robot_0a_fodder_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, asset.AHDR.ADBG.assetName + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
                     break;
                 case AssetTemplate.Hammer:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("ham_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.ham_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, asset.AHDR.ADBG.assetName + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
                     break;
                 case AssetTemplate.TarTar:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("robot_tar_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.robot_tar_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, asset.AHDR.ADBG.assetName + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
                     break;
                 case AssetTemplate.ChompBot:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("robot_0a_chomper_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.robot_0a_chomper_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, asset.AHDR.ADBG.assetName + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
                     break;
                 case AssetTemplate.GLove:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("g_love_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.g_love_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, asset.AHDR.ADBG.assetName + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
                     break;
                 case AssetTemplate.Chuck:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("robot_chuck_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.robot_chuck_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, asset.AHDR.ADBG.assetName + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
                     break;
                 case AssetTemplate.Chuck_Trigger:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("robot_chuck_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.robot_chuck_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, asset.AHDR.ADBG.assetName + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
                     ((AssetVIL)asset).EventsBFBB = new AssetEventBFBB[] {
                         new AssetEventBFBB
                         {
@@ -285,7 +285,7 @@ namespace IndustrialPark
                             EventSendID = EventTypeBFBB.DetectPlayerOff
                         }
                     };
-                    AssetTRIG chuckTrigger = (AssetTRIG)GetFromAssetID(PlaceTemplate(position, layerIndex, out success, ref assetIDs, asset.AHDR.ADBG.assetName + "_TRIG", AssetTemplate.SphereTrigger));
+                    AssetTRIG chuckTrigger = (AssetTRIG)GetFromAssetID(PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_TRIG", AssetTemplate.SphereTrigger));
                     chuckTrigger.Position1X_Radius = 15f;
                     chuckTrigger.EventsBFBB = new AssetEventBFBB[] {
                         new AssetEventBFBB
@@ -308,12 +308,12 @@ namespace IndustrialPark
                 case AssetTemplate.Monsoon:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("robot_4a_monsoon_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.robot_4a_monsoon_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, asset.AHDR.ADBG.assetName + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
                     break;
                 case AssetTemplate.Monsoon_Trigger:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("robot_4a_monsoon_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.robot_4a_monsoon_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, asset.AHDR.ADBG.assetName + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
                     ((AssetVIL)asset).EventsBFBB = new AssetEventBFBB[] {
                         new AssetEventBFBB
                         {
@@ -324,7 +324,7 @@ namespace IndustrialPark
                         }
                     };
 
-                    AssetTRIG monsoonTrigger = (AssetTRIG)GetFromAssetID(PlaceTemplate(position, layerIndex, out success, ref assetIDs, asset.AHDR.ADBG.assetName + "_TRIG", AssetTemplate.SphereTrigger));
+                    AssetTRIG monsoonTrigger = (AssetTRIG)GetFromAssetID(PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_TRIG", AssetTemplate.SphereTrigger));
                     monsoonTrigger.Position1X_Radius = 15f;
                     monsoonTrigger.EventsBFBB = new AssetEventBFBB[] {
                         new AssetEventBFBB
@@ -347,35 +347,35 @@ namespace IndustrialPark
                 case AssetTemplate.Sleepytime_Moving:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("robot_sleepy-time_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.robot_sleepytime_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, asset.AHDR.ADBG.assetName + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
                     break;
                 case AssetTemplate.Sleepytime:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("robot_sleepy-time_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.robot_sleepytime_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, asset.AHDR.ADBG.assetName + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
                     ((AssetMVPT)GetFromAssetID(((AssetVIL)asset).AssetID_MVPT)).MovementRadius = -1;
                     break;
                 case AssetTemplate.BombBot:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("robot_0a_bomb_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.robot_0a_bomb_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, asset.AHDR.ADBG.assetName + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
                     break;
                 case AssetTemplate.Tubelet:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("tubelet_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.tubelet_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, asset.AHDR.ADBG.assetName + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
                     ((AssetVIL)asset).EventsBFBB = new AssetEventBFBB[] {
                         new AssetEventBFBB
                         {
                             Arguments_Float = new float[6],
-                            TargetAssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, asset.AHDR.ADBG.assetName + "_SLAVEA", AssetTemplate.TubeletSlave),
+                            TargetAssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_SLAVEA", AssetTemplate.TubeletSlave),
                             EventReceiveID = EventTypeBFBB.ScenePrepare,
                             EventSendID = EventTypeBFBB.Connect_IOwnYou
                         },
                         new AssetEventBFBB
                         {
                             Arguments_Float = new float[6],
-                            TargetAssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, asset.AHDR.ADBG.assetName + "_SLAVEB", AssetTemplate.TubeletSlave),
+                            TargetAssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_SLAVEB", AssetTemplate.TubeletSlave),
                             EventReceiveID = EventTypeBFBB.ScenePrepare,
                             EventSendID = EventTypeBFBB.Connect_IOwnYou
                         }
@@ -388,17 +388,17 @@ namespace IndustrialPark
                 case AssetTemplate.BzztBot:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("robot_0a_bzzt_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.robot_0a_bzzt_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, asset.AHDR.ADBG.assetName + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
                     break;
                 case AssetTemplate.Slick:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("robot_9a_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.robot_9a_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, asset.AHDR.ADBG.assetName + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
                     break;
                 case AssetTemplate.Slick_Trigger:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("robot_9a_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.robot_9a_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, asset.AHDR.ADBG.assetName + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
                     ((AssetVIL)asset).EventsBFBB = new AssetEventBFBB[] {
                         new AssetEventBFBB
                         {
@@ -409,7 +409,7 @@ namespace IndustrialPark
                         }
                     };
 
-                    AssetTRIG slickTrigger = (AssetTRIG)GetFromAssetID(PlaceTemplate(position, layerIndex, out success, ref assetIDs, asset.AHDR.ADBG.assetName + "_TRIG", AssetTemplate.SphereTrigger));
+                    AssetTRIG slickTrigger = (AssetTRIG)GetFromAssetID(PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_TRIG", AssetTemplate.SphereTrigger));
                     slickTrigger.Position1X_Radius = 15f;
                     slickTrigger.EventsBFBB = new AssetEventBFBB[] {
                         new AssetEventBFBB
@@ -432,12 +432,12 @@ namespace IndustrialPark
                 case AssetTemplate.Jellyfish_Pink:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("jellyfish_pink_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.jellyfish_pink_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, asset.AHDR.ADBG.assetName + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
                     break;
                 case AssetTemplate.Jellyfish_Blue:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("jellyfish_blue_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.jellyfish_blue_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, asset.AHDR.ADBG.assetName + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
                     break;
                 case AssetTemplate.Duplicatotron:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("duplicatotron1000_bind.MINF");
@@ -478,7 +478,7 @@ namespace IndustrialPark
                     ((AssetBUTN)asset).ThrowFruitOnPressurePlate = true;
                     ((AssetBUTN)asset).BubbleBowlOnPressurePlate = true;
 
-                    PlaceTemplate(position, layerIndex, out success, ref assetIDs, asset.AHDR.ADBG.assetName + "_BASE", AssetTemplate.PressurePlateBaseOnly);
+                    PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_BASE", AssetTemplate.PressurePlateBaseOnly);
                     break;
                 case AssetTemplate.PressurePlateBaseOnly:
                     ((AssetSIMP)asset).ModelAssetID = BKDRHash("plate_pressure_base");

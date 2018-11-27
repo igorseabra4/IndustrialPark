@@ -14,6 +14,7 @@ namespace IndustrialPark
             this.asset = asset;
             this.archive = archive;
 
+            labelAssetName.Text = $"[{asset.AHDR.assetType.ToString()}] {asset.ToString()}";
             UpdateListbox();
         }
 
@@ -45,7 +46,6 @@ namespace IndustrialPark
                 listBoxFlyEntries.Items.Add(entry);
                 maxFrame = entry.FrameNumer > maxFrame ? entry.FrameNumer : maxFrame;
             }
-            labelAssetName.Text = $"[{asset.AHDR.assetType.ToString()}] {asset.ToString()}";
         }
 
         private void UpdateAssetEntries()

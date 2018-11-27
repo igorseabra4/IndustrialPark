@@ -2,6 +2,7 @@
 using RenderWareFile;
 using SharpDX;
 using System;
+using System.Collections.Generic;
 
 namespace IndustrialPark
 {
@@ -41,6 +42,31 @@ namespace IndustrialPark
         public bool HasRenderWareModelFile()
         {
             return model != null;
+        }
+
+        public string[] Textures
+        {
+            get
+            {
+                List<string> textures = new List<string>();
+                foreach (string s in model.MaterialList)
+                    if (!textures.Contains(s))
+                        textures.Add(s);
+                return textures.ToArray();
+            }
+        }
+
+        public override bool HasReference(uint assetID)
+        {
+            foreach (string s in Textures)
+            {
+                if (Functions.BKDRHash(s + ".RW3") == assetID)
+                    return true;
+                if (Functions.BKDRHash(s) == assetID)
+                    return true;
+            }
+
+            return base.HasReference(assetID);
         }
     }
 }

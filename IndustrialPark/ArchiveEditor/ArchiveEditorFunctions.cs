@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using HipHopFile;
-using RenderWareFile;
-using RenderWareFile.Sections;
 using SharpDX;
 using static HipHopFile.Functions;
 
@@ -637,7 +635,7 @@ namespace IndustrialPark
                 if (AHDR.ADBG.assetName.Contains(stringToAdd))
                     AHDR.ADBG.assetName = AHDR.ADBG.assetName.Substring(0, AHDR.ADBG.assetName.LastIndexOf(stringToAdd));
 
-                AHDR.ADBG.assetName += stringToAdd + numCopies.ToString("D3");
+                AHDR.ADBG.assetName += stringToAdd + numCopies.ToString("D2");
                 AHDR.assetID = BKDRHash(AHDR.ADBG.assetName);
             }
 

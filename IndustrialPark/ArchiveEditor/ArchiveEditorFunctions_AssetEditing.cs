@@ -49,6 +49,9 @@ namespace IndustrialPark
                 case AssetType.FLY:
                     internalEditors.Add(new InternalFlyEditor((AssetFLY)asset, this));
                     break;
+                case AssetType.GRUP:
+                    internalEditors.Add(new InternalGrupEditor((AssetGRUP)asset, this));
+                    break;
                 case AssetType.TEXT:
                     internalEditors.Add(new InternalTextEditor((AssetTEXT)asset, this));
                     break;

@@ -235,6 +235,7 @@ namespace IndustrialPark
                 if (m.texture != null)
                 {
                     string textureName = m.texture.diffuseTextureName.stringString;
+                    this.MaterialList.Add(textureName);
                     MaterialList.Add(textureName);
                 }
                 else

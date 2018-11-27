@@ -77,6 +77,12 @@
   <ItemGroup>
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetTemplates.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetEditing.cs" />
+    <Compile Include="ArchiveEditor\AssetEditor\InternalGrupEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\AssetEditor\InternalGrupEditor.Designer.cs">
+      <DependentUpon>InternalGrupEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="ArchiveEditor\AssetEditor\InternalFlyEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -369,6 +375,9 @@
     <Compile Include="MainForm\ViewConfig.designer.cs">
       <DependentUpon>ViewConfig.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="ArchiveEditor\AssetEditor\InternalGrupEditor.resx">
+      <DependentUpon>InternalGrupEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\AssetEditor\InternalFlyEditor.resx">
       <DependentUpon>InternalFlyEditor.cs</DependentUpon>
     </EmbeddedResource>
