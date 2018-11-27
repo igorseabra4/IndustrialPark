@@ -22,6 +22,13 @@ namespace IndustrialPark
         {
             return $"[{Program.MainForm.GetAssetNameFromID(SoundAssetID)}] - [{JawData.Count}]";
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj != null && obj is EntryJAW entryJAW)
+                return SoundAssetID == entryJAW.SoundAssetID;
+            return false;
+        }
     }
 
     public class AssetJAW : Asset
@@ -91,6 +98,15 @@ namespace IndustrialPark
 
                 Data = newData.ToArray();
             }
+        }
+
+        public void Merge(AssetJAW assetJAW)
+        {
+            List<EntryJAW> entriesJAW = JAW_Entries.ToList();
+            foreach (EntryJAW entryJAW in assetJAW.JAW_Entries)
+                if (!entriesJAW.Contains(entryJAW))
+                    entriesJAW.Add(entryJAW);
+            JAW_Entries = entriesJAW.ToArray();
         }
     }
 }

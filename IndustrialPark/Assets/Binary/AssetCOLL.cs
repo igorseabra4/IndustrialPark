@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using HipHopFile;
 using static IndustrialPark.ConverterFunctions;
 
@@ -24,6 +25,13 @@ namespace IndustrialPark
             if (Collision_ModelAssetID != 0)
                 return $"[{Program.MainForm.GetAssetNameFromID(ModelAssetID)}] - [{Program.MainForm.GetAssetNameFromID(Collision_ModelAssetID)}]";
             return $"[{Program.MainForm.GetAssetNameFromID(ModelAssetID)}] - [{Program.MainForm.GetAssetNameFromID(CameraCollision_ModelAssetID)}]";
+        }
+        
+        public override bool Equals(object obj)
+        {
+            if (obj != null && obj is EntryCOLL entryCOLL)
+                return ModelAssetID == entryCOLL.ModelAssetID;
+            return false;
         }
     }
 
@@ -82,6 +90,15 @@ namespace IndustrialPark
                 
                 Data = newData.ToArray();
             }
+        }
+
+        public void Merge(AssetCOLL assetCOLL)
+        {
+            List<EntryCOLL> entriesCOLL = COLL_Entries.ToList();
+            foreach (EntryCOLL entryCOLL in assetCOLL.COLL_Entries)
+                if (!entriesCOLL.Contains(entryCOLL))
+                    entriesCOLL.Add(entryCOLL);
+            COLL_Entries = entriesCOLL.ToArray();
         }
     }
 }

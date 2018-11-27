@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using HipHopFile;
 using static IndustrialPark.ConverterFunctions;
 
@@ -27,6 +28,13 @@ namespace IndustrialPark
         public override string ToString()
         {
             return $"{Program.MainForm.GetAssetNameFromID(ModelAssetID)} - {MaybeMeshIndex}";
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj != null && obj is EntryPIPT entryPIPT)
+                return ModelAssetID == entryPIPT.ModelAssetID && MaybeMeshIndex == entryPIPT.MaybeMeshIndex;
+            return false;
         }
     }
 
@@ -86,6 +94,15 @@ namespace IndustrialPark
                 
                 Data = newData.ToArray();
             }
+        }
+
+        public void Merge(AssetPIPT assetPIPT)
+        {
+            List<EntryPIPT> entriesPIPT = PIPT_Entries.ToList();
+            foreach (EntryPIPT entryPIPT in assetPIPT.PIPT_Entries)
+                if (!entriesPIPT.Contains(entryPIPT))
+                    entriesPIPT.Add(entryPIPT);
+            PIPT_Entries = entriesPIPT.ToArray();
         }
     }
 }

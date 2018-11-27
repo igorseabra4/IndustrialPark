@@ -35,9 +35,6 @@ namespace IndustrialPark
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            if (!Directory.Exists(userTemplatesFolder))
-                Directory.CreateDirectory(userTemplatesFolder);
-
             UpdateUserTemplateComboBox();
 
             if (File.Exists(pathToSettings))

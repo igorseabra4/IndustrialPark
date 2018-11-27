@@ -30,6 +30,8 @@
         Sleepytime,
         Sleepytime_Moving,
         BombBot,
+        Tubelet,
+        TubeletSlave,
         BzztBot,
         Slick,
         Slick_Trigger,

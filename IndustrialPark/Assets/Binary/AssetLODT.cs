@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using HipHopFile;
 using static IndustrialPark.ConverterFunctions;
 
@@ -28,6 +29,13 @@ namespace IndustrialPark
         public override string ToString()
         {
             return $"[{Program.MainForm.GetAssetNameFromID(ModelAssetID)}] - {MaxDistance}";
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj != null && obj is EntryLODT entryLODT)
+                return ModelAssetID == entryLODT.ModelAssetID;
+            return false;
         }
     }
 
@@ -98,6 +106,15 @@ namespace IndustrialPark
                 
                 Data = newData.ToArray();
             }
+        }
+
+        public void Merge(AssetLODT assetLODT)
+        {
+            List<EntryLODT> entriesLODT = LODT_Entries.ToList();
+            foreach (EntryLODT entryLODT in assetLODT.LODT_Entries)
+                if (!entriesLODT.Contains(entryLODT))
+                    entriesLODT.Add(entryLODT);
+            LODT_Entries = entriesLODT.ToArray();
         }
     }
 }

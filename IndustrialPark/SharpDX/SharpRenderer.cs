@@ -315,6 +315,21 @@ namespace IndustrialPark
             Plane.Draw(device);
         }
 
+        private bool playingFly = false;
+        private InternalFlyEditor flyToPlay;
+
+        public void PlayFly(InternalFlyEditor internalFlyEditor)
+        {
+            playingFly = true;
+            flyToPlay = internalFlyEditor;
+        }
+
+        public void StopFly()
+        {
+            playingFly = false;
+            flyToPlay = null;
+        }
+
         public Matrix viewProjection;
         public Color4 backgroundColor;
         public BoundingFrustum frustum;
@@ -365,6 +380,9 @@ namespace IndustrialPark
                     }
                     else
                     {
+                        if (playingFly)
+                            flyToPlay.Play();
+
                         Program.MainForm.SetToolStripStatusLabel(Camera.GetInformation() + " FPS: " + $"{sharpFPS.FPS:0.0000}");
 
                         Matrix view = Camera.GetViewMatrix();

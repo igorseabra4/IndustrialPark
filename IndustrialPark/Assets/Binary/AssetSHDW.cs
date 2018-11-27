@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using HipHopFile;
 using static IndustrialPark.ConverterFunctions;
 
@@ -21,6 +22,13 @@ namespace IndustrialPark
         public override string ToString()
         {
             return $"[{Program.MainForm.GetAssetNameFromID(ModelAssetID)}] - [{Program.MainForm.GetAssetNameFromID(ShadowModelAssetID)}]";
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj != null && obj is EntrySHDW entrySHDW)
+                return ModelAssetID == entrySHDW.ModelAssetID;
+            return false;
         }
     }
 
@@ -77,6 +85,15 @@ namespace IndustrialPark
                 
                 Data = newData.ToArray();
             }
+        }
+
+        public void Merge(AssetSHDW assetSHDW)
+        {
+            List<EntrySHDW> entriesSHDW = SHDW_Entries.ToList();
+            foreach (EntrySHDW entrySHDW in assetSHDW.SHDW_Entries)
+                if (!entriesSHDW.Contains(entrySHDW))
+                    entriesSHDW.Add(entrySHDW);
+            SHDW_Entries = entriesSHDW.ToArray();
         }
     }
 }

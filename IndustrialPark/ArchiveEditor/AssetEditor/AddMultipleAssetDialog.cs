@@ -88,24 +88,10 @@ namespace IndustrialPark
 
                     Section_AHDR AHDR = new Section_AHDR(Functions.BKDRHash(a.assetNames[i]), a.assetType, a.AHDRflags, ADBG, a.assetData[i])
                     {
-                        fileSize = a.assetData[i].Length,
-                        plusValue = 0
+                        fileSize = a.assetData[i].Length
                     };
 
-                    int alignment = 16;
-                    if (Functions.currentGame == Game.BFBB)
-                    {
-                        if (AHDR.assetType == AssetType.CSN |
-                            AHDR.assetType == AssetType.SND |
-                            AHDR.assetType == AssetType.SNDS)
-                            alignment = 32;
-                        else if (AHDR.assetType == AssetType.CRDT)
-                            alignment = 4;
-                    }
-
-                    int value = AHDR.fileSize % alignment;
-                    if (value != 0)
-                        AHDR.plusValue = alignment - value;
+                    AHDRs.Add(AHDR);
                 }
 
                 success = true;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 
 namespace IndustrialPark
@@ -22,6 +23,10 @@ namespace IndustrialPark
             Application.SetCompatibleTextRenderingDefault(false);
 
             MainForm = new MainForm();
+
+            if (!Directory.Exists(MainForm.userTemplatesFolder))
+                Directory.CreateDirectory(MainForm.userTemplatesFolder);
+
             ViewConfig = new ViewConfig();
             AboutBox = new AboutBox();
             UserTemplateManager = new UserTemplateManager();

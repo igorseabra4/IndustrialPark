@@ -140,6 +140,11 @@ namespace IndustrialPark
             return Up;
         }
 
+        public Vector3 GetRight()
+        {
+            return Right;
+        }
+
         public Matrix GetViewMatrix()
         {
             return Matrix.LookAtRH(Position, Position + Forward, Up);
@@ -167,6 +172,19 @@ namespace IndustrialPark
             Forward = new Vector3(cam.NormalizedForwardX, cam.NormalizedForwardY, cam.NormalizedForwardZ);
             Up = new Vector3(cam.NormalizedUpX, cam.NormalizedUpY, cam.NormalizedUpZ);
             Right = Vector3.Normalize(Vector3.Cross(Forward, Up));
+            _pitch = MathUtil.RadiansToDegrees((float)Math.Asin(Forward.Y));
+            _yaw = 270f - MathUtil.RadiansToDegrees((float)Math.Atan2(Forward.Z, Forward.X));
+            _yaw = _yaw % 360f;
+
+            RaiseCameraChangedEvent();
+        }
+
+        public void SetPositionFlyEntry(EntryFLY cam)
+        {
+            Position = cam.CameraPosition;
+            Forward = -cam.CameraNormalizedBackward;
+            Up = cam.CameraNormalizedUp;
+            Right = -cam.CameraNormalizedLeft;
             _pitch = MathUtil.RadiansToDegrees((float)Math.Asin(Forward.Y));
             _yaw = 270f - MathUtil.RadiansToDegrees((float)Math.Atan2(Forward.Z, Forward.X));
             _yaw = _yaw % 360f;
