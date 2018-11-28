@@ -55,6 +55,9 @@ namespace IndustrialPark
                 case AssetType.TEXT:
                     internalEditors.Add(new InternalTextEditor((AssetTEXT)asset, this));
                     break;
+                case AssetType.SHRP:
+                    internalEditors.Add(new InternalShrapnelEditor((AssetSHRP)asset, this));
+                    break;
                 case AssetType.SND:
                 case AssetType.SNDS:
                     internalEditors.Add(new InternalSoundEditor(asset, this));

@@ -459,6 +459,12 @@ namespace IndustrialPark
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
+                case AssetType.SHRP:
+                    {
+                        AssetSHRP newAsset = new AssetSHRP(AHDR);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
                 case AssetType.SNDI:
                     {
                         if (currentPlatform == Platform.GameCube && (currentGame == Game.BFBB || currentGame == Game.Scooby))
@@ -481,6 +487,12 @@ namespace IndustrialPark
                             Asset newAsset = new Asset(AHDR);
                             assetDictionary.Add(AHDR.assetID, newAsset);
                         }
+                    }
+                    break;
+                case AssetType.SURF:
+                    {
+                        AssetSURF newAsset = new AssetSURF(AHDR);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
                 case AssetType.TEXT:
@@ -542,7 +554,6 @@ namespace IndustrialPark
                 case AssetType.SPLN:
                 case AssetType.SSET:
                 case AssetType.SUBT:
-                case AssetType.SURF:
                 case AssetType.TPIK:
                 case AssetType.TRWT:
                 case AssetType.UIM:
@@ -563,7 +574,6 @@ namespace IndustrialPark
                 case AssetType.NPCS:
                 case AssetType.ONEL:
                 case AssetType.RAW:
-                case AssetType.SHRP:
                 case AssetType.SND:
                 case AssetType.SNDS:
                 case AssetType.SPLP:

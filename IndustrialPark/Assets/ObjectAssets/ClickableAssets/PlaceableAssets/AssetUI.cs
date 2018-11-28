@@ -10,9 +10,9 @@ namespace IndustrialPark
     {
         public static bool dontRender = false;
 
-        protected override bool DontRender { get => dontRender; }
+        protected override bool DontRender => dontRender;
 
-        protected override int EventStartOffset { get => 0x80 + Offset; }
+        protected override int EventStartOffset => 0x80 + Offset;
 
         public AssetUI(Section_AHDR AHDR) : base(AHDR)
         {

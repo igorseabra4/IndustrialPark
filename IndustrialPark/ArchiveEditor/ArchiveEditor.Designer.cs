@@ -45,6 +45,8 @@
             this.importTXDArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabelCurrentFilename = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabelSelectionCount = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.buttonArrowDown = new System.Windows.Forms.Button();
             this.buttonArrowUp = new System.Windows.Forms.Button();
@@ -81,6 +83,7 @@
             this.toolStripMenuItem_Export = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_EditHeader = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_EditData = new System.Windows.Forms.ToolStripMenuItem();
+            this.hideButtonsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -107,6 +110,7 @@
             this.saveToolStripMenuItem,
             this.saveAsToolStripMenuItem,
             this.toolStripSeparator1,
+            this.hideButtonsToolStripMenuItem,
             this.closeToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -209,7 +213,9 @@
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabelCurrentFilename});
+            this.toolStripStatusLabelCurrentFilename,
+            this.toolStripStatusLabel1,
+            this.toolStripStatusLabelSelectionCount});
             this.statusStrip1.Location = new System.Drawing.Point(0, 419);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(624, 22);
@@ -220,6 +226,17 @@
             // 
             this.toolStripStatusLabelCurrentFilename.Name = "toolStripStatusLabelCurrentFilename";
             this.toolStripStatusLabelCurrentFilename.Size = new System.Drawing.Size(0, 17);
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(10, 17);
+            this.toolStripStatusLabel1.Text = "|";
+            // 
+            // toolStripStatusLabelSelectionCount
+            // 
+            this.toolStripStatusLabelSelectionCount.Name = "toolStripStatusLabelSelectionCount";
+            this.toolStripStatusLabelSelectionCount.Size = new System.Drawing.Size(0, 17);
             // 
             // groupBox1
             // 
@@ -612,6 +629,13 @@
             this.toolStripMenuItem_EditData.Text = "Edit Data (Ctrl + G)";
             this.toolStripMenuItem_EditData.Click += new System.EventHandler(this.toolStripMenuItem_EditData_Click);
             // 
+            // hideButtonsToolStripMenuItem
+            // 
+            this.hideButtonsToolStripMenuItem.Name = "hideButtonsToolStripMenuItem";
+            this.hideButtonsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.hideButtonsToolStripMenuItem.Text = "Hide Buttons";
+            this.hideButtonsToolStripMenuItem.Click += new System.EventHandler(this.hideButtonsToolStripMenuItem_Click);
+            // 
             // ArchiveEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -695,5 +719,8 @@
         private System.Windows.Forms.Label labelTemplateFocus;
         private System.Windows.Forms.ToolStripMenuItem importMultipleAssetsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_AddMulti;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelSelectionCount;
+        private System.Windows.Forms.ToolStripMenuItem hideButtonsToolStripMenuItem;
     }
 }

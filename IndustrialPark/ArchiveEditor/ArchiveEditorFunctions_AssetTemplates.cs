@@ -136,6 +136,12 @@ namespace IndustrialPark
                 case AssetTemplate.SphereTrigger:
                     newAssetType = AssetType.TRIG;
                     break;
+                case AssetTemplate.DuplicatotronSettings:
+                    newAssetType = AssetType.DYNA;
+                    break;
+                case AssetTemplate.EmptyGroup:
+                    newAssetType = AssetType.GRUP;
+                    break;
                 default:
                     if (template != AssetTemplate.None)
                         MessageBox.Show("Unsupported asset template");
@@ -149,6 +155,9 @@ namespace IndustrialPark
                 flags = AHDRFlagsFromAssetType(newAssetType),
                 data = GetTemplate(newAssetType)
             };
+
+            if (template == AssetTemplate.DuplicatotronSettings)
+                newAsset.data = new byte[0x10];
 
             if (string.IsNullOrWhiteSpace(customName))
                 newAsset.ADBG = new Section_ADBG(0, template.ToString().ToUpper() + "_01", "", 0);
@@ -442,6 +451,32 @@ namespace IndustrialPark
                 case AssetTemplate.Duplicatotron:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("duplicatotron1000_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.duplicatotron1000_bind;
+                    ((AssetVIL)asset).AssetID_DYNA_NPCSettings = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_SETTINGS", AssetTemplate.DuplicatotronSettings);
+                    ((AssetVIL)asset).EventsBFBB = new AssetEventBFBB[] {
+                        new AssetEventBFBB
+                        {
+                            Arguments_Float = new float[6],
+                            TargetAssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_GROUP", AssetTemplate.EmptyGroup),
+                            EventReceiveID = EventTypeBFBB.ScenePrepare,
+                            EventSendID = EventTypeBFBB.Connect_IOwnYou
+                        }
+                    };
+                    break;
+                case AssetTemplate.DuplicatotronSettings:
+                    ((AssetDYNA)asset).Flags = 0x1D;
+                    ((AssetDYNA)asset).Version = 2;
+                    ((AssetDYNA)asset).Type = DynaType.game_object__NPCSettings;
+                    ((AssetDYNA)asset).DynaBase = new DynaNPCSettings()
+                    {
+                        Flags1 = 1,
+                        Flags2 = 1,
+                        Flags3 = 1,
+                        Flags5 = 1,
+                        Flags9 = 1,
+                        Flags10 = 1,
+                        DuploSpawnRate = 1f,
+                        DuploEnemyLimit = -1
+                    };
                     break;
                 case AssetTemplate.Button:
                     ((AssetBUTN)asset).RotationX = -90f;

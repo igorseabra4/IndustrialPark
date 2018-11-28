@@ -10,7 +10,7 @@ namespace IndustrialPark
     {
         public AssetFOG(Section_AHDR AHDR) : base(AHDR) { }
 
-        protected override int EventStartOffset { get => 0x24; }
+        protected override int EventStartOffset => 0x24;
 
         [Category("Fog"), Editor(typeof(MyColorEditor), typeof(UITypeEditor))]
         public MyColor Color1

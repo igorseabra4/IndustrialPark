@@ -77,6 +77,12 @@
   <ItemGroup>
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetTemplates.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetEditing.cs" />
+    <Compile Include="ArchiveEditor\AssetEditor\InternalShrapnelEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\AssetEditor\InternalShrapnelEditor.Designer.cs">
+      <DependentUpon>InternalShrapnelEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="ArchiveEditor\AssetEditor\InternalGrupEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -89,6 +95,7 @@
     <Compile Include="ArchiveEditor\AssetEditor\InternalFlyEditor.designer.cs">
       <DependentUpon>InternalFlyEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Assets\Binary\AssetSHRP.cs" />
     <Compile Include="Assets\Binary\AssetCRDT.cs" />
     <Compile Include="Assets\Binary\AssetFLY.cs" />
     <Compile Include="Assets\Binary\AssetLKIT.cs" />
@@ -96,6 +103,7 @@
     <Compile Include="Assets\ObjectAssets\AssetPARE.cs" />
     <Compile Include="Assets\ObjectAssets\AssetPARP.cs" />
     <Compile Include="Assets\ObjectAssets\AssetPARS.cs" />
+    <Compile Include="Assets\ObjectAssets\AssetSURF.cs" />
     <Compile Include="MainForm\EditName.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -375,6 +383,9 @@
     <Compile Include="MainForm\ViewConfig.designer.cs">
       <DependentUpon>ViewConfig.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="ArchiveEditor\AssetEditor\InternalShrapnelEditor.resx">
+      <DependentUpon>InternalShrapnelEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\AssetEditor\InternalGrupEditor.resx">
       <DependentUpon>InternalGrupEditor.cs</DependentUpon>
     </EmbeddedResource>

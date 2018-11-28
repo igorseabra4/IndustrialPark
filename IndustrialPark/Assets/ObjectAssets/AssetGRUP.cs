@@ -19,10 +19,7 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
-        protected override int EventStartOffset
-        {
-            get => 0x0C + ReadShort(0x08) * 4;
-        }
+        protected override int EventStartOffset => 0x0C + ReadShort(0x08) * 4;
 
         public enum Delegation
         {

@@ -24,10 +24,7 @@ namespace IndustrialPark
     {
         public AssetPARP(Section_AHDR AHDR) : base(AHDR) { }
 
-        protected override int EventStartOffset
-        {
-            get => 0x138;
-        }
+        protected override int EventStartOffset => 0x138;
 
         public override bool HasReference(uint assetID)
         {

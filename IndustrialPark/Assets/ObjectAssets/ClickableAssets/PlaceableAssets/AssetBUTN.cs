@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using System;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -8,9 +7,9 @@ namespace IndustrialPark
     {
         public static bool dontRender = false;
 
-        protected override bool DontRender { get => dontRender; }
+        protected override bool DontRender => dontRender;
 
-        protected override int EventStartOffset { get => 0x9C + Offset; }
+        protected override int EventStartOffset => 0x9C + Offset;
 
         public AssetBUTN(Section_AHDR AHDR) : base(AHDR) { }
 

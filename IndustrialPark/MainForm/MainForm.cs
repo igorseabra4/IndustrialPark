@@ -438,6 +438,8 @@ namespace IndustrialPark
                 ToggleWireFrame();
             else if (e.KeyCode == Keys.G)
                 OpenInternalEditors();
+            else if (e.KeyCode == Keys.Delete)
+                DeleteSelectedAssets();
             else if (e.KeyCode == Keys.U)
                 uIModeToolStripMenuItem_Click(null, null);
 
@@ -722,6 +724,12 @@ namespace IndustrialPark
         {
             foreach (ArchiveEditor ae in archiveEditors)
                 ae.OpenInternalEditors();
+        }
+
+        private void DeleteSelectedAssets()
+        {
+            foreach (ArchiveEditor ae in archiveEditors)
+                ae.DeleteSelectedAssets();
         }
 
         private void addTextureFolderToolStripMenuItem_Click(object sender, EventArgs e)

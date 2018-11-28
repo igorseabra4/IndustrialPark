@@ -76,6 +76,8 @@ namespace IndustrialPark
             set => Flags = (short)(value ? (Flags | (short)Mask(4)) : (Flags & (short)InvMask(4)));
         }
 
+        protected virtual int EventStartOffset => Data.Length - AmountOfEvents * AssetEvent.sizeOfStruct;
+
         [Category("Object Base")]
         public AssetEventBFBB[] EventsBFBB
         {
@@ -107,8 +109,6 @@ namespace IndustrialPark
             }
             set => WriteEvents(value);
         }
-
-        protected virtual int EventStartOffset { get => Data.Length - AmountOfEvents * AssetEvent.sizeOfStruct; }
         
         protected void WriteEvents(AssetEvent[] value)
         {

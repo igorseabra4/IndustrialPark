@@ -7,11 +7,11 @@ namespace IndustrialPark
     {
         public static bool dontRender = false;
 
-        protected override bool DontRender { get => dontRender; }
+        protected override bool DontRender => dontRender;
         
         public AssetPEND(Section_AHDR AHDR) : base(AHDR) { }
 
-        protected override int EventStartOffset { get => 0x84 + Offset; }
+        protected override int EventStartOffset => 0x84 + Offset;
 
         [Category("Pendulum")]
         public byte UnknownByte54

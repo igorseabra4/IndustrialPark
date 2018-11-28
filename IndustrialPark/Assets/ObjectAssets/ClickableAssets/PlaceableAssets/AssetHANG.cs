@@ -7,11 +7,11 @@ namespace IndustrialPark
     {
         public static bool dontRender = false;
 
-        protected override bool DontRender { get => dontRender; }
+        protected override bool DontRender => dontRender;
         
         public AssetHANG(Section_AHDR AHDR) : base(AHDR) { }
 
-        protected override int EventStartOffset { get => 0x74 + Offset; }
+        protected override int EventStartOffset => 0x74 + Offset;
 
         [Category("Hangable")]
         public int UnknownInt54

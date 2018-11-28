@@ -375,6 +375,8 @@ namespace IndustrialPark
 
             assetList.Sort();
             listBoxAssets.Items.AddRange(assetList.ToArray());
+
+            toolStripStatusLabelSelectionCount.Text = $"{listBoxAssets.SelectedItems.Count}/{listBoxAssets.Items.Count} assets selected";
         }
 
         private void comboBoxAssetTypes_SelectedIndexChanged(object sender, EventArgs e)
@@ -639,6 +641,12 @@ namespace IndustrialPark
             archive.OpenInternalEditor(archive.GetCurrentlySelectedAssetIDs());
         }
 
+        public void DeleteSelectedAssets()
+        {
+            buttonRemoveAsset_Click(null, null);
+            listBoxAssets.SelectedIndex = -1;
+        }
+
         private void buttonExportRaw_Click(object sender, EventArgs e)
         {
             if (listBoxAssets.SelectedItem == null)
@@ -694,6 +702,8 @@ namespace IndustrialPark
         
         private void listBoxAssets_SelectedIndexChanged(object sender, EventArgs e)
         {
+            toolStripStatusLabelSelectionCount.Text = $"{listBoxAssets.SelectedItems.Count}/{listBoxAssets.Items.Count} assets selected";
+
             archive.ClearSelectedAssets();
             foreach (string s in listBoxAssets.SelectedItems)
                 archive.SelectAsset(GetAssetIDFromName(s), true);
@@ -1009,6 +1019,30 @@ namespace IndustrialPark
             {
                 Program.MainForm.ClearTemplateFocus();
                 TemplateFocusOn();
+            }
+        }
+
+        private void hideButtonsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            hideButtonsToolStripMenuItem.Checked = !hideButtonsToolStripMenuItem.Checked;
+
+            buttonAddAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
+            buttonDuplicate.Visible = !hideButtonsToolStripMenuItem.Checked;
+            buttonCopy.Visible = !hideButtonsToolStripMenuItem.Checked;
+            buttonPaste.Visible = !hideButtonsToolStripMenuItem.Checked;
+            buttonRemoveAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
+            buttonView.Visible = !hideButtonsToolStripMenuItem.Checked;
+            buttonEditAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
+            buttonExportRaw.Visible = !hideButtonsToolStripMenuItem.Checked;
+            buttonInternalEdit.Visible = !hideButtonsToolStripMenuItem.Checked;
+
+            if (hideButtonsToolStripMenuItem.Checked)
+            {
+                listBoxAssets.Size = new System.Drawing.Size(listBoxAssets.Size.Width + 81, listBoxAssets.Size.Height);
+            }
+            else
+            {
+                listBoxAssets.Size = new System.Drawing.Size(listBoxAssets.Size.Width - 81, listBoxAssets.Size.Height);
             }
         }
     }

@@ -14,10 +14,7 @@ namespace IndustrialPark
 
         public static bool dontRender = false;
 
-        protected override int EventStartOffset
-        {
-            get => 0x88;
-        }
+        protected override int EventStartOffset => 0x88;
 
         public AssetCAM(Section_AHDR AHDR) : base(AHDR)
         {

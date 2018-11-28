@@ -6,9 +6,6 @@ namespace IndustrialPark
     {
         public AssetDPAT(Section_AHDR AHDR) : base(AHDR) { }
 
-        protected override int EventStartOffset
-        {
-            get => 0x8;
-        }
+        protected override int EventStartOffset => 0x8;
     }
 }

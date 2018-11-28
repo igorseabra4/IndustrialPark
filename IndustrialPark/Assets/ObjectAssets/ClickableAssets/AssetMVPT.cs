@@ -16,10 +16,7 @@ namespace IndustrialPark
 
         public static bool dontRender = false;
 
-        protected override int EventStartOffset
-        {
-            get => 0x28 + 4 * SiblingAmount;
-        }
+        protected override int EventStartOffset => 0x28 + 4 * SiblingAmount;
 
         public AssetMVPT(Section_AHDR AHDR) : base(AHDR)
         {

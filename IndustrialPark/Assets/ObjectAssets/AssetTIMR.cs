@@ -8,10 +8,7 @@ namespace IndustrialPark
     {
         public AssetTIMR(Section_AHDR AHDR) : base(AHDR) { }
 
-        protected override int EventStartOffset
-        {
-            get => 0x10;
-        }
+        protected override int EventStartOffset => 0x10;
 
         [Category("Timer")]
         public float Time

@@ -15,7 +15,7 @@ namespace IndustrialPark
 
         public static bool dontRender = false;
 
-        protected override int EventStartOffset { get => 0x30; }
+        protected override int EventStartOffset => 0x30;
 
         public AssetSFX(Section_AHDR AHDR) : base(AHDR) { }
 

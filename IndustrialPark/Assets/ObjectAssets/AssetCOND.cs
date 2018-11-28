@@ -49,10 +49,7 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
-        protected override int EventStartOffset
-        {
-            get => 0x18;
-        }
+        protected override int EventStartOffset => 0x18;
 
         [Category("Conditional")]
         public CONDVariable Conditional

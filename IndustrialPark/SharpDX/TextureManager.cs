@@ -166,9 +166,21 @@ namespace IndustrialPark
 
         public static void SetTextureForAnimation(string diffuseMapName, string newMapName)
         {
+
             List<RenderWareModelFile> models = new List<RenderWareModelFile>();
             foreach (IAssetWithModel awm in ArchiveEditorFunctions.renderingDictionary.Values)
-                models.Add(awm.GetRenderWareModelFile());
+                try
+                {
+                    models.Add(awm.GetRenderWareModelFile());
+                }
+                catch { }
+            foreach (IRenderableAsset awm in ArchiveEditorFunctions.renderableAssetSetJSP)
+                if (awm is AssetJSP alm)
+                    try
+                    {
+                        models.Add(alm.model);
+                    }
+                    catch { }
 
             foreach (RenderWareModelFile m in models)
                 foreach (SharpMesh mesh in m.meshList)

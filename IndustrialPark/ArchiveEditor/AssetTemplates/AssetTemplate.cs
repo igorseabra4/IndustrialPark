@@ -45,5 +45,7 @@
         TexasHitch,
         SphereTrigger,
         EnemyMVPT,
+        EmptyGroup,
+        DuplicatotronSettings,
     }
 }

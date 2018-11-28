@@ -7,10 +7,7 @@ namespace IndustrialPark
     {
         public AssetCNTR(Section_AHDR AHDR) : base(AHDR) { }
 
-        protected override int EventStartOffset
-        {
-            get => 0xC;
-        }
+        protected override int EventStartOffset => 0xC;
 
         [Category("Counter")]
         public short Count

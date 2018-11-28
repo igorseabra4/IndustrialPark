@@ -7,10 +7,7 @@ namespace IndustrialPark
     {
         public AssetPARE(Section_AHDR AHDR) : base(AHDR) { }
 
-        protected override int EventStartOffset
-        {
-            get => 0x54;
-        }
+        protected override int EventStartOffset => 0x54;
 
         public override bool HasReference(uint assetID)
         {
@@ -163,9 +160,9 @@ namespace IndustrialPark
         }
 
         [Category("Particle Emitter")]
-        public float UnknownFloat4C
+        public int UnknownInt4C
         {
-            get => ReadFloat(0x4C);
+            get => ReadInt(0x4C);
             set => Write(0x4C, value);
         }
 

@@ -7,10 +7,7 @@ namespace IndustrialPark
     {
         public AssetCSNM(Section_AHDR AHDR) : base(AHDR) { }
 
-        protected override int EventStartOffset
-        {
-            get => 0xC8;
-        }
+        protected override int EventStartOffset => 0xC8;
 
         public override bool HasReference(uint assetID)
         {
