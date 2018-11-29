@@ -75,35 +75,44 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Gizmos.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetTemplates.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetEditing.cs" />
-    <Compile Include="ArchiveEditor\AssetEditor\InternalShrapnelEditor.cs">
+    <Compile Include="ArchiveEditor\InternalEditors\InternalShrapnelEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ArchiveEditor\AssetEditor\InternalShrapnelEditor.Designer.cs">
+    <Compile Include="ArchiveEditor\InternalEditors\InternalShrapnelEditor.Designer.cs">
       <DependentUpon>InternalShrapnelEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="ArchiveEditor\AssetEditor\InternalGrupEditor.cs">
+    <Compile Include="ArchiveEditor\InternalEditors\InternalGrupEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ArchiveEditor\AssetEditor\InternalGrupEditor.Designer.cs">
+    <Compile Include="ArchiveEditor\InternalEditors\InternalGrupEditor.Designer.cs">
       <DependentUpon>InternalGrupEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="ArchiveEditor\AssetEditor\InternalFlyEditor.cs">
+    <Compile Include="ArchiveEditor\InternalEditors\InternalFlyEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ArchiveEditor\AssetEditor\InternalFlyEditor.designer.cs">
+    <Compile Include="ArchiveEditor\InternalEditors\InternalFlyEditor.designer.cs">
       <DependentUpon>InternalFlyEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="ArchiveEditor\Other\GizmoBase.cs" />
+    <Compile Include="ArchiveEditor\Other\PositionGizmo.cs" />
+    <Compile Include="ArchiveEditor\Other\PositionLocalGizmo.cs" />
+    <Compile Include="ArchiveEditor\Other\RotationGizmo.cs" />
+    <Compile Include="ArchiveEditor\Other\ScaleGizmo.cs" />
     <Compile Include="Assets\Binary\AssetSHRP.cs" />
     <Compile Include="Assets\Binary\AssetCRDT.cs" />
     <Compile Include="Assets\Binary\AssetFLY.cs" />
     <Compile Include="Assets\Binary\AssetLKIT.cs" />
+    <Compile Include="Assets\Binary\AssetVILP.cs" />
     <Compile Include="Assets\ObjectAssets\AssetCSNM.cs" />
     <Compile Include="Assets\ObjectAssets\AssetPARE.cs" />
     <Compile Include="Assets\ObjectAssets\AssetPARP.cs" />
     <Compile Include="Assets\ObjectAssets\AssetPARS.cs" />
     <Compile Include="Assets\ObjectAssets\AssetSURF.cs" />
+    <Compile Include="Assets\Shared\Interfaces\IRotatableAsset.cs" />
+    <Compile Include="Assets\Shared\Interfaces\IScalableAsset.cs" />
     <Compile Include="MainForm\EditName.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -116,56 +125,55 @@
     <Compile Include="MainForm\UserTemplateManager.Designer.cs">
       <DependentUpon>UserTemplateManager.cs</DependentUpon>
     </Compile>
-    <Compile Include="ArchiveEditor\AssetEditor\AddMultipleAssetDialog.cs">
+    <Compile Include="ArchiveEditor\AddAsset\AddMultipleAssetDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ArchiveEditor\AssetEditor\AddMultipleAssetDialog.Designer.cs">
+    <Compile Include="ArchiveEditor\AddAsset\AddMultipleAssetDialog.Designer.cs">
       <DependentUpon>AddMultipleAssetDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="ArchiveEditor\AssetTemplates\AssetTemplate.cs" />
+    <Compile Include="ArchiveEditor\Other\AssetTemplate.cs" />
     <Compile Include="ArchiveEditor\ChoosePlatform.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ArchiveEditor\ChoosePlatform.Designer.cs">
       <DependentUpon>ChoosePlatform.cs</DependentUpon>
     </Compile>
-    <Compile Include="ArchiveEditor\AssetEditor\AddAssetDialog.cs">
+    <Compile Include="ArchiveEditor\AddAsset\AddAssetDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ArchiveEditor\AssetEditor\AddAssetDialog.Designer.cs">
+    <Compile Include="ArchiveEditor\AddAsset\AddAssetDialog.Designer.cs">
       <DependentUpon>AddAssetDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions.cs" />
-    <Compile Include="ArchiveEditor\AssetEditor\Gizmo.cs" />
-    <Compile Include="ArchiveEditor\AssetEditor\InternalAssetEditor.cs">
+    <Compile Include="ArchiveEditor\InternalEditors\InternalAssetEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ArchiveEditor\AssetEditor\InternalAssetEditor.Designer.cs">
+    <Compile Include="ArchiveEditor\InternalEditors\InternalAssetEditor.Designer.cs">
       <DependentUpon>InternalAssetEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="ArchiveEditor\AssetEditor\InternalSoundEditor.cs">
+    <Compile Include="ArchiveEditor\InternalEditors\InternalSoundEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ArchiveEditor\AssetEditor\InternalSoundEditor.Designer.cs">
+    <Compile Include="ArchiveEditor\InternalEditors\InternalSoundEditor.Designer.cs">
       <DependentUpon>InternalSoundEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="ArchiveEditor\AssetEditor\InternalCamEditor.cs">
+    <Compile Include="ArchiveEditor\InternalEditors\InternalCamEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ArchiveEditor\AssetEditor\InternalCamEditor.Designer.cs">
+    <Compile Include="ArchiveEditor\InternalEditors\InternalCamEditor.Designer.cs">
       <DependentUpon>InternalCamEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="ArchiveEditor\AssetEditor\InternalDynaEditor.cs">
+    <Compile Include="ArchiveEditor\InternalEditors\InternalDynaEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ArchiveEditor\AssetEditor\InternalDynaEditor.designer.cs">
+    <Compile Include="ArchiveEditor\InternalEditors\InternalDynaEditor.designer.cs">
       <DependentUpon>InternalDynaEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="ArchiveEditor\AssetEditor\InternalEditor.cs" />
-    <Compile Include="ArchiveEditor\AssetEditor\InternalTextEditor.cs">
+    <Compile Include="ArchiveEditor\Other\InternalEditor.cs" />
+    <Compile Include="ArchiveEditor\InternalEditors\InternalTextEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ArchiveEditor\AssetEditor\InternalTextEditor.designer.cs">
+    <Compile Include="ArchiveEditor\InternalEditors\InternalTextEditor.designer.cs">
       <DependentUpon>InternalTextEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="ArchiveEditor\NewArchive.cs">
@@ -383,13 +391,13 @@
     <Compile Include="MainForm\ViewConfig.designer.cs">
       <DependentUpon>ViewConfig.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="ArchiveEditor\AssetEditor\InternalShrapnelEditor.resx">
+    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalShrapnelEditor.resx">
       <DependentUpon>InternalShrapnelEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\AssetEditor\InternalGrupEditor.resx">
+    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalGrupEditor.resx">
       <DependentUpon>InternalGrupEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\AssetEditor\InternalFlyEditor.resx">
+    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalFlyEditor.resx">
       <DependentUpon>InternalFlyEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm\EditName.resx">
@@ -398,32 +406,32 @@
     <EmbeddedResource Include="MainForm\UserTemplateManager.resx">
       <DependentUpon>UserTemplateManager.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\AssetEditor\AddMultipleAssetDialog.resx">
+    <EmbeddedResource Include="ArchiveEditor\AddAsset\AddMultipleAssetDialog.resx">
       <DependentUpon>AddMultipleAssetDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\ChoosePlatform.resx">
       <DependentUpon>ChoosePlatform.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\AssetEditor\AddAssetDialog.resx">
+    <EmbeddedResource Include="ArchiveEditor\AddAsset\AddAssetDialog.resx">
       <DependentUpon>AddAssetDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\ArchiveEditor.resx">
       <DependentUpon>ArchiveEditor.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\AssetEditor\InternalAssetEditor.resx">
+    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalAssetEditor.resx">
       <DependentUpon>InternalAssetEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\AssetEditor\InternalSoundEditor.resx">
+    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalSoundEditor.resx">
       <DependentUpon>InternalSoundEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\AssetEditor\InternalCamEditor.resx">
+    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalCamEditor.resx">
       <DependentUpon>InternalCamEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\AssetEditor\InternalDynaEditor.resx">
+    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalDynaEditor.resx">
       <DependentUpon>InternalDynaEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\AssetEditor\InternalTextEditor.resx">
+    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalTextEditor.resx">
       <DependentUpon>InternalTextEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\NewArchive.resx">
@@ -501,6 +509,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\Templates\Scooby\SIMP">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Models\Torus.DFF">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

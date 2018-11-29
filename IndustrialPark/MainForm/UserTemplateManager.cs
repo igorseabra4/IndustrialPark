@@ -48,7 +48,7 @@ namespace IndustrialPark
 
         private void listBox1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Delete)
+            if ((listBoxTemplates.SelectedItem != null) && (e.KeyCode == Keys.Delete))
             {
                 File.Delete(Path.Combine(Program.MainForm.userTemplatesFolder, Path.GetFileName(listBoxTemplates.SelectedItem.ToString())));
                 UpdateListBox();

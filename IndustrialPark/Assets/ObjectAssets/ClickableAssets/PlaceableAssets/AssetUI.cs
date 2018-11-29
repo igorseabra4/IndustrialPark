@@ -33,11 +33,8 @@ namespace IndustrialPark
         {
             if (_textureAssetID == 0)
             {
-                world = 
-                    Matrix.Scaling(_scale) * Matrix.Scaling(Width, Height, 1f)
-                    * Matrix.RotationY(_rotation.Y)
-                    * Matrix.RotationX(_rotation.X)
-                    * Matrix.RotationZ(_rotation.Z)
+                world = Matrix.Scaling(_scale) * Matrix.Scaling(Width, Height, 1f)
+                    * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                     * Matrix.Translation(_position.X, -_position.Y, -_position.Z);
             }
             else

@@ -33,7 +33,9 @@ namespace IndustrialPark
             _trigPos2 = new Vector3(ReadFloat(0x6C + Offset), ReadFloat(0x70 + Offset), ReadFloat(0x74 + Offset));
             _trigPos3 = new Vector3(ReadFloat(0x78 + Offset), ReadFloat(0x7C + Offset), ReadFloat(0x80 + Offset));
 
-            _rotation = new Vector3(ReadFloat(0x18 + Offset), ReadFloat(0x14 + Offset), ReadFloat(0x1C + Offset));
+            _yaw = ReadFloat(0x14 + Offset);
+            _pitch = ReadFloat(0x18 + Offset);
+            _roll = ReadFloat(0x1C + Offset);
             _position = new Vector3(ReadFloat(0x20 + Offset), ReadFloat(0x24 + Offset), ReadFloat(0x28 + Offset));
             _scale = new Vector3(ReadFloat(0x2C + Offset), ReadFloat(0x30 + Offset), ReadFloat(0x34 + Offset));
             _color = new Vector4(ReadFloat(0x38 + Offset), ReadFloat(0x3c + Offset), ReadFloat(0x40 + Offset), ReadFloat(0x44 + Offset));
@@ -53,17 +55,13 @@ namespace IndustrialPark
                 Vector3 midPos = (_trigPos0 + _trigPos1) / 2f;
 
                 world = Matrix.Scaling(boxSize) *
-                    Matrix.RotationY(_rotation.Y) *
-                    Matrix.RotationX(_rotation.X) *
-                    Matrix.RotationZ(_rotation.Z) *
+                    Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll) *
                     Matrix.Translation(midPos);
             }
             else
             {
                 world = Matrix.Scaling(Position1X_Radius * 2f) *
-                    Matrix.RotationY(_rotation.Y) *
-                    Matrix.RotationX(_rotation.X) *
-                    Matrix.RotationZ(_rotation.Z) *
+                    Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll) *
                     Matrix.Translation(_trigPos0);
             }
 
@@ -227,6 +225,60 @@ namespace IndustrialPark
                 _position.Z = value;
                 Write(0x28 + Offset, _position.Z);
                 CreateTransformMatrix();
+            }
+        }
+
+        [Category("Placement")]
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public override float ScaleX
+        {
+            get
+            {
+                if (Shape == TriggerShape.Sphere)
+                    return Position1X_Radius;
+                return base.ScaleX;
+            }
+            set
+            {
+                if (Shape == TriggerShape.Sphere)
+                    Position1X_Radius = value;
+                base.ScaleX = value;
+            }
+        }
+
+        [Category("Placement")]
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public override float ScaleY
+        {
+            get
+            {
+                if (Shape == TriggerShape.Sphere)
+                    return Position1X_Radius;
+                return base.ScaleY;
+            }
+            set
+            {
+                if (Shape == TriggerShape.Sphere)
+                    Position1X_Radius = value;
+                base.ScaleY = value;
+            }
+        }
+
+        [Category("Placement")]
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public override float ScaleZ
+        {
+            get
+            {
+                if (Shape == TriggerShape.Sphere)
+                    return Position1X_Radius;
+                return base.ScaleZ;
+            }
+            set
+            {
+                if (Shape == TriggerShape.Sphere)
+                    Position1X_Radius = value;
+                base.ScaleZ = value;
             }
         }
 

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using static IndustrialPark.Models.OBJFunctions;
 using System.Linq;
 using System;
+using System.IO;
 
 namespace IndustrialPark
 {
@@ -100,6 +101,7 @@ namespace IndustrialPark
         public static SharpMesh Pyramid { get; private set; }
         public static SharpMesh Sphere { get; private set; }
         public static SharpMesh Plane { get; private set; }
+        public static SharpMesh Torus { get; private set; }
 
         public static List<Vector3> cubeVertices;
         public static List<Models.Triangle> cubeTriangles;
@@ -111,6 +113,8 @@ namespace IndustrialPark
         public static List<Models.Triangle> sphereTriangles;
         public static List<Vector3> planeVertices;
         public static List<Models.Triangle> planeTriangles;
+        public static List<Vector3> torusVertices;
+        public static List<Models.Triangle> torusTriangles;
 
         public void LoadModels()
         {
@@ -126,14 +130,14 @@ namespace IndustrialPark
             sphereVertices = new List<Vector3>();
             sphereTriangles = new List<Models.Triangle>();
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 4; i++)
             {
                 Models.ModelConverterData objData;
 
                 if (i == 0) objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Box.obj", false);
                 else if (i == 1) objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Cylinder.obj", false);
                 else if (i == 2) objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Pyramid.obj", false);
-                else objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Sphere.obj", false);
+                else  objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Sphere.obj", false);
 
                 List<Vertex> vertexList = new List<Vertex>();
                 foreach (Models.Vertex v in objData.VertexList)
@@ -162,6 +166,14 @@ namespace IndustrialPark
                 else if (i == 2) Pyramid = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
                 else if (i == 3) Sphere = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
             }
+
+            RenderWareModelFile torusModel = new RenderWareModelFile("Torus");
+            torusModel.SetForRendering(device, RenderWareFile.ReadFileMethods.ReadRenderWareFile(Application.StartupPath + "/Resources/Models/Torus.DFF"), File.ReadAllBytes(Application.StartupPath + "/Resources/Models/Torus.DFF"));
+            Torus = torusModel.meshList[0];
+            torusTriangles = new List<Models.Triangle>();
+            foreach (RenderWareFile.Triangle t in torusModel.triangleList)
+                torusTriangles.Add(new Models.Triangle() { vertex1 = t.vertex1, vertex2 = t.vertex2, vertex3 = t.vertex3 });
+            torusVertices = torusModel.vertexListG;
 
             CreatePlaneMesh();
         }

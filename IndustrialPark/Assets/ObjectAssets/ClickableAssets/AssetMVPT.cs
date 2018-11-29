@@ -9,7 +9,7 @@ using static HipHopFile.Functions;
 
 namespace IndustrialPark
 {
-    public class AssetMVPT : ObjectAsset, IRenderableAsset, IClickableAsset
+    public class AssetMVPT : ObjectAsset, IRenderableAsset, IClickableAsset, IScalableAsset
     {
         private Matrix world;
         private BoundingBox boundingBox;
@@ -131,7 +131,7 @@ namespace IndustrialPark
         {
             return Vector3.Distance(cameraPosition, _position) - (_distanceICanSeeYou == -1f ? 0 : _distanceICanSeeYou);
         }
-
+        
         private Vector3 _position;
         [Category("Move Point")]
         public float PositionX
@@ -273,6 +273,25 @@ namespace IndustrialPark
 
                 SiblingAmount = value.Length;
             }
+        }
+
+        [Browsable(false)]
+        public float ScaleX
+        {
+            get => DistanceICanSeeYou;
+            set => DistanceICanSeeYou = value;
+        }
+        [Browsable(false)]
+        public float ScaleY
+        {
+            get => DistanceICanSeeYou;
+            set => DistanceICanSeeYou = value;
+        }
+        [Browsable(false)]
+        public float ScaleZ
+        {
+            get => DistanceICanSeeYou;
+            set => DistanceICanSeeYou = value;
         }
     }
 }

@@ -26,14 +26,6 @@ namespace IndustrialPark
 
         public bool UnsavedChanges { get; set; } = false;
 
-        public ArchiveEditorFunctions()
-        {
-            gizmos = new Gizmo[3];
-            gizmos[0] = new Gizmo(GizmoType.X);
-            gizmos[1] = new Gizmo(GizmoType.Y);
-            gizmos[2] = new Gizmo(GizmoType.Z);
-        }
-        
         public string currentlyOpenFilePath;
         public Section_HIPA HIPA;
         public Section_PACK PACK;
@@ -79,7 +71,7 @@ namespace IndustrialPark
             Dispose();
 
             currentlySelectedAssets = new List<Asset>();
-            currentlyOpenFilePath = fileName;                        
+            currentlyOpenFilePath = fileName;
 
             HipSection[] HipFile = HipFileToHipArray(fileName);
 
@@ -535,6 +527,12 @@ namespace IndustrialPark
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
+                case AssetType.VILP:
+                    {
+                        AssetVILP newAsset = new AssetVILP(AHDR);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
                 case AssetType.CCRV:
                 case AssetType.DTRK:
                 case AssetType.DUPC:
@@ -579,7 +577,6 @@ namespace IndustrialPark
                 case AssetType.SPLP:
                 case AssetType.TEXS:
                 case AssetType.UIFN:
-                case AssetType.VILP:
                 case AssetType.WIRE:
                     {
                         Asset newAsset = new Asset(AHDR);
@@ -694,6 +691,16 @@ namespace IndustrialPark
         }
 
         private List<Asset> currentlySelectedAssets = new List<Asset>();
+        private static List<Asset> allCurrentlySelectedAssets
+        {
+            get
+            {
+                List<Asset> currentlySelectedAssets = new List<Asset>();
+                foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
+                    currentlySelectedAssets.AddRange(ae.archive.currentlySelectedAssets);
+                return currentlySelectedAssets;
+            }
+        }
 
         public bool AssetIsSelected(uint assetID)
         {
@@ -745,20 +752,7 @@ namespace IndustrialPark
             assetDictionary[assetID].isSelected = true;
             currentlySelectedAssets.Add(assetDictionary[assetID]);
 
-            bool updateGizmos = false;
-
-            if (assetDictionary[assetID] is IClickableAsset ra)
-            {
-                if (ra is AssetDYNA dyna)
-                    updateGizmos = dyna.IsRenderableClickable;
-                else
-                    updateGizmos = true;
-            }
-
-            if (updateGizmos)
-                UpdateGizmoPosition();
-            else
-                ClearGizmos();
+            UpdateGizmoPosition();
         }
 
         public int GetLayerFromAssetID(uint assetID)
@@ -778,127 +772,6 @@ namespace IndustrialPark
                 a.CreateTransformMatrix();
             foreach (AssetJSP a in renderableAssetSetJSP)
                 a.CreateTransformMatrix();
-        }
-
-        // Gizmos
-        private static Gizmo[] gizmos = new Gizmo[0];
-        private static bool DrawGizmos = false;
-        public static bool FinishedMovingGizmo = false;
-
-        public static void RenderGizmos(SharpRenderer renderer)
-        {
-            if (DrawGizmos)
-                foreach (Gizmo g in gizmos)
-                    g.Draw(renderer);
-        }
-
-        public void UpdateGizmoPosition()
-        {
-            if (currentlySelectedAssets.Count == 0)
-                UpdateGizmoPosition(new BoundingSphere());
-            else
-            {
-                bool found = false;
-                BoundingSphere bs = new BoundingSphere();
-
-                foreach (Asset a in currentlySelectedAssets)
-                {
-                    if (a is IClickableAsset ica)
-                    {
-                        if (!found)
-                        {
-                            found = true;
-                            bs = ica.GetGizmoCenter();
-                        }
-                        else
-                            bs = BoundingSphere.Merge(bs, ica.GetGizmoCenter());
-                    }
-                }
-
-                UpdateGizmoPosition(bs);
-            }
-        }
-
-        private static void UpdateGizmoPosition(BoundingSphere position)
-        {
-            DrawGizmos = true;
-            foreach (Gizmo g in gizmos)
-                g.SetPosition(position);
-        }
-
-        private static void ClearGizmos()
-        {
-            DrawGizmos = false;
-        }
-
-        public static void GizmoSelect(Ray r)
-        {
-            if (!DrawGizmos)
-                return;
-
-            float dist = 1000f;
-            int index = -1;
-
-            for (int g = 0; g < gizmos.Length; g++)
-            {
-                float? distance = gizmos[g].IntersectsWith(r);
-                if (distance != null)
-                {
-                    if (distance < dist)
-                    {
-                        dist = (float)distance;
-                        index = g;
-                    }
-                }
-            }
-
-            if (index == -1)
-                return;
-
-            gizmos[index].isSelected = true;
-        }
-
-        public static void ScreenUnclicked()
-        {
-            foreach (Gizmo g in gizmos)
-                g.isSelected = false;
-        }
-
-        public void MouseMoveX(SharpCamera camera, int distance)
-        {
-            foreach (Asset a in currentlySelectedAssets)
-                if (a is IClickableAsset ra)
-                {
-                    if (gizmos[0].isSelected)
-                    {
-                        ra.PositionX += (
-                            (camera.Yaw >= -360 & camera.Yaw < -270) |
-                            (camera.Yaw >= -90 & camera.Yaw < 90) |
-                            (camera.Yaw >= 270)) ? distance / 10f : -distance / 10f;
-                        UpdateGizmoPosition();
-                        FinishedMovingGizmo = true;
-                    }
-                    else if (gizmos[2].isSelected)
-                    {
-                        ra.PositionZ += (
-                            (camera.Yaw >= -180 & camera.Yaw < 0) |
-                            (camera.Yaw >= 180)) ? distance / 10f : -distance / 10f;
-                        UpdateGizmoPosition();
-                        FinishedMovingGizmo = true;
-                    }
-                }
-        }
-
-        public void MouseMoveY(SharpCamera camera, int distance)
-        {
-            foreach (Asset a in currentlySelectedAssets)
-                if (a is IClickableAsset ra)
-                    if (gizmos[1].isSelected)
-                    {
-                        ra.PositionY -= distance / 10f;
-                        UpdateGizmoPosition();
-                        FinishedMovingGizmo = true;
-                    }
         }
     }
 }

@@ -479,7 +479,6 @@ namespace IndustrialPark
                     };
                     break;
                 case AssetTemplate.Button:
-                    ((AssetBUTN)asset).RotationX = -90f;
                     ((AssetBUTN)asset).ModelAssetID = BKDRHash("button");
                     ((AssetBUTN)asset).PressedModelAssetID = BKDRHash("button_grn");
                     ((AssetBUTN)asset).UnknownByte6C = 4;

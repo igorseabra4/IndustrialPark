@@ -7,7 +7,7 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class AssetSFX : ObjectAsset, IRenderableAsset, IClickableAsset
+    public class AssetSFX : ObjectAsset, IRenderableAsset, IClickableAsset, IScalableAsset
     {
         private Matrix world;
         private Matrix world2;
@@ -116,7 +116,7 @@ namespace IndustrialPark
         {
             return Vector3.Distance(cameraPosition, _position) - _radius;
         }
-
+        
         [Category("Sound Effect")]
         [TypeConverter(typeof(HexByteTypeConverter))]
         public byte Flag08
@@ -237,6 +237,37 @@ namespace IndustrialPark
                 _radius2 = value;
                 Write(0x2C, _radius2);
                 CreateTransformMatrix();
+            }
+        }
+
+        [Browsable(false)]
+        public float ScaleX
+        {
+            get => RadiusMin;
+            set
+            {
+                RadiusMax += value - RadiusMin;
+                RadiusMin = value;
+            }
+        }
+        [Browsable(false)]
+        public float ScaleY
+        {
+            get => RadiusMin;
+            set
+            {
+                RadiusMax += value - RadiusMin;
+                RadiusMin = value;
+            }
+        }
+        [Browsable(false)]
+        public float ScaleZ
+        {
+            get => RadiusMin;
+            set
+            {
+                RadiusMax += value - RadiusMin;
+                RadiusMin = value;
             }
         }
     }

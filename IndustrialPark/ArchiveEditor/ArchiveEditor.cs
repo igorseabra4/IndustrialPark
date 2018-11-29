@@ -746,14 +746,12 @@ namespace IndustrialPark
             }
         }
 
-        public void MouseMoveX(SharpCamera camera, int deltaX)
+        public void MouseMoveGeneric(Matrix viewProjection, int deltaX, int deltaY)
         {
-            archive.MouseMoveX(camera, deltaX);
-        }
-
-        public void MouseMoveY(SharpCamera camera, int deltaY)
-        {
-            archive.MouseMoveY(camera, deltaY);
+            archive.MouseMoveForPosition(viewProjection, deltaX, deltaY);
+            archive.MouseMoveForRotation(viewProjection, deltaX, deltaY);
+            archive.MouseMoveForScale(viewProjection, deltaX, deltaY);
+            archive.MouseMoveForPositionLocal(viewProjection, deltaX, deltaY);
         }
 
         public void SetSelectedIndexes(List<uint> assetIDs, bool add = false)
@@ -761,7 +759,7 @@ namespace IndustrialPark
             if (assetIDs.Contains(0) && !add)
             {
                 listBoxAssets.SelectedIndices.Clear();
-                archive.UpdateGizmoPosition();
+                ArchiveEditorFunctions.UpdateGizmoPosition();
                 return;
             }
 

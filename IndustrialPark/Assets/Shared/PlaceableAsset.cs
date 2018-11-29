@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public abstract class PlaceableAsset : ObjectAsset, IRenderableAsset, IClickableAsset
+    public abstract class PlaceableAsset : ObjectAsset, IRenderableAsset, IClickableAsset, IRotatableAsset, IScalableAsset
     {
         protected Matrix world;
         protected BoundingBox boundingBox;
@@ -16,7 +16,9 @@ namespace IndustrialPark
 
         public virtual void Setup()
         {
-            _rotation = new Vector3(ReadFloat(0x18 + Offset), ReadFloat(0x14 + Offset), ReadFloat(0x1C + Offset));
+            _yaw = ReadFloat(0x14 + Offset);
+            _pitch = ReadFloat(0x18 + Offset);
+            _roll = ReadFloat(0x1C + Offset);
             _position = new Vector3(ReadFloat(0x20 + Offset), ReadFloat(0x24 + Offset), ReadFloat(0x28 + Offset));
             _scale = new Vector3(ReadFloat(0x2C + Offset), ReadFloat(0x30 + Offset), ReadFloat(0x34 + Offset));
             _color = new Vector4(ReadFloat(0x38 + Offset), ReadFloat(0x3c + Offset), ReadFloat(0x40 + Offset), ReadFloat(0x44 + Offset));
@@ -31,10 +33,8 @@ namespace IndustrialPark
         public virtual void CreateTransformMatrix()
         {
             world = Matrix.Scaling(_scale)
-            * Matrix.RotationY(_rotation.Y)
-            * Matrix.RotationX(_rotation.X)
-            * Matrix.RotationZ(_rotation.Z)
-            * Matrix.Translation(_position);
+                * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
+                * Matrix.Translation(_position);
 
             CreateBoundingBox();
         }
@@ -110,6 +110,13 @@ namespace IndustrialPark
             }
 
             return initialDistance;
+        }
+
+        public BoundingSphere GetObjectCenter()
+        {
+            BoundingSphere boundingSphere = new BoundingSphere(_position, boundingBox.Size.Length());
+            boundingSphere.Radius *= 0.9f;
+            return boundingSphere;
         }
 
         public BoundingSphere GetGizmoCenter()
@@ -245,43 +252,45 @@ namespace IndustrialPark
             }
         }
 
-        protected Vector3 _rotation;
+        protected float _yaw;
+        protected float _pitch;
+        protected float _roll;
 
         [Category("Placement")]
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float RotationX
+        public virtual float Yaw
         {
-            get { return MathUtil.RadiansToDegrees(_rotation.X); }
+            get { return MathUtil.RadiansToDegrees(_yaw); }
             set
             {
-                _rotation.X = MathUtil.DegreesToRadians(value);
-                Write(0x18 + Offset, _rotation.X);
+                _yaw = MathUtil.DegreesToRadians(value);
+                Write(0x14 + Offset, _yaw);
                 CreateTransformMatrix();
             }
         }
 
         [Category("Placement")]
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float RotationY
+        public virtual float Pitch
         {
-            get { return MathUtil.RadiansToDegrees(_rotation.Y); }
+            get { return MathUtil.RadiansToDegrees(_pitch); }
             set
             {
-                _rotation.Y = MathUtil.DegreesToRadians(value);
-                Write(0x14 + Offset, _rotation.Y);
+                _pitch = MathUtil.DegreesToRadians(value);
+                Write(0x18 + Offset, _pitch);
                 CreateTransformMatrix();
             }
         }
 
         [Category("Placement")]
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float RotationZ
+        public virtual float Roll
         {
-            get { return MathUtil.RadiansToDegrees(_rotation.Z); }
+            get { return MathUtil.RadiansToDegrees(_roll); }
             set
             {
-                _rotation.Z = MathUtil.DegreesToRadians(value);
-                Write(0x1C + Offset, _rotation.Z);
+                _roll = MathUtil.DegreesToRadians(value);
+                Write(0x1C + Offset, _roll);
                 CreateTransformMatrix();
             }
         }
@@ -290,7 +299,7 @@ namespace IndustrialPark
 
         [Category("Placement")]
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float ScaleX
+        public virtual float ScaleX
         {
             get { return _scale.X; }
             set
@@ -303,7 +312,7 @@ namespace IndustrialPark
 
         [Category("Placement")]
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float ScaleY
+        public virtual float ScaleY
         {
             get { return _scale.Y; }
             set
@@ -316,7 +325,7 @@ namespace IndustrialPark
 
         [Category("Placement")]
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float ScaleZ
+        public virtual float ScaleZ
         {
             get { return _scale.Z; }
             set

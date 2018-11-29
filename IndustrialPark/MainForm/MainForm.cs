@@ -386,10 +386,7 @@ namespace IndustrialPark
                     }
 
                     foreach (ArchiveEditor ae in archiveEditors)
-                    {
-                        ae.MouseMoveX(renderer.Camera, deltaX);
-                        ae.MouseMoveY(renderer.Camera, deltaY);
-                    }
+                        ae.MouseMoveGeneric(renderer.viewProjection, deltaX, deltaY);
                 }
 
                 if (e.Delta != 0)
@@ -438,6 +435,8 @@ namespace IndustrialPark
                 ToggleWireFrame();
             else if (e.KeyCode == Keys.G)
                 OpenInternalEditors();
+            else if (e.KeyCode == Keys.V)
+                ToggleGizmoType();
             else if (e.KeyCode == Keys.Delete)
                 DeleteSelectedAssets();
             else if (e.KeyCode == Keys.U)
@@ -672,15 +671,15 @@ namespace IndustrialPark
                     renderPanel.ClientRectangle.Height), e.X, e.Y, true);
             }
         }
-
+        
         public void ScreenClicked(Rectangle viewRectangle, int X, int Y, bool isMouseDown = false)
         {
-            Ray ray = Ray.GetPickRay(X, Y, new Viewport(viewRectangle), renderer.viewProjection);
-
             if (ArchiveEditorFunctions.FinishedMovingGizmo)
                 ArchiveEditorFunctions.FinishedMovingGizmo = false;
             else
             {
+                Ray ray = Ray.GetPickRay(X, Y, new Viewport(viewRectangle), renderer.viewProjection);
+
                 if (isMouseDown)
                     ArchiveEditorFunctions.GizmoSelect(ray);
                 else
@@ -990,6 +989,38 @@ namespace IndustrialPark
         private void manageUserTemplatesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.UserTemplateManager.Show();
+        }
+
+        private void ToggleGizmoType(GizmoMode mode = GizmoMode.Null)
+        {
+            GizmoMode outMode = ArchiveEditorFunctions.ToggleGizmoType(mode);
+
+            positionToolStripMenuItem.Checked = outMode == GizmoMode.Position;
+            rotationToolStripMenuItem.Checked = outMode == GizmoMode.Rotation;
+            scaleToolStripMenuItem.Checked = outMode == GizmoMode.Scale;
+            positionLocalToolStripMenuItem.Checked = outMode == GizmoMode.PositionLocal;
+
+            ArchiveEditorFunctions.UpdateGizmoPosition();
+        }
+
+        private void positionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ToggleGizmoType(GizmoMode.Position);
+        }
+
+        private void rotationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ToggleGizmoType(GizmoMode.Rotation);
+        }
+
+        private void scaleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ToggleGizmoType(GizmoMode.Scale);
+        }
+
+        private void positionLocalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ToggleGizmoType(GizmoMode.PositionLocal);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using RenderWareFile;
+using RenderWareFile.Sections;
 using SharpDX;
 using System;
 using System.Collections.Generic;
@@ -110,6 +111,109 @@ namespace IndustrialPark
             }
 
             return base.HasReference(assetID);
+        }
+
+        private int renderWareVersion;
+
+        private RWSection[] ModelAsRWSections
+        {
+            get
+            {
+                try
+                {
+                    RWSection[] sections = ReadFileMethods.ReadRenderWareFile(Data);
+                    renderWareVersion = sections[0].renderWareVersion;
+                    return sections;
+                }
+                catch
+                {
+                    return new RWSection[0];
+                }
+            }
+            set
+            {
+                Data = ReadFileMethods.ExportRenderWareFile(value, renderWareVersion);
+            }
+        }
+
+        private int colorCount;
+
+        public RenderWareFile.Color[] Colors
+        {
+            get
+            {
+                List<RenderWareFile.Color> colors = new List<RenderWareFile.Color>();
+
+                foreach (RWSection rws in ModelAsRWSections)
+                    if (rws is Clump_0010 clump)
+                        foreach (Geometry_000F geo in clump.geometryList.geometryList)
+                            foreach (Material_0007 mat in geo.materialList.materialList)
+                                colors.Add(mat.materialStruct.color);
+
+                colorCount = colors.Count;
+                return colors.ToArray();
+            }
+
+            set
+            {
+                int i = 0;
+                RWSection[] sections = ModelAsRWSections;
+
+                foreach (RWSection rws in sections)
+                    if (rws is Clump_0010 clump)
+                        foreach (Geometry_000F geo in clump.geometryList.geometryList)
+                            foreach (Material_0007 mat in geo.materialList.materialList)
+                            {
+                                if (value.Length < colorCount)
+                                    return;
+
+                                mat.materialStruct.color = value[i];
+                                i++;
+                            }
+
+                ModelAsRWSections = sections;
+                model.Dispose();
+                Setup(Program.MainForm.renderer);
+            }
+        }
+
+        public string[] TextureNames
+        {
+            get
+            {
+                List<string> names = new List<string>();
+
+                foreach (RWSection rws in ModelAsRWSections)
+                    if (rws is Clump_0010 clump)
+                        foreach (Geometry_000F geo in clump.geometryList.geometryList)
+                            foreach (Material_0007 mat in geo.materialList.materialList)
+                                names.Add(mat.texture.diffuseTextureName.stringString);
+
+                colorCount = names.Count;
+                return names.ToArray();
+            }
+
+            set
+            {
+                int i = 0;
+                RWSection[] sections = ModelAsRWSections;
+
+                foreach (RWSection rws in sections)
+                    if (rws is Clump_0010 clump)
+                        foreach (Geometry_000F geo in clump.geometryList.geometryList)
+                            foreach (Material_0007 mat in geo.materialList.materialList)
+                            {
+                                if (value.Length < colorCount)
+                                    return;
+
+                                mat.texture.diffuseTextureName.stringString = value[i];
+                                i++;
+                            }
+
+                ModelAsRWSections = sections;
+                model.Dispose();
+                Setup(Program.MainForm.renderer);
+            }
         }
     }
 }
