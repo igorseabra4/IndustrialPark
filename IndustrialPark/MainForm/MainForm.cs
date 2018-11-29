@@ -655,8 +655,7 @@ namespace IndustrialPark
             }
             else if (e.Button == MouseButtons.Right)
             {
-                if (SomeoneHasTemplateFocus)
-                    contextMenuStripMain.Show(renderPanel.PointToScreen(e.Location));
+                contextMenuStripMain.Show(renderPanel.PointToScreen(e.Location));
             }
         }
 
@@ -906,18 +905,7 @@ namespace IndustrialPark
             foreach (ArchiveEditor archiveEditor in archiveEditors)
                 archiveEditor.TemplateFocusOff();
         }
-
-        public bool SomeoneHasTemplateFocus
-        {
-            get
-            {
-                foreach (ArchiveEditor archiveEditor in archiveEditors)
-                    if (archiveEditor.TemplateFocus)
-                        return true;
-                return false;
-            }
-        }
-
+        
         private void useLegacyAssetIDFormatToolStripMenuItem_Click(object sender, EventArgs e)
         {
             useLegacyAssetIDFormatToolStripMenuItem.Checked = !useLegacyAssetIDFormatToolStripMenuItem.Checked;
