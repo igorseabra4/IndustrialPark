@@ -66,7 +66,7 @@ namespace IndustrialPark
 
         public override void Draw(SharpRenderer renderer)
         {
-            if (dontRender) return;
+            if (dontRender || isInvisible) return;
 
             renderer.DrawPyramid(world, isSelected, 1f);
         }

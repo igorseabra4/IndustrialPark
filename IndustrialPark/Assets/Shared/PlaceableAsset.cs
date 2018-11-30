@@ -84,7 +84,7 @@ namespace IndustrialPark
 
         public virtual void Draw(SharpRenderer renderer)
         {
-            if (DontRender) return;
+            if (DontRender || isInvisible) return;
 
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
                 ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * _color : _color);
@@ -94,7 +94,7 @@ namespace IndustrialPark
 
         public virtual float? IntersectsWith(Ray ray)
         {
-            if (DontRender)
+            if (DontRender || isInvisible)
                 return null;
 
             if (ray.Intersects(ref boundingBox, out float distance))

@@ -68,7 +68,9 @@ namespace IndustrialPark
         {
             if (UnsavedChanges())
             {
+                TopMost = true;
                 DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                TopMost = false;
                 if (result == DialogResult.Yes)
                     SaveAllChanges();
                 else if (result == DialogResult.Cancel)
@@ -101,7 +103,9 @@ namespace IndustrialPark
                 }
                 catch (Exception ex)
                 {
+                    TopMost = true;
                     MessageBox.Show("Error opening file: " + ex.Message);
+                    TopMost = true;
                 }
         }
 
@@ -115,8 +119,10 @@ namespace IndustrialPark
         {
             if (UnsavedChanges())
             {
+                TopMost = true;
                 DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-                if (result == DialogResult.Yes)
+                TopMost = false;
+                 if (result == DialogResult.Yes)
                     SaveAllChanges();
                 else if (result == DialogResult.Cancel)
                     return;
@@ -131,7 +137,9 @@ namespace IndustrialPark
         {
             if (UnsavedChanges())
             {
+                TopMost = true;
                 DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                TopMost = false;
                 if (result == DialogResult.Yes)
                     SaveAllChanges();
                 else if (result == DialogResult.Cancel)
@@ -189,13 +197,18 @@ namespace IndustrialPark
         public ProjectJson FromCurrentInstance()
         {
             List<string> hips = new List<string>();
+            List<uint> hiddenAssets = new List<uint>();
+
             foreach (ArchiveEditor ae in archiveEditors)
+            {
                 hips.Add(ae.GetCurrentlyOpenFileName());
+                hiddenAssets.AddRange(ae.archive.GetHiddenAssets());
+            }
 
             return new ProjectJson(hips, TextureManager.OpenTextureFolders.ToList(), renderer.Camera.Position,
                 renderer.Camera.Yaw, renderer.Camera.Pitch, renderer.Camera.Speed, renderer.Camera.SpeedRot, renderer.Camera.FieldOfView,renderer.Camera.FarPlane,
                 noCullingCToolStripMenuItem.Checked, wireframeFToolStripMenuItem.Checked, renderer.backgroundColor, renderer.normalColor, renderer.trigColor,
-                renderer.mvptColor, renderer.sfxColor, useLegacyAssetIDFormatToolStripMenuItem.Checked, alternateNamingMode, renderer.isDrawingUI,
+                renderer.mvptColor, renderer.sfxColor, useLegacyAssetIDFormatToolStripMenuItem.Checked, alternateNamingMode, hiddenAssets, renderer.isDrawingUI,
                 AssetJSP.dontRender, AssetBOUL.dontRender, AssetBUTN.dontRender, AssetCAM.dontRender, AssetDSTR.dontRender, AssetDYNA.dontRender, AssetEGEN.dontRender,
                 AssetHANG.dontRender, AssetMRKR.dontRender, AssetMVPT.dontRender, AssetPEND.dontRender, AssetPLAT.dontRender, AssetPLAT.dontRender, AssetPLYR.dontRender,
                 AssetSFX.dontRender, AssetSIMP.dontRender, AssetTRIG.dontRender, AssetUI.dontRender, AssetUIFT.dontRender, AssetVIL.dontRender);
@@ -216,12 +229,18 @@ namespace IndustrialPark
                 if (Directory.Exists(s))
                     TextureManager.LoadTexturesFromFolder(s);
                 else
+                {
+                    TopMost = true;
                     MessageBox.Show("Error loading textures from " + s + ": folder not found");
+                    TopMost = false;
+                }
 
             List<ArchiveEditor> aeList = new List<ArchiveEditor>();
             aeList.AddRange(archiveEditors);
             foreach (ArchiveEditor ae in aeList)
                 ae.CloseArchiveEditor();
+
+            ArchiveEditorFunctions.hiddenAssets = ipSettings.hiddenAssets;
 
             foreach (string s in ipSettings.hipPaths)
                 if (s == "Empty")
@@ -231,8 +250,14 @@ namespace IndustrialPark
                     if (File.Exists(s))
                         AddArchiveEditor(s);
                     else
+                    {
+                        TopMost = true;
                         MessageBox.Show("Error opening " + s + ": file not found");
+                        TopMost = false;
+                    }
                 }
+
+            ArchiveEditorFunctions.hiddenAssets.Clear();
 
             renderer.Camera.SetPosition(ipSettings.CamPos);
             renderer.Camera.Yaw = ipSettings.Yaw;
@@ -712,7 +737,7 @@ namespace IndustrialPark
         public void SetSelectedIndex(uint assetID)
         {
             foreach (ArchiveEditor ae in archiveEditors)
-                ae.SetSelectedIndexes(new List<uint>() { assetID }, PressedKeys.Contains(Keys.ControlKey) || PressedKeys.Contains(Keys.Control));
+                ae.SetSelectedIndices(new List<uint>() { assetID }, false, PressedKeys.Contains(Keys.ControlKey) || PressedKeys.Contains(Keys.Control));
         }
 
         private void OpenInternalEditors()
@@ -899,7 +924,11 @@ namespace IndustrialPark
 
             bool willOpen = true;
             if (whoTargets.Count > 15)
+            {
+                TopMost = true;
                 willOpen = MessageBox.Show($"Warning: you're going to open {whoTargets.Count} Asset Data Editor windows. Are you sure you want to do that?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
+                TopMost = false;
+            }
 
             if (willOpen)
                 foreach (ArchiveEditor archiveEditor in archiveEditors)
@@ -1087,7 +1116,9 @@ namespace IndustrialPark
                 }
             }
 
+            TopMost = true;
             MessageBox.Show("There was a problem setting your template for placement");
+            TopMost = false;
         }
         
         private void userTemplateToolStripMenuItem_Click(object sender, EventArgs e)

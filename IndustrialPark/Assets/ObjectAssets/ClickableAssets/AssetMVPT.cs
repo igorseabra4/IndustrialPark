@@ -75,7 +75,7 @@ namespace IndustrialPark
 
         public float? IntersectsWith(Ray ray)
         {
-            if (dontRender)
+            if (dontRender || isInvisible)
                 return null;
 
             if (ray.Intersects(ref boundingSphere))
@@ -114,7 +114,7 @@ namespace IndustrialPark
 
         public void Draw(SharpRenderer renderer)
         {
-            if (dontRender) return;
+            if (dontRender || isInvisible) return;
 
             if (_distanceICanSeeYou == -1f)
                 renderer.DrawPyramid(world, isSelected, 1f);

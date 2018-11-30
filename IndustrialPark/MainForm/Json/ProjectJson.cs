@@ -7,6 +7,7 @@ namespace IndustrialPark
     {
         public List<string> hipPaths;
         public List<string> TextureFolderPaths;
+        public List<uint> hiddenAssets;
 
         public Vector3 CamPos;
         public float Yaw;
@@ -54,6 +55,7 @@ namespace IndustrialPark
         {
             hipPaths = new List<string>();
             TextureFolderPaths = new List<string>();
+            hiddenAssets = new List<uint>();
 
             CamPos = new Vector3();
             Yaw = 0;
@@ -101,10 +103,10 @@ namespace IndustrialPark
 
         public ProjectJson(List<string> hipPaths, List<string> textureFolderPaths, Vector3 camPos, float yaw, float pitch, float speed, float speedRot,
             float fieldOfView, float farPlane, bool noCulling, bool wireframe, Color4 backgroundColor, Vector4 widgetColor, Vector4 trigColor,
-            Vector4 mvptColor, Vector4 sfxColor, bool useLegacyAssetIDFormat, bool alternateNameDisplayMode, bool isDrawingUI, bool dontRenderLevelModel,
-            bool dontRenderBOUL, bool dontRenderBUTN, bool dontRenderCAM, bool dontRenderDSTR, bool dontRenderDYNA, bool dontRenderEGEN, bool dontRenderHANG,
-            bool dontRenderMRKR, bool dontRenderMVPT, bool dontRenderPEND, bool dontRenderPKUP, bool dontRenderPLAT, bool dontRenderPLYR, bool dontRenderSFX,
-            bool dontRenderSIMP, bool dontRenderTRIG, bool dontRenderUI, bool dontRenderUIFT, bool dontRenderVIL)
+            Vector4 mvptColor, Vector4 sfxColor, bool useLegacyAssetIDFormat, bool alternateNameDisplayMode, List<uint> hiddenAssets, bool isDrawingUI,
+            bool dontRenderLevelModel, bool dontRenderBOUL, bool dontRenderBUTN, bool dontRenderCAM, bool dontRenderDSTR, bool dontRenderDYNA, bool dontRenderEGEN,
+            bool dontRenderHANG, bool dontRenderMRKR, bool dontRenderMVPT, bool dontRenderPEND, bool dontRenderPKUP, bool dontRenderPLAT, bool dontRenderPLYR,
+            bool dontRenderSFX, bool dontRenderSIMP, bool dontRenderTRIG, bool dontRenderUI, bool dontRenderUIFT, bool dontRenderVIL)
         {
             this.hipPaths = hipPaths;
             TextureFolderPaths = textureFolderPaths;
@@ -124,6 +126,7 @@ namespace IndustrialPark
             SfxColor = sfxColor;
             UseLegacyAssetIDFormat = useLegacyAssetIDFormat;
             AlternateNameDisplayMode = alternateNameDisplayMode;
+            this.hiddenAssets = hiddenAssets;
             this.isDrawingUI = isDrawingUI;
             this.dontRenderLevelModel = dontRenderLevelModel;
             this.dontRenderBOUL = dontRenderBOUL;

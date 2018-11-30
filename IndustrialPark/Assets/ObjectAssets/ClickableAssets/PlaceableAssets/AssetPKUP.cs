@@ -31,7 +31,7 @@ namespace IndustrialPark
 
         protected override float? TriangleIntersection(Ray r, float initialDistance)
         {
-            if (dontRender)
+            if (dontRender || isInvisible)
                 return null;
 
             uint _modelAssetId;
@@ -78,7 +78,7 @@ namespace IndustrialPark
 
         public override void Draw(SharpRenderer renderer)
         {
-            if (dontRender) return;
+            if (dontRender || isInvisible) return;
                 if (AssetPICK.pickEntries.ContainsKey(_pickEntryID))
                     if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(AssetPICK.pickEntries[_pickEntryID]))
                     {

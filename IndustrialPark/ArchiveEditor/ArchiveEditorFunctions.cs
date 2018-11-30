@@ -591,6 +591,9 @@ namespace IndustrialPark
                     throw new Exception("Unknown asset type: " + AHDR.assetType);
             }
 
+            if (hiddenAssets.Contains(AHDR.assetID))
+                assetDictionary[AHDR.assetID].isInvisible = true;
+
             allowRender = true;
         }
 

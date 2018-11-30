@@ -50,14 +50,14 @@ namespace IndustrialPark
 
         public void Draw(SharpRenderer renderer)
         {
-            if (dontRender) return;
+            if (dontRender || isInvisible) return;
 
             model.Render(renderer, Matrix.Identity, isSelected ? renderer.selectedObjectColor : Vector4.One);
         }
 
         public float? IntersectsWith(Ray ray)
         {
-            if (dontRender)
+            if (dontRender || isInvisible)
                 return null;
 
             return TriangleIntersection(ray);

@@ -13,6 +13,18 @@ namespace IndustrialPark
 {
     public partial class ArchiveEditorFunctions
     {
+        public static List<uint> hiddenAssets = new List<uint>();
+
+        public List<uint> GetHiddenAssets()
+        {
+            List<uint> hiddenAssets = new List<uint>();
+            foreach (Asset a in assetDictionary.Values)
+                if (a.isInvisible)
+                    hiddenAssets.Add(a.AHDR.assetID);
+
+            return hiddenAssets;
+        }
+
         private List<IInternalEditor> internalEditors = new List<IInternalEditor>();
 
         public void CloseInternalEditor(IInternalEditor i)
@@ -31,8 +43,10 @@ namespace IndustrialPark
         {
             bool willOpen = true;
             if (list.Count > 15 && !openAnyway)
+            {
                 willOpen = MessageBox.Show($"Warning: you're going to open {list.Count} Asset Data Editor windows. Are you sure you want to do that?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
-
+            }
+                
             if (willOpen)
             foreach (uint u in list)
                 if (assetDictionary.ContainsKey(u))

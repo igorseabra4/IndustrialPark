@@ -163,7 +163,7 @@ namespace IndustrialPark
 
         public float? IntersectsWith(Ray ray)
         {
-            if (dontRender)
+            if (dontRender || isInvisible)
                 return null;
 
             return _dynaSpecific.IntersectsWith(ray);
@@ -181,7 +181,7 @@ namespace IndustrialPark
 
         public void Draw(SharpRenderer renderer)
         {
-            if (dontRender)
+            if (dontRender || isInvisible)
                 return;
 
             _dynaSpecific.Draw(renderer, isSelected);

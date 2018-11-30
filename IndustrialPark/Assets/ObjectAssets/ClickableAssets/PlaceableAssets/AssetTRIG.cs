@@ -86,7 +86,7 @@ namespace IndustrialPark
 
         public override void Draw(SharpRenderer renderer)
         {
-            if (dontRender) return;
+            if (dontRender || isInvisible) return;
 
             if (Shape == TriggerShape.Box)
                 renderer.DrawCube(world, isSelected, 1f);
@@ -96,7 +96,7 @@ namespace IndustrialPark
 
         public override float? IntersectsWith(Ray ray)
         {
-            if (dontRender)
+            if (dontRender || isInvisible)
                 return null;
 
             if (Shape == TriggerShape.Box)

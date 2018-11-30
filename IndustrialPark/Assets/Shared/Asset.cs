@@ -12,6 +12,7 @@ namespace IndustrialPark
 
         public Section_AHDR AHDR;
         public bool isSelected;
+        public bool isInvisible = false;
 
         public Asset(Section_AHDR AHDR)
         {
