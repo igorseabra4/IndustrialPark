@@ -9,42 +9,41 @@ namespace IndustrialPark
         {
         }
 
-        public void SetPosition(BoundingSphere Sphere, float Yaw, float Pitch, float Roll)
+        public void SetPosition(BoundingSphere Sphere, Matrix Rotation)
         {
             if (Sphere.Radius < 1f)
                 Sphere.Radius = 1f;
-
-            Matrix RotationMatrix = Matrix.RotationYawPitchRoll(MathUtil.DegreesToRadians(Yaw), MathUtil.DegreesToRadians(Pitch), MathUtil.DegreesToRadians(Roll));
-            
+                        
             switch (type)
             {
                 case GizmoType.Yaw:
-                    transformMatrix = Matrix.Scaling(Sphere.Radius / 2f) * RotationMatrix * Matrix.Translation(Sphere.Center);
+                    transformMatrix = Matrix.Scaling(Sphere.Radius / 2f) * Rotation * Matrix.Translation(Sphere.Center);
                     break;
                 case GizmoType.Pitch:
-                    transformMatrix = Matrix.Scaling(Sphere.Radius / 2f) * Matrix.RotationZ(MathUtil.Pi / 2) * RotationMatrix * Matrix.Translation(Sphere.Center);
+                    transformMatrix = Matrix.Scaling(Sphere.Radius / 2f) * Matrix.RotationZ(MathUtil.Pi / 2) * Rotation * Matrix.Translation(Sphere.Center);
                     break;
                 case GizmoType.Roll:
-                    transformMatrix = Matrix.Scaling(Sphere.Radius / 2f) * Matrix.RotationX(MathUtil.Pi / 2) * RotationMatrix * Matrix.Translation(Sphere.Center);
+                    transformMatrix = Matrix.Scaling(Sphere.Radius / 2f) * Matrix.RotationX(MathUtil.Pi / 2) * Rotation * Matrix.Translation(Sphere.Center);
                     break;
             }
 
-            boundingBox = BoundingBox.FromPoints(SharpRenderer.torusVertices.ToArray());
-            boundingBox.Maximum = (Vector3)Vector3.Transform(boundingBox.Maximum, transformMatrix);
-            boundingBox.Minimum = (Vector3)Vector3.Transform(boundingBox.Minimum, transformMatrix);
+            vertices = new Vector3[SharpRenderer.torusVertices.Count];
+            for (int i = 0; i < SharpRenderer.torusVertices.Count; i++)
+                vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.torusVertices[i], transformMatrix);
+            boundingBox = BoundingBox.FromPoints(vertices);
         }
-        
+                
         public override SharpMesh Mesh => SharpRenderer.Torus;
+
+        protected override List<Models.Triangle> triangleList => SharpRenderer.torusTriangles;
 
         public override bool TriangleIntersection(Ray r)
         {
-            List<Vector3> torusVertices = SharpRenderer.torusVertices;
-
             foreach (Models.Triangle t in SharpRenderer.torusTriangles)
             {
-                Vector3 v1 = (Vector3)Vector3.Transform(torusVertices[t.vertex1], transformMatrix);
-                Vector3 v2 = (Vector3)Vector3.Transform(torusVertices[t.vertex2], transformMatrix);
-                Vector3 v3 = (Vector3)Vector3.Transform(torusVertices[t.vertex3], transformMatrix);
+                Vector3 v1 = vertices[t.vertex1];
+                Vector3 v2 = vertices[t.vertex2];
+                Vector3 v3 = vertices[t.vertex3];
 
                 if (r.Intersects(ref v1, ref v2, ref v3, out float distance))
                 {

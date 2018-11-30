@@ -66,14 +66,14 @@ namespace IndustrialPark
             return null;
         }
 
-        public static AssetTemplate CurrentAssetTemplate { get; set; } = AssetTemplate.None;
+        public static AssetTemplate CurrentAssetTemplate { get; set; } = AssetTemplate.Null;
         public static string CurrentUserTemplate { get; set; } = "";
 
-        public uint PlaceTemplate(Vector3 position, int layerIndex, out bool success, ref List<uint> assetIDs, string customName = "", AssetTemplate template = AssetTemplate.None)
+        public uint PlaceTemplate(Vector3 position, int layerIndex, out bool success, ref List<uint> assetIDs, string customName = "", AssetTemplate template = AssetTemplate.Null)
         {
             AssetType newAssetType = AssetType.Null;
 
-            if (template == AssetTemplate.None)
+            if (template == AssetTemplate.Null)
                 template = CurrentAssetTemplate;
 
             if (template == AssetTemplate.UserTemplate)
@@ -83,6 +83,68 @@ namespace IndustrialPark
 
             switch (template)
             {
+                case AssetTemplate.AnimationList:
+                    newAssetType = AssetType.ALST;
+                    break;
+                case AssetTemplate.Boulder_Generic:
+                    newAssetType = AssetType.BOUL;
+                    break;
+                case AssetTemplate.Button_Generic:
+                case AssetTemplate.Button_Red:
+                case AssetTemplate.PressurePlate:
+                    newAssetType = AssetType.BUTN;
+                    break;
+                case AssetTemplate.Camera:
+                case AssetTemplate.CharacterSwitch_Camera:
+                    newAssetType = AssetType.CAM;
+                    break;
+                case AssetTemplate.Counter:
+                    newAssetType = AssetType.CNTR;
+                    break;
+                case AssetTemplate.CollisionTable:
+                    newAssetType = AssetType.COLL;
+                    break;
+                case AssetTemplate.Conditional:
+                    newAssetType = AssetType.COND;
+                    break;
+                case AssetTemplate.Dispatcher:
+                    newAssetType = AssetType.DPAT;
+                    break;
+                case AssetTemplate.Destructible_Generic:
+                    newAssetType = AssetType.DSTR;
+                    break;
+                case AssetTemplate.CharSwitch:
+                case AssetTemplate.DuplicatotronSettings:
+                    newAssetType = AssetType.DYNA;
+                    break;
+                case AssetTemplate.ElectricArc_Generic:
+                    newAssetType = AssetType.EGEN;
+                    break;
+                case AssetTemplate.Environment:
+                    newAssetType = AssetType.ENV;
+                    break;
+                case AssetTemplate.Group:
+                    newAssetType = AssetType.GRUP;
+                    break;
+                case AssetTemplate.JawData:
+                    newAssetType = AssetType.JAW;
+                    break;
+                case AssetTemplate.LevelOfDetailTable:
+                    newAssetType = AssetType.LODT;
+                    break;
+                case AssetTemplate.MaterialMap:
+                    newAssetType = AssetType.MAPR;
+                    break;
+                case AssetTemplate.Marker:
+                    newAssetType = AssetType.MRKR;
+                    break;
+                case AssetTemplate.EnemyAreaMVPT:
+                case AssetTemplate.PointMVPT:
+                    newAssetType = AssetType.MVPT;
+                    break;
+                case AssetTemplate.PipeInfoTable:
+                    newAssetType = AssetType.PIPT;
+                    break;
                 case AssetTemplate.Shiny_Red:
                 case AssetTemplate.Shiny_Yellow:
                 case AssetTemplate.Shiny_Green:
@@ -93,6 +155,41 @@ namespace IndustrialPark
                 case AssetTemplate.Sock:
                 case AssetTemplate.Spongeball:
                     newAssetType = AssetType.PKUP;
+                    break;
+                case AssetTemplate.Platform_Generic:
+                    newAssetType = AssetType.PLAT;
+                    break;
+                case AssetTemplate.Player_Generic:
+                    newAssetType = AssetType.PLYR;
+                    break;
+                case AssetTemplate.Portal:
+                    newAssetType = AssetType.PORT;
+                    break;
+                case AssetTemplate.ShadowTable:
+                    newAssetType = AssetType.SHDW;
+                    break;
+                case AssetTemplate.SIMP_Generic:
+                case AssetTemplate.TaxiStand:
+                case AssetTemplate.TexasHitch:
+                case AssetTemplate.PressurePlateBase:
+                case AssetTemplate.CharacterSwitch_BusSimp:
+                case AssetTemplate.BusStop:
+                case AssetTemplate.BusStop_LightSimp:
+                    newAssetType = AssetType.SIMP;
+                    break;
+                case AssetTemplate.SoundInfo:
+                    customName = "sound_info";
+                    newAssetType = AssetType.SNDI;
+                    break;
+                case AssetTemplate.SphereTrigger:
+                case AssetTemplate.BusStop_Trigger:
+                    newAssetType = AssetType.TRIG;
+                    break;
+                case AssetTemplate.Text:
+                    newAssetType = AssetType.TEXT;
+                    break;
+                case AssetTemplate.Timer:
+                    newAssetType = AssetType.TIMR;
                     break;
                 case AssetTemplate.WoodenTiki:
                 case AssetTemplate.FloatingTiki:
@@ -119,31 +216,11 @@ namespace IndustrialPark
                 case AssetTemplate.Jellyfish_Pink:
                 case AssetTemplate.Jellyfish_Blue:
                 case AssetTemplate.Duplicatotron:
+                case AssetTemplate.VIL_Generic:
                     newAssetType = AssetType.VIL;
                     break;
-                case AssetTemplate.Button:
-                case AssetTemplate.PressurePlateWithBase:
-                    newAssetType = AssetType.BUTN;
-                    break;
-                case AssetTemplate.TaxiStand:
-                case AssetTemplate.TexasHitch:
-                case AssetTemplate.PressurePlateBaseOnly:
-                    newAssetType = AssetType.SIMP;
-                    break;
-                case AssetTemplate.EnemyMVPT:
-                    newAssetType = AssetType.MVPT;
-                    break;
-                case AssetTemplate.SphereTrigger:
-                    newAssetType = AssetType.TRIG;
-                    break;
-                case AssetTemplate.DuplicatotronSettings:
-                    newAssetType = AssetType.DYNA;
-                    break;
-                case AssetTemplate.EmptyGroup:
-                    newAssetType = AssetType.GRUP;
-                    break;
                 default:
-                    if (template != AssetTemplate.None)
+                    if (template != AssetTemplate.Null)
                         MessageBox.Show("Unsupported asset template");
                     success = false;
                     return 0;
@@ -156,7 +233,7 @@ namespace IndustrialPark
                 data = GetTemplate(newAssetType)
             };
 
-            if (template == AssetTemplate.DuplicatotronSettings)
+            if (newAssetType == AssetType.DYNA)
                 newAsset.data = new byte[0x10];
 
             if (string.IsNullOrWhiteSpace(customName))
@@ -173,6 +250,18 @@ namespace IndustrialPark
                 placeableAsset.PositionX = position.X;
                 placeableAsset.PositionY = position.Y;
                 placeableAsset.PositionZ = position.Z;
+            }
+            else if (asset is AssetMRKR mrkr)
+            {
+                mrkr.PositionX = position.X;
+                mrkr.PositionY = position.Y;
+                mrkr.PositionZ = position.Z;
+            }
+            else if (asset is AssetCAM cam)
+            {
+                cam.PositionX = position.X;
+                cam.PositionY = position.Y;
+                cam.PositionZ = position.Z;
             }
 
             switch (template)
@@ -254,37 +343,37 @@ namespace IndustrialPark
                 case AssetTemplate.Fodder:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("robot_0a_fodder_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.robot_0a_fodder_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyAreaMVPT);
                     break;
                 case AssetTemplate.Hammer:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("ham_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.ham_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyAreaMVPT);
                     break;
                 case AssetTemplate.TarTar:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("robot_tar_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.robot_tar_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyAreaMVPT);
                     break;
                 case AssetTemplate.ChompBot:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("robot_0a_chomper_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.robot_0a_chomper_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyAreaMVPT);
                     break;
                 case AssetTemplate.GLove:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("g_love_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.g_love_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyAreaMVPT);
                     break;
                 case AssetTemplate.Chuck:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("robot_chuck_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.robot_chuck_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyAreaMVPT);
                     break;
                 case AssetTemplate.Chuck_Trigger:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("robot_chuck_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.robot_chuck_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyAreaMVPT);
                     ((AssetVIL)asset).EventsBFBB = new AssetEventBFBB[] {
                         new AssetEventBFBB
                         {
@@ -317,12 +406,12 @@ namespace IndustrialPark
                 case AssetTemplate.Monsoon:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("robot_4a_monsoon_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.robot_4a_monsoon_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyAreaMVPT);
                     break;
                 case AssetTemplate.Monsoon_Trigger:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("robot_4a_monsoon_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.robot_4a_monsoon_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyAreaMVPT);
                     ((AssetVIL)asset).EventsBFBB = new AssetEventBFBB[] {
                         new AssetEventBFBB
                         {
@@ -356,23 +445,23 @@ namespace IndustrialPark
                 case AssetTemplate.Sleepytime_Moving:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("robot_sleepy-time_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.robot_sleepytime_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyAreaMVPT);
                     break;
                 case AssetTemplate.Sleepytime:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("robot_sleepy-time_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.robot_sleepytime_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyAreaMVPT);
                     ((AssetMVPT)GetFromAssetID(((AssetVIL)asset).AssetID_MVPT)).MovementRadius = -1;
                     break;
                 case AssetTemplate.BombBot:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("robot_0a_bomb_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.robot_0a_bomb_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyAreaMVPT);
                     break;
                 case AssetTemplate.Tubelet:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("tubelet_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.tubelet_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyAreaMVPT);
                     ((AssetVIL)asset).EventsBFBB = new AssetEventBFBB[] {
                         new AssetEventBFBB
                         {
@@ -397,17 +486,17 @@ namespace IndustrialPark
                 case AssetTemplate.BzztBot:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("robot_0a_bzzt_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.robot_0a_bzzt_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyAreaMVPT);
                     break;
                 case AssetTemplate.Slick:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("robot_9a_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.robot_9a_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyAreaMVPT);
                     break;
                 case AssetTemplate.Slick_Trigger:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("robot_9a_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.robot_9a_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyAreaMVPT);
                     ((AssetVIL)asset).EventsBFBB = new AssetEventBFBB[] {
                         new AssetEventBFBB
                         {
@@ -441,12 +530,12 @@ namespace IndustrialPark
                 case AssetTemplate.Jellyfish_Pink:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("jellyfish_pink_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.jellyfish_pink_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyAreaMVPT);
                     break;
                 case AssetTemplate.Jellyfish_Blue:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("jellyfish_blue_bind.MINF");
                     ((AssetVIL)asset).VilType = VilType.jellyfish_blue_bind;
-                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyMVPT);
+                    ((AssetVIL)asset).AssetID_MVPT = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyAreaMVPT);
                     break;
                 case AssetTemplate.Duplicatotron:
                     ((AssetVIL)asset).ModelAssetID = BKDRHash("duplicatotron1000_bind.MINF");
@@ -456,7 +545,7 @@ namespace IndustrialPark
                         new AssetEventBFBB
                         {
                             Arguments_Float = new float[6],
-                            TargetAssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_GROUP", AssetTemplate.EmptyGroup),
+                            TargetAssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_GROUP", AssetTemplate.Group),
                             EventReceiveID = EventTypeBFBB.ScenePrepare,
                             EventSendID = EventTypeBFBB.Connect_IOwnYou
                         }
@@ -478,7 +567,7 @@ namespace IndustrialPark
                         DuploEnemyLimit = -1
                     };
                     break;
-                case AssetTemplate.Button:
+                case AssetTemplate.Button_Red:
                     ((AssetBUTN)asset).ModelAssetID = BKDRHash("button");
                     ((AssetBUTN)asset).PressedModelAssetID = BKDRHash("button_grn");
                     ((AssetBUTN)asset).UnknownByte6C = 4;
@@ -496,7 +585,7 @@ namespace IndustrialPark
                     ((AssetBUTN)asset).PatrickBelly = true;
                     ((AssetBUTN)asset).SandyMelee = true;
                     break;
-                case AssetTemplate.PressurePlateWithBase:
+                case AssetTemplate.PressurePlate:
                     ((AssetBUTN)asset).ButtonType = AssetBUTN.ButnHitMode.PressurePlate;
                     ((AssetBUTN)asset).ModelAssetID = BKDRHash("plate_pressure");
                     ((AssetBUTN)asset).PressedModelAssetID = 0xCE7F8131;
@@ -512,9 +601,9 @@ namespace IndustrialPark
                     ((AssetBUTN)asset).ThrowFruitOnPressurePlate = true;
                     ((AssetBUTN)asset).BubbleBowlOnPressurePlate = true;
 
-                    PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_BASE", AssetTemplate.PressurePlateBaseOnly);
+                    PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_BASE", AssetTemplate.PressurePlateBase);
                     break;
-                case AssetTemplate.PressurePlateBaseOnly:
+                case AssetTemplate.PressurePlateBase:
                     ((AssetSIMP)asset).ModelAssetID = BKDRHash("plate_pressure_base");
                     break;
                 case AssetTemplate.TaxiStand:
@@ -523,7 +612,7 @@ namespace IndustrialPark
                 case AssetTemplate.TexasHitch:
                     ((AssetSIMP)asset).ModelAssetID = BKDRHash("trailer_hitch");
                     break;
-                case AssetTemplate.EnemyMVPT:
+                case AssetTemplate.EnemyAreaMVPT:
                     ((AssetMVPT)asset).PositionX = position.X;
                     ((AssetMVPT)asset).PositionY = position.Y;
                     ((AssetMVPT)asset).PositionZ = position.Z;
@@ -535,11 +624,69 @@ namespace IndustrialPark
                     ((AssetMVPT)asset).MovementRadius = 4;
                     ((AssetMVPT)asset).DistanceICanSeeYou = 8;
                     break;
+                case AssetTemplate.PointMVPT:
+                    ((AssetMVPT)asset).PositionX = position.X;
+                    ((AssetMVPT)asset).PositionY = position.Y;
+                    ((AssetMVPT)asset).PositionZ = position.Z;
+                    ((AssetMVPT)asset).UnknownByte14 = 0x27;
+                    ((AssetMVPT)asset).UnknownByte15 = 0x10;
+                    ((AssetMVPT)asset).UnknownByte16 = 0x01;
+                    ((AssetMVPT)asset).PointType = 0x00;
+                    ((AssetMVPT)asset).MovementAngle = 0;
+                    ((AssetMVPT)asset).MovementRadius = -1;
+                    ((AssetMVPT)asset).DistanceICanSeeYou = -1;
+                    break;
                 case AssetTemplate.SphereTrigger:
                     ((AssetTRIG)asset).PositionX = position.X;
                     ((AssetTRIG)asset).PositionY = position.Y;
                     ((AssetTRIG)asset).PositionZ = position.Z;
                     ((AssetTRIG)asset).Position1X_Radius = 10f;
+                    break;
+                case AssetTemplate.CharSwitch:
+                    ((AssetDYNA)asset).Flags = 0x1D;
+                    ((AssetDYNA)asset).Version = 2;
+                    ((AssetDYNA)asset).Type = DynaType.game_object__BusStop;
+                    ((AssetDYNA)asset).DynaBase = new DynaBusStop()
+                    {
+                        MRKR_ID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MRKR", AssetTemplate.Marker),
+                        Player = 0,
+                        CAM_ID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_CAM", AssetTemplate.CharacterSwitch_Camera),
+                        SIMP_ID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_SIMP", AssetTemplate.CharacterSwitch_BusSimp),
+                        CharacterSwitchTimer = 1.5f
+                    };
+                    break;
+                case AssetTemplate.CharacterSwitch_Camera:
+                    ((AssetCAM)asset).PositionX -= 7f;
+                    ((AssetCAM)asset).PositionY += 2f;
+                    ((AssetCAM)asset).NormalizedForwardX = 0.980334f;
+                    ((AssetCAM)asset).NormalizedForwardY = -0.119257f;
+                    ((AssetCAM)asset).NormalizedForwardZ = -0.157237f;
+                    ((AssetCAM)asset).NormalizedUpX = 0.117752f;
+                    ((AssetCAM)asset).NormalizedUpX = 0.992864f;
+                    ((AssetCAM)asset).NormalizedUpX = -0.018886f;
+                    ((AssetCAM)asset).Float2C = -0.158367f;
+                    ((AssetCAM)asset).UnknownValue30 = -1317011456;
+                    ((AssetCAM)asset).UnknownValue34 = 0x3F7CC4FD;
+                    ((AssetCAM)asset).UnknownShort44 = 30;
+                    ((AssetCAM)asset).UnknownShort46 = 45;
+                    ((AssetCAM)asset).CameraSpeed = 60f;
+                    ((AssetCAM)asset).Float4C = 0.5f;
+                    ((AssetCAM)asset).UnknownFloat64 = -2f;
+                    ((AssetCAM)asset).UnknownFloat68 = 1f;
+                    ((AssetCAM)asset).UnknownFloat6C = 1f;
+                    ((AssetCAM)asset).Flags1 = 00;
+                    ((AssetCAM)asset).Flags2 = 01;
+                    ((AssetCAM)asset).Flags3 = 01;
+                    ((AssetCAM)asset).Flags4 = 0x8F;
+                    break;
+                case AssetTemplate.CharacterSwitch_BusSimp:
+                    ((AssetSIMP)asset).PositionX -= 3f;
+                    ((AssetSIMP)asset).VisibilityFlag = 0;
+                    ((AssetSIMP)asset).SolidityFlag = 2;
+                    ((AssetSIMP)asset).ModelAssetID = BKDRHash("bus_bind");
+                    ((AssetSIMP)asset).AnimationAssetID = BKDRHash("BUSSTOP_ANIMLIST_01");
+                    ((AssetSIMP)asset).UnknownFloat_54 = 1f;
+                    ((AssetSIMP)asset).Unknown_5C = 0;
                     break;
             }
 

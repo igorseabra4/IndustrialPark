@@ -1,6 +1,6 @@
 ﻿using HipHopFile;
 using SharpDX;
-using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -41,15 +41,45 @@ namespace IndustrialPark
 
         protected virtual void CreateBoundingBox()
         {
+            List<Vector3> vertexList = new List<Vector3>();
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID) &&
                 ArchiveEditorFunctions.renderingDictionary[_modelAssetID].HasRenderWareModelFile() &&
                 ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile() != null)
-                boundingBox = BoundingBox.FromPoints(ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile().vertexListG.ToArray());
+            {
+                CreateBoundingBox(ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile().vertexListG);
+            }
             else
-                boundingBox = BoundingBox.FromPoints(SharpRenderer.cubeVertices.ToArray());
-            
-            boundingBox.Maximum = (Vector3)Vector3.Transform(boundingBox.Maximum, world);
-            boundingBox.Minimum = (Vector3)Vector3.Transform(boundingBox.Minimum, world);
+            {
+                CreateBoundingBox(SharpRenderer.cubeVertices, 0.5f);
+            }
+        }
+
+        protected Vector3[] vertices;
+        protected RenderWareFile.Triangle[] triangles;
+
+        protected void CreateBoundingBox(List<Vector3> vertexList, float multiplier = 1f)
+        {
+            vertices = new Vector3[vertexList.Count];
+
+            for (int i = 0; i < vertexList.Count; i++)
+                vertices[i] = (Vector3)Vector3.Transform(vertexList[i] * multiplier, world);
+
+            boundingBox = BoundingBox.FromPoints(vertices);
+
+            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
+            {
+                if (ArchiveEditorFunctions.renderingDictionary[_modelAssetID] is AssetMINF MINF)
+                {
+                    if (MINF.HasRenderWareModelFile())
+                        triangles = ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile().triangleList.ToArray();
+                    else
+                        triangles = null;
+                }
+                else
+                    triangles = ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile().triangleList.ToArray();
+            }
+            else
+                triangles = null;
         }
 
         public virtual void Draw(SharpRenderer renderer)
@@ -74,42 +104,24 @@ namespace IndustrialPark
         
         protected virtual float? TriangleIntersection(Ray r, float initialDistance)
         {
+            if (triangles == null)
+                return initialDistance;
+
             bool hasIntersected = false;
             float smallestDistance = 1000f;
 
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
-            {
-                RenderWareModelFile rwmf;
-
-                if (ArchiveEditorFunctions.renderingDictionary[_modelAssetID] is AssetMINF MINF)
+            foreach (RenderWareFile.Triangle t in triangles)
+                if (r.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
                 {
-                    if (MINF.HasRenderWareModelFile())
-                        rwmf = ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile();
-                    else return initialDistance;
-                }
-                else rwmf = ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile();
+                    hasIntersected = true;
 
-                foreach (RenderWareFile.Triangle t in rwmf.triangleList)
-                {
-                    Vector3 v1 = (Vector3)Vector3.Transform(rwmf.vertexListG[t.vertex1], world);
-                    Vector3 v2 = (Vector3)Vector3.Transform(rwmf.vertexListG[t.vertex2], world);
-                    Vector3 v3 = (Vector3)Vector3.Transform(rwmf.vertexListG[t.vertex3], world);
-
-                    if (r.Intersects(ref v1, ref v2, ref v3, out float distance))
-                    {
-                        hasIntersected = true;
-
-                        if (distance < smallestDistance)
-                            smallestDistance = distance;
-                    }
+                    if (distance < smallestDistance)
+                        smallestDistance = distance;
                 }
 
-                if (hasIntersected)
-                    return smallestDistance;
-                else return null;
-            }
-
-            return initialDistance;
+            if (hasIntersected)
+                return smallestDistance;
+            return null;
         }
 
         public BoundingSphere GetObjectCenter()

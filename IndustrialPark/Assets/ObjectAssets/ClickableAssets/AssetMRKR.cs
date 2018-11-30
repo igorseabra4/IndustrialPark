@@ -37,11 +37,14 @@ namespace IndustrialPark
 
         protected void CreateBoundingBox()
         {
-            boundingBox =  BoundingBox.FromPoints(SharpRenderer.pyramidVertices.ToArray());
-            boundingBox.Maximum = (Vector3)Vector3.Transform(boundingBox.Maximum, world);
-            boundingBox.Minimum = (Vector3)Vector3.Transform(boundingBox.Minimum, world);
+            Vector3[] vertices = new Vector3[SharpRenderer.pyramidVertices.Count];
+
+            for (int i = 0; i < SharpRenderer.pyramidVertices.Count; i++)
+                vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.pyramidVertices[i], world);
+
+            boundingBox = BoundingBox.FromPoints(vertices);
         }
-        
+
         public float? IntersectsWith(Ray ray)
         {
             if (dontRender)

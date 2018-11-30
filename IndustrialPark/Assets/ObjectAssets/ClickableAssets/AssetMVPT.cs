@@ -58,9 +58,12 @@ namespace IndustrialPark
         {
             if (_distanceICanSeeYou == -1f)
             {
-                boundingBox = BoundingBox.FromPoints(SharpRenderer.pyramidVertices.ToArray());
-                boundingBox.Maximum = (Vector3)Vector3.Transform(boundingBox.Maximum, world);
-                boundingBox.Minimum = (Vector3)Vector3.Transform(boundingBox.Minimum, world);
+                Vector3[] vertices = new Vector3[SharpRenderer.pyramidVertices.Count];
+
+                for (int i = 0; i < SharpRenderer.pyramidVertices.Count; i++)
+                    vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.pyramidVertices[i], world);
+
+                boundingBox = BoundingBox.FromPoints(vertices);
                 boundingSphere = BoundingSphere.FromBox(boundingBox);
             }
             else
@@ -76,7 +79,11 @@ namespace IndustrialPark
                 return null;
 
             if (ray.Intersects(ref boundingSphere))
-                    return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices);
+            {
+                if (_distanceICanSeeYou == -1f)
+                    return TriangleIntersection(ray, SharpRenderer.pyramidTriangles, SharpRenderer.pyramidVertices);
+                return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices);
+            }
             return null;
         }
 

@@ -2,8 +2,20 @@
 {
     public enum AssetTemplate
     {
-        None,
+        Null,
         UserTemplate,
+
+        // Controllers
+        Group,
+        Counter,
+        Conditional,
+        Dispatcher,
+        Portal,
+        Text,
+        Timer,
+        DuplicatotronSettings,
+
+        // Pickups and Tikis
         Shiny_Red,
         Shiny_Yellow,
         Shiny_Green,
@@ -18,6 +30,8 @@
         ThunderTiki,
         ShhhTiki,
         StoneTiki,
+
+        // Enemies
         Fodder,
         Hammer,
         TarTar,
@@ -31,21 +45,55 @@
         Sleepytime_Moving,
         BombBot,
         Tubelet,
-        TubeletSlave,
         BzztBot,
         Slick,
         Slick_Trigger,
         Jellyfish_Pink,
         Jellyfish_Blue,
         Duplicatotron,
-        Button,
-        PressurePlateWithBase,
-        PressurePlateBaseOnly,
+
+        // ...but not for user
+        TubeletSlave,
+
+        // Stage Items
+        Button_Red,
+        PressurePlate,
         TaxiStand,
         TexasHitch,
+        CharSwitch,
+        BusStop,
+
+        // ...but not for user
+        PressurePlateBase,
+        CharacterSwitch_BusSimp,
+        CharacterSwitch_Camera,
+        BusStop_LightSimp,
+        BusStop_Trigger,
+
+        // Placeable
+        Marker,
         SphereTrigger,
-        EnemyMVPT,
-        EmptyGroup,
-        DuplicatotronSettings,
+        PointMVPT,
+        EnemyAreaMVPT,
+        Boulder_Generic,
+        Button_Generic,
+        Camera,
+        Destructible_Generic,
+        ElectricArc_Generic,
+        Platform_Generic,
+        Player_Generic,
+        SIMP_Generic,
+        VIL_Generic,
+
+        // Other
+        AnimationList,
+        CollisionTable,
+        Environment,
+        JawData,
+        LevelOfDetailTable,
+        MaterialMap,
+        PipeInfoTable,
+        ShadowTable,
+        SoundInfo,
     }
 }

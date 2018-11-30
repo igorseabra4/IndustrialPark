@@ -84,7 +84,8 @@ namespace IndustrialPark
             if (AllSelectedRotatableAssets.Count == 1)
             {
                 IRotatableAsset ira = AllSelectedRotatableAssets[0];
-                UpdateRotationGizmo(ira.GetObjectCenter(), ira.Yaw, ira.Pitch, ira.Roll);
+                SetCenterRotation(ira.Yaw, ira.Pitch, ira.Roll);
+                UpdateRotationGizmo(ira.GetObjectCenter());
                 if (CurrentGizmoMode == GizmoMode.Rotation)
                     DrawGizmos = true;
             }
@@ -95,6 +96,7 @@ namespace IndustrialPark
                 bool found = false;
 
                 foreach (IScalableAsset a in AllSelectedScalableAssets)
+                {
                     if (!found)
                     {
                         found = true;
@@ -102,6 +104,10 @@ namespace IndustrialPark
                     }
                     else
                         bb = BoundingBox.Merge(bb, a.GetBoundingBox());
+
+                    if (CurrentGizmoMode == GizmoMode.Scale && a is IRotatableAsset ira)
+                        SetCenterRotation(ira.Yaw, ira.Pitch, ira.Roll);
+                }
 
                 if (found)
                 {
@@ -167,13 +173,12 @@ namespace IndustrialPark
                 g.SetPosition(position);
         }
 
-        private static void UpdateRotationGizmo(BoundingSphere position, float Yaw, float Pitch, float Roll)
+        private static void UpdateRotationGizmo(BoundingSphere position)
         {
             GizmoCenterPosition = position.Center;
-            GizmoCenterRotation = Matrix.RotationYawPitchRoll(MathUtil.DegreesToRadians(Yaw), MathUtil.DegreesToRadians(Pitch), MathUtil.DegreesToRadians(Roll));
 
             foreach (RotationGizmo g in rotationGizmos)
-                g.SetPosition(position, Yaw, Pitch, Roll);
+                g.SetPosition(position, GizmoCenterRotation);
         }
 
         private static void UpdateScaleGizmo(BoundingBox position)
@@ -190,6 +195,11 @@ namespace IndustrialPark
 
             foreach (PositionLocalGizmo g in positionLocalGizmos)
                 g.SetPosition(position, GizmoCenterRotation);
+        }
+
+        private static void SetCenterRotation(float Yaw, float Pitch, float Roll)
+        {
+            GizmoCenterRotation = Matrix.RotationYawPitchRoll(MathUtil.DegreesToRadians(Yaw), MathUtil.DegreesToRadians(Pitch), MathUtil.DegreesToRadians(Roll));
         }
 
         public static void GizmoSelect(Ray r)
@@ -366,7 +376,7 @@ namespace IndustrialPark
                             //direction.Normalize();
 
                             //ra.Yaw -= (distanceX * direction.X - distanceY * direction.Y) / 10;
-                            ra.Yaw += distanceX / 2.5f;
+                            ra.Yaw += distanceX;
                         }
                         else if (rotationGizmos[1].isSelected)
                         {
@@ -379,7 +389,7 @@ namespace IndustrialPark
                             //direction.Normalize();
 
                             //ra.Pitch -= (distanceX * direction.X - distanceY * direction.Y) / 10;
-                            ra.Pitch += distanceX / 2.5f;
+                            ra.Pitch += distanceX;
                         }
                         else if (rotationGizmos[2].isSelected)
                         {
@@ -392,7 +402,7 @@ namespace IndustrialPark
                             //direction.Normalize();
 
                             //ra.Roll -= (distanceX * direction.X - distanceY * direction.Y) / 10;
-                            ra.Roll += distanceX / 2.5f;
+                            ra.Roll += distanceX;
                         }
                     }
 

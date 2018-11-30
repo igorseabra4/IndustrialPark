@@ -33,6 +33,8 @@ namespace IndustrialPark
 
             if (!string.IsNullOrWhiteSpace(filePath))
                 OpenFile(filePath);
+
+            MainForm.PopulateTemplateMenusAt(addTemplateToolStripMenuItem, TemplateToolStripMenuItem_Click);
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -231,6 +233,7 @@ namespace IndustrialPark
             buttonArrowUp.Enabled = true;
             buttonArrowDown.Enabled = true;
             importMultipleAssetsToolStripMenuItem.Enabled = true;
+            addTemplateToolStripMenuItem.Enabled = true;
 
             programIsChangingStuff = false;
         }
@@ -306,6 +309,7 @@ namespace IndustrialPark
                 buttonArrowUp.Enabled = false;
                 buttonArrowDown.Enabled = false;
                 importMultipleAssetsToolStripMenuItem.Enabled = false;
+                addTemplateToolStripMenuItem.Enabled = false;
 
                 buttonCopy.Enabled = false;
                 buttonDuplicate.Enabled = false;
@@ -562,7 +566,7 @@ namespace IndustrialPark
             SetSelectedIndexes(assetIDs);
         }
 
-        private void buttonRemoveAsset_Click(object sender, EventArgs e)
+        private void ButtonRemoveAsset_Click(object sender, EventArgs e)
         {
             if (listBoxAssets.SelectedIndex < 0) return;
 
@@ -638,12 +642,12 @@ namespace IndustrialPark
 
         public void OpenInternalEditors()
         {
-            archive.OpenInternalEditor(archive.GetCurrentlySelectedAssetIDs());
+            archive.OpenInternalEditor(archive.GetCurrentlySelectedAssetIDs(), false);
         }
 
         public void DeleteSelectedAssets()
         {
-            buttonRemoveAsset_Click(null, null);
+            ButtonRemoveAsset_Click(null, null);
             listBoxAssets.SelectedIndex = -1;
         }
 
@@ -799,11 +803,6 @@ namespace IndustrialPark
             }
         }
 
-        public void FindWhoTargets(uint assetID)
-        {
-            archive.FindWhoTargets(assetID);
-        }
-
         System.Drawing.Color defaultColor;
 
         private void textBoxFindAsset_TextChanged(object sender, EventArgs e)
@@ -880,7 +879,7 @@ namespace IndustrialPark
 
         private void toolStripMenuItem_Remove_Click(object sender, EventArgs e)
         {
-            buttonRemoveAsset_Click(null, null);
+            ButtonRemoveAsset_Click(null, null);
         }
 
         private void toolStripMenuItem_View_Click(object sender, EventArgs e)
@@ -943,7 +942,7 @@ namespace IndustrialPark
             else if (e.KeyCode == Keys.Delete)
             {
                 if (buttonRemoveAsset.Enabled)
-                    buttonRemoveAsset_Click(null, null);
+                    ButtonRemoveAsset_Click(null, null);
             }
         }
 
@@ -961,12 +960,29 @@ namespace IndustrialPark
                 toolStripMenuItem_Export.Enabled = buttonExportRaw.Enabled;
                 toolStripMenuItem_EditHeader.Enabled = buttonEditAsset.Enabled;
                 toolStripMenuItem_EditData.Enabled = buttonInternalEdit.Enabled;
+                addTemplateToolStripMenuItem.Enabled = buttonAddAsset.Enabled;
 
                 contextMenuStrip_ListBoxAssets.Show(listBoxAssets.PointToScreen(e.Location));
             }
         }
 
-        public void PlaceTemplate(Vector3 position)
+        private void TemplateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string text = ((ToolStripItem)sender).Text;
+            foreach (AssetTemplate template in Enum.GetValues(typeof(AssetTemplate)))
+            {
+                if (text == template.ToString())
+                {
+                    Vector3 Position = Program.MainForm.renderer.Camera.Position + 2 * Program.MainForm.renderer.Camera.GetForward();
+                    PlaceTemplate(Position, template);
+                    return;
+                }
+            }
+
+            MessageBox.Show("There was a problem setting your template for placement");
+        }
+
+        public void PlaceTemplate(Vector3 position, AssetTemplate template = AssetTemplate.Null)
         {
             if (comboBoxLayers.SelectedIndex == -1)
             {
@@ -976,8 +992,8 @@ namespace IndustrialPark
 
             List<uint> assetIDs = new List<uint>();
 
-            archive.PlaceTemplate(position, comboBoxLayers.SelectedIndex, out bool success, ref assetIDs);
-
+            archive.PlaceTemplate(position, comboBoxLayers.SelectedIndex, out bool success, ref assetIDs, template: template);
+            
             if (success)
             {
                 archive.UnsavedChanges = true;

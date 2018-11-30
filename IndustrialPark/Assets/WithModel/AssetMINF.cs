@@ -42,19 +42,26 @@ namespace IndustrialPark
             try
             {
                 _modelAssetID = ReadUInt(0x14);
+                ArchiveEditorFunctions.AddToRenderingDictionary(AHDR.assetID, this);
             }
             catch
             {
                 _modelAssetID = 0;
             }
-            ArchiveEditorFunctions.AddToRenderingDictionary(AHDR.assetID, this);
         }
 
         public override bool HasReference(uint assetID)
         {
+            if (ATBL_AssetID == assetID)
+                return true;
+
             foreach (ModelReference m in ModelReferences)
+            {
                 if (m.ModelAssetID == assetID)
                     return true;
+                if (m.UnknownAssetID == assetID)
+                    return true;
+            }
 
             return base.HasReference(assetID);
         }

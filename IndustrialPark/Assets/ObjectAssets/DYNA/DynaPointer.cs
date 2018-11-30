@@ -19,9 +19,9 @@ namespace IndustrialPark
             _position.X = Switch(BitConverter.ToSingle(Data, 0));
             _position.Y = Switch(BitConverter.ToSingle(Data, 4));
             _position.Z = Switch(BitConverter.ToSingle(Data, 8));
-            _rotation.X = Switch(BitConverter.ToSingle(Data, 12));
-            _rotation.Y = Switch(BitConverter.ToSingle(Data, 16));
-            _rotation.Z = Switch(BitConverter.ToSingle(Data, 20));
+            _yaw = Switch(BitConverter.ToSingle(Data, 12));
+            _pitch = Switch(BitConverter.ToSingle(Data, 16));
+            _roll = Switch(BitConverter.ToSingle(Data, 20));
         }
 
         public override byte[] ToByteArray()
@@ -30,14 +30,16 @@ namespace IndustrialPark
             list.AddRange(BitConverter.GetBytes(Switch(_position.X)));
             list.AddRange(BitConverter.GetBytes(Switch(_position.Y)));
             list.AddRange(BitConverter.GetBytes(Switch(_position.Z)));
-            list.AddRange(BitConverter.GetBytes(Switch(_rotation.X)));
-            list.AddRange(BitConverter.GetBytes(Switch(_rotation.Y)));
-            list.AddRange(BitConverter.GetBytes(Switch(_rotation.Z)));
+            list.AddRange(BitConverter.GetBytes(Switch(_yaw)));
+            list.AddRange(BitConverter.GetBytes(Switch(_pitch)));
+            list.AddRange(BitConverter.GetBytes(Switch(_roll)));
             return list.ToArray();
         }
 
         private Vector3 _position;
-        private Vector3 _rotation;
+        private float _yaw;
+        private float _pitch;
+        private float _roll;
 
         [Category("Pointer"), Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
         public override float PositionX
@@ -70,57 +72,49 @@ namespace IndustrialPark
             }
         }
         [Category("Pointer"), Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public float RotationX
+        public float RotationYaw
         {
-            get => _rotation.X;
+            get => _yaw;
             set
             {
-                _rotation.X = value;
+                _yaw = value;
                 CreateTransformMatrix();
             }
         }
         [Category("Pointer"), Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public float RotationY
+        public float RotationPitch
         {
-            get => _rotation.Y;
+            get => _pitch;
             set
             {
-                _rotation.Y = value;
+                _pitch = value;
                 CreateTransformMatrix();
             }
         }
         [Category("Pointer"), Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public float RotationZ
+        public float RotationRoll
         {
-            get => _rotation.Z;
+            get => _roll;
             set
             {
-                _rotation.Z = value;
+                _roll = value;
                 CreateTransformMatrix();
             }
         }
 
-        public override bool IsRenderableClickable { get => true; }
+        public override bool IsRenderableClickable => true;
 
         private Matrix world;
         private BoundingBox boundingBox;
 
         public override void CreateTransformMatrix()
         {
-            world =
-                Matrix.RotationY(MathUtil.DegreesToRadians(_rotation.Y)) *
-                Matrix.RotationX(MathUtil.DegreesToRadians(_rotation.X)) *
-                Matrix.RotationZ(MathUtil.DegreesToRadians(_rotation.Z)) *
-                Matrix.Translation(_position);
+            world = Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll) * Matrix.Translation(_position);
 
-            CreateBoundingBox();
-        }
-
-        private void CreateBoundingBox()
-        {
-            boundingBox = BoundingBox.FromPoints(SharpRenderer.pyramidVertices.ToArray());
-            boundingBox.Maximum = (Vector3)Vector3.Transform(boundingBox.Maximum, world);
-            boundingBox.Minimum = (Vector3)Vector3.Transform(boundingBox.Minimum, world);
+            Vector3[] vertices = new Vector3[SharpRenderer.pyramidVertices.Count];
+            for (int i = 0; i < SharpRenderer.pyramidVertices.Count; i++)
+                vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.pyramidVertices[i], world);
+            boundingBox = BoundingBox.FromPoints(vertices);
         }
 
         public override void Draw(SharpRenderer renderer, bool isSelected)

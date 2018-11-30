@@ -24,18 +24,14 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
-        public override void CreateTransformMatrix()
-        {
-            world = Matrix.RotationX(MathUtil.PiOverTwo) * Matrix.Translation(_position + new Vector3(0f, 0.5f, 0f));
-
-            CreateBoundingBox();
-        }
-
         protected override void CreateBoundingBox()
         {
-            boundingBox = BoundingBox.FromPoints(SharpRenderer.pyramidVertices.ToArray());
-            boundingBox.Maximum = (Vector3)Vector3.Transform(boundingBox.Maximum, world);
-            boundingBox.Minimum = (Vector3)Vector3.Transform(boundingBox.Minimum, world);
+            vertices = new Vector3[SharpRenderer.pyramidVertices.Count];
+
+            for (int i = 0; i < SharpRenderer.pyramidVertices.Count; i++)
+                vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.pyramidVertices[i], world);
+
+            boundingBox = BoundingBox.FromPoints(vertices);
         }
 
         protected override float? TriangleIntersection(Ray r, float distance)

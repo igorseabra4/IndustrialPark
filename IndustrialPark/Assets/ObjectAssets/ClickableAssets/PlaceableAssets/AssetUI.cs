@@ -57,12 +57,9 @@ namespace IndustrialPark
                 if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID) &&
                     ArchiveEditorFunctions.renderingDictionary[_modelAssetID].HasRenderWareModelFile() &&
                     ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile() != null)
-                    boundingBox = BoundingBox.FromPoints(ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile().vertexListG.ToArray());
+                    CreateBoundingBox(ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile().vertexListG);
                 else
-                    boundingBox = BoundingBox.FromPoints(SharpRenderer.planeVertices.ToArray());
-
-                boundingBox.Maximum = (Vector3)Vector3.Transform(boundingBox.Maximum, world);
-                boundingBox.Minimum = (Vector3)Vector3.Transform(boundingBox.Minimum, world);
+                    CreateBoundingBox(SharpRenderer.planeVertices);
             }
         }
 

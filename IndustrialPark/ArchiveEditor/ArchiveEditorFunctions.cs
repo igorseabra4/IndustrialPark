@@ -68,6 +68,8 @@ namespace IndustrialPark
 
         public void OpenFile(string fileName)
         {
+            allowRender = false;
+
             Dispose();
 
             currentlySelectedAssets = new List<Asset>();
@@ -90,6 +92,8 @@ namespace IndustrialPark
             foreach (Section_AHDR AHDR in DICT.ATOC.AHDRList)
                 AddAssetToDictionary(AHDR);
             RecalculateAllMatrices();
+
+            allowRender = true;
         }
 
         public void Save()
@@ -636,7 +640,15 @@ namespace IndustrialPark
 
             while (ContainsAsset(AHDR.assetID) | giveIDregardless)
             {
-                giveIDregardless = false;
+
+                if (numCopies > 1000)
+                {
+                    MessageBox.Show("Something went wrong: the asset your're trying to duplicate, paste or create a template of's name is too long. Due to that, I'll have to give it a new name myself.");
+                    numCopies = 0;
+                    AHDR.ADBG.assetName = "TOO_LONG";
+                }
+
+                    giveIDregardless = false;
                 numCopies++;
 
                 if (AHDR.ADBG.assetName.Contains(stringToAdd))

@@ -27,8 +27,13 @@ namespace IndustrialPark
                     internalEditors[i].Close();
         }
 
-        public void OpenInternalEditor(List<uint> list)
+        public void OpenInternalEditor(List<uint> list, bool openAnyway)
         {
+            bool willOpen = true;
+            if (list.Count > 15 && !openAnyway)
+                willOpen = MessageBox.Show($"Warning: you're going to open {list.Count} Asset Data Editor windows. Are you sure you want to do that?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
+
+            if (willOpen)
             foreach (uint u in list)
                 if (assetDictionary.ContainsKey(u))
                     OpenInternalEditor(assetDictionary[u]);
@@ -158,11 +163,14 @@ namespace IndustrialPark
             return assetID;
         }
 
-        public void FindWhoTargets(uint assetID)
+        public List<uint> FindWhoTargets(uint assetID)
         {
+            List<uint> whoTargets = new List<uint>();
             foreach (Asset asset in assetDictionary.Values)
                 if (asset.HasReference(assetID))
-                    OpenInternalEditor(asset);
+                    whoTargets.Add(asset.AHDR.assetID);
+
+            return whoTargets;
         }
         
         public void ExportHip(string fileName)
@@ -535,7 +543,7 @@ namespace IndustrialPark
                 }
             }
 
-            throw new Exception("Error: could not find SNDI asset in this archive.");
+            throw new Exception("Error: could not find SNDI asset which contains this sound in this archive.");
         }
 
         public static AHDRFlags AHDRFlagsFromAssetType(AssetType assetType)

@@ -28,27 +28,14 @@ namespace IndustrialPark
                     break;
             }
 
-            boundingBox = BoundingBox.FromPoints(SharpRenderer.cubeVertices.ToArray());
-            boundingBox.Maximum = (Vector3)Vector3.Transform(boundingBox.Maximum, transformMatrix);
-            boundingBox.Minimum = (Vector3)Vector3.Transform(boundingBox.Minimum, transformMatrix);
+            vertices = new Vector3[SharpRenderer.cubeVertices.Count];
+            for (int i = 0; i < SharpRenderer.cubeVertices.Count; i++)
+                vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.cubeVertices[i], transformMatrix);
+            boundingBox = BoundingBox.FromPoints(vertices);
         }
 
         public override SharpMesh Mesh => SharpRenderer.Cube;
 
-        public override bool TriangleIntersection(Ray r)
-        {
-            List<Vector3> cubeVertices = SharpRenderer.cubeVertices;
-
-            foreach (Models.Triangle t in SharpRenderer.cubeTriangles)
-            {
-                Vector3 v1 = (Vector3)Vector3.Transform(cubeVertices[t.vertex1], transformMatrix);
-                Vector3 v2 = (Vector3)Vector3.Transform(cubeVertices[t.vertex2], transformMatrix);
-                Vector3 v3 = (Vector3)Vector3.Transform(cubeVertices[t.vertex3], transformMatrix);
-
-                if (r.Intersects(ref v1, ref v2, ref v3))
-                    return true;
-            }
-            return false;
-        }
+        protected override List<Models.Triangle> triangleList => SharpRenderer.cubeTriangles;
     }
 }

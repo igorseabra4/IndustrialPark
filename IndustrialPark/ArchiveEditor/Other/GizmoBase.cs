@@ -1,4 +1,5 @@
 ﻿using SharpDX;
+using System.Collections.Generic;
 
 namespace IndustrialPark
 {
@@ -85,6 +86,10 @@ namespace IndustrialPark
 
         public BoundingBox boundingBox;
 
+        protected Vector3[] vertices;
+
+        protected abstract List<Models.Triangle> triangleList { get; }
+
         public float? IntersectsWith(Ray r)
         {
             if (r.Intersects(ref boundingBox, out float distance))
@@ -94,6 +99,18 @@ namespace IndustrialPark
             return null;
         }
 
-        public abstract bool TriangleIntersection(Ray r);
+        public virtual bool TriangleIntersection(Ray r)
+        {
+            foreach (Models.Triangle t in triangleList)
+            {
+                Vector3 v1 = vertices[t.vertex1];
+                Vector3 v2 = vertices[t.vertex2];
+                Vector3 v3 = vertices[t.vertex3];
+
+                if (r.Intersects(ref v1, ref v2, ref v3))
+                    return true;
+            }
+            return false;
+        }
     }
 }

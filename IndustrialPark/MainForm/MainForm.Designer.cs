@@ -99,15 +99,14 @@ namespace IndustrialPark
             this.toolStripStatusLabelTemplate = new System.Windows.Forms.ToolStripStatusLabel();
             this.renderPanel = new System.Windows.Forms.Panel();
             this.contextMenuStripMain = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.toolStripMenuItem_Templates = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripComboBoxAssetTemplate = new System.Windows.Forms.ToolStripComboBox();
-            this.userTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripComboBoxUserTemplate = new System.Windows.Forms.ToolStripComboBox();
             this.gizmoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.positionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rotationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.scaleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.positionLocalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_Templates = new System.Windows.Forms.ToolStripMenuItem();
+            this.userTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripComboBoxUserTemplate = new System.Windows.Forms.ToolStripComboBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStripMain.SuspendLayout();
@@ -139,14 +138,14 @@ namespace IndustrialPark
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.newToolStripMenuItem.Text = "Open New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(127, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
             // 
             // projectToolStripMenuItem
             // 
@@ -687,36 +686,7 @@ namespace IndustrialPark
             this.toolStripMenuItem_Templates,
             this.userTemplateToolStripMenuItem});
             this.contextMenuStripMain.Name = "contextMenuStripMain";
-            this.contextMenuStripMain.Size = new System.Drawing.Size(181, 92);
-            // 
-            // toolStripMenuItem_Templates
-            // 
-            this.toolStripMenuItem_Templates.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripComboBoxAssetTemplate});
-            this.toolStripMenuItem_Templates.Name = "toolStripMenuItem_Templates";
-            this.toolStripMenuItem_Templates.Size = new System.Drawing.Size(180, 22);
-            this.toolStripMenuItem_Templates.Text = "Template";
-            // 
-            // toolStripComboBoxAssetTemplate
-            // 
-            this.toolStripComboBoxAssetTemplate.Name = "toolStripComboBoxAssetTemplate";
-            this.toolStripComboBoxAssetTemplate.Size = new System.Drawing.Size(160, 23);
-            this.toolStripComboBoxAssetTemplate.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxAssetTemplate_SelectedIndexChanged);
-            // 
-            // userTemplateToolStripMenuItem
-            // 
-            this.userTemplateToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripComboBoxUserTemplate});
-            this.userTemplateToolStripMenuItem.Name = "userTemplateToolStripMenuItem";
-            this.userTemplateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.userTemplateToolStripMenuItem.Text = "User Template";
-            this.userTemplateToolStripMenuItem.Click += new System.EventHandler(this.userTemplateToolStripMenuItem_Click);
-            // 
-            // toolStripComboBoxUserTemplate
-            // 
-            this.toolStripComboBoxUserTemplate.Name = "toolStripComboBoxUserTemplate";
-            this.toolStripComboBoxUserTemplate.Size = new System.Drawing.Size(160, 23);
-            this.toolStripComboBoxUserTemplate.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxUserTemplate_SelectedIndexChanged);
+            this.contextMenuStripMain.Size = new System.Drawing.Size(150, 70);
             // 
             // gizmoToolStripMenuItem
             // 
@@ -726,7 +696,7 @@ namespace IndustrialPark
             this.scaleToolStripMenuItem,
             this.positionLocalToolStripMenuItem});
             this.gizmoToolStripMenuItem.Name = "gizmoToolStripMenuItem";
-            this.gizmoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.gizmoToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.gizmoToolStripMenuItem.Text = "Gizmo";
             // 
             // positionToolStripMenuItem
@@ -758,6 +728,27 @@ namespace IndustrialPark
             this.positionLocalToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.positionLocalToolStripMenuItem.Text = "Position (Local)";
             this.positionLocalToolStripMenuItem.Click += new System.EventHandler(this.positionLocalToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem_Templates
+            // 
+            this.toolStripMenuItem_Templates.Name = "toolStripMenuItem_Templates";
+            this.toolStripMenuItem_Templates.Size = new System.Drawing.Size(149, 22);
+            this.toolStripMenuItem_Templates.Text = "Template";
+            // 
+            // userTemplateToolStripMenuItem
+            // 
+            this.userTemplateToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripComboBoxUserTemplate});
+            this.userTemplateToolStripMenuItem.Name = "userTemplateToolStripMenuItem";
+            this.userTemplateToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.userTemplateToolStripMenuItem.Text = "User Template";
+            this.userTemplateToolStripMenuItem.Click += new System.EventHandler(this.userTemplateToolStripMenuItem_Click);
+            // 
+            // toolStripComboBoxUserTemplate
+            // 
+            this.toolStripComboBoxUserTemplate.Name = "toolStripComboBoxUserTemplate";
+            this.toolStripComboBoxUserTemplate.Size = new System.Drawing.Size(160, 23);
+            this.toolStripComboBoxUserTemplate.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxUserTemplate_SelectedIndexChanged);
             // 
             // MainForm
             // 
@@ -855,9 +846,8 @@ namespace IndustrialPark
         private ToolStripStatusLabel toolStripStatusLabel2;
         private ToolStripStatusLabel toolStripStatusLabelProject;
         private ToolStripMenuItem ensureAssociationsToolStripMenuItem;
-        private ContextMenuStrip contextMenuStripMain;
+        public ContextMenuStrip contextMenuStripMain;
         private ToolStripMenuItem toolStripMenuItem_Templates;
-        private ToolStripComboBox toolStripComboBoxAssetTemplate;
         private ToolStripStatusLabel toolStripStatusLabel3;
         private ToolStripStatusLabel toolStripStatusLabelTemplate;
         private ToolStripMenuItem userTemplateToolStripMenuItem;
