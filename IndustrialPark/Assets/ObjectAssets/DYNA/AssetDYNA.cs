@@ -65,7 +65,7 @@ namespace IndustrialPark
                     if (Functions.currentGame == Game.Incredibles)
                         _dynaSpecific = reset ? new DynaTeleport_MovieGame() : new DynaTeleport_MovieGame(Data.Skip(0x10).Take(EventStartOffset));
                     else
-                        _dynaSpecific = reset ? new DynaTeleport_BFBB() : new DynaTeleport_BFBB(Data.Skip(0x10).Take(EventStartOffset), Version);
+                        _dynaSpecific = reset ? new DynaTeleport_BFBB(Version) : new DynaTeleport_BFBB(Data.Skip(0x10).Take(EventStartOffset), Version);
                     break;
                 case DynaType.game_object__Taxi:
                     _dynaSpecific = reset ? new DynaTaxi() : new DynaTaxi(Data.Skip(0x10).Take(EventStartOffset));

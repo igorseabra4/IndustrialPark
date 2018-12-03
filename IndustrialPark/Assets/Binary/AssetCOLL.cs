@@ -33,6 +33,11 @@ namespace IndustrialPark
                 return ModelAssetID == entryCOLL.ModelAssetID;
             return false;
         }
+
+        public override int GetHashCode()
+        {
+            return ModelAssetID.GetHashCode();
+        }
     }
 
     public class AssetCOLL : Asset

@@ -411,7 +411,7 @@ namespace IndustrialPark
                             foreach (TextureNative_0015 tn in td.textureNativeList)
                             {
                                 fileVersion = tn.renderWareVersion;
-                                tn.textureNativeStruct.textureName = RWTX.AHDR.ADBG.assetName;
+                                tn.textureNativeStruct.textureName = RWTX.AHDR.ADBG.assetName.Replace(".RW3", "");
                                 textNativeList.Add(tn);
                             }
                 }
@@ -634,5 +634,31 @@ namespace IndustrialPark
             }
         }
 
+        public void CollapseLayers()
+        {
+            Dictionary<LayerType, Section_LHDR> layers = new Dictionary<LayerType, Section_LHDR>();
+
+            foreach (Section_LHDR LHDR in DICT.LTOC.LHDRList)
+            {
+                if (layers.ContainsKey(LHDR.layerType))
+                {
+                    layers[LHDR.layerType].assetIDlist.AddRange(LHDR.assetIDlist);
+                }
+                else
+                {
+                    layers.Add(LHDR.layerType, LHDR);
+                }
+            }
+
+            DICT.LTOC.LHDRList = new List<Section_LHDR>();
+
+            if (layers.ContainsKey(LayerType.TEXTURE))
+            {
+                DICT.LTOC.LHDRList.Add(layers[LayerType.TEXTURE]);
+                layers.Remove(LayerType.TEXTURE);
+            }
+
+            DICT.LTOC.LHDRList.AddRange(layers.Values.ToList());
+        }
     }
 }

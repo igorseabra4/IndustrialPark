@@ -44,6 +44,7 @@
         Sleepytime,
         Sleepytime_Moving,
         BombBot,
+        Arf,
         Tubelet,
         BzztBot,
         Slick,
@@ -53,6 +54,7 @@
         Duplicatotron,
 
         // ...but not for user
+        ArfDog,
         TubeletSlave,
 
         // Stage Items
@@ -60,15 +62,19 @@
         PressurePlate,
         TaxiStand,
         TexasHitch,
-        CharSwitch,
         BusStop,
+        TeleportBox,
+        ThrowFruit,
+        FreezyFruit,
 
         // ...but not for user
         PressurePlateBase,
-        CharacterSwitch_BusSimp,
-        CharacterSwitch_Camera,
-        BusStop_LightSimp,
+        BusStop_DYNA,
+        BusStop_BusSimp,
+        BusStop_Camera,
+        BusStop_Lights,
         BusStop_Trigger,
+        ThrowFruitBase,
 
         // Placeable
         Marker,

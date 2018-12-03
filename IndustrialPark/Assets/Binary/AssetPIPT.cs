@@ -30,6 +30,11 @@ namespace IndustrialPark
             return $"{Program.MainForm.GetAssetNameFromID(ModelAssetID)} - {MaybeMeshIndex}";
         }
 
+        public override int GetHashCode()
+        {
+            return ModelAssetID.GetHashCode() * -131 * MaybeMeshIndex.GetHashCode();
+        }
+
         public override bool Equals(object obj)
         {
             if (obj != null && obj is EntryPIPT entryPIPT)

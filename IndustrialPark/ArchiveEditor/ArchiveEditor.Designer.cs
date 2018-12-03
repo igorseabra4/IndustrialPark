@@ -86,6 +86,7 @@
             this.toolStripMenuItem_Export = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_EditHeader = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_EditData = new System.Windows.Forms.ToolStripMenuItem();
+            this.collapseLayersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -170,6 +171,7 @@
             // editToolStripMenuItem
             // 
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.collapseLayersToolStripMenuItem,
             this.hipHopToolExportToolStripMenuItem,
             this.importHIPArchiveToolStripMenuItem,
             this.importMultipleAssetsToolStripMenuItem,
@@ -384,9 +386,10 @@
             this.listViewAssets.Location = new System.Drawing.Point(6, 40);
             this.listViewAssets.Name = "listViewAssets";
             this.listViewAssets.Size = new System.Drawing.Size(507, 289);
+            this.listViewAssets.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.listViewAssets.TabIndex = 22;
             this.listViewAssets.UseCompatibleStateImageBehavior = false;
-            this.listViewAssets.View = System.Windows.Forms.View.SmallIcon;
+            this.listViewAssets.View = System.Windows.Forms.View.Details;
             this.listViewAssets.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.checkedListBoxAssets_ItemCheck);
             this.listViewAssets.SelectedIndexChanged += new System.EventHandler(this.checkedListBoxAssets_SelectedIndexChanged);
             this.listViewAssets.SizeChanged += new System.EventHandler(this.listViewAssets_SizeChanged);
@@ -652,6 +655,14 @@
             this.toolStripMenuItem_EditData.Text = "Edit Data (Ctrl + G)";
             this.toolStripMenuItem_EditData.Click += new System.EventHandler(this.toolStripMenuItem_EditData_Click);
             // 
+            // collapseLayersToolStripMenuItem
+            // 
+            this.collapseLayersToolStripMenuItem.Enabled = false;
+            this.collapseLayersToolStripMenuItem.Name = "collapseLayersToolStripMenuItem";
+            this.collapseLayersToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.collapseLayersToolStripMenuItem.Text = "Collapse Layers";
+            this.collapseLayersToolStripMenuItem.Click += new System.EventHandler(this.collapseLayersToolStripMenuItem_Click);
+            // 
             // ArchiveEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -740,5 +751,6 @@
         private System.Windows.Forms.ToolStripMenuItem addTemplateToolStripMenuItem;
         private System.Windows.Forms.ListView listViewAssets;
         private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ToolStripMenuItem collapseLayersToolStripMenuItem;
     }
 }

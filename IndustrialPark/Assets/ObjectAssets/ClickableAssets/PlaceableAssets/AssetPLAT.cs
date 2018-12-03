@@ -48,9 +48,9 @@ namespace IndustrialPark
         }
 
         [Category("Platform")]
-        public PlatType PlatformType
+        public PlatTypeSpecific PlatformType_Specific
         {
-            get => (PlatType)ReadByte(0x54 + Offset);
+            get => (PlatTypeSpecific)ReadByte(0x54 + Offset);
             set => Write(0x54 + Offset, (byte)value);
         }
 
@@ -244,14 +244,14 @@ namespace IndustrialPark
         }
 
         [Category("Platform")]
-        public float MovementTranslation_UnknownA0
+        public float MovementTranslation_EaseStart
         {
             get => ReadFloat(0xA0 + Offset);
             set => Write(0xA0 + Offset, value);
         }
 
         [Category("Platform")]
-        public float MovementTranslation_UnknownA4
+        public float MovementTranslation_EaseEnd
         {
             get => ReadFloat(0xA4 + Offset);
             set => Write(0xA4 + Offset, value);
@@ -272,28 +272,28 @@ namespace IndustrialPark
         }
 
         [Category("Platform")]
-        public float MovementRotation_UnknownB0
+        public float MovementRotation_EaseStart
         {
             get => ReadFloat(0xB0 + Offset);
             set => Write(0xB0 + Offset, value);
         }
 
         [Category("Platform")]
-        public float MovementRotation_UnknownB4
+        public float MovementRotation_EaseEnd
         {
             get => ReadFloat(0xB4 + Offset);
             set => Write(0xB4 + Offset, value);
         }
 
         [Category("Platform")]
-        public float MovementEndPointTime
+        public float Movement_StartPointWait
         {
             get => ReadFloat(0xB8 + Offset);
             set => Write(0xB8 + Offset, value);
         }
 
         [Category("Platform")]
-        public float MovementStartPointTime
+        public float Movement_EndPointWait
         {
             get => ReadFloat(0xBC + Offset);
             set => Write(0xBC + Offset, value);

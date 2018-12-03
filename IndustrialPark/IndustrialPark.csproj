@@ -111,6 +111,7 @@
     <Compile Include="Assets\ObjectAssets\AssetPARP.cs" />
     <Compile Include="Assets\ObjectAssets\AssetPARS.cs" />
     <Compile Include="Assets\ObjectAssets\AssetSURF.cs" />
+    <Compile Include="Assets\Shared\Enums\PlatTypeSpecific.cs" />
     <Compile Include="Assets\Shared\Interfaces\IRotatableAsset.cs" />
     <Compile Include="Assets\Shared\Interfaces\IScalableAsset.cs" />
     <Compile Include="MainForm\EditName.cs">

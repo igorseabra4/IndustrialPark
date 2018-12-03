@@ -1026,6 +1026,7 @@ namespace IndustrialPark
                 new ToolStripMenuItem(AssetTemplate.Monsoon_Trigger.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Sleepytime.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Sleepytime_Moving.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Arf.ToString()),
                 new ToolStripMenuItem(AssetTemplate.BombBot.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Tubelet.ToString()),
                 new ToolStripMenuItem(AssetTemplate.BzztBot.ToString()),
@@ -1044,10 +1045,12 @@ namespace IndustrialPark
             {
                 new ToolStripMenuItem(AssetTemplate.Button_Red.ToString()),
                 new ToolStripMenuItem(AssetTemplate.PressurePlate.ToString()),
-                new ToolStripMenuItem(AssetTemplate.CharSwitch.ToString()),
                 new ToolStripMenuItem(AssetTemplate.BusStop.ToString()),
+                new ToolStripMenuItem(AssetTemplate.TeleportBox.ToString()),
+                new ToolStripMenuItem(AssetTemplate.ThrowFruit.ToString()),
+                new ToolStripMenuItem(AssetTemplate.FreezyFruit.ToString()),
+                new ToolStripMenuItem(AssetTemplate.TexasHitch.ToString()),
                 new ToolStripMenuItem(AssetTemplate.TaxiStand.ToString()),
-                new ToolStripMenuItem(AssetTemplate.TexasHitch.ToString())
             });
             foreach (ToolStripItem i in stageitems.DropDownItems)
                 if (i is ToolStripMenuItem j)

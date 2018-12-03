@@ -37,6 +37,11 @@ namespace IndustrialPark
                 return ModelAssetID == entryLODT.ModelAssetID;
             return false;
         }
+
+        public override int GetHashCode()
+        {
+            return ModelAssetID.GetHashCode();
+        }
     }
 
     public class AssetLODT : Asset

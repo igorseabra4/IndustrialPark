@@ -26,49 +26,27 @@ namespace IndustrialPark
 
         protected override void CreateBoundingBox()
         {
-            vertices = new Vector3[SharpRenderer.pyramidVertices.Count];
-
-            for (int i = 0; i < SharpRenderer.pyramidVertices.Count; i++)
-                vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.pyramidVertices[i], world);
-
-            boundingBox = BoundingBox.FromPoints(vertices);
-        }
-
-        protected override float? TriangleIntersection(Ray r, float distance)
-        {
-            return TriangleIntersection(r, distance, SharpRenderer.pyramidTriangles, SharpRenderer.pyramidVertices);
-        }
-
-        private float? TriangleIntersection(Ray r, float initialDistance, List<Triangle> triangles, List<Vector3> vertices)
-        {
-            bool hasIntersected = false;
-            float smallestDistance = 1000f;
-
-            foreach (Triangle t in triangles)
+            List<Vector3> vertexList = new List<Vector3>();
+            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID) &&
+                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].HasRenderWareModelFile() &&
+                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile() != null)
             {
-                Vector3 v1 = (Vector3)Vector3.Transform(vertices[t.vertex1], world);
-                Vector3 v2 = (Vector3)Vector3.Transform(vertices[t.vertex2], world);
-                Vector3 v3 = (Vector3)Vector3.Transform(vertices[t.vertex3], world);
-
-                if (r.Intersects(ref v1, ref v2, ref v3, out float distance))
-                {
-                    hasIntersected = true;
-
-                    if (distance < smallestDistance)
-                        smallestDistance = distance;
-                }
+                CreateBoundingBox(ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile().vertexListG);
             }
-
-            if (hasIntersected)
-                return smallestDistance;
-            else return null;
+            else
+            {
+                CreateBoundingBox(SharpRenderer.pyramidVertices);
+            }
         }
 
         public override void Draw(SharpRenderer renderer)
         {
-            if (dontRender || isInvisible) return;
+            if (DontRender || isInvisible) return;
 
-            renderer.DrawPyramid(world, isSelected, 1f);
+            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
+                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * _color : _color);
+            else
+                renderer.DrawPyramid(world, isSelected, 1f);
         }
 
         [Category("Player References")]

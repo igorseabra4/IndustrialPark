@@ -24,6 +24,11 @@ namespace IndustrialPark
             return $"[{Program.MainForm.GetAssetNameFromID(ModelAssetID)}] - [{Program.MainForm.GetAssetNameFromID(ShadowModelAssetID)}]";
         }
 
+        public override int GetHashCode()
+        {
+            return ModelAssetID.GetHashCode();
+        }
+
         public override bool Equals(object obj)
         {
             if (obj != null && obj is EntrySHDW entrySHDW)

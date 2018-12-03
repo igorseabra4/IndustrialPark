@@ -29,6 +29,11 @@ namespace IndustrialPark
                 return SoundAssetID == entryJAW.SoundAssetID;
             return false;
         }
+
+        public override int GetHashCode()
+        {
+            return SoundAssetID.GetHashCode();
+        }
     }
 
     public class AssetJAW : Asset

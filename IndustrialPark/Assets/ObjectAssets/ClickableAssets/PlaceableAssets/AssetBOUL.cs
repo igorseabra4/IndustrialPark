@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using SharpDX;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -17,8 +18,21 @@ namespace IndustrialPark
         {
             if (SoundAssetID == assetID)
                 return true;
-
+            
             return base.HasReference(assetID);
+        }
+
+        public override void Draw(SharpRenderer renderer)
+        {
+            if (DontRender || isInvisible) return;
+
+            Vector4 Color = _color;
+            Color.W = Color.W == 0f ? 1f : Color.W;
+
+            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
+                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * Color : Color);
+            else
+                renderer.DrawCube(world, isSelected);
         }
 
         [Category("Boulder")]
@@ -43,7 +57,7 @@ namespace IndustrialPark
         }
 
         [Category("Boulder")]
-        public float UnknownFloat60
+        public float Friction
         {
             get => ReadFloat(0x60 + Offset);
             set => Write(0x60 + Offset, value);
@@ -57,35 +71,35 @@ namespace IndustrialPark
         }
 
         [Category("Boulder")]
-        public float UnknownFloat68
+        public float MaxLinearVelocity
         {
             get => ReadFloat(0x68 + Offset);
             set => Write(0x68 + Offset, value);
         }
 
         [Category("Boulder")]
-        public float UnknownFloat6C
+        public float MaxAngularVelocity
         {
             get => ReadFloat(0x6C + Offset);
             set => Write(0x6C + Offset, value);
         }
 
         [Category("Boulder")]
-        public float UnknownFloat70
+        public float AngularFriction
         {
             get => ReadFloat(0x70 + Offset);
             set => Write(0x70 + Offset, value);
         }
 
         [Category("Boulder")]
-        public float UnknownFloat74
+        public float MinBounceVelocity
         {
             get => ReadFloat(0x74);
             set => Write(0x74, value);
         }
 
         [Category("Boulder")]
-        public int UnknownInt78
+        public int Flags
         {
             get => ReadInt(0x78 + Offset);
             set => Write(0x78 + Offset, value);

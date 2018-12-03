@@ -31,7 +31,6 @@ namespace IndustrialPark
         public void CreateTransformMatrix()
         {
             world = Matrix.RotationX(MathUtil.PiOverTwo) * Matrix.Translation(_position + new Vector3(0f, 0.5f, 0f));
-
             CreateBoundingBox();
         }
 

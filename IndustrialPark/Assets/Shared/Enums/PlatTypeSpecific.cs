@@ -1,8 +1,8 @@
 ﻿namespace IndustrialPark
-{ 
-    public enum PlatType : byte
+{
+    public enum PlatTypeSpecific : byte
     {
-        Platform = 0,
+        ExtendRetract = 0,
         Orbit = 1,
         Type2 = 2,
         MovePoint = 3,

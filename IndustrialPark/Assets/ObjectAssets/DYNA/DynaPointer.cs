@@ -106,12 +106,14 @@ namespace IndustrialPark
 
         private Matrix world;
         private BoundingBox boundingBox;
+        private Vector3[] vertices;
+        protected RenderWareFile.Triangle[] triangles;
 
         public override void CreateTransformMatrix()
         {
             world = Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll) * Matrix.Translation(_position);
 
-            Vector3[] vertices = new Vector3[SharpRenderer.pyramidVertices.Count];
+            vertices = new Vector3[SharpRenderer.pyramidVertices.Count];
             for (int i = 0; i < SharpRenderer.pyramidVertices.Count; i++)
                 vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.pyramidVertices[i], world);
             boundingBox = BoundingBox.FromPoints(vertices);
@@ -136,6 +138,28 @@ namespace IndustrialPark
         {
             if (ray.Intersects(ref boundingBox, out float distance))
                 return TriangleIntersection(ray, distance, SharpRenderer.pyramidTriangles, SharpRenderer.pyramidVertices);
+            return null;
+        }
+
+        private float? TriangleIntersection(Ray r, float initialDistance)
+        {
+            if (triangles == null)
+                return initialDistance;
+
+            bool hasIntersected = false;
+            float smallestDistance = 1000f;
+
+            foreach (RenderWareFile.Triangle t in triangles)
+                if (r.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
+                {
+                    hasIntersected = true;
+
+                    if (distance < smallestDistance)
+                        smallestDistance = distance;
+                }
+
+            if (hasIntersected)
+                return smallestDistance;
             return null;
         }
 

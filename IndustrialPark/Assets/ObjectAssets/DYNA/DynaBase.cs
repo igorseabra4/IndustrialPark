@@ -26,13 +26,10 @@ namespace IndustrialPark
             return Data;
         }
 
-        public virtual bool HasReference(uint assetID)
-        {
-            return false;
-        }
+        public virtual bool HasReference(uint assetID) => false;
 
         [Browsable(false)]
-        public virtual bool IsRenderableClickable { get => false; }
+        public virtual bool IsRenderableClickable => false;
 
         [Browsable(false)]
         public virtual float PositionX { get => 0; set { } }
