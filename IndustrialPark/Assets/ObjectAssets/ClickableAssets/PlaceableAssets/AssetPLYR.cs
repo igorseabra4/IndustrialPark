@@ -43,8 +43,11 @@ namespace IndustrialPark
         {
             if (DontRender || isInvisible) return;
 
+            Vector4 Color = _color;
+            Color.W = Color.W == 0f ? 1f : Color.W;
+
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
-                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * _color : _color);
+                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * Color : Color);
             else
                 renderer.DrawPyramid(world, isSelected, 1f);
         }

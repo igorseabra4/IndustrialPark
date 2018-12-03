@@ -141,28 +141,6 @@ namespace IndustrialPark
             return null;
         }
 
-        private float? TriangleIntersection(Ray r, float initialDistance)
-        {
-            if (triangles == null)
-                return initialDistance;
-
-            bool hasIntersected = false;
-            float smallestDistance = 1000f;
-
-            foreach (RenderWareFile.Triangle t in triangles)
-                if (r.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
-                {
-                    hasIntersected = true;
-
-                    if (distance < smallestDistance)
-                        smallestDistance = distance;
-                }
-
-            if (hasIntersected)
-                return smallestDistance;
-            return null;
-        }
-
         private float? TriangleIntersection(Ray r, float initialDistance, List<Models.Triangle> triangles, List<Vector3> vertices)
         {
             bool hasIntersected = false;
