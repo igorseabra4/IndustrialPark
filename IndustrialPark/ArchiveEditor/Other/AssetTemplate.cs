@@ -25,11 +25,16 @@
         Spatula,
         Sock,
         Spongeball,
+        Golden_Underwear,
+        Smelly_Sundae,
         WoodenTiki,
         FloatingTiki,
         ThunderTiki,
         ShhhTiki,
         StoneTiki,
+        Artwork,
+        SteeringWheel,
+        PowerCrystal,
 
         // Enemies
         Fodder,

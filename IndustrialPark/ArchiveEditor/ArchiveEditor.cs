@@ -35,6 +35,7 @@ namespace IndustrialPark
                 OpenFile(filePath);
 
             MainForm.PopulateTemplateMenusAt(addTemplateToolStripMenuItem, TemplateToolStripMenuItem_Click);
+            listViewAssets_SizeChanged(null, null);
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)

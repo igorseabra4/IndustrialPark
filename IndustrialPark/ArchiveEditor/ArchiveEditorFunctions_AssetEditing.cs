@@ -411,7 +411,7 @@ namespace IndustrialPark
                             foreach (TextureNative_0015 tn in td.textureNativeList)
                             {
                                 fileVersion = tn.renderWareVersion;
-                                tn.textureNativeStruct.textureName = RWTX.AHDR.ADBG.assetName.Replace(".RW3", "");
+                                tn.textureNativeStruct.textureName = RWTX.AHDR.ADBG.assetName;
                                 textNativeList.Add(tn);
                             }
                 }

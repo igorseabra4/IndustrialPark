@@ -44,14 +44,15 @@ namespace IndustrialPark
 
             foreach (string s in Directory.GetFiles(Program.MainForm.userTemplatesFolder))
                 listBoxTemplates.Items.Add(Path.GetFileName(s));
+
+            Program.MainForm.UpdateUserTemplateComboBox();
         }
 
         private void listBox1_KeyDown(object sender, KeyEventArgs e)
         {
             if ((listBoxTemplates.SelectedItem != null) && (e.KeyCode == Keys.Delete))
             {
-                File.Delete(Path.Combine(Program.MainForm.userTemplatesFolder, Path.GetFileName(listBoxTemplates.SelectedItem.ToString())));
-                UpdateListBox();
+                buttonDelete_Click(sender, e);
             }
         }
 
@@ -115,7 +116,18 @@ namespace IndustrialPark
             UpdateListBox();
         }
 
+        private void buttonDelete_Click(object sender, EventArgs e)
+        {
+            File.Delete(Path.Combine(Program.MainForm.userTemplatesFolder, Path.GetFileName(listBoxTemplates.SelectedItem.ToString())));
+            UpdateListBox();
+        }
+
         private void listBoxTemplates_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            buttonRename_Click(null, null);
+        }
+
+        private void buttonRename_Click(object sender, EventArgs e)
         {
             string oldName = listBoxTemplates.SelectedItem.ToString();
             byte[] oldData = File.ReadAllBytes(Path.Combine(Program.MainForm.userTemplatesFolder, oldName));

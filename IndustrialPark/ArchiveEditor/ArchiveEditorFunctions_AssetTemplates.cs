@@ -155,6 +155,11 @@ namespace IndustrialPark
                 case AssetTemplate.Spatula:
                 case AssetTemplate.Sock:
                 case AssetTemplate.Spongeball:
+                case AssetTemplate.Smelly_Sundae:
+                case AssetTemplate.Golden_Underwear:
+                case AssetTemplate.Artwork:
+                case AssetTemplate.SteeringWheel:
+                case AssetTemplate.PowerCrystal:
                     newAssetType = AssetType.PKUP;
                     break;
                 case AssetTemplate.Platform_Generic:
@@ -307,12 +312,14 @@ namespace IndustrialPark
                     ((AssetPKUP)asset).UnknownShort5A = 4;
                     break;
                 case AssetTemplate.Spatula:
+                    ((AssetPKUP)asset).StateIsPersistent = true;
                     ((AssetPKUP)asset).Shape = 0xDD;
                     ((AssetPKUP)asset).PickReferenceID = 0x8BDFE8DD;
                     ((AssetPKUP)asset).UnknownShort58 = 2;
                     ((AssetPKUP)asset).UnknownShort5A = 4;
                     break;
                 case AssetTemplate.Sock:
+                    ((AssetPKUP)asset).StateIsPersistent = true;
                     ((AssetPKUP)asset).Shape = 0x24;
                     ((AssetPKUP)asset).PickReferenceID = 0x74B46F24;
                     ((AssetPKUP)asset).UnknownShort58 = 2;
@@ -322,6 +329,40 @@ namespace IndustrialPark
                     ((AssetPKUP)asset).Shape = 0x15;
                     ((AssetPKUP)asset).PickReferenceID = 0xF09A1415;
                     ((AssetPKUP)asset).UnknownShort58 = 3;
+                    ((AssetPKUP)asset).UnknownShort5A = 4;
+                    break;
+                case AssetTemplate.Golden_Underwear:
+                    ((AssetPKUP)asset).StateIsPersistent = true;
+                    ((AssetPKUP)asset).Shape = 0x2E;
+                    ((AssetPKUP)asset).PickReferenceID = 0xF650DA2E;
+                    ((AssetPKUP)asset).UnknownShort58 = 2;
+                    ((AssetPKUP)asset).UnknownShort5A = 4;
+                    break;
+                case AssetTemplate.Artwork:
+                    ((AssetPKUP)asset).StateIsPersistent = true;
+                    ((AssetPKUP)asset).Shape = 0x10;
+                    ((AssetPKUP)asset).PickReferenceID = 0x18140B10;
+                    ((AssetPKUP)asset).UnknownShort58 = 2;
+                    ((AssetPKUP)asset).UnknownShort5A = 4;
+                    break;
+                case AssetTemplate.SteeringWheel:
+                    ((AssetPKUP)asset).StateIsPersistent = true;
+                    ((AssetPKUP)asset).Shape = 0x32;
+                    ((AssetPKUP)asset).PickReferenceID = 0x4C67C832;
+                    ((AssetPKUP)asset).UnknownShort58 = 2;
+                    ((AssetPKUP)asset).UnknownShort5A = 4;
+                    break;
+                case AssetTemplate.PowerCrystal:
+                    ((AssetPKUP)asset).StateIsPersistent = true;
+                    ((AssetPKUP)asset).Shape = 0xBB;
+                    ((AssetPKUP)asset).PickReferenceID = 0xFE7A89BB;
+                    ((AssetPKUP)asset).UnknownShort58 = 2;
+                    ((AssetPKUP)asset).UnknownShort5A = 4;
+                    break;
+                case AssetTemplate.Smelly_Sundae:
+                    ((AssetPKUP)asset).Shape = 0x54;
+                    ((AssetPKUP)asset).PickReferenceID = 0x6A779454;
+                    ((AssetPKUP)asset).UnknownShort58 = 2;
                     ((AssetPKUP)asset).UnknownShort5A = 4;
                     break;
                 case AssetTemplate.WoodenTiki:

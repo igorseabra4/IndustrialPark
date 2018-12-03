@@ -52,7 +52,7 @@ namespace IndustrialPark
                     }
                 }
 
-                if (settings.AutoloadOnStartup && !string.IsNullOrEmpty(settings.LastProjectPath))
+                if (settings.AutoloadOnStartup && !string.IsNullOrEmpty(settings.LastProjectPath) && File.Exists(settings.LastProjectPath))
                     ApplySettings(settings.LastProjectPath);
             }
             else
@@ -999,14 +999,22 @@ namespace IndustrialPark
                 new ToolStripMenuItem(AssetTemplate.Shiny_Blue.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Shiny_Purple.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Underwear.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Spongeball.ToString()),
+                new ToolStripSeparator(),
                 new ToolStripMenuItem(AssetTemplate.WoodenTiki.ToString()),
                 new ToolStripMenuItem(AssetTemplate.FloatingTiki.ToString()),
                 new ToolStripMenuItem(AssetTemplate.ThunderTiki.ToString()),
                 new ToolStripMenuItem(AssetTemplate.ShhhTiki.ToString()),
                 new ToolStripMenuItem(AssetTemplate.StoneTiki.ToString()),
+                new ToolStripSeparator(),
                 new ToolStripMenuItem(AssetTemplate.Spatula.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Sock.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Spongeball.ToString())
+                new ToolStripMenuItem(AssetTemplate.Golden_Underwear.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Smelly_Sundae.ToString()),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem(AssetTemplate.SteeringWheel.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Artwork.ToString()),
+                new ToolStripMenuItem(AssetTemplate.PowerCrystal.ToString()),
             });
             foreach (ToolStripItem i in pickups.DropDownItems)
                 if (i is ToolStripMenuItem j)
