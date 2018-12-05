@@ -36,6 +36,7 @@ namespace IndustrialPark
 
 #if !DEBUG
             researchToolStripMenuItem.Visible = false;
+            addTXDArchiveToolStripMenuItem.Visible = false;
 #endif
 
             if (File.Exists(pathToSettings))
@@ -545,18 +546,17 @@ namespace IndustrialPark
             archiveEditorToolStripMenuItem.DropDownItems[archiveEditors.IndexOf(sender) + 2].Text = newName;
         }
 
-        public void CloseAssetEditor(ArchiveEditor sender)
+        public void CloseArchiveEditor(ArchiveEditor sender)
         {
             int index = archiveEditors.IndexOf(sender);
             archiveEditorToolStripMenuItem.DropDownItems.RemoveAt(index + 2);
-            archiveEditors[index].DisposeAll();
             archiveEditors.RemoveAt(index);
         }
 
         public void DisposeAllArchiveEditors()
         {
             foreach (ArchiveEditor ae in archiveEditors)
-                ae.DisposeAll();
+                ae.DisposeForClosing();
         }
 
         private bool UnsavedChanges()
@@ -763,6 +763,13 @@ namespace IndustrialPark
                 TextureManager.LoadTexturesFromFolder(openFile.FileName);
         }
 
+        private void addTXDArchiveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFile = new OpenFileDialog() { Filter = "TXD files|*.txd"};
+            if (openFile.ShowDialog() == DialogResult.OK)
+                TextureManager.LoadTexturesFromTXD(openFile.FileName);
+        }
+
         private void clearTexturesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TextureManager.ClearTextures();
@@ -903,6 +910,20 @@ namespace IndustrialPark
 
             renderer.Camera.Reset();
             mouseMode = false;
+        }
+
+        private void pLATPreviewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            pLATPreviewToolStripMenuItem.Checked = !pLATPreviewToolStripMenuItem.Checked;
+            AssetPLAT.playingPlat = pLATPreviewToolStripMenuItem.Checked;
+
+            if (AssetPLAT.playingPlat)
+            {
+                foreach (ArchiveEditor ae in archiveEditors)
+                    foreach (Asset a in ae.archive.GetAllAssets())
+                        if (a is AssetPLAT PLAT)
+                            PLAT.Reset();
+            }
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -30,7 +31,6 @@ namespace IndustrialPark
         public Section_PACK PACK;
         public Section_DICT DICT;
         public Section_STRM STRM;
-        public AutoCompleteStringCollection autoCompleteSource = new AutoCompleteStringCollection();
 
         public bool New()
         {
@@ -59,7 +59,7 @@ namespace IndustrialPark
                     new ChoosePlatformDialog().ShowDialog();
 
                 foreach (Section_AHDR AHDR in DICT.ATOC.AHDRList)
-                    AddAssetToDictionary(AHDR);
+                    AddAssetToDictionary(AHDR, true);
                 RecalculateAllMatrices();
             }
 
@@ -71,11 +71,13 @@ namespace IndustrialPark
             allowRender = false;
 
             Dispose();
+            ProgressBar progressBar = new ProgressBar("Opening Archive");
+            progressBar.Show();
+
+            assetDictionary = new Dictionary<uint, Asset>();
 
             currentlySelectedAssets = new List<Asset>();
             currentlyOpenFilePath = fileName;
-
-            HipSection[] HipFile = HipFileToHipArray(fileName);
 
             foreach (HipSection i in HipFileToHipArray(fileName))
             {
@@ -83,15 +85,34 @@ namespace IndustrialPark
                 else if (i is Section_PACK pack) PACK = pack;
                 else if (i is Section_DICT dict) DICT = dict;
                 else if (i is Section_STRM strm) STRM = strm;
-                else throw new Exception();
+                else
+                {
+                    progressBar.Close();
+                    throw new Exception();
+                }
             }
+
+            progressBar.SetProgressBar(0, DICT.ATOC.AHDRList.Count, 1);
 
             if (currentPlatform == Platform.Unknown)
                 new ChoosePlatformDialog().ShowDialog();
 
+            List<string> autoComplete = new List<string>();
+
             foreach (Section_AHDR AHDR in DICT.ATOC.AHDRList)
-                AddAssetToDictionary(AHDR);
+            {
+                AddAssetToDictionary(AHDR, true);
+
+                autoComplete.Add(AHDR.ADBG.assetName);
+
+                progressBar.PerformStep();
+            }
+
+            autoCompleteSource.AddRange(autoComplete.ToArray());
+
             RecalculateAllMatrices();
+
+            progressBar.Close();
 
             allowRender = true;
         }
@@ -134,26 +155,85 @@ namespace IndustrialPark
 
         public void Dispose()
         {
+            autoCompleteSource.Clear();
+
             List<uint> assetList = new List<uint>();
             assetList.AddRange(assetDictionary.Keys);
 
-            foreach (uint assetID in assetList)
-                RemoveAsset(assetID);
+            if (assetList.Count == 0)
+                return;
 
-            if (DICT == null) return;
+            ProgressBar progressBar = new ProgressBar("Closing Archive");
+            progressBar.Show();
+            progressBar.SetProgressBar(0, assetList.Count, 1);
+
+            foreach (uint assetID in assetList)
+            {
+                DisposeOfAsset(assetID, true);
+                progressBar.PerformStep();
+            }
+
             HIPA = null;
             PACK = null;
             DICT = null;
             STRM = null;
             currentlyOpenFilePath = null;
+
+            progressBar.Close();
+        }
+
+        public void DisposeForClosing()
+        {
+            List<uint> assetList = new List<uint>();
+            assetList.AddRange(assetDictionary.Keys);
+
+            ProgressBar progressBar = new ProgressBar("Closing Archive");
+            progressBar.Show();
+            progressBar.SetProgressBar(0, assetList.Count, 1);
+
+            foreach (uint assetID in assetList)
+            {
+                if (assetDictionary[assetID] is AssetJSP jsp)
+                    jsp.model.Dispose();
+                else if (assetDictionary[assetID] is AssetMODL modl)
+                    modl.GetRenderWareModelFile().Dispose();
+                
+                progressBar.PerformStep();
+            }
+            
+            progressBar.Close();
+        }
+
+        public void DisposeOfAsset(uint assetID, bool fast = false)
+        {
+            currentlySelectedAssets.Remove(assetDictionary[assetID]);
+            CloseInternalEditor(assetID);
+
+            renderingDictionary.Remove(assetID);
+
+            if (assetDictionary[assetID] is IRenderableAsset ra)
+            {
+                if (renderableAssetSetCommon.Contains(ra))
+                    renderableAssetSetCommon.Remove(ra);
+                else if (renderableAssetSetTrans.Contains(ra))
+                    renderableAssetSetTrans.Remove(ra);
+                else if (renderableAssetSetJSP.Contains(ra))
+                    renderableAssetSetJSP.Remove((AssetJSP)ra);
+            }
+
+            if (assetDictionary[assetID] is AssetJSP jsp)
+                jsp.model.Dispose();
+
+            if (assetDictionary[assetID] is AssetMODL modl)
+                modl.GetRenderWareModelFile().Dispose();
         }
 
         public static bool allowRender = true;
 
-        private void AddAssetToDictionary(Section_AHDR AHDR)
+        private void AddAssetToDictionary(Section_AHDR AHDR, bool fast = false)
         {
             allowRender = false;
-
+            
             if (assetDictionary.ContainsKey(AHDR.assetID))
             {
                 assetDictionary.Remove(AHDR.assetID);
@@ -594,12 +674,20 @@ namespace IndustrialPark
             if (hiddenAssets.Contains(AHDR.assetID))
                 assetDictionary[AHDR.assetID].isInvisible = true;
 
-            if (assetDictionary[AHDR.assetID] is ObjectAsset oa)
-                autoCompleteSource.Add(AHDR.ADBG.assetName);
-
+            autoCompleteSource.Add(AHDR.ADBG.assetName);
+            
             allowRender = true;
         }
+        
+        private AutoCompleteStringCollection autoCompleteSource = new AutoCompleteStringCollection();
+        private TextBox textBoxFindAsset;
 
+        public void SetTextboxForAutocomplete(TextBox textBoxFindAsset)
+        {
+            this.textBoxFindAsset = textBoxFindAsset;
+            this.textBoxFindAsset.AutoCompleteCustomSource = autoCompleteSource;
+        }
+        
         public void RemoveLayer(int index)
         {
             RemoveAsset(DICT.LTOC.LHDRList[index].assetIDlist);
@@ -676,41 +764,22 @@ namespace IndustrialPark
 
         public void RemoveAsset(uint assetID)
         {
-            UnselectAsset(assetID);
-            CloseInternalEditor(assetID);
+            DisposeOfAsset(assetID);
+            autoCompleteSource.Remove(assetDictionary[assetID].AHDR.ADBG.assetName);
 
             for (int i = 0; i < DICT.LTOC.LHDRList.Count; i++)
                 DICT.LTOC.LHDRList[i].assetIDlist.Remove(assetID);
 
-            renderingDictionary.Remove(assetID);
-
             if (GetFromAssetID(assetID).AHDR.assetType == AssetType.SND | GetFromAssetID(assetID).AHDR.assetType == AssetType.SNDS)
                 RemoveSoundFromSNDI(assetID);
 
-            if (assetDictionary[assetID] is IRenderableAsset ra)
-            {
-                if (renderableAssetSetCommon.Contains(ra))
-                    renderableAssetSetCommon.Remove(ra);
-                else if (renderableAssetSetTrans.Contains(ra))
-                    renderableAssetSetTrans.Remove(ra);
-                else if (renderableAssetSetJSP.Contains(ra))
-                    renderableAssetSetJSP.Remove((AssetJSP)ra);
-            }
-
-            if (assetDictionary[assetID] is AssetJSP jsp)
-                jsp.model.Dispose();
-
-            if (assetDictionary[assetID] is AssetMODL modl)
-                modl.GetRenderWareModelFile().Dispose();
-
             DICT.ATOC.AHDRList.Remove(assetDictionary[assetID].AHDR);
-
-            autoCompleteSource.Remove(assetDictionary[assetID].AHDR.ADBG.assetName);
 
             assetDictionary.Remove(assetID);
         }
 
         private List<Asset> currentlySelectedAssets = new List<Asset>();
+
         private static List<Asset> allCurrentlySelectedAssets
         {
             get
@@ -730,20 +799,7 @@ namespace IndustrialPark
 
             return false;
         }
-
-        public void UnselectAsset(uint assetID)
-        {
-            for (int i = 0; i < currentlySelectedAssets.Count; i++)
-            {
-                if (currentlySelectedAssets[i].AHDR.assetID == assetID)
-                {
-                    currentlySelectedAssets[i].isSelected = false;
-                    currentlySelectedAssets.RemoveAt(i);
-                    return;
-                }
-            }
-        }
-
+        
         public void ClearSelectedAssets()
         {
             for (int i = 0; i < currentlySelectedAssets.Count; i++)

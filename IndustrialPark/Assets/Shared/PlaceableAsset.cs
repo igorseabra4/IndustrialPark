@@ -82,14 +82,52 @@ namespace IndustrialPark
                 triangles = null;
         }
 
+        protected AssetPLAT FindDrivenByAsset(out bool found)
+        {
+            foreach (AssetEventBFBB assetEvent in EventsBFBB)
+                if (assetEvent.EventSendID == EventTypeBFBB.Drivenby)
+                {
+                    uint PlatID = assetEvent.TargetAssetID;
+
+                    foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
+                        if (ae.archive.ContainsAsset(PlatID))
+                        {
+                            AssetPLAT PLAT = (AssetPLAT)ae.archive.GetFromAssetID(PlatID);
+                            found = true;
+                            return PLAT;
+                        }
+                }
+            found = false;
+            return null;
+        }
+
+        protected virtual Matrix LocalWorld()
+        {
+            if (AssetPLAT.playingPlat)
+            {
+                AssetPLAT driver = FindDrivenByAsset(out bool found);
+
+                if (found)
+                {
+                    return Matrix.Scaling(_scale)
+                        * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
+                        * Matrix.Translation(_position - driver._position)
+                        * Matrix.Translation((Vector3)Vector3.Transform(Vector3.Zero, driver.LocalWorld()));
+                }
+            }
+
+            return world;
+        }
+
         public virtual void Draw(SharpRenderer renderer)
         {
-            if (DontRender || isInvisible) return;
+            if (DontRender || isInvisible)
+                return;
 
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
-                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * _color : _color);
+                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * _color : _color);
             else
-                renderer.DrawCube(world, isSelected);
+                renderer.DrawCube(LocalWorld(), isSelected);
         }
 
         public virtual float? IntersectsWith(Ray ray)

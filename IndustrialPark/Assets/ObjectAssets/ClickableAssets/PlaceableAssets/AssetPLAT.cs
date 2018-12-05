@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using SharpDX;
+using System;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -24,6 +25,236 @@ namespace IndustrialPark
                 return true;
 
             return base.HasReference(assetID);
+        }
+
+        private enum CurrentMovementAction
+        {
+            StartWait,
+            Going,
+            EndWait,
+            GoingBack
+        }
+
+        public static bool playingPlat = false;
+        private float localFrameCounter = -1;
+        private int amountOfMovementsPerformed = 0;
+
+        private CurrentMovementAction currentMovementAction = CurrentMovementAction.StartWait;
+
+        private float StartWaitRange => 60 * (Movement_StartPointWait);
+        private float GoingRange => StartWaitRange + 60 * Math.Max(MovementMode == 0 ? 0 : MovementRotation_Time, MovementMode != 1 ? MovementTranslation_Time : 0);
+        private float EndWaitRange => GoingRange + 60 * Movement_EndPointWait;
+        private float GoingBackRange => EndWaitRange + 60 * Math.Max(MovementMode == 0 ? 0 : MovementRotation_Time, MovementMode != 1 ? MovementTranslation_Time : 0);
+
+        public void Reset()
+        {
+            currentMovementAction = CurrentMovementAction.StartWait;
+            localFrameCounter = -1;
+            amountOfMovementsPerformed = 0;
+        }
+
+        private Matrix PlatLocalTranslation()
+        {
+            Matrix localWorld = Matrix.Identity;
+
+            if (MovementMode != 1)
+            {
+                float translationMultiplier = 0;
+
+                switch (MovementLoopType)
+                {
+                    case 0:
+                        switch (currentMovementAction)
+                        {
+                            case CurrentMovementAction.StartWait:
+                                translationMultiplier = amountOfMovementsPerformed;
+                                if (localFrameCounter >= StartWaitRange)
+                                    currentMovementAction = CurrentMovementAction.Going;
+                                break;
+
+                            case CurrentMovementAction.Going:
+                                translationMultiplier = amountOfMovementsPerformed + Math.Min(1f, (localFrameCounter - StartWaitRange) / (60 * MovementTranslation_Time));
+
+                                if (localFrameCounter >= GoingRange)
+                                {
+                                    amountOfMovementsPerformed++;
+                                    currentMovementAction = CurrentMovementAction.StartWait;
+                                    localFrameCounter = 0;
+                                }
+                                break;
+                        }
+                        break;
+                    case 1:
+                    case 2:
+                        switch (currentMovementAction)
+                        {
+                            case CurrentMovementAction.StartWait:
+                                if (localFrameCounter >= StartWaitRange)
+                                    currentMovementAction = CurrentMovementAction.Going;
+                                break;
+
+                            case CurrentMovementAction.Going:
+                                translationMultiplier = Math.Min(1, (localFrameCounter - StartWaitRange) / (60 * MovementTranslation_Time));
+                                if (localFrameCounter >= GoingRange)
+                                    currentMovementAction = CurrentMovementAction.EndWait;
+                                break;
+
+                            case CurrentMovementAction.EndWait:
+                                translationMultiplier = 1;
+                                if (localFrameCounter >= EndWaitRange)
+                                    currentMovementAction = CurrentMovementAction.GoingBack;
+                                break;
+
+                            case CurrentMovementAction.GoingBack:
+                                translationMultiplier = 1 - Math.Min(1, (localFrameCounter - EndWaitRange) / (60 * MovementTranslation_Time));
+                                if (localFrameCounter >= GoingBackRange)
+                                {
+                                    currentMovementAction = CurrentMovementAction.StartWait;
+                                    localFrameCounter = 0;
+                                }
+                                break;
+                        }
+                        break;
+                }
+
+                switch (MovementTranslation_Direction)
+                {
+                    case 0:
+                        localWorld *= Matrix.Translation(translationMultiplier * MovementTranslation_Distance_98, 0, 0);
+                        break;
+                    case 1:
+                        localWorld *= Matrix.Translation(0, translationMultiplier * MovementTranslation_Distance_98, 0);
+                        break;
+                    case 2:
+                        localWorld *= Matrix.Translation(0, 0, translationMultiplier * MovementTranslation_Distance_98);
+                        break;
+                }
+            }
+
+            return localWorld;
+        }
+
+        private Matrix PlatLocalRotation()
+        {
+            Matrix localWorld = Matrix.Identity;
+
+            if (MovementMode >= 1)
+            {
+                float rotationMultiplier = 0;
+
+                switch (MovementLoopType)
+                {
+                    case 0:
+                        switch (currentMovementAction)
+                        {
+                            case CurrentMovementAction.StartWait:
+                                rotationMultiplier = amountOfMovementsPerformed;
+                                if (localFrameCounter >= StartWaitRange)
+                                    currentMovementAction = CurrentMovementAction.Going;
+                                break;
+
+                            case CurrentMovementAction.Going:
+                                rotationMultiplier = amountOfMovementsPerformed + Math.Min(1f, (localFrameCounter - StartWaitRange) / (60 * MovementRotation_Time));
+
+                                if (localFrameCounter >= GoingRange)
+                                {
+                                    amountOfMovementsPerformed++;
+                                    currentMovementAction = CurrentMovementAction.StartWait;
+                                    localFrameCounter = 0;
+                                }
+                                break;
+                        }
+                        break;
+                    case 1:
+                    case 2:
+                        switch (currentMovementAction)
+                        {
+                            case CurrentMovementAction.StartWait:
+                                if (localFrameCounter >= StartWaitRange)
+                                    currentMovementAction = CurrentMovementAction.Going;
+                                break;
+
+                            case CurrentMovementAction.Going:
+                                rotationMultiplier = Math.Min(1, (localFrameCounter - StartWaitRange) / (60 * MovementRotation_Time));
+                                if (localFrameCounter >= GoingRange)
+                                    currentMovementAction = CurrentMovementAction.EndWait;
+                                break;
+
+                            case CurrentMovementAction.EndWait:
+                                rotationMultiplier = 1;
+                                if (localFrameCounter >= EndWaitRange)
+                                    currentMovementAction = CurrentMovementAction.GoingBack;
+                                break;
+
+                            case CurrentMovementAction.GoingBack:
+                                rotationMultiplier = 1 - Math.Min(1, (localFrameCounter - EndWaitRange) / (60 * MovementRotation_Time));
+                                if (localFrameCounter >= GoingBackRange)
+                                {
+                                    currentMovementAction = CurrentMovementAction.StartWait;
+                                    localFrameCounter = 0;
+                                }
+                                break;
+                        }
+                        break;
+                }
+
+                switch (MovementRotation_Direction)
+                {
+                    case 0:
+                        localWorld = Matrix.RotationX(rotationMultiplier * MathUtil.DegreesToRadians(MovementRotation_Degrees));
+                        break;
+                    case 1:
+                        localWorld = Matrix.RotationY(rotationMultiplier * MathUtil.DegreesToRadians(MovementRotation_Degrees));
+                        break;
+                    case 2:
+                        localWorld = Matrix.RotationZ(rotationMultiplier * MathUtil.DegreesToRadians(MovementRotation_Degrees));
+                        break;
+                }
+            }
+
+            return localWorld;
+        }
+
+        protected override Matrix LocalWorld()
+        {
+            if (playingPlat)
+            {
+                AssetPLAT driver = FindDrivenByAsset(out bool found);
+
+                if (found)
+                {
+                    return Matrix.Scaling(_scale)
+                        * PlatLocalRotation() * PlatLocalTranslation()
+                        * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
+                        * Matrix.RotationYawPitchRoll(
+                            (float)Math.Acos(((Vector3)Vector3.Transform(Vector3.UnitX, driver.LocalWorld())).X),
+                            (float)Math.Acos(((Vector3)Vector3.Transform(Vector3.UnitX, driver.LocalWorld())).Y),
+                            (float)Math.Acos(((Vector3)Vector3.Transform(Vector3.UnitZ, driver.LocalWorld())).Y))
+                        * Matrix.Translation(_position - driver._position)
+                        * Matrix.Translation((Vector3)Vector3.Transform(Vector3.Zero, driver.LocalWorld()));
+                }
+
+                return Matrix.Scaling(_scale)
+                    * PlatLocalRotation() * PlatLocalTranslation()
+                    * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
+                    * Matrix.Translation(_position);
+            }
+
+            return world;
+        }
+
+        public override void Draw(SharpRenderer renderer)
+        {
+            if (playingPlat)
+                localFrameCounter++;
+
+            if (DontRender || isInvisible)
+                return;
+
+            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
+                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * _color : _color);
+            else
+                renderer.DrawCube(LocalWorld(), isSelected);
         }
 
         [Browsable(false)]
@@ -195,28 +426,28 @@ namespace IndustrialPark
         }
 
         [Category("Platform")]
-        public byte UnknownByte_94
+        public byte MovementMode
         {
             get => ReadByte(0x94 + Offset);
             set => Write(0x94 + Offset, value);
         }
 
         [Category("Platform")]
-        public byte UnknownByte_95
+        public byte MovementLoopType
         {
             get => ReadByte(0x95 + Offset);
             set => Write(0x95 + Offset, value);
         }
 
         [Category("Platform")]
-        public byte UnknownByte_96
+        public byte MovementTranslation_Direction
         {
             get => ReadByte(0x96 + Offset);
             set => Write(0x96 + Offset, value);
         }
 
         [Category("Platform")]
-        public byte UnknownByte_97
+        public byte MovementRotation_Direction
         {
             get => ReadByte(0x97 + Offset);
             set => Write(0x97 + Offset, value);

@@ -53,6 +53,12 @@
             this.comboSendEvent = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.comboRecieveEvent = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBoxEventData.SuspendLayout();
             this.groupBox6.SuspendLayout();
@@ -69,7 +75,7 @@
             this.groupBox1.Controls.Add(this.listBoxEvents);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(301, 255);
+            this.groupBox1.Size = new System.Drawing.Size(310, 255);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Events";
@@ -83,7 +89,7 @@
             this.listBoxEvents.Location = new System.Drawing.Point(6, 19);
             this.listBoxEvents.Name = "listBoxEvents";
             this.listBoxEvents.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBoxEvents.Size = new System.Drawing.Size(289, 225);
+            this.listBoxEvents.Size = new System.Drawing.Size(298, 225);
             this.listBoxEvents.TabIndex = 1;
             this.listBoxEvents.SelectedIndexChanged += new System.EventHandler(this.listBoxEvents_SelectedIndexChanged);
             // 
@@ -134,7 +140,7 @@
             // buttonArrowDown
             // 
             this.buttonArrowDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonArrowDown.Location = new System.Drawing.Point(319, 59);
+            this.buttonArrowDown.Location = new System.Drawing.Point(183, 302);
             this.buttonArrowDown.Name = "buttonArrowDown";
             this.buttonArrowDown.Size = new System.Drawing.Size(22, 22);
             this.buttonArrowDown.TabIndex = 7;
@@ -145,7 +151,7 @@
             // buttonArrowUp
             // 
             this.buttonArrowUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonArrowUp.Location = new System.Drawing.Point(319, 31);
+            this.buttonArrowUp.Location = new System.Drawing.Point(183, 274);
             this.buttonArrowUp.Name = "buttonArrowUp";
             this.buttonArrowUp.Size = new System.Drawing.Size(22, 22);
             this.buttonArrowUp.TabIndex = 6;
@@ -156,9 +162,9 @@
             // buttonOK
             // 
             this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonOK.Location = new System.Drawing.Point(355, 299);
+            this.buttonOK.Location = new System.Drawing.Point(336, 299);
             this.buttonOK.Name = "buttonOK";
-            this.buttonOK.Size = new System.Drawing.Size(104, 23);
+            this.buttonOK.Size = new System.Drawing.Size(112, 23);
             this.buttonOK.TabIndex = 18;
             this.buttonOK.Text = "OK";
             this.buttonOK.UseVisualStyleBackColor = true;
@@ -168,9 +174,9 @@
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(465, 299);
+            this.buttonCancel.Location = new System.Drawing.Point(454, 299);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(104, 23);
+            this.buttonCancel.Size = new System.Drawing.Size(112, 23);
             this.buttonCancel.TabIndex = 19;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
@@ -183,15 +189,21 @@
             this.groupBoxEventData.Controls.Add(this.groupBox5);
             this.groupBoxEventData.Controls.Add(this.groupBox4);
             this.groupBoxEventData.Controls.Add(this.groupBox3);
-            this.groupBoxEventData.Location = new System.Drawing.Point(347, 12);
+            this.groupBoxEventData.Location = new System.Drawing.Point(328, 12);
             this.groupBoxEventData.Name = "groupBoxEventData";
-            this.groupBoxEventData.Size = new System.Drawing.Size(226, 281);
+            this.groupBoxEventData.Size = new System.Drawing.Size(244, 281);
             this.groupBoxEventData.TabIndex = 2;
             this.groupBoxEventData.TabStop = false;
             this.groupBoxEventData.Text = "Event Data";
             // 
             // groupBox6
             // 
+            this.groupBox6.Controls.Add(this.label5);
+            this.groupBox6.Controls.Add(this.label6);
+            this.groupBox6.Controls.Add(this.label4);
+            this.groupBox6.Controls.Add(this.label3);
+            this.groupBox6.Controls.Add(this.label2);
+            this.groupBox6.Controls.Add(this.label1);
             this.groupBox6.Controls.Add(this.checkBoxHex);
             this.groupBox6.Controls.Add(this.textBox5);
             this.groupBox6.Controls.Add(this.textBox6);
@@ -201,7 +213,7 @@
             this.groupBox6.Controls.Add(this.textBox1);
             this.groupBox6.Location = new System.Drawing.Point(8, 178);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(214, 99);
+            this.groupBox6.Size = new System.Drawing.Size(230, 99);
             this.groupBox6.TabIndex = 4;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Arguments";
@@ -209,7 +221,7 @@
             // checkBoxHex
             // 
             this.checkBoxHex.AutoSize = true;
-            this.checkBoxHex.Location = new System.Drawing.Point(163, 0);
+            this.checkBoxHex.Location = new System.Drawing.Point(173, 0);
             this.checkBoxHex.Name = "checkBoxHex";
             this.checkBoxHex.Size = new System.Drawing.Size(45, 17);
             this.checkBoxHex.TabIndex = 11;
@@ -219,54 +231,54 @@
             // 
             // textBox5
             // 
-            this.textBox5.Location = new System.Drawing.Point(6, 71);
+            this.textBox5.Location = new System.Drawing.Point(25, 71);
             this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(98, 20);
+            this.textBox5.Size = new System.Drawing.Size(86, 20);
             this.textBox5.TabIndex = 16;
             this.textBox5.TextChanged += new System.EventHandler(this.textBox5_TextChanged);
             this.textBox5.Leave += new System.EventHandler(this.textBox_Leave);
             // 
             // textBox6
             // 
-            this.textBox6.Location = new System.Drawing.Point(110, 71);
+            this.textBox6.Location = new System.Drawing.Point(136, 71);
             this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(98, 20);
+            this.textBox6.Size = new System.Drawing.Size(85, 20);
             this.textBox6.TabIndex = 17;
             this.textBox6.TextChanged += new System.EventHandler(this.textBox6_TextChanged);
             this.textBox6.Leave += new System.EventHandler(this.textBox_Leave);
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(6, 45);
+            this.textBox3.Location = new System.Drawing.Point(25, 45);
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(98, 20);
+            this.textBox3.Size = new System.Drawing.Size(86, 20);
             this.textBox3.TabIndex = 14;
             this.textBox3.TextChanged += new System.EventHandler(this.textBox3_TextChanged);
             this.textBox3.Leave += new System.EventHandler(this.textBox_Leave);
             // 
             // textBox4
             // 
-            this.textBox4.Location = new System.Drawing.Point(110, 45);
+            this.textBox4.Location = new System.Drawing.Point(136, 46);
             this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(98, 20);
+            this.textBox4.Size = new System.Drawing.Size(85, 20);
             this.textBox4.TabIndex = 15;
             this.textBox4.TextChanged += new System.EventHandler(this.textBox4_TextChanged);
             this.textBox4.Leave += new System.EventHandler(this.textBox_Leave);
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(110, 19);
+            this.textBox2.Location = new System.Drawing.Point(136, 19);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(98, 20);
+            this.textBox2.Size = new System.Drawing.Size(85, 20);
             this.textBox2.TabIndex = 13;
             this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             this.textBox2.Leave += new System.EventHandler(this.textBox_Leave);
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(6, 19);
+            this.textBox1.Location = new System.Drawing.Point(25, 19);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(98, 20);
+            this.textBox1.Size = new System.Drawing.Size(86, 20);
             this.textBox1.TabIndex = 12;
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             this.textBox1.Leave += new System.EventHandler(this.textBox_Leave);
@@ -276,7 +288,7 @@
             this.groupBox5.Controls.Add(this.textBoxTargetAsset);
             this.groupBox5.Location = new System.Drawing.Point(8, 125);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(214, 47);
+            this.groupBox5.Size = new System.Drawing.Size(230, 47);
             this.groupBox5.TabIndex = 3;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Target Asset";
@@ -286,7 +298,7 @@
             this.textBoxTargetAsset.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
             this.textBoxTargetAsset.Location = new System.Drawing.Point(6, 19);
             this.textBoxTargetAsset.Name = "textBoxTargetAsset";
-            this.textBoxTargetAsset.Size = new System.Drawing.Size(202, 20);
+            this.textBoxTargetAsset.Size = new System.Drawing.Size(218, 20);
             this.textBoxTargetAsset.TabIndex = 10;
             this.textBoxTargetAsset.TextChanged += new System.EventHandler(this.textBoxTargetAsset_TextChanged);
             this.textBoxTargetAsset.Leave += new System.EventHandler(this.textBoxTargetAsset_Leave);
@@ -296,7 +308,7 @@
             this.groupBox4.Controls.Add(this.comboSendEvent);
             this.groupBox4.Location = new System.Drawing.Point(8, 72);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(214, 47);
+            this.groupBox4.Size = new System.Drawing.Size(230, 47);
             this.groupBox4.TabIndex = 2;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Send Event";
@@ -306,7 +318,7 @@
             this.comboSendEvent.FormattingEnabled = true;
             this.comboSendEvent.Location = new System.Drawing.Point(6, 19);
             this.comboSendEvent.Name = "comboSendEvent";
-            this.comboSendEvent.Size = new System.Drawing.Size(202, 21);
+            this.comboSendEvent.Size = new System.Drawing.Size(218, 21);
             this.comboSendEvent.TabIndex = 9;
             this.comboSendEvent.SelectedIndexChanged += new System.EventHandler(this.comboSendEvent_SelectedIndexChanged);
             // 
@@ -315,7 +327,7 @@
             this.groupBox3.Controls.Add(this.comboRecieveEvent);
             this.groupBox3.Location = new System.Drawing.Point(6, 19);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(214, 47);
+            this.groupBox3.Size = new System.Drawing.Size(232, 47);
             this.groupBox3.TabIndex = 1;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Recieve Event";
@@ -325,9 +337,63 @@
             this.comboRecieveEvent.FormattingEnabled = true;
             this.comboRecieveEvent.Location = new System.Drawing.Point(6, 19);
             this.comboRecieveEvent.Name = "comboRecieveEvent";
-            this.comboRecieveEvent.Size = new System.Drawing.Size(204, 21);
+            this.comboRecieveEvent.Size = new System.Drawing.Size(220, 21);
             this.comboRecieveEvent.TabIndex = 8;
             this.comboRecieveEvent.SelectedIndexChanged += new System.EventHandler(this.comboRecieveEvent_SelectedIndexChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 22);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(13, 13);
+            this.label1.TabIndex = 20;
+            this.label1.Text = "1";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 48);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(13, 13);
+            this.label2.TabIndex = 21;
+            this.label2.Text = "3";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 74);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(13, 13);
+            this.label3.TabIndex = 22;
+            this.label3.Text = "5";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(117, 22);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(13, 13);
+            this.label4.TabIndex = 23;
+            this.label4.Text = "2";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(117, 74);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(13, 13);
+            this.label5.TabIndex = 25;
+            this.label5.Text = "6";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(117, 49);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(13, 13);
+            this.label6.TabIndex = 24;
+            this.label6.Text = "4";
             // 
             // EventEditor
             // 
@@ -335,7 +401,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(581, 334);
+            this.ClientSize = new System.Drawing.Size(584, 334);
             this.Controls.Add(this.groupBoxEventData);
             this.Controls.Add(this.buttonOK);
             this.Controls.Add(this.buttonCancel);
@@ -350,6 +416,7 @@
             this.MaximizeBox = false;
             this.Name = "EventEditor";
             this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Event Editor";
             this.groupBox1.ResumeLayout(false);
             this.groupBoxEventData.ResumeLayout(false);
@@ -390,5 +457,11 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.CheckBox checkBoxHex;
         private System.Windows.Forms.TextBox textBoxTargetAsset;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label1;
     }
 }

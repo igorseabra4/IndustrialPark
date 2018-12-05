@@ -186,7 +186,7 @@ namespace IndustrialPark
 
             return whoTargets;
         }
-        
+
         public void ExportHip(string fileName)
         {
             HipSection[] hipFile = SetupStream(ref HIPA, ref PACK, ref DICT, ref STRM);

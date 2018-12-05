@@ -42,10 +42,14 @@ namespace IndustrialPark
             return SharpRenderer.whiteDefault;
         }
 
+        public static void LoadTexturesFromTXD(string textureFile, string textureName = null)
+        {
+            LoadTexturesFromTXD(ReadFileMethods.ReadRenderWareFile(textureFile), textureName);
+        }
+
         public static void LoadTexturesFromTXD(byte[] txdData, string textureName = null)
         {
-            RWSection[] file = ReadFileMethods.ReadRenderWareFile(txdData);
-            LoadTexturesFromTXD(file, textureName);
+            LoadTexturesFromTXD(ReadFileMethods.ReadRenderWareFile(txdData), textureName);
         }
 
         public static void LoadTexturesFromTXD(RWSection[] txdFile, string textureName = null)

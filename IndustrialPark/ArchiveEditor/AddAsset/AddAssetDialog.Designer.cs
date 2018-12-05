@@ -286,6 +286,7 @@
             this.MaximizeBox = false;
             this.Name = "AddAssetDialog";
             this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Asset Header";
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);

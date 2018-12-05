@@ -138,6 +138,7 @@
             this.MaximizeBox = false;
             this.Name = "AddMultipleAssetDialog";
             this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Add Multiple Assets";
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
