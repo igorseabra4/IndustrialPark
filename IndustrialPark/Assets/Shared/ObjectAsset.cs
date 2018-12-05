@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
 
 namespace IndustrialPark
@@ -29,10 +30,7 @@ namespace IndustrialPark
         }
 
         [Category("Object Base"), ReadOnly(true)]
-        public byte AmountOfEvents
-        {
-            get => ReadByte(0x5);
-        }
+        public byte AmountOfEvents => ReadByte(0x5);
 
         [Category("Object Base"), TypeConverter(typeof(HexShortTypeConverter))]
         public short Flags
@@ -78,38 +76,49 @@ namespace IndustrialPark
 
         protected virtual int EventStartOffset => Data.Length - AmountOfEvents * AssetEvent.sizeOfStruct;
 
-        [Category("Object Base")]
+        [Category("Object Base"), Editor(typeof(EventListEditor), typeof(UITypeEditor))]
         public AssetEventBFBB[] EventsBFBB
         {
             get
             {
-                byte amount = ReadByte(0x05);
-                AssetEventBFBB[] events = new AssetEventBFBB[amount];
+                AssetEventBFBB[] events = new AssetEventBFBB[AmountOfEvents];
 
-                for (int i = 0; i < amount; i++)
+                for (int i = 0; i < AmountOfEvents; i++)
                     events[i] = new AssetEventBFBB(Data, EventStartOffset + i * AssetEvent.sizeOfStruct);
 
                 return events;
             }
             set => WriteEvents(value);
         }
-
-        [Category("Object Base")]
+        [Category("Object Base"), Editor(typeof(EventListEditor), typeof(UITypeEditor))]
         public AssetEventTSSM[] EventsTSSM
         {
             get
             {
-                byte amount = ReadByte(0x05);
-                AssetEventTSSM[] events = new AssetEventTSSM[amount];
+                AssetEventTSSM[] events = new AssetEventTSSM[AmountOfEvents];
 
-                for (int i = 0; i < amount; i++)
+                for (int i = 0; i < AmountOfEvents; i++)
                     events[i] = new AssetEventTSSM(Data, EventStartOffset + i * AssetEvent.sizeOfStruct);
 
                 return events;
             }
             set => WriteEvents(value);
         }
-        
+        [Category("Object Base"), Editor(typeof(EventListEditor), typeof(UITypeEditor))]
+        public AssetEventIncredibles[] EventsIncredibles
+        {
+            get
+            {
+                AssetEventIncredibles[] events = new AssetEventIncredibles[AmountOfEvents];
+
+                for (int i = 0; i < AmountOfEvents; i++)
+                    events[i] = new AssetEventIncredibles(Data, EventStartOffset + i * AssetEvent.sizeOfStruct);
+
+                return events;
+            }
+            set => WriteEvents(value);
+        }
+
         protected void WriteEvents(AssetEvent[] value)
         {
             List<byte> newData = Data.Take(EventStartOffset).ToList();

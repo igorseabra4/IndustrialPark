@@ -116,6 +116,7 @@ namespace IndustrialPark
                 case AssetTemplate.BusStop_DYNA:
                 case AssetTemplate.DuplicatotronSettings:
                 case AssetTemplate.TeleportBox:
+                case AssetTemplate.Checkpoint_Talkbox:
                     newAssetType = AssetType.DYNA;
                     break;
                 case AssetTemplate.ElectricArc_Generic:
@@ -184,6 +185,7 @@ namespace IndustrialPark
                 case AssetTemplate.ThrowFruit:
                 case AssetTemplate.ThrowFruitBase:
                 case AssetTemplate.FreezyFruit:
+                case AssetTemplate.Checkpoint_SIMP:
                     newAssetType = AssetType.SIMP;
                     break;
                 case AssetTemplate.SoundInfo:
@@ -192,12 +194,15 @@ namespace IndustrialPark
                     break;
                 case AssetTemplate.SphereTrigger:
                 case AssetTemplate.BusStop_Trigger:
+                case AssetTemplate.Checkpoint:
+                case AssetTemplate.Checkpoint_Invisible:
                     newAssetType = AssetType.TRIG;
                     break;
                 case AssetTemplate.Text:
                     newAssetType = AssetType.TEXT;
                     break;
                 case AssetTemplate.Timer:
+                case AssetTemplate.Checkpoint_Timer:
                     newAssetType = AssetType.TIMR;
                     break;
                 case AssetTemplate.WoodenTiki:
@@ -818,6 +823,94 @@ namespace IndustrialPark
                 case AssetTemplate.ThrowFruitBase:
                     ((AssetSIMP)asset).ModelAssetID = BKDRHash("fruit_throw_base");
                     ((AssetSIMP)asset).Unknown_5C = 0;
+                    break;
+                case AssetTemplate.Checkpoint:
+                case AssetTemplate.Checkpoint_Invisible:
+                    {
+                        ((AssetTRIG)asset).Position1X_Radius = 6f;
+                        uint checkpointDisp = BKDRHash("CHECKPOINT_DISP_00"); ;
+                        if (!ContainsAsset(checkpointDisp))
+                            checkpointDisp = PlaceTemplate(position, layerIndex, out success, ref assetIDs, "CHECKPOINT_DISP", AssetTemplate.Dispatcher);
+
+                        List<AssetEventBFBB> events = new List<AssetEventBFBB>
+                        {
+                            new AssetEventBFBB
+                            {
+                                Arguments_Hex = new AssetID[] { 0, 0, 0, 0, PlaceTemplate(position, layerIndex, out success, ref assetIDs, "CHECKPOINT_MRKR", AssetTemplate.Marker), 0 },
+                                TargetAssetID = checkpointDisp,
+                                EventReceiveID = EventTypeBFBB.EnterPlayer,
+                                EventSendID = EventTypeBFBB.SetCheckPoint
+                            }
+                        };
+
+                        if (template == AssetTemplate.Checkpoint)
+                            events.Add(new AssetEventBFBB
+                            {
+                                Arguments_Float = new float[6],
+                                TargetAssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, "CHECKPOINT_TIMER", AssetTemplate.Checkpoint_Timer),
+                                EventReceiveID = EventTypeBFBB.EnterPlayer,
+                                EventSendID = EventTypeBFBB.Run
+                            });
+
+                        ((AssetTRIG)asset).EventsBFBB = events.ToArray();
+                        break;
+                    }
+                case AssetTemplate.Checkpoint_Timer:
+                    {
+                        ((AssetTIMR)asset).Time = 0.5f;
+                        uint checkpointSimp = PlaceTemplate(new Vector3(position.X + 2f, position.Y, position.Z), layerIndex, out success, ref assetIDs, "CHECKPOINT_SIMP", AssetTemplate.Checkpoint_SIMP);
+                        uint checkpointTalkbox = BKDRHash("CHECKPOINT_TALKBOX_00"); ;
+                        if (!ContainsAsset(checkpointTalkbox))
+                            checkpointTalkbox = PlaceTemplate(position, layerIndex, out success, ref assetIDs, "CHECKPOINT_TALKBOX", AssetTemplate.Checkpoint_Talkbox);
+                        ((AssetTIMR)asset).EventsBFBB = new AssetEventBFBB[] {
+                            new AssetEventBFBB
+                            {
+                                Arguments_Float = new float[] { 2, 0, 0, 0, 0, 0},
+                                TargetAssetID = checkpointSimp,
+                                EventReceiveID = EventTypeBFBB.Run,
+                                EventSendID = EventTypeBFBB.AnimPlayLoop
+                            },
+                            new AssetEventBFBB
+                            {
+                                Arguments_Hex = new AssetID[] { BKDRHash("checkpoint_text"), 0, 0, 0, 0, 0},
+                                TargetAssetID = checkpointTalkbox,
+                                EventReceiveID = EventTypeBFBB.Run,
+                                EventSendID = EventTypeBFBB.StartConversation
+                            },
+                            new AssetEventBFBB
+                            {
+                                Arguments_Float = new float[] { 3, 0, 0, 0, 0, 0},
+                                TargetAssetID = checkpointSimp,
+                                EventReceiveID = EventTypeBFBB.Expired,
+                                EventSendID = EventTypeBFBB.AnimPlayLoop
+                            },
+                            new AssetEventBFBB
+                            {
+                                Arguments_Float = new float[6],
+                                TargetAssetID = asset.AHDR.assetID,
+                                EventReceiveID = EventTypeBFBB.Expired,
+                                EventSendID = EventTypeBFBB.Disable
+                            },
+                        };
+                        break;
+                    }
+                case AssetTemplate.Checkpoint_SIMP:
+                    ((AssetSIMP)asset).ScaleX = 0.75f;
+                    ((AssetSIMP)asset).ScaleY = 0.75f;
+                    ((AssetSIMP)asset).ScaleZ = 0.75f;
+                    ((AssetSIMP)asset).ModelAssetID = BKDRHash("checkpoint_bind");
+                    ((AssetSIMP)asset).AnimationAssetID = BKDRHash("CHECKPOINT_ANIMLIST_01");
+                    break;
+                case AssetTemplate.Checkpoint_Talkbox:
+                    ((AssetDYNA)asset).Flags = 0x1D;
+                    ((AssetDYNA)asset).Version = 11;
+                    ((AssetDYNA)asset).Type = DynaType.game_object__talk_box;
+                    ((AssetDYNA)asset).DynaBase = new DynaTalkBox()
+                    {
+                        TextBoxID1 = 0x9BC49154,
+                        Flags5 = 1,
+                        UnknownFloat = 2f
+                    };
                     break;
             }
 

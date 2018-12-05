@@ -10,6 +10,7 @@ namespace IndustrialPark
         public static ViewConfig ViewConfig;
         public static AboutBox AboutBox;
         public static UserTemplateManager UserTemplateManager;
+        public static EventSearch EventSearch;
 
         /// <summary>
         /// Ponto de entrada principal para o aplicativo.
@@ -30,6 +31,7 @@ namespace IndustrialPark
             ViewConfig = new ViewConfig();
             AboutBox = new AboutBox();
             UserTemplateManager = new UserTemplateManager();
+            EventSearch = new EventSearch();
 
             Application.Run(MainForm);
         }

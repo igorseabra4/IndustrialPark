@@ -67,6 +67,8 @@
         PressurePlate,
         TaxiStand,
         TexasHitch,
+        Checkpoint,
+        Checkpoint_Invisible,
         BusStop,
         TeleportBox,
         ThrowFruit,
@@ -80,6 +82,9 @@
         BusStop_Lights,
         BusStop_Trigger,
         ThrowFruitBase,
+        Checkpoint_Timer,
+        Checkpoint_Talkbox,
+        Checkpoint_SIMP,
 
         // Placeable
         Marker,

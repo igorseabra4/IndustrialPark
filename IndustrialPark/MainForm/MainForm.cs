@@ -34,6 +34,10 @@ namespace IndustrialPark
         {
             UpdateUserTemplateComboBox();
 
+#if !DEBUG
+            researchToolStripMenuItem.Visible = false;
+#endif
+
             if (File.Exists(pathToSettings))
             {
                 IPSettings settings = JsonConvert.DeserializeObject<IPSettings>(File.ReadAllText(pathToSettings));
@@ -1053,6 +1057,8 @@ namespace IndustrialPark
             {
                 new ToolStripMenuItem(AssetTemplate.Button_Red.ToString()),
                 new ToolStripMenuItem(AssetTemplate.PressurePlate.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Checkpoint.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Checkpoint_Invisible.ToString()),
                 new ToolStripMenuItem(AssetTemplate.BusStop.ToString()),
                 new ToolStripMenuItem(AssetTemplate.TeleportBox.ToString()),
                 new ToolStripMenuItem(AssetTemplate.ThrowFruit.ToString()),
@@ -1195,6 +1201,11 @@ namespace IndustrialPark
         private void positionLocalToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ToggleGizmoType(GizmoMode.PositionLocal);
+        }
+
+        private void eventSearchToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.EventSearch.Show();
         }
     }
 }

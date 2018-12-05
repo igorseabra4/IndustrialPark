@@ -14,6 +14,14 @@ namespace IndustrialPark
             Unknown_ID = 0;
         }
 
+        public override bool HasReference(uint assetID)
+        {
+            if (Unknown_ID == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
         public DynaBoulderGen(IEnumerable<byte> enumerable) : base (enumerable)
         {
             Unknown_ID = Switch(BitConverter.ToUInt32(Data, 0x0));

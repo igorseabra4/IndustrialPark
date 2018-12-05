@@ -34,6 +34,9 @@ namespace IndustrialPark
             if (!string.IsNullOrWhiteSpace(filePath))
                 OpenFile(filePath);
 
+            textBoxFindAsset.AutoCompleteSource = AutoCompleteSource.CustomSource;
+            textBoxFindAsset.AutoCompleteCustomSource = archive.autoCompleteSource;
+
             MainForm.PopulateTemplateMenusAt(addTemplateToolStripMenuItem, TemplateToolStripMenuItem_Click);
             listViewAssets_SizeChanged(null, null);
         }
@@ -867,8 +870,11 @@ namespace IndustrialPark
                 SetSelectedIndices(new List<uint>() { assetID }, false);
             else
                 foreach (ListViewItem v in listViewAssets.Items)
-                    if (v.Text.ToLower().Contains(textBoxFindAsset.Text.ToLower()))
+                    if (v.Text.ToLower().Contains(textBoxFindAsset.Text.ToLower()) && (v.Selected == false))
+                    {
                         SetSelectedIndices(new List<uint>() { GetAssetIDFromName(v.Text) }, false);
+                        return;
+                    }
         }
 
         private void collapseLayersToolStripMenuItem_Click(object sender, EventArgs e)

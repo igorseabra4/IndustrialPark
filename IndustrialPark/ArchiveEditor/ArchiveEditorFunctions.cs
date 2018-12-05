@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using HipHopFile;
-using SharpDX;
 using static HipHopFile.Functions;
 
 namespace IndustrialPark
@@ -31,6 +30,7 @@ namespace IndustrialPark
         public Section_PACK PACK;
         public Section_DICT DICT;
         public Section_STRM STRM;
+        public AutoCompleteStringCollection autoCompleteSource = new AutoCompleteStringCollection();
 
         public bool New()
         {
@@ -594,6 +594,9 @@ namespace IndustrialPark
             if (hiddenAssets.Contains(AHDR.assetID))
                 assetDictionary[AHDR.assetID].isInvisible = true;
 
+            if (assetDictionary[AHDR.assetID] is ObjectAsset oa)
+                autoCompleteSource.Add(AHDR.ADBG.assetName);
+
             allowRender = true;
         }
 
@@ -701,6 +704,8 @@ namespace IndustrialPark
                 modl.GetRenderWareModelFile().Dispose();
 
             DICT.ATOC.AHDRList.Remove(assetDictionary[assetID].AHDR);
+
+            autoCompleteSource.Remove(assetDictionary[assetID].AHDR.ADBG.assetName);
 
             assetDictionary.Remove(assetID);
         }
