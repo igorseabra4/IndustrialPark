@@ -413,14 +413,14 @@ namespace IndustrialPark
 
                         Program.MainForm.SetToolStripStatusLabel(Camera.GetInformation() + " FPS: " + $"{sharpFPS.FPS:0.0000}");
                         
-                        Camera.FieldOfView = 1F / (float)Math.Tan(Camera.FieldOfView / 2F) * AspectRatioYScale;
+                        Camera.FieldOfView = 1F / (float)Math.Tan(Camera.FieldOfView / 2F) * Camera.AspectRatioYScale;
                         Camera.FieldOfView = (float)Math.Atan(1F / Camera.FieldOfView) * 2F;
 
                         Matrix view = Camera.GetViewMatrix();
                         viewProjection = view * Camera.GetProjectionMatrix();
                         frustum = new BoundingFrustum(view * Camera.GetBiggerFovProjectionMatrix());
                         
-                        Camera.FieldOfView = 1F / (float)Math.Tan(Camera.FieldOfView / 2F) / AspectRatioYScale;
+                        Camera.FieldOfView = 1F / (float)Math.Tan(Camera.FieldOfView / 2F) / Camera.AspectRatioYScale;
                         Camera.FieldOfView = (float)Math.Atan(1F / Camera.FieldOfView) * 2F;
 
                         device.SetFillModeDefault();
