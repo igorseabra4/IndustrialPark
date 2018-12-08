@@ -85,6 +85,12 @@
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetTemplates.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetEditing.cs" />
     <Compile Include="ArchiveEditor\EventListEditor.cs" />
+    <Compile Include="ArchiveEditor\InternalEditors\InternalPlatEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\InternalEditors\InternalPlatEditor.Designer.cs">
+      <DependentUpon>InternalPlatEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="ArchiveEditor\InternalEditors\InternalShrapnelEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -320,8 +326,14 @@
       <DependentUpon>EventEditor.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalPlatEditor.resx">
+      <DependentUpon>InternalPlatEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\ProgressBar.resx">
       <DependentUpon>ProgressBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Research\PlatSearch.resx">
+      <DependentUpon>PlatSearch.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Research\EventSearch.resx">
       <DependentUpon>EventSearch.cs</DependentUpon>
@@ -398,6 +410,12 @@
     <None Include="Resources\Templates\BFBB\SIMP">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Compile Include="Research\PlatSearch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Research\PlatSearch.Designer.cs">
+      <DependentUpon>PlatSearch.cs</DependentUpon>
+    </Compile>
     <Compile Include="Research\EventSearch.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -1,4 +1,6 @@
 ﻿using HipHopFile;
+using SharpDX;
+using System;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -27,6 +29,84 @@ namespace IndustrialPark
                 return true;
 
             return base.HasReference(assetID);
+        }
+
+        private float localFrameCounter = -1;
+
+        public void Reset()
+        {
+            localFrameCounter = -1;
+        }
+
+        public override Matrix LocalWorld()
+        {
+            if (movementPreview && AssetID_MVPT != 0)
+            {
+                AssetMVPT driver = FindMVPT(out bool found);
+
+                if (found)
+                {
+                    return Matrix.Scaling(_scale)
+                        * Matrix.Translation(driver.PositionX, driver.PositionY, driver.PositionZ)
+                        * Matrix.Translation((float)(driver.MovementRadius * Math.Cos(localFrameCounter * Math.PI / 360f)), 0f, (float)(driver.MovementRadius * Math.Sin(localFrameCounter * Math.PI / 360f)));
+                }
+            }
+
+            return base.LocalWorld();
+        }
+
+        private AssetMVPT FindMVPT(out bool found)
+        {
+            foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
+                if (ae.archive.ContainsAsset(AssetID_MVPT))
+                {
+                    Asset asset = ae.archive.GetFromAssetID(AssetID_MVPT);
+                    if (asset is AssetMVPT MVPT)
+                        return FindMVPTWithRadius(MVPT, out found);
+                }
+
+            found = false;
+            return null;
+        }
+
+        private AssetMVPT FindMVPTWithRadius(AssetMVPT MVPT, out bool found)
+        {
+            if (MVPT != null)
+            {
+                if (MVPT.MovementRadius != -1f)
+                {
+                    found = true;
+                    return MVPT;
+                }
+                foreach (AssetID assetID in MVPT.SiblingMVPTs)
+                    foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
+                        if (ae.archive.ContainsAsset(assetID))
+                        {
+                            Asset asset = ae.archive.GetFromAssetID(assetID);
+                            if (asset is AssetMVPT MVPT2)
+                                return FindMVPTWithRadius(MVPT2, out found);
+                        }
+            }
+            found = false;
+            return null;
+        }
+
+        public override void Draw(SharpRenderer renderer)
+        {
+            if (movementPreview)
+            {
+                localFrameCounter++;
+                if (localFrameCounter >= int.MaxValue)
+                    localFrameCounter = 0;
+            }
+
+            if (DontRender || isInvisible)
+                return;
+
+            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
+                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * _color : _color);
+            else
+                renderer.DrawCube(LocalWorld(), isSelected);
         }
 
         [Category("VIL")]

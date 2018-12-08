@@ -35,7 +35,6 @@ namespace IndustrialPark
             GoingBack
         }
 
-        public static bool playingPlat = false;
         private float localFrameCounter = -1;
         private int amountOfMovementsPerformed = 0;
 
@@ -53,7 +52,7 @@ namespace IndustrialPark
             amountOfMovementsPerformed = 0;
         }
 
-        private Matrix PlatLocalTranslation()
+        public Matrix PlatLocalTranslation()
         {
             Matrix localWorld = Matrix.Identity;
 
@@ -134,7 +133,7 @@ namespace IndustrialPark
             return localWorld;
         }
 
-        private Matrix PlatLocalRotation()
+        public override Matrix PlatLocalRotation()
         {
             Matrix localWorld = Matrix.Identity;
 
@@ -167,6 +166,7 @@ namespace IndustrialPark
                         break;
                     case 1:
                     case 2:
+                    case 3:
                         switch (currentMovementAction)
                         {
                             case CurrentMovementAction.StartWait:
@@ -198,7 +198,7 @@ namespace IndustrialPark
                         break;
                 }
 
-                switch (MovementRotation_Direction)
+                switch (MovementRotation_Axis)
                 {
                     case 0:
                         localWorld = Matrix.RotationX(rotationMultiplier * MathUtil.DegreesToRadians(MovementRotation_Degrees));
@@ -215,27 +215,24 @@ namespace IndustrialPark
             return localWorld;
         }
 
-        protected override Matrix LocalWorld()
+        public override Matrix LocalWorld()
         {
-            if (playingPlat)
+            if (movementPreview)
             {
-                AssetPLAT driver = FindDrivenByAsset(out bool found);
+                PlaceableAsset driver = FindDrivenByAsset(out bool found, out bool useRotation);
 
                 if (found)
                 {
-                    return Matrix.Scaling(_scale)
-                        * PlatLocalRotation() * PlatLocalTranslation()
+                    return PlatLocalRotation() * PlatLocalTranslation()
+                        * Matrix.Scaling(_scale)
                         * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
-                        * Matrix.RotationYawPitchRoll(
-                            (float)Math.Acos(((Vector3)Vector3.Transform(Vector3.UnitX, driver.LocalWorld())).X),
-                            (float)Math.Acos(((Vector3)Vector3.Transform(Vector3.UnitX, driver.LocalWorld())).Y),
-                            (float)Math.Acos(((Vector3)Vector3.Transform(Vector3.UnitZ, driver.LocalWorld())).Y))
                         * Matrix.Translation(_position - driver._position)
+                        * (useRotation ? driver.PlatLocalRotation() : Matrix.Identity)
                         * Matrix.Translation((Vector3)Vector3.Transform(Vector3.Zero, driver.LocalWorld()));
                 }
 
-                return Matrix.Scaling(_scale)
-                    * PlatLocalRotation() * PlatLocalTranslation()
+                return PlatLocalRotation() * PlatLocalTranslation()
+                    * Matrix.Scaling(_scale)
                     * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                     * Matrix.Translation(_position);
             }
@@ -245,7 +242,7 @@ namespace IndustrialPark
 
         public override void Draw(SharpRenderer renderer)
         {
-            if (playingPlat)
+            if (movementPreview)
                 localFrameCounter++;
 
             if (DontRender || isInvisible)
@@ -272,14 +269,14 @@ namespace IndustrialPark
         }
 
         [Category("Platform")]
-        public PlatType PlatformType_Header
+        public PlatType PlatformType
         {
             get => (PlatType)ReadByte(0x09 + Offset);
             set => Write(0x09 + Offset, (byte)value);
         }
 
         [Category("Platform")]
-        public PlatTypeSpecific PlatformType_Specific
+        public PlatTypeSpecific PlatformSubtype
         {
             get => (PlatTypeSpecific)ReadByte(0x54 + Offset);
             set => Write(0x54 + Offset, (byte)value);
@@ -300,30 +297,58 @@ namespace IndustrialPark
         }
 
         [Category("Platform")]
-        public float MaybeLaunchStrength
+        public float Float58
         {
             get => ReadFloat(0x58 + Offset);
             set => Write(0x58 + Offset, value);
         }
 
-        [Category("Platform")]
-        public float TeeterRotationAngle
+        [Category("Platform"), Browsable(false)]
+        public int Int58
         {
-            get => MathUtil.RadiansToDegrees(ReadFloat(0x5C + Offset));
-            set => Write(0x5C + Offset, MathUtil.DegreesToRadians(value));
+            get => ReadInt(0x58 + Offset);
+            set => Write(0x58 + Offset, value);
         }
 
-        [Category("Platform")]
-        public float TeeterRotationSpeed
+        [Category("Platform"), Browsable(false)]
+        public float Float5C
+        {
+            get => ReadFloat(0x5C + Offset);
+            set => Write(0x5C + Offset, value);
+        }
+
+        [Category("Platform"), Browsable(false)]
+        public int Int5C
+        {
+            get => ReadInt(0x5C + Offset);
+            set => Write(0x5C + Offset, value);
+        }
+
+        [Category("Platform"), Browsable(false)]
+        public float Float60
         {
             get => ReadFloat(0x60 + Offset);
             set => Write(0x60 + Offset, value);
         }
 
-        [Category("Platform")]
-        public float AdditionalSlamHeight
+        [Category("Platform"), Browsable(false)]
+        public int Int60
+        {
+            get => ReadInt(0x60 + Offset);
+            set => Write(0x60 + Offset, value);
+        }
+
+        [Category("Platform"), Browsable(false)]
+        public float Float64
         {
             get => ReadFloat(0x64 + Offset);
+            set => Write(0x64 + Offset, value);
+        }
+
+        [Category("Platform"), Browsable(false)]
+        public int Int64
+        {
+            get => ReadInt(0x64 + Offset);
             set => Write(0x64 + Offset, value);
         }
 
@@ -436,42 +461,42 @@ namespace IndustrialPark
         public byte MovementLoopType
         {
             get => ReadByte(0x95 + Offset);
-            set => Write(0x95 + Offset, value);
+            set { Write(0x95 + Offset, value); Reset(); }
         }
 
         [Category("Platform")]
         public byte MovementTranslation_Direction
         {
             get => ReadByte(0x96 + Offset);
-            set => Write(0x96 + Offset, value);
+            set { Write(0x96 + Offset, value); Reset(); }
         }
 
         [Category("Platform")]
-        public byte MovementRotation_Direction
+        public byte MovementRotation_Axis
         {
             get => ReadByte(0x97 + Offset);
-            set => Write(0x97 + Offset, value);
+            set { Write(0x97 + Offset, value); Reset(); }
         }
 
         [Category("Platform")]
         public AssetID MVPT_AssetID_98
         {
             get { return ReadUInt(0x98 + Offset); }
-            set { Write(0x98 + Offset, value); }
+            set { Write(0x98 + Offset, value); Reset(); }
         }
 
         [Category("Platform")]
         public float MovementTranslation_Distance_98
         {
             get => ReadFloat(0x98 + Offset);
-            set => Write(0x98 + Offset, value);
+            set { Write(0x98 + Offset, value); Reset(); }
         }
 
         [Category("Platform")]
         public float MovementTranslation_Time
         {
             get => ReadFloat(0x9C + Offset);
-            set => Write(0x9C + Offset, value);
+            set { Write(0x9C + Offset, value); Reset(); }
         }
 
         [Category("Platform")]
@@ -492,14 +517,14 @@ namespace IndustrialPark
         public float MovementRotation_Degrees
         {
             get => ReadFloat(0xA8 + Offset);
-            set => Write(0xA8 + Offset, value);
+            set { Write(0xA8 + Offset, value); Reset(); }
         }
 
         [Category("Platform")]
         public float MovementRotation_Time
         {
             get => ReadFloat(0xAC + Offset);
-            set => Write(0xAC + Offset, value);
+            set { Write(0xAC + Offset, value); Reset(); }
         }
 
         [Category("Platform")]
@@ -520,14 +545,14 @@ namespace IndustrialPark
         public float Movement_StartPointWait
         {
             get => ReadFloat(0xB8 + Offset);
-            set => Write(0xB8 + Offset, value);
+            set { Write(0xB8 + Offset, value); Reset(); }
         }
 
         [Category("Platform")]
         public float Movement_EndPointWait
         {
             get => ReadFloat(0xBC + Offset);
-            set => Write(0xBC + Offset, value);
+            set { Write(0xBC + Offset, value); Reset(); }
         }
     }
 }

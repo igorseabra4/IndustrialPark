@@ -15,7 +15,7 @@ namespace IndustrialPark
 
         public override bool HasReference(uint assetID)
         {
-            if (UnknownAssetID74 == assetID)
+            if (SHRP_AssetID == assetID)
                 return true;
 
             return base.HasReference(assetID);
@@ -92,7 +92,7 @@ namespace IndustrialPark
         }
 
         [Category("Destructable")]
-        public AssetID UnknownAssetID74
+        public AssetID SHRP_AssetID
         {
             get => ReadUInt(0x74);
             set => Write(0x74, value);

@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using SharpDX;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -92,7 +91,7 @@ namespace IndustrialPark
         }
 
         [Category("Button Hitmask")]
-        public bool BubbleBowl
+        public bool BubbleBowlOrBoulder
         {
             get => (HitMask & Mask(3)) != 0;
             set => HitMask = value ? (HitMask | Mask(3)) : (HitMask & InvMask(3));
@@ -106,21 +105,21 @@ namespace IndustrialPark
         }
 
         [Category("Button Hitmask")]
-        public bool HitMask5
+        public bool Bungee
         {
             get => (HitMask & Mask(5)) != 0;
             set => HitMask = value ? (HitMask | Mask(5)) : (HitMask & InvMask(5));
         }
 
         [Category("Button Hitmask")]
-        public bool HitMask6
+        public bool ThrowEnemyOrTiki
         {
             get => (HitMask & Mask(6)) != 0;
             set => HitMask = value ? (HitMask | Mask(6)) : (HitMask & InvMask(6));
         }
 
         [Category("Button Hitmask")]
-        public bool Throwable
+        public bool ThrowFruit
         {
             get => (HitMask & Mask(7)) != 0;
             set => HitMask = value ? (HitMask | Mask(7)) : (HitMask & InvMask(7));
@@ -148,14 +147,14 @@ namespace IndustrialPark
         }
 
         [Category("Button Hitmask")]
-        public bool HitMask11
+        public bool EnemyOnPressurePlate
         {
             get => (HitMask & Mask(11)) != 0;
             set => HitMask = value ? (HitMask | Mask(11)) : (HitMask & InvMask(11));
         }
 
         [Category("Button Hitmask")]
-        public bool BubbleBowlOnPressurePlate
+        public bool BubbleBowlOrBoulderPressurePlate
         {
             get => (HitMask & Mask(12)) != 0;
             set => HitMask = value ? (HitMask | Mask(12)) : (HitMask & InvMask(12));
@@ -176,7 +175,7 @@ namespace IndustrialPark
         }
 
         [Category("Button Hitmask")]
-        public bool PatrickBelly
+        public bool PatrickMelee
         {
             get => (HitMask & Mask(15)) != 0;
             set => HitMask = value ? (HitMask | Mask(15)) : (HitMask & InvMask(15));

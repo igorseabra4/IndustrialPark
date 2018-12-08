@@ -38,10 +38,10 @@
             this.comboTargetEvent = new System.Windows.Forms.ComboBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.comboTargetAsset = new System.Windows.Forms.ComboBox();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.buttonPerform = new System.Windows.Forms.Button();
             this.richTextBox2 = new System.Windows.Forms.RichTextBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -141,17 +141,6 @@
             this.comboTargetAsset.Size = new System.Drawing.Size(188, 21);
             this.comboTargetAsset.TabIndex = 3;
             // 
-            // richTextBox1
-            // 
-            this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.richTextBox1.Location = new System.Drawing.Point(12, 187);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(402, 269);
-            this.richTextBox1.TabIndex = 7;
-            this.richTextBox1.Text = "";
-            // 
             // buttonPerform
             // 
             this.buttonPerform.Location = new System.Drawing.Point(224, 129);
@@ -164,11 +153,12 @@
             // 
             // richTextBox2
             // 
-            this.richTextBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.richTextBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.richTextBox2.Location = new System.Drawing.Point(12, 462);
+            this.richTextBox2.Location = new System.Drawing.Point(12, 491);
             this.richTextBox2.Name = "richTextBox2";
-            this.richTextBox2.Size = new System.Drawing.Size(402, 99);
+            this.richTextBox2.Size = new System.Drawing.Size(402, 70);
             this.richTextBox2.TabIndex = 9;
             this.richTextBox2.Text = "";
             // 
@@ -181,15 +171,26 @@
             this.progressBar1.Size = new System.Drawing.Size(400, 23);
             this.progressBar1.TabIndex = 10;
             // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.richTextBox1.Location = new System.Drawing.Point(12, 187);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(402, 298);
+            this.richTextBox1.TabIndex = 11;
+            this.richTextBox1.Text = "";
+            // 
             // EventSearch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(426, 573);
+            this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.richTextBox2);
             this.Controls.Add(this.buttonPerform);
-            this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox4);
@@ -223,9 +224,9 @@
         private System.Windows.Forms.ComboBox comboTargetEvent;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.ComboBox comboTargetAsset;
-        private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.Button buttonPerform;
         private System.Windows.Forms.RichTextBox richTextBox2;
         private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.RichTextBox richTextBox1;
     }
 }

@@ -31,6 +31,7 @@
             this.labelAssetName = new System.Windows.Forms.Label();
             this.propertyGridSpecific = new System.Windows.Forms.PropertyGrid();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.buttonView = new System.Windows.Forms.Button();
             this.buttonFindCallers = new System.Windows.Forms.Button();
             this.buttonStop = new System.Windows.Forms.Button();
             this.buttonGetPos = new System.Windows.Forms.Button();
@@ -39,7 +40,6 @@
             this.buttonRemove = new System.Windows.Forms.Button();
             this.buttonAdd = new System.Windows.Forms.Button();
             this.buttonPlay = new System.Windows.Forms.Button();
-            this.buttonView = new System.Windows.Forms.Button();
             this.labelFrame = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -98,6 +98,18 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(330, 543);
             this.tableLayoutPanel1.TabIndex = 8;
+            // 
+            // buttonView
+            // 
+            this.buttonView.AutoSize = true;
+            this.buttonView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonView.Location = new System.Drawing.Point(168, 498);
+            this.buttonView.Name = "buttonView";
+            this.buttonView.Size = new System.Drawing.Size(159, 22);
+            this.buttonView.TabIndex = 30;
+            this.buttonView.Text = "View";
+            this.buttonView.UseVisualStyleBackColor = true;
+            this.buttonView.Click += new System.EventHandler(this.buttonView_Click);
             // 
             // buttonFindCallers
             // 
@@ -190,25 +202,14 @@
             this.buttonPlay.UseVisualStyleBackColor = true;
             this.buttonPlay.Click += new System.EventHandler(this.buttonPlay_Click);
             // 
-            // buttonView
-            // 
-            this.buttonView.AutoSize = true;
-            this.buttonView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonView.Location = new System.Drawing.Point(168, 498);
-            this.buttonView.Name = "buttonView";
-            this.buttonView.Size = new System.Drawing.Size(159, 22);
-            this.buttonView.TabIndex = 30;
-            this.buttonView.Text = "View";
-            this.buttonView.UseVisualStyleBackColor = true;
-            this.buttonView.Click += new System.EventHandler(this.buttonView_Click);
-            // 
             // labelFrame
             // 
             this.labelFrame.AutoSize = true;
+            this.tableLayoutPanel1.SetColumnSpan(this.labelFrame, 2);
             this.labelFrame.Dock = System.Windows.Forms.DockStyle.Fill;
             this.labelFrame.Location = new System.Drawing.Point(3, 523);
             this.labelFrame.Name = "labelFrame";
-            this.labelFrame.Size = new System.Drawing.Size(159, 20);
+            this.labelFrame.Size = new System.Drawing.Size(324, 20);
             this.labelFrame.TabIndex = 31;
             this.labelFrame.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 

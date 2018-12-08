@@ -915,9 +915,9 @@ namespace IndustrialPark
         private void pLATPreviewToolStripMenuItem_Click(object sender, EventArgs e)
         {
             pLATPreviewToolStripMenuItem.Checked = !pLATPreviewToolStripMenuItem.Checked;
-            AssetPLAT.playingPlat = pLATPreviewToolStripMenuItem.Checked;
+            PlaceableAsset.movementPreview = pLATPreviewToolStripMenuItem.Checked;
 
-            if (AssetPLAT.playingPlat)
+            if (PlaceableAsset.movementPreview)
             {
                 foreach (ArchiveEditor ae in archiveEditors)
                     foreach (Asset a in ae.archive.GetAllAssets())
@@ -1085,6 +1085,11 @@ namespace IndustrialPark
                 new ToolStripMenuItem(AssetTemplate.ThrowFruit.ToString()),
                 new ToolStripMenuItem(AssetTemplate.FreezyFruit.ToString()),
                 new ToolStripMenuItem(AssetTemplate.TexasHitch.ToString()),
+                new ToolStripMenuItem(AssetTemplate.TexasHitch_PLAT.ToString()),
+                new ToolStripMenuItem(AssetTemplate.BungeeHook.ToString()),
+                new ToolStripMenuItem(AssetTemplate.BungeeDrop.ToString()),
+                new ToolStripMenuItem(AssetTemplate.HoveringPlatform.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Springboard.ToString()),
                 new ToolStripMenuItem(AssetTemplate.TaxiStand.ToString()),
             });
             foreach (ToolStripItem i in stageitems.DropDownItems)
@@ -1226,7 +1231,16 @@ namespace IndustrialPark
 
         private void eventSearchToolStripMenuItem_Click(object sender, EventArgs e)
         {
+#if DEBUG
             Program.EventSearch.Show();
+#endif
+        }
+
+        private void platSearchToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+#if DEBUG
+            Program.PlatSearch.Show();
+#endif
         }
     }
 }

@@ -67,12 +67,17 @@
         PressurePlate,
         TaxiStand,
         TexasHitch,
+        TexasHitch_PLAT,
         Checkpoint,
         Checkpoint_Invisible,
         BusStop,
         TeleportBox,
         ThrowFruit,
         FreezyFruit,
+        Springboard,
+        HoveringPlatform,
+        BungeeHook,
+        BungeeDrop,
 
         // ...but not for user
         PressurePlateBase,
@@ -85,6 +90,7 @@
         Checkpoint_Timer,
         Checkpoint_Talkbox,
         Checkpoint_SIMP,
+        BungeeHook_SIMP,
 
         // Placeable
         Marker,

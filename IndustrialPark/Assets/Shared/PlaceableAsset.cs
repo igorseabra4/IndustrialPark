@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using SharpDX;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -80,43 +81,6 @@ namespace IndustrialPark
             }
             else
                 triangles = null;
-        }
-
-        protected AssetPLAT FindDrivenByAsset(out bool found)
-        {
-            foreach (AssetEventBFBB assetEvent in EventsBFBB)
-                if (assetEvent.EventSendID == EventTypeBFBB.Drivenby)
-                {
-                    uint PlatID = assetEvent.TargetAssetID;
-
-                    foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                        if (ae.archive.ContainsAsset(PlatID))
-                        {
-                            AssetPLAT PLAT = (AssetPLAT)ae.archive.GetFromAssetID(PlatID);
-                            found = true;
-                            return PLAT;
-                        }
-                }
-            found = false;
-            return null;
-        }
-
-        protected virtual Matrix LocalWorld()
-        {
-            if (AssetPLAT.playingPlat)
-            {
-                AssetPLAT driver = FindDrivenByAsset(out bool found);
-
-                if (found)
-                {
-                    return Matrix.Scaling(_scale)
-                        * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
-                        * Matrix.Translation(_position - driver._position)
-                        * Matrix.Translation((Vector3)Vector3.Transform(Vector3.Zero, driver.LocalWorld()));
-                }
-            }
-
-            return world;
         }
 
         public virtual void Draw(SharpRenderer renderer)
@@ -261,7 +225,7 @@ namespace IndustrialPark
             set { Write(0x10 + Offset, value); }
         }
         
-        protected Vector3 _position;
+        public Vector3 _position;
 
         [Category("Placement")]
         [TypeConverter(typeof(FloatTypeConverter))]
@@ -456,6 +420,56 @@ namespace IndustrialPark
         {
             get { return ReadUInt(0x50 + Offset); }
             set { Write(0x50 + Offset, value); }
+        }
+
+        public static bool movementPreview = false;
+
+        protected PlaceableAsset FindDrivenByAsset(out bool found, out bool useRotation)
+        {
+            foreach (AssetEventBFBB assetEvent in EventsBFBB)
+                if (assetEvent.EventSendID == EventTypeBFBB.Drivenby)
+                {
+                    uint PlatID = assetEvent.TargetAssetID;
+
+                    foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
+                        if (ae.archive.ContainsAsset(PlatID))
+                        {
+                            Asset asset = ae.archive.GetFromAssetID(PlatID);
+                            if (asset is PlaceableAsset Placeable)
+                            {
+                                found = true;
+                                useRotation = assetEvent.Arguments_Float[0] != 0;
+                                return Placeable;
+                            }
+                        }
+                }
+            found = false;
+            useRotation = false;
+            return null;
+        }
+
+        public virtual Matrix PlatLocalRotation()
+        {
+            return Matrix.Identity;
+        }
+
+        public virtual Matrix LocalWorld()
+        {
+            if (movementPreview)
+            {
+                PlaceableAsset driver = FindDrivenByAsset(out bool found, out bool useRotation);
+
+                if (found)
+                {
+                    return Matrix.Scaling(_scale)
+                        * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
+                        * Matrix.Translation(_position - driver._position)
+                        * (useRotation ? driver.PlatLocalRotation() : Matrix.Identity)
+                        * Matrix.Translation((Vector3)Vector3.Transform(Vector3.Zero, driver.LocalWorld()));
+                }
+            }
+
+            return world;
         }
     }
 }

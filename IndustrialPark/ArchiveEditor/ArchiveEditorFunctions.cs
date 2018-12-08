@@ -730,11 +730,10 @@ namespace IndustrialPark
 
         public uint AddAssetWithUniqueID(int layerIndex, Section_AHDR AHDR, string stringToAdd = "_COPY", bool giveIDregardless = false)
         {
-            int numCopies = -1;
+            int numCopies = 0;
 
             while (ContainsAsset(AHDR.assetID) | giveIDregardless)
             {
-
                 if (numCopies > 1000)
                 {
                     MessageBox.Show("Something went wrong: the asset your're trying to duplicate, paste or create a template of's name is too long. Due to that, I'll have to give it a new name myself.");
@@ -742,7 +741,7 @@ namespace IndustrialPark
                     AHDR.ADBG.assetName = "TOO_LONG";
                 }
 
-                    giveIDregardless = false;
+                giveIDregardless = false;
                 numCopies++;
 
                 if (AHDR.ADBG.assetName.Contains(stringToAdd))

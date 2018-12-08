@@ -75,12 +75,9 @@ namespace IndustrialPark
 
             if (template == AssetTemplate.Null)
                 template = CurrentAssetTemplate;
-
             if (template == AssetTemplate.UserTemplate)
-            {
                 return PlaceUserTemplate(position, layerIndex, out success, ref assetIDs);
-            }
-
+            
             switch (template)
             {
                 case AssetTemplate.AnimationList:
@@ -117,6 +114,8 @@ namespace IndustrialPark
                 case AssetTemplate.DuplicatotronSettings:
                 case AssetTemplate.TeleportBox:
                 case AssetTemplate.Checkpoint_Talkbox:
+                case AssetTemplate.BungeeHook:
+                case AssetTemplate.BungeeDrop:
                     newAssetType = AssetType.DYNA;
                     break;
                 case AssetTemplate.ElectricArc_Generic:
@@ -164,6 +163,9 @@ namespace IndustrialPark
                     newAssetType = AssetType.PKUP;
                     break;
                 case AssetTemplate.Platform_Generic:
+                case AssetTemplate.TexasHitch_PLAT:
+                case AssetTemplate.HoveringPlatform:
+                case AssetTemplate.Springboard:
                     newAssetType = AssetType.PLAT;
                     break;
                 case AssetTemplate.Player_Generic:
@@ -186,15 +188,19 @@ namespace IndustrialPark
                 case AssetTemplate.ThrowFruitBase:
                 case AssetTemplate.FreezyFruit:
                 case AssetTemplate.Checkpoint_SIMP:
+                case AssetTemplate.BungeeHook_SIMP:
                     newAssetType = AssetType.SIMP;
                     break;
                 case AssetTemplate.SoundInfo:
                     customName = "sound_info";
                     newAssetType = AssetType.SNDI;
                     break;
+                case AssetTemplate.Checkpoint:
+                    customName = "CHECKPOINT_TRIG";
+                    newAssetType = AssetType.TRIG;
+                    break;
                 case AssetTemplate.SphereTrigger:
                 case AssetTemplate.BusStop_Trigger:
-                case AssetTemplate.Checkpoint:
                 case AssetTemplate.Checkpoint_Invisible:
                     newAssetType = AssetType.TRIG;
                     break;
@@ -216,9 +222,7 @@ namespace IndustrialPark
                 case AssetTemplate.ChompBot:
                 case AssetTemplate.GLove:
                 case AssetTemplate.Chuck:
-                case AssetTemplate.Chuck_Trigger:
                 case AssetTemplate.Monsoon:
-                case AssetTemplate.Monsoon_Trigger:
                 case AssetTemplate.Sleepytime:
                 case AssetTemplate.Sleepytime_Moving:
                 case AssetTemplate.BombBot:
@@ -226,11 +230,16 @@ namespace IndustrialPark
                 case AssetTemplate.TubeletSlave:
                 case AssetTemplate.BzztBot:
                 case AssetTemplate.Slick:
-                case AssetTemplate.Slick_Trigger:
                 case AssetTemplate.Jellyfish_Pink:
                 case AssetTemplate.Jellyfish_Blue:
                 case AssetTemplate.Duplicatotron:
                 case AssetTemplate.VIL_Generic:
+                    newAssetType = AssetType.VIL;
+                    break;
+                case AssetTemplate.Chuck_Trigger:
+                case AssetTemplate.Monsoon_Trigger:
+                case AssetTemplate.Slick_Trigger:
+                    customName = template.ToString().ToUpper().Replace("_TRIGGER", "");
                     newAssetType = AssetType.VIL;
                     break;
                 default:
@@ -639,11 +648,11 @@ namespace IndustrialPark
                     ((AssetDYNA)asset).DynaBase = new DynaNPCSettings()
                     {
                         Flags1 = 1,
-                        Flags2 = 1,
-                        Flags3 = 1,
+                        Flags4 = 1,
                         Flags5 = 1,
-                        Flags9 = 1,
                         Flags10 = 1,
+                        Flags11 = 1,
+                        Flags12 = 1,
                         DuploSpawnRate = 1f,
                         DuploEnemyLimit = -1
                     };
@@ -660,10 +669,11 @@ namespace IndustrialPark
                     ((AssetBUTN)asset).TransitionTime = 0.5f;
                     ((AssetBUTN)asset).TransitionEaseOut = 0.2f;
                     ((AssetBUTN)asset).BubbleSpin = true;
-                    ((AssetBUTN)asset).BubbleBowl = true;
+                    ((AssetBUTN)asset).BubbleBowlOrBoulder = true;
                     ((AssetBUTN)asset).CruiseBubble = true;
-                    ((AssetBUTN)asset).Throwable = true;
-                    ((AssetBUTN)asset).PatrickBelly = true;
+                    ((AssetBUTN)asset).ThrowFruit = true;
+                    ((AssetBUTN)asset).ThrowEnemyOrTiki = true;
+                    ((AssetBUTN)asset).PatrickMelee = true;
                     ((AssetBUTN)asset).SandyMelee = true;
                     break;
                 case AssetTemplate.PressurePlate:
@@ -680,7 +690,7 @@ namespace IndustrialPark
                     ((AssetBUTN)asset).PlayerOnPressurePlate = true;
                     ((AssetBUTN)asset).AnyThrowableOnPressurePlate = true;
                     ((AssetBUTN)asset).ThrowFruitOnPressurePlate = true;
-                    ((AssetBUTN)asset).BubbleBowlOnPressurePlate = true;
+                    ((AssetBUTN)asset).BubbleBowlOrBoulderPressurePlate = true;
 
                     PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_BASE", AssetTemplate.PressurePlateBase);
                     break;
@@ -692,6 +702,10 @@ namespace IndustrialPark
                     break;
                 case AssetTemplate.TexasHitch:
                     ((AssetSIMP)asset).ModelAssetID = BKDRHash("trailer_hitch");
+                    break;
+                case AssetTemplate.TexasHitch_PLAT:
+                    ((AssetPLAT)asset).ModelAssetID = BKDRHash("trailer_hitch");
+                    ((AssetPLAT)asset).UnknownByte_90 = 4;
                     break;
                 case AssetTemplate.EnemyAreaMVPT:
                     ((AssetMVPT)asset).PositionX = position.X;
@@ -910,6 +924,79 @@ namespace IndustrialPark
                         TextBoxID1 = 0x9BC49154,
                         Flags5 = 1,
                         UnknownFloat = 2f
+                    };
+                    break;
+                case AssetTemplate.Springboard:
+                    ((AssetPLAT)asset).ModelAssetID = 0x55E9EAB5;
+                    ((AssetPLAT)asset).AnimationAssetID = 0x7AAA99BB;
+                    ((AssetPLAT)asset).PlatformType = PlatType.Springboard;
+                    ((AssetPLAT)asset).PlatformSubtype = PlatTypeSpecific.Springboard;
+                    ((AssetPLAT)asset).CollisionType = 4;
+                    ((AssetPLAT)asset).Float58 = 10;
+                    ((AssetPLAT)asset).ANIM_AssetID_1 = 0x6DAE0759;
+                    ((AssetPLAT)asset).ANIM_AssetID_2 = 0xBC4A9A5F;
+                    ((AssetPLAT)asset).LaunchDirectionY = 1;
+                    ((AssetPLAT)asset).UnknownByte_90 = 6;
+                    break;
+                case AssetTemplate.HoveringPlatform:
+                    ((AssetPLAT)asset).ModelAssetID = 0x335EE0C8;
+                    ((AssetPLAT)asset).AnimationAssetID = 0x730847B6;
+                    ((AssetPLAT)asset).PlatformType = PlatType.Mechanism;
+                    ((AssetPLAT)asset).PlatformSubtype = PlatTypeSpecific.Mechanism;
+                    ((AssetPLAT)asset).CollisionType = 4;
+                    ((AssetPLAT)asset).UnknownByte_90 = 6;
+                    ((AssetPLAT)asset).MovementLoopType = 1;
+                    ((AssetPLAT)asset).MovementTranslation_EaseEnd = 0.4f;
+                    ((AssetPLAT)asset).MovementTranslation_EaseStart = 0.4f;
+                    break;
+                case AssetTemplate.BungeeHook:
+                    ((AssetDYNA)asset).Flags = 0x1D;
+                    ((AssetDYNA)asset).Version = 13;
+                    ((AssetDYNA)asset).Type = DynaType.game_object__bungee_hook;
+                    ((AssetDYNA)asset).DynaBase = new DynaBungeeHook()
+                    {
+                        Unknown_ID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, "BUNGEE_SIMP", AssetTemplate.BungeeHook_SIMP),
+                        UnknownFloat1 = 3,
+                        UnknownFloat2 = 0.5f,
+                        UnknownFloat3 = 10,
+                        UnknownFloat4 = 1,
+                        UnknownFloat5 = 2,
+                        UnknownFloat6 = 25,
+                        UnknownFloat7 = 0.95f,
+                        UnknownFloat8 = 2,
+                        UnknownFloat9 = 9.8f,
+                        UnknownFloat10 = 2,
+                        UnknownFloat11 = 2,
+                        UnknownFloat12 = 40,
+                        UnknownFloat13 = 0.05f,
+                        UnknownFloat14 = 2,
+                        UnknownFloat15 = 5,
+                        UnknownFloat16 = 220,
+                        UnknownFloat17 = 0.5f,
+                        UnknownFloat18 = 180,
+                        UnknownFloat19 = 0.05f,
+                        UnknownFloat20 = 0,
+                        UnknownFloat21 = 0.05f,
+                        UnknownFloat22 = 0.2f,
+                        UnknownFloat23 = 0.25f,
+                        UnknownFloat24 = 0.2f,
+                        UnknownFloat25 = 0.1f,
+                        UnknownFloat26 = 0.6f,
+                        UnknownFloat27 = 0.2f,
+                    };
+                    break;
+                case AssetTemplate.BungeeHook_SIMP:
+                    ((AssetSIMP)asset).ModelAssetID = BKDRHash("bungee_hook");
+                    ((AssetSIMP)asset).Unknown_5C = 0;
+                    break;
+                case AssetTemplate.BungeeDrop:
+                    ((AssetDYNA)asset).Flags = 0x1D;
+                    ((AssetDYNA)asset).Version = 2;
+                    ((AssetDYNA)asset).Type = DynaType.game_object__bungee_drop;
+                    ((AssetDYNA)asset).DynaBase = new DynaBungeeDrop()
+                    {
+                        MRKR_ID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, "BUNGEE_MRKR", AssetTemplate.Marker),
+                        Unknown = 1,
                     };
                     break;
             }

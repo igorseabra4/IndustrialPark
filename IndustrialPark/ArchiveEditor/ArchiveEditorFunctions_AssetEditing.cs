@@ -71,8 +71,8 @@ namespace IndustrialPark
                 case AssetType.GRUP:
                     internalEditors.Add(new InternalGrupEditor((AssetGRUP)asset, this));
                     break;
-                case AssetType.TEXT:
-                    internalEditors.Add(new InternalTextEditor((AssetTEXT)asset, this));
+                case AssetType.PLAT:
+                    internalEditors.Add(new InternalPlatEditor((AssetPLAT)asset, this));
                     break;
                 case AssetType.SHRP:
                     internalEditors.Add(new InternalShrapnelEditor((AssetSHRP)asset, this));
@@ -80,6 +80,9 @@ namespace IndustrialPark
                 case AssetType.SND:
                 case AssetType.SNDS:
                     internalEditors.Add(new InternalSoundEditor(asset, this));
+                    break;
+                case AssetType.TEXT:
+                    internalEditors.Add(new InternalTextEditor((AssetTEXT)asset, this));
                     break;
                 default:
                     internalEditors.Add(new InternalAssetEditor(asset, this));
