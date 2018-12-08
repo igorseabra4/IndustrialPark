@@ -33,12 +33,7 @@ namespace IndustrialPark
         private void MainForm_Load(object sender, EventArgs e)
         {
             UpdateUserTemplateComboBox();
-
-#if !DEBUG
-            researchToolStripMenuItem.Visible = false;
-            addTXDArchiveToolStripMenuItem.Visible = false;
-#endif
-
+            
             if (File.Exists(pathToSettings))
             {
                 IPSettings settings = JsonConvert.DeserializeObject<IPSettings>(File.ReadAllText(pathToSettings));
@@ -1231,16 +1226,12 @@ namespace IndustrialPark
 
         private void eventSearchToolStripMenuItem_Click(object sender, EventArgs e)
         {
-#if DEBUG
             Program.EventSearch.Show();
-#endif
         }
 
         private void platSearchToolStripMenuItem_Click(object sender, EventArgs e)
         {
-#if DEBUG
             Program.PlatSearch.Show();
-#endif
         }
     }
 }

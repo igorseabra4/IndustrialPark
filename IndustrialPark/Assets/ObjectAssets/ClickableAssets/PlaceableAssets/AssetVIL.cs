@@ -48,7 +48,7 @@ namespace IndustrialPark
                 {
                     return Matrix.Scaling(_scale)
                         * Matrix.Translation(driver.PositionX, driver.PositionY, driver.PositionZ)
-                        * Matrix.Translation((float)(driver.MovementRadius * Math.Cos(localFrameCounter * Math.PI / 360f)), 0f, (float)(driver.MovementRadius * Math.Sin(localFrameCounter * Math.PI / 360f)));
+                        * Matrix.Translation((float)(driver.MovementRadius * Math.Cos(localFrameCounter * Math.PI / 180f)), 0f, (float)(driver.MovementRadius * Math.Sin(localFrameCounter * Math.PI / 180f)));
                 }
             }
 
