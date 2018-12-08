@@ -194,7 +194,7 @@ namespace IndustrialPark
             foreach (uint assetID in assetList)
             {
                 if (assetDictionary[assetID] is AssetJSP jsp)
-                    jsp.model.Dispose();
+                    jsp.GetRenderWareModelFile().Dispose();
                 else if (assetDictionary[assetID] is AssetMODL modl)
                     modl.GetRenderWareModelFile().Dispose();
                 
@@ -222,8 +222,7 @@ namespace IndustrialPark
             }
 
             if (assetDictionary[assetID] is AssetJSP jsp)
-                jsp.model.Dispose();
-
+                jsp.GetRenderWareModelFile().Dispose();
             if (assetDictionary[assetID] is AssetMODL modl)
                 modl.GetRenderWareModelFile().Dispose();
         }

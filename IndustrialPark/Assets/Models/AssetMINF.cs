@@ -75,7 +75,6 @@ namespace IndustrialPark
             else
             {
                 renderer.DrawCube(world, isSelected |isSelected);
-                //throw new Exception("Error: MINF asset " + AHDR.ADBG.assetName + " could not find its MODL asset ID");
             }
         }
 

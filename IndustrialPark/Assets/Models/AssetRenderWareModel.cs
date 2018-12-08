@@ -1,40 +1,34 @@
 ﻿using HipHopFile;
 using RenderWareFile;
 using RenderWareFile.Sections;
-using SharpDX;
 using System;
 using System.Collections.Generic;
 
 namespace IndustrialPark
 {
-    public class AssetMODL : Asset, IAssetWithModel
+    public class AssetRenderWareModel : Asset
     {
-        RenderWareModelFile model;
+        protected RenderWareModelFile model;
 
-        public AssetMODL(Section_AHDR AHDR) : base(AHDR)
+        public AssetRenderWareModel(Section_AHDR AHDR) : base(AHDR)
         {
         }
 
-        public void Setup(SharpRenderer renderer)
+        public virtual void Setup(SharpRenderer renderer)
         {
             model = new RenderWareModelFile(AHDR.ADBG.assetName);
             try
             {
-                RWSection[] rw = ReadFileMethods.ReadRenderWareFile(AHDR.data);
-                model.SetForRendering(renderer.device, rw, AHDR.data);
-                ArchiveEditorFunctions.AddToRenderingDictionary(AHDR.assetID, this);
+                model.SetForRendering(renderer.device, ReadFileMethods.ReadRenderWareFile(AHDR.data), AHDR.data);
             }
             catch (Exception ex)
             {
                 System.Windows.Forms.MessageBox.Show("Error: " + ToString() + " (MODL) has an unsupported format and cannot be rendered. " + ex.Message);
+                model.Dispose();
+                model = null;
             }
         }
-
-        public void Draw(SharpRenderer renderer, Matrix world, Vector4 color)
-        {
-            model.Render(renderer, world, isSelected ? renderer.selectedObjectColor * color : color);
-        }
-
+        
         public RenderWareModelFile GetRenderWareModelFile()
         {
             return model;
@@ -93,21 +87,25 @@ namespace IndustrialPark
             }
         }
 
-        private int colorCount;
+        private int tempCount;
 
-        public RenderWareFile.Color[] Colors
+        public System.Drawing.Color[] Colors
         {
             get
             {
-                List<RenderWareFile.Color> colors = new List<RenderWareFile.Color>();
+                List<System.Drawing.Color> colors = new List<System.Drawing.Color>();
 
                 foreach (RWSection rws in ModelAsRWSections)
                     if (rws is Clump_0010 clump)
                         foreach (Geometry_000F geo in clump.geometryList.geometryList)
                             foreach (Material_0007 mat in geo.materialList.materialList)
-                                colors.Add(mat.materialStruct.color);
+                            {
+                                RenderWareFile.Color rwColor = mat.materialStruct.color;
+                                System.Drawing.Color color = System.Drawing.Color.FromArgb(rwColor.A, rwColor.R, rwColor.G, rwColor.B);
+                                colors.Add(color);
+                            }
 
-                colorCount = colors.Count;
+                tempCount = colors.Count;
                 return colors.ToArray();
             }
 
@@ -121,10 +119,10 @@ namespace IndustrialPark
                         foreach (Geometry_000F geo in clump.geometryList.geometryList)
                             foreach (Material_0007 mat in geo.materialList.materialList)
                             {
-                                if (value.Length < colorCount)
-                                    return;
+                                if (i >= value.Length)
+                                    continue;
 
-                                mat.materialStruct.color = value[i];
+                                mat.materialStruct.color = new RenderWareFile.Color(value[i].R, value[i].G, value[i].B, value[i].A);
                                 i++;
                             }
 
@@ -143,10 +141,14 @@ namespace IndustrialPark
                 foreach (RWSection rws in ModelAsRWSections)
                     if (rws is Clump_0010 clump)
                         foreach (Geometry_000F geo in clump.geometryList.geometryList)
-                            foreach (Material_0007 mat in geo.materialList.materialList)
-                                names.Add(mat.texture.diffuseTextureName.stringString);
+                            if (geo.materialList != null)
+                                if (geo.materialList.materialList != null)
+                                    foreach (Material_0007 mat in geo.materialList.materialList)
+                                        if (mat.texture != null)
+                                            if (mat.texture.diffuseTextureName != null)
+                                                names.Add(mat.texture.diffuseTextureName.stringString);
 
-                colorCount = names.Count;
+                tempCount = names.Count;
                 return names.ToArray();
             }
 
@@ -158,14 +160,18 @@ namespace IndustrialPark
                 foreach (RWSection rws in sections)
                     if (rws is Clump_0010 clump)
                         foreach (Geometry_000F geo in clump.geometryList.geometryList)
-                            foreach (Material_0007 mat in geo.materialList.materialList)
-                            {
-                                if (value.Length < colorCount)
-                                    return;
+                            if (geo.materialList != null)
+                                if (geo.materialList.materialList != null)
+                                    foreach (Material_0007 mat in geo.materialList.materialList)
+                                        if (mat.texture != null)
+                                            if (mat.texture.diffuseTextureName != null)
+                                            {
+                                                if (i >= value.Length)
+                                                    continue;
 
-                                mat.texture.diffuseTextureName.stringString = value[i];
-                                i++;
-                            }
+                                                mat.texture.diffuseTextureName.stringString = value[i];
+                                                i++;
+                                            }
 
                 ModelAsRWSections = sections;
                 model.Dispose();

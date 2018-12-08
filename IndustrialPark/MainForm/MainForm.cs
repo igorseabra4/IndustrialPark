@@ -17,6 +17,10 @@ namespace IndustrialPark
             StartPosition = FormStartPosition.CenterScreen;
 
             InitializeComponent();
+            
+            #if !DEBUG
+            addTXDArchiveToolStripMenuItem.Visible = false;
+            #endif
 
             uIToolStripMenuItem_Click(null, null);
             uIFTToolStripMenuItem_Click(null, null);
@@ -760,7 +764,7 @@ namespace IndustrialPark
 
         private void addTXDArchiveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFile = new OpenFileDialog() { Filter = "TXD files|*.txd"};
+               OpenFileDialog openFile = new OpenFileDialog() { Filter = "TXD files|*.txd"};
             if (openFile.ShowDialog() == DialogResult.OK)
                 TextureManager.LoadTexturesFromTXD(openFile.FileName);
         }
