@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Globalization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace IndustrialPark
 {
@@ -30,6 +32,20 @@ namespace IndustrialPark
         {
             if (s.ToLower().StartsWith("0x"))
                 return Convert.ToUInt32(s, 16);
+
+            if (s.StartsWith("[{") && s.EndsWith("}]"))
+            {
+                try
+                {
+                    var assets = JArray.Parse(s);
+                    return assets[0].Value<uint>("assetID");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
+
             return HipHopFile.Functions.BKDRHash(s);
         }
 

@@ -105,6 +105,27 @@ namespace IndustrialPark
             }
         }
 
+        public void AddEntry(byte[] jawData, uint assetID)
+        {
+            RemoveEntry(assetID);
+
+            List<EntryJAW> entries = JAW_Entries.ToList();
+            entries.Add(new EntryJAW() { SoundAssetID = assetID, JawData = jawData.ToList() });
+
+            JAW_Entries = entries.ToArray();
+        }
+
+        public void RemoveEntry(uint assetID)
+        {
+            List<EntryJAW> entries = JAW_Entries.ToList();
+
+            for (int i = 0; i < entries.Count; i++)
+                if (entries[i].SoundAssetID == assetID)
+                    entries.Remove(entries[i]);
+
+            JAW_Entries = entries.ToArray();
+        }
+
         public void Merge(AssetJAW assetJAW)
         {
             List<EntryJAW> entriesJAW = JAW_Entries.ToList();

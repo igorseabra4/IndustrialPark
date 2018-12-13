@@ -98,5 +98,29 @@ namespace IndustrialPark
         {
             Program.MainForm.FindWhoTargets(GetAssetID());
         }
+
+        private void buttonImportJawData_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog()
+            {
+                Title = "Select your raw data file"
+            };
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                byte[] file = File.ReadAllBytes(openFileDialog.FileName);
+
+                try
+                {
+                    archive.AddJawDataToJAW(file, asset.AHDR.assetID);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+
+                archive.UnsavedChanges = true;
+            }
+        }
     }
 }
