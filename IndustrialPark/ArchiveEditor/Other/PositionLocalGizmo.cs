@@ -7,6 +7,7 @@ namespace IndustrialPark
     {
         public PositionLocalGizmo(GizmoType type) : base(type)
         {
+            vertices = new Vector3[SharpRenderer.pyramidVertices.Count];
         }
 
         public void SetPosition(BoundingSphere Sphere, Matrix Rotation)
@@ -35,7 +36,6 @@ namespace IndustrialPark
                     break;
             }
 
-            vertices = new Vector3[SharpRenderer.pyramidVertices.Count];
             for (int i = 0; i < SharpRenderer.pyramidVertices.Count; i++)
                 vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.pyramidVertices[i], transformMatrix);
             boundingBox = BoundingBox.FromPoints(vertices);

@@ -400,7 +400,7 @@ namespace IndustrialPark
 
         public void ExportTextureDictionary(string fileName)
         {
-            ReadFileMethods.treatTexturesAsByteArray = true;
+            ReadFileMethods.treatStuffAsByteArray = true;
 
             List<TextureNative_0015> textNativeList = new List<TextureNative_0015>();
 
@@ -437,7 +437,7 @@ namespace IndustrialPark
 
             File.WriteAllBytes(fileName, ReadFileMethods.ExportRenderWareFile(rws, fileVersion));
 
-            ReadFileMethods.treatTexturesAsByteArray = false;
+            ReadFileMethods.treatStuffAsByteArray = false;
         }
 
         public void AddTextureDictionary(string fileName)
@@ -457,7 +457,7 @@ namespace IndustrialPark
             LHDRs.AddRange(DICT.LTOC.LHDRList);
             DICT.LTOC.LHDRList = LHDRs;
 
-            ReadFileMethods.treatTexturesAsByteArray = true;
+            ReadFileMethods.treatStuffAsByteArray = true;
 
             foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(fileName))
             {
@@ -490,7 +490,7 @@ namespace IndustrialPark
                 }
             }
 
-            ReadFileMethods.treatTexturesAsByteArray = false;
+            ReadFileMethods.treatStuffAsByteArray = false;
         }
 
         public void AddSoundToSNDI(byte[] soundData, uint assetID, AssetType assetType, out byte[] finalData)

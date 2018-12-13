@@ -42,7 +42,6 @@ namespace IndustrialPark
 
         protected virtual void CreateBoundingBox()
         {
-            List<Vector3> vertexList = new List<Vector3>();
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID) &&
                 ArchiveEditorFunctions.renderingDictionary[_modelAssetID].HasRenderWareModelFile() &&
                 ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile() != null)
@@ -58,7 +57,7 @@ namespace IndustrialPark
         protected Vector3[] vertices;
         protected RenderWareFile.Triangle[] triangles;
 
-        protected void CreateBoundingBox(List<Vector3> vertexList, float multiplier = 1f)
+        protected virtual void CreateBoundingBox(List<Vector3> vertexList, float multiplier = 1f)
         {
             vertices = new Vector3[vertexList.Count];
 

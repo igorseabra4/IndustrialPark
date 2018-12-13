@@ -1,34 +1,40 @@
 ﻿using HipHopFile;
 using RenderWareFile;
 using RenderWareFile.Sections;
+using SharpDX;
 using System;
 using System.Collections.Generic;
 
 namespace IndustrialPark
 {
-    public class AssetRenderWareModel : Asset
+    public class AssetRenderWareModel : Asset, IAssetWithModel
     {
-        protected RenderWareModelFile model;
+        RenderWareModelFile model;
 
         public AssetRenderWareModel(Section_AHDR AHDR) : base(AHDR)
         {
         }
 
-        public virtual void Setup(SharpRenderer renderer)
+        public void Setup(SharpRenderer renderer)
         {
             model = new RenderWareModelFile(AHDR.ADBG.assetName);
             try
             {
-                model.SetForRendering(renderer.device, ReadFileMethods.ReadRenderWareFile(AHDR.data), AHDR.data);
+                RWSection[] rw = ReadFileMethods.ReadRenderWareFile(AHDR.data);
+                model.SetForRendering(renderer.device, rw, AHDR.data);
+                ArchiveEditorFunctions.AddToRenderingDictionary(AHDR.assetID, this);
             }
             catch (Exception ex)
             {
                 System.Windows.Forms.MessageBox.Show("Error: " + ToString() + " (MODL) has an unsupported format and cannot be rendered. " + ex.Message);
-                model.Dispose();
-                model = null;
             }
         }
-        
+
+        public void Draw(SharpRenderer renderer, Matrix world, Vector4 color)
+        {
+            model.Render(renderer, world, isSelected ? renderer.selectedObjectColor * color : color);
+        }
+
         public RenderWareModelFile GetRenderWareModelFile()
         {
             return model;
@@ -72,10 +78,8 @@ namespace IndustrialPark
             {
                 try
                 {
-                    ReadFileMethods.treatStuffAsByteArray = true;
                     RWSection[] sections = ReadFileMethods.ReadRenderWareFile(Data);
                     renderWareVersion = sections[0].renderWareVersion;
-                    ReadFileMethods.treatStuffAsByteArray = false;
                     return sections;
                 }
                 catch
@@ -85,13 +89,11 @@ namespace IndustrialPark
             }
             set
             {
-                ReadFileMethods.treatStuffAsByteArray = true;
                 Data = ReadFileMethods.ExportRenderWareFile(value, renderWareVersion);
-                ReadFileMethods.treatStuffAsByteArray = false;
             }
         }
 
-        private int tempCount;
+        private int colorCount;
 
         public System.Drawing.Color[] Colors
         {
@@ -109,7 +111,7 @@ namespace IndustrialPark
                                 colors.Add(color);
                             }
 
-                tempCount = colors.Count;
+                colorCount = colors.Count;
                 return colors.ToArray();
             }
 
@@ -123,8 +125,8 @@ namespace IndustrialPark
                         foreach (Geometry_000F geo in clump.geometryList.geometryList)
                             foreach (Material_0007 mat in geo.materialList.materialList)
                             {
-                                if (i >= value.Length)
-                                    continue;
+                                if (value.Length < colorCount)
+                                    break;
 
                                 mat.materialStruct.color = new RenderWareFile.Color(value[i].R, value[i].G, value[i].B, value[i].A);
                                 i++;
@@ -152,7 +154,7 @@ namespace IndustrialPark
                                             if (mat.texture.diffuseTextureName != null)
                                                 names.Add(mat.texture.diffuseTextureName.stringString);
 
-                tempCount = names.Count;
+                colorCount = names.Count;
                 return names.ToArray();
             }
 
@@ -170,8 +172,8 @@ namespace IndustrialPark
                                         if (mat.texture != null)
                                             if (mat.texture.diffuseTextureName != null)
                                             {
-                                                if (i >= value.Length)
-                                                    continue;
+                                                if (value.Length < colorCount)
+                                                    return;
 
                                                 mat.texture.diffuseTextureName.stringString = value[i];
                                                 i++;

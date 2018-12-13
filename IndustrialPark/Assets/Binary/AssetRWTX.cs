@@ -23,10 +23,10 @@ namespace IndustrialPark
             {
                 try
                 {
-                    ReadFileMethods.treatTexturesAsByteArray = true;
+                    ReadFileMethods.treatStuffAsByteArray = true;
                     RWSection[] sections = ReadFileMethods.ReadRenderWareFile(Data);
                     renderWareVersion = sections[0].renderWareVersion;
-                    ReadFileMethods.treatTexturesAsByteArray = false;
+                    ReadFileMethods.treatStuffAsByteArray = false;
                     return sections;
                 }
                 catch
@@ -36,9 +36,9 @@ namespace IndustrialPark
             }
             set
             {
-                ReadFileMethods.treatTexturesAsByteArray = true;
+                ReadFileMethods.treatStuffAsByteArray = true;
                 Data = ReadFileMethods.ExportRenderWareFile(value, renderWareVersion);
-                ReadFileMethods.treatTexturesAsByteArray = false;
+                ReadFileMethods.treatStuffAsByteArray = false;
             }
         }
 

@@ -139,7 +139,12 @@ namespace IndustrialPark
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            SaveFileDialog saveFileDialog = new SaveFileDialog()
+            {
+                FileName = archive.currentlyOpenFilePath,
+                Filter = "HIP/HOP Files|*.hip;*.hop",
+                Title = "Please choose a HIP or HOP file to save as"
+            };
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 archive.currentlyOpenFilePath = saveFileDialog.FileName;
@@ -357,9 +362,7 @@ namespace IndustrialPark
             curType = type;
             listViewAssets.BeginUpdate();
             listViewAssets.Items.Clear();
-
-            int ensureVisible = -1;
-
+            
             if (comboBoxLayers.SelectedItem != null)
             {
                 List<uint> assetIDs = archive.DICT.LTOC.LHDRList[comboBoxLayers.SelectedIndex].assetIDlist;
@@ -376,9 +379,6 @@ namespace IndustrialPark
                             Checked = !asset.isInvisible,
                             Selected = selected
                         });
-
-                        if (selected)
-                            ensureVisible = items.Count - 1;
                     }
                 }
 
@@ -388,7 +388,17 @@ namespace IndustrialPark
             listViewAssets.EndUpdate();
 
             if (select)
+            {
+                int ensureVisible = - 1;
+
+                for (int i = 0; i < listViewAssets.Items.Count; i++)
+                {
+                    if (listViewAssets.Items[i].Selected)
+                        ensureVisible = i;
+                }
+
                 listViewAssets.EnsureVisible(ensureVisible);
+            }
 
             toolStripStatusLabelSelectionCount.Text = $"{listViewAssets.SelectedItems.Count}/{listViewAssets.Items.Count} assets selected";
         }
@@ -725,7 +735,9 @@ namespace IndustrialPark
 
         private uint GetAssetIDFromName(string name)
         {
-            return Convert.ToUInt32(name.Substring(name.IndexOf('[') + 1, 8), 16);
+            if (MainForm.alternateNamingMode)
+                return Convert.ToUInt32(name.Substring(name.IndexOf('[') + 1, 8), 16);
+            return Convert.ToUInt32(name.Substring(name.LastIndexOf('[') + 1, 8), 16);
         }
         
         private void checkedListBoxAssets_SelectedIndexChanged(object sender, EventArgs e)

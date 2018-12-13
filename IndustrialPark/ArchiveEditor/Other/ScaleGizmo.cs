@@ -8,6 +8,7 @@ namespace IndustrialPark
     {
         public ScaleGizmo(GizmoType type) : base(type)
         {
+            vertices = new Vector3[SharpRenderer.cubeVertices.Count];
         }
 
         public void SetPosition(BoundingBox Box, Matrix Rotation)
@@ -28,7 +29,6 @@ namespace IndustrialPark
                     break;
             }
 
-            vertices = new Vector3[SharpRenderer.cubeVertices.Count];
             for (int i = 0; i < SharpRenderer.cubeVertices.Count; i++)
                 vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.cubeVertices[i], transformMatrix);
             boundingBox = BoundingBox.FromPoints(vertices);

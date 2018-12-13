@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using SharpDX;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -29,65 +30,59 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
-        protected override float? TriangleIntersection(Ray r, float initialDistance)
+        protected override void CreateBoundingBox()
         {
-            if (dontRender || isInvisible)
-                return null;
-
-            uint _modelAssetId;
-            try { _modelAssetId = AssetPICK.pickEntries[_pickEntryID]; }
-            catch { return initialDistance; }
-
-            bool hasIntersected = false;
-            float smallestDistance = 1000f;
-
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetId))
+            if (AssetPICK.pickEntries.ContainsKey(_pickEntryID) &&
+                ArchiveEditorFunctions.renderingDictionary.ContainsKey(AssetPICK.pickEntries[_pickEntryID]) &&
+                ArchiveEditorFunctions.renderingDictionary[AssetPICK.pickEntries[_pickEntryID]].HasRenderWareModelFile() &&
+                ArchiveEditorFunctions.renderingDictionary[AssetPICK.pickEntries[_pickEntryID]].GetRenderWareModelFile() != null)
             {
-                RenderWareModelFile rwmf;
+                List<Vector3> vertexList = ArchiveEditorFunctions.renderingDictionary[AssetPICK.pickEntries[_pickEntryID]].GetRenderWareModelFile().vertexListG;
 
-                if (ArchiveEditorFunctions.renderingDictionary[_modelAssetId] is AssetMINF MINF)
+                vertices = new Vector3[vertexList.Count];
+                for (int i = 0; i < vertexList.Count; i++)
+                    vertices[i] = (Vector3)Vector3.Transform(vertexList[i], world);
+                boundingBox = BoundingBox.FromPoints(vertices);
+
+                if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(AssetPICK.pickEntries[_pickEntryID]))
                 {
-                    if (MINF.HasRenderWareModelFile())
-                        rwmf = ArchiveEditorFunctions.renderingDictionary[_modelAssetId].GetRenderWareModelFile();
-                    else return initialDistance;
-                }
-                else rwmf = ArchiveEditorFunctions.renderingDictionary[_modelAssetId].GetRenderWareModelFile();
-
-                foreach (RenderWareFile.Triangle t in rwmf.triangleList)
-                {
-                    Vector3 v1 = (Vector3)Vector3.Transform(rwmf.vertexListG[t.vertex1], world);
-                    Vector3 v2 = (Vector3)Vector3.Transform(rwmf.vertexListG[t.vertex2], world);
-                    Vector3 v3 = (Vector3)Vector3.Transform(rwmf.vertexListG[t.vertex3], world);
-
-                    if (r.Intersects(ref v1, ref v2, ref v3, out float distance))
+                    if (ArchiveEditorFunctions.renderingDictionary[AssetPICK.pickEntries[_pickEntryID]] is AssetMINF MINF)
                     {
-                        hasIntersected = true;
-
-                        if (distance < smallestDistance)
-                            smallestDistance = distance;
+                        if (MINF.HasRenderWareModelFile())
+                            triangles = ArchiveEditorFunctions.renderingDictionary[AssetPICK.pickEntries[_pickEntryID]].GetRenderWareModelFile().triangleList.ToArray();
+                        else
+                            triangles = null;
                     }
+                    else
+                        triangles = ArchiveEditorFunctions.renderingDictionary[AssetPICK.pickEntries[_pickEntryID]].GetRenderWareModelFile().triangleList.ToArray();
                 }
-
-                if (hasIntersected)
-                    return smallestDistance;
-                else return null;
+                else
+                    triangles = null;
             }
-
-            return initialDistance;
+            else
+            {
+                vertices = new Vector3[SharpRenderer.cubeVertices.Count];
+                for (int i = 0; i < SharpRenderer.cubeVertices.Count; i++)
+                    vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.cubeVertices[i] * 0.5f, world);
+                boundingBox = BoundingBox.FromPoints(vertices);
+            }
         }
-
+        
         public override void Draw(SharpRenderer renderer)
         {
-            if (dontRender || isInvisible) return;
-                if (AssetPICK.pickEntries.ContainsKey(_pickEntryID))
-                    if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(AssetPICK.pickEntries[_pickEntryID]))
-                    {
-                        ArchiveEditorFunctions.renderingDictionary[AssetPICK.pickEntries[_pickEntryID]].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * _color : _color);
-                        return;
-                    }
-            renderer.DrawCube(world, isSelected);
-        }
+            if (DontRender || isInvisible)
+                return;
 
+            if (AssetPICK.pickEntries.ContainsKey(_pickEntryID))
+                if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(AssetPICK.pickEntries[_pickEntryID]))
+                {
+                    ArchiveEditorFunctions.renderingDictionary[AssetPICK.pickEntries[_pickEntryID]].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * _color : _color);
+                    return;
+                }
+
+            renderer.DrawCube(LocalWorld(), isSelected);
+        }
+        
         [TypeConverter(typeof(HexByteTypeConverter))]
         [Category("Pickup")]
         public byte Shape

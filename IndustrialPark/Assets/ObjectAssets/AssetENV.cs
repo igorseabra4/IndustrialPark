@@ -41,23 +41,23 @@ namespace IndustrialPark
         }
 
         [Category("Environment")]
-        public int Unknown10
+        public int UnknownInt10
         {
             get => ReadInt(0x10);
             set => Write(0x10, value);
         }
 
         [Category("Environment")]
-        public int Unknown14
+        public float UnknownFloat14
         {
-            get => ReadInt(0x14);
+            get => ReadFloat(0x14);
             set => Write(0x14, value);
         }
 
         [Category("Environment")]
-        public int Unknown18
+        public float UnknownFloat18
         {
-            get => ReadInt(0x18);
+            get => ReadFloat(0x18);
             set => Write(0x18, value);
         }
 
@@ -76,28 +76,28 @@ namespace IndustrialPark
         }
 
         [Category("Environment")]
-        public int Unknown24
+        public int UnknownInt24
         {
             get => ReadInt(0x24);
             set => Write(0x24, value);
         }
 
         [Category("Environment")]
-        public int Unknown28
+        public int UnknownInt28
         {
             get => ReadInt(0x28);
             set => Write(0x28, value);
         }
 
         [Category("Environment")]
-        public int Unknown2C
+        public int UnknownInt2C
         {
             get => ReadInt(0x2C);
             set => Write(0x2C, value);
         }
 
         [Category("Environment")]
-        public int Unknown30
+        public int UnknownInt30
         {
             get => ReadInt(0x30);
             set => Write(0x30, value);
@@ -111,14 +111,14 @@ namespace IndustrialPark
         }
 
         [Category("Environment")]
-        public int Unknown38
+        public int UnknownInt38
         {
             get => ReadInt(0x38);
             set => Write(0x38, value);
         }
 
         [Category("Environment")]
-        public int Unknown3C
+        public int UnknownInt3C
         {
             get => ReadInt(0x3C);
             set => Write(0x3C, value);

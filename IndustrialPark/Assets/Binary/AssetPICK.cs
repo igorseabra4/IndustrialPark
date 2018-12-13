@@ -36,7 +36,7 @@ namespace IndustrialPark
 
     public class AssetPICK : Asset
     {
-        public static Dictionary<uint, AssetID> pickEntries = new Dictionary<uint, AssetID>();
+        public static Dictionary<uint, uint> pickEntries = new Dictionary<uint, uint>();
 
         public AssetPICK(Section_AHDR AHDR) : base(AHDR)
         {
@@ -44,7 +44,7 @@ namespace IndustrialPark
 
         public void Setup()
         {
-            pickEntries = new Dictionary<uint, AssetID>();
+            pickEntries = new Dictionary<uint, uint>();
             foreach (EntryPICK entryPICK in PICK_Entries)
                 pickEntries.Add(entryPICK.ReferenceID, entryPICK.ModelAssetID);
         }

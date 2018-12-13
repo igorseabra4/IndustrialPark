@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using SharpDX;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -62,14 +63,14 @@ namespace IndustrialPark
                 {
                     Asset asset = ae.archive.GetFromAssetID(AssetID_MVPT);
                     if (asset is AssetMVPT MVPT)
-                        return FindMVPTWithRadius(MVPT, out found);
+                        return FindMVPTWithRadius(MVPT, out found, new List<uint>() { AssetID_MVPT });
                 }
 
             found = false;
             return null;
         }
 
-        private AssetMVPT FindMVPTWithRadius(AssetMVPT MVPT, out bool found)
+        private AssetMVPT FindMVPTWithRadius(AssetMVPT MVPT, out bool found, List<uint> list)
         {
             if (MVPT != null)
             {
@@ -83,8 +84,11 @@ namespace IndustrialPark
                         if (ae.archive.ContainsAsset(assetID))
                         {
                             Asset asset = ae.archive.GetFromAssetID(assetID);
-                            if (asset is AssetMVPT MVPT2)
-                                return FindMVPTWithRadius(MVPT2, out found);
+                            if (asset is AssetMVPT MVPT2 && !list.Contains(assetID))
+                            {
+                                list.Add(assetID);
+                                return FindMVPTWithRadius(MVPT2, out found, list);
+                            }
                         }
             }
             found = false;

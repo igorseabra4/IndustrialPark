@@ -99,7 +99,7 @@ namespace IndustrialPark
             return null;
         }
 
-        public virtual bool TriangleIntersection(Ray r)
+        public bool TriangleIntersection(Ray r)
         {
             foreach (Models.Triangle t in triangleList)
             {
@@ -107,7 +107,7 @@ namespace IndustrialPark
                 Vector3 v2 = vertices[t.vertex2];
                 Vector3 v3 = vertices[t.vertex3];
 
-                if (r.Intersects(ref v1, ref v2, ref v3))
+                if (r.Intersects(ref v1, ref v2, ref v3, out float distance))
                     return true;
             }
             return false;

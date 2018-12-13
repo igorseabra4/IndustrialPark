@@ -7,6 +7,7 @@ namespace IndustrialPark
     {
         public RotationGizmo(GizmoType type) : base(type)
         {
+            vertices = new Vector3[SharpRenderer.torusVertices.Count];
         }
 
         public void SetPosition(BoundingSphere Sphere, Matrix Rotation)
@@ -27,7 +28,6 @@ namespace IndustrialPark
                     break;
             }
 
-            vertices = new Vector3[SharpRenderer.torusVertices.Count];
             for (int i = 0; i < SharpRenderer.torusVertices.Count; i++)
                 vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.torusVertices[i], transformMatrix);
             boundingBox = BoundingBox.FromPoints(vertices);
@@ -36,24 +36,5 @@ namespace IndustrialPark
         public override SharpMesh Mesh => SharpRenderer.Torus;
 
         protected override List<Models.Triangle> triangleList => SharpRenderer.torusTriangles;
-
-        public override bool TriangleIntersection(Ray r)
-        {
-            foreach (Models.Triangle t in SharpRenderer.torusTriangles)
-            {
-                Vector3 v1 = vertices[t.vertex1];
-                Vector3 v2 = vertices[t.vertex2];
-                Vector3 v3 = vertices[t.vertex3];
-
-                if (r.Intersects(ref v1, ref v2, ref v3, out float distance))
-                {
-                    clickPosition = r.Position + distance * r.Direction;
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public Vector3 clickPosition;
     }
 }
