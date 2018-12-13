@@ -563,6 +563,32 @@ namespace IndustrialPark
             throw new Exception("Error: could not find SNDI asset which contains this sound in this archive.");
         }
 
+        public void AddJawDataToJAW(byte[] jawData, uint assetID)
+        {
+            foreach (Asset a in assetDictionary.Values)
+            {
+                if (a is AssetJAW JAW)
+                {
+                    JAW.AddEntry(jawData, assetID);
+                    return;
+                }
+            }
+
+            throw new Exception("Unable to add jaw data: JAW asset not found");
+        }
+
+        public void RemoveJawDataFromJAW(uint assetID)
+        {
+            foreach (Asset a in assetDictionary.Values)
+            {
+                if (a is AssetJAW JAW)
+                {
+                    if (JAW.HasReference(assetID))
+                        JAW.RemoveEntry(assetID);
+                }
+            }
+        }
+
         public static AHDRFlags AHDRFlagsFromAssetType(AssetType assetType)
         {
             switch (assetType)
