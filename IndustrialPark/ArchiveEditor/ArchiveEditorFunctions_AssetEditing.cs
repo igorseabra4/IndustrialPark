@@ -13,6 +13,32 @@ namespace IndustrialPark
 {
     public partial class ArchiveEditorFunctions
     {
+        private class LHDRComparer : IComparer<LayerType>
+        {
+            private static readonly List<LayerType> layerOrder = new List<LayerType> {
+                    LayerType.TEXTURE,
+                    LayerType.BSP,
+                    LayerType.JSPINFO,
+                    LayerType.MODEL,
+                    LayerType.ANIMATION,
+                    LayerType.DEFAULT,
+                    LayerType.CUTSCENE,
+                    LayerType.SRAM,
+                    LayerType.SNDTOC
+                };
+
+            public int Compare(LayerType l1, LayerType l2)
+            {
+                if (l1 == l2)
+                    return 0;
+
+                if (layerOrder.Contains(l1) && layerOrder.Contains(l2))
+                    return layerOrder.IndexOf(l1) > layerOrder.IndexOf(l2) ? 1 : -1;
+
+                return 0;
+            }
+        }
+
         public static List<uint> hiddenAssets = new List<uint>();
 
         public List<uint> GetHiddenAssets()
@@ -301,17 +327,7 @@ namespace IndustrialPark
                 }
             }
 
-            List<Section_LHDR> newList = new List<Section_LHDR>();
-
-            foreach (Section_LHDR LHDR in DICT.LTOC.LHDRList)
-                if (LHDR.layerType == LayerType.TEXTURE)
-                    newList.Add(LHDR);
-
-            foreach (Section_LHDR LHDR in DICT.LTOC.LHDRList)
-                if (LHDR.layerType != LayerType.TEXTURE)
-                    newList.Add(LHDR);
-
-            DICT.LTOC.LHDRList = newList;
+            DICT.LTOC.LHDRList = DICT.LTOC.LHDRList.OrderBy(f => f.layerType, new LHDRComparer()).ToList();
 
             RecalculateAllMatrices();
         }
@@ -673,21 +689,14 @@ namespace IndustrialPark
                 {
                     layers[LHDR.layerType].assetIDlist.AddRange(LHDR.assetIDlist);
                 }
-                else
+                else if (LHDR.assetIDlist.Count != 0)
                 {
                     layers.Add(LHDR.layerType, LHDR);
                 }
             }
 
             DICT.LTOC.LHDRList = new List<Section_LHDR>();
-
-            if (layers.ContainsKey(LayerType.TEXTURE))
-            {
-                DICT.LTOC.LHDRList.Add(layers[LayerType.TEXTURE]);
-                layers.Remove(LayerType.TEXTURE);
-            }
-
-            DICT.LTOC.LHDRList.AddRange(layers.Values.ToList());
+            DICT.LTOC.LHDRList.AddRange(layers.Values.ToList().OrderBy(f => f.layerType, new LHDRComparer()));
         }
     }
 }

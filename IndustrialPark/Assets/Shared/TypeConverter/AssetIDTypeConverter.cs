@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using HipHopFile;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace IndustrialPark
 {
@@ -37,16 +38,13 @@ namespace IndustrialPark
             {
                 try
                 {
-                    var assets = JArray.Parse(s);
-                    return assets[0].Value<uint>("assetID");
+                    var assets = JsonConvert.DeserializeObject<List<Section_AHDR>>(s);
+                    return assets[0].assetID;
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
+                catch { }
             }
 
-            return HipHopFile.Functions.BKDRHash(s);
+            return s;
         }
 
         public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)

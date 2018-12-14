@@ -50,5 +50,10 @@ namespace IndustrialPark
         {
             return new AssetID(value);
         }
+
+        public static implicit operator AssetID(string value)
+        {
+            return HipHopFile.Functions.BKDRHash(value);
+        }
     }
 }
