@@ -47,7 +47,7 @@ namespace IndustrialPark
                     _dynaSpecific = reset ? new DynaTextBox() : new DynaTextBox(Data.Skip(0x10).Take(EventStartOffset));
                     break;
                 case DynaType.game_object__task_box:
-                    _dynaSpecific = reset ? new DynaBase() : new DynaBase(Data.Skip(0x10).Take(EventStartOffset));
+                    _dynaSpecific = reset ? new DynaTaskBox() : new DynaTaskBox(Data.Skip(0x10).Take(EventStartOffset));
                     break;
                 case DynaType.game_object__NPCSettings:
                     _dynaSpecific = reset ? new DynaNPCSettings() : new DynaNPCSettings(Data.Skip(0x10).Take(EventStartOffset));

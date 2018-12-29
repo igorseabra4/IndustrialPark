@@ -131,6 +131,7 @@
     <Compile Include="Assets\ObjectAssets\AssetPARP.cs" />
     <Compile Include="Assets\ObjectAssets\AssetPARS.cs" />
     <Compile Include="Assets\ObjectAssets\AssetSURF.cs" />
+    <Compile Include="Assets\ObjectAssets\DYNA\DynaTaskBox.cs" />
     <Compile Include="Assets\ObjectAssets\DYNA\MovieGame\DynaCrate_MovieGame.cs" />
     <Compile Include="Assets\Shared\AssetEventIncredibles.cs" />
     <Compile Include="Assets\Shared\Enums\EventTypeBFBB.cs" />
