@@ -70,7 +70,7 @@ namespace IndustrialPark
             set => Write(0x63 + Offset, value);
         }
 
-        [Category("Electric Arc")]
+        [Category("Electric Arc"), TypeConverter(typeof(FloatTypeConverter))]
         public float TimeActiveSeconds
         {
             get => ReadFloat(0x64 + Offset);

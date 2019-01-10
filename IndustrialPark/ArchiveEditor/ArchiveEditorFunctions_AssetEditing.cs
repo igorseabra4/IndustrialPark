@@ -705,6 +705,12 @@ namespace IndustrialPark
 
             foreach (Asset a in assetDictionary.Values)
             {
+                if (a is AssetMRKR MRKR)
+                {
+                    MRKR.PositionX *= factor.X;
+                    MRKR.PositionY *= factor.Y;
+                    MRKR.PositionZ *= factor.Z;
+                }
                 if (a is AssetTRIG TRIG)
                 {
                     if (TRIG.Shape == TriggerShape.Sphere)

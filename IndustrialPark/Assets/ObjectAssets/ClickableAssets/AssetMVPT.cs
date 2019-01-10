@@ -140,7 +140,7 @@ namespace IndustrialPark
         }
         
         private Vector3 _position;
-        [Category("Move Point")]
+        [Category("Move Point"), TypeConverter(typeof(FloatTypeConverter))]
         public float PositionX
         {
             get { return _position.X; }
@@ -152,7 +152,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Move Point")]
+        [Category("Move Point"), TypeConverter(typeof(FloatTypeConverter))]
         public float PositionY
         {
             get { return _position.Y; }
@@ -164,7 +164,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Move Point")]
+        [Category("Move Point"), TypeConverter(typeof(FloatTypeConverter))]
         public float PositionZ
         {
             get { return _position.Z; }
@@ -178,7 +178,7 @@ namespace IndustrialPark
 
         [Category("Move Point")]
         [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte14
+        public byte Flag14
         {
             get => ReadByte(0x14);
             set => Write(0x14, value);
@@ -186,7 +186,7 @@ namespace IndustrialPark
 
         [Category("Move Point")]
         [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte15
+        public byte Flag15
         {
             get => ReadByte(0x15);
             set => Write(0x15, value);
@@ -194,7 +194,7 @@ namespace IndustrialPark
 
         [Category("Move Point")]
         [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte16
+        public byte Flag16
         {
             get => ReadByte(0x16);
             set => Write(0x16, value);
@@ -202,7 +202,7 @@ namespace IndustrialPark
 
         [Category("Move Point")]
         [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte PointType
+        public byte Flag17
         {
             get => ReadByte(0x17);
             set => Write(0x17, value);
@@ -216,14 +216,14 @@ namespace IndustrialPark
             set => Write(0x18, value);
         }
 
-        [Category("Move Point")]
+        [Category("Move Point"), TypeConverter(typeof(FloatTypeConverter))]
         public float MovementAngle
         {
             get => ReadFloat(0x1C);
             set => Write(0x1C, value);
         }
 
-        [Category("Move Point")]
+        [Category("Move Point"), TypeConverter(typeof(FloatTypeConverter))]
         public float MovementRadius
         {
             get => ReadFloat(0x20);
@@ -231,7 +231,7 @@ namespace IndustrialPark
         }
 
         private float _distanceICanSeeYou;
-        [Category("Move Point")]
+        [Category("Move Point"), TypeConverter(typeof(FloatTypeConverter))]
         public float DistanceICanSeeYou
         {
             get => _distanceICanSeeYou;

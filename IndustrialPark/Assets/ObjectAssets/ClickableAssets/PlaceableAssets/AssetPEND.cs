@@ -48,21 +48,21 @@ namespace IndustrialPark
             set => Write(0x58 + Offset, value);
         }
 
-        [Category("Pendulum")]
+        [Category("Pendulum"), TypeConverter(typeof(FloatTypeConverter))]
         public float MovementDistance
         {
             get => ReadFloat(0x5C + Offset);
             set => Write(0x5C + Offset, value);
         }
 
-        [Category("Pendulum")]
+        [Category("Pendulum"), TypeConverter(typeof(FloatTypeConverter))]
         public float Steepness
         {
             get => ReadFloat(0x60 + Offset);
             set => Write(0x60 + Offset, value);
         }
 
-        [Category("Pendulum")]
+        [Category("Pendulum"), TypeConverter(typeof(FloatTypeConverter))]
         public float MovementTime
         {
             get => ReadFloat(0x64 + Offset);

@@ -349,28 +349,28 @@ namespace IndustrialPark
             set => Write(0x73 + Offset, value);
         }
 
-        [Category("Button")]
+        [Category("Button"), TypeConverter(typeof(FloatTypeConverter))]
         public float PressedOffset
         {
             get => ReadFloat(0x74);
             set => Write(0x74, value);
         }
 
-        [Category("Button")]
+        [Category("Button"), TypeConverter(typeof(FloatTypeConverter))]
         public float TransitionTime
         {
             get => ReadFloat(0x78 + Offset);
             set => Write(0x78 + Offset, value);
         }
 
-        [Category("Button")]
+        [Category("Button"), TypeConverter(typeof(FloatTypeConverter))]
         public float TransitionEaseIn
         {
             get => ReadFloat(0x7C + Offset);
             set => Write(0x7C + Offset, value);
         }
 
-        [Category("Button")]
+        [Category("Button"), TypeConverter(typeof(FloatTypeConverter))]
         public float TransitionEaseOut
         {
             get => ReadFloat(0x80 + Offset);

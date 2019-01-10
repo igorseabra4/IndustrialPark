@@ -172,56 +172,56 @@ namespace IndustrialPark
             }
         }
 
-        [Category("UserInterface")]
+        [Category("UserInterface"), TypeConverter(typeof(FloatTypeConverter))]
         public float TextCoordTopLeftX
         {
             get => ReadFloat(0x60 + Offset);
             set => Write(0x60 + Offset, value);
         }
 
-        [Category("UserInterface")]
+        [Category("UserInterface"), TypeConverter(typeof(FloatTypeConverter))]
         public float TextCoordTopLeftY
         {
             get => ReadFloat(0x64 + Offset);
             set => Write(0x64 + Offset, value);
         }
 
-        [Category("UserInterface")]
+        [Category("UserInterface"), TypeConverter(typeof(FloatTypeConverter))]
         public float TextCoordTopRightX
         {
             get => ReadFloat(0x68 + Offset);
             set => Write(0x68 + Offset, value);
         }
 
-        [Category("UserInterface")]
+        [Category("UserInterface"), TypeConverter(typeof(FloatTypeConverter))]
         public float TextCoordTopRightY
         {
             get => ReadFloat(0x6C + Offset);
             set => Write(0x6C + Offset, value);
         }
 
-        [Category("UserInterface")]
+        [Category("UserInterface"), TypeConverter(typeof(FloatTypeConverter))]
         public float TextCoordBottomRightX
         {
             get => ReadFloat(0x70 + Offset);
             set => Write(0x70 + Offset, value);
         }
 
-        [Category("UserInterface")]
+        [Category("UserInterface"), TypeConverter(typeof(FloatTypeConverter))]
         public float TextCoordBottomRightY
         {
             get => ReadFloat(0x74 + Offset);
             set => Write(0x74 + Offset, value);
         }
 
-        [Category("UserInterface")]
+        [Category("UserInterface"), TypeConverter(typeof(FloatTypeConverter))]
         public float TextCoordBottomLeftX
         {
             get => ReadFloat(0x78 + Offset);
             set => Write(0x78 + Offset, value);
         }
 
-        [Category("UserInterface")]
+        [Category("UserInterface"), TypeConverter(typeof(FloatTypeConverter))]
         public float TextCoordBottomLeftY
         {
             get => ReadFloat(0x7C + Offset);

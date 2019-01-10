@@ -10,14 +10,14 @@ namespace IndustrialPark
 
         protected override int EventStartOffset => 0x10;
 
-        [Category("Timer")]
+        [Category("Timer"), TypeConverter(typeof(FloatTypeConverter))]
         public float Time
         {
             get => ReadFloat(0x8);
             set => Write(0x8, value);
         }
 
-        [Category("Timer")]
+        [Category("Timer"), TypeConverter(typeof(FloatTypeConverter))]
         public float Unknown
         {
             get => BitConverter.ToSingle(AHDR.data, 0xC);

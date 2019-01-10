@@ -35,63 +35,63 @@ namespace IndustrialPark
                 renderer.DrawCube(world, isSelected);
         }
 
-        [Category("Boulder")]
+        [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float Gravity
         {
             get => ReadFloat(0x54 + Offset);
             set => Write(0x54 + Offset, value);
         }
 
-        [Category("Boulder")]
+        [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float Mass
         {
             get => ReadFloat(0x58 + Offset);
             set => Write(0x58 + Offset, value);
         }
 
-        [Category("Boulder")]
+        [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float BounceFactor
         {
             get => ReadFloat(0x5C + Offset);
             set => Write(0x5C + Offset, value);
         }
 
-        [Category("Boulder")]
+        [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float Friction
         {
             get => ReadFloat(0x60 + Offset);
             set => Write(0x60 + Offset, value);
         }
 
-        [Category("Boulder")]
+        [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat64
         {
             get => ReadFloat(0x64 + Offset);
             set => Write(0x64 + Offset, value);
         }
 
-        [Category("Boulder")]
+        [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float MaxLinearVelocity
         {
             get => ReadFloat(0x68 + Offset);
             set => Write(0x68 + Offset, value);
         }
 
-        [Category("Boulder")]
+        [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float MaxAngularVelocity
         {
             get => ReadFloat(0x6C + Offset);
             set => Write(0x6C + Offset, value);
         }
 
-        [Category("Boulder")]
+        [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float AngularFriction
         {
             get => ReadFloat(0x70 + Offset);
             set => Write(0x70 + Offset, value);
         }
 
-        [Category("Boulder")]
+        [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float MinBounceVelocity
         {
             get => ReadFloat(0x74);
@@ -120,7 +120,7 @@ namespace IndustrialPark
         }
 
         [Category("Boulder Flags")]
-        public bool somethingrelatedtodestructibleobjects
+        public bool SomethingRelatedToDestructibles
         {
             get => (BoulderFlags & Mask(2)) != 0;
             set => BoulderFlags = value ? (BoulderFlags | Mask(2)) : (BoulderFlags & InvMask(2));
@@ -329,7 +329,7 @@ namespace IndustrialPark
             set => BoulderFlags = value ? (BoulderFlags | Mask(31)) : (BoulderFlags & InvMask(31));
         }
 
-        [Category("Boulder")]
+        [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float Lifetime
         {
             get => ReadFloat(0x7C);
@@ -350,35 +350,35 @@ namespace IndustrialPark
             set => Write(0x84 + Offset, value);
         }
 
-        [Category("Boulder")]
+        [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat88
         {
             get => ReadFloat(0x88);
             set => Write(0x88, value);
         }
 
-        [Category("Boulder")]
+        [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat8C
         {
             get => ReadFloat(0x8C);
             set => Write(0x8C, value);
         }
 
-        [Category("Boulder")]
+        [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat90
         {
             get => ReadFloat(0x90);
             set => Write(0x90, value);
         }
 
-        [Category("Boulder")]
+        [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat94
         {
             get => ReadFloat(0x94);
             set => Write(0x94, value);
         }
 
-        [Category("Boulder")]
+        [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat98
         {
             get => ReadFloat(0x98);

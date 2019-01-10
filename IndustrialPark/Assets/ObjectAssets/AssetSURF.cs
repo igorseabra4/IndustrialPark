@@ -75,7 +75,7 @@ namespace IndustrialPark
             set => Write(0x0F, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat10
         {
             get => ReadFloat(0x10);
@@ -103,7 +103,7 @@ namespace IndustrialPark
             set => Write(0x1C, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat20
         {
             get => ReadFloat(0x20);
@@ -138,7 +138,7 @@ namespace IndustrialPark
             set => Write(0x2E, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat30
         {
             get => ReadFloat(0x30);
@@ -166,28 +166,28 @@ namespace IndustrialPark
             set => Write(0x3C, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat40
         {
             get => ReadFloat(0x40);
             set => Write(0x40, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat44
         {
             get => ReadFloat(0x44);
             set => Write(0x44, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat48
         {
             get => ReadFloat(0x48);
             set => Write(0x48, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat4C
         {
             get => ReadFloat(0x4C);
@@ -243,126 +243,126 @@ namespace IndustrialPark
             set => Write(0x68, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVAnimation_X
         {
             get => ReadFloat(0x6C);
             set => Write(0x6C, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVAnimation_Y
         {
             get => ReadFloat(0x70);
             set => Write(0x70, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat74
         {
             get => ReadFloat(0x74);
             set => Write(0x74, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat78
         {
             get => ReadFloat(0x78);
             set => Write(0x78, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat7C
         {
             get => ReadFloat(0x7C);
             set => Write(0x7C, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat80
         {
             get => ReadFloat(0x80);
             set => Write(0x80, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat84
         {
             get => ReadFloat(0x84);
             set => Write(0x84, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat88
         {
             get => ReadFloat(0x88);
             set => Write(0x88, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat8C
         {
             get => ReadFloat(0x8C);
             set => Write(0x8C, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat90
         {
             get => ReadFloat(0x90);
             set => Write(0x90, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat94
         {
             get => ReadFloat(0x94);
             set => Write(0x94, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat98
         {
             get => ReadFloat(0x98);
             set => Write(0x98, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat9C
         {
             get => ReadFloat(0x9C);
             set => Write(0x9C, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloatA0
         {
             get => ReadFloat(0xA0);
             set => Write(0xA0, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloatA4
         {
             get => ReadFloat(0xA4);
             set => Write(0xA4, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloatA8
         {
             get => ReadFloat(0xA8);
             set => Write(0xA8, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloatAC
         {
             get => ReadFloat(0xAC);
             set => Write(0xAC, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloatB0
         {
             get => ReadFloat(0xB0);
@@ -397,35 +397,35 @@ namespace IndustrialPark
             set => Write(0xB7, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloatB8
         {
             get => ReadFloat(0xB8);
             set => Write(0xB8, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloatBC
         {
             get => ReadFloat(0xBC);
             set => Write(0xBC, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloatC0
         {
             get => ReadFloat(0xC0);
             set => Write(0xC0, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloatC4
         {
             get => ReadFloat(0xC4);
             set => Write(0xC4, value);
         }
 
-        [Category("Surface")]
+        [Category("Surface"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloatC8
         {
             get => ReadFloat(0xC8);

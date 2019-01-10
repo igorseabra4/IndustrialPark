@@ -108,14 +108,14 @@ namespace IndustrialPark
             set => Write(0x6B + Offset, value);
         }
 
-        [Category("Destructable")]
+        [Category("Destructable"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat6C
         {
             get => ReadFloat(0x6C);
             set => Write(0x6C, value);
         }
 
-        [Category("Destructable")]
+        [Category("Destructable"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat70
         {
             get => ReadFloat(0x70);
