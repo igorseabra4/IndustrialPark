@@ -705,12 +705,6 @@ namespace IndustrialPark
 
             foreach (Asset a in assetDictionary.Values)
             {
-                if (a is AssetMRKR MRKR)
-                {
-                    MRKR.PositionX *= factor.X;
-                    MRKR.PositionY *= factor.Y;
-                    MRKR.PositionZ *= factor.Z;
-                }
                 if (a is AssetTRIG TRIG)
                 {
                     if (TRIG.Shape == TriggerShape.Sphere)
@@ -768,7 +762,7 @@ namespace IndustrialPark
                         SFX.RadiusMax *= singleFactor;
                         SFX.RadiusMin *= singleFactor;
                     }
-                    else if (a is PlaceableAsset placeable && !(a is AssetPLYR || a is AssetPKUP || a is AssetUI || a is AssetUIFT || a is AssetVIL))
+                    else if (a is PlaceableAsset placeable && !(a is AssetPLYR || a is AssetPKUP || a is AssetUI || a is AssetUIFT || a is AssetVIL || (a is AssetDYNA DYNA && DYNA.Type == DynaType.game_object__Teleport)))
                     {
                         placeable.ScaleX *= factor.X;
                         placeable.ScaleY *= factor.Y;
