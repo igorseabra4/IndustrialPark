@@ -1,8 +1,10 @@
 ﻿using HipHopFile;
 using RenderWareFile;
 using RenderWareFile.Sections;
+using SharpDX;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
@@ -66,7 +68,7 @@ namespace IndustrialPark
 
         private int renderWareVersion;
 
-        private RWSection[] ModelAsRWSections
+        protected RWSection[] ModelAsRWSections
         {
             get
             {
@@ -93,6 +95,7 @@ namespace IndustrialPark
 
         private int tempCount;
 
+        [DisplayName("Colors ([A,] R, G, B)")]
         public System.Drawing.Color[] Colors
         {
             get
@@ -182,6 +185,5 @@ namespace IndustrialPark
                 Setup(Program.MainForm.renderer);
             }
         }
-
     }
 }

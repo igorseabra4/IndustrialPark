@@ -3,6 +3,7 @@ using System;
 using System.ComponentModel;
 using System.Drawing.Design;
 using AssetEditorColors;
+using System.Windows.Forms;
 
 namespace IndustrialPark
 {
@@ -11,8 +12,8 @@ namespace IndustrialPark
         public AssetFOG(Section_AHDR AHDR) : base(AHDR) { }
 
         protected override int EventStartOffset => 0x24;
-
-        [Category("Fog"), Editor(typeof(MyColorEditor), typeof(UITypeEditor))]
+        
+        [Category("Fog"), Editor(typeof(MyColorEditor), typeof(UITypeEditor)), DisplayName("End Color (R, G, B)")]
         public MyColor Color1
         {
             get
@@ -24,7 +25,7 @@ namespace IndustrialPark
             set => Write(0x8, BitConverter.ToInt32(new byte[] { Color1Alpha, value.B, value.G, value.R }, 0));
         }
 
-        [Category("Fog"), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("Fog"), DisplayName("End Color Alpha (0 - 255)")]
         public byte Color1Alpha
         {
             get
@@ -36,7 +37,7 @@ namespace IndustrialPark
             set => Write(0x8, BitConverter.ToInt32(new byte[] { value, Color1.B, Color1.G, Color1.R }, 0));
         }
 
-        [Category("Fog"), Editor(typeof(MyColorEditor), typeof(UITypeEditor))]
+        [Category("Fog"), Editor(typeof(MyColorEditor), typeof(UITypeEditor)), DisplayName("Start Color (R, G, B)")]
         public MyColor Color2
         {
             get
@@ -48,7 +49,7 @@ namespace IndustrialPark
             set => Write(0xC, BitConverter.ToInt32(new byte[] { Color2Alpha, value.B, value.G, value.R }, 0));
         }
 
-        [Category("Fog"), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("Fog"), DisplayName("Start Color Alpha (0 - 255)")]
         public byte Color2Alpha
         {
             get
@@ -68,21 +69,21 @@ namespace IndustrialPark
         }
 
         [Category("Fog")]
-        public float UnknownFloat14
+        public float StartDistance
         {
             get => ReadFloat(0x14);
             set => Write(0x14, value);
         }
 
         [Category("Fog")]
-        public float UnknownFloat18
+        public float EndDistance
         {
             get => ReadFloat(0x18);
             set => Write(0x18, value);
         }
 
         [Category("Fog")]
-        public float UnknownFloat1C
+        public float TransitionTime
         {
             get => ReadFloat(0x1C);
             set => Write(0x1C, value);

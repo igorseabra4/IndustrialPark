@@ -1,4 +1,5 @@
-﻿using HipHopFile;
+﻿using System;
+using HipHopFile;
 using RenderWareFile;
 using SharpDX;
 

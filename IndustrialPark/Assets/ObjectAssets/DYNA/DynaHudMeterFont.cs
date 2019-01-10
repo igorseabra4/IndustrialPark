@@ -64,7 +64,7 @@ namespace IndustrialPark
             Color1R = abgr[3];
             Color1G = abgr[2];
             Color1B = abgr[1];
-            Color1Alpha = abgr[0];
+            ColorAlpha = abgr[0];
             Unknown3 = Switch(BitConverter.ToUInt32(Data, 0x5C));
             Flag1 = Data[0x60];
             Flag2 = Data[0x61];
@@ -97,7 +97,7 @@ namespace IndustrialPark
             list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat14)));
             list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat15)));
             list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat16)));
-            list.AddRange(BitConverter.GetBytes(Switch(BitConverter.ToSingle(new byte[] { Color1Alpha, Color1B, Color1G, Color1R }, 0))));
+            list.AddRange(BitConverter.GetBytes(Switch(BitConverter.ToSingle(new byte[] { ColorAlpha, Color1B, Color1G, Color1R }, 0))));
             list.AddRange(BitConverter.GetBytes(Switch(Unknown3)));
             list.Add(Flag1);
             list.Add(Flag2);
@@ -148,10 +148,10 @@ namespace IndustrialPark
         private byte Color1R;
         private byte Color1G;
         private byte Color1B;
-        [Editor(typeof(MyColorEditor), typeof(UITypeEditor))]
-        public MyColor Color1
+        [Editor(typeof(MyColorEditor), typeof(UITypeEditor)), DisplayName("Color 1 (R, G, B)")]
+        public MyColor Color
         {
-            get => new MyColor(Color1R, Color1G, Color1B, Color1Alpha);
+            get => new MyColor(Color1R, Color1G, Color1B, ColorAlpha);
             set
             {
                 Color1R = value.R;
@@ -159,8 +159,8 @@ namespace IndustrialPark
                 Color1B = value.B;
             }
         }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        private byte Color1Alpha { get; set; }
+        [DisplayName("Color 1 Alpha (0 - 255)")]
+        private byte ColorAlpha { get; set; }
         public AssetID Unknown3 { get; set; }
         [TypeConverter(typeof(HexByteTypeConverter))]
         public byte Flag1 { get; set; }

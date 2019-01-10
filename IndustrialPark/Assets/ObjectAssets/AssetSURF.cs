@@ -9,11 +9,42 @@ namespace IndustrialPark
 
         protected override int EventStartOffset => 0x12C;
 
-        [Category("Surface")]
-        public int UnknownInt08
+        public override bool HasReference(uint assetID)
         {
-            get => ReadInt(0x08);
+            if (UnknownAssetID1C == assetID)
+                return true;
+            if (GroupAssetID == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
+        [Category("Surface")]
+        public byte UnknownByte08
+        {
+            get => ReadByte(0x08);
             set => Write(0x08, value);
+        }
+
+        [Category("Surface")]
+        public byte UnknownByte09
+        {
+            get => ReadByte(0x09);
+            set => Write(0x09, value);
+        }
+
+        [Category("Surface")]
+        public byte UnknownByte0A
+        {
+            get => ReadByte(0x0A);
+            set => Write(0x0A, value);
+        }
+
+        [Category("Surface")]
+        public byte UnknownByte0B
+        {
+            get => ReadByte(0x0B);
+            set => Write(0x0B, value);
         }
 
         [Category("Surface")]
@@ -66,16 +97,16 @@ namespace IndustrialPark
         }
 
         [Category("Surface")]
-        public int UnknownInt1C
+        public AssetID UnknownAssetID1C
         {
-            get => ReadInt(0x1C);
+            get => ReadUInt(0x1C);
             set => Write(0x1C, value);
         }
 
         [Category("Surface")]
-        public int UnknownInt20
+        public float UnknownFloat20
         {
-            get => ReadInt(0x20);
+            get => ReadFloat(0x20);
             set => Write(0x20, value);
         }
 
@@ -115,23 +146,23 @@ namespace IndustrialPark
         }
 
         [Category("Surface")]
-        public float UnknownFloat34
+        public int UnknownInt34
         {
-            get => ReadFloat(0x34);
+            get => ReadInt(0x34);
             set => Write(0x34, value);
         }
 
         [Category("Surface")]
-        public float UnknownFloat38
+        public int UnknownInt38
         {
-            get => ReadFloat(0x38);
+            get => ReadInt(0x38);
             set => Write(0x38, value);
         }
 
         [Category("Surface")]
-        public float UnknownFloat3C
+        public AssetID GroupAssetID
         {
-            get => ReadFloat(0x3C);
+            get => ReadUInt(0x3C);
             set => Write(0x3C, value);
         }
 
@@ -304,101 +335,101 @@ namespace IndustrialPark
         }
 
         [Category("Surface")]
-        public float UnknownFloat100
+        public float UnknownFloatA0
         {
-            get => ReadFloat(0x100);
-            set => Write(0x100, value);
+            get => ReadFloat(0xA0);
+            set => Write(0xA0, value);
         }
 
         [Category("Surface")]
-        public float UnknownFloat104
+        public float UnknownFloatA4
         {
-            get => ReadFloat(0x104);
-            set => Write(0x104, value);
+            get => ReadFloat(0xA4);
+            set => Write(0xA4, value);
         }
 
         [Category("Surface")]
-        public float UnknownFloat108
+        public float UnknownFloatA8
         {
-            get => ReadFloat(0x108);
-            set => Write(0x108, value);
+            get => ReadFloat(0xA8);
+            set => Write(0xA8, value);
         }
 
         [Category("Surface")]
-        public float UnknownFloat10C
+        public float UnknownFloatAC
         {
-            get => ReadFloat(0x10C);
-            set => Write(0x10C, value);
+            get => ReadFloat(0xAC);
+            set => Write(0xAC, value);
         }
 
         [Category("Surface")]
-        public float UnknownFloat110
+        public float UnknownFloatB0
         {
-            get => ReadFloat(0x110);
-            set => Write(0x110, value);
+            get => ReadFloat(0xB0);
+            set => Write(0xB0, value);
         }
 
         [Category("Surface")]
-        public byte UnknownByte114
+        public byte UnknownByteB4
         {
-            get => ReadByte(0x114);
-            set => Write(0x114, value);
+            get => ReadByte(0xB4);
+            set => Write(0xB4, value);
         }
 
         [Category("Surface")]
-        public byte UnknownByte115
+        public byte UnknownByteB5
         {
-            get => ReadByte(0x115);
-            set => Write(0x115, value);
+            get => ReadByte(0xB5);
+            set => Write(0xB5, value);
         }
 
         [Category("Surface")]
-        public byte UnknownByte116
+        public byte UnknownByteB6
         {
-            get => ReadByte(0x116);
-            set => Write(0x116, value);
+            get => ReadByte(0xB6);
+            set => Write(0xB6, value);
         }
 
         [Category("Surface")]
-        public byte UnknownByte117
+        public byte UnknownByteB7
         {
-            get => ReadByte(0x117);
-            set => Write(0x117, value);
+            get => ReadByte(0xB7);
+            set => Write(0xB7, value);
         }
 
         [Category("Surface")]
-        public float UnknownFloat118
+        public float UnknownFloatB8
         {
-            get => ReadFloat(0x118);
-            set => Write(0x118, value);
+            get => ReadFloat(0xB8);
+            set => Write(0xB8, value);
         }
 
         [Category("Surface")]
-        public float UnknownFloat11C
+        public float UnknownFloatBC
         {
-            get => ReadFloat(0x11C);
-            set => Write(0x11C, value);
+            get => ReadFloat(0xBC);
+            set => Write(0xBC, value);
         }
 
         [Category("Surface")]
-        public float UnknownFloat120
+        public float UnknownFloatC0
         {
-            get => ReadFloat(0x120);
-            set => Write(0x120, value);
+            get => ReadFloat(0xC0);
+            set => Write(0xC0, value);
         }
 
         [Category("Surface")]
-        public float UnknownFloat124
+        public float UnknownFloatC4
         {
-            get => ReadFloat(0x124);
-            set => Write(0x124, value);
+            get => ReadFloat(0xC4);
+            set => Write(0xC4, value);
         }
 
         [Category("Surface")]
-        public float UnknownFloat128
+        public float UnknownFloatC8
         {
-            get => ReadFloat(0x128);
-            set => Write(0x128, value);
+            get => ReadFloat(0xC8);
+            set => Write(0xC8, value);
         }
     }
 }

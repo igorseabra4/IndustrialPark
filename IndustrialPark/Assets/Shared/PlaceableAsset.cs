@@ -164,7 +164,7 @@ namespace IndustrialPark
         [Category("Placement Flags"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte VisibilityFlag
         {
-            get { return ReadByte(0x8); }
+            get => ReadByte(0x8);
             set { Write(0x8, value); }
         }
 
@@ -185,21 +185,21 @@ namespace IndustrialPark
         [Category("Placement Flags"), ReadOnly(true), TypeConverter(typeof(HexByteTypeConverter))]
         public byte TypeFlag
         {
-            get { return ReadByte(0x9); }
+            get => ReadByte(0x9);
             set { Write(0x9, value); }
         }
 
         [Category("Placement Flags"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte UnknownFlag0A
         {
-            get { return ReadByte(0xA); }
+            get => ReadByte(0xA);
             set { Write(0xA, value); }
         }
 
         [Category("Placement Flags"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte SolidityFlag
         {
-            get { return ReadByte(0xB); }
+            get => ReadByte(0xB);
             set { Write(0xB, value); }
         }
 
@@ -213,14 +213,14 @@ namespace IndustrialPark
         [Category("Placement")]
         public int UnknownIntC
         {
-            get { return ReadInt(0xC); }
+            get => ReadInt(0xC);
             set { Write(0xC, value); }
         }
 
         [Category("Placement References")]
         public AssetID SurfaceAssetID
         {
-            get { return ReadUInt(0x10 + Offset); }
+            get => ReadUInt(0x10 + Offset);
             set { Write(0x10 + Offset, value); }
         }
         
@@ -230,7 +230,7 @@ namespace IndustrialPark
         [TypeConverter(typeof(FloatTypeConverter))]
         public virtual float PositionX
         {
-            get { return _position.X; }
+            get => _position.X;
             set
             {
                 _position.X = value;
@@ -243,7 +243,7 @@ namespace IndustrialPark
         [TypeConverter(typeof(FloatTypeConverter))]
         public virtual float PositionY
         {
-            get { return _position.Y; }
+            get => _position.Y;
             set
             {
                 _position.Y = value;
@@ -256,7 +256,7 @@ namespace IndustrialPark
         [TypeConverter(typeof(FloatTypeConverter))]
         public virtual float PositionZ
         {
-            get { return _position.Z; }
+            get => _position.Z;
             set
             {
                 _position.Z = value;
@@ -273,7 +273,7 @@ namespace IndustrialPark
         [TypeConverter(typeof(FloatTypeConverter))]
         public virtual float Yaw
         {
-            get { return MathUtil.RadiansToDegrees(_yaw); }
+            get => MathUtil.RadiansToDegrees(_yaw);
             set
             {
                 _yaw = MathUtil.DegreesToRadians(value);
@@ -286,7 +286,7 @@ namespace IndustrialPark
         [TypeConverter(typeof(FloatTypeConverter))]
         public virtual float Pitch
         {
-            get { return MathUtil.RadiansToDegrees(_pitch); }
+            get => MathUtil.RadiansToDegrees(_pitch);
             set
             {
                 _pitch = MathUtil.DegreesToRadians(value);
@@ -299,7 +299,7 @@ namespace IndustrialPark
         [TypeConverter(typeof(FloatTypeConverter))]
         public virtual float Roll
         {
-            get { return MathUtil.RadiansToDegrees(_roll); }
+            get => MathUtil.RadiansToDegrees(_roll);
             set
             {
                 _roll = MathUtil.DegreesToRadians(value);
@@ -314,7 +314,7 @@ namespace IndustrialPark
         [TypeConverter(typeof(FloatTypeConverter))]
         public virtual float ScaleX
         {
-            get { return _scale.X; }
+            get => _scale.X;
             set
             {
                 _scale.X = value;
@@ -327,7 +327,7 @@ namespace IndustrialPark
         [TypeConverter(typeof(FloatTypeConverter))]
         public virtual float ScaleY
         {
-            get { return _scale.Y; }
+            get => _scale.Y;
             set
             {
                 _scale.Y = value;
@@ -340,7 +340,7 @@ namespace IndustrialPark
         [TypeConverter(typeof(FloatTypeConverter))]
         public virtual float ScaleZ
         {
-            get { return _scale.Z; }
+            get => _scale.Z;
             set
             {
                 _scale.Z = value;
@@ -351,7 +351,7 @@ namespace IndustrialPark
 
         protected Vector4 _color;
 
-        [Category("Placement Color")]
+        [Category("Placement Color"), DisplayName("Red (0 - 1)")]
         public float ColorRed
         {
             get => ReadFloat(0x38 + Offset);
@@ -362,10 +362,10 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement Color")]
+        [Category("Placement Color"), DisplayName("Green (0 - 1)")]
         public float ColorGreen
         {
-            get { return ReadFloat(0x3C + Offset); }
+            get => ReadFloat(0x3C + Offset);
             set
             {
                 _color.Y = value;
@@ -373,10 +373,10 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement Color")]
+        [Category("Placement Color"), DisplayName("Blue (0 - 1)")]
         public float ColorBlue
         {
-            get { return ReadFloat(0x40 + Offset); }
+            get => ReadFloat(0x40 + Offset);
             set
             {
                 _color.Z = value;
@@ -384,10 +384,10 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement Color")]
+        [Category("Placement Color"), DisplayName("Alpha (0 - 1)")]
         public float ColorAlpha
         {
-            get { return ReadFloat(0x44 + Offset); }
+            get => ReadFloat(0x44 + Offset);
             set
             {
                 _color.W = value;
@@ -395,10 +395,23 @@ namespace IndustrialPark
             }
         }
 
+        [Category("Placement Color"), DisplayName("Color - (A,) R, G, B")]
+        public System.Drawing.Color Color_ARGB
+        {
+            get => System.Drawing.Color.FromArgb(BitConverter.ToInt32(new byte[] { (byte)(ColorBlue * 255), (byte)(ColorGreen * 255), (byte)(ColorRed * 255), (byte)(ColorAlpha * 255) }, 0));
+            set
+            {
+                ColorRed = value.R / 255f;
+                ColorGreen = value.G / 255f;
+                ColorBlue = value.B / 255f;
+                ColorAlpha = value.A / 255f;
+            }
+        }
+
         [Category("Placement")]
         public float UnknownFloat48
         {
-            get { return ReadFloat(0x48 + Offset); }
+            get => ReadFloat(0x48 + Offset);
             set { Write(0x48 + Offset, value); }
         }
 
@@ -406,7 +419,7 @@ namespace IndustrialPark
         [Category("Placement References")]
         public AssetID ModelAssetID
         {
-            get { return _modelAssetID; }
+            get => _modelAssetID;
             set
             {
                 _modelAssetID = value;
@@ -417,7 +430,7 @@ namespace IndustrialPark
         [Category("Placement References")]
         public virtual AssetID ReferenceAssetID
         {
-            get { return ReadUInt(0x50 + Offset); }
+            get => ReadUInt(0x50 + Offset);
             set { Write(0x50 + Offset, value); }
         }
 

@@ -45,7 +45,7 @@ namespace IndustrialPark
             set => Write(0x84 + Offset, value);
         }
 
-        [Category("UIFont"), Editor(typeof(MyColorEditor), typeof(UITypeEditor))]
+        [Category("UIFont"), Editor(typeof(MyColorEditor), typeof(UITypeEditor)), DisplayName("Background Color (R, G, B)")]
         public MyColor BackgroundColor
         {
             get
@@ -57,7 +57,7 @@ namespace IndustrialPark
             set => Write(0x88, BitConverter.ToInt32(new byte[] { BackgroundColorAlpha, value.B, value.G, value.R }, 0));
         }
 
-        [Category("UIFont"), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("UIFont"), DisplayName("Background Color Alpha (0 - 255)")]
         public byte BackgroundColorAlpha
         {
             get
@@ -69,7 +69,7 @@ namespace IndustrialPark
             set => Write(0x88, BitConverter.ToInt32(new byte[] { value, BackgroundColor.B, BackgroundColor.G, BackgroundColor.R }, 0));
         }
 
-        [Category("UIFont"), Editor(typeof(MyColorEditor), typeof(UITypeEditor))]
+        [Category("UIFont"), Editor(typeof(MyColorEditor), typeof(UITypeEditor)), DisplayName("Font Color (R, G, B)")]
         public MyColor FontColor
         {
             get
@@ -81,7 +81,7 @@ namespace IndustrialPark
             set => Write(0x8C, BitConverter.ToInt32(new byte[] { FontColorAlpha, value.B, value.G, value.R }, 0));
         }
 
-        [Category("UIFont"), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("UIFont"), DisplayName("Font Color Alpha (0 - 255)")]
         public byte FontColorAlpha
         {
             get

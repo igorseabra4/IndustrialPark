@@ -131,6 +131,7 @@
     <Compile Include="Assets\ObjectAssets\AssetPARP.cs" />
     <Compile Include="Assets\ObjectAssets\AssetPARS.cs" />
     <Compile Include="Assets\ObjectAssets\AssetSURF.cs" />
+    <Compile Include="Assets\ObjectAssets\DYNA\DynaTaskBox.cs" />
     <Compile Include="Assets\ObjectAssets\DYNA\MovieGame\DynaCrate_MovieGame.cs" />
     <Compile Include="Assets\Shared\AssetEventIncredibles.cs" />
     <Compile Include="Assets\Shared\Enums\EventTypeBFBB.cs" />
@@ -138,6 +139,12 @@
     <Compile Include="Assets\Shared\Enums\PlatTypeSpecific.cs" />
     <Compile Include="Assets\Shared\Interfaces\IRotatableAsset.cs" />
     <Compile Include="Assets\Shared\Interfaces\IScalableAsset.cs" />
+    <Compile Include="ArchiveEditor\ApplyScale.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\ApplyScale.designer.cs">
+      <DependentUpon>ApplyScale.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainForm\EditName.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -332,6 +339,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\ProgressBar.resx">
       <DependentUpon>ProgressBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveEditor\ApplyScale.resx">
+      <DependentUpon>ApplyScale.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Research\PlatSearch.resx">
       <DependentUpon>PlatSearch.cs</DependentUpon>

@@ -5,26 +5,24 @@ namespace IndustrialPark
 {
     public partial class EditName : Form
     {
-        public EditName(string oldName)
+        public EditName(string oldName, string windowText)
         {
             InitializeComponent();
             TopMost = true;
+            Text = windowText;
             textBox1.Text = oldName;
         }
 
-        public static string GetName(string oldName)
+        public static string GetName(string oldName, string windowText, out bool OKed)
         {
-            EditName edit = new EditName(oldName);
+            EditName edit = new EditName(oldName, windowText);
             edit.ShowDialog();
-                        
+
+            OKed = edit.OKed;
+
             if (edit.OKed)
-            {
                 return edit.textBox1.Text;
-            }
-            else
-            {
-                return oldName;
-            }
+            return oldName;
         }
 
         private bool OKed = false;
