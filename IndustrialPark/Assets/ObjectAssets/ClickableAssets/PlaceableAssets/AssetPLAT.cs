@@ -296,56 +296,56 @@ namespace IndustrialPark
             set => Write(0x56 + Offset, value);
         }
 
-        [Category("Platform")]
+        [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float Float58
         {
             get => ReadFloat(0x58 + Offset);
             set => Write(0x58 + Offset, value);
         }
 
-        [Category("Platform"), Browsable(false)]
+        [Browsable(false)]
         public int Int58
         {
             get => ReadInt(0x58 + Offset);
             set => Write(0x58 + Offset, value);
         }
 
-        [Category("Platform"), Browsable(false)]
+        [Browsable(false)]
         public float Float5C
         {
             get => ReadFloat(0x5C + Offset);
             set => Write(0x5C + Offset, value);
         }
 
-        [Category("Platform"), Browsable(false)]
+        [Browsable(false)]
         public int Int5C
         {
             get => ReadInt(0x5C + Offset);
             set => Write(0x5C + Offset, value);
         }
 
-        [Category("Platform"), Browsable(false)]
+        [Browsable(false)]
         public float Float60
         {
             get => ReadFloat(0x60 + Offset);
             set => Write(0x60 + Offset, value);
         }
 
-        [Category("Platform"), Browsable(false)]
+        [Browsable(false)]
         public int Int60
         {
             get => ReadInt(0x60 + Offset);
             set => Write(0x60 + Offset, value);
         }
 
-        [Category("Platform"), Browsable(false)]
+        [Browsable(false)]
         public float Float64
         {
             get => ReadFloat(0x64 + Offset);
             set => Write(0x64 + Offset, value);
         }
 
-        [Category("Platform"), Browsable(false)]
+        [Browsable(false)]
         public int Int64
         {
             get => ReadInt(0x64 + Offset);
@@ -366,28 +366,28 @@ namespace IndustrialPark
             set => Write(0x6C + Offset, value);
         }
 
-        [Category("Platform")]
+        [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat_70
         {
             get => ReadFloat(0x70 + Offset);
             set => Write(0x70 + Offset, value);
         }
 
-        [Category("Platform")]
+        [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float LaunchDirectionX
         {
             get => ReadFloat(0x74 + Offset);
             set => Write(0x74 + Offset, value);
         }
 
-        [Category("Platform")]
+        [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float LaunchDirectionY
         {
             get => ReadFloat(0x78 + Offset);
             set => Write(0x78 + Offset, value);
         }
 
-        [Category("Platform")]
+        [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float LaunchDirectionZ
         {
             get => ReadFloat(0x7C + Offset);
@@ -401,21 +401,21 @@ namespace IndustrialPark
             set => Write(0x80 + Offset, value);
         }
 
-        [Category("Platform")]
+        [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat_84
         {
             get => ReadFloat(0x84 + Offset);
             set => Write(0x84 + Offset, value);
         }
 
-        [Category("Platform")]
+        [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat_88
         {
             get => ReadFloat(0x88 + Offset);
             set => Write(0x88 + Offset, value);
         }
 
-        [Category("Platform")]
+        [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat_8C
         {
             get => ReadFloat(0x8C + Offset);
@@ -485,70 +485,70 @@ namespace IndustrialPark
             set { Write(0x98 + Offset, value); Reset(); }
         }
 
-        [Category("Platform")]
+        [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float MovementTranslation_Distance_98
         {
             get => ReadFloat(0x98 + Offset);
             set { Write(0x98 + Offset, value); Reset(); }
         }
 
-        [Category("Platform")]
+        [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float MovementTranslation_Time
         {
             get => ReadFloat(0x9C + Offset);
             set { Write(0x9C + Offset, value); Reset(); }
         }
 
-        [Category("Platform")]
+        [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float MovementTranslation_EaseStart
         {
             get => ReadFloat(0xA0 + Offset);
             set => Write(0xA0 + Offset, value);
         }
 
-        [Category("Platform")]
+        [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float MovementTranslation_EaseEnd
         {
             get => ReadFloat(0xA4 + Offset);
             set => Write(0xA4 + Offset, value);
         }
 
-        [Category("Platform")]
+        [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float MovementRotation_Degrees
         {
             get => ReadFloat(0xA8 + Offset);
             set { Write(0xA8 + Offset, value); Reset(); }
         }
 
-        [Category("Platform")]
+        [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float MovementRotation_Time
         {
             get => ReadFloat(0xAC + Offset);
             set { Write(0xAC + Offset, value); Reset(); }
         }
 
-        [Category("Platform")]
+        [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float MovementRotation_EaseStart
         {
             get => ReadFloat(0xB0 + Offset);
             set => Write(0xB0 + Offset, value);
         }
 
-        [Category("Platform")]
+        [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float MovementRotation_EaseEnd
         {
             get => ReadFloat(0xB4 + Offset);
             set => Write(0xB4 + Offset, value);
         }
 
-        [Category("Platform")]
+        [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float Movement_StartPointWait
         {
             get => ReadFloat(0xB8 + Offset);
             set { Write(0xB8 + Offset, value); Reset(); }
         }
 
-        [Category("Platform")]
+        [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float Movement_EndPointWait
         {
             get => ReadFloat(0xBC + Offset);

@@ -17,14 +17,14 @@ namespace IndustrialPark
             set => Write(0x8, value);
         }
 
-        [Category("Disco Floor")]
+        [Category("Disco Floor"), TypeConverter(typeof(FloatTypeConverter))]
         public float Speed_YellowToRed
         {
             get => ReadFloat(0xC);
             set => Write(0xC, value);
         }
 
-        [Category("Disco Floor")]
+        [Category("Disco Floor"), TypeConverter(typeof(FloatTypeConverter))]
         public float Time_RedToWhite
         {
             get => ReadFloat(0x10);

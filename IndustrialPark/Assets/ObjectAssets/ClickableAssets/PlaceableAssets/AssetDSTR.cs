@@ -15,7 +15,17 @@ namespace IndustrialPark
 
         public override bool HasReference(uint assetID)
         {
-            if (SHRP_AssetID == assetID)
+            if (SHRP_AssetID1 == assetID)
+                return true;
+            if (SHRP_AssetID2 == assetID)
+                return true;
+            if (SFX_AssetID1 == assetID)
+                return true;
+            if (SFX_AssetID2 == assetID)
+                return true;
+            if (DestroyedModelAssetID1 == assetID)
+                return true;
+            if (DestroyedModelAssetID2 == assetID)
                 return true;
 
             return base.HasReference(assetID);
@@ -64,27 +74,48 @@ namespace IndustrialPark
         }
 
         [Category("Destructable")]
-        public int UnknownInt64
+        public int UnknownInt64_MaybeHitMask
         {
             get => ReadInt(0x64 + Offset);
             set => Write(0x64 + Offset, value);
         }
 
         [Category("Destructable")]
-        public int UnknownInt68
+        public byte UnknownByte68
         {
-            get => ReadInt(0x68 + Offset);
+            get => ReadByte(0x68 + Offset);
             set => Write(0x68 + Offset, value);
         }
 
         [Category("Destructable")]
+        public byte UnknownByte69
+        {
+            get => ReadByte(0x69 + Offset);
+            set => Write(0x69 + Offset, value);
+        }
+
+        [Category("Destructable")]
+        public byte UnknownByte6A
+        {
+            get => ReadByte(0x6A + Offset);
+            set => Write(0x6A + Offset, value);
+        }
+
+        [Category("Destructable")]
+        public byte UnknownByte6B
+        {
+            get => ReadByte(0x6B + Offset);
+            set => Write(0x6B + Offset, value);
+        }
+
+        [Category("Destructable"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat6C
         {
             get => ReadFloat(0x6C);
             set => Write(0x6C, value);
         }
 
-        [Category("Destructable")]
+        [Category("Destructable"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat70
         {
             get => ReadFloat(0x70);
@@ -92,44 +123,44 @@ namespace IndustrialPark
         }
 
         [Category("Destructable")]
-        public AssetID SHRP_AssetID
+        public AssetID SHRP_AssetID1
         {
             get => ReadUInt(0x74);
             set => Write(0x74, value);
         }
 
         [Category("Destructable")]
-        public int UnknownInt78
+        public AssetID SHRP_AssetID2
         {
-            get => ReadInt(0x78 + Offset);
+            get => ReadUInt(0x78 + Offset);
             set => Write(0x78 + Offset, value);
         }
 
         [Category("Destructable")]
-        public int UnknownInt7C
+        public AssetID SFX_AssetID1
         {
-            get => ReadInt(0x7C + Offset);
+            get => ReadUInt(0x7C + Offset);
             set => Write(0x7C + Offset, value);
         }
 
         [Category("Destructable")]
-        public int UnknownInt80
+        public AssetID SFX_AssetID2
         {
-            get => ReadInt(0x80 + Offset);
+            get => ReadUInt(0x80 + Offset);
             set => Write(0x80 + Offset, value);
         }
 
         [Category("Destructable")]
-        public int UnknownInt84
+        public AssetID DestroyedModelAssetID1
         {
-            get => ReadInt(0x84 + Offset);
+            get => ReadUInt(0x84 + Offset);
             set => Write(0x84 + Offset, value);
         }
 
         [Category("Destructable")]
-        public int UnknownInt88
+        public AssetID DestroyedModelAssetID2
         {
-            get => ReadInt(0x88 + Offset);
+            get => ReadUInt(0x88 + Offset);
             set => Write(0x88 + Offset, value);
         }
     }

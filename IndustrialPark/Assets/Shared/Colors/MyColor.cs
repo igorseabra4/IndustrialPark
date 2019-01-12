@@ -52,7 +52,7 @@ namespace AssetEditorColors
 
         public override string ToString()
         {
-            return $"{R.ToString("X2")}{G.ToString("X2")}{B.ToString("X2")}{A.ToString("X2")}";
+            return $"{R.ToString()}, {G.ToString()}, {B.ToString()}";
         }
     }
 }

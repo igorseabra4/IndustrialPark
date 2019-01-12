@@ -23,12 +23,10 @@ namespace AssetEditorColors
 
             if (service != null)
             {
-                MyColor color = (MyColor)value;
-
                 ColorDialog selectionControl = new ColorDialog
                 {
                     AnyColor = true,
-                    Color = Color.FromArgb(color.GetARGB()),
+                    Color = Color.FromArgb(((MyColor)value).GetARGB()),
                     FullOpen = true,
                     SolidColorOnly = false
                 };

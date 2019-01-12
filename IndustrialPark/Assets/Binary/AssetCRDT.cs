@@ -170,7 +170,7 @@ namespace IndustrialPark
         public int Unknown_00_1 { get; set; }
 
         public int Color1_Int;
-        [Category("Fog"), Editor(typeof(MyColorEditor), typeof(UITypeEditor))]
+        [Category("Fog"), Editor(typeof(MyColorEditor), typeof(UITypeEditor)), DisplayName("Color 1 (R, G, B)")]
         public MyColor Color1
         {
             get
@@ -182,7 +182,7 @@ namespace IndustrialPark
             set => Color1_Int = BitConverter.ToInt32(new byte[] { Color1Alpha, value.B, value.G, value.R }, 0);
         }
 
-        [Category("Fog"), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("Fog"), DisplayName("Color 1 Alpha (0 - 255)")]
         public byte Color1Alpha
         {
             get
@@ -204,7 +204,7 @@ namespace IndustrialPark
         public int Unknown_00_2 { get; set; }
 
         public int Color2_Int;
-        [Category("Fog"), Editor(typeof(MyColorEditor), typeof(UITypeEditor))]
+        [Category("Fog"), Editor(typeof(MyColorEditor), typeof(UITypeEditor)), DisplayName("Color 1 (R, G, B)")]
         public MyColor Color2
         {
             get
@@ -216,7 +216,7 @@ namespace IndustrialPark
             set => Color2_Int = BitConverter.ToInt32(new byte[] { Color2Alpha, value.B, value.G, value.R }, 0);
         }
 
-        [Category("Fog"), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("Fog"), DisplayName("Color 2 Alpha (0 - 255)")]
         public byte Color2Alpha
         {
             get

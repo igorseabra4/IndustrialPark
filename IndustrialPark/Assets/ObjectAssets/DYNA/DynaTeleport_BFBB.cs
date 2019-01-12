@@ -74,8 +74,12 @@ namespace IndustrialPark
             foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
                 if (ae.archive.ContainsAsset(_MRKR_ID))
                 {
-                    MRKR = (AssetMRKR)ae.archive.GetFromAssetID(_MRKR_ID);
-                    MRKR.isInvisible = true;
+                    Asset asset = ae.archive.GetFromAssetID(_MRKR_ID);
+                    if (asset is AssetMRKR MRKR)
+                    {
+                        this.MRKR = MRKR;
+                        this.MRKR.isInvisible = true;
+                    }
                     return;
                 }
 
@@ -85,7 +89,7 @@ namespace IndustrialPark
         [Category("Teleport Box")]
         public int UnknownInt { get; set; }
         private int _rotation;
-        [Category("Teleport Box"), Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Teleport Box"), Browsable(true)]
         public int Rotation
         {
             get => _rotation;

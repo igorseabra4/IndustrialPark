@@ -33,6 +33,7 @@ namespace IndustrialPark
         {
             asset.SetNormalizedForward(Program.MainForm.renderer.Camera.GetForward());
             asset.SetNormalizedUp(Program.MainForm.renderer.Camera.GetUp());
+            asset.SetNormalizedLeft(Program.MainForm.renderer.Camera.GetRight());
         }
 
         public uint GetAssetID()

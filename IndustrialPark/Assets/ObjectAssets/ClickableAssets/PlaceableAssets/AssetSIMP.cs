@@ -27,7 +27,7 @@ namespace IndustrialPark
             set { Write(0x50 + Offset, value); }
         }
 
-        [Category("Simple Object")]
+        [Category("Simple Object"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat_54
         {
             get => ReadFloat(0x54 + Offset);

@@ -180,37 +180,37 @@ namespace IndustrialPark
             set => Write(0x28, value);
         }
         [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Float2C
+        public float NormalizedLeftX
         {
             get => ReadFloat(0x2C);
             set => Write(0x2C, value);
         }
-        [Category("Camera"), TypeConverter(typeof(HexIntTypeConverter))]
-        public int UnknownValue30
+        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
+        public float NormalizedLeftY
         {
-            get => ReadInt(0x30);
+            get => ReadFloat(0x30);
             set => Write(0x30, value);
         }
-        [Category("Camera"), TypeConverter(typeof(HexIntTypeConverter))]
-        public int UnknownValue34
+        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
+        public float NormalizedLeftZ
         {
-            get => ReadInt(0x34);
+            get => ReadFloat(0x34);
             set => Write(0x34, value);
         }
         [Category("Camera")]
-        public int UnknownValue38
+        public int UnknownInt38
         {
             get => ReadInt(0x38);
             set => Write(0x38, value);
         }
         [Category("Camera")]
-        public int UnknownValue3C
+        public int UnknownInt3C
         {
             get => ReadInt(0x3C);
             set => Write(0x3C, value);
         }
         [Category("Camera")]
-        public int UnknownValue40
+        public int UnknownInt40
         {
             get => ReadInt(0x40);
             set => Write(0x40, value);
@@ -234,13 +234,13 @@ namespace IndustrialPark
             set => Write(0x48, value);
         }
         [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Float4C
+        public float UnknownFloat4C
         {
             get => ReadFloat(0x4C);
             set => Write(0x4C, value);
         }
         [Category("Camera")]
-        public int UnknownValue50
+        public int UnknownInt50
         {
             get => ReadInt(0x50);
             set => Write(0x50, value);
@@ -324,19 +324,19 @@ namespace IndustrialPark
             set => Write(0x7B, value);
         }
         [Category("Camera"), TypeConverter(typeof(HexIntTypeConverter))]
-        public int UnknownValue7C
+        public int UnknownInt7C
         {
             get => ReadInt(0x7C);
             set => Write(0x7C, value);
         }
         [Category("Camera"), TypeConverter(typeof(HexIntTypeConverter))]
-        public int UnknownValue80
+        public int UnknownInt80
         {
             get => ReadInt(0x80);
             set => Write(0x80, value);
         }
         [Category("Camera"), TypeConverter(typeof(HexIntTypeConverter))]
-        public int UnknownValue84
+        public int UnknownInt84
         {
             get => ReadInt(0x84);
             set => Write(0x84, value);
@@ -361,6 +361,13 @@ namespace IndustrialPark
             NormalizedUpX = up.X;
             NormalizedUpY = up.Y;
             NormalizedUpZ = up.Z;
+        }
+
+        public void SetNormalizedLeft(Vector3 right)
+        {
+            NormalizedLeftX = -right.X;
+            NormalizedLeftY = -right.Y;
+            NormalizedLeftZ = -right.Z;
         }
     }
 }

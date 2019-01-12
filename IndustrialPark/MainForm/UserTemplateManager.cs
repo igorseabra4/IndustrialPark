@@ -132,12 +132,15 @@ namespace IndustrialPark
             string oldName = listBoxTemplates.SelectedItem.ToString();
             byte[] oldData = File.ReadAllBytes(Path.Combine(Program.MainForm.userTemplatesFolder, oldName));
 
-            string newName = EditName.GetName(oldName);
+            string newName = EditName.GetName(oldName, "Template Name", out bool okED);
 
-            File.Delete(Path.Combine(Program.MainForm.userTemplatesFolder, oldName));
-            File.WriteAllBytes(Path.Combine(Program.MainForm.userTemplatesFolder, newName), oldData);
+            if (okED)
+            {
+                File.Delete(Path.Combine(Program.MainForm.userTemplatesFolder, oldName));
+                File.WriteAllBytes(Path.Combine(Program.MainForm.userTemplatesFolder, newName), oldData);
 
-            UpdateListBox();
+                UpdateListBox();
+            }
         }
     }
 }

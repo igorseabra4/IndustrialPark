@@ -47,14 +47,14 @@ namespace IndustrialPark
             set => Write(0x10, value);
         }
 
-        [Category("Environment")]
+        [Category("Environment"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat14
         {
             get => ReadFloat(0x14);
             set => Write(0x14, value);
         }
 
-        [Category("Environment")]
+        [Category("Environment"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat18
         {
             get => ReadFloat(0x18);
@@ -124,7 +124,7 @@ namespace IndustrialPark
             set => Write(0x3C, value);
         }
 
-        [Category("Environment")]
+        [Category("Environment"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat40
         {
             get => BitConverter.ToSingle(AHDR.data, 0x40);

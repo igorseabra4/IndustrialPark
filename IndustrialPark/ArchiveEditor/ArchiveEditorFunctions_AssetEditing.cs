@@ -698,5 +698,81 @@ namespace IndustrialPark
             DICT.LTOC.LHDRList = new List<Section_LHDR>();
             DICT.LTOC.LHDRList.AddRange(layers.Values.ToList().OrderBy(f => f.layerType, new LHDRComparer()));
         }
+        
+        public void ApplyScale(Vector3 factor)
+        {
+            float singleFactor = (factor.X + factor.Y + factor.Z) / 3;
+
+            foreach (Asset a in assetDictionary.Values)
+            {
+                if (a is AssetTRIG TRIG)
+                {
+                    if (TRIG.Shape == TriggerShape.Sphere)
+                    {
+                        TRIG.Position0X *= factor.X;
+                        TRIG.Position0Y *= factor.Y;
+                        TRIG.Position0Z *= factor.Z;
+                        TRIG.Position1X_Radius *= singleFactor;
+                    }
+                    else
+                    {
+                        Vector3 TrigCenter = new Vector3(TRIG.Position0X + TRIG.Position1X_Radius, TRIG.Position0Y + TRIG.Position1Y, TRIG.Position0Z + TRIG.Position1Z) / 2f;
+
+                        TRIG.Position0X -= TrigCenter.X;
+                        TRIG.Position0Y -= TrigCenter.Y;
+                        TRIG.Position0Z -= TrigCenter.Z;
+                        TRIG.Position1X_Radius -= TrigCenter.X;
+                        TRIG.Position1Y -= TrigCenter.Y;
+                        TRIG.Position1Z -= TrigCenter.Z;
+
+                        TRIG.Position0X *= factor.X;
+                        TRIG.Position0Y *= factor.Y;
+                        TRIG.Position0Z *= factor.Z;
+                        TRIG.Position1X_Radius *= factor.X;
+                        TRIG.Position1Y *= factor.Y;
+                        TRIG.Position1Z *= factor.Z;
+
+                        TRIG.Position0X += TrigCenter.X * factor.X;
+                        TRIG.Position0Y += TrigCenter.Y * factor.Y;
+                        TRIG.Position0Z += TrigCenter.Z * factor.Z;
+                        TRIG.Position1X_Radius += TrigCenter.X * factor.X;
+                        TRIG.Position1Y += TrigCenter.Y *factor.Y;
+                        TRIG.Position1Z += TrigCenter.Z * factor.Z;
+                    }
+
+                    TRIG._position.X = TRIG.Position0X;
+                    TRIG._position.Y = TRIG.Position0Y;
+                    TRIG._position.Z = TRIG.Position0Z;
+                }
+                else if (a is IClickableAsset clickableAsset)
+                {
+                    ((IClickableAsset)a).PositionX *= factor.X;
+                    ((IClickableAsset)a).PositionY *= factor.Y;
+                    ((IClickableAsset)a).PositionZ *= factor.Z;
+
+                    if (a is AssetMVPT MVPT)
+                    {
+                        if (MVPT.MovementRadius != -1)
+                            MVPT.MovementRadius *= singleFactor;
+                        if (MVPT.DistanceICanSeeYou != -1)
+                            MVPT.DistanceICanSeeYou *= singleFactor;
+                    }
+                    else if (a is AssetSFX SFX)
+                    {
+                        SFX.RadiusMax *= singleFactor;
+                        SFX.RadiusMin *= singleFactor;
+                    }
+                    else if (a is PlaceableAsset placeable && !(a is AssetPLYR || a is AssetPKUP || a is AssetUI || a is AssetUIFT || a is AssetVIL || (a is AssetDYNA DYNA && DYNA.Type == DynaType.game_object__Teleport)))
+                    {
+                        placeable.ScaleX *= factor.X;
+                        placeable.ScaleY *= factor.Y;
+                        placeable.ScaleZ *= factor.Z;
+                    }
+                }
+            }
+
+            UnsavedChanges = true;
+            RecalculateAllMatrices();
+        }
     }
 }

@@ -287,7 +287,7 @@ namespace IndustrialPark
         private Vector3 _trigPos2;
         private Vector3 _trigPos3;
 
-        [Category("Trigger")]
+        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
         public float Position0X
         {
             get => _trigPos0.X;
@@ -298,7 +298,7 @@ namespace IndustrialPark
                 CreateTransformMatrix();
             }
         }
-        [Category("Trigger")]
+        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
         public float Position0Y
         {
             get => _trigPos0.Y;
@@ -309,7 +309,7 @@ namespace IndustrialPark
                 CreateTransformMatrix();
             }
         }
-        [Category("Trigger")]
+        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
         public float Position0Z
         {
             get => _trigPos0.Z;
@@ -320,7 +320,7 @@ namespace IndustrialPark
                 CreateTransformMatrix();
             }
         }
-        [Category("Trigger")]
+        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
         public float Position1X_Radius
         {
             get => _trigPos1.X;
@@ -331,7 +331,7 @@ namespace IndustrialPark
                 CreateTransformMatrix();
             }
         }
-        [Category("Trigger")]
+        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
         public float Position1Y
         {
             get => _trigPos1.Y;
@@ -342,7 +342,7 @@ namespace IndustrialPark
                 CreateTransformMatrix();
             }
         }
-        [Category("Trigger")]
+        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
         public float Position1Z
         {
             get => _trigPos1.Z;
@@ -353,7 +353,7 @@ namespace IndustrialPark
                 CreateTransformMatrix();
             }
         }
-        [Category("Trigger")]
+        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
         public float Position2X
         {
             get => _trigPos2.X;
@@ -363,7 +363,7 @@ namespace IndustrialPark
                 Write(0x6C + Offset, _trigPos2.X);
             }
         }
-        [Category("Trigger")]
+        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
         public float Position2Y
         {
             get => _trigPos2.Y;
@@ -373,7 +373,7 @@ namespace IndustrialPark
                 Write(0x70 + Offset, _trigPos2.Y);
             }
         }
-        [Category("Trigger")]
+        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
         public float Position2Z
         {
             get => _trigPos2.Z;
@@ -383,7 +383,7 @@ namespace IndustrialPark
                 Write(0x74 + Offset, _trigPos2.Z);
             }
         }
-        [Category("Trigger")]
+        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
         public float Position3X
         {
             get => _trigPos3.X;
@@ -393,7 +393,7 @@ namespace IndustrialPark
                 Write(0x78 + Offset, _trigPos3.X);
             }
         }
-        [Category("Trigger")]
+        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
         public float Position3Y
         {
             get => _trigPos3.Y;
@@ -403,7 +403,7 @@ namespace IndustrialPark
                 Write(0x7C + Offset, _trigPos3.Y);
             }
         }
-        [Category("Trigger")]
+        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
         public float Position3Z
         {
             get => _trigPos3.Z;
@@ -414,28 +414,28 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Trigger")]
+        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownTriggerFloat1
         {
             get => ReadFloat(0x84 + Offset);
             set => Write(0x84 + Offset, value);
         }
 
-        [Category("Trigger")]
+        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownTriggerFloat2
         {
             get => ReadFloat(0x88 + Offset);
             set => Write(0x88 + Offset, value);
         }
 
-        [Category("Trigger")]
+        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownTriggerFloat3
         {
             get => ReadFloat(0x8C + Offset);
             set => Write(0x8C + Offset, value);
         }
 
-        [Category("Trigger")]
+        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownTriggerFloat4
         {
             get => ReadFloat(0x90 + Offset);

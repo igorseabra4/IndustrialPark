@@ -149,7 +149,7 @@ namespace IndustrialPark
             set => Write(0xA, value);
         }
 
-        [Category("Sound Effect")]
+        [Category("Sound Effect"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat0C
         {
             get => ReadFloat(0xC);
@@ -163,7 +163,7 @@ namespace IndustrialPark
             set => Write(0x10, value);
         }
 
-        [Category("Sound Effect")]
+        [Category("Sound Effect"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat14
         {
             get => ReadFloat(0x14);
@@ -178,7 +178,7 @@ namespace IndustrialPark
         }
 
         private Vector3 _position;
-        [Category("Sound Effect")]
+        [Category("Sound Effect"), TypeConverter(typeof(FloatTypeConverter))]
         public float PositionX
         {
             get { return _position.X; }
@@ -190,7 +190,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Sound Effect")]
+        [Category("Sound Effect"), TypeConverter(typeof(FloatTypeConverter))]
         public float PositionY
         {
             get { return _position.Y; }
@@ -202,7 +202,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Sound Effect")]
+        [Category("Sound Effect"), TypeConverter(typeof(FloatTypeConverter))]
         public float PositionZ
         {
             get { return _position.Z; }
@@ -215,7 +215,7 @@ namespace IndustrialPark
         }
 
         private float _radius;
-        [Category("Sound Effect")]
+        [Category("Sound Effect"), TypeConverter(typeof(FloatTypeConverter))]
         public float RadiusMin
         {
             get => _radius;
@@ -228,7 +228,7 @@ namespace IndustrialPark
         }
 
         private float _radius2;
-        [Category("Sound Effect")]
+        [Category("Sound Effect"), TypeConverter(typeof(FloatTypeConverter))]
         public float RadiusMax
         {
             get => _radius2;

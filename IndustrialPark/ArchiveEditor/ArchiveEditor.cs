@@ -72,6 +72,7 @@ namespace IndustrialPark
                 hipHopToolExportToolStripMenuItem.Enabled = true;
                 importHIPArchiveToolStripMenuItem.Enabled = true;
                 collapseLayersToolStripMenuItem.Enabled = true;
+                applyScaleToolStripMenuItem.Enabled = true;
 
                 PopulateLayerComboBox();
                 PopulateAssetList();
@@ -116,6 +117,7 @@ namespace IndustrialPark
             importTXDArchiveToolStripMenuItem.Enabled = true;
             exportTXDArchiveToolStripMenuItem.Enabled = true;
             collapseLayersToolStripMenuItem.Enabled = true;
+            applyScaleToolStripMenuItem.Enabled = true;
 
             PopulateLayerComboBox();
             PopulateAssetList();
@@ -239,6 +241,7 @@ namespace IndustrialPark
             importMultipleAssetsToolStripMenuItem.Enabled = true;
             addTemplateToolStripMenuItem.Enabled = true;
             collapseLayersToolStripMenuItem.Enabled = true;
+            applyScaleToolStripMenuItem.Enabled = true;
 
             programIsChangingStuff = false;
         }
@@ -303,6 +306,7 @@ namespace IndustrialPark
                 buttonPaste.Enabled = false;
                 buttonRemoveLayer.Enabled = false;
                 collapseLayersToolStripMenuItem.Enabled = false;
+                applyScaleToolStripMenuItem.Enabled = false;
                 buttonArrowUp.Enabled = false;
                 buttonArrowDown.Enabled = false;
                 importMultipleAssetsToolStripMenuItem.Enabled = false;
@@ -887,6 +891,18 @@ namespace IndustrialPark
         {
             archive.CollapseLayers();
             PopulateLayerComboBox();
+        }
+
+        private void applyScaleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Vector3 scale = ApplyScale.GetName(out bool OKed);
+
+            if (OKed)
+            {
+                DialogResult dialogResult = MessageBox.Show($"Are you sure you want to scale all assets by a factor of [{scale.X}, {scale.Y}, {scale.Z}]?", "Apply Scale", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (dialogResult == DialogResult.Yes)
+                    archive.ApplyScale(scale);
+            }
         }
 
         private void hipHopToolExportToolStripMenuItem_Click(object sender, EventArgs e)

@@ -10,29 +10,29 @@ namespace IndustrialPark
     public class EntryLKIT
     {
         public int Type { get; set; }
-        public float Unknown01 { get; set; }
-        public float Unknown02 { get; set; }
-        public float Unknown03 { get; set; }
+        public float ColorR { get; set; }
+        public float ColorG { get; set; }
+        public float ColorB { get; set; }
         public float Unknown04 { get; set; }
-        public float Unknown05 { get; set; }
-        public float Unknown06 { get; set; }
-        public float Unknown07 { get; set; }
+        public float Unknown05_X { get; set; }
+        public float Unknown06_Y { get; set; }
+        public float Unknown07_Z { get; set; }
         public float Unknown08 { get; set; }
-        public float Unknown09 { get; set; }
-        public float Unknown10 { get; set; }
-        public float Unknown11 { get; set; }
+        public float Unknown09_X { get; set; }
+        public float Unknown10_Y { get; set; }
+        public float Unknown11_Z { get; set; }
         public float Unknown12 { get; set; }
-        public float Unknown13 { get; set; }
-        public float Unknown14 { get; set; }
-        public float Unknown15 { get; set; }
+        public float Unknown13_X { get; set; }
+        public float Unknown14_Y { get; set; }
+        public float Unknown15_Z { get; set; }
         public float Unknown16 { get; set; }
-        public float Unknown17 { get; set; }
-        public float Unknown18 { get; set; }
-        public float Unknown19 { get; set; }
+        public float Unknown17_X { get; set; }
+        public float Unknown18_Y { get; set; }
+        public float Unknown19_Z { get; set; }
         public float Unknown20 { get; set; }
-        public float Unknown21 { get; set; }
-        public float Unknown22 { get; set; }
-        public float Unknown23 { get; set; }
+        public float Unknown21_X { get; set; }
+        public float Unknown22_Y { get; set; }
+        public float Unknown23_Z { get; set; }
     }
 
     public class AssetLKIT : Asset
@@ -72,29 +72,29 @@ namespace IndustrialPark
                     lights.Add(new EntryLKIT()
                     {
                         Type = Switch(binaryReader.ReadInt32()),
-                        Unknown01 = Switch(binaryReader.ReadSingle()),
-                        Unknown02 = Switch(binaryReader.ReadSingle()),
-                        Unknown03 = Switch(binaryReader.ReadSingle()),
+                        ColorR = Switch(binaryReader.ReadSingle()),
+                        ColorG = Switch(binaryReader.ReadSingle()),
+                        ColorB = Switch(binaryReader.ReadSingle()),
                         Unknown04 = Switch(binaryReader.ReadSingle()),
-                        Unknown05 = Switch(binaryReader.ReadSingle()),
-                        Unknown06 = Switch(binaryReader.ReadSingle()),
-                        Unknown07 = Switch(binaryReader.ReadSingle()),
+                        Unknown05_X = Switch(binaryReader.ReadSingle()),
+                        Unknown06_Y = Switch(binaryReader.ReadSingle()),
+                        Unknown07_Z = Switch(binaryReader.ReadSingle()),
                         Unknown08 = Switch(binaryReader.ReadSingle()),
-                        Unknown09 = Switch(binaryReader.ReadSingle()),
-                        Unknown10 = Switch(binaryReader.ReadSingle()),
-                        Unknown11 = Switch(binaryReader.ReadSingle()),
+                        Unknown09_X = Switch(binaryReader.ReadSingle()),
+                        Unknown10_Y = Switch(binaryReader.ReadSingle()),
+                        Unknown11_Z = Switch(binaryReader.ReadSingle()),
                         Unknown12 = Switch(binaryReader.ReadSingle()),
-                        Unknown13 = Switch(binaryReader.ReadSingle()),
-                        Unknown14 = Switch(binaryReader.ReadSingle()),
-                        Unknown15 = Switch(binaryReader.ReadSingle()),
+                        Unknown13_X = Switch(binaryReader.ReadSingle()),
+                        Unknown14_Y = Switch(binaryReader.ReadSingle()),
+                        Unknown15_Z = Switch(binaryReader.ReadSingle()),
                         Unknown16 = Switch(binaryReader.ReadSingle()),
-                        Unknown17 = Switch(binaryReader.ReadSingle()),
-                        Unknown18 = Switch(binaryReader.ReadSingle()),
-                        Unknown19 = Switch(binaryReader.ReadSingle()),
+                        Unknown17_X = Switch(binaryReader.ReadSingle()),
+                        Unknown18_Y = Switch(binaryReader.ReadSingle()),
+                        Unknown19_Z = Switch(binaryReader.ReadSingle()),
                         Unknown20 = Switch(binaryReader.ReadSingle()),
-                        Unknown21 = Switch(binaryReader.ReadSingle()),
-                        Unknown22 = Switch(binaryReader.ReadSingle()),
-                        Unknown23 = Switch(binaryReader.ReadSingle())
+                        Unknown21_X = Switch(binaryReader.ReadSingle()),
+                        Unknown22_Y = Switch(binaryReader.ReadSingle()),
+                        Unknown23_Z = Switch(binaryReader.ReadSingle())
                     });
                 }
 
@@ -106,29 +106,29 @@ namespace IndustrialPark
                 foreach (EntryLKIT entry in value)
                 {
                     binaryWriter.Write(Switch(entry.Type));
-                    binaryWriter.Write(Switch(entry.Unknown01));
-                    binaryWriter.Write(Switch(entry.Unknown02));
-                    binaryWriter.Write(Switch(entry.Unknown03));
+                    binaryWriter.Write(Switch(entry.ColorR));
+                    binaryWriter.Write(Switch(entry.ColorG));
+                    binaryWriter.Write(Switch(entry.ColorB));
                     binaryWriter.Write(Switch(entry.Unknown04));
-                    binaryWriter.Write(Switch(entry.Unknown05));
-                    binaryWriter.Write(Switch(entry.Unknown06));
-                    binaryWriter.Write(Switch(entry.Unknown07));
+                    binaryWriter.Write(Switch(entry.Unknown05_X));
+                    binaryWriter.Write(Switch(entry.Unknown06_Y));
+                    binaryWriter.Write(Switch(entry.Unknown07_Z));
                     binaryWriter.Write(Switch(entry.Unknown08));
-                    binaryWriter.Write(Switch(entry.Unknown09));
-                    binaryWriter.Write(Switch(entry.Unknown10));
-                    binaryWriter.Write(Switch(entry.Unknown11));
+                    binaryWriter.Write(Switch(entry.Unknown09_X));
+                    binaryWriter.Write(Switch(entry.Unknown10_Y));
+                    binaryWriter.Write(Switch(entry.Unknown11_Z));
                     binaryWriter.Write(Switch(entry.Unknown12));
-                    binaryWriter.Write(Switch(entry.Unknown13));
-                    binaryWriter.Write(Switch(entry.Unknown14));
-                    binaryWriter.Write(Switch(entry.Unknown15));
+                    binaryWriter.Write(Switch(entry.Unknown13_X));
+                    binaryWriter.Write(Switch(entry.Unknown14_Y));
+                    binaryWriter.Write(Switch(entry.Unknown15_Z));
                     binaryWriter.Write(Switch(entry.Unknown16));
-                    binaryWriter.Write(Switch(entry.Unknown17));
-                    binaryWriter.Write(Switch(entry.Unknown18));
-                    binaryWriter.Write(Switch(entry.Unknown19));
+                    binaryWriter.Write(Switch(entry.Unknown17_X));
+                    binaryWriter.Write(Switch(entry.Unknown18_Y));
+                    binaryWriter.Write(Switch(entry.Unknown19_Z));
                     binaryWriter.Write(Switch(entry.Unknown20));
-                    binaryWriter.Write(Switch(entry.Unknown21));
-                    binaryWriter.Write(Switch(entry.Unknown22));
-                    binaryWriter.Write(Switch(entry.Unknown23));
+                    binaryWriter.Write(Switch(entry.Unknown21_X));
+                    binaryWriter.Write(Switch(entry.Unknown22_Y));
+                    binaryWriter.Write(Switch(entry.Unknown23_Z));
                 }
 
                 List<byte> newData = Data.Take(0x10).ToList();

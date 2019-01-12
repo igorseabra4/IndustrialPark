@@ -20,49 +20,49 @@ namespace IndustrialPark
             set => Write(0x54 + Offset, value);
         }
 
-        [Category("Hangable")]
+        [Category("Hangable"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat58
         {
             get => ReadFloat(0x58 + Offset);
             set => Write(0x58 + Offset, value);
         }
 
-        [Category("Hangable")]
+        [Category("Hangable"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat5C
         {
             get => ReadFloat(0x5C + Offset);
             set => Write(0x5C + Offset, value);
         }
 
-        [Category("Hangable")]
+        [Category("Hangable"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat60
         {
             get => ReadFloat(0x60 + Offset);
             set => Write(0x60 + Offset, value);
         }
 
-        [Category("Hangable")]
+        [Category("Hangable"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat64
         {
             get => ReadFloat(0x64 + Offset);
             set => Write(0x64 + Offset, value);
         }
 
-        [Category("Hangable")]
+        [Category("Hangable"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat68
         {
             get => ReadFloat(0x68 + Offset);
             set => Write(0x68 + Offset, value);
         }
 
-        [Category("Hangable")]
+        [Category("Hangable"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat6C
         {
             get => ReadFloat(0x6C + Offset);
             set => Write(0x6C + Offset, value);
         }
 
-        [Category("Hangable")]
+        [Category("Hangable"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat70
         {
             get => ReadFloat(0x70 + Offset);

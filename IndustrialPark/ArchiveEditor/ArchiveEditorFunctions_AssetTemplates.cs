@@ -35,6 +35,7 @@ namespace IndustrialPark
                 cam.SetPosition(Program.MainForm.renderer.Camera.Position);
                 cam.SetNormalizedForward(Program.MainForm.renderer.Camera.GetForward());
                 cam.SetNormalizedUp(Program.MainForm.renderer.Camera.GetUp());
+                cam.SetNormalizedLeft(Program.MainForm.renderer.Camera.GetRight());
             }
             else if (GetFromAssetID(assetID) is AssetMRKR mrkr)
             {
@@ -725,10 +726,10 @@ namespace IndustrialPark
                     ((AssetMVPT)asset).PositionX = position.X;
                     ((AssetMVPT)asset).PositionY = position.Y;
                     ((AssetMVPT)asset).PositionZ = position.Z;
-                    ((AssetMVPT)asset).UnknownByte14 = 0x27;
-                    ((AssetMVPT)asset).UnknownByte15 = 0x10;
-                    ((AssetMVPT)asset).UnknownByte16 = 0x01;
-                    ((AssetMVPT)asset).PointType = 0x00;
+                    ((AssetMVPT)asset).Flag14 = 0x27;
+                    ((AssetMVPT)asset).Flag15 = 0x10;
+                    ((AssetMVPT)asset).Flag16 = 0x01;
+                    ((AssetMVPT)asset).Flag17 = 0x00;
                     ((AssetMVPT)asset).MovementAngle = 360;
                     ((AssetMVPT)asset).MovementRadius = 4;
                     ((AssetMVPT)asset).DistanceICanSeeYou = 8;
@@ -737,10 +738,10 @@ namespace IndustrialPark
                     ((AssetMVPT)asset).PositionX = position.X;
                     ((AssetMVPT)asset).PositionY = position.Y;
                     ((AssetMVPT)asset).PositionZ = position.Z;
-                    ((AssetMVPT)asset).UnknownByte14 = 0x27;
-                    ((AssetMVPT)asset).UnknownByte15 = 0x10;
-                    ((AssetMVPT)asset).UnknownByte16 = 0x01;
-                    ((AssetMVPT)asset).PointType = 0x00;
+                    ((AssetMVPT)asset).Flag14 = 0x27;
+                    ((AssetMVPT)asset).Flag15 = 0x10;
+                    ((AssetMVPT)asset).Flag16 = 0x01;
+                    ((AssetMVPT)asset).Flag17 = 0x00;
                     ((AssetMVPT)asset).MovementAngle = 0;
                     ((AssetMVPT)asset).MovementRadius = -1;
                     ((AssetMVPT)asset).DistanceICanSeeYou = -1;
@@ -802,19 +803,19 @@ namespace IndustrialPark
                 case AssetTemplate.BusStop_Camera:
                     ((AssetCAM)asset).PositionX -= 7f;
                     ((AssetCAM)asset).PositionY += 2f;
-                    ((AssetCAM)asset).NormalizedForwardX = 0.980334f;
-                    ((AssetCAM)asset).NormalizedForwardY = -0.119257f;
-                    ((AssetCAM)asset).NormalizedForwardZ = -0.157237f;
-                    ((AssetCAM)asset).NormalizedUpX = 0.117752f;
-                    ((AssetCAM)asset).NormalizedUpX = 0.992864f;
-                    ((AssetCAM)asset).NormalizedUpX = -0.018886f;
-                    ((AssetCAM)asset).Float2C = -0.158367f;
-                    ((AssetCAM)asset).UnknownValue30 = -1317011456;
-                    ((AssetCAM)asset).UnknownValue34 = 0x3F7CC4FD;
+                    ((AssetCAM)asset).NormalizedForwardX = 1f;
+                    ((AssetCAM)asset).NormalizedForwardY = 0f;
+                    ((AssetCAM)asset).NormalizedForwardZ = 0f;
+                    ((AssetCAM)asset).NormalizedUpX = 0f;
+                    ((AssetCAM)asset).NormalizedUpX = 1f;
+                    ((AssetCAM)asset).NormalizedUpX = 0f;
+                    ((AssetCAM)asset).NormalizedLeftX = 0f;
+                    ((AssetCAM)asset).NormalizedLeftY = 0f;
+                    ((AssetCAM)asset).NormalizedLeftZ = 1f;
                     ((AssetCAM)asset).UnknownShort44 = 30;
                     ((AssetCAM)asset).UnknownShort46 = 45;
                     ((AssetCAM)asset).CameraSpeed = 60f;
-                    ((AssetCAM)asset).Float4C = 0.5f;
+                    ((AssetCAM)asset).UnknownFloat4C = 0.5f;
                     ((AssetCAM)asset).UnknownFloat64 = -2f;
                     ((AssetCAM)asset).UnknownFloat68 = 1f;
                     ((AssetCAM)asset).UnknownFloat6C = 1f;
@@ -1075,6 +1076,7 @@ namespace IndustrialPark
                 cam.SetPosition(Program.MainForm.renderer.Camera.Position);
                 cam.SetNormalizedForward(Program.MainForm.renderer.Camera.GetForward());
                 cam.SetNormalizedUp(Program.MainForm.renderer.Camera.GetUp());
+                cam.SetNormalizedLeft(Program.MainForm.renderer.Camera.GetRight());
             }
             else if (asset is AssetMRKR mrkr)
             {

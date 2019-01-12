@@ -35,7 +35,7 @@ namespace IndustrialPark
             set => Write(0xC, value);
         }
 
-        [Category("Portal")]
+        [Category("Portal"), TypeConverter(typeof(FloatTypeConverter))]
         public float Rotation
         {
             get => ReadFloat(0x10);
