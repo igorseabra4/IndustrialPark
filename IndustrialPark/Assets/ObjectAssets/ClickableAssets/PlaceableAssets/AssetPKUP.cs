@@ -104,14 +104,14 @@ namespace IndustrialPark
         }
 
         [Category("Pickup")]
-        public short UnknownShort58
+        public short PickupFlags
         {
             get => ReadShort(0x58 + Offset);
             set => Write(0x58 + Offset, value);
         }
 
         [Category("Pickup")]
-        public short UnknownShort5A
+        public short PickupValue
         {
             get => ReadShort(0x5A + Offset);
             set => Write(0x5A + Offset, value);

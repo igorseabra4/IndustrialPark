@@ -415,30 +415,30 @@ namespace IndustrialPark
         }
 
         [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownTriggerFloat1
+        public float DirectionX
         {
             get => ReadFloat(0x84 + Offset);
             set => Write(0x84 + Offset, value);
         }
 
         [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownTriggerFloat2
+        public float DirectionY
         {
             get => ReadFloat(0x88 + Offset);
             set => Write(0x88 + Offset, value);
         }
 
         [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownTriggerFloat3
+        public float DirectionZ
         {
             get => ReadFloat(0x8C + Offset);
             set => Write(0x8C + Offset, value);
         }
 
-        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownTriggerFloat4
+        [Category("Trigger")]
+        public int TriggerFlags
         {
-            get => ReadFloat(0x90 + Offset);
+            get => ReadInt(0x90 + Offset);
             set => Write(0x90 + Offset, value);
         }
     }

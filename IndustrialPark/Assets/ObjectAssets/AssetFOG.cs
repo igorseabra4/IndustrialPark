@@ -14,7 +14,7 @@ namespace IndustrialPark
         protected override int EventStartOffset => 0x24;
         
         [Category("Fog"), Editor(typeof(MyColorEditor), typeof(UITypeEditor)), DisplayName("End Color (R, G, B)")]
-        public MyColor Color1
+        public MyColor BackgroundColor
         {
             get
             {
@@ -22,11 +22,11 @@ namespace IndustrialPark
                 return new MyColor(abgr[3], abgr[2], abgr[1], abgr[0]);
             }
 
-            set => Write(0x8, BitConverter.ToInt32(new byte[] { Color1Alpha, value.B, value.G, value.R }, 0));
+            set => Write(0x8, BitConverter.ToInt32(new byte[] { BackgroundColorAlpha, value.B, value.G, value.R }, 0));
         }
 
         [Category("Fog"), DisplayName("End Color Alpha (0 - 255)")]
-        public byte Color1Alpha
+        public byte BackgroundColorAlpha
         {
             get
             {
@@ -34,11 +34,11 @@ namespace IndustrialPark
                 return abgr[0];
             }
 
-            set => Write(0x8, BitConverter.ToInt32(new byte[] { value, Color1.B, Color1.G, Color1.R }, 0));
+            set => Write(0x8, BitConverter.ToInt32(new byte[] { value, BackgroundColor.B, BackgroundColor.G, BackgroundColor.R }, 0));
         }
 
         [Category("Fog"), Editor(typeof(MyColorEditor), typeof(UITypeEditor)), DisplayName("Start Color (R, G, B)")]
-        public MyColor Color2
+        public MyColor FogColor
         {
             get
             {
@@ -46,11 +46,11 @@ namespace IndustrialPark
                 return new MyColor(abgr[3], abgr[2], abgr[1], abgr[0]);
             }
 
-            set => Write(0xC, BitConverter.ToInt32(new byte[] { Color2Alpha, value.B, value.G, value.R }, 0));
+            set => Write(0xC, BitConverter.ToInt32(new byte[] { FogColorAlpha, value.B, value.G, value.R }, 0));
         }
 
         [Category("Fog"), DisplayName("Start Color Alpha (0 - 255)")]
-        public byte Color2Alpha
+        public byte FogColorAlpha
         {
             get
             {
@@ -58,11 +58,11 @@ namespace IndustrialPark
                 return abgr[0];
             }
 
-            set => Write(0xC, BitConverter.ToInt32(new byte[] { value, Color2.B, Color2.G, Color2.R }, 0));
+            set => Write(0xC, BitConverter.ToInt32(new byte[] { value, FogColor.B, FogColor.G, FogColor.R }, 0));
         }
 
         [Category("Fog"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat10
+        public float FogDensity
         {
             get => ReadFloat(0x10);
             set => Write(0x10, value);
@@ -90,10 +90,31 @@ namespace IndustrialPark
         }
 
         [Category("Fog")]
-        public int UnknownInt20
+        public byte FogType
         {
-            get => ReadInt(0x20);
+            get => ReadByte(0x20);
             set => Write(0x20, value);
+        }
+
+        [Category("Fog")]
+        public byte Padding21
+        {
+            get => ReadByte(0x21);
+            set => Write(0x21, value);
+        }
+
+        [Category("Fog")]
+        public byte Padding22
+        {
+            get => ReadByte(0x22);
+            set => Write(0x22, value);
+        }
+
+        [Category("Fog")]
+        public byte Padding23
+        {
+            get => ReadByte(0x23);
+            set => Write(0x23, value);
         }
     }
 }

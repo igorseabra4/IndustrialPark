@@ -14,7 +14,7 @@ namespace IndustrialPark
         {
             this.version = version;
             MRKR_ID = 0;
-            DYNA_Teleport_ID = 0;
+            TargetDYNATeleportID = 0;
         }
 
         private int version;
@@ -23,16 +23,16 @@ namespace IndustrialPark
         {
             this.version = version;
             MRKR_ID = Switch(BitConverter.ToUInt32(Data, 0x0));
-            UnknownInt = Switch(BitConverter.ToInt32(Data, 0x4));
-            Rotation = Switch(BitConverter.ToInt32(Data, 0x8));
+            Opened = Switch(BitConverter.ToInt32(Data, 0x4));
+            LaunchAngle = Switch(BitConverter.ToInt32(Data, 0x8));
             if (version == 2)
             {
-                Rotation2 = Switch(BitConverter.ToInt32(Data, 0xC));
-                DYNA_Teleport_ID = Switch(BitConverter.ToUInt32(Data, 0x10));
+                CameraAngle = Switch(BitConverter.ToInt32(Data, 0xC));
+                TargetDYNATeleportID = Switch(BitConverter.ToUInt32(Data, 0x10));
             }
             else
             {
-                DYNA_Teleport_ID = Switch(BitConverter.ToUInt32(Data, 0x0C));
+                TargetDYNATeleportID = Switch(BitConverter.ToUInt32(Data, 0x0C));
             }
         }
 
@@ -40,7 +40,7 @@ namespace IndustrialPark
         {
             if (MRKR_ID == assetID)
                 return true;
-            if (DYNA_Teleport_ID == assetID)
+            if (TargetDYNATeleportID == assetID)
                 return true;
 
             return base.HasReference(assetID);
@@ -50,11 +50,11 @@ namespace IndustrialPark
         {
             List<byte> list = new List<byte>();
             list.AddRange(BitConverter.GetBytes(Switch(MRKR_ID)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownInt)));
-            list.AddRange(BitConverter.GetBytes(Switch(Rotation)));
+            list.AddRange(BitConverter.GetBytes(Switch(Opened)));
+            list.AddRange(BitConverter.GetBytes(Switch(LaunchAngle)));
             if (version == 2)
-                list.AddRange(BitConverter.GetBytes(Switch(Rotation2)));
-            list.AddRange(BitConverter.GetBytes(Switch(DYNA_Teleport_ID)));
+                list.AddRange(BitConverter.GetBytes(Switch(CameraAngle)));
+            list.AddRange(BitConverter.GetBytes(Switch(TargetDYNATeleportID)));
             return list.ToArray();
         }
 
@@ -87,10 +87,10 @@ namespace IndustrialPark
         }
 
         [Category("Teleport Box")]
-        public int UnknownInt { get; set; }
+        public int Opened { get; set; }
         private int _rotation;
         [Category("Teleport Box"), Browsable(true)]
-        public int Rotation
+        public int LaunchAngle
         {
             get => _rotation;
             set
@@ -100,9 +100,9 @@ namespace IndustrialPark
             }
         }
         [Category("Teleport Box")]
-        public int Rotation2 { get; set; }
+        public int CameraAngle { get; set; }
         [Category("Teleport Box")]
-        public AssetID DYNA_Teleport_ID { get; set; }
+        public AssetID TargetDYNATeleportID { get; set; }
 
         [Category("Teleport Box"), Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
         public override float PositionX
@@ -169,7 +169,7 @@ namespace IndustrialPark
         public override void CreateTransformMatrix()
         {
             ValidateMRKR();
-            world = Matrix.RotationY(MathUtil.DegreesToRadians(Rotation)) * Matrix.Translation(PositionX, PositionY, PositionZ);
+            world = Matrix.RotationY(MathUtil.DegreesToRadians(LaunchAngle)) * Matrix.Translation(PositionX, PositionY, PositionZ);
 
             List<Vector3> vertexList = new List<Vector3>();
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID) &&

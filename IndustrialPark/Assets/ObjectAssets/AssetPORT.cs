@@ -11,9 +11,9 @@ namespace IndustrialPark
 
         public override bool HasReference(uint assetID)
         {
-            if (Camera_Unknown == assetID)
+            if (Camera_AssetID == assetID)
                 return true;
-            if (Destination_MRKR == assetID)
+            if (Destination_MRKR_AssetID == assetID)
                 return true;
 
             return base.HasReference(assetID);
@@ -22,14 +22,14 @@ namespace IndustrialPark
         protected override int EventStartOffset => 0x18;
 
         [Category("Portal")]
-        public AssetID Camera_Unknown
+        public AssetID Camera_AssetID
         {
             get => ReadUInt(0x8);
             set => Write(0x8, value);
         }
 
         [Category("Portal")]
-        public AssetID Destination_MRKR
+        public AssetID Destination_MRKR_AssetID
         {
             get => ReadUInt(0xC);
             set => Write(0xC, value);

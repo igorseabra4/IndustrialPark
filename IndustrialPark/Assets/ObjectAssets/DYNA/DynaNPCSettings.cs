@@ -13,74 +13,74 @@ namespace IndustrialPark
 
         public DynaNPCSettings(IEnumerable<byte> enumerable) : base (enumerable)
         {
-            Unknown1 = Switch(BitConverter.ToInt32(Data, 0x0));
-            Flags1 = Data[0x4];
-            Flags2 = Data[0x5];
-            Flags3 = Data[0x6];
-            Flags4 = Data[0x7];
-            Flags5 = Data[0x8];
-            Flags6 = Data[0x9];
-            Flags7 = Data[0xA];
-            Flags8 = Data[0xB];
-            Flags9 = Data[0xC];
-            Flags10 = Data[0xD];
-            Flags11 = Data[0xE];
-            Flags12 = Data[0xF];
-            Unknown2 = Switch(BitConverter.ToInt32(Data, 0x10));
-            DuploSpawnRate = Switch(BitConverter.ToSingle(Data, 0x14));
-            DuploEnemyLimit = Switch(BitConverter.ToInt32(Data, 0x18));
+            BasisType = Switch(BitConverter.ToInt32(Data, 0x0));
+            AllowDetect = Data[0x4];
+            AllowPatrol = Data[0x5];
+            AllowWander = Data[0x6];
+            ReduceCollide = Data[0x7];
+            UseNavSplines = Data[0x8];
+            Padding09 = Data[0x9];
+            Padding0A = Data[0xA];
+            Padding0B = Data[0xB];
+            AllowChase = Data[0xC];
+            AllowAttack = Data[0xD];
+            AssumeLOS = Data[0xE];
+            AssumeFOV = Data[0xF];
+            DuploWaveMode = Switch(BitConverter.ToInt32(Data, 0x10));
+            DuploSpawnDelay = Switch(BitConverter.ToSingle(Data, 0x14));
+            DuploSpawnLifeMax = Switch(BitConverter.ToInt32(Data, 0x18));
         }
 
         public override byte[] ToByteArray()
         {
             List<byte> list = new List<byte>();
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown1)));
-            list.Add(Flags1);
-            list.Add(Flags2);
-            list.Add(Flags3);
-            list.Add(Flags4);
-            list.Add(Flags5);
-            list.Add(Flags6);
-            list.Add(Flags7);
-            list.Add(Flags8);
-            list.Add(Flags9);
-            list.Add(Flags10);
-            list.Add(Flags11);
-            list.Add(Flags12);
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown2)));
-            list.AddRange(BitConverter.GetBytes(Switch(DuploSpawnRate)));
-            list.AddRange(BitConverter.GetBytes(Switch(DuploEnemyLimit)));
+            list.AddRange(BitConverter.GetBytes(Switch(BasisType)));
+            list.Add(AllowDetect);
+            list.Add(AllowPatrol);
+            list.Add(AllowWander);
+            list.Add(ReduceCollide);
+            list.Add(UseNavSplines);
+            list.Add(Padding09);
+            list.Add(Padding0A);
+            list.Add(Padding0B);
+            list.Add(AllowChase);
+            list.Add(AllowAttack);
+            list.Add(AssumeLOS);
+            list.Add(AssumeFOV);
+            list.AddRange(BitConverter.GetBytes(Switch(DuploWaveMode)));
+            list.AddRange(BitConverter.GetBytes(Switch(DuploSpawnDelay)));
+            list.AddRange(BitConverter.GetBytes(Switch(DuploSpawnLifeMax)));
             return list.ToArray();
         }
 
-        public int Unknown1 { get; set; }
+        public int BasisType { get; set; }
         [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flags1 { get; set; }
+        public byte AllowDetect { get; set; }
         [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flags2 { get; set; }
+        public byte AllowPatrol { get; set; }
         [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flags3 { get; set; }
+        public byte AllowWander { get; set; }
         [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flags4 { get; set; }
+        public byte ReduceCollide { get; set; }
         [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flags5 { get; set; }
+        public byte UseNavSplines { get; set; }
         [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flags6 { get; set; }
+        public byte Padding09 { get; set; }
         [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flags7 { get; set; }
+        public byte Padding0A { get; set; }
         [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flags8 { get; set; }
+        public byte Padding0B { get; set; }
         [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flags9 { get; set; }
+        public byte AllowChase { get; set; }
         [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flags10 { get; set; }
+        public byte AllowAttack { get; set; }
         [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flags11 { get; set; }
+        public byte AssumeLOS { get; set; }
         [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flags12 { get; set; }
-        public int Unknown2 { get; set; }
+        public byte AssumeFOV { get; set; }
+        public int DuploWaveMode { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float DuploSpawnRate { get; set; }
-        public int DuploEnemyLimit { get; set; }
+        public float DuploSpawnDelay { get; set; }
+        public int DuploSpawnLifeMax { get; set; }
     }
 }

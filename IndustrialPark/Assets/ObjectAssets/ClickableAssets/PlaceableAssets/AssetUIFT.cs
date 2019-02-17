@@ -25,17 +25,24 @@ namespace IndustrialPark
         }
 
         [Category("UIFont")]
-        public short UnknownShort_80
+        public short UIFontFlags
         {
             get => ReadShort(0x80 + Offset);
             set => Write(0x80 + Offset, value);
         }
 
         [Category("UIFont")]
-        public short UnknownShort_82
+        public byte UIFontMode
         {
-            get => ReadShort(0x82 + Offset);
+            get => ReadByte(0x82 + Offset);
             set => Write(0x82 + Offset, value);
+        }
+
+        [Category("UIFont")]
+        public byte FontID
+        {
+            get => ReadByte(0x83 + Offset);
+            set => Write(0x83 + Offset, value);
         }
 
         [Category("UIFont")]
@@ -94,63 +101,63 @@ namespace IndustrialPark
         }
 
         [Category("UIFont")]
-        public short UnknownShort_90
+        public short Inset_90
         {
             get => ReadShort(0x90 + Offset);
             set => Write(0x90 + Offset, value);
         }
 
         [Category("UIFont")]
-        public short UnknownShort_92
+        public short Inset_92
         {
             get => ReadShort(0x92 + Offset);
             set => Write(0x92 + Offset, value);
         }
 
         [Category("UIFont")]
-        public short UnknownShort_94
+        public short Inset_94
         {
             get => ReadShort(0x94 + Offset);
             set => Write(0x94 + Offset, value);
         }
 
         [Category("UIFont")]
-        public short UnknownShort_96
+        public short Inset_96
         {
             get => ReadShort(0x96 + Offset);
             set => Write(0x96 + Offset, value);
         }
 
         [Category("UIFont")]
-        public short UnknownShort_98
+        public short Space_98
         {
             get => ReadShort(0x98 + Offset);
             set => Write(0x98 + Offset, value);
         }
 
         [Category("UIFont")]
-        public short UnknownShort_9A
+        public short Space_9A
         {
             get => ReadShort(0x9A + Offset);
             set => Write(0x9A + Offset, value);
         }
 
         [Category("UIFont")]
-        public short UnknownShort_9C
+        public short Cdim_9C
         {
             get => ReadShort(0x9C + Offset);
             set => Write(0x9C + Offset, value);
         }
 
         [Category("UIFont")]
-        public short UnknownShort_9E
+        public short Cdim_9E
         {
             get => ReadShort(0x9E + Offset);
             set => Write(0x9E + Offset, value);
         }
 
         [Category("UIFont")]
-        public int UnknownInt_A0
+        public int MaxHeight
         {
             get => ReadInt(0xA0 + Offset);
             set => Write(0xA0 + Offset, value);

@@ -102,6 +102,7 @@
         Camera,
         Destructible_Generic,
         ElectricArc_Generic,
+        Pendulum_Generic,
         Platform_Generic,
         Player_Generic,
         SIMP_Generic,

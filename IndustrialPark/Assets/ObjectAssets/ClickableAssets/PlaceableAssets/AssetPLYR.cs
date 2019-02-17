@@ -18,7 +18,7 @@ namespace IndustrialPark
 
         public override bool HasReference(uint assetID)
         {
-            if (LightKitID == assetID)
+            if (LightKit_AssetID == assetID)
                 return true;
 
             return base.HasReference(assetID);
@@ -53,7 +53,7 @@ namespace IndustrialPark
         }
 
         [Category("Player References")]
-        public AssetID LightKitID
+        public AssetID LightKit_AssetID
         {
             get => ReadUInt(EventStartOffset + AmountOfEvents * AssetEvent.sizeOfStruct);
             set => Write(EventStartOffset + AmountOfEvents * AssetEvent.sizeOfStruct, value);

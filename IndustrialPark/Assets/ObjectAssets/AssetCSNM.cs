@@ -25,14 +25,14 @@ namespace IndustrialPark
         }
 
         [Category("Cutscene Manager")]
-        public int UnknownInt0C
+        public int CsnmFlags
         {
             get => ReadInt(0xC);
             set => Write(0xC, value);
         }
 
         [Category("Cutscene Manager")]
-        public int UnknownInt10
+        public int InterpSpeed
         {
             get => ReadInt(0x10);
             set => Write(0x10, value);

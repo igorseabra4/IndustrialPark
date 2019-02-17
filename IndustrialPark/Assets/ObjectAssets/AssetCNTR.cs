@@ -17,7 +17,7 @@ namespace IndustrialPark
         }
 
         [Category("Counter")]
-        public short Unknown
+        public short Padding
         {
             get => ReadShort(0xA);
             set => Write(0xA, value);

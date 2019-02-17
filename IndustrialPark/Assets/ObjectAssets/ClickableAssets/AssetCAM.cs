@@ -197,68 +197,68 @@ namespace IndustrialPark
             get => ReadFloat(0x34);
             set => Write(0x34, value);
         }
-        [Category("Camera")]
-        public int UnknownInt38
+        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
+        public float ViewOffsetX
         {
-            get => ReadInt(0x38);
+            get => ReadFloat(0x38);
             set => Write(0x38, value);
         }
-        [Category("Camera")]
-        public int UnknownInt3C
+        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
+        public int ViewOffsetY
         {
             get => ReadInt(0x3C);
             set => Write(0x3C, value);
         }
-        [Category("Camera")]
-        public int UnknownInt40
+        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
+        public int ViewOffsetZ
         {
             get => ReadInt(0x40);
             set => Write(0x40, value);
         }
         [Category("Camera")]
-        public short UnknownShort44
+        public short OffsetStartFrames
         {
             get => ReadShort(0x44);
             set => Write(0x44, value);
         }
         [Category("Camera")]
-        public short UnknownShort46
+        public short OffsetEndFrames
         {
             get => ReadShort(0x46);
             set => Write(0x46, value);
         }
         [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
-        public float CameraSpeed
+        public float FieldOfView
         {
             get => ReadFloat(0x48);
             set => Write(0x48, value);
         }
         [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat4C
+        public float TransitionTime
         {
             get => ReadFloat(0x4C);
             set => Write(0x4C, value);
         }
         [Category("Camera")]
-        public int UnknownInt50
+        public int TransitionType
         {
             get => ReadInt(0x50);
             set => Write(0x50, value);
         }
-        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat54
+        [Category("Camera")]
+        public uint CamFlags
         {
-            get => ReadFloat(0x54);
+            get => ReadUInt(0x54);
             set => Write(0x54, value);
         }
         [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat58
+        public float FadeUp
         {
             get => ReadFloat(0x58);
             set => Write(0x58, value);
         }
         [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat5C
+        public float FadeDown
         {
             get => ReadFloat(0x5C);
             set => Write(0x5C, value);
@@ -323,10 +323,10 @@ namespace IndustrialPark
             get => ReadByte(0x7B);
             set => Write(0x7B, value);
         }
-        [Category("Camera"), TypeConverter(typeof(HexIntTypeConverter))]
-        public int UnknownInt7C
+        [Category("Camera")]
+        public AssetID MarkerAssetId
         {
-            get => ReadInt(0x7C);
+            get => ReadUInt(0x7C);
             set => Write(0x7C, value);
         }
         [Category("Camera"), TypeConverter(typeof(HexIntTypeConverter))]
@@ -335,11 +335,29 @@ namespace IndustrialPark
             get => ReadInt(0x80);
             set => Write(0x80, value);
         }
-        [Category("Camera"), TypeConverter(typeof(HexIntTypeConverter))]
-        public int UnknownInt84
+        [Category("Camera")]
+        public byte CamType
         {
-            get => ReadInt(0x84);
+            get => ReadByte(0x84);
             set => Write(0x84, value);
+        }
+        [Category("Camera")]
+        public byte Padding85
+        {
+            get => ReadByte(0x85);
+            set => Write(0x85, value);
+        }
+        [Category("Camera")]
+        public byte Padding86
+        {
+            get => ReadByte(0x86);
+            set => Write(0x86, value);
+        }
+        [Category("Camera")]
+        public byte Padding87
+        {
+            get => ReadByte(0x87);
+            set => Write(0x87, value);
         }
 
         public void SetPosition(Vector3 position)

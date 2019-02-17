@@ -128,7 +128,7 @@ namespace IndustrialPark
         }
 
         [Category("Dynamic")]
-        public short Unknown
+        public short Handle
         {
             get => ReadShort(0xE);
             set => Write(0xE, value);

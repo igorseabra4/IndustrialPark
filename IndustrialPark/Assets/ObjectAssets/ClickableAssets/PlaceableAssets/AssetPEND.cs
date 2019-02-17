@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using SharpDX;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -56,10 +57,17 @@ namespace IndustrialPark
         }
 
         [Category("Pendulum"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Steepness
+        public float SteepnessRad
         {
             get => ReadFloat(0x60 + Offset);
             set => Write(0x60 + Offset, value);
+        }
+
+        [Category("Pendulum"), TypeConverter(typeof(FloatTypeConverter))]
+        public float SteepnessDeg
+        {
+            get => MathUtil.RadiansToDegrees(ReadFloat(0x60 + Offset));
+            set => Write(0x60 + Offset, MathUtil.DegreesToRadians(value));
         }
 
         [Category("Pendulum"), TypeConverter(typeof(FloatTypeConverter))]
@@ -69,11 +77,18 @@ namespace IndustrialPark
             set => Write(0x64 + Offset, value);
         }
 
-        [Category("Pendulum")]
-        public int UnknownInt68
+        [Category("Pendulum"), TypeConverter(typeof(FloatTypeConverter))]
+        public float UnknownFloat68Rad
         {
-            get => ReadInt(0x68 + Offset);
+            get => ReadFloat(0x68 + Offset);
             set => Write(0x68 + Offset, value);
+        }
+
+        [Category("Pendulum"), TypeConverter(typeof(FloatTypeConverter))]
+        public float UnknownFloat68Deg
+        {
+            get => MathUtil.RadiansToDegrees(ReadFloat(0x68 + Offset));
+            set => Write(0x68 + Offset, MathUtil.DegreesToRadians(value));
         }
 
         [Category("Pendulum")]

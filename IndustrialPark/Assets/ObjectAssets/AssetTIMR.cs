@@ -18,7 +18,7 @@ namespace IndustrialPark
         }
 
         [Category("Timer"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Unknown
+        public float RandomRange
         {
             get => BitConverter.ToSingle(AHDR.data, 0xC);
             set

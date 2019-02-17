@@ -1108,9 +1108,11 @@ namespace IndustrialPark
                 new ToolStripMenuItem(AssetTemplate.Button_Generic.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Destructible_Generic.ToString()),
                 new ToolStripMenuItem(AssetTemplate.ElectricArc_Generic.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Pendulum_Generic.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Platform_Generic.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Player_Generic.ToString()),
                 new ToolStripMenuItem(AssetTemplate.SIMP_Generic.ToString()),
+                new ToolStripMenuItem(AssetTemplate.VIL_Generic.ToString()),
             });
             foreach (ToolStripItem i in placeable.DropDownItems)
                 if (i is ToolStripMenuItem j)

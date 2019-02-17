@@ -34,7 +34,7 @@ namespace IndustrialPark
             Player = Switch(BitConverter.ToInt32(Data, 0x4));
             CAM_ID = Switch(BitConverter.ToUInt32(Data, 0x8));
             SIMP_ID = Switch(BitConverter.ToUInt32(Data, 0xC));
-            CharacterSwitchTimer = Switch(BitConverter.ToSingle(Data, 0x10));
+            Delay = Switch(BitConverter.ToSingle(Data, 0x10));
         }
 
         public override byte[] ToByteArray()
@@ -44,7 +44,7 @@ namespace IndustrialPark
             list.AddRange(BitConverter.GetBytes(Switch(Player)));
             list.AddRange(BitConverter.GetBytes(Switch(CAM_ID)));
             list.AddRange(BitConverter.GetBytes(Switch(SIMP_ID)));
-            list.AddRange(BitConverter.GetBytes(Switch(CharacterSwitchTimer)));
+            list.AddRange(BitConverter.GetBytes(Switch(Delay)));
             return list.ToArray();
         }
 
@@ -53,6 +53,6 @@ namespace IndustrialPark
         public AssetID CAM_ID { get; set; }
         public AssetID SIMP_ID { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float CharacterSwitchTimer { get; set; }
+        public float Delay { get; set; }
     }
 }

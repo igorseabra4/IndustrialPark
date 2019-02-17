@@ -177,24 +177,16 @@ namespace IndustrialPark
         }
 
         [Category("Move Point")]
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flag14
+        [TypeConverter(typeof(HexShortTypeConverter))]
+        public short Wt
         {
-            get => ReadByte(0x14);
+            get => ReadShort(0x14);
             set => Write(0x14, value);
         }
-
+        
         [Category("Move Point")]
         [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flag15
-        {
-            get => ReadByte(0x15);
-            set => Write(0x15, value);
-        }
-
-        [Category("Move Point")]
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flag16
+        public byte On
         {
             get => ReadByte(0x16);
             set => Write(0x16, value);
@@ -202,29 +194,45 @@ namespace IndustrialPark
 
         [Category("Move Point")]
         [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flag17
+        public byte BezIndex
         {
             get => ReadByte(0x17);
             set => Write(0x17, value);
         }
 
         [Category("Move Point")]
-        [ReadOnly(true)]
-        public int SiblingAmount
+        [TypeConverter(typeof(HexByteTypeConverter))]
+        public byte Flg_Props
         {
-            get => ReadInt(0x18);
+            get => ReadByte(0x18);
+            set => Write(0x18, value);
+        }
+
+        [Category("Move Point")]
+        [TypeConverter(typeof(HexByteTypeConverter))]
+        public byte Padding19
+        {
+            get => ReadByte(0x19);
+            set => Write(0x19, value);
+        }
+
+        [Category("Move Point")]
+        [ReadOnly(true)]
+        public short SiblingAmount
+        {
+            get => ReadShort(0x1A);
             set => Write(0x18, value);
         }
 
         [Category("Move Point"), TypeConverter(typeof(FloatTypeConverter))]
-        public float MovementAngle
+        public float Delay
         {
             get => ReadFloat(0x1C);
             set => Write(0x1C, value);
         }
 
         [Category("Move Point"), TypeConverter(typeof(FloatTypeConverter))]
-        public float MovementRadius
+        public float ZoneRadius
         {
             get => ReadFloat(0x20);
             set => Write(0x20, value);
@@ -232,7 +240,7 @@ namespace IndustrialPark
 
         private float _distanceICanSeeYou;
         [Category("Move Point"), TypeConverter(typeof(FloatTypeConverter))]
-        public float DistanceICanSeeYou
+        public float ArenaRadius
         {
             get => _distanceICanSeeYou;
             set
@@ -278,27 +286,27 @@ namespace IndustrialPark
                 
                 Data = newData.ToArray();
 
-                SiblingAmount = value.Length;
+                SiblingAmount = (short)value.Length;
             }
         }
 
         [Browsable(false)]
         public float ScaleX
         {
-            get => DistanceICanSeeYou;
-            set => DistanceICanSeeYou = value;
+            get => ArenaRadius;
+            set => ArenaRadius = value;
         }
         [Browsable(false)]
         public float ScaleY
         {
-            get => DistanceICanSeeYou;
-            set => DistanceICanSeeYou = value;
+            get => ArenaRadius;
+            set => ArenaRadius = value;
         }
         [Browsable(false)]
         public float ScaleZ
         {
-            get => DistanceICanSeeYou;
-            set => DistanceICanSeeYou = value;
+            get => ArenaRadius;
+            set => ArenaRadius = value;
         }
     }
 }

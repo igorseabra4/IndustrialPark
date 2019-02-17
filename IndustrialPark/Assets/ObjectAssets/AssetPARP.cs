@@ -180,14 +180,14 @@ namespace IndustrialPark
         }
 
         [Category("Particle Properties")]
-        public int UnknownInt130
+        public int Emit_Limit
         {
             get => ReadInt(0x130);
             set => Write(0x130, value);
         }
 
         [Category("Particle Properties")]
-        public int UnknownFloat134
+        public int Emit_limit_reset_time
         {
             get => ReadInt(0x134);
             set => Write(0x134, value);

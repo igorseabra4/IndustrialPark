@@ -151,11 +151,11 @@ namespace IndustrialPark
 
         public override bool HasReference(uint assetID)
         {
-            if (SurfaceAssetID == assetID)
+            if (Surface_AssetID == assetID)
                 return true;
-            if (ModelAssetID == assetID)
+            if (Model_AssetID == assetID)
                 return true;
-            if (ReferenceAssetID == assetID)
+            if (Animation_AssetID == assetID)
                 return true;
 
             return base.HasReference(assetID);
@@ -186,21 +186,21 @@ namespace IndustrialPark
         public byte TypeFlag
         {
             get => ReadByte(0x9);
-            set { Write(0x9, value); }
+            set => Write(0x9, value);
         }
 
         [Category("Placement Flags"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte UnknownFlag0A
         {
             get => ReadByte(0xA);
-            set { Write(0xA, value); }
+            set => Write(0xA, value);
         }
 
         [Category("Placement Flags"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte SolidityFlag
         {
             get => ReadByte(0xB);
-            set { Write(0xB, value); }
+            set => Write(0xB, value);
         }
 
         [Category("Placement Flags")]
@@ -211,17 +211,17 @@ namespace IndustrialPark
         }
 
         [Category("Placement")]
-        public int UnknownIntC
+        public int PaddingC
         {
             get => ReadInt(0xC);
-            set { Write(0xC, value); }
+            set => Write(0xC, value);
         }
 
         [Category("Placement References")]
-        public AssetID SurfaceAssetID
+        public AssetID Surface_AssetID
         {
             get => ReadUInt(0x10 + Offset);
-            set { Write(0x10 + Offset, value); }
+            set => Write(0x10 + Offset, value);
         }
         
         public Vector3 _position;
@@ -409,7 +409,7 @@ namespace IndustrialPark
         }
 
         [Category("Placement")]
-        public float UnknownFloat48
+        public float ColorAlphaSpeed
         {
             get => ReadFloat(0x48 + Offset);
             set { Write(0x48 + Offset, value); }
@@ -417,7 +417,7 @@ namespace IndustrialPark
 
         protected uint _modelAssetID;
         [Category("Placement References")]
-        public AssetID ModelAssetID
+        public AssetID Model_AssetID
         {
             get => _modelAssetID;
             set
@@ -428,7 +428,7 @@ namespace IndustrialPark
         }
 
         [Category("Placement References")]
-        public virtual AssetID ReferenceAssetID
+        public virtual AssetID Animation_AssetID
         {
             get => ReadUInt(0x50 + Offset);
             set { Write(0x50 + Offset, value); }

@@ -111,14 +111,14 @@ namespace IndustrialPark
         }
 
         [Browsable(false)]
-        public override AssetID ReferenceAssetID
+        public override AssetID Animation_AssetID
         {
             get { return ReadUInt(0x50 + Offset); }
             set { Write(0x50 + Offset, value); }
         }
 
         [Category("UserInterface")]
-        public AssetID SoundAssetID
+        public AssetID Sound_AssetID
         {
             get { return ReadUInt(0x50 + Offset); }
             set { Write(0x50 + Offset, value); }
@@ -132,7 +132,7 @@ namespace IndustrialPark
         }
 
         [Category("UserInterface")]
-        public int UnknownInt_54
+        public int UIFlags
         {
             get => ReadInt(0x54 + Offset);
             set => Write(0x54 + Offset, value);

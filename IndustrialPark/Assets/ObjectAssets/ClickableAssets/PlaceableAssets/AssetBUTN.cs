@@ -15,48 +15,48 @@ namespace IndustrialPark
         
         public override bool HasReference(uint assetID)
         {
-            if (PressedModelAssetID == assetID)
+            if (PressedModel_AssetID == assetID)
                 return true;
 
             return base.HasReference(assetID);
         }
 
         [Category("Button")]
-        public AssetID PressedModelAssetID
+        public AssetID PressedModel_AssetID
         {
             get => ReadUInt(0x54 + Offset);
             set => Write(0x54 + Offset, value);
         }
 
-        public enum ButnHitMode
+        public enum ButnActMethod
         {
             Button = 0,
             PressurePlate = 1
         }
 
         [Category("Button")]
-        public ButnHitMode ButtonType
+        public ButnActMethod ActMethod
         {
-            get => (ButnHitMode)ReadInt(0x58 + Offset);
+            get => (ButnActMethod)ReadInt(0x58 + Offset);
             set => Write(0x58 + Offset, (int)value);
         }
 
         [Category("Button")]
-        public int UnknownInt5C
+        public int InitialButtonState
         {
             get => ReadInt(0x5C + Offset);
             set => Write(0x5C + Offset, value);
         }
 
         [Category("Button")]
-        public bool HoldEnabled
+        public bool ResetAfterDelay
         {
             get => ReadInt(0x60 + Offset) != 0;
             set => Write(0x60 + Offset, value ? 1 : 0);
         }
 
         [Category("Button"), TypeConverter(typeof(FloatTypeConverter))]
-        public float HoldTime
+        public float ResetDelay
         {
             get => ReadFloat(0x64 + Offset);
             set => Write(0x64 + Offset, value);

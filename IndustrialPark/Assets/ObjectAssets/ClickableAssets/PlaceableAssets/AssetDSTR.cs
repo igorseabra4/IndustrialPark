@@ -15,150 +15,129 @@ namespace IndustrialPark
 
         public override bool HasReference(uint assetID)
         {
-            if (SHRP_AssetID1 == assetID)
+            if (DestroyShrapnel_AssetID == assetID)
                 return true;
-            if (SHRP_AssetID2 == assetID)
+            if (HitShrapnel_AssetID == assetID)
                 return true;
-            if (SFX_AssetID1 == assetID)
+            if (DestroySFX_AssetID == assetID)
                 return true;
-            if (SFX_AssetID2 == assetID)
+            if (HitSFX_AssetID == assetID)
                 return true;
-            if (DestroyedModelAssetID1 == assetID)
+            if (HitModel_AssetID == assetID)
                 return true;
-            if (DestroyedModelAssetID2 == assetID)
+            if (DestroyModel_AssetID == assetID)
                 return true;
 
             return base.HasReference(assetID);
         }
-
-        [Browsable(false)]
-        public override AssetID ReferenceAssetID
-        {
-            get { return ReadUInt(0x50 + Offset); }
-            set { Write(0x50 + Offset, value); }
-        }
-
+        
         [Category("Destructable")]
-        public AssetID AnimationAssetID
-        {
-            get { return ReadUInt(0x50 + Offset); }
-            set { Write(0x50 + Offset, value); }
-        }
-
-        [Category("Destructable")]
-        public int UnknownInt54
+        public int AnimationSpeed
         {
             get => ReadInt(0x54 + Offset);
             set => Write(0x54 + Offset, value);
         }
 
         [Category("Destructable")]
-        public int UnknownInt58
+        public int InitialAnimationState
         {
             get => ReadInt(0x58 + Offset);
             set => Write(0x58 + Offset, value);
         }
 
         [Category("Destructable")]
-        public int UnknownInt5C
+        public int Health
         {
             get => ReadInt(0x5C + Offset);
             set => Write(0x5C + Offset, value);
         }
 
         [Category("Destructable")]
-        public int UnknownInt60
+        public AssetID SpawnItemAssetID
         {
-            get => ReadInt(0x60 + Offset);
+            get => ReadUInt(0x60 + Offset);
             set => Write(0x60 + Offset, value);
         }
 
         [Category("Destructable")]
-        public int UnknownInt64_MaybeHitMask
+        public int MaybeHitMask
         {
             get => ReadInt(0x64 + Offset);
             set => Write(0x64 + Offset, value);
         }
 
         [Category("Destructable")]
-        public byte UnknownByte68
+        public byte CollType
         {
             get => ReadByte(0x68 + Offset);
             set => Write(0x68 + Offset, value);
         }
 
         [Category("Destructable")]
-        public byte UnknownByte69
+        public byte FxType
         {
             get => ReadByte(0x69 + Offset);
             set => Write(0x69 + Offset, value);
         }
 
         [Category("Destructable")]
-        public byte UnknownByte6A
+        public short Padding6A
         {
-            get => ReadByte(0x6A + Offset);
+            get => ReadShort(0x6A + Offset);
             set => Write(0x6A + Offset, value);
         }
-
-        [Category("Destructable")]
-        public byte UnknownByte6B
-        {
-            get => ReadByte(0x6B + Offset);
-            set => Write(0x6B + Offset, value);
-        }
-
+        
         [Category("Destructable"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat6C
+        public float BlastRadius
         {
             get => ReadFloat(0x6C);
             set => Write(0x6C, value);
         }
 
         [Category("Destructable"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat70
+        public float BlastStrength
         {
             get => ReadFloat(0x70);
             set => Write(0x70, value);
         }
 
         [Category("Destructable")]
-        public AssetID SHRP_AssetID1
+        public AssetID DestroyShrapnel_AssetID
         {
             get => ReadUInt(0x74);
             set => Write(0x74, value);
         }
 
         [Category("Destructable")]
-        public AssetID SHRP_AssetID2
+        public AssetID HitShrapnel_AssetID
         {
             get => ReadUInt(0x78 + Offset);
             set => Write(0x78 + Offset, value);
         }
 
         [Category("Destructable")]
-        public AssetID SFX_AssetID1
+        public AssetID DestroySFX_AssetID
         {
             get => ReadUInt(0x7C + Offset);
             set => Write(0x7C + Offset, value);
         }
 
         [Category("Destructable")]
-        public AssetID SFX_AssetID2
+        public AssetID HitSFX_AssetID
         {
             get => ReadUInt(0x80 + Offset);
             set => Write(0x80 + Offset, value);
         }
 
         [Category("Destructable")]
-        public AssetID DestroyedModelAssetID1
+        public AssetID HitModel_AssetID
         {
             get => ReadUInt(0x84 + Offset);
             set => Write(0x84 + Offset, value);
         }
 
         [Category("Destructable")]
-        public AssetID DestroyedModelAssetID2
+        public AssetID DestroyModel_AssetID
         {
             get => ReadUInt(0x88 + Offset);
             set => Write(0x88 + Offset, value);

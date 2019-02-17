@@ -254,20 +254,6 @@ namespace IndustrialPark
                 renderer.DrawCube(LocalWorld(), isSelected);
         }
 
-        [Browsable(false)]
-        public override AssetID ReferenceAssetID
-        {
-            get { return ReadUInt(0x50 + Offset); }
-            set { Write(0x50 + Offset, value); }
-        }
-
-        [Category("Platform")]
-        public AssetID AnimationAssetID
-        {
-            get { return ReadUInt(0x50 + Offset); }
-            set { Write(0x50 + Offset, value); }
-        }
-
         [Category("Platform")]
         public PlatType PlatformType
         {

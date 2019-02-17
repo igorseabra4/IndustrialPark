@@ -13,28 +13,28 @@ namespace IndustrialPark
 
         public DynaCamTweak(IEnumerable<byte> enumerable) : base (enumerable)
         {
-            UnknownInt = Switch(BitConverter.ToInt32(Data, 0x0));
-            UnknownFloat1 = Switch(BitConverter.ToSingle(Data, 0x04));
-            UnknownFloat2 = Switch(BitConverter.ToSingle(Data, 0x08));
-            UnknownFloat3 = Switch(BitConverter.ToSingle(Data, 0x0C));
+            Priority = Switch(BitConverter.ToInt32(Data, 0x0));
+            Time = Switch(BitConverter.ToSingle(Data, 0x04));
+            PitchAdjust = Switch(BitConverter.ToSingle(Data, 0x08));
+            DistAdjust = Switch(BitConverter.ToSingle(Data, 0x0C));
         }
 
         public override byte[] ToByteArray()
         {
             List<byte> list = new List<byte>();
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownInt)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat1)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat2)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat3)));
+            list.AddRange(BitConverter.GetBytes(Switch(Priority)));
+            list.AddRange(BitConverter.GetBytes(Switch(Time)));
+            list.AddRange(BitConverter.GetBytes(Switch(PitchAdjust)));
+            list.AddRange(BitConverter.GetBytes(Switch(DistAdjust)));
             return list.ToArray();
         }
 
-        public int UnknownInt { get; set; }
+        public int Priority { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat1 { get; set; }
+        public float Time { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat2 { get; set; }
+        public float PitchAdjust { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat3 { get; set; }
+        public float DistAdjust { get; set; }
     }
 }

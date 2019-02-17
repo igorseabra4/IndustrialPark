@@ -12,40 +12,47 @@ namespace IndustrialPark
         protected override int EventStartOffset => 0x60 + Offset;
 
         public AssetSIMP(Section_AHDR AHDR) : base(AHDR) { }
-
-        [Browsable(false)]
-        public override AssetID ReferenceAssetID
-        {
-            get { return ReadUInt(0x50 + Offset); }
-            set { Write(0x50 + Offset, value); }
-        }
-
-        [Category("Simple Object")]
-        public AssetID AnimationAssetID
-        {
-            get { return ReadUInt(0x50 + Offset); }
-            set { Write(0x50 + Offset, value); }
-        }
-
+        
         [Category("Simple Object"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_54
+        public float AnimSpeed
         {
             get => ReadFloat(0x54 + Offset);
             set => Write(0x54 + Offset, value);
         }
 
         [Category("Simple Object")]
-        public int Unknown_58
+        public int InitialAnimState
         {
             get => ReadInt(0x58 + Offset);
             set => Write(0x58 + Offset, value);
         }
 
-        [Category("Simple Object"), TypeConverter(typeof(HexIntTypeConverter))]
-        public int Unknown_5C
+        [Category("Simple Object"), TypeConverter(typeof(HexByteTypeConverter))]
+        public byte CollType
         {
-            get => ReadInt(0x5C + Offset);
+            get => ReadByte(0x5C + Offset);
             set => Write(0x5C + Offset, value);
+        }
+
+        [Category("Simple Object"), TypeConverter(typeof(HexByteTypeConverter))]
+        public byte SimpFlags
+        {
+            get => ReadByte(0x5D + Offset);
+            set => Write(0x5D + Offset, value);
+        }
+
+        [Category("Simple Object"), TypeConverter(typeof(HexByteTypeConverter))]
+        public byte Padding5E
+        {
+            get => ReadByte(0x5E + Offset);
+            set => Write(0x5E + Offset, value);
+        }
+
+        [Category("Simple Object"), TypeConverter(typeof(HexByteTypeConverter))]
+        public byte Padding5F
+        {
+            get => ReadByte(0x5F + Offset);
+            set => Write(0x5F + Offset, value);
         }
     }
 }

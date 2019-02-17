@@ -400,6 +400,9 @@
     <None Include="Resources\Templates\BFBB\MVPT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Resources\Templates\BFBB\PEND">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\Templates\BFBB\PIPT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

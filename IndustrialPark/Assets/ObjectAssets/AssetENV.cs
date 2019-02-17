@@ -12,120 +12,130 @@ namespace IndustrialPark
 
         public override bool HasReference(uint assetID)
         {
-            if (JSP_AssetID == assetID)
+            if (BSP_AssetID == assetID)
                 return true;
-            if (CAM_AssetID == assetID)
+            if (StartCameraAssetID == assetID)
                 return true;
-            if (LKIT_AssetID_0 == assetID)
+            if (BSP_LKIT_AssetID == assetID)
                 return true;
-            if (LKIT_AssetID_1 == assetID)
+            if (Object_LKIT_AssetID == assetID)
                 return true;
-            if (MAPR_AssetID == assetID)
+            if (BSP_Collision_AssetID == assetID)
+                return true;
+            if (BSP_FX_AssetID == assetID)
+                return true;
+            if (BSP_Camera_AssetID == assetID)
+                return true;
+            if (BSP_MAPR_AssetID == assetID)
+                return true;
+            if (BSP_MAPR_Collision_AssetID == assetID)
+                return true;
+            if (BSP_MAPR_FX_AssetID == assetID)
                 return true;
 
             return base.HasReference(assetID);
         }
 
         [Category("Environment")]
-        public AssetID JSP_AssetID
+        public AssetID BSP_AssetID
         {
             get => ReadUInt(0x8);
             set => Write(0x8, value);
         }
 
         [Category("Environment")]
-        public AssetID CAM_AssetID
+        public AssetID StartCameraAssetID
         {
             get => ReadUInt(0xC);
             set => Write(0xC, value);
         }
 
         [Category("Environment")]
-        public int UnknownInt10
+        public int ClimateFlags
         {
             get => ReadInt(0x10);
             set => Write(0x10, value);
         }
 
         [Category("Environment"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat14
+        public float ClimateStrengthMin
         {
             get => ReadFloat(0x14);
             set => Write(0x14, value);
         }
 
         [Category("Environment"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat18
+        public float ClimateStrengthMax
         {
             get => ReadFloat(0x18);
             set => Write(0x18, value);
         }
 
         [Category("Environment")]
-        public AssetID LKIT_AssetID_0
+        public AssetID BSP_LKIT_AssetID
         {
             get => ReadUInt(0x1C);
             set => Write(0x1C, value);
         }
 
         [Category("Environment")]
-        public AssetID LKIT_AssetID_1
+        public AssetID Object_LKIT_AssetID
         {
             get => ReadUInt(0x20);
             set => Write(0x20, value);
         }
 
         [Category("Environment")]
-        public int UnknownInt24
+        public int Padding24
         {
             get => ReadInt(0x24);
             set => Write(0x24, value);
         }
 
         [Category("Environment")]
-        public int UnknownInt28
+        public AssetID BSP_Collision_AssetID
         {
-            get => ReadInt(0x28);
+            get => ReadUInt(0x28);
             set => Write(0x28, value);
-        }
-
+        }	
+	
         [Category("Environment")]
-        public int UnknownInt2C
+        public AssetID BSP_FX_AssetID 	
         {
-            get => ReadInt(0x2C);
+            get => ReadUInt(0x2C);
             set => Write(0x2C, value);
         }
 
         [Category("Environment")]
-        public int UnknownInt30
+        public AssetID BSP_Camera_AssetID
         {
-            get => ReadInt(0x30);
+            get => ReadUInt(0x30);
             set => Write(0x30, value);
         }
 
         [Category("Environment")]
-        public AssetID MAPR_AssetID
+        public AssetID BSP_MAPR_AssetID
         {
             get => ReadUInt(0x34);
             set => Write(0x34, value);
         }
 
         [Category("Environment")]
-        public int UnknownInt38
+        public AssetID BSP_MAPR_Collision_AssetID
         {
-            get => ReadInt(0x38);
+            get => ReadUInt(0x38);
             set => Write(0x38, value);
         }
 
         [Category("Environment")]
-        public int UnknownInt3C
+        public AssetID BSP_MAPR_FX_AssetID
         {
-            get => ReadInt(0x3C);
+            get => ReadUInt(0x3C);
             set => Write(0x3C, value);
         }
 
         [Category("Environment"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat40
+        public float LoldHeight
         {
             get => BitConverter.ToSingle(AHDR.data, 0x40);
             set

@@ -752,15 +752,15 @@ namespace IndustrialPark
 
                     if (a is AssetMVPT MVPT)
                     {
-                        if (MVPT.MovementRadius != -1)
-                            MVPT.MovementRadius *= singleFactor;
-                        if (MVPT.DistanceICanSeeYou != -1)
-                            MVPT.DistanceICanSeeYou *= singleFactor;
+                        if (MVPT.ZoneRadius != -1)
+                            MVPT.ZoneRadius *= singleFactor;
+                        if (MVPT.ArenaRadius != -1)
+                            MVPT.ArenaRadius *= singleFactor;
                     }
                     else if (a is AssetSFX SFX)
                     {
-                        SFX.RadiusMax *= singleFactor;
-                        SFX.RadiusMin *= singleFactor;
+                        SFX.OuterRadius *= singleFactor;
+                        SFX.InnerRadius *= singleFactor;
                     }
                     else if (a is PlaceableAsset placeable && !(a is AssetPLYR || a is AssetPKUP || a is AssetUI || a is AssetUIFT || a is AssetVIL || (a is AssetDYNA DYNA && DYNA.Type == DynaType.game_object__Teleport)))
                     {

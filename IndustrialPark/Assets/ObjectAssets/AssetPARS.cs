@@ -14,21 +14,23 @@ namespace IndustrialPark
         {
             if (TextureAssetID == assetID)
                 return true;
+            if (PARS_AssetID == assetID)
+                return true;
             
             return base.HasReference(assetID);
         }
 
         [Category("Particle System")]
-        public int Unknown08
+        public int PARS_Type
         {
             get => ReadInt(0x8);
             set => Write(0x8, value);
         }
 
         [Category("Particle System")]
-        public int Unknown0C
+        public AssetID PARS_AssetID
         {
-            get => ReadInt(0xC);
+            get => ReadUInt(0xC);
             set => Write(0xC, value);
         }
 
@@ -40,76 +42,69 @@ namespace IndustrialPark
         }
 
         [Category("Particle System")]
-        public byte UnknownByte14
+        public byte ParsFlags
         {
             get => ReadByte(0x14);
             set => Write(0x14, value);
         }
 
         [Category("Particle System")]
-        public byte UnknownByte15
+        public byte Priority
         {
             get => ReadByte(0x15);
             set => Write(0x15, value);
         }
 
         [Category("Particle System")]
-        public byte UnknownByte16
+        public short MaxParticles
         {
-            get => ReadByte(0x16);
+            get => ReadShort(0x16);
             set => Write(0x16, value);
         }
-
+        
         [Category("Particle System")]
-        public byte UnknownByte17
-        {
-            get => ReadByte(0x17);
-            set => Write(0x17, value);
-        }
-
-        [Category("Particle System")]
-        public byte UnknownByte18
+        public byte RenderFunction
         {
             get => ReadByte(0x18);
             set => Write(0x18, value);
         }
 
         [Category("Particle System")]
-        public byte UnknownByte19
+        public byte RenderSourceBlendMode
         {
             get => ReadByte(0x19);
             set => Write(0x19, value);
         }
 
         [Category("Particle System")]
-        public byte UnknownByte1A
+        public byte RenderDestBlendMode
         {
             get => ReadByte(0x1A);
             set => Write(0x1A, value);
         }
 
         [Category("Particle System")]
-        public byte UnknownByte1B
+        public byte CmdCount
         {
             get => ReadByte(0x1B);
             set => Write(0x1B, value);
         }
 
         [Category("Particle System"), ReadOnly(true)]
-        public int SizeOfStruct
+        public int CmdSize
         {
             get => ReadInt(0x1C);
             set => Write(0x1C, value);
         }
 
         [Category("Particle System")]
-        public AssetID[] Struct
+        public AssetID[] Cmd
         {
             get
             {
                 List<AssetID> list = new List<AssetID>();
 
-                for (int i = 0x20; i < 0x20 + SizeOfStruct; i += 4)
+                for (int i = 0x20; i < 0x20 + CmdSize; i += 4)
                     list.Add(ReadUInt(i));
 
                 return list.ToArray();
@@ -121,10 +116,10 @@ namespace IndustrialPark
                 foreach (AssetID a in value)
                     before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(a)));
 
-                before.AddRange(Data.Skip(0x20 + SizeOfStruct));
+                before.AddRange(Data.Skip(0x20 + CmdSize));
                 Data = before.ToArray();
 
-                SizeOfStruct = value.Length * 4;
+                CmdSize = value.Length * 4;
             }
         }
     }

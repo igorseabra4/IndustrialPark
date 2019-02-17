@@ -15,42 +15,42 @@ namespace IndustrialPark
 
         public override bool HasReference(uint assetID)
         {
-            if (UnknownAssetID_68 == assetID)
+            if (OnAnim_AssetID == assetID)
                 return true;
 
             return base.HasReference(assetID);
         }
 
         [Category("Electric Arc")]
-        public int UnknownInt54
+        public float Src_dpos_X
         {
-            get => ReadInt(0x54 + Offset);
+            get => ReadFloat(0x54 + Offset);
             set => Write(0x54 + Offset, value);
         }
 
         [Category("Electric Arc")]
-        public int UnknownInt58
+        public float Src_dpos_Y
         {
-            get => ReadInt(0x58 + Offset);
+            get => ReadFloat(0x58 + Offset);
             set => Write(0x58 + Offset, value);
         }
 
         [Category("Electric Arc")]
-        public int UnknownInt5C
+        public float Src_dpos_Z
         {
-            get => ReadInt(0x5C + Offset);
+            get => ReadFloat(0x5C + Offset);
             set => Write(0x5C + Offset, value);
         }
 
         [Category("Electric Arc")]
-        public byte UnknownByte60
+        public byte DamageType
         {
             get => ReadByte(0x60 + Offset);
             set => Write(0x60 + Offset, value);
         }
 
         [Category("Electric Arc")]
-        public byte UnknownByte61
+        public byte EgenFlags
         {
             get => ReadByte(0x61 + Offset);
             set => Write(0x61 + Offset, value);
@@ -71,14 +71,14 @@ namespace IndustrialPark
         }
 
         [Category("Electric Arc"), TypeConverter(typeof(FloatTypeConverter))]
-        public float TimeActiveSeconds
+        public float ActiveTimeSeconds
         {
             get => ReadFloat(0x64 + Offset);
             set => Write(0x64 + Offset, value);
         }
 
         [Category("Electric Arc")]
-        public AssetID UnknownAssetID_68
+        public AssetID OnAnim_AssetID
         {
             get => ReadUInt(0x68 + Offset);
             set => Write(0x68 + Offset, value);

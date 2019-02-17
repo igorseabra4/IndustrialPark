@@ -14,56 +14,56 @@ namespace IndustrialPark
         protected override int EventStartOffset => 0x74 + Offset;
 
         [Category("Hangable")]
-        public int UnknownInt54
+        public int HangFlags
         {
             get => ReadInt(0x54 + Offset);
             set => Write(0x54 + Offset, value);
         }
 
         [Category("Hangable"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat58
+        public float PivotOffset
         {
             get => ReadFloat(0x58 + Offset);
             set => Write(0x58 + Offset, value);
         }
 
         [Category("Hangable"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat5C
+        public float LeverArm
         {
             get => ReadFloat(0x5C + Offset);
             set => Write(0x5C + Offset, value);
         }
 
         [Category("Hangable"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat60
+        public float Gravity
         {
             get => ReadFloat(0x60 + Offset);
             set => Write(0x60 + Offset, value);
         }
 
         [Category("Hangable"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat64
+        public float Acceleration
         {
             get => ReadFloat(0x64 + Offset);
             set => Write(0x64 + Offset, value);
         }
 
         [Category("Hangable"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat68
+        public float Decay
         {
             get => ReadFloat(0x68 + Offset);
             set => Write(0x68 + Offset, value);
         }
 
         [Category("Hangable"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat6C
+        public float GrabDelay
         {
             get => ReadFloat(0x6C + Offset);
             set => Write(0x6C + Offset, value);
         }
 
         [Category("Hangable"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat70
+        public float StopDeceleration
         {
             get => ReadFloat(0x70 + Offset);
             set => Write(0x70 + Offset, value);

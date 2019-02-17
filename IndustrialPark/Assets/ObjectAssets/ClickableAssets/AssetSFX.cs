@@ -119,7 +119,7 @@ namespace IndustrialPark
         
         [Category("Sound Effect")]
         [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flag08
+        public byte SFXFlag08
         {
             get => ReadByte(0x8);
             set => Write(0x8, value);
@@ -127,30 +127,21 @@ namespace IndustrialPark
 
         [Category("Sound Effect")]
         [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flag09
+        public byte SFXFlag09
         {
             get => ReadByte(0x9);
             set => Write(0x9, value);
         }
 
         [Category("Sound Effect")]
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flag0A
+        public short Frequency
         {
-            get => ReadByte(0xA);
-            set => Write(0xA, value);
-        }
-
-        [Category("Sound Effect")]
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flag0B
-        {
-            get => ReadByte(0xB);
+            get => ReadShort(0xA);
             set => Write(0xA, value);
         }
 
         [Category("Sound Effect"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat0C
+        public float MinFrequency
         {
             get => ReadFloat(0xC);
             set => Write(0xC, value);
@@ -163,18 +154,39 @@ namespace IndustrialPark
             set => Write(0x10, value);
         }
 
-        [Category("Sound Effect"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat14
+        [Category("Sound Effect")]
+        public AssetID AttachAssetID
         {
-            get => ReadFloat(0x14);
+            get => ReadUInt(0x14);
             set => Write(0x14, value);
         }
 
         [Category("Sound Effect")]
-        public int UnknownInt18
+        public byte LoopCount
         {
-            get => ReadInt(0x18);
+            get => ReadByte(0x18);
             set => Write(0x18, value);
+        }
+
+        [Category("Sound Effect")]
+        public byte Priority
+        {
+            get => ReadByte(0x19);
+            set => Write(0x19, value);
+        }
+
+        [Category("Sound Effect")]
+        public byte Volume
+        {
+            get => ReadByte(0x1A);
+            set => Write(0x1A, value);
+        }
+
+        [Category("Sound Effect")]
+        public byte Padding1B
+        {
+            get => ReadByte(0x1B);
+            set => Write(0x1B, value);
         }
 
         private Vector3 _position;
@@ -216,7 +228,7 @@ namespace IndustrialPark
 
         private float _radius;
         [Category("Sound Effect"), TypeConverter(typeof(FloatTypeConverter))]
-        public float RadiusMin
+        public float InnerRadius
         {
             get => _radius;
             set
@@ -229,7 +241,7 @@ namespace IndustrialPark
 
         private float _radius2;
         [Category("Sound Effect"), TypeConverter(typeof(FloatTypeConverter))]
-        public float RadiusMax
+        public float OuterRadius
         {
             get => _radius2;
             set
@@ -243,31 +255,31 @@ namespace IndustrialPark
         [Browsable(false)]
         public float ScaleX
         {
-            get => RadiusMin;
+            get => InnerRadius;
             set
             {
-                RadiusMax += value - RadiusMin;
-                RadiusMin = value;
+                OuterRadius += value - InnerRadius;
+                InnerRadius = value;
             }
         }
         [Browsable(false)]
         public float ScaleY
         {
-            get => RadiusMin;
+            get => InnerRadius;
             set
             {
-                RadiusMax += value - RadiusMin;
-                RadiusMin = value;
+                OuterRadius += value - InnerRadius;
+                InnerRadius = value;
             }
         }
         [Browsable(false)]
         public float ScaleZ
         {
-            get => RadiusMin;
+            get => InnerRadius;
             set
             {
-                RadiusMax += value - RadiusMin;
-                RadiusMin = value;
+                OuterRadius += value - InnerRadius;
+                InnerRadius = value;
             }
         }
     }

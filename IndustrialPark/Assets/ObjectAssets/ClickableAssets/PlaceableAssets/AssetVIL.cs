@@ -20,13 +20,13 @@ namespace IndustrialPark
         {
             if ((uint)VilType == assetID)
                 return true;
-            if (AssetID_DYNA_NPCSettings == assetID)
+            if (NPCSettings_AssetID == assetID)
                 return true;
-            if (AssetID_MVPT == assetID)
+            if (MovePoint_AssetID == assetID)
                 return true;
-            if (AssetID_DYNA_1 == assetID)
+            if (TaskDYNA1_AssetID == assetID)
                 return true;
-            if (AssetID_DYNA_2 == assetID)
+            if (TaskDYNA2_AssetID == assetID)
                 return true;
 
             return base.HasReference(assetID);
@@ -41,7 +41,7 @@ namespace IndustrialPark
 
         public override Matrix LocalWorld()
         {
-            if (movementPreview && AssetID_MVPT != 0)
+            if (movementPreview && MovePoint_AssetID != 0)
             {
                 AssetMVPT driver = FindMVPT(out bool found);
 
@@ -49,7 +49,7 @@ namespace IndustrialPark
                 {
                     return Matrix.Scaling(_scale)
                         * Matrix.Translation(driver.PositionX, driver.PositionY, driver.PositionZ)
-                        * Matrix.Translation((float)(driver.MovementRadius * Math.Cos(localFrameCounter * Math.PI / 180f)), 0f, (float)(driver.MovementRadius * Math.Sin(localFrameCounter * Math.PI / 180f)));
+                        * Matrix.Translation((float)(driver.ZoneRadius * Math.Cos(localFrameCounter * Math.PI / 180f)), 0f, (float)(driver.ZoneRadius * Math.Sin(localFrameCounter * Math.PI / 180f)));
                 }
             }
 
@@ -59,11 +59,11 @@ namespace IndustrialPark
         private AssetMVPT FindMVPT(out bool found)
         {
             foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                if (ae.archive.ContainsAsset(AssetID_MVPT))
+                if (ae.archive.ContainsAsset(MovePoint_AssetID))
                 {
-                    Asset asset = ae.archive.GetFromAssetID(AssetID_MVPT);
+                    Asset asset = ae.archive.GetFromAssetID(MovePoint_AssetID);
                     if (asset is AssetMVPT MVPT)
-                        return FindMVPTWithRadius(MVPT, out found, new List<uint>() { AssetID_MVPT });
+                        return FindMVPTWithRadius(MVPT, out found, new List<uint>() { MovePoint_AssetID });
                 }
 
             found = false;
@@ -74,7 +74,7 @@ namespace IndustrialPark
         {
             if (MVPT != null)
             {
-                if (MVPT.MovementRadius != -1f)
+                if (MVPT.ZoneRadius != -1f)
                 {
                     found = true;
                     return MVPT;
@@ -114,7 +114,7 @@ namespace IndustrialPark
         }
 
         [Category("VIL")]
-        public int Unknown54
+        public int VilFlags
         {
             get => ReadInt(0x54 + Offset);
             set => Write(0x54 + Offset, value);
@@ -128,28 +128,28 @@ namespace IndustrialPark
         }
 
         [Category("VIL")]
-        public AssetID AssetID_DYNA_NPCSettings
+        public AssetID NPCSettings_AssetID
         {
             get => ReadUInt(0x5C + Offset);
             set => Write(0x5C + Offset, value);
         }
 
         [Category("VIL")]
-        public AssetID AssetID_MVPT
+        public AssetID MovePoint_AssetID
         {
             get => ReadUInt(0x60 + Offset);
             set => Write(0x60 + Offset, value);
         }
 
         [Category("VIL")]
-        public AssetID AssetID_DYNA_1
+        public AssetID TaskDYNA1_AssetID
         {
             get => ReadUInt(0x64 + Offset);
             set => Write(0x64 + Offset, value);
         }
 
         [Category("VIL")]
-        public AssetID AssetID_DYNA_2
+        public AssetID TaskDYNA2_AssetID
         {
             get => ReadUInt(0x68 + Offset);
             set => Write(0x68 + Offset, value);
