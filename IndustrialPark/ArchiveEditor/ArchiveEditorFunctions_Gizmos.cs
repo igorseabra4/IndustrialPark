@@ -1,6 +1,7 @@
 ﻿using SharpDX;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace IndustrialPark
 {
@@ -63,7 +64,7 @@ namespace IndustrialPark
                 BoundingSphere bs = new BoundingSphere();
                 bool found = false;
 
-                foreach (IClickableAsset a in AllSelectedClickableAssets)
+                foreach (IClickableAsset a in allCurrentlySelectedAssets.OfType<IClickableAsset>())
                     if (!found)
                     {
                         found = true;
@@ -81,9 +82,9 @@ namespace IndustrialPark
             }
 
             // Rotation Gizmos
-            if (AllSelectedRotatableAssets.Count == 1)
+            if (allCurrentlySelectedAssets.OfType<IRotatableAsset>().Count() == 1)
             {
-                IRotatableAsset ira = AllSelectedRotatableAssets[0];
+                IRotatableAsset ira = allCurrentlySelectedAssets.OfType<IRotatableAsset>().FirstOrDefault();
                 SetCenterRotation(ira.Yaw, ira.Pitch, ira.Roll);
                 UpdateRotationGizmo(ira.GetObjectCenter());
                 if (CurrentGizmoMode == GizmoMode.Rotation)
@@ -95,7 +96,7 @@ namespace IndustrialPark
                 BoundingBox bb = new BoundingBox();
                 bool found = false;
 
-                foreach (IScalableAsset a in AllSelectedScalableAssets)
+                foreach (IScalableAsset a in allCurrentlySelectedAssets.OfType<IScalableAsset>())
                 {
                     if (!found)
                     {
@@ -118,50 +119,14 @@ namespace IndustrialPark
             }
 
             // Position Local Gizmos
-            if (AllSelectedClickableAssets.Count == 1)
+            if (allCurrentlySelectedAssets.OfType<IClickableAsset>().Count() == 1)
             {
-                UpdatePositionLocalGizmo(AllSelectedClickableAssets[0].GetGizmoCenter());
+                UpdatePositionLocalGizmo(allCurrentlySelectedAssets.OfType<IClickableAsset>().FirstOrDefault().GetGizmoCenter());
                 if (CurrentGizmoMode == GizmoMode.PositionLocal)
                     DrawGizmos = true;
             }
         }
-
-        private static List<IClickableAsset> AllSelectedClickableAssets
-        {
-            get
-            {
-                List<IClickableAsset> allSelectedClickableAssets = new List<IClickableAsset>();
-                foreach (Asset a in allCurrentlySelectedAssets)
-                    if (a is IClickableAsset ica)
-                        allSelectedClickableAssets.Add(ica);
-                return allSelectedClickableAssets;
-            }
-        }
-
-        private static List<IRotatableAsset> AllSelectedRotatableAssets
-        {
-            get
-            {
-                List<IRotatableAsset> allSelectedRotatableAssets = new List<IRotatableAsset>();
-                foreach (Asset a in allCurrentlySelectedAssets)
-                    if (a is IRotatableAsset ira)
-                        allSelectedRotatableAssets.Add(ira);
-                return allSelectedRotatableAssets;
-            }
-        }
-
-        private static List<IScalableAsset> AllSelectedScalableAssets
-        {
-            get
-            {
-                List<IScalableAsset> allSelecteScalableAssets = new List<IScalableAsset>();
-                foreach (Asset a in allCurrentlySelectedAssets)
-                    if (a is IScalableAsset isa)
-                        allSelecteScalableAssets.Add(isa);
-                return allSelecteScalableAssets;
-            }
-        }
-
+        
         private static Vector3 GizmoCenterPosition;
         private static Matrix GizmoCenterRotation;
             

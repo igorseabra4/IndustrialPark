@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using HipHopFile;
+using Newtonsoft.Json;
 using static HipHopFile.Functions;
 
 namespace IndustrialPark
@@ -718,6 +718,33 @@ namespace IndustrialPark
             }
         }
 
+        public void CreateNewAsset(int layerIndex, out bool success, out uint assetID)
+        {
+            Section_AHDR AHDR = AddAssetDialog.GetAsset(new AddAssetDialog(), out success, out bool setPosition);
+
+            if (success)
+            {
+                try
+                {
+                    while (ContainsAsset(AHDR.assetID))
+                    {
+                        MessageBox.Show($"Archive already contains asset id [{AHDR.assetID.ToString("X8")}]. Will change it to [{(AHDR.assetID + 1).ToString("X8")}].");
+                        AHDR.assetID++;
+                    }
+                    UnsavedChanges = true;
+                    AddAsset(layerIndex, AHDR);
+                    if (setPosition)
+                        SetAssetPositionToView(AHDR.assetID);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Unable to add asset: " + ex.Message);
+                }
+            }
+
+            assetID = AHDR.assetID;
+        }
+
         public uint AddAsset(int layerIndex, Section_AHDR AHDR)
         {
             DICT.LTOC.LHDRList[layerIndex].assetIDlist.Add(AHDR.assetID);
@@ -776,6 +803,92 @@ namespace IndustrialPark
             assetDictionary.Remove(assetID);
         }
 
+        public void DuplicateSelectedAssets(int layerIndex, out List<uint> finalIndices)
+        {
+            UnsavedChanges = true;
+
+            finalIndices = new List<uint>();
+            foreach (Asset asset in currentlySelectedAssets)
+            {
+                string serializedObject = JsonConvert.SerializeObject(asset.AHDR);
+                Section_AHDR AHDR = JsonConvert.DeserializeObject<Section_AHDR>(serializedObject);
+
+                AddAssetWithUniqueID(layerIndex, AHDR);
+
+                finalIndices.Add(AHDR.assetID);
+            }
+        }
+
+        public void CopyAssetsToClipboard()
+        {
+            List<Section_AHDR> copiedAHDRs = new List<Section_AHDR>();
+
+            foreach (Asset asset in currentlySelectedAssets)
+            {
+                Section_AHDR AHDR = asset.AHDR;
+
+                if (AHDR.assetType == AssetType.SND || AHDR.assetType == AssetType.SNDS)
+                {
+                    List<byte> file = new List<byte>();
+                    file.AddRange(GetHeaderFromSNDI(AHDR.assetID));
+                    file.AddRange(AHDR.data);
+
+                    if (new string(new char[] { (char)file[0], (char)file[1], (char)file[2], (char)file[3] }) == "RIFF")
+                    {
+                        byte[] chunkSizeArr = BitConverter.GetBytes(file.Count - 8);
+
+                        file[4] = chunkSizeArr[0];
+                        file[5] = chunkSizeArr[1];
+                        file[6] = chunkSizeArr[2];
+                        file[7] = chunkSizeArr[3];
+                    }
+
+                    AHDR.data = file.ToArray();
+                }
+
+                copiedAHDRs.Add(AHDR);
+            }
+
+            Clipboard.SetText(JsonConvert.SerializeObject(copiedAHDRs));
+        }
+
+        public void PasteAssetsFromClipboard(int layerIndex, out List<uint> finalIndices)
+        {
+            List<Section_AHDR> AHDRs;
+            finalIndices = new List<uint>();
+
+            try
+            {
+                AHDRs = JsonConvert.DeserializeObject<List<Section_AHDR>>(Clipboard.GetText());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error pasting objects from clipboard: " + ex.Message + ". Are you sure you have assets copied?");
+                return;
+            }
+
+            UnsavedChanges = true;
+
+            foreach (Section_AHDR AHDR in AHDRs)
+            {
+                if (AHDR.assetType == AssetType.SND || AHDR.assetType == AssetType.SNDS)
+                {
+                    try
+                    {
+                        AddSoundToSNDI(AHDR.data, AHDR.assetID, AHDR.assetType, out byte[] soundData);
+                        AHDR.data = soundData;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                }
+
+                AddAssetWithUniqueID(layerIndex, AHDR);
+                finalIndices.Add(AHDR.assetID);
+            }
+        }
+
         private List<Asset> currentlySelectedAssets = new List<Asset>();
 
         private static List<Asset> allCurrentlySelectedAssets
@@ -787,15 +900,6 @@ namespace IndustrialPark
                     currentlySelectedAssets.AddRange(ae.archive.currentlySelectedAssets);
                 return currentlySelectedAssets;
             }
-        }
-
-        public bool AssetIsSelected(uint assetID)
-        {
-            for (int i = 0; i < currentlySelectedAssets.Count; i++)
-                if (currentlySelectedAssets[i].AHDR.assetID == assetID)
-                    return true;
-
-            return false;
         }
         
         public void ClearSelectedAssets()

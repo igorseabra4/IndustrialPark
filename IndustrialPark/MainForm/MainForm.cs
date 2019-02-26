@@ -215,7 +215,7 @@ namespace IndustrialPark
                 renderer.mvptColor, renderer.sfxColor, useLegacyAssetIDFormatToolStripMenuItem.Checked, alternateNamingMode, hiddenAssets, renderer.isDrawingUI,
                 AssetJSP.dontRender, AssetBOUL.dontRender, AssetBUTN.dontRender, AssetCAM.dontRender, AssetDSTR.dontRender, AssetDYNA.dontRender, AssetEGEN.dontRender,
                 AssetHANG.dontRender, AssetMRKR.dontRender, AssetMVPT.dontRender, AssetPEND.dontRender, AssetPLAT.dontRender, AssetPLAT.dontRender, AssetPLYR.dontRender,
-                AssetSFX.dontRender, AssetSIMP.dontRender, AssetTRIG.dontRender, AssetUI.dontRender, AssetUIFT.dontRender, AssetVIL.dontRender);
+                AssetSFX.dontRender, AssetSIMP.dontRender, AssetTRIG.dontRender, AssetUI.dontRender, AssetUIFT.dontRender, AssetVIL.dontRender, ArchiveEditorFunctions.persistentShinies);
         }
 
         private void ApplySettings(string ipSettingsPath)
@@ -357,6 +357,9 @@ namespace IndustrialPark
 
             vILToolStripMenuItem.Checked = !ipSettings.dontRenderVIL;
             AssetVIL.dontRender = ipSettings.dontRenderVIL;
+
+            templatesPersistentShiniesToolStripMenuItem.Checked = ipSettings.persistentShinies;
+            ArchiveEditorFunctions.persistentShinies = ipSettings.persistentShinies;
         }
 
         public void SetToolStripStatusLabel(string Text)
@@ -1013,7 +1016,7 @@ namespace IndustrialPark
             foreach (ToolStripItem i in controllers.DropDownItems)
                 if (i is ToolStripMenuItem j)
                     j.Click += eventHandler;
-
+            
             ToolStripMenuItem pickups = new ToolStripMenuItem("Pickups and Tikis");
             pickups.DropDownItems.AddRange(new ToolStripItem[]
             {
@@ -1196,6 +1199,12 @@ namespace IndustrialPark
         private void manageUserTemplatesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.UserTemplateManager.Show();
+        }
+
+        private void templatesPersistentShiniesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            templatesPersistentShiniesToolStripMenuItem.Checked = !templatesPersistentShiniesToolStripMenuItem.Checked;
+            ArchiveEditorFunctions.persistentShinies = templatesPersistentShiniesToolStripMenuItem.Checked;
         }
 
         private void ToggleGizmoType(GizmoMode mode = GizmoMode.Null)

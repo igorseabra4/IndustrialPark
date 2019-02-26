@@ -70,6 +70,8 @@ namespace IndustrialPark
         public static AssetTemplate CurrentAssetTemplate { get; set; } = AssetTemplate.Null;
         public static string CurrentUserTemplate { get; set; } = "";
 
+        public static bool persistentShinies = true;
+
         public uint PlaceTemplate(Vector3 position, int layerIndex, out bool success, ref List<uint> assetIDs, string customName = "", AssetTemplate template = AssetTemplate.Null)
         {
             AssetType newAssetType = AssetType.Null;
@@ -296,6 +298,7 @@ namespace IndustrialPark
             switch (template)
             {
                 case AssetTemplate.Shiny_Red:
+                    ((AssetPKUP)asset).StateIsPersistent = persistentShinies;
                     ((AssetPKUP)asset).Shape = 0x3E;
                     ((AssetPKUP)asset).PickReferenceID = 0x7C8AC53E;
                     ((AssetPKUP)asset).PickupFlags = 2;
@@ -303,6 +306,7 @@ namespace IndustrialPark
                     ((AssetPKUP)asset).PositionY += 0.5f;
                     break;
                 case AssetTemplate.Shiny_Yellow:
+                    ((AssetPKUP)asset).StateIsPersistent = persistentShinies;
                     ((AssetPKUP)asset).Shape = 0x3B;
                     ((AssetPKUP)asset).PickReferenceID = 0xB3D6283B;
                     ((AssetPKUP)asset).PickupFlags = 2;
@@ -310,6 +314,7 @@ namespace IndustrialPark
                     ((AssetPKUP)asset).PositionY += 0.5f;
                     break;
                 case AssetTemplate.Shiny_Green:
+                    ((AssetPKUP)asset).StateIsPersistent = persistentShinies;
                     ((AssetPKUP)asset).Shape = 0x34;
                     ((AssetPKUP)asset).PickReferenceID = 0x079A0734;
                     ((AssetPKUP)asset).PickupFlags = 2;
@@ -317,6 +322,7 @@ namespace IndustrialPark
                     ((AssetPKUP)asset).PositionY += 0.5f;
                     break;
                 case AssetTemplate.Shiny_Blue:
+                    ((AssetPKUP)asset).StateIsPersistent = persistentShinies;
                     ((AssetPKUP)asset).Shape = 0x81;
                     ((AssetPKUP)asset).PickReferenceID = 0x6D4A4181;
                     ((AssetPKUP)asset).PickupFlags = 2;
@@ -324,6 +330,7 @@ namespace IndustrialPark
                     ((AssetPKUP)asset).PositionY += 0.5f;
                     break;
                 case AssetTemplate.Shiny_Purple:
+                    ((AssetPKUP)asset).StateIsPersistent = persistentShinies;
                     ((AssetPKUP)asset).Shape = 0xCB;
                     ((AssetPKUP)asset).PickReferenceID = 0xFA607BCB;
                     ((AssetPKUP)asset).PickupFlags = 2;

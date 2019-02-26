@@ -420,30 +420,12 @@ namespace IndustrialPark
 
         private void buttonAddAsset_Click(object sender, EventArgs e)
         {
-            Section_AHDR AHDR = AddAssetDialog.GetAsset(new AddAssetDialog(), out bool success, out bool setPosition);
+            archive.CreateNewAsset(comboBoxLayers.SelectedIndex, out bool success, out uint assetID);
 
             if (success)
             {
-                try
-                {
-                    while (archive.ContainsAsset(AHDR.assetID))
-                    {
-                        MessageBox.Show($"Archive already contains asset id [{AHDR.assetID.ToString("X8")}]. Will change it to [{(AHDR.assetID + 1).ToString("X8")}].");
-                        AHDR.assetID++;
-                    }
-                    archive.UnsavedChanges = true;
-                    archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR);
-                    if (setPosition)
-                        archive.SetAssetPositionToView(AHDR.assetID);
-
-                    comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = LayerToString(comboBoxLayers.SelectedIndex);
-                    //PopulateAssetListAndComboBox();
-                    SetSelectedIndices(new List<uint>() { AHDR.assetID }, true);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Unable to add asset: " + ex.Message);
-                }
+                comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = LayerToString(comboBoxLayers.SelectedIndex);
+                SetSelectedIndices(new List<uint>() { assetID }, true);
             }
         }
 
@@ -479,7 +461,6 @@ namespace IndustrialPark
                     }
 
                     comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = LayerToString(comboBoxLayers.SelectedIndex);
-                    //PopulateAssetListAndComboBox();
 
                     SetSelectedIndices(assetIDs, true);
                 }
@@ -494,98 +475,26 @@ namespace IndustrialPark
         {
             if (listViewAssets.SelectedItems.Count == 0) return;
 
-            archive.UnsavedChanges = true;
-
-            List<uint> finalIndexes = new List<uint>();
-            foreach (uint u in archive.GetCurrentlySelectedAssetIDs())
-            {
-                string serializedObject = JsonConvert.SerializeObject(archive.GetFromAssetID(u).AHDR);
-                Section_AHDR AHDR = JsonConvert.DeserializeObject<Section_AHDR>(serializedObject);
-
-                archive.AddAssetWithUniqueID(comboBoxLayers.SelectedIndex, AHDR);
-
-                finalIndexes.Add(AHDR.assetID);
-            }
-
+            archive.DuplicateSelectedAssets(comboBoxLayers.SelectedIndex, out List<uint> finalIndices);
+            
             comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = LayerToString(comboBoxLayers.SelectedIndex);
-
-            SetSelectedIndices(finalIndexes, true);
+            SetSelectedIndices(finalIndices, false);
         }
 
         private void buttonCopy_Click(object sender, EventArgs e)
         {
             if (listViewAssets.SelectedItems.Count == 0) return;
 
-            List<Section_AHDR> copiedAHDRs = new List<Section_AHDR>();
-
-            foreach (uint u in archive.GetCurrentlySelectedAssetIDs())
-            {
-                Section_AHDR AHDR = JsonConvert.DeserializeObject<Section_AHDR>(JsonConvert.SerializeObject(archive.GetFromAssetID(u).AHDR));
-
-                if (AHDR.assetType == AssetType.SND || AHDR.assetType == AssetType.SNDS)
-                {
-                    List<byte> file = new List<byte>();
-                    file.AddRange(archive.GetHeaderFromSNDI(AHDR.assetID));
-                    file.AddRange(AHDR.data);
-
-                    if (new string(new char[] { (char)file[0], (char)file[1], (char)file[2], (char)file[3] }) == "RIFF")
-                    {
-                        byte[] chunkSizeArr = BitConverter.GetBytes(file.Count - 8);
-
-                        file[4] = chunkSizeArr[0];
-                        file[5] = chunkSizeArr[1];
-                        file[6] = chunkSizeArr[2];
-                        file[7] = chunkSizeArr[3];
-                    }
-
-                    AHDR.data = file.ToArray();
-                }
-
-                copiedAHDRs.Add(AHDR);
-            }
-
-            Clipboard.SetText(JsonConvert.SerializeObject(copiedAHDRs));
+            archive.CopyAssetsToClipboard();
         }
 
         private void buttonPaste_Click(object sender, EventArgs e)
         {
-            List<Section_AHDR> AHDRs;
-            List<uint> assetIDs = new List<uint>();
-
-            archive.UnsavedChanges = true;
-
-            try
-            {
-                AHDRs = JsonConvert.DeserializeObject<List<Section_AHDR>>(Clipboard.GetText());
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error pasting objects from clipboard: " + ex.Message + ". Are you sure you have assets copied?");
-                return;
-            }
-
-            foreach (Section_AHDR AHDR in AHDRs)
-            {
-                if (AHDR.assetType == AssetType.SND || AHDR.assetType == AssetType.SNDS)
-                {
-                    try
-                    {
-                        archive.AddSoundToSNDI(AHDR.data, AHDR.assetID, AHDR.assetType, out byte[] soundData);
-                        AHDR.data = soundData;
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message);
-                    }
-                }
-
-                archive.AddAssetWithUniqueID(comboBoxLayers.SelectedIndex, AHDR);
-                assetIDs.Add(AHDR.assetID);
-            }
+            archive.PasteAssetsFromClipboard(comboBoxLayers.SelectedIndex, out List<uint> finalIndices);
 
             comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = LayerToString(comboBoxLayers.SelectedIndex);
             
-            SetSelectedIndices(assetIDs, true);
+            SetSelectedIndices(finalIndices, true);
         }
 
         private void ButtonRemoveAsset_Click(object sender, EventArgs e)
@@ -813,6 +722,7 @@ namespace IndustrialPark
             foreach (uint u in assetIDs)
                 if (!archive.ContainsAsset(u))
                 {
+                    listViewAssets.SelectedIndices.Clear();
                     listViewAssets.EndUpdate();
                     return;
                 }
@@ -941,57 +851,7 @@ namespace IndustrialPark
                 PopulateLayerComboBox();
             }
         }
-
-        private void toolStripMenuItem_Add_Click(object sender, EventArgs e)
-        {
-            buttonAddAsset_Click(null, null);
-        }
-
-        private void toolStripMenuItem_Duplicate_Click(object sender, EventArgs e)
-        {
-            buttonDuplicate_Click(null, null);
-        }
-
-        private void toolStripMenuItem_Copy_Click(object sender, EventArgs e)
-        {
-            buttonCopy_Click(null, null);
-        }
-
-        private void toolStripMenuItem_Paste_Click(object sender, EventArgs e)
-        {
-            buttonPaste_Click(null, null);
-        }
-
-        private void toolStripMenuItem_Remove_Click(object sender, EventArgs e)
-        {
-            ButtonRemoveAsset_Click(null, null);
-        }
-
-        private void toolStripMenuItem_View_Click(object sender, EventArgs e)
-        {
-            buttonView_Click(null, null);
-        }
-
-        private void toolStripMenuItem_Export_Click(object sender, EventArgs e)
-        {
-            buttonExportRaw_Click(null, null);
-        }
-
-        private void toolStripMenuItem_EditHeader_Click(object sender, EventArgs e)
-        {
-            buttonEditAsset_Click(null, null);
-        }
-
-        private void toolStripMenuItem_EditData_Click(object sender, EventArgs e)
-        {
-            buttonInternalEdit_Click(null, null);
-        }
-
-        private void toolStripMenuItem_AddMulti_Click(object sender, EventArgs e)
-        {
-            importMultipleAssetsToolStripMenuItem_Click(null, null);
-        }
-
+        
         private void checkedListBoxAssets_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.I && e.Modifiers == Keys.Control)

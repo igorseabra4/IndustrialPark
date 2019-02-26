@@ -43,12 +43,7 @@ namespace IndustrialPark
 
         public List<uint> GetHiddenAssets()
         {
-            List<uint> hiddenAssets = new List<uint>();
-            foreach (Asset a in assetDictionary.Values)
-                if (a.isInvisible)
-                    hiddenAssets.Add(a.AHDR.assetID);
-
-            return hiddenAssets;
+            return (from asset in assetDictionary.Values where asset.isInvisible select asset.AHDR.assetID).ToList();
         }
 
         private List<IInternalEditor> internalEditors = new List<IInternalEditor>();

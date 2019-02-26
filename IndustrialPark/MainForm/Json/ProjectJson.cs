@@ -51,6 +51,8 @@ namespace IndustrialPark
         public bool dontRenderUIFT;
         public bool dontRenderVIL;
 
+        public bool persistentShinies;
+
         public ProjectJson()
         {
             hipPaths = new List<string>();
@@ -99,6 +101,8 @@ namespace IndustrialPark
             dontRenderUI = true;
             dontRenderUIFT = true;
             dontRenderVIL = false;
+
+            persistentShinies = true;
         }
 
         public ProjectJson(List<string> hipPaths, List<string> textureFolderPaths, Vector3 camPos, float yaw, float pitch, float speed, float speedRot,
@@ -106,7 +110,7 @@ namespace IndustrialPark
             Vector4 mvptColor, Vector4 sfxColor, bool useLegacyAssetIDFormat, bool alternateNameDisplayMode, List<uint> hiddenAssets, bool isDrawingUI,
             bool dontRenderLevelModel, bool dontRenderBOUL, bool dontRenderBUTN, bool dontRenderCAM, bool dontRenderDSTR, bool dontRenderDYNA, bool dontRenderEGEN,
             bool dontRenderHANG, bool dontRenderMRKR, bool dontRenderMVPT, bool dontRenderPEND, bool dontRenderPKUP, bool dontRenderPLAT, bool dontRenderPLYR,
-            bool dontRenderSFX, bool dontRenderSIMP, bool dontRenderTRIG, bool dontRenderUI, bool dontRenderUIFT, bool dontRenderVIL)
+            bool dontRenderSFX, bool dontRenderSIMP, bool dontRenderTRIG, bool dontRenderUI, bool dontRenderUIFT, bool dontRenderVIL, bool persistentShinies)
         {
             this.hipPaths = hipPaths;
             TextureFolderPaths = textureFolderPaths;
@@ -148,6 +152,7 @@ namespace IndustrialPark
             this.dontRenderUI = dontRenderUI;
             this.dontRenderUIFT = dontRenderUIFT;
             this.dontRenderVIL = dontRenderVIL;
+            this.persistentShinies = persistentShinies;
         }
     }
 }
