@@ -72,7 +72,7 @@ namespace IndustrialPark
             }
         }
         [Category("Pointer"), Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public float RotationYaw
+        public override float Yaw
         {
             get => _yaw;
             set
@@ -82,7 +82,7 @@ namespace IndustrialPark
             }
         }
         [Category("Pointer"), Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public float RotationPitch
+        public override float Pitch
         {
             get => _pitch;
             set
@@ -92,7 +92,7 @@ namespace IndustrialPark
             }
         }
         [Category("Pointer"), Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public float RotationRoll
+        public override float Roll
         {
             get => _roll;
             set

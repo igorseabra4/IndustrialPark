@@ -37,6 +37,18 @@ namespace IndustrialPark
         public virtual float PositionY { get => 0; set { } }
         [Browsable(false)]
         public virtual float PositionZ { get => 0; set { } }
+        [Browsable(false)]
+        public virtual float Yaw { get => 0; set { } }
+        [Browsable(false)]
+        public virtual float Pitch { get => 0; set { } }
+        [Browsable(false)]
+        public virtual float Roll { get => 0; set { } }
+        [Browsable(false)]
+        public virtual float ScaleX { get => 0; set { } }
+        [Browsable(false)]
+        public virtual float ScaleY { get => 0; set { } }
+        [Browsable(false)]
+        public virtual float ScaleZ { get => 0; set { } }
 
         public virtual void CreateTransformMatrix()
         {
@@ -62,6 +74,11 @@ namespace IndustrialPark
         }
 
         public virtual BoundingSphere GetGizmoCenter()
+        {
+            return new BoundingSphere();
+        }
+
+        public virtual BoundingSphere GetObjectCenter()
         {
             return new BoundingSphere();
         }

@@ -1,6 +1,6 @@
 ﻿namespace IndustrialPark
 {
-    public enum DynaType : uint
+    public enum DynaType_BFBB : uint
     {
         pointer​ = 0x2196C135,
         game_object__talk_box​ = 0x0934B196,
@@ -18,10 +18,6 @@
         hud__model​ = 0xFF5691D2,
         hud__meter__font​ = 0x8B3E732F,
         hud__meter__unit​ = 0x8D40B9AC,
-        hud__text = 0x687ED0B0,
-        movieGame_Crate = 0x495BFF9B,
-        movieGame_Fogger= 0x44EA147A,
-        movieGame_RingControl = 0x18028CA7,
-        movieGame_Ring = 0x4D81C1EE
+        hud__text = 0x687ED0B0
     }
 }

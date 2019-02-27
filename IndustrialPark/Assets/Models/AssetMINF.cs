@@ -43,6 +43,9 @@ namespace IndustrialPark
             {
                 _modelAssetID = ReadUInt(0x14);
                 ArchiveEditorFunctions.AddToRenderingDictionary(AHDR.assetID, this);
+
+                if (Functions.currentGame == Game.Incredibles)
+                    ArchiveEditorFunctions.AddToRenderingDictionary(Functions.BKDRHash(AHDR.ADBG.assetName.Replace(".MINF", "")), this);
             }
             catch
             {

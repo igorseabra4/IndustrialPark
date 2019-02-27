@@ -178,6 +178,7 @@ namespace IndustrialPark
 
         [Category("Move Point")]
         [TypeConverter(typeof(HexShortTypeConverter))]
+        [Description("Usually 0x2710")]
         public short Wt
         {
             get => ReadShort(0x14);
@@ -186,6 +187,7 @@ namespace IndustrialPark
         
         [Category("Move Point")]
         [TypeConverter(typeof(HexByteTypeConverter))]
+        [Description("0x00 for arena (can see you), 0x01 for zone")]
         public byte On
         {
             get => ReadByte(0x16);
@@ -194,6 +196,7 @@ namespace IndustrialPark
 
         [Category("Move Point")]
         [TypeConverter(typeof(HexByteTypeConverter))]
+        [Description("Usually 0x00")]
         public byte BezIndex
         {
             get => ReadByte(0x17);
@@ -225,6 +228,7 @@ namespace IndustrialPark
         }
 
         [Category("Move Point"), TypeConverter(typeof(FloatTypeConverter))]
+        [Description("Movement Angle - Enemy will rotate around the point this amount, -1 means disabled")]
         public float Delay
         {
             get => ReadFloat(0x1C);
@@ -232,6 +236,7 @@ namespace IndustrialPark
         }
 
         [Category("Move Point"), TypeConverter(typeof(FloatTypeConverter))]
+        [Description("Enemy will circle around the point in this distance, -1 means disabled")]
         public float ZoneRadius
         {
             get => ReadFloat(0x20);
@@ -240,6 +245,7 @@ namespace IndustrialPark
 
         private float _distanceICanSeeYou;
         [Category("Move Point"), TypeConverter(typeof(FloatTypeConverter))]
+        [Description("Enemy will be able to see you from this radius (as in a sphere trigger), -1 means disabled")]
         public float ArenaRadius
         {
             get => _distanceICanSeeYou;

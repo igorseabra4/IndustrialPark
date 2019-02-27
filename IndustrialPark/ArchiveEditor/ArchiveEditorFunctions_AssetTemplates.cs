@@ -671,7 +671,7 @@ namespace IndustrialPark
                 case AssetTemplate.DuplicatotronSettings:
                     ((AssetDYNA)asset).Flags = 0x1D;
                     ((AssetDYNA)asset).Version = 2;
-                    ((AssetDYNA)asset).Type = DynaType.game_object__NPCSettings;
+                    ((AssetDYNA)asset).Type_BFBB = DynaType_BFBB.game_object__NPCSettings;
                     ((AssetDYNA)asset).DynaBase = new DynaNPCSettings()
                     {
                         AllowDetect = 1,
@@ -800,7 +800,7 @@ namespace IndustrialPark
                 case AssetTemplate.BusStop_DYNA:
                     ((AssetDYNA)asset).Flags = 0x1D;
                     ((AssetDYNA)asset).Version = 2;
-                    ((AssetDYNA)asset).Type = DynaType.game_object__BusStop;
+                    ((AssetDYNA)asset).Type_BFBB = DynaType_BFBB.game_object__BusStop;
                     ((AssetDYNA)asset).DynaBase = new DynaBusStop()
                     {
                         MRKR_ID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper().Replace("DYNA", "MRKR"), AssetTemplate.Marker),
@@ -845,7 +845,7 @@ namespace IndustrialPark
                 case AssetTemplate.TeleportBox:
                     ((AssetDYNA)asset).Flags = 0x1D;
                     ((AssetDYNA)asset).Version = 2;
-                    ((AssetDYNA)asset).Type = DynaType.game_object__Teleport;
+                    ((AssetDYNA)asset).Type_BFBB = DynaType_BFBB.game_object__Teleport;
                     ((AssetDYNA)asset).DynaBase = new DynaTeleport_BFBB(2)
                     {
                         MRKR_ID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MRKR", AssetTemplate.Marker)
@@ -943,7 +943,7 @@ namespace IndustrialPark
                 case AssetTemplate.Checkpoint_Talkbox:
                     ((AssetDYNA)asset).Flags = 0x1D;
                     ((AssetDYNA)asset).Version = 11;
-                    ((AssetDYNA)asset).Type = DynaType.game_object__talk_box;
+                    ((AssetDYNA)asset).Type_BFBB = DynaType_BFBB.game_object__talk_box;
                     ((AssetDYNA)asset).DynaBase = new DynaTalkBox()
                     {
                         TextBoxID1 = 0x9BC49154,
@@ -977,7 +977,7 @@ namespace IndustrialPark
                 case AssetTemplate.BungeeHook:
                     ((AssetDYNA)asset).Flags = 0x1D;
                     ((AssetDYNA)asset).Version = 13;
-                    ((AssetDYNA)asset).Type = DynaType.game_object__bungee_hook;
+                    ((AssetDYNA)asset).Type_BFBB = DynaType_BFBB.game_object__bungee_hook;
                     ((AssetDYNA)asset).DynaBase = new DynaBungeeHook()
                     {
                         Unknown_ID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, "BUNGEE_SIMP", AssetTemplate.BungeeHook_SIMP),
@@ -1017,7 +1017,7 @@ namespace IndustrialPark
                 case AssetTemplate.BungeeDrop:
                     ((AssetDYNA)asset).Flags = 0x1D;
                     ((AssetDYNA)asset).Version = 2;
-                    ((AssetDYNA)asset).Type = DynaType.game_object__bungee_drop;
+                    ((AssetDYNA)asset).Type_BFBB = DynaType_BFBB.game_object__bungee_drop;
                     ((AssetDYNA)asset).DynaBase = new DynaBungeeDrop()
                     {
                         MRKR_ID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, "BUNGEE_MRKR", AssetTemplate.Marker),

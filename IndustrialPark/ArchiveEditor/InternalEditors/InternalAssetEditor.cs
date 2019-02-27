@@ -14,6 +14,9 @@ namespace IndustrialPark
 
             propertyGridAsset.SelectedObject = asset;
             labelAssetName.Text = $"[{asset.AHDR.assetType.ToString()}] {asset.ToString()}";
+
+            if (asset is AssetMVPT)
+                propertyGridAsset.HelpVisible = true;
         }
 
         private void InternalAssetEditor_FormClosing(object sender, FormClosingEventArgs e)
