@@ -23,7 +23,7 @@ namespace IndustrialPark
         public override void CreateTransformMatrix()
         {
             world = Matrix.Scaling(ScaleX, ScaleY, ScaleZ)
-                * Matrix.RotationYawPitchRoll(Yaw, Pitch, Roll)
+                * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                 * Matrix.Translation(PositionX, PositionY, PositionZ);
 
             CreateBoundingBox();

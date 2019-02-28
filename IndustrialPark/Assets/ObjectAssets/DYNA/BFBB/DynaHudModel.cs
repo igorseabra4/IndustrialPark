@@ -11,12 +11,12 @@ namespace IndustrialPark
 
         public DynaHudModel() : base()
         {
-            Unknown_ID = 0;
+            Model_AssetID = 0;
         }
 
         public override bool HasReference(uint assetID)
         {
-            if (Unknown_ID == assetID)
+            if (Model_AssetID == assetID)
                 return true;
 
             return base.HasReference(assetID);
@@ -24,40 +24,40 @@ namespace IndustrialPark
 
         public DynaHudModel(IEnumerable<byte> enumerable) : base (enumerable)
         {
-            UnknownFloat1 = Switch(BitConverter.ToSingle(Data, 0x0));
-            UnknownFloat2 = Switch(BitConverter.ToSingle(Data, 0x4));
-            UnknownFloat3 = Switch(BitConverter.ToSingle(Data, 0x8));
-            UnknownFloat4 = Switch(BitConverter.ToSingle(Data, 0xC));
-            UnknownFloat5 = Switch(BitConverter.ToSingle(Data, 0x10));
-            UnknownFloat6 = Switch(BitConverter.ToSingle(Data, 0x14));
-            Unknown_ID = Switch(BitConverter.ToUInt32(Data, 0x18));
+            PositionX = Switch(BitConverter.ToSingle(Data, 0x0));
+            PositionY = Switch(BitConverter.ToSingle(Data, 0x4));
+            PositionZ = Switch(BitConverter.ToSingle(Data, 0x8));
+            SizeX = Switch(BitConverter.ToSingle(Data, 0xC));
+            SizeY = Switch(BitConverter.ToSingle(Data, 0x10));
+            SizeZ = Switch(BitConverter.ToSingle(Data, 0x14));
+            Model_AssetID = Switch(BitConverter.ToUInt32(Data, 0x18));
         }
 
         public override byte[] ToByteArray()
         {
             List<byte> list = new List<byte>();
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat1)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat2)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat3)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat4)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat5)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat6)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown_ID)));
+            list.AddRange(BitConverter.GetBytes(Switch(PositionX)));
+            list.AddRange(BitConverter.GetBytes(Switch(PositionY)));
+            list.AddRange(BitConverter.GetBytes(Switch(PositionZ)));
+            list.AddRange(BitConverter.GetBytes(Switch(SizeX)));
+            list.AddRange(BitConverter.GetBytes(Switch(SizeY)));
+            list.AddRange(BitConverter.GetBytes(Switch(SizeZ)));
+            list.AddRange(BitConverter.GetBytes(Switch(Model_AssetID)));
             return list.ToArray();
         }
 
+        [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
+        public override float PositionX { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
+        public override float PositionY { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
+        public override float PositionZ { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat1{ get; set; }
+        public float SizeX{ get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat2{ get; set; }
+        public float SizeY{ get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat3{ get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat4{ get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat5{ get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat6{ get; set; }
-        public AssetID Unknown_ID { get; set; }
+        public float SizeZ{ get; set; }
+        public AssetID Model_AssetID { get; set; }
     }
 }

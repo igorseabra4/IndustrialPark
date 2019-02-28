@@ -130,6 +130,7 @@
     <Compile Include="Assets\ObjectAssets\AssetPARE.cs" />
     <Compile Include="Assets\ObjectAssets\AssetPARP.cs" />
     <Compile Include="Assets\ObjectAssets\AssetPARS.cs" />
+    <Compile Include="Assets\ObjectAssets\AssetSRCP.cs" />
     <Compile Include="Assets\ObjectAssets\AssetSURF.cs" />
     <Compile Include="Assets\ObjectAssets\DYNA\BFBB\DynaTaskBox.cs" />
     <Compile Include="Assets\ObjectAssets\DYNA\DynaType_BFBB.cs" />
@@ -137,6 +138,8 @@
     <Compile Include="Assets\ObjectAssets\DYNA\MovieGame\DynaEffectScreenFade.cs" />
     <Compile Include="Assets\ObjectAssets\DYNA\MovieGame\DynaEnemyCritter.cs" />
     <Compile Include="Assets\ObjectAssets\DYNA\MovieGame\DynaPlaceableBase.cs" />
+    <Compile Include="Assets\ObjectAssets\DYNA\MovieGame\DynaRing.cs" />
+    <Compile Include="Assets\ObjectAssets\DYNA\MovieGame\DynaRingControl.cs" />
     <Compile Include="Assets\ObjectAssets\DYNA\MovieGame\DynaSceneProperties.cs" />
     <Compile Include="Assets\Shared\AssetEventIncredibles.cs" />
     <Compile Include="Assets\Shared\Enums\EventTypeBFBB.cs" />

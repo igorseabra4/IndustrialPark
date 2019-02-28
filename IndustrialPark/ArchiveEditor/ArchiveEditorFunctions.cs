@@ -514,6 +514,12 @@ namespace IndustrialPark
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
+                case AssetType.SCRP:
+                    {
+                        AssetSRCP newAsset = new AssetSRCP(AHDR);
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
                 case AssetType.SFX:
                     {
                         AssetSFX newAsset = new AssetSFX(AHDR);
@@ -628,7 +634,6 @@ namespace IndustrialPark
                 case AssetType.PGRS:
                 case AssetType.PRJT:
                 case AssetType.RANM:
-                case AssetType.SCRP:
                 case AssetType.SDFX:
                 case AssetType.SGRP:
                 case AssetType.SLID:

@@ -153,6 +153,12 @@ namespace IndustrialPark
                     case DynaType_TSSM.Enemy__SB__Critter:
                         _dynaSpecific = reset ? new DynaEnemyCritter() : new DynaEnemyCritter(Data.Skip(0x10).Take(EventStartOffset));
                         break;
+                    case DynaType_TSSM.game_object__Ring:
+                        _dynaSpecific = reset ? new DynaRing() : new DynaRing(Data.Skip(0x10).Take(EventStartOffset));
+                        break;
+                    case DynaType_TSSM.game_object__RingControl:
+                        _dynaSpecific = reset ? new DynaRingControl() : new DynaRingControl(Data.Skip(0x10).Take(EventStartOffset));
+                        break;
                     case DynaType_TSSM.SceneProperties:
                         _dynaSpecific = reset ? new DynaSceneProperties() : new DynaSceneProperties(Data.Skip(0x10).Take(EventStartOffset));
                         break;
