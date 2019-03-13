@@ -180,6 +180,9 @@ namespace IndustrialPark
                 case AssetTemplate.Portal:
                     newAssetType = AssetType.PORT;
                     break;
+                case AssetTemplate.Script:
+                    newAssetType = AssetType.SCRP;
+                    break;
                 case AssetTemplate.ShadowTable:
                     newAssetType = AssetType.SHDW;
                     break;
@@ -263,9 +266,6 @@ namespace IndustrialPark
                 flags = AHDRFlagsFromAssetType(newAssetType),
                 data = GetTemplate(newAssetType)
             };
-
-            if (newAssetType == AssetType.DYNA)
-                newAsset.data = new byte[0x10];
 
             if (string.IsNullOrWhiteSpace(customName))
                 newAsset.ADBG = new Section_ADBG(0, template.ToString().ToUpper() + "_01", "", 0);
@@ -460,31 +460,31 @@ namespace IndustrialPark
                     ((AssetVIL)asset).Model_AssetID = "robot_chuck_bind.MINF";
                     ((AssetVIL)asset).VilType = VilType.robot_chuck_bind;
                     ((AssetVIL)asset).MovePoint_AssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyAreaMVPT);
-                    ((AssetVIL)asset).EventsBFBB = new AssetEventBFBB[] {
-                        new AssetEventBFBB
+                    ((AssetVIL)asset).LinksBFBB = new LinkBFBB[] {
+                        new LinkBFBB
                         {
                             Arguments_Float = new float[6],
                             TargetAssetID = asset.AHDR.assetID,
-                            EventReceiveID = EventTypeBFBB.ScenePrepare,
-                            EventSendID = EventTypeBFBB.DetectPlayerOff
+                            EventReceiveID = EventBFBB.ScenePrepare,
+                            EventSendID = EventBFBB.DetectPlayerOff
                         }
                     };
                     AssetTRIG chuckTrigger = (AssetTRIG)GetFromAssetID(PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_TRIG", AssetTemplate.SphereTrigger));
                     chuckTrigger.Position1X_Radius = 15f;
-                    chuckTrigger.EventsBFBB = new AssetEventBFBB[] {
-                        new AssetEventBFBB
+                    chuckTrigger.LinksBFBB = new LinkBFBB[] {
+                        new LinkBFBB
                         {
                             Arguments_Float = new float[6],
                             TargetAssetID = asset.AHDR.assetID,
-                            EventReceiveID = EventTypeBFBB.EnterPlayer,
-                            EventSendID = EventTypeBFBB.DetectPlayerOn
+                            EventReceiveID = EventBFBB.EnterPlayer,
+                            EventSendID = EventBFBB.DetectPlayerOn
                         },
-                        new AssetEventBFBB
+                        new LinkBFBB
                         {
                             Arguments_Float = new float[6],
                             TargetAssetID = asset.AHDR.assetID,
-                            EventReceiveID = EventTypeBFBB.ExitPlayer,
-                            EventSendID = EventTypeBFBB.DetectPlayerOff
+                            EventReceiveID = EventBFBB.ExitPlayer,
+                            EventSendID = EventBFBB.DetectPlayerOff
                         }
                     };
 
@@ -498,32 +498,32 @@ namespace IndustrialPark
                     ((AssetVIL)asset).Model_AssetID = "robot_4a_monsoon_bind.MINF";
                     ((AssetVIL)asset).VilType = VilType.robot_4a_monsoon_bind;
                     ((AssetVIL)asset).MovePoint_AssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyAreaMVPT);
-                    ((AssetVIL)asset).EventsBFBB = new AssetEventBFBB[] {
-                        new AssetEventBFBB
+                    ((AssetVIL)asset).LinksBFBB = new LinkBFBB[] {
+                        new LinkBFBB
                         {
                             Arguments_Float = new float[6],
                             TargetAssetID = asset.AHDR.assetID,
-                            EventReceiveID = EventTypeBFBB.ScenePrepare,
-                            EventSendID = EventTypeBFBB.DetectPlayerOff
+                            EventReceiveID = EventBFBB.ScenePrepare,
+                            EventSendID = EventBFBB.DetectPlayerOff
                         }
                     };
 
                     AssetTRIG monsoonTrigger = (AssetTRIG)GetFromAssetID(PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_TRIG", AssetTemplate.SphereTrigger));
                     monsoonTrigger.Position1X_Radius = 15f;
-                    monsoonTrigger.EventsBFBB = new AssetEventBFBB[] {
-                        new AssetEventBFBB
+                    monsoonTrigger.LinksBFBB = new LinkBFBB[] {
+                        new LinkBFBB
                         {
                             Arguments_Float = new float[6],
                             TargetAssetID = asset.AHDR.assetID,
-                            EventReceiveID = EventTypeBFBB.EnterPlayer,
-                            EventSendID = EventTypeBFBB.DetectPlayerOn
+                            EventReceiveID = EventBFBB.EnterPlayer,
+                            EventSendID = EventBFBB.DetectPlayerOn
                         },
-                        new AssetEventBFBB
+                        new LinkBFBB
                         {
                             Arguments_Float = new float[6],
                             TargetAssetID = asset.AHDR.assetID,
-                            EventReceiveID = EventTypeBFBB.ExitPlayer,
-                            EventSendID = EventTypeBFBB.DetectPlayerOff
+                            EventReceiveID = EventBFBB.ExitPlayer,
+                            EventSendID = EventBFBB.DetectPlayerOff
                         }
                     };
 
@@ -542,27 +542,27 @@ namespace IndustrialPark
                 case AssetTemplate.Arf:
                     ((AssetVIL)asset).Model_AssetID = "robot_arf_bind.MINF";
                     ((AssetVIL)asset).VilType = VilType.robot_arf_bind;
-                    ((AssetVIL)asset).EventsBFBB = new AssetEventBFBB[] {
-                        new AssetEventBFBB
+                    ((AssetVIL)asset).LinksBFBB = new LinkBFBB[] {
+                        new LinkBFBB
                         {
                             Arguments_Float = new float[6],
                             TargetAssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_DOGA", AssetTemplate.ArfDog),
-                            EventReceiveID = EventTypeBFBB.ScenePrepare,
-                            EventSendID = EventTypeBFBB.Connect_IOwnYou
+                            EventReceiveID = EventBFBB.ScenePrepare,
+                            EventSendID = EventBFBB.Connect_IOwnYou
                         },
-                        new AssetEventBFBB
+                        new LinkBFBB
                         {
                             Arguments_Float = new float[6],
                             TargetAssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_DOGB", AssetTemplate.ArfDog),
-                            EventReceiveID = EventTypeBFBB.ScenePrepare,
-                            EventSendID = EventTypeBFBB.Connect_IOwnYou
+                            EventReceiveID = EventBFBB.ScenePrepare,
+                            EventSendID = EventBFBB.Connect_IOwnYou
                         },
-                        new AssetEventBFBB
+                        new LinkBFBB
                         {
                             Arguments_Float = new float[6],
                             TargetAssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_DOGC", AssetTemplate.ArfDog),
-                            EventReceiveID = EventTypeBFBB.ScenePrepare,
-                            EventSendID = EventTypeBFBB.Connect_IOwnYou
+                            EventReceiveID = EventBFBB.ScenePrepare,
+                            EventSendID = EventBFBB.Connect_IOwnYou
                         }
                     };
                     break;
@@ -579,20 +579,20 @@ namespace IndustrialPark
                     ((AssetVIL)asset).Model_AssetID = "tubelet_bind.MINF";
                     ((AssetVIL)asset).VilType = VilType.tubelet_bind;
                     ((AssetVIL)asset).MovePoint_AssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyAreaMVPT);
-                    ((AssetVIL)asset).EventsBFBB = new AssetEventBFBB[] {
-                        new AssetEventBFBB
+                    ((AssetVIL)asset).LinksBFBB = new LinkBFBB[] {
+                        new LinkBFBB
                         {
                             Arguments_Float = new float[6],
                             TargetAssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_SLAVEA", AssetTemplate.TubeletSlave),
-                            EventReceiveID = EventTypeBFBB.ScenePrepare,
-                            EventSendID = EventTypeBFBB.Connect_IOwnYou
+                            EventReceiveID = EventBFBB.ScenePrepare,
+                            EventSendID = EventBFBB.Connect_IOwnYou
                         },
-                        new AssetEventBFBB
+                        new LinkBFBB
                         {
                             Arguments_Float = new float[6],
                             TargetAssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_SLAVEB", AssetTemplate.TubeletSlave),
-                            EventReceiveID = EventTypeBFBB.ScenePrepare,
-                            EventSendID = EventTypeBFBB.Connect_IOwnYou
+                            EventReceiveID = EventBFBB.ScenePrepare,
+                            EventSendID = EventBFBB.Connect_IOwnYou
                         }
                     };
                     break;
@@ -614,32 +614,32 @@ namespace IndustrialPark
                     ((AssetVIL)asset).Model_AssetID = "robot_9a_bind.MINF";
                     ((AssetVIL)asset).VilType = VilType.robot_9a_bind;
                     ((AssetVIL)asset).MovePoint_AssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyAreaMVPT);
-                    ((AssetVIL)asset).EventsBFBB = new AssetEventBFBB[] {
-                        new AssetEventBFBB
+                    ((AssetVIL)asset).LinksBFBB = new LinkBFBB[] {
+                        new LinkBFBB
                         {
                             Arguments_Float = new float[6],
                             TargetAssetID = asset.AHDR.assetID,
-                            EventReceiveID = EventTypeBFBB.ScenePrepare,
-                            EventSendID = EventTypeBFBB.DetectPlayerOff
+                            EventReceiveID = EventBFBB.ScenePrepare,
+                            EventSendID = EventBFBB.DetectPlayerOff
                         }
                     };
 
                     AssetTRIG slickTrigger = (AssetTRIG)GetFromAssetID(PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_TRIG", AssetTemplate.SphereTrigger));
                     slickTrigger.Position1X_Radius = 15f;
-                    slickTrigger.EventsBFBB = new AssetEventBFBB[] {
-                        new AssetEventBFBB
+                    slickTrigger.LinksBFBB = new LinkBFBB[] {
+                        new LinkBFBB
                         {
                             Arguments_Float = new float[6],
                             TargetAssetID = asset.AHDR.assetID,
-                            EventReceiveID = EventTypeBFBB.EnterPlayer,
-                            EventSendID = EventTypeBFBB.DetectPlayerOn
+                            EventReceiveID = EventBFBB.EnterPlayer,
+                            EventSendID = EventBFBB.DetectPlayerOn
                         },
-                        new AssetEventBFBB
+                        new LinkBFBB
                         {
                             Arguments_Float = new float[6],
                             TargetAssetID = asset.AHDR.assetID,
-                            EventReceiveID = EventTypeBFBB.ExitPlayer,
-                            EventSendID = EventTypeBFBB.DetectPlayerOff
+                            EventReceiveID = EventBFBB.ExitPlayer,
+                            EventSendID = EventBFBB.DetectPlayerOff
                         }
                     };
 
@@ -658,13 +658,13 @@ namespace IndustrialPark
                     ((AssetVIL)asset).Model_AssetID = "duplicatotron1000_bind.MINF";
                     ((AssetVIL)asset).VilType = VilType.duplicatotron1000_bind;
                     ((AssetVIL)asset).NPCSettings_AssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_SETTINGS", AssetTemplate.DuplicatotronSettings);
-                    ((AssetVIL)asset).EventsBFBB = new AssetEventBFBB[] {
-                        new AssetEventBFBB
+                    ((AssetVIL)asset).LinksBFBB = new LinkBFBB[] {
+                        new LinkBFBB
                         {
                             Arguments_Float = new float[6],
                             TargetAssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_GROUP", AssetTemplate.Group),
-                            EventReceiveID = EventTypeBFBB.ScenePrepare,
-                            EventSendID = EventTypeBFBB.Connect_IOwnYou
+                            EventReceiveID = EventBFBB.ScenePrepare,
+                            EventSendID = EventBFBB.Connect_IOwnYou
                         }
                     };
                     break;
@@ -780,20 +780,20 @@ namespace IndustrialPark
                 case AssetTemplate.BusStop_Trigger:
                     ((AssetTRIG)asset).Position1X_Radius = 2.5f;
                     uint lightsAssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper().Replace("TRIGGER", "LIGHTS").Replace("TRIG", "LIGHTS"), AssetTemplate.BusStop_Lights);
-                    ((AssetTRIG)asset).EventsBFBB = new AssetEventBFBB[] {
-                        new AssetEventBFBB
+                    ((AssetTRIG)asset).LinksBFBB = new LinkBFBB[] {
+                        new LinkBFBB
                         {
                             Arguments_Float = new float[6],
                             TargetAssetID = lightsAssetID,
-                            EventReceiveID = EventTypeBFBB.EnterPlayer,
-                            EventSendID = EventTypeBFBB.Visible
+                            EventReceiveID = EventBFBB.EnterPlayer,
+                            EventSendID = EventBFBB.Visible
                         },
-                        new AssetEventBFBB
+                        new LinkBFBB
                         {
                             Arguments_Float = new float[6],
                             TargetAssetID = lightsAssetID,
-                            EventReceiveID = EventTypeBFBB.ExitPlayer,
-                            EventSendID = EventTypeBFBB.Invisible
+                            EventReceiveID = EventBFBB.ExitPlayer,
+                            EventSendID = EventBFBB.Invisible
                         }
                     };
                     break;
@@ -871,27 +871,27 @@ namespace IndustrialPark
                         if (!ContainsAsset(checkpointDisp))
                             checkpointDisp = PlaceTemplate(position, layerIndex, out success, ref assetIDs, "CHECKPOINT_DISP", AssetTemplate.Dispatcher);
 
-                        List<AssetEventBFBB> events = new List<AssetEventBFBB>
+                        List<LinkBFBB> events = new List<LinkBFBB>
                         {
-                            new AssetEventBFBB
+                            new LinkBFBB
                             {
                                 Arguments_Hex = new AssetID[] { 0, 0, 0, 0, PlaceTemplate(position, layerIndex, out success, ref assetIDs, "CHECKPOINT_MRKR", AssetTemplate.Marker), 0 },
                                 TargetAssetID = checkpointDisp,
-                                EventReceiveID = EventTypeBFBB.EnterPlayer,
-                                EventSendID = EventTypeBFBB.SetCheckPoint
+                                EventReceiveID = EventBFBB.EnterPlayer,
+                                EventSendID = EventBFBB.SetCheckPoint
                             }
                         };
 
                         if (template == AssetTemplate.Checkpoint)
-                            events.Add(new AssetEventBFBB
+                            events.Add(new LinkBFBB
                             {
                                 Arguments_Float = new float[6],
                                 TargetAssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, "CHECKPOINT_TIMER", AssetTemplate.Checkpoint_Timer),
-                                EventReceiveID = EventTypeBFBB.EnterPlayer,
-                                EventSendID = EventTypeBFBB.Run
+                                EventReceiveID = EventBFBB.EnterPlayer,
+                                EventSendID = EventBFBB.Run
                             });
 
-                        ((AssetTRIG)asset).EventsBFBB = events.ToArray();
+                        ((AssetTRIG)asset).LinksBFBB = events.ToArray();
                         break;
                     }
                 case AssetTemplate.Checkpoint_Timer:
@@ -901,34 +901,34 @@ namespace IndustrialPark
                         uint checkpointTalkbox = BKDRHash("CHECKPOINT_TALKBOX_00");
                         if (!ContainsAsset(checkpointTalkbox))
                             checkpointTalkbox = PlaceTemplate(position, layerIndex, out success, ref assetIDs, "CHECKPOINT_TALKBOX", AssetTemplate.Checkpoint_Talkbox);
-                        ((AssetTIMR)asset).EventsBFBB = new AssetEventBFBB[] {
-                            new AssetEventBFBB
+                        ((AssetTIMR)asset).LinksBFBB = new LinkBFBB[] {
+                            new LinkBFBB
                             {
                                 Arguments_Float = new float[] { 2, 0, 0, 0, 0, 0},
                                 TargetAssetID = checkpointSimp,
-                                EventReceiveID = EventTypeBFBB.Run,
-                                EventSendID = EventTypeBFBB.AnimPlayLoop
+                                EventReceiveID = EventBFBB.Run,
+                                EventSendID = EventBFBB.AnimPlayLoop
                             },
-                            new AssetEventBFBB
+                            new LinkBFBB
                             {
                                 Arguments_Hex = new AssetID[] { "checkpoint_text", 0, 0, 0, 0, 0},
                                 TargetAssetID = checkpointTalkbox,
-                                EventReceiveID = EventTypeBFBB.Run,
-                                EventSendID = EventTypeBFBB.StartConversation
+                                EventReceiveID = EventBFBB.Run,
+                                EventSendID = EventBFBB.StartConversation
                             },
-                            new AssetEventBFBB
+                            new LinkBFBB
                             {
                                 Arguments_Float = new float[] { 3, 0, 0, 0, 0, 0},
                                 TargetAssetID = checkpointSimp,
-                                EventReceiveID = EventTypeBFBB.Expired,
-                                EventSendID = EventTypeBFBB.AnimPlayLoop
+                                EventReceiveID = EventBFBB.Expired,
+                                EventSendID = EventBFBB.AnimPlayLoop
                             },
-                            new AssetEventBFBB
+                            new LinkBFBB
                             {
                                 Arguments_Float = new float[6],
                                 TargetAssetID = asset.AHDR.assetID,
-                                EventReceiveID = EventTypeBFBB.Expired,
-                                EventSendID = EventTypeBFBB.Disable
+                                EventReceiveID = EventBFBB.Expired,
+                                EventSendID = EventBFBB.Disable
                             },
                         };
                         break;

@@ -55,8 +55,8 @@ namespace IndustrialPark
         [Category("Player References")]
         public AssetID LightKit_AssetID
         {
-            get => ReadUInt(EventStartOffset + AmountOfEvents * AssetEvent.sizeOfStruct);
-            set => Write(EventStartOffset + AmountOfEvents * AssetEvent.sizeOfStruct, value);
+            get => ReadUInt(EventStartOffset + AmountOfEvents * Link.sizeOfStruct);
+            set => Write(EventStartOffset + AmountOfEvents * Link.sizeOfStruct, value);
         }
     }
 }

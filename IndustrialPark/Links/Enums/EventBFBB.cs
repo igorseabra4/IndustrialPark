@@ -1,6 +1,6 @@
 ﻿namespace IndustrialPark
 {
-    public enum EventTypeBFBB : ushort
+    public enum EventBFBB : ushort
     {
         Unknown = 0x0000,
         Enable = 0x0001,

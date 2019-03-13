@@ -11,9 +11,15 @@ namespace IndustrialPark
 
         public override bool HasReference(uint assetID)
         {
-            if (UnknownAssetID1C == assetID)
+            if (BumpMapTexture_AssetID == assetID)
                 return true;
-            if (GroupAssetID == assetID)
+            if (EnvMapTexture_AssetID == assetID)
+                return true;
+            if (DualMapTexture_AssetID == assetID)
+                return true;
+            if (TextureAnim1_GroupAssetID == assetID)
+                return true;
+            if (TextureAnim2_GroupAssetID == assetID)
                 return true;
 
             return base.HasReference(assetID);
@@ -81,65 +87,65 @@ namespace IndustrialPark
             get => ReadFloat(0x10);
             set => Write(0x10, value);
         }
-
+        
         [Category("Surface: Material Effects")]
-        public int UnknownInt14
+        public int MaterialEffectFlags
         {
             get => ReadInt(0x14);
             set => Write(0x14, value);
         }
 
         [Category("Surface: Material Effects")]
-        public int UnknownInt18
+        public AssetID BumpMapTexture_AssetID
         {
-            get => ReadInt(0x18);
+            get => ReadUInt(0x18);
             set => Write(0x18, value);
         }
 
         [Category("Surface: Material Effects")]
-        public AssetID UnknownAssetID1C
+        public AssetID EnvMapTexture_AssetID
         {
             get => ReadUInt(0x1C);
             set => Write(0x1C, value);
         }
 
         [Category("Surface: Material Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat20
+        public float Shininess
         {
             get => ReadFloat(0x20);
             set => Write(0x20, value);
         }
 
-        [Category("Surface: Material Effects")]
-        public int UnknownInt24
+        [Category("Surface: Material Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        public float Bumpiness
         {
-            get => ReadInt(0x24);
+            get => ReadFloat(0x24);
             set => Write(0x24, value);
         }
 
         [Category("Surface: Material Effects")]
-        public int UnknownInt28
+        public AssetID DualMapTexture_AssetID
         {
-            get => ReadInt(0x28);
+            get => ReadUInt(0x28);
             set => Write(0x28, value);
         }
-
+        
         [Category("Surface: Color Effects")]
-        public short UnknownShort2C
+        public short ColorEffectFlags
         {
             get => ReadShort(0x2C);
             set => Write(0x2C, value);
         }
 
         [Category("Surface: Color Effects")]
-        public short UnknownShort2E
+        public short ColorEffectMode
         {
             get => ReadShort(0x2E);
             set => Write(0x2E, value);
         }
 
         [Category("Surface: Color Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat30
+        public float Speed
         {
             get => ReadFloat(0x30);
             set => Write(0x30, value);
@@ -153,385 +159,399 @@ namespace IndustrialPark
         }
 
         [Category("Surface: Texture Animation")]
-        public int UnknownInt38
+        public short TextureAnim1_Pad38
         {
-            get => ReadInt(0x38);
+            get => ReadShort(0x38);
             set => Write(0x38, value);
         }
 
         [Category("Surface: Texture Animation")]
-        public AssetID GroupAssetID
+        public short TextureAnim1_Mode
+        {
+            get => ReadShort(0x3A);
+            set => Write(0x3A, value);
+        }
+
+        [Category("Surface: Texture Animation")]
+        public AssetID TextureAnim1_GroupAssetID
         {
             get => ReadUInt(0x3C);
             set => Write(0x3C, value);
         }
 
         [Category("Surface: Texture Animation"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat40
+        public float TextureAnim1_Speed
         {
             get => ReadFloat(0x40);
             set => Write(0x40, value);
         }
 
-        [Category("Surface: Texture Animation"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat44
+        [Category("Surface: Texture Animation")]
+        public short TextureAnim2_Pad44
         {
-            get => ReadFloat(0x44);
+            get => ReadShort(0x44);
             set => Write(0x44, value);
         }
 
-        [Category("Surface: Texture Animation"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat48
+        [Category("Surface: Texture Animation")]
+        public short TextureAnim2_Mode
         {
-            get => ReadFloat(0x48);
+            get => ReadShort(0x46);
+            set => Write(0x46, value);
+        }
+
+        [Category("Surface: Texture Animation")]
+        public AssetID TextureAnim2_GroupAssetID
+        {
+            get => ReadUInt(0x48);
             set => Write(0x48, value);
         }
 
         [Category("Surface: Texture Animation"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat4C
+        public float TextureAnim2_Speed
         {
             get => ReadFloat(0x4C);
             set => Write(0x4C, value);
         }
 
         [Category("Surface: UV Effects")]
-        public int UnknownInt50
+        public int UVEffects_Flags
         {
             get => ReadInt(0x50);
             set => Write(0x50, value);
         }
 
         [Category("Surface: UV Effects")]
-        public int UnknownInt54
+        public int UVEffects1_Mode
         {
             get => ReadInt(0x54);
             set => Write(0x54, value);
         }
 
-        [Category("Surface: UV Effects")]
-        public int UnknownInt58
+        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        public float UVEffects1_Rot
         {
-            get => ReadInt(0x58);
+            get => ReadFloat(0x58);
             set => Write(0x58, value);
         }
 
-        [Category("Surface: UV Effects")]
-        public int UnknownInt5C
+        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        public float UVEffects1_RotSpd
         {
-            get => ReadInt(0x5C);
+            get => ReadFloat(0x5C);
             set => Write(0x5C, value);
         }
 
-        [Category("Surface: UV Effects")]
-        public int UnknownInt60
+        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        public float UVEffects1_Trans_X
         {
-            get => ReadInt(0x60);
+            get => ReadFloat(0x60);
             set => Write(0x60, value);
         }
 
-        [Category("Surface: UV Effects")]
-        public int UnknownInt64
+        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        public float UVEffects1_Trans_Y
         {
-            get => ReadInt(0x64);
+            get => ReadFloat(0x64);
             set => Write(0x64, value);
         }
 
-        [Category("Surface: UV Effects")]
-        public int UnknownInt68
+        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        public float UVEffects1_Trans_Z
         {
-            get => ReadInt(0x68);
+            get => ReadFloat(0x68);
             set => Write(0x68, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UVAnimation_X
+        public float UVEffects1_TransSpeed_X
         {
             get => ReadFloat(0x6C);
             set => Write(0x6C, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UVAnimation_Y
+        public float UVEffects1_TransSpeed_Y
         {
             get => ReadFloat(0x70);
             set => Write(0x70, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat74
+        public float UVEffects1_TransSpeed_Z
         {
             get => ReadFloat(0x74);
             set => Write(0x74, value);
         }
-
+               
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat78
+        public float UVEffects1_Scale_X
         {
             get => ReadFloat(0x78);
             set => Write(0x78, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat7C
+        public float UVEffects1_Scale_Y
         {
             get => ReadFloat(0x7C);
             set => Write(0x7C, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat80
+        public float UVEffects1_Scale_Z
         {
             get => ReadFloat(0x80);
             set => Write(0x80, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat84
+        public float UVEffects1_ScaleSpeed_X
         {
             get => ReadFloat(0x84);
             set => Write(0x84, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat88
+        public float UVEffects1_ScaleSpeed_Y
         {
             get => ReadFloat(0x88);
             set => Write(0x88, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat8C
+        public float UVEffects1_ScaleSpeed_Z
         {
             get => ReadFloat(0x8C);
             set => Write(0x8C, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat90
+        public float UVEffects1_Min_X
         {
             get => ReadFloat(0x90);
             set => Write(0x90, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat94
+        public float UVEffects1_Min_Y
         {
             get => ReadFloat(0x94);
             set => Write(0x94, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat98
+        public float UVEffects1_Min_Z
         {
             get => ReadFloat(0x98);
             set => Write(0x98, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat9C
+        public float UVEffects1_Max_X
         {
             get => ReadFloat(0x9C);
             set => Write(0x9C, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatA0
+        public float UVEffects1_Max_Y
         {
             get => ReadFloat(0xA0);
             set => Write(0xA0, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatA4
+        public float UVEffects1_Max_Z
         {
             get => ReadFloat(0xA4);
             set => Write(0xA4, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatA8
+        public float UVEffects1_MinMaxSpeed_X
         {
             get => ReadFloat(0xA8);
             set => Write(0xA8, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatAC
+        public float UVEffects1_MinMaxSpeed_Y
         {
             get => ReadFloat(0xAC);
             set => Write(0xAC, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatB0
+        public float UVEffects1_MinMaxSpeed_Z
         {
             get => ReadFloat(0xB0);
             set => Write(0xB0, value);
         }
 
-        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatB4
+        [Category("Surface: UV Effects")]
+        public int UVEffects2_Mode
         {
-            get => ReadFloat(0xB4);
+            get => ReadInt(0xB4);
             set => Write(0xB4, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatB8
+        public float UVEffects2_Rot
         {
             get => ReadFloat(0xB8);
             set => Write(0xB8, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatBC
+        public float UVEffects2_RotSpd
         {
             get => ReadFloat(0xBC);
             set => Write(0xBC, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatC0
+        public float UVEffects2_Trans_X
         {
             get => ReadFloat(0xC0);
             set => Write(0xC0, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatC4
+        public float UVEffects2_Trans_Y
         {
             get => ReadFloat(0xC4);
             set => Write(0xC4, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatC8
+        public float UVEffects2_Trans_Z
         {
             get => ReadFloat(0xC8);
             set => Write(0xC8, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatCC
+        public float UVEffects2_TransSpeed_X
         {
             get => ReadFloat(0xCC);
             set => Write(0xCC, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatD0
+        public float UVEffects2_TransSpeed_Y
         {
             get => ReadFloat(0xD0);
             set => Write(0xD0, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatD4
+        public float UVEffects2_TransSpeed_Z
         {
             get => ReadFloat(0xD4);
             set => Write(0xD4, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatD8
+        public float UVEffects2_Scale_X
         {
             get => ReadFloat(0xD8);
             set => Write(0xD8, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatDC
+        public float UVEffects2_Scale_Y
         {
             get => ReadFloat(0xDC);
             set => Write(0xDC, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatE0
+        public float UVEffects2_Scale_Z
         {
             get => ReadFloat(0xE0);
             set => Write(0xE0, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatE4
+        public float UVEffects2_ScaleSpeed_X
         {
             get => ReadFloat(0xE4);
             set => Write(0xE4, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatE8
+        public float UVEffects2_ScaleSpeed_Y
         {
             get => ReadFloat(0xE8);
             set => Write(0xE8, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatEC
+        public float UVEffects2_ScaleSpeed_Z
         {
             get => ReadFloat(0xEC);
             set => Write(0xEC, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatF0
+        public float UVEffects2_Min_X
         {
             get => ReadFloat(0xF0);
             set => Write(0xF0, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatF4
+        public float UVEffects2_Min_Y
         {
             get => ReadFloat(0xF4);
             set => Write(0xF4, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatF8
+        public float UVEffects2_Min_Z
         {
             get => ReadFloat(0xF8);
             set => Write(0xF8, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatFC
+        public float UVEffects2_Max_X
         {
             get => ReadFloat(0xFC);
             set => Write(0xFC, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat100
+        public float UVEffects2_Max_Y
         {
             get => ReadFloat(0x100);
             set => Write(0x100, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat104
+        public float UVEffects2_Max_Z
         {
             get => ReadFloat(0x104);
             set => Write(0x104, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat108
+        public float UVEffects2_MinMaxSpeed_X
         {
             get => ReadFloat(0x108);
             set => Write(0x108, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat10C
+        public float UVEffects2_MinMaxSpeed_Y
         {
             get => ReadFloat(0x10C);
             set => Write(0x10C, value);
         }
 
         [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat110
+        public float UVEffects2_MinMaxSpeed_Z
         {
             get => ReadFloat(0x110);
             set => Write(0x110, value);

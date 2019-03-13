@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
@@ -74,55 +73,58 @@ namespace IndustrialPark
             set => Flags = (short)(value ? (Flags | (short)Mask(4)) : (Flags & (short)InvMask(4)));
         }
 
-        protected virtual int EventStartOffset => Data.Length - AmountOfEvents * AssetEvent.sizeOfStruct;
+        protected virtual int EventStartOffset => Data.Length - AmountOfEvents * Link.sizeOfStruct;
 
-        [Category("Object Base"), Editor(typeof(EventListEditor), typeof(UITypeEditor))]
-        public AssetEventBFBB[] EventsBFBB
+        [Category("Object Base"), Editor(typeof(LinkListEditor), typeof(UITypeEditor))]
+        public LinkBFBB[] LinksBFBB
         {
             get
             {
-                AssetEventBFBB[] events = new AssetEventBFBB[AmountOfEvents];
+                LinkListEditor.IsTimed = false;
+                LinkBFBB[] events = new LinkBFBB[AmountOfEvents];
 
                 for (int i = 0; i < AmountOfEvents; i++)
-                    events[i] = new AssetEventBFBB(Data, EventStartOffset + i * AssetEvent.sizeOfStruct);
+                    events[i] = new LinkBFBB(Data, EventStartOffset + i * Link.sizeOfStruct, false);
 
                 return events;
             }
             set => WriteEvents(value);
         }
-        [Category("Object Base"), Editor(typeof(EventListEditor), typeof(UITypeEditor))]
-        public AssetEventTSSM[] EventsTSSM
+        [Category("Object Base"), Editor(typeof(LinkListEditor), typeof(UITypeEditor))]
+        public LinkTSSM[] LinksTSSM
         {
             get
             {
-                AssetEventTSSM[] events = new AssetEventTSSM[AmountOfEvents];
+                LinkListEditor.IsTimed = false;
+                LinkTSSM[] events = new LinkTSSM[AmountOfEvents];
 
                 for (int i = 0; i < AmountOfEvents; i++)
-                    events[i] = new AssetEventTSSM(Data, EventStartOffset + i * AssetEvent.sizeOfStruct);
+                    events[i] = new LinkTSSM(Data, EventStartOffset + i * Link.sizeOfStruct, false);
 
                 return events;
             }
             set => WriteEvents(value);
         }
-        [Category("Object Base"), Editor(typeof(EventListEditor), typeof(UITypeEditor))]
-        public AssetEventIncredibles[] EventsIncredibles
+        [Category("Object Base"), Editor(typeof(LinkListEditor), typeof(UITypeEditor))]
+        public LinkIncredibles[] LinksIncredibles
         {
             get
             {
-                AssetEventIncredibles[] events = new AssetEventIncredibles[AmountOfEvents];
+                LinkListEditor.IsTimed = false;
+                LinkIncredibles[] events = new LinkIncredibles[AmountOfEvents];
 
                 for (int i = 0; i < AmountOfEvents; i++)
-                    events[i] = new AssetEventIncredibles(Data, EventStartOffset + i * AssetEvent.sizeOfStruct);
+                    events[i] = new LinkIncredibles(Data, EventStartOffset + i * Link.sizeOfStruct, false);
 
                 return events;
             }
             set => WriteEvents(value);
         }
 
-        protected void WriteEvents(AssetEvent[] value)
+        protected void WriteEvents(Link[] value)
         {
             List<byte> newData = Data.Take(EventStartOffset).ToList();
-            List<byte> bytesAfterEvents = Data.Skip(EventStartOffset + ReadByte(0x05) * AssetEvent.sizeOfStruct).ToList();
+            List<byte> bytesAfterEvents = Data.Skip(EventStartOffset + ReadByte(0x05) * Link.sizeOfStruct).ToList();
 
             for (int i = 0; i < value.Length; i++)
                 newData.AddRange(value[i].ToByteArray());
@@ -135,9 +137,15 @@ namespace IndustrialPark
 
         public override bool HasReference(uint assetID)
         {
-            foreach (AssetEvent assetEvent in EventsBFBB)
-                if (assetEvent.TargetAssetID == assetID)
+            foreach (Link link in LinksBFBB)
+            {
+                if (link.TargetAssetID == assetID)
                     return true;
+                if (link.ArgumentAssetID == assetID)
+                    return true;
+                if (link.SourceCheckAssetID == assetID)
+                    return true;
+            }
 
             return false;
         }

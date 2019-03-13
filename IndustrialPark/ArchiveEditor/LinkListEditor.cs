@@ -1,15 +1,15 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.Drawing.Design;
-using System.Windows.Forms;
 using System.Windows.Forms.Design;
 
 namespace IndustrialPark
 {
-    public class EventListEditor : UITypeEditor
+    public class LinkListEditor : UITypeEditor
     {
         private IWindowsFormsEditorService service;
+
+        public static bool IsTimed { get; internal set; }
 
         public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
         {
@@ -23,29 +23,30 @@ namespace IndustrialPark
 
             if (service != null)
             {
-                if (value is AssetEventBFBB[])
+                if (value is LinkBFBB[])
                 {
-                    AssetEventBFBB[] events = EventEditor.GetEvents((AssetEventBFBB[])value, out bool success);
+                    LinkBFBB[] events = LinkEditor.GetEvents((LinkBFBB[])value, out bool success, IsTimed);
 
                     if (success)
                         value = events;
                 }
-                else if (value is AssetEventTSSM[])
+                else if (value is LinkTSSM[])
                 {
-                    AssetEventTSSM[] events = EventEditor.GetEvents((AssetEventTSSM[])value, out bool success);
+                    LinkTSSM[] events = LinkEditor.GetEvents((LinkTSSM[])value, out bool success, IsTimed);
 
                     if (success)
                         value = events;
                 }
-                else if (value is AssetEventIncredibles[])
+                else if (value is LinkIncredibles[])
                 {
-                    AssetEventIncredibles[] events = EventEditor.GetEvents((AssetEventIncredibles[])value, out bool success);
+                    LinkIncredibles[] events = LinkEditor.GetEvents((LinkIncredibles[])value, out bool success, IsTimed);
 
                     if (success)
                         value = events;
                 }
             }
 
+            IsTimed = false;
             return value;
         }
     }

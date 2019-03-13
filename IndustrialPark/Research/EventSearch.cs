@@ -27,7 +27,7 @@ namespace IndustrialPark
                 comboSenderAsset.Items.Add(o);
                 comboTargetAsset.Items.Add(o);
             }
-            foreach (EventTypeBFBB o in Enum.GetValues(typeof(EventTypeBFBB)))
+            foreach (EventBFBB o in Enum.GetValues(typeof(EventBFBB)))
             {
                 comboRecieveEvent.Items.Add(o);
                 comboTargetEvent.Items.Add(o);
@@ -57,13 +57,13 @@ namespace IndustrialPark
 
         AssetType senderAssetType;
         AssetType recieverAssetType;
-        EventTypeBFBB recieveEventType;
-        EventTypeBFBB targetEventType;
+        EventBFBB recieveEventType;
+        EventBFBB targetEventType;
 
         HashSet<AssetType> senders = new HashSet<AssetType>();
         HashSet<AssetType> recievers = new HashSet<AssetType>();
-        HashSet<EventTypeBFBB> recievedEvents = new HashSet<EventTypeBFBB>();
-        HashSet<EventTypeBFBB> sentEvents = new HashSet<EventTypeBFBB>();
+        HashSet<EventBFBB> recievedEvents = new HashSet<EventBFBB>();
+        HashSet<EventBFBB> sentEvents = new HashSet<EventBFBB>();
 
         int total = 0;
 
@@ -71,13 +71,13 @@ namespace IndustrialPark
         {
             senderAssetType = (AssetType)comboSenderAsset.SelectedItem;
             recieverAssetType = (AssetType)comboTargetAsset.SelectedItem;
-            recieveEventType = (EventTypeBFBB)comboRecieveEvent.SelectedItem;
-            targetEventType = (EventTypeBFBB)comboTargetEvent.SelectedItem;
+            recieveEventType = (EventBFBB)comboRecieveEvent.SelectedItem;
+            targetEventType = (EventBFBB)comboTargetEvent.SelectedItem;
 
             senders = new HashSet<AssetType>();
             recievers = new HashSet<AssetType>();
-            recievedEvents = new HashSet<EventTypeBFBB>();
-            sentEvents = new HashSet<EventTypeBFBB>();
+            recievedEvents = new HashSet<EventBFBB>();
+            sentEvents = new HashSet<EventBFBB>();
 
             total = 0;
             richTextBox1.Clear();
@@ -91,10 +91,10 @@ namespace IndustrialPark
             foreach (AssetType type in recievers)
                 richTextBox2.Text += type.ToString() + ", ";
             richTextBox2.Text += $"the recieved events are of {recievedEvents.Count} different event types: ";
-            foreach (EventTypeBFBB type in recievedEvents)
+            foreach (EventBFBB type in recievedEvents)
                 richTextBox2.Text += type.ToString() + ", ";
             richTextBox2.Text += $"and the sent events are of {sentEvents.Count} different event types: ";
-            foreach (EventTypeBFBB type in sentEvents)
+            foreach (EventBFBB type in sentEvents)
                 richTextBox2.Text += type.ToString() + ", ";
         }
 
@@ -128,11 +128,11 @@ namespace IndustrialPark
                     continue;
 
                 if (asset is ObjectAsset objectAsset)
-                    foreach (AssetEventBFBB assetEvent in objectAsset.EventsBFBB)
+                    foreach (LinkBFBB assetEvent in objectAsset.LinksBFBB)
                     {
-                        if (recieveEventType != EventTypeBFBB.Unknown && assetEvent.EventReceiveID != recieveEventType)
+                        if (recieveEventType != EventBFBB.Unknown && assetEvent.EventReceiveID != recieveEventType)
                             continue;
-                        if (targetEventType != EventTypeBFBB.Unknown && assetEvent.EventSendID != targetEventType)
+                        if (targetEventType != EventBFBB.Unknown && assetEvent.EventSendID != targetEventType)
                             continue;
 
                         Asset targetAsset = null;

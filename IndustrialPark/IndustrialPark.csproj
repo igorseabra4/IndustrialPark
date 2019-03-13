@@ -75,16 +75,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArchiveEditor\EventEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\EventEditor.Designer.cs">
-      <DependentUpon>EventEditor.cs</DependentUpon>
-    </Compile>
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Gizmos.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetTemplates.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetEditing.cs" />
-    <Compile Include="ArchiveEditor\EventListEditor.cs" />
+    <Compile Include="ArchiveEditor\LinkEditor.Designer.cs">
+      <DependentUpon>LinkEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="ArchiveEditor\InternalEditors\InternalPlatEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -109,6 +105,10 @@
     <Compile Include="ArchiveEditor\InternalEditors\InternalFlyEditor.designer.cs">
       <DependentUpon>InternalFlyEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="ArchiveEditor\LinkEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\LinkListEditor.cs" />
     <Compile Include="ArchiveEditor\Other\GizmoBase.cs" />
     <Compile Include="ArchiveEditor\Other\PositionGizmo.cs" />
     <Compile Include="ArchiveEditor\Other\PositionLocalGizmo.cs" />
@@ -130,20 +130,18 @@
     <Compile Include="Assets\ObjectAssets\AssetPARE.cs" />
     <Compile Include="Assets\ObjectAssets\AssetPARP.cs" />
     <Compile Include="Assets\ObjectAssets\AssetPARS.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetSRCP.cs" />
+    <Compile Include="Assets\ObjectAssets\AssetSCRP.cs" />
     <Compile Include="Assets\ObjectAssets\AssetSURF.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\BFBB\DynaTaskBox.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\DynaType_BFBB.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\DynaType_TSSM.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\MovieGame\DynaEffectScreenFade.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\MovieGame\DynaEnemyCritter.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\MovieGame\DynaPlaceableBase.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\MovieGame\DynaRing.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\MovieGame\DynaRingControl.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\MovieGame\DynaSceneProperties.cs" />
-    <Compile Include="Assets\Shared\AssetEventIncredibles.cs" />
-    <Compile Include="Assets\Shared\Enums\EventTypeBFBB.cs" />
-    <Compile Include="Assets\Shared\Enums\EventTypeIncredibles.cs" />
+    <Compile Include="Assets\DYNA\BFBB\DynaTaskBox.cs" />
+    <Compile Include="Assets\DYNA\DynaType_BFBB.cs" />
+    <Compile Include="Assets\DYNA\DynaType_TSSM.cs" />
+    <Compile Include="Assets\DYNA\MovieGame\DynaEffectScreenFade.cs" />
+    <Compile Include="Assets\DYNA\MovieGame\DynaEnemyCritter.cs" />
+    <Compile Include="Assets\DYNA\MovieGame\DynaPlaceableBase.cs" />
+    <Compile Include="Assets\DYNA\MovieGame\DynaRing.cs" />
+    <Compile Include="Assets\DYNA\MovieGame\DynaRingControl.cs" />
+    <Compile Include="Assets\DYNA\MovieGame\DynaSceneProperties.cs" />
+    <Compile Include="Links\Enums\EventBFBB.cs" />
     <Compile Include="Assets\Shared\Enums\PlatTypeSpecific.cs" />
     <Compile Include="Assets\Shared\Interfaces\IRotatableAsset.cs" />
     <Compile Include="Assets\Shared\Interfaces\IScalableAsset.cs" />
@@ -153,6 +151,12 @@
     <Compile Include="ArchiveEditor\ApplyScale.designer.cs">
       <DependentUpon>ApplyScale.cs</DependentUpon>
     </Compile>
+    <Compile Include="Links\Enums\EventIncredibles.cs" />
+    <Compile Include="Links\Enums\EventTSSM.cs" />
+    <Compile Include="Links\Link.cs" />
+    <Compile Include="Links\LinkBFBB.cs" />
+    <Compile Include="Links\LinkIncredibles.cs" />
+    <Compile Include="Links\LinkTSSM.cs" />
     <Compile Include="MainForm\EditName.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -249,17 +253,14 @@
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetUI.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetUIFT.cs" />
     <Compile Include="Assets\Shared\Enums\PlatType.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\AssetDYNA.cs" />
+    <Compile Include="Assets\DYNA\AssetDYNA.cs" />
     <Compile Include="Assets\ObjectAssets\AssetFOG.cs" />
     <Compile Include="Assets\ObjectAssets\AssetPORT.cs" />
     <Compile Include="Assets\ObjectAssets\AssetTIMR.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetBOUL.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetDSTR.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\BFBB\DynaTeleport_BFBB.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\BFBB\DynaTeleport_MovieGame.cs" />
-    <Compile Include="Assets\Shared\AssetEventBFBB.cs" />
-    <Compile Include="Assets\Shared\AssetEventTSSM.cs" />
-    <Compile Include="Assets\Shared\Enums\EventTypeTSSM.cs" />
+    <Compile Include="Assets\DYNA\BFBB\DynaTeleport_BFBB.cs" />
+    <Compile Include="Assets\DYNA\BFBB\DynaTeleport_MovieGame.cs" />
     <Compile Include="Assets\Shared\Enums\VilType.cs" />
     <Compile Include="Assets\Shared\TypeConverter\HexIntTypeConverter.cs" />
     <Compile Include="MainForm\Json\IPSettings.cs" />
@@ -269,22 +270,22 @@
     <Compile Include="Assets\Shared\Colors\MyColor.cs" />
     <Compile Include="Assets\Shared\Colors\MyColorConverter.cs" />
     <Compile Include="Assets\Shared\Colors\MyColorEditor.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\DynaBase.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\BFBB\DynaBoulderGen.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\BFBB\DynaBungeeDrop.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\BFBB\DynaBungeeHook.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\BFBB\DynaBusStop.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\BFBB\DynaCamTweak.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\BFBB\DynaFlythrough.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\BFBB\DynaHudMeterFont.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\BFBB\DynaHudMeterUnit.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\BFBB\DynaHudModel.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\BFBB\DynaHudText.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\BFBB\DynaNPCSettings.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\BFBB\DynaPointer.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\BFBB\DynaTalkBox.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\BFBB\DynaTaxi.cs" />
-    <Compile Include="Assets\ObjectAssets\DYNA\BFBB\DynaTextBox.cs" />
+    <Compile Include="Assets\DYNA\DynaBase.cs" />
+    <Compile Include="Assets\DYNA\BFBB\DynaBoulderGen.cs" />
+    <Compile Include="Assets\DYNA\BFBB\DynaBungeeDrop.cs" />
+    <Compile Include="Assets\DYNA\BFBB\DynaBungeeHook.cs" />
+    <Compile Include="Assets\DYNA\BFBB\DynaBusStop.cs" />
+    <Compile Include="Assets\DYNA\BFBB\DynaCamTweak.cs" />
+    <Compile Include="Assets\DYNA\BFBB\DynaFlythrough.cs" />
+    <Compile Include="Assets\DYNA\BFBB\DynaHudMeterFont.cs" />
+    <Compile Include="Assets\DYNA\BFBB\DynaHudMeterUnit.cs" />
+    <Compile Include="Assets\DYNA\BFBB\DynaHudModel.cs" />
+    <Compile Include="Assets\DYNA\BFBB\DynaHudText.cs" />
+    <Compile Include="Assets\DYNA\BFBB\DynaNPCSettings.cs" />
+    <Compile Include="Assets\DYNA\BFBB\DynaPointer.cs" />
+    <Compile Include="Assets\DYNA\BFBB\DynaTalkBox.cs" />
+    <Compile Include="Assets\DYNA\BFBB\DynaTaxi.cs" />
+    <Compile Include="Assets\DYNA\BFBB\DynaTextBox.cs" />
     <Compile Include="Assets\Shared\Asset.cs" />
     <Compile Include="Assets\Shared\TypeConverter\FloatTypeConverter.cs" />
     <Compile Include="Assets\Shared\TypeConverter\HexByteTypeConverter.cs" />
@@ -293,7 +294,6 @@
     <Compile Include="Assets\Shared\ObjectAsset.cs" />
     <Compile Include="Assets\Shared\Enums\ObjectAssetType.cs" />
     <Compile Include="Assets\Shared\PlaceableAsset.cs" />
-    <Compile Include="Assets\Shared\AssetEvent.cs" />
     <Compile Include="Assets\Shared\Interfaces\IAssetWithModel.cs" />
     <Compile Include="Assets\Shared\Interfaces\IRenderableAsset.cs" />
     <Compile Include="Assets\ObjectAssets\AssetGRUP.cs" />
@@ -337,12 +337,11 @@
     <Compile Include="Other\Vertex.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="ArchiveEditor\EventEditor.resx">
-      <DependentUpon>EventEditor.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalPlatEditor.resx">
       <DependentUpon>InternalPlatEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveEditor\LinkEditor.resx">
+      <DependentUpon>LinkEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\ProgressBar.resx">
       <DependentUpon>ProgressBar.cs</DependentUpon>
@@ -381,6 +380,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\Templates\BFBB\DSTR">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Templates\BFBB\DYNA">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\Templates\BFBB\EGEN">
@@ -423,6 +425,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\Templates\BFBB\PORT">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Templates\BFBB\SCRP">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\Templates\BFBB\SHDW">

@@ -1,6 +1,6 @@
 ﻿namespace IndustrialPark
 {
-    public enum EventTypeTSSM : ushort
+    public enum EventTSSM : ushort
     {
         Unknown = 0x0000,
         Enable = 0x0001,

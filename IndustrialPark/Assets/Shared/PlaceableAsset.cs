@@ -438,8 +438,8 @@ namespace IndustrialPark
 
         protected PlaceableAsset FindDrivenByAsset(out bool found, out bool useRotation)
         {
-            foreach (AssetEventBFBB assetEvent in EventsBFBB)
-                if (assetEvent.EventSendID == EventTypeBFBB.Drivenby)
+            foreach (LinkBFBB assetEvent in LinksBFBB)
+                if (assetEvent.EventSendID == EventBFBB.Drivenby)
                 {
                     uint PlatID = assetEvent.TargetAssetID;
 

@@ -516,7 +516,7 @@ namespace IndustrialPark
                     break;
                 case AssetType.SCRP:
                     {
-                        AssetSRCP newAsset = new AssetSRCP(AHDR);
+                        AssetSCRP newAsset = new AssetSCRP(AHDR);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;

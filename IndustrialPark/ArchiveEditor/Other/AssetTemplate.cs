@@ -6,11 +6,12 @@
         UserTemplate,
 
         // Controllers
-        Group,
         Counter,
         Conditional,
         Dispatcher,
+        Group,
         Portal,
+        Script,
         Text,
         Timer,
         DuplicatotronSettings,

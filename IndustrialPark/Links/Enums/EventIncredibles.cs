@@ -1,6 +1,6 @@
 ﻿namespace IndustrialPark
 {
-    public enum EventTypeIncredibles : ushort
+    public enum EventIncredibles : ushort
     {
         Unknown = 0,
         Enable = 1,

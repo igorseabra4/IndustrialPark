@@ -1008,6 +1008,7 @@ namespace IndustrialPark
                 new ToolStripMenuItem(AssetTemplate.Dispatcher.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Group.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Portal.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Script.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Text.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Timer.ToString()),
                 new ToolStripSeparator(),
