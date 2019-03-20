@@ -1,63 +1,44 @@
 ﻿using System;
+using System.Linq;
 using HipHopFile;
 
 namespace IndustrialPark
 {
     public static class ConverterFunctions
     {
-        public static Single Switch(Single a)
+        public static float Switch(float a)
         {
             if (Functions.currentPlatform == Platform.GameCube)
-            {
-                byte[] b = BitConverter.GetBytes(a);
-                b = new byte[] { b[3], b[2], b[1], b[0] };
-                return BitConverter.ToSingle(b, 0);
-            }
-            else return a;
+                return BitConverter.ToSingle(BitConverter.GetBytes(a).Reverse().ToArray(), 0);
+            return a;
         }
 
-        public static Int32 Switch(Int32 a)
+        public static int Switch(int a)
         {
             if (Functions.currentPlatform == Platform.GameCube)
-            {
-                byte[] b = BitConverter.GetBytes(a);
-                b = new byte[] { b[3], b[2], b[1], b[0] };
-                return BitConverter.ToInt32(b, 0);
-            }
-            else return a;
+                return BitConverter.ToInt32(BitConverter.GetBytes(a).Reverse().ToArray(), 0);
+            return a;
         }
 
-        public static UInt32 Switch(UInt32 a)
+        public static uint Switch(uint a)
         {
             if (Functions.currentPlatform == Platform.GameCube)
-            {
-                byte[] b = BitConverter.GetBytes(a);
-                b = new byte[] { b[3], b[2], b[1], b[0] };
-                return BitConverter.ToUInt32(b, 0);
-            }
-            else return a;
+                return BitConverter.ToUInt32(BitConverter.GetBytes(a).Reverse().ToArray(), 0);
+            return a;
         }
 
-        public static Int16 Switch(Int16 a)
+        public static short Switch(short a)
         {
             if (Functions.currentPlatform == Platform.GameCube)
-            {
-                byte[] b = BitConverter.GetBytes(a);
-                b = new byte[] { b[1], b[0] };
-                return BitConverter.ToInt16(b, 0);
-            }
-            else return a;
+                return BitConverter.ToInt16(BitConverter.GetBytes(a).Reverse().ToArray(), 0);
+            return a;
         }
 
-        public static UInt16 Switch(UInt16 a)
+        public static ushort Switch(ushort a)
         {
             if (Functions.currentPlatform == Platform.GameCube)
-            {
-                byte[] b = BitConverter.GetBytes(a);
-                b = new byte[] { b[1], b[0] };
-                return BitConverter.ToUInt16(b, 0);
-            }
-            else return a;
+                return BitConverter.ToUInt16(BitConverter.GetBytes(a).Reverse().ToArray(), 0);
+            return a;
         }
     }
 }

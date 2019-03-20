@@ -22,9 +22,7 @@ namespace IndustrialPark
 
         public BoundingSphere boundingSphere;
 
-        public AssetTRIG(Section_AHDR AHDR) : base(AHDR) { }
-
-        public override void Setup()
+        public AssetTRIG(Section_AHDR AHDR) : base(AHDR)
         {
             _shape = ReadByte(9);
 
@@ -32,19 +30,6 @@ namespace IndustrialPark
             _trigPos1 = new Vector3(ReadFloat(0x60 + Offset), ReadFloat(0x64 + Offset), ReadFloat(0x68 + Offset));
             _trigPos2 = new Vector3(ReadFloat(0x6C + Offset), ReadFloat(0x70 + Offset), ReadFloat(0x74 + Offset));
             _trigPos3 = new Vector3(ReadFloat(0x78 + Offset), ReadFloat(0x7C + Offset), ReadFloat(0x80 + Offset));
-
-            _yaw = ReadFloat(0x14 + Offset);
-            _pitch = ReadFloat(0x18 + Offset);
-            _roll = ReadFloat(0x1C + Offset);
-            _position = new Vector3(ReadFloat(0x20 + Offset), ReadFloat(0x24 + Offset), ReadFloat(0x28 + Offset));
-            _scale = new Vector3(ReadFloat(0x2C + Offset), ReadFloat(0x30 + Offset), ReadFloat(0x34 + Offset));
-            _color = new Vector4(ReadFloat(0x38 + Offset), ReadFloat(0x3c + Offset), ReadFloat(0x40 + Offset), ReadFloat(0x44 + Offset));
-
-            _modelAssetID = ReadUInt(0x4C + Offset);
-
-            CreateTransformMatrix();
-            if (!ArchiveEditorFunctions.renderableAssetSetTrans.Contains(this))
-                ArchiveEditorFunctions.renderableAssetSetTrans.Add(this);
         }
 
         public override void CreateTransformMatrix()

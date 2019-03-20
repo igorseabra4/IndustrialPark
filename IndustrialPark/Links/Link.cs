@@ -76,26 +76,9 @@ namespace IndustrialPark
             }
             set
             {
-                float[] result = new float[4];
-
-                if (value.Length < 4)
-                {
-                    System.Windows.Forms.MessageBox.Show("Arguments must have an exact length of 4. Your values will be padded.");
-                    for (int i = 0; i < value.Length; i++)
-                        result[i] = value[i];
-                    for (int i = value.Length; i < 4; i++)
-                        result[i] = 0f;
-                }
-                else
-                    for (int i = 0; i < 4; i++)
-                        result[i] = value[i];
-
-                if (value.Length > 4)
-                    System.Windows.Forms.MessageBox.Show("Arguments must have an exact length of 4. Your values will be trimmed.");
-
                 for (int i = 0; i < 4; i++)
                 {
-                    byte[] r = BitConverter.GetBytes(ConverterFunctions.Switch(result[i]));
+                    byte[] r = BitConverter.GetBytes(ConverterFunctions.Switch(value[i]));
 
                     arguments[i * 4 + 0] = r[0];
                     arguments[i * 4 + 1] = r[1];
@@ -117,26 +100,9 @@ namespace IndustrialPark
             }
             set
             {
-                AssetID[] result = new AssetID[4];
-
-                if (value.Length < 4)
-                {
-                    System.Windows.Forms.MessageBox.Show("Arguments must have an exact length of 4. Your values will be padded.");
-                    for (int i = 0; i < value.Length; i++)
-                        result[i] = value[i];
-                    for (int i = value.Length; i < 4; i++)
-                        result[i] = 0;
-                }
-                else
-                    for (int i = 0; i < 4; i++)
-                        result[i] = value[i];
-
-                if (value.Length > 4)
-                    System.Windows.Forms.MessageBox.Show("Arguments must have an exact length of 4. Your values will be trimmed.");
-
                 for (int i = 0; i < 4; i++)
                 {
-                    byte[] r = BitConverter.GetBytes(ConverterFunctions.Switch(result[i]));
+                    byte[] r = BitConverter.GetBytes(ConverterFunctions.Switch(value[i]));
 
                     arguments[i * 4 + 0] = r[0];
                     arguments[i * 4 + 1] = r[1];

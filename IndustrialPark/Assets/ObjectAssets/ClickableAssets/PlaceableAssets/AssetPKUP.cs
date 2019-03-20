@@ -13,13 +13,9 @@ namespace IndustrialPark
 
         protected override int EventStartOffset => 0x5C + Offset;
 
-        public AssetPKUP(Section_AHDR AHDR) : base(AHDR) { }
-
-        public override void Setup()
+        public AssetPKUP(Section_AHDR AHDR) : base(AHDR)
         {
             _pickEntryID = ReadUInt(0x54 + Offset);
-
-            base.Setup();
         }
 
         public override bool HasReference(uint assetID)

@@ -36,6 +36,7 @@
             this.buttonAdd3 = new System.Windows.Forms.Button();
             this.buttonAdd5 = new System.Windows.Forms.Button();
             this.buttonAdd6 = new System.Windows.Forms.Button();
+            this.buttonHelp = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -71,10 +72,11 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel1.Controls.Add(this.buttonHelp, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.buttonAdd4, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.propertyGridAsset, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.labelAssetName, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.buttonFindCallers, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.buttonFindCallers, 2, 3);
             this.tableLayoutPanel1.Controls.Add(this.buttonAdd3, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.buttonAdd5, 2, 2);
             this.tableLayoutPanel1.Controls.Add(this.buttonAdd6, 3, 2);
@@ -104,11 +106,11 @@
             // buttonFindCallers
             // 
             this.buttonFindCallers.AutoSize = true;
-            this.tableLayoutPanel1.SetColumnSpan(this.buttonFindCallers, 4);
+            this.tableLayoutPanel1.SetColumnSpan(this.buttonFindCallers, 2);
             this.buttonFindCallers.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonFindCallers.Location = new System.Drawing.Point(3, 376);
+            this.buttonFindCallers.Location = new System.Drawing.Point(167, 376);
             this.buttonFindCallers.Name = "buttonFindCallers";
-            this.buttonFindCallers.Size = new System.Drawing.Size(324, 22);
+            this.buttonFindCallers.Size = new System.Drawing.Size(160, 22);
             this.buttonFindCallers.TabIndex = 7;
             this.buttonFindCallers.Text = "Find Who Targets Me";
             this.buttonFindCallers.UseVisualStyleBackColor = true;
@@ -147,6 +149,19 @@
             this.buttonAdd6.UseVisualStyleBackColor = true;
             this.buttonAdd6.Click += new System.EventHandler(this.buttonAdd6_Click);
             // 
+            // buttonHelp
+            // 
+            this.buttonHelp.AutoSize = true;
+            this.tableLayoutPanel1.SetColumnSpan(this.buttonHelp, 2);
+            this.buttonHelp.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonHelp.Location = new System.Drawing.Point(3, 376);
+            this.buttonHelp.Name = "buttonHelp";
+            this.buttonHelp.Size = new System.Drawing.Size(158, 22);
+            this.buttonHelp.TabIndex = 17;
+            this.buttonHelp.Text = "Help";
+            this.buttonHelp.UseVisualStyleBackColor = true;
+            this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
+            // 
             // InternalShrapnelEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -174,5 +189,6 @@
         private System.Windows.Forms.Button buttonAdd3;
         private System.Windows.Forms.Button buttonAdd5;
         private System.Windows.Forms.Button buttonAdd6;
+        private System.Windows.Forms.Button buttonHelp;
     }
 }

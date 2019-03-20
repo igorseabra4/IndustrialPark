@@ -51,5 +51,10 @@ namespace IndustrialPark
                     items.Add(i);
             asset.GroupItems = items.ToArray();
         }
+
+        private void buttonHelp_Click(object sender, System.EventArgs e)
+        {
+            System.Diagnostics.Process.Start(AboutBox.WikiLink + asset.AHDR.assetType.ToString());
+        }
     }
 }

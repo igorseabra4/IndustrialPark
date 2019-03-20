@@ -33,6 +33,7 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.buttonAddSelected = new System.Windows.Forms.Button();
             this.buttonFindCallers = new System.Windows.Forms.Button();
+            this.buttonHelp = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -41,6 +42,7 @@
             this.propertyGridAsset.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel1.SetColumnSpan(this.propertyGridAsset, 2);
             this.propertyGridAsset.HelpVisible = false;
             this.propertyGridAsset.Location = new System.Drawing.Point(3, 23);
             this.propertyGridAsset.Name = "propertyGridAsset";
@@ -52,6 +54,7 @@
             // labelAssetName
             // 
             this.labelAssetName.AutoSize = true;
+            this.tableLayoutPanel1.SetColumnSpan(this.labelAssetName, 2);
             this.labelAssetName.Dock = System.Windows.Forms.DockStyle.Left;
             this.labelAssetName.Location = new System.Drawing.Point(3, 0);
             this.labelAssetName.Name = "labelAssetName";
@@ -61,13 +64,14 @@
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.ColumnCount = 2;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Controls.Add(this.buttonHelp, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.buttonAddSelected, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.propertyGridAsset, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.labelAssetName, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.buttonFindCallers, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.buttonFindCallers, 1, 3);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -82,6 +86,7 @@
             // buttonAddSelected
             // 
             this.buttonAddSelected.AutoSize = true;
+            this.tableLayoutPanel1.SetColumnSpan(this.buttonAddSelected, 2);
             this.buttonAddSelected.Dock = System.Windows.Forms.DockStyle.Fill;
             this.buttonAddSelected.Location = new System.Drawing.Point(3, 348);
             this.buttonAddSelected.Name = "buttonAddSelected";
@@ -95,13 +100,25 @@
             // 
             this.buttonFindCallers.AutoSize = true;
             this.buttonFindCallers.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonFindCallers.Location = new System.Drawing.Point(3, 376);
+            this.buttonFindCallers.Location = new System.Drawing.Point(168, 376);
             this.buttonFindCallers.Name = "buttonFindCallers";
-            this.buttonFindCallers.Size = new System.Drawing.Size(324, 22);
+            this.buttonFindCallers.Size = new System.Drawing.Size(159, 22);
             this.buttonFindCallers.TabIndex = 12;
             this.buttonFindCallers.Text = "Find Who Targets Me";
             this.buttonFindCallers.UseVisualStyleBackColor = true;
             this.buttonFindCallers.Click += new System.EventHandler(this.buttonFindCallers_Click);
+            // 
+            // buttonHelp
+            // 
+            this.buttonHelp.AutoSize = true;
+            this.buttonHelp.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonHelp.Location = new System.Drawing.Point(3, 376);
+            this.buttonHelp.Name = "buttonHelp";
+            this.buttonHelp.Size = new System.Drawing.Size(159, 22);
+            this.buttonHelp.TabIndex = 15;
+            this.buttonHelp.Text = "Help";
+            this.buttonHelp.UseVisualStyleBackColor = true;
+            this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
             // 
             // InternalGrupEditor
             // 
@@ -127,5 +144,6 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Button buttonAddSelected;
         private System.Windows.Forms.Button buttonFindCallers;
+        private System.Windows.Forms.Button buttonHelp;
     }
 }

@@ -463,7 +463,7 @@ namespace IndustrialPark
                     ((AssetVIL)asset).LinksBFBB = new LinkBFBB[] {
                         new LinkBFBB
                         {
-                            Arguments_Float = new float[6],
+                            Arguments_Float = new float[4],
                             TargetAssetID = asset.AHDR.assetID,
                             EventReceiveID = EventBFBB.ScenePrepare,
                             EventSendID = EventBFBB.DetectPlayerOff
@@ -474,14 +474,14 @@ namespace IndustrialPark
                     chuckTrigger.LinksBFBB = new LinkBFBB[] {
                         new LinkBFBB
                         {
-                            Arguments_Float = new float[6],
+                            Arguments_Float = new float[4],
                             TargetAssetID = asset.AHDR.assetID,
                             EventReceiveID = EventBFBB.EnterPlayer,
                             EventSendID = EventBFBB.DetectPlayerOn
                         },
                         new LinkBFBB
                         {
-                            Arguments_Float = new float[6],
+                            Arguments_Float = new float[4],
                             TargetAssetID = asset.AHDR.assetID,
                             EventReceiveID = EventBFBB.ExitPlayer,
                             EventSendID = EventBFBB.DetectPlayerOff
@@ -501,7 +501,7 @@ namespace IndustrialPark
                     ((AssetVIL)asset).LinksBFBB = new LinkBFBB[] {
                         new LinkBFBB
                         {
-                            Arguments_Float = new float[6],
+                            Arguments_Float = new float[4],
                             TargetAssetID = asset.AHDR.assetID,
                             EventReceiveID = EventBFBB.ScenePrepare,
                             EventSendID = EventBFBB.DetectPlayerOff
@@ -513,14 +513,14 @@ namespace IndustrialPark
                     monsoonTrigger.LinksBFBB = new LinkBFBB[] {
                         new LinkBFBB
                         {
-                            Arguments_Float = new float[6],
+                            Arguments_Float = new float[4],
                             TargetAssetID = asset.AHDR.assetID,
                             EventReceiveID = EventBFBB.EnterPlayer,
                             EventSendID = EventBFBB.DetectPlayerOn
                         },
                         new LinkBFBB
                         {
-                            Arguments_Float = new float[6],
+                            Arguments_Float = new float[4],
                             TargetAssetID = asset.AHDR.assetID,
                             EventReceiveID = EventBFBB.ExitPlayer,
                             EventSendID = EventBFBB.DetectPlayerOff
@@ -545,21 +545,21 @@ namespace IndustrialPark
                     ((AssetVIL)asset).LinksBFBB = new LinkBFBB[] {
                         new LinkBFBB
                         {
-                            Arguments_Float = new float[6],
+                            Arguments_Float = new float[4],
                             TargetAssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_DOGA", AssetTemplate.ArfDog),
                             EventReceiveID = EventBFBB.ScenePrepare,
                             EventSendID = EventBFBB.Connect_IOwnYou
                         },
                         new LinkBFBB
                         {
-                            Arguments_Float = new float[6],
+                            Arguments_Float = new float[4],
                             TargetAssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_DOGB", AssetTemplate.ArfDog),
                             EventReceiveID = EventBFBB.ScenePrepare,
                             EventSendID = EventBFBB.Connect_IOwnYou
                         },
                         new LinkBFBB
                         {
-                            Arguments_Float = new float[6],
+                            Arguments_Float = new float[4],
                             TargetAssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_DOGC", AssetTemplate.ArfDog),
                             EventReceiveID = EventBFBB.ScenePrepare,
                             EventSendID = EventBFBB.Connect_IOwnYou
@@ -582,14 +582,14 @@ namespace IndustrialPark
                     ((AssetVIL)asset).LinksBFBB = new LinkBFBB[] {
                         new LinkBFBB
                         {
-                            Arguments_Float = new float[6],
+                            Arguments_Float = new float[4],
                             TargetAssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_SLAVEA", AssetTemplate.TubeletSlave),
                             EventReceiveID = EventBFBB.ScenePrepare,
                             EventSendID = EventBFBB.Connect_IOwnYou
                         },
                         new LinkBFBB
                         {
-                            Arguments_Float = new float[6],
+                            Arguments_Float = new float[4],
                             TargetAssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_SLAVEB", AssetTemplate.TubeletSlave),
                             EventReceiveID = EventBFBB.ScenePrepare,
                             EventSendID = EventBFBB.Connect_IOwnYou
@@ -617,7 +617,7 @@ namespace IndustrialPark
                     ((AssetVIL)asset).LinksBFBB = new LinkBFBB[] {
                         new LinkBFBB
                         {
-                            Arguments_Float = new float[6],
+                            Arguments_Float = new float[4],
                             TargetAssetID = asset.AHDR.assetID,
                             EventReceiveID = EventBFBB.ScenePrepare,
                             EventSendID = EventBFBB.DetectPlayerOff
@@ -629,14 +629,14 @@ namespace IndustrialPark
                     slickTrigger.LinksBFBB = new LinkBFBB[] {
                         new LinkBFBB
                         {
-                            Arguments_Float = new float[6],
+                            Arguments_Float = new float[4],
                             TargetAssetID = asset.AHDR.assetID,
                             EventReceiveID = EventBFBB.EnterPlayer,
                             EventSendID = EventBFBB.DetectPlayerOn
                         },
                         new LinkBFBB
                         {
-                            Arguments_Float = new float[6],
+                            Arguments_Float = new float[4],
                             TargetAssetID = asset.AHDR.assetID,
                             EventReceiveID = EventBFBB.ExitPlayer,
                             EventSendID = EventBFBB.DetectPlayerOff
@@ -661,7 +661,7 @@ namespace IndustrialPark
                     ((AssetVIL)asset).LinksBFBB = new LinkBFBB[] {
                         new LinkBFBB
                         {
-                            Arguments_Float = new float[6],
+                            Arguments_Float = new float[4],
                             TargetAssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_GROUP", AssetTemplate.Group),
                             EventReceiveID = EventBFBB.ScenePrepare,
                             EventSendID = EventBFBB.Connect_IOwnYou
@@ -739,7 +739,7 @@ namespace IndustrialPark
                     ((AssetMVPT)asset).PositionY = position.Y;
                     ((AssetMVPT)asset).PositionZ = position.Z;
                     ((AssetMVPT)asset).Wt = 0x2710;
-                    ((AssetMVPT)asset).On = 0x01;
+                    ((AssetMVPT)asset).IsZone = 0x01;
                     ((AssetMVPT)asset).BezIndex = 0x00;
                     ((AssetMVPT)asset).Delay = 360;
                     ((AssetMVPT)asset).ZoneRadius = 4;
@@ -750,7 +750,7 @@ namespace IndustrialPark
                     ((AssetMVPT)asset).PositionY = position.Y;
                     ((AssetMVPT)asset).PositionZ = position.Z;
                     ((AssetMVPT)asset).Wt = 0x2710;
-                    ((AssetMVPT)asset).On = 0x01;
+                    ((AssetMVPT)asset).IsZone = 0x01;
                     ((AssetMVPT)asset).BezIndex = 0x00;
                     ((AssetMVPT)asset).Delay = 0;
                     ((AssetMVPT)asset).ZoneRadius = -1;
@@ -783,14 +783,14 @@ namespace IndustrialPark
                     ((AssetTRIG)asset).LinksBFBB = new LinkBFBB[] {
                         new LinkBFBB
                         {
-                            Arguments_Float = new float[6],
+                            Arguments_Float = new float[4],
                             TargetAssetID = lightsAssetID,
                             EventReceiveID = EventBFBB.EnterPlayer,
                             EventSendID = EventBFBB.Visible
                         },
                         new LinkBFBB
                         {
-                            Arguments_Float = new float[6],
+                            Arguments_Float = new float[4],
                             TargetAssetID = lightsAssetID,
                             EventReceiveID = EventBFBB.ExitPlayer,
                             EventSendID = EventBFBB.Invisible
@@ -885,7 +885,7 @@ namespace IndustrialPark
                         if (template == AssetTemplate.Checkpoint)
                             events.Add(new LinkBFBB
                             {
-                                Arguments_Float = new float[6],
+                                Arguments_Float = new float[4],
                                 TargetAssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, "CHECKPOINT_TIMER", AssetTemplate.Checkpoint_Timer),
                                 EventReceiveID = EventBFBB.EnterPlayer,
                                 EventSendID = EventBFBB.Run
@@ -904,28 +904,28 @@ namespace IndustrialPark
                         ((AssetTIMR)asset).LinksBFBB = new LinkBFBB[] {
                             new LinkBFBB
                             {
-                                Arguments_Float = new float[] { 2, 0, 0, 0, 0, 0},
+                                Arguments_Float = new float[] { 2, 0, 0, 0 },
                                 TargetAssetID = checkpointSimp,
                                 EventReceiveID = EventBFBB.Run,
                                 EventSendID = EventBFBB.AnimPlayLoop
                             },
                             new LinkBFBB
                             {
-                                Arguments_Hex = new AssetID[] { "checkpoint_text", 0, 0, 0, 0, 0},
+                                Arguments_Hex = new AssetID[] { "checkpoint_text", 0, 0, 0 },
                                 TargetAssetID = checkpointTalkbox,
                                 EventReceiveID = EventBFBB.Run,
                                 EventSendID = EventBFBB.StartConversation
                             },
                             new LinkBFBB
                             {
-                                Arguments_Float = new float[] { 3, 0, 0, 0, 0, 0},
+                                Arguments_Float = new float[] { 3, 0, 0, 0 },
                                 TargetAssetID = checkpointSimp,
                                 EventReceiveID = EventBFBB.Expired,
                                 EventSendID = EventBFBB.AnimPlayLoop
                             },
                             new LinkBFBB
                             {
-                                Arguments_Float = new float[6],
+                                Arguments_Float = new float[4],
                                 TargetAssetID = asset.AHDR.assetID,
                                 EventReceiveID = EventBFBB.Expired,
                                 EventSendID = EventBFBB.Disable

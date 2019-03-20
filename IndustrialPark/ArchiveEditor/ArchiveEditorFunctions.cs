@@ -270,21 +270,18 @@ namespace IndustrialPark
                 case AssetType.BOUL:
                     {
                         AssetBOUL newAsset = new AssetBOUL(AHDR);
-                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
                 case AssetType.BUTN:
                     {
                         AssetBUTN newAsset = new AssetBUTN(AHDR);
-                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
                 case AssetType.CAM:
                     {
                         AssetCAM newAsset = new AssetCAM(AHDR);
-                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
@@ -333,21 +330,18 @@ namespace IndustrialPark
                 case AssetType.DSTR:
                     {
                         AssetDSTR newAsset = new AssetDSTR(AHDR);
-                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
                 case AssetType.DYNA:
                     {
                         AssetDYNA newAsset = new AssetDYNA(AHDR);
-                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
                 case AssetType.EGEN:
                     {
                         AssetEGEN newAsset = new AssetEGEN(AHDR);
-                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
@@ -378,7 +372,6 @@ namespace IndustrialPark
                 case AssetType.HANG:
                     {
                         AssetHANG newAsset = new AssetHANG(AHDR);
-                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
@@ -423,16 +416,14 @@ namespace IndustrialPark
                 case AssetType.MRKR:
                     {
                         AssetMRKR newAsset = new AssetMRKR(AHDR);
-                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
                 case AssetType.MVPT:
                     {
-                        if (currentGame == Game.BFBB)
+                        if (currentGame != Game.Scooby)
                         {
                             AssetMVPT newAsset = new AssetMVPT(AHDR);
-                            newAsset.Setup();
                             assetDictionary.Add(AHDR.assetID, newAsset);
                         }
                         else
@@ -463,7 +454,6 @@ namespace IndustrialPark
                 case AssetType.PEND:
                     {
                         AssetPEND newAsset = new AssetPEND(AHDR);
-                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
@@ -483,21 +473,18 @@ namespace IndustrialPark
                 case AssetType.PKUP:
                     {
                         AssetPKUP newAsset = new AssetPKUP(AHDR);
-                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
                 case AssetType.PLAT:
                     {
                         AssetPLAT newAsset = new AssetPLAT(AHDR);
-                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
                 case AssetType.PLYR:
                     {
                         AssetPLYR newAsset = new AssetPLYR(AHDR);
-                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
@@ -530,7 +517,6 @@ namespace IndustrialPark
                 case AssetType.SIMP:
                     {
                         AssetSIMP newAsset = new AssetSIMP(AHDR);
-                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
@@ -542,8 +528,16 @@ namespace IndustrialPark
                     break;
                 case AssetType.SHRP:
                     {
-                        AssetSHRP newAsset = new AssetSHRP(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
+                        if (currentGame == Game.BFBB)
+                        {
+                            AssetSHRP newAsset = new AssetSHRP(AHDR);
+                            assetDictionary.Add(AHDR.assetID, newAsset);
+                        }
+                        else
+                        {
+                            Asset newAsset = new Asset(AHDR);
+                            assetDictionary.Add(AHDR.assetID, newAsset);
+                        }
                     }
                     break;
                 case AssetType.SNDI:
@@ -585,7 +579,6 @@ namespace IndustrialPark
                 case AssetType.TRIG:
                     {
                         AssetTRIG newAsset = new AssetTRIG(AHDR);
-                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
@@ -598,21 +591,18 @@ namespace IndustrialPark
                 case AssetType.UI:
                     {
                         AssetUI newAsset = new AssetUI(AHDR);
-                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
                 case AssetType.UIFT:
                     {
                         AssetUIFT newAsset = new AssetUIFT(AHDR);
-                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
                 case AssetType.VIL:
                     {
                         AssetVIL newAsset = new AssetVIL(AHDR);
-                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;

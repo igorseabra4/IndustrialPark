@@ -11,7 +11,7 @@ namespace IndustrialPark
 
         protected override bool DontRender => dontRender;
 
-        protected override int EventStartOffset => 0xC0 + Offset;
+        protected override int EventStartOffset => Functions.currentGame == Game.Incredibles ? 0xC8 : 0xC0;
 
         public AssetPLAT(Section_AHDR AHDR) : base(AHDR) { }
 
@@ -21,7 +21,7 @@ namespace IndustrialPark
                 return true;
             if (ANIM_AssetID_2 == assetID)
                 return true;
-            if (MVPT_AssetID_98 == assetID)
+            if (MVPT_AssetID == assetID)
                 return true;
 
             return base.HasReference(assetID);
@@ -119,13 +119,13 @@ namespace IndustrialPark
                 switch (MovementTranslation_Direction)
                 {
                     case 0:
-                        localWorld *= Matrix.Translation(translationMultiplier * MovementTranslation_Distance_98, 0, 0);
+                        localWorld *= Matrix.Translation(translationMultiplier * MovementTranslation_Distance, 0, 0);
                         break;
                     case 1:
-                        localWorld *= Matrix.Translation(0, translationMultiplier * MovementTranslation_Distance_98, 0);
+                        localWorld *= Matrix.Translation(0, translationMultiplier * MovementTranslation_Distance, 0);
                         break;
                     case 2:
-                        localWorld *= Matrix.Translation(0, 0, translationMultiplier * MovementTranslation_Distance_98);
+                        localWorld *= Matrix.Translation(0, 0, translationMultiplier * MovementTranslation_Distance);
                         break;
                 }
             }
@@ -464,81 +464,119 @@ namespace IndustrialPark
             set { Write(0x97 + Offset, value); Reset(); }
         }
 
+        private int OffsetForTSSM => Functions.currentGame == Game.Incredibles ? 4 : 0;
+
         [Category("Platform")]
-        public AssetID MVPT_AssetID_98
+        public AssetID MVPT_AssetID
         {
             get { return ReadUInt(0x98 + Offset); }
             set { Write(0x98 + Offset, value); Reset(); }
         }
 
         [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
-        public float MovementTranslation_Distance_98
+        public float MovementTranslation_Distance
         {
-            get => ReadFloat(0x98 + Offset);
-            set { Write(0x98 + Offset, value); Reset(); }
+            get => ReadFloat(0x98 + Offset + OffsetForTSSM);
+            set { Write(0x98 + Offset + OffsetForTSSM, value); Reset(); }
         }
 
         [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float MovementTranslation_Time
         {
-            get => ReadFloat(0x9C + Offset);
-            set { Write(0x9C + Offset, value); Reset(); }
+            get => ReadFloat(0x9C + Offset + OffsetForTSSM);
+            set { Write(0x9C + Offset + OffsetForTSSM, value); Reset(); }
         }
 
         [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float MovementTranslation_EaseStart
         {
-            get => ReadFloat(0xA0 + Offset);
-            set => Write(0xA0 + Offset, value);
+            get => ReadFloat(0xA0 + Offset + OffsetForTSSM);
+            set => Write(0xA0 + Offset + OffsetForTSSM, value);
         }
 
         [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float MovementTranslation_EaseEnd
         {
-            get => ReadFloat(0xA4 + Offset);
-            set => Write(0xA4 + Offset, value);
+            get => ReadFloat(0xA4 + Offset + OffsetForTSSM);
+            set => Write(0xA4 + Offset + OffsetForTSSM, value);
         }
 
         [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float MovementRotation_Degrees
         {
-            get => ReadFloat(0xA8 + Offset);
-            set { Write(0xA8 + Offset, value); Reset(); }
+            get => ReadFloat(0xA8 + Offset + OffsetForTSSM);
+            set { Write(0xA8 + Offset + OffsetForTSSM, value); Reset(); }
         }
 
         [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float MovementRotation_Time
         {
-            get => ReadFloat(0xAC + Offset);
-            set { Write(0xAC + Offset, value); Reset(); }
+            get => ReadFloat(0xAC + Offset + OffsetForTSSM);
+            set { Write(0xAC + Offset + OffsetForTSSM, value); Reset(); }
         }
 
         [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float MovementRotation_EaseStart
         {
-            get => ReadFloat(0xB0 + Offset);
-            set => Write(0xB0 + Offset, value);
+            get => ReadFloat(0xB0 + Offset + OffsetForTSSM);
+            set => Write(0xB0 + Offset + OffsetForTSSM, value);
         }
 
         [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float MovementRotation_EaseEnd
         {
-            get => ReadFloat(0xB4 + Offset);
-            set => Write(0xB4 + Offset, value);
+            get => ReadFloat(0xB4 + Offset + OffsetForTSSM);
+            set => Write(0xB4 + Offset + OffsetForTSSM, value);
         }
 
         [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float Movement_StartPointWait
         {
-            get => ReadFloat(0xB8 + Offset);
-            set { Write(0xB8 + Offset, value); Reset(); }
+            get => ReadFloat(0xB8 + Offset + OffsetForTSSM);
+            set { Write(0xB8 + Offset + OffsetForTSSM, value); Reset(); }
         }
 
         [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
         public float Movement_EndPointWait
         {
-            get => ReadFloat(0xBC + Offset);
-            set { Write(0xBC + Offset, value); Reset(); }
+            get => ReadFloat(0xBC + Offset + OffsetForTSSM);
+            set { Write(0xBC + Offset + OffsetForTSSM, value); Reset(); }
+        }
+
+        [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
+        public float TSSM_Unknown_C0
+        {
+            get
+            {
+                if (Functions.currentGame == Game.Incredibles)
+                    return ReadFloat(0xC0 + Offset + OffsetForTSSM);
+                return 0;
+            }
+            set
+            {
+                if (Functions.currentGame == Game.Incredibles)
+                {
+                    Write(0xC0 + Offset + OffsetForTSSM, value);
+                }
+            }
+        }
+
+        [Category("Platform"), TypeConverter(typeof(FloatTypeConverter))]
+        public float TSSM_Unknown_C4
+        {
+            get
+            {
+                if (Functions.currentGame == Game.Incredibles)
+                    return ReadFloat(0xC4 + Offset + OffsetForTSSM);
+                return 0;
+            }
+            set
+            {
+                if (Functions.currentGame == Game.Incredibles)
+                {
+                    Write(0xC4 + Offset + OffsetForTSSM, value);
+                }
+            }
         }
     }
 }

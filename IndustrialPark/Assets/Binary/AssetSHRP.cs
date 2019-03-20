@@ -133,6 +133,10 @@ namespace IndustrialPark
         {
             if (Unknown04 == assetID)
                 return true;
+            if (Unknown08 == assetID)
+                return true;
+            if (Unknown0C == assetID)
+                return true;
 
             return false;
         }

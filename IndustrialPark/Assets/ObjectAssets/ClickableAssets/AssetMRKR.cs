@@ -16,10 +16,6 @@ namespace IndustrialPark
 
         public AssetMRKR(Section_AHDR AHDR) : base(AHDR)
         {
-        }
-
-        public void Setup()
-        {
             _position = new Vector3(ReadFloat(0x0), ReadFloat(0x4), ReadFloat(0x8));
 
             CreateTransformMatrix();

@@ -80,5 +80,10 @@ namespace IndustrialPark
             propertyGridAsset.SelectedObject = asset;
             archive.UnsavedChanges = true;
         }
+
+        private void buttonHelp_Click(object sender, System.EventArgs e)
+        {
+            System.Diagnostics.Process.Start(AboutBox.WikiLink + asset.AHDR.assetType.ToString());
+        }
     }
 }

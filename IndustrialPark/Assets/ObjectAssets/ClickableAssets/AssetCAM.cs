@@ -11,16 +11,14 @@ namespace IndustrialPark
     {
         private Matrix world;
         private BoundingBox boundingBox;
+        private Vector3[] vertices;
+        protected RenderWareFile.Triangle[] triangles;
 
         public static bool dontRender = false;
 
         protected override int EventStartOffset => 0x88;
 
         public AssetCAM(Section_AHDR AHDR) : base(AHDR)
-        {
-        }
-
-        public void Setup()
         {
             _position = new Vector3(ReadFloat(0x8), ReadFloat(0xC), ReadFloat(0x10));
 
@@ -39,12 +37,19 @@ namespace IndustrialPark
 
         protected void CreateBoundingBox()
         {
-            Vector3[] vertices = new Vector3[SharpRenderer.cubeVertices.Count];
+            vertices = new Vector3[SharpRenderer.cubeVertices.Count];
 
             for (int i = 0; i < SharpRenderer.cubeVertices.Count; i++)
                 vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.cubeVertices[i] * 0.5f, world);
 
             boundingBox = BoundingBox.FromPoints(vertices);
+
+            triangles = new RenderWareFile.Triangle[SharpRenderer.cubeTriangles.Count];
+            for (int i = 0; i < SharpRenderer.cubeTriangles.Count; i++)
+            {
+                triangles[i] = new RenderWareFile.Triangle((ushort)SharpRenderer.cubeTriangles[i].materialIndex,
+                    (ushort)SharpRenderer.cubeTriangles[i].vertex1, (ushort)SharpRenderer.cubeTriangles[i].vertex2, (ushort)SharpRenderer.cubeTriangles[i].vertex3);
+            }
         }
 
         public float? IntersectsWith(Ray ray)
@@ -53,29 +58,23 @@ namespace IndustrialPark
                 return null;
 
             if (ray.Intersects(ref boundingBox, out float distance))
-                return TriangleIntersection(ray, distance, SharpRenderer.pyramidTriangles, SharpRenderer.pyramidVertices);
+                return TriangleIntersection(ray, distance);
             return null;
         }
 
-        private float? TriangleIntersection(Ray r, float initialDistance, List<Triangle> triangles, List<Vector3> vertices)
+        private float? TriangleIntersection(Ray r, float initialDistance)
         {
             bool hasIntersected = false;
             float smallestDistance = 1000f;
 
-            foreach (Triangle t in triangles)
-            {
-                Vector3 v1 = (Vector3)Vector3.Transform(vertices[t.vertex1], world);
-                Vector3 v2 = (Vector3)Vector3.Transform(vertices[t.vertex2], world);
-                Vector3 v3 = (Vector3)Vector3.Transform(vertices[t.vertex3], world);
-
-                if (r.Intersects(ref v1, ref v2, ref v3, out float distance))
+            foreach (RenderWareFile.Triangle t in triangles)
+                if (r.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
                 {
                     hasIntersected = true;
 
                     if (distance < smallestDistance)
                         smallestDistance = distance;
                 }
-            }
 
             if (hasIntersected)
                 return smallestDistance;

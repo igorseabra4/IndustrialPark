@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using SharpDX;
+using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
@@ -13,9 +14,83 @@ namespace IndustrialPark
         {
             Surface_AssetID = 0;
             Model_AssetID = 0;
+            Unknown44 = 0;
+            Unknown4C = 0;
         }
 
-        protected DynaPlaceableBase(IEnumerable<byte> enumerable) : base(enumerable) { }
+        public override bool HasReference(uint assetID)
+        {
+            if (Surface_AssetID == assetID)
+                return true;
+            if (Model_AssetID == assetID)
+                return true;
+            if (Unknown44 == assetID)
+                return true;
+            if (Unknown4C == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
+        protected DynaPlaceableBase(IEnumerable<byte> enumerable) : base(enumerable)
+        {
+            Unknown00 = Switch(BitConverter.ToInt32(Data, 0x0));
+            Unknown04 = Data[0x04];
+            Unknown05 = Data[0x05];
+            Flags06 = Switch(BitConverter.ToInt16(Data, 0x06));
+            VisibilityFlag = Data[0x08];
+            TypeFlag = Data[0x08];
+            UnknownFlag0A = Data[0x08];
+            SolidityFlag = Data[0x08];
+            Surface_AssetID = Switch(BitConverter.ToUInt32(Data, 0x0C));
+            _yaw = Switch(BitConverter.ToSingle(Data, 0x10));
+            _pitch = Switch(BitConverter.ToSingle(Data, 0x14));
+            _roll = Switch(BitConverter.ToSingle(Data, 0x18));
+            _position.X = Switch(BitConverter.ToSingle(Data, 0x1C));
+            _position.Y = Switch(BitConverter.ToSingle(Data, 0x20));
+            _position.Z = Switch(BitConverter.ToSingle(Data, 0x24));
+            _scale.X = Switch(BitConverter.ToSingle(Data, 0x28));
+            _scale.Y = Switch(BitConverter.ToSingle(Data, 0x2C));
+            _scale.Z = Switch(BitConverter.ToSingle(Data, 0x30));
+            ColorRed = Switch(BitConverter.ToSingle(Data, 0x34));
+            ColorGreen = Switch(BitConverter.ToSingle(Data, 0x38));
+            ColorBlue = Switch(BitConverter.ToSingle(Data, 0x3C));
+            ColorAlpha = Switch(BitConverter.ToSingle(Data, 0x40));
+            Unknown44 = Switch(BitConverter.ToUInt32(Data, 0x44));
+            Model_AssetID = Switch(BitConverter.ToUInt32(Data, 0x48));
+            Unknown4C = Switch(BitConverter.ToUInt32(Data, 0x4C));
+        }
+
+        public override byte[] ToByteArray()
+        {
+            List<byte> list = new List<byte>();
+            list.AddRange(BitConverter.GetBytes(Switch(Unknown00)));
+            list.Add(Unknown04);
+            list.Add(Unknown05);
+            list.AddRange(BitConverter.GetBytes(Switch(Flags06)));
+            list.Add(VisibilityFlag);
+            list.Add(TypeFlag);
+            list.Add(UnknownFlag0A);
+            list.Add(SolidityFlag);
+            list.AddRange(BitConverter.GetBytes(Switch(Surface_AssetID)));
+            list.AddRange(BitConverter.GetBytes(Switch(_yaw)));
+            list.AddRange(BitConverter.GetBytes(Switch(_pitch)));
+            list.AddRange(BitConverter.GetBytes(Switch(_roll)));
+            list.AddRange(BitConverter.GetBytes(Switch(PositionX)));
+            list.AddRange(BitConverter.GetBytes(Switch(PositionY)));
+            list.AddRange(BitConverter.GetBytes(Switch(PositionZ)));
+            list.AddRange(BitConverter.GetBytes(Switch(ScaleX)));
+            list.AddRange(BitConverter.GetBytes(Switch(ScaleY)));
+            list.AddRange(BitConverter.GetBytes(Switch(ScaleZ)));
+            list.AddRange(BitConverter.GetBytes(Switch(ColorRed)));
+            list.AddRange(BitConverter.GetBytes(Switch(ColorGreen)));
+            list.AddRange(BitConverter.GetBytes(Switch(ColorBlue)));
+            list.AddRange(BitConverter.GetBytes(Switch(ColorAlpha)));
+            list.AddRange(BitConverter.GetBytes(Switch(Unknown44)));
+            list.AddRange(BitConverter.GetBytes(Switch(Model_AssetID)));
+            list.AddRange(BitConverter.GetBytes(Switch(Unknown4C)));
+            return list.ToArray();
+        }
 
         private Matrix world;
         private BoundingBox boundingBox;
@@ -185,6 +260,7 @@ namespace IndustrialPark
             set
             {
                 _position.X = value;
+                dynaSpecificPropertyChanged(this);
                 CreateTransformMatrix();
             }
         }
@@ -197,6 +273,7 @@ namespace IndustrialPark
             set
             {
                 _position.Y = value;
+                dynaSpecificPropertyChanged(this);
                 CreateTransformMatrix();
             }
         }
@@ -209,6 +286,7 @@ namespace IndustrialPark
             set
             {
                 _position.Z = value;
+                dynaSpecificPropertyChanged(this);
                 CreateTransformMatrix();
             }
         }
@@ -232,6 +310,7 @@ namespace IndustrialPark
             set
             {
                 _yaw = MathUtil.DegreesToRadians(value);
+                dynaSpecificPropertyChanged(this);
                 CreateTransformMatrix();
             }
         }
@@ -244,6 +323,7 @@ namespace IndustrialPark
             set
             {
                 _pitch = MathUtil.DegreesToRadians(value);
+                dynaSpecificPropertyChanged(this);
                 CreateTransformMatrix();
             }
         }
@@ -256,6 +336,7 @@ namespace IndustrialPark
             set
             {
                 _roll = MathUtil.DegreesToRadians(value);
+                dynaSpecificPropertyChanged(this);
                 CreateTransformMatrix();
             }
         }
@@ -270,6 +351,7 @@ namespace IndustrialPark
             set
             {
                 _scale.X = value;
+                dynaSpecificPropertyChanged(this);
                 CreateTransformMatrix();
             }
         }
@@ -282,6 +364,7 @@ namespace IndustrialPark
             set
             {
                 _scale.Y = value;
+                dynaSpecificPropertyChanged(this);
                 CreateTransformMatrix();
             }
         }
@@ -294,6 +377,7 @@ namespace IndustrialPark
             set
             {
                 _scale.Z = value;
+                dynaSpecificPropertyChanged(this);
                 CreateTransformMatrix();
             }
         }
@@ -321,6 +405,12 @@ namespace IndustrialPark
         }
 
         [Category("Placement References")]
+        public AssetID Unknown44 { get; set; }
+
+        [Category("Placement References")]
         public AssetID Model_AssetID { get; set; }
+
+        [Category("Placement References")]
+        public AssetID Unknown4C { get; set; }
     }
 }

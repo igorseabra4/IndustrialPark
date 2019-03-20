@@ -161,7 +161,7 @@ namespace IndustrialPark
             }
         }
         [DisplayName("Color Alpha (0 - 255)")]
-        private byte ColorAlpha { get; set; }
+        public byte ColorAlpha { get; set; }
         private byte ShadowColorR;
         private byte ShadowColorG;
         private byte ShadowColorB;
@@ -177,7 +177,7 @@ namespace IndustrialPark
             }
         }
         [DisplayName("Shadow Color Alpha (0 - 255)")]
-        private byte ShadowColorAlpha { get; set; }
+        public byte ShadowColorAlpha { get; set; }
         [TypeConverter(typeof(HexByteTypeConverter))]
         public byte Flag1 { get; set; }
         [TypeConverter(typeof(HexByteTypeConverter))]

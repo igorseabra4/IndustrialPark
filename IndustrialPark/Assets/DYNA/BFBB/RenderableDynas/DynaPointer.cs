@@ -117,6 +117,13 @@ namespace IndustrialPark
             for (int i = 0; i < SharpRenderer.pyramidVertices.Count; i++)
                 vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.pyramidVertices[i], world);
             boundingBox = BoundingBox.FromPoints(vertices);
+
+            triangles = new RenderWareFile.Triangle[SharpRenderer.pyramidTriangles.Count];
+            for (int i = 0; i < SharpRenderer.pyramidTriangles.Count; i++)
+            {
+                triangles[i] = new RenderWareFile.Triangle((ushort)SharpRenderer.pyramidTriangles[i].materialIndex,
+                    (ushort)SharpRenderer.pyramidTriangles[i].vertex1, (ushort)SharpRenderer.pyramidTriangles[i].vertex2, (ushort)SharpRenderer.pyramidTriangles[i].vertex3);
+            }
         }
 
         public override void Draw(SharpRenderer renderer, bool isSelected)
@@ -137,29 +144,23 @@ namespace IndustrialPark
         public override float? IntersectsWith(Ray ray)
         {
             if (ray.Intersects(ref boundingBox, out float distance))
-                return TriangleIntersection(ray, distance, SharpRenderer.pyramidTriangles, SharpRenderer.pyramidVertices);
+                return TriangleIntersection(ray, distance);
             return null;
         }
 
-        private float? TriangleIntersection(Ray r, float initialDistance, List<Models.Triangle> triangles, List<Vector3> vertices)
+        private float? TriangleIntersection(Ray r, float initialDistance)
         {
             bool hasIntersected = false;
             float smallestDistance = 1000f;
 
-            foreach (Models.Triangle t in triangles)
-            {
-                Vector3 v1 = (Vector3)Vector3.Transform(vertices[t.vertex1], world);
-                Vector3 v2 = (Vector3)Vector3.Transform(vertices[t.vertex2], world);
-                Vector3 v3 = (Vector3)Vector3.Transform(vertices[t.vertex3], world);
-
-                if (r.Intersects(ref v1, ref v2, ref v3, out float distance))
+            foreach (RenderWareFile.Triangle t in triangles)
+                if (r.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
                 {
                     hasIntersected = true;
 
                     if (distance < smallestDistance)
                         smallestDistance = distance;
                 }
-            }
 
             if (hasIntersected)
                 return smallestDistance;

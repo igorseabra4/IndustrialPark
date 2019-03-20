@@ -125,6 +125,12 @@
     <Compile Include="Assets\Binary\AssetFLY.cs" />
     <Compile Include="Assets\Binary\AssetLKIT.cs" />
     <Compile Include="Assets\Binary\AssetVILP.cs" />
+    <Compile Include="Assets\DYNA\MovieGame\RenderableDynas\DynaEffectLightning.cs" />
+    <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\DynaEnemyBucketOTron.cs" />
+    <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\DynaEnemyStandard.cs" />
+    <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\DynaSupplyCrate.cs" />
+    <Compile Include="Assets\DYNA\MovieGame\RenderableDynas\DynaVent.cs" />
+    <Compile Include="Assets\DYNA\MovieGame\DynaVentType.cs" />
     <Compile Include="Assets\Models\AssetRenderWareModel.cs" />
     <Compile Include="Assets\ObjectAssets\AssetCSNM.cs" />
     <Compile Include="Assets\ObjectAssets\AssetPARE.cs" />
@@ -136,11 +142,12 @@
     <Compile Include="Assets\DYNA\DynaType_BFBB.cs" />
     <Compile Include="Assets\DYNA\DynaType_TSSM.cs" />
     <Compile Include="Assets\DYNA\MovieGame\DynaEffectScreenFade.cs" />
-    <Compile Include="Assets\DYNA\MovieGame\DynaEnemyCritter.cs" />
-    <Compile Include="Assets\DYNA\MovieGame\DynaPlaceableBase.cs" />
-    <Compile Include="Assets\DYNA\MovieGame\DynaRing.cs" />
+    <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\DynaEnemyCritter.cs" />
+    <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\DynaPlaceableBase.cs" />
+    <Compile Include="Assets\DYNA\MovieGame\RenderableDynas\DynaRing.cs" />
     <Compile Include="Assets\DYNA\MovieGame\DynaRingControl.cs" />
     <Compile Include="Assets\DYNA\MovieGame\DynaSceneProperties.cs" />
+    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetPLAT.cs" />
     <Compile Include="Links\Enums\EventBFBB.cs" />
     <Compile Include="Assets\Shared\Enums\PlatTypeSpecific.cs" />
     <Compile Include="Assets\Shared\Interfaces\IRotatableAsset.cs" />
@@ -259,8 +266,8 @@
     <Compile Include="Assets\ObjectAssets\AssetTIMR.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetBOUL.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetDSTR.cs" />
-    <Compile Include="Assets\DYNA\BFBB\DynaTeleport_BFBB.cs" />
-    <Compile Include="Assets\DYNA\BFBB\DynaTeleport_MovieGame.cs" />
+    <Compile Include="Assets\DYNA\BFBB\RenderableDynas\DynaTeleport_BFBB.cs" />
+    <Compile Include="Assets\DYNA\MovieGame\DynaTeleport_MovieGame.cs" />
     <Compile Include="Assets\Shared\Enums\VilType.cs" />
     <Compile Include="Assets\Shared\TypeConverter\HexIntTypeConverter.cs" />
     <Compile Include="MainForm\Json\IPSettings.cs" />
@@ -282,7 +289,7 @@
     <Compile Include="Assets\DYNA\BFBB\DynaHudModel.cs" />
     <Compile Include="Assets\DYNA\BFBB\DynaHudText.cs" />
     <Compile Include="Assets\DYNA\BFBB\DynaNPCSettings.cs" />
-    <Compile Include="Assets\DYNA\BFBB\DynaPointer.cs" />
+    <Compile Include="Assets\DYNA\BFBB\RenderableDynas\DynaPointer.cs" />
     <Compile Include="Assets\DYNA\BFBB\DynaTalkBox.cs" />
     <Compile Include="Assets\DYNA\BFBB\DynaTaxi.cs" />
     <Compile Include="Assets\DYNA\BFBB\DynaTextBox.cs" />
@@ -307,7 +314,6 @@
     <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetMVPT.cs" />
     <Compile Include="Assets\Binary\AssetPICK.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetPKUP.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetPLAT.cs" />
     <Compile Include="Assets\Binary\AssetRWTX.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetSIMP.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetTRIG.cs" />
@@ -596,8 +602,19 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="AboutImage.png" />
     <Content Include="icon.ico" />
+    <Content Include="Resources\AboutImage2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\AboutImage0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\AboutImage1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\AboutImage3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\SharpDX\Shader_Basic.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

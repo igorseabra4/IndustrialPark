@@ -651,7 +651,7 @@ namespace IndustrialPark
 
         private void button1_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("https://bfbb.krustykrab.restaurant/wiki/Events");
+            System.Diagnostics.Process.Start(AboutBox.WikiLink + "Events");
         }
     }
 }

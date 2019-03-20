@@ -1,0 +1,267 @@
+﻿using AssetEditorColors;
+using SharpDX;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing.Design;
+using static IndustrialPark.ConverterFunctions;
+
+namespace IndustrialPark
+{
+    public class DynaEffectLightning : DynaBase
+    {
+        public override string Note => "Version is always 2";
+
+        public DynaEffectLightning() : base() { }
+
+        public DynaEffectLightning(IEnumerable<byte> enumerable) : base (enumerable)
+        {
+            _position = new Vector3(
+                Switch(BitConverter.ToSingle(Data, 0x00)),
+                Switch(BitConverter.ToSingle(Data, 0x04)),
+                Switch(BitConverter.ToSingle(Data, 0x08)));
+            _position2 = new Vector3(
+                Switch(BitConverter.ToSingle(Data, 0x0C)),
+                Switch(BitConverter.ToSingle(Data, 0x10)),
+                Switch(BitConverter.ToSingle(Data, 0x14)));
+            byte[] abgr = BitConverter.GetBytes(Switch(BitConverter.ToInt32(Data, 0x18)));
+            Color1R = abgr[3];
+            Color1G = abgr[2];
+            Color1B = abgr[1];
+            ColorAlpha = abgr[0];
+            Width = Switch(BitConverter.ToSingle(Data, 0x1C));
+            UnknownFloat = Switch(BitConverter.ToSingle(Data, 0x20));
+            LightningTexture_AssetID = Switch(BitConverter.ToUInt32(Data, 0x24));
+            GlowTexture_AssetID = Switch(BitConverter.ToUInt32(Data, 0x28));
+            UnknownInt1 = Switch(BitConverter.ToInt32(Data, 0x2C));
+            KnockbackSpeed = Switch(BitConverter.ToSingle(Data, 0x30));
+            SoundGroupID_AssetID = Switch(BitConverter.ToUInt32(Data, 0x34));
+            UnknownInt2 = Switch(BitConverter.ToInt32(Data, 0x38));
+            UnknownInt3 = Switch(BitConverter.ToInt32(Data, 0x3C));
+            SIMP1_AssetID = Switch(BitConverter.ToUInt32(Data, 0x40));
+            SIMP2_AssetID = Switch(BitConverter.ToUInt32(Data, 0x44));
+            DamagePlayer = Switch(BitConverter.ToInt32(Data, 0x48));
+        }
+
+        public override byte[] ToByteArray()
+        {
+            List<byte> list = new List<byte>();
+            list.AddRange(BitConverter.GetBytes(Switch(_position.X)));
+            list.AddRange(BitConverter.GetBytes(Switch(_position.Y)));
+            list.AddRange(BitConverter.GetBytes(Switch(_position.Z)));
+            list.AddRange(BitConverter.GetBytes(Switch(_position2.X)));
+            list.AddRange(BitConverter.GetBytes(Switch(_position2.Y)));
+            list.AddRange(BitConverter.GetBytes(Switch(_position2.Z)));
+            list.AddRange(BitConverter.GetBytes(Switch(BitConverter.ToInt32(new byte[] { ColorAlpha, Color1B, Color1G, Color1R }, 0))));
+            list.AddRange(BitConverter.GetBytes(Switch(Width)));
+            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat)));
+            list.AddRange(BitConverter.GetBytes(Switch(LightningTexture_AssetID)));
+            list.AddRange(BitConverter.GetBytes(Switch(GlowTexture_AssetID)));
+            list.AddRange(BitConverter.GetBytes(Switch(UnknownInt1)));
+            list.AddRange(BitConverter.GetBytes(Switch(KnockbackSpeed)));
+            list.AddRange(BitConverter.GetBytes(Switch(SoundGroupID_AssetID)));
+            list.AddRange(BitConverter.GetBytes(Switch(UnknownInt2)));
+            list.AddRange(BitConverter.GetBytes(Switch(UnknownInt3)));
+            list.AddRange(BitConverter.GetBytes(Switch(SIMP1_AssetID)));
+            list.AddRange(BitConverter.GetBytes(Switch(SIMP2_AssetID)));
+            list.AddRange(BitConverter.GetBytes(Switch(DamagePlayer)));
+            return list.ToArray();
+        }
+
+        private Vector3 _position;
+        private Vector3 _position2;
+
+        [Category("Vent"), Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
+        public override float PositionX
+        {
+            get => _position.X;
+            set
+            {
+                _position.X = value;
+                CreateTransformMatrix();
+            }
+        }
+        [Category("Vent"), Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
+        public override float PositionY
+        {
+            get => _position.Y;
+            set
+            {
+                _position.Y = value;
+                CreateTransformMatrix();
+            }
+        }
+        [Category("Vent"), Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
+        public override float PositionZ
+        {
+            get => _position.Z;
+            set
+            {
+                _position.Z = value;
+                CreateTransformMatrix();
+            }
+        }
+
+        [Category("Vent"), TypeConverter(typeof(FloatTypeConverter))]
+        public float PositionEndX
+        {
+            get => _position2.X;
+            set
+            {
+                _position2.X = value;
+                CreateTransformMatrix();
+            }
+        }
+        [Category("Vent"), Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
+        public float PositionEndY
+        {
+            get => _position2.Y;
+            set
+            {
+                _position2.Y = value;
+                CreateTransformMatrix();
+            }
+        }
+        [Category("Vent"), Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
+        public float PositionEndZ
+        {
+            get => _position2.Z;
+            set
+            {
+                _position2.Z = value;
+                CreateTransformMatrix();
+            }
+        }
+
+        private byte Color1R;
+        private byte Color1G;
+        private byte Color1B;
+
+        [Category("Vent"), Editor(typeof(MyColorEditor), typeof(UITypeEditor)), DisplayName("Color 1 (R, G, B)")]
+        public MyColor Color
+        {
+            get => new MyColor(Color1R, Color1G, Color1B, ColorAlpha);
+            set
+            {
+                Color1R = value.R;
+                Color1G = value.G;
+                Color1B = value.B;
+            }
+        }
+        [Category("Vent"), DisplayName("Color 1 Alpha (0 - 255)")]
+        public byte ColorAlpha { get; set; }
+
+        [Category("Vent"), TypeConverter(typeof(FloatTypeConverter))]
+        public float Width { get; set; }
+
+        [Category("Vent"), TypeConverter(typeof(FloatTypeConverter))]
+        public float UnknownFloat { get; set; }
+
+        [Category("Vent")]
+        public AssetID LightningTexture_AssetID { get; set; }
+
+        [Category("Vent")]
+        public AssetID GlowTexture_AssetID { get; set; }
+
+        [Category("Vent")]
+        public int UnknownInt1 { get; set; }
+
+        [Category("Vent"), TypeConverter(typeof(FloatTypeConverter))]
+        public float KnockbackSpeed { get; set; }
+
+        [Category("Vent")]
+        public AssetID SoundGroupID_AssetID { get; set; }
+
+        [Category("Vent")]
+        public int UnknownInt2 { get; set; }
+
+        [Category("Vent")]
+        public int UnknownInt3 { get; set; }
+
+        [Category("Vent")]
+        public AssetID SIMP1_AssetID { get; set; }
+
+        [Category("Vent")]
+        public AssetID SIMP2_AssetID { get; set; }
+
+        [Category("Vent")]
+        public int DamagePlayer { get; set; }
+        
+        public override bool IsRenderableClickable => true;
+
+        private Matrix world;
+        private Matrix world2;
+        private BoundingBox boundingBox;
+        private Vector3[] vertices;
+        protected RenderWareFile.Triangle[] triangles;
+
+        public override void CreateTransformMatrix()
+        {
+            world = Matrix.Translation(_position);
+            world2 = Matrix.Translation(_position2);
+
+            vertices = new Vector3[SharpRenderer.cubeVertices.Count];
+
+            for (int i = 0; i < SharpRenderer.cubeVertices.Count; i++)
+                vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.cubeVertices[i], world);
+
+            boundingBox = BoundingBox.FromPoints(vertices);
+
+            triangles = new RenderWareFile.Triangle[SharpRenderer.cubeTriangles.Count];
+            for (int i = 0; i < SharpRenderer.cubeTriangles.Count; i++)
+            {
+                triangles[i] = new RenderWareFile.Triangle((ushort)SharpRenderer.cubeTriangles[i].materialIndex,
+                    (ushort)SharpRenderer.cubeTriangles[i].vertex1, (ushort)SharpRenderer.cubeTriangles[i].vertex2, (ushort)SharpRenderer.cubeTriangles[i].vertex3);
+            }
+        }
+
+        public override void Draw(SharpRenderer renderer, bool isSelected)
+        {
+            renderer.DrawCube(world, isSelected);
+            renderer.DrawCube(world2, isSelected);
+        }
+
+        public override BoundingBox GetBoundingBox()
+        {
+            return boundingBox;
+        }
+
+        public override float GetDistance(Vector3 cameraPosition)
+        {
+            return Vector3.Distance(cameraPosition, new Vector3(PositionX, PositionY, PositionZ));
+        }
+
+        public override float? IntersectsWith(Ray ray)
+        {
+            if (ray.Intersects(ref boundingBox, out float distance))
+                return TriangleIntersection(ray, distance);
+            return null;
+        }
+
+        private float? TriangleIntersection(Ray r, float initialDistance)
+        {
+            bool hasIntersected = false;
+            float smallestDistance = 1000f;
+
+            foreach (RenderWareFile.Triangle t in triangles)
+                if (r.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
+                {
+                    hasIntersected = true;
+
+                    if (distance < smallestDistance)
+                        smallestDistance = distance;
+                }
+
+            if (hasIntersected)
+                return smallestDistance;
+            else return null;
+        }
+
+        public override BoundingSphere GetGizmoCenter()
+        {
+            BoundingSphere boundingSphere = BoundingSphere.FromBox(boundingBox);
+            boundingSphere.Radius *= 0.9f;
+            return boundingSphere;
+        }
+    }
+}

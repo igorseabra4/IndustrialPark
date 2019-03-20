@@ -79,7 +79,7 @@ namespace IndustrialPark
                     found = true;
                     return MVPT;
                 }
-                foreach (AssetID assetID in MVPT.SiblingMVPTs)
+                foreach (AssetID assetID in MVPT.NextMVPTs)
                     foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
                         if (ae.archive.ContainsAsset(assetID))
                         {

@@ -8,9 +8,7 @@ namespace IndustrialPark
 {
     public class AssetDYNA : ObjectAsset, IRenderableAsset, IClickableAsset, IRotatableAsset, IScalableAsset
     {
-        public AssetDYNA(Section_AHDR AHDR) : base(AHDR) { }
-        
-        public void Setup()
+        public AssetDYNA(Section_AHDR AHDR) : base(AHDR)
         {
             SetDynaSpecific(false);
 
@@ -69,7 +67,7 @@ namespace IndustrialPark
                         _dynaSpecific = reset ? new DynaTaxi() : new DynaTaxi(Data.Skip(0x10).Take(EventStartOffset));
                         break;
                     case DynaType_BFBB.game_object__Teleport:
-                            _dynaSpecific = reset ? new DynaTeleport_BFBB(Version) : new DynaTeleport_BFBB(Data.Skip(0x10).Take(EventStartOffset), Version);
+                        _dynaSpecific = reset ? new DynaTeleport_BFBB(Version) : new DynaTeleport_BFBB(Data.Skip(0x10).Take(EventStartOffset), Version);
                         break;
                     case DynaType_BFBB.game_object__text_box:
                         _dynaSpecific = reset ? new DynaTextBox() : new DynaTextBox(Data.Skip(0x10).Take(EventStartOffset));
@@ -150,14 +148,32 @@ namespace IndustrialPark
                     case DynaType_TSSM.effect__ScreenFade:
                         _dynaSpecific = reset ? new DynaEffectScreenFade() : new DynaEffectScreenFade(Data.Skip(0x10).Take(EventStartOffset));
                         break;
+                    case DynaType_TSSM.effect__Lightning:
+                        _dynaSpecific = reset ? new DynaEffectLightning() : new DynaEffectLightning(Data.Skip(0x10).Take(EventStartOffset));
+                        break;
                     case DynaType_TSSM.Enemy__SB__Critter:
                         _dynaSpecific = reset ? new DynaEnemyCritter() : new DynaEnemyCritter(Data.Skip(0x10).Take(EventStartOffset));
+                        break;
+                    case DynaType_TSSM.Enemy__SB__Standard:
+                        _dynaSpecific = reset ? new DynaEnemyStandard() : new DynaEnemyStandard(Data.Skip(0x10).Take(EventStartOffset));
+                        break;
+                    case DynaType_TSSM.Enemy__SB__BucketOTron:
+                        _dynaSpecific = reset ? new DynaEnemyBucketOTron() : new DynaEnemyBucketOTron(Data.Skip(0x10).Take(EventStartOffset));
+                        break;
+                    case DynaType_TSSM.Enemy__SB__SupplyCrate:
+                        _dynaSpecific = reset ? new DynaSupplyCrate() : new DynaSupplyCrate(Data.Skip(0x10).Take(EventStartOffset));
                         break;
                     case DynaType_TSSM.game_object__Ring:
                         _dynaSpecific = reset ? new DynaRing() : new DynaRing(Data.Skip(0x10).Take(EventStartOffset));
                         break;
                     case DynaType_TSSM.game_object__RingControl:
                         _dynaSpecific = reset ? new DynaRingControl() : new DynaRingControl(Data.Skip(0x10).Take(EventStartOffset));
+                        break;
+                    case DynaType_TSSM.game_object__Vent:
+                        _dynaSpecific = reset ? new DynaVent() : new DynaVent(Data.Skip(0x10).Take(EventStartOffset));
+                        break;
+                    case DynaType_TSSM.game_object__VentType:
+                        _dynaSpecific = reset ? new DynaVentType() : new DynaVentType(Data.Skip(0x10).Take(EventStartOffset));
                         break;
                     case DynaType_TSSM.SceneProperties:
                         _dynaSpecific = reset ? new DynaSceneProperties() : new DynaSceneProperties(Data.Skip(0x10).Take(EventStartOffset));
@@ -170,6 +186,20 @@ namespace IndustrialPark
             dataBefore.AddRange(_dynaSpecific.ToByteArray());
             dataBefore.AddRange(dataAfter);
 
+            Data = dataBefore.ToArray();
+
+            _dynaSpecific.dynaSpecificPropertyChanged += OnDynaSpecificPropertyChange;
+        }
+
+        public void OnDynaSpecificPropertyChange(DynaBase value)
+        {
+            List<byte> dataBefore = Data.Take(0x10).ToList();
+            List<byte> dataAfter = Data.Skip(EventStartOffset).ToList();
+
+            dataBefore.AddRange(value.ToByteArray());
+            dataBefore.AddRange(dataAfter);
+
+            _dynaSpecific = value;
             Data = dataBefore.ToArray();
         }
 
@@ -223,6 +253,7 @@ namespace IndustrialPark
                 dataBefore.AddRange(dataAfter);
 
                 _dynaSpecific = value;
+
                 Data = dataBefore.ToArray();
             }
         }

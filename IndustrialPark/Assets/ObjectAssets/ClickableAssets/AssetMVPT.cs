@@ -20,12 +20,9 @@ namespace IndustrialPark
 
         public AssetMVPT(Section_AHDR AHDR) : base(AHDR)
         {
-        }
-
-        public void Setup()
-        {
             _position = new Vector3(ReadFloat(0x8), ReadFloat(0xC), ReadFloat(0x10));
-            _distanceICanSeeYou = ReadFloat(0x24);
+            _zoneRadius = ReadFloat(0x20);
+            _arenaRadius = ReadFloat(0x24);
 
             CreateTransformMatrix();
 
@@ -35,7 +32,7 @@ namespace IndustrialPark
 
         public override bool HasReference(uint assetID)
         {
-            foreach (AssetID a in SiblingMVPTs)
+            foreach (AssetID a in NextMVPTs)
                 if (a == assetID)
                     return true;
 
@@ -44,10 +41,10 @@ namespace IndustrialPark
 
         public void CreateTransformMatrix()
         {
-            if (_distanceICanSeeYou == -1f)
+            if (IsZone == 1 || _arenaRadius == -1f)
                 world = Matrix.RotationX(MathUtil.PiOverTwo) * Matrix.Translation(_position + new Vector3(0f, 0.5f, 0f));
             else
-                world = Matrix.Scaling(_distanceICanSeeYou * 2f) * Matrix.Translation(_position);
+                world = Matrix.Scaling(_arenaRadius * 2f) * Matrix.Translation(_position);
 
             CreateBoundingBox();
         }
@@ -56,7 +53,7 @@ namespace IndustrialPark
 
         protected void CreateBoundingBox()
         {
-            if (_distanceICanSeeYou == -1f)
+            if (IsZone == 1 || _arenaRadius == -1f)
             {
                 Vector3[] vertices = new Vector3[SharpRenderer.pyramidVertices.Count];
 
@@ -68,7 +65,7 @@ namespace IndustrialPark
             }
             else
             {
-                boundingSphere = new BoundingSphere(_position, _distanceICanSeeYou);
+                boundingSphere = new BoundingSphere(_position, _arenaRadius);
                 boundingBox = BoundingBox.FromSphere(boundingSphere);
             }
         }
@@ -80,7 +77,7 @@ namespace IndustrialPark
 
             if (ray.Intersects(ref boundingSphere))
             {
-                if (_distanceICanSeeYou == -1f)
+                if (IsZone == 1 || _arenaRadius == -1f)
                     return TriangleIntersection(ray, SharpRenderer.pyramidTriangles, SharpRenderer.pyramidVertices);
                 return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices);
             }
@@ -116,7 +113,7 @@ namespace IndustrialPark
         {
             if (dontRender || isInvisible) return;
 
-            if (_distanceICanSeeYou == -1f)
+            if (IsZone == 1 || _arenaRadius == -1f)
                 renderer.DrawPyramid(world, isSelected, 1f);
             else
                 renderer.DrawSphere(world, isSelected, renderer.mvptColor);
@@ -136,7 +133,7 @@ namespace IndustrialPark
 
         public float GetDistance(Vector3 cameraPosition)
         {
-            return Vector3.Distance(cameraPosition, _position) - (_distanceICanSeeYou == -1f ? 0 : _distanceICanSeeYou);
+            return Vector3.Distance(cameraPosition, _position) - (_arenaRadius == -1f ? 0 : _arenaRadius);
         }
         
         private Vector3 _position;
@@ -188,7 +185,7 @@ namespace IndustrialPark
         [Category("Move Point")]
         [TypeConverter(typeof(HexByteTypeConverter))]
         [Description("0x00 for arena (can see you), 0x01 for zone")]
-        public byte On
+        public byte IsZone
         {
             get => ReadByte(0x16);
             set => Write(0x16, value);
@@ -224,7 +221,7 @@ namespace IndustrialPark
         public short SiblingAmount
         {
             get => ReadShort(0x1A);
-            set => Write(0x18, value);
+            set => Write(0x1A, value);
         }
 
         [Category("Move Point"), TypeConverter(typeof(FloatTypeConverter))]
@@ -235,30 +232,36 @@ namespace IndustrialPark
             set => Write(0x1C, value);
         }
 
+        private float _zoneRadius;
         [Category("Move Point"), TypeConverter(typeof(FloatTypeConverter))]
         [Description("Enemy will circle around the point in this distance, -1 means disabled")]
         public float ZoneRadius
         {
-            get => ReadFloat(0x20);
-            set => Write(0x20, value);
+            get => _zoneRadius;
+            set
+            {
+                _zoneRadius = value;
+                Write(0x20, _zoneRadius);
+                CreateTransformMatrix();
+            }
         }
 
-        private float _distanceICanSeeYou;
+        private float _arenaRadius;
         [Category("Move Point"), TypeConverter(typeof(FloatTypeConverter))]
         [Description("Enemy will be able to see you from this radius (as in a sphere trigger), -1 means disabled")]
         public float ArenaRadius
         {
-            get => _distanceICanSeeYou;
+            get => _arenaRadius;
             set
             {
-                _distanceICanSeeYou = value;
-                Write(0x24, _distanceICanSeeYou);
+                _arenaRadius = value;
+                Write(0x24, _arenaRadius);
                 CreateTransformMatrix();
             }
         }
 
         [Category("Move Point")]
-        public AssetID[] SiblingMVPTs
+        public AssetID[] NextMVPTs
         {
             get
             {
@@ -299,20 +302,44 @@ namespace IndustrialPark
         [Browsable(false)]
         public float ScaleX
         {
-            get => ArenaRadius;
-            set => ArenaRadius = value;
+            get => GetScale();
+            set => SetScale(value);
         }
         [Browsable(false)]
         public float ScaleY
         {
-            get => ArenaRadius;
-            set => ArenaRadius = value;
+            get => GetScale();
+            set => SetScale(value);
         }
         [Browsable(false)]
         public float ScaleZ
         {
-            get => ArenaRadius;
-            set => ArenaRadius = value;
+            get => GetScale();
+            set => SetScale(value);
+        }
+
+        private float GetScale()
+        {
+            if (IsZone == 0x00)
+            {
+                if (_arenaRadius != -1f)
+                    return _arenaRadius;
+            }
+            else
+            {
+                if (_zoneRadius != -1f)
+                    return _zoneRadius;
+            }
+
+            return 1f;
+        }
+
+        private void SetScale(float scale)
+        {
+            if (IsZone == 0x00)
+                ArenaRadius = scale;
+            else
+                ZoneRadius = scale;
         }
     }
 }

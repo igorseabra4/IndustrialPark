@@ -96,6 +96,19 @@ namespace IndustrialPark
             }
         }
 
+        public static void LoadTexturesFromFolder(IEnumerable<string> folderNames)
+        {
+            foreach (string folderName in folderNames)
+            {
+                OpenTextureFolders.Add(folderName);
+                foreach (string i in Directory.GetFiles(folderName))
+                    if (Path.GetExtension(i).ToLower().Equals(".png"))
+                        AddTexturePNG(i);
+            }
+
+            ReapplyTextures();
+        }
+
         public static void LoadTexturesFromFolder(string folderName)
         {
             OpenTextureFolders.Add(folderName);

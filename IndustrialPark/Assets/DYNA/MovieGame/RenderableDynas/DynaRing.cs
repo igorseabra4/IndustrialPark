@@ -54,9 +54,9 @@ namespace IndustrialPark
             list.AddRange(BitConverter.GetBytes(Switch(PositionX)));
             list.AddRange(BitConverter.GetBytes(Switch(PositionY)));
             list.AddRange(BitConverter.GetBytes(Switch(PositionZ)));
-            list.AddRange(BitConverter.GetBytes(Switch(Yaw)));
-            list.AddRange(BitConverter.GetBytes(Switch(Pitch)));
-            list.AddRange(BitConverter.GetBytes(Switch(Roll)));
+            list.AddRange(BitConverter.GetBytes(Switch(_yaw)));
+            list.AddRange(BitConverter.GetBytes(Switch(_pitch)));
+            list.AddRange(BitConverter.GetBytes(Switch(_roll)));
             list.AddRange(BitConverter.GetBytes(Switch(UnknownInt1)));
             list.AddRange(BitConverter.GetBytes(Switch(UnknownInt2)));
             list.AddRange(BitConverter.GetBytes(Switch(UnknownInt3)));
@@ -202,6 +202,7 @@ namespace IndustrialPark
             set
             {
                 _position.X = value;
+                dynaSpecificPropertyChanged(this);
                 CreateTransformMatrix();
             }
         }
@@ -214,6 +215,7 @@ namespace IndustrialPark
             set
             {
                 _position.Y = value;
+                dynaSpecificPropertyChanged(this);
                 CreateTransformMatrix();
             }
         }
@@ -226,6 +228,7 @@ namespace IndustrialPark
             set
             {
                 _position.Z = value;
+                dynaSpecificPropertyChanged(this);
                 CreateTransformMatrix();
             }
         }
@@ -242,6 +245,7 @@ namespace IndustrialPark
             set
             {
                 _yaw = MathUtil.DegreesToRadians(value);
+                dynaSpecificPropertyChanged(this);
                 CreateTransformMatrix();
             }
         }
@@ -254,6 +258,7 @@ namespace IndustrialPark
             set
             {
                 _pitch = MathUtil.DegreesToRadians(value);
+                dynaSpecificPropertyChanged(this);
                 CreateTransformMatrix();
             }
         }
@@ -266,6 +271,7 @@ namespace IndustrialPark
             set
             {
                 _roll = MathUtil.DegreesToRadians(value);
+                dynaSpecificPropertyChanged(this);
                 CreateTransformMatrix();
             }
         }
@@ -287,6 +293,7 @@ namespace IndustrialPark
             set
             {
                 _scale.X = value;
+                dynaSpecificPropertyChanged(this);
                 CreateTransformMatrix();
             }
         }
@@ -299,6 +306,7 @@ namespace IndustrialPark
             set
             {
                 _scale.Y = value;
+                dynaSpecificPropertyChanged(this);
                 CreateTransformMatrix();
             }
         }
@@ -311,6 +319,7 @@ namespace IndustrialPark
             set
             {
                 _scale.Z = value;
+                dynaSpecificPropertyChanged(this);
                 CreateTransformMatrix();
             }
         }

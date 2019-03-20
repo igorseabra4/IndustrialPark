@@ -32,12 +32,14 @@
             this.richTextBoxAssetText = new System.Windows.Forms.RichTextBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.buttonFindCallers = new System.Windows.Forms.Button();
+            this.buttonHelp = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // labelAssetName
             // 
             this.labelAssetName.AutoSize = true;
+            this.tableLayoutPanel1.SetColumnSpan(this.labelAssetName, 2);
             this.labelAssetName.Location = new System.Drawing.Point(3, 0);
             this.labelAssetName.Name = "labelAssetName";
             this.labelAssetName.Size = new System.Drawing.Size(0, 13);
@@ -45,6 +47,7 @@
             // 
             // richTextBoxAssetText
             // 
+            this.tableLayoutPanel1.SetColumnSpan(this.richTextBoxAssetText, 2);
             this.richTextBoxAssetText.Dock = System.Windows.Forms.DockStyle.Fill;
             this.richTextBoxAssetText.Font = new System.Drawing.Font("Courier New", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richTextBoxAssetText.Location = new System.Drawing.Point(3, 23);
@@ -56,9 +59,11 @@
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.buttonFindCallers, 0, 2);
+            this.tableLayoutPanel1.ColumnCount = 2;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Controls.Add(this.buttonHelp, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.buttonFindCallers, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.labelAssetName, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.richTextBoxAssetText, 0, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -75,13 +80,25 @@
             // 
             this.buttonFindCallers.AutoSize = true;
             this.buttonFindCallers.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonFindCallers.Location = new System.Drawing.Point(3, 225);
+            this.buttonFindCallers.Location = new System.Drawing.Point(284, 225);
             this.buttonFindCallers.Name = "buttonFindCallers";
-            this.buttonFindCallers.Size = new System.Drawing.Size(557, 22);
+            this.buttonFindCallers.Size = new System.Drawing.Size(276, 22);
             this.buttonFindCallers.TabIndex = 8;
             this.buttonFindCallers.Text = "Find Who Targets Me";
             this.buttonFindCallers.UseVisualStyleBackColor = true;
             this.buttonFindCallers.Click += new System.EventHandler(this.buttonFindCallers_Click);
+            // 
+            // buttonHelp
+            // 
+            this.buttonHelp.AutoSize = true;
+            this.buttonHelp.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonHelp.Location = new System.Drawing.Point(3, 225);
+            this.buttonHelp.Name = "buttonHelp";
+            this.buttonHelp.Size = new System.Drawing.Size(275, 22);
+            this.buttonHelp.TabIndex = 18;
+            this.buttonHelp.Text = "Help";
+            this.buttonHelp.UseVisualStyleBackColor = true;
+            this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
             // 
             // InternalTextEditor
             // 
@@ -106,5 +123,6 @@
         private System.Windows.Forms.RichTextBox richTextBoxAssetText;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Button buttonFindCallers;
+        private System.Windows.Forms.Button buttonHelp;
     }
 }

@@ -41,7 +41,6 @@
             this.buttonCancel = new System.Windows.Forms.Button();
             this.groupBoxEventData = new System.Windows.Forms.GroupBox();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
-            this.numericUpDownTime = new System.Windows.Forms.NumericUpDown();
             this.textBoxSourceCheck = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.textBoxArgumentAsset = new System.Windows.Forms.TextBox();
@@ -61,17 +60,18 @@
             this.comboSendEvent = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.comboRecieveEvent = new System.Windows.Forms.ComboBox();
+            this.numericUpDownTime = new System.Windows.Forms.NumericUpDown();
             this.button1 = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.groupBox1.SuspendLayout();
             this.groupBoxEventData.SuspendLayout();
             this.groupBox7.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTime)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTime)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -215,16 +215,6 @@
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Source Check";
             this.toolTip1.SetToolTip(this.groupBox7, "Link will only be activated if the sender asset matches this one. Optional.");
-            // 
-            // numericUpDownTime
-            // 
-            this.numericUpDownTime.DecimalPlaces = 4;
-            this.numericUpDownTime.Location = new System.Drawing.Point(8, 19);
-            this.numericUpDownTime.Name = "numericUpDownTime";
-            this.numericUpDownTime.Size = new System.Drawing.Size(218, 20);
-            this.numericUpDownTime.TabIndex = 18;
-            this.numericUpDownTime.Visible = false;
-            this.numericUpDownTime.ValueChanged += new System.EventHandler(this.numericUpDownTime_ValueChanged);
             // 
             // textBoxSourceCheck
             // 
@@ -371,7 +361,7 @@
             this.groupBox5.Size = new System.Drawing.Size(230, 47);
             this.groupBox5.TabIndex = 3;
             this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Destination Asset";
+            this.groupBox5.Text = "Target Asset";
             this.toolTip1.SetToolTip(this.groupBox5, "Asset to which this link will be sent.");
             // 
             // textBoxTargetAsset
@@ -393,7 +383,7 @@
             this.groupBox4.Size = new System.Drawing.Size(230, 47);
             this.groupBox4.TabIndex = 2;
             this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Destination Event";
+            this.groupBox4.Text = "Target Event";
             this.toolTip1.SetToolTip(this.groupBox4, "Event sent by this link.");
             // 
             // comboSendEvent
@@ -427,6 +417,16 @@
             this.comboRecieveEvent.TabIndex = 8;
             this.toolTip1.SetToolTip(this.comboRecieveEvent, "Event which activates this link.");
             this.comboRecieveEvent.SelectedIndexChanged += new System.EventHandler(this.comboRecieveEvent_SelectedIndexChanged);
+            // 
+            // numericUpDownTime
+            // 
+            this.numericUpDownTime.DecimalPlaces = 4;
+            this.numericUpDownTime.Location = new System.Drawing.Point(8, 19);
+            this.numericUpDownTime.Name = "numericUpDownTime";
+            this.numericUpDownTime.Size = new System.Drawing.Size(218, 20);
+            this.numericUpDownTime.TabIndex = 18;
+            this.numericUpDownTime.Visible = false;
+            this.numericUpDownTime.ValueChanged += new System.EventHandler(this.numericUpDownTime_ValueChanged);
             // 
             // button1
             // 
@@ -467,7 +467,6 @@
             this.groupBoxEventData.ResumeLayout(false);
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTime)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox6.ResumeLayout(false);
@@ -476,6 +475,7 @@
             this.groupBox5.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTime)).EndInit();
             this.ResumeLayout(false);
 
         }

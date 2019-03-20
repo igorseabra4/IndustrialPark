@@ -82,5 +82,8 @@ namespace IndustrialPark
         {
             return new BoundingSphere();
         }
+
+        public delegate void DynaBasePropertyChanged(DynaBase value);
+        public DynaBasePropertyChanged dynaSpecificPropertyChanged;
     }
 }

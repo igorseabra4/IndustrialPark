@@ -760,9 +760,9 @@ namespace IndustrialPark
 
         private void addTextureFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CommonOpenFileDialog openFile = new CommonOpenFileDialog() { IsFolderPicker = true };
+            CommonOpenFileDialog openFile = new CommonOpenFileDialog() { IsFolderPicker = true, Multiselect = true };
             if (openFile.ShowDialog() == CommonFileDialogResult.Ok)
-                TextureManager.LoadTexturesFromFolder(openFile.FileName);
+                TextureManager.LoadTexturesFromFolder(openFile.FileNames);
         }
 
         private void addTXDArchiveToolStripMenuItem_Click(object sender, EventArgs e)

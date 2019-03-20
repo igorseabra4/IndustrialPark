@@ -13,9 +13,7 @@ namespace IndustrialPark
 
         protected abstract bool DontRender { get; }
 
-        public PlaceableAsset(Section_AHDR AHDR) : base(AHDR) { }
-
-        public virtual void Setup()
+        public PlaceableAsset(Section_AHDR AHDR) : base(AHDR)
         {
             _yaw = ReadFloat(0x14 + Offset);
             _pitch = ReadFloat(0x18 + Offset);
