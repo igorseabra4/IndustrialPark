@@ -8,6 +8,8 @@ namespace IndustrialPark
 {
     public class DynaRing : DynaBase
     {
+        public override string Note => "Version is always 2";
+
         public DynaRing() : base()
         {
             DriverPLAT_AssetID = 0;

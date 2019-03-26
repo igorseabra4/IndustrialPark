@@ -151,17 +151,23 @@ namespace IndustrialPark
                     case DynaType_TSSM.effect__Lightning:
                         _dynaSpecific = reset ? new DynaEffectLightning() : new DynaEffectLightning(Data.Skip(0x10).Take(EventStartOffset));
                         break;
+                    case DynaType_TSSM.Enemy__SB__BucketOTron:
+                        _dynaSpecific = reset ? new DynaEnemyBucketOTron() : new DynaEnemyBucketOTron(Data.Skip(0x10).Take(EventStartOffset));
+                        break;
                     case DynaType_TSSM.Enemy__SB__Critter:
                         _dynaSpecific = reset ? new DynaEnemyCritter() : new DynaEnemyCritter(Data.Skip(0x10).Take(EventStartOffset));
+                        break;
+                    case DynaType_TSSM.Enemy__SB__Mindy:
+                        _dynaSpecific = reset ? new DynaEnemyMindy() : new DynaEnemyMindy(Data.Skip(0x10).Take(EventStartOffset));
                         break;
                     case DynaType_TSSM.Enemy__SB__Standard:
                         _dynaSpecific = reset ? new DynaEnemyStandard() : new DynaEnemyStandard(Data.Skip(0x10).Take(EventStartOffset));
                         break;
-                    case DynaType_TSSM.Enemy__SB__BucketOTron:
-                        _dynaSpecific = reset ? new DynaEnemyBucketOTron() : new DynaEnemyBucketOTron(Data.Skip(0x10).Take(EventStartOffset));
-                        break;
                     case DynaType_TSSM.Enemy__SB__SupplyCrate:
                         _dynaSpecific = reset ? new DynaSupplyCrate() : new DynaSupplyCrate(Data.Skip(0x10).Take(EventStartOffset));
+                        break;
+                    case DynaType_TSSM.Enemy__SB__Turret:
+                        _dynaSpecific = reset ? new DynaEnemyTurret() : new DynaEnemyTurret(Data.Skip(0x10).Take(EventStartOffset));
                         break;
                     case DynaType_TSSM.game_object__Ring:
                         _dynaSpecific = reset ? new DynaRing() : new DynaRing(Data.Skip(0x10).Take(EventStartOffset));

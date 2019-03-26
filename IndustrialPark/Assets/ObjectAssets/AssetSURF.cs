@@ -25,56 +25,56 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
-        [Category("Surface: Base")]
+        [Category("Surface: Base"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte DamageType
         {
             get => ReadByte(0x08);
             set => Write(0x08, value);
         }
 
-        [Category("Surface: Base")]
+        [Category("Surface: Base"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Sticky
         {
             get => ReadByte(0x09);
             set => Write(0x09, value);
         }
 
-        [Category("Surface: Base")]
+        [Category("Surface: Base"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte DamageFlags
         {
             get => ReadByte(0x0A);
             set => Write(0x0A, value);
         }
 
-        [Category("Surface: Base")]
+        [Category("Surface: Base"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte SurfaceType
         {
             get => ReadByte(0x0B);
             set => Write(0x0B, value);
         }
 
-        [Category("Surface: Base")]
+        [Category("Surface: Base"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Phys_Pad
         {
             get => ReadByte(0x0C);
             set => Write(0x0C, value);
         }
 
-        [Category("Surface: Base")]
+        [Category("Surface: Base"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte SlideStart
         {
             get => ReadByte(0x0D);
             set => Write(0x0D, value);
         }
 
-        [Category("Surface: Base")]
+        [Category("Surface: Base"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte SlideStop
         {
             get => ReadByte(0x0E);
             set => Write(0x0E, value);
         }
 
-        [Category("Surface: Base")]
+        [Category("Surface: Base"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte PhysicsFlags
         {
             get => ReadByte(0x0F);
@@ -557,28 +557,28 @@ namespace IndustrialPark
             set => Write(0x110, value);
         }
 
-        [Category("Surface: Other")]
+        [Category("Surface: Other"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte On
         {
             get => ReadByte(0x114);
             set => Write(0x114, value);
         }
 
-        [Category("Surface: Other")]
+        [Category("Surface: Other"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Padding115
         {
             get => ReadByte(0x115);
             set => Write(0x115, value);
         }
 
-        [Category("Surface: Other")]
+        [Category("Surface: Other"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Padding116
         {
             get => ReadByte(0x116);
             set => Write(0x116, value);
         }
 
-        [Category("Surface: Other")]
+        [Category("Surface: Other"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Padding117
         {
             get => ReadByte(0x117);

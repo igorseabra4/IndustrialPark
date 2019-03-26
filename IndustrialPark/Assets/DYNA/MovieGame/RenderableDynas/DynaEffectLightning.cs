@@ -71,7 +71,7 @@ namespace IndustrialPark
         private Vector3 _position;
         private Vector3 _position2;
 
-        [Category("Vent"), Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Effect Lightning"), Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
         public override float PositionX
         {
             get => _position.X;
@@ -81,7 +81,7 @@ namespace IndustrialPark
                 CreateTransformMatrix();
             }
         }
-        [Category("Vent"), Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Effect Lightning"), Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
         public override float PositionY
         {
             get => _position.Y;
@@ -91,7 +91,7 @@ namespace IndustrialPark
                 CreateTransformMatrix();
             }
         }
-        [Category("Vent"), Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Effect Lightning"), Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
         public override float PositionZ
         {
             get => _position.Z;
@@ -102,7 +102,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Vent"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Effect Lightning"), TypeConverter(typeof(FloatTypeConverter))]
         public float PositionEndX
         {
             get => _position2.X;
@@ -112,7 +112,7 @@ namespace IndustrialPark
                 CreateTransformMatrix();
             }
         }
-        [Category("Vent"), Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Effect Lightning"), Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
         public float PositionEndY
         {
             get => _position2.Y;
@@ -122,7 +122,7 @@ namespace IndustrialPark
                 CreateTransformMatrix();
             }
         }
-        [Category("Vent"), Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Effect Lightning"), Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
         public float PositionEndZ
         {
             get => _position2.Z;
@@ -137,7 +137,7 @@ namespace IndustrialPark
         private byte Color1G;
         private byte Color1B;
 
-        [Category("Vent"), Editor(typeof(MyColorEditor), typeof(UITypeEditor)), DisplayName("Color 1 (R, G, B)")]
+        [Category("Effect Lightning"), Editor(typeof(MyColorEditor), typeof(UITypeEditor)), DisplayName("Color 1 (R, G, B)")]
         public MyColor Color
         {
             get => new MyColor(Color1R, Color1G, Color1B, ColorAlpha);
@@ -148,43 +148,43 @@ namespace IndustrialPark
                 Color1B = value.B;
             }
         }
-        [Category("Vent"), DisplayName("Color 1 Alpha (0 - 255)")]
+        [Category("Effect Lightning"), DisplayName("Color 1 Alpha (0 - 255)")]
         public byte ColorAlpha { get; set; }
 
-        [Category("Vent"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Effect Lightning"), TypeConverter(typeof(FloatTypeConverter))]
         public float Width { get; set; }
 
-        [Category("Vent"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Effect Lightning"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat { get; set; }
 
-        [Category("Vent")]
+        [Category("Effect Lightning")]
         public AssetID LightningTexture_AssetID { get; set; }
 
-        [Category("Vent")]
+        [Category("Effect Lightning")]
         public AssetID GlowTexture_AssetID { get; set; }
 
-        [Category("Vent")]
+        [Category("Effect Lightning")]
         public int UnknownInt1 { get; set; }
 
-        [Category("Vent"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Effect Lightning"), TypeConverter(typeof(FloatTypeConverter))]
         public float KnockbackSpeed { get; set; }
 
-        [Category("Vent")]
+        [Category("Effect Lightning")]
         public AssetID SoundGroupID_AssetID { get; set; }
 
-        [Category("Vent")]
+        [Category("Effect Lightning")]
         public int UnknownInt2 { get; set; }
 
-        [Category("Vent")]
+        [Category("Effect Lightning")]
         public int UnknownInt3 { get; set; }
 
-        [Category("Vent")]
+        [Category("Effect Lightning")]
         public AssetID SIMP1_AssetID { get; set; }
 
-        [Category("Vent")]
+        [Category("Effect Lightning")]
         public AssetID SIMP2_AssetID { get; set; }
 
-        [Category("Vent")]
+        [Category("Effect Lightning")]
         public int DamagePlayer { get; set; }
         
         public override bool IsRenderableClickable => true;

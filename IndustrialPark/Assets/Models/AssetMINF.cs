@@ -35,10 +35,6 @@ namespace IndustrialPark
     {
         public AssetMINF(Section_AHDR AHDR) : base(AHDR)
         {
-        }
-
-        public void Setup()
-        {
             try
             {
                 _modelAssetID = ReadUInt(0x14);

@@ -7,6 +7,8 @@ namespace IndustrialPark
 {
     public class DynaRingControl : DynaBase
     {
+        public override string Note => "Version is always 3";
+
         public static uint RingModelAssetID = 0;
 
         public DynaRingControl() : base()

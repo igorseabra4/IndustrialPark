@@ -12,9 +12,7 @@ namespace IndustrialPark
         }
 
         public string Name { get => Path.GetFileNameWithoutExtension(AHDR.ADBG.assetName); }
-
-        public void Setup() { }
-
+        
         private int renderWareVersion;
 
         private RWSection[] TextureAsRWSections

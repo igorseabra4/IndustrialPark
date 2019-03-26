@@ -34,9 +34,9 @@ namespace IndustrialPark
 
         protected DynaPlaceableBase(IEnumerable<byte> enumerable) : base(enumerable)
         {
-            Unknown00 = Switch(BitConverter.ToInt32(Data, 0x0));
-            Unknown04 = Data[0x04];
-            Unknown05 = Data[0x05];
+            PaddingInt00 = Switch(BitConverter.ToInt32(Data, 0x0));
+            PaddingByte04 = Data[0x04];
+            PaddingByte05 = Data[0x05];
             Flags06 = Switch(BitConverter.ToInt16(Data, 0x06));
             VisibilityFlag = Data[0x08];
             TypeFlag = Data[0x08];
@@ -64,9 +64,9 @@ namespace IndustrialPark
         public override byte[] ToByteArray()
         {
             List<byte> list = new List<byte>();
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown00)));
-            list.Add(Unknown04);
-            list.Add(Unknown05);
+            list.AddRange(BitConverter.GetBytes(Switch(PaddingInt00)));
+            list.Add(PaddingByte04);
+            list.Add(PaddingByte05);
             list.AddRange(BitConverter.GetBytes(Switch(Flags06)));
             list.Add(VisibilityFlag);
             list.Add(TypeFlag);
@@ -212,9 +212,16 @@ namespace IndustrialPark
             return uint.MaxValue - Mask(bit);
         }
 
-        public int Unknown00 { get; set; }
-        public byte Unknown04 { get; set; }
-        public byte Unknown05 { get; set; }
+        [Category("Placement Flags")]
+        public int PaddingInt00 { get; set; }
+
+        [Category("Placement Flags"), TypeConverter(typeof(HexByteTypeConverter))]
+        public byte PaddingByte04 { get; set; }
+
+        [Category("Placement Flags"), TypeConverter(typeof(HexByteTypeConverter))]
+        public byte PaddingByte05 { get; set; }
+
+        [Category("Placement Flags"), TypeConverter(typeof(HexShortTypeConverter))]
         public short Flags06 { get; set; }
 
         [Category("Placement Flags"), TypeConverter(typeof(HexByteTypeConverter))]

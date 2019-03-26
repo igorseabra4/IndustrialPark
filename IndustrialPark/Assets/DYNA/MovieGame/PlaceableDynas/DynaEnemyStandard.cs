@@ -69,25 +69,25 @@ namespace IndustrialPark
             return list.ToArray();
         }
 
-        [Category("Dyna Enemy Standard")]
+        [Category("Enemy Standard")]
         public AssetID MVPT_AssetID { get; set; }
 
-        [Category("Dyna Enemy Standard")]
+        [Category("Enemy Standard")]
         public AssetID Unknown54 { get; set; }
 
-        [Category("Dyna Enemy Standard")]
+        [Category("Enemy Standard")]
         public AssetID Unknown58 { get; set; }
 
-        [Category("Dyna Enemy Standard")]
+        [Category("Enemy Standard")]
         public AssetID Unknown5C { get; set; }
 
-        [Category("Dyna Enemy Standard")]
+        [Category("Enemy Standard")]
         public AssetID Unknown60 { get; set; }
 
-        [Category("Dyna Enemy Standard")]
+        [Category("Enemy Standard")]
         public AssetID Unknown64 { get; set; }
 
-        [Category("Dyna Enemy Standard")]
+        [Category("Enemy Standard")]
         public AssetID Unknown68 { get; set; }
     }
 }

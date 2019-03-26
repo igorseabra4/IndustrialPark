@@ -17,9 +17,7 @@ namespace IndustrialPark
 
         protected override int EventStartOffset => 0x30;
 
-        public AssetSFX(Section_AHDR AHDR) : base(AHDR) { }
-
-        public void Setup()
+        public AssetSFX(Section_AHDR AHDR) : base(AHDR)
         {
             _position = new Vector3(ReadFloat(0x1C), ReadFloat(0x20), ReadFloat(0x24));
             _radius = ReadFloat(0x28);

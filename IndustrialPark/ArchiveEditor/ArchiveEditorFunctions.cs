@@ -402,7 +402,6 @@ namespace IndustrialPark
                 case AssetType.MINF:
                     {
                         AssetMINF newAsset = new AssetMINF(AHDR);
-                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
@@ -460,7 +459,6 @@ namespace IndustrialPark
                 case AssetType.PICK:
                     {
                         AssetPICK newAsset = new AssetPICK(AHDR);
-                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
@@ -497,7 +495,6 @@ namespace IndustrialPark
                 case AssetType.RWTX:
                     {
                         AssetRWTX newAsset = new AssetRWTX(AHDR);
-                        newAsset.Setup();
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
@@ -510,7 +507,12 @@ namespace IndustrialPark
                 case AssetType.SFX:
                     {
                         AssetSFX newAsset = new AssetSFX(AHDR);
-                        newAsset.Setup();
+                        assetDictionary.Add(AHDR.assetID, newAsset);
+                    }
+                    break;
+                case AssetType.SGRP:
+                    {
+                        AssetSGRP newAsset = new AssetSGRP(AHDR);
                         assetDictionary.Add(AHDR.assetID, newAsset);
                     }
                     break;
@@ -625,7 +627,6 @@ namespace IndustrialPark
                 case AssetType.PRJT:
                 case AssetType.RANM:
                 case AssetType.SDFX:
-                case AssetType.SGRP:
                 case AssetType.SLID:
                 case AssetType.SPLN:
                 case AssetType.SSET:

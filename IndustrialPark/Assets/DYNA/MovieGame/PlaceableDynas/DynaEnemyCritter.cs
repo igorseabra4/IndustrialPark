@@ -44,10 +44,10 @@ namespace IndustrialPark
             return list.ToArray();
         }
 
-        [Category("Dyna Enemy Critter")]
+        [Category("Enemy Critter")]
         public AssetID MVPT_AssetID { get; set; }
 
-        [Category("Dyna Enemy Critter")]
+        [Category("Enemy Critter")]
         public AssetID Unknown54 { get; set; }
     }
 }

@@ -434,12 +434,12 @@ namespace IndustrialPark
                                 a.Draw(this);
                         }
 
-                        device.SetFillModeSolid();
+                        //device.SetFillModeSolid();
                         device.SetCullModeNone();
                         device.ApplyRasterState();
-                        device.SetBlendStateAlphaBlend();
-                        device.SetDefaultDepthState();
-                        device.UpdateAllStates();
+                        //device.SetBlendStateAlphaBlend();
+                        //device.SetDefaultDepthState();
+                        //device.UpdateAllStates();
 
                         foreach (IRenderableAsset a in renderTrans)
                         {
@@ -448,12 +448,12 @@ namespace IndustrialPark
                                 a.Draw(this);
                         }
 
-                        device.SetFillModeDefault();
+                        //device.SetFillModeDefault();
                         device.SetCullModeDefault();
                         device.ApplyRasterState();
-                        device.SetBlendStateAlphaBlend();
-                        device.SetDefaultDepthState();
-                        device.UpdateAllStates();
+                        //device.SetBlendStateAlphaBlend();
+                        //device.SetDefaultDepthState();
+                        //device.UpdateAllStates();
 
                         foreach (IRenderableAsset a in renderLarge)
                         {

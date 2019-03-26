@@ -47,19 +47,19 @@ namespace IndustrialPark
             return list.ToArray();
         }
         
-        [Category("Dyna Enemy BucketOTron")]
+        [Category("Enemy BucketOTron")]
         public AssetID GRUP_AssetID { get; set; }
 
-        [Category("Dyna Enemy BucketOTron")]
+        [Category("Enemy BucketOTron")]
         public int UnknownInt54 { get; set; }
 
-        [Category("Dyna Enemy BucketOTron")]
+        [Category("Enemy BucketOTron")]
         public float UnknownFloat58 { get; set; }
 
-        [Category("Dyna Enemy BucketOTron")]
+        [Category("Enemy BucketOTron")]
         public int UnknownInt5C { get; set; }
 
-        [Category("Dyna Enemy BucketOTron")]
+        [Category("Enemy BucketOTron")]
         public int UnknownInt60 { get; set; }
     }
 }

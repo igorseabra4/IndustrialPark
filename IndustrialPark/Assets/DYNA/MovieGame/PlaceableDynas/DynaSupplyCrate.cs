@@ -38,7 +38,7 @@ namespace IndustrialPark
             return list.ToArray();
         }
         
-        [Category("Dyna Supply Crate")]
+        [Category("Supply Crate")]
         public AssetID MVPT_AssetID { get; set; }
     }
 }

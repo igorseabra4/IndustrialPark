@@ -40,10 +40,6 @@ namespace IndustrialPark
 
         public AssetPICK(Section_AHDR AHDR) : base(AHDR)
         {
-        }
-
-        public void Setup()
-        {
             pickEntries = new Dictionary<uint, uint>();
             foreach (EntryPICK entryPICK in PICK_Entries)
                 pickEntries.Add(entryPICK.ReferenceID, entryPICK.ModelAssetID);

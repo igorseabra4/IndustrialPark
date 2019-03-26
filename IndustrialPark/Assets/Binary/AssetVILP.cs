@@ -9,6 +9,14 @@ namespace IndustrialPark
         {
         }
 
+        public override bool HasReference(uint assetID)
+        {
+            if (UnknownInt_00 == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
         [Category("VILP")]
         public AssetID UnknownInt_00
         {

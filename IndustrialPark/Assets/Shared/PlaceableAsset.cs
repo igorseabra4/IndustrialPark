@@ -25,8 +25,10 @@ namespace IndustrialPark
             _modelAssetID = ReadUInt(0x4C + Offset);
 
             CreateTransformMatrix();
-            if (!ArchiveEditorFunctions.renderableAssetSetCommon.Contains(this))
-                ArchiveEditorFunctions.renderableAssetSetCommon.Add(this);
+
+            if (!(this is AssetTRIG))
+                if (!ArchiveEditorFunctions.renderableAssetSetCommon.Contains(this))
+                    ArchiveEditorFunctions.renderableAssetSetCommon.Add(this);
         }
 
         public virtual void CreateTransformMatrix()

@@ -125,6 +125,8 @@
     <Compile Include="Assets\Binary\AssetFLY.cs" />
     <Compile Include="Assets\Binary\AssetLKIT.cs" />
     <Compile Include="Assets\Binary\AssetVILP.cs" />
+    <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\DynaEnemyMindy.cs" />
+    <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\DynaEnemyTurret.cs" />
     <Compile Include="Assets\DYNA\MovieGame\RenderableDynas\DynaEffectLightning.cs" />
     <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\DynaEnemyBucketOTron.cs" />
     <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\DynaEnemyStandard.cs" />
@@ -137,6 +139,7 @@
     <Compile Include="Assets\ObjectAssets\AssetPARP.cs" />
     <Compile Include="Assets\ObjectAssets\AssetPARS.cs" />
     <Compile Include="Assets\ObjectAssets\AssetSCRP.cs" />
+    <Compile Include="Assets\ObjectAssets\AssetSGRP.cs" />
     <Compile Include="Assets\ObjectAssets\AssetSURF.cs" />
     <Compile Include="Assets\DYNA\BFBB\DynaTaskBox.cs" />
     <Compile Include="Assets\DYNA\DynaType_BFBB.cs" />
