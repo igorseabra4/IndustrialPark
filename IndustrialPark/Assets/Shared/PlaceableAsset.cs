@@ -151,11 +151,7 @@ namespace IndustrialPark
 
         public override bool HasReference(uint assetID)
         {
-            if (Surface_AssetID == assetID)
-                return true;
-            if (Model_AssetID == assetID)
-                return true;
-            if (Animation_AssetID == assetID)
+            if (Surface_AssetID == assetID || Model_AssetID == assetID || Animation_AssetID == assetID)
                 return true;
 
             return base.HasReference(assetID);

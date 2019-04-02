@@ -134,10 +134,14 @@
     <Compile Include="Assets\DYNA\MovieGame\RenderableDynas\DynaVent.cs" />
     <Compile Include="Assets\DYNA\MovieGame\DynaVentType.cs" />
     <Compile Include="Assets\Models\AssetRenderWareModel.cs" />
+    <Compile Include="Assets\ObjectAssets\AssetCOND_Scooby.cs" />
     <Compile Include="Assets\ObjectAssets\AssetCSNM.cs" />
+    <Compile Include="Assets\ObjectAssets\AssetGUST.cs" />
+    <Compile Include="Assets\ObjectAssets\AssetLITE.cs" />
     <Compile Include="Assets\ObjectAssets\AssetPARE.cs" />
     <Compile Include="Assets\ObjectAssets\AssetPARP.cs" />
     <Compile Include="Assets\ObjectAssets\AssetPARS.cs" />
+    <Compile Include="Assets\ObjectAssets\AssetPRJT.cs" />
     <Compile Include="Assets\ObjectAssets\AssetSCRP.cs" />
     <Compile Include="Assets\ObjectAssets\AssetSGRP.cs" />
     <Compile Include="Assets\ObjectAssets\AssetSURF.cs" />
@@ -150,6 +154,10 @@
     <Compile Include="Assets\DYNA\MovieGame\RenderableDynas\DynaRing.cs" />
     <Compile Include="Assets\DYNA\MovieGame\DynaRingControl.cs" />
     <Compile Include="Assets\DYNA\MovieGame\DynaSceneProperties.cs" />
+    <Compile Include="Assets\ObjectAssets\AssetVOLU.cs" />
+    <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetMVPT_Scooby.cs" />
+    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetDSTR_Scooby.cs" />
+    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetNPC.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetPLAT.cs" />
     <Compile Include="Links\Enums\EventBFBB.cs" />
     <Compile Include="Assets\Shared\Enums\PlatTypeSpecific.cs" />

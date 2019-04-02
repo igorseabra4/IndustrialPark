@@ -214,8 +214,9 @@ namespace IndustrialPark
                 noCullingCToolStripMenuItem.Checked, wireframeFToolStripMenuItem.Checked, renderer.backgroundColor, renderer.normalColor, renderer.trigColor,
                 renderer.mvptColor, renderer.sfxColor, useLegacyAssetIDFormatToolStripMenuItem.Checked, alternateNamingMode, hiddenAssets, renderer.isDrawingUI,
                 AssetJSP.dontRender, AssetBOUL.dontRender, AssetBUTN.dontRender, AssetCAM.dontRender, AssetDSTR.dontRender, AssetDYNA.dontRender, AssetEGEN.dontRender,
-                AssetHANG.dontRender, AssetMRKR.dontRender, AssetMVPT.dontRender, AssetPEND.dontRender, AssetPLAT.dontRender, AssetPLAT.dontRender, AssetPLYR.dontRender,
-                AssetSFX.dontRender, AssetSIMP.dontRender, AssetTRIG.dontRender, AssetUI.dontRender, AssetUIFT.dontRender, AssetVIL.dontRender, ArchiveEditorFunctions.persistentShinies);
+                AssetHANG.dontRender, AssetLITE.dontRender, AssetMRKR.dontRender, AssetMVPT.dontRender, AssetPEND.dontRender, AssetPLAT.dontRender, AssetPLAT.dontRender,
+                AssetPLYR.dontRender, AssetSFX.dontRender, AssetSIMP.dontRender, AssetTRIG.dontRender, AssetUI.dontRender, AssetUIFT.dontRender, AssetVIL.dontRender,
+                ArchiveEditorFunctions.persistentShinies);
         }
 
         private void ApplySettings(string ipSettingsPath)
@@ -321,6 +322,9 @@ namespace IndustrialPark
 
             hANGToolStripMenuItem.Checked = !ipSettings.dontRenderHANG;
             AssetHANG.dontRender = ipSettings.dontRenderHANG;
+
+            lITEToolStripMenuItem.Checked = !ipSettings.dontRenderLITE;
+            AssetLITE.dontRender = ipSettings.dontRenderLITE;
 
             mRKRToolStripMenuItem.Checked = !ipSettings.dontRenderMRKR;
             AssetMRKR.dontRender = ipSettings.dontRenderMRKR;
@@ -895,6 +899,12 @@ namespace IndustrialPark
         {
             pENDToolStripMenuItem.Checked = !pENDToolStripMenuItem.Checked;
             AssetPEND.dontRender = !pENDToolStripMenuItem.Checked;
+        }
+
+        private void lITEToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            lITEToolStripMenuItem.Checked = !lITEToolStripMenuItem.Checked;
+            AssetLITE.dontRender = !lITEToolStripMenuItem.Checked;
         }
 
         private void uIModeToolStripMenuItem_Click(object sender, EventArgs e)

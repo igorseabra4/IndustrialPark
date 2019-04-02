@@ -38,6 +38,7 @@ namespace IndustrialPark
         public bool dontRenderDYNA;
         public bool dontRenderEGEN;
         public bool dontRenderHANG;
+        public bool dontRenderLITE;
         public bool dontRenderMRKR;
         public bool dontRenderMVPT;
         public bool dontRenderPEND;
@@ -89,6 +90,7 @@ namespace IndustrialPark
             dontRenderDYNA = false;
             dontRenderEGEN = false;
             dontRenderHANG = false;
+            dontRenderLITE = false;
             dontRenderMRKR = false;
             dontRenderMVPT = false;
             dontRenderPEND = false;
@@ -108,9 +110,10 @@ namespace IndustrialPark
         public ProjectJson(List<string> hipPaths, List<string> textureFolderPaths, Vector3 camPos, float yaw, float pitch, float speed, float speedRot,
             float fieldOfView, float farPlane, bool noCulling, bool wireframe, Color4 backgroundColor, Vector4 widgetColor, Vector4 trigColor,
             Vector4 mvptColor, Vector4 sfxColor, bool useLegacyAssetIDFormat, bool alternateNameDisplayMode, List<uint> hiddenAssets, bool isDrawingUI,
-            bool dontRenderLevelModel, bool dontRenderBOUL, bool dontRenderBUTN, bool dontRenderCAM, bool dontRenderDSTR, bool dontRenderDYNA, bool dontRenderEGEN,
-            bool dontRenderHANG, bool dontRenderMRKR, bool dontRenderMVPT, bool dontRenderPEND, bool dontRenderPKUP, bool dontRenderPLAT, bool dontRenderPLYR,
-            bool dontRenderSFX, bool dontRenderSIMP, bool dontRenderTRIG, bool dontRenderUI, bool dontRenderUIFT, bool dontRenderVIL, bool persistentShinies)
+            bool dontRenderLevelModel, bool dontRenderBOUL, bool dontRenderBUTN, bool dontRenderCAM, bool dontRenderDSTR, bool dontRenderDYNA,
+            bool dontRenderEGEN, bool dontRenderHANG, bool dontRenderLITE, bool dontRenderMRKR, bool dontRenderMVPT, bool dontRenderPEND, bool dontRenderPKUP,
+            bool dontRenderPLAT, bool dontRenderPLYR, bool dontRenderSFX, bool dontRenderSIMP, bool dontRenderTRIG, bool dontRenderUI, bool dontRenderUIFT,
+            bool dontRenderVIL, bool persistentShinies)
         {
             this.hipPaths = hipPaths;
             TextureFolderPaths = textureFolderPaths;
@@ -140,6 +143,7 @@ namespace IndustrialPark
             this.dontRenderDYNA = dontRenderDYNA;
             this.dontRenderEGEN = dontRenderEGEN;
             this.dontRenderHANG = dontRenderHANG;
+            this.dontRenderLITE = dontRenderLITE;
             this.dontRenderMRKR = dontRenderMRKR;
             this.dontRenderMVPT = dontRenderMVPT;
             this.dontRenderPEND = dontRenderPEND;

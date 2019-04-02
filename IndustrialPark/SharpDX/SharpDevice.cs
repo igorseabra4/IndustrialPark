@@ -62,6 +62,8 @@ namespace IndustrialPark
         
         SampleDescription multisampleDesc = new SampleDescription(1, 0);
 
+        private static FeatureLevel featureLevel = FeatureLevel.Level_11_0;
+
         /// <summary>
         /// Init all object to start rendering
         /// </summary>
@@ -83,7 +85,7 @@ namespace IndustrialPark
                 Usage = Usage.RenderTargetOutput,
             };
 
-            FeatureLevel[] levels = new FeatureLevel[] { FeatureLevel.Level_11_0 };
+            FeatureLevel[] levels = new FeatureLevel[] { featureLevel };
 
             //create device and swapchain
             DeviceCreationFlags flag = DeviceCreationFlags.None;
@@ -411,7 +413,10 @@ namespace IndustrialPark
         /// <returns>Supported</returns>
         public static bool IsDirectX11Supported()
         {
-            return SharpDX.Direct3D11.Device.GetSupportedFeatureLevel() == FeatureLevel.Level_11_0;
+            #if DEBUG
+            featureLevel = SharpDX.Direct3D11.Device.GetSupportedFeatureLevel();
+            #endif
+            return SharpDX.Direct3D11.Device.GetSupportedFeatureLevel() == featureLevel;
         }
 
         private bool currentMode = true;

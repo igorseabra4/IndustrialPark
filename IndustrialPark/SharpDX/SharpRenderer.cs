@@ -27,7 +27,7 @@ namespace IndustrialPark
         {
             if (!SharpDevice.IsDirectX11Supported())
             {
-                MessageBox.Show("DirectX11 Not Supported");
+                MessageBox.Show("DirectX11 Not Supported. Maximum feature level is " + SharpDX.Direct3D11.Device.GetSupportedFeatureLevel().ToString());
                 return;
             }
 

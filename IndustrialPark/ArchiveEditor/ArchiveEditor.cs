@@ -24,16 +24,7 @@ namespace IndustrialPark
 
             textBoxFindAsset.AutoCompleteSource = AutoCompleteSource.CustomSource;
             archive.SetTextboxForAutocomplete(textBoxFindAsset);
-
-            programIsChangingStuff = true;
-
-            foreach (LayerType o in Enum.GetValues(typeof(LayerType)))
-            {
-                comboBoxLayerTypes.Items.Add(o.ToString());
-            }
-
-            programIsChangingStuff = false;
-
+            
             if (!string.IsNullOrWhiteSpace(filePath))
                 OpenFile(filePath);
 
@@ -63,6 +54,8 @@ namespace IndustrialPark
             if (archive.New())
             {
                 archive.UnsavedChanges = true;
+
+                PopulateLayerTypeComboBox();
 
                 saveToolStripMenuItem.Enabled = true;
                 saveAsToolStripMenuItem.Enabled = true;
@@ -103,11 +96,13 @@ namespace IndustrialPark
         private void OpenFile(string fileName)
         {
             archive.OpenFile(fileName);
-
+            
             toolStripStatusLabelCurrentFilename.Text = "File: " + fileName;
             Text = Path.GetFileName(fileName);
             Program.MainForm.SetToolStripItemName(this, Text);
             archive.UnsavedChanges = false;
+
+            PopulateLayerTypeComboBox();
 
             saveToolStripMenuItem.Enabled = true;
             saveAsToolStripMenuItem.Enabled = true;
@@ -121,6 +116,21 @@ namespace IndustrialPark
 
             PopulateLayerComboBox();
             PopulateAssetList();
+        }
+
+        private void PopulateLayerTypeComboBox()
+        {
+            programIsChangingStuff = true;
+
+            comboBoxLayerTypes.Items.Clear();
+            if (Functions.currentGame == Game.Incredibles)
+                foreach (var t in Enum.GetValues(typeof(LayerType_TSSM)))
+                    comboBoxLayerTypes.Items.Add(t);
+            else
+                foreach (var t in Enum.GetValues(typeof(LayerType_BFBB)))
+                    comboBoxLayerTypes.Items.Add(t);
+
+            programIsChangingStuff = false;
         }
         
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -207,8 +217,14 @@ namespace IndustrialPark
 
         private string LayerToString(int index)
         {
+            string layerName;
+            if (Functions.currentGame == Game.Incredibles)
+                layerName = ((LayerType_TSSM)archive.DICT.LTOC.LHDRList[index].layerType).ToString();
+            else
+                layerName = ((LayerType_BFBB)archive.DICT.LTOC.LHDRList[index].layerType).ToString();
+
             return "Layer " + index.ToString() + ": "
-                + archive.DICT.LTOC.LHDRList[index].layerType.ToString()
+                + layerName
                 + " [" + archive.DICT.LTOC.LHDRList[index].assetIDlist.Count() + "]";
         }
 
@@ -229,7 +245,10 @@ namespace IndustrialPark
 
             programIsChangingStuff = true;
 
-            comboBoxLayerTypes.SelectedItem = archive.DICT.LTOC.LHDRList[comboBoxLayers.SelectedIndex].layerType.ToString();
+            if (Functions.currentGame == Game.Incredibles)
+                comboBoxLayerTypes.SelectedItem = (LayerType_TSSM)archive.DICT.LTOC.LHDRList[comboBoxLayers.SelectedIndex].layerType;
+            else
+                comboBoxLayerTypes.SelectedItem = (LayerType_BFBB)archive.DICT.LTOC.LHDRList[comboBoxLayers.SelectedIndex].layerType;
 
             PopulateAssetListAndComboBox();
 
@@ -251,17 +270,9 @@ namespace IndustrialPark
             if (comboBoxLayerTypes.SelectedItem == null || programIsChangingStuff)
                 return;
 
-            foreach (LayerType o in Enum.GetValues(typeof(LayerType)))
-            {
-                if (o.ToString() == (string)comboBoxLayerTypes.SelectedItem)
-                {
-                    archive.DICT.LTOC.LHDRList[comboBoxLayers.SelectedIndex].layerType = o;
-                    comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = LayerToString(comboBoxLayers.SelectedIndex);
-                    archive.UnsavedChanges = true;
-                    return;
-                }
-            }
-            throw new Exception("Invalid layer type");
+            archive.DICT.LTOC.LHDRList[comboBoxLayers.SelectedIndex].layerType = (int)comboBoxLayerTypes.SelectedItem;
+            comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = LayerToString(comboBoxLayers.SelectedIndex);
+            archive.UnsavedChanges = true;
         }
 
         private void buttonAddLayer_Click(object sender, EventArgs e)

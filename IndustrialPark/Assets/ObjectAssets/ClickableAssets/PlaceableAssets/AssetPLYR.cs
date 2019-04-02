@@ -55,8 +55,8 @@ namespace IndustrialPark
         [Category("Player References")]
         public AssetID LightKit_AssetID
         {
-            get => ReadUInt(EventStartOffset + AmountOfEvents * Link.sizeOfStruct);
-            set => Write(EventStartOffset + AmountOfEvents * Link.sizeOfStruct, value);
+            get => Functions.currentGame == Game.Scooby ? 0 : ReadUInt(EventStartOffset + AmountOfEvents * Link.sizeOfStruct);
+            set { if (Functions.currentGame != Game.Scooby) Write(EventStartOffset + AmountOfEvents * Link.sizeOfStruct, value); }
         }
     }
 }

@@ -37,7 +37,11 @@ namespace IndustrialPark
         {
             try
             {
-                _modelAssetID = ReadUInt(0x14);
+                if (Functions.currentGame == Game.Scooby)
+                    _modelAssetID = ReadUInt(0x0C);
+                else
+                    _modelAssetID = ReadUInt(0x14);
+
                 ArchiveEditorFunctions.AddToRenderingDictionary(AHDR.assetID, this);
 
                 if (Functions.currentGame == Game.Incredibles)
@@ -113,16 +117,36 @@ namespace IndustrialPark
         [Category("Model Info")]
         public int UnknownInt0C
         {
-            get => ReadInt(0x0C);
-            set => Write(0x0C, value);
+            get
+            {
+                if (Functions.currentGame != Game.Scooby)
+                    return ReadInt(0x0C);
+                return 0;
+            }
+            set
+            {
+                if (Functions.currentGame != Game.Scooby)
+                    Write(0x0C, value);
+            }
         }
 
         [Category("Model Info")]
         public int UnknownInt10
         {
-            get => ReadInt(0x10);
-            set => Write(0x10, value);
+            get
+            {
+                if (Functions.currentGame != Game.Scooby)
+                    return ReadInt(0x10);
+                return 0;
+            }
+            set
+            {
+                if (Functions.currentGame != Game.Scooby)
+                    Write(0x10, value);
+            }
         }
+
+        private int ModelReferencesStart => Functions.currentGame == Game.Scooby ? 0xC : 0x14;
 
         [Category("Model Info")]
         public ModelReference[] ModelReferences
@@ -135,20 +159,20 @@ namespace IndustrialPark
                 {
                     references.Add(new ModelReference()
                     {
-                        ModelAssetID = ReadUInt(0x14 + i * 56),
-                        UnknownAssetID = ReadUInt(0x14 + i * 56 + 0x04),
-                        UnknownFloat01 = ReadFloat(0x14 + i * 56 + 0x08),
-                        UnknownFloat02 = ReadFloat(0x14 + i * 56 + 0x0C),
-                        UnknownFloat03 = ReadFloat(0x14 + i * 56 + 0x10),
-                        UnknownFloat04 = ReadFloat(0x14 + i * 56 + 0x14),
-                        UnknownFloat05 = ReadFloat(0x14 + i * 56 + 0x18),
-                        UnknownFloat06 = ReadFloat(0x14 + i * 56 + 0x1C),
-                        UnknownFloat07 = ReadFloat(0x14 + i * 56 + 0x20),
-                        UnknownFloat08 = ReadFloat(0x14 + i * 56 + 0x24),
-                        UnknownFloat09 = ReadFloat(0x14 + i * 56 + 0x28),
-                        UnknownFloat10 = ReadFloat(0x14 + i * 56 + 0x2C),
-                        UnknownFloat11 = ReadFloat(0x14 + i * 56 + 0x30),
-                        UnknownFloat12 = ReadFloat(0x14 + i * 56 + 0x34),
+                        ModelAssetID = ReadUInt(ModelReferencesStart + i * 56),
+                        UnknownAssetID = ReadUInt(ModelReferencesStart + i * 56 + 0x04),
+                        UnknownFloat01 = ReadFloat(ModelReferencesStart + i * 56 + 0x08),
+                        UnknownFloat02 = ReadFloat(ModelReferencesStart + i * 56 + 0x0C),
+                        UnknownFloat03 = ReadFloat(ModelReferencesStart + i * 56 + 0x10),
+                        UnknownFloat04 = ReadFloat(ModelReferencesStart + i * 56 + 0x14),
+                        UnknownFloat05 = ReadFloat(ModelReferencesStart + i * 56 + 0x18),
+                        UnknownFloat06 = ReadFloat(ModelReferencesStart + i * 56 + 0x1C),
+                        UnknownFloat07 = ReadFloat(ModelReferencesStart + i * 56 + 0x20),
+                        UnknownFloat08 = ReadFloat(ModelReferencesStart + i * 56 + 0x24),
+                        UnknownFloat09 = ReadFloat(ModelReferencesStart + i * 56 + 0x28),
+                        UnknownFloat10 = ReadFloat(ModelReferencesStart + i * 56 + 0x2C),
+                        UnknownFloat11 = ReadFloat(ModelReferencesStart + i * 56 + 0x30),
+                        UnknownFloat12 = ReadFloat(ModelReferencesStart + i * 56 + 0x34),
                     });
                 }
 
@@ -158,7 +182,7 @@ namespace IndustrialPark
             {
                 List<byte> before = new List<byte>();
 
-                before.AddRange(Data.Take(0x14));
+                before.AddRange(Data.Take(ModelReferencesStart));
 
                 if (value.Length > 0)
                     _modelAssetID = value[0].ModelAssetID;
@@ -189,7 +213,7 @@ namespace IndustrialPark
             }
         }
 
-        private int EndOfModelReferenceData => 0x14 + 56 * AmountOfReferences;
+        private int EndOfModelReferenceData => ModelReferencesStart + 56 * AmountOfReferences;
 
         [Category("Model Info")]
         public AssetID[] RestOfData

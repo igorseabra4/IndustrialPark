@@ -137,11 +137,18 @@ namespace IndustrialPark
         [Category("Environment"), TypeConverter(typeof(FloatTypeConverter))]
         public float LoldHeight
         {
-            get => BitConverter.ToSingle(AHDR.data, 0x40);
+            get
+            {
+                if (Functions.currentGame == Game.Scooby)
+                    return 0;
+
+                return BitConverter.ToSingle(AHDR.data, 0x40);
+            }
             set
             {
-                for (int i = 0; i < 4; i++)
-                    AHDR.data[0x40 + i] = BitConverter.GetBytes(value)[i];
+                if (Functions.currentGame != Game.Scooby)
+                    for (int i = 0; i < 4; i++)
+                        AHDR.data[0x40 + i] = BitConverter.GetBytes(value)[i];
             }
         }
     }

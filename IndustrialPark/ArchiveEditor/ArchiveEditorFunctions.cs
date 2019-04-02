@@ -239,392 +239,112 @@ namespace IndustrialPark
                 MessageBox.Show("Duplicate asset ID found: " + AHDR.assetID.ToString("X8"));
             }
 
+            Asset newAsset;
+
             switch (AHDR.assetType)
             {
-                case AssetType.ANIM:
-                    {
-                        AssetANIM newAsset = new AssetANIM(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.ALST:
-                    {
-                        AssetALST newAsset = new AssetALST(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.ATBL:
-                    {
-                        AssetATBL newAsset = new AssetATBL(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
+                case AssetType.ANIM: newAsset = new AssetANIM(AHDR); break;
+                case AssetType.ALST: newAsset = new AssetALST(AHDR); break;
+                case AssetType.ATBL: newAsset = new AssetATBL(AHDR); break;
                 case AssetType.BSP:
                 case AssetType.JSP:
-                    {
-                        AssetJSP newAsset = new AssetJSP(AHDR);
-                        newAsset.Setup(Program.MainForm.renderer);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
+                    newAsset = new AssetJSP(AHDR);
+                    ((AssetJSP)newAsset).Setup(Program.MainForm.renderer);
                     break;
-                case AssetType.BOUL:
-                    {
-                        AssetBOUL newAsset = new AssetBOUL(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.BUTN:
-                    {
-                        AssetBUTN newAsset = new AssetBUTN(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.CAM:
-                    {
-                        AssetCAM newAsset = new AssetCAM(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.CNTR:
-                    {
-                        AssetCNTR newAsset = new AssetCNTR(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.COLL:
-                    {
-                        AssetCOLL newAsset = new AssetCOLL(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
+                case AssetType.BOUL: newAsset = new AssetBOUL(AHDR); break;
+                case AssetType.BUTN: newAsset = new AssetBUTN(AHDR); break;
+                case AssetType.CAM: newAsset = new AssetCAM(AHDR); break;
+                case AssetType.CNTR: newAsset = new AssetCNTR(AHDR); break;
+                case AssetType.COLL: newAsset = new AssetCOLL(AHDR); break;
                 case AssetType.COND:
-                    {
-                        AssetCOND newAsset = new AssetCOND(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
+                    if (currentGame == Game.Scooby)
+                        newAsset = new AssetCOND_Scooby(AHDR);
+                    else
+                        newAsset = new AssetCOND(AHDR);
                     break;
-                case AssetType.CRDT:
-                    {
-                        AssetCRDT newAsset = new AssetCRDT(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.CSNM:
-                    {
-                        AssetCSNM newAsset = new AssetCSNM(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.DPAT:
-                    {
-                        AssetDPAT newAsset = new AssetDPAT(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.DSCO:
-                    {
-                        AssetDSCO newAsset = new AssetDSCO(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
+                case AssetType.CRDT: newAsset = new AssetCRDT(AHDR); break;
+                case AssetType.CSNM: newAsset = new AssetCSNM(AHDR); break;
+                case AssetType.DPAT: newAsset = new AssetDPAT(AHDR); break;
+                case AssetType.DSCO: newAsset = new AssetDSCO(AHDR); break;
                 case AssetType.DSTR:
-                    {
-                        AssetDSTR newAsset = new AssetDSTR(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
+                    if (currentGame == Game.Scooby)
+                        newAsset = new AssetDSTR_Scooby(AHDR);
+                    else
+                        newAsset = new AssetDSTR(AHDR);
                     break;
-                case AssetType.DYNA:
-                    {
-                        AssetDYNA newAsset = new AssetDYNA(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.EGEN:
-                    {
-                        AssetEGEN newAsset = new AssetEGEN(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.ENV:
-                    {
-                        AssetENV newAsset = new AssetENV(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.FLY:
-                    {
-                        AssetFLY newAsset = new AssetFLY(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.FOG:
-                    {
-                        AssetFOG newAsset = new AssetFOG(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.GRUP:
-                    {
-                        AssetGRUP newAsset = new AssetGRUP(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.HANG:
-                    {
-                        AssetHANG newAsset = new AssetHANG(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.JAW:
-                    {
-                        AssetJAW newAsset = new AssetJAW(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.LKIT:
-                    {
-                        AssetLKIT newAsset = new AssetLKIT(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.LODT:
-                    {
-                        AssetLODT newAsset = new AssetLODT(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.MAPR:
-                    {
-                        AssetMAPR newAsset = new AssetMAPR(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.MINF:
-                    {
-                        AssetMINF newAsset = new AssetMINF(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
+                case AssetType.DYNA: newAsset = new AssetDYNA(AHDR); break;
+                case AssetType.EGEN: newAsset = new AssetEGEN(AHDR); break;
+                case AssetType.ENV: newAsset = new AssetENV(AHDR); break;
+                case AssetType.FLY: newAsset = new AssetFLY(AHDR); break;
+                case AssetType.FOG: newAsset = new AssetFOG(AHDR); break;
+                case AssetType.GRUP: newAsset = new AssetGRUP(AHDR); break;
+                case AssetType.GUST: newAsset = new AssetGUST(AHDR); break;
+                case AssetType.HANG: newAsset = new AssetHANG(AHDR); break;
+                case AssetType.JAW: newAsset = new AssetJAW(AHDR); break;
+                case AssetType.LITE: newAsset = new AssetLITE(AHDR); break;
+                case AssetType.LKIT: newAsset = new AssetLKIT(AHDR); break;
+                case AssetType.LODT: newAsset = new AssetLODT(AHDR); break;
+                case AssetType.MAPR: newAsset = new AssetMAPR(AHDR); break;
+                case AssetType.MINF: newAsset = new AssetMINF(AHDR); break;
                 case AssetType.MODL:
-                    {
-                        AssetMODL newAsset = new AssetMODL(AHDR);
-                        newAsset.Setup(Program.MainForm.renderer);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
+                    newAsset = new AssetMODL(AHDR);
+                    ((AssetMODL)newAsset).Setup(Program.MainForm.renderer);
                     break;
-                case AssetType.MRKR:
-                    {
-                        AssetMRKR newAsset = new AssetMRKR(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
+                case AssetType.MRKR: newAsset = new AssetMRKR(AHDR); break;
                 case AssetType.MVPT:
-                    {
-                        if (currentGame != Game.Scooby)
-                        {
-                            AssetMVPT newAsset = new AssetMVPT(AHDR);
-                            assetDictionary.Add(AHDR.assetID, newAsset);
-                        }
-                        else
-                        {
-                            Asset newAsset = new Asset(AHDR);
-                            assetDictionary.Add(AHDR.assetID, newAsset);
-                        }
-                    }
+                    if (currentGame == Game.Scooby)
+                        newAsset = new AssetMVPT_Scooby(AHDR);
+                    else
+                        newAsset = new AssetMVPT(AHDR);
                     break;
-                case AssetType.PARE:
-                    {
-                        AssetPARE newAsset = new AssetPARE(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.PARP:
-                    {
-                        AssetPARP newAsset = new AssetPARP(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.PARS:
-                    {
-                        AssetPARS newAsset = new AssetPARS(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.PEND:
-                    {
-                        AssetPEND newAsset = new AssetPEND(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.PICK:
-                    {
-                        AssetPICK newAsset = new AssetPICK(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.PIPT:
-                    {
-                        AssetPIPT newAsset = new AssetPIPT(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.PKUP:
-                    {
-                        AssetPKUP newAsset = new AssetPKUP(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.PLAT:
-                    {
-                        AssetPLAT newAsset = new AssetPLAT(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.PLYR:
-                    {
-                        AssetPLYR newAsset = new AssetPLYR(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.PORT:
-                    {
-                        AssetPORT newAsset = new AssetPORT(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.RWTX:
-                    {
-                        AssetRWTX newAsset = new AssetRWTX(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.SCRP:
-                    {
-                        AssetSCRP newAsset = new AssetSCRP(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.SFX:
-                    {
-                        AssetSFX newAsset = new AssetSFX(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.SGRP:
-                    {
-                        AssetSGRP newAsset = new AssetSGRP(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.SIMP:
-                    {
-                        AssetSIMP newAsset = new AssetSIMP(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.SHDW:
-                    {
-                        AssetSHDW newAsset = new AssetSHDW(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
+                case AssetType.NPC: newAsset = new AssetNPC(AHDR); break;
+                case AssetType.PARE: newAsset = new AssetPARE(AHDR); break;
+                case AssetType.PARP: newAsset = new AssetPARP(AHDR); break;
+                case AssetType.PARS: newAsset = new AssetPARS(AHDR); break;
+                case AssetType.PEND: newAsset = new AssetPEND(AHDR); break;
+                case AssetType.PICK: newAsset = new AssetPICK(AHDR); break;
+                case AssetType.PIPT: newAsset = new AssetPIPT(AHDR); break;
+                case AssetType.PKUP: newAsset = new AssetPKUP(AHDR); break;
+                case AssetType.PLAT: newAsset = new AssetPLAT(AHDR); break;
+                case AssetType.PLYR: newAsset = new AssetPLYR(AHDR); break;
+                case AssetType.PORT: newAsset = new AssetPORT(AHDR); break;
+                case AssetType.PRJT: newAsset = new AssetPRJT(AHDR); break;
+                case AssetType.RWTX: newAsset = new AssetRWTX(AHDR); break;
+                case AssetType.SCRP: newAsset = new AssetSCRP(AHDR); break;
+                case AssetType.SFX: newAsset = new AssetSFX(AHDR); break;
+                case AssetType.SGRP: newAsset = new AssetSGRP(AHDR); break;
+                case AssetType.SIMP: newAsset = new AssetSIMP(AHDR); break;
+                case AssetType.SHDW: newAsset = new AssetSHDW(AHDR); break;
                 case AssetType.SHRP:
-                    {
-                        if (currentGame == Game.BFBB)
-                        {
-                            AssetSHRP newAsset = new AssetSHRP(AHDR);
-                            assetDictionary.Add(AHDR.assetID, newAsset);
-                        }
-                        else
-                        {
-                            Asset newAsset = new Asset(AHDR);
-                            assetDictionary.Add(AHDR.assetID, newAsset);
-                        }
-                    }
+                    newAsset = currentGame == Game.BFBB ? new AssetSHRP(AHDR) : new Asset(AHDR);
                     break;
                 case AssetType.SNDI:
-                    {
-                        if (currentPlatform == Platform.GameCube && (currentGame == Game.BFBB || currentGame == Game.Scooby))
-                        {
-                            AssetSNDI_GCN_V1 newAsset = new AssetSNDI_GCN_V1(AHDR);
-                            assetDictionary.Add(AHDR.assetID, newAsset);
-                        }
-                        else if (currentPlatform == Platform.Xbox)
-                        {
-                            AssetSNDI_XBOX newAsset = new AssetSNDI_XBOX(AHDR);
-                            assetDictionary.Add(AHDR.assetID, newAsset);
-                        }
-                        else if (currentPlatform == Platform.PS2)
-                        {
-                            AssetSNDI_PS2 newAsset = new AssetSNDI_PS2(AHDR);
-                            assetDictionary.Add(AHDR.assetID, newAsset);
-                        }
-                        else
-                        {
-                            Asset newAsset = new Asset(AHDR);
-                            assetDictionary.Add(AHDR.assetID, newAsset);
-                        }
-                    }
+                    if (currentPlatform == Platform.GameCube && (currentGame == Game.BFBB || currentGame == Game.Scooby))
+                        newAsset = new AssetSNDI_GCN_V1(AHDR);
+                    else if (currentPlatform == Platform.Xbox)
+                        newAsset = new AssetSNDI_XBOX(AHDR);
+                    else if (currentPlatform == Platform.PS2)
+                        newAsset = new AssetSNDI_PS2(AHDR);
+                    else
+                        newAsset = new Asset(AHDR);
                     break;
-                case AssetType.SURF:
-                    {
-                        AssetSURF newAsset = new AssetSURF(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.TEXT:
-                    {
-                        AssetTEXT newAsset = new AssetTEXT(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.TRIG:
-                    {
-                        AssetTRIG newAsset = new AssetTRIG(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.TIMR:
-                    {
-                        AssetTIMR newAsset = new AssetTIMR(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.UI:
-                    {
-                        AssetUI newAsset = new AssetUI(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.UIFT:
-                    {
-                        AssetUIFT newAsset = new AssetUIFT(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.VIL:
-                    {
-                        AssetVIL newAsset = new AssetVIL(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
-                case AssetType.VILP:
-                    {
-                        AssetVILP newAsset = new AssetVILP(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
-                    break;
+                case AssetType.SURF: newAsset = new AssetSURF(AHDR); break;
+                case AssetType.TEXT: newAsset = new AssetTEXT(AHDR); break;
+                case AssetType.TRIG: newAsset = new AssetTRIG(AHDR); break;
+                case AssetType.TIMR: newAsset = new AssetTIMR(AHDR); break;
+                case AssetType.UI: newAsset = new AssetUI(AHDR); break;
+                case AssetType.UIFT: newAsset = new AssetUIFT(AHDR); break;
+                case AssetType.VIL: newAsset = new AssetVIL(AHDR); break;
+                case AssetType.VILP: newAsset = new AssetVILP(AHDR); break;
+                case AssetType.VOLU: newAsset = new AssetVOLU(AHDR); break;
+
                 case AssetType.CCRV:
                 case AssetType.DTRK:
                 case AssetType.DUPC:
                 case AssetType.GRSM:
-                case AssetType.GUST:
-                case AssetType.LITE:
                 case AssetType.LOBM:
                 case AssetType.NGMS:
-                case AssetType.NPC:
                 case AssetType.PGRS:
-                case AssetType.PRJT:
                 case AssetType.RANM:
                 case AssetType.SDFX:
                 case AssetType.SLID:
@@ -634,12 +354,8 @@ namespace IndustrialPark
                 case AssetType.TPIK:
                 case AssetType.TRWT:
                 case AssetType.UIM:
-                case AssetType.VOLU:
                 case AssetType.ZLIN:
-                    {
-                        ObjectAsset newAsset = new ObjectAsset(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
+                        newAsset = new ObjectAsset(AHDR);
                     break;
                 case AssetType.ATKT:
                 case AssetType.BINK:
@@ -657,14 +373,13 @@ namespace IndustrialPark
                 case AssetType.TEXS:
                 case AssetType.UIFN:
                 case AssetType.WIRE:
-                    {
-                        Asset newAsset = new Asset(AHDR);
-                        assetDictionary.Add(AHDR.assetID, newAsset);
-                    }
+                        newAsset = new Asset(AHDR);
                     break;
                 default:
                     throw new Exception("Unknown asset type: " + AHDR.assetType);
             }
+
+            assetDictionary.Add(AHDR.assetID, newAsset);
 
             if (hiddenAssets.Contains(AHDR.assetID))
                 assetDictionary[AHDR.assetID].isInvisible = true;
