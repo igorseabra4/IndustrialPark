@@ -1259,5 +1259,10 @@ namespace IndustrialPark
         {
             Program.PlatSearch.Show();
         }
+
+        private void assetIDGeneratorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.AssetIDGenerator.Show();
+        }
     }
 }

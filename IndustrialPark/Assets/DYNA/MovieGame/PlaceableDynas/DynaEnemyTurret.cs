@@ -55,6 +55,13 @@ namespace IndustrialPark
             return list.ToArray();
         }
 
+        [Category("Enemy Turret")]
+        public EnemyTurretType Type
+        {
+            get => (EnemyTurretType)(uint)Model_AssetID;
+            set => Model_AssetID = (uint)value;
+        }
+
         [Category("Enemy Turret"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat50 { get; set; }
 

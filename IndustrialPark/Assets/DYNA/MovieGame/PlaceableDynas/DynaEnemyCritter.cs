@@ -45,6 +45,13 @@ namespace IndustrialPark
         }
 
         [Category("Enemy Critter")]
+        public EnemyCritterType Type
+        {
+            get => (EnemyCritterType)(uint)Model_AssetID;
+            set => Model_AssetID = (uint)value;
+        }
+
+        [Category("Enemy Critter")]
         public AssetID MVPT_AssetID { get; set; }
 
         [Category("Enemy Critter")]

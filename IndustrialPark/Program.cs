@@ -13,6 +13,7 @@ namespace IndustrialPark
 
         public static EventSearch EventSearch;
         public static PlatSearch PlatSearch;
+        public static AssetIDGenerator AssetIDGenerator;
 
         /// <summary>
         /// Ponto de entrada principal para o aplicativo.
@@ -36,6 +37,7 @@ namespace IndustrialPark
 
             EventSearch = new EventSearch();
             PlatSearch = new PlatSearch();
+            AssetIDGenerator = new AssetIDGenerator();
 
             Application.Run(MainForm);
         }

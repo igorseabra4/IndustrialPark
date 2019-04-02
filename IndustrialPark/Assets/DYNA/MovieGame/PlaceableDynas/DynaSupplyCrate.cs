@@ -37,7 +37,14 @@ namespace IndustrialPark
 
             return list.ToArray();
         }
-        
+
+        [Category("Supply Crate")]
+        public EnemySupplyCrateType Type
+        {
+            get => (EnemySupplyCrateType)(uint)Model_AssetID;
+            set => Model_AssetID = (uint)value;
+        }
+
         [Category("Supply Crate")]
         public AssetID MVPT_AssetID { get; set; }
     }

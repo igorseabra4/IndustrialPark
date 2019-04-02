@@ -177,11 +177,11 @@ namespace IndustrialPark
                 vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.pyramidVertices[i], world);
             boundingBox = BoundingBox.FromPoints(vertices);
 
-            triangles = new RenderWareFile.Triangle[SharpRenderer.cubeTriangles.Count];
-            for (int i = 0; i < SharpRenderer.cubeTriangles.Count; i++)
+            triangles = new RenderWareFile.Triangle[SharpRenderer.pyramidTriangles.Count];
+            for (int i = 0; i < SharpRenderer.pyramidTriangles.Count; i++)
             {
-                triangles[i] = new RenderWareFile.Triangle((ushort)SharpRenderer.cubeTriangles[i].materialIndex,
-                    (ushort)SharpRenderer.cubeTriangles[i].vertex1, (ushort)SharpRenderer.cubeTriangles[i].vertex2, (ushort)SharpRenderer.cubeTriangles[i].vertex3);
+                triangles[i] = new RenderWareFile.Triangle((ushort)SharpRenderer.pyramidTriangles[i].materialIndex,
+                    (ushort)SharpRenderer.pyramidTriangles[i].vertex1, (ushort)SharpRenderer.pyramidTriangles[i].vertex2, (ushort)SharpRenderer.pyramidTriangles[i].vertex3);
             }
         }
 

@@ -52,22 +52,29 @@ namespace IndustrialPark
             return list.ToArray();
         }
 
-        [Category("Enemy Standard")]
+        [Category("Enemy Mindy")]
+        public EnemyMindyType Type
+        {
+            get => (EnemyMindyType)(uint)Model_AssetID;
+            set => Model_AssetID = (uint)value;
+        }
+
+        [Category("Enemy Mindy")]
         public AssetID TaskBox1_AssetID { get; set; }
 
-        [Category("Enemy Standard"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Enemy Mindy"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat54 { get; set; }
 
-        [Category("Enemy Standard"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Enemy Mindy"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat58 { get; set; }
 
-        [Category("Enemy Standard"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Enemy Mindy"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat5C { get; set; }
 
-        [Category("Enemy Standard")]
+        [Category("Enemy Mindy")]
         public int UnknownInt60 { get; set; }
 
-        [Category("Enemy Standard")]
+        [Category("Enemy Mindy")]
         public AssetID TaskBox2_AssetID { get; set; }
     }
 }

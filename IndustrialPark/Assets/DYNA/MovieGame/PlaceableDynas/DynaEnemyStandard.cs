@@ -13,8 +13,7 @@ namespace IndustrialPark
         public DynaEnemyStandard() : base()
         {
             MVPT_AssetID = 0;
-            Unknown54 = 0;
-            Unknown58 = 0;
+            MVPT_Group_AssetID = 0;
             Unknown5C = 0;
             Unknown60 = 0;
             Unknown64 = 0;
@@ -24,8 +23,8 @@ namespace IndustrialPark
         public DynaEnemyStandard(IEnumerable<byte> enumerable) : base (enumerable)
         {
             MVPT_AssetID = Switch(BitConverter.ToUInt32(Data, 0x50));
-            Unknown54 = Switch(BitConverter.ToUInt32(Data, 0x54));
-            Unknown58 = Switch(BitConverter.ToUInt32(Data, 0x58));
+            MVPT_Group_AssetID = Switch(BitConverter.ToUInt32(Data, 0x54));
+            MaybeFlags = Switch(BitConverter.ToInt32(Data, 0x58));
             Unknown5C = Switch(BitConverter.ToUInt32(Data, 0x5C));
             Unknown60 = Switch(BitConverter.ToUInt32(Data, 0x60));
             Unknown64 = Switch(BitConverter.ToUInt32(Data, 0x64));
@@ -38,9 +37,7 @@ namespace IndustrialPark
         {
             if (MVPT_AssetID == assetID)
                 return true;
-            if (Unknown54 == assetID)
-                return true;
-            if (Unknown58 == assetID)
+            if (MVPT_Group_AssetID == assetID)
                 return true;
             if (Unknown5C == assetID)
                 return true;
@@ -59,8 +56,8 @@ namespace IndustrialPark
             List<byte> list = base.ToByteArray().ToList();
 
             list.AddRange(BitConverter.GetBytes(Switch(MVPT_AssetID)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown54)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown58)));
+            list.AddRange(BitConverter.GetBytes(Switch(MVPT_Group_AssetID)));
+            list.AddRange(BitConverter.GetBytes(Switch(MaybeFlags)));
             list.AddRange(BitConverter.GetBytes(Switch(Unknown5C)));
             list.AddRange(BitConverter.GetBytes(Switch(Unknown60)));
             list.AddRange(BitConverter.GetBytes(Switch(Unknown64)));
@@ -70,13 +67,20 @@ namespace IndustrialPark
         }
 
         [Category("Enemy Standard")]
+        public EnemyStandardType Type
+        {
+            get => (EnemyStandardType)(uint)Model_AssetID;
+            set => Model_AssetID = (uint)value;
+        }
+
+        [Category("Enemy Standard")]
         public AssetID MVPT_AssetID { get; set; }
 
         [Category("Enemy Standard")]
-        public AssetID Unknown54 { get; set; }
+        public AssetID MVPT_Group_AssetID { get; set; }
 
         [Category("Enemy Standard")]
-        public AssetID Unknown58 { get; set; }
+        public int MaybeFlags { get; set; }
 
         [Category("Enemy Standard")]
         public AssetID Unknown5C { get; set; }

@@ -127,6 +127,7 @@
     <Compile Include="Assets\Binary\AssetVILP.cs" />
     <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\DynaEnemyMindy.cs" />
     <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\DynaEnemyTurret.cs" />
+    <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\EnemyTypes.cs" />
     <Compile Include="Assets\DYNA\MovieGame\RenderableDynas\DynaEffectLightning.cs" />
     <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\DynaEnemyBucketOTron.cs" />
     <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\DynaEnemyStandard.cs" />
@@ -366,6 +367,9 @@
     <EmbeddedResource Include="ArchiveEditor\ApplyScale.resx">
       <DependentUpon>ApplyScale.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Research\AssetIDGenerator.resx">
+      <DependentUpon>AssetIDGenerator.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Research\PlatSearch.resx">
       <DependentUpon>PlatSearch.cs</DependentUpon>
     </EmbeddedResource>
@@ -453,6 +457,12 @@
     <None Include="Resources\Templates\BFBB\SIMP">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Compile Include="Research\AssetIDGenerator.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Research\AssetIDGenerator.Designer.cs">
+      <DependentUpon>AssetIDGenerator.cs</DependentUpon>
+    </Compile>
     <Compile Include="Research\PlatSearch.cs">
       <SubType>Form</SubType>
     </Compile>

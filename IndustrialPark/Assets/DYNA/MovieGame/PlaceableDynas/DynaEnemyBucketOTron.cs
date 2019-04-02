@@ -46,7 +46,14 @@ namespace IndustrialPark
 
             return list.ToArray();
         }
-        
+
+        [Category("Enemy BucketOTron")]
+        public EnemyBucketOTronType Type
+        {
+            get => (EnemyBucketOTronType)(uint)Model_AssetID;
+            set => Model_AssetID = (uint)value;
+        }
+
         [Category("Enemy BucketOTron")]
         public AssetID GRUP_AssetID { get; set; }
 
