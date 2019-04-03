@@ -132,6 +132,12 @@ namespace IndustrialPark
             internalEditors.Last().Show();
         }
 
+        public void SetAllTopMost(bool value)
+        {
+            foreach (var ie in internalEditors)
+                ie.TopMost = value;
+        }
+
         public static Vector3 GetRayInterserctionPosition(Ray ray)
         {
             List<IRenderableAsset> l = new List<IRenderableAsset>();

@@ -17,10 +17,10 @@ namespace IndustrialPark
             StartPosition = FormStartPosition.CenterScreen;
 
             InitializeComponent();
-            
-            #if !DEBUG
+
+#if !DEBUG
             addTXDArchiveToolStripMenuItem.Visible = false;
-            #endif
+#endif
 
             uIToolStripMenuItem_Click(null, null);
             uIFTToolStripMenuItem_Click(null, null);
@@ -37,7 +37,7 @@ namespace IndustrialPark
         private void MainForm_Load(object sender, EventArgs e)
         {
             UpdateUserTemplateComboBox();
-            
+
             if (File.Exists(pathToSettings))
             {
                 IPSettings settings = JsonConvert.DeserializeObject<IPSettings>(File.ReadAllText(pathToSettings));
@@ -126,7 +126,7 @@ namespace IndustrialPark
                 TopMost = true;
                 DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
                 TopMost = false;
-                 if (result == DialogResult.Yes)
+                if (result == DialogResult.Yes)
                     SaveAllChanges();
                 else if (result == DialogResult.Cancel)
                     return;
@@ -210,7 +210,7 @@ namespace IndustrialPark
             }
 
             return new ProjectJson(hips, TextureManager.OpenTextureFolders.ToList(), renderer.Camera.Position,
-                renderer.Camera.Yaw, renderer.Camera.Pitch, renderer.Camera.Speed, renderer.Camera.SpeedRot, renderer.Camera.FieldOfView,renderer.Camera.FarPlane,
+                renderer.Camera.Yaw, renderer.Camera.Pitch, renderer.Camera.Speed, renderer.Camera.SpeedRot, renderer.Camera.FieldOfView, renderer.Camera.FarPlane,
                 noCullingCToolStripMenuItem.Checked, wireframeFToolStripMenuItem.Checked, renderer.backgroundColor, renderer.normalColor, renderer.trigColor,
                 renderer.mvptColor, renderer.sfxColor, useLegacyAssetIDFormatToolStripMenuItem.Checked, alternateNamingMode, hiddenAssets, renderer.isDrawingUI,
                 AssetJSP.dontRender, AssetBOUL.dontRender, AssetBUTN.dontRender, AssetCAM.dontRender, AssetDSTR.dontRender, AssetDYNA.dontRender, AssetEGEN.dontRender,
@@ -444,7 +444,7 @@ namespace IndustrialPark
         {
             MouseCenter = renderPanel.PointToScreen(new System.Drawing.Point(renderPanel.Width / 2, renderPanel.Height / 2));
         }
-                
+
         private HashSet<Keys> PressedKeys = new HashSet<Keys>();
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
@@ -702,7 +702,7 @@ namespace IndustrialPark
                     renderPanel.ClientRectangle.Height), e.X, e.Y, true);
             }
         }
-        
+
         public void ScreenClicked(Rectangle viewRectangle, int X, int Y, bool isMouseDown = false)
         {
             if (ArchiveEditorFunctions.FinishedMovingGizmo)
@@ -771,7 +771,7 @@ namespace IndustrialPark
 
         private void addTXDArchiveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-               OpenFileDialog openFile = new OpenFileDialog() { Filter = "TXD files|*.txd"};
+            OpenFileDialog openFile = new OpenFileDialog() { Filter = "TXD files|*.txd" };
             if (openFile.ShowDialog() == DialogResult.OK)
                 TextureManager.LoadTexturesFromTXD(openFile.FileName);
         }
@@ -786,7 +786,7 @@ namespace IndustrialPark
             levelModelToolStripMenuItem.Checked = !levelModelToolStripMenuItem.Checked;
             AssetJSP.dontRender = !levelModelToolStripMenuItem.Checked;
         }
-        
+
         private void bUTNToolStripMenuItem_Click(object sender, EventArgs e)
         {
             bUTNToolStripMenuItem.Checked = !bUTNToolStripMenuItem.Checked;
@@ -977,7 +977,7 @@ namespace IndustrialPark
             foreach (ArchiveEditor archiveEditor in archiveEditors)
                 archiveEditor.TemplateFocusOff();
         }
-        
+
         private void useLegacyAssetIDFormatToolStripMenuItem_Click(object sender, EventArgs e)
         {
             useLegacyAssetIDFormatToolStripMenuItem.Checked = !useLegacyAssetIDFormatToolStripMenuItem.Checked;
@@ -1027,7 +1027,7 @@ namespace IndustrialPark
             foreach (ToolStripItem i in controllers.DropDownItems)
                 if (i is ToolStripMenuItem j)
                     j.Click += eventHandler;
-            
+
             ToolStripMenuItem pickups = new ToolStripMenuItem("Pickups and Tikis");
             pickups.DropDownItems.AddRange(new ToolStripItem[]
             {
@@ -1178,7 +1178,7 @@ namespace IndustrialPark
             MessageBox.Show("There was a problem setting your template for placement");
             TopMost = false;
         }
-        
+
         private void userTemplateToolStripMenuItem_Click(object sender, EventArgs e)
         {
             UpdateUserTemplateComboBox();
@@ -1263,6 +1263,44 @@ namespace IndustrialPark
         private void assetIDGeneratorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.AssetIDGenerator.Show();
+        }
+
+        private void MainForm_Resize(object sender, EventArgs e)
+        {
+            try
+            {
+                if (WindowState == FormWindowState.Minimized)
+                {
+                    ArchiveEditorFunctions.allowRender = false;
+                    SetAllTopMost(false);
+                }
+                else
+                {
+                    ArchiveEditorFunctions.allowRender = true;
+                    SetAllTopMost(true);
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        private bool allTopMost = true;
+
+        private void SetAllTopMost(bool value)
+        {
+            Program.AboutBox.TopMost = value;
+            Program.ViewConfig.TopMost = value;
+            Program.UserTemplateManager.TopMost = value;
+
+            Program.EventSearch.TopMost = value;
+            Program.PlatSearch.TopMost = value;
+            Program.AssetIDGenerator.TopMost = value;
+
+            foreach (ArchiveEditor ae in archiveEditors)
+                ae.SetAllTopMost(value);
+
+            allTopMost = value;
         }
     }
 }

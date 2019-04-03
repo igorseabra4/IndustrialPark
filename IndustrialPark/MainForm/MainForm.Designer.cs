@@ -98,6 +98,7 @@ namespace IndustrialPark
             this.researchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eventSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.platSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.assetIDGeneratorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -114,7 +115,6 @@ namespace IndustrialPark
             this.toolStripMenuItem_Templates = new System.Windows.Forms.ToolStripMenuItem();
             this.userTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripComboBoxUserTemplate = new System.Windows.Forms.ToolStripComboBox();
-            this.assetIDGeneratorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStripMain.SuspendLayout();
@@ -691,6 +691,13 @@ namespace IndustrialPark
             this.platSearchToolStripMenuItem.Text = "Plat Search";
             this.platSearchToolStripMenuItem.Click += new System.EventHandler(this.platSearchToolStripMenuItem_Click);
             // 
+            // assetIDGeneratorToolStripMenuItem
+            // 
+            this.assetIDGeneratorToolStripMenuItem.Name = "assetIDGeneratorToolStripMenuItem";
+            this.assetIDGeneratorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.assetIDGeneratorToolStripMenuItem.Text = "Asset ID Generator";
+            this.assetIDGeneratorToolStripMenuItem.Click += new System.EventHandler(this.assetIDGeneratorToolStripMenuItem_Click);
+            // 
             // statusStrip1
             // 
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
@@ -819,13 +826,6 @@ namespace IndustrialPark
             this.toolStripComboBoxUserTemplate.Size = new System.Drawing.Size(160, 23);
             this.toolStripComboBoxUserTemplate.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxUserTemplate_SelectedIndexChanged);
             // 
-            // assetIDGeneratorToolStripMenuItem
-            // 
-            this.assetIDGeneratorToolStripMenuItem.Name = "assetIDGeneratorToolStripMenuItem";
-            this.assetIDGeneratorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.assetIDGeneratorToolStripMenuItem.Text = "Asset ID Generator";
-            this.assetIDGeneratorToolStripMenuItem.Click += new System.EventHandler(this.assetIDGeneratorToolStripMenuItem_Click);
-            // 
             // MainForm
             // 
             this.AllowDrop = true;
@@ -848,6 +848,7 @@ namespace IndustrialPark
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyUp);
             this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.MouseMoveControl);
             this.Move += new System.EventHandler(this.ResetMouseCenter);
+            this.Resize += new System.EventHandler(this.MainForm_Resize);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);

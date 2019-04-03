@@ -1020,5 +1020,11 @@ namespace IndustrialPark
         {
             columnHeader1.Width = listViewAssets.Width - 28;
         }
+
+        public void SetAllTopMost(bool value)
+        {
+            TopMost = value;
+            archive.SetAllTopMost(value);
+        }
     }
 }
