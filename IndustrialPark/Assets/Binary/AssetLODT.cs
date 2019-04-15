@@ -116,9 +116,15 @@ namespace IndustrialPark
         public void Merge(AssetLODT assetLODT)
         {
             List<EntryLODT> entriesLODT = LODT_Entries.ToList();
+            List<uint> assetIDsAlreadyPresent = new List<uint>();
+
+            foreach (EntryLODT entryLODT in entriesLODT)
+                assetIDsAlreadyPresent.Add(entryLODT.ModelAssetID);
+
             foreach (EntryLODT entryLODT in assetLODT.LODT_Entries)
-                if (!entriesLODT.Contains(entryLODT))
+                if (!assetIDsAlreadyPresent.Contains(entryLODT.ModelAssetID))
                     entriesLODT.Add(entryLODT);
+
             LODT_Entries = entriesLODT.ToArray();
         }
     }

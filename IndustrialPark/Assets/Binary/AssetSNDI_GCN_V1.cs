@@ -266,20 +266,50 @@ namespace IndustrialPark
                 if (entries[i].SoundAssetID == assetID)
                     return entries[i].SoundHeader;
 
+            entries = Entries_Sound_CIN.ToList();
+
+            for (int i = 0; i < entries.Count; i++)
+                if (entries[i].SoundAssetID == assetID)
+                    return entries[i].SoundHeader;
+
             throw new Exception($"Error: SNDI asset does not contain {assetType.ToString()} sound header for asset [{assetID.ToString("X8")}]");
         }
 
         public void Merge(AssetSNDI_GCN_V1 assetSNDI)
         {
-            List<EntrySoundInfo_GCN_V1> entriesSND = Entries_SND.ToList();
-            entriesSND.AddRange(assetSNDI.Entries_SND);
-            Entries_SND = entriesSND.ToArray();
-            List<EntrySoundInfo_GCN_V1> entriesSNDS = Entries_SNDS.ToList();
-            entriesSNDS.AddRange(assetSNDI.Entries_SNDS);
-            Entries_SNDS = entriesSNDS.ToArray();
-            List<EntrySoundInfo_GCN_V1> entriesSoundCIN = Entries_Sound_CIN.ToList();
-            entriesSoundCIN.AddRange(assetSNDI.Entries_Sound_CIN);
-            Entries_Sound_CIN = entriesSoundCIN.ToArray();
+            {
+                // SND
+                List<EntrySoundInfo_GCN_V1> entriesSND = Entries_SND.ToList();
+                List<uint> assetIDsAlreadyPresentSND = new List<uint>();
+                foreach (EntrySoundInfo_GCN_V1 entrySND in entriesSND)
+                    assetIDsAlreadyPresentSND.Add(entrySND.SoundAssetID);
+                foreach (EntrySoundInfo_GCN_V1 entrySND in assetSNDI.Entries_SND)
+                    if (!assetIDsAlreadyPresentSND.Contains(entrySND.SoundAssetID))
+                        entriesSND.Add(entrySND);
+                Entries_SND = entriesSND.ToArray();
+            }
+            {
+                // SNDS
+                List<EntrySoundInfo_GCN_V1> entriesSNDS = Entries_SNDS.ToList();
+                List<uint> assetIDsAlreadyPresentSNDS = new List<uint>();
+                foreach (EntrySoundInfo_GCN_V1 entrySNDS in entriesSNDS)
+                    assetIDsAlreadyPresentSNDS.Add(entrySNDS.SoundAssetID);
+                foreach (EntrySoundInfo_GCN_V1 entrySNDS in assetSNDI.Entries_SNDS)
+                    if (!assetIDsAlreadyPresentSNDS.Contains(entrySNDS.SoundAssetID))
+                        entriesSNDS.Add(entrySNDS);
+                Entries_SNDS = entriesSNDS.ToArray();
+            }
+            {
+                // Sound_CIN
+                List<EntrySoundInfo_GCN_V1> entriesSound_CIN = Entries_Sound_CIN.ToList();
+                List<uint> assetIDsAlreadyPresentSound_CIN = new List<uint>();
+                foreach (EntrySoundInfo_GCN_V1 entrySound_CIN in entriesSound_CIN)
+                    assetIDsAlreadyPresentSound_CIN.Add(entrySound_CIN.SoundAssetID);
+                foreach (EntrySoundInfo_GCN_V1 entrySound_CIN in assetSNDI.Entries_Sound_CIN)
+                    if (!assetIDsAlreadyPresentSound_CIN.Contains(entrySound_CIN.SoundAssetID))
+                        entriesSound_CIN.Add(entrySound_CIN);
+                Entries_Sound_CIN = entriesSound_CIN.ToArray();
+            }
         }
     }
 }

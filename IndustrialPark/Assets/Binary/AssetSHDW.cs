@@ -95,9 +95,15 @@ namespace IndustrialPark
         public void Merge(AssetSHDW assetSHDW)
         {
             List<EntrySHDW> entriesSHDW = SHDW_Entries.ToList();
+            List<uint> assetIDsAlreadyPresent = new List<uint>();
+
+            foreach (EntrySHDW entrySHDW in entriesSHDW)
+                assetIDsAlreadyPresent.Add(entrySHDW.ModelAssetID);
+
             foreach (EntrySHDW entrySHDW in assetSHDW.SHDW_Entries)
-                if (!entriesSHDW.Contains(entrySHDW))
+                if (!assetIDsAlreadyPresent.Contains(entrySHDW.ModelAssetID))
                     entriesSHDW.Add(entrySHDW);
+
             SHDW_Entries = entriesSHDW.ToArray();
         }
     }

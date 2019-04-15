@@ -246,7 +246,15 @@ namespace IndustrialPark
         [Category("Sample Header")]
         public uint loopstart { get; set; }
         [Category("Sample Header")]
-        public uint loopend { get; set; }
+        public uint loopend
+        {
+            get
+            {
+                if (soundEntries.Length > 0)
+                    return (uint)(soundEntries[0].lengthsamples - 1);
+                return 0;
+            }
+        }
         [Category("Sample Header")]
         public uint sampleHeaderMode { get; set; }
         [Category("Sample Header")]
@@ -269,6 +277,20 @@ namespace IndustrialPark
 
         public FSB3_File()
         {
+            mode = 2;
+            version = 196609;
+
+            deffreq = 32000;
+            defpan = 128;
+            defpri = 255;
+            defvol = 255;
+            mindistance = 1f;
+            maxdistance = 1000000f;
+            name = "empty";
+            numchannels = 1;
+            sampleHeaderMode = 33558561;
+            size = 126;
+
             soundEntries = new EntrySoundInfo_GCN_V2[0];
         }
 
@@ -291,7 +313,7 @@ namespace IndustrialPark
             int lengthsamples = binaryReader.ReadInt32();
             int templengthcompressedbytes = binaryReader.ReadInt32();
             loopstart = binaryReader.ReadUInt32();
-            loopend = binaryReader.ReadUInt32();
+            uint loopend = binaryReader.ReadUInt32();
             sampleHeaderMode = binaryReader.ReadUInt32();
             deffreq = binaryReader.ReadInt32();
             defvol = binaryReader.ReadUInt16();
@@ -533,6 +555,9 @@ namespace IndustrialPark
             RemoveEntry(assetID);
 
             List<FSB3_File> entries = Entries.ToList();
+
+            if (entries.Count == 0)
+                entries.Add(new FSB3_File());
 
             List<EntrySoundInfo_GCN_V2> entries2 = entries[0].soundEntries.ToList();
             entries2.Add(EntrySoundInfo_GCN_V2.Deserialize(soundData));

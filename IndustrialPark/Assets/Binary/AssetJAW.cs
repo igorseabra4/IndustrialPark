@@ -129,9 +129,15 @@ namespace IndustrialPark
         public void Merge(AssetJAW assetJAW)
         {
             List<EntryJAW> entriesJAW = JAW_Entries.ToList();
+            List<uint> assetIDsAlreadyPresent = new List<uint>();
+
+            foreach (EntryJAW entryJAW in entriesJAW)
+                assetIDsAlreadyPresent.Add(entryJAW.SoundAssetID);
+
             foreach (EntryJAW entryJAW in assetJAW.JAW_Entries)
-                if (!entriesJAW.Contains(entryJAW))
+                if (!assetIDsAlreadyPresent.Contains(entryJAW.SoundAssetID))
                     entriesJAW.Add(entryJAW);
+
             JAW_Entries = entriesJAW.ToArray();
         }
     }

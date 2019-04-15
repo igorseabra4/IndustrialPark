@@ -191,12 +191,28 @@ namespace IndustrialPark
 
         public void Merge(AssetSNDI_PS2 assetSNDI)
         {
-            List<EntrySoundInfo_PS2> entriesSND = Entries_SND.ToList();
-            entriesSND.AddRange(assetSNDI.Entries_SND);
-            Entries_SND = entriesSND.ToArray();
-            List<EntrySoundInfo_PS2> entriesSNDS = Entries_SNDS.ToList();
-            entriesSNDS.AddRange(assetSNDI.Entries_SNDS);
-            Entries_SNDS = entriesSNDS.ToArray();
+            {
+                // SND
+                List<EntrySoundInfo_PS2> entriesSND = Entries_SND.ToList();
+                List<uint> assetIDsAlreadyPresentSND = new List<uint>();
+                foreach (EntrySoundInfo_PS2 entrySND in entriesSND)
+                    assetIDsAlreadyPresentSND.Add(entrySND.SoundAssetID);
+                foreach (EntrySoundInfo_PS2 entrySND in assetSNDI.Entries_SND)
+                    if (!assetIDsAlreadyPresentSND.Contains(entrySND.SoundAssetID))
+                        entriesSND.Add(entrySND);
+                Entries_SND = entriesSND.ToArray();
+            }
+            {
+                // SNDS
+                List<EntrySoundInfo_PS2> entriesSNDS = Entries_SNDS.ToList();
+                List<uint> assetIDsAlreadyPresentSNDS = new List<uint>();
+                foreach (EntrySoundInfo_PS2 entrySNDS in entriesSNDS)
+                    assetIDsAlreadyPresentSNDS.Add(entrySNDS.SoundAssetID);
+                foreach (EntrySoundInfo_PS2 entrySNDS in assetSNDI.Entries_SNDS)
+                    if (!assetIDsAlreadyPresentSNDS.Contains(entrySNDS.SoundAssetID))
+                        entriesSNDS.Add(entrySNDS);
+                Entries_SNDS = entriesSNDS.ToArray();
+            }
         }
     }
 }

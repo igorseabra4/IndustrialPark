@@ -843,14 +843,6 @@ namespace IndustrialPark
             PopulateLayerComboBox();
         }
 
-        private void exportTXDArchiveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void importTXDArchiveToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-        }
-        
         private void checkedListBoxAssets_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.I && e.Modifiers == Keys.Control)

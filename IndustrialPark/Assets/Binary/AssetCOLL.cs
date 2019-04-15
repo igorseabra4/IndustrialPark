@@ -100,9 +100,15 @@ namespace IndustrialPark
         public void Merge(AssetCOLL assetCOLL)
         {
             List<EntryCOLL> entriesCOLL = COLL_Entries.ToList();
+            List<uint> assetIDsAlreadyPresent = new List<uint>();
+
+            foreach (EntryCOLL entryCOLL in entriesCOLL)
+                assetIDsAlreadyPresent.Add(entryCOLL.ModelAssetID);
+
             foreach (EntryCOLL entryCOLL in assetCOLL.COLL_Entries)
-                if (!entriesCOLL.Contains(entryCOLL))
+                if (!assetIDsAlreadyPresent.Contains(entryCOLL.ModelAssetID))
                     entriesCOLL.Add(entryCOLL);
+
             COLL_Entries = entriesCOLL.ToArray();
         }
     }

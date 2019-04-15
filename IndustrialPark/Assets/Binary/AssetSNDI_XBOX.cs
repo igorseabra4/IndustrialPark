@@ -272,10 +272,18 @@ namespace IndustrialPark
                     entry = entries[i];
 
             if (entry == null)
-                throw new Exception($"Error: SNDI asset does not contain {assetType.ToString()} sound header for asset [{assetID.ToString("X8")}]");
-            else
             {
-                List<byte> bytes = new List<byte>
+                entries = Entries_Sound_CIN.ToList();
+
+                for (int i = 0; i < entries.Count; i++)
+                    if (entries[i].SoundAssetID == assetID)
+                        entry = entries[i];
+            }
+
+            if (entry == null)
+                throw new Exception($"Error: SNDI asset does not contain {assetType.ToString()} sound header for asset [{assetID.ToString("X8")}]");
+
+            List<byte> bytes = new List<byte>
                 {
                     (byte)'R', (byte)'I', (byte)'F', (byte)'F',
                     0, 0, 0, 0,
@@ -284,50 +292,73 @@ namespace IndustrialPark
                     0x14, 0, 0, 0
                 };
 
-                if (entry.fmtId == 0x0001)
-                {
-                    bytes.AddRange(BitConverter.GetBytes(entry.fmtId));
-                    bytes.AddRange(BitConverter.GetBytes(entry.fmtChannels));
-                    bytes.AddRange(BitConverter.GetBytes(entry.fmtSampleRate));
-                    bytes.AddRange(BitConverter.GetBytes(entry.fmtBytesPerSecond));
-                    bytes.AddRange(BitConverter.GetBytes(entry.fmtBlockAlignment));
-                    bytes.AddRange(BitConverter.GetBytes(entry.fmtBitsPerSample));
-                    bytes.AddRange(BitConverter.GetBytes(entry.fmtExtBytes));
-                    bytes.AddRange(BitConverter.GetBytes(entry.fmtExtData));
-                }
-                else if (entry.fmtId == 0x0069)
-                {
-                    bytes.AddRange(BitConverter.GetBytes((short)0x0011));
-                    bytes.AddRange(BitConverter.GetBytes(entry.fmtChannels));
-                    bytes.AddRange(BitConverter.GetBytes(entry.fmtSampleRate * 65 / 64));
-                    bytes.AddRange(BitConverter.GetBytes(entry.fmtBytesPerSecond));
-                    bytes.AddRange(BitConverter.GetBytes(entry.fmtBlockAlignment));
-                    bytes.AddRange(BitConverter.GetBytes(entry.fmtBitsPerSample));
-                    bytes.AddRange(BitConverter.GetBytes(entry.fmtExtBytes));
-                    bytes.AddRange(BitConverter.GetBytes((short)0x0041));
-                }
-
-                bytes.Add((byte)'d');
-                bytes.Add((byte)'a');
-                bytes.Add((byte)'t');
-                bytes.Add((byte)'a');
-                bytes.AddRange(BitConverter.GetBytes(entry.dataSize));
-
-                return bytes.ToArray();
+            if (entry.fmtId == 0x0001)
+            {
+                bytes.AddRange(BitConverter.GetBytes(entry.fmtId));
+                bytes.AddRange(BitConverter.GetBytes(entry.fmtChannels));
+                bytes.AddRange(BitConverter.GetBytes(entry.fmtSampleRate));
+                bytes.AddRange(BitConverter.GetBytes(entry.fmtBytesPerSecond));
+                bytes.AddRange(BitConverter.GetBytes(entry.fmtBlockAlignment));
+                bytes.AddRange(BitConverter.GetBytes(entry.fmtBitsPerSample));
+                bytes.AddRange(BitConverter.GetBytes(entry.fmtExtBytes));
+                bytes.AddRange(BitConverter.GetBytes(entry.fmtExtData));
             }
+            else if (entry.fmtId == 0x0069)
+            {
+                bytes.AddRange(BitConverter.GetBytes((short)0x0011));
+                bytes.AddRange(BitConverter.GetBytes(entry.fmtChannels));
+                bytes.AddRange(BitConverter.GetBytes(entry.fmtSampleRate * 65 / 64));
+                bytes.AddRange(BitConverter.GetBytes(entry.fmtBytesPerSecond));
+                bytes.AddRange(BitConverter.GetBytes(entry.fmtBlockAlignment));
+                bytes.AddRange(BitConverter.GetBytes(entry.fmtBitsPerSample));
+                bytes.AddRange(BitConverter.GetBytes(entry.fmtExtBytes));
+                bytes.AddRange(BitConverter.GetBytes((short)0x0041));
+            }
+
+            bytes.Add((byte)'d');
+            bytes.Add((byte)'a');
+            bytes.Add((byte)'t');
+            bytes.Add((byte)'a');
+            bytes.AddRange(BitConverter.GetBytes(entry.dataSize));
+
+            return bytes.ToArray();
         }
 
         public void Merge(AssetSNDI_XBOX assetSNDI)
         {
-            List<EntrySoundInfo_XBOX> entriesSND = Entries_SND.ToList();
-            entriesSND.AddRange(assetSNDI.Entries_SND);
-            Entries_SND = entriesSND.ToArray();
-            List<EntrySoundInfo_XBOX> entriesSNDS = Entries_SNDS.ToList();
-            entriesSNDS.AddRange(assetSNDI.Entries_SNDS);
-            Entries_SNDS = entriesSNDS.ToArray();
-            List<EntrySoundInfo_XBOX> entriesSoundCIN = Entries_Sound_CIN.ToList();
-            entriesSoundCIN.AddRange(assetSNDI.Entries_Sound_CIN);
-            Entries_Sound_CIN = entriesSoundCIN.ToArray();
+            {
+                // SND
+                List<EntrySoundInfo_XBOX> entriesSND = Entries_SND.ToList();
+                List<uint> assetIDsAlreadyPresentSND = new List<uint>();
+                foreach (EntrySoundInfo_XBOX entrySND in entriesSND)
+                    assetIDsAlreadyPresentSND.Add(entrySND.SoundAssetID);
+                foreach (EntrySoundInfo_XBOX entrySND in assetSNDI.Entries_SND)
+                    if (!assetIDsAlreadyPresentSND.Contains(entrySND.SoundAssetID))
+                        entriesSND.Add(entrySND);
+                Entries_SND = entriesSND.ToArray();
+            }
+            {
+                // SNDS
+                List<EntrySoundInfo_XBOX> entriesSNDS = Entries_SNDS.ToList();
+                List<uint> assetIDsAlreadyPresentSNDS = new List<uint>();
+                foreach (EntrySoundInfo_XBOX entrySNDS in entriesSNDS)
+                    assetIDsAlreadyPresentSNDS.Add(entrySNDS.SoundAssetID);
+                foreach (EntrySoundInfo_XBOX entrySNDS in assetSNDI.Entries_SNDS)
+                    if (!assetIDsAlreadyPresentSNDS.Contains(entrySNDS.SoundAssetID))
+                        entriesSNDS.Add(entrySNDS);
+                Entries_SNDS = entriesSNDS.ToArray();
+            }
+            {
+                // Sound_CIN
+                List<EntrySoundInfo_XBOX> entriesSound_CIN = Entries_Sound_CIN.ToList();
+                List<uint> assetIDsAlreadyPresentSound_CIN = new List<uint>();
+                foreach (EntrySoundInfo_XBOX entrySound_CIN in entriesSound_CIN)
+                    assetIDsAlreadyPresentSound_CIN.Add(entrySound_CIN.SoundAssetID);
+                foreach (EntrySoundInfo_XBOX entrySound_CIN in assetSNDI.Entries_Sound_CIN)
+                    if (!assetIDsAlreadyPresentSound_CIN.Contains(entrySound_CIN.SoundAssetID))
+                        entriesSound_CIN.Add(entrySound_CIN);
+                Entries_Sound_CIN = entriesSound_CIN.ToArray();
+            }
         }
     }
 }

@@ -52,10 +52,8 @@ namespace IndustrialPark
         public override bool HasReference(uint assetID)
         {
             foreach (EntryPIPT a in PIPT_Entries)
-            {
                 if (a.ModelAssetID == assetID)
                     return true;
-            }
 
             return base.HasReference(assetID);
         }
@@ -104,9 +102,15 @@ namespace IndustrialPark
         public void Merge(AssetPIPT assetPIPT)
         {
             List<EntryPIPT> entriesPIPT = PIPT_Entries.ToList();
+            List<uint> assetIDsAlreadyPresent = new List<uint>();
+
+            foreach (EntryPIPT entryPIPT in entriesPIPT)
+                assetIDsAlreadyPresent.Add(entryPIPT.ModelAssetID);
+
             foreach (EntryPIPT entryPIPT in assetPIPT.PIPT_Entries)
-                if (!entriesPIPT.Contains(entryPIPT))
+                if (!assetIDsAlreadyPresent.Contains(entryPIPT.ModelAssetID))
                     entriesPIPT.Add(entryPIPT);
+
             PIPT_Entries = entriesPIPT.ToArray();
         }
     }
