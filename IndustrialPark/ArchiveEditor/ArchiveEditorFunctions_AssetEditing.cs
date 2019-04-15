@@ -46,13 +46,19 @@ namespace IndustrialPark
                     return 0;
 
                 if (currentGame == Game.Scooby && layerOrderBFBB.Contains(l1) && layerOrderBFBB.Contains(l2))
-                        return layerOrderBFBB.IndexOf(l1) > layerOrderBFBB.IndexOf(l2) ? 1 : -1;
+                    return layerOrderBFBB.IndexOf(l1) > layerOrderBFBB.IndexOf(l2) ? 1 : -1;
 
                 if (currentGame == Game.BFBB && layerOrderBFBB.Contains(l1) && layerOrderBFBB.Contains(l2))
-                        return layerOrderBFBB.IndexOf(l1) > layerOrderBFBB.IndexOf(l2) ? 1 : -1;
+                    return layerOrderBFBB.IndexOf(l1) > layerOrderBFBB.IndexOf(l2) ? 1 : -1;
 
-                if (currentGame == Game.Incredibles && layerOrderTSSM.Contains(l1) && layerOrderTSSM.Contains(l2))
+                if (currentGame == Game.Incredibles)
+                {
+                    if ((l1 == 3 && l2 == 11) || (l1 == 11 && l2 == 3))
+                        return 0;
+
+                    if (layerOrderTSSM.Contains(l1) && layerOrderTSSM.Contains(l2))
                         return layerOrderTSSM.IndexOf(l1) > layerOrderTSSM.IndexOf(l2) ? 1 : -1;
+                }
 
                 return 0;
             }
@@ -421,6 +427,11 @@ namespace IndustrialPark
                     SNDI_G1.Merge(new AssetSNDI_GCN_V1(AHDR));
                     return;
                 }
+                else if (a is AssetSNDI_GCN_V2 SNDI_G2)
+                {
+                    SNDI_G2.Merge(new AssetSNDI_GCN_V2(AHDR));
+                    return;
+                }
                 else if (a is AssetSNDI_XBOX SNDI_X)
                 {
                     SNDI_X.Merge(new AssetSNDI_XBOX(AHDR));
@@ -434,7 +445,7 @@ namespace IndustrialPark
             }
         }
 
-        public void ExportTextureDictionary(string fileName)
+        public void ExportTextureDictionary(string fileName, bool RW3)
         {
             ReadFileMethods.treatStuffAsByteArray = true;
 
@@ -443,17 +454,16 @@ namespace IndustrialPark
             int fileVersion = 0;
 
             foreach (Asset a in assetDictionary.Values)
-                if (a is AssetRWTX RWTX && RWTX.AHDR.ADBG.assetName.Contains(".RW3"))
-                {
-                    foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(RWTX.Data))
-                        if (rw is TextureDictionary_0016 td)
-                            foreach (TextureNative_0015 tn in td.textureNativeList)
-                            {
-                                fileVersion = tn.renderWareVersion;
-                                tn.textureNativeStruct.textureName = RWTX.AHDR.ADBG.assetName.Replace(".RW3", "");
-                                textNativeList.Add(tn);
-                            }
-                }
+                if (a is AssetRWTX RWTX)
+                    if ((RW3 && RWTX.AHDR.ADBG.assetName.Contains(".RW3")) || (!RW3 && !RWTX.AHDR.ADBG.assetName.Contains(".RW3")))
+                        foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(RWTX.Data))
+                            if (rw is TextureDictionary_0016 td)
+                                foreach (TextureNative_0015 tn in td.textureNativeList)
+                                {
+                                    fileVersion = tn.renderWareVersion;
+                                    tn.textureNativeStruct.textureName = RWTX.AHDR.ADBG.assetName.Replace(".RW3", "");
+                                    textNativeList.Add(tn);
+                                }
 
             TextureDictionary_0016 rws = new TextureDictionary_0016()
             {
@@ -476,7 +486,7 @@ namespace IndustrialPark
             ReadFileMethods.treatStuffAsByteArray = false;
         }
 
-        public void AddTextureDictionary(string fileName)
+        public void AddTextureDictionary(string fileName, bool RW3)
         {
             UnsavedChanges = true;
             int layerIndex = 0;
@@ -503,7 +513,7 @@ namespace IndustrialPark
                     foreach (TextureNative_0015 tn in td.textureNativeList)
                     {
                         string textureName = tn.textureNativeStruct.textureName;
-                        if (!textureName.Contains(".RW3"))
+                        if (RW3 && !textureName.Contains(".RW3"))
                             textureName += ".RW3";
 
                         // Create a new dictionary that has only that texture.
@@ -525,7 +535,7 @@ namespace IndustrialPark
                     }
                 }
             }
-
+            
             ReadFileMethods.treatStuffAsByteArray = false;
         }
 
@@ -536,6 +546,12 @@ namespace IndustrialPark
                 if (a is AssetSNDI_GCN_V1 SNDI_G1)
                 {
                     SNDI_G1.AddEntry(soundData, assetID, assetType, out finalData);
+                    return;
+                }
+                else if (a is AssetSNDI_GCN_V2 SNDI_G2)
+                {
+                    SNDI_G2.AddEntry(soundData, assetID);
+                    finalData = new byte[0];
                     return;
                 }
                 else if (a is AssetSNDI_XBOX SNDI_X)
@@ -562,6 +578,11 @@ namespace IndustrialPark
                     if (SNDI_G1.HasReference(assetID))
                         SNDI_G1.RemoveEntry(assetID, GetFromAssetID(assetID).AHDR.assetType);
                 }
+                else if (a is AssetSNDI_GCN_V2 SNDI_G2)
+                {
+                    if (SNDI_G2.HasReference(assetID))
+                        SNDI_G2.RemoveEntry(assetID);
+                }
                 else if (a is AssetSNDI_XBOX SNDI_X)
                 {
                     if (SNDI_X.HasReference(assetID))
@@ -583,6 +604,11 @@ namespace IndustrialPark
                 {
                     if (SNDI_G1.HasReference(assetID))
                         return SNDI_G1.GetHeader(assetID, GetFromAssetID(assetID).AHDR.assetType);
+                }
+                else if (a is AssetSNDI_GCN_V2 SNDI_G2)
+                {
+                    if (SNDI_G2.HasReference(assetID))
+                        return SNDI_G2.GetHeader(assetID);
                 }
                 else if (a is AssetSNDI_XBOX SNDI_X)
                 {
@@ -702,10 +728,16 @@ namespace IndustrialPark
         public void CollapseLayers()
         {
             Dictionary<int, Section_LHDR> layers = new Dictionary<int, Section_LHDR>();
+            List<Section_LHDR> bspLayers = new List<Section_LHDR>();
 
             foreach (Section_LHDR LHDR in DICT.LTOC.LHDRList)
             {
-                if (layers.ContainsKey(LHDR.layerType))
+                if (currentGame == Game.Incredibles && (LHDR.layerType == (int)LayerType_TSSM.BSP || LHDR.layerType == (int)LayerType_TSSM.JSPINFO))
+                {
+                    if (LHDR.assetIDlist.Count != 0)
+                        bspLayers.Add(LHDR);
+                }
+                else if (layers.ContainsKey(LHDR.layerType))
                 {
                     layers[LHDR.layerType].assetIDlist.AddRange(LHDR.assetIDlist);
                 }
@@ -715,8 +747,12 @@ namespace IndustrialPark
                 }
             }
 
+            UnsavedChanges = true;
+            
             DICT.LTOC.LHDRList = new List<Section_LHDR>();
-            DICT.LTOC.LHDRList.AddRange(layers.Values.ToList().OrderBy(f => f.layerType, new LHDRComparer()));
+            DICT.LTOC.LHDRList.AddRange(layers.Values.ToList());
+            DICT.LTOC.LHDRList.AddRange(bspLayers);
+            DICT.LTOC.LHDRList = DICT.LTOC.LHDRList.OrderBy(f => f.layerType, new LHDRComparer()).ToList();
         }
         
         public void ApplyScale(Vector3 factor)

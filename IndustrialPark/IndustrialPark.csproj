@@ -124,6 +124,7 @@
     <Compile Include="Assets\Binary\AssetCRDT.cs" />
     <Compile Include="Assets\Binary\AssetFLY.cs" />
     <Compile Include="Assets\Binary\AssetLKIT.cs" />
+    <Compile Include="Assets\Binary\AssetSNDI_GCN_V2.cs" />
     <Compile Include="Assets\Binary\AssetVILP.cs" />
     <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\DynaEnemyMindy.cs" />
     <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\DynaEnemyTurret.cs" />

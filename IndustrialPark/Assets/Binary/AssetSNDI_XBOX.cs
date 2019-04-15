@@ -77,7 +77,7 @@ namespace IndustrialPark
 
         public override string ToString()
         {
-            return $"Sound: {Program.MainForm.GetAssetNameFromID(SoundAssetID)}";
+            return Program.MainForm.GetAssetNameFromID(SoundAssetID);
         }
     }
 

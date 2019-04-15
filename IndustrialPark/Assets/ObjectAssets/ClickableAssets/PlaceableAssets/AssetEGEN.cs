@@ -21,21 +21,21 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
-        [Category("Electric Arc")]
+        [Category("Electric Arc"), TypeConverter(typeof(FloatTypeConverter))]
         public float Src_dpos_X
         {
             get => ReadFloat(0x54 + Offset);
             set => Write(0x54 + Offset, value);
         }
 
-        [Category("Electric Arc")]
+        [Category("Electric Arc"), TypeConverter(typeof(FloatTypeConverter))]
         public float Src_dpos_Y
         {
             get => ReadFloat(0x58 + Offset);
             set => Write(0x58 + Offset, value);
         }
 
-        [Category("Electric Arc")]
+        [Category("Electric Arc"), TypeConverter(typeof(FloatTypeConverter))]
         public float Src_dpos_Z
         {
             get => ReadFloat(0x5C + Offset);

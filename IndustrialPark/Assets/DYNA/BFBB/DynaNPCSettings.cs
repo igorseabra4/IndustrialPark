@@ -26,7 +26,7 @@ namespace IndustrialPark
             AllowAttack = Data[0xD];
             AssumeLOS = Data[0xE];
             AssumeFOV = Data[0xF];
-            DuploWaveMode = Switch(BitConverter.ToInt32(Data, 0x10));
+            DuploWaveMode = (En_dupowavmod)Switch(BitConverter.ToInt32(Data, 0x10));
             DuploSpawnDelay = Switch(BitConverter.ToSingle(Data, 0x14));
             DuploSpawnLifeMax = Switch(BitConverter.ToInt32(Data, 0x18));
         }
@@ -47,7 +47,7 @@ namespace IndustrialPark
             list.Add(AllowAttack);
             list.Add(AssumeLOS);
             list.Add(AssumeFOV);
-            list.AddRange(BitConverter.GetBytes(Switch(DuploWaveMode)));
+            list.AddRange(BitConverter.GetBytes(Switch((int)DuploWaveMode)));
             list.AddRange(BitConverter.GetBytes(Switch(DuploSpawnDelay)));
             list.AddRange(BitConverter.GetBytes(Switch(DuploSpawnLifeMax)));
             return list.ToArray();
@@ -78,9 +78,15 @@ namespace IndustrialPark
         public byte AssumeLOS { get; set; }
         [TypeConverter(typeof(HexByteTypeConverter))]
         public byte AssumeFOV { get; set; }
-        public int DuploWaveMode { get; set; }
+        public En_dupowavmod DuploWaveMode { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
         public float DuploSpawnDelay { get; set; }
         public int DuploSpawnLifeMax { get; set; }
+
+        public enum En_dupowavmod
+        {
+            NPCP_DUPOWAVE_CONTINUOUS = 0,
+            NPCP_DUPOWAVE_DISCREET = 1
+        }
     }
 }

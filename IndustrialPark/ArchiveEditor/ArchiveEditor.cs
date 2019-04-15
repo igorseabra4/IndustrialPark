@@ -60,8 +60,7 @@ namespace IndustrialPark
                 saveToolStripMenuItem.Enabled = true;
                 saveAsToolStripMenuItem.Enabled = true;
                 buttonAddLayer.Enabled = true;
-                importTXDArchiveToolStripMenuItem.Enabled = true;
-                exportTXDArchiveToolStripMenuItem.Enabled = true;
+                tXDArchiveToolStripMenuItem.Enabled = true;
                 hipHopToolExportToolStripMenuItem.Enabled = true;
                 importHIPArchiveToolStripMenuItem.Enabled = true;
                 collapseLayersToolStripMenuItem.Enabled = true;
@@ -109,8 +108,7 @@ namespace IndustrialPark
             buttonAddLayer.Enabled = true;
             hipHopToolExportToolStripMenuItem.Enabled = true;
             importHIPArchiveToolStripMenuItem.Enabled = true;
-            importTXDArchiveToolStripMenuItem.Enabled = true;
-            exportTXDArchiveToolStripMenuItem.Enabled = true;
+            tXDArchiveToolStripMenuItem.Enabled = true;
             collapseLayersToolStripMenuItem.Enabled = true;
             applyScaleToolStripMenuItem.Enabled = true;
 
@@ -816,11 +814,12 @@ namespace IndustrialPark
 
         private void applyScaleToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Vector3 scale = ApplyScale.GetName(out bool OKed);
+            Vector3 scale = ApplyScale.GetScale(out bool OKed);
 
             if (OKed)
             {
-                DialogResult dialogResult = MessageBox.Show($"Are you sure you want to scale all assets by a factor of [{scale.X}, {scale.Y}, {scale.Z}]?", "Apply Scale", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                string question = $"Are you sure you want to scale all assets by a factor of [{scale.X}, {scale.Y}, {scale.Z}]? To undo this, you must scale it by a factor of [{1 / scale.X}, {1 / scale.Y}, {1 / scale.Z}], and precision might be lost in the process, resulting in some objects slighly off from their intented placement.";
+                DialogResult dialogResult = MessageBox.Show(question, "Apply Scale", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (dialogResult == DialogResult.Yes)
                     archive.ApplyScale(scale);
             }
@@ -846,21 +845,10 @@ namespace IndustrialPark
 
         private void exportTXDArchiveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SaveFileDialog saveTXD = new SaveFileDialog() { Filter = "TXD archives|*.txd" };
-
-            if (saveTXD.ShowDialog() == DialogResult.OK)
-                archive.ExportTextureDictionary(saveTXD.FileName);
         }
 
         private void importTXDArchiveToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openTXD = new OpenFileDialog() { Filter = "TXD archives|*.txd" };
-
-            if (openTXD.ShowDialog() == DialogResult.OK)
-            {
-                archive.AddTextureDictionary(openTXD.FileName);
-                PopulateLayerComboBox();
-            }
         }
         
         private void checkedListBoxAssets_KeyDown(object sender, KeyEventArgs e)
@@ -1025,6 +1013,45 @@ namespace IndustrialPark
         {
             TopMost = value;
             archive.SetAllTopMost(value);
+        }
+
+        private void exportRW3ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExportTXD(true);
+        }
+
+        private void importRW3ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ImportTXD(true);
+        }
+
+        private void exportNoRW3ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExportTXD(false);
+        }
+
+        private void importNoRW3ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ImportTXD(false);
+        }
+
+        private void ImportTXD(bool RW3)
+        {
+            OpenFileDialog openTXD = new OpenFileDialog() { Filter = "TXD archives|*.txd" };
+
+            if (openTXD.ShowDialog() == DialogResult.OK)
+            {
+                archive.AddTextureDictionary(openTXD.FileName, RW3);
+                PopulateLayerComboBox();
+            }
+        }
+
+        private void ExportTXD(bool RW3)
+        {
+            SaveFileDialog saveTXD = new SaveFileDialog() { Filter = "TXD archives|*.txd" };
+
+            if (saveTXD.ShowDialog() == DialogResult.OK)
+                archive.ExportTextureDictionary(saveTXD.FileName, RW3);
         }
     }
 }

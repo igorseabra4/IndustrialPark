@@ -321,6 +321,8 @@ namespace IndustrialPark
                 case AssetType.SNDI:
                     if (currentPlatform == Platform.GameCube && (currentGame == Game.BFBB || currentGame == Game.Scooby))
                         newAsset = new AssetSNDI_GCN_V1(AHDR);
+                    else if (currentPlatform == Platform.GameCube)
+                        newAsset = new AssetSNDI_GCN_V2(AHDR);
                     else if (currentPlatform == Platform.Xbox)
                         newAsset = new AssetSNDI_XBOX(AHDR);
                     else if (currentPlatform == Platform.PS2)
@@ -469,7 +471,7 @@ namespace IndustrialPark
         {
             int numCopies = 0;
 
-            while (ContainsAsset(AHDR.assetID) | giveIDregardless)
+            while (ContainsAsset(AHDR.assetID) || giveIDregardless)
             {
                 if (numCopies > 1000)
                 {
@@ -506,7 +508,7 @@ namespace IndustrialPark
             for (int i = 0; i < DICT.LTOC.LHDRList.Count; i++)
                 DICT.LTOC.LHDRList[i].assetIDlist.Remove(assetID);
 
-            if (GetFromAssetID(assetID).AHDR.assetType == AssetType.SND | GetFromAssetID(assetID).AHDR.assetType == AssetType.SNDS)
+            if (GetFromAssetID(assetID).AHDR.assetType == AssetType.SND || GetFromAssetID(assetID).AHDR.assetType == AssetType.SNDS)
                 RemoveSoundFromSNDI(assetID);
 
             DICT.ATOC.AHDRList.Remove(assetDictionary[assetID].AHDR);
@@ -540,21 +542,28 @@ namespace IndustrialPark
 
                 if (AHDR.assetType == AssetType.SND || AHDR.assetType == AssetType.SNDS)
                 {
-                    List<byte> file = new List<byte>();
-                    file.AddRange(GetHeaderFromSNDI(AHDR.assetID));
-                    file.AddRange(AHDR.data);
-
-                    if (new string(new char[] { (char)file[0], (char)file[1], (char)file[2], (char)file[3] }) == "RIFF")
+                    try
                     {
-                        byte[] chunkSizeArr = BitConverter.GetBytes(file.Count - 8);
+                        List<byte> file = new List<byte>();
+                        file.AddRange(GetHeaderFromSNDI(AHDR.assetID));
+                        file.AddRange(AHDR.data);
 
-                        file[4] = chunkSizeArr[0];
-                        file[5] = chunkSizeArr[1];
-                        file[6] = chunkSizeArr[2];
-                        file[7] = chunkSizeArr[3];
+                        if (new string(new char[] { (char)file[0], (char)file[1], (char)file[2], (char)file[3] }) == "RIFF")
+                        {
+                            byte[] chunkSizeArr = BitConverter.GetBytes(file.Count - 8);
+
+                            file[4] = chunkSizeArr[0];
+                            file[5] = chunkSizeArr[1];
+                            file[6] = chunkSizeArr[2];
+                            file[7] = chunkSizeArr[3];
+                        }
+
+                        AHDR.data = file.ToArray();
                     }
-
-                    AHDR.data = file.ToArray();
+                    catch (Exception e)
+                    {
+                        MessageBox.Show(e.Message + " The asset will be copied as it is.");
+                    }
                 }
 
                 copiedAHDRs.Add(AHDR);
@@ -582,6 +591,8 @@ namespace IndustrialPark
 
             foreach (Section_AHDR AHDR in AHDRs)
             {
+                AddAssetWithUniqueID(layerIndex, AHDR);
+
                 if (AHDR.assetType == AssetType.SND || AHDR.assetType == AssetType.SNDS)
                 {
                     try
@@ -595,7 +606,6 @@ namespace IndustrialPark
                     }
                 }
 
-                AddAssetWithUniqueID(layerIndex, AHDR);
                 finalIndices.Add(AHDR.assetID);
             }
         }

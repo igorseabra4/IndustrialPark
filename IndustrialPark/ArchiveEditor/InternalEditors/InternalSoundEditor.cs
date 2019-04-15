@@ -67,7 +67,7 @@ namespace IndustrialPark
             SaveFileDialog saveFileDialog = new SaveFileDialog()
             {
                 FileName = asset.AHDR.ADBG.assetName + (
-                (HipHopFile.Functions.currentPlatform == HipHopFile.Platform.GameCube) ? ".DSP" :
+                (HipHopFile.Functions.currentPlatform == HipHopFile.Platform.GameCube && HipHopFile.Functions.currentGame != HipHopFile.Game.Incredibles) ? ".DSP" :
                 (HipHopFile.Functions.currentPlatform == HipHopFile.Platform.Xbox) ? ".WAV" :
                 (HipHopFile.Functions.currentPlatform == HipHopFile.Platform.PS2) ? ".VAG" :
                 ""),
