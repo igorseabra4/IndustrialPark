@@ -53,6 +53,11 @@ namespace IndustrialPark
             }
         }
 
+        public void MovieRemoveFromDictionary()
+        {
+            ArchiveEditorFunctions.renderingDictionary.Remove(Functions.BKDRHash(AHDR.ADBG.assetName.Replace(".MINF", "")));
+        }
+
         public override bool HasReference(uint assetID)
         {
             if (ATBL_AssetID == assetID)

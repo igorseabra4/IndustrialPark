@@ -210,13 +210,14 @@ namespace IndustrialPark
             }
 
             return new ProjectJson(hips, TextureManager.OpenTextureFolders.ToList(), renderer.Camera.Position,
-                renderer.Camera.Yaw, renderer.Camera.Pitch, renderer.Camera.Speed, renderer.Camera.SpeedRot, renderer.Camera.FieldOfView, renderer.Camera.FarPlane,
-                noCullingCToolStripMenuItem.Checked, wireframeFToolStripMenuItem.Checked, renderer.backgroundColor, renderer.normalColor, renderer.trigColor,
-                renderer.mvptColor, renderer.sfxColor, useLegacyAssetIDFormatToolStripMenuItem.Checked, alternateNamingMode, hiddenAssets, renderer.isDrawingUI,
-                AssetJSP.dontRender, AssetBOUL.dontRender, AssetBUTN.dontRender, AssetCAM.dontRender, AssetDSTR.dontRender, AssetDYNA.dontRender, AssetEGEN.dontRender,
-                AssetHANG.dontRender, AssetLITE.dontRender, AssetMRKR.dontRender, AssetMVPT.dontRender, AssetPEND.dontRender, AssetPLAT.dontRender, AssetPLAT.dontRender,
-                AssetPLYR.dontRender, AssetSFX.dontRender, AssetSIMP.dontRender, AssetTRIG.dontRender, AssetUI.dontRender, AssetUIFT.dontRender, AssetVIL.dontRender,
-                ArchiveEditorFunctions.persistentShinies, HipHopFile.Functions.currentPlatform);
+                renderer.Camera.Yaw, renderer.Camera.Pitch, renderer.Camera.Speed, renderer.Camera.SpeedRot, renderer.Camera.FieldOfView,
+                renderer.Camera.FarPlane, noCullingCToolStripMenuItem.Checked, wireframeFToolStripMenuItem.Checked, renderer.backgroundColor,
+                renderer.normalColor, renderer.trigColor, renderer.mvptColor, renderer.sfxColor, useLegacyAssetIDFormatToolStripMenuItem.Checked,
+                alternateNamingMode, hiddenAssets, renderer.isDrawingUI, AssetMODL.renderBasedOnLodt, AssetJSP.dontRender, AssetBOUL.dontRender,
+                AssetBUTN.dontRender, AssetCAM.dontRender, AssetDSTR_Scooby.dontRender, AssetDYNA.dontRender, AssetEGEN.dontRender, AssetHANG.dontRender,
+                AssetLITE.dontRender, AssetMRKR.dontRender, AssetMVPT_Scooby.dontRender, AssetPEND.dontRender, AssetPLAT.dontRender, AssetPLAT.dontRender,
+                AssetPLYR.dontRender, AssetSFX.dontRender, AssetSIMP.dontRender, AssetTRIG.dontRender, AssetUI.dontRender, AssetUIFT.dontRender,
+                AssetVIL.dontRender, ArchiveEditorFunctions.persistentShinies, HipHopFile.Functions.currentPlatform);
         }
 
         private void ApplySettings(string ipSettingsPath)
@@ -229,6 +230,11 @@ namespace IndustrialPark
         private void ApplySettings(ProjectJson ipSettings)
         {
             TextureManager.ClearTextures();
+
+            List<ArchiveEditor> archiveEditors = new List<ArchiveEditor>();
+            archiveEditors.AddRange(this.archiveEditors);
+            foreach (ArchiveEditor ae in archiveEditors)
+                ae.CloseArchiveEditor();
 
             foreach (string s in ipSettings.TextureFolderPaths)
                 if (Directory.Exists(s))
@@ -294,6 +300,9 @@ namespace IndustrialPark
 
             uIModeToolStripMenuItem.Checked = ipSettings.isDrawingUI;
             renderer.isDrawingUI = ipSettings.isDrawingUI;
+
+            useMaxRenderDistanceToolStripMenuItem.Checked = ipSettings.renderBasedOnLodt;
+            AssetMODL.renderBasedOnLodt = ipSettings.renderBasedOnLodt;
 
             levelModelToolStripMenuItem.Checked = !ipSettings.dontRenderLevelModel;
             AssetJSP.dontRender = ipSettings.dontRenderLevelModel;
@@ -777,6 +786,39 @@ namespace IndustrialPark
             TextureManager.ClearTextures();
         }
 
+        private void pLATPreviewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            pLATPreviewToolStripMenuItem.Checked = !pLATPreviewToolStripMenuItem.Checked;
+            PlaceableAsset.movementPreview = pLATPreviewToolStripMenuItem.Checked;
+
+            if (PlaceableAsset.movementPreview)
+            {
+                foreach (ArchiveEditor ae in archiveEditors)
+                    foreach (Asset a in ae.archive.GetAllAssets())
+                        if (a is AssetPLAT PLAT)
+                            PLAT.Reset();
+            }
+        }
+
+        private void useMaxRenderDistanceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            useMaxRenderDistanceToolStripMenuItem.Checked = !useMaxRenderDistanceToolStripMenuItem.Checked;
+            AssetMODL.renderBasedOnLodt = useMaxRenderDistanceToolStripMenuItem.Checked;
+        }
+
+        private void useLegacyAssetIDFormatToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            useLegacyAssetIDFormatToolStripMenuItem.Checked = !useLegacyAssetIDFormatToolStripMenuItem.Checked;
+            AssetIDTypeConverter.Legacy = useLegacyAssetIDFormatToolStripMenuItem.Checked;
+        }
+
+        private void assetNameAssetIDToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            assetIDAssetNameToolStripMenuItem.Checked = false;
+            assetNameAssetIDToolStripMenuItem.Checked = true;
+            alternateNamingMode = false;
+        }
+
         private void levelModelToolStripMenuItem_Click(object sender, EventArgs e)
         {
             levelModelToolStripMenuItem.Checked = !levelModelToolStripMenuItem.Checked;
@@ -804,7 +846,7 @@ namespace IndustrialPark
         private void mVPTToolStripMenuItem_Click(object sender, EventArgs e)
         {
             mVPTToolStripMenuItem.Checked = !mVPTToolStripMenuItem.Checked;
-            AssetMVPT.dontRender = !mVPTToolStripMenuItem.Checked;
+            AssetMVPT_Scooby.dontRender = !mVPTToolStripMenuItem.Checked;
         }
 
         private void pKUPToolStripMenuItem_Click(object sender, EventArgs e)
@@ -816,7 +858,7 @@ namespace IndustrialPark
         private void dSTRToolStripMenuItem_Click(object sender, EventArgs e)
         {
             dSTRToolStripMenuItem.Checked = !dSTRToolStripMenuItem.Checked;
-            AssetDSTR.dontRender = !dSTRToolStripMenuItem.Checked;
+            AssetDSTR_Scooby.dontRender = !dSTRToolStripMenuItem.Checked;
         }
 
         private void tRIGToolStripMenuItem_Click(object sender, EventArgs e)
@@ -920,20 +962,6 @@ namespace IndustrialPark
             mouseMode = false;
         }
 
-        private void pLATPreviewToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            pLATPreviewToolStripMenuItem.Checked = !pLATPreviewToolStripMenuItem.Checked;
-            PlaceableAsset.movementPreview = pLATPreviewToolStripMenuItem.Checked;
-
-            if (PlaceableAsset.movementPreview)
-            {
-                foreach (ArchiveEditor ae in archiveEditors)
-                    foreach (Asset a in ae.archive.GetAllAssets())
-                        if (a is AssetPLAT PLAT)
-                            PLAT.Reset();
-            }
-        }
-
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.AboutBox.Show();
@@ -972,19 +1000,6 @@ namespace IndustrialPark
         {
             foreach (ArchiveEditor archiveEditor in archiveEditors)
                 archiveEditor.TemplateFocusOff();
-        }
-
-        private void useLegacyAssetIDFormatToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            useLegacyAssetIDFormatToolStripMenuItem.Checked = !useLegacyAssetIDFormatToolStripMenuItem.Checked;
-            AssetIDTypeConverter.Legacy = useLegacyAssetIDFormatToolStripMenuItem.Checked;
-        }
-
-        private void assetNameAssetIDToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            assetIDAssetNameToolStripMenuItem.Checked = false;
-            assetNameAssetIDToolStripMenuItem.Checked = true;
-            alternateNamingMode = false;
         }
 
         private void assetIDAssetNameToolStripMenuItem_Click(object sender, EventArgs e)

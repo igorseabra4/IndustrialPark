@@ -31,7 +31,8 @@ namespace IndustrialPark
         public bool UseLegacyAssetIDFormat;
         public bool AlternateNameDisplayMode;
         public bool isDrawingUI;
-        
+        public bool renderBasedOnLodt;
+
         public bool dontRenderLevelModel;
         public bool dontRenderBOUL;
         public bool dontRenderBUTN;
@@ -112,10 +113,10 @@ namespace IndustrialPark
         public ProjectJson(List<string> hipPaths, List<string> textureFolderPaths, Vector3 camPos, float yaw, float pitch, float speed, float speedRot,
             float fieldOfView, float farPlane, bool noCulling, bool wireframe, Color4 backgroundColor, Vector4 widgetColor, Vector4 trigColor,
             Vector4 mvptColor, Vector4 sfxColor, bool useLegacyAssetIDFormat, bool alternateNameDisplayMode, List<uint> hiddenAssets, bool isDrawingUI,
-            bool dontRenderLevelModel, bool dontRenderBOUL, bool dontRenderBUTN, bool dontRenderCAM, bool dontRenderDSTR, bool dontRenderDYNA,
-            bool dontRenderEGEN, bool dontRenderHANG, bool dontRenderLITE, bool dontRenderMRKR, bool dontRenderMVPT, bool dontRenderPEND, bool dontRenderPKUP,
-            bool dontRenderPLAT, bool dontRenderPLYR, bool dontRenderSFX, bool dontRenderSIMP, bool dontRenderTRIG, bool dontRenderUI, bool dontRenderUIFT,
-            bool dontRenderVIL, bool persistentShinies, Platform platformForScooby)
+            bool renderBasedOnLodt, bool dontRenderLevelModel, bool dontRenderBOUL, bool dontRenderBUTN, bool dontRenderCAM, bool dontRenderDSTR,
+            bool dontRenderDYNA, bool dontRenderEGEN, bool dontRenderHANG, bool dontRenderLITE, bool dontRenderMRKR, bool dontRenderMVPT,
+            bool dontRenderPEND, bool dontRenderPKUP, bool dontRenderPLAT, bool dontRenderPLYR, bool dontRenderSFX, bool dontRenderSIMP,
+            bool dontRenderTRIG, bool dontRenderUI, bool dontRenderUIFT, bool dontRenderVIL, bool persistentShinies, Platform platformForScooby)
         {
             this.hipPaths = hipPaths;
             TextureFolderPaths = textureFolderPaths;
@@ -137,6 +138,7 @@ namespace IndustrialPark
             AlternateNameDisplayMode = alternateNameDisplayMode;
             this.hiddenAssets = hiddenAssets;
             this.isDrawingUI = isDrawingUI;
+            this.renderBasedOnLodt = renderBasedOnLodt;
             this.dontRenderLevelModel = dontRenderLevelModel;
             this.dontRenderBOUL = dontRenderBOUL;
             this.dontRenderBUTN = dontRenderBUTN;

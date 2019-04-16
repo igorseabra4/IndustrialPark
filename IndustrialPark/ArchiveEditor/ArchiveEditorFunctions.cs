@@ -266,9 +266,9 @@ namespace IndustrialPark
             {
                 if (renderableAssetSetCommon.Contains(ra))
                     renderableAssetSetCommon.Remove(ra);
-                else if (renderableAssetSetTrans.Contains(ra))
+                if (renderableAssetSetTrans.Contains(ra))
                     renderableAssetSetTrans.Remove(ra);
-                else if (renderableAssetSetJSP.Contains(ra))
+                if (renderableAssetSetJSP.Contains(ra))
                     renderableAssetSetJSP.Remove((AssetJSP)ra);
             }
 
@@ -276,6 +276,10 @@ namespace IndustrialPark
                 jsp.GetRenderWareModelFile().Dispose();
             if (assetDictionary[assetID] is AssetMODL modl)
                 modl.GetRenderWareModelFile().Dispose();
+            if (assetDictionary[assetID] is AssetMINF minf)
+                minf.MovieRemoveFromDictionary();
+            if (assetDictionary[assetID] is AssetLODT lodt)
+                lodt.ClearDictionary();
         }
 
         public bool ContainsAsset(uint key)

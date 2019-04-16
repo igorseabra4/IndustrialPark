@@ -16,7 +16,7 @@
         Timer,
         DuplicatotronSettings,
 
-        // Pickups and Tikis
+        // BFBB Pickups and Tikis
         Shiny_Red,
         Shiny_Yellow,
         Shiny_Green,
@@ -36,6 +36,8 @@
         Artwork,
         SteeringWheel,
         PowerCrystal,
+
+        // TSSM Pickups and Tikis
 
         // Enemies
         Fodder,

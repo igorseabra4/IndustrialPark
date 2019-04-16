@@ -46,8 +46,26 @@ namespace IndustrialPark
 
     public class AssetLODT : Asset
     {
+        public static Dictionary<uint, float> MaxDistances = new Dictionary<uint, float>();
+
         public AssetLODT(Section_AHDR AHDR) : base(AHDR)
         {
+            UpdateDictionary();
+        }
+
+        public void UpdateDictionary()
+        {
+            foreach (EntryLODT entry in LODT_Entries)
+                if (MaxDistances.ContainsKey(entry.ModelAssetID))
+                    MaxDistances[entry.ModelAssetID] = entry.MaxDistance;
+                else
+                    MaxDistances.Add(entry.ModelAssetID, entry.MaxDistance);
+        }
+
+        public void ClearDictionary()
+        {
+            foreach (EntryLODT entry in LODT_Entries)
+                MaxDistances.Remove(entry.ModelAssetID);
         }
 
         public override bool HasReference(uint assetID)
@@ -119,6 +137,7 @@ namespace IndustrialPark
                 }
 
                 Data = newData.ToArray();
+                UpdateDictionary();
             }
         }
 

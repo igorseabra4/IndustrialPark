@@ -276,6 +276,9 @@ namespace IndustrialPark
 
         public void DrawCube(Matrix world, bool isSelected, float multiplier = 0.5f)
         {
+            if (AssetMODL.renderBasedOnLodt && Vector3.Distance(Camera.Position, (Vector3)world.Row4) > 100f)
+                return;
+
             DefaultRenderData renderData;
             renderData.worldViewProjection = Matrix.Scaling(multiplier) * world * viewProjection;
             renderData.Color = isSelected ? selectedColor : normalColor;
@@ -289,6 +292,9 @@ namespace IndustrialPark
 
         public void DrawPyramid(Matrix world, bool isSelected, float multiplier = 0.5f)
         {
+            if (AssetMODL.renderBasedOnLodt && Vector3.Distance(Camera.Position, (Vector3)world.Row4) > 100f)
+                return;
+
             DefaultRenderData renderData;
             renderData.worldViewProjection = Matrix.Scaling(multiplier) * world * viewProjection;
             renderData.Color = isSelected ? selectedColor : normalColor;
@@ -302,6 +308,9 @@ namespace IndustrialPark
 
         public void DrawSphere(Matrix world, bool isSelected, Vector4 normalColor)
         {
+            if (AssetMODL.renderBasedOnLodt && Vector3.Distance(Camera.Position, (Vector3)world.Row4) > 100f)
+                return;
+
             DefaultRenderData renderData;
             renderData.worldViewProjection = world * viewProjection;
             renderData.Color = isSelected ? selectedColor : normalColor;
@@ -315,6 +324,9 @@ namespace IndustrialPark
 
         public void DrawPlane(Matrix world, bool isSelected, uint textureAssetID)
         {
+            if (AssetMODL.renderBasedOnLodt && Vector3.Distance(Camera.Position, (Vector3)world.Row4) > 100f)
+                return;
+
             DefaultRenderData renderData;
             renderData.worldViewProjection = world * viewProjection;
             renderData.Color = isSelected ? selectedColor : Vector4.One;
