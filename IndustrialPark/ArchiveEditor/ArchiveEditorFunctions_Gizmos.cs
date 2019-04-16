@@ -7,26 +7,34 @@ namespace IndustrialPark
 {
     public partial class ArchiveEditorFunctions
     {
-        private static PositionGizmo[] positionGizmos = new PositionGizmo[3] {
+        private static PositionGizmo[] positionGizmos;
+        private static RotationGizmo[] rotationGizmos;
+        private static ScaleGizmo[] scaleGizmos;
+        private static PositionLocalGizmo[] positionLocalGizmos;
+
+        public static void SetUpGizmos()
+        {
+            positionGizmos = new PositionGizmo[3]{
                 new PositionGizmo(GizmoType.X),
                 new PositionGizmo(GizmoType.Y),
                 new PositionGizmo(GizmoType.Z)};
 
-        private static RotationGizmo[] rotationGizmos = new RotationGizmo[3] {
+            rotationGizmos = new RotationGizmo[3]{
                 new RotationGizmo(GizmoType.Yaw),
                 new RotationGizmo(GizmoType.Pitch),
                 new RotationGizmo(GizmoType.Roll)};
 
-        private static ScaleGizmo[] scaleGizmos = new ScaleGizmo[4] {
+            scaleGizmos = new ScaleGizmo[4]{
                 new ScaleGizmo(GizmoType.ScaleX),
                 new ScaleGizmo(GizmoType.ScaleY),
                 new ScaleGizmo(GizmoType.ScaleZ),
                 new ScaleGizmo(GizmoType.ScaleAll)};
 
-        private static PositionLocalGizmo[] positionLocalGizmos = new PositionLocalGizmo[3] {
+            positionLocalGizmos = new PositionLocalGizmo[3]{
                 new PositionLocalGizmo(GizmoType.X),
                 new PositionLocalGizmo(GizmoType.Y),
                 new PositionLocalGizmo(GizmoType.Z)};
+        }
 
         private static bool DrawGizmos = false;
         public static GizmoMode CurrentGizmoMode { get; private set; } = GizmoMode.Position;

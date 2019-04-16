@@ -1,6 +1,6 @@
 ﻿namespace IndustrialPark
 {
-    partial class AddMultipleAssetDialog
+    partial class AddMultipleAssets
     {
         /// <summary>
         /// Required designer variable.

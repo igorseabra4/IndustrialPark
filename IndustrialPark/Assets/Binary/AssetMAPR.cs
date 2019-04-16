@@ -9,7 +9,7 @@ namespace IndustrialPark
     public class EntryMAPR
     {
         public AssetID AssetID_SURF { get; set; }
-        public int Unknown { get; set; }
+        public AssetID Unknown { get; set; }
 
         public EntryMAPR()
         {
@@ -18,7 +18,7 @@ namespace IndustrialPark
 
         public override string ToString()
         {
-            return $"[{Program.MainForm.GetAssetNameFromID(AssetID_SURF)}] - {Unknown}";
+            return $"[{Program.MainForm.GetAssetNameFromID(AssetID_SURF)}] - [{Program.MainForm.GetAssetNameFromID(Unknown)}]";
         }
     }
 
@@ -33,8 +33,12 @@ namespace IndustrialPark
         public override bool HasReference(uint assetID)
         {
             foreach (EntryMAPR a in MAPR_Entries)
+            {
                 if (a.AssetID_SURF == assetID)
                     return true;
+                if (a.Unknown == assetID)
+                    return true;
+            }
 
             return base.HasReference(assetID);
         }
@@ -59,7 +63,7 @@ namespace IndustrialPark
                     entries.Add(new EntryMAPR()
                     {
                         AssetID_SURF = ReadUInt(8 + i * 8),
-                        Unknown = ReadInt(12 + i * 8)
+                        Unknown = ReadUInt(12 + i * 8)
                     });
                 }
                 

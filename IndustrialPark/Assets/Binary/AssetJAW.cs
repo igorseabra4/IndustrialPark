@@ -10,17 +10,17 @@ namespace IndustrialPark
     public class EntryJAW
     {
         public AssetID SoundAssetID { get; set; }
-        public List<byte> JawData { get; set; }
+        public byte[] JawData { get; set; }
 
         public EntryJAW()
         {
             SoundAssetID = 0;
-            JawData = new List<byte>();
+            JawData = new byte[0];
         }
 
         public override string ToString()
         {
-            return $"[{Program.MainForm.GetAssetNameFromID(SoundAssetID)}] - [{JawData.Count}]";
+            return $"[{Program.MainForm.GetAssetNameFromID(SoundAssetID)}] - [{JawData.Length}]";
         }
 
         public override bool Equals(object obj)
@@ -74,7 +74,7 @@ namespace IndustrialPark
                     int length = BitConverter.ToInt32(Data, StartOfJawData + offset);
                     byte[] jawData = Data.Skip(StartOfJawData + offset + 4).Take(length).ToArray();
 
-                    entries.Add(new EntryJAW() { SoundAssetID = soundAssetID, JawData = jawData.ToList() });
+                    entries.Add(new EntryJAW() { SoundAssetID = soundAssetID, JawData = jawData });
                 }
                 
                 return entries.ToArray();
@@ -90,9 +90,9 @@ namespace IndustrialPark
                 {
                     newData.AddRange(BitConverter.GetBytes(Switch(i.SoundAssetID)));
                     newData.AddRange(BitConverter.GetBytes(Switch(newJawData.Count)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.JawData.Count + 4)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.JawData.Length + 4)));
 
-                    newJawData.AddRange(BitConverter.GetBytes(i.JawData.Count));
+                    newJawData.AddRange(BitConverter.GetBytes(i.JawData.Length));
                     newJawData.AddRange(i.JawData);
 
                     while (newJawData.Count % 4 != 0)
@@ -110,7 +110,7 @@ namespace IndustrialPark
             RemoveEntry(assetID);
 
             List<EntryJAW> entries = JAW_Entries.ToList();
-            entries.Add(new EntryJAW() { SoundAssetID = assetID, JawData = jawData.ToList() });
+            entries.Add(new EntryJAW() { SoundAssetID = assetID, JawData = jawData });
 
             JAW_Entries = entries.ToArray();
         }

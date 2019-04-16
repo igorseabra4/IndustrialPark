@@ -527,7 +527,7 @@ namespace IndustrialPark
                 AssetID = AHDR.assetID;
                 FileCount = (byte)value.Length;
                 TotalSoundCount = (short)listForPart2.Count;
-                SoundCountFirstFile = (short)value[0].numSamples;
+                SoundCountFirstFile = (short)(value.Length > 0 ? value[0].numSamples : 0);
                 SoundCountRest = (short)(TotalSoundCount - SoundCountFirstFile);
                 UnknownCount = unkCount;
             }

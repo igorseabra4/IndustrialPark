@@ -24,13 +24,23 @@ namespace IndustrialPark
                 renderingDictionary[key] = value;
         }
 
-        public bool UnsavedChanges { get; set; } = false;
+        private AutoCompleteStringCollection autoCompleteSource = new AutoCompleteStringCollection();
+        private TextBox textBoxFindAsset;
 
-        public string currentlyOpenFilePath;
-        public Section_HIPA HIPA;
-        public Section_PACK PACK;
-        public Section_DICT DICT;
-        public Section_STRM STRM;
+        public void SetTextboxForAutocomplete(TextBox textBoxFindAsset)
+        {
+            this.textBoxFindAsset = textBoxFindAsset;
+            this.textBoxFindAsset.AutoCompleteCustomSource = autoCompleteSource;
+        }
+
+        public bool UnsavedChanges { get; set; } = false;
+        public string currentlyOpenFilePath { get; private set; }
+
+        private Section_HIPA HIPA;
+        private Section_PACK PACK;
+        private Section_DICT DICT;
+        private Section_STRM STRM;
+        private Dictionary<uint, Asset> assetDictionary = new Dictionary<uint, Asset>();
 
         public bool New()
         {
@@ -117,6 +127,12 @@ namespace IndustrialPark
             allowRender = true;
         }
 
+        public void Save(string path)
+        {
+            currentlyOpenFilePath = path;
+            Save();
+        }
+
         public void Save()
         {
             HipSection[] hipFile = SetupStream(ref HIPA, ref PACK, ref DICT, ref STRM);
@@ -125,32 +141,67 @@ namespace IndustrialPark
             UnsavedChanges = false;
         }
 
-        private Dictionary<uint, Asset> assetDictionary = new Dictionary<uint, Asset>();
+        public int GetLayerCount() => DICT.LTOC.LHDRList.Count;
 
-        public bool ContainsAsset(uint key)
+        public int GetLayerType(int index) => DICT.LTOC.LHDRList[index].layerType;
+
+        public void SetLayerType(int index, int type) => DICT.LTOC.LHDRList[index].layerType = type;
+
+        public string LayerToString(int index) => "Layer " + index.ToString("D2") + ": "
+            + (currentGame == Game.Incredibles ?
+            ((LayerType_TSSM)DICT.LTOC.LHDRList[index].layerType).ToString() :
+            ((LayerType_BFBB)DICT.LTOC.LHDRList[index].layerType).ToString())
+            + " [" + DICT.LTOC.LHDRList[index].assetIDlist.Count() + "]";
+
+        public List<uint> GetAssetIDsOnLayer(int index) => DICT.LTOC.LHDRList[index].assetIDlist;
+
+        public void AddLayer()
         {
-            return assetDictionary.ContainsKey(key);
+            DICT.LTOC.LHDRList.Add(new Section_LHDR()
+            {
+                assetIDlist = new List<uint>(),
+                LDBG = new Section_LDBG(-1)
+            });
         }
 
-        public bool ContainsAssetWithType(AssetType assetType)
+        public void RemoveLayer(int index)
         {
-            foreach (Asset a in assetDictionary.Values)
-                if (a.AHDR.assetType == assetType)
-                    return true;
+            RemoveAsset(DICT.LTOC.LHDRList[index].assetIDlist);
 
-            return false;
+            DICT.LTOC.LHDRList.RemoveAt(index);
+
+            UnsavedChanges = true;
         }
 
-        public Asset GetFromAssetID(uint key)
+        public void MoveLayerUp(int index)
         {
-            if (ContainsAsset(key))
-                return assetDictionary[key];
-            throw new KeyNotFoundException("Asset not present in dictionary.");
+            if (index > 0)
+            {
+                Section_LHDR previous = DICT.LTOC.LHDRList[index - 1];
+                DICT.LTOC.LHDRList[index - 1] = DICT.LTOC.LHDRList[index];
+                DICT.LTOC.LHDRList[index] = previous;
+                UnsavedChanges = true;
+            }
         }
 
-        public Dictionary<uint, Asset>.ValueCollection GetAllAssets()
+        public void MoveLayerDown(int index)
         {
-            return assetDictionary.Values;
+            if (index < DICT.LTOC.LHDRList.Count - 1)
+            {
+                Section_LHDR post = DICT.LTOC.LHDRList[index + 1];
+                DICT.LTOC.LHDRList[index + 1] = DICT.LTOC.LHDRList[index];
+                DICT.LTOC.LHDRList[index] = post;
+                UnsavedChanges = true;
+            }
+        }
+
+        public int GetLayerFromAssetID(uint assetID)
+        {
+            for (int i = 0; i < DICT.LTOC.LHDRList.Count; i++)
+                if (DICT.LTOC.LHDRList[i].assetIDlist.Contains(assetID))
+                    return i;
+
+            throw new Exception($"Asset ID {assetID.ToString("X8")} is not present in any layer.");
         }
 
         public void Dispose()
@@ -197,10 +248,10 @@ namespace IndustrialPark
                     jsp.GetRenderWareModelFile().Dispose();
                 else if (assetDictionary[assetID] is AssetMODL modl)
                     modl.GetRenderWareModelFile().Dispose();
-                
+
                 progressBar.PerformStep();
             }
-            
+
             progressBar.Close();
         }
 
@@ -225,6 +276,50 @@ namespace IndustrialPark
                 jsp.GetRenderWareModelFile().Dispose();
             if (assetDictionary[assetID] is AssetMODL modl)
                 modl.GetRenderWareModelFile().Dispose();
+        }
+
+        public bool ContainsAsset(uint key)
+        {
+            return assetDictionary.ContainsKey(key);
+        }
+
+        public List<AssetType> AssetTypesOnArchive()
+        {
+            var assetTypeList = new List<AssetType>();
+
+            foreach (Asset asset in assetDictionary.Values)
+                if (!assetTypeList.Contains(asset.AHDR.assetType))
+                    assetTypeList.Add(asset.AHDR.assetType);
+
+            assetTypeList.Sort();
+            return assetTypeList;
+        }
+
+        public List<AssetType> AssetTypesOnLayer(int index)
+        {
+            List<uint> assetIDs = GetAssetIDsOnLayer(index);
+            var assetTypeList = new List<AssetType>();
+
+            for (int i = 0; i < assetIDs.Count(); i++)
+                if (!assetTypeList.Contains(assetDictionary[assetIDs[i]].AHDR.assetType))
+                    assetTypeList.Add(assetDictionary[assetIDs[i]].AHDR.assetType);
+
+            assetTypeList.Sort();
+            return assetTypeList;
+        }
+
+        public bool ContainsAssetWithType(AssetType assetType) => AssetTypesOnArchive().Contains(assetType);
+        
+        public Asset GetFromAssetID(uint key)
+        {
+            if (ContainsAsset(key))
+                return assetDictionary[key];
+            throw new KeyNotFoundException("Asset not present in dictionary.");
+        }
+
+        public Dictionary<uint, Asset>.ValueCollection GetAllAssets()
+        {
+            return assetDictionary.Values;
         }
 
         public static bool allowRender = true;
@@ -390,50 +485,11 @@ namespace IndustrialPark
             
             allowRender = true;
         }
-        
-        private AutoCompleteStringCollection autoCompleteSource = new AutoCompleteStringCollection();
-        private TextBox textBoxFindAsset;
-
-        public void SetTextboxForAutocomplete(TextBox textBoxFindAsset)
-        {
-            this.textBoxFindAsset = textBoxFindAsset;
-            this.textBoxFindAsset.AutoCompleteCustomSource = autoCompleteSource;
-        }
-        
-        public void RemoveLayer(int index)
-        {
-            RemoveAsset(DICT.LTOC.LHDRList[index].assetIDlist);
-
-            DICT.LTOC.LHDRList.RemoveAt(index);
-
-            UnsavedChanges = true;
-        }
-
-        public void MoveLayerUp(int selectedIndex)
-        {
-            if (selectedIndex > 0)
-            {
-                Section_LHDR previous = DICT.LTOC.LHDRList[selectedIndex - 1];
-                DICT.LTOC.LHDRList[selectedIndex - 1] = DICT.LTOC.LHDRList[selectedIndex];
-                DICT.LTOC.LHDRList[selectedIndex] = previous;
-                UnsavedChanges = true;
-            }
-        }
-
-        public void MoveLayerDown(int selectedIndex)
-        {
-            if (selectedIndex < DICT.LTOC.LHDRList.Count - 1)
-            {
-                Section_LHDR post = DICT.LTOC.LHDRList[selectedIndex + 1];
-                DICT.LTOC.LHDRList[selectedIndex + 1] = DICT.LTOC.LHDRList[selectedIndex];
-                DICT.LTOC.LHDRList[selectedIndex] = post;
-                UnsavedChanges = true;
-            }
-        }
 
         public void CreateNewAsset(int layerIndex, out bool success, out uint assetID)
         {
-            Section_AHDR AHDR = AddAssetDialog.GetAsset(new AddAssetDialog(), out success, out bool setPosition);
+            Section_AHDR AHDR = AssetHeader.GetAsset(new AssetHeader(), out success, out bool setPosition);
+            assetID = 0;
 
             if (success)
             {
@@ -453,9 +509,9 @@ namespace IndustrialPark
                 {
                     MessageBox.Show("Unable to add asset: " + ex.Message);
                 }
-            }
 
-            assetID = AHDR.assetID;
+                assetID = AHDR.assetID;
+            }
         }
 
         public uint AddAsset(int layerIndex, Section_AHDR AHDR)
@@ -622,23 +678,6 @@ namespace IndustrialPark
                 return currentlySelectedAssets;
             }
         }
-        
-        public void ClearSelectedAssets()
-        {
-            for (int i = 0; i < currentlySelectedAssets.Count; i++)
-                currentlySelectedAssets[i].isSelected = false;
-
-            currentlySelectedAssets.Clear();
-        }
-
-        public List<uint> GetCurrentlySelectedAssetIDs()
-        {
-            List<uint> selectedAssetIDs = new List<uint>();
-            foreach (Asset a in currentlySelectedAssets)
-                selectedAssetIDs.Add(a.AHDR.assetID);
-
-            return selectedAssetIDs;
-        }
 
         public void SelectAsset(uint assetID, bool add)
         {
@@ -654,13 +693,21 @@ namespace IndustrialPark
             UpdateGizmoPosition();
         }
 
-        public int GetLayerFromAssetID(uint assetID)
+        public List<uint> GetCurrentlySelectedAssetIDs()
         {
-            for (int i = 0; i < DICT.LTOC.LHDRList.Count; i++)
-                if (DICT.LTOC.LHDRList[i].assetIDlist.Contains(assetID))
-                    return i;
+            List<uint> selectedAssetIDs = new List<uint>();
+            foreach (Asset a in currentlySelectedAssets)
+                selectedAssetIDs.Add(a.AHDR.assetID);
 
-            throw new Exception($"Asset ID {assetID.ToString("X8")} is not present in any layer.");
+            return selectedAssetIDs;
+        }
+
+        public void ClearSelectedAssets()
+        {
+            for (int i = 0; i < currentlySelectedAssets.Count; i++)
+                currentlySelectedAssets[i].isSelected = false;
+
+            currentlySelectedAssets.Clear();
         }
 
         public void RecalculateAllMatrices()

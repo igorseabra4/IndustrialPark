@@ -162,7 +162,7 @@ namespace IndustrialPark
 
         private Matrix world;
         private BoundingBox boundingBox;
-        private uint _modelAssetID => HipHopFile.Functions.BKDRHash("teleportation_box_bind");
+        private static readonly uint _modelAssetID = HipHopFile.Functions.BKDRHash("teleportation_box_bind");
 
         private AssetMRKR MRKR;
 

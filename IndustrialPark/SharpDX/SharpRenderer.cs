@@ -40,6 +40,7 @@ namespace IndustrialPark
             ResetColors();
             SetSharpShader();
             LoadTexture();
+            ArchiveEditorFunctions.SetUpGizmos();
         }
 
         public SharpShader basicShader;

@@ -9,14 +9,26 @@ namespace IndustrialPark
 {
     public class EntryLODT
     {
+        [Category("LODT Entry")]
         public AssetID ModelAssetID { get; set; }
+        [Category("LODT Entry")]
         public float MaxDistance { get; set; }
+        [Category("LODT Entry")]
         public AssetID LOD1_Model { get; set; }
+        [Category("LODT Entry")]
         public float LOD1_Distance { get; set; }
+        [Category("LODT Entry")]
         public AssetID LOD2_Model { get; set; }
+        [Category("LODT Entry")]
         public float LOD2_Distance { get; set; }
+        [Category("LODT Entry")]
         public AssetID LOD3_Model { get; set; }
+        [Category("LODT Entry")]
         public float LOD3_Distance { get; set; }
+        [Category("LODT Entry (Movie Only)")]
+        public float Unknown { get; set; }
+
+        public static int SizeOfStruct => Functions.currentGame == Game.Incredibles ? 0x24 : 0x20;
 
         public EntryLODT()
         {
@@ -29,18 +41,6 @@ namespace IndustrialPark
         public override string ToString()
         {
             return $"[{Program.MainForm.GetAssetNameFromID(ModelAssetID)}] - {MaxDistance}";
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj != null && obj is EntryLODT entryLODT)
-                return ModelAssetID == entryLODT.ModelAssetID;
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return ModelAssetID.GetHashCode();
         }
     }
 
@@ -73,23 +73,29 @@ namespace IndustrialPark
             get
             {
                 List<EntryLODT> entries = new List<EntryLODT>();
-                int amount = ReadInt(0);
 
-                for (int i = 0; i < amount; i++)
+                for (int i = 4; i < Data.Length; i += EntryLODT.SizeOfStruct)
                 {
-                    entries.Add(new EntryLODT()
+                    byte[] Flags = BitConverter.GetBytes(ReadInt(i + 8));
+
+                    EntryLODT a = new EntryLODT
                     {
-                        ModelAssetID = ReadUInt(i * 0x20 + 0x04),
-                        MaxDistance = ReadFloat(i * 0x20 + 0x08),
-                        LOD1_Model = ReadUInt(i * 0x20 + 0x0C),
-                        LOD2_Model = ReadUInt(i * 0x20 + 0x10),
-                        LOD3_Model = ReadUInt(i * 0x20 + 0x14),
-                        LOD1_Distance = ReadFloat(i * 0x20 + 0x18),
-                        LOD2_Distance = ReadFloat(i * 0x20 + 0x1C),
-                        LOD3_Distance = ReadFloat(i * 0x20 + 0x20),
-                    });
+                        ModelAssetID = ReadUInt(i + 0x00),
+                        MaxDistance = ReadFloat(i + 0x04),
+                        LOD1_Model = ReadUInt(i + 0x08),
+                        LOD2_Model = ReadUInt(i + 0x0C),
+                        LOD3_Model = ReadUInt(i + 0x10),
+                        LOD1_Distance = ReadFloat(i + 0x14),
+                        LOD2_Distance = ReadFloat(i + 0x18),
+                        LOD3_Distance = ReadFloat(i + 0x1C)
+                    };
+
+                    if (Functions.currentGame == Game.Incredibles)
+                        a.Unknown = ReadFloat(i + 0x20);
+                    
+                    entries.Add(a);
                 }
-                
+
                 return entries.ToArray();
             }
             set
@@ -107,8 +113,11 @@ namespace IndustrialPark
                     newData.AddRange(BitConverter.GetBytes(Switch(i.LOD1_Distance)));
                     newData.AddRange(BitConverter.GetBytes(Switch(i.LOD2_Distance)));
                     newData.AddRange(BitConverter.GetBytes(Switch(i.LOD3_Distance)));
+
+                    if (Functions.currentGame == Game.Incredibles)
+                        newData.AddRange(BitConverter.GetBytes(Switch(i.Unknown)));
                 }
-                
+
                 Data = newData.ToArray();
             }
         }

@@ -13,7 +13,7 @@ namespace IndustrialPark
 {
     public partial class ArchiveEditorFunctions
     {
-    private class LHDRComparer : IComparer<int>
+        private class LHDRComparer : IComparer<int>
         {
             private static readonly List<int> layerOrderBFBB = new List<int> {
                 (int)LayerType_BFBB.TEXTURE,
@@ -94,9 +94,9 @@ namespace IndustrialPark
             }
                 
             if (willOpen)
-            foreach (uint u in list)
-                if (assetDictionary.ContainsKey(u))
-                    OpenInternalEditor(assetDictionary[u]);
+                foreach (uint u in list)
+                    if (assetDictionary.ContainsKey(u))
+                        OpenInternalEditor(assetDictionary[u]);
         }
 
         private void OpenInternalEditor(Asset asset)

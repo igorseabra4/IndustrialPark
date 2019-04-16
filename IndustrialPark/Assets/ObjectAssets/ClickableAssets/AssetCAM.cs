@@ -203,15 +203,15 @@ namespace IndustrialPark
             set => Write(0x38, value);
         }
         [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
-        public int ViewOffsetY
+        public float ViewOffsetY
         {
-            get => ReadInt(0x3C);
+            get => ReadFloat(0x3C);
             set => Write(0x3C, value);
         }
         [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
-        public int ViewOffsetZ
+        public float ViewOffsetZ
         {
-            get => ReadInt(0x40);
+            get => ReadFloat(0x40);
             set => Write(0x40, value);
         }
         [Category("Camera")]

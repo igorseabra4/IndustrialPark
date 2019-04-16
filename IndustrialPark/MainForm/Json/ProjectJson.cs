@@ -1,5 +1,6 @@
 ﻿using SharpDX;
 using System.Collections.Generic;
+using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -8,6 +9,7 @@ namespace IndustrialPark
         public List<string> hipPaths;
         public List<string> TextureFolderPaths;
         public List<uint> hiddenAssets;
+        public Platform platformForScooby;
 
         public Vector3 CamPos;
         public float Yaw;
@@ -113,7 +115,7 @@ namespace IndustrialPark
             bool dontRenderLevelModel, bool dontRenderBOUL, bool dontRenderBUTN, bool dontRenderCAM, bool dontRenderDSTR, bool dontRenderDYNA,
             bool dontRenderEGEN, bool dontRenderHANG, bool dontRenderLITE, bool dontRenderMRKR, bool dontRenderMVPT, bool dontRenderPEND, bool dontRenderPKUP,
             bool dontRenderPLAT, bool dontRenderPLYR, bool dontRenderSFX, bool dontRenderSIMP, bool dontRenderTRIG, bool dontRenderUI, bool dontRenderUIFT,
-            bool dontRenderVIL, bool persistentShinies)
+            bool dontRenderVIL, bool persistentShinies, Platform platformForScooby)
         {
             this.hipPaths = hipPaths;
             TextureFolderPaths = textureFolderPaths;
@@ -157,6 +159,7 @@ namespace IndustrialPark
             this.dontRenderUIFT = dontRenderUIFT;
             this.dontRenderVIL = dontRenderVIL;
             this.persistentShinies = persistentShinies;
+            this.platformForScooby = platformForScooby;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace IndustrialPark
 {
-    partial class AddAssetDialog
+    partial class AssetHeader
     {
         /// <summary>
         /// Required designer variable.
@@ -47,7 +47,6 @@
             this.textBoxAssetFileName = new System.Windows.Forms.TextBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.textBoxChecksum = new System.Windows.Forms.TextBox();
-            this.buttonGrabTemplate = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -241,17 +240,6 @@
             this.textBoxChecksum.TabIndex = 0;
             this.textBoxChecksum.TextChanged += new System.EventHandler(this.textBoxChecksum_TextChanged);
             // 
-            // buttonGrabTemplate
-            // 
-            this.buttonGrabTemplate.Enabled = false;
-            this.buttonGrabTemplate.Location = new System.Drawing.Point(182, 180);
-            this.buttonGrabTemplate.Name = "buttonGrabTemplate";
-            this.buttonGrabTemplate.Size = new System.Drawing.Size(172, 23);
-            this.buttonGrabTemplate.TabIndex = 7;
-            this.buttonGrabTemplate.Text = "Grab Template";
-            this.buttonGrabTemplate.UseVisualStyleBackColor = true;
-            this.buttonGrabTemplate.Click += new System.EventHandler(this.buttonGrabTemplate_Click);
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -271,7 +259,6 @@
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(372, 281);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.buttonGrabTemplate);
             this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
@@ -325,7 +312,6 @@
         private System.Windows.Forms.TextBox textBoxAssetFileName;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.TextBox textBoxChecksum;
-        private System.Windows.Forms.Button buttonGrabTemplate;
         private System.Windows.Forms.Label label1;
     }
 }

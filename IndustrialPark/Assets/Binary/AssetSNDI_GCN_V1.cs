@@ -58,6 +58,12 @@ namespace IndustrialPark
             get => ReadInt(0x0);
             set => Write(0x0, value);
         }
+        [Browsable(false)]
+        public uint Padding
+        {
+            get => ReadUInt(0x4);
+            set => Write(0x4, value);
+        }
         private int Entries_SNDS_amount
         {
             get => ReadInt(0x8);

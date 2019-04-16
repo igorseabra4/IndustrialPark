@@ -5,11 +5,11 @@ using System.Windows.Forms;
 
 namespace IndustrialPark
 {
-    public partial class AddAssetDialog : Form
+    public partial class AssetHeader : Form
     {
         System.Drawing.Color defaultColor;
 
-        public AddAssetDialog()
+        public AssetHeader()
         {
             InitializeComponent();
 
@@ -21,7 +21,7 @@ namespace IndustrialPark
             defaultColor = textBoxAssetID.BackColor;
         }
 
-        public AddAssetDialog(Section_AHDR AHDR)
+        public AssetHeader(Section_AHDR AHDR)
         {
             InitializeComponent();
 
@@ -49,11 +49,9 @@ namespace IndustrialPark
             textBoxAssetFileName.Text = AHDR.ADBG.assetFileName;
             labelRawDataSize.Text = "Raw Data Size: " + AHDR.fileSize.ToString();
             textBoxChecksum.Text = "0x"+ AHDR.ADBG.checksum.ToString("X8");
-
-            VerifyTemplate();
         }
 
-        public static Section_AHDR GetAsset(AddAssetDialog a, out bool success, out bool setPosition)
+        public static Section_AHDR GetAsset(AssetHeader a, out bool success, out bool setPosition)
         {
             DialogResult d = a.ShowDialog();
             if (d == DialogResult.OK)
@@ -101,7 +99,7 @@ namespace IndustrialPark
 
         public static Section_AHDR GetAsset(Section_AHDR AHDR, out bool success, out bool setPosition)
         {
-            return GetAsset(new AddAssetDialog(AHDR), out success, out setPosition);
+            return GetAsset(new AssetHeader(AHDR), out success, out setPosition);
         }
         
         uint assetID = 0;
@@ -126,7 +124,6 @@ namespace IndustrialPark
             label1.Visible = flags == 0;
 
             setPosition = false;
-            VerifyTemplate();
         }
 
         private void textBoxAssetID_TextChanged(object sender, EventArgs e)
@@ -192,25 +189,7 @@ namespace IndustrialPark
         {
             Close();
         }
-
-        private byte[] Template = new byte[0];
-
-        private void VerifyTemplate()
-        {
-            Template = ArchiveEditorFunctions.GetTemplate(assetType);
-            buttonGrabTemplate.Enabled = Template != null;
-        }
-
+        
         private bool setPosition = false;
-
-        private void buttonGrabTemplate_Click(object sender, EventArgs e)
-        {
-            data = Template;
-            textBoxAssetName.Text = assetType.ToString() + "_NEW";
-            labelRawDataSize.Text = "Raw Data Size: " + data.Length.ToString();
-            buttonOK.Enabled = true;
-
-            setPosition = true;
-        }
     }
 }

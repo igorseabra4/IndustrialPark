@@ -157,8 +157,7 @@ namespace IndustrialPark
             };
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                archive.currentlyOpenFilePath = saveFileDialog.FileName;
-                archive.Save();
+                archive.Save(saveFileDialog.FileName);
 
                 Text = Path.GetFileName(saveFileDialog.FileName);
                 Program.MainForm.SetToolStripItemName(this, Text);
@@ -213,40 +212,28 @@ namespace IndustrialPark
                 return archive.currentlyOpenFilePath;
         }
 
-        private string LayerToString(int index)
-        {
-            string layerName;
-            if (Functions.currentGame == Game.Incredibles)
-                layerName = ((LayerType_TSSM)archive.DICT.LTOC.LHDRList[index].layerType).ToString();
-            else
-                layerName = ((LayerType_BFBB)archive.DICT.LTOC.LHDRList[index].layerType).ToString();
-
-            return "Layer " + index.ToString() + ": "
-                + layerName
-                + " [" + archive.DICT.LTOC.LHDRList[index].assetIDlist.Count() + "]";
-        }
-
         private void PopulateLayerComboBox()
         {
             programIsChangingStuff = true;
 
             comboBoxLayers.Items.Clear();
-            for (int i = 0; i < archive.DICT.LTOC.LHDRList.Count; i++)
-                comboBoxLayers.Items.Add(LayerToString(i));
+            for (int i = 0; i < archive.GetLayerCount(); i++)
+                comboBoxLayers.Items.Add(archive.LayerToString(i));
 
             programIsChangingStuff = false;
         }
 
         private void comboBoxLayers_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (programIsChangingStuff) return;
+            if (programIsChangingStuff)
+                return;
 
             programIsChangingStuff = true;
 
             if (Functions.currentGame == Game.Incredibles)
-                comboBoxLayerTypes.SelectedItem = (LayerType_TSSM)archive.DICT.LTOC.LHDRList[comboBoxLayers.SelectedIndex].layerType;
+                comboBoxLayerTypes.SelectedItem = (LayerType_TSSM)archive.GetLayerType(comboBoxLayers.SelectedIndex);
             else
-                comboBoxLayerTypes.SelectedItem = (LayerType_BFBB)archive.DICT.LTOC.LHDRList[comboBoxLayers.SelectedIndex].layerType;
+                comboBoxLayerTypes.SelectedItem = (LayerType_BFBB)archive.GetLayerType(comboBoxLayers.SelectedIndex);
 
             PopulateAssetListAndComboBox();
 
@@ -268,21 +255,17 @@ namespace IndustrialPark
             if (comboBoxLayerTypes.SelectedItem == null || programIsChangingStuff)
                 return;
 
-            archive.DICT.LTOC.LHDRList[comboBoxLayers.SelectedIndex].layerType = (int)comboBoxLayerTypes.SelectedItem;
-            comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = LayerToString(comboBoxLayers.SelectedIndex);
+            archive.SetLayerType(comboBoxLayers.SelectedIndex, (int)comboBoxLayerTypes.SelectedItem);
+            comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
             archive.UnsavedChanges = true;
         }
 
         private void buttonAddLayer_Click(object sender, EventArgs e)
         {
             try
-            { 
-                archive.DICT.LTOC.LHDRList.Add(new Section_LHDR()
-                {
-                    assetIDlist = new List<uint>(),
-                    LDBG = new Section_LDBG(-1)
-                });
-                comboBoxLayers.Items.Add(LayerToString(archive.DICT.LTOC.LHDRList.Count - 1));
+            {
+                archive.AddLayer();
+                comboBoxLayers.Items.Add(archive.LayerToString(archive.GetLayerCount() - 1));
                 comboBoxLayers.SelectedIndex = comboBoxLayers.Items.Count - 1;
                 PopulateAssetListAndComboBox();
                 archive.UnsavedChanges = true;
@@ -348,19 +331,10 @@ namespace IndustrialPark
         private void PopulateAssetListAndComboBox()
         {
             programIsChangingStuff = true;
-
-            List<uint> assetIDs = archive.DICT.LTOC.LHDRList[comboBoxLayers.SelectedIndex].assetIDlist;
-            List <AssetType> assetTypeList = new List<AssetType>();
-            for (int i = 0; i < assetIDs.Count(); i++)
-            {
-                if (!assetTypeList.Contains(archive.GetFromAssetID(assetIDs[i]).AHDR.assetType))
-                    assetTypeList.Add(archive.GetFromAssetID(assetIDs[i]).AHDR.assetType);
-            }
-            assetTypeList.Sort();
-
+            
             comboBoxAssetTypes.Items.Clear();
             comboBoxAssetTypes.Items.Add("All");
-            comboBoxAssetTypes.Items.AddRange(assetTypeList.ToArray().Cast<object>().ToArray());
+            comboBoxAssetTypes.Items.AddRange(archive.AssetTypesOnLayer(comboBoxLayers.SelectedIndex).Cast<object>().ToArray());
 
             comboBoxAssetTypes.SelectedIndex = 0;
             PopulateAssetList();
@@ -378,7 +352,7 @@ namespace IndustrialPark
             
             if (comboBoxLayers.SelectedItem != null)
             {
-                List<uint> assetIDs = archive.DICT.LTOC.LHDRList[comboBoxLayers.SelectedIndex].assetIDlist;
+                List<uint> assetIDs = archive.GetAssetIDsOnLayer(comboBoxLayers.SelectedIndex);
                 List<ListViewItem> items = new List<ListViewItem>();
 
                 for (int i = 0; i < assetIDs.Count(); i++)
@@ -433,14 +407,14 @@ namespace IndustrialPark
 
             if (success)
             {
-                comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = LayerToString(comboBoxLayers.SelectedIndex);
+                comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
                 SetSelectedIndices(new List<uint>() { assetID }, true);
             }
         }
 
         private void importMultipleAssetsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            List<Section_AHDR> AHDRs = AddMultipleAssetDialog.GetAssets(out bool success);
+            List<Section_AHDR> AHDRs = AddMultipleAssets.GetAssets(out bool success);
 
             if (success)
             {
@@ -469,7 +443,7 @@ namespace IndustrialPark
                         assetIDs.Add(AHDR.assetID);
                     }
 
-                    comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = LayerToString(comboBoxLayers.SelectedIndex);
+                    comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
 
                     SetSelectedIndices(assetIDs, true);
                 }
@@ -486,7 +460,7 @@ namespace IndustrialPark
 
             archive.DuplicateSelectedAssets(comboBoxLayers.SelectedIndex, out List<uint> finalIndices);
             
-            comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = LayerToString(comboBoxLayers.SelectedIndex);
+            comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
             SetSelectedIndices(finalIndices, false);
         }
 
@@ -501,7 +475,7 @@ namespace IndustrialPark
         {
             archive.PasteAssetsFromClipboard(comboBoxLayers.SelectedIndex, out List<uint> finalIndices);
 
-            comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = LayerToString(comboBoxLayers.SelectedIndex);
+            comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
             
             SetSelectedIndices(finalIndices, true);
         }
@@ -519,7 +493,7 @@ namespace IndustrialPark
 
             archive.RemoveAsset(CurrentlySelectedAssetIDs());
 
-            comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = LayerToString(comboBoxLayers.SelectedIndex);
+            comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
 
             archive.UnsavedChanges = true;
 
@@ -563,7 +537,7 @@ namespace IndustrialPark
             try
             {
                 uint oldAssetID = CurrentlySelectedAssetIDs()[0];
-                Section_AHDR AHDR = AddAssetDialog.GetAsset(archive.GetFromAssetID(oldAssetID).AHDR, out bool success, out bool setPosition);
+                Section_AHDR AHDR = AssetHeader.GetAsset(archive.GetFromAssetID(oldAssetID).AHDR, out bool success, out bool setPosition);
 
                 if (success)
                 {
@@ -934,7 +908,7 @@ namespace IndustrialPark
             {
                 archive.UnsavedChanges = true;
 
-                comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = LayerToString(comboBoxLayers.SelectedIndex);
+                comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
                 //PopulateAssetListAndComboBox();
 
                 SetSelectedIndices(assetIDs, true);

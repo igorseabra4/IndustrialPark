@@ -84,6 +84,9 @@ namespace IndustrialPark
                 }
             }
 
+            if (autoSaveOnClosingToolStripMenuItem.Checked)
+                SaveProject(currentProjectPath);
+
             IPSettings settings = new IPSettings
             {
                 AutosaveOnClose = autoSaveOnClosingToolStripMenuItem.Checked,
@@ -92,9 +95,6 @@ namespace IndustrialPark
             };
 
             File.WriteAllText(pathToSettings, JsonConvert.SerializeObject(settings, Formatting.Indented));
-
-            if (autoSaveOnClosingToolStripMenuItem.Checked)
-                SaveProject(currentProjectPath);
         }
 
         private void MainForm_DragDrop(object sender, DragEventArgs e)
@@ -216,7 +216,7 @@ namespace IndustrialPark
                 AssetJSP.dontRender, AssetBOUL.dontRender, AssetBUTN.dontRender, AssetCAM.dontRender, AssetDSTR.dontRender, AssetDYNA.dontRender, AssetEGEN.dontRender,
                 AssetHANG.dontRender, AssetLITE.dontRender, AssetMRKR.dontRender, AssetMVPT.dontRender, AssetPEND.dontRender, AssetPLAT.dontRender, AssetPLAT.dontRender,
                 AssetPLYR.dontRender, AssetSFX.dontRender, AssetSIMP.dontRender, AssetTRIG.dontRender, AssetUI.dontRender, AssetUIFT.dontRender, AssetVIL.dontRender,
-                ArchiveEditorFunctions.persistentShinies);
+                ArchiveEditorFunctions.persistentShinies, HipHopFile.Functions.currentPlatform);
         }
 
         private void ApplySettings(string ipSettingsPath)
@@ -239,13 +239,9 @@ namespace IndustrialPark
                     MessageBox.Show("Error loading textures from " + s + ": folder not found");
                     TopMost = false;
                 }
-
-            List<ArchiveEditor> aeList = new List<ArchiveEditor>();
-            aeList.AddRange(archiveEditors);
-            foreach (ArchiveEditor ae in aeList)
-                ae.CloseArchiveEditor();
-
+            
             ArchiveEditorFunctions.hiddenAssets = ipSettings.hiddenAssets;
+            HipHopFile.Functions.currentPlatform = ipSettings.platformForScooby;
 
             foreach (string s in ipSettings.hipPaths)
                 if (s == "Empty")
@@ -1028,7 +1024,7 @@ namespace IndustrialPark
                 if (i is ToolStripMenuItem j)
                     j.Click += eventHandler;
 
-            ToolStripMenuItem pickups = new ToolStripMenuItem("Pickups and Tikis");
+            ToolStripMenuItem pickups = new ToolStripMenuItem("Pickups and Tikis (BFBB)");
             pickups.DropDownItems.AddRange(new ToolStripItem[]
             {
                 new ToolStripMenuItem(AssetTemplate.Shiny_Red.ToString()),
@@ -1058,7 +1054,7 @@ namespace IndustrialPark
                 if (i is ToolStripMenuItem j)
                     j.Click += eventHandler;
 
-            ToolStripMenuItem enemies = new ToolStripMenuItem("Enemies");
+            ToolStripMenuItem enemies = new ToolStripMenuItem("Enemies (BFBB)");
             enemies.DropDownItems.AddRange(new ToolStripItem[]
             {
                 new ToolStripMenuItem(AssetTemplate.Fodder.ToString()),
@@ -1086,7 +1082,7 @@ namespace IndustrialPark
                 if (i is ToolStripMenuItem j)
                     j.Click += eventHandler;
 
-            ToolStripMenuItem stageitems = new ToolStripMenuItem("Stage Items");
+            ToolStripMenuItem stageitems = new ToolStripMenuItem("Stage Items (BFBB)");
             stageitems.DropDownItems.AddRange(new ToolStripItem[]
             {
                 new ToolStripMenuItem(AssetTemplate.Button_Red.ToString()),

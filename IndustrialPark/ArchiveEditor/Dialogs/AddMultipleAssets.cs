@@ -6,11 +6,11 @@ using System.Windows.Forms;
 
 namespace IndustrialPark
 {
-    public partial class AddMultipleAssetDialog : Form
+    public partial class AddMultipleAssets : Form
     {
         System.Drawing.Color defaultColor;
 
-        public AddMultipleAssetDialog()
+        public AddMultipleAssets()
         {
             InitializeComponent();
 
@@ -76,7 +76,7 @@ namespace IndustrialPark
 
         public static List<Section_AHDR> GetAssets(out bool success)
         {
-            AddMultipleAssetDialog a = new AddMultipleAssetDialog();
+            AddMultipleAssets a = new AddMultipleAssets();
             DialogResult d = a.ShowDialog();
             if (d == DialogResult.OK)
             {

@@ -78,7 +78,7 @@
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Gizmos.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetTemplates.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetEditing.cs" />
-    <Compile Include="ArchiveEditor\LinkEditor.Designer.cs">
+    <Compile Include="ArchiveEditor\Dialogs\LinkEditor.Designer.cs">
       <DependentUpon>LinkEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="ArchiveEditor\InternalEditors\InternalPlatEditor.cs">
@@ -105,19 +105,19 @@
     <Compile Include="ArchiveEditor\InternalEditors\InternalFlyEditor.designer.cs">
       <DependentUpon>InternalFlyEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="ArchiveEditor\LinkEditor.cs">
+    <Compile Include="ArchiveEditor\Dialogs\LinkEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ArchiveEditor\LinkListEditor.cs" />
+    <Compile Include="ArchiveEditor\Other\LinkListEditor.cs" />
     <Compile Include="ArchiveEditor\Other\GizmoBase.cs" />
     <Compile Include="ArchiveEditor\Other\PositionGizmo.cs" />
     <Compile Include="ArchiveEditor\Other\PositionLocalGizmo.cs" />
     <Compile Include="ArchiveEditor\Other\RotationGizmo.cs" />
     <Compile Include="ArchiveEditor\Other\ScaleGizmo.cs" />
-    <Compile Include="ArchiveEditor\ProgressBar.cs">
+    <Compile Include="ArchiveEditor\Dialogs\ProgressBar.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ArchiveEditor\ProgressBar.Designer.cs">
+    <Compile Include="ArchiveEditor\Dialogs\ProgressBar.Designer.cs">
       <DependentUpon>ProgressBar.cs</DependentUpon>
     </Compile>
     <Compile Include="Assets\Binary\AssetSHRP.cs" />
@@ -165,10 +165,10 @@
     <Compile Include="Assets\Shared\Enums\PlatTypeSpecific.cs" />
     <Compile Include="Assets\Shared\Interfaces\IRotatableAsset.cs" />
     <Compile Include="Assets\Shared\Interfaces\IScalableAsset.cs" />
-    <Compile Include="ArchiveEditor\ApplyScale.cs">
+    <Compile Include="ArchiveEditor\Dialogs\ApplyScale.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ArchiveEditor\ApplyScale.designer.cs">
+    <Compile Include="ArchiveEditor\Dialogs\ApplyScale.designer.cs">
       <DependentUpon>ApplyScale.cs</DependentUpon>
     </Compile>
     <Compile Include="Links\Enums\EventIncredibles.cs" />
@@ -189,24 +189,24 @@
     <Compile Include="MainForm\UserTemplateManager.Designer.cs">
       <DependentUpon>UserTemplateManager.cs</DependentUpon>
     </Compile>
-    <Compile Include="ArchiveEditor\AddAsset\AddMultipleAssetDialog.cs">
+    <Compile Include="ArchiveEditor\Dialogs\AddMultipleAssets.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ArchiveEditor\AddAsset\AddMultipleAssetDialog.Designer.cs">
-      <DependentUpon>AddMultipleAssetDialog.cs</DependentUpon>
+    <Compile Include="ArchiveEditor\Dialogs\AddMultipleAssets.Designer.cs">
+      <DependentUpon>AddMultipleAssets.cs</DependentUpon>
     </Compile>
     <Compile Include="ArchiveEditor\Other\AssetTemplate.cs" />
-    <Compile Include="ArchiveEditor\ChoosePlatform.cs">
+    <Compile Include="ArchiveEditor\Dialogs\ChoosePlatform.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ArchiveEditor\ChoosePlatform.Designer.cs">
+    <Compile Include="ArchiveEditor\Dialogs\ChoosePlatform.Designer.cs">
       <DependentUpon>ChoosePlatform.cs</DependentUpon>
     </Compile>
-    <Compile Include="ArchiveEditor\AddAsset\AddAssetDialog.cs">
+    <Compile Include="ArchiveEditor\Dialogs\AssetHeader.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ArchiveEditor\AddAsset\AddAssetDialog.Designer.cs">
-      <DependentUpon>AddAssetDialog.cs</DependentUpon>
+    <Compile Include="ArchiveEditor\Dialogs\AssetHeader.Designer.cs">
+      <DependentUpon>AssetHeader.cs</DependentUpon>
     </Compile>
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\InternalAssetEditor.cs">
@@ -240,10 +240,10 @@
     <Compile Include="ArchiveEditor\InternalEditors\InternalTextEditor.designer.cs">
       <DependentUpon>InternalTextEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="ArchiveEditor\NewArchive.cs">
+    <Compile Include="ArchiveEditor\Dialogs\NewArchive.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ArchiveEditor\NewArchive.Designer.cs">
+    <Compile Include="ArchiveEditor\Dialogs\NewArchive.Designer.cs">
       <DependentUpon>NewArchive.cs</DependentUpon>
     </Compile>
     <Compile Include="Assets\Binary\AssetALST.cs" />
@@ -359,13 +359,13 @@
     <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalPlatEditor.resx">
       <DependentUpon>InternalPlatEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\LinkEditor.resx">
+    <EmbeddedResource Include="ArchiveEditor\Dialogs\LinkEditor.resx">
       <DependentUpon>LinkEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\ProgressBar.resx">
+    <EmbeddedResource Include="ArchiveEditor\Dialogs\ProgressBar.resx">
       <DependentUpon>ProgressBar.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\ApplyScale.resx">
+    <EmbeddedResource Include="ArchiveEditor\Dialogs\ApplyScale.resx">
       <DependentUpon>ApplyScale.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Research\AssetIDGenerator.resx">
@@ -377,87 +377,6 @@
     <EmbeddedResource Include="Research\EventSearch.resx">
       <DependentUpon>EventSearch.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="Resources\Templates\BFBB\ALST">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\BOUL">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\BUTN">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\CAM">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\CNTR">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\COLL">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\COND">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\DPAT">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\DSTR">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\DYNA">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\EGEN">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\ENV">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\GRUP">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\JAW">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\LODT">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\MAPR">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\MRKR">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\MVPT">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\PEND">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\PIPT">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\PKUP">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\PLAT">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\PLYR">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\PORT">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\SCRP">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\SHDW">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\SIMP">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <Compile Include="Research\AssetIDGenerator.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -511,14 +430,14 @@
     <EmbeddedResource Include="MainForm\UserTemplateManager.resx">
       <DependentUpon>UserTemplateManager.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\AddAsset\AddMultipleAssetDialog.resx">
-      <DependentUpon>AddMultipleAssetDialog.cs</DependentUpon>
+    <EmbeddedResource Include="ArchiveEditor\Dialogs\AddMultipleAssets.resx">
+      <DependentUpon>AddMultipleAssets.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\ChoosePlatform.resx">
+    <EmbeddedResource Include="ArchiveEditor\Dialogs\ChoosePlatform.resx">
       <DependentUpon>ChoosePlatform.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\AddAsset\AddAssetDialog.resx">
-      <DependentUpon>AddAssetDialog.cs</DependentUpon>
+    <EmbeddedResource Include="ArchiveEditor\Dialogs\AssetHeader.resx">
+      <DependentUpon>AssetHeader.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\ArchiveEditor.resx">
       <DependentUpon>ArchiveEditor.cs</DependentUpon>
@@ -539,7 +458,7 @@
     <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalTextEditor.resx">
       <DependentUpon>InternalTextEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\NewArchive.resx">
+    <EmbeddedResource Include="ArchiveEditor\Dialogs\NewArchive.resx">
       <DependentUpon>NewArchive.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm\AboutBox.resx">
@@ -593,27 +512,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\Models\Sphere.obj">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\SNDI">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\TEXT">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\TIMR">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\TRIG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\BFBB\VIL">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\Incredibles\SIMP">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Templates\Scooby\SIMP">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\Models\Torus.DFF">

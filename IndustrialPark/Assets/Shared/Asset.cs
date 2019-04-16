@@ -22,8 +22,8 @@ namespace IndustrialPark
         [Category("Data")]
         public byte[] Data
         {
-            get { return AHDR.data; }
-            set { AHDR.data = value; }
+            get => AHDR.data;
+            set => AHDR.data = value; 
         }
 
         public override string ToString()

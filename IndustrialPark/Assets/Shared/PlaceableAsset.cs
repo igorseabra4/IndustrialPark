@@ -178,7 +178,7 @@ namespace IndustrialPark
             set => VisibilityFlag = (byte)(value ? (VisibilityFlag | Mask(1)) : (VisibilityFlag & InvMask(1)));
         }
 
-        [Category("Placement Flags"), ReadOnly(true), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("Placement Flags"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte TypeFlag
         {
             get => ReadByte(0x9);
