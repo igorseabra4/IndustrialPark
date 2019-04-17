@@ -209,8 +209,17 @@ namespace IndustrialPark
         [Category("Placement")]
         public int PaddingC
         {
-            get => ReadInt(0xC);
-            set => Write(0xC, value);
+            get
+            {
+                if (Functions.currentGame == Game.BFBB)
+                    return ReadInt(0xC);
+                return 0;
+            }
+            set
+            {
+                if (Functions.currentGame == Game.BFBB)
+                    Write(0xC, value);
+            }
         }
 
         [Category("Placement References")]

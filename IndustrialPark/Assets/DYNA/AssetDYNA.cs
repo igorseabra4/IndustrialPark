@@ -11,13 +11,6 @@ namespace IndustrialPark
         public AssetDYNA(Section_AHDR AHDR) : base(AHDR)
         {
             SetDynaSpecific(false);
-
-            if (IsRenderableClickable)
-            {
-                CreateTransformMatrix();
-                if (!ArchiveEditorFunctions.renderableAssetSetCommon.Contains(this))
-                    ArchiveEditorFunctions.renderableAssetSetCommon.Add(this);
-            }
         }
 
         public override bool HasReference(uint assetID)
@@ -28,7 +21,7 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
-        private void SetDynaSpecific(bool reset)
+        public void SetDynaSpecific(bool reset)
         {
             List<byte> dataBefore = Data.Take(0x10).ToList();
             List<byte> dataAfter = Data.Skip(EventStartOffset).ToList();
@@ -193,6 +186,13 @@ namespace IndustrialPark
             dataBefore.AddRange(dataAfter);
 
             Data = dataBefore.ToArray();
+
+            if (IsRenderableClickable)
+            {
+                CreateTransformMatrix();
+                if (!ArchiveEditorFunctions.renderableAssetSetCommon.Contains(this))
+                    ArchiveEditorFunctions.renderableAssetSetCommon.Add(this);
+            }
 
             _dynaSpecific.dynaSpecificPropertyChanged += OnDynaSpecificPropertyChange;
         }

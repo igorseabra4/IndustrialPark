@@ -1069,6 +1069,29 @@ namespace IndustrialPark
                 if (i is ToolStripMenuItem j)
                     j.Click += eventHandler;
 
+            ToolStripMenuItem pickupsTSSM = new ToolStripMenuItem("Pickups and Crates (TSSM)");
+            pickupsTSSM.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                new ToolStripMenuItem(AssetTemplate.Manliness_Red.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Manliness_Yellow.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Manliness_Green.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Manliness_Blue.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Manliness_Purple.ToString()),
+                new ToolStripMenuItem(AssetTemplate.KrabbyPatty.ToString()),
+                new ToolStripMenuItem(AssetTemplate.GoofyGooberToken.ToString()),
+                new ToolStripMenuItem(AssetTemplate.TreasureChest.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Nitro.ToString()),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem(AssetTemplate.Wood_Crate.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Hover_Crate.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Explode_Crate.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Shrink_Crate.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Steel_Crate.ToString()),
+            });
+            foreach (ToolStripItem i in pickupsTSSM.DropDownItems)
+                if (i is ToolStripMenuItem j)
+                    j.Click += eventHandler;
+
             ToolStripMenuItem enemies = new ToolStripMenuItem("Enemies (BFBB)");
             enemies.DropDownItems.AddRange(new ToolStripItem[]
             {
@@ -1094,6 +1117,48 @@ namespace IndustrialPark
                 new ToolStripMenuItem(AssetTemplate.Duplicatotron.ToString())
             });
             foreach (ToolStripItem i in enemies.DropDownItems)
+                if (i is ToolStripMenuItem j)
+                    j.Click += eventHandler;
+
+            ToolStripMenuItem enemiesTSSM = new ToolStripMenuItem("Enemies (TSSM)");
+            enemiesTSSM.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                new ToolStripMenuItem(AssetTemplate.Fogger_GoofyGoober.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Fogger_Desert.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Fogger_ThugTug.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Fogger_Trench.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Fogger_Junkyard.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Fogger_Planktopolis.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Fogger_v1.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Fogger_v2.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Fogger_v3.ToString()),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem(AssetTemplate.Slammer_GoofyGoober.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Slammer_Desert.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Slammer_ThugTug.ToString()),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem(AssetTemplate.Flinger_Desert.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Flinger_Trench.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Flinger_Junkyard.ToString()),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem(AssetTemplate.Spinner_ThugTug.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Spinner_Junkyard.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Spinner_Planktopolis.ToString()),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem(AssetTemplate.Popper_Trench.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Popper_Planktopolis.ToString()),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem(AssetTemplate.Minimerv.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Mervyn.ToString()),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem(AssetTemplate.Jelly_Critter.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Jelly_Bucket.ToString()),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem(AssetTemplate.Turret_v1.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Turret_v2.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Turret_v3.ToString())
+            });
+            foreach (ToolStripItem i in enemiesTSSM.DropDownItems)
                 if (i is ToolStripMenuItem j)
                     j.Click += eventHandler;
 
@@ -1126,8 +1191,10 @@ namespace IndustrialPark
                 new ToolStripMenuItem(AssetTemplate.Camera.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Marker.ToString()),
                 new ToolStripMenuItem(AssetTemplate.PointMVPT.ToString()),
+                new ToolStripMenuItem(AssetTemplate.PointMVPT_TSSM.ToString()),
                 new ToolStripMenuItem(AssetTemplate.EnemyAreaMVPT.ToString()),
                 new ToolStripMenuItem(AssetTemplate.SphereTrigger.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Dyna_Pointer.ToString()),
                 new ToolStripSeparator(),
                 new ToolStripMenuItem(AssetTemplate.Boulder_Generic.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Button_Generic.ToString()),
@@ -1161,7 +1228,7 @@ namespace IndustrialPark
                     j.Click += eventHandler;
 
             menu.DropDownItems.AddRange(new ToolStripItem[] {
-                controllers, pickups, enemies, stageitems, placeable, others});
+                controllers, pickups, enemies, stageitems, pickupsTSSM, enemiesTSSM, placeable, others});
         }
 
         private void TemplateToolStripItemClick(object sender, EventArgs e)

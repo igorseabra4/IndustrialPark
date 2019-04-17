@@ -9,7 +9,7 @@ namespace IndustrialPark
 
         protected override bool DontRender => dontRender;
 
-        protected override int EventStartOffset => 0x9C + Offset;
+        protected override int EventStartOffset => 0x9C + Offset + (Functions.currentGame == Game.Incredibles ? 12 : 0);
 
         public AssetBUTN(Section_AHDR AHDR) : base(AHDR) { }
         
@@ -417,6 +417,54 @@ namespace IndustrialPark
         {
             get => ReadInt(0x98 + Offset);
             set => Write(0x98 + Offset, value);
+        }
+
+        [Category("Button (TSSM)")]
+        public int UnknownInt9C
+        {
+            get
+            {
+                if (Functions.currentGame == Game.Incredibles)
+                    return ReadInt(0x9C + Offset);
+                return 0;
+            }
+            set
+            {
+                if (Functions.currentGame == Game.Incredibles)
+                    Write(0x9C + Offset, value);
+            }
+        }
+
+        [Category("Button (TSSM)")]
+        public int UnknownIntA0
+        {
+            get
+            {
+                if (Functions.currentGame == Game.Incredibles)
+                    return ReadInt(0xA0 + Offset);
+                return 0;
+            }
+            set
+            {
+                if (Functions.currentGame == Game.Incredibles)
+                    Write(0xA0 + Offset, value);
+            }
+        }
+
+        [Category("Button (TSSM)")]
+        public int UnknownIntA4
+        {
+            get
+            {
+                if (Functions.currentGame == Game.Incredibles)
+                    return ReadInt(0xA4 + Offset);
+                return 0;
+            }
+            set
+            {
+                if (Functions.currentGame == Game.Incredibles)
+                    Write(0xA4 + Offset, value);
+            }
         }
     }
 }

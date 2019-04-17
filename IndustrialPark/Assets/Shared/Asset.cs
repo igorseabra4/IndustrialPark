@@ -8,7 +8,7 @@ namespace IndustrialPark
 {
     public class Asset
     {
-        public static int Offset { get { return currentGame == Game.BFBB ? 0x00 : -0x04; } }
+        public static int Offset => currentGame == Game.BFBB ? 0x00 : -0x04;
 
         public Section_AHDR AHDR;
         public bool isSelected;

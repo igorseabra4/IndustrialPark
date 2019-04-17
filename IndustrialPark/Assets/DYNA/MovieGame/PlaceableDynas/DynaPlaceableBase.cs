@@ -267,7 +267,7 @@ namespace IndustrialPark
             set
             {
                 _position.X = value;
-                dynaSpecificPropertyChanged(this);
+                dynaSpecificPropertyChanged?.Invoke(this);
                 CreateTransformMatrix();
             }
         }
@@ -280,7 +280,7 @@ namespace IndustrialPark
             set
             {
                 _position.Y = value;
-                dynaSpecificPropertyChanged(this);
+                dynaSpecificPropertyChanged?.Invoke(this);
                 CreateTransformMatrix();
             }
         }
@@ -293,7 +293,7 @@ namespace IndustrialPark
             set
             {
                 _position.Z = value;
-                dynaSpecificPropertyChanged(this);
+                dynaSpecificPropertyChanged?.Invoke(this);
                 CreateTransformMatrix();
             }
         }
@@ -317,7 +317,7 @@ namespace IndustrialPark
             set
             {
                 _yaw = MathUtil.DegreesToRadians(value);
-                dynaSpecificPropertyChanged(this);
+                dynaSpecificPropertyChanged?.Invoke(this);
                 CreateTransformMatrix();
             }
         }
@@ -330,7 +330,7 @@ namespace IndustrialPark
             set
             {
                 _pitch = MathUtil.DegreesToRadians(value);
-                dynaSpecificPropertyChanged(this);
+                dynaSpecificPropertyChanged?.Invoke(this);
                 CreateTransformMatrix();
             }
         }
@@ -343,7 +343,7 @@ namespace IndustrialPark
             set
             {
                 _roll = MathUtil.DegreesToRadians(value);
-                dynaSpecificPropertyChanged(this);
+                dynaSpecificPropertyChanged?.Invoke(this);
                 CreateTransformMatrix();
             }
         }
@@ -358,7 +358,7 @@ namespace IndustrialPark
             set
             {
                 _scale.X = value;
-                dynaSpecificPropertyChanged(this);
+                dynaSpecificPropertyChanged?.Invoke(this);
                 CreateTransformMatrix();
             }
         }
@@ -371,7 +371,7 @@ namespace IndustrialPark
             set
             {
                 _scale.Y = value;
-                dynaSpecificPropertyChanged(this);
+                dynaSpecificPropertyChanged?.Invoke(this);
                 CreateTransformMatrix();
             }
         }
@@ -384,7 +384,7 @@ namespace IndustrialPark
             set
             {
                 _scale.Z = value;
-                dynaSpecificPropertyChanged(this);
+                dynaSpecificPropertyChanged?.Invoke(this);
                 CreateTransformMatrix();
             }
         }
@@ -414,7 +414,7 @@ namespace IndustrialPark
         [Category("Placement References")]
         public AssetID Unknown44 { get; set; }
 
-        [Category("Placement References")]//, Browsable(false)]
+        [Category("Placement References"), TypeConverter(typeof(HexIntTypeConverter))]
         public AssetID Model_AssetID { get; set; }
 
         [Category("Placement References")]

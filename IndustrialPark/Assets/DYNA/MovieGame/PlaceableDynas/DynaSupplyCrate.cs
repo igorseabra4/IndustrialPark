@@ -12,6 +12,7 @@ namespace IndustrialPark
 
         public DynaSupplyCrate() : base()
         {
+            MVPT_AssetID = 0;
         }
 
         public DynaSupplyCrate(IEnumerable<byte> enumerable) : base (enumerable)

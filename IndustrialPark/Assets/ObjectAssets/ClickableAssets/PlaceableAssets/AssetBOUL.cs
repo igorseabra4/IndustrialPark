@@ -10,7 +10,7 @@ namespace IndustrialPark
 
         protected override bool DontRender => dontRender;
 
-        protected override int EventStartOffset => 0x9C + Offset;
+        protected override int EventStartOffset => 0x9C + Offset + 2 * Offset2;
 
         public AssetBOUL(Section_AHDR AHDR) : base(AHDR) { }
 
@@ -18,7 +18,7 @@ namespace IndustrialPark
         {
             if (Sound_AssetID == assetID)
                 return true;
-            
+
             return base.HasReference(assetID);
         }
 
@@ -66,43 +66,54 @@ namespace IndustrialPark
         [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float StartFriction
         {
-            get => ReadFloat(0x64 + Offset);
-            set => Write(0x64 + Offset, value);
+            get
+            {
+                if (Functions.currentGame == Game.BFBB)
+                    return ReadFloat(0x64 + Offset);
+                return 0;
+            }
+            set
+            {
+                if (Functions.currentGame == Game.BFBB)
+                    Write(0x64 + Offset, value);
+            }
         }
+
+        private static int Offset2 => Functions.currentGame == Game.Incredibles ? -0x04 : 0x00;
 
         [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float MaxLinearVelocity
         {
-            get => ReadFloat(0x68 + Offset);
-            set => Write(0x68 + Offset, value);
+            get => ReadFloat(0x68 + Offset + Offset2);
+            set => Write(0x68 + Offset + Offset2, value);
         }
 
         [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float MaxAngularVelocity
         {
-            get => ReadFloat(0x6C + Offset);
-            set => Write(0x6C + Offset, value);
+            get => ReadFloat(0x6C + Offset + Offset2);
+            set => Write(0x6C + Offset + Offset2, value);
         }
 
         [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float Stickiness
         {
-            get => ReadFloat(0x70 + Offset);
-            set => Write(0x70 + Offset, value);
+            get => ReadFloat(0x70 + Offset + Offset2);
+            set => Write(0x70 + Offset + Offset2, value);
         }
 
         [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float BounceDamp
         {
-            get => ReadFloat(0x74);
-            set => Write(0x74, value);
+            get => ReadFloat(0x74 + Offset + Offset2) + Offset2;
+            set => Write(0x74 + Offset + Offset2, value);
         }
 
         [Category("Boulder Flags")]
         public uint BoulderFlags
         {
-            get => ReadUInt(0x78 + Offset);
-            set => Write(0x78 + Offset, value);
+            get => ReadUInt(0x78 + Offset + Offset2);
+            set => Write(0x78 + Offset + Offset2, value);
         }
 
         [Category("Boulder Flags")]
@@ -332,57 +343,66 @@ namespace IndustrialPark
         [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float KillTimer
         {
-            get => ReadFloat(0x7C);
-            set => Write(0x7C, value);
+            get => ReadFloat(0x7C + Offset + Offset2);
+            set => Write(0x7C + Offset + Offset2, value);
         }
 
         [Category("Boulder")]
         public int Hitpoints
         {
-            get => ReadInt(0x80 + Offset);
+            get => ReadInt(0x80 + Offset + Offset2);
             set => Write(0x80 + Offset, value);
         }
 
         [Category("Boulder")]
         public AssetID Sound_AssetID
         {
-            get => ReadUInt(0x84 + Offset);
-            set => Write(0x84 + Offset, value);
+            get => ReadUInt(0x84 + Offset + Offset2);
+            set => Write(0x84 + Offset + Offset2, value);
         }
 
         [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float Volume
         {
-            get => ReadFloat(0x88);
-            set => Write(0x88, value);
+            get
+            {
+                if (Functions.currentGame == Game.BFBB)
+                    return ReadFloat(0x88 + Offset);
+                return 0;
+            }
+            set
+            {
+                if (Functions.currentGame == Game.BFBB)
+                    Write(0x88 + Offset, value);
+            }
         }
 
         [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float MinSoundVel
         {
-            get => ReadFloat(0x8C);
-            set => Write(0x8C, value);
+            get => ReadFloat(0x8C + Offset + 2 * Offset2);
+            set => Write(0x8C + Offset + 2 * Offset2, value);
         }
 
         [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float MaxSoundVel
         {
-            get => ReadFloat(0x90);
-            set => Write(0x90, value);
+            get => ReadFloat(0x90 + Offset + 2 * Offset2);
+            set => Write(0x90 + Offset + 2 * Offset2, value);
         }
 
         [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float InnerRadius
         {
-            get => ReadFloat(0x94);
-            set => Write(0x94, value);
+            get => ReadFloat(0x94 + Offset + 2 * Offset2);
+            set => Write(0x94 + Offset + 2 * Offset2, value);
         }
 
         [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float OuterRadius
         {
-            get => ReadFloat(0x98);
-            set => Write(0x98, value);
+            get => ReadFloat(0x98 + Offset + 2 * Offset2);
+            set => Write(0x98 + Offset + 2 * Offset2, value);
         }
     }
 }

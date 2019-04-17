@@ -67,7 +67,10 @@ namespace IndustrialPark
                 case AssetTemplate.Button_Generic:
                 case AssetTemplate.Button_Red:
                 case AssetTemplate.PressurePlate:
-                    dataSize = 0x9C + Asset.Offset;
+                    if (currentGame == Game.BFBB)
+                        dataSize = 0x9C + Asset.Offset;
+                    else if (currentGame == Game.Incredibles)
+                        dataSize = 0xA8 + Asset.Offset;
                     newAssetType = AssetType.BUTN;
                     break;
                 case AssetTemplate.Camera:
@@ -101,6 +104,39 @@ namespace IndustrialPark
                 case AssetTemplate.Checkpoint_Talkbox:
                 case AssetTemplate.BungeeHook:
                 case AssetTemplate.BungeeDrop:
+                case AssetTemplate.Dyna_Pointer:
+                case AssetTemplate.Wood_Crate:
+                case AssetTemplate.Hover_Crate:
+                case AssetTemplate.Explode_Crate:
+                case AssetTemplate.Shrink_Crate:
+                case AssetTemplate.Steel_Crate:
+                case AssetTemplate.Jelly_Critter:
+                case AssetTemplate.Jelly_Bucket:
+                case AssetTemplate.Fogger_GoofyGoober:
+                case AssetTemplate.Fogger_Desert:
+                case AssetTemplate.Fogger_ThugTug:
+                case AssetTemplate.Fogger_Trench:
+                case AssetTemplate.Fogger_Junkyard:
+                case AssetTemplate.Fogger_Planktopolis:
+                case AssetTemplate.Fogger_v1:
+                case AssetTemplate.Fogger_v2:
+                case AssetTemplate.Fogger_v3:
+                case AssetTemplate.Slammer_GoofyGoober:
+                case AssetTemplate.Slammer_Desert:
+                case AssetTemplate.Slammer_ThugTug:
+                case AssetTemplate.Flinger_Desert:
+                case AssetTemplate.Flinger_Trench:
+                case AssetTemplate.Flinger_Junkyard:
+                case AssetTemplate.Spinner_ThugTug:
+                case AssetTemplate.Spinner_Junkyard:
+                case AssetTemplate.Spinner_Planktopolis:
+                case AssetTemplate.Popper_Trench:
+                case AssetTemplate.Popper_Planktopolis:
+                case AssetTemplate.Minimerv:
+                case AssetTemplate.Mervyn:
+                case AssetTemplate.Turret_v1:
+                case AssetTemplate.Turret_v2:
+                case AssetTemplate.Turret_v3:
                     dataSize = 0x10;
                     newAssetType = AssetType.DYNA;
                     break;
@@ -134,6 +170,7 @@ namespace IndustrialPark
                     break;
                 case AssetTemplate.EnemyAreaMVPT:
                 case AssetTemplate.PointMVPT:
+                case AssetTemplate.PointMVPT_TSSM:
                     dataSize = currentGame == Game.Scooby ? 0x20 : 0x28;
                     newAssetType = AssetType.MVPT;
                     break;
@@ -159,6 +196,15 @@ namespace IndustrialPark
                 case AssetTemplate.Artwork:
                 case AssetTemplate.SteeringWheel:
                 case AssetTemplate.PowerCrystal:
+                case AssetTemplate.Manliness_Red:
+                case AssetTemplate.Manliness_Yellow:
+                case AssetTemplate.Manliness_Green:
+                case AssetTemplate.Manliness_Blue:
+                case AssetTemplate.Manliness_Purple:
+                case AssetTemplate.KrabbyPatty:
+                case AssetTemplate.GoofyGooberToken:
+                case AssetTemplate.TreasureChest:
+                case AssetTemplate.Nitro:
                     dataSize = 0x5C + Asset.Offset;
                     newAssetType = AssetType.PKUP;
                     break;
@@ -342,7 +388,10 @@ namespace IndustrialPark
                 if (asset is AssetPKUP pkup)
                 {
                     pkup.AssetType = ObjectAssetType.PKUP;
-                    pkup.Model_AssetID = "pickups.MINF";
+                    if (currentGame == Game.BFBB)
+                        pkup.Model_AssetID = "pickups.MINF";
+                    else if (currentGame == Game.Incredibles)
+                        pkup.Model_AssetID = 0x94E25463;
                 }
                 else if (asset is AssetSIMP simp)
                 {
@@ -909,6 +958,7 @@ namespace IndustrialPark
                     }
                     break;
                 case AssetTemplate.PointMVPT:
+                case AssetTemplate.PointMVPT_TSSM:
                     ((AssetMVPT_Scooby)asset).AssetType = ObjectAssetType.MVPT;
                     ((AssetMVPT_Scooby)asset).PositionX = position.X;
                     ((AssetMVPT_Scooby)asset).PositionY = position.Y;
@@ -916,14 +966,18 @@ namespace IndustrialPark
                     ((AssetMVPT_Scooby)asset).Wt = 0x2710;
                     ((AssetMVPT_Scooby)asset).IsZone = 0x01;
                     ((AssetMVPT_Scooby)asset).BezIndex = 0x00;
-                    if (asset is AssetMVPT_Scooby)
-                        ((AssetMVPT_Scooby)asset).ArenaRadius = -1;
-                    else
+                    if (asset is AssetMVPT)
                     {
-                        ((AssetMVPT)asset).Delay = 0;
+                        if (template == AssetTemplate.PointMVPT_TSSM)
+                            ((AssetMVPT)asset).Delay = 2;
+                        else
+                            ((AssetMVPT)asset).Delay = 0;
+
                         ((AssetMVPT)asset).ZoneRadius = -1;
                         ((AssetMVPT)asset).ArenaRadius = -1;
                     }
+                    else
+                        ((AssetMVPT_Scooby)asset).ArenaRadius = -1;
                     break;
                 case AssetTemplate.SphereTrigger:
                     ((AssetTRIG)asset).AssetType = ObjectAssetType.TRIG;
@@ -1204,7 +1258,255 @@ namespace IndustrialPark
                         Unknown = 1,
                     };
                     break;
+                case AssetTemplate.Dyna_Pointer:
+                    ((AssetDYNA)asset).Version = 1;
+                    ((AssetDYNA)asset).Type_BFBB = DynaType_BFBB.pointer;
+                    ((AssetDYNA)asset).DynaBase = new DynaPointer();
+                    break;
+                case AssetTemplate.Manliness_Red:
+                    ((AssetPKUP)asset).StateIsPersistent = persistentShinies;
+                    ((AssetPKUP)asset).Shape = 0x17;
+                    ((AssetPKUP)asset).PickReferenceID = 0x7C134517;
+                    ((AssetPKUP)asset).PickupFlags = 2;
+                    ((AssetPKUP)asset).PickupValue = 4;
+                    ((AssetPKUP)asset).PositionY += 0.5f;
+                    break;
+                case AssetTemplate.Manliness_Yellow:
+                    ((AssetPKUP)asset).StateIsPersistent = persistentShinies;
+                    ((AssetPKUP)asset).Shape = 0x5A;
+                    ((AssetPKUP)asset).PickReferenceID = 0xFA454C5A;
+                    ((AssetPKUP)asset).PickupFlags = 2;
+                    ((AssetPKUP)asset).PickupValue = 4;
+                    ((AssetPKUP)asset).PositionY += 0.5f;
+                    break;
+                case AssetTemplate.Manliness_Green:
+                    ((AssetPKUP)asset).StateIsPersistent = persistentShinies;
+                    ((AssetPKUP)asset).Shape = 0xD9;
+                    ((AssetPKUP)asset).PickReferenceID = 0xA869F4D9;
+                    ((AssetPKUP)asset).PickupFlags = 2;
+                    ((AssetPKUP)asset).PickupValue = 4;
+                    ((AssetPKUP)asset).PositionY += 0.5f;
+                    break;
+                case AssetTemplate.Manliness_Blue:
+                    ((AssetPKUP)asset).StateIsPersistent = persistentShinies;
+                    ((AssetPKUP)asset).Shape = 0x4C;
+                    ((AssetPKUP)asset).PickReferenceID = 0x7BB95F4C;
+                    ((AssetPKUP)asset).PickupFlags = 2;
+                    ((AssetPKUP)asset).PickupValue = 4;
+                    ((AssetPKUP)asset).PositionY += 0.5f;
+                    break;
+                case AssetTemplate.Manliness_Purple:
+                    ((AssetPKUP)asset).StateIsPersistent = persistentShinies;
+                    ((AssetPKUP)asset).Shape = 0x8A;
+                    ((AssetPKUP)asset).PickReferenceID = 0x3C48E68A;
+                    ((AssetPKUP)asset).PickupFlags = 2;
+                    ((AssetPKUP)asset).PickupValue = 4;
+                    ((AssetPKUP)asset).PositionY += 0.5f;
+                    break;
+                case AssetTemplate.KrabbyPatty:
+                    ((AssetPKUP)asset).Shape = 0xD1;
+                    ((AssetPKUP)asset).PickReferenceID = 0xACC4FBD1;
+                    ((AssetPKUP)asset).PickupFlags = 2;
+                    ((AssetPKUP)asset).PickupValue = 4;
+                    ((AssetPKUP)asset).PositionY += 0.5f;
+                    break;
+                case AssetTemplate.GoofyGooberToken:
+                    ((AssetPKUP)asset).StateIsPersistent = true;
+                    ((AssetPKUP)asset).Shape = 0xB7;
+                    ((AssetPKUP)asset).PickReferenceID = 0x60F808B7;
+                    ((AssetPKUP)asset).PickupFlags = 2;
+                    ((AssetPKUP)asset).PickupValue = 4;
+                    ((AssetPKUP)asset).PositionY += 0.5f;
+                    break;
+                case AssetTemplate.TreasureChest:
+                    ((AssetPKUP)asset).StateIsPersistent = true;
+                    ((AssetPKUP)asset).Shape = 0x8A;
+                    ((AssetPKUP)asset).PickReferenceID = 0xA613E48A;
+                    ((AssetPKUP)asset).PickupFlags = 2;
+                    ((AssetPKUP)asset).PickupValue = 4;
+                    ((AssetPKUP)asset).PositionY += 0.5f;
+                    break;
+                case AssetTemplate.Nitro:
+                    ((AssetPKUP)asset).Shape = 0x1A;
+                    ((AssetPKUP)asset).PickReferenceID = 0x630BD71A;
+                    ((AssetPKUP)asset).PickupFlags = 3;
+                    ((AssetPKUP)asset).PickupValue = 4;
+                    ((AssetPKUP)asset).PositionY += 0.5f;
+                    break;
+                case AssetTemplate.Wood_Crate:
+                case AssetTemplate.Hover_Crate:
+                case AssetTemplate.Explode_Crate:
+                case AssetTemplate.Shrink_Crate:
+                case AssetTemplate.Steel_Crate:
+                    ((AssetDYNA)asset).Version = 2;
+                    ((AssetDYNA)asset).Type_TSSM = DynaType_TSSM.Enemy__SB__SupplyCrate;
+                    ((AssetDYNA)asset).DynaBase = new DynaSupplyCrate()
+                    {
+                        VisibilityFlag = 1,
+                        SolidityFlag = 1,
+                        Flags06 = 0x1D,
+                        PositionX = position.X,
+                        PositionY = position.Y,
+                        PositionZ = position.Z,
+                        ScaleX = 1f,
+                        ScaleY = 1f,
+                        ScaleZ = 1f,
+                        ColorRed = 1f,
+                        ColorGreen = 1f,
+                        ColorBlue = 1f,
+                        ColorAlpha = 1f,
+                        Type =
+                        template == AssetTemplate.Wood_Crate ? EnemySupplyCrateType.crate_wood_bind :
+                        template == AssetTemplate.Hover_Crate ? EnemySupplyCrateType.crate_hover_bind :
+                        template == AssetTemplate.Explode_Crate ? EnemySupplyCrateType.crate_explode_bind :
+                        template == AssetTemplate.Shrink_Crate ? EnemySupplyCrateType.crate_shrink_bind :
+                        template == AssetTemplate.Steel_Crate ? EnemySupplyCrateType.crate_steel_bind : 0
+                    };
+                    break;
+                case AssetTemplate.Jelly_Critter:
+                case AssetTemplate.Jelly_Bucket:
+                    ((AssetDYNA)asset).Version = 2;
+                    ((AssetDYNA)asset).Type_TSSM = DynaType_TSSM.Enemy__SB__Critter;
+                    ((AssetDYNA)asset).Flags = 0x0D;
+                    ((AssetDYNA)asset).DynaBase = new DynaEnemyCritter()
+                    {
+                        VisibilityFlag = 1,
+                        SolidityFlag = 1,
+                        Flags06 = 0x1D,
+                        PositionX = position.X,
+                        PositionY = position.Y,
+                        PositionZ = position.Z,
+                        ScaleX = 1f,
+                        ScaleY = 1f,
+                        ScaleZ = 1f,
+                        ColorRed = 1f,
+                        ColorGreen = 1f,
+                        ColorBlue = 1f,
+                        ColorAlpha = 1f,
+                        MVPT_AssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyAreaMVPT),
+                        Type =
+                        template == AssetTemplate.Jelly_Critter ? EnemyCritterType.jellyfish_v1_bind :
+                        template == AssetTemplate.Jelly_Bucket ? EnemyCritterType.jellybucket_v1_bind : 0
+                    };
+                    break;
+                case AssetTemplate.Fogger_GoofyGoober:
+                case AssetTemplate.Fogger_Desert:
+                case AssetTemplate.Fogger_ThugTug:
+                case AssetTemplate.Fogger_Trench:
+                case AssetTemplate.Fogger_Junkyard:
+                case AssetTemplate.Fogger_Planktopolis:
+                case AssetTemplate.Fogger_v1:
+                case AssetTemplate.Fogger_v2:
+                case AssetTemplate.Fogger_v3:
+                case AssetTemplate.Slammer_GoofyGoober:
+                case AssetTemplate.Slammer_Desert: 
+                case AssetTemplate.Slammer_ThugTug:
+                case AssetTemplate.Spinner_ThugTug:
+                case AssetTemplate.Spinner_Junkyard:
+                case AssetTemplate.Spinner_Planktopolis:
+                case AssetTemplate.Minimerv:
+                case AssetTemplate.Mervyn:
+                    ((AssetDYNA)asset).Version = 7;
+                    ((AssetDYNA)asset).Type_TSSM = DynaType_TSSM.Enemy__SB__Standard;
+                    ((AssetDYNA)asset).DynaBase = new DynaEnemyStandard()
+                    {
+                        VisibilityFlag = 1,
+                        SolidityFlag = 1,
+                        Flags06 = 0x1D,
+                        PositionX = position.X,
+                        PositionY = position.Y,
+                        PositionZ = position.Z,
+                        ScaleX = 1f,
+                        ScaleY = 1f,
+                        ScaleZ = 1f,
+                        ColorRed = 1f,
+                        ColorGreen = 1f,
+                        ColorBlue = 1f,
+                        ColorAlpha = 1f,
+                        MVPT_AssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyAreaMVPT),
+                        Type =
+                        template == AssetTemplate.Fogger_GoofyGoober ? EnemyStandardType.fogger_gg_bind :
+                        template == AssetTemplate.Fogger_Desert ? EnemyStandardType.fogger_de_bind :
+                        template == AssetTemplate.Fogger_ThugTug ? EnemyStandardType.fogger_tt_bind :
+                        template == AssetTemplate.Fogger_Trench ? EnemyStandardType.fogger_tr_bind :
+                        template == AssetTemplate.Fogger_Junkyard ? EnemyStandardType.fogger_jk_bind :
+                        template == AssetTemplate.Fogger_Planktopolis ? EnemyStandardType.fogger_pt_bind :
+                        template == AssetTemplate.Fogger_v1 ? EnemyStandardType.fogger_v1_bind :
+                        template == AssetTemplate.Fogger_v2 ? EnemyStandardType.fogger_v2_bind :
+                        template == AssetTemplate.Fogger_v3 ? EnemyStandardType.fogger_v3_bind :
+                        template == AssetTemplate.Slammer_GoofyGoober ? EnemyStandardType.slammer_v1_bind :
+                        template == AssetTemplate.Slammer_Desert ? EnemyStandardType.slammer_des_bind :
+                        template == AssetTemplate.Slammer_ThugTug ? EnemyStandardType.slammer_v3_bind :
+                        template == AssetTemplate.Spinner_ThugTug ? EnemyStandardType.spinner_v1_bind :
+                        template == AssetTemplate.Spinner_Junkyard ? EnemyStandardType.spinner_v2_bind :
+                        template == AssetTemplate.Spinner_Planktopolis ? EnemyStandardType.spinner_v3_bind :
+                        template == AssetTemplate.Minimerv ? EnemyStandardType.minimerv_v1_bind :
+                        template == AssetTemplate.Mervyn ? EnemyStandardType.mervyn_v3_bind : 0
+                    };
+                    break;
+                case AssetTemplate.Flinger_Desert:
+                case AssetTemplate.Flinger_Trench:
+                case AssetTemplate.Flinger_Junkyard:
+                case AssetTemplate.Popper_Trench:
+                case AssetTemplate.Popper_Planktopolis:
+                    ((AssetDYNA)asset).Version = 7;
+                    ((AssetDYNA)asset).Type_TSSM = DynaType_TSSM.Enemy__SB__Standard;
+                    ((AssetDYNA)asset).DynaBase = new DynaEnemyStandard()
+                    {
+                        VisibilityFlag = 1,
+                        SolidityFlag = 1,
+                        Flags06 = 0x1D,
+                        PositionX = position.X,
+                        PositionY = position.Y,
+                        PositionZ = position.Z,
+                        ScaleX = 1f,
+                        ScaleY = 1f,
+                        ScaleZ = 1f,
+                        ColorRed = 1f,
+                        ColorGreen = 1f,
+                        ColorBlue = 1f,
+                        ColorAlpha = 1f,
+                        MVPT_AssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.PointMVPT_TSSM),
+                        Type =
+                        template == AssetTemplate.Flinger_Desert ? EnemyStandardType.flinger_v1_bind :
+                        template == AssetTemplate.Flinger_Trench ? EnemyStandardType.flinger_v2_bind :
+                        template == AssetTemplate.Flinger_Junkyard ? EnemyStandardType.flinger_v3_bind :
+                        template == AssetTemplate.Popper_Trench ? EnemyStandardType.popper_v1_bind :
+                        template == AssetTemplate.Popper_Planktopolis ? EnemyStandardType.popper_v3_bind : 0
+                    };
+                    break;
+                case AssetTemplate.Turret_v1:
+                case AssetTemplate.Turret_v2:
+                case AssetTemplate.Turret_v3:
+                    ((AssetDYNA)asset).Version = 4;
+                    ((AssetDYNA)asset).Type_TSSM = DynaType_TSSM.Enemy__SB__Turret;
+                    ((AssetDYNA)asset).DynaBase = new DynaEnemyTurret()
+                    {
+                        VisibilityFlag = 1,
+                        SolidityFlag = 1,
+                        Flags06 = 0x1D,
+                        PositionX = position.X,
+                        PositionY = position.Y,
+                        PositionZ = position.Z,
+                        ScaleX = 1f,
+                        ScaleY = 1f,
+                        ScaleZ = 1f,
+                        ColorRed = 1f,
+                        ColorGreen = 1f,
+                        ColorBlue = 1f,
+                        ColorAlpha = 1f,
+                        UnknownFloat50 = 30f,
+                        UnknownInt58 = 1,
+                        Type =
+                        template == AssetTemplate.Turret_v1 ? EnemyTurretType.turret_v1_bind :
+                        template == AssetTemplate.Turret_v2 ? EnemyTurretType.turret_v2_bind :
+                        template == AssetTemplate.Turret_v3 ? EnemyTurretType.turret_v3_bind : 0
+                    };
+                    break;
             }
+
+            if (asset is AssetDYNA DYNA)
+                DYNA.SetDynaSpecific(false);
 
             assetIDs.Add(asset.AHDR.assetID);
 

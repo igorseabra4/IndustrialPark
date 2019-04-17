@@ -12,9 +12,7 @@ namespace IndustrialPark
 
         public DynaEnemyTurret() : base()
         {
-            UnknownFloat50 = 0;
             Unknown54 = 0;
-            UnknownInt58 = 0;
             Unknown5C = 0;
             Unknown60 = 0;
         }
