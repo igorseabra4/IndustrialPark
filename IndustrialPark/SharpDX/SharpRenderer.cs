@@ -408,11 +408,11 @@ namespace IndustrialPark
                         if (playingFly)
                             flyToPlay.Play();
 
-                        Program.MainForm.SetToolStripStatusLabel(Camera.GetInformation() + " FPS: " + $"{sharpFPS.FPS:0.0000}");
+                        Program.MainForm.SetToolStripStatusLabel(Camera.ToString() + " FPS: " + $"{sharpFPS.FPS:0.0000}");
 
-                        Matrix view = Camera.GetViewMatrix();
-                        viewProjection = view * Camera.GetProjectionMatrix();
-                        frustum = new BoundingFrustum(view * Camera.GetBiggerFovProjectionMatrix());
+                        Matrix view = Camera.ViewMatrix;
+                        viewProjection = view * Camera.ProjectionMatrix;
+                        frustum = new BoundingFrustum(view * Camera.BiggerFovProjectionMatrix);
 
                         device.SetFillModeDefault();
                         device.SetCullModeDefault();

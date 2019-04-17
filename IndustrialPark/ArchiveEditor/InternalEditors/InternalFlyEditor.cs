@@ -109,9 +109,9 @@ namespace IndustrialPark
 
         private void buttonGetDir_Click(object sender, EventArgs e)
         {
-            ((EntryFLY)propertyGridSpecific.SelectedObject).CameraNormalizedLeft = -Program.MainForm.renderer.Camera.GetRight();
-            ((EntryFLY)propertyGridSpecific.SelectedObject).CameraNormalizedUp = Program.MainForm.renderer.Camera.GetUp();
-            ((EntryFLY)propertyGridSpecific.SelectedObject).CameraNormalizedBackward = -Program.MainForm.renderer.Camera.GetForward();
+            ((EntryFLY)propertyGridSpecific.SelectedObject).CameraNormalizedLeft = -Program.MainForm.renderer.Camera.Right;
+            ((EntryFLY)propertyGridSpecific.SelectedObject).CameraNormalizedUp = Program.MainForm.renderer.Camera.Up;
+            ((EntryFLY)propertyGridSpecific.SelectedObject).CameraNormalizedBackward = -Program.MainForm.renderer.Camera.Forward;
             UpdateAssetEntries();
         }
 

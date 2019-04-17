@@ -10,9 +10,254 @@ namespace IndustrialPark
 {
     public partial class ArchiveEditorFunctions
     {
+        public static void PopulateTemplateMenusAt(ToolStripMenuItem menu, EventHandler eventHandler)
+        {
+            ToolStripMenuItem controllers = new ToolStripMenuItem("Stage Controllers");
+            controllers.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                new ToolStripMenuItem(AssetTemplate.Counter.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Conditional.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Dispatcher.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Group.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Portal.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Script.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Text.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Timer.ToString())
+            });
+            foreach (ToolStripItem i in controllers.DropDownItems)
+                if (i is ToolStripMenuItem j)
+                    j.Click += eventHandler;
+
+            // BFBB
+            ToolStripMenuItem pickupsBFBB = new ToolStripMenuItem("Pickups and Tikis");
+            pickupsBFBB.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                new ToolStripMenuItem(AssetTemplate.Shiny_Red.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Shiny_Yellow.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Shiny_Green.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Shiny_Blue.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Shiny_Purple.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Underwear.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Spongeball.ToString()),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem(AssetTemplate.WoodenTiki.ToString()),
+                new ToolStripMenuItem(AssetTemplate.FloatingTiki.ToString()),
+                new ToolStripMenuItem(AssetTemplate.ThunderTiki.ToString()),
+                new ToolStripMenuItem(AssetTemplate.ShhhTiki.ToString()),
+                new ToolStripMenuItem(AssetTemplate.StoneTiki.ToString()),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem(AssetTemplate.Spatula.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Sock.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Golden_Underwear.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Smelly_Sundae.ToString()),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem(AssetTemplate.SteeringWheel.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Artwork.ToString()),
+                new ToolStripMenuItem(AssetTemplate.PowerCrystal.ToString()),
+            });
+            foreach (ToolStripItem i in pickupsBFBB.DropDownItems)
+                if (i is ToolStripMenuItem j)
+                    j.Click += eventHandler;
+
+            ToolStripMenuItem enemiesBFBB = new ToolStripMenuItem("Enemies");
+            enemiesBFBB.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                new ToolStripMenuItem(AssetTemplate.Fodder.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Hammer.ToString()),
+                new ToolStripMenuItem(AssetTemplate.TarTar.ToString()),
+                new ToolStripMenuItem(AssetTemplate.ChompBot.ToString()),
+                new ToolStripMenuItem(AssetTemplate.GLove.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Chuck.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Chuck_Trigger.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Monsoon.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Monsoon_Trigger.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Sleepytime.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Sleepytime_Moving.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Arf.ToString()),
+                new ToolStripMenuItem(AssetTemplate.BombBot.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Tubelet.ToString()),
+                new ToolStripMenuItem(AssetTemplate.BzztBot.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Slick.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Slick_Trigger.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Jellyfish_Pink.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Jellyfish_Blue.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Duplicatotron.ToString()),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem(AssetTemplate.DuplicatotronSettings.ToString())
+            });
+            foreach (ToolStripItem i in enemiesBFBB.DropDownItems)
+                if (i is ToolStripMenuItem j)
+                    j.Click += eventHandler;
+
+            ToolStripMenuItem stageitemsBFBB = new ToolStripMenuItem("Stage Items");
+            stageitemsBFBB.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                new ToolStripMenuItem(AssetTemplate.Button_Red.ToString()),
+                new ToolStripMenuItem(AssetTemplate.PressurePlate.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Checkpoint.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Checkpoint_Invisible.ToString()),
+                new ToolStripMenuItem(AssetTemplate.BusStop.ToString()),
+                new ToolStripMenuItem(AssetTemplate.TeleportBox.ToString()),
+                new ToolStripMenuItem(AssetTemplate.ThrowFruit.ToString()),
+                new ToolStripMenuItem(AssetTemplate.FreezyFruit.ToString()),
+                new ToolStripMenuItem(AssetTemplate.TexasHitch.ToString()),
+                new ToolStripMenuItem(AssetTemplate.TexasHitch_PLAT.ToString()),
+                new ToolStripMenuItem(AssetTemplate.BungeeHook.ToString()),
+                new ToolStripMenuItem(AssetTemplate.BungeeDrop.ToString()),
+                new ToolStripMenuItem(AssetTemplate.HoveringPlatform.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Springboard.ToString()),
+                new ToolStripMenuItem(AssetTemplate.TaxiStand.ToString()),
+            });
+            foreach (ToolStripItem i in stageitemsBFBB.DropDownItems)
+                if (i is ToolStripMenuItem j)
+                    j.Click += eventHandler;
+
+            ToolStripMenuItem bfbb = new ToolStripMenuItem("Battle For Bikini Bottom");
+            bfbb.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                pickupsBFBB,
+                enemiesBFBB,
+                stageitemsBFBB
+            });
+
+            // Movie
+            ToolStripMenuItem pickupsTSSM = new ToolStripMenuItem("Pickups and Crates");
+            pickupsTSSM.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                new ToolStripMenuItem(AssetTemplate.Manliness_Red.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Manliness_Yellow.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Manliness_Green.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Manliness_Blue.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Manliness_Purple.ToString()),
+                new ToolStripMenuItem(AssetTemplate.KrabbyPatty.ToString()),
+                new ToolStripMenuItem(AssetTemplate.GoofyGooberToken.ToString()),
+                new ToolStripMenuItem(AssetTemplate.TreasureChest.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Nitro.ToString()),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem(AssetTemplate.Wood_Crate.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Hover_Crate.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Explode_Crate.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Shrink_Crate.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Steel_Crate.ToString()),
+            });
+            foreach (ToolStripItem i in pickupsTSSM.DropDownItems)
+                if (i is ToolStripMenuItem j)
+                    j.Click += eventHandler;
+
+            ToolStripMenuItem enemiesTSSM = new ToolStripMenuItem("Enemies");
+            enemiesTSSM.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                new ToolStripMenuItem(AssetTemplate.Fogger_GoofyGoober.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Fogger_Desert.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Fogger_ThugTug.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Fogger_Trench.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Fogger_Junkyard.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Fogger_Planktopolis.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Fogger_v1.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Fogger_v2.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Fogger_v3.ToString()),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem(AssetTemplate.Slammer_GoofyGoober.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Slammer_Desert.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Slammer_ThugTug.ToString()),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem(AssetTemplate.Flinger_Desert.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Flinger_Trench.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Flinger_Junkyard.ToString()),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem(AssetTemplate.Spinner_ThugTug.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Spinner_Junkyard.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Spinner_Planktopolis.ToString()),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem(AssetTemplate.Popper_Trench.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Popper_Planktopolis.ToString()),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem(AssetTemplate.Minimerv.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Mervyn.ToString()),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem(AssetTemplate.Jelly_Critter.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Jelly_Bucket.ToString()),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem(AssetTemplate.Turret_v1.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Turret_v2.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Turret_v3.ToString())
+            });
+            foreach (ToolStripItem i in enemiesTSSM.DropDownItems)
+                if (i is ToolStripMenuItem j)
+                    j.Click += eventHandler;
+
+            ToolStripMenuItem stageitemsTSSM = new ToolStripMenuItem("Stage Items");
+            stageitemsTSSM.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                new ToolStripMenuItem(AssetTemplate.Button_Red.ToString()),
+                new ToolStripMenuItem(AssetTemplate.TeleportBox.ToString()),
+                new ToolStripMenuItem(AssetTemplate.ThrowFruit.ToString()),
+                new ToolStripMenuItem(AssetTemplate.FreezyFruit.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Swinger.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Swinger_PLAT.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Ring.ToString()),
+                new ToolStripMenuItem(AssetTemplate.RingControl.ToString())
+            });
+            foreach (ToolStripItem i in stageitemsTSSM.DropDownItems)
+                if (i is ToolStripMenuItem j)
+                    j.Click += eventHandler;
+
+            ToolStripMenuItem tssm = new ToolStripMenuItem("Movie Game");
+            tssm.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                pickupsTSSM,
+                enemiesTSSM,
+                stageitemsTSSM
+            });
+
+            ToolStripMenuItem placeable = new ToolStripMenuItem("Placeable");
+            placeable.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                new ToolStripMenuItem(AssetTemplate.Camera.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Marker.ToString()),
+                new ToolStripMenuItem(AssetTemplate.PointMVPT.ToString()),
+                new ToolStripMenuItem(AssetTemplate.PointMVPT_TSSM.ToString()),
+                new ToolStripMenuItem(AssetTemplate.EnemyAreaMVPT.ToString()),
+                new ToolStripMenuItem(AssetTemplate.SphereTrigger.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Dyna_Pointer.ToString()),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem(AssetTemplate.Boulder_Generic.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Button_Generic.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Destructible_Generic.ToString()),
+                new ToolStripMenuItem(AssetTemplate.ElectricArc_Generic.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Pendulum_Generic.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Platform_Generic.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Player_Generic.ToString()),
+                new ToolStripMenuItem(AssetTemplate.SIMP_Generic.ToString()),
+                new ToolStripMenuItem(AssetTemplate.VIL_Generic.ToString()),
+            });
+            foreach (ToolStripItem i in placeable.DropDownItems)
+                if (i is ToolStripMenuItem j)
+                    j.Click += eventHandler;
+
+            ToolStripMenuItem others = new ToolStripMenuItem("Other");
+            others.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                new ToolStripMenuItem(AssetTemplate.AnimationList.ToString()),
+                new ToolStripMenuItem(AssetTemplate.CollisionTable.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Environment.ToString()),
+                new ToolStripMenuItem(AssetTemplate.JawData.ToString()),
+                new ToolStripMenuItem(AssetTemplate.LevelOfDetailTable.ToString()),
+                new ToolStripMenuItem(AssetTemplate.MaterialMap.ToString()),
+                new ToolStripMenuItem(AssetTemplate.PipeInfoTable.ToString()),
+                new ToolStripMenuItem(AssetTemplate.ShadowTable.ToString()),
+                new ToolStripMenuItem(AssetTemplate.SoundInfo.ToString()),
+            });
+            foreach (ToolStripItem i in others.DropDownItems)
+                if (i is ToolStripMenuItem j)
+                    j.Click += eventHandler;
+
+            menu.DropDownItems.AddRange(new ToolStripItem[] { controllers, placeable, bfbb, tssm, others});
+        }
+
         public void SetAssetPositionToView(uint assetID)
         {
-            Vector3 Position = Program.MainForm.renderer.Camera.Position + 3 * Program.MainForm.renderer.Camera.GetForward();
+            Vector3 Position = Program.MainForm.renderer.Camera.Position + 3 * Program.MainForm.renderer.Camera.Forward;
 
             if (GetFromAssetID(assetID) is AssetTRIG trig)
             {
@@ -27,9 +272,9 @@ namespace IndustrialPark
             else if (GetFromAssetID(assetID) is AssetCAM cam)
             {
                 cam.SetPosition(Program.MainForm.renderer.Camera.Position);
-                cam.SetNormalizedForward(Program.MainForm.renderer.Camera.GetForward());
-                cam.SetNormalizedUp(Program.MainForm.renderer.Camera.GetUp());
-                cam.SetNormalizedLeft(Program.MainForm.renderer.Camera.GetRight());
+                cam.SetNormalizedForward(Program.MainForm.renderer.Camera.Forward);
+                cam.SetNormalizedUp(Program.MainForm.renderer.Camera.Up);
+                cam.SetNormalizedLeft(Program.MainForm.renderer.Camera.Right);
             }
             else if (GetFromAssetID(assetID) is IClickableAsset ir)
             {
@@ -43,6 +288,93 @@ namespace IndustrialPark
         public static string CurrentUserTemplate { get; set; } = "";
 
         public static bool persistentShinies = true;
+
+        private uint PlaceUserTemplate(Vector3 Position, int layerIndex, out bool success, ref List<uint> assetIDs)
+        {
+            if (!File.Exists(Path.Combine(Program.MainForm.userTemplatesFolder, CurrentUserTemplate)))
+            {
+                success = false;
+                return 0;
+            }
+
+            string assetTypeName = CurrentUserTemplate.Substring(CurrentUserTemplate.IndexOf('[') + 1, CurrentUserTemplate.IndexOf(']') - CurrentUserTemplate.IndexOf('[') - 1);
+            AssetType assetType = AssetType.Null;
+
+            foreach (AssetType o in Enum.GetValues(typeof(AssetType)))
+            {
+                if (o.ToString() == assetTypeName.Trim().ToUpper())
+                {
+                    assetType = o;
+                    break;
+                }
+            }
+            if (assetType == AssetType.Null) throw new Exception("Unknown asset type: " + assetType);
+
+            Section_AHDR newAsset = new Section_AHDR
+            {
+                assetType = assetType,
+                flags = AHDRFlagsFromAssetType(assetType),
+                data = File.ReadAllBytes(Path.Combine(Program.MainForm.userTemplatesFolder, CurrentUserTemplate))
+            };
+
+            newAsset.ADBG = new Section_ADBG(0, CurrentUserTemplate.Substring(CurrentUserTemplate.IndexOf(']') + 2) + "_T001", "", 0);
+
+            Asset asset = GetFromAssetID(AddAssetWithUniqueID(layerIndex, newAsset, "_T", true));
+
+            success = true;
+
+            if (asset is AssetTRIG trig)
+            {
+                trig.PositionX = Position.X;
+                trig.PositionY = Position.Y;
+                trig.PositionZ = Position.Z;
+
+                trig.Position0X = Position.X;
+                trig.Position0Y = Position.Y;
+                trig.Position0Z = Position.Z;
+            }
+            else if (asset is PlaceableAsset placeableAsset)
+            {
+                placeableAsset.PositionX = Position.X;
+                placeableAsset.PositionY = Position.Y;
+                placeableAsset.PositionZ = Position.Z;
+            }
+            else if (asset is AssetCAM cam)
+            {
+                cam.SetPosition(Program.MainForm.renderer.Camera.Position);
+                cam.SetNormalizedForward(Program.MainForm.renderer.Camera.Forward);
+                cam.SetNormalizedUp(Program.MainForm.renderer.Camera.Up);
+                cam.SetNormalizedLeft(Program.MainForm.renderer.Camera.Right);
+            }
+            else if (asset is AssetMRKR mrkr)
+            {
+                mrkr.PositionX = Position.X;
+                mrkr.PositionY = Position.Y;
+                mrkr.PositionZ = Position.Z;
+            }
+            else if (asset is AssetMVPT mvpt)
+            {
+                mvpt.PositionX = Position.X;
+                mvpt.PositionY = Position.Y;
+                mvpt.PositionZ = Position.Z;
+            }
+            else if (asset is AssetSFX sfx)
+            {
+                sfx.PositionX = Position.X;
+                sfx.PositionY = Position.Y;
+                sfx.PositionZ = Position.Z;
+            }
+            else if (asset is AssetDYNA dyna)
+            {
+                dyna.PositionX = Position.X;
+                dyna.PositionY = Position.Y;
+                dyna.PositionZ = Position.Z;
+            }
+
+            assetIDs.Add(asset.AHDR.assetID);
+
+            return asset.AHDR.assetID;
+        }
 
         public uint PlaceTemplate(Vector3 position, int layerIndex, out bool success, ref List<uint> assetIDs, string customName = "", AssetTemplate template = AssetTemplate.Null)
         {
@@ -137,6 +469,8 @@ namespace IndustrialPark
                 case AssetTemplate.Turret_v1:
                 case AssetTemplate.Turret_v2:
                 case AssetTemplate.Turret_v3:
+                case AssetTemplate.Ring:
+                case AssetTemplate.RingControl:
                     dataSize = 0x10;
                     newAssetType = AssetType.DYNA;
                     break;
@@ -210,6 +544,7 @@ namespace IndustrialPark
                     break;
                 case AssetTemplate.Platform_Generic:
                 case AssetTemplate.TexasHitch_PLAT:
+                case AssetTemplate.Swinger_PLAT:
                 case AssetTemplate.HoveringPlatform:
                 case AssetTemplate.Springboard:
                     if (currentGame == Game.BFBB)
@@ -246,6 +581,7 @@ namespace IndustrialPark
                 case AssetTemplate.FreezyFruit:
                 case AssetTemplate.Checkpoint_SIMP:
                 case AssetTemplate.BungeeHook_SIMP:
+                case AssetTemplate.Swinger:
                     dataSize = 0x60 + Asset.Offset;
                     newAssetType = AssetType.SIMP;
                     break;
@@ -932,10 +1268,12 @@ namespace IndustrialPark
                     ((AssetSIMP)asset).Model_AssetID = "taxi_stand";
                     break;
                 case AssetTemplate.TexasHitch:
+                case AssetTemplate.Swinger:
                     ((AssetSIMP)asset).AssetType = ObjectAssetType.SIMP;
                     ((AssetSIMP)asset).Model_AssetID = "trailer_hitch";
                     break;
                 case AssetTemplate.TexasHitch_PLAT:
+                case AssetTemplate.Swinger_PLAT:
                     ((AssetPLAT)asset).AssetType = ObjectAssetType.PLAT;
                     ((AssetPLAT)asset).Model_AssetID = "trailer_hitch";
                     ((AssetPLAT)asset).UnknownByte_90 = 4;
@@ -948,14 +1286,14 @@ namespace IndustrialPark
                     ((AssetMVPT_Scooby)asset).Wt = 0x2710;
                     ((AssetMVPT_Scooby)asset).IsZone = 0x00;
                     ((AssetMVPT_Scooby)asset).BezIndex = 0x00;
-                    if (asset is AssetMVPT_Scooby)
-                        ((AssetMVPT_Scooby)asset).ArenaRadius = 8;
-                    else
+                    if (asset is AssetMVPT)
                     {
                         ((AssetMVPT)asset).Delay = 360;
                         ((AssetMVPT)asset).ZoneRadius = 4;
                         ((AssetMVPT)asset).ArenaRadius = 8;
                     }
+                    else
+                        ((AssetMVPT_Scooby)asset).ArenaRadius = 8;
                     break;
                 case AssetTemplate.PointMVPT:
                 case AssetTemplate.PointMVPT_TSSM:
@@ -1106,7 +1444,7 @@ namespace IndustrialPark
                         {
                             new LinkBFBB
                             {
-                                Arguments_Hex = new AssetID[] { 0, 0, 0, 0 },
+                                Arguments_Float = new float[4],
                                 ArgumentAssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, "CHECKPOINT_MRKR", AssetTemplate.Marker),
                                 TargetAssetID = checkpointDisp,
                                 EventReceiveID = EventBFBB.EnterPlayer,
@@ -1503,97 +1841,41 @@ namespace IndustrialPark
                         template == AssetTemplate.Turret_v3 ? EnemyTurretType.turret_v3_bind : 0
                     };
                     break;
+                case AssetTemplate.Ring:
+                    ((AssetDYNA)asset).Version = 2;
+                    ((AssetDYNA)asset).Type_TSSM = DynaType_TSSM.game_object__Ring;
+                    ((AssetDYNA)asset).DynaBase = new DynaRing()
+                    {
+                        PositionX = position.X,
+                        PositionY = position.Y,
+                        PositionZ = position.Z,
+                        ScaleX = 1f,
+                        ScaleY = 1f,
+                        ScaleZ = 1f,
+                        UnknownShadowFlag = 1,
+                        CollisionRadius = 3.5f,
+                        UnknownFloat1 = 4f,
+                        UnknownFloat2 = 4f,
+                        NormalTimer = 5f,
+                        RedTimer = -1f
+                    };
+                    break;
+                case AssetTemplate.RingControl:
+                    ((AssetDYNA)asset).Version = 3;
+                    ((AssetDYNA)asset).Type_TSSM = DynaType_TSSM.game_object__RingControl;
+                    ((AssetDYNA)asset).DynaBase = new DynaRingControl()
+                    {
+                        RingModel_AssetID = "test_ring",
+                        UnknownInt1 = 40,
+                        RingSoundGroup_AssetID = "RING_SGRP",
+                        RingsAreVisible = 1,
+                        Rings_AssetIDs = new AssetID[0]
+                    };
+                    break;
             }
 
             if (asset is AssetDYNA DYNA)
                 DYNA.SetDynaSpecific(false);
-
-            assetIDs.Add(asset.AHDR.assetID);
-
-            return asset.AHDR.assetID;
-        }
-
-        private uint PlaceUserTemplate(Vector3 Position, int layerIndex, out bool success, ref List<uint> assetIDs)
-        {
-            if (!File.Exists(Path.Combine(Program.MainForm.userTemplatesFolder, CurrentUserTemplate)))
-            {
-                success = false;
-                return 0;
-            }
-
-            string assetTypeName = CurrentUserTemplate.Substring(CurrentUserTemplate.IndexOf('[') + 1, CurrentUserTemplate.IndexOf(']') - CurrentUserTemplate.IndexOf('[') - 1);
-            AssetType assetType = AssetType.Null;
-
-            foreach (AssetType o in Enum.GetValues(typeof(AssetType)))
-            {
-                if (o.ToString() == assetTypeName.Trim().ToUpper())
-                {
-                    assetType = o;
-                    break;
-                }
-            }
-            if (assetType == AssetType.Null) throw new Exception("Unknown asset type: " + assetType);
-
-            Section_AHDR newAsset = new Section_AHDR
-            {
-                assetType = assetType,
-                flags = AHDRFlagsFromAssetType(assetType),
-                data = File.ReadAllBytes(Path.Combine(Program.MainForm.userTemplatesFolder, CurrentUserTemplate))
-            };
-
-            newAsset.ADBG = new Section_ADBG(0, CurrentUserTemplate.Substring(CurrentUserTemplate.IndexOf(']') + 2) + "_T001", "", 0);
-
-            Asset asset = GetFromAssetID(AddAssetWithUniqueID(layerIndex, newAsset, "_T", true));
-
-            success = true;
-
-            if (asset is AssetTRIG trig)
-            {
-                trig.PositionX = Position.X;
-                trig.PositionY = Position.Y;
-                trig.PositionZ = Position.Z;
-
-                trig.Position0X = Position.X;
-                trig.Position0Y = Position.Y;
-                trig.Position0Z = Position.Z;
-            }
-            if (asset is PlaceableAsset placeableAsset)
-            {
-                placeableAsset.PositionX = Position.X;
-                placeableAsset.PositionY = Position.Y;
-                placeableAsset.PositionZ = Position.Z;
-            }
-            else if (asset is AssetCAM cam)
-            {
-                cam.SetPosition(Program.MainForm.renderer.Camera.Position);
-                cam.SetNormalizedForward(Program.MainForm.renderer.Camera.GetForward());
-                cam.SetNormalizedUp(Program.MainForm.renderer.Camera.GetUp());
-                cam.SetNormalizedLeft(Program.MainForm.renderer.Camera.GetRight());
-            }
-            else if (asset is AssetMRKR mrkr)
-            {
-                mrkr.PositionX = Position.X;
-                mrkr.PositionY = Position.Y;
-                mrkr.PositionZ = Position.Z;
-            }
-            else if (asset is AssetMVPT mvpt)
-            {
-                mvpt.PositionX = Position.X;
-                mvpt.PositionY = Position.Y;
-                mvpt.PositionZ = Position.Z;
-            }
-            else if (asset is AssetSFX sfx)
-            {
-                sfx.PositionX = Position.X;
-                sfx.PositionY = Position.Y;
-                sfx.PositionZ = Position.Z;
-            }
-            else if (asset is AssetDYNA dyna)
-            {
-                dyna.PositionX = Position.X;
-                dyna.PositionY = Position.Y;
-                dyna.PositionZ = Position.Z;
-            }
 
             assetIDs.Add(asset.AHDR.assetID);
 

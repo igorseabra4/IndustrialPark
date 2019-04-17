@@ -5,10 +5,10 @@ namespace IndustrialPark
 {
     public class SharpCamera
     {
-        public Vector3 Position = Vector3.Zero;
-        private Vector3 Forward = Vector3.ForwardRH;
-        private Vector3 Right = Vector3.Right;
-        private Vector3 Up = Vector3.Up;
+        public Vector3 Position { get; private set; } = Vector3.Zero;
+        public Vector3 Forward { get; private set; } = Vector3.ForwardRH;
+        public Vector3 Right { get; private set; } = Vector3.Right;
+        public Vector3 Up { get; private set; } = Vector3.Up;
         private float _yaw = 0;
         public float Yaw
         {
@@ -124,48 +124,16 @@ namespace IndustrialPark
             this.Position = Position;
             UpdateCamera();
         }
-
-        public Vector3 GetPosition()
-        {
-            return Position;
-        }
-
-        public Vector3 GetForward()
-        {
-            return Forward;
-        }
-
-        public Vector3 GetUp()
-        {
-            return Up;
-        }
-
-        public Vector3 GetRight()
-        {
-            return Right;
-        }
-
-        public Matrix GetViewMatrix()
-        {
-            return Matrix.LookAtRH(Position, Position + Forward, Up);
-        }
-
-        public Matrix GetProjectionMatrix()
-        {
-            return Matrix.PerspectiveFovRH(FieldOfView, AspectRatio, NearPlane, FarPlane);
-        }
-
-        public Matrix GetBiggerFovProjectionMatrix()
-        {
-            return Matrix.PerspectiveFovRH(1.3f * FieldOfView, AspectRatio, NearPlane, FarPlane);
-        }
-
-        public string GetInformation()
-        {
-            return string.Format("Position: [{0:0.0000}, {1:0.0000}, {2:0.0000}] Rotation: [{3:0.0000}, {4:0.0000}]",
+        
+        public Matrix ViewMatrix => Matrix.LookAtRH(Position, Position + Forward, Up);
+        
+        public Matrix ProjectionMatrix => Matrix.PerspectiveFovRH(FieldOfView, AspectRatio, NearPlane, FarPlane);
+        
+        public Matrix BiggerFovProjectionMatrix => Matrix.PerspectiveFovRH(1.3f * FieldOfView, AspectRatio, NearPlane, FarPlane);
+        
+        public override string ToString() => string.Format("Position: [{0:0.0000}, {1:0.0000}, {2:0.0000}] Rotation: [{3:0.0000}, {4:0.0000}]",
                 Position.X, Position.Y, Position.Z, Yaw, Pitch);
-        }
-
+        
         public void SetPositionCamera(AssetCAM cam)
         {
             Position = new Vector3(cam.PositionX, cam.PositionY, cam.PositionZ);

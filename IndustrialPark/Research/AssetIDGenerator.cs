@@ -17,6 +17,15 @@ namespace IndustrialPark
             InitializeComponent();
         }
 
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.WindowsShutDown) return;
+            if (e.CloseReason == CloseReason.FormOwnerClosing) return;
+
+            e.Cancel = true;
+            Hide();
+        }
+
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
             richTextBox2.Clear();

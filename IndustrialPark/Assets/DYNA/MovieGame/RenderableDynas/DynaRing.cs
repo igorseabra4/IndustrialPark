@@ -335,7 +335,7 @@ namespace IndustrialPark
         [Category("Ring"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat1 { get; set; }
 
-        [Category("Ring")]
+        [Category("Ring"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat2 { get; set; }
 
         [Category("Ring"), TypeConverter(typeof(FloatTypeConverter))]

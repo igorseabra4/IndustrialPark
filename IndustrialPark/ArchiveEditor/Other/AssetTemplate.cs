@@ -125,6 +125,11 @@
         BungeeHook,
         BungeeDrop,
 
+        Swinger,
+        Swinger_PLAT,
+        Ring,
+        RingControl,
+
         // ...but not for user
         PressurePlateBase,
         BusStop_DYNA,

@@ -28,7 +28,7 @@ namespace IndustrialPark
             if (!string.IsNullOrWhiteSpace(filePath))
                 OpenFile(filePath);
 
-            MainForm.PopulateTemplateMenusAt(addTemplateToolStripMenuItem, TemplateToolStripMenuItem_Click);
+            ArchiveEditorFunctions.PopulateTemplateMenusAt(addTemplateToolStripMenuItem, TemplateToolStripMenuItem_Click);
             listViewAssets_SizeChanged(null, null);
         }
 
@@ -529,7 +529,7 @@ namespace IndustrialPark
             if (archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]) is AssetCAM cam)
                 Program.MainForm.renderer.Camera.SetPositionCamera(cam);
             else if (archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]) is IClickableAsset a)
-                Program.MainForm.renderer.Camera.SetPosition(new Vector3(a.PositionX, a.PositionY, a.PositionZ) - 8 * Program.MainForm.renderer.Camera.GetForward());
+                Program.MainForm.renderer.Camera.SetPosition(new Vector3(a.PositionX, a.PositionY, a.PositionZ) - 8 * Program.MainForm.renderer.Camera.Forward);
         }
 
         private void buttonEditAsset_Click(object sender, EventArgs e)
@@ -883,7 +883,7 @@ namespace IndustrialPark
             {
                 if (text == template.ToString())
                 {
-                    Vector3 Position = Program.MainForm.renderer.Camera.Position + 2 * Program.MainForm.renderer.Camera.GetForward();
+                    Vector3 Position = Program.MainForm.renderer.Camera.Position + 3 * Program.MainForm.renderer.Camera.Forward;
                     PlaceTemplate(Position, template);
                     return;
                 }

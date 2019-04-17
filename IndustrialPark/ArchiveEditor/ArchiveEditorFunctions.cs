@@ -438,7 +438,6 @@ namespace IndustrialPark
                 case AssetType.VIL: newAsset = new AssetVIL(AHDR); break;
                 case AssetType.VILP: newAsset = new AssetVILP(AHDR); break;
                 case AssetType.VOLU: newAsset = new AssetVOLU(AHDR); break;
-
                 case AssetType.CCRV:
                 case AssetType.DTRK:
                 case AssetType.DUPC:
@@ -481,6 +480,25 @@ namespace IndustrialPark
             }
 
             assetDictionary.Add(AHDR.assetID, newAsset);
+
+            // THIS IS TEMPORARY, REMOVE AFTER FINISHING ENEMY HIPS
+            //if (newAsset is AssetMINF minf)
+            //{
+            //    uint hash = BKDRHash(AHDR.ADBG.assetName.Replace(".MINF", ""));
+            //    if (assetDictionary.ContainsKey(hash))
+            //        assetDictionary[hash] = newAsset;
+            //    else
+            //        assetDictionary.Add(hash, newAsset);
+            //}
+            //if (newAsset is AssetMODL modl)
+            //{
+            //    uint hash = BKDRHash(AHDR.ADBG.assetName.ToLower().Replace(".dff", ""));
+            //    if (assetDictionary.ContainsKey(hash))
+            //        assetDictionary[hash] = newAsset;
+            //    else
+            //        assetDictionary.Add(hash, newAsset);
+            //}
+            // ...
 
             if (hiddenAssets.Contains(AHDR.assetID))
                 assetDictionary[AHDR.assetID].isInvisible = true;

@@ -25,7 +25,7 @@ namespace IndustrialPark
             uIToolStripMenuItem_Click(null, null);
             uIFTToolStripMenuItem_Click(null, null);
 
-            PopulateTemplateMenusAt(toolStripMenuItem_Templates, TemplateToolStripItemClick);
+            ArchiveEditorFunctions.PopulateTemplateMenusAt(toolStripMenuItem_Templates, TemplateToolStripItemClick);
 
             renderer = new SharpRenderer(renderPanel);
         }
@@ -970,10 +970,9 @@ namespace IndustrialPark
         public string GetAssetNameFromID(uint assetID)
         {
             foreach (ArchiveEditor archiveEditor in archiveEditors)
-            {
                 if (archiveEditor.HasAsset(assetID))
                     return archiveEditor.GetAssetNameFromID(assetID);
-            }
+
             return "0x" + assetID.ToString("X8");
         }
 
@@ -1019,225 +1018,21 @@ namespace IndustrialPark
             FileAssociations.FileAssociations.EnsureAssociationsSet();
         }
 
-        public static void PopulateTemplateMenusAt(ToolStripMenuItem menu, EventHandler eventHandler)
+        private void UnselectTemplateButtonRecursive(ToolStripItem t)
         {
-            ToolStripMenuItem controllers = new ToolStripMenuItem("Stage Controllers");
-            controllers.DropDownItems.AddRange(new ToolStripItem[]
+            if (t is ToolStripMenuItem toolStripMenuItem)
             {
-                new ToolStripMenuItem(AssetTemplate.Counter.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Conditional.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Dispatcher.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Group.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Portal.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Script.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Text.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Timer.ToString()),
-                new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.DuplicatotronSettings.ToString()),
-            });
-            foreach (ToolStripItem i in controllers.DropDownItems)
-                if (i is ToolStripMenuItem j)
-                    j.Click += eventHandler;
-
-            ToolStripMenuItem pickups = new ToolStripMenuItem("Pickups and Tikis (BFBB)");
-            pickups.DropDownItems.AddRange(new ToolStripItem[]
-            {
-                new ToolStripMenuItem(AssetTemplate.Shiny_Red.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Shiny_Yellow.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Shiny_Green.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Shiny_Blue.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Shiny_Purple.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Underwear.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Spongeball.ToString()),
-                new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.WoodenTiki.ToString()),
-                new ToolStripMenuItem(AssetTemplate.FloatingTiki.ToString()),
-                new ToolStripMenuItem(AssetTemplate.ThunderTiki.ToString()),
-                new ToolStripMenuItem(AssetTemplate.ShhhTiki.ToString()),
-                new ToolStripMenuItem(AssetTemplate.StoneTiki.ToString()),
-                new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.Spatula.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Sock.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Golden_Underwear.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Smelly_Sundae.ToString()),
-                new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.SteeringWheel.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Artwork.ToString()),
-                new ToolStripMenuItem(AssetTemplate.PowerCrystal.ToString()),
-            });
-            foreach (ToolStripItem i in pickups.DropDownItems)
-                if (i is ToolStripMenuItem j)
-                    j.Click += eventHandler;
-
-            ToolStripMenuItem pickupsTSSM = new ToolStripMenuItem("Pickups and Crates (TSSM)");
-            pickupsTSSM.DropDownItems.AddRange(new ToolStripItem[]
-            {
-                new ToolStripMenuItem(AssetTemplate.Manliness_Red.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Manliness_Yellow.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Manliness_Green.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Manliness_Blue.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Manliness_Purple.ToString()),
-                new ToolStripMenuItem(AssetTemplate.KrabbyPatty.ToString()),
-                new ToolStripMenuItem(AssetTemplate.GoofyGooberToken.ToString()),
-                new ToolStripMenuItem(AssetTemplate.TreasureChest.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Nitro.ToString()),
-                new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.Wood_Crate.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Hover_Crate.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Explode_Crate.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Shrink_Crate.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Steel_Crate.ToString()),
-            });
-            foreach (ToolStripItem i in pickupsTSSM.DropDownItems)
-                if (i is ToolStripMenuItem j)
-                    j.Click += eventHandler;
-
-            ToolStripMenuItem enemies = new ToolStripMenuItem("Enemies (BFBB)");
-            enemies.DropDownItems.AddRange(new ToolStripItem[]
-            {
-                new ToolStripMenuItem(AssetTemplate.Fodder.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Hammer.ToString()),
-                new ToolStripMenuItem(AssetTemplate.TarTar.ToString()),
-                new ToolStripMenuItem(AssetTemplate.ChompBot.ToString()),
-                new ToolStripMenuItem(AssetTemplate.GLove.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Chuck.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Chuck_Trigger.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Monsoon.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Monsoon_Trigger.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Sleepytime.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Sleepytime_Moving.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Arf.ToString()),
-                new ToolStripMenuItem(AssetTemplate.BombBot.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Tubelet.ToString()),
-                new ToolStripMenuItem(AssetTemplate.BzztBot.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Slick.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Slick_Trigger.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Jellyfish_Pink.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Jellyfish_Blue.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Duplicatotron.ToString())
-            });
-            foreach (ToolStripItem i in enemies.DropDownItems)
-                if (i is ToolStripMenuItem j)
-                    j.Click += eventHandler;
-
-            ToolStripMenuItem enemiesTSSM = new ToolStripMenuItem("Enemies (TSSM)");
-            enemiesTSSM.DropDownItems.AddRange(new ToolStripItem[]
-            {
-                new ToolStripMenuItem(AssetTemplate.Fogger_GoofyGoober.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Fogger_Desert.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Fogger_ThugTug.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Fogger_Trench.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Fogger_Junkyard.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Fogger_Planktopolis.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Fogger_v1.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Fogger_v2.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Fogger_v3.ToString()),
-                new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.Slammer_GoofyGoober.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Slammer_Desert.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Slammer_ThugTug.ToString()),
-                new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.Flinger_Desert.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Flinger_Trench.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Flinger_Junkyard.ToString()),
-                new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.Spinner_ThugTug.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Spinner_Junkyard.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Spinner_Planktopolis.ToString()),
-                new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.Popper_Trench.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Popper_Planktopolis.ToString()),
-                new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.Minimerv.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Mervyn.ToString()),
-                new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.Jelly_Critter.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Jelly_Bucket.ToString()),
-                new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.Turret_v1.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Turret_v2.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Turret_v3.ToString())
-            });
-            foreach (ToolStripItem i in enemiesTSSM.DropDownItems)
-                if (i is ToolStripMenuItem j)
-                    j.Click += eventHandler;
-
-            ToolStripMenuItem stageitems = new ToolStripMenuItem("Stage Items (BFBB)");
-            stageitems.DropDownItems.AddRange(new ToolStripItem[]
-            {
-                new ToolStripMenuItem(AssetTemplate.Button_Red.ToString()),
-                new ToolStripMenuItem(AssetTemplate.PressurePlate.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Checkpoint.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Checkpoint_Invisible.ToString()),
-                new ToolStripMenuItem(AssetTemplate.BusStop.ToString()),
-                new ToolStripMenuItem(AssetTemplate.TeleportBox.ToString()),
-                new ToolStripMenuItem(AssetTemplate.ThrowFruit.ToString()),
-                new ToolStripMenuItem(AssetTemplate.FreezyFruit.ToString()),
-                new ToolStripMenuItem(AssetTemplate.TexasHitch.ToString()),
-                new ToolStripMenuItem(AssetTemplate.TexasHitch_PLAT.ToString()),
-                new ToolStripMenuItem(AssetTemplate.BungeeHook.ToString()),
-                new ToolStripMenuItem(AssetTemplate.BungeeDrop.ToString()),
-                new ToolStripMenuItem(AssetTemplate.HoveringPlatform.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Springboard.ToString()),
-                new ToolStripMenuItem(AssetTemplate.TaxiStand.ToString()),
-            });
-            foreach (ToolStripItem i in stageitems.DropDownItems)
-                if (i is ToolStripMenuItem j)
-                    j.Click += eventHandler;
-
-            ToolStripMenuItem placeable = new ToolStripMenuItem("Placeable");
-            placeable.DropDownItems.AddRange(new ToolStripItem[]
-            {
-                new ToolStripMenuItem(AssetTemplate.Camera.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Marker.ToString()),
-                new ToolStripMenuItem(AssetTemplate.PointMVPT.ToString()),
-                new ToolStripMenuItem(AssetTemplate.PointMVPT_TSSM.ToString()),
-                new ToolStripMenuItem(AssetTemplate.EnemyAreaMVPT.ToString()),
-                new ToolStripMenuItem(AssetTemplate.SphereTrigger.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Dyna_Pointer.ToString()),
-                new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.Boulder_Generic.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Button_Generic.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Destructible_Generic.ToString()),
-                new ToolStripMenuItem(AssetTemplate.ElectricArc_Generic.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Pendulum_Generic.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Platform_Generic.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Player_Generic.ToString()),
-                new ToolStripMenuItem(AssetTemplate.SIMP_Generic.ToString()),
-                new ToolStripMenuItem(AssetTemplate.VIL_Generic.ToString()),
-            });
-            foreach (ToolStripItem i in placeable.DropDownItems)
-                if (i is ToolStripMenuItem j)
-                    j.Click += eventHandler;
-
-            ToolStripMenuItem others = new ToolStripMenuItem("Other");
-            others.DropDownItems.AddRange(new ToolStripItem[]
-            {
-                new ToolStripMenuItem(AssetTemplate.AnimationList.ToString()),
-                new ToolStripMenuItem(AssetTemplate.CollisionTable.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Environment.ToString()),
-                new ToolStripMenuItem(AssetTemplate.JawData.ToString()),
-                new ToolStripMenuItem(AssetTemplate.LevelOfDetailTable.ToString()),
-                new ToolStripMenuItem(AssetTemplate.MaterialMap.ToString()),
-                new ToolStripMenuItem(AssetTemplate.PipeInfoTable.ToString()),
-                new ToolStripMenuItem(AssetTemplate.ShadowTable.ToString()),
-                new ToolStripMenuItem(AssetTemplate.SoundInfo.ToString()),
-            });
-            foreach (ToolStripItem i in others.DropDownItems)
-                if (i is ToolStripMenuItem j)
-                    j.Click += eventHandler;
-
-            menu.DropDownItems.AddRange(new ToolStripItem[] {
-                controllers, pickups, enemies, stageitems, pickupsTSSM, enemiesTSSM, placeable, others});
+                if (toolStripMenuItem.HasDropDownItems)
+                    foreach (ToolStripItem ti in toolStripMenuItem.DropDownItems)
+                        UnselectTemplateButtonRecursive(ti);
+                else
+                    toolStripMenuItem.Checked = false;
+            }
         }
 
         private void TemplateToolStripItemClick(object sender, EventArgs e)
         {
-            foreach (ToolStripItem t in toolStripMenuItem_Templates.DropDownItems)
-                if (t is ToolStripMenuItem j)
-                    foreach (ToolStripItem ti in j.DropDownItems)
-                        if (ti is ToolStripMenuItem k)
-                            k.Checked = false;
+            UnselectTemplateButtonRecursive(toolStripMenuItem_Templates);
 
             string text = ((ToolStripItem)sender).Text;
             foreach (AssetTemplate template in Enum.GetValues(typeof(AssetTemplate)))
