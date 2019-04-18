@@ -7,7 +7,7 @@ namespace IndustrialPark
     {
         public AssetCSNM(Section_AHDR AHDR) : base(AHDR) { }
 
-        protected override int EventStartOffset => 0xC8;
+        protected override int EventStartOffset => 0xC8 + (Functions.currentGame == Game.Incredibles ? 4 : 0);
 
         public override bool HasReference(uint assetID)
         {
@@ -351,6 +351,22 @@ namespace IndustrialPark
         {
             get => ReadInt(0xC4);
             set => Write(0xC4, value);
+        }
+
+        [Category("Cutscene Manager (Movie Only)")]
+        public int UnknownIntC8
+        {
+            get
+            {
+                if (Functions.currentGame == Game.Incredibles)
+                    return ReadInt(0xC8);
+                return 0;
+            }
+            set
+            {
+                if (Functions.currentGame == Game.Incredibles)
+                    Write(0xC8, value);
+            }
         }
     }
 }

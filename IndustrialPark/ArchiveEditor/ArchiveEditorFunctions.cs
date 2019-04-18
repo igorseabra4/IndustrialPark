@@ -414,9 +414,7 @@ namespace IndustrialPark
                 case AssetType.SGRP: newAsset = new AssetSGRP(AHDR); break;
                 case AssetType.SIMP: newAsset = new AssetSIMP(AHDR); break;
                 case AssetType.SHDW: newAsset = new AssetSHDW(AHDR); break;
-                case AssetType.SHRP:
-                    newAsset = currentGame == Game.BFBB ? new AssetSHRP(AHDR) : new Asset(AHDR);
-                    break;
+                case AssetType.SHRP: newAsset = new AssetSHRP(AHDR); break;
                 case AssetType.SNDI:
                     if (currentPlatform == Platform.GameCube && (currentGame == Game.BFBB || currentGame == Game.Scooby))
                         newAsset = new AssetSNDI_GCN_V1(AHDR);

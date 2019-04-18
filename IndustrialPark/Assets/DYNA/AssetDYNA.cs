@@ -186,6 +186,8 @@ namespace IndustrialPark
             dataBefore.AddRange(dataAfter);
 
             Data = dataBefore.ToArray();
+            
+            _dynaSpecific.dynaSpecificPropertyChanged += OnDynaSpecificPropertyChange;
 
             if (IsRenderableClickable)
             {
@@ -193,8 +195,8 @@ namespace IndustrialPark
                 if (!ArchiveEditorFunctions.renderableAssetSetCommon.Contains(this))
                     ArchiveEditorFunctions.renderableAssetSetCommon.Add(this);
             }
-
-            _dynaSpecific.dynaSpecificPropertyChanged += OnDynaSpecificPropertyChange;
+            else if (ArchiveEditorFunctions.renderableAssetSetCommon.Contains(this))
+                ArchiveEditorFunctions.renderableAssetSetCommon.Remove(this);
         }
 
         public void OnDynaSpecificPropertyChange(DynaBase value)

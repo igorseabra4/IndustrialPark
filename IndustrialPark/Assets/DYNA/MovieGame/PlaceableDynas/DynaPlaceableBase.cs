@@ -414,7 +414,7 @@ namespace IndustrialPark
         [Category("Placement References")]
         public AssetID Unknown44 { get; set; }
 
-        [Category("Placement References"), TypeConverter(typeof(HexIntTypeConverter))]
+        [Category("Placement References")]
         public AssetID Model_AssetID { get; set; }
 
         [Category("Placement References")]
