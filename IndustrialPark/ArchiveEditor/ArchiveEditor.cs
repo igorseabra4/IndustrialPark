@@ -243,6 +243,7 @@ namespace IndustrialPark
             buttonArrowUp.Enabled = true;
             buttonArrowDown.Enabled = true;
             importMultipleAssetsToolStripMenuItem.Enabled = true;
+            importModelsToolStripMenuItem.Enabled = true;
             addTemplateToolStripMenuItem.Enabled = true;
             collapseLayersToolStripMenuItem.Enabled = true;
             applyScaleToolStripMenuItem.Enabled = true;
@@ -302,6 +303,7 @@ namespace IndustrialPark
                 buttonArrowUp.Enabled = false;
                 buttonArrowDown.Enabled = false;
                 importMultipleAssetsToolStripMenuItem.Enabled = false;
+                importModelsToolStripMenuItem.Enabled = false;
                 addTemplateToolStripMenuItem.Enabled = false;
 
                 buttonCopy.Enabled = false;
@@ -415,42 +417,22 @@ namespace IndustrialPark
         private void importMultipleAssetsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             List<Section_AHDR> AHDRs = AddMultipleAssets.GetAssets(out bool success);
-
             if (success)
             {
-                archive.UnsavedChanges = true;
+                archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, out List<uint> assetIDs);
+                comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
+                SetSelectedIndices(assetIDs, true);
+            }
+        }
 
-                try
-                {
-                    List<uint> assetIDs = new List<uint>();
-                    
-                    foreach (Section_AHDR AHDR in AHDRs)
-                    {
-                        if (AHDR.assetType == AssetType.SND || AHDR.assetType == AssetType.SNDS)
-                        {
-                            try
-                            {
-                                archive.AddSoundToSNDI(AHDR.data, AHDR.assetID, AHDR.assetType, out byte[] soundData);
-                                AHDR.data = soundData;
-                            }
-                            catch (Exception ex)
-                            {
-                                MessageBox.Show(ex.Message);
-                            }
-                        }
-
-                        archive.AddAssetWithUniqueID(comboBoxLayers.SelectedIndex, AHDR);
-                        assetIDs.Add(AHDR.assetID);
-                    }
-
-                    comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
-
-                    SetSelectedIndices(assetIDs, true);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Unable to add asset: " + ex.Message);
-                }
+        private void importModelsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            List<Section_AHDR> AHDRs = ImportModel.GetAssets(out bool success);
+            if (success)
+            {
+                archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, out List<uint> assetIDs);
+                comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
+                SetSelectedIndices(assetIDs, true);
             }
         }
 
@@ -861,7 +843,6 @@ namespace IndustrialPark
             if (e.Button == MouseButtons.Right)
             {
                 toolStripMenuItem_Add.Enabled = buttonAddAsset.Enabled;
-                toolStripMenuItem_AddMulti.Enabled = importMultipleAssetsToolStripMenuItem.Enabled;
                 toolStripMenuItem_Duplicate.Enabled = buttonDuplicate.Enabled;
                 toolStripMenuItem_Copy.Enabled = buttonCopy.Enabled;
                 toolStripMenuItem_Paste.Enabled = buttonPaste.Enabled;

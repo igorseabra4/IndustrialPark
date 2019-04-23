@@ -78,8 +78,20 @@
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Gizmos.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetTemplates.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetEditing.cs" />
+    <Compile Include="ArchiveEditor\Dialogs\ImportModel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\Dialogs\ImportModel.Designer.cs">
+      <DependentUpon>ImportModel.cs</DependentUpon>
+    </Compile>
     <Compile Include="ArchiveEditor\Dialogs\LinkEditor.Designer.cs">
       <DependentUpon>LinkEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ArchiveEditor\InternalEditors\InternalModelEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\InternalEditors\InternalModelEditor.Designer.cs">
+      <DependentUpon>InternalModelEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="ArchiveEditor\InternalEditors\InternalPlatEditor.cs">
       <SubType>Form</SubType>
@@ -126,6 +138,7 @@
     <Compile Include="Assets\Binary\AssetLKIT.cs" />
     <Compile Include="Assets\Binary\AssetSNDI_GCN_V2.cs" />
     <Compile Include="Assets\Binary\AssetVILP.cs" />
+    <Compile Include="Assets\DYNA\MovieGame\DynaJSPExtraData.cs" />
     <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\DynaEnemyMindy.cs" />
     <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\DynaEnemyTurret.cs" />
     <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\EnemyTypes.cs" />
@@ -285,8 +298,12 @@
     <Compile Include="Assets\Shared\TypeConverter\HexIntTypeConverter.cs" />
     <Compile Include="MainForm\Json\IPSettings.cs" />
     <Compile Include="MainForm\Json\ProjectJson.cs" />
+    <Compile Include="Models\BSP_IO_Collada.cs" />
+    <Compile Include="Models\BSP_IO_CreateBSP.cs" />
+    <Compile Include="Models\BSP_IO_ReadOBJ.cs" />
+    <Compile Include="Models\collada_schema_1_4.cs" />
     <Compile Include="Other\FileAssociation.cs" />
-    <Compile Include="Other\OBJFunctions.cs" />
+    <Compile Include="Models\ModelConverterDataCollada.cs" />
     <Compile Include="Assets\Shared\Colors\MyColor.cs" />
     <Compile Include="Assets\Shared\Colors\MyColorConverter.cs" />
     <Compile Include="Assets\Shared\Colors\MyColorEditor.cs" />
@@ -351,11 +368,17 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Other\ConverterFunctions.cs" />
-    <Compile Include="Other\ModelConverterData.cs" />
-    <Compile Include="Other\Triangle.cs" />
-    <Compile Include="Other\Vertex.cs" />
+    <Compile Include="Models\ModelConverterData.cs" />
+    <Compile Include="Models\Triangle.cs" />
+    <Compile Include="Models\Vertex.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="ArchiveEditor\Dialogs\ImportModel.resx">
+      <DependentUpon>ImportModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalModelEditor.resx">
+      <DependentUpon>InternalModelEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalPlatEditor.resx">
       <DependentUpon>InternalPlatEditor.cs</DependentUpon>
     </EmbeddedResource>

@@ -90,6 +90,9 @@ namespace IndustrialPark
                 ReadFileMethods.treatStuffAsByteArray = true;
                 Data = ReadFileMethods.ExportRenderWareFile(value, renderWareVersion);
                 ReadFileMethods.treatStuffAsByteArray = false;
+
+                model.Dispose();
+                Setup(Program.MainForm.renderer);
             }
         }
 
@@ -134,8 +137,6 @@ namespace IndustrialPark
                             }
 
                 ModelAsRWSections = sections;
-                model.Dispose();
-                Setup(Program.MainForm.renderer);
             }
         }
 
@@ -181,8 +182,6 @@ namespace IndustrialPark
                                             }
 
                 ModelAsRWSections = sections;
-                model.Dispose();
-                Setup(Program.MainForm.renderer);
             }
         }
     }

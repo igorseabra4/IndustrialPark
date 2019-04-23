@@ -4,7 +4,7 @@ using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Windows;
 using System.Collections.Generic;
-using static IndustrialPark.Models.OBJFunctions;
+using static IndustrialPark.Models.BSP_IO_ReadOBJ;
 using System.Linq;
 using System;
 using System.IO;

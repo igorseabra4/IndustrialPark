@@ -275,7 +275,8 @@ namespace IndustrialPark
             if (assetDictionary[assetID] is AssetJSP jsp)
                 jsp.GetRenderWareModelFile().Dispose();
             if (assetDictionary[assetID] is AssetMODL modl)
-                modl.GetRenderWareModelFile().Dispose();
+                if (modl.HasRenderWareModelFile())
+                    modl.GetRenderWareModelFile().Dispose();
             if (assetDictionary[assetID] is AssetMINF minf)
                 minf.MovieRemoveFromDictionary();
             if (assetDictionary[assetID] is AssetLODT lodt)
@@ -683,6 +684,41 @@ namespace IndustrialPark
                 }
 
                 finalIndices.Add(AHDR.assetID);
+            }
+        }
+
+        public bool ImportMultipleAssets(int layerIndex, List<Section_AHDR> AHDRs, out List<uint> assetIDs)
+        {
+            UnsavedChanges = true;
+            assetIDs = new List<uint>();
+
+            try
+            {
+                foreach (Section_AHDR AHDR in AHDRs)
+                {
+                    if (AHDR.assetType == AssetType.SND || AHDR.assetType == AssetType.SNDS)
+                    {
+                        try
+                        {
+                            AddSoundToSNDI(AHDR.data, AHDR.assetID, AHDR.assetType, out byte[] soundData);
+                            AHDR.data = soundData;
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                    }
+
+                    AddAssetWithUniqueID(layerIndex, AHDR);
+                    assetIDs.Add(AHDR.assetID);
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to add asset: " + ex.Message);
+                return false;
             }
         }
 

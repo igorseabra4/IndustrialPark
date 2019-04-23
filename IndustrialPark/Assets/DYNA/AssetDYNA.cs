@@ -177,6 +177,9 @@ namespace IndustrialPark
                     case DynaType_TSSM.SceneProperties:
                         _dynaSpecific = reset ? new DynaSceneProperties() : new DynaSceneProperties(Data.Skip(0x10).Take(EventStartOffset));
                         break;
+                    case DynaType_TSSM.JSPExtraData:
+                        _dynaSpecific = reset ? new DynaJSPExtraData() : new DynaJSPExtraData(Data.Skip(0x10).Take(EventStartOffset));
+                        break;
                     default:
                         _dynaSpecific = reset ? new DynaBase() : new DynaBase(Data.Skip(0x10).Take(EventStartOffset));
                         break;

@@ -45,6 +45,11 @@
             this.hipHopToolExportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importHIPArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importMultipleAssetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tXDArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportRW3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importRW3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportNoRW3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importNoRW3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabelCurrentFilename = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -77,7 +82,6 @@
             this.contextMenuStrip_ListBoxAssets = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_Add = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem_AddMulti = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_Duplicate = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_Copy = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_Paste = new System.Windows.Forms.ToolStripMenuItem();
@@ -87,11 +91,7 @@
             this.toolStripMenuItem_Export = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_EditHeader = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_EditData = new System.Windows.Forms.ToolStripMenuItem();
-            this.tXDArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.importRW3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exportRW3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exportNoRW3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.importNoRW3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importModelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -182,6 +182,7 @@
             this.hipHopToolExportToolStripMenuItem,
             this.importHIPArchiveToolStripMenuItem,
             this.importMultipleAssetsToolStripMenuItem,
+            this.importModelsToolStripMenuItem,
             this.tXDArchiveToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
@@ -191,7 +192,7 @@
             // 
             this.collapseLayersToolStripMenuItem.Enabled = false;
             this.collapseLayersToolStripMenuItem.Name = "collapseLayersToolStripMenuItem";
-            this.collapseLayersToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.collapseLayersToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.collapseLayersToolStripMenuItem.Text = "Collapse Layers";
             this.collapseLayersToolStripMenuItem.Click += new System.EventHandler(this.collapseLayersToolStripMenuItem_Click);
             // 
@@ -199,20 +200,20 @@
             // 
             this.applyScaleToolStripMenuItem.Enabled = false;
             this.applyScaleToolStripMenuItem.Name = "applyScaleToolStripMenuItem";
-            this.applyScaleToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.applyScaleToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.applyScaleToolStripMenuItem.Text = "Apply Scale";
             this.applyScaleToolStripMenuItem.Click += new System.EventHandler(this.applyScaleToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(190, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(202, 6);
             // 
             // hipHopToolExportToolStripMenuItem
             // 
             this.hipHopToolExportToolStripMenuItem.Enabled = false;
             this.hipHopToolExportToolStripMenuItem.Name = "hipHopToolExportToolStripMenuItem";
-            this.hipHopToolExportToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.hipHopToolExportToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.hipHopToolExportToolStripMenuItem.Text = "Export Assets + INI";
             this.hipHopToolExportToolStripMenuItem.Click += new System.EventHandler(this.hipHopToolExportToolStripMenuItem_Click);
             // 
@@ -228,9 +229,49 @@
             // 
             this.importMultipleAssetsToolStripMenuItem.Enabled = false;
             this.importMultipleAssetsToolStripMenuItem.Name = "importMultipleAssetsToolStripMenuItem";
-            this.importMultipleAssetsToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.importMultipleAssetsToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.importMultipleAssetsToolStripMenuItem.Text = "Import Multiple Assets";
             this.importMultipleAssetsToolStripMenuItem.Click += new System.EventHandler(this.importMultipleAssetsToolStripMenuItem_Click);
+            // 
+            // tXDArchiveToolStripMenuItem
+            // 
+            this.tXDArchiveToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.exportRW3ToolStripMenuItem,
+            this.importRW3ToolStripMenuItem,
+            this.exportNoRW3ToolStripMenuItem,
+            this.importNoRW3ToolStripMenuItem});
+            this.tXDArchiveToolStripMenuItem.Enabled = false;
+            this.tXDArchiveToolStripMenuItem.Name = "tXDArchiveToolStripMenuItem";
+            this.tXDArchiveToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.tXDArchiveToolStripMenuItem.Text = "TXD Archive";
+            // 
+            // exportRW3ToolStripMenuItem
+            // 
+            this.exportRW3ToolStripMenuItem.Name = "exportRW3ToolStripMenuItem";
+            this.exportRW3ToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.exportRW3ToolStripMenuItem.Text = "Export (RW3)";
+            this.exportRW3ToolStripMenuItem.Click += new System.EventHandler(this.exportRW3ToolStripMenuItem_Click);
+            // 
+            // importRW3ToolStripMenuItem
+            // 
+            this.importRW3ToolStripMenuItem.Name = "importRW3ToolStripMenuItem";
+            this.importRW3ToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.importRW3ToolStripMenuItem.Text = "Import (RW3)";
+            this.importRW3ToolStripMenuItem.Click += new System.EventHandler(this.importRW3ToolStripMenuItem_Click);
+            // 
+            // exportNoRW3ToolStripMenuItem
+            // 
+            this.exportNoRW3ToolStripMenuItem.Name = "exportNoRW3ToolStripMenuItem";
+            this.exportNoRW3ToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.exportNoRW3ToolStripMenuItem.Text = "Export (No RW3)";
+            this.exportNoRW3ToolStripMenuItem.Click += new System.EventHandler(this.exportNoRW3ToolStripMenuItem_Click);
+            // 
+            // importNoRW3ToolStripMenuItem
+            // 
+            this.importNoRW3ToolStripMenuItem.Name = "importNoRW3ToolStripMenuItem";
+            this.importNoRW3ToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.importNoRW3ToolStripMenuItem.Text = "Import (No RW3)";
+            this.importNoRW3ToolStripMenuItem.Click += new System.EventHandler(this.importNoRW3ToolStripMenuItem_Click);
             // 
             // statusStrip1
             // 
@@ -573,7 +614,6 @@
             this.contextMenuStrip_ListBoxAssets.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addTemplateToolStripMenuItem,
             this.toolStripMenuItem_Add,
-            this.toolStripMenuItem_AddMulti,
             this.toolStripMenuItem_Duplicate,
             this.toolStripMenuItem_Copy,
             this.toolStripMenuItem_Paste,
@@ -584,7 +624,7 @@
             this.toolStripMenuItem_EditHeader,
             this.toolStripMenuItem_EditData});
             this.contextMenuStrip_ListBoxAssets.Name = "contextMenuStrip_ListBoxAssets";
-            this.contextMenuStrip_ListBoxAssets.Size = new System.Drawing.Size(189, 252);
+            this.contextMenuStrip_ListBoxAssets.Size = new System.Drawing.Size(189, 230);
             // 
             // addTemplateToolStripMenuItem
             // 
@@ -598,13 +638,6 @@
             this.toolStripMenuItem_Add.Size = new System.Drawing.Size(188, 22);
             this.toolStripMenuItem_Add.Text = "Import (Ctrl + I)";
             this.toolStripMenuItem_Add.Click += new System.EventHandler(this.buttonAddAsset_Click);
-            // 
-            // toolStripMenuItem_AddMulti
-            // 
-            this.toolStripMenuItem_AddMulti.Name = "toolStripMenuItem_AddMulti";
-            this.toolStripMenuItem_AddMulti.Size = new System.Drawing.Size(188, 22);
-            this.toolStripMenuItem_AddMulti.Text = "Import Multiple";
-            this.toolStripMenuItem_AddMulti.Click += new System.EventHandler(this.importMultipleAssetsToolStripMenuItem_Click);
             // 
             // toolStripMenuItem_Duplicate
             // 
@@ -650,7 +683,7 @@
             // 
             this.toolStripMenuItem_Export.Name = "toolStripMenuItem_Export";
             this.toolStripMenuItem_Export.Size = new System.Drawing.Size(188, 22);
-            this.toolStripMenuItem_Export.Text = "Export";
+            this.toolStripMenuItem_Export.Text = "Export Raw";
             this.toolStripMenuItem_Export.Click += new System.EventHandler(this.buttonExportRaw_Click);
             // 
             // toolStripMenuItem_EditHeader
@@ -667,45 +700,13 @@
             this.toolStripMenuItem_EditData.Text = "Edit Data (Ctrl + G)";
             this.toolStripMenuItem_EditData.Click += new System.EventHandler(this.buttonInternalEdit_Click);
             // 
-            // tXDArchiveToolStripMenuItem
+            // importModelsToolStripMenuItem
             // 
-            this.tXDArchiveToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.exportRW3ToolStripMenuItem,
-            this.importRW3ToolStripMenuItem,
-            this.exportNoRW3ToolStripMenuItem,
-            this.importNoRW3ToolStripMenuItem});
-            this.tXDArchiveToolStripMenuItem.Enabled = false;
-            this.tXDArchiveToolStripMenuItem.Name = "tXDArchiveToolStripMenuItem";
-            this.tXDArchiveToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
-            this.tXDArchiveToolStripMenuItem.Text = "TXD Archive";
-            // 
-            // importRW3ToolStripMenuItem
-            // 
-            this.importRW3ToolStripMenuItem.Name = "importRW3ToolStripMenuItem";
-            this.importRW3ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.importRW3ToolStripMenuItem.Text = "Import (RW3)";
-            this.importRW3ToolStripMenuItem.Click += new System.EventHandler(this.importRW3ToolStripMenuItem_Click);
-            // 
-            // exportRW3ToolStripMenuItem
-            // 
-            this.exportRW3ToolStripMenuItem.Name = "exportRW3ToolStripMenuItem";
-            this.exportRW3ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.exportRW3ToolStripMenuItem.Text = "Export (RW3)";
-            this.exportRW3ToolStripMenuItem.Click += new System.EventHandler(this.exportRW3ToolStripMenuItem_Click);
-            // 
-            // exportNoRW3ToolStripMenuItem
-            // 
-            this.exportNoRW3ToolStripMenuItem.Name = "exportNoRW3ToolStripMenuItem";
-            this.exportNoRW3ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.exportNoRW3ToolStripMenuItem.Text = "Export (No RW3)";
-            this.exportNoRW3ToolStripMenuItem.Click += new System.EventHandler(this.exportNoRW3ToolStripMenuItem_Click);
-            // 
-            // importNoRW3ToolStripMenuItem
-            // 
-            this.importNoRW3ToolStripMenuItem.Name = "importNoRW3ToolStripMenuItem";
-            this.importNoRW3ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.importNoRW3ToolStripMenuItem.Text = "Import (No RW3)";
-            this.importNoRW3ToolStripMenuItem.Click += new System.EventHandler(this.importNoRW3ToolStripMenuItem_Click);
+            this.importModelsToolStripMenuItem.Enabled = false;
+            this.importModelsToolStripMenuItem.Name = "importModelsToolStripMenuItem";
+            this.importModelsToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.importModelsToolStripMenuItem.Text = "Import Models";
+            this.importModelsToolStripMenuItem.Click += new System.EventHandler(this.importModelsToolStripMenuItem_Click);
             // 
             // ArchiveEditor
             // 
@@ -786,7 +787,6 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_EditData;
         private System.Windows.Forms.Label labelTemplateFocus;
         private System.Windows.Forms.ToolStripMenuItem importMultipleAssetsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_AddMulti;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelSelectionCount;
         private System.Windows.Forms.ToolStripMenuItem hideButtonsToolStripMenuItem;
@@ -801,5 +801,6 @@
         private System.Windows.Forms.ToolStripMenuItem importRW3ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportNoRW3ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importNoRW3ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importModelsToolStripMenuItem;
     }
 }
