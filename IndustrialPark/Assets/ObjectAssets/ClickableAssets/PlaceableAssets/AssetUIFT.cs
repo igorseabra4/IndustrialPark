@@ -1,6 +1,7 @@
 ﻿using AssetEditorColors;
 using HipHopFile;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 
@@ -22,6 +23,13 @@ namespace IndustrialPark
                 return true;
 
             return base.HasReference(assetID);
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            Verify(TextAssetID, ref result);
         }
 
         [Category("UIFont")]

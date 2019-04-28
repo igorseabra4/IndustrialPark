@@ -16,6 +16,30 @@ namespace IndustrialPark
         public Vector3 CameraPosition { get; set; }
         public Vector3 Unknown { get; set; }
 
+        public byte[] ToByteArray()
+        {
+            List<byte> data = new List<byte>();
+
+            data.AddRange(BitConverter.GetBytes(FrameNumer));
+            data.AddRange(BitConverter.GetBytes(CameraNormalizedLeft.X));
+            data.AddRange(BitConverter.GetBytes(CameraNormalizedLeft.Y));
+            data.AddRange(BitConverter.GetBytes(CameraNormalizedLeft.Z));
+            data.AddRange(BitConverter.GetBytes(CameraNormalizedUp.X));
+            data.AddRange(BitConverter.GetBytes(CameraNormalizedUp.Y));
+            data.AddRange(BitConverter.GetBytes(CameraNormalizedUp.Z));
+            data.AddRange(BitConverter.GetBytes(CameraNormalizedBackward.X));
+            data.AddRange(BitConverter.GetBytes(CameraNormalizedBackward.Y));
+            data.AddRange(BitConverter.GetBytes(CameraNormalizedBackward.Z));
+            data.AddRange(BitConverter.GetBytes(CameraPosition.X));
+            data.AddRange(BitConverter.GetBytes(CameraPosition.Y));
+            data.AddRange(BitConverter.GetBytes(CameraPosition.Z));
+            data.AddRange(BitConverter.GetBytes(Unknown.X));
+            data.AddRange(BitConverter.GetBytes(Unknown.Y));
+            data.AddRange(BitConverter.GetBytes(Unknown.Z));
+
+            return data.ToArray();
+        }
+
         public override string ToString()
         {
             return $"[{FrameNumer}] - [{CameraPosition.ToString()}]";
@@ -24,8 +48,11 @@ namespace IndustrialPark
 
     public class AssetFLY : Asset
     {
-        public AssetFLY (Section_AHDR AHDR) : base(AHDR)
+        public AssetFLY(Section_AHDR AHDR) : base(AHDR) { }
+
+        public override void Verify(ref List<string> result)
         {
+            EntryFLY[] entries = FLY_Entries;
         }
 
         [Category("Flythrough")]
@@ -37,8 +64,7 @@ namespace IndustrialPark
                 BinaryReader binaryReader = new BinaryReader(new MemoryStream(Data));
 
                 while (binaryReader.BaseStream.Position < binaryReader.BaseStream.Length)
-                {
-                    EntryFLY entry = new EntryFLY
+                    entries.Add(new EntryFLY
                     {
                         FrameNumer = binaryReader.ReadInt32(),
                         CameraNormalizedLeft = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle()),
@@ -46,11 +72,8 @@ namespace IndustrialPark
                         CameraNormalizedBackward = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle()),
                         CameraPosition = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle()),
                         Unknown = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle())
-                    };
-
-                    entries.Add(entry);
-                }
-
+                    });
+                
                 return entries.ToArray();
             }
             set
@@ -58,25 +81,8 @@ namespace IndustrialPark
                 List<byte> newData = new List<byte>();
 
                 foreach (EntryFLY i in value)
-                {
-                    newData.AddRange(BitConverter.GetBytes(i.FrameNumer));
-                    newData.AddRange(BitConverter.GetBytes(i.CameraNormalizedLeft.X));
-                    newData.AddRange(BitConverter.GetBytes(i.CameraNormalizedLeft.Y));
-                    newData.AddRange(BitConverter.GetBytes(i.CameraNormalizedLeft.Z));
-                    newData.AddRange(BitConverter.GetBytes(i.CameraNormalizedUp.X));
-                    newData.AddRange(BitConverter.GetBytes(i.CameraNormalizedUp.Y));
-                    newData.AddRange(BitConverter.GetBytes(i.CameraNormalizedUp.Z));
-                    newData.AddRange(BitConverter.GetBytes(i.CameraNormalizedBackward.X));
-                    newData.AddRange(BitConverter.GetBytes(i.CameraNormalizedBackward.Y));
-                    newData.AddRange(BitConverter.GetBytes(i.CameraNormalizedBackward.Z));
-                    newData.AddRange(BitConverter.GetBytes(i.CameraPosition.X));
-                    newData.AddRange(BitConverter.GetBytes(i.CameraPosition.Y));
-                    newData.AddRange(BitConverter.GetBytes(i.CameraPosition.Z));
-                    newData.AddRange(BitConverter.GetBytes(i.Unknown.X));
-                    newData.AddRange(BitConverter.GetBytes(i.Unknown.Y));
-                    newData.AddRange(BitConverter.GetBytes(i.Unknown.Z));
-                }
-
+                    newData.AddRange(i.ToByteArray());
+                
                 Data = newData.ToArray();
             }
         }

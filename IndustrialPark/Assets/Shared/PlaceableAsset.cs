@@ -157,6 +157,17 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            Verify(Surface_AssetID, ref result);
+            if (Model_AssetID == 0)
+                result.Add(AHDR.assetType.ToString() + " with Model_AssetID set to 0");
+            Verify(Model_AssetID, ref result);
+            Verify(Animation_AssetID, ref result);
+        }
+
         [Category("Placement Flags"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte VisibilityFlag
         {

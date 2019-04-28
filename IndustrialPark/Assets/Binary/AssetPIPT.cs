@@ -45,9 +45,7 @@ namespace IndustrialPark
 
     public class AssetPIPT : Asset
     {
-        public AssetPIPT(Section_AHDR AHDR) : base(AHDR)
-        {
-        }
+        public AssetPIPT(Section_AHDR AHDR) : base(AHDR) { }
 
         public override bool HasReference(uint assetID)
         {
@@ -56,6 +54,16 @@ namespace IndustrialPark
                     return true;
 
             return base.HasReference(assetID);
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            foreach (EntryPIPT a in PIPT_Entries)
+            {
+                if (a.ModelAssetID == 0)
+                    result.Add("PIPT entry with ModelAssetID set to 0");
+                Verify(a.ModelAssetID, ref result);
+            }
         }
 
         [Category("Pipe Table")]

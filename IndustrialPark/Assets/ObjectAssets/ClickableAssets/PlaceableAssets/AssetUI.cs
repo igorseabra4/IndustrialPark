@@ -2,6 +2,7 @@
 using IndustrialPark.Models;
 using SharpDX;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -27,6 +28,14 @@ namespace IndustrialPark
                 return true;
             
             return base.HasReference(assetID);
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            Verify(TextureAssetID, ref result);
+            Verify(AnimListAssetID, ref result);
         }
 
         public override void CreateTransformMatrix()

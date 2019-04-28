@@ -85,6 +85,20 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            foreach (EntryLODT a in LODT_Entries)
+            {
+                if (a.ModelAssetID == 0)
+                    result.Add("LODT entry with ModelAssetID set to 0");
+
+                Verify(a.ModelAssetID, ref result);
+                Verify(a.LOD1_Model, ref result);
+                Verify(a.LOD2_Model, ref result);
+                Verify(a.LOD3_Model, ref result);
+            }
+        }
+
         [Category("Level Of Detail Table")]
         public EntryLODT[] LODT_Entries
         {

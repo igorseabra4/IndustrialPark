@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -26,7 +27,19 @@ namespace IndustrialPark
 
             return base.HasReference(assetID);
         }
-        
+
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            Verify(DestroyShrapnel_AssetID, ref result);
+            Verify(HitShrapnel_AssetID, ref result);
+            Verify(DestroySFX_AssetID, ref result);
+            Verify(HitSFX_AssetID, ref result);
+            Verify(HitModel_AssetID, ref result);
+            Verify(DestroyModel_AssetID, ref result);
+        }
+
         [Category("Destructable Ext.")]
         public AssetID DestroyShrapnel_AssetID
         {

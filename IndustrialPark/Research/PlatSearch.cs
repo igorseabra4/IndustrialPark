@@ -158,7 +158,7 @@ namespace IndustrialPark
         private void WriteWhatIFound(ArchiveEditorFunctions archive)
         {
             progressBar1.Minimum = 0;
-            progressBar1.Maximum = archive.GetAllAssets().Count;
+            progressBar1.Maximum = archive.AssetCount;
             progressBar1.Step = 1;
 
             foreach (Asset asset in archive.GetAllAssets())

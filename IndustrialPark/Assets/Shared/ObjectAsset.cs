@@ -149,5 +149,49 @@ namespace IndustrialPark
 
             return false;
         }
+
+        public override void Verify(ref List<string> result)
+        {
+            if (Functions.currentGame == Game.BFBB || Functions.currentGame == Game.Scooby)
+            {
+                foreach (LinkBFBB link in LinksBFBB)
+                {
+                    if (link.TargetAssetID == 0)
+                        result.Add("Link with Target Asset set to 0");
+                    Verify(link.TargetAssetID, ref result);
+                    Verify(link.ArgumentAssetID, ref result);
+                    Verify(link.SourceCheckAssetID, ref result);
+
+                    if (link.EventReceiveID == 0 || link.EventReceiveID.ToString() == ((int)link.EventReceiveID).ToString())
+                        result.Add("Link receives event of unknown type for BFBB: " + link.EventReceiveID.ToString());
+                    if (link.EventSendID == 0 || link.EventSendID.ToString() == ((int)link.EventSendID).ToString())
+                        result.Add("Link sends event of unknown type for BFBB: " + link.EventSendID.ToString());
+                }
+            }
+            else if (Functions.currentGame == Game.Incredibles)
+            {
+                foreach (LinkTSSM link in LinksTSSM)
+                {
+                    if (link.TargetAssetID == 0)
+                        result.Add("Link with Target Asset set to 0");
+                    Verify(link.TargetAssetID, ref result);
+                    Verify(link.ArgumentAssetID, ref result);
+                    Verify(link.SourceCheckAssetID, ref result);
+
+                    if (link.EventReceiveID == 0 || link.EventReceiveID.ToString() == ((int)link.EventReceiveID).ToString())
+                        result.Add("Link receives event of unknown type for TSSM: " + link.EventReceiveID.ToString());
+                    if (link.EventSendID == 0 || link.EventSendID.ToString() == ((int)link.EventSendID).ToString())
+                        result.Add("Link sends event of unknown type for TSSM: " + link.EventSendID.ToString());
+                }
+            }
+
+            if (!(this is AssetPLYR))
+            {
+                if (EventStartOffset + AmountOfEvents * Link.sizeOfStruct < Data.Length)
+                    result.Add("Additional data found at the end of asset data");
+                if (EventStartOffset + AmountOfEvents * Link.sizeOfStruct > Data.Length)
+                    result.Add("Asset expects mode data than present");
+            }
+        }
     }
 }

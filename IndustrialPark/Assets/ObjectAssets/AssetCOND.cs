@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -47,6 +48,18 @@ namespace IndustrialPark
                 return true;
 
             return base.HasReference(assetID);
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            Verify(AssetUnderEvaluation, ref result);
+
+            if ((int)Operation > 6)
+                result.Add("COND with unknown operation type: " + Operation.ToString());
+            if ((int)Conditional == 0)
+                result.Add("COND with Conditional set to 0");
         }
 
         protected override int EventStartOffset => 0x18;

@@ -39,9 +39,7 @@ namespace IndustrialPark
 
     public class AssetSHDW : Asset
     {
-        public AssetSHDW(Section_AHDR AHDR) : base(AHDR)
-        {
-        }
+        public AssetSHDW(Section_AHDR AHDR) : base(AHDR) { }
 
         public override bool HasReference(uint assetID)
         {
@@ -54,6 +52,19 @@ namespace IndustrialPark
             }
 
             return base.HasReference(assetID);
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            foreach (EntrySHDW a in SHDW_Entries)
+            {
+                if (a.ModelAssetID == 0)
+                    result.Add("SHDW entry with ModelAssetID set to 0");
+                Verify(a.ModelAssetID, ref result);
+                if (a.ShadowModelAssetID == 0)
+                    result.Add("SHDW entry with ShadowModelAssetID set to 0");
+                Verify(a.ShadowModelAssetID, ref result);
+            }
         }
 
         [Category("Shadow Map")]

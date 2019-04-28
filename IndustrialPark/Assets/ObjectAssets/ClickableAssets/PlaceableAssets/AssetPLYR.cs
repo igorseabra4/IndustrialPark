@@ -24,6 +24,18 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            Verify(LightKit_AssetID, ref result);
+
+            if (EventStartOffset + AmountOfEvents * Link.sizeOfStruct + 4 < Data.Length)
+                result.Add("Additional data found at the end of asset data");
+            if (EventStartOffset + AmountOfEvents * Link.sizeOfStruct + 4 > Data.Length)
+                result.Add("Asset expects mode data than present");
+        }
+
         protected override void CreateBoundingBox()
         {
             List<Vector3> vertexList = new List<Vector3>();

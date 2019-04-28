@@ -42,9 +42,7 @@ namespace IndustrialPark
 
     public class AssetCOLL : Asset
     {
-        public AssetCOLL(Section_AHDR AHDR) : base(AHDR)
-        {
-        }
+        public AssetCOLL(Section_AHDR AHDR) : base(AHDR) { }
 
         public override bool HasReference(uint assetID)
         {
@@ -59,6 +57,19 @@ namespace IndustrialPark
             }
 
             return base.HasReference(assetID);
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            foreach (EntryCOLL a in COLL_Entries)
+            {
+                if (a.ModelAssetID == 0)
+                    result.Add("COLL entry with ModelAssetID set to 0");
+
+                Verify(a.ModelAssetID, ref result);
+                Verify(a.Collision_ModelAssetID, ref result);
+                Verify(a.CameraCollision_ModelAssetID, ref result);
+            }
         }
 
         [Category("Collision Table")]

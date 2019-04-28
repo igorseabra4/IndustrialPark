@@ -26,6 +26,14 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            if (_pickEntryID == 0)
+                result.Add("PKUP with PickReferenceID set to 0");
+        }
+
         protected override void CreateBoundingBox()
         {
             if (AssetPICK.pickEntries.ContainsKey(_pickEntryID) &&

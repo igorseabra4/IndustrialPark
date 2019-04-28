@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -23,6 +24,17 @@ namespace IndustrialPark
                 return true;
 
             return base.HasReference(assetID);
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            Verify(BumpMapTexture_AssetID, ref result);
+            Verify(EnvMapTexture_AssetID, ref result);
+            Verify(DualMapTexture_AssetID, ref result);
+            Verify(TextureAnim1_GroupAssetID, ref result);
+            Verify(TextureAnim2_GroupAssetID, ref result);
         }
 
         [Category("Surface: Base"), TypeConverter(typeof(HexByteTypeConverter))]

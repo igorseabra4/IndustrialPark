@@ -759,7 +759,62 @@ namespace IndustrialPark
             DICT.LTOC.LHDRList.AddRange(bspLayers);
             DICT.LTOC.LHDRList = DICT.LTOC.LHDRList.OrderBy(f => f.layerType, new LHDRComparer()).ToList();
         }
-        
+
+        public string VerifyArchive()
+        {
+            string result = "";
+            char endl = '\n';
+
+            ProgressBar progressBar = new ProgressBar("Verify Archive");
+            progressBar.SetProgressBar(0, DICT.ATOC.AHDRList.Count, 1);
+            progressBar.Show();
+
+            foreach (Section_LHDR LHDR in DICT.LTOC.LHDRList)
+                foreach (uint assetID in LHDR.assetIDlist)
+                    if (!ContainsAsset(assetID))
+                        result += $"Asset 0x{assetID.ToString("X8")} appears to be present in a layer, but it's not in the AHDR dictionary. This archive is likely unusable." + endl;
+
+            List<Asset> ordered = assetDictionary.Values.OrderBy(f => f.AHDR.ADBG.assetName).ToList();
+            ordered = ordered.OrderBy(f => f.AHDR.assetType).ToList();
+
+            foreach (Asset asset in ordered)
+            {
+                bool found = false;
+
+                foreach (Section_LHDR LHDR in DICT.LTOC.LHDRList)
+                    foreach (uint assetID in LHDR.assetIDlist)
+                        if (assetID == asset.AHDR.assetID)
+                        {
+                            if (found == false)
+                                found = true;
+                            else
+                                result += $"Asset {asset.ToString()} is present in more than one layer. This is unexpected." + endl;
+                        }
+
+                if (found == false)
+                    result += $"Asset {asset.ToString()} appears to not be present in the AHDR dictionary, but it's not in any layer. This archive is likely unusable." + endl;
+
+                List<string> resultParam = new List<string>();
+                try
+                {
+                    asset.Verify(ref resultParam);
+
+                    foreach (string s in resultParam)
+                        result += $"[{asset.AHDR.assetType.ToString()}] {asset.AHDR.ADBG.assetName}: " + s + endl;
+                }
+                catch (Exception e)
+                {
+                    result += $"Failed verification on [{asset.AHDR.assetType.ToString()}] {asset.AHDR.ADBG.assetName}: " + e.Message + endl;
+                }
+
+                progressBar.PerformStep();
+            }
+
+            progressBar.Close();
+
+            return result;
+        }
+
         public void ApplyScale(Vector3 factor)
         {
             float singleFactor = (factor.X + factor.Y + factor.Z) / 3;

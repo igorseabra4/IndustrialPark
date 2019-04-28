@@ -66,6 +66,19 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            if (ModelAsRWSections.Length == 0)
+                result.Add("Failed to read MODL asset. This might be just a library error and does not necessarily mean the model is broken.");
+
+            foreach (string s in Textures)
+                if (!Program.MainForm.AssetExists(Functions.BKDRHash(s + ".RW3")) && !Program.MainForm.AssetExists(Functions.BKDRHash(s)))
+                    result.Add($"I haven't found texture {s}, used by the model. This might just mean I haven't looked properly for it, though.");
+            
+            if (Program.MainForm.WhoTargets(AHDR.assetID).Count == 0)
+                result.Add("Model appears to be unused, as no other asset references it. This might just mean I haven't looked properly for an asset which does does, though.");
+        }
+
         private int renderWareVersion;
 
         protected RWSection[] ModelAsRWSections

@@ -117,7 +117,7 @@ namespace IndustrialPark
         private void WriteWhatIFound(ArchiveEditorFunctions archive)
         {
             progressBar1.Minimum = 0;
-            progressBar1.Maximum = archive.GetAllAssets().Count;
+            progressBar1.Maximum = archive.AssetCount;
             progressBar1.Step = 1;
 
             foreach (Asset asset in archive.GetAllAssets())
@@ -136,21 +136,42 @@ namespace IndustrialPark
                             continue;
 
                         Asset targetAsset = null;
-
                         if (archive.ContainsAsset(assetEvent.TargetAssetID))
                             targetAsset = archive.GetFromAssetID(assetEvent.TargetAssetID);
 
-                        if (targetAsset != null && recieverAssetType != AssetType.Null && targetAsset.AHDR.assetType != recieverAssetType)
-                            continue;
+                        if (recieverAssetType != AssetType.Null)
+                        {
+                            if (targetAsset != null && targetAsset.AHDR.assetType != recieverAssetType)
+                                continue;
+                            if (targetAsset == null)
+                                continue;
+                        }
 
-                        if (targetAsset == null && recieverAssetType != AssetType.Null)
-                            continue;
+                        string eventName = $"{objectAsset.AHDR.ADBG.assetName} ({assetEvent.EventReceiveID.ToString()}) => {assetEvent.EventSendID.ToString()} => ";
 
-                        string eventName;
                         if (targetAsset == null)
-                            eventName = $"{objectAsset.AHDR.ADBG.assetName} ({assetEvent.EventReceiveID.ToString()}) => {assetEvent.EventSendID.ToString()} => {assetEvent.TargetAssetID.ToString()} [{assetEvent.Arguments_Float[0]}, {assetEvent.Arguments_Float[1]}, {assetEvent.Arguments_Float[2]}, {assetEvent.Arguments_Float[3]}, {assetEvent.Arguments_Hex[4].ToString()}, {assetEvent.Arguments_Hex[5].ToString()}]";
+                            eventName += $"0x{assetEvent.TargetAssetID.ToString("X8")}";
                         else
-                            eventName = $"{objectAsset.AHDR.ADBG.assetName} ({assetEvent.EventReceiveID.ToString()}) => {assetEvent.EventSendID.ToString()} => {targetAsset.AHDR.ADBG.assetName} [{ assetEvent.Arguments_Float[0]}, { assetEvent.Arguments_Float[1]}, { assetEvent.Arguments_Float[2]}, { assetEvent.Arguments_Float[3]}, { assetEvent.Arguments_Hex[4].ToString()}, { assetEvent.Arguments_Hex[5].ToString()}]";
+                            eventName += $"{targetAsset.AHDR.ADBG.assetName}";
+
+                        eventName += $" [{assetEvent.Arguments_Float[0]}, {assetEvent.Arguments_Float[1]}, {assetEvent.Arguments_Float[2]}, {assetEvent.Arguments_Float[3]}";
+
+                        if (assetEvent.ArgumentAssetID != 0)
+                        {
+                            if (archive.ContainsAsset(assetEvent.ArgumentAssetID))
+                                eventName += $", {archive.GetFromAssetID(assetEvent.ArgumentAssetID).AHDR.ADBG.assetName}";
+                            else
+                                eventName += $", 0x{assetEvent.ArgumentAssetID.ToString("X8")}";
+                        }
+                        if (assetEvent.SourceCheckAssetID != 0)
+                        {
+                            if (archive.ContainsAsset(assetEvent.SourceCheckAssetID))
+                                eventName += $", {archive.GetFromAssetID(assetEvent.SourceCheckAssetID).AHDR.ADBG.assetName}";
+                            else
+                                eventName += $", 0x{assetEvent.SourceCheckAssetID.ToString("X8")}";
+                        }
+
+                        eventName += "]";
 
                         richTextBox1.AppendText(eventName + "\n");
                         senders.Add(objectAsset.AHDR.assetType);

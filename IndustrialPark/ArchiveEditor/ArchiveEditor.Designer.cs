@@ -40,11 +40,13 @@
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.collapseLayersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.verifyArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.applyScaleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.hipHopToolExportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importHIPArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importMultipleAssetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importModelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tXDArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportRW3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importRW3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -91,7 +93,6 @@
             this.toolStripMenuItem_Export = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_EditHeader = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_EditData = new System.Windows.Forms.ToolStripMenuItem();
-            this.importModelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -177,6 +178,7 @@
             // 
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.collapseLayersToolStripMenuItem,
+            this.verifyArchiveToolStripMenuItem,
             this.applyScaleToolStripMenuItem,
             this.toolStripSeparator3,
             this.hipHopToolExportToolStripMenuItem,
@@ -195,6 +197,14 @@
             this.collapseLayersToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.collapseLayersToolStripMenuItem.Text = "Collapse Layers";
             this.collapseLayersToolStripMenuItem.Click += new System.EventHandler(this.collapseLayersToolStripMenuItem_Click);
+            // 
+            // verifyArchiveToolStripMenuItem
+            // 
+            this.verifyArchiveToolStripMenuItem.Enabled = false;
+            this.verifyArchiveToolStripMenuItem.Name = "verifyArchiveToolStripMenuItem";
+            this.verifyArchiveToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.verifyArchiveToolStripMenuItem.Text = "Verify Archive";
+            this.verifyArchiveToolStripMenuItem.Click += new System.EventHandler(this.verifyArchiveToolStripMenuItem_Click);
             // 
             // applyScaleToolStripMenuItem
             // 
@@ -232,6 +242,14 @@
             this.importMultipleAssetsToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.importMultipleAssetsToolStripMenuItem.Text = "Import Multiple Assets";
             this.importMultipleAssetsToolStripMenuItem.Click += new System.EventHandler(this.importMultipleAssetsToolStripMenuItem_Click);
+            // 
+            // importModelsToolStripMenuItem
+            // 
+            this.importModelsToolStripMenuItem.Enabled = false;
+            this.importModelsToolStripMenuItem.Name = "importModelsToolStripMenuItem";
+            this.importModelsToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.importModelsToolStripMenuItem.Text = "Import Models";
+            this.importModelsToolStripMenuItem.Click += new System.EventHandler(this.importModelsToolStripMenuItem_Click);
             // 
             // tXDArchiveToolStripMenuItem
             // 
@@ -700,14 +718,6 @@
             this.toolStripMenuItem_EditData.Text = "Edit Data (Ctrl + G)";
             this.toolStripMenuItem_EditData.Click += new System.EventHandler(this.buttonInternalEdit_Click);
             // 
-            // importModelsToolStripMenuItem
-            // 
-            this.importModelsToolStripMenuItem.Enabled = false;
-            this.importModelsToolStripMenuItem.Name = "importModelsToolStripMenuItem";
-            this.importModelsToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
-            this.importModelsToolStripMenuItem.Text = "Import Models";
-            this.importModelsToolStripMenuItem.Click += new System.EventHandler(this.importModelsToolStripMenuItem_Click);
-            // 
             // ArchiveEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -802,5 +812,6 @@
         private System.Windows.Forms.ToolStripMenuItem exportNoRW3ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importNoRW3ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importModelsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem verifyArchiveToolStripMenuItem;
     }
 }

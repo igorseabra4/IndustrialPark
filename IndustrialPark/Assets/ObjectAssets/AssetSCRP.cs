@@ -27,6 +27,20 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            foreach (LinkTSSM link in TimedLinksTSSM)
+            {
+                Verify(link.TargetAssetID, ref result);
+                Verify(link.ArgumentAssetID, ref result);
+
+                if (link.EventSendID == 0 || link.EventSendID.ToString() == ((int)link.EventSendID).ToString())
+                    result.Add("Timed link sends event of unknown type for TSSM: " + link.EventSendID.ToString());
+            }
+        }
+
         [Category("Scripted Event")]
         public float UnknownFloat08
         {

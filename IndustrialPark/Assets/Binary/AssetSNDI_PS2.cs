@@ -61,6 +61,23 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            foreach (EntrySoundInfo_PS2 a in Entries_SND)
+            {
+                if (a.SoundAssetID == 0)
+                    result.Add("SNDI entry with SoundAssetID set to 0");
+                Verify(a.SoundAssetID, ref result);
+            }
+
+            foreach (EntrySoundInfo_PS2 a in Entries_SNDS)
+            {
+                if (a.SoundAssetID == 0)
+                    result.Add("SNDI entry with SoundAssetID set to 0");
+                Verify(a.SoundAssetID, ref result);
+            }
+        }
+
         private int Entries_SND_amount
         {
             get => ReadInt(0x0);

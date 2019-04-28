@@ -20,6 +20,15 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            if (ANIM_AssetIDs.Length != 10)
+                result.Add("ALST asset has invalid amount of ANIM asset IDs");
+
+            foreach(AssetID assetID in ANIM_AssetIDs)
+                Verify(assetID, ref result);
+        }
+
         [Category("Animation List")]
         public AssetID[] ANIM_AssetIDs
         {

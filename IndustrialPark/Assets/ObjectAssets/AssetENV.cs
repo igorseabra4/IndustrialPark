@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -34,6 +35,24 @@ namespace IndustrialPark
                 return true;
 
             return base.HasReference(assetID);
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            Verify(BSP_AssetID, ref result);
+            if (StartCameraAssetID == 0)
+                result.Add("ENV with StartCameraAssetID set to 0");
+            Verify(StartCameraAssetID, ref result);
+            Verify(BSP_LKIT_AssetID, ref result);
+            Verify(Object_LKIT_AssetID, ref result);
+            Verify(BSP_Collision_AssetID, ref result);
+            Verify(BSP_FX_AssetID, ref result);
+            Verify(BSP_Camera_AssetID, ref result);
+            Verify(BSP_MAPR_AssetID, ref result);
+            Verify(BSP_MAPR_Collision_AssetID, ref result);
+            Verify(BSP_MAPR_FX_AssetID, ref result);
         }
 
         [Category("Environment")]

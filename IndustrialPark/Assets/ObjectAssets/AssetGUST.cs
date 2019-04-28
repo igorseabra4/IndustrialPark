@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -15,6 +16,15 @@ namespace IndustrialPark
                 return true;
 
             return base.HasReference(assetID);
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            if (Volume_AssetID == 0)
+                result.Add("GUST with Volume_AssetID set to 0");
+            Verify(Volume_AssetID, ref result);
         }
 
         [Category("Gust")]

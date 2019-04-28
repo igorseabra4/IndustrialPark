@@ -5,9 +5,7 @@ namespace IndustrialPark
 {
     public class AssetVILP : Asset
     {
-        public AssetVILP(Section_AHDR AHDR) : base(AHDR)
-        {
-        }
+        public AssetVILP(Section_AHDR AHDR) : base(AHDR) { }
 
         public override bool HasReference(uint assetID)
         {

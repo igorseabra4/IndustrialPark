@@ -9,7 +9,7 @@ namespace IndustrialPark
 {
     public class ModelReference
     {
-        public AssetID ModelAssetID { get; set; }
+        public AssetID Model_AssetID { get; set; }
         public AssetID UnknownAssetID { get; set; }
         public float UnknownFloat01 { get; set; }
         public float UnknownFloat02 { get; set; }
@@ -26,7 +26,7 @@ namespace IndustrialPark
 
         public ModelReference()
         {
-            ModelAssetID = 0;
+            Model_AssetID = 0;
             UnknownAssetID = 0;
         }
     }
@@ -45,7 +45,10 @@ namespace IndustrialPark
                 ArchiveEditorFunctions.AddToRenderingDictionary(AHDR.assetID, this);
 
                 if (Functions.currentGame == Game.Incredibles)
-                    ArchiveEditorFunctions.AddToRenderingDictionary(Functions.BKDRHash(AHDR.ADBG.assetName.Replace(".MINF", "")), this);
+                {
+                    ArchiveEditorFunctions.AddToRenderingDictionary(Functions.BKDRHash(newName), this);
+                    ArchiveEditorFunctions.AddToNameDictionary(Functions.BKDRHash(newName), newName);
+                }
             }
             catch
             {
@@ -53,9 +56,12 @@ namespace IndustrialPark
             }
         }
 
+        private string newName => AHDR.ADBG.assetName.Replace(".MINF", "");
+
         public void MovieRemoveFromDictionary()
         {
-            ArchiveEditorFunctions.renderingDictionary.Remove(Functions.BKDRHash(AHDR.ADBG.assetName.Replace(".MINF", "")));
+            ArchiveEditorFunctions.renderingDictionary.Remove(Functions.BKDRHash(newName));
+            ArchiveEditorFunctions.nameDictionary.Remove(Functions.BKDRHash(newName));
         }
 
         public override bool HasReference(uint assetID)
@@ -65,13 +71,25 @@ namespace IndustrialPark
 
             foreach (ModelReference m in ModelReferences)
             {
-                if (m.ModelAssetID == assetID)
+                if (m.Model_AssetID == assetID)
                     return true;
                 if (m.UnknownAssetID == assetID)
                     return true;
             }
 
             return base.HasReference(assetID);
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            Verify(ATBL_AssetID, ref result);
+            foreach (ModelReference m in ModelReferences)
+            {
+                if (m.Model_AssetID == 0)
+                    result.Add("MINF model reference with Model_AssetID set to 0");
+                Verify(m.Model_AssetID, ref result);
+                Verify(m.UnknownAssetID, ref result);
+            }
         }
 
         public void Draw(SharpRenderer renderer, Matrix world, Vector4 color)
@@ -164,7 +182,7 @@ namespace IndustrialPark
                 {
                     references.Add(new ModelReference()
                     {
-                        ModelAssetID = ReadUInt(ModelReferencesStart + i * 56),
+                        Model_AssetID = ReadUInt(ModelReferencesStart + i * 56),
                         UnknownAssetID = ReadUInt(ModelReferencesStart + i * 56 + 0x04),
                         UnknownFloat01 = ReadFloat(ModelReferencesStart + i * 56 + 0x08),
                         UnknownFloat02 = ReadFloat(ModelReferencesStart + i * 56 + 0x0C),
@@ -190,11 +208,11 @@ namespace IndustrialPark
                 before.AddRange(Data.Take(ModelReferencesStart));
 
                 if (value.Length > 0)
-                    _modelAssetID = value[0].ModelAssetID;
+                    _modelAssetID = value[0].Model_AssetID;
 
                 foreach (ModelReference m in value)
                 {
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.ModelAssetID)));
+                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.Model_AssetID)));
                     before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.UnknownAssetID)));
                     before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.UnknownFloat01)));
                     before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.UnknownFloat02)));

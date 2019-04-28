@@ -38,6 +38,18 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            foreach (EntrySGRP i in SGRP_Entries)
+            {
+                if (i.Sound_AssetID == 0)
+                    result.Add("SGRP entry with Sound_AssetID set to 0");
+                Verify(i.Sound_AssetID, ref result);
+            }
+        }
+
         [Category("Sound Group")]
         public int UnknownInt08
         {

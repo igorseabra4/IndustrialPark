@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using SharpDX;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -20,6 +21,13 @@ namespace IndustrialPark
                 return true;
 
             return base.HasReference(assetID);
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            Verify(Sound_AssetID, ref result);
         }
 
         public override void Draw(SharpRenderer renderer)

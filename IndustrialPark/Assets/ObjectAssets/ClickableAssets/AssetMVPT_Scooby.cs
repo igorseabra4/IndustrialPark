@@ -38,6 +38,14 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            foreach (AssetID a in NextMVPTs)
+                Verify(a, ref result);
+        }
+
         public void CreateTransformMatrix()
         {
             if (IsZone == 1 || _arenaRadius == -1f)

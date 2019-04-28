@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -17,6 +18,16 @@ namespace IndustrialPark
                 return true;
 
             return base.HasReference(assetID);
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            if (PARP_AssetID == 0)
+                result.Add("PARE with PARP_AssetID set to 0");
+            Verify(PARP_AssetID, ref result);
+            Verify(Emitter_AssetID, ref result);
         }
 
         [Category("Particle Emitter")]

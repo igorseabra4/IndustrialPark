@@ -43,6 +43,16 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            foreach (EntryMAPR a in MAPR_Entries)
+            {
+                if (a.AssetID_SURF == 0)
+                    result.Add("MAPR entry with SurfaceAssetID set to 0");
+                Verify(a.AssetID_SURF, ref result);
+            }
+        }
+
         [Category("Surface Map")]
         public AssetID AssetID
         {

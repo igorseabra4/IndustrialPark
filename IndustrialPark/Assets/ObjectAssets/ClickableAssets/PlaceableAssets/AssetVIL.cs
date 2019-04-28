@@ -32,6 +32,19 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            if (VilType.ToString() == ((int)VilType).ToString())
+                result.Add("VIL with unknown VilType 0x" + VilType.ToString("X8"));
+
+            Verify(NPCSettings_AssetID, ref result);
+            Verify(MovePoint_AssetID, ref result);
+            Verify(TaskDYNA1_AssetID, ref result);
+            Verify(TaskDYNA2_AssetID, ref result);
+        }
+
         private float localFrameCounter = -1;
 
         public void Reset()

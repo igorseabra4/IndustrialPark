@@ -11,9 +11,7 @@ namespace IndustrialPark
 
         public static bool dontRender = false;
 
-        public AssetJSP(Section_AHDR AHDR) : base(AHDR)
-        {
-        }
+        public AssetJSP(Section_AHDR AHDR) : base(AHDR) { }
 
         public override void Setup(SharpRenderer renderer)
         {

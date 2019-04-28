@@ -1721,7 +1721,7 @@ namespace IndustrialPark
                         ColorGreen = 1f,
                         ColorBlue = 1f,
                         ColorAlpha = 1f,
-                        MVPT_AssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.EnemyAreaMVPT),
+                        MVPT_AssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.PointMVPT_TSSM),
                         Type =
                         template == AssetTemplate.Jelly_Critter ? EnemyCritterType.jellyfish_v1_bind :
                         template == AssetTemplate.Jelly_Bucket ? EnemyCritterType.jellybucket_v1_bind : 0

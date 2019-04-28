@@ -19,6 +19,16 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            if (Camera_AssetID == 0)
+                result.Add("PORT with Camera_AssetID set to 0");
+            if (Destination_MRKR_AssetID == 0)
+                result.Add("PORT with Destination_MRKR_AssetID set to 0");
+        }
+
         protected override int EventStartOffset => 0x18;
 
         [Category("Portal")]

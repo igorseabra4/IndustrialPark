@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -15,6 +16,15 @@ namespace IndustrialPark
                 return true;
 
             return base.HasReference(assetID);
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            if (CSN_AssetID == 0)
+                result.Add("CNSM with CSN_AssetID set to 0");
+            Verify(CSN_AssetID, ref result);
         }
 
         [Category("Cutscene Manager")]

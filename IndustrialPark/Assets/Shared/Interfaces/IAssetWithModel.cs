@@ -9,5 +9,7 @@ namespace IndustrialPark
         bool HasRenderWareModelFile();
 
         RenderWareModelFile GetRenderWareModelFile();
+
+        void MovieRemoveFromDictionary();
     }
 }

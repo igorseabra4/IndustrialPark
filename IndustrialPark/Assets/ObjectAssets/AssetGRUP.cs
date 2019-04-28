@@ -19,13 +19,32 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
-        protected override int EventStartOffset => 0x0C + ReadShort(0x08) * 4;
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            foreach (AssetID a in GroupItems)
+            {
+                if (a == 0)
+                    result.Add("GRUP with group item set to 0");
+                Verify(a, ref result);
+            }
+        }
+
+        protected override int EventStartOffset => 0x0C + ItemCount * 4;
 
         public enum Delegation
         {
             AllItems = 0,
             RandomItem = 1,
             InOrder = 2
+        }
+
+        [Category("Group"), ReadOnly(true)]
+        public short ItemCount
+        {
+            get => ReadShort(0x08);
+            set => Write(0x0A, value);
         }
 
         [Category("Group")]
@@ -41,28 +60,22 @@ namespace IndustrialPark
             get
             {
                 List<AssetID> group = new List<AssetID>();
-                short amount = ReadShort(0x08);
-                for (int i = 0; i < amount; i++)
+                for (int i = 0; i < ItemCount; i++)
                     group.Add(ReadUInt(0xC + 4 * i));
 
                 return group.ToArray();
             }
             set
             {
-                List<AssetID> newValues = value.ToList();
-                short oldAmountOfPairs = ReadShort(0x08);
-
                 List<byte> newData = Data.Take(0xC).ToList();
-                List<byte> restOfOldData = Data.Skip(0xC + 4 * oldAmountOfPairs).ToList();
 
-                foreach (AssetID i in newValues)
+                foreach (AssetID i in value)
                     newData.AddRange(BitConverter.GetBytes(i).Reverse());
 
-                newData.AddRange(restOfOldData);
-                newData[0x08] = BitConverter.GetBytes((short)newValues.Count)[1];
-                newData[0x09] = BitConverter.GetBytes((short)newValues.Count)[0];
-
+                newData.AddRange(Data.Skip(EventStartOffset).ToList());
+                
                 Data = newData.ToArray();
+                ItemCount = (short)value.Length;
             }
         }
     }

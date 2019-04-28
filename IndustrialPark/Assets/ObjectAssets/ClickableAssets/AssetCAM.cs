@@ -28,6 +28,33 @@ namespace IndustrialPark
                 ArchiveEditorFunctions.renderableAssetSetTrans.Add(this);
         }
 
+        public override bool HasReference(uint assetID)
+        {
+            if (MarkerAssetID == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            Verify(MarkerAssetID, ref result);
+
+            Vector3 nForward = new Vector3(NormalizedForwardX, NormalizedForwardY, NormalizedForwardZ);
+            if (nForward != Vector3.Normalize(nForward))
+                result.Add("Camera forward vector seems to not be normalized.");
+
+            Vector3 nUp = new Vector3(NormalizedUpX, NormalizedUpY, NormalizedUpZ);
+            if (nUp != Vector3.Normalize(nUp))
+                result.Add("Camera up vector seems to not be normalized.");
+
+            Vector3 nLeft = new Vector3(NormalizedLeftX, NormalizedLeftY, NormalizedLeftZ);
+            if (nLeft != Vector3.Normalize(nLeft))
+                result.Add("Camera left vector seems to not be normalized.");
+        }
+
         public void CreateTransformMatrix()
         {
             world = Matrix.Translation(_position);
@@ -323,7 +350,7 @@ namespace IndustrialPark
             set => Write(0x7B, value);
         }
         [Category("Camera")]
-        public AssetID MarkerAssetId
+        public AssetID MarkerAssetID
         {
             get => ReadUInt(0x7C);
             set => Write(0x7C, value);

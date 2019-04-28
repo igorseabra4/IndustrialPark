@@ -23,6 +23,13 @@ namespace IndustrialPark
     {
         public AssetANIM(Section_AHDR AHDR) : base(AHDR) { }
 
+        public override void Verify(ref List<string> result)
+        {
+            KeyFrame[] a = KeyFrames;
+            float[] b = TimeMap;
+            short[][] c = KeyFrameMap;
+        }
+
         [Category("Animation")]
         public int Unknown_04
         {

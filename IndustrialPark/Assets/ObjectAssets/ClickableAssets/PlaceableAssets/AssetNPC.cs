@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using SharpDX;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -20,6 +21,14 @@ namespace IndustrialPark
                 return true;
 
             return base.HasReference(assetID);
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            Verify(MovePoint_AssetID, ref result);
+            Verify(UnknownAssetID_BC, ref result);
         }
 
         public override void Draw(SharpRenderer renderer)

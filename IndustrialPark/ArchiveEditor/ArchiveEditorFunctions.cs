@@ -15,6 +15,7 @@ namespace IndustrialPark
         public static HashSet<IRenderableAsset> renderableAssetSetTrans = new HashSet<IRenderableAsset>();
         public static HashSet<AssetJSP> renderableAssetSetJSP = new HashSet<AssetJSP>();
         public static Dictionary<uint, IAssetWithModel> renderingDictionary = new Dictionary<uint, IAssetWithModel>();
+        public static Dictionary<uint, string> nameDictionary = new Dictionary<uint, string>();
 
         public static void AddToRenderingDictionary(uint key, IAssetWithModel value)
         {
@@ -22,6 +23,14 @@ namespace IndustrialPark
                 renderingDictionary.Add(key, value);
             else
                 renderingDictionary[key] = value;
+        }
+
+        public static void AddToNameDictionary(uint key, string value)
+        {
+            if (!nameDictionary.ContainsKey(key))
+                nameDictionary.Add(key, value);
+            else
+                nameDictionary[key] = value;
         }
 
         private AutoCompleteStringCollection autoCompleteSource = new AutoCompleteStringCollection();
@@ -277,8 +286,8 @@ namespace IndustrialPark
             if (assetDictionary[assetID] is AssetMODL modl)
                 if (modl.HasRenderWareModelFile())
                     modl.GetRenderWareModelFile().Dispose();
-            if (assetDictionary[assetID] is AssetMINF minf)
-                minf.MovieRemoveFromDictionary();
+            if (assetDictionary[assetID] is IAssetWithModel iawm)
+                iawm.MovieRemoveFromDictionary();
             if (assetDictionary[assetID] is AssetLODT lodt)
                 lodt.ClearDictionary();
         }
@@ -326,6 +335,8 @@ namespace IndustrialPark
         {
             return assetDictionary.Values;
         }
+
+        public int AssetCount => assetDictionary.Values.Count;
 
         public static bool allowRender = true;
 

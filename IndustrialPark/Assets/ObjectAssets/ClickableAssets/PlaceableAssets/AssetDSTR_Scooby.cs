@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -12,7 +13,22 @@ namespace IndustrialPark
         protected override int EventStartOffset => 0x70;
 
         public AssetDSTR_Scooby(Section_AHDR AHDR) : base(AHDR) { }
-                
+
+        public override bool HasReference(uint assetID)
+        {
+            if (SpawnItemAssetID == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            Verify(SpawnItemAssetID, ref result);
+        }
+
         [Category("Destructable")]
         public int AnimationSpeed
         {

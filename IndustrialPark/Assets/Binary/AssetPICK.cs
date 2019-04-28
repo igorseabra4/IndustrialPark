@@ -58,6 +58,16 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            foreach (EntryPICK a in PICK_Entries)
+            {
+                if (a.ModelAssetID == 0)
+                    result.Add("PICK entry with ModelAssetID set to 0");
+                Verify(a.ModelAssetID, ref result);
+            }
+        }
+
         [Category("Pickup Table")]
         public EntryPICK[] PICK_Entries
         {
@@ -103,7 +113,6 @@ namespace IndustrialPark
                 }
                 
                 Data = newData.ToArray();
-                Write(0x4, newValues.Count);
             }
         }
     }

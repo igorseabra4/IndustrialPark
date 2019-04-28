@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using SharpDX;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -25,6 +26,16 @@ namespace IndustrialPark
                 return true;
 
             return base.HasReference(assetID);
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            Verify(ANIM_AssetID_1, ref result);
+            Verify(ANIM_AssetID_2, ref result);
+            if (PlatformType == PlatType.MovePoint)
+                Verify(MVPT_AssetID, ref result);
         }
 
         private enum CurrentMovementAction

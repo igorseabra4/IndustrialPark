@@ -279,6 +279,11 @@ namespace IndustrialPark
     {
         public AssetCRDT(Section_AHDR AHDR) : base(AHDR) { }
 
+        public override void Verify(ref List<string> result)
+        {
+            SectionEntry[] sections = Sections;
+        }
+
         [Category("Credits")]
         public int UnknownInt04
         {

@@ -7,14 +7,26 @@ namespace IndustrialPark
     {
         public static bool renderBasedOnLodt = false;
 
-        public AssetMODL(Section_AHDR AHDR) : base(AHDR)
-        {
-        }
+        public AssetMODL(Section_AHDR AHDR) : base(AHDR) { }
 
         public override void Setup(SharpRenderer renderer)
         {
             base.Setup(renderer);
             ArchiveEditorFunctions.AddToRenderingDictionary(AHDR.assetID, this);
+
+            if (Functions.currentGame == Game.Incredibles)
+            {
+                ArchiveEditorFunctions.AddToRenderingDictionary(Functions.BKDRHash(newName), this);
+                ArchiveEditorFunctions.AddToNameDictionary(Functions.BKDRHash(newName), newName);
+            }
+        }
+
+        private string newName => AHDR.ADBG.assetName.Replace(".dff", "");
+
+        public void MovieRemoveFromDictionary()
+        {
+            ArchiveEditorFunctions.renderingDictionary.Remove(Functions.BKDRHash(newName));
+            ArchiveEditorFunctions.nameDictionary.Remove(Functions.BKDRHash(newName));
         }
 
         public void Draw(SharpRenderer renderer, Matrix world, Vector4 color)

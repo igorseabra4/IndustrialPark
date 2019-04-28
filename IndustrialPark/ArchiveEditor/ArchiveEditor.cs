@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using Microsoft.WindowsAPICodePack.Controls;
 using Newtonsoft.Json;
 using SharpDX;
 using System;
@@ -64,6 +65,7 @@ namespace IndustrialPark
                 hipHopToolExportToolStripMenuItem.Enabled = true;
                 importHIPArchiveToolStripMenuItem.Enabled = true;
                 collapseLayersToolStripMenuItem.Enabled = true;
+                verifyArchiveToolStripMenuItem.Enabled = true;
                 applyScaleToolStripMenuItem.Enabled = true;
 
                 PopulateLayerComboBox();
@@ -110,6 +112,7 @@ namespace IndustrialPark
             importHIPArchiveToolStripMenuItem.Enabled = true;
             tXDArchiveToolStripMenuItem.Enabled = true;
             collapseLayersToolStripMenuItem.Enabled = true;
+            verifyArchiveToolStripMenuItem.Enabled = true;
             applyScaleToolStripMenuItem.Enabled = true;
 
             PopulateLayerComboBox();
@@ -246,6 +249,7 @@ namespace IndustrialPark
             importModelsToolStripMenuItem.Enabled = true;
             addTemplateToolStripMenuItem.Enabled = true;
             collapseLayersToolStripMenuItem.Enabled = true;
+            verifyArchiveToolStripMenuItem.Enabled = true;
             applyScaleToolStripMenuItem.Enabled = true;
 
             programIsChangingStuff = false;
@@ -299,6 +303,7 @@ namespace IndustrialPark
                 buttonPaste.Enabled = false;
                 buttonRemoveLayer.Enabled = false;
                 collapseLayersToolStripMenuItem.Enabled = false;
+                verifyArchiveToolStripMenuItem.Enabled = false;
                 applyScaleToolStripMenuItem.Enabled = false;
                 buttonArrowUp.Enabled = false;
                 buttonArrowDown.Enabled = false;
@@ -766,6 +771,11 @@ namespace IndustrialPark
         {
             archive.CollapseLayers();
             PopulateLayerComboBox();
+        }
+
+        private void verifyArchiveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new ScrollableMessageBox("Verify results on " + Text, archive.VerifyArchive()).Show();
         }
 
         private void applyScaleToolStripMenuItem_Click(object sender, EventArgs e)

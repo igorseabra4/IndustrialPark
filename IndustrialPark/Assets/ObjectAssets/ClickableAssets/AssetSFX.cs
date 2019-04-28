@@ -31,10 +31,19 @@ namespace IndustrialPark
 
         public override bool HasReference(uint assetID)
         {
-            if (SoundAssetID == assetID)
+            if (Sound_AssetID == assetID)
                 return true;
 
             return base.HasReference(assetID);
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            if (Sound_AssetID == 0)
+                result.Add("SFX with Sound_AssetID set to 0");
+            Verify(Sound_AssetID, ref result);
         }
 
         public void CreateTransformMatrix()
@@ -146,7 +155,7 @@ namespace IndustrialPark
         }
 
         [Category("Sound Effect")]
-        public AssetID SoundAssetID
+        public AssetID Sound_AssetID
         {
             get => ReadUInt(0x10);
             set => Write(0x10, value);

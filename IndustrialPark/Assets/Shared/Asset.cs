@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using static HipHopFile.Functions;
@@ -165,5 +166,13 @@ namespace IndustrialPark
         }
 
         public virtual bool HasReference(uint assetID) => false;
+
+        public virtual void Verify(ref List<string> result) { }
+
+        public static void Verify(uint assetID, ref List<string> result)
+        {
+            if (assetID != 0 && !Program.MainForm.AssetExists(assetID))
+                result.Add("Referenced asset 0x" + assetID.ToString("X8") + " was not found in any open archive.");
+        }
     }
 }

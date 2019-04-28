@@ -53,6 +53,20 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            foreach (AssetID a in Animations)
+            {
+                if (a == 0)
+                    result.Add("ATBL entry with animation asset ID set to 0");
+                Verify(a, ref result);
+            }
+
+            Unknown2[] b = Entries_Unknown2;
+            Unknown3[] c = Entries_Unknown3;
+            int[] d = Entries_Unknown4;
+        }
+
         [Category("Animation Table")]
         public int ANIMCount
         {

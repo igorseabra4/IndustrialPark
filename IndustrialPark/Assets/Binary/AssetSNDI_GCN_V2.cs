@@ -205,9 +205,7 @@ namespace IndustrialPark
             {
                 int acc = 0;
 
-                if (numSamples > 0)
-                    acc += soundEntries[0].lengthcompressedbytes;
-                for (int i = 1; i < numSamples; i++)
+                for (int i = 0; i < numSamples; i++)
                     acc += soundEntries[i].lengthcompressedbytes;
 
                 return acc;
@@ -413,6 +411,17 @@ namespace IndustrialPark
                         return true;
 
             return base.HasReference(assetID);
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            foreach (FSB3_File a in Entries)
+                foreach (EntrySoundInfo_GCN_V2 e in a.soundEntries)
+                {
+                    if (e.SoundAssetID == 0)
+                        result.Add("SNDI entry with SoundAssetID set to 0");
+                    Verify(e.SoundAssetID, ref result);
+                }
         }
 
         private AssetID AssetID

@@ -973,14 +973,27 @@ namespace IndustrialPark
                 if (archiveEditor.HasAsset(assetID))
                     return archiveEditor.GetAssetNameFromID(assetID);
 
+            if (ArchiveEditorFunctions.nameDictionary.ContainsKey(assetID))
+                return ArchiveEditorFunctions.nameDictionary[assetID];
+
             return "0x" + assetID.ToString("X8");
+        }
+
+        public bool AssetExists(uint assetID)
+        {
+            foreach (ArchiveEditor archiveEditor in archiveEditors)
+                if (archiveEditor.HasAsset(assetID))
+                    return true;
+
+            if (ArchiveEditorFunctions.nameDictionary.ContainsKey(assetID))
+                return true;
+
+            return false;
         }
 
         public void FindWhoTargets(uint assetID)
         {
-            List<uint> whoTargets = new List<uint>();
-            foreach (ArchiveEditor archiveEditor in archiveEditors)
-                whoTargets.AddRange(archiveEditor.archive.FindWhoTargets(assetID));
+            List<uint> whoTargets = WhoTargets(assetID);
 
             bool willOpen = true;
             if (whoTargets.Count > 15)
@@ -993,6 +1006,15 @@ namespace IndustrialPark
             if (willOpen)
                 foreach (ArchiveEditor archiveEditor in archiveEditors)
                     archiveEditor.archive.OpenInternalEditor(whoTargets, true);
+        }
+
+        public List<uint> WhoTargets(uint assetID)
+        {
+            List<uint> whoTargets = new List<uint>();
+            foreach (ArchiveEditor archiveEditor in archiveEditors)
+                whoTargets.AddRange(archiveEditor.archive.FindWhoTargets(assetID));
+
+            return whoTargets;
         }
 
         public void ClearTemplateFocus()

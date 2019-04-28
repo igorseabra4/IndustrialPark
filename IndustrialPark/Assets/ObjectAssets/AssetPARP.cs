@@ -34,6 +34,15 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            if (PARS_AssetID == 0)
+                result.Add("PARP with PARS_AssetID set to 0");
+            Verify(PARS_AssetID, ref result);
+        }
+
         [Category("Particle Properties")]
         public AssetID PARS_AssetID
         {

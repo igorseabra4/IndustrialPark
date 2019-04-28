@@ -39,6 +39,11 @@ namespace IndustrialPark
     {
         public AssetLKIT(Section_AHDR AHDR) : base(AHDR) { }
 
+        public override void Verify(ref List<string> result)
+        {
+            EntryLKIT[] entries = Lights;
+        }
+
         [Category("Light Kit")]
         public int UnknownInt04
         {

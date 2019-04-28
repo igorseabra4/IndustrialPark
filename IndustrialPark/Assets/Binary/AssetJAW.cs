@@ -18,6 +18,12 @@ namespace IndustrialPark
             JawData = new byte[0];
         }
 
+        public EntryJAW(AssetID soundAssetID, byte[] jawData)
+        {
+            SoundAssetID = soundAssetID;
+            JawData = jawData;
+        }
+
         public override string ToString()
         {
             return $"[{Program.MainForm.GetAssetNameFromID(SoundAssetID)}] - [{JawData.Length}]";
@@ -38,9 +44,7 @@ namespace IndustrialPark
 
     public class AssetJAW : Asset
     {
-        public AssetJAW(Section_AHDR AHDR) : base(AHDR)
-        {
-        }
+        public AssetJAW(Section_AHDR AHDR) : base(AHDR) { }
 
         public override bool HasReference(uint assetID)
         {
@@ -49,6 +53,12 @@ namespace IndustrialPark
                     return true;
 
             return base.HasReference(assetID);
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            foreach (EntryJAW a in JAW_Entries)
+                Verify(a.SoundAssetID, ref result);
         }
 
         private int JawDataCount
@@ -74,7 +84,7 @@ namespace IndustrialPark
                     int length = BitConverter.ToInt32(Data, StartOfJawData + offset);
                     byte[] jawData = Data.Skip(StartOfJawData + offset + 4).Take(length).ToArray();
 
-                    entries.Add(new EntryJAW() { SoundAssetID = soundAssetID, JawData = jawData });
+                    entries.Add(new EntryJAW(soundAssetID, jawData));
                 }
                 
                 return entries.ToArray();
@@ -110,7 +120,7 @@ namespace IndustrialPark
             RemoveEntry(assetID);
 
             List<EntryJAW> entries = JAW_Entries.ToList();
-            entries.Add(new EntryJAW() { SoundAssetID = assetID, JawData = jawData });
+            entries.Add(new EntryJAW(assetID, jawData));
 
             JAW_Entries = entries.ToArray();
         }

@@ -6,7 +6,7 @@ namespace IndustrialPark
     public class AssetCNTR : ObjectAsset
     {
         public AssetCNTR(Section_AHDR AHDR) : base(AHDR) { }
-
+        
         protected override int EventStartOffset => 0xC;
 
         [Category("Counter")]

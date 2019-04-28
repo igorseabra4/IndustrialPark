@@ -10,18 +10,63 @@ namespace IndustrialPark
 {
     public class AssetSHRP : Asset
     {
-        public AssetSHRP(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetSHRP(Section_AHDR AHDR) : base(AHDR)
+        {
+            if (AssetID != AHDR.assetID)
+                AssetID = AHDR.assetID;
+        }
 
         public override bool HasReference(uint assetID)
         {
             if (AssetID == assetID)
                 return true;
 
-            foreach (EntrySHRP a in SHRPEntries)
-                if (a.HasReference(assetID))
-                    return true;
+            try
+            {
+                foreach (EntrySHRP a in SHRPEntries)
+                    if (a.HasReference(assetID))
+                        return true;
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                //System.Windows.Forms.MessageBox.Show("Error searching for references: " + e.Message + ". It will be skipped on the search.");
+#endif
+            }
 
             return false;
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            foreach (EntrySHRP a in SHRPEntries)
+                switch (a.Type)
+                {
+                    case 3:
+                        if (Functions.currentGame == Game.BFBB)
+                            Verify(((EntrySHRP_Type3_BFBB)a).PARE_AssetID, ref result);
+                        else if (Functions.currentGame == Game.Incredibles)
+                            Verify(((EntrySHRP_Type3_TSSM)a).Unknown1F0, ref result);
+                        break;
+                    case 4:
+                        if (Functions.currentGame == Game.BFBB)
+                        {
+                            Verify(((EntrySHRP_Type4_BFBB)a).ModelAssetID, ref result);
+                            Verify(((EntrySHRP_Type4_BFBB)a).UnknownAssetID74, ref result);
+                        }
+                        else if (Functions.currentGame == Game.Incredibles)
+                            Verify(((EntrySHRP_Type4_TSSM)a).ModelAssetID, ref result);
+                        break;
+                    case 6:
+                        if (Functions.currentGame == Game.BFBB)
+                            Verify(((EntrySHRP_Type6_BFBB)a).SoundAssetID, ref result);
+                        else if (Functions.currentGame == Game.Incredibles)
+                            Verify(((EntrySHRP_Type6_TSSM)a).SoundAssetID, ref result);
+                        break;
+                    case 9:
+                        Verify(((EntrySHRP_Type9)a).UnknownAssetID18, ref result);
+                        break;
+                }
         }
 
         [Category("Shrapnel"), ReadOnly(true)]
@@ -88,8 +133,8 @@ namespace IndustrialPark
                     else if (Type == 9)
                         entry = new EntrySHRP_Type9(binaryReader.ReadBytes(EntrySHRP_Type9.SizeOfEntry));
                     else
-                        System.Windows.Forms.MessageBox.Show("Unknown SHRP entry type found: " + Type.ToString() + " in asset " + ToString());
-
+                        throw new Exception("Unknown SHRP entry type " + Type.ToString() + " found in asset " + ToString() + ". This SHRP asset cannot be edited by Industrial Park.");
+                    
                     entries.Add(entry);
                 }
 

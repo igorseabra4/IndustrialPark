@@ -20,6 +20,14 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            Verify(TextureAssetID, ref result);
+            Verify(PARS_AssetID, ref result);
+        }
+
         [Category("Particle System")]
         public int PARS_Type
         {

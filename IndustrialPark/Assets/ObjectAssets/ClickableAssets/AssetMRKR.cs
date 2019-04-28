@@ -24,6 +24,12 @@ namespace IndustrialPark
                 ArchiveEditorFunctions.renderableAssetSetTrans.Add(this);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            if (Data.Length != 12)
+                result.Add("MRKR data length is invalid");
+        }
+
         public void CreateTransformMatrix()
         {
             world = Matrix.RotationX(MathUtil.PiOverTwo) * Matrix.Translation(_position + new Vector3(0f, 0.5f, 0f));
