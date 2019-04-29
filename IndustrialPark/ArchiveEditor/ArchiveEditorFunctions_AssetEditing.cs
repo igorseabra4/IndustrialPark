@@ -117,8 +117,8 @@ namespace IndustrialPark
                 case AssetType.GRUP:
                     internalEditors.Add(new InternalGrupEditor((AssetGRUP)asset, this));
                     break;
-                //case AssetType.BSP:
-                //case AssetType.JSP:
+                case AssetType.BSP:
+                case AssetType.JSP:
                 case AssetType.MODL:
                     internalEditors.Add(new InternalModelEditor((AssetRenderWareModel)asset, this));
                     break;

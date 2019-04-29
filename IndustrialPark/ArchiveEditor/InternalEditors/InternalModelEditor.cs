@@ -19,6 +19,9 @@ namespace IndustrialPark
             this.asset = asset;
             this.archive = archive;
 
+            if (asset.AHDR.assetType != HipHopFile.AssetType.MODL)
+                buttonImport.Enabled = false;
+
             propertyGridAsset.SelectedObject = asset;
             labelAssetName.Text = $"[{asset.AHDR.assetType.ToString()}] {asset.ToString()}";
         }
