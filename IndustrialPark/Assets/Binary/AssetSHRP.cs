@@ -120,7 +120,12 @@ namespace IndustrialPark
                             entry = new EntrySHRP_Type4_TSSM(binaryReader.ReadBytes(EntrySHRP_Type4_TSSM.SizeOfEntry));
                     }
                     else if (Type == 5)
-                        entry = new EntrySHRP_Type5(binaryReader.ReadBytes(EntrySHRP_Type5.SizeOfEntry));
+                    {
+                        if (Functions.currentGame == Game.BFBB)
+                            entry = new EntrySHRP_Type5_BFBB(binaryReader.ReadBytes(EntrySHRP_Type5_BFBB.SizeOfEntry));
+                        else if (Functions.currentGame == Game.Incredibles)
+                            entry = new EntrySHRP_Type5_TSSM(binaryReader.ReadBytes(EntrySHRP_Type5_TSSM.SizeOfEntry));
+                    }
                     else if (Type == 6)
                     {
                         if (Functions.currentGame == Game.BFBB)
@@ -583,7 +588,7 @@ namespace IndustrialPark
         }
     }
 
-    public class EntrySHRP_Type5 : EntrySHRP
+    public class EntrySHRP_Type5_BFBB : EntrySHRP
     {
         public static int SizeOfEntry => 0x68;
 
@@ -597,8 +602,8 @@ namespace IndustrialPark
         public float Unknown44 { get; set; }
         public AssetID Unknown48 { get; set; }
         public AssetID Unknown4C { get; set; }
-        
-        public EntrySHRP_Type5() : base()
+
+        public EntrySHRP_Type5_BFBB() : base()
         {
             Type = 5;
             Unknown1C = 0;
@@ -609,7 +614,7 @@ namespace IndustrialPark
             Unknown4C = 0;
         }
 
-        public EntrySHRP_Type5(byte[] data) : base(data)
+        public EntrySHRP_Type5_BFBB(byte[] data) : base(data)
         {
             Unknown18 = Switch(BitConverter.ToInt32(data, 0x18));
             Unknown1C = Switch(BitConverter.ToUInt32(data, 0x1C));
@@ -641,7 +646,89 @@ namespace IndustrialPark
             list.AddRange(BitConverter.GetBytes(Switch(Unknown4C)));
             for (int i = 0; i < 0x18; i++)
                 list.Add(0xCD);
-            
+
+            return list;
+        }
+
+        public override bool HasReference(uint assetID)
+        {
+            if (Unknown1C == assetID)
+                return true;
+            if (Unknown24 == assetID)
+                return true;
+            if (Unknown28 == assetID)
+                return true;
+            if (Unknown40 == assetID)
+                return true;
+            if (Unknown48 == assetID)
+                return true;
+            if (Unknown4C == assetID)
+                return true;
+            return base.HasReference(assetID);
+        }
+    }
+
+    public class EntrySHRP_Type5_TSSM : EntrySHRP
+    {
+        public static int SizeOfEntry => 0x70;
+
+        public int Unknown18 { get; set; }
+        public int Unknown1C { get; set; }
+        public float Unknown20 { get; set; }
+        public int Unknown24 { get; set; }
+        public int Unknown28 { get; set; }
+        public int Unknown3C { get; set; }
+        public int Unknown40 { get; set; }
+        public float Unknown44 { get; set; }
+        public int Unknown48 { get; set; }
+        public int Unknown4C { get; set; }
+        public int Unknown50 { get; set; }
+        public int Unknown64 { get; set; }
+
+        public EntrySHRP_Type5_TSSM() : base()
+        {
+            Type = 5;
+        }
+
+        public EntrySHRP_Type5_TSSM(byte[] data) : base(data)
+        {
+            Unknown18 = Switch(BitConverter.ToInt32(data, 0x18));
+            Unknown1C = Switch(BitConverter.ToInt32(data, 0x1C));
+            Unknown20 = Switch(BitConverter.ToSingle(data, 0x20));
+            Unknown24 = Switch(BitConverter.ToInt32(data, 0x24));
+            Unknown28 = Switch(BitConverter.ToInt32(data, 0x28));
+            Unknown3C = Switch(BitConverter.ToInt32(data, 0x3C));
+            Unknown40 = Switch(BitConverter.ToInt32(data, 0x40));
+            Unknown44 = Switch(BitConverter.ToSingle(data, 0x44));
+            Unknown48 = Switch(BitConverter.ToInt32(data, 0x48));
+            Unknown4C = Switch(BitConverter.ToInt32(data, 0x4C));
+            Unknown50 = Switch(BitConverter.ToInt32(data, 0x50));
+            Unknown64 = Switch(BitConverter.ToInt32(data, 0x64));
+        }
+
+        public override List<byte> ToByteArray()
+        {
+            List<byte> list = base.ToByteArray();
+
+            list.AddRange(BitConverter.GetBytes(Switch(Unknown18)));
+            list.AddRange(BitConverter.GetBytes(Switch(Unknown1C)));
+            list.AddRange(BitConverter.GetBytes(Switch(Unknown20)));
+            list.AddRange(BitConverter.GetBytes(Switch(Unknown24)));
+            list.AddRange(BitConverter.GetBytes(Switch(Unknown28)));
+            for (int i = 0; i < 0x10; i++)
+                list.Add(0xCD);
+            list.AddRange(BitConverter.GetBytes(Switch(Unknown3C)));
+            list.AddRange(BitConverter.GetBytes(Switch(Unknown40)));
+            list.AddRange(BitConverter.GetBytes(Switch(Unknown44)));
+            list.AddRange(BitConverter.GetBytes(Switch(Unknown48)));
+            list.AddRange(BitConverter.GetBytes(Switch(Unknown4C)));
+            list.AddRange(BitConverter.GetBytes(Switch(Unknown50)));
+            for (int i = 0; i < 0x10; i++)
+                list.Add(0xCD);
+            list.AddRange(BitConverter.GetBytes(Switch(Unknown64)));
+            for (int i = 0; i < 0x8; i++)
+                list.Add(0xCD);
+
             return list;
         }
 

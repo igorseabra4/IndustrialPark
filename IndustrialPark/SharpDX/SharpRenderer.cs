@@ -6,8 +6,8 @@ using SharpDX.Windows;
 using System.Collections.Generic;
 using static IndustrialPark.Models.BSP_IO_ReadOBJ;
 using System.Linq;
-using System;
 using System.IO;
+using System;
 
 namespace IndustrialPark
 {
@@ -27,11 +27,20 @@ namespace IndustrialPark
         {
             if (!SharpDevice.IsDirectX11Supported())
             {
-                MessageBox.Show("DirectX11 Not Supported. Maximum feature level is " + SharpDX.Direct3D11.Device.GetSupportedFeatureLevel().ToString());
+                MessageBox.Show("DirectX11 not supported. Maximum feature level is " + SharpDevice.GetSupportedFeatureLevel().ToString());
                 return;
             }
 
-            device = new SharpDevice(control, false);
+            try
+            {
+                device = new SharpDevice(control, false);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Error setting up DirectX11 renderer: " + e.Message);
+                return;
+            }
+
             LoadModels();
 
             sharpFPS = new SharpFPS();

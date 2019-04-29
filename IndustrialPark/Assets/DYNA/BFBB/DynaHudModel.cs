@@ -22,6 +22,11 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            Asset.Verify(Model_AssetID, ref result);
+        }
+
         public DynaHudModel(IEnumerable<byte> enumerable) : base (enumerable)
         {
             PositionX = Switch(BitConverter.ToSingle(Data, 0x0));

@@ -25,6 +25,12 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            Asset.Verify(TextboxID, ref result);
+            Asset.Verify(TextID, ref result);
+        }
+
         public DynaHudText(IEnumerable<byte> enumerable) : base (enumerable)
         {
             PositionX = Switch(BitConverter.ToSingle(Data, 0x0));

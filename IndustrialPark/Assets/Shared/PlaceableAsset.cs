@@ -164,7 +164,8 @@ namespace IndustrialPark
             Verify(Surface_AssetID, ref result);
             if (Model_AssetID == 0)
                 result.Add(AHDR.assetType.ToString() + " with Model_AssetID set to 0");
-            Verify(Model_AssetID, ref result);
+            if (!(this is AssetTRIG))
+                Verify(Model_AssetID, ref result);
             Verify(Animation_AssetID, ref result);
         }
 

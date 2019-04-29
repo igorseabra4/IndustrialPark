@@ -58,7 +58,11 @@ namespace IndustrialPark
         public override void Verify(ref List<string> result)
         {
             foreach (EntryJAW a in JAW_Entries)
+            {
+                if (a.SoundAssetID == 0)
+                    result.Add("JAW entry with SoundAssetID set to 0");
                 Verify(a.SoundAssetID, ref result);
+            }
         }
 
         private int JawDataCount
@@ -117,9 +121,12 @@ namespace IndustrialPark
 
         public void AddEntry(byte[] jawData, uint assetID)
         {
-            RemoveEntry(assetID);
-
             List<EntryJAW> entries = JAW_Entries.ToList();
+
+            for (int i = 0; i < entries.Count; i++)
+                if (entries[i].SoundAssetID == assetID)
+                    entries.Remove(entries[i]);
+
             entries.Add(new EntryJAW(assetID, jawData));
 
             JAW_Entries = entries.ToArray();

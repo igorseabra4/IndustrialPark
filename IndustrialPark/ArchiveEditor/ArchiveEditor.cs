@@ -184,6 +184,10 @@ namespace IndustrialPark
 
         public void CloseArchiveEditor()
         {
+            if (verifyResult != null)
+                if (!verifyResult.IsDisposed)
+                    verifyResult.Close();
+
             archive.Dispose();
 
             Program.MainForm.CloseArchiveEditor(this);
@@ -257,7 +261,7 @@ namespace IndustrialPark
         
         private void comboBoxLayerTypes_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxLayerTypes.SelectedItem == null || programIsChangingStuff)
+            if (programIsChangingStuff || comboBoxLayers.SelectedItem == null)
                 return;
 
             archive.SetLayerType(comboBoxLayers.SelectedIndex, (int)comboBoxLayerTypes.SelectedItem);
@@ -773,9 +777,16 @@ namespace IndustrialPark
             PopulateLayerComboBox();
         }
 
+        private ScrollableMessageBox verifyResult;
+
         private void verifyArchiveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new ScrollableMessageBox("Verify results on " + Text, archive.VerifyArchive()).Show();
+            if (verifyResult != null)
+                if (!verifyResult.IsDisposed)
+                    verifyResult.Close();
+
+            verifyResult = new ScrollableMessageBox("Verify results on " + Text, archive.VerifyArchive());
+            verifyResult.Show();
         }
 
         private void applyScaleToolStripMenuItem_Click(object sender, EventArgs e)

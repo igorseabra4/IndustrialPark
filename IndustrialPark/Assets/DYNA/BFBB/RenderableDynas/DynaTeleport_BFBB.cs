@@ -46,6 +46,16 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            if (MRKR_ID == 0)
+                result.Add("Teleport with no MRKR reference");
+            Asset.Verify(MRKR_ID, ref result);
+            if (TargetDYNATeleportID == 0)
+                result.Add("Teleport with no target reference");
+            Asset.Verify(TargetDYNATeleportID, ref result);
+        }
+
         public override byte[] ToByteArray()
         {
             List<byte> list = new List<byte>();

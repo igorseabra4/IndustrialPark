@@ -70,7 +70,10 @@ namespace IndustrialPark
         private void buttonAdd5_Click(object sender, System.EventArgs e)
         {
             List<EntrySHRP> list = asset.SHRPEntries.ToList();
-            list.Add(new EntrySHRP_Type5());
+            if (HipHopFile.Functions.currentGame == HipHopFile.Game.Incredibles)
+                list.Add(new EntrySHRP_Type5_TSSM());
+            else
+                list.Add(new EntrySHRP_Type5_BFBB());
             asset.SHRPEntries = list.ToArray();
 
             propertyGridAsset.SelectedObject = asset;

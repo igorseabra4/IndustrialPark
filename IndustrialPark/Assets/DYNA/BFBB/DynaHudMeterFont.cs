@@ -33,6 +33,14 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            Asset.Verify(SoundID1, ref result);
+            Asset.Verify(SoundID2, ref result);
+            Asset.Verify(SoundID3, ref result);
+            Asset.Verify(SoundID4, ref result);
+        }
+
         public DynaHudMeterFontV3(IEnumerable<byte> enumerable) : base (enumerable)
         {
             PositionX = Switch(BitConverter.ToSingle(Data, 0x0));

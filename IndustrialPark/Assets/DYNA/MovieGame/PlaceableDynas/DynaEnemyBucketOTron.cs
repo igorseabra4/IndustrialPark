@@ -34,6 +34,16 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            if (GRUP_AssetID == 0)
+                result.Add("DYNA BucketOTron with GRUP Asset ID set to 0");
+
+            Asset.Verify(GRUP_AssetID, ref result);
+        }
+
         public override byte[] ToByteArray()
         {
             List<byte> list = base.ToByteArray().ToList();

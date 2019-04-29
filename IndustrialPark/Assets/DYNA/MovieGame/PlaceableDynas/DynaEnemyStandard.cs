@@ -51,6 +51,21 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            if (MVPT_AssetID == 0 && MVPT_Group_AssetID == 0)
+                result.Add("DYNA Enemy Standard without set MVPT");
+
+            Asset.Verify(MVPT_AssetID, ref result);
+            Asset.Verify(MVPT_Group_AssetID, ref result);
+            Asset.Verify(Unknown5C, ref result);
+            Asset.Verify(Unknown60, ref result);
+            Asset.Verify(Unknown64, ref result);
+            Asset.Verify(Unknown68, ref result);
+        }
+
         public override byte[] ToByteArray()
         {
             List<byte> list = base.ToByteArray().ToList();

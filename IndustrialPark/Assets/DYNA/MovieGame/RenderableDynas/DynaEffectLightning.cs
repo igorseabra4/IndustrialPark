@@ -14,6 +14,19 @@ namespace IndustrialPark
 
         public DynaEffectLightning() : base() { }
 
+        public override bool HasReference(uint assetID)
+        {
+            return LightningTexture_AssetID == assetID || GlowTexture_AssetID == assetID || SIMP1_AssetID == assetID || SIMP2_AssetID == assetID;
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            Asset.Verify(LightningTexture_AssetID, ref result);
+            Asset.Verify(GlowTexture_AssetID, ref result);
+            Asset.Verify(SIMP1_AssetID, ref result);
+            Asset.Verify(SIMP2_AssetID, ref result);
+        }
+
         public DynaEffectLightning(IEnumerable<byte> enumerable) : base (enumerable)
         {
             _position = new Vector3(

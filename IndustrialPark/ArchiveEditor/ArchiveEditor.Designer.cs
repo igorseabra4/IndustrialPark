@@ -363,7 +363,8 @@
             // 
             // comboBoxLayerTypes
             // 
-            this.comboBoxLayerTypes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxLayerTypes.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxLayerTypes.FormattingEnabled = true;
             this.comboBoxLayerTypes.Location = new System.Drawing.Point(296, 19);
             this.comboBoxLayerTypes.Name = "comboBoxLayerTypes";
@@ -373,7 +374,7 @@
             // 
             // label1
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(256, 23);
             this.label1.Name = "label1";
@@ -407,8 +408,6 @@
             // 
             // comboBoxLayers
             // 
-            this.comboBoxLayers.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxLayers.FormattingEnabled = true;
             this.comboBoxLayers.Location = new System.Drawing.Point(6, 19);
             this.comboBoxLayers.Name = "comboBoxLayers";
@@ -505,7 +504,8 @@
             // 
             // textBoxFindAsset
             // 
-            this.textBoxFindAsset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxFindAsset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxFindAsset.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
             this.textBoxFindAsset.Location = new System.Drawing.Point(296, 13);
             this.textBoxFindAsset.Name = "textBoxFindAsset";
@@ -515,7 +515,6 @@
             // 
             // label3
             // 
-            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(260, 16);
             this.label3.Name = "label3";
@@ -609,8 +608,6 @@
             // 
             // comboBoxAssetTypes
             // 
-            this.comboBoxAssetTypes.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxAssetTypes.FormattingEnabled = true;
             this.comboBoxAssetTypes.Location = new System.Drawing.Point(46, 13);
             this.comboBoxAssetTypes.Name = "comboBoxAssetTypes";

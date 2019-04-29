@@ -26,7 +26,17 @@ namespace IndustrialPark
             if (Emit_SGRP == assetID)
                 return true;
 
-            return base.HasReference(assetID);
+            return false;
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            Asset.Verify(Constant_PARE, ref result);
+            Asset.Verify(Constant_SGRP, ref result);
+            Asset.Verify(Warning_PARE, ref result);
+            Asset.Verify(Warning_SGRP, ref result);
+            Asset.Verify(Emit_PARE, ref result);
+            Asset.Verify(Emit_SGRP, ref result);
         }
 
         public DynaVentType(IEnumerable<byte> enumerable) : base (enumerable)

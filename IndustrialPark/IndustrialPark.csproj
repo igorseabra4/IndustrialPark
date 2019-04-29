@@ -157,6 +157,7 @@
     <Compile Include="Assets\Models\AssetRenderWareModel.cs" />
     <Compile Include="Assets\ObjectAssets\AssetCOND_Scooby.cs" />
     <Compile Include="Assets\ObjectAssets\AssetCSNM.cs" />
+    <Compile Include="Assets\ObjectAssets\AssetENV_TSSM.cs" />
     <Compile Include="Assets\ObjectAssets\AssetGUST.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetLITE.cs" />
     <Compile Include="Assets\ObjectAssets\AssetPARE.cs" />

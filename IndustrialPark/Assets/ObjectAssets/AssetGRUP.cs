@@ -44,7 +44,7 @@ namespace IndustrialPark
         public short ItemCount
         {
             get => ReadShort(0x08);
-            set => Write(0x0A, value);
+            set => Write(0x08, value);
         }
 
         [Category("Group")]

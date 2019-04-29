@@ -354,7 +354,12 @@ namespace IndustrialPark
 
             switch (AHDR.assetType)
             {
-                case AssetType.ANIM: newAsset = new AssetANIM(AHDR); break;
+                case AssetType.ANIM:
+                    if (AHDR.ADBG.assetName.Contains("ATBL"))
+                        newAsset = new Asset(AHDR);
+                    else
+                        newAsset = new AssetANIM(AHDR);
+                    break;
                 case AssetType.ALST: newAsset = new AssetALST(AHDR); break;
                 case AssetType.ATBL: newAsset = new AssetATBL(AHDR); break;
                 case AssetType.BSP:
@@ -385,7 +390,12 @@ namespace IndustrialPark
                     break;
                 case AssetType.DYNA: newAsset = new AssetDYNA(AHDR); break;
                 case AssetType.EGEN: newAsset = new AssetEGEN(AHDR); break;
-                case AssetType.ENV: newAsset = new AssetENV(AHDR); break;
+                case AssetType.ENV:
+                    if (currentGame == Game.Incredibles)
+                        newAsset = new AssetENV_TSSM(AHDR);
+                    else
+                        newAsset = new AssetENV(AHDR);
+                    break;
                 case AssetType.FLY: newAsset = new AssetFLY(AHDR); break;
                 case AssetType.FOG: newAsset = new AssetFOG(AHDR); break;
                 case AssetType.GRUP: newAsset = new AssetGRUP(AHDR); break;

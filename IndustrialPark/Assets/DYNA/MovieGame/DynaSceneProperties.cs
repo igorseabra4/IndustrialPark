@@ -16,10 +16,14 @@ namespace IndustrialPark
 
         public override bool HasReference(uint assetID)
         {
-            if (Sound_AssetID == assetID)
-                return true;
+            return Sound_AssetID == assetID;
+        }
 
-            return base.HasReference(assetID);
+        public override void Verify(ref List<string> result)
+        {
+            if (Sound_AssetID == 0)
+                result.Add("Scene Properties with no song reference");
+            Asset.Verify(Sound_AssetID, ref result);
         }
 
         public DynaSceneProperties(IEnumerable<byte> enumerable) : base (enumerable)

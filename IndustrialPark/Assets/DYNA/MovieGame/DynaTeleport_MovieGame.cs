@@ -36,14 +36,18 @@ namespace IndustrialPark
 
         public override bool HasReference(uint assetID)
         {
-            if (MRKR_ID == assetID)
-                return true;
-            if (DYNA_Teleport_ID == assetID)
-                return true;
-            if (UnknownAssetID == assetID)
-                return true;
+            return MRKR_ID == assetID || DYNA_Teleport_ID == assetID || UnknownAssetID == assetID;
+        }
 
-            return base.HasReference(assetID);
+        public override void Verify(ref List<string> result)
+        {
+            if (MRKR_ID == 0)
+                result.Add("DYNA Teleport with no MRKR reference");
+            Asset.Verify(MRKR_ID, ref result);
+            if (DYNA_Teleport_ID == 0)
+                result.Add("DYNA Teleport with no DYNA Teleport reference");
+            Asset.Verify(DYNA_Teleport_ID, ref result);
+            Asset.Verify(UnknownAssetID, ref result);
         }
 
         public override byte[] ToByteArray()

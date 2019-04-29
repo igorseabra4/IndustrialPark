@@ -21,6 +21,13 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            _dynaSpecific.Verify(ref result);
+
+            base.Verify(ref result);
+        }
+
         public void SetDynaSpecific(bool reset)
         {
             List<byte> dataBefore = Data.Take(0x10).ToList();

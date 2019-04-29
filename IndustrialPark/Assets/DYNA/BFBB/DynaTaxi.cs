@@ -49,6 +49,16 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            Asset.Verify(MRKR_ID, ref result);
+            Asset.Verify(CAM_ID, ref result);
+            Asset.Verify(PORT_ID, ref result);
+            Asset.Verify(DYNA_Talkbox_ID, ref result);
+            Asset.Verify(TEXT_ID, ref result);
+            Asset.Verify(SIMP_ID, ref result);
+        }
+
         public override byte[] ToByteArray()
         {
             List<byte> list = new List<byte>();

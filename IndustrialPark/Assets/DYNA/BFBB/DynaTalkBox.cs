@@ -46,6 +46,19 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            Asset.Verify(TextBoxID1, ref result);
+            Asset.Verify(TextBoxID2, ref result);
+            Asset.Verify(TextBoxID3, ref result);
+            Asset.Verify(PointerID, ref result);
+            Asset.Verify(TextID1, ref result);
+            Asset.Verify(TextID2, ref result);
+            Asset.Verify(TextID3, ref result);
+            Asset.Verify(TextID4, ref result);
+            Asset.Verify(TextID5, ref result);
+        }
+
         public DynaTalkBox(IEnumerable<byte> enumerable) : base (enumerable)
         {
             TextBoxID1 = Switch(BitConverter.ToUInt32(Data, 0x0));

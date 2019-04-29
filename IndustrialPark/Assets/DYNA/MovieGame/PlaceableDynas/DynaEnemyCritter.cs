@@ -34,6 +34,17 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            if (MVPT_AssetID == 0)
+                result.Add("DYNA Critter with MVPT Asset ID set to 0");
+
+            Asset.Verify(MVPT_AssetID, ref result);
+            Asset.Verify(Unknown54, ref result);
+        }
+
         public override byte[] ToByteArray()
         {
             List<byte> list = base.ToByteArray().ToList();

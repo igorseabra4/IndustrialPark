@@ -21,6 +21,13 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            if (FLY_ID == 0)
+                result.Add("Flythrough with no FLY reference");
+            Asset.Verify(FLY_ID, ref result);
+        }
+
         public DynaFlythrough(IEnumerable<byte> enumerable) : base (enumerable)
         {
             FLY_ID = Switch(BitConverter.ToUInt32(Data, 0x0));

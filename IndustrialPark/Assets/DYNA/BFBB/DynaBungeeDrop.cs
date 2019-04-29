@@ -22,6 +22,11 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            Asset.Verify(MRKR_ID, ref result);
+        }
+
         public DynaBungeeDrop(IEnumerable<byte> enumerable) : base (enumerable)
         {
             MRKR_ID = Switch(BitConverter.ToUInt32(Data, 0x0));

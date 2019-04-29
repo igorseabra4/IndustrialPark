@@ -27,6 +27,12 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            Asset.Verify(DefaultTextID, ref result);
+            Asset.Verify(BackgroundTextureID, ref result);
+        }
+
         public DynaTextBox(IEnumerable<byte> enumerable) : base (enumerable)
         {
             DefaultTextID = Switch(BitConverter.ToUInt32(Data, 0x00));

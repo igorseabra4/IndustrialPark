@@ -32,6 +32,14 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            Asset.Verify(Surface_AssetID, ref result);
+            Asset.Verify(Model_AssetID, ref result);
+            Asset.Verify(Unknown44, ref result);
+            Asset.Verify(Unknown4C, ref result);
+        }
+
         protected DynaPlaceableBase(IEnumerable<byte> enumerable) : base(enumerable)
         {
             PaddingInt00 = Switch(BitConverter.ToInt32(Data, 0x0));

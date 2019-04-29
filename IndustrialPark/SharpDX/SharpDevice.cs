@@ -3,10 +3,8 @@ using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
-
 using Device11 = SharpDX.Direct3D11.Device;
 using Buffer11 = SharpDX.Direct3D11.Buffer;
-using System.Linq;
 
 namespace IndustrialPark
 {
@@ -28,17 +26,17 @@ namespace IndustrialPark
         /// <summary>
         /// Device
         /// </summary>
-        public Device11 Device { get { return _device; } }
+        public Device11 Device => _device;
 
         /// <summary>
         /// Device Context
         /// </summary>
-        public DeviceContext DeviceContext { get { return _deviceContext; } }
+        public DeviceContext DeviceContext => _deviceContext;
 
         /// <summary>
         /// Swapchain
         /// </summary>
-        public SwapChain SwapChain { get { return _swapchain; } }
+        public SwapChain SwapChain => _swapchain;
 
         /// <summary>
         /// Rendering Form
@@ -53,12 +51,12 @@ namespace IndustrialPark
         /// <summary>
         /// View to BackBuffer
         /// </summary>
-        public RenderTargetView BackBufferView { get { return _backbufferView; } }
+        public RenderTargetView BackBufferView => _backbufferView;
 
         /// <summary>
         /// View to Depth Buffer
         /// </summary>
-        public DepthStencilView ZBufferView { get { return _zbufferView; } }
+        public DepthStencilView ZBufferView => _zbufferView;
         
         SampleDescription multisampleDesc = new SampleDescription(1, 0);
 
@@ -413,10 +411,15 @@ namespace IndustrialPark
         /// <returns>Supported</returns>
         public static bool IsDirectX11Supported()
         {
-            #if DEBUG
+#if DEBUG
             featureLevel = SharpDX.Direct3D11.Device.GetSupportedFeatureLevel();
-            #endif
-            return SharpDX.Direct3D11.Device.GetSupportedFeatureLevel() == featureLevel;
+#endif
+            return Device11.GetSupportedFeatureLevel() == featureLevel;
+        }
+
+        public static FeatureLevel GetSupportedFeatureLevel()
+        {
+            return Device11.GetSupportedFeatureLevel();
         }
 
         private bool currentMode = true;

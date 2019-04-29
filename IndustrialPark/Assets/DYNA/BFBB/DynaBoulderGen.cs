@@ -22,6 +22,11 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            Asset.Verify(ObjectAssetID, ref result);
+        }
+
         public DynaBoulderGen(IEnumerable<byte> enumerable) : base (enumerable)
         {
             ObjectAssetID = Switch(BitConverter.ToUInt32(Data, 0x0));

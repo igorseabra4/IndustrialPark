@@ -40,6 +40,15 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            Asset.Verify(Unknown54, ref result);
+            Asset.Verify(Unknown5C, ref result);
+            Asset.Verify(Unknown60, ref result);
+        }
+
         public override byte[] ToByteArray()
         {
             List<byte> list = base.ToByteArray().ToList();

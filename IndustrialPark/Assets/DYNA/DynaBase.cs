@@ -28,6 +28,8 @@ namespace IndustrialPark
 
         public virtual bool HasReference(uint assetID) => false;
 
+        public virtual void Verify(ref List<string> result) { }
+
         [Browsable(false)]
         public virtual bool IsRenderableClickable => false;
 

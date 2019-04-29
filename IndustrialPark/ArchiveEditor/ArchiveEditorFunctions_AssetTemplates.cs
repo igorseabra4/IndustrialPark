@@ -479,7 +479,7 @@ namespace IndustrialPark
                     newAssetType = AssetType.EGEN;
                     break;
                 case AssetTemplate.Environment:
-                    dataSize = 0x44;
+                    dataSize = currentGame == Game.Incredibles ? 0x5C : 0x44;
                     newAssetType = AssetType.ENV;
                     break;
                 case AssetTemplate.Group:

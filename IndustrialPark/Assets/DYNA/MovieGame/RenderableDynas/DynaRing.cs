@@ -44,10 +44,12 @@ namespace IndustrialPark
         
         public override bool HasReference(uint assetID)
         {
-            if (DriverPLAT_AssetID == assetID)
-                return true;
+            return DriverPLAT_AssetID == assetID;
+        }
 
-            return base.HasReference(assetID);
+        public override void Verify(ref List<string> result)
+        {
+            Asset.Verify(DriverPLAT_AssetID, ref result);
         }
 
         public override byte[] ToByteArray()

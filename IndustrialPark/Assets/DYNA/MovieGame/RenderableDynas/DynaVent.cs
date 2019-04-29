@@ -17,10 +17,12 @@ namespace IndustrialPark
 
         public override bool HasReference(uint assetID)
         {
-            if (VentType_AssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
+            return VentType_AssetID == assetID;
+        }
+        
+        public override void Verify(ref List<string> result)
+        {
+            Asset.Verify(VentType_AssetID, ref result);
         }
 
         public DynaVent(IEnumerable<byte> enumerable) : base(enumerable)

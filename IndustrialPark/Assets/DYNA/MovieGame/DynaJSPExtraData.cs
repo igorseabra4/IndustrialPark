@@ -16,12 +16,17 @@ namespace IndustrialPark
 
         public override bool HasReference(uint assetID)
         {
-            if (JSPInfo_AssetID == assetID)
-                return true;
-            if (Group_AssetID == assetID)
-                return true;
+            return JSPInfo_AssetID == assetID || Group_AssetID == assetID;
+        }
 
-            return base.HasReference(assetID);
+        public override void Verify(ref List<string> result)
+        {
+            if (JSPInfo_AssetID == 0)
+                result.Add("JSP Extra Data with no JSPInfo reference");
+            Asset.Verify(JSPInfo_AssetID, ref result);
+            if (Group_AssetID == 0)
+                result.Add("JSP Extra Data with no GRUP reference");
+            Asset.Verify(Group_AssetID, ref result);
         }
 
         public DynaJSPExtraData(IEnumerable<byte> enumerable) : base (enumerable)

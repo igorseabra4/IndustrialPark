@@ -28,6 +28,19 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            if (MRKR_ID == 0)
+                result.Add("Bus stop with no MRKR reference");
+            Asset.Verify(MRKR_ID, ref result);
+            if (CAM_ID == 0)
+                result.Add("Bus stop with no CAM reference");
+            Asset.Verify(CAM_ID, ref result);
+            if (SIMP_ID == 0)
+                result.Add("Bus stop with no SIMP reference");
+            Asset.Verify(SIMP_ID, ref result);
+        }
+
         public DynaBusStop(IEnumerable<byte> enumerable) : base (enumerable)
         {
             MRKR_ID = Switch(BitConverter.ToUInt32(Data, 0x0));

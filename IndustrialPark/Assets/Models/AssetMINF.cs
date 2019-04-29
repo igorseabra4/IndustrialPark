@@ -88,7 +88,6 @@ namespace IndustrialPark
                 if (m.Model_AssetID == 0)
                     result.Add("MINF model reference with Model_AssetID set to 0");
                 Verify(m.Model_AssetID, ref result);
-                Verify(m.UnknownAssetID, ref result);
             }
         }
 

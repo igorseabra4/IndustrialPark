@@ -50,6 +50,20 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            if (RingModel_AssetID == 0)
+                result.Add("Ring Control with no Ring Model reference");
+            Asset.Verify(RingModel_AssetID, ref result);
+
+            if (RingSoundGroup_AssetID == 0)
+                result.Add("Ring Control with no SGRP reference");
+            Asset.Verify(RingSoundGroup_AssetID, ref result);
+
+            foreach (AssetID ring in Rings_AssetIDs)
+                Asset.Verify(ring, ref result);
+        }
+
         public override byte[] ToByteArray()
         {
             List<byte> list = new List<byte>();

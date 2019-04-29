@@ -644,18 +644,6 @@ namespace IndustrialPark
             throw new Exception("Unable to add jaw data: JAW asset not found");
         }
 
-        public void RemoveJawDataFromJAW(uint assetID)
-        {
-            foreach (Asset a in assetDictionary.Values)
-            {
-                if (a is AssetJAW JAW)
-                {
-                    if (JAW.HasReference(assetID))
-                        JAW.RemoveEntry(assetID);
-                }
-            }
-        }
-
         public static AHDRFlags AHDRFlagsFromAssetType(AssetType assetType)
         {
             switch (assetType)
@@ -772,10 +760,13 @@ namespace IndustrialPark
             foreach (Section_LHDR LHDR in DICT.LTOC.LHDRList)
                 foreach (uint assetID in LHDR.assetIDlist)
                     if (!ContainsAsset(assetID))
-                        result += $"Asset 0x{assetID.ToString("X8")} appears to be present in a layer, but it's not in the AHDR dictionary. This archive is likely unusable." + endl;
+                        result += $"Archive: Asset 0x{assetID.ToString("X8")} appears to be present in a layer, but it's not in the AHDR dictionary. This archive is likely unusable." + endl;
 
             List<Asset> ordered = assetDictionary.Values.OrderBy(f => f.AHDR.ADBG.assetName).ToList();
             ordered = ordered.OrderBy(f => f.AHDR.assetType).ToList();
+
+            if (!ContainsAssetWithType(AssetType.JSP))
+                result += $"Archive: Does not contain any JSP asset." + endl;
 
             foreach (Asset asset in ordered)
             {
@@ -788,11 +779,11 @@ namespace IndustrialPark
                             if (found == false)
                                 found = true;
                             else
-                                result += $"Asset {asset.ToString()} is present in more than one layer. This is unexpected." + endl;
+                                result += $"Archive: Asset {asset.ToString()} is present in more than one layer. This is unexpected." + endl;
                         }
 
                 if (found == false)
-                    result += $"Asset {asset.ToString()} appears to not be present in the AHDR dictionary, but it's not in any layer. This archive is likely unusable." + endl;
+                    result += $"Archive: Asset {asset.ToString()} appears to not be present in the AHDR dictionary, but it's not in any layer. This archive is likely unusable." + endl;
 
                 List<string> resultParam = new List<string>();
                 try

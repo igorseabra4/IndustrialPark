@@ -45,6 +45,18 @@ namespace IndustrialPark
             return base.HasReference(assetID);
         }
 
+        public override void Verify(ref List<string> result)
+        {
+            Asset.Verify(TalkBoxID, ref result);
+            Asset.Verify(TaskBoxID, ref result);
+            Asset.Verify(TextID, ref result);
+            Asset.Verify(TextID_Description, ref result);
+            Asset.Verify(TextOrGrupID_Reminder, ref result);
+            Asset.Verify(TextID_Success, ref result);
+            Asset.Verify(TextID_Failure, ref result);
+            Asset.Verify(TextID_End, ref result);
+        }
+
         public DynaTaskBox(IEnumerable<byte> enumerable) : base (enumerable)
         {
             Flag1 = Data[0x00];
