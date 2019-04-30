@@ -95,7 +95,7 @@ rollout objImport "Vcolor OBJ Import"
 	function ReadFloat tkzr default:0.0 =
 	(
 		local floatStr = tkzr.ReadToken()
-		if floatStr != undefined then
+		if (floatStr != undefined and floatStr != "nan") then
 			return floatStr as float
 		else
 			return default
@@ -287,13 +287,70 @@ rollout objImport "Vcolor OBJ Import"
 		if objFileName != undefined then
 		(
 			currentPath = getFilenamePath objFileName
-			-- Open up the file
-			objStream = openFile objFileName mode:"r"	
+
 			local curMaterialID = 0
 			local curGroup = 0
 			local lineNum = 0
 			local isValid = true
-		
+			
+			-- Open up the file
+			vtStream = openFile objFileName mode:"r"	
+			--Test if HPP or PSO2 style vt
+			try
+			(
+				gFound = false
+				vtBeforeG = false
+				vuUsed = false
+				-- Go through the whole OBJ file
+				while not (eof vtStream) do
+				(
+					local lineTokenizer = Tokenizer()
+					
+					lineTokenizer.SetString (readLine vtStream)
+					
+					lineNum += 1
+					
+					-- Read the data ID tag
+					local idToken = lineTokenizer.ReadToken()
+					
+					if idToken != undefined do
+					(
+	
+						case idToken of
+						(					
+							"g": 
+							(
+								gFound = true
+							)
+							
+							"vt": -- Set vertex texcoord
+							(
+								if (gFound == false) then
+								(
+									vtBeforeG = true
+								)
+							)
+							
+							"vu": -- Set vertex texcoord
+							(
+								vuUsed = true
+							)
+							default:
+							(
+							)
+						)
+					)
+				)				
+			) catch
+			(
+				close vtStream
+			)
+			
+			vtCount = 0
+			vtPad = false
+			vuPad = false
+			-- Open up the file
+			objStream = openFile objFileName mode:"r"	
 			try
 			(
 				-- Go through the whole OBJ file
@@ -320,6 +377,12 @@ rollout objImport "Vcolor OBJ Import"
 							
 							"g": -- Define group
 							(
+								if (vtBeforeG == false) then
+								(
+									vtCount = 0
+									vtPad = true
+									vuPad = true
+								)
 								groupName = lineTokenizer.ReadToken()
 								append groupNames groupName
 								curGroup = groupNames.count
@@ -350,6 +413,11 @@ rollout objImport "Vcolor OBJ Import"
 							
 							"v": -- Set vertex co-ordinate
 							(
+								if (vtBeforeG == false) then
+								(
+									vtCount += 1
+								)
+								
 								local x = ReadFloat lineTokenizer
 								if YZCheckBox.checked then
 								(
@@ -365,6 +433,8 @@ rollout objImport "Vcolor OBJ Import"
 							
 							"vt": -- Set vertex texcoord
 							(
+								vtPad = false
+								
 								local u = ReadFloat lineTokenizer
 								if UVFlip.checked then
 								(
@@ -379,6 +449,8 @@ rollout objImport "Vcolor OBJ Import"
 							
 							"vu": -- Set vertex texcoord
 							(
+								vuPad = false
+								
 								local u = ReadFloat lineTokenizer
 								if UVFlip.checked then
 								(
@@ -405,11 +477,36 @@ rollout objImport "Vcolor OBJ Import"
 								local nx = ReadFloat lineTokenizer
 								local ny = ReadFloat lineTokenizer
 								local nz = ReadFloat lineTokenizer
+								
 								append normals [ nx, ny, nx ]
 							)
 							
 							"f": -- Define face (coord index/texcoord index/normal index)
 							(
+								-- Append null tex coords if they didn't exist for a group set
+								if (vtBeforeG == false) then
+								(
+									if (vtPad == true) then
+									(
+										for l = 1 to vtCount do
+										(
+											append texCoords [ 0, 0, 0 ]
+										)
+									)
+									
+									if (vuPad == true and vuUsed == true) then
+									(
+										for l = 1 to vtCount do
+										(
+											append texCoords2 [ 0, 0, 0 ]
+										)
+									)
+																	
+									vtPad = false
+									vuPad = false
+								)
+
+								
 								local v1 = ReadFaceVertex lineTokenizer
 								local v2 = ReadFaceVertex lineTokenizer
 								local v3 = ReadFaceVertex lineTokenizer
@@ -480,10 +577,8 @@ rollout objImport "Vcolor OBJ Import"
 					)
 				)
 				
-				if objectName == undefined do
-				(
-					objectName = (getFilenameFile objFileName)
-				)
+				fileGroupName = (getFilenameFile objFileName)
+				
 				
 				local importList = #()
 				
@@ -506,7 +601,16 @@ rollout objImport "Vcolor OBJ Import"
 					local newMesh = mesh name:groupNames[k] pos:[0,0,0] \
 										 vertices:verts faces:faceArray \
 										 material:newMaterial
-
+					append importList newMesh
+					-- Find valid textured 
+					/*
+					local realVertList = meshop.getVertsUsingFace newMesh newMesh.Faces
+					if (texCoords.count < realVertList[realVertList.count]) then
+					(
+						
+					) */
+					--local realVertStart = realvertList[0]
+					--local realVertEnd = realVertList[realVertList.count]
 					
 					-- Add texCoords
 					if texCoords.count > 0 then
@@ -529,7 +633,6 @@ rollout objImport "Vcolor OBJ Import"
 								for i = 1 to (meshop.getNumFaces newMesh) do
 								(
 									meshop.setMapFace newMesh 2 i faceArray[i]
-									
 								)
 							)
 							catch()
@@ -590,8 +693,7 @@ rollout objImport "Vcolor OBJ Import"
 					update newMesh
 					gc()
 				)
-				
-				-- Redraw max viewports
+				group importList name:fileGroupName
 				max views redraw
 			)
 		)
@@ -605,6 +707,8 @@ rollout objImport "Vcolor OBJ Import"
         
 		importObject objFileName
 		
+		-- Redraw max viewports
+		--max views redraw
 		-- Ta-daa! You should now see a lovely new imported model in all its glory.
 		--print "Import completed."
 	)
@@ -626,7 +730,9 @@ rollout objImport "Vcolor OBJ Import"
 		    importObject objFileName
 		  )
 	    )
-			
+		
+	    -- Redraw max viewports
+		--max views redraw
 		-- Ta-daa! You should now see a lovely new imported model in all its glory.
 		--print "Import completed."
 	)

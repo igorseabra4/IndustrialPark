@@ -457,7 +457,7 @@ namespace IndustrialPark.Models
 
         public static void ConvertBSPtoOBJ(string fileName, RenderWareModelFile bspFile, bool flipUVs)
         {
-            int totalVertexIndices = 0;
+            int totalVertexIndices = 1;
 
             string materialLibrary = Path.ChangeExtension(fileName, "MTL");
             string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
@@ -492,9 +492,9 @@ namespace IndustrialPark.Models
                 foreach (Triangle j in triangleList)
                     if (j.materialIndex == i)
                         OBJWriter.WriteLine("f "
-                            + (j.vertex1 + 1).ToString() + "/" + (j.vertex1 + 1).ToString() + " "
-                            + (j.vertex2 + 1).ToString() + "/" + (j.vertex2 + 1).ToString() + " "
-                            + (j.vertex3 + 1).ToString() + "/" + (j.vertex3 + 1).ToString());
+                            + j.vertex1.ToString() + "/" + j.vertex1.ToString() + " "
+                            + j.vertex2.ToString() + "/" + j.vertex2.ToString() + " "
+                            + j.vertex3.ToString() + "/" + j.vertex3.ToString());
 
                 OBJWriter.WriteLine();
             }
@@ -529,7 +529,7 @@ namespace IndustrialPark.Models
         {
             if (AtomicSector.atomicSectorStruct.isNativeData)
             {
-                GetNativeTriangleList(OBJWriter, AtomicSector.atomicSectorExtension, ref triangleList, ref totalVertexIndices, flipUVs);
+                GetNativeTriangleList(OBJWriter, AtomicSector.atomicSectorExtension, null, ref triangleList, ref totalVertexIndices, flipUVs);
                 return;
             }
 
@@ -561,23 +561,23 @@ namespace IndustrialPark.Models
 
             if (AtomicSector.atomicSectorStruct.triangleArray != null)
             {
-                    foreach (RenderWareFile.Triangle i in AtomicSector.atomicSectorStruct.triangleArray)
+                foreach (RenderWareFile.Triangle i in AtomicSector.atomicSectorStruct.triangleArray)
+                {
+                    triangleList.Add(new Triangle
                     {
-                        triangleList.Add(new Triangle
-                        {
-                            materialIndex = i.materialIndex,
-                            vertex1 = i.vertex1 + totalVertexIndices,
-                            vertex2 = i.vertex2 + totalVertexIndices,
-                            vertex3 = i.vertex3 + totalVertexIndices,
-                        });
-                    }
+                        materialIndex = i.materialIndex,
+                        vertex1 = i.vertex1 + totalVertexIndices,
+                        vertex2 = i.vertex2 + totalVertexIndices,
+                        vertex3 = i.vertex3 + totalVertexIndices,
+                    });
+                }
             }
 
             if (AtomicSector.atomicSectorStruct.vertexArray != null)
                 totalVertexIndices += AtomicSector.atomicSectorStruct.vertexArray.Count();
         }
 
-        private static void GetNativeTriangleList(StreamWriter OBJWriter, Extension_0003 extension, ref List<Triangle> triangleList, ref int totalVertexIndices, bool flipUVs)
+        private static void GetNativeTriangleList(StreamWriter objWriter, Extension_0003 extension, List<string> materialList, ref List<Triangle> triangleList, ref int totalVertexIndices, bool flipUVs)
         {
             NativeDataGC n = null;
 
@@ -596,6 +596,7 @@ namespace IndustrialPark.Models
             if (n == null) throw new Exception();
 
             List<Vertex3> vertexList_init = new List<Vertex3>();
+            List<Vertex3> normalList_init = new List<Vertex3>();
             List<RenderWareFile.Color> colorList_init = new List<RenderWareFile.Color>();
             List<Vertex2> textCoordList_init = new List<Vertex2>();
 
@@ -603,12 +604,14 @@ namespace IndustrialPark.Models
             {
                 foreach (object o in d.entryList)
                 {
-                    if (o is Vertex3 v)
-                        vertexList_init.Add(v);
-                    else if (o is Color c)
-                        colorList_init.Add(c);
-                    else if (o is Vertex2 t)
-                        textCoordList_init.Add(t);
+                    if (d.declarationType == Declarations.Vertex)
+                        vertexList_init.Add((Vertex3)o);
+                    else if (d.declarationType == Declarations.Normal)
+                        normalList_init.Add((Vertex3)o);
+                    else if (d.declarationType == Declarations.Color)
+                        colorList_init.Add((Color)o);
+                    else if (d.declarationType == Declarations.TextCoord)
+                        textCoordList_init.Add((Vertex2)o);
                     else throw new Exception();
                 }
             }
@@ -618,6 +621,7 @@ namespace IndustrialPark.Models
                 foreach (TriangleList tl in td.TriangleListList)
                 {
                     List<Vertex3> vertexList_final = new List<Vertex3>();
+                    List<Vertex3> normalList_final = new List<Vertex3>();
                     List<Color> colorList_final = new List<Color>();
                     List<Vertex2> textCoordList_final = new List<Vertex2>();
 
@@ -629,6 +633,10 @@ namespace IndustrialPark.Models
                             {
                                 vertexList_final.Add(vertexList_init[objectList[j]]);
                             }
+                            else if (n.declarations[j].declarationType == Declarations.Normal)
+                            {
+                                normalList_final.Add(normalList_init[objectList[j]]);
+                            }
                             else if (n.declarations[j].declarationType == Declarations.Color)
                             {
                                 colorList_final.Add(colorList_init[objectList[j]]);
@@ -639,6 +647,9 @@ namespace IndustrialPark.Models
                             }
                         }
                     }
+
+                    if (materialList != null)
+                        triangleList.Clear();
 
                     bool control = true;
 
@@ -653,8 +664,6 @@ namespace IndustrialPark.Models
                                 vertex2 = i - 1 + totalVertexIndices,
                                 vertex3 = i + totalVertexIndices
                             });
-
-                            control = false;
                         }
                         else
                         {
@@ -665,37 +674,65 @@ namespace IndustrialPark.Models
                                 vertex2 = i + totalVertexIndices,
                                 vertex3 = i - 1 + totalVertexIndices
                             });
-
-                            control = true;
                         }
+                        control = !control;
                     }
 
                     //Write vertex list to obj
                     foreach (Vertex3 i in vertexList_final)
-                        OBJWriter.WriteLine("v " + i.X.ToString() + " " + i.Y.ToString() + " " + i.Z.ToString());
+                        objWriter.WriteLine("v " + i.X.ToString() + " " + i.Y.ToString() + " " + i.Z.ToString());
 
-                    OBJWriter.WriteLine();
+                    objWriter.WriteLine();
+
+                    //Write normal list to obj
+                    foreach (Vertex3 i in normalList_final)
+                        objWriter.WriteLine("v " + i.X.ToString() + " " + i.Y.ToString() + " " + i.Z.ToString());
+
+                    objWriter.WriteLine();
 
                     //Write uv list to obj
                     if (textCoordList_final.Count() > 0)
                     {
                         if (flipUVs)
                             foreach (Vertex2 i in textCoordList_final)
-                                OBJWriter.WriteLine("vt " + i.X.ToString() + " " + (-i.Y).ToString());
+                                objWriter.WriteLine("vt " + i.X.ToString() + " " + (-i.Y).ToString());
                         else
                             foreach (Vertex2 i in textCoordList_final)
-                                OBJWriter.WriteLine("vt " + i.X.ToString() + " " + i.Y.ToString());
+                                objWriter.WriteLine("vt " + i.X.ToString() + " " + i.Y.ToString());
                     }
-                    OBJWriter.WriteLine();
+                    objWriter.WriteLine();
 
                     // Write vcolors to obj
                     if (colorList_final.Count() > 0)
                         foreach (Color i in colorList_final)
-                            OBJWriter.WriteLine("vc " + i.R.ToString() + " " + i.G.ToString() + " " + i.B.ToString() + " " + i.A.ToString());
+                            objWriter.WriteLine("vc " + i.R.ToString() + " " + i.G.ToString() + " " + i.B.ToString() + " " + i.A.ToString());
 
-                    OBJWriter.WriteLine();
+                    objWriter.WriteLine();
 
                     totalVertexIndices += vertexList_final.Count();
+
+                    if (materialList == null)
+                        return;
+
+                    for (int i = 0; i < materialList.Count; i++)
+                    {
+                        if (!string.IsNullOrEmpty(lastMaterial) && lastMaterial != materialList[i])
+                        {
+                            objWriter.WriteLine("g obj_" + materialList[i]);
+                            objWriter.WriteLine("usemtl " + materialList[i] + "_m");
+                        }
+
+                        foreach (Triangle j in triangleList)
+                            if (j.materialIndex == i)
+                                objWriter.WriteLine("f "
+                                    + j.vertex1.ToString() + "/" + j.vertex1.ToString() + "/" + j.vertex1.ToString() + " "
+                                    + j.vertex2.ToString() + "/" + j.vertex2.ToString() + "/" + j.vertex2.ToString() + " "
+                                    + j.vertex3.ToString() + "/" + j.vertex3.ToString() + "/" + j.vertex3.ToString());
+
+                        objWriter.WriteLine();
+
+                        lastMaterial = materialList[i];
+                    }
                 }
             }
         }
@@ -703,7 +740,7 @@ namespace IndustrialPark.Models
         private static void WriteMaterialLib(string[] MaterialStream, string materialLibrary)
         {
             StreamWriter MTLWriter = new StreamWriter(materialLibrary, false);
-            MTLWriter.WriteLine("# Exported by Heroes Power Plant");
+            MTLWriter.WriteLine("# Exported by Industrial Park");
 
             for (int i = 0; i < MaterialStream.Length; i++)
             {
@@ -721,41 +758,41 @@ namespace IndustrialPark.Models
             MTLWriter.Close();
         }
 
-        private static int totalVertexIndices;
+        private static string lastMaterial;
 
-        public static void ConvertDFFtoOBJ(string fileName, RWSection[] renderWareFile)
+        public static void ConvertDFFtoOBJ(string fileName, RenderWareModelFile renderWareModelFile, bool flipUVs)
         {
-            totalVertexIndices = 1;
+            lastMaterial = "";
+            int totalVertexIndices = 1;
 
             string materialLibrary = Path.ChangeExtension(fileName, "MTL");
             string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
             int untexturedMaterials = 0;
+            List<Triangle> triangleList = new List<Triangle>();
 
             StreamWriter writer = new StreamWriter((Path.ChangeExtension(fileName, "obj")), false);
-            writer.WriteLine("# Exported by BFBB JSP Tool");
+            writer.WriteLine("# Exported by Industrial Park");
             writer.WriteLine("mtllib " + Path.GetFileName(materialLibrary));
             writer.WriteLine();
 
-            foreach (RWSection rw in renderWareFile)
+            foreach (RWSection rw in renderWareModelFile.GetAsRWSectionArray())
             {
                 if (rw is Clump_0010 w)
                 {
                     foreach (Geometry_000F rw2 in w.geometryList.geometryList)
                     {
-                        ExportGeometryToOBJ(writer, rw2, ref untexturedMaterials);
+                        ExportGeometryToOBJ(writer, rw2, ref triangleList, ref totalVertexIndices, ref untexturedMaterials, flipUVs);
                     }
                 }
             }
 
             writer.Close();
 
-            untexturedMaterials = 0;
-
             StreamWriter MTLWriter = new StreamWriter(materialLibrary, false);
-            MTLWriter.WriteLine("# Exported by BFBB JSP Tool");
+            MTLWriter.WriteLine("# Exported by Industrial Park");
             MTLWriter.WriteLine();
 
-            foreach (RWSection rw in renderWareFile)
+            foreach (RWSection rw in renderWareModelFile.GetAsRWSectionArray())
             {
                 if (rw is Clump_0010 w)
                 {
@@ -768,27 +805,40 @@ namespace IndustrialPark.Models
             MTLWriter.Close();
         }
 
-        private static void ExportGeometryToOBJ(StreamWriter writer, Geometry_000F g, ref int untexturedMaterials)
+        private static void ExportGeometryToOBJ(StreamWriter writer, Geometry_000F g, ref List<Triangle> triangleList, ref int totalVertexIndices, ref int untexturedMaterials, bool flipUVs)
         {
-            List<string> MaterialList = new List<string>();
+            List<string> materialList = new List<string>();
             foreach (Material_0007 m in g.materialList.materialList)
             {
                 if (m.texture != null)
                 {
                     string textureName = m.texture.diffuseTextureName.stringString;
                     //if (!MaterialList.Contains(textureName))
-                    MaterialList.Add(textureName);
+                    materialList.Add(textureName);
                 }
                 else
-                    MaterialList.Add("default");
+                    materialList.Add("default");
             }
 
             GeometryStruct_0001 gs = g.geometryStruct;
 
+            if (gs.geometryFlags2 == (GeometryFlags2)0x0101)
+            {
+                GetNativeTriangleList(writer, g.geometryExtension, materialList, ref triangleList, ref totalVertexIndices, flipUVs);
+                return;
+            }
+
             if (g.materialList.materialList[0].materialStruct.isTextured != 0)
             {
-                writer.WriteLine("g obj_" + g.materialList.materialList[0].texture.diffuseTextureName.stringString);
-                writer.WriteLine("usemtl " + g.materialList.materialList[0].texture.diffuseTextureName.stringString + "_m");
+                string mn = g.materialList.materialList[0].texture.diffuseTextureName.stringString;
+
+                if (string.IsNullOrEmpty(lastMaterial) || lastMaterial != mn)
+                {
+                    writer.WriteLine("g obj_" + mn);
+                    writer.WriteLine("usemtl " + mn + "_m");
+                }
+
+                lastMaterial = mn;
             }
             else
             {
@@ -797,12 +847,6 @@ namespace IndustrialPark.Models
                 untexturedMaterials++;
             }
             writer.WriteLine();
-
-            if (gs.geometryFlags2 == (GeometryFlags2)0x0101)
-            {
-                WriteNativeData(writer, g);
-                return;
-            }
 
             foreach (MorphTarget m in gs.morphTargets)
             {
@@ -873,182 +917,6 @@ namespace IndustrialPark.Models
 
                 totalVertexIndices += m.vertices.Count();
                 writer.WriteLine();
-            }
-        }
-
-        private static void WriteNativeData(StreamWriter writer, Geometry_000F g)
-        {
-            NativeDataGC n = null;
-
-            foreach (RWSection rw in g.geometryExtension.extensionSectionList)
-            {
-                if (rw is BinMeshPLG_050E binmesh)
-                {
-                    if (binmesh.numMeshes == 0) return;
-                }
-                if (rw is NativeDataPLG_0510 native)
-                {
-                    n = native.nativeDataStruct.nativeData;
-                    break;
-                }
-            }
-
-            if (n == null) throw new Exception();
-
-            List<Vertex3> vertexList_init = new List<Vertex3>();
-            List<Color> colorList_init = new List<Color>();
-            List<Vertex2> textCoordList_init = new List<Vertex2>();
-            List<Vertex3> normalList_init = new List<Vertex3>();
-            List<Triangle> triangleList = new List<Triangle>();
-
-            foreach (Declaration d in n.declarations)
-            {
-                if (d.declarationType == Declarations.Vertex)
-                {
-                    foreach (Vertex3 v in d.entryList)
-                        vertexList_init.Add(v);
-                }
-                else if (d.declarationType == Declarations.Color)
-                {
-                    foreach (Color c in d.entryList)
-                        colorList_init.Add(c);
-                }
-                else if (d.declarationType == Declarations.TextCoord)
-                {
-                    foreach (Vertex2 t in d.entryList)
-                        textCoordList_init.Add(t);
-                }
-                else if (d.declarationType == Declarations.Normal)
-                {
-                    foreach (Vertex3 v in d.entryList)
-                        normalList_init.Add(v);
-                }
-                else throw new Exception();
-            }
-
-            foreach (TriangleDeclaration td in n.triangleDeclarations)
-            {
-                foreach (TriangleList tl in td.TriangleListList)
-                {
-                    List<Vertex3> vertexList_final = new List<Vertex3>();
-                    List<Color> colorList_final = new List<Color>();
-                    List<Vertex2> textCoordList_final = new List<Vertex2>();
-                    List<Vertex3> normalList_final = new List<Vertex3>();
-
-                    foreach (int[] objectList in tl.entries)
-                    {
-                        for (int j = 0; j < objectList.Count(); j++)
-                        {
-                            if (n.declarations[j].declarationType == Declarations.Vertex)
-                            {
-                                vertexList_final.Add(vertexList_init[objectList[j]]);
-                            }
-                            else if (n.declarations[j].declarationType == Declarations.Color)
-                            {
-                                colorList_final.Add(colorList_init[objectList[j]]);
-                            }
-                            else if (n.declarations[j].declarationType == Declarations.TextCoord)
-                            {
-                                textCoordList_final.Add(textCoordList_init[objectList[j]]);
-                            }
-                            else if (n.declarations[j].declarationType == Declarations.Normal)
-                            {
-                                normalList_final.Add(normalList_init[objectList[j]]);
-                            }
-                            else throw new Exception();
-                        }
-                    }
-
-                    bool control = true;
-
-                    for (int i = 2; i < vertexList_final.Count(); i++)
-                    {
-                        if (control)
-                        {
-                            triangleList.Add(new Triangle
-                            {
-                                materialIndex = (ushort)td.MaterialIndex,
-                                vertex1 = (ushort)(i - 2),
-                                vertex2 = (ushort)(i - 1),
-                                vertex3 = (ushort)(i)
-                            });
-                        }
-                        else
-                        {
-                            triangleList.Add(new Triangle
-                            {
-                                materialIndex = (ushort)td.MaterialIndex,
-                                vertex1 = (ushort)(i - 2),
-                                vertex2 = (ushort)(i),
-                                vertex3 = (ushort)(i - 1)
-                            });
-                        }
-
-                        control = !control;
-                    }
-
-                    //Write vertex list to obj
-                    foreach (Vertex3 i in vertexList_final)
-                        writer.WriteLine("v " + i.X.ToString() + " " + i.Y.ToString() + " " + i.Z.ToString());
-                    writer.WriteLine();
-
-                    //Write uv list to obj
-                    if (textCoordList_final.Count() > 0)
-                        foreach (Vertex2 i in textCoordList_final)
-                            writer.WriteLine("vt " + i.X.ToString() + " " + (-i.Y).ToString());
-                    writer.WriteLine();
-
-                    //Write normal list to obj
-                    if (normalList_final.Count() > 0)
-                        foreach (Vertex3 i in normalList_final)
-                            writer.WriteLine("vn " + i.X.ToString() + " " + i.Y.ToString() + " " + i.Z.ToString());
-                    writer.WriteLine();
-
-                    // Write vcolors to obj
-                    if (colorList_final.Count() > 0)
-                        foreach (Color i in colorList_final)
-                            writer.WriteLine("vc " + i.R.ToString() + " " + i.G.ToString() + " " + i.B.ToString() + " " + i.A.ToString());
-                    writer.WriteLine();
-
-                    foreach (Triangle t in triangleList)
-                    {
-                        List<char> v1 = new List<char>(8);
-                        List<char> v2 = new List<char>(8);
-                        List<char> v3 = new List<char>(8);
-
-                        int n1 = t.vertex1 + totalVertexIndices;
-                        int n2 = t.vertex2 + totalVertexIndices;
-                        int n3 = t.vertex3 + totalVertexIndices;
-
-                        v1.AddRange(n1.ToString());
-                        v2.AddRange(n2.ToString());
-                        v3.AddRange(n3.ToString());
-
-                        if (((g.geometryStruct.geometryFlags & GeometryFlags.hasTextCoords) != 0) & (g.geometryStruct.geometryFlags & GeometryFlags.hasNormals) != 0)
-                        {
-                            v1.AddRange("/" + n1.ToString() + "/" + n1.ToString());
-                            v2.AddRange("/" + n2.ToString() + "/" + n2.ToString());
-                            v3.AddRange("/" + n3.ToString() + "/" + n3.ToString());
-                        }
-                        else if ((g.geometryStruct.geometryFlags & GeometryFlags.hasTextCoords) != 0)
-                        {
-                            v1.AddRange("/" + n1.ToString());
-                            v2.AddRange("/" + n2.ToString());
-                            v3.AddRange("/" + n3.ToString());
-                        }
-                        else if ((g.geometryStruct.geometryFlags & GeometryFlags.hasNormals) != 0)
-                        {
-                            v1.AddRange("//" + n1.ToString());
-                            v2.AddRange("//" + n2.ToString());
-                            v3.AddRange("//" + n3.ToString());
-                        }
-                        writer.WriteLine("f " + new string(v1.ToArray()) + " " + new string(v2.ToArray()) + " " + new string(v3.ToArray()));
-                    }
-
-                    writer.WriteLine();
-
-                    totalVertexIndices += vertexList_final.Count();
-                }
             }
         }
 

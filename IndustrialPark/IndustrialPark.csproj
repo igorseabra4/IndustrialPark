@@ -523,7 +523,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Resources\importvcolorobj\importvcolorobj_v1.3.7.ms">
+    <None Include="Resources\importvcolorobj\importvcolorobj_v1.3.9.ms">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\Models\Box.mtl">

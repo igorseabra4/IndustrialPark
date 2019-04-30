@@ -66,9 +66,9 @@ namespace IndustrialPark
                 if (Path.GetExtension(a.FileName).ToLower() == ".obj")
                 {
                     if (asset.AHDR.assetType == HipHopFile.AssetType.BSP)
-                        ConvertBSPtoOBJ(a.FileName, asset.GetRenderWareModelFile(), false);
+                        ConvertBSPtoOBJ(a.FileName, asset.GetRenderWareModelFile(), true);
                     else
-                        ConvertDFFtoOBJ(a.FileName, asset.GetRenderWareModelFile().GetAsRWSectionArray());
+                        ConvertDFFtoOBJ(a.FileName, asset.GetRenderWareModelFile(), true);
                 }
                 else
                     File.WriteAllBytes(a.FileName, asset.AHDR.data);
