@@ -283,12 +283,13 @@ namespace IndustrialPark
 
             if (assetDictionary[assetID] is AssetJSP jsp)
                 jsp.GetRenderWareModelFile().Dispose();
-            if (assetDictionary[assetID] is AssetMODL modl)
-                if (modl.HasRenderWareModelFile())
-                    modl.GetRenderWareModelFile().Dispose();
-            if (assetDictionary[assetID] is IAssetWithModel iawm)
+            else if (assetDictionary[assetID] is AssetMODL modl && modl.HasRenderWareModelFile())
+                modl.GetRenderWareModelFile().Dispose();
+            else if (assetDictionary[assetID] is IAssetWithModel iawm)
                 iawm.MovieRemoveFromDictionary();
-            if (assetDictionary[assetID] is AssetLODT lodt)
+            else if (assetDictionary[assetID] is AssetPICK pick)
+                pick.ClearDictionary();
+            else if (assetDictionary[assetID] is AssetLODT lodt)
                 lodt.ClearDictionary();
         }
 

@@ -795,8 +795,8 @@ namespace IndustrialPark
             {
                 foreach (ArchiveEditor ae in archiveEditors)
                     foreach (Asset a in ae.archive.GetAllAssets())
-                        if (a is AssetPLAT PLAT)
-                            PLAT.Reset();
+                        if (a is AssetWithMotion m)
+                            m.Reset();
             }
         }
 
@@ -1149,12 +1149,7 @@ namespace IndustrialPark
         {
             Program.EventSearch.Show();
         }
-
-        private void platSearchToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Program.PlatSearch.Show();
-        }
-
+        
         private void assetIDGeneratorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.AssetIDGenerator.Show();
@@ -1189,7 +1184,6 @@ namespace IndustrialPark
             Program.UserTemplateManager.TopMost = value;
 
             Program.EventSearch.TopMost = value;
-            Program.PlatSearch.TopMost = value;
             Program.AssetIDGenerator.TopMost = value;
 
             foreach (ArchiveEditor ae in archiveEditors)

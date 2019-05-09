@@ -80,7 +80,7 @@ namespace IndustrialPark
             if (AssetPICK.pickEntries.ContainsKey(_pickEntryID))
                 if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(AssetPICK.pickEntries[_pickEntryID]))
                 {
-                    ArchiveEditorFunctions.renderingDictionary[AssetPICK.pickEntries[_pickEntryID]].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * _color : _color);
+                    ArchiveEditorFunctions.renderingDictionary[AssetPICK.pickEntries[_pickEntryID]].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * _color : _color);
                     return;
                 }
 

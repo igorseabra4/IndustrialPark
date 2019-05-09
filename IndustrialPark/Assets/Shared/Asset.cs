@@ -61,7 +61,7 @@ namespace IndustrialPark
             return BitConverter.ToInt16(AHDR.data, j);
         }
 
-        protected ushort ReadUshort(int j)
+        protected ushort ReadUShort(int j)
         {
             if (currentPlatform == Platform.GameCube)
                 return BitConverter.ToUInt16(new byte[] {

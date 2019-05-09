@@ -39,9 +39,9 @@ namespace IndustrialPark
             Color.W = Color.W == 0f ? 1f : Color.W;
 
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
-                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * Color : Color);
+                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * Color : Color);
             else
-                renderer.DrawCube(world, isSelected);
+                renderer.DrawCube(LocalWorld(), isSelected);
         }
 
         [Category("NPC"), TypeConverter(typeof(FloatTypeConverter))]

@@ -456,22 +456,28 @@ namespace IndustrialPark
         protected PlaceableAsset FindDrivenByAsset(out bool found, out bool useRotation)
         {
             foreach (LinkBFBB assetEvent in LinksBFBB)
-                if (assetEvent.EventSendID == EventBFBB.Drivenby)
-                {
-                    uint PlatID = assetEvent.TargetAssetID;
+            {
+                uint PlatID = 0;
 
-                    foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                        if (ae.archive.ContainsAsset(PlatID))
+                if (assetEvent.EventSendID == EventBFBB.Drivenby)
+                    PlatID = assetEvent.TargetAssetID;
+                else if (assetEvent.EventSendID == EventBFBB.Mount)
+                    PlatID = assetEvent.ArgumentAssetID;
+                else continue;
+
+                foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
+                    if (ae.archive.ContainsAsset(PlatID))
+                    {
+                        Asset asset = ae.archive.GetFromAssetID(PlatID);
+                        if (asset is PlaceableAsset Placeable)
                         {
-                            Asset asset = ae.archive.GetFromAssetID(PlatID);
-                            if (asset is PlaceableAsset Placeable)
-                            {
-                                found = true;
-                                useRotation = assetEvent.Arguments_Float[0] != 0;
-                                return Placeable;
-                            }
+                            found = true;
+                            useRotation = assetEvent.Arguments_Float[0] != 0 || assetEvent.EventSendID == EventBFBB.Mount;
+                            return Placeable;
                         }
-                }
+                    }
+            }
+
             found = false;
             useRotation = false;
             return null;

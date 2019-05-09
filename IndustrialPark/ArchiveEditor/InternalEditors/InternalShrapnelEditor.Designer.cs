@@ -52,7 +52,7 @@
             this.propertyGridAsset.Location = new System.Drawing.Point(3, 23);
             this.propertyGridAsset.Name = "propertyGridAsset";
             this.propertyGridAsset.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.propertyGridAsset.Size = new System.Drawing.Size(311, 362);
+            this.propertyGridAsset.Size = new System.Drawing.Size(324, 342);
             this.propertyGridAsset.TabIndex = 5;
             this.propertyGridAsset.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGridAsset_PropertyValueChanged);
             // 
@@ -93,16 +93,16 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(317, 472);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(330, 452);
             this.tableLayoutPanel1.TabIndex = 7;
             // 
             // buttonHelp
             // 
             this.buttonHelp.AutoSize = true;
             this.buttonHelp.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonHelp.Location = new System.Drawing.Point(3, 447);
+            this.buttonHelp.Location = new System.Drawing.Point(3, 427);
             this.buttonHelp.Name = "buttonHelp";
-            this.buttonHelp.Size = new System.Drawing.Size(99, 22);
+            this.buttonHelp.Size = new System.Drawing.Size(103, 22);
             this.buttonHelp.TabIndex = 21;
             this.buttonHelp.Text = "Help";
             this.buttonHelp.UseVisualStyleBackColor = true;
@@ -111,9 +111,9 @@
             // buttonAdd9
             // 
             this.buttonAdd9.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonAdd9.Location = new System.Drawing.Point(213, 419);
+            this.buttonAdd9.Location = new System.Drawing.Point(222, 399);
             this.buttonAdd9.Name = "buttonAdd9";
-            this.buttonAdd9.Size = new System.Drawing.Size(101, 22);
+            this.buttonAdd9.Size = new System.Drawing.Size(105, 22);
             this.buttonAdd9.TabIndex = 20;
             this.buttonAdd9.Text = "Add Type 9";
             this.buttonAdd9.UseVisualStyleBackColor = true;
@@ -122,9 +122,9 @@
             // buttonAdd8
             // 
             this.buttonAdd8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonAdd8.Location = new System.Drawing.Point(108, 419);
+            this.buttonAdd8.Location = new System.Drawing.Point(112, 399);
             this.buttonAdd8.Name = "buttonAdd8";
-            this.buttonAdd8.Size = new System.Drawing.Size(99, 22);
+            this.buttonAdd8.Size = new System.Drawing.Size(104, 22);
             this.buttonAdd8.TabIndex = 19;
             this.buttonAdd8.Text = "Add Type 8";
             this.buttonAdd8.UseVisualStyleBackColor = true;
@@ -133,9 +133,9 @@
             // buttonAdd6
             // 
             this.buttonAdd6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonAdd6.Location = new System.Drawing.Point(3, 419);
+            this.buttonAdd6.Location = new System.Drawing.Point(3, 399);
             this.buttonAdd6.Name = "buttonAdd6";
-            this.buttonAdd6.Size = new System.Drawing.Size(99, 22);
+            this.buttonAdd6.Size = new System.Drawing.Size(103, 22);
             this.buttonAdd6.TabIndex = 18;
             this.buttonAdd6.Text = "Add Type 6";
             this.buttonAdd6.UseVisualStyleBackColor = true;
@@ -146,9 +146,9 @@
             this.buttonFindWhoTargetsMe.AutoSize = true;
             this.tableLayoutPanel1.SetColumnSpan(this.buttonFindWhoTargetsMe, 2);
             this.buttonFindWhoTargetsMe.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonFindWhoTargetsMe.Location = new System.Drawing.Point(108, 447);
+            this.buttonFindWhoTargetsMe.Location = new System.Drawing.Point(112, 427);
             this.buttonFindWhoTargetsMe.Name = "buttonFindWhoTargetsMe";
-            this.buttonFindWhoTargetsMe.Size = new System.Drawing.Size(206, 22);
+            this.buttonFindWhoTargetsMe.Size = new System.Drawing.Size(215, 22);
             this.buttonFindWhoTargetsMe.TabIndex = 17;
             this.buttonFindWhoTargetsMe.Text = "Find Who Targets Me";
             this.buttonFindWhoTargetsMe.UseVisualStyleBackColor = true;
@@ -157,9 +157,9 @@
             // buttonAdd4
             // 
             this.buttonAdd4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonAdd4.Location = new System.Drawing.Point(108, 391);
+            this.buttonAdd4.Location = new System.Drawing.Point(112, 371);
             this.buttonAdd4.Name = "buttonAdd4";
-            this.buttonAdd4.Size = new System.Drawing.Size(99, 22);
+            this.buttonAdd4.Size = new System.Drawing.Size(104, 22);
             this.buttonAdd4.TabIndex = 9;
             this.buttonAdd4.Text = "Add Type 4";
             this.buttonAdd4.UseVisualStyleBackColor = true;
@@ -168,9 +168,9 @@
             // buttonAdd3
             // 
             this.buttonAdd3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonAdd3.Location = new System.Drawing.Point(3, 391);
+            this.buttonAdd3.Location = new System.Drawing.Point(3, 371);
             this.buttonAdd3.Name = "buttonAdd3";
-            this.buttonAdd3.Size = new System.Drawing.Size(99, 22);
+            this.buttonAdd3.Size = new System.Drawing.Size(103, 22);
             this.buttonAdd3.TabIndex = 8;
             this.buttonAdd3.Text = "Add Type 3";
             this.buttonAdd3.UseVisualStyleBackColor = true;
@@ -179,9 +179,9 @@
             // buttonAdd5
             // 
             this.buttonAdd5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonAdd5.Location = new System.Drawing.Point(213, 391);
+            this.buttonAdd5.Location = new System.Drawing.Point(222, 371);
             this.buttonAdd5.Name = "buttonAdd5";
-            this.buttonAdd5.Size = new System.Drawing.Size(101, 22);
+            this.buttonAdd5.Size = new System.Drawing.Size(105, 22);
             this.buttonAdd5.TabIndex = 10;
             this.buttonAdd5.Text = "Add Type 5";
             this.buttonAdd5.UseVisualStyleBackColor = true;
@@ -191,7 +191,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(317, 472);
+            this.ClientSize = new System.Drawing.Size(330, 452);
             this.Controls.Add(this.tableLayoutPanel1);
             this.MaximizeBox = false;
             this.Name = "InternalShrapnelEditor";

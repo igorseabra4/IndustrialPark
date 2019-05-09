@@ -1,19 +1,22 @@
 ﻿using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace IndustrialPark
 {
-    public class AssetBUTN : PlaceableAsset
+    public class AssetBUTN : AssetWithMotion
     {
         public static bool dontRender = false;
 
         protected override bool DontRender => dontRender;
 
-        protected override int EventStartOffset => 0x9C + Offset + (Functions.currentGame == Game.Incredibles ? 12 : 0);
+        protected override int EventStartOffset => 0x6C + Offset + Motion.Size;
 
-        public AssetBUTN(Section_AHDR AHDR) : base(AHDR) { }
-        
+        public AssetBUTN(Section_AHDR AHDR) : base(AHDR)
+        {
+        }
+
         public override bool HasReference(uint assetID)
         {
             if (PressedModel_AssetID == assetID)
@@ -300,179 +303,7 @@ namespace IndustrialPark
             get => (HitMask & Mask(31)) != 0;
             set => HitMask = value ? (HitMask | Mask(31)) : (HitMask & InvMask(31));
         }
-
-        [Category("Button")]
-        public byte UnknownByte6C
-        {
-            get => ReadByte(0x6C + Offset);
-            set => Write(0x6C + Offset, value);
-        }
-
-        [Category("Button")]
-        public byte UnknownByte6D
-        {
-            get => ReadByte(0x6D + Offset);
-            set => Write(0x6D + Offset, value);
-        }
-
-        [Category("Button")]
-        public byte UnknownByte6E
-        {
-            get => ReadByte(0x6E + Offset);
-            set => Write(0x6E + Offset, value);
-        }
-
-        [Category("Button")]
-        public byte UnknownByte6F
-        {
-            get => ReadByte(0x6F + Offset);
-            set => Write(0x6F + Offset, value);
-        }
-
-        [Category("Button")]
-        public byte UnknownByte70
-        {
-            get => ReadByte(0x70 + Offset);
-            set => Write(0x70 + Offset, value);
-        }
-
-        [Category("Button")]
-        public byte UnknownByte71
-        {
-            get => ReadByte(0x71 + Offset);
-            set => Write(0x71 + Offset, value);
-        }
-
-        [Category("Button")]
-        public byte UnknownByte72
-        {
-            get => ReadByte(0x72 + Offset);
-            set => Write(0x72 + Offset, value);
-        }
-
-        [Category("Button")]
-        public byte UnknownByte73
-        {
-            get => ReadByte(0x73 + Offset);
-            set => Write(0x73 + Offset, value);
-        }
-
-        [Category("Button"), TypeConverter(typeof(FloatTypeConverter))]
-        public float PressedOffset
-        {
-            get => ReadFloat(0x74);
-            set => Write(0x74, value);
-        }
-
-        [Category("Button"), TypeConverter(typeof(FloatTypeConverter))]
-        public float TransitionTime
-        {
-            get => ReadFloat(0x78 + Offset);
-            set => Write(0x78 + Offset, value);
-        }
-
-        [Category("Button"), TypeConverter(typeof(FloatTypeConverter))]
-        public float TransitionEaseIn
-        {
-            get => ReadFloat(0x7C + Offset);
-            set => Write(0x7C + Offset, value);
-        }
-
-        [Category("Button"), TypeConverter(typeof(FloatTypeConverter))]
-        public float TransitionEaseOut
-        {
-            get => ReadFloat(0x80 + Offset);
-            set => Write(0x80 + Offset, value);
-        }
-
-        [Category("Button")]
-        public int UnknownInt84
-        {
-            get => ReadInt(0x84 + Offset);
-            set => Write(0x84 + Offset, value);
-        }
-
-        [Category("Button")]
-        public int UnknownInt88
-        {
-            get => ReadInt(0x88 + Offset);
-            set => Write(0x88 + Offset, value);
-        }
-
-        [Category("Button")]
-        public int UnknownInt8C
-        {
-            get => ReadInt(0x8C + Offset);
-            set => Write(0x8C + Offset, value);
-        }
-
-        [Category("Button")]
-        public int UnknownInt90
-        {
-            get => ReadInt(0x90 + Offset);
-            set => Write(0x90 + Offset, value);
-        }
-
-        [Category("Button")]
-        public int UnknownInt94
-        {
-            get => ReadInt(0x94 + Offset);
-            set => Write(0x94 + Offset, value);
-        }
-
-        [Category("Button")]
-        public int UnknownInt98
-        {
-            get => ReadInt(0x98 + Offset);
-            set => Write(0x98 + Offset, value);
-        }
-
-        [Category("Button (TSSM)")]
-        public int UnknownInt9C
-        {
-            get
-            {
-                if (Functions.currentGame == Game.Incredibles)
-                    return ReadInt(0x9C + Offset);
-                return 0;
-            }
-            set
-            {
-                if (Functions.currentGame == Game.Incredibles)
-                    Write(0x9C + Offset, value);
-            }
-        }
-
-        [Category("Button (TSSM)")]
-        public int UnknownIntA0
-        {
-            get
-            {
-                if (Functions.currentGame == Game.Incredibles)
-                    return ReadInt(0xA0 + Offset);
-                return 0;
-            }
-            set
-            {
-                if (Functions.currentGame == Game.Incredibles)
-                    Write(0xA0 + Offset, value);
-            }
-        }
-
-        [Category("Button (TSSM)")]
-        public int UnknownIntA4
-        {
-            get
-            {
-                if (Functions.currentGame == Game.Incredibles)
-                    return ReadInt(0xA4 + Offset);
-                return 0;
-            }
-            set
-            {
-                if (Functions.currentGame == Game.Incredibles)
-                    Write(0xA4 + Offset, value);
-            }
-        }
+        
+        protected override int MotionStart => 0x6C + Offset;
     }
 }

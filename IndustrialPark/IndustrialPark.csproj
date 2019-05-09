@@ -99,6 +99,12 @@
     <Compile Include="ArchiveEditor\InternalEditors\InternalModelEditor.Designer.cs">
       <DependentUpon>InternalModelEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="ArchiveEditor\InternalEditors\InternalButtonEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\InternalEditors\InternalButtonEditor.Designer.cs">
+      <DependentUpon>InternalButtonEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="ArchiveEditor\InternalEditors\InternalPlatEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -181,6 +187,10 @@
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetDSTR_Scooby.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetNPC.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetPLAT.cs" />
+    <Compile Include="Assets\Shared\AssetWithMotion.cs" />
+    <Compile Include="Assets\Shared\Motion.cs" />
+    <Compile Include="Assets\Shared\PlatSpecific.cs" />
+    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlatSpecific.cs" />
     <Compile Include="Links\Enums\EventBFBB.cs" />
     <Compile Include="Assets\Shared\Enums\PlatTypeSpecific.cs" />
     <Compile Include="Assets\Shared\Interfaces\IRotatableAsset.cs" />
@@ -389,6 +399,9 @@
     <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalModelEditor.resx">
       <DependentUpon>InternalModelEditor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalButtonEditor.resx">
+      <DependentUpon>InternalButtonEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalPlatEditor.resx">
       <DependentUpon>InternalPlatEditor.cs</DependentUpon>
     </EmbeddedResource>
@@ -404,9 +417,6 @@
     <EmbeddedResource Include="Research\AssetIDGenerator.resx">
       <DependentUpon>AssetIDGenerator.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Research\PlatSearch.resx">
-      <DependentUpon>PlatSearch.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Research\EventSearch.resx">
       <DependentUpon>EventSearch.cs</DependentUpon>
     </EmbeddedResource>
@@ -415,12 +425,6 @@
     </Compile>
     <Compile Include="Research\AssetIDGenerator.Designer.cs">
       <DependentUpon>AssetIDGenerator.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Research\PlatSearch.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Research\PlatSearch.Designer.cs">
-      <DependentUpon>PlatSearch.cs</DependentUpon>
     </Compile>
     <Compile Include="Research\EventSearch.cs">
       <SubType>Form</SubType>

@@ -1,12 +1,34 @@
 ﻿using HipHopFile;
 using SharpDX;
 using System.Collections.Generic;
-using System;
 using System.ComponentModel;
-using IndustrialPark.Models;
+using System.Linq;
 
 namespace IndustrialPark
 {
+    public enum CamType : byte
+    {
+        Follow = 0,
+        Shoulder = 1,
+        Static = 2,
+        Path = 3,
+        StaticFollow = 4,
+    }
+
+    public enum CamTransitionType
+    {
+        None = 0,
+        Interp1 = 1,
+        Interp2 = 2,
+        Interp3 = 3,
+        Interp4 = 4,
+        Linear = 5,
+        Interp1Rev = 6,
+        Interp2Rev = 7,
+        Interp3Rev = 8,
+        Interp4Rev = 9,
+    }
+
     public class AssetCAM : ObjectAsset, IRenderableAsset, IClickableAsset
     {
         private Matrix world;
@@ -30,8 +52,14 @@ namespace IndustrialPark
 
         public override bool HasReference(uint assetID)
         {
-            if (MarkerAssetID == assetID)
+            if (Marker1AssetID == assetID)
                 return true;
+            if (Marker2AssetID == assetID)
+                return true;
+
+            if (CamSpecific is CamSpecific_Path camSpecific_Path)
+                if (camSpecific_Path.Unknown_AssetID == assetID)
+                    return true;
 
             return base.HasReference(assetID);
         }
@@ -40,7 +68,11 @@ namespace IndustrialPark
         {
             base.Verify(ref result);
 
-            Verify(MarkerAssetID, ref result);
+            Verify(Marker1AssetID, ref result);
+            Verify(Marker2AssetID, ref result);
+
+            if (CamSpecific is CamSpecific_Path camSpecific_Path)
+                Verify(camSpecific_Path.Unknown_AssetID, ref result);
 
             Vector3 nForward = new Vector3(NormalizedForwardX, NormalizedForwardY, NormalizedForwardZ);
             if (nForward != Vector3.Normalize(nForward))
@@ -266,10 +298,10 @@ namespace IndustrialPark
             set => Write(0x4C, value);
         }
         [Category("Camera")]
-        public int TransitionType
+        public CamTransitionType TransitionType
         {
-            get => ReadInt(0x50);
-            set => Write(0x50, value);
+            get => (CamTransitionType)ReadInt(0x50);
+            set => Write(0x50, (int)value);
         }
         [Category("Camera")]
         public uint CamFlags
@@ -289,42 +321,36 @@ namespace IndustrialPark
             get => ReadFloat(0x5C);
             set => Write(0x5C, value);
         }
-        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat60
+
+        public CamSpecific_Generic CamSpecific
         {
-            get => ReadFloat(0x60);
-            set => Write(0x60, value);
+            get
+            {
+                switch (CamType)
+                {
+                    case CamType.Follow:
+                        return new CamSpecific_Follow(Data.Skip(0x60).ToArray());
+                    case CamType.Shoulder:
+                        return new CamSpecific_Shoulder(Data.Skip(0x60).ToArray());
+                    case CamType.Static:
+                        return new CamSpecific_Static(Data.Skip(0x60).ToArray());
+                    case CamType.Path:
+                        return new CamSpecific_Path(Data.Skip(0x60).ToArray());
+                    case CamType.StaticFollow:
+                        return new CamSpecific_StaticFollow(Data.Skip(0x60).ToArray());
+                    default:
+                        return new CamSpecific_Generic(Data.Skip(0x60).ToArray());
+                }
+            }
+            set
+            {
+                List<byte> before = Data.Take(0x60).ToList();
+                before.AddRange(value.ToByteArray());
+                before.AddRange(Data.Skip(0x60 + CamSpecific_Generic.Size));
+                Data = before.ToArray();
+            }
         }
-        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat64
-        {
-            get => ReadFloat(0x64);
-            set => Write(0x64, value);
-        }
-        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat68
-        {
-            get => ReadFloat(0x68);
-            set => Write(0x68, value);
-        }
-        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat6C
-        {
-            get => ReadFloat(0x6C);
-            set => Write(0x6C, value);
-        }
-        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat70
-        {
-            get => ReadFloat(0x70);
-            set => Write(0x70, value);
-        }
-        [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat74
-        {
-            get => ReadFloat(0x74);
-            set => Write(0x74, value);
-        }
+
         [Category("Camera"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Flags1
         {
@@ -350,22 +376,22 @@ namespace IndustrialPark
             set => Write(0x7B, value);
         }
         [Category("Camera")]
-        public AssetID MarkerAssetID
+        public AssetID Marker1AssetID
         {
             get => ReadUInt(0x7C);
             set => Write(0x7C, value);
         }
-        [Category("Camera"), TypeConverter(typeof(HexIntTypeConverter))]
-        public int UnknownInt80
+        [Category("Camera")]
+        public AssetID Marker2AssetID
         {
-            get => ReadInt(0x80);
+            get => ReadUInt(0x80);
             set => Write(0x80, value);
         }
         [Category("Camera")]
-        public byte CamType
+        public CamType CamType
         {
-            get => ReadByte(0x84);
-            set => Write(0x84, value);
+            get => (CamType)ReadByte(0x84);
+            set => Write(0x84, (byte)value);
         }
         [Category("Camera")]
         public byte Padding85

@@ -9,28 +9,25 @@ namespace IndustrialPark
 {
     public class EntryPICK
     {
-        public AssetID ReferenceID { get; set; }
+        public uint PickupHash { get; set; }
         [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Unknown21 { get; set; }
+        public byte PickupType { get; set; }
         [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Unknown22 { get; set; }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Unknown23 { get; set; }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Unknown24 { get; set; }
-        public uint Unknown3 { get; set; }
+        public byte PickupIndex { get; set; }
+        [TypeConverter(typeof(HexShortTypeConverter))]
+        public ushort PickupFlags { get; set; }
+        public uint Quantity { get; set; }
         public AssetID ModelAssetID { get; set; }
-        public uint Unknown5 { get; set; }
+        public AssetID AnimAssetID { get; set; }
 
         public EntryPICK()
         {
-            ReferenceID = 0;
             ModelAssetID = 0;
         }
 
         public override string ToString()
         {
-            return $"[{Program.MainForm.GetAssetNameFromID(ReferenceID)}] - [{Program.MainForm.GetAssetNameFromID(ModelAssetID)}]";
+            return $"[{Program.MainForm.GetAssetNameFromID(PickupHash)}] - [{Program.MainForm.GetAssetNameFromID(ModelAssetID)}]";
         }
     }
 
@@ -40,9 +37,24 @@ namespace IndustrialPark
 
         public AssetPICK(Section_AHDR AHDR) : base(AHDR)
         {
-            pickEntries = new Dictionary<uint, uint>();
-            foreach (EntryPICK entryPICK in PICK_Entries)
-                pickEntries.Add(entryPICK.ReferenceID, entryPICK.ModelAssetID);
+            SetupDictionary();
+        }
+
+        private void SetupDictionary()
+        {
+            pickEntries.Clear();
+
+            foreach (EntryPICK entry in PICK_Entries)
+                if (pickEntries.ContainsKey(entry.PickupHash))
+                    pickEntries[entry.PickupHash] = entry.ModelAssetID;
+                else
+                    pickEntries.Add(entry.PickupHash, entry.ModelAssetID);
+        }
+
+        public void ClearDictionary()
+        {
+            foreach (EntryPICK entry in PICK_Entries)
+                pickEntries.Remove(entry.PickupHash);
         }
 
         public override bool HasReference(uint assetID)
@@ -50,8 +62,6 @@ namespace IndustrialPark
             foreach (EntryPICK a in PICK_Entries)
             {
                 if (a.ModelAssetID == assetID)
-                    return true;
-                if (a.ReferenceID == assetID)
                     return true;
             }
 
@@ -80,14 +90,13 @@ namespace IndustrialPark
                 {
                     entries.Add(new EntryPICK()
                     {
-                        ReferenceID = ReadUInt(8 + i * 0x14),
-                        Unknown21 = ReadByte(12 + i * 0x14),
-                        Unknown22 = ReadByte(13 + i * 0x14),
-                        Unknown23 = ReadByte(14 + i * 0x14),
-                        Unknown24 = ReadByte(15 + i * 0x14),
-                        Unknown3 = ReadUInt(16 + i * 0x14),
+                        PickupHash = ReadUInt(8 + i * 0x14),
+                        PickupType = ReadByte(12 + i * 0x14),
+                        PickupIndex = ReadByte(13 + i * 0x14),
+                        PickupFlags = ReadUShort(14 + i * 0x14),
+                        Quantity = ReadUInt(16 + i * 0x14),
                         ModelAssetID = ReadUInt(20 + i * 0x14),
-                        Unknown5 = ReadUInt(24 + i * 0x14)
+                        AnimAssetID = ReadUInt(24 + i * 0x14)
                     });
                 }
                 
@@ -102,14 +111,13 @@ namespace IndustrialPark
 
                 foreach (EntryPICK i in newValues)
                 {
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.ReferenceID)));
-                    newData.Add(i.Unknown21);
-                    newData.Add(i.Unknown22);
-                    newData.Add(i.Unknown23);
-                    newData.Add(i.Unknown24);
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.Unknown3)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.PickupHash)));
+                    newData.Add(i.PickupType);
+                    newData.Add(i.PickupIndex);
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.PickupFlags)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.Quantity)));
                     newData.AddRange(BitConverter.GetBytes(Switch(i.ModelAssetID)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.Unknown5)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.AnimAssetID)));
                 }
                 
                 Data = newData.ToArray();

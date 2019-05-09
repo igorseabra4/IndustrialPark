@@ -105,6 +105,9 @@ namespace IndustrialPark
 
             switch (asset.AHDR.assetType)
             {
+                case AssetType.BUTN:
+                    internalEditors.Add(new InternalButtonEditor((AssetBUTN)asset, this));
+                    break;
                 case AssetType.CAM:
                     internalEditors.Add(new InternalCamEditor((AssetCAM)asset, this));
                     break;

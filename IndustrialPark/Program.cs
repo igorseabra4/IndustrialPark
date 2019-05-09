@@ -12,7 +12,6 @@ namespace IndustrialPark
         public static UserTemplateManager UserTemplateManager;
 
         public static EventSearch EventSearch;
-        public static PlatSearch PlatSearch;
         public static AssetIDGenerator AssetIDGenerator;
 
         /// <summary>
@@ -36,7 +35,6 @@ namespace IndustrialPark
             UserTemplateManager = new UserTemplateManager();
 
             EventSearch = new EventSearch();
-            PlatSearch = new PlatSearch();
             AssetIDGenerator = new AssetIDGenerator();
 
             Application.Run(MainForm);

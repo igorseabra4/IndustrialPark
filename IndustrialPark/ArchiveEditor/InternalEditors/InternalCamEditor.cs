@@ -14,6 +14,7 @@ namespace IndustrialPark
 
             propertyGridAsset.SelectedObject = asset;
             labelAssetName.Text = $"[{asset.AHDR.assetType.ToString()}] {asset.ToString()}";
+            propertyGridCamSpecific.SelectedObject = asset.CamSpecific;
         }
 
         private void InternalCamEditor_FormClosing(object sender, FormClosingEventArgs e)
@@ -48,6 +49,13 @@ namespace IndustrialPark
 
         private void propertyGridAsset_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
+            propertyGridCamSpecific.SelectedObject = asset.CamSpecific;
+            archive.UnsavedChanges = true;
+        }
+
+        private void propertyGridCamSpecific_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            asset.CamSpecific = (CamSpecific_Generic)propertyGridCamSpecific.SelectedObject;
             archive.UnsavedChanges = true;
         }
 

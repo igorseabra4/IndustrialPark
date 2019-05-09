@@ -32,8 +32,8 @@
             this.labelAssetName = new System.Windows.Forms.Label();
             this.propertyGridDynaType = new System.Windows.Forms.PropertyGrid();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.buttonFindCallers = new System.Windows.Forms.Button();
             this.buttonHelp = new System.Windows.Forms.Button();
+            this.buttonFindCallers = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -93,18 +93,6 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(330, 580);
             this.tableLayoutPanel1.TabIndex = 8;
             // 
-            // buttonFindCallers
-            // 
-            this.buttonFindCallers.AutoSize = true;
-            this.buttonFindCallers.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonFindCallers.Location = new System.Drawing.Point(168, 555);
-            this.buttonFindCallers.Name = "buttonFindCallers";
-            this.buttonFindCallers.Size = new System.Drawing.Size(159, 22);
-            this.buttonFindCallers.TabIndex = 8;
-            this.buttonFindCallers.Text = "Find Who Targets Me";
-            this.buttonFindCallers.UseVisualStyleBackColor = true;
-            this.buttonFindCallers.Click += new System.EventHandler(this.buttonFindCallers_Click);
-            // 
             // buttonHelp
             // 
             this.buttonHelp.AutoSize = true;
@@ -116,6 +104,18 @@
             this.buttonHelp.Text = "Help";
             this.buttonHelp.UseVisualStyleBackColor = true;
             this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
+            // 
+            // buttonFindCallers
+            // 
+            this.buttonFindCallers.AutoSize = true;
+            this.buttonFindCallers.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonFindCallers.Location = new System.Drawing.Point(168, 555);
+            this.buttonFindCallers.Name = "buttonFindCallers";
+            this.buttonFindCallers.Size = new System.Drawing.Size(159, 22);
+            this.buttonFindCallers.TabIndex = 8;
+            this.buttonFindCallers.Text = "Find Who Targets Me";
+            this.buttonFindCallers.UseVisualStyleBackColor = true;
+            this.buttonFindCallers.Click += new System.EventHandler(this.buttonFindCallers_Click);
             // 
             // InternalDynaEditor
             // 

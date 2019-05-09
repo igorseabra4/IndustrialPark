@@ -4,10 +4,10 @@
     {
         ExtendRetract = 0,
         Orbit = 1,
-        Type2 = 2,
+        Spline = 2,
         MovePoint = 3,
         Mechanism = 4,
-        Type5 = 5,
+        Pendulum = 5,
         ConveyorBelt = 6,
         Type7 = 7,
         Type8 = 8,

@@ -770,7 +770,7 @@ namespace IndustrialPark
                     ((AssetCAM)asset).Flags2 = 1;
                     ((AssetCAM)asset).Flags3 = 1;
                     ((AssetCAM)asset).Flags4 = 0xC0;
-                    ((AssetCAM)asset).CamType = 2;
+                    ((AssetCAM)asset).CamType = CamType.Static;
                     break;
                 case AssetTemplate.Counter:
                     ((AssetCNTR)asset).AssetType = ObjectAssetType.CNTR;
@@ -807,7 +807,8 @@ namespace IndustrialPark
                     ((AssetPLAT)asset).PlatformType = PlatType.Mechanism;
                     ((AssetPLAT)asset).PlatformSubtype = PlatTypeSpecific.Mechanism;
                     ((AssetPLAT)asset).CollisionType = 4;
-                    ((AssetPLAT)asset).UnknownByte_90 = 4;
+                    ((AssetPLAT)asset).PlatSpecific = new PlatSpecific_Generic();
+                    ((AssetPLAT)asset).Motion = new Motion_Mechanism();
                     break;
                 case AssetTemplate.Player_Generic:
                     ((AssetPLYR)asset).AssetType = ObjectAssetType.PLYR;
@@ -1224,14 +1225,16 @@ namespace IndustrialPark
                     ((AssetBUTN)asset).AssetType = ObjectAssetType.BUTN;
                     ((AssetBUTN)asset).Model_AssetID = "button";
                     ((AssetBUTN)asset).PressedModel_AssetID = "button_grn";
-                    ((AssetBUTN)asset).UnknownByte6C = 4;
-                    ((AssetBUTN)asset).UnknownByte6F = 4;
-                    ((AssetBUTN)asset).UnknownByte70 = 2;
-                    ((AssetBUTN)asset).UnknownByte71 = 1;
-                    ((AssetBUTN)asset).UnknownByte72 = 1;
-                    ((AssetBUTN)asset).PressedOffset = -0.2f;
-                    ((AssetBUTN)asset).TransitionTime = 0.5f;
-                    ((AssetBUTN)asset).TransitionEaseOut = 0.2f;
+                    ((AssetBUTN)asset).Motion = new Motion_Mechanism()
+                    {
+                        Flags = 4,
+                        MovementMode = 2,
+                        MovementLoopMode = 1,
+                        SlideAxis = 1,
+                        SlideDistance = -0.2f,
+                        SlideTime = 0.5f,
+                        SlideDecelTime = 0.2f
+                    };
                     ((AssetBUTN)asset).BubbleSpin = true;
                     ((AssetBUTN)asset).BubbleBowlOrBoulder = true;
                     ((AssetBUTN)asset).CruiseBubble = true;
@@ -1245,13 +1248,15 @@ namespace IndustrialPark
                     ((AssetBUTN)asset).ActMethod = AssetBUTN.ButnActMethod.PressurePlate;
                     ((AssetBUTN)asset).Model_AssetID = "plate_pressure";
                     ((AssetBUTN)asset).PressedModel_AssetID = 0xCE7F8131;
-                    ((AssetBUTN)asset).UnknownByte6C = 4;
-                    ((AssetBUTN)asset).UnknownByte6F = 4;
-                    ((AssetBUTN)asset).UnknownByte70 = 2;
-                    ((AssetBUTN)asset).UnknownByte71 = 1;
-                    ((AssetBUTN)asset).UnknownByte72 = 1;
-                    ((AssetBUTN)asset).PressedOffset = -0.15f;
-                    ((AssetBUTN)asset).TransitionTime = 0.15f;
+                    ((AssetBUTN)asset).Motion = new Motion_Mechanism()
+                    {
+                        Flags = 4,
+                        MovementMode = 2,
+                        MovementLoopMode = 1,
+                        SlideAxis = 1,
+                        SlideDistance = -0.15f,
+                        SlideTime = 0.15f,
+                    };
                     ((AssetBUTN)asset).PlayerOnPressurePlate = true;
                     ((AssetBUTN)asset).AnyThrowableOnPressurePlate = true;
                     ((AssetBUTN)asset).ThrowFruitOnPressurePlate = true;
@@ -1276,7 +1281,8 @@ namespace IndustrialPark
                 case AssetTemplate.Swinger_PLAT:
                     ((AssetPLAT)asset).AssetType = ObjectAssetType.PLAT;
                     ((AssetPLAT)asset).Model_AssetID = "trailer_hitch";
-                    ((AssetPLAT)asset).UnknownByte_90 = 4;
+                    ((AssetPLAT)asset).PlatSpecific = new PlatSpecific_Generic();
+                    ((AssetPLAT)asset).Motion = new Motion_Mechanism();
                     break;
                 case AssetTemplate.EnemyAreaMVPT:
                     ((AssetMVPT_Scooby)asset).AssetType = ObjectAssetType.MVPT;
@@ -1390,14 +1396,11 @@ namespace IndustrialPark
                     ((AssetCAM)asset).OffsetEndFrames = 45;
                     ((AssetCAM)asset).FieldOfView = 60f;
                     ((AssetCAM)asset).TransitionTime = 0.5f;
-                    ((AssetCAM)asset).UnknownFloat64 = -2f;
-                    ((AssetCAM)asset).UnknownFloat68 = 1f;
-                    ((AssetCAM)asset).UnknownFloat6C = 1f;
                     ((AssetCAM)asset).Flags1 = 00;
                     ((AssetCAM)asset).Flags2 = 01;
                     ((AssetCAM)asset).Flags3 = 01;
                     ((AssetCAM)asset).Flags4 = 0x8F;
-                    ((AssetCAM)asset).CamType = 2;
+                    ((AssetCAM)asset).CamType = CamType.Static;
                     break;
                 case AssetTemplate.BusStop_BusSimp:
                     ((AssetSIMP)asset).AssetType = ObjectAssetType.SIMP;
@@ -1529,11 +1532,17 @@ namespace IndustrialPark
                     ((AssetPLAT)asset).PlatformType = PlatType.Springboard;
                     ((AssetPLAT)asset).PlatformSubtype = PlatTypeSpecific.Springboard;
                     ((AssetPLAT)asset).CollisionType = 4;
-                    ((AssetPLAT)asset).Float58 = 10;
-                    ((AssetPLAT)asset).ANIM_AssetID_1 = 0x6DAE0759;
-                    ((AssetPLAT)asset).ANIM_AssetID_2 = 0xBC4A9A5F;
-                    ((AssetPLAT)asset).LaunchDirectionY = 1;
-                    ((AssetPLAT)asset).UnknownByte_90 = 6;
+                    ((AssetPLAT)asset).PlatSpecific = new PlatSpecific_Springboard()
+                    {
+                        Height1 = 10,
+                        Height2 = 10,
+                        Height3 = 10,
+                        HeightBubbleBounce = 10,
+                        Anim1_AssetID = 0x6DAE0759,
+                        Anim2_AssetID = 0xBC4A9A5F,
+                        DirectionY = 1f,
+                    };
+                    ((AssetPLAT)asset).Motion = new Motion() { Type = MotionType.Other };
                     break;
                 case AssetTemplate.HoveringPlatform:
                     ((AssetPLAT)asset).AssetType = ObjectAssetType.PLAT;
@@ -1542,10 +1551,12 @@ namespace IndustrialPark
                     ((AssetPLAT)asset).PlatformType = PlatType.Mechanism;
                     ((AssetPLAT)asset).PlatformSubtype = PlatTypeSpecific.Mechanism;
                     ((AssetPLAT)asset).CollisionType = 4;
-                    ((AssetPLAT)asset).UnknownByte_90 = 6;
-                    ((AssetPLAT)asset).MovementLoopType = 1;
-                    ((AssetPLAT)asset).MovementTranslation_EaseEnd = 0.4f;
-                    ((AssetPLAT)asset).MovementTranslation_EaseStart = 0.4f;
+                    ((AssetPLAT)asset).Motion = new Motion_Mechanism() {
+                        Type = MotionType.Other,
+                        MovementLoopMode = 1,
+                        SlideAccelTime = 0.4f,
+                        SlideDecelTime = 0.4f                        
+                    };
                     break;
                 case AssetTemplate.BungeeHook:
                     ((AssetDYNA)asset).Version = 13;
