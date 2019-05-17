@@ -739,7 +739,7 @@ namespace IndustrialPark
                 }
                 else if (LHDR.assetIDlist.Count != 0)
                 {
-                    layers.Add(LHDR.layerType, LHDR);
+                    layers[LHDR.layerType] = LHDR;
                 }
             }
 

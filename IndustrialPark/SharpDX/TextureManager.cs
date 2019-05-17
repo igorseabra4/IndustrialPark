@@ -11,7 +11,7 @@ namespace IndustrialPark
     {
         public static string TreatTextureName(string entry)
         {
-            entry = (Path.GetFileNameWithoutExtension(entry).Trim('_'));
+            entry = Path.GetFileNameWithoutExtension(entry).Trim('_');
             entry = entry.Trim('_');
             return entry;
         }
@@ -72,28 +72,14 @@ namespace IndustrialPark
             try { texture = Program.MainForm.renderer.device.LoadTextureFromRenderWareNative(tnStruct); }
             catch { return; }
 
-            if (Textures.ContainsKey(textureName))
-            {
-                if (Textures[textureName] != null)
-                    if (!Textures[textureName].IsDisposed)
-                        Textures[textureName].Dispose();
-
-                Textures[textureName] = texture;
-            }
-            else
-                Textures.Add(textureName, texture);
+            DisposeTexture(textureName);
+            Textures[textureName] = texture;
         }
 
         public static void RemoveTexture(string textureName)
         {
-            if (Textures.ContainsKey(textureName))
-            {
-                if (Textures[textureName] != null)
-                    if (!Textures[textureName].IsDisposed)
-                        Textures[textureName].Dispose();
-
-                Textures.Remove(textureName);
-            }
+            DisposeTexture(textureName);
+            Textures.Remove(textureName);
         }
 
         public static void LoadTexturesFromFolder(IEnumerable<string> folderNames)
@@ -124,16 +110,8 @@ namespace IndustrialPark
         {
             string textureName = TreatTextureName(Path.GetFileNameWithoutExtension(path));
 
-            if (Textures.ContainsKey(textureName))
-            {
-                if (Textures[textureName] != null)
-                    if (!Textures[textureName].IsDisposed)
-                        Textures[textureName].Dispose();
-
-                Textures[textureName] = Program.MainForm.renderer.device.LoadTextureFromFile(path);
-            }
-            else
-                Textures.Add(textureName, Program.MainForm.renderer.device.LoadTextureFromFile(path));
+            DisposeTexture(textureName);
+            Textures[textureName] = Program.MainForm.renderer.device.LoadTextureFromFile(path);
         }
 
         public static void ReapplyTextures()
@@ -190,6 +168,12 @@ namespace IndustrialPark
                         if (sub.DiffuseMapName == diffuseMapName)
                             sub.DiffuseMap = Textures[newMapName];
                     }
+        }
+
+        public static void DisposeTexture(string textureName)
+        {
+            if (Textures.ContainsKey(textureName) && Textures[textureName] != null && !Textures[textureName].IsDisposed)
+                Textures[textureName].Dispose();
         }
 
         public static void DisposeTextures()

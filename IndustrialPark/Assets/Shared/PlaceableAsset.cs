@@ -3,6 +3,7 @@ using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
@@ -27,8 +28,8 @@ namespace IndustrialPark
             CreateTransformMatrix();
 
             if (!(this is AssetTRIG))
-                if (!ArchiveEditorFunctions.renderableAssetSetCommon.Contains(this))
-                    ArchiveEditorFunctions.renderableAssetSetCommon.Add(this);
+                if (!renderableAssetSetCommon.Contains(this))
+                    renderableAssetSetCommon.Add(this);
         }
 
         public virtual void CreateTransformMatrix()
@@ -42,11 +43,11 @@ namespace IndustrialPark
 
         protected virtual void CreateBoundingBox()
         {
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID) &&
-                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].HasRenderWareModelFile() &&
-                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile() != null)
+            if (renderingDictionary.ContainsKey(_modelAssetID) &&
+                renderingDictionary[_modelAssetID].HasRenderWareModelFile() &&
+                renderingDictionary[_modelAssetID].GetRenderWareModelFile() != null)
             {
-                CreateBoundingBox(ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile().vertexListG);
+                CreateBoundingBox(renderingDictionary[_modelAssetID].GetRenderWareModelFile().vertexListG);
             }
             else
             {
@@ -66,17 +67,17 @@ namespace IndustrialPark
 
             boundingBox = BoundingBox.FromPoints(vertices);
 
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
+            if (renderingDictionary.ContainsKey(_modelAssetID))
             {
-                if (ArchiveEditorFunctions.renderingDictionary[_modelAssetID] is AssetMINF MINF)
+                if (renderingDictionary[_modelAssetID] is AssetMINF MINF)
                 {
                     if (MINF.HasRenderWareModelFile())
-                        triangles = ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile().triangleList.ToArray();
+                        triangles = renderingDictionary[_modelAssetID].GetRenderWareModelFile().triangleList.ToArray();
                     else
                         triangles = null;
                 }
                 else
-                    triangles = ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile().triangleList.ToArray();
+                    triangles = renderingDictionary[_modelAssetID].GetRenderWareModelFile().triangleList.ToArray();
             }
             else
                 triangles = null;
@@ -87,8 +88,8 @@ namespace IndustrialPark
             if (DontRender || isInvisible)
                 return;
 
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
-                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * _color : _color);
+            if (renderingDictionary.ContainsKey(_modelAssetID))
+                renderingDictionary[_modelAssetID].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * _color : _color, UvAnimOffset);
             else
                 renderer.DrawCube(LocalWorld(), isSelected);
         }
@@ -102,7 +103,7 @@ namespace IndustrialPark
                 return TriangleIntersection(ray, distance);
             return null;
         }
-        
+
         protected virtual float? TriangleIntersection(Ray r, float initialDistance)
         {
             if (triangles == null)
@@ -240,7 +241,7 @@ namespace IndustrialPark
             get => ReadUInt(0x10 + Offset);
             set => Write(0x10 + Offset, value);
         }
-        
+
         public Vector3 _position;
 
         [Category("Placement")]
@@ -429,7 +430,7 @@ namespace IndustrialPark
         public float ColorAlphaSpeed
         {
             get => ReadFloat(0x48 + Offset);
-            set { Write(0x48 + Offset, value); }
+            set => Write(0x48 + Offset, value);
         }
 
         protected uint _modelAssetID;
@@ -448,7 +449,7 @@ namespace IndustrialPark
         public virtual AssetID Animation_AssetID
         {
             get => ReadUInt(0x50 + Offset);
-            set { Write(0x50 + Offset, value); }
+            set => Write(0x50 + Offset, value);
         }
 
         public static bool movementPreview = false;
@@ -505,6 +506,48 @@ namespace IndustrialPark
             }
 
             return world;
+        }
+
+        public virtual void Reset()
+        {
+            localFrameCounter = -1;
+            FindSurf();
+        }
+
+        protected float uvTransSpeedX;
+        protected float uvTransSpeedY;
+        protected float uvTransSpeedZ;
+        protected int localFrameCounter = -1;
+
+        private void FindSurf()
+        {
+            foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
+                if (ae.archive.ContainsAsset(Surface_AssetID))
+                {
+                    if (ae.archive.GetFromAssetID(Surface_AssetID) is AssetSURF SURF)
+                    {
+                        uvTransSpeedX = SURF.UVEffects1_TransSpeed_X;
+                        uvTransSpeedY = SURF.UVEffects1_TransSpeed_Y;
+                        uvTransSpeedZ = SURF.UVEffects1_TransSpeed_Z;
+                        return;
+                    }
+                }
+            uvTransSpeedX = 0;
+            uvTransSpeedY = 0;
+            uvTransSpeedZ = 0;
+        }
+
+        public Vector3 UvAnimOffset
+        {
+            get
+            {
+                if (movementPreview)
+                {
+                    localFrameCounter++;
+                    return new Vector3(uvTransSpeedX * localFrameCounter / 60f, uvTransSpeedY * localFrameCounter / 60f, uvTransSpeedZ * localFrameCounter / 60f);
+                }
+                return Vector3.Zero;
+            }
         }
     }
 }

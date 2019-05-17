@@ -83,7 +83,7 @@ namespace IndustrialPark
             }
             else
             {
-                renderer.DrawPlane(world, isSelected, _textureAssetID);
+                renderer.DrawPlane(world, isSelected, _textureAssetID, UvAnimOffset);
             }
         }
 

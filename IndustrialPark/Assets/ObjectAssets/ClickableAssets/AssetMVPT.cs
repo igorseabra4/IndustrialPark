@@ -15,9 +15,6 @@ namespace IndustrialPark
             _arenaRadius = ReadFloat(0x24);
 
             CreateTransformMatrix();
-
-            if (!ArchiveEditorFunctions.renderableAssetSetTrans.Contains(this))
-                ArchiveEditorFunctions.renderableAssetSetTrans.Add(this);
         }
         
         [Category("Move Point"), TypeConverter(typeof(FloatTypeConverter))]

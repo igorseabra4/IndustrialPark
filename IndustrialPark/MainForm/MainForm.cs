@@ -719,17 +719,9 @@ namespace IndustrialPark
                 if (isMouseDown)
                     ArchiveEditorFunctions.GizmoSelect(ray);
                 else
-                {
-                    uint assetID = 0;
-                    if (renderer.isDrawingUI)
-                    {
-                        assetID = ArchiveEditorFunctions.GetClickedAssetID2D(ray, renderer.Camera.FarPlane);
-                    }
-                    else
-                        assetID = ArchiveEditorFunctions.GetClickedAssetID(ray);
-
-                    SetSelectedIndex(assetID);
-                }
+                    SetSelectedIndex(renderer.isDrawingUI ?
+                        ArchiveEditorFunctions.GetClickedAssetID2D(ray, renderer.Camera.FarPlane) :
+                        ArchiveEditorFunctions.GetClickedAssetID(ray));
             }
         }
 
@@ -791,13 +783,15 @@ namespace IndustrialPark
             pLATPreviewToolStripMenuItem.Checked = !pLATPreviewToolStripMenuItem.Checked;
             PlaceableAsset.movementPreview = pLATPreviewToolStripMenuItem.Checked;
 
-            if (PlaceableAsset.movementPreview)
-            {
-                foreach (ArchiveEditor ae in archiveEditors)
-                    foreach (Asset a in ae.archive.GetAllAssets())
-                        if (a is AssetWithMotion m)
-                            m.Reset();
-            }
+            ResetMovementPreview();
+        }
+
+        public void ResetMovementPreview()
+        {
+            foreach (ArchiveEditor ae in archiveEditors)
+                foreach (Asset a in ae.archive.GetAllAssets())
+                    if (a is PlaceableAsset p)
+                        p.Reset();
         }
 
         private void useMaxRenderDistanceToolStripMenuItem_Click(object sender, EventArgs e)

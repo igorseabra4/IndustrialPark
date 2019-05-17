@@ -4,30 +4,33 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
-    public class ModelReference
+    public class ModelInst
     {
+        public static int Size => 56;
         public AssetID Model_AssetID { get; set; }
-        public AssetID UnknownAssetID { get; set; }
-        public float UnknownFloat01 { get; set; }
-        public float UnknownFloat02 { get; set; }
-        public float UnknownFloat03 { get; set; }
-        public float UnknownFloat04 { get; set; }
-        public float UnknownFloat05 { get; set; }
-        public float UnknownFloat06 { get; set; }
-        public float UnknownFloat07 { get; set; }
-        public float UnknownFloat08 { get; set; }
-        public float UnknownFloat09 { get; set; }
-        public float UnknownFloat10 { get; set; }
-        public float UnknownFloat11 { get; set; }
-        public float UnknownFloat12 { get; set; }
+        public ushort Flags { get; set; }
+        public byte Parent { get; set; }
+        public byte Bone { get; set; }
+        public float RightX { get; set; }
+        public float RightY { get; set; }
+        public float RightZ { get; set; }
+        public float UpX { get; set; }
+        public float UpY { get; set; }
+        public float UpZ { get; set; }
+        public float AtX { get; set; }
+        public float AtY { get; set; }
+        public float AtZ { get; set; }
+        public float PosX { get; set; }
+        public float PosY { get; set; }
+        public float PosZ { get; set; }
 
-        public ModelReference()
+        public ModelInst()
         {
             Model_AssetID = 0;
-            UnknownAssetID = 0;
         }
     }
 
@@ -42,12 +45,12 @@ namespace IndustrialPark
                 else
                     _modelAssetID = ReadUInt(0x14);
 
-                ArchiveEditorFunctions.AddToRenderingDictionary(AHDR.assetID, this);
+                AddToRenderingDictionary(AHDR.assetID, this);
 
                 if (Functions.currentGame == Game.Incredibles)
                 {
-                    ArchiveEditorFunctions.AddToRenderingDictionary(Functions.BKDRHash(newName), this);
-                    ArchiveEditorFunctions.AddToNameDictionary(Functions.BKDRHash(newName), newName);
+                    AddToRenderingDictionary(Functions.BKDRHash(newName), this);
+                    AddToNameDictionary(Functions.BKDRHash(newName), newName);
                 }
             }
             catch
@@ -60,8 +63,8 @@ namespace IndustrialPark
 
         public void MovieRemoveFromDictionary()
         {
-            ArchiveEditorFunctions.renderingDictionary.Remove(Functions.BKDRHash(newName));
-            ArchiveEditorFunctions.nameDictionary.Remove(Functions.BKDRHash(newName));
+            renderingDictionary.Remove(Functions.BKDRHash(newName));
+            nameDictionary.Remove(Functions.BKDRHash(newName));
         }
 
         public override bool HasReference(uint assetID)
@@ -69,11 +72,9 @@ namespace IndustrialPark
             if (ATBL_AssetID == assetID)
                 return true;
 
-            foreach (ModelReference m in ModelReferences)
+            foreach (ModelInst m in ModelReferences)
             {
                 if (m.Model_AssetID == assetID)
-                    return true;
-                if (m.UnknownAssetID == assetID)
                     return true;
             }
 
@@ -83,7 +84,7 @@ namespace IndustrialPark
         public override void Verify(ref List<string> result)
         {
             Verify(ATBL_AssetID, ref result);
-            foreach (ModelReference m in ModelReferences)
+            foreach (ModelInst m in ModelReferences)
             {
                 if (m.Model_AssetID == 0)
                     result.Add("MINF model reference with Model_AssetID set to 0");
@@ -91,33 +92,25 @@ namespace IndustrialPark
             }
         }
 
-        public void Draw(SharpRenderer renderer, Matrix world, Vector4 color)
+        public void Draw(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset)
         {
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
-            {
-                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * color : color);
-            }
+            if (renderingDictionary.ContainsKey(_modelAssetID))
+                renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, uvAnimOffset);
             else
-            {
                 renderer.DrawCube(world, isSelected |isSelected);
-            }
         }
 
         public RenderWareModelFile GetRenderWareModelFile()
         {
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
-            {
-                return ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile();
-            }
-            else
-            {
-                throw new Exception("Error: MINF asset " + AHDR.ADBG.assetName + " could not find its RenderWareModelFile");
-            }
+            if (renderingDictionary.ContainsKey(_modelAssetID))
+                return renderingDictionary[_modelAssetID].GetRenderWareModelFile();
+
+            throw new Exception("Error: MINF asset " + AHDR.ADBG.assetName + " could not find its RenderWareModelFile");
         }
 
         public bool HasRenderWareModelFile()
         {
-            return ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID) && ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile() != null;
+            return renderingDictionary.ContainsKey(_modelAssetID) && renderingDictionary[_modelAssetID].GetRenderWareModelFile() != null;
         }
 
         private uint _modelAssetID;
@@ -137,12 +130,12 @@ namespace IndustrialPark
         }
 
         [Category("Model Info")]
-        public int UnknownInt0C
+        public AssetID CombatID
         {
             get
             {
                 if (Functions.currentGame != Game.Scooby)
-                    return ReadInt(0x0C);
+                    return ReadUInt(0x0C);
                 return 0;
             }
             set
@@ -153,12 +146,12 @@ namespace IndustrialPark
         }
 
         [Category("Model Info")]
-        public int UnknownInt10
+        public AssetID BrainID
         {
             get
             {
                 if (Functions.currentGame != Game.Scooby)
-                    return ReadInt(0x10);
+                    return ReadUInt(0x10);
                 return 0;
             }
             set
@@ -171,30 +164,32 @@ namespace IndustrialPark
         private int ModelReferencesStart => Functions.currentGame == Game.Scooby ? 0xC : 0x14;
 
         [Category("Model Info")]
-        public ModelReference[] ModelReferences
+        public ModelInst[] ModelReferences
         {
             get
             {
-                List<ModelReference> references = new List<ModelReference>();
+                List<ModelInst> references = new List<ModelInst>();
 
                 for (int i = 0; i < AmountOfReferences; i++)
                 {
-                    references.Add(new ModelReference()
+                    references.Add(new ModelInst()
                     {
-                        Model_AssetID = ReadUInt(ModelReferencesStart + i * 56),
-                        UnknownAssetID = ReadUInt(ModelReferencesStart + i * 56 + 0x04),
-                        UnknownFloat01 = ReadFloat(ModelReferencesStart + i * 56 + 0x08),
-                        UnknownFloat02 = ReadFloat(ModelReferencesStart + i * 56 + 0x0C),
-                        UnknownFloat03 = ReadFloat(ModelReferencesStart + i * 56 + 0x10),
-                        UnknownFloat04 = ReadFloat(ModelReferencesStart + i * 56 + 0x14),
-                        UnknownFloat05 = ReadFloat(ModelReferencesStart + i * 56 + 0x18),
-                        UnknownFloat06 = ReadFloat(ModelReferencesStart + i * 56 + 0x1C),
-                        UnknownFloat07 = ReadFloat(ModelReferencesStart + i * 56 + 0x20),
-                        UnknownFloat08 = ReadFloat(ModelReferencesStart + i * 56 + 0x24),
-                        UnknownFloat09 = ReadFloat(ModelReferencesStart + i * 56 + 0x28),
-                        UnknownFloat10 = ReadFloat(ModelReferencesStart + i * 56 + 0x2C),
-                        UnknownFloat11 = ReadFloat(ModelReferencesStart + i * 56 + 0x30),
-                        UnknownFloat12 = ReadFloat(ModelReferencesStart + i * 56 + 0x34),
+                        Model_AssetID = ReadUInt(ModelReferencesStart + i * ModelInst.Size),
+                        Flags = ReadUShort(ModelReferencesStart + i * ModelInst.Size + 0x04),
+                        Parent = ReadByte(ModelReferencesStart + i * ModelInst.Size + 0x06),
+                        Bone = ReadByte(ModelReferencesStart + i * ModelInst.Size + 0x07),
+                        RightX = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x08),
+                        RightY = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x0C),
+                        RightZ = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x10),
+                        UpX = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x14),
+                        UpY = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x18),
+                        UpZ = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x1C),
+                        AtX = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x20),
+                        AtY = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x24),
+                        AtZ = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x28),
+                        PosX = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x2C),
+                        PosY = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x30),
+                        PosZ = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x34),
                     });
                 }
 
@@ -209,22 +204,24 @@ namespace IndustrialPark
                 if (value.Length > 0)
                     _modelAssetID = value[0].Model_AssetID;
 
-                foreach (ModelReference m in value)
+                foreach (ModelInst m in value)
                 {
                     before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.Model_AssetID)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.UnknownAssetID)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.UnknownFloat01)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.UnknownFloat02)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.UnknownFloat03)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.UnknownFloat04)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.UnknownFloat05)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.UnknownFloat06)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.UnknownFloat07)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.UnknownFloat08)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.UnknownFloat09)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.UnknownFloat10)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.UnknownFloat11)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.UnknownFloat12)));
+                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.Flags)));
+                    before.Add(m.Parent);
+                    before.Add(m.Bone);
+                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.RightX)));
+                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.RightY)));
+                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.RightZ)));
+                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.UpX)));
+                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.UpY)));
+                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.UpZ)));
+                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.AtX)));
+                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.AtY)));
+                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.AtZ)));
+                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.PosX)));
+                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.PosY)));
+                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.PosZ)));
                 }
 
                 before.AddRange(Data.Skip(EndOfModelReferenceData));
@@ -235,7 +232,7 @@ namespace IndustrialPark
             }
         }
 
-        private int EndOfModelReferenceData => ModelReferencesStart + 56 * AmountOfReferences;
+        private int EndOfModelReferenceData => ModelReferencesStart + ModelInst.Size * AmountOfReferences;
 
         [Category("Model Info")]
         public AssetID[] RestOfData
@@ -251,9 +248,7 @@ namespace IndustrialPark
             }
             set
             {
-                List<byte> before = new List<byte>();
-
-                before.AddRange(Data.Take(EndOfModelReferenceData));
+                List<byte> before = Data.Take(EndOfModelReferenceData).ToList();
 
                 foreach (AssetID a in value)
                     before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(a)));

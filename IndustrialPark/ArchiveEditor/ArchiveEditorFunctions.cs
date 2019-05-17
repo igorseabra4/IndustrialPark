@@ -19,18 +19,12 @@ namespace IndustrialPark
 
         public static void AddToRenderingDictionary(uint key, IAssetWithModel value)
         {
-            if (!renderingDictionary.ContainsKey(key))
-                renderingDictionary.Add(key, value);
-            else
-                renderingDictionary[key] = value;
+            renderingDictionary[key] = value;
         }
 
         public static void AddToNameDictionary(uint key, string value)
         {
-            if (!nameDictionary.ContainsKey(key))
-                nameDictionary.Add(key, value);
-            else
-                nameDictionary[key] = value;
+            nameDictionary[key] = value;
         }
 
         private AutoCompleteStringCollection autoCompleteSource = new AutoCompleteStringCollection();
@@ -500,27 +494,8 @@ namespace IndustrialPark
                     throw new Exception("Unknown asset type: " + AHDR.assetType);
             }
 
-            assetDictionary.Add(AHDR.assetID, newAsset);
-
-            // THIS IS TEMPORARY, REMOVE AFTER FINISHING ENEMY HIPS
-            //if (newAsset is AssetMINF minf)
-            //{
-            //    uint hash = BKDRHash(AHDR.ADBG.assetName.Replace(".MINF", ""));
-            //    if (assetDictionary.ContainsKey(hash))
-            //        assetDictionary[hash] = newAsset;
-            //    else
-            //        assetDictionary.Add(hash, newAsset);
-            //}
-            //if (newAsset is AssetMODL modl)
-            //{
-            //    uint hash = BKDRHash(AHDR.ADBG.assetName.ToLower().Replace(".dff", ""));
-            //    if (assetDictionary.ContainsKey(hash))
-            //        assetDictionary[hash] = newAsset;
-            //    else
-            //        assetDictionary.Add(hash, newAsset);
-            //}
-            // ...
-
+            assetDictionary[AHDR.assetID] = newAsset;
+            
             if (hiddenAssets.Contains(AHDR.assetID))
                 assetDictionary[AHDR.assetID].isInvisible = true;
 

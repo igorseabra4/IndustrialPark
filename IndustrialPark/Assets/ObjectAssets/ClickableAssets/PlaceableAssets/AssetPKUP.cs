@@ -2,6 +2,7 @@
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
+using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
@@ -37,28 +38,28 @@ namespace IndustrialPark
         protected override void CreateBoundingBox()
         {
             if (AssetPICK.pickEntries.ContainsKey(_pickEntryID) &&
-                ArchiveEditorFunctions.renderingDictionary.ContainsKey(AssetPICK.pickEntries[_pickEntryID]) &&
-                ArchiveEditorFunctions.renderingDictionary[AssetPICK.pickEntries[_pickEntryID]].HasRenderWareModelFile() &&
-                ArchiveEditorFunctions.renderingDictionary[AssetPICK.pickEntries[_pickEntryID]].GetRenderWareModelFile() != null)
+                renderingDictionary.ContainsKey(AssetPICK.pickEntries[_pickEntryID]) &&
+                renderingDictionary[AssetPICK.pickEntries[_pickEntryID]].HasRenderWareModelFile() &&
+                renderingDictionary[AssetPICK.pickEntries[_pickEntryID]].GetRenderWareModelFile() != null)
             {
-                List<Vector3> vertexList = ArchiveEditorFunctions.renderingDictionary[AssetPICK.pickEntries[_pickEntryID]].GetRenderWareModelFile().vertexListG;
+                List<Vector3> vertexList = renderingDictionary[AssetPICK.pickEntries[_pickEntryID]].GetRenderWareModelFile().vertexListG;
 
                 vertices = new Vector3[vertexList.Count];
                 for (int i = 0; i < vertexList.Count; i++)
                     vertices[i] = (Vector3)Vector3.Transform(vertexList[i], world);
                 boundingBox = BoundingBox.FromPoints(vertices);
 
-                if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(AssetPICK.pickEntries[_pickEntryID]))
+                if (renderingDictionary.ContainsKey(AssetPICK.pickEntries[_pickEntryID]))
                 {
-                    if (ArchiveEditorFunctions.renderingDictionary[AssetPICK.pickEntries[_pickEntryID]] is AssetMINF MINF)
+                    if (renderingDictionary[AssetPICK.pickEntries[_pickEntryID]] is AssetMINF MINF)
                     {
                         if (MINF.HasRenderWareModelFile())
-                            triangles = ArchiveEditorFunctions.renderingDictionary[AssetPICK.pickEntries[_pickEntryID]].GetRenderWareModelFile().triangleList.ToArray();
+                            triangles = renderingDictionary[AssetPICK.pickEntries[_pickEntryID]].GetRenderWareModelFile().triangleList.ToArray();
                         else
                             triangles = null;
                     }
                     else
-                        triangles = ArchiveEditorFunctions.renderingDictionary[AssetPICK.pickEntries[_pickEntryID]].GetRenderWareModelFile().triangleList.ToArray();
+                        triangles = renderingDictionary[AssetPICK.pickEntries[_pickEntryID]].GetRenderWareModelFile().triangleList.ToArray();
                 }
                 else
                     triangles = null;
@@ -78,9 +79,9 @@ namespace IndustrialPark
                 return;
 
             if (AssetPICK.pickEntries.ContainsKey(_pickEntryID))
-                if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(AssetPICK.pickEntries[_pickEntryID]))
+                if (renderingDictionary.ContainsKey(AssetPICK.pickEntries[_pickEntryID]))
                 {
-                    ArchiveEditorFunctions.renderingDictionary[AssetPICK.pickEntries[_pickEntryID]].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * _color : _color);
+                    renderingDictionary[AssetPICK.pickEntries[_pickEntryID]].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * _color : _color, UvAnimOffset);
                     return;
                 }
 

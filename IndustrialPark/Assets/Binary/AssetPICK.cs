@@ -45,10 +45,7 @@ namespace IndustrialPark
             pickEntries.Clear();
 
             foreach (EntryPICK entry in PICK_Entries)
-                if (pickEntries.ContainsKey(entry.PickupHash))
-                    pickEntries[entry.PickupHash] = entry.ModelAssetID;
-                else
-                    pickEntries.Add(entry.PickupHash, entry.ModelAssetID);
+                pickEntries[entry.PickupHash] = entry.ModelAssetID;
         }
 
         public void ClearDictionary()

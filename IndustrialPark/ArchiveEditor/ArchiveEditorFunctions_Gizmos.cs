@@ -269,7 +269,7 @@ namespace IndustrialPark
                     break;
             }
         }
-
+        
         public static void ScreenUnclicked()
         {
             foreach (PositionGizmo g in positionGizmos)
@@ -328,7 +328,7 @@ namespace IndustrialPark
             }
         }
 
-        public void MouseMoveForRotation(Matrix viewProjection, int distanceX, int distanceY)
+        public void MouseMoveForRotation(Matrix viewProjection, int distanceX)//, int distanceY)
         {
             if (rotationGizmos[0].isSelected || rotationGizmos[1].isSelected || rotationGizmos[2].isSelected)
             {
@@ -442,35 +442,33 @@ namespace IndustrialPark
         {
             if (positionLocalGizmos[0].isSelected || positionLocalGizmos[1].isSelected || positionLocalGizmos[2].isSelected)
             {
+                Vector3 movementDirection = new Vector3();
+
+                if (positionLocalGizmos[0].isSelected)
+                    movementDirection = (Vector3)Vector3.Transform(Vector3.UnitX, GizmoCenterRotation);
+                else if (positionLocalGizmos[1].isSelected)
+                    movementDirection = (Vector3)Vector3.Transform(Vector3.UnitY, GizmoCenterRotation);
+                else if (positionLocalGizmos[2].isSelected)
+                    movementDirection = (Vector3)Vector3.Transform(Vector3.UnitZ, GizmoCenterRotation);
+
+                Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
+                Vector3 direction = direction2 - (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
+                direction.Z = 0;
+                direction.Normalize();
+
                 foreach (Asset a in currentlySelectedAssets)
                 {
-                    Vector3 direction1 = (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
-
                     if (a is IClickableAsset ra)
                     {
-                        Vector3 movementDirection = new Vector3();
-
-                        if (positionLocalGizmos[0].isSelected)
-                            movementDirection = (Vector3)Vector3.Transform(Vector3.UnitX, GizmoCenterRotation);
-                        else if (positionLocalGizmos[1].isSelected)
-                            movementDirection = (Vector3)Vector3.Transform(Vector3.UnitY, GizmoCenterRotation);
-                        else if (positionLocalGizmos[2].isSelected)
-                            movementDirection = (Vector3)Vector3.Transform(Vector3.UnitZ, GizmoCenterRotation);
-
-                        Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
-                        Vector3 direction = direction2 - direction1;
-                        direction.Z = 0;
-                        direction.Normalize();
-
                         ra.PositionX += movementDirection.X * (distanceX * direction.X - distanceY * direction.Y) / 10f;
                         ra.PositionY += movementDirection.Y * (distanceX * direction.X - distanceY * direction.Y) / 10f;
                         ra.PositionZ += movementDirection.Z * (distanceX * direction.X - distanceY * direction.Y) / 10f;
                     }
-
-                    UpdateGizmoPosition();
-                    FinishedMovingGizmo = true;
-                    UnsavedChanges = true;
                 }
+
+                UpdateGizmoPosition();
+                FinishedMovingGizmo = true;
+                UnsavedChanges = true;
             }
         }
 

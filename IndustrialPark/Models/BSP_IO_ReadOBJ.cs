@@ -165,8 +165,7 @@ namespace IndustrialPark.Models
                 }
                 else if (a.StartsWith("map_Kd"))
                 {
-                    if (!MaterialLibrary.ContainsKey(MaterialName))
-                        MaterialLibrary.Add(MaterialName, Path.GetFileNameWithoutExtension(a.Substring(6)));
+                    MaterialLibrary[MaterialName] = Path.GetFileNameWithoutExtension(a.Substring(6));
                 }
             }
 

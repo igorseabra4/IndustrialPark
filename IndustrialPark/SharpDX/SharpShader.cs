@@ -151,7 +151,8 @@ namespace IndustrialPark
         /// <returns></returns>
         public Buffer CreateBuffer<T>() where T : struct
         {
-            return new Buffer(Device.Device, Utilities.SizeOf<T>(), ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None, 0);
+            int size = Utilities.SizeOf<T>();
+            return new Buffer(Device.Device, size, ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None, 0);
         }
 
         /// <summary>

@@ -44,14 +44,7 @@ namespace IndustrialPark
             Verify(TaskDYNA1_AssetID, ref result);
             Verify(TaskDYNA2_AssetID, ref result);
         }
-
-        private float localFrameCounter = -1;
-
-        public void Reset()
-        {
-            localFrameCounter = -1;
-        }
-
+        
         public override Matrix LocalWorld()
         {
             if (movementPreview && MovePoint_AssetID != 0)
@@ -121,7 +114,7 @@ namespace IndustrialPark
                 return;
 
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
-                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * _color : _color);
+                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * _color : _color, UvAnimOffset);
             else
                 renderer.DrawCube(LocalWorld(), isSelected);
         }

@@ -1,6 +1,4 @@
-﻿using SharpDX;
-using System;
-using System.ComponentModel;
+﻿using System;
 using System.Windows.Forms;
 
 namespace IndustrialPark

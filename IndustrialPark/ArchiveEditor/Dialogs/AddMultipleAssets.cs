@@ -8,8 +8,6 @@ namespace IndustrialPark
 {
     public partial class AddMultipleAssets : Form
     {
-        System.Drawing.Color defaultColor;
-
         public AddMultipleAssets()
         {
             InitializeComponent();

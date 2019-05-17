@@ -1,5 +1,4 @@
-﻿using System;
-using HipHopFile;
+﻿using HipHopFile;
 using RenderWareFile;
 using SharpDX;
 
@@ -39,7 +38,7 @@ namespace IndustrialPark
         {
             if (dontRender || isInvisible) return;
 
-            model.Render(renderer, Matrix.Identity, isSelected ? renderer.selectedObjectColor : Vector4.One);
+            model.Render(renderer, Matrix.Identity, isSelected ? renderer.selectedObjectColor : Vector4.One, Vector3.Zero);
         }
 
         public float? IntersectsWith(Ray ray)

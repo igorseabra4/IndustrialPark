@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using SharpDX;
+using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
@@ -12,12 +13,12 @@ namespace IndustrialPark
         public override void Setup(SharpRenderer renderer)
         {
             base.Setup(renderer);
-            ArchiveEditorFunctions.AddToRenderingDictionary(AHDR.assetID, this);
+            AddToRenderingDictionary(AHDR.assetID, this);
 
             if (Functions.currentGame == Game.Incredibles)
             {
-                ArchiveEditorFunctions.AddToRenderingDictionary(Functions.BKDRHash(newName), this);
-                ArchiveEditorFunctions.AddToNameDictionary(Functions.BKDRHash(newName), newName);
+                AddToRenderingDictionary(Functions.BKDRHash(newName), this);
+                AddToNameDictionary(Functions.BKDRHash(newName), newName);
             }
         }
 
@@ -25,11 +26,11 @@ namespace IndustrialPark
 
         public void MovieRemoveFromDictionary()
         {
-            ArchiveEditorFunctions.renderingDictionary.Remove(Functions.BKDRHash(newName));
-            ArchiveEditorFunctions.nameDictionary.Remove(Functions.BKDRHash(newName));
+            renderingDictionary.Remove(Functions.BKDRHash(newName));
+            nameDictionary.Remove(Functions.BKDRHash(newName));
         }
 
-        public void Draw(SharpRenderer renderer, Matrix world, Vector4 color)
+        public void Draw(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset)
         {
             if (renderBasedOnLodt)
             {
@@ -42,7 +43,7 @@ namespace IndustrialPark
                     return;
             }
 
-            model.Render(renderer, world, isSelected ? renderer.selectedObjectColor * color : color);
+            model.Render(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, uvAnimOffset);
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using static IndustrialPark.ConverterFunctions;
+using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
@@ -94,12 +95,11 @@ namespace IndustrialPark
 
         protected virtual void CreateBoundingBox()
         {
-            List<Vector3> vertexList = new List<Vector3>();
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(DynaRingControl.RingModelAssetID) &&
-                ArchiveEditorFunctions.renderingDictionary[DynaRingControl.RingModelAssetID].HasRenderWareModelFile() &&
-                ArchiveEditorFunctions.renderingDictionary[DynaRingControl.RingModelAssetID].GetRenderWareModelFile() != null)
+            if (renderingDictionary.ContainsKey(DynaRingControl.RingModelAssetID) &&
+                renderingDictionary[DynaRingControl.RingModelAssetID].HasRenderWareModelFile() &&
+                renderingDictionary[DynaRingControl.RingModelAssetID].GetRenderWareModelFile() != null)
             {
-                CreateBoundingBox(ArchiveEditorFunctions.renderingDictionary[DynaRingControl.RingModelAssetID].GetRenderWareModelFile().vertexListG);
+                CreateBoundingBox(renderingDictionary[DynaRingControl.RingModelAssetID].GetRenderWareModelFile().vertexListG);
             }
             else
             {
@@ -119,17 +119,17 @@ namespace IndustrialPark
 
             boundingBox = BoundingBox.FromPoints(vertices);
 
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(DynaRingControl.RingModelAssetID))
+            if (renderingDictionary.ContainsKey(DynaRingControl.RingModelAssetID))
             {
-                if (ArchiveEditorFunctions.renderingDictionary[DynaRingControl.RingModelAssetID] is AssetMINF MINF)
+                if (renderingDictionary[DynaRingControl.RingModelAssetID] is AssetMINF MINF)
                 {
                     if (MINF.HasRenderWareModelFile())
-                        triangles = ArchiveEditorFunctions.renderingDictionary[DynaRingControl.RingModelAssetID].GetRenderWareModelFile().triangleList.ToArray();
+                        triangles = renderingDictionary[DynaRingControl.RingModelAssetID].GetRenderWareModelFile().triangleList.ToArray();
                     else
                         triangles = null;
                 }
                 else
-                    triangles = ArchiveEditorFunctions.renderingDictionary[DynaRingControl.RingModelAssetID].GetRenderWareModelFile().triangleList.ToArray();
+                    triangles = renderingDictionary[DynaRingControl.RingModelAssetID].GetRenderWareModelFile().triangleList.ToArray();
             }
             else
                 triangles = null;
@@ -137,8 +137,8 @@ namespace IndustrialPark
 
         public override void Draw(SharpRenderer renderer, bool isSelected)
         {
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(DynaRingControl.RingModelAssetID))
-                ArchiveEditorFunctions.renderingDictionary[DynaRingControl.RingModelAssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor : Vector4.One);
+            if (renderingDictionary.ContainsKey(DynaRingControl.RingModelAssetID))
+                renderingDictionary[DynaRingControl.RingModelAssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor : Vector4.One, Vector3.Zero);
             else
                 renderer.DrawCube(world, isSelected);
         }

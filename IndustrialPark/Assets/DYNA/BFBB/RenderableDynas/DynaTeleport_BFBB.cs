@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using static IndustrialPark.ConverterFunctions;
+using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
@@ -17,7 +18,7 @@ namespace IndustrialPark
             TargetDYNATeleportID = 0;
         }
 
-        private int version;
+        private readonly int version;
 
         public DynaTeleport_BFBB(IEnumerable<byte> enumerable, int version) : base(enumerable)
         {
@@ -181,12 +182,11 @@ namespace IndustrialPark
             ValidateMRKR();
             world = Matrix.RotationY(MathUtil.DegreesToRadians(LaunchAngle)) * Matrix.Translation(PositionX, PositionY, PositionZ);
 
-            List<Vector3> vertexList = new List<Vector3>();
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID) &&
-                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].HasRenderWareModelFile() &&
-                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile() != null)
+            if (renderingDictionary.ContainsKey(_modelAssetID) &&
+                renderingDictionary[_modelAssetID].HasRenderWareModelFile() &&
+                renderingDictionary[_modelAssetID].GetRenderWareModelFile() != null)
             {
-                CreateBoundingBox(ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile().vertexListG);
+                CreateBoundingBox(renderingDictionary[_modelAssetID].GetRenderWareModelFile().vertexListG);
             }
             else
             {
@@ -203,17 +203,17 @@ namespace IndustrialPark
 
             boundingBox = BoundingBox.FromPoints(vertices);
 
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
+            if (renderingDictionary.ContainsKey(_modelAssetID))
             {
-                if (ArchiveEditorFunctions.renderingDictionary[_modelAssetID] is AssetMINF MINF)
+                if (renderingDictionary[_modelAssetID] is AssetMINF MINF)
                 {
                     if (MINF.HasRenderWareModelFile())
-                        triangles = ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile().triangleList.ToArray();
+                        triangles = renderingDictionary[_modelAssetID].GetRenderWareModelFile().triangleList.ToArray();
                     else
                         triangles = null;
                 }
                 else
-                    triangles = ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile().triangleList.ToArray();
+                    triangles = renderingDictionary[_modelAssetID].GetRenderWareModelFile().triangleList.ToArray();
             }
             else
                 triangles = null;
@@ -221,8 +221,8 @@ namespace IndustrialPark
 
         public override void Draw(SharpRenderer renderer, bool isSelected)
         {
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
-                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor : Vector4.One);
+            if (renderingDictionary.ContainsKey(_modelAssetID))
+                renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor : Vector4.One, Vector3.Zero);
             else
                 renderer.DrawPyramid(world, isSelected);
         }

@@ -30,7 +30,7 @@ namespace IndustrialPark
             catch (Exception e)
             {
 #if DEBUG
-                //System.Windows.Forms.MessageBox.Show("Error searching for references: " + e.Message + ". It will be skipped on the search.");
+                System.Windows.Forms.MessageBox.Show("Error searching for references: " + e.Message + ". It will be skipped on the search.");
 #endif
             }
 

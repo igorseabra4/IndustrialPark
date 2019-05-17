@@ -1,8 +1,8 @@
 ﻿using HipHopFile;
-using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
+using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
@@ -38,12 +38,11 @@ namespace IndustrialPark
 
         protected override void CreateBoundingBox()
         {
-            List<Vector3> vertexList = new List<Vector3>();
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID) &&
-                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].HasRenderWareModelFile() &&
-                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile() != null)
+            if (renderingDictionary.ContainsKey(_modelAssetID) &&
+                renderingDictionary[_modelAssetID].HasRenderWareModelFile() &&
+                renderingDictionary[_modelAssetID].GetRenderWareModelFile() != null)
             {
-                CreateBoundingBox(ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile().vertexListG);
+                CreateBoundingBox(renderingDictionary[_modelAssetID].GetRenderWareModelFile().vertexListG);
             }
             else
             {
@@ -58,8 +57,8 @@ namespace IndustrialPark
             Vector4 Color = _color;
             Color.W = Color.W == 0f ? 1f : Color.W;
 
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
-                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * Color : Color);
+            if (renderingDictionary.ContainsKey(_modelAssetID))
+                renderingDictionary[_modelAssetID].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * Color : Color, UvAnimOffset);
             else
                 renderer.DrawPyramid(LocalWorld(), isSelected, 1f);
         }

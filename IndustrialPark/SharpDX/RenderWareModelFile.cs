@@ -50,7 +50,7 @@ namespace IndustrialPark
             return rwSectionArray;
         }
         
-        public DefaultRenderData renderData;
+        public UvAnimRenderData renderData;
         
         public void SetForRendering(SharpDevice device, RWSection[] rwChunkList, byte[] rwByteArray)
         {
@@ -460,10 +460,11 @@ namespace IndustrialPark
             }
         }
 
-        public void Render(SharpRenderer renderer, Matrix world, Vector4 color)
+        public void Render(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset)
         { 
             renderData.worldViewProjection = world * renderer.viewProjection;
             renderData.Color = color;
+            renderData.UvAnimOffset = (Vector4)uvAnimOffset;
 
             renderer.device.UpdateData(renderer.tintedBuffer, renderData);
             renderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, renderer.tintedBuffer);

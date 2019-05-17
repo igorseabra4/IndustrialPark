@@ -3,6 +3,7 @@ using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
@@ -31,164 +32,177 @@ namespace IndustrialPark
         public void SetDynaSpecific(bool reset)
         {
             List<byte> dataBefore = Data.Take(0x10).ToList();
+            List<byte> dataMiddle = Data.Skip(0x10).Take(EventStartOffset).ToList();
             List<byte> dataAfter = Data.Skip(EventStartOffset).ToList();
 
             if (Functions.currentGame == Game.BFBB)
                 switch (Type_BFBB)
                 {
                     case DynaType_BFBB.game_object__BoulderGenerator:
-                        _dynaSpecific = reset ? new DynaBoulderGen() : new DynaBoulderGen(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaBoulderGen() : new DynaBoulderGen(dataMiddle);
                         break;
                     case DynaType_BFBB.game_object__bungee_drop:
-                        _dynaSpecific = reset ? new DynaBungeeDrop() : new DynaBungeeDrop(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaBungeeDrop() : new DynaBungeeDrop(dataMiddle);
                         break;
                     case DynaType_BFBB.game_object__bungee_hook:
-                        _dynaSpecific = reset ? new DynaBungeeHook() : new DynaBungeeHook(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaBungeeHook() : new DynaBungeeHook(dataMiddle);
                         break;
                     case DynaType_BFBB.game_object__BusStop:
-                        _dynaSpecific = reset ? new DynaBusStop() : new DynaBusStop(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaBusStop() : new DynaBusStop(dataMiddle);
                         break;
                     case DynaType_BFBB.game_object__Camera_Tweak:
-                        _dynaSpecific = reset ? new DynaCamTweak() : new DynaCamTweak(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaCamTweak() : new DynaCamTweak(dataMiddle);
                         break;
                     case DynaType_BFBB.game_object__Flythrough:
-                        _dynaSpecific = reset ? new DynaFlythrough() : new DynaFlythrough(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaFlythrough() : new DynaFlythrough(dataMiddle);
                         break;
                     case DynaType_BFBB.game_object__NPCSettings:
-                        _dynaSpecific = reset ? new DynaNPCSettings() : new DynaNPCSettings(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaNPCSettings() : new DynaNPCSettings(dataMiddle);
                         break;
                     case DynaType_BFBB.game_object__talk_box:
-                        _dynaSpecific = reset ? new DynaTalkBox() : new DynaTalkBox(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaTalkBox() : new DynaTalkBox(dataMiddle);
                         break;
                     case DynaType_BFBB.game_object__task_box:
-                        _dynaSpecific = reset ? new DynaTaskBox() : new DynaTaskBox(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaTaskBox() : new DynaTaskBox(dataMiddle);
                         break;
                     case DynaType_BFBB.game_object__Taxi:
-                        _dynaSpecific = reset ? new DynaTaxi() : new DynaTaxi(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaTaxi() : new DynaTaxi(dataMiddle);
                         break;
                     case DynaType_BFBB.game_object__Teleport:
-                        _dynaSpecific = reset ? new DynaTeleport_BFBB(Version) : new DynaTeleport_BFBB(Data.Skip(0x10).Take(EventStartOffset), Version);
+                        _dynaSpecific = reset ? new DynaTeleport_BFBB(Version) : new DynaTeleport_BFBB(dataMiddle, Version);
                         break;
                     case DynaType_BFBB.game_object__text_box:
-                        _dynaSpecific = reset ? new DynaTextBox() : new DynaTextBox(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaTextBox() : new DynaTextBox(dataMiddle);
                         break;
                     case DynaType_BFBB.hud__meter__font:
                         if (Version == 3)
-                            _dynaSpecific = reset ? new DynaHudMeterFontV3() : new DynaHudMeterFontV3(Data.Skip(0x10).Take(EventStartOffset));
+                            _dynaSpecific = reset ? new DynaHudMeterFontV3() : new DynaHudMeterFontV3(dataMiddle);
                         else
-                            _dynaSpecific = reset ? new DynaBase() : new DynaBase(Data.Skip(0x10).Take(EventStartOffset));
+                            _dynaSpecific = reset ? new DynaBase() : new DynaBase(dataMiddle);
                         break;
                     case DynaType_BFBB.hud__meter__unit:
-                        _dynaSpecific = reset ? new DynaHudMeterUnit() : new DynaHudMeterUnit(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaHudMeterUnit() : new DynaHudMeterUnit(dataMiddle);
                         break;
                     case DynaType_BFBB.hud__model:
-                        _dynaSpecific = reset ? new DynaHudModel() : new DynaHudModel(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaHudModel() : new DynaHudModel(dataMiddle);
                         break;
                     case DynaType_BFBB.hud__text:
-                        _dynaSpecific = reset ? new DynaHudText() : new DynaHudText(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaHudText() : new DynaHudText(dataMiddle);
                         break;
                     case DynaType_BFBB.pointer:
-                        _dynaSpecific = reset ? new DynaPointer() : new DynaPointer(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaPointer() : new DynaPointer(dataMiddle);
                         break;
                     default:
-                        _dynaSpecific = reset ? new DynaBase() : new DynaBase(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaBase() : new DynaBase(dataMiddle);
                         break;
                 }
             else if (Functions.currentGame == Game.Incredibles)
                 switch (Type_TSSM)
                 {
                     case DynaType_TSSM.pointer:
-                        _dynaSpecific = reset ? new DynaPointer() : new DynaPointer(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaPointer() : new DynaPointer(dataMiddle);
                         break;
                     case DynaType_TSSM.game_object__talk_box:
-                        _dynaSpecific = reset ? new DynaTalkBox() : new DynaTalkBox(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaTalkBox() : new DynaTalkBox(dataMiddle);
                         break;
                     case DynaType_TSSM.game_object__text_box:
-                        _dynaSpecific = reset ? new DynaTextBox() : new DynaTextBox(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaTextBox() : new DynaTextBox(dataMiddle);
                         break;
                     case DynaType_TSSM.game_object__task_box:
-                        _dynaSpecific = reset ? new DynaTaskBox() : new DynaTaskBox(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaTaskBox() : new DynaTaskBox(dataMiddle);
                         break;
                     case DynaType_TSSM.game_object__BusStop:
-                        _dynaSpecific = reset ? new DynaBusStop() : new DynaBusStop(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaBusStop() : new DynaBusStop(dataMiddle);
                         break;
                     case DynaType_TSSM.game_object__Flythrough:
-                        _dynaSpecific = reset ? new DynaFlythrough() : new DynaFlythrough(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaFlythrough() : new DynaFlythrough(dataMiddle);
                         break;
                     case DynaType_TSSM.game_object__BoulderGenerator:
-                        _dynaSpecific = reset ? new DynaBoulderGen() : new DynaBoulderGen(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaBoulderGen() : new DynaBoulderGen(dataMiddle);
                         break;
                     case DynaType_TSSM.game_object__Teleport:
-                        _dynaSpecific = reset ? new DynaTeleport_MovieGame() : new DynaTeleport_MovieGame(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaTeleport_MovieGame() : new DynaTeleport_MovieGame(dataMiddle);
                         break;
                     case DynaType_TSSM.game_object__bungee_drop:
-                        _dynaSpecific = reset ? new DynaBungeeDrop() : new DynaBungeeDrop(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaBungeeDrop() : new DynaBungeeDrop(dataMiddle);
                         break;
                     case DynaType_TSSM.game_object__bungee_hook:
-                        _dynaSpecific = reset ? new DynaBungeeHook() : new DynaBungeeHook(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaBungeeHook() : new DynaBungeeHook(dataMiddle);
                         break;
                     case DynaType_TSSM.game_object__Camera_Tweak:
-                        _dynaSpecific = reset ? new DynaCamTweak() : new DynaCamTweak(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaCamTweak() : new DynaCamTweak(dataMiddle);
                         break;
                     case DynaType_TSSM.hud__model:
-                        _dynaSpecific = reset ? new DynaHudModel() : new DynaHudModel(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaHudModel() : new DynaHudModel(dataMiddle);
                         break;
                     case DynaType_TSSM.hud__meter__font:
                         if (Version == 3)
-                            _dynaSpecific = reset ? new DynaHudMeterFontV3() : new DynaHudMeterFontV3(Data.Skip(0x10).Take(EventStartOffset));
+                            _dynaSpecific = reset ? new DynaHudMeterFontV3() : new DynaHudMeterFontV3(dataMiddle);
                         else
-                            _dynaSpecific = reset ? new DynaBase() : new DynaBase(Data.Skip(0x10).Take(EventStartOffset));
+                            _dynaSpecific = reset ? new DynaBase() : new DynaBase(dataMiddle);
                         break;
                     case DynaType_TSSM.hud__meter__unit:
-                        _dynaSpecific = reset ? new DynaHudMeterUnit() : new DynaHudMeterUnit(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaHudMeterUnit() : new DynaHudMeterUnit(dataMiddle);
                         break;
                     case DynaType_TSSM.hud__text:
-                        _dynaSpecific = reset ? new DynaHudText() : new DynaHudText(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaHudText() : new DynaHudText(dataMiddle);
                         break;
                     case DynaType_TSSM.effect__ScreenFade:
-                        _dynaSpecific = reset ? new DynaEffectScreenFade() : new DynaEffectScreenFade(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaEffectScreenFade() : new DynaEffectScreenFade(dataMiddle);
                         break;
                     case DynaType_TSSM.effect__Lightning:
-                        _dynaSpecific = reset ? new DynaEffectLightning() : new DynaEffectLightning(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaEffectLightning() : new DynaEffectLightning(dataMiddle);
                         break;
                     case DynaType_TSSM.Enemy__SB__BucketOTron:
-                        _dynaSpecific = reset ? new DynaEnemyBucketOTron() : new DynaEnemyBucketOTron(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaEnemyBucketOTron() : new DynaEnemyBucketOTron(dataMiddle);
+                        break;
+                    case DynaType_TSSM.Enemy__SB__CastNCrew:
+                        _dynaSpecific = reset ? new DynaEnemyCastNCrew() : new DynaEnemyCastNCrew(dataMiddle);
                         break;
                     case DynaType_TSSM.Enemy__SB__Critter:
-                        _dynaSpecific = reset ? new DynaEnemyCritter() : new DynaEnemyCritter(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaEnemyCritter() : new DynaEnemyCritter(dataMiddle);
+                        break;
+                    case DynaType_TSSM.Enemy__SB__Dennis:
+                        _dynaSpecific = reset ? new DynaEnemyDennis() : new DynaEnemyDennis(dataMiddle);
+                        break;
+                    case DynaType_TSSM.Enemy__SB__FrogFish:
+                        _dynaSpecific = reset ? new DynaEnemyFrogFish() : new DynaEnemyFrogFish(dataMiddle);
                         break;
                     case DynaType_TSSM.Enemy__SB__Mindy:
-                        _dynaSpecific = reset ? new DynaEnemyMindy() : new DynaEnemyMindy(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaEnemyMindy() : new DynaEnemyMindy(dataMiddle);
+                        break;
+                    case DynaType_TSSM.Enemy__SB__Neptune:
+                        _dynaSpecific = reset ? new DynaEnemyNeptune() : new DynaEnemyNeptune(dataMiddle);
                         break;
                     case DynaType_TSSM.Enemy__SB__Standard:
-                        _dynaSpecific = reset ? new DynaEnemyStandard() : new DynaEnemyStandard(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaEnemyStandard() : new DynaEnemyStandard(dataMiddle);
                         break;
                     case DynaType_TSSM.Enemy__SB__SupplyCrate:
-                        _dynaSpecific = reset ? new DynaSupplyCrate() : new DynaSupplyCrate(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaSupplyCrate() : new DynaSupplyCrate(dataMiddle);
                         break;
                     case DynaType_TSSM.Enemy__SB__Turret:
-                        _dynaSpecific = reset ? new DynaEnemyTurret() : new DynaEnemyTurret(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaEnemyTurret() : new DynaEnemyTurret(dataMiddle);
                         break;
                     case DynaType_TSSM.game_object__Ring:
-                        _dynaSpecific = reset ? new DynaRing() : new DynaRing(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaRing() : new DynaRing(dataMiddle);
                         break;
                     case DynaType_TSSM.game_object__RingControl:
-                        _dynaSpecific = reset ? new DynaRingControl() : new DynaRingControl(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaRingControl() : new DynaRingControl(dataMiddle);
                         break;
                     case DynaType_TSSM.game_object__Vent:
-                        _dynaSpecific = reset ? new DynaVent() : new DynaVent(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaVent() : new DynaVent(dataMiddle);
                         break;
                     case DynaType_TSSM.game_object__VentType:
-                        _dynaSpecific = reset ? new DynaVentType() : new DynaVentType(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaVentType() : new DynaVentType(dataMiddle);
                         break;
                     case DynaType_TSSM.SceneProperties:
-                        _dynaSpecific = reset ? new DynaSceneProperties() : new DynaSceneProperties(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaSceneProperties() : new DynaSceneProperties(dataMiddle);
                         break;
                     case DynaType_TSSM.JSPExtraData:
-                        _dynaSpecific = reset ? new DynaJSPExtraData() : new DynaJSPExtraData(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaJSPExtraData() : new DynaJSPExtraData(dataMiddle);
                         break;
                     default:
-                        _dynaSpecific = reset ? new DynaBase() : new DynaBase(Data.Skip(0x10).Take(EventStartOffset));
+                        _dynaSpecific = reset ? new DynaBase() : new DynaBase(dataMiddle);
                         break;
                 }
 
@@ -202,11 +216,11 @@ namespace IndustrialPark
             if (IsRenderableClickable)
             {
                 CreateTransformMatrix();
-                if (!ArchiveEditorFunctions.renderableAssetSetCommon.Contains(this))
-                    ArchiveEditorFunctions.renderableAssetSetCommon.Add(this);
+                if (!renderableAssetSetCommon.Contains(this))
+                    renderableAssetSetCommon.Add(this);
             }
-            else if (ArchiveEditorFunctions.renderableAssetSetCommon.Contains(this))
-                ArchiveEditorFunctions.renderableAssetSetCommon.Remove(this);
+            else if (renderableAssetSetCommon.Contains(this))
+                renderableAssetSetCommon.Remove(this);
         }
 
         public void OnDynaSpecificPropertyChange(DynaBase value)

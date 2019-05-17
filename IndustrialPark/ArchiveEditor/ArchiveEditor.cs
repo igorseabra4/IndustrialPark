@@ -1,7 +1,5 @@
 ﻿using HipHopFile;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using Microsoft.WindowsAPICodePack.Controls;
-using Newtonsoft.Json;
 using SharpDX;
 using System;
 using System.Collections.Generic;
@@ -679,7 +677,7 @@ namespace IndustrialPark
         public void MouseMoveGeneric(Matrix viewProjection, int deltaX, int deltaY)
         {
             archive.MouseMoveForPosition(viewProjection, deltaX, deltaY);
-            archive.MouseMoveForRotation(viewProjection, deltaX, deltaY);
+            archive.MouseMoveForRotation(viewProjection, deltaX);//, deltaY);
             archive.MouseMoveForScale(viewProjection, deltaX, deltaY);
             archive.MouseMoveForPositionLocal(viewProjection, deltaX, deltaY);
         }
@@ -745,7 +743,7 @@ namespace IndustrialPark
             }
         }
 
-        System.Drawing.Color defaultColor;
+        readonly System.Drawing.Color defaultColor;
 
         private void textBoxFindAsset_TextChanged(object sender, EventArgs e)
         {

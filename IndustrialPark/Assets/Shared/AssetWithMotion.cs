@@ -39,13 +39,14 @@ namespace IndustrialPark
                 return;
 
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
-                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, localW, isSelected ? renderer.selectedObjectColor * _color : _color);
+                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, localW, isSelected ? renderer.selectedObjectColor * _color : _color, UvAnimOffset);
             else
                 renderer.DrawCube(localW, isSelected);
         }
         
-        public void Reset()
+        public override void Reset()
         {
+            base.Reset();
             _motion.Reset();
         }
 

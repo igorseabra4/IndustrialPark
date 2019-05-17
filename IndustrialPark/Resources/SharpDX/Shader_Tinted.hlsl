@@ -2,20 +2,21 @@
 {
 	float4x4 worldViewProj;
 	float4 color;
+	float4 uvAnim;
 };
 
 struct VS_IN
 {
 	float4 position : POSITION;
 	float4 color : COLOR;
-	float2 texcoord : TEXCOORD;
+	float4 texcoord : TEXCOORD;
 };
 
 struct PS_IN
 {
 	float4 position : SV_POSITION;
 	float4 color : COLOR;
-	float2 texcoord : TEXCOORD;
+	float4 texcoord : TEXCOORD;
 };
 
 //texture
@@ -32,7 +33,7 @@ PS_IN VS(VS_IN input)
 	PS_IN output = (PS_IN)0;
 
 	output.position = mul(worldViewProj, input.position);
-	output.texcoord = input.texcoord;
+	output.texcoord = input.texcoord + uvAnim;
 	output.color = input.color * color;
 
 	return output;

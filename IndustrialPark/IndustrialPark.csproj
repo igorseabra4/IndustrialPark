@@ -151,7 +151,11 @@
     <Compile Include="Assets\Binary\AssetSNDI_GCN_V2.cs" />
     <Compile Include="Assets\Binary\AssetVILP.cs" />
     <Compile Include="Assets\DYNA\MovieGame\DynaJSPExtraData.cs" />
+    <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\DynaEnemyCastNCrew.cs" />
+    <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\DynaEnemyDennis.cs" />
+    <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\DynaEnemyFrogFish.cs" />
     <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\DynaEnemyMindy.cs" />
+    <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\DynaEnemyNeptune.cs" />
     <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\DynaEnemyTurret.cs" />
     <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\EnemyTypes.cs" />
     <Compile Include="Assets\DYNA\MovieGame\RenderableDynas\DynaEffectLightning.cs" />

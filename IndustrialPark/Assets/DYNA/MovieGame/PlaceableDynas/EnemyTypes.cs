@@ -11,7 +11,8 @@
     }
     public enum EnemyCastNCrewType : uint
     {
-
+        gram_bind = 0x470806A1,
+        sb_bat_bind = 0xFF2ABE7F
     }
     public enum EnemyCritterType : uint
     {
@@ -20,19 +21,22 @@
     }
     public enum EnemyDennisType : uint
     {
-
+        dennis_junk_bind = 0xCB1BBC20,
+        dennis_hoff_bind = 0x3D6C5895
     }
     public enum EnemyFrogFishType : uint
     {
-
+        frog_bind = 0x2AA1822C,
     }
     public enum EnemyMindyType : uint
     {
-
+        patrick_npc_bind = 0x7362A2AC,
+        spongebob_npc_bind = 0xA92E3C8F,
+        mindy_shell_bind = 0x5D13D2A4
     }
     public enum EnemyNeptuneType : uint
     {
-
+        neptune_bind = 0x8F85AF53
     }
     public enum EnemyStandardType : uint
     {

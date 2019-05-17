@@ -56,10 +56,7 @@ namespace IndustrialPark
         public void UpdateDictionary()
         {
             foreach (EntryLODT entry in LODT_Entries)
-                if (MaxDistances.ContainsKey(entry.ModelAssetID))
-                    MaxDistances[entry.ModelAssetID] = entry.MaxDistance;
-                else
-                    MaxDistances.Add(entry.ModelAssetID, entry.MaxDistance);
+                MaxDistances[entry.ModelAssetID] = entry.MaxDistance;
         }
 
         public void ClearDictionary()

@@ -16,6 +16,12 @@ namespace IndustrialPark
         public Matrix worldViewProjection;
         public Vector4 Color;
     }
+    public struct UvAnimRenderData
+    {
+        public Matrix worldViewProjection;
+        public Vector4 Color;
+        public Vector4 UvAnimOffset;
+    }
 
     public class SharpRenderer
     {
@@ -89,7 +95,7 @@ namespace IndustrialPark
                         new InputElement("TEXCOORD", 0, Format.R32G32_Float, 20, 0)
                 });
 
-            tintedBuffer = tintedShader.CreateBuffer<DefaultRenderData>();
+            tintedBuffer = tintedShader.CreateBuffer<UvAnimRenderData>();
         }
 
         public const string DefaultTexture = "default";
@@ -283,12 +289,12 @@ namespace IndustrialPark
         public Vector4 selectedColor;
         public Vector4 selectedObjectColor;
 
+        DefaultRenderData renderData;
         public void DrawCube(Matrix world, bool isSelected, float multiplier = 0.5f)
         {
             if (AssetMODL.renderBasedOnLodt && Vector3.Distance(Camera.Position, (Vector3)world.Row4) > 100f)
                 return;
 
-            DefaultRenderData renderData;
             renderData.worldViewProjection = Matrix.Scaling(multiplier) * world * viewProjection;
             renderData.Color = isSelected ? selectedColor : normalColor;
 
@@ -304,7 +310,6 @@ namespace IndustrialPark
             if (AssetMODL.renderBasedOnLodt && Vector3.Distance(Camera.Position, (Vector3)world.Row4) > 100f)
                 return;
 
-            DefaultRenderData renderData;
             renderData.worldViewProjection = Matrix.Scaling(multiplier) * world * viewProjection;
             renderData.Color = isSelected ? selectedColor : normalColor;
 
@@ -320,7 +325,6 @@ namespace IndustrialPark
             if (AssetMODL.renderBasedOnLodt && Vector3.Distance(Camera.Position, (Vector3)world.Row4) > 100f)
                 return;
 
-            DefaultRenderData renderData;
             renderData.worldViewProjection = world * viewProjection;
             renderData.Color = isSelected ? selectedColor : normalColor;
 
@@ -331,14 +335,15 @@ namespace IndustrialPark
             Sphere.Draw(device);
         }
 
-        public void DrawPlane(Matrix world, bool isSelected, uint textureAssetID)
+        public void DrawPlane(Matrix world, bool isSelected, uint textureAssetID, Vector3 uvAnimOffset)
         {
             if (AssetMODL.renderBasedOnLodt && Vector3.Distance(Camera.Position, (Vector3)world.Row4) > 100f)
                 return;
 
-            DefaultRenderData renderData;
+            UvAnimRenderData renderData;
             renderData.worldViewProjection = world * viewProjection;
             renderData.Color = isSelected ? selectedColor : Vector4.One;
+            renderData.UvAnimOffset = (Vector4)uvAnimOffset;
 
             device.UpdateData(tintedBuffer, renderData);
             device.DeviceContext.VertexShader.SetConstantBuffer(0, tintedBuffer);
