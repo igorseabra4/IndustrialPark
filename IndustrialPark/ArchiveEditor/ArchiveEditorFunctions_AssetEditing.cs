@@ -366,6 +366,47 @@ namespace IndustrialPark
             RecalculateAllMatrices();
         }
 
+        public void MergeSimilar()
+        {
+            UnsavedChanges = true;
+
+            List<Section_AHDR> COLLs = GetAssetsOfType(AssetType.COLL);
+            for (int i = 1; i < COLLs.Count; i++)
+                RemoveAsset(COLLs[i].assetID);
+            for (int i = 1; i < COLLs.Count; i++)
+                MergeCOLL(COLLs[i]);
+            
+            List<Section_AHDR> JAWs = GetAssetsOfType(AssetType.JAW);
+            for (int i = 1; i < JAWs.Count; i++)
+                RemoveAsset(JAWs[i].assetID);
+            for (int i = 1; i < JAWs.Count; i++)
+                MergeJAW(JAWs[i]);
+            
+            List<Section_AHDR> LODTs = GetAssetsOfType(AssetType.LODT);
+            for (int i = 1; i < LODTs.Count; i++)            
+                RemoveAsset(LODTs[i].assetID);
+            for (int i = 1; i < LODTs.Count; i++)
+                MergeLODT(LODTs[i]);
+            
+            List<Section_AHDR> PIPTs = GetAssetsOfType(AssetType.PIPT);
+            for (int i = 1; i < PIPTs.Count; i++)
+                RemoveAsset(PIPTs[i].assetID);
+            for (int i = 1; i < PIPTs.Count; i++)
+                MergePIPT(PIPTs[i]);
+            
+            List<Section_AHDR> SHDWs = GetAssetsOfType(AssetType.SHDW);
+            for (int i = 1; i < SHDWs.Count; i++)            
+                RemoveAsset(SHDWs[i].assetID);
+            for (int i = 1; i < SHDWs.Count; i++)
+                MergeSHDW(SHDWs[i]);
+            
+            List<Section_AHDR> SNDIs = GetAssetsOfType(AssetType.SNDI);
+            for (int i = 1; i < SNDIs.Count; i++)            
+                RemoveAsset(SNDIs[i].assetID);
+            for (int i = 1; i < SNDIs.Count; i++)
+                MergeSNDI(SNDIs[i]);
+        }
+
         private void MergeCOLL(Section_AHDR AHDR)
         {
             foreach (Asset a in assetDictionary.Values)

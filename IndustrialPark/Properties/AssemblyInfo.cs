@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("BFBB Modding")]
 [assembly: AssemblyProduct("IndustrialPark")]
-[assembly: AssemblyCopyright("Copyright ©  2018 igorseabra4")]
+[assembly: AssemblyCopyright("Copyright ©  2019 igorseabra4")]
 [assembly: AssemblyTrademark("BFBB Modding")]
 [assembly: AssemblyCulture("")]
 

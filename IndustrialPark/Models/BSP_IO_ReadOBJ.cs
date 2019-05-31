@@ -141,9 +141,12 @@ namespace IndustrialPark.Models
             }
 
             if (hasUVCoords)
-                return FixUVCoords(FixNormals(objData));
-            else
-                return objData;
+            {
+                FixNormals(ref objData);
+                FixUVCoords(ref objData);
+            }
+
+            return objData;
         }
 
         public static List<string> ReplaceMaterialNames(string InputOBJFile, string MTLLib, List<string> MaterialList)
@@ -160,13 +163,9 @@ namespace IndustrialPark.Models
                 string a = Regex.Replace(j, @"\s+", "");
 
                 if (a.StartsWith("newmtl"))
-                {
                     MaterialName = a.Substring(6);
-                }
                 else if (a.StartsWith("map_Kd"))
-                {
                     MaterialLibrary[MaterialName] = Path.GetFileNameWithoutExtension(a.Substring(6));
-                }
             }
 
             for (int k = 0; k < MaterialList.Count; k++)
@@ -180,7 +179,7 @@ namespace IndustrialPark.Models
             return MaterialList;
         }
 
-        public static ModelConverterData FixUVCoords(ModelConverterData data)
+        public static void FixUVCoords(ref ModelConverterData data)
         {
             for (int i = 0; i < data.TriangleList.Count; i++)
             {
@@ -202,9 +201,7 @@ namespace IndustrialPark.Models
                         TempVertex.TexCoord.X = data.UVList[data.TriangleList[i].UVCoord1].X;
                         TempVertex.TexCoord.Y = data.UVList[data.TriangleList[i].UVCoord1].Y;
 
-                        Triangle TempTriangle = data.TriangleList[i];
-                        TempTriangle.vertex1 = data.VertexList.Count;
-                        data.TriangleList[i] = TempTriangle;
+                        data.TriangleList[i].vertex1 = data.VertexList.Count;
                         data.VertexList.Add(TempVertex);
                     }
                 }
@@ -226,9 +223,7 @@ namespace IndustrialPark.Models
                         TempVertex.TexCoord.X = data.UVList[data.TriangleList[i].UVCoord2].X;
                         TempVertex.TexCoord.Y = data.UVList[data.TriangleList[i].UVCoord2].Y;
 
-                        Triangle TempTriangle = data.TriangleList[i];
-                        TempTriangle.vertex2 = data.VertexList.Count;
-                        data.TriangleList[i] = TempTriangle;
+                        data.TriangleList[i].vertex2 = data.VertexList.Count;
                         data.VertexList.Add(TempVertex);
                     }
                 }
@@ -250,18 +245,14 @@ namespace IndustrialPark.Models
                         TempVertex.TexCoord.X = data.UVList[data.TriangleList[i].UVCoord3].X;
                         TempVertex.TexCoord.Y = data.UVList[data.TriangleList[i].UVCoord3].Y;
 
-                        Triangle TempTriangle = data.TriangleList[i];
-                        TempTriangle.vertex3 = data.VertexList.Count;
-                        data.TriangleList[i] = TempTriangle;
+                        data.TriangleList[i].vertex3 = data.VertexList.Count;
                         data.VertexList.Add(TempVertex);
                     }
                 }
             }
-
-            return data;
         }
 
-        public static ModelConverterData FixNormals(ModelConverterData data)
+        public static void FixNormals(ref ModelConverterData data)
         {
             List<Vector3>[] normalListList = new List<Vector3>[data.VertexList.Count];
             for (int i = 0; i < normalListList.Count(); i++)
@@ -285,101 +276,82 @@ namespace IndustrialPark.Models
                 TempVertex.Normal = acc;
                 data.VertexList[i] = TempVertex;
             }
-
-            return data;
         }
 
-        public static ModelConverterData FixColors(ModelConverterData d)
+        public static void FixColors(ref ModelConverterData d)
         {
-            List<Vertex> VertexStream = d.VertexList;
-            List<Vector3> NormalList = d.NormalList;
-            List<Triangle> TriangleStream = d.TriangleList;
-            List<Color> ColorStream = d.ColorList;
-
-            for (int i = 0; i < TriangleStream.Count; i++)
+            for (int i = 0; i < d.TriangleList.Count; i++)
             {
-                if (VertexStream[TriangleStream[i].vertex1].HasColor == false)
+                if (d.VertexList[d.TriangleList[i].vertex1].HasColor == false)
                 {
-                    Vertex TempVertex = VertexStream[TriangleStream[i].vertex1];
+                    Vertex TempVertex = d.VertexList[d.TriangleList[i].vertex1];
 
-                    TempVertex.Color = ColorStream[TriangleStream[i].Color1];
+                    TempVertex.Color = d.ColorList[d.TriangleList[i].Color1];
                     TempVertex.HasColor = true;
-                    VertexStream[TriangleStream[i].vertex1] = TempVertex;
+                    d.VertexList[d.TriangleList[i].vertex1] = TempVertex;
                 }
                 else
                 {
-                    Vertex TempVertex = VertexStream[TriangleStream[i].vertex1];
+                    Vertex TempVertex = d.VertexList[d.TriangleList[i].vertex1];
 
-                    if (TempVertex.Color != ColorStream[TriangleStream[i].Color1])
+                    if (!TempVertex.Color.Equals(d.ColorList[d.TriangleList[i].Color1]))
                     {
-                        TempVertex.Color.R = ColorStream[TriangleStream[i].Color1].R;
-                        TempVertex.Color.G = ColorStream[TriangleStream[i].Color1].G;
-                        TempVertex.Color.B = ColorStream[TriangleStream[i].Color1].B;
-                        TempVertex.Color.A = ColorStream[TriangleStream[i].Color1].A;
+                        TempVertex.Color.R = d.ColorList[d.TriangleList[i].Color1].R;
+                        TempVertex.Color.G = d.ColorList[d.TriangleList[i].Color1].G;
+                        TempVertex.Color.B = d.ColorList[d.TriangleList[i].Color1].B;
+                        TempVertex.Color.A = d.ColorList[d.TriangleList[i].Color1].A;
 
-                        Triangle TempTriangle = TriangleStream[i];
-                        TempTriangle.vertex1 = VertexStream.Count;
-                        TriangleStream[i] = TempTriangle;
-                        VertexStream.Add(TempVertex);
+                        d.TriangleList[i].vertex1 = d.VertexList.Count;
+                        d.VertexList.Add(TempVertex);
                     }
                 }
-                if (VertexStream[TriangleStream[i].vertex2].HasColor == false)
+                if (d.VertexList[d.TriangleList[i].vertex2].HasColor == false)
                 {
-                    Vertex TempVertex = VertexStream[TriangleStream[i].vertex2];
+                    Vertex TempVertex = d.VertexList[d.TriangleList[i].vertex2];
 
-                    TempVertex.Color = ColorStream[TriangleStream[i].Color2];
+                    TempVertex.Color = d.ColorList[d.TriangleList[i].Color2];
                     TempVertex.HasColor = true;
-                    VertexStream[TriangleStream[i].vertex2] = TempVertex;
+                    d.VertexList[d.TriangleList[i].vertex2] = TempVertex;
                 }
                 else
                 {
-                    Vertex TempVertex = VertexStream[TriangleStream[i].vertex2];
+                    Vertex TempVertex = d.VertexList[d.TriangleList[i].vertex2];
 
-                    if (TempVertex.Color != ColorStream[TriangleStream[i].Color2])
+                    if (!TempVertex.Color.Equals(d.ColorList[d.TriangleList[i].Color2]))
                     {
-                        TempVertex.Color.R = ColorStream[TriangleStream[i].Color2].R;
-                        TempVertex.Color.G = ColorStream[TriangleStream[i].Color2].G;
-                        TempVertex.Color.B = ColorStream[TriangleStream[i].Color2].B;
-                        TempVertex.Color.A = ColorStream[TriangleStream[i].Color2].A;
+                        TempVertex.Color.R = d.ColorList[d.TriangleList[i].Color2].R;
+                        TempVertex.Color.G = d.ColorList[d.TriangleList[i].Color2].G;
+                        TempVertex.Color.B = d.ColorList[d.TriangleList[i].Color2].B;
+                        TempVertex.Color.A = d.ColorList[d.TriangleList[i].Color2].A;
 
-                        Triangle TempTriangle = TriangleStream[i];
-                        TempTriangle.vertex2 = VertexStream.Count;
-                        TriangleStream[i] = TempTriangle;
-                        VertexStream.Add(TempVertex);
+                        d.TriangleList[i].vertex2 = d.VertexList.Count;
+                        d.VertexList.Add(TempVertex);
                     }
                 }
-                if (VertexStream[TriangleStream[i].vertex3].HasColor == false)
+                if (d.VertexList[d.TriangleList[i].vertex3].HasColor == false)
                 {
-                    Vertex TempVertex = VertexStream[TriangleStream[i].vertex3];
+                    Vertex TempVertex = d.VertexList[d.TriangleList[i].vertex3];
 
-                    TempVertex.Color = ColorStream[TriangleStream[i].Color3];
+                    TempVertex.Color = d.ColorList[d.TriangleList[i].Color3];
                     TempVertex.HasColor = true;
-                    VertexStream[TriangleStream[i].vertex3] = TempVertex;
+                    d.VertexList[d.TriangleList[i].vertex3] = TempVertex;
                 }
                 else
                 {
-                    Vertex TempVertex = VertexStream[TriangleStream[i].vertex3];
+                    Vertex TempVertex = d.VertexList[d.TriangleList[i].vertex3];
 
-                    if (TempVertex.Color != ColorStream[TriangleStream[i].Color3])
+                    if (!TempVertex.Color.Equals(d.ColorList[d.TriangleList[i].Color3]))
                     {
-                        TempVertex.Color.R = ColorStream[TriangleStream[i].Color3].R;
-                        TempVertex.Color.G = ColorStream[TriangleStream[i].Color3].G;
-                        TempVertex.Color.B = ColorStream[TriangleStream[i].Color3].B;
-                        TempVertex.Color.A = ColorStream[TriangleStream[i].Color3].A;
+                        TempVertex.Color.R = d.ColorList[d.TriangleList[i].Color3].R;
+                        TempVertex.Color.G = d.ColorList[d.TriangleList[i].Color3].G;
+                        TempVertex.Color.B = d.ColorList[d.TriangleList[i].Color3].B;
+                        TempVertex.Color.A = d.ColorList[d.TriangleList[i].Color3].A;
 
-                        Triangle TempTriangle = TriangleStream[i];
-                        TempTriangle.vertex3 = VertexStream.Count;
-                        TriangleStream[i] = TempTriangle;
-                        VertexStream.Add(TempVertex);
+                        d.TriangleList[i].vertex3 = d.VertexList.Count;
+                        d.VertexList.Add(TempVertex);
                     }
                 }
             }
-
-            d.VertexList = VertexStream;
-            d.ColorList = ColorStream;
-            d.TriangleList = TriangleStream;
-
-            return d;
         }
     }
 }

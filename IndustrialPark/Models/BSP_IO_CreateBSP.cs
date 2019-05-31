@@ -492,9 +492,9 @@ namespace IndustrialPark.Models
                 foreach (Triangle j in triangleList)
                     if (j.materialIndex == i)
                         OBJWriter.WriteLine("f "
-                            + j.vertex1.ToString() + "/" + j.vertex1.ToString() + " "
-                            + j.vertex2.ToString() + "/" + j.vertex2.ToString() + " "
-                            + j.vertex3.ToString() + "/" + j.vertex3.ToString());
+                            + j.vertex1.ToString() + "/" + j.vertex1.ToString() + "/" + j.vertex1.ToString() + " "
+                            + j.vertex2.ToString() + "/" + j.vertex2.ToString() + "/" + j.vertex2.ToString() + " "
+                            + j.vertex3.ToString() + "/" + j.vertex3.ToString() + "/" + j.vertex3.ToString());
 
                 OBJWriter.WriteLine();
             }

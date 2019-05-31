@@ -334,10 +334,14 @@ namespace IndustrialPark.Models
                 TotalColors += i.VColorList.Count;
             }
 
-            if (ignoreUVsAndColors)
-                return data;
+            if (!ignoreUVsAndColors)
+            {
+                FixNormals(ref data);
+                FixUVCoords(ref data);
+                FixColors(ref data);
+            }
 
-            return FixColors(FixUVCoords(FixNormals(data)));
+            return data;
         }
 
         //public static void CreateDAEFile(string OutputFileName)

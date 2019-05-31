@@ -93,6 +93,7 @@
             this.toolStripMenuItem_Export = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_EditHeader = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_EditData = new System.Windows.Forms.ToolStripMenuItem();
+            this.mergeSimilarAssetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -178,8 +179,9 @@
             // 
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.collapseLayersToolStripMenuItem,
-            this.verifyArchiveToolStripMenuItem,
+            this.mergeSimilarAssetsToolStripMenuItem,
             this.applyScaleToolStripMenuItem,
+            this.verifyArchiveToolStripMenuItem,
             this.toolStripSeparator3,
             this.hipHopToolExportToolStripMenuItem,
             this.importHIPArchiveToolStripMenuItem,
@@ -715,6 +717,14 @@
             this.toolStripMenuItem_EditData.Text = "Edit Data (Ctrl + G)";
             this.toolStripMenuItem_EditData.Click += new System.EventHandler(this.buttonInternalEdit_Click);
             // 
+            // mergeSimilarAssetsToolStripMenuItem
+            // 
+            this.mergeSimilarAssetsToolStripMenuItem.Enabled = false;
+            this.mergeSimilarAssetsToolStripMenuItem.Name = "mergeSimilarAssetsToolStripMenuItem";
+            this.mergeSimilarAssetsToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.mergeSimilarAssetsToolStripMenuItem.Text = "Merge Similar Assets";
+            this.mergeSimilarAssetsToolStripMenuItem.Click += new System.EventHandler(this.MergeSimilarAssetsToolStripMenuItem_Click);
+            // 
             // ArchiveEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -810,5 +820,6 @@
         private System.Windows.Forms.ToolStripMenuItem importNoRW3ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importModelsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem verifyArchiveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mergeSimilarAssetsToolStripMenuItem;
     }
 }

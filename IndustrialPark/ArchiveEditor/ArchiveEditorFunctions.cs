@@ -158,6 +158,8 @@ namespace IndustrialPark
 
         public List<uint> GetAssetIDsOnLayer(int index) => DICT.LTOC.LHDRList[index].assetIDlist;
 
+        public List<Section_AHDR> GetAssetsOfType(AssetType assetType) => (from asset in assetDictionary.Values where asset.AHDR.assetType == assetType select asset.AHDR).ToList();
+        
         public void AddLayer()
         {
             DICT.LTOC.LHDRList.Add(new Section_LHDR()

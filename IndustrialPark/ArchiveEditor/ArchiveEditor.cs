@@ -63,6 +63,7 @@ namespace IndustrialPark
                 hipHopToolExportToolStripMenuItem.Enabled = true;
                 importHIPArchiveToolStripMenuItem.Enabled = true;
                 collapseLayersToolStripMenuItem.Enabled = true;
+                mergeSimilarAssetsToolStripMenuItem.Enabled = true;
                 verifyArchiveToolStripMenuItem.Enabled = true;
                 applyScaleToolStripMenuItem.Enabled = true;
 
@@ -105,11 +106,12 @@ namespace IndustrialPark
 
             saveToolStripMenuItem.Enabled = true;
             saveAsToolStripMenuItem.Enabled = true;
-            buttonAddLayer.Enabled = true;
             hipHopToolExportToolStripMenuItem.Enabled = true;
             importHIPArchiveToolStripMenuItem.Enabled = true;
             tXDArchiveToolStripMenuItem.Enabled = true;
+            buttonAddLayer.Enabled = true;
             collapseLayersToolStripMenuItem.Enabled = true;
+            mergeSimilarAssetsToolStripMenuItem.Enabled = true;
             verifyArchiveToolStripMenuItem.Enabled = true;
             applyScaleToolStripMenuItem.Enabled = true;
 
@@ -235,24 +237,41 @@ namespace IndustrialPark
 
             programIsChangingStuff = true;
 
-            if (Functions.currentGame == Game.Incredibles)
-                comboBoxLayerTypes.SelectedItem = (LayerType_TSSM)archive.GetLayerType(comboBoxLayers.SelectedIndex);
+            if (comboBoxLayers.SelectedIndex == -1)
+            {
+                comboBoxLayerTypes.SelectedItem = null;
+
+                comboBoxAssetTypes.Items.Clear();
+                comboBoxAssetTypes.SelectedIndex = -1;
+                PopulateAssetList();
+
+                buttonAddAsset.Enabled = false;
+                buttonPaste.Enabled = false;
+                buttonRemoveLayer.Enabled = false;
+                buttonArrowUp.Enabled = false;
+                buttonArrowDown.Enabled = false;
+                importMultipleAssetsToolStripMenuItem.Enabled = false;
+                importModelsToolStripMenuItem.Enabled = false;
+                addTemplateToolStripMenuItem.Enabled = false;
+            }
             else
-                comboBoxLayerTypes.SelectedItem = (LayerType_BFBB)archive.GetLayerType(comboBoxLayers.SelectedIndex);
+            {
+                if (Functions.currentGame == Game.Incredibles)
+                    comboBoxLayerTypes.SelectedItem = (LayerType_TSSM)archive.GetLayerType(comboBoxLayers.SelectedIndex);
+                else
+                    comboBoxLayerTypes.SelectedItem = (LayerType_BFBB)archive.GetLayerType(comboBoxLayers.SelectedIndex);
 
-            PopulateAssetListAndComboBox();
+                PopulateAssetListAndComboBox();
 
-            buttonAddAsset.Enabled = true;
-            buttonPaste.Enabled = true;
-            buttonRemoveLayer.Enabled = true;
-            buttonArrowUp.Enabled = true;
-            buttonArrowDown.Enabled = true;
-            importMultipleAssetsToolStripMenuItem.Enabled = true;
-            importModelsToolStripMenuItem.Enabled = true;
-            addTemplateToolStripMenuItem.Enabled = true;
-            collapseLayersToolStripMenuItem.Enabled = true;
-            verifyArchiveToolStripMenuItem.Enabled = true;
-            applyScaleToolStripMenuItem.Enabled = true;
+                buttonAddAsset.Enabled = true;
+                buttonPaste.Enabled = true;
+                buttonRemoveLayer.Enabled = true;
+                buttonArrowUp.Enabled = true;
+                buttonArrowDown.Enabled = true;
+                importMultipleAssetsToolStripMenuItem.Enabled = true;
+                importModelsToolStripMenuItem.Enabled = true;
+                addTemplateToolStripMenuItem.Enabled = true;
+            }
 
             programIsChangingStuff = false;
         }
@@ -305,6 +324,7 @@ namespace IndustrialPark
                 buttonPaste.Enabled = false;
                 buttonRemoveLayer.Enabled = false;
                 collapseLayersToolStripMenuItem.Enabled = false;
+                mergeSimilarAssetsToolStripMenuItem.Enabled = false;
                 verifyArchiveToolStripMenuItem.Enabled = false;
                 applyScaleToolStripMenuItem.Enabled = false;
                 buttonArrowUp.Enabled = false;
@@ -385,7 +405,7 @@ namespace IndustrialPark
 
             if (select)
             {
-                int ensureVisible = - 1;
+                int ensureVisible = -1;
 
                 for (int i = 0; i < listViewAssets.Items.Count; i++)
                 {
@@ -393,7 +413,8 @@ namespace IndustrialPark
                         ensureVisible = i;
                 }
 
-                listViewAssets.EnsureVisible(ensureVisible);
+                if (ensureVisible != -1)
+                    listViewAssets.EnsureVisible(ensureVisible);
             }
 
             toolStripStatusLabelSelectionCount.Text = $"{listViewAssets.SelectedItems.Count}/{listViewAssets.Items.Count} assets selected";
@@ -798,6 +819,12 @@ namespace IndustrialPark
                 if (dialogResult == DialogResult.Yes)
                     archive.ApplyScale(scale);
             }
+        }
+
+        private void MergeSimilarAssetsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            archive.MergeSimilar();
+            comboBoxLayers_SelectedIndexChanged(sender, e);
         }
 
         private void hipHopToolExportToolStripMenuItem_Click(object sender, EventArgs e)
