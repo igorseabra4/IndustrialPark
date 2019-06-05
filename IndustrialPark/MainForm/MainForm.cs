@@ -30,9 +30,7 @@ namespace IndustrialPark
 
             renderer = new SharpRenderer(renderPanel);
         }
-
-        bool close = false;
-
+        
         private string pathToSettings => Application.StartupPath + "/ip_settings.json";
         private string currentProjectPath;
         public string userTemplatesFolder => Application.StartupPath + "\\Resources\\UserTemplates\\";
@@ -99,7 +97,7 @@ namespace IndustrialPark
                 AutosaveOnClose = autoSaveOnClosingToolStripMenuItem.Checked,
                 AutoloadOnStartup = autoLoadOnStartupToolStripMenuItem.Checked,
                 LastProjectPath = currentProjectPath,
-                CheckForUpdatesOnStartup = checkForUpdatesNowToolStripMenuItem.Checked
+                CheckForUpdatesOnStartup = checkForUpdatesOnStartupToolStripMenuItem.Checked
             };
 
             File.WriteAllText(pathToSettings, JsonConvert.SerializeObject(settings, Formatting.Indented));
@@ -208,7 +206,7 @@ namespace IndustrialPark
 
         private void CheckForUpdatesOnStartupToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            checkForUpdatesNowToolStripMenuItem.Checked = !checkForUpdatesNowToolStripMenuItem.Checked;
+            checkForUpdatesOnStartupToolStripMenuItem.Checked = !checkForUpdatesOnStartupToolStripMenuItem.Checked;
         }
 
         private void CheckForUpdatesNowToolStripMenuItem_Click(object sender, EventArgs e)
@@ -231,7 +229,7 @@ namespace IndustrialPark
                     IPversion updatedVersion = JsonConvert.DeserializeObject<IPversion>(updatedJson);
                     IPversion oldVersion = new IPversion();
 
-                    if (updatedVersion.released && oldVersion.version != updatedVersion.version)
+                    if (oldVersion.version != updatedVersion.version)
                     {
                         string messageText = "There is an update available for Industrial Park: " + updatedVersion.versionName + ". Do you wish to download it?";
                         DialogResult d = MessageBox.Show(messageText, "Update Available", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
