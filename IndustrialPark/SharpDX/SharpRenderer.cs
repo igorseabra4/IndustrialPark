@@ -31,12 +31,6 @@ namespace IndustrialPark
 
         public SharpRenderer(Control control)
         {
-            if (!SharpDevice.IsDirectX11Supported())
-            {
-                MessageBox.Show("DirectX11 not supported. Maximum feature level is " + SharpDevice.GetSupportedFeatureLevel().ToString());
-                return;
-            }
-
             try
             {
                 device = new SharpDevice(control, false);

@@ -25,6 +25,12 @@ namespace IndustrialPark
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            if (!SharpDevice.IsDirectX11Supported())
+            {
+                MessageBox.Show("DirectX11 feature level 11.0 is required to run Industrial Park. Maximum supported feature level is " + SharpDevice.GetSupportedFeatureLevel().ToString() + ". Please update your DirectX.");
+                return;
+            }
+
             MainForm = new MainForm();
 
             if (!Directory.Exists(MainForm.userTemplatesFolder))

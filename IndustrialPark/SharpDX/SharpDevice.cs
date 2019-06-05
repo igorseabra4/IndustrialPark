@@ -83,6 +83,9 @@ namespace IndustrialPark
                 Usage = Usage.RenderTargetOutput,
             };
 
+            //if (GetSupportedFeatureLevel() >= FeatureLevel.Level_10_0)
+            //    featureLevel = GetSupportedFeatureLevel();
+
             FeatureLevel[] levels = new FeatureLevel[] { featureLevel };
 
             //create device and swapchain
@@ -411,10 +414,10 @@ namespace IndustrialPark
         /// <returns>Supported</returns>
         public static bool IsDirectX11Supported()
         {
-#if DEBUG
+            #if DEBUG
             featureLevel = SharpDX.Direct3D11.Device.GetSupportedFeatureLevel();
-#endif
-            return Device11.GetSupportedFeatureLevel() == featureLevel;
+            #endif
+            return Device11.GetSupportedFeatureLevel() >= FeatureLevel.Level_10_0;
         }
 
         public static FeatureLevel GetSupportedFeatureLevel()

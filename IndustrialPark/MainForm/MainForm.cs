@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Newtonsoft.Json;
+using System.IO.Compression;
 
 namespace IndustrialPark
 {
@@ -30,6 +31,8 @@ namespace IndustrialPark
             renderer = new SharpRenderer(renderPanel);
         }
 
+        bool close = false;
+
         private string pathToSettings => Application.StartupPath + "/ip_settings.json";
         private string currentProjectPath;
         public string userTemplatesFolder => Application.StartupPath + "\\Resources\\UserTemplates\\";
@@ -44,7 +47,11 @@ namespace IndustrialPark
 
                 autoSaveOnClosingToolStripMenuItem.Checked = settings.AutosaveOnClose;
                 autoLoadOnStartupToolStripMenuItem.Checked = settings.AutoloadOnStartup;
+                checkForUpdatesOnStartupToolStripMenuItem.Checked = settings.CheckForUpdatesOnStartup;
 
+                if (settings.CheckForUpdatesOnStartup && CheckForUpdates())
+                    return;
+                
                 string[] args = Environment.GetCommandLineArgs();
                 if (args.Length > 1)
                 {
@@ -91,7 +98,8 @@ namespace IndustrialPark
             {
                 AutosaveOnClose = autoSaveOnClosingToolStripMenuItem.Checked,
                 AutoloadOnStartup = autoLoadOnStartupToolStripMenuItem.Checked,
-                LastProjectPath = currentProjectPath
+                LastProjectPath = currentProjectPath,
+                CheckForUpdatesOnStartup = checkForUpdatesNowToolStripMenuItem.Checked
             };
 
             File.WriteAllText(pathToSettings, JsonConvert.SerializeObject(settings, Formatting.Indented));
@@ -196,6 +204,60 @@ namespace IndustrialPark
         private void autoSaveOnClosingToolStripMenuItem_Click(object sender, EventArgs e)
         {
             autoSaveOnClosingToolStripMenuItem.Checked = !autoSaveOnClosingToolStripMenuItem.Checked;
+        }
+
+        private void CheckForUpdatesOnStartupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            checkForUpdatesNowToolStripMenuItem.Checked = !checkForUpdatesNowToolStripMenuItem.Checked;
+        }
+
+        private void CheckForUpdatesNowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CheckForUpdates();
+        }
+
+        public bool CheckForUpdates()
+        {
+            string versionInfoURL = "https://raw.githubusercontent.com/igorseabra4/IndustrialPark/master/IndustrialPark/MainForm/Json/IPversion.cs";
+
+            try
+            {
+                using (var webClient = new System.Net.WebClient())
+                {
+                    string updatedJson;
+
+                    updatedJson = webClient.DownloadString(versionInfoURL);
+
+                    IPversion updatedVersion = JsonConvert.DeserializeObject<IPversion>(updatedJson);
+                    IPversion oldVersion = new IPversion();
+
+                    if (updatedVersion.released && oldVersion.version != updatedVersion.version)
+                    {
+                        string messageText = "There is an update available for Industrial Park: " + updatedVersion.versionName + ". Do you wish to download it?";
+                        DialogResult d = MessageBox.Show(messageText, "Update Available", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+                        string updatedIPfileName = "IndustrialPark_" + updatedVersion.version.Replace('p', 'P') + ".zip";
+                        string updatedIPURL = "https://github.com/igorseabra4/IndustrialPark/releases/download/" + updatedVersion.version + "/" + updatedIPfileName;
+
+                        if (d == DialogResult.Yes)
+                        {
+                            string updatedIPfilePath = Application.StartupPath + "\\Resources\\" + updatedIPfileName;
+                            webClient.DownloadFile(updatedIPURL, updatedIPfilePath);
+
+                            ZipFile.ExtractToDirectory(updatedIPfilePath, Application.StartupPath);
+
+                            return true;
+                        }
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("There was an error checking for updates: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
+            return false;
         }
 
         public ProjectJson FromCurrentInstance()
