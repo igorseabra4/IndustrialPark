@@ -282,7 +282,7 @@ namespace IndustrialPark
 
                             foreach (string s2 in Directory.GetFiles(Application.StartupPath + s))
                             {
-                                if (Path.GetExtension(s2).ToLower().Equals(".zip"))
+                                if (Path.GetExtension(s2).ToLower().Equals(".zip") || Path.GetExtension(s2).ToLower().Equals(".json"))
                                     continue;
 
                                 string newFilePath = oldPath + s + "\\" + Path.GetFileName(s2);
@@ -295,6 +295,8 @@ namespace IndustrialPark
                         }
                         
                         ZipFile.ExtractToDirectory(updatedIPfilePath, Application.StartupPath);
+
+                        File.Delete(updatedIPfilePath);
 
                         return true;
                     }
@@ -315,7 +317,9 @@ namespace IndustrialPark
                 string editorFilesZipURL = "https://github.com/igorseabra4/IndustrialPark-EditorFiles/archive/master.zip";
                 string destZipPath = Application.StartupPath + "\\Resources\\IndustrialPark-EditorFiles.zip";
                 string editorFilesFolder = Application.StartupPath + "\\Resources\\IndustrialPark-EditorFiles\\";
-                
+
+                MessageBox.Show("Will begin download of IndustrialPark-EditorFiles from GitHub to " + editorFilesFolder + ". Please wait as this might take a while. Any previously existing files in the folder will be overwritten.");
+
                 using (var webClient = new WebClient())
                     webClient.DownloadFile(new Uri(editorFilesZipURL), destZipPath);
 
