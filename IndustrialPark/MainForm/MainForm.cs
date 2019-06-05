@@ -47,8 +47,11 @@ namespace IndustrialPark
                 autoLoadOnStartupToolStripMenuItem.Checked = settings.AutoloadOnStartup;
                 checkForUpdatesOnStartupToolStripMenuItem.Checked = settings.CheckForUpdatesOnStartup;
 
-                if (settings.CheckForUpdatesOnStartup && CheckForUpdates())
-                    return;
+                if (settings.CheckForUpdatesOnStartup && UpdateIndustrialPark())
+                {
+                    Close();
+                    System.Diagnostics.Process.Start(Application.StartupPath + "\\IndustrialPark.exe");
+                }
                 
                 string[] args = Environment.GetCommandLineArgs();
                 if (args.Length > 1)
@@ -211,20 +214,22 @@ namespace IndustrialPark
 
         private void CheckForUpdatesNowToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CheckForUpdates();
+            if (UpdateIndustrialPark())
+            {
+                Close();
+                System.Diagnostics.Process.Start(Application.StartupPath + "\\IndustrialPark.exe");
+            }
         }
 
-        public bool CheckForUpdates()
+        public bool UpdateIndustrialPark()
         {
-            string versionInfoURL = "https://raw.githubusercontent.com/igorseabra4/IndustrialPark/master/IndustrialPark/MainForm/Json/IPversion.cs";
+            string versionInfoURL = "https://raw.githubusercontent.com/igorseabra4/IndustrialPark/master/IndustrialPark/Resources/ip_version.json";
 
             try
             {
                 using (var webClient = new System.Net.WebClient())
                 {
-                    string updatedJson;
-
-                    updatedJson = webClient.DownloadString(versionInfoURL);
+                    string updatedJson = webClient.DownloadString(versionInfoURL);
 
                     IPversion updatedVersion = JsonConvert.DeserializeObject<IPversion>(updatedJson);
                     IPversion oldVersion = new IPversion();
@@ -239,11 +244,39 @@ namespace IndustrialPark
 
                         if (d == DialogResult.Yes)
                         {
+                            string oldPath = Application.StartupPath + "\\IndustrialPark_old\\";
+
+                            if (!Directory.Exists(oldPath))
+                                Directory.CreateDirectory(oldPath);
+
+                            foreach (string s in new string[]
+                            {
+                                "",
+                                "\\Resources",
+                                "\\Resources\\importvcolorobj",
+                                "\\Resources\\Models",
+                                "\\Resources\\SharpDX"
+                            })
+                            {
+                                if (!Directory.Exists(oldPath + s))
+                                    Directory.CreateDirectory(oldPath + s);
+
+                                foreach (string s2 in Directory.GetFiles(Application.StartupPath + s))
+                                {
+                                    string newFilePath = oldPath + s + "\\" + Path.GetFileName(s2);
+
+                                    if (File.Exists(newFilePath))
+                                        File.Delete(newFilePath);
+
+                                    File.Move(s2, newFilePath);
+                                }
+                            }
+
                             string updatedIPfilePath = Application.StartupPath + "\\Resources\\" + updatedIPfileName;
                             webClient.DownloadFile(updatedIPURL, updatedIPfilePath);
 
                             ZipFile.ExtractToDirectory(updatedIPfilePath, Application.StartupPath);
-
+                            
                             return true;
                         }
 
