@@ -235,6 +235,7 @@
     <Compile Include="Links\LinkBFBB.cs" />
     <Compile Include="Links\LinkIncredibles.cs" />
     <Compile Include="Links\LinkTSSM.cs" />
+    <Compile Include="Other\AutomaticUpdater.cs" />
     <Compile Include="MainForm\EditName.cs">
       <SubType>Form</SubType>
     </Compile>
