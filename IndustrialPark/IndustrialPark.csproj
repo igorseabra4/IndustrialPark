@@ -102,6 +102,12 @@
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Gizmos.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetTemplates.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetEditing.cs" />
+    <Compile Include="ArchiveEditor\Dialogs\ImportTextures.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\Dialogs\ImportTextures.Designer.cs">
+      <DependentUpon>ImportTextures.cs</DependentUpon>
+    </Compile>
     <Compile Include="ArchiveEditor\Dialogs\ScrollableMessageBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -116,6 +122,12 @@
     </Compile>
     <Compile Include="ArchiveEditor\Dialogs\LinkEditor.Designer.cs">
       <DependentUpon>LinkEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ArchiveEditor\InternalEditors\InternalTextureEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\InternalEditors\InternalTextureEditor.Designer.cs">
+      <DependentUpon>InternalTextureEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="ArchiveEditor\InternalEditors\InternalModelEditor.cs">
       <SubType>Form</SubType>
@@ -420,11 +432,17 @@
     <Compile Include="Models\Vertex.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="ArchiveEditor\Dialogs\ImportTextures.resx">
+      <DependentUpon>ImportTextures.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\Dialogs\ScrollableMessageBox.resx">
       <DependentUpon>ScrollableMessageBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\Dialogs\ImportModel.resx">
       <DependentUpon>ImportModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalTextureEditor.resx">
+      <DependentUpon>InternalTextureEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalModelEditor.resx">
       <DependentUpon>InternalModelEditor.cs</DependentUpon>
@@ -588,6 +606,33 @@
     <None Include="Resources\Models\Torus.DFF">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Resources\txdgen_1.0\LICENSES\eirrepo\LICENSE">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\txdgen_1.0\LICENSES\libimagequant\COPYRIGHT">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\txdgen_1.0\LICENSES\libjpeg\COPYRIGHT">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\txdgen_1.0\LICENSES\libpng\COPYRIGHT">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\txdgen_1.0\LICENSES\libsquish\COPYRIGHT">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\txdgen_1.0\LICENSES\lzo-2.08\COPYING">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\txdgen_1.0\LICENSES\pvrtextool\COPYRIGHT">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\txdgen_1.0\LICENSES\rwtools\COPYRIGHT">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\txdgen_1.0\LICENSES\rwtools\README.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -618,6 +663,18 @@
     <Content Include="Resources\SharpDX\Shader_Default.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\txdgen_1.0\README.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\txdgen_1.0\txdgen.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\txdgen_1.0\txdgen64.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\txdgen_1.0\txdgen_xp.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\WhiteDefault.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -644,6 +701,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions />
 </Project>

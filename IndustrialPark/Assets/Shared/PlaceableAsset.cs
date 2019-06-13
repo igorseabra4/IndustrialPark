@@ -69,15 +69,11 @@ namespace IndustrialPark
 
             if (renderingDictionary.ContainsKey(_modelAssetID))
             {
-                if (renderingDictionary[_modelAssetID] is AssetMINF MINF)
-                {
-                    if (MINF.HasRenderWareModelFile())
-                        triangles = renderingDictionary[_modelAssetID].GetRenderWareModelFile().triangleList.ToArray();
-                    else
-                        triangles = null;
-                }
+                IAssetWithModel assetWithModel = renderingDictionary[_modelAssetID];
+                if (assetWithModel.HasRenderWareModelFile())
+                    triangles = assetWithModel.GetRenderWareModelFile().triangleList.ToArray();
                 else
-                    triangles = renderingDictionary[_modelAssetID].GetRenderWareModelFile().triangleList.ToArray();
+                    triangles = null;
             }
             else
                 triangles = null;
@@ -150,13 +146,8 @@ namespace IndustrialPark
             return Vector3.Distance(cameraPosition, _position);
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (Surface_AssetID == assetID || Model_AssetID == assetID || Animation_AssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
+        public override bool HasReference(uint assetID) => Surface_AssetID == assetID || Model_AssetID == assetID || Animation_AssetID == assetID ||
+            base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {
@@ -442,6 +433,7 @@ namespace IndustrialPark
             {
                 _modelAssetID = value;
                 Write(0x4C + Offset, _modelAssetID);
+                CreateTransformMatrix();
             }
         }
 

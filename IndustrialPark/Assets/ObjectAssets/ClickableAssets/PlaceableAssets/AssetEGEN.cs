@@ -14,14 +14,8 @@ namespace IndustrialPark
 
         protected override int EventStartOffset => 0x6C + Offset;
 
-        public override bool HasReference(uint assetID)
-        {
-            if (OnAnim_AssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
+        public override bool HasReference(uint assetID) => OnAnim_AssetID == assetID || base.HasReference(assetID);
+        
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);

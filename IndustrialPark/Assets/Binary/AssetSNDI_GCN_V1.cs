@@ -46,7 +46,6 @@ namespace IndustrialPark
                 if (a.SoundAssetID == assetID)
                     return true;
             
-
             return base.HasReference(assetID);
         }
 

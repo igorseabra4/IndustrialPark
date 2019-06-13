@@ -14,14 +14,8 @@ namespace IndustrialPark
             _motion = new Motion_Mechanism(Data.Skip(MotionStart).ToArray());
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (_motion.HasReference(assetID))
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
+        public override bool HasReference(uint assetID) => _motion.HasReference(assetID) || base.HasReference(assetID);
+        
         public override void Verify(ref List<string> result)
         {
             _motion.Verify(ref result);

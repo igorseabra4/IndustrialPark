@@ -9,16 +9,8 @@ namespace IndustrialPark
     {
         public AssetPORT(Section_AHDR AHDR) : base(AHDR) { }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (Camera_AssetID == assetID)
-                return true;
-            if (Destination_MRKR_AssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
+        public override bool HasReference(uint assetID) => Camera_AssetID == assetID || Destination_MRKR_AssetID == assetID || base.HasReference(assetID);
+        
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);

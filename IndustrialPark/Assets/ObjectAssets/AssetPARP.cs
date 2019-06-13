@@ -26,14 +26,8 @@ namespace IndustrialPark
 
         protected override int EventStartOffset => 0x138;
 
-        public override bool HasReference(uint assetID)
-        {
-            if (PARS_AssetID == assetID)
-                return true;
-            
-            return base.HasReference(assetID);
-        }
-
+        public override bool HasReference(uint assetID) => PARS_AssetID == assetID || base.HasReference(assetID);
+        
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);

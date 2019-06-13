@@ -10,14 +10,8 @@ namespace IndustrialPark
 
         protected override int EventStartOffset => 0xC8 + (Functions.currentGame == Game.Incredibles ? 4 : 0);
 
-        public override bool HasReference(uint assetID)
-        {
-            if (CSN_AssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
+        public override bool HasReference(uint assetID) => CSN_AssetID == assetID || base.HasReference(assetID);
+        
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);

@@ -1,0 +1,121 @@
+Copyright (C) 1994-2013, Thomas G. Lane, Guido Vollbeding.
+This file is part of the Independent JPEG Group's software.
+For conditions of distribution and use, see the accompanying README file.
+
+===============================================
+
+This distribution contains the ninth public release of the Independent JPEG
+Group's free JPEG software.  You are welcome to redistribute this software and
+to use it for any purpose, subject to the conditions under LEGAL ISSUES, below.
+
+This software is the work of Tom Lane, Guido Vollbeding, Philip Gladstone,
+Bill Allombert, Jim Boucher, Lee Crocker, Bob Friesenhahn, Ben Jackson,
+Julian Minguillon, Luis Ortiz, George Phillips, Davide Rossi, Ge' Weijers,
+and other members of the Independent JPEG Group.
+
+IJG is not affiliated with the ISO/IEC JTC1/SC29/WG1 standards committee
+(previously known as JPEG, together with ITU-T SG16).
+
+LEGAL ISSUES
+============
+
+In plain English:
+
+1. We don't promise that this software works.  (But if you find any bugs,
+   please let us know!)
+2. You can use this software for whatever you want.  You don't have to pay us.
+3. You may not pretend that you wrote this software.  If you use it in a
+   program, you must acknowledge somewhere in your documentation that
+   you've used the IJG code.
+
+In legalese:
+
+The authors make NO WARRANTY or representation, either express or implied,
+with respect to this software, its quality, accuracy, merchantability, or
+fitness for a particular purpose.  This software is provided "AS IS", and you,
+its user, assume the entire risk as to its quality and accuracy.
+
+This software is copyright (C) 1991-2014, Thomas G. Lane, Guido Vollbeding.
+All Rights Reserved except as specified below.
+
+Permission is hereby granted to use, copy, modify, and distribute this
+software (or portions thereof) for any purpose, without fee, subject to these
+conditions:
+(1) If any part of the source code for this software is distributed, then this
+README file must be included, with this copyright and no-warranty notice
+unaltered; and any additions, deletions, or changes to the original files
+must be clearly indicated in accompanying documentation.
+(2) If only executable code is distributed, then the accompanying
+documentation must state that "this software is based in part on the work of
+the Independent JPEG Group".
+(3) Permission for use of this software is granted only if the user accepts
+full responsibility for any undesirable consequences; the authors accept
+NO LIABILITY for damages of any kind.
+
+These conditions apply to any software derived from or based on the IJG code,
+not just to the unmodified library.  If you use our work, you ought to
+acknowledge us.
+
+Permission is NOT granted for the use of any IJG author's name or company name
+in advertising or publicity relating to this software or products derived from
+it.  This software may be referred to only as "the Independent JPEG Group's
+software".
+
+We specifically permit and encourage the use of this software as the basis of
+commercial products, provided that all warranty or liability claims are
+assumed by the product vendor.
+
+
+The Unix configuration script "configure" was produced with GNU Autoconf.
+It is copyright by the Free Software Foundation but is freely distributable.
+The same holds for its supporting scripts (config.guess, config.sub,
+ltmain.sh).  Another support script, install-sh, is copyright by X Consortium
+but is also freely distributable.
+
+The IJG distribution formerly included code to read and write GIF files.
+To avoid entanglement with the Unisys LZW patent (now expired), GIF reading
+support has been removed altogether, and the GIF writer has been simplified
+to produce "uncompressed GIFs".  This technique does not use the LZW
+algorithm; the resulting GIF files are larger than usual, but are readable
+by all standard GIF decoders.
+
+We are required to state that
+    "The Graphics Interchange Format(c) is the Copyright property of
+    CompuServe Incorporated.  GIF(sm) is a Service Mark property of
+    CompuServe Incorporated."
+
+ACKNOWLEDGMENTS
+===============
+
+Thank to Juergen Bruder for providing me with a copy of the common DCT
+algorithm article, only to find out that I had come to the same result
+in a more direct and comprehensible way with a more generative approach.
+
+Thank to Istvan Sebestyen and Joan L. Mitchell for inviting me to the
+ITU JPEG (Study Group 16) meeting in Geneva, Switzerland.
+
+Thank to Thomas Wiegand and Gary Sullivan for inviting me to the
+Joint Video Team (MPEG & ITU) meeting in Geneva, Switzerland.
+
+Thank to Thomas Richter and Daniel Lee for inviting me to the
+ISO/IEC JTC1/SC29/WG1 (previously known as JPEG, together with ITU-T SG16)
+meeting in Berlin, Germany.
+
+Thank to John Korejwa and Massimo Ballerini for inviting me to
+fruitful consultations in Boston, MA and Milan, Italy.
+
+Thank to Hendrik Elstner, Roland Fassauer, Simone Zuck, Guenther
+Maier-Gerber, Walter Stoeber, Fred Schmitz, and Norbert Braunagel
+for corresponding business development.
+
+Thank to Nico Zschach and Dirk Stelling of the technical support team
+at the Digital Images company in Halle for providing me with extra
+equipment for configuration tests.
+
+Thank to Richard F. Lyon (then of Foveon Inc.) for fruitful
+communication about JPEG configuration in Sigma Photo Pro software.
+
+Thank to Andrew Finkenstadt for hosting the ijg.org site.
+
+Last but not least special thank to Thomas G. Lane for the original
+design and development of this singular software package.

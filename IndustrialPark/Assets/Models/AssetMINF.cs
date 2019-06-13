@@ -73,10 +73,8 @@ namespace IndustrialPark
                 return true;
 
             foreach (ModelInst m in ModelReferences)
-            {
                 if (m.Model_AssetID == assetID)
                     return true;
-            }
 
             return base.HasReference(assetID);
         }

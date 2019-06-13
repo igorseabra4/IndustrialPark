@@ -13,18 +13,10 @@ namespace IndustrialPark
 
         protected override int EventStartOffset => 0x6C + Offset + Motion.Size;
 
-        public AssetBUTN(Section_AHDR AHDR) : base(AHDR)
-        {
-        }
+        public AssetBUTN(Section_AHDR AHDR) : base(AHDR) { }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (PressedModel_AssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
+        public override bool HasReference(uint assetID) => PressedModel_AssetID == assetID || base.HasReference(assetID);
+        
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);

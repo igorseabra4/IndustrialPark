@@ -123,6 +123,9 @@ namespace IndustrialPark
 
             autoCompleteSource.AddRange(autoComplete.ToArray());
 
+            if (GetAssetsOfType(AssetType.RWTX).Any())
+                SetupCustomTextures();
+
             RecalculateAllMatrices();
 
             progressBar.Close();
@@ -287,6 +290,8 @@ namespace IndustrialPark
                 pick.ClearDictionary();
             else if (assetDictionary[assetID] is AssetLODT lodt)
                 lodt.ClearDictionary();
+            else if (assetDictionary[assetID] is AssetRWTX rwtx)
+                TextureManager.RemoveTexture(rwtx.Name);
         }
 
         public bool ContainsAsset(uint key)
@@ -506,6 +511,90 @@ namespace IndustrialPark
             allowRender = true;
         }
 
+        private static string txdGenFolder => Application.StartupPath + "\\Resources\\txdgen_1.0\\";
+        private static string tempGcTxdsDir => txdGenFolder + "Temp\\txds_gc\\";
+        private static string tempPcTxdsDir => txdGenFolder + "Temp\\txds_pc\\";
+        private static string pathToGcTXD => tempGcTxdsDir + "temp.txd";
+        private static string pathToPcTXD => tempPcTxdsDir + "temp.txd";
+
+        private void SetupCustomTextures()
+        {
+            if (!Directory.Exists(tempGcTxdsDir))
+                Directory.CreateDirectory(tempGcTxdsDir);
+            if (!Directory.Exists(tempPcTxdsDir))
+                Directory.CreateDirectory(tempPcTxdsDir);
+
+            ExportTextureDictionary(pathToGcTXD, true);
+
+            PerformTXDConversionExternal();
+
+            TextureManager.LoadTexturesFromTXD(pathToPcTXD);
+
+            File.Delete(pathToGcTXD);
+            File.Delete(pathToPcTXD);
+        }
+
+        public void EnableTextureForDisplay(AssetRWTX RWTX)
+        {
+            if (!Directory.Exists(tempGcTxdsDir))
+                Directory.CreateDirectory(tempGcTxdsDir);
+            if (!Directory.Exists(tempPcTxdsDir))
+                Directory.CreateDirectory(tempPcTxdsDir);
+
+            ExportSingleTextureToDictionary(pathToGcTXD, RWTX.AHDR);
+
+            PerformTXDConversionExternal();
+
+            TextureManager.LoadTexturesFromTXD(pathToPcTXD);
+
+            File.Delete(pathToGcTXD);
+            File.Delete(pathToPcTXD);
+        }
+
+        private static void PerformTXDConversionExternal(bool toPC = true, bool compress = false, bool generateMipmaps = false)
+        {
+            string ini =
+                "[Main]\r\n" +
+
+                (toPC ?
+                "gameRoot=" + tempGcTxdsDir + "\r\n" +
+                "outputRoot=" + tempPcTxdsDir + "\r\n" +
+                "targetVersion=VC\r\n" +
+                "targetPlatform=PC\r\n"
+                :
+                "gameRoot=" + tempPcTxdsDir + "\r\n" +
+                "outputRoot=" + tempGcTxdsDir + "\r\n" +
+                "targetVersion=VC\r\n" +
+                "targetPlatform=Gamecube\r\n") +
+
+                "clearMipmaps=false\r\n" +
+                "generateMipmaps=" + generateMipmaps.ToString().ToLower() + "\r\n" +
+                "mipGenMode=default\r\n" +
+                "mipGenMaxLevel=10\r\n" +
+                "improveFiltering=true\r\n" +
+                "compressTextures=" + compress.ToString().ToLower() + "\r\n" +
+                "compressionQuality=1.0\r\n" +
+                "palRuntimeType=PNGQUANT\r\n" +
+                "dxtRuntimeType=SQUISH\r\n" +
+                "warningLevel=1\r\n" +
+                "ignoreSecureWarnings=true\r\n" +
+                "reconstructIMGArchives=false\r\n" +
+                "fixIncompatibleRasters=true\r\n" +
+                "dxtPackedDecompression=false\r\n" +
+                "imgArchivesCompressed=false\r\n" +
+                "ignoreSerializationRegions=true";
+
+            string curr = Directory.GetCurrentDirectory();
+            Directory.SetCurrentDirectory(txdGenFolder);
+
+            File.WriteAllText("txdgen.ini", ini);
+
+            System.Diagnostics.Process txdgen = System.Diagnostics.Process.Start("txdgen.exe");
+            txdgen.WaitForExit();
+
+            Directory.SetCurrentDirectory(curr);
+        }
+
         public void CreateNewAsset(int layerIndex, out bool success, out uint assetID)
         {
             Section_AHDR AHDR = AssetHeader.GetAsset(new AssetHeader(), out success, out bool setPosition);
@@ -539,6 +628,9 @@ namespace IndustrialPark
             DICT.LTOC.LHDRList[layerIndex].assetIDlist.Add(AHDR.assetID);
             DICT.ATOC.AHDRList.Add(AHDR);
             AddAssetToDictionary(AHDR);
+
+            if (GetFromAssetID(AHDR.assetID) is AssetRWTX rwtx)
+                EnableTextureForDisplay(rwtx);
 
             return AHDR.assetID;
         }
@@ -686,7 +778,7 @@ namespace IndustrialPark
             }
         }
 
-        public bool ImportMultipleAssets(int layerIndex, List<Section_AHDR> AHDRs, out List<uint> assetIDs)
+        public bool ImportMultipleAssets(int layerIndex, List<Section_AHDR> AHDRs, out List<uint> assetIDs, bool overwrite)
         {
             UnsavedChanges = true;
             assetIDs = new List<uint>();
@@ -708,7 +800,14 @@ namespace IndustrialPark
                         }
                     }
 
-                    AddAssetWithUniqueID(layerIndex, AHDR);
+                    if (overwrite)
+                    {
+                        RemoveAsset(AHDR.assetID);
+                        AddAsset(layerIndex, AHDR);
+                    }
+                    else
+                        AddAssetWithUniqueID(layerIndex, AHDR);
+
                     assetIDs.Add(AHDR.assetID);
                 }
 

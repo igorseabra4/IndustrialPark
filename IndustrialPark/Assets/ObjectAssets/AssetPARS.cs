@@ -10,15 +10,7 @@ namespace IndustrialPark
     {
         public AssetPARS(Section_AHDR AHDR) : base(AHDR) { }
         
-        public override bool HasReference(uint assetID)
-        {
-            if (TextureAssetID == assetID)
-                return true;
-            if (PARS_AssetID == assetID)
-                return true;
-            
-            return base.HasReference(assetID);
-        }
+        public override bool HasReference(uint assetID) => TextureAssetID == assetID || PARS_AssetID == assetID || base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {

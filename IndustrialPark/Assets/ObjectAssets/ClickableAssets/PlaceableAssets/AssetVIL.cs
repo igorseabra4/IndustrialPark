@@ -16,22 +16,9 @@ namespace IndustrialPark
 
         public AssetVIL(Section_AHDR AHDR) : base(AHDR) { }
 
-        public override bool HasReference(uint assetID)
-        {
-            if ((uint)VilType == assetID)
-                return true;
-            if (NPCSettings_AssetID == assetID)
-                return true;
-            if (MovePoint_AssetID == assetID)
-                return true;
-            if (TaskDYNA1_AssetID == assetID)
-                return true;
-            if (TaskDYNA2_AssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
+        public override bool HasReference(uint assetID) => (uint)VilType == assetID || NPCSettings_AssetID == assetID || MovePoint_AssetID == assetID ||
+            TaskDYNA1_AssetID == assetID || TaskDYNA2_AssetID == assetID || base.HasReference(assetID);
+        
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);

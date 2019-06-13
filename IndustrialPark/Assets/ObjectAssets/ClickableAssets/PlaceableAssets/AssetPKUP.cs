@@ -19,14 +19,8 @@ namespace IndustrialPark
             _pickEntryID = ReadUInt(0x54 + Offset);
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (PickReferenceID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
+        public override bool HasReference(uint assetID) => PickReferenceID == assetID || base.HasReference(assetID);
+        
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);

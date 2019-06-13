@@ -128,6 +128,9 @@ namespace IndustrialPark
                 case AssetType.PLAT:
                     internalEditors.Add(new InternalPlatEditor((AssetPLAT)asset, this));
                     break;
+                case AssetType.RWTX:
+                    internalEditors.Add(new InternalTextureEditor((AssetRWTX)asset, this));
+                    break;
                 case AssetType.SHRP:
                     internalEditors.Add(new InternalShrapnelEditor((AssetSHRP)asset, this));
                     break;
@@ -494,6 +497,61 @@ namespace IndustrialPark
             }
         }
 
+        public static void ExportSingleTextureToDictionary(string fileName, Section_AHDR RWTX)
+        {
+            ExportSingleTextureToDictionary(fileName, RWTX.data, RWTX.ADBG.assetName.Replace(".RW3", ""));
+        }
+
+        public static void ExportSingleTextureToRWTEX(byte[] data, string fileName)
+        {
+            ReadFileMethods.treatStuffAsByteArray = true;
+
+            foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(data))
+                if (rw is TextureDictionary_0016 td)
+                    foreach (TextureNative_0015 tn in td.textureNativeList)
+                        File.WriteAllBytes(fileName, ReadFileMethods.ExportRenderWareFile(tn, tn.renderWareVersion));
+
+            ReadFileMethods.treatStuffAsByteArray = false;
+        }
+
+        public static void ExportSingleTextureToDictionary(string fileName, byte[] data, string textureName)
+        {
+            ReadFileMethods.treatStuffAsByteArray = true;
+
+            List<TextureNative_0015> textNativeList = new List<TextureNative_0015>();
+
+            int fileVersion = 0;
+
+            foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(data))
+                if (rw is TextureDictionary_0016 td)
+                    foreach (TextureNative_0015 tn in td.textureNativeList)
+                    {
+                        fileVersion = tn.renderWareVersion;
+                        tn.textureNativeStruct.textureName = textureName;
+                        textNativeList.Add(tn);
+                    }
+
+            TextureDictionary_0016 rws = new TextureDictionary_0016()
+            {
+                textureDictionaryStruct = new TextureDictionaryStruct_0001()
+                {
+                    textureCount = (short)textNativeList.Count(),
+                    unknown = 0
+                },
+                textureNativeList = textNativeList,
+                textureDictionaryExtension = new Extension_0003()
+                {
+                    extensionSectionList = new List<RWSection>()
+                }
+            };
+
+            rws.textureNativeList = rws.textureNativeList.OrderBy(f => f.textureNativeStruct.textureName).ToList();
+
+            File.WriteAllBytes(fileName, ReadFileMethods.ExportRenderWareFile(rws, fileVersion));
+
+            ReadFileMethods.treatStuffAsByteArray = false;
+        }
+
         public void ExportTextureDictionary(string fileName, bool RW3)
         {
             ReadFileMethods.treatStuffAsByteArray = true;
@@ -588,6 +646,151 @@ namespace IndustrialPark
             ReadFileMethods.treatStuffAsByteArray = false;
         }
 
+        public static Section_AHDR CreateRWTXFromPNG(string fileName, bool appendRW3, bool flip, bool mipmaps, bool compress)
+        {
+            string textureName = Path.GetFileNameWithoutExtension(fileName);
+            System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(fileName);
+
+            List<byte> bitmapData = new List<byte>(bitmap.Width * bitmap.Height * 4);
+
+            if (flip)
+                bitmap.RotateFlip(System.Drawing.RotateFlipType.RotateNoneFlipY);
+
+            for (int j = 0; j < bitmap.Height; j++)
+                for (int i = 0; i < bitmap.Width; i++)
+                {
+                    bitmapData.Add(bitmap.GetPixel(i, j).B);
+                    bitmapData.Add(bitmap.GetPixel(i, j).G);
+                    bitmapData.Add(bitmap.GetPixel(i, j).R);
+                    bitmapData.Add(bitmap.GetPixel(i, j).A);
+                }
+
+            TextureDictionary_0016 td = new TextureDictionary_0016()
+            {
+                textureDictionaryStruct = new TextureDictionaryStruct_0001() { textureCount = 1, unknown = 0 },
+                textureNativeList = new List<TextureNative_0015>()
+                {
+                    new TextureNative_0015()
+                    {
+                        textureNativeStruct = new TextureNativeStruct_0001(){
+                            textureName = textureName,
+                            alphaName = "",
+                            height = (short)bitmap.Height,
+                            width = (short)bitmap.Width,
+                            mipMapCount = 1,
+                            addressModeU = TextureAddressMode.TEXTUREADDRESSWRAP,
+                            addressModeV = TextureAddressMode.TEXTUREADDRESSWRAP,
+                            filterMode = TextureFilterMode.FILTERLINEAR,
+                            bitDepth = 32,
+                            platformType = 8,
+                            compression = 0,
+                            hasAlpha = false,
+                            rasterFormatFlags = TextureRasterFormat.RASTER_C8888,
+                            type = 4,
+                            mipMaps = new MipMapEntry[] { new MipMapEntry(bitmapData.Count, bitmapData.ToArray()) },
+                        },
+                        textureNativeExtension = new Extension_0003()
+                    }
+                },
+                textureDictionaryExtension = new Extension_0003()
+            };
+
+            bitmap.Dispose();
+
+            // created PC txd, now will convert to gamecube.
+            if (!Directory.Exists(tempPcTxdsDir))
+                Directory.CreateDirectory(tempPcTxdsDir);
+            if (!Directory.Exists(tempGcTxdsDir))
+                Directory.CreateDirectory(tempGcTxdsDir);
+
+            ExportSingleTextureToDictionary(pathToPcTXD, ReadFileMethods.ExportRenderWareFile(td, 0x1003FFFF), textureName);
+
+            PerformTXDConversionExternal(false, compress, mipmaps);
+            
+            string assetName = textureName + (appendRW3 ? ".RW3" : "");
+
+            Section_ADBG ADBG = new Section_ADBG(0, assetName, "", 0);
+            Section_AHDR AHDR = new Section_AHDR(BKDRHash(assetName), AssetType.RWTX, AHDRFlagsFromAssetType(AssetType.RWTX), ADBG, File.ReadAllBytes(pathToGcTXD));
+
+            File.Delete(pathToGcTXD);
+            File.Delete(pathToPcTXD);
+
+            return AHDR;
+        }
+
+        public static System.Drawing.Bitmap ExportRWTXToBitmap(byte[] textureData)
+        {
+            if (!Directory.Exists(tempPcTxdsDir))
+                Directory.CreateDirectory(tempPcTxdsDir);
+            if (!Directory.Exists(tempGcTxdsDir))
+                Directory.CreateDirectory(tempGcTxdsDir);
+
+            File.WriteAllBytes(pathToGcTXD, textureData);
+
+            PerformTXDConversionExternal(true);
+
+            System.Drawing.Bitmap bitmap = null;
+
+            foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(pathToPcTXD))
+            {
+                if (rw is TextureDictionary_0016 td)
+                {
+                    // For each texture in the dictionary...
+                    foreach (TextureNative_0015 tn in td.textureNativeList)
+                    {
+                        List<System.Drawing.Color> bitmapData = new List<System.Drawing.Color>();
+
+                        byte[] imageData = tn.textureNativeStruct.mipMaps[0].data;
+
+                        if (tn.textureNativeStruct.compression == 0)
+                        {
+                            for (int i = 0; i < imageData.Length; i += 4)
+                                bitmapData.Add(System.Drawing.Color.FromArgb(
+                                    imageData[i + 3],
+                                    imageData[i + 2],
+                                    imageData[i + 1],
+                                    imageData[i]));
+                        }
+                        else
+                        {
+                            for (int i = 0; i < imageData.Length; i += 2)
+                            {
+                                short value = BitConverter.ToInt16(imageData, i);
+                                byte R = (byte)((value >> 11) & 0x1F);
+                                byte G = (byte)((value >> 5) & 0x3F);
+                                byte B = (byte)((value) & 0x1F);
+
+                                System.Drawing.Color color = System.Drawing.Color.FromArgb(0xFF,
+                                    (R << 3) | (R >> 2),
+                                    (G << 2) | (G >> 4),
+                                    (B << 3) | (B >> 2));
+
+                                bitmapData.Add(color);
+                            }
+                        }
+
+                        bitmap = new System.Drawing.Bitmap(tn.textureNativeStruct.width, tn.textureNativeStruct.height);
+
+                        int k = 0;
+                        for (int i = 0; i < bitmap.Width; i++)
+                            for (int j = 0; j < bitmap.Height; j++)
+                            {
+                                int v = k;
+                                int v2 = bitmapData.Count;
+                                System.Drawing.Color c = bitmapData[k];
+                                bitmap.SetPixel(i, j, c);
+                                k++;
+                            }
+                    }
+                }
+            }
+
+            File.Delete(pathToGcTXD);
+            File.Delete(pathToPcTXD);
+
+            return bitmap;
+        }
+        
         public void AddSoundToSNDI(byte[] soundData, uint assetID, AssetType assetType, out byte[] finalData)
         {
             foreach (Asset a in assetDictionary.Values)

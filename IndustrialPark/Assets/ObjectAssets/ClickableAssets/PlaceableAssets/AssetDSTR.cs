@@ -10,24 +10,9 @@ namespace IndustrialPark
 
         public AssetDSTR(Section_AHDR AHDR) : base(AHDR) { }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (DestroyShrapnel_AssetID == assetID)
-                return true;
-            if (HitShrapnel_AssetID == assetID)
-                return true;
-            if (DestroySFX_AssetID == assetID)
-                return true;
-            if (HitSFX_AssetID == assetID)
-                return true;
-            if (HitModel_AssetID == assetID)
-                return true;
-            if (DestroyModel_AssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
+        public override bool HasReference(uint assetID) => DestroyShrapnel_AssetID == assetID || HitShrapnel_AssetID == assetID || DestroySFX_AssetID == assetID ||
+            HitSFX_AssetID == assetID || HitModel_AssetID == assetID || DestroyModel_AssetID == assetID || base.HasReference(assetID);
+        
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);

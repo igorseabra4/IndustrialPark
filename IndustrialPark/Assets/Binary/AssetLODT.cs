@@ -68,17 +68,9 @@ namespace IndustrialPark
         public override bool HasReference(uint assetID)
         {
             foreach (EntryLODT a in LODT_Entries)
-            {
-                if (a.ModelAssetID == assetID)
+                if (a.ModelAssetID == assetID || a.LOD1_Model == assetID || a.LOD2_Model == assetID || a.LOD3_Model == assetID)
                     return true;
-                if (a.LOD1_Model == assetID)
-                    return true;
-                if (a.LOD2_Model == assetID)
-                    return true;
-                if (a.LOD3_Model == assetID)
-                    return true;
-            }
-
+            
             return base.HasReference(assetID);
         }
 

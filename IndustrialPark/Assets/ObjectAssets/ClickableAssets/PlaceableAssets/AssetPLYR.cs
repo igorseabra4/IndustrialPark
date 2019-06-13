@@ -16,14 +16,8 @@ namespace IndustrialPark
 
         public AssetPLYR(Section_AHDR AHDR) : base(AHDR) { }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (LightKit_AssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
+        public override bool HasReference(uint assetID) => LightKit_AssetID == assetID || base.HasReference(assetID);
+        
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);

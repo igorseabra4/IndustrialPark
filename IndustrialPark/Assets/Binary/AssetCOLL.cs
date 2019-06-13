@@ -47,15 +47,9 @@ namespace IndustrialPark
         public override bool HasReference(uint assetID)
         {
             foreach (EntryCOLL a in COLL_Entries)
-            {
-                if (a.ModelAssetID == assetID)
+                if (a.ModelAssetID == assetID || a.Collision_ModelAssetID == assetID || a.CameraCollision_ModelAssetID == assetID)
                     return true;
-                if (a.Collision_ModelAssetID == assetID)
-                    return true;
-                if (a.CameraCollision_ModelAssetID == assetID)
-                    return true;
-            }
-
+            
             return base.HasReference(assetID);
         }
 

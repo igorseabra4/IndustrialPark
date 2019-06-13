@@ -33,13 +33,9 @@ namespace IndustrialPark
         public override bool HasReference(uint assetID)
         {
             foreach (EntryMAPR a in MAPR_Entries)
-            {
-                if (a.AssetID_SURF == assetID)
+                if (a.AssetID_SURF == assetID || a.Unknown == assetID)
                     return true;
-                if (a.Unknown == assetID)
-                    return true;
-            }
-
+            
             return base.HasReference(assetID);
         }
 

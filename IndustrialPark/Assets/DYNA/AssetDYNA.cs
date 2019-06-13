@@ -14,13 +14,7 @@ namespace IndustrialPark
             SetDynaSpecific(false);
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (_dynaSpecific.HasReference(assetID))
-                return true;
-
-            return base.HasReference(assetID);
-        }
+        public override bool HasReference(uint assetID) => _dynaSpecific.HasReference(assetID) || base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {

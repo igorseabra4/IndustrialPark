@@ -79,7 +79,7 @@ namespace IndustrialPark
         public static void RemoveTexture(string textureName)
         {
             DisposeTexture(textureName);
-            Textures.Remove(textureName);
+            Textures[textureName] = SharpRenderer.whiteDefault;
         }
 
         public static void LoadTexturesFromFolder(IEnumerable<string> folderNames)
@@ -109,7 +109,6 @@ namespace IndustrialPark
         private static void AddTexturePNG(string path)
         {
             string textureName = TreatTextureName(Path.GetFileNameWithoutExtension(path));
-
             DisposeTexture(textureName);
             Textures[textureName] = Program.MainForm.renderer.device.LoadTextureFromFile(path);
         }

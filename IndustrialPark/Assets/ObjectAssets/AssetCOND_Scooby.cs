@@ -7,14 +7,8 @@ namespace IndustrialPark
     {
         public AssetCOND_Scooby(Section_AHDR AHDR) : base(AHDR) { }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (Conditional == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
+        public override bool HasReference(uint assetID) => Conditional == assetID || base.HasReference(assetID);
+        
         protected override int EventStartOffset => 0x14;
 
         [Category("Conditional")]

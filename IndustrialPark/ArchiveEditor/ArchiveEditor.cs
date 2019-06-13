@@ -252,6 +252,7 @@ namespace IndustrialPark
                 buttonArrowDown.Enabled = false;
                 importMultipleAssetsToolStripMenuItem.Enabled = false;
                 importModelsToolStripMenuItem.Enabled = false;
+                importTexturesToolStripMenuItem.Enabled = false;
                 addTemplateToolStripMenuItem.Enabled = false;
             }
             else
@@ -270,6 +271,7 @@ namespace IndustrialPark
                 buttonArrowDown.Enabled = true;
                 importMultipleAssetsToolStripMenuItem.Enabled = true;
                 importModelsToolStripMenuItem.Enabled = true;
+                importTexturesToolStripMenuItem.Enabled = true;
                 addTemplateToolStripMenuItem.Enabled = true;
             }
 
@@ -331,6 +333,7 @@ namespace IndustrialPark
                 buttonArrowDown.Enabled = false;
                 importMultipleAssetsToolStripMenuItem.Enabled = false;
                 importModelsToolStripMenuItem.Enabled = false;
+                importTexturesToolStripMenuItem.Enabled = false;
                 addTemplateToolStripMenuItem.Enabled = false;
 
                 buttonCopy.Enabled = false;
@@ -447,7 +450,7 @@ namespace IndustrialPark
             List<Section_AHDR> AHDRs = AddMultipleAssets.GetAssets(out bool success);
             if (success)
             {
-                archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, out List<uint> assetIDs);
+                archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, out List<uint> assetIDs, false);
                 comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
                 SetSelectedIndices(assetIDs, true);
             }
@@ -458,7 +461,18 @@ namespace IndustrialPark
             List<Section_AHDR> AHDRs = ImportModel.GetAssets(out bool success);
             if (success)
             {
-                archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, out List<uint> assetIDs);
+                archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, out List<uint> assetIDs, false);
+                comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
+                SetSelectedIndices(assetIDs, true);
+            }
+        }
+
+        private void ImportTexturesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            List<Section_AHDR> AHDRs = ImportTextures.GetAssets(out bool success, out bool overwrite);
+            if (success)
+            {
+                archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, out List<uint> assetIDs, overwrite);
                 comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
                 SetSelectedIndices(assetIDs, true);
             }
@@ -539,7 +553,7 @@ namespace IndustrialPark
             if (archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]) is AssetCAM cam)
                 Program.MainForm.renderer.Camera.SetPositionCamera(cam);
             else if (archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]) is IClickableAsset a)
-                Program.MainForm.renderer.Camera.SetPosition(new Vector3(a.PositionX, a.PositionY, a.PositionZ) - 8 * Program.MainForm.renderer.Camera.Forward);
+                Program.MainForm.renderer.Camera.SetPosition(a.GetGizmoCenter().Center - (10 + a.GetGizmoCenter().Radius) * Program.MainForm.renderer.Camera.Forward);
         }
 
         private void buttonEditAsset_Click(object sender, EventArgs e)

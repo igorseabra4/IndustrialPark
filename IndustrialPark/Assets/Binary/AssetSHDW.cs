@@ -44,12 +44,8 @@ namespace IndustrialPark
         public override bool HasReference(uint assetID)
         {
             foreach (EntrySHDW a in SHDW_Entries)
-            {
-                if (a.ModelAssetID == assetID)
+                if (a.ModelAssetID == assetID || a.ShadowModelAssetID == assetID)
                     return true;
-                if (a.ShadowModelAssetID == assetID)
-                    return true;
-            }
 
             return base.HasReference(assetID);
         }

@@ -11,32 +11,10 @@ namespace IndustrialPark
 
         protected override int EventStartOffset => 0x44;
 
-        public override bool HasReference(uint assetID)
-        {
-            if (BSP_AssetID == assetID)
-                return true;
-            if (StartCameraAssetID == assetID)
-                return true;
-            if (BSP_LKIT_AssetID == assetID)
-                return true;
-            if (Object_LKIT_AssetID == assetID)
-                return true;
-            if (BSP_Collision_AssetID == assetID)
-                return true;
-            if (BSP_FX_AssetID == assetID)
-                return true;
-            if (BSP_Camera_AssetID == assetID)
-                return true;
-            if (BSP_MAPR_AssetID == assetID)
-                return true;
-            if (BSP_MAPR_Collision_AssetID == assetID)
-                return true;
-            if (BSP_MAPR_FX_AssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
+        public override bool HasReference(uint assetID) => BSP_AssetID == assetID || StartCameraAssetID == assetID || BSP_LKIT_AssetID == assetID ||
+            Object_LKIT_AssetID == assetID || BSP_Collision_AssetID == assetID || BSP_FX_AssetID == assetID || BSP_Camera_AssetID == assetID ||
+            BSP_MAPR_AssetID == assetID || BSP_MAPR_Collision_AssetID == assetID || BSP_MAPR_FX_AssetID == assetID || base.HasReference(assetID);
+        
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);

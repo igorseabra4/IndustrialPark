@@ -57,11 +57,9 @@ namespace IndustrialPark
         public override bool HasReference(uint assetID)
         {
             foreach (EntryPICK a in PICK_Entries)
-            {
                 if (a.ModelAssetID == assetID)
                     return true;
-            }
-
+            
             return base.HasReference(assetID);
         }
 

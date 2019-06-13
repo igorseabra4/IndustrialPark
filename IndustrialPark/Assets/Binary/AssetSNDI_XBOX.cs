@@ -88,21 +88,17 @@ namespace IndustrialPark
         public override bool HasReference(uint assetID)
         {
             foreach (EntrySoundInfo_XBOX a in Entries_SND)
-            {
                 if (a.SoundAssetID == assetID)
                     return true;
-            }
-            foreach (EntrySoundInfo_XBOX a in Entries_SNDS)
-            {
-                if (a.SoundAssetID == assetID)
-                    return true;
-            }
-            foreach (EntrySoundInfo_XBOX a in Entries_Sound_CIN)
-            {
-                if (a.SoundAssetID == assetID)
-                    return true;
-            }
 
+            foreach (EntrySoundInfo_XBOX a in Entries_SNDS)
+                if (a.SoundAssetID == assetID)
+                    return true;
+            
+            foreach (EntrySoundInfo_XBOX a in Entries_Sound_CIN)
+                if (a.SoundAssetID == assetID)
+                    return true;
+            
             return base.HasReference(assetID);
         }
 

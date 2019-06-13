@@ -20,14 +20,8 @@ namespace IndustrialPark
             ChoosePlatSpecific();
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (_platSpecific.HasReference(assetID))
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
+        public override bool HasReference(uint assetID) => _platSpecific.HasReference(assetID) || base.HasReference(assetID);
+        
         public override void Verify(ref List<string> result)
         {
             _platSpecific.Verify(ref result);

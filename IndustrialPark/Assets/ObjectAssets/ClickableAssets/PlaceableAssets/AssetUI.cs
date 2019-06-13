@@ -20,15 +20,7 @@ namespace IndustrialPark
             _textureAssetID = ReadUInt(0x5C + Offset);
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (TextureAssetID == assetID)
-                return true;
-            if (AnimListAssetID == assetID)
-                return true;
-            
-            return base.HasReference(assetID);
-        }
+        public override bool HasReference(uint assetID) => TextureAssetID == assetID || AnimListAssetID == assetID || base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {

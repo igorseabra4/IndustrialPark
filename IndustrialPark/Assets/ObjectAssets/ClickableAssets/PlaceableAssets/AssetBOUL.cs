@@ -15,14 +15,8 @@ namespace IndustrialPark
 
         public AssetBOUL(Section_AHDR AHDR) : base(AHDR) { }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (Sound_AssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
+        public override bool HasReference(uint assetID) => Sound_AssetID == assetID || base.HasReference(assetID);
+        
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
@@ -113,7 +107,7 @@ namespace IndustrialPark
         [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float BounceDamp
         {
-            get => ReadFloat(0x74 + Offset + Offset2) + Offset2;
+            get => ReadFloat(0x74 + Offset + Offset2);
             set => Write(0x74 + Offset + Offset2, value);
         }
 

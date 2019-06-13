@@ -40,15 +40,7 @@ namespace IndustrialPark
     {
         public AssetCOND(Section_AHDR AHDR) : base(AHDR) { }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (AssetUnderEvaluation == assetID)
-                return true;
-            if ((uint)Conditional == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
+        public override bool HasReference(uint assetID) => AssetUnderEvaluation == assetID || (uint)Conditional == assetID || base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {

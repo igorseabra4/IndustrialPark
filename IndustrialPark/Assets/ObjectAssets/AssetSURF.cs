@@ -10,22 +10,9 @@ namespace IndustrialPark
 
         protected override int EventStartOffset => 0x12C;
 
-        public override bool HasReference(uint assetID)
-        {
-            if (BumpMapTexture_AssetID == assetID)
-                return true;
-            if (EnvMapTexture_AssetID == assetID)
-                return true;
-            if (DualMapTexture_AssetID == assetID)
-                return true;
-            if (TextureAnim1_GroupAssetID == assetID)
-                return true;
-            if (TextureAnim2_GroupAssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
+        public override bool HasReference(uint assetID) => BumpMapTexture_AssetID == assetID || EnvMapTexture_AssetID == assetID || DualMapTexture_AssetID == assetID ||
+            TextureAnim1_GroupAssetID == assetID || TextureAnim2_GroupAssetID == assetID || base.HasReference(assetID);
+        
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);

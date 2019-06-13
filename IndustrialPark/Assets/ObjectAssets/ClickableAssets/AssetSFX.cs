@@ -29,13 +29,7 @@ namespace IndustrialPark
                 ArchiveEditorFunctions.renderableAssetSetTrans.Add(this);
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (Sound_AssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
+        public override bool HasReference(uint assetID) => Sound_AssetID == assetID || base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {

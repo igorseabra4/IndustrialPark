@@ -50,19 +50,9 @@ namespace IndustrialPark
                 ArchiveEditorFunctions.renderableAssetSetTrans.Add(this);
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (Marker1AssetID == assetID)
-                return true;
-            if (Marker2AssetID == assetID)
-                return true;
-
-            if (CamSpecific is CamSpecific_Path camSpecific_Path)
-                if (camSpecific_Path.Unknown_AssetID == assetID)
-                    return true;
-
-            return base.HasReference(assetID);
-        }
+        public override bool HasReference(uint assetID) => Marker1AssetID == assetID || Marker2AssetID == assetID ||
+            (CamSpecific is CamSpecific_Path camSpecific_Path && camSpecific_Path.Unknown_AssetID == assetID) ||
+            base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {

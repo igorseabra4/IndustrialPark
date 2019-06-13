@@ -12,13 +12,9 @@ namespace IndustrialPark
         public override bool HasReference(uint assetID)
         {
             foreach (string s in AssetNamesInText)
-            {
-                if (Functions.BKDRHash(s) == assetID)
+                if (Functions.BKDRHash(s) == assetID || Functions.BKDRHash(s + ".RW3") == assetID)
                     return true;
-                if (Functions.BKDRHash(s + ".RW3") == assetID)
-                    return true;
-            }
-
+            
             return base.HasReference(assetID);
         }
 

@@ -15,15 +15,9 @@ namespace IndustrialPark
         public override bool HasReference(uint assetID)
         {
             foreach (Link link in TimedLinksBFBB)
-            {
-                if (link.TargetAssetID == assetID)
+                if (link.TargetAssetID == assetID || link.ArgumentAssetID == assetID || link.SourceCheckAssetID == assetID)
                     return true;
-                if (link.ArgumentAssetID == assetID)
-                    return true;
-                if (link.SourceCheckAssetID == assetID)
-                    return true;
-            }
-
+            
             return base.HasReference(assetID);
         }
 
