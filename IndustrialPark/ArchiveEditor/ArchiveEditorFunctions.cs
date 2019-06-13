@@ -124,7 +124,7 @@ namespace IndustrialPark
             autoCompleteSource.AddRange(autoComplete.ToArray());
 
             if (GetAssetsOfType(AssetType.RWTX).Any())
-                SetupCustomTextures();
+                SetupTextureDisplay();
 
             RecalculateAllMatrices();
 
@@ -517,7 +517,7 @@ namespace IndustrialPark
         private static string pathToGcTXD => tempGcTxdsDir + "temp.txd";
         private static string pathToPcTXD => tempPcTxdsDir + "temp.txd";
 
-        private void SetupCustomTextures()
+        public void SetupTextureDisplay()
         {
             if (!Directory.Exists(tempGcTxdsDir))
                 Directory.CreateDirectory(tempGcTxdsDir);
@@ -528,7 +528,8 @@ namespace IndustrialPark
 
             PerformTXDConversionExternal();
 
-            TextureManager.LoadTexturesFromTXD(pathToPcTXD);
+            TextureManager.LoadTexturesFromTXD(pathToPcTXD, false);
+            TextureManager.ReapplyTextures();
 
             File.Delete(pathToGcTXD);
             File.Delete(pathToPcTXD);
@@ -565,7 +566,11 @@ namespace IndustrialPark
                 "gameRoot=" + tempPcTxdsDir + "\r\n" +
                 "outputRoot=" + tempGcTxdsDir + "\r\n" +
                 "targetVersion=VC\r\n" +
-                "targetPlatform=Gamecube\r\n") +
+                "targetPlatform=" +
+                (currentPlatform == Platform.GameCube ? "Gamecube" :
+                currentPlatform == Platform.Xbox ? "XBOX" :
+                currentPlatform == Platform.PS2 ? "PS2" : "PC")
+                + "\r\n") +
 
                 "clearMipmaps=false\r\n" +
                 "generateMipmaps=" + generateMipmaps.ToString().ToLower() + "\r\n" +
@@ -802,7 +807,8 @@ namespace IndustrialPark
 
                     if (overwrite)
                     {
-                        RemoveAsset(AHDR.assetID);
+                        if (ContainsAsset(AHDR.assetID))
+                            RemoveAsset(AHDR.assetID);
                         AddAsset(layerIndex, AHDR);
                     }
                     else

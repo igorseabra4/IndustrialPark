@@ -1,4 +1,4 @@
 {
-  "version": "preview40",
-  "versionName": "Preview 40. Automatic updates; Download EditorFiles; Merge similar assets; Xbox saving fix"
+  "version": "preview41",
+  "versionName": "Preview 41. Load textures from HOP. Import textures from image files (Archive Editor->Edit->Import Textures)."
 }

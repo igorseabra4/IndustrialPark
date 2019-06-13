@@ -4,6 +4,7 @@ using SharpDX.Direct3D11;
 using RenderWareFile;
 using RenderWareFile.Sections;
 using HipHopFile;
+using System.Linq;
 
 namespace IndustrialPark
 {
@@ -42,71 +43,53 @@ namespace IndustrialPark
             return SharpRenderer.whiteDefault;
         }
 
-        public static void LoadTexturesFromTXD(string textureFile, string textureName = null)
+        public static void LoadTexturesFromTXD(string textureFile, bool reapply = true)
         {
-            LoadTexturesFromTXD(ReadFileMethods.ReadRenderWareFile(textureFile), textureName);
-        }
-
-        public static void LoadTexturesFromTXD(byte[] txdData, string textureName = null)
-        {
-            LoadTexturesFromTXD(ReadFileMethods.ReadRenderWareFile(txdData), textureName);
-        }
-
-        public static void LoadTexturesFromTXD(RWSection[] txdFile, string textureName = null)
-        {
-            foreach (RWSection rw in txdFile)
+            foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(textureFile))
                 if (rw is TextureDictionary_0016 td)
                     foreach (TextureNative_0015 tn in td.textureNativeList)
-                        AddTextureNative(tn.textureNativeStruct, textureName);
+                        AddTextureNative(tn.textureNativeStruct);
 
-            ReapplyTextures();
+            if (reapply)
+                ReapplyTextures();
         }
 
-        private static void AddTextureNative(TextureNativeStruct_0001 tnStruct, string textureName = null)
+        private static void AddTextureNative(TextureNativeStruct_0001 tnStruct)
         {
-            if (textureName == null)
-                textureName = tnStruct.textureName;
-
             ShaderResourceView texture;
 
             try { texture = Program.MainForm.renderer.device.LoadTextureFromRenderWareNative(tnStruct); }
             catch { return; }
 
-            DisposeTexture(textureName);
-            Textures[textureName] = texture;
+            DisposeTexture(tnStruct.textureName);
+            Textures[tnStruct.textureName] = texture;
         }
 
         public static void RemoveTexture(string textureName)
         {
             DisposeTexture(textureName);
-            Textures[textureName] = SharpRenderer.whiteDefault;
+            Textures.Remove(textureName);
+            ReapplyTextures();
         }
 
         public static void LoadTexturesFromFolder(IEnumerable<string> folderNames)
         {
+            string[] extensions = new string[] { ".png", ".bmp", ".gif", ".jpg", ".jpeg", ".jpe", ".jif", ".jfif", ".jfi", ".tif", ".tiff" };
+
             foreach (string folderName in folderNames)
-            {
-                OpenTextureFolders.Add(folderName);
-                foreach (string i in Directory.GetFiles(folderName))
-                    if (Path.GetExtension(i).ToLower().Equals(".png"))
-                        AddTexturePNG(i);
-            }
-
+                if (Directory.Exists(folderName))
+                {
+                    OpenTextureFolders.Add(folderName);
+                    foreach (string i in Directory.GetFiles(folderName))
+                        if (extensions.Contains(Path.GetExtension(i).ToLower()))
+                            AddTextureBitmap(i);
+                }
+                else System.Windows.Forms.MessageBox.Show("Error loading textures from " + folderName + ": folder not found");
+            
             ReapplyTextures();
         }
 
-        public static void LoadTexturesFromFolder(string folderName)
-        {
-            OpenTextureFolders.Add(folderName);
-
-            foreach (string i in Directory.GetFiles(folderName))
-                if (Path.GetExtension(i).ToLower().Equals(".png"))
-                    AddTexturePNG(i);
-
-            ReapplyTextures();
-        }
-
-        private static void AddTexturePNG(string path)
+        private static void AddTextureBitmap(string path)
         {
             string textureName = TreatTextureName(Path.GetFileNameWithoutExtension(path));
             DisposeTexture(textureName);
@@ -187,7 +170,9 @@ namespace IndustrialPark
             OpenTextureFolders.Clear();
             DisposeTextures();
             Textures.Clear();
-            ReapplyTextures();
+
+            foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
+                ae.archive.SetupTextureDisplay();
         }
     }
 }

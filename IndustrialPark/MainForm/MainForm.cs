@@ -265,15 +265,7 @@ namespace IndustrialPark
             foreach (ArchiveEditor ae in archiveEditors)
                 ae.CloseArchiveEditor();
 
-            foreach (string s in ipSettings.TextureFolderPaths)
-                if (Directory.Exists(s))
-                    TextureManager.LoadTexturesFromFolder(s);
-                else
-                {
-                    TopMost = true;
-                    MessageBox.Show("Error loading textures from " + s + ": folder not found");
-                    TopMost = false;
-                }
+            TextureManager.LoadTexturesFromFolder(ipSettings.TextureFolderPaths);
             
             ArchiveEditorFunctions.hiddenAssets = ipSettings.hiddenAssets;
             HipHopFile.Functions.currentPlatform = ipSettings.platformForScooby;

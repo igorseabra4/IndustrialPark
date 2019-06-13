@@ -17,15 +17,17 @@ namespace IndustrialPark
             buttonOK.Enabled = false;
             TopMost = true;
         }
+        
+        public static string filter => "All supported formats|*.bmp;*.png;*.gif;*.jpg;*.jpeg;*.jpe;*.jif;*.jfif;*.jfi;*.tif;*.tiff;*.rwtex|All files|*";
 
-        List<string> filePaths = new List<string>();
+        private List<string> filePaths = new List<string>();
 
         private void buttonImportRawData_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog()
             {
                 Multiselect = true,
-                Filter = "All supported formats|*.png;*.bmp;*.rwtex|PNG files|*.png|BMP files|*.bmp|RWTEX files|*.rwtex|All files|*"
+                Filter = filter
             };
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
@@ -79,7 +81,7 @@ namespace IndustrialPark
                             textureDictionaryStruct = new TextureDictionaryStruct_0001() { textureCount = 1, unknown = 0 },
                             textureNativeList = new List<TextureNative_0015>() { new TextureNative_0015().FromBytes(File.ReadAllBytes(a.filePaths[i])) },
                             textureDictionaryExtension = new Extension_0003()
-                        }, 0x1003FFFF);
+                        }, ArchiveEditorFunctions.currentTextureVersion);
 
                         string assetName = Path.GetFileNameWithoutExtension(a.filePaths[i]) + (a.checkBoxRW3.Checked ? ".RW3" : "");
 
@@ -90,7 +92,7 @@ namespace IndustrialPark
                     }
                     else
                     {
-                        AHDRs.Add(ArchiveEditorFunctions.CreateRWTXFromPNG(a.filePaths[i], a.checkBoxRW3.Checked, a.checkBoxFlipTextures.Checked, a.checkBoxMipmaps.Checked, a.checkBoxCompress.Checked));
+                        AHDRs.Add(ArchiveEditorFunctions.CreateRWTXFromBitmap(a.filePaths[i], a.checkBoxRW3.Checked, a.checkBoxFlipTextures.Checked, a.checkBoxMipmaps.Checked, a.checkBoxCompress.Checked));
                     }
                 }
 

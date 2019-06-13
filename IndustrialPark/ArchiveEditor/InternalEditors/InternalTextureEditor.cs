@@ -15,10 +15,7 @@ namespace IndustrialPark
 
             this.asset = asset;
             this.archive = archive;
-
-            if (asset.AHDR.assetType != HipHopFile.AssetType.MODL)
-                buttonImport.Enabled = false;
-
+            
             propertyGridAsset.SelectedObject = asset;
             labelAssetName.Text = $"[{asset.AHDR.assetType.ToString()}] {asset.ToString()}";
         }
@@ -72,7 +69,7 @@ namespace IndustrialPark
         {
             OpenFileDialog a = new OpenFileDialog()
             {
-                Filter = "All supported formats|*.png;*.rwtex|PNG Files|*.png|RWTEX Files|*.rwtex"
+                Filter = ImportTextures.filter
             };
 
             if (a.ShowDialog() == DialogResult.OK)
@@ -88,11 +85,11 @@ namespace IndustrialPark
                         textureDictionaryStruct = new TextureDictionaryStruct_0001() { textureCount = 1, unknown = 0 },
                         textureNativeList = new List<TextureNative_0015>() { new TextureNative_0015().FromBytes(File.ReadAllBytes(i)) },
                         textureDictionaryExtension = new Extension_0003()
-                    }, 0x1003FFFF);
+                    }, ArchiveEditorFunctions.currentTextureVersion);
                 }
                 else
                 {
-                    asset.Data = ArchiveEditorFunctions.CreateRWTXFromPNG(i, false, false, true, true).data;
+                    asset.Data = ArchiveEditorFunctions.CreateRWTXFromBitmap(i, false, false, true, true).data;
                 }
 
                 archive.EnableTextureForDisplay(asset);

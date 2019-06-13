@@ -497,6 +497,24 @@ namespace IndustrialPark
             }
         }
 
+        public static int scoobyTextureVersion => 0x0C02FFFF;
+        public static int bfbbTextureVersion => 0x1003FFFF;
+        public static int tssmTextureVersion => 0x1C02000A;
+
+        public static int currentTextureVersion
+        {
+            get
+            {
+                if (currentGame == Game.Scooby)
+                    return scoobyTextureVersion;
+                if (currentGame == Game.BFBB)
+                    return bfbbTextureVersion; // VC
+                if (currentGame == Game.Incredibles)
+                    return tssmTextureVersion; // Bully
+                return 0;
+            }
+        }
+        
         public static void ExportSingleTextureToDictionary(string fileName, Section_AHDR RWTX)
         {
             ExportSingleTextureToDictionary(fileName, RWTX.data, RWTX.ADBG.assetName.Replace(".RW3", ""));
@@ -646,7 +664,7 @@ namespace IndustrialPark
             ReadFileMethods.treatStuffAsByteArray = false;
         }
 
-        public static Section_AHDR CreateRWTXFromPNG(string fileName, bool appendRW3, bool flip, bool mipmaps, bool compress)
+        public static Section_AHDR CreateRWTXFromBitmap(string fileName, bool appendRW3, bool flip, bool mipmaps, bool compress)
         {
             string textureName = Path.GetFileNameWithoutExtension(fileName);
             System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(fileName);
@@ -703,14 +721,18 @@ namespace IndustrialPark
             if (!Directory.Exists(tempGcTxdsDir))
                 Directory.CreateDirectory(tempGcTxdsDir);
 
-            ExportSingleTextureToDictionary(pathToPcTXD, ReadFileMethods.ExportRenderWareFile(td, 0x1003FFFF), textureName);
+            ExportSingleTextureToDictionary(pathToPcTXD, ReadFileMethods.ExportRenderWareFile(td, currentTextureVersion), textureName);
 
             PerformTXDConversionExternal(false, compress, mipmaps);
             
             string assetName = textureName + (appendRW3 ? ".RW3" : "");
 
-            Section_ADBG ADBG = new Section_ADBG(0, assetName, "", 0);
-            Section_AHDR AHDR = new Section_AHDR(BKDRHash(assetName), AssetType.RWTX, AHDRFlagsFromAssetType(AssetType.RWTX), ADBG, File.ReadAllBytes(pathToGcTXD));
+            ReadFileMethods.treatStuffAsByteArray = true;
+
+            Section_AHDR AHDR = new Section_AHDR(BKDRHash(assetName), AssetType.RWTX, AHDRFlagsFromAssetType(AssetType.RWTX),
+                new Section_ADBG(0, assetName, "", 0), ReadFileMethods.ExportRenderWareFile(ReadFileMethods.ReadRenderWareFile(pathToGcTXD), currentTextureVersion));
+
+            ReadFileMethods.treatStuffAsByteArray = false;
 
             File.Delete(pathToGcTXD);
             File.Delete(pathToPcTXD);
