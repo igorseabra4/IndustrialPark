@@ -1032,7 +1032,7 @@ namespace IndustrialPark
                         result += $"Archive: Asset 0x{assetID.ToString("X8")} appears to be present in a layer, but it's not in the AHDR dictionary. This archive is likely unusable." + endl;
 
             List<Asset> ordered = assetDictionary.Values.OrderBy(f => f.AHDR.ADBG.assetName).ToList();
-            ordered = ordered.OrderBy(f => f.AHDR.ADBG.assetName).ToList();
+            ordered = ordered.OrderBy(f => f.AHDR.assetType).ToList();
 
             if (!ContainsAssetWithType(AssetType.JSP))
                 result += $"Archive: Does not contain any JSP asset." + endl;

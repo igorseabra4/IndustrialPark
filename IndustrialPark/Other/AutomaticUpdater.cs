@@ -32,7 +32,7 @@ namespace IndustrialPark
 
                 if (oldVersion.version != updatedVersion.version)
                 {
-                    string messageText = "There is an update available for Industrial Park: " + updatedVersion.versionName + ". Do you wish to download it?";
+                    string messageText = "There is an update available for Industrial Park:\n" + updatedVersion.versionName + "\nDo you wish to download it?";
                     DialogResult d = MessageBox.Show(messageText, "Update Available", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
                     if (d == DialogResult.Yes)
@@ -57,7 +57,17 @@ namespace IndustrialPark
                                 "\\Resources\\importvcolorobj",
                                 "\\Resources\\Models",
                                 "\\Resources\\SharpDX",
-                                "\\Resources\\txdgen_1.0"
+                                "\\Resources\\txdgen_1.0",
+                                "\\Resources\\txdgen_1.0",
+                                "\\Resources\\txdgen_1.0\\LICENSES",
+                                "\\Resources\\txdgen_1.0\\LICENSES\\eirrepo",
+                                "\\Resources\\txdgen_1.0\\LICENSES\\libimagequant",
+                                "\\Resources\\txdgen_1.0\\LICENSES\\libjpeg",
+                                "\\Resources\\txdgen_1.0\\LICENSES\\libpng",
+                                "\\Resources\\txdgen_1.0\\LICENSES\\libsquish",
+                                "\\Resources\\txdgen_1.0\\LICENSES\\lzo-2.08",
+                                "\\Resources\\txdgen_1.0\\LICENSES\\pvrtextool",
+                                "\\Resources\\txdgen_1.0\\LICENSES\\rwtools",
                         })
                         {
                             if (!Directory.Exists(oldPath + s))

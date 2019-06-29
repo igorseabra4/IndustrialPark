@@ -1,4 +1,4 @@
 {
-  "version": "preview41",
-  "versionName": "Preview 41. Load textures from HOP. Import textures from image files (Archive Editor->Edit->Import Textures)."
+  "version": "preview42",
+  "versionName": "Preview 42:\nCorrupt or invalid assets will not make Industrial Park crash anymore. Instead, you will simply not be able to edit them.\nAdds new \"template\": Paste Clipboard. Placing this template will actually cause all assets you have copied to your cliboard to be placed at the clicked position.\nCylinder triggers: this third trigger type has always been available in BFBB but unused. IP is now able to place and edit them.\nNew template: cylinder trigger.\n"
 }

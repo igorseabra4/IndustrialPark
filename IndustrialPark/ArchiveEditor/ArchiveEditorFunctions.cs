@@ -467,12 +467,12 @@ namespace IndustrialPark
                         newAsset = new Asset(AHDR);
                         break;
                     default:
-                        throw new Exception($"Unknown asset type ({AHDR.assetType.ToString()}");
+                        throw new Exception($"Unknown asset type ({AHDR.assetType.ToString()})");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"There was an error loading asset [{AHDR.assetID.ToString("X8")}] {AHDR.ADBG.assetName}: " + ex.Message);
+                MessageBox.Show($"There was an error loading asset [{AHDR.assetID.ToString("X8")}] {AHDR.ADBG.assetName}: " + ex.Message + ". Industrial Park will not be able to edit this asset.");
                 newAsset = new Asset(AHDR);
             }
 
