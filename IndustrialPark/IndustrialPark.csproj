@@ -99,6 +99,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Shuffle.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Gizmos.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetTemplates.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetEditing.cs" />

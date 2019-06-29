@@ -163,7 +163,7 @@ namespace IndustrialPark
                 List<EntrySoundInfo_XBOX> entries = new List<EntrySoundInfo_XBOX>();
 
                 for (int i = 0; i < Entries_SND_amount; i++)
-                    entries.Add(new EntrySoundInfo_XBOX(AHDR.data.Skip(Entries_SND_StartOffset + EntrySoundInfo_XBOX.StructSize * i).Take(EntrySoundInfo_XBOX.StructSize).ToArray(), false));
+                    entries.Add(new EntrySoundInfo_XBOX(Data.Skip(Entries_SND_StartOffset + EntrySoundInfo_XBOX.StructSize * i).Take(EntrySoundInfo_XBOX.StructSize).ToArray(), false));
                 
                 return entries.ToArray();
             }
@@ -192,7 +192,7 @@ namespace IndustrialPark
                 List<EntrySoundInfo_XBOX> entries = new List<EntrySoundInfo_XBOX>();
 
                 for (int i = 0; i < Entries_SNDS_amount; i++)
-                    entries.Add(new EntrySoundInfo_XBOX(AHDR.data.Skip(Entries_SNDS_StartOffset + EntrySoundInfo_XBOX.StructSize * i).Take(EntrySoundInfo_XBOX.StructSize).ToArray(), false));
+                    entries.Add(new EntrySoundInfo_XBOX(Data.Skip(Entries_SNDS_StartOffset + EntrySoundInfo_XBOX.StructSize * i).Take(EntrySoundInfo_XBOX.StructSize).ToArray(), false));
 
                 return entries.ToArray();
             }
@@ -221,7 +221,7 @@ namespace IndustrialPark
                 List<EntrySoundInfo_XBOX> entries = new List<EntrySoundInfo_XBOX>();
 
                 for (int i = 0; i < Entries_SND_CIN_amount; i++)
-                    entries.Add(new EntrySoundInfo_XBOX(AHDR.data.Skip(Entries_SND_CIN_StartOffset + EntrySoundInfo_XBOX.StructSize * i).Take(EntrySoundInfo_XBOX.StructSize).ToArray(), false));
+                    entries.Add(new EntrySoundInfo_XBOX(Data.Skip(Entries_SND_CIN_StartOffset + EntrySoundInfo_XBOX.StructSize * i).Take(EntrySoundInfo_XBOX.StructSize).ToArray(), false));
 
                 return entries.ToArray();
             }

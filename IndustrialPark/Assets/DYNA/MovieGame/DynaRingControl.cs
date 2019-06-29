@@ -23,7 +23,7 @@ namespace IndustrialPark
             PlayerType = (DynaRingControlPlayerType)Switch(BitConverter.ToInt32(Data, 0x0));
             RingModel_AssetID = Switch(BitConverter.ToUInt32(Data, 0x4));
             UnknownFloat1 = Switch(BitConverter.ToSingle(Data, 0x8));
-            RingCount = Switch(BitConverter.ToInt32(Data, 0xC));
+            int RingCount = Switch(BitConverter.ToInt32(Data, 0xC));
             UnknownInt1 = Switch(BitConverter.ToInt32(Data, 0x10));
             RingSoundGroup_AssetID = Switch(BitConverter.ToUInt32(Data, 0x14));
             UnknownInt2 = Switch(BitConverter.ToInt32(Data, 0x18));
@@ -70,7 +70,7 @@ namespace IndustrialPark
             list.AddRange(BitConverter.GetBytes(Switch((int)PlayerType)));
             list.AddRange(BitConverter.GetBytes(Switch(RingModel_AssetID)));
             list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat1)));
-            list.AddRange(BitConverter.GetBytes(Switch(RingCount)));
+            list.AddRange(BitConverter.GetBytes(Switch(Rings_AssetIDs.Length)));
             list.AddRange(BitConverter.GetBytes(Switch(UnknownInt1)));
             list.AddRange(BitConverter.GetBytes(Switch(RingSoundGroup_AssetID)));
             list.AddRange(BitConverter.GetBytes(Switch(UnknownInt2)));
@@ -112,8 +112,6 @@ namespace IndustrialPark
         [Category("Ring Control"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat1 { get; set; }
 
-        [Category("Ring Control"), ReadOnly(true)]
-        public int RingCount { get; set; }
         [Category("Ring Control")]
         public int UnknownInt1 { get; set; }
 

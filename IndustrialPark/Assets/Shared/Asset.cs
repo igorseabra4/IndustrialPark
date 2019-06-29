@@ -19,7 +19,7 @@ namespace IndustrialPark
         {
             this.AHDR = AHDR;
         }
-        
+
         [Category("Data")]
         public byte[] Data
         {
@@ -38,61 +38,61 @@ namespace IndustrialPark
         {
             if (currentPlatform == Platform.GameCube)
                 return BitConverter.ToSingle(new byte[] {
-                AHDR.data[j + 3],
-                AHDR.data[j + 2],
-                AHDR.data[j + 1],
-                AHDR.data[j] }, 0);
+                Data[j + 3],
+                Data[j + 2],
+                Data[j + 1],
+                Data[j] }, 0);
 
-            return BitConverter.ToSingle(AHDR.data, j);
+            return BitConverter.ToSingle(Data, j);
         }
 
         protected byte ReadByte(int j)
         {
-            return AHDR.data[j];
+            return Data[j];
         }
 
         protected short ReadShort(int j)
         {
             if (currentPlatform == Platform.GameCube)
                 return BitConverter.ToInt16(new byte[] {
-                AHDR.data[j + 1],
-                AHDR.data[j] }, 0);
+                Data[j + 1],
+                Data[j] }, 0);
 
-            return BitConverter.ToInt16(AHDR.data, j);
+            return BitConverter.ToInt16(Data, j);
         }
 
         protected ushort ReadUShort(int j)
         {
             if (currentPlatform == Platform.GameCube)
                 return BitConverter.ToUInt16(new byte[] {
-                AHDR.data[j + 1],
-                AHDR.data[j] }, 0);
+                Data[j + 1],
+                Data[j] }, 0);
 
-            return BitConverter.ToUInt16(AHDR.data, j);
+            return BitConverter.ToUInt16(Data, j);
         }
 
         protected int ReadInt(int j)
         {
             if (currentPlatform == Platform.GameCube)
                 return BitConverter.ToInt32(new byte[] {
-                AHDR.data[j + 3],
-                AHDR.data[j + 2],
-                AHDR.data[j + 1],
-                AHDR.data[j] }, 0);
+                Data[j + 3],
+                Data[j + 2],
+                Data[j + 1],
+                Data[j] }, 0);
 
-            return BitConverter.ToInt32(AHDR.data, j);
+            return BitConverter.ToInt32(Data, j);
         }
 
         protected uint ReadUInt(int j)
         {
             if (currentPlatform == Platform.GameCube)
                 return BitConverter.ToUInt32(new byte[] {
-                AHDR.data[j + 3],
-                AHDR.data[j + 2],
-                AHDR.data[j + 1],
-                AHDR.data[j] }, 0);
+                Data[j + 3],
+                Data[j + 2],
+                Data[j + 1],
+                Data[j] }, 0);
 
-            return BitConverter.ToUInt32(AHDR.data, j);
+            return BitConverter.ToUInt32(Data, j);
         }
         
         protected void Write(int j, float value)
@@ -103,12 +103,12 @@ namespace IndustrialPark
                 split = split.Reverse().ToArray();
 
             for (int i = 0; i < 4; i++)
-                AHDR.data[j + i] = split[i];
+                Data[j + i] = split[i];
         }
 
         protected void Write(int j, byte value)
         {
-            AHDR.data[j] = value;
+            Data[j] = value;
         }
 
         protected void Write(int j, short value)
@@ -119,7 +119,7 @@ namespace IndustrialPark
                 split = split.Reverse().ToArray();
 
             for (int i = 0; i < 2; i++)
-                AHDR.data[j + i] = split[i];
+                Data[j + i] = split[i];
         }
 
         protected void Write(int j, ushort value)
@@ -130,7 +130,7 @@ namespace IndustrialPark
                 split = split.Reverse().ToArray();
 
             for (int i = 0; i < 2; i++)
-                AHDR.data[j + i] = split[i];
+                Data[j + i] = split[i];
         }
 
         protected void Write(int j, int value)
@@ -141,7 +141,7 @@ namespace IndustrialPark
                 split = split.Reverse().ToArray();
 
             for (int i = 0; i < 4; i++)
-                AHDR.data[j + i] = split[i];
+                Data[j + i] = split[i];
         }
 
         protected void Write(int j, uint value)
@@ -152,7 +152,7 @@ namespace IndustrialPark
                 split = split.Reverse().ToArray();
 
             for (int i = 0; i < 4; i++)
-                AHDR.data[j + i] = split[i];
+                Data[j + i] = split[i];
         }
 
         protected static uint Mask(uint bit)

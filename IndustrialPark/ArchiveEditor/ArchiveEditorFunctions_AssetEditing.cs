@@ -1032,7 +1032,7 @@ namespace IndustrialPark
                         result += $"Archive: Asset 0x{assetID.ToString("X8")} appears to be present in a layer, but it's not in the AHDR dictionary. This archive is likely unusable." + endl;
 
             List<Asset> ordered = assetDictionary.Values.OrderBy(f => f.AHDR.ADBG.assetName).ToList();
-            ordered = ordered.OrderBy(f => f.AHDR.assetType).ToList();
+            ordered = ordered.OrderBy(f => f.AHDR.ADBG.assetName).ToList();
 
             if (!ContainsAssetWithType(AssetType.JSP))
                 result += $"Archive: Does not contain any JSP asset." + endl;
@@ -1088,30 +1088,30 @@ namespace IndustrialPark
                         TRIG.Position0X *= factor.X;
                         TRIG.Position0Y *= factor.Y;
                         TRIG.Position0Z *= factor.Z;
-                        TRIG.Position1X_Radius *= singleFactor;
+                        TRIG.Radius *= singleFactor;
                     }
                     else
                     {
-                        Vector3 TrigCenter = new Vector3(TRIG.Position0X + TRIG.Position1X_Radius, TRIG.Position0Y + TRIG.Position1Y, TRIG.Position0Z + TRIG.Position1Z) / 2f;
+                        Vector3 TrigCenter = new Vector3(TRIG.Position0X + TRIG.Radius, TRIG.Position0Y + TRIG.Position1Y, TRIG.Position0Z + TRIG.Position1Z) / 2f;
 
                         TRIG.Position0X -= TrigCenter.X;
                         TRIG.Position0Y -= TrigCenter.Y;
                         TRIG.Position0Z -= TrigCenter.Z;
-                        TRIG.Position1X_Radius -= TrigCenter.X;
+                        TRIG.Position0X -= TrigCenter.X;
                         TRIG.Position1Y -= TrigCenter.Y;
                         TRIG.Position1Z -= TrigCenter.Z;
 
                         TRIG.Position0X *= factor.X;
                         TRIG.Position0Y *= factor.Y;
                         TRIG.Position0Z *= factor.Z;
-                        TRIG.Position1X_Radius *= factor.X;
+                        TRIG.Position0X *= factor.X;
                         TRIG.Position1Y *= factor.Y;
                         TRIG.Position1Z *= factor.Z;
 
                         TRIG.Position0X += TrigCenter.X * factor.X;
                         TRIG.Position0Y += TrigCenter.Y * factor.Y;
                         TRIG.Position0Z += TrigCenter.Z * factor.Z;
-                        TRIG.Position1X_Radius += TrigCenter.X * factor.X;
+                        TRIG.Position0X += TrigCenter.X * factor.X;
                         TRIG.Position1Y += TrigCenter.Y *factor.Y;
                         TRIG.Position1Z += TrigCenter.Z * factor.Z;
                     }

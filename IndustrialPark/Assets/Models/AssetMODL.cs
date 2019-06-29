@@ -8,7 +8,7 @@ namespace IndustrialPark
     {
         public static bool renderBasedOnLodt = false;
 
-        public AssetMODL(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetMODL(Section_AHDR AHDR, SharpRenderer renderer) : base(AHDR, renderer) { }
 
         public override void Setup(SharpRenderer renderer)
         {

@@ -11,8 +11,9 @@ namespace IndustrialPark
     {
         protected RenderWareModelFile model;
 
-        public AssetRenderWareModel(Section_AHDR AHDR) : base(AHDR)
+        public AssetRenderWareModel(Section_AHDR AHDR, SharpRenderer renderer) : base(AHDR)
         {
+            Setup(renderer);
         }
 
         public virtual void Setup(SharpRenderer renderer)
@@ -20,7 +21,7 @@ namespace IndustrialPark
             model = new RenderWareModelFile(AHDR.ADBG.assetName);
             try
             {
-                model.SetForRendering(renderer.device, ReadFileMethods.ReadRenderWareFile(AHDR.data), AHDR.data);
+                model.SetForRendering(renderer.device, ReadFileMethods.ReadRenderWareFile(Data), Data);
             }
             catch (Exception ex)
             {
@@ -29,16 +30,10 @@ namespace IndustrialPark
                 model = null;
             }
         }
-        
-        public RenderWareModelFile GetRenderWareModelFile()
-        {
-            return model;
-        }
 
-        public bool HasRenderWareModelFile()
-        {
-            return model != null;
-        }
+        public RenderWareModelFile GetRenderWareModelFile() => model;
+
+        public bool HasRenderWareModelFile() => model != null;
 
         public string[] Textures
         {
@@ -103,9 +98,7 @@ namespace IndustrialPark
                 Setup(Program.MainForm.renderer);
             }
         }
-
-        private int tempCount;
-
+        
         [DisplayName("Colors ([A,] R, G, B)")]
         public System.Drawing.Color[] Colors
         {
@@ -122,8 +115,7 @@ namespace IndustrialPark
                                 System.Drawing.Color color = System.Drawing.Color.FromArgb(rwColor.A, rwColor.R, rwColor.G, rwColor.B);
                                 colors.Add(color);
                             }
-
-                tempCount = colors.Count;
+                
                 return colors.ToArray();
             }
 
@@ -164,7 +156,6 @@ namespace IndustrialPark
                                             if (mat.texture.diffuseTextureName != null)
                                                 names.Add(mat.texture.diffuseTextureName.stringString);
 
-                tempCount = names.Count;
                 return names.ToArray();
             }
 

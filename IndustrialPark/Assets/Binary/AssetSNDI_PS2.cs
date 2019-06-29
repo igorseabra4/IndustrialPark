@@ -103,7 +103,7 @@ namespace IndustrialPark
                 List<EntrySoundInfo_PS2> entries = new List<EntrySoundInfo_PS2>();
 
                 for (int i = 0; i < Entries_SND_amount; i++)
-                    entries.Add(new EntrySoundInfo_PS2(AHDR.data.Skip(Entries_SND_StartOffset + EntrySoundInfo_PS2.StructSize * i).Take(EntrySoundInfo_PS2.StructSize).ToArray()));
+                    entries.Add(new EntrySoundInfo_PS2(Data.Skip(Entries_SND_StartOffset + EntrySoundInfo_PS2.StructSize * i).Take(EntrySoundInfo_PS2.StructSize).ToArray()));
                 
                 return entries.ToArray();
             }
@@ -132,7 +132,7 @@ namespace IndustrialPark
                 List<EntrySoundInfo_PS2> entries = new List<EntrySoundInfo_PS2>();
 
                 for (int i = 0; i < Entries_SNDS_amount; i++)
-                    entries.Add(new EntrySoundInfo_PS2(AHDR.data.Skip(Entries_SNDS_StartOffset + EntrySoundInfo_PS2.StructSize * i).Take(EntrySoundInfo_PS2.StructSize).ToArray()));
+                    entries.Add(new EntrySoundInfo_PS2(Data.Skip(Entries_SNDS_StartOffset + EntrySoundInfo_PS2.StructSize * i).Take(EntrySoundInfo_PS2.StructSize).ToArray()));
 
                 return entries.ToArray();
             }

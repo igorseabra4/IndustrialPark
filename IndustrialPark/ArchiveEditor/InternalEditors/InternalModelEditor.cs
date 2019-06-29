@@ -71,7 +71,7 @@ namespace IndustrialPark
                         ConvertDFFtoOBJ(a.FileName, asset.GetRenderWareModelFile(), true);
                 }
                 else
-                    File.WriteAllBytes(a.FileName, asset.AHDR.data);
+                    File.WriteAllBytes(a.FileName, asset.Data);
             }
         }
 
@@ -99,7 +99,7 @@ namespace IndustrialPark
                 else
                 {
                     asset.GetRenderWareModelFile().Dispose();
-                    asset.AHDR.data = File.ReadAllBytes(i);
+                    asset.Data = File.ReadAllBytes(i);
                     asset.Setup(Program.MainForm.renderer);
                     return;
                 }
@@ -112,7 +112,7 @@ namespace IndustrialPark
                     rws = CreateDFFFile(m, true);
 
                 asset.GetRenderWareModelFile().Dispose();
-                asset.AHDR.data = ReadFileMethods.ExportRenderWareFile(rws, currentRenderWareVersion);
+                asset.Data = ReadFileMethods.ExportRenderWareFile(rws, currentRenderWareVersion);
                 asset.Setup(Program.MainForm.renderer);
             }
         }

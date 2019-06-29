@@ -56,7 +56,8 @@ namespace IndustrialPark
                                 "\\Resources",
                                 "\\Resources\\importvcolorobj",
                                 "\\Resources\\Models",
-                                "\\Resources\\SharpDX"
+                                "\\Resources\\SharpDX",
+                                "\\Resources\\txdgen_1.0"
                         })
                         {
                             if (!Directory.Exists(oldPath + s))

@@ -134,7 +134,7 @@ namespace IndustrialPark
                 {
                     entries.Add(new EntrySoundInfo_GCN_V1()
                     {
-                        SoundHeader = AHDR.data.Skip(Entries_SND_StartOffset + EntrySoundInfo_GCN_V1.StructSize * i).Take(0x60).ToArray(),
+                        SoundHeader = Data.Skip(Entries_SND_StartOffset + EntrySoundInfo_GCN_V1.StructSize * i).Take(0x60).ToArray(),
                         SoundAssetID = ReadUInt(Entries_SND_StartOffset + EntrySoundInfo_GCN_V1.StructSize * i + 0x60)
                     });
                 }
@@ -172,7 +172,7 @@ namespace IndustrialPark
                 {
                     entries.Add(new EntrySoundInfo_GCN_V1()
                     {
-                        SoundHeader = AHDR.data.Skip(Entries_SNDS_StartOffset + EntrySoundInfo_GCN_V1.StructSize * i).Take(0x60).ToArray(),
+                        SoundHeader = Data.Skip(Entries_SNDS_StartOffset + EntrySoundInfo_GCN_V1.StructSize * i).Take(0x60).ToArray(),
                         SoundAssetID = ReadUInt(Entries_SNDS_StartOffset + EntrySoundInfo_GCN_V1.StructSize * i + 0x60)
                     });
                 }
@@ -213,7 +213,7 @@ namespace IndustrialPark
                 {
                     entries.Add(new EntrySoundInfo_GCN_V1()
                     {
-                        SoundHeader = AHDR.data.Skip(Entries_SND_CIN_StartOffset + EntrySoundInfo_GCN_V1.StructSize * i).Take(0x60).ToArray(),
+                        SoundHeader = Data.Skip(Entries_SND_CIN_StartOffset + EntrySoundInfo_GCN_V1.StructSize * i).Take(0x60).ToArray(),
                         SoundAssetID = ReadUInt(Entries_SND_CIN_StartOffset + EntrySoundInfo_GCN_V1.StructSize * i + 0x60)
                     });
                 }

@@ -146,6 +146,7 @@
         // Placeable
         Marker,
         SphereTrigger,
+        CylinderTrigger,
         PointMVPT,
         PointMVPT_TSSM,
         EnemyAreaMVPT,
@@ -171,5 +172,7 @@
         PipeInfoTable,
         ShadowTable,
         SoundInfo,
+
+        PasteClipboard
     }
 }

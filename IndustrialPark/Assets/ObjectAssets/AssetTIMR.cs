@@ -20,12 +20,12 @@ namespace IndustrialPark
         [Category("Timer"), TypeConverter(typeof(FloatTypeConverter))]
         public float RandomRange
         {
-            get => Functions.currentGame == Game.Scooby ? 0 : BitConverter.ToSingle(AHDR.data, 0xC);
+            get => Functions.currentGame == Game.Scooby ? 0 : BitConverter.ToSingle(Data, 0xC);
             set
             {
                 if (Functions.currentGame != Game.Scooby)
                     for (int i = 0; i < 4; i++)
-                        AHDR.data[0xC + i] = BitConverter.GetBytes(value)[i];
+                        Data[0xC + i] = BitConverter.GetBytes(value)[i];
             }
         }
     }

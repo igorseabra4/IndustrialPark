@@ -766,7 +766,6 @@ namespace IndustrialPark.Models
             int totalVertexIndices = 1;
 
             string materialLibrary = Path.ChangeExtension(fileName, "MTL");
-            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
             int untexturedMaterials = 0;
             List<Triangle> triangleList = new List<Triangle>();
 
@@ -802,6 +801,7 @@ namespace IndustrialPark.Models
                     }
                 }
             }
+
             MTLWriter.Close();
         }
 

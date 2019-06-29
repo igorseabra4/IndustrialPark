@@ -10,7 +10,7 @@ namespace IndustrialPark
 
         public static bool dontRender = false;
 
-        public AssetJSP(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetJSP(Section_AHDR AHDR, SharpRenderer renderer) : base(AHDR, renderer) { }
 
         public override void Setup(SharpRenderer renderer)
         {
@@ -19,20 +19,11 @@ namespace IndustrialPark
             ArchiveEditorFunctions.renderableAssetSetJSP.Add(this);
         }
 
-        public void CreateTransformMatrix()
-        {
-            boundingBox = BoundingBox.FromPoints(model.vertexListG.ToArray());
-        }
+        public void CreateTransformMatrix() => boundingBox = BoundingBox.FromPoints(model.vertexListG.ToArray());
+        
+        public BoundingBox GetBoundingBox() => boundingBox;
 
-        public BoundingBox GetBoundingBox()
-        {
-            return boundingBox;
-        }
-
-        public float GetDistance(Vector3 cameraPosition)
-        {
-            return 0f;
-        }
+        public float GetDistance(Vector3 cameraPosition) => 0;
         
         public void Draw(SharpRenderer renderer)
         {
@@ -41,14 +32,8 @@ namespace IndustrialPark
             model.Render(renderer, Matrix.Identity, isSelected ? renderer.selectedObjectColor : Vector4.One, Vector3.Zero);
         }
 
-        public float? IntersectsWith(Ray ray)
-        {
-            if (dontRender || isInvisible)
-                return null;
-
-            return TriangleIntersection(ray);
-        }
-
+        public float? IntersectsWith(Ray ray) => dontRender || isInvisible ? null : TriangleIntersection(ray);
+        
         private float? TriangleIntersection(Ray r)
         {
             bool hasIntersected = false;

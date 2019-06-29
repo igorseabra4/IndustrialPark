@@ -47,7 +47,7 @@ namespace IndustrialPark
                     try
                     {
                         archive.AddSoundToSNDI(file, asset.AHDR.assetID, asset.AHDR.assetType, out byte[] soundData);
-                        asset.AHDR.data = soundData;
+                        asset.Data = soundData;
                     }
                     catch (Exception ex)
                     {
@@ -56,7 +56,7 @@ namespace IndustrialPark
                 }
                 else
                 {
-                    asset.AHDR.data = file;
+                    asset.Data = file;
                 }
                 archive.UnsavedChanges = true;
             }
@@ -78,7 +78,7 @@ namespace IndustrialPark
             {
                 List<byte> file = new List<byte>();
                 file.AddRange(archive.GetHeaderFromSNDI(asset.AHDR.assetID));
-                file.AddRange(asset.AHDR.data);
+                file.AddRange(asset.Data);
 
                 if (new string(new char[] { (char)file[0], (char)file[1], (char)file[2], (char)file[3] }) == "RIFF")
                 {

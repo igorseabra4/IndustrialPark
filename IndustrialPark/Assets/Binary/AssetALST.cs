@@ -35,7 +35,7 @@ namespace IndustrialPark
             get
             {
                 List<AssetID> assetIDs = new List<AssetID>();
-                for (int i = 0; i < AHDR.data.Length; i += 4)
+                for (int i = 0; i < Data.Length; i += 4)
                     assetIDs.Add(ReadUInt(i));
 
                 return assetIDs.ToArray();

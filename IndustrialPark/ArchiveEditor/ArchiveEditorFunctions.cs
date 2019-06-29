@@ -353,152 +353,127 @@ namespace IndustrialPark
             }
 
             Asset newAsset;
-
-            switch (AHDR.assetType)
+            try
             {
-                case AssetType.ANIM:
-                    if (AHDR.ADBG.assetName.Contains("ATBL"))
-                        newAsset = new Asset(AHDR);
-                    else
-                        newAsset = new AssetANIM(AHDR);
-                    break;
-                case AssetType.ALST: newAsset = new AssetALST(AHDR); break;
-                case AssetType.ATBL: newAsset = new AssetATBL(AHDR); break;
-                case AssetType.BSP:
-                case AssetType.JSP:
-                    newAsset = new AssetJSP(AHDR);
-                    ((AssetJSP)newAsset).Setup(Program.MainForm.renderer);
-                    break;
-                case AssetType.BOUL: newAsset = new AssetBOUL(AHDR); break;
-                case AssetType.BUTN: newAsset = new AssetBUTN(AHDR); break;
-                case AssetType.CAM: newAsset = new AssetCAM(AHDR); break;
-                case AssetType.CNTR: newAsset = new AssetCNTR(AHDR); break;
-                case AssetType.COLL: newAsset = new AssetCOLL(AHDR); break;
-                case AssetType.COND:
-                    if (currentGame == Game.Scooby)
-                        newAsset = new AssetCOND_Scooby(AHDR);
-                    else
-                        newAsset = new AssetCOND(AHDR);
-                    break;
-                case AssetType.CRDT: newAsset = new AssetCRDT(AHDR); break;
-                case AssetType.CSNM: newAsset = new AssetCSNM(AHDR); break;
-                case AssetType.DPAT: newAsset = new AssetDPAT(AHDR); break;
-                case AssetType.DSCO: newAsset = new AssetDSCO(AHDR); break;
-                case AssetType.DSTR:
-                    if (currentGame == Game.Scooby)
-                        newAsset = new AssetDSTR_Scooby(AHDR);
-                    else
-                        newAsset = new AssetDSTR(AHDR);
-                    break;
-                case AssetType.DYNA: newAsset = new AssetDYNA(AHDR); break;
-                case AssetType.EGEN: newAsset = new AssetEGEN(AHDR); break;
-                case AssetType.ENV:
-                    if (currentGame == Game.Incredibles)
-                        newAsset = new AssetENV_TSSM(AHDR);
-                    else
-                        newAsset = new AssetENV(AHDR);
-                    break;
-                case AssetType.FLY: newAsset = new AssetFLY(AHDR); break;
-                case AssetType.FOG: newAsset = new AssetFOG(AHDR); break;
-                case AssetType.GRUP: newAsset = new AssetGRUP(AHDR); break;
-                case AssetType.GUST: newAsset = new AssetGUST(AHDR); break;
-                case AssetType.HANG: newAsset = new AssetHANG(AHDR); break;
-                case AssetType.JAW: newAsset = new AssetJAW(AHDR); break;
-                case AssetType.LITE: newAsset = new AssetLITE(AHDR); break;
-                case AssetType.LKIT: newAsset = new AssetLKIT(AHDR); break;
-                case AssetType.LODT: newAsset = new AssetLODT(AHDR); break;
-                case AssetType.MAPR: newAsset = new AssetMAPR(AHDR); break;
-                case AssetType.MINF: newAsset = new AssetMINF(AHDR); break;
-                case AssetType.MODL:
-                    newAsset = new AssetMODL(AHDR);
-                    ((AssetMODL)newAsset).Setup(Program.MainForm.renderer);
-                    break;
-                case AssetType.MRKR: newAsset = new AssetMRKR(AHDR); break;
-                case AssetType.MVPT:
-                    if (currentGame == Game.Scooby)
-                        newAsset = new AssetMVPT_Scooby(AHDR);
-                    else
-                        newAsset = new AssetMVPT(AHDR);
-                    break;
-                case AssetType.NPC: newAsset = new AssetNPC(AHDR); break;
-                case AssetType.PARE: newAsset = new AssetPARE(AHDR); break;
-                case AssetType.PARP: newAsset = new AssetPARP(AHDR); break;
-                case AssetType.PARS: newAsset = new AssetPARS(AHDR); break;
-                case AssetType.PEND: newAsset = new AssetPEND(AHDR); break;
-                case AssetType.PICK: newAsset = new AssetPICK(AHDR); break;
-                case AssetType.PIPT: newAsset = new AssetPIPT(AHDR); break;
-                case AssetType.PKUP: newAsset = new AssetPKUP(AHDR); break;
-                case AssetType.PLAT: newAsset = new AssetPLAT(AHDR); break;
-                case AssetType.PLYR: newAsset = new AssetPLYR(AHDR); break;
-                case AssetType.PORT: newAsset = new AssetPORT(AHDR); break;
-                case AssetType.PRJT: newAsset = new AssetPRJT(AHDR); break;
-                case AssetType.RWTX: newAsset = new AssetRWTX(AHDR); break;
-                case AssetType.SCRP: newAsset = new AssetSCRP(AHDR); break;
-                case AssetType.SFX: newAsset = new AssetSFX(AHDR); break;
-                case AssetType.SGRP: newAsset = new AssetSGRP(AHDR); break;
-                case AssetType.SIMP: newAsset = new AssetSIMP(AHDR); break;
-                case AssetType.SHDW: newAsset = new AssetSHDW(AHDR); break;
-                case AssetType.SHRP: newAsset = new AssetSHRP(AHDR); break;
-                case AssetType.SNDI:
-                    if (currentPlatform == Platform.GameCube && (currentGame == Game.BFBB || currentGame == Game.Scooby))
-                        newAsset = new AssetSNDI_GCN_V1(AHDR);
-                    else if (currentPlatform == Platform.GameCube)
-                        newAsset = new AssetSNDI_GCN_V2(AHDR);
-                    else if (currentPlatform == Platform.Xbox)
-                        newAsset = new AssetSNDI_XBOX(AHDR);
-                    else if (currentPlatform == Platform.PS2)
-                        newAsset = new AssetSNDI_PS2(AHDR);
-                    else
-                        newAsset = new Asset(AHDR);
-                    break;
-                case AssetType.SURF: newAsset = new AssetSURF(AHDR); break;
-                case AssetType.TEXT: newAsset = new AssetTEXT(AHDR); break;
-                case AssetType.TRIG: newAsset = new AssetTRIG(AHDR); break;
-                case AssetType.TIMR: newAsset = new AssetTIMR(AHDR); break;
-                case AssetType.UI: newAsset = new AssetUI(AHDR); break;
-                case AssetType.UIFT: newAsset = new AssetUIFT(AHDR); break;
-                case AssetType.VIL: newAsset = new AssetVIL(AHDR); break;
-                case AssetType.VILP: newAsset = new AssetVILP(AHDR); break;
-                case AssetType.VOLU: newAsset = new AssetVOLU(AHDR); break;
-                case AssetType.CCRV:
-                case AssetType.DTRK:
-                case AssetType.DUPC:
-                case AssetType.GRSM:
-                case AssetType.LOBM:
-                case AssetType.NGMS:
-                case AssetType.PGRS:
-                case AssetType.RANM:
-                case AssetType.SDFX:
-                case AssetType.SLID:
-                case AssetType.SPLN:
-                case AssetType.SSET:
-                case AssetType.SUBT:
-                case AssetType.TPIK:
-                case AssetType.TRWT:
-                case AssetType.UIM:
-                case AssetType.ZLIN:
+                switch (AHDR.assetType)
+                {
+                    case AssetType.ANIM: newAsset = AHDR.ADBG.assetName.Contains("ATBL") ? new Asset(AHDR) : newAsset = new AssetANIM(AHDR); break;
+                    case AssetType.ALST: newAsset = new AssetALST(AHDR); break;
+                    case AssetType.ATBL: newAsset = new AssetATBL(AHDR); break;
+                    case AssetType.BSP: case AssetType.JSP: newAsset = new AssetJSP(AHDR, Program.MainForm.renderer); break;
+                    case AssetType.BOUL: newAsset = new AssetBOUL(AHDR); break;
+                    case AssetType.BUTN: newAsset = new AssetBUTN(AHDR); break;
+                    case AssetType.CAM: newAsset = new AssetCAM(AHDR); break;
+                    case AssetType.CNTR: newAsset = new AssetCNTR(AHDR); break;
+                    case AssetType.COLL: newAsset = new AssetCOLL(AHDR); break;
+                    case AssetType.COND: if (currentGame == Game.Scooby) newAsset = new AssetCOND_Scooby(AHDR); else newAsset = new AssetCOND(AHDR); break;
+                    case AssetType.CRDT: newAsset = new AssetCRDT(AHDR); break;
+                    case AssetType.CSNM: newAsset = new AssetCSNM(AHDR); break;
+                    case AssetType.DPAT: newAsset = new AssetDPAT(AHDR); break;
+                    case AssetType.DSCO: newAsset = new AssetDSCO(AHDR); break;
+                    case AssetType.DSTR: newAsset = currentGame == Game.Scooby ? new AssetDSTR_Scooby(AHDR) : new AssetDSTR(AHDR); break;
+                    case AssetType.DYNA: newAsset = new AssetDYNA(AHDR); break;
+                    case AssetType.EGEN: newAsset = new AssetEGEN(AHDR); break;
+                    case AssetType.ENV: newAsset = currentGame == Game.Incredibles ? new AssetENV_TSSM(AHDR) : new AssetENV(AHDR); break;
+                    case AssetType.FLY: newAsset = new AssetFLY(AHDR); break;
+                    case AssetType.FOG: newAsset = new AssetFOG(AHDR); break;
+                    case AssetType.GRUP: newAsset = new AssetGRUP(AHDR); break;
+                    case AssetType.GUST: newAsset = new AssetGUST(AHDR); break;
+                    case AssetType.HANG: newAsset = new AssetHANG(AHDR); break;
+                    case AssetType.JAW: newAsset = new AssetJAW(AHDR); break;
+                    case AssetType.LITE: newAsset = new AssetLITE(AHDR); break;
+                    case AssetType.LKIT: newAsset = new AssetLKIT(AHDR); break;
+                    case AssetType.LODT: newAsset = new AssetLODT(AHDR); break;
+                    case AssetType.MAPR: newAsset = new AssetMAPR(AHDR); break;
+                    case AssetType.MINF: newAsset = new AssetMINF(AHDR); break;
+                    case AssetType.MODL: newAsset = new AssetMODL(AHDR, Program.MainForm.renderer); break;
+                    case AssetType.MRKR: newAsset = new AssetMRKR(AHDR); break;
+                    case AssetType.MVPT: newAsset = currentGame == Game.Scooby ? new AssetMVPT_Scooby(AHDR) : new AssetMVPT(AHDR); break;
+                    case AssetType.NPC: newAsset = new AssetNPC(AHDR); break;
+                    case AssetType.PARE: newAsset = new AssetPARE(AHDR); break;
+                    case AssetType.PARP: newAsset = new AssetPARP(AHDR); break;
+                    case AssetType.PARS: newAsset = new AssetPARS(AHDR); break;
+                    case AssetType.PEND: newAsset = new AssetPEND(AHDR); break;
+                    case AssetType.PICK: newAsset = new AssetPICK(AHDR); break;
+                    case AssetType.PIPT: newAsset = new AssetPIPT(AHDR); break;
+                    case AssetType.PKUP: newAsset = new AssetPKUP(AHDR); break;
+                    case AssetType.PLAT: newAsset = new AssetPLAT(AHDR); break;
+                    case AssetType.PLYR: newAsset = new AssetPLYR(AHDR); break;
+                    case AssetType.PORT: newAsset = new AssetPORT(AHDR); break;
+                    case AssetType.PRJT: newAsset = new AssetPRJT(AHDR); break;
+                    case AssetType.RWTX: newAsset = new AssetRWTX(AHDR); break;
+                    case AssetType.SCRP: newAsset = new AssetSCRP(AHDR); break;
+                    case AssetType.SFX: newAsset = new AssetSFX(AHDR); break;
+                    case AssetType.SGRP: newAsset = new AssetSGRP(AHDR); break;
+                    case AssetType.SIMP: newAsset = new AssetSIMP(AHDR); break;
+                    case AssetType.SHDW: newAsset = new AssetSHDW(AHDR); break;
+                    case AssetType.SHRP: newAsset = new AssetSHRP(AHDR); break;
+                    case AssetType.SNDI:
+                        if (currentPlatform == Platform.GameCube && (currentGame == Game.BFBB || currentGame == Game.Scooby))
+                            newAsset = new AssetSNDI_GCN_V1(AHDR);
+                        else if (currentPlatform == Platform.GameCube)
+                            newAsset = new AssetSNDI_GCN_V2(AHDR);
+                        else if (currentPlatform == Platform.Xbox)
+                            newAsset = new AssetSNDI_XBOX(AHDR);
+                        else if (currentPlatform == Platform.PS2)
+                            newAsset = new AssetSNDI_PS2(AHDR);
+                        else
+                            newAsset = new Asset(AHDR);
+                        break;
+                    case AssetType.SURF: newAsset = new AssetSURF(AHDR); break;
+                    case AssetType.TEXT: newAsset = new AssetTEXT(AHDR); break;
+                    case AssetType.TRIG: newAsset = new AssetTRIG(AHDR); break;
+                    case AssetType.TIMR: newAsset = new AssetTIMR(AHDR); break;
+                    case AssetType.UI: newAsset = new AssetUI(AHDR); break;
+                    case AssetType.UIFT: newAsset = new AssetUIFT(AHDR); break;
+                    case AssetType.VIL: newAsset = new AssetVIL(AHDR); break;
+                    case AssetType.VILP: newAsset = new AssetVILP(AHDR); break;
+                    case AssetType.VOLU: newAsset = new AssetVOLU(AHDR); break;
+                    case AssetType.CCRV:
+                    case AssetType.DTRK:
+                    case AssetType.DUPC:
+                    case AssetType.GRSM:
+                    case AssetType.LOBM:
+                    case AssetType.NGMS:
+                    case AssetType.PGRS:
+                    case AssetType.RANM:
+                    case AssetType.SDFX:
+                    case AssetType.SLID:
+                    case AssetType.SPLN:
+                    case AssetType.SSET:
+                    case AssetType.SUBT:
+                    case AssetType.TPIK:
+                    case AssetType.TRWT:
+                    case AssetType.UIM:
+                    case AssetType.ZLIN:
                         newAsset = new ObjectAsset(AHDR);
-                    break;
-                case AssetType.ATKT:
-                case AssetType.BINK:
-                case AssetType.CSN:
-                case AssetType.CSSS:
-                case AssetType.CTOC:
-                case AssetType.DEST:
-                case AssetType.MPHT:
-                case AssetType.NPCS:
-                case AssetType.ONEL:
-                case AssetType.RAW:
-                case AssetType.SND:
-                case AssetType.SNDS:
-                case AssetType.SPLP:
-                case AssetType.TEXS:
-                case AssetType.UIFN:
-                case AssetType.WIRE:
+                        break;
+                    case AssetType.ATKT:
+                    case AssetType.BINK:
+                    case AssetType.CSN:
+                    case AssetType.CSSS:
+                    case AssetType.CTOC:
+                    case AssetType.DEST:
+                    case AssetType.MPHT:
+                    case AssetType.NPCS:
+                    case AssetType.ONEL:
+                    case AssetType.RAW:
+                    case AssetType.SND:
+                    case AssetType.SNDS:
+                    case AssetType.SPLP:
+                    case AssetType.TEXS:
+                    case AssetType.UIFN:
+                    case AssetType.WIRE:
                         newAsset = new Asset(AHDR);
-                    break;
-                default:
-                    throw new Exception("Unknown asset type: " + AHDR.assetType);
+                        break;
+                    default:
+                        throw new Exception($"Unknown asset type ({AHDR.assetType.ToString()}");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"There was an error loading asset [{AHDR.assetID.ToString("X8")}] {AHDR.ADBG.assetName}: " + ex.Message);
+                newAsset = new Asset(AHDR);
             }
 
             assetDictionary[AHDR.assetID] = newAsset;

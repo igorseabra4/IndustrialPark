@@ -219,6 +219,7 @@ namespace IndustrialPark
                 new ToolStripMenuItem(AssetTemplate.PointMVPT_TSSM.ToString()),
                 new ToolStripMenuItem(AssetTemplate.EnemyAreaMVPT.ToString()),
                 new ToolStripMenuItem(AssetTemplate.SphereTrigger.ToString()),
+                new ToolStripMenuItem(AssetTemplate.CylinderTrigger.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Dyna_Pointer.ToString()),
                 new ToolStripSeparator(),
                 new ToolStripMenuItem(AssetTemplate.Boulder_Generic.ToString()),
@@ -252,7 +253,10 @@ namespace IndustrialPark
                 if (i is ToolStripMenuItem j)
                     j.Click += eventHandler;
 
-            menu.DropDownItems.AddRange(new ToolStripItem[] { controllers, placeable, bfbb, tssm, others});
+            ToolStripMenuItem paste = new ToolStripMenuItem(AssetTemplate.PasteClipboard.ToString());
+            paste.Click += eventHandler;
+
+            menu.DropDownItems.AddRange(new ToolStripItem[] { controllers, placeable, bfbb, tssm, others, paste });
         }
 
         public void SetAssetPositionToView(uint assetID)
@@ -382,8 +386,28 @@ namespace IndustrialPark
                 template = CurrentAssetTemplate;
             if (template == AssetTemplate.UserTemplate)
                 return PlaceUserTemplate(position, layerIndex, out success, ref assetIDs);
+            if (template == AssetTemplate.PasteClipboard)
+            {
+                PasteAssetsFromClipboard(layerIndex, out assetIDs);
 
-            AssetType newAssetType = AssetType.Null;
+                if (assetIDs.Count > 0)
+                {
+                    success = true;
+                    foreach (uint assetID in assetIDs)
+                        if (GetFromAssetID(assetID) is IClickableAsset ica)
+                        {
+                            ica.PositionX = position.X;
+                            ica.PositionY = position.Y;
+                            ica.PositionZ = position.Z;
+                        }
+                }
+                else
+                    success = false;
+
+                return 0;
+            }
+
+            AssetType newAssetType;
             int dataSize = -1;
 
             switch (template)
@@ -617,6 +641,7 @@ namespace IndustrialPark
                     newAssetType = AssetType.TRIG;
                     break;
                 case AssetTemplate.SphereTrigger:
+                case AssetTemplate.CylinderTrigger:
                 case AssetTemplate.BusStop_Trigger:
                 case AssetTemplate.Checkpoint_Invisible:
                     dataSize = 0x94 + Asset.Offset;
@@ -663,7 +688,7 @@ namespace IndustrialPark
                     success = false;
                     return 0;
             }
-            
+
             string assetName = string.IsNullOrWhiteSpace(customName) ? template.ToString().ToUpper() + "_01" : customName + "_01";
             
             Section_AHDR newAsset = new Section_AHDR
@@ -698,7 +723,7 @@ namespace IndustrialPark
                 trig.ColorAlpha = 0;
                 trig.ColorAlphaSpeed = 0;
                 trig.Model_AssetID = 0xDD77064D;
-                trig.Position1X_Radius = 1f;
+                trig.Radius = 1f;
                 trig.Data[0x88] = 0x80;
                 trig.DirectionZ = 1f;
             }
@@ -1007,7 +1032,7 @@ namespace IndustrialPark
                         }
                     };
                     AssetTRIG chuckTrigger = (AssetTRIG)GetFromAssetID(PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_TRIG", AssetTemplate.SphereTrigger));
-                    chuckTrigger.Position1X_Radius = 15f;
+                    chuckTrigger.Radius = 15f;
                     chuckTrigger.LinksBFBB = new LinkBFBB[] {
                         new LinkBFBB
                         {
@@ -1047,7 +1072,7 @@ namespace IndustrialPark
                     };
 
                     AssetTRIG monsoonTrigger = (AssetTRIG)GetFromAssetID(PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_TRIG", AssetTemplate.SphereTrigger));
-                    monsoonTrigger.Position1X_Radius = 15f;
+                    monsoonTrigger.Radius = 15f;
                     monsoonTrigger.LinksBFBB = new LinkBFBB[] {
                         new LinkBFBB
                         {
@@ -1163,7 +1188,7 @@ namespace IndustrialPark
                     };
 
                     AssetTRIG slickTrigger = (AssetTRIG)GetFromAssetID(PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_TRIG", AssetTemplate.SphereTrigger));
-                    slickTrigger.Position1X_Radius = 15f;
+                    slickTrigger.Radius = 15f;
                     slickTrigger.LinksBFBB = new LinkBFBB[] {
                         new LinkBFBB
                         {
@@ -1325,7 +1350,13 @@ namespace IndustrialPark
                     break;
                 case AssetTemplate.SphereTrigger:
                     ((AssetTRIG)asset).AssetType = ObjectAssetType.TRIG;
-                    ((AssetTRIG)asset).Position1X_Radius = 10f;
+                    ((AssetTRIG)asset).Radius = 10f;
+                    break;
+                case AssetTemplate.CylinderTrigger:
+                    ((AssetTRIG)asset).AssetType = ObjectAssetType.TRIG;
+                    ((AssetTRIG)asset).Shape = TriggerShape.Cylinder;
+                    ((AssetTRIG)asset).Radius = 10f;
+                    ((AssetTRIG)asset).Height = 5f;
                     break;
                 case AssetTemplate.BusStop:
                     ((AssetSIMP)asset).AssetType = ObjectAssetType.SIMP;
@@ -1349,7 +1380,7 @@ namespace IndustrialPark
                     break;
                 case AssetTemplate.BusStop_Trigger:
                     ((AssetTRIG)asset).AssetType = ObjectAssetType.TRIG;
-                    ((AssetTRIG)asset).Position1X_Radius = 2.5f;
+                    ((AssetTRIG)asset).Radius = 2.5f;
                     uint lightsAssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper().Replace("TRIGGER", "LIGHTS").Replace("TRIG", "LIGHTS"), AssetTemplate.BusStop_Lights);
                     ((AssetTRIG)asset).LinksBFBB = new LinkBFBB[] {
                         new LinkBFBB
@@ -1438,7 +1469,7 @@ namespace IndustrialPark
                 case AssetTemplate.Checkpoint_Invisible:
                     {
                         ((AssetTRIG)asset).AssetType = ObjectAssetType.TRIG;
-                        ((AssetTRIG)asset).Position1X_Radius = 6f;
+                        ((AssetTRIG)asset).Radius = 6f;
                         AssetID checkpointDisp = "CHECKPOINT_DISP_00";
                         if (!ContainsAsset(checkpointDisp))
                             checkpointDisp = PlaceTemplate(position, layerIndex, out success, ref assetIDs, "CHECKPOINT_DISP", AssetTemplate.Dispatcher);

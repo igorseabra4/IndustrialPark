@@ -9,7 +9,8 @@ namespace IndustrialPark
     public enum TriggerShape
     {
         Box = 0,
-        Sphere = 1
+        Sphere = 1,
+        Cylinder = 2
     }
 
     public class AssetTRIG : PlaceableAsset
@@ -48,9 +49,15 @@ namespace IndustrialPark
                     Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll) *
                     Matrix.Translation(midPos);
             }
+            else if (Shape == TriggerShape.Sphere)
+            {
+                world = Matrix.Scaling(Radius * 2f) *
+                    Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll) *
+                    Matrix.Translation(_trigPos0);
+            }
             else
             {
-                world = Matrix.Scaling(Position1X_Radius * 2f) *
+                world = Matrix.Scaling(Radius * 2f, Height * 2f, Radius * 2f) *
                     Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll) *
                     Matrix.Translation(_trigPos0);
             }
@@ -67,10 +74,19 @@ namespace IndustrialPark
                 boundingBox.Minimum = (Vector3)Vector3.Transform(boundingBox.Minimum, world);
                 boundingSphere = BoundingSphere.FromBox(boundingBox);
             }
+            else if (Shape == TriggerShape.Sphere)
+            {
+                boundingSphere = new BoundingSphere(_trigPos0, Radius);
+                boundingBox = BoundingBox.FromSphere(boundingSphere);
+            }
             else
             {
-                boundingSphere = new BoundingSphere(_trigPos0, Position1X_Radius);
-                boundingBox = BoundingBox.FromSphere(boundingSphere);
+                boundingBox = new BoundingBox
+                {
+                    Maximum = new Vector3(Position0X, Position0Y, Position0Z) + new Vector3(Radius, Height * 2, Radius),
+                    Minimum = new Vector3(Position0X, Position0Y, Position0Z) - new Vector3(Radius, Height * 2, Radius)
+                };
+                boundingSphere = BoundingSphere.FromBox(boundingBox);
             }
         }
 
@@ -80,8 +96,10 @@ namespace IndustrialPark
 
             if (Shape == TriggerShape.Box)
                 renderer.DrawCube(world, isSelected, 1f);
-            else
+            else if (Shape == TriggerShape.Sphere)
                 renderer.DrawSphere(world, isSelected, renderer.trigColor);
+            else
+                renderer.DrawCylinder(world, isSelected, renderer.trigColor);
         }
 
         public override float? IntersectsWith(Ray ray)
@@ -90,11 +108,21 @@ namespace IndustrialPark
                 return null;
 
             if (Shape == TriggerShape.Box)
+            {
                 if (ray.Intersects(ref boundingBox))
                     return TriangleIntersection(ray, SharpRenderer.cubeTriangles, SharpRenderer.cubeVertices);
-            if (Shape == TriggerShape.Sphere)
+            }
+            else if (Shape == TriggerShape.Sphere)
+            {
                 if (ray.Intersects(ref boundingSphere))
                     return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices);
+            }
+            else
+            {
+                if (ray.Intersects(ref boundingBox))
+                    return TriangleIntersection(ray, SharpRenderer.cylinderTriangles, SharpRenderer.cylinderVertices);
+            }
+
             return null;
         }
 
@@ -158,14 +186,14 @@ namespace IndustrialPark
             get => _position.X;
             set
             {
-                if (Shape == TriggerShape.Sphere)
+                if (Shape == TriggerShape.Box)
                 {
-                    Position0X = value;
+                    Position0X += value - _position.X;
+                    Position1X += value - _position.X;
                 }
                 else
                 {
-                    Position0X += value - _position.X;
-                    Position1X_Radius += value - _position.X;
+                    Position0X = value;
                 }
 
                 _position.X = value;
@@ -180,14 +208,14 @@ namespace IndustrialPark
             get => _position.Y;
             set
             {
-                if (Shape == TriggerShape.Sphere)
-                {
-                    Position0Y = value;
-                }
-                else
+                if (Shape == TriggerShape.Box)
                 {
                     Position0Y += value - _position.Y;
                     Position1Y += value - _position.Y;
+                }
+                else
+                {
+                    Position0Y = value;
                 }
 
                 _position.Y = value;
@@ -202,14 +230,14 @@ namespace IndustrialPark
             get => _position.Z;
             set
             {
-                if (Shape == TriggerShape.Sphere)
-                {
-                    Position0Z = value;
-                }
-                else
+                if (Shape == TriggerShape.Box)
                 {
                     Position0Z += value - _position.Z;
                     Position1Z += value - _position.Z;
+                }
+                else
+                {
+                    Position0Z = value;
                 }
 
                 _position.Z = value;
@@ -224,14 +252,14 @@ namespace IndustrialPark
         {
             get
             {
-                if (Shape == TriggerShape.Sphere)
-                    return Position1X_Radius;
+                if (Shape == TriggerShape.Sphere || Shape == TriggerShape.Cylinder)
+                    return Radius;
                 return base.ScaleX;
             }
             set
             {
-                if (Shape == TriggerShape.Sphere)
-                    Position1X_Radius = value;
+                if (Shape == TriggerShape.Sphere || Shape == TriggerShape.Cylinder)
+                    Radius = value;
                 base.ScaleX = value;
             }
         }
@@ -243,13 +271,17 @@ namespace IndustrialPark
             get
             {
                 if (Shape == TriggerShape.Sphere)
-                    return Position1X_Radius;
+                    return Radius;
+                if (Shape == TriggerShape.Cylinder)
+                    return Height;
                 return base.ScaleY;
             }
             set
             {
                 if (Shape == TriggerShape.Sphere)
-                    Position1X_Radius = value;
+                    Radius = value;
+                if (Shape == TriggerShape.Cylinder)
+                    Height = value;
                 base.ScaleY = value;
             }
         }
@@ -260,14 +292,14 @@ namespace IndustrialPark
         {
             get
             {
-                if (Shape == TriggerShape.Sphere)
-                    return Position1X_Radius;
+                if (Shape == TriggerShape.Sphere || Shape == TriggerShape.Cylinder)
+                    return Radius;
                 return base.ScaleZ;
             }
             set
             {
-                if (Shape == TriggerShape.Sphere)
-                    Position1X_Radius = value;
+                if (Shape == TriggerShape.Sphere || Shape == TriggerShape.Cylinder)
+                    Radius = value;
                 base.ScaleZ = value;
             }
         }
@@ -311,7 +343,19 @@ namespace IndustrialPark
             }
         }
         [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Position1X_Radius
+        public float Radius
+        {
+            get => Position1X;
+            set => Position1X = value;
+        }
+        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
+        public float Height
+        {
+            get => Position1Y;
+            set => Position1Y = value;
+        }
+        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
+        public float Position1X
         {
             get => _trigPos1.X;
             set

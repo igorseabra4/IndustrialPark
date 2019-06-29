@@ -105,8 +105,8 @@ namespace IndustrialPark
             }
             set
             {
-                List<byte> before = AHDR.data.Take(KeyFramesSectionStart).ToList();
-                List<byte> after = AHDR.data.Skip(KeyFramesSectionStart + NumKeyFrames * 0x10).ToList();
+                List<byte> before = Data.Take(KeyFramesSectionStart).ToList();
+                List<byte> after = Data.Skip(KeyFramesSectionStart + NumKeyFrames * 0x10).ToList();
                 foreach (KeyFrame k in value)
                 {
                     before.AddRange(BitConverter.GetBytes(Switch(k.Frame)));
@@ -138,8 +138,8 @@ namespace IndustrialPark
             }
             set
             {
-                List<byte> before = AHDR.data.Take(TimeMapSectionStart).ToList();
-                List<byte> after = AHDR.data.Skip(TimeMapSectionStart + 4 * NumFrames).ToList();
+                List<byte> before = Data.Take(TimeMapSectionStart).ToList();
+                List<byte> after = Data.Skip(TimeMapSectionStart + 4 * NumFrames).ToList();
                 foreach (float k in value)
                     before.AddRange(BitConverter.GetBytes(Switch(k)));
                 before.AddRange(after);
@@ -168,7 +168,7 @@ namespace IndustrialPark
             }
             set
             {
-                List<byte> before = AHDR.data.Take(KeyFrameMapSectionStart).ToList();
+                List<byte> before = Data.Take(KeyFrameMapSectionStart).ToList();
 
                 foreach (short[] i in value)
                     foreach (short j in i)

@@ -329,6 +329,21 @@ namespace IndustrialPark
             Sphere.Draw(device);
         }
 
+        public void DrawCylinder(Matrix world, bool isSelected, Vector4 normalColor)
+        {
+            if (AssetMODL.renderBasedOnLodt && Vector3.Distance(Camera.Position, (Vector3)world.Row4) > 100f)
+                return;
+
+            renderData.worldViewProjection = world * viewProjection;
+            renderData.Color = isSelected ? selectedColor : normalColor;
+
+            device.UpdateData(basicBuffer, renderData);
+            device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer);
+            basicShader.Apply();
+
+            Cylinder.Draw(device);
+        }
+
         public void DrawPlane(Matrix world, bool isSelected, uint textureAssetID, Vector3 uvAnimOffset)
         {
             if (AssetMODL.renderBasedOnLodt && Vector3.Distance(Camera.Position, (Vector3)world.Row4) > 100f)

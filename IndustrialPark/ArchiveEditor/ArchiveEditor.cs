@@ -29,6 +29,10 @@ namespace IndustrialPark
 
             ArchiveEditorFunctions.PopulateTemplateMenusAt(addTemplateToolStripMenuItem, TemplateToolStripMenuItem_Click);
             listViewAssets_SizeChanged(null, null);
+            
+            #if RELEASE
+            shuffleToolStripMenuItem.Visible = false;
+            #endif
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -619,7 +623,7 @@ namespace IndustrialPark
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                     try
                     {
-                        File.WriteAllBytes(saveFileDialog.FileName, archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]).AHDR.data);
+                        File.WriteAllBytes(saveFileDialog.FileName, archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]).Data);
                     }
                     catch (Exception ex)
                     {
@@ -636,7 +640,7 @@ namespace IndustrialPark
                     foreach (uint u in CurrentlySelectedAssetIDs())
                         try
                         {
-                            File.WriteAllBytes(saveFileDialog.FileName + "\\" + archive.GetFromAssetID(u).AHDR.ADBG.assetName, archive.GetFromAssetID(u).AHDR.data);
+                            File.WriteAllBytes(saveFileDialog.FileName + "\\" + archive.GetFromAssetID(u).AHDR.ADBG.assetName, archive.GetFromAssetID(u).Data);
                         }
                         catch (Exception ex)
                         {
@@ -1059,6 +1063,11 @@ namespace IndustrialPark
 
             if (saveTXD.ShowDialog() == DialogResult.OK)
                 archive.ExportTextureDictionary(saveTXD.FileName, RW3);
+        }
+
+        private void ShuffleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            archive.Shuffle();
         }
     }
 }
