@@ -417,7 +417,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement")]
+        [Category("Placement Color")]
         public float ColorAlphaSpeed
         {
             get => ReadFloat(0x48 + Offset);
@@ -506,40 +506,22 @@ namespace IndustrialPark
             FindSurf();
         }
 
-        protected float uvTransSpeedX;
-        protected float uvTransSpeedY;
-        protected float uvTransSpeedZ;
+        protected Vector3 uvTransSpeed;
         protected int localFrameCounter = -1;
 
         private void FindSurf()
         {
             foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
                 if (ae.archive.ContainsAsset(Surface_AssetID))
-                {
                     if (ae.archive.GetFromAssetID(Surface_AssetID) is AssetSURF SURF)
                     {
-                        uvTransSpeedX = SURF.UVEffects1_TransSpeed_X;
-                        uvTransSpeedY = SURF.UVEffects1_TransSpeed_Y;
-                        uvTransSpeedZ = SURF.UVEffects1_TransSpeed_Z;
+                        uvTransSpeed = new Vector3(SURF.UVEffects1_TransSpeed_X, SURF.UVEffects1_TransSpeed_Y, SURF.UVEffects1_TransSpeed_Z);
                         return;
                     }
-                }
-            uvTransSpeedX = 0;
-            uvTransSpeedY = 0;
-            uvTransSpeedZ = 0;
+            uvTransSpeed = Vector3.Zero;
         }
 
-        public Vector3 UvAnimOffset
-        {
-            get
-            {
-                if (movementPreview)
-                {
-                    localFrameCounter++;
-                    return new Vector3(uvTransSpeedX * localFrameCounter / 60f, uvTransSpeedY * localFrameCounter / 60f, uvTransSpeedZ * localFrameCounter / 60f);
-                }
-                return Vector3.Zero;
-            }
-        }
+        [Browsable(false)]
+        public Vector3 UvAnimOffset => movementPreview ? uvTransSpeed * localFrameCounter++ / 60f : Vector3.Zero;
     }
 }

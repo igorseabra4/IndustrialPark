@@ -1573,7 +1573,7 @@ namespace IndustrialPark
                         Anim2_AssetID = 0xBC4A9A5F,
                         DirectionY = 1f,
                     };
-                    ((AssetPLAT)asset).Motion = new Motion() { Type = MotionType.Other };
+                    ((AssetPLAT)asset).Motion = new Motion_Mechanism() { Type = MotionType.Other };
                     break;
                 case AssetTemplate.HoveringPlatform:
                     ((AssetPLAT)asset).AssetType = ObjectAssetType.PLAT;
