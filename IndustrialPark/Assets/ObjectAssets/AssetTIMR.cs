@@ -8,7 +8,7 @@ namespace IndustrialPark
     {
         public AssetTIMR(Section_AHDR AHDR) : base(AHDR) { }
 
-        protected override int EventStartOffset => 0x10;
+        protected override int EventStartOffset => Functions.currentGame == Game.Scooby ? 0xC : 0x10;
 
         [Category("Timer"), TypeConverter(typeof(FloatTypeConverter))]
         public float Time

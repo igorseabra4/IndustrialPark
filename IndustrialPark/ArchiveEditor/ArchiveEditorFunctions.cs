@@ -359,7 +359,7 @@ namespace IndustrialPark
                 {
                     case AssetType.ANIM: newAsset = AHDR.ADBG.assetName.Contains("ATBL") ? new Asset(AHDR) : newAsset = new AssetANIM(AHDR); break;
                     case AssetType.ALST: newAsset = new AssetALST(AHDR); break;
-                    case AssetType.ATBL: newAsset = new AssetATBL(AHDR); break;
+                    case AssetType.ATBL: newAsset = currentGame == Game.Scooby ? new Asset(AHDR) : new AssetATBL(AHDR); break;
                     case AssetType.BSP: case AssetType.JSP: newAsset = new AssetJSP(AHDR, Program.MainForm.renderer); break;
                     case AssetType.BOUL: newAsset = new AssetBOUL(AHDR); break;
                     case AssetType.BUTN: newAsset = new AssetBUTN(AHDR); break;

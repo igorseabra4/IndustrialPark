@@ -8,7 +8,7 @@ namespace IndustrialPark
     {
         public AssetSURF(Section_AHDR AHDR) : base(AHDR) { }
 
-        protected override int EventStartOffset => 0x12C;
+        protected override int EventStartOffset => 0x12C + ScoobyOffset2;
 
         public override bool HasReference(uint assetID) => BumpMapTexture_AssetID == assetID || EnvMapTexture_AssetID == assetID || DualMapTexture_AssetID == assetID ||
             TextureAnim1_GroupAssetID == assetID || TextureAnim2_GroupAssetID == assetID || base.HasReference(assetID);
@@ -388,235 +388,254 @@ namespace IndustrialPark
             set => Write(0xB0, value);
         }
 
-        [Category("Surface: UV Effects")]
+        private int ScoobyOffset => Functions.currentGame == Game.Scooby ? -0x60 : 0;
+
+        [Category("Surface: UV Effects 2")]
         public int UVEffects2_Mode
         {
-            get => ReadInt(0xB4);
-            set => Write(0xB4, value);
+            get => ReadInt(ScoobyOffset + 0xB4);
+            set => Write(ScoobyOffset + 0xB4, value);
         }
 
-        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_Rot
         {
-            get => ReadFloat(0xB8);
-            set => Write(0xB8, value);
+            get => ReadFloat(ScoobyOffset + 0xB8);
+            set => Write(ScoobyOffset + 0xB8, value);
         }
 
-        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_RotSpd
         {
-            get => ReadFloat(0xBC);
-            set => Write(0xBC, value);
+            get => ReadFloat(ScoobyOffset + 0xBC);
+            set => Write(ScoobyOffset + 0xBC, value);
         }
 
-        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_Trans_X
         {
-            get => ReadFloat(0xC0);
-            set => Write(0xC0, value);
+            get => ReadFloat(ScoobyOffset + 0xC0);
+            set => Write(ScoobyOffset + 0xC0, value);
         }
 
-        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_Trans_Y
         {
-            get => ReadFloat(0xC4);
-            set => Write(0xC4, value);
+            get => ReadFloat(ScoobyOffset + 0xC4);
+            set => Write(ScoobyOffset + 0xC4, value);
         }
 
-        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_Trans_Z
         {
-            get => ReadFloat(0xC8);
-            set => Write(0xC8, value);
+            get => ReadFloat(ScoobyOffset + 0xC8);
+            set => Write(ScoobyOffset + 0xC8, value);
         }
 
-        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_TransSpeed_X
         {
-            get => ReadFloat(0xCC);
-            set => Write(0xCC, value);
+            get => ReadFloat(ScoobyOffset + 0xCC);
+            set => Write(ScoobyOffset + 0xCC, value);
         }
 
-        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_TransSpeed_Y
         {
-            get => ReadFloat(0xD0);
-            set => Write(0xD0, value);
+            get => ReadFloat(ScoobyOffset + 0xD0);
+            set => Write(ScoobyOffset + 0xD0, value);
         }
 
-        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_TransSpeed_Z
         {
-            get => ReadFloat(0xD4);
-            set => Write(0xD4, value);
+            get => ReadFloat(ScoobyOffset + 0xD4);
+            set => Write(ScoobyOffset + 0xD4, value);
         }
 
-        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_Scale_X
         {
-            get => ReadFloat(0xD8);
-            set => Write(0xD8, value);
+            get => ReadFloat(ScoobyOffset + 0xD8);
+            set => Write(ScoobyOffset + 0xD8, value);
         }
 
-        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_Scale_Y
         {
-            get => ReadFloat(0xDC);
-            set => Write(0xDC, value);
+            get => ReadFloat(ScoobyOffset + 0xDC);
+            set => Write(ScoobyOffset + 0xDC, value);
         }
 
-        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_Scale_Z
         {
-            get => ReadFloat(0xE0);
-            set => Write(0xE0, value);
+            get => ReadFloat(ScoobyOffset + 0xE0);
+            set => Write(ScoobyOffset + 0xE0, value);
         }
 
-        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_ScaleSpeed_X
         {
-            get => ReadFloat(0xE4);
-            set => Write(0xE4, value);
+            get => ReadFloat(ScoobyOffset + 0xE4);
+            set => Write(ScoobyOffset + 0xE4, value);
         }
 
-        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_ScaleSpeed_Y
         {
-            get => ReadFloat(0xE8);
-            set => Write(0xE8, value);
+            get => ReadFloat(ScoobyOffset + 0xE8);
+            set => Write(ScoobyOffset + 0xE8, value);
         }
 
-        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_ScaleSpeed_Z
         {
-            get => ReadFloat(0xEC);
-            set => Write(0xEC, value);
+            get => ReadFloat(ScoobyOffset + 0xEC);
+            set => Write(ScoobyOffset + 0xEC, value);
         }
 
-        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_Min_X
         {
-            get => ReadFloat(0xF0);
-            set => Write(0xF0, value);
+            get => ReadFloat(ScoobyOffset + 0xF0);
+            set => Write(ScoobyOffset + 0xF0, value);
         }
 
-        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_Min_Y
         {
-            get => ReadFloat(0xF4);
-            set => Write(0xF4, value);
+            get => ReadFloat(ScoobyOffset + 0xF4);
+            set => Write(ScoobyOffset + 0xF4, value);
         }
 
-        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_Min_Z
         {
-            get => ReadFloat(0xF8);
-            set => Write(0xF8, value);
+            get => ReadFloat(ScoobyOffset + 0xF8);
+            set => Write(ScoobyOffset + 0xF8, value);
         }
 
-        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_Max_X
         {
-            get => ReadFloat(0xFC);
-            set => Write(0xFC, value);
+            get => ReadFloat(ScoobyOffset + 0xFC);
+            set => Write(ScoobyOffset + 0xFC, value);
         }
 
-        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_Max_Y
         {
-            get => ReadFloat(0x100);
-            set => Write(0x100, value);
+            get => ReadFloat(ScoobyOffset + 0x100);
+            set => Write(ScoobyOffset + 0x100, value);
         }
 
-        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_Max_Z
         {
-            get => ReadFloat(0x104);
-            set => Write(0x104, value);
+            get => ReadFloat(ScoobyOffset + 0x104);
+            set => Write(ScoobyOffset + 0x104, value);
         }
 
-        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_MinMaxSpeed_X
         {
-            get => ReadFloat(0x108);
-            set => Write(0x108, value);
+            get => ReadFloat(ScoobyOffset + 0x108);
+            set => Write(ScoobyOffset + 0x108, value);
         }
 
-        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_MinMaxSpeed_Y
         {
-            get => ReadFloat(0x10C);
-            set => Write(0x10C, value);
+            get => ReadFloat(ScoobyOffset + 0x10C);
+            set => Write(ScoobyOffset + 0x10C, value);
         }
 
-        [Category("Surface: UV Effects"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_MinMaxSpeed_Z
         {
-            get => ReadFloat(0x110);
-            set => Write(0x110, value);
+            get => ReadFloat(ScoobyOffset + 0x110);
+            set => Write(ScoobyOffset + 0x110, value);
         }
+
+        private int ScoobyOffset2 => Functions.currentGame == Game.Scooby ? (ScoobyOffset -0x04) : 0;
 
         [Category("Surface: Other"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte On
         {
-            get => ReadByte(0x114);
-            set => Write(0x114, value);
+            get => Functions.currentGame == Game.Scooby ? (byte)0 : ReadByte(0x114);
+            set
+            {
+                if (Functions.currentGame != Game.Scooby)
+                    Write(ScoobyOffset2 + 0x114, value);
+            }
         }
-
         [Category("Surface: Other"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Padding115
         {
-            get => ReadByte(0x115);
-            set => Write(0x115, value);
+            get => Functions.currentGame == Game.Scooby ? (byte)0 : ReadByte(0x115);
+            set
+            {
+                if (Functions.currentGame != Game.Scooby)
+                    Write(ScoobyOffset2 + 0x115, value);
+            }
         }
 
         [Category("Surface: Other"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Padding116
         {
-            get => ReadByte(0x116);
-            set => Write(0x116, value);
+            get => Functions.currentGame == Game.Scooby ? (byte)0 : ReadByte(0x116);
+            set
+            {
+                if (Functions.currentGame != Game.Scooby)
+                    Write(0x116, value);
+            }
         }
 
         [Category("Surface: Other"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Padding117
         {
-            get => ReadByte(0x117);
-            set => Write(0x117, value);
+            get => Functions.currentGame == Game.Scooby ? (byte)0 : ReadByte(0x117);
+            set
+            {
+                if (Functions.currentGame != Game.Scooby)
+                    Write(0x117, value);
+            }
         }
 
         [Category("Surface: Other"), TypeConverter(typeof(FloatTypeConverter))]
         public float OutOfBoundsDelay
         {
-            get => ReadFloat(0x118);
-            set => Write(0x118, value);
+            get => ReadFloat(ScoobyOffset2 + 0x118);
+            set => Write(ScoobyOffset2 + 0x118, value);
         }
 
         [Category("Surface: Other"), TypeConverter(typeof(FloatTypeConverter))]
         public float WalljumpScaleXZ
         {
-            get => ReadFloat(0x11C);
-            set => Write(0x11C, value);
+            get => ReadFloat(ScoobyOffset2 + 0x11C);
+            set => Write(ScoobyOffset2 + 0x11C, value);
         }
 
         [Category("Surface: Other"), TypeConverter(typeof(FloatTypeConverter))]
         public float WalljumpScaleY
         {
-            get => ReadFloat(0x120);
-            set => Write(0x120, value);
+            get => ReadFloat(ScoobyOffset2 + 0x120);
+            set => Write(ScoobyOffset2 + 0x120, value);
         }
 
         [Category("Surface: Other"), TypeConverter(typeof(FloatTypeConverter))]
         public float DamageTimer
         {
-            get => ReadFloat(0x124);
-            set => Write(0x124, value);
+            get => ReadFloat(ScoobyOffset2 + 0x124);
+            set => Write(ScoobyOffset2 + 0x124, value);
         }
 
         [Category("Surface: Other"), TypeConverter(typeof(FloatTypeConverter))]
         public float DamageBounce
         {
-            get => ReadFloat(0x128);
-            set => Write(0x128, value);
+            get => ReadFloat(ScoobyOffset2 + 0x128);
+            set => Write(ScoobyOffset2 + 0x128, value);
         }
     }
 }

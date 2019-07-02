@@ -13,7 +13,23 @@ namespace IndustrialPark
 
         protected override bool DontRender => dontRender;
 
-        protected override int EventStartOffset => Functions.currentGame == Game.Incredibles ? 0xC8 : 0xC0;
+        protected override int EventStartOffset
+        {
+            get
+            {
+                switch (Functions.currentGame)
+                {
+                    case Game.BFBB:
+                        return 0xC0;
+                    case Game.Incredibles:
+                        return 0xC8;
+                    case Game.Scooby:
+                        return 0xA8;
+                }
+
+                return 0;
+            }
+        }
 
         public AssetPLAT(Section_AHDR AHDR) : base(AHDR)
         {
@@ -117,33 +133,35 @@ namespace IndustrialPark
             set => Write(0x56 + Offset, value);
         }
 
+        private const int PlatSpecificStart = 0x58;
+
         private void ChoosePlatSpecific()
         {
             switch (PlatformType)
             {
                 case PlatType.ConveyorBelt:
-                    _platSpecific = new PlatSpecific_ConveryorBelt(Data.Skip(0x58 + Offset).ToArray());
+                    _platSpecific = new PlatSpecific_ConveryorBelt(Data.Skip(PlatSpecificStart + Offset).ToArray());
                     break;
                 case PlatType.FallingPlatform:
-                    _platSpecific = new PlatSpecific_FallingPlatform(Data.Skip(0x58 + Offset).ToArray());
+                    _platSpecific = new PlatSpecific_FallingPlatform(Data.Skip(PlatSpecificStart + Offset).ToArray());
                     break;
                 case PlatType.FR:
-                    _platSpecific = new PlatSpecific_FR(Data.Skip(0x58 + Offset).ToArray());
+                    _platSpecific = new PlatSpecific_FR(Data.Skip(PlatSpecificStart + Offset).ToArray());
                     break;
                 case PlatType.BreakawayPlatform:
-                    _platSpecific = new PlatSpecific_BreakawayPlatform(Data.Skip(0x58 + Offset).ToArray());
+                    _platSpecific = new PlatSpecific_BreakawayPlatform(Data.Skip(PlatSpecificStart + Offset).ToArray());
                     break;
                 case PlatType.Springboard:
-                    _platSpecific = new PlatSpecific_Springboard(Data.Skip(0x58 + Offset).ToArray());
+                    _platSpecific = new PlatSpecific_Springboard(Data.Skip(PlatSpecificStart + Offset).ToArray());
                     break;
                 case PlatType.TeeterTotter:
-                    _platSpecific = new PlatSpecific_TeeterTotter(Data.Skip(0x58 + Offset).ToArray());
+                    _platSpecific = new PlatSpecific_TeeterTotter(Data.Skip(PlatSpecificStart + Offset).ToArray());
                     break;
                 case PlatType.Paddle:
-                    _platSpecific = new PlatSpecific_Paddle(Data.Skip(0x58 + Offset).ToArray());
+                    _platSpecific = new PlatSpecific_Paddle(Data.Skip(PlatSpecificStart + Offset).ToArray());
                     break;
                 default:
-                    _platSpecific = new PlatSpecific_Generic(Data.Skip(0x58 + Offset).ToArray());
+                    _platSpecific = new PlatSpecific_Generic(Data.Skip(PlatSpecificStart + Offset).ToArray());
                     break;
             }
 
@@ -198,13 +216,13 @@ namespace IndustrialPark
             {
                 _platSpecific = value;
 
-                List<byte> before = Data.Take(0x58 + Offset).ToList();
+                List<byte> before = Data.Take(PlatSpecificStart + Offset).ToList();
                 before.AddRange(value.ToByteArray());
-                before.AddRange(Data.Skip(0x58 + Offset + PlatSpecific_Generic.Size));
+                before.AddRange(Data.Skip(PlatSpecificStart + Offset + PlatSpecific_Generic.Size));
                 Data = before.ToArray();
             }
         }
 
-        protected override int MotionStart => 0x90 + Offset;
+        protected override int MotionStart => Functions.currentGame == Game.Scooby ? 0x78 : 0x90 + Offset;
     }
 }

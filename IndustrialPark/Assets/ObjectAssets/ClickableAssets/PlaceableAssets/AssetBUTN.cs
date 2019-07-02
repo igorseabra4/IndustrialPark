@@ -11,7 +11,7 @@ namespace IndustrialPark
 
         protected override bool DontRender => dontRender;
 
-        protected override int EventStartOffset => 0x6C + Offset + Motion.Size;
+        protected override int EventStartOffset => 0x6C + Offset + ScoobyOffset + Motion.Size;
 
         public AssetBUTN(Section_AHDR AHDR) : base(AHDR) { }
 
@@ -27,9 +27,15 @@ namespace IndustrialPark
         [Category("Button")]
         public AssetID PressedModel_AssetID
         {
-            get => ReadUInt(0x54 + Offset);
-            set => Write(0x54 + Offset, value);
+            get => Functions.currentGame == Game.Scooby ? 0 : ReadUInt(0x54 + Offset);
+            set
+            {
+                if (Functions.currentGame != Game.Scooby)
+                    Write(0x54 + Offset, value);
+            }
         }
+
+        private int ScoobyOffset => Functions.currentGame == Game.Scooby ? -0x04 : 0;
 
         public enum ButnActMethod
         {
@@ -40,36 +46,36 @@ namespace IndustrialPark
         [Category("Button")]
         public ButnActMethod ActMethod
         {
-            get => (ButnActMethod)ReadInt(0x58 + Offset);
-            set => Write(0x58 + Offset, (int)value);
+            get => (ButnActMethod)ReadInt(0x58 + Offset + ScoobyOffset);
+            set => Write(0x58 + Offset + ScoobyOffset, (int)value);
         }
 
         [Category("Button")]
         public int InitialButtonState
         {
-            get => ReadInt(0x5C + Offset);
-            set => Write(0x5C + Offset, value);
+            get => ReadInt(0x5C + Offset + ScoobyOffset);
+            set => Write(0x5C + Offset + ScoobyOffset, value);
         }
 
         [Category("Button")]
         public bool ResetAfterDelay
         {
-            get => ReadInt(0x60 + Offset) != 0;
-            set => Write(0x60 + Offset, value ? 1 : 0);
+            get => ReadInt(0x60 + Offset + ScoobyOffset) != 0;
+            set => Write(0x60 + Offset + ScoobyOffset, value ? 1 : 0);
         }
 
         [Category("Button"), TypeConverter(typeof(FloatTypeConverter))]
         public float ResetDelay
         {
-            get => ReadFloat(0x64 + Offset);
-            set => Write(0x64 + Offset, value);
+            get => ReadFloat(0x64 + Offset + ScoobyOffset);
+            set => Write(0x64 + Offset + ScoobyOffset, value);
         }
 
         [Category("Button Hitmask")]
         private uint HitMask
         {
-            get => ReadUInt(0x68 + Offset);
-            set => Write(0x68 + Offset, value);
+            get => ReadUInt(0x68 + Offset + ScoobyOffset);
+            set => Write(0x68 + Offset + ScoobyOffset, value);
         }
 
         [Category("Button Hitmask")]
@@ -296,6 +302,6 @@ namespace IndustrialPark
             set => HitMask = value ? (HitMask | Mask(31)) : (HitMask & InvMask(31));
         }
         
-        protected override int MotionStart => 0x6C + Offset;
+        protected override int MotionStart => 0x6C + Offset + ScoobyOffset;
     }
 }

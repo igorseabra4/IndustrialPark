@@ -1,18 +1,20 @@
-﻿using SharpDX;
+﻿using HipHopFile;
+using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
     public class PlatSpecific_Generic
     {
-        public static int Size => 0x38;
+        public static int Size => Functions.currentGame == Game.Scooby ? 0x28 : 0x38;
 
         public PlatSpecific_Generic() { }
 
-        public PlatSpecific_Generic(byte[] data) { }
+        public PlatSpecific_Generic(byte[] _) { }
 
         public virtual byte[] ToByteArray()
         {
@@ -168,17 +170,22 @@ namespace IndustrialPark
 
         public PlatSpecific_Springboard(byte[] data)
         {
-            Height1 = Switch(BitConverter.ToSingle(data, 0));
-            Height2 = Switch(BitConverter.ToSingle(data, 4));
-            Height3 = Switch(BitConverter.ToSingle(data, 8));
-            HeightBubbleBounce = Switch(BitConverter.ToSingle(data, 12));
-            Anim1_AssetID = Switch(BitConverter.ToUInt32(data, 16));
-            Anim2_AssetID = Switch(BitConverter.ToUInt32(data, 20));
-            Anim3_AssetID = Switch(BitConverter.ToUInt32(data, 24));
-            DirectionX = Switch(BitConverter.ToSingle(data, 28));
-            DirectionY = Switch(BitConverter.ToSingle(data, 32));
-            DirectionZ = Switch(BitConverter.ToSingle(data, 36));
-            Flags = Switch(BitConverter.ToInt32(data, 40));
+            using (var reader = new BinaryReader(new MemoryStream(data)))
+            {
+                Height1 = Switch(reader.ReadSingle());
+                Height2 = Switch(reader.ReadSingle());
+                Height3 = Switch(reader.ReadSingle());
+                if (Functions.currentGame != Game.Scooby)
+                    HeightBubbleBounce = Switch(reader.ReadSingle());
+                Anim1_AssetID = Switch(reader.ReadUInt32());
+                Anim2_AssetID = Switch(reader.ReadUInt32());
+                Anim3_AssetID = Switch(reader.ReadUInt32());
+                DirectionX = Switch(reader.ReadSingle());
+                DirectionY = Switch(reader.ReadSingle());
+                DirectionZ = Switch(reader.ReadSingle());
+                if (Functions.currentGame != Game.Scooby)
+                    Flags = Switch(reader.ReadInt32());
+            }
         }
 
         [Category("Springboard")]
@@ -210,14 +217,16 @@ namespace IndustrialPark
             data.AddRange(BitConverter.GetBytes(Switch(Height1)));
             data.AddRange(BitConverter.GetBytes(Switch(Height2)));
             data.AddRange(BitConverter.GetBytes(Switch(Height3)));
-            data.AddRange(BitConverter.GetBytes(Switch(HeightBubbleBounce)));
+            if (Functions.currentGame != Game.Scooby)
+                data.AddRange(BitConverter.GetBytes(Switch(HeightBubbleBounce)));
             data.AddRange(BitConverter.GetBytes(Switch(Anim1_AssetID)));
             data.AddRange(BitConverter.GetBytes(Switch(Anim2_AssetID)));
             data.AddRange(BitConverter.GetBytes(Switch(Anim3_AssetID)));
             data.AddRange(BitConverter.GetBytes(Switch(DirectionX)));
             data.AddRange(BitConverter.GetBytes(Switch(DirectionY)));
             data.AddRange(BitConverter.GetBytes(Switch(DirectionZ)));
-            data.AddRange(BitConverter.GetBytes(Switch(Flags)));
+            if (Functions.currentGame != Game.Scooby)
+                data.AddRange(BitConverter.GetBytes(Switch(Flags)));
 
             while (data.Count < Size)
                 data.Add(0);
