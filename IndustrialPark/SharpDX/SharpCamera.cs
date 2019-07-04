@@ -36,6 +36,7 @@ namespace IndustrialPark
 
         public float FieldOfView;
         public float AspectRatio;
+        public float ConditionalAspect;
         public float NearPlane;
         public float FarPlane;
 
@@ -127,9 +128,21 @@ namespace IndustrialPark
         
         public Matrix ViewMatrix => Matrix.LookAtRH(Position, Position + Forward, Up);
         
-        public Matrix ProjectionMatrix => Matrix.PerspectiveFovRH(FieldOfView, AspectRatio, NearPlane, FarPlane);
+        public Matrix ProjectionMatrix => Matrix.PerspectiveFovRH(2f * (float)Math.Atan((float)Math.Tan(FieldOfView / 2f) / AspectRatioScreenScale(AspectRatio, ConditionalAspect) * ConditionalAspect), AspectRatio, NearPlane, FarPlane);
         
-        public Matrix BiggerFovProjectionMatrix => Matrix.PerspectiveFovRH(1.3f * FieldOfView, AspectRatio, NearPlane, FarPlane);
+        public Matrix BiggerFovProjectionMatrix => Matrix.PerspectiveFovRH(1.3f * (2f * (float)Math.Atan((float)Math.Tan(FieldOfView / 2f) / AspectRatioScreenScale(AspectRatio, ConditionalAspect) * ConditionalAspect)), AspectRatio, NearPlane, FarPlane);
+
+        public float AspectRatioScreenScale(float AspectRatio, float ConditionalAspect)
+        {
+            if (AspectRatio < ConditionalAspect)
+            {
+                return this.AspectRatio;
+            }
+            else
+            {
+                return this.ConditionalAspect;
+            }
+        }
         
         public override string ToString() => string.Format("Position: [{0:0.0000}, {1:0.0000}, {2:0.0000}] Rotation: [{3:0.0000}, {4:0.0000}]",
                 Position.X, Position.Y, Position.Z, Yaw, Pitch);
