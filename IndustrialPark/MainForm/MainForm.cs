@@ -414,7 +414,7 @@ namespace IndustrialPark
         {
             if (renderer.isDrawingUI)
             {
-                float x = ((e.X - renderPanel.ClientRectangle.X) * 640f / renderPanel.ClientRectangle.Width);
+                float x = ((e.X - renderPanel.ClientRectangle.X) * (480f * (renderPanel.ClientSize.Width / renderPanel.ClientSize.Height)) / renderPanel.ClientRectangle.Width);
                 float y = ((e.Y - renderPanel.ClientRectangle.Y) * 480f / renderPanel.ClientRectangle.Height);
 
                 SetToolStripStatusLabel(string.Format("Position: [{0:0.0000}, {1:0.0000}]", x, y) + " FPS: " + $"{renderer.sharpFPS.FPS:0.0000}");
