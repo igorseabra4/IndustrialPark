@@ -45,6 +45,7 @@ namespace IndustrialPark
 
             sharpFPS = new SharpFPS();
             Camera.AspectRatio = (float)control.ClientSize.Width / control.ClientSize.Height;
+            Camera.ConditionalAspect = 16f / 9f;
             Camera.Reset();
             ResetColors();
             SetSharpShader();
@@ -404,7 +405,7 @@ namespace IndustrialPark
                 if (ArchiveEditorFunctions.allowRender)
                     if (isDrawingUI)
                     {
-                        viewProjection = Matrix.OrthoOffCenterRH(0, 640, -480, 0, -Camera.FarPlane, Camera.FarPlane);
+                        viewProjection = Matrix.OrthoOffCenterRH(-480f / (Camera.AspectRatioScreenScale(Camera.AspectRatio, Camera.ConditionalAspect) / Camera.ConditionalAspect) * Camera.AspectRatio / 2f - -480f * (4f / 3f) / 2f, 480f / (Camera.AspectRatioScreenScale(Camera.AspectRatio, Camera.ConditionalAspect) / Camera.ConditionalAspect) * Camera.AspectRatio / 2f + 480f * (4f / 3f) / 2f, (-480f / (Camera.AspectRatioScreenScale(Camera.AspectRatio, Camera.ConditionalAspect) / Camera.ConditionalAspect) / 2f) + (-480f / 2f), (480f / (Camera.AspectRatioScreenScale(Camera.AspectRatio, Camera.ConditionalAspect) / Camera.ConditionalAspect) / 2f) - (480f / 2f), -Camera.FarPlane, Camera.FarPlane);
 
                         device.SetFillModeDefault();
                         device.SetCullModeDefault();
