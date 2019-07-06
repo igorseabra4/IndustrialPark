@@ -111,7 +111,7 @@ namespace IndustrialPark
         [TypeConverter(typeof(FloatTypeConverter))]
         public float PositionX
         {
-            get { return _position.X; }
+            get => _position.X;
             set
             {
                 _position.X = value;
@@ -124,7 +124,7 @@ namespace IndustrialPark
         [TypeConverter(typeof(FloatTypeConverter))]
         public float PositionY
         {
-            get { return _position.Y; }
+            get => _position.Y;
             set
             {
                 _position.Y = value;
@@ -137,7 +137,7 @@ namespace IndustrialPark
         [TypeConverter(typeof(FloatTypeConverter))]
         public float PositionZ
         {
-            get { return _position.Z; }
+            get => _position.Z;
             set
             {
                 _position.Z = value;

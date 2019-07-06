@@ -21,13 +21,13 @@ namespace IndustrialPark
         public byte DestinationSourceBlend { get; set; }
         [Category("PIPT Entry"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Unknown0B { get; set; }
-        [Category("PIPT Entry (Movie Only)"), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("PIPT Entry"), Description("Movie only"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Unknown0C { get; set; }
-        [Category("PIPT Entry (Movie Only)"), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("PIPT Entry"), Description("Movie only"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Unknown0D { get; set; }
-        [Category("PIPT Entry (Movie Only)"), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("PIPT Entry"), Description("Movie only"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Unknown0E { get; set; }
-        [Category("PIPT Entry (Movie Only)"), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("PIPT Entry"), Description("Movie only"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Unknown0F { get; set; }
 
         public static int SizeOfStruct => Functions.currentGame == Game.Incredibles ? 16 : 12;

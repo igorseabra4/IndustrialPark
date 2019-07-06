@@ -64,7 +64,8 @@ namespace IndustrialPark
         }
 
         [Category("Pendulum"), TypeConverter(typeof(FloatTypeConverter))]
-        public float SteepnessDeg
+        [Description("In degrees")]
+        public float Steepness
         {
             get => MathUtil.RadiansToDegrees(ReadFloat(0x60 + Offset));
             set => Write(0x60 + Offset, MathUtil.DegreesToRadians(value));
@@ -78,6 +79,8 @@ namespace IndustrialPark
         }
 
         [Category("Pendulum"), TypeConverter(typeof(FloatTypeConverter))]
+        [Description("In radians")]
+        [DisplayName("UnknownFloat68")]
         public float UnknownFloat68Rad
         {
             get => ReadFloat(0x68 + Offset);
@@ -85,6 +88,8 @@ namespace IndustrialPark
         }
 
         [Category("Pendulum"), TypeConverter(typeof(FloatTypeConverter))]
+        [Description("In degrees")]
+        [DisplayName("UnknownFloat68")]
         public float UnknownFloat68Deg
         {
             get => MathUtil.RadiansToDegrees(ReadFloat(0x68 + Offset));

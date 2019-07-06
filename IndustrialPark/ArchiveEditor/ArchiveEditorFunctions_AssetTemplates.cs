@@ -831,7 +831,7 @@ namespace IndustrialPark
                     ((AssetPLAT)asset).AssetType = ObjectAssetType.PLAT;
                     ((AssetPLAT)asset).PlatformType = PlatType.Mechanism;
                     ((AssetPLAT)asset).PlatformSubtype = PlatTypeSpecific.Mechanism;
-                    ((AssetPLAT)asset).CollisionType = 4;
+                    ((AssetPLAT)asset).PlatFlags = 4;
                     ((AssetPLAT)asset).PlatSpecific = new PlatSpecific_Generic();
                     ((AssetPLAT)asset).Motion = new Motion_Mechanism();
                     break;
@@ -1253,9 +1253,9 @@ namespace IndustrialPark
                     ((AssetBUTN)asset).Motion = new Motion_Mechanism()
                     {
                         Flags = 4,
-                        MovementMode = 2,
+                        MovementType = Motion_Mechanism.EMovementType.SlideAndRotate,
                         MovementLoopMode = 1,
-                        SlideAxis = 1,
+                        SlideAxis = Motion_Mechanism.Axis.Y,
                         SlideDistance = -0.2f,
                         SlideTime = 0.5f,
                         SlideDecelTime = 0.2f
@@ -1276,9 +1276,9 @@ namespace IndustrialPark
                     ((AssetBUTN)asset).Motion = new Motion_Mechanism()
                     {
                         Flags = 4,
-                        MovementMode = 2,
+                        MovementType = Motion_Mechanism.EMovementType.SlideAndRotate,
                         MovementLoopMode = 1,
-                        SlideAxis = 1,
+                        SlideAxis = Motion_Mechanism.Axis.Y,
                         SlideDistance = -0.15f,
                         SlideTime = 0.15f,
                     };
@@ -1562,7 +1562,7 @@ namespace IndustrialPark
                     ((AssetPLAT)asset).Animation_AssetID = 0x7AAA99BB;
                     ((AssetPLAT)asset).PlatformType = PlatType.Springboard;
                     ((AssetPLAT)asset).PlatformSubtype = PlatTypeSpecific.Springboard;
-                    ((AssetPLAT)asset).CollisionType = 4;
+                    ((AssetPLAT)asset).PlatFlags = 4;
                     ((AssetPLAT)asset).PlatSpecific = new PlatSpecific_Springboard()
                     {
                         Height1 = 10,
@@ -1581,7 +1581,7 @@ namespace IndustrialPark
                     ((AssetPLAT)asset).Animation_AssetID = 0x730847B6;
                     ((AssetPLAT)asset).PlatformType = PlatType.Mechanism;
                     ((AssetPLAT)asset).PlatformSubtype = PlatTypeSpecific.Mechanism;
-                    ((AssetPLAT)asset).CollisionType = 4;
+                    ((AssetPLAT)asset).PlatFlags = 4;
                     ((AssetPLAT)asset).Motion = new Motion_Mechanism() {
                         Type = MotionType.Other,
                         MovementLoopMode = 1,

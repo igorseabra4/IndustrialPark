@@ -25,7 +25,7 @@ namespace IndustrialPark
         public AssetID LOD3_Model { get; set; }
         [Category("LODT Entry")]
         public float LOD3_Distance { get; set; }
-        [Category("LODT Entry (Movie Only)")]
+        [Category("LODT Entry"), Description("Movie only.")]
         public float Unknown { get; set; }
 
         public static int SizeOfStruct => Functions.currentGame == Game.Incredibles ? 0x24 : 0x20;
@@ -97,8 +97,6 @@ namespace IndustrialPark
 
                 for (int i = 4; i < Data.Length; i += EntryLODT.SizeOfStruct)
                 {
-                    byte[] Flags = BitConverter.GetBytes(ReadInt(i + 8));
-
                     EntryLODT a = new EntryLODT
                     {
                         ModelAssetID = ReadUInt(i + 0x00),

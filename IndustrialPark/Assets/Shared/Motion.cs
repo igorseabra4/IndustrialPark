@@ -27,6 +27,7 @@ namespace IndustrialPark
         [Category("Motion")]
         public byte UseBanking { get; set; }
         [Category("Motion")]
+        [Description("0 = None\n1 = Unknown\n2 = Unknown\n4=Don't start moving\nAdd numbers to enable multiple")]
         public short Flags { get; set; }
 
         public Motion() { }
@@ -337,14 +338,31 @@ namespace IndustrialPark
             Type = MotionType.Mechanism;
         }
 
+        public enum EMovementType : byte
+        {
+            Slide = 0,
+            Rotate = 1,
+            SlideAndRotate = 2,
+            SlideThenRotate = 3,
+            RotateThenSlide = 4
+        }
+
+        public enum Axis : byte
+        {
+            X = 0,
+            Y = 1,
+            Z = 2
+        }
+
         [Category("Motion: Mechanism")]
-        public byte MovementMode { get; set; }
+        public EMovementType MovementType { get; set; }
         [Category("Motion: Mechanism")]
+        [Description("0 = None\n1 = Return to start after moving\n2 = Don't loop\nAdd to enable multiple")]
         public byte MovementLoopMode { get; set; }
         [Category("Motion: Mechanism")]
-        public byte SlideAxis { get; set; }
+        public Axis SlideAxis { get; set; }
         [Category("Motion: Mechanism")]
-        public byte RotateAxis { get; set; }
+        public Axis RotateAxis { get; set; }
         [Category("Motion: Mechanism"), TypeConverter(typeof(FloatTypeConverter))]
         public float SlideDistance { get; set; }
         [Category("Motion: Mechanism"), TypeConverter(typeof(FloatTypeConverter))]
@@ -381,10 +399,10 @@ namespace IndustrialPark
 
         public Motion_Mechanism(byte[] data) : base(data)
         {
-            MovementMode = data[4];
+            MovementType = (EMovementType)data[4];
             MovementLoopMode = data[5];
-            SlideAxis = data[6];
-            RotateAxis = data[7];
+            SlideAxis = (Axis)data[6];
+            RotateAxis = (Axis)data[7];
 
             int offset = 0;
             if (HipHopFile.Functions.currentGame == HipHopFile.Game.Incredibles)
@@ -419,10 +437,10 @@ namespace IndustrialPark
         {
             List<byte> data = base.ToByteArray().ToList();
 
-            data.Add(MovementMode);
+            data.Add((byte)MovementType);
             data.Add(MovementLoopMode);
-            data.Add(SlideAxis);
-            data.Add(RotateAxis);
+            data.Add((byte)SlideAxis);
+            data.Add((byte)RotateAxis);
 
             if (HipHopFile.Functions.currentGame == HipHopFile.Game.Incredibles)
             {
@@ -475,15 +493,15 @@ namespace IndustrialPark
         }
 
         private float StartWaitRange => 60 * PostRetractDelay;
-        private float GoingRange => StartWaitRange + 60 * Math.Max(MovementMode != 0 ? RotateTime :0, MovementMode != 1 ? SlideTime : 0);
+        private float GoingRange => StartWaitRange + 60 * Math.Max(MovementType != 0 ? RotateTime :0, MovementType != EMovementType.Rotate ? SlideTime : 0);
         private float EndWaitRange => GoingRange + 60 * RetractDelay;
-        private float GoingBackRange => EndWaitRange + 60 * Math.Max(MovementMode != 0 ? RotateTime : 0, MovementMode != 1 ? SlideTime : 0);
+        private float GoingBackRange => EndWaitRange + 60 * Math.Max(MovementType != 0 ? RotateTime : 0, MovementType != EMovementType.Rotate ? SlideTime : 0);
 
         public override Matrix PlatLocalTranslation()
         {
             Matrix localWorld = Matrix.Identity;
 
-            if (MovementMode != 1)
+            if (MovementType != EMovementType.Rotate)
             {
                 float translationMultiplier = 0;
 
@@ -549,13 +567,13 @@ namespace IndustrialPark
 
                 switch (SlideAxis)
                 {
-                    case 0:
+                    case Axis.X:
                         localWorld *= Matrix.Translation(translationMultiplier * SlideDistance, 0, 0);
                         break;
-                    case 1:
+                    case Axis.Y:
                         localWorld *= Matrix.Translation(0, translationMultiplier * SlideDistance, 0);
                         break;
-                    case 2:
+                    case Axis.Z:
                         localWorld *= Matrix.Translation(0, 0, translationMultiplier * SlideDistance);
                         break;
                 }
@@ -568,7 +586,7 @@ namespace IndustrialPark
         {
             Matrix localWorld = Matrix.Identity;
 
-            if (MovementMode > 0)
+            if (MovementType > 0)
             {
                 float rotationMultiplier = 0;
 
@@ -634,13 +652,13 @@ namespace IndustrialPark
                 
                 switch (RotateAxis)
                 {
-                    case 0:
+                    case Axis.X:
                         localWorld = Matrix.RotationX(rotationMultiplier * MathUtil.DegreesToRadians(RotateDistance));
                         break;
-                    case 1:
+                    case Axis.Y:
                         localWorld = Matrix.RotationY(rotationMultiplier * MathUtil.DegreesToRadians(RotateDistance));
                         break;
-                    case 2:
+                    case Axis.Z:
                         localWorld = Matrix.RotationZ(rotationMultiplier * MathUtil.DegreesToRadians(RotateDistance));
                         break;
                 }

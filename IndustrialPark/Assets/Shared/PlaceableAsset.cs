@@ -211,6 +211,7 @@ namespace IndustrialPark
         }
 
         [Category("Placement")]
+        [Description("BFBB only.")]
         public int PaddingC
         {
             get

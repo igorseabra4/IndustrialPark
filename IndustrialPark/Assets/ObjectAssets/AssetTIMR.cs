@@ -17,7 +17,7 @@ namespace IndustrialPark
             set => Write(0x8, value);
         }
 
-        [Category("Timer"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Timer"), TypeConverter(typeof(FloatTypeConverter)), Description("Not present in Scooby.")]
         public float RandomRange
         {
             get => Functions.currentGame == Game.Scooby ? 0 : BitConverter.ToSingle(Data, 0xC);

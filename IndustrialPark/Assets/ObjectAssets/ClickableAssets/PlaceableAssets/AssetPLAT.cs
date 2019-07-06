@@ -85,25 +85,14 @@ namespace IndustrialPark
                 ChoosePlatSpecific();
             }
         }
-
-        private byte _platformType
-        {
-            get => ReadByte(0x09);
-            set => Write(0x09, value);
-        }
-        private byte _platformSubtype
-        {
-            get => ReadByte(0x54 + Offset);
-            set => Write(0x54 + Offset, value);
-        }
-
+        
         [Category("Platform")]
         public PlatType PlatformType
         {
-            get => (PlatType)_platformType;
+            get => (PlatType)ReadByte(0x09);
             set
             {
-                _platformType = (byte)value;
+                Write(0x09, (byte)value);
                 ChoosePlatSpecific();
             }
         }
@@ -111,10 +100,10 @@ namespace IndustrialPark
         [Category("Platform")]
         public PlatTypeSpecific PlatformSubtype
         {
-            get => (PlatTypeSpecific)_platformSubtype;
+            get => (PlatTypeSpecific)ReadByte(0x54 + Offset);
             set
             {
-                _platformSubtype = (byte)value;
+                Write(0x54 + Offset, (byte)value);
                 ChoosePlatSpecific();
             }
         }
@@ -127,7 +116,8 @@ namespace IndustrialPark
         }
 
         [Category("Platform")]
-        public short CollisionType
+        [Description("0 = None\n1 = Shake on Mount\n2 = Unknown\n4=Solid\nAdd numbers to enable multiple")]
+        public short PlatFlags
         {
             get => ReadShort(0x56 + Offset);
             set => Write(0x56 + Offset, value);

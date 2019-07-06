@@ -18,6 +18,9 @@ namespace IndustrialPark
 
         public virtual void Setup(SharpRenderer renderer)
         {
+            if (model != null)
+                model.Dispose();
+
             model = new RenderWareModelFile(AHDR.ADBG.assetName);
             try
             {
@@ -25,7 +28,7 @@ namespace IndustrialPark
             }
             catch (Exception ex)
             {
-                System.Windows.Forms.MessageBox.Show("Error: " + ToString() + " (MODL) has an unsupported format and cannot be rendered. " + ex.Message);
+                System.Windows.Forms.MessageBox.Show("Error: " + ToString() + " has an unsupported format and cannot be rendered. " + ex.Message);
                 model.Dispose();
                 model = null;
             }

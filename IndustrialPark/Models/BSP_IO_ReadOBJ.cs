@@ -18,7 +18,7 @@ namespace IndustrialPark.Models
                 VertexList = new List<Vertex>(),
                 NormalList = new List<Vector3>(),
                 UVList = new List<Vector2>(),
-                ColorList = new List<SharpDX.Color>(),
+                ColorList = new List<Color>(),
                 TriangleList = new List<Triangle>(),
                 MTLLib = null
             };

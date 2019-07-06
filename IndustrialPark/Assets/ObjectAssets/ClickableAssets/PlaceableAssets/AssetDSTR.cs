@@ -25,42 +25,42 @@ namespace IndustrialPark
             Verify(DestroyModel_AssetID, ref result);
         }
 
-        [Category("Destructable Ext.")]
+        [Category("Destructable"), Description("Not present in Scooby")]
         public AssetID DestroyShrapnel_AssetID
         {
             get => ReadUInt(0x74);
             set => Write(0x74, value);
         }
 
-        [Category("Destructable Ext.")]
+        [Category("Destructable"), Description("Not present in Scooby")]
         public AssetID HitShrapnel_AssetID
         {
             get => ReadUInt(0x78 + Offset);
             set => Write(0x78 + Offset, value);
         }
 
-        [Category("Destructable Ext.")]
+        [Category("Destructable"), Description("Not present in Scooby")]
         public AssetID DestroySFX_AssetID
         {
             get => ReadUInt(0x7C + Offset);
             set => Write(0x7C + Offset, value);
         }
 
-        [Category("Destructable Ext.")]
+        [Category("Destructable"), Description("Not present in Scooby")]
         public AssetID HitSFX_AssetID
         {
             get => ReadUInt(0x80 + Offset);
             set => Write(0x80 + Offset, value);
         }
 
-        [Category("Destructable Ext.")]
+        [Category("Destructable"), Description("Not present in Scooby")]
         public AssetID HitModel_AssetID
         {
             get => ReadUInt(0x84 + Offset);
             set => Write(0x84 + Offset, value);
         }
 
-        [Category("Destructable Ext.")]
+        [Category("Destructable"), Description("Not present in Scooby")]
         public AssetID DestroyModel_AssetID
         {
             get => ReadUInt(0x88 + Offset);

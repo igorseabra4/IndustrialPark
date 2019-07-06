@@ -390,168 +390,168 @@ namespace IndustrialPark
 
         private int ScoobyOffset => Functions.currentGame == Game.Scooby ? -0x60 : 0;
 
-        [Category("Surface: UV Effects 2")]
+        [Category("Surface: UV Effects 2"), Description("Same as UV Effects 1 in Scooby")]
         public int UVEffects2_Mode
         {
             get => ReadInt(ScoobyOffset + 0xB4);
             set => Write(ScoobyOffset + 0xB4, value);
         }
 
-        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), Description("Same as UV Effects 1 in Scooby"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_Rot
         {
             get => ReadFloat(ScoobyOffset + 0xB8);
             set => Write(ScoobyOffset + 0xB8, value);
         }
 
-        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), Description("Same as UV Effects 1 in Scooby"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_RotSpd
         {
             get => ReadFloat(ScoobyOffset + 0xBC);
             set => Write(ScoobyOffset + 0xBC, value);
         }
 
-        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), Description("Same as UV Effects 1 in Scooby"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_Trans_X
         {
             get => ReadFloat(ScoobyOffset + 0xC0);
             set => Write(ScoobyOffset + 0xC0, value);
         }
 
-        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), Description("Same as UV Effects 1 in Scooby"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_Trans_Y
         {
             get => ReadFloat(ScoobyOffset + 0xC4);
             set => Write(ScoobyOffset + 0xC4, value);
         }
 
-        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), Description("Same as UV Effects 1 in Scooby"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_Trans_Z
         {
             get => ReadFloat(ScoobyOffset + 0xC8);
             set => Write(ScoobyOffset + 0xC8, value);
         }
 
-        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), Description("Same as UV Effects 1 in Scooby"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_TransSpeed_X
         {
             get => ReadFloat(ScoobyOffset + 0xCC);
             set => Write(ScoobyOffset + 0xCC, value);
         }
 
-        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), Description("Same as UV Effects 1 in Scooby"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_TransSpeed_Y
         {
             get => ReadFloat(ScoobyOffset + 0xD0);
             set => Write(ScoobyOffset + 0xD0, value);
         }
 
-        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), Description("Same as UV Effects 1 in Scooby"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_TransSpeed_Z
         {
             get => ReadFloat(ScoobyOffset + 0xD4);
             set => Write(ScoobyOffset + 0xD4, value);
         }
 
-        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), Description("Same as UV Effects 1 in Scooby"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_Scale_X
         {
             get => ReadFloat(ScoobyOffset + 0xD8);
             set => Write(ScoobyOffset + 0xD8, value);
         }
 
-        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), Description("Same as UV Effects 1 in Scooby"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_Scale_Y
         {
             get => ReadFloat(ScoobyOffset + 0xDC);
             set => Write(ScoobyOffset + 0xDC, value);
         }
 
-        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), Description("Same as UV Effects 1 in Scooby"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_Scale_Z
         {
             get => ReadFloat(ScoobyOffset + 0xE0);
             set => Write(ScoobyOffset + 0xE0, value);
         }
 
-        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), Description("Same as UV Effects 1 in Scooby"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_ScaleSpeed_X
         {
             get => ReadFloat(ScoobyOffset + 0xE4);
             set => Write(ScoobyOffset + 0xE4, value);
         }
 
-        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), Description("Same as UV Effects 1 in Scooby"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_ScaleSpeed_Y
         {
             get => ReadFloat(ScoobyOffset + 0xE8);
             set => Write(ScoobyOffset + 0xE8, value);
         }
 
-        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), Description("Same as UV Effects 1 in Scooby"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_ScaleSpeed_Z
         {
             get => ReadFloat(ScoobyOffset + 0xEC);
             set => Write(ScoobyOffset + 0xEC, value);
         }
 
-        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), Description("Same as UV Effects 1 in Scooby"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_Min_X
         {
             get => ReadFloat(ScoobyOffset + 0xF0);
             set => Write(ScoobyOffset + 0xF0, value);
         }
 
-        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), Description("Same as UV Effects 1 in Scooby"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_Min_Y
         {
             get => ReadFloat(ScoobyOffset + 0xF4);
             set => Write(ScoobyOffset + 0xF4, value);
         }
 
-        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), Description("Same as UV Effects 1 in Scooby"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_Min_Z
         {
             get => ReadFloat(ScoobyOffset + 0xF8);
             set => Write(ScoobyOffset + 0xF8, value);
         }
 
-        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), Description("Same as UV Effects 1 in Scooby"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_Max_X
         {
             get => ReadFloat(ScoobyOffset + 0xFC);
             set => Write(ScoobyOffset + 0xFC, value);
         }
 
-        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), Description("Same as UV Effects 1 in Scooby"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_Max_Y
         {
             get => ReadFloat(ScoobyOffset + 0x100);
             set => Write(ScoobyOffset + 0x100, value);
         }
 
-        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), Description("Same as UV Effects 1 in Scooby"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_Max_Z
         {
             get => ReadFloat(ScoobyOffset + 0x104);
             set => Write(ScoobyOffset + 0x104, value);
         }
 
-        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), Description("Same as UV Effects 1 in Scooby"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_MinMaxSpeed_X
         {
             get => ReadFloat(ScoobyOffset + 0x108);
             set => Write(ScoobyOffset + 0x108, value);
         }
 
-        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), Description("Same as UV Effects 1 in Scooby"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_MinMaxSpeed_Y
         {
             get => ReadFloat(ScoobyOffset + 0x10C);
             set => Write(ScoobyOffset + 0x10C, value);
         }
 
-        [Category("Surface: UV Effects 2"), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Surface: UV Effects 2"), Description("Same as UV Effects 1 in Scooby"), TypeConverter(typeof(FloatTypeConverter))]
         public float UVEffects2_MinMaxSpeed_Z
         {
             get => ReadFloat(ScoobyOffset + 0x110);

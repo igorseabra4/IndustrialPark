@@ -26,6 +26,8 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -57,6 +59,9 @@
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
+    <Reference Include="AssimpNet, Version=4.1.0.0, Culture=neutral, PublicKeyToken=0d51b391f59f42a6, processorArchitecture=MSIL">
+      <HintPath>..\packages\AssimpNet.4.1.0\lib\net40\AssimpNet.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\WindowsAPICodePack-Core.1.1.2\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
     </Reference>
@@ -231,7 +236,7 @@
     <Compile Include="Assets\Shared\AssetWithMotion.cs" />
     <Compile Include="Assets\Shared\Motion.cs" />
     <Compile Include="Assets\Shared\PlatSpecific.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlatSpecific.cs" />
+    <Compile Include="Assets\Shared\CamSpecific.cs" />
     <Compile Include="Links\Enums\EventBFBB.cs" />
     <Compile Include="Assets\Shared\Enums\PlatTypeSpecific.cs" />
     <Compile Include="Assets\Shared\Interfaces\IRotatableAsset.cs" />
@@ -248,6 +253,14 @@
     <Compile Include="Links\LinkBFBB.cs" />
     <Compile Include="Links\LinkIncredibles.cs" />
     <Compile Include="Links\LinkTSSM.cs" />
+    <Compile Include="Models\BSP_IO_Shared.cs" />
+    <Compile Include="Models\ChooseTarget.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Models\ChooseTarget.Designer.cs">
+      <DependentUpon>ChooseTarget.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Model_IO_Assimp.cs" />
     <Compile Include="Other\AutomaticUpdater.cs" />
     <Compile Include="MainForm\EditName.cs">
       <SubType>Form</SubType>
@@ -355,15 +368,11 @@
     <Compile Include="Assets\DYNA\BFBB\RenderableDynas\DynaTeleport_BFBB.cs" />
     <Compile Include="Assets\DYNA\MovieGame\DynaTeleport_MovieGame.cs" />
     <Compile Include="Assets\Shared\Enums\VilType.cs" />
-    <Compile Include="Assets\Shared\TypeConverter\HexIntTypeConverter.cs" />
     <Compile Include="MainForm\Json\IPSettings.cs" />
     <Compile Include="MainForm\Json\ProjectJson.cs" />
-    <Compile Include="Models\BSP_IO_Collada.cs" />
     <Compile Include="Models\BSP_IO_CreateBSP.cs" />
     <Compile Include="Models\BSP_IO_ReadOBJ.cs" />
-    <Compile Include="Models\collada_schema_1_4.cs" />
     <Compile Include="Other\FileAssociation.cs" />
-    <Compile Include="Models\ModelConverterDataCollada.cs" />
     <Compile Include="Assets\Shared\Colors\MyColor.cs" />
     <Compile Include="Assets\Shared\Colors\MyColorConverter.cs" />
     <Compile Include="Assets\Shared\Colors\MyColorEditor.cs" />
@@ -709,4 +718,11 @@
       <UserProperties resources_4ip_3version_1json__JsonSchema="http://json-schema.org/draft-04/schema" />
     </VisualStudio>
   </ProjectExtensions>
+  <Import Project="..\packages\AssimpNet.4.1.0\build\AssimpNet.targets" Condition="Exists('..\packages\AssimpNet.4.1.0\build\AssimpNet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Este projeto faz referência a pacotes do NuGet que não estão presentes neste computador. Use a Restauração de Pacotes do NuGet para baixá-los.  Para obter mais informações, consulte http://go.microsoft.com/fwlink/?LinkID=322105. O arquivo ausente é {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\AssimpNet.4.1.0\build\AssimpNet.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\AssimpNet.4.1.0\build\AssimpNet.targets'))" />
+  </Target>
 </Project>

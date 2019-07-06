@@ -132,6 +132,7 @@ namespace IndustrialPark
         }
 
         [Category("Environment"), TypeConverter(typeof(FloatTypeConverter))]
+        [Description("Not present in Scooby.")]
         public float LoldHeight
         {
             get

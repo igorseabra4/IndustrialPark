@@ -1,11 +1,11 @@
-﻿using RenderWareFile;
+﻿using System;
 using System.IO;
 using System.Windows.Forms;
-using static IndustrialPark.Models.BSP_IO_CreateBSP;
-using static IndustrialPark.Models.BSP_IO_ReadOBJ;
-using static IndustrialPark.Models.BSP_IO_Collada;
-using System.Linq;
+using RenderWareFile;
 using IndustrialPark.Models;
+using static IndustrialPark.Models.BSP_IO_Shared;
+using static IndustrialPark.Models.BSP_IO_CreateBSP;
+using static IndustrialPark.Models.Model_IO_Assimp;
 
 namespace IndustrialPark
 {
@@ -39,7 +39,7 @@ namespace IndustrialPark
             return asset.AHDR.assetID;
         }
 
-        private void buttonFindCallers_Click(object sender, System.EventArgs e)
+        private void buttonFindCallers_Click(object sender, EventArgs e)
         {
             Program.MainForm.FindWhoTargets(GetAssetID());
         }
@@ -49,71 +49,49 @@ namespace IndustrialPark
             archive.UnsavedChanges = true;
         }
 
-        private void buttonHelp_Click(object sender, System.EventArgs e)
+        private void buttonHelp_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start(AboutBox.WikiLink + asset.AHDR.assetType.ToString());
         }
 
-        private void buttonExport_Click(object sender, System.EventArgs e)
+        private void buttonExport_Click(object sender, EventArgs e)
         {
-            SaveFileDialog a = new SaveFileDialog()
+            ChooseTarget.GetTarget(out bool success, out Assimp.ExportFormatDescription format, out string textureExtension);
+
+            if (success)
             {
-                Filter = "OBJ Files|*.obj|" + (asset.AHDR.assetType == HipHopFile.AssetType.MODL ? "DFF Files | *.dff" : "BSP Files | *.bsp"),
-                FileName = Path.ChangeExtension(asset.AHDR.ADBG.assetName, ".obj")
-            };
-            if (a.ShowDialog() == DialogResult.OK)
-            {
-                if (Path.GetExtension(a.FileName).ToLower() == ".obj")
+                SaveFileDialog a = new SaveFileDialog()
                 {
-                    if (asset.AHDR.assetType == HipHopFile.AssetType.BSP)
+                    Filter = format == null ? "RenderWare BSP|*.bsp" : format.Description + "|*." + format.FileExtension,
+                };
+
+                if (a.ShowDialog() == DialogResult.OK)
+                {                    
+                    if (format == null)
+                        File.WriteAllBytes(a.FileName, asset.Data);
+                    else if (format.FileExtension.ToLower().Equals("obj") && asset.AHDR.assetType == HipHopFile.AssetType.BSP)
                         ConvertBSPtoOBJ(a.FileName, asset.GetRenderWareModelFile(), true);
                     else
-                        ConvertDFFtoOBJ(a.FileName, asset.GetRenderWareModelFile(), true);
+                        ExportAssimp(Path.ChangeExtension(a.FileName, format.FileExtension), asset.GetRenderWareModelFile(), true, format, textureExtension);
                 }
-                else
-                    File.WriteAllBytes(a.FileName, asset.Data);
             }
         }
 
-        private void buttonImport_Click(object sender, System.EventArgs e)
+        private void buttonImport_Click(object sender, EventArgs e)
         {
-            OpenFileDialog a = new OpenFileDialog()
+            OpenFileDialog openFile = new OpenFileDialog()
             {
-                Filter = asset.AHDR.assetType == HipHopFile.AssetType.BSP ?
-                "All supported types|*.dae;*.obj;*.bsp|DAE Files|*.dae|OBJ Files|*.obj|BSP Files|*.bsp|All files|*.*" :
-                "All supported types|*.dae;*.obj;*.dff|DAE Files|*.dae|OBJ Files|*.obj|DFF Files|*.dff|All files|*.*"
+                Filter = GetImportFilter(), // "All supported types|*.dae;*.obj;*.bsp|DAE Files|*.dae|OBJ Files|*.obj|BSP Files|*.bsp|All files|*.*",
             };
 
-            if (a.ShowDialog() == DialogResult.OK)
+            if (openFile.ShowDialog() == DialogResult.OK)
             {
-                archive.UnsavedChanges = true;
-
-                string i = a.FileName;
-
-                ModelConverterData m;
-
-                if (Path.GetExtension(i).ToLower() == ".obj")
-                    m = ReadOBJFile(i);
-                else if (Path.GetExtension(i).ToLower() == ".dae")
-                    m = ConvertDataFromDAEObject(ReadDAEFile(i), false);
-                else
-                {
-                    asset.GetRenderWareModelFile().Dispose();
-                    asset.Data = File.ReadAllBytes(i);
-                    asset.Setup(Program.MainForm.renderer);
-                    return;
-                }
-
-                RWSection[] rws;
-
-                if (asset.AHDR.assetType == HipHopFile.AssetType.BSP)
-                    rws = CreateBSPFile(m, true);
-                else
-                    rws = CreateDFFFile(m, true);
-
-                asset.GetRenderWareModelFile().Dispose();
-                asset.Data = ReadFileMethods.ExportRenderWareFile(rws, currentRenderWareVersion);
+                asset.Data = Path.GetExtension(openFile.FileName).ToLower().Equals(".dff") ? File.ReadAllBytes(openFile.FileName) :
+                    ReadFileMethods.ExportRenderWareFile(CreateDFFFromAssimp(openFile.FileName, false), currentRenderWareVersion);
+                
                 asset.Setup(Program.MainForm.renderer);
+
+                archive.UnsavedChanges = true;
             }
         }
     }

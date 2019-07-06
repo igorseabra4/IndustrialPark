@@ -83,7 +83,6 @@ namespace IndustrialPark
                 {
                     uint soundAssetID = ReadUInt(4 + i * 0xC);
                     int offset = ReadInt(8 + i * 0xC);
-                    int size = ReadInt(12 + i * 0xC);
 
                     int length = BitConverter.ToInt32(Data, StartOfJawData + offset);
                     byte[] jawData = Data.Skip(StartOfJawData + offset + 4).Take(length).ToArray();

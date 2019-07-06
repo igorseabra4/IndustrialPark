@@ -25,6 +25,7 @@ namespace IndustrialPark
         }
 
         [Category("Button")]
+        [Description("Not present in Scooby")]
         public AssetID PressedModel_AssetID
         {
             get => Functions.currentGame == Game.Scooby ? 0 : ReadUInt(0x54 + Offset);

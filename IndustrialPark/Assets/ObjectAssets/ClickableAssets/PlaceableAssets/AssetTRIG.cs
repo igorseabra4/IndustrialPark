@@ -343,18 +343,21 @@ namespace IndustrialPark
             }
         }
         [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
+        [Description("Used only for Sphere and Cylinder.")]
         public float Radius
         {
             get => Position1X;
             set => Position1X = value;
         }
         [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
+        [Description("Used only for Cylinder.")]
         public float Height
         {
             get => Position1Y;
             set => Position1Y = value;
         }
         [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
+        [Description("Used only for Box.")]
         public float Position1X
         {
             get => _trigPos1.X;
@@ -366,6 +369,7 @@ namespace IndustrialPark
             }
         }
         [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
+        [Description("Used only for Box.")]
         public float Position1Y
         {
             get => _trigPos1.Y;
@@ -377,6 +381,7 @@ namespace IndustrialPark
             }
         }
         [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
+        [Description("Used only for Box.")]
         public float Position1Z
         {
             get => _trigPos1.Z;

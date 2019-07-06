@@ -49,28 +49,28 @@ namespace IndustrialPark
             set => Write(0x0C, value);
         }
 
-        [Category("Scripted Event (Movie Only)"), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("Scripted Event"), Description("Movie only."), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Flag1
         {
             get => ReadByte(0x10);
             set => Write(0x10, value);
         }
 
-        [Category("Scripted Event (Movie Only)"), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("Scripted Event"), Description("Movie only."), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Flag2
         {
             get => ReadByte(0x11);
             set => Write(0x11, value);
         }
 
-        [Category("Scripted Event (Movie Only)"), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("Scripted Event"), Description("Movie only."), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Flag3
         {
             get => ReadByte(0x12);
             set => Write(0x12, value);
         }
 
-        [Category("Scripted Event (Movie Only)"), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("Scripted Event"), Description("Movie only."), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Flag4
         {
             get => ReadByte(0x13);

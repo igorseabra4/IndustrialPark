@@ -357,7 +357,8 @@ namespace IndustrialPark
             set => Write(0xC4, value);
         }
 
-        [Category("Cutscene Manager (Movie Only)")]
+        [Category("Cutscene Manager")]
+        [Description("Movie only.")]
         public int UnknownIntC8
         {
             get

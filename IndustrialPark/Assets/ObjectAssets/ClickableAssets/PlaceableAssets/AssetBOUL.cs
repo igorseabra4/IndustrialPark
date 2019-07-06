@@ -66,6 +66,7 @@ namespace IndustrialPark
         }
 
         [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
+        [Description("BFBB Only")]
         public float StartFriction
         {
             get
@@ -364,6 +365,7 @@ namespace IndustrialPark
         }
 
         [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
+        [Description("BFBB Only")]
         public float Volume
         {
             get
