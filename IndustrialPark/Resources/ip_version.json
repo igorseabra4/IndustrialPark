@@ -1,4 +1,4 @@
 {
-  "version": "preview42",
-  "versionName": "Preview 42:\nCorrupt or invalid assets will not make Industrial Park crash anymore. Instead, you will simply not be able to edit them.\nAdds new \"template\": Paste Clipboard. Placing this template will actually cause all assets you have copied to your clipboard to be placed at the clicked position.\nCylinder triggers: this third trigger type has always been available in BFBB but unused. IP is now able to place and edit them.\nNew template: cylinder trigger.\n"
+  "version": "preview43",
+  "versionName": "Preview 43:\n* Industrial Park now has Assimp (Open Asset Import Library) support for model I/O (input/output). You can import and export models (BSP, JSP or MODL) in all formats supported by Assimp (which include OBJ, DAE, FBX and others) as well as DFF (exported from the 3ds Max rwio plugin for example). Importing is available from the Asset Data window for MODL assets and the Import Models tool in the Archive Editor, and exporting from the Asset Data window for BSP, JSP and MODL.\n* Fixes Springboard template.\n* Adds description box for Asset Data Editors and description for some \"less intuitive\" properties for assets such as PLAT.\n* Fixes PLAT, BUTN and SHRP assets for Scooby.\n"
 }

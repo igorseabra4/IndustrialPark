@@ -36,6 +36,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.listBox1 = new System.Windows.Forms.ListBox();
+            this.checkBoxOverwrite = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -72,7 +73,7 @@
             // buttonOK
             // 
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(116, 267);
+            this.buttonOK.Location = new System.Drawing.Point(116, 290);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(92, 23);
             this.buttonOK.TabIndex = 5;
@@ -83,7 +84,7 @@
             // buttonCancel
             // 
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(18, 267);
+            this.buttonCancel.Location = new System.Drawing.Point(18, 290);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(92, 23);
             this.buttonCancel.TabIndex = 6;
@@ -93,7 +94,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(15, 293);
+            this.label1.Location = new System.Drawing.Point(15, 316);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(199, 26);
             this.label1.TabIndex = 8;
@@ -120,13 +121,26 @@
             this.listBox1.TabIndex = 9;
             this.listBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listBox1_KeyDown);
             // 
-            // AddMultipleAssetDialog
+            // checkBoxOverwrite
+            // 
+            this.checkBoxOverwrite.AutoSize = true;
+            this.checkBoxOverwrite.Checked = true;
+            this.checkBoxOverwrite.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxOverwrite.Location = new System.Drawing.Point(18, 267);
+            this.checkBoxOverwrite.Name = "checkBoxOverwrite";
+            this.checkBoxOverwrite.Size = new System.Drawing.Size(71, 17);
+            this.checkBoxOverwrite.TabIndex = 12;
+            this.checkBoxOverwrite.Text = "Overwrite";
+            this.checkBoxOverwrite.UseVisualStyleBackColor = true;
+            // 
+            // AddMultipleAssets
             // 
             this.AcceptButton = this.buttonOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(224, 326);
+            this.ClientSize = new System.Drawing.Size(224, 351);
+            this.Controls.Add(this.checkBoxOverwrite);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.buttonCancel);
@@ -136,7 +150,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.KeyPreview = true;
             this.MaximizeBox = false;
-            this.Name = "AddMultipleAssetDialog";
+            this.Name = "AddMultipleAssets";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Add Multiple Assets";
@@ -157,5 +171,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.CheckBox checkBoxOverwrite;
     }
 }

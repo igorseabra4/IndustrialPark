@@ -23,7 +23,7 @@ namespace IndustrialPark.Models
 
         private void ChooseTarget_Load(object sender, EventArgs e)
         {
-            comboBoxFormat.Items.Add("RenderWare BSP");
+            comboBoxFormat.Items.Add("RenderWare Stream (raw BSP/DFF)");
             foreach (ExportFormatDescription f in formats)
                 comboBoxFormat.Items.Add(f.Description);
 

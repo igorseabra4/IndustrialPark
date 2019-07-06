@@ -62,38 +62,43 @@ namespace IndustrialPark
             Close();
         }
 
-        public static List<Section_AHDR> GetAssets(out bool success)
+        public static List<Section_AHDR> GetAssets(out bool success, out bool overwrite)
         {
             ImportModel a = new ImportModel();
             if (a.ShowDialog() == DialogResult.OK)
             {
                 List<Section_AHDR> AHDRs = new List<Section_AHDR>();
 
-                for (int i = 0; i < a.filePaths.Count; i++)
+                foreach (string filePath in a.filePaths)
                 {
-                    byte[] data;
-                    AssetType assetType;
-                    string assetName = Path.GetFileNameWithoutExtension(a.filePaths[i]); // + ".dff";
+                    string assetName = Path.GetFileNameWithoutExtension(filePath) + ".dff";
+                    AssetType assetType = AssetType.MODL;
+                    byte[] assetData = Path.GetExtension(filePath).ToLower().Equals(".dff") ?
+                                File.ReadAllBytes(filePath) :
+                                ReadFileMethods.ExportRenderWareFile(
+                                    CreateDFFFromAssimp(filePath,
+                                    a.checkBoxFlipUVs.Checked),
+                                    currentRenderWareVersion);
                     
-                    assetType = AssetType.MODL;
-                    data = Path.GetExtension(a.filePaths[i]).ToLower().Equals(".dff") ? File.ReadAllBytes(a.filePaths[i]) :
-                        ReadFileMethods.ExportRenderWareFile(CreateDFFFromAssimp(a.filePaths[i], a.checkBoxFlipUVs.Checked), currentRenderWareVersion);
-
-                    Section_ADBG ADBG = new Section_ADBG(0, assetName, "", 0);
-                    Section_AHDR AHDR = new Section_AHDR(Functions.BKDRHash(assetName), assetType, ArchiveEditorFunctions.AHDRFlagsFromAssetType(assetType), ADBG, data);
-
-                    AHDRs.Add(AHDR);
+                    AHDRs.Add(
+                        new Section_AHDR(
+                            Functions.BKDRHash(assetName),
+                            assetType,
+                            ArchiveEditorFunctions.AHDRFlagsFromAssetType(assetType),
+                            new Section_ADBG(0, assetName, "", 0),
+                            assetData));
                 }
 
                 success = true;
+                overwrite = a.checkBoxOverwrite.Checked;
                 return AHDRs;
             }
             else
             {
                 success = false;
+                overwrite = false;
                 return null;
             }
         }
-
     }
 }

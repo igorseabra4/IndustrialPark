@@ -496,7 +496,7 @@
             this.labelTemplateFocus.Name = "labelTemplateFocus";
             this.labelTemplateFocus.Size = new System.Drawing.Size(83, 26);
             this.labelTemplateFocus.TabIndex = 20;
-            this.labelTemplateFocus.Text = "Template Focus\r\nOFF\r\n";
+            this.labelTemplateFocus.Text = "Template Focus\nOFF";
             this.labelTemplateFocus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.labelTemplateFocus.Click += new System.EventHandler(this.labelTemplateFocus_Click);
             // 

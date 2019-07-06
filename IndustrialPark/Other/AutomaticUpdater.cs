@@ -45,12 +45,12 @@ namespace IndustrialPark
                         using (var webClient = new WebClient())
                             webClient.DownloadFile(updatedIPURL, updatedIPfilePath);
 
-                        string oldPath = Application.StartupPath + "\\IndustrialPark_old\\";
+                        string oldIPdestinationPath = Application.StartupPath + "\\IndustrialPark_old\\";
 
-                        if (!Directory.Exists(oldPath))
-                            Directory.CreateDirectory(oldPath);
+                        if (!Directory.Exists(oldIPdestinationPath))
+                            Directory.CreateDirectory(oldIPdestinationPath);
 
-                        foreach (string s in new string[]
+                        string[] directoryNames = new string[]
                         {
                                 "",
                                 "\\Resources",
@@ -68,25 +68,37 @@ namespace IndustrialPark
                                 "\\Resources\\txdgen_1.0\\LICENSES\\lzo-2.08",
                                 "\\Resources\\txdgen_1.0\\LICENSES\\pvrtextool",
                                 "\\Resources\\txdgen_1.0\\LICENSES\\rwtools",
-                        })
-                        {
-                            if (!Directory.Exists(oldPath + s))
-                                Directory.CreateDirectory(oldPath + s);
+                                "\\runtimes\\",
+                                "\\runtimes\\linux-x64",
+                                "\\runtimes\\linux-x64\\native",
+                                "\\runtimes\\osx-x64",
+                                "\\runtimes\\osx-x64\\native",
+                                "\\runtimes\\win-x64",
+                                "\\runtimes\\win-x64\\native",
+                                "\\runtimes\\win-x86",
+                                "\\runtimes\\win-x86\\native",
+                        };
 
-                            foreach (string s2 in Directory.GetFiles(Application.StartupPath + s))
+                        foreach (string localDirPath in directoryNames)
+                            if (Directory.Exists(Application.StartupPath + localDirPath))
                             {
-                                if (Path.GetExtension(s2).ToLower().Equals(".zip") || Path.GetExtension(s2).ToLower().Equals(".json"))
-                                    continue;
+                                if (!Directory.Exists(oldIPdestinationPath + localDirPath))
+                                    Directory.CreateDirectory(oldIPdestinationPath + localDirPath);
 
-                                string newFilePath = oldPath + s + "\\" + Path.GetFileName(s2);
+                                foreach (string previousFile in Directory.GetFiles(Application.StartupPath + localDirPath))
+                                {
+                                    if (Path.GetExtension(previousFile).ToLower().Equals(".zip") || Path.GetExtension(previousFile).ToLower().Equals(".json"))
+                                        continue;
 
-                                if (File.Exists(newFilePath))
-                                    File.Delete(newFilePath);
+                                    string newFilePath = oldIPdestinationPath + localDirPath + "\\" + Path.GetFileName(previousFile);
 
-                                File.Move(s2, newFilePath);
+                                    if (File.Exists(newFilePath))
+                                        File.Delete(newFilePath);
+
+                                    File.Move(previousFile, newFilePath);
+                                }
                             }
-                        }
-
+                        
                         ZipFile.ExtractToDirectory(updatedIPfilePath, Application.StartupPath);
 
                         File.Delete(updatedIPfilePath);

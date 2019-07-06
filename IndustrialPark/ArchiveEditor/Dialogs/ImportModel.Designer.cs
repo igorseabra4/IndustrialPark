@@ -36,6 +36,7 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.checkBoxFlipUVs = new System.Windows.Forms.CheckBox();
+            this.checkBoxOverwrite = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -65,7 +66,7 @@
             this.buttonImportRawData.Name = "buttonImportRawData";
             this.buttonImportRawData.Size = new System.Drawing.Size(190, 23);
             this.buttonImportRawData.TabIndex = 4;
-            this.buttonImportRawData.Text = "Import OBJ/DAE";
+            this.buttonImportRawData.Text = "Import";
             this.buttonImportRawData.UseVisualStyleBackColor = true;
             this.buttonImportRawData.Click += new System.EventHandler(this.buttonImportRawData_Click);
             // 
@@ -119,6 +120,18 @@
             this.checkBoxFlipUVs.Text = "Flip UVs";
             this.checkBoxFlipUVs.UseVisualStyleBackColor = true;
             // 
+            // checkBoxOverwrite
+            // 
+            this.checkBoxOverwrite.AutoSize = true;
+            this.checkBoxOverwrite.Checked = true;
+            this.checkBoxOverwrite.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxOverwrite.Location = new System.Drawing.Point(137, 267);
+            this.checkBoxOverwrite.Name = "checkBoxOverwrite";
+            this.checkBoxOverwrite.Size = new System.Drawing.Size(71, 17);
+            this.checkBoxOverwrite.TabIndex = 12;
+            this.checkBoxOverwrite.Text = "Overwrite";
+            this.checkBoxOverwrite.UseVisualStyleBackColor = true;
+            // 
             // ImportModel
             // 
             this.AcceptButton = this.buttonOK;
@@ -126,6 +139,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(224, 321);
+            this.Controls.Add(this.checkBoxOverwrite);
             this.Controls.Add(this.checkBoxFlipUVs);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.buttonCancel);
@@ -156,5 +170,6 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.CheckBox checkBoxFlipUVs;
+        private System.Windows.Forms.CheckBox checkBoxOverwrite;
     }
 }

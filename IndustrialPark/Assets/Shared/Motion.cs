@@ -27,7 +27,7 @@ namespace IndustrialPark
         [Category("Motion")]
         public byte UseBanking { get; set; }
         [Category("Motion")]
-        [Description("0 = None\n1 = Unknown\n2 = Unknown\n4=Don't start moving\nAdd numbers to enable multiple")]
+        [Description("0 = None\n1 = Unknown\n2 = Unknown\n4 = Don't start moving\nAdd numbers to enable multiple flags")]
         public short Flags { get; set; }
 
         public Motion() { }
@@ -357,7 +357,7 @@ namespace IndustrialPark
         [Category("Motion: Mechanism")]
         public EMovementType MovementType { get; set; }
         [Category("Motion: Mechanism")]
-        [Description("0 = None\n1 = Return to start after moving\n2 = Don't loop\nAdd to enable multiple")]
+        [Description("0 = None\n1 = Return to start after moving\n2 = Don't loop\n3 = Both")]
         public byte MovementLoopMode { get; set; }
         [Category("Motion: Mechanism")]
         public Axis SlideAxis { get; set; }

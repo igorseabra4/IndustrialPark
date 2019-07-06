@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 
 namespace IndustrialPark
 {
@@ -15,8 +16,7 @@ namespace IndustrialPark
             propertyGridAsset.SelectedObject = asset;
             labelAssetName.Text = $"[{asset.AHDR.assetType.ToString()}] {asset.ToString()}";
 
-            if (asset is AssetMVPT)
-                propertyGridAsset.HelpVisible = true;
+            propertyGridAsset.HelpVisible = true;
         }
 
         private void InternalAssetEditor_FormClosing(object sender, FormClosingEventArgs e)
@@ -32,7 +32,7 @@ namespace IndustrialPark
             return asset.AHDR.assetID;
         }
 
-        private void buttonFindCallers_Click(object sender, System.EventArgs e)
+        private void buttonFindCallers_Click(object sender, EventArgs e)
         {
             Program.MainForm.FindWhoTargets(GetAssetID());
         }
@@ -43,7 +43,7 @@ namespace IndustrialPark
             ArchiveEditorFunctions.UpdateGizmoPosition();
         }
 
-        private void buttonHelp_Click(object sender, System.EventArgs e)
+        private void buttonHelp_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start(AboutBox.WikiLink + asset.AHDR.assetType.ToString());
         }

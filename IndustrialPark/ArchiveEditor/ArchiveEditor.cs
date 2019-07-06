@@ -451,10 +451,10 @@ namespace IndustrialPark
 
         private void importMultipleAssetsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            List<Section_AHDR> AHDRs = AddMultipleAssets.GetAssets(out bool success);
+            List<Section_AHDR> AHDRs = AddMultipleAssets.GetAssets(out bool success, out bool overwrite);
             if (success)
             {
-                archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, out List<uint> assetIDs, false);
+                archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, out List<uint> assetIDs, overwrite);
                 comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
                 SetSelectedIndices(assetIDs, true);
             }
@@ -462,10 +462,10 @@ namespace IndustrialPark
 
         private void importModelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            List<Section_AHDR> AHDRs = ImportModel.GetAssets(out bool success);
+            List<Section_AHDR> AHDRs = ImportModel.GetAssets(out bool success, out bool overwrite);
             if (success)
             {
-                archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, out List<uint> assetIDs, false);
+                archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, out List<uint> assetIDs, overwrite);
                 comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
                 SetSelectedIndices(assetIDs, true);
             }

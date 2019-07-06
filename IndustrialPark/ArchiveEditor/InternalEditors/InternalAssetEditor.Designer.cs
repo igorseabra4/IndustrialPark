@@ -40,7 +40,6 @@
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.propertyGridAsset, 2);
             this.propertyGridAsset.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propertyGridAsset.HelpVisible = false;
             this.propertyGridAsset.Location = new System.Drawing.Point(3, 23);
             this.propertyGridAsset.Name = "propertyGridAsset";
             this.propertyGridAsset.PropertySort = System.Windows.Forms.PropertySort.Categorized;

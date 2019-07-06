@@ -41,7 +41,6 @@
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.propertyGridAsset, 2);
             this.propertyGridAsset.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propertyGridAsset.HelpVisible = false;
             this.propertyGridAsset.Location = new System.Drawing.Point(3, 23);
             this.propertyGridAsset.Name = "propertyGridAsset";
             this.propertyGridAsset.PropertySort = System.Windows.Forms.PropertySort.Categorized;
@@ -109,7 +108,6 @@
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.propertyGrid_Motion, 2);
             this.propertyGrid_Motion.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propertyGrid_Motion.HelpVisible = false;
             this.propertyGrid_Motion.Location = new System.Drawing.Point(3, 366);
             this.propertyGrid_Motion.Name = "propertyGrid_Motion";
             this.propertyGrid_Motion.PropertySort = System.Windows.Forms.PropertySort.Categorized;

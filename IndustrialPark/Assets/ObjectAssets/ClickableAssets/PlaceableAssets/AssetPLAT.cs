@@ -116,7 +116,7 @@ namespace IndustrialPark
         }
 
         [Category("Platform")]
-        [Description("0 = None\n1 = Shake on Mount\n2 = Unknown\n4=Solid\nAdd numbers to enable multiple")]
+        [Description("0 = None\n1 = Shake on Mount\n2 = Unknown\n4 = Solid\nAdd numbers to enable multiple flags")]
         public short PlatFlags
         {
             get => ReadShort(0x56 + Offset);
