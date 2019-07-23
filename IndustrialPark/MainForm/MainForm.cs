@@ -117,7 +117,7 @@ namespace IndustrialPark
                 {
                     TopMost = true;
                     MessageBox.Show("Error opening file: " + ex.Message);
-                    TopMost = true;
+                    TopMost = false;
                 }
         }
 
@@ -268,7 +268,7 @@ namespace IndustrialPark
             TextureManager.LoadTexturesFromFolder(ipSettings.TextureFolderPaths);
             
             ArchiveEditorFunctions.hiddenAssets = ipSettings.hiddenAssets;
-            HipHopFile.Functions.currentPlatform = ipSettings.platformForScooby;
+            ArchiveEditorFunctions.defaultScoobyPlatform = ipSettings.platformForScooby;
 
             foreach (string s in ipSettings.hipPaths)
                 if (s == "Empty")
@@ -1168,6 +1168,11 @@ namespace IndustrialPark
         private void assetIDGeneratorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.AssetIDGenerator.Show();
+        }
+
+        private void RandomizerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.Randomizer.Show();
         }
 
         private void MainForm_Resize(object sender, EventArgs e)

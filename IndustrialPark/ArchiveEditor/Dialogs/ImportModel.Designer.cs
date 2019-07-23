@@ -37,6 +37,7 @@
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.checkBoxFlipUVs = new System.Windows.Forms.CheckBox();
             this.checkBoxOverwrite = new System.Windows.Forms.CheckBox();
+            this.checkBoxGenSimps = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -73,7 +74,7 @@
             // buttonOK
             // 
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(116, 290);
+            this.buttonOK.Location = new System.Drawing.Point(116, 313);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(92, 23);
             this.buttonOK.TabIndex = 5;
@@ -84,7 +85,7 @@
             // buttonCancel
             // 
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(18, 290);
+            this.buttonCancel.Location = new System.Drawing.Point(18, 313);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(92, 23);
             this.buttonCancel.TabIndex = 6;
@@ -132,13 +133,24 @@
             this.checkBoxOverwrite.Text = "Overwrite";
             this.checkBoxOverwrite.UseVisualStyleBackColor = true;
             // 
+            // checkBoxGenSimps
+            // 
+            this.checkBoxGenSimps.AutoSize = true;
+            this.checkBoxGenSimps.Location = new System.Drawing.Point(18, 290);
+            this.checkBoxGenSimps.Name = "checkBoxGenSimps";
+            this.checkBoxGenSimps.Size = new System.Drawing.Size(104, 17);
+            this.checkBoxGenSimps.TabIndex = 13;
+            this.checkBoxGenSimps.Text = "Generate SIMPs";
+            this.checkBoxGenSimps.UseVisualStyleBackColor = true;
+            // 
             // ImportModel
             // 
             this.AcceptButton = this.buttonOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(224, 321);
+            this.ClientSize = new System.Drawing.Size(224, 345);
+            this.Controls.Add(this.checkBoxGenSimps);
             this.Controls.Add(this.checkBoxOverwrite);
             this.Controls.Add(this.checkBoxFlipUVs);
             this.Controls.Add(this.groupBox2);
@@ -171,5 +183,6 @@
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.CheckBox checkBoxFlipUVs;
         private System.Windows.Forms.CheckBox checkBoxOverwrite;
+        private System.Windows.Forms.CheckBox checkBoxGenSimps;
     }
 }

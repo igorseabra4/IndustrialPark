@@ -28,12 +28,10 @@ namespace IndustrialPark
         }
 
         private AutoCompleteStringCollection autoCompleteSource = new AutoCompleteStringCollection();
-        private TextBox textBoxFindAsset;
 
         public void SetTextboxForAutocomplete(TextBox textBoxFindAsset)
         {
-            this.textBoxFindAsset = textBoxFindAsset;
-            this.textBoxFindAsset.AutoCompleteCustomSource = autoCompleteSource;
+            textBoxFindAsset.AutoCompleteCustomSource = autoCompleteSource;
         }
 
         public bool UnsavedChanges { get; set; } = false;
@@ -55,6 +53,7 @@ namespace IndustrialPark
 
                 currentlySelectedAssets = new List<Asset>();
                 currentlyOpenFilePath = null;
+                autoCompleteSource.Clear();
 
                 foreach (HipSection i in hipFile)
                 {
@@ -73,20 +72,26 @@ namespace IndustrialPark
 
                 foreach (Section_AHDR AHDR in DICT.ATOC.AHDRList)
                     AddAssetToDictionary(AHDR, true);
+
                 RecalculateAllMatrices();
             }
 
             return OK;
         }
 
-        public void OpenFile(string fileName)
+        public static Platform defaultScoobyPlatform = Platform.Unknown;
+
+        public void OpenFile(string fileName, bool displayProgressBar, bool skipTexturesAndModels = false)
         {
             allowRender = false;
 
             Dispose();
-            ProgressBar progressBar = new ProgressBar("Opening Archive");
-            progressBar.Show();
 
+            ProgressBar progressBar = new ProgressBar("Opening Archive");
+
+            if (displayProgressBar)
+                progressBar.Show();
+            
             assetDictionary = new Dictionary<uint, Asset>();
 
             currentlySelectedAssets = new List<Asset>();
@@ -108,13 +113,17 @@ namespace IndustrialPark
             progressBar.SetProgressBar(0, DICT.ATOC.AHDRList.Count, 1);
 
             if (currentPlatform == Platform.Unknown)
-                new ChoosePlatformDialog().ShowDialog();
+            {
+                if (defaultScoobyPlatform == Platform.Unknown)
+                    new ChoosePlatformDialog().ShowDialog();
+                currentPlatform = defaultScoobyPlatform;
+            }
 
-            List<string> autoComplete = new List<string>();
+            List<string> autoComplete = new List<string>(DICT.ATOC.AHDRList.Count);
 
             foreach (Section_AHDR AHDR in DICT.ATOC.AHDRList)
             {
-                AddAssetToDictionary(AHDR, true);
+                AddAssetToDictionary(AHDR, true, skipTexturesAndModels);
 
                 autoComplete.Add(AHDR.ADBG.assetName);
 
@@ -123,7 +132,7 @@ namespace IndustrialPark
 
             autoCompleteSource.AddRange(autoComplete.ToArray());
 
-            if (GetAssetsOfType(AssetType.RWTX).Any())
+            if (!skipTexturesAndModels && GetAssetsOfType(AssetType.RWTX).Any())
                 SetupTextureDisplay();
 
             RecalculateAllMatrices();
@@ -212,7 +221,7 @@ namespace IndustrialPark
             throw new Exception($"Asset ID {assetID.ToString("X8")} is not present in any layer.");
         }
 
-        public void Dispose()
+        public void Dispose(bool showProgress = true)
         {
             autoCompleteSource.Clear();
 
@@ -223,7 +232,8 @@ namespace IndustrialPark
                 return;
 
             ProgressBar progressBar = new ProgressBar("Closing Archive");
-            progressBar.Show();
+            if (showProgress)
+                progressBar.Show();
             progressBar.SetProgressBar(0, assetList.Count, 1);
 
             foreach (uint assetID in assetList)
@@ -342,7 +352,7 @@ namespace IndustrialPark
 
         public static bool allowRender = true;
 
-        private void AddAssetToDictionary(Section_AHDR AHDR, bool fast = false)
+        private void AddAssetToDictionary(Section_AHDR AHDR, bool fast, bool skipTexturesAndModels = false)
         {
             allowRender = false;
             
@@ -360,7 +370,8 @@ namespace IndustrialPark
                     case AssetType.ANIM: newAsset = AHDR.ADBG.assetName.Contains("ATBL") ? new Asset(AHDR) : newAsset = new AssetANIM(AHDR); break;
                     case AssetType.ALST: newAsset = new AssetALST(AHDR); break;
                     case AssetType.ATBL: newAsset = currentGame == Game.Scooby ? new Asset(AHDR) : new AssetATBL(AHDR); break;
-                    case AssetType.BSP: case AssetType.JSP: newAsset = new AssetJSP(AHDR, Program.MainForm.renderer); break;
+                    case AssetType.BSP: case AssetType.JSP:
+                        newAsset = skipTexturesAndModels ? new Asset(AHDR) : new AssetJSP(AHDR, Program.MainForm.renderer); break;
                     case AssetType.BOUL: newAsset = new AssetBOUL(AHDR); break;
                     case AssetType.BUTN: newAsset = new AssetBUTN(AHDR); break;
                     case AssetType.CAM: newAsset = new AssetCAM(AHDR); break;
@@ -386,7 +397,8 @@ namespace IndustrialPark
                     case AssetType.LODT: newAsset = new AssetLODT(AHDR); break;
                     case AssetType.MAPR: newAsset = new AssetMAPR(AHDR); break;
                     case AssetType.MINF: newAsset = new AssetMINF(AHDR); break;
-                    case AssetType.MODL: newAsset = new AssetMODL(AHDR, Program.MainForm.renderer); break;
+                    case AssetType.MODL:
+                        newAsset = skipTexturesAndModels ? new Asset(AHDR) : new AssetMODL(AHDR, Program.MainForm.renderer); break;
                     case AssetType.MRKR: newAsset = new AssetMRKR(AHDR); break;
                     case AssetType.MVPT: newAsset = currentGame == Game.Scooby ? new AssetMVPT_Scooby(AHDR) : new AssetMVPT(AHDR); break;
                     case AssetType.NPC: newAsset = new AssetNPC(AHDR); break;
@@ -401,7 +413,8 @@ namespace IndustrialPark
                     case AssetType.PLYR: newAsset = new AssetPLYR(AHDR); break;
                     case AssetType.PORT: newAsset = new AssetPORT(AHDR); break;
                     case AssetType.PRJT: newAsset = new AssetPRJT(AHDR); break;
-                    case AssetType.RWTX: newAsset = new AssetRWTX(AHDR); break;
+                    case AssetType.RWTX:
+                        newAsset = skipTexturesAndModels ? new Asset(AHDR) : new AssetRWTX(AHDR); break;
                     case AssetType.SCRP: newAsset = new AssetSCRP(AHDR); break;
                     case AssetType.SFX: newAsset = new AssetSFX(AHDR); break;
                     case AssetType.SGRP: newAsset = new AssetSGRP(AHDR); break;
@@ -481,98 +494,10 @@ namespace IndustrialPark
             if (hiddenAssets.Contains(AHDR.assetID))
                 assetDictionary[AHDR.assetID].isInvisible = true;
 
-            autoCompleteSource.Add(AHDR.ADBG.assetName);
+            if (!fast)
+                autoCompleteSource.Add(AHDR.ADBG.assetName);
             
             allowRender = true;
-        }
-
-        private static string txdGenFolder => Application.StartupPath + "\\Resources\\txdgen_1.0\\";
-        private static string tempGcTxdsDir => txdGenFolder + "Temp\\txds_gc\\";
-        private static string tempPcTxdsDir => txdGenFolder + "Temp\\txds_pc\\";
-        private static string pathToGcTXD => tempGcTxdsDir + "temp.txd";
-        private static string pathToPcTXD => tempPcTxdsDir + "temp.txd";
-
-        public void SetupTextureDisplay()
-        {
-            if (!Directory.Exists(tempGcTxdsDir))
-                Directory.CreateDirectory(tempGcTxdsDir);
-            if (!Directory.Exists(tempPcTxdsDir))
-                Directory.CreateDirectory(tempPcTxdsDir);
-
-            ExportTextureDictionary(pathToGcTXD, true);
-
-            PerformTXDConversionExternal();
-
-            TextureManager.LoadTexturesFromTXD(pathToPcTXD, false);
-            TextureManager.ReapplyTextures();
-
-            File.Delete(pathToGcTXD);
-            File.Delete(pathToPcTXD);
-        }
-
-        public void EnableTextureForDisplay(AssetRWTX RWTX)
-        {
-            if (!Directory.Exists(tempGcTxdsDir))
-                Directory.CreateDirectory(tempGcTxdsDir);
-            if (!Directory.Exists(tempPcTxdsDir))
-                Directory.CreateDirectory(tempPcTxdsDir);
-
-            ExportSingleTextureToDictionary(pathToGcTXD, RWTX.AHDR);
-
-            PerformTXDConversionExternal();
-
-            TextureManager.LoadTexturesFromTXD(pathToPcTXD);
-
-            File.Delete(pathToGcTXD);
-            File.Delete(pathToPcTXD);
-        }
-
-        private static void PerformTXDConversionExternal(bool toPC = true, bool compress = false, bool generateMipmaps = false)
-        {
-            string ini =
-                "[Main]\r\n" +
-
-                (toPC ?
-                "gameRoot=" + tempGcTxdsDir + "\r\n" +
-                "outputRoot=" + tempPcTxdsDir + "\r\n" +
-                "targetVersion=VC\r\n" +
-                "targetPlatform=PC\r\n"
-                :
-                "gameRoot=" + tempPcTxdsDir + "\r\n" +
-                "outputRoot=" + tempGcTxdsDir + "\r\n" +
-                "targetVersion=VC\r\n" +
-                "targetPlatform=" +
-                (currentPlatform == Platform.GameCube ? "Gamecube" :
-                currentPlatform == Platform.Xbox ? "XBOX" :
-                currentPlatform == Platform.PS2 ? "PS2" : "PC")
-                + "\r\n") +
-
-                "clearMipmaps=false\r\n" +
-                "generateMipmaps=" + generateMipmaps.ToString().ToLower() + "\r\n" +
-                "mipGenMode=default\r\n" +
-                "mipGenMaxLevel=10\r\n" +
-                "improveFiltering=true\r\n" +
-                "compressTextures=" + compress.ToString().ToLower() + "\r\n" +
-                "compressionQuality=1.0\r\n" +
-                "palRuntimeType=PNGQUANT\r\n" +
-                "dxtRuntimeType=SQUISH\r\n" +
-                "warningLevel=1\r\n" +
-                "ignoreSecureWarnings=true\r\n" +
-                "reconstructIMGArchives=false\r\n" +
-                "fixIncompatibleRasters=true\r\n" +
-                "dxtPackedDecompression=false\r\n" +
-                "imgArchivesCompressed=false\r\n" +
-                "ignoreSerializationRegions=true";
-
-            string curr = Directory.GetCurrentDirectory();
-            Directory.SetCurrentDirectory(txdGenFolder);
-
-            File.WriteAllText("txdgen.ini", ini);
-
-            System.Diagnostics.Process txdgen = System.Diagnostics.Process.Start("txdgen.exe");
-            txdgen.WaitForExit();
-
-            Directory.SetCurrentDirectory(curr);
         }
 
         public void CreateNewAsset(int layerIndex, out bool success, out uint assetID)
@@ -607,7 +532,7 @@ namespace IndustrialPark
         {
             DICT.LTOC.LHDRList[layerIndex].assetIDlist.Add(AHDR.assetID);
             DICT.ATOC.AHDRList.Add(AHDR);
-            AddAssetToDictionary(AHDR);
+            AddAssetToDictionary(AHDR, false);
 
             if (GetFromAssetID(AHDR.assetID) is AssetRWTX rwtx)
                 EnableTextureForDisplay(rwtx);

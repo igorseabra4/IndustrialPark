@@ -105,7 +105,7 @@ namespace IndustrialPark
                 if (Path.GetExtension(s).ToLower() == ".hip" || Path.GetExtension(s).ToLower() == ".hop")
                 {
                     ArchiveEditorFunctions archive = new ArchiveEditorFunctions();
-                    archive.OpenFile(s);
+                    archive.OpenFile(s, false);
                     WriteWhatIFound(archive);
                     archive.Dispose();
                 }

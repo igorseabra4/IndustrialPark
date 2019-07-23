@@ -71,6 +71,7 @@ namespace IndustrialPark
             this.assetIDAssetNameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.useLegacyAssetIDFormatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.downloadIndustrialParkEditorFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkForUpdatesOnStartupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkForUpdatesNowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ensureAssociationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -119,7 +120,7 @@ namespace IndustrialPark
             this.toolStripMenuItem_Templates = new System.Windows.Forms.ToolStripMenuItem();
             this.userTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripComboBoxUserTemplate = new System.Windows.Forms.ToolStripComboBox();
-            this.downloadIndustrialParkEditorFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.randomizerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStripMain.SuspendLayout();
@@ -442,6 +443,13 @@ namespace IndustrialPark
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(259, 6);
             // 
+            // downloadIndustrialParkEditorFilesToolStripMenuItem
+            // 
+            this.downloadIndustrialParkEditorFilesToolStripMenuItem.Name = "downloadIndustrialParkEditorFilesToolStripMenuItem";
+            this.downloadIndustrialParkEditorFilesToolStripMenuItem.Size = new System.Drawing.Size(262, 22);
+            this.downloadIndustrialParkEditorFilesToolStripMenuItem.Text = "Download IndustrialPark-EditorFiles";
+            this.downloadIndustrialParkEditorFilesToolStripMenuItem.Click += new System.EventHandler(this.DownloadIndustrialParkEditorFilesToolStripMenuItem_Click);
+            // 
             // checkForUpdatesOnStartupToolStripMenuItem
             // 
             this.checkForUpdatesOnStartupToolStripMenuItem.Checked = true;
@@ -714,8 +722,9 @@ namespace IndustrialPark
             // researchToolStripMenuItem
             // 
             this.researchToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.assetIDGeneratorToolStripMenuItem,
             this.eventSearchToolStripMenuItem,
-            this.assetIDGeneratorToolStripMenuItem});
+            this.randomizerToolStripMenuItem});
             this.researchToolStripMenuItem.Name = "researchToolStripMenuItem";
             this.researchToolStripMenuItem.Size = new System.Drawing.Size(124, 20);
             this.researchToolStripMenuItem.Text = "Research/Advanced";
@@ -723,14 +732,14 @@ namespace IndustrialPark
             // eventSearchToolStripMenuItem
             // 
             this.eventSearchToolStripMenuItem.Name = "eventSearchToolStripMenuItem";
-            this.eventSearchToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.eventSearchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.eventSearchToolStripMenuItem.Text = "Event Search";
             this.eventSearchToolStripMenuItem.Click += new System.EventHandler(this.eventSearchToolStripMenuItem_Click);
             // 
             // assetIDGeneratorToolStripMenuItem
             // 
             this.assetIDGeneratorToolStripMenuItem.Name = "assetIDGeneratorToolStripMenuItem";
-            this.assetIDGeneratorToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.assetIDGeneratorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.assetIDGeneratorToolStripMenuItem.Text = "Asset ID Generator";
             this.assetIDGeneratorToolStripMenuItem.Click += new System.EventHandler(this.assetIDGeneratorToolStripMenuItem_Click);
             // 
@@ -862,12 +871,12 @@ namespace IndustrialPark
             this.toolStripComboBoxUserTemplate.Size = new System.Drawing.Size(160, 23);
             this.toolStripComboBoxUserTemplate.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxUserTemplate_SelectedIndexChanged);
             // 
-            // downloadIndustrialParkEditorFilesToolStripMenuItem
+            // randomizerToolStripMenuItem
             // 
-            this.downloadIndustrialParkEditorFilesToolStripMenuItem.Name = "downloadIndustrialParkEditorFilesToolStripMenuItem";
-            this.downloadIndustrialParkEditorFilesToolStripMenuItem.Size = new System.Drawing.Size(262, 22);
-            this.downloadIndustrialParkEditorFilesToolStripMenuItem.Text = "Download IndustrialPark-EditorFiles";
-            this.downloadIndustrialParkEditorFilesToolStripMenuItem.Click += new System.EventHandler(this.DownloadIndustrialParkEditorFilesToolStripMenuItem_Click);
+            this.randomizerToolStripMenuItem.Name = "randomizerToolStripMenuItem";
+            this.randomizerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.randomizerToolStripMenuItem.Text = "Randomizer";
+            this.randomizerToolStripMenuItem.Click += new System.EventHandler(this.RandomizerToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -991,6 +1000,7 @@ namespace IndustrialPark
         private ToolStripMenuItem checkForUpdatesOnStartupToolStripMenuItem;
         private ToolStripMenuItem checkForUpdatesNowToolStripMenuItem;
         private ToolStripMenuItem downloadIndustrialParkEditorFilesToolStripMenuItem;
+        private ToolStripMenuItem randomizerToolStripMenuItem;
     }
 }
 

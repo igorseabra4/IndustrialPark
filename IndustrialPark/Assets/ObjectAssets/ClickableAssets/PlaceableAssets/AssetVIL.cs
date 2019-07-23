@@ -121,6 +121,30 @@ namespace IndustrialPark
         }
 
         [Category("VIL")]
+        public VilType_Alphabetical VilType_Alphabetical
+        {
+            get
+            {
+                foreach (VilType_Alphabetical o in Enum.GetValues(typeof(VilType_Alphabetical)))
+                    if (o.ToString() == VilType.ToString())
+                        return o;
+
+                throw new Exception();
+            }
+            set
+            {
+                foreach (VilType o in Enum.GetValues(typeof(VilType)))
+                    if (o.ToString() == value.ToString())
+                    {
+                        Write(0x58 + Offset, (uint)o);
+                        return;
+                    }
+
+                throw new Exception();
+            }
+        }
+
+        [Category("VIL")]
         public AssetID NPCSettings_AssetID
         {
             get => ReadUInt(0x5C + Offset);

@@ -29,10 +29,6 @@ namespace IndustrialPark
 
             ArchiveEditorFunctions.PopulateTemplateMenusAt(addTemplateToolStripMenuItem, TemplateToolStripMenuItem_Click);
             listViewAssets_SizeChanged(null, null);
-            
-            #if RELEASE
-            shuffleToolStripMenuItem.Visible = false;
-            #endif
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -99,8 +95,8 @@ namespace IndustrialPark
 
         private void OpenFile(string fileName)
         {
-            archive.OpenFile(fileName);
-            
+            archive.OpenFile(fileName, true);
+
             toolStripStatusLabelCurrentFilename.Text = "File: " + fileName;
             Text = Path.GetFileName(fileName);
             Program.MainForm.SetToolStripItemName(this, Text);
@@ -462,11 +458,13 @@ namespace IndustrialPark
 
         private void importModelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            List<Section_AHDR> AHDRs = ImportModel.GetAssets(out bool success, out bool overwrite);
+            List<Section_AHDR> AHDRs = ImportModel.GetAssets(out bool success, out bool overwrite, out bool makeSimps);
             if (success)
             {
                 archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, out List<uint> assetIDs, overwrite);
-                comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
+                if (makeSimps)
+                    assetIDs.AddRange(archive.MakeSimps(assetIDs));
+                PopulateLayerComboBox();
                 SetSelectedIndices(assetIDs, true);
             }
         }
@@ -1052,7 +1050,7 @@ namespace IndustrialPark
 
             if (openTXD.ShowDialog() == DialogResult.OK)
             {
-                archive.AddTextureDictionary(openTXD.FileName, RW3);
+                archive.ImportTextureDictionary(openTXD.FileName, RW3);
                 PopulateLayerComboBox();
             }
         }
@@ -1063,11 +1061,6 @@ namespace IndustrialPark
 
             if (saveTXD.ShowDialog() == DialogResult.OK)
                 archive.ExportTextureDictionary(saveTXD.FileName, RW3);
-        }
-
-        private void ShuffleToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            archive.Shuffle();
         }
     }
 }

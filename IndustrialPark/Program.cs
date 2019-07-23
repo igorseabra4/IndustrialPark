@@ -13,6 +13,7 @@ namespace IndustrialPark
 
         public static EventSearch EventSearch;
         public static AssetIDGenerator AssetIDGenerator;
+        public static Randomizer Randomizer;
 
         /// <summary>
         /// Ponto de entrada principal para o aplicativo.
@@ -42,6 +43,7 @@ namespace IndustrialPark
 
             EventSearch = new EventSearch();
             AssetIDGenerator = new AssetIDGenerator();
+            Randomizer = new Randomizer();
 
             Application.Run(MainForm);
         }

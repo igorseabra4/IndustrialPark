@@ -1,8 +1,11 @@
 ﻿using RenderWareFile;
+using System;
 using System.IO;
 using System.Windows.Forms;
 using RenderWareFile.Sections;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
+using System.Drawing;
 
 namespace IndustrialPark
 {
@@ -18,22 +21,38 @@ namespace IndustrialPark
             
             propertyGridAsset.SelectedObject = asset;
             labelAssetName.Text = $"[{asset.AHDR.assetType.ToString()}] {asset.ToString()}";
+
+            ResetImage();
         }
 
-        private void InternalCamEditor_FormClosing(object sender, FormClosingEventArgs e)
+        private void ResetImage()
         {
+            if (b != null)
+                b.Dispose();
+            foreach (Bitmap bitmap in ArchiveEditorFunctions.ExportRWTXToBitmap(asset.Data).Values)
+                b = bitmap;
+            pictureBox1.Image = b;
+
+            tableLayoutPanel1.RowStyles[2].SizeType = SizeType.Absolute;
+            tableLayoutPanel1.RowStyles[2].Height = b.Height + 16;
+        }
+
+        private void InternalTextureEditor_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            b.Dispose();
             archive.CloseInternalEditor(this);
         }
 
         private AssetRWTX asset;
         private ArchiveEditorFunctions archive;
+        private Bitmap b; 
 
         public uint GetAssetID()
         {
             return asset.AHDR.assetID;
         }
 
-        private void buttonFindCallers_Click(object sender, System.EventArgs e)
+        private void buttonFindCallers_Click(object sender, EventArgs e)
         {
             Program.MainForm.FindWhoTargets(GetAssetID());
         }
@@ -43,29 +62,56 @@ namespace IndustrialPark
             archive.UnsavedChanges = true;
         }
 
-        private void buttonHelp_Click(object sender, System.EventArgs e)
+        private void buttonHelp_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start(AboutBox.WikiLink + asset.AHDR.assetType.ToString());
         }
 
-        private void buttonExport_Click(object sender, System.EventArgs e)
+        private void buttonExport_Click(object sender, EventArgs e)
         {
             SaveFileDialog a = new SaveFileDialog()
             {
-                //Filter = "All supported formats|*.png;*.rwtex|PNG Files|*.png|RWTEX Files|*.rwtex",
-                Filter = "RWTEX Files|*.rwtex",
-                FileName = Path.ChangeExtension(asset.AHDR.ADBG.assetName, ".rwtex")
+                Filter = "All supported formats|*.png;*.bmp;*.gif;*.jpeg;*.jpg;*.tiff;*.rwtex" +
+                "|PNG Files|*.png" +
+                "|BMP Files|*.bmp" +
+                "|GIF Files|*.gif" +
+                "|JPG Files|*.jpeg;*.jpg;" +
+                "|TIFF Files|*.tiff" +
+                "|RWTEX Files|*.rwtex",
+
+                FileName = Path.ChangeExtension(asset.AHDR.ADBG.assetName, ".png")
             };
             if (a.ShowDialog() == DialogResult.OK)
             {
-                //if (Path.GetExtension(a.FileName).ToLower() == ".rwtex")
-                    ArchiveEditorFunctions.ExportSingleTextureToRWTEX(asset.Data, a.FileName);
-                //else
-                //    MessageBox.Show("Unsupported");
+                switch (Path.GetExtension(a.FileName).ToLower())
+                {
+                    case ".rwtex":
+                        ArchiveEditorFunctions.ExportSingleTextureToRWTEX(asset.Data, a.FileName);
+                        break;
+                    case ".png":
+                        b.Save(a.FileName, ImageFormat.Png);
+                        break;
+                    case ".bmp":
+                        b.Save(a.FileName, ImageFormat.Bmp);
+                        break;
+                    case ".gif":
+                        b.Save(a.FileName, ImageFormat.Gif);
+                        break;
+                    case ".jpg":
+                    case ".jpeg":
+                        b.Save(a.FileName, ImageFormat.Jpeg);
+                        break;
+                    case ".tiff":
+                        b.Save(a.FileName, ImageFormat.Tiff);
+                        break;
+                    default:
+                        MessageBox.Show("Unknown image format", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        break;
+                }
             }
         }
 
-        private void buttonImport_Click(object sender, System.EventArgs e)
+        private void buttonImport_Click(object sender, EventArgs e)
         {
             OpenFileDialog a = new OpenFileDialog()
             {
@@ -92,6 +138,7 @@ namespace IndustrialPark
                     asset.Data = ArchiveEditorFunctions.CreateRWTXFromBitmap(i, false, false, true, true).data;
                 }
 
+                ResetImage();
                 archive.EnableTextureForDisplay(asset);
             }
         }

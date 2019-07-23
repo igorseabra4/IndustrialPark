@@ -62,6 +62,7 @@ namespace IndustrialPark
             hipPaths = new List<string>();
             TextureFolderPaths = new List<string>();
             hiddenAssets = new List<uint>();
+            platformForScooby = Platform.Unknown;
 
             CamPos = new Vector3();
             Yaw = 0;
@@ -84,6 +85,7 @@ namespace IndustrialPark
             UseLegacyAssetIDFormat = false;
             AlternateNameDisplayMode = false;
             isDrawingUI = false;
+            renderBasedOnLodt = false;
 
             dontRenderLevelModel = false;
             dontRenderBOUL = false;

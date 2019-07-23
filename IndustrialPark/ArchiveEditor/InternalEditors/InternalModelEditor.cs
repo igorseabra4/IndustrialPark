@@ -6,6 +6,7 @@ using IndustrialPark.Models;
 using static IndustrialPark.Models.BSP_IO_Shared;
 using static IndustrialPark.Models.BSP_IO_CreateBSP;
 using static IndustrialPark.Models.Model_IO_Assimp;
+using System.Collections.Generic;
 
 namespace IndustrialPark
 {
@@ -73,6 +74,16 @@ namespace IndustrialPark
                         ConvertBSPtoOBJ(a.FileName, asset.GetRenderWareModelFile(), true);
                     else
                         ExportAssimp(Path.ChangeExtension(a.FileName, format.FileExtension), asset.GetRenderWareModelFile(), true, format, textureExtension);
+
+                    if (checkBoxTextures.Checked)
+                    {
+                        string folderName = Path.GetDirectoryName(a.FileName);
+                        ReadFileMethods.treatStuffAsByteArray = true;
+                        var bitmaps = archive.GetTexturesAsBitmaps(asset.Textures);
+                        ReadFileMethods.treatStuffAsByteArray = false;
+                        foreach (string textureName in bitmaps.Keys)
+                            bitmaps[textureName].Save(folderName + "\\" + textureName + ".png", System.Drawing.Imaging.ImageFormat.Png);
+                    }
                 }
             }
         }

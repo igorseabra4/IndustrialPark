@@ -95,7 +95,6 @@
             this.toolStripMenuItem_Export = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_EditHeader = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_EditData = new System.Windows.Forms.ToolStripMenuItem();
-            this.shuffleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -190,8 +189,7 @@
             this.importMultipleAssetsToolStripMenuItem,
             this.importModelsToolStripMenuItem,
             this.importTexturesToolStripMenuItem,
-            this.tXDArchiveToolStripMenuItem,
-            this.shuffleToolStripMenuItem});
+            this.tXDArchiveToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.editToolStripMenuItem.Text = "Edit";
@@ -737,13 +735,6 @@
             this.toolStripMenuItem_EditData.Text = "Edit Data (Ctrl + G)";
             this.toolStripMenuItem_EditData.Click += new System.EventHandler(this.buttonInternalEdit_Click);
             // 
-            // shuffleToolStripMenuItem
-            // 
-            this.shuffleToolStripMenuItem.Name = "shuffleToolStripMenuItem";
-            this.shuffleToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
-            this.shuffleToolStripMenuItem.Text = "Shuffle";
-            this.shuffleToolStripMenuItem.Click += new System.EventHandler(this.ShuffleToolStripMenuItem_Click);
-            // 
             // ArchiveEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -841,6 +832,5 @@
         private System.Windows.Forms.ToolStripMenuItem verifyArchiveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mergeSimilarAssetsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importTexturesToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem shuffleToolStripMenuItem;
     }
 }

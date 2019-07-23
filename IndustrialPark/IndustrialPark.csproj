@@ -92,6 +92,9 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -104,7 +107,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Shuffle.cs" />
+    <Compile Include="ArchiveEditor\ArchiveEditorFunctions_IO.cs" />
+    <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Sounds.cs" />
+    <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Textures.cs" />
+    <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Randomizer.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Gizmos.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetTemplates.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetEditing.cs" />
@@ -475,6 +481,9 @@
     <EmbeddedResource Include="Research\AssetIDGenerator.resx">
       <DependentUpon>AssetIDGenerator.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Research\Randomizer.resx">
+      <DependentUpon>Randomizer.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Research\EventSearch.resx">
       <DependentUpon>EventSearch.cs</DependentUpon>
     </EmbeddedResource>
@@ -484,12 +493,19 @@
     <Compile Include="Research\AssetIDGenerator.Designer.cs">
       <DependentUpon>AssetIDGenerator.cs</DependentUpon>
     </Compile>
+    <Compile Include="Research\Randomizer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Research\Randomizer.Designer.cs">
+      <DependentUpon>Randomizer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Research\EventSearch.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Research\EventSearch.Designer.cs">
       <DependentUpon>EventSearch.cs</DependentUpon>
     </Compile>
+    <Compile Include="Research\RandomizerFlags.cs" />
     <Compile Include="SharpDX\Camera\CameraVectors.cs" />
     <Compile Include="SharpDX\Camera\ProjectionMatrix.cs" />
     <Compile Include="SharpDX\Camera\ViewMatrix.cs" />

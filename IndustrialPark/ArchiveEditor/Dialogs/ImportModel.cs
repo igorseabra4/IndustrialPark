@@ -62,12 +62,16 @@ namespace IndustrialPark
             Close();
         }
 
-        public static List<Section_AHDR> GetAssets(out bool success, out bool overwrite)
+        public static List<Section_AHDR> GetAssets(out bool success, out bool overwrite, out bool simps)
         {
             ImportModel a = new ImportModel();
             if (a.ShowDialog() == DialogResult.OK)
             {
                 List<Section_AHDR> AHDRs = new List<Section_AHDR>();
+                simps = a.checkBoxGenSimps.Checked;
+
+                if (simps)
+                    MessageBox.Show("a SIMP for each imported MODL will be generated and placed on a new DEFAULT layer.");
 
                 foreach (string filePath in a.filePaths)
                 {
@@ -95,8 +99,7 @@ namespace IndustrialPark
             }
             else
             {
-                success = false;
-                overwrite = false;
+                success = overwrite = simps = false;
                 return null;
             }
         }

@@ -21,11 +21,11 @@ namespace IndustrialPark
         private void comboBoxAssetTypes_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboBoxAssetTypes.SelectedIndex == 0)
-                Functions.currentPlatform = Platform.GameCube;
+                ArchiveEditorFunctions.defaultScoobyPlatform = Platform.GameCube;
             else if (comboBoxAssetTypes.SelectedIndex == 1)
-                Functions.currentPlatform = Platform.Xbox;
+                ArchiveEditorFunctions.defaultScoobyPlatform = Platform.Xbox;
             else if (comboBoxAssetTypes.SelectedIndex == 2)
-                Functions.currentPlatform = Platform.PS2;
+                ArchiveEditorFunctions.defaultScoobyPlatform = Platform.PS2;
 
             buttonOK.Enabled = true;
         }

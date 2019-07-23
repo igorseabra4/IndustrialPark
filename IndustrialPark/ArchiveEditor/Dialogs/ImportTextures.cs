@@ -72,6 +72,8 @@ namespace IndustrialPark
 
                 List<Section_AHDR> AHDRs = new List<Section_AHDR>();
 
+                List<string> forBitmap = new List<string>();
+
                 for (int i = 0; i < a.filePaths.Count; i++)
                 {
                     if (Path.GetExtension(a.filePaths[i]).ToLower().Equals(".rwtex"))
@@ -92,9 +94,11 @@ namespace IndustrialPark
                     }
                     else
                     {
-                        AHDRs.Add(ArchiveEditorFunctions.CreateRWTXFromBitmap(a.filePaths[i], a.checkBoxRW3.Checked, a.checkBoxFlipTextures.Checked, a.checkBoxMipmaps.Checked, a.checkBoxCompress.Checked));
+                        forBitmap.Add(a.filePaths[i]);
                     }
                 }
+
+                AHDRs.AddRange(ArchiveEditorFunctions.CreateRWTXsFromBitmaps(forBitmap, a.checkBoxRW3.Checked, a.checkBoxFlipTextures.Checked, a.checkBoxMipmaps.Checked, a.checkBoxCompress.Checked));
 
                 ReadFileMethods.treatStuffAsByteArray = false;
 
