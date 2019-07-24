@@ -113,9 +113,9 @@ namespace IndustrialPark
                 shuffled = true;
             }
 
-            if (ShouldShuffle(flags, RandomizerFlags.LODT_Entries, AssetType.LODT))
+            if (ShouldShuffle(flags, RandomizerFlags.Double_LODT_Distances, AssetType.LODT))
             {
-                ShuffleLODT();
+                DoubleLODT();
                 shuffled = true;
             }
 
@@ -430,25 +430,21 @@ namespace IndustrialPark
                 }
         }
 
-        private void ShuffleLODT()
+        private void DoubleLODT()
         {
-            float min = 0.8f;
-            float max = 1.6f;
+            float value = 2f;
 
             foreach (Asset a in assetDictionary.Values)
                 if (a is AssetLODT lodt)
                 {
                     EntryLODT[] entries = lodt.LODT_Entries;
-
-                    Random r = new Random((int)DateTime.Now.ToBinary());
-
+                    
                     foreach (var v in entries)
                     {
-                        float multi = r.NextFloat(min, max);
-                        v.MaxDistance *= multi;
-                        v.LOD1_Distance *= multi;
-                        v.LOD2_Distance *= multi;
-                        v.LOD3_Distance *= multi;
+                        v.MaxDistance *= value;
+                        v.LOD1_Distance *= value;
+                        v.LOD2_Distance *= value;
+                        v.LOD3_Distance *= value;
                     }
 
                     lodt.LODT_Entries = entries;

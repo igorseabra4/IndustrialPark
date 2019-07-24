@@ -188,7 +188,7 @@
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.Size = new System.Drawing.Size(402, 167);
             this.richTextBox1.TabIndex = 18;
-            this.richTextBox1.Text = "mn\nsp\npg\nhb00\nhb01\nhb02\nb2\nb3\ndb05\nh00\ns006";
+            this.richTextBox1.Text = "font\nboot\nplat\nmn\nsp\npg\nhb00\nhb01\nhb02\nb2\nb3\ndb05\nh00\ns006\npl";
             // 
             // label1
             // 
