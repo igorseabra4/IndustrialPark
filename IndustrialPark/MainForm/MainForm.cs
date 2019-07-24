@@ -583,6 +583,9 @@ namespace IndustrialPark
             int index = archiveEditors.IndexOf(sender);
             archiveEditorToolStripMenuItem.DropDownItems.RemoveAt(index + 2);
             archiveEditors.RemoveAt(index);
+
+            if (archiveEditors.Count == 0)
+                ArchiveEditorFunctions.defaultScoobyPlatform = HipHopFile.Platform.Unknown;
         }
 
         public void DisposeAllArchiveEditors()
