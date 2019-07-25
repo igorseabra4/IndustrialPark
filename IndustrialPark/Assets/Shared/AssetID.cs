@@ -15,6 +15,11 @@ namespace IndustrialPark
             this.value = value;
         }
 
+        public AssetID(string value)
+        {
+            this.value = HipHopFile.Functions.BKDRHash(value);
+        }
+
         private uint value;
 
         public override int GetHashCode()
