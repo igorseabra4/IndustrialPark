@@ -155,27 +155,18 @@ namespace IndustrialPark
                 foreach (string hipPath in Directory.GetFiles(dir))
                     if (Path.GetExtension(hipPath).ToLower() == ".hip")
                     {
-                        bool skip = false;
-                        foreach (string s in richTextBoxSkip.Lines)
-                            if (Path.GetFileName(hipPath).ToLower().Contains(s.ToLower()))
-                                skip = true;
-                        if (skip)
+                        if (FileInFirstBox(hipPath))
                             continue;
 
                         ArchiveEditorFunctions hip = new ArchiveEditorFunctions();
                         hip.OpenFile(hipPath, false, true);
 
-                        if ((flags & RandomizerFlags.Warps) != 0)
-                            hip.GetWarpNames(ref warpNames, toSkip);
+                        if ((flags & RandomizerFlags.Warps) != 0 && !FileInSecondBox(hipPath))
+                                hip.GetWarpNames(ref warpNames, toSkip);
 
                         ArchiveEditorFunctions hop = null;
                         string hopPath = Path.ChangeExtension(hipPath, ".HOP");
-
-                        bool secondSkip = false;
-                        foreach (string s in richTextBox2.Lines)
-                            if (Path.GetFileName(hip.currentlyOpenFilePath).ToLower().Contains(s.ToLower()))
-                                secondSkip = true;
-
+                        
                         if (File.Exists(hopPath))
                         {
                             hop = new ArchiveEditorFunctions();
@@ -183,14 +174,14 @@ namespace IndustrialPark
 
                             levelPairs.Add((hip, hop));
 
-                            if (!secondSkip)
+                            if (!FileInSecondBox(hipPath))
                                 levelPathPairs.Add((hipPath, hopPath));
                         }
                         else
                         {
                             levelPairs.Add((hip, null));
 
-                            if (!secondSkip)
+                            if (!FileInSecondBox(hipPath))
                                 levelPathPairs.Add((hipPath, null));
                         }
 
@@ -268,15 +259,10 @@ namespace IndustrialPark
             
             for (int i = 0; i < levelPairs.Count; i++)
             {
-                bool secondSkip = false;
-                foreach (string s in richTextBox2.Lines)
-                    if (Path.GetFileName(levelPairs[i].Item1.currentlyOpenFilePath).ToLower().Contains(s.ToLower()))
-                        secondSkip = true;
-
                 bool item1shuffled = 
                 levelPairs[i].Item1.Shuffle(r, flags, flags2, (float)numericPlatSpeedMin.Value, (float)numericPlatSpeedMax.Value, (float)numericPlatTimeMin.Value, (float)numericPlatTimeMax.Value);
 
-                if ((flags & RandomizerFlags.Warps) != 0 && !secondSkip)
+                if ((flags & RandomizerFlags.Warps) != 0 && !FileInSecondBox(levelPairs[i].Item1.currentlyOpenFilePath))
                     levelPairs[i].Item1.SetWarpNames(r, ref warpNames, toSkip);
 
                 bool item2shuffled = false;
@@ -284,7 +270,7 @@ namespace IndustrialPark
                     item2shuffled = 
                     levelPairs[i].Item2.Shuffle(r, flags, flags2, (float)numericPlatSpeedMin.Value, (float)numericPlatSpeedMax.Value, (float)numericPlatTimeMin.Value, (float)numericPlatTimeMax.Value);
 
-                if ((flags2 & RandomizerFlagsP2.Level_Files) != 0 && !secondSkip)
+                if ((flags2 & RandomizerFlagsP2.Level_Files) != 0 && !FileInSecondBox(levelPairs[i].Item1.currentlyOpenFilePath))
                 {
                     int newPathIndex = r.Next(0, levelPathPairs.Count);
 
@@ -313,12 +299,31 @@ namespace IndustrialPark
                 progressBar1.PerformStep();
             }
 
+            if (warpNames.Count != 0)
+                MessageBox.Show("There was a problem with the warp randomizer. It is likely some warps are broken.");
+
             if (flags3 != 0)
                 ApplyINISettings(flags3, r, namesForBoot);
         }
 
         private bool ShouldShuffle(RandomizerFlagsP3 flags, RandomizerFlagsP3 flag)
             => (flags & flag) != 0;
+
+        private bool FileInFirstBox(string levelName)
+        {
+            foreach (string s in richTextBoxSkip.Lines)
+                if (Path.GetFileNameWithoutExtension(levelName).ToLower().Contains(s.ToLower()))
+                    return true;
+            return false;
+        }
+
+        private bool FileInSecondBox(string levelName)
+        {
+            foreach (string s in richTextBox2.Lines)
+                if (Path.GetFileNameWithoutExtension(levelName).ToLower().Contains(s.ToLower()))
+                    return true;
+            return false;
+        }
 
         private void ApplyINISettings(RandomizerFlagsP3 flags3, Random r, List<string> namesForBoot)
         {
@@ -476,7 +481,7 @@ namespace IndustrialPark
                 }
                 else
                 {
-                    MessageBox.Show("Randomizer instance cannot be opened because it was made with an earlier or different version of Industrial Park.");
+                    MessageBox.Show("Randomizer settings cannot be opened because it was made with an earlier or different version of Industrial Park.");
                 }
             }
         }
@@ -523,7 +528,7 @@ namespace IndustrialPark
 
         public RandoSettings FromInstance() => new RandoSettings()
         {
-            version = 45,
+            version = 46,
             seedText = textBoxSeed.Text,
             seedNum = seed,
             flags = GetActiveFlags(),

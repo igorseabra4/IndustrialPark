@@ -199,6 +199,7 @@ namespace IndustrialPark
                     break;
                 case "jf01":
                 case "bc01":
+                case "rb03":
                 case "sm01":
                     for (int i = 0; i < assets.Count; i++)
                     {
@@ -636,21 +637,21 @@ namespace IndustrialPark
         private string LevelName => Path.GetFileNameWithoutExtension(currentlyOpenFilePath); 
 
         private bool IsWarpToSameLevel(string warpName) =>
-            LevelName.ToLower().Equals(warpName.ToLower()) || new string(warpName.Reverse().ToArray()).ToLower().Equals(LevelName);
+            LevelName.ToLower().Equals(warpName.ToLower()) || new string(warpName.Reverse().ToArray()).ToLower().Equals(LevelName.ToLower());
 
-        public void GetWarpNames(ref List<string> warpNames, List<string> lines)
+        public void GetWarpNames(ref List<string> warpNames, List<string> toSkip)
         {
             foreach (Asset a in assetDictionary.Values)
-                if (a is AssetPORT port && !IsWarpToSameLevel(port.DestinationLevel) && !PortInLines(port.DestinationLevel, lines))
+                if (a is AssetPORT port && !IsWarpToSameLevel(port.DestinationLevel) && !PortInToSkip(port.DestinationLevel, toSkip))
                     warpNames.Add(port.DestinationLevel);
         }
 
-        private bool PortInLines(string port, List<string> lines)
+        private bool PortInToSkip(string port, List<string> toSkip)
         {
-            foreach (string s in lines)
-                if (port.ToLower().Contains(s.ToLower()))
+            foreach (string s in toSkip)
+                if (port.ToLower().Equals(s.ToLower()))
                     return true;
-                else if (new string(port.Reverse().ToArray()).ToLower().Contains(s.ToLower()))
+                else if (new string(port.Reverse().ToArray()).ToLower().Equals(s.ToLower()))
                     return true;
 
             return false;
@@ -658,9 +659,13 @@ namespace IndustrialPark
 
         public void SetWarpNames(Random r, ref List<string> warpNames, List<string> lines)
         {
+
             foreach (Asset a in assetDictionary.Values)
-                if (a is AssetPORT port && !IsWarpToSameLevel(port.DestinationLevel) && !PortInLines(port.DestinationLevel, lines))
+                if (a is AssetPORT port && !IsWarpToSameLevel(port.DestinationLevel) && !PortInToSkip(port.DestinationLevel, lines))
                 {
+                    if (warpNames.Count == 0)
+                        throw new Exception("warpNames is empty");
+
                     int index;
                     int times = 0;
                     do

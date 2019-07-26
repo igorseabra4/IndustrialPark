@@ -2,7 +2,7 @@
 {
     public class IPversion
     {
-        public string version = "preview45";
-        public string versionName = "Preview 45";
+        public string version = "preview46";
+        public string versionName = "Preview 46";
     }
 }

@@ -238,7 +238,7 @@
             this.richTextBox2.Name = "richTextBox2";
             this.richTextBox2.Size = new System.Drawing.Size(134, 184);
             this.richTextBox2.TabIndex = 23;
-            this.richTextBox2.Text = "b3\npg";
+            this.richTextBox2.Text = "gy04\nb3\npg";
             // 
             // label1
             // 
