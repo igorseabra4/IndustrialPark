@@ -70,8 +70,7 @@ namespace IndustrialPark
                     VilType.robot_9a_bind,
                     VilType.robot_chuck_bind,
                     VilType.robot_sleepytime_bind,
-                    VilType.robot_tar_bind,
-                    VilType.jellyfish_pink_bind
+                    VilType.robot_tar_bind
                 },
                 ShouldShuffle(flags2, RandomizerFlagsP2.Enemy_Models),
                 ShouldShuffle(flags2, RandomizerFlagsP2.Enemies_Allow_Any_Type));
@@ -111,7 +110,7 @@ namespace IndustrialPark
                 shuffled = true;
             }
 
-            if (ShouldShuffle(flags, RandomizerFlags.DiscoFloors, AssetType.DSCO))
+            if (ShouldShuffle(flags, RandomizerFlags.Disco_Floors, AssetType.DSCO))
             {
                 ShuffleDisco(r);
                 shuffled = true;
@@ -169,20 +168,53 @@ namespace IndustrialPark
         {
             List<AssetPKUP> assets = (from asset in assetDictionary.Values where asset.AHDR.assetType == AssetType.PKUP select asset).Cast<AssetPKUP>().ToList();
 
-            if (currentlyOpenFilePath.ToLower().Contains("gl03") && ContainsAsset(0x0B48E8AC))
-            {
-                AssetDYNA dyna = (AssetDYNA)GetFromAssetID(0x0B48E8AC);
-                dyna.LinksBFBB = new LinkBFBB[0];
+            string levelName = Path.GetFileNameWithoutExtension(currentlyOpenFilePath).ToLower();
 
-                if (ContainsAsset(0xF70F6FEE))
-                {
-                    ((AssetPKUP)GetFromAssetID(0xF70F6FEE)).PickupFlags = 2;
-                    ((AssetPKUP)GetFromAssetID(0xF70F6FEE)).Visible = true;
-                }
+            switch (levelName)
+            {
+                case "hb02":
+                    for (int i = 0; i < assets.Count; i++)
+                        if (assets[i].AHDR.ADBG.assetName.Contains("RED"))
+                        {
+                            int shinyNum = Convert.ToInt32(assets[i].AHDR.ADBG.assetName.Split('_')[2]);
+                            if (shinyNum >= 32 && shinyNum <= 47 && shinyNum != 42)
+                            {
+                                assets.RemoveAt(i);
+                                i--;
+                            }
+                        }
+                    break;
+                case "gl03":
+                    if (ContainsAsset(0x0B48E8AC))
+                    {
+                        AssetDYNA dyna = (AssetDYNA)GetFromAssetID(0x0B48E8AC);
+                        dyna.LinksBFBB = new LinkBFBB[0];
+
+                        if (ContainsAsset(0xF70F6FEE))
+                        {
+                            ((AssetPKUP)GetFromAssetID(0xF70F6FEE)).PickupFlags = 2;
+                            ((AssetPKUP)GetFromAssetID(0xF70F6FEE)).Visible = true;
+                        }
+                    }
+                    break;
+                case "jf01":
+                case "bc01":
+                case "sm01":
+                    for (int i = 0; i < assets.Count; i++)
+                    {
+                        foreach (LinkBFBB link in assets[i].LinksBFBB)
+                            if (link.EventSendID == EventBFBB.Mount)
+                            {
+                                assets.RemoveAt(i);
+                                i--;
+                                break;
+                            }
+                    }
+                    break;
             }
 
             List<Vector3> positions = (from asset in assets where true select (new Vector3(asset.PositionX, asset.PositionY, asset.PositionZ))).ToList();
-            
+
             foreach (AssetPKUP a in assets)
             {
                 int value = r.Next(0, positions.Count);
@@ -310,7 +342,7 @@ namespace IndustrialPark
             List<IClickableAsset> assets = new List<IClickableAsset>();
 
             foreach (Asset a in assetDictionary.Values)
-                if (a is AssetMRKR mrkr && MRKRisOK(mrkr, busStops, teleBox, taxis))
+                if (a is AssetMRKR mrkr && VerifyMarkerStep1(mrkr, busStops, teleBox, taxis))
                     assets.Add(mrkr);
                 else if (a is AssetDYNA dyna && pointers && dyna.Type_BFBB == DynaType_BFBB.pointer)
                     assets.Add(dyna);
@@ -331,7 +363,7 @@ namespace IndustrialPark
             }
         }
 
-        private bool MRKRisOK(AssetMRKR mrkr, bool busStops, bool teleBox, bool taxis)
+        private bool VerifyMarkerStep1(AssetMRKR mrkr, bool busStops, bool teleBox, bool taxis)
         {
             string assetName = mrkr.AHDR.ADBG.assetName;
 
@@ -356,8 +388,7 @@ namespace IndustrialPark
                             hasSetCheckpoint |= true;
 
                     if (hasSetCheckpoint && assetName.StartsWith("CHECKPOINT"))
-                        return VerifyCheckpointMarker(assetName);
-                    return hasSetCheckpoint;
+                        return VerifyMarkerStep2(assetName);
                 }
                 else if (GetFromAssetID(whoTargets[0]) is AssetPORT)
                     return true;
@@ -365,48 +396,57 @@ namespace IndustrialPark
                 return false;
             }
 
-            return true;
+            return VerifyMarkerStep2(assetName);
         }
 
-        private bool VerifyCheckpointMarker(string assetName)
+        private bool VerifyMarkerStep2(string assetName)
         {
             string levelName = Path.GetFileNameWithoutExtension(currentlyOpenFilePath).ToLower();
 
-            if (levelName.Contains("rb03"))
+            try
             {
-                if (assetName == "RB06MK12" || assetName == "RB06MK13")
-                    return false;
+                if (Functions.currentGame == Game.BFBB)
+                    switch (levelName)
+                    {
+                        case "rb03":
+                            if (assetName == "RB06MK12" || assetName == "RB06MK13")
+                                return false;
+                            break;
+                        case "sm03":
+                            if (Convert.ToInt32(assetName.Split('_')[2]) > 4)
+                                return false;
+                            break;
+                        case "sm04":
+                            if (Convert.ToInt32(assetName.Split('_')[2]) > 4)
+                                return false;
+                            break;
+                        case "kf01":
+                            if (Convert.ToInt32(assetName.Split('_')[2]) == 3)
+                                return false;
+                            break;
+                        case "kf04":
+                            if (Convert.ToInt32(assetName.Split('_')[2]) == 2)
+                                return false;
+                            break;
+                        case "kf05":
+                            if (Convert.ToInt32(assetName.Split('_')[2]) > 3)
+                                return false;
+                            break;
+                        case "db02":
+                            if (Convert.ToInt32(assetName.Split('_')[2]) > 6)
+                                return false;
+                            break;
+                    }
+                else
+                {
+                    if (levelName == "r020")
+                    {
+                        if (assetName.Contains("FROMR003"))
+                            return false;
+                    }
+                }
             }
-            else if (levelName.Contains("sm03"))
-            {
-                if (Convert.ToInt32(assetName.Split('_')[2]) > 4)
-                    return false;
-            }
-            else if (levelName.Contains("sm04"))
-            {
-                if (Convert.ToInt32(assetName.Split('_')[2]) > 4)
-                    return false;
-            }
-            else if (levelName.Contains("kf01"))
-            {
-                if (Convert.ToInt32(assetName.Split('_')[2]) == 3)
-                    return false;
-            }
-            else if (levelName.Contains("kf04"))
-            {
-                if (Convert.ToInt32(assetName.Split('_')[2]) == 2)
-                    return false;
-            }
-            else if (levelName.Contains("kf05"))
-            {
-                if (Convert.ToInt32(assetName.Split('_')[2]) > 3)
-                    return false;
-            }
-            else if (levelName.Contains("db02"))
-            {
-                if (Convert.ToInt32(assetName.Split('_')[2]) > 6)
-                    return false;
-            }
+            catch { }
 
             return true;
         }
@@ -481,7 +521,7 @@ namespace IndustrialPark
                 }
         }
 
-        private void ShuffleSounds(Random r, bool mixTypes)
+        public void ShuffleSounds(Random r, bool mixTypes, bool scoobyBoot = false)
         {
             foreach (Asset a in assetDictionary.Values)
                 if (a is AssetSNDI_GCN_V1 sndi)
@@ -489,7 +529,24 @@ namespace IndustrialPark
                     List<EntrySoundInfo_GCN_V1> snd = sndi.Entries_SND.ToList();
                     List<EntrySoundInfo_GCN_V1> snds = sndi.Entries_SNDS.ToList();
                     
-                    if (mixTypes)
+                    if (scoobyBoot)
+                    {
+                        List<(byte[], byte[])> sounds = new List<(byte[], byte[])>();
+
+                        foreach (var v in snds)
+                            if (!GetFromAssetID(v.SoundAssetID).AHDR.ADBG.assetName.Contains("thera"))
+                                sounds.Add((v.SoundHeader, GetFromAssetID(v.SoundAssetID).Data));
+
+                        foreach (var v in snds)
+                            if (!GetFromAssetID(v.SoundAssetID).AHDR.ADBG.assetName.Contains("thera"))
+                            {
+                                int index = r.Next(0, sounds.Count);
+                                v.SoundHeader = sounds[index].Item1;
+                                GetFromAssetID(v.SoundAssetID).Data = sounds[index].Item2;
+                                sounds.RemoveAt(index);
+                            }
+                    }
+                    else if (mixTypes)
                     {
                         List<(byte[], byte[])> sounds = new List<(byte[], byte[])>();
 
@@ -619,11 +676,16 @@ namespace IndustrialPark
                 }
         }
 
+        private string musicDispAssetName => "IP_RANDO_DISP";
+        private string musicGroupAssetName => "IP_RANDO_GROUP";
+
         public void RandomizePlaylistLocal()
         {
-            if (ContainsAsset(new AssetID("MUSIC_DISP")))
+            string musicDispAssetName = "MUSIC_DISP";
+
+            if (ContainsAsset(new AssetID(musicDispAssetName)))
             {
-                List<uint> assetIDs = FindWhoTargets(new AssetID("MUSIC_DISP"));
+                List<uint> assetIDs = FindWhoTargets(new AssetID(musicDispAssetName));
                 foreach (uint assetID in assetIDs)
                 {
                     ObjectAsset objectAsset = (ObjectAsset)GetFromAssetID(assetID);
@@ -633,7 +695,7 @@ namespace IndustrialPark
                         {
                             link.EventSendID = EventBFBB.Run;
                             link.Arguments_Float = new float[] { 0, 0, 0, 0 };
-                            link.TargetAssetID = "MUSIC_GROUP_01";
+                            link.TargetAssetID = musicGroupAssetName;
                         }
                     objectAsset.LinksBFBB = links;
                 }
@@ -642,7 +704,7 @@ namespace IndustrialPark
 
         public bool RandomizePlaylist()
         {
-            if (ContainsAsset(new AssetID("MUSIC_DISP_01")) && ContainsAsset(new AssetID("MUSIC_GROUP_01")))
+            if (ContainsAsset(new AssetID(musicDispAssetName + "_01")) && ContainsAsset(new AssetID(musicGroupAssetName + "_01")))
                 return false;
 
             int defaultLayerIndex = -1;
@@ -654,20 +716,34 @@ namespace IndustrialPark
                 }
 
             List<uint> outAssetIDs = new List<uint>();
-            uint dpat = PlaceTemplate(new Vector3(), defaultLayerIndex, out _, ref outAssetIDs, "MUSIC_DISP", template: AssetTemplate.Dispatcher);
+            uint dpat = PlaceTemplate(new Vector3(), defaultLayerIndex, out _, ref outAssetIDs, musicDispAssetName, template: AssetTemplate.Dispatcher);
 
-            AssetGRUP group = (AssetGRUP)GetFromAssetID(PlaceTemplate(new Vector3(), defaultLayerIndex, out _, ref outAssetIDs, "MUSIC_GROUP", template: AssetTemplate.Group));
+            AssetGRUP group = (AssetGRUP)GetFromAssetID(PlaceTemplate(new Vector3(), defaultLayerIndex, out _, ref outAssetIDs, musicGroupAssetName, template: AssetTemplate.Group));
             group.ReceiveEventDelegation = AssetGRUP.Delegation.RandomItem;
             group.LinksBFBB = new LinkBFBB[]
+            {
+                new LinkBFBB()
                 {
-                    new LinkBFBB()
-                    {
-                        Arguments_Float = new float[] {0, 0, 0, 0},
-                        EventReceiveID = EventBFBB.ScenePrepare,
-                        EventSendID = EventBFBB.Run,
-                        TargetAssetID = group.AssetID
-                    }
-                };
+                    Arguments_Float = new float[] {0, 0, 0, 0},
+                    EventReceiveID = EventBFBB.ScenePrepare,
+                    EventSendID = EventBFBB.Run,
+                    TargetAssetID = group.AssetID
+                },
+                new LinkBFBB()
+                {
+                    Arguments_Float = new float[] {0, 0, 0, 0},
+                    EventReceiveID = EventBFBB.SceneEnter,
+                    EventSendID = EventBFBB.Run,
+                    TargetAssetID = group.AssetID
+                },
+                new LinkBFBB()
+                {
+                    Arguments_Float = new float[] {0, 0, 0, 0},
+                    EventReceiveID = EventBFBB.SceneReset,
+                    EventSendID = EventBFBB.Run,
+                    TargetAssetID = group.AssetID
+                }
+            };
 
             outAssetIDs = new List<uint>();
             for (int i = 0; i < 17; i++)
@@ -675,17 +751,10 @@ namespace IndustrialPark
                 if (i == 7 || i == 14)
                     continue;
 
-                AssetTIMR timer = (AssetTIMR)GetFromAssetID(PlaceTemplate(new Vector3(), defaultLayerIndex, out _, ref outAssetIDs, "TIMER_MUSIC", template: AssetTemplate.Timer));
-                timer.Time = 0.01f;
-                timer.LinksBFBB = new LinkBFBB[]
+                AssetTIMR timer = (AssetTIMR)GetFromAssetID(PlaceTemplate(new Vector3(), defaultLayerIndex, out _, ref outAssetIDs, "IP_RANDO_TIMR", template: AssetTemplate.Timer));
+                timer.Time = 0.1f;
+                var links = new List<LinkBFBB>()
                 {
-                    new LinkBFBB()
-                    {
-                        Arguments_Float = new float[] {0, 0, 0, 0},
-                        EventReceiveID = EventBFBB.ScenePrepare,
-                        EventSendID = EventBFBB.Reset,
-                        TargetAssetID = timer.AssetID
-                    },
                     new LinkBFBB()
                     {
                         Arguments_Float = new float[] {i, 0, 0, 0},
@@ -699,8 +768,10 @@ namespace IndustrialPark
                         EventReceiveID = EventBFBB.Expired,
                         EventSendID = EventBFBB.Reset,
                         TargetAssetID = timer.AssetID
-                    }
+                    },
                 };
+                
+                timer.LinksBFBB = links.ToArray();
             }
 
             List<AssetID> assetIDs = new List<AssetID>();
@@ -714,8 +785,10 @@ namespace IndustrialPark
         public bool DoubleLODT()
         {
             foreach (Asset a in assetDictionary.Values)
-                if (a is AssetLODT lodt)
+                if (a is AssetLODT lodt && lodt.AHDR.ADBG.assetFileName != "lodt_doubled")
                 {
+                    lodt.AHDR.ADBG.assetFileName = "lodt_doubled";
+
                     EntryLODT[] lodtEntries = lodt.LODT_Entries;
                     foreach (var t in lodtEntries)
                     {

@@ -1,4 +1,4 @@
 {
-  "version": "preview44",
-  "versionName": "Preview 44:\n* Import Models dialog now has the Generate SIMPs function: when importing new models you can choose to automatically create a SIMP for each one, which will be placed at 0, 0, 0 position in a new DEFAULT layer in the same archive.\n* Asset Data Editor for RWTX assets now has a preview of the image and a function to export it to multiple formats such as PNG, BMP and JPEG.\n* Asset Data Editor for MODL, BSP and JSP assets now has a function to export all textures used by the model along with it.\n* Asset Data Editor for VIL allows viewing Vil Types in alphabetical order.\n* Fixed bug which made opening files through the Open button in the Archive Editor very slow.\n* When opening Scooby files, you will only be asked for the platform (GC, PS2, Xbox) the first time; then the same one will be used for the rest of the session. If you want to open files from a different platform, close all open Archive Editors or click Project -> New.\n* New tool under Research/Advanced: Randomizer.\n"
+  "version": "preview45",
+  "versionName": "Preview 45:\nRandomizer update. Check wiki page for more info.\n"
 }

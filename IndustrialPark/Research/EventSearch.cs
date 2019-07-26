@@ -105,9 +105,9 @@ namespace IndustrialPark
                 if (Path.GetExtension(s).ToLower() == ".hip" || Path.GetExtension(s).ToLower() == ".hop")
                 {
                     ArchiveEditorFunctions archive = new ArchiveEditorFunctions();
-                    archive.OpenFile(s, false);
+                    archive.OpenFile(s, false, true);
                     WriteWhatIFound(archive);
-                    archive.Dispose();
+                    archive.Dispose(false);
                 }
             }
             foreach (string s in Directory.GetDirectories(folderPath))
@@ -128,58 +128,65 @@ namespace IndustrialPark
                     continue;
 
                 if (asset is ObjectAsset objectAsset)
-                    foreach (LinkBFBB assetEvent in objectAsset.LinksBFBB)
+                    try
                     {
-                        if (recieveEventType != EventBFBB.Unknown && assetEvent.EventReceiveID != recieveEventType)
-                            continue;
-                        if (targetEventType != EventBFBB.Unknown && assetEvent.EventSendID != targetEventType)
-                            continue;
-
-                        Asset targetAsset = null;
-                        if (archive.ContainsAsset(assetEvent.TargetAssetID))
-                            targetAsset = archive.GetFromAssetID(assetEvent.TargetAssetID);
-
-                        if (recieverAssetType != AssetType.Null)
+                        foreach (LinkBFBB assetEvent in objectAsset.LinksBFBB)
                         {
-                            if (targetAsset != null && targetAsset.AHDR.assetType != recieverAssetType)
+                            if (recieveEventType != EventBFBB.Unknown && assetEvent.EventReceiveID != recieveEventType)
                                 continue;
+                            if (targetEventType != EventBFBB.Unknown && assetEvent.EventSendID != targetEventType)
+                                continue;
+
+                            Asset targetAsset = null;
+                            if (archive.ContainsAsset(assetEvent.TargetAssetID))
+                                targetAsset = archive.GetFromAssetID(assetEvent.TargetAssetID);
+
+                            if (recieverAssetType != AssetType.Null)
+                            {
+                                if (targetAsset != null && targetAsset.AHDR.assetType != recieverAssetType)
+                                    continue;
+                                if (targetAsset == null)
+                                    continue;
+                            }
+
+                            string eventName = $"{objectAsset.AHDR.ADBG.assetName} ({assetEvent.EventReceiveID.ToString()}) => {assetEvent.EventSendID.ToString()} => ";
+
                             if (targetAsset == null)
-                                continue;
-                        }
-
-                        string eventName = $"{objectAsset.AHDR.ADBG.assetName} ({assetEvent.EventReceiveID.ToString()}) => {assetEvent.EventSendID.ToString()} => ";
-
-                        if (targetAsset == null)
-                            eventName += $"0x{assetEvent.TargetAssetID.ToString("X8")}";
-                        else
-                            eventName += $"{targetAsset.AHDR.ADBG.assetName}";
-
-                        eventName += $" [{assetEvent.Arguments_Float[0]}, {assetEvent.Arguments_Float[1]}, {assetEvent.Arguments_Float[2]}, {assetEvent.Arguments_Float[3]}";
-
-                        if (assetEvent.ArgumentAssetID != 0)
-                        {
-                            if (archive.ContainsAsset(assetEvent.ArgumentAssetID))
-                                eventName += $", {archive.GetFromAssetID(assetEvent.ArgumentAssetID).AHDR.ADBG.assetName}";
+                                eventName += $"0x{assetEvent.TargetAssetID.ToString("X8")}";
                             else
-                                eventName += $", 0x{assetEvent.ArgumentAssetID.ToString("X8")}";
-                        }
-                        if (assetEvent.SourceCheckAssetID != 0)
-                        {
-                            if (archive.ContainsAsset(assetEvent.SourceCheckAssetID))
-                                eventName += $", {archive.GetFromAssetID(assetEvent.SourceCheckAssetID).AHDR.ADBG.assetName}";
-                            else
-                                eventName += $", 0x{assetEvent.SourceCheckAssetID.ToString("X8")}";
-                        }
+                                eventName += $"{targetAsset.AHDR.ADBG.assetName}";
 
-                        eventName += "]";
+                            eventName += $" [{assetEvent.Arguments_Float[0]}, {assetEvent.Arguments_Float[1]}, {assetEvent.Arguments_Float[2]}, {assetEvent.Arguments_Float[3]}";
 
-                        richTextBox1.AppendText(eventName + "\n");
-                        senders.Add(objectAsset.AHDR.assetType);
-                        if (targetAsset != null)
-                            recievers.Add(targetAsset.AHDR.assetType);
-                        recievedEvents.Add(assetEvent.EventReceiveID);
-                        sentEvents.Add(assetEvent.EventSendID);
-                        total++;
+                            if (assetEvent.ArgumentAssetID != 0)
+                            {
+                                if (archive.ContainsAsset(assetEvent.ArgumentAssetID))
+                                    eventName += $", {archive.GetFromAssetID(assetEvent.ArgumentAssetID).AHDR.ADBG.assetName}";
+                                else
+                                    eventName += $", 0x{assetEvent.ArgumentAssetID.ToString("X8")}";
+                            }
+                            if (assetEvent.SourceCheckAssetID != 0)
+                            {
+                                if (archive.ContainsAsset(assetEvent.SourceCheckAssetID))
+                                    eventName += $", {archive.GetFromAssetID(assetEvent.SourceCheckAssetID).AHDR.ADBG.assetName}";
+                                else
+                                    eventName += $", 0x{assetEvent.SourceCheckAssetID.ToString("X8")}";
+                            }
+
+                            eventName += "]";
+
+                            richTextBox1.AppendText(eventName + "\n");
+                            senders.Add(objectAsset.AHDR.assetType);
+                            if (targetAsset != null)
+                                recievers.Add(targetAsset.AHDR.assetType);
+                            recievedEvents.Add(assetEvent.EventReceiveID);
+                            sentEvents.Add(assetEvent.EventSendID);
+                            total++;
+                        }
+                    }
+                    catch
+                    {
+
                     }
             }
         }

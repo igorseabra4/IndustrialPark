@@ -57,6 +57,7 @@
             this.labelRandoJson = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.checkedListBoxSBINI = new System.Windows.Forms.CheckedListBox();
+            this.buttonClear = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericPlatSpeedMax)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericPlatSpeedMin)).BeginInit();
@@ -127,9 +128,9 @@
             // 
             this.groupBox1.Controls.Add(this.numericPlatSpeedMax);
             this.groupBox1.Controls.Add(this.numericPlatSpeedMin);
-            this.groupBox1.Location = new System.Drawing.Point(12, 316);
+            this.groupBox1.Location = new System.Drawing.Point(174, 316);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(402, 49);
+            this.groupBox1.Size = new System.Drawing.Size(323, 49);
             this.groupBox1.TabIndex = 14;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "PLAT Speed Multiplier (Min, Max)";
@@ -137,9 +138,9 @@
             // numericPlatSpeedMax
             // 
             this.numericPlatSpeedMax.DecimalPlaces = 6;
-            this.numericPlatSpeedMax.Location = new System.Drawing.Point(204, 19);
+            this.numericPlatSpeedMax.Location = new System.Drawing.Point(162, 19);
             this.numericPlatSpeedMax.Name = "numericPlatSpeedMax";
-            this.numericPlatSpeedMax.Size = new System.Drawing.Size(192, 20);
+            this.numericPlatSpeedMax.Size = new System.Drawing.Size(150, 20);
             this.numericPlatSpeedMax.TabIndex = 16;
             this.numericPlatSpeedMax.Value = new decimal(new int[] {
             5,
@@ -152,7 +153,7 @@
             this.numericPlatSpeedMin.DecimalPlaces = 6;
             this.numericPlatSpeedMin.Location = new System.Drawing.Point(6, 19);
             this.numericPlatSpeedMin.Name = "numericPlatSpeedMin";
-            this.numericPlatSpeedMin.Size = new System.Drawing.Size(192, 20);
+            this.numericPlatSpeedMin.Size = new System.Drawing.Size(150, 20);
             this.numericPlatSpeedMin.TabIndex = 15;
             this.numericPlatSpeedMin.Value = new decimal(new int[] {
             1,
@@ -164,9 +165,9 @@
             // 
             this.groupBox2.Controls.Add(this.numericPlatTimeMax);
             this.groupBox2.Controls.Add(this.numericPlatTimeMin);
-            this.groupBox2.Location = new System.Drawing.Point(420, 316);
+            this.groupBox2.Location = new System.Drawing.Point(503, 316);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(402, 49);
+            this.groupBox2.Size = new System.Drawing.Size(319, 49);
             this.groupBox2.TabIndex = 17;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "PLAT Time Multiplier (Min, Max)";
@@ -174,9 +175,9 @@
             // numericPlatTimeMax
             // 
             this.numericPlatTimeMax.DecimalPlaces = 6;
-            this.numericPlatTimeMax.Location = new System.Drawing.Point(204, 19);
+            this.numericPlatTimeMax.Location = new System.Drawing.Point(162, 19);
             this.numericPlatTimeMax.Name = "numericPlatTimeMax";
-            this.numericPlatTimeMax.Size = new System.Drawing.Size(191, 20);
+            this.numericPlatTimeMax.Size = new System.Drawing.Size(150, 20);
             this.numericPlatTimeMax.TabIndex = 16;
             this.numericPlatTimeMax.Value = new decimal(new int[] {
             1,
@@ -189,7 +190,7 @@
             this.numericPlatTimeMin.DecimalPlaces = 6;
             this.numericPlatTimeMin.Location = new System.Drawing.Point(6, 19);
             this.numericPlatTimeMin.Name = "numericPlatTimeMin";
-            this.numericPlatTimeMin.Size = new System.Drawing.Size(192, 20);
+            this.numericPlatTimeMin.Size = new System.Drawing.Size(150, 20);
             this.numericPlatTimeMin.TabIndex = 15;
             this.numericPlatTimeMin.Value = new decimal(new int[] {
             2,
@@ -237,7 +238,7 @@
             this.richTextBox2.Name = "richTextBox2";
             this.richTextBox2.Size = new System.Drawing.Size(134, 184);
             this.richTextBox2.TabIndex = 23;
-            this.richTextBox2.Text = "pg";
+            this.richTextBox2.Text = "b3\npg";
             // 
             // label1
             // 
@@ -353,11 +354,22 @@
             this.checkedListBoxSBINI.Size = new System.Drawing.Size(170, 169);
             this.checkedListBoxSBINI.TabIndex = 31;
             // 
+            // buttonClear
+            // 
+            this.buttonClear.Location = new System.Drawing.Point(12, 316);
+            this.buttonClear.Name = "buttonClear";
+            this.buttonClear.Size = new System.Drawing.Size(156, 23);
+            this.buttonClear.TabIndex = 32;
+            this.buttonClear.Text = "Clear Checkboxes";
+            this.buttonClear.UseVisualStyleBackColor = true;
+            this.buttonClear.Click += new System.EventHandler(this.ButtonClear_Click);
+            // 
             // Randomizer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(827, 402);
+            this.Controls.Add(this.buttonClear);
             this.Controls.Add(this.checkedListBoxSBINI);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.labelRandoJson);
@@ -429,5 +441,6 @@
         private System.Windows.Forms.Label labelRandoJson;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.CheckedListBox checkedListBoxSBINI;
+        private System.Windows.Forms.Button buttonClear;
     }
 }

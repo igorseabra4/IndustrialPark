@@ -16,25 +16,25 @@
         Player_Start            = 1 << 11,
         Timers                  = 1 << 12,
         Music                   = 1 << 13,
-        DiscoFloors             = 1 << 14,
+        Disco_Floors            = 1 << 14,
         Textures                = 1 << 15,
         Sounds                  = 1 << 16,
         Cameras                 = 1 << 17,
-        DoubleBootHipLODT       = 1 << 18
+        Reduce_Warps_To_HB01    = 1 << 18,
+        Double_BootHip_LODT       = 1 << 19
     }
 
     public enum RandomizerFlagsP2
     {
         Level_Files              = 1 << 0,
-        Reduce_Warps_To_HB01     = 1 << 1,
-        Teleport_Box_Positions   = 1 << 2,
-        Taxi_Positions           = 1 << 3,
-        Bus_Stop_Positions       = 1 << 4,
-        Mix_SND_SNDS             = 1 << 5,
-        SIMP_Positions           = 1 << 6,
-        Enemy_Models             = 1 << 7,
-        Enemies_Allow_Any_Type   = 1 << 8,
-        Models                   = 1 << 9
+        Teleport_Box_Positions   = 1 << 1,
+        Taxi_Positions           = 1 << 2,
+        Bus_Stop_Positions       = 1 << 3,
+        Mix_SND_SNDS             = 1 << 4,
+        SIMP_Positions           = 1 << 5,
+        Enemy_Models             = 1 << 6,
+        Enemies_Allow_Any_Type   = 1 << 7,
+        Models                   = 1 << 8
     }
 
     public enum RandomizerFlagsP3

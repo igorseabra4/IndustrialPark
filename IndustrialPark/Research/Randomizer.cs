@@ -3,8 +3,8 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Security.Cryptography;
 using System.Windows.Forms;
+using static HipHopFile.Functions;
 
 namespace IndustrialPark
 {
@@ -51,9 +51,10 @@ namespace IndustrialPark
                 RandomizerFlags.Player_Start |
                 RandomizerFlags.Timers |
                 RandomizerFlags.Music |
-                RandomizerFlags.DiscoFloors |
-                RandomizerFlags.DoubleBootHipLODT,
-                flags2 = RandomizerFlagsP2.Reduce_Warps_To_HB01,
+                RandomizerFlags.Disco_Floors |
+                RandomizerFlags.Double_BootHip_LODT |
+                RandomizerFlags.Reduce_Warps_To_HB01,
+                flags2 = 0,
                 flags3 = 
                 RandomizerFlagsP3.BootToHB01 |
                 RandomizerFlagsP3.DontShowMenuOnBoot |
@@ -125,6 +126,7 @@ namespace IndustrialPark
             ArchiveEditorFunctions.nameDictionary.Clear();
 
             MessageBox.Show("Randomization complete.");
+            progressBar1.Value = 0;
         }
 
         private void PerformDirRandomizer(Random r, RandomizerFlags flags, RandomizerFlagsP2 flags2, RandomizerFlagsP3 flags3)
@@ -137,7 +139,7 @@ namespace IndustrialPark
                 folderNames.Add(dir);
 
             progressBar1.Minimum = 0;
-            progressBar1.Maximum = 150;
+            progressBar1.Maximum = 200;
             progressBar1.Step = 1;
 
             List<string> warpNames = new List<string>();
@@ -199,11 +201,10 @@ namespace IndustrialPark
                         progressBar1.PerformStep();
                     }
 
-            if ((flags2 & RandomizerFlagsP2.Reduce_Warps_To_HB01) != 0)
+            if ((flags & RandomizerFlags.Reduce_Warps_To_HB01) != 0 && currentGame == HipHopFile.Game.BFBB)
             {
                 bool found = false;
                 for (int i = 0; i < warpNames.Count; i++)
-                {
                     if (warpNames[i] == "HB01")
                     {
                         if (!found)
@@ -219,13 +220,12 @@ namespace IndustrialPark
 
                         warpNames[i] = warpNames[index];
                     }
-                }
             }
 
-            string bootPath = rootDir + "\\boot.hip";
-            if (File.Exists(bootPath))
+            if ((flags & (RandomizerFlags.Music | RandomizerFlags.Double_BootHip_LODT)) != 0)
             {
-                if (((flags & RandomizerFlags.Music) != 0) || ((flags & RandomizerFlags.DoubleBootHipLODT) != 0))
+                string bootPath = rootDir + "\\boot.hip";
+                if (File.Exists(bootPath))
                 {
                     ArchiveEditorFunctions boot = new ArchiveEditorFunctions();
                     boot.OpenFile(bootPath, false, true);
@@ -233,15 +233,35 @@ namespace IndustrialPark
                     bool shouldSave = false;
 
                     if ((flags & RandomizerFlags.Music) != 0)
-                        shouldSave |= boot.RandomizePlaylist();
+                    {
+                        if (currentGame == HipHopFile.Game.BFBB)
+                            shouldSave |= boot.RandomizePlaylist();
+                        else
+                        {
+                            boot.ShuffleSounds(r, false, true);
+                            shouldSave = true;
+                        }
+                    }
 
-                    if ((flags & RandomizerFlags.DoubleBootHipLODT) != 0)
+                    if ((flags & RandomizerFlags.Double_BootHip_LODT) != 0)
                         shouldSave |= boot.DoubleLODT();
 
                     if (shouldSave)
                         boot.Save();
                 }
             }
+
+            //if (currentGame == HipHopFile.Game.Scooby && ((flags & RandomizerFlags.Music) != 0))
+            //{
+            //    string mnu4Path = rootDir + "\\MN\\mnu4.HIP";
+            //    if (File.Exists(mnu4Path))
+            //    {
+            //        ArchiveEditorFunctions mnu4 = new ArchiveEditorFunctions();
+            //        mnu4.OpenFile(mnu4Path, false, true);
+            //        if (mnu4.RandomizePlaylist())
+            //            mnu4.Save();
+            //    }
+            //}
 
             progressBar1.Value = levelPairs.Count;
             progressBar1.Maximum = levelPairs.Count * 2;
@@ -294,57 +314,60 @@ namespace IndustrialPark
             }
 
             if (flags3 != 0)
-            {
-                string[] ini;
-                string filePath = rootDir + "\\sb.ini";
-                if (File.Exists(filePath))
-                    ini = File.ReadAllLines(filePath);
-                else
-                {
-                    filePath = rootDir + "\\sd2.ini";
-                    if (File.Exists(filePath))
-                        ini = File.ReadAllLines(filePath);
-                    else
-                    {
-                        MessageBox.Show("Unable to find game settings INI.");
-                        return;
-                    }
-                }
-
-                for (int i = 0; i < ini.Length; i++)
-                {
-                    if (ini[i].StartsWith("BOOT=") && ShouldShuffle(flags3, RandomizerFlagsP3.RandomBootLevel))
-                        ini[i] = "BOOT=" + namesForBoot[r.Next(0, namesForBoot.Count)];
-                    else if (ini[i].StartsWith("BOOT=") && ShouldShuffle(flags3, RandomizerFlagsP3.BootToHB01))
-                        ini[i] = "BOOT=HB01";
-                    else if (ini[i].StartsWith("ShowMenuOnBoot") && ShouldShuffle(flags3, RandomizerFlagsP3.DontShowMenuOnBoot))
-                        ini[i] = "ShowMenuOnBoot=0";
-                    else if (ini[i].StartsWith("Menu") && ShouldShuffle(flags3, RandomizerFlagsP3.AllMenuWarpsHB01))
-                        ini[i] = ini[i].Substring(0, 9) + "HB 01 01 01 01 01 01 01 01";
-                    else if (ini[i].StartsWith("G.TakeDamage") && ShouldShuffle(flags3, RandomizerFlagsP3.Cheat_Invincible))
-                        ini[i] = "G.TakeDamage=0";
-                    else if (ini[i].StartsWith("TakeDamage") && ShouldShuffle(flags3, RandomizerFlagsP3.Cheat_Invincible))
-                        ini[i] = "TakeDamage=0";
-                    else if (ini[i].StartsWith("G.BubbleBowl") && ShouldShuffle(flags3, RandomizerFlagsP3.BobCheat_BubbleBowl))
-                        ini[i] = "G.BubbleBowl=1";
-                    else if (ini[i].StartsWith("G.CruiseBubble") && ShouldShuffle(flags3, RandomizerFlagsP3.BobCheat_CruiseBubble))
-                        ini[i] = "G.CruiseBubble=1";
-                    else if (ini[i].StartsWith("eSPECIAL_Spring") && ShouldShuffle(flags3, RandomizerFlagsP3.ScoobyCheat_Spring))
-                        ini[i] = "eSPECIAL_Spring=1";
-                    else if (ini[i].StartsWith("eSPECIAL_FootballHelmet") && ShouldShuffle(flags3, RandomizerFlagsP3.ScoobyCheat_Helmet))
-                        ini[i] = "eSPECIAL_FootballHelmet=1";
-                    else if (ini[i].StartsWith("eSPECIAL_LightningBolt") && ShouldShuffle(flags3, RandomizerFlagsP3.ScoobyCheat_Smash))
-                        ini[i] = "eSPECIAL_LightningBolt=1";
-                    else if (ini[i].StartsWith("eSPECIAL_Umbrella") && ShouldShuffle(flags3, RandomizerFlagsP3.ScoobyCheat_Umbrella))
-                        ini[i] = "eSPECIAL_Umbrella=1";
-                }
-
-                File.WriteAllLines(filePath, ini);
-            }
+                ApplyINISettings(flags3, r, namesForBoot);
         }
 
         private bool ShouldShuffle(RandomizerFlagsP3 flags, RandomizerFlagsP3 flag)
             => (flags & flag) != 0;
+
+        private void ApplyINISettings(RandomizerFlagsP3 flags3, Random r, List<string> namesForBoot)
+        {
+            string[] ini;
+            string filePath = rootDir + "\\sb.ini";
+            if (File.Exists(filePath))
+                ini = File.ReadAllLines(filePath);
+            else
+            {
+                filePath = rootDir + "\\sd2.ini";
+                if (File.Exists(filePath))
+                    ini = File.ReadAllLines(filePath);
+                else
+                {
+                    MessageBox.Show("Unable to find game settings INI.");
+                    return;
+                }
+            }
+
+            for (int i = 0; i < ini.Length; i++)
+            {
+                if (ini[i].StartsWith("BOOT=") && ShouldShuffle(flags3, RandomizerFlagsP3.RandomBootLevel))
+                    ini[i] = "BOOT=" + namesForBoot[r.Next(0, namesForBoot.Count)];
+                else if (ini[i].StartsWith("BOOT=") && currentGame == HipHopFile.Game.BFBB && ShouldShuffle(flags3, RandomizerFlagsP3.BootToHB01))
+                    ini[i] = "BOOT=HB01";
+                else if (ini[i].StartsWith("ShowMenuOnBoot") && ShouldShuffle(flags3, RandomizerFlagsP3.DontShowMenuOnBoot))
+                    ini[i] = "ShowMenuOnBoot=0";
+                else if (ini[i].StartsWith("Menu") && ShouldShuffle(flags3, RandomizerFlagsP3.AllMenuWarpsHB01))
+                    ini[i] = ini[i].Substring(0, 9) + "HB 01 01 01 01 01 01 01 01";
+                else if (ini[i].StartsWith("G.TakeDamage") && ShouldShuffle(flags3, RandomizerFlagsP3.Cheat_Invincible))
+                    ini[i] = "G.TakeDamage=0";
+                else if (ini[i].StartsWith("TakeDamage") && ShouldShuffle(flags3, RandomizerFlagsP3.Cheat_Invincible))
+                    ini[i] = "TakeDamage=0";
+                else if (ini[i].StartsWith("G.BubbleBowl") && ShouldShuffle(flags3, RandomizerFlagsP3.BobCheat_BubbleBowl))
+                    ini[i] = "G.BubbleBowl=1";
+                else if (ini[i].StartsWith("G.CruiseBubble") && ShouldShuffle(flags3, RandomizerFlagsP3.BobCheat_CruiseBubble))
+                    ini[i] = "G.CruiseBubble=1";
+                else if (ini[i].StartsWith("eSPECIAL_Spring") && currentGame == HipHopFile.Game.Scooby && ShouldShuffle(flags3, RandomizerFlagsP3.ScoobyCheat_Spring))
+                    ini[i] = "eSPECIAL_Spring=1";
+                else if (ini[i].StartsWith("eSPECIAL_FootballHelmet") && currentGame == HipHopFile.Game.Scooby && ShouldShuffle(flags3, RandomizerFlagsP3.ScoobyCheat_Helmet))
+                    ini[i] = "eSPECIAL_FootballHelmet=1";
+                else if (ini[i].StartsWith("eSPECIAL_LightningBolt") && currentGame == HipHopFile.Game.Scooby && ShouldShuffle(flags3, RandomizerFlagsP3.ScoobyCheat_Smash))
+                    ini[i] = "eSPECIAL_LightningBolt=1";
+                else if (ini[i].StartsWith("eSPECIAL_Umbrella") && currentGame == HipHopFile.Game.Scooby && ShouldShuffle(flags3, RandomizerFlagsP3.ScoobyCheat_Umbrella))
+                    ini[i] = "eSPECIAL_Umbrella=1";
+            }
+
+            File.WriteAllLines(filePath, ini);
+        }
 
         private void ButtonHelp_Click(object sender, EventArgs e)
         {
@@ -513,5 +536,15 @@ namespace IndustrialPark
             skip1 = richTextBoxSkip.Lines,
             skip2 = richTextBox2.Lines
         };
+
+        private void ButtonClear_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < checkedListBoxMethods.Items.Count; i++)
+                checkedListBoxMethods.SetItemChecked(i, false);
+            for (int i = 0; i < checkedListBoxNotRecommended.Items.Count; i++)
+                checkedListBoxNotRecommended.SetItemChecked(i, false);
+            for (int i = 0; i < checkedListBoxSBINI.Items.Count; i++)
+                checkedListBoxSBINI.SetItemChecked(i, false);
+        }
     }
 }
