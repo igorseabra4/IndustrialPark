@@ -274,7 +274,7 @@
     <Compile Include="MainForm\EditName.designer.cs">
       <DependentUpon>EditName.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainForm\Json\IPversion.cs" />
+    <Compile Include="Other\IPversion.cs" />
     <Compile Include="MainForm\UserTemplateManager.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -374,8 +374,8 @@
     <Compile Include="Assets\DYNA\BFBB\RenderableDynas\DynaTeleport_BFBB.cs" />
     <Compile Include="Assets\DYNA\MovieGame\DynaTeleport_MovieGame.cs" />
     <Compile Include="Assets\Shared\Enums\VilType.cs" />
-    <Compile Include="MainForm\Json\IPSettings.cs" />
-    <Compile Include="MainForm\Json\ProjectJson.cs" />
+    <Compile Include="Other\IPSettings.cs" />
+    <Compile Include="Other\ProjectJson.cs" />
     <Compile Include="Models\BSP_IO_CreateBSP.cs" />
     <Compile Include="Models\BSP_IO_ReadOBJ.cs" />
     <Compile Include="Other\FileAssociation.cs" />

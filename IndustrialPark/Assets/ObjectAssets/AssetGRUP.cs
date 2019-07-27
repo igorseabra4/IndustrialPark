@@ -70,7 +70,7 @@ namespace IndustrialPark
                 List<byte> newData = Data.Take(0xC).ToList();
 
                 foreach (AssetID i in value)
-                    newData.AddRange(BitConverter.GetBytes(i).Reverse());
+                    newData.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i)));
 
                 newData.AddRange(Data.Skip(EventStartOffset).ToList());
                 

@@ -26,11 +26,18 @@ namespace IndustrialPark
             if (!Directory.Exists(tempPcTxdsDir))
                 Directory.CreateDirectory(tempPcTxdsDir);
 
-            ExportTextureDictionary(pathToGcTXD, true);
+            try
+            {
+                ExportTextureDictionary(pathToGcTXD, true);
 
-            PerformTXDConversionExternal();
+                PerformTXDConversionExternal();
 
-            TextureManager.LoadTexturesFromTXD(pathToPcTXD, false);
+                TextureManager.LoadTexturesFromTXD(pathToPcTXD, false);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to setup texture display: " + ex.Message);
+            }
             TextureManager.ReapplyTextures();
 
             File.Delete(pathToGcTXD);

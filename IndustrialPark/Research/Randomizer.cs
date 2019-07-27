@@ -148,8 +148,6 @@ namespace IndustrialPark
             List<string> toSkip = new List<string>(richTextBoxSkip.Lines.Length + richTextBox2.Lines.Length);
             toSkip.AddRange(richTextBoxSkip.Lines);
             toSkip.AddRange(richTextBox2.Lines);
-            toSkip.Add("jf80");
-            toSkip.Add("tl01");
 
             foreach (string dir in folderNames)
                 foreach (string hipPath in Directory.GetFiles(dir))
@@ -162,7 +160,7 @@ namespace IndustrialPark
                         hip.OpenFile(hipPath, false, true);
 
                         if ((flags & RandomizerFlags.Warps) != 0 && !FileInSecondBox(hipPath))
-                                hip.GetWarpNames(ref warpNames, toSkip);
+                            hip.GetWarpNames(ref warpNames, toSkip);
 
                         ArchiveEditorFunctions hop = null;
                         string hopPath = Path.ChangeExtension(hipPath, ".HOP");
@@ -227,11 +225,8 @@ namespace IndustrialPark
                     {
                         if (currentGame == HipHopFile.Game.BFBB)
                             shouldSave |= boot.RandomizePlaylist();
-                        else
-                        {
-                            boot.ShuffleSounds(r, false, true);
-                            shouldSave = true;
-                        }
+                        else                            
+                            shouldSave |= boot.ShuffleSounds(r, false, true);
                     }
 
                     if ((flags & RandomizerFlags.Double_BootHip_LODT) != 0)
@@ -254,6 +249,8 @@ namespace IndustrialPark
             //    }
             //}
 
+            List<(string, string, string)> warpRandomizerOutput = new List<(string, string, string)>();
+
             progressBar1.Value = levelPairs.Count;
             progressBar1.Maximum = levelPairs.Count * 2;
             
@@ -263,7 +260,7 @@ namespace IndustrialPark
                 levelPairs[i].Item1.Shuffle(r, flags, flags2, (float)numericPlatSpeedMin.Value, (float)numericPlatSpeedMax.Value, (float)numericPlatTimeMin.Value, (float)numericPlatTimeMax.Value);
 
                 if ((flags & RandomizerFlags.Warps) != 0 && !FileInSecondBox(levelPairs[i].Item1.currentlyOpenFilePath))
-                    levelPairs[i].Item1.SetWarpNames(r, ref warpNames, toSkip);
+                    levelPairs[i].Item1.SetWarpNames(r, ref warpNames, toSkip, ref warpRandomizerOutput);
 
                 bool item2shuffled = false;
                 if (levelPairs[i].Item2 != null)
@@ -277,9 +274,7 @@ namespace IndustrialPark
                     levelPairs[i].Item1.Save(levelPathPairs[newPathIndex].Item1);
 
                     if (levelPairs[i].Item2 != null)
-                    {
                         levelPairs[i].Item2.Save(levelPathPairs[newPathIndex].Item2);
-                    }
                     
                     levelPathPairs.RemoveAt(newPathIndex);
                 }
@@ -296,6 +291,9 @@ namespace IndustrialPark
                     }
                 }
 
+                levelPairs.RemoveAt(i);
+                i--;
+                
                 progressBar1.PerformStep();
             }
 
@@ -304,6 +302,30 @@ namespace IndustrialPark
 
             if (flags3 != 0)
                 ApplyINISettings(flags3, r, namesForBoot);
+
+            if (warpRandomizerOutput.Count != 0)
+                WriteWarpRandomizerOutput(warpRandomizerOutput);
+        }
+
+        private void WriteWarpRandomizerOutput(List<(string, string, string)> warpRandomizerOutput)
+        {
+            HashSet<string> uniqueNames = new HashSet<string>();
+            foreach (var s in warpRandomizerOutput)
+                uniqueNames.Add(s.Item1);
+
+            using (StreamWriter streamWriter = new StreamWriter(new FileStream(rootDir + "\\warp_randomizer_output.txt", FileMode.Create)))
+            {
+                streamWriter.WriteLine($"CREATE");
+                foreach (var s in uniqueNames)
+                    streamWriter.WriteLine($"({s}: Level {{ name: '{s}'}} ),");
+                for (int i = 0; i < warpRandomizerOutput.Count - 1; i++)
+                {
+                    var s = warpRandomizerOutput[i];
+                    streamWriter.WriteLine($"({s.Item1})-[:{s.Item2}]->({s.Item3}),");
+                }
+                var c = warpRandomizerOutput[warpRandomizerOutput.Count - 1];
+                streamWriter.WriteLine($"({c.Item1})-[:{c.Item2}]->({c.Item3})");
+            }
         }
 
         private bool ShouldShuffle(RandomizerFlagsP3 flags, RandomizerFlagsP3 flag)

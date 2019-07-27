@@ -80,7 +80,7 @@ namespace IndustrialPark
 
             if (ShouldShuffle(flags, RandomizerFlags.Marker_Positions, AssetType.MRKR)
                 && !new string[] { "hb02", "b101", "b201", "b302", "b303" }
-                .Contains(Path.GetFileNameWithoutExtension(currentlyOpenFilePath).ToLower()))
+                .Contains(LevelName))
             {
                 ShuffleMRKRPositions(r, 
                     ShouldShuffle(flags, RandomizerFlags.Pointer_Positions),
@@ -168,9 +168,7 @@ namespace IndustrialPark
         {
             List<AssetPKUP> assets = (from asset in assetDictionary.Values where asset.AHDR.assetType == AssetType.PKUP select asset).Cast<AssetPKUP>().ToList();
 
-            string levelName = Path.GetFileNameWithoutExtension(currentlyOpenFilePath).ToLower();
-
-            switch (levelName)
+            switch (LevelName)
             {
                 case "hb02":
                     for (int i = 0; i < assets.Count; i++)
@@ -183,6 +181,10 @@ namespace IndustrialPark
                                 i--;
                             }
                         }
+                    break;
+                case "gl01":
+                    if (ContainsAsset(new AssetID("SHINY_YELLOW_004")))
+                        assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("SHINY_YELLOW_004")));
                     break;
                 case "gl03":
                     if (ContainsAsset(0x0B48E8AC))
@@ -402,12 +404,10 @@ namespace IndustrialPark
 
         private bool VerifyMarkerStep2(string assetName)
         {
-            string levelName = Path.GetFileNameWithoutExtension(currentlyOpenFilePath).ToLower();
-
             try
             {
                 if (Functions.currentGame == Game.BFBB)
-                    switch (levelName)
+                    switch (LevelName)
                     {
                         case "rb03":
                             if (assetName == "RB06MK12" || assetName == "RB06MK13")
@@ -440,7 +440,7 @@ namespace IndustrialPark
                     }
                 else
                 {
-                    if (levelName == "r020")
+                    if (LevelName == "r020")
                     {
                         if (assetName.Contains("FROMR003"))
                             return false;
@@ -522,8 +522,10 @@ namespace IndustrialPark
                 }
         }
 
-        public void ShuffleSounds(Random r, bool mixTypes, bool scoobyBoot = false)
+        public bool ShuffleSounds(Random r, bool mixTypes, bool scoobyBoot = false)
         {
+            bool result = false;
+
             foreach (Asset a in assetDictionary.Values)
                 if (a is AssetSNDI_GCN_V1 sndi)
                 {
@@ -604,7 +606,11 @@ namespace IndustrialPark
 
                     sndi.Entries_SND = snd.ToArray();
                     sndi.Entries_SNDS = snds.ToArray();
+
+                    result = true;
                 }
+
+            return result;
         }
         
         private void ShuffleMVPT(Random r)
@@ -634,7 +640,7 @@ namespace IndustrialPark
                     timr.Time *= r.NextFloat(0.75f, 1.75f);
         }
 
-        private string LevelName => Path.GetFileNameWithoutExtension(currentlyOpenFilePath); 
+        private string LevelName => Path.GetFileNameWithoutExtension(currentlyOpenFilePath).ToLower();
 
         private bool IsWarpToSameLevel(string warpName) =>
             LevelName.ToLower().Equals(warpName.ToLower()) || new string(warpName.Reverse().ToArray()).ToLower().Equals(LevelName.ToLower());
@@ -642,26 +648,80 @@ namespace IndustrialPark
         public void GetWarpNames(ref List<string> warpNames, List<string> toSkip)
         {
             foreach (Asset a in assetDictionary.Values)
-                if (a is AssetPORT port && !IsWarpToSameLevel(port.DestinationLevel) && !PortInToSkip(port.DestinationLevel, toSkip))
+                if (a is AssetPORT port && !IsWarpToSameLevel(port.DestinationLevel) && !PortInToSkip(port, toSkip))                
                     warpNames.Add(port.DestinationLevel);
         }
 
-        private bool PortInToSkip(string port, List<string> toSkip)
+        private bool PortInToSkip(AssetPORT port, List<string> toSkip)
         {
+            string dest = port.DestinationLevel.ToLower();
+
+            if (Functions.currentGame == Game.BFBB)
+                switch (LevelName)
+                {
+                    case "bb01":
+                        if (port.AHDR.ADBG.assetName == "TOHB01")
+                            return true;
+                        else if (dest == "bb03")
+                            return true;
+                        break;
+                    case "bc01":
+                        if (dest == "hb01")
+                            return true;
+                        break;
+                    case "bc02":
+                        if (dest == "bc04")
+                            return true;
+                        break;
+                    case "hb01":
+                        if (dest == "tl01")
+                            return true;
+                        else if (port.AHDR.ADBG.assetName == "TOJF01")
+                            return true;
+                        else if (port.AHDR.ADBG.assetName == "TOBB01")
+                            return true;
+                        else if (port.AHDR.ADBG.assetName == "TOGL01")
+                            return true;
+                        else if (port.AHDR.ADBG.assetName == "TOBC01")
+                            return true;
+                        break;
+                    case "jf01":
+                        if (port.AHDR.ADBG.assetName == "TAXISTAND_PORTAL_01")
+                            return true;
+                        break;
+                    case "jf02":
+                        if (dest == "jf04")
+                            return true;
+                        break;
+                    case "jf04":
+                        if (dest == "jf02")
+                            return true;
+                        else if (dest == "jf80")
+                            return true;
+                        break;
+                    case "rb01":
+                        if (port.AHDR.ADBG.assetName == "TOHUB_PORTAL")
+                            return true;
+                        break;
+                    case "sm01":
+                        if (port.AHDR.ADBG.assetName == "TOHB01")
+                            return true;
+                        break;
+                }
+
             foreach (string s in toSkip)
-                if (port.ToLower().Equals(s.ToLower()))
+                if (dest.Contains(s.ToLower()))
                     return true;
-                else if (new string(port.Reverse().ToArray()).ToLower().Equals(s.ToLower()))
+                else if (new string(dest.ToArray()).ToLower().Contains(s.ToLower()))
                     return true;
 
             return false;
         }
 
-        public void SetWarpNames(Random r, ref List<string> warpNames, List<string> lines)
+        public void SetWarpNames(Random r, ref List<string> warpNames, List<string> lines, ref List<(string, string, string)> warpRandomizerOutput)
         {
-
             foreach (Asset a in assetDictionary.Values)
-                if (a is AssetPORT port && !IsWarpToSameLevel(port.DestinationLevel) && !PortInToSkip(port.DestinationLevel, lines))
+                if (a is AssetPORT port && !IsWarpToSameLevel(port.DestinationLevel) && !PortInToSkip(port, lines))
                 {
                     if (warpNames.Count == 0)
                         throw new Exception("warpNames is empty");
@@ -674,6 +734,8 @@ namespace IndustrialPark
                         times++;
                     }
                     while (IsWarpToSameLevel(warpNames[index]) && times < 500);
+
+                    warpRandomizerOutput.Add((LevelName.ToUpper(), port.DestinationLevel, warpNames[index]));
 
                     port.DestinationLevel = warpNames[index];
 
