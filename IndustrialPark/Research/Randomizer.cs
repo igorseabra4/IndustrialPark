@@ -43,6 +43,7 @@ namespace IndustrialPark
                 RandomizerFlags.Tiki_Models |
                 RandomizerFlags.Tiki_Allow_Any_Type |
                 RandomizerFlags.Enemy_Types |
+                RandomizerFlags.Enemies_Allow_Any_Type |
                 RandomizerFlags.MovePoint_Radius |
                 RandomizerFlags.Platform_Speeds |
                 RandomizerFlags.Boulder_Settings |
@@ -109,27 +110,9 @@ namespace IndustrialPark
             RandomizerFlagsP2 flags2 = GetActiveFlagsP2();
             RandomizerFlagsP3 flags3 = GetActiveFlagsP3();
 
-            if ((flags & RandomizerFlags.Enemies_Allow_Any_Type) != 0)
-            {
-                if (currentPlatform == HipHopFile.Platform.GameCube)
-                {
-                    if (!Directory.Exists(ArchiveEditorFunctions.editorFilesFolder))
-                    {
-                        DialogResult dialogResult = MessageBox.Show("The IndustrialPark-EditorFiles folder has not been found under Resources. You must download it first to be able to use Enemies_Allow_Any_Type. Do you wish to download it?", "Note", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+            if ((flags & RandomizerFlags.Enemies_Allow_Any_Type) != 0 && currentGame != HipHopFile.Game.BFBB)
+                flags ^= RandomizerFlags.Enemies_Allow_Any_Type;
 
-                        if (dialogResult == DialogResult.Yes)
-                            AutomaticUpdater.DownloadEditorFiles();
-                        else
-                            flags ^= RandomizerFlags.Enemies_Allow_Any_Type;
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Enemies_Allow_Any_Type is only supported for GameCube. It will be disabled");
-                    flags ^= RandomizerFlags.Enemies_Allow_Any_Type;
-                }
-            }
-            
             if (isDir)
                 PerformDirRandomizer(r, flags, flags2, flags3);
             else
@@ -170,6 +153,8 @@ namespace IndustrialPark
             toSkip.AddRange(richTextBoxSkip.Lines);
             toSkip.AddRange(richTextBox2.Lines);
 
+            bool platformVerified = false;
+
             foreach (string dir in folderNames)
                 foreach (string hipPath in Directory.GetFiles(dir))
                     if (Path.GetExtension(hipPath).ToLower() == ".hip")
@@ -179,6 +164,29 @@ namespace IndustrialPark
 
                         ArchiveEditorFunctions hip = new ArchiveEditorFunctions();
                         hip.OpenFile(hipPath, false, true);
+
+                        if (!platformVerified && (flags & RandomizerFlags.Enemies_Allow_Any_Type) != 0)
+                        {
+                            if (currentPlatform == HipHopFile.Platform.GameCube)
+                            {
+                                if (!Directory.Exists(ArchiveEditorFunctions.editorFilesFolder))
+                                {
+                                    DialogResult dialogResult = MessageBox.Show("The IndustrialPark-EditorFiles folder has not been found under Resources. You must download it first to be able to use Enemies_Allow_Any_Type. Do you wish to download it?", "Note", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+                                    if (dialogResult == DialogResult.Yes)
+                                        AutomaticUpdater.DownloadEditorFiles();
+                                    else
+                                        flags ^= RandomizerFlags.Enemies_Allow_Any_Type;
+                                }
+                            }
+                            else
+                            {
+                                MessageBox.Show("Enemies_Allow_Any_Type is only supported for GameCube. It will be disabled");
+                                flags ^= RandomizerFlags.Enemies_Allow_Any_Type;
+                            }
+
+                            platformVerified = true;
+                        }
 
                         if ((flags & RandomizerFlags.Warps) != 0 && !FileInSecondBox(hipPath))
                             hip.GetWarpNames(ref warpNames, toSkip);
@@ -205,7 +213,7 @@ namespace IndustrialPark
                         }
 
                         string nameForBoot = Path.GetFileNameWithoutExtension(hipPath).ToUpper();
-                        if (ShouldShuffle(flags3, RandomizerFlagsP3.RandomBootLevel) && !namesForBoot.Contains(nameForBoot))
+                        if (ShouldShuffle(flags3, RandomizerFlagsP3.RandomBootLevel) && !FileInSecondBox(hipPath) && !namesForBoot.Contains(nameForBoot))
                             namesForBoot.Add(nameForBoot);
 
                         progressBar1.PerformStep();
@@ -496,11 +504,7 @@ namespace IndustrialPark
                 Filter = "JSON Files|*.json|All files|*.*"
             };
             if (saveFile.ShowDialog() == DialogResult.OK)
-            {
-                string file = JsonConvert.SerializeObject(FromInstance(), Formatting.Indented);
-
-                File.WriteAllText(saveFile.FileName, file);
-            }
+                File.WriteAllText(saveFile.FileName, JsonConvert.SerializeObject(FromInstance(), Formatting.Indented));
         }
 
         private void ButtonLoadJson_Click(object sender, EventArgs e)
@@ -583,7 +587,7 @@ namespace IndustrialPark
 
         public RandoSettings FromInstance() => new RandoSettings()
         {
-            version = 46,
+            version = 47,
             seedText = textBoxSeed.Text,
             seedNum = seed,
             flags = GetActiveFlags(),

@@ -187,6 +187,10 @@ namespace IndustrialPark
                             }
                         }
                     break;
+                case "bb01":
+                    if (ContainsAsset(new AssetID("SHINY_RED_019")))
+                        assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("SHINY_RED_019")));
+                    break;
                 case "gl01":
                     if (ContainsAsset(new AssetID("SHINY_YELLOW_004")))
                         assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("SHINY_YELLOW_004")));
