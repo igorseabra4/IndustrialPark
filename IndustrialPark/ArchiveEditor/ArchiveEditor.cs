@@ -857,7 +857,7 @@ namespace IndustrialPark
             Multiselect = true };
 
             if (openFile.ShowDialog() == DialogResult.OK)
-                archive.ImportHip(openFile.FileNames);
+                archive.ImportHip(openFile.FileNames, false);
             PopulateLayerComboBox();
         }
 

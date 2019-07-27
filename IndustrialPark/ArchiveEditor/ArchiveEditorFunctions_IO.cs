@@ -14,23 +14,23 @@ namespace IndustrialPark
             HipArrayToIni(hipFile, fileName, true, true);
         }
         
-        public void ImportHip(string[] fileNames)
+        public void ImportHip(string[] fileNames, bool forceOverwrite)
         {
             foreach (string fileName in fileNames)
-                ImportHip(fileName);
+                ImportHip(fileName, forceOverwrite);
         }
 
-        public void ImportHip(string fileName)
+        public void ImportHip(string fileName, bool forceOverwrite)
         {
             if (Path.GetExtension(fileName).ToLower() == ".hip" || Path.GetExtension(fileName).ToLower() == ".hop")
-                ImportHip(HipFileToHipArray(fileName));
+                ImportHip(HipFileToHipArray(fileName), forceOverwrite);
             else if (Path.GetExtension(fileName).ToLower() == ".ini")
-                ImportHip(IniToHipArray(fileName));
+                ImportHip(IniToHipArray(fileName), forceOverwrite);
             else
                 MessageBox.Show("Invalid file: " + fileName);
         }
 
-        public void ImportHip(HipSection[] hipSections)
+        public void ImportHip(HipSection[] hipSections, bool forceOverwrite)
         {
             UnsavedChanges = true;
 
@@ -91,7 +91,9 @@ namespace IndustrialPark
 
                         if (ContainsAsset(AHDR.assetID))
                         {
-                            DialogResult result = MessageBox.Show($"Asset [{AHDR.assetID.ToString("X8")}] {AHDR.ADBG.assetName} already present in archive. Do you wish to overwrite it?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                            DialogResult result = forceOverwrite ? DialogResult.Yes :
+                            MessageBox.Show($"Asset [{AHDR.assetID.ToString("X8")}] {AHDR.ADBG.assetName} already present in archive. Do you wish to overwrite it?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
                             if (result == DialogResult.Yes)
                             {
                                 RemoveAsset(AHDR.assetID);

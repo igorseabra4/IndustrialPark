@@ -4,11 +4,26 @@ using System.Linq;
 using SharpDX;
 using HipHopFile;
 using System.IO;
+using System.Windows.Forms;
 
 namespace IndustrialPark
 {
     public partial class ArchiveEditorFunctions
     {
+        private VilType[] allowedEnemyVilTypes => new VilType[] {
+                    VilType.g_love_bind,
+                    VilType.ham_bind,
+                    VilType.robot_0a_bomb_bind,
+                    VilType.robot_0a_bzzt_bind,
+                    VilType.robot_0a_chomper_bind,
+                    VilType.robot_0a_fodder_bind,
+                    VilType.robot_4a_monsoon_bind,
+                    VilType.robot_9a_bind,
+                    VilType.robot_chuck_bind,
+                    VilType.robot_sleepytime_bind,
+                    VilType.robot_tar_bind
+                };
+
         public bool Shuffle(Random r, RandomizerFlags flags, RandomizerFlagsP2 flags2, float minSpeed, float maxSpeed, float minTime, float maxTime)
         {
             bool shuffled = false;
@@ -52,28 +67,18 @@ namespace IndustrialPark
                     VilType.tiki_wooden_bind },
 
                     ShouldShuffle(flags, RandomizerFlags.Tiki_Models),
-                    ShouldShuffle(flags, RandomizerFlags.Tiki_Allow_Any_Type));
+                    ShouldShuffle(flags, RandomizerFlags.Tiki_Allow_Any_Type),
+                    false);
 
                 shuffled = true;
             }
 
             if (ShouldShuffle(flags, RandomizerFlags.Enemy_Types, AssetType.VIL))
             {
-                ShuffleVilTypes(r, new VilType[] {
-                    VilType.g_love_bind,
-                    VilType.ham_bind,
-                    VilType.robot_0a_bomb_bind,
-                    VilType.robot_0a_bzzt_bind,
-                    VilType.robot_0a_chomper_bind,
-                    VilType.robot_0a_fodder_bind,
-                    VilType.robot_4a_monsoon_bind,
-                    VilType.robot_9a_bind,
-                    VilType.robot_chuck_bind,
-                    VilType.robot_sleepytime_bind,
-                    VilType.robot_tar_bind
-                },
-                ShouldShuffle(flags2, RandomizerFlagsP2.Enemy_Models),
-                ShouldShuffle(flags2, RandomizerFlagsP2.Enemies_Allow_Any_Type));
+                ShuffleVilTypes(r, allowedEnemyVilTypes,
+                    false,
+                ShouldShuffle(flags, RandomizerFlags.Enemies_Allow_Any_Type),
+                true);
 
                 shuffled = true;
             }
@@ -321,7 +326,7 @@ namespace IndustrialPark
             }
         }
         
-        private void ShuffleVilTypes(Random r, VilType[] allowed, bool mixModels, bool veryRandom)
+        private void ShuffleVilTypes(Random r, VilType[] allowed, bool mixModels, bool veryRandom, bool enemies)
         {
             List<AssetVIL> assets = (from asset in assetDictionary.Values where asset is AssetVIL tiki && allowed.Contains(tiki.VilType) select asset).Cast<AssetVIL>().ToList();
             List<VilType> viltypes = (from asset in assets where true select asset.VilType).ToList();
@@ -334,10 +339,91 @@ namespace IndustrialPark
 
                 a.VilType = veryRandom ? allowed[r.Next(0, allowed.Length)] : viltypes[viltypes_value];
                 a.Model_AssetID = models[model_value];
+
+                if (enemies && veryRandom)
+                {
+                    a.Model_AssetID = a.VilType.ToString() + ".MINF";
+
+                    switch (a.VilType)
+                    {
+                        case VilType.robot_sleepytime_bind:
+                            a.Model_AssetID = "robot_sleepy-time_bind.MINF";
+                            break;
+                        default:
+                            a.Model_AssetID = a.VilType.ToString() + ".MINF";
+                            break;
+                    }
+                }
                 
                 viltypes.RemoveAt(viltypes_value);
                 models.RemoveAt(model_value);
             }
+        }
+
+        public void GetEnemyTypes(ref HashSet<VilType> outSet)
+        {
+            VilType[] viltypes = allowedEnemyVilTypes;
+            foreach (AssetVIL a in (from asset in assetDictionary.Values
+                                    where asset is AssetVIL vil && viltypes.Contains(vil.VilType)
+                                    select asset).Cast<AssetVIL>())
+            {
+                if (!ContainsAsset(a.Model_AssetID))
+                    outSet.Add(a.VilType);
+            }
+        }
+
+        public static string editorFilesFolder => Application.StartupPath +
+            "\\Resources\\IndustrialPark-EditorFiles\\IndustrialPark-EditorFiles-master\\BattleForBikiniBottom\\GameCube\\Enemies\\";
+
+        public bool ImportEnemyTypes(HashSet<VilType> inSet)
+        {
+            bool imported = false;
+
+            if (inSet.Count == 0)
+                return imported;
+
+
+            foreach (VilType v in inSet)
+            {
+                if ((v == VilType.robot_sleepytime_bind && ContainsAsset(new AssetID("robot_sleepy-time_bind.MINF")))
+                    || ContainsAsset(new AssetID(v.ToString() + ".MINF")))
+                    continue;
+
+                string hipFileName = null;
+
+                switch (v)
+                {
+                    case VilType.g_love_bind:
+                        hipFileName = "g-love.HIP"; break;
+                    case VilType.ham_bind:
+                        hipFileName = "ham-mer.HIP"; break;
+                    case VilType.robot_0a_bomb_bind:
+                        hipFileName = "bomb-bot.HIP"; break;
+                    case VilType.robot_0a_bzzt_bind:
+                        hipFileName = "bzzt-bot.HIP"; break;
+                    case VilType.robot_0a_chomper_bind:
+                        hipFileName = "chomp-bot.HIP"; break;
+                    case VilType.robot_0a_fodder_bind:
+                        hipFileName = "fodder.HIP"; break;
+                    case VilType.robot_4a_monsoon_bind:
+                        hipFileName = "monsoon.HIP"; break;
+                    case VilType.robot_9a_bind:
+                        hipFileName = "slick.HIP"; break;
+                    case VilType.robot_chuck_bind:
+                        hipFileName = "chuck.HIP"; break;
+                    case VilType.robot_sleepytime_bind:
+                        hipFileName = "sleepytime.HIP"; break;
+                    case VilType.robot_tar_bind:
+                        hipFileName = "tar-tar.HIP"; break;
+                    default:
+                        throw new Exception("Invalid VilType");
+                }
+
+                ImportHip(editorFilesFolder + hipFileName, true);
+                imported = true;
+            }
+
+            return imported;
         }
 
         private void ShuffleMRKRPositions(Random r, bool pointers, bool plyrs, bool busStops, bool teleBox, bool taxis)

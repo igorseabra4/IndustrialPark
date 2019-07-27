@@ -21,7 +21,8 @@
         Sounds                  = 1 << 16,
         Cameras                 = 1 << 17,
         Reduce_Warps_To_HB01    = 1 << 18,
-        Double_BootHip_LODT       = 1 << 19
+        Enemies_Allow_Any_Type  = 1 << 19,
+        Double_BootHip_LODT     = 1 << 20
     }
 
     public enum RandomizerFlagsP2
@@ -32,9 +33,7 @@
         Bus_Stop_Positions       = 1 << 3,
         Mix_SND_SNDS             = 1 << 4,
         SIMP_Positions           = 1 << 5,
-        Enemy_Models             = 1 << 6,
-        Enemies_Allow_Any_Type   = 1 << 7,
-        Models                   = 1 << 8
+        Models                   = 1 << 6
     }
 
     public enum RandomizerFlagsP3
