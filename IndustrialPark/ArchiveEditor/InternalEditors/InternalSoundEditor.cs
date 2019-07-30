@@ -75,23 +75,7 @@ namespace IndustrialPark
             };
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                List<byte> file = new List<byte>();
-                file.AddRange(archive.GetHeaderFromSNDI(asset.AHDR.assetID));
-                file.AddRange(asset.Data);
-
-                if (new string(new char[] { (char)file[0], (char)file[1], (char)file[2], (char)file[3] }) == "RIFF")
-                {
-                    byte[] chunkSizeArr = BitConverter.GetBytes(file.Count - 8);
-
-                    file[4] = chunkSizeArr[0];
-                    file[5] = chunkSizeArr[1];
-                    file[6] = chunkSizeArr[2];
-                    file[7] = chunkSizeArr[3];
-                }
-
-                File.WriteAllBytes(saveFileDialog.FileName, file.ToArray());
-            }
+                File.WriteAllBytes(saveFileDialog.FileName, archive.GetSoundData(asset.AHDR.assetID, asset.Data));
         }
 
         private void buttonFindCallers_Click(object sender, EventArgs e)

@@ -319,6 +319,9 @@ namespace IndustrialPark
 
                             ra.PositionZ += (distanceX * direction.X - distanceY * direction.Y) / 10;
                         }
+
+                        if (a is AssetDYNA dyna)
+                            dyna.OnDynaSpecificPropertyChange(dyna.DynaBase);
                     }
 
                     UpdateGizmoPosition();
@@ -377,6 +380,9 @@ namespace IndustrialPark
                             //ra.Roll -= (distanceX * direction.X - distanceY * direction.Y) / 10;
                             ra.Roll += distanceX;
                         }
+
+                        if (a is AssetDYNA dyna)
+                            dyna.OnDynaSpecificPropertyChange(dyna.DynaBase);
                     }
 
                     UpdateGizmoPosition();
@@ -429,6 +435,9 @@ namespace IndustrialPark
                             ra.ScaleY += distanceX / 40f;
                             ra.ScaleZ += distanceX / 40f;
                         }
+
+                        if (a is AssetDYNA dyna)
+                            dyna.OnDynaSpecificPropertyChange(dyna.DynaBase);
                     }
 
                     UpdateGizmoPosition();
@@ -463,6 +472,9 @@ namespace IndustrialPark
                         ra.PositionX += movementDirection.X * (distanceX * direction.X - distanceY * direction.Y) / 10f;
                         ra.PositionY += movementDirection.Y * (distanceX * direction.X - distanceY * direction.Y) / 10f;
                         ra.PositionZ += movementDirection.Z * (distanceX * direction.X - distanceY * direction.Y) / 10f;
+
+                        if (a is AssetDYNA dyna)
+                            dyna.OnDynaSpecificPropertyChange(dyna.DynaBase);
                     }
                 }
 

@@ -90,6 +90,7 @@
       <HintPath>..\packages\SharpDX.Mathematics.4.2.0\lib\net45\SharpDX.Mathematics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -481,7 +482,10 @@
     <EmbeddedResource Include="Research\AssetIDGenerator.resx">
       <DependentUpon>AssetIDGenerator.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Research\Randomizer.resx">
+    <EmbeddedResource Include="Research\Randomizer\EnemyProbabilityEditor.resx">
+      <DependentUpon>EnemyProbabilityEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Research\Randomizer\Randomizer.resx">
       <DependentUpon>Randomizer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Research\EventSearch.resx">
@@ -493,10 +497,16 @@
     <Compile Include="Research\AssetIDGenerator.Designer.cs">
       <DependentUpon>AssetIDGenerator.cs</DependentUpon>
     </Compile>
-    <Compile Include="Research\Randomizer.cs">
+    <Compile Include="Research\Randomizer\EnemyProbabilityEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Research\Randomizer.Designer.cs">
+    <Compile Include="Research\Randomizer\EnemyProbabilityEditor.Designer.cs">
+      <DependentUpon>EnemyProbabilityEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Research\Randomizer\Randomizer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Research\Randomizer\Randomizer.Designer.cs">
       <DependentUpon>Randomizer.cs</DependentUpon>
     </Compile>
     <Compile Include="Research\EventSearch.cs">
@@ -505,7 +515,8 @@
     <Compile Include="Research\EventSearch.Designer.cs">
       <DependentUpon>EventSearch.cs</DependentUpon>
     </Compile>
-    <Compile Include="Research\RandomizerFlags.cs" />
+    <Compile Include="Research\Randomizer\RandomizerOtherSettings.cs" />
+    <Compile Include="Research\Randomizer\RandomizerFlags.cs" />
     <Compile Include="SharpDX\Camera\CameraVectors.cs" />
     <Compile Include="SharpDX\Camera\ProjectionMatrix.cs" />
     <Compile Include="SharpDX\Camera\ViewMatrix.cs" />

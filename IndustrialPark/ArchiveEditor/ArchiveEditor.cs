@@ -668,10 +668,12 @@ namespace IndustrialPark
                 return;
 
             toolStripStatusLabelSelectionCount.Text = $"{listViewAssets.SelectedItems.Count}/{listViewAssets.Items.Count} assets selected";
-
-            archive.ClearSelectedAssets();
+       
+            List<uint> selected = new List<uint>(listViewAssets.SelectedItems.Count);
             foreach (ListViewItem v in listViewAssets.SelectedItems)
-                archive.SelectAsset(GetAssetIDFromName(v.Text), true);
+                selected.Add(GetAssetIDFromName(v.Text));
+
+            archive.SelectAssets(selected);
 
             if (listViewAssets.SelectedItems.Count == 0)
             {
@@ -680,6 +682,7 @@ namespace IndustrialPark
                 buttonRemoveAsset.Enabled = false;
                 buttonExportRaw.Enabled = false;
                 buttonInternalEdit.Enabled = false;
+                ArchiveEditorFunctions.UpdateGizmoPosition();
             }
             else
             {

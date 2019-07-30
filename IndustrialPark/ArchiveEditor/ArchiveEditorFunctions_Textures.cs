@@ -232,6 +232,8 @@ namespace IndustrialPark
             LHDRs.AddRange(DICT.LTOC.LHDRList);
             DICT.LTOC.LHDRList = LHDRs;
 
+            List<Section_AHDR> AHDRs = new List<Section_AHDR>();
+
             ReadFileMethods.treatStuffAsByteArray = true;
 
             foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(fileName))
@@ -256,14 +258,13 @@ namespace IndustrialPark
                         // And add the new dictionary as an asset.
                         Section_ADBG ADBG = new Section_ADBG(0, textureName, "", 0);
                         Section_AHDR AHDR = new Section_AHDR(BKDRHash(textureName), AssetType.RWTX, AHDRFlags.SOURCE_VIRTUAL | AHDRFlags.READ_TRANSFORM, ADBG, data);
-
-                        if (ContainsAsset(AHDR.assetID))
-                            RemoveAsset(AHDR.assetID);
-
-                        AddAsset(layerIndex, AHDR);
+                        
+                        AHDRs.Add(AHDR);
                     }
                 }
             }
+
+            ImportMultipleAssets(layerIndex, AHDRs, out _, true);
             
             ReadFileMethods.treatStuffAsByteArray = false;
         }

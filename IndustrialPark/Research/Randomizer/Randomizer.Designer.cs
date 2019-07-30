@@ -34,12 +34,6 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.buttonChooseFile = new System.Windows.Forms.Button();
             this.checkedListBoxMethods = new System.Windows.Forms.CheckedListBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.numericPlatSpeedMax = new System.Windows.Forms.NumericUpDown();
-            this.numericPlatSpeedMin = new System.Windows.Forms.NumericUpDown();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.numericPlatTimeMax = new System.Windows.Forms.NumericUpDown();
-            this.numericPlatTimeMin = new System.Windows.Forms.NumericUpDown();
             this.richTextBoxSkip = new System.Windows.Forms.RichTextBox();
             this.labelSkip = new System.Windows.Forms.Label();
             this.checkedListBoxNotRecommended = new System.Windows.Forms.CheckedListBox();
@@ -58,12 +52,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.checkedListBoxSBINI = new System.Windows.Forms.CheckedListBox();
             this.buttonClear = new System.Windows.Forms.Button();
-            this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericPlatSpeedMax)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericPlatSpeedMin)).BeginInit();
-            this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericPlatTimeMax)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericPlatTimeMin)).BeginInit();
+            this.buttonProbs = new System.Windows.Forms.Button();
             this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -89,9 +78,9 @@
             // buttonPerform
             // 
             this.buttonPerform.Enabled = false;
-            this.buttonPerform.Location = new System.Drawing.Point(624, 371);
+            this.buttonPerform.Location = new System.Drawing.Point(645, 316);
             this.buttonPerform.Name = "buttonPerform";
-            this.buttonPerform.Size = new System.Drawing.Size(191, 23);
+            this.buttonPerform.Size = new System.Drawing.Size(170, 23);
             this.buttonPerform.TabIndex = 8;
             this.buttonPerform.Text = "Perform";
             this.buttonPerform.UseVisualStyleBackColor = true;
@@ -101,9 +90,9 @@
             // 
             this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar1.Location = new System.Drawing.Point(12, 371);
+            this.progressBar1.Location = new System.Drawing.Point(12, 345);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(606, 23);
+            this.progressBar1.Size = new System.Drawing.Size(803, 23);
             this.progressBar1.TabIndex = 10;
             // 
             // buttonChooseFile
@@ -123,80 +112,6 @@
             this.checkedListBoxMethods.Name = "checkedListBoxMethods";
             this.checkedListBoxMethods.Size = new System.Drawing.Size(170, 199);
             this.checkedListBoxMethods.TabIndex = 13;
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.numericPlatSpeedMax);
-            this.groupBox1.Controls.Add(this.numericPlatSpeedMin);
-            this.groupBox1.Location = new System.Drawing.Point(174, 316);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(323, 49);
-            this.groupBox1.TabIndex = 14;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "PLAT Speed Multiplier (Min, Max)";
-            // 
-            // numericPlatSpeedMax
-            // 
-            this.numericPlatSpeedMax.DecimalPlaces = 6;
-            this.numericPlatSpeedMax.Location = new System.Drawing.Point(162, 19);
-            this.numericPlatSpeedMax.Name = "numericPlatSpeedMax";
-            this.numericPlatSpeedMax.Size = new System.Drawing.Size(150, 20);
-            this.numericPlatSpeedMax.TabIndex = 16;
-            this.numericPlatSpeedMax.Value = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-            // 
-            // numericPlatSpeedMin
-            // 
-            this.numericPlatSpeedMin.DecimalPlaces = 6;
-            this.numericPlatSpeedMin.Location = new System.Drawing.Point(6, 19);
-            this.numericPlatSpeedMin.Name = "numericPlatSpeedMin";
-            this.numericPlatSpeedMin.Size = new System.Drawing.Size(150, 20);
-            this.numericPlatSpeedMin.TabIndex = 15;
-            this.numericPlatSpeedMin.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.numericPlatTimeMax);
-            this.groupBox2.Controls.Add(this.numericPlatTimeMin);
-            this.groupBox2.Location = new System.Drawing.Point(503, 316);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(319, 49);
-            this.groupBox2.TabIndex = 17;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "PLAT Time Multiplier (Min, Max)";
-            // 
-            // numericPlatTimeMax
-            // 
-            this.numericPlatTimeMax.DecimalPlaces = 6;
-            this.numericPlatTimeMax.Location = new System.Drawing.Point(162, 19);
-            this.numericPlatTimeMax.Name = "numericPlatTimeMax";
-            this.numericPlatTimeMax.Size = new System.Drawing.Size(150, 20);
-            this.numericPlatTimeMax.TabIndex = 16;
-            this.numericPlatTimeMax.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
-            // numericPlatTimeMin
-            // 
-            this.numericPlatTimeMin.DecimalPlaces = 6;
-            this.numericPlatTimeMin.Location = new System.Drawing.Point(6, 19);
-            this.numericPlatTimeMin.Name = "numericPlatTimeMin";
-            this.numericPlatTimeMin.Size = new System.Drawing.Size(150, 20);
-            this.numericPlatTimeMin.TabIndex = 15;
-            this.numericPlatTimeMin.Value = new decimal(new int[] {
-            2,
-            0,
-            0,
-            65536});
             // 
             // richTextBoxSkip
             // 
@@ -356,19 +271,30 @@
             // 
             // buttonClear
             // 
-            this.buttonClear.Location = new System.Drawing.Point(12, 316);
+            this.buttonClear.Location = new System.Drawing.Point(188, 316);
             this.buttonClear.Name = "buttonClear";
-            this.buttonClear.Size = new System.Drawing.Size(156, 23);
+            this.buttonClear.Size = new System.Drawing.Size(170, 23);
             this.buttonClear.TabIndex = 32;
             this.buttonClear.Text = "Clear Checkboxes";
             this.buttonClear.UseVisualStyleBackColor = true;
             this.buttonClear.Click += new System.EventHandler(this.ButtonClear_Click);
             // 
+            // buttonProbs
+            // 
+            this.buttonProbs.Location = new System.Drawing.Point(15, 316);
+            this.buttonProbs.Name = "buttonProbs";
+            this.buttonProbs.Size = new System.Drawing.Size(167, 23);
+            this.buttonProbs.TabIndex = 33;
+            this.buttonProbs.Text = "Other Settings";
+            this.buttonProbs.UseVisualStyleBackColor = true;
+            this.buttonProbs.Click += new System.EventHandler(this.ButtonProbs_Click);
+            // 
             // Randomizer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(827, 402);
+            this.ClientSize = new System.Drawing.Size(827, 374);
+            this.Controls.Add(this.buttonProbs);
             this.Controls.Add(this.buttonClear);
             this.Controls.Add(this.checkedListBoxSBINI);
             this.Controls.Add(this.label4);
@@ -383,8 +309,6 @@
             this.Controls.Add(this.checkedListBoxNotRecommended);
             this.Controls.Add(this.labelSkip);
             this.Controls.Add(this.richTextBoxSkip);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.checkedListBoxMethods);
             this.Controls.Add(this.buttonChooseFile);
             this.Controls.Add(this.progressBar1);
@@ -397,12 +321,6 @@
             this.ShowIcon = false;
             this.Text = "Randomizer";
             this.Load += new System.EventHandler(this.Randomizer_Load);
-            this.groupBox1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.numericPlatSpeedMax)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericPlatSpeedMin)).EndInit();
-            this.groupBox2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.numericPlatTimeMax)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericPlatTimeMin)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
@@ -418,12 +336,6 @@
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Button buttonChooseFile;
         private System.Windows.Forms.CheckedListBox checkedListBoxMethods;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.NumericUpDown numericPlatSpeedMax;
-        private System.Windows.Forms.NumericUpDown numericPlatSpeedMin;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.NumericUpDown numericPlatTimeMax;
-        private System.Windows.Forms.NumericUpDown numericPlatTimeMin;
         private System.Windows.Forms.RichTextBox richTextBoxSkip;
         private System.Windows.Forms.Label labelSkip;
         private System.Windows.Forms.CheckedListBox checkedListBoxNotRecommended;
@@ -442,5 +354,6 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.CheckedListBox checkedListBoxSBINI;
         private System.Windows.Forms.Button buttonClear;
+        private System.Windows.Forms.Button buttonProbs;
     }
 }

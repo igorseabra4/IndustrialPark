@@ -22,7 +22,7 @@
         Sounds                  = 1 << 17,
         Cameras                 = 1 << 18,
         Reduce_Warps_To_HB01    = 1 << 19,
-        Double_BootHip_LODT     = 1 << 20
+        Multiply_BootHip_LODT   = 1 << 20
     }
 
     public enum RandomizerFlagsP2
@@ -38,16 +38,16 @@
 
     public enum RandomizerFlagsP3
     {
-        BootToHB01            = 1 << 0,
-        RandomBootLevel       = 1 << 1,
-        DontShowMenuOnBoot    = 1 << 2,
-        AllMenuWarpsHB01      = 1 << 3,
-        Cheat_Invincible      = 1 << 4,
-        BobCheat_BubbleBowl   = 1 << 5,
-        BobCheat_CruiseBubble = 1 << 6,
-        ScoobyCheat_Spring    = 1 << 7,
-        ScoobyCheat_Helmet    = 1 << 8,
-        ScoobyCheat_Smash     = 1 << 9,
-        ScoobyCheat_Umbrella  = 1 << 10,
+        Boot_To_Set_Level           = 1 << 0,
+        Random_Boot_Level      = 1 << 1,
+        Dont_Show_Menu_On_Boot = 1 << 2,
+        All_Menu_Warps_HB01    = 1 << 3,
+        Cheat_Invincible       = 1 << 4,
+        BobCheat_BubbleBowl    = 1 << 5,
+        BobCheat_CruiseBubble  = 1 << 6,
+        ScoobyCheat_Spring     = 1 << 7,
+        ScoobyCheat_Helmet     = 1 << 8,
+        ScoobyCheat_Smash      = 1 << 9,
+        ScoobyCheat_Umbrella   = 1 << 10,
     }
 }

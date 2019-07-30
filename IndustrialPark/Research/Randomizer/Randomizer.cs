@@ -13,19 +13,11 @@ namespace IndustrialPark
         public Randomizer()
         {
             InitializeComponent();
+            otherSettings = new RandomizerSettings();
         }
 
         private void Randomizer_Load(object sender, EventArgs e)
         {
-            numericPlatTimeMin.Minimum = decimal.MinValue;
-            numericPlatTimeMin.Maximum = decimal.MaxValue;
-            numericPlatTimeMax.Minimum = decimal.MinValue;
-            numericPlatTimeMax.Maximum = decimal.MaxValue;
-            numericPlatSpeedMin.Minimum = decimal.MinValue;
-            numericPlatSpeedMin.Maximum = decimal.MaxValue;
-            numericPlatSpeedMax.Minimum = decimal.MinValue;
-            numericPlatSpeedMax.Maximum = decimal.MaxValue;
-
             foreach (RandomizerFlags o in Enum.GetValues(typeof(RandomizerFlags)))
                 checkedListBoxMethods.Items.Add(o);
             foreach (RandomizerFlagsP2 o in Enum.GetValues(typeof(RandomizerFlagsP2)))
@@ -35,7 +27,7 @@ namespace IndustrialPark
 
             textBoxSeed.Text = new Random().Next().ToString();
 
-            SetCheckBoxes(new RandoSettings() {
+            SetCheckBoxes(new RandomizerSaveFile() {
                 flags =
                 RandomizerFlags.Warps |
                 RandomizerFlags.Pickup_Positions |
@@ -53,13 +45,13 @@ namespace IndustrialPark
                 RandomizerFlags.Timers |
                 RandomizerFlags.Music |
                 RandomizerFlags.Disco_Floors |
-                RandomizerFlags.Double_BootHip_LODT |
+                RandomizerFlags.Multiply_BootHip_LODT |
                 RandomizerFlags.Reduce_Warps_To_HB01,
                 flags2 = 0,
                 flags3 = 
-                RandomizerFlagsP3.BootToHB01 |
-                RandomizerFlagsP3.DontShowMenuOnBoot |
-                RandomizerFlagsP3.AllMenuWarpsHB01 |
+                RandomizerFlagsP3.Boot_To_Set_Level |
+                RandomizerFlagsP3.Dont_Show_Menu_On_Boot |
+                RandomizerFlagsP3.All_Menu_Warps_HB01 |
                 RandomizerFlagsP3.ScoobyCheat_Spring
             });
         }
@@ -76,6 +68,7 @@ namespace IndustrialPark
         private string rootDir;
         private bool isDir = true;
         private uint seed;
+        private RandomizerSettings otherSettings;
 
         private void buttonChooseRoot_Click(object sender, EventArgs e)
         {
@@ -100,26 +93,76 @@ namespace IndustrialPark
                 buttonPerform.Enabled = true;
             }
         }
+
+
+        private void ButtonRandomSeed_Click(object sender, EventArgs e)
+        {
+            byte[] bytes = new byte[4];
+            new Random().NextBytes(bytes);
+            textBoxSeed.Text = BitConverter.ToUInt32(bytes, 0).ToString();
+            UpdateSeed();
+        }
+
+        private void TextBox1_TextChanged(object sender, EventArgs e)
+        {
+            UpdateSeed();
+        }
+
+        private void UpdateSeed()
+        {
+            try
+            {
+                seed = Convert.ToUInt32(textBoxSeed.Text);
+            }
+            catch
+            {
+                seed = BKDRHash(textBoxSeed.Text);
+            }
+            labelSeed.Text = "Seed: " + seed.ToString();
+        }
+
+        private RandomizerFlags GetActiveFlags()
+        {
+            RandomizerFlags flags = 0;
+            foreach (RandomizerFlags i in checkedListBoxMethods.CheckedItems)
+                flags |= i;
+
+            return flags;
+        }
+
+        private RandomizerFlagsP2 GetActiveFlagsP2()
+        {
+            RandomizerFlagsP2 flags2 = 0;
+            foreach (RandomizerFlagsP2 i in checkedListBoxNotRecommended.CheckedItems)
+                flags2 |= i;
+
+            return flags2;
+        }
+
+        private RandomizerFlagsP3 GetActiveFlagsP3()
+        {
+            RandomizerFlagsP3 flags3 = 0;
+            foreach (RandomizerFlagsP3 i in checkedListBoxSBINI.CheckedItems)
+                flags3 |= i;
+
+            return flags3;
+        }
         
         private void buttonPerform_Click(object sender, EventArgs e)
         {
             progressBar1.Value = 0;
-            Random r = new Random((int)seed);
 
             RandomizerFlags flags = GetActiveFlags();
             RandomizerFlagsP2 flags2 = GetActiveFlagsP2();
             RandomizerFlagsP3 flags3 = GetActiveFlagsP3();
 
-            if ((flags & RandomizerFlags.Enemies_Allow_Any_Type) != 0 && currentGame != HipHopFile.Game.BFBB)
-                flags ^= RandomizerFlags.Enemies_Allow_Any_Type;
-
             if (isDir)
-                PerformDirRandomizer(r, flags, flags2, flags3);
+                PerformDirRandomizer((int)seed, flags, flags2, flags3);
             else
             {
                 ArchiveEditorFunctions archive = new ArchiveEditorFunctions();
                 archive.OpenFile(rootDir, false, true);
-                archive.Shuffle(r, flags, flags2, (float)numericPlatSpeedMin.Value, (float)numericPlatSpeedMax.Value, (float)numericPlatTimeMin.Value, (float)numericPlatTimeMax.Value);
+                archive.Shuffle((int)seed, flags, flags2, otherSettings);
                 archive.Save();
             }
 
@@ -133,7 +176,7 @@ namespace IndustrialPark
             progressBar1.Value = 0;
         }
 
-        private void PerformDirRandomizer(Random r, RandomizerFlags flags, RandomizerFlagsP2 flags2, RandomizerFlagsP3 flags3)
+        private void PerformDirRandomizer(int seed, RandomizerFlags flags, RandomizerFlagsP2 flags2, RandomizerFlagsP3 flags3)
         {
             List<(ArchiveEditorFunctions, ArchiveEditorFunctions)> levelPairs = new List<(ArchiveEditorFunctions, ArchiveEditorFunctions)>();
             List<(string, string)> levelPathPairs = new List<(string, string)>();
@@ -167,23 +210,22 @@ namespace IndustrialPark
 
                         if (!platformVerified && (flags & RandomizerFlags.Enemies_Allow_Any_Type) != 0)
                         {
-                            if (currentPlatform == HipHopFile.Platform.GameCube)
+                            if (currentGame != HipHopFile.Game.BFBB || currentPlatform != HipHopFile.Platform.GameCube)
                             {
-                                if (!Directory.Exists(ArchiveEditorFunctions.editorFilesFolder))
-                                {
-                                    DialogResult dialogResult = MessageBox.Show("The IndustrialPark-EditorFiles folder has not been found under Resources. You must download it first to be able to use Enemies_Allow_Any_Type. Do you wish to download it?", "Note", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-
-                                    if (dialogResult == DialogResult.Yes)
-                                        AutomaticUpdater.DownloadEditorFiles();
-                                    else
-                                        flags ^= RandomizerFlags.Enemies_Allow_Any_Type;
-                                }
-                            }
-                            else
-                            {
-                                MessageBox.Show("Enemies_Allow_Any_Type is only supported for GameCube. It will be disabled");
+                                MessageBox.Show("Enemies_Allow_Any_Type is only supported for Battle For Bikini Bottom (GameCube). It will be disabled.");
                                 flags ^= RandomizerFlags.Enemies_Allow_Any_Type;
                             }
+                            else if (!Directory.Exists(ArchiveEditorFunctions.editorFilesFolder))
+                            {
+                                DialogResult dialogResult = MessageBox.Show("The IndustrialPark-EditorFiles folder has not been found under Resources. You must download it first to be able to use Enemies_Allow_Any_Type. Do you wish to download it?", "Note", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+                                if (dialogResult == DialogResult.Yes)
+                                    AutomaticUpdater.DownloadEditorFiles();
+                                else
+                                    flags ^= RandomizerFlags.Enemies_Allow_Any_Type;
+                            }
+                            else
+                                AutomaticUpdater.VerifyEditorFiles();
 
                             platformVerified = true;
                         }
@@ -213,34 +255,34 @@ namespace IndustrialPark
                         }
 
                         string nameForBoot = Path.GetFileNameWithoutExtension(hipPath).ToUpper();
-                        if (ShouldShuffle(flags3, RandomizerFlagsP3.RandomBootLevel) && !FileInSecondBox(hipPath) && !namesForBoot.Contains(nameForBoot))
+                        if (ShouldShuffle(flags3, RandomizerFlagsP3.Random_Boot_Level) && !namesForBoot.Contains(nameForBoot))
                             namesForBoot.Add(nameForBoot);
 
                         progressBar1.PerformStep();
                     }
 
+            Random r = new Random(seed);
+
             if ((flags & RandomizerFlags.Reduce_Warps_To_HB01) != 0 && currentGame == HipHopFile.Game.BFBB)
             {
-                bool found = false;
+                int count = 0;
                 for (int i = 0; i < warpNames.Count; i++)
                     if (warpNames[i] == "HB01")
                     {
-                        if (!found)
+                        count++;
+                        if (count >= otherSettings.hb01Warps)
                         {
-                            found = true;
-                            continue;
+                            int index;
+                            do
+                                index = r.Next(0, warpNames.Count);
+                            while (warpNames[index] == "HB01");
+
+                            warpNames[i] = warpNames[index];
                         }
-
-                        int index;
-                        do
-                            index = r.Next(0, warpNames.Count);
-                        while (warpNames[index] == "HB01");
-
-                        warpNames[i] = warpNames[index];
                     }
             }
 
-            if ((flags & (RandomizerFlags.Music | RandomizerFlags.Double_BootHip_LODT)) != 0)
+            if ((flags & (RandomizerFlags.Music | RandomizerFlags.Multiply_BootHip_LODT)) != 0)
             {
                 string bootPath = rootDir + "\\boot.hip";
                 if (File.Exists(bootPath))
@@ -255,11 +297,11 @@ namespace IndustrialPark
                         if (currentGame == HipHopFile.Game.BFBB)
                             shouldSave |= boot.RandomizePlaylist();
                         else                            
-                            shouldSave |= boot.ShuffleSounds(r, false, true);
+                            shouldSave |= boot.ShuffleSounds(seed, false, true);
                     }
 
-                    if ((flags & RandomizerFlags.Double_BootHip_LODT) != 0)
-                        shouldSave |= boot.DoubleLODT();
+                    if ((flags & RandomizerFlags.Multiply_BootHip_LODT) != 0)
+                        shouldSave |= boot.MultiplyLODT(otherSettings.bootHipLodtMulti);
 
                     if (shouldSave)
                         boot.Save();
@@ -286,10 +328,10 @@ namespace IndustrialPark
             for (int i = 0; i < levelPairs.Count; i++)
             {
                 bool item1shuffled = 
-                levelPairs[i].Item1.Shuffle(r, flags, flags2, (float)numericPlatSpeedMin.Value, (float)numericPlatSpeedMax.Value, (float)numericPlatTimeMin.Value, (float)numericPlatTimeMax.Value);
+                levelPairs[i].Item1.Shuffle(seed, flags, flags2, otherSettings);
 
                 if ((flags & RandomizerFlags.Warps) != 0 && !FileInSecondBox(levelPairs[i].Item1.currentlyOpenFilePath))
-                    levelPairs[i].Item1.SetWarpNames(r, ref warpNames, toSkip, ref warpRandomizerOutput);
+                    levelPairs[i].Item1.SetWarpNames(seed, ref warpNames, toSkip, ref warpRandomizerOutput);
 
                 HashSet<VilType> enemyVils = new HashSet<VilType>();
 
@@ -303,7 +345,7 @@ namespace IndustrialPark
                         item2shuffled = levelPairs[i].Item2.ImportEnemyTypes(enemyVils);
 
                     item2shuffled |=
-                       levelPairs[i].Item2.Shuffle(r, flags, flags2, (float)numericPlatSpeedMin.Value, (float)numericPlatSpeedMax.Value, (float)numericPlatTimeMin.Value, (float)numericPlatTimeMax.Value);
+                       levelPairs[i].Item2.Shuffle(seed, flags, flags2, otherSettings);
                 }
                 
                 if ((flags2 & RandomizerFlagsP2.Level_Files) != 0 && !FileInSecondBox(levelPairs[i].Item1.currentlyOpenFilePath))
@@ -322,7 +364,6 @@ namespace IndustrialPark
                     if (item1shuffled)
                         levelPairs[i].Item1.Save();
                     
-
                     if (item2shuffled)
                         levelPairs[i].Item2.Save();
                 }
@@ -337,7 +378,7 @@ namespace IndustrialPark
                 MessageBox.Show("There was a problem with the warp randomizer. It is likely some warps are broken.");
 
             if (flags3 != 0)
-                ApplyINISettings(flags3, r, namesForBoot);
+                ApplyINISettings(flags3, seed, namesForBoot);
 
             if (warpRandomizerOutput.Count != 0)
                 WriteWarpRandomizerOutput(warpRandomizerOutput);
@@ -388,8 +429,16 @@ namespace IndustrialPark
             return false;
         }
 
-        private void ApplyINISettings(RandomizerFlagsP3 flags3, Random r, List<string> namesForBoot)
+        private void ApplyINISettings(RandomizerFlagsP3 flags3, int seed, List<string> namesForBoot)
         {
+            namesForBoot.Remove("BC05");
+            namesForBoot.Remove("GY04");
+            namesForBoot.Remove("B302");
+            namesForBoot.Remove("B303");
+            namesForBoot.Remove("PG12");
+
+            Random r = new Random(seed);
+
             string[] ini;
             string filePath = rootDir + "\\sb.ini";
             if (File.Exists(filePath))
@@ -408,13 +457,13 @@ namespace IndustrialPark
 
             for (int i = 0; i < ini.Length; i++)
             {
-                if (ini[i].StartsWith("BOOT=") && ShouldShuffle(flags3, RandomizerFlagsP3.RandomBootLevel))
+                if (ini[i].StartsWith("BOOT=") && ShouldShuffle(flags3, RandomizerFlagsP3.Random_Boot_Level))
                     ini[i] = "BOOT=" + namesForBoot[r.Next(0, namesForBoot.Count)];
-                else if (ini[i].StartsWith("BOOT=") && currentGame == HipHopFile.Game.BFBB && ShouldShuffle(flags3, RandomizerFlagsP3.BootToHB01))
-                    ini[i] = "BOOT=HB01";
-                else if (ini[i].StartsWith("ShowMenuOnBoot") && ShouldShuffle(flags3, RandomizerFlagsP3.DontShowMenuOnBoot))
+                else if (ini[i].StartsWith("BOOT=") && ShouldShuffle(flags3, RandomizerFlagsP3.Boot_To_Set_Level))
+                    ini[i] = "BOOT=" + otherSettings.BootLevel;
+                else if (ini[i].StartsWith("ShowMenuOnBoot") && ShouldShuffle(flags3, RandomizerFlagsP3.Dont_Show_Menu_On_Boot))
                     ini[i] = "ShowMenuOnBoot=0";
-                else if (ini[i].StartsWith("Menu") && ShouldShuffle(flags3, RandomizerFlagsP3.AllMenuWarpsHB01))
+                else if (ini[i].StartsWith("Menu") && ShouldShuffle(flags3, RandomizerFlagsP3.All_Menu_Warps_HB01))
                     ini[i] = ini[i].Substring(0, 9) + "HB 01 01 01 01 01 01 01 01";
                 else if (ini[i].StartsWith("G.TakeDamage") && ShouldShuffle(flags3, RandomizerFlagsP3.Cheat_Invincible))
                     ini[i] = "G.TakeDamage=0";
@@ -444,57 +493,19 @@ namespace IndustrialPark
                 "For more information please check the Randomizer page in the Battlepedia wiki.");
         }
 
-        private void ButtonRandomSeed_Click(object sender, EventArgs e)
+        private void ButtonProbs_Click(object sender, EventArgs e)
         {
-            byte[] bytes = new byte[4];
-            new Random().NextBytes(bytes);
-            textBoxSeed.Text = BitConverter.ToUInt32(bytes, 0).ToString();
-            UpdateSeed();
+            new RandomizerSettingsEditor(otherSettings).ShowDialog();
         }
 
-        private void TextBox1_TextChanged(object sender, EventArgs e)
+        private void ButtonClear_Click(object sender, EventArgs e)
         {
-            UpdateSeed();
-        }
-
-        private void UpdateSeed()
-        {
-            try
-            {
-                seed = Convert.ToUInt32(textBoxSeed.Text);
-            }
-            catch
-            {
-                seed = HipHopFile.Functions.BKDRHash(textBoxSeed.Text);
-            }
-            labelSeed.Text = "Seed: " + seed.ToString();
-        }
-
-        private RandomizerFlags GetActiveFlags()
-        {
-            RandomizerFlags flags = 0;
-            foreach (RandomizerFlags i in checkedListBoxMethods.CheckedItems)
-                flags |= i;
-
-            return flags;
-        }
-
-        private RandomizerFlagsP2 GetActiveFlagsP2()
-        {
-            RandomizerFlagsP2 flags2 = 0;
-            foreach (RandomizerFlagsP2 i in checkedListBoxNotRecommended.CheckedItems)
-                flags2 |= i;
-
-            return flags2;
-        }
-
-        private RandomizerFlagsP3 GetActiveFlagsP3()
-        {
-            RandomizerFlagsP3 flags3 = 0;
-            foreach (RandomizerFlagsP3 i in checkedListBoxSBINI.CheckedItems)
-                flags3 |= i;
-
-            return flags3;
+            for (int i = 0; i < checkedListBoxMethods.Items.Count; i++)
+                checkedListBoxMethods.SetItemChecked(i, false);
+            for (int i = 0; i < checkedListBoxNotRecommended.Items.Count; i++)
+                checkedListBoxNotRecommended.SetItemChecked(i, false);
+            for (int i = 0; i < checkedListBoxSBINI.Items.Count; i++)
+                checkedListBoxSBINI.SetItemChecked(i, false);
         }
 
         private void ButtonSaveJson_Click(object sender, EventArgs e)
@@ -515,37 +526,33 @@ namespace IndustrialPark
             };
             if (openFile.ShowDialog() == DialogResult.OK)
             {
-                RandoSettings settings = JsonConvert.DeserializeObject<RandoSettings>(File.ReadAllText(openFile.FileName));
+                RandomizerSaveFile settings = JsonConvert.DeserializeObject<RandomizerSaveFile>(File.ReadAllText(openFile.FileName));
 
                 if (settings.version == FromInstance().version)
-                {
-                    if (!string.IsNullOrEmpty(settings.seedText))
-                        textBoxSeed.Text = settings.seedText;
-                    else
-                        textBoxSeed.Text = settings.seedNum.ToString();
+                    MessageBox.Show("Note: randomizer settings file was made with an earlier or different version of Industrial Park. " +
+                        "The program will attempt to open it, but doesn't guarantee the randomization result will be the same. " +
+                        "If you need the exact same result, please use the same Industrial Park version (preferably the latest one) and a settings file saved by it.");
 
-                    seed = settings.seedNum;
-
-                    SetCheckBoxes(settings);
-
-                    numericPlatSpeedMin.Value = (decimal)settings.speedMin;
-                    numericPlatSpeedMax.Value = (decimal)settings.speedMax;
-                    numericPlatTimeMin.Value = (decimal)settings.timeMin;
-                    numericPlatTimeMax.Value = (decimal)settings.timeMax;
-
-                    richTextBoxSkip.Lines = settings.skip1;
-                    richTextBox2.Lines = settings.skip2;
-
-                    labelRandoJson.Text = "Loaded settings: " + openFile.FileName;
-                }
+                if (!string.IsNullOrEmpty(settings.seedText))
+                    textBoxSeed.Text = settings.seedText;
                 else
-                {
-                    MessageBox.Show("Randomizer settings cannot be opened because it was made with an earlier or different version of Industrial Park.");
-                }
+                    textBoxSeed.Text = settings.seedNum.ToString();
+
+                seed = settings.seedNum;
+
+                SetCheckBoxes(settings);
+                UpdateSeed();
+                
+                richTextBoxSkip.Lines = settings.skip1;
+                richTextBox2.Lines = settings.skip2;
+
+                otherSettings = settings.otherSettings;
+
+                labelRandoJson.Text = "Loaded settings: " + openFile.FileName;
             }
         }
 
-        private void SetCheckBoxes(RandoSettings settings)
+        private void SetCheckBoxes(RandomizerSaveFile settings)
         {
             int k = 0;
             foreach (RandomizerFlags i in Enum.GetValues(typeof(RandomizerFlags)))
@@ -569,7 +576,7 @@ namespace IndustrialPark
             }
         }
 
-        public class RandoSettings
+        public class RandomizerSaveFile
         {
             public int version;
             public string seedText;
@@ -577,38 +584,22 @@ namespace IndustrialPark
             public RandomizerFlags flags;
             public RandomizerFlagsP2 flags2;
             public RandomizerFlagsP3 flags3;
-            public float speedMin;
-            public float speedMax;
-            public float timeMin;
-            public float timeMax;
             public string[] skip1;
             public string[] skip2;
+            public RandomizerSettings otherSettings;
         }
 
-        public RandoSettings FromInstance() => new RandoSettings()
+        public RandomizerSaveFile FromInstance() => new RandomizerSaveFile()
         {
-            version = 47,
+            version = 48,
             seedText = textBoxSeed.Text,
             seedNum = seed,
             flags = GetActiveFlags(),
             flags2 = GetActiveFlagsP2(),
             flags3 = GetActiveFlagsP3(),
-            speedMin = (float)numericPlatSpeedMin.Value,
-            speedMax = (float)numericPlatSpeedMax.Value,
-            timeMin = (float)numericPlatTimeMin.Value,
-            timeMax = (float)numericPlatTimeMax.Value,
             skip1 = richTextBoxSkip.Lines,
-            skip2 = richTextBox2.Lines
+            skip2 = richTextBox2.Lines,
+            otherSettings = otherSettings
         };
-
-        private void ButtonClear_Click(object sender, EventArgs e)
-        {
-            for (int i = 0; i < checkedListBoxMethods.Items.Count; i++)
-                checkedListBoxMethods.SetItemChecked(i, false);
-            for (int i = 0; i < checkedListBoxNotRecommended.Items.Count; i++)
-                checkedListBoxNotRecommended.SetItemChecked(i, false);
-            for (int i = 0; i < checkedListBoxSBINI.Items.Count; i++)
-                checkedListBoxSBINI.SetItemChecked(i, false);
-        }
     }
 }

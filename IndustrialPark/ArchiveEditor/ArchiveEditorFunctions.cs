@@ -617,21 +617,7 @@ namespace IndustrialPark
                 {
                     try
                     {
-                        List<byte> file = new List<byte>();
-                        file.AddRange(GetHeaderFromSNDI(AHDR.assetID));
-                        file.AddRange(AHDR.data);
-
-                        if (new string(new char[] { (char)file[0], (char)file[1], (char)file[2], (char)file[3] }) == "RIFF")
-                        {
-                            byte[] chunkSizeArr = BitConverter.GetBytes(file.Count - 8);
-
-                            file[4] = chunkSizeArr[0];
-                            file[5] = chunkSizeArr[1];
-                            file[6] = chunkSizeArr[2];
-                            file[7] = chunkSizeArr[3];
-                        }
-
-                        AHDR.data = file.ToArray();
+                        AHDR.data = GetSoundData(AHDR.assetID, AHDR.data);
                     }
                     catch (Exception e)
                     {
@@ -739,16 +725,18 @@ namespace IndustrialPark
             }
         }
 
-        public void SelectAsset(uint assetID, bool add)
+        public void SelectAssets(List<uint> assetIDs)
         {
-            if (!add)
-                ClearSelectedAssets();
+            ClearSelectedAssets();
 
-            if (!assetDictionary.ContainsKey(assetID))
-                return;
+            foreach (uint assetID in assetIDs)
+            {
+                if (!assetDictionary.ContainsKey(assetID))
+                    continue;
 
-            assetDictionary[assetID].isSelected = true;
-            currentlySelectedAssets.Add(assetDictionary[assetID]);
+                assetDictionary[assetID].isSelected = true;
+                currentlySelectedAssets.Add(assetDictionary[assetID]);
+            }
 
             UpdateGizmoPosition();
         }

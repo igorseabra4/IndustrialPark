@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using System;
+using System.Collections.Generic;
 
 namespace IndustrialPark
 {
@@ -89,6 +90,25 @@ namespace IndustrialPark
             }
 
             throw new Exception("Error: could not find SNDI asset which contains this sound in this archive.");
+        }
+
+        public byte[] GetSoundData(uint assetID, byte[] previousData)
+        {
+            List<byte> file = new List<byte>();
+            file.AddRange(GetHeaderFromSNDI(assetID));
+            file.AddRange(previousData);
+
+            if (new string(new char[] { (char)file[0], (char)file[1], (char)file[2], (char)file[3] }) == "RIFF")
+            {
+                byte[] chunkSizeArr = BitConverter.GetBytes(file.Count - 8);
+
+                file[4] = chunkSizeArr[0];
+                file[5] = chunkSizeArr[1];
+                file[6] = chunkSizeArr[2];
+                file[7] = chunkSizeArr[3];
+            }
+
+            return file.ToArray();
         }
 
         public void AddJawDataToJAW(byte[] jawData, uint assetID)

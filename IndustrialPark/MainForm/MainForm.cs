@@ -222,6 +222,12 @@ namespace IndustrialPark
                 MessageBox.Show("No update found.");
         }
 
+        private void CheckForUpdatesOnEditorFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!AutomaticUpdater.VerifyEditorFiles())
+                MessageBox.Show("No update found.");
+        }
+
         private void DownloadIndustrialParkEditorFilesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AutomaticUpdater.DownloadEditorFiles();

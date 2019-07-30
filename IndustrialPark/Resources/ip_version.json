@@ -1,4 +1,4 @@
 {
-  "version": "preview47",
-  "versionName": "Preview 47:\nRandomizer update: fixes more issues with Warps randomizer, adds proper Enemies_Allow_Any_Type method"
+  "version": "preview48",
+  "versionName": "Preview 48:\n* Randomizer update\n* Fixes bug with gizmos not working on DYNAs\n* Adds version checking for EditorFiles"
 }

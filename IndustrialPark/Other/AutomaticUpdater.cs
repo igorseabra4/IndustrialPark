@@ -155,5 +155,58 @@ namespace IndustrialPark
 
             Directory.Delete(directory);
         }
+
+        public static bool VerifyEditorFiles()
+        {
+            bool mustUpdate = false;
+
+            try
+            {
+                if (!Directory.Exists(ArchiveEditorFunctions.editorFilesFolder))
+                {
+                    mustUpdate = true;
+                }
+                else
+                {
+                    if (File.Exists(ArchiveEditorFunctions.editorFilesFolder + "version.json"))
+                    {
+                        string localVersion = JsonConvert.DeserializeObject<IPversion>(File.ReadAllText(ArchiveEditorFunctions.editorFilesFolder + "version.json")).version;
+
+                        string versionInfoURL = "https://raw.githubusercontent.com/igorseabra4/IndustrialPark-EditorFiles/master/version.json";
+
+                        string updatedJson;
+
+                        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(versionInfoURL);
+                        request.AutomaticDecompression = DecompressionMethods.GZip;
+                        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                        using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                            updatedJson = reader.ReadToEnd();
+
+                        IPversion updatedVersion = JsonConvert.DeserializeObject<IPversion>(updatedJson);
+
+                        if (localVersion != updatedVersion.version)
+                            mustUpdate = true;
+                    }
+                    else
+                    {
+                        mustUpdate = true;
+                    }
+                }
+
+                if (mustUpdate)
+                {
+                    DialogResult dialogResult = MessageBox.Show("An update for IndustrialPark-EditorFiles has been found. Do you wish to download it now?", "Note", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+                    if (dialogResult == DialogResult.Yes)
+                        DownloadEditorFiles();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+            return mustUpdate;
+        }
     }
 }
