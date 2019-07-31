@@ -46,7 +46,8 @@ namespace IndustrialPark
                 RandomizerFlags.Music |
                 RandomizerFlags.Disco_Floors |
                 RandomizerFlags.Multiply_BootHip_LODT |
-                RandomizerFlags.Reduce_Warps_To_HB01,
+                RandomizerFlags.Reduce_Warps_To_HB01 |
+                RandomizerFlags.Disable_Cutscenes,
                 flags2 = 0,
                 flags3 = 
                 RandomizerFlagsP3.Boot_To_Set_Level |
@@ -93,8 +94,7 @@ namespace IndustrialPark
                 buttonPerform.Enabled = true;
             }
         }
-
-
+        
         private void ButtonRandomSeed_Click(object sender, EventArgs e)
         {
             byte[] bytes = new byte[4];
@@ -591,7 +591,7 @@ namespace IndustrialPark
 
         public RandomizerSaveFile FromInstance() => new RandomizerSaveFile()
         {
-            version = 48,
+            version = 49,
             seedText = textBoxSeed.Text,
             seedNum = seed,
             flags = GetActiveFlags(),

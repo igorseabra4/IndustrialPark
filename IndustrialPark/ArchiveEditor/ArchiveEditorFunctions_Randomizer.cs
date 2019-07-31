@@ -197,6 +197,12 @@ namespace IndustrialPark
                 shuffled = true;
             }
 
+            if (ShouldShuffle(flags, RandomizerFlags.Disable_Cutscenes))
+            {
+                DisableCutscenes();
+                shuffled = true;
+            }
+
             return shuffled;
         }
 
@@ -259,6 +265,8 @@ namespace IndustrialPark
                     break;
                 case "gl01":
                     assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("SHINY_YELLOW_004")));
+                    if (ContainsAsset(new AssetID("GOLDENSPATULA_04")))
+                        ((AssetPKUP)GetFromAssetID(new AssetID("GOLDENSPATULA_04"))).PositionY += 2f;
                     break;
                 case "gl03":
                     if (ContainsAsset(0x0B48E8AC))
@@ -272,6 +280,13 @@ namespace IndustrialPark
                             ((AssetPKUP)GetFromAssetID(0xF70F6FEE)).Visible = true;
                         }
                     }
+                    break;
+                case "sm02":
+                    assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("PU_SHINY_RED")));
+                    assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("PU_SHINY_GREEN")));
+                    assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("PU_SHINY_YELLOW")));
+                    assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("PU_SHINY_BLUE")));
+                    assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("PU_SHINY_PURPLE")));
                     break;
                 case "jf01":
                 case "bc01":
@@ -403,6 +418,25 @@ namespace IndustrialPark
         
         private void ShuffleVilTypes(int seed, List<VilType> chooseFrom, List<VilType> setTo, bool mixModels, bool veryRandom, bool enemies)
         {
+            if (LevelName == "bb02")
+            {
+                while (setTo.Contains(VilType.tubelet_bind))
+                    setTo.Remove(VilType.tubelet_bind);
+            }
+            else if (LevelName == "hb07")
+            {
+                while (setTo.Contains(VilType.robot_arf_bind))
+                    setTo.Remove(VilType.robot_arf_bind);
+            }
+            else if (LevelName == "rb01")
+            {
+                while (setTo.Contains(VilType.robot_4a_monsoon_bind))
+                    setTo.Remove(VilType.robot_4a_monsoon_bind);
+            }
+
+            if (setTo.Count == 0)
+                return;
+
             Random r = new Random(seed);
 
             List<AssetVIL> assets = (from asset in assetDictionary.Values where asset is AssetVIL vil && chooseFrom.Contains(vil.VilType) select asset).Cast<AssetVIL>().ToList();
@@ -417,15 +451,15 @@ namespace IndustrialPark
                 int model_value = mixModels ? r.Next(0, viltypes.Count) : viltypes_value;
 
                 a.VilType = veryRandom ? setTo[r.Next(0, setTo.Count)] : viltypes[viltypes_value];
-                
+
                 if (enemies && veryRandom)
-                    a.Model_AssetID = 
-                        a.VilType == VilType.robot_sleepytime_bind ? 
-                        "robot_sleepy-time_bind.MINF" : 
+                    a.Model_AssetID =
+                        a.VilType == VilType.robot_sleepytime_bind ?
+                        "robot_sleepy-time_bind.MINF" :
                         a.VilType.ToString() + ".MINF";
 
                 else a.Model_AssetID = models[model_value];
-
+                
                 viltypes.RemoveAt(viltypes_value);
                 models.RemoveAt(model_value);
 
@@ -441,6 +475,7 @@ namespace IndustrialPark
                             links.RemoveAt(i);
                             i--;
                         }
+                    a.LinksBFBB = links.ToArray();
                 }
 
                 if (a.VilType == VilType.robot_arf_bind || a.VilType == VilType.tubelet_bind)
@@ -453,53 +488,142 @@ namespace IndustrialPark
                         "RANDO_" + (a.VilType == VilType.tubelet_bind ? "TUBELET" : "ARF"),
                        (a.VilType == VilType.tubelet_bind ? AssetTemplate.Tubelet : AssetTemplate.Arf)));
                     links.AddRange(vil.LinksBFBB);
-                    vil.LinksBFBB = links.ToArray();
-                    vil.MovePoint_AssetID = a.MovePoint_AssetID;
-                    RemoveAsset(a.AHDR.assetID);
-                    ReplaceConnectIOwnYou(a.AHDR.assetID, vil.AHDR.assetID);
-                    foreach (uint u in FindWhoTargets(a.AHDR.assetID))
-                        if (GetFromAssetID(u) is ObjectAsset asset)
-                        {
-                            List<LinkBFBB> objectAssetLinks = asset.LinksBFBB.ToList();
-                            for (int i = 0; i < objectAssetLinks.Count; i++)
-                                if (objectAssetLinks[i].TargetAssetID == a.AHDR.assetID)
-                                {
-                                    objectAssetLinks.RemoveAt(i);
-                                    i--;
-                                }
-                            asset.LinksBFBB = objectAssetLinks.ToArray();
-                        }
+                    a.LinksBFBB = links.ToArray();
+                    RemoveAsset(vil.AHDR.assetID);
+                    foreach (uint u in assetIDs)
+                        if (ContainsAsset(u) && GetFromAssetID(u) is AssetMVPT)
+                            RemoveAsset(u);
                 }
             }
         }
 
-        private void ReplaceConnectIOwnYou(uint oldAssetID, uint newAssetID)
+        private bool DisableCutscenes()
+        {
+            switch (LevelName)
+            {
+                case "bb01":
+                    uint gloveIntroDisp = new AssetID("GLOVE_INTRO_DISP");
+                    uint gloveIntroTrig = new AssetID("GLOVE_INTRO_TRIG");
+
+                    if (ContainsAsset(gloveIntroDisp))
+                        ((AssetDPAT)GetFromAssetID(gloveIntroDisp)).EnabledOnStart = false;
+                    if (ContainsAsset(gloveIntroTrig))
+                        ((AssetTRIG)GetFromAssetID(gloveIntroTrig)).EnabledOnStart = false;
+                    return true;
+
+                case "bb02":
+                    uint chuckOffDisp = new AssetID("CHUCK_CINEMATIC_OFF_DISP");
+
+                    if (ContainsAsset(chuckOffDisp))
+                        ((AssetDPAT)GetFromAssetID(chuckOffDisp)).EnabledOnStart = true;
+                    return true;
+
+                case "bc01":
+                    uint arfIntroTrigDisp = new AssetID("ARF_INTRO_TRIG_DISP");
+
+                    if (ContainsAsset(arfIntroTrigDisp))
+                        ((AssetDPAT)GetFromAssetID(arfIntroTrigDisp)).EnabledOnStart = false;
+                    return true;
+
+                case "gl01":
+                    uint moonsoonIntroTrig = new AssetID("MONSOON_INTRO_TRIG");
+
+                    if (ContainsAsset(moonsoonIntroTrig))
+                        ((AssetTRIG)GetFromAssetID(moonsoonIntroTrig)).EnabledOnStart = false;
+                    return true;
+
+                case "gy01":
+                    uint slickIntoDisp = new AssetID("SLICK_INTRO_TRIG_DISP'");
+
+                    if (ContainsAsset(slickIntoDisp))
+                        ((AssetDPAT)GetFromAssetID(slickIntoDisp)).EnabledOnStart = false;
+                    return true;
+
+                case "jf01":
+                    uint jf01fly = new AssetID("JF01_FLYTHOUGH_WIDGET");
+
+                    if (ContainsAsset(jf01fly))
+                    {
+                        AssetDYNA fly = (AssetDYNA)GetFromAssetID(jf01fly);
+                        List<LinkBFBB> flyLinks = fly.LinksBFBB.ToList();
+                        for (int i = 0; i < flyLinks.Count; i++)
+                            if (flyLinks[i].EventSendID == EventBFBB.Preload)
+                            {
+                                flyLinks.RemoveAt(i);
+                                break;
+                            }
+                        fly.LinksBFBB = flyLinks.ToArray();
+                    }
+
+                    uint swCinemaDisp = new AssetID("SWCINEMA_DISP_01");
+                    if (ContainsAsset(swCinemaDisp))
+                        ((AssetDPAT)GetFromAssetID(swCinemaDisp)).EnabledOnStart = true;
+
+                    uint hammerDisp = new AssetID("HAMMERCINEMA_DISP_01");
+                    if (ContainsAsset(hammerDisp))
+                        ((AssetDPAT)GetFromAssetID(hammerDisp)).EnabledOnStart = true;
+                    return true;
+
+                case "jf03":
+                    uint tartarIntroDisp = new AssetID("TARTAR_CUTSCENE_OFF_DISP");
+
+                    if (ContainsAsset(tartarIntroDisp))
+                        ((AssetDPAT)GetFromAssetID(tartarIntroDisp)).EnabledOnStart = true;
+                    return true;
+
+                case "kf01":
+                    uint tubeDisp = new AssetID("TUBELETS_CINEMA_DISP");
+
+                    if (ContainsAsset(tubeDisp))
+                        ((AssetDPAT)GetFromAssetID(tubeDisp)).EnabledOnStart = true;
+                    return true;
+
+                case "rb01":
+                    uint rb01fly = new AssetID("RB01_FLYTHOUGH_WIDGET");
+
+                    if (ContainsAsset(rb01fly))
+                    {
+                        AssetDYNA fly = (AssetDYNA)GetFromAssetID(rb01fly);
+                        List<LinkBFBB> flyLinks = fly.LinksBFBB.ToList();
+                        for (int i = 0; i < flyLinks.Count; i++)
+                            if (flyLinks[i].EventSendID == EventBFBB.Preload)
+                            {
+                                flyLinks.RemoveAt(i);
+                                break;
+                            }
+                        fly.LinksBFBB = flyLinks.ToArray();
+                    }
+
+                    uint sleepyDpat = new AssetID("SLEEPY_DESP_02");
+                    if (ContainsAsset(sleepyDpat))
+                        ((AssetDPAT)GetFromAssetID(sleepyDpat)).StateIsPersistent = false;
+                    return true;
+            }
+
+            return false;
+        }
+
+        private void ReplaceReferences(uint oldAssetID, uint newAssetID)
         {
             foreach (uint a in FindWhoTargets(oldAssetID))
-                if (ContainsAsset(a))
+            {
+                if (GetFromAssetID(a) is ObjectAsset asset)
                 {
-                    if (GetFromAssetID(a) is AssetGRUP grup)
-                    {
-                        foreach (uint b in FindWhoTargets(grup.AssetID))
-                            if (ContainsAsset(b) && GetFromAssetID(b) is AssetVIL vil)
-                                foreach (LinkBFBB link in vil.LinksBFBB)
-                                    if (link.EventSendID == EventBFBB.Connect_IOwnYou)
-                                    {
-                                        List<AssetID> assetIDs = grup.GroupItems.ToList();
-                                        for (int i = 0; i < assetIDs.Count; i++)
-                                            if (assetIDs[i] == oldAssetID)
-                                                assetIDs[i] = newAssetID;
-                                        grup.GroupItems = assetIDs.ToArray();
-                                    }
-                    }
-                    else if (GetFromAssetID(a) is AssetVIL vil)
-                    {
-                        List<LinkBFBB> links = vil.LinksBFBB.ToList();
-                        for (int i = 0; i < links.Count; i++)
-                            if (links[i].EventSendID == EventBFBB.Connect_IOwnYou && links[i].TargetAssetID == oldAssetID)
-                                links[i].TargetAssetID = newAssetID;
-                    }
+                    LinkBFBB[] links = asset.LinksBFBB;
+                    for (int i = 0; i < links.Length; i++)
+                        if (links[i].TargetAssetID == oldAssetID)
+                            links[i].TargetAssetID = newAssetID;
+                    asset.LinksBFBB = links.ToArray();
                 }
+                if (GetFromAssetID(a) is AssetGRUP grup)
+                {
+                    List<AssetID> assetIDs = grup.GroupItems.ToList();
+                    for (int i = 0; i < assetIDs.Count; i++)
+                        if (assetIDs[i] == oldAssetID)
+                            assetIDs[i] = newAssetID;
+                    grup.GroupItems = assetIDs.ToArray();
+                }
+            }
         }
 
         private VilType[] enemyVilTypes = new VilType[] {

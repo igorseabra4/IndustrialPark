@@ -22,7 +22,8 @@
         Sounds                  = 1 << 17,
         Cameras                 = 1 << 18,
         Reduce_Warps_To_HB01    = 1 << 19,
-        Multiply_BootHip_LODT   = 1 << 20
+        Multiply_BootHip_LODT   = 1 << 20,
+        Disable_Cutscenes       = 1 << 21
     }
 
     public enum RandomizerFlagsP2
