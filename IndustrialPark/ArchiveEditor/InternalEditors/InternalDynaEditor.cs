@@ -4,7 +4,7 @@ namespace IndustrialPark
 {
     public partial class InternalDynaEditor : Form, IInternalEditor
     {
-        public InternalDynaEditor(AssetDYNA asset, ArchiveEditorFunctions archive)
+        public InternalDynaEditor(AssetDYNA asset, ArchiveEditorFunctions archive, bool hideHelp)
         {
             InitializeComponent();
             TopMost = true;
@@ -15,6 +15,9 @@ namespace IndustrialPark
             propertyGridAsset.SelectedObject = asset;
             propertyGridDynaType.SelectedObject = asset.DynaBase;
             labelAssetName.Text = $"[{asset.AHDR.assetType.ToString()}] {asset.ToString()}";
+
+            propertyGridAsset.HelpVisible = !hideHelp;
+            propertyGridDynaType.HelpVisible = !hideHelp;
         }
 
         private void InternalDynaEditor_FormClosing(object sender, FormClosingEventArgs e)
@@ -50,6 +53,12 @@ namespace IndustrialPark
         private void buttonHelp_Click(object sender, System.EventArgs e)
         {
             System.Diagnostics.Process.Start(AboutBox.WikiLink + asset.AHDR.assetType.ToString());
+        }
+
+        public void SetHideHelp(bool hideHelp)
+        {
+            propertyGridAsset.HelpVisible = !hideHelp;
+            propertyGridDynaType.HelpVisible = !hideHelp;
         }
     }
 }

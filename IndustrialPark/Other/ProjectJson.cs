@@ -56,6 +56,7 @@ namespace IndustrialPark
         public bool dontRenderVIL;
 
         public bool persistentShinies;
+        public bool hideHelp;
 
         public ProjectJson()
         {
@@ -110,6 +111,7 @@ namespace IndustrialPark
             dontRenderVIL = false;
 
             persistentShinies = true;
+            hideHelp = false;
         }
 
         public ProjectJson(List<string> hipPaths, List<string> textureFolderPaths, Vector3 camPos, float yaw, float pitch, float speed, float speedRot,
@@ -118,7 +120,7 @@ namespace IndustrialPark
             bool renderBasedOnLodt, bool dontRenderLevelModel, bool dontRenderBOUL, bool dontRenderBUTN, bool dontRenderCAM, bool dontRenderDSTR,
             bool dontRenderDYNA, bool dontRenderEGEN, bool dontRenderHANG, bool dontRenderLITE, bool dontRenderMRKR, bool dontRenderMVPT,
             bool dontRenderPEND, bool dontRenderPKUP, bool dontRenderPLAT, bool dontRenderPLYR, bool dontRenderSFX, bool dontRenderSIMP,
-            bool dontRenderTRIG, bool dontRenderUI, bool dontRenderUIFT, bool dontRenderVIL, bool persistentShinies, Platform platformForScooby)
+            bool dontRenderTRIG, bool dontRenderUI, bool dontRenderUIFT, bool dontRenderVIL, bool persistentShinies, Platform platformForScooby, bool hideHelp)
         {
             this.hipPaths = hipPaths;
             TextureFolderPaths = textureFolderPaths;
@@ -164,6 +166,7 @@ namespace IndustrialPark
             this.dontRenderVIL = dontRenderVIL;
             this.persistentShinies = persistentShinies;
             this.platformForScooby = platformForScooby;
+            this.hideHelp = hideHelp;
         }
     }
 }

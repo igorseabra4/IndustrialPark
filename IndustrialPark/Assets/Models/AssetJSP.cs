@@ -27,7 +27,8 @@ namespace IndustrialPark
         
         public void Draw(SharpRenderer renderer)
         {
-            if (dontRender || isInvisible) return;
+            if (!isSelected && (dontRender || isInvisible))
+                return;
 
             model.Render(renderer, Matrix.Identity, isSelected ? renderer.selectedObjectColor : Vector4.One, Vector3.Zero);
         }

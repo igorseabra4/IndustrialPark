@@ -97,7 +97,7 @@ namespace IndustrialPark
                     localFrameCounter = 0;
             }
 
-            if (DontRender || isInvisible)
+            if (!isSelected && (dontRender || isInvisible))
                 return;
 
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))

@@ -92,7 +92,8 @@ namespace IndustrialPark
 
         public override void Draw(SharpRenderer renderer)
         {
-            if (dontRender || isInvisible) return;
+            if (!isSelected && (dontRender || isInvisible))
+                return;
 
             if (Shape == TriggerShape.Box)
                 renderer.DrawCube(world, isSelected, 1f);

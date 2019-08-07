@@ -328,7 +328,7 @@ namespace IndustrialPark
 
         public void Draw(SharpRenderer renderer)
         {
-            if (dontRender || isInvisible)
+            if (!isSelected && (dontRender || isInvisible))
                 return;
 
             _dynaSpecific.Draw(renderer, isSelected);

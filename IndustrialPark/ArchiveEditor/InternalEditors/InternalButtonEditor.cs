@@ -5,7 +5,7 @@ namespace IndustrialPark
 {
     public partial class InternalButtonEditor : Form, IInternalEditor
     {
-        public InternalButtonEditor(AssetBUTN asset, ArchiveEditorFunctions archive)
+        public InternalButtonEditor(AssetBUTN asset, ArchiveEditorFunctions archive, bool hideHelp)
         {
             InitializeComponent();
             TopMost = true;
@@ -17,6 +17,9 @@ namespace IndustrialPark
             labelAssetName.Text = $"[{asset.AHDR.assetType.ToString()}] {asset.ToString()}";
 
             propertyGrid_Motion.SelectedObject = asset.Motion;
+
+            propertyGridAsset.HelpVisible = !hideHelp;
+            propertyGrid_Motion.HelpVisible = !hideHelp;
         }
 
         private void InternalAssetEditor_FormClosing(object sender, FormClosingEventArgs e)
@@ -32,7 +35,7 @@ namespace IndustrialPark
             return asset.AHDR.assetID;
         }
 
-        private void buttonFindCallers_Click(object sender, System.EventArgs e)
+        private void buttonFindCallers_Click(object sender, EventArgs e)
         {
             Program.MainForm.FindWhoTargets(GetAssetID());
         }
@@ -52,6 +55,12 @@ namespace IndustrialPark
         private void buttonHelp_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start(AboutBox.WikiLink + asset.AHDR.assetType.ToString());
+        }
+
+        public void SetHideHelp(bool hideHelp)
+        {
+            propertyGridAsset.HelpVisible = !hideHelp;
+            propertyGrid_Motion.HelpVisible = !hideHelp;
         }
     }
 }

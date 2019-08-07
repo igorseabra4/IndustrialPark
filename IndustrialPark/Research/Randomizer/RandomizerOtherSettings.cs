@@ -32,10 +32,10 @@ namespace IndustrialPark
         [Category("Enemy Probabilities"), Description(probExample)]
         public int Sleepytime { get; set; } = 1;
         [Category("Enemy Probabilities"), Description(probExample)]
-        public int Arf { get; set; } = 1;
-        [Category("Enemy Probabilities"), Description(probExample)]
-        public int Tubelets { get; set; } = 1;
-        [Category("Enemy Probabilities"), Description(probExample)]
+        public int Arf { get; set; } = -1;
+        [Category("Enemy Probabilities"), Description("Note: Arf and Tubelets are set to -1 by default due to chance of crashing the game.")]
+        public int Tubelets { get; set; } = -1;
+        [Category("Enemy Probabilities"), Description("Note: Arf and Tubelets are set to -1 by default due to chance of crashing the game.")]
         public int Slick { get; set; } = 1;
         [Category("Enemy Probabilities"), Description(probExample)]
         public int ChompBot { get; set; } = 1;
@@ -91,6 +91,45 @@ namespace IndustrialPark
             Description("A random value between min. and max. is chosen to multiply the time for Timer assets."),
             TypeConverter(typeof(FloatTypeConverter))]
         public float timerMax { get; set; } = 1.75f;
+
+        [Category("Scale Multiplier"),
+            DisplayName("Minimum"),
+            Description("A random value between min. and max. is chosen to multiply the scale of placeable assets."),
+            TypeConverter(typeof(FloatTypeConverter))]
+        public float scaleMin { get; set; } = 0.8f;
+
+        [Category("Scale Multiplier"),
+            DisplayName("Maximum"),
+            Description("A random value between min. and max. is chosen to multiply the scale of placeable assets."),
+            TypeConverter(typeof(FloatTypeConverter))]
+        public float scaleMax { get; set; } = 1.3f;
+
+        [Category("Shiny Object Gate Multiplier"),
+            DisplayName("Minimum"),
+            Description("A random value between min. and max. is chosen to multiply the shiny object requirement for clams/toll gates."),
+            TypeConverter(typeof(FloatTypeConverter))]
+        public float shinyReqMin { get; set; } = 0.6f;
+
+        [Category("Shiny Object Gate Multiplier"),
+            DisplayName("Maximum"),
+            Description("A random value between min. and max. is chosen to multiply the shiny object requirement for clams/toll gates."),
+            TypeConverter(typeof(FloatTypeConverter))]
+        public float shinyReqMax { get; set; } = 1.5f;
+
+        [Category("Spatula Gates"),
+            DisplayName("Minimum"),
+            Description("A random value between min. and max. is chosen for each spatula toll gate.")]
+        public int spatReqMin { get; set; } = 5;
+
+        [Category("Spatula Gates"),
+            DisplayName("Maximum"),
+            Description("A random value between min. and max. is chosen for each spatula toll gate.")]
+        public int spatReqMax { get; set; } = 70;
+
+        [Category("Spatula Gates"),
+            DisplayName("Chum Bucket Lab Req."),
+            Description("This value will override the amount of spatulas needed for the final boss.")]
+        public int spatReqChum { get; set; } = 75;
 
         private string bootLevel = "HB01";
 

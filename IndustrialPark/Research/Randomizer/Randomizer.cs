@@ -27,7 +27,8 @@ namespace IndustrialPark
 
             textBoxSeed.Text = new Random().Next().ToString();
 
-            SetCheckBoxes(new RandomizerSaveFile() {
+            SetCheckBoxes(new RandomizerSaveFile()
+            {
                 flags =
                 RandomizerFlags.Warps |
                 RandomizerFlags.Pickup_Positions |
@@ -40,16 +41,17 @@ namespace IndustrialPark
                 RandomizerFlags.Platform_Speeds |
                 RandomizerFlags.Boulder_Settings |
                 RandomizerFlags.Marker_Positions |
-                RandomizerFlags.Pointer_Positions |
                 RandomizerFlags.Player_Start |
+                RandomizerFlags.Shiny_Object_Gates |
+                RandomizerFlags.Spatula_Gates |
                 RandomizerFlags.Timers |
                 RandomizerFlags.Music |
                 RandomizerFlags.Disco_Floors |
-                RandomizerFlags.Multiply_BootHip_LODT |
                 RandomizerFlags.Reduce_Warps_To_HB01 |
-                RandomizerFlags.Disable_Cutscenes,
+                RandomizerFlags.Disable_Cutscenes |
+                RandomizerFlags.Multiply_BootHip_LODT,
                 flags2 = 0,
-                flags3 = 
+                flags3 =
                 RandomizerFlagsP3.Boot_To_Set_Level |
                 RandomizerFlagsP3.Dont_Show_Menu_On_Boot |
                 RandomizerFlagsP3.All_Menu_Warps_HB01 |
@@ -94,7 +96,7 @@ namespace IndustrialPark
                 buttonPerform.Enabled = true;
             }
         }
-        
+
         private void ButtonRandomSeed_Click(object sender, EventArgs e)
         {
             byte[] bytes = new byte[4];
@@ -147,7 +149,7 @@ namespace IndustrialPark
 
             return flags3;
         }
-        
+
         private void buttonPerform_Click(object sender, EventArgs e)
         {
             progressBar1.Value = 0;
@@ -160,9 +162,14 @@ namespace IndustrialPark
                 PerformDirRandomizer((int)seed, flags, flags2, flags3);
             else
             {
+                if ((flags & RandomizerFlags.Shiny_Object_Gates) != 0)
+                    flags ^= RandomizerFlags.Shiny_Object_Gates;
+                if ((flags & RandomizerFlags.Spatula_Gates) != 0)
+                    flags ^= RandomizerFlags.Spatula_Gates;
+
                 ArchiveEditorFunctions archive = new ArchiveEditorFunctions();
                 archive.OpenFile(rootDir, false, true);
-                archive.Shuffle((int)seed, flags, flags2, otherSettings);
+                archive.Shuffle((int)seed, flags, flags2, otherSettings, new Random((int)seed), out _);
                 archive.Save();
             }
 
@@ -208,24 +215,38 @@ namespace IndustrialPark
                         ArchiveEditorFunctions hip = new ArchiveEditorFunctions();
                         hip.OpenFile(hipPath, false, true);
 
-                        if (!platformVerified && (flags & RandomizerFlags.Enemies_Allow_Any_Type) != 0)
+                        if (!platformVerified &&
+                            (((flags & RandomizerFlags.Enemies_Allow_Any_Type) != 0) ||
+                            ((flags & RandomizerFlags.Shiny_Object_Gates) != 0) ||
+                            ((flags & RandomizerFlags.Spatula_Gates)) != 0))
                         {
+                            bool disableStuff = false;
                             if (currentGame != HipHopFile.Game.BFBB || currentPlatform != HipHopFile.Platform.GameCube)
                             {
-                                MessageBox.Show("Enemies_Allow_Any_Type is only supported for Battle For Bikini Bottom (GameCube). It will be disabled.");
-                                flags ^= RandomizerFlags.Enemies_Allow_Any_Type;
+                                MessageBox.Show("Enemies_Allow_Any_Type, Shiny_Object_Gates and Spatula_Gates are only supported for Battle For Bikini Bottom (GameCube). They will be disabled.");
+                                disableStuff = true;
                             }
                             else if (!Directory.Exists(ArchiveEditorFunctions.editorFilesFolder))
                             {
-                                DialogResult dialogResult = MessageBox.Show("The IndustrialPark-EditorFiles folder has not been found under Resources. You must download it first to be able to use Enemies_Allow_Any_Type. Do you wish to download it?", "Note", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                                DialogResult dialogResult = MessageBox.Show("The IndustrialPark-EditorFiles folder has not been found under Resources. You must download it first. Do you wish to download it?", "Note", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
                                 if (dialogResult == DialogResult.Yes)
                                     AutomaticUpdater.DownloadEditorFiles();
                                 else
-                                    flags ^= RandomizerFlags.Enemies_Allow_Any_Type;
+                                    disableStuff = true;
                             }
                             else
                                 AutomaticUpdater.VerifyEditorFiles();
+
+                            if (disableStuff)
+                            {
+                                if ((flags & RandomizerFlags.Enemies_Allow_Any_Type) != 0)
+                                    flags ^= RandomizerFlags.Enemies_Allow_Any_Type;
+                                if ((flags & RandomizerFlags.Shiny_Object_Gates) != 0)
+                                    flags ^= RandomizerFlags.Shiny_Object_Gates;
+                                if ((flags & RandomizerFlags.Spatula_Gates) != 0)
+                                    flags ^= RandomizerFlags.Spatula_Gates;
+                            }
 
                             platformVerified = true;
                         }
@@ -235,7 +256,7 @@ namespace IndustrialPark
 
                         ArchiveEditorFunctions hop = null;
                         string hopPath = Path.ChangeExtension(hipPath, ".HOP");
-                        
+
                         if (File.Exists(hopPath))
                         {
                             hop = new ArchiveEditorFunctions();
@@ -259,6 +280,7 @@ namespace IndustrialPark
                             namesForBoot.Add(nameForBoot);
 
                         progressBar1.PerformStep();
+
                     }
 
             Random r = new Random(seed);
@@ -296,7 +318,7 @@ namespace IndustrialPark
                     {
                         if (currentGame == HipHopFile.Game.BFBB)
                             shouldSave |= boot.RandomizePlaylist();
-                        else                            
+                        else
                             shouldSave |= boot.ShuffleSounds(seed, false, true);
                     }
 
@@ -324,14 +346,17 @@ namespace IndustrialPark
 
             progressBar1.Value = levelPairs.Count;
             progressBar1.Maximum = levelPairs.Count * 2;
-            
+
+            Random gateRandom = new Random(seed);
+            Random warpRandom = new Random(seed);
+
             for (int i = 0; i < levelPairs.Count; i++)
             {
-                bool item1shuffled = 
-                levelPairs[i].Item1.Shuffle(seed, flags, flags2, otherSettings);
+                bool item1shuffled =
+                levelPairs[i].Item1.Shuffle(seed, flags, flags2, otherSettings, gateRandom, out bool needToAddNumbers);
 
                 if ((flags & RandomizerFlags.Warps) != 0 && !FileInSecondBox(levelPairs[i].Item1.currentlyOpenFilePath))
-                    levelPairs[i].Item1.SetWarpNames(seed, ref warpNames, toSkip, ref warpRandomizerOutput);
+                    levelPairs[i].Item1.SetWarpNames(warpRandom, ref warpNames, toSkip, ref warpRandomizerOutput);
 
                 HashSet<VilType> enemyVils = new HashSet<VilType>();
 
@@ -344,10 +369,12 @@ namespace IndustrialPark
                     if ((flags & RandomizerFlags.Enemies_Allow_Any_Type) != 0)
                         item2shuffled = levelPairs[i].Item2.ImportEnemyTypes(enemyVils);
 
-                    item2shuffled |=
-                       levelPairs[i].Item2.Shuffle(seed, flags, flags2, otherSettings);
+                    if (needToAddNumbers)
+                        item2shuffled |= levelPairs[i].Item2.ImportNumbers();
+
+                    item2shuffled |= levelPairs[i].Item2.Shuffle(seed, flags, flags2, otherSettings, gateRandom, out _);
                 }
-                
+
                 if ((flags2 & RandomizerFlagsP2.Level_Files) != 0 && !FileInSecondBox(levelPairs[i].Item1.currentlyOpenFilePath))
                 {
                     int newPathIndex = r.Next(0, levelPathPairs.Count);
@@ -356,21 +383,21 @@ namespace IndustrialPark
 
                     if (levelPairs[i].Item2 != null)
                         levelPairs[i].Item2.Save(levelPathPairs[newPathIndex].Item2);
-                    
+
                     levelPathPairs.RemoveAt(newPathIndex);
                 }
                 else
                 {
                     if (item1shuffled)
                         levelPairs[i].Item1.Save();
-                    
+
                     if (item2shuffled)
                         levelPairs[i].Item2.Save();
                 }
-                
+
                 levelPairs.RemoveAt(i);
                 i--;
-                
+
                 progressBar1.PerformStep();
             }
 
@@ -436,8 +463,8 @@ namespace IndustrialPark
             namesForBoot.Remove("B302");
             namesForBoot.Remove("B303");
             namesForBoot.Remove("PG12");
-
-            Random r = new Random(seed);
+            namesForBoot.Remove("S005");
+            namesForBoot.Remove("S006");
 
             string[] ini;
             string filePath = rootDir + "\\sb.ini";
@@ -455,12 +482,17 @@ namespace IndustrialPark
                 }
             }
 
+            Random r = new Random(seed);
+
             for (int i = 0; i < ini.Length; i++)
             {
                 if (ini[i].StartsWith("BOOT=") && ShouldShuffle(flags3, RandomizerFlagsP3.Random_Boot_Level))
                     ini[i] = "BOOT=" + namesForBoot[r.Next(0, namesForBoot.Count)];
                 else if (ini[i].StartsWith("BOOT=") && ShouldShuffle(flags3, RandomizerFlagsP3.Boot_To_Set_Level))
-                    ini[i] = "BOOT=" + otherSettings.BootLevel;
+                {
+                    if (!(otherSettings.BootLevel == "HB01" && currentGame == HipHopFile.Game.Scooby))
+                        ini[i] = "BOOT=" + otherSettings.BootLevel;
+                }
                 else if (ini[i].StartsWith("ShowMenuOnBoot") && ShouldShuffle(flags3, RandomizerFlagsP3.Dont_Show_Menu_On_Boot))
                     ini[i] = "ShowMenuOnBoot=0";
                 else if (ini[i].StartsWith("Menu") && ShouldShuffle(flags3, RandomizerFlagsP3.All_Menu_Warps_HB01))
@@ -528,7 +560,7 @@ namespace IndustrialPark
             {
                 RandomizerSaveFile settings = JsonConvert.DeserializeObject<RandomizerSaveFile>(File.ReadAllText(openFile.FileName));
 
-                if (settings.version == FromInstance().version)
+                if (settings.version != FromInstance().version)
                     MessageBox.Show("Note: randomizer settings file was made with an earlier or different version of Industrial Park. " +
                         "The program will attempt to open it, but doesn't guarantee the randomization result will be the same. " +
                         "If you need the exact same result, please use the same Industrial Park version (preferably the latest one) and a settings file saved by it.");
@@ -542,7 +574,7 @@ namespace IndustrialPark
 
                 SetCheckBoxes(settings);
                 UpdateSeed();
-                
+
                 richTextBoxSkip.Lines = settings.skip1;
                 richTextBox2.Lines = settings.skip2;
 
@@ -601,5 +633,61 @@ namespace IndustrialPark
             skip2 = richTextBox2.Lines,
             otherSettings = otherSettings
         };
+
+        private void LogWarps()
+        {
+            Dictionary<string, string> levelNames = new Dictionary<string, string>();
+
+            string[] levelNamesFiles = File.ReadAllLines("scooby_levelnames.txt");
+            foreach (string s in levelNamesFiles)
+            {
+                string[] split = s.Split('-');
+                levelNames.Add(split[0].ToUpper(), split[1]);
+            }
+
+            List<string> folderNames = new List<string>() { rootDir };
+            foreach (string dir in Directory.GetDirectories(rootDir))
+                folderNames.Add(dir);
+
+            progressBar1.Minimum = 0;
+            progressBar1.Maximum = folderNames.Count;
+            progressBar1.Step = 1;
+
+            using (StreamWriter writer = new StreamWriter(new FileStream("scooby_warps.txt", FileMode.Create)))
+                foreach (string dir in folderNames)
+                {
+                    foreach (string hipPath in Directory.GetFiles(dir))
+                        if (Path.GetExtension(hipPath).ToLower() == ".hip")
+                        {
+                            ArchiveEditorFunctions hip = new ArchiveEditorFunctions();
+                            hip.OpenFile(hipPath, false, true);
+
+                            List<string> warpNames = new List<string>();
+                            hip.GetWarpNames(ref warpNames, new List<string>());
+
+                            foreach (string s in warpNames)
+                            {
+                                string hipPathSmall = Path.GetFileNameWithoutExtension(hipPath).ToUpper();
+
+                                if (levelNames.ContainsKey(hipPathSmall))
+                                    hipPathSmall = levelNames[hipPathSmall];
+
+                                string a = s;
+                                if (levelNames.ContainsKey(s))
+                                    a = levelNames[s];
+
+                                writer.WriteLine(hipPathSmall + " -> " + a);
+                            }
+
+                            hip.Dispose(false);
+                        }
+                    progressBar1.PerformStep();
+                }
+        }
+
+        private void ButtonLogWarps_Click(object sender, EventArgs e)
+        {
+            LogWarps();
+        }
     }
 }

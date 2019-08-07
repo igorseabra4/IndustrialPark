@@ -66,7 +66,7 @@ namespace IndustrialPark
 
         public override void Draw(SharpRenderer renderer)
         {
-            if (DontRender || isInvisible)
+            if (!isSelected && (dontRender || isInvisible))
                 return;
 
             if (_textureAssetID == 0)

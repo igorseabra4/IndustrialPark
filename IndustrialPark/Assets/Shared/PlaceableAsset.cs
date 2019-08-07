@@ -81,7 +81,7 @@ namespace IndustrialPark
 
         public virtual void Draw(SharpRenderer renderer)
         {
-            if (DontRender || isInvisible)
+            if (!isSelected && (DontRender || isInvisible))
                 return;
 
             if (renderingDictionary.ContainsKey(_modelAssetID))

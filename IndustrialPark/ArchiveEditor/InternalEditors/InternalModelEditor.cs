@@ -6,13 +6,12 @@ using IndustrialPark.Models;
 using static IndustrialPark.Models.BSP_IO_Shared;
 using static IndustrialPark.Models.BSP_IO_CreateBSP;
 using static IndustrialPark.Models.Model_IO_Assimp;
-using System.Collections.Generic;
 
 namespace IndustrialPark
 {
     public partial class InternalModelEditor : Form, IInternalEditor
     {
-        public InternalModelEditor(AssetRenderWareModel asset, ArchiveEditorFunctions archive)
+        public InternalModelEditor(AssetRenderWareModel asset, ArchiveEditorFunctions archive, bool hideHelp)
         {
             InitializeComponent();
             TopMost = true;
@@ -104,6 +103,10 @@ namespace IndustrialPark
 
                 archive.UnsavedChanges = true;
             }
+        }
+
+        public void SetHideHelp(bool _)
+        {
         }
     }
 }

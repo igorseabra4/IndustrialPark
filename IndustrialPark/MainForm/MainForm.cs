@@ -252,7 +252,7 @@ namespace IndustrialPark
                 AssetBUTN.dontRender, AssetCAM.dontRender, AssetDSTR_Scooby.dontRender, AssetDYNA.dontRender, AssetEGEN.dontRender, AssetHANG.dontRender,
                 AssetLITE.dontRender, AssetMRKR.dontRender, AssetMVPT_Scooby.dontRender, AssetPEND.dontRender, AssetPLAT.dontRender, AssetPLAT.dontRender,
                 AssetPLYR.dontRender, AssetSFX.dontRender, AssetSIMP.dontRender, AssetTRIG.dontRender, AssetUI.dontRender, AssetUIFT.dontRender,
-                AssetVIL.dontRender, ArchiveEditorFunctions.persistentShinies, HipHopFile.Functions.currentPlatform);
+                AssetVIL.dontRender, ArchiveEditorFunctions.persistentShinies, HipHopFile.Functions.currentPlatform, ArchiveEditorFunctions.hideHelp);
         }
 
         private void ApplySettings(string ipSettingsPath)
@@ -396,6 +396,7 @@ namespace IndustrialPark
 
             templatesPersistentShiniesToolStripMenuItem.Checked = ipSettings.persistentShinies;
             ArchiveEditorFunctions.persistentShinies = ipSettings.persistentShinies;
+            hideHelpInAssetDataEditorsToolStripMenuItem.Checked = ipSettings.hideHelp;
         }
 
         public void SetToolStripStatusLabel(string Text)
@@ -984,6 +985,14 @@ namespace IndustrialPark
 
             renderer.Camera.Reset();
             mouseMode = false;
+        }
+        
+        private void HideHelpInAssetDataEditorsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ArchiveEditorFunctions.hideHelp = !ArchiveEditorFunctions.hideHelp;
+            hideHelpInAssetDataEditorsToolStripMenuItem.Checked = ArchiveEditorFunctions.hideHelp;
+            foreach (ArchiveEditor ae in archiveEditors)
+                ae.SetHideHelp(ArchiveEditorFunctions.hideHelp);
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)

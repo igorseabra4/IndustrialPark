@@ -69,7 +69,7 @@ namespace IndustrialPark
         
         public override void Draw(SharpRenderer renderer)
         {
-            if (DontRender || isInvisible)
+            if (!isSelected && (dontRender || isInvisible))
                 return;
 
             if (AssetPICK.pickEntries.ContainsKey(_pickEntryID))

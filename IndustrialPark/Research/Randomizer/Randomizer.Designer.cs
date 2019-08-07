@@ -53,6 +53,7 @@
             this.checkedListBoxSBINI = new System.Windows.Forms.CheckedListBox();
             this.buttonClear = new System.Windows.Forms.Button();
             this.buttonProbs = new System.Windows.Forms.Button();
+            this.buttonLogWarps = new System.Windows.Forms.Button();
             this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -153,7 +154,7 @@
             this.richTextBox2.Name = "richTextBox2";
             this.richTextBox2.Size = new System.Drawing.Size(134, 184);
             this.richTextBox2.TabIndex = 23;
-            this.richTextBox2.Text = "gy04\nb3\npg";
+            this.richTextBox2.Text = "gy04\nb3\npg\ns005";
             // 
             // label1
             // 
@@ -289,11 +290,23 @@
             this.buttonProbs.UseVisualStyleBackColor = true;
             this.buttonProbs.Click += new System.EventHandler(this.ButtonProbs_Click);
             // 
+            // buttonLogWarps
+            // 
+            this.buttonLogWarps.Location = new System.Drawing.Point(364, 316);
+            this.buttonLogWarps.Name = "buttonLogWarps";
+            this.buttonLogWarps.Size = new System.Drawing.Size(135, 23);
+            this.buttonLogWarps.TabIndex = 34;
+            this.buttonLogWarps.Text = "Log Warps";
+            this.buttonLogWarps.UseVisualStyleBackColor = true;
+            this.buttonLogWarps.Visible = false;
+            this.buttonLogWarps.Click += new System.EventHandler(this.ButtonLogWarps_Click);
+            // 
             // Randomizer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(827, 374);
+            this.Controls.Add(this.buttonLogWarps);
             this.Controls.Add(this.buttonProbs);
             this.Controls.Add(this.buttonClear);
             this.Controls.Add(this.checkedListBoxSBINI);
@@ -355,5 +368,6 @@
         private System.Windows.Forms.CheckedListBox checkedListBoxSBINI;
         private System.Windows.Forms.Button buttonClear;
         private System.Windows.Forms.Button buttonProbs;
+        private System.Windows.Forms.Button buttonLogWarps;
     }
 }

@@ -96,6 +96,8 @@ namespace IndustrialPark
                         OpenInternalEditor(assetDictionary[u]);
         }
 
+        public static bool hideHelp { get; set; }
+
         private void OpenInternalEditor(Asset asset)
         {
             CloseInternalEditor(asset.AHDR.assetID);
@@ -103,13 +105,13 @@ namespace IndustrialPark
             switch (asset.AHDR.assetType)
             {
                 case AssetType.BUTN:
-                    internalEditors.Add(new InternalButtonEditor((AssetBUTN)asset, this));
+                    internalEditors.Add(new InternalButtonEditor((AssetBUTN)asset, this, hideHelp));
                     break;
                 case AssetType.CAM:
                     internalEditors.Add(new InternalCamEditor((AssetCAM)asset, this));
                     break;
                 case AssetType.DYNA:
-                    internalEditors.Add(new InternalDynaEditor((AssetDYNA)asset, this));
+                    internalEditors.Add(new InternalDynaEditor((AssetDYNA)asset, this, hideHelp));
                     break;
                 case AssetType.FLY:
                     internalEditors.Add(new InternalFlyEditor((AssetFLY)asset, this));
@@ -120,13 +122,13 @@ namespace IndustrialPark
                 case AssetType.BSP:
                 case AssetType.JSP:
                 case AssetType.MODL:
-                    internalEditors.Add(new InternalModelEditor((AssetRenderWareModel)asset, this));
+                    internalEditors.Add(new InternalModelEditor((AssetRenderWareModel)asset, this, hideHelp));
                     break;
                 case AssetType.PLAT:
-                    internalEditors.Add(new InternalPlatEditor((AssetPLAT)asset, this));
+                    internalEditors.Add(new InternalPlatEditor((AssetPLAT)asset, this, hideHelp));
                     break;
                 case AssetType.RWTX:
-                    internalEditors.Add(new InternalTextureEditor((AssetRWTX)asset, this));
+                    internalEditors.Add(new InternalTextureEditor((AssetRWTX)asset, this, hideHelp));
                     break;
                 case AssetType.SHRP:
                     internalEditors.Add(new InternalShrapnelEditor((AssetSHRP)asset, this));
@@ -139,7 +141,7 @@ namespace IndustrialPark
                     internalEditors.Add(new InternalTextEditor((AssetTEXT)asset, this));
                     break;
                 default:
-                    internalEditors.Add(new InternalAssetEditor(asset, this));
+                    internalEditors.Add(new InternalAssetEditor(asset, this, hideHelp));
                     break;
             }
 
@@ -150,6 +152,12 @@ namespace IndustrialPark
         {
             foreach (var ie in internalEditors)
                 ie.TopMost = value;
+        }
+
+        internal void SetHideHelp(bool hideHelp)
+        {
+            foreach (var ie in internalEditors)
+                ie.SetHideHelp(hideHelp);
         }
 
         public static Vector3 GetRayInterserctionPosition(Ray ray)

@@ -132,7 +132,8 @@ namespace IndustrialPark
 
         public void Draw(SharpRenderer renderer)
         {
-            if (dontRender || isInvisible) return;
+            if (!isSelected && (dontRender || isInvisible))
+                return;
 
             renderer.DrawCube(world, isSelected);
         }

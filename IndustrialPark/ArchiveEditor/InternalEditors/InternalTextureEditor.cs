@@ -11,7 +11,7 @@ namespace IndustrialPark
 {
     public partial class InternalTextureEditor : Form, IInternalEditor
     {
-        public InternalTextureEditor(AssetRWTX asset, ArchiveEditorFunctions archive)
+        public InternalTextureEditor(AssetRWTX asset, ArchiveEditorFunctions archive, bool hideHelp)
         {
             InitializeComponent();
             TopMost = true;
@@ -141,6 +141,10 @@ namespace IndustrialPark
                 ResetImage();
                 archive.EnableTextureForDisplay(asset);
             }
+        }
+
+        public void SetHideHelp(bool _)
+        {
         }
     }
 }

@@ -44,5 +44,8 @@ namespace IndustrialPark
         {
             System.Diagnostics.Process.Start(AboutBox.WikiLink + asset.AHDR.assetType.ToString());
         }
+        public void SetHideHelp(bool _)
+        {
+        }
     }
 }

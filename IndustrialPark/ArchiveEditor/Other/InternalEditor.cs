@@ -6,5 +6,7 @@
         uint GetAssetID();
         void Close();
         void Show();
+
+        void SetHideHelp(bool hideHelp);
     }
 }

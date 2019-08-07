@@ -1058,6 +1058,11 @@ namespace IndustrialPark
             }
         }
 
+        internal void SetHideHelp(bool hideHelp)
+        {
+            archive.SetHideHelp(hideHelp);
+        }
+
         private void ExportTXD(bool RW3)
         {
             SaveFileDialog saveTXD = new SaveFileDialog() { Filter = "TXD archives|*.txd" };

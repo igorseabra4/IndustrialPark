@@ -7,7 +7,7 @@ namespace IndustrialPark
 {
     public partial class InternalPlatEditor : Form, IInternalEditor
     {
-        public InternalPlatEditor(AssetPLAT asset, ArchiveEditorFunctions archive)
+        public InternalPlatEditor(AssetPLAT asset, ArchiveEditorFunctions archive, bool hideHelp)
         {
             InitializeComponent();
             TopMost = true;
@@ -21,6 +21,10 @@ namespace IndustrialPark
             asset.PlatSpecificChosen += UpdatePlatSpecifics;
 
             UpdatePlatSpecifics();
+
+            propertyGridAsset.HelpVisible = !hideHelp;
+            propertyGrid_PlatSpecific.HelpVisible = !hideHelp;
+            propertyGrid_Motion.HelpVisible = !hideHelp;
         }
 
         private void InternalAssetEditor_FormClosing(object sender, FormClosingEventArgs e)
@@ -70,6 +74,13 @@ namespace IndustrialPark
         private void buttonHelp_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start(AboutBox.WikiLink + asset.AHDR.assetType.ToString());
+        }
+
+        public void SetHideHelp(bool hideHelp)
+        {
+            propertyGridAsset.HelpVisible = !hideHelp;
+            propertyGrid_PlatSpecific.HelpVisible = !hideHelp;
+            propertyGrid_Motion.HelpVisible = !hideHelp;
         }
     }
 }

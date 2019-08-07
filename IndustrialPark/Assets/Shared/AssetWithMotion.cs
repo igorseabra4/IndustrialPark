@@ -29,7 +29,7 @@ namespace IndustrialPark
 
             Matrix localW = LocalWorld();
 
-            if (DontRender || isInvisible)
+            if (!isSelected && (DontRender || isInvisible))
                 return;
 
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))

@@ -5,7 +5,7 @@ namespace IndustrialPark
 {
     public partial class InternalAssetEditor : Form, IInternalEditor
     {
-        public InternalAssetEditor(Asset asset, ArchiveEditorFunctions archive)
+        public InternalAssetEditor(Asset asset, ArchiveEditorFunctions archive, bool hideHelp)
         {
             InitializeComponent();
             TopMost = true;
@@ -16,7 +16,7 @@ namespace IndustrialPark
             propertyGridAsset.SelectedObject = asset;
             labelAssetName.Text = $"[{asset.AHDR.assetType.ToString()}] {asset.ToString()}";
 
-            propertyGridAsset.HelpVisible = true;
+            propertyGridAsset.HelpVisible = !hideHelp;
         }
 
         private void InternalAssetEditor_FormClosing(object sender, FormClosingEventArgs e)
@@ -46,6 +46,11 @@ namespace IndustrialPark
         private void buttonHelp_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start(AboutBox.WikiLink + asset.AHDR.assetType.ToString());
+        }
+
+        public void SetHideHelp(bool hideHelp)
+        {
+            propertyGridAsset.HelpVisible = !hideHelp;
         }
     }
 }
