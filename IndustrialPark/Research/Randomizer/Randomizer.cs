@@ -623,7 +623,7 @@ namespace IndustrialPark
 
         public RandomizerSaveFile FromInstance() => new RandomizerSaveFile()
         {
-            version = 49,
+            version = 50,
             seedText = textBoxSeed.Text,
             seedNum = seed,
             flags = GetActiveFlags(),

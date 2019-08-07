@@ -1512,7 +1512,7 @@ namespace IndustrialPark
                                 Arguments_Float = new float[] { 2, 0, 0, 0 },
                                 TargetAssetID = checkpointSimp,
                                 EventReceiveID = EventBFBB.Run,
-                                EventSendID = EventBFBB.AnimPlayLoop
+                                EventSendID = EventBFBB.AnimPlay
                             },
                             new LinkBFBB
                             {

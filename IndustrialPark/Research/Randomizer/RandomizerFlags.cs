@@ -31,14 +31,14 @@
     public enum RandomizerFlagsP2
     {
         Level_Files              = 1 << 0,
-        Scale_Of_Things          = 1 << 1,
-        Pointer_Positions        = 1 << 2,
-        Teleport_Box_Positions   = 1 << 3,
-        Taxi_Positions           = 1 << 4,
-        Bus_Stop_Positions       = 1 << 5,
-        Mix_SND_SNDS             = 1 << 6,
-        SIMP_Positions           = 1 << 7,
-        ButtonEvents             = 1 << 8,
+        Pointer_Positions        = 1 << 1,
+        Teleport_Box_Positions   = 1 << 2,
+        Taxi_Positions           = 1 << 3,
+        Bus_Stop_Positions       = 1 << 4,
+        Scale_Of_Things          = 1 << 5,
+        ButtonEvents             = 1 << 6,
+        Mix_SND_SNDS             = 1 << 7,
+        SIMP_Positions           = 1 << 8,
         Models                   = 1 << 9
     }
 

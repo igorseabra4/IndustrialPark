@@ -446,7 +446,7 @@ namespace IndustrialPark
 
             List<PlaceableAsset> assets = (from asset in assetDictionary.Values
                                            where new AssetType[] {
-                                               AssetType.BOUL, AssetType.BUTN, AssetType.DSTR, AssetType.PKUP, AssetType.PLAT, AssetType.SIMP
+                                               AssetType.BOUL, AssetType.BUTN, AssetType.DSTR, AssetType.PLAT, AssetType.SIMP
                                            }.Contains(asset.AHDR.assetType) select asset).Cast<PlaceableAsset>().ToList();
 
             for (int i = 0; i < assets.Count; i++)

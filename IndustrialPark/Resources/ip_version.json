@@ -1,4 +1,4 @@
 {
-  "version": "preview49",
-  "versionName": "Preview 49:\n* Randomizer update"
+  "version": "preview50",
+  "versionName": "Preview 50:\n* Hide Help boxes: available from Options. You can hide the info boxes from the Asset Data Editor windows.\n* Selected assets will always be visible, even if their asset type is currently hidden.\n* Fixes error in checkpoint template.\n* Randomizer update."
 }
