@@ -111,10 +111,10 @@
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_IO.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Sounds.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Textures.cs" />
-    <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Randomizer.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Gizmos.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetTemplates.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetEditing.cs" />
+    <Compile Include="ArchiveEditor\AssetClipboard.cs" />
     <Compile Include="ArchiveEditor\Dialogs\ImportTextures.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -241,6 +241,7 @@
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetNPC.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetPLAT.cs" />
     <Compile Include="Assets\Shared\AssetWithMotion.cs" />
+    <Compile Include="ArchiveEditor\Other\EndianConverter.cs" />
     <Compile Include="Assets\Shared\Motion.cs" />
     <Compile Include="Assets\Shared\PlatSpecific.cs" />
     <Compile Include="Assets\Shared\CamSpecific.cs" />
@@ -482,12 +483,6 @@
     <EmbeddedResource Include="Research\AssetIDGenerator.resx">
       <DependentUpon>AssetIDGenerator.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Research\Randomizer\EnemyProbabilityEditor.resx">
-      <DependentUpon>EnemyProbabilityEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Research\Randomizer\Randomizer.resx">
-      <DependentUpon>Randomizer.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Research\EventSearch.resx">
       <DependentUpon>EventSearch.cs</DependentUpon>
     </EmbeddedResource>
@@ -497,26 +492,12 @@
     <Compile Include="Research\AssetIDGenerator.Designer.cs">
       <DependentUpon>AssetIDGenerator.cs</DependentUpon>
     </Compile>
-    <Compile Include="Research\Randomizer\EnemyProbabilityEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Research\Randomizer\EnemyProbabilityEditor.Designer.cs">
-      <DependentUpon>EnemyProbabilityEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Research\Randomizer\Randomizer.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Research\Randomizer\Randomizer.Designer.cs">
-      <DependentUpon>Randomizer.cs</DependentUpon>
-    </Compile>
     <Compile Include="Research\EventSearch.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Research\EventSearch.Designer.cs">
       <DependentUpon>EventSearch.cs</DependentUpon>
     </Compile>
-    <Compile Include="Research\Randomizer\RandomizerOtherSettings.cs" />
-    <Compile Include="Research\Randomizer\RandomizerFlags.cs" />
     <Compile Include="SharpDX\Camera\CameraVectors.cs" />
     <Compile Include="SharpDX\Camera\ProjectionMatrix.cs" />
     <Compile Include="SharpDX\Camera\ViewMatrix.cs" />

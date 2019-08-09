@@ -38,6 +38,7 @@
             this.checkBoxFlipUVs = new System.Windows.Forms.CheckBox();
             this.checkBoxOverwrite = new System.Windows.Forms.CheckBox();
             this.checkBoxGenSimps = new System.Windows.Forms.CheckBox();
+            this.checkBoxEnableVcolors = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -126,7 +127,7 @@
             this.checkBoxOverwrite.AutoSize = true;
             this.checkBoxOverwrite.Checked = true;
             this.checkBoxOverwrite.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxOverwrite.Location = new System.Drawing.Point(137, 267);
+            this.checkBoxOverwrite.Location = new System.Drawing.Point(137, 290);
             this.checkBoxOverwrite.Name = "checkBoxOverwrite";
             this.checkBoxOverwrite.Size = new System.Drawing.Size(71, 17);
             this.checkBoxOverwrite.TabIndex = 12;
@@ -143,6 +144,18 @@
             this.checkBoxGenSimps.Text = "Generate SIMPs";
             this.checkBoxGenSimps.UseVisualStyleBackColor = true;
             // 
+            // checkBoxEnableVcolors
+            // 
+            this.checkBoxEnableVcolors.AutoSize = true;
+            this.checkBoxEnableVcolors.Checked = true;
+            this.checkBoxEnableVcolors.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxEnableVcolors.Location = new System.Drawing.Point(110, 267);
+            this.checkBoxEnableVcolors.Name = "checkBoxEnableVcolors";
+            this.checkBoxEnableVcolors.Size = new System.Drawing.Size(98, 17);
+            this.checkBoxEnableVcolors.TabIndex = 14;
+            this.checkBoxEnableVcolors.Text = "Enable VColors";
+            this.checkBoxEnableVcolors.UseVisualStyleBackColor = true;
+            // 
             // ImportModel
             // 
             this.AcceptButton = this.buttonOK;
@@ -150,6 +163,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(224, 345);
+            this.Controls.Add(this.checkBoxEnableVcolors);
             this.Controls.Add(this.checkBoxGenSimps);
             this.Controls.Add(this.checkBoxOverwrite);
             this.Controls.Add(this.checkBoxFlipUVs);
@@ -184,5 +198,6 @@
         private System.Windows.Forms.CheckBox checkBoxFlipUVs;
         private System.Windows.Forms.CheckBox checkBoxOverwrite;
         private System.Windows.Forms.CheckBox checkBoxGenSimps;
+        private System.Windows.Forms.CheckBox checkBoxEnableVcolors;
     }
 }

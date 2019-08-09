@@ -1,6 +1,6 @@
-﻿namespace IndustrialPark
+﻿namespace IndustrialPark.Randomizer
 {
-    partial class Randomizer
+    partial class RandomizerMenu
     {
         /// <summary>
         /// Required designer variable.
@@ -34,14 +34,9 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.buttonChooseFile = new System.Windows.Forms.Button();
             this.checkedListBoxMethods = new System.Windows.Forms.CheckedListBox();
-            this.richTextBoxSkip = new System.Windows.Forms.RichTextBox();
-            this.labelSkip = new System.Windows.Forms.Label();
             this.checkedListBoxNotRecommended = new System.Windows.Forms.CheckedListBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.richTextBox2 = new System.Windows.Forms.RichTextBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.buttonHelp = new System.Windows.Forms.Button();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.buttonRandomSeed = new System.Windows.Forms.Button();
             this.labelSeed = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -53,15 +48,13 @@
             this.checkedListBoxSBINI = new System.Windows.Forms.CheckedListBox();
             this.buttonClear = new System.Windows.Forms.Button();
             this.buttonProbs = new System.Windows.Forms.Button();
-            this.buttonLogWarps = new System.Windows.Forms.Button();
-            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonChooseRoot
             // 
-            this.buttonChooseRoot.Location = new System.Drawing.Point(12, 82);
+            this.buttonChooseRoot.Location = new System.Drawing.Point(12, 77);
             this.buttonChooseRoot.Name = "buttonChooseRoot";
-            this.buttonChooseRoot.Size = new System.Drawing.Size(198, 23);
+            this.buttonChooseRoot.Size = new System.Drawing.Size(170, 23);
             this.buttonChooseRoot.TabIndex = 0;
             this.buttonChooseRoot.Text = "Choose Root Directory";
             this.buttonChooseRoot.UseVisualStyleBackColor = true;
@@ -70,7 +63,7 @@
             // labelRootDir
             // 
             this.labelRootDir.AutoSize = true;
-            this.labelRootDir.Location = new System.Drawing.Point(12, 66);
+            this.labelRootDir.Location = new System.Drawing.Point(12, 61);
             this.labelRootDir.Name = "labelRootDir";
             this.labelRootDir.Size = new System.Drawing.Size(107, 13);
             this.labelRootDir.TabIndex = 1;
@@ -79,7 +72,7 @@
             // buttonPerform
             // 
             this.buttonPerform.Enabled = false;
-            this.buttonPerform.Location = new System.Drawing.Point(645, 316);
+            this.buttonPerform.Location = new System.Drawing.Point(364, 311);
             this.buttonPerform.Name = "buttonPerform";
             this.buttonPerform.Size = new System.Drawing.Size(170, 23);
             this.buttonPerform.TabIndex = 8;
@@ -89,18 +82,16 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar1.Location = new System.Drawing.Point(12, 345);
+            this.progressBar1.Location = new System.Drawing.Point(12, 340);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(803, 23);
+            this.progressBar1.Size = new System.Drawing.Size(522, 23);
             this.progressBar1.TabIndex = 10;
             // 
             // buttonChooseFile
             // 
-            this.buttonChooseFile.Location = new System.Drawing.Point(216, 82);
+            this.buttonChooseFile.Location = new System.Drawing.Point(188, 77);
             this.buttonChooseFile.Name = "buttonChooseFile";
-            this.buttonChooseFile.Size = new System.Drawing.Size(198, 23);
+            this.buttonChooseFile.Size = new System.Drawing.Size(170, 23);
             this.buttonChooseFile.TabIndex = 12;
             this.buttonChooseFile.Text = "Choose Single File";
             this.buttonChooseFile.UseVisualStyleBackColor = true;
@@ -109,90 +100,45 @@
             // checkedListBoxMethods
             // 
             this.checkedListBoxMethods.FormattingEnabled = true;
-            this.checkedListBoxMethods.Location = new System.Drawing.Point(12, 111);
+            this.checkedListBoxMethods.Location = new System.Drawing.Point(12, 106);
             this.checkedListBoxMethods.Name = "checkedListBoxMethods";
             this.checkedListBoxMethods.Size = new System.Drawing.Size(170, 199);
             this.checkedListBoxMethods.TabIndex = 13;
-            // 
-            // richTextBoxSkip
-            // 
-            this.richTextBoxSkip.Location = new System.Drawing.Point(364, 126);
-            this.richTextBoxSkip.Name = "richTextBoxSkip";
-            this.richTextBoxSkip.Size = new System.Drawing.Size(135, 184);
-            this.richTextBoxSkip.TabIndex = 18;
-            this.richTextBoxSkip.Text = "font\nboot\nplat\nmn\nsp\npl\nhb00\nhb10\ndb05\nb301\ns006";
-            // 
-            // labelSkip
-            // 
-            this.labelSkip.AutoSize = true;
-            this.labelSkip.Location = new System.Drawing.Point(361, 107);
-            this.labelSkip.Name = "labelSkip";
-            this.labelSkip.Size = new System.Drawing.Size(125, 13);
-            this.labelSkip.TabIndex = 19;
-            this.labelSkip.Text = "Patterns and files to skip:";
+            this.checkedListBoxMethods.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.CheckedListBoxMethods_ItemCheck);
             // 
             // checkedListBoxNotRecommended
             // 
             this.checkedListBoxNotRecommended.FormattingEnabled = true;
-            this.checkedListBoxNotRecommended.Location = new System.Drawing.Point(188, 126);
+            this.checkedListBoxNotRecommended.Location = new System.Drawing.Point(188, 121);
             this.checkedListBoxNotRecommended.Name = "checkedListBoxNotRecommended";
             this.checkedListBoxNotRecommended.Size = new System.Drawing.Size(170, 184);
             this.checkedListBoxNotRecommended.TabIndex = 21;
+            this.checkedListBoxNotRecommended.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.CheckedListBoxNotRecommended_ItemCheck);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(188, 110);
+            this.label2.Location = new System.Drawing.Point(188, 103);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(97, 13);
             this.label2.TabIndex = 22;
             this.label2.Text = "Not recommended:";
             // 
-            // richTextBox2
-            // 
-            this.richTextBox2.Location = new System.Drawing.Point(505, 126);
-            this.richTextBox2.Name = "richTextBox2";
-            this.richTextBox2.Size = new System.Drawing.Size(134, 184);
-            this.richTextBox2.TabIndex = 23;
-            this.richTextBox2.Text = "gy04\nb3\npg\ns005";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(500, 107);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(154, 13);
-            this.label1.TabIndex = 24;
-            this.label1.Text = "Skip for Warps and Level Files:";
-            // 
             // buttonHelp
             // 
-            this.buttonHelp.Location = new System.Drawing.Point(660, 103);
+            this.buttonHelp.Location = new System.Drawing.Point(452, 77);
             this.buttonHelp.Name = "buttonHelp";
-            this.buttonHelp.Size = new System.Drawing.Size(155, 21);
+            this.buttonHelp.Size = new System.Drawing.Size(82, 23);
             this.buttonHelp.TabIndex = 25;
             this.buttonHelp.Text = "Help";
             this.buttonHelp.UseVisualStyleBackColor = true;
             this.buttonHelp.Click += new System.EventHandler(this.ButtonHelp_Click);
             // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.buttonRandomSeed);
-            this.groupBox3.Controls.Add(this.labelSeed);
-            this.groupBox3.Controls.Add(this.label3);
-            this.groupBox3.Controls.Add(this.textBoxSeed);
-            this.groupBox3.Location = new System.Drawing.Point(420, 9);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(395, 88);
-            this.groupBox3.TabIndex = 26;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Seed";
-            // 
             // buttonRandomSeed
             // 
-            this.buttonRandomSeed.Location = new System.Drawing.Point(330, 45);
+            this.buttonRandomSeed.Location = new System.Drawing.Point(364, 77);
             this.buttonRandomSeed.Name = "buttonRandomSeed";
-            this.buttonRandomSeed.Size = new System.Drawing.Size(59, 20);
+            this.buttonRandomSeed.Size = new System.Drawing.Size(82, 23);
             this.buttonRandomSeed.TabIndex = 29;
             this.buttonRandomSeed.Text = "Random";
             this.buttonRandomSeed.UseVisualStyleBackColor = true;
@@ -201,7 +147,7 @@
             // labelSeed
             // 
             this.labelSeed.AutoSize = true;
-            this.labelSeed.Location = new System.Drawing.Point(6, 68);
+            this.labelSeed.Location = new System.Drawing.Point(364, 61);
             this.labelSeed.Name = "labelSeed";
             this.labelSeed.Size = new System.Drawing.Size(35, 13);
             this.labelSeed.TabIndex = 28;
@@ -210,26 +156,25 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 16);
+            this.label3.Location = new System.Drawing.Point(364, 9);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(348, 26);
+            this.label3.Size = new System.Drawing.Size(178, 26);
             this.label3.TabIndex = 27;
-            this.label3.Text = "Type something to generate a seed or click the button for a random one.\r\nA seed i" +
-    "s a number between 0 and 4.294.967.295.";
+            this.label3.Text = "Type something to generate a seed\r\nor click the button for a random one.";
             // 
             // textBoxSeed
             // 
-            this.textBoxSeed.Location = new System.Drawing.Point(6, 45);
+            this.textBoxSeed.Location = new System.Drawing.Point(364, 38);
             this.textBoxSeed.Name = "textBoxSeed";
-            this.textBoxSeed.Size = new System.Drawing.Size(318, 20);
+            this.textBoxSeed.Size = new System.Drawing.Size(170, 20);
             this.textBoxSeed.TabIndex = 0;
             this.textBoxSeed.TextChanged += new System.EventHandler(this.TextBox1_TextChanged);
             // 
             // buttonSaveJson
             // 
-            this.buttonSaveJson.Location = new System.Drawing.Point(216, 28);
+            this.buttonSaveJson.Location = new System.Drawing.Point(188, 25);
             this.buttonSaveJson.Name = "buttonSaveJson";
-            this.buttonSaveJson.Size = new System.Drawing.Size(198, 23);
+            this.buttonSaveJson.Size = new System.Drawing.Size(170, 23);
             this.buttonSaveJson.TabIndex = 28;
             this.buttonSaveJson.Text = "Save Settings";
             this.buttonSaveJson.UseVisualStyleBackColor = true;
@@ -237,9 +182,9 @@
             // 
             // buttonLoadJson
             // 
-            this.buttonLoadJson.Location = new System.Drawing.Point(12, 28);
+            this.buttonLoadJson.Location = new System.Drawing.Point(12, 25);
             this.buttonLoadJson.Name = "buttonLoadJson";
-            this.buttonLoadJson.Size = new System.Drawing.Size(198, 23);
+            this.buttonLoadJson.Size = new System.Drawing.Size(170, 23);
             this.buttonLoadJson.TabIndex = 27;
             this.buttonLoadJson.Text = "Load Settings";
             this.buttonLoadJson.UseVisualStyleBackColor = true;
@@ -250,13 +195,14 @@
             this.labelRandoJson.AutoSize = true;
             this.labelRandoJson.Location = new System.Drawing.Point(12, 9);
             this.labelRandoJson.Name = "labelRandoJson";
-            this.labelRandoJson.Size = new System.Drawing.Size(0, 13);
+            this.labelRandoJson.Size = new System.Drawing.Size(72, 13);
             this.labelRandoJson.TabIndex = 29;
+            this.labelRandoJson.Text = "No file loaded";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(642, 125);
+            this.label4.Location = new System.Drawing.Point(364, 103);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(52, 13);
             this.label4.TabIndex = 30;
@@ -265,14 +211,15 @@
             // checkedListBoxSBINI
             // 
             this.checkedListBoxSBINI.FormattingEnabled = true;
-            this.checkedListBoxSBINI.Location = new System.Drawing.Point(645, 141);
+            this.checkedListBoxSBINI.Location = new System.Drawing.Point(364, 121);
             this.checkedListBoxSBINI.Name = "checkedListBoxSBINI";
-            this.checkedListBoxSBINI.Size = new System.Drawing.Size(170, 169);
+            this.checkedListBoxSBINI.Size = new System.Drawing.Size(170, 184);
             this.checkedListBoxSBINI.TabIndex = 31;
+            this.checkedListBoxSBINI.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.CheckedListBoxSBINI_ItemCheck);
             // 
             // buttonClear
             // 
-            this.buttonClear.Location = new System.Drawing.Point(188, 316);
+            this.buttonClear.Location = new System.Drawing.Point(188, 311);
             this.buttonClear.Name = "buttonClear";
             this.buttonClear.Size = new System.Drawing.Size(170, 23);
             this.buttonClear.TabIndex = 32;
@@ -282,46 +229,33 @@
             // 
             // buttonProbs
             // 
-            this.buttonProbs.Location = new System.Drawing.Point(15, 316);
+            this.buttonProbs.Location = new System.Drawing.Point(12, 311);
             this.buttonProbs.Name = "buttonProbs";
-            this.buttonProbs.Size = new System.Drawing.Size(167, 23);
+            this.buttonProbs.Size = new System.Drawing.Size(170, 23);
             this.buttonProbs.TabIndex = 33;
             this.buttonProbs.Text = "Other Settings";
             this.buttonProbs.UseVisualStyleBackColor = true;
             this.buttonProbs.Click += new System.EventHandler(this.ButtonProbs_Click);
             // 
-            // buttonLogWarps
-            // 
-            this.buttonLogWarps.Location = new System.Drawing.Point(364, 316);
-            this.buttonLogWarps.Name = "buttonLogWarps";
-            this.buttonLogWarps.Size = new System.Drawing.Size(135, 23);
-            this.buttonLogWarps.TabIndex = 34;
-            this.buttonLogWarps.Text = "Log Warps";
-            this.buttonLogWarps.UseVisualStyleBackColor = true;
-            this.buttonLogWarps.Visible = false;
-            this.buttonLogWarps.Click += new System.EventHandler(this.ButtonLogWarps_Click);
-            // 
-            // Randomizer
+            // RandomizerMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(827, 374);
-            this.Controls.Add(this.buttonLogWarps);
+            this.ClientSize = new System.Drawing.Size(545, 370);
+            this.Controls.Add(this.labelSeed);
+            this.Controls.Add(this.buttonRandomSeed);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.buttonProbs);
+            this.Controls.Add(this.textBoxSeed);
             this.Controls.Add(this.buttonClear);
             this.Controls.Add(this.checkedListBoxSBINI);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.labelRandoJson);
             this.Controls.Add(this.buttonSaveJson);
             this.Controls.Add(this.buttonLoadJson);
-            this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.buttonHelp);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.richTextBox2);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.checkedListBoxNotRecommended);
-            this.Controls.Add(this.labelSkip);
-            this.Controls.Add(this.richTextBoxSkip);
             this.Controls.Add(this.checkedListBoxMethods);
             this.Controls.Add(this.buttonChooseFile);
             this.Controls.Add(this.progressBar1);
@@ -330,12 +264,9 @@
             this.Controls.Add(this.buttonChooseRoot);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
-            this.Name = "Randomizer";
+            this.Name = "RandomizerMenu";
             this.ShowIcon = false;
             this.Text = "Randomizer";
-            this.Load += new System.EventHandler(this.Randomizer_Load);
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -349,14 +280,9 @@
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Button buttonChooseFile;
         private System.Windows.Forms.CheckedListBox checkedListBoxMethods;
-        private System.Windows.Forms.RichTextBox richTextBoxSkip;
-        private System.Windows.Forms.Label labelSkip;
         private System.Windows.Forms.CheckedListBox checkedListBoxNotRecommended;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.RichTextBox richTextBox2;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button buttonHelp;
-        private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Button buttonRandomSeed;
         private System.Windows.Forms.Label labelSeed;
         private System.Windows.Forms.Label label3;
@@ -368,6 +294,5 @@
         private System.Windows.Forms.CheckedListBox checkedListBoxSBINI;
         private System.Windows.Forms.Button buttonClear;
         private System.Windows.Forms.Button buttonProbs;
-        private System.Windows.Forms.Button buttonLogWarps;
     }
 }

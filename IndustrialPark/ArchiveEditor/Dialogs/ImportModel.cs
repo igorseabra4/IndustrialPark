@@ -62,7 +62,7 @@ namespace IndustrialPark
             Close();
         }
 
-        public static List<Section_AHDR> GetAssets(out bool success, out bool overwrite, out bool simps)
+        public static List<Section_AHDR> GetAssets(out bool success, out bool overwrite, out bool simps, out bool piptVcolors)
         {
             ImportModel a = new ImportModel();
             if (a.ShowDialog() == DialogResult.OK)
@@ -95,11 +95,12 @@ namespace IndustrialPark
 
                 success = true;
                 overwrite = a.checkBoxOverwrite.Checked;
+                piptVcolors = a.checkBoxEnableVcolors.Checked;
                 return AHDRs;
             }
             else
             {
-                success = overwrite = simps = false;
+                success = overwrite = simps = piptVcolors = false;
                 return null;
             }
         }

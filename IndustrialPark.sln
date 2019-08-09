@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2036
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28922.388
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IndustrialPark", "IndustrialPark\IndustrialPark.csproj", "{62F1A222-225B-463F-85A7-70F56C34C324}"
 EndProject
@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HipHopTool", "HipHopTool\Hi
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderWareFile", "RenderWareFile\RenderWareFile\RenderWareFile.csproj", "{005F2D00-06DE-4EF9-BFEE-80EFAC49E114}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Randomizer", "IndustrialParkRandomizer\Randomizer.csproj", "{6E4742AD-4125-486F-882D-82C703265887}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,6 +38,10 @@ Global
 		{005F2D00-06DE-4EF9-BFEE-80EFAC49E114}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{005F2D00-06DE-4EF9-BFEE-80EFAC49E114}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{005F2D00-06DE-4EF9-BFEE-80EFAC49E114}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E4742AD-4125-486F-882D-82C703265887}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E4742AD-4125-486F-882D-82C703265887}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E4742AD-4125-486F-882D-82C703265887}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E4742AD-4125-486F-882D-82C703265887}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

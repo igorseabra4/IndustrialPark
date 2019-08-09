@@ -52,6 +52,11 @@ namespace IndustrialPark
             ArchiveEditorFunctions.SetUpGizmos();
         }
 
+        public SharpRenderer()
+        {
+            LoadModels(true);
+        }
+
         public SharpShader basicShader;
         public SharpDX.Direct3D11.Buffer basicBuffer;
 
@@ -126,7 +131,7 @@ namespace IndustrialPark
         public static List<Vector3> torusVertices;
         public static List<Models.Triangle> torusTriangles;
 
-        public void LoadModels()
+        public void LoadModels(bool tiny = false)
         {
             cubeVertices = new List<Vector3>();
             cubeTriangles = new List<Models.Triangle>();
@@ -147,7 +152,7 @@ namespace IndustrialPark
                 if (i == 0) objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Box.obj", false);
                 else if (i == 1) objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Cylinder.obj", false);
                 else if (i == 2) objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Pyramid.obj", false);
-                else  objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Sphere.obj", false);
+                else objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Sphere.obj", false);
 
                 List<Vertex> vertexList = new List<Vertex>();
                 foreach (Models.Vertex v in objData.VertexList)
@@ -171,24 +176,30 @@ namespace IndustrialPark
                     else if (i == 3) sphereTriangles.Add(t);
                 }
 
-                if (i == 0) Cube = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
-                else if (i == 1) Cylinder = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
-                else if (i == 2) Pyramid = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
-                else if (i == 3) Sphere = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
+                if (!tiny)
+                {
+                    if (i == 0) Cube = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
+                    else if (i == 1) Cylinder = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
+                    else if (i == 2) Pyramid = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
+                    else if (i == 3) Sphere = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
+                }
             }
 
-            RenderWareModelFile torusModel = new RenderWareModelFile("Torus");
-            torusModel.SetForRendering(device, RenderWareFile.ReadFileMethods.ReadRenderWareFile(Application.StartupPath + "/Resources/Models/Torus.DFF"), File.ReadAllBytes(Application.StartupPath + "/Resources/Models/Torus.DFF"));
-            Torus = torusModel.meshList[0];
-            torusTriangles = new List<Models.Triangle>();
-            foreach (RenderWareFile.Triangle t in torusModel.triangleList)
-                torusTriangles.Add(new Models.Triangle() { vertex1 = t.vertex1, vertex2 = t.vertex2, vertex3 = t.vertex3 });
-            torusVertices = torusModel.vertexListG;
+            if (!tiny)
+            {
+                RenderWareModelFile torusModel = new RenderWareModelFile("Torus");
+                torusModel.SetForRendering(device, RenderWareFile.ReadFileMethods.ReadRenderWareFile(Application.StartupPath + "/Resources/Models/Torus.DFF"), File.ReadAllBytes(Application.StartupPath + "/Resources/Models/Torus.DFF"));
+                Torus = torusModel.meshList[0];
+                torusTriangles = new List<Models.Triangle>();
+                foreach (RenderWareFile.Triangle t in torusModel.triangleList)
+                    torusTriangles.Add(new Models.Triangle() { vertex1 = t.vertex1, vertex2 = t.vertex2, vertex3 = t.vertex3 });
+                torusVertices = torusModel.vertexListG;
+            }
 
-            CreatePlaneMesh();
+            CreatePlaneMesh(tiny);
         }
 
-        public void CreatePlaneMesh()
+        public void CreatePlaneMesh(bool tiny)
         {
             planeVertices = new List<Vector3>();
             planeTriangles = new List<Models.Triangle>();
@@ -212,7 +223,8 @@ namespace IndustrialPark
             planeTriangles.Add(new Models.Triangle() { vertex1 = 0, vertex2 = 1, vertex3 = 2, UVCoord1 = 0, UVCoord2 = 1, UVCoord3 = 2 });
             planeTriangles.Add(new Models.Triangle() { vertex1 = 3, vertex2 = 2, vertex3 = 1, UVCoord1 = 3, UVCoord2 = 2, UVCoord3 = 1 });
 
-            Plane = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
+            if (!tiny)
+                Plane = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), new List<SharpSubSet>() { new SharpSubSet(0, indexList.Count, null) });
         }
 
         public void SetSelectionColor(System.Drawing.Color color)

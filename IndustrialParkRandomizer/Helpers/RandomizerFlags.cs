@@ -1,0 +1,31 @@
+﻿namespace IndustrialPark.Randomizer
+{
+    public enum RandomizerFlags
+    {
+        Warps,
+        Pickup_Positions,
+        Tiki_Types,
+        Tiki_Models,
+        Tiki_Allow_Any_Type,
+        Enemy_Types,
+        Enemies_Allow_Any_Type,
+        MovePoint_Radius,
+        Platform_Speeds,
+        Boulder_Settings,
+        Marker_Positions,
+        Player_Start,
+        Shiny_Object_Gates,
+        Spatula_Gates,
+        Timers,
+        Music,
+        Disco_Floors,
+        Textures,
+        Sounds,
+        Cameras,
+        Reduce_Warps_To_HB01,
+        Disable_Cutscenes,
+        Set_FinalBoss_Spatulas,
+        Multiply_BootHip_LODT,
+        AlternateWarpRandoMethod
+    }
+}

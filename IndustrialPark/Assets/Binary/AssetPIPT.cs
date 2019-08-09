@@ -20,14 +20,14 @@ namespace IndustrialPark
         [Category("PIPT Entry"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte DestinationSourceBlend { get; set; }
         [Category("PIPT Entry"), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Unknown0B { get; set; }
-        [Category("PIPT Entry"), Description("Movie only"), TypeConverter(typeof(HexByteTypeConverter))]
+        public byte OtherFlags { get; set; }
+        [Category("PIPT Entry (Movie only)"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Unknown0C { get; set; }
-        [Category("PIPT Entry"), Description("Movie only"), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("PIPT Entry (Movie only)"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Unknown0D { get; set; }
-        [Category("PIPT Entry"), Description("Movie only"), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("PIPT Entry (Movie only)"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Unknown0E { get; set; }
-        [Category("PIPT Entry"), Description("Movie only"), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("PIPT Entry (Movie only)"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Unknown0F { get; set; }
 
         public static int SizeOfStruct => Functions.currentGame == Game.Incredibles ? 16 : 12;
@@ -84,7 +84,7 @@ namespace IndustrialPark
                         RelatedToVisibility = Flags[3],
                         Culling = Flags[2],
                         DestinationSourceBlend = Flags[1],
-                        Unknown0B = Flags[0]
+                        OtherFlags = Flags[0]
                     };
 
                     if (Functions.currentGame == Game.Incredibles)
@@ -109,7 +109,7 @@ namespace IndustrialPark
                 {
                     newData.AddRange(BitConverter.GetBytes(Switch(i.ModelAssetID)));
                     newData.AddRange(BitConverter.GetBytes(Switch(i.MeshIndex)));
-                    int Flags = BitConverter.ToInt32(new byte[] { i.Unknown0B, i.DestinationSourceBlend, i.Culling, i.RelatedToVisibility }, 0);
+                    int Flags = BitConverter.ToInt32(new byte[] { i.OtherFlags, i.DestinationSourceBlend, i.Culling, i.RelatedToVisibility }, 0);
                     newData.AddRange(BitConverter.GetBytes(Switch(Flags)));
 
                     if (Functions.currentGame == Game.Incredibles)

@@ -1,6 +1,6 @@
-﻿namespace IndustrialPark
+﻿namespace IndustrialPark.Randomizer
 {
-    partial class RandomizerSettingsEditor
+    partial class RandomizerSettingsMenu
     {
         /// <summary>
         /// Required designer variable.
@@ -39,8 +39,8 @@
             this.propertyGridAsset.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGridAsset.Location = new System.Drawing.Point(3, 3);
             this.propertyGridAsset.Name = "propertyGridAsset";
-            this.propertyGridAsset.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.propertyGridAsset.Size = new System.Drawing.Size(324, 367);
+            this.propertyGridAsset.PropertySort = System.Windows.Forms.PropertySort.NoSort;
+            this.propertyGridAsset.Size = new System.Drawing.Size(391, 477);
             this.propertyGridAsset.TabIndex = 5;
             // 
             // tableLayoutPanel1
@@ -57,30 +57,30 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(330, 401);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(397, 511);
             this.tableLayoutPanel1.TabIndex = 7;
             // 
             // buttonOk
             // 
             this.buttonOk.AutoSize = true;
             this.buttonOk.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonOk.Location = new System.Drawing.Point(3, 376);
+            this.buttonOk.Location = new System.Drawing.Point(3, 486);
             this.buttonOk.Name = "buttonOk";
-            this.buttonOk.Size = new System.Drawing.Size(324, 22);
+            this.buttonOk.Size = new System.Drawing.Size(391, 22);
             this.buttonOk.TabIndex = 8;
             this.buttonOk.Text = "OK";
             this.buttonOk.UseVisualStyleBackColor = true;
             this.buttonOk.Click += new System.EventHandler(this.ButtonHelp_Click);
             // 
-            // EnemyProbabilityEditor
+            // RandomizerSettingsMenu
             // 
             this.AcceptButton = this.buttonOk;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(330, 401);
+            this.ClientSize = new System.Drawing.Size(397, 511);
             this.Controls.Add(this.tableLayoutPanel1);
             this.MaximizeBox = false;
-            this.Name = "EnemyProbabilityEditor";
+            this.Name = "RandomizerSettingsMenu";
             this.ShowIcon = false;
             this.Text = "Randomizer Settings";
             this.TopMost = true;

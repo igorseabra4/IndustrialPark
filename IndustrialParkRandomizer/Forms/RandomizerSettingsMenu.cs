@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace IndustrialPark
+namespace IndustrialPark.Randomizer
 {
-    public partial class RandomizerSettingsEditor : Form
+    public partial class RandomizerSettingsMenu : Form
     {
-        public RandomizerSettingsEditor(RandomizerSettings asset)
+        public RandomizerSettingsMenu(RandomizerSettings asset)
         {
             InitializeComponent();
             propertyGridAsset.SelectedObject = asset;

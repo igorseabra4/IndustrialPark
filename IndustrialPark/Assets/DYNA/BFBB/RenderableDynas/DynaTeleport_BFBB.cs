@@ -76,24 +76,29 @@ namespace IndustrialPark
             set
             {
                 _MRKR_ID = value;
-                ValidateMRKR();
+                    ValidateMRKR();
             }
         }
 
         private void ValidateMRKR()
         {
-            foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                if (ae.archive.ContainsAsset(_MRKR_ID))
-                {
-                    Asset asset = ae.archive.GetFromAssetID(_MRKR_ID);
-                    if (asset is AssetMRKR MRKR)
+            try
+            {
+                foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
+                    if (ae.archive.ContainsAsset(_MRKR_ID))
                     {
-                        this.MRKR = MRKR;
-                        this.MRKR.isInvisible = true;
+                        Asset asset = ae.archive.GetFromAssetID(_MRKR_ID);
+                        if (asset is AssetMRKR MRKR)
+                        {
+                            this.MRKR = MRKR;
+                            this.MRKR.isInvisible = true;
+                        }
+                        return;
                     }
-                    return;
-                }
-
+            }
+            catch
+            {
+            }
             MRKR = null;
         }
 

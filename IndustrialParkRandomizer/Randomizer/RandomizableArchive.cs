@@ -7,11 +7,11 @@ using System.IO;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 
-namespace IndustrialPark
+namespace IndustrialPark.Randomizer
 {
-    public partial class ArchiveEditorFunctions
+    public class RandomizableArchive : ArchiveEditorFunctions
     {
-        public bool Shuffle(int seed, RandomizerFlags flags, RandomizerFlagsP2 flags2, RandomizerSettings settings, Random gateRandom, out bool needToAddNumbers)
+        public bool Shuffle(int seed, HashSet<RandomizerFlags> flags, HashSet<RandomizerFlagsP2> flags2, RandomizerSettings settings, Random gateRandom, out bool needToAddNumbers)
         {
             bool shuffled = false;
 
@@ -29,7 +29,7 @@ namespace IndustrialPark
 
             if (ShouldShuffle(flags, RandomizerFlags.Sounds, AssetType.SNDI))
             {
-                ShuffleSounds(seed, ShouldShuffle(flags2, RandomizerFlagsP2.Mix_SND_SNDS));
+                ShuffleSounds(seed, flags2.Contains(RandomizerFlagsP2.Mix_SND_SNDS));
                 shuffled = true;
             }
 
@@ -72,8 +72,8 @@ namespace IndustrialPark
                     setTo.Add(VilType.tiki_stone_bind);
 
                 ShuffleVilTypes(seed, chooseFrom, setTo,
-                    ShouldShuffle(flags, RandomizerFlags.Tiki_Models),
-                    ShouldShuffle(flags, RandomizerFlags.Tiki_Allow_Any_Type),
+                    flags.Contains(RandomizerFlags.Tiki_Models),
+                    flags.Contains(RandomizerFlags.Tiki_Allow_Any_Type),
                     false);
 
                 shuffled = true;
@@ -137,7 +137,7 @@ namespace IndustrialPark
                 for (int i = 0; i < settings.ChompBot; i++)
                     setTo.Add(VilType.robot_0a_chomper_bind);
                 
-                ShuffleVilTypes(seed, chooseFrom, setTo, false, ShouldShuffle(flags, RandomizerFlags.Enemies_Allow_Any_Type), true);
+                ShuffleVilTypes(seed, chooseFrom, setTo, false, flags.Contains(RandomizerFlags.Enemies_Allow_Any_Type), true);
 
                 shuffled = true;
             }
@@ -146,11 +146,11 @@ namespace IndustrialPark
                 && !new string[] { "hb02", "b101", "b201", "b302", "b303" }.Contains(LevelName))
             {
                 ShuffleMRKRPositions(seed, 
-                    ShouldShuffle(flags2, RandomizerFlagsP2.Pointer_Positions),
-                    ShouldShuffle(flags, RandomizerFlags.Player_Start),
-                    ShouldShuffle(flags2, RandomizerFlagsP2.Bus_Stop_Positions),
-                    ShouldShuffle(flags2, RandomizerFlagsP2.Teleport_Box_Positions),
-                    ShouldShuffle(flags2, RandomizerFlagsP2.Taxi_Positions));
+                    flags2.Contains(RandomizerFlagsP2.Pointer_Positions),
+                    flags.Contains(RandomizerFlags.Player_Start),
+                    flags2.Contains(RandomizerFlagsP2.Bus_Stop_Positions),
+                    flags2.Contains(RandomizerFlagsP2.Teleport_Box_Positions),
+                    flags2.Contains(RandomizerFlagsP2.Taxi_Positions));
 
                 shuffled = true;
             }
@@ -186,11 +186,11 @@ namespace IndustrialPark
                 shuffled |= ShuffleShinyGates(gateRandom, settings, out shinyNumbers);
 
             if (ShouldShuffle(flags, RandomizerFlags.Spatula_Gates, AssetType.COND))
-                shuffled |= ShuffleSpatulaGates(gateRandom, settings, ShouldShuffle(flags, RandomizerFlags.Set_FinalBoss_Spatulas), out spatNumbers);
+                shuffled |= ShuffleSpatulaGates(gateRandom, settings, flags.Contains(RandomizerFlags.Set_FinalBoss_Spatulas), out spatNumbers);
 
             needToAddNumbers = shinyNumbers | spatNumbers;
 
-            if (ShouldShuffle(flags2, RandomizerFlagsP2.Scale_Of_Things))
+            if (flags2.Contains(RandomizerFlagsP2.Scale_Of_Things))
                 shuffled |= ShuffleScales(seed, settings);
             
             if (ShouldShuffle(flags2, RandomizerFlagsP2.Models, AssetType.MODL))
@@ -211,13 +211,13 @@ namespace IndustrialPark
                 shuffled = true;
             }
 
-            if (ShouldShuffle(flags, RandomizerFlags.Music))
+            if (flags.Contains(RandomizerFlags.Music))
             {
                 RandomizePlaylistLocal();
                 shuffled = true;
             }
 
-            if (ShouldShuffle(flags, RandomizerFlags.Disable_Cutscenes))
+            if (flags.Contains(RandomizerFlags.Disable_Cutscenes))
             {
                 DisableCutscenes();
                 shuffled = true;
@@ -225,19 +225,9 @@ namespace IndustrialPark
 
             return shuffled;
         }
-
-        private bool ShouldShuffle(RandomizerFlags flags, RandomizerFlags flag)
-            => (flags & flag) != 0;
-
-        private bool ShouldShuffle(RandomizerFlags flags, RandomizerFlags flag, AssetType assetType)
-            => (flags & flag) != 0 && GetAssetsOfType(assetType).Any();
-
-        private bool ShouldShuffle(RandomizerFlagsP2 flags, RandomizerFlagsP2 flag)
-            => (flags & flag) != 0;
-
-        private bool ShouldShuffle(RandomizerFlagsP2 flags, RandomizerFlagsP2 flag, AssetType assetType)
-            => (flags & flag) != 0 && GetAssetsOfType(assetType).Any();
-
+        
+        private bool ShouldShuffle<T>(IEnumerable<T> flags, T flag, AssetType assetType) => flags.Contains(flag) && GetAssetsOfType(assetType).Any();
+        
         private void ShuffleData(int seed, AssetType assetType)
         {
             Random r = new Random(seed);
@@ -709,9 +699,6 @@ namespace IndustrialPark
             }
         }
 
-        public static string editorFilesFolder => Application.StartupPath +
-            "\\Resources\\IndustrialPark-EditorFiles\\IndustrialPark-EditorFiles-master\\";
-
         public bool ImportEnemyTypes(HashSet<VilType> inSet)
         {
             bool imported = false;
@@ -828,9 +815,7 @@ namespace IndustrialPark
                                 if (LevelName == "sm02" && (assetName.Equals("CHECKPOINT_MK_01") || assetName.Equals("CHECKPOINT_MK_02")))
                                     mrkr.PositionY += 0.5f;
 
-                                if (assetName.StartsWith("CHECKPOINT"))
-                                    return VerifyMarkerStep2(assetName);
-                                    return true;
+                                return VerifyMarkerStep2(assetName);
                             }
                     else if (GetFromAssetID(u) is AssetPORT)
                         return true;
@@ -880,8 +865,12 @@ namespace IndustrialPark
                             if (Convert.ToInt32(assetName.Split('_')[2]) > 3)
                                 return false;
                             break;
-                        case "gy03":
+                        case "gy01":
                             if (assetName.Contains("BALLDESTROYED"))
+                                return false;
+                            break;
+                        case "gy03":
+                            if (assetName.Contains("TELEPRT_MARK_B"))
                                 return false;
                             break;
                         case "db02":
@@ -1253,7 +1242,7 @@ namespace IndustrialPark
             return false;
         }
 
-        public void SetWarpNames(Random r, ref List<string> warpNames, List<string> lines, ref List<(string, string, string)> warpRandomizerOutput)
+        public void SetWarpNames(Random r, ref List<string> warpNames, List<string> lines, ref List<(string, string, string)> warpRandomizerOutput, HashSet<string> unique)
         {
             foreach (Asset a in assetDictionary.Values)
                 if (a is AssetPORT port && !IsWarpToSameLevel(port.DestinationLevel) && !PortInToSkip(port, lines))
@@ -1275,6 +1264,9 @@ namespace IndustrialPark
                     port.DestinationLevel = warpNames[index];
 
                     warpNames.RemoveAt(index);
+
+                    if (warpNames.Count == 0) // this means we're out of warp names and we need to get them from unique again! this only happens on alternate warps method
+                        warpNames.AddRange(unique);
                 }
         }
 
@@ -1540,6 +1532,7 @@ namespace IndustrialPark
 
             return true;
         }
+
         private bool ShuffleShinyGates(Random r, RandomizerSettings settings, out bool needToAddNumbers)
         {
             needToAddNumbers = false;

@@ -8,6 +8,9 @@ namespace IndustrialPark
 {
     public partial class ArchiveEditorFunctions
     {
+        public static string editorFilesFolder => Application.StartupPath +
+            "\\Resources\\IndustrialPark-EditorFiles\\IndustrialPark-EditorFiles-master\\";
+
         public void ExportHip(string fileName)
         {
             HipSection[] hipFile = SetupStream(ref HIPA, ref PACK, ref DICT, ref STRM);
@@ -98,7 +101,7 @@ namespace IndustrialPark
                             {
                                 RemoveAsset(AHDR.assetID);
                                 DICT.ATOC.AHDRList.Add(AHDR);
-                                AddAssetToDictionary(AHDR, false);
+                                AddAssetToDictionary(AHDR, false, forceOverwrite);
                             }
                             else
                             {
@@ -109,7 +112,7 @@ namespace IndustrialPark
                         else
                         {
                             DICT.ATOC.AHDRList.Add(AHDR);
-                            AddAssetToDictionary(AHDR, false);
+                            AddAssetToDictionary(AHDR, false, forceOverwrite);
                         }
                     }
 

@@ -323,7 +323,7 @@ namespace IndustrialPark
 
             newAsset.ADBG = new Section_ADBG(0, CurrentUserTemplate.Substring(CurrentUserTemplate.IndexOf(']') + 2) + "_T001", "", 0);
 
-            Asset asset = GetFromAssetID(AddAssetWithUniqueID(layerIndex, newAsset, "_T", true));
+            Asset asset = GetFromAssetID(AddAssetWithUniqueID(layerIndex, newAsset, true));
 
             success = true;
 
@@ -699,7 +699,7 @@ namespace IndustrialPark
                 data = new byte[dataSize]
             };
 
-            Asset asset = GetFromAssetID(AddAssetWithUniqueID(layerIndex, newAsset, "_", true));
+            Asset asset = GetFromAssetID(AddAssetWithUniqueID(layerIndex, newAsset, true));
 
             success = true;
 

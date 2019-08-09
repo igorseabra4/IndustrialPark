@@ -585,7 +585,7 @@ namespace IndustrialPark
                         TRIG.Position0Y += TrigCenter.Y * factor.Y;
                         TRIG.Position0Z += TrigCenter.Z * factor.Z;
                         TRIG.Position0X += TrigCenter.X * factor.X;
-                        TRIG.Position1Y += TrigCenter.Y *factor.Y;
+                        TRIG.Position1Y += TrigCenter.Y * factor.Y;
                         TRIG.Position1Z += TrigCenter.Z * factor.Z;
                     }
 
@@ -639,6 +639,53 @@ namespace IndustrialPark
                 }
 
             return outAssetIDs;
+        }
+
+        private int IndexOfDefaultLayer()
+        {
+            int defaultLayerIndex = -1;
+            for (int i = 0; i < DICT.LTOC.LHDRList.Count; i++)
+                if (DICT.LTOC.LHDRList[i].layerType == 0)
+                {
+                    defaultLayerIndex = i;
+                    break;
+                }
+
+            if (defaultLayerIndex == -1)
+            {
+                AddLayer();
+                defaultLayerIndex = DICT.LTOC.LHDRList.Count - 1;
+            }
+
+            return defaultLayerIndex;
+        }
+
+        public void MakePiptVcolors(List<uint> assetIDs)
+        {
+            AssetPIPT pipt = null;
+
+            foreach (Asset a in assetDictionary.Values)
+                if (a is AssetPIPT PIPT)
+                    pipt = PIPT;
+            if (pipt == null)
+            {
+                List<uint> assetIDs2 = new List<uint>();
+                pipt = (AssetPIPT)GetFromAssetID(PlaceTemplate(new Vector3(), IndexOfDefaultLayer(), out _, ref assetIDs2, template: AssetTemplate.PipeInfoTable));
+            }
+
+            List<EntryPIPT> entries = pipt.PIPT_Entries.ToList();
+
+            foreach (uint u in assetIDs)
+                if (GetFromAssetID(u) is AssetMODL)
+                    entries.Add(new EntryPIPT()
+                    {
+                        Culling = 0x98,
+                        MeshIndex = -1,
+                        ModelAssetID = u,
+                        OtherFlags = 0x42
+                    });
+
+            pipt.PIPT_Entries = entries.ToArray();
         }
     }
 }

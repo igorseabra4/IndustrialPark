@@ -37,11 +37,11 @@ namespace IndustrialPark
         public bool UnsavedChanges { get; set; } = false;
         public string currentlyOpenFilePath { get; private set; }
 
-        private Section_HIPA HIPA;
-        private Section_PACK PACK;
-        private Section_DICT DICT;
-        private Section_STRM STRM;
-        private Dictionary<uint, Asset> assetDictionary = new Dictionary<uint, Asset>();
+        protected Section_HIPA HIPA;
+        protected Section_PACK PACK;
+        protected Section_DICT DICT;
+        protected Section_STRM STRM;
+        protected Dictionary<uint, Asset> assetDictionary = new Dictionary<uint, Asset>();
 
         public bool New()
         {
@@ -363,8 +363,8 @@ namespace IndustrialPark
             }
 
             Asset newAsset;
-            try
-            {
+            //try
+            //{
                 switch (AHDR.assetType)
                 {
                     case AssetType.ANIM: newAsset = AHDR.ADBG.assetName.Contains("ATBL") ? new Asset(AHDR) : newAsset = new AssetANIM(AHDR); break;
@@ -482,12 +482,12 @@ namespace IndustrialPark
                     default:
                         throw new Exception($"Unknown asset type ({AHDR.assetType.ToString()})");
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"There was an error loading asset [{AHDR.assetID.ToString("X8")}] {AHDR.ADBG.assetName}: " + ex.Message + ". Industrial Park will not be able to edit this asset.");
-                newAsset = new Asset(AHDR);
-            }
+            //}
+            //catch (Exception ex)
+           // {
+          //      MessageBox.Show($"There was an error loading asset [{AHDR.assetID.ToString("X8")}] {AHDR.ADBG.assetName}: " + ex.Message + ". Industrial Park will not be able to edit this asset.");
+           //     newAsset = new Asset(AHDR);
+           // }
 
             assetDictionary[AHDR.assetID] = newAsset;
             
@@ -540,9 +540,10 @@ namespace IndustrialPark
             return AHDR.assetID;
         }
 
-        public uint AddAssetWithUniqueID(int layerIndex, Section_AHDR AHDR, string stringToAdd = "_COPY", bool giveIDregardless = false)
+        public uint AddAssetWithUniqueID(int layerIndex, Section_AHDR AHDR, bool giveIDregardless = false)
         {
             int numCopies = 0;
+            string stringToAdd = "_";
 
             while (ContainsAsset(AHDR.assetID) || giveIDregardless)
             {
@@ -628,36 +629,54 @@ namespace IndustrialPark
                 copiedAHDRs.Add(AHDR);
             }
 
-            Clipboard.SetText(JsonConvert.SerializeObject(copiedAHDRs));
+            Clipboard.SetText(JsonConvert.SerializeObject(
+                new AssetClipboard(currentGame, EndianConverter.PlatformEndianness(currentPlatform), copiedAHDRs), 
+                Formatting.Indented));
         }
 
         public void PasteAssetsFromClipboard(int layerIndex, out List<uint> finalIndices)
         {
-            List<Section_AHDR> AHDRs;
+            AssetClipboard clipboard;
             finalIndices = new List<uint>();
 
             try
             {
-                AHDRs = JsonConvert.DeserializeObject<List<Section_AHDR>>(Clipboard.GetText());
+                clipboard = JsonConvert.DeserializeObject<AssetClipboard>(Clipboard.GetText());
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error pasting objects from clipboard: " + ex.Message + ". Are you sure you have assets copied?");
+                MessageBox.Show("Error pasting assets from clipboard: " + ex.Message + ". Are you sure you have assets copied?");
                 return;
             }
 
             UnsavedChanges = true;
 
-            foreach (Section_AHDR AHDR in AHDRs)
+            foreach (Section_AHDR section in clipboard.assets)
             {
-                AddAssetWithUniqueID(layerIndex, AHDR);
+                Section_AHDR AHDRtoAdd;
 
-                if (AHDR.assetType == AssetType.SND || AHDR.assetType == AssetType.SNDS)
+                if (clipboard.game != currentGame)
+                {
+                    AHDRtoAdd = new EndianConverter(section, clipboard.game, currentGame, clipboard.endianness).GetReversedEndian();
+
+                    if (clipboard.endianness == EndianConverter.PlatformEndianness(currentPlatform))
+                        AHDRtoAdd = new EndianConverter(AHDRtoAdd, currentGame, currentGame,
+                            EndianConverter.PlatformEndianness(currentPlatform) == Endianness.Big ? Endianness.Little : Endianness.Big)
+                            .GetReversedEndian();
+                }
+                else if (clipboard.endianness != EndianConverter.PlatformEndianness(currentPlatform))
+                    AHDRtoAdd = new EndianConverter(section, clipboard.game, currentGame, clipboard.endianness).GetReversedEndian();
+                else
+                    AHDRtoAdd = section;
+
+                AddAssetWithUniqueID(layerIndex, AHDRtoAdd);
+
+                if (AHDRtoAdd.assetType == AssetType.SND || AHDRtoAdd.assetType == AssetType.SNDS)
                 {
                     try
                     {
-                        AddSoundToSNDI(AHDR.data, AHDR.assetID, AHDR.assetType, out byte[] soundData);
-                        AHDR.data = soundData;
+                        AddSoundToSNDI(AHDRtoAdd.data, AHDRtoAdd.assetID, AHDRtoAdd.assetType, out byte[] soundData);
+                        AHDRtoAdd.data = soundData;
                     }
                     catch (Exception ex)
                     {
@@ -665,18 +684,18 @@ namespace IndustrialPark
                     }
                 }
 
-                finalIndices.Add(AHDR.assetID);
+                finalIndices.Add(AHDRtoAdd.assetID);
             }
         }
 
-        public bool ImportMultipleAssets(int layerIndex, List<Section_AHDR> AHDRs, out List<uint> assetIDs, bool overwrite)
+        public void ImportMultipleAssets(int layerIndex, List<Section_AHDR> AHDRs, out List<uint> assetIDs, bool overwrite)
         {
             UnsavedChanges = true;
             assetIDs = new List<uint>();
 
-            try
+            foreach (Section_AHDR AHDR in AHDRs)
             {
-                foreach (Section_AHDR AHDR in AHDRs)
+                try
                 {
                     if (AHDR.assetType == AssetType.SND || AHDR.assetType == AssetType.SNDS)
                     {
@@ -703,12 +722,10 @@ namespace IndustrialPark
                     assetIDs.Add(AHDR.assetID);
                 }
 
-                return true;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Unable to add asset: " + ex.Message);
-                return false;
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Unable to import asset [{AHDR.assetID.ToString("X8")}] {AHDR.ADBG.assetName}: " + ex.Message);
+                }
             }
         }
 
