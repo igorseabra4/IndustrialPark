@@ -60,6 +60,8 @@ namespace IndustrialPark
                     ReverseBOUL(ref bytes); break;
                 case AssetType.BUTN:
                     ReverseBUTN(ref bytes); break;
+                case AssetType.CAM:
+                    ReverseCAM(ref bytes); break;
                 case AssetType.CNTR:
                     ReverseCNTR(ref bytes); break;
                 case AssetType.COND:
@@ -119,7 +121,7 @@ namespace IndustrialPark
                 case AssetType.VIL:
                     ReverseVIL(ref bytes); break;
                 default:
-                    throw new ArgumentException("Unsupported asset type for endian conversion: " + AHDR.assetType.ToString());
+                    throw new ArgumentException("Unsupported asset type for type conversion: " + AHDR.assetType.ToString());
             }
 
             AHDR.data = bytes.ToArray();
@@ -500,6 +502,25 @@ namespace IndustrialPark
                 bytes.AddRange(Reverse(reader.ReadInt32()));
 
             ReverseMotion(ref bytes);
+
+            ReverseLinks(ref bytes, bytes[5]);
+        }
+
+        private void ReverseCAM(ref List<byte> bytes)
+        {
+            ReverseObject(ref bytes);
+
+            for (int i = 0; i < 15; i++)
+                bytes.AddRange(Reverse(reader.ReadInt32()));
+
+            for (int i = 0; i < 2; i++)
+                bytes.AddRange(Reverse(reader.ReadInt16()));
+
+            for (int i = 0; i < 15; i++)
+                bytes.AddRange(Reverse(reader.ReadInt32()));
+
+            for (int i = 0; i < 4; i++)
+                bytes.Add(reader.ReadByte());
 
             ReverseLinks(ref bytes, bytes[5]);
         }
