@@ -749,6 +749,7 @@
             this.MaximizeBox = false;
             this.Name = "ArchiveEditor";
             this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Archive Editor";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

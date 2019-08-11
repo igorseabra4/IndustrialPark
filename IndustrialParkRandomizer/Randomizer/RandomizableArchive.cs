@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using SharpDX;
 using HipHopFile;
+using static HipHopFile.Functions;
 using System.IO;
 using System.Windows.Forms;
 using Newtonsoft.Json;
+using RenderWareFile;
+using RenderWareFile.Sections;
 
 namespace IndustrialPark.Randomizer
 {
     public class RandomizableArchive : ArchiveEditorFunctions
     {
-        public bool Shuffle(int seed, HashSet<RandomizerFlags> flags, HashSet<RandomizerFlagsP2> flags2, RandomizerSettings settings, Random gateRandom, out bool needToAddNumbers)
+        public bool Shuffle(int seed, RandomizerFlags flags, RandomizerFlags2 flags2, RandomizerSettings settings, Random gateRandom, out bool needToAddNumbers)
         {
             bool shuffled = false;
 
@@ -29,7 +32,7 @@ namespace IndustrialPark.Randomizer
 
             if (ShouldShuffle(flags, RandomizerFlags.Sounds, AssetType.SNDI))
             {
-                ShuffleSounds(seed, flags2.Contains(RandomizerFlagsP2.Mix_SND_SNDS));
+                ShuffleSounds(seed, flags2.HasFlag(RandomizerFlags2.Mix_SND_SNDS));
                 shuffled = true;
             }
 
@@ -72,8 +75,8 @@ namespace IndustrialPark.Randomizer
                     setTo.Add(VilType.tiki_stone_bind);
 
                 ShuffleVilTypes(seed, chooseFrom, setTo,
-                    flags.Contains(RandomizerFlags.Tiki_Models),
-                    flags.Contains(RandomizerFlags.Tiki_Allow_Any_Type),
+                    flags.HasFlag(RandomizerFlags.Tiki_Models),
+                    flags.HasFlag(RandomizerFlags.Tiki_Allow_Any_Type),
                     false);
 
                 shuffled = true;
@@ -137,7 +140,7 @@ namespace IndustrialPark.Randomizer
                 for (int i = 0; i < settings.ChompBot; i++)
                     setTo.Add(VilType.robot_0a_chomper_bind);
                 
-                ShuffleVilTypes(seed, chooseFrom, setTo, false, flags.Contains(RandomizerFlags.Enemies_Allow_Any_Type), true);
+                ShuffleVilTypes(seed, chooseFrom, setTo, false, flags.HasFlag(RandomizerFlags.Enemies_Allow_Any_Type), true);
 
                 shuffled = true;
             }
@@ -146,11 +149,11 @@ namespace IndustrialPark.Randomizer
                 && !new string[] { "hb02", "b101", "b201", "b302", "b303" }.Contains(LevelName))
             {
                 ShuffleMRKRPositions(seed, 
-                    flags2.Contains(RandomizerFlagsP2.Pointer_Positions),
-                    flags.Contains(RandomizerFlags.Player_Start),
-                    flags2.Contains(RandomizerFlagsP2.Bus_Stop_Positions),
-                    flags2.Contains(RandomizerFlagsP2.Teleport_Box_Positions),
-                    flags2.Contains(RandomizerFlagsP2.Taxi_Positions));
+                    flags2.HasFlag(RandomizerFlags2.Pointer_Positions),
+                    flags.HasFlag(RandomizerFlags.Player_Start),
+                    flags2.HasFlag(RandomizerFlags2.Bus_Stop_Positions),
+                    flags2.HasFlag(RandomizerFlags2.Teleport_Box_Positions),
+                    flags2.HasFlag(RandomizerFlags2.Taxi_Positions));
 
                 shuffled = true;
             }
@@ -166,7 +169,7 @@ namespace IndustrialPark.Randomizer
                 ShuffleTimers(seed, settings);
                 shuffled = true;
             }
-
+            
             if (ShouldShuffle(flags, RandomizerFlags.Cameras, AssetType.CAM))
             {
                 ShuffleCameras(seed);
@@ -185,39 +188,42 @@ namespace IndustrialPark.Randomizer
             if (ShouldShuffle(flags, RandomizerFlags.Shiny_Object_Gates, AssetType.COND))
                 shuffled |= ShuffleShinyGates(gateRandom, settings, out shinyNumbers);
 
-            if (ShouldShuffle(flags, RandomizerFlags.Spatula_Gates, AssetType.COND))
-                shuffled |= ShuffleSpatulaGates(gateRandom, settings, flags.Contains(RandomizerFlags.Set_FinalBoss_Spatulas), out spatNumbers);
+            if ((settings.setChumSpats || flags.HasFlag(RandomizerFlags.Spatula_Gates)) && ContainsAssetWithType(AssetType.COND))
+                shuffled |= ShuffleSpatulaGates(gateRandom, flags.HasFlag(RandomizerFlags.Spatula_Gates), settings, out spatNumbers);
 
             needToAddNumbers = shinyNumbers | spatNumbers;
 
-            if (flags2.Contains(RandomizerFlagsP2.Scale_Of_Things))
+            if (flags2.HasFlag(RandomizerFlags2.Scale_Of_Things))
                 shuffled |= ShuffleScales(seed, settings);
             
-            if (ShouldShuffle(flags2, RandomizerFlagsP2.Models, AssetType.MODL))
+            if (ShouldShuffle(flags2, RandomizerFlags2.Models, AssetType.MODL))
             {
                 ShuffleData(seed, AssetType.MODL);
                 shuffled = true;
             }
 
-            if (ShouldShuffle(flags2, RandomizerFlagsP2.ButtonEvents, AssetType.BUTN))
+            if (ShouldShuffle(flags2, RandomizerFlags2.Button_Events, AssetType.BUTN))
             {
                 ShuffleButtons(seed);
                 shuffled = true;
             }
 
-            if (ShouldShuffle(flags2, RandomizerFlagsP2.SIMP_Positions, AssetType.SIMP))
+            if (ShouldShuffle(flags2, RandomizerFlags2.SIMP_Positions, AssetType.SIMP))
             {
                 ShuffleSIMPPositions(seed);
                 shuffled = true;
             }
 
-            if (flags.Contains(RandomizerFlags.Music))
+            if (flags.HasFlag(RandomizerFlags.Colors))
+                shuffled |= ShuffleColors(seed, settings.brightColors, settings.strongColors);
+
+            if (flags.HasFlag(RandomizerFlags.Music))
             {
                 RandomizePlaylistLocal();
                 shuffled = true;
             }
 
-            if (flags.Contains(RandomizerFlags.Disable_Cutscenes))
+            if (settings.disableCutscenes)
             {
                 DisableCutscenes();
                 shuffled = true;
@@ -225,8 +231,9 @@ namespace IndustrialPark.Randomizer
 
             return shuffled;
         }
-        
-        private bool ShouldShuffle<T>(IEnumerable<T> flags, T flag, AssetType assetType) => flags.Contains(flag) && GetAssetsOfType(assetType).Any();
+
+        private bool ShouldShuffle(RandomizerFlags flags, RandomizerFlags flag, AssetType assetType) => flags.HasFlag(flag) && GetAssetsOfType(assetType).Any();
+        private bool ShouldShuffle(RandomizerFlags2 flags, RandomizerFlags2 flag, AssetType assetType) => flags.HasFlag(flag) && GetAssetsOfType(assetType).Any();
         
         private void ShuffleData(int seed, AssetType assetType)
         {
@@ -437,7 +444,8 @@ namespace IndustrialPark.Randomizer
             List<PlaceableAsset> assets = (from asset in assetDictionary.Values
                                            where new AssetType[] {
                                                AssetType.BOUL, AssetType.BUTN, AssetType.DSTR, AssetType.PLAT, AssetType.SIMP
-                                           }.Contains(asset.AHDR.assetType) select asset).Cast<PlaceableAsset>().ToList();
+                                           }.Contains(asset.AHDR.assetType)
+                                           select asset).Cast<PlaceableAsset>().ToList();
 
             for (int i = 0; i < assets.Count; i++)
             {
@@ -460,6 +468,178 @@ namespace IndustrialPark.Randomizer
             return assets.Count != 0;
         }
 
+        private bool ShuffleColors(int seed, bool brightColors, bool strongColors)
+        {
+            Random r = new Random(seed);
+            return ShufflePlaceableColors(r, brightColors, strongColors) | ShuffleModelColors(r, brightColors, strongColors);
+        }
+
+        private bool ShufflePlaceableColors(Random r, bool brightColors, bool strongColors)
+        {
+            AssetType[] allowed = new AssetType[] {
+                AssetType.BOUL, AssetType.BUTN, AssetType.DSTR, AssetType.HANG, AssetType.NPC, AssetType.PEND,
+                AssetType.PKUP, AssetType.PLAT, AssetType.PLYR, AssetType.SIMP, AssetType.VIL };
+
+            List<PlaceableAsset> assets = (from asset in assetDictionary.Values
+                                           where allowed.Contains(asset.AHDR.assetType)
+                                           select asset).Cast<PlaceableAsset>().ToList();
+
+            foreach (PlaceableAsset a in assets)
+            {
+                Vector3 color = GetRandomColor(r, brightColors, strongColors);
+                a.ColorRed = color.X;
+                a.ColorGreen = color.Y;
+                a.ColorBlue = color.Z;
+            }
+
+            return assets.Count != 0;
+        }
+
+        private bool ShuffleModelColors(Random r, bool brightColors, bool strongColors)
+        {
+            List<Asset> assets = (from asset in assetDictionary.Values
+                                   where new AssetType[] { AssetType.JSP, AssetType.BSP }.Contains(asset.AHDR.assetType) select asset).ToList();
+
+            float max = 255f;
+            bool colored = false;
+
+            foreach (Asset a in assets)
+            {
+                var colors = GetColors(a.Data);
+
+                if (colors.Length == 0)
+                    continue;
+
+                for (int i = 0; i < colors.Length; i++)
+                {
+                    Vector3 color = GetRandomColor(r, brightColors, strongColors);
+
+                    colors[i] = System.Drawing.Color.FromArgb(colors[i].A,
+                        (byte)(color.X * max),
+                        (byte)(color.Y * max),
+                        (byte)(color.Z * max));
+                }
+
+                try
+                {
+                    a.Data = SetColors(a.Data, colors);
+                    colored = true;
+                }
+                catch { }
+            }
+
+            return colored;
+        }
+
+        private Vector3 GetRandomColor(Random r, bool brightColors, bool strongColors)
+        {
+            float colorMin = brightColors ? 0.5f : 0f;
+            float colorMax = 1f;
+
+            Vector3 v = new Vector3(r.NextFloat(colorMin, colorMax), r.NextFloat(colorMin, colorMax), r.NextFloat(colorMin, colorMax));
+
+            if (strongColors)
+            {
+                float strongFactor = brightColors ? 0.4f : 0.7f;
+                float doublestrongFactor = 2 * strongFactor;
+
+                v -= strongFactor;
+
+                int strongColor = r.Next(0, 6);
+
+                switch (strongColor)
+                {
+                    case 0:
+                        v.X += doublestrongFactor;
+                        break;
+                    case 1:
+                        v.Y += doublestrongFactor;
+                        break;
+                    case 2:
+                        v.Z += doublestrongFactor;
+                        break;
+                    case 3:
+                        v.X += doublestrongFactor;
+                        v.Y += doublestrongFactor;
+                        break;
+                    case 4:
+                        v.X += doublestrongFactor;
+                        v.Z += doublestrongFactor;
+                        break;
+                    case 5:
+                        v.Y += doublestrongFactor;
+                        v.Z += doublestrongFactor;
+                        break;
+                }
+            }
+
+            return new Vector3(ClampFloat(v.X), ClampFloat(v.Y), ClampFloat(v.Z));
+        }
+
+        private float ClampFloat(float value, float min = 0f, float max = 1f)
+        {
+            if (value < min)
+                return min;
+            if (value > max)
+                return max;
+            return value;
+        }
+
+        private System.Drawing.Color[] GetColors(byte[] data)
+        {
+            List<System.Drawing.Color> colors = new List<System.Drawing.Color>();
+
+            foreach (RWSection rws in ModelAsRWSections(data, out _))
+                if (rws is Clump_0010 clump)
+                    foreach (Geometry_000F geo in clump.geometryList.geometryList)
+                        foreach (Material_0007 mat in geo.materialList.materialList)
+                        {
+                            RenderWareFile.Color rwColor = mat.materialStruct.color;
+                            System.Drawing.Color color = System.Drawing.Color.FromArgb(rwColor.A, rwColor.R, rwColor.G, rwColor.B);
+                            colors.Add(color);
+                        }
+
+            return colors.ToArray();
+        }
+
+        private byte[] SetColors(byte[] data, System.Drawing.Color[] colors)
+        {
+            int i = 0;
+
+            RWSection[] sections = ModelAsRWSections(data, out int renderWareVersion);
+
+            foreach (RWSection rws in sections)
+                if (rws is Clump_0010 clump)
+                    foreach (Geometry_000F geo in clump.geometryList.geometryList)
+                        foreach (Material_0007 mat in geo.materialList.materialList)
+                        {
+                            if (i >= colors.Length)
+                                continue;
+
+                            mat.materialStruct.color = new RenderWareFile.Color(colors[i].R, colors[i].G, colors[i].B, colors[i].A);
+                            i++;
+                        }
+
+            return ModelToRWSections(sections, renderWareVersion);
+        }
+
+        private RWSection[] ModelAsRWSections(byte[] data, out int renderWareVersion)
+        {
+            ReadFileMethods.treatStuffAsByteArray = true;
+            RWSection[] sections = ReadFileMethods.ReadRenderWareFile(data);
+            renderWareVersion = sections[0].renderWareVersion;
+            ReadFileMethods.treatStuffAsByteArray = false;
+            return sections;
+        }
+
+        private byte[] ModelToRWSections(RWSection[] sections, int renderWareVersion)
+        {
+            ReadFileMethods.treatStuffAsByteArray = true;
+            byte[] data = ReadFileMethods.ExportRenderWareFile(sections, renderWareVersion);
+            ReadFileMethods.treatStuffAsByteArray = false;
+            return data;
+        }
+
         private void ShuffleButtons(int seed)
         {
             Random r = new Random(seed);
@@ -478,10 +658,25 @@ namespace IndustrialPark.Randomizer
 
         private void ShuffleVilTypes(int seed, List<VilType> chooseFrom, List<VilType> setTo, bool mixModels, bool veryRandom, bool enemies)
         {
+            Random r = new Random(seed);
+
+            if (veryRandom && LevelName == "sm01")
+            {
+                HashSet<VilType> uniqueSetTo = new HashSet<VilType>();
+                foreach (VilType v in setTo)
+                    uniqueSetTo.Add(v);
+
+                while (uniqueSetTo.Count > 9)
+                {
+                    VilType randomRemove = setTo[r.Next(0, setTo.Count)];
+                    while (setTo.Contains(randomRemove))
+                        setTo.Remove(randomRemove);
+                    uniqueSetTo.Remove(randomRemove);
+                }
+            }
+
             if (setTo.Count == 0)
                 return;
-
-            Random r = new Random(seed);
 
             List<AssetVIL> assets = (from asset in assetDictionary.Values where asset is AssetVIL vil && chooseFrom.Contains(vil.VilType) select asset).Cast<AssetVIL>().ToList();
             List<VilType> viltypes = (from asset in assets select asset.VilType).ToList();
@@ -746,16 +941,30 @@ namespace IndustrialPark.Randomizer
                         throw new Exception("Invalid VilType");
                 }
 
-                ImportHip(editorFilesFolder + "BattleForBikiniBottom\\GameCube\\Enemies\\" + hipFileName, true);
+                string path = editorFilesFolder + "BattleForBikiniBottom\\GameCube\\Enemies\\" + hipFileName;
+
+                if (!enemyHipDict.ContainsKey(hipFileName))
+                    enemyHipDict.Add(hipFileName, HipFileToHipArray(path));
+
+                ImportHip(enemyHipDict[hipFileName], true);
+
                 imported = true;
             }
 
             return imported;
         }
 
+        public static Dictionary<string, HipSection[]> enemyHipDict;
+
         public bool ImportNumbers()
         {
-            ImportHip(editorFilesFolder + "BattleForBikiniBottom\\GameCube\\Utility\\numbers.hip", true);
+            string path = editorFilesFolder + "BattleForBikiniBottom\\GameCube\\Utility\\numbers.hip";
+
+            if (!enemyHipDict.ContainsKey("numbers.hip"))
+                enemyHipDict.Add("numbers.hip", HipFileToHipArray(path));
+
+            ImportHip(enemyHipDict["numbers.hip"], true);
+
             return true;
         }
 
@@ -1289,7 +1498,7 @@ namespace IndustrialPark.Randomizer
                         {
                             link.EventSendID = EventBFBB.Run;
                             link.Arguments_Float = new float[] { 0, 0, 0, 0 };
-                            link.TargetAssetID = musicGroupAssetName;
+                            link.TargetAssetID = musicGroupAssetName + "_01";
                         }
                     objectAsset.LinksBFBB = links;
                 }
@@ -1384,7 +1593,7 @@ namespace IndustrialPark.Randomizer
             return true;
         }
 
-        private bool ShuffleSpatulaGates(Random r, RandomizerSettings settings, bool setFinalBoss, out bool needToAddNumbers)
+        private bool ShuffleSpatulaGates(Random r, bool shuffleSpatulaGates, RandomizerSettings settings, out bool needToAddNumbers)
         {
             needToAddNumbers = false;
 
@@ -1392,6 +1601,8 @@ namespace IndustrialPark.Randomizer
             {
                 case "hb01":
                     {
+                        if (!shuffleSpatulaGates)
+                            return false;
                         // Downtown
                         {
                             uint spatMechAssetID = new AssetID("SPATULA_BB_MECH_01");
@@ -1512,18 +1723,21 @@ namespace IndustrialPark.Randomizer
                     break;
                 case "hb08":
                     {
-                        int value = r.Next(settings.spatReqMin, settings.spatReqMax + 1);
+                        if (ContainsAssetWithType(AssetType.COND))
+                        {
+                            int value = r.Next(settings.spatReqMin, settings.spatReqMax + 1);
 
-                        if (setFinalBoss)
-                            value = settings.spatReqChum;
+                            if (settings.setChumSpats)
+                                value = settings.spatReqChum;
 
-                        SetCondEvaluationAmount(value - 1, new AssetID("TOLL_DOOR_CONDITIONAL_01"));
-                        SetNumberPlats(value, 0, new AssetID("NUMBER_5_MECH_01"));
-                        SetNumberPlats(value, 1, new AssetID("NUMBER_7_MECH_01"));
-                        ReplaceInText(new AssetID("exit_b301_denial_text"), "75", value.ToString());
-                        ReplaceInText(new AssetID("exit_b301_description_text"), "75", value.ToString());
+                            SetCondEvaluationAmount(value - 1, new AssetID("TOLL_DOOR_CONDITIONAL_01"));
+                            SetNumberPlats(value, 0, new AssetID("NUMBER_5_MECH_01"));
+                            SetNumberPlats(value, 1, new AssetID("NUMBER_7_MECH_01"));
+                            ReplaceInText(new AssetID("exit_b301_denial_text"), "75", value.ToString());
+                            ReplaceInText(new AssetID("exit_b301_description_text"), "75", value.ToString());
 
-                        needToAddNumbers = true;
+                            needToAddNumbers = true;
+                        }
                     }
                     break;
                 default:

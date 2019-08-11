@@ -44,17 +44,15 @@
             this.buttonSaveJson = new System.Windows.Forms.Button();
             this.buttonLoadJson = new System.Windows.Forms.Button();
             this.labelRandoJson = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.checkedListBoxSBINI = new System.Windows.Forms.CheckedListBox();
             this.buttonClear = new System.Windows.Forms.Button();
-            this.buttonProbs = new System.Windows.Forms.Button();
+            this.propertyGridAsset = new System.Windows.Forms.PropertyGrid();
             this.SuspendLayout();
             // 
             // buttonChooseRoot
             // 
             this.buttonChooseRoot.Location = new System.Drawing.Point(12, 77);
             this.buttonChooseRoot.Name = "buttonChooseRoot";
-            this.buttonChooseRoot.Size = new System.Drawing.Size(170, 23);
+            this.buttonChooseRoot.Size = new System.Drawing.Size(162, 23);
             this.buttonChooseRoot.TabIndex = 0;
             this.buttonChooseRoot.Text = "Choose Root Directory";
             this.buttonChooseRoot.UseVisualStyleBackColor = true;
@@ -72,9 +70,9 @@
             // buttonPerform
             // 
             this.buttonPerform.Enabled = false;
-            this.buttonPerform.Location = new System.Drawing.Point(364, 311);
+            this.buttonPerform.Location = new System.Drawing.Point(348, 327);
             this.buttonPerform.Name = "buttonPerform";
-            this.buttonPerform.Size = new System.Drawing.Size(170, 23);
+            this.buttonPerform.Size = new System.Drawing.Size(186, 23);
             this.buttonPerform.TabIndex = 8;
             this.buttonPerform.Text = "Perform";
             this.buttonPerform.UseVisualStyleBackColor = true;
@@ -82,16 +80,16 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(12, 340);
+            this.progressBar1.Location = new System.Drawing.Point(11, 355);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(522, 23);
+            this.progressBar1.Size = new System.Drawing.Size(523, 23);
             this.progressBar1.TabIndex = 10;
             // 
             // buttonChooseFile
             // 
-            this.buttonChooseFile.Location = new System.Drawing.Point(188, 77);
+            this.buttonChooseFile.Location = new System.Drawing.Point(180, 77);
             this.buttonChooseFile.Name = "buttonChooseFile";
-            this.buttonChooseFile.Size = new System.Drawing.Size(170, 23);
+            this.buttonChooseFile.Size = new System.Drawing.Size(162, 23);
             this.buttonChooseFile.TabIndex = 12;
             this.buttonChooseFile.Text = "Choose Single File";
             this.buttonChooseFile.UseVisualStyleBackColor = true;
@@ -99,26 +97,28 @@
             // 
             // checkedListBoxMethods
             // 
+            this.checkedListBoxMethods.ColumnWidth = 162;
             this.checkedListBoxMethods.FormattingEnabled = true;
             this.checkedListBoxMethods.Location = new System.Drawing.Point(12, 106);
+            this.checkedListBoxMethods.MultiColumn = true;
             this.checkedListBoxMethods.Name = "checkedListBoxMethods";
-            this.checkedListBoxMethods.Size = new System.Drawing.Size(170, 199);
+            this.checkedListBoxMethods.Size = new System.Drawing.Size(330, 244);
             this.checkedListBoxMethods.TabIndex = 13;
             this.checkedListBoxMethods.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.CheckedListBoxMethods_ItemCheck);
             // 
             // checkedListBoxNotRecommended
             // 
             this.checkedListBoxNotRecommended.FormattingEnabled = true;
-            this.checkedListBoxNotRecommended.Location = new System.Drawing.Point(188, 121);
+            this.checkedListBoxNotRecommended.Location = new System.Drawing.Point(348, 121);
             this.checkedListBoxNotRecommended.Name = "checkedListBoxNotRecommended";
-            this.checkedListBoxNotRecommended.Size = new System.Drawing.Size(170, 184);
+            this.checkedListBoxNotRecommended.Size = new System.Drawing.Size(186, 169);
             this.checkedListBoxNotRecommended.TabIndex = 21;
             this.checkedListBoxNotRecommended.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.CheckedListBoxNotRecommended_ItemCheck);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(188, 103);
+            this.label2.Location = new System.Drawing.Point(345, 105);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(97, 13);
             this.label2.TabIndex = 22;
@@ -126,9 +126,9 @@
             // 
             // buttonHelp
             // 
-            this.buttonHelp.Location = new System.Drawing.Point(452, 77);
+            this.buttonHelp.Location = new System.Drawing.Point(444, 77);
             this.buttonHelp.Name = "buttonHelp";
-            this.buttonHelp.Size = new System.Drawing.Size(82, 23);
+            this.buttonHelp.Size = new System.Drawing.Size(90, 23);
             this.buttonHelp.TabIndex = 25;
             this.buttonHelp.Text = "Help";
             this.buttonHelp.UseVisualStyleBackColor = true;
@@ -136,18 +136,18 @@
             // 
             // buttonRandomSeed
             // 
-            this.buttonRandomSeed.Location = new System.Drawing.Point(364, 77);
+            this.buttonRandomSeed.Location = new System.Drawing.Point(348, 77);
             this.buttonRandomSeed.Name = "buttonRandomSeed";
-            this.buttonRandomSeed.Size = new System.Drawing.Size(82, 23);
+            this.buttonRandomSeed.Size = new System.Drawing.Size(90, 23);
             this.buttonRandomSeed.TabIndex = 29;
-            this.buttonRandomSeed.Text = "Random";
+            this.buttonRandomSeed.Text = "Random Seed";
             this.buttonRandomSeed.UseVisualStyleBackColor = true;
             this.buttonRandomSeed.Click += new System.EventHandler(this.ButtonRandomSeed_Click);
             // 
             // labelSeed
             // 
             this.labelSeed.AutoSize = true;
-            this.labelSeed.Location = new System.Drawing.Point(364, 61);
+            this.labelSeed.Location = new System.Drawing.Point(348, 61);
             this.labelSeed.Name = "labelSeed";
             this.labelSeed.Size = new System.Drawing.Size(35, 13);
             this.labelSeed.TabIndex = 28;
@@ -156,25 +156,25 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(364, 9);
+            this.label3.Location = new System.Drawing.Point(348, 9);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(178, 26);
+            this.label3.Size = new System.Drawing.Size(186, 26);
             this.label3.TabIndex = 27;
-            this.label3.Text = "Type something to generate a seed\r\nor click the button for a random one.";
+            this.label3.Text = "Type something to generate a seed or\r\nclick the button for a random one.";
             // 
             // textBoxSeed
             // 
-            this.textBoxSeed.Location = new System.Drawing.Point(364, 38);
+            this.textBoxSeed.Location = new System.Drawing.Point(348, 38);
             this.textBoxSeed.Name = "textBoxSeed";
-            this.textBoxSeed.Size = new System.Drawing.Size(170, 20);
+            this.textBoxSeed.Size = new System.Drawing.Size(186, 20);
             this.textBoxSeed.TabIndex = 0;
             this.textBoxSeed.TextChanged += new System.EventHandler(this.TextBox1_TextChanged);
             // 
             // buttonSaveJson
             // 
-            this.buttonSaveJson.Location = new System.Drawing.Point(188, 25);
+            this.buttonSaveJson.Location = new System.Drawing.Point(180, 25);
             this.buttonSaveJson.Name = "buttonSaveJson";
-            this.buttonSaveJson.Size = new System.Drawing.Size(170, 23);
+            this.buttonSaveJson.Size = new System.Drawing.Size(162, 23);
             this.buttonSaveJson.TabIndex = 28;
             this.buttonSaveJson.Text = "Save Settings";
             this.buttonSaveJson.UseVisualStyleBackColor = true;
@@ -184,7 +184,7 @@
             // 
             this.buttonLoadJson.Location = new System.Drawing.Point(12, 25);
             this.buttonLoadJson.Name = "buttonLoadJson";
-            this.buttonLoadJson.Size = new System.Drawing.Size(170, 23);
+            this.buttonLoadJson.Size = new System.Drawing.Size(162, 23);
             this.buttonLoadJson.TabIndex = 27;
             this.buttonLoadJson.Text = "Load Settings";
             this.buttonLoadJson.UseVisualStyleBackColor = true;
@@ -199,57 +199,35 @@
             this.labelRandoJson.TabIndex = 29;
             this.labelRandoJson.Text = "No file loaded";
             // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(364, 103);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(52, 13);
-            this.label4.TabIndex = 30;
-            this.label4.Text = "INI mods:";
-            // 
-            // checkedListBoxSBINI
-            // 
-            this.checkedListBoxSBINI.FormattingEnabled = true;
-            this.checkedListBoxSBINI.Location = new System.Drawing.Point(364, 121);
-            this.checkedListBoxSBINI.Name = "checkedListBoxSBINI";
-            this.checkedListBoxSBINI.Size = new System.Drawing.Size(170, 184);
-            this.checkedListBoxSBINI.TabIndex = 31;
-            this.checkedListBoxSBINI.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.CheckedListBoxSBINI_ItemCheck);
-            // 
             // buttonClear
             // 
-            this.buttonClear.Location = new System.Drawing.Point(188, 311);
+            this.buttonClear.Location = new System.Drawing.Point(348, 298);
             this.buttonClear.Name = "buttonClear";
-            this.buttonClear.Size = new System.Drawing.Size(170, 23);
+            this.buttonClear.Size = new System.Drawing.Size(186, 23);
             this.buttonClear.TabIndex = 32;
-            this.buttonClear.Text = "Clear Checkboxes";
+            this.buttonClear.Text = "Disable Everything";
             this.buttonClear.UseVisualStyleBackColor = true;
             this.buttonClear.Click += new System.EventHandler(this.ButtonClear_Click);
             // 
-            // buttonProbs
+            // propertyGridAsset
             // 
-            this.buttonProbs.Location = new System.Drawing.Point(12, 311);
-            this.buttonProbs.Name = "buttonProbs";
-            this.buttonProbs.Size = new System.Drawing.Size(170, 23);
-            this.buttonProbs.TabIndex = 33;
-            this.buttonProbs.Text = "Other Settings";
-            this.buttonProbs.UseVisualStyleBackColor = true;
-            this.buttonProbs.Click += new System.EventHandler(this.ButtonProbs_Click);
+            this.propertyGridAsset.Location = new System.Drawing.Point(540, 9);
+            this.propertyGridAsset.Name = "propertyGridAsset";
+            this.propertyGridAsset.PropertySort = System.Windows.Forms.PropertySort.Categorized;
+            this.propertyGridAsset.Size = new System.Drawing.Size(262, 369);
+            this.propertyGridAsset.TabIndex = 34;
             // 
             // RandomizerMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(545, 370);
+            this.ClientSize = new System.Drawing.Size(811, 387);
+            this.Controls.Add(this.propertyGridAsset);
             this.Controls.Add(this.labelSeed);
             this.Controls.Add(this.buttonRandomSeed);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.buttonProbs);
             this.Controls.Add(this.textBoxSeed);
             this.Controls.Add(this.buttonClear);
-            this.Controls.Add(this.checkedListBoxSBINI);
-            this.Controls.Add(this.label4);
             this.Controls.Add(this.labelRandoJson);
             this.Controls.Add(this.buttonSaveJson);
             this.Controls.Add(this.buttonLoadJson);
@@ -266,6 +244,7 @@
             this.MaximizeBox = false;
             this.Name = "RandomizerMenu";
             this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Randomizer";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -290,9 +269,7 @@
         private System.Windows.Forms.Button buttonSaveJson;
         private System.Windows.Forms.Button buttonLoadJson;
         private System.Windows.Forms.Label labelRandoJson;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.CheckedListBox checkedListBoxSBINI;
         private System.Windows.Forms.Button buttonClear;
-        private System.Windows.Forms.Button buttonProbs;
+        private System.Windows.Forms.PropertyGrid propertyGridAsset;
     }
 }

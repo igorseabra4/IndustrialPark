@@ -1,4 +1,4 @@
 {
-  "version": "preview50",
-  "versionName": "Preview 50:\n* Hide Help boxes: available from Options. You can hide the info boxes from the Asset Data Editor windows.\n* Selected assets will always be visible, even if their asset type is currently hidden.\n* Fixes error in checkpoint template.\n* Randomizer update."
+  "version": "preview51",
+  "versionName": "Preview 51:\n* Copy/Paste assets across different platforms/games: now, Industrial Park tries to convert the format of most asset types when copying and pasting between different platforms/games. This is supported for most Object Assets (including Placeable assets) and assets such as PIPT, LODT, COLL (usually found in the default layer of the HOP). Not supported for assets such as models, textures and sounds (but you can still use external tools to convert those).\n* Import Models: adds option to create PIPT entries that enable vertex color display on newly imported models, as those are by default not enabled (you can also create those entries manually).\n* Randomizer: major refactoring. Now is a standalone tool instead of a function inside Industrial Park (it still requires IP in the same directory to run, though). The UI's also been refactored, new functions and possible softlock fixes also added. (here's a seed suggestion: 2103954777)\n"
 }

@@ -1,9 +1,7 @@
 ﻿using Microsoft.WindowsAPICodePack.Dialogs;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace IndustrialPark.Randomizer
@@ -16,26 +14,36 @@ namespace IndustrialPark.Randomizer
         {
             InitializeComponent();
 
-            if (AutomaticUpdater.UpdateIndustrialPark(out _))
+            if (File.Exists(MainForm.pathToSettings))
             {
-                Close();
-                System.Diagnostics.Process.Start(Application.StartupPath + "\\Randomizer.exe");
+                IPSettings settings = JsonConvert.DeserializeObject<IPSettings>(File.ReadAllText(MainForm.pathToSettings));
+
+                if (settings.CheckForUpdatesOnStartup && AutomaticUpdater.UpdateIndustrialPark(out _))
+                {
+                    Close();
+                    System.Diagnostics.Process.Start(Application.StartupPath + "\\Randomizer.exe");
+                }
             }
+            else
+            {
+                MessageBox.Show("It appears this is your first time using Industrial Park's Randomizer.\nPlease consult the documentation on the BFBB Modding Wiki to understand how to use the tool if you haven't already.");
 
+                File.WriteAllText(MainForm.pathToSettings, JsonConvert.SerializeObject(new IPSettings
+                {
+                    AutosaveOnClose = true,
+                    AutoloadOnStartup = true,
+                    LastProjectPath = null,
+                    CheckForUpdatesOnStartup = true
+                }, Formatting.Indented));
+            }
+            
             randomizer = new Randomizer();
-
-            foreach (RandomizerFlags o in Enum.GetValues(typeof(RandomizerFlags)))
-                checkedListBoxMethods.Items.Add(o);
-            foreach (RandomizerFlagsP2 o in Enum.GetValues(typeof(RandomizerFlagsP2)))
-                checkedListBoxNotRecommended.Items.Add(o);
-            foreach (RandomizerFlagsP3 o in Enum.GetValues(typeof(RandomizerFlagsP3)))
-                checkedListBoxSBINI.Items.Add(o);
 
             textBoxSeed.Text = new Random().Next().ToString();
 
             UpdateInterfaceFromRandomizer();
         }
-        
+
         private void buttonChooseRoot_Click(object sender, EventArgs e)
         {
             CommonOpenFileDialog openFile = new CommonOpenFileDialog() { IsFolderPicker = true };
@@ -82,16 +90,10 @@ namespace IndustrialPark.Randomizer
             System.Diagnostics.Process.Start("https://battlepedia.org/Randomizer");
         }
 
-        private void ButtonProbs_Click(object sender, EventArgs e)
-        {
-            new RandomizerSettingsMenu(randomizer.settings).ShowDialog();
-        }
-
         private void ButtonClear_Click(object sender, EventArgs e)
         {
             randomizer.flags.Clear();
-            randomizer.flags2.Clear();
-            randomizer.flags3.Clear();
+            randomizer.settings.SetAllFalse();
 
             UpdateInterfaceFromRandomizer();
         }
@@ -154,13 +156,24 @@ namespace IndustrialPark.Randomizer
             textBoxSeed.Text = randomizer.seedText.ToString();
             labelSeed.Text = "Seed: " + randomizer.seed.ToString();
 
-            for (int i = 0; i < checkedListBoxMethods.Items.Count; i++)
-                checkedListBoxMethods.SetItemChecked(i, randomizer.flags.Contains((RandomizerFlags)i));
-            for (int i = 0; i < checkedListBoxNotRecommended.Items.Count; i++)
-                checkedListBoxNotRecommended.SetItemChecked(i, randomizer.flags2.Contains((RandomizerFlagsP2)i));
-            for (int i = 0; i < checkedListBoxSBINI.Items.Count; i++)
-                checkedListBoxSBINI.SetItemChecked(i, randomizer.flags3.Contains((RandomizerFlagsP3)i));
-            
+            checkedListBoxMethods.Items.Clear();
+            checkedListBoxNotRecommended.Items.Clear();
+
+            int k = 0;
+            for (RandomizerFlags i = RandomizerFlags.Warps; i <= RandomizerFlags.Sounds; i = (RandomizerFlags)((int)i * 2))
+            {
+                checkedListBoxMethods.Items.Add(i);
+                checkedListBoxMethods.SetItemChecked(k++, randomizer.flags.Contains(i));
+            }
+            k = 0;
+            for (RandomizerFlags2 i = RandomizerFlags2.Level_Files; i <= RandomizerFlags2.Models; i = (RandomizerFlags2)((int)i * 2))
+            {
+                checkedListBoxNotRecommended.Items.Add(i);
+                checkedListBoxNotRecommended.SetItemChecked(k++, randomizer.flags2.Contains(i));
+            }
+
+            propertyGridAsset.SelectedObject = randomizer.settings;
+
             programIsChangingStuff = false;
         }
         
@@ -169,9 +182,9 @@ namespace IndustrialPark.Randomizer
             if (!programIsChangingStuff)
             {
                 if (e.NewValue == CheckState.Checked)
-                    randomizer.flags.Add((RandomizerFlags)e.Index);
+                    randomizer.flags.Add((RandomizerFlags)checkedListBoxMethods.Items[e.Index]);
                 else
-                    randomizer.flags.Remove((RandomizerFlags)e.Index);
+                    randomizer.flags.Remove((RandomizerFlags)checkedListBoxMethods.Items[e.Index]);
             }
         }
 
@@ -180,20 +193,9 @@ namespace IndustrialPark.Randomizer
             if (!programIsChangingStuff)
             {
                 if (e.NewValue == CheckState.Checked)
-                    randomizer.flags2.Add((RandomizerFlagsP2)e.Index);
+                    randomizer.flags2.Add((RandomizerFlags2)checkedListBoxNotRecommended.Items[e.Index]);
                 else
-                    randomizer.flags2.Remove((RandomizerFlagsP2)e.Index);
-            }
-        }
-
-        private void CheckedListBoxSBINI_ItemCheck(object sender, ItemCheckEventArgs e)
-        {
-            if (!programIsChangingStuff)
-            {
-                if (e.NewValue == CheckState.Checked)
-                    randomizer.flags3.Add((RandomizerFlagsP3)e.Index);
-                else
-                    randomizer.flags3.Remove((RandomizerFlagsP3)e.Index);
+                    randomizer.flags2.Remove((RandomizerFlags2)checkedListBoxNotRecommended.Items[e.Index]);
             }
         }
     }

@@ -16,8 +16,7 @@ namespace IndustrialPark.Randomizer
         public string seedText;
         public uint seed;
         public HashSet<RandomizerFlags> flags;
-        public HashSet<RandomizerFlagsP2> flags2;
-        public HashSet<RandomizerFlagsP3> flags3;
+        public HashSet<RandomizerFlags2> flags2;
         public RandomizerSettings settings;
 
         public Randomizer()
@@ -40,21 +39,11 @@ namespace IndustrialPark.Randomizer
                 RandomizerFlags.Timers,
                 RandomizerFlags.Music,
                 RandomizerFlags.Disco_Floors,
-                RandomizerFlags.Reduce_Warps_To_HB01,
-                RandomizerFlags.Disable_Cutscenes,
-                RandomizerFlags.Set_FinalBoss_Spatulas,
-                RandomizerFlags.Multiply_BootHip_LODT
+                RandomizerFlags.Colors
             };
 
-            flags2 = new HashSet<RandomizerFlagsP2>();
-
-            flags3 = new HashSet<RandomizerFlagsP3>() {
-                RandomizerFlagsP3.Boot_To_Set_Level,
-                RandomizerFlagsP3.Dont_Show_Menu_On_Boot,
-                RandomizerFlagsP3.All_Menu_Warps_HB01,
-                RandomizerFlagsP3.ScoobyCheat_Spring
-            };
-
+            flags2 = new HashSet<RandomizerFlags2>();
+            
             settings = new RandomizerSettings();
         }
 
@@ -90,23 +79,24 @@ namespace IndustrialPark.Randomizer
             seed = BitConverter.ToUInt32(bytes, 0);
             seedText = seed.ToString();
         }
-
-        public void SetActiveFlags(IEnumerable<RandomizerFlags> enumerable1, IEnumerable<RandomizerFlagsP2> enumerable2, IEnumerable<RandomizerFlagsP3> enumerable3)
-        {
-            flags = enumerable1.ToHashSet();
-            flags2 = enumerable2.ToHashSet();
-            flags3 = enumerable3.ToHashSet();
-        }
-
+        
         public void Perform(System.Windows.Forms.ProgressBar progressBar)
         {
             int seed = (int)this.seed;
             progressBar.Value = 0;
-            
+
             if (isDir)
                 PerformDirRandomizer(progressBar);
             else
             {
+                RandomizerFlags flags = 0;
+                foreach (RandomizerFlags f in this.flags)
+                    flags |= f;
+
+                RandomizerFlags2 flags2 = 0;
+                foreach (RandomizerFlags2 f in this.flags2)
+                    flags2 |= f;
+
                 RandomizableArchive archive = new RandomizableArchive();
                 archive.OpenFile(rootDir, false, true);
                 archive.Shuffle(seed, flags, flags2, settings, new Random(seed), out bool needToAddNumbers);
@@ -114,7 +104,7 @@ namespace IndustrialPark.Randomizer
 
                 string message = "Randomization complete!";
 
-                if (Contains(RandomizerFlags.Enemies_Allow_Any_Type))
+                if (flags.HasFlag(RandomizerFlags.Enemies_Allow_Any_Type))
                 {
                     HashSet<VilType> vilTypes = new HashSet<VilType>();
                     archive.GetEnemyTypes(ref vilTypes);
@@ -147,6 +137,13 @@ namespace IndustrialPark.Randomizer
 
         private void PerformDirRandomizer(System.Windows.Forms.ProgressBar progressBar)
         {
+            RandomizerFlags flags = 0;
+            foreach (RandomizerFlags f in this.flags)
+                flags |= f;
+            RandomizerFlags2 flags2 = 0;
+            foreach (RandomizerFlags2 f in this.flags2)
+                flags2 |= f;
+
             int seed = (int)this.seed;
 
             List<(RandomizableArchive, RandomizableArchive)> levelPairs = new List<(RandomizableArchive, RandomizableArchive)>(); // HIP/HOP file pairs
@@ -182,9 +179,9 @@ namespace IndustrialPark.Randomizer
 
                         // Verifies if game/platform combination is ok, also checks for EditorFiles in case it needs those
                         if (!platformVerified &&
-                            (Contains(RandomizerFlags.Enemies_Allow_Any_Type) ||
-                            Contains(RandomizerFlags.Shiny_Object_Gates) ||
-                            Contains(RandomizerFlags.Spatula_Gates)))
+                            (flags.HasFlag(RandomizerFlags.Enemies_Allow_Any_Type) ||
+                            flags.HasFlag(RandomizerFlags.Shiny_Object_Gates) ||
+                            flags.HasFlag(RandomizerFlags.Spatula_Gates)))
                         {
                             bool disableStuff = false;
                             if (currentGame != HipHopFile.Game.BFBB || currentPlatform != HipHopFile.Platform.GameCube)
@@ -206,15 +203,15 @@ namespace IndustrialPark.Randomizer
 
                             if (disableStuff)
                             {
-                                flags.Remove(RandomizerFlags.Enemies_Allow_Any_Type);
-                                flags.Remove(RandomizerFlags.Shiny_Object_Gates);
-                                flags.Remove(RandomizerFlags.Spatula_Gates);
+                                this.flags.Remove(RandomizerFlags.Enemies_Allow_Any_Type);
+                                this.flags.Remove(RandomizerFlags.Shiny_Object_Gates);
+                                this.flags.Remove(RandomizerFlags.Spatula_Gates);
                             }
 
                             platformVerified = true;
                         }
 
-                        if (Contains(RandomizerFlags.Warps) && !FileInSecondBox(hipPath))
+                        if (flags.HasFlag(RandomizerFlags.Warps) && !FileInSecondBox(hipPath))
                             hip.GetWarpNames(ref warpNames, toSkip);
 
                         RandomizableArchive hop = null;
@@ -239,49 +236,25 @@ namespace IndustrialPark.Randomizer
                         }
 
                         string nameForBoot = Path.GetFileNameWithoutExtension(hipPath).ToUpper();
-                        if (Contains(RandomizerFlagsP3.Random_Boot_Level) && !namesForBoot.Contains(nameForBoot))
+                        if (settings.bootLevelMode == BootLevelMode.Random && !namesForBoot.Contains(nameForBoot))
                             namesForBoot.Add(nameForBoot);
 
                         progressBar.PerformStep();
 
                     }
 
-            // Reduce warps to hb01
             HashSet<string> unique = new HashSet<string>();
-            if (Contains(RandomizerFlags.AlternateWarpRandoMethod))
+            if (flags.HasFlag(RandomizerFlags.Warps))
             {
                 unique = new HashSet<string>();
                 foreach (string s in warpNames)
                     unique.Add(s);
                 warpNames.Clear();
                 warpNames.AddRange(unique);
-                // now warpnames is just like unique: only 1 of each warp
-            }
-            else
-            // Reduce warps to hb01
-            if (Contains(RandomizerFlags.Reduce_Warps_To_HB01) && currentGame == HipHopFile.Game.BFBB)
-            {
-                Random reduceWarpsR = new Random(seed);
-
-                int count = 0;
-                for (int i = 0; i < warpNames.Count; i++)
-                    if (warpNames[i] == "HB01")
-                    {
-                        count++;
-                        if (count > settings.hb01Warps)
-                        {
-                            int index;
-                            do
-                                index = reduceWarpsR.Next(0, warpNames.Count);
-                            while (warpNames[index] == "HB01");
-
-                            warpNames[i] = warpNames[index];
-                        }
-                    }
             }
 
             // Perform things on boot.hip
-            if (Contains(RandomizerFlags.Music | RandomizerFlags.Multiply_BootHip_LODT))
+            if (flags.HasFlag(RandomizerFlags.Music) || settings.bootHipLodtMulti)
             {
                 string bootPath = rootDir + "\\boot.hip";
                 if (File.Exists(bootPath))
@@ -291,7 +264,7 @@ namespace IndustrialPark.Randomizer
 
                     bool shouldSave = false;
 
-                    if (Contains(RandomizerFlags.Music))
+                    if (flags.HasFlag(RandomizerFlags.Music))
                     {
                         if (currentGame == HipHopFile.Game.BFBB)
                             shouldSave |= boot.RandomizePlaylist();
@@ -299,8 +272,8 @@ namespace IndustrialPark.Randomizer
                             shouldSave |= boot.ShuffleSounds(seed, false, true);
                     }
 
-                    if (Contains(RandomizerFlags.Multiply_BootHip_LODT))
-                        shouldSave |= boot.MultiplyLODT(settings.bootHipLodtMulti);
+                    if (settings.bootHipLodtMulti)
+                        shouldSave |= boot.MultiplyLODT(settings.lodtValue);
 
                     if (shouldSave)
                         boot.Save();
@@ -318,23 +291,25 @@ namespace IndustrialPark.Randomizer
             Random warpRandom = new Random(seed);
             Random levelFilesR = new Random(seed);
 
+            RandomizableArchive.enemyHipDict = new Dictionary<string, HipHopFile.HipSection[]>();
+
             for (int i = 0; i < levelPairs.Count; i++)
             {
                 bool item1shuffled =
                 levelPairs[i].Item1.Shuffle(seed, flags, flags2, settings, gateRandom, out bool needToAddNumbers);
 
-                if (Contains(RandomizerFlags.Warps) && !FileInSecondBox(levelPairs[i].Item1.currentlyOpenFilePath))
+                if (flags.HasFlag(RandomizerFlags.Warps) && !FileInSecondBox(levelPairs[i].Item1.currentlyOpenFilePath))
                     levelPairs[i].Item1.SetWarpNames(warpRandom, ref warpNames, toSkip, ref warpRandomizerOutput, unique);
 
                 HashSet<VilType> enemyVils = new HashSet<VilType>();
 
-                if (Contains(RandomizerFlags.Enemies_Allow_Any_Type))
+                if (flags.HasFlag(RandomizerFlags.Enemies_Allow_Any_Type))
                     levelPairs[i].Item1.GetEnemyTypes(ref enemyVils);
 
                 bool item2shuffled = false;
                 if (levelPairs[i].Item2 != null)
                 {
-                    if (Contains(RandomizerFlags.Enemies_Allow_Any_Type))
+                    if (flags.HasFlag(RandomizerFlags.Enemies_Allow_Any_Type))
                         item2shuffled = levelPairs[i].Item2.ImportEnemyTypes(enemyVils);
 
                     if (needToAddNumbers)
@@ -344,7 +319,7 @@ namespace IndustrialPark.Randomizer
                 }
 
                 // Save to a random different path (level files randomizer)
-                if (Contains(RandomizerFlagsP2.Level_Files) && !FileInSecondBox(levelPairs[i].Item1.currentlyOpenFilePath))
+                if (flags2.HasFlag(RandomizerFlags2.Level_Files) && !FileInSecondBox(levelPairs[i].Item1.currentlyOpenFilePath))
                 {
                     int newPathIndex = levelFilesR.Next(0, levelPathPairs.Count);
 
@@ -372,16 +347,13 @@ namespace IndustrialPark.Randomizer
             }
 
             string message = "Randomization complete!";
+            
+            // if (warpNames.Count != 0)
+            //     message += "\n* There was a problem with the warp randomizer. It is likely some warps are broken.";
 
-            if (warpNames.Count != 0)
-                message += "\n* There was a problem with the warp randomizer. It is likely some warps are broken.";
-
-            if (flags3.Any())
-            {
-                if (!ApplyINISettings(namesForBoot))
-                    message += "\n* Unable to find game settings INI, so these were not applied.";
-            }
-
+            if (!ApplyINISettings(namesForBoot))
+                message += "\n* Unable to find game settings INI, so these were not applied.";
+            
             if (warpRandomizerOutput.Count != 0)
             {
                 WriteLog(warpRandomizerOutput);
@@ -393,11 +365,7 @@ namespace IndustrialPark.Randomizer
 
             MessageBox.Show(message);
         }
-
-        private bool Contains(RandomizerFlags flag) => flags.Contains(flag);
-        private bool Contains(RandomizerFlagsP2 flag) => flags2.Contains(flag);
-        private bool Contains(RandomizerFlagsP3 flag) => flags3.Contains(flag);
-
+        
         private bool FileInFirstBox(string levelName)
         {
             foreach (string s in settings.skipFiles)
@@ -441,32 +409,32 @@ namespace IndustrialPark.Randomizer
 
             for (int i = 0; i < ini.Length; i++)
             {
-                if (ini[i].StartsWith("BOOT=") && Contains(RandomizerFlagsP3.Random_Boot_Level))
+                if (ini[i].StartsWith("BOOT=") && settings.bootLevelMode == BootLevelMode.Random)
                     ini[i] = "BOOT=" + namesForBoot[r.Next(0, namesForBoot.Count)];
-                else if (ini[i].StartsWith("BOOT=") && Contains(RandomizerFlagsP3.Boot_To_Set_Level))
+                else if (ini[i].StartsWith("BOOT=") && settings.bootLevelMode == BootLevelMode.Set)
                 {
                     if (!(settings.BootLevel == "HB01" && currentGame == HipHopFile.Game.Scooby))
                         ini[i] = "BOOT=" + settings.BootLevel;
                 }
-                else if (ini[i].StartsWith("ShowMenuOnBoot") && Contains(RandomizerFlagsP3.Dont_Show_Menu_On_Boot))
+                else if (ini[i].StartsWith("ShowMenuOnBoot") && settings.dontShowMenuOnBoot)
                     ini[i] = "ShowMenuOnBoot=0";
-                else if (ini[i].StartsWith("Menu") && Contains(RandomizerFlagsP3.All_Menu_Warps_HB01))
+                else if (ini[i].StartsWith("Menu") && settings.allMenuWarpsHB01)
                     ini[i] = ini[i].Substring(0, 9) + "HB 01 01 01 01 01 01 01 01";
-                else if (ini[i].StartsWith("G.TakeDamage") && Contains(RandomizerFlagsP3.Cheat_Invincible))
+                else if (ini[i].StartsWith("G.TakeDamage") && settings.cheatInvincible)
                     ini[i] = "G.TakeDamage=0";
-                else if (ini[i].StartsWith("TakeDamage") && Contains(RandomizerFlagsP3.Cheat_Invincible))
+                else if (ini[i].StartsWith("TakeDamage") && settings.cheatInvincible)
                     ini[i] = "TakeDamage=0";
-                else if (ini[i].StartsWith("G.BubbleBowl") && Contains(RandomizerFlagsP3.BobCheat_BubbleBowl))
+                else if (ini[i].StartsWith("G.BubbleBowl") && settings.cheatBubbleBowl)
                     ini[i] = "G.BubbleBowl=1";
-                else if (ini[i].StartsWith("G.CruiseBubble") && Contains(RandomizerFlagsP3.BobCheat_CruiseBubble))
+                else if (ini[i].StartsWith("G.CruiseBubble") && settings.cheatCruiseBubble)
                     ini[i] = "G.CruiseBubble=1";
-                else if (ini[i].StartsWith("eSPECIAL_Spring") && currentGame == HipHopFile.Game.Scooby && Contains(RandomizerFlagsP3.ScoobyCheat_Spring))
+                else if (ini[i].StartsWith("eSPECIAL_Spring") && currentGame == HipHopFile.Game.Scooby && settings.cheatSpring)
                     ini[i] = "eSPECIAL_Spring=1";
-                else if (ini[i].StartsWith("eSPECIAL_FootballHelmet") && currentGame == HipHopFile.Game.Scooby && Contains(RandomizerFlagsP3.ScoobyCheat_Helmet))
+                else if (ini[i].StartsWith("eSPECIAL_FootballHelmet") && currentGame == HipHopFile.Game.Scooby && settings.cheatHelmet)
                     ini[i] = "eSPECIAL_FootballHelmet=1";
-                else if (ini[i].StartsWith("eSPECIAL_LightningBolt") && currentGame == HipHopFile.Game.Scooby && Contains(RandomizerFlagsP3.ScoobyCheat_Smash))
+                else if (ini[i].StartsWith("eSPECIAL_LightningBolt") && currentGame == HipHopFile.Game.Scooby && settings.cheatSmash)
                     ini[i] = "eSPECIAL_LightningBolt=1";
-                else if (ini[i].StartsWith("eSPECIAL_Umbrella") && currentGame == HipHopFile.Game.Scooby && Contains(RandomizerFlagsP3.ScoobyCheat_Umbrella))
+                else if (ini[i].StartsWith("eSPECIAL_Umbrella") && currentGame == HipHopFile.Game.Scooby && settings.cheatUmbrella)
                     ini[i] = "eSPECIAL_Umbrella=1";
             }
 

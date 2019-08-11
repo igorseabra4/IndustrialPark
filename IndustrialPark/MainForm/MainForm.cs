@@ -30,7 +30,7 @@ namespace IndustrialPark
             renderer = new SharpRenderer(renderPanel);
         }
         
-        private string pathToSettings => Application.StartupPath + "/ip_settings.json";
+        public static string pathToSettings => Application.StartupPath + "\\ip_settings.json";
         private string currentProjectPath;
         public string userTemplatesFolder => Application.StartupPath + "\\Resources\\UserTemplates\\";
 

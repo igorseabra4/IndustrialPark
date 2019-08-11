@@ -70,14 +70,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Randomizer\RandomizableArchive.cs" />
     <Compile Include="Randomizer\Randomizer.cs" />
-    <Compile Include="Helpers\RandomizerFlagsP2.cs" />
-    <Compile Include="Helpers\RandomizerFlagsP3.cs" />
-    <Compile Include="Forms\RandomizerSettingsMenu.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\RandomizerSettingsMenu.Designer.cs">
-      <DependentUpon>RandomizerSettingsMenu.cs</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Forms\RandomizerMenu.cs">
       <SubType>Form</SubType>
@@ -87,9 +79,6 @@
     </Compile>
     <Compile Include="Helpers\RandomizerFlags.cs" />
     <Compile Include="Helpers\RandomizerSettings.cs" />
-    <EmbeddedResource Include="Forms\RandomizerSettingsMenu.resx">
-      <DependentUpon>RandomizerSettingsMenu.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -125,6 +114,10 @@
     <ProjectReference Include="..\IndustrialPark\IndustrialPark.csproj">
       <Project>{62f1a222-225b-463f-85a7-70f56c34c324}</Project>
       <Name>IndustrialPark</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RenderWareFile\RenderWareFile\RenderWareFile.csproj">
+      <Project>{005F2D00-06DE-4EF9-BFEE-80EFAC49E114}</Project>
+      <Name>RenderWareFile</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

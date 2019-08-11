@@ -141,17 +141,28 @@ namespace IndustrialPark
             DisplayName("Maximum"),
             Description("A random value between min. and max. is chosen for each spatula toll gate.")]
         public int spatReqMax { get; set; } = 70;
+        
+        [Category("INI Mods (Cheats)"), DisplayName("Invincible")]
+        public bool cheatInvincible { get; set; } = false;
+        [Category("INI Mods (Cheats)"), DisplayName("BFBB: Bubble Bowl")]
+        public bool cheatBubbleBowl { get; set; } = false;
+        [Category("INI Mods (Cheats)"), DisplayName("BFBB: Cruise Bubble")]
+        public bool cheatCruiseBubble { get; set; } = false;
+        [Category("INI Mods (Cheats)"), DisplayName("Scooby: Spring")]
+        public bool cheatSpring { get; set; } = false;
+        [Category("INI Mods (Cheats)"), DisplayName("Scooby: Helmet")]
+        public bool cheatHelmet { get; set; } = false;
+        [Category("INI Mods (Cheats)"), DisplayName("Scooby: Smash")]
+        public bool cheatSmash { get; set; } = false;
+        [Category("INI Mods (Cheats)"), DisplayName("Scooby: Umbrella")]
+        public bool cheatUmbrella { get; set; } = false;
 
-        [Category("Spatula Gates"),
-            DisplayName("Chum Bucket Lab Req."),
-            Description("This value will override the amount of spatulas needed for the final boss.")]
-        public int spatReqChum { get; set; } = 75;
-
+        [Category("INI Mods"), DisplayName("Boot Level"), Description("Which level to start the game in.")]
+        public BootLevelMode bootLevelMode { get; set; } = BootLevelMode.Set;
+        
         private string bootLevel = "HB01";
 
-        [Category("Other"),
-            DisplayName("Boot Level"),
-            Description("Start the game in this level if 'Boot To Set Level' is on.")]
+        [Category("INI Mods"), DisplayName("Set Boot Level"), Description("If Boot Level is 'set', start the game in this level.")]
         public string BootLevel
         {
             get => bootLevel;
@@ -163,15 +174,65 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Other"),
-            DisplayName("Amount of warps to HB01"),
-            Description("'Reduce Warps to HB01' reduces the amount of warps the game has to HB01 (around 17) to this number. The leftover warps are random.")]
-        public int hb01Warps { get; set; } = 1;
+        [Category("INI Mods"), DisplayName("Don't Show Menu on Boot")]
+        public bool dontShowMenuOnBoot { get; set; } = true;
+
+        [Category("INI Mods"), DisplayName("All Menu Warps HB01"),
+            Description("If true, all menu warps will lead to the hub.")]
+        public bool allMenuWarpsHB01 { get; set; } = true;
+
+        [Category("Other"), DisplayName("Disable Cutscenes")]
+        public bool disableCutscenes { get; set; } = true;
 
         [Category("Other"),
-            DisplayName("boot.HIP LODT multiplier"),
-            Description("The 'Multiply boot.HIP LODT' method multiplies the render distance for the pickups by this amount."),
+            DisplayName("Spatulas for Chum Bucket Lab"),
+            Description("If true, this value will override the amount of spatulas needed for the final boss.")]
+        public bool setChumSpats { get; set; } = true;
+
+        [Category("Other"),
+            DisplayName("Spatulas for Chum Bucket Lab"),
+            Description("If true, this value will override the amount of spatulas needed for the final boss.")]
+        public int spatReqChum { get; set; } = 75;
+
+        [Category("Other"), DisplayName("boot.HIP LODT multiplier"),
+            Description("If true, multiply the render distance for the pickups by this amount.")]
+        public bool bootHipLodtMulti { get; set; } = true;
+
+        [Category("Other"), DisplayName("boot.HIP LODT multiplier"),
+            Description("If true, multiply the render distance for the pickups by this amount."),
             TypeConverter(typeof(FloatTypeConverter))]
-        public float bootHipLodtMulti { get; set; } = 2f;
+        public float lodtValue { get; set; } = 2f;
+
+        [Category("Other"), DisplayName("Bright Colors"), Description("Colors randomizer results in lighter colors")]
+        public bool brightColors { get; set; } = true;
+
+        [Category("Other"), DisplayName("Strong Colors"), Description("Colors randomizer results in very saturated colors")]
+        public bool strongColors { get; set; } = false;
+
+        public void SetAllFalse()
+        {
+            cheatInvincible = false;
+            cheatBubbleBowl = false;
+            cheatCruiseBubble = false;
+            cheatSpring = false;
+            cheatHelmet = false;
+            cheatSmash = false;
+            cheatUmbrella = false;
+            bootLevelMode = BootLevelMode.Default;
+            dontShowMenuOnBoot = false;
+            allMenuWarpsHB01 = false;
+            disableCutscenes = false;
+            setChumSpats = false;
+            bootHipLodtMulti = false;
+            brightColors = false;
+            strongColors = false;
+        }
+    }
+
+    public enum BootLevelMode
+    {
+        Default,
+        Set,
+        Random
     }
 }
