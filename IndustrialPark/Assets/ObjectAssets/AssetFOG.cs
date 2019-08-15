@@ -15,49 +15,40 @@ namespace IndustrialPark
         [Category("Fog"), Editor(typeof(MyColorEditor), typeof(UITypeEditor)), DisplayName("End Color (R, G, B)")]
         public MyColor BackgroundColor
         {
-            get
+            get => new MyColor(Data[8], Data[9], Data[10], Data[11]);
+            
+            set
             {
-                byte[] abgr = BitConverter.GetBytes(ReadInt(0x8));
-                return new MyColor(abgr[3], abgr[2], abgr[1], abgr[0]);
+                Data[8] = value.R;
+                Data[9] = value.G;
+                Data[10] = value.B;
             }
-
-            set => Write(0x8, BitConverter.ToInt32(new byte[] { BackgroundColorAlpha, value.B, value.G, value.R }, 0));
         }
 
         [Category("Fog"), DisplayName("End Color Alpha (0 - 255)")]
         public byte BackgroundColorAlpha
         {
-            get
-            {
-                byte[] abgr = BitConverter.GetBytes(ReadInt(0x8));
-                return abgr[0];
-            }
-
-            set => Write(0x8, BitConverter.ToInt32(new byte[] { value, BackgroundColor.B, BackgroundColor.G, BackgroundColor.R }, 0));
+            get => ReadByte(11);
+            set => Write(value, 11);
         }
 
         [Category("Fog"), Editor(typeof(MyColorEditor), typeof(UITypeEditor)), DisplayName("Start Color (R, G, B)")]
         public MyColor FogColor
         {
-            get
+            get => new MyColor(Data[12], Data[13], Data[14], Data[15]);
+            set
             {
-                byte[] abgr = BitConverter.GetBytes(ReadInt(0xC));
-                return new MyColor(abgr[3], abgr[2], abgr[1], abgr[0]);
+                Data[12] = value.R;
+                Data[13] = value.G;
+                Data[14] = value.B;
             }
-
-            set => Write(0xC, BitConverter.ToInt32(new byte[] { FogColorAlpha, value.B, value.G, value.R }, 0));
         }
 
         [Category("Fog"), DisplayName("Start Color Alpha (0 - 255)")]
         public byte FogColorAlpha
         {
-            get
-            {
-                byte[] abgr = BitConverter.GetBytes(ReadInt(0xC));
-                return abgr[0];
-            }
-
-            set => Write(0xC, BitConverter.ToInt32(new byte[] { value, FogColor.B, FogColor.G, FogColor.R }, 0));
+            get => ReadByte(15);
+            set => Write(value, 15);
         }
 
         [Category("Fog"), TypeConverter(typeof(FloatTypeConverter))]

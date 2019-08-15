@@ -170,9 +170,6 @@ namespace IndustrialPark
             OpenTextureFolders.Clear();
             DisposeTextures();
             Textures.Clear();
-
-            foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                ae.archive.SetupTextureDisplay();
         }
     }
 }

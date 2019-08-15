@@ -148,7 +148,8 @@ namespace IndustrialPark.Randomizer
             if (ShouldShuffle(flags, RandomizerFlags.Marker_Positions, AssetType.MRKR)
                 && !new string[] { "hb02", "b101", "b201", "b302", "b303" }.Contains(LevelName))
             {
-                ShuffleMRKRPositions(seed, 
+                ShuffleMRKRPositions(seed,
+                    settings.allMenuWarpsHB01,
                     flags2.HasFlag(RandomizerFlags2.Pointer_Positions),
                     flags.HasFlag(RandomizerFlags.Player_Start),
                     flags2.HasFlag(RandomizerFlags2.Bus_Stop_Positions),
@@ -161,6 +162,12 @@ namespace IndustrialPark.Randomizer
             if (ShouldShuffle(flags, RandomizerFlags.Platform_Speeds, AssetType.PLAT))
             {
                 ShufflePlatSpeeds(seed, settings);
+                shuffled = true;
+            }
+
+            if (ShouldShuffle(flags, RandomizerFlags.Texture_Animations, AssetType.SURF))
+            {
+                ShuffleSurfs(seed, settings);
                 shuffled = true;
             }
 
@@ -898,9 +905,6 @@ namespace IndustrialPark.Randomizer
         {
             bool imported = false;
 
-            if (inSet.Count == 0)
-                return imported;
-
             foreach (VilType v in inSet)
             {
                 if ((v == VilType.robot_sleepytime_bind && ContainsAsset(new AssetID("robot_sleepy-time_bind.MINF")))
@@ -968,14 +972,14 @@ namespace IndustrialPark.Randomizer
             return true;
         }
 
-        private void ShuffleMRKRPositions(int seed, bool pointers, bool plyrs, bool busStops, bool teleBox, bool taxis)
+        private void ShuffleMRKRPositions(int seed, bool noWarps, bool pointers, bool plyrs, bool busStops, bool teleBox, bool taxis)
         {
             Random r = new Random(seed);
 
             List<IClickableAsset> assets = new List<IClickableAsset>();
 
             foreach (Asset a in assetDictionary.Values)
-                if (a is AssetMRKR mrkr && VerifyMarkerStep1(mrkr, busStops, teleBox, taxis))
+                if (a is AssetMRKR mrkr && VerifyMarkerStep1(mrkr, noWarps, busStops, teleBox, taxis))
                     assets.Add(mrkr);
                 else if (a is AssetDYNA dyna && pointers && dyna.Type_BFBB == DynaType_BFBB.pointer)
                     assets.Add(dyna);
@@ -999,11 +1003,13 @@ namespace IndustrialPark.Randomizer
             }
         }
 
-        private bool VerifyMarkerStep1(AssetMRKR mrkr, bool busStops, bool teleBox, bool taxis)
+        private bool VerifyMarkerStep1(AssetMRKR mrkr, bool noWarps, bool busStops, bool teleBox, bool taxis)
         {
             string assetName = mrkr.AHDR.ADBG.assetName;
 
             if (assetName.Contains("TEMP"))
+                return false;
+            if (noWarps && assetName.Contains("SPAT"))
                 return false;
 
             List<uint> whoTargets = FindWhoTargets(mrkr.AHDR.assetID);
@@ -1042,6 +1048,10 @@ namespace IndustrialPark.Randomizer
                 if (Functions.currentGame == Game.BFBB)
                     switch (LevelName)
                     {
+                        case "jf01":
+                            if (assetName.Contains("BOUCETREE PARTICLE MARKER"))
+                                return false;
+                            break;
                         case "jf04":
                             if (Convert.ToInt32(assetName.Split('_')[2]) > 3)
                                 return false;
@@ -1075,11 +1085,11 @@ namespace IndustrialPark.Randomizer
                                 return false;
                             break;
                         case "gy01":
-                            if (assetName.Contains("BALLDESTROYED"))
+                            if (assetName.Equals("TELEPRT_MARK_B"))
                                 return false;
                             break;
                         case "gy03":
-                            if (assetName.Contains("TELEPRT_MARK_B"))
+                            if (assetName.Contains("BALLDESTROYED"))
                                 return false;
                             break;
                         case "db02":
@@ -1152,6 +1162,28 @@ namespace IndustrialPark.Randomizer
                         mc.SlideTime *= r.NextFloat(minMultiTime, maxMultiTime);
                         plat.Motion = mc;
                     }
+                }
+        }
+
+        private void ShuffleSurfs(int seed, RandomizerSettings settings)
+        {
+            Random r = new Random(seed);
+
+            float minMultiSpeed = settings.surfMin;
+            float maxMultiSpeed = settings.surfMax;
+
+            foreach (Asset a in assetDictionary.Values)
+                if (a is AssetSURF surf)
+                {
+                    if (surf.UVEffects1_TransSpeed_X == 0)
+                        surf.UVEffects1_TransSpeed_X = r.NextFloat(minMultiSpeed, maxMultiSpeed);
+                    else
+                        surf.UVEffects1_TransSpeed_X *= r.NextFloat(minMultiSpeed, maxMultiSpeed);
+
+                    if (surf.UVEffects1_TransSpeed_Y == 0)
+                        surf.UVEffects1_TransSpeed_Y = r.NextFloat(minMultiSpeed, maxMultiSpeed);
+                    else
+                        surf.UVEffects1_TransSpeed_Y *= r.NextFloat(minMultiSpeed, maxMultiSpeed);
                 }
         }
 
@@ -1465,8 +1497,15 @@ namespace IndustrialPark.Randomizer
                     { 
                         index = r.Next(0, warpNames.Count);
                         times++;
+
+                        if (times > 500)
+                        {
+                            warpNames.Clear();
+                            warpNames.AddRange(unique);
+                            times = 0;
+                        }
                     }
-                    while (IsWarpToSameLevel(warpNames[index]) && times < 500);
+                    while (IsWarpToSameLevel(warpNames[index]));
 
                     warpRandomizerOutput.Add((LevelName.ToUpper(), port.DestinationLevel, warpNames[index]));
 
@@ -1474,7 +1513,7 @@ namespace IndustrialPark.Randomizer
 
                     warpNames.RemoveAt(index);
 
-                    if (warpNames.Count == 0) // this means we're out of warp names and we need to get them from unique again! this only happens on alternate warps method
+                    if (warpNames.Count == 0)
                         warpNames.AddRange(unique);
                 }
         }
@@ -1736,7 +1775,8 @@ namespace IndustrialPark.Randomizer
                             ReplaceInText(new AssetID("exit_b301_denial_text"), "75", value.ToString());
                             ReplaceInText(new AssetID("exit_b301_description_text"), "75", value.ToString());
 
-                            needToAddNumbers = true;
+                            if (value != 75)
+                                needToAddNumbers = true;
                         }
                     }
                     break;

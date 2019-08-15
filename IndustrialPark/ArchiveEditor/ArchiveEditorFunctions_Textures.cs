@@ -32,13 +32,12 @@ namespace IndustrialPark
 
                 PerformTXDConversionExternal();
 
-                TextureManager.LoadTexturesFromTXD(pathToPcTXD, false);
+                TextureManager.LoadTexturesFromTXD(pathToPcTXD);
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Unable to setup texture display: " + ex.Message);
             }
-            TextureManager.ReapplyTextures();
 
             File.Delete(pathToGcTXD);
             File.Delete(pathToPcTXD);

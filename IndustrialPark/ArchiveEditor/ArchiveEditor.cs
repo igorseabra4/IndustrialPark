@@ -578,7 +578,7 @@ namespace IndustrialPark
                         AHDR.assetID++;
                     }
 
-                    archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR);
+                    archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR, true);
                     if (setPosition)
                         archive.SetAssetPositionToView(AHDR.assetID);
 

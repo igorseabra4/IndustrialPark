@@ -37,11 +37,10 @@ namespace IndustrialPark
                 Switch(BitConverter.ToSingle(Data, 0x0C)),
                 Switch(BitConverter.ToSingle(Data, 0x10)),
                 Switch(BitConverter.ToSingle(Data, 0x14)));
-            byte[] abgr = BitConverter.GetBytes(Switch(BitConverter.ToInt32(Data, 0x18)));
-            Color1R = abgr[3];
-            Color1G = abgr[2];
-            Color1B = abgr[1];
-            ColorAlpha = abgr[0];
+            ColorR = Data[0x18];
+            ColorG = Data[0x19];
+            ColorB = Data[0x1A];
+            ColorAlpha = Data[0x1B];
             Width = Switch(BitConverter.ToSingle(Data, 0x1C));
             UnknownFloat = Switch(BitConverter.ToSingle(Data, 0x20));
             LightningTexture_AssetID = Switch(BitConverter.ToUInt32(Data, 0x24));
@@ -65,7 +64,10 @@ namespace IndustrialPark
             list.AddRange(BitConverter.GetBytes(Switch(_position2.X)));
             list.AddRange(BitConverter.GetBytes(Switch(_position2.Y)));
             list.AddRange(BitConverter.GetBytes(Switch(_position2.Z)));
-            list.AddRange(BitConverter.GetBytes(Switch(BitConverter.ToInt32(new byte[] { ColorAlpha, Color1B, Color1G, Color1R }, 0))));
+            list.Add(ColorR);
+            list.Add(ColorG);
+            list.Add(ColorB);
+            list.Add(ColorAlpha);
             list.AddRange(BitConverter.GetBytes(Switch(Width)));
             list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat)));
             list.AddRange(BitConverter.GetBytes(Switch(LightningTexture_AssetID)));
@@ -146,19 +148,19 @@ namespace IndustrialPark
             }
         }
 
-        private byte Color1R;
-        private byte Color1G;
-        private byte Color1B;
+        private byte ColorR;
+        private byte ColorG;
+        private byte ColorB;
 
         [Category("Effect Lightning"), Editor(typeof(MyColorEditor), typeof(UITypeEditor)), DisplayName("Color 1 (R, G, B)")]
         public MyColor Color
         {
-            get => new MyColor(Color1R, Color1G, Color1B, ColorAlpha);
+            get => new MyColor(ColorR, ColorG, ColorB, ColorAlpha);
             set
             {
-                Color1R = value.R;
-                Color1G = value.G;
-                Color1B = value.B;
+                ColorR = value.R;
+                ColorG = value.G;
+                ColorB = value.B;
             }
         }
         [Category("Effect Lightning"), DisplayName("Color 1 Alpha (0 - 255)")]

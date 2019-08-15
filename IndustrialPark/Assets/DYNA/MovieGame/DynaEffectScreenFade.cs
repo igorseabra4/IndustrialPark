@@ -15,11 +15,10 @@ namespace IndustrialPark
 
         public DynaEffectScreenFade(IEnumerable<byte> enumerable) : base (enumerable)
         {
-            byte[] abgr = BitConverter.GetBytes(Switch(BitConverter.ToInt32(Data, 0x0)));
-            Color1R = abgr[3];
-            Color1G = abgr[2];
-            Color1B = abgr[1];
-            ColorAlpha = abgr[0];
+            ColorR = Data[0];
+            ColorG = Data[1];
+            ColorB = Data[2];
+            ColorAlpha = Data[3];
             UnknownFloat1 = Switch(BitConverter.ToSingle(Data, 0x4));
             UnknownFloat2 = Switch(BitConverter.ToSingle(Data, 0x8));
             UnknownFloat3 = Switch(BitConverter.ToSingle(Data, 0xC));
@@ -28,26 +27,29 @@ namespace IndustrialPark
         public override byte[] ToByteArray()
         {
             List<byte> list = new List<byte>();
-            list.AddRange(BitConverter.GetBytes(Switch(BitConverter.ToInt32(new byte[] { ColorAlpha, Color1B, Color1G, Color1R }, 0))));
+            list.Add(ColorR);
+            list.Add(ColorG);
+            list.Add(ColorB);
+            list.Add(ColorAlpha);
             list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat1)));
             list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat2)));
             list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat3)));
             return list.ToArray();
         }
         
-        private byte Color1R;
-        private byte Color1G;
-        private byte Color1B;
+        private byte ColorR;
+        private byte ColorG;
+        private byte ColorB;
 
         [Editor(typeof(MyColorEditor), typeof(UITypeEditor)), DisplayName("Color 1 (R, G, B)")]
         public MyColor Color
         {
-            get => new MyColor(Color1R, Color1G, Color1B, ColorAlpha);
+            get => new MyColor(ColorR, ColorG, ColorB, ColorAlpha);
             set
             {
-                Color1R = value.R;
-                Color1G = value.G;
-                Color1B = value.B;
+                ColorR = value.R;
+                ColorG = value.G;
+                ColorB = value.B;
             }
         }
         [DisplayName("Color 1 Alpha (0 - 255)")]

@@ -455,15 +455,17 @@ namespace IndustrialPark.Models
                         mat.materialStruct.color.G / 255f,
                         mat.materialStruct.color.B / 255f,
                         mat.materialStruct.color.A / 255f),
-                    TextureDiffuse = new TextureSlot()
+                    TextureDiffuse = mat.materialStruct.isTextured != 0 ? new TextureSlot()
                     {
                         FilePath = mat.texture.diffuseTextureName.stringString + textureExtension,
                         TextureType = TextureType.Diffuse
-                    },
-                    Name = "mat_" + mat.texture.diffuseTextureName.stringString
+                    } : default,
+                    Name = mat.materialStruct.isTextured != 0 ? "mat_" + mat.texture.diffuseTextureName.stringString : default,
                 });
 
-                scene.Meshes.Add(new Mesh(PrimitiveType.Triangle) { MaterialIndex = i, Name = "mesh_" + mat.texture.diffuseTextureName.stringString });
+                scene.Meshes.Add(new Mesh(PrimitiveType.Triangle) { MaterialIndex = i, Name = "mesh_" +
+                    (mat.materialStruct.isTextured != 0 ? mat.texture.diffuseTextureName.stringString : ("default_" + i.ToString()))
+                });
             }
 
             if (world.firstWorldChunk.sectionIdentifier == Section.AtomicSector)

@@ -132,6 +132,18 @@ namespace IndustrialPark
             TypeConverter(typeof(FloatTypeConverter))]
         public float shinyReqMax { get; set; } = 1.5f;
 
+        [Category("Texture Animation Multiplier"),
+            DisplayName("Minimum"),
+            Description("A random value between min. and max. is chosen to multiply the settings for texture animations."),
+            TypeConverter(typeof(FloatTypeConverter))]
+        public float surfMin { get; set; } = -3f;
+
+        [Category("Texture Animation Multiplier"),
+            DisplayName("Maximum"),
+            Description("A random value between min. and max. is chosen to multiply the settings for texture animations."),
+            TypeConverter(typeof(FloatTypeConverter))]
+        public float surfMax { get; set; } = 3f;
+
         [Category("Spatula Gates"),
             DisplayName("Minimum"),
             Description("A random value between min. and max. is chosen for each spatula toll gate.")]

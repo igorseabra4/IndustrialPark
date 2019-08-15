@@ -199,6 +199,9 @@
     <Compile Include="Assets\Binary\AssetLKIT.cs" />
     <Compile Include="Assets\Binary\AssetSNDI_GCN_V2.cs" />
     <Compile Include="Assets\Binary\AssetVILP.cs" />
+    <Compile Include="Assets\DYNA\BFBB\HudDynas\DynaHudBase.cs" />
+    <Compile Include="Assets\DYNA\BFBB\HudDynas\DynaHudMeterBase.cs" />
+    <Compile Include="Assets\DYNA\BFBB\FontEnum.cs" />
     <Compile Include="Assets\DYNA\MovieGame\DynaJSPExtraData.cs" />
     <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\DynaEnemyCastNCrew.cs" />
     <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\DynaEnemyDennis.cs" />
@@ -391,10 +394,10 @@
     <Compile Include="Assets\DYNA\BFBB\DynaBusStop.cs" />
     <Compile Include="Assets\DYNA\BFBB\DynaCamTweak.cs" />
     <Compile Include="Assets\DYNA\BFBB\DynaFlythrough.cs" />
-    <Compile Include="Assets\DYNA\BFBB\DynaHudMeterFont.cs" />
-    <Compile Include="Assets\DYNA\BFBB\DynaHudMeterUnit.cs" />
-    <Compile Include="Assets\DYNA\BFBB\DynaHudModel.cs" />
-    <Compile Include="Assets\DYNA\BFBB\DynaHudText.cs" />
+    <Compile Include="Assets\DYNA\BFBB\HudDynas\DynaHudMeterFont.cs" />
+    <Compile Include="Assets\DYNA\BFBB\HudDynas\DynaHudMeterUnit.cs" />
+    <Compile Include="Assets\DYNA\BFBB\HudDynas\DynaHudModel.cs" />
+    <Compile Include="Assets\DYNA\BFBB\HudDynas\DynaHudText.cs" />
     <Compile Include="Assets\DYNA\BFBB\DynaNPCSettings.cs" />
     <Compile Include="Assets\DYNA\BFBB\RenderableDynas\DynaPointer.cs" />
     <Compile Include="Assets\DYNA\BFBB\DynaTalkBox.cs" />

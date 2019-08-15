@@ -38,6 +38,7 @@ namespace IndustrialPark.Randomizer
                 RandomizerFlags.Spatula_Gates,
                 RandomizerFlags.Timers,
                 RandomizerFlags.Music,
+                RandomizerFlags.Texture_Animations,
                 RandomizerFlags.Disco_Floors,
                 RandomizerFlags.Colors
             };
@@ -181,7 +182,8 @@ namespace IndustrialPark.Randomizer
                         if (!platformVerified &&
                             (flags.HasFlag(RandomizerFlags.Enemies_Allow_Any_Type) ||
                             flags.HasFlag(RandomizerFlags.Shiny_Object_Gates) ||
-                            flags.HasFlag(RandomizerFlags.Spatula_Gates)))
+                            flags.HasFlag(RandomizerFlags.Spatula_Gates) ||
+                            (settings.setChumSpats && settings.spatReqChum != 75)))
                         {
                             bool disableStuff = false;
                             if (currentGame != HipHopFile.Game.BFBB || currentPlatform != HipHopFile.Platform.GameCube)
@@ -206,6 +208,7 @@ namespace IndustrialPark.Randomizer
                                 this.flags.Remove(RandomizerFlags.Enemies_Allow_Any_Type);
                                 this.flags.Remove(RandomizerFlags.Shiny_Object_Gates);
                                 this.flags.Remove(RandomizerFlags.Spatula_Gates);
+                                settings.setChumSpats = false;
                             }
 
                             platformVerified = true;

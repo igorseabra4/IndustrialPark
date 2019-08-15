@@ -27,25 +27,25 @@ namespace IndustrialPark
             Asset.Verify(MRKR_ID, ref result);
         }
 
-        public DynaBungeeDrop(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaBungeeDrop(IEnumerable<byte> enumerable) : base(enumerable)
         {
             MRKR_ID = Switch(BitConverter.ToUInt32(Data, 0x0));
-            Unknown = Switch(BitConverter.ToInt32(Data, 0x4));
-            MaybeRotation = Switch(BitConverter.ToSingle(Data, 0x8));
+            SetViewAngle = Switch(BitConverter.ToInt32(Data, 0x4));
+            ViewAngle = Switch(BitConverter.ToSingle(Data, 0x8));
         }
 
         public override byte[] ToByteArray()
         {
             List<byte> list = new List<byte>();
             list.AddRange(BitConverter.GetBytes(Switch(MRKR_ID)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown)));
-            list.AddRange(BitConverter.GetBytes(Switch(MaybeRotation)));
+            list.AddRange(BitConverter.GetBytes(Switch(SetViewAngle)));
+            list.AddRange(BitConverter.GetBytes(Switch(ViewAngle)));
             return list.ToArray();
         }
 
         public AssetID MRKR_ID { get; set; }
-        public int Unknown { get; set; }
+        public int SetViewAngle { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float MaybeRotation { get; set; }
+        public float ViewAngle { get; set; }
     }
 }

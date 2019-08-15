@@ -11,12 +11,12 @@ namespace IndustrialPark
 
         public DynaBungeeHook() : base()
         {
-            Unknown_ID = 0;
+            Placeable_AssetID = 0;
         }
 
         public override bool HasReference(uint assetID)
         {
-            if (Unknown_ID == assetID)
+            if (Placeable_AssetID == assetID)
                 return true;
 
             return base.HasReference(assetID);
@@ -24,138 +24,139 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
-            Asset.Verify(Unknown_ID, ref result);
+            Asset.Verify(Placeable_AssetID, ref result);
         }
 
         public DynaBungeeHook(IEnumerable<byte> enumerable) : base (enumerable)
         {
-            Unknown_ID = Switch(BitConverter.ToUInt32(Data, 0x0));
-            Unknown1 = Switch(BitConverter.ToInt32(Data, 0x4));
-            Unknown2 = Switch(BitConverter.ToInt32(Data, 0x8));
-            Unknown3 = Switch(BitConverter.ToInt32(Data, 0xC));
-            UnknownFloat1 = Switch(BitConverter.ToSingle(Data, 0x10));
-            UnknownFloat2 = Switch(BitConverter.ToSingle(Data, 0x14));
-            UnknownFloat3 = Switch(BitConverter.ToSingle(Data, 0x18));
-            UnknownFloat4 = Switch(BitConverter.ToSingle(Data, 0x1C));
-            UnknownFloat5 = Switch(BitConverter.ToSingle(Data, 0x20));
-            UnknownFloat6 = Switch(BitConverter.ToSingle(Data, 0x24));
-            UnknownFloat7 = Switch(BitConverter.ToSingle(Data, 0x28));
-            UnknownFloat8 = Switch(BitConverter.ToSingle(Data, 0x2C));
-            UnknownFloat9 = Switch(BitConverter.ToSingle(Data, 0x30));
-            UnknownFloat10 = Switch(BitConverter.ToSingle(Data, 0x34));
-            UnknownFloat11 = Switch(BitConverter.ToSingle(Data, 0x38));
-            UnknownFloat12 = Switch(BitConverter.ToSingle(Data, 0x3C));
-            UnknownFloat13 = Switch(BitConverter.ToSingle(Data, 0x40));
-            UnknownFloat14 = Switch(BitConverter.ToSingle(Data, 0x44));
-            UnknownFloat15 = Switch(BitConverter.ToSingle(Data, 0x48));
-            UnknownFloat16 = Switch(BitConverter.ToSingle(Data, 0x4C));
-            UnknownFloat17 = Switch(BitConverter.ToSingle(Data, 0x50));
-            UnknownFloat18 = Switch(BitConverter.ToSingle(Data, 0x54));
-            UnknownFloat19 = Switch(BitConverter.ToSingle(Data, 0x58));
-            UnknownFloat20 = Switch(BitConverter.ToSingle(Data, 0x5C));
-            UnknownFloat21 = Switch(BitConverter.ToSingle(Data, 0x60));
-            UnknownFloat22 = Switch(BitConverter.ToSingle(Data, 0x64));
-            UnknownFloat23 = Switch(BitConverter.ToSingle(Data, 0x68));
-            UnknownFloat24 = Switch(BitConverter.ToSingle(Data, 0x6C));
-            UnknownFloat25 = Switch(BitConverter.ToSingle(Data, 0x70));
-            UnknownFloat26 = Switch(BitConverter.ToSingle(Data, 0x74));
-            UnknownFloat27 = Switch(BitConverter.ToSingle(Data, 0x78));
+            Placeable_AssetID = Switch(BitConverter.ToUInt32(Data, 0x0));
+            EnterX = Switch(BitConverter.ToInt32(Data, 0x4));
+            EnterY = Switch(BitConverter.ToInt32(Data, 0x8));
+            EnterZ = Switch(BitConverter.ToInt32(Data, 0xC));
+            AttachDist = Switch(BitConverter.ToSingle(Data, 0x10));
+            AttachTravelTime = Switch(BitConverter.ToSingle(Data, 0x14));
+            DetachDist = Switch(BitConverter.ToSingle(Data, 0x18));
+            DetachFreeFallTime = Switch(BitConverter.ToSingle(Data, 0x1C));
+            DetachAccel = Switch(BitConverter.ToSingle(Data, 0x20));
+            TurnUnused1 = Switch(BitConverter.ToSingle(Data, 0x24));
+            TurnUnused2 = Switch(BitConverter.ToSingle(Data, 0x28));
+            VerticalFrequency = Switch(BitConverter.ToSingle(Data, 0x2C));
+            VerticalGravity = Switch(BitConverter.ToSingle(Data, 0x30));
+            VerticalDive = Switch(BitConverter.ToSingle(Data, 0x34));
+            VerticalMinDist = Switch(BitConverter.ToSingle(Data, 0x38));
+            VerticalMaxDist = Switch(BitConverter.ToSingle(Data, 0x3C));
+            VerticalDamp = Switch(BitConverter.ToSingle(Data, 0x40));
+            HorizontalMaxDist = Switch(BitConverter.ToSingle(Data, 0x44));
+            CameraRestDist = Switch(BitConverter.ToSingle(Data, 0x48));
+            Cameraview_angle = Switch(BitConverter.ToSingle(Data, 0x4C));
+            CameraOffset = Switch(BitConverter.ToSingle(Data, 0x50));
+            CameraOffsetDir = Switch(BitConverter.ToSingle(Data, 0x54));
+            CameraTurnSpeed = Switch(BitConverter.ToSingle(Data, 0x58));
+            CameraVelScale = Switch(BitConverter.ToSingle(Data, 0x5C));
+            CameraRollSpeed = Switch(BitConverter.ToSingle(Data, 0x60));
+            CameraUnused1_X = Switch(BitConverter.ToSingle(Data, 0x64));
+            CameraUnused1_Y = Switch(BitConverter.ToSingle(Data, 0x68));
+            CameraUnused1_Z = Switch(BitConverter.ToSingle(Data, 0x6C));
+            CollisionHitLoss = Switch(BitConverter.ToSingle(Data, 0x70));
+            CollisionDamageVelocity = Switch(BitConverter.ToSingle(Data, 0x74));
+            CollisionHitVelocity = Switch(BitConverter.ToSingle(Data, 0x78));
         }
 
         public override byte[] ToByteArray()
         {
             List<byte> list = new List<byte>();
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown_ID)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown1)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown2)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown3)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat1)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat2)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat3)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat4)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat5)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat6)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat7)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat8)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat9)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat10)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat11)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat12)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat13)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat14)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat15)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat16)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat17)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat18)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat19)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat20)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat21)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat22)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat23)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat24)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat25)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat26)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat27)));
+            list.AddRange(BitConverter.GetBytes(Switch(Placeable_AssetID)));
+            list.AddRange(BitConverter.GetBytes(Switch(EnterX)));
+            list.AddRange(BitConverter.GetBytes(Switch(EnterY)));
+            list.AddRange(BitConverter.GetBytes(Switch(EnterZ)));
+            list.AddRange(BitConverter.GetBytes(Switch(AttachDist)));
+            list.AddRange(BitConverter.GetBytes(Switch(AttachTravelTime)));
+            list.AddRange(BitConverter.GetBytes(Switch(DetachDist)));
+            list.AddRange(BitConverter.GetBytes(Switch(DetachFreeFallTime)));
+            list.AddRange(BitConverter.GetBytes(Switch(DetachAccel)));
+            list.AddRange(BitConverter.GetBytes(Switch(TurnUnused1)));
+            list.AddRange(BitConverter.GetBytes(Switch(TurnUnused2)));
+            list.AddRange(BitConverter.GetBytes(Switch(VerticalFrequency)));
+            list.AddRange(BitConverter.GetBytes(Switch(VerticalGravity)));
+            list.AddRange(BitConverter.GetBytes(Switch(VerticalDive)));
+            list.AddRange(BitConverter.GetBytes(Switch(VerticalMinDist)));
+            list.AddRange(BitConverter.GetBytes(Switch(VerticalMaxDist)));
+            list.AddRange(BitConverter.GetBytes(Switch(VerticalDamp)));
+            list.AddRange(BitConverter.GetBytes(Switch(HorizontalMaxDist)));
+            list.AddRange(BitConverter.GetBytes(Switch(CameraRestDist)));
+            list.AddRange(BitConverter.GetBytes(Switch(Cameraview_angle)));
+            list.AddRange(BitConverter.GetBytes(Switch(CameraOffset)));
+            list.AddRange(BitConverter.GetBytes(Switch(CameraOffsetDir)));
+            list.AddRange(BitConverter.GetBytes(Switch(CameraTurnSpeed)));
+            list.AddRange(BitConverter.GetBytes(Switch(CameraVelScale)));
+            list.AddRange(BitConverter.GetBytes(Switch(CameraRollSpeed)));
+            list.AddRange(BitConverter.GetBytes(Switch(CameraUnused1_X)));
+            list.AddRange(BitConverter.GetBytes(Switch(CameraUnused1_Y)));
+            list.AddRange(BitConverter.GetBytes(Switch(CameraUnused1_Z)));
+            list.AddRange(BitConverter.GetBytes(Switch(CollisionHitLoss)));
+            list.AddRange(BitConverter.GetBytes(Switch(CollisionDamageVelocity)));
+            list.AddRange(BitConverter.GetBytes(Switch(CollisionHitVelocity)));
+
             return list.ToArray();
         }
 
-        public AssetID Unknown_ID { get; set; }
-        public int Unknown1 { get; set; }
-        public int Unknown2 { get; set; }
-        public int Unknown3 { get; set; }
+        public AssetID Placeable_AssetID { get; set; }
+        public int EnterX { get; set; }
+        public int EnterY { get; set; }
+        public int EnterZ { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat1 { get; set; }
+        public float AttachDist { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat2 { get; set; }
+        public float AttachTravelTime { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat3 { get; set; }
+        public float DetachDist { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat4 { get; set; }
+        public float DetachFreeFallTime { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat5 { get; set; }
+        public float DetachAccel { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat6 { get; set; }
+        public float TurnUnused1 { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat7 { get; set; }
+        public float TurnUnused2 { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat8 { get; set; }
+        public float VerticalFrequency { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat9 { get; set; }
+        public float VerticalGravity { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat10 { get; set; }
+        public float VerticalDive { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat11 { get; set; }
+        public float VerticalMinDist { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat12 { get; set; }
+        public float VerticalMaxDist { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat13 { get; set; }
+        public float VerticalDamp { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat14 { get; set; }
+        public float HorizontalMaxDist { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat15 { get; set; }
+        public float CameraRestDist { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat16 { get; set; }
+        public float Cameraview_angle { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat17 { get; set; }
+        public float CameraOffset { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat18 { get; set; }
+        public float CameraOffsetDir { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat19 { get; set; }
+        public float CameraTurnSpeed { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat20 { get; set; }
+        public float CameraVelScale { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat21 { get; set; }
+        public float CameraRollSpeed { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat22 { get; set; }
+        public float CameraUnused1_X { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat23 { get; set; }
+        public float CameraUnused1_Y { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat24 { get; set; }
+        public float CameraUnused1_Z { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat25 { get; set; }
+        public float CollisionHitLoss { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat26 { get; set; }
+        public float CollisionDamageVelocity { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat27 { get; set; }
+        public float CollisionHitVelocity { get; set; }
     }
 }

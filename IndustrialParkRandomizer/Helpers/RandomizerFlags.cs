@@ -19,10 +19,11 @@
         Spatula_Gates = 1 << 14,
         Disco_Floors = 1 << 15,
         Colors = 1 << 16,
-        Music = 1 << 17,
-        Cameras = 1 << 18,
-        Textures = 1 << 19,
-        Sounds = 1 << 20,
+        Texture_Animations = 1 << 17,
+        Music = 1 << 18,
+        Cameras = 1 << 19,
+        Textures = 1 << 20,
+        Sounds = 1 << 21,
     }
 
     public enum RandomizerFlags2

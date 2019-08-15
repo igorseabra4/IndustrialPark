@@ -40,29 +40,27 @@ namespace IndustrialPark
             YPosition = Switch(BitConverter.ToSingle(Data, 0x08));
             Width = Switch(BitConverter.ToSingle(Data, 0x0C));
             Height = Switch(BitConverter.ToSingle(Data, 0x10));
-            Font = Switch(BitConverter.ToInt32(Data, 0x14));
+            Font = (FontEnum)Switch(BitConverter.ToInt32(Data, 0x14));
             TextWidth = Switch(BitConverter.ToSingle(Data, 0x18));
             TextHeight = Switch(BitConverter.ToSingle(Data, 0x1C));
-            CharSpacing = Switch(BitConverter.ToSingle(Data, 0x20));
-            UnknownInt_34 = Switch(BitConverter.ToInt32(Data, 0x24));
-            byte[] abgr = BitConverter.GetBytes(Switch(BitConverter.ToInt32(Data, 0x28)));
-            Color1R = abgr[3];
-            Color1G = abgr[2];
-            Color1B = abgr[1];
-            Color1Alpha = abgr[0];
+            CharSpacingX = Switch(BitConverter.ToSingle(Data, 0x20));
+            CharSpacingY = Switch(BitConverter.ToSingle(Data, 0x24));
+            Color1R = Data[0x28];
+            Color1G = Data[0x29];
+            Color1B = Data[0x2A];
+            Color1Alpha = Data[0x2B];
             LeftMargin = Switch(BitConverter.ToSingle(Data, 0x2C));
             TopMargin = Switch(BitConverter.ToSingle(Data, 0x30));
             RightMargin = Switch(BitConverter.ToSingle(Data, 0x34));
             BottomMargin = Switch(BitConverter.ToSingle(Data, 0x38));
             TextAlign = Switch(BitConverter.ToInt32(Data, 0x3C));
-            UnknownInt_50 = Switch(BitConverter.ToInt32(Data, 0x40));
-            UnknownFloat_54 = Switch(BitConverter.ToSingle(Data, 0x44));
+            ExpandMode = Switch(BitConverter.ToInt32(Data, 0x40));
+            MaxHeight = Switch(BitConverter.ToSingle(Data, 0x44));
             BackgroundMode = Switch(BitConverter.ToInt32(Data, 0x48));
-            byte[] abgr2 = BitConverter.GetBytes(Switch(BitConverter.ToInt32(Data, 0x4C)));
-            Color2R = abgr2[3];
-            Color2G = abgr2[2];
-            Color2B = abgr2[1];
-            Color2Alpha = abgr2[0];
+            Color2R = Data[0x4C];
+            Color2G = Data[0x4D];
+            Color2B = Data[0x4E];
+            Color2Alpha = Data[0x4F];
             BackgroundTextureID = Switch(BitConverter.ToUInt32(Data, 0x50));
         }
 
@@ -74,21 +72,27 @@ namespace IndustrialPark
             list.AddRange(BitConverter.GetBytes(Switch(YPosition)));
             list.AddRange(BitConverter.GetBytes(Switch(Width)));
             list.AddRange(BitConverter.GetBytes(Switch(Height)));
-            list.AddRange(BitConverter.GetBytes(Switch(Font)));
+            list.AddRange(BitConverter.GetBytes(Switch((int)Font)));
             list.AddRange(BitConverter.GetBytes(Switch(TextWidth)));
             list.AddRange(BitConverter.GetBytes(Switch(TextHeight)));
-            list.AddRange(BitConverter.GetBytes(Switch(CharSpacing)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownInt_34)));
-            list.AddRange(BitConverter.GetBytes(Switch(BitConverter.ToInt32(new byte[] { Color1Alpha, Color1B, Color1G, Color1R }, 0))));
+            list.AddRange(BitConverter.GetBytes(Switch(CharSpacingX)));
+            list.AddRange(BitConverter.GetBytes(Switch(CharSpacingY)));
+            list.Add(Color1R);
+            list.Add(Color1G);
+            list.Add(Color1B);
+            list.Add(Color1Alpha);
             list.AddRange(BitConverter.GetBytes(Switch(LeftMargin)));
             list.AddRange(BitConverter.GetBytes(Switch(TopMargin)));
             list.AddRange(BitConverter.GetBytes(Switch(RightMargin)));
             list.AddRange(BitConverter.GetBytes(Switch(BottomMargin)));
             list.AddRange(BitConverter.GetBytes(Switch(TextAlign)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownInt_50)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat_54)));
+            list.AddRange(BitConverter.GetBytes(Switch(ExpandMode)));
+            list.AddRange(BitConverter.GetBytes(Switch(MaxHeight)));
             list.AddRange(BitConverter.GetBytes(Switch(BackgroundMode)));
-            list.AddRange(BitConverter.GetBytes(Switch(BitConverter.ToInt32(new byte[] { Color2Alpha, Color2B, Color2G, Color2R }, 0))));
+            list.Add(Color2R);
+            list.Add(Color2G);
+            list.Add(Color2B);
+            list.Add(Color2Alpha);
             list.AddRange(BitConverter.GetBytes(Switch(BackgroundTextureID)));
             return list.ToArray();
         }
@@ -98,11 +102,11 @@ namespace IndustrialPark
         public float YPosition { get; set; }
         public float Width { get; set; }
         public float Height { get; set; }
-        public int Font { get; set; }
+        public FontEnum Font { get; set; }
         public float TextWidth { get; set; }
         public float TextHeight { get; set; }
-        public float CharSpacing { get; set; }
-        public int UnknownInt_34 { get; set; }
+        public float CharSpacingX { get; set; }
+        public float CharSpacingY { get; set; }
 
         private byte Color1R;
         private byte Color1G;
@@ -126,8 +130,8 @@ namespace IndustrialPark
         public float RightMargin { get; set; }
         public float BottomMargin { get; set; }
         public int TextAlign { get; set; }
-        public int UnknownInt_50 { get; set; }
-        public float UnknownFloat_54 { get; set; }
+        public int ExpandMode { get; set; }
+        public float MaxHeight { get; set; }
         public int BackgroundMode { get; set; }
 
         private byte Color2R;

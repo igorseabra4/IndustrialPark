@@ -323,7 +323,7 @@ namespace IndustrialPark
 
             newAsset.ADBG = new Section_ADBG(0, CurrentUserTemplate.Substring(CurrentUserTemplate.IndexOf(']') + 2) + "_T001", "", 0);
 
-            Asset asset = GetFromAssetID(AddAssetWithUniqueID(layerIndex, newAsset, true));
+            Asset asset = GetFromAssetID(AddAssetWithUniqueID(layerIndex, newAsset, giveIDregardless: true));
 
             success = true;
 
@@ -699,7 +699,7 @@ namespace IndustrialPark
                 data = new byte[dataSize]
             };
 
-            Asset asset = GetFromAssetID(AddAssetWithUniqueID(layerIndex, newAsset, true));
+            Asset asset = GetFromAssetID(AddAssetWithUniqueID(layerIndex, newAsset, giveIDregardless: true));
 
             success = true;
 
@@ -1551,9 +1551,9 @@ namespace IndustrialPark
                     ((AssetDYNA)asset).Type_BFBB = DynaType_BFBB.game_object__talk_box;
                     ((AssetDYNA)asset).DynaBase = new DynaTalkBox()
                     {
-                        TextBoxID1 = 0x9BC49154,
-                        Flags5 = 1,
-                        UnknownFloat = 2f
+                        Dialog_TextBoxID = 0x9BC49154,
+                        AutoWaitTypeTime = 1,
+                        AutoWaitDelay = 2f
                     };
                     break;
                 case AssetTemplate.Springboard:
@@ -1594,34 +1594,34 @@ namespace IndustrialPark
                     ((AssetDYNA)asset).Type_BFBB = DynaType_BFBB.game_object__bungee_hook;
                     ((AssetDYNA)asset).DynaBase = new DynaBungeeHook()
                     {
-                        Unknown_ID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, "BUNGEE_SIMP", AssetTemplate.BungeeHook_SIMP),
-                        UnknownFloat1 = 3,
-                        UnknownFloat2 = 0.5f,
-                        UnknownFloat3 = 10,
-                        UnknownFloat4 = 1,
-                        UnknownFloat5 = 2,
-                        UnknownFloat6 = 25,
-                        UnknownFloat7 = 0.95f,
-                        UnknownFloat8 = 2,
-                        UnknownFloat9 = 9.8f,
-                        UnknownFloat10 = 2,
-                        UnknownFloat11 = 2,
-                        UnknownFloat12 = 40,
-                        UnknownFloat13 = 0.05f,
-                        UnknownFloat14 = 2,
-                        UnknownFloat15 = 5,
-                        UnknownFloat16 = 220,
-                        UnknownFloat17 = 0.5f,
-                        UnknownFloat18 = 180,
-                        UnknownFloat19 = 0.05f,
-                        UnknownFloat20 = 0,
-                        UnknownFloat21 = 0.05f,
-                        UnknownFloat22 = 0.2f,
-                        UnknownFloat23 = 0.25f,
-                        UnknownFloat24 = 0.2f,
-                        UnknownFloat25 = 0.1f,
-                        UnknownFloat26 = 0.6f,
-                        UnknownFloat27 = 0.2f,
+                        Placeable_AssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, "BUNGEE_SIMP", AssetTemplate.BungeeHook_SIMP),
+                        AttachDist = 3,
+                        AttachTravelTime = 0.5f,
+                        DetachDist = 10,
+                        DetachFreeFallTime = 1,
+                        DetachAccel = 2,
+                        TurnUnused1 = 25,
+                        TurnUnused2 = 0.95f,
+                        VerticalFrequency = 2,
+                        VerticalGravity = 9.8f,
+                        VerticalDive = 2,
+                        VerticalMinDist = 2,
+                        VerticalMaxDist = 40,
+                        VerticalDamp = 0.05f,
+                        HorizontalMaxDist = 2,
+                        CameraRestDist = 5,
+                        Cameraview_angle = 220,
+                        CameraOffset = 0.5f,
+                        CameraOffsetDir = 180,
+                        CameraTurnSpeed = 0.05f,
+                        CameraVelScale = 0,
+                        CameraRollSpeed = 0.05f,
+                        CameraUnused1_X = 0.2f,
+                        CameraUnused1_Y = 0.25f,
+                        CameraUnused1_Z = 0.2f,
+                        CollisionHitLoss = 0.1f,
+                        CollisionDamageVelocity = 0.6f,
+                        CollisionHitVelocity = 0.2f,
                     };
                     break;
                 case AssetTemplate.BungeeHook_SIMP:
@@ -1635,7 +1635,7 @@ namespace IndustrialPark
                     ((AssetDYNA)asset).DynaBase = new DynaBungeeDrop()
                     {
                         MRKR_ID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, "BUNGEE_MRKR", AssetTemplate.Marker),
-                        Unknown = 1,
+                        SetViewAngle = 1,
                     };
                     break;
                 case AssetTemplate.Dyna_Pointer:

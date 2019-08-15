@@ -214,7 +214,7 @@ namespace IndustrialPark
             ReverseObject(ref bytes);
 
             for (int i = 0; i < 3; i++)
-                bytes.AddRange(Reverse(reader.ReadInt16()));
+                bytes.AddRange(Reverse(reader.ReadInt32()));
 
             if (previousGame == Game.Scooby && newGame != Game.Scooby)
                 bytes.AddRange(new byte[4]);
@@ -284,6 +284,7 @@ namespace IndustrialPark
             if (previousEndianness == Endianness.Big)
                 dynaType = BitConverter.ToInt32(Reverse(dynaType).ToArray(), 0);
 
+            bytes.AddRange(Reverse(reader.ReadInt32()));
             bytes.AddRange(Reverse(reader.ReadInt16()));
             bytes.AddRange(Reverse(reader.ReadInt16()));
 
@@ -291,9 +292,9 @@ namespace IndustrialPark
 
             if ((DynaType_BFBB)dynaType == DynaType_BFBB.hud__meter__font)
             {
-                while (reader.BaseStream.Position < linksStart - 4)
+                while (reader.BaseStream.Position < linksStart - 12)
                     bytes.AddRange(Reverse(reader.ReadInt32()));
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < 12; i++)
                     bytes.Add(reader.ReadByte());
             }
             else if ((DynaType_BFBB)dynaType == DynaType_BFBB.game_object__NPCSettings)
@@ -316,6 +317,17 @@ namespace IndustrialPark
             }
             else if ((DynaType_BFBB)dynaType == DynaType_BFBB.game_object__task_box)
             {
+                for (int i = 0; i < 4; i++)
+                    bytes.Add(reader.ReadByte());
+            }
+            else if ((DynaType_BFBB)dynaType == DynaType_BFBB.game_object__text_box)
+            {
+                for (int i = 0; i < 10; i++)
+                    bytes.AddRange(Reverse(reader.ReadInt32()));
+                for (int i = 0; i < 4; i++)
+                    bytes.Add(reader.ReadByte());
+                for (int i = 0; i < 8; i++)
+                    bytes.AddRange(Reverse(reader.ReadInt32()));
                 for (int i = 0; i < 4; i++)
                     bytes.Add(reader.ReadByte());
             }
@@ -383,7 +395,10 @@ namespace IndustrialPark
         {
             ReverseObject(ref bytes);
 
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 8; i++)
+                bytes.Add(reader.ReadByte());
+
+            for (int i = 0; i < 4; i++)
                 bytes.AddRange(Reverse(reader.ReadInt32()));
 
             for (int i = 0; i < 4; i++)

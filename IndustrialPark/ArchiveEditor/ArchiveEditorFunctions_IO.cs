@@ -101,7 +101,7 @@ namespace IndustrialPark
                             {
                                 RemoveAsset(AHDR.assetID);
                                 DICT.ATOC.AHDRList.Add(AHDR);
-                                AddAssetToDictionary(AHDR, false, forceOverwrite);
+                                AddAssetToDictionary(AHDR, forceOverwrite, forceOverwrite);
                             }
                             else
                             {
@@ -112,7 +112,7 @@ namespace IndustrialPark
                         else
                         {
                             DICT.ATOC.AHDRList.Add(AHDR);
-                            AddAssetToDictionary(AHDR, false, forceOverwrite);
+                            AddAssetToDictionary(AHDR, forceOverwrite, forceOverwrite);
                         }
                     }
 

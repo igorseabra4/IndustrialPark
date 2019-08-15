@@ -57,49 +57,39 @@ namespace IndustrialPark
         [Category("UIFont"), Editor(typeof(MyColorEditor), typeof(UITypeEditor)), DisplayName("Background Color (R, G, B)")]
         public MyColor BackgroundColor
         {
-            get
+            get => new MyColor(Data[0x88 + Offset], Data[0x89 + Offset], Data[0x8A + Offset], Data[0x8B + Offset]);
+            set
             {
-                byte[] abgr = BitConverter.GetBytes(ReadInt(0x88));
-                return new MyColor(abgr[3], abgr[2], abgr[1], abgr[0]);
+                Data[0x88 + Offset] = value.R;
+                Data[0x89 + Offset] = value.G;
+                Data[0x8A + Offset] = value.B;
             }
-
-            set => Write(0x88, BitConverter.ToInt32(new byte[] { BackgroundColorAlpha, value.B, value.G, value.R }, 0));
         }
 
         [Category("UIFont"), DisplayName("Background Color Alpha (0 - 255)")]
         public byte BackgroundColorAlpha
         {
-            get
-            {
-                byte[] abgr = BitConverter.GetBytes(ReadInt(0x88));
-                return abgr[0];
-            }
-
-            set => Write(0x88, BitConverter.ToInt32(new byte[] { value, BackgroundColor.B, BackgroundColor.G, BackgroundColor.R }, 0));
+            get => ReadByte(0x8B + Offset);
+            set => Write(0x8B + Offset, value);
         }
 
         [Category("UIFont"), Editor(typeof(MyColorEditor), typeof(UITypeEditor)), DisplayName("Font Color (R, G, B)")]
         public MyColor FontColor
         {
-            get
+            get => new MyColor(Data[0x8C + Offset], Data[0x8D + Offset], Data[0x8E + Offset], Data[0x8F + Offset]);
+            set
             {
-                byte[] abgr = BitConverter.GetBytes(ReadInt(0x8C));
-                return new MyColor(abgr[3], abgr[2], abgr[1], abgr[0]);
+                Data[0x8C + Offset] = value.R;
+                Data[0x8D + Offset] = value.G;
+                Data[0x8E + Offset] = value.B;
             }
-
-            set => Write(0x8C, BitConverter.ToInt32(new byte[] { FontColorAlpha, value.B, value.G, value.R }, 0));
         }
 
         [Category("UIFont"), DisplayName("Font Color Alpha (0 - 255)")]
         public byte FontColorAlpha
         {
-            get
-            {
-                byte[] abgr = BitConverter.GetBytes(ReadInt(0x8C));
-                return abgr[0];
-            }
-
-            set => Write(0x8C, BitConverter.ToInt32(new byte[] { value, FontColor.B, FontColor.G, FontColor.R }, 0));
+            get => ReadByte(0x8F + Offset);
+            set => Write(0x8F + Offset, value);
         }
 
         [Category("UIFont")]

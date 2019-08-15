@@ -275,6 +275,7 @@ namespace IndustrialPark
             
             ArchiveEditorFunctions.hiddenAssets = ipSettings.hiddenAssets;
             ArchiveEditorFunctions.defaultScoobyPlatform = ipSettings.platformForScooby;
+            ArchiveEditorFunctions.hideHelp = ipSettings.hideHelp;
 
             foreach (string s in ipSettings.hipPaths)
                 if (s == "Empty")

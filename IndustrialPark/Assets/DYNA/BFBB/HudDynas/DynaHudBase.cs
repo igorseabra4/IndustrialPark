@@ -5,37 +5,21 @@ using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
-    public class DynaHudModel : DynaBase
+    public class DynaHudBase : DynaBase
     {
-        public override string Note => "Version is always 1";
-
-        public DynaHudModel() : base()
+        public DynaHudBase() : base()
         {
-            Model_AssetID = 0;
+
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (Model_AssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            Asset.Verify(Model_AssetID, ref result);
-        }
-
-        public DynaHudModel(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaHudBase(IEnumerable<byte> enumerable) : base (enumerable)
         {
             PositionX = Switch(BitConverter.ToSingle(Data, 0x0));
             PositionY = Switch(BitConverter.ToSingle(Data, 0x4));
             PositionZ = Switch(BitConverter.ToSingle(Data, 0x8));
-            SizeX = Switch(BitConverter.ToSingle(Data, 0xC));
-            SizeY = Switch(BitConverter.ToSingle(Data, 0x10));
-            SizeZ = Switch(BitConverter.ToSingle(Data, 0x14));
-            Model_AssetID = Switch(BitConverter.ToUInt32(Data, 0x18));
+            ScaleX = Switch(BitConverter.ToSingle(Data, 0xC));
+            ScaleY = Switch(BitConverter.ToSingle(Data, 0x10));
+            ScaleZ = Switch(BitConverter.ToSingle(Data, 0x14));
         }
 
         public override byte[] ToByteArray()
@@ -44,10 +28,10 @@ namespace IndustrialPark
             list.AddRange(BitConverter.GetBytes(Switch(PositionX)));
             list.AddRange(BitConverter.GetBytes(Switch(PositionY)));
             list.AddRange(BitConverter.GetBytes(Switch(PositionZ)));
-            list.AddRange(BitConverter.GetBytes(Switch(SizeX)));
-            list.AddRange(BitConverter.GetBytes(Switch(SizeY)));
-            list.AddRange(BitConverter.GetBytes(Switch(SizeZ)));
-            list.AddRange(BitConverter.GetBytes(Switch(Model_AssetID)));
+            list.AddRange(BitConverter.GetBytes(Switch(ScaleX)));
+            list.AddRange(BitConverter.GetBytes(Switch(ScaleY)));
+            list.AddRange(BitConverter.GetBytes(Switch(ScaleZ)));
+
             return list.ToArray();
         }
 
@@ -58,11 +42,10 @@ namespace IndustrialPark
         [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
         public override float PositionZ { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float SizeX{ get; set; }
+        public override float ScaleX { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float SizeY{ get; set; }
+        public override float ScaleY { get; set; }
         [TypeConverter(typeof(FloatTypeConverter))]
-        public float SizeZ{ get; set; }
-        public AssetID Model_AssetID { get; set; }
+        public override float ScaleZ { get; set; }
     }
 }

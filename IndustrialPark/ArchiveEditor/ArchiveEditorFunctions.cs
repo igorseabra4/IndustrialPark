@@ -132,7 +132,7 @@ namespace IndustrialPark
 
             autoCompleteSource.AddRange(autoComplete.ToArray());
 
-            if (!skipTexturesAndModels && GetAssetsOfType(AssetType.RWTX).Any())
+            if (!skipTexturesAndModels && ContainsAssetWithType(AssetType.RWTX))
                 SetupTextureDisplay();
 
             RecalculateAllMatrices();
@@ -515,7 +515,7 @@ namespace IndustrialPark
                         AHDR.assetID++;
                     }
                     UnsavedChanges = true;
-                    AddAsset(layerIndex, AHDR);
+                    AddAsset(layerIndex, AHDR, true);
                     if (setPosition)
                         SetAssetPositionToView(AHDR.assetID);
                 }
@@ -528,22 +528,22 @@ namespace IndustrialPark
             }
         }
 
-        public uint AddAsset(int layerIndex, Section_AHDR AHDR)
+        public uint AddAsset(int layerIndex, Section_AHDR AHDR, bool setTextureDisplay)
         {
             DICT.LTOC.LHDRList[layerIndex].assetIDlist.Add(AHDR.assetID);
             DICT.ATOC.AHDRList.Add(AHDR);
             AddAssetToDictionary(AHDR, false);
 
-            if (GetFromAssetID(AHDR.assetID) is AssetRWTX rwtx)
+            if (setTextureDisplay && GetFromAssetID(AHDR.assetID) is AssetRWTX rwtx)
                 EnableTextureForDisplay(rwtx);
 
             return AHDR.assetID;
         }
 
-        public uint AddAssetWithUniqueID(int layerIndex, Section_AHDR AHDR, bool giveIDregardless = false)
+        public uint AddAssetWithUniqueID(int layerIndex, Section_AHDR AHDR, bool giveIDregardless = false, bool setTextureDisplay = false)
         {
             int numCopies = 0;
-            string stringToAdd = "_";
+            char stringToAdd = '_';
 
             while (ContainsAsset(AHDR.assetID) || giveIDregardless)
             {
@@ -551,20 +551,25 @@ namespace IndustrialPark
                 {
                     MessageBox.Show("Something went wrong: the asset your're trying to duplicate, paste or create a template of's name is too long. Due to that, I'll have to give it a new name myself.");
                     numCopies = 0;
-                    AHDR.ADBG.assetName = "TOO_LONG";
+                    AHDR.ADBG.assetName = AHDR.assetType.ToString();
                 }
 
                 giveIDregardless = false;
                 numCopies++;
 
                 if (AHDR.ADBG.assetName.Contains(stringToAdd))
-                    AHDR.ADBG.assetName = AHDR.ADBG.assetName.Substring(0, AHDR.ADBG.assetName.LastIndexOf(stringToAdd));
+                    try
+                    {
+                        int a = Convert.ToInt32(AHDR.ADBG.assetName.Split(stringToAdd).Last());
+                        AHDR.ADBG.assetName = AHDR.ADBG.assetName.Substring(0, AHDR.ADBG.assetName.LastIndexOf(stringToAdd));
+                    }
+                    catch { }
 
                 AHDR.ADBG.assetName += stringToAdd + numCopies.ToString("D2");
                 AHDR.assetID = BKDRHash(AHDR.ADBG.assetName);
             }
 
-            return AddAsset(layerIndex, AHDR);
+            return AddAsset(layerIndex, AHDR, setTextureDisplay);
         }
 
         public void RemoveAsset(IEnumerable<uint> assetIDs)
@@ -714,19 +719,20 @@ namespace IndustrialPark
                     {
                         if (ContainsAsset(AHDR.assetID))
                             RemoveAsset(AHDR.assetID);
-                        AddAsset(layerIndex, AHDR);
+                        AddAsset(layerIndex, AHDR, setTextureDisplay: false);
                     }
                     else
-                        AddAssetWithUniqueID(layerIndex, AHDR);
+                        AddAssetWithUniqueID(layerIndex, AHDR, setTextureDisplay: true);
 
                     assetIDs.Add(AHDR.assetID);
                 }
-
                 catch (Exception ex)
                 {
                     MessageBox.Show($"Unable to import asset [{AHDR.assetID.ToString("X8")}] {AHDR.ADBG.assetName}: " + ex.Message);
                 }
             }
+
+            SetupTextureDisplay();
         }
 
         private List<Asset> currentlySelectedAssets = new List<Asset>();
