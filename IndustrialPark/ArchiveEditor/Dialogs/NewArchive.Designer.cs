@@ -35,8 +35,8 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.comboBoxPlatform = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.textBoxPCRT = new System.Windows.Forms.TextBox();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
+            this.textBoxPCRT = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -112,13 +112,6 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Date/Time Information";
             // 
-            // textBoxPCRT
-            // 
-            this.textBoxPCRT.Location = new System.Drawing.Point(6, 45);
-            this.textBoxPCRT.Name = "textBoxPCRT";
-            this.textBoxPCRT.Size = new System.Drawing.Size(202, 20);
-            this.textBoxPCRT.TabIndex = 0;
-            // 
             // dateTimePicker1
             // 
             this.dateTimePicker1.Location = new System.Drawing.Point(6, 19);
@@ -126,6 +119,13 @@
             this.dateTimePicker1.Size = new System.Drawing.Size(202, 20);
             this.dateTimePicker1.TabIndex = 1;
             this.dateTimePicker1.ValueChanged += new System.EventHandler(this.dateTimePicker1_ValueChanged);
+            // 
+            // textBoxPCRT
+            // 
+            this.textBoxPCRT.Location = new System.Drawing.Point(6, 45);
+            this.textBoxPCRT.Name = "textBoxPCRT";
+            this.textBoxPCRT.Size = new System.Drawing.Size(202, 20);
+            this.textBoxPCRT.TabIndex = 0;
             // 
             // NewArchive
             // 
@@ -141,8 +141,7 @@
             this.MaximizeBox = false;
             this.Name = "NewArchive";
             this.ShowIcon = false;
-            this.Text = "New HIP/HOP Archive";
-            this.Load += new System.EventHandler(this.NewArchive_Load);
+            this.Text = "PACK Settings";
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);

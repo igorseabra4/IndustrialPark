@@ -8,7 +8,7 @@ namespace IndustrialPark
 {
     public class AssetPARS : ObjectAsset
     {
-        public AssetPARS(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetPARS(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
         
         public override bool HasReference(uint assetID) => TextureAssetID == assetID || PARS_AssetID == assetID || base.HasReference(assetID);
 
@@ -114,7 +114,7 @@ namespace IndustrialPark
                 List<byte> before = Data.Take(0x20).ToList();
 
                 foreach (AssetID a in value)
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(a)));
+                    before.AddRange(BitConverter.GetBytes(Switch(a)));
 
                 before.AddRange(Data.Skip(0x20 + CmdSize));
                 Data = before.ToArray();

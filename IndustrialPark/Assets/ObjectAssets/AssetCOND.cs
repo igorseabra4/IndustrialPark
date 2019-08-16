@@ -38,7 +38,7 @@ namespace IndustrialPark
 
     public class AssetCOND : ObjectAsset
     {
-        public AssetCOND(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetCOND(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         public override bool HasReference(uint assetID) => AssetUnderEvaluation == assetID || (uint)Conditional == assetID || base.HasReference(assetID);
 

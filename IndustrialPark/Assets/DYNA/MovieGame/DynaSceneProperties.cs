@@ -1,7 +1,7 @@
-﻿using System;
+﻿using HipHopFile;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
@@ -9,7 +9,7 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 1";
 
-        public DynaSceneProperties() : base()
+        public DynaSceneProperties(Platform platform) : base(platform)
         {
             Sound_AssetID = 0;
         }
@@ -26,7 +26,7 @@ namespace IndustrialPark
             Asset.Verify(Sound_AssetID, ref result);
         }
 
-        public DynaSceneProperties(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaSceneProperties(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             UnknownInt1 = Switch(BitConverter.ToInt32(Data, 0x00));
             UnknownInt2 = Switch(BitConverter.ToInt32(Data, 0x04));

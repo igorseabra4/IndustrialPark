@@ -15,13 +15,16 @@ namespace IndustrialPark
             Incredibles
         }
 
+        private Endianness endianness;
         private EventType eventType;
         private bool isTimed = false;
 
-        private LinkEditor(bool isTimed)
+        private LinkEditor(bool isTimed, Endianness endianness)
         {
             InitializeComponent();
             TopMost = true;
+
+            this.endianness = endianness;
 
             bgColor = textBoxTargetAsset.BackColor;
             
@@ -60,7 +63,7 @@ namespace IndustrialPark
             }
         }
 
-        private LinkEditor(LinkBFBB[] events, bool isTimed) : this(isTimed)
+        private LinkEditor(LinkBFBB[] events, bool isTimed, Endianness endianness) : this(isTimed, endianness)
         {
             eventType = EventType.BFBB;
             foreach (EventBFBB o in Enum.GetValues(typeof(EventBFBB)))
@@ -73,7 +76,7 @@ namespace IndustrialPark
                 listBoxLinks.Items.Add(assetEvent);
         }
 
-        private LinkEditor(LinkTSSM[] events, bool isTimed) : this(isTimed)
+        private LinkEditor(LinkTSSM[] events, bool isTimed, Endianness endianness) : this(isTimed, endianness)
         {
             eventType = EventType.TSSM;
             foreach (EventTSSM o in Enum.GetValues(typeof(EventTSSM)))
@@ -86,7 +89,7 @@ namespace IndustrialPark
                 listBoxLinks.Items.Add(assetEvent);
         }
 
-        private LinkEditor(LinkIncredibles[] events, bool isTimed) : this(isTimed)
+        private LinkEditor(LinkIncredibles[] events, bool isTimed, Endianness endianness) : this(isTimed, endianness)
         {
             eventType = EventType.Incredibles;
             foreach (EventIncredibles o in Enum.GetValues(typeof(EventIncredibles)))
@@ -119,9 +122,9 @@ namespace IndustrialPark
             return AssetIDTypeConverter.AssetIDFromString(assetName);
         }
 
-        public static LinkBFBB[] GetEvents(LinkBFBB[] events, out bool success, bool isTimed)
+        public static LinkBFBB[] GetEvents(LinkBFBB[] links, Endianness endianness, out bool success, bool isTimed)
         {
-            LinkEditor eventEditor = new LinkEditor(events, isTimed);
+            LinkEditor eventEditor = new LinkEditor(links, isTimed, endianness);
             eventEditor.ShowDialog();
 
             success = eventEditor.OK;
@@ -133,9 +136,9 @@ namespace IndustrialPark
             return assetEventBFBBs.ToArray();
         }
 
-        public static LinkTSSM[] GetEvents(LinkTSSM[] events, out bool success, bool isTimed)
+        public static LinkTSSM[] GetEvents(LinkTSSM[] links, Endianness endianness, out bool success, bool isTimed)
         {
-            LinkEditor eventEditor = new LinkEditor(events, isTimed);
+            LinkEditor eventEditor = new LinkEditor(links, isTimed, endianness);
             eventEditor.ShowDialog();
 
             success = eventEditor.OK;
@@ -147,9 +150,9 @@ namespace IndustrialPark
             return assetEventBFBBs.ToArray();
         }
 
-        public static LinkIncredibles[] GetEvents(LinkIncredibles[] events, out bool success, bool isTimed)
+        public static LinkIncredibles[] GetEvents(LinkIncredibles[] links, Endianness endianness, out bool success, bool isTimed)
         {
-            LinkEditor eventEditor = new LinkEditor(events, isTimed);
+            LinkEditor eventEditor = new LinkEditor(links, isTimed, endianness);
             eventEditor.ShowDialog();
 
             success = eventEditor.OK;
@@ -166,13 +169,13 @@ namespace IndustrialPark
             switch (eventType)
             {
                 case EventType.BFBB:
-                    listBoxLinks.Items.Add(new LinkBFBB(isTimed));
+                    listBoxLinks.Items.Add(new LinkBFBB(endianness, isTimed));
                     break;
                 case EventType.TSSM:
-                    listBoxLinks.Items.Add(new LinkTSSM(isTimed));
+                    listBoxLinks.Items.Add(new LinkTSSM(endianness, isTimed));
                     break;
                 case EventType.Incredibles:
-                    listBoxLinks.Items.Add(new LinkIncredibles(isTimed));
+                    listBoxLinks.Items.Add(new LinkIncredibles(endianness, isTimed));
                     break;
             }
             listBoxLinks.SelectedIndices.Clear();
@@ -199,35 +202,41 @@ namespace IndustrialPark
             foreach (Link assetEvent in listBoxLinks.SelectedItems)
                 assetEventBFBBs.Add(assetEvent.ToByteArray());
 
-            Clipboard.SetText(JsonConvert.SerializeObject(assetEventBFBBs));
+            Clipboard.SetText(JsonConvert.SerializeObject(new LinkClipboard(endianness, assetEventBFBBs), Formatting.Indented));
         }
 
         private void buttonPaste_Click(object sender, EventArgs e)
         {
-            List<byte[]> assetEvents;
+            LinkClipboard linkClipboard;
             try
             {
-                assetEvents = JsonConvert.DeserializeObject<List<byte[]>>(Clipboard.GetText());
+                linkClipboard = JsonConvert.DeserializeObject<LinkClipboard>(Clipboard.GetText());
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Unable to paste events: " + ex.Message + ". Are you sure you have events copied?");
+                MessageBox.Show("Unable to paste links: " + ex.Message + ". Are you sure you have links copied?");
                 return;
             }
 
             listBoxLinks.SelectedIndices.Clear();
-            foreach (byte[] data in assetEvents)
+            foreach (byte[] data in linkClipboard.links)
             {
+                byte[] newData = isTimed ?
+                    (linkClipboard.endianness != endianness ?
+                    EndianConverter.GetTimedLinksReversedEndian(data) : data) :
+                    (linkClipboard.endianness != endianness ?
+                    EndianConverter.GetLinksReversedEndian(data) : data);
+
                 switch (eventType)
                 {
                     case EventType.BFBB:
-                        listBoxLinks.Items.Add(new LinkBFBB(data, 0, isTimed));
+                        listBoxLinks.Items.Add(new LinkBFBB(newData, 0, isTimed, endianness));
                         break;
                     case EventType.TSSM:
-                        listBoxLinks.Items.Add(new LinkTSSM(data, 0, isTimed));
+                        listBoxLinks.Items.Add(new LinkTSSM(newData, 0, isTimed, endianness));
                         break;
                     case EventType.Incredibles:
-                        listBoxLinks.Items.Add(new LinkIncredibles(data, 0, isTimed));
+                        listBoxLinks.Items.Add(new LinkIncredibles(newData, 0, isTimed, endianness));
                         break;
                 }
                 listBoxLinks.SetSelected(listBoxLinks.Items.Count - 1, true);

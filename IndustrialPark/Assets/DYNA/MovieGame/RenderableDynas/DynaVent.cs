@@ -1,8 +1,8 @@
-﻿using SharpDX;
+﻿using HipHopFile;
+using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
@@ -10,7 +10,7 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 1";
         
-        public DynaVent() : base()
+        public DynaVent(Platform platform) : base(platform)
         {
             VentType_AssetID = 0;
         }
@@ -25,7 +25,7 @@ namespace IndustrialPark
             Asset.Verify(VentType_AssetID, ref result);
         }
 
-        public DynaVent(IEnumerable<byte> enumerable) : base(enumerable)
+        public DynaVent(IEnumerable<byte> enumerable, Platform platform) : base(enumerable, platform)
         {
             VentType_AssetID = Switch(BitConverter.ToUInt32(Data, 0x00));
             _position.X = Switch(BitConverter.ToSingle(Data, 0x04));

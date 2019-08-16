@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using static IndustrialPark.ConverterFunctions;
+using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -10,13 +10,13 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 3";
 
-        public DynaEnemyMindy() : base()
+        public DynaEnemyMindy(Platform platform) : base(platform)
         {
             TaskBox1_AssetID = 0;
             TaskBox2_AssetID = 0;
         }
 
-        public DynaEnemyMindy(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaEnemyMindy(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             TaskBox1_AssetID = Switch(BitConverter.ToUInt32(Data, 0x50));
             UnknownFloat54 = Switch(BitConverter.ToSingle(Data, 0x54));

@@ -17,7 +17,7 @@ namespace IndustrialPark
         {
             get
             {
-                switch (Functions.currentGame)
+                switch (currentGame)
                 {
                     case Game.BFBB:
                         return 0xC0;
@@ -31,7 +31,7 @@ namespace IndustrialPark
             }
         }
 
-        public AssetPLAT(Section_AHDR AHDR) : base(AHDR)
+        public AssetPLAT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             ChoosePlatSpecific();
         }
@@ -130,50 +130,50 @@ namespace IndustrialPark
             switch (PlatformType)
             {
                 case PlatType.ConveyorBelt:
-                    _platSpecific = new PlatSpecific_ConveryorBelt(Data.Skip(PlatSpecificStart + Offset).ToArray());
+                    _platSpecific = new PlatSpecific_ConveryorBelt(Data.Skip(PlatSpecificStart + Offset).ToArray(), currentGame, currentPlatform);
                     break;
                 case PlatType.FallingPlatform:
-                    _platSpecific = new PlatSpecific_FallingPlatform(Data.Skip(PlatSpecificStart + Offset).ToArray());
+                    _platSpecific = new PlatSpecific_FallingPlatform(Data.Skip(PlatSpecificStart + Offset).ToArray(), currentGame, currentPlatform);
                     break;
                 case PlatType.FR:
-                    _platSpecific = new PlatSpecific_FR(Data.Skip(PlatSpecificStart + Offset).ToArray());
+                    _platSpecific = new PlatSpecific_FR(Data.Skip(PlatSpecificStart + Offset).ToArray(), currentGame, currentPlatform);
                     break;
                 case PlatType.BreakawayPlatform:
-                    _platSpecific = new PlatSpecific_BreakawayPlatform(Data.Skip(PlatSpecificStart + Offset).ToArray());
+                    _platSpecific = new PlatSpecific_BreakawayPlatform(Data.Skip(PlatSpecificStart + Offset).ToArray(), currentGame, currentPlatform);
                     break;
                 case PlatType.Springboard:
-                    _platSpecific = new PlatSpecific_Springboard(Data.Skip(PlatSpecificStart + Offset).ToArray());
+                    _platSpecific = new PlatSpecific_Springboard(Data.Skip(PlatSpecificStart + Offset).ToArray(), currentGame, currentPlatform);
                     break;
                 case PlatType.TeeterTotter:
-                    _platSpecific = new PlatSpecific_TeeterTotter(Data.Skip(PlatSpecificStart + Offset).ToArray());
+                    _platSpecific = new PlatSpecific_TeeterTotter(Data.Skip(PlatSpecificStart + Offset).ToArray(), currentGame, currentPlatform);
                     break;
                 case PlatType.Paddle:
-                    _platSpecific = new PlatSpecific_Paddle(Data.Skip(PlatSpecificStart + Offset).ToArray());
+                    _platSpecific = new PlatSpecific_Paddle(Data.Skip(PlatSpecificStart + Offset).ToArray(), currentGame, currentPlatform);
                     break;
                 default:
-                    _platSpecific = new PlatSpecific_Generic(Data.Skip(PlatSpecificStart + Offset).ToArray());
+                    _platSpecific = new PlatSpecific_Generic(Data.Skip(PlatSpecificStart + Offset).ToArray(), currentGame, currentPlatform);
                     break;
             }
 
             switch (PlatformSubtype)
             {
                 case PlatTypeSpecific.ExtendRetract:
-                    _motion = new Motion_ExtendRetract(Data.Skip(MotionStart).ToArray());
+                    _motion = new Motion_ExtendRetract(Data.Skip(MotionStart).ToArray(), currentGame, currentPlatform);
                     break;
                 case PlatTypeSpecific.Orbit:
-                    _motion = new Motion_Orbit(Data.Skip(MotionStart).ToArray());
+                    _motion = new Motion_Orbit(Data.Skip(MotionStart).ToArray(), currentGame, currentPlatform);
                     break;
                 case PlatTypeSpecific.Spline:
-                    _motion = new Motion_Spline(Data.Skip(MotionStart).ToArray());
+                    _motion = new Motion_Spline(Data.Skip(MotionStart).ToArray(), currentGame, currentPlatform);
                     break;
                 case PlatTypeSpecific.Pendulum:
-                    _motion = new Motion_Pendulum(Data.Skip(MotionStart).ToArray());
+                    _motion = new Motion_Pendulum(Data.Skip(MotionStart).ToArray(), currentGame, currentPlatform);
                     break;
                 case PlatTypeSpecific.MovePoint:
-                    _motion = new Motion_MovePoint(Data.Skip(MotionStart).ToArray(), _position);
+                    _motion = new Motion_MovePoint(Data.Skip(MotionStart).ToArray(), currentGame, currentPlatform, _position);
                     break;
                 default:
-                    _motion = new Motion_Mechanism(Data.Skip(MotionStart).ToArray());
+                    _motion = new Motion_Mechanism(Data.Skip(MotionStart).ToArray(), currentGame, currentPlatform);
                     break;
             }
 
@@ -208,11 +208,11 @@ namespace IndustrialPark
 
                 List<byte> before = Data.Take(PlatSpecificStart + Offset).ToList();
                 before.AddRange(value.ToByteArray());
-                before.AddRange(Data.Skip(PlatSpecificStart + Offset + PlatSpecific_Generic.Size));
+                before.AddRange(Data.Skip(PlatSpecificStart + Offset + PlatSpecific_Generic.Size(currentGame)));
                 Data = before.ToArray();
             }
         }
 
-        protected override int MotionStart => Functions.currentGame == Game.Scooby ? 0x78 : 0x90 + Offset;
+        protected override int MotionStart => currentGame == Game.Scooby ? 0x78 : 0x90 + Offset;
     }
 }

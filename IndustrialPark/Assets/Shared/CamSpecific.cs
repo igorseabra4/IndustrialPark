@@ -1,17 +1,17 @@
-﻿using System;
+﻿using HipHopFile;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
-    public class CamSpecific_Generic
+    public class CamSpecific_Generic : EndianConvertible
     {
         public static int Size => 0x18;
 
-        public CamSpecific_Generic() { }
+        public CamSpecific_Generic(Platform platform) : base(EndianConverter.PlatformEndianness(platform)) { }
 
-        public CamSpecific_Generic(byte[] data) { }
+        public CamSpecific_Generic(byte[] data, Platform platform) : this(platform) { }
 
         public virtual byte[] ToByteArray()
         {
@@ -21,7 +21,7 @@ namespace IndustrialPark
 
     public class CamSpecific_Follow : CamSpecific_Generic
     {
-        public CamSpecific_Follow(byte[] data)
+        public CamSpecific_Follow(byte[] data, Platform platform) : base(platform)
         {
             Rotation = Switch(BitConverter.ToSingle(data, 0));
             Distance = Switch(BitConverter.ToSingle(data, 4));
@@ -63,7 +63,7 @@ namespace IndustrialPark
 
     public class CamSpecific_Shoulder : CamSpecific_Generic
     {
-        public CamSpecific_Shoulder(byte[] data)
+        public CamSpecific_Shoulder(byte[] data, Platform platform) : base(platform)
         {
             Distance = Switch(BitConverter.ToSingle(data, 0));
             Height = Switch(BitConverter.ToSingle(data, 4));
@@ -97,7 +97,7 @@ namespace IndustrialPark
 
     public class CamSpecific_Static : CamSpecific_Generic
     {
-        public CamSpecific_Static(byte[] data)
+        public CamSpecific_Static(byte[] data, Platform platform) : base(platform)
         {
             Unused = Switch(BitConverter.ToInt32(data, 0));
         }
@@ -119,7 +119,7 @@ namespace IndustrialPark
 
     public class CamSpecific_Path : CamSpecific_Generic
     {
-        public CamSpecific_Path(byte[] data)
+        public CamSpecific_Path(byte[] data, Platform platform) : base(platform)
         {
             Unknown_AssetID = Switch(BitConverter.ToUInt32(data, 0));
             TimeEnd = Switch(BitConverter.ToSingle(data, 4));
@@ -149,7 +149,7 @@ namespace IndustrialPark
 
     public class CamSpecific_StaticFollow : CamSpecific_Generic
     {
-        public CamSpecific_StaticFollow(byte[] data)
+        public CamSpecific_StaticFollow(byte[] data, Platform platform) : base(platform)
         {
             RubberBand = Switch(BitConverter.ToSingle(data, 0));
         }

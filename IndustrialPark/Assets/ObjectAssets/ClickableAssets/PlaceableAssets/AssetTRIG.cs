@@ -23,7 +23,7 @@ namespace IndustrialPark
 
         public BoundingSphere boundingSphere;
 
-        public AssetTRIG(Section_AHDR AHDR) : base(AHDR)
+        public AssetTRIG(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             _shape = ReadByte(9);
 

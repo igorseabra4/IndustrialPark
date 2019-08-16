@@ -110,11 +110,13 @@
   <ItemGroup>
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_IO.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Sounds.cs" />
+    <Compile Include="ArchiveEditor\TextureIOHelper.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Textures.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Gizmos.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetTemplates.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetEditing.cs" />
-    <Compile Include="ArchiveEditor\AssetClipboard.cs" />
+    <Compile Include="ArchiveEditor\Other\LinkClipboard.cs" />
+    <Compile Include="ArchiveEditor\Other\AssetClipboard.cs" />
     <Compile Include="ArchiveEditor\Dialogs\ImportTextures.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -447,7 +449,7 @@
     <Compile Include="MainForm\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Other\ConverterFunctions.cs" />
+    <Compile Include="Other\EndianConvertible.cs" />
     <Compile Include="Models\ModelConverterData.cs" />
     <Compile Include="Models\Triangle.cs" />
     <Compile Include="Models\Vertex.cs" />

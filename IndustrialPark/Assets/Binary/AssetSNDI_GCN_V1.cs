@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
 using HipHopFile;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
@@ -30,7 +29,7 @@ namespace IndustrialPark
 
     public class AssetSNDI_GCN_V1 : Asset
     {
-        public AssetSNDI_GCN_V1(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetSNDI_GCN_V1(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         public override bool HasReference(uint assetID)
         {
@@ -93,14 +92,14 @@ namespace IndustrialPark
         {
             get
             {
-                if (Functions.currentGame == Game.BFBB)
+                if (currentGame == Game.BFBB)
                     return ReadInt(0xC);
 
                 return 0;
             }
             set
             {
-                if (Functions.currentGame == Game.BFBB)
+                if (currentGame == Game.BFBB)
                     Write(0xC, value);
             }
         }
@@ -109,7 +108,7 @@ namespace IndustrialPark
         {
             get
             {
-                if (Functions.currentGame == Game.BFBB)
+                if (currentGame == Game.BFBB)
                     return 0x10;
                 return 0xC;
             }
@@ -204,7 +203,7 @@ namespace IndustrialPark
         {
             get
             {
-                if (Functions.currentGame == Game.Scooby)
+                if (currentGame == Game.Scooby)
                     return new EntrySoundInfo_GCN_V1[0];
 
                 List<EntrySoundInfo_GCN_V1> entries = new List<EntrySoundInfo_GCN_V1>();
@@ -222,7 +221,7 @@ namespace IndustrialPark
             }
             set
             {
-                if (Functions.currentGame == Game.Scooby)
+                if (currentGame == Game.Scooby)
                     return;
 
                 List<EntrySoundInfo_GCN_V1> newValues = value.ToList();

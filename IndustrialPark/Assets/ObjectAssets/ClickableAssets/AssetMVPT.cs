@@ -8,7 +8,7 @@ namespace IndustrialPark
     {
         protected override int EventStartOffset => 0x28 + 4 * SiblingAmount;
 
-        public AssetMVPT(Section_AHDR AHDR) : base(AHDR)
+        public AssetMVPT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             _position = new Vector3(ReadFloat(0x8), ReadFloat(0xC), ReadFloat(0x10));
             _zoneRadius = ReadFloat(0x20);

@@ -70,21 +70,6 @@ namespace IndustrialPark
                     plusValue = 0
                 };
 
-                int alignment = 16;
-                if (Functions.currentGame == Game.BFBB)
-                {
-                    if (AHDR.assetType == AssetType.CSN |
-                        AHDR.assetType == AssetType.SND |
-                        AHDR.assetType == AssetType.SNDS)
-                        alignment = 32;
-                    else if (AHDR.assetType == AssetType.CRDT)
-                        alignment = 4;
-                }
-
-                int value = AHDR.fileSize % alignment;
-                if (value != 0)
-                    AHDR.plusValue = alignment - value;
-
                 setPosition = a.setPosition;
                 success = true;
                 return AHDR;

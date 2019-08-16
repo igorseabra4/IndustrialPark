@@ -8,7 +8,7 @@ namespace IndustrialPark
 {
     public class ObjectAsset : Asset
     {
-        public ObjectAsset(Section_AHDR AHDR) : base(AHDR)
+        public ObjectAsset(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             if (AssetID != AHDR.assetID)
                 AssetID = AHDR.assetID;
@@ -81,10 +81,11 @@ namespace IndustrialPark
             get
             {
                 LinkListEditor.IsTimed = false;
+                LinkListEditor.endianness = EndianConverter.PlatformEndianness(currentPlatform);
                 LinkBFBB[] events = new LinkBFBB[AmountOfEvents];
 
                 for (int i = 0; i < AmountOfEvents; i++)
-                    events[i] = new LinkBFBB(Data, EventStartOffset + i * Link.sizeOfStruct, false);
+                    events[i] = new LinkBFBB(Data, EventStartOffset + i * Link.sizeOfStruct, false, EndianConverter.PlatformEndianness(currentPlatform));
 
                 return events;
             }
@@ -96,10 +97,11 @@ namespace IndustrialPark
             get
             {
                 LinkListEditor.IsTimed = false;
+                LinkListEditor.endianness = EndianConverter.PlatformEndianness(currentPlatform);
                 LinkTSSM[] events = new LinkTSSM[AmountOfEvents];
 
                 for (int i = 0; i < AmountOfEvents; i++)
-                    events[i] = new LinkTSSM(Data, EventStartOffset + i * Link.sizeOfStruct, false);
+                    events[i] = new LinkTSSM(Data, EventStartOffset + i * Link.sizeOfStruct, false, EndianConverter.PlatformEndianness(currentPlatform));
 
                 return events;
             }
@@ -111,10 +113,11 @@ namespace IndustrialPark
             get
             {
                 LinkListEditor.IsTimed = false;
+                LinkListEditor.endianness = EndianConverter.PlatformEndianness(currentPlatform);
                 LinkIncredibles[] events = new LinkIncredibles[AmountOfEvents];
 
                 for (int i = 0; i < AmountOfEvents; i++)
-                    events[i] = new LinkIncredibles(Data, EventStartOffset + i * Link.sizeOfStruct, false);
+                    events[i] = new LinkIncredibles(Data, EventStartOffset + i * Link.sizeOfStruct, false, EndianConverter.PlatformEndianness(currentPlatform));
 
                 return events;
             }
@@ -146,7 +149,7 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
-            if (Functions.currentGame == Game.BFBB || Functions.currentGame == Game.Scooby)
+            if (currentGame == Game.BFBB || currentGame == Game.Scooby)
             {
                 foreach (LinkBFBB link in LinksBFBB)
                 {
@@ -162,7 +165,7 @@ namespace IndustrialPark
                         result.Add("Link sends event of unknown type for BFBB: " + link.EventSendID.ToString());
                 }
             }
-            else if (Functions.currentGame == Game.Incredibles)
+            else if (currentGame == Game.Incredibles)
             {
                 foreach (LinkTSSM link in LinksTSSM)
                 {

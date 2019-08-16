@@ -1,8 +1,8 @@
-﻿using System;
+﻿using HipHopFile;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
@@ -10,12 +10,12 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 4";
 
-        public DynaEnemyBucketOTron() : base()
+        public DynaEnemyBucketOTron(Platform platform) : base(platform)
         {
             GRUP_AssetID = 0;
         }
 
-        public DynaEnemyBucketOTron(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaEnemyBucketOTron(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             GRUP_AssetID = Switch(BitConverter.ToUInt32(Data, 0x50));
             UnknownInt54 = Switch(BitConverter.ToInt32(Data, 0x54));

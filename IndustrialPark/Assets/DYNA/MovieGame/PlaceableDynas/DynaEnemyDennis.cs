@@ -1,8 +1,8 @@
-﻿using System;
+﻿using HipHopFile;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
@@ -10,7 +10,7 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 3";
 
-        public DynaEnemyDennis() : base()
+        public DynaEnemyDennis(Platform platform) : base(platform)
         {
             Unknown50 = 0;
             Unknown54 = 0;
@@ -22,7 +22,7 @@ namespace IndustrialPark
             Unknown6C = 0;
         }
 
-        public DynaEnemyDennis(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaEnemyDennis(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             Unknown50 = Switch(BitConverter.ToUInt32(Data, 0x50));
             Unknown54 = Switch(BitConverter.ToUInt32(Data, 0x54));

@@ -6,7 +6,7 @@ namespace IndustrialPark
 {
     public class AssetPARE : ObjectAsset
     {
-        public AssetPARE(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetPARE(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         protected override int EventStartOffset => 0x54;
 

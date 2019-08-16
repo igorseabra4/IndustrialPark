@@ -1,13 +1,12 @@
 ﻿using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
-using static HipHopFile.Functions;
 
 namespace IndustrialPark
 {
     public class AssetPORT : ObjectAsset
     {
-        public AssetPORT(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetPORT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         public override bool HasReference(uint assetID) => Camera_AssetID == assetID || Destination_MRKR_AssetID == assetID || base.HasReference(assetID);
         

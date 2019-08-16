@@ -3,21 +3,26 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using static HipHopFile.Functions;
 
 namespace IndustrialPark
 {
-    public class Asset
+    public class Asset : EndianConvertible
     {
-        public static int Offset => currentGame == Game.BFBB ? 0x00 : -0x04;
+        [Browsable(false)]
+        public int Offset => currentGame == Game.BFBB ? 0x00 : -0x04;
+        public static int DataSizeOffset(Game currentGame) => currentGame == Game.BFBB ? 0x00 : -0x04;
 
         public Section_AHDR AHDR;
         public bool isSelected;
         public bool isInvisible = false;
+        public Game currentGame;
+        public Platform currentPlatform;
 
-        public Asset(Section_AHDR AHDR)
+        public Asset(Section_AHDR AHDR, Game game, Platform platform) : base(EndianConverter.PlatformEndianness(platform))
         {
             this.AHDR = AHDR;
+            this.currentGame = game;
+            this.currentPlatform = platform;
         }
 
         [Category("Data")]

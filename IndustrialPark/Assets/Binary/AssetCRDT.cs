@@ -6,11 +6,10 @@ using System.IO;
 using System.Linq;
 using AssetEditorColors;
 using HipHopFile;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
-    public class SectionEntry
+    public class SectionEntry : EndianConvertible
     {
         private int _size;
         [ReadOnly(true)]
@@ -153,7 +152,7 @@ namespace IndustrialPark
             return result;
         }
 
-        public SectionEntry()
+        public SectionEntry(Endianness endianness) : base(endianness)
         {
             Styles = new StyleEntry[0];
             Titles = new TitleEntry[0];
@@ -277,7 +276,7 @@ namespace IndustrialPark
 
     public class AssetCRDT : Asset
     {
-        public AssetCRDT(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetCRDT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         public override void Verify(ref List<string> result)
         {
@@ -329,7 +328,7 @@ namespace IndustrialPark
 
                 while (binaryReader.BaseStream.Position != binaryReader.BaseStream.Length)
                 {
-                    SectionEntry section = new SectionEntry
+                    SectionEntry section = new SectionEntry(EndianConverter.PlatformEndianness(currentPlatform))
                     {
                         Start = binaryReader.BaseStream.Position,
                         Size = Switch(binaryReader.ReadInt32()),

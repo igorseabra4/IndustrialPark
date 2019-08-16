@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using HipHopFile;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
@@ -28,7 +27,7 @@ namespace IndustrialPark
         [Category("LODT Entry"), Description("Movie only.")]
         public float Unknown { get; set; }
 
-        public static int SizeOfStruct => Functions.currentGame == Game.Incredibles ? 0x24 : 0x20;
+        public static int SizeOfStruct(Game game) => game == Game.Incredibles ? 0x24 : 0x20;
 
         public EntryLODT()
         {
@@ -48,7 +47,7 @@ namespace IndustrialPark
     {
         public static Dictionary<uint, float> MaxDistances = new Dictionary<uint, float>();
 
-        public AssetLODT(Section_AHDR AHDR) : base(AHDR)
+        public AssetLODT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             UpdateDictionary();
         }
@@ -95,7 +94,7 @@ namespace IndustrialPark
             {
                 List<EntryLODT> entries = new List<EntryLODT>();
 
-                for (int i = 4; i < Data.Length; i += EntryLODT.SizeOfStruct)
+                for (int i = 4; i < Data.Length; i += EntryLODT.SizeOfStruct(currentGame))
                 {
                     EntryLODT a = new EntryLODT
                     {
@@ -109,7 +108,7 @@ namespace IndustrialPark
                         LOD3_Distance = ReadFloat(i + 0x1C)
                     };
 
-                    if (Functions.currentGame == Game.Incredibles)
+                    if (currentGame == Game.Incredibles)
                         a.Unknown = ReadFloat(i + 0x20);
                     
                     entries.Add(a);
@@ -133,7 +132,7 @@ namespace IndustrialPark
                     newData.AddRange(BitConverter.GetBytes(Switch(i.LOD2_Distance)));
                     newData.AddRange(BitConverter.GetBytes(Switch(i.LOD3_Distance)));
 
-                    if (Functions.currentGame == Game.Incredibles)
+                    if (currentGame == Game.Incredibles)
                         newData.AddRange(BitConverter.GetBytes(Switch(i.Unknown)));
                 }
 

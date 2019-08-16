@@ -14,7 +14,7 @@ namespace IndustrialPark
     {
         public ArchiveEditorFunctions archive;
 
-        public ArchiveEditor(string filePath)
+        public ArchiveEditor(string filePath, Platform scoobyPlatform)
         {
             InitializeComponent();
             TopMost = true;
@@ -25,7 +25,7 @@ namespace IndustrialPark
             archive.SetTextboxForAutocomplete(textBoxFindAsset);
             
             if (!string.IsNullOrWhiteSpace(filePath))
-                OpenFile(filePath);
+                OpenFile(filePath, scoobyPlatform);
 
             ArchiveEditorFunctions.PopulateTemplateMenusAt(addTemplateToolStripMenuItem, TemplateToolStripMenuItem_Click);
             listViewAssets_SizeChanged(null, null);
@@ -52,8 +52,6 @@ namespace IndustrialPark
 
             if (archive.New())
             {
-                archive.UnsavedChanges = true;
-
                 PopulateLayerTypeComboBox();
 
                 saveToolStripMenuItem.Enabled = true;
@@ -62,6 +60,7 @@ namespace IndustrialPark
                 tXDArchiveToolStripMenuItem.Enabled = true;
                 hipHopToolExportToolStripMenuItem.Enabled = true;
                 importHIPArchiveToolStripMenuItem.Enabled = true;
+                editPACKToolStripMenuItem.Enabled = true;
                 collapseLayersToolStripMenuItem.Enabled = true;
                 mergeSimilarAssetsToolStripMenuItem.Enabled = true;
                 verifyArchiveToolStripMenuItem.Enabled = true;
@@ -93,9 +92,9 @@ namespace IndustrialPark
             }
         }
 
-        private void OpenFile(string fileName)
+        private void OpenFile(string fileName, Platform scoobyPlatform = Platform.Unknown)
         {
-            archive.OpenFile(fileName, true);
+            archive.OpenFile(fileName, true, scoobyPlatform);
 
             toolStripStatusLabelCurrentFilename.Text = "File: " + fileName;
             Text = Path.GetFileName(fileName);
@@ -110,6 +109,7 @@ namespace IndustrialPark
             importHIPArchiveToolStripMenuItem.Enabled = true;
             tXDArchiveToolStripMenuItem.Enabled = true;
             buttonAddLayer.Enabled = true;
+            editPACKToolStripMenuItem.Enabled = true;
             collapseLayersToolStripMenuItem.Enabled = true;
             mergeSimilarAssetsToolStripMenuItem.Enabled = true;
             verifyArchiveToolStripMenuItem.Enabled = true;
@@ -124,7 +124,7 @@ namespace IndustrialPark
             programIsChangingStuff = true;
 
             comboBoxLayerTypes.Items.Clear();
-            if (Functions.currentGame == Game.Incredibles)
+            if (archive.currentGame == Game.Incredibles)
                 foreach (var t in Enum.GetValues(typeof(LayerType_TSSM)))
                     comboBoxLayerTypes.Items.Add(t);
             else
@@ -257,7 +257,7 @@ namespace IndustrialPark
             }
             else
             {
-                if (Functions.currentGame == Game.Incredibles)
+                if (archive.currentGame == Game.Incredibles)
                     comboBoxLayerTypes.SelectedItem = (LayerType_TSSM)archive.GetLayerType(comboBoxLayers.SelectedIndex);
                 else
                     comboBoxLayerTypes.SelectedItem = (LayerType_BFBB)archive.GetLayerType(comboBoxLayers.SelectedIndex);
@@ -458,7 +458,7 @@ namespace IndustrialPark
 
         private void importModelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            List<Section_AHDR> AHDRs = ImportModel.GetAssets(out bool success, out bool overwrite, out bool makeSimps, out bool piptVcolors);
+            List<Section_AHDR> AHDRs = ImportModel.GetAssets(archive.currentGame, out bool success, out bool overwrite, out bool makeSimps, out bool piptVcolors);
             if (success)
             {
                 archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, out List<uint> assetIDs, overwrite);
@@ -473,7 +473,7 @@ namespace IndustrialPark
 
         private void ImportTexturesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            List<Section_AHDR> AHDRs = ImportTextures.GetAssets(out bool success, out bool overwrite);
+            List<Section_AHDR> AHDRs = ImportTextures.GetAssets(archive.currentGame, archive.currentPlatform, out bool success, out bool overwrite);
             if (success)
             {
                 archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, out List<uint> assetIDs, overwrite);
@@ -809,6 +809,25 @@ namespace IndustrialPark
                         SetSelectedIndices(new List<uint>() { a.AHDR.assetID }, false);
                         return;
                     }
+        }
+
+        private void EditPACKToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (archive.EditPack(out HashSet<AssetType> unsupported))
+            {
+                if (unsupported.Count > 0)
+                {
+                    string message = "Archive PACK edited sucessfully and asset formats were converted, however conversion is unsupported for the following asset types and they have been left unchanged:\n";
+                    foreach (AssetType t in unsupported.OrderBy(f => f))
+                        message += t.ToString() + ", ";
+                    message.Remove(message.LastIndexOf(","));
+                    MessageBox.Show(message);
+                }
+
+                PopulateLayerTypeComboBox();
+                PopulateLayerComboBox();
+                PopulateAssetList();
+            }
         }
 
         private void collapseLayersToolStripMenuItem_Click(object sender, EventArgs e)

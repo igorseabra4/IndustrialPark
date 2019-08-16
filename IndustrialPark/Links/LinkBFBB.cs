@@ -9,9 +9,9 @@ namespace IndustrialPark
         [DisplayName("Send Event")]
         public EventBFBB EventSendID { get => (EventBFBB)_eventSendID; set => _eventSendID = (ushort)value; }
 
-        public LinkBFBB(bool isTimed = false) : base(isTimed) { }
+        public LinkBFBB(Endianness endianness, bool isTimed) : base(endianness, isTimed) { }
 
-        public LinkBFBB(byte[] data, int offset, bool isTimed) : base(data, offset, isTimed) { }
+        public LinkBFBB(byte[] data, int offset, bool isTimed, Endianness endianness) : base(data, offset, isTimed, endianness) { }
 
         public override string ToString()
         {

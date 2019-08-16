@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using static IndustrialPark.ConverterFunctions;
+using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -10,7 +10,7 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 3";
 
-        public DynaHudMeterBase() : base()
+        public DynaHudMeterBase(Platform platform) : base(platform)
         {
             StartIncrement_SoundAssetID = 0;
             Increment_SoundAssetID = 0;
@@ -40,7 +40,7 @@ namespace IndustrialPark
             Asset.Verify(Decrement_SoundAssetID, ref result);
         }
 
-        public DynaHudMeterBase(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaHudMeterBase(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             StartValue = Switch(BitConverter.ToSingle(Data, 0x18));
             MinValue = Switch(BitConverter.ToSingle(Data, 0x1C));

@@ -11,9 +11,9 @@ namespace IndustrialPark
 
         protected override bool DontRender => dontRender;
 
-        protected override int EventStartOffset => 0x6C + Offset + ScoobyOffset + Motion.Size;
+        protected override int EventStartOffset => 0x6C + Offset + ScoobyOffset + Motion.Size(currentGame);
 
-        public AssetBUTN(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetBUTN(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         public override bool HasReference(uint assetID) => PressedModel_AssetID == assetID || base.HasReference(assetID);
         
@@ -28,15 +28,15 @@ namespace IndustrialPark
         [Description("Not present in Scooby")]
         public AssetID PressedModel_AssetID
         {
-            get => Functions.currentGame == Game.Scooby ? 0 : ReadUInt(0x54 + Offset);
+            get => currentGame == Game.Scooby ? 0 : ReadUInt(0x54 + Offset);
             set
             {
-                if (Functions.currentGame != Game.Scooby)
+                if (currentGame != Game.Scooby)
                     Write(0x54 + Offset, value);
             }
         }
 
-        private int ScoobyOffset => Functions.currentGame == Game.Scooby ? -0x04 : 0;
+        private int ScoobyOffset => currentGame == Game.Scooby ? -0x04 : 0;
 
         public enum ButnActMethod
         {

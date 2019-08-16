@@ -8,14 +8,14 @@ namespace IndustrialPark
     {
         public static bool renderBasedOnLodt = false;
 
-        public AssetMODL(Section_AHDR AHDR, SharpRenderer renderer) : base(AHDR, renderer) { }
+        public AssetMODL(Section_AHDR AHDR, Game game, Platform platform, SharpRenderer renderer) : base(AHDR, game, platform, renderer) { }
 
         public override void Setup(SharpRenderer renderer)
         {
             base.Setup(renderer);
             AddToRenderingDictionary(AHDR.assetID, this);
 
-            if (Functions.currentGame == Game.Incredibles)
+            if (currentGame == Game.Incredibles)
             {
                 AddToRenderingDictionary(Functions.BKDRHash(newName), this);
                 AddToNameDictionary(Functions.BKDRHash(newName), newName);

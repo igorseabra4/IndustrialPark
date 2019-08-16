@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
+
 namespace IndustrialPark
 {
     public class StructPARP
@@ -22,7 +23,7 @@ namespace IndustrialPark
 
     public class AssetPARP : ObjectAsset
     {
-        public AssetPARP(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetPARP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         protected override int EventStartOffset => 0x138;
 
@@ -79,11 +80,11 @@ namespace IndustrialPark
 
                 foreach (StructPARP a in list)
                 {
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(a.UnknownFloat00)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(a.UnknownFloat04)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(a.UnknownStringHash08)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(a.UnknownFloat0C)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(a.UnknownFloat10)));
+                    before.AddRange(BitConverter.GetBytes(Switch(a.UnknownFloat00)));
+                    before.AddRange(BitConverter.GetBytes(Switch(a.UnknownFloat04)));
+                    before.AddRange(BitConverter.GetBytes(Switch(a.UnknownStringHash08)));
+                    before.AddRange(BitConverter.GetBytes(Switch(a.UnknownFloat0C)));
+                    before.AddRange(BitConverter.GetBytes(Switch(a.UnknownFloat10)));
                 }
 
                 before.AddRange(Data.Skip(0xFC));

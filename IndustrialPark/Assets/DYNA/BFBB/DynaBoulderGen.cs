@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using static IndustrialPark.ConverterFunctions;
+using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -9,7 +9,7 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 1";
 
-        public DynaBoulderGen() : base()
+        public DynaBoulderGen(Platform platform) : base(platform)
         {
             ObjectAssetID = 0;
         }
@@ -27,7 +27,7 @@ namespace IndustrialPark
             Asset.Verify(ObjectAssetID, ref result);
         }
 
-        public DynaBoulderGen(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaBoulderGen(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             ObjectAssetID = Switch(BitConverter.ToUInt32(Data, 0x0));
             OffsetX = Switch(BitConverter.ToSingle(Data, 0x04));

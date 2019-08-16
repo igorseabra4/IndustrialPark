@@ -6,6 +6,7 @@ using RenderWareFile.Sections;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.Drawing;
+using static IndustrialPark.TextureIOHelper;
 
 namespace IndustrialPark
 {
@@ -29,7 +30,7 @@ namespace IndustrialPark
         {
             if (b != null)
                 b.Dispose();
-            foreach (Bitmap bitmap in ArchiveEditorFunctions.ExportRWTXToBitmap(asset.Data).Values)
+            foreach (Bitmap bitmap in archive.ExportRWTXToBitmap(asset.Data).Values)
                 b = bitmap;
             pictureBox1.Image = b;
 
@@ -86,7 +87,7 @@ namespace IndustrialPark
                 switch (Path.GetExtension(a.FileName).ToLower())
                 {
                     case ".rwtex":
-                        ArchiveEditorFunctions.ExportSingleTextureToRWTEX(asset.Data, a.FileName);
+                        ExportSingleTextureToRWTEX(asset.Data, a.FileName);
                         break;
                     case ".png":
                         b.Save(a.FileName, ImageFormat.Png);
@@ -131,11 +132,11 @@ namespace IndustrialPark
                         textureDictionaryStruct = new TextureDictionaryStruct_0001() { textureCount = 1, unknown = 0 },
                         textureNativeList = new List<TextureNative_0015>() { new TextureNative_0015().FromBytes(File.ReadAllBytes(i)) },
                         textureDictionaryExtension = new Extension_0003()
-                    }, ArchiveEditorFunctions.currentTextureVersion);
+                    }, currentTextureVersion(archive.currentGame));
                 }
                 else
                 {
-                    asset.Data = ArchiveEditorFunctions.CreateRWTXFromBitmap(i, false, false, true, true).data;
+                    asset.Data = CreateRWTXFromBitmap(archive.currentGame, archive.currentPlatform, i, false, false, true, true).data;
                 }
 
                 ResetImage();

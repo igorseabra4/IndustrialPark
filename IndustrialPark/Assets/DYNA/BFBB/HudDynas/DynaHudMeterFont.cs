@@ -4,17 +4,17 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
-using static IndustrialPark.ConverterFunctions;
+using HipHopFile;
 
 namespace IndustrialPark
 {
     public class DynaHudMeterFontV3 : DynaHudMeterBase
     {
-        public DynaHudMeterFontV3() : base()
+        public DynaHudMeterFontV3(Platform platform) : base(platform)
         {
         }
         
-        public DynaHudMeterFontV3(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaHudMeterFontV3(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             Font = (FontEnum)Switch(BitConverter.ToInt32(Data, 0x3C));
             FontJustify = Switch(BitConverter.ToInt32(Data, 0x40));

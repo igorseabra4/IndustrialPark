@@ -1,8 +1,9 @@
-﻿using SharpDX;
+﻿using HipHopFile;
+using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using static IndustrialPark.ConverterFunctions;
+
 using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
@@ -11,12 +12,12 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 2";
 
-        public DynaRing() : base()
+        public DynaRing(Platform platform) : base(platform)
         {
             DriverPLAT_AssetID = 0;
         }
 
-        public DynaRing(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaRing(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             _position = new Vector3(
                 Switch(BitConverter.ToSingle(Data, 0x00)),

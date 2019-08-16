@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using static IndustrialPark.ConverterFunctions;
+using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -10,12 +10,12 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 2";
 
-        public DynaSupplyCrate() : base()
+        public DynaSupplyCrate(Platform platform) : base(platform)
         {
             MVPT_AssetID = 0;
         }
 
-        public DynaSupplyCrate(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaSupplyCrate(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             MVPT_AssetID = Switch(BitConverter.ToUInt32(Data, 0x50));
 

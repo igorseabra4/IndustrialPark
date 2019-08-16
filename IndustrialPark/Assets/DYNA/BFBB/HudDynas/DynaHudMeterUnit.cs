@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using static IndustrialPark.ConverterFunctions;
+using HipHopFile;
 
 namespace IndustrialPark
 {
     public class DynaHudMeterUnit : DynaHudMeterBase
     {
-        public DynaHudMeterUnit() : base()
+        public DynaHudMeterUnit(Platform platform) : base(platform)
         {
             EmptyModel_AssetID = 0;
             FullModel_AssetID = 0;
@@ -30,7 +30,7 @@ namespace IndustrialPark
             Asset.Verify(FullModel_AssetID, ref result);
         }
 
-        public DynaHudMeterUnit(IEnumerable<byte> enumerable) : base(enumerable)
+        public DynaHudMeterUnit(IEnumerable<byte> enumerable, Platform platform) : base(enumerable, platform)
         {
             EmptyModel_AssetID = Switch(BitConverter.ToUInt32(Data, 0x3C));
             EmptyOffset_X = Switch(BitConverter.ToSingle(Data, 0x40));

@@ -15,7 +15,7 @@ namespace IndustrialPark
 
         protected override int EventStartOffset => 0x80 + Offset;
 
-        public AssetUI(Section_AHDR AHDR) : base(AHDR)
+        public AssetUI(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             _textureAssetID = ReadUInt(0x5C + Offset);
         }

@@ -12,6 +12,13 @@ namespace IndustrialPark
     {
         private class LHDRComparer : IComparer<int>
         {
+            private Game game;
+
+            public LHDRComparer(Game game)
+            {
+                this.game = game;
+            }
+
             private static readonly List<int> layerOrderBFBB = new List<int> {
                 (int)LayerType_BFBB.TEXTURE,
                 (int)LayerType_BFBB.BSP,
@@ -42,13 +49,13 @@ namespace IndustrialPark
                 if (l1 == l2)
                     return 0;
 
-                if (currentGame == Game.Scooby && layerOrderBFBB.Contains(l1) && layerOrderBFBB.Contains(l2))
+                if (game == Game.Scooby && layerOrderBFBB.Contains(l1) && layerOrderBFBB.Contains(l2))
                     return layerOrderBFBB.IndexOf(l1) > layerOrderBFBB.IndexOf(l2) ? 1 : -1;
 
-                if (currentGame == Game.BFBB && layerOrderBFBB.Contains(l1) && layerOrderBFBB.Contains(l2))
+                if (game == Game.BFBB && layerOrderBFBB.Contains(l1) && layerOrderBFBB.Contains(l2))
                     return layerOrderBFBB.IndexOf(l1) > layerOrderBFBB.IndexOf(l2) ? 1 : -1;
 
-                if (currentGame == Game.Incredibles)
+                if (game == Game.Incredibles)
                 {
                     if ((l1 == 3 && l2 == 11) || (l1 == 11 && l2 == 3))
                         return 0;
@@ -305,7 +312,7 @@ namespace IndustrialPark
             {
                 if (a is AssetCOLL COLL)
                 {
-                    COLL.Merge(new AssetCOLL(AHDR));
+                    COLL.Merge(new AssetCOLL(AHDR, currentGame, currentPlatform));
                     return;
                 }
             }
@@ -317,7 +324,7 @@ namespace IndustrialPark
             {
                 if (a is AssetJAW JAW)
                 {
-                    JAW.Merge(new AssetJAW(AHDR));
+                    JAW.Merge(new AssetJAW(AHDR, currentGame, currentPlatform));
                     return;
                 }
             }
@@ -329,7 +336,7 @@ namespace IndustrialPark
             {
                 if (a is AssetLODT LODT)
                 {
-                    LODT.Merge(new AssetLODT(AHDR));
+                    LODT.Merge(new AssetLODT(AHDR, currentGame, currentPlatform));
                     return;
                 }
             }
@@ -341,7 +348,7 @@ namespace IndustrialPark
             {
                 if (a is AssetPIPT PIPT)
                 {
-                    PIPT.Merge(new AssetPIPT(AHDR));
+                    PIPT.Merge(new AssetPIPT(AHDR, currentGame, currentPlatform));
                     return;
                 }
             }
@@ -353,7 +360,7 @@ namespace IndustrialPark
             {
                 if (a is AssetSHDW SHDW)
                 {
-                    SHDW.Merge(new AssetSHDW(AHDR));
+                    SHDW.Merge(new AssetSHDW(AHDR, currentGame, currentPlatform));
                     return;
                 }
             }
@@ -365,22 +372,22 @@ namespace IndustrialPark
             {
                 if (a is AssetSNDI_GCN_V1 SNDI_G1)
                 {
-                    SNDI_G1.Merge(new AssetSNDI_GCN_V1(AHDR));
+                    SNDI_G1.Merge(new AssetSNDI_GCN_V1(AHDR, currentGame, currentPlatform));
                     return;
                 }
                 else if (a is AssetSNDI_GCN_V2 SNDI_G2)
                 {
-                    SNDI_G2.Merge(new AssetSNDI_GCN_V2(AHDR));
+                    SNDI_G2.Merge(new AssetSNDI_GCN_V2(AHDR, currentGame, currentPlatform));
                     return;
                 }
                 else if (a is AssetSNDI_XBOX SNDI_X)
                 {
-                    SNDI_X.Merge(new AssetSNDI_XBOX(AHDR));
+                    SNDI_X.Merge(new AssetSNDI_XBOX(AHDR, currentGame, currentPlatform));
                     return;
                 }
                 else if (a is AssetSNDI_PS2 SNDI_P)
                 {
-                    SNDI_P.Merge(new AssetSNDI_PS2(AHDR));
+                    SNDI_P.Merge(new AssetSNDI_PS2(AHDR, currentGame, currentPlatform));
                     return;
                 }
             }
@@ -487,7 +494,7 @@ namespace IndustrialPark
             DICT.LTOC.LHDRList = new List<Section_LHDR>();
             DICT.LTOC.LHDRList.AddRange(layers.Values.ToList());
             DICT.LTOC.LHDRList.AddRange(bspLayers);
-            DICT.LTOC.LHDRList = DICT.LTOC.LHDRList.OrderBy(f => f.layerType, new LHDRComparer()).ToList();
+            DICT.LTOC.LHDRList = DICT.LTOC.LHDRList.OrderBy(f => f.layerType, new LHDRComparer(currentGame)).ToList();
         }
 
         public string VerifyArchive()
@@ -622,6 +629,37 @@ namespace IndustrialPark
 
             UnsavedChanges = true;
             RecalculateAllMatrices();
+        }
+
+        private void ConvertAllAssetTypes(Platform previousPlatform, Game previousGame, Platform currentPlatform, Game currentGame, out HashSet<AssetType> unsupported)
+        {
+            unsupported = new HashSet<AssetType>();
+            foreach (Asset asset in assetDictionary.Values)
+                try
+                {
+                    asset.AHDR = ConvertAssetType(asset.AHDR, EndianConverter.PlatformEndianness(previousPlatform), EndianConverter.PlatformEndianness(currentPlatform), previousGame, currentGame);
+                    asset.currentGame = currentGame;
+                    asset.currentPlatform = currentPlatform;
+                }
+                catch
+                {
+                    unsupported.Add(asset.AHDR.assetType);
+                }
+        }
+
+        private Section_AHDR ConvertAssetType(Section_AHDR AHDR, Endianness previousEndianness, Endianness currentEndianness, Game previousGame,  Game currentGame)
+        {
+            if (previousGame != currentGame)
+            {
+                AHDR = EndianConverter.GetReversedEndian(AHDR, previousGame, currentGame, previousEndianness);
+
+                if (previousEndianness == currentEndianness)
+                    AHDR = EndianConverter.GetReversedEndian(AHDR, currentGame, currentGame, currentEndianness == Endianness.Big ? Endianness.Little : Endianness.Big);
+            }
+            else if (previousEndianness != currentEndianness)
+                AHDR = EndianConverter.GetReversedEndian(AHDR, previousGame, currentGame, previousEndianness);
+
+            return AHDR;
         }
 
         public List<uint> MakeSimps(List<uint> assetIDs)

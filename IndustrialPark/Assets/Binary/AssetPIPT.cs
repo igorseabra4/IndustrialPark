@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using HipHopFile;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
@@ -30,7 +29,7 @@ namespace IndustrialPark
         [Category("PIPT Entry (Movie only)"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Unknown0F { get; set; }
 
-        public static int SizeOfStruct => Functions.currentGame == Game.Incredibles ? 16 : 12;
+        public static int SizeOfStruct(Game game) => game == Game.Incredibles ? 16 : 12;
 
         public EntryPIPT()
         {
@@ -45,7 +44,7 @@ namespace IndustrialPark
 
     public class AssetPIPT : Asset
     {
-        public AssetPIPT(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetPIPT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         public override bool HasReference(uint assetID)
         {
@@ -73,11 +72,11 @@ namespace IndustrialPark
             {
                 List<EntryPIPT> entries = new List<EntryPIPT>();
                 
-                for (int i = 4; i < Data.Length; i += EntryPIPT.SizeOfStruct)
+                for (int i = 4; i < Data.Length; i += EntryPIPT.SizeOfStruct(currentGame))
                 {
                     byte[] Flags = BitConverter.GetBytes(ReadInt(i + 8));
 
-                    EntryPIPT a = new EntryPIPT
+                    EntryPIPT a = new EntryPIPT()
                     {
                         ModelAssetID = ReadUInt(i),
                         MeshIndex = ReadInt(i + 4),
@@ -87,7 +86,7 @@ namespace IndustrialPark
                         OtherFlags = Flags[0]
                     };
 
-                    if (Functions.currentGame == Game.Incredibles)
+                    if (currentGame == Game.Incredibles)
                     {
                         a.Unknown0C = ReadByte(i + 12);
                         a.Unknown0D = ReadByte(i + 13);
@@ -112,7 +111,7 @@ namespace IndustrialPark
                     int Flags = BitConverter.ToInt32(new byte[] { i.OtherFlags, i.DestinationSourceBlend, i.Culling, i.RelatedToVisibility }, 0);
                     newData.AddRange(BitConverter.GetBytes(Switch(Flags)));
 
-                    if (Functions.currentGame == Game.Incredibles)
+                    if (currentGame == Game.Incredibles)
                     {
                         newData.Add(i.Unknown0C);
                         newData.Add(i.Unknown0D);

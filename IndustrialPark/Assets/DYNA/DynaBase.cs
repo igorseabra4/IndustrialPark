@@ -2,21 +2,22 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using HipHopFile;
 using SharpDX;
 
 namespace IndustrialPark
 {
-    public class DynaBase
+    public class DynaBase : EndianConvertible
     {
         public virtual string Note { get => "DYNA Placement is unused"; }
         public byte[] Data { get; set; }
 
-        public DynaBase()
+        public DynaBase(Platform platform) : base(EndianConverter.PlatformEndianness(platform))
         {
             Data = new byte[0];
         }
 
-        public DynaBase(IEnumerable<byte> enumerable)
+        public DynaBase(IEnumerable<byte> enumerable, Platform platform) : this (platform)
         {
             Data = enumerable.ToArray();
         }

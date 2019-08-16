@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using HipHopFile;
 using SharpDX;
-using static IndustrialPark.ConverterFunctions;
 using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
@@ -11,7 +11,7 @@ namespace IndustrialPark
     {
         public override bool IsRenderableClickable => true;
 
-        protected DynaPlaceableBase() : base()
+        protected DynaPlaceableBase(Platform platform) : base(platform)
         {
             Surface_AssetID = 0;
             Model_AssetID = 0;
@@ -41,7 +41,7 @@ namespace IndustrialPark
             Asset.Verify(Unknown4C, ref result);
         }
 
-        protected DynaPlaceableBase(IEnumerable<byte> enumerable) : base(enumerable)
+        protected DynaPlaceableBase(IEnumerable<byte> enumerable, Platform platform) : base(enumerable, platform)
         {
             PaddingInt00 = Switch(BitConverter.ToInt32(Data, 0x0));
             PaddingByte04 = Data[0x04];

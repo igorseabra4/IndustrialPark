@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using static IndustrialPark.ArchiveEditorFunctions;
 
+
 namespace IndustrialPark
 {
     public class ModelInst
@@ -36,18 +37,18 @@ namespace IndustrialPark
 
     public class AssetMINF : Asset, IAssetWithModel
     {
-        public AssetMINF(Section_AHDR AHDR) : base(AHDR)
+        public AssetMINF(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             try
             {
-                if (Functions.currentGame == Game.Scooby)
+                if (currentGame == Game.Scooby)
                     _modelAssetID = ReadUInt(0x0C);
                 else
                     _modelAssetID = ReadUInt(0x14);
 
                 AddToRenderingDictionary(AHDR.assetID, this);
 
-                if (Functions.currentGame == Game.Incredibles)
+                if (currentGame == Game.Incredibles)
                 {
                     AddToRenderingDictionary(Functions.BKDRHash(newName), this);
                     AddToNameDictionary(Functions.BKDRHash(newName), newName);
@@ -132,13 +133,13 @@ namespace IndustrialPark
         {
             get
             {
-                if (Functions.currentGame != Game.Scooby)
+                if (currentGame != Game.Scooby)
                     return ReadUInt(0x0C);
                 return 0;
             }
             set
             {
-                if (Functions.currentGame != Game.Scooby)
+                if (currentGame != Game.Scooby)
                     Write(0x0C, value);
             }
         }
@@ -148,18 +149,18 @@ namespace IndustrialPark
         {
             get
             {
-                if (Functions.currentGame != Game.Scooby)
+                if (currentGame != Game.Scooby)
                     return ReadUInt(0x10);
                 return 0;
             }
             set
             {
-                if (Functions.currentGame != Game.Scooby)
+                if (currentGame != Game.Scooby)
                     Write(0x10, value);
             }
         }
 
-        private int ModelReferencesStart => Functions.currentGame == Game.Scooby ? 0xC : 0x14;
+        private int ModelReferencesStart => currentGame == Game.Scooby ? 0xC : 0x14;
 
         [Category("Model Info")]
         public ModelInst[] ModelReferences
@@ -204,22 +205,22 @@ namespace IndustrialPark
 
                 foreach (ModelInst m in value)
                 {
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.Model_AssetID)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.Flags)));
+                    before.AddRange(BitConverter.GetBytes(Switch(m.Model_AssetID)));
+                    before.AddRange(BitConverter.GetBytes(Switch(m.Flags)));
                     before.Add(m.Parent);
                     before.Add(m.Bone);
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.RightX)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.RightY)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.RightZ)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.UpX)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.UpY)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.UpZ)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.AtX)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.AtY)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.AtZ)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.PosX)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.PosY)));
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(m.PosZ)));
+                    before.AddRange(BitConverter.GetBytes(Switch(m.RightX)));
+                    before.AddRange(BitConverter.GetBytes(Switch(m.RightY)));
+                    before.AddRange(BitConverter.GetBytes(Switch(m.RightZ)));
+                    before.AddRange(BitConverter.GetBytes(Switch(m.UpX)));
+                    before.AddRange(BitConverter.GetBytes(Switch(m.UpY)));
+                    before.AddRange(BitConverter.GetBytes(Switch(m.UpZ)));
+                    before.AddRange(BitConverter.GetBytes(Switch(m.AtX)));
+                    before.AddRange(BitConverter.GetBytes(Switch(m.AtY)));
+                    before.AddRange(BitConverter.GetBytes(Switch(m.AtZ)));
+                    before.AddRange(BitConverter.GetBytes(Switch(m.PosX)));
+                    before.AddRange(BitConverter.GetBytes(Switch(m.PosY)));
+                    before.AddRange(BitConverter.GetBytes(Switch(m.PosZ)));
                 }
 
                 before.AddRange(Data.Skip(EndOfModelReferenceData));
@@ -249,7 +250,7 @@ namespace IndustrialPark
                 List<byte> before = Data.Take(EndOfModelReferenceData).ToList();
 
                 foreach (AssetID a in value)
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(a)));
+                    before.AddRange(BitConverter.GetBytes(Switch(a)));
 
                 Data = before.ToArray();
             }

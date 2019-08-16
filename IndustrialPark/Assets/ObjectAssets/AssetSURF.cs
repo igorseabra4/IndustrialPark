@@ -6,7 +6,7 @@ namespace IndustrialPark
 {
     public class AssetSURF : ObjectAsset
     {
-        public AssetSURF(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetSURF(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         protected override int EventStartOffset => 0x12C + ScoobyOffset2;
 
@@ -388,7 +388,7 @@ namespace IndustrialPark
             set => Write(0xB0, value);
         }
 
-        private int ScoobyOffset => Functions.currentGame == Game.Scooby ? -0x60 : 0;
+        private int ScoobyOffset => currentGame == Game.Scooby ? -0x60 : 0;
 
         [Category("Surface: UV Effects 2"), Description("Same as UV Effects 1 in Scooby")]
         public int UVEffects2_Mode
@@ -558,25 +558,25 @@ namespace IndustrialPark
             set => Write(ScoobyOffset + 0x110, value);
         }
 
-        private int ScoobyOffset2 => Functions.currentGame == Game.Scooby ? (ScoobyOffset -0x04) : 0;
+        private int ScoobyOffset2 => currentGame == Game.Scooby ? (ScoobyOffset -0x04) : 0;
 
         [Category("Surface: Other"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte On
         {
-            get => Functions.currentGame == Game.Scooby ? (byte)0 : ReadByte(0x114);
+            get => currentGame == Game.Scooby ? (byte)0 : ReadByte(0x114);
             set
             {
-                if (Functions.currentGame != Game.Scooby)
+                if (currentGame != Game.Scooby)
                     Write(ScoobyOffset2 + 0x114, value);
             }
         }
         [Category("Surface: Other"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Padding115
         {
-            get => Functions.currentGame == Game.Scooby ? (byte)0 : ReadByte(0x115);
+            get => currentGame == Game.Scooby ? (byte)0 : ReadByte(0x115);
             set
             {
-                if (Functions.currentGame != Game.Scooby)
+                if (currentGame != Game.Scooby)
                     Write(ScoobyOffset2 + 0x115, value);
             }
         }
@@ -584,10 +584,10 @@ namespace IndustrialPark
         [Category("Surface: Other"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Padding116
         {
-            get => Functions.currentGame == Game.Scooby ? (byte)0 : ReadByte(0x116);
+            get => currentGame == Game.Scooby ? (byte)0 : ReadByte(0x116);
             set
             {
-                if (Functions.currentGame != Game.Scooby)
+                if (currentGame != Game.Scooby)
                     Write(0x116, value);
             }
         }
@@ -595,10 +595,10 @@ namespace IndustrialPark
         [Category("Surface: Other"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte Padding117
         {
-            get => Functions.currentGame == Game.Scooby ? (byte)0 : ReadByte(0x117);
+            get => currentGame == Game.Scooby ? (byte)0 : ReadByte(0x117);
             set
             {
-                if (Functions.currentGame != Game.Scooby)
+                if (currentGame != Game.Scooby)
                     Write(0x117, value);
             }
         }

@@ -43,7 +43,7 @@ namespace IndustrialPark
 
     public class AssetSNDI_PS2 : Asset
     {
-        public AssetSNDI_PS2(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetSNDI_PS2(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         public override bool HasReference(uint assetID)
         {

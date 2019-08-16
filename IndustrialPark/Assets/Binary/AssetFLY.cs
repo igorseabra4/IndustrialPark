@@ -48,7 +48,7 @@ namespace IndustrialPark
 
     public class AssetFLY : Asset
     {
-        public AssetFLY(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetFLY(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         public override void Verify(ref List<string> result)
         {

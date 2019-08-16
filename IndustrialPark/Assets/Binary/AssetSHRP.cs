@@ -4,13 +4,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
     public class AssetSHRP : Asset
     {
-        public AssetSHRP(Section_AHDR AHDR) : base(AHDR)
+        public AssetSHRP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             if (AssetID != AHDR.assetID)
                 AssetID = AHDR.assetID;
@@ -43,24 +42,24 @@ namespace IndustrialPark
                 switch (a.Type)
                 {
                     case 3:
-                        if (Functions.currentGame == Game.BFBB)
+                        if (currentGame == Game.BFBB)
                             Verify(((EntrySHRP_Type3_BFBB)a).PARE_AssetID, ref result);
-                        else if (Functions.currentGame == Game.Incredibles)
+                        else if (currentGame == Game.Incredibles)
                             Verify(((EntrySHRP_Type3_TSSM)a).Unknown1F0, ref result);
                         break;
                     case 4:
-                        if (Functions.currentGame == Game.BFBB)
+                        if (currentGame == Game.BFBB)
                         {
                             Verify(((EntrySHRP_Type4_BFBB)a).ModelAssetID, ref result);
                             Verify(((EntrySHRP_Type4_BFBB)a).UnknownAssetID74, ref result);
                         }
-                        else if (Functions.currentGame == Game.Incredibles)
+                        else if (currentGame == Game.Incredibles)
                             Verify(((EntrySHRP_Type4_TSSM)a).ModelAssetID, ref result);
                         break;
                     case 6:
-                        if (Functions.currentGame == Game.BFBB)
+                        if (currentGame == Game.BFBB)
                             Verify(((EntrySHRP_Type6_BFBB)a).SoundAssetID, ref result);
-                        else if (Functions.currentGame == Game.Incredibles)
+                        else if (currentGame == Game.Incredibles)
                             Verify(((EntrySHRP_Type6_TSSM)a).SoundAssetID, ref result);
                         break;
                     case 9:
@@ -107,36 +106,36 @@ namespace IndustrialPark
 
                     if (Type == 3)
                     {
-                        if (Functions.currentGame == Game.BFBB)
-                            entry = new EntrySHRP_Type3_BFBB(binaryReader.ReadBytes(EntrySHRP_Type3_BFBB.SizeOfEntry));
-                        else if (Functions.currentGame == Game.Incredibles)
-                            entry = new EntrySHRP_Type3_TSSM(binaryReader.ReadBytes(EntrySHRP_Type3_TSSM.SizeOfEntry));
+                        if (currentGame == Game.BFBB)
+                            entry = new EntrySHRP_Type3_BFBB(binaryReader.ReadBytes(EntrySHRP_Type3_BFBB.SizeOfEntry), currentPlatform);
+                        else if (currentGame == Game.Incredibles)
+                            entry = new EntrySHRP_Type3_TSSM(binaryReader.ReadBytes(EntrySHRP_Type3_TSSM.SizeOfEntry), currentPlatform);
                     }
                     else if (Type == 4)
                     {
-                        if (Functions.currentGame == Game.BFBB)
-                            entry = new EntrySHRP_Type4_BFBB(binaryReader.ReadBytes(EntrySHRP_Type4_BFBB.SizeOfEntry));
-                        else if (Functions.currentGame == Game.Incredibles)
-                            entry = new EntrySHRP_Type4_TSSM(binaryReader.ReadBytes(EntrySHRP_Type4_TSSM.SizeOfEntry));
+                        if (currentGame == Game.BFBB)
+                            entry = new EntrySHRP_Type4_BFBB(binaryReader.ReadBytes(EntrySHRP_Type4_BFBB.SizeOfEntry), currentPlatform);
+                        else if (currentGame == Game.Incredibles)
+                            entry = new EntrySHRP_Type4_TSSM(binaryReader.ReadBytes(EntrySHRP_Type4_TSSM.SizeOfEntry), currentPlatform);
                     }
                     else if (Type == 5)
                     {
-                        if (Functions.currentGame == Game.BFBB)
-                            entry = new EntrySHRP_Type5_BFBB(binaryReader.ReadBytes(EntrySHRP_Type5_BFBB.SizeOfEntry));
-                        else if (Functions.currentGame == Game.Incredibles)
-                            entry = new EntrySHRP_Type5_TSSM(binaryReader.ReadBytes(EntrySHRP_Type5_TSSM.SizeOfEntry));
+                        if (currentGame == Game.BFBB)
+                            entry = new EntrySHRP_Type5_BFBB(binaryReader.ReadBytes(EntrySHRP_Type5_BFBB.SizeOfEntry), currentPlatform);
+                        else if (currentGame == Game.Incredibles)
+                            entry = new EntrySHRP_Type5_TSSM(binaryReader.ReadBytes(EntrySHRP_Type5_TSSM.SizeOfEntry), currentPlatform);
                     }
                     else if (Type == 6)
                     {
-                        if (Functions.currentGame == Game.BFBB)
-                            entry = new EntrySHRP_Type6_BFBB(binaryReader.ReadBytes(EntrySHRP_Type6_BFBB.SizeOfEntry));
-                        else if (Functions.currentGame == Game.Incredibles)
-                            entry = new EntrySHRP_Type6_TSSM(binaryReader.ReadBytes(EntrySHRP_Type6_TSSM.SizeOfEntry));
+                        if (currentGame == Game.BFBB)
+                            entry = new EntrySHRP_Type6_BFBB(binaryReader.ReadBytes(EntrySHRP_Type6_BFBB.SizeOfEntry), currentPlatform);
+                        else if (currentGame == Game.Incredibles)
+                            entry = new EntrySHRP_Type6_TSSM(binaryReader.ReadBytes(EntrySHRP_Type6_TSSM.SizeOfEntry), currentPlatform);
                     }
                     else if (Type == 8)
-                        entry = new EntrySHRP_Type8(binaryReader.ReadBytes(EntrySHRP_Type8.SizeOfEntry));
+                        entry = new EntrySHRP_Type8(binaryReader.ReadBytes(EntrySHRP_Type8.SizeOfEntry), currentPlatform);
                     else if (Type == 9)
-                        entry = new EntrySHRP_Type9(binaryReader.ReadBytes(EntrySHRP_Type9.SizeOfEntry));
+                        entry = new EntrySHRP_Type9(binaryReader.ReadBytes(EntrySHRP_Type9.SizeOfEntry), currentPlatform);
                     else
                         throw new Exception("Unknown SHRP entry type " + Type.ToString() + " found in asset " + ToString() + ". This SHRP asset cannot be edited by Industrial Park.");
                     
@@ -157,7 +156,7 @@ namespace IndustrialPark
         }
     }
 
-    public abstract class EntrySHRP
+    public abstract class EntrySHRP : EndianConvertible
     {
         [ReadOnly(true)]
         public int Type { get; set; }
@@ -167,14 +166,14 @@ namespace IndustrialPark
         public float Unknown10 { get; set; }
         public float Unknown14 { get; set; }
 
-        public EntrySHRP()
+        public EntrySHRP(Platform platform) : base(EndianConverter.PlatformEndianness(platform))
         {
             Unknown04 = 0;
             Unknown08 = 0;
             Unknown0C = 0;
         }
 
-        public EntrySHRP(byte[] data)
+        public EntrySHRP(byte[] data, Platform platform) : base(EndianConverter.PlatformEndianness(platform))
         {
             Type = Switch(BitConverter.ToInt32(data, 0x00));
             Unknown04 = Switch(BitConverter.ToUInt32(data, 0x04));
@@ -228,13 +227,13 @@ namespace IndustrialPark
         public AssetID PARE_AssetID { get; set; }
         public int Unknown1D0 { get; set; }
 
-        public EntrySHRP_Type3_BFBB() : base()
+        public EntrySHRP_Type3_BFBB(Platform platform) : base(platform)
         {
             Type = 3;
             PARE_AssetID = 0;
         }
 
-        public EntrySHRP_Type3_BFBB(byte[] data) : base(data)
+        public EntrySHRP_Type3_BFBB(byte[] data, Platform platform) : base(data, platform)
         {
             Unknown18 = Switch(BitConverter.ToInt32(data, 0x18));
             Unknown1C = Switch(BitConverter.ToInt32(data, 0x1C));
@@ -307,13 +306,13 @@ namespace IndustrialPark
         public AssetID Unknown1F0 { get; set; }
         public int Unknown1F4 { get; set; }
 
-        public EntrySHRP_Type3_TSSM() : base()
+        public EntrySHRP_Type3_TSSM(Platform platform) : base(platform)
         {
             Type = 3;
             Unknown1F0 = 0;
         }
 
-        public EntrySHRP_Type3_TSSM(byte[] data) : base(data)
+        public EntrySHRP_Type3_TSSM(byte[] data, Platform platform) : base(data, platform)
         {
             Unknown18 = Switch(BitConverter.ToInt32(data, 0x18));
             Unknown1C = Switch(BitConverter.ToInt32(data, 0x1C));
@@ -400,14 +399,14 @@ namespace IndustrialPark
         public float Unknown88 { get; set; }
         public float Gravity { get; set; }
 
-        public EntrySHRP_Type4_BFBB() : base()
+        public EntrySHRP_Type4_BFBB(Platform platform) : base(platform)
         {
             Type = 4;
             ModelAssetID = 0;
             UnknownAssetID74 = 0;
         }
 
-        public EntrySHRP_Type4_BFBB(byte[] data) : base(data)
+        public EntrySHRP_Type4_BFBB(byte[] data, Platform platform) : base(data, platform)
         {
             ModelAssetID = Switch(BitConverter.ToUInt32(data, 0x18));
             Unknown1C = Switch(BitConverter.ToInt32(data, 0x1C));
@@ -499,13 +498,13 @@ namespace IndustrialPark
         public int UnknownInt108 { get; set; }
         public float UnknownFloat10C { get; set; }
 
-        public EntrySHRP_Type4_TSSM() : base()
+        public EntrySHRP_Type4_TSSM(Platform platform) : base(platform)
         {
             Type = 4;
             ModelAssetID = 0;
         }
 
-        public EntrySHRP_Type4_TSSM(byte[] data) : base(data)
+        public EntrySHRP_Type4_TSSM(byte[] data, Platform platform) : base(data, platform)
         {
             ModelAssetID = Switch(BitConverter.ToUInt32(data, 0x18));
             Unknown1C = Switch(BitConverter.ToInt32(data, 0x1C));
@@ -603,7 +602,7 @@ namespace IndustrialPark
         public AssetID Unknown48 { get; set; }
         public AssetID Unknown4C { get; set; }
 
-        public EntrySHRP_Type5_BFBB() : base()
+        public EntrySHRP_Type5_BFBB(Platform platform) : base(platform)
         {
             Type = 5;
             Unknown1C = 0;
@@ -614,7 +613,7 @@ namespace IndustrialPark
             Unknown4C = 0;
         }
 
-        public EntrySHRP_Type5_BFBB(byte[] data) : base(data)
+        public EntrySHRP_Type5_BFBB(byte[] data, Platform platform) : base(data, platform)
         {
             Unknown18 = Switch(BitConverter.ToInt32(data, 0x18));
             Unknown1C = Switch(BitConverter.ToUInt32(data, 0x1C));
@@ -685,12 +684,12 @@ namespace IndustrialPark
         public int Unknown50 { get; set; }
         public int Unknown64 { get; set; }
 
-        public EntrySHRP_Type5_TSSM() : base()
+        public EntrySHRP_Type5_TSSM(Platform platform) : base(platform)
         {
             Type = 5;
         }
 
-        public EntrySHRP_Type5_TSSM(byte[] data) : base(data)
+        public EntrySHRP_Type5_TSSM(byte[] data, Platform platform) : base(data, platform)
         {
             Unknown18 = Switch(BitConverter.ToInt32(data, 0x18));
             Unknown1C = Switch(BitConverter.ToInt32(data, 0x1C));
@@ -764,13 +763,13 @@ namespace IndustrialPark
         public float Unknown44 { get; set; }
         public float Unknown48 { get; set; }
 
-        public EntrySHRP_Type6_BFBB() : base()
+        public EntrySHRP_Type6_BFBB(Platform platform) : base(platform)
         {
             Type = 6;
             SoundAssetID = 0;
         }
 
-        public EntrySHRP_Type6_BFBB(byte[] data) : base(data)
+        public EntrySHRP_Type6_BFBB(byte[] data, Platform platform) : base(data, platform)
         {
             SoundAssetID = Switch(BitConverter.ToUInt32(data, 0x18));
             Unknown1C = Switch(BitConverter.ToInt32(data, 0x1C));
@@ -823,13 +822,13 @@ namespace IndustrialPark
         public int Unknown2C { get; set; }
         public float Unknown40 { get; set; }
 
-        public EntrySHRP_Type6_TSSM() : base()
+        public EntrySHRP_Type6_TSSM(Platform platform) : base(platform)
         {
             Type = 6;
             SoundAssetID = 0;
         }
 
-        public EntrySHRP_Type6_TSSM(byte[] data) : base(data)
+        public EntrySHRP_Type6_TSSM(byte[] data, Platform platform) : base(data, platform)
         {
             SoundAssetID = Switch(BitConverter.ToUInt32(data, 0x18));
             Unknown1C = Switch(BitConverter.ToInt32(data, 0x1C));
@@ -879,7 +878,7 @@ namespace IndustrialPark
         public float Unknown40 { get; set; }
         public float Unknown44 { get; set; }
 
-        public EntrySHRP_Type8() : base()
+        public EntrySHRP_Type8(Platform platform) : base(platform)
         {
             Type = 8;
             UnknownAssetID18 = 0;
@@ -888,7 +887,7 @@ namespace IndustrialPark
             UnknownAssetID2C = 0;
         }
 
-        public EntrySHRP_Type8(byte[] data) : base(data)
+        public EntrySHRP_Type8(byte[] data, Platform platform) : base(data, platform)
         {
             UnknownAssetID18 = Switch(BitConverter.ToUInt32(data, 0x18));
             Unknown1C = Switch(BitConverter.ToInt32(data, 0x1C));
@@ -945,13 +944,13 @@ namespace IndustrialPark
         public float Unknown54 { get; set; }
         public float Unknown58 { get; set; }
 
-        public EntrySHRP_Type9() : base()
+        public EntrySHRP_Type9(Platform platform) : base(platform)
         {
             Type = 8;
             UnknownAssetID18 = 0;
         }
 
-        public EntrySHRP_Type9(byte[] data) : base(data)
+        public EntrySHRP_Type9(byte[] data, Platform platform) : base(data, platform)
         {
             UnknownAssetID18 = Switch(BitConverter.ToUInt32(data, 0x18));
             Unknown1C = Switch(BitConverter.ToInt32(data, 0x1C));

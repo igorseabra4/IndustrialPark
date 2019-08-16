@@ -6,23 +6,28 @@ namespace IndustrialPark
 {
     public partial class NewArchive : Form
     {
-        public static HipSection[] GetNewArchive(out bool OK, out Platform platform, out Game game)
+        public static HipFile GetNewArchive(out bool OK)
         {
             NewArchive newArchive = new NewArchive();
             newArchive.ShowDialog();
-            platform = newArchive.platform;
-            game = newArchive.game;
             OK = newArchive.OK;
             return newArchive.result;
+        }
+
+        public static void GetExistingArchive(Platform previousPlatform, Game previousGame, int previousDate, string previousDateString, 
+            out bool OK, out Section_PACK PACK, out Platform newPlatform, out Game newGame)
+        {
+            NewArchive newArchive = new NewArchive(previousPlatform, previousGame, previousDate, previousDateString);
+            newArchive.ShowDialog();
+            OK = newArchive.OK;
+            PACK = OK ? newArchive.result.PACK : null;
+            newPlatform = newArchive.platform;
+            newGame = newArchive.game;
         }
 
         public NewArchive()
         {
             InitializeComponent();
-        }
-
-        private void NewArchive_Load(object sender, EventArgs e)
-        {
             TopMost = true;
 
             comboBoxGame.Items.Add("Scooby-Doo: Night Of 100 Frights");
@@ -33,13 +38,70 @@ namespace IndustrialPark
             comboBoxPlatform.Items.Add("Xbox / PC");
             comboBoxPlatform.Items.Add("Playstation 2");
 
+            dateTimePicker1.MinDate = DateTime.MinValue;
+            dateTimePicker1.MaxDate = DateTime.MaxValue;
+
             dateTimePicker1.Value = DateTime.Now;
+        }
+        
+        public NewArchive(Platform previousPlatform, Game previousGame, int previousDate, string previousDateString)
+        {
+            InitializeComponent();
+            TopMost = true;
+
+            comboBoxGame.Items.Add("Scooby-Doo: Night Of 100 Frights");
+            comboBoxGame.Items.Add("Spongebob Squarepants: Battle For Bikini Bottom");
+            comboBoxGame.Items.Add("The Incredibles/Movie Game/Rise of the Underminer");
+            
+            switch (previousGame)
+            {
+                case Game.Scooby:
+                    comboBoxGame.SelectedIndex = 0;
+                    break;
+                case Game.BFBB:
+                    comboBoxGame.SelectedIndex = 1;
+                    break;
+                case Game.Incredibles:
+                    comboBoxGame.SelectedIndex = 2;
+                    break;
+            }
+
+            comboBoxPlatform.Items.Add("GameCube");
+            comboBoxPlatform.Items.Add("Xbox / PC");
+            comboBoxPlatform.Items.Add("Playstation 2");
+
+            switch (previousPlatform)
+            {
+                case Platform.PS2:
+                    comboBoxPlatform.SelectedIndex = 2;
+                    break;
+                case Platform.GameCube:
+                    comboBoxPlatform.SelectedIndex = 0;
+                    break;
+                case Platform.Xbox:
+                    comboBoxPlatform.SelectedIndex = 1;
+                    break;
+            }
+
+            dateTimePicker1.MinDate = DateTime.MinValue;
+            dateTimePicker1.MaxDate = DateTime.MaxValue;
+
+            try
+            {
+                dateTimePicker1.Value = new DateTime(previousDate);
+            }
+            catch
+            {
+                dateTimePicker1.Value = new DateTime(1970, 1, 1).AddSeconds(previousDate);
+            }
+
+            textBoxPCRT.Text = previousDateString;
         }
 
         private bool OK = false;
-        private Platform platform = Platform.Unknown;
-        private Game game = Game.Unknown;
-        private HipSection[] result = null;
+        private HipFile result = null;
+        private Game game;
+        private Platform platform;
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
@@ -86,19 +148,16 @@ namespace IndustrialPark
                             PACK.PFLG = new Section_PFLG(36241454);
                             PACK.PLAT.targetPlatform = "GC";
                             PACK.PLAT.targetPlatformName = "GameCube";
-                            platform = Platform.GameCube;
                             break;
                         case Platform.PS2:
                             PACK.PFLG = new Section_PFLG(36438062);
                             PACK.PLAT.targetPlatform = "P2";
                             PACK.PLAT.targetPlatformName = "PlayStation 2";
-                            platform = Platform.PS2;
                             break;
                         case Platform.Xbox:
                             PACK.PFLG = new Section_PFLG(36306990);
                             PACK.PLAT.targetPlatform = "XB";
                             PACK.PLAT.targetPlatformName = "Xbox";
-                            platform = Platform.Xbox;
                             break;
                     }
                     break;
@@ -109,21 +168,18 @@ namespace IndustrialPark
                     {
                         case Platform.Xbox:
                             PACK.PLAT.targetPlatform = "BX";
-                            platform = Platform.Xbox;
                             break;
                         case Platform.GameCube:
                             PACK.PLAT.targetPlatform = "GC";
-                            platform = Platform.GameCube;
                             break;
                         case Platform.PS2:
                             PACK.PLAT.targetPlatform = "PS2";
-                            platform = Platform.PS2;
                             break;
                     }
                     break;
             }
 
-            result = new HipSection[] { HIPA, PACK, DICT, STRM };
+            result = new HipFile(game, platform, HIPA, PACK, DICT, STRM);
 
             Close();
         }

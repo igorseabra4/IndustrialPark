@@ -5,7 +5,7 @@ namespace IndustrialPark
 {
     public class AssetCOND_Scooby : ObjectAsset
     {
-        public AssetCOND_Scooby(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetCOND_Scooby(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         public override bool HasReference(uint assetID) => Conditional == assetID || base.HasReference(assetID);
         

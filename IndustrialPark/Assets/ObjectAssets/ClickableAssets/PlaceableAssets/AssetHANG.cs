@@ -9,7 +9,7 @@ namespace IndustrialPark
 
         protected override bool DontRender => dontRender;
         
-        public AssetHANG(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetHANG(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         protected override int EventStartOffset => 0x74 + Offset;
 

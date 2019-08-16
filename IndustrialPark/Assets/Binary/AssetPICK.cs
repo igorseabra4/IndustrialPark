@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using HipHopFile;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
@@ -35,7 +34,7 @@ namespace IndustrialPark
     {
         public static Dictionary<uint, uint> pickEntries = new Dictionary<uint, uint>();
 
-        public AssetPICK(Section_AHDR AHDR) : base(AHDR)
+        public AssetPICK(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             SetupDictionary();
         }

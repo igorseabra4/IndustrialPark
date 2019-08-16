@@ -5,7 +5,7 @@ namespace IndustrialPark
 {
     public class AssetVOLU : ObjectAsset
     {
-        public AssetVOLU(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetVOLU(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         protected override int EventStartOffset => 0x50;
         

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using HipHopFile;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
@@ -24,7 +23,7 @@ namespace IndustrialPark
 
     public class AssetMAPR : Asset
     {
-        public AssetMAPR(Section_AHDR AHDR) : base(AHDR)
+        public AssetMAPR(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             if (AssetID != AHDR.assetID)
                 AssetID = AHDR.assetID;

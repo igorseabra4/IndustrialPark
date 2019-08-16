@@ -62,7 +62,7 @@ namespace IndustrialPark
             Close();
         }
 
-        public static List<Section_AHDR> GetAssets(out bool success, out bool overwrite, out bool simps, out bool piptVcolors)
+        public static List<Section_AHDR> GetAssets(Game game, out bool success, out bool overwrite, out bool simps, out bool piptVcolors)
         {
             ImportModel a = new ImportModel();
             if (a.ShowDialog() == DialogResult.OK)
@@ -82,7 +82,7 @@ namespace IndustrialPark
                                 ReadFileMethods.ExportRenderWareFile(
                                     CreateDFFFromAssimp(filePath,
                                     a.checkBoxFlipUVs.Checked),
-                                    currentRenderWareVersion);
+                                    currentRenderWareVersion(game));
                     
                     AHDRs.Add(
                         new Section_AHDR(

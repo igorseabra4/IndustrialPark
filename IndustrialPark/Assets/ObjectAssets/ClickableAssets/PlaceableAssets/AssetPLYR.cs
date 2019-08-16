@@ -14,7 +14,7 @@ namespace IndustrialPark
 
         protected override int EventStartOffset => 0x54 + Offset;
 
-        public AssetPLYR(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetPLYR(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         public override bool HasReference(uint assetID) => LightKit_AssetID == assetID || base.HasReference(assetID);
         
@@ -61,8 +61,8 @@ namespace IndustrialPark
         [Category("Player References")]
         public AssetID LightKit_AssetID
         {
-            get => Functions.currentGame == Game.Scooby ? 0 : ReadUInt(EventStartOffset + AmountOfEvents * Link.sizeOfStruct);
-            set { if (Functions.currentGame != Game.Scooby) Write(EventStartOffset + AmountOfEvents * Link.sizeOfStruct, value); }
+            get => currentGame == Game.Scooby ? 0 : ReadUInt(EventStartOffset + AmountOfEvents * Link.sizeOfStruct);
+            set { if (currentGame != Game.Scooby) Write(EventStartOffset + AmountOfEvents * Link.sizeOfStruct, value); }
         }
     }
 }

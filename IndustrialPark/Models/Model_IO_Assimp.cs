@@ -386,7 +386,7 @@ namespace IndustrialPark.Models
                         unknown1 = 5,
                         unknown2 = 0
                     },
-                    atomicExtension = currentRenderWareVersion == scoobyRenderWareVersion ? new Extension_0003()
+                    atomicExtension = new Extension_0003() // check this in case something fails
                     {
                         extensionSectionList = new List<RWSection>()
                         {
@@ -395,7 +395,7 @@ namespace IndustrialPark.Models
                                 value = 0
                             }
                         }
-                    } : new Extension_0003()
+                    }
                 }
                 },
 

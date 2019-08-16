@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using static IndustrialPark.ConverterFunctions;
+using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -9,7 +9,7 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 13";
 
-        public DynaBungeeHook() : base()
+        public DynaBungeeHook(Platform platform) : base(platform)
         {
             Placeable_AssetID = 0;
         }
@@ -27,7 +27,7 @@ namespace IndustrialPark
             Asset.Verify(Placeable_AssetID, ref result);
         }
 
-        public DynaBungeeHook(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaBungeeHook(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             Placeable_AssetID = Switch(BitConverter.ToUInt32(Data, 0x0));
             EnterX = Switch(BitConverter.ToInt32(Data, 0x4));

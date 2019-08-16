@@ -1,8 +1,8 @@
-﻿using System;
+﻿using HipHopFile;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
@@ -10,13 +10,13 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 2";
 
-        public DynaEnemyCritter() : base()
+        public DynaEnemyCritter(Platform platform) : base(platform)
         {
             MVPT_AssetID = 0;
             Unknown54 = 0;
         }
 
-        public DynaEnemyCritter(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaEnemyCritter(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             MVPT_AssetID = Switch(BitConverter.ToUInt32(Data, 0x50));
             Unknown54 = Switch(BitConverter.ToUInt32(Data, 0x54));

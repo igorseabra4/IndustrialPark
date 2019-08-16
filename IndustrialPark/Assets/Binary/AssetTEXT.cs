@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using HipHopFile;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
     public class AssetTEXT : Asset
     {
-        public AssetTEXT(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetTEXT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         public override bool HasReference(uint assetID)
         {

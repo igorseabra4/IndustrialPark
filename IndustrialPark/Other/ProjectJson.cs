@@ -7,9 +7,9 @@ namespace IndustrialPark
     public class ProjectJson
     {
         public List<string> hipPaths;
+        public List<Platform> scoobyPlatforms;
         public List<string> TextureFolderPaths;
         public List<uint> hiddenAssets;
-        public Platform platformForScooby;
 
         public Vector3 CamPos;
         public float Yaw;
@@ -61,9 +61,9 @@ namespace IndustrialPark
         public ProjectJson()
         {
             hipPaths = new List<string>();
+            scoobyPlatforms = new List<Platform>();
             TextureFolderPaths = new List<string>();
             hiddenAssets = new List<uint>();
-            platformForScooby = Platform.Unknown;
 
             CamPos = new Vector3();
             Yaw = 0;
@@ -114,15 +114,16 @@ namespace IndustrialPark
             hideHelp = false;
         }
 
-        public ProjectJson(List<string> hipPaths, List<string> textureFolderPaths, Vector3 camPos, float yaw, float pitch, float speed, float speedRot,
+        public ProjectJson(List<string> hipPaths, List<Platform> scoobyPlatforms, List<string> textureFolderPaths, Vector3 camPos, float yaw, float pitch, float speed, float speedRot,
             float fieldOfView, float farPlane, bool noCulling, bool wireframe, Color4 backgroundColor, Vector4 widgetColor, Vector4 trigColor,
             Vector4 mvptColor, Vector4 sfxColor, bool useLegacyAssetIDFormat, bool alternateNameDisplayMode, List<uint> hiddenAssets, bool isDrawingUI,
             bool renderBasedOnLodt, bool dontRenderLevelModel, bool dontRenderBOUL, bool dontRenderBUTN, bool dontRenderCAM, bool dontRenderDSTR,
             bool dontRenderDYNA, bool dontRenderEGEN, bool dontRenderHANG, bool dontRenderLITE, bool dontRenderMRKR, bool dontRenderMVPT,
             bool dontRenderPEND, bool dontRenderPKUP, bool dontRenderPLAT, bool dontRenderPLYR, bool dontRenderSFX, bool dontRenderSIMP,
-            bool dontRenderTRIG, bool dontRenderUI, bool dontRenderUIFT, bool dontRenderVIL, bool persistentShinies, Platform platformForScooby, bool hideHelp)
+            bool dontRenderTRIG, bool dontRenderUI, bool dontRenderUIFT, bool dontRenderVIL, bool persistentShinies, bool hideHelp)
         {
             this.hipPaths = hipPaths;
+            this.scoobyPlatforms = scoobyPlatforms;
             TextureFolderPaths = textureFolderPaths;
             CamPos = camPos;
             Yaw = yaw;
@@ -165,7 +166,6 @@ namespace IndustrialPark
             this.dontRenderUIFT = dontRenderUIFT;
             this.dontRenderVIL = dontRenderVIL;
             this.persistentShinies = persistentShinies;
-            this.platformForScooby = platformForScooby;
             this.hideHelp = hideHelp;
         }
     }

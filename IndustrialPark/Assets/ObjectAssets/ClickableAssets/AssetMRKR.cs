@@ -14,7 +14,7 @@ namespace IndustrialPark
 
         public static bool dontRender = false;
 
-        public AssetMRKR(Section_AHDR AHDR) : base(AHDR)
+        public AssetMRKR(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             _position = new Vector3(ReadFloat(0x0), ReadFloat(0x4), ReadFloat(0x8));
 

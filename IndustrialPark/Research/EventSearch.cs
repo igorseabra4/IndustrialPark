@@ -82,7 +82,8 @@ namespace IndustrialPark
             total = 0;
             richTextBox1.Clear();
 
-            AddFolder(rootDir);
+            Platform scoobyPlatform = Platform.Unknown;
+            AddFolder(rootDir, ref scoobyPlatform);
 
             richTextBox2.Text = $"Found a total of {total} events sent by {senders.Count} different asset types: ";
             foreach (AssetType type in senders)
@@ -98,20 +99,22 @@ namespace IndustrialPark
                 richTextBox2.Text += type.ToString() + ", ";
         }
 
-        private void AddFolder(string folderPath)
+        private void AddFolder(string folderPath, ref Platform scoobyPlatform)
         {
             foreach (string s in Directory.GetFiles(folderPath))
             {
                 if (Path.GetExtension(s).ToLower() == ".hip" || Path.GetExtension(s).ToLower() == ".hop")
                 {
                     ArchiveEditorFunctions archive = new ArchiveEditorFunctions();
-                    archive.OpenFile(s, false, true);
+                    archive.OpenFile(s, false, scoobyPlatform, true);
+                    if (scoobyPlatform == Platform.Unknown)
+                        scoobyPlatform = archive.currentPlatform;
                     WriteWhatIFound(archive);
                     archive.Dispose(false);
                 }
             }
             foreach (string s in Directory.GetDirectories(folderPath))
-                AddFolder(s);
+                AddFolder(s, ref scoobyPlatform);
         }
 
         private void WriteWhatIFound(ArchiveEditorFunctions archive)

@@ -1,7 +1,7 @@
-﻿using System;
+﻿using HipHopFile;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
@@ -11,14 +11,14 @@ namespace IndustrialPark
 
         public static uint RingModelAssetID = 0;
 
-        public DynaRingControl() : base()
+        public DynaRingControl(Platform platform) : base(platform)
         {
             RingModel_AssetID = 0;
             RingSoundGroup_AssetID = 0;
             Rings_AssetIDs = new AssetID[0];
         }
 
-        public DynaRingControl(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaRingControl(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             PlayerType = (DynaRingControlPlayerType)Switch(BitConverter.ToInt32(Data, 0x0));
             RingModel_AssetID = Switch(BitConverter.ToUInt32(Data, 0x4));

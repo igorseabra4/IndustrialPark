@@ -3,7 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using static IndustrialPark.ConverterFunctions;
+
+using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -18,9 +19,11 @@ namespace IndustrialPark
         Other = 6,
     }
 
-    public class Motion
+    public class Motion : EndianConvertible
     {
-        public static int Size => HipHopFile.Functions.currentGame == HipHopFile.Game.Incredibles ? 0x3C : 0x30;
+        public static int Size(Game currentGame) => currentGame == Game.Incredibles ? 0x3C : 0x30;
+
+        protected Game game;
 
         [Category("Motion"), ReadOnly(true)]
         public MotionType Type { get; set; }
@@ -30,11 +33,14 @@ namespace IndustrialPark
         [Description("0 = None\n1 = Unknown\n2 = Unknown\n4 = Don't start moving\nAdd numbers to enable multiple flags")]
         public short Flags { get; set; }
 
-        public Motion() { }
-
-        public Motion(byte[] data)
+        public Motion(Game game, Platform platform) : base(EndianConverter.PlatformEndianness(platform))
         {
-            Type = (MotionType)(data[0]);
+            this.game = game;
+        }
+
+        public Motion(byte[] data, Game game, Platform platform) : this(game, platform)
+        {
+            Type = (MotionType)data[0];
             UseBanking = data[1];
             Flags = Switch(BitConverter.ToInt16(data, 2));
         }
@@ -86,7 +92,7 @@ namespace IndustrialPark
 
     public class Motion_ExtendRetract : Motion
     {
-        public Motion_ExtendRetract()
+        public Motion_ExtendRetract(Game game, Platform platform) : base(game, platform)
         {
             Type = MotionType.ExtendRetract;
         }
@@ -112,7 +118,7 @@ namespace IndustrialPark
         [Category("Motion: ExtendRetract"), TypeConverter(typeof(FloatTypeConverter))]
         public float RetractWaitTime { get; set; }
 
-        public Motion_ExtendRetract(byte[] data) : base(data)
+        public Motion_ExtendRetract(byte[] data, Game game, Platform platform) : base(data, game, platform)
         {
             RetractPositionX = Switch(BitConverter.ToSingle(data, 4));
             RetractPositionY = Switch(BitConverter.ToSingle(data, 8));
@@ -141,7 +147,7 @@ namespace IndustrialPark
             data.AddRange(BitConverter.GetBytes(Switch(RetractTime)));
             data.AddRange(BitConverter.GetBytes(Switch(RetractWaitTime)));
 
-            while (data.Count < Size)
+            while (data.Count < Size(game))
                 data.Add(0);
 
             return data.ToArray();
@@ -150,7 +156,7 @@ namespace IndustrialPark
 
     public class Motion_Orbit : Motion
     {
-        public Motion_Orbit()
+        public Motion_Orbit(Game game, Platform platform) : base(game, platform)
         {
             Type = MotionType.Orbit;
         }
@@ -168,7 +174,7 @@ namespace IndustrialPark
         [Category("Motion: Orbit"), TypeConverter(typeof(FloatTypeConverter))]
         public float Period { get; set; }
 
-        public Motion_Orbit(byte[] data) : base(data)
+        public Motion_Orbit(byte[] data, Game game, Platform platform) : base(data, game, platform)
         {
             CenterX = Switch(BitConverter.ToSingle(data, 4));
             CenterY = Switch(BitConverter.ToSingle(data, 8));
@@ -189,7 +195,7 @@ namespace IndustrialPark
             data.AddRange(BitConverter.GetBytes(Switch(Height)));
             data.AddRange(BitConverter.GetBytes(Switch(Period)));
 
-            while (data.Count < Size)
+            while (data.Count < Size(game))
                 data.Add(0);
 
             return data.ToArray();
@@ -198,7 +204,7 @@ namespace IndustrialPark
 
     public class Motion_Spline : Motion
     {
-        public Motion_Spline()
+        public Motion_Spline(Game game, Platform platform) : base(game, platform)
         {
             Type = MotionType.Spline;
         }
@@ -206,7 +212,7 @@ namespace IndustrialPark
         [Category("Motion: Spline")]
         public int Unknown { get; set; }
 
-        public Motion_Spline(byte[] data) : base(data)
+        public Motion_Spline(byte[] data, Game game, Platform platform) : base(data, game, platform)
         {
             Unknown = Switch(BitConverter.ToInt32(data, 4));
         }
@@ -217,7 +223,7 @@ namespace IndustrialPark
 
             data.AddRange(BitConverter.GetBytes(Switch(Unknown)));
 
-            while (data.Count < Size)
+            while (data.Count < Size(game))
                 data.Add(0);
 
             return data.ToArray();
@@ -226,7 +232,7 @@ namespace IndustrialPark
 
     public class Motion_MovePoint : Motion
     {
-        public Motion_MovePoint()
+        public Motion_MovePoint(Game game, Platform platform) : base(game, platform)
         {
             Type = MotionType.MovePoint;
         }
@@ -238,7 +244,7 @@ namespace IndustrialPark
         [Category("Motion: MovePoint"), TypeConverter(typeof(FloatTypeConverter))]
         public float Speed { get; set; }
 
-        public Motion_MovePoint(byte[] data, Vector3 initialPosition) : base(data)
+        public Motion_MovePoint(byte[] data, Game game, Platform platform, Vector3 initialPosition) : base(data, game, platform)
         {
             MovePoint_Flags = Switch(BitConverter.ToUInt32(data, 4));
             MVPT_AssetID = Switch(BitConverter.ToUInt32(data, 8));
@@ -255,7 +261,7 @@ namespace IndustrialPark
             data.AddRange(BitConverter.GetBytes(Switch(MVPT_AssetID)));
             data.AddRange(BitConverter.GetBytes(Switch(Speed)));
 
-            while (data.Count < Size)
+            while (data.Count < Size(game))
                 data.Add(0);
 
             return data.ToArray();
@@ -333,7 +339,7 @@ namespace IndustrialPark
 
     public class Motion_Mechanism : Motion
     {
-        public Motion_Mechanism()
+        public Motion_Mechanism(Game game, Platform platform) : base(game, platform)
         {
             Type = MotionType.Mechanism;
         }
@@ -397,7 +403,7 @@ namespace IndustrialPark
         [Category("TSSM Only")]
         public float UnknownFloat2 { get; set; }
 
-        public Motion_Mechanism(byte[] data) : base(data)
+        public Motion_Mechanism(byte[] data, Game game, Platform platform) : base(data, game, platform)
         {
             MovementType = (EMovementType)data[4];
             MovementLoopMode = data[5];
@@ -405,7 +411,7 @@ namespace IndustrialPark
             RotateAxis = (Axis)data[7];
 
             int offset = 0;
-            if (HipHopFile.Functions.currentGame == HipHopFile.Game.Incredibles)
+            if (base.game == HipHopFile.Game.Incredibles)
             {
                 Unknown1 = data[8];
                 Unknown2 = data[9];
@@ -426,7 +432,7 @@ namespace IndustrialPark
             RetractDelay = Switch(BitConverter.ToSingle(data, 40 + offset));
             PostRetractDelay = Switch(BitConverter.ToSingle(data, 44 + offset));
 
-            if (HipHopFile.Functions.currentGame == HipHopFile.Game.Incredibles)
+            if (base.game == HipHopFile.Game.Incredibles)
             {
                 UnknownFloat1 = Switch(BitConverter.ToSingle(data, 52));
                 UnknownFloat2 = Switch(BitConverter.ToSingle(data, 56));
@@ -442,7 +448,7 @@ namespace IndustrialPark
             data.Add((byte)SlideAxis);
             data.Add((byte)RotateAxis);
 
-            if (HipHopFile.Functions.currentGame == HipHopFile.Game.Incredibles)
+            if (game == Game.Incredibles)
             {
                 data.Add(Unknown1);
                 data.Add(Unknown2);
@@ -461,13 +467,13 @@ namespace IndustrialPark
             data.AddRange(BitConverter.GetBytes(Switch(RetractDelay)));
             data.AddRange(BitConverter.GetBytes(Switch(PostRetractDelay)));
 
-            if (HipHopFile.Functions.currentGame == HipHopFile.Game.Incredibles)
+            if (game == Game.Incredibles)
             {
                 data.AddRange(BitConverter.GetBytes(Switch(UnknownFloat1)));
                 data.AddRange(BitConverter.GetBytes(Switch(UnknownFloat2)));
             }
 
-            while (data.Count < Size)
+            while (data.Count < Size(game))
                 data.Add(0);
 
             return data.ToArray();
@@ -670,7 +676,7 @@ namespace IndustrialPark
 
     public class Motion_Pendulum : Motion
     {
-        public Motion_Pendulum()
+        public Motion_Pendulum(Game game, Platform platform) : base(game, platform)
         {
             Type = MotionType.Pendulum;
         }
@@ -688,7 +694,7 @@ namespace IndustrialPark
         [Category("Motion: Pendulum")]
         public float Phase { get; set; }
 
-        public Motion_Pendulum(byte[] data) : base(data)
+        public Motion_Pendulum(byte[] data, Game game, Platform platform) : base(data, game, platform)
         {
             PendulumFlags = data[4];
             Plane = data[5];
@@ -712,7 +718,7 @@ namespace IndustrialPark
             data.AddRange(BitConverter.GetBytes(Switch(Period)));
             data.AddRange(BitConverter.GetBytes(Switch(Phase)));
 
-            while (data.Count < Size)
+            while (data.Count < Size(game))
                 data.Add(0);
 
             return data.ToArray();

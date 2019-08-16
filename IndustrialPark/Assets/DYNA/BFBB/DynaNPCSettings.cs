@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using static IndustrialPark.ConverterFunctions;
+using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -9,9 +9,9 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 2";
 
-        public DynaNPCSettings() : base() { }
+        public DynaNPCSettings(Platform platform) : base(platform) { }
 
-        public DynaNPCSettings(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaNPCSettings(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             BasisType = Switch(BitConverter.ToInt32(Data, 0x0));
             AllowDetect = Data[0x4];

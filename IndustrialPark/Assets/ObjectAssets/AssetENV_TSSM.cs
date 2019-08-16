@@ -7,7 +7,7 @@ namespace IndustrialPark
 {
     public class AssetENV_TSSM : AssetENV
     {
-        public AssetENV_TSSM(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetENV_TSSM(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         protected override int EventStartOffset => 0x5C;
 

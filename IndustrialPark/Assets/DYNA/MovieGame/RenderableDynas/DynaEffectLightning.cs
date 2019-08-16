@@ -1,10 +1,10 @@
 ﻿using AssetEditorColors;
+using HipHopFile;
 using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
@@ -12,7 +12,7 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 2";
 
-        public DynaEffectLightning() : base() { }
+        public DynaEffectLightning(Platform platform) : base(platform) { }
 
         public override bool HasReference(uint assetID)
         {
@@ -27,7 +27,7 @@ namespace IndustrialPark
             Asset.Verify(SIMP2_AssetID, ref result);
         }
 
-        public DynaEffectLightning(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaEffectLightning(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             _position = new Vector3(
                 Switch(BitConverter.ToSingle(Data, 0x00)),

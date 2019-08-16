@@ -6,9 +6,9 @@ namespace IndustrialPark
 {
     public class AssetCSNM : ObjectAsset
     {
-        public AssetCSNM(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetCSNM(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
-        protected override int EventStartOffset => 0xC8 + (Functions.currentGame == Game.Incredibles ? 4 : 0);
+        protected override int EventStartOffset => 0xC8 + (currentGame == Game.Incredibles ? 4 : 0);
 
         public override bool HasReference(uint assetID) => CSN_AssetID == assetID || base.HasReference(assetID);
         
@@ -363,13 +363,13 @@ namespace IndustrialPark
         {
             get
             {
-                if (Functions.currentGame == Game.Incredibles)
+                if (currentGame == Game.Incredibles)
                     return ReadInt(0xC8);
                 return 0;
             }
             set
             {
-                if (Functions.currentGame == Game.Incredibles)
+                if (currentGame == Game.Incredibles)
                     Write(0xC8, value);
             }
         }

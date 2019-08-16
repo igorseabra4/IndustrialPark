@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HipHopFile;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -67,9 +68,9 @@ namespace IndustrialPark
             SaveFileDialog saveFileDialog = new SaveFileDialog()
             {
                 FileName = asset.AHDR.ADBG.assetName + (
-                (HipHopFile.Functions.currentPlatform == HipHopFile.Platform.GameCube && HipHopFile.Functions.currentGame != HipHopFile.Game.Incredibles) ? ".DSP" :
-                (HipHopFile.Functions.currentPlatform == HipHopFile.Platform.Xbox) ? ".WAV" :
-                (HipHopFile.Functions.currentPlatform == HipHopFile.Platform.PS2) ? ".VAG" :
+                (asset.currentPlatform == Platform.GameCube && asset.currentGame != Game.Incredibles) ? ".DSP" :
+                (asset.currentPlatform == Platform.Xbox) ? ".WAV" :
+                (asset.currentPlatform == Platform.PS2) ? ".VAG" :
                 ""),
                 Filter = "All files|*"
             };

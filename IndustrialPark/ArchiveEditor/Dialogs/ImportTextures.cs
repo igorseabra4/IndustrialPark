@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using static IndustrialPark.TextureIOHelper;
 
 namespace IndustrialPark
 {
@@ -63,7 +64,7 @@ namespace IndustrialPark
             Close();
         }
 
-        public static List<Section_AHDR> GetAssets(out bool success, out bool overwrite)
+        public static List<Section_AHDR> GetAssets(Game game, Platform platform, out bool success, out bool overwrite)
         {
             ImportTextures a = new ImportTextures();
             if (a.ShowDialog() == DialogResult.OK)
@@ -83,7 +84,7 @@ namespace IndustrialPark
                             textureDictionaryStruct = new TextureDictionaryStruct_0001() { textureCount = 1, unknown = 0 },
                             textureNativeList = new List<TextureNative_0015>() { new TextureNative_0015().FromBytes(File.ReadAllBytes(a.filePaths[i])) },
                             textureDictionaryExtension = new Extension_0003()
-                        }, ArchiveEditorFunctions.currentTextureVersion);
+                        }, currentTextureVersion(game));
 
                         string assetName = Path.GetFileNameWithoutExtension(a.filePaths[i]) + (a.checkBoxRW3.Checked ? ".RW3" : "");
 
@@ -98,7 +99,7 @@ namespace IndustrialPark
                     }
                 }
 
-                AHDRs.AddRange(ArchiveEditorFunctions.CreateRWTXsFromBitmaps(forBitmap, a.checkBoxRW3.Checked, a.checkBoxFlipTextures.Checked, a.checkBoxMipmaps.Checked, a.checkBoxCompress.Checked));
+                AHDRs.AddRange(CreateRWTXsFromBitmaps(game, platform, forBitmap, a.checkBoxRW3.Checked, a.checkBoxFlipTextures.Checked, a.checkBoxMipmaps.Checked, a.checkBoxCompress.Checked));
 
                 ReadFileMethods.treatStuffAsByteArray = false;
 

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing.Design;
 using System.IO;
 using System.Linq;
 using HipHopFile;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
@@ -131,7 +129,7 @@ namespace IndustrialPark
 
         public void SetEntryPartTwo(BinaryReader binaryReader)
         {
-            SoundAssetID = Switch(binaryReader.ReadUInt32());
+            SoundAssetID = BitConverter.ToUInt32(BitConverter.GetBytes(binaryReader.ReadUInt32()).Reverse().ToArray(), 0);
             unk1 = binaryReader.ReadByte();
             index = binaryReader.ReadByte();
             fileIndex = binaryReader.ReadByte();
@@ -151,7 +149,7 @@ namespace IndustrialPark
         {
             List<byte> list = new List<byte>(8);
 
-            list.AddRange(BitConverter.GetBytes(Switch(SoundAssetID)));
+            list.AddRange(BitConverter.GetBytes(SoundAssetID).Reverse());
             list.Add(unk1);
             list.Add(index);
             list.Add(fileIndex);
@@ -401,7 +399,7 @@ namespace IndustrialPark
 
     public class AssetSNDI_GCN_V2 : Asset
     {
-        public AssetSNDI_GCN_V2(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetSNDI_GCN_V2(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         public override bool HasReference(uint assetID)
         {

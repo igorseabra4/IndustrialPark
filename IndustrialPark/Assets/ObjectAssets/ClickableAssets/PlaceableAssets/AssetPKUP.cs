@@ -14,7 +14,7 @@ namespace IndustrialPark
 
         protected override int EventStartOffset => 0x5C + Offset;
 
-        public AssetPKUP(Section_AHDR AHDR) : base(AHDR)
+        public AssetPKUP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             _pickEntryID = ReadUInt(0x54 + Offset);
         }

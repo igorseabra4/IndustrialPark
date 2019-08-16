@@ -1,6 +1,6 @@
-﻿using System;
+﻿using HipHopFile;
+using System;
 using System.Collections.Generic;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
@@ -8,7 +8,7 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 1";
 
-        public DynaJSPExtraData() : base()
+        public DynaJSPExtraData(Platform platform) : base(platform)
         {
             JSPInfo_AssetID = 0;
             Group_AssetID = 0;
@@ -29,7 +29,7 @@ namespace IndustrialPark
             Asset.Verify(Group_AssetID, ref result);
         }
 
-        public DynaJSPExtraData(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaJSPExtraData(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             JSPInfo_AssetID = Switch(BitConverter.ToUInt32(Data, 0x00));
             Group_AssetID = Switch(BitConverter.ToUInt32(Data, 0x04));

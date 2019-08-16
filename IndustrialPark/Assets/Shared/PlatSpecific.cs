@@ -4,21 +4,25 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
-    public class PlatSpecific_Generic
+    public class PlatSpecific_Generic : EndianConvertible
     {
-        public static int Size => Functions.currentGame == Game.Scooby ? 0x28 : 0x38;
+        protected Game game;
 
-        public PlatSpecific_Generic() { }
+        public static int Size(Game game) => game == Game.Scooby ? 0x28 : 0x38;
 
-        public PlatSpecific_Generic(byte[] _) { }
+        public PlatSpecific_Generic(Game game, Platform platform) : base(EndianConverter.PlatformEndianness(platform))
+        {
+            this.game = game;
+        }
+
+        public PlatSpecific_Generic(byte[] _, Game game, Platform platform) :this(game, platform) { }
 
         public virtual byte[] ToByteArray()
         {
-            return new byte[Size];
+            return new byte[Size(game)];
         }
 
         public virtual bool HasReference(uint assetID)
@@ -34,7 +38,7 @@ namespace IndustrialPark
 
     public class PlatSpecific_ConveryorBelt : PlatSpecific_Generic
     {
-        public PlatSpecific_ConveryorBelt(byte[] data)
+        public PlatSpecific_ConveryorBelt(byte[] data, Game game, Platform platform) : base(game, platform) 
         {
             Speed = Switch(BitConverter.ToSingle(data, 0));
         }
@@ -44,10 +48,10 @@ namespace IndustrialPark
 
         public override byte[] ToByteArray()
         {
-            List<byte> data = new List<byte>(Size);
+            List<byte> data = new List<byte>(Size(game));
             data.AddRange(BitConverter.GetBytes(Switch(Speed)));
 
-            while (data.Count < Size)
+            while (data.Count < Size(game))
                 data.Add(0);
 
             return data.ToArray();
@@ -56,7 +60,7 @@ namespace IndustrialPark
 
     public class PlatSpecific_FallingPlatform : PlatSpecific_Generic
     {
-        public PlatSpecific_FallingPlatform(byte[] data)
+        public PlatSpecific_FallingPlatform(byte[] data, Game game, Platform platform) : base(game, platform) 
         {
             Speed = Switch(BitConverter.ToSingle(data, 0));
             BustModel_AssetID = Switch(BitConverter.ToUInt32(data, 4));
@@ -69,11 +73,11 @@ namespace IndustrialPark
 
         public override byte[] ToByteArray()
         {
-            List<byte> data = new List<byte>(Size);
+            List<byte> data = new List<byte>(Size(game));
             data.AddRange(BitConverter.GetBytes(Switch(Speed)));
             data.AddRange(BitConverter.GetBytes(Switch(BustModel_AssetID)));
 
-            while (data.Count < Size)
+            while (data.Count < Size(game))
                 data.Add(0);
 
             return data.ToArray();
@@ -93,7 +97,7 @@ namespace IndustrialPark
 
     public class PlatSpecific_FR : PlatSpecific_Generic
     {
-        public PlatSpecific_FR(byte[] data)
+        public PlatSpecific_FR(byte[] data, Game game, Platform platform) : base(game, platform) 
         {
             fspeed = Switch(BitConverter.ToSingle(data, 0));
             rspeed = Switch(BitConverter.ToSingle(data, 4));
@@ -112,13 +116,13 @@ namespace IndustrialPark
 
         public override byte[] ToByteArray()
         {
-            List<byte> data = new List<byte>(Size);
+            List<byte> data = new List<byte>(Size(game));
             data.AddRange(BitConverter.GetBytes(Switch(fspeed)));
             data.AddRange(BitConverter.GetBytes(Switch(rspeed)));
             data.AddRange(BitConverter.GetBytes(Switch(ret_delay)));
             data.AddRange(BitConverter.GetBytes(Switch(post_ret_delay)));
 
-            while (data.Count < Size)
+            while (data.Count < Size(game))
                 data.Add(0);
 
             return data.ToArray();
@@ -127,7 +131,7 @@ namespace IndustrialPark
 
     public class PlatSpecific_BreakawayPlatform : PlatSpecific_Generic
     {
-        public PlatSpecific_BreakawayPlatform(byte[] data)
+        public PlatSpecific_BreakawayPlatform(byte[] data, Game game, Platform platform) : base(game, platform) 
         {
             BreakawayDelay = Switch(BitConverter.ToSingle(data, 0));
             BustModel_AssetID = Switch(BitConverter.ToUInt32(data, 4));
@@ -146,13 +150,13 @@ namespace IndustrialPark
 
         public override byte[] ToByteArray()
         {
-            List<byte> data = new List<byte>(Size);
+            List<byte> data = new List<byte>(Size(game));
             data.AddRange(BitConverter.GetBytes(Switch(BreakawayDelay)));
             data.AddRange(BitConverter.GetBytes(Switch(BustModel_AssetID)));
             data.AddRange(BitConverter.GetBytes(Switch(ResetDelay)));
             data.AddRange(BitConverter.GetBytes(Switch(Flags)));
 
-            while (data.Count < Size)
+            while (data.Count < Size(game))
                 data.Add(0);
 
             return data.ToArray();
@@ -161,21 +165,21 @@ namespace IndustrialPark
 
     public class PlatSpecific_Springboard : PlatSpecific_Generic
     {
-        public PlatSpecific_Springboard()
+        public PlatSpecific_Springboard(Game game, Platform platform) : base(game, platform) 
         {
             Anim1_AssetID = 0;
             Anim2_AssetID = 0;
             Anim3_AssetID = 0;
         }
 
-        public PlatSpecific_Springboard(byte[] data)
+        public PlatSpecific_Springboard(byte[] data, Game game, Platform platform) : base(game, platform) 
         {
             using (var reader = new BinaryReader(new MemoryStream(data)))
             {
                 Height1 = Switch(reader.ReadSingle());
                 Height2 = Switch(reader.ReadSingle());
                 Height3 = Switch(reader.ReadSingle());
-                if (Functions.currentGame != Game.Scooby)
+                if (game != Game.Scooby)
                     HeightBubbleBounce = Switch(reader.ReadSingle());
                 Anim1_AssetID = Switch(reader.ReadUInt32());
                 Anim2_AssetID = Switch(reader.ReadUInt32());
@@ -183,7 +187,7 @@ namespace IndustrialPark
                 DirectionX = Switch(reader.ReadSingle());
                 DirectionY = Switch(reader.ReadSingle());
                 DirectionZ = Switch(reader.ReadSingle());
-                if (Functions.currentGame != Game.Scooby)
+                if (game != Game.Scooby)
                     Flags = Switch(reader.ReadInt32());
             }
         }
@@ -213,11 +217,11 @@ namespace IndustrialPark
 
         public override byte[] ToByteArray()
         {
-            List<byte> data = new List<byte>(Size);
+            List<byte> data = new List<byte>(Size(game));
             data.AddRange(BitConverter.GetBytes(Switch(Height1)));
             data.AddRange(BitConverter.GetBytes(Switch(Height2)));
             data.AddRange(BitConverter.GetBytes(Switch(Height3)));
-            if (Functions.currentGame != Game.Scooby)
+            if (game != Game.Scooby)
                 data.AddRange(BitConverter.GetBytes(Switch(HeightBubbleBounce)));
             data.AddRange(BitConverter.GetBytes(Switch(Anim1_AssetID)));
             data.AddRange(BitConverter.GetBytes(Switch(Anim2_AssetID)));
@@ -225,10 +229,10 @@ namespace IndustrialPark
             data.AddRange(BitConverter.GetBytes(Switch(DirectionX)));
             data.AddRange(BitConverter.GetBytes(Switch(DirectionY)));
             data.AddRange(BitConverter.GetBytes(Switch(DirectionZ)));
-            if (Functions.currentGame != Game.Scooby)
+            if (game != Game.Scooby)
                 data.AddRange(BitConverter.GetBytes(Switch(Flags)));
 
-            while (data.Count < Size)
+            while (data.Count < Size(game))
                 data.Add(0);
 
             return data.ToArray();
@@ -249,7 +253,7 @@ namespace IndustrialPark
 
     public class PlatSpecific_TeeterTotter : PlatSpecific_Generic
     {
-        public PlatSpecific_TeeterTotter(byte[] data)
+        public PlatSpecific_TeeterTotter(byte[] data, Game game, Platform platform) : base(game, platform) 
         {
             InitialTilt_Rad = Switch(BitConverter.ToSingle(data, 0));
             MaxTilt_Rad = Switch(BitConverter.ToSingle(data, 4));
@@ -279,12 +283,12 @@ namespace IndustrialPark
 
         public override byte[] ToByteArray()
         {
-            List<byte> data = new List<byte>(Size);
+            List<byte> data = new List<byte>(Size(game));
             data.AddRange(BitConverter.GetBytes(Switch(InitialTilt_Rad)));
             data.AddRange(BitConverter.GetBytes(Switch(MaxTilt_Rad)));
             data.AddRange(BitConverter.GetBytes(Switch(InverseMass)));
 
-            while (data.Count < Size)
+            while (data.Count < Size(game))
                 data.Add(0);
 
             return data.ToArray();
@@ -293,7 +297,7 @@ namespace IndustrialPark
 
     public class PlatSpecific_Paddle : PlatSpecific_Generic
     {
-        public PlatSpecific_Paddle(byte[] data)
+        public PlatSpecific_Paddle(byte[] data, Game game, Platform platform) : base(game, platform) 
         {
             StartOrient = Switch(BitConverter.ToInt32(data, 0));
             OrientCount = Switch(BitConverter.ToInt32(data, 4));
@@ -342,7 +346,7 @@ namespace IndustrialPark
 
         public override byte[] ToByteArray()
         {
-            List<byte> data = new List<byte>(Size);
+            List<byte> data = new List<byte>(Size(game));
 
             data.AddRange(BitConverter.GetBytes(Switch(StartOrient)));
             data.AddRange(BitConverter.GetBytes(Switch(OrientCount)));
@@ -359,7 +363,7 @@ namespace IndustrialPark
             data.AddRange(BitConverter.GetBytes(Switch(DecelTime)));
             data.AddRange(BitConverter.GetBytes(Switch(HubRadius)));
 
-            while (data.Count < Size)
+            while (data.Count < Size(game))
                 data.Add(0);
 
             return data.ToArray();

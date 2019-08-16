@@ -10,7 +10,7 @@ namespace IndustrialPark
 {
     public class AssetSCRP : ObjectAsset
     {
-        public AssetSCRP(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetSCRP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         public override bool HasReference(uint assetID)
         {
@@ -102,9 +102,10 @@ namespace IndustrialPark
                 LinkBFBB[] events = new LinkBFBB[TimedLinkCount];
 
                 for (int i = 0; i < TimedLinkCount; i++)
-                    events[i] = new LinkBFBB(Data, TimedLinksStartOffset + i * Link.sizeOfStruct, true);
+                    events[i] = new LinkBFBB(Data, TimedLinksStartOffset + i * Link.sizeOfStruct, true, EndianConverter.PlatformEndianness(currentPlatform));
 
                 LinkListEditor.IsTimed = true;
+                LinkListEditor.endianness = EndianConverter.PlatformEndianness(currentPlatform);
                 return events;
             }
             set
@@ -121,9 +122,10 @@ namespace IndustrialPark
                 LinkTSSM[] events = new LinkTSSM[TimedLinkCount];
 
                 for (int i = 0; i < TimedLinkCount; i++)
-                    events[i] = new LinkTSSM(Data, TimedLinksStartOffset + i * Link.sizeOfStruct, true);
+                    events[i] = new LinkTSSM(Data, TimedLinksStartOffset + i * Link.sizeOfStruct, true, EndianConverter.PlatformEndianness(currentPlatform));
 
                 LinkListEditor.IsTimed = true;
+                LinkListEditor.endianness = EndianConverter.PlatformEndianness(currentPlatform);
                 return events;
             }
             set
@@ -140,9 +142,10 @@ namespace IndustrialPark
                 LinkIncredibles[] events = new LinkIncredibles[TimedLinkCount];
 
                 for (int i = 0; i < TimedLinkCount; i++)
-                    events[i] = new LinkIncredibles(Data, TimedLinksStartOffset + i * Link.sizeOfStruct, true);
+                    events[i] = new LinkIncredibles(Data, TimedLinksStartOffset + i * Link.sizeOfStruct, true, EndianConverter.PlatformEndianness(currentPlatform));
 
                 LinkListEditor.IsTimed = true;
+                LinkListEditor.endianness = EndianConverter.PlatformEndianness(currentPlatform);
                 return events;
             }
             set

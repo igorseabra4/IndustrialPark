@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using SharpDX;
-using static IndustrialPark.ConverterFunctions;
+using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -10,14 +9,14 @@ namespace IndustrialPark
         private string _note = "Version is always 2?";
         public override string Note => _note;
 
-        public DynaTeleport_MovieGame() : base()
+        public DynaTeleport_MovieGame(Platform platform) : base(platform)
         {
             MRKR_ID = 0;
             DYNA_Teleport_ID = 0;
             UnknownAssetID = 0;
         }
 
-        public DynaTeleport_MovieGame(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaTeleport_MovieGame(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             MRKR_ID = Switch(BitConverter.ToUInt32(Data, 0x0));
             UnknownInt = Switch(BitConverter.ToInt32(Data, 0x4));

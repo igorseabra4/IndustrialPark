@@ -37,15 +37,16 @@ namespace IndustrialPark
         public bool UnsavedChanges { get; set; } = false;
         public string currentlyOpenFilePath { get; private set; }
 
-        protected Section_HIPA HIPA;
-        protected Section_PACK PACK;
-        protected Section_DICT DICT;
-        protected Section_STRM STRM;
+        protected HipFile hipFile;
         protected Dictionary<uint, Asset> assetDictionary = new Dictionary<uint, Asset>();
+
+        public Game currentGame => hipFile.game;
+        public Platform currentPlatform => hipFile.platform;
+        public Section_DICT DICT => hipFile.DICT;
 
         public bool New()
         {
-            HipSection[] hipFile = NewArchive.GetNewArchive(out bool OK, out Platform platform, out Game game);
+            HipFile hipFile = NewArchive.GetNewArchive(out bool OK);
 
             if (OK)
             {
@@ -55,17 +56,7 @@ namespace IndustrialPark
                 currentlyOpenFilePath = null;
                 autoCompleteSource.Clear();
 
-                foreach (HipSection i in hipFile)
-                {
-                    if (i is Section_HIPA hipa) HIPA = hipa;
-                    else if (i is Section_PACK pack) PACK = pack;
-                    else if (i is Section_DICT dict) DICT = dict;
-                    else if (i is Section_STRM strm) STRM = strm;
-                    else throw new Exception();
-                }
-
-                currentPlatform = platform;
-                currentGame = game;
+                this.hipFile = hipFile;
 
                 if (currentPlatform == Platform.Unknown)
                     new ChoosePlatformDialog().ShowDialog();
@@ -73,15 +64,14 @@ namespace IndustrialPark
                 foreach (Section_AHDR AHDR in DICT.ATOC.AHDRList)
                     AddAssetToDictionary(AHDR, true);
 
+                UnsavedChanges = true;
                 RecalculateAllMatrices();
             }
 
             return OK;
         }
 
-        public static Platform defaultScoobyPlatform = Platform.Unknown;
-
-        public void OpenFile(string fileName, bool displayProgressBar, bool skipTexturesAndModels = false)
+        public void OpenFile(string fileName, bool displayProgressBar, Platform platform, bool skipTexturesAndModels = false)
         {
             allowRender = false;
 
@@ -91,34 +81,29 @@ namespace IndustrialPark
 
             if (displayProgressBar)
                 progressBar.Show();
-            
+
             assetDictionary = new Dictionary<uint, Asset>();
 
             currentlySelectedAssets = new List<Asset>();
             currentlyOpenFilePath = fileName;
 
-            foreach (HipSection i in HipFileToHipArray(fileName))
+            try
             {
-                if (i is Section_HIPA hipa) HIPA = hipa;
-                else if (i is Section_PACK pack) PACK = pack;
-                else if (i is Section_DICT dict) DICT = dict;
-                else if (i is Section_STRM strm) STRM = strm;
-                else
-                {
-                    progressBar.Close();
-                    throw new Exception();
-                }
+                hipFile = new HipFile(fileName, false);
+            }
+            catch
+            {
+                progressBar.Close();
+                throw new Exception();
             }
 
             progressBar.SetProgressBar(0, DICT.ATOC.AHDRList.Count, 1);
 
             if (currentPlatform == Platform.Unknown)
-            {
-                if (defaultScoobyPlatform == Platform.Unknown)
-                    new ChoosePlatformDialog().ShowDialog();
-                currentPlatform = defaultScoobyPlatform;
-            }
-
+                hipFile.platform = platform;
+            while (currentPlatform == Platform.Unknown)
+                hipFile.platform = ChoosePlatformDialog.GetPlatform();
+            
             List<string> autoComplete = new List<string>(DICT.ATOC.AHDRList.Count);
 
             foreach (Section_AHDR AHDR in DICT.ATOC.AHDRList)
@@ -150,10 +135,43 @@ namespace IndustrialPark
 
         public void Save()
         {
-            HipSection[] hipFile = SetupStream(ref HIPA, ref PACK, ref DICT, ref STRM);
-            byte[] file = HipArrayToFile(hipFile);
-            File.WriteAllBytes(currentlyOpenFilePath, file);
+            File.WriteAllBytes(currentlyOpenFilePath, hipFile.ToBytes());
             UnsavedChanges = false;
+        }
+
+        public bool EditPack(out HashSet<AssetType> unsupported)
+        {
+            Platform previousPlatform = currentPlatform;
+            Game previousGame = currentGame;
+
+            NewArchive.GetExistingArchive(currentPlatform, currentGame, hipFile.PACK.PCRT.fileDate, hipFile.PACK.PCRT.dateString,
+                out bool OK, out Section_PACK PACK, out Platform newPlatform, out Game newGame);
+
+            unsupported = new HashSet<AssetType>();
+
+            if (OK)
+            {
+                hipFile.PACK = PACK;
+
+                hipFile.platform = newPlatform;
+                hipFile.game = newGame;
+
+                if (currentPlatform == Platform.Unknown)
+                    new ChoosePlatformDialog().ShowDialog();
+
+                for (int i = 0; i < internalEditors.Count; i++)
+                {
+                    internalEditors[i].Close();
+                    i--;
+                }
+
+                if (previousPlatform != currentPlatform || previousGame != currentGame)
+                    ConvertAllAssetTypes(previousPlatform, previousGame, currentPlatform, currentGame, out unsupported);
+
+                UnsavedChanges = true; 
+            }
+
+            return OK;
         }
 
         public int GetLayerCount() => DICT.LTOC.LHDRList.Count;
@@ -242,10 +260,7 @@ namespace IndustrialPark
                 progressBar.PerformStep();
             }
 
-            HIPA = null;
-            PACK = null;
-            DICT = null;
-            STRM = null;
+            hipFile = null;
             currentlyOpenFilePath = null;
 
             progressBar.Close();
@@ -364,84 +379,84 @@ namespace IndustrialPark
 
             Asset newAsset;
             try
-            {
+            { 
                 switch (AHDR.assetType)
                 {
-                    case AssetType.ANIM: newAsset = AHDR.ADBG.assetName.Contains("ATBL") ? new Asset(AHDR) : newAsset = new AssetANIM(AHDR); break;
-                    case AssetType.ALST: newAsset = new AssetALST(AHDR); break;
-                    case AssetType.ATBL: newAsset = currentGame == Game.Scooby ? new Asset(AHDR) : new AssetATBL(AHDR); break;
+                    case AssetType.ANIM: newAsset = AHDR.ADBG.assetName.Contains("ATBL") ? new Asset(AHDR, currentGame, currentPlatform) : newAsset = new AssetANIM(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.ALST: newAsset = new AssetALST(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.ATBL: newAsset = currentGame == Game.Scooby ? new Asset(AHDR, currentGame, currentPlatform) : new AssetATBL(AHDR, currentGame, currentPlatform); break;
                     case AssetType.BSP: case AssetType.JSP:
-                        newAsset = skipTexturesAndModels ? new Asset(AHDR) : new AssetJSP(AHDR, Program.MainForm.renderer); break;
-                    case AssetType.BOUL: newAsset = new AssetBOUL(AHDR); break;
-                    case AssetType.BUTN: newAsset = new AssetBUTN(AHDR); break;
-                    case AssetType.CAM: newAsset = new AssetCAM(AHDR); break;
-                    case AssetType.CNTR: newAsset = new AssetCNTR(AHDR); break;
-                    case AssetType.COLL: newAsset = new AssetCOLL(AHDR); break;
-                    case AssetType.COND: if (currentGame == Game.Scooby) newAsset = new AssetCOND_Scooby(AHDR); else newAsset = new AssetCOND(AHDR); break;
-                    case AssetType.CRDT: newAsset = new AssetCRDT(AHDR); break;
-                    case AssetType.CSNM: newAsset = new AssetCSNM(AHDR); break;
-                    case AssetType.DPAT: newAsset = new AssetDPAT(AHDR); break;
-                    case AssetType.DSCO: newAsset = new AssetDSCO(AHDR); break;
-                    case AssetType.DSTR: newAsset = currentGame == Game.Scooby ? new AssetDSTR_Scooby(AHDR) : new AssetDSTR(AHDR); break;
-                    case AssetType.DYNA: newAsset = new AssetDYNA(AHDR); break;
-                    case AssetType.EGEN: newAsset = new AssetEGEN(AHDR); break;
-                    case AssetType.ENV: newAsset = currentGame == Game.Incredibles ? new AssetENV_TSSM(AHDR) : new AssetENV(AHDR); break;
-                    case AssetType.FLY: newAsset = new AssetFLY(AHDR); break;
-                    case AssetType.FOG: newAsset = new AssetFOG(AHDR); break;
-                    case AssetType.GRUP: newAsset = new AssetGRUP(AHDR); break;
-                    case AssetType.GUST: newAsset = new AssetGUST(AHDR); break;
-                    case AssetType.HANG: newAsset = new AssetHANG(AHDR); break;
-                    case AssetType.JAW: newAsset = new AssetJAW(AHDR); break;
-                    case AssetType.LITE: newAsset = new AssetLITE(AHDR); break;
-                    case AssetType.LKIT: newAsset = new AssetLKIT(AHDR); break;
-                    case AssetType.LODT: newAsset = new AssetLODT(AHDR); break;
-                    case AssetType.MAPR: newAsset = new AssetMAPR(AHDR); break;
-                    case AssetType.MINF: newAsset = new AssetMINF(AHDR); break;
+                        newAsset = skipTexturesAndModels ? new Asset(AHDR, currentGame, currentPlatform) : new AssetJSP(AHDR, currentGame, currentPlatform, Program.MainForm.renderer); break;
+                    case AssetType.BOUL: newAsset = new AssetBOUL(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.BUTN: newAsset = new AssetBUTN(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.CAM: newAsset = new AssetCAM(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.CNTR: newAsset = new AssetCNTR(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.COLL: newAsset = new AssetCOLL(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.COND: if (currentGame == Game.Scooby) newAsset = new AssetCOND_Scooby(AHDR, currentGame, currentPlatform); else newAsset = new AssetCOND(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.CRDT: newAsset = new AssetCRDT(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.CSNM: newAsset = new AssetCSNM(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.DPAT: newAsset = new AssetDPAT(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.DSCO: newAsset = new AssetDSCO(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.DSTR: newAsset = currentGame == Game.Scooby ? new AssetDSTR_Scooby(AHDR, currentGame, currentPlatform) : new AssetDSTR(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.DYNA: newAsset = new AssetDYNA(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.EGEN: newAsset = new AssetEGEN(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.ENV: newAsset = currentGame == Game.Incredibles ? new AssetENV_TSSM(AHDR, currentGame, currentPlatform) : new AssetENV(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.FLY: newAsset = new AssetFLY(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.FOG: newAsset = new AssetFOG(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.GRUP: newAsset = new AssetGRUP(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.GUST: newAsset = new AssetGUST(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.HANG: newAsset = new AssetHANG(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.JAW: newAsset = new AssetJAW(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.LITE: newAsset = new AssetLITE(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.LKIT: newAsset = new AssetLKIT(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.LODT: newAsset = new AssetLODT(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.MAPR: newAsset = new AssetMAPR(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.MINF: newAsset = new AssetMINF(AHDR, currentGame, currentPlatform); break;
                     case AssetType.MODL:
-                        newAsset = skipTexturesAndModels ? new Asset(AHDR) : new AssetMODL(AHDR, Program.MainForm.renderer); break;
-                    case AssetType.MRKR: newAsset = new AssetMRKR(AHDR); break;
-                    case AssetType.MVPT: newAsset = currentGame == Game.Scooby ? new AssetMVPT_Scooby(AHDR) : new AssetMVPT(AHDR); break;
-                    case AssetType.NPC: newAsset = new AssetNPC(AHDR); break;
-                    case AssetType.PARE: newAsset = new AssetPARE(AHDR); break;
-                    case AssetType.PARP: newAsset = new AssetPARP(AHDR); break;
-                    case AssetType.PARS: newAsset = new AssetPARS(AHDR); break;
-                    case AssetType.PEND: newAsset = new AssetPEND(AHDR); break;
-                    case AssetType.PICK: newAsset = new AssetPICK(AHDR); break;
-                    case AssetType.PIPT: newAsset = new AssetPIPT(AHDR); break;
-                    case AssetType.PKUP: newAsset = new AssetPKUP(AHDR); break;
-                    case AssetType.PLAT: newAsset = new AssetPLAT(AHDR); break;
-                    case AssetType.PLYR: newAsset = new AssetPLYR(AHDR); break;
-                    case AssetType.PORT: newAsset = new AssetPORT(AHDR); break;
-                    case AssetType.PRJT: newAsset = new AssetPRJT(AHDR); break;
+                        newAsset = skipTexturesAndModels ? new Asset(AHDR, currentGame, currentPlatform) : new AssetMODL(AHDR, currentGame, currentPlatform, Program.MainForm.renderer); break;
+                    case AssetType.MRKR: newAsset = new AssetMRKR(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.MVPT: newAsset = currentGame == Game.Scooby ? new AssetMVPT_Scooby(AHDR, currentGame, currentPlatform) : new AssetMVPT(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.NPC: newAsset = new AssetNPC(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.PARE: newAsset = new AssetPARE(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.PARP: newAsset = new AssetPARP(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.PARS: newAsset = new AssetPARS(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.PEND: newAsset = new AssetPEND(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.PICK: newAsset = new AssetPICK(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.PIPT: newAsset = new AssetPIPT(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.PKUP: newAsset = new AssetPKUP(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.PLAT: newAsset = new AssetPLAT(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.PLYR: newAsset = new AssetPLYR(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.PORT: newAsset = new AssetPORT(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.PRJT: newAsset = new AssetPRJT(AHDR, currentGame, currentPlatform); break;
                     case AssetType.RWTX:
-                        newAsset = skipTexturesAndModels ? new Asset(AHDR) : new AssetRWTX(AHDR); break;
-                    case AssetType.SCRP: newAsset = new AssetSCRP(AHDR); break;
-                    case AssetType.SFX: newAsset = new AssetSFX(AHDR); break;
-                    case AssetType.SGRP: newAsset = new AssetSGRP(AHDR); break;
-                    case AssetType.SIMP: newAsset = new AssetSIMP(AHDR); break;
-                    case AssetType.SHDW: newAsset = new AssetSHDW(AHDR); break;
-                    case AssetType.SHRP: newAsset = new AssetSHRP(AHDR); break;
+                        newAsset = skipTexturesAndModels ? new Asset(AHDR, currentGame, currentPlatform) : new AssetRWTX(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.SCRP: newAsset = new AssetSCRP(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.SFX: newAsset = new AssetSFX(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.SGRP: newAsset = new AssetSGRP(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.SIMP: newAsset = new AssetSIMP(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.SHDW: newAsset = new AssetSHDW(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.SHRP: newAsset = new AssetSHRP(AHDR, currentGame, currentPlatform); break;
                     case AssetType.SNDI:
                         if (currentPlatform == Platform.GameCube && (currentGame == Game.BFBB || currentGame == Game.Scooby))
-                            newAsset = new AssetSNDI_GCN_V1(AHDR);
+                            newAsset = new AssetSNDI_GCN_V1(AHDR, currentGame, currentPlatform);
                         else if (currentPlatform == Platform.GameCube)
-                            newAsset = new AssetSNDI_GCN_V2(AHDR);
+                            newAsset = new AssetSNDI_GCN_V2(AHDR, currentGame, currentPlatform);
                         else if (currentPlatform == Platform.Xbox)
-                            newAsset = new AssetSNDI_XBOX(AHDR);
+                            newAsset = new AssetSNDI_XBOX(AHDR, currentGame, currentPlatform);
                         else if (currentPlatform == Platform.PS2)
-                            newAsset = new AssetSNDI_PS2(AHDR);
+                            newAsset = new AssetSNDI_PS2(AHDR, currentGame, currentPlatform);
                         else
-                            newAsset = new Asset(AHDR);
+                            newAsset = new Asset(AHDR, currentGame, currentPlatform);
                         break;
-                    case AssetType.SURF: newAsset = new AssetSURF(AHDR); break;
-                    case AssetType.TEXT: newAsset = new AssetTEXT(AHDR); break;
-                    case AssetType.TRIG: newAsset = new AssetTRIG(AHDR); break;
-                    case AssetType.TIMR: newAsset = new AssetTIMR(AHDR); break;
-                    case AssetType.UI: newAsset = new AssetUI(AHDR); break;
-                    case AssetType.UIFT: newAsset = new AssetUIFT(AHDR); break;
-                    case AssetType.VIL: newAsset = new AssetVIL(AHDR); break;
-                    case AssetType.VILP: newAsset = new AssetVILP(AHDR); break;
-                    case AssetType.VOLU: newAsset = new AssetVOLU(AHDR); break;
+                    case AssetType.SURF: newAsset = new AssetSURF(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.TEXT: newAsset = new AssetTEXT(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.TRIG: newAsset = new AssetTRIG(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.TIMR: newAsset = new AssetTIMR(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.UI: newAsset = new AssetUI(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.UIFT: newAsset = new AssetUIFT(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.VIL: newAsset = new AssetVIL(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.VILP: newAsset = new AssetVILP(AHDR, currentGame, currentPlatform); break;
+                    case AssetType.VOLU: newAsset = new AssetVOLU(AHDR, currentGame, currentPlatform); break;
                     case AssetType.CCRV:
                     case AssetType.DTRK:
                     case AssetType.DUPC:
@@ -459,7 +474,7 @@ namespace IndustrialPark
                     case AssetType.TRWT:
                     case AssetType.UIM:
                     case AssetType.ZLIN:
-                        newAsset = new ObjectAsset(AHDR);
+                        newAsset = new ObjectAsset(AHDR, currentGame, currentPlatform);
                         break;
                     case AssetType.ATKT:
                     case AssetType.BINK:
@@ -477,7 +492,7 @@ namespace IndustrialPark
                     case AssetType.TEXS:
                     case AssetType.UIFN:
                     case AssetType.WIRE:
-                        newAsset = new Asset(AHDR);
+                        newAsset = new Asset(AHDR, currentGame, currentPlatform);
                         break;
                     default:
                         throw new Exception($"Unknown asset type ({AHDR.assetType.ToString()})");
@@ -486,7 +501,7 @@ namespace IndustrialPark
             catch (Exception ex)
             {
                 MessageBox.Show($"There was an error loading asset [{AHDR.assetID.ToString("X8")}] {AHDR.ADBG.assetName}: " + ex.Message + ". Industrial Park will not be able to edit this asset.");
-                newAsset = new Asset(AHDR);
+                newAsset = new Asset(AHDR, currentGame, currentPlatform);
             }
 
             assetDictionary[AHDR.assetID] = newAsset;
@@ -658,30 +673,16 @@ namespace IndustrialPark
 
             foreach (Section_AHDR section in clipboard.assets)
             {
-                Section_AHDR AHDRtoAdd;
+                Section_AHDR AHDR = ConvertAssetType(section, clipboard.endianness, EndianConverter.PlatformEndianness(currentPlatform), clipboard.game, currentGame);
 
-                if (clipboard.game != currentGame)
-                {
-                    AHDRtoAdd = new EndianConverter(section, clipboard.game, currentGame, clipboard.endianness).GetReversedEndian();
+                AddAssetWithUniqueID(layerIndex, AHDR);
 
-                    if (clipboard.endianness == EndianConverter.PlatformEndianness(currentPlatform))
-                        AHDRtoAdd = new EndianConverter(AHDRtoAdd, currentGame, currentGame,
-                            EndianConverter.PlatformEndianness(currentPlatform) == Endianness.Big ? Endianness.Little : Endianness.Big)
-                            .GetReversedEndian();
-                }
-                else if (clipboard.endianness != EndianConverter.PlatformEndianness(currentPlatform))
-                    AHDRtoAdd = new EndianConverter(section, clipboard.game, currentGame, clipboard.endianness).GetReversedEndian();
-                else
-                    AHDRtoAdd = section;
-
-                AddAssetWithUniqueID(layerIndex, AHDRtoAdd);
-
-                if (AHDRtoAdd.assetType == AssetType.SND || AHDRtoAdd.assetType == AssetType.SNDS)
+                if (AHDR.assetType == AssetType.SND || AHDR.assetType == AssetType.SNDS)
                 {
                     try
                     {
-                        AddSoundToSNDI(AHDRtoAdd.data, AHDRtoAdd.assetID, AHDRtoAdd.assetType, out byte[] soundData);
-                        AHDRtoAdd.data = soundData;
+                        AddSoundToSNDI(AHDR.data, AHDR.assetID, AHDR.assetType, out byte[] soundData);
+                        AHDR.data = soundData;
                     }
                     catch (Exception ex)
                     {
@@ -689,7 +690,7 @@ namespace IndustrialPark
                     }
                 }
 
-                finalIndices.Add(AHDRtoAdd.assetID);
+                finalIndices.Add(AHDR.assetID);
             }
         }
 

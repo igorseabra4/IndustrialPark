@@ -14,7 +14,7 @@ namespace IndustrialPark
 
         protected abstract bool DontRender { get; }
 
-        public PlaceableAsset(Section_AHDR AHDR) : base(AHDR)
+        public PlaceableAsset(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             _yaw = ReadFloat(0x14 + Offset);
             _pitch = ReadFloat(0x18 + Offset);
@@ -216,13 +216,13 @@ namespace IndustrialPark
         {
             get
             {
-                if (Functions.currentGame == Game.BFBB)
+                if (currentGame == Game.BFBB)
                     return ReadInt(0xC);
                 return 0;
             }
             set
             {
-                if (Functions.currentGame == Game.BFBB)
+                if (currentGame == Game.BFBB)
                     Write(0xC, value);
             }
         }

@@ -1,12 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
-using static IndustrialPark.ConverterFunctions;
-using static HipHopFile.Functions;
 using System.Collections.Generic;
 
 namespace IndustrialPark
 {
-    public abstract class Link
+    public abstract class Link : EndianConvertible
     {
         public static readonly int sizeOfStruct = 32;
 
@@ -21,7 +19,7 @@ namespace IndustrialPark
         protected bool IsTimed = false;
         public float Time { get; set; }
 
-        protected Link(bool isTimed)
+        protected Link(Endianness endianness, bool isTimed) : base(endianness)
         {
             _eventReceiveID = 0;
             _eventSendID = 0;
@@ -32,22 +30,22 @@ namespace IndustrialPark
             IsTimed = isTimed;
         }
 
-        protected Link(byte[] data, int offset, bool isTimed)
+        protected Link(byte[] data, int offset, bool isTimed, Endianness endianness) : base(endianness)
         {
             IsTimed = isTimed;
 
-            TargetAssetID = ConverterFunctions.Switch(BitConverter.ToUInt32(data, offset + 4));
+            TargetAssetID = Switch(BitConverter.ToUInt32(data, offset + 4));
 
             if (isTimed)
             {
-                Time = ConverterFunctions.Switch(BitConverter.ToSingle(data, offset));
-                _eventSendID = (ushort)ConverterFunctions.Switch(BitConverter.ToInt32(data, offset + 8));
+                Time = Switch(BitConverter.ToSingle(data, offset));
+                _eventSendID = (ushort)Switch(BitConverter.ToInt32(data, offset + 8));
 
                 arguments = new byte[16];
                 for (int i = 0; i < 16; i++)
                     arguments[i] = data[offset + 12 + i];
 
-                ArgumentAssetID = ConverterFunctions.Switch(BitConverter.ToUInt32(data, offset + 0x1C));
+                ArgumentAssetID = Switch(BitConverter.ToUInt32(data, offset + 0x1C));
                 SourceCheckAssetID = 0;
             }
             else
@@ -59,8 +57,8 @@ namespace IndustrialPark
                 for (int i = 0; i < 16; i++)
                     arguments[i] = data[offset + 8 + i];
 
-                ArgumentAssetID = ConverterFunctions.Switch(BitConverter.ToUInt32(data, offset + 0x18));
-                SourceCheckAssetID = ConverterFunctions.Switch(BitConverter.ToUInt32(data, offset + 0x1C));
+                ArgumentAssetID = Switch(BitConverter.ToUInt32(data, offset + 0x18));
+                SourceCheckAssetID = Switch(BitConverter.ToUInt32(data, offset + 0x1C));
             }
         }
 
@@ -70,7 +68,7 @@ namespace IndustrialPark
             {
                 float[] result = new float[4];
                 for (int i = 0; i < 4; i++)
-                    result[i] = ConverterFunctions.Switch(BitConverter.ToSingle(arguments, 4 * i));
+                    result[i] = Switch(BitConverter.ToSingle(arguments, 4 * i));
 
                 return result;
             }
@@ -78,7 +76,7 @@ namespace IndustrialPark
             {
                 for (int i = 0; i < 4; i++)
                 {
-                    byte[] r = BitConverter.GetBytes(ConverterFunctions.Switch(value[i]));
+                    byte[] r = BitConverter.GetBytes(Switch(value[i]));
 
                     arguments[i * 4 + 0] = r[0];
                     arguments[i * 4 + 1] = r[1];
@@ -94,7 +92,7 @@ namespace IndustrialPark
             {
                 AssetID[] result = new AssetID[4];
                 for (int i = 0; i < 4; i++)
-                    result[i] = ConverterFunctions.Switch(BitConverter.ToUInt32(arguments, 4 * i));
+                    result[i] = Switch(BitConverter.ToUInt32(arguments, 4 * i));
 
                 return result;
             }
@@ -102,7 +100,7 @@ namespace IndustrialPark
             {
                 for (int i = 0; i < 4; i++)
                 {
-                    byte[] r = BitConverter.GetBytes(ConverterFunctions.Switch(value[i]));
+                    byte[] r = BitConverter.GetBytes(Switch(value[i]));
 
                     arguments[i * 4 + 0] = r[0];
                     arguments[i * 4 + 1] = r[1];
@@ -118,20 +116,20 @@ namespace IndustrialPark
 
             if (IsTimed)
             {
-                data.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(Time)));
-                data.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(TargetAssetID)));
-                data.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch((int)_eventSendID)));
+                data.AddRange(BitConverter.GetBytes(Switch(Time)));
+                data.AddRange(BitConverter.GetBytes(Switch(TargetAssetID)));
+                data.AddRange(BitConverter.GetBytes(Switch((int)_eventSendID)));
                 data.AddRange(arguments);
-                data.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(ArgumentAssetID)));
+                data.AddRange(BitConverter.GetBytes(Switch(ArgumentAssetID)));
             }
             else
             {
                 data.AddRange(BitConverter.GetBytes(Switch(_eventReceiveID)));
                 data.AddRange(BitConverter.GetBytes(Switch(_eventSendID)));
-                data.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(TargetAssetID)));
+                data.AddRange(BitConverter.GetBytes(Switch(TargetAssetID)));
                 data.AddRange(arguments);
-                data.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(ArgumentAssetID)));
-                data.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(SourceCheckAssetID)));
+                data.AddRange(BitConverter.GetBytes(Switch(ArgumentAssetID)));
+                data.AddRange(BitConverter.GetBytes(Switch(SourceCheckAssetID)));
             }
 
             return data.ToArray();

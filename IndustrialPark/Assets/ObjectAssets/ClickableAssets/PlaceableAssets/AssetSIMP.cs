@@ -11,7 +11,7 @@ namespace IndustrialPark
 
         protected override int EventStartOffset => 0x60 + Offset;
 
-        public AssetSIMP(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetSIMP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
         
         [Category("Simple Object"), TypeConverter(typeof(FloatTypeConverter))]
         public float AnimSpeed

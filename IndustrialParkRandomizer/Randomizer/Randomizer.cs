@@ -2,8 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
+using HipHopFile;
 using static HipHopFile.Functions;
 
 namespace IndustrialPark.Randomizer
@@ -85,7 +85,7 @@ namespace IndustrialPark.Randomizer
         {
             int seed = (int)this.seed;
             progressBar.Value = 0;
-
+            
             if (isDir)
                 PerformDirRandomizer(progressBar);
             else
@@ -99,7 +99,7 @@ namespace IndustrialPark.Randomizer
                     flags2 |= f;
 
                 RandomizableArchive archive = new RandomizableArchive();
-                archive.OpenFile(rootDir, false, true);
+                archive.OpenFile(rootDir, false, Platform.Unknown, true);
                 archive.Shuffle(seed, flags, flags2, settings, new Random(seed), out bool needToAddNumbers);
                 archive.Save();
 
@@ -161,6 +161,9 @@ namespace IndustrialPark.Randomizer
             List<string> warpNames = new List<string>(); // Names of all warps in the game for the Warps randomizer
             List<string> namesForBoot = new List<string>(); // Names of all levels in the game for sb.ini boot level randomizer
 
+            Game game = Game.Unknown;
+            Platform scoobyPlatform = Platform.Unknown;
+
             List<string> toSkip = new List<string>(settings.skipFiles.Length + settings.skipFilesWarps.Length); // Uses these to skip warps that shouldn't be randomized
             toSkip.AddRange(settings.skipFiles);
             toSkip.AddRange(settings.skipFilesWarps);
@@ -176,7 +179,10 @@ namespace IndustrialPark.Randomizer
                             continue;
 
                         RandomizableArchive hip = new RandomizableArchive();
-                        hip.OpenFile(hipPath, false, true);
+                        hip.OpenFile(hipPath, false, scoobyPlatform, true);
+
+                        if (scoobyPlatform == Platform.Unknown)
+                            scoobyPlatform = hip.currentPlatform;
 
                         // Verifies if game/platform combination is ok, also checks for EditorFiles in case it needs those
                         if (!platformVerified &&
@@ -186,7 +192,7 @@ namespace IndustrialPark.Randomizer
                             (settings.setChumSpats && settings.spatReqChum != 75)))
                         {
                             bool disableStuff = false;
-                            if (currentGame != HipHopFile.Game.BFBB || currentPlatform != HipHopFile.Platform.GameCube)
+                            if (hip.currentGame != Game.BFBB || hip.currentPlatform != Platform.GameCube)
                             {
                                 MessageBox.Show("Enemies_Allow_Any_Type, Shiny_Object_Gates and Spatula_Gates are only supported for Battle For Bikini Bottom (GameCube). They will be disabled.");
                                 disableStuff = true;
@@ -223,7 +229,7 @@ namespace IndustrialPark.Randomizer
                         if (File.Exists(hopPath))
                         {
                             hop = new RandomizableArchive();
-                            hop.OpenFile(hopPath, false, true);
+                            hop.OpenFile(hopPath, false, scoobyPlatform, true);
 
                             levelPairs.Add((hip, hop));
 
@@ -263,13 +269,13 @@ namespace IndustrialPark.Randomizer
                 if (File.Exists(bootPath))
                 {
                     var boot = new RandomizableArchive();
-                    boot.OpenFile(bootPath, false, true);
+                    boot.OpenFile(bootPath, false, scoobyPlatform, true);
 
                     bool shouldSave = false;
 
                     if (flags.HasFlag(RandomizerFlags.Music))
                     {
-                        if (currentGame == HipHopFile.Game.BFBB)
+                        if (boot.currentGame == Game.BFBB)
                             shouldSave |= boot.RandomizePlaylist();
                         else
                             shouldSave |= boot.ShuffleSounds(seed, false, true);
@@ -294,7 +300,7 @@ namespace IndustrialPark.Randomizer
             Random warpRandom = new Random(seed);
             Random levelFilesR = new Random(seed);
 
-            RandomizableArchive.enemyHipDict = new Dictionary<string, HipHopFile.HipSection[]>();
+            RandomizableArchive.enemyHipDict = new Dictionary<string, HipFile>();
 
             for (int i = 0; i < levelPairs.Count; i++)
             {
@@ -354,7 +360,7 @@ namespace IndustrialPark.Randomizer
             // if (warpNames.Count != 0)
             //     message += "\n* There was a problem with the warp randomizer. It is likely some warps are broken.";
 
-            if (!ApplyINISettings(namesForBoot))
+            if (!ApplyINISettings(namesForBoot, game))
                 message += "\n* Unable to find game settings INI, so these were not applied.";
             
             if (warpRandomizerOutput.Count != 0)
@@ -385,7 +391,7 @@ namespace IndustrialPark.Randomizer
             return false;
         }
 
-        private bool ApplyINISettings(List<string> namesForBoot)
+        private bool ApplyINISettings(List<string> namesForBoot, Game game)
         {
             namesForBoot.Remove("BC05");
             namesForBoot.Remove("GY04");
@@ -416,7 +422,7 @@ namespace IndustrialPark.Randomizer
                     ini[i] = "BOOT=" + namesForBoot[r.Next(0, namesForBoot.Count)];
                 else if (ini[i].StartsWith("BOOT=") && settings.bootLevelMode == BootLevelMode.Set)
                 {
-                    if (!(settings.BootLevel == "HB01" && currentGame == HipHopFile.Game.Scooby))
+                    if (!(settings.BootLevel == "HB01" && game == Game.Scooby))
                         ini[i] = "BOOT=" + settings.BootLevel;
                 }
                 else if (ini[i].StartsWith("ShowMenuOnBoot") && settings.dontShowMenuOnBoot)
@@ -431,13 +437,13 @@ namespace IndustrialPark.Randomizer
                     ini[i] = "G.BubbleBowl=1";
                 else if (ini[i].StartsWith("G.CruiseBubble") && settings.cheatCruiseBubble)
                     ini[i] = "G.CruiseBubble=1";
-                else if (ini[i].StartsWith("eSPECIAL_Spring") && currentGame == HipHopFile.Game.Scooby && settings.cheatSpring)
+                else if (ini[i].StartsWith("eSPECIAL_Spring") && game == Game.Scooby && settings.cheatSpring)
                     ini[i] = "eSPECIAL_Spring=1";
-                else if (ini[i].StartsWith("eSPECIAL_FootballHelmet") && currentGame == HipHopFile.Game.Scooby && settings.cheatHelmet)
+                else if (ini[i].StartsWith("eSPECIAL_FootballHelmet") && game == Game.Scooby && settings.cheatHelmet)
                     ini[i] = "eSPECIAL_FootballHelmet=1";
-                else if (ini[i].StartsWith("eSPECIAL_LightningBolt") && currentGame == HipHopFile.Game.Scooby && settings.cheatSmash)
+                else if (ini[i].StartsWith("eSPECIAL_LightningBolt") && game == Game.Scooby && settings.cheatSmash)
                     ini[i] = "eSPECIAL_LightningBolt=1";
-                else if (ini[i].StartsWith("eSPECIAL_Umbrella") && currentGame == HipHopFile.Game.Scooby && settings.cheatUmbrella)
+                else if (ini[i].StartsWith("eSPECIAL_Umbrella") && game == Game.Scooby && settings.cheatUmbrella)
                     ini[i] = "eSPECIAL_Umbrella=1";
             }
 
@@ -474,6 +480,7 @@ namespace IndustrialPark.Randomizer
 
         public void LogWarps(System.Windows.Forms.ProgressBar progressBar)
         {
+            Platform scoobyPlatform = Platform.Unknown;
             Dictionary<string, string> levelNames = new Dictionary<string, string>();
 
             string[] levelNamesFiles = File.ReadAllLines("scooby_levelnames.txt");
@@ -498,7 +505,10 @@ namespace IndustrialPark.Randomizer
                         if (Path.GetExtension(hipPath).ToLower() == ".hip")
                         {
                             RandomizableArchive hip = new RandomizableArchive();
-                            hip.OpenFile(hipPath, false, true);
+                            hip.OpenFile(hipPath, false, scoobyPlatform, true);
+
+                            if (scoobyPlatform == Platform.Unknown)
+                                scoobyPlatform = hip.currentPlatform;
 
                             List<string> warpNames = new List<string>();
                             hip.GetWarpNames(ref warpNames, new List<string>());

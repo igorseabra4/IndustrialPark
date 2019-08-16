@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using static IndustrialPark.ConverterFunctions;
+using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -10,11 +8,11 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 1";
 
-        public DynaEnemyCastNCrew() : base()
+        public DynaEnemyCastNCrew(Platform platform) : base(platform)
         {
         }
 
-        public DynaEnemyCastNCrew(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaEnemyCastNCrew(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             CreateTransformMatrix();
         }

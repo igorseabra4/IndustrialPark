@@ -8,7 +8,7 @@ namespace IndustrialPark
 {
     public class AssetFOG : ObjectAsset
     {
-        public AssetFOG(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetFOG(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         protected override int EventStartOffset => 0x24;
         

@@ -7,7 +7,7 @@ namespace IndustrialPark
 {
     public class AssetENV : ObjectAsset
     {
-        public AssetENV(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetENV(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         protected override int EventStartOffset => 0x44;
 
@@ -137,14 +137,14 @@ namespace IndustrialPark
         {
             get
             {
-                if (Functions.currentGame == Game.Scooby)
+                if (currentGame == Game.Scooby)
                     return 0;
 
                 return BitConverter.ToSingle(Data, 0x40);
             }
             set
             {
-                if (Functions.currentGame != Game.Scooby)
+                if (currentGame != Game.Scooby)
                     for (int i = 0; i < 4; i++)
                         Data[0x40 + i] = BitConverter.GetBytes(value)[i];
             }

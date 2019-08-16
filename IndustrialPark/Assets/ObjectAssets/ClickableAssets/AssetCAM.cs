@@ -40,7 +40,7 @@ namespace IndustrialPark
 
         protected override int EventStartOffset => 0x88;
 
-        public AssetCAM(Section_AHDR AHDR) : base(AHDR)
+        public AssetCAM(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             _position = new Vector3(ReadFloat(0x8), ReadFloat(0xC), ReadFloat(0x10));
 
@@ -320,17 +320,17 @@ namespace IndustrialPark
                 switch (CamType)
                 {
                     case CamType.Follow:
-                        return new CamSpecific_Follow(Data.Skip(0x60).ToArray());
+                        return new CamSpecific_Follow(Data.Skip(0x60).ToArray(), currentPlatform);
                     case CamType.Shoulder:
-                        return new CamSpecific_Shoulder(Data.Skip(0x60).ToArray());
+                        return new CamSpecific_Shoulder(Data.Skip(0x60).ToArray(), currentPlatform);
                     case CamType.Static:
-                        return new CamSpecific_Static(Data.Skip(0x60).ToArray());
+                        return new CamSpecific_Static(Data.Skip(0x60).ToArray(), currentPlatform);
                     case CamType.Path:
-                        return new CamSpecific_Path(Data.Skip(0x60).ToArray());
+                        return new CamSpecific_Path(Data.Skip(0x60).ToArray(), currentPlatform);
                     case CamType.StaticFollow:
-                        return new CamSpecific_StaticFollow(Data.Skip(0x60).ToArray());
+                        return new CamSpecific_StaticFollow(Data.Skip(0x60).ToArray(), currentPlatform);
                     default:
-                        return new CamSpecific_Generic(Data.Skip(0x60).ToArray());
+                        return new CamSpecific_Generic(Data.Skip(0x60).ToArray(), currentPlatform);
                 }
             }
             set

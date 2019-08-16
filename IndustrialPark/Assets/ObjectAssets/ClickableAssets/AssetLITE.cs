@@ -13,7 +13,7 @@ namespace IndustrialPark
 
         public static bool dontRender = false;
 
-        public AssetLITE(Section_AHDR AHDR) : base(AHDR)
+        public AssetLITE(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             _position = new Vector3(ReadFloat(0x30), ReadFloat(0x34), ReadFloat(0x38));
 

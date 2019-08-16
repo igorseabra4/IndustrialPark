@@ -8,7 +8,7 @@ namespace IndustrialPark
 {
     public class AssetRWTX : Asset
     {
-        public AssetRWTX(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetRWTX(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         public override void Verify(ref List<string> result)
         {

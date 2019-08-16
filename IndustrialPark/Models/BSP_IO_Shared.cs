@@ -12,18 +12,15 @@ namespace IndustrialPark.Models
         public static int bfbbRenderWareVersion => 0x1003FFFF; // fix
         public static int tssmRenderWareVersion => 0x1400FFFF;
 
-        public static int currentRenderWareVersion
+        public static int currentRenderWareVersion(HipHopFile.Game currentGame)
         {
-            get
-            {
-                if (HipHopFile.Functions.currentGame == HipHopFile.Game.Scooby)
+                if (currentGame == HipHopFile.Game.Scooby)
                     return scoobyRenderWareVersion;
-                if (HipHopFile.Functions.currentGame == HipHopFile.Game.BFBB)
+                if (currentGame == HipHopFile.Game.BFBB)
                     return bfbbRenderWareVersion;
-                if (HipHopFile.Functions.currentGame == HipHopFile.Game.Incredibles)
+                if (currentGame == HipHopFile.Game.Incredibles)
                     return tssmRenderWareVersion;
                 return 0;
-            }
         }
     }
 }

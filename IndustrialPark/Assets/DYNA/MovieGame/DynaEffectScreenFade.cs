@@ -1,9 +1,9 @@
 ﻿using AssetEditorColors;
+using HipHopFile;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
@@ -11,9 +11,9 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 1";
 
-        public DynaEffectScreenFade() : base() { }
+        public DynaEffectScreenFade(Platform platform) : base(platform) { }
 
-        public DynaEffectScreenFade(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaEffectScreenFade(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             ColorR = Data[0];
             ColorG = Data[1];

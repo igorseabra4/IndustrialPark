@@ -8,7 +8,7 @@ namespace IndustrialPark
     {
         protected override int EventStartOffset => 0x8C + Offset;
 
-        public AssetDSTR(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetDSTR(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         public override bool HasReference(uint assetID) => DestroyShrapnel_AssetID == assetID || HitShrapnel_AssetID == assetID || DestroySFX_AssetID == assetID ||
             HitSFX_AssetID == assetID || HitModel_AssetID == assetID || DestroyModel_AssetID == assetID || base.HasReference(assetID);

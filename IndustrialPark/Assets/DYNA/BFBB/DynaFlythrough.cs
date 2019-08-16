@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using static IndustrialPark.ConverterFunctions;
+using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -8,7 +8,7 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 1";
 
-        public DynaFlythrough() : base()
+        public DynaFlythrough(Platform platform) : base(platform)
         {
             FLY_ID = 0;
         }
@@ -28,7 +28,7 @@ namespace IndustrialPark
             Asset.Verify(FLY_ID, ref result);
         }
 
-        public DynaFlythrough(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaFlythrough(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             FLY_ID = Switch(BitConverter.ToUInt32(Data, 0x0));
         }

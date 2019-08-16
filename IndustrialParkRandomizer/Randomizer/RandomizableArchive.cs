@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using SharpDX;
 using HipHopFile;
-using static HipHopFile.Functions;
 using System.IO;
 using System.Windows.Forms;
 using Newtonsoft.Json;
@@ -948,9 +947,9 @@ namespace IndustrialPark.Randomizer
                 string path = editorFilesFolder + "BattleForBikiniBottom\\GameCube\\Enemies\\" + hipFileName;
 
                 if (!enemyHipDict.ContainsKey(hipFileName))
-                    enemyHipDict.Add(hipFileName, HipFileToHipArray(path));
+                    enemyHipDict.Add(hipFileName, new HipFile(path, false));
 
-                ImportHip(enemyHipDict[hipFileName], true);
+                ImportHip(enemyHipDict[hipFileName].DICT, true);
 
                 imported = true;
             }
@@ -958,16 +957,16 @@ namespace IndustrialPark.Randomizer
             return imported;
         }
 
-        public static Dictionary<string, HipSection[]> enemyHipDict;
+        public static Dictionary<string, HipFile> enemyHipDict;
 
         public bool ImportNumbers()
         {
             string path = editorFilesFolder + "BattleForBikiniBottom\\GameCube\\Utility\\numbers.hip";
 
             if (!enemyHipDict.ContainsKey("numbers.hip"))
-                enemyHipDict.Add("numbers.hip", HipFileToHipArray(path));
+                enemyHipDict.Add("numbers.hip", new HipFile(path, false));
 
-            ImportHip(enemyHipDict["numbers.hip"], true);
+            ImportHip(enemyHipDict["numbers.hip"].DICT, true);
 
             return true;
         }
@@ -1045,7 +1044,7 @@ namespace IndustrialPark.Randomizer
         {
             try
             {
-                if (Functions.currentGame == Game.BFBB)
+                if (currentGame == Game.BFBB)
                     switch (LevelName)
                     {
                         case "jf01":
@@ -1352,7 +1351,7 @@ namespace IndustrialPark.Randomizer
         {
             string dest = port.DestinationLevel.ToLower();
 
-            if (Functions.currentGame == Game.BFBB)
+            if (currentGame == Game.BFBB)
                 switch (LevelName)
                 {
                     case "bb01":
@@ -1404,7 +1403,7 @@ namespace IndustrialPark.Randomizer
                             return true;
                         break;
                 }
-            else if (Functions.currentGame == Game.Scooby)
+            else if (currentGame == Game.Scooby)
                 switch (LevelName)
                 {
                     case "g001":
@@ -1564,7 +1563,7 @@ namespace IndustrialPark.Randomizer
             group.ReceiveEventDelegation = AssetGRUP.Delegation.RandomItem;
             group.LinksBFBB = new LinkBFBB[]
             {
-                new LinkBFBB()
+                new LinkBFBB(EndianConverter.PlatformEndianness(currentPlatform), false)
                 {
                     Arguments_Float = new float[] {0, 0, 0, 0},
                     EventReceiveID = EventBFBB.ScenePrepare,
@@ -1583,14 +1582,14 @@ namespace IndustrialPark.Randomizer
                 timer.Time = 0.1f;
                 var links = new List<LinkBFBB>()
                 {
-                    new LinkBFBB()
+                    new LinkBFBB(EndianConverter.PlatformEndianness(currentPlatform), false)
                     {
                         Arguments_Float = new float[] {i, 0, 0, 0},
                         EventReceiveID = EventBFBB.Expired,
                         EventSendID = EventBFBB.PlayMusic,
                         TargetAssetID = dpat
                     },
-                    new LinkBFBB()
+                    new LinkBFBB(EndianConverter.PlatformEndianness(currentPlatform), false)
                     {
                         Arguments_Float = new float[] {0, 0, 0, 0},
                         EventReceiveID = EventBFBB.Expired,
@@ -1673,7 +1672,7 @@ namespace IndustrialPark.Randomizer
                                 platAssetIDs.Add(numRightAssetID);
                                 platAssetIDs.Add(newAssetID);
 
-                                plat.LinksBFBB = new LinkBFBB[] { new LinkBFBB()
+                                plat.LinksBFBB = new LinkBFBB[] { new LinkBFBB(EndianConverter.PlatformEndianness(currentPlatform), false)
                                 {
                                     EventReceiveID = EventBFBB.Invisible,
                                     EventSendID = EventBFBB.Invisible,

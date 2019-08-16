@@ -11,6 +11,7 @@ namespace IndustrialPark
             InitializeComponent();
 
             TopMost = true;
+            comboBoxAssetTypes.SelectedIndex = 0;
         }
 
         private void buttonOK_Click(object sender, EventArgs e)
@@ -21,13 +22,22 @@ namespace IndustrialPark
         private void comboBoxAssetTypes_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboBoxAssetTypes.SelectedIndex == 0)
-                ArchiveEditorFunctions.defaultScoobyPlatform = Platform.GameCube;
+                platform = Platform.GameCube;
             else if (comboBoxAssetTypes.SelectedIndex == 1)
-                ArchiveEditorFunctions.defaultScoobyPlatform = Platform.Xbox;
+                platform = Platform.Xbox;
             else if (comboBoxAssetTypes.SelectedIndex == 2)
-                ArchiveEditorFunctions.defaultScoobyPlatform = Platform.PS2;
+                platform = Platform.PS2;
 
             buttonOK.Enabled = true;
+        }
+
+        private Platform platform = Platform.GameCube;
+
+        public static Platform GetPlatform()
+        {
+            ChoosePlatformDialog a = new ChoosePlatformDialog();
+            a.ShowDialog();
+            return a.platform;
         }
     }
 }

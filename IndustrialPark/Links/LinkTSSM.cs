@@ -9,9 +9,9 @@ namespace IndustrialPark
         [DisplayName("Send Event")]
         public EventTSSM EventSendID { get => (EventTSSM)_eventSendID; set => _eventSendID = (ushort)value; }
 
-        public LinkTSSM(bool isTimed = false) : base(isTimed) { }
+        public LinkTSSM(Endianness endianness, bool isTimed) : base(endianness, isTimed) { }
 
-        public LinkTSSM(byte[] data, int offset, bool isTimed) : base(data, offset, isTimed) { }
+        public LinkTSSM(byte[] data, int offset, bool isTimed, Endianness endianness) : base(data, offset, isTimed, endianness) { }
 
         public override string ToString()
         {

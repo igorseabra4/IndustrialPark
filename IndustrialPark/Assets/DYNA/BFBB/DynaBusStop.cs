@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using static IndustrialPark.ConverterFunctions;
+using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -9,7 +9,7 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 2";
 
-        public DynaBusStop() : base()
+        public DynaBusStop(Platform platform) : base(platform)
         {
             MRKR_ID = 0;
             CAM_ID = 0;
@@ -41,7 +41,7 @@ namespace IndustrialPark
             Asset.Verify(SIMP_ID, ref result);
         }
 
-        public DynaBusStop(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaBusStop(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             MRKR_ID = Switch(BitConverter.ToUInt32(Data, 0x0));
             Player = (PlayerEnum)Switch(BitConverter.ToInt32(Data, 0x4));

@@ -16,22 +16,53 @@ namespace IndustrialPark
     {
         public static Endianness PlatformEndianness(Platform platform) => platform == Platform.GameCube ? Endianness.Big : Endianness.Little;
 
-        private Section_AHDR AHDR;
+        public static Section_AHDR GetReversedEndian(Section_AHDR AHDR, Game previousGame, Game currentGame, Endianness previousEndianness)
+        {
+            EndianConverter e = new EndianConverter
+            {
+                previousGame = previousGame,
+                newGame = currentGame,
+                previousEndianness = previousEndianness,
+                reader = new BinaryReader(new MemoryStream(AHDR.data))
+            };
+            return e.GetReversedEndian(AHDR);
+        }
+
+        public static byte[] GetLinksReversedEndian(byte[] data, int count = 1)
+        {
+            EndianConverter e = new EndianConverter
+            {
+                reader = new BinaryReader(new MemoryStream(data))
+            };
+
+            List<byte> bytes = new List<byte>();
+            e.ReverseLinks(ref bytes, count);
+
+            return bytes.ToArray();
+        }
+
+        public static byte[] GetTimedLinksReversedEndian(byte[] data, int count = 1)
+        {
+            BinaryReader reader = new BinaryReader(new MemoryStream(data));
+            List<byte> bytes = new List<byte>();
+
+            for (int i = 0; i < count; i++)
+                for (int j = 0; j < 8; j++)
+                    bytes.AddRange(Reverse(reader.ReadInt32()));
+            
+            return bytes.ToArray();
+        }
+
         private Game previousGame;
         private Game newGame;
         private Endianness previousEndianness;
         private BinaryReader reader;
 
-        public EndianConverter(Section_AHDR AHDR, Game previousGame, Game newGame, Endianness previousEndianness)
+        private EndianConverter()
         {
-            this.AHDR = AHDR;
-            this.previousGame = previousGame;
-            this.newGame = newGame;
-            this.previousEndianness = previousEndianness;
-            reader = new BinaryReader(new MemoryStream(AHDR.data));
         }
 
-        public Section_AHDR GetReversedEndian()
+        private Section_AHDR GetReversedEndian(Section_AHDR AHDR)
         {
             reader.BaseStream.Position = 0;
             List<byte> bytes = new List<byte>();

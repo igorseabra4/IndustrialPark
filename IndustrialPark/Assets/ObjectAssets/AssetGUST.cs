@@ -6,7 +6,7 @@ namespace IndustrialPark
 {
     public class AssetGUST : ObjectAsset
     {
-        public AssetGUST(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetGUST(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         protected override int EventStartOffset => 0x28;
 

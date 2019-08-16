@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using static IndustrialPark.ConverterFunctions;
+using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -10,11 +10,11 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 1";
         
-        public DynaPointer() : base()
+        public DynaPointer(Platform platform) : base(platform)
         {
         }
 
-        public DynaPointer(IEnumerable<byte> enumerable) : base(enumerable)
+        public DynaPointer(IEnumerable<byte> enumerable, Platform platform) : base(enumerable, platform)
         {
             _position.X = Switch(BitConverter.ToSingle(Data, 0));
             _position.Y = Switch(BitConverter.ToSingle(Data, 4));

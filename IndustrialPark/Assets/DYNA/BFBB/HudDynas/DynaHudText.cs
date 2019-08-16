@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using static IndustrialPark.ConverterFunctions;
+using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -9,7 +9,7 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 1";
 
-        public DynaHudText() : base()
+        public DynaHudText(Platform platform) : base(platform)
         {
             TextboxID = 0;
             TextID = 0;
@@ -29,7 +29,7 @@ namespace IndustrialPark
             Asset.Verify(TextID, ref result);
         }
 
-        public DynaHudText(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaHudText(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             TextboxID = Switch(BitConverter.ToUInt32(Data, 0x18));
             TextID = Switch(BitConverter.ToUInt32(Data, 0x1C));

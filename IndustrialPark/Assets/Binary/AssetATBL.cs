@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using HipHopFile;
-using static HipHopFile.Functions;
 
 namespace IndustrialPark
 {
@@ -105,7 +104,7 @@ namespace IndustrialPark
 
     public class AssetATBL : Asset
     {
-        public AssetATBL(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetATBL(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         public override bool HasReference(uint assetID)
         {
@@ -238,15 +237,15 @@ namespace IndustrialPark
 
                 foreach (AnimationFile i in value)
                 {
-                    newData.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i.FileFlags)));
-                    newData.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i.Duration)));
-                    newData.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i.TimeOffset)));
-                    newData.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i.NumAnims1)));
-                    newData.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i.NumAnims2)));
-                    newData.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i.RawData)));
-                    newData.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i.Physics)));
-                    newData.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i.StartPose)));
-                    newData.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i.EndPose)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.FileFlags)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.Duration)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.TimeOffset)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.NumAnims1)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.NumAnims2)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.RawData)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.Physics)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.StartPose)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.EndPose)));
                 }
 
                 newData.AddRange(restOfData);
@@ -288,13 +287,13 @@ namespace IndustrialPark
 
                 foreach (AnimationState i in value)
                 {
-                    newData.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i.StateID)));
-                    newData.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i.FileIndex)));
-                    newData.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i.EffectCount)));
-                    newData.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i.EffectOffset)));
-                    newData.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i.Speed)));
-                    newData.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i.SubStateID)));
-                    newData.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i.SubStateCount)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.StateID)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.FileIndex)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.EffectCount)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.EffectOffset)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.Speed)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.SubStateID)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.SubStateCount)));
                 }
 
                 newData.AddRange(restOfData);
@@ -336,13 +335,13 @@ namespace IndustrialPark
 
                 foreach (AnimationEffect i in value)
                 {
-                    newData.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i.StateID)));
-                    newData.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i.StartTime)));
-                    newData.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i.EndTime)));
-                    newData.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i.Flags)));
-                    newData.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i.EffectType)));
-                    newData.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i.UserDataSize)));
-                    newData.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i.Unknown)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.StateID)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.StartTime)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.EndTime)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.Flags)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.EffectType)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.UserDataSize)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.Unknown)));
                 }
 
                 newData.AddRange(restOfData);
@@ -369,7 +368,7 @@ namespace IndustrialPark
                 List<byte> newData = Data.Take(ListUnknown5Start).ToList();
 
                 foreach (int i in value)
-                    newData.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i)));
                 
                 Data = newData.ToArray();
             }

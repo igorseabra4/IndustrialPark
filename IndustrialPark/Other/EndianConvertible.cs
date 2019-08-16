@@ -1,42 +1,48 @@
 ﻿using System;
 using System.Linq;
-using HipHopFile;
 
 namespace IndustrialPark
 {
-    public static class ConverterFunctions
+    public class EndianConvertible
     {
-        public static float Switch(float a)
+        private Endianness endianness;
+
+        public EndianConvertible(Endianness endianness)
         {
-            if (Functions.currentPlatform == Platform.GameCube)
+            this.endianness = endianness;
+        }
+
+        public float Switch(float a)
+        {
+            if (endianness == Endianness.Big)
                 return BitConverter.ToSingle(BitConverter.GetBytes(a).Reverse().ToArray(), 0);
             return a;
         }
 
-        public static int Switch(int a)
+        public int Switch(int a)
         {
-            if (Functions.currentPlatform == Platform.GameCube)
+            if (endianness == Endianness.Big)
                 return BitConverter.ToInt32(BitConverter.GetBytes(a).Reverse().ToArray(), 0);
             return a;
         }
 
-        public static uint Switch(uint a)
+        public uint Switch(uint a)
         {
-            if (Functions.currentPlatform == Platform.GameCube)
+            if (endianness == Endianness.Big)
                 return BitConverter.ToUInt32(BitConverter.GetBytes(a).Reverse().ToArray(), 0);
             return a;
         }
 
-        public static short Switch(short a)
+        public short Switch(short a)
         {
-            if (Functions.currentPlatform == Platform.GameCube)
+            if (endianness == Endianness.Big)
                 return BitConverter.ToInt16(BitConverter.GetBytes(a).Reverse().ToArray(), 0);
             return a;
         }
 
-        public static ushort Switch(ushort a)
+        public ushort Switch(ushort a)
         {
-            if (Functions.currentPlatform == Platform.GameCube)
+            if (endianness == Endianness.Big)
                 return BitConverter.ToUInt16(BitConverter.GetBytes(a).Reverse().ToArray(), 0);
             return a;
         }

@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System;
 using System.Linq;
-using static HipHopFile.Functions;
 using System.ComponentModel;
 
 namespace IndustrialPark
 {
     public class AssetALST : Asset
     {
-        public AssetALST(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetALST(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         public override bool HasReference(uint assetID)
         {

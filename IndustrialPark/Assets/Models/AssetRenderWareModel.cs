@@ -11,7 +11,7 @@ namespace IndustrialPark
     {
         protected RenderWareModelFile model;
 
-        public AssetRenderWareModel(Section_AHDR AHDR, SharpRenderer renderer) : base(AHDR)
+        public AssetRenderWareModel(Section_AHDR AHDR, Game game, Platform platform, SharpRenderer renderer) : base(AHDR, game, platform)
         {
             Setup(renderer);
         }
@@ -24,13 +24,14 @@ namespace IndustrialPark
             model = new RenderWareModelFile(AHDR.ADBG.assetName);
             try
             {
-                model.SetForRendering(renderer.device, ReadFileMethods.ReadRenderWareFile(Data), Data);
+                ReadFileMethods.treatStuffAsByteArray = false;
+                model.SetForRendering(renderer.device, ReadFileMethods.ReadRenderWareFile(Data));
             }
             catch (Exception ex)
             {
-                System.Windows.Forms.MessageBox.Show("Error: " + ToString() + " has an unsupported format and cannot be rendered. " + ex.Message);
                 model.Dispose();
                 model = null;
+                throw new Exception("Error: " + ToString() + " has an unsupported format and cannot be rendered. " + ex.Message);
             }
         }
 

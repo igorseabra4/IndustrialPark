@@ -9,7 +9,7 @@ namespace IndustrialPark
 {
     public class AssetDYNA : ObjectAsset, IRenderableAsset, IClickableAsset, IRotatableAsset, IScalableAsset
     {
-        public AssetDYNA(Section_AHDR AHDR) : base(AHDR)
+        public AssetDYNA(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             SetDynaSpecific(false);
         }
@@ -29,174 +29,174 @@ namespace IndustrialPark
             List<byte> dataMiddle = Data.Skip(0x10).Take(EventStartOffset).ToList();
             List<byte> dataAfter = Data.Skip(EventStartOffset).ToList();
 
-            if (Functions.currentGame == Game.BFBB)
+            if (currentGame == Game.BFBB)
                 switch (Type_BFBB)
                 {
                     case DynaType_BFBB.game_object__BoulderGenerator:
-                        _dynaSpecific = reset ? new DynaBoulderGen() : new DynaBoulderGen(dataMiddle);
+                        _dynaSpecific = reset ? new DynaBoulderGen(currentPlatform) : new DynaBoulderGen(dataMiddle, currentPlatform);
                         break;
                     case DynaType_BFBB.game_object__bungee_drop:
-                        _dynaSpecific = reset ? new DynaBungeeDrop() : new DynaBungeeDrop(dataMiddle);
+                        _dynaSpecific = reset ? new DynaBungeeDrop(currentPlatform) : new DynaBungeeDrop(dataMiddle, currentPlatform);
                         break;
                     case DynaType_BFBB.game_object__bungee_hook:
-                        _dynaSpecific = reset ? new DynaBungeeHook() : new DynaBungeeHook(dataMiddle);
+                        _dynaSpecific = reset ? new DynaBungeeHook(currentPlatform) : new DynaBungeeHook(dataMiddle, currentPlatform);
                         break;
                     case DynaType_BFBB.game_object__BusStop:
-                        _dynaSpecific = reset ? new DynaBusStop() : new DynaBusStop(dataMiddle);
+                        _dynaSpecific = reset ? new DynaBusStop(currentPlatform) : new DynaBusStop(dataMiddle, currentPlatform);
                         break;
                     case DynaType_BFBB.game_object__Camera_Tweak:
-                        _dynaSpecific = reset ? new DynaCamTweak() : new DynaCamTweak(dataMiddle);
+                        _dynaSpecific = reset ? new DynaCamTweak(currentPlatform) : new DynaCamTweak(dataMiddle, currentPlatform);
                         break;
                     case DynaType_BFBB.game_object__Flythrough:
-                        _dynaSpecific = reset ? new DynaFlythrough() : new DynaFlythrough(dataMiddle);
+                        _dynaSpecific = reset ? new DynaFlythrough(currentPlatform) : new DynaFlythrough(dataMiddle, currentPlatform);
                         break;
                     case DynaType_BFBB.game_object__NPCSettings:
-                        _dynaSpecific = reset ? new DynaNPCSettings() : new DynaNPCSettings(dataMiddle);
+                        _dynaSpecific = reset ? new DynaNPCSettings(currentPlatform) : new DynaNPCSettings(dataMiddle, currentPlatform);
                         break;
                     case DynaType_BFBB.game_object__talk_box:
-                        _dynaSpecific = reset ? new DynaTalkBox() : new DynaTalkBox(dataMiddle);
+                        _dynaSpecific = reset ? new DynaTalkBox(currentPlatform) : new DynaTalkBox(dataMiddle, currentPlatform);
                         break;
                     case DynaType_BFBB.game_object__task_box:
-                        _dynaSpecific = reset ? new DynaTaskBox() : new DynaTaskBox(dataMiddle);
+                        _dynaSpecific = reset ? new DynaTaskBox(currentPlatform) : new DynaTaskBox(dataMiddle, currentPlatform);
                         break;
                     case DynaType_BFBB.game_object__Taxi:
-                        _dynaSpecific = reset ? new DynaTaxi() : new DynaTaxi(dataMiddle);
+                        _dynaSpecific = reset ? new DynaTaxi(currentPlatform) : new DynaTaxi(dataMiddle, currentPlatform);
                         break;
                     case DynaType_BFBB.game_object__Teleport:
-                        _dynaSpecific = reset ? new DynaTeleport_BFBB(Version) : new DynaTeleport_BFBB(dataMiddle, Version);
+                        _dynaSpecific = reset ? new DynaTeleport_BFBB(currentPlatform, Version) : new DynaTeleport_BFBB(dataMiddle, currentPlatform, Version);
                         break;
                     case DynaType_BFBB.game_object__text_box:
-                        _dynaSpecific = reset ? new DynaTextBox() : new DynaTextBox(dataMiddle);
+                        _dynaSpecific = reset ? new DynaTextBox(currentPlatform) : new DynaTextBox(dataMiddle, currentPlatform);
                         break;
                     case DynaType_BFBB.hud__meter__font:
                         if (Version == 3)
-                            _dynaSpecific = reset ? new DynaHudMeterFontV3() : new DynaHudMeterFontV3(dataMiddle);
+                            _dynaSpecific = reset ? new DynaHudMeterFontV3(currentPlatform) : new DynaHudMeterFontV3(dataMiddle, currentPlatform);
                         else
-                            _dynaSpecific = reset ? new DynaBase() : new DynaBase(dataMiddle);
+                            _dynaSpecific = reset ? new DynaBase(currentPlatform) : new DynaBase(dataMiddle, currentPlatform);
                         break;
                     case DynaType_BFBB.hud__meter__unit:
-                        _dynaSpecific = reset ? new DynaHudMeterUnit() : new DynaHudMeterUnit(dataMiddle);
+                        _dynaSpecific = reset ? new DynaHudMeterUnit(currentPlatform) : new DynaHudMeterUnit(dataMiddle, currentPlatform);
                         break;
                     case DynaType_BFBB.hud__model:
-                        _dynaSpecific = reset ? new DynaHudModel() : new DynaHudModel(dataMiddle);
+                        _dynaSpecific = reset ? new DynaHudModel(currentPlatform) : new DynaHudModel(dataMiddle, currentPlatform);
                         break;
                     case DynaType_BFBB.hud__text:
-                        _dynaSpecific = reset ? new DynaHudText() : new DynaHudText(dataMiddle);
+                        _dynaSpecific = reset ? new DynaHudText(currentPlatform) : new DynaHudText(dataMiddle, currentPlatform);
                         break;
                     case DynaType_BFBB.pointer:
-                        _dynaSpecific = reset ? new DynaPointer() : new DynaPointer(dataMiddle);
+                        _dynaSpecific = reset ? new DynaPointer(currentPlatform) : new DynaPointer(dataMiddle, currentPlatform);
                         break;
                     default:
-                        _dynaSpecific = reset ? new DynaBase() : new DynaBase(dataMiddle);
+                        _dynaSpecific = reset ? new DynaBase(currentPlatform) : new DynaBase(dataMiddle, currentPlatform);
                         break;
                 }
-            else if (Functions.currentGame == Game.Incredibles)
+            else if (currentGame == Game.Incredibles)
                 switch (Type_TSSM)
                 {
                     case DynaType_TSSM.pointer:
-                        _dynaSpecific = reset ? new DynaPointer() : new DynaPointer(dataMiddle);
+                        _dynaSpecific = reset ? new DynaPointer(currentPlatform) : new DynaPointer(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.game_object__talk_box:
-                        _dynaSpecific = reset ? new DynaTalkBox() : new DynaTalkBox(dataMiddle);
+                        _dynaSpecific = reset ? new DynaTalkBox(currentPlatform) : new DynaTalkBox(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.game_object__text_box:
-                        _dynaSpecific = reset ? new DynaTextBox() : new DynaTextBox(dataMiddle);
+                        _dynaSpecific = reset ? new DynaTextBox(currentPlatform) : new DynaTextBox(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.game_object__task_box:
-                        _dynaSpecific = reset ? new DynaTaskBox() : new DynaTaskBox(dataMiddle);
+                        _dynaSpecific = reset ? new DynaTaskBox(currentPlatform) : new DynaTaskBox(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.game_object__BusStop:
-                        _dynaSpecific = reset ? new DynaBusStop() : new DynaBusStop(dataMiddle);
+                        _dynaSpecific = reset ? new DynaBusStop(currentPlatform) : new DynaBusStop(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.game_object__Flythrough:
-                        _dynaSpecific = reset ? new DynaFlythrough() : new DynaFlythrough(dataMiddle);
+                        _dynaSpecific = reset ? new DynaFlythrough(currentPlatform) : new DynaFlythrough(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.game_object__BoulderGenerator:
-                        _dynaSpecific = reset ? new DynaBoulderGen() : new DynaBoulderGen(dataMiddle);
+                        _dynaSpecific = reset ? new DynaBoulderGen(currentPlatform) : new DynaBoulderGen(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.game_object__Teleport:
-                        _dynaSpecific = reset ? new DynaTeleport_MovieGame() : new DynaTeleport_MovieGame(dataMiddle);
+                        _dynaSpecific = reset ? new DynaTeleport_MovieGame(currentPlatform) : new DynaTeleport_MovieGame(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.game_object__bungee_drop:
-                        _dynaSpecific = reset ? new DynaBungeeDrop() : new DynaBungeeDrop(dataMiddle);
+                        _dynaSpecific = reset ? new DynaBungeeDrop(currentPlatform) : new DynaBungeeDrop(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.game_object__bungee_hook:
-                        _dynaSpecific = reset ? new DynaBungeeHook() : new DynaBungeeHook(dataMiddle);
+                        _dynaSpecific = reset ? new DynaBungeeHook(currentPlatform) : new DynaBungeeHook(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.game_object__Camera_Tweak:
-                        _dynaSpecific = reset ? new DynaCamTweak() : new DynaCamTweak(dataMiddle);
+                        _dynaSpecific = reset ? new DynaCamTweak(currentPlatform) : new DynaCamTweak(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.hud__model:
-                        _dynaSpecific = reset ? new DynaHudModel() : new DynaHudModel(dataMiddle);
+                        _dynaSpecific = reset ? new DynaHudModel(currentPlatform) : new DynaHudModel(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.hud__meter__font:
                         if (Version == 3)
-                            _dynaSpecific = reset ? new DynaHudMeterFontV3() : new DynaHudMeterFontV3(dataMiddle);
+                            _dynaSpecific = reset ? new DynaHudMeterFontV3(currentPlatform) : new DynaHudMeterFontV3(dataMiddle, currentPlatform);
                         else
-                            _dynaSpecific = reset ? new DynaBase() : new DynaBase(dataMiddle);
+                            _dynaSpecific = reset ? new DynaBase(currentPlatform) : new DynaBase(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.hud__meter__unit:
-                        _dynaSpecific = reset ? new DynaHudMeterUnit() : new DynaHudMeterUnit(dataMiddle);
+                        _dynaSpecific = reset ? new DynaHudMeterUnit(currentPlatform) : new DynaHudMeterUnit(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.hud__text:
-                        _dynaSpecific = reset ? new DynaHudText() : new DynaHudText(dataMiddle);
+                        _dynaSpecific = reset ? new DynaHudText(currentPlatform) : new DynaHudText(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.effect__ScreenFade:
-                        _dynaSpecific = reset ? new DynaEffectScreenFade() : new DynaEffectScreenFade(dataMiddle);
+                        _dynaSpecific = reset ? new DynaEffectScreenFade(currentPlatform) : new DynaEffectScreenFade(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.effect__Lightning:
-                        _dynaSpecific = reset ? new DynaEffectLightning() : new DynaEffectLightning(dataMiddle);
+                        _dynaSpecific = reset ? new DynaEffectLightning(currentPlatform) : new DynaEffectLightning(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.Enemy__SB__BucketOTron:
-                        _dynaSpecific = reset ? new DynaEnemyBucketOTron() : new DynaEnemyBucketOTron(dataMiddle);
+                        _dynaSpecific = reset ? new DynaEnemyBucketOTron(currentPlatform) : new DynaEnemyBucketOTron(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.Enemy__SB__CastNCrew:
-                        _dynaSpecific = reset ? new DynaEnemyCastNCrew() : new DynaEnemyCastNCrew(dataMiddle);
+                        _dynaSpecific = reset ? new DynaEnemyCastNCrew(currentPlatform) : new DynaEnemyCastNCrew(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.Enemy__SB__Critter:
-                        _dynaSpecific = reset ? new DynaEnemyCritter() : new DynaEnemyCritter(dataMiddle);
+                        _dynaSpecific = reset ? new DynaEnemyCritter(currentPlatform) : new DynaEnemyCritter(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.Enemy__SB__Dennis:
-                        _dynaSpecific = reset ? new DynaEnemyDennis() : new DynaEnemyDennis(dataMiddle);
+                        _dynaSpecific = reset ? new DynaEnemyDennis(currentPlatform) : new DynaEnemyDennis(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.Enemy__SB__FrogFish:
-                        _dynaSpecific = reset ? new DynaEnemyFrogFish() : new DynaEnemyFrogFish(dataMiddle);
+                        _dynaSpecific = reset ? new DynaEnemyFrogFish(currentPlatform) : new DynaEnemyFrogFish(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.Enemy__SB__Mindy:
-                        _dynaSpecific = reset ? new DynaEnemyMindy() : new DynaEnemyMindy(dataMiddle);
+                        _dynaSpecific = reset ? new DynaEnemyMindy(currentPlatform) : new DynaEnemyMindy(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.Enemy__SB__Neptune:
-                        _dynaSpecific = reset ? new DynaEnemyNeptune() : new DynaEnemyNeptune(dataMiddle);
+                        _dynaSpecific = reset ? new DynaEnemyNeptune(currentPlatform) : new DynaEnemyNeptune(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.Enemy__SB__Standard:
-                        _dynaSpecific = reset ? new DynaEnemyStandard() : new DynaEnemyStandard(dataMiddle);
+                        _dynaSpecific = reset ? new DynaEnemyStandard(currentPlatform) : new DynaEnemyStandard(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.Enemy__SB__SupplyCrate:
-                        _dynaSpecific = reset ? new DynaSupplyCrate() : new DynaSupplyCrate(dataMiddle);
+                        _dynaSpecific = reset ? new DynaSupplyCrate(currentPlatform) : new DynaSupplyCrate(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.Enemy__SB__Turret:
-                        _dynaSpecific = reset ? new DynaEnemyTurret() : new DynaEnemyTurret(dataMiddle);
+                        _dynaSpecific = reset ? new DynaEnemyTurret(currentPlatform) : new DynaEnemyTurret(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.game_object__Ring:
-                        _dynaSpecific = reset ? new DynaRing() : new DynaRing(dataMiddle);
+                        _dynaSpecific = reset ? new DynaRing(currentPlatform) : new DynaRing(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.game_object__RingControl:
-                        _dynaSpecific = reset ? new DynaRingControl() : new DynaRingControl(dataMiddle);
+                        _dynaSpecific = reset ? new DynaRingControl(currentPlatform) : new DynaRingControl(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.game_object__Vent:
-                        _dynaSpecific = reset ? new DynaVent() : new DynaVent(dataMiddle);
+                        _dynaSpecific = reset ? new DynaVent(currentPlatform) : new DynaVent(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.game_object__VentType:
-                        _dynaSpecific = reset ? new DynaVentType() : new DynaVentType(dataMiddle);
+                        _dynaSpecific = reset ? new DynaVentType(currentPlatform) : new DynaVentType(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.SceneProperties:
-                        _dynaSpecific = reset ? new DynaSceneProperties() : new DynaSceneProperties(dataMiddle);
+                        _dynaSpecific = reset ? new DynaSceneProperties(currentPlatform) : new DynaSceneProperties(dataMiddle, currentPlatform);
                         break;
                     case DynaType_TSSM.JSPExtraData:
-                        _dynaSpecific = reset ? new DynaJSPExtraData() : new DynaJSPExtraData(dataMiddle);
+                        _dynaSpecific = reset ? new DynaJSPExtraData(currentPlatform) : new DynaJSPExtraData(dataMiddle, currentPlatform);
                         break;
                     default:
-                        _dynaSpecific = reset ? new DynaBase() : new DynaBase(dataMiddle);
+                        _dynaSpecific = reset ? new DynaBase(currentPlatform) : new DynaBase(dataMiddle, currentPlatform);
                         break;
                 }
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using static IndustrialPark.ConverterFunctions;
+using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -10,7 +10,7 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 4";
 
-        public DynaEnemyNeptune() : base()
+        public DynaEnemyNeptune(Platform platform) : base(platform)
         {
             Unknown50 = 0;
             Unknown54 = 0;
@@ -20,7 +20,7 @@ namespace IndustrialPark
             Unknown64 = 0;
         }
 
-        public DynaEnemyNeptune(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaEnemyNeptune(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             Unknown50 = Switch(BitConverter.ToUInt32(Data, 0x50));
             Unknown54 = Switch(BitConverter.ToUInt32(Data, 0x54));

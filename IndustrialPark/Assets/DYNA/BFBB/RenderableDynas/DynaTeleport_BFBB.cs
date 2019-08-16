@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using static IndustrialPark.ConverterFunctions;
+using HipHopFile;
 using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
@@ -11,7 +11,7 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 1 or 2. Version 1 doesn't use the Rotation2";
 
-        public DynaTeleport_BFBB(int version) : base()
+        public DynaTeleport_BFBB(Platform platform, int version) : base(platform)
         {
             this.version = version;
             MRKR_ID = 0;
@@ -20,7 +20,7 @@ namespace IndustrialPark
 
         private readonly int version;
 
-        public DynaTeleport_BFBB(IEnumerable<byte> enumerable, int version) : base(enumerable)
+        public DynaTeleport_BFBB(IEnumerable<byte> enumerable, Platform platform, int version) : base(enumerable, platform)
         {
             this.version = version;
             MRKR_ID = Switch(BitConverter.ToUInt32(Data, 0x0));

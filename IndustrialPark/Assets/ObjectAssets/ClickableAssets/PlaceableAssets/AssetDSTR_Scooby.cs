@@ -12,7 +12,7 @@ namespace IndustrialPark
 
         protected override int EventStartOffset => 0x70;
 
-        public AssetDSTR_Scooby(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetDSTR_Scooby(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         public override bool HasReference(uint assetID) => SpawnItemAssetID == assetID || base.HasReference(assetID);
         

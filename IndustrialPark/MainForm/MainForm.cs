@@ -236,15 +236,17 @@ namespace IndustrialPark
         public ProjectJson FromCurrentInstance()
         {
             List<string> hips = new List<string>();
+            List<HipHopFile.Platform> platforms = new List<HipHopFile.Platform>();
             List<uint> hiddenAssets = new List<uint>();
 
             foreach (ArchiveEditor ae in archiveEditors)
             {
                 hips.Add(ae.GetCurrentlyOpenFileName());
+                platforms.Add(ae.archive.currentPlatform);
                 hiddenAssets.AddRange(ae.archive.GetHiddenAssets());
             }
 
-            return new ProjectJson(hips, TextureManager.OpenTextureFolders.ToList(), renderer.Camera.Position,
+            return new ProjectJson(hips, platforms, TextureManager.OpenTextureFolders.ToList(), renderer.Camera.Position,
                 renderer.Camera.Yaw, renderer.Camera.Pitch, renderer.Camera.Speed, renderer.Camera.SpeedRot, renderer.Camera.FieldOfView,
                 renderer.Camera.FarPlane, noCullingCToolStripMenuItem.Checked, wireframeFToolStripMenuItem.Checked, renderer.backgroundColor,
                 renderer.normalColor, renderer.trigColor, renderer.mvptColor, renderer.sfxColor, useLegacyAssetIDFormatToolStripMenuItem.Checked,
@@ -252,7 +254,7 @@ namespace IndustrialPark
                 AssetBUTN.dontRender, AssetCAM.dontRender, AssetDSTR_Scooby.dontRender, AssetDYNA.dontRender, AssetEGEN.dontRender, AssetHANG.dontRender,
                 AssetLITE.dontRender, AssetMRKR.dontRender, AssetMVPT_Scooby.dontRender, AssetPEND.dontRender, AssetPLAT.dontRender, AssetPLAT.dontRender,
                 AssetPLYR.dontRender, AssetSFX.dontRender, AssetSIMP.dontRender, AssetTRIG.dontRender, AssetUI.dontRender, AssetUIFT.dontRender,
-                AssetVIL.dontRender, ArchiveEditorFunctions.persistentShinies, HipHopFile.Functions.currentPlatform, ArchiveEditorFunctions.hideHelp);
+                AssetVIL.dontRender, ArchiveEditorFunctions.persistentShinies, ArchiveEditorFunctions.hideHelp);
         }
 
         private void ApplySettings(string ipSettingsPath)
@@ -274,20 +276,19 @@ namespace IndustrialPark
             TextureManager.LoadTexturesFromFolder(ipSettings.TextureFolderPaths);
             
             ArchiveEditorFunctions.hiddenAssets = ipSettings.hiddenAssets;
-            ArchiveEditorFunctions.defaultScoobyPlatform = ipSettings.platformForScooby;
             ArchiveEditorFunctions.hideHelp = ipSettings.hideHelp;
 
-            foreach (string s in ipSettings.hipPaths)
-                if (s == "Empty")
+            for (int i = 0; i < ipSettings.hipPaths.Count; i++)
+                if (ipSettings.hipPaths[i] == "Empty")
                     AddArchiveEditor();
                 else
                 {
-                    if (File.Exists(s))
-                        AddArchiveEditor(s);
+                    if (File.Exists(ipSettings.hipPaths[i]))
+                        AddArchiveEditor(ipSettings.hipPaths[i], ipSettings.scoobyPlatforms[i]);
                     else
                     {
                         TopMost = true;
-                        MessageBox.Show("Error opening " + s + ": file not found");
+                        MessageBox.Show("Error opening " + ipSettings.hipPaths[i] + ": file not found");
                         TopMost = false;
                     }
                 }
@@ -564,9 +565,9 @@ namespace IndustrialPark
             AddArchiveEditor();
         }
 
-        private void AddArchiveEditor(string filePath = null)
+        private void AddArchiveEditor(string filePath = null, HipHopFile.Platform scoobyPlatform = HipHopFile.Platform.Unknown)
         {
-            ArchiveEditor temp = new ArchiveEditor(filePath);
+            ArchiveEditor temp = new ArchiveEditor(filePath, scoobyPlatform);
             archiveEditors.Add(temp);
             temp.Show();
 
@@ -591,9 +592,6 @@ namespace IndustrialPark
             int index = archiveEditors.IndexOf(sender);
             archiveEditorToolStripMenuItem.DropDownItems.RemoveAt(index + 2);
             archiveEditors.RemoveAt(index);
-
-            if (archiveEditors.Count == 0)
-                ArchiveEditorFunctions.defaultScoobyPlatform = HipHopFile.Platform.Unknown;
         }
 
         public void DisposeAllArchiveEditors()
@@ -644,7 +642,7 @@ namespace IndustrialPark
         {
             ColorDialog colorDialog = new ColorDialog
             {
-                Color = System.Drawing.Color.FromArgb(ConverterFunctions.Switch(renderer.backgroundColor.ToBgra()))
+                Color = System.Drawing.Color.FromArgb(BitConverter.ToInt32(BitConverter.GetBytes(renderer.backgroundColor.ToBgra()).Reverse().ToArray(), 0))
             };
             if (colorDialog.ShowDialog() == DialogResult.OK)
                 renderer.backgroundColor = new Color(colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B, colorDialog.Color.A);

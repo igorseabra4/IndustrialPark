@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using static IndustrialPark.ConverterFunctions;
+using HipHopFile;
 
 namespace IndustrialPark
 {
     public class DynaHudBase : DynaBase
     {
-        public DynaHudBase() : base()
+        public DynaHudBase(Platform platform) : base(platform)
         {
 
         }
 
-        public DynaHudBase(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaHudBase(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             PositionX = Switch(BitConverter.ToSingle(Data, 0x0));
             PositionY = Switch(BitConverter.ToSingle(Data, 0x4));

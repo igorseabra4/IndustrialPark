@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
-using static IndustrialPark.ConverterFunctions;
+using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -11,7 +11,7 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 1";
 
-        public DynaTextBox() : base()
+        public DynaTextBox(Platform platform) : base(platform)
         {
             DefaultTextID = 0;
             BackgroundTextureID = 0;
@@ -33,7 +33,7 @@ namespace IndustrialPark
             Asset.Verify(BackgroundTextureID, ref result);
         }
 
-        public DynaTextBox(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaTextBox(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             DefaultTextID = Switch(BitConverter.ToUInt32(Data, 0x00));
             XPosition = Switch(BitConverter.ToSingle(Data, 0x04));

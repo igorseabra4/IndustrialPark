@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using static IndustrialPark.ConverterFunctions;
+using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -10,7 +10,7 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 2";
 
-        public DynaEnemyFrogFish() : base()
+        public DynaEnemyFrogFish(Platform platform) : base(platform)
         {
             Player_AssetID = 0;
             Unknown58 = 0;
@@ -18,7 +18,7 @@ namespace IndustrialPark
             Unknown60 = 0;
         }
 
-        public DynaEnemyFrogFish(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaEnemyFrogFish(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             Player_AssetID = Switch(BitConverter.ToUInt32(Data, 0x50));
             UnknownByte54 = Data[0x54];

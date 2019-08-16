@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using static IndustrialPark.ConverterFunctions;
+
 
 namespace IndustrialPark
 {
@@ -27,7 +27,7 @@ namespace IndustrialPark
 
     public class AssetSGRP : ObjectAsset
     {
-        public AssetSGRP(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetSGRP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         public override bool HasReference(uint assetID)
         {

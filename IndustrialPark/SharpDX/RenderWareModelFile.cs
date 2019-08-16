@@ -12,7 +12,6 @@ namespace IndustrialPark
         public string fileName;
 
         private const string DefaultTexture = "default";
-        private byte[] rwSectionByteArray;
         private RWSection[] rwSectionArray;
 
         public List<string> MaterialList = new List<string>();
@@ -39,12 +38,7 @@ namespace IndustrialPark
         {
             this.fileName = fileName;
         }
-
-        public byte[] GetAsByteArray()
-        {
-            return rwSectionByteArray;
-        }
-
+        
         public RWSection[] GetAsRWSectionArray()
         {
             return rwSectionArray;
@@ -52,19 +46,10 @@ namespace IndustrialPark
         
         public UvAnimRenderData renderData;
         
-        public void SetForRendering(SharpDevice device, RWSection[] rwChunkList, byte[] rwByteArray)
+        public void SetForRendering(SharpDevice device, RWSection[] rwChunkList)
         {
             rwSectionArray = rwChunkList;
 
-            if (rwByteArray == null)
-            {
-                rwSectionByteArray = ReadFileMethods.ExportRenderWareFile(rwSectionArray, 0x1400FFFF);
-
-                if (rwSectionByteArray.Length > 450 * 1024)
-                    System.Windows.Forms.MessageBox.Show(fileName + " is larger than 450 kb. I will still import it for you, but be warned that files too large might make the game crash.");
-            }
-            else
-                rwSectionByteArray = rwByteArray;
             meshList = new List<SharpMesh>();
 
             vertexListG = new List<Vector3>();

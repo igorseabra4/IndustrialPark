@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
-using static IndustrialPark.ConverterFunctions;
+using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -11,7 +11,7 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 2";
 
-        public DynaTaskBox() : base()
+        public DynaTaskBox(Platform platform) : base(platform)
         {
             TalkBox_AssetID = 0;
             NextTaskBox_AssetID = 0;
@@ -57,7 +57,7 @@ namespace IndustrialPark
             Asset.Verify(End_TextID, ref result);
         }
 
-        public DynaTaskBox(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaTaskBox(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             Persistent = Data[0x00];
             Loop = Data[0x01];

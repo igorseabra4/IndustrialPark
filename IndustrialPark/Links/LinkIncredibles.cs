@@ -9,9 +9,9 @@ namespace IndustrialPark
         [DisplayName("Send Event")]
         public EventIncredibles EventSendID { get => (EventIncredibles)_eventSendID; set => _eventSendID = (ushort)value; }
 
-        public LinkIncredibles(bool isTimed = false) : base(isTimed) { }
+        public LinkIncredibles(Endianness endianness, bool isTimed) : base(endianness, isTimed) { }
 
-        public LinkIncredibles(byte[] data, int offset, bool isTimed) : base(data, offset, isTimed) { }
+        public LinkIncredibles(byte[] data, int offset, bool isTimed, Endianness endianness) : base(data, offset, isTimed, endianness) { }
 
         public override string ToString()
         {

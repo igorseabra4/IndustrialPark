@@ -1,7 +1,7 @@
-﻿using System;
+﻿using HipHopFile;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
@@ -9,7 +9,7 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 1";
 
-        public DynaVentType() : base() { }
+        public DynaVentType(Platform platform) : base(platform) { }
 
         public override bool HasReference(uint assetID)
         {
@@ -39,7 +39,7 @@ namespace IndustrialPark
             Asset.Verify(Emit_SGRP, ref result);
         }
 
-        public DynaVentType(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaVentType(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             Constant_PARE = Switch(BitConverter.ToUInt32(Data, 0x00));
             Constant_SGRP = Switch(BitConverter.ToUInt32(Data, 0x04));

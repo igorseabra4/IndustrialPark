@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
+
 namespace IndustrialPark
 {
     public class AssetDSCO : ObjectAsset
     {
-        public AssetDSCO(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetDSCO(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         [Category("Disco Floor")]
         public int UnknownInt08
@@ -156,7 +157,7 @@ namespace IndustrialPark
                 List<byte> after = Data.Skip(PatternController_Position).ToList();
 
                 foreach (int i in value)
-                    before.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i)));
+                    before.AddRange(BitConverter.GetBytes(Switch(i)));
 
                 before.AddRange(after);
 

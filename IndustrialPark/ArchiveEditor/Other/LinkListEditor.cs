@@ -9,7 +9,8 @@ namespace IndustrialPark
     {
         private IWindowsFormsEditorService service;
 
-        public static bool IsTimed { get; internal set; }
+        public static bool IsTimed { get; set; }
+        public static Endianness endianness { get; set; }
 
         public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
         {
@@ -25,21 +26,21 @@ namespace IndustrialPark
             {
                 if (value is LinkBFBB[])
                 {
-                    LinkBFBB[] events = LinkEditor.GetEvents((LinkBFBB[])value, out bool success, IsTimed);
+                    LinkBFBB[] events = LinkEditor.GetEvents((LinkBFBB[])value, endianness, out bool success, IsTimed);
 
                     if (success)
                         value = events;
                 }
                 else if (value is LinkTSSM[])
                 {
-                    LinkTSSM[] events = LinkEditor.GetEvents((LinkTSSM[])value, out bool success, IsTimed);
+                    LinkTSSM[] events = LinkEditor.GetEvents((LinkTSSM[])value, endianness, out bool success, IsTimed);
 
                     if (success)
                         value = events;
                 }
                 else if (value is LinkIncredibles[])
                 {
-                    LinkIncredibles[] events = LinkEditor.GetEvents((LinkIncredibles[])value, out bool success, IsTimed);
+                    LinkIncredibles[] events = LinkEditor.GetEvents((LinkIncredibles[])value, endianness, out bool success, IsTimed);
 
                     if (success)
                         value = events;

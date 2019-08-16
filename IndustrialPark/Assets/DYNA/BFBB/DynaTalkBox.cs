@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using static IndustrialPark.ConverterFunctions;
+using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -9,7 +9,7 @@ namespace IndustrialPark
     {
         public override string Note => "Version is always 11";
 
-        public DynaTalkBox() : base()
+        public DynaTalkBox(Platform platform) : base(platform)
         {
             Dialog_TextBoxID = 0;
             Prompt_TextBoxID = 0;
@@ -59,7 +59,7 @@ namespace IndustrialPark
             Asset.Verify(PromptYesNoTextID, ref result);
         }
 
-        public DynaTalkBox(IEnumerable<byte> enumerable) : base (enumerable)
+        public DynaTalkBox(IEnumerable<byte> enumerable, Platform platform) : base (enumerable, platform)
         {
             Dialog_TextBoxID = Switch(BitConverter.ToUInt32(Data, 0x0));
             Prompt_TextBoxID = Switch(BitConverter.ToUInt32(Data, 0x4));

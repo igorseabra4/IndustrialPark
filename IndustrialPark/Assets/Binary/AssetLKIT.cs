@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
@@ -37,7 +36,7 @@ namespace IndustrialPark
 
     public class AssetLKIT : Asset
     {
-        public AssetLKIT(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetLKIT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         public override void Verify(ref List<string> result)
         {

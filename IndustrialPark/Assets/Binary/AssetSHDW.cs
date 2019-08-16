@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using HipHopFile;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
@@ -39,7 +38,7 @@ namespace IndustrialPark
 
     public class AssetSHDW : Asset
     {
-        public AssetSHDW(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetSHDW(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         public override bool HasReference(uint assetID)
         {

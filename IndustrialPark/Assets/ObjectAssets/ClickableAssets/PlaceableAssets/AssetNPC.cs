@@ -13,7 +13,7 @@ namespace IndustrialPark
 
         protected override int EventStartOffset => 0xC8 + Offset;
 
-        public AssetNPC(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetNPC(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         public override bool HasReference(uint assetID) =>MovePoint_AssetID == assetID || UnknownAssetID_BC == assetID || base.HasReference(assetID);
         

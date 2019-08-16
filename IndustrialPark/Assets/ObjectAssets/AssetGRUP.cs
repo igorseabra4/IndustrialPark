@@ -8,7 +8,7 @@ namespace IndustrialPark
 {
     public class AssetGRUP : ObjectAsset
     {
-        public AssetGRUP(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetGRUP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         public override bool HasReference(uint assetID)
         {
@@ -70,7 +70,7 @@ namespace IndustrialPark
                 List<byte> newData = Data.Take(0xC).ToList();
 
                 foreach (AssetID i in value)
-                    newData.AddRange(BitConverter.GetBytes(ConverterFunctions.Switch(i)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i)));
 
                 newData.AddRange(Data.Skip(EventStartOffset).ToList());
                 

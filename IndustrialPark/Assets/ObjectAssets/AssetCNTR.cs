@@ -5,7 +5,7 @@ namespace IndustrialPark
 {
     public class AssetCNTR : ObjectAsset
     {
-        public AssetCNTR(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetCNTR(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
         
         protected override int EventStartOffset => 0xC;
 

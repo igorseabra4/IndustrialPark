@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using HipHopFile;
-using static IndustrialPark.ConverterFunctions;
 
 namespace IndustrialPark
 {
@@ -21,7 +20,7 @@ namespace IndustrialPark
     
     public class AssetANIM : Asset
     {
-        public AssetANIM(Section_AHDR AHDR) : base(AHDR) { }
+        public AssetANIM(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         public override void Verify(ref List<string> result)
         {
