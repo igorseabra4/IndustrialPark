@@ -11,7 +11,7 @@ namespace IndustrialPark
 
         protected override bool DontRender => dontRender;
 
-        protected override int EventStartOffset => 0x6C + Offset + ScoobyOffset + Motion.Size(currentGame);
+        protected override int EventStartOffset => 0x6C + Offset + ScoobyOffset + Motion.Size(game);
 
         public AssetBUTN(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
@@ -28,15 +28,15 @@ namespace IndustrialPark
         [Description("Not present in Scooby")]
         public AssetID PressedModel_AssetID
         {
-            get => currentGame == Game.Scooby ? 0 : ReadUInt(0x54 + Offset);
+            get => game == Game.Scooby ? 0 : ReadUInt(0x54 + Offset);
             set
             {
-                if (currentGame != Game.Scooby)
+                if (game != Game.Scooby)
                     Write(0x54 + Offset, value);
             }
         }
 
-        private int ScoobyOffset => currentGame == Game.Scooby ? -0x04 : 0;
+        private int ScoobyOffset => game == Game.Scooby ? -0x04 : 0;
 
         public enum ButnActMethod
         {

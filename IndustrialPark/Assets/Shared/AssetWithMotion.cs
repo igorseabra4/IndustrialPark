@@ -11,7 +11,7 @@ namespace IndustrialPark
     {
         public AssetWithMotion(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
-            _motion = new Motion_Mechanism(Data.Skip(MotionStart).ToArray(), currentGame, currentPlatform);
+            _motion = new Motion_Mechanism(Data.Skip(MotionStart).ToArray(), base.game, base.platform);
         }
 
         public override bool HasReference(uint assetID) => _motion.HasReference(assetID) || base.HasReference(assetID);
@@ -93,7 +93,7 @@ namespace IndustrialPark
 
                 List<byte> before = Data.Take(MotionStart).ToList();
                 before.AddRange(value.ToByteArray());
-                before.AddRange(Data.Skip(MotionStart + Motion.Size(currentGame)));
+                before.AddRange(Data.Skip(MotionStart + Motion.Size(game)));
                 Data = before.ToArray();
             }
         }

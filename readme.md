@@ -1,2 +1,2 @@
 # IndustrialPark
-Industrial Park is a level viewer and editor for Spongebob Squarepants: Battle For Bikini Bottom, The Spongebob Squarepants Movie Game, Scooby-Doo: Night of 100 Frights, The Incredibles Game and The Incredibles: Rise of the Underminer. Please see the project's wiki page for additional information: https://bfbb.krustykrab.restaurant/wiki/Industrial_Park
+Industrial Park is a level viewer and editor for Spongebob Squarepants: Battle For Bikini Bottom, The Spongebob Squarepants Movie Game, Scooby-Doo: Night of 100 Frights, The Incredibles Game and The Incredibles: Rise of the Underminer. Please see the project's wiki page for additional information: https://battlepedia.org/Industrial_Park_(level_editor)

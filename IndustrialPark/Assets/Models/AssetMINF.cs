@@ -41,14 +41,14 @@ namespace IndustrialPark
         {
             try
             {
-                if (currentGame == Game.Scooby)
+                if (base.game == Game.Scooby)
                     _modelAssetID = ReadUInt(0x0C);
                 else
                     _modelAssetID = ReadUInt(0x14);
 
                 AddToRenderingDictionary(AHDR.assetID, this);
 
-                if (currentGame == Game.Incredibles)
+                if (base.game == Game.Incredibles)
                 {
                     AddToRenderingDictionary(Functions.BKDRHash(newName), this);
                     AddToNameDictionary(Functions.BKDRHash(newName), newName);
@@ -133,13 +133,13 @@ namespace IndustrialPark
         {
             get
             {
-                if (currentGame != Game.Scooby)
+                if (game != Game.Scooby)
                     return ReadUInt(0x0C);
                 return 0;
             }
             set
             {
-                if (currentGame != Game.Scooby)
+                if (game != Game.Scooby)
                     Write(0x0C, value);
             }
         }
@@ -149,18 +149,18 @@ namespace IndustrialPark
         {
             get
             {
-                if (currentGame != Game.Scooby)
+                if (game != Game.Scooby)
                     return ReadUInt(0x10);
                 return 0;
             }
             set
             {
-                if (currentGame != Game.Scooby)
+                if (game != Game.Scooby)
                     Write(0x10, value);
             }
         }
 
-        private int ModelReferencesStart => currentGame == Game.Scooby ? 0xC : 0x14;
+        private int ModelReferencesStart => game == Game.Scooby ? 0xC : 0x14;
 
         [Category("Model Info")]
         public ModelInst[] ModelReferences

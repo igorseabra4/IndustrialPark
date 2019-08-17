@@ -81,11 +81,11 @@ namespace IndustrialPark
             get
             {
                 LinkListEditor.IsTimed = false;
-                LinkListEditor.endianness = EndianConverter.PlatformEndianness(currentPlatform);
+                LinkListEditor.endianness = EndianConverter.PlatformEndianness(platform);
                 LinkBFBB[] events = new LinkBFBB[AmountOfEvents];
 
                 for (int i = 0; i < AmountOfEvents; i++)
-                    events[i] = new LinkBFBB(Data, EventStartOffset + i * Link.sizeOfStruct, false, EndianConverter.PlatformEndianness(currentPlatform));
+                    events[i] = new LinkBFBB(Data, EventStartOffset + i * Link.sizeOfStruct, false, EndianConverter.PlatformEndianness(platform));
 
                 return events;
             }
@@ -97,11 +97,11 @@ namespace IndustrialPark
             get
             {
                 LinkListEditor.IsTimed = false;
-                LinkListEditor.endianness = EndianConverter.PlatformEndianness(currentPlatform);
+                LinkListEditor.endianness = EndianConverter.PlatformEndianness(platform);
                 LinkTSSM[] events = new LinkTSSM[AmountOfEvents];
 
                 for (int i = 0; i < AmountOfEvents; i++)
-                    events[i] = new LinkTSSM(Data, EventStartOffset + i * Link.sizeOfStruct, false, EndianConverter.PlatformEndianness(currentPlatform));
+                    events[i] = new LinkTSSM(Data, EventStartOffset + i * Link.sizeOfStruct, false, EndianConverter.PlatformEndianness(platform));
 
                 return events;
             }
@@ -113,11 +113,11 @@ namespace IndustrialPark
             get
             {
                 LinkListEditor.IsTimed = false;
-                LinkListEditor.endianness = EndianConverter.PlatformEndianness(currentPlatform);
+                LinkListEditor.endianness = EndianConverter.PlatformEndianness(platform);
                 LinkIncredibles[] events = new LinkIncredibles[AmountOfEvents];
 
                 for (int i = 0; i < AmountOfEvents; i++)
-                    events[i] = new LinkIncredibles(Data, EventStartOffset + i * Link.sizeOfStruct, false, EndianConverter.PlatformEndianness(currentPlatform));
+                    events[i] = new LinkIncredibles(Data, EventStartOffset + i * Link.sizeOfStruct, false, EndianConverter.PlatformEndianness(platform));
 
                 return events;
             }
@@ -149,7 +149,7 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
-            if (currentGame == Game.BFBB || currentGame == Game.Scooby)
+            if (game == Game.BFBB || game == Game.Scooby)
             {
                 foreach (LinkBFBB link in LinksBFBB)
                 {
@@ -165,7 +165,7 @@ namespace IndustrialPark
                         result.Add("Link sends event of unknown type for BFBB: " + link.EventSendID.ToString());
                 }
             }
-            else if (currentGame == Game.Incredibles)
+            else if (game == Game.Incredibles)
             {
                 foreach (LinkTSSM link in LinksTSSM)
                 {

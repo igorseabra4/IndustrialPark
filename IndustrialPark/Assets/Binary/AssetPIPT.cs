@@ -72,7 +72,7 @@ namespace IndustrialPark
             {
                 List<EntryPIPT> entries = new List<EntryPIPT>();
                 
-                for (int i = 4; i < Data.Length; i += EntryPIPT.SizeOfStruct(currentGame))
+                for (int i = 4; i < Data.Length; i += EntryPIPT.SizeOfStruct(game))
                 {
                     byte[] Flags = BitConverter.GetBytes(ReadInt(i + 8));
 
@@ -86,7 +86,7 @@ namespace IndustrialPark
                         OtherFlags = Flags[0]
                     };
 
-                    if (currentGame == Game.Incredibles)
+                    if (game == Game.Incredibles)
                     {
                         a.Unknown0C = ReadByte(i + 12);
                         a.Unknown0D = ReadByte(i + 13);
@@ -111,7 +111,7 @@ namespace IndustrialPark
                     int Flags = BitConverter.ToInt32(new byte[] { i.OtherFlags, i.DestinationSourceBlend, i.Culling, i.RelatedToVisibility }, 0);
                     newData.AddRange(BitConverter.GetBytes(Switch(Flags)));
 
-                    if (currentGame == Game.Incredibles)
+                    if (game == Game.Incredibles)
                     {
                         newData.Add(i.Unknown0C);
                         newData.Add(i.Unknown0D);

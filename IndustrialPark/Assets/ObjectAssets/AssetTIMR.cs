@@ -8,7 +8,7 @@ namespace IndustrialPark
     {
         public AssetTIMR(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
-        protected override int EventStartOffset => currentGame == Game.Scooby ? 0xC : 0x10;
+        protected override int EventStartOffset => game == Game.Scooby ? 0xC : 0x10;
 
         [Category("Timer"), TypeConverter(typeof(FloatTypeConverter))]
         public float Time
@@ -20,10 +20,10 @@ namespace IndustrialPark
         [Category("Timer"), TypeConverter(typeof(FloatTypeConverter)), Description("Not present in Scooby.")]
         public float RandomRange
         {
-            get => currentGame == Game.Scooby ? 0 : BitConverter.ToSingle(Data, 0xC);
+            get => game == Game.Scooby ? 0 : BitConverter.ToSingle(Data, 0xC);
             set
             {
-                if (currentGame != Game.Scooby)
+                if (game != Game.Scooby)
                     for (int i = 0; i < 4; i++)
                         Data[0xC + i] = BitConverter.GetBytes(value)[i];
             }

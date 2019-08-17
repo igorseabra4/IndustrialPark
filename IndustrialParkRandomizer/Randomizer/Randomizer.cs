@@ -182,19 +182,15 @@ namespace IndustrialPark.Randomizer
                         hip.OpenFile(hipPath, false, scoobyPlatform, true);
 
                         if (scoobyPlatform == Platform.Unknown)
-                            scoobyPlatform = hip.currentPlatform;
+                            scoobyPlatform = hip.platform;
 
                         // Verifies if game/platform combination is ok, also checks for EditorFiles in case it needs those
-                        if (!platformVerified &&
-                            (flags.HasFlag(RandomizerFlags.Enemies_Allow_Any_Type) ||
-                            flags.HasFlag(RandomizerFlags.Shiny_Object_Gates) ||
-                            flags.HasFlag(RandomizerFlags.Spatula_Gates) ||
-                            (settings.setChumSpats && settings.spatReqChum != 75)))
+                        if (!platformVerified)
                         {
                             bool disableStuff = false;
-                            if (hip.currentGame != Game.BFBB || hip.currentPlatform != Platform.GameCube)
+                            if (hip.game != Game.BFBB)
                             {
-                                MessageBox.Show("Enemies_Allow_Any_Type, Shiny_Object_Gates and Spatula_Gates are only supported for Battle For Bikini Bottom (GameCube). They will be disabled.");
+                                MessageBox.Show("Enemies_Allow_Any_Type, Shiny_Object_Gates and Spatula_Gates are only supported for Battle For Bikini Bottom. They will be disabled.");
                                 disableStuff = true;
                             }
                             else if (!Directory.Exists(ArchiveEditorFunctions.editorFilesFolder))
@@ -275,7 +271,7 @@ namespace IndustrialPark.Randomizer
 
                     if (flags.HasFlag(RandomizerFlags.Music))
                     {
-                        if (boot.currentGame == Game.BFBB)
+                        if (boot.game == Game.BFBB)
                             shouldSave |= boot.RandomizePlaylist();
                         else
                             shouldSave |= boot.ShuffleSounds(seed, false, true);
@@ -508,7 +504,7 @@ namespace IndustrialPark.Randomizer
                             hip.OpenFile(hipPath, false, scoobyPlatform, true);
 
                             if (scoobyPlatform == Platform.Unknown)
-                                scoobyPlatform = hip.currentPlatform;
+                                scoobyPlatform = hip.platform;
 
                             List<string> warpNames = new List<string>();
                             hip.GetWarpNames(ref warpNames, new List<string>());

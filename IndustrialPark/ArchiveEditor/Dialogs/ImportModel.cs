@@ -82,7 +82,7 @@ namespace IndustrialPark
                                 ReadFileMethods.ExportRenderWareFile(
                                     CreateDFFFromAssimp(filePath,
                                     a.checkBoxFlipUVs.Checked),
-                                    currentRenderWareVersion(game));
+                                    modelRenderWareVersion(game));
                     
                     AHDRs.Add(
                         new Section_AHDR(

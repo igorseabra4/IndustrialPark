@@ -94,7 +94,7 @@ namespace IndustrialPark
             {
                 List<EntryLODT> entries = new List<EntryLODT>();
 
-                for (int i = 4; i < Data.Length; i += EntryLODT.SizeOfStruct(currentGame))
+                for (int i = 4; i < Data.Length; i += EntryLODT.SizeOfStruct(game))
                 {
                     EntryLODT a = new EntryLODT
                     {
@@ -108,7 +108,7 @@ namespace IndustrialPark
                         LOD3_Distance = ReadFloat(i + 0x1C)
                     };
 
-                    if (currentGame == Game.Incredibles)
+                    if (game == Game.Incredibles)
                         a.Unknown = ReadFloat(i + 0x20);
                     
                     entries.Add(a);
@@ -132,7 +132,7 @@ namespace IndustrialPark
                     newData.AddRange(BitConverter.GetBytes(Switch(i.LOD2_Distance)));
                     newData.AddRange(BitConverter.GetBytes(Switch(i.LOD3_Distance)));
 
-                    if (currentGame == Game.Incredibles)
+                    if (game == Game.Incredibles)
                         newData.AddRange(BitConverter.GetBytes(Switch(i.Unknown)));
                 }
 

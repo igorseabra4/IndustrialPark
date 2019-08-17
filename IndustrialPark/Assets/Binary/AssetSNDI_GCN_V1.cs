@@ -92,14 +92,14 @@ namespace IndustrialPark
         {
             get
             {
-                if (currentGame == Game.BFBB)
+                if (game == Game.BFBB)
                     return ReadInt(0xC);
 
                 return 0;
             }
             set
             {
-                if (currentGame == Game.BFBB)
+                if (game == Game.BFBB)
                     Write(0xC, value);
             }
         }
@@ -108,7 +108,7 @@ namespace IndustrialPark
         {
             get
             {
-                if (currentGame == Game.BFBB)
+                if (game == Game.BFBB)
                     return 0x10;
                 return 0xC;
             }
@@ -203,7 +203,7 @@ namespace IndustrialPark
         {
             get
             {
-                if (currentGame == Game.Scooby)
+                if (game == Game.Scooby)
                     return new EntrySoundInfo_GCN_V1[0];
 
                 List<EntrySoundInfo_GCN_V1> entries = new List<EntrySoundInfo_GCN_V1>();
@@ -221,7 +221,7 @@ namespace IndustrialPark
             }
             set
             {
-                if (currentGame == Game.Scooby)
+                if (game == Game.Scooby)
                     return;
 
                 List<EntrySoundInfo_GCN_V1> newValues = value.ToList();

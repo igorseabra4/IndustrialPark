@@ -45,10 +45,10 @@ namespace IndustrialPark
         private void buttonAdd3_Click(object sender, System.EventArgs e)
         {
             List<EntrySHRP> list = asset.SHRPEntries.ToList();
-            if (asset.currentGame == Game.Incredibles)
-                list.Add(new EntrySHRP_Type3_TSSM(asset.currentPlatform));
+            if (asset.game == Game.Incredibles)
+                list.Add(new EntrySHRP_Type3_TSSM(asset.platform));
             else
-                list.Add(new EntrySHRP_Type3_BFBB(asset.currentPlatform));
+                list.Add(new EntrySHRP_Type3_BFBB(asset.platform));
             asset.SHRPEntries = list.ToArray();
 
             propertyGridAsset.SelectedObject = asset;
@@ -58,10 +58,10 @@ namespace IndustrialPark
         private void buttonAdd4_Click(object sender, System.EventArgs e)
         {
             List<EntrySHRP> list = asset.SHRPEntries.ToList();
-            if (asset.currentGame == Game.Incredibles)
-                list.Add(new EntrySHRP_Type4_TSSM(asset.currentPlatform));
+            if (asset.game == Game.Incredibles)
+                list.Add(new EntrySHRP_Type4_TSSM(asset.platform));
             else
-                list.Add(new EntrySHRP_Type4_BFBB(asset.currentPlatform));
+                list.Add(new EntrySHRP_Type4_BFBB(asset.platform));
             asset.SHRPEntries = list.ToArray();
 
             propertyGridAsset.SelectedObject = asset;
@@ -71,10 +71,10 @@ namespace IndustrialPark
         private void buttonAdd5_Click(object sender, System.EventArgs e)
         {
             List<EntrySHRP> list = asset.SHRPEntries.ToList();
-            if (asset.currentGame == Game.Incredibles)
-                list.Add(new EntrySHRP_Type5_TSSM(asset.currentPlatform));
+            if (asset.game == Game.Incredibles)
+                list.Add(new EntrySHRP_Type5_TSSM(asset.platform));
             else
-                list.Add(new EntrySHRP_Type5_BFBB(asset.currentPlatform));
+                list.Add(new EntrySHRP_Type5_BFBB(asset.platform));
             asset.SHRPEntries = list.ToArray();
 
             propertyGridAsset.SelectedObject = asset;
@@ -84,10 +84,10 @@ namespace IndustrialPark
         private void buttonAdd6_Click(object sender, System.EventArgs e)
         {
             List<EntrySHRP> list = asset.SHRPEntries.ToList();
-            if (asset.currentGame == Game.Incredibles)
-                list.Add(new EntrySHRP_Type6_TSSM(asset.currentPlatform));
+            if (asset.game == Game.Incredibles)
+                list.Add(new EntrySHRP_Type6_TSSM(asset.platform));
             else
-                list.Add(new EntrySHRP_Type6_BFBB(asset.currentPlatform));
+                list.Add(new EntrySHRP_Type6_BFBB(asset.platform));
             asset.SHRPEntries = list.ToArray();
 
 
@@ -98,7 +98,7 @@ namespace IndustrialPark
         private void buttonAdd8_Click(object sender, System.EventArgs e)
         {
             List<EntrySHRP> list = asset.SHRPEntries.ToList();
-            list.Add(new EntrySHRP_Type8(asset.currentPlatform));
+            list.Add(new EntrySHRP_Type8(asset.platform));
             asset.SHRPEntries = list.ToArray();
 
             propertyGridAsset.SelectedObject = asset;
@@ -108,7 +108,7 @@ namespace IndustrialPark
         private void buttonAdd9_Click(object sender, System.EventArgs e)
         {
             List<EntrySHRP> list = asset.SHRPEntries.ToList();
-            list.Add(new EntrySHRP_Type9(asset.currentPlatform));
+            list.Add(new EntrySHRP_Type9(asset.platform));
             asset.SHRPEntries = list.ToArray();
 
             propertyGridAsset.SelectedObject = asset;

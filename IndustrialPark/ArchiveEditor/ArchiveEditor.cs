@@ -124,7 +124,7 @@ namespace IndustrialPark
             programIsChangingStuff = true;
 
             comboBoxLayerTypes.Items.Clear();
-            if (archive.currentGame == Game.Incredibles)
+            if (archive.game == Game.Incredibles)
                 foreach (var t in Enum.GetValues(typeof(LayerType_TSSM)))
                     comboBoxLayerTypes.Items.Add(t);
             else
@@ -257,7 +257,7 @@ namespace IndustrialPark
             }
             else
             {
-                if (archive.currentGame == Game.Incredibles)
+                if (archive.game == Game.Incredibles)
                     comboBoxLayerTypes.SelectedItem = (LayerType_TSSM)archive.GetLayerType(comboBoxLayers.SelectedIndex);
                 else
                     comboBoxLayerTypes.SelectedItem = (LayerType_BFBB)archive.GetLayerType(comboBoxLayers.SelectedIndex);
@@ -458,7 +458,7 @@ namespace IndustrialPark
 
         private void importModelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            List<Section_AHDR> AHDRs = ImportModel.GetAssets(archive.currentGame, out bool success, out bool overwrite, out bool makeSimps, out bool piptVcolors);
+            List<Section_AHDR> AHDRs = ImportModel.GetAssets(archive.game, out bool success, out bool overwrite, out bool makeSimps, out bool piptVcolors);
             if (success)
             {
                 archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, out List<uint> assetIDs, overwrite);
@@ -473,7 +473,7 @@ namespace IndustrialPark
 
         private void ImportTexturesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            List<Section_AHDR> AHDRs = ImportTextures.GetAssets(archive.currentGame, archive.currentPlatform, out bool success, out bool overwrite);
+            List<Section_AHDR> AHDRs = ImportTextures.GetAssets(archive.game, archive.platform, out bool success, out bool overwrite);
             if (success)
             {
                 archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, out List<uint> assetIDs, overwrite);

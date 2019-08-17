@@ -42,24 +42,24 @@ namespace IndustrialPark
                 switch (a.Type)
                 {
                     case 3:
-                        if (currentGame == Game.BFBB)
+                        if (game == Game.BFBB)
                             Verify(((EntrySHRP_Type3_BFBB)a).PARE_AssetID, ref result);
-                        else if (currentGame == Game.Incredibles)
+                        else if (game == Game.Incredibles)
                             Verify(((EntrySHRP_Type3_TSSM)a).Unknown1F0, ref result);
                         break;
                     case 4:
-                        if (currentGame == Game.BFBB)
+                        if (game == Game.BFBB)
                         {
                             Verify(((EntrySHRP_Type4_BFBB)a).ModelAssetID, ref result);
                             Verify(((EntrySHRP_Type4_BFBB)a).UnknownAssetID74, ref result);
                         }
-                        else if (currentGame == Game.Incredibles)
+                        else if (game == Game.Incredibles)
                             Verify(((EntrySHRP_Type4_TSSM)a).ModelAssetID, ref result);
                         break;
                     case 6:
-                        if (currentGame == Game.BFBB)
+                        if (game == Game.BFBB)
                             Verify(((EntrySHRP_Type6_BFBB)a).SoundAssetID, ref result);
-                        else if (currentGame == Game.Incredibles)
+                        else if (game == Game.Incredibles)
                             Verify(((EntrySHRP_Type6_TSSM)a).SoundAssetID, ref result);
                         break;
                     case 9:
@@ -106,36 +106,36 @@ namespace IndustrialPark
 
                     if (Type == 3)
                     {
-                        if (currentGame == Game.BFBB)
-                            entry = new EntrySHRP_Type3_BFBB(binaryReader.ReadBytes(EntrySHRP_Type3_BFBB.SizeOfEntry), currentPlatform);
-                        else if (currentGame == Game.Incredibles)
-                            entry = new EntrySHRP_Type3_TSSM(binaryReader.ReadBytes(EntrySHRP_Type3_TSSM.SizeOfEntry), currentPlatform);
+                        if (game == Game.BFBB)
+                            entry = new EntrySHRP_Type3_BFBB(binaryReader.ReadBytes(EntrySHRP_Type3_BFBB.SizeOfEntry), platform);
+                        else if (game == Game.Incredibles)
+                            entry = new EntrySHRP_Type3_TSSM(binaryReader.ReadBytes(EntrySHRP_Type3_TSSM.SizeOfEntry), platform);
                     }
                     else if (Type == 4)
                     {
-                        if (currentGame == Game.BFBB)
-                            entry = new EntrySHRP_Type4_BFBB(binaryReader.ReadBytes(EntrySHRP_Type4_BFBB.SizeOfEntry), currentPlatform);
-                        else if (currentGame == Game.Incredibles)
-                            entry = new EntrySHRP_Type4_TSSM(binaryReader.ReadBytes(EntrySHRP_Type4_TSSM.SizeOfEntry), currentPlatform);
+                        if (game == Game.BFBB)
+                            entry = new EntrySHRP_Type4_BFBB(binaryReader.ReadBytes(EntrySHRP_Type4_BFBB.SizeOfEntry), platform);
+                        else if (game == Game.Incredibles)
+                            entry = new EntrySHRP_Type4_TSSM(binaryReader.ReadBytes(EntrySHRP_Type4_TSSM.SizeOfEntry), platform);
                     }
                     else if (Type == 5)
                     {
-                        if (currentGame == Game.BFBB)
-                            entry = new EntrySHRP_Type5_BFBB(binaryReader.ReadBytes(EntrySHRP_Type5_BFBB.SizeOfEntry), currentPlatform);
-                        else if (currentGame == Game.Incredibles)
-                            entry = new EntrySHRP_Type5_TSSM(binaryReader.ReadBytes(EntrySHRP_Type5_TSSM.SizeOfEntry), currentPlatform);
+                        if (game == Game.BFBB)
+                            entry = new EntrySHRP_Type5_BFBB(binaryReader.ReadBytes(EntrySHRP_Type5_BFBB.SizeOfEntry), platform);
+                        else if (game == Game.Incredibles)
+                            entry = new EntrySHRP_Type5_TSSM(binaryReader.ReadBytes(EntrySHRP_Type5_TSSM.SizeOfEntry), platform);
                     }
                     else if (Type == 6)
                     {
-                        if (currentGame == Game.BFBB)
-                            entry = new EntrySHRP_Type6_BFBB(binaryReader.ReadBytes(EntrySHRP_Type6_BFBB.SizeOfEntry), currentPlatform);
-                        else if (currentGame == Game.Incredibles)
-                            entry = new EntrySHRP_Type6_TSSM(binaryReader.ReadBytes(EntrySHRP_Type6_TSSM.SizeOfEntry), currentPlatform);
+                        if (game == Game.BFBB)
+                            entry = new EntrySHRP_Type6_BFBB(binaryReader.ReadBytes(EntrySHRP_Type6_BFBB.SizeOfEntry), platform);
+                        else if (game == Game.Incredibles)
+                            entry = new EntrySHRP_Type6_TSSM(binaryReader.ReadBytes(EntrySHRP_Type6_TSSM.SizeOfEntry), platform);
                     }
                     else if (Type == 8)
-                        entry = new EntrySHRP_Type8(binaryReader.ReadBytes(EntrySHRP_Type8.SizeOfEntry), currentPlatform);
+                        entry = new EntrySHRP_Type8(binaryReader.ReadBytes(EntrySHRP_Type8.SizeOfEntry), platform);
                     else if (Type == 9)
-                        entry = new EntrySHRP_Type9(binaryReader.ReadBytes(EntrySHRP_Type9.SizeOfEntry), currentPlatform);
+                        entry = new EntrySHRP_Type9(binaryReader.ReadBytes(EntrySHRP_Type9.SizeOfEntry), platform);
                     else
                         throw new Exception("Unknown SHRP entry type " + Type.ToString() + " found in asset " + ToString() + ". This SHRP asset cannot be edited by Industrial Park.");
                     

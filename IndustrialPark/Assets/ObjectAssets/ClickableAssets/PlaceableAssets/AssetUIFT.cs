@@ -13,7 +13,7 @@ namespace IndustrialPark
 
         protected override bool DontRender => dontRender;
 
-        protected override int EventStartOffset => 0xA4 + Offset + (currentGame == Game.Scooby ? -0x04 : 0);
+        protected override int EventStartOffset => 0xA4 + Offset + (game == Game.Scooby ? -0x04 : 0);
 
         public AssetUIFT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
@@ -151,10 +151,10 @@ namespace IndustrialPark
         [Category("UIFont")]
         public int MaxHeight
         {
-            get => currentGame == Game.Scooby ? 0 : ReadInt(0xA0 + Offset);
+            get => game == Game.Scooby ? 0 : ReadInt(0xA0 + Offset);
             set
             {
-                if (currentGame != Game.Scooby)
+                if (game != Game.Scooby)
                     Write(0xA0 + Offset, value);
             }
         }

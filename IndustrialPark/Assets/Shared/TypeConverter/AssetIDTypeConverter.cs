@@ -34,12 +34,12 @@ namespace IndustrialPark
             if (s.ToLower().StartsWith("0x"))
                 return Convert.ToUInt32(s, 16);
 
-            if (s.StartsWith("[{") && s.EndsWith("}]"))
+            if (s.StartsWith("{") && s.EndsWith("}"))
             {
                 try
                 {
-                    var assets = JsonConvert.DeserializeObject<List<Section_AHDR>>(s);
-                    return assets[0].assetID;
+                    var assets = JsonConvert.DeserializeObject<AssetClipboard>(s);
+                    return assets.assets[0].assetID;
                 }
                 catch { }
             }

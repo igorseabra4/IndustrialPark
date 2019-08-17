@@ -52,7 +52,7 @@ namespace IndustrialPark
                 for (int i = 0; i < 4; i++)
                     bytes.Add(Data[0x14 + i]);
 
-                if (currentGame != Game.Incredibles && currentPlatform == Platform.GameCube)
+                if (game != Game.Incredibles && platform == Platform.GameCube)
                     bytes.Reverse();
 
                 return System.Text.Encoding.ASCII.GetString(bytes.ToArray(), 0, 4);
@@ -66,7 +66,7 @@ namespace IndustrialPark
                 while (bytes.Count < 4)
                     bytes.Add((byte)' ');
 
-                if (currentGame != Game.Incredibles && currentPlatform == Platform.GameCube)
+                if (game != Game.Incredibles && platform == Platform.GameCube)
                     bytes.Reverse();
 
                 for (int i = 0; i < 4; i++)

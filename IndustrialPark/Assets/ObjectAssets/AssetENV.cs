@@ -137,14 +137,14 @@ namespace IndustrialPark
         {
             get
             {
-                if (currentGame == Game.Scooby)
+                if (game == Game.Scooby)
                     return 0;
 
                 return BitConverter.ToSingle(Data, 0x40);
             }
             set
             {
-                if (currentGame != Game.Scooby)
+                if (game != Game.Scooby)
                     for (int i = 0; i < 4; i++)
                         Data[0x40 + i] = BitConverter.GetBytes(value)[i];
             }

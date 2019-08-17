@@ -97,7 +97,7 @@ namespace IndustrialPark
             if (openFile.ShowDialog() == DialogResult.OK)
             {
                 asset.Data = Path.GetExtension(openFile.FileName).ToLower().Equals(".dff") ? File.ReadAllBytes(openFile.FileName) :
-                    ReadFileMethods.ExportRenderWareFile(CreateDFFFromAssimp(openFile.FileName, false), currentRenderWareVersion(asset.currentGame));
+                    ReadFileMethods.ExportRenderWareFile(CreateDFFFromAssimp(openFile.FileName, false), modelRenderWareVersion(asset.game));
                 
                 asset.Setup(Program.MainForm.renderer);
 

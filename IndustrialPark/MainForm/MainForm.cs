@@ -242,7 +242,7 @@ namespace IndustrialPark
             foreach (ArchiveEditor ae in archiveEditors)
             {
                 hips.Add(ae.GetCurrentlyOpenFileName());
-                platforms.Add(ae.archive.currentPlatform);
+                platforms.Add(ae.archive.platform);
                 hiddenAssets.AddRange(ae.archive.GetHiddenAssets());
             }
 

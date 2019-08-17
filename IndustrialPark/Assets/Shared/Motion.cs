@@ -21,7 +21,7 @@ namespace IndustrialPark
 
     public class Motion : EndianConvertible
     {
-        public static int Size(Game currentGame) => currentGame == Game.Incredibles ? 0x3C : 0x30;
+        public static int Size(Game game) => game == Game.Incredibles ? 0x3C : 0x30;
 
         protected Game game;
 

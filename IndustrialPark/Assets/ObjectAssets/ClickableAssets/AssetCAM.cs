@@ -320,17 +320,17 @@ namespace IndustrialPark
                 switch (CamType)
                 {
                     case CamType.Follow:
-                        return new CamSpecific_Follow(Data.Skip(0x60).ToArray(), currentPlatform);
+                        return new CamSpecific_Follow(Data.Skip(0x60).ToArray(), platform);
                     case CamType.Shoulder:
-                        return new CamSpecific_Shoulder(Data.Skip(0x60).ToArray(), currentPlatform);
+                        return new CamSpecific_Shoulder(Data.Skip(0x60).ToArray(), platform);
                     case CamType.Static:
-                        return new CamSpecific_Static(Data.Skip(0x60).ToArray(), currentPlatform);
+                        return new CamSpecific_Static(Data.Skip(0x60).ToArray(), platform);
                     case CamType.Path:
-                        return new CamSpecific_Path(Data.Skip(0x60).ToArray(), currentPlatform);
+                        return new CamSpecific_Path(Data.Skip(0x60).ToArray(), platform);
                     case CamType.StaticFollow:
-                        return new CamSpecific_StaticFollow(Data.Skip(0x60).ToArray(), currentPlatform);
+                        return new CamSpecific_StaticFollow(Data.Skip(0x60).ToArray(), platform);
                     default:
-                        return new CamSpecific_Generic(Data.Skip(0x60).ToArray(), currentPlatform);
+                        return new CamSpecific_Generic(Data.Skip(0x60).ToArray(), platform);
                 }
             }
             set

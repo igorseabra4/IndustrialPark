@@ -312,7 +312,7 @@ namespace IndustrialPark
             {
                 if (a is AssetCOLL COLL)
                 {
-                    COLL.Merge(new AssetCOLL(AHDR, currentGame, currentPlatform));
+                    COLL.Merge(new AssetCOLL(AHDR, game, platform));
                     return;
                 }
             }
@@ -324,7 +324,7 @@ namespace IndustrialPark
             {
                 if (a is AssetJAW JAW)
                 {
-                    JAW.Merge(new AssetJAW(AHDR, currentGame, currentPlatform));
+                    JAW.Merge(new AssetJAW(AHDR, game, platform));
                     return;
                 }
             }
@@ -336,7 +336,7 @@ namespace IndustrialPark
             {
                 if (a is AssetLODT LODT)
                 {
-                    LODT.Merge(new AssetLODT(AHDR, currentGame, currentPlatform));
+                    LODT.Merge(new AssetLODT(AHDR, game, platform));
                     return;
                 }
             }
@@ -348,7 +348,7 @@ namespace IndustrialPark
             {
                 if (a is AssetPIPT PIPT)
                 {
-                    PIPT.Merge(new AssetPIPT(AHDR, currentGame, currentPlatform));
+                    PIPT.Merge(new AssetPIPT(AHDR, game, platform));
                     return;
                 }
             }
@@ -360,7 +360,7 @@ namespace IndustrialPark
             {
                 if (a is AssetSHDW SHDW)
                 {
-                    SHDW.Merge(new AssetSHDW(AHDR, currentGame, currentPlatform));
+                    SHDW.Merge(new AssetSHDW(AHDR, game, platform));
                     return;
                 }
             }
@@ -372,22 +372,22 @@ namespace IndustrialPark
             {
                 if (a is AssetSNDI_GCN_V1 SNDI_G1)
                 {
-                    SNDI_G1.Merge(new AssetSNDI_GCN_V1(AHDR, currentGame, currentPlatform));
+                    SNDI_G1.Merge(new AssetSNDI_GCN_V1(AHDR, game, platform));
                     return;
                 }
                 else if (a is AssetSNDI_GCN_V2 SNDI_G2)
                 {
-                    SNDI_G2.Merge(new AssetSNDI_GCN_V2(AHDR, currentGame, currentPlatform));
+                    SNDI_G2.Merge(new AssetSNDI_GCN_V2(AHDR, game, platform));
                     return;
                 }
                 else if (a is AssetSNDI_XBOX SNDI_X)
                 {
-                    SNDI_X.Merge(new AssetSNDI_XBOX(AHDR, currentGame, currentPlatform));
+                    SNDI_X.Merge(new AssetSNDI_XBOX(AHDR, game, platform));
                     return;
                 }
                 else if (a is AssetSNDI_PS2 SNDI_P)
                 {
-                    SNDI_P.Merge(new AssetSNDI_PS2(AHDR, currentGame, currentPlatform));
+                    SNDI_P.Merge(new AssetSNDI_PS2(AHDR, game, platform));
                     return;
                 }
             }
@@ -474,7 +474,7 @@ namespace IndustrialPark
 
             foreach (Section_LHDR LHDR in DICT.LTOC.LHDRList)
             {
-                if (currentGame == Game.Incredibles && (LHDR.layerType == (int)LayerType_TSSM.BSP || LHDR.layerType == (int)LayerType_TSSM.JSPINFO))
+                if (game == Game.Incredibles && (LHDR.layerType == (int)LayerType_TSSM.BSP || LHDR.layerType == (int)LayerType_TSSM.JSPINFO))
                 {
                     if (LHDR.assetIDlist.Count != 0)
                         bspLayers.Add(LHDR);
@@ -494,7 +494,7 @@ namespace IndustrialPark
             DICT.LTOC.LHDRList = new List<Section_LHDR>();
             DICT.LTOC.LHDRList.AddRange(layers.Values.ToList());
             DICT.LTOC.LHDRList.AddRange(bspLayers);
-            DICT.LTOC.LHDRList = DICT.LTOC.LHDRList.OrderBy(f => f.layerType, new LHDRComparer(currentGame)).ToList();
+            DICT.LTOC.LHDRList = DICT.LTOC.LHDRList.OrderBy(f => f.layerType, new LHDRComparer(game)).ToList();
         }
 
         public string VerifyArchive()
@@ -631,15 +631,22 @@ namespace IndustrialPark
             RecalculateAllMatrices();
         }
 
-        private void ConvertAllAssetTypes(Platform previousPlatform, Game previousGame, Platform currentPlatform, Game currentGame, out HashSet<AssetType> unsupported)
+        private void ConvertAllAssetTypes(Platform previousPlatform, Game previousGame, out HashSet<AssetType> unsupported)
         {
             unsupported = new HashSet<AssetType>();
+            HashSet<AssetType> unsupportedDefault = new HashSet<AssetType>() { AssetType.BSP, AssetType.JSP, AssetType.RWTX, AssetType.MODL };
             foreach (Asset asset in assetDictionary.Values)
                 try
                 {
-                    asset.AHDR = ConvertAssetType(asset.AHDR, EndianConverter.PlatformEndianness(previousPlatform), EndianConverter.PlatformEndianness(currentPlatform), previousGame, currentGame);
-                    asset.currentGame = currentGame;
-                    asset.currentPlatform = currentPlatform;
+                    asset.AHDR = ConvertAssetType(asset.AHDR, EndianConverter.PlatformEndianness(previousPlatform), EndianConverter.PlatformEndianness(platform), previousGame, game);
+
+                    if (unsupportedDefault.Contains(asset.AHDR.assetType))
+                        unsupported.Add(asset.AHDR.assetType);
+                    else
+                    {
+                        asset.game = game;
+                        asset.platform = platform;
+                    }
                 }
                 catch
                 {

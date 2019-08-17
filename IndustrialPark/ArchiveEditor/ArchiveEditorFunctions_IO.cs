@@ -24,8 +24,10 @@ namespace IndustrialPark
 
         public void ImportHip(string fileName, bool forceOverwrite)
         {
-            if (Path.GetExtension(fileName).ToLower() == ".hip" || Path.GetExtension(fileName).ToLower() == ".hop" || Path.GetExtension(fileName).ToLower() == ".ini")
-                ImportHip(new HipFile(fileName, Path.GetExtension(fileName).ToLower() == ".ini").DICT, forceOverwrite);
+            if (Path.GetExtension(fileName).ToLower() == ".hip" || Path.GetExtension(fileName).ToLower() == ".hop")
+                ImportHip(new HipFile(fileName).DICT, forceOverwrite);
+            else if (Path.GetExtension(fileName).ToLower() == ".ini")
+                ImportHip(HipFile.FromINI(fileName).DICT, forceOverwrite);
             else
                 MessageBox.Show("Invalid file: " + fileName);
         }
@@ -113,7 +115,7 @@ namespace IndustrialPark
                 if (LHDR.assetIDlist.Count != 0)
                     DICT.LTOC.LHDRList.Add(LHDR);
 
-            DICT.LTOC.LHDRList = DICT.LTOC.LHDRList.OrderBy(f => f.layerType, new LHDRComparer(currentGame)).ToList();
+            DICT.LTOC.LHDRList = DICT.LTOC.LHDRList.OrderBy(f => f.layerType, new LHDRComparer(game)).ToList();
 
             RecalculateAllMatrices();
         }

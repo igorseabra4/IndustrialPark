@@ -110,7 +110,7 @@
   <ItemGroup>
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_IO.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Sounds.cs" />
-    <Compile Include="ArchiveEditor\TextureIOHelper.cs" />
+    <Compile Include="ArchiveEditor\Other\TextureIOHelper.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Textures.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Gizmos.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetTemplates.cs" />
@@ -184,11 +184,11 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ArchiveEditor\Other\LinkListEditor.cs" />
-    <Compile Include="ArchiveEditor\Other\GizmoBase.cs" />
-    <Compile Include="ArchiveEditor\Other\PositionGizmo.cs" />
-    <Compile Include="ArchiveEditor\Other\PositionLocalGizmo.cs" />
-    <Compile Include="ArchiveEditor\Other\RotationGizmo.cs" />
-    <Compile Include="ArchiveEditor\Other\ScaleGizmo.cs" />
+    <Compile Include="ArchiveEditor\Gizmos\GizmoBase.cs" />
+    <Compile Include="ArchiveEditor\Gizmos\PositionGizmo.cs" />
+    <Compile Include="ArchiveEditor\Gizmos\PositionLocalGizmo.cs" />
+    <Compile Include="ArchiveEditor\Gizmos\RotationGizmo.cs" />
+    <Compile Include="ArchiveEditor\Gizmos\ScaleGizmo.cs" />
     <Compile Include="ArchiveEditor\Dialogs\ProgressBar.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -332,7 +332,7 @@
     <Compile Include="ArchiveEditor\InternalEditors\InternalDynaEditor.designer.cs">
       <DependentUpon>InternalDynaEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="ArchiveEditor\Other\InternalEditor.cs" />
+    <Compile Include="ArchiveEditor\Other\IInternalEditor.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\InternalTextEditor.cs">
       <SubType>Form</SubType>
     </Compile>

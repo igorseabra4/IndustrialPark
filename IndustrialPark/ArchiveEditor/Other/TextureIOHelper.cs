@@ -68,13 +68,13 @@ namespace IndustrialPark
         public static int bfbbTextureVersion => 0x1003FFFF;
         public static int tssmTextureVersion => 0x1C02000A;
 
-        public static int currentTextureVersion(Game currentGame)
+        public static int currentTextureVersion(Game game)
         {
-            if (currentGame == Game.Scooby)
+            if (game == Game.Scooby)
                 return scoobyTextureVersion;
-            if (currentGame == Game.BFBB)
+            if (game == Game.BFBB)
                 return bfbbTextureVersion; // VC
-            if (currentGame == Game.Incredibles)
+            if (game == Game.Incredibles)
                 return tssmTextureVersion; // Bully
             return 0;
         }

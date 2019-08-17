@@ -25,7 +25,7 @@ namespace IndustrialPark
             {
                 ExportTextureDictionary(pathToGcTXD, true);
 
-                PerformTXDConversionExternal(currentPlatform);
+                PerformTXDConversionExternal(platform);
 
                 TextureManager.LoadTexturesFromTXD(pathToPcTXD);
             }
@@ -47,7 +47,7 @@ namespace IndustrialPark
 
             ExportSingleTextureToDictionary(pathToGcTXD, RWTX.Data, RWTX.AHDR.ADBG.assetName);
 
-            PerformTXDConversionExternal(currentPlatform);
+            PerformTXDConversionExternal(platform);
 
             TextureManager.LoadTexturesFromTXD(pathToPcTXD);
 
@@ -159,14 +159,14 @@ namespace IndustrialPark
 
             File.WriteAllBytes(pathToPcTXD, txdFile);
 
-            PerformTXDConversionExternal(currentPlatform, false, false, false,
+            PerformTXDConversionExternal(platform, false, false, false,
             "gameRoot=" + tempPcTxdsDir + "\r\n" +
             "outputRoot=" + tempGcTxdsDir + "\r\n" +
             "targetVersion=VC\r\n" +
             "targetPlatform=uncompressed_mobile\r\n"
             );
 
-            PerformTXDConversionExternal(currentPlatform);
+            PerformTXDConversionExternal(platform);
 
             Dictionary<string, Bitmap> bitmaps = new Dictionary<string, Bitmap>();
 
@@ -265,7 +265,7 @@ namespace IndustrialPark
                 textureDictionaryStruct = new TextureDictionaryStruct_0001() { textureCount = (short)textures.Count, unknown = 0 },
                 textureNativeList = textures,
                 textureDictionaryExtension = new Extension_0003()
-            }, currentTextureVersion(currentGame)));
+            }, currentTextureVersion(game)));
         }
     }
 }

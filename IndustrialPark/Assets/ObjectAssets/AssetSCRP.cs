@@ -77,7 +77,7 @@ namespace IndustrialPark
             set => Write(0x13, value);
         }
 
-        private int TimedLinksStartOffset => currentGame == Game.Incredibles ? 0x14 : 0x10;
+        private int TimedLinksStartOffset => game == Game.Incredibles ? 0x14 : 0x10;
 
         private void WriteTimedLinks(Link[] links)
         {
@@ -102,10 +102,10 @@ namespace IndustrialPark
                 LinkBFBB[] events = new LinkBFBB[TimedLinkCount];
 
                 for (int i = 0; i < TimedLinkCount; i++)
-                    events[i] = new LinkBFBB(Data, TimedLinksStartOffset + i * Link.sizeOfStruct, true, EndianConverter.PlatformEndianness(currentPlatform));
+                    events[i] = new LinkBFBB(Data, TimedLinksStartOffset + i * Link.sizeOfStruct, true, EndianConverter.PlatformEndianness(platform));
 
                 LinkListEditor.IsTimed = true;
-                LinkListEditor.endianness = EndianConverter.PlatformEndianness(currentPlatform);
+                LinkListEditor.endianness = EndianConverter.PlatformEndianness(platform);
                 return events;
             }
             set
@@ -122,10 +122,10 @@ namespace IndustrialPark
                 LinkTSSM[] events = new LinkTSSM[TimedLinkCount];
 
                 for (int i = 0; i < TimedLinkCount; i++)
-                    events[i] = new LinkTSSM(Data, TimedLinksStartOffset + i * Link.sizeOfStruct, true, EndianConverter.PlatformEndianness(currentPlatform));
+                    events[i] = new LinkTSSM(Data, TimedLinksStartOffset + i * Link.sizeOfStruct, true, EndianConverter.PlatformEndianness(platform));
 
                 LinkListEditor.IsTimed = true;
-                LinkListEditor.endianness = EndianConverter.PlatformEndianness(currentPlatform);
+                LinkListEditor.endianness = EndianConverter.PlatformEndianness(platform);
                 return events;
             }
             set
@@ -142,10 +142,10 @@ namespace IndustrialPark
                 LinkIncredibles[] events = new LinkIncredibles[TimedLinkCount];
 
                 for (int i = 0; i < TimedLinkCount; i++)
-                    events[i] = new LinkIncredibles(Data, TimedLinksStartOffset + i * Link.sizeOfStruct, true, EndianConverter.PlatformEndianness(currentPlatform));
+                    events[i] = new LinkIncredibles(Data, TimedLinksStartOffset + i * Link.sizeOfStruct, true, EndianConverter.PlatformEndianness(platform));
 
                 LinkListEditor.IsTimed = true;
-                LinkListEditor.endianness = EndianConverter.PlatformEndianness(currentPlatform);
+                LinkListEditor.endianness = EndianConverter.PlatformEndianness(platform);
                 return events;
             }
             set

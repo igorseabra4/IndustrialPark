@@ -328,7 +328,7 @@ namespace IndustrialPark
 
                 while (binaryReader.BaseStream.Position != binaryReader.BaseStream.Length)
                 {
-                    SectionEntry section = new SectionEntry(EndianConverter.PlatformEndianness(currentPlatform))
+                    SectionEntry section = new SectionEntry(EndianConverter.PlatformEndianness(platform))
                     {
                         Start = binaryReader.BaseStream.Position,
                         Size = Switch(binaryReader.ReadInt32()),

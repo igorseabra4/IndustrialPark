@@ -108,7 +108,7 @@ namespace IndustrialPark
                     ArchiveEditorFunctions archive = new ArchiveEditorFunctions();
                     archive.OpenFile(s, false, scoobyPlatform, true);
                     if (scoobyPlatform == Platform.Unknown)
-                        scoobyPlatform = archive.currentPlatform;
+                        scoobyPlatform = archive.platform;
                     WriteWhatIFound(archive);
                     archive.Dispose(false);
                 }

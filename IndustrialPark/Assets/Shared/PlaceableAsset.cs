@@ -216,13 +216,13 @@ namespace IndustrialPark
         {
             get
             {
-                if (currentGame == Game.BFBB)
+                if (game == Game.BFBB)
                     return ReadInt(0xC);
                 return 0;
             }
             set
             {
-                if (currentGame == Game.BFBB)
+                if (game == Game.BFBB)
                     Write(0xC, value);
             }
         }

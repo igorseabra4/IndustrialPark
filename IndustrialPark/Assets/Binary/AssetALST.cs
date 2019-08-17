@@ -45,7 +45,7 @@ namespace IndustrialPark
 
                 foreach (AssetID i in value)
                 {
-                    if (currentPlatform == Platform.GameCube)
+                    if (platform == Platform.GameCube)
                         newData.AddRange(BitConverter.GetBytes(i).Reverse());
                     else
                         newData.AddRange(BitConverter.GetBytes(i));

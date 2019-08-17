@@ -9,20 +9,20 @@ namespace IndustrialPark
     public class Asset : EndianConvertible
     {
         [Browsable(false)]
-        public int Offset => currentGame == Game.BFBB ? 0x00 : -0x04;
-        public static int DataSizeOffset(Game currentGame) => currentGame == Game.BFBB ? 0x00 : -0x04;
+        public int Offset => game == Game.BFBB ? 0x00 : -0x04;
+        public static int DataSizeOffset(Game game) => game == Game.BFBB ? 0x00 : -0x04;
 
         public Section_AHDR AHDR;
         public bool isSelected;
         public bool isInvisible = false;
-        public Game currentGame;
-        public Platform currentPlatform;
+        public Game game;
+        public Platform platform;
 
         public Asset(Section_AHDR AHDR, Game game, Platform platform) : base(EndianConverter.PlatformEndianness(platform))
         {
             this.AHDR = AHDR;
-            this.currentGame = game;
-            this.currentPlatform = platform;
+            this.game = game;
+            this.platform = platform;
         }
 
         [Category("Data")]
@@ -41,7 +41,7 @@ namespace IndustrialPark
         
         protected float ReadFloat(int j)
         {
-            if (currentPlatform == Platform.GameCube)
+            if (platform == Platform.GameCube)
                 return BitConverter.ToSingle(new byte[] {
                 Data[j + 3],
                 Data[j + 2],
@@ -58,7 +58,7 @@ namespace IndustrialPark
 
         protected short ReadShort(int j)
         {
-            if (currentPlatform == Platform.GameCube)
+            if (platform == Platform.GameCube)
                 return BitConverter.ToInt16(new byte[] {
                 Data[j + 1],
                 Data[j] }, 0);
@@ -68,7 +68,7 @@ namespace IndustrialPark
 
         protected ushort ReadUShort(int j)
         {
-            if (currentPlatform == Platform.GameCube)
+            if (platform == Platform.GameCube)
                 return BitConverter.ToUInt16(new byte[] {
                 Data[j + 1],
                 Data[j] }, 0);
@@ -78,7 +78,7 @@ namespace IndustrialPark
 
         protected int ReadInt(int j)
         {
-            if (currentPlatform == Platform.GameCube)
+            if (platform == Platform.GameCube)
                 return BitConverter.ToInt32(new byte[] {
                 Data[j + 3],
                 Data[j + 2],
@@ -90,7 +90,7 @@ namespace IndustrialPark
 
         protected uint ReadUInt(int j)
         {
-            if (currentPlatform == Platform.GameCube)
+            if (platform == Platform.GameCube)
                 return BitConverter.ToUInt32(new byte[] {
                 Data[j + 3],
                 Data[j + 2],
@@ -104,7 +104,7 @@ namespace IndustrialPark
         {
             byte[] split = BitConverter.GetBytes(value).ToArray();
 
-            if (currentPlatform == Platform.GameCube)
+            if (platform == Platform.GameCube)
                 split = split.Reverse().ToArray();
 
             for (int i = 0; i < 4; i++)
@@ -120,7 +120,7 @@ namespace IndustrialPark
         {
             byte[] split = BitConverter.GetBytes(value).ToArray();
 
-            if (currentPlatform == Platform.GameCube)
+            if (platform == Platform.GameCube)
                 split = split.Reverse().ToArray();
 
             for (int i = 0; i < 2; i++)
@@ -131,7 +131,7 @@ namespace IndustrialPark
         {
             byte[] split = BitConverter.GetBytes(value).ToArray();
 
-            if (currentPlatform == Platform.GameCube)
+            if (platform == Platform.GameCube)
                 split = split.Reverse().ToArray();
 
             for (int i = 0; i < 2; i++)
@@ -142,7 +142,7 @@ namespace IndustrialPark
         {
             byte[] split = BitConverter.GetBytes(value).ToArray();
 
-            if (currentPlatform == Platform.GameCube)
+            if (platform == Platform.GameCube)
                 split = split.Reverse().ToArray();
 
             for (int i = 0; i < 4; i++)
@@ -153,7 +153,7 @@ namespace IndustrialPark
         {
             byte[] split = BitConverter.GetBytes(value).ToArray();
 
-            if (currentPlatform == Platform.GameCube)
+            if (platform == Platform.GameCube)
                 split = split.Reverse().ToArray();
 
             for (int i = 0; i < 4; i++)

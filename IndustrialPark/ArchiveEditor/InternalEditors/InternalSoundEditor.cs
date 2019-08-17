@@ -68,9 +68,9 @@ namespace IndustrialPark
             SaveFileDialog saveFileDialog = new SaveFileDialog()
             {
                 FileName = asset.AHDR.ADBG.assetName + (
-                (asset.currentPlatform == Platform.GameCube && asset.currentGame != Game.Incredibles) ? ".DSP" :
-                (asset.currentPlatform == Platform.Xbox) ? ".WAV" :
-                (asset.currentPlatform == Platform.PS2) ? ".VAG" :
+                (asset.platform == Platform.GameCube && asset.game != Game.Incredibles) ? ".DSP" :
+                (asset.platform == Platform.Xbox) ? ".WAV" :
+                (asset.platform == Platform.PS2) ? ".VAG" :
                 ""),
                 Filter = "All files|*"
             };

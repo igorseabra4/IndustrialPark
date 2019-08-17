@@ -132,11 +132,11 @@ namespace IndustrialPark
                         textureDictionaryStruct = new TextureDictionaryStruct_0001() { textureCount = 1, unknown = 0 },
                         textureNativeList = new List<TextureNative_0015>() { new TextureNative_0015().FromBytes(File.ReadAllBytes(i)) },
                         textureDictionaryExtension = new Extension_0003()
-                    }, currentTextureVersion(archive.currentGame));
+                    }, currentTextureVersion(archive.game));
                 }
                 else
                 {
-                    asset.Data = CreateRWTXFromBitmap(archive.currentGame, archive.currentPlatform, i, false, false, true, true).data;
+                    asset.Data = CreateRWTXFromBitmap(archive.game, archive.platform, i, false, false, true, true).data;
                 }
 
                 ResetImage();

@@ -72,18 +72,18 @@ namespace IndustrialPark
         {
             get
             {
-                if (currentGame == Game.BFBB)
+                if (game == Game.BFBB)
                     return ReadFloat(0x64 + Offset);
                 return 0;
             }
             set
             {
-                if (currentGame == Game.BFBB)
+                if (game == Game.BFBB)
                     Write(0x64 + Offset, value);
             }
         }
 
-        private int Offset2 => currentGame == Game.Incredibles ? -0x04 : 0x00;
+        private int Offset2 => game == Game.Incredibles ? -0x04 : 0x00;
 
         [Category("Boulder"), TypeConverter(typeof(FloatTypeConverter))]
         public float MaxLinearVelocity
@@ -371,13 +371,13 @@ namespace IndustrialPark
         {
             get
             {
-                if (currentGame == Game.BFBB)
+                if (game == Game.BFBB)
                     return ReadFloat(0x88 + Offset);
                 return 0;
             }
             set
             {
-                if (currentGame == Game.BFBB)
+                if (game == Game.BFBB)
                     Write(0x88 + Offset, value);
             }
         }
