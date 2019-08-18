@@ -105,10 +105,10 @@ namespace IndustrialPark
             if (whiteDefault != null)
             {
                 if (whiteDefault.IsDisposed)
-                    whiteDefault = device.LoadTextureFromFile(Application.StartupPath + "\\Resources\\WhiteDefault.png");
+                    whiteDefault = device.LoadTextureFromFile(Application.StartupPath + "/Resources/WhiteDefault.png");
             }
             else
-                whiteDefault = device.LoadTextureFromFile(Application.StartupPath + "\\Resources\\WhiteDefault.png");
+                whiteDefault = device.LoadTextureFromFile(Application.StartupPath + "/Resources/WhiteDefault.png");
         }
 
         public static SharpMesh Cube { get; private set; }

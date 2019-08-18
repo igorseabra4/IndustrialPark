@@ -640,7 +640,7 @@ namespace IndustrialPark
                     foreach (uint u in CurrentlySelectedAssetIDs())
                         try
                         {
-                            File.WriteAllBytes(saveFileDialog.FileName + "\\" + archive.GetFromAssetID(u).AHDR.ADBG.assetName, archive.GetFromAssetID(u).Data);
+                            File.WriteAllBytes(saveFileDialog.FileName + "/" + archive.GetFromAssetID(u).AHDR.ADBG.assetName, archive.GetFromAssetID(u).Data);
                         }
                         catch (Exception ex)
                         {

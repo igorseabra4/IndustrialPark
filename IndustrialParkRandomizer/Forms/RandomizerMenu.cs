@@ -21,7 +21,7 @@ namespace IndustrialPark.Randomizer
                 if (settings.CheckForUpdatesOnStartup && AutomaticUpdater.UpdateIndustrialPark(out _))
                 {
                     Close();
-                    System.Diagnostics.Process.Start(Application.StartupPath + "\\Randomizer.exe");
+                    System.Diagnostics.Process.Start(Application.StartupPath + "/Randomizer.exe");
                 }
             }
             else

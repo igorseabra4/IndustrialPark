@@ -30,9 +30,9 @@ namespace IndustrialPark
             renderer = new SharpRenderer(renderPanel);
         }
         
-        public static string pathToSettings => Application.StartupPath + "\\ip_settings.json";
+        public static string pathToSettings => Application.StartupPath + "/ip_settings.json";
         private string currentProjectPath;
-        public string userTemplatesFolder => Application.StartupPath + "\\Resources\\UserTemplates\\";
+        public string userTemplatesFolder => Application.StartupPath + "/Resources/UserTemplates/";
 
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -49,7 +49,7 @@ namespace IndustrialPark
                 if (settings.CheckForUpdatesOnStartup && AutomaticUpdater.UpdateIndustrialPark(out _))
                 {
                     Close();
-                    System.Diagnostics.Process.Start(Application.StartupPath + "\\IndustrialPark.exe");
+                    System.Diagnostics.Process.Start(Application.StartupPath + "/IndustrialPark.exe");
                 }
                 
                 string[] args = Environment.GetCommandLineArgs();
@@ -216,7 +216,7 @@ namespace IndustrialPark
             if (AutomaticUpdater.UpdateIndustrialPark(out bool hasChecked))
             {
                 Close();
-                System.Diagnostics.Process.Start(Application.StartupPath + "\\IndustrialPark.exe");
+                System.Diagnostics.Process.Start(Application.StartupPath + "/IndustrialPark.exe");
             }
             else if (hasChecked)
                 MessageBox.Show("No update found.");
