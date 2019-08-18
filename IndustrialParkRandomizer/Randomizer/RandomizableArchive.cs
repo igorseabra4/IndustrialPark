@@ -944,19 +944,9 @@ namespace IndustrialPark.Randomizer
                         throw new Exception("Invalid VilType");
                 }
 
-                string platform = this.platform == Platform.GameCube ? "GameCube" : this.platform == Platform.Xbox ? "Xbox" : "PS2";
-
-                string path = editorFilesFolder + "BattleForBikiniBottom\\" + platform + "\\Enemies\\" + hipFileName;
-
-                if (Directory.Exists(path))
-                {
-                    if (!enemyHipDict.ContainsKey(hipFileName))
-                        enemyHipDict.Add(hipFileName, new HipFile(path));
-
-                    ImportHip(enemyHipDict[hipFileName].DICT, true);
-
-                    imported = true;
-                }
+                ProgImportHip("Enemies", hipFileName);
+                
+                imported = true;
             }
 
             return imported;
@@ -966,16 +956,18 @@ namespace IndustrialPark.Randomizer
 
         public bool ImportNumbers()
         {
-            string platform = this.platform == Platform.GameCube ? "GameCube" : this.platform == Platform.Xbox ? "Xbox" : "PS2";
-
-            string path = editorFilesFolder + "BattleForBikiniBottom\\" + platform + "\\Utility\\numbers.hip";
-
-            if (!enemyHipDict.ContainsKey("numbers.hip"))
-                enemyHipDict.Add("numbers.hip", new HipFile(path));
-
-            ImportHip(enemyHipDict["numbers.hip"].DICT, true);
-
+            ProgImportHip("Utility", "numbers.hip");
             return true;
+        }
+
+        private void ProgImportHip(string folderName, string fileName)
+        {
+            string path = editorFilesFolder + "BattleForBikiniBottom\\" + platform.ToString() + "\\" + folderName + "\\" + fileName;
+
+            if (!enemyHipDict.ContainsKey(fileName))
+                enemyHipDict.Add(fileName, new HipFile(path));
+
+            ImportHip(enemyHipDict[fileName].DICT, true);
         }
 
         private void ShuffleMRKRPositions(int seed, bool noWarps, bool pointers, bool plyrs, bool busStops, bool teleBox, bool taxis)

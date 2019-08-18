@@ -2,7 +2,6 @@
 using System.Linq;
 using System.IO;
 using System.Windows.Forms;
-using static HipHopFile.Functions;
 
 namespace IndustrialPark
 {
@@ -117,7 +116,8 @@ namespace IndustrialPark
 
             DICT.LTOC.LHDRList = DICT.LTOC.LHDRList.OrderBy(f => f.layerType, new LHDRComparer(game)).ToList();
 
-            RecalculateAllMatrices();
+            if (!forceOverwrite)
+                RecalculateAllMatrices();
         }
     }
 }

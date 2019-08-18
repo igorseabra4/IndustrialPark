@@ -1,4 +1,4 @@
 {
-  "version": "preview53",
-  "versionName": "Preview 53:\n* Major code refactoring now allows current game and platform to be archive-specific. This means you should be able to open HIP/HOP archives from multiple games and platforms at the same time in the same Industrial Park instance with no conflict between them.\n* Edit PACK: available from Archive Editor -> Edit. This allows you to edit the PACK section of the HIP archive, which contains the information for the archive's platform, game and date. This means you can edit an existing archive's game and platform; Industrial Park will also convert the format of all assets to the new game/platform's format. The assets which will be converted are limited to the ones supported by the \"Cross-Version Copy\" function (which you can check in the table in the wiki page); all unsupported asset types will simply be left unchanged.\n* Randomizer update: Enemies Allow Any Type and Gates methods are supported for all platforms.\n"
+  "version": "preview53.1",
+  "versionName": "Preview 53.1:\n* Fixes Randomizer breaking almost every level when Enemies_Allow_Any_Type was on.\n"
 }
