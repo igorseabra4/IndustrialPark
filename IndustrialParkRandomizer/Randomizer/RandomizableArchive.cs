@@ -962,7 +962,7 @@ namespace IndustrialPark.Randomizer
 
         private void ProgImportHip(string folderName, string fileName)
         {
-            string path = editorFilesFolder + "BattleForBikiniBottom\\" + platform.ToString() + "\\" + folderName + "\\" + fileName;
+            string path = editorFilesFolder + "BattleForBikiniBottom/" + platform.ToString() + "/" + folderName + "/" + fileName;
 
             if (!enemyHipDict.ContainsKey(fileName))
                 enemyHipDict.Add(fileName, new HipFile(path));

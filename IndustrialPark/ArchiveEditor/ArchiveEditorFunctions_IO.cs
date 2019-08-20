@@ -8,7 +8,7 @@ namespace IndustrialPark
     public partial class ArchiveEditorFunctions
     {
         public static string editorFilesFolder => Application.StartupPath +
-            "\\Resources\\IndustrialPark-EditorFiles\\IndustrialPark-EditorFiles-master\\";
+            "/Resources/IndustrialPark-EditorFiles/IndustrialPark-EditorFiles-master/";
 
         public void ExportHip(string fileName)
         {

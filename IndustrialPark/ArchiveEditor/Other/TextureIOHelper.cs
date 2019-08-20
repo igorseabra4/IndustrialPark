@@ -13,9 +13,9 @@ namespace IndustrialPark
 {
     public static class TextureIOHelper
     {
-        public static string txdGenFolder => Application.StartupPath + "\\Resources\\txdgen_1.0\\";
-        public static string tempGcTxdsDir => txdGenFolder + "Temp\\txds_gc\\";
-        public static string tempPcTxdsDir => txdGenFolder + "Temp\\txds_pc\\";
+        public static string txdGenFolder => Application.StartupPath + "/Resources/txdgen_1.0/";
+        public static string tempGcTxdsDir => txdGenFolder + "Temp/txds_gc/";
+        public static string tempPcTxdsDir => txdGenFolder + "Temp/txds_pc/";
         public static string pathToGcTXD => tempGcTxdsDir + "temp.txd";
         public static string pathToPcTXD => tempPcTxdsDir + "temp.txd";
 
