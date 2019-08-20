@@ -81,7 +81,7 @@ namespace IndustrialPark
                         var bitmaps = archive.GetTexturesAsBitmaps(asset.Textures);
                         ReadFileMethods.treatStuffAsByteArray = false;
                         foreach (string textureName in bitmaps.Keys)
-                            bitmaps[textureName].Save(folderName + "\\" + textureName + ".png", System.Drawing.Imaging.ImageFormat.Png);
+                            bitmaps[textureName].Save(folderName + "/" + textureName + ".png", System.Drawing.Imaging.ImageFormat.Png);
                     }
                 }
             }

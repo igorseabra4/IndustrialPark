@@ -264,7 +264,7 @@ namespace IndustrialPark.Randomizer
             // Perform things on boot.hip
             if (flags.HasFlag(RandomizerFlags.Music) || settings.bootHipLodtMulti || settings.restoreRobotLaugh)
             {
-                string bootPath = rootDir + "\\boot.hip";
+                string bootPath = rootDir + "/boot.hip";
                 if (File.Exists(bootPath))
                 {
                     var boot = new RandomizableArchive();
@@ -371,7 +371,7 @@ namespace IndustrialPark.Randomizer
                 message += "\n* A warps_log.txt file with the result of the Warps randomizer was saved to your root folder. Don't look at that file, it spoils the fun.";
             }
 
-            File.WriteAllText(rootDir + "\\settings.json", JsonConvert.SerializeObject(this, Formatting.Indented));
+            File.WriteAllText(rootDir + "/settings.json", JsonConvert.SerializeObject(this, Formatting.Indented));
             message += "\n* The settings.json file with the settings used was saved to your root folder.";
 
             MessageBox.Show(message);
@@ -404,12 +404,12 @@ namespace IndustrialPark.Randomizer
             namesForBoot.Remove("S006");
 
             string[] ini;
-            string filePath = rootDir + "\\sb.ini";
+            string filePath = rootDir + "/sb.ini";
             if (File.Exists(filePath))
                 ini = File.ReadAllLines(filePath);
             else
             {
-                filePath = rootDir + "\\sd2.ini";
+                filePath = rootDir + "/sd2.ini";
                 if (File.Exists(filePath))
                     ini = File.ReadAllLines(filePath);
                 else
@@ -456,7 +456,7 @@ namespace IndustrialPark.Randomizer
 
         private void WriteLog(List<(string, string, string)> warpRandomizerOutput)
         {
-            using (StreamWriter streamWriter = new StreamWriter(new FileStream(rootDir + "\\warps_log.txt", FileMode.Create)))
+            using (StreamWriter streamWriter = new StreamWriter(new FileStream(rootDir + "/warps_log.txt", FileMode.Create)))
             {
                 HashSet<string> uniqueNames = new HashSet<string>();
                 foreach (var s in warpRandomizerOutput)

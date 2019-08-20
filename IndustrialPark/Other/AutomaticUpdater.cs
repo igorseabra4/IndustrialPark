@@ -40,12 +40,12 @@ namespace IndustrialPark
                         string updatedIPfileName = "IndustrialPark_" + updatedVersion.version.Replace('p', 'P') + ".zip";
                         string updatedIPURL = "https://github.com/igorseabra4/IndustrialPark/releases/download/" + updatedVersion.version + "/" + updatedIPfileName;
 
-                        string updatedIPfilePath = Application.StartupPath + "\\Resources\\" + updatedIPfileName;
+                        string updatedIPfilePath = Application.StartupPath + "/Resources/" + updatedIPfileName;
 
                         using (var webClient = new WebClient())
                             webClient.DownloadFile(updatedIPURL, updatedIPfilePath);
 
-                        string oldIPdestinationPath = Application.StartupPath + "\\IndustrialPark_old\\";
+                        string oldIPdestinationPath = Application.StartupPath + "/IndustrialPark_old/";
 
                         if (!Directory.Exists(oldIPdestinationPath))
                             Directory.CreateDirectory(oldIPdestinationPath);
@@ -53,30 +53,30 @@ namespace IndustrialPark
                         string[] directoryNames = new string[]
                         {
                                 "",
-                                "\\Resources",
-                                "\\Resources\\importvcolorobj",
-                                "\\Resources\\Models",
-                                "\\Resources\\SharpDX",
-                                "\\Resources\\txdgen_1.0",
-                                "\\Resources\\txdgen_1.0",
-                                "\\Resources\\txdgen_1.0\\LICENSES",
-                                "\\Resources\\txdgen_1.0\\LICENSES\\eirrepo",
-                                "\\Resources\\txdgen_1.0\\LICENSES\\libimagequant",
-                                "\\Resources\\txdgen_1.0\\LICENSES\\libjpeg",
-                                "\\Resources\\txdgen_1.0\\LICENSES\\libpng",
-                                "\\Resources\\txdgen_1.0\\LICENSES\\libsquish",
-                                "\\Resources\\txdgen_1.0\\LICENSES\\lzo-2.08",
-                                "\\Resources\\txdgen_1.0\\LICENSES\\pvrtextool",
-                                "\\Resources\\txdgen_1.0\\LICENSES\\rwtools",
-                                "\\runtimes\\",
-                                "\\runtimes\\linux-x64",
-                                "\\runtimes\\linux-x64\\native",
-                                "\\runtimes\\osx-x64",
-                                "\\runtimes\\osx-x64\\native",
-                                "\\runtimes\\win-x64",
-                                "\\runtimes\\win-x64\\native",
-                                "\\runtimes\\win-x86",
-                                "\\runtimes\\win-x86\\native",
+                                "/Resources",
+                                "/Resources/importvcolorobj",
+                                "/Resources/Models",
+                                "/Resources/SharpDX",
+                                "/Resources/txdgen_1.0",
+                                "/Resources/txdgen_1.0",
+                                "/Resources/txdgen_1.0/LICENSES",
+                                "/Resources/txdgen_1.0/LICENSES/eirrepo",
+                                "/Resources/txdgen_1.0/LICENSES/libimagequant",
+                                "/Resources/txdgen_1.0/LICENSES/libjpeg",
+                                "/Resources/txdgen_1.0/LICENSES/libpng",
+                                "/Resources/txdgen_1.0/LICENSES/libsquish",
+                                "/Resources/txdgen_1.0/LICENSES/lzo-2.08",
+                                "/Resources/txdgen_1.0/LICENSES/pvrtextool",
+                                "/Resources/txdgen_1.0/LICENSES/rwtools",
+                                "/runtimes/",
+                                "/runtimes/linux-x64",
+                                "/runtimes/linux-x64/native",
+                                "/runtimes/osx-x64",
+                                "/runtimes/osx-x64/native",
+                                "/runtimes/win-x64",
+                                "/runtimes/win-x64/native",
+                                "/runtimes/win-x86",
+                                "/runtimes/win-x86/native",
                         };
 
                         foreach (string localDirPath in directoryNames)
@@ -90,7 +90,7 @@ namespace IndustrialPark
                                     if (Path.GetExtension(previousFile).ToLower().Equals(".zip") || Path.GetExtension(previousFile).ToLower().Equals(".json"))
                                         continue;
 
-                                    string newFilePath = oldIPdestinationPath + localDirPath + "\\" + Path.GetFileName(previousFile);
+                                    string newFilePath = oldIPdestinationPath + localDirPath + "/" + Path.GetFileName(previousFile);
 
                                     if (File.Exists(newFilePath))
                                         File.Delete(newFilePath);
@@ -120,8 +120,8 @@ namespace IndustrialPark
             try
             {
                 string editorFilesZipURL = "https://github.com/igorseabra4/IndustrialPark-EditorFiles/archive/master.zip";
-                string destZipPath = Application.StartupPath + "\\Resources\\IndustrialPark-EditorFiles.zip";
-                string editorFilesFolder = Application.StartupPath + "\\Resources\\IndustrialPark-EditorFiles\\";
+                string destZipPath = Application.StartupPath + "/Resources/IndustrialPark-EditorFiles.zip";
+                string editorFilesFolder = Application.StartupPath + "/Resources/IndustrialPark-EditorFiles/";
 
                 MessageBox.Show("Will begin download of IndustrialPark-EditorFiles from GitHub to " + editorFilesFolder + ". Please wait as this might take a while. Any previously existing files in the folder will be overwritten.");
 
