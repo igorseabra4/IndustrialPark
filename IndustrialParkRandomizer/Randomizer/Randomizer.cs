@@ -213,6 +213,9 @@ namespace IndustrialPark.Randomizer
                                 settings.setChumSpats = false;
                             }
 
+                            if (settings.restoreRobotLaugh && (hip.game != Game.BFBB || hip.platform != Platform.GameCube))
+                                settings.restoreRobotLaugh = false;
+
                             platformVerified = true;
                         }
 
@@ -259,7 +262,7 @@ namespace IndustrialPark.Randomizer
             }
 
             // Perform things on boot.hip
-            if (flags.HasFlag(RandomizerFlags.Music) || settings.bootHipLodtMulti)
+            if (flags.HasFlag(RandomizerFlags.Music) || settings.bootHipLodtMulti || settings.restoreRobotLaugh)
             {
                 string bootPath = rootDir + "\\boot.hip";
                 if (File.Exists(bootPath))
@@ -276,9 +279,12 @@ namespace IndustrialPark.Randomizer
                         else
                             shouldSave |= boot.ShuffleSounds(seed, false, true);
                     }
-
+                    
                     if (settings.bootHipLodtMulti)
                         shouldSave |= boot.MultiplyLODT(settings.lodtValue);
+
+                    if (settings.restoreRobotLaugh)
+                        shouldSave |= boot.RestoreRobotLaugh();
 
                     if (shouldSave)
                         boot.Save();

@@ -960,6 +960,12 @@ namespace IndustrialPark.Randomizer
             return true;
         }
 
+        public bool RestoreRobotLaugh()
+        {
+            ProgImportHip("Utility", "robot_laugh.HIP");
+            return true;
+        }
+
         private void ProgImportHip(string folderName, string fileName)
         {
             string path = editorFilesFolder + "BattleForBikiniBottom\\" + platform.ToString() + "\\" + folderName + "\\" + fileName;

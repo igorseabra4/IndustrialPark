@@ -221,6 +221,9 @@ namespace IndustrialPark
         [Category("Other"), DisplayName("Strong Colors"), Description("Colors randomizer results in very saturated colors")]
         public bool strongColors { get; set; } = false;
 
+        [Category("Other"), DisplayName("Restore Robot Laugh"), Description("Restores robot laugh sound, which is not present normally in the GameCube version of the game.")]
+        public bool restoreRobotLaugh { get; set; } = true;
+
         public void SetAllFalse()
         {
             cheatInvincible = false;
@@ -238,6 +241,7 @@ namespace IndustrialPark
             bootHipLodtMulti = false;
             brightColors = false;
             strongColors = false;
+            restoreRobotLaugh = false;
         }
     }
 
