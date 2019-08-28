@@ -136,13 +136,13 @@ namespace IndustrialPark
             DisplayName("Minimum"),
             Description("A random value between min. and max. is chosen to multiply the settings for texture animations."),
             TypeConverter(typeof(FloatTypeConverter))]
-        public float surfMin { get; set; } = -3f;
+        public float surfMin { get; set; } = -2f;
 
         [Category("Texture Animation Multiplier"),
             DisplayName("Maximum"),
             Description("A random value between min. and max. is chosen to multiply the settings for texture animations."),
             TypeConverter(typeof(FloatTypeConverter))]
-        public float surfMax { get; set; } = 3f;
+        public float surfMax { get; set; } = 2f;
 
         [Category("Spatula Gates"),
             DisplayName("Minimum"),
@@ -153,9 +153,11 @@ namespace IndustrialPark
             DisplayName("Maximum"),
             Description("A random value between min. and max. is chosen for each spatula toll gate.")]
         public int spatReqMax { get; set; } = 70;
-        
+
         [Category("INI Mods (Cheats)"), DisplayName("Invincible")]
         public bool cheatInvincible { get; set; } = false;
+        [Category("INI Mods (Cheats)"), DisplayName("BFBB: Player Switch")]
+        public bool cheatPlayerSwitch { get; set; } = false;
         [Category("INI Mods (Cheats)"), DisplayName("BFBB: Bubble Bowl")]
         public bool cheatBubbleBowl { get; set; } = false;
         [Category("INI Mods (Cheats)"), DisplayName("BFBB: Cruise Bubble")]
@@ -193,9 +195,18 @@ namespace IndustrialPark
             Description("If true, all menu warps will lead to the hub.")]
         public bool allMenuWarpsHB01 { get; set; } = true;
 
+        [Category("Other"), DisplayName("Open Teleport Boxes")]
+        public bool openTeleportBoxes { get; set; } = false;
+
+        [Category("Other"), DisplayName("Chars on Any Level"), Description("Allows playing as Patrick and Sandy on every level.")]
+        public bool charsOnAnyLevel { get; set; } = false;
+
         [Category("Other"), DisplayName("Disable Cutscenes")]
         public bool disableCutscenes { get; set; } = true;
 
+        [Category("Other"), DisplayName("Disable Flythroughs")]
+        public bool disableFlythroughs { get; set; } = true;
+        
         [Category("Other"),
             DisplayName("Spatulas for Chum Bucket Lab"),
             Description("If true, this value will override the amount of spatulas needed for the final boss.")]
@@ -227,6 +238,7 @@ namespace IndustrialPark
         public void SetAllFalse()
         {
             cheatInvincible = false;
+            cheatPlayerSwitch = false;
             cheatBubbleBowl = false;
             cheatCruiseBubble = false;
             cheatSpring = false;
@@ -242,6 +254,9 @@ namespace IndustrialPark
             brightColors = false;
             strongColors = false;
             restoreRobotLaugh = false;
+            openTeleportBoxes = false;
+            disableFlythroughs = false;
+            charsOnAnyLevel = false;
         }
     }
 

@@ -20,24 +20,22 @@
         Disco_Floors = 1 << 15,
         Colors = 1 << 16,
         Texture_Animations = 1 << 17,
-        Music = 1 << 18,
-        Cameras = 1 << 19,
-        Textures = 1 << 20,
-        Sounds = 1 << 21,
+        Player_Characters = 1 << 18,
+        Music = 1 << 19,
+        Cameras = 1 << 20,
+        Textures = 1 << 21,
+        Sounds = 1 << 22,
     }
 
     public enum RandomizerFlags2
     {
-        // Not recommended
-        Level_Files              = 1 << 0,
-        Pointer_Positions        = 1 << 1,
-        Teleport_Box_Positions   = 1 << 2,
-        Taxi_Positions           = 1 << 3,
-        Bus_Stop_Positions       = 1 << 4,
-        Scale_Of_Things          = 1 << 5,
-        Button_Events            = 1 << 6,
-        Mix_SND_SNDS             = 1 << 7,
-        SIMP_Positions           = 1 << 8,
-        Models                   = 1 << 9
+        Pointer_Positions        = 1 << 0,
+        Teleport_Box_Positions   = 1 << 1,
+        Taxi_Positions           = 1 << 2,
+        Bus_Stop_Positions       = 1 << 3,
+        Scale_Of_Things          = 1 << 4,
+        Buttons                  = 1 << 5,
+        Mix_SND_SNDS             = 1 << 6,
+        Level_Files              = 1 << 7
     }
 }

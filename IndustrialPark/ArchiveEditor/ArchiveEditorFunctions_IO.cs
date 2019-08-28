@@ -93,7 +93,7 @@ namespace IndustrialPark
 
                     if (result == DialogResult.Yes)
                     {
-                        RemoveAsset(AHDR.assetID);
+                        RemoveAsset(AHDR.assetID, false);
                         DICT.ATOC.AHDRList.Add(AHDR);
                         AddAssetToDictionary(AHDR, forceOverwrite, forceOverwrite);
                     }

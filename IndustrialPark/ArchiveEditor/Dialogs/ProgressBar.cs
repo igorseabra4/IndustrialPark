@@ -12,10 +12,13 @@ namespace IndustrialPark
 {
     public partial class ProgressBar : Form
     {
-        public ProgressBar(string text)
+        private string Text2;
+
+        public ProgressBar(string text, string text2 = "Asset")
         {
             InitializeComponent();
             Text = text;
+            Text2 = text2;
         }
 
         public void SetProgressBar(int min, int max, int step)
@@ -29,9 +32,14 @@ namespace IndustrialPark
         public void PerformStep()
         {
             progressBar1.PerformStep();
-            labelLoading.Text = $"Asset {progressBar1.Value}/{progressBar1.Maximum}";
+            labelLoading.Text = $"{Text2} {progressBar1.Value}/{progressBar1.Maximum}";
             if (progressBar1.Value >= progressBar1.Maximum)
                 Close();
+        }
+
+        public System.Windows.Forms.ProgressBar GetProgressBar()
+        {
+            return progressBar1;
         }
     }
 }

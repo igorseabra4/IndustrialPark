@@ -9,16 +9,28 @@ namespace IndustrialPark.Randomizer
     public partial class RandomizerMenu : Form
     {
         private Randomizer randomizer;
+        private string backupDir;
+        private string pathToSettings => Application.StartupPath + "/randomizer_settings.json";
 
         public RandomizerMenu()
         {
             InitializeComponent();
 
-            if (File.Exists(MainForm.pathToSettings))
+            string rootDir = null;
+            bool isDir = false;
+            
+            if (File.Exists(pathToSettings))
             {
-                IPSettings settings = JsonConvert.DeserializeObject<IPSettings>(File.ReadAllText(MainForm.pathToSettings));
+                Randomizer_JSON_Settings settings = JsonConvert.DeserializeObject<Randomizer_JSON_Settings>(File.ReadAllText(pathToSettings));
+                backupDir = settings.backupDir;
+                useBackupDirectoryToolStripMenuItem.Checked = !string.IsNullOrEmpty(settings.backupDir);
+                checkForUpdatesOnStartupToolStripMenuItem.Checked = settings.checkForUpdatesOnStartup;
 
-                if (settings.CheckForUpdatesOnStartup && AutomaticUpdater.UpdateIndustrialPark(out _))
+                if (!string.IsNullOrEmpty(settings.rootDir))
+                    rootDir = settings.rootDir;
+                isDir = settings.isDir;
+
+                if (settings.checkForUpdatesOnStartup && AutomaticUpdater.UpdateIndustrialPark(out _))
                 {
                     Close();
                     System.Diagnostics.Process.Start(Application.StartupPath + "/Randomizer.exe");
@@ -28,40 +40,74 @@ namespace IndustrialPark.Randomizer
             {
                 MessageBox.Show("It appears this is your first time using Industrial Park's Randomizer.\nPlease consult the documentation on the BFBB Modding Wiki to understand how to use the tool if you haven't already.");
 
-                File.WriteAllText(MainForm.pathToSettings, JsonConvert.SerializeObject(new IPSettings
-                {
-                    AutosaveOnClose = true,
-                    AutoloadOnStartup = true,
-                    LastProjectPath = null,
-                    CheckForUpdatesOnStartup = true
-                }, Formatting.Indented));
+                checkForUpdatesOnStartupToolStripMenuItem.Checked = true;
+
+                File.WriteAllText(pathToSettings, JsonConvert.SerializeObject(new Randomizer_JSON_Settings(), Formatting.Indented));
             }
             
-            randomizer = new Randomizer();
+            randomizer = new Randomizer(rootDir, isDir);
 
             textBoxSeed.Text = new Random().Next().ToString();
 
             UpdateInterfaceFromRandomizer();
         }
 
-        private void buttonChooseRoot_Click(object sender, EventArgs e)
+        private void RandomizerMenu_FormClosing(object sender, FormClosingEventArgs e)
         {
-            CommonOpenFileDialog openFile = new CommonOpenFileDialog() { IsFolderPicker = true };
-            if (openFile.ShowDialog() == CommonFileDialogResult.Ok)
+            File.WriteAllText(pathToSettings, JsonConvert.SerializeObject(new Randomizer_JSON_Settings
             {
-                randomizer.SetRootDir(openFile.FileName);
-                UpdateInterfaceFromRandomizer();
-            }
+                checkForUpdatesOnStartup = checkForUpdatesOnStartupToolStripMenuItem.Checked,
+                backupDir = backupDir,
+                rootDir = randomizer.rootDir,
+                isDir = randomizer.isDir
+            }, Formatting.Indented));
         }
 
-        private void ButtonChooseFile_Click(object sender, EventArgs e)
+        private void ChooseBackupDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFile = new OpenFileDialog();
-            if (openFile.ShowDialog() == DialogResult.OK)
+            using (CommonOpenFileDialog openFile = new CommonOpenFileDialog() { Title = "Please choose your backup files directory.", IsFolderPicker = true })
+                if (openFile.ShowDialog() == CommonFileDialogResult.Ok)
+                {
+                    backupDir = openFile.FileName;
+                    useBackupDirectoryToolStripMenuItem.Checked = true;
+                    UpdateInterfaceFromRandomizer();
+                }
+        }
+
+        private void UseBackupDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            useBackupDirectoryToolStripMenuItem.Checked = !useBackupDirectoryToolStripMenuItem.Checked;
+            if (useBackupDirectoryToolStripMenuItem.Checked)
             {
-                randomizer.SetFile(openFile.FileName);
-                UpdateInterfaceFromRandomizer();
+                chooseBackupDirectoryToolStripMenuItem.Enabled = true;
+                ChooseBackupDirectoryToolStripMenuItem_Click(null, null);
             }
+            else
+            {
+                chooseBackupDirectoryToolStripMenuItem.Enabled = false;
+                backupDir = null;
+            }
+            UpdateInterfaceFromRandomizer();
+        }
+
+        private void ChooseRootDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (CommonOpenFileDialog openFile = new CommonOpenFileDialog() { Title = "Please choose your game root (files) directory.", IsFolderPicker = true })
+                if (openFile.ShowDialog() == CommonFileDialogResult.Ok)
+                {
+                    randomizer.SetRootDir(openFile.FileName);
+                    UpdateInterfaceFromRandomizer();
+                }
+        }
+
+        private void ChooseSingleFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog openFile = new OpenFileDialog())
+                if (openFile.ShowDialog() == DialogResult.OK)
+                {
+                    randomizer.SetFile(openFile.FileName);
+                    UpdateInterfaceFromRandomizer();
+                }
         }
 
         private void ButtonRandomSeed_Click(object sender, EventArgs e)
@@ -81,7 +127,10 @@ namespace IndustrialPark.Randomizer
                 
         private void buttonPerform_Click(object sender, EventArgs e)
         {
-            randomizer.Perform(progressBar1);
+            ProgressBar progressBar = new ProgressBar("Performing Randomizer Operation", "Step");
+            progressBar.Show();
+            randomizer.Perform(backupDir, progressBar.GetProgressBar());
+            progressBar.Close();
             UpdateInterfaceFromRandomizer();
         }
         
@@ -98,37 +147,35 @@ namespace IndustrialPark.Randomizer
             UpdateInterfaceFromRandomizer();
         }
 
-        private void ButtonSaveJson_Click(object sender, EventArgs e)
+        private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SaveFileDialog saveFile = new SaveFileDialog()
+            using (SaveFileDialog saveFile = new SaveFileDialog()
             {
                 Filter = "JSON Files|*.json|All files|*.*"
-            };
-            if (saveFile.ShowDialog() == DialogResult.OK)
-                File.WriteAllText(saveFile.FileName, JsonConvert.SerializeObject(randomizer, Formatting.Indented));
+            })
+                if (saveFile.ShowDialog() == DialogResult.OK)
+                    File.WriteAllText(saveFile.FileName, JsonConvert.SerializeObject(randomizer, Formatting.Indented));
         }
 
-        private void ButtonLoadJson_Click(object sender, EventArgs e)
+        private void LoadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFile = new OpenFileDialog()
+            using (OpenFileDialog openFile = new OpenFileDialog()
             {
                 Filter = "JSON Files|*.json|All files|*.*"
-            };
-            if (openFile.ShowDialog() == DialogResult.OK)
-            {
-                Randomizer settings = JsonConvert.DeserializeObject<Randomizer>(File.ReadAllText(openFile.FileName));
+            })
+                if (openFile.ShowDialog() == DialogResult.OK)
+                {
+                    Randomizer settings = JsonConvert.DeserializeObject<Randomizer>(File.ReadAllText(openFile.FileName));
 
-                if (settings.version != new Randomizer().version)
-                    MessageBox.Show("Note: randomizer settings file was made with an earlier or different version of Industrial Park. " +
-                        "The program will attempt to open it, but doesn't guarantee the randomization result will be the same. " +
-                        "If you need the exact same result, please use the same Industrial Park version (preferably the latest one) and a settings file saved by it.");
+                    if (settings.version != new Randomizer().version)
+                        MessageBox.Show("Note: randomizer settings file was made with an earlier or different version of Industrial Park. " +
+                            "The program will attempt to open it, but doesn't guarantee the randomization result will be the same. " +
+                            "If you need the exact same result, please use the same Industrial Park version (preferably the latest one) and a settings file saved by it.");
 
-                randomizer = settings;
+                    randomizer = settings;
 
-                UpdateInterfaceFromRandomizer();
-
-                labelRandoJson.Text = "Loaded settings: " + openFile.FileName;
-            }
+                    UpdateInterfaceFromRandomizer();
+                }
         }
 
         private bool programIsChangingStuff = false;
@@ -136,6 +183,11 @@ namespace IndustrialPark.Randomizer
         private void UpdateInterfaceFromRandomizer()
         {
             programIsChangingStuff = true;
+
+            if (string.IsNullOrEmpty(backupDir))
+                labelBackupDir.Text = "Backup Directory: None";
+            else
+                labelBackupDir.Text = "Backup Directory: " + backupDir;
 
             if (!string.IsNullOrEmpty(randomizer.rootDir))
             {
@@ -160,13 +212,13 @@ namespace IndustrialPark.Randomizer
             checkedListBoxNotRecommended.Items.Clear();
 
             int k = 0;
-            for (RandomizerFlags i = RandomizerFlags.Warps; i <= RandomizerFlags.Sounds; i = (RandomizerFlags)((int)i * 2))
+            foreach (RandomizerFlags i in Enum.GetValues(typeof(RandomizerFlags)))
             {
                 checkedListBoxMethods.Items.Add(i);
                 checkedListBoxMethods.SetItemChecked(k++, randomizer.flags.Contains(i));
             }
             k = 0;
-            for (RandomizerFlags2 i = RandomizerFlags2.Level_Files; i <= RandomizerFlags2.Models; i = (RandomizerFlags2)((int)i * 2))
+            foreach (RandomizerFlags2 i in Enum.GetValues(typeof(RandomizerFlags2)))
             {
                 checkedListBoxNotRecommended.Items.Add(i);
                 checkedListBoxNotRecommended.SetItemChecked(k++, randomizer.flags2.Contains(i));
@@ -197,6 +249,11 @@ namespace IndustrialPark.Randomizer
                 else
                     randomizer.flags2.Remove((RandomizerFlags2)checkedListBoxNotRecommended.Items[e.Index]);
             }
+        }
+
+        private void CheckForUpdatesOnStartupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            checkForUpdatesOnStartupToolStripMenuItem.Checked = !checkForUpdatesOnStartupToolStripMenuItem.Checked;
         }
     }
 }

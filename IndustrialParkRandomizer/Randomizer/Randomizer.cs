@@ -8,11 +8,18 @@ using static HipHopFile.Functions;
 
 namespace IndustrialPark.Randomizer
 {
+    public enum RandomizerActMode
+    {
+        Backup,
+        Directory,
+        SingleFile
+    }
+
     public class Randomizer
     {
-        public int version = 51;
+        public int version = 52;
         public string rootDir;
-        public bool isDir = true;
+        public bool isDir;
         public string seedText;
         public uint seed;
         public HashSet<RandomizerFlags> flags;
@@ -20,6 +27,13 @@ namespace IndustrialPark.Randomizer
         public RandomizerSettings settings;
 
         public Randomizer()
+        {
+            flags = new HashSet<RandomizerFlags>();
+            flags2 = new HashSet<RandomizerFlags2>();
+            settings = new RandomizerSettings();
+        }
+
+        public Randomizer(string rootDir, bool isDir) : this()
         {
             flags = new HashSet<RandomizerFlags>() {
                 RandomizerFlags.Warps,
@@ -43,11 +57,10 @@ namespace IndustrialPark.Randomizer
                 RandomizerFlags.Colors
             };
 
-            flags2 = new HashSet<RandomizerFlags2>();
-            
-            settings = new RandomizerSettings();
+            this.rootDir = rootDir;
+            this.isDir = isDir;
         }
-
+        
         public void SetRootDir(string fileName)
         {
             rootDir = fileName;
@@ -81,13 +94,13 @@ namespace IndustrialPark.Randomizer
             seedText = seed.ToString();
         }
         
-        public void Perform(System.Windows.Forms.ProgressBar progressBar)
+        public void Perform(string backupDir, System.Windows.Forms.ProgressBar progressBar)
         {
             int seed = (int)this.seed;
             progressBar.Value = 0;
             
             if (isDir)
-                PerformDirRandomizer(progressBar);
+                PerformDirRandomizer(backupDir, progressBar);
             else
             {
                 RandomizerFlags flags = 0;
@@ -136,8 +149,14 @@ namespace IndustrialPark.Randomizer
             progressBar.Value = 0;
         }
 
-        private void PerformDirRandomizer(System.Windows.Forms.ProgressBar progressBar)
+        private void PerformDirRandomizer(string backupDir, System.Windows.Forms.ProgressBar progressBar)
         {
+            if (!File.Exists(Path.Combine(rootDir, "boot.hip")) && Directory.Exists(Path.Combine(rootDir, "files")) && File.Exists(Path.Combine(rootDir, "files", "boot.hip")))
+            {
+                MessageBox.Show("You're supposed to select the 'files' folder, not the folder which contains it. I'll fix that for you.");
+                rootDir = Path.Combine(rootDir, "files");
+            }
+
             RandomizerFlags flags = 0;
             foreach (RandomizerFlags f in this.flags)
                 flags |= f;
@@ -150,12 +169,24 @@ namespace IndustrialPark.Randomizer
             List<(RandomizableArchive, RandomizableArchive)> levelPairs = new List<(RandomizableArchive, RandomizableArchive)>(); // HIP/HOP file pairs
             List<(string, string)> levelPathPairs = new List<(string, string)>(); // HIP/HOP path pairs
 
-            List<string> folderNames = new List<string>() { rootDir };
-            foreach (string dir in Directory.GetDirectories(rootDir))
-                folderNames.Add(dir);
+            string firstDir = string.IsNullOrEmpty(backupDir) ? rootDir : backupDir;
+            List<string> hipPaths = new List<string>();
+            foreach (string hipPath in Directory.GetFiles(firstDir))
+            {
+                if (Path.GetExtension(hipPath).ToLower() != ".hip" || FileInFirstBox(hipPath))
+                    continue;
+                hipPaths.Add(hipPath);
+            }
+            foreach (string dir in Directory.GetDirectories(firstDir))
+                foreach (string hipPath in Directory.GetFiles(dir))
+                {
+                    if (Path.GetExtension(hipPath).ToLower() != ".hip" || FileInFirstBox(hipPath))
+                        continue;
+                    hipPaths.Add(hipPath);
+                }
 
             progressBar.Minimum = 0;
-            progressBar.Maximum = 200;
+            progressBar.Maximum = hipPaths.Count * 2;
             progressBar.Step = 1;
 
             List<string> warpNames = new List<string>(); // Names of all warps in the game for the Warps randomizer
@@ -169,87 +200,89 @@ namespace IndustrialPark.Randomizer
             toSkip.AddRange(settings.skipFilesWarps);
 
             bool platformVerified = false; // Not all game/plaftorm combinations support all methods
-
+            
             // This goes through each file in the game, loads them into memory, and also gets the warp names
-            foreach (string dir in folderNames)
-                foreach (string hipPath in Directory.GetFiles(dir))
-                    if (Path.GetExtension(hipPath).ToLower() == ".hip")
+                foreach (string hipPath in hipPaths)
+            {
+                RandomizableArchive hip = new RandomizableArchive();
+                hip.OpenFile(hipPath, false, scoobyPlatform, true);
+
+                // Verifies if game/platform combination is ok, also checks for EditorFiles in case it needs those
+                if (!platformVerified)
+                {
+                    scoobyPlatform = hip.platform;
+                    bool disableStuff = false;
+                    if (hip.game != Game.BFBB || hip.platform == Platform.PS2)
                     {
-                        if (FileInFirstBox(hipPath))
-                            continue;
-
-                        RandomizableArchive hip = new RandomizableArchive();
-                        hip.OpenFile(hipPath, false, scoobyPlatform, true);
-
-                        if (scoobyPlatform == Platform.Unknown)
-                            scoobyPlatform = hip.platform;
-
-                        // Verifies if game/platform combination is ok, also checks for EditorFiles in case it needs those
-                        if (!platformVerified)
-                        {
-                            bool disableStuff = false;
-                            if (hip.game != Game.BFBB)
-                            {
-                                MessageBox.Show("Enemies_Allow_Any_Type, Shiny_Object_Gates and Spatula_Gates are only supported for Battle For Bikini Bottom. They will be disabled.");
-                                disableStuff = true;
-                            }
-                            else if (!Directory.Exists(ArchiveEditorFunctions.editorFilesFolder))
-                            {
-                                DialogResult dialogResult = MessageBox.Show("The IndustrialPark-EditorFiles folder has not been found under Resources. You must download it first. Do you wish to download it?", "Note", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-
-                                if (dialogResult == DialogResult.Yes)
-                                    AutomaticUpdater.DownloadEditorFiles();
-                                else
-                                    disableStuff = true;
-                            }
-                            else
-                                AutomaticUpdater.VerifyEditorFiles();
-
-                            if (disableStuff)
-                            {
-                                this.flags.Remove(RandomizerFlags.Enemies_Allow_Any_Type);
-                                this.flags.Remove(RandomizerFlags.Shiny_Object_Gates);
-                                this.flags.Remove(RandomizerFlags.Spatula_Gates);
-                                settings.setChumSpats = false;
-                            }
-
-                            if (settings.restoreRobotLaugh && (hip.game != Game.BFBB || hip.platform != Platform.GameCube))
-                                settings.restoreRobotLaugh = false;
-
-                            platformVerified = true;
-                        }
-
-                        if (flags.HasFlag(RandomizerFlags.Warps) && !FileInSecondBox(hipPath))
-                            hip.GetWarpNames(ref warpNames, toSkip);
-
-                        RandomizableArchive hop = null;
-                        string hopPath = Path.ChangeExtension(hipPath, ".HOP");
-
-                        if (File.Exists(hopPath))
-                        {
-                            hop = new RandomizableArchive();
-                            hop.OpenFile(hopPath, false, scoobyPlatform, true);
-
-                            levelPairs.Add((hip, hop));
-
-                            if (!FileInSecondBox(hipPath))
-                                levelPathPairs.Add((hipPath, hopPath));
-                        }
-                        else
-                        {
-                            levelPairs.Add((hip, null));
-
-                            if (!FileInSecondBox(hipPath))
-                                levelPathPairs.Add((hipPath, null));
-                        }
-
-                        string nameForBoot = Path.GetFileNameWithoutExtension(hipPath).ToUpper();
-                        if (settings.bootLevelMode == BootLevelMode.Random && !namesForBoot.Contains(nameForBoot))
-                            namesForBoot.Add(nameForBoot);
-
-                        progressBar.PerformStep();
-
+                        MessageBox.Show("Enemies_Allow_Any_Type, Shiny_Object_Gates and Spatula_Gates are only supported for Battle For Bikini Bottom (GC/Xbox). They will be disabled.");
+                        disableStuff = true;
                     }
+                    else if (!Directory.Exists(ArchiveEditorFunctions.editorFilesFolder))
+                    {
+                        DialogResult dialogResult = MessageBox.Show("The IndustrialPark-EditorFiles folder has not been found under Resources. You must download it first. Do you wish to download it?", "Note", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+                        if (dialogResult == DialogResult.Yes)
+                            AutomaticUpdater.DownloadEditorFiles();
+                        else
+                            disableStuff = true;
+                    }
+                    else
+                        AutomaticUpdater.VerifyEditorFiles();
+
+                    if (flags.HasFlag(RandomizerFlags.Player_Characters))
+                        settings.charsOnAnyLevel = true;
+
+                    if (disableStuff)
+                    {
+                        this.flags.Remove(RandomizerFlags.Enemies_Allow_Any_Type);
+                        this.flags.Remove(RandomizerFlags.Shiny_Object_Gates);
+                        this.flags.Remove(RandomizerFlags.Spatula_Gates);
+                        settings.setChumSpats = false;
+
+                        flags = 0;
+                        foreach (RandomizerFlags f in this.flags)
+                            flags |= f;
+                        flags2 = 0;
+                        foreach (RandomizerFlags2 f in this.flags2)
+                            flags2 |= f;
+                    }
+
+                    if (settings.restoreRobotLaugh && (hip.game != Game.BFBB || hip.platform != Platform.GameCube))
+                        settings.restoreRobotLaugh = false;
+
+                    platformVerified = true;
+                }
+
+                if (flags.HasFlag(RandomizerFlags.Warps) && !FileInSecondBox(hipPath))
+                    hip.GetWarpNames(ref warpNames, toSkip);
+
+                RandomizableArchive hop = null;
+                string hopPath = Path.ChangeExtension(hipPath, ".HOP");
+
+                if (File.Exists(hopPath))
+                {
+                    hop = new RandomizableArchive();
+                    hop.OpenFile(hopPath, false, scoobyPlatform, true);
+
+                    levelPairs.Add((hip, hop));
+
+                    if (!FileInSecondBox(hipPath))
+                        levelPathPairs.Add((hipPath, hopPath));
+                }
+                else
+                {
+                    levelPairs.Add((hip, null));
+
+                    if (!FileInSecondBox(hipPath))
+                        levelPathPairs.Add((hipPath, null));
+                }
+
+                string nameForBoot = Path.GetFileNameWithoutExtension(hipPath).ToUpper();
+                if (settings.bootLevelMode == BootLevelMode.Random && !namesForBoot.Contains(nameForBoot))
+                    namesForBoot.Add(nameForBoot);
+
+                progressBar.PerformStep();
+            }
 
             HashSet<string> unique = new HashSet<string>();
             if (flags.HasFlag(RandomizerFlags.Warps))
@@ -261,10 +294,12 @@ namespace IndustrialPark.Randomizer
                 warpNames.AddRange(unique);
             }
 
+            RandomizableArchive.enemyHipDict = new Dictionary<string, HipFile>();
+
             // Perform things on boot.hip
-            if (flags.HasFlag(RandomizerFlags.Music) || settings.bootHipLodtMulti || settings.restoreRobotLaugh)
+            if (flags.HasFlag(RandomizerFlags.Music) || settings.bootHipLodtMulti || settings.charsOnAnyLevel)
             {
-                string bootPath = rootDir + "/boot.hip";
+                string bootPath = (string.IsNullOrEmpty(backupDir) ? rootDir : backupDir) + "/boot.hip";
                 if (File.Exists(bootPath))
                 {
                     var boot = new RandomizableArchive();
@@ -279,15 +314,42 @@ namespace IndustrialPark.Randomizer
                         else
                             shouldSave |= boot.ShuffleSounds(seed, false, true);
                     }
-                    
+
                     if (settings.bootHipLodtMulti)
                         shouldSave |= boot.MultiplyLODT(settings.lodtValue);
 
-                    if (settings.restoreRobotLaugh)
-                        shouldSave |= boot.RestoreRobotLaugh();
+                    if (settings.charsOnAnyLevel)
+                    {
+                        boot.ProgImportHip("Utility", "patrick.hip");
+                        boot.ProgImportHip("Utility", "sandy.hip");
+                        shouldSave = true;
+                    }
 
                     if (shouldSave)
-                        boot.Save();
+                    {
+                        if (string.IsNullOrEmpty(backupDir))
+                            boot.Save();
+                        else
+                            boot.Save(boot.currentlyOpenFilePath.Replace(backupDir, rootDir));
+                    }
+                }
+            }
+
+            if (settings.restoreRobotLaugh)
+            {
+                string mnu5path = (string.IsNullOrEmpty(backupDir) ? rootDir : backupDir) + "/mn/mnu5.hip";
+                if (File.Exists(mnu5path))
+                {
+                    var mnu5 = new RandomizableArchive();
+                    mnu5.OpenFile(mnu5path, false, scoobyPlatform, true);
+
+                    if (mnu5.RestoreRobotLaugh())
+                    {
+                        if (string.IsNullOrEmpty(backupDir))
+                            mnu5.Save();
+                        else
+                            mnu5.Save(mnu5.currentlyOpenFilePath.Replace(backupDir, rootDir));
+                    }
                 }
             }
 
@@ -301,16 +363,18 @@ namespace IndustrialPark.Randomizer
             Random gateRandom = new Random(seed);
             Random warpRandom = new Random(seed);
             Random levelFilesR = new Random(seed);
-
-            RandomizableArchive.enemyHipDict = new Dictionary<string, HipFile>();
-
+            
             for (int i = 0; i < levelPairs.Count; i++)
             {
-                bool item1shuffled =
-                levelPairs[i].Item1.Shuffle(seed, flags, flags2, settings, gateRandom, out bool needToAddNumbers);
+                bool item1shuffled = false;
+
+                if (settings.charsOnAnyLevel)
+                    item1shuffled |= levelPairs[i].Item1.UnimportCharacters();
 
                 if (flags.HasFlag(RandomizerFlags.Warps) && !FileInSecondBox(levelPairs[i].Item1.currentlyOpenFilePath))
-                    levelPairs[i].Item1.SetWarpNames(warpRandom, ref warpNames, toSkip, ref warpRandomizerOutput, unique);
+                    item1shuffled |= levelPairs[i].Item1.SetWarpNames(warpRandom, ref warpNames, toSkip, ref warpRandomizerOutput, unique);
+
+                item1shuffled |= levelPairs[i].Item1.Shuffle(seed, flags, flags2, settings, gateRandom, out bool needToAddNumbers);
 
                 HashSet<VilType> enemyVils = new HashSet<VilType>();
 
@@ -320,8 +384,11 @@ namespace IndustrialPark.Randomizer
                 bool item2shuffled = false;
                 if (levelPairs[i].Item2 != null)
                 {
+                    if (settings.charsOnAnyLevel)
+                        item2shuffled = levelPairs[i].Item2.UnimportCharacters();
+
                     if (flags.HasFlag(RandomizerFlags.Enemies_Allow_Any_Type))
-                        item2shuffled = levelPairs[i].Item2.ImportEnemyTypes(enemyVils);
+                        item2shuffled |= levelPairs[i].Item2.ImportEnemyTypes(enemyVils);
 
                     if (needToAddNumbers)
                         item2shuffled |= levelPairs[i].Item2.ImportNumbers();
@@ -336,8 +403,18 @@ namespace IndustrialPark.Randomizer
 
                     levelPairs[i].Item1.Save(levelPathPairs[newPathIndex].Item1);
 
+                    if (string.IsNullOrEmpty(backupDir))
+                        levelPairs[i].Item1.Save(levelPathPairs[newPathIndex].Item1);
+                    else
+                        levelPairs[i].Item1.Save(levelPathPairs[newPathIndex].Item1.Replace(backupDir, rootDir));
+
                     if (levelPairs[i].Item2 != null)
-                        levelPairs[i].Item2.Save(levelPathPairs[newPathIndex].Item2);
+                    {
+                        if (string.IsNullOrEmpty(backupDir))
+                            levelPairs[i].Item2.Save(levelPathPairs[newPathIndex].Item2);
+                        else
+                            levelPairs[i].Item2.Save(levelPathPairs[newPathIndex].Item2.Replace(backupDir, rootDir));
+                    }
 
                     levelPathPairs.RemoveAt(newPathIndex);
                 }
@@ -345,10 +422,20 @@ namespace IndustrialPark.Randomizer
                 else
                 {
                     if (item1shuffled)
-                        levelPairs[i].Item1.Save();
+                    {
+                        if (string.IsNullOrEmpty(backupDir))
+                            levelPairs[i].Item1.Save();
+                        else
+                            levelPairs[i].Item1.Save(levelPairs[i].Item1.currentlyOpenFilePath.Replace(backupDir, rootDir));
+                    }
 
                     if (item2shuffled)
-                        levelPairs[i].Item2.Save();
+                    {
+                        if (string.IsNullOrEmpty(backupDir))
+                            levelPairs[i].Item2.Save();
+                        else
+                            levelPairs[i].Item2.Save(levelPairs[i].Item2.currentlyOpenFilePath.Replace(backupDir, rootDir));
+                    }
                 }
 
                 levelPairs.RemoveAt(i);
@@ -362,7 +449,7 @@ namespace IndustrialPark.Randomizer
             // if (warpNames.Count != 0)
             //     message += "\n* There was a problem with the warp randomizer. It is likely some warps are broken.";
 
-            if (!ApplyINISettings(namesForBoot, game))
+            if (!ApplyINISettings(backupDir, namesForBoot, game))
                 message += "\n* Unable to find game settings INI, so these were not applied.";
             
             if (warpRandomizerOutput.Count != 0)
@@ -393,7 +480,7 @@ namespace IndustrialPark.Randomizer
             return false;
         }
 
-        private bool ApplyINISettings(List<string> namesForBoot, Game game)
+        private bool ApplyINISettings(string backupDir, List<string> namesForBoot, Game game)
         {
             namesForBoot.Remove("BC05");
             namesForBoot.Remove("GY04");
@@ -404,12 +491,12 @@ namespace IndustrialPark.Randomizer
             namesForBoot.Remove("S006");
 
             string[] ini;
-            string filePath = rootDir + "/sb.ini";
+            string filePath = (string.IsNullOrEmpty(backupDir) ? rootDir : backupDir) + "/sb.ini";
             if (File.Exists(filePath))
                 ini = File.ReadAllLines(filePath);
             else
             {
-                filePath = rootDir + "/sd2.ini";
+                filePath = (string.IsNullOrEmpty(backupDir) ? rootDir : backupDir) + "/sd2.ini";
                 if (File.Exists(filePath))
                     ini = File.ReadAllLines(filePath);
                 else
@@ -435,6 +522,8 @@ namespace IndustrialPark.Randomizer
                     ini[i] = "G.TakeDamage=0";
                 else if (ini[i].StartsWith("TakeDamage") && settings.cheatInvincible)
                     ini[i] = "TakeDamage=0";
+                else if (ini[i].StartsWith("G.CheatPlayerSwitch") && settings.cheatPlayerSwitch)
+                    ini[i] = "G.CheatPlayerSwitch=1";
                 else if (ini[i].StartsWith("G.BubbleBowl") && settings.cheatBubbleBowl)
                     ini[i] = "G.BubbleBowl=1";
                 else if (ini[i].StartsWith("G.CruiseBubble") && settings.cheatCruiseBubble)
@@ -449,7 +538,7 @@ namespace IndustrialPark.Randomizer
                     ini[i] = "eSPECIAL_Umbrella=1";
             }
 
-            File.WriteAllLines(filePath, ini);
+            File.WriteAllLines(string.IsNullOrEmpty(backupDir) ? filePath : filePath.Replace(backupDir, rootDir), ini);
 
             return true;
         }

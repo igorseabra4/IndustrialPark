@@ -15,39 +15,61 @@ namespace IndustrialPark.Randomizer
     {
         public bool Shuffle(int seed, RandomizerFlags flags, RandomizerFlags2 flags2, RandomizerSettings settings, Random gateRandom, out bool needToAddNumbers)
         {
+            if (LevelName == "hb09")
+                return needToAddNumbers = false;
+
             bool shuffled = false;
 
-            if (ShouldShuffle(flags, RandomizerFlags.Textures, AssetType.RWTX))
-            {
-                ShuffleData(seed, AssetType.RWTX);
-                shuffled = true;
-            }
+            Random localRandom = new Random(seed);
+            foreach (Asset a in assetDictionary.Values)
+                if (a is AssetTIMR timr && flags.HasFlag(RandomizerFlags.Timers))
+                {
+                    timr.Time *= localRandom.NextFloat(settings.timerMin, settings.timerMax);
+                    shuffled = true;
+                }
+                else if (a is AssetDSCO dsco && flags.HasFlag(RandomizerFlags.Disco_Floors))
+                {
+                    byte[] bytes = dsco.PatternController;
+                    localRandom.NextBytes(bytes);
+                    dsco.PatternController = bytes;
+                    shuffled = true;
+                }
+                else if (a is AssetSURF surf && flags.HasFlag(RandomizerFlags.Texture_Animations))
+                {
+                    if (surf.UVEffects1_TransSpeed_X == 0)
+                        surf.UVEffects1_TransSpeed_X = localRandom.NextFloat(settings.surfMin, settings.surfMax);
+                    else
+                        surf.UVEffects1_TransSpeed_X *= localRandom.NextFloat(settings.surfMin, settings.surfMax);
 
-            if (ShouldShuffle(flags, RandomizerFlags.Boulder_Settings, AssetType.BOUL))
-            {
-                ShuffleBoulders(seed, settings);
-                shuffled = true;
-            }
+                    if (surf.UVEffects1_TransSpeed_Y == 0)
+                        surf.UVEffects1_TransSpeed_Y = localRandom.NextFloat(settings.surfMin, settings.surfMax);
+                    else
+                        surf.UVEffects1_TransSpeed_Y *= localRandom.NextFloat(settings.surfMin, settings.surfMax);
 
-            if (ShouldShuffle(flags, RandomizerFlags.Sounds, AssetType.SNDI))
-            {
-                ShuffleSounds(seed, flags2.HasFlag(RandomizerFlags2.Mix_SND_SNDS));
-                shuffled = true;
-            }
+                    shuffled = true;
+                }
+                else if (a is AssetFLY fly && settings.disableFlythroughs && fly.Data.Length > 60)
+                {
+                    fly.FLY_Entries = new EntryFLY[] { fly.FLY_Entries[0] };
+                    shuffled = true;
+                }
 
-            if (ShouldShuffle(flags, RandomizerFlags.Pickup_Positions, AssetType.PKUP))
-            {
-                ShufflePKUPPositions(seed);
-                shuffled = true;
-            }
+            if (flags.HasFlag(RandomizerFlags.Textures))
+                shuffled |= ShuffleData(seed, AssetType.RWTX);
 
-            if (ShouldShuffle(flags, RandomizerFlags.MovePoint_Radius, AssetType.MVPT))
-            {
-                ShuffleMVPT(seed, settings);
-                shuffled = true;
-            }
+            if (flags.HasFlag(RandomizerFlags.Boulder_Settings))
+                shuffled |= ShuffleBoulders(seed, settings);
 
-            if (ShouldShuffle(flags, RandomizerFlags.Tiki_Types, AssetType.VIL))
+            if (flags.HasFlag(RandomizerFlags.Sounds))
+                shuffled |= ShuffleSounds(seed, flags2.HasFlag(RandomizerFlags2.Mix_SND_SNDS));
+
+            if (flags.HasFlag(RandomizerFlags.Pickup_Positions))
+                shuffled |= ShufflePKUPPositions(seed);
+
+            if (flags.HasFlag(RandomizerFlags.MovePoint_Radius))
+                shuffled |= ShuffleMVPT(seed, settings);
+
+            if (flags.HasFlag(RandomizerFlags.Tiki_Types) && ContainsAssetWithType(AssetType.VIL))
             {
                 List<VilType> chooseFrom = new List<VilType>();
                 if (settings.WoodenTiki >= 0)
@@ -73,17 +95,17 @@ namespace IndustrialPark.Randomizer
                 for (int i = 0; i < settings.StoneTiki; i++)
                     setTo.Add(VilType.tiki_stone_bind);
 
-                ShuffleVilTypes(seed, chooseFrom, setTo,
-                    flags.HasFlag(RandomizerFlags.Tiki_Models),
-                    flags.HasFlag(RandomizerFlags.Tiki_Allow_Any_Type),
-                    false);
+                if (LevelName == "kf04")
+                    chooseFrom.Remove(VilType.tiki_stone_bind);
 
-                shuffled = true;
+                shuffled |= ShuffleVilTypes(new Random(seed), chooseFrom, setTo,
+                    flags.HasFlag(RandomizerFlags.Tiki_Models),
+                    flags.HasFlag(RandomizerFlags.Tiki_Allow_Any_Type));
             }
 
-            if (ShouldShuffle(flags, RandomizerFlags.Enemy_Types, AssetType.VIL))
+            if (flags.HasFlag(RandomizerFlags.Enemy_Types) && ContainsAssetWithType(AssetType.VIL))
             {
-                List<VilType> chooseFrom = new List<VilType>();
+                List<VilType> chooseFrom = new List<VilType>(16);
                 if (settings.Fodder >= 0)
                     chooseFrom.Add(VilType.robot_0a_fodder_bind);
                 if (settings.Hammer >= 0)
@@ -111,7 +133,7 @@ namespace IndustrialPark.Randomizer
                 if (settings.ChompBot >= 0)
                     chooseFrom.Add(VilType.robot_0a_chomper_bind);
 
-                List<VilType> setTo = new List<VilType>();
+                List<VilType> setTo = new List<VilType>(16);
                 for (int i = 0; i < settings.Fodder; i++)
                     setTo.Add(VilType.robot_0a_fodder_bind);
                 for (int i = 0; i < settings.Hammer; i++)
@@ -138,16 +160,41 @@ namespace IndustrialPark.Randomizer
                     setTo.Add(VilType.robot_0a_bzzt_bind);
                 for (int i = 0; i < settings.ChompBot; i++)
                     setTo.Add(VilType.robot_0a_chomper_bind);
-                
-                ShuffleVilTypes(seed, chooseFrom, setTo, false, flags.HasFlag(RandomizerFlags.Enemies_Allow_Any_Type), true);
 
-                shuffled = true;
+                bool veryRandom = flags.HasFlag(RandomizerFlags.Enemies_Allow_Any_Type);
+                Random r = new Random(seed);
+
+                if (veryRandom && (LevelName == "sm01" || LevelName == "gl01"))
+                {
+                    HashSet<VilType> uniqueSetTo = new HashSet<VilType>();
+                    foreach (VilType v in setTo)
+                        uniqueSetTo.Add(v);
+
+                    while (uniqueSetTo.Count > 9)
+                    {
+                        VilType randomRemove = setTo[r.Next(0, setTo.Count)];
+                        while (setTo.Contains(randomRemove))
+                            setTo.Remove(randomRemove);
+                        uniqueSetTo.Remove(randomRemove);
+                    }
+                }
+
+                if (veryRandom && settings.charsOnAnyLevel)
+                {
+                    var vilTypes = GetVilTypesInLevel(chooseFrom);
+                    VilType randomRemove = setTo[r.Next(0, setTo.Count)];
+                    vilTypes.Remove(randomRemove);
+                    for (int i = 0; i < setTo.Count; i++)
+                        if (!vilTypes.Contains(setTo[i]))
+                            setTo.RemoveAt(i--);
+                }
+                
+                shuffled |= ShuffleVilTypes(r, chooseFrom, setTo, false, veryRandom);
             }
 
-            if (ShouldShuffle(flags, RandomizerFlags.Marker_Positions, AssetType.MRKR)
+            if (flags.HasFlag(RandomizerFlags.Marker_Positions) && ContainsAssetWithType(AssetType.MRKR)
                 && !new string[] { "hb02", "b101", "b201", "b302", "b303" }.Contains(LevelName))
-            {
-                ShuffleMRKRPositions(seed,
+                shuffled |= ShuffleMRKRPositions(seed,
                     settings.allMenuWarpsHB01,
                     flags2.HasFlag(RandomizerFlags2.Pointer_Positions),
                     flags.HasFlag(RandomizerFlags.Player_Start),
@@ -155,43 +202,16 @@ namespace IndustrialPark.Randomizer
                     flags2.HasFlag(RandomizerFlags2.Teleport_Box_Positions),
                     flags2.HasFlag(RandomizerFlags2.Taxi_Positions));
 
-                shuffled = true;
-            }
-
-            if (ShouldShuffle(flags, RandomizerFlags.Platform_Speeds, AssetType.PLAT))
-            {
-                ShufflePlatSpeeds(seed, settings);
-                shuffled = true;
-            }
-
-            if (ShouldShuffle(flags, RandomizerFlags.Texture_Animations, AssetType.SURF))
-            {
-                ShuffleSurfs(seed, settings);
-                shuffled = true;
-            }
-
-            if (ShouldShuffle(flags, RandomizerFlags.Timers, AssetType.TIMR))
-            {
-                ShuffleTimers(seed, settings);
-                shuffled = true;
-            }
+            if (flags.HasFlag(RandomizerFlags.Platform_Speeds))
+                shuffled |= ShufflePlatSpeeds(seed, settings);
             
-            if (ShouldShuffle(flags, RandomizerFlags.Cameras, AssetType.CAM))
-            {
-                ShuffleCameras(seed);
-                shuffled = true;
-            }
-
-            if (ShouldShuffle(flags, RandomizerFlags.Disco_Floors, AssetType.DSCO))
-            {
-                ShuffleDisco(seed);
-                shuffled = true;
-            }
+            if (flags.HasFlag(RandomizerFlags.Cameras))
+                shuffled |= ShuffleCameras(seed);
 
             bool shinyNumbers = false;
             bool spatNumbers = false;
 
-            if (ShouldShuffle(flags, RandomizerFlags.Shiny_Object_Gates, AssetType.COND))
+            if (flags.HasFlag(RandomizerFlags.Shiny_Object_Gates) && ContainsAssetWithType(AssetType.COND))
                 shuffled |= ShuffleShinyGates(gateRandom, settings, out shinyNumbers);
 
             if ((settings.setChumSpats || flags.HasFlag(RandomizerFlags.Spatula_Gates)) && ContainsAssetWithType(AssetType.COND))
@@ -200,52 +220,72 @@ namespace IndustrialPark.Randomizer
             needToAddNumbers = shinyNumbers | spatNumbers;
 
             if (flags2.HasFlag(RandomizerFlags2.Scale_Of_Things))
-                shuffled |= ShuffleScales(seed, settings);
+               ShuffleScales(seed, settings);
             
-            if (ShouldShuffle(flags2, RandomizerFlags2.Models, AssetType.MODL))
-            {
-                ShuffleData(seed, AssetType.MODL);
-                shuffled = true;
-            }
-
-            if (ShouldShuffle(flags2, RandomizerFlags2.Button_Events, AssetType.BUTN))
-            {
-                ShuffleButtons(seed);
-                shuffled = true;
-            }
-
-            if (ShouldShuffle(flags2, RandomizerFlags2.SIMP_Positions, AssetType.SIMP))
-            {
-                ShuffleSIMPPositions(seed);
-                shuffled = true;
-            }
+            if (flags2.HasFlag(RandomizerFlags2.Buttons))
+                shuffled |= ShuffleButtons(seed);
 
             if (flags.HasFlag(RandomizerFlags.Colors))
-                shuffled |= ShuffleColors(seed, settings.brightColors, settings.strongColors);
-
-            if (flags.HasFlag(RandomizerFlags.Music))
             {
-                RandomizePlaylistLocal();
-                shuffled = true;
+                Random r = new Random(seed);
+                shuffled |= ShufflePlaceableColors(r, settings.brightColors, settings.strongColors) | ShuffleModelColors(r, settings.brightColors, settings.strongColors);
             }
+
+            if (flags.HasFlag(RandomizerFlags.Player_Characters))
+                shuffled |= ShuffleBusStops(gateRandom);
+            
+            if (flags.HasFlag(RandomizerFlags.Music))
+                shuffled |= RandomizePlaylistLocal();
 
             if (settings.disableCutscenes)
-            {
-                DisableCutscenes();
-                shuffled = true;
-            }
+                shuffled |= DisableCutscenes();
 
+            if (settings.openTeleportBoxes)
+                shuffled |= OpenTeleportBoxes();
+            
             return shuffled;
         }
 
-        private bool ShouldShuffle(RandomizerFlags flags, RandomizerFlags flag, AssetType assetType) => flags.HasFlag(flag) && GetAssetsOfType(assetType).Any();
-        private bool ShouldShuffle(RandomizerFlags2 flags, RandomizerFlags2 flag, AssetType assetType) => flags.HasFlag(flag) && GetAssetsOfType(assetType).Any();
-        
-        private void ShuffleData(int seed, AssetType assetType)
+        private bool OpenTeleportBoxes()
+        {
+            List<uint> dynaTeleportAssetIDs = new List<uint>();
+            int layerIndex = -1;
+
+            foreach (AssetDYNA dyna in (from asset in assetDictionary.Values
+                                        where asset is AssetDYNA dyna && dyna.Type_BFBB == DynaType_BFBB.game_object__Teleport
+                                        select asset).Cast<AssetDYNA>())
+            {
+                dynaTeleportAssetIDs.Add(dyna.AssetID);
+                layerIndex = GetLayerFromAssetID(dyna.AssetID);
+            }
+
+            if (dynaTeleportAssetIDs.Count == 0)
+                return false;
+
+            var links = new List<LinkBFBB>();
+            foreach (uint u in dynaTeleportAssetIDs)
+                links.Add(new LinkBFBB(EndianConverter.PlatformEndianness(platform), false)
+                {
+                    EventReceiveID = EventBFBB.ScenePrepare,
+                    EventSendID = EventBFBB.OpenTeleportBox,
+                    TargetAssetID = u,
+                    Arguments_Float = new float[4]
+                });
+
+            AssetDPAT dispatcher = (AssetDPAT)GetFromAssetID(PlaceTemplate(new Vector3(), layerIndex, out _, ref dynaTeleportAssetIDs, "IP_TELEBOX", AssetTemplate.Dispatcher));
+            dispatcher.LinksBFBB = links.ToArray();
+
+            return true;
+        }
+
+        private bool ShuffleData(int seed, AssetType assetType)
         {
             Random r = new Random(seed);
 
             List<Asset> assets = (from asset in assetDictionary.Values where asset.AHDR.assetType == assetType select asset).ToList();
+
+            if (assets.Count < 2)
+                return false;
 
             List<byte[]> datas = (from asset in assets select asset.Data).ToList();
             
@@ -255,13 +295,18 @@ namespace IndustrialPark.Randomizer
                 a.Data = datas[value];
                 datas.RemoveAt(value);
             }
+
+            return true;
         }
 
-        private void ShufflePKUPPositions(int seed)
+        private bool ShufflePKUPPositions(int seed)
         {
             Random r = new Random(seed);
 
             List<AssetPKUP> assets = (from asset in assetDictionary.Values where asset.AHDR.assetType == AssetType.PKUP select asset).Cast<AssetPKUP>().ToList();
+
+            if (assets.Count < 2)
+                return false;
 
             switch (LevelName)
             {
@@ -346,15 +391,20 @@ namespace IndustrialPark.Randomizer
 
                 positions.RemoveAt(value);
             }
+
+            return true;
         }
 
-        private void ShuffleCameras(int seed)
+        private bool ShuffleCameras(int seed)
         {
             Random r = new Random(seed);
 
             List<AssetCAM> assets = (from asset in assetDictionary.Values
                                      where asset.AHDR.assetType == AssetType.CAM && asset.AHDR.ADBG.assetName != "STARTCAM"
                                      select asset).Cast<AssetCAM>().ToList();
+
+            if (assets.Count == 0)
+                return false;
 
             for (int i = 0; i < assets.Count; i++)
             {
@@ -403,46 +453,10 @@ namespace IndustrialPark.Randomizer
                 positions.RemoveAt(value1);
                 angles.RemoveAt(value2);
             }
+
+            return true;
         }
-
-        private void ShuffleDisco(int seed)
-        {
-            Random r = new Random(seed);
-
-            List<AssetDSCO> assets = (from asset in assetDictionary.Values
-                                     where asset.AHDR.assetType == AssetType.DSCO
-                                     select asset).Cast<AssetDSCO>().ToList();
-            
-            foreach (AssetDSCO d in assets)
-            {
-                byte[] bytes = d.PatternController;
-                r.NextBytes(bytes);
-                d.PatternController = bytes;
-            }
-        }
-
-        private void ShuffleSIMPPositions(int seed)
-        {
-            Random r = new Random(seed);
-
-            List<AssetSIMP> assets = (from asset in assetDictionary.Values
-                                      where asset is AssetSIMP simp && FindWhoTargets(simp.AssetID).Count == 0
-                                      select asset).Cast<AssetSIMP>().ToList();
-
-            List<Vector3> positions = (from asset in assets select (new Vector3(asset.PositionX, asset.PositionY, asset.PositionZ))).ToList();
-
-            foreach (AssetSIMP a in assets)
-            {
-                int value = r.Next(0, positions.Count);
-
-                a.PositionX = positions[value].X;
-                a.PositionY = positions[value].Y;
-                a.PositionZ = positions[value].Z;
-
-                positions.RemoveAt(value);
-            }
-        }
-
+        
         private bool ShuffleScales(int seed, RandomizerSettings settings)
         {
             Random r = new Random(seed);
@@ -450,34 +464,19 @@ namespace IndustrialPark.Randomizer
             List<PlaceableAsset> assets = (from asset in assetDictionary.Values
                                            where new AssetType[] {
                                                AssetType.BOUL, AssetType.BUTN, AssetType.DSTR, AssetType.PLAT, AssetType.SIMP
-                                           }.Contains(asset.AHDR.assetType)
+                                           }.Contains(asset.AHDR.assetType) && !asset.AHDR.ADBG.assetName.ToLower().Contains("track")
                                            select asset).Cast<PlaceableAsset>().ToList();
-
-            for (int i = 0; i < assets.Count; i++)
-            {
-                if (assets[i].AHDR.ADBG.assetName.ToLower().Contains("track"))
-                {
-                    assets.RemoveAt(i);
-                    i--;
-                }
-            }
-
+            
             foreach (PlaceableAsset a in assets)
             {
                 float scale = r.NextFloat(settings.scaleMin, settings.scaleMax);
 
-                a.ScaleX = a.ScaleX * scale;
-                a.ScaleY = a.ScaleY * scale;
-                a.ScaleZ = a.ScaleZ * scale;
+                a.ScaleX *= scale;
+                a.ScaleY *= scale;
+                a.ScaleZ *= scale;
             }
 
             return assets.Count != 0;
-        }
-
-        private bool ShuffleColors(int seed, bool brightColors, bool strongColors)
-        {
-            Random r = new Random(seed);
-            return ShufflePlaceableColors(r, brightColors, strongColors) | ShuffleModelColors(r, brightColors, strongColors);
         }
 
         private bool ShufflePlaceableColors(Random r, bool brightColors, bool strongColors)
@@ -629,9 +628,9 @@ namespace IndustrialPark.Randomizer
             return ModelToRWSections(sections, renderWareVersion);
         }
 
-        private RWSection[] ModelAsRWSections(byte[] data, out int renderWareVersion)
+        private RWSection[] ModelAsRWSections(byte[] data, out int renderWareVersion, bool treatStuffAsByteArray = true)
         {
-            ReadFileMethods.treatStuffAsByteArray = true;
+            ReadFileMethods.treatStuffAsByteArray = treatStuffAsByteArray;
             RWSection[] sections = ReadFileMethods.ReadRenderWareFile(data);
             renderWareVersion = sections[0].renderWareVersion;
             ReadFileMethods.treatStuffAsByteArray = false;
@@ -646,43 +645,142 @@ namespace IndustrialPark.Randomizer
             return data;
         }
 
-        private void ShuffleButtons(int seed)
+        private bool ShuffleButtons(int seed)
         {
             Random r = new Random(seed);
 
-            List<AssetBUTN> assets = (from asset in assetDictionary.Values where asset is AssetBUTN select asset).Cast<AssetBUTN>().ToList();
-
-            List<LinkBFBB[]> links = (from asset in assets select asset.LinksBFBB).ToList();
-
-            foreach (AssetBUTN a in assets)
+            bool result = false;
+            for (int i = 0; i < 2; i++)
             {
-                int value = r.Next(0, links.Count);
-                a.LinksBFBB = links[value];
-                links.RemoveAt(value);
+                List<AssetBUTN> assets = (from asset in assetDictionary.Values where asset is AssetBUTN butn && butn.ActMethod == (AssetBUTN.ButnActMethod)i select asset).Cast<AssetBUTN>().ToList();
+
+                List<byte[]> datas = (from asset in assets select asset.Data.Skip(8).Take(asset.Data.Length - Link.sizeOfStruct * asset.AmountOfEvents - 8).ToArray()).ToList();
+
+                foreach (AssetBUTN a in assets)
+                {
+                    int InitialButtonState = a.InitialButtonState;
+                    bool ResetAfterDelay = a.ResetAfterDelay;
+                    float ResetDelay = a.ResetDelay;
+
+                    int value = r.Next(0, datas.Count);
+                    var newData = a.Data.Take(8).ToList();
+                    newData.AddRange(datas[value]);
+                    newData.AddRange(a.Data.Skip(a.Data.Length - Link.sizeOfStruct * a.AmountOfEvents));
+                    a.Data = newData.ToArray();
+                    datas.RemoveAt(value);
+
+                    a.InitialButtonState = InitialButtonState;
+                    a.ResetAfterDelay = ResetAfterDelay;
+                    a.ResetDelay = ResetDelay;
+
+                    result = true;
+                }
+            }
+            return result;
+        }
+
+        private bool ShuffleBusStops(Random r)
+        {
+            bool result = false;
+
+            foreach (AssetDYNA dyna in (from asset in assetDictionary.Values
+                                        where asset is AssetDYNA dyna && dyna.Type_BFBB == DynaType_BFBB.game_object__BusStop
+                                        select asset).Cast<AssetDYNA>())
+            {
+                DynaBusStop dynaBusStop = (DynaBusStop)dyna.DynaBase;
+                dynaBusStop.Player = (DynaBusStop.PlayerEnum)r.Next(0, 2);
+                dyna.DynaBase = dynaBusStop;
+                result = true;
+            }
+
+            if (LevelName == "hb01")
+            {
+                int defaultLayerIndex = -1;
+                for (int i = 0; i < DICT.LTOC.LHDRList.Count; i++)
+                    if (DICT.LTOC.LHDRList[i].layerType == (int)LayerType_BFBB.DEFAULT)
+                    {
+                        defaultLayerIndex = i;
+                        break;
+                    }
+
+                List<uint> outAssetIDs = new List<uint>();
+                
+                AssetGRUP group = (AssetGRUP)GetFromAssetID(PlaceTemplate(new Vector3(), defaultLayerIndex, out _, ref outAssetIDs, "IP_RANDO_PLAYER_GRUP", template: AssetTemplate.Group));
+                group.ReceiveEventDelegation = AssetGRUP.Delegation.RandomItem;
+                group.LinksBFBB = new LinkBFBB[]
+                {
+                    new LinkBFBB(EndianConverter.PlatformEndianness(platform), false)
+                    {
+                        Arguments_Float = new float[] {0, 0, 0, 0},
+                        EventReceiveID = EventBFBB.ScenePrepare,
+                        EventSendID = EventBFBB.Run,
+                        TargetAssetID = group.AssetID
+                    }
+                };
+
+                outAssetIDs = new List<uint>();
+                for (int i = 0; i < 3; i++)
+                {
+                    AssetTIMR timer = (AssetTIMR)GetFromAssetID(PlaceTemplate(new Vector3(), defaultLayerIndex, out _, ref outAssetIDs, "IP_RANDO_PLAYER_TIMR", template: AssetTemplate.Timer));
+                    timer.Time = 0.1f;
+                    timer.LinksBFBB = new LinkBFBB[]
+                    {
+                        new LinkBFBB(EndianConverter.PlatformEndianness(platform), false)
+                        {
+                            Arguments_Float = new float[] { i, 0, 0, 0 },
+                            EventReceiveID = EventBFBB.Expired,
+                            EventSendID = EventBFBB.SwitchPlayerCharacter,
+                            TargetAssetID = "SPONGEBOB"
+                        },
+                        new LinkBFBB(EndianConverter.PlatformEndianness(platform), false)
+                        {
+                            Arguments_Float = new float[] { 0, 0, 0, 0 },
+                            EventReceiveID = EventBFBB.Expired,
+                            EventSendID = EventBFBB.Reset,
+                            TargetAssetID = timer.AssetID
+                        }
+                    };
+                }
+
+                List<AssetID> assetIDs = new List<AssetID>();
+                foreach (uint i in outAssetIDs)
+                    assetIDs.Add(new AssetID(i));
+                group.GroupItems = assetIDs.ToArray();
+
+                for (int i = 1; i < 4; i++)
+                {
+                    SetTaskDynasForVil("BUBBLEBUDDY_NPC_0" + i.ToString());
+                    SetTaskDynasForVil("MRKRABS_NPC_0" + i.ToString());
+                    SetTaskDynasForVil("PLANKTON_NPC_0" + i.ToString());
+                }
+                SetTaskDynasForVil("PATRICK_NPC_01");
+            }
+            else if (LevelName == "db04")
+                SetTaskDynasForVil("NPC_SQUIDWARD");
+            else if (LevelName == "db06")
+                SetTaskDynasForVil("NPC_PATRICK");
+
+            return result;
+        }
+
+        private void SetTaskDynasForVil(string vilAssetID)
+        {
+            SetTaskDynasForVil(new AssetID(vilAssetID));
+        }
+
+        private void SetTaskDynasForVil(uint vilAssetID)
+        {
+            if (ContainsAsset(vilAssetID))
+            {
+                AssetVIL vil = ((AssetVIL)GetFromAssetID(vilAssetID));
+                vil.TaskDYNA2_AssetID = vil.TaskDYNA1_AssetID;
             }
         }
 
-        private void ShuffleVilTypes(int seed, List<VilType> chooseFrom, List<VilType> setTo, bool mixModels, bool veryRandom, bool enemies)
+        private bool ShuffleVilTypes(Random r, List<VilType> chooseFrom, List<VilType> setTo, bool mixModels, bool veryRandom)
         {
-            Random r = new Random(seed);
-
-            if (veryRandom && LevelName == "sm01")
-            {
-                HashSet<VilType> uniqueSetTo = new HashSet<VilType>();
-                foreach (VilType v in setTo)
-                    uniqueSetTo.Add(v);
-
-                while (uniqueSetTo.Count > 9)
-                {
-                    VilType randomRemove = setTo[r.Next(0, setTo.Count)];
-                    while (setTo.Contains(randomRemove))
-                        setTo.Remove(randomRemove);
-                    uniqueSetTo.Remove(randomRemove);
-                }
-            }
-
             if (setTo.Count == 0)
-                return;
+                return false;
 
             List<AssetVIL> assets = (from asset in assetDictionary.Values where asset is AssetVIL vil && chooseFrom.Contains(vil.VilType) select asset).Cast<AssetVIL>().ToList();
             List<VilType> viltypes = (from asset in assets select asset.VilType).ToList();
@@ -697,7 +795,7 @@ namespace IndustrialPark.Randomizer
 
                 a.VilType = veryRandom ? setTo[r.Next(0, setTo.Count)] : viltypes[viltypes_value];
 
-                if (enemies && veryRandom)
+                if (!mixModels && veryRandom)
                     a.Model_AssetID =
                         a.VilType == VilType.robot_sleepytime_bind ?
                         "robot_sleepy-time_bind.MINF" :
@@ -740,6 +838,8 @@ namespace IndustrialPark.Randomizer
                             RemoveAsset(u);
                 }
             }
+
+            return assets.Count != 0;
         }
 
         private bool DisableCutscenes()
@@ -817,10 +917,27 @@ namespace IndustrialPark.Randomizer
                     return true;
 
                 case "kf01":
-                    uint tubeDisp = new AssetID("TUBELETS_CINEMA_DISP");
+                    LinkBFBB[] csnmLinks = null;
+                    uint kf01csnm = new AssetID("TUBELET_CUTSCENE_MGR");
+                    if (ContainsAsset(kf01csnm))
+                        csnmLinks = ((ObjectAsset)GetFromAssetID(kf01csnm)).LinksBFBB;
 
-                    if (ContainsAsset(tubeDisp))
-                        ((AssetDPAT)GetFromAssetID(tubeDisp)).EnabledOnStart = true;
+                    uint kf01fly = new AssetID("KF01_FLYTHOUGH_WIDGET");
+                    if (ContainsAsset(kf01fly))
+                    {
+                        ObjectAsset flyWidged = ((ObjectAsset)GetFromAssetID(kf01fly));
+                        List<LinkBFBB> flyLinks = flyWidged.LinksBFBB.ToList();
+                        flyLinks.AddRange(csnmLinks);
+
+                        for (int i = 0; i < flyLinks.Count; i++)
+                            if (flyLinks[i].EventReceiveID == EventBFBB.Done)
+                                flyLinks[i].EventReceiveID = EventBFBB.Stop;
+                            else if (flyLinks[i].EventSendID == EventBFBB.Preload)
+                                flyLinks.RemoveAt(i--);
+
+                        flyWidged.LinksBFBB = flyLinks.ToArray();
+                    }
+
                     return true;
 
                 case "rb01":
@@ -871,7 +988,19 @@ namespace IndustrialPark.Randomizer
             }
         }
 
-        private VilType[] enemyVilTypes = new VilType[] {
+        private HashSet<VilType> GetVilTypesInLevel(List<VilType> chooseFrom)
+        {
+            HashSet<VilType> viltypes = new HashSet<VilType>();
+
+            foreach (AssetVIL a in (from asset in assetDictionary.Values
+                                    where asset is AssetVIL vil && chooseFrom.Contains(vil.VilType)
+                                    select asset).Cast<AssetVIL>())
+                viltypes.Add(a.VilType);
+            
+            return viltypes;
+        }
+
+        private static VilType[] importVilTypes = new VilType[] {
             VilType.g_love_bind,
             VilType.ham_bind,
             VilType.robot_0a_bomb_bind,
@@ -885,11 +1014,16 @@ namespace IndustrialPark.Randomizer
             VilType.robot_tar_bind,
             VilType.robot_arf_bind,
             VilType.tubelet_bind,
+            VilType.tiki_lovey_dovey_bind,
+            VilType.tiki_shhhh_bind,
+            VilType.tiki_stone_bind,
+            VilType.tiki_thunder_bind,
+            VilType.tiki_wooden_bind
         };
 
         public void GetEnemyTypes(ref HashSet<VilType> outSet)
         {
-            VilType[] viltypes = enemyVilTypes;
+            VilType[] viltypes = importVilTypes;
 
             foreach (AssetVIL a in (from asset in assetDictionary.Values
                                     where asset is AssetVIL vil && viltypes.Contains(vil.VilType)
@@ -911,6 +1045,7 @@ namespace IndustrialPark.Randomizer
                     continue;
 
                 string hipFileName = null;
+                string folderName = "Enemies";
 
                 switch (v)
                 {
@@ -940,14 +1075,29 @@ namespace IndustrialPark.Randomizer
                         hipFileName = "arf_arf-dawg.HIP"; break;
                     case VilType.tubelet_bind:
                         hipFileName = "tubelet.HIP"; break;
+                    case VilType.tiki_wooden_bind:
+                        hipFileName = "tiki_wooden.HIP"; break;
+                    case VilType.tiki_lovey_dovey_bind:
+                        hipFileName = "tiki_floating.HIP"; break;
+                    case VilType.tiki_thunder_bind:
+                        hipFileName = "tiki_thunder.HIP"; break;
+                    case VilType.tiki_stone_bind:
+                        hipFileName = "tiki_stone.HIP"; break;
+                    case VilType.tiki_shhhh_bind:
+                        hipFileName = "tiki_shhh.HIP"; break;
                     default:
                         throw new Exception("Invalid VilType");
                 }
 
-                ProgImportHip("Enemies", hipFileName);
+                if (v.ToString().Contains("tiki"))
+                    folderName = "Utility";
+
+                ProgImportHip(folderName, hipFileName);
                 
                 imported = true;
             }
+
+            CollapseLayers();
 
             return imported;
         }
@@ -962,21 +1112,58 @@ namespace IndustrialPark.Randomizer
 
         public bool RestoreRobotLaugh()
         {
+            uint assetID = new AssetID("RSB_laugh_8");
+            RemoveAsset(new AssetID("RSB_laugh_8"));
             ProgImportHip("Utility", "robot_laugh.HIP");
+            DICT.LTOC.LHDRList.RemoveAt(14);
+            DICT.LTOC.LHDRList[13].assetIDlist.Add(assetID);
             return true;
         }
 
-        private void ProgImportHip(string folderName, string fileName)
+        public void ProgImportHip(string folderName, string fileName)
         {
-            string path = editorFilesFolder + "BattleForBikiniBottom/" + platform.ToString() + "/" + folderName + "/" + fileName;
-
             if (!enemyHipDict.ContainsKey(fileName))
+            {
+                string path = Path.Combine(editorFilesFolder, "BattleForBikiniBottom", platform.ToString(), folderName, fileName);
                 enemyHipDict.Add(fileName, new HipFile(path));
+            }
 
             ImportHip(enemyHipDict[fileName].DICT, true);
         }
 
-        private void ShuffleMRKRPositions(int seed, bool noWarps, bool pointers, bool plyrs, bool busStops, bool teleBox, bool taxis)
+        private void UnimportHip(string folderName, string fileName)
+        {
+            if (!enemyHipDict.ContainsKey(fileName))
+            {
+                string path = Path.Combine(editorFilesFolder, "BattleForBikiniBottom", platform.ToString(), folderName, fileName);
+                enemyHipDict.Add(fileName, new HipFile(path));
+            }
+
+            UnimportHip(enemyHipDict[fileName].DICT);
+        }
+
+        public void UnimportHip(Section_DICT dict)
+        {
+            UnsavedChanges = true;
+
+            foreach (Section_AHDR AHDR in dict.ATOC.AHDRList)
+            {
+                switch (AHDR.assetType)
+                {
+                    case AssetType.COLL:
+                    case AssetType.JAW:
+                    case AssetType.LODT:
+                    case AssetType.SHDW:
+                    case AssetType.SNDI:
+                        continue;
+                }
+
+                if (ContainsAsset(AHDR.assetID))
+                    RemoveAsset(AHDR.assetID);
+            }
+        }
+
+        private bool ShuffleMRKRPositions(int seed, bool noWarps, bool pointers, bool plyrs, bool busStops, bool teleBox, bool taxis)
         {
             Random r = new Random(seed);
 
@@ -1005,6 +1192,8 @@ namespace IndustrialPark.Randomizer
                 if (a is AssetDYNA dyna)
                     dyna.OnDynaSpecificPropertyChange(dyna.DynaBase);
             }
+
+            return assets.Count != 0;
         }
 
         private bool VerifyMarkerStep1(AssetMRKR mrkr, bool noWarps, bool busStops, bool teleBox, bool taxis)
@@ -1115,7 +1304,7 @@ namespace IndustrialPark.Randomizer
             return true;
         }
 
-        private void ShufflePlatSpeeds(int seed, RandomizerSettings settings)
+        private bool ShufflePlatSpeeds(int seed, RandomizerSettings settings)
         {
             Random r = new Random(seed);
 
@@ -1123,6 +1312,8 @@ namespace IndustrialPark.Randomizer
             float maxMultiSpeed = settings.speedMax;
             float minMultiTime = settings.speedMax == 0 ? 0 : 1 / settings.speedMax;
             float maxMultiTime = settings.speedMin == 0 ? 0 : 1 / settings.speedMin;
+
+            bool result = false;
 
             foreach (Asset a in assetDictionary.Values)
                 if (a is AssetPLAT plat)
@@ -1166,54 +1357,39 @@ namespace IndustrialPark.Randomizer
                         mc.SlideTime *= r.NextFloat(minMultiTime, maxMultiTime);
                         plat.Motion = mc;
                     }
+
+                    result = true;
                 }
+
+            return result;
         }
-
-        private void ShuffleSurfs(int seed, RandomizerSettings settings)
-        {
-            Random r = new Random(seed);
-
-            float minMultiSpeed = settings.surfMin;
-            float maxMultiSpeed = settings.surfMax;
-
-            foreach (Asset a in assetDictionary.Values)
-                if (a is AssetSURF surf)
-                {
-                    if (surf.UVEffects1_TransSpeed_X == 0)
-                        surf.UVEffects1_TransSpeed_X = r.NextFloat(minMultiSpeed, maxMultiSpeed);
-                    else
-                        surf.UVEffects1_TransSpeed_X *= r.NextFloat(minMultiSpeed, maxMultiSpeed);
-
-                    if (surf.UVEffects1_TransSpeed_Y == 0)
-                        surf.UVEffects1_TransSpeed_Y = r.NextFloat(minMultiSpeed, maxMultiSpeed);
-                    else
-                        surf.UVEffects1_TransSpeed_Y *= r.NextFloat(minMultiSpeed, maxMultiSpeed);
-                }
-        }
-
-        private void ShuffleBoulders(int seed, RandomizerSettings settings)
+        
+        private bool ShuffleBoulders(int seed, RandomizerSettings settings)
         {
             Random r = new Random(seed);
 
             float min = settings.boulderMin;
             float max = settings.boulderMax;
 
-            foreach (Asset a in assetDictionary.Values)
-                if (a is AssetBOUL boul)
-                {
-                    boul.Gravity *= r.NextFloat(min, max);
-                    boul.Mass *= r.NextFloat(min, max);
-                    boul.BounceFactor *= r.NextFloat(min, max);
-                    boul.Friction *= r.NextFloat(min, max);
-                    boul.StartFriction *= r.NextFloat(min, max); 
-                    boul.MaxLinearVelocity *= r.NextFloat(min, max);
-                    boul.MaxAngularVelocity *= r.NextFloat(min, max);
-                    boul.Stickiness *= r.NextFloat(min, max);
-                    boul.BounceDamp *= r.NextFloat(min, max);
-                    boul.KillTimer *= r.NextFloat(min, max);
-                    boul.InnerRadius *= r.NextFloat(min, max);
-                    boul.OuterRadius *= r.NextFloat(min, max);
-                }
+            List<AssetBOUL> assets = (from asset in assetDictionary.Values where asset.AHDR.assetType == AssetType.BOUL select asset).Cast<AssetBOUL>().ToList();
+
+            foreach (AssetBOUL boul in assets)
+            {
+                boul.Gravity *= r.NextFloat(min, max);
+                boul.Mass *= r.NextFloat(min, max);
+                boul.BounceFactor *= r.NextFloat(min, max);
+                boul.Friction *= r.NextFloat(min, max);
+                boul.StartFriction *= r.NextFloat(min, max);
+                boul.MaxLinearVelocity *= r.NextFloat(min, max);
+                boul.MaxAngularVelocity *= r.NextFloat(min, max);
+                boul.Stickiness *= r.NextFloat(min, max);
+                boul.BounceDamp *= r.NextFloat(min, max);
+                boul.KillTimer *= r.NextFloat(min, max);
+                boul.InnerRadius *= r.NextFloat(min, max);
+                boul.OuterRadius *= r.NextFloat(min, max);
+            }
+
+            return assets.Count > 0;
         }
 
         public bool ShuffleSounds(int seed, bool mixTypes, bool scoobyBoot = false)
@@ -1309,35 +1485,144 @@ namespace IndustrialPark.Randomizer
             return result;
         }
         
-        private void ShuffleMVPT(int seed, RandomizerSettings settings)
+        private bool ShuffleMVPT(int seed, RandomizerSettings settings)
         {
             Random r = new Random(seed);
 
             float min = settings.mvptMin;
             float max = settings.mvptMax;
 
-            foreach (Asset a in assetDictionary.Values)
-                if (a is AssetMVPT_Scooby mvpt)
+            List<AssetMVPT_Scooby> assets = (from asset in assetDictionary.Values where asset.AHDR.assetType == AssetType.MVPT select asset).Cast<AssetMVPT_Scooby>().ToList();
+
+            foreach (AssetMVPT_Scooby mvpt in assets)
+            {
+                if (mvpt.ArenaRadius != -1)
+                    mvpt.ArenaRadius *= r.NextFloat(min, max);
+                if (mvpt is AssetMVPT mvpts)
                 {
-                    if (mvpt.ArenaRadius != -1)
-                        mvpt.ArenaRadius *= r.NextFloat(min, max);
-                    if (mvpt is AssetMVPT mvpts)
-                    {
-                        if (mvpts.ZoneRadius != -1)
-                            mvpts.ZoneRadius *= r.NextFloat(min, max);
-                        if (mvpts.Delay != -1)
-                            mvpts.Delay *= r.NextFloat(min, max);
-                    }
+                    if (mvpts.ZoneRadius != -1)
+                        mvpts.ZoneRadius *= r.NextFloat(min, max);
+                    if (mvpts.Delay != -1)
+                        mvpts.Delay *= r.NextFloat(min, max);
                 }
+            }
+
+            return assets.Count != 0;
         }
 
-        private void ShuffleTimers(int seed, RandomizerSettings settings)
+        public bool ImportCharacters()
         {
-            Random r = new Random(seed);
+            bool patrick = false;
+            bool sandy = false;
 
-            foreach (Asset a in assetDictionary.Values)
-                if (a is AssetTIMR timr)
-                    timr.Time *= r.NextFloat(settings.timerMin, settings.timerMax);
+            switch (LevelName)
+            {
+                case "hb01":
+                case "hb02":
+                case "hb03":
+                case "hb04":
+                case "hb05":
+                case "hb06":
+                case "hb07":
+                case "hb08":
+                case "hb09":
+                case "hb10":
+                case "bc03":
+                case "bc04":
+                case "bc05":
+                case "db01":
+                case "db03":
+                case "db04":
+                case "db06":
+                    patrick = sandy = true;
+                    break;
+                case "jf01":
+                case "jf02":
+                case "jf03":
+                case "jf04":
+                case "gl01":
+                case "gl02":
+                case "gl03":
+                case "bc01":
+                case "bc02":
+                case "kf01":
+                case "kf02":
+                case "kf04":
+                case "kf05":
+                    sandy = true;
+                    break;
+                case "bb01":
+                case "bb02":
+                case "bb03":
+                case "bb04":
+                case "rb01":
+                case "rb02":
+                case "rb03":
+                case "sm01":
+                case "sm02":
+                case "sm03":
+                case "sm04":
+                case "gy01":
+                case "gy02":
+                case "gy03":
+                case "gy04":
+                case "db02":
+                    patrick = true;
+                    break;
+            }
+
+            if (sandy)
+                ProgImportHip("Utility", "sandy.hip");
+            if (patrick)
+                ProgImportHip("Utility", "patrick.hip");
+
+            return patrick || sandy;
+        }
+
+        public bool UnimportCharacters()
+        {
+            switch (LevelName)
+            {
+                case "jf01":
+                case "jf02":
+                case "jf03":
+                case "jf04":
+                case "gl01":
+                case "gl02":
+                case "gl03":
+                case "bc01":
+                case "bc02":
+                case "kf01":
+                case "kf02":
+                case "kf04":
+                case "kf05":
+                case "b101":
+                    UnimportHip("Utility", "patrick.hip");
+                    break;
+                case "bb01":
+                case "bb02":
+                case "bb03":
+                case "bb04":
+                case "rb01":
+                case "rb02":
+                case "rb03":
+                case "sm01":
+                case "sm02":
+                case "sm03":
+                case "sm04":
+                case "gy01":
+                case "gy02":
+                case "gy03":
+                case "gy04":
+                case "db02":
+                case "b201":
+                    UnimportHip("Utility", "sandy.hip");
+                    break;
+                default:
+                    return false;
+            }
+
+            return true;
         }
 
         private string LevelName => Path.GetFileNameWithoutExtension(currentlyOpenFilePath).ToLower();
@@ -1487,8 +1772,10 @@ namespace IndustrialPark.Randomizer
             return false;
         }
 
-        public void SetWarpNames(Random r, ref List<string> warpNames, List<string> lines, ref List<(string, string, string)> warpRandomizerOutput, HashSet<string> unique)
+        public bool SetWarpNames(Random r, ref List<string> warpNames, List<string> lines, ref List<(string, string, string)> warpRandomizerOutput, HashSet<string> unique)
         {
+            bool result = false;
+
             foreach (Asset a in assetDictionary.Values)
                 if (a is AssetPORT port && !IsWarpToSameLevel(port.DestinationLevel) && !PortInToSkip(port, lines))
                 {
@@ -1519,13 +1806,17 @@ namespace IndustrialPark.Randomizer
 
                     if (warpNames.Count == 0)
                         warpNames.AddRange(unique);
+
+                    result = true;
                 }
+
+            return result;
         }
 
         private string musicDispAssetName => "IP_RANDO_DISP";
         private string musicGroupAssetName => "IP_RANDO_GROUP";
 
-        public void RandomizePlaylistLocal()
+        public bool RandomizePlaylistLocal()
         {
             string musicDispAssetName = "MUSIC_DISP";
 
@@ -1545,7 +1836,10 @@ namespace IndustrialPark.Randomizer
                         }
                     objectAsset.LinksBFBB = links;
                 }
+
+                return true;
             }
+            return false;
         }
 
         public bool RandomizePlaylist()

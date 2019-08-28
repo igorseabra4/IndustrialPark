@@ -61,19 +61,18 @@ namespace IndustrialPark
             get
             {
                 List<EntryFLY> entries = new List<EntryFLY>();
-                BinaryReader binaryReader = new BinaryReader(new MemoryStream(Data));
+                using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(Data)))
+                    while (binaryReader.BaseStream.Position < binaryReader.BaseStream.Length)
+                        entries.Add(new EntryFLY
+                        {
+                            FrameNumer = binaryReader.ReadInt32(),
+                            CameraNormalizedLeft = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle()),
+                            CameraNormalizedUp = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle()),
+                            CameraNormalizedBackward = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle()),
+                            CameraPosition = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle()),
+                            Unknown = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle())
+                        });
 
-                while (binaryReader.BaseStream.Position < binaryReader.BaseStream.Length)
-                    entries.Add(new EntryFLY
-                    {
-                        FrameNumer = binaryReader.ReadInt32(),
-                        CameraNormalizedLeft = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle()),
-                        CameraNormalizedUp = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle()),
-                        CameraNormalizedBackward = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle()),
-                        CameraPosition = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle()),
-                        Unknown = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle())
-                    });
-                
                 return entries.ToArray();
             }
             set

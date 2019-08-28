@@ -42,7 +42,7 @@ namespace IndustrialPark
 
         public Game game => hipFile.game;
         public Platform platform => hipFile.platform;
-        public Section_DICT DICT => hipFile.DICT;
+        protected Section_DICT DICT => hipFile.DICT;
 
         public bool New()
         {
@@ -338,18 +338,22 @@ namespace IndustrialPark
 
         public List<AssetType> AssetTypesOnLayer(int index)
         {
-            List<uint> assetIDs = GetAssetIDsOnLayer(index);
-            var assetTypeList = new List<AssetType>();
-
-            for (int i = 0; i < assetIDs.Count(); i++)
-                if (!assetTypeList.Contains(assetDictionary[assetIDs[i]].AHDR.assetType))
-                    assetTypeList.Add(assetDictionary[assetIDs[i]].AHDR.assetType);
+            var assetTypeSet = new HashSet<AssetType>();
+            foreach (uint i in DICT.LTOC.LHDRList[index].assetIDlist)
+                assetTypeSet.Add(assetDictionary[i].AHDR.assetType);
+            var assetTypeList = assetTypeSet.ToList();
 
             assetTypeList.Sort();
             return assetTypeList;
         }
 
-        public bool ContainsAssetWithType(AssetType assetType) => AssetTypesOnArchive().Contains(assetType);
+        public bool ContainsAssetWithType(AssetType assetType)
+        {
+            foreach (Asset a in assetDictionary.Values)
+                if (a.AHDR.assetType == assetType)
+                    return true;
+            return false;
+        }
         
         public Asset GetFromAssetID(uint key)
         {
@@ -594,7 +598,7 @@ namespace IndustrialPark
                 RemoveAsset(u);
         }
 
-        public void RemoveAsset(uint assetID)
+        public void RemoveAsset(uint assetID, bool removeSound = true)
         {
             DisposeOfAsset(assetID);
             autoCompleteSource.Remove(assetDictionary[assetID].AHDR.ADBG.assetName);
@@ -603,7 +607,8 @@ namespace IndustrialPark
                 DICT.LTOC.LHDRList[i].assetIDlist.Remove(assetID);
 
             if (GetFromAssetID(assetID).AHDR.assetType == AssetType.SND || GetFromAssetID(assetID).AHDR.assetType == AssetType.SNDS)
-                RemoveSoundFromSNDI(assetID);
+                if (removeSound)
+                    RemoveSoundFromSNDI(assetID);
 
             DICT.ATOC.AHDRList.Remove(assetDictionary[assetID].AHDR);
 

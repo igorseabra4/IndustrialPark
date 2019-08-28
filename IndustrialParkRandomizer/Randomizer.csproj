@@ -67,6 +67,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\Randomizer_JSON_Settings.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Randomizer\RandomizableArchive.cs" />
     <Compile Include="Randomizer\Randomizer.cs" />
