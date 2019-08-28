@@ -222,7 +222,7 @@
             // 
             this.chooseRootDirectoryToolStripMenuItem.Name = "chooseRootDirectoryToolStripMenuItem";
             this.chooseRootDirectoryToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
-            this.chooseRootDirectoryToolStripMenuItem.Text = "Choose Root Directory";
+            this.chooseRootDirectoryToolStripMenuItem.Text = "Choose Game Directory";
             this.chooseRootDirectoryToolStripMenuItem.Click += new System.EventHandler(this.ChooseRootDirectoryToolStripMenuItem_Click);
             // 
             // chooseSingleFileToolStripMenuItem

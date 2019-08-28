@@ -198,7 +198,7 @@ namespace IndustrialPark
         [Category("Other"), DisplayName("Open Teleport Boxes")]
         public bool openTeleportBoxes { get; set; } = false;
 
-        [Category("Other"), DisplayName("Chars on Any Level"), Description("Allows playing as Patrick and Sandy on every level.")]
+        [Category("Other"), DisplayName("Unlock Characters"), Description("Allows playing as Patrick and Sandy on every level.")]
         public bool charsOnAnyLevel { get; set; } = false;
 
         [Category("Other"), DisplayName("Disable Cutscenes")]

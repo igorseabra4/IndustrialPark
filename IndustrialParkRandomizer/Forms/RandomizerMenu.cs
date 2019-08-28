@@ -65,13 +65,30 @@ namespace IndustrialPark.Randomizer
 
         private void ChooseBackupDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (CommonOpenFileDialog openFile = new CommonOpenFileDialog() { Title = "Please choose your backup files directory.", IsFolderPicker = true })
-                if (openFile.ShowDialog() == CommonFileDialogResult.Ok)
-                {
-                    backupDir = openFile.FileName;
-                    useBackupDirectoryToolStripMenuItem.Checked = true;
-                    UpdateInterfaceFromRandomizer();
-                }
+            bool success = false;
+            try
+            {
+                using (CommonOpenFileDialog openFile = new CommonOpenFileDialog() { Title = "Please choose your backup files directory.", IsFolderPicker = true })
+                    if (openFile.ShowDialog() == CommonFileDialogResult.Ok)
+                    {
+                        backupDir = openFile.FileName;
+                        success = true;
+                    }
+            }
+            catch
+            {
+                using (FolderBrowserDialog openFile = new FolderBrowserDialog())
+                    if (openFile.ShowDialog() == DialogResult.OK)
+                    {
+                        backupDir = openFile.SelectedPath;
+                        success = true;
+                    }
+            }
+            if (success)
+            {
+                useBackupDirectoryToolStripMenuItem.Checked = true;
+                UpdateInterfaceFromRandomizer();
+            }
         }
 
         private void UseBackupDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
@@ -92,12 +109,29 @@ namespace IndustrialPark.Randomizer
 
         private void ChooseRootDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (CommonOpenFileDialog openFile = new CommonOpenFileDialog() { Title = "Please choose your game root (files) directory.", IsFolderPicker = true })
-                if (openFile.ShowDialog() == CommonFileDialogResult.Ok)
-                {
-                    randomizer.SetRootDir(openFile.FileName);
-                    UpdateInterfaceFromRandomizer();
-                }
+            bool success = false;
+            try
+            {
+                using (CommonOpenFileDialog openFile = new CommonOpenFileDialog() { Title = "Please choose your game root (files) directory.", IsFolderPicker = true })
+                    if (openFile.ShowDialog() == CommonFileDialogResult.Ok)
+                    {
+                        randomizer.SetRootDir(openFile.FileName);
+                        success = true;
+                    }
+            }
+            catch
+            {
+                using (FolderBrowserDialog openFile = new FolderBrowserDialog())
+                    if (openFile.ShowDialog() == DialogResult.OK)
+                    {
+                        randomizer.SetRootDir(openFile.SelectedPath);
+                        success = true;
+                    }
+            }
+            if (success)
+            {
+                UpdateInterfaceFromRandomizer();
+            }
         }
 
         private void ChooseSingleFileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -193,7 +227,7 @@ namespace IndustrialPark.Randomizer
             {
                 if (randomizer.isDir)
                 {
-                    labelRootDir.Text = "Root Directory: " + randomizer.rootDir;
+                    labelRootDir.Text = "Game Directory: " + randomizer.rootDir;
                     buttonPerform.Enabled = true;
                 }
                 else
