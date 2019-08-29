@@ -55,6 +55,7 @@ namespace IndustrialPark
                 currentlySelectedAssets = new List<Asset>();
                 currentlyOpenFilePath = null;
                 autoCompleteSource.Clear();
+                assetDictionary.Clear();
 
                 this.hipFile = hipFile;
 

@@ -1453,6 +1453,70 @@ namespace IndustrialPark.Randomizer
 
                 return true;
             }
+            else if (LevelName == "b302")
+            {
+                uint dpat = new AssetID("BOSS3_OPEN_DISP");
+                if (ContainsAsset(dpat) && GetFromAssetID(dpat) is AssetDPAT dispatcher)
+                {
+                    dispatcher.EnabledOnStart = false;
+                    int defaultLayer = GetLayerFromAssetID(dpat);
+                    List<uint> vs = new List<uint>();
+                    AssetTIMR timer = (AssetTIMR)GetFromAssetID(PlaceTemplate(new Vector3(), defaultLayer, out _, ref vs, template: AssetTemplate.Timer));
+                    timer.Time = 1f;
+
+                    uint boss = new AssetID("BOSS_NPC");
+                    if (ContainsAsset(boss) && GetFromAssetID(boss) is AssetVIL spongebot)
+                    {
+                        uint transCut = new AssetID("BOSS3_TRANSITION_CSNMANAGER");
+
+                        LinkBFBB[] links = spongebot.LinksBFBB;
+                        for (int i = 0; i < links.Length; i++)
+                            if (links[i].EventSendID == EventBFBB.Preload)
+                            {
+                                links[i].TargetAssetID = timer.AssetID;
+                                links[i].EventSendID = EventBFBB.Run;
+                            }
+                        spongebot.LinksBFBB = links;
+
+                        if (ContainsAsset(transCut) && GetFromAssetID(transCut) is AssetCSNM transitionCutscene)
+                        {
+                            LinkBFBB[] cutLinks = transitionCutscene.LinksBFBB;
+                            for (int i = 0; i < cutLinks.Length; i++)
+                                if (cutLinks[i].EventReceiveID == EventBFBB.Play)
+                                    cutLinks[i].EventReceiveID = EventBFBB.Run;
+                                else if (cutLinks[i].EventReceiveID == EventBFBB.Done)
+                                    cutLinks[i].EventReceiveID = EventBFBB.Expired;
+                            timer.LinksBFBB = cutLinks;
+                        }
+                    }
+                    return true;
+                }
+            }
+            else if (LevelName == "b303")
+            {
+                uint timer = new AssetID("CUTSCN_TIMER");
+                if (ContainsAsset(timer) && GetFromAssetID(timer) is AssetTIMR cutTimer)
+                {
+                    List<LinkBFBB> links = cutTimer.LinksBFBB.ToList();
+
+                    uint cut = new AssetID("WIN_GAME_CTSNMANAGER");
+                    if (ContainsAsset(cut) && GetFromAssetID(cut) is AssetCSNM cutManager)
+                    {
+                        links.AddRange(cutManager.LinksBFBB);
+
+                        for (int i = 0; i < links.Count; i++)
+                            if (links[i].EventSendID == EventBFBB.Preload)
+                                links.RemoveAt(i--);
+                            else if (links[i].EventReceiveID == EventBFBB.Play)
+                                links[i].EventReceiveID = EventBFBB.Run;
+                            else if (links[i].EventReceiveID == EventBFBB.Done)
+                                links[i].EventReceiveID = EventBFBB.Expired;
+
+                        cutTimer.LinksBFBB = links.ToArray();
+                    }
+                    return true;
+                }
+            }
             return false;
         }
 
