@@ -383,6 +383,10 @@ namespace IndustrialPark.Randomizer
                     item1shuffled |= levelPairs[0].Item1.UnimportCharacters();
                     item1shuffled |= levelPairs[0].Item1.FixTreedome();
                 }
+
+                if (settings.charsOnAnyLevel || settings.disableCutscenes)
+                    item1shuffled |= levelPairs[0].Item1.KillFinalBossCutscenes();
+
                 if (flags.HasFlag(RandomizerFlags.Warps) && !FileInSecondBox(levelPairs[0].Item1.currentlyOpenFilePath))
                     item1shuffled |= levelPairs[0].Item1.SetWarpNames(warpRandom, ref warpNames, ref warpRandomizerOutput, uinqueWarpNames);
 
