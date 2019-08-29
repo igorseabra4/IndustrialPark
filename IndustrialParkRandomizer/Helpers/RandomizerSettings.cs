@@ -10,7 +10,7 @@ namespace IndustrialPark
             Description("The randomizer will leave these files unnafected.")]
         public string[] skipFiles { get; set; } = new string[]
         {
-            "font", "boot", "plat", "mn", "sp", "pl", "hb00", "hb10", "db05", "b301", "s006"
+            "font", "boot", "plat", "mn", "sp", "pl", "hb10", "db05", "b301", "s006"
         };
 
         [Category("Patterns/Files To Skip"),
@@ -18,7 +18,7 @@ namespace IndustrialPark
             Description("The randomizer will leave warps to/from these files unnafected (but still randomize other things).")]
         public string[] skipFilesWarps { get; set; } = new string[]
         {
-            "gy04", "b3", "pg", "s005"
+            "hb00", "gy04", "b3", "pg", "s005"
         };
 
         private const string probExample = "Example: say Wooden, Thunder, Shhh and Stone Tiki probabilities are set to 1, 3, 0 and 2 respectively. Add up the numbers and the total is 6. Tikis have 1/6 probability of being Wooden, 3/6 Thunder and 2/6 Stone. There will be no Shhh Tikis. This applies similarly to enemies. Setting the value to -1 makes the randomizer ignore all existing instances of that tiki/enemy completely (doesn't replace them).";
@@ -201,6 +201,9 @@ namespace IndustrialPark
         [Category("Other"), DisplayName("Unlock Characters"), Description("Allows playing as Patrick and Sandy on every level.")]
         public bool charsOnAnyLevel { get; set; } = false;
 
+        [Category("Other"), DisplayName("Random Characters"), Description("Switches you to Spongebob, Patrick or Sandy randomly on every spawn.")]
+        public bool randomChars { get; set; } = false;
+
         [Category("Other"), DisplayName("Disable Cutscenes")]
         public bool disableCutscenes { get; set; } = true;
 
@@ -257,6 +260,7 @@ namespace IndustrialPark
             openTeleportBoxes = false;
             disableFlythroughs = false;
             charsOnAnyLevel = false;
+            randomChars = false;
         }
     }
 

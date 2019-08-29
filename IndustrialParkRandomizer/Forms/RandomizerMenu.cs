@@ -190,7 +190,7 @@ namespace IndustrialPark.Randomizer
                 if (saveFile.ShowDialog() == DialogResult.OK)
                     File.WriteAllText(saveFile.FileName, JsonConvert.SerializeObject(randomizer, Formatting.Indented));
         }
-
+        
         private void LoadToolStripMenuItem_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFile = new OpenFileDialog()
