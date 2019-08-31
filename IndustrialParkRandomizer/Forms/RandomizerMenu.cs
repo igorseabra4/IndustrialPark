@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace IndustrialPark.Randomizer
@@ -163,11 +164,25 @@ namespace IndustrialPark.Randomizer
         {
             ProgressBar progressBar = new ProgressBar("Performing Randomizer Operation", "Step");
             progressBar.Show();
-            randomizer.Perform(backupDir, progressBar.GetProgressBar());
+
+            Enabled = false;
+            new Thread(new ThreadStart(() =>
+            {
+                randomizer.Perform(backupDir, progressBar);
+                ThreadDone(progressBar);
+            })).Start();
+        }
+
+        private void ThreadDone(ProgressBar progressBar)
+        {
             progressBar.Close();
+            Invoke(new Action(() =>
+            {
+                Enabled = true;
+            }));
             UpdateInterfaceFromRandomizer();
         }
-        
+
         private void ButtonHelp_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start("https://battlepedia.org/Randomizer");
@@ -216,6 +231,11 @@ namespace IndustrialPark.Randomizer
 
         private void UpdateInterfaceFromRandomizer()
         {
+            if (InvokeRequired)
+            {
+                Invoke(new Action(UpdateInterfaceFromRandomizer));
+                return;
+            }
             programIsChangingStuff = true;
 
             if (string.IsNullOrEmpty(backupDir))

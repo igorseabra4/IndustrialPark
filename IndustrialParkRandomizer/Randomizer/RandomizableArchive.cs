@@ -177,11 +177,13 @@ namespace IndustrialPark.Randomizer
                             HashSet<VilType> uniqueSetTo = new HashSet<VilType>();
                             foreach (VilType v in setTo)
                                 uniqueSetTo.Add(v);
+                            foreach (VilType v in GetVilTypesInLevel(setTo))
+                                uniqueSetTo.Remove(v);
 
-                            while (uniqueSetTo.Count > 9)
+                            while (uniqueSetTo.Count > 3)
                             {
                                 VilType randomRemove = setTo[r.Next(0, setTo.Count)];
-                                while (setTo.Contains(randomRemove))
+                                while (uniqueSetTo.Contains(randomRemove) && setTo.Contains(randomRemove))
                                     setTo.Remove(randomRemove);
                                 uniqueSetTo.Remove(randomRemove);
                             }
@@ -1528,7 +1530,6 @@ namespace IndustrialPark.Randomizer
 
         public bool UnimportEnemies(HashSet<VilType> enemyVils)
         {
-            string folderName = "Enemies";
             foreach (VilType v in enemyVils)
             {
                 string hipFileName;
@@ -1574,9 +1575,7 @@ namespace IndustrialPark.Randomizer
                         throw new Exception("Invalid VilType");
                 }
 
-                if (v.ToString().Contains("tiki"))
-                    folderName = "Utility";
-
+                string folderName = v.ToString().Contains("tiki") ? "Utility" : "Enemies";
                 UnimportHip(folderName, hipFileName);
             }
 
@@ -1663,8 +1662,6 @@ namespace IndustrialPark.Randomizer
                     continue;
 
                 string hipFileName = null;
-                string folderName = "Enemies";
-
                 switch (v)
                 {
                     case VilType.g_love_bind:
@@ -1707,8 +1704,7 @@ namespace IndustrialPark.Randomizer
                         throw new Exception("Invalid VilType");
                 }
 
-                if (v.ToString().Contains("tiki"))
-                    folderName = "Utility";
+                string folderName = v.ToString().Contains("tiki") ? "Utility" : "Enemies";
 
                 ProgImportHip(folderName, hipFileName);
 
@@ -1717,9 +1713,7 @@ namespace IndustrialPark.Randomizer
 
             return imported;
         }
-
-        public static Dictionary<string, HipFile> enemyHipDict;
-
+        
         public bool ImportNumbers()
         {
             ProgImportHip("Utility", "numbers.hip");
@@ -1738,26 +1732,14 @@ namespace IndustrialPark.Randomizer
 
         public void ProgImportHip(string folderName, string fileName)
         {
-            if (!enemyHipDict.ContainsKey(fileName))
-            {
-                string path = Path.Combine(editorFilesFolder, "BattleForBikiniBottom", platform.ToString(), folderName, fileName);
-                enemyHipDict.Add(fileName, new HipFile(path));
-            }
-
-            ImportHip(enemyHipDict[fileName].DICT, true);
+            ImportHip(Path.Combine(editorFilesFolder, "BattleForBikiniBottom", platform.ToString(), folderName, fileName), true);
         }
 
         private void UnimportHip(string folderName, string fileName)
         {
-            if (!enemyHipDict.ContainsKey(fileName))
-            {
-                string path = Path.Combine(editorFilesFolder, "BattleForBikiniBottom", platform.ToString(), folderName, fileName);
-                enemyHipDict.Add(fileName, new HipFile(path));
-            }
-
-            UnimportHip(enemyHipDict[fileName].DICT);
+            UnimportHip(new HipFile(Path.Combine(editorFilesFolder, "BattleForBikiniBottom", platform.ToString(), folderName, fileName)).DICT);
         }
-
+        
         public void UnimportHip(Section_DICT dict)
         {
             UnsavedChanges = true;

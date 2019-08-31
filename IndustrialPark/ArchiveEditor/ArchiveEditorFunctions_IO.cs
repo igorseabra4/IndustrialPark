@@ -31,15 +31,15 @@ namespace IndustrialPark
                 MessageBox.Show("Invalid file: " + fileName);
         }
 
-        public void ImportHip(Section_DICT dict, bool forceOverwrite)
+        public void ImportHip(Section_DICT dictToImport, bool forceOverwrite)
         {
             UnsavedChanges = true;
 
-            foreach (Section_AHDR AHDR in dict.ATOC.AHDRList)
+            foreach (Section_AHDR AHDR in dictToImport.ATOC.AHDRList)
             {
                 if (AHDR.assetType == AssetType.COLL && ContainsAssetWithType(AssetType.COLL))
                 {
-                    foreach (Section_LHDR LHDR in dict.LTOC.LHDRList)
+                    foreach (Section_LHDR LHDR in dictToImport.LTOC.LHDRList)
                         LHDR.assetIDlist.Remove(AHDR.assetID);
 
                     MergeCOLL(AHDR);
@@ -47,7 +47,7 @@ namespace IndustrialPark
                 }
                 else if (AHDR.assetType == AssetType.JAW && ContainsAssetWithType(AssetType.JAW))
                 {
-                    foreach (Section_LHDR LHDR in dict.LTOC.LHDRList)
+                    foreach (Section_LHDR LHDR in dictToImport.LTOC.LHDRList)
                         LHDR.assetIDlist.Remove(AHDR.assetID);
 
                     MergeJAW(AHDR);
@@ -55,7 +55,7 @@ namespace IndustrialPark
                 }
                 else if (AHDR.assetType == AssetType.LODT && ContainsAssetWithType(AssetType.LODT))
                 {
-                    foreach (Section_LHDR LHDR in dict.LTOC.LHDRList)
+                    foreach (Section_LHDR LHDR in dictToImport.LTOC.LHDRList)
                         LHDR.assetIDlist.Remove(AHDR.assetID);
 
                     MergeLODT(AHDR);
@@ -63,7 +63,7 @@ namespace IndustrialPark
                 }
                 else if (AHDR.assetType == AssetType.PIPT && ContainsAssetWithType(AssetType.PIPT))
                 {
-                    foreach (Section_LHDR LHDR in dict.LTOC.LHDRList)
+                    foreach (Section_LHDR LHDR in dictToImport.LTOC.LHDRList)
                         LHDR.assetIDlist.Remove(AHDR.assetID);
 
                     MergePIPT(AHDR);
@@ -71,7 +71,7 @@ namespace IndustrialPark
                 }
                 else if (AHDR.assetType == AssetType.SHDW && ContainsAssetWithType(AssetType.SHDW))
                 {
-                    foreach (Section_LHDR LHDR in dict.LTOC.LHDRList)
+                    foreach (Section_LHDR LHDR in dictToImport.LTOC.LHDRList)
                         LHDR.assetIDlist.Remove(AHDR.assetID);
 
                     MergeSHDW(AHDR);
@@ -79,7 +79,7 @@ namespace IndustrialPark
                 }
                 else if (AHDR.assetType == AssetType.SNDI && ContainsAssetWithType(AssetType.SNDI))
                 {
-                    foreach (Section_LHDR LHDR in dict.LTOC.LHDRList)
+                    foreach (Section_LHDR LHDR in dictToImport.LTOC.LHDRList)
                         LHDR.assetIDlist.Remove(AHDR.assetID);
 
                     MergeSNDI(AHDR);
@@ -99,7 +99,7 @@ namespace IndustrialPark
                     }
                     else
                     {
-                        foreach (Section_LHDR LHDR in dict.LTOC.LHDRList)
+                        foreach (Section_LHDR LHDR in dictToImport.LTOC.LHDRList)
                             LHDR.assetIDlist.Remove(AHDR.assetID);
                     }
                 }
@@ -110,7 +110,7 @@ namespace IndustrialPark
                 }
             }
 
-            foreach (Section_LHDR LHDR in dict.LTOC.LHDRList)
+            foreach (Section_LHDR LHDR in dictToImport.LTOC.LHDRList)
                 if (LHDR.assetIDlist.Count != 0)
                     DICT.LTOC.LHDRList.Add(LHDR);
 

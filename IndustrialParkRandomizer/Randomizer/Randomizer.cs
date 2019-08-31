@@ -95,10 +95,9 @@ namespace IndustrialPark.Randomizer
             seedText = seed.ToString();
         }
         
-        public void Perform(string backupDir, System.Windows.Forms.ProgressBar progressBar)
+        public void Perform(string backupDir, ProgressBar progressBar)
         {
             int seed = (int)this.seed;
-            progressBar.Value = 0;
             
             if (isDir)
                 PerformDirRandomizer(backupDir, progressBar);
@@ -146,11 +145,9 @@ namespace IndustrialPark.Randomizer
             ArchiveEditorFunctions.renderableAssetSetTrans.Clear();
             ArchiveEditorFunctions.renderingDictionary.Clear();
             ArchiveEditorFunctions.nameDictionary.Clear();
-
-            progressBar.Value = 0;
         }
 
-        private void PerformDirRandomizer(string backupDir, System.Windows.Forms.ProgressBar progressBar)
+        private void PerformDirRandomizer(string backupDir, ProgressBar progressBar)
         {
             if (!File.Exists(Path.Combine(rootDir, "boot.hip")) && Directory.Exists(Path.Combine(rootDir, "files")) && File.Exists(Path.Combine(rootDir, "files", "boot.hip")))
             {
@@ -196,9 +193,8 @@ namespace IndustrialPark.Randomizer
                     hipPaths.Add(hipPath);
                 }
 
-            progressBar.Minimum = 0;
-            progressBar.Maximum = hipPaths.Count * 2;
-            progressBar.Step = 1;
+            progressBar.SetProgressBar(0, hipPaths.Count * 4 + 3, 1);
+            progressBar.Text2 = "Opening archives: step";
 
             List<string> warpNames = new List<string>(); // Names of all warps in the game for the Warps randomizer
             List<string> namesForBoot = new List<string>(); // Names of all levels in the game for sb.ini boot level randomizer
@@ -217,6 +213,8 @@ namespace IndustrialPark.Randomizer
             {
                 RandomizableArchive hip = new RandomizableArchive();
                 hip.OpenFile(hipPath, false, scoobyPlatform, true);
+
+                progressBar.PerformStep();
 
                 // Verifies if game/platform combination is ok, also checks for EditorFiles in case it needs those
                 if (!platformVerified)
@@ -276,6 +274,8 @@ namespace IndustrialPark.Randomizer
 
                     if (!FileInSecondBox(hipPath))
                         levelPathPairs.Add((hipPath, hopPath));
+
+                    progressBar.PerformStep();
                 }
                 else
                 {
@@ -283,13 +283,13 @@ namespace IndustrialPark.Randomizer
 
                     if (!FileInSecondBox(hipPath))
                         levelPathPairs.Add((hipPath, null));
+
+                    progressBar.PerformStep();
                 }
 
                 string nameForBoot = Path.GetFileNameWithoutExtension(hipPath).ToUpper();
                 if (settings.bootLevelMode == BootLevelMode.Random && !namesForBoot.Contains(nameForBoot))
                     namesForBoot.Add(nameForBoot);
-
-                progressBar.PerformStep();
             }
 
             HashSet<string> uinqueWarpNames = new HashSet<string>();
@@ -300,9 +300,7 @@ namespace IndustrialPark.Randomizer
                 warpNames.Clear();
                 warpNames.AddRange(uinqueWarpNames);
             }
-
-            RandomizableArchive.enemyHipDict = new Dictionary<string, HipFile>();
-
+            
             // Perform things on boot.hip
             if (flags.HasFlag(RandomizerFlags.Music) || settings.bootHipLodtMulti || settings.charsOnAnyLevel || settings.randomChars)
             {
@@ -345,6 +343,8 @@ namespace IndustrialPark.Randomizer
                 }
             }
 
+            progressBar.PerformStep();
+
             if (settings.restoreRobotLaugh)
             {
                 string mnu5path = (string.IsNullOrEmpty(backupDir) ? rootDir : backupDir) + "/mn/mnu5.hip";
@@ -363,13 +363,13 @@ namespace IndustrialPark.Randomizer
                 }
             }
 
+            progressBar.PerformStep();
+
             // Time for the actual randomization process!
+            progressBar.Text2 = "Randomizing archives: step";
 
             List<(string, string, string)> warpRandomizerOutput = new List<(string, string, string)>();
-
-            progressBar.Value = levelPairs.Count;
-            progressBar.Maximum = levelPairs.Count * 2;
-
+            
             Random gateRandom = new Random(seed);
             Random warpRandom = new Random(seed);
             Random levelFilesR = new Random(seed);
@@ -391,6 +391,8 @@ namespace IndustrialPark.Randomizer
                     item1shuffled |= levelPairs[0].Item1.SetWarpNames(warpRandom, ref warpNames, ref warpRandomizerOutput, uinqueWarpNames);
 
                 item1shuffled |= levelPairs[0].Item1.Randomize(seed, flags, flags2, settings, gateRandom, out bool needToAddNumbers);
+
+                progressBar.PerformStep();
 
                 HashSet<VilType> enemyVils = new HashSet<VilType>();
 
@@ -417,7 +419,11 @@ namespace IndustrialPark.Randomizer
                         item2shuffled |= levelPairs[0].Item2.ImportNumbers();
 
                     item2shuffled |= levelPairs[0].Item2.Randomize(seed, flags, flags2, settings, gateRandom, out _);
+
+                    progressBar.PerformStep();
                 }
+                else
+                    progressBar.PerformStep();
 
                 levelPairs[0].Item1.CollapseLayers();
                 levelPairs[0].Item2.CollapseLayers();
@@ -465,15 +471,15 @@ namespace IndustrialPark.Randomizer
                 }
 
                 levelPairs.RemoveAt(0);
-
-                progressBar.PerformStep();
             }
 
             string message = "Randomization complete!";
             
             if (!ApplyINISettings(backupDir, namesForBoot, game))
                 message += "\n* Unable to find game settings INI, so these were not applied.";
-            
+
+            progressBar.PerformStep();
+
             if (warpRandomizerOutput.Count != 0)
             {
                 WriteLog(warpRandomizerOutput);
