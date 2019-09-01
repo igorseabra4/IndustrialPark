@@ -69,12 +69,17 @@ namespace IndustrialPark.Randomizer
             bool success = false;
             try
             {
-                using (CommonOpenFileDialog openFile = new CommonOpenFileDialog() { Title = "Please choose your backup files directory.", IsFolderPicker = true })
-                    if (openFile.ShowDialog() == CommonFileDialogResult.Ok)
-                    {
-                        backupDir = openFile.FileName;
-                        success = true;
-                    }
+                void WindowsFolderPicker()
+                {
+                    using (CommonOpenFileDialog openFile = new CommonOpenFileDialog() { Title = "Please choose your backup files directory.", IsFolderPicker = true })
+                        if (openFile.ShowDialog() == CommonFileDialogResult.Ok)
+                        {
+                            backupDir = openFile.FileName;
+                            success = true;
+                        }
+                }
+
+                WindowsFolderPicker();
             }
             catch
             {
@@ -113,12 +118,16 @@ namespace IndustrialPark.Randomizer
             bool success = false;
             try
             {
-                using (CommonOpenFileDialog openFile = new CommonOpenFileDialog() { Title = "Please choose your game root (files) directory.", IsFolderPicker = true })
-                    if (openFile.ShowDialog() == CommonFileDialogResult.Ok)
-                    {
-                        randomizer.SetRootDir(openFile.FileName);
-                        success = true;
-                    }
+                void WindowsFolderPicker() {
+                    using (CommonOpenFileDialog openFile = new CommonOpenFileDialog() { Title = "Please choose your game root (files) directory.", IsFolderPicker = true })
+                        if (openFile.ShowDialog() == CommonFileDialogResult.Ok)
+                        {
+                            randomizer.SetRootDir(openFile.FileName);
+                            success =  true;
+                        }
+                }
+
+                WindowsFolderPicker();
             }
             catch
             {
