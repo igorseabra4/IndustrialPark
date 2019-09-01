@@ -329,14 +329,14 @@
     <Compile Include="ArchiveEditor\InternalEditors\InternalDynaEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\InternalDynaEditor.designer.cs">
+    <Compile Include="ArchiveEditor\InternalEditors\InternalDynaEditor.Designer.cs">
       <DependentUpon>InternalDynaEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="ArchiveEditor\Other\IInternalEditor.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\InternalTextEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\InternalTextEditor.designer.cs">
+    <Compile Include="ArchiveEditor\InternalEditors\InternalTextEditor.Designer.cs">
       <DependentUpon>InternalTextEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="ArchiveEditor\Dialogs\NewArchive.cs">
