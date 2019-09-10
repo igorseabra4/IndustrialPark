@@ -55,7 +55,7 @@ namespace IndustrialPark.Randomizer
                 }
 
             if (flags.HasFlag(RandomizerFlags.Textures))
-                shuffled |= RandomizeData(seed, AssetType.RWTX);
+                shuffled |= RandomizeTextures(seed, flags.HasFlag(RandomizerFlags.Textures_Special));
 
             if (flags.HasFlag(RandomizerFlags.Boulder_Settings))
                 shuffled |= RandomizeBoulderSettings(seed, settings);
@@ -216,7 +216,7 @@ namespace IndustrialPark.Randomizer
             if (flags.HasFlag(RandomizerFlags.Shiny_Object_Gates) && ContainsAssetWithType(AssetType.COND))
                 shuffled |= ShuffleShinyGates(gateRandom, settings, out shinyNumbers);
 
-            if ((settings.setChumSpats || flags.HasFlag(RandomizerFlags.Spatula_Gates)) && ContainsAssetWithType(AssetType.COND))
+            if ((settings.spatReqChum != 75 || flags.HasFlag(RandomizerFlags.Spatula_Gates)) && ContainsAssetWithType(AssetType.COND))
                 shuffled |= ShuffleSpatulaGates(gateRandom, flags.HasFlag(RandomizerFlags.Spatula_Gates), settings, out spatNumbers);
 
             needToAddNumbers = shinyNumbers | spatNumbers;
@@ -280,11 +280,13 @@ namespace IndustrialPark.Randomizer
             return true;
         }
 
-        private bool RandomizeData(int seed, AssetType assetType)
+        private bool RandomizeTextures(int seed, bool hud)
         {
             Random r = new Random(seed);
 
-            List<Asset> assets = (from asset in assetDictionary.Values where asset.AHDR.assetType == assetType select asset).ToList();
+            List<Asset> assets = (from asset in assetDictionary.Values where asset.AHDR.assetType == AssetType.RWTX
+                                  && ((hud && asset.AHDR.ADBG.assetName.ToLower().Contains("rw3")) || (!hud))
+                                  select asset).ToList();
 
             if (assets.Count < 2)
                 return false;
@@ -2191,7 +2193,7 @@ namespace IndustrialPark.Randomizer
                         {
                             int value = r.Next(settings.spatReqMin, settings.spatReqMax + 1);
 
-                            if (settings.setChumSpats)
+                            if (settings.spatReqChum != -1)
                                 value = settings.spatReqChum;
 
                             SetCondEvaluationAmount(value - 1, new AssetID("TOLL_DOOR_CONDITIONAL_01"));

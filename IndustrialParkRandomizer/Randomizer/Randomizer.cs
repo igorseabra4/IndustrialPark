@@ -243,7 +243,7 @@ namespace IndustrialPark.Randomizer
                         this.flags.Remove(RandomizerFlags.Enemies_Allow_Any_Type);
                         this.flags.Remove(RandomizerFlags.Shiny_Object_Gates);
                         this.flags.Remove(RandomizerFlags.Spatula_Gates);
-                        settings.setChumSpats = false;
+                        settings.spatReqChum = 75;
 
                         flags = 0;
                         foreach (RandomizerFlags f in this.flags)

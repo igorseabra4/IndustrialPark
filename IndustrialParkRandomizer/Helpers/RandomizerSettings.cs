@@ -212,12 +212,7 @@ namespace IndustrialPark
         
         [Category("Other"),
             DisplayName("Spatulas for Chum Bucket Lab"),
-            Description("If true, this value will override the amount of spatulas needed for the final boss.")]
-        public bool setChumSpats { get; set; } = true;
-
-        [Category("Other"),
-            DisplayName("Spatulas for Chum Bucket Lab"),
-            Description("If true, this value will override the amount of spatulas needed for the final boss.")]
+            Description("This will be the amount of spatulas needed for the final boss. Set to -1 to include it in the Spatula Gates randomizer method.")]
         public int spatReqChum { get; set; } = 75;
 
         [Category("Other"), DisplayName("boot.HIP LODT multiplier"),
@@ -252,7 +247,7 @@ namespace IndustrialPark
             dontShowMenuOnBoot = false;
             allMenuWarpsHB01 = false;
             disableCutscenes = false;
-            setChumSpats = false;
+            spatReqChum = 75;
             bootHipLodtMulti = false;
             brightColors = false;
             strongColors = false;

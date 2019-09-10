@@ -24,7 +24,8 @@
         Player_Characters = 1 << 19,
         Cameras = 1 << 20,
         Textures = 1 << 21,
-        Sounds = 1 << 22,
+        Textures_Special = 1 << 22,
+        Sounds = 1 << 23,
     }
 
     public enum RandomizerFlags2
