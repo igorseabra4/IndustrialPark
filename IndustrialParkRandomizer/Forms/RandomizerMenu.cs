@@ -216,12 +216,10 @@ namespace IndustrialPark.Randomizer
                 {
                     Randomizer settings = JsonConvert.DeserializeObject<Randomizer>(File.ReadAllText(openFile.FileName));
 
-                    if (settings.version != new Randomizer().version)
-                        MessageBox.Show("Note: randomizer settings file was made with an earlier or different version of Industrial Park. " +
-                            "The program will attempt to open it, but doesn't guarantee the randomization result will be the same. " +
-                            "If you need the exact same result, please use the same Industrial Park version (preferably the latest one) and a settings file saved by it.");
-
-                    randomizer = settings;
+                    if (settings.version == new Randomizer().version)
+                        randomizer = settings;
+                    else
+                        MessageBox.Show("Randomizer settings file was made with a different version of Industrial Park and cannot be opened.");
 
                     UpdateInterfaceFromRandomizer();
                 }

@@ -788,28 +788,21 @@ namespace IndustrialPark.Randomizer
         {
             List<AssetVIL> assets = (from asset in assetDictionary.Values where asset is AssetVIL vil && chooseFrom.Contains(vil.VilType) select asset).Cast<AssetVIL>().ToList();
             List<VilType> viltypes = (from asset in assets select asset.VilType).ToList();
-            List<AssetID> models = (from asset in assets select asset.Model_AssetID).ToList();
             
             foreach (AssetVIL a in assets)
             {
                 VilType prevVilType = a.VilType;
 
                 int viltypes_value = r.Next(0, viltypes.Count);
-                int model_value = mixModels ? r.Next(0, viltypes.Count) : viltypes_value;
 
                 a.VilType = veryRandom ? setTo[r.Next(0, setTo.Count)] : viltypes[viltypes_value];
 
-                if (veryRandom)
-                {
-                    a.Model_AssetID = new AssetID(mixModels ? 
-                        setTo[r.Next(0, setTo.Count)].ToString() + ".MINF" :
-                        a.VilType.ToString().Replace("sleepytime", "sleepy-time") + ".MINF");
-                }
+                if (mixModels)
+                    a.Model_AssetID = setTo[r.Next(0, setTo.Count)].ToString().Replace("sleepytime", "sleepy-time") + ".MINF";
                 else
-                    a.Model_AssetID = models[model_value];
-                
+                    a.Model_AssetID = a.VilType.ToString().Replace("sleepytime", "sleepy-time") + ".MINF";
+
                 viltypes.RemoveAt(viltypes_value);
-                models.RemoveAt(model_value);
 
                 if (prevVilType == VilType.robot_arf_bind || prevVilType == VilType.tubelet_bind)
                 {
@@ -1638,17 +1631,17 @@ namespace IndustrialPark.Randomizer
             VilType.tiki_wooden_bind
         };
 
-        public void GetEnemyTypes(ref HashSet<VilType> outSet)
+        public HashSet<VilType> GetEnemyTypes()
         {
-            VilType[] viltypes = importVilTypes;
-            outSet.Clear();
+            HashSet<VilType> outSet = new HashSet<VilType>();
             foreach (AssetVIL a in (from asset in assetDictionary.Values
-                                    where asset is AssetVIL vil && viltypes.Contains(vil.VilType)
+                                    where asset is AssetVIL vil && importVilTypes.Contains(vil.VilType)
                                     select asset).Cast<AssetVIL>())
             {
                 if (!ContainsAsset(a.Model_AssetID))
                     outSet.Add(a.VilType);
             }
+            return outSet;
         }
 
         public bool ImportEnemyTypes(HashSet<VilType> inSet)
@@ -1657,8 +1650,7 @@ namespace IndustrialPark.Randomizer
 
             foreach (VilType v in inSet)
             {
-                if ((v == VilType.robot_sleepytime_bind && ContainsAsset(new AssetID("robot_sleepy-time_bind.MINF")))
-                    || ContainsAsset(new AssetID(v.ToString() + ".MINF")))
+                if (ContainsAsset(new AssetID(v.ToString().Replace("sleepytime", "sleepy-time") + ".MINF")))
                     continue;
 
                 string hipFileName = null;
@@ -1704,10 +1696,7 @@ namespace IndustrialPark.Randomizer
                         throw new Exception("Invalid VilType");
                 }
 
-                string folderName = v.ToString().Contains("tiki") ? "Utility" : "Enemies";
-
-                ProgImportHip(folderName, hipFileName);
-
+                ProgImportHip(v.ToString().Contains("tiki") ? "Utility" : "Enemies", hipFileName);
                 imported = true;
             }
 

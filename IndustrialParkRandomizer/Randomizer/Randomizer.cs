@@ -18,7 +18,7 @@ namespace IndustrialPark.Randomizer
 
     public class Randomizer
     {
-        public int version = 52;
+        public int version = 54;
         public string rootDir;
         public bool isDir;
         public string seedText;
@@ -120,8 +120,7 @@ namespace IndustrialPark.Randomizer
 
                 if (flags.HasFlag(RandomizerFlags.Enemies_Allow_Any_Type))
                 {
-                    HashSet<VilType> vilTypes = new HashSet<VilType>();
-                    archive.GetEnemyTypes(ref vilTypes);
+                    HashSet<VilType> vilTypes = archive.GetEnemyTypes();
 
                     if (vilTypes.Count > 0)
                     {
@@ -395,22 +394,12 @@ namespace IndustrialPark.Randomizer
 
                 progressBar.PerformStep();
 
-                HashSet<VilType> enemyVils = new HashSet<VilType>();
-
-                if (flags.HasFlag(RandomizerFlags.Enemies_Allow_Any_Type))
-                {
-                    levelPairs[0].Item1.GetEnemyTypes(ref enemyVils);
-                    item1shuffled |= levelPairs[0].Item1.UnimportEnemies(enemyVils);
-                    levelPairs[0].Item1.GetEnemyTypes(ref enemyVils);
-                }
+                HashSet<VilType> enemyVils = levelPairs[0].Item1.GetEnemyTypes();
 
                 bool item2shuffled = false;
                 if (levelPairs[0].Item2 != null)
                 {
-                    if (settings.charsOnAnyLevel)
-                        item2shuffled = levelPairs[0].Item2.UnimportCharacters();
-
-                    if (flags.HasFlag(RandomizerFlags.Enemies_Allow_Any_Type))
+                    if (enemyVils.Count != 0)
                     {
                         item1shuffled |= levelPairs[0].Item1.UnimportEnemies(enemyVils);
                         item2shuffled |= levelPairs[0].Item2.ImportEnemyTypes(enemyVils);
@@ -418,6 +407,9 @@ namespace IndustrialPark.Randomizer
 
                     if (needToAddNumbers)
                         item2shuffled |= levelPairs[0].Item2.ImportNumbers();
+
+                    if (settings.charsOnAnyLevel)
+                        item2shuffled = levelPairs[0].Item2.UnimportCharacters();
 
                     item2shuffled |= levelPairs[0].Item2.Randomize(seed, flags, flags2, settings, gateRandom, out _);
 
