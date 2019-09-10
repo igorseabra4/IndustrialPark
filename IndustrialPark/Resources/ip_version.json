@@ -1,4 +1,4 @@
 {
-  "version": "preview54.1",
-  "versionName": "Preview 54.1:\n* Randomizer: Random Characters. Similar to Music, this switches you to Spongebob, Patrick or Sandy randomly on every spawn. Can be used without Unlock Characters.\n* Randomizer: fixes bugs on Unlock Characters. Forces you out of levels which crash the game (intro cutscene and treedome) and places extra spatula in hub to make up for the removed treedome. Removes all cutscenes from both final boss levels.\n* Fixes bug related to creating a new archive from an archive editor that had something in it before.\n"
+  "version": "preview54.2",
+  "versionName": "Preview 54.2:\n* Randomizer: fixes bug which made some stages crash more often than not depending on your settings.\n* Randomizer: fixes bug in which it tried to load external HIPs from the wrong folder on some seeds.\n* Randomizer: fixes bug in which using the randomizer on Scooby threw a null pointer exception.\n"
 }

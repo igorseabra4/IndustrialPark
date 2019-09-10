@@ -180,7 +180,7 @@ namespace IndustrialPark.Randomizer
                             foreach (VilType v in GetVilTypesInLevel(setTo))
                                 uniqueSetTo.Remove(v);
 
-                            while (uniqueSetTo.Count > 3)
+                            while (uniqueSetTo.Count > 5)
                             {
                                 VilType randomRemove = setTo[r.Next(0, setTo.Count)];
                                 while (uniqueSetTo.Contains(randomRemove) && setTo.Contains(randomRemove))
