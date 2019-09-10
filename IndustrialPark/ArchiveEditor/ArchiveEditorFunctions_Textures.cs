@@ -63,23 +63,23 @@ namespace IndustrialPark
 
             int fileVersion = 0;
 
-            foreach (Asset a in assetDictionary.Values)
-                if (a is AssetRWTX RWTX)
-                    if ((RW3 && RWTX.AHDR.ADBG.assetName.Contains(".RW3")) || (!RW3 && !RWTX.AHDR.ADBG.assetName.Contains(".RW3"))) try
-                        {
-                            foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(RWTX.Data))
-                                if (rw is TextureDictionary_0016 td)
-                                    foreach (TextureNative_0015 tn in td.textureNativeList)
-                                    {
-                                        fileVersion = tn.renderWareVersion;
-                                        tn.textureNativeStruct.textureName = RWTX.AHDR.ADBG.assetName.Replace(".RW3", "");
-                                        textNativeList.Add(tn);
-                                    }
-                        }
-                        catch
-                        {
-                            MessageBox.Show(a.AHDR.assetID.ToString("X8") + " " + a.AHDR.ADBG.assetName);
-                        }
+            foreach (Section_AHDR AHDR in GetAssetsOfType(AssetType.RWTX))
+                if ((RW3 && AHDR.ADBG.assetName.Contains(".RW3")) || (!RW3 && !AHDR.ADBG.assetName.Contains(".RW3")))
+                    try
+                    {
+                        foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(AHDR.data))
+                            if (rw is TextureDictionary_0016 td)
+                                foreach (TextureNative_0015 tn in td.textureNativeList)
+                                {
+                                    fileVersion = tn.renderWareVersion;
+                                    tn.textureNativeStruct.textureName = AHDR.ADBG.assetName.Replace(".RW3", "");
+                                    textNativeList.Add(tn);
+                                }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Unable to add RWTX asset {GetFromAssetID(AHDR.assetID).ToString()} to TXD archive: {ex.Message}");
+                    }
 
             TextureDictionary_0016 rws = new TextureDictionary_0016()
             {

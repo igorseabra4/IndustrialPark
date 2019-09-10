@@ -219,6 +219,7 @@ namespace IndustrialPark.Randomizer
                 // Verifies if game/platform combination is ok, also checks for EditorFiles in case it needs those
                 if (!platformVerified)
                 {
+                    game = hip.game;
                     scoobyPlatform = hip.platform;
                     bool disableStuff = false;
                     if (hip.game != Game.BFBB && (flags.HasFlag(RandomizerFlags.Enemies_Allow_Any_Type) || flags.HasFlag(RandomizerFlags.Shiny_Object_Gates) || flags.HasFlag(RandomizerFlags.Spatula_Gates)))
@@ -426,7 +427,8 @@ namespace IndustrialPark.Randomizer
                     progressBar.PerformStep();
 
                 levelPairs[0].Item1.CollapseLayers();
-                levelPairs[0].Item2.CollapseLayers();
+                if (levelPairs[0].Item2 != null)
+                    levelPairs[0].Item2.CollapseLayers();
 
                 // Save to a random different path (level files randomizer)
                 if (flags2.HasFlag(RandomizerFlags2.Level_Files) && !FileInSecondBox(levelPairs[0].Item1.currentlyOpenFilePath))
