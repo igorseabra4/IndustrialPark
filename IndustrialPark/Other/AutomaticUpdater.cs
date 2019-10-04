@@ -54,8 +54,8 @@ namespace IndustrialPark
                         {
                                 "",
                                 "/Resources",
-                                "/Resources/importvcolorobj",
                                 "/Resources/Models",
+                                "/Resources/Scripts",
                                 "/Resources/SharpDX",
                                 "/Resources/txdgen_1.0",
                                 "/Resources/txdgen_1.0",

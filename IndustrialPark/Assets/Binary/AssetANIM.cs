@@ -8,14 +8,14 @@ namespace IndustrialPark
 {
     public class KeyFrame
     {
-        public short Frame { get; set; }
-        public short Xrot { get; set; }
-        public short Yrot { get; set; }
-        public short Zrot { get; set; }
-        public short Scale { get; set; }
-        public short Xpos { get; set; }
-        public short Ypos { get; set; }
-        public short Zpos { get; set; }
+        public ushort TimeIndex { get; set; }
+        public short RotationX { get; set; }
+        public short RotationY { get; set; }
+        public short RotationZ { get; set; }
+        public short RotationW { get; set; }
+        public short PositionX { get; set; }
+        public short PositionY { get; set; }
+        public short PositionZ { get; set; }
     }
     
     public class AssetANIM : Asset
@@ -25,60 +25,60 @@ namespace IndustrialPark
         public override void Verify(ref List<string> result)
         {
             KeyFrame[] a = KeyFrames;
-            float[] b = TimeMap;
-            short[][] c = KeyFrameMap;
+            float[] b = Times;
+            short[][] c = Offsets;
         }
 
         [Category("Animation")]
-        public int Unknown_04
+        public int Flags
         {
             get => ReadInt(0x04);
             set => Write(0x04, value);
         }
 
         [Category("Animation")]
-        public short NumBones
+        public short BoneCount
         {
             get => ReadShort(0x08);
             set => Write(0x08, value);
         }
 
         [Category("Animation")]
-        public short NumFrames
+        public short TimeCount
         {
             get => ReadShort(0x0A);
             set => Write(0x0A, value);
         }
 
         [Category("Animation")]
-        public int NumKeyFrames
+        public int KeyCount
         {
             get => ReadInt(0xC);
             set => Write(0xC, value);
         }
 
-        [Category("Animation")]
-        public int Unknown10
+        [Category("Animation"), TypeConverter(typeof(FloatTypeConverter))]
+        public float ScaleX
         {
-            get => ReadInt(0x10);
+            get => ReadFloat(0x10);
             set => Write(0x10, value);
         }
 
-        [Category("Animation")]
-        public int Unknown14
+        [Category("Animation"), TypeConverter(typeof(FloatTypeConverter))]
+        public float ScaleY
         {
-            get => ReadInt(0x14);
+            get => ReadFloat(0x14);
             set => Write(0x14, value);
         }
 
-        [Category("Animation")]
-        public int Unknown18
+        [Category("Animation"), TypeConverter(typeof(FloatTypeConverter))]
+        public float ScaleZ
         {
-            get => ReadInt(0x18);
+            get => ReadFloat(0x18);
             set => Write(0x18, value);
         }
 
-        private int KeyFramesSectionStart { get => 0x1C; }
+        private const int KeyFramesSectionStart = 0x1C;
 
         [Category("Animation")]
         public KeyFrame[] KeyFrames
@@ -86,18 +86,18 @@ namespace IndustrialPark
             get
             {
                 List<KeyFrame> keyFrames = new List<KeyFrame>();
-                for (int i = KeyFramesSectionStart; i < KeyFramesSectionStart + NumKeyFrames * 0x10; i += 0x10)
+                for (int i = KeyFramesSectionStart; i < KeyFramesSectionStart + KeyCount * 0x10; i += 0x10)
                 {
                     keyFrames.Add(new KeyFrame
                     {
-                        Frame = ReadShort(i + 0x00),
-                        Xrot = ReadShort(i + 0x02),
-                        Yrot = ReadShort(i + 0x04),
-                        Zrot = ReadShort(i + 0x06),
-                        Scale = ReadShort(i + 0x08),
-                        Xpos = ReadShort(i + 0x0A),
-                        Ypos = ReadShort(i + 0x0C),
-                        Zpos = ReadShort(i + 0x0E)
+                        TimeIndex = ReadUShort(i + 0x00),
+                        RotationX = ReadShort(i + 0x02),
+                        RotationY = ReadShort(i + 0x04),
+                        RotationZ = ReadShort(i + 0x06),
+                        RotationW = ReadShort(i + 0x08),
+                        PositionX = ReadShort(i + 0x0A),
+                        PositionY = ReadShort(i + 0x0C),
+                        PositionZ = ReadShort(i + 0x0E)
                     });
                 }
                 return keyFrames.ToArray();
@@ -105,60 +105,60 @@ namespace IndustrialPark
             set
             {
                 List<byte> before = Data.Take(KeyFramesSectionStart).ToList();
-                List<byte> after = Data.Skip(KeyFramesSectionStart + NumKeyFrames * 0x10).ToList();
+                List<byte> after = Data.Skip(TimesSectionStart).ToList();
                 foreach (KeyFrame k in value)
                 {
-                    before.AddRange(BitConverter.GetBytes(Switch(k.Frame)));
-                    before.AddRange(BitConverter.GetBytes(Switch(k.Xrot)));
-                    before.AddRange(BitConverter.GetBytes(Switch(k.Yrot)));
-                    before.AddRange(BitConverter.GetBytes(Switch(k.Zrot)));
-                    before.AddRange(BitConverter.GetBytes(Switch(k.Scale)));
-                    before.AddRange(BitConverter.GetBytes(Switch(k.Xpos)));
-                    before.AddRange(BitConverter.GetBytes(Switch(k.Ypos)));
-                    before.AddRange(BitConverter.GetBytes(Switch(k.Zpos)));
+                    before.AddRange(BitConverter.GetBytes(Switch(k.TimeIndex)));
+                    before.AddRange(BitConverter.GetBytes(Switch(k.RotationX)));
+                    before.AddRange(BitConverter.GetBytes(Switch(k.RotationY)));
+                    before.AddRange(BitConverter.GetBytes(Switch(k.RotationZ)));
+                    before.AddRange(BitConverter.GetBytes(Switch(k.RotationW)));
+                    before.AddRange(BitConverter.GetBytes(Switch(k.PositionX)));
+                    before.AddRange(BitConverter.GetBytes(Switch(k.PositionY)));
+                    before.AddRange(BitConverter.GetBytes(Switch(k.PositionZ)));
                 }
                 before.AddRange(after);
                 Data = before.ToArray();
-                NumKeyFrames = value.Length;
+                KeyCount = value.Length;
             }
         }
 
-        private int TimeMapSectionStart { get => KeyFramesSectionStart + NumKeyFrames * 0x10; }
+        private int TimesSectionStart => KeyFramesSectionStart + KeyCount * 0x10;
 
         [Category("Animation")]
-        public float[] TimeMap
+        public float[] Times
         {
             get
             {
                 List<float> timeMap = new List<float>();
-                for (int i = TimeMapSectionStart; i < TimeMapSectionStart + 4 * NumFrames; i += 4)
+                for (int i = TimesSectionStart; i < OffsetsSectionStart; i += 4)
                     timeMap.Add(ReadFloat(i));
                 return timeMap.ToArray();
             }
             set
             {
-                List<byte> before = Data.Take(TimeMapSectionStart).ToList();
-                List<byte> after = Data.Skip(TimeMapSectionStart + 4 * NumFrames).ToList();
+                List<byte> before = Data.Take(TimesSectionStart).ToList();
+                List<byte> after = Data.Skip(OffsetsSectionStart).ToList();
                 foreach (float k in value)
                     before.AddRange(BitConverter.GetBytes(Switch(k)));
                 before.AddRange(after);
                 Data = before.ToArray();
-                NumFrames = (short)value.Length;
+                TimeCount = (short)value.Length;
             }
         }
 
-        private int KeyFrameMapSectionStart { get => TimeMapSectionStart + NumFrames * 4; }
+        private int OffsetsSectionStart => TimesSectionStart + TimeCount * 4;
 
         [Category("Animation")]
-        public short[][] KeyFrameMap
+        public short[][] Offsets
         {
             get
             {
                 List<short[]> keyFrameMap = new List<short[]>();
-                for (int i = KeyFrameMapSectionStart; i < KeyFrameMapSectionStart + NumBones * 2 * (NumFrames - 1); i += NumBones * 2)
+                for (int i = OffsetsSectionStart; i < OffsetsSectionStart + BoneCount * 2 * (TimeCount - 1); i += BoneCount * 2)
                 {
                     List<short> keyframes = new List<short>();
-                    for (int j = i; j < i + NumBones * 2; j += 2)
+                    for (int j = i; j < i + BoneCount * 2; j += 2)
                         keyframes.Add(ReadShort(j));
 
                     keyFrameMap.Add(keyframes.ToArray());
@@ -167,7 +167,7 @@ namespace IndustrialPark
             }
             set
             {
-                List<byte> before = Data.Take(KeyFrameMapSectionStart).ToList();
+                List<byte> before = Data.Take(OffsetsSectionStart).ToList();
 
                 foreach (short[] i in value)
                     foreach (short j in i)

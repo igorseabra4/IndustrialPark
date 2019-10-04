@@ -64,45 +64,45 @@ namespace IndustrialPark
 
         public static List<Section_AHDR> GetAssets(Game game, out bool success, out bool overwrite, out bool simps, out bool piptVcolors)
         {
-            ImportModel a = new ImportModel();
-            if (a.ShowDialog() == DialogResult.OK)
-            {
-                List<Section_AHDR> AHDRs = new List<Section_AHDR>();
-                simps = a.checkBoxGenSimps.Checked;
-
-                if (simps)
-                    MessageBox.Show("a SIMP for each imported MODL will be generated and placed on a new DEFAULT layer.");
-
-                foreach (string filePath in a.filePaths)
+            using (ImportModel a = new ImportModel())
+                if (a.ShowDialog() == DialogResult.OK)
                 {
-                    string assetName = Path.GetFileNameWithoutExtension(filePath) + ".dff";
-                    AssetType assetType = AssetType.MODL;
-                    byte[] assetData = Path.GetExtension(filePath).ToLower().Equals(".dff") ?
-                                File.ReadAllBytes(filePath) :
-                                ReadFileMethods.ExportRenderWareFile(
-                                    CreateDFFFromAssimp(filePath,
-                                    a.checkBoxFlipUVs.Checked),
-                                    modelRenderWareVersion(game));
-                    
-                    AHDRs.Add(
-                        new Section_AHDR(
-                            Functions.BKDRHash(assetName),
-                            assetType,
-                            ArchiveEditorFunctions.AHDRFlagsFromAssetType(assetType),
-                            new Section_ADBG(0, assetName, "", 0),
-                            assetData));
-                }
+                    List<Section_AHDR> AHDRs = new List<Section_AHDR>();
+                    simps = a.checkBoxGenSimps.Checked;
 
-                success = true;
-                overwrite = a.checkBoxOverwrite.Checked;
-                piptVcolors = a.checkBoxEnableVcolors.Checked;
-                return AHDRs;
-            }
-            else
-            {
-                success = overwrite = simps = piptVcolors = false;
-                return null;
-            }
+                    if (simps)
+                        MessageBox.Show("a SIMP for each imported MODL will be generated and placed on a new DEFAULT layer.");
+
+                    foreach (string filePath in a.filePaths)
+                    {
+                        string assetName = Path.GetFileNameWithoutExtension(filePath) + ".dff";
+                        AssetType assetType = AssetType.MODL;
+                        byte[] assetData = Path.GetExtension(filePath).ToLower().Equals(".dff") ?
+                                    File.ReadAllBytes(filePath) :
+                                    ReadFileMethods.ExportRenderWareFile(
+                                        CreateDFFFromAssimp(filePath,
+                                        a.checkBoxFlipUVs.Checked),
+                                        modelRenderWareVersion(game));
+
+                        AHDRs.Add(
+                            new Section_AHDR(
+                                Functions.BKDRHash(assetName),
+                                assetType,
+                                ArchiveEditorFunctions.AHDRFlagsFromAssetType(assetType),
+                                new Section_ADBG(0, assetName, "", 0),
+                                assetData));
+                    }
+
+                    success = true;
+                    overwrite = a.checkBoxOverwrite.Checked;
+                    piptVcolors = a.checkBoxEnableVcolors.Checked;
+                    return AHDRs;
+                }
+                else
+                {
+                    success = overwrite = simps = piptVcolors = false;
+                    return null;
+                }
         }
     }
 }

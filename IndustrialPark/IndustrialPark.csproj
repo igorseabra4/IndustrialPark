@@ -273,6 +273,7 @@
     <Compile Include="Models\ChooseTarget.Designer.cs">
       <DependentUpon>ChooseTarget.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Animation_IO_Assimp.cs" />
     <Compile Include="Models\Model_IO_Assimp.cs" />
     <Compile Include="Other\AutomaticUpdater.cs" />
     <Compile Include="MainForm\EditName.cs">
@@ -598,7 +599,13 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Resources\importvcolorobj\importvcolorobj_v1.3.9.ms">
+    <None Include="Resources\Scripts\ANIM_asset_importer_gcn.ms">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Scripts\ANIM_asset_importer_xbox.ms">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Scripts\importvcolorobj_v1.3.9.ms">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\ip_version.json" />
@@ -674,7 +681,7 @@
     <Content Include="Resources\AboutImage3.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\importvcolorobj\readme.txt">
+    <Content Include="Resources\Scripts\readme.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\SharpDX\Shader_Basic.hlsl">
