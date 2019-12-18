@@ -1,6 +1,4 @@
 ﻿using SharpDX;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace IndustrialPark
@@ -8,6 +6,7 @@ namespace IndustrialPark
     public partial class ArchiveEditorFunctions
     {
         private static PositionGizmo[] positionGizmos;
+        private static PositionGizmo[] triggerPositionGizmos;
         private static RotationGizmo[] rotationGizmos;
         private static ScaleGizmo[] scaleGizmos;
         private static PositionLocalGizmo[] positionLocalGizmos;
@@ -18,6 +17,14 @@ namespace IndustrialPark
                 new PositionGizmo(GizmoType.X),
                 new PositionGizmo(GizmoType.Y),
                 new PositionGizmo(GizmoType.Z)};
+
+            triggerPositionGizmos = new PositionGizmo[6]{
+                new PositionGizmo(GizmoType.X),
+                new PositionGizmo(GizmoType.Y),
+                new PositionGizmo(GizmoType.Z),
+                new PositionGizmo(GizmoType.TrigX1),
+                new PositionGizmo(GizmoType.TrigY1),
+                new PositionGizmo(GizmoType.TrigZ1)};
 
             rotationGizmos = new RotationGizmo[3]{
                 new RotationGizmo(GizmoType.Yaw),
@@ -36,140 +43,129 @@ namespace IndustrialPark
                 new PositionLocalGizmo(GizmoType.Z)};
         }
 
-        private static bool DrawGizmos = false;
         public static GizmoMode CurrentGizmoMode { get; private set; } = GizmoMode.Position;
         public static bool FinishedMovingGizmo = false;
+        public static bool TriggerGizmo = false;
 
         public static void RenderGizmos(SharpRenderer renderer)
         {
-            if (DrawGizmos)
-                switch (CurrentGizmoMode)
-                {
-                    case GizmoMode.Position:
-                        foreach (PositionGizmo g in positionGizmos)
-                            g.Draw(renderer);
-                        break;
-                    case GizmoMode.Rotation:
-                        for (int i = 2; i >= 0; i--)
-                            rotationGizmos[i].Draw(renderer);
-                        break;
-                    case GizmoMode.Scale:
-                        foreach (ScaleGizmo g in scaleGizmos)
-                            g.Draw(renderer);
-                        break;
-                    case GizmoMode.PositionLocal:
-                        foreach (PositionLocalGizmo g in positionLocalGizmos)
-                            g.Draw(renderer);
-                        break;
-                }
-        }
-
-        public static void UpdateGizmoPosition()
-        {
-            DrawGizmos = false;
-            // Position Gizmos
+            switch (CurrentGizmoMode)
             {
-                BoundingSphere bs = new BoundingSphere();
-                bool found = false;
-
-                foreach (IClickableAsset a in allCurrentlySelectedAssets.OfType<IClickableAsset>())
-                    if (!found)
+                case GizmoMode.Position:
                     {
-                        found = true;
-                        bs = a.GetGizmoCenter();
+                        if (allCurrentlySelectedAssets.OfType<IClickableAsset>().Count() == 1 &&
+                        allCurrentlySelectedAssets.OfType<IClickableAsset>().FirstOrDefault() is AssetTRIG TRIG
+                        && TRIG.Shape == TriggerShape.Box)
+                        {
+                            TriggerGizmo = true;
+
+                            GizmoCenterPosition = TRIG.Position;
+                            float distance = Vector3.Distance(renderer.Camera.Position, TRIG.GetBoundingBox().Center) / 5f;
+
+                            foreach (PositionGizmo g in triggerPositionGizmos)
+                            {
+                                g.SetPosition(TRIG.GetBoundingBox(), distance);
+                                g.Draw(renderer);
+                            }
+
+                            distance = Vector3.Distance(renderer.Camera.Position, TRIG.Position) / 5f;
+
+                            foreach (PositionGizmo g in positionGizmos)
+                            {
+                                g.SetPosition(TRIG.Position, distance);
+                                g.Draw(renderer);
+                            }
+                        }
+                        else
+                        {
+                            TriggerGizmo = false;
+
+                            BoundingBox bb = new BoundingBox();
+                            bool found = false;
+
+                            foreach (IClickableAsset a in allCurrentlySelectedAssets.OfType<IClickableAsset>())
+                                if (!found)
+                                {
+                                    found = true;
+                                    bb = a.GetBoundingBox();
+                                }
+                                else
+                                    bb = BoundingBox.Merge(bb, a.GetBoundingBox());
+
+                            if (found)
+                            {
+                                GizmoCenterPosition = bb.Center;
+                                float distance = Vector3.Distance(renderer.Camera.Position, bb.Center) / 5f;
+
+                                foreach (PositionGizmo g in positionGizmos)
+                                {
+                                    g.SetPosition(bb.Center, distance);
+                                    g.Draw(renderer);
+                                }
+                            }
+                        }
                     }
-                    else
-                        bs = BoundingSphere.Merge(bs, a.GetGizmoCenter());
-                
-                if (found)
-                {
-                    UpdatePositionGizmo(bs);
-                    if (CurrentGizmoMode == GizmoMode.Position)
-                        DrawGizmos = true;
-                }
-            }
-
-            // Rotation Gizmos
-            if (allCurrentlySelectedAssets.OfType<IRotatableAsset>().Count() == 1)
-            {
-                IRotatableAsset ira = allCurrentlySelectedAssets.OfType<IRotatableAsset>().FirstOrDefault();
-                SetCenterRotation(ira.Yaw, ira.Pitch, ira.Roll);
-                UpdateRotationGizmo(ira.GetObjectCenter());
-                if (CurrentGizmoMode == GizmoMode.Rotation)
-                    DrawGizmos = true;
-            }
-
-            // Scale Gizmos
-            {
-                BoundingBox bb = new BoundingBox();
-                bool found = false;
-
-                foreach (IScalableAsset a in allCurrentlySelectedAssets.OfType<IScalableAsset>())
-                {
-                    if (!found)
+                    break;
+                case GizmoMode.Rotation:
+                    if (allCurrentlySelectedAssets.OfType<IRotatableAsset>().Count() != 0)
                     {
-                        found = true;
-                        bb = a.GetBoundingBox();
-                    }
-                    else
-                        bb = BoundingBox.Merge(bb, a.GetBoundingBox());
-
-                    if (CurrentGizmoMode == GizmoMode.Scale && a is IRotatableAsset ira)
+                        IRotatableAsset ira = allCurrentlySelectedAssets.OfType<IRotatableAsset>().FirstOrDefault();
                         SetCenterRotation(ira.Yaw, ira.Pitch, ira.Roll);
-                }
 
-                if (found)
-                {
-                    UpdateScaleGizmo(bb);
-                    if (CurrentGizmoMode == GizmoMode.Scale)
-                        DrawGizmos = true;
-                }
-            }
+                        GizmoCenterPosition = ira.Position;
+                        float distance = Vector3.Distance(renderer.Camera.Position, ira.Position) / 2f;
 
-            // Position Local Gizmos
-            if (allCurrentlySelectedAssets.OfType<IClickableAsset>().Count() == 1)
-            {
-                UpdatePositionLocalGizmo(allCurrentlySelectedAssets.OfType<IClickableAsset>().FirstOrDefault().GetGizmoCenter());
-                if (CurrentGizmoMode == GizmoMode.PositionLocal)
-                    DrawGizmos = true;
+                        for (int i = 2; i >= 0; i--)
+                        {
+                            rotationGizmos[i].SetPosition(ira.Position, distance, GizmoCenterRotation);
+                            rotationGizmos[i].Draw(renderer);
+                        }
+                    }
+                    break;
+                case GizmoMode.Scale:
+                    if (allCurrentlySelectedAssets.OfType<IScalableAsset>().Count() != 0)
+                    {
+                        IScalableAsset isa = allCurrentlySelectedAssets.OfType<IScalableAsset>().FirstOrDefault();
+                        if (isa is IRotatableAsset ira)
+                            SetCenterRotation(ira.Yaw, ira.Pitch, ira.Roll);
+                        else
+                            SetCenterRotation(0, 0, 0);
+
+                        GizmoCenterPosition = isa.Position;
+                        float distance = Vector3.Distance(renderer.Camera.Position, isa.Position) / 5f;
+                        
+                        foreach (ScaleGizmo g in scaleGizmos)
+                        {
+                            g.SetPosition(isa.Position, distance, GizmoCenterRotation);
+                            g.Draw(renderer);
+                        }
+                    }
+                    break;
+                case GizmoMode.PositionLocal:
+                    if (allCurrentlySelectedAssets.OfType<IClickableAsset>().Count() == 1)
+                    {
+                        if (allCurrentlySelectedAssets.OfType<IClickableAsset>().FirstOrDefault() is AssetTRIG TRIG && TRIG.Shape == TriggerShape.Box)
+                            return;
+
+                        IClickableAsset ica = allCurrentlySelectedAssets.OfType<IClickableAsset>().FirstOrDefault();
+
+                        GizmoCenterPosition = ica.GetBoundingBox().Center;
+
+                        float radius = Vector3.Distance(renderer.Camera.Position, GizmoCenterPosition) / 5f;
+
+                        foreach (PositionLocalGizmo g in positionLocalGizmos)
+                        { 
+                            g.SetPosition(ica.GetBoundingBox().Center, radius, GizmoCenterRotation);
+                            g.Draw(renderer);
+                        }
+                    }
+                    break;
             }
         }
-        
+
         private static Vector3 GizmoCenterPosition;
         private static Matrix GizmoCenterRotation;
-            
-        private static void UpdatePositionGizmo(BoundingSphere position)
-        {
-            GizmoCenterPosition = position.Center;
-
-            foreach (PositionGizmo g in positionGizmos)
-                g.SetPosition(position);
-        }
-
-        private static void UpdateRotationGizmo(BoundingSphere position)
-        {
-            GizmoCenterPosition = position.Center;
-
-            foreach (RotationGizmo g in rotationGizmos)
-                g.SetPosition(position, GizmoCenterRotation);
-        }
-
-        private static void UpdateScaleGizmo(BoundingBox position)
-        {
-            GizmoCenterPosition = position.Center;
-
-            foreach (ScaleGizmo g in scaleGizmos)
-                g.SetPosition(position, GizmoCenterRotation);
-        }
-
-        private static void UpdatePositionLocalGizmo(BoundingSphere position)
-        {
-            GizmoCenterPosition = position.Center;
-
-            foreach (PositionLocalGizmo g in positionLocalGizmos)
-                g.SetPosition(position, GizmoCenterRotation);
-        }
-
+        
         private static void SetCenterRotation(float Yaw, float Pitch, float Roll)
         {
             GizmoCenterRotation = Matrix.RotationYawPitchRoll(MathUtil.DegreesToRadians(Yaw), MathUtil.DegreesToRadians(Pitch), MathUtil.DegreesToRadians(Roll));
@@ -184,21 +180,43 @@ namespace IndustrialPark
                         float dist = 1000f;
                         int index = -1;
 
-                        for (int g = 0; g < positionGizmos.Length; g++)
+                        if (TriggerGizmo)
                         {
-                            float? distance = positionGizmos[g].IntersectsWith(r);
-                            if (distance != null)
+                            for (int g = 0; g < triggerPositionGizmos.Length; g++)
                             {
-                                if (distance < dist)
+                                float? distance = triggerPositionGizmos[g].IntersectsWith(r);
+                                if (distance != null)
                                 {
-                                    dist = (float)distance;
-                                    index = g;
+                                    if (distance < dist)
+                                    {
+                                        dist = (float)distance;
+                                        index = g;
+                                    }
                                 }
                             }
+
+                            if (index != -1)
+                                triggerPositionGizmos[index].isSelected = true;
                         }
 
-                        if (index != -1)
-                            positionGizmos[index].isSelected = true;
+                        if (index == -1)
+                        {
+                            for (int g = 0; g < positionGizmos.Length; g++)
+                            {
+                                float? distance = positionGizmos[g].IntersectsWith(r);
+                                if (distance != null)
+                                {
+                                    if (distance < dist)
+                                    {
+                                        dist = (float)distance;
+                                        index = g;
+                                    }
+                                }
+                            }
+
+                            if (index != -1)
+                                positionGizmos[index].isSelected = true;
+                        }
                     }
                     break;
                 case GizmoMode.Rotation:
@@ -274,6 +292,8 @@ namespace IndustrialPark
         {
             foreach (PositionGizmo g in positionGizmos)
                 g.isSelected = false;
+            foreach (PositionGizmo g in triggerPositionGizmos)
+                g.isSelected = false;
             foreach (RotationGizmo g in rotationGizmos)
                 g.isSelected = false;
             foreach (ScaleGizmo g in scaleGizmos)
@@ -300,6 +320,8 @@ namespace IndustrialPark
                             direction.Normalize();
 
                             ra.PositionX += (distanceX * direction.X - distanceY * direction.Y) / 10;
+                            if (ra is AssetTRIG trig && trig.Shape != TriggerShape.Box)
+                                trig.Position0X = trig.PositionX;
                         }
                         else if (positionGizmos[1].isSelected)
                         {
@@ -309,6 +331,8 @@ namespace IndustrialPark
                             direction.Normalize();
 
                             ra.PositionY += (distanceX * direction.X - distanceY * direction.Y) / 10;
+                            if (ra is AssetTRIG trig && trig.Shape != TriggerShape.Box)
+                                trig.Position0Y = trig.PositionY;
                         }
                         else if (positionGizmos[2].isSelected)
                         {
@@ -318,13 +342,84 @@ namespace IndustrialPark
                             direction.Normalize();
 
                             ra.PositionZ += (distanceX * direction.X - distanceY * direction.Y) / 10;
+                            if (ra is AssetTRIG trig && trig.Shape != TriggerShape.Box)
+                                trig.Position0Z = trig.PositionZ;
                         }
 
                         if (a is AssetDYNA dyna)
                             dyna.OnDynaSpecificPropertyChange(dyna.DynaBase);
                     }
 
-                    UpdateGizmoPosition();
+                    FinishedMovingGizmo = true;
+                    UnsavedChanges = true;
+                }
+            }
+
+            if (triggerPositionGizmos[0].isSelected || triggerPositionGizmos[1].isSelected || triggerPositionGizmos[2].isSelected
+                || triggerPositionGizmos[3].isSelected || triggerPositionGizmos[4].isSelected || triggerPositionGizmos[5].isSelected)
+            {
+                foreach (Asset a in currentlySelectedAssets)
+                {
+                    Vector3 direction1 = (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
+
+                    if (a is AssetTRIG ra)
+                    {
+                        if (triggerPositionGizmos[0].isSelected)
+                        {
+                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + Vector3.UnitX, viewProjection);
+                            Vector3 direction = direction2 - direction1;
+                            direction.Z = 0;
+                            direction.Normalize();
+
+                            ra.Position1X += (distanceX * direction.X - distanceY * direction.Y) / 10;
+                        }
+                        else if (triggerPositionGizmos[1].isSelected)
+                        {
+                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + Vector3.UnitY, viewProjection);
+                            Vector3 direction = direction2 - direction1;
+                            direction.Z = 0;
+                            direction.Normalize();
+
+                            ra.Position0Y += (distanceX * direction.X - distanceY * direction.Y) / 10;
+                        }
+                        else if (triggerPositionGizmos[2].isSelected)
+                        {
+                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + Vector3.UnitZ, viewProjection);
+                            Vector3 direction = direction2 - direction1;
+                            direction.Z = 0;
+                            direction.Normalize();
+
+                            ra.Position1Z += (distanceX * direction.X - distanceY * direction.Y) / 10;
+                        }
+                        else if (triggerPositionGizmos[3].isSelected)
+                        {
+                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + Vector3.UnitX, viewProjection);
+                            Vector3 direction = direction2 - direction1;
+                            direction.Z = 0;
+                            direction.Normalize();
+
+                            ra.Position0X += (distanceX * direction.X - distanceY * direction.Y) / 10;
+                        }
+                        else if (triggerPositionGizmos[4].isSelected)
+                        {
+                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + Vector3.UnitY, viewProjection);
+                            Vector3 direction = direction2 - direction1;
+                            direction.Z = 0;
+                            direction.Normalize();
+
+                            ra.Position1Y += (distanceX * direction.X - distanceY * direction.Y) / 10;
+                        }
+                        else if (triggerPositionGizmos[5].isSelected)
+                        {
+                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + Vector3.UnitZ, viewProjection);
+                            Vector3 direction = direction2 - direction1;
+                            direction.Z = 0;
+                            direction.Normalize();
+
+                            ra.Position0Z += (distanceX * direction.X - distanceY * direction.Y) / 10;
+                        }
+                    }
+
                     FinishedMovingGizmo = true;
                     UnsavedChanges = true;
                 }
@@ -385,7 +480,6 @@ namespace IndustrialPark
                             dyna.OnDynaSpecificPropertyChange(dyna.DynaBase);
                     }
 
-                    UpdateGizmoPosition();
                     FinishedMovingGizmo = true;
                     UnsavedChanges = true;
                 }
@@ -440,7 +534,6 @@ namespace IndustrialPark
                             dyna.OnDynaSpecificPropertyChange(dyna.DynaBase);
                     }
 
-                    UpdateGizmoPosition();
                     FinishedMovingGizmo = true;
                     UnsavedChanges = true;
                 }
@@ -475,10 +568,16 @@ namespace IndustrialPark
 
                         if (a is AssetDYNA dyna)
                             dyna.OnDynaSpecificPropertyChange(dyna.DynaBase);
+
+                        if (ra is AssetTRIG trig && trig.Shape != TriggerShape.Box)
+                        {
+                            trig.Position0X = trig.PositionX;
+                            trig.Position0Y = trig.PositionY;
+                            trig.Position0Z = trig.PositionZ;
+                        }
                     }
                 }
 
-                UpdateGizmoPosition();
                 FinishedMovingGizmo = true;
                 UnsavedChanges = true;
             }

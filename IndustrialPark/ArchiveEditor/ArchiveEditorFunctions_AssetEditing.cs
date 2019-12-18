@@ -124,7 +124,8 @@ namespace IndustrialPark
                     internalEditors.Add(new InternalFlyEditor((AssetFLY)asset, this));
                     break;
                 case AssetType.GRUP:
-                    internalEditors.Add(new InternalGrupEditor((AssetGRUP)asset, this));
+                //case AssetType.ANIM:
+                    internalEditors.Add(new InternalGrupEditor(asset, this));
                     break;
                 case AssetType.BSP:
                 case AssetType.JSP:
@@ -563,12 +564,13 @@ namespace IndustrialPark
             {
                 if (a is AssetTRIG TRIG)
                 {
-                    if (TRIG.Shape == TriggerShape.Sphere)
+                    if (TRIG.Shape != TriggerShape.Box)
                     {
                         TRIG.Position0X *= factor.X;
                         TRIG.Position0Y *= factor.Y;
                         TRIG.Position0Z *= factor.Z;
                         TRIG.Radius *= singleFactor;
+                        TRIG.Height *= singleFactor;
                     }
                     else
                     {
@@ -596,9 +598,7 @@ namespace IndustrialPark
                         TRIG.Position1Z += TrigCenter.Z * factor.Z;
                     }
 
-                    TRIG._position.X = TRIG.Position0X;
-                    TRIG._position.Y = TRIG.Position0Y;
-                    TRIG._position.Z = TRIG.Position0Z;
+                    TRIG.FixPosition();
                 }
                 else if (a is IClickableAsset clickableAsset)
                 {

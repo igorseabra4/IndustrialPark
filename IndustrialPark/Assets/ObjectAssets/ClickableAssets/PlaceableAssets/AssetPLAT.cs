@@ -48,11 +48,11 @@ namespace IndustrialPark
         [TypeConverter(typeof(FloatTypeConverter))]
         public override float PositionX
         {
-            get => _position.X;
+            get => Position.X;
             set
             {
                 _position.X = value;
-                Write(0x20 + Offset, _position.X);
+                Write(0x20 + Offset, Position.X);
                 CreateTransformMatrix();
                 ChoosePlatSpecific();
             }
@@ -62,11 +62,11 @@ namespace IndustrialPark
         [TypeConverter(typeof(FloatTypeConverter))]
         public override float PositionY
         {
-            get => _position.Y;
+            get => Position.Y;
             set
             {
                 _position.Y = value;
-                Write(0x24 + Offset, _position.Y);
+                Write(0x24 + Offset, Position.Y);
                 CreateTransformMatrix();
                 ChoosePlatSpecific();
             }
@@ -76,11 +76,11 @@ namespace IndustrialPark
         [TypeConverter(typeof(FloatTypeConverter))]
         public override float PositionZ
         {
-            get => _position.Z;
+            get => Position.Z;
             set
             {
                 _position.Z = value;
-                Write(0x28 + Offset, _position.Z);
+                Write(0x28 + Offset, Position.Z);
                 CreateTransformMatrix();
                 ChoosePlatSpecific();
             }
@@ -170,7 +170,7 @@ namespace IndustrialPark
                     _motion = new Motion_Pendulum(Data.Skip(MotionStart).ToArray(), game, platform);
                     break;
                 case PlatTypeSpecific.MovePoint:
-                    _motion = new Motion_MovePoint(Data.Skip(MotionStart).ToArray(), game, platform, _position);
+                    _motion = new Motion_MovePoint(Data.Skip(MotionStart).ToArray(), game, platform, Position);
                     break;
                 default:
                     _motion = new Motion_Mechanism(Data.Skip(MotionStart).ToArray(), game, platform);

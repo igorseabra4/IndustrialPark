@@ -825,7 +825,7 @@ namespace IndustrialPark.Randomizer
                 {
                     List<uint> assetIDs = new List<uint>();
                     int layerIndex = GetLayerFromAssetID(a.AHDR.assetID);
-                    Vector3 position = a._position;
+                    Vector3 position = a.Position;
                     List<LinkBFBB> links = a.LinksBFBB.ToList();
                     AssetVIL vil = (AssetVIL)GetFromAssetID(PlaceTemplate(position, layerIndex, out _, ref assetIDs,
                         "RANDO_" + (a.VilType == VilType.tubelet_bind ? "TUBELET" : "ARF"),

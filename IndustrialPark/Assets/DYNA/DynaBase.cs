@@ -75,12 +75,7 @@ namespace IndustrialPark
         {
             return null;
         }
-
-        public virtual BoundingSphere GetGizmoCenter()
-        {
-            return new BoundingSphere();
-        }
-
+        
         public virtual BoundingSphere GetObjectCenter()
         {
             return new BoundingSphere();

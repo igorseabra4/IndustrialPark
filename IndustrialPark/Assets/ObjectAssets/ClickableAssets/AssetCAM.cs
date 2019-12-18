@@ -137,14 +137,7 @@ namespace IndustrialPark
 
             renderer.DrawCube(world, isSelected);
         }
-
-        public BoundingSphere GetGizmoCenter()
-        {
-            BoundingSphere boundingSphere = BoundingSphere.FromBox(boundingBox);
-            boundingSphere.Radius *= 0.9f;
-            return boundingSphere;
-        }
-
+        
         public BoundingBox GetBoundingBox()
         {
             return boundingBox;

@@ -36,12 +36,12 @@ namespace IndustrialPark
             {
                 world = Matrix.Scaling(_scale) * Matrix.Scaling(Width, Height, 1f)
                     * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
-                    * Matrix.Translation(_position.X, -_position.Y, -_position.Z);
+                    * Matrix.Translation(Position.X, -Position.Y, -Position.Z);
             }
             else
             {
                 world = Matrix.Scaling(Width, Height, 1f)
-                    * Matrix.Translation(_position.X, -_position.Y, -_position.Z);
+                    * Matrix.Translation(Position.X, -Position.Y, -Position.Z);
             }
 
             CreateBoundingBox();

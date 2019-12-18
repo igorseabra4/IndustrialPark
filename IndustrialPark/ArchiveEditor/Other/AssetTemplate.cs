@@ -145,6 +145,7 @@
 
         // Placeable
         Marker,
+        BoxTrigger,
         SphereTrigger,
         CylinderTrigger,
         PointMVPT,

@@ -6,6 +6,22 @@ using HipHopFile;
 
 namespace IndustrialPark
 {
+    public enum BlendFactorType
+    {
+        SourceAlpha_InverseSourceAlpha = 0x00,
+        Zero                           = 0x01,
+        One                            = 0x02,
+        SourceColor                    = 0x03,
+        InverseSourceColor             = 0x04,
+        SourceAlpha                    = 0x05,
+        InverseSourceAlpha             = 0x06,
+        DestinationAlpha               = 0x07,
+        InverseDestinationAlpha        = 0x08,
+        DestinationColor               = 0x09,
+        InverseDestinationColor        = 0x0A,
+        SourceAlphaSaturated           = 0x0B
+    }
+
     public class EntryPIPT
     {
         [Category("PIPT Entry")]
@@ -18,6 +34,29 @@ namespace IndustrialPark
         public byte Culling { get; set; }
         [Category("PIPT Entry"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte DestinationSourceBlend { get; set; }
+
+        [Category("PIPT Entry (Helper)")]
+        public BlendFactorType DestinationBlend
+        {
+            get => (BlendFactorType)(DestinationSourceBlend & 0x0F);
+            set
+            {
+                DestinationSourceBlend &= 0xF0;
+                DestinationSourceBlend |= (byte)value;
+            }
+        }
+
+        [Category("PIPT Entry (Helper)")]
+        public BlendFactorType SourceBlend
+        {
+            get => (BlendFactorType)((DestinationSourceBlend & 0xF0) >> 4);
+            set
+            {
+                DestinationSourceBlend &= 0x0F;
+                DestinationSourceBlend |= (byte)((byte)value << 4);
+            }
+        }
+
         [Category("PIPT Entry"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte OtherFlags { get; set; }
         [Category("PIPT Entry (Movie only)"), TypeConverter(typeof(HexByteTypeConverter))]
@@ -44,7 +83,24 @@ namespace IndustrialPark
 
     public class AssetPIPT : Asset
     {
-        public AssetPIPT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        public static Dictionary<uint, (int, BlendFactorType, BlendFactorType)> BlendModes = new Dictionary<uint, (int, BlendFactorType, BlendFactorType)>();
+
+        public AssetPIPT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        {
+            UpdateDictionary();
+        }
+
+        public void UpdateDictionary()
+        {
+            foreach (EntryPIPT entry in PIPT_Entries)
+                BlendModes[entry.ModelAssetID] = (entry.MeshIndex, entry.DestinationBlend, entry.SourceBlend);
+        }
+
+        public void ClearDictionary()
+        {
+            foreach (EntryPIPT entry in PIPT_Entries)
+                BlendModes.Remove(entry.ModelAssetID);
+        }
 
         public override bool HasReference(uint assetID)
         {
@@ -121,6 +177,7 @@ namespace IndustrialPark
                 }
                 
                 Data = newData.ToArray();
+                UpdateDictionary();
             }
         }
 

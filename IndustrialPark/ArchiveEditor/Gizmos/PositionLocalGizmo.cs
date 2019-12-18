@@ -10,29 +10,26 @@ namespace IndustrialPark
             vertices = new Vector3[SharpRenderer.pyramidVertices.Count];
         }
 
-        public void SetPosition(BoundingSphere Sphere, Matrix Rotation)
+        public void SetPosition(Vector3 Position, float Radius, Matrix Rotation)
         {
-            if (Sphere.Radius < 1f)
-                Sphere.Radius = 1f;
-
             switch (type)
             {
                 case GizmoType.X:
-                    transformMatrix = Matrix.Scaling(Sphere.Radius / 2f) *
+                    transformMatrix = Matrix.Scaling(Radius / 2f) *
                         Matrix.RotationY(MathUtil.Pi / 2) *
-                        Matrix.Translation(new Vector3(Sphere.Radius, 0f, 0f)) *
-                        Rotation * Matrix.Translation(Sphere.Center);
+                        Matrix.Translation(new Vector3(Radius, 0f, 0f)) *
+                        Rotation * Matrix.Translation(Position);
                     break;
                 case GizmoType.Y:
-                    transformMatrix = Matrix.Scaling(Sphere.Radius / 2f) *
+                    transformMatrix = Matrix.Scaling(Radius / 2f) *
                         Matrix.RotationX(-MathUtil.Pi / 2) *
-                        Matrix.Translation(new Vector3(0f, Sphere.Radius, 0f)) *
-                        Rotation * Matrix.Translation(Sphere.Center);
+                        Matrix.Translation(new Vector3(0f, Radius, 0f)) *
+                        Rotation * Matrix.Translation(Position);
                     break;
                 case GizmoType.Z:
-                    transformMatrix = Matrix.Scaling(Sphere.Radius / 2f) *
-                        Matrix.Translation(new Vector3(0f, 0f, Sphere.Radius)) *
-                        Rotation * Matrix.Translation(Sphere.Center);
+                    transformMatrix = Matrix.Scaling(Radius / 2f) *
+                        Matrix.Translation(new Vector3(0f, 0f, Radius)) *
+                        Rotation * Matrix.Translation(Position);
                     break;
             }
 

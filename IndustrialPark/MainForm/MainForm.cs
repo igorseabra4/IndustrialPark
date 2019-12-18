@@ -250,11 +250,11 @@ namespace IndustrialPark
                 renderer.Camera.Yaw, renderer.Camera.Pitch, renderer.Camera.Speed, renderer.Camera.SpeedRot, renderer.Camera.FieldOfView,
                 renderer.Camera.FarPlane, noCullingCToolStripMenuItem.Checked, wireframeFToolStripMenuItem.Checked, renderer.backgroundColor,
                 renderer.normalColor, renderer.trigColor, renderer.mvptColor, renderer.sfxColor, useLegacyAssetIDFormatToolStripMenuItem.Checked,
-                alternateNamingMode, hiddenAssets, renderer.isDrawingUI, AssetMODL.renderBasedOnLodt, AssetJSP.dontRender, AssetBOUL.dontRender,
-                AssetBUTN.dontRender, AssetCAM.dontRender, AssetDSTR_Scooby.dontRender, AssetDYNA.dontRender, AssetEGEN.dontRender, AssetHANG.dontRender,
-                AssetLITE.dontRender, AssetMRKR.dontRender, AssetMVPT_Scooby.dontRender, AssetPEND.dontRender, AssetPLAT.dontRender, AssetPLAT.dontRender,
-                AssetPLYR.dontRender, AssetSFX.dontRender, AssetSIMP.dontRender, AssetTRIG.dontRender, AssetUI.dontRender, AssetUIFT.dontRender,
-                AssetVIL.dontRender, ArchiveEditorFunctions.persistentShinies, ArchiveEditorFunctions.hideHelp);
+                alternateNamingMode, hiddenAssets, renderer.isDrawingUI, AssetMODL.renderBasedOnLodt, AssetMODL.renderBasedOnPipt, AssetJSP.dontRender, 
+                AssetBOUL.dontRender, AssetBUTN.dontRender, AssetCAM.dontRender, AssetDSTR_Scooby.dontRender, AssetDYNA.dontRender, AssetEGEN.dontRender, 
+                AssetHANG.dontRender, AssetLITE.dontRender, AssetMRKR.dontRender, AssetMVPT_Scooby.dontRender, AssetPEND.dontRender, AssetPLAT.dontRender, 
+                AssetPLAT.dontRender, AssetPLYR.dontRender, AssetSFX.dontRender, AssetSIMP.dontRender, AssetTRIG.dontRender, AssetUI.dontRender, 
+                AssetUIFT.dontRender, AssetVIL.dontRender, ArchiveEditorFunctions.persistentShinies, ArchiveEditorFunctions.hideHelp);
         }
 
         private void ApplySettings(string ipSettingsPath)
@@ -332,6 +332,9 @@ namespace IndustrialPark
 
             useMaxRenderDistanceToolStripMenuItem.Checked = ipSettings.renderBasedOnLodt;
             AssetMODL.renderBasedOnLodt = ipSettings.renderBasedOnLodt;
+
+            usePIPTForRenderingToolStripMenuItem.Checked = ipSettings.renderBasedOnPipt;
+            AssetMODL.renderBasedOnPipt = ipSettings.renderBasedOnPipt;
 
             levelModelToolStripMenuItem.Checked = !ipSettings.dontRenderLevelModel;
             AssetJSP.dontRender = ipSettings.dontRenderLevelModel;
@@ -830,6 +833,12 @@ namespace IndustrialPark
             AssetMODL.renderBasedOnLodt = useMaxRenderDistanceToolStripMenuItem.Checked;
         }
 
+        private void UsePIPTForRenderingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            usePIPTForRenderingToolStripMenuItem.Checked = !usePIPTForRenderingToolStripMenuItem.Checked;
+            AssetMODL.renderBasedOnPipt = usePIPTForRenderingToolStripMenuItem.Checked;
+        }
+
         private void useLegacyAssetIDFormatToolStripMenuItem_Click(object sender, EventArgs e)
         {
             useLegacyAssetIDFormatToolStripMenuItem.Checked = !useLegacyAssetIDFormatToolStripMenuItem.Checked;
@@ -1153,8 +1162,6 @@ namespace IndustrialPark
             rotationToolStripMenuItem.Checked = outMode == GizmoMode.Rotation;
             scaleToolStripMenuItem.Checked = outMode == GizmoMode.Scale;
             positionLocalToolStripMenuItem.Checked = outMode == GizmoMode.PositionLocal;
-
-            ArchiveEditorFunctions.UpdateGizmoPosition();
         }
 
         private void positionToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1223,5 +1230,6 @@ namespace IndustrialPark
 
             allTopMost = value;
         }
+
     }
 }

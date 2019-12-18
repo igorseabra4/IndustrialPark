@@ -101,14 +101,7 @@ namespace IndustrialPark
             if (isSelected)
                 renderer.DrawSphere(world2, false, renderer.sfxColor);
         }
-
-        public BoundingSphere GetGizmoCenter()
-        {
-            BoundingSphere boundingSphere = BoundingSphere.FromBox(boundingBox);
-            boundingSphere.Radius *= 0.9f;
-            return boundingSphere;
-        }
-
+        
         public BoundingBox GetBoundingBox()
         {
             return boundingBox;
@@ -192,6 +185,9 @@ namespace IndustrialPark
         }
 
         private Vector3 _position;
+        [Browsable(false)]
+        public Vector3 Position => new Vector3(PositionX, PositionY, PositionZ);
+
         [Category("Sound Effect"), TypeConverter(typeof(FloatTypeConverter))]
         public float PositionX
         {

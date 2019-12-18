@@ -5,7 +5,6 @@ using System;
 using System.Linq;
 using System.ComponentModel;
 using IndustrialPark.Models;
-using static HipHopFile.Functions;
 
 namespace IndustrialPark
 {
@@ -126,14 +125,7 @@ namespace IndustrialPark
             else
                 renderer.DrawSphere(world, isSelected, renderer.mvptColor);
         }
-
-        public BoundingSphere GetGizmoCenter()
-        {
-            BoundingSphere boundingSphere = BoundingSphere.FromBox(boundingBox);
-            boundingSphere.Radius *= 0.9f;
-            return boundingSphere;
-        }
-
+        
         public BoundingBox GetBoundingBox()
         {
             return boundingBox;
@@ -143,8 +135,11 @@ namespace IndustrialPark
         {
             return Vector3.Distance(cameraPosition, _position) - (_arenaRadius == -1f ? 0 : _arenaRadius);
         }
-        
+
         protected Vector3 _position;
+        [Browsable(false)]
+        public Vector3 Position => new Vector3(PositionX, PositionY, PositionZ);
+
         [Category("Move Point"), TypeConverter(typeof(FloatTypeConverter))]
         public float PositionX
         {

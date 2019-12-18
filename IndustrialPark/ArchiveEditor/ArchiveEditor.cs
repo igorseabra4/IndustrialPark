@@ -557,7 +557,7 @@ namespace IndustrialPark
             if (archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]) is AssetCAM cam)
                 Program.MainForm.renderer.Camera.SetPositionCamera(cam);
             else if (archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]) is IClickableAsset a)
-                Program.MainForm.renderer.Camera.SetPosition(a.GetGizmoCenter().Center - (10 + a.GetGizmoCenter().Radius) * Program.MainForm.renderer.Camera.Forward);
+                Program.MainForm.renderer.Camera.SetPosition(a.GetBoundingBox().Center - (10 + a.GetBoundingBox().Size) * Program.MainForm.renderer.Camera.Forward);
         }
 
         private void buttonEditAsset_Click(object sender, EventArgs e)
@@ -684,7 +684,6 @@ namespace IndustrialPark
                 buttonRemoveAsset.Enabled = false;
                 buttonExportRaw.Enabled = false;
                 buttonInternalEdit.Enabled = false;
-                ArchiveEditorFunctions.UpdateGizmoPosition();
             }
             else
             {
@@ -729,7 +728,6 @@ namespace IndustrialPark
             if (assetIDs.Contains(0) && !add)
             {
                 listViewAssets.SelectedIndices.Clear();
-                ArchiveEditorFunctions.UpdateGizmoPosition();
                 return;
             }
 

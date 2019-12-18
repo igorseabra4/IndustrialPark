@@ -10,6 +10,6 @@ namespace IndustrialPark
 
         float? IntersectsWith(Ray ray);
 
-        BoundingSphere GetGizmoCenter();
+        BoundingBox GetBoundingBox();
     }
 }

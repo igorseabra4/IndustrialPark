@@ -14,7 +14,11 @@ namespace IndustrialPark
         ScaleX,
         ScaleY,
         ScaleZ,
-        ScaleAll
+        ScaleAll,
+
+        TrigX1,
+        TrigY1,
+        TrigZ1
     }
 
     public enum GizmoMode
@@ -41,16 +45,19 @@ namespace IndustrialPark
                 case GizmoType.X:
                 case GizmoType.Yaw:
                 case GizmoType.ScaleX:
+                case GizmoType.TrigX1:
                     renderData.Color = new Vector4(1f, 0f, 0f, 0.4f);
                     break;
                 case GizmoType.Y:
                 case GizmoType.Pitch:
                 case GizmoType.ScaleY:
+                case GizmoType.TrigY1:
                     renderData.Color = new Vector4(0f, 1f, 0f, 0.4f);
                     break;
                 case GizmoType.Z:
                 case GizmoType.Roll:
                 case GizmoType.ScaleZ:
+                case GizmoType.TrigZ1:
                     renderData.Color = new Vector4(0f, 0f, 1f, 0.4f);
                     break;
                 case GizmoType.ScaleAll:

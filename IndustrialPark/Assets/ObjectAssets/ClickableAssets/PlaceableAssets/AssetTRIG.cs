@@ -22,6 +22,7 @@ namespace IndustrialPark
         protected override int EventStartOffset => 0x94 + Offset;
 
         public BoundingSphere boundingSphere;
+        private Matrix pivotWorld;
 
         public AssetTRIG(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
@@ -32,7 +33,7 @@ namespace IndustrialPark
             _trigPos2 = new Vector3(ReadFloat(0x6C + Offset), ReadFloat(0x70 + Offset), ReadFloat(0x74 + Offset));
             _trigPos3 = new Vector3(ReadFloat(0x78 + Offset), ReadFloat(0x7C + Offset), ReadFloat(0x80 + Offset));
 
-            CreateTransformMatrix();
+            FixPosition();
 
             if (!ArchiveEditorFunctions.renderableAssetSetTrans.Contains(this))
                 ArchiveEditorFunctions.renderableAssetSetTrans.Add(this);
@@ -46,21 +47,29 @@ namespace IndustrialPark
                 Vector3 midPos = (_trigPos0 + _trigPos1) / 2f;
 
                 world = Matrix.Scaling(boxSize) *
+                    Matrix.Translation(midPos) *
+                    Matrix.Translation(-_position) *
                     Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll) *
-                    Matrix.Translation(midPos);
+                    Matrix.Translation(_position);
             }
             else if (Shape == TriggerShape.Sphere)
             {
                 world = Matrix.Scaling(Radius * 2f) *
+                    Matrix.Translation(_trigPos0) *
+                    Matrix.Translation(-_position) *
                     Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll) *
-                    Matrix.Translation(_trigPos0);
+                    Matrix.Translation(_position);
             }
             else
             {
                 world = Matrix.Scaling(Radius * 2f, Height * 2f, Radius * 2f) *
+                    Matrix.Translation(_trigPos0) *
+                    Matrix.Translation(-_position) *
                     Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll) *
-                    Matrix.Translation(_trigPos0);
+                    Matrix.Translation(_position);
             }
+
+            pivotWorld = Matrix.Scaling(3) * Matrix.Translation(_position);
 
             CreateBoundingBox();
         }
@@ -69,9 +78,11 @@ namespace IndustrialPark
         {
             if (Shape == TriggerShape.Box)
             {
-                boundingBox = new BoundingBox(-Vector3.One, Vector3.One);
-                boundingBox.Maximum = (Vector3)Vector3.Transform(boundingBox.Maximum, world);
+                boundingBox = new BoundingBox(new Vector3(-1, -1, -1), new Vector3(1, 1, 1));
+                
                 boundingBox.Minimum = (Vector3)Vector3.Transform(boundingBox.Minimum, world);
+                boundingBox.Maximum = (Vector3)Vector3.Transform(boundingBox.Maximum, world);
+
                 boundingSphere = BoundingSphere.FromBox(boundingBox);
             }
             else if (Shape == TriggerShape.Sphere)
@@ -101,6 +112,9 @@ namespace IndustrialPark
                 renderer.DrawSphere(world, isSelected, renderer.trigColor);
             else
                 renderer.DrawCylinder(world, isSelected, renderer.trigColor);
+
+            if (isSelected)
+                renderer.DrawSphere(pivotWorld, isSelected, new Vector4(1f, 0.5f, 0.7f, 1f));
         }
 
         public override float? IntersectsWith(Ray ray)
@@ -156,12 +170,7 @@ namespace IndustrialPark
         {
             return null;
         }
-
-        public BoundingSphere GetBoundingSphere()
-        {
-            return boundingSphere;
-        }
-
+        
         public override float GetDistance(Vector3 cameraPosition)
         {
             if (Shape == TriggerShape.Sphere)
@@ -180,73 +189,41 @@ namespace IndustrialPark
                 Write(0x09, _shape);
             }
         }
-
-        [Category("Trigger"), ReadOnly(true)]
-        public override float PositionX
+                
+        public void FixPosition()
         {
-            get => _position.X;
-            set
+            if (Shape == TriggerShape.Box)
             {
-                if (Shape == TriggerShape.Box)
+                if (_trigPos0.X > _trigPos1.X)
                 {
-                    Position0X += value - _position.X;
-                    Position1X += value - _position.X;
+                    float temp = _trigPos1.X;
+                    _trigPos1.X = _trigPos0.X;
+                    _trigPos0.X = temp;
                 }
-                else
+                if (_trigPos0.Y > _trigPos1.Y)
                 {
-                    Position0X = value;
+                    float temp = _trigPos1.Y;
+                    _trigPos1.Y = _trigPos0.Y;
+                    _trigPos0.Y = temp;
                 }
-
-                _position.X = value;
-                Write(0x20 + Offset, _position.X);
-                CreateTransformMatrix();
+                if (_trigPos0.Z > _trigPos1.Z)
+                {
+                    float temp = _trigPos1.Z;
+                    _trigPos1.Z = _trigPos0.Z;
+                    _trigPos0.Z = temp;
+                }
             }
+
+            Write(0x54 + Offset, _trigPos0.X);
+            Write(0x58 + Offset, _trigPos0.Y);
+            Write(0x5C + Offset, _trigPos0.Z);
+            Write(0x60 + Offset, _trigPos1.X);
+            Write(0x64 + Offset, _trigPos1.Y);
+            Write(0x68 + Offset, _trigPos1.Z);
+
+            CreateTransformMatrix();
         }
-
-        [Category("Trigger"), ReadOnly(true)]
-        public override float PositionY
-        {
-            get => _position.Y;
-            set
-            {
-                if (Shape == TriggerShape.Box)
-                {
-                    Position0Y += value - _position.Y;
-                    Position1Y += value - _position.Y;
-                }
-                else
-                {
-                    Position0Y = value;
-                }
-
-                _position.Y = value;
-                Write(0x24 + Offset, _position.Y);
-                CreateTransformMatrix();
-            }
-        }
-
-        [Category("Trigger"), ReadOnly(true)]
-        public override float PositionZ
-        {
-            get => _position.Z;
-            set
-            {
-                if (Shape == TriggerShape.Box)
-                {
-                    Position0Z += value - _position.Z;
-                    Position1Z += value - _position.Z;
-                }
-                else
-                {
-                    Position0Z = value;
-                }
-
-                _position.Z = value;
-                Write(0x28 + Offset, _position.Z);
-                CreateTransformMatrix();
-            }
-        }
-
+        
         [Category("Placement")]
         [TypeConverter(typeof(FloatTypeConverter))]
         public override float ScaleX
@@ -317,8 +294,7 @@ namespace IndustrialPark
             set
             {
                 _trigPos0.X = value;
-                Write(0x54 + Offset, _trigPos0.X);
-                CreateTransformMatrix();
+                FixPosition();
             }
         }
         [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
@@ -328,8 +304,7 @@ namespace IndustrialPark
             set
             {
                 _trigPos0.Y = value;
-                Write(0x58 + Offset, _trigPos0.Y);
-                CreateTransformMatrix();
+                FixPosition();
             }
         }
         [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
@@ -339,8 +314,7 @@ namespace IndustrialPark
             set
             {
                 _trigPos0.Z = value;
-                Write(0x5C + Offset, _trigPos0.Z);
-                CreateTransformMatrix();
+                FixPosition();
             }
         }
         [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
@@ -365,8 +339,7 @@ namespace IndustrialPark
             set
             {
                 _trigPos1.X = value;
-                Write(0x60 + Offset, _trigPos1.X);
-                CreateTransformMatrix();
+                FixPosition();
             }
         }
         [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
@@ -377,8 +350,7 @@ namespace IndustrialPark
             set
             {
                 _trigPos1.Y = value;
-                Write(0x64, _trigPos1.Y);
-                CreateTransformMatrix();
+                FixPosition();
             }
         }
         [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
@@ -389,10 +361,21 @@ namespace IndustrialPark
             set
             {
                 _trigPos1.Z = value;
-                Write(0x68 + Offset, _trigPos1.Z);
-                CreateTransformMatrix();
+                FixPosition();
             }
         }
+
+        public void SetPositions(float x0, float y0, float z0, float x1, float y1, float z1)
+        {
+            _trigPos0.X = x0;
+            _trigPos0.Y = y0;
+            _trigPos0.Z = z0;
+            _trigPos1.X = x1;
+            _trigPos1.Y = y1;
+            _trigPos1.Z = z1;
+            FixPosition();
+        }
+
         [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
         public float Position2X
         {

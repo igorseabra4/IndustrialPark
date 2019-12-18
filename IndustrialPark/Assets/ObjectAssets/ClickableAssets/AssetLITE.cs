@@ -227,14 +227,7 @@ namespace IndustrialPark
             get => ReadFloat(0x40);
             set => Write(0x40, value);
         }
-
-        public BoundingSphere GetGizmoCenter()
-        {
-            BoundingSphere boundingSphere = BoundingSphere.FromBox(boundingBox);
-            boundingSphere.Radius *= 0.9f;
-            return boundingSphere;
-        }
-
+        
         public BoundingBox GetBoundingBox()
         {
             return boundingBox;

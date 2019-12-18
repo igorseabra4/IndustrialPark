@@ -43,7 +43,6 @@ namespace IndustrialPark
         private void propertyGridAsset_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             archive.UnsavedChanges = true;
-            ArchiveEditorFunctions.UpdateGizmoPosition();
         }
 
         private void propertyGrid_Motion_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)

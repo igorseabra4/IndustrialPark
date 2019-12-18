@@ -178,7 +178,7 @@ namespace IndustrialPark
 
         private Matrix world;
         private BoundingBox boundingBox;
-        private static readonly uint _modelAssetID = HipHopFile.Functions.BKDRHash("teleportation_box_bind");
+        private static readonly uint _modelAssetID = Functions.BKDRHash("teleportation_box_bind");
 
         private AssetMRKR MRKR;
 
@@ -272,13 +272,6 @@ namespace IndustrialPark
         public override float GetDistance(Vector3 cameraPosition)
         {
             return Vector3.Distance(cameraPosition, new Vector3(PositionX, PositionY, PositionZ));
-        }
-        
-        public override BoundingSphere GetGizmoCenter()
-        {
-            BoundingSphere boundingSphere = BoundingSphere.FromBox(boundingBox);
-            boundingSphere.Radius *= 0.9f;
-            return boundingSphere;
         }
     }
 }

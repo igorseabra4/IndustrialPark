@@ -316,6 +316,8 @@ namespace IndustrialPark
                 pick.ClearDictionary();
             else if (assetDictionary[assetID] is AssetLODT lodt)
                 lodt.ClearDictionary();
+            else if (assetDictionary[assetID] is AssetPIPT pipt)
+                pipt.ClearDictionary();
             else if (assetDictionary[assetID] is AssetRWTX rwtx)
                 TextureManager.RemoveTexture(rwtx.Name);
         }
@@ -767,8 +769,6 @@ namespace IndustrialPark
                 assetDictionary[assetID].isSelected = true;
                 currentlySelectedAssets.Add(assetDictionary[assetID]);
             }
-
-            UpdateGizmoPosition();
         }
 
         public List<uint> GetCurrentlySelectedAssetIDs()

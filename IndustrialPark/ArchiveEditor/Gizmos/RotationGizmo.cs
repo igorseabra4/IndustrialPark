@@ -10,21 +10,18 @@ namespace IndustrialPark
             vertices = new Vector3[SharpRenderer.torusVertices.Count];
         }
 
-        public void SetPosition(BoundingSphere Sphere, Matrix Rotation)
+        public void SetPosition(Vector3 Position, float Radius, Matrix Rotation)
         {
-            if (Sphere.Radius < 1f)
-                Sphere.Radius = 1f;
-                        
             switch (type)
             {
                 case GizmoType.Yaw:
-                    transformMatrix = Matrix.Scaling(Sphere.Radius / 2f) * Rotation * Matrix.Translation(Sphere.Center);
+                    transformMatrix = Matrix.Scaling(Radius / 2f) * Rotation * Matrix.Translation(Position);
                     break;
                 case GizmoType.Pitch:
-                    transformMatrix = Matrix.Scaling(Sphere.Radius / 2f) * Matrix.RotationZ(MathUtil.Pi / 2) * Rotation * Matrix.Translation(Sphere.Center);
+                    transformMatrix = Matrix.Scaling(Radius / 2f) * Matrix.RotationZ(MathUtil.Pi / 2) * Rotation * Matrix.Translation(Position);
                     break;
                 case GizmoType.Roll:
-                    transformMatrix = Matrix.Scaling(Sphere.Radius / 2f) * Matrix.RotationX(MathUtil.Pi / 2) * Rotation * Matrix.Translation(Sphere.Center);
+                    transformMatrix = Matrix.Scaling(Radius / 2f) * Matrix.RotationX(MathUtil.Pi / 2) * Rotation * Matrix.Translation(Position);
                     break;
             }
 

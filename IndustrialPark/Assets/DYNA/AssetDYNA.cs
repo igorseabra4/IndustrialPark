@@ -290,6 +290,8 @@ namespace IndustrialPark
         public bool IsRenderableClickable { get => _dynaSpecific.IsRenderableClickable; }
 
         [Browsable(false)]
+        public Vector3 Position => new Vector3(PositionX, PositionY, PositionZ);
+        [Browsable(false)]
         public float PositionX { get => _dynaSpecific.PositionX; set => _dynaSpecific.PositionX = value; }
         [Browsable(false)]
         public float PositionY { get => _dynaSpecific.PositionY; set => _dynaSpecific.PositionY = value; }
@@ -315,12 +317,7 @@ namespace IndustrialPark
 
             return _dynaSpecific.IntersectsWith(ray);
         }
-
-        public BoundingSphere GetGizmoCenter()
-        {
-            return _dynaSpecific.GetGizmoCenter();
-        }
-
+        
         public void CreateTransformMatrix()
         {
             _dynaSpecific.CreateTransformMatrix();

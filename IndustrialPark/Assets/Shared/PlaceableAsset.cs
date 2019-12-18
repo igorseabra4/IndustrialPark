@@ -36,7 +36,7 @@ namespace IndustrialPark
         {
             world = Matrix.Scaling(_scale)
                 * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
-                * Matrix.Translation(_position);
+                * Matrix.Translation(Position);
 
             CreateBoundingBox();
         }
@@ -121,21 +121,7 @@ namespace IndustrialPark
                 return smallestDistance;
             return null;
         }
-
-        public BoundingSphere GetObjectCenter()
-        {
-            BoundingSphere boundingSphere = new BoundingSphere(_position, boundingBox.Size.Length());
-            boundingSphere.Radius *= 0.9f;
-            return boundingSphere;
-        }
-
-        public BoundingSphere GetGizmoCenter()
-        {
-            BoundingSphere boundingSphere = BoundingSphere.FromBox(boundingBox);
-            boundingSphere.Radius *= 0.9f;
-            return boundingSphere;
-        }
-
+        
         public BoundingBox GetBoundingBox()
         {
             return boundingBox;
@@ -143,7 +129,7 @@ namespace IndustrialPark
 
         public virtual float GetDistance(Vector3 cameraPosition)
         {
-            return Vector3.Distance(cameraPosition, _position);
+            return Vector3.Distance(cameraPosition, Position);
         }
 
         public override bool HasReference(uint assetID) => Surface_AssetID == assetID || Model_AssetID == assetID || Animation_AssetID == assetID ||
@@ -234,17 +220,30 @@ namespace IndustrialPark
             set => Write(0x10 + Offset, value);
         }
 
-        public Vector3 _position;
+        protected Vector3 _position;
+        [Browsable(false)]
+        public Vector3 Position
+        {
+            get => _position;
+            protected set
+            {
+                _position = value;
+                Write(0x20 + Offset, _position.X);
+                Write(0x24 + Offset, _position.Y);
+                Write(0x28 + Offset, _position.Z);
+                CreateTransformMatrix();
+            }
+        }
 
         [Category("Placement")]
         [TypeConverter(typeof(FloatTypeConverter))]
         public virtual float PositionX
         {
-            get => _position.X;
+            get => Position.X;
             set
             {
                 _position.X = value;
-                Write(0x20 + Offset, _position.X);
+                Write(0x20 + Offset, Position.X);
                 CreateTransformMatrix();
             }
         }
@@ -253,11 +252,11 @@ namespace IndustrialPark
         [TypeConverter(typeof(FloatTypeConverter))]
         public virtual float PositionY
         {
-            get => _position.Y;
+            get => Position.Y;
             set
             {
                 _position.Y = value;
-                Write(0x24 + Offset, _position.Y);
+                Write(0x24 + Offset, Position.Y);
                 CreateTransformMatrix();
             }
         }
@@ -266,11 +265,11 @@ namespace IndustrialPark
         [TypeConverter(typeof(FloatTypeConverter))]
         public virtual float PositionZ
         {
-            get => _position.Z;
+            get => Position.Z;
             set
             {
                 _position.Z = value;
-                Write(0x28 + Offset, _position.Z);
+                Write(0x28 + Offset, Position.Z);
                 CreateTransformMatrix();
             }
         }
@@ -492,7 +491,7 @@ namespace IndustrialPark
                 {
                     return Matrix.Scaling(_scale)
                         * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
-                        * Matrix.Translation(_position - driver._position)
+                        * Matrix.Translation(Position - driver.Position)
                         * (useRotation ? driver.PlatLocalRotation() : Matrix.Identity)
                         * Matrix.Translation((Vector3)Vector3.Transform(Vector3.Zero, driver.LocalWorld()));
                 }

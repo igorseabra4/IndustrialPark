@@ -1,5 +1,7 @@
-﻿using HipHopFile;
+﻿using System;
+using HipHopFile;
 using SharpDX;
+using SharpDX.Direct3D11;
 using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
@@ -7,6 +9,7 @@ namespace IndustrialPark
     public class AssetMODL : AssetRenderWareModel, IAssetWithModel
     {
         public static bool renderBasedOnLodt = false;
+        public static bool renderBasedOnPipt = true;
 
         public AssetMODL(Section_AHDR AHDR, Game game, Platform platform, SharpRenderer renderer) : base(AHDR, game, platform, renderer) { }
 
@@ -43,7 +46,54 @@ namespace IndustrialPark
                     return;
             }
 
+            if (renderBasedOnPipt)
+            {
+                if (AssetPIPT.BlendModes.ContainsKey(AHDR.assetID))
+                {
+                    (int, BlendFactorType, BlendFactorType) destSrc = AssetPIPT.BlendModes[AHDR.assetID];
+                    renderer.device.SetBlend(BlendOperation.Add, GetSharpBlendMode(destSrc.Item2, false), GetSharpBlendMode(destSrc.Item3, true));
+                }
+                else
+                    renderer.device.SetDefaultBlendState();
+
+                renderer.device.UpdateAllStates();
+            }
+
             model.Render(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, uvAnimOffset);
+        }
+
+        private BlendOption GetSharpBlendMode(BlendFactorType type, bool dest)
+        {
+            switch (type)
+            {
+                case BlendFactorType.Zero:
+                    return BlendOption.Zero;
+                case BlendFactorType.One:
+                    return BlendOption.One;
+                case BlendFactorType.SourceColor:
+                    return BlendOption.SourceColor;
+                case BlendFactorType.InverseSourceColor:
+                    return BlendOption.InverseSourceColor;
+                case BlendFactorType.SourceAlpha:
+                    return BlendOption.SourceAlpha;
+                case BlendFactorType.InverseSourceAlpha:
+                    return BlendOption.InverseSourceAlpha;
+                case BlendFactorType.DestinationAlpha:
+                    return BlendOption.DestinationAlpha;
+                case BlendFactorType.InverseDestinationAlpha:
+                    return BlendOption.InverseDestinationAlpha;
+                case BlendFactorType.DestinationColor:
+                    return BlendOption.DestinationColor;
+                case BlendFactorType.InverseDestinationColor:
+                    return BlendOption.InverseDestinationColor;
+                case BlendFactorType.SourceAlphaSaturated:
+                    return BlendOption.SourceAlphaSaturate;
+            }
+
+            if (dest)
+                return BlendOption.Zero;
+            else
+                return BlendOption.One;
         }
     }
 }

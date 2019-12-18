@@ -46,5 +46,12 @@ namespace IndustrialPark
                 return BitConverter.ToUInt16(BitConverter.GetBytes(a).Reverse().ToArray(), 0);
             return a;
         }
+
+        public string Switch(string a)
+        {
+            if (endianness == Endianness.Big)
+                return new string(a.Reverse().ToArray());
+            return a;
+        }
     }
 }

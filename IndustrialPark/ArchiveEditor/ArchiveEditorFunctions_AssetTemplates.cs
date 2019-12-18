@@ -218,6 +218,7 @@ namespace IndustrialPark
                 new ToolStripMenuItem(AssetTemplate.PointMVPT.ToString()),
                 new ToolStripMenuItem(AssetTemplate.PointMVPT_TSSM.ToString()),
                 new ToolStripMenuItem(AssetTemplate.EnemyAreaMVPT.ToString()),
+                new ToolStripMenuItem(AssetTemplate.BoxTrigger.ToString()),
                 new ToolStripMenuItem(AssetTemplate.SphereTrigger.ToString()),
                 new ToolStripMenuItem(AssetTemplate.CylinderTrigger.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Dyna_Pointer.ToString()),
@@ -333,9 +334,23 @@ namespace IndustrialPark
                 trig.PositionY = Position.Y;
                 trig.PositionZ = Position.Z;
 
-                trig.Position0X = Position.X;
-                trig.Position0Y = Position.Y;
-                trig.Position0Z = Position.Z;
+                if (trig.Shape != TriggerShape.Box)
+                {
+                    trig.Position0X = Position.X;
+                    trig.Position0Y = Position.Y;
+                    trig.Position0Z = Position.Z;
+                }
+                else
+                {
+                    Vector3 translation = Position - trig.Position;
+
+                    trig.Position0X += translation.X;
+                    trig.Position0Y += translation.Y;
+                    trig.Position0Z += translation.Z;
+                    trig.Position1X += translation.X;
+                    trig.Position1Y += translation.Y;
+                    trig.Position1Z += translation.Z;
+                }
             }
             else if (asset is PlaceableAsset placeableAsset)
             {
@@ -640,6 +655,7 @@ namespace IndustrialPark
                     dataSize = 0x94 + Asset.DataSizeOffset(game);
                     newAssetType = AssetType.TRIG;
                     break;
+                case AssetTemplate.BoxTrigger:
                 case AssetTemplate.SphereTrigger:
                 case AssetTemplate.CylinderTrigger:
                 case AssetTemplate.BusStop_Trigger:
@@ -705,29 +721,7 @@ namespace IndustrialPark
 
             if (asset is ObjectAsset oa)
                 oa.Flags = 0x1D;
-            if (asset is AssetTRIG trig)
-            {
-                trig.AssetType = ObjectAssetType.TRIG;
-                trig.Shape = TriggerShape.Sphere;
-                trig.VisibilityFlag = 0x01;
-                trig.SolidityFlag = 0;
-                trig.PositionX = position.X;
-                trig.PositionY = position.Y;
-                trig.PositionZ = position.Z;
-                trig.ScaleX = 1f;
-                trig.ScaleY = 1f;
-                trig.ScaleZ = 1f;
-                trig.ColorRed = 1f;
-                trig.ColorGreen = 1f;
-                trig.ColorBlue = 1f;
-                trig.ColorAlpha = 0;
-                trig.ColorAlphaSpeed = 0;
-                trig.Model_AssetID = 0xDD77064D;
-                trig.Radius = 1f;
-                trig.Data[0x88] = 0x80;
-                trig.DirectionZ = 1f;
-            }
-            else if (asset is PlaceableAsset placeableAsset)
+            if (asset is PlaceableAsset placeableAsset)
             {
                 placeableAsset.VisibilityFlag = 0x01;
                 placeableAsset.SolidityFlag = 0x02;
@@ -746,7 +740,18 @@ namespace IndustrialPark
                 placeableAsset.ColorAlpha = 1f;
                 placeableAsset.ColorAlphaSpeed = 255f;
 
-                if (asset is AssetPKUP pkup)
+                if (asset is AssetTRIG trig)
+                {
+                    trig.AssetType = ObjectAssetType.TRIG;
+                    trig.SolidityFlag = 0;
+
+                    trig.ColorAlpha = 0;
+                    trig.ColorAlphaSpeed = 0;
+
+                    trig.Data[0x88] = 0x80;
+                    trig.DirectionZ = 1f;
+                }
+                else if (asset is AssetPKUP pkup)
                 {
                     pkup.AssetType = ObjectAssetType.PKUP;
                     if (game == Game.BFBB)
@@ -1348,15 +1353,27 @@ namespace IndustrialPark
                     else
                         ((AssetMVPT_Scooby)asset).ArenaRadius = -1;
                     break;
+                case AssetTemplate.BoxTrigger:
+                    ((AssetTRIG)asset).Shape = TriggerShape.Box;
+                    ((AssetTRIG)asset).Model_AssetID = 0x19A4D2E9;
+                    ((AssetTRIG)asset).SetPositions(position.X + 5f, position.Y + 5f, position.Z + 5f, position.X - 5f, position.Y - 5f, position.Z - 5f);
+                    break;
                 case AssetTemplate.SphereTrigger:
-                    ((AssetTRIG)asset).AssetType = ObjectAssetType.TRIG;
+                    ((AssetTRIG)asset).Shape = TriggerShape.Sphere;
+                    ((AssetTRIG)asset).Model_AssetID = 0xDD77064D;
                     ((AssetTRIG)asset).Radius = 10f;
+                    ((AssetTRIG)asset).Position0X = position.X;
+                    ((AssetTRIG)asset).Position0Y = position.Y;
+                    ((AssetTRIG)asset).Position0Z = position.Z;
                     break;
                 case AssetTemplate.CylinderTrigger:
-                    ((AssetTRIG)asset).AssetType = ObjectAssetType.TRIG;
                     ((AssetTRIG)asset).Shape = TriggerShape.Cylinder;
+                    ((AssetTRIG)asset).Model_AssetID = 0xDD77064D;
                     ((AssetTRIG)asset).Radius = 10f;
                     ((AssetTRIG)asset).Height = 5f;
+                    ((AssetTRIG)asset).Position0X = position.X;
+                    ((AssetTRIG)asset).Position0Y = position.Y;
+                    ((AssetTRIG)asset).Position0Z = position.Z;
                     break;
                 case AssetTemplate.BusStop:
                     ((AssetSIMP)asset).AssetType = ObjectAssetType.SIMP;

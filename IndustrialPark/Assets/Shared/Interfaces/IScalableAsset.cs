@@ -8,6 +8,6 @@ namespace IndustrialPark
         float ScaleY { get; set; }
         float ScaleZ { get; set; }
 
-        BoundingBox GetBoundingBox();
+        Vector3 Position { get; }
     }
 }

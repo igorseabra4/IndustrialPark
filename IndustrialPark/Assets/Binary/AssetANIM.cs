@@ -44,14 +44,14 @@ namespace IndustrialPark
         }
 
         [Category("Animation")]
-        public short TimeCount
+        public short FrameCount
         {
             get => ReadShort(0x0A);
             set => Write(0x0A, value);
         }
 
         [Category("Animation")]
-        public int KeyCount
+        public int KeyframeCount
         {
             get => ReadInt(0xC);
             set => Write(0xC, value);
@@ -86,7 +86,7 @@ namespace IndustrialPark
             get
             {
                 List<KeyFrame> keyFrames = new List<KeyFrame>();
-                for (int i = KeyFramesSectionStart; i < KeyFramesSectionStart + KeyCount * 0x10; i += 0x10)
+                for (int i = KeyFramesSectionStart; i < KeyFramesSectionStart + KeyframeCount * 0x10; i += 0x10)
                 {
                     keyFrames.Add(new KeyFrame
                     {
@@ -119,11 +119,11 @@ namespace IndustrialPark
                 }
                 before.AddRange(after);
                 Data = before.ToArray();
-                KeyCount = value.Length;
+                KeyframeCount = value.Length;
             }
         }
 
-        private int TimesSectionStart => KeyFramesSectionStart + KeyCount * 0x10;
+        private int TimesSectionStart => KeyFramesSectionStart + KeyframeCount * 0x10;
 
         [Category("Animation")]
         public float[] Times
@@ -143,11 +143,11 @@ namespace IndustrialPark
                     before.AddRange(BitConverter.GetBytes(Switch(k)));
                 before.AddRange(after);
                 Data = before.ToArray();
-                TimeCount = (short)value.Length;
+                FrameCount = (short)value.Length;
             }
         }
 
-        private int OffsetsSectionStart => TimesSectionStart + TimeCount * 4;
+        private int OffsetsSectionStart => TimesSectionStart + FrameCount * 4;
 
         [Category("Animation")]
         public short[][] Offsets
@@ -155,7 +155,7 @@ namespace IndustrialPark
             get
             {
                 List<short[]> keyFrameMap = new List<short[]>();
-                for (int i = OffsetsSectionStart; i < OffsetsSectionStart + BoneCount * 2 * (TimeCount - 1); i += BoneCount * 2)
+                for (int i = OffsetsSectionStart; i < OffsetsSectionStart + BoneCount * 2 * (FrameCount - 1); i += BoneCount * 2)
                 {
                     List<short> keyframes = new List<short>();
                     for (int j = i; j < i + BoneCount * 2; j += 2)

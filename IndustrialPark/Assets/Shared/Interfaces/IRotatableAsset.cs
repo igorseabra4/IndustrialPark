@@ -8,6 +8,6 @@ namespace IndustrialPark
         float Pitch { get; set; }
         float Roll { get; set; }
 
-        BoundingSphere GetObjectCenter();
+        Vector3 Position { get; }
     }
 }

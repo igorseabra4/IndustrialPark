@@ -229,12 +229,5 @@ namespace IndustrialPark
                 return smallestDistance;
             else return null;
         }
-
-        public override BoundingSphere GetGizmoCenter()
-        {
-            BoundingSphere boundingSphere = BoundingSphere.FromBox(boundingBox);
-            boundingSphere.Radius *= 0.9f;
-            return boundingSphere;
-        }
     }
 }

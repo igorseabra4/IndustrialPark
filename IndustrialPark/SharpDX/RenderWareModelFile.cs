@@ -462,7 +462,6 @@ namespace IndustrialPark
                 mesh.Begin(renderer.device);
                 for (int i = 0; i < mesh.SubSets.Count(); i++)
                 {
-                    renderer.device.DeviceContext.PixelShader.SetShaderResource(0, mesh.SubSets[i].DiffuseMap);
                     mesh.Draw(renderer.device, i);
                 }
             }
