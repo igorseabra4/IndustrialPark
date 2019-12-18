@@ -6,7 +6,7 @@ namespace IndustrialPark
     public partial class ArchiveEditorFunctions
     {
         private static PositionGizmo[] positionGizmos;
-        private static PositionGizmo[] triggerPositionGizmos;
+        private static BoxTrigPositionGizmo[] triggerPositionGizmos;
         private static RotationGizmo[] rotationGizmos;
         private static ScaleGizmo[] scaleGizmos;
         private static PositionLocalGizmo[] positionLocalGizmos;
@@ -18,13 +18,13 @@ namespace IndustrialPark
                 new PositionGizmo(GizmoType.Y),
                 new PositionGizmo(GizmoType.Z)};
 
-            triggerPositionGizmos = new PositionGizmo[6]{
-                new PositionGizmo(GizmoType.X),
-                new PositionGizmo(GizmoType.Y),
-                new PositionGizmo(GizmoType.Z),
-                new PositionGizmo(GizmoType.TrigX1),
-                new PositionGizmo(GizmoType.TrigY1),
-                new PositionGizmo(GizmoType.TrigZ1)};
+            triggerPositionGizmos = new BoxTrigPositionGizmo[6]{
+                new BoxTrigPositionGizmo(GizmoType.X),
+                new BoxTrigPositionGizmo(GizmoType.Y),
+                new BoxTrigPositionGizmo(GizmoType.Z),
+                new BoxTrigPositionGizmo(GizmoType.TrigX1),
+                new BoxTrigPositionGizmo(GizmoType.TrigY1),
+                new BoxTrigPositionGizmo(GizmoType.TrigZ1)};
 
             rotationGizmos = new RotationGizmo[3]{
                 new RotationGizmo(GizmoType.Yaw),
@@ -62,7 +62,7 @@ namespace IndustrialPark
                             GizmoCenterPosition = TRIG.Position;
                             float distance = Vector3.Distance(renderer.Camera.Position, TRIG.GetBoundingBox().Center) / 5f;
 
-                            foreach (PositionGizmo g in triggerPositionGizmos)
+                            foreach (BoxTrigPositionGizmo g in triggerPositionGizmos)
                             {
                                 g.SetPosition(TRIG.GetBoundingBox(), distance);
                                 g.Draw(renderer);
@@ -292,7 +292,7 @@ namespace IndustrialPark
         {
             foreach (PositionGizmo g in positionGizmos)
                 g.isSelected = false;
-            foreach (PositionGizmo g in triggerPositionGizmos)
+            foreach (BoxTrigPositionGizmo g in triggerPositionGizmos)
                 g.isSelected = false;
             foreach (RotationGizmo g in rotationGizmos)
                 g.isSelected = false;
@@ -380,7 +380,7 @@ namespace IndustrialPark
                             direction.Z = 0;
                             direction.Normalize();
 
-                            ra.Position0Y += (distanceX * direction.X - distanceY * direction.Y) / 10;
+                            ra.Position1Y += (distanceX * direction.X - distanceY * direction.Y) / 10;
                         }
                         else if (triggerPositionGizmos[2].isSelected)
                         {
@@ -407,7 +407,7 @@ namespace IndustrialPark
                             direction.Z = 0;
                             direction.Normalize();
 
-                            ra.Position1Y += (distanceX * direction.X - distanceY * direction.Y) / 10;
+                            ra.Position0Y += (distanceX * direction.X - distanceY * direction.Y) / 10;
                         }
                         else if (triggerPositionGizmos[5].isSelected)
                         {

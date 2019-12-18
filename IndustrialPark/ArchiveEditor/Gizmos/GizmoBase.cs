@@ -45,23 +45,29 @@ namespace IndustrialPark
                 case GizmoType.X:
                 case GizmoType.Yaw:
                 case GizmoType.ScaleX:
-                case GizmoType.TrigX1:
                     renderData.Color = new Vector4(1f, 0f, 0f, 0.4f);
                     break;
                 case GizmoType.Y:
                 case GizmoType.Pitch:
                 case GizmoType.ScaleY:
-                case GizmoType.TrigY1:
                     renderData.Color = new Vector4(0f, 1f, 0f, 0.4f);
                     break;
                 case GizmoType.Z:
                 case GizmoType.Roll:
                 case GizmoType.ScaleZ:
-                case GizmoType.TrigZ1:
                     renderData.Color = new Vector4(0f, 0f, 1f, 0.4f);
                     break;
                 case GizmoType.ScaleAll:
                     renderData.Color = new Vector4(0.6f, 0.5f, 0.5f, 0.4f);
+                    break;
+                case GizmoType.TrigX1:
+                    renderData.Color = new Vector4(0f, 1f, 1f, 0.4f);
+                    break;
+                case GizmoType.TrigY1:
+                    renderData.Color = new Vector4(1f, 0f, 1f, 0.4f);
+                    break;
+                case GizmoType.TrigZ1:
+                    renderData.Color = new Vector4(1f, 1f, 0f, 0.4f);
                     break;
             }
             isSelected = false;
