@@ -97,10 +97,11 @@ namespace IndustrialPark.Randomizer
 
                 if (LevelName == "kf04")
                     chooseFrom.Remove(VilType.tiki_stone_bind);
-
-                shuffled |= ShuffleVilTypes(new Random(seed), chooseFrom, setTo,
+                
+                shuffled |= ShuffleVilTypes(seed, chooseFrom, setTo,
                     flags.HasFlag(RandomizerFlags.Tiki_Models),
-                    flags.HasFlag(RandomizerFlags.Tiki_Allow_Any_Type));
+                    flags.HasFlag(RandomizerFlags.Tiki_Allow_Any_Type),
+                    false);
             }
 
             if (flags.HasFlag(RandomizerFlags.Enemy_Types) && ContainsAssetWithType(AssetType.VIL))
@@ -133,67 +134,37 @@ namespace IndustrialPark.Randomizer
                 if (settings.ChompBot >= 0)
                     chooseFrom.Add(VilType.robot_0a_chomper_bind);
 
-                bool veryRandom = flags.HasFlag(RandomizerFlags.Enemies_Allow_Any_Type);
-                Random r = new Random(seed);
+                List<VilType> setTo = new List<VilType>();
+                for (int i = 0; i < settings.Fodder; i++)
+                    setTo.Add(VilType.robot_0a_fodder_bind);
+                for (int i = 0; i < settings.Hammer; i++)
+                    setTo.Add(VilType.ham_bind);
+                for (int i = 0; i < settings.Tartar; i++)
+                    setTo.Add(VilType.robot_tar_bind);
+                for (int i = 0; i < settings.GLove; i++)
+                    setTo.Add(VilType.g_love_bind);
+                for (int i = 0; i < settings.Chuck; i++)
+                    setTo.Add(VilType.robot_chuck_bind);
+                for (int i = 0; i < settings.Monsoon; i++)
+                    setTo.Add(VilType.robot_4a_monsoon_bind);
+                for (int i = 0; i < settings.Sleepytime; i++)
+                    setTo.Add(VilType.robot_sleepytime_bind);
+                for (int i = 0; i < settings.Arf; i++)
+                    setTo.Add(VilType.robot_arf_bind);
+                for (int i = 0; i < settings.Tubelets; i++)
+                    setTo.Add(VilType.tubelet_bind);
+                for (int i = 0; i < settings.Slick; i++)
+                    setTo.Add(VilType.robot_9a_bind);
+                for (int i = 0; i < settings.BombBot; i++)
+                    setTo.Add(VilType.robot_0a_bomb_bind);
+                for (int i = 0; i < settings.BzztBot; i++)
+                    setTo.Add(VilType.robot_0a_bzzt_bind);
+                for (int i = 0; i < settings.ChompBot; i++)
+                    setTo.Add(VilType.robot_0a_chomper_bind);
 
-                List<VilType> setTo = null;
-
-                if (veryRandom)
-                {
-                    if (settings.charsOnAnyLevel)
-                        setTo = GetVilTypesInLevel(chooseFrom).ToList();
-                    else
-                    {
-                        setTo = new List<VilType>();
-                        for (int i = 0; i < settings.Fodder; i++)
-                            setTo.Add(VilType.robot_0a_fodder_bind);
-                        for (int i = 0; i < settings.Hammer; i++)
-                            setTo.Add(VilType.ham_bind);
-                        for (int i = 0; i < settings.Tartar; i++)
-                            setTo.Add(VilType.robot_tar_bind);
-                        for (int i = 0; i < settings.GLove; i++)
-                            setTo.Add(VilType.g_love_bind);
-                        for (int i = 0; i < settings.Chuck; i++)
-                            setTo.Add(VilType.robot_chuck_bind);
-                        for (int i = 0; i < settings.Monsoon; i++)
-                            setTo.Add(VilType.robot_4a_monsoon_bind);
-                        for (int i = 0; i < settings.Sleepytime; i++)
-                            setTo.Add(VilType.robot_sleepytime_bind);
-                        for (int i = 0; i < settings.Arf; i++)
-                            setTo.Add(VilType.robot_arf_bind);
-                        for (int i = 0; i < settings.Tubelets; i++)
-                            setTo.Add(VilType.tubelet_bind);
-                        for (int i = 0; i < settings.Slick; i++)
-                            setTo.Add(VilType.robot_9a_bind);
-                        for (int i = 0; i < settings.BombBot; i++)
-                            setTo.Add(VilType.robot_0a_bomb_bind);
-                        for (int i = 0; i < settings.BzztBot; i++)
-                            setTo.Add(VilType.robot_0a_bzzt_bind);
-                        for (int i = 0; i < settings.ChompBot; i++)
-                            setTo.Add(VilType.robot_0a_chomper_bind);
-
-                        if (LevelName == "sm01" || LevelName == "gl01")
-                        {
-                            HashSet<VilType> uniqueSetTo = new HashSet<VilType>();
-                            foreach (VilType v in setTo)
-                                uniqueSetTo.Add(v);
-                            foreach (VilType v in GetVilTypesInLevel(setTo))
-                                uniqueSetTo.Remove(v);
-
-                            while (uniqueSetTo.Count > 5)
-                            {
-                                VilType randomRemove = setTo[r.Next(0, setTo.Count)];
-                                while (uniqueSetTo.Contains(randomRemove) && setTo.Contains(randomRemove))
-                                    setTo.Remove(randomRemove);
-                                uniqueSetTo.Remove(randomRemove);
-                            }
-                        }
-                    }
-                }
-
-                shuffled |= ShuffleVilTypes(r, chooseFrom, setTo, false, veryRandom && setTo.Count != 0);
+                shuffled |= ShuffleVilTypes(seed, chooseFrom, setTo, false, flags.HasFlag(RandomizerFlags.Enemies_Allow_Any_Type), true);
             }
-
+            
             if (flags.HasFlag(RandomizerFlags.Marker_Positions) && ContainsAssetWithType(AssetType.MRKR)
                 && !new string[] { "hb02", "b101", "b201", "b302", "b303" }.Contains(LevelName))
                 shuffled |= ShuffleMRKRPositions(seed,
@@ -786,25 +757,51 @@ namespace IndustrialPark.Randomizer
             return true;
         }
 
-        private bool ShuffleVilTypes(Random r, List<VilType> chooseFrom, List<VilType> setTo, bool mixModels, bool veryRandom)
+        private bool ShuffleVilTypes(int seed, List<VilType> chooseFrom, List<VilType> setTo, bool mixModels, bool veryRandom, bool enemies)
         {
+            Random r = new Random(seed);
+
+            if (veryRandom && (LevelName == "sm01" || LevelName == "gl01"))
+            {
+                HashSet<VilType> uniqueSetTo = new HashSet<VilType>();
+                foreach (VilType v in setTo)
+                    uniqueSetTo.Add(v);
+
+                while (uniqueSetTo.Count > 5)
+                {
+                    VilType randomRemove = setTo[r.Next(0, setTo.Count)];
+                    while (setTo.Contains(randomRemove))
+                        setTo.Remove(randomRemove);
+                    uniqueSetTo.Remove(randomRemove);
+                }
+            }
+
+            if (setTo.Count == 0)
+                return false;
+
             List<AssetVIL> assets = (from asset in assetDictionary.Values where asset is AssetVIL vil && chooseFrom.Contains(vil.VilType) select asset).Cast<AssetVIL>().ToList();
             List<VilType> viltypes = (from asset in assets select asset.VilType).ToList();
-            
+            List<AssetID> models = (from asset in assets select asset.Model_AssetID).ToList();
+
             foreach (AssetVIL a in assets)
             {
                 VilType prevVilType = a.VilType;
 
                 int viltypes_value = r.Next(0, viltypes.Count);
+                int model_value = mixModels ? r.Next(0, viltypes.Count) : viltypes_value;
 
                 a.VilType = veryRandom ? setTo[r.Next(0, setTo.Count)] : viltypes[viltypes_value];
 
-                if (mixModels)
-                    a.Model_AssetID = setTo[r.Next(0, setTo.Count)].ToString().Replace("sleepytime", "sleepy-time") + ".MINF";
-                else
-                    a.Model_AssetID = a.VilType.ToString().Replace("sleepytime", "sleepy-time") + ".MINF";
+                if (enemies && veryRandom)
+                    a.Model_AssetID =
+                        a.VilType == VilType.robot_sleepytime_bind ?
+                        "robot_sleepy-time_bind.MINF" :
+                        a.VilType.ToString() + ".MINF";
+
+                else a.Model_AssetID = models[model_value];
 
                 viltypes.RemoveAt(viltypes_value);
+                models.RemoveAt(model_value);
 
                 if (prevVilType == VilType.robot_arf_bind || prevVilType == VilType.tubelet_bind)
                 {
@@ -834,14 +831,14 @@ namespace IndustrialPark.Randomizer
                     a.LinksBFBB = links.ToArray();
                     RemoveAsset(vil.AHDR.assetID);
                     foreach (uint u in assetIDs)
-                        if (ContainsAsset(u) && GetFromAssetID(u).AHDR.assetType == AssetType.MVPT)
+                        if (ContainsAsset(u) && GetFromAssetID(u) is AssetMVPT)
                             RemoveAsset(u);
                 }
             }
 
             return assets.Count != 0;
         }
-
+        
         private bool DisableCutscenes()
         {
             switch (LevelName)

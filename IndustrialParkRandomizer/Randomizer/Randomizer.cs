@@ -18,7 +18,7 @@ namespace IndustrialPark.Randomizer
 
     public class Randomizer
     {
-        public int version = 54;
+        public int version = 55;
         public string rootDir;
         public bool isDir;
         public string seedText;
@@ -220,41 +220,16 @@ namespace IndustrialPark.Randomizer
                 {
                     game = hip.game;
                     scoobyPlatform = hip.platform;
-                    bool disableStuff = false;
-                    if (hip.game != Game.BFBB && (flags.HasFlag(RandomizerFlags.Enemies_Allow_Any_Type) || flags.HasFlag(RandomizerFlags.Shiny_Object_Gates) || flags.HasFlag(RandomizerFlags.Spatula_Gates)))
-                    {
-                        MessageBox.Show("Enemies_Allow_Any_Type, Shiny_Object_Gates and Spatula_Gates are only supported for Battle For Bikini Bottom. They will be disabled.");
-                        disableStuff = true;
-                    }
-                    else if (!Directory.Exists(ArchiveEditorFunctions.editorFilesFolder))
+
+                    if (!Directory.Exists(ArchiveEditorFunctions.editorFilesFolder))
                     {
                         DialogResult dialogResult = MessageBox.Show("The IndustrialPark-EditorFiles folder has not been found under Resources. You must download it first. Do you wish to download it?", "Note", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
                         if (dialogResult == DialogResult.Yes)
                             AutomaticUpdater.DownloadEditorFiles();
-                        else
-                            disableStuff = true;
                     }
                     else
                         AutomaticUpdater.VerifyEditorFiles();
-
-                    if (disableStuff)
-                    {
-                        this.flags.Remove(RandomizerFlags.Enemies_Allow_Any_Type);
-                        this.flags.Remove(RandomizerFlags.Shiny_Object_Gates);
-                        this.flags.Remove(RandomizerFlags.Spatula_Gates);
-                        settings.spatReqChum = 75;
-
-                        flags = 0;
-                        foreach (RandomizerFlags f in this.flags)
-                            flags |= f;
-                        flags2 = 0;
-                        foreach (RandomizerFlags2 f in this.flags2)
-                            flags2 |= f;
-                    }
-
-                    if (settings.restoreRobotLaugh && (hip.game != Game.BFBB || hip.platform != Platform.GameCube))
-                        settings.restoreRobotLaugh = false;
 
                     platformVerified = true;
                 }
@@ -401,7 +376,7 @@ namespace IndustrialPark.Randomizer
                 {
                     if (enemyVils.Count != 0)
                     {
-                        item1shuffled |= levelPairs[0].Item1.UnimportEnemies(enemyVils);
+                        //item1shuffled |= levelPairs[0].Item1.UnimportEnemies(enemyVils);
                         item2shuffled |= levelPairs[0].Item2.ImportEnemyTypes(enemyVils);
                     }
 
