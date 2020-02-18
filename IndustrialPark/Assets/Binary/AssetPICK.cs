@@ -8,13 +8,13 @@ namespace IndustrialPark
 {
     public class EntryPICK
     {
-        public uint PickupHash { get; set; }
+        public AssetID PickupHash { get; set; }
         [TypeConverter(typeof(HexByteTypeConverter))]
         public byte PickupType { get; set; }
         [TypeConverter(typeof(HexByteTypeConverter))]
         public byte PickupIndex { get; set; }
         [TypeConverter(typeof(HexShortTypeConverter))]
-        public ushort PickupFlags { get; set; }
+        public short PickupFlags { get; set; }
         public uint Quantity { get; set; }
         public AssetID ModelAssetID { get; set; }
         public AssetID AnimAssetID { get; set; }
@@ -22,6 +22,8 @@ namespace IndustrialPark
         public EntryPICK()
         {
             ModelAssetID = 0;
+            AnimAssetID = 0;
+            PickupHash = 0;
         }
 
         public override string ToString()
@@ -87,7 +89,7 @@ namespace IndustrialPark
                         PickupHash = ReadUInt(8 + i * 0x14),
                         PickupType = ReadByte(12 + i * 0x14),
                         PickupIndex = ReadByte(13 + i * 0x14),
-                        PickupFlags = ReadUShort(14 + i * 0x14),
+                        PickupFlags = ReadShort(14 + i * 0x14),
                         Quantity = ReadUInt(16 + i * 0x14),
                         ModelAssetID = ReadUInt(20 + i * 0x14),
                         AnimAssetID = ReadUInt(24 + i * 0x14)
@@ -98,12 +100,10 @@ namespace IndustrialPark
             }
             set
             {
-                List<EntryPICK> newValues = value.ToList();
-
                 List<byte> newData = Data.Take(4).ToList();
-                newData.AddRange(BitConverter.GetBytes(Switch(newValues.Count)));
+                newData.AddRange(BitConverter.GetBytes(Switch(value.Length)));
 
-                foreach (EntryPICK i in newValues)
+                foreach (var i in value)
                 {
                     newData.AddRange(BitConverter.GetBytes(Switch(i.PickupHash)));
                     newData.Add(i.PickupType);

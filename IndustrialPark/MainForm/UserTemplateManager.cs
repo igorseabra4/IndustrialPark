@@ -129,6 +129,8 @@ namespace IndustrialPark
 
         private void buttonRename_Click(object sender, EventArgs e)
         {
+            if (listBoxTemplates.SelectedIndex < 0) return;
+
             string oldName = listBoxTemplates.SelectedItem.ToString();
             byte[] oldData = File.ReadAllBytes(Path.Combine(Program.MainForm.userTemplatesFolder, oldName));
 

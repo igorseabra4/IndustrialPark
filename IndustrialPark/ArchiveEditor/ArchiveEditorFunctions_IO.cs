@@ -34,6 +34,7 @@ namespace IndustrialPark
         public void ImportHip(Section_DICT dictToImport, bool forceOverwrite)
         {
             UnsavedChanges = true;
+            bool redoTextures = false;
 
             foreach (Section_AHDR AHDR in dictToImport.ATOC.AHDRList)
             {
@@ -85,6 +86,8 @@ namespace IndustrialPark
                     MergeSNDI(AHDR);
                     continue;
                 }
+                else if (AHDR.assetType == AssetType.RWTX)
+                    redoTextures = true;
 
                 if (ContainsAsset(AHDR.assetID))
                 {
@@ -117,7 +120,11 @@ namespace IndustrialPark
             DICT.LTOC.LHDRList = DICT.LTOC.LHDRList.OrderBy(f => f.layerType, new LHDRComparer(game)).ToList();
 
             if (!forceOverwrite)
+            {
                 RecalculateAllMatrices();
+                if (redoTextures)
+                    SetupTextureDisplay();
+            }
         }
     }
 }

@@ -28,6 +28,8 @@ namespace IndustrialPark
         public Vector4 MvptColor;
         public Vector4 SfxColor;
 
+        public Vector3 Grid;
+
         public bool UseLegacyAssetIDFormat;
         public bool AlternateNameDisplayMode;
         public bool isDrawingUI;
@@ -84,6 +86,8 @@ namespace IndustrialPark
             MvptColor = new Vector4(0.7f, 0.2f, 0.6f, 0.5f);
             SfxColor = new Vector4(1f, 0.2f, 0.2f, 0.35f);
 
+            Grid = new Vector3(1f, 1f, 1f);
+
             UseLegacyAssetIDFormat = false;
             AlternateNameDisplayMode = false;
             isDrawingUI = false;
@@ -118,7 +122,7 @@ namespace IndustrialPark
 
         public ProjectJson(List<string> hipPaths, List<Platform> scoobyPlatforms, List<string> textureFolderPaths, Vector3 camPos, float yaw, float pitch, float speed, float speedRot,
             float fieldOfView, float farPlane, bool noCulling, bool wireframe, Color4 backgroundColor, Vector4 widgetColor, Vector4 trigColor,
-            Vector4 mvptColor, Vector4 sfxColor, bool useLegacyAssetIDFormat, bool alternateNameDisplayMode, List<uint> hiddenAssets, bool isDrawingUI,
+            Vector4 mvptColor, Vector4 sfxColor, bool useLegacyAssetIDFormat, bool alternateNameDisplayMode, List<uint> hiddenAssets, bool isDrawingUI, Vector3 Grid,
             bool renderBasedOnLodt, bool renderBasedOnPipt, bool dontRenderLevelModel, bool dontRenderBOUL, bool dontRenderBUTN, bool dontRenderCAM, bool dontRenderDSTR,
             bool dontRenderDYNA, bool dontRenderEGEN, bool dontRenderHANG, bool dontRenderLITE, bool dontRenderMRKR, bool dontRenderMVPT,
             bool dontRenderPEND, bool dontRenderPKUP, bool dontRenderPLAT, bool dontRenderPLYR, bool dontRenderSFX, bool dontRenderSIMP,
@@ -170,6 +174,7 @@ namespace IndustrialPark
             this.dontRenderVIL = dontRenderVIL;
             this.persistentShinies = persistentShinies;
             this.hideHelp = hideHelp;
+            this.Grid = Grid;
         }
     }
 }

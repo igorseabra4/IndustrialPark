@@ -195,13 +195,14 @@ namespace IndustrialPark.Models
                         vertexColors.Add(new RenderWareFile.Color(255, 255, 255, 255));
 
                 foreach (var t in m.Faces)
-                    triangles.Add(new RenderWareFile.Triangle()
-                    {
-                        vertex1 = (ushort)(t.Indices[0] + totalVertices),
-                        vertex2 = (ushort)(t.Indices[1] + totalVertices),
-                        vertex3 = (ushort)(t.Indices[2] + totalVertices),
-                        materialIndex = (ushort)m.MaterialIndex
-                    });
+                    if (t.IndexCount == 3)
+                        triangles.Add(new RenderWareFile.Triangle()
+                        {
+                            vertex1 = (ushort)(t.Indices[0] + totalVertices),
+                            vertex2 = (ushort)(t.Indices[1] + totalVertices),
+                            vertex3 = (ushort)(t.Indices[2] + totalVertices),
+                            materialIndex = (ushort)m.MaterialIndex
+                        });
             }
 
             Vertex3 max = new Vertex3(vertices[0].X, vertices[0].Y, vertices[0].Z);

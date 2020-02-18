@@ -38,9 +38,9 @@ namespace IndustrialPark
             UnknownFloat20 = Switch(BitConverter.ToSingle(Data, 0x20));
             UnknownFloat24 = Switch(BitConverter.ToSingle(Data, 0x24));
             UnknownFloat28 = Switch(BitConverter.ToSingle(Data, 0x28));
-            UnknownFloat2C = Switch(BitConverter.ToSingle(Data, 0x2C));
+            VentDistance = Switch(BitConverter.ToSingle(Data, 0x2C));
             UnknownFloat30 = Switch(BitConverter.ToSingle(Data, 0x30));
-            UnknownFloat34 = Switch(BitConverter.ToSingle(Data, 0x34));
+            LaunchSpeed = Switch(BitConverter.ToSingle(Data, 0x34));
             UnknownInt38 = Switch(BitConverter.ToInt32(Data, 0x38));
             UnknownFloat3C = Switch(BitConverter.ToSingle(Data, 0x3C));
             UnknownFloat40 = Switch(BitConverter.ToSingle(Data, 0x40));
@@ -61,9 +61,9 @@ namespace IndustrialPark
             list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat20)));
             list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat24)));
             list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat28)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat2C)));
+            list.AddRange(BitConverter.GetBytes(Switch(VentDistance)));
             list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat30)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat34)));
+            list.AddRange(BitConverter.GetBytes(Switch(LaunchSpeed)));
             list.AddRange(BitConverter.GetBytes(Switch(UnknownInt38)));
             list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat3C)));
             list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat40)));
@@ -149,11 +149,11 @@ namespace IndustrialPark
         [Category("Vent"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat28 { get; set; }
         [Category("Vent"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat2C { get; set; }
+        public float VentDistance { get; set; }
         [Category("Vent"), TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat30 { get; set; }
         [Category("Vent"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat34 { get; set; }
+        public float LaunchSpeed { get; set; }
         [Category("Vent")]
         public float UnknownInt38 { get; set; }
         [Category("Vent"), TypeConverter(typeof(FloatTypeConverter))]

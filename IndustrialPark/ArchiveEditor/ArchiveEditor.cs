@@ -715,12 +715,12 @@ namespace IndustrialPark
             }
         }
 
-        public void MouseMoveGeneric(Matrix viewProjection, int deltaX, int deltaY)
+        public void MouseMoveGeneric(Matrix viewProjection, int deltaX, int deltaY, bool grid)
         {
-            archive.MouseMoveForPosition(viewProjection, deltaX, deltaY);
-            archive.MouseMoveForRotation(viewProjection, deltaX);//, deltaY);
-            archive.MouseMoveForScale(viewProjection, deltaX, deltaY);
-            archive.MouseMoveForPositionLocal(viewProjection, deltaX, deltaY);
+            archive.MouseMoveForPosition(viewProjection, deltaX, deltaY, grid);
+            archive.MouseMoveForRotation(viewProjection, deltaX, grid);//, deltaY);
+            archive.MouseMoveForScale(viewProjection, deltaX, deltaY, grid);
+            archive.MouseMoveForPositionLocal(viewProjection, deltaX, deltaY, grid);
         }
 
         public void SetSelectedIndices(List<uint> assetIDs, bool newlyAddedObjects, bool add = false)
@@ -832,6 +832,14 @@ namespace IndustrialPark
         {
             archive.CollapseLayers();
             PopulateLayerComboBox();
+            comboBoxLayers.SelectedIndex = -1;
+            comboBoxLayers_SelectedIndexChanged(sender, e);
+            buttonDuplicate.Enabled = false;
+            buttonCopy.Enabled = false;
+            buttonRemoveAsset.Enabled = false;
+            buttonExportRaw.Enabled = false;
+            buttonEditAsset.Enabled = false;
+            buttonInternalEdit.Enabled = false;
         }
 
         private ScrollableMessageBox verifyResult;

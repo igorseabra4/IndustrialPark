@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Newtonsoft.Json;
+using System.Threading;
 
 namespace IndustrialPark
 {
@@ -73,8 +74,18 @@ namespace IndustrialPark
             }
 
             SetProjectToolStripStatusLabel();
+
+            new Thread(() =>
+            {
+                if (InvokeRequired)
+                    Invoke(new StartLoop(renderer.RunMainLoop), renderPanel);
+                else
+                    renderer.RunMainLoop(renderPanel);
+            }).Start();            
         }
 
+        private delegate void StartLoop(Panel renderPanel);
+        
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (UnsavedChanges())
@@ -250,11 +261,11 @@ namespace IndustrialPark
                 renderer.Camera.Yaw, renderer.Camera.Pitch, renderer.Camera.Speed, renderer.Camera.SpeedRot, renderer.Camera.FieldOfView,
                 renderer.Camera.FarPlane, noCullingCToolStripMenuItem.Checked, wireframeFToolStripMenuItem.Checked, renderer.backgroundColor,
                 renderer.normalColor, renderer.trigColor, renderer.mvptColor, renderer.sfxColor, useLegacyAssetIDFormatToolStripMenuItem.Checked,
-                alternateNamingMode, hiddenAssets, renderer.isDrawingUI, AssetMODL.renderBasedOnLodt, AssetMODL.renderBasedOnPipt, AssetJSP.dontRender, 
-                AssetBOUL.dontRender, AssetBUTN.dontRender, AssetCAM.dontRender, AssetDSTR_Scooby.dontRender, AssetDYNA.dontRender, AssetEGEN.dontRender, 
-                AssetHANG.dontRender, AssetLITE.dontRender, AssetMRKR.dontRender, AssetMVPT_Scooby.dontRender, AssetPEND.dontRender, AssetPLAT.dontRender, 
-                AssetPLAT.dontRender, AssetPLYR.dontRender, AssetSFX.dontRender, AssetSIMP.dontRender, AssetTRIG.dontRender, AssetUI.dontRender, 
-                AssetUIFT.dontRender, AssetVIL.dontRender, ArchiveEditorFunctions.persistentShinies, ArchiveEditorFunctions.hideHelp);
+                alternateNamingMode, hiddenAssets, renderer.isDrawingUI, ArchiveEditorFunctions.Grid, AssetMODL.renderBasedOnLodt, AssetMODL.renderBasedOnPipt,
+                AssetJSP.dontRender, AssetBOUL.dontRender, AssetBUTN.dontRender, AssetCAM.dontRender, AssetDSTR_Scooby.dontRender, AssetDYNA.dontRender,
+                AssetEGEN.dontRender, AssetHANG.dontRender, AssetLITE.dontRender, AssetMRKR.dontRender, AssetMVPT_Scooby.dontRender, AssetPEND.dontRender,
+                AssetPLAT.dontRender, AssetPLAT.dontRender, AssetPLYR.dontRender, AssetSFX.dontRender, AssetSIMP.dontRender, AssetTRIG.dontRender,
+                AssetUI.dontRender, AssetUIFT.dontRender, AssetVIL.dontRender, ArchiveEditorFunctions.persistentShinies, ArchiveEditorFunctions.hideHelp);
         }
 
         private void ApplySettings(string ipSettingsPath)
@@ -302,6 +313,7 @@ namespace IndustrialPark
             renderer.Camera.SpeedRot = ipSettings.Speed;
             renderer.Camera.FieldOfView = ipSettings.FieldOfView;
             renderer.Camera.FarPlane = ipSettings.FarPlane;
+            ArchiveEditorFunctions.Grid = ipSettings.Grid;
 
             noCullingCToolStripMenuItem.Checked = ipSettings.NoCulling;
             if (noCullingCToolStripMenuItem.Checked)
@@ -419,9 +431,7 @@ namespace IndustrialPark
         private bool mouseMode = false;
         private System.Drawing.Point MouseCenter = new System.Drawing.Point();
         private MouseEventArgs oldMousePosition = new MouseEventArgs(MouseButtons.None, 0, 0, 0, 0);
-
-        private bool loopNotStarted = true;
-
+        
         private void MouseMoveControl(object sender, MouseEventArgs e)
         {
             if (renderer.isDrawingUI)
@@ -457,7 +467,9 @@ namespace IndustrialPark
                     }
 
                     foreach (ArchiveEditor ae in archiveEditors)
-                        ae.MouseMoveGeneric(renderer.viewProjection, deltaX, deltaY);
+                    {
+                        ae.MouseMoveGeneric(renderer.viewProjection, deltaX, deltaY, PressedKeys.Contains(Keys.T));
+                    }
                 }
 
                 if (e.Delta != 0)
@@ -465,12 +477,6 @@ namespace IndustrialPark
             }
 
             oldMousePosition = e;
-
-            if (loopNotStarted)
-            {
-                loopNotStarted = false;
-                renderer.RunMainLoop(renderPanel);
-            }
         }
 
         private void MouseModeToggle()
@@ -515,6 +521,8 @@ namespace IndustrialPark
 
             if (e.KeyCode == Keys.F1)
                 Program.ViewConfig.Show();
+            else if (e.KeyCode == Keys.F5)
+                TryToRunGame();
         }
 
         private void MainForm_KeyUp(object sender, KeyEventArgs e)
@@ -701,23 +709,24 @@ namespace IndustrialPark
             Program.ViewConfig.Show();
         }
 
+        private Rectangle ViewRectangle()
+        {
+            return new Rectangle(
+                renderPanel.ClientRectangle.X,
+                renderPanel.ClientRectangle.Y,
+                renderPanel.ClientRectangle.Width,
+                renderPanel.ClientRectangle.Height);
+        }
+
         private void renderPanel_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
-                ScreenClicked(new Rectangle(
-                    renderPanel.ClientRectangle.X,
-                    renderPanel.ClientRectangle.Y,
-                    renderPanel.ClientRectangle.Width,
-                    renderPanel.ClientRectangle.Height), e.X, e.Y);
+                ScreenClicked(ViewRectangle(), e.X, e.Y);
             }
             else if (e.Button == MouseButtons.Right && PressedKeys.Contains(Keys.ShiftKey))
             {
-                Vector3 Position = GetScreenClickedPosition(new Rectangle(
-                renderPanel.ClientRectangle.X,
-                renderPanel.ClientRectangle.Y,
-                renderPanel.ClientRectangle.Width,
-                renderPanel.ClientRectangle.Height), e.X, e.Y);
+                Vector3 Position = GetScreenClickedPosition(ViewRectangle(), e.X, e.Y);
 
                 foreach (ArchiveEditor archiveEditor in archiveEditors)
                     if (archiveEditor.TemplateFocus)
@@ -732,13 +741,7 @@ namespace IndustrialPark
         private void renderPanel_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
-            {
-                ScreenClicked(new Rectangle(
-                    renderPanel.ClientRectangle.X,
-                    renderPanel.ClientRectangle.Y,
-                    renderPanel.ClientRectangle.Width,
-                    renderPanel.ClientRectangle.Height), e.X, e.Y, true);
-            }
+                ScreenClicked(ViewRectangle(), e.X, e.Y, true);
         }
 
         public void ScreenClicked(Rectangle viewRectangle, int X, int Y, bool isMouseDown = false)
@@ -1078,7 +1081,9 @@ namespace IndustrialPark
 
         private void ensureAssociationsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FileAssociations.FileAssociations.EnsureAssociationsSet();
+            DialogResult result = MessageBox.Show("Will set Industrial Park as default application for HIP and HOP file formats on registry.", "Associate HIP/HOP files", MessageBoxButtons.OKCancel);
+            if (result == DialogResult.OK)
+                FileAssociations.FileAssociations.EnsureAssociationsSet();
         }
 
         private void UnselectTemplateButtonRecursive(ToolStripItem t)
@@ -1231,5 +1236,39 @@ namespace IndustrialPark
             allTopMost = value;
         }
 
+        private void runGameF5ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TryToRunGame();
+        }
+
+        private void TryToRunGame()
+        {
+            string dolPath = null;
+            foreach (var ae in archiveEditors) 
+            {
+                string hipName = ae.GetCurrentlyOpenFileName().ToLower();
+                string rootFolderName = Path.GetDirectoryName(Path.GetDirectoryName(hipName));
+
+                if (!(hipName.Contains("boot") || hipName.Contains("font") || hipName.Contains("plat")))
+                    rootFolderName = Path.GetDirectoryName(rootFolderName);
+
+                dolPath = Path.Combine(rootFolderName, "sys", "main.dol");
+
+                if (File.Exists(dolPath))
+                    break;
+                dolPath = null;
+            }
+
+            if (dolPath == null)
+                MessageBox.Show("Unable to find DOL to launch.");
+            else RemoteControl.TryToRunGame(dolPath);
+        }
+
+        private void saveAllOpenHIPsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (var ae in archiveEditors)
+                if (ae.archive.UnsavedChanges)
+                    ae.Save();
+        }
     }
 }

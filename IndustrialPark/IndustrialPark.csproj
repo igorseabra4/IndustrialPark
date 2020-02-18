@@ -276,6 +276,7 @@
     </Compile>
     <Compile Include="Models\Animation_IO_Assimp.cs" />
     <Compile Include="Models\Model_IO_Assimp.cs" />
+    <Compile Include="Other\RemoteControl.cs" />
     <Compile Include="Other\AutomaticUpdater.cs" />
     <Compile Include="MainForm\EditName.cs">
       <SubType>Form</SubType>
@@ -731,11 +732,7 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <ProjectExtensions>
-    <VisualStudio>
-      <UserProperties resources_4ip_3version_1json__JsonSchema="http://json-schema.org/draft-04/schema" />
-    </VisualStudio>
-  </ProjectExtensions>
+  <ProjectExtensions />
   <Import Project="..\packages\AssimpNet.4.1.0\build\AssimpNet.targets" Condition="Exists('..\packages\AssimpNet.4.1.0\build\AssimpNet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

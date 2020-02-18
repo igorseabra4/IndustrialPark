@@ -44,6 +44,10 @@
             this.NumericFOV = new System.Windows.Forms.NumericUpDown();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.NumericIntervalRotation = new System.Windows.Forms.NumericUpDown();
+            this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.numericGridZ = new System.Windows.Forms.NumericUpDown();
+            this.numericGridY = new System.Windows.Forms.NumericUpDown();
+            this.numericGridX = new System.Windows.Forms.NumericUpDown();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NumericCameraYaw)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NumericCameraPitch)).BeginInit();
@@ -59,6 +63,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.NumericFOV)).BeginInit();
             this.groupBox6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NumericIntervalRotation)).BeginInit();
+            this.groupBox7.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericGridZ)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericGridY)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericGridX)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox2
@@ -269,10 +277,86 @@
             0});
             this.NumericIntervalRotation.ValueChanged += new System.EventHandler(this.NumericIntervalRotation_ValueChanged);
             // 
+            // groupBox7
+            // 
+            this.groupBox7.Controls.Add(this.numericGridZ);
+            this.groupBox7.Controls.Add(this.numericGridY);
+            this.groupBox7.Controls.Add(this.numericGridX);
+            resources.ApplyResources(this.groupBox7, "groupBox7");
+            this.groupBox7.Name = "groupBox7";
+            this.groupBox7.TabStop = false;
+            // 
+            // numericGridZ
+            // 
+            this.numericGridZ.DecimalPlaces = 4;
+            resources.ApplyResources(this.numericGridZ, "numericGridZ");
+            this.numericGridZ.Maximum = new decimal(new int[] {
+            -1,
+            -1,
+            -1,
+            0});
+            this.numericGridZ.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            262144});
+            this.numericGridZ.Name = "numericGridZ";
+            this.numericGridZ.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericGridZ.ValueChanged += new System.EventHandler(this.numericGrid_ValueChanged);
+            // 
+            // numericGridY
+            // 
+            this.numericGridY.DecimalPlaces = 4;
+            resources.ApplyResources(this.numericGridY, "numericGridY");
+            this.numericGridY.Maximum = new decimal(new int[] {
+            -1,
+            -1,
+            -1,
+            0});
+            this.numericGridY.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            262144});
+            this.numericGridY.Name = "numericGridY";
+            this.numericGridY.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericGridY.ValueChanged += new System.EventHandler(this.numericGrid_ValueChanged);
+            // 
+            // numericGridX
+            // 
+            this.numericGridX.DecimalPlaces = 4;
+            resources.ApplyResources(this.numericGridX, "numericGridX");
+            this.numericGridX.Maximum = new decimal(new int[] {
+            -1,
+            -1,
+            -1,
+            0});
+            this.numericGridX.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            262144});
+            this.numericGridX.Name = "numericGridX";
+            this.numericGridX.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericGridX.ValueChanged += new System.EventHandler(this.numericGrid_ValueChanged);
+            // 
             // ViewConfig
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.groupBox7);
             this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox2);
@@ -300,6 +384,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.NumericFOV)).EndInit();
             this.groupBox6.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.NumericIntervalRotation)).EndInit();
+            this.groupBox7.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.numericGridZ)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericGridY)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericGridX)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -321,5 +409,9 @@
         public System.Windows.Forms.NumericUpDown NumericFOV;
         private System.Windows.Forms.GroupBox groupBox6;
         public System.Windows.Forms.NumericUpDown NumericIntervalRotation;
+        private System.Windows.Forms.GroupBox groupBox7;
+        public System.Windows.Forms.NumericUpDown numericGridZ;
+        public System.Windows.Forms.NumericUpDown numericGridY;
+        public System.Windows.Forms.NumericUpDown numericGridX;
     }
 }

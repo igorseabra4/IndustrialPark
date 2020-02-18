@@ -1397,6 +1397,10 @@ namespace IndustrialPark
                     break;
                 case AssetTemplate.BusStop_Trigger:
                     ((AssetTRIG)asset).AssetType = ObjectAssetType.TRIG;
+                    ((AssetTRIG)asset).Shape = TriggerShape.Sphere;
+                    ((AssetTRIG)asset).Position0X = position.X;
+                    ((AssetTRIG)asset).Position0Y = position.Y;
+                    ((AssetTRIG)asset).Position0Z = position.Z;
                     ((AssetTRIG)asset).Radius = 2.5f;
                     uint lightsAssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper().Replace("TRIGGER", "LIGHTS").Replace("TRIG", "LIGHTS"), AssetTemplate.BusStop_Lights);
                     ((AssetTRIG)asset).LinksBFBB = new LinkBFBB[] {
@@ -1486,7 +1490,12 @@ namespace IndustrialPark
                 case AssetTemplate.Checkpoint_Invisible:
                     {
                         ((AssetTRIG)asset).AssetType = ObjectAssetType.TRIG;
+                        ((AssetTRIG)asset).Shape = TriggerShape.Sphere;
                         ((AssetTRIG)asset).Radius = 6f;
+                        ((AssetTRIG)asset).Position0X = position.X;
+                        ((AssetTRIG)asset).Position0Y = position.Y;
+                        ((AssetTRIG)asset).Position0Z = position.Z;
+
                         AssetID checkpointDisp = "CHECKPOINT_DISP_00";
                         if (!ContainsAsset(checkpointDisp))
                             checkpointDisp = PlaceTemplate(position, layerIndex, out success, ref assetIDs, "CHECKPOINT_DISP", AssetTemplate.Dispatcher);

@@ -93,7 +93,7 @@ namespace IndustrialPark
         }
 
         [Category("Sound Group"), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte11
+        public byte ChooseRandomEntry
         {
             get => ReadByte(0x11);
             set => Write(0x11, value);

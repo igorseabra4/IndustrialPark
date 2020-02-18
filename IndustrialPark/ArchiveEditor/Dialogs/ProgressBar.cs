@@ -12,13 +12,10 @@ namespace IndustrialPark
 {
     public partial class ProgressBar : Form
     {
-        public string Text2;
-
         public ProgressBar(string text, string text2 = "Asset")
         {
             InitializeComponent();
             Text = text;
-            Text2 = text2;
         }
 
         public void SetProgressBar(int min, int max, int step)
@@ -43,7 +40,7 @@ namespace IndustrialPark
             else
             {
                 pBar.PerformStep();
-                labelLoading.Text = $"{Text2} {pBar.Value}/{pBar.Maximum}";
+                labelLoading.Text = $"Progress: {100 * pBar.Value/pBar.Maximum}%";
                 if (pBar.Value >= pBar.Maximum)
                     Close();
             }

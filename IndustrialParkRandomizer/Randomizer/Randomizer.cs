@@ -193,7 +193,6 @@ namespace IndustrialPark.Randomizer
                 }
 
             progressBar.SetProgressBar(0, hipPaths.Count * 4 + 3, 1);
-            progressBar.Text2 = "Opening archives: step";
 
             List<string> warpNames = new List<string>(); // Names of all warps in the game for the Warps randomizer
             List<string> namesForBoot = new List<string>(); // Names of all levels in the game for sb.ini boot level randomizer
@@ -341,7 +340,6 @@ namespace IndustrialPark.Randomizer
             progressBar.PerformStep();
 
             // Time for the actual randomization process!
-            progressBar.Text2 = "Randomizing archives: step";
 
             List<(string, string, string)> warpRandomizerOutput = new List<(string, string, string)>();
             

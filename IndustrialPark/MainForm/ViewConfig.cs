@@ -112,7 +112,13 @@ namespace IndustrialPark
                 NumericFOV.Value = 1;
             Program.MainForm.renderer.Camera.FieldOfView = MathUtil.DegreesToRadians((float)NumericFOV.Value);
         }
-        
+
+        private void numericGrid_ValueChanged(object sender, EventArgs e)
+        {
+            if (!ProgramIsUpdatingValues)
+                ArchiveEditorFunctions.Grid = new Vector3((float)numericGridX.Value, (float)numericGridY.Value, (float)numericGridZ.Value);
+        }
+
         private void ViewConfig_VisibleChanged(object sender, EventArgs e)
         {
             if (Visible)
@@ -152,6 +158,11 @@ namespace IndustrialPark
 
             NumericCameraYaw.Value = (decimal)Program.MainForm.renderer.Camera.Yaw;
             NumericCameraPitch.Value = (decimal)Program.MainForm.renderer.Camera.Pitch;
+
+            numericGridX.Value = (decimal)ArchiveEditorFunctions.Grid.X;
+            numericGridY.Value = (decimal)ArchiveEditorFunctions.Grid.Y;
+            numericGridZ.Value = (decimal)ArchiveEditorFunctions.Grid.Z;
+
             ProgramIsUpdatingValues = false;
             _invalidCameraValues = false;
         }

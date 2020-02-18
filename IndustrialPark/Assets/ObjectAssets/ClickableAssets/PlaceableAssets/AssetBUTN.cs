@@ -199,7 +199,7 @@ namespace IndustrialPark
         }
 
         [Category("Button Hitmask")]
-        public bool HitMask17
+        public bool PatrickCartwheel
         {
             get => (HitMask & Mask(17)) != 0;
             set => HitMask = value ? (HitMask | Mask(17)) : (HitMask & InvMask(17));
