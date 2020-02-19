@@ -8,7 +8,7 @@ namespace IndustrialPark
 {
     public enum BlendFactorType
     {
-        SourceAlpha_InverseSourceAlpha = 0x00,
+        None = 0x00,
         Zero                           = 0x01,
         One                            = 0x02,
         SourceColor                    = 0x03,
@@ -27,57 +27,174 @@ namespace IndustrialPark
         [Category("PIPT Entry")]
         public AssetID ModelAssetID { get; set; }
         [Category("PIPT Entry")]
-        public int MeshIndex { get; set; }
-        [Category("PIPT Entry"), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte RelatedToVisibility { get; set; }
-        [Category("PIPT Entry"), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Culling { get; set; }
-        [Category("PIPT Entry"), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte DestinationSourceBlend { get; set; }
+        public int SubObjectBits { get; set; }
+        [Category("PIPT Entry")]
+        public int PipeFlags { get; set; }
+        
+        [Category("PIPT Pipe Flags")]
+        public byte AlphaCompareValue
+        {
+            get => (byte)((PipeFlags & 0xFF000000) >> 24);
 
-        [Category("PIPT Entry (Helper)")]
+            set
+            {
+                PipeFlags &= 0x00FFFFFF;
+                PipeFlags |= value << 24;
+            }
+        }
+
+        [Category("PIPT Pipe Flags")]
+        public byte UnknownFlagB
+        {
+            get => (byte)((PipeFlags & 0x00F00000) >> 20);
+
+            set
+            {
+                unchecked
+                {
+                    PipeFlags &= (int)0xFF0FFFFF;
+                    PipeFlags |= value << 20;
+                }
+            }
+        }
+
+        [Category("PIPT Pipe Flags")]
+        public byte UnknownFlagC
+        {
+            get => (byte)((PipeFlags & 0x000E0000) >> 17);
+
+            set
+            {
+                unchecked
+                {
+                    PipeFlags &= (int)0xFFF1FFFF;
+                    PipeFlags |= value << 17;
+                }
+            }
+        }
+
+        [Category("PIPT Pipe Flags")]
+        public bool IgnoreFog
+        {
+            get => ((PipeFlags & 0x00010000) >> 16) != 0;
+
+            set
+            {
+                unchecked
+                {
+                    PipeFlags &= (int)0xFFFEFFFF;
+                    PipeFlags |= (value ? 1 : 0) << 16;
+                }
+            }
+        }
+        
+        [Category("PIPT Pipe Flags")]
         public BlendFactorType DestinationBlend
         {
-            get => (BlendFactorType)(DestinationSourceBlend & 0x0F);
+            get => (BlendFactorType)((PipeFlags & 0x0000F000) >> 12);
+
             set
             {
-                DestinationSourceBlend &= 0xF0;
-                DestinationSourceBlend |= (byte)value;
+                unchecked
+                {
+                    PipeFlags &= (int)0xFFFF0FFF;
+                    PipeFlags |= (byte)value << 12;
+                }
             }
         }
 
-        [Category("PIPT Entry (Helper)")]
+        [Category("PIPT Pipe Flags")]
         public BlendFactorType SourceBlend
         {
-            get => (BlendFactorType)((DestinationSourceBlend & 0xF0) >> 4);
+            get => (BlendFactorType)((PipeFlags & 0x0000F00) >> 8);
+
             set
             {
-                DestinationSourceBlend &= 0x0F;
-                DestinationSourceBlend |= (byte)((byte)value << 4);
+                unchecked
+                {
+                    PipeFlags &= (int)0xFFFFF0FF;
+                    PipeFlags |= (byte)value << 8;
+                }
             }
         }
 
-        [Category("PIPT Entry"), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte OtherFlags { get; set; }
-        [Category("PIPT Entry (Movie only)"), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Unknown0C { get; set; }
-        [Category("PIPT Entry (Movie only)"), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Unknown0D { get; set; }
-        [Category("PIPT Entry (Movie only)"), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Unknown0E { get; set; }
-        [Category("PIPT Entry (Movie only)"), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Unknown0F { get; set; }
+        [Category("PIPT Pipe Flags")]
+        public byte LightingMode
+        {
+            get => (byte)((PipeFlags & 0x000000C0) >> 6);
+
+            set
+            {
+                unchecked
+                {
+                    PipeFlags &= (int)0xFFFFFF3F;
+                    PipeFlags |= value << 6;
+                }
+            }
+        }
+
+        [Category("PIPT Pipe Flags")]
+        public byte CullMode
+        {
+            get => (byte)((PipeFlags & 0x00000030) >> 4);
+
+            set
+            {
+                unchecked
+                {
+                    PipeFlags &= (int)0xFFFFFFCF;
+                    PipeFlags |= value << 4;
+                }
+            }
+        }
+
+        [Category("PIPT Pipe Flags")]
+        public byte ZWriteMode
+        {
+            get => (byte)((PipeFlags & 0x000000C) >> 2);
+
+            set
+            {
+                unchecked
+                {
+                    PipeFlags &= (int)0xFFFFFFF3;
+                    PipeFlags |= value << 2;
+                }
+            }
+        }
+
+        [Category("PIPT Pipe Flags")]
+        public byte UnknownFlagJ
+        {
+            get => (byte)(PipeFlags & 0x00000003);
+
+            set
+            {
+                unchecked
+                {
+                    PipeFlags &= (int)0xFFFFFFFC;
+                    PipeFlags |= value;
+                }
+            }
+        }
+
+        [Category("PIPT Entry (Movie only)")]
+        public int Unknown { get; set; }
 
         public static int SizeOfStruct(Game game) => game == Game.Incredibles ? 16 : 12;
 
         public EntryPIPT()
         {
             ModelAssetID = 0;
+            SubObjectBits = -1;
+            UnknownFlagB = 9;
+            UnknownFlagC = 4;
+            UnknownFlagJ = 2;
         }
         
         public override string ToString()
         {
-            return $"{Program.MainForm.GetAssetNameFromID(ModelAssetID)} - {MeshIndex}";
+            return $"{Program.MainForm.GetAssetNameFromID(ModelAssetID)} - {SubObjectBits}";
         }
     }
 
@@ -93,7 +210,7 @@ namespace IndustrialPark
         public void UpdateDictionary()
         {
             foreach (EntryPIPT entry in PIPT_Entries)
-                BlendModes[entry.ModelAssetID] = (entry.MeshIndex, entry.DestinationBlend, entry.SourceBlend);
+                BlendModes[entry.ModelAssetID] = (entry.SubObjectBits, entry.SourceBlend, entry.DestinationBlend);
         }
 
         public void ClearDictionary()
@@ -130,26 +247,16 @@ namespace IndustrialPark
                 
                 for (int i = 4; i < Data.Length; i += EntryPIPT.SizeOfStruct(game))
                 {
-                    byte[] Flags = BitConverter.GetBytes(ReadInt(i + 8));
-
                     EntryPIPT a = new EntryPIPT()
                     {
                         ModelAssetID = ReadUInt(i),
-                        MeshIndex = ReadInt(i + 4),
-                        RelatedToVisibility = Flags[3],
-                        Culling = Flags[2],
-                        DestinationSourceBlend = Flags[1],
-                        OtherFlags = Flags[0]
+                        SubObjectBits = ReadInt(i + 4),
+                        PipeFlags = ReadInt(i + 8)
                     };
 
                     if (game == Game.Incredibles)
-                    {
-                        a.Unknown0C = ReadByte(i + 12);
-                        a.Unknown0D = ReadByte(i + 13);
-                        a.Unknown0E = ReadByte(i + 14);
-                        a.Unknown0F = ReadByte(i + 15);
-                    }
-
+                        a.Unknown = ReadInt(i + 12);
+                    
                     entries.Add(a);
                 }
                 
@@ -163,17 +270,11 @@ namespace IndustrialPark
                 foreach (EntryPIPT i in value)
                 {
                     newData.AddRange(BitConverter.GetBytes(Switch(i.ModelAssetID)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.MeshIndex)));
-                    int Flags = BitConverter.ToInt32(new byte[] { i.OtherFlags, i.DestinationSourceBlend, i.Culling, i.RelatedToVisibility }, 0);
-                    newData.AddRange(BitConverter.GetBytes(Switch(Flags)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.SubObjectBits)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.PipeFlags)));
 
                     if (game == Game.Incredibles)
-                    {
-                        newData.Add(i.Unknown0C);
-                        newData.Add(i.Unknown0D);
-                        newData.Add(i.Unknown0E);
-                        newData.Add(i.Unknown0F);
-                    }
+                        newData.AddRange(BitConverter.GetBytes(Switch(i.Unknown)));
                 }
                 
                 Data = newData.ToArray();

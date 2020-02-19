@@ -724,10 +724,8 @@ namespace IndustrialPark
                 if (GetFromAssetID(u) is AssetMODL)
                     entries.Add(new EntryPIPT()
                     {
-                        Culling = 0x98,
-                        MeshIndex = -1,
                         ModelAssetID = u,
-                        OtherFlags = 0x42
+                        LightingMode = 1
                     });
 
             pipt.PIPT_Entries = entries.ToArray();

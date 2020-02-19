@@ -50,8 +50,8 @@ namespace IndustrialPark
             {
                 if (AssetPIPT.BlendModes.ContainsKey(AHDR.assetID))
                 {
-                    (int, BlendFactorType, BlendFactorType) destSrc = AssetPIPT.BlendModes[AHDR.assetID];
-                    renderer.device.SetBlend(BlendOperation.Add, GetSharpBlendMode(destSrc.Item2, false), GetSharpBlendMode(destSrc.Item3, true));
+                    (int, BlendFactorType, BlendFactorType) sourceDest = AssetPIPT.BlendModes[AHDR.assetID];
+                    renderer.device.SetBlend(BlendOperation.Add, GetSharpBlendMode(sourceDest.Item2, true), GetSharpBlendMode(sourceDest.Item3, false));
                 }
                 else
                     renderer.device.SetDefaultBlendState();
@@ -91,9 +91,9 @@ namespace IndustrialPark
             }
 
             if (dest)
-                return BlendOption.Zero;
-            else
                 return BlendOption.One;
+            else
+                return BlendOption.Zero;
         }
     }
 }

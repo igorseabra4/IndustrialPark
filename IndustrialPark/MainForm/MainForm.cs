@@ -30,6 +30,17 @@ namespace IndustrialPark
 
             renderer = new SharpRenderer(renderPanel);
         }
+
+        private void StartRenderer()
+        {
+            new Thread(() =>
+            {
+                if (InvokeRequired)
+                    Invoke(new StartLoop(renderer.RunMainLoop), renderPanel);
+                else
+                    renderer.RunMainLoop(renderPanel);
+            }).Start();
+        }
         
         public static string pathToSettings => Application.StartupPath + "/ip_settings.json";
         private string currentProjectPath;
@@ -60,6 +71,7 @@ namespace IndustrialPark
                     {
                         AddArchiveEditor(args[1]);
                         SetProjectToolStripStatusLabel();
+                        StartRenderer();
                         return;
                     }
                 }
@@ -74,14 +86,7 @@ namespace IndustrialPark
             }
 
             SetProjectToolStripStatusLabel();
-
-            new Thread(() =>
-            {
-                if (InvokeRequired)
-                    Invoke(new StartLoop(renderer.RunMainLoop), renderPanel);
-                else
-                    renderer.RunMainLoop(renderPanel);
-            }).Start();            
+            StartRenderer();
         }
 
         private delegate void StartLoop(Panel renderPanel);

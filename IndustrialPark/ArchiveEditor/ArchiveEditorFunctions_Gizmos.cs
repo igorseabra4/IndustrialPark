@@ -484,9 +484,10 @@ namespace IndustrialPark
                             //direction.Normalize();
 
                             //ra.Yaw -= (distanceX * direction.X - distanceY * direction.Y) / 10;
-                            ra.Yaw += distanceX;
                             if (grid)
-                                ra.Yaw = SnapToGrid(ra.Yaw, GizmoType.X);
+                                ra.Yaw = SnapToGrid(ra.Yaw + distanceX, GizmoType.X);
+                            else
+                                ra.Yaw += distanceX;
                         }
                         else if (rotationGizmos[1].isSelected)
                         {
@@ -499,9 +500,10 @@ namespace IndustrialPark
                             //direction.Normalize();
 
                             //ra.Pitch -= (distanceX * direction.X - distanceY * direction.Y) / 10;
-                            ra.Pitch += distanceX;
                             if (grid)
-                                ra.Pitch = SnapToGrid(ra.Pitch, GizmoType.Y);
+                                ra.Pitch = SnapToGrid(ra.Pitch + distanceX, GizmoType.Y);
+                            else
+                                ra.Pitch += distanceX;
                         }
                         else if (rotationGizmos[2].isSelected)
                         {
@@ -514,9 +516,10 @@ namespace IndustrialPark
                             //direction.Normalize();
 
                             //ra.Roll -= (distanceX * direction.X - distanceY * direction.Y) / 10;
-                            ra.Roll += distanceX;
                             if (grid)
-                                ra.Roll = SnapToGrid(ra.Roll, GizmoType.Z);
+                                ra.Roll = SnapToGrid(ra.Roll + distanceX, GizmoType.Z);
+                            else
+                                ra.Roll += distanceX;
                         }
 
                         if (a is AssetDYNA dyna)
