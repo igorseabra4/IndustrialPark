@@ -526,6 +526,8 @@ namespace IndustrialPark
 
             if (e.KeyCode == Keys.F1)
                 Program.ViewConfig.Show();
+            else if (e.KeyCode == Keys.F4)
+                saveAllOpenHIPsToolStripMenuItem_Click(sender, e);
             else if (e.KeyCode == Keys.F5)
                 TryToRunGame();
         }

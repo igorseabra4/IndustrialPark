@@ -305,49 +305,49 @@ namespace IndustrialPark
             // resetColorsToolStripMenuItem
             // 
             this.resetColorsToolStripMenuItem.Name = "resetColorsToolStripMenuItem";
-            this.resetColorsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.resetColorsToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.resetColorsToolStripMenuItem.Text = "Reset Colors";
             this.resetColorsToolStripMenuItem.Click += new System.EventHandler(this.resetColorsToolStripMenuItem_Click);
             // 
             // backgroundColorToolStripMenuItem1
             // 
             this.backgroundColorToolStripMenuItem1.Name = "backgroundColorToolStripMenuItem1";
-            this.backgroundColorToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.backgroundColorToolStripMenuItem1.Size = new System.Drawing.Size(179, 22);
             this.backgroundColorToolStripMenuItem1.Text = "Background Color...";
             this.backgroundColorToolStripMenuItem1.Click += new System.EventHandler(this.backgroundColorToolStripMenuItem1_Click);
             // 
             // widgetColorToolStripMenuItem
             // 
             this.widgetColorToolStripMenuItem.Name = "widgetColorToolStripMenuItem";
-            this.widgetColorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.widgetColorToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.widgetColorToolStripMenuItem.Text = "Widget Color...";
             this.widgetColorToolStripMenuItem.Click += new System.EventHandler(this.widgetColorToolStripMenuItem_Click);
             // 
             // mVPTColorToolStripMenuItem
             // 
             this.mVPTColorToolStripMenuItem.Name = "mVPTColorToolStripMenuItem";
-            this.mVPTColorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.mVPTColorToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.mVPTColorToolStripMenuItem.Text = "MVPT Color...";
             this.mVPTColorToolStripMenuItem.Click += new System.EventHandler(this.mVPTColorToolStripMenuItem_Click);
             // 
             // tRIGColorToolStripMenuItem
             // 
             this.tRIGColorToolStripMenuItem.Name = "tRIGColorToolStripMenuItem";
-            this.tRIGColorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.tRIGColorToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.tRIGColorToolStripMenuItem.Text = "TRIG Color...";
             this.tRIGColorToolStripMenuItem.Click += new System.EventHandler(this.tRIGColorToolStripMenuItem_Click);
             // 
             // sFXInColorToolStripMenuItem
             // 
             this.sFXInColorToolStripMenuItem.Name = "sFXInColorToolStripMenuItem";
-            this.sFXInColorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.sFXInColorToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.sFXInColorToolStripMenuItem.Text = "SFX Color...";
             this.sFXInColorToolStripMenuItem.Click += new System.EventHandler(this.sFXInColorToolStripMenuItem_Click);
             // 
             // selectionColorToolStripMenuItem1
             // 
             this.selectionColorToolStripMenuItem1.Name = "selectionColorToolStripMenuItem1";
-            this.selectionColorToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.selectionColorToolStripMenuItem1.Size = new System.Drawing.Size(179, 22);
             this.selectionColorToolStripMenuItem1.Text = "Selection Color...";
             this.selectionColorToolStripMenuItem1.Click += new System.EventHandler(this.selectionColorToolStripMenuItem_Click);
             // 
@@ -453,7 +453,7 @@ namespace IndustrialPark
             // 
             this.saveAllOpenHIPsToolStripMenuItem.Name = "saveAllOpenHIPsToolStripMenuItem";
             this.saveAllOpenHIPsToolStripMenuItem.Size = new System.Drawing.Size(271, 22);
-            this.saveAllOpenHIPsToolStripMenuItem.Text = "Save All Open HIPs";
+            this.saveAllOpenHIPsToolStripMenuItem.Text = "Save All Open HIPs (F4)";
             this.saveAllOpenHIPsToolStripMenuItem.Click += new System.EventHandler(this.saveAllOpenHIPsToolStripMenuItem_Click);
             // 
             // runGameF5ToolStripMenuItem
