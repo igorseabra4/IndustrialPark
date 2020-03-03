@@ -327,7 +327,7 @@ namespace IndustrialPark
             {
                 bytes.AddRange(BitConverter.GetBytes((short)0x0011));
                 bytes.AddRange(BitConverter.GetBytes(entry.fmtChannels));
-                bytes.AddRange(BitConverter.GetBytes(entry.fmtSampleRate * 65 / 64));
+                bytes.AddRange(BitConverter.GetBytes(entry.fmtSampleRate));
                 bytes.AddRange(BitConverter.GetBytes(entry.fmtBytesPerSecond));
                 bytes.AddRange(BitConverter.GetBytes(entry.fmtBlockAlignment));
                 bytes.AddRange(BitConverter.GetBytes(entry.fmtBitsPerSample));
