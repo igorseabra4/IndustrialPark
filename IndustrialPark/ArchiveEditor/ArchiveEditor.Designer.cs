@@ -39,6 +39,7 @@
             this.hideButtonsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editPACKToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.collapseLayersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mergeSimilarAssetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.applyScaleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -68,7 +69,10 @@
             this.comboBoxLayers = new System.Windows.Forms.ComboBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.listViewAssets = new System.Windows.Forms.ListView();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.AssetNameCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.AssetIDCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.AssetTypeCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.AssetSizeCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.labelTemplateFocus = new System.Windows.Forms.Label();
             this.buttonCopy = new System.Windows.Forms.Button();
             this.buttonPaste = new System.Windows.Forms.Button();
@@ -95,7 +99,6 @@
             this.toolStripMenuItem_Export = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_EditHeader = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_EditData = new System.Windows.Forms.ToolStripMenuItem();
-            this.editPACKToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -131,14 +134,14 @@
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.newToolStripMenuItem.Text = "New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
@@ -146,7 +149,7 @@
             // 
             this.saveToolStripMenuItem.Enabled = false;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -154,26 +157,26 @@
             // 
             this.saveAsToolStripMenuItem.Enabled = false;
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.saveAsToolStripMenuItem.Text = "Save As...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(140, 6);
             // 
             // hideButtonsToolStripMenuItem
             // 
             this.hideButtonsToolStripMenuItem.Name = "hideButtonsToolStripMenuItem";
-            this.hideButtonsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.hideButtonsToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.hideButtonsToolStripMenuItem.Text = "Hide Buttons";
             this.hideButtonsToolStripMenuItem.Click += new System.EventHandler(this.hideButtonsToolStripMenuItem_Click);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
@@ -195,6 +198,14 @@
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.editToolStripMenuItem.Text = "Edit";
+            // 
+            // editPACKToolStripMenuItem
+            // 
+            this.editPACKToolStripMenuItem.Enabled = false;
+            this.editPACKToolStripMenuItem.Name = "editPACKToolStripMenuItem";
+            this.editPACKToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.editPACKToolStripMenuItem.Text = "Edit PACK";
+            this.editPACKToolStripMenuItem.Click += new System.EventHandler(this.EditPACKToolStripMenuItem_Click);
             // 
             // collapseLayersToolStripMenuItem
             // 
@@ -466,26 +477,51 @@
             // 
             // listViewAssets
             // 
+            this.listViewAssets.AllowColumnReorder = true;
             this.listViewAssets.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.listViewAssets.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.listViewAssets.CheckBoxes = true;
             this.listViewAssets.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1});
-            this.listViewAssets.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.AssetNameCol,
+            this.AssetIDCol,
+            this.AssetTypeCol,
+            this.AssetSizeCol});
             this.listViewAssets.HideSelection = false;
-            this.listViewAssets.Location = new System.Drawing.Point(6, 40);
+            this.listViewAssets.Location = new System.Drawing.Point(9, 40);
             this.listViewAssets.Name = "listViewAssets";
             this.listViewAssets.Size = new System.Drawing.Size(507, 289);
             this.listViewAssets.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.listViewAssets.TabIndex = 22;
             this.listViewAssets.UseCompatibleStateImageBehavior = false;
             this.listViewAssets.View = System.Windows.Forms.View.Details;
+            this.listViewAssets.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewAssets_ColumnClick);
             this.listViewAssets.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.checkedListBoxAssets_ItemCheck);
             this.listViewAssets.SelectedIndexChanged += new System.EventHandler(this.checkedListBoxAssets_SelectedIndexChanged);
             this.listViewAssets.SizeChanged += new System.EventHandler(this.listViewAssets_SizeChanged);
             this.listViewAssets.KeyDown += new System.Windows.Forms.KeyEventHandler(this.checkedListBoxAssets_KeyDown);
             this.listViewAssets.MouseDown += new System.Windows.Forms.MouseEventHandler(this.checkedListBoxAssets_MouseDown);
+            // 
+            // AssetNameCol
+            // 
+            this.AssetNameCol.Text = "Name";
+            this.AssetNameCol.Width = 288;
+            // 
+            // AssetIDCol
+            // 
+            this.AssetIDCol.DisplayIndex = 0;
+            this.AssetIDCol.Text = "Asset ID";
+            this.AssetIDCol.Width = 77;
+            // 
+            // AssetTypeCol
+            // 
+            this.AssetTypeCol.Text = "Type";
+            // 
+            // AssetSizeCol
+            // 
+            this.AssetSizeCol.Text = "Size";
+            this.AssetSizeCol.Width = 66;
             // 
             // labelTemplateFocus
             // 
@@ -737,14 +773,6 @@
             this.toolStripMenuItem_EditData.Text = "Edit Data (Ctrl + G)";
             this.toolStripMenuItem_EditData.Click += new System.EventHandler(this.buttonInternalEdit_Click);
             // 
-            // editPACKToolStripMenuItem
-            // 
-            this.editPACKToolStripMenuItem.Enabled = false;
-            this.editPACKToolStripMenuItem.Name = "editPACKToolStripMenuItem";
-            this.editPACKToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
-            this.editPACKToolStripMenuItem.Text = "Edit PACK";
-            this.editPACKToolStripMenuItem.Click += new System.EventHandler(this.EditPACKToolStripMenuItem_Click);
-            // 
             // ArchiveEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -830,7 +858,6 @@
         private System.Windows.Forms.ToolStripMenuItem hideButtonsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addTemplateToolStripMenuItem;
         private System.Windows.Forms.ListView listViewAssets;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ToolStripMenuItem collapseLayersToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem applyScaleToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
@@ -844,5 +871,9 @@
         private System.Windows.Forms.ToolStripMenuItem mergeSimilarAssetsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importTexturesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editPACKToolStripMenuItem;
+        private System.Windows.Forms.ColumnHeader AssetNameCol;
+        private System.Windows.Forms.ColumnHeader AssetIDCol;
+        private System.Windows.Forms.ColumnHeader AssetTypeCol;
+        private System.Windows.Forms.ColumnHeader AssetSizeCol;
     }
 }

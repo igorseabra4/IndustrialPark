@@ -33,6 +33,7 @@ namespace IndustrialPark
             AutoCompleteStringCollection sourceObjects = new AutoCompleteStringCollection();
             AutoCompleteStringCollection sourceAll = new AutoCompleteStringCollection();
 
+            if (!AssetIDTypeConverter.Legacy)
             foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
                 foreach (Asset a in ae.archive.GetAllAssets())
                 {

@@ -12,18 +12,42 @@ namespace IndustrialPark
 {
     public partial class ArchiveEditor : Form
     {
-        public ArchiveEditorFunctions archive;
+        public static ArchiveEditor Standalone
+        {
+            get
+            {
+                SharpRenderer.cubeVertices = new List<Vector3>();
+                SharpRenderer.cylinderVertices = new List<Vector3>();
+                SharpRenderer.pyramidVertices = new List<Vector3>();
+                SharpRenderer.sphereVertices = new List<Vector3>();
+                SharpRenderer.planeVertices = new List<Vector3>();
+                SharpRenderer.torusVertices = new List<Vector3>();
+                SharpRenderer.cubeTriangles = new List<Models.Triangle>();
+                SharpRenderer.cylinderTriangles = new List<Models.Triangle>();
+                SharpRenderer.pyramidTriangles = new List<Models.Triangle>();
+                SharpRenderer.sphereTriangles = new List<Models.Triangle>();
+                SharpRenderer.planeTriangles = new List<Models.Triangle>();
+                SharpRenderer.torusTriangles = new List<Models.Triangle>();
+                AssetIDTypeConverter.Legacy = true;
+                return new ArchiveEditor(null, Platform.Unknown, true);
+            }
+        }
 
-        public ArchiveEditor(string filePath, Platform scoobyPlatform)
+        public ArchiveEditorFunctions archive;
+        
+        public ArchiveEditor(string filePath, Platform scoobyPlatform, bool standalone = false)
         {
             InitializeComponent();
             TopMost = true;
+            this.standalone = standalone;
+
             archive = new ArchiveEditorFunctions();
+            archive.standalone = standalone;
             defaultColor = textBoxFindAsset.BackColor;
 
             textBoxFindAsset.AutoCompleteSource = AutoCompleteSource.CustomSource;
             archive.SetTextboxForAutocomplete(textBoxFindAsset);
-            
+
             if (!string.IsNullOrWhiteSpace(filePath))
                 OpenFile(filePath, scoobyPlatform);
 
@@ -31,13 +55,18 @@ namespace IndustrialPark
             listViewAssets_SizeChanged(null, null);
         }
 
+        private bool standalone = false;
+
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            if (e.CloseReason == CloseReason.WindowsShutDown) return;
-            if (e.CloseReason == CloseReason.FormOwnerClosing) return;
+            if (!standalone)
+            {
+                if (e.CloseReason == CloseReason.WindowsShutDown) return;
+                if (e.CloseReason == CloseReason.FormOwnerClosing) return;
 
-            e.Cancel = true;
-            Hide();
+                e.Cancel = true;
+                Hide();
+            }
         }
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
@@ -98,7 +127,8 @@ namespace IndustrialPark
 
             toolStripStatusLabelCurrentFilename.Text = "File: " + fileName;
             Text = Path.GetFileName(fileName);
-            Program.MainForm.SetToolStripItemName(this, Text);
+            if (!standalone)
+                Program.MainForm.SetToolStripItemName(this, Text);
             archive.UnsavedChanges = false;
 
             PopulateLayerTypeComboBox();
@@ -163,7 +193,8 @@ namespace IndustrialPark
                 archive.Save(saveFileDialog.FileName);
 
                 Text = Path.GetFileName(saveFileDialog.FileName);
-                Program.MainForm.SetToolStripItemName(this, Text);
+                if (!standalone)
+                    Program.MainForm.SetToolStripItemName(this, Text);
                 toolStripStatusLabelCurrentFilename.Text = "File: " + saveFileDialog.FileName;
                 archive.UnsavedChanges = false;
             }
@@ -190,7 +221,8 @@ namespace IndustrialPark
 
             archive.Dispose();
 
-            Program.MainForm.CloseArchiveEditor(this);
+            if (!standalone)
+                Program.MainForm.CloseArchiveEditor(this);
             Close();
         }
 
@@ -385,20 +417,13 @@ namespace IndustrialPark
             if (comboBoxLayers.SelectedItem != null)
             {
                 List<uint> assetIDs = archive.GetAssetIDsOnLayer(comboBoxLayers.SelectedIndex);
-                List<ListViewItem> items = new List<ListViewItem>();
+                List<ListViewItem> items = new List<ListViewItem>(assetIDs.Count());
 
                 for (int i = 0; i < assetIDs.Count(); i++)
                 {
                     Asset asset = archive.GetFromAssetID(assetIDs[i]);
                     if (type == AssetType.Null || asset.AHDR.assetType == type)
-                    {
-                        bool selected = (select == true) && selectionAssetIDs.Contains(asset.AHDR.assetID);
-                        items.Add(new ListViewItem(asset.ToString())
-                        {
-                            Checked = !asset.isInvisible,
-                            Selected = selected
-                        });
-                    }
+                        items.Add(ListViewItemFromAsset(asset, (select == true) && selectionAssetIDs.Contains(asset.AHDR.assetID)));
                 }
 
                 listViewAssets.Items.AddRange(items.ToArray());
@@ -423,9 +448,72 @@ namespace IndustrialPark
             toolStripStatusLabelSelectionCount.Text = $"{listViewAssets.SelectedItems.Count}/{listViewAssets.Items.Count} assets selected";
         }
 
+        private ListViewItem ListViewItemFromAsset(Asset asset, bool selected)
+        {
+            ListViewItem item = new ListViewItem(asset.AHDR.ADBG.assetName)
+            {
+                Checked = !asset.isInvisible,
+                Selected = selected
+            };
+            item.SubItems.AddRange(new ListViewItem.ListViewSubItem[]
+            {
+                new ListViewItem.ListViewSubItem(item, asset.AHDR.assetID.ToString("X8")),
+                new ListViewItem.ListViewSubItem(item, asset.AHDR.assetType.ToString()),
+                new ListViewItem.ListViewSubItem(item, asset.AHDR.data.Length.ToString())
+            });
+            return item;
+        }
+
         private void checkedListBoxAssets_ItemCheck(object sender, ItemCheckEventArgs e)
         {
-            archive.GetFromAssetID(GetAssetIDFromName(listViewAssets.Items[e.Index].Text)).isInvisible = e.NewValue != CheckState.Checked;
+            archive.GetFromAssetID(GetAssetIDFromName(listViewAssets.Items[e.Index])).isInvisible = e.NewValue != CheckState.Checked;
+        }
+
+        private void listViewAssets_SizeChanged(object sender, EventArgs e)
+        {
+            //columnHeader1.Width = listViewAssets.Width - 28;
+        }
+
+        private class AssetListViewSorter : System.Collections.IComparer
+        {
+            public int Column { get; set; }
+            public bool reverseSorting { get; set; }
+
+            public AssetListViewSorter(int Column, bool reverseSorting)
+            {
+                this.Column = Column;
+                this.reverseSorting = reverseSorting;
+            }
+
+            public int Compare(ListViewItem x, ListViewItem y)
+            {
+                if (Column == 1)
+                    return GetAssetIDFromName(x).CompareTo(GetAssetIDFromName(y));
+                else if (Column == 3)
+                    return Convert.ToInt32(x.SubItems[Column].Text).CompareTo(Convert.ToInt32(y.SubItems[Column].Text));
+                else
+                    return x.SubItems[Column].Text.CompareTo(y.SubItems[Column].Text);
+            }
+
+            public int Compare(object x, object y)
+            {
+                return Compare((ListViewItem)x, (ListViewItem)y) * (reverseSorting ? -1 : 1);
+            }
+        }
+
+        private bool reverseSorting = false;
+        private int prevColumn = 0;
+
+        private void listViewAssets_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            if (e.Column == prevColumn)
+                reverseSorting = !reverseSorting;
+            else 
+                reverseSorting = false;
+            prevColumn = e.Column;
+
+            listViewAssets.ListViewItemSorter = new AssetListViewSorter(e.Column, reverseSorting);
+            listViewAssets.Sort();
         }
 
         private void comboBoxAssetTypes_SelectedIndexChanged(object sender, EventArgs e)
@@ -552,7 +640,7 @@ namespace IndustrialPark
 
         private void buttonView_Click(object sender, EventArgs e)
         {
-            if (listViewAssets.SelectedItems.Count == 0) return;
+            if (listViewAssets.SelectedItems.Count == 0 || standalone) return;
 
             if (archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]) is AssetCAM cam)
                 Program.MainForm.renderer.Camera.SetPositionCamera(cam);
@@ -652,17 +740,15 @@ namespace IndustrialPark
         {
             List<uint> list = new List<uint>();
             foreach (ListViewItem v in listViewAssets.SelectedItems)
-                list.Add(GetAssetIDFromName(v.Text));
+                list.Add(GetAssetIDFromName(v));
             return list;
         }
 
-        private uint GetAssetIDFromName(string name)
+        private static uint GetAssetIDFromName(ListViewItem v)
         {
-            if (MainForm.alternateNamingMode)
-                return Convert.ToUInt32(name.Substring(name.IndexOf('[') + 1, 8), 16);
-            return Convert.ToUInt32(name.Substring(name.LastIndexOf('[') + 1, 8), 16);
+            return Convert.ToUInt32(v.SubItems[1].Text, 16);
         }
-        
+
         private void checkedListBoxAssets_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (programIsChangingStuff)
@@ -672,7 +758,7 @@ namespace IndustrialPark
        
             List<uint> selected = new List<uint>(listViewAssets.SelectedItems.Count);
             foreach (ListViewItem v in listViewAssets.SelectedItems)
-                selected.Add(GetAssetIDFromName(v.Text));
+                selected.Add(GetAssetIDFromName(v));
 
             archive.SelectAssets(selected);
 
@@ -773,7 +859,7 @@ namespace IndustrialPark
                 listViewAssets.SelectedIndices.Clear();
                 int last = 0;
                 for (int i = 0; i < listViewAssets.Items.Count; i++)
-                    if (assetIDs.Contains(GetAssetIDFromName(listViewAssets.Items[i].Text)))
+                    if (assetIDs.Contains(GetAssetIDFromName(listViewAssets.Items[i])))
                     {
                         listViewAssets.SelectedIndices.Add(i);
                         last = i;
@@ -955,7 +1041,7 @@ namespace IndustrialPark
             {
                 if (text == template.ToString())
                 {
-                    Vector3 Position = Program.MainForm.renderer.Camera.Position + 3 * Program.MainForm.renderer.Camera.Forward;
+                    Vector3 Position = standalone ? new Vector3() : (Program.MainForm.renderer.Camera.Position + 3 * Program.MainForm.renderer.Camera.Forward);
                     PlaceTemplate(Position, template);
                     return;
                 }
@@ -1013,6 +1099,7 @@ namespace IndustrialPark
             }
             else
             {
+                if (!standalone)
                 Program.MainForm.ClearTemplateFocus();
                 TemplateFocusOn();
             }
@@ -1040,11 +1127,6 @@ namespace IndustrialPark
             {
                 listViewAssets.Size = new System.Drawing.Size(listViewAssets.Size.Width - 81, listViewAssets.Size.Height);
             }
-        }
-
-        private void listViewAssets_SizeChanged(object sender, EventArgs e)
-        {
-            columnHeader1.Width = listViewAssets.Width - 28;
         }
 
         public void SetAllTopMost(bool value)

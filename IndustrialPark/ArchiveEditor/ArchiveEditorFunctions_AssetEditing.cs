@@ -4,7 +4,6 @@ using System.Linq;
 using System.Windows.Forms;
 using HipHopFile;
 using SharpDX;
-using static HipHopFile.Functions;
 
 namespace IndustrialPark
 {
@@ -139,7 +138,10 @@ namespace IndustrialPark
                     internalEditors.Add(new InternalPlatEditor((AssetPLAT)asset, this, hideHelp));
                     break;
                 case AssetType.RWTX:
-                    internalEditors.Add(new InternalTextureEditor((AssetRWTX)asset, this, hideHelp));
+                    if (asset is AssetRWTX rwtx)
+                        internalEditors.Add(new InternalTextureEditor(rwtx, this, hideHelp));
+                    else
+                        internalEditors.Add(new InternalAssetEditor(asset, this, hideHelp));
                     break;
                 case AssetType.SHRP:
                     internalEditors.Add(new InternalShrapnelEditor((AssetSHRP)asset, this));

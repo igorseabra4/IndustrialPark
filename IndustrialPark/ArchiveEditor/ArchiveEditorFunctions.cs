@@ -44,6 +44,8 @@ namespace IndustrialPark
         public Platform platform => hipFile.platform;
         protected Section_DICT DICT => hipFile.DICT;
 
+        public bool standalone;
+
         public bool New()
         {
             HipFile hipFile = NewArchive.GetNewArchive(out bool OK);
@@ -109,7 +111,7 @@ namespace IndustrialPark
 
             foreach (Section_AHDR AHDR in DICT.ATOC.AHDRList)
             {
-                AddAssetToDictionary(AHDR, true, skipTexturesAndModels);
+                AddAssetToDictionary(AHDR, true, skipTexturesAndModels || standalone);
 
                 autoComplete.Add(AHDR.ADBG.assetName);
 
@@ -118,7 +120,7 @@ namespace IndustrialPark
 
             autoCompleteSource.AddRange(autoComplete.ToArray());
 
-            if (!skipTexturesAndModels && ContainsAssetWithType(AssetType.RWTX))
+            if (!(skipTexturesAndModels || standalone) && ContainsAssetWithType(AssetType.RWTX))
                 SetupTextureDisplay();
 
             RecalculateAllMatrices();
@@ -385,7 +387,7 @@ namespace IndustrialPark
             }
 
             Asset newAsset;
-            try
+            //try
             { 
                 switch (AHDR.assetType)
                 {
@@ -509,11 +511,11 @@ namespace IndustrialPark
                         throw new Exception($"Unknown asset type ({AHDR.assetType.ToString()})");
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"There was an error loading asset [{AHDR.assetID.ToString("X8")}] {AHDR.ADBG.assetName}: " + ex.Message + ". Industrial Park will not be able to edit this asset.");
-                newAsset = new Asset(AHDR, game, platform);
-            }
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show($"There was an error loading asset [{AHDR.assetID.ToString("X8")}] {AHDR.ADBG.assetName}: " + ex.Message + ". Industrial Park will not be able to edit this asset.");
+            //    newAsset = new Asset(AHDR, game, platform);
+            //}
 
             assetDictionary[AHDR.assetID] = newAsset;
             
