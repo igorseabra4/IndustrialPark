@@ -565,12 +565,13 @@ namespace IndustrialPark
             try
             {
                 uint oldAssetID = CurrentlySelectedAssetIDs()[0];
-                Section_AHDR AHDR = AssetHeader.GetAsset(archive.GetFromAssetID(oldAssetID).AHDR, out bool success, out bool setPosition);
+                Section_AHDR AHDR = AssetHeader.GetAsset(archive.GetFromAssetID(oldAssetID).AHDR, out bool success);
 
                 if (success)
                 {
                     archive.UnsavedChanges = true;
-                    archive.RemoveAsset(oldAssetID);
+                    
+                    archive.RemoveAsset(oldAssetID, false);
 
                     while (archive.ContainsAsset(AHDR.assetID))
                     {
@@ -579,9 +580,7 @@ namespace IndustrialPark
                     }
 
                     archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR, true);
-                    if (setPosition)
-                        archive.SetAssetPositionToView(AHDR.assetID);
-
+                    
                     //PopulateAssetListAndComboBox();
                     SetSelectedIndices(new List<uint>() { AHDR.assetID }, true);
                 }

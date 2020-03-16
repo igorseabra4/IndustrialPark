@@ -51,7 +51,7 @@ namespace IndustrialPark
             textBoxChecksum.Text = "0x"+ AHDR.ADBG.checksum.ToString("X8");
         }
 
-        public static Section_AHDR GetAsset(AssetHeader a, out bool success, out bool setPosition)
+        public static Section_AHDR GetAsset(AssetHeader a, out bool success)
         {
             DialogResult d = a.ShowDialog();
             if (d == DialogResult.OK)
@@ -70,21 +70,19 @@ namespace IndustrialPark
                     plusValue = 0
                 };
 
-                setPosition = a.setPosition;
                 success = true;
                 return AHDR;
             }
             else
             {
                 success = false;
-                setPosition = false;
                 return null;
             }
         }
 
-        public static Section_AHDR GetAsset(Section_AHDR AHDR, out bool success, out bool setPosition)
+        public static Section_AHDR GetAsset(Section_AHDR AHDR, out bool success)
         {
-            return GetAsset(new AssetHeader(AHDR), out success, out setPosition);
+            return GetAsset(new AssetHeader(AHDR), out success);
         }
         
         uint assetID = 0;
@@ -107,8 +105,6 @@ namespace IndustrialPark
             checkWriteT.Checked = (flags & AHDRFlags.WRITE_TRANSFORM) != 0;
 
             label1.Visible = flags == 0;
-
-            setPosition = false;
         }
 
         private void textBoxAssetID_TextChanged(object sender, EventArgs e)
@@ -134,7 +130,6 @@ namespace IndustrialPark
                 textBoxAssetName.Text = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
                 labelRawDataSize.Text = "Raw Data Size: " + data.Length.ToString();
                 buttonOK.Enabled = true;
-                setPosition = false;
             }
         }
 
@@ -174,7 +169,5 @@ namespace IndustrialPark
         {
             Close();
         }
-        
-        private bool setPosition = false;
     }
 }

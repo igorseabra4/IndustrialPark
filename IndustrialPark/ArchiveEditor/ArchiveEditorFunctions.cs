@@ -393,7 +393,11 @@ namespace IndustrialPark
                     case AssetType.ALST: newAsset = new AssetALST(AHDR, game, platform); break;
                     case AssetType.ATBL: newAsset = game == Game.Scooby ? new Asset(AHDR, game, platform) : new AssetATBL(AHDR, game, platform); break;
                     case AssetType.BSP: case AssetType.JSP:
-                        newAsset = skipTexturesAndModels ? new Asset(AHDR, game, platform) : new AssetJSP(AHDR, game, platform, Program.MainForm.renderer); break;
+                        if (DICT.LTOC.LHDRList[GetLayerFromAssetID(AHDR.assetID)].layerType > 9)
+                            newAsset = new AssetJSP_INFO(AHDR, game, platform);
+                        else
+                            newAsset = skipTexturesAndModels ? new Asset(AHDR, game, platform) : new AssetJSP(AHDR, game, platform, Program.MainForm.renderer); 
+                        break;
                     case AssetType.BOUL: newAsset = new AssetBOUL(AHDR, game, platform); break;
                     case AssetType.BUTN: newAsset = new AssetBUTN(AHDR, game, platform); break;
                     case AssetType.CAM: newAsset = new AssetCAM(AHDR, game, platform); break;
@@ -524,7 +528,7 @@ namespace IndustrialPark
 
         public void CreateNewAsset(int layerIndex, out bool success, out uint assetID)
         {
-            Section_AHDR AHDR = AssetHeader.GetAsset(new AssetHeader(), out success, out bool setPosition);
+            Section_AHDR AHDR = AssetHeader.GetAsset(new AssetHeader(), out success);
             assetID = 0;
 
             if (success)
@@ -538,8 +542,7 @@ namespace IndustrialPark
                     }
                     UnsavedChanges = true;
                     AddAsset(layerIndex, AHDR, true);
-                    if (setPosition)
-                        SetAssetPositionToView(AHDR.assetID);
+                    SetAssetPositionToView(AHDR.assetID);
                 }
                 catch (Exception ex)
                 {

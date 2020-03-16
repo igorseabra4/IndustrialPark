@@ -130,7 +130,10 @@ namespace IndustrialPark
                 case AssetType.BSP:
                 case AssetType.JSP:
                 case AssetType.MODL:
-                    internalEditors.Add(new InternalModelEditor((AssetRenderWareModel)asset, this, hideHelp));
+                    if (asset is AssetRenderWareModel arwm)
+                        internalEditors.Add(new InternalModelEditor(arwm, this, hideHelp));
+                    else
+                        internalEditors.Add(new InternalAssetEditor(asset, this, hideHelp));
                     break;
                 case AssetType.PLAT:
                     internalEditors.Add(new InternalPlatEditor((AssetPLAT)asset, this, hideHelp));

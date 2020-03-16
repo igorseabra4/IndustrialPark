@@ -219,6 +219,7 @@
     <Compile Include="Assets\DYNA\MovieGame\PlaceableDynas\DynaSupplyCrate.cs" />
     <Compile Include="Assets\DYNA\MovieGame\RenderableDynas\DynaVent.cs" />
     <Compile Include="Assets\DYNA\MovieGame\DynaVentType.cs" />
+    <Compile Include="Assets\Models\AssetJSP_INFO.cs" />
     <Compile Include="Assets\Models\AssetRenderWareModel.cs" />
     <Compile Include="Assets\ObjectAssets\AssetCOND_Scooby.cs" />
     <Compile Include="Assets\ObjectAssets\AssetCSNM.cs" />
