@@ -30,7 +30,7 @@ namespace IndustrialPark
             if (!isSelected && (dontRender || isInvisible))
                 return;
 
-            model.Render(renderer, Matrix.Identity, isSelected ? renderer.selectedObjectColor : Vector4.One, Vector3.Zero);
+            model.Render(renderer, Matrix.Identity, isSelected ? renderer.selectedObjectColor : Vector4.One, Vector3.Zero, _atomicFlags);
         }
 
         public float? IntersectsWith(Ray ray) => dontRender || isInvisible ? null : TriangleIntersection(ray);

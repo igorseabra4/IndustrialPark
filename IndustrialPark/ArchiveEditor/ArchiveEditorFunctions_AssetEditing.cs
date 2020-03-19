@@ -153,6 +153,9 @@ namespace IndustrialPark
                 case AssetType.TEXT:
                     internalEditors.Add(new InternalTextEditor((AssetTEXT)asset, this));
                     break;
+                case AssetType.WIRE:
+                    internalEditors.Add(new InternalWireEditor((AssetWIRE)asset, this, hideHelp));
+                    break;
                 default:
                     internalEditors.Add(new InternalAssetEditor(asset, this, hideHelp));
                     break;

@@ -111,6 +111,12 @@
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_IO.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Sounds.cs" />
     <Compile Include="ArchiveEditor\Gizmos\BoxTrigPositionGizmo.cs" />
+    <Compile Include="ArchiveEditor\InternalEditors\InternalWireEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\InternalEditors\InternalWireEditor.Designer.cs">
+      <DependentUpon>InternalWireEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="ArchiveEditor\Other\TextureIOHelper.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Textures.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Gizmos.cs" />
@@ -202,6 +208,7 @@
     <Compile Include="Assets\Binary\AssetLKIT.cs" />
     <Compile Include="Assets\Binary\AssetSNDI_GCN_V2.cs" />
     <Compile Include="Assets\Binary\AssetVILP.cs" />
+    <Compile Include="Assets\Binary\AssetWIRE.cs" />
     <Compile Include="Assets\DYNA\BFBB\HudDynas\DynaHudBase.cs" />
     <Compile Include="Assets\DYNA\BFBB\HudDynas\DynaHudMeterBase.cs" />
     <Compile Include="Assets\DYNA\BFBB\FontEnum.cs" />
@@ -468,6 +475,9 @@
     <EmbeddedResource Include="ArchiveEditor\Dialogs\ImportModel.resx">
       <DependentUpon>ImportModel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalWireEditor.resx">
+      <DependentUpon>InternalWireEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalTextureEditor.resx">
       <DependentUpon>InternalTextureEditor.cs</DependentUpon>
     </EmbeddedResource>
@@ -602,9 +612,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Resources\Scripts\BFBBAnimTools.ms">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Resources\Scripts\importvcolorobj_v1.3.9.ms">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

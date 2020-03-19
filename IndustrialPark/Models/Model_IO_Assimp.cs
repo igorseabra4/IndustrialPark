@@ -384,8 +384,8 @@ namespace IndustrialPark.Models
                     {
                         frameIndex = 1,
                         geometryIndex = 0,
-                        unknown1 = 5,
-                        unknown2 = 0
+                        flags = AtomicFlags.Both,
+                        unused = 0
                     },
                     atomicExtension = new Extension_0003() // check this in case something fails
                     {

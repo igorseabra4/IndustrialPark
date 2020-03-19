@@ -9,15 +9,10 @@ namespace IndustrialPark
 {
     public class RenderWareModelFile
     {
-        public string fileName;
-
         private const string DefaultTexture = "default";
         private RWSection[] rwSectionArray;
 
-        public List<string> MaterialList = new List<string>();
-        public bool isNoCulling = false;
-        public bool isCollision = false;
-        public bool containsNormals = false;
+        public bool dontDrawInvisible = true;
 
         public List<SharpMesh> meshList;
         private void AddToMeshList(SharpMesh mesh)
@@ -34,11 +29,6 @@ namespace IndustrialPark
         public List<Triangle> triangleList;
         private int triangleListOffset;
         
-        public RenderWareModelFile(string fileName)
-        {
-            this.fileName = fileName;
-        }
-        
         public RWSection[] GetAsRWSectionArray()
         {
             return rwSectionArray;
@@ -46,7 +36,7 @@ namespace IndustrialPark
         
         public UvAnimRenderData renderData;
         
-        public void SetForRendering(SharpDevice device, RWSection[] rwChunkList)
+        public RenderWareModelFile(SharpDevice device, RWSection[] rwChunkList)
         {
             rwSectionArray = rwChunkList;
 
@@ -55,6 +45,7 @@ namespace IndustrialPark
             vertexListG = new List<Vector3>();
             triangleList = new List<Triangle>();
             triangleListOffset = 0;
+            List<string> materialList = new List<string>();
 
             foreach (RWSection rwSection in rwSectionArray)
             {
@@ -67,20 +58,20 @@ namespace IndustrialPark
                     {
                         if (m.texture != null)
                         {
-                            MaterialList.Add(m.texture.diffuseTextureName.stringString);
+                            materialList.Add(m.texture.diffuseTextureName.stringString);
                         }
                         else
                         {
-                            MaterialList.Add(DefaultTexture);
+                            materialList.Add(DefaultTexture);
                         }
                     }
                     if (w.firstWorldChunk is AtomicSector_0009 a)
                     {
-                        AddAtomic(device, a);
+                        AddAtomic(device, a, materialList);
                     }
                     else if (w.firstWorldChunk is PlaneSector_000A p)
                     {
-                        AddPlane(device, p);
+                        AddPlane(device, p, materialList);
                     }
                 }
                 else if (rwSection is Clump_0010 c)
@@ -121,30 +112,30 @@ namespace IndustrialPark
             return transform;
         }
 
-        private void AddPlane(SharpDevice device, PlaneSector_000A planeSection)
+        private void AddPlane(SharpDevice device, PlaneSector_000A planeSection, List<string> materialList)
         {
             if (planeSection.leftSection is AtomicSector_0009 al)
             {
-                AddAtomic(device, al);
+                AddAtomic(device, al, materialList);
             }
             else if (planeSection.leftSection is PlaneSector_000A pl)
             {
-                AddPlane(device, pl);
+                AddPlane(device, pl, materialList);
             }
             else throw new Exception();
 
             if (planeSection.rightSection is AtomicSector_0009 ar)
             {
-                AddAtomic(device, ar);
+                AddAtomic(device, ar, materialList);
             }
             else if (planeSection.rightSection is PlaneSector_000A pr)
             {
-                AddPlane(device, pr);
+                AddPlane(device, pr, materialList);
             }
             else throw new Exception();
         }
 
-        private void AddAtomic(SharpDevice device, AtomicSector_0009 AtomicSector)
+        private void AddAtomic(SharpDevice device, AtomicSector_0009 AtomicSector, List<string> MaterialList)
         {
             if (AtomicSector.atomicSectorStruct.isNativeData)
             {
@@ -214,22 +205,21 @@ namespace IndustrialPark
 
         private void AddGeometry(SharpDevice device, Geometry_000F g, Matrix transformMatrix)
         {
-            List<string> MaterialList = new List<string>();
+            List<string> materialList = new List<string>();
             foreach (Material_0007 m in g.materialList.materialList)
             {
                 if (m.texture != null)
                 {
                     string textureName = m.texture.diffuseTextureName.stringString;
-                    this.MaterialList.Add(textureName);
-                    MaterialList.Add(textureName);
+                    materialList.Add(textureName);
                 }
                 else
-                    MaterialList.Add(DefaultTexture);
+                    materialList.Add(DefaultTexture);
             }
 
             if ((g.geometryStruct.geometryFlags2 & GeometryFlags2.isNativeGeometry) != 0)
             {
-                AddNativeData(device, g.geometryExtension, MaterialList, transformMatrix);
+                AddNativeData(device, g.geometryExtension, materialList, transformMatrix);
                 return;
             }
 
@@ -251,11 +241,8 @@ namespace IndustrialPark
 
             if ((g.geometryStruct.geometryFlags & GeometryFlags.hasNormals) != 0)
             {
-                containsNormals = true;
                 for (int i = 0; i < vertexList1.Count; i++)
-                {
                     normalList.Add(new Vector3(g.geometryStruct.morphTargets[0].normals[i].X, g.geometryStruct.morphTargets[0].normals[i].Y, g.geometryStruct.morphTargets[0].normals[i].Z));
-                }
             }
 
             if ((g.geometryStruct.geometryFlags & GeometryFlags.hasVertexColors) != 0)
@@ -269,9 +256,7 @@ namespace IndustrialPark
             else
             {
                 for (int i = 0; i < vertexList1.Count; i++)
-                {
                     colorList.Add(new SharpDX.Color(1f, 1f, 1f, 1f));
-                }
             }
 
             if ((g.geometryStruct.geometryFlags & GeometryFlags.hasTextCoords) != 0)
@@ -279,23 +264,20 @@ namespace IndustrialPark
                 for (int i = 0; i < vertexList1.Count; i++)
                 {
                     Vertex2 tc = g.geometryStruct.textCoords[i];
-
                     textCoordList.Add(new Vector2(tc.X, tc.Y));
                 }
             }
             else
             {
                 for (int i = 0; i < vertexList1.Count; i++)
-                {
                     textCoordList.Add(new Vector2());
-                }
             }
 
             List<SharpSubSet> SubsetList = new List<SharpSubSet>();
             List<int> indexList = new List<int>();
             int previousIndexCount = 0;
 
-            for (int i = 0; i < MaterialList.Count; i++)
+            for (int i = 0; i < materialList.Count; i++)
             {
                 foreach (Triangle t in g.geometryStruct.triangles)
                 {
@@ -312,7 +294,7 @@ namespace IndustrialPark
                 if (indexList.Count - previousIndexCount > 0)
                 {
                     SubsetList.Add(new SharpSubSet(previousIndexCount, indexList.Count - previousIndexCount,
-                        TextureManager.GetTextureFromDictionary(MaterialList[i]), MaterialList[i]));
+                        TextureManager.GetTextureFromDictionary(materialList[i]), materialList[i]));
                 }
 
                 previousIndexCount = indexList.Count();
@@ -327,6 +309,8 @@ namespace IndustrialPark
                     vertices[i] = new VertexColoredTextured(vertexList1[i], textCoordList[i], colorList[i]);
                 AddToMeshList(SharpMesh.Create(device, vertices, indexList.ToArray(), SubsetList));
             }
+            else
+                AddToMeshList(null);
         }
 
         private void AddNativeData(SharpDevice device, Extension_0003 extension, List<string> MaterialStream, Matrix transformMatrix)
@@ -414,7 +398,6 @@ namespace IndustrialPark
                                         normalList[objectList[j]].X,
                                         normalList[objectList[j]].Y,
                                         normalList[objectList[j]].Z);
-                                containsNormals = true;
                             }
                         }
 
@@ -443,9 +426,11 @@ namespace IndustrialPark
                 VertexColoredTextured[] vertices = vertexList.ToArray();
                 AddToMeshList(SharpMesh.Create(device, vertices, indexList.ToArray(), subSetList, SharpDX.Direct3D.PrimitiveTopology.TriangleStrip));
             }
+            else
+                AddToMeshList(null);
         }
 
-        public void Render(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset)
+        public void Render(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset, AtomicFlags[] atomicFlags)
         { 
             renderData.worldViewProjection = world * renderer.viewProjection;
             renderData.Color = color;
@@ -455,15 +440,14 @@ namespace IndustrialPark
             renderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, renderer.tintedBuffer);
             renderer.tintedShader.Apply();
 
-            foreach (SharpMesh mesh in meshList)
+            for (int i = 0; i < meshList.Count; i++)
             {
-                if (mesh == null) continue;
+                if (dontDrawInvisible && (atomicFlags[i] & AtomicFlags.Render) == 0)
+                    continue;
 
-                mesh.Begin(renderer.device);
-                for (int i = 0; i < mesh.SubSets.Count(); i++)
-                {
-                    mesh.Draw(renderer.device, i);
-                }
+                meshList[i].Begin(renderer.device);
+                for (int j = 0; j < meshList[i].SubSets.Count(); j++)
+                    meshList[i].Draw(renderer.device, j);
             }
         }
 

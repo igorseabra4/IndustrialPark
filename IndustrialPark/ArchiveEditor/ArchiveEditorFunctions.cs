@@ -470,6 +470,7 @@ namespace IndustrialPark
                     case AssetType.VIL: newAsset = new AssetVIL(AHDR, game, platform); break;
                     case AssetType.VILP: newAsset = new AssetVILP(AHDR, game, platform); break;
                     case AssetType.VOLU: newAsset = new AssetVOLU(AHDR, game, platform); break;
+                    case AssetType.WIRE: newAsset = new AssetWIRE(AHDR, game, platform); break;
                     case AssetType.CCRV:
                     case AssetType.DTRK:
                     case AssetType.DUPC:
@@ -504,7 +505,6 @@ namespace IndustrialPark
                     case AssetType.SPLP:
                     case AssetType.TEXS:
                     case AssetType.UIFN:
-                    case AssetType.WIRE:
                         newAsset = new Asset(AHDR, game, platform);
                         break;
                     default:

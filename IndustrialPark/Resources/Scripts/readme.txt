@@ -1,6 +1,3 @@
-* BFBBAnimTools.ms:
-	ANIM asset importer/exporter scripts for 3ds Max by Seil and igorseabra4.
-
 * importvcolorobj_v1.3.ms:
 	OBJ importer script for 3ds Max originally by Chris Cookson, modded by Shadowth117 to allow importing of OBJ with vertex colors.
 

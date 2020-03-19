@@ -35,27 +35,32 @@ namespace IndustrialPark.Models
                     {
                         GetPlaneTriangleList(OBJWriter, (PlaneSector_000A)w.firstWorldChunk, ref triangleList, ref totalVertexIndices, flipUVs);
                     }
+
+                    for (int i = 0; i < w.materialList.materialList.Length; i++)
+                    {
+                        string materialName = "default";
+                        if (w.materialList.materialList[i].materialStruct.isTextured != 0)
+                            materialName = w.materialList.materialList[i].texture.diffuseTextureName.stringString;
+
+                        OBJWriter.WriteLine("g " + fileNameWithoutExtension + "_" + materialName);
+                        OBJWriter.WriteLine("usemtl " + materialName + "_m");
+
+                        foreach (Triangle j in triangleList)
+                            if (j.materialIndex == i)
+                                OBJWriter.WriteLine("f "
+                                    + j.vertex1.ToString() + "/" + j.vertex1.ToString() + "/" + j.vertex1.ToString() + " "
+                                    + j.vertex2.ToString() + "/" + j.vertex2.ToString() + "/" + j.vertex2.ToString() + " "
+                                    + j.vertex3.ToString() + "/" + j.vertex3.ToString() + "/" + j.vertex3.ToString());
+
+                        OBJWriter.WriteLine();
+                    }
+
+                    WriteMaterialLib(w.materialList, materialLibrary);
                 }
             }
 
-            for (int i = 0; i < bspFile.MaterialList.Count; i++)
-            {
-                OBJWriter.WriteLine("g " + fileNameWithoutExtension + "_" + bspFile.MaterialList[i]);
-                OBJWriter.WriteLine("usemtl " + bspFile.MaterialList[i] + "_m");
-
-                foreach (Triangle j in triangleList)
-                    if (j.materialIndex == i)
-                        OBJWriter.WriteLine("f "
-                            + j.vertex1.ToString() + "/" + j.vertex1.ToString() + "/" + j.vertex1.ToString() + " "
-                            + j.vertex2.ToString() + "/" + j.vertex2.ToString() + "/" + j.vertex2.ToString() + " "
-                            + j.vertex3.ToString() + "/" + j.vertex3.ToString() + "/" + j.vertex3.ToString());
-
-                OBJWriter.WriteLine();
-            }
 
             OBJWriter.Close();
-            WriteMaterialLib(bspFile.MaterialList.ToArray(), materialLibrary);
-
         }
 
         private static void GetPlaneTriangleList(StreamWriter OBJWriter, PlaneSector_000A planeSection, ref List<Triangle> triangleList, ref int totalVertexIndices, bool flipUVs)
@@ -291,21 +296,25 @@ namespace IndustrialPark.Models
             }
         }
 
-        private static void WriteMaterialLib(string[] MaterialStream, string materialLibrary)
+        private static void WriteMaterialLib(MaterialList_0008 materialList, string materialLibrary)
         {
             StreamWriter MTLWriter = new StreamWriter(materialLibrary, false);
             MTLWriter.WriteLine("# Exported by Industrial Park");
 
-            for (int i = 0; i < MaterialStream.Length; i++)
+            for (int i = 0; i < materialList.materialList.Length; i++)
             {
-                MTLWriter.WriteLine("newmtl " + MaterialStream[i] + "_m");
+                string materialName = "default";
+                if (materialList.materialList[i].materialStruct.isTextured != 0)
+                    materialName = materialList.materialList[i].texture.diffuseTextureName.stringString;
+
+                MTLWriter.WriteLine("newmtl " + materialName + "_m");
                 MTLWriter.WriteLine("Ka 0.2 0.2 0.2");
                 MTLWriter.WriteLine("Kd 0.8 0.8 0.8");
                 MTLWriter.WriteLine("Ks 0 0 0");
                 MTLWriter.WriteLine("Ns 10");
                 MTLWriter.WriteLine("d 1.0");
                 MTLWriter.WriteLine("illum 4");
-                MTLWriter.WriteLine("map_Kd " + MaterialStream[i] + ".png");
+                MTLWriter.WriteLine("map_Kd " + materialName + ".png");
                 MTLWriter.WriteLine();
             }
 

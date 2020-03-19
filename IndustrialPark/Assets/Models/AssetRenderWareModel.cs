@@ -4,6 +4,7 @@ using RenderWareFile.Sections;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace IndustrialPark
 {
@@ -21,11 +22,11 @@ namespace IndustrialPark
             if (model != null)
                 model.Dispose();
 
-            model = new RenderWareModelFile(AHDR.ADBG.assetName);
             try
             {
                 ReadFileMethods.treatStuffAsByteArray = false;
-                model.SetForRendering(renderer.device, ReadFileMethods.ReadRenderWareFile(Data));
+                model = new RenderWareModelFile(renderer.device, ReadFileMethods.ReadRenderWareFile(Data));
+                _atomicFlags = AtomicFlags;
             }
             catch (Exception ex)
             {
@@ -39,17 +40,8 @@ namespace IndustrialPark
 
         public bool HasRenderWareModelFile() => model != null;
 
-        public string[] Textures
-        {
-            get
-            {
-                List<string> textures = new List<string>();
-                foreach (string s in model.MaterialList)
-                    if (!textures.Contains(s))
-                        textures.Add(s);
-                return textures.ToArray();
-            }
-        }
+        [Browsable(false)]
+        public string[] Textures => TextureNames.Distinct().ToArray();
 
         public override bool HasReference(uint assetID)
         {
@@ -115,7 +107,7 @@ namespace IndustrialPark
                         foreach (Geometry_000F geo in clump.geometryList.geometryList)
                             foreach (Material_0007 mat in geo.materialList.materialList)
                             {
-                                RenderWareFile.Color rwColor = mat.materialStruct.color;
+                                Color rwColor = mat.materialStruct.color;
                                 System.Drawing.Color color = System.Drawing.Color.FromArgb(rwColor.A, rwColor.R, rwColor.G, rwColor.B);
                                 colors.Add(color);
                             }
@@ -185,6 +177,43 @@ namespace IndustrialPark
                                             }
 
                 ModelAsRWSections = sections;
+            }
+        }
+
+        protected AtomicFlags[] _atomicFlags;
+
+        public AtomicFlags[] AtomicFlags
+        {
+            get
+            {
+                List<AtomicFlags> flags = new List<AtomicFlags>();
+
+                foreach (RWSection rws in ModelAsRWSections)
+                    if (rws is Clump_0010 clump)
+                        foreach (var atomic in clump.atomicList)
+                            flags.Add(atomic.atomicStruct.flags);
+
+                return flags.ToArray();
+            }
+
+            set
+            {
+                int i = 0;
+                RWSection[] sections = ModelAsRWSections;
+
+                foreach (RWSection rws in sections)
+                    if (rws is Clump_0010 clump)
+                        foreach (var atomic in clump.atomicList)
+                        {
+                            if (i >= value.Length)
+                                continue;
+
+                            atomic.atomicStruct.flags = value[i];
+                            i++;
+                        }
+
+                ModelAsRWSections = sections;
+                _atomicFlags = value;
             }
         }
     }

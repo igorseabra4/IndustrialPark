@@ -204,6 +204,12 @@ namespace IndustrialPark
         [Category("Other"), DisplayName("Random Characters"), Description("Switches you to Spongebob, Patrick or Sandy randomly on every spawn.")]
         public bool randomChars { get; set; } = false;
 
+        [Category("Other"), DisplayName("Invisible Level"), Description("Makes all levels invisible.")]
+        public bool invisibleLevel { get; set; } = false;
+
+        [Category("Other"), DisplayName("Invisible Objects"), Description("Makes all objects invisible.")]
+        public bool invisibleObjects { get; set; } = false;
+
         [Category("Other"), DisplayName("Disable Cutscenes")]
         public bool disableCutscenes { get; set; } = true;
 
@@ -256,6 +262,8 @@ namespace IndustrialPark
             disableFlythroughs = false;
             charsOnAnyLevel = false;
             randomChars = false;
+            invisibleLevel = false;
+            invisibleObjects = false;
         }
     }
 

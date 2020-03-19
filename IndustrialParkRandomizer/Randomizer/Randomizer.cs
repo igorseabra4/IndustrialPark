@@ -18,7 +18,7 @@ namespace IndustrialPark.Randomizer
 
     public class Randomizer
     {
-        public int version = 55;
+        public int version = 56;
         public string rootDir;
         public bool isDir;
         public string seedText;

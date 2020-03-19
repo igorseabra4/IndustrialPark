@@ -59,7 +59,7 @@ namespace IndustrialPark
                 renderer.device.UpdateAllStates();
             }
 
-            model.Render(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, uvAnimOffset);
+            model.Render(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, uvAnimOffset, _atomicFlags);
         }
 
         private BlendOption GetSharpBlendMode(BlendFactorType type, bool dest)

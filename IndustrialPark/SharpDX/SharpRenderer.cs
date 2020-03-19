@@ -187,8 +187,7 @@ namespace IndustrialPark
 
             if (!tiny)
             {
-                RenderWareModelFile torusModel = new RenderWareModelFile("Torus");
-                torusModel.SetForRendering(device, RenderWareFile.ReadFileMethods.ReadRenderWareFile(Application.StartupPath + "/Resources/Models/Torus.DFF"));
+                RenderWareModelFile torusModel = new RenderWareModelFile(device, RenderWareFile.ReadFileMethods.ReadRenderWareFile(Application.StartupPath + "/Resources/Models/Torus.DFF"));
                 Torus = torusModel.meshList[0];
                 torusTriangles = new List<Models.Triangle>();
                 foreach (RenderWareFile.Triangle t in torusModel.triangleList)

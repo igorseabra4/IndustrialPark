@@ -215,7 +215,13 @@ namespace IndustrialPark.Randomizer
 
             if (settings.openTeleportBoxes)
                 shuffled |= OpenTeleportBoxes();
-            
+
+            if (settings.invisibleLevel)
+                shuffled |= MakeLevelInvisible();
+
+            if (settings.invisibleObjects)
+                shuffled |= MakeObjectsInvisible();
+
             return shuffled;
         }
 
@@ -262,11 +268,11 @@ namespace IndustrialPark.Randomizer
             if (assets.Count < 2)
                 return false;
 
-            List<byte[]> datas = (from asset in assets select asset.Data).ToList();
+            var datas = (from asset in assets select asset.Data).ToList();
             
             foreach (Asset a in assets)
             {
-                int value = r.Next(0, datas.Count);
+                int value = r.Next(0, datas.Count());
                 a.Data = datas[value];
                 datas.RemoveAt(value);
             }
@@ -1307,6 +1313,42 @@ namespace IndustrialPark.Randomizer
             }
 
             return assets.Count != 0;
+        }
+
+        private bool MakeLevelInvisible()
+        {
+            List<Asset> assets = (from asset in assetDictionary.Values where asset.AHDR.assetType == AssetType.JSP select asset).ToList();
+
+            foreach (Asset a in assets)
+            {
+                try
+                {
+                    RWSection[] sections = ModelAsRWSections(a.Data, out int renderWareVersion);
+
+                    foreach (var rws in sections)
+                        if (rws is Clump_0010 clump)
+                            foreach (var atomic in clump.atomicList)
+                                atomic.atomicStruct.flags = AtomicFlags.None;
+
+                    a.Data = ModelToRWSections(sections, renderWareVersion);
+                }
+                catch { }
+            }
+
+            return assets.Count != 0;
+        }
+
+        private bool MakeObjectsInvisible()
+        {
+            var assets = (from asset in assetDictionary.Values where asset.AHDR.assetType == AssetType.SIMP select asset).Cast<AssetSIMP>();
+
+            foreach (var simp in assets)
+            {
+                simp.ColorAlpha = 0f;
+                simp.Visible = false;
+            }
+
+            return assets.Count() != 0;
         }
 
         public bool ImportCharacters()
