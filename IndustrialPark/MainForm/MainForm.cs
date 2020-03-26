@@ -1010,7 +1010,7 @@ namespace IndustrialPark
             ArchiveEditorFunctions.hideHelp = !ArchiveEditorFunctions.hideHelp;
             hideHelpInAssetDataEditorsToolStripMenuItem.Checked = ArchiveEditorFunctions.hideHelp;
             foreach (ArchiveEditor ae in archiveEditors)
-                ae.SetHideHelp(ArchiveEditorFunctions.hideHelp);
+                ae.SetHideHelp();
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)

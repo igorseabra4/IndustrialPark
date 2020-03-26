@@ -1166,9 +1166,9 @@ namespace IndustrialPark
             }
         }
 
-        internal void SetHideHelp(bool hideHelp)
+        internal void SetHideHelp()
         {
-            archive.SetHideHelp(hideHelp);
+            archive.SetHideHelp();
         }
 
         private void ExportTXD(bool RW3)

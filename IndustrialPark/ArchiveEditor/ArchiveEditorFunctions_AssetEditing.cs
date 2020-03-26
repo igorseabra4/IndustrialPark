@@ -170,7 +170,7 @@ namespace IndustrialPark
                 ie.TopMost = value;
         }
 
-        internal void SetHideHelp(bool hideHelp)
+        internal void SetHideHelp()
         {
             foreach (var ie in internalEditors)
                 ie.SetHideHelp(hideHelp);

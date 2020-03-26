@@ -662,9 +662,7 @@ namespace IndustrialPark
                 copiedAHDRs.Add(AHDR);
             }
 
-            Clipboard.SetText(JsonConvert.SerializeObject(
-                new AssetClipboard(game, EndianConverter.PlatformEndianness(platform), copiedAHDRs), 
-                Formatting.Indented));
+            Clipboard.SetText(JsonConvert.SerializeObject(new AssetClipboard(game, EndianConverter.PlatformEndianness(platform), copiedAHDRs), Formatting.None));
         }
 
         public void PasteAssetsFromClipboard(int layerIndex, out List<uint> finalIndices)
