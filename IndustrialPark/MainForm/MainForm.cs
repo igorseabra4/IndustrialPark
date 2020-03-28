@@ -1235,7 +1235,7 @@ namespace IndustrialPark
         private void TryToRunGame()
         {
             string dolPath = null;
-            string iniPath = null;
+            string filesPath = null;
             string hipName = null;
             foreach (var ae in archiveEditors) 
             {
@@ -1246,22 +1246,27 @@ namespace IndustrialPark
                     rootFolderName = Path.GetDirectoryName(rootFolderName);
 
                 dolPath = Path.Combine(rootFolderName, "sys", "main.dol");
-                iniPath = Path.Combine(rootFolderName, "files", "sb.ini");
+                filesPath = Path.Combine(rootFolderName, "files");
 
                 if (File.Exists(dolPath))
                     break;
                 dolPath = null;
             }
 
-            if (hipName != null && !(hipName.Contains("boot") || hipName.Contains("font") || hipName.Contains("plat"))
-                && iniPath != null && File.Exists(iniPath))
-            {
-                string[] ini = File.ReadAllLines(iniPath);
-                for (int i = 0; i < ini.Length; i++)
-                    if (ini[i].StartsWith("BOOT="))
-                        ini[i] = "BOOT=" + Path.GetFileNameWithoutExtension(hipName);
-                File.WriteAllLines(iniPath, ini);
-            }
+            if (hipName != null && !(hipName.Contains("boot") || hipName.Contains("font") || hipName.Contains("plat")) && filesPath != null)
+                foreach (string s in Directory.GetFiles(filesPath))
+                    if (Path.GetExtension(s).ToLower().Equals(".ini"))
+                    {
+                        string[] ini = File.ReadAllLines(s);
+                        for (int i = 0; i < ini.Length; i++)
+                            if (ini[i].StartsWith("BOOT="))
+                            { 
+                                ini[i] = "BOOT=" + Path.GetFileNameWithoutExtension(hipName).ToUpper();
+                                break;
+                            }
+                        File.WriteAllLines(s, ini);
+                        break;
+                    }
 
             if (dolPath == null)
                 MessageBox.Show("Unable to find DOL to launch.");

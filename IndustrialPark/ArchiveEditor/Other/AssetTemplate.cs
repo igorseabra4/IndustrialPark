@@ -174,6 +174,8 @@
         ShadowTable,
         SoundInfo,
 
+        EmptyBSP,
+
         PasteClipboard
     }
 }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using HipHopFile;
+using RenderWareFile;
+using RenderWareFile.Sections;
 using SharpDX;
 using static HipHopFile.Functions;
 
@@ -249,6 +251,8 @@ namespace IndustrialPark
                 new ToolStripMenuItem(AssetTemplate.PipeInfoTable.ToString()),
                 new ToolStripMenuItem(AssetTemplate.ShadowTable.ToString()),
                 new ToolStripMenuItem(AssetTemplate.SoundInfo.ToString()),
+                //new ToolStripSeparator(),
+                //new ToolStripMenuItem(AssetTemplate.EmptyBSP.ToString()),
             });
             foreach (ToolStripItem i in others.DropDownItems)
                 if (i is ToolStripMenuItem j)
@@ -434,6 +438,10 @@ namespace IndustrialPark
                 case AssetTemplate.Boulder_Generic:
                     newAssetType = AssetType.BOUL;
                     dataSize = 0x9C + Asset.DataSizeOffset(game);
+                    break;
+                case AssetTemplate.EmptyBSP:
+                    dataSize = 0;
+                    newAssetType = AssetType.BSP;
                     break;
                 case AssetTemplate.Button_Generic:
                 case AssetTemplate.Button_Red:
@@ -1940,6 +1948,9 @@ namespace IndustrialPark
                         Rings_AssetIDs = new AssetID[0]
                     };
                     break;
+                case AssetTemplate.EmptyBSP:
+                        asset.AHDR.data = GenerateBlankBSP();
+                    break;
             }
 
             if (asset is AssetDYNA DYNA)
@@ -1948,6 +1959,122 @@ namespace IndustrialPark
             assetIDs.Add(asset.AHDR.assetID);
 
             return asset.AHDR.assetID;
+        }
+
+        private byte[] GenerateBlankBSP()
+        {
+            Vertex3 Max = new Vertex3(10000, 10000, 10000);
+            Vertex3 Min = new Vertex3(-10000, -10000, -10000);
+            
+            return ReadFileMethods.ExportRenderWareFile(new World_000B()
+            {
+                worldStruct = new WorldStruct_0001()
+                {
+                    rootIsWorldSector = 1,
+                    inverseOrigin = new Vertex3(-0f, -0f, -0f),
+                    numTriangles = 0,
+                    numVertices = 0,
+                    numPlaneSectors = 0,
+                    numAtomicSectors = 1,
+                    colSectorSize = 0,
+                    worldFlags = WorldFlags.HasOneSetOfTextCoords | WorldFlags.HasVertexColors | WorldFlags.WorldSectorsOverlap | (WorldFlags)0x00010000,
+                    boxMaximum = Max,
+                    boxMinimum = Min,
+                },
+
+                materialList = new MaterialList_0008()
+                {
+                    materialListStruct = new MaterialListStruct_0001()
+                    {
+                        materialCount = 0
+                    },
+                    materialList = new Material_0007[]
+                    {
+                        new Material_0007()
+                        {
+                            materialStruct = new MaterialStruct_0001()
+                            {
+                                unusedFlags = 0,
+                                color = new RenderWareFile.Color(0xFF, 0xFF, 0xFF, 0xFF),
+                                unusedInt2 = 0x2DF53E84,
+                                isTextured = 1,
+                                ambient = 1f,
+                                specular = 1f,
+                                diffuse = 1f
+                            },
+                            texture = new Texture_0006()
+                            {
+                                textureStruct = new TextureStruct_0001()
+                                {
+                                    filterMode = TextureFilterMode.FILTERLINEAR,
+                                    addressModeU = TextureAddressMode.TEXTUREADDRESSWRAP,
+                                    addressModeV = TextureAddressMode.TEXTUREADDRESSWRAP,
+                                    useMipLevels = 1
+                                },
+                                diffuseTextureName = new String_0002()
+                                {
+                                    stringString = ""
+                                },
+                                alphaTextureName = new String_0002()
+                                {
+                                    stringString = ""
+                                },
+                                textureExtension = new Extension_0003()
+                            },
+                            materialExtension = new Extension_0003(),
+                        }
+                    }
+                },
+
+                firstWorldChunk = new AtomicSector_0009()
+                {
+                    atomicSectorStruct = new AtomicSectorStruct_0001()
+                    {
+                        matListWindowBase = 0,
+                        numTriangles = 0,
+                        numVertices = 0,
+                        boxMaximum = Max,
+                        boxMinimum = Min,
+                        collSectorPresent = 0,
+                        unused = 0,
+                        vertexArray = new Vertex3[0],
+                        colorArray = new RenderWareFile.Color[0],
+                        uvArray = new Vertex2[0],
+                        triangleArray = new Triangle[0]
+                    },
+                    atomicSectorExtension = new Extension_0003()
+                    {
+                        extensionSectionList = new List<RWSection>()
+                        { 
+                            new BinMeshPLG_050E()
+                            {
+                                binMeshHeaderFlags = BinMeshHeaderFlags.TriangleList,
+                                numMeshes = 1,
+                                totalIndexCount = 0,
+                                binMeshList = new BinMesh[] {
+                                    new BinMesh()
+                                    {
+                                        materialIndex = 0,
+                                        indexCount = 0,
+                                        vertexIndices = new int[0]
+                                    }
+                                }
+                            },
+                            new MaterialEffectsPLG_0120()
+                            {
+                                value = 0
+                            },
+                            new GenericSection()
+                            {
+                                sectionIdentifier = RenderWareFile.Section.CollisionPLG,
+                                data = new byte[0x18]
+                            }
+                        }
+                    }
+                },
+
+                worldExtension = new Extension_0003()
+            }, 0x0310);
         }
     }
 }
