@@ -95,19 +95,19 @@ namespace IndustrialPark
 
         private void buttonPaste_Click(object sender, EventArgs e)
         {
-            List<Section_AHDR> AHDRs;
-            
+            AssetClipboard clipboard;
+
             try
             {
-                AHDRs = JsonConvert.DeserializeObject<List<Section_AHDR>>(Clipboard.GetText());
+                clipboard = JsonConvert.DeserializeObject<AssetClipboard>(Clipboard.GetText());
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error pasting objects from clipboard: " + ex.Message + ". Are you sure you have assets copied?");
                 return;
             }
-
-            foreach (Section_AHDR AHDR in AHDRs)
+            
+            foreach (var AHDR in clipboard.assets)
             {
                 string templateName = "[" + AHDR.assetType.ToString() + "] " + AHDR.ADBG.assetName;
                 File.WriteAllBytes(Path.Combine(Program.MainForm.userTemplatesFolder, templateName), AHDR.data);

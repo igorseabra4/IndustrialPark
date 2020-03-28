@@ -1251,19 +1251,32 @@ namespace IndustrialPark
         private void TryToRunGame()
         {
             string dolPath = null;
+            string iniPath = null;
+            string hipName = null;
             foreach (var ae in archiveEditors) 
             {
-                string hipName = ae.GetCurrentlyOpenFileName().ToLower();
+                hipName = ae.GetCurrentlyOpenFileName().ToLower();
                 string rootFolderName = Path.GetDirectoryName(Path.GetDirectoryName(hipName));
 
                 if (!(hipName.Contains("boot") || hipName.Contains("font") || hipName.Contains("plat")))
                     rootFolderName = Path.GetDirectoryName(rootFolderName);
 
                 dolPath = Path.Combine(rootFolderName, "sys", "main.dol");
+                iniPath = Path.Combine(rootFolderName, "files", "sb.ini");
 
                 if (File.Exists(dolPath))
                     break;
                 dolPath = null;
+            }
+
+            if (hipName != null && !(hipName.Contains("boot") || hipName.Contains("font") || hipName.Contains("plat"))
+                && iniPath != null && File.Exists(iniPath))
+            {
+                string[] ini = File.ReadAllLines(iniPath);
+                for (int i = 0; i < ini.Length; i++)
+                    if (ini[i].StartsWith("BOOT="))
+                        ini[i] = "BOOT=" + Path.GetFileNameWithoutExtension(hipName);
+                File.WriteAllLines(iniPath, ini);
             }
 
             if (dolPath == null)

@@ -802,8 +802,10 @@ namespace IndustrialPark
             bytes.Add(reader.ReadByte());
             bytes.Add(reader.ReadByte());
 
-            for (int i = 0; i < 3; i++)
-                bytes.AddRange(Reverse(reader.ReadInt32()));
+            bytes.AddRange(Reverse(reader.ReadInt32()));
+
+            for (int i = 0; i < 8; i++)
+                bytes.Add(reader.ReadByte());
 
             for (int i = 0; i < 8; i++)
                 bytes.AddRange(Reverse(reader.ReadInt16()));

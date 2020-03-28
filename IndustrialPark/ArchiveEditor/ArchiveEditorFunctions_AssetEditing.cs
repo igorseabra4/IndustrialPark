@@ -662,7 +662,7 @@ namespace IndustrialPark
                 }
         }
 
-        private Section_AHDR ConvertAssetType(Section_AHDR AHDR, Endianness previousEndianness, Endianness currentEndianness, Game previousGame,  Game currentGame)
+        public static Section_AHDR ConvertAssetType(Section_AHDR AHDR, Endianness previousEndianness, Endianness currentEndianness, Game previousGame,  Game currentGame)
         {
             if (previousGame != currentGame)
             {
