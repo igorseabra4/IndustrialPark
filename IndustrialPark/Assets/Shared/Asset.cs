@@ -32,12 +32,7 @@ namespace IndustrialPark
             set => AHDR.data = value; 
         }
 
-        public override string ToString()
-        {
-            return MainForm.alternateNamingMode ?
-                "[" + AHDR.assetID.ToString("X8") + "] " + AHDR.ADBG.assetName :
-                AHDR.ADBG.assetName + " [" + AHDR.assetID.ToString("X8") + "]";
-        }
+        public override string ToString() =>  $"{AHDR.ADBG.assetName} [{AHDR.assetID.ToString("X8")}]";
         
         protected float ReadFloat(int j)
         {

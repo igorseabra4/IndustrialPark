@@ -266,7 +266,7 @@ namespace IndustrialPark
                 renderer.Camera.Yaw, renderer.Camera.Pitch, renderer.Camera.Speed, renderer.Camera.SpeedRot, renderer.Camera.FieldOfView,
                 renderer.Camera.FarPlane, noCullingCToolStripMenuItem.Checked, wireframeFToolStripMenuItem.Checked, renderer.backgroundColor,
                 renderer.normalColor, renderer.trigColor, renderer.mvptColor, renderer.sfxColor, useLegacyAssetIDFormatToolStripMenuItem.Checked,
-                alternateNamingMode, hiddenAssets, renderer.isDrawingUI, ArchiveEditorFunctions.Grid, AssetMODL.renderBasedOnLodt, AssetMODL.renderBasedOnPipt,
+                hiddenAssets, renderer.isDrawingUI, ArchiveEditorFunctions.Grid, AssetMODL.renderBasedOnLodt, AssetMODL.renderBasedOnPipt, RenderWareModelFile.dontDrawInvisible,
                 AssetJSP.dontRender, AssetBOUL.dontRender, AssetBUTN.dontRender, AssetCAM.dontRender, AssetDSTR_Scooby.dontRender, AssetDYNA.dontRender,
                 AssetEGEN.dontRender, AssetHANG.dontRender, AssetLITE.dontRender, AssetMRKR.dontRender, AssetMVPT_Scooby.dontRender, AssetPEND.dontRender,
                 AssetPLAT.dontRender, AssetPLAT.dontRender, AssetPLYR.dontRender, AssetSFX.dontRender, AssetSIMP.dontRender, AssetTRIG.dontRender,
@@ -339,10 +339,6 @@ namespace IndustrialPark
             renderer.SetSfxColor(ipSettings.SfxColor);
 
             useLegacyAssetIDFormatToolStripMenuItem.Checked = ipSettings.UseLegacyAssetIDFormat;
-            alternateNamingMode = ipSettings.AlternateNameDisplayMode;
-
-            assetIDAssetNameToolStripMenuItem.Checked = alternateNamingMode;
-            assetNameAssetIDToolStripMenuItem.Checked = !alternateNamingMode;
 
             uIModeToolStripMenuItem.Checked = ipSettings.isDrawingUI;
             renderer.isDrawingUI = ipSettings.isDrawingUI;
@@ -353,8 +349,11 @@ namespace IndustrialPark
             usePIPTForRenderingToolStripMenuItem.Checked = ipSettings.renderBasedOnPipt;
             AssetMODL.renderBasedOnPipt = ipSettings.renderBasedOnPipt;
 
-            levelModelToolStripMenuItem.Checked = !ipSettings.dontRenderLevelModel;
-            AssetJSP.dontRender = ipSettings.dontRenderLevelModel;
+            hideInvisibleMeshesToolStripMenuItem.Checked = ipSettings.dontDrawInvisible;
+            RenderWareModelFile.dontDrawInvisible = ipSettings.dontDrawInvisible;
+
+            levelModelToolStripMenuItem.Checked = !ipSettings.dontRenderJSP;
+            AssetJSP.dontRender = ipSettings.dontRenderJSP;
 
             bOULToolStripMenuItem.Checked = !ipSettings.dontRenderBOUL;
             AssetBOUL.dontRender = ipSettings.dontRenderBOUL;
@@ -575,7 +574,6 @@ namespace IndustrialPark
                 renderer.Camera.Reset();
         }
 
-        public static bool alternateNamingMode = false;
         public List<ArchiveEditor> archiveEditors = new List<ArchiveEditor>();
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
@@ -854,14 +852,7 @@ namespace IndustrialPark
             useLegacyAssetIDFormatToolStripMenuItem.Checked = !useLegacyAssetIDFormatToolStripMenuItem.Checked;
             AssetIDTypeConverter.Legacy = useLegacyAssetIDFormatToolStripMenuItem.Checked;
         }
-
-        private void assetNameAssetIDToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            assetIDAssetNameToolStripMenuItem.Checked = false;
-            assetNameAssetIDToolStripMenuItem.Checked = true;
-            alternateNamingMode = false;
-        }
-
+        
         private void levelModelToolStripMenuItem_Click(object sender, EventArgs e)
         {
             levelModelToolStripMenuItem.Checked = !levelModelToolStripMenuItem.Checked;
@@ -1073,14 +1064,7 @@ namespace IndustrialPark
             foreach (ArchiveEditor archiveEditor in archiveEditors)
                 archiveEditor.TemplateFocusOff();
         }
-
-        private void assetIDAssetNameToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            assetIDAssetNameToolStripMenuItem.Checked = true;
-            assetNameAssetIDToolStripMenuItem.Checked = false;
-            alternateNamingMode = true;
-        }
-
+        
         private void uIModeAutoSizeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Width = (int)(Height * 656f / 565f);
@@ -1289,6 +1273,12 @@ namespace IndustrialPark
             foreach (var ae in archiveEditors)
                 if (ae.archive.UnsavedChanges)
                     ae.Save();
+        }
+
+        private void hideInvisibleMeshesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            hideInvisibleMeshesToolStripMenuItem.Checked = !hideInvisibleMeshesToolStripMenuItem.Checked;
+            RenderWareModelFile.dontDrawInvisible = hideInvisibleMeshesToolStripMenuItem.Checked;
         }
     }
 }

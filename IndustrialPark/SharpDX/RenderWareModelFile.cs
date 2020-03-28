@@ -12,7 +12,7 @@ namespace IndustrialPark
         private const string DefaultTexture = "default";
         private RWSection[] rwSectionArray;
 
-        public bool dontDrawInvisible = true;
+        public static bool dontDrawInvisible = false;
 
         public List<SharpMesh> meshList;
         private void AddToMeshList(SharpMesh mesh)
