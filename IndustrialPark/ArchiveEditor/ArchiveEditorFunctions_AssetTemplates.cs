@@ -251,8 +251,8 @@ namespace IndustrialPark
                 new ToolStripMenuItem(AssetTemplate.PipeInfoTable.ToString()),
                 new ToolStripMenuItem(AssetTemplate.ShadowTable.ToString()),
                 new ToolStripMenuItem(AssetTemplate.SoundInfo.ToString()),
-                //new ToolStripSeparator(),
-                //new ToolStripMenuItem(AssetTemplate.EmptyBSP.ToString()),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem(AssetTemplate.EmptyBSP.ToString()),
             });
             foreach (ToolStripItem i in others.DropDownItems)
                 if (i is ToolStripMenuItem j)
@@ -1963,9 +1963,9 @@ namespace IndustrialPark
 
         private byte[] GenerateBlankBSP()
         {
-            Vertex3 Max = new Vertex3(10000, 10000, 10000);
-            Vertex3 Min = new Vertex3(-10000, -10000, -10000);
-            
+            Vertex3 Max = new Vertex3(100000, 100000, 100000);
+            Vertex3 Min = new Vertex3(-100000, -100000, -100000);
+
             return ReadFileMethods.ExportRenderWareFile(new World_000B()
             {
                 worldStruct = new WorldStruct_0001()
@@ -1978,8 +1978,8 @@ namespace IndustrialPark
                     numAtomicSectors = 1,
                     colSectorSize = 0,
                     worldFlags = WorldFlags.HasOneSetOfTextCoords | WorldFlags.HasVertexColors | WorldFlags.WorldSectorsOverlap | (WorldFlags)0x00010000,
-                    boxMaximum = Max,
-                    boxMinimum = Min,
+                    boxMaximum = new Vertex3(),
+                    boxMinimum = new Vertex3(),
                 },
 
                 materialList = new MaterialList_0008()
@@ -1988,42 +1988,7 @@ namespace IndustrialPark
                     {
                         materialCount = 0
                     },
-                    materialList = new Material_0007[]
-                    {
-                        new Material_0007()
-                        {
-                            materialStruct = new MaterialStruct_0001()
-                            {
-                                unusedFlags = 0,
-                                color = new RenderWareFile.Color(0xFF, 0xFF, 0xFF, 0xFF),
-                                unusedInt2 = 0x2DF53E84,
-                                isTextured = 1,
-                                ambient = 1f,
-                                specular = 1f,
-                                diffuse = 1f
-                            },
-                            texture = new Texture_0006()
-                            {
-                                textureStruct = new TextureStruct_0001()
-                                {
-                                    filterMode = TextureFilterMode.FILTERLINEAR,
-                                    addressModeU = TextureAddressMode.TEXTUREADDRESSWRAP,
-                                    addressModeV = TextureAddressMode.TEXTUREADDRESSWRAP,
-                                    useMipLevels = 1
-                                },
-                                diffuseTextureName = new String_0002()
-                                {
-                                    stringString = ""
-                                },
-                                alphaTextureName = new String_0002()
-                                {
-                                    stringString = ""
-                                },
-                                textureExtension = new Extension_0003()
-                            },
-                            materialExtension = new Extension_0003(),
-                        }
-                    }
+                    materialList = new Material_0007[0]
                 },
 
                 firstWorldChunk = new AtomicSector_0009()
@@ -2049,25 +2014,19 @@ namespace IndustrialPark
                             new BinMeshPLG_050E()
                             {
                                 binMeshHeaderFlags = BinMeshHeaderFlags.TriangleList,
-                                numMeshes = 1,
+                                numMeshes = 0,
                                 totalIndexCount = 0,
-                                binMeshList = new BinMesh[] {
-                                    new BinMesh()
-                                    {
-                                        materialIndex = 0,
-                                        indexCount = 0,
-                                        vertexIndices = new int[0]
-                                    }
-                                }
+                                binMeshList = new BinMesh[0]
                             },
                             new MaterialEffectsPLG_0120()
                             {
                                 value = 0
                             },
-                            new GenericSection()
+                            new CollisionPLG_011D_Scooby()
                             {
-                                sectionIdentifier = RenderWareFile.Section.CollisionPLG,
-                                data = new byte[0x18]
+                                splits = new Split_Scooby[0],
+                                startIndex_amountOfTriangles = new short[][] { new short[] { 0, 0 } },
+                                triangles = new int[0]
                             }
                         }
                     }

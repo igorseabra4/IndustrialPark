@@ -442,9 +442,9 @@ namespace IndustrialPark
 
             for (int i = 0; i < meshList.Count; i++)
             {
-                if (dontDrawInvisible && (atomicFlags[i] & AtomicFlags.Render) == 0)
+                if (meshList[i] == null || (dontDrawInvisible && (atomicFlags[i] & AtomicFlags.Render) == 0))
                     continue;
-
+                
                 meshList[i].Begin(renderer.device);
                 for (int j = 0; j < meshList[i].SubSets.Count(); j++)
                     meshList[i].Draw(renderer.device, j);
@@ -459,7 +459,8 @@ namespace IndustrialPark
             foreach (SharpMesh m in meshList)
             {
                 completeMeshList.Remove(m);
-                m.Dispose();
+                if (m != null)
+                    m.Dispose();
             }
             meshList.Clear();
         }

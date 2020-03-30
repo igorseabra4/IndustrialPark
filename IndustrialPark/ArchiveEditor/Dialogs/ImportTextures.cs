@@ -86,6 +86,10 @@ namespace IndustrialPark
                             textureDictionaryExtension = new Extension_0003()
                         }, currentTextureVersion(game));
 
+                        if (game == Game.Scooby)
+                            for (int j = 0x6D; j < 0x8C; j++)
+                                data[j] = 0xCD;
+
                         string assetName = Path.GetFileNameWithoutExtension(a.filePaths[i]) + (a.checkBoxRW3.Checked ? ".RW3" : "");
 
                         Section_ADBG ADBG = new Section_ADBG(0, assetName, "", 0);

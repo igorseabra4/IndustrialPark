@@ -87,7 +87,7 @@ namespace IndustrialPark
 
                                 foreach (string previousFile in Directory.GetFiles(Application.StartupPath + localDirPath))
                                 {
-                                    if (Path.GetExtension(previousFile).ToLower().Equals(".zip") || Path.GetExtension(previousFile).ToLower().Equals(".json"))
+                                    if (Path.GetExtension(previousFile).ToLower().Equals(".zip") || (Path.GetExtension(previousFile).ToLower().Equals(".json") && Path.GetFileNameWithoutExtension(previousFile) != "default_project"))
                                         continue;
 
                                     string newFilePath = oldIPdestinationPath + localDirPath + "/" + Path.GetFileName(previousFile);

@@ -463,6 +463,7 @@ namespace IndustrialPark
                 case AssetType.SND:
                 case AssetType.SNDS:
                     return AHDRFlags.SOURCE_FILE | AHDRFlags.WRITE_TRANSFORM;
+                case AssetType.BSP:
                 case AssetType.MODL:
                     return AHDRFlags.SOURCE_FILE | AHDRFlags.READ_TRANSFORM;
                 case AssetType.ATBL:

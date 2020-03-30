@@ -108,6 +108,7 @@ namespace IndustrialPark
 
             foreach (RenderWareModelFile m in models)
                 foreach (SharpMesh mesh in m.meshList)
+                    if (mesh != null)
                     foreach (SharpSubSet sub in mesh.SubSets)
                     {
                         if (Textures.ContainsKey(sub.DiffuseMapName))

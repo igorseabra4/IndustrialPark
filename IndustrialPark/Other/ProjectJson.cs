@@ -6,6 +6,9 @@ namespace IndustrialPark
 {
     public class ProjectJson
     {
+        public static int getCurrentVersion => 2;
+        public int version;
+
         public List<string> hipPaths;
         public List<Platform> scoobyPlatforms;
         public List<string> TextureFolderPaths;
@@ -130,6 +133,8 @@ namespace IndustrialPark
             bool dontRenderPLYR, bool dontRenderSFX, bool dontRenderSIMP, bool dontRenderTRIG, bool dontRenderUI, bool dontRenderUIFT, 
             bool dontRenderVIL, bool persistentShinies, bool hideHelp)
         {
+            version = getCurrentVersion;
+
             this.hipPaths = hipPaths;
             this.scoobyPlatforms = scoobyPlatforms;
             TextureFolderPaths = textureFolderPaths;

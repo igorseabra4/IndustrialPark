@@ -282,6 +282,9 @@ namespace IndustrialPark
 
         private void ApplySettings(ProjectJson ipSettings)
         {
+            if (ipSettings.version != ProjectJson.getCurrentVersion)
+                MessageBox.Show("You are trying to open a project file made with a different version of Industrial Park. The program will attempt to load the project, but there is a chance it will not load properly.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            
             TextureManager.ClearTextures();
 
             List<ArchiveEditor> archiveEditors = new List<ArchiveEditor>();
