@@ -142,7 +142,7 @@ namespace IndustrialPark
             UnsavedChanges = false;
         }
 
-        public bool EditPack(out HashSet<AssetType> unsupported)
+        public bool EditPack(out HashSet<uint> unsupported)
         {
             Platform previousPlatform = platform;
             Game previousGame = game;
@@ -150,8 +150,8 @@ namespace IndustrialPark
             NewArchive.GetExistingArchive(platform, game, hipFile.PACK.PCRT.fileDate, hipFile.PACK.PCRT.dateString,
                 out bool OK, out Section_PACK PACK, out Platform newPlatform, out Game newGame);
 
-            unsupported = new HashSet<AssetType>();
-
+            unsupported = new HashSet<uint>();
+            
             if (OK)
             {
                 hipFile.PACK = PACK;
@@ -170,7 +170,6 @@ namespace IndustrialPark
 
                 if (previousPlatform != platform || previousGame != game)
                     ConvertAllAssetTypes(previousPlatform, previousGame, out unsupported);
-
                 UnsavedChanges = true; 
             }
 
@@ -665,6 +664,8 @@ namespace IndustrialPark
             Clipboard.SetText(JsonConvert.SerializeObject(new AssetClipboard(game, EndianConverter.PlatformEndianness(platform), copiedAHDRs), Formatting.None));
         }
 
+        public static bool updateReferencesOnCopy = true;
+
         public void PasteAssetsFromClipboard(int layerIndex, out List<uint> finalIndices)
         {
             AssetClipboard clipboard;
@@ -682,11 +683,17 @@ namespace IndustrialPark
 
             UnsavedChanges = true;
 
+            Dictionary<uint, uint> referenceUpdate = new Dictionary<uint, uint>();
+
             foreach (Section_AHDR section in clipboard.assets)
             {
                 Section_AHDR AHDR = ConvertAssetType(section, clipboard.endianness, EndianConverter.PlatformEndianness(platform), clipboard.game, game);
+                
+                uint previousAssetID = AHDR.assetID;
 
                 AddAssetWithUniqueID(layerIndex, AHDR);
+
+                referenceUpdate.Add(previousAssetID, AHDR.assetID);
 
                 if (AHDR.assetType == AssetType.SND || AHDR.assetType == AssetType.SNDS)
                 {
@@ -702,6 +709,39 @@ namespace IndustrialPark
                 }
 
                 finalIndices.Add(AHDR.assetID);
+            }
+
+            if (updateReferencesOnCopy)
+            {
+                AssetType[] dontUpdate = new AssetType[] {
+                    AssetType.BSP,
+                    AssetType.JSP,
+                    AssetType.MODL,
+                    AssetType.RWTX,
+                    AssetType.SND,
+                    AssetType.SNDI,
+                    AssetType.SNDS,
+                    AssetType.TEXT
+                };
+
+                Dictionary<uint, uint> newReferenceUpdate;
+
+                if (EndianConverter.PlatformEndianness(platform) == Endianness.Big)
+                {
+                    newReferenceUpdate = new Dictionary<uint, uint>();
+                    foreach (var key in referenceUpdate.Keys)
+                    {
+                        newReferenceUpdate.Add(
+                            BitConverter.ToUInt32(BitConverter.GetBytes(key).Reverse().ToArray(), 0),
+                            BitConverter.ToUInt32(BitConverter.GetBytes(referenceUpdate[key]).Reverse().ToArray(), 0));
+                    }
+                }
+                else
+                    newReferenceUpdate = referenceUpdate;
+
+                foreach (Section_AHDR section in clipboard.assets)
+                    if (!dontUpdate.Contains(section.assetType))
+                        section.data = ReplaceReferences(section.data, newReferenceUpdate);
             }
         }
 
@@ -743,8 +783,6 @@ namespace IndustrialPark
                     MessageBox.Show($"Unable to import asset [{AHDR.assetID.ToString("X8")}] {AHDR.ADBG.assetName}: " + ex.Message);
                 }
             }
-
-            SetupTextureDisplay();
         }
 
         private List<Asset> currentlySelectedAssets = new List<Asset>();
@@ -789,6 +827,13 @@ namespace IndustrialPark
                 currentlySelectedAssets[i].isSelected = false;
 
             currentlySelectedAssets.Clear();
+        }
+
+        public void ResetModels(SharpRenderer renderer)
+        {
+            foreach (Asset a in assetDictionary.Values)
+                if (a is AssetRenderWareModel model)
+                    model.Setup(renderer);
         }
 
         public void RecalculateAllMatrices()

@@ -1,5 +1,4 @@
-﻿using System;
-using HipHopFile;
+﻿using HipHopFile;
 using SharpDX;
 using SharpDX.Direct3D11;
 using static IndustrialPark.ArchiveEditorFunctions;

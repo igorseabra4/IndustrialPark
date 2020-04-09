@@ -896,20 +896,51 @@ namespace IndustrialPark
 
         private void EditPACKToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (archive.EditPack(out HashSet<AssetType> unsupported))
+            if (archive.EditPack(out HashSet<uint> unsupported))
             {
+                string message = "Archive PACK edited sucessfully and asset formats were converted\n";
+
                 if (unsupported.Count > 0)
                 {
-                    string message = "Archive PACK edited sucessfully and asset formats were converted, however conversion is unsupported for the following asset types and they have been left unchanged:\n";
-                    foreach (AssetType t in unsupported.OrderBy(f => f))
-                        message += t.ToString() + ", ";
-                    message.Remove(message.LastIndexOf(","));
-                    MessageBox.Show(message);
+                    message += "\nConversion is unsupported for the following assets and they have been left unchanged:\n";
+                    foreach (var v in unsupported)
+                        message += GetAssetNameFromID(v) + ", ";
                 }
+
+                MessageBox.Show(message);
+                
+                #if DEBUG
+                if (unsupported.Count > 0)
+                {
+                    DialogResult result = MessageBox.Show("Do you wish to search for the unsupported assets in external archives? You can choose a folder and Industrial Park will search all HIP/HOP archives in the folder and subfolders for assets that match the ones which were not converted and use them as replacements.", "Automatic Asset Replacement", MessageBoxButtons.YesNo);
+                    if (result == DialogResult.Yes)
+                    {
+                        CommonOpenFileDialog dialog = new CommonOpenFileDialog()
+                        {
+                            IsFolderPicker = true
+                        };
+                        if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+                        {
+                            archive.ReplaceUnconvertableAssets(dialog.FileName, ref unsupported);
+
+                            if (unsupported.Count > 0)
+                            {
+                                message = "\nThe following assets have not been found and have not been replaced:\n";
+                                    foreach (var v in unsupported)
+                                        message += GetAssetNameFromID(v) + "\n";
+                                MessageBox.Show(message);
+                            }
+                            else
+                                MessageBox.Show("All assets successfully replaced.");
+                        }
+                    }
+                }
+                #endif
 
                 PopulateLayerTypeComboBox();
                 PopulateLayerComboBox();
                 PopulateAssetList();
+                archive.SetupTextureDisplay();
             }
         }
 
@@ -1177,6 +1208,13 @@ namespace IndustrialPark
 
             if (saveTXD.ShowDialog() == DialogResult.OK)
                 archive.ExportTextureDictionary(saveTXD.FileName, RW3);
+        }
+
+        internal void RefreshHop(SharpRenderer renderer)
+        {
+            archive.ResetModels(renderer);
+            archive.SetupTextureDisplay();
+            archive.RecalculateAllMatrices();
         }
     }
 }

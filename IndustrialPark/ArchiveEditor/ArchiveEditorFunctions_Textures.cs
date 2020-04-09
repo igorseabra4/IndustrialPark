@@ -105,7 +105,6 @@ namespace IndustrialPark
         public void ImportTextureDictionary(string fileName, bool RW3)
         {
             UnsavedChanges = true;
-            int layerIndex = 0;
 
             List<Section_LHDR> LHDRs = new List<Section_LHDR>
             {
@@ -119,9 +118,16 @@ namespace IndustrialPark
             LHDRs.AddRange(DICT.LTOC.LHDRList);
             DICT.LTOC.LHDRList = LHDRs;
 
-            List<Section_AHDR> AHDRs = new List<Section_AHDR>();
+            List<Section_AHDR> AHDRs = GetAssetsFromTextureDictionary(fileName, RW3);
 
+            ImportMultipleAssets(0, AHDRs, out _, true);
+        }
+
+        public List<Section_AHDR> GetAssetsFromTextureDictionary(string fileName, bool RW3)
+        {
             ReadFileMethods.treatStuffAsByteArray = true;
+
+            List<Section_AHDR> AHDRs = new List<Section_AHDR>();
 
             foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(fileName))
             {
@@ -142,18 +148,20 @@ namespace IndustrialPark
                             textureNativeList = new List<TextureNative_0015>() { tn }
                         }, tn.renderWareVersion);
                         
+                        if (game == Game.Scooby)
+                            FixTextureForScooby(ref data);
+
                         // And add the new dictionary as an asset.
                         Section_ADBG ADBG = new Section_ADBG(0, textureName, "", 0);
                         Section_AHDR AHDR = new Section_AHDR(BKDRHash(textureName), AssetType.RWTX, AHDRFlags.SOURCE_VIRTUAL | AHDRFlags.READ_TRANSFORM, ADBG, data);
-                        
+
                         AHDRs.Add(AHDR);
                     }
                 }
             }
-
-            ImportMultipleAssets(layerIndex, AHDRs, out _, true);
-            
             ReadFileMethods.treatStuffAsByteArray = false;
+
+            return AHDRs;
         }
 
         public Dictionary<string, Bitmap> ExportRWTXToBitmap(byte[] txdFile)
@@ -272,6 +280,55 @@ namespace IndustrialPark
                 textureNativeList = textures,
                 textureDictionaryExtension = new Extension_0003()
             }, currentTextureVersion(game)));
+        }
+
+        private bool PerformTextureConversion()
+        {
+            Dictionary<uint, Section_AHDR> dataDict = new Dictionary<uint, Section_AHDR>();
+
+            if (!Directory.Exists(tempPcTxdsDir))
+                Directory.CreateDirectory(tempPcTxdsDir);
+            if (!Directory.Exists(tempGcTxdsDir))
+                Directory.CreateDirectory(tempGcTxdsDir);
+            
+            try
+            {
+                ExportTextureDictionary(pathToPcTXD, true);
+                PerformTXDConversionExternal(platform, false);
+                foreach (var AHDR in GetAssetsFromTextureDictionary(pathToGcTXD, true))
+                    dataDict.Add(AHDR.assetID, AHDR);
+
+                ExportTextureDictionary(pathToPcTXD, false);
+                PerformTXDConversionExternal(platform, false);
+                foreach (var AHDR in GetAssetsFromTextureDictionary(pathToGcTXD, false))
+                    dataDict.Add(AHDR.assetID, AHDR);
+            }
+            catch
+            {
+                File.Delete(pathToGcTXD);
+                File.Delete(pathToPcTXD);
+                return false;
+            }
+
+            File.Delete(pathToGcTXD);
+            File.Delete(pathToPcTXD);
+
+            ReadFileMethods.treatStuffAsByteArray = true;
+
+            foreach (var a in assetDictionary.Values)
+                if (a is AssetRWTX rwtx)
+                {
+                    rwtx.Data =
+                            ReadFileMethods.ExportRenderWareFile(
+                            ReadFileMethods.ReadRenderWareFile(
+                                dataDict[rwtx.AHDR.assetID].data),
+                            Models.BSP_IO_Shared.modelRenderWareVersion(game));
+                    rwtx.game = game;
+                    rwtx.platform = platform;
+                }
+
+            ReadFileMethods.treatStuffAsByteArray = false;
+            return true;
         }
     }
 }

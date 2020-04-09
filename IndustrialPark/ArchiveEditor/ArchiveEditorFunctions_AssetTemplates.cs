@@ -413,12 +413,36 @@ namespace IndustrialPark
                 {
                     success = true;
                     foreach (uint assetID in assetIDs)
+                    {
                         if (GetFromAssetID(assetID) is IClickableAsset ica)
                         {
+                            Vector3 delta = position - new Vector3(ica.PositionX, ica.PositionY, ica.PositionZ);
+
                             ica.PositionX = position.X;
                             ica.PositionY = position.Y;
                             ica.PositionZ = position.Z;
+
+                            if (GetFromAssetID(assetID) is AssetTRIG trig)
+                            {
+                                if (trig.Shape == TriggerShape.Box)
+                                {
+                                    trig.SetPositions(
+                                        trig.Position0X + delta.X,
+                                        trig.Position0Y + delta.Y,
+                                        trig.Position0Z + delta.Z,
+                                        trig.Position1X + delta.X,
+                                        trig.Position1Y + delta.Y,
+                                        trig.Position1Z + delta.Z);
+                                }
+                                else
+                                {
+                                    trig.Position0X = position.X;
+                                    trig.Position0Y = position.Y;
+                                    trig.Position0Z = position.Z;
+                                }
+                            }
                         }
+                    }
                 }
                 else
                     success = false;

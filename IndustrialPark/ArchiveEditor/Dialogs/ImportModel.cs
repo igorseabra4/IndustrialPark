@@ -81,7 +81,8 @@ namespace IndustrialPark
                                     File.ReadAllBytes(filePath) :
                                     ReadFileMethods.ExportRenderWareFile(
                                         CreateDFFFromAssimp(filePath,
-                                        a.checkBoxFlipUVs.Checked),
+                                        a.checkBoxFlipUVs.Checked,
+                                        a.checkBoxIgnoreMeshColors.Checked),
                                         modelRenderWareVersion(game));
 
                         AHDRs.Add(

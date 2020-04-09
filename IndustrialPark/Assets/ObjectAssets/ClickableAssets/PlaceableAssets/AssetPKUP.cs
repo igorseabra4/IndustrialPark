@@ -102,7 +102,8 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Pickup")]
+        [Category("Pickup"),
+        Description("0 = None\n1 = Reappear shortly after collect (Spongeball)\n2 = Initially visible\nAdd numbers to enable multiple flags")]
         public short PickupFlags
         {
             get => ReadShort(0x58 + Offset);

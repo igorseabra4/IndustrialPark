@@ -9,15 +9,15 @@ namespace IndustrialPark
 {
     public class StructPARP
     {
-        public float UnknownFloat00 { get; set; }
-        public float UnknownFloat04 { get; set; }
-        public AssetID UnknownStringHash08 { get; set; }
-        public float UnknownFloat0C { get; set; }
-        public float UnknownFloat10 { get; set; }
+        public float InterpStart { get; set; }
+        public float InterpEnd { get; set; }
+        public AssetID InterpMode { get; set; }
+        public float Frequency { get; set; }
+        public float Frequency2 { get; set; }
 
         public StructPARP()
         {
-            UnknownStringHash08 = 0;
+            InterpMode = 0;
         }
     }
 
@@ -45,22 +45,22 @@ namespace IndustrialPark
             set => Write(0x8, value);
         }
 
-        [Category("Particle Properties")]
+        [Category("Particle Properties"), Description("Each of the 14 structs has a different function. Check wiki page for more info.")]
         public StructPARP[] Structs
         {
             get
             {
                 List<StructPARP> list = new List<StructPARP>();
 
-                for (int i = 0; i < 12; i++)
+                for (int i = 0; i < 14; i++)
                 {
                     list.Add(new StructPARP()
                     {
-                        UnknownFloat00 = ReadFloat(0x0C + i * 0x14 + 0x00),
-                        UnknownFloat04 = ReadFloat(0x0C + i * 0x14 + 0x04),
-                        UnknownStringHash08 = ReadUInt(0x0C + i * 0x14 + 0x08),
-                        UnknownFloat0C = ReadFloat(0x0C + i * 0x14 + 0x0C),
-                        UnknownFloat10 = ReadFloat(0x0C + i * 0x14 + 0x10)
+                        InterpStart = ReadFloat(0x0C + i * 0x14 + 0x00),
+                        InterpEnd = ReadFloat(0x0C + i * 0x14 + 0x04),
+                        InterpMode = ReadUInt(0x0C + i * 0x14 + 0x08),
+                        Frequency = ReadFloat(0x0C + i * 0x14 + 0x0C),
+                        Frequency2 = ReadFloat(0x0C + i * 0x14 + 0x10)
                     });
                 }
 
@@ -69,117 +69,47 @@ namespace IndustrialPark
             set
             {
                 List<StructPARP> list = value.ToList();
-                if (list.Count != 12)
-                    System.Windows.Forms.MessageBox.Show("Array of PARP structs must have exactly 12 entries!");
-                while (list.Count < 12)
+                if (list.Count != 14)
+                    System.Windows.Forms.MessageBox.Show("Array of PARP structs must have exactly 14 entries!");
+                while (list.Count < 14)
                     list.Add(new StructPARP());
-                while (list.Count > 12)
+                while (list.Count > 14)
                     list.RemoveAt(list.Count - 1);
 
                 List<byte> before = Data.Take(0xC).ToList();
 
                 foreach (StructPARP a in list)
                 {
-                    before.AddRange(BitConverter.GetBytes(Switch(a.UnknownFloat00)));
-                    before.AddRange(BitConverter.GetBytes(Switch(a.UnknownFloat04)));
-                    before.AddRange(BitConverter.GetBytes(Switch(a.UnknownStringHash08)));
-                    before.AddRange(BitConverter.GetBytes(Switch(a.UnknownFloat0C)));
-                    before.AddRange(BitConverter.GetBytes(Switch(a.UnknownFloat10)));
+                    before.AddRange(BitConverter.GetBytes(Switch(a.InterpStart)));
+                    before.AddRange(BitConverter.GetBytes(Switch(a.InterpEnd)));
+                    before.AddRange(BitConverter.GetBytes(Switch(a.InterpMode)));
+                    before.AddRange(BitConverter.GetBytes(Switch(a.Frequency)));
+                    before.AddRange(BitConverter.GetBytes(Switch(a.Frequency2)));
                 }
 
-                before.AddRange(Data.Skip(0xFC));
+                before.AddRange(Data.Skip(0x124));
                 Data = before.ToArray();
             }
         }
 
-        [Category("Particle Properties")]
-        public int UnknownIntFC
+        [Category("Particle Properties"), TypeConverter(typeof(FloatTypeConverter))]
+        public float VelX
         {
-            get => ReadInt(0xFC);
-            set => Write(0xFC, value);
-        }
-
-        [Category("Particle Properties")]
-        public int UnknownInt100
-        {
-            get => ReadInt(0x100);
-            set => Write(0x100, value);
-        }
-
-        [Category("Particle Properties")]
-        public int UnknownInt104
-        {
-            get => ReadInt(0x104);
-            set => Write(0x104, value);
-        }
-
-        [Category("Particle Properties")]
-        public int UnknownInt108
-        {
-            get => ReadInt(0x108);
-            set => Write(0x108, value);
-        }
-
-        [Category("Particle Properties")]
-        public int UnknownInt10C
-        {
-            get => ReadInt(0x10C);
-            set => Write(0x10C, value);
-        }
-
-        [Category("Particle Properties")]
-        public int UnknownInt110
-        {
-            get => ReadInt(0x110);
-            set => Write(0x110, value);
-        }
-
-        [Category("Particle Properties")]
-        public int UnknownInt114
-        {
-            get => ReadInt(0x114);
-            set => Write(0x114, value);
-        }
-
-        [Category("Particle Properties")]
-        public int UnknownInt118
-        {
-            get => ReadInt(0x118);
-            set => Write(0x118, value);
-        }
-
-        [Category("Particle Properties")]
-        public int UnknownInt11C
-        {
-            get => ReadInt(0x11C);
-            set => Write(0x11C, value);
-        }
-
-        [Category("Particle Properties")]
-        public int UnknownInt120
-        {
-            get => ReadInt(0x120);
-            set => Write(0x120, value);
-        }
-
-        [Category("Particle Properties")]
-        public int UnknownInt124
-        {
-            get => ReadInt(0x124);
+            get => ReadFloat(0x124);
             set => Write(0x124, value);
         }
 
-        [Category("Particle Properties")]
-        public int UnknownInt128
+        [Category("Particle Properties"), TypeConverter(typeof(FloatTypeConverter))]
+        public float VelY
         {
-            get => ReadInt(0x128);
+            get => ReadFloat(0x128);
             set => Write(0x128, value);
         }
 
-        [Category("Particle Properties")]
-        public int UnknownInt12C
+        [Category("Particle Properties"), TypeConverter(typeof(FloatTypeConverter))]
+        public float VelZ
         {
-            get => ReadInt(0x12C);
+            get => ReadFloat(0x12C);
             set => Write(0x12C, value);
         }
 

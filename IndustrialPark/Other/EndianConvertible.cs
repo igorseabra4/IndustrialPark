@@ -5,7 +5,7 @@ namespace IndustrialPark
 {
     public class EndianConvertible
     {
-        private Endianness endianness;
+        protected Endianness endianness;
 
         public EndianConvertible(Endianness endianness)
         {

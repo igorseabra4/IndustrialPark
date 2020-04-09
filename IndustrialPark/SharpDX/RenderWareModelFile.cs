@@ -11,6 +11,7 @@ namespace IndustrialPark
     {
         private const string DefaultTexture = "default";
         private RWSection[] rwSectionArray;
+        public bool isNativeData = false;
 
         public static bool dontDrawInvisible = false;
 
@@ -35,7 +36,7 @@ namespace IndustrialPark
         }
         
         public UvAnimRenderData renderData;
-        
+
         public RenderWareModelFile(SharpDevice device, RWSection[] rwChunkList)
         {
             rwSectionArray = rwChunkList;
@@ -315,6 +316,7 @@ namespace IndustrialPark
 
         private void AddNativeData(SharpDevice device, Extension_0003 extension, List<string> MaterialStream, Matrix transformMatrix)
         {
+            isNativeData = true;
             NativeDataGC n = null;
 
             foreach (RWSection rw in extension.extensionSectionList)

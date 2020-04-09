@@ -6,7 +6,7 @@ namespace IndustrialPark
 {
     public class ProjectJson
     {
-        public static int getCurrentVersion => 2;
+        public static int getCurrentVersion => 3;
         public int version;
 
         public List<string> hipPaths;
@@ -35,11 +35,8 @@ namespace IndustrialPark
 
         public bool UseLegacyAssetIDFormat;
         public bool isDrawingUI;
-        public bool renderBasedOnLodt;
-        public bool renderBasedOnPipt;
 
         public bool dontRenderJSP;
-        public bool dontDrawInvisible;
 
         public bool dontRenderBOUL;
         public bool dontRenderBUTN;
@@ -61,12 +58,11 @@ namespace IndustrialPark
         public bool dontRenderUI;
         public bool dontRenderUIFT;
         public bool dontRenderVIL;
-
-        public bool persistentShinies;
-        public bool hideHelp;
-
+        
         public ProjectJson()
         {
+            version = getCurrentVersion;
+
             hipPaths = new List<string>();
             scoobyPlatforms = new List<Platform>();
             TextureFolderPaths = new List<string>();
@@ -94,9 +90,6 @@ namespace IndustrialPark
 
             UseLegacyAssetIDFormat = false;
             isDrawingUI = false;
-            renderBasedOnLodt = false;
-            renderBasedOnPipt = false;
-            dontDrawInvisible = false;
 
             dontRenderJSP = false;
             dontRenderBOUL = false;
@@ -119,69 +112,6 @@ namespace IndustrialPark
             dontRenderUI = true;
             dontRenderUIFT = true;
             dontRenderVIL = false;
-
-            persistentShinies = true;
-            hideHelp = false;
-        }
-
-        public ProjectJson(List<string> hipPaths, List<Platform> scoobyPlatforms, List<string> textureFolderPaths, Vector3 camPos, float yaw, float pitch, float speed, float speedRot,
-            float fieldOfView, float farPlane, bool noCulling, bool wireframe, Color4 backgroundColor, Vector4 widgetColor, Vector4 trigColor,
-            Vector4 mvptColor, Vector4 sfxColor, bool useLegacyAssetIDFormat, List<uint> hiddenAssets, bool isDrawingUI, Vector3 Grid,
-            bool renderBasedOnLodt, bool renderBasedOnPipt, bool dontDrawInvisible, bool dontRenderJSP, bool dontRenderBOUL, 
-            bool dontRenderBUTN, bool dontRenderCAM, bool dontRenderDSTR, bool dontRenderDYNA, bool dontRenderEGEN, bool dontRenderHANG,
-            bool dontRenderLITE, bool dontRenderMRKR, bool dontRenderMVPT, bool dontRenderPEND, bool dontRenderPKUP, bool dontRenderPLAT,
-            bool dontRenderPLYR, bool dontRenderSFX, bool dontRenderSIMP, bool dontRenderTRIG, bool dontRenderUI, bool dontRenderUIFT, 
-            bool dontRenderVIL, bool persistentShinies, bool hideHelp)
-        {
-            version = getCurrentVersion;
-
-            this.hipPaths = hipPaths;
-            this.scoobyPlatforms = scoobyPlatforms;
-            TextureFolderPaths = textureFolderPaths;
-            CamPos = camPos;
-            Yaw = yaw;
-            Pitch = pitch;
-            Speed = speed;
-            SpeedRot = speedRot;
-            FieldOfView = fieldOfView;
-            FarPlane = farPlane;
-            NoCulling = noCulling;
-            Wireframe = wireframe;
-            BackgroundColor = backgroundColor;
-            WidgetColor = widgetColor;
-            TrigColor = trigColor;
-            MvptColor = mvptColor;
-            SfxColor = sfxColor;
-            UseLegacyAssetIDFormat = useLegacyAssetIDFormat;
-            this.hiddenAssets = hiddenAssets;
-            this.isDrawingUI = isDrawingUI;
-            this.renderBasedOnLodt = renderBasedOnLodt;
-            this.renderBasedOnPipt = renderBasedOnPipt;
-            this.dontDrawInvisible = dontDrawInvisible;
-            this.dontRenderJSP = dontRenderJSP;
-            this.dontRenderBOUL = dontRenderBOUL;
-            this.dontRenderBUTN = dontRenderBUTN;
-            this.dontRenderCAM = dontRenderCAM;
-            this.dontRenderDSTR = dontRenderDSTR;
-            this.dontRenderDYNA = dontRenderDYNA;
-            this.dontRenderEGEN = dontRenderEGEN;
-            this.dontRenderHANG = dontRenderHANG;
-            this.dontRenderLITE = dontRenderLITE;
-            this.dontRenderMRKR = dontRenderMRKR;
-            this.dontRenderMVPT = dontRenderMVPT;
-            this.dontRenderPEND = dontRenderPEND;
-            this.dontRenderPKUP = dontRenderPKUP;
-            this.dontRenderPLAT = dontRenderPLAT;
-            this.dontRenderPLYR = dontRenderPLYR;
-            this.dontRenderSFX = dontRenderSFX;
-            this.dontRenderSIMP = dontRenderSIMP;
-            this.dontRenderTRIG = dontRenderTRIG;
-            this.dontRenderUI = dontRenderUI;
-            this.dontRenderUIFT = dontRenderUIFT;
-            this.dontRenderVIL = dontRenderVIL;
-            this.persistentShinies = persistentShinies;
-            this.hideHelp = hideHelp;
-            this.Grid = Grid;
         }
     }
 }

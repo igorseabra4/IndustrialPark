@@ -186,6 +186,15 @@ namespace IndustrialPark
         {
             if (movementPreview)
             {
+                if (isSkyBox)
+                {
+                    Vector3 skyTranslation = Program.MainForm.renderer.Camera.Position;
+                    if (!skyBoxUseY)
+                        skyTranslation.Y = PositionY;
+
+                    return base.LocalWorld() * Matrix.Translation(-Position) * Matrix.Translation(skyTranslation);
+                }
+                
                 if (PlatformSubtype == PlatTypeSpecific.MovePoint)
                     return Matrix.Scaling(_scale)
                         * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
@@ -214,5 +223,22 @@ namespace IndustrialPark
         }
 
         protected override int MotionStart => game == Game.Scooby ? 0x78 : 0x90 + Offset;
+
+        private bool isSkyBox = false;
+        private bool skyBoxUseY = false;
+
+        public override void Reset()
+        {
+            isSkyBox = false;
+            skyBoxUseY = false;
+            foreach (LinkBFBB link in LinksBFBB)
+                if (link.EventSendID == EventBFBB.SetasSkydome && link.TargetAssetID.Equals(AssetID))
+                {
+                    isSkyBox = true;
+                    if (link.Arguments_Float[1] == 1f)
+                        skyBoxUseY = true;
+                }
+            base.Reset();
+        }
     }
 }

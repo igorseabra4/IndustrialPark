@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using HipHopFile;
+using RenderWareFile;
 using SharpDX;
 
 namespace IndustrialPark
@@ -640,27 +642,48 @@ namespace IndustrialPark
             RecalculateAllMatrices();
         }
 
-        private void ConvertAllAssetTypes(Platform previousPlatform, Game previousGame, out HashSet<AssetType> unsupported)
+        private void ConvertAllAssetTypes(Platform previousPlatform, Game previousGame, out HashSet<uint> unsupported)
         {
-            unsupported = new HashSet<AssetType>();
-            HashSet<AssetType> unsupportedDefault = new HashSet<AssetType>() { AssetType.BSP, AssetType.JSP, AssetType.RWTX, AssetType.MODL };
+            unsupported = new HashSet<uint>();
+
+            HashSet<AssetType> unsupportedDefault = new HashSet<AssetType>() { AssetType.SND, AssetType.SNDS, AssetType.SNDI };
+
             foreach (Asset asset in assetDictionary.Values)
                 try
                 {
-                    asset.AHDR = ConvertAssetType(asset.AHDR, EndianConverter.PlatformEndianness(previousPlatform), EndianConverter.PlatformEndianness(platform), previousGame, game);
-
-                    if (unsupportedDefault.Contains(asset.AHDR.assetType))
-                        unsupported.Add(asset.AHDR.assetType);
+                    if (asset.AHDR.assetType == AssetType.RWTX)
+                        continue;
+                    if (asset is AssetRenderWareModel MODL && !MODL.IsNativeData)
+                    {
+                        MODL.Data =
+                            ReadFileMethods.ExportRenderWareFile(
+                            ReadFileMethods.ReadRenderWareFile(asset.Data),
+                            Models.BSP_IO_Shared.modelRenderWareVersion(game));
+                    }
                     else
                     {
-                        asset.game = game;
-                        asset.platform = platform;
+                        if (unsupportedDefault.Contains(asset.AHDR.assetType))
+                        {
+                            unsupported.Add(asset.AHDR.assetID);
+                            continue;
+                        }
+
+                        asset.AHDR = ConvertAssetType(asset.AHDR, EndianConverter.PlatformEndianness(previousPlatform), EndianConverter.PlatformEndianness(platform), previousGame, game);
                     }
+
+                    asset.game = game;
+                    asset.platform = platform;
                 }
                 catch
                 {
-                    unsupported.Add(asset.AHDR.assetType);
+                    unsupported.Add(asset.AHDR.assetID);
                 }
+
+            if (ContainsAssetWithType(AssetType.RWTX))
+                if (!PerformTextureConversion())
+                    foreach (var a in assetDictionary.Values)
+                        if (a.AHDR.assetType == AssetType.RWTX)
+                            unsupported.Add(a.AHDR.assetID);
         }
 
         public static Section_AHDR ConvertAssetType(Section_AHDR AHDR, Endianness previousEndianness, Endianness currentEndianness, Game previousGame,  Game currentGame)
@@ -677,6 +700,99 @@ namespace IndustrialPark
 
             return AHDR;
         }
+
+        public void ReplaceUnconvertableAssets(string fileName, ref HashSet<uint> missing)
+        {
+            var soundHeaders = new List<(uint, byte[])>();
+            Platform scoobyPlatform = Platform.Unknown;
+            SearchOnFolder(fileName, ref scoobyPlatform, ref missing, ref soundHeaders);
+            
+            if (soundHeaders.Count > 0)
+                foreach (Asset a in assetDictionary.Values)
+                    if (a.AHDR.assetType == AssetType.SNDI)
+                    {
+                        List<uint> assetIDs = new List<uint>();
+                        uint sndiAssetID = PlaceTemplate(new Vector3(), GetLayerFromAssetID(a.AHDR.assetID), out _, ref assetIDs, "sound_info", AssetTemplate.SoundInfo);
+
+                        RemoveAsset(a.AHDR.assetID);
+
+                        if (platform == Platform.GameCube)
+                        {
+                            if (game == Game.Incredibles)
+                            {
+                                AssetSNDI_GCN_V2 sndi = (AssetSNDI_GCN_V2)GetFromAssetID(sndiAssetID);
+                                foreach (var v in soundHeaders)
+                                    sndi.AddEntry(v.Item2, v.Item1);
+                            }
+                            else
+                            {
+                                AssetSNDI_GCN_V1 sndi = (AssetSNDI_GCN_V1)GetFromAssetID(sndiAssetID);
+                                foreach (var v in soundHeaders)
+                                    sndi.AddEntry(v.Item2, v.Item1, GetFromAssetID(v.Item1).AHDR.assetType, out _);
+                            }
+                        }
+                        else if (platform == Platform.Xbox)
+                        {
+                            AssetSNDI_XBOX sndi = (AssetSNDI_XBOX)GetFromAssetID(sndiAssetID);
+                            foreach (var v in soundHeaders)
+                                sndi.AddEntry(v.Item2, v.Item1, GetFromAssetID(v.Item1).AHDR.assetType, out _);
+                        }
+                        else if (platform == Platform.PS2)
+                        {
+                            AssetSNDI_PS2 sndi = (AssetSNDI_PS2)GetFromAssetID(sndiAssetID);
+                            foreach (var v in soundHeaders)
+                                sndi.AddEntry(v.Item2, v.Item1, GetFromAssetID(v.Item1).AHDR.assetType, out _);
+                        }
+                        break;
+                    }
+        }
+
+        private void SearchOnFolder(string folderPath, ref Platform scoobyPlatform, ref HashSet<uint> missing, ref List<(uint, byte[])> soundHeaders)
+        {
+            if (missing.Count == 0)
+                return;
+
+            foreach (string s in Directory.GetFiles(folderPath))
+            {
+                if (Path.GetExtension(s).ToLower() == ".hip" || Path.GetExtension(s).ToLower() == ".hop")
+                {
+                    ArchiveEditorFunctions otherArchive = new ArchiveEditorFunctions();
+                    otherArchive.OpenFile(s, false, scoobyPlatform, true);
+                    if (scoobyPlatform == Platform.Unknown)
+                        scoobyPlatform = otherArchive.platform;
+
+                    foreach (Asset a in otherArchive.GetAllAssets())
+                    {
+                        if (missing.Contains(a.AHDR.assetID))
+                        {
+                            if (a.AHDR.assetType == AssetType.SND || a.AHDR.assetType == AssetType.SNDS)
+                                try
+                                {
+                                    soundHeaders.Add((a.AHDR.assetID, otherArchive.GetHeaderFromSNDI(a.AHDR.assetID)));
+                                }
+                                catch
+                                {
+                                    continue;
+                                }
+                            
+                            assetDictionary[a.AHDR.assetID].Data = a.Data;
+                            assetDictionary[a.AHDR.assetID].game = a.game;
+                            assetDictionary[a.AHDR.assetID].platform = a.platform;
+
+                            missing.Remove(a.AHDR.assetID);
+                        }
+                    }
+
+                    otherArchive.Dispose(false);
+                }
+
+                if (missing.Count == 0)
+                    return;
+            }
+            foreach (string s in Directory.GetDirectories(folderPath))
+                SearchOnFolder(s, ref scoobyPlatform, ref missing, ref soundHeaders);
+        }
+
 
         public List<uint> MakeSimps(List<uint> assetIDs)
         {
@@ -738,6 +854,20 @@ namespace IndustrialPark
                     });
 
             pipt.PIPT_Entries = entries.ToArray();
+        }
+
+        private byte[] ReplaceReferences(byte[] data, Dictionary<uint, uint> referenceUpdate)
+        {
+            for (int i = 0; i < data.Length; i += 4)
+                foreach (var key in referenceUpdate.Keys)
+                    if (BitConverter.ToUInt32(data, i) == key)
+                    {
+                        byte[] nd = BitConverter.GetBytes(referenceUpdate[key]);
+                        for (int j = 0; j < 4; j++)
+                            data[i + j] = nd[j];
+                    }
+
+            return data;
         }
     }
 }

@@ -51,34 +51,7 @@ namespace IndustrialPark
             UpdateUserTemplateComboBox();
 
             if (File.Exists(pathToSettings))
-            {
-                IPSettings settings = JsonConvert.DeserializeObject<IPSettings>(File.ReadAllText(pathToSettings));
-
-                autoSaveOnClosingToolStripMenuItem.Checked = settings.AutosaveOnClose;
-                autoLoadOnStartupToolStripMenuItem.Checked = settings.AutoloadOnStartup;
-                checkForUpdatesOnStartupToolStripMenuItem.Checked = settings.CheckForUpdatesOnStartup;
-
-                if (settings.CheckForUpdatesOnStartup && AutomaticUpdater.UpdateIndustrialPark(out _))
-                {
-                    Close();
-                    System.Diagnostics.Process.Start(Application.StartupPath + "/IndustrialPark.exe");
-                }
-                
-                string[] args = Environment.GetCommandLineArgs();
-                if (args.Length > 1)
-                {
-                    if (Path.GetExtension(args[1]).ToLower() == ".hip" || Path.GetExtension(args[1]).ToLower() == ".hop")
-                    {
-                        AddArchiveEditor(args[1]);
-                        SetProjectToolStripStatusLabel();
-                        StartRenderer();
-                        return;
-                    }
-                }
-
-                if (settings.AutoloadOnStartup && !string.IsNullOrEmpty(settings.LastProjectPath) && File.Exists(settings.LastProjectPath))
-                    ApplySettings(settings.LastProjectPath);
-            }
+                ApplyIPSettings(JsonConvert.DeserializeObject<IPSettings>(File.ReadAllText(pathToSettings)));
             else
             {
                 MessageBox.Show("It appears this is your first time using Industrial Park.\nPlease consult the documentation on the BFBB Modding Wiki to understand how to use the tool if you haven't already.\nAlso, be sure to check individual asset pages if you're not sure what one of them or their settings do.");
@@ -87,6 +60,52 @@ namespace IndustrialPark
 
             SetProjectToolStripStatusLabel();
             StartRenderer();
+        }
+
+        private void ApplyIPSettings(IPSettings settings)
+        {
+            autoSaveOnClosingToolStripMenuItem.Checked = settings.AutosaveOnClose;
+            autoLoadOnStartupToolStripMenuItem.Checked = settings.AutoloadOnStartup;
+            checkForUpdatesOnStartupToolStripMenuItem.Checked = settings.CheckForUpdatesOnStartup;
+
+            useLODTForRenderingToolStripMenuItem.Checked = settings.renderBasedOnLodt;
+            AssetMODL.renderBasedOnLodt = settings.renderBasedOnLodt;
+
+            usePIPTForRenderingToolStripMenuItem.Checked = settings.renderBasedOnPipt;
+            AssetMODL.renderBasedOnPipt = settings.renderBasedOnPipt;
+
+            hideInvisibleMeshesToolStripMenuItem.Checked = settings.dontDrawInvisible;
+            RenderWareModelFile.dontDrawInvisible = settings.dontDrawInvisible;
+
+            updateReferencesOnCopyPasteToolStripMenuItem.Checked = settings.updateReferencesOnCopy;
+            ArchiveEditorFunctions.updateReferencesOnCopy = settings.updateReferencesOnCopy;
+
+            templatesPersistentShiniesToolStripMenuItem.Checked = settings.persistentShinies;
+            ArchiveEditorFunctions.persistentShinies = settings.persistentShinies;
+
+            hideHelpInAssetDataEditorsToolStripMenuItem.Checked = settings.hideHelp;
+            ArchiveEditorFunctions.hideHelp = settings.hideHelp;
+
+            if (settings.CheckForUpdatesOnStartup && AutomaticUpdater.UpdateIndustrialPark(out _))
+            {
+                Close();
+                System.Diagnostics.Process.Start(Application.StartupPath + "/IndustrialPark.exe");
+            }
+
+            string[] args = Environment.GetCommandLineArgs();
+            if (args.Length > 1)
+            {
+                if (Path.GetExtension(args[1]).ToLower() == ".hip" || Path.GetExtension(args[1]).ToLower() == ".hop")
+                {
+                    AddArchiveEditor(args[1]);
+                    SetProjectToolStripStatusLabel();
+                    StartRenderer();
+                    return;
+                }
+            }
+
+            if (settings.AutoloadOnStartup && !string.IsNullOrEmpty(settings.LastProjectPath) && File.Exists(settings.LastProjectPath))
+                ApplySettings(settings.LastProjectPath);
         }
 
         private delegate void StartLoop(Panel renderPanel);
@@ -115,7 +134,12 @@ namespace IndustrialPark
                 AutosaveOnClose = autoSaveOnClosingToolStripMenuItem.Checked,
                 AutoloadOnStartup = autoLoadOnStartupToolStripMenuItem.Checked,
                 LastProjectPath = currentProjectPath,
-                CheckForUpdatesOnStartup = checkForUpdatesOnStartupToolStripMenuItem.Checked
+                CheckForUpdatesOnStartup = checkForUpdatesOnStartupToolStripMenuItem.Checked,
+                renderBasedOnLodt = AssetMODL.renderBasedOnLodt,
+                renderBasedOnPipt = AssetMODL.renderBasedOnPipt,
+                dontDrawInvisible = RenderWareModelFile.dontDrawInvisible,
+                persistentShinies = ArchiveEditorFunctions.persistentShinies,
+                hideHelp = hideHelpInAssetDataEditorsToolStripMenuItem.Checked
             };
 
             File.WriteAllText(pathToSettings, JsonConvert.SerializeObject(settings, Formatting.Indented));
@@ -262,15 +286,51 @@ namespace IndustrialPark
                 hiddenAssets.AddRange(ae.archive.GetHiddenAssets());
             }
 
-            return new ProjectJson(hips, platforms, TextureManager.OpenTextureFolders.ToList(), renderer.Camera.Position,
-                renderer.Camera.Yaw, renderer.Camera.Pitch, renderer.Camera.Speed, renderer.Camera.SpeedRot, renderer.Camera.FieldOfView,
-                renderer.Camera.FarPlane, noCullingCToolStripMenuItem.Checked, wireframeFToolStripMenuItem.Checked, renderer.backgroundColor,
-                renderer.normalColor, renderer.trigColor, renderer.mvptColor, renderer.sfxColor, useLegacyAssetIDFormatToolStripMenuItem.Checked,
-                hiddenAssets, renderer.isDrawingUI, ArchiveEditorFunctions.Grid, AssetMODL.renderBasedOnLodt, AssetMODL.renderBasedOnPipt, RenderWareModelFile.dontDrawInvisible,
-                AssetJSP.dontRender, AssetBOUL.dontRender, AssetBUTN.dontRender, AssetCAM.dontRender, AssetDSTR_Scooby.dontRender, AssetDYNA.dontRender,
-                AssetEGEN.dontRender, AssetHANG.dontRender, AssetLITE.dontRender, AssetMRKR.dontRender, AssetMVPT_Scooby.dontRender, AssetPEND.dontRender,
-                AssetPLAT.dontRender, AssetPLAT.dontRender, AssetPLYR.dontRender, AssetSFX.dontRender, AssetSIMP.dontRender, AssetTRIG.dontRender,
-                AssetUI.dontRender, AssetUIFT.dontRender, AssetVIL.dontRender, ArchiveEditorFunctions.persistentShinies, ArchiveEditorFunctions.hideHelp);
+            return new ProjectJson()
+            {
+                hipPaths = hips,
+                scoobyPlatforms = platforms,
+                TextureFolderPaths = TextureManager.OpenTextureFolders.ToList(),
+                CamPos = renderer.Camera.Position,
+                Yaw = renderer.Camera.Yaw,
+                Pitch = renderer.Camera.Pitch,
+                Speed = renderer.Camera.Speed,
+                SpeedRot = renderer.Camera.SpeedRot,
+                FieldOfView = renderer.Camera.FieldOfView,
+                FarPlane = renderer.Camera.FarPlane,
+                NoCulling = noCullingCToolStripMenuItem.Checked,
+                Wireframe = wireframeFToolStripMenuItem.Checked,
+                BackgroundColor = renderer.backgroundColor,
+                WidgetColor = renderer.normalColor,
+                TrigColor = renderer.trigColor,
+                MvptColor = renderer.mvptColor,
+                SfxColor = renderer.sfxColor,
+                UseLegacyAssetIDFormat = useLegacyAssetIDFormatToolStripMenuItem.Checked,
+                hiddenAssets = hiddenAssets,
+                isDrawingUI = renderer.isDrawingUI,
+                dontRenderJSP = AssetJSP.dontRender,
+                dontRenderBOUL = AssetBOUL.dontRender,
+                dontRenderBUTN = AssetBUTN.dontRender,
+                dontRenderCAM = AssetCAM.dontRender,
+                dontRenderDSTR = AssetDSTR_Scooby.dontRender,
+                dontRenderDYNA = AssetDYNA.dontRender,
+                dontRenderEGEN = AssetEGEN.dontRender,
+                dontRenderHANG = AssetHANG.dontRender,
+                dontRenderLITE = AssetLITE.dontRender,
+                dontRenderMRKR = AssetMRKR.dontRender,
+                dontRenderMVPT = AssetMVPT_Scooby.dontRender,
+                dontRenderPEND = AssetPEND.dontRender,
+                dontRenderPKUP = AssetPKUP.dontRender,
+                dontRenderPLAT = AssetPLAT.dontRender,
+                dontRenderPLYR = AssetPLYR.dontRender,
+                dontRenderSFX = AssetSFX.dontRender,
+                dontRenderSIMP = AssetSIMP.dontRender,
+                dontRenderTRIG = AssetTRIG.dontRender,
+                dontRenderUI = AssetUI.dontRender,
+                dontRenderUIFT = AssetUIFT.dontRender,
+                dontRenderVIL = AssetVIL.dontRender,
+                Grid = ArchiveEditorFunctions.Grid,
+            };
         }
 
         private void ApplySettings(string ipSettingsPath)
@@ -295,7 +355,6 @@ namespace IndustrialPark
             TextureManager.LoadTexturesFromFolder(ipSettings.TextureFolderPaths);
             
             ArchiveEditorFunctions.hiddenAssets = ipSettings.hiddenAssets;
-            ArchiveEditorFunctions.hideHelp = ipSettings.hideHelp;
 
             for (int i = 0; i < ipSettings.hipPaths.Count; i++)
                 if (ipSettings.hipPaths[i] == "Empty")
@@ -342,19 +401,11 @@ namespace IndustrialPark
             renderer.SetSfxColor(ipSettings.SfxColor);
 
             useLegacyAssetIDFormatToolStripMenuItem.Checked = ipSettings.UseLegacyAssetIDFormat;
+            AssetIDTypeConverter.Legacy = ipSettings.UseLegacyAssetIDFormat;
 
             uIModeToolStripMenuItem.Checked = ipSettings.isDrawingUI;
             renderer.isDrawingUI = ipSettings.isDrawingUI;
-
-            useMaxRenderDistanceToolStripMenuItem.Checked = ipSettings.renderBasedOnLodt;
-            AssetMODL.renderBasedOnLodt = ipSettings.renderBasedOnLodt;
-
-            usePIPTForRenderingToolStripMenuItem.Checked = ipSettings.renderBasedOnPipt;
-            AssetMODL.renderBasedOnPipt = ipSettings.renderBasedOnPipt;
-
-            hideInvisibleMeshesToolStripMenuItem.Checked = ipSettings.dontDrawInvisible;
-            RenderWareModelFile.dontDrawInvisible = ipSettings.dontDrawInvisible;
-
+            
             levelModelToolStripMenuItem.Checked = !ipSettings.dontRenderJSP;
             AssetJSP.dontRender = ipSettings.dontRenderJSP;
 
@@ -417,10 +468,6 @@ namespace IndustrialPark
 
             vILToolStripMenuItem.Checked = !ipSettings.dontRenderVIL;
             AssetVIL.dontRender = ipSettings.dontRenderVIL;
-
-            templatesPersistentShiniesToolStripMenuItem.Checked = ipSettings.persistentShinies;
-            ArchiveEditorFunctions.persistentShinies = ipSettings.persistentShinies;
-            hideHelpInAssetDataEditorsToolStripMenuItem.Checked = ipSettings.hideHelp;
         }
 
         public void SetToolStripStatusLabel(string Text)
@@ -840,8 +887,8 @@ namespace IndustrialPark
 
         private void useMaxRenderDistanceToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            useMaxRenderDistanceToolStripMenuItem.Checked = !useMaxRenderDistanceToolStripMenuItem.Checked;
-            AssetMODL.renderBasedOnLodt = useMaxRenderDistanceToolStripMenuItem.Checked;
+            useLODTForRenderingToolStripMenuItem.Checked = !useLODTForRenderingToolStripMenuItem.Checked;
+            AssetMODL.renderBasedOnLodt = useLODTForRenderingToolStripMenuItem.Checked;
         }
 
         private void UsePIPTForRenderingToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1287,6 +1334,18 @@ namespace IndustrialPark
         {
             hideInvisibleMeshesToolStripMenuItem.Checked = !hideInvisibleMeshesToolStripMenuItem.Checked;
             RenderWareModelFile.dontDrawInvisible = hideInvisibleMeshesToolStripMenuItem.Checked;
+        }
+
+        private void updateReferencesOnCopyPasteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            updateReferencesOnCopyPasteToolStripMenuItem.Checked = !updateReferencesOnCopyPasteToolStripMenuItem.Checked;
+            ArchiveEditorFunctions.updateReferencesOnCopy = updateReferencesOnCopyPasteToolStripMenuItem.Checked;
+        }
+
+        private void refreshTexturesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (ArchiveEditor ae in archiveEditors)
+                ae.RefreshHop(renderer);
         }
     }
 }

@@ -220,5 +220,11 @@ namespace IndustrialPark
 
             return AHDRs;
         }
+
+        public static void FixTextureForScooby(ref byte[] data)
+        {
+            for (int j = 0x6D; j < 0x8C; j++)
+                data[j] = 0xCD;
+        }
     }
 }

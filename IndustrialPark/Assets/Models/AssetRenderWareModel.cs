@@ -40,6 +40,9 @@ namespace IndustrialPark
 
         public bool HasRenderWareModelFile() => model != null;
 
+        [Description("If IsNativeData is true, there is a good chance the Export function will not work properly.")]
+        public bool IsNativeData => model != null ? model.isNativeData : false;
+
         [Browsable(false)]
         public string[] Textures => TextureNames.Distinct().ToArray();
 

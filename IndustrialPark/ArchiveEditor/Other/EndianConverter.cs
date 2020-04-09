@@ -80,13 +80,11 @@ namespace IndustrialPark
                     while (reader.BaseStream.Position < reader.BaseStream.Length)
                         bytes.AddRange(Reverse(reader.ReadInt32()));
                     break;
-                case AssetType.BSP:
-                case AssetType.JSP:
-                case AssetType.MODL:
-                case AssetType.RWTX:
                 case AssetType.FLY:
                     AHDR.data = ((MemoryStream)reader.BaseStream).ToArray();
                     return AHDR;
+                case AssetType.ATBL:
+                    ReverseATBL(ref bytes, AHDR); break;
                 case AssetType.BOUL:
                     ReverseBOUL(ref bytes); break;
                 case AssetType.BUTN:
@@ -119,6 +117,10 @@ namespace IndustrialPark
                     ReverseHANG(ref bytes); break;
                 case AssetType.MVPT:
                     ReverseMVPT(ref bytes); break;
+                case AssetType.PARS:
+                    ReversePARS(ref bytes); break;
+                case AssetType.PARP:
+                    ReversePARP(ref bytes); break;
                 case AssetType.PEND:
                     ReversePEND(ref bytes); break;
                 case AssetType.PKUP:
@@ -137,8 +139,12 @@ namespace IndustrialPark
                     ReverseSFX(ref bytes); break;
                 case AssetType.SGRP:
                     ReverseSGRP(ref bytes); break;
+                case AssetType.SHRP:
+                    ReverseSHRP(ref bytes, AHDR); break;
                 case AssetType.SIMP:
                     ReverseSIMP(ref bytes); break;
+                case AssetType.SURF:
+                    ReverseSURF(ref bytes); break;
                 case AssetType.TEXT:
                     ReverseTEXT(ref bytes); break;
                 case AssetType.TIMR:
@@ -198,6 +204,43 @@ namespace IndustrialPark
                 for (int j = 0; j < 7; j++)
                     bytes.AddRange(Reverse(reader.ReadInt32()));
             }
+        }
+
+        private void ReverseATBL(ref List<byte> bytes, Section_AHDR AHDR)
+        {
+            AssetATBL ATBL = new AssetATBL(AHDR, previousGame, previousEndianness == Endianness.Big ? Platform.GameCube : Platform.Xbox);
+
+            int numRaw = ATBL.NumRaw;
+            int numFiles = ATBL.NumFiles;
+            int numStates = ATBL.NumStates;
+            int numEffects = ATBL.AnimationEffects.Length;
+
+            for (int i = 0; i < 5; i++)
+                bytes.AddRange(Reverse(reader.ReadInt32()));
+
+            for (int i = 0; i < numRaw; i++)
+                bytes.AddRange(Reverse(reader.ReadInt32()));
+
+            for (int i = 0; i < numFiles; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                    bytes.AddRange(Reverse(reader.ReadInt32()));
+                for (int j = 0; j < 2; j++)
+                    bytes.AddRange(Reverse(reader.ReadInt16()));
+                for (int j = 0; j < 4; j++)
+                    bytes.AddRange(Reverse(reader.ReadInt32()));
+            }
+
+            for (int i = 0; i < numStates; i++)
+                for (int j = 0; j < 7; j++)
+                    bytes.AddRange(Reverse(reader.ReadInt32()));
+
+            for (int i = 0; i < numEffects; i++)
+                for (int j = 0; j < 6; j++)
+                    bytes.AddRange(Reverse(reader.ReadInt32()));
+
+            for (int i = 0; i < numRaw; i++)
+                bytes.AddRange(Reverse(reader.ReadInt32()));
         }
 
         private void ReverseBOUL(ref List<byte> bytes)
@@ -515,6 +558,45 @@ namespace IndustrialPark
             ReverseLinks(ref bytes, bytes[5]);
         }
 
+        private void ReversePARS(ref List<byte> bytes)
+        {
+            ReverseObject(ref bytes);
+
+            for (int i = 0; i < 3; i++)
+                bytes.AddRange(Reverse(reader.ReadInt32()));
+
+            for (int i = 0; i < 2; i++)
+                bytes.Add(reader.ReadByte());
+
+            bytes.AddRange(Reverse(reader.ReadInt16()));
+
+            for (int i = 0; i < 4; i++)
+                bytes.Add(reader.ReadByte());
+
+            int cmdSize = reader.ReadInt32();
+            reader.BaseStream.Position -= 4;
+            if (previousEndianness == Endianness.Big)
+                cmdSize = BitConverter.ToInt32(Reverse(cmdSize).ToArray(), 0);
+            bytes.AddRange(Reverse(reader.ReadInt32()));
+
+            for (int i = 0; i < cmdSize; i++)
+                bytes.AddRange(Reverse(reader.ReadInt32()));
+
+            ReverseLinks(ref bytes, bytes[5]);
+        }
+
+        private void ReversePARP(ref List<byte> bytes)
+        {
+            ReverseObject(ref bytes);
+            
+            bytes.AddRange(Reverse(reader.ReadInt32()));
+
+            for (int i = 0; i < 75; i++)
+                    bytes.AddRange(Reverse(reader.ReadInt32()));
+
+            ReverseLinks(ref bytes, bytes[5]);
+        }
+
         private void ReversePEND(ref List<byte> bytes)
         {
             ReversePlaceable(ref bytes);
@@ -730,6 +812,17 @@ namespace IndustrialPark
             ReverseLinks(ref bytes, bytes[5]);
         }
 
+        private void ReverseSHRP(ref List<byte> bytes, Section_AHDR AHDR)
+        {
+            for (int i = 0; i < 3; i++)
+                bytes.AddRange(Reverse(reader.ReadInt32()));
+
+            AssetSHRP SHRP = new AssetSHRP(AHDR, previousGame, previousEndianness == Endianness.Big ? Platform.GameCube : Platform.Xbox);
+
+            foreach (var entry in SHRP.GetEntries())
+                bytes.AddRange(entry.ToReverseByteArray());
+        }
+
         private void ReverseSIMP(ref List<byte> bytes)
         {
             ReversePlaceable(ref bytes);
@@ -739,6 +832,36 @@ namespace IndustrialPark
 
             for (int i = 0; i < 4; i++)
                 bytes.Add(reader.ReadByte());
+
+            ReverseLinks(ref bytes, bytes[5]);
+        }
+
+        private void ReverseSURF(ref List<byte> bytes)
+        {
+            ReverseObject(ref bytes);
+
+            for (int i = 0; i < 8; i++)
+                bytes.Add(reader.ReadByte());
+            
+            for (int i = 0; i < 7; i++)
+                bytes.AddRange(Reverse(reader.ReadInt32()));
+
+            for (int j = 0; j < 3; j++)
+            {
+                for (int i = 0; i < 2; i++)
+                    bytes.AddRange(Reverse(reader.ReadInt16()));
+                for (int i = 0; i < 2; i++)
+                    bytes.AddRange(Reverse(reader.ReadInt32()));
+            }
+            
+            for (int i = 0; i < 49; i++)
+                bytes.AddRange(Reverse(reader.ReadInt32()));
+
+            for (int i = 0; i < 4; i++)
+                bytes.Add(reader.ReadByte());
+
+            for (int i = 0; i < 5; i++)
+                bytes.AddRange(Reverse(reader.ReadInt32()));
 
             ReverseLinks(ref bytes, bytes[5]);
         }
@@ -821,7 +944,7 @@ namespace IndustrialPark
 
             for (int i = 0; i < 6; i++)
                 bytes.AddRange(Reverse(reader.ReadInt32()));
-            
+
             ReverseLinks(ref bytes, bytes[5]);
         }
     }

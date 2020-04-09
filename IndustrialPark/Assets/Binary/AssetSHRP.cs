@@ -92,58 +92,7 @@ namespace IndustrialPark
         [Category("Shrapnel")]
         public EntrySHRP[] SHRPEntries
         {
-            get
-            {
-                List<EntrySHRP> entries = new List<EntrySHRP>();
-                BinaryReader binaryReader = new BinaryReader(new MemoryStream(Data.Skip(0xC).ToArray()));
-
-                for (int i = 0; i < AmountOfEntries; i++)
-                {
-                    int Type = Switch(binaryReader.ReadInt32());
-                    binaryReader.BaseStream.Position -= 4;
-
-                    EntrySHRP entry = null;
-
-                    if (Type == 3)
-                    {
-                        if (game == Game.BFBB)
-                            entry = new EntrySHRP_Type3_BFBB(binaryReader.ReadBytes(EntrySHRP_Type3_BFBB.SizeOfEntry), platform);
-                        else if (game == Game.Incredibles)
-                            entry = new EntrySHRP_Type3_TSSM(binaryReader.ReadBytes(EntrySHRP_Type3_TSSM.SizeOfEntry), platform);
-                    }
-                    else if (Type == 4)
-                    {
-                        if (game == Game.BFBB)
-                            entry = new EntrySHRP_Type4_BFBB(binaryReader.ReadBytes(EntrySHRP_Type4_BFBB.SizeOfEntry), platform);
-                        else if (game == Game.Incredibles)
-                            entry = new EntrySHRP_Type4_TSSM(binaryReader.ReadBytes(EntrySHRP_Type4_TSSM.SizeOfEntry), platform);
-                    }
-                    else if (Type == 5)
-                    {
-                        if (game == Game.BFBB)
-                            entry = new EntrySHRP_Type5_BFBB(binaryReader.ReadBytes(EntrySHRP_Type5_BFBB.SizeOfEntry), platform);
-                        else if (game == Game.Incredibles)
-                            entry = new EntrySHRP_Type5_TSSM(binaryReader.ReadBytes(EntrySHRP_Type5_TSSM.SizeOfEntry), platform);
-                    }
-                    else if (Type == 6)
-                    {
-                        if (game == Game.BFBB)
-                            entry = new EntrySHRP_Type6_BFBB(binaryReader.ReadBytes(EntrySHRP_Type6_BFBB.SizeOfEntry), platform);
-                        else if (game == Game.Incredibles)
-                            entry = new EntrySHRP_Type6_TSSM(binaryReader.ReadBytes(EntrySHRP_Type6_TSSM.SizeOfEntry), platform);
-                    }
-                    else if (Type == 8)
-                        entry = new EntrySHRP_Type8(binaryReader.ReadBytes(EntrySHRP_Type8.SizeOfEntry), platform);
-                    else if (Type == 9)
-                        entry = new EntrySHRP_Type9(binaryReader.ReadBytes(EntrySHRP_Type9.SizeOfEntry), platform);
-                    else
-                        throw new Exception("Unknown SHRP entry type " + Type.ToString() + " found in asset " + ToString() + ". This SHRP asset cannot be edited by Industrial Park.");
-                    
-                    entries.Add(entry);
-                }
-
-                return entries.ToArray();
-            }
+            get => GetEntries();
 
             set
             {
@@ -153,6 +102,59 @@ namespace IndustrialPark
                 Data = newData.ToArray();
                 AmountOfEntries = value.Length;
             }
+        }
+
+        public EntrySHRP[] GetEntries()
+        {
+            List<EntrySHRP> entries = new List<EntrySHRP>();
+            BinaryReader binaryReader = new BinaryReader(new MemoryStream(Data.Skip(0xC).ToArray()));
+
+            for (int i = 0; i < AmountOfEntries; i++)
+            {
+                int Type = Switch(binaryReader.ReadInt32());
+                binaryReader.BaseStream.Position -= 4;
+
+                EntrySHRP entry = null;
+
+                if (Type == 3)
+                {
+                    if (game == Game.BFBB)
+                        entry = new EntrySHRP_Type3_BFBB(binaryReader.ReadBytes(EntrySHRP_Type3_BFBB.SizeOfEntry), platform);
+                    else if (game == Game.Incredibles)
+                        entry = new EntrySHRP_Type3_TSSM(binaryReader.ReadBytes(EntrySHRP_Type3_TSSM.SizeOfEntry), platform);
+                }
+                else if (Type == 4)
+                {
+                    if (game == Game.BFBB)
+                        entry = new EntrySHRP_Type4_BFBB(binaryReader.ReadBytes(EntrySHRP_Type4_BFBB.SizeOfEntry), platform);
+                    else if (game == Game.Incredibles)
+                        entry = new EntrySHRP_Type4_TSSM(binaryReader.ReadBytes(EntrySHRP_Type4_TSSM.SizeOfEntry), platform);
+                }
+                else if (Type == 5)
+                {
+                    if (game == Game.BFBB)
+                        entry = new EntrySHRP_Type5_BFBB(binaryReader.ReadBytes(EntrySHRP_Type5_BFBB.SizeOfEntry), platform);
+                    else if (game == Game.Incredibles)
+                        entry = new EntrySHRP_Type5_TSSM(binaryReader.ReadBytes(EntrySHRP_Type5_TSSM.SizeOfEntry), platform);
+                }
+                else if (Type == 6)
+                {
+                    if (game == Game.BFBB)
+                        entry = new EntrySHRP_Type6_BFBB(binaryReader.ReadBytes(EntrySHRP_Type6_BFBB.SizeOfEntry), platform);
+                    else if (game == Game.Incredibles)
+                        entry = new EntrySHRP_Type6_TSSM(binaryReader.ReadBytes(EntrySHRP_Type6_TSSM.SizeOfEntry), platform);
+                }
+                else if (Type == 8)
+                    entry = new EntrySHRP_Type8(binaryReader.ReadBytes(EntrySHRP_Type8.SizeOfEntry), platform);
+                else if (Type == 9)
+                    entry = new EntrySHRP_Type9(binaryReader.ReadBytes(EntrySHRP_Type9.SizeOfEntry), platform);
+                else
+                    throw new Exception("Unknown SHRP entry type " + Type.ToString() + " found in asset " + ToString() + ". This SHRP asset cannot be edited by Industrial Park.");
+
+                entries.Add(entry);
+            }
+
+            return entries.ToArray();
         }
     }
 
@@ -207,6 +209,12 @@ namespace IndustrialPark
                 return true;
 
             return false;
+        }
+
+        internal IEnumerable<byte> ToReverseByteArray()
+        {
+            endianness = endianness == Endianness.Big ? Endianness.Little : Endianness.Big;
+            return ToByteArray();
         }
     }
 

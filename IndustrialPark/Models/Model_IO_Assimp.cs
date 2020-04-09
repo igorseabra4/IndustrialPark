@@ -88,7 +88,7 @@ namespace IndustrialPark.Models
             return data;
         }
 
-        public static RWSection[] CreateDFFFromAssimp(string fileName, bool flipUVs)
+        public static RWSection[] CreateDFFFromAssimp(string fileName, bool flipUVs, bool ignoreMeshColors)
         {
             PostProcessSteps pps =
                 PostProcessSteps.Debone |
@@ -118,7 +118,9 @@ namespace IndustrialPark.Models
                     materialStruct = new MaterialStruct_0001()
                     {
                         unusedFlags = 0,
-                        color = new RenderWareFile.Color(
+                        color = ignoreMeshColors ? 
+                        new RenderWareFile.Color(255, 255, 255, 255) :
+                        new RenderWareFile.Color(
                             (byte)(m.ColorDiffuse.R * 255),
                             (byte)(m.ColorDiffuse.G * 255),
                             (byte)(m.ColorDiffuse.B * 255),

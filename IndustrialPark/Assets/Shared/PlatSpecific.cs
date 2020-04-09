@@ -212,7 +212,7 @@ namespace IndustrialPark
         public float DirectionY { get; set; }
         [Category("Springboard")]
         public float DirectionZ { get; set; }
-        [Category("Springboard")]
+        [Category("Springboard"), Description("0 = None\n1 = Lock Camera Down\n2 = Unknown\n4 = Lock Player Control\nAdd numbers to enable multiple flags")]
         public int Flags { get; set; }
 
         public override byte[] ToByteArray()

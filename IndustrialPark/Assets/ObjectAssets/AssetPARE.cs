@@ -4,6 +4,27 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
+    public enum EmmiterType : byte
+    {
+        Point = 0,
+        CircleEdge = 1,
+        Circle = 2,
+        RectEdge = 3,
+        Rect = 4,
+        Line = 5,
+        Volume = 6,
+        SphereEdge = 7,
+        Sphere = 8,
+        OffsetPoint = 9,
+        SphereEdge10 = 10,
+        SphereEdge11 = 11,
+        VCylEdge = 12,
+        OCircleEdge = 13,
+        OCircle = 14,
+        EntityBone = 15,
+        EntityBound = 16,
+    }
+
     public class AssetPARE : ObjectAsset
     {
         public AssetPARE(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
@@ -30,24 +51,17 @@ namespace IndustrialPark
         }
 
         [Category("Particle Emitter")]
-        public byte EmitterType
+        public EmmiterType EmitterType
         {
-            get => ReadByte(0x9);
-            set => Write(0x9, value);
+            get => (EmmiterType)ReadByte(0x9);
+            set => Write(0x9, (byte)value);
         }
 
         [Category("Particle Emitter")]
-        public byte Padding0A
+        public short Padding0A
         {
-            get => ReadByte(0xA);
+            get => ReadShort(0xA);
             set => Write(0xA, value);
-        }
-
-        [Category("Particle Emitter")]
-        public byte Padding0B
-        {
-            get => ReadByte(0xB);
-            set => Write(0xB, value);
         }
 
         [Category("Particle Emitter")]

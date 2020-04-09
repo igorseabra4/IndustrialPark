@@ -139,6 +139,13 @@ namespace IndustrialPark
                     asset.Data = CreateRWTXFromBitmap(archive.game, archive.platform, i, false, false, true, true).data;
                 }
 
+                if (asset.game == HipHopFile.Game.Scooby)
+                {
+                    byte[] data = asset.Data;
+                    FixTextureForScooby(ref data);
+                    asset.Data = data;
+                }
+
                 ResetImage();
                 archive.EnableTextureForDisplay(asset);
             }

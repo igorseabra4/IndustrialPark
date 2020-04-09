@@ -39,6 +39,7 @@
             this.checkBoxOverwrite = new System.Windows.Forms.CheckBox();
             this.checkBoxGenSimps = new System.Windows.Forms.CheckBox();
             this.checkBoxEnableVcolors = new System.Windows.Forms.CheckBox();
+            this.checkBoxIgnoreMeshColors = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -75,7 +76,7 @@
             // buttonOK
             // 
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(116, 313);
+            this.buttonOK.Location = new System.Drawing.Point(116, 336);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(92, 23);
             this.buttonOK.TabIndex = 5;
@@ -86,7 +87,7 @@
             // buttonCancel
             // 
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(18, 313);
+            this.buttonCancel.Location = new System.Drawing.Point(18, 336);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(92, 23);
             this.buttonCancel.TabIndex = 6;
@@ -115,7 +116,7 @@
             // checkBoxFlipUVs
             // 
             this.checkBoxFlipUVs.AutoSize = true;
-            this.checkBoxFlipUVs.Location = new System.Drawing.Point(18, 267);
+            this.checkBoxFlipUVs.Location = new System.Drawing.Point(18, 290);
             this.checkBoxFlipUVs.Name = "checkBoxFlipUVs";
             this.checkBoxFlipUVs.Size = new System.Drawing.Size(65, 17);
             this.checkBoxFlipUVs.TabIndex = 7;
@@ -127,7 +128,7 @@
             this.checkBoxOverwrite.AutoSize = true;
             this.checkBoxOverwrite.Checked = true;
             this.checkBoxOverwrite.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxOverwrite.Location = new System.Drawing.Point(137, 290);
+            this.checkBoxOverwrite.Location = new System.Drawing.Point(137, 313);
             this.checkBoxOverwrite.Name = "checkBoxOverwrite";
             this.checkBoxOverwrite.Size = new System.Drawing.Size(71, 17);
             this.checkBoxOverwrite.TabIndex = 12;
@@ -137,7 +138,7 @@
             // checkBoxGenSimps
             // 
             this.checkBoxGenSimps.AutoSize = true;
-            this.checkBoxGenSimps.Location = new System.Drawing.Point(18, 290);
+            this.checkBoxGenSimps.Location = new System.Drawing.Point(18, 313);
             this.checkBoxGenSimps.Name = "checkBoxGenSimps";
             this.checkBoxGenSimps.Size = new System.Drawing.Size(104, 17);
             this.checkBoxGenSimps.TabIndex = 13;
@@ -147,14 +148,22 @@
             // checkBoxEnableVcolors
             // 
             this.checkBoxEnableVcolors.AutoSize = true;
-            this.checkBoxEnableVcolors.Checked = true;
-            this.checkBoxEnableVcolors.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxEnableVcolors.Location = new System.Drawing.Point(110, 267);
+            this.checkBoxEnableVcolors.Location = new System.Drawing.Point(110, 290);
             this.checkBoxEnableVcolors.Name = "checkBoxEnableVcolors";
             this.checkBoxEnableVcolors.Size = new System.Drawing.Size(98, 17);
             this.checkBoxEnableVcolors.TabIndex = 14;
             this.checkBoxEnableVcolors.Text = "Enable VColors";
             this.checkBoxEnableVcolors.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxIgnoreMeshColors
+            // 
+            this.checkBoxIgnoreMeshColors.AutoSize = true;
+            this.checkBoxIgnoreMeshColors.Location = new System.Drawing.Point(91, 267);
+            this.checkBoxIgnoreMeshColors.Name = "checkBoxIgnoreMeshColors";
+            this.checkBoxIgnoreMeshColors.Size = new System.Drawing.Size(117, 17);
+            this.checkBoxIgnoreMeshColors.TabIndex = 15;
+            this.checkBoxIgnoreMeshColors.Text = "Ignore Mesh Colors";
+            this.checkBoxIgnoreMeshColors.UseVisualStyleBackColor = true;
             // 
             // ImportModel
             // 
@@ -162,7 +171,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(224, 345);
+            this.ClientSize = new System.Drawing.Size(224, 370);
+            this.Controls.Add(this.checkBoxIgnoreMeshColors);
             this.Controls.Add(this.checkBoxEnableVcolors);
             this.Controls.Add(this.checkBoxGenSimps);
             this.Controls.Add(this.checkBoxOverwrite);
@@ -199,5 +209,6 @@
         private System.Windows.Forms.CheckBox checkBoxOverwrite;
         private System.Windows.Forms.CheckBox checkBoxGenSimps;
         private System.Windows.Forms.CheckBox checkBoxEnableVcolors;
+        private System.Windows.Forms.CheckBox checkBoxIgnoreMeshColors;
     }
 }
