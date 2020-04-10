@@ -7,12 +7,12 @@
         public string LastProjectPath;
         public bool CheckForUpdatesOnStartup;
 
-        public bool renderBasedOnLodt;
-        public bool renderBasedOnPipt;
-        public bool dontDrawInvisible;
+        public bool renderBasedOnLodt = false;
+        public bool renderBasedOnPipt = true;
+        public bool dontDrawInvisible = false;
 
-        public bool updateReferencesOnCopy;
-        public bool persistentShinies;
-        public bool hideHelp;
+        public bool updateReferencesOnCopy = true;
+        public bool persistentShinies = true;
+        public bool hideHelp = false;
     }
 }
