@@ -85,7 +85,7 @@ namespace IndustrialPark
             }
         }
 
-        private Matrix CreateMatrix(FrameList_000E frameList, int frameIndex)
+        public static Matrix CreateMatrix(FrameList_000E frameList, int frameIndex)
         {
             Matrix transform = Matrix.Identity;
 

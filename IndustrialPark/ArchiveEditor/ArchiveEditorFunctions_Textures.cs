@@ -164,7 +164,7 @@ namespace IndustrialPark
             return AHDRs;
         }
 
-        public Dictionary<string, Bitmap> ExportRWTXToBitmap(byte[] txdFile)
+        public Dictionary<string, Bitmap> ExportTXDToBitmap(byte[] txdFile)
         {
             if (!Directory.Exists(tempPcTxdsDir))
                 Directory.CreateDirectory(tempPcTxdsDir);
@@ -252,6 +252,8 @@ namespace IndustrialPark
         {
             List<TextureNative_0015> textures = new List<TextureNative_0015>();
 
+            ReadFileMethods.treatStuffAsByteArray = true;
+
             foreach (string t in textureNames)
             {
                 AssetRWTX RWTX;
@@ -274,7 +276,7 @@ namespace IndustrialPark
                 }
             }
 
-            return ExportRWTXToBitmap(ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016()
+            return ExportTXDToBitmap(ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016()
             {
                 textureDictionaryStruct = new TextureDictionaryStruct_0001() { textureCount = (short)textures.Count, unknown = 0 },
                 textureNativeList = textures,

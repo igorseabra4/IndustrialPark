@@ -30,7 +30,7 @@ namespace IndustrialPark
         {
             if (b != null)
                 b.Dispose();
-            foreach (Bitmap bitmap in archive.ExportRWTXToBitmap(asset.Data).Values)
+            foreach (Bitmap bitmap in archive.ExportTXDToBitmap(asset.Data).Values)
                 b = bitmap;
             pictureBox1.Image = b;
 

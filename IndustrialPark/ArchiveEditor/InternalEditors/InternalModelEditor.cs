@@ -21,6 +21,12 @@ namespace IndustrialPark
 
             if (asset.AHDR.assetType != HipHopFile.AssetType.MODL)
                 buttonImport.Enabled = false;
+            if (asset.IsNativeData)
+            {
+                buttonExport.Enabled = false;
+                checkBoxTextures.Enabled = false;
+            }
+            
 
             propertyGridAsset.SelectedObject = asset;
             labelAssetName.Text = $"[{asset.AHDR.assetType.ToString()}] {asset.ToString()}";
@@ -77,7 +83,6 @@ namespace IndustrialPark
                     if (checkBoxTextures.Checked)
                     {
                         string folderName = Path.GetDirectoryName(a.FileName);
-                        ReadFileMethods.treatStuffAsByteArray = true;
                         var bitmaps = archive.GetTexturesAsBitmaps(asset.Textures);
                         ReadFileMethods.treatStuffAsByteArray = false;
                         foreach (string textureName in bitmaps.Keys)

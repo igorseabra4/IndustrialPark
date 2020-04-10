@@ -40,7 +40,7 @@ namespace IndustrialPark
 
         public bool HasRenderWareModelFile() => model != null;
 
-        [Description("If IsNativeData is true, there is a good chance the Export function will not work properly.")]
+        [Description("If IsNativeData is true, you cannot use the Export function.")]
         public bool IsNativeData => model != null ? model.isNativeData : false;
 
         [Browsable(false)]

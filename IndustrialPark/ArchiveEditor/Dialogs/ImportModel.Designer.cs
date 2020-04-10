@@ -148,11 +148,11 @@
             // checkBoxEnableVcolors
             // 
             this.checkBoxEnableVcolors.AutoSize = true;
-            this.checkBoxEnableVcolors.Location = new System.Drawing.Point(110, 290);
+            this.checkBoxEnableVcolors.Location = new System.Drawing.Point(124, 290);
             this.checkBoxEnableVcolors.Name = "checkBoxEnableVcolors";
-            this.checkBoxEnableVcolors.Size = new System.Drawing.Size(98, 17);
+            this.checkBoxEnableVcolors.Size = new System.Drawing.Size(84, 17);
             this.checkBoxEnableVcolors.TabIndex = 14;
-            this.checkBoxEnableVcolors.Text = "Enable VColors";
+            this.checkBoxEnableVcolors.Text = "Create PIPT";
             this.checkBoxEnableVcolors.UseVisualStyleBackColor = true;
             // 
             // checkBoxIgnoreMeshColors

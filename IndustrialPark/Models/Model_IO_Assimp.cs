@@ -533,147 +533,86 @@ namespace IndustrialPark.Models
 
         private static void ClumpToScene(Scene scene, Clump_0010 clump, string textureExtension)
         {
+            int totalMaterials = 0;
+
             for (int i = 0; i < clump.geometryList.geometryList.Count; i++)
             {
-                var geo = clump.geometryList.geometryList[i].geometryStruct;
-                var mat = clump.geometryList.geometryList[i].materialList.materialList[0];
+                Matrix transformMatrix = RenderWareModelFile.CreateMatrix(clump.frameList, clump.atomicList[i].atomicStruct.frameIndex);
 
-                Material material = new Material()
+                int triangleListOffset = 0;
+                for (int j = 0; j < clump.geometryList.geometryList[i].materialList.materialList.Length; j++)
                 {
-                    ColorDiffuse = new Color4D(
-                        mat.materialStruct.color.R / 255f,
-                        mat.materialStruct.color.G / 255f,
-                        mat.materialStruct.color.B / 255f,
-                        mat.materialStruct.color.A / 255f),
-                    Name = "default"
-                };
+                    var geo = clump.geometryList.geometryList[i].geometryStruct;
+                    var mat = clump.geometryList.geometryList[i].materialList.materialList[j];
 
-                if (mat.materialStruct.isTextured != 0)
-                {
-                    material.TextureDiffuse = new TextureSlot()
+                    Material material = new Material()
                     {
-                        FilePath = mat.texture.diffuseTextureName.stringString + textureExtension,
-                        TextureType = TextureType.Diffuse
+                        ColorDiffuse = new Color4D(
+                                mat.materialStruct.color.R / 255f,
+                                mat.materialStruct.color.G / 255f,
+                                mat.materialStruct.color.B / 255f,
+                                mat.materialStruct.color.A / 255f),
+                        Name = "default"
                     };
-                    material.Name = "mat_" + mat.texture.diffuseTextureName.stringString;
-                }
 
-                scene.Materials.Add(material);
-
-                Mesh mesh = new Mesh(PrimitiveType.Triangle)
-                {
-                    MaterialIndex = i,
-                    Name = "mesh_" + material.Name.Replace("mat_", "")
-                };
-
-                if (geo.geometryFlags2 == (GeometryFlags2)0x0101)
-                {
-                    NativeDataGC n = null;
-
-                    foreach (RWSection rws in clump.geometryList.geometryList[i].geometryExtension.extensionSectionList)
-                        if (rws is NativeDataPLG_0510 native)
-                            n = native.nativeDataStruct.nativeData;
-
-                    if (n == null)
-                        throw new Exception("Unable to find native data section");
-
-                    NativeDataToMesh(mesh, n);
-                }
-                else
-                {
-                    foreach (var v in geo.morphTargets[0].vertices)
-                        mesh.Vertices.Add(new Vector3D(v.X, v.Y, v.Z));
-
-                    if ((geo.geometryFlags & GeometryFlags.hasNormals) != 0)
-                        foreach (var v in geo.morphTargets[0].normals)
-                            mesh.Normals.Add(new Vector3D(v.X, v.Y, v.Z));
-
-                    if ((geo.geometryFlags & GeometryFlags.hasTextCoords) != 0)
-                        foreach (var v in geo.textCoords)
-                            mesh.TextureCoordinateChannels[0].Add(new Vector3D(v.X, v.Y, 0));
-
-                    if ((geo.geometryFlags & GeometryFlags.hasVertexColors) != 0)
-                        foreach (var color in geo.vertexColors)
-                            mesh.VertexColorChannels[0].Add(new Color4D(color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f));
-
-                    foreach (var t in geo.triangles)
-                        mesh.Faces.Add(new Face(new int[] { t.vertex1, t.vertex2, t.vertex3 }));
-                }
-
-                scene.Meshes.Add(mesh);
-            }
-        }
-
-        private static void NativeDataToMesh(Mesh mesh, NativeDataGC n)
-        {
-            List<Vertex3> vertexList_init = new List<Vertex3>();
-            List<Vertex3> normalList_init = new List<Vertex3>();
-            List<RenderWareFile.Color> colorList_init = new List<RenderWareFile.Color>();
-            List<Vertex2> textCoordList_init = new List<Vertex2>();
-
-            foreach (Declaration d in n.declarations)
-            {
-                foreach (object o in d.entryList)
-                {
-                    if (d.declarationType == Declarations.Vertex)
-                        vertexList_init.Add((Vertex3)o);
-                    else if (d.declarationType == Declarations.Normal)
-                        normalList_init.Add((Vertex3)o);
-                    else if (d.declarationType == Declarations.Color)
-                        colorList_init.Add((RenderWareFile.Color)o);
-                    else if (d.declarationType == Declarations.TextCoord)
-                        textCoordList_init.Add((Vertex2)o);
-                    else throw new Exception();
-                }
-            }
-
-            foreach (TriangleDeclaration td in n.triangleDeclarations)
-            {
-                foreach (TriangleList tl in td.TriangleListList)
-                {
-                    foreach (int[] objectList in tl.entries)
+                    if (mat.materialStruct.isTextured != 0)
                     {
-                        for (int j = 0; j < objectList.Count(); j++)
+                        material.TextureDiffuse = new TextureSlot()
                         {
-                            if (n.declarations[j].declarationType == Declarations.Vertex)
-                                mesh.Vertices.Add(new Vector3D(
-                                    vertexList_init[objectList[j]].X,
-                                    vertexList_init[objectList[j]].Y,
-                                    vertexList_init[objectList[j]].Z));
-
-                            else if (n.declarations[j].declarationType == Declarations.Normal)
-                                mesh.Normals.Add(new Vector3D(
-                                    normalList_init[objectList[j]].X,
-                                    normalList_init[objectList[j]].Y,
-                                    normalList_init[objectList[j]].Z));
-
-                            else if (n.declarations[j].declarationType == Declarations.Color)
-                                mesh.VertexColorChannels[0].Add(new Color4D(
-                                    colorList_init[objectList[j]].R / 255f,
-                                    colorList_init[objectList[j]].G / 255f,
-                                    colorList_init[objectList[j]].B / 255f,
-                                    colorList_init[objectList[j]].A / 255f));
-
-                            else if (n.declarations[j].declarationType == Declarations.TextCoord)
-                                mesh.TextureCoordinateChannels[0].Add(new Vector3D(
-                                    textCoordList_init[objectList[j]].X,
-                                    textCoordList_init[objectList[j]].Y,
-                                    0));
-                        }
+                            FilePath = mat.texture.diffuseTextureName.stringString + textureExtension,
+                            TextureType = TextureType.Diffuse
+                        };
+                        material.Name = "mat_" + mat.texture.diffuseTextureName.stringString;
                     }
 
-                    bool control = true;
+                    scene.Materials.Add(material);
 
-                    for (int i = 2; i < vertexList_init.Count(); i++)
+                    Mesh mesh = new Mesh(PrimitiveType.Triangle)
                     {
-                        if (control)
-                            mesh.Faces.Add(new Face(new int[] { i - 2, i - 1, i }));
-                        else
-                            mesh.Faces.Add(new Face(new int[] { i - 2, i, i - 1 }));
+                        MaterialIndex = j + totalMaterials,
+                        Name = "mesh_" + material.Name.Replace("mat_", "")
+                    };
 
-                        control = !control;
+                    if (geo.geometryFlags2 == (GeometryFlags2)0x0101)
+                    {
+                        NativeDataGC n = null;
+
+                        foreach (RWSection rws in clump.geometryList.geometryList[i].geometryExtension.extensionSectionList)
+                            if (rws is NativeDataPLG_0510 native)
+                                n = native.nativeDataStruct.nativeData;
+
+                        if (n == null)
+                            throw new Exception("Unable to find native data section");
+
+                        throw new NotImplementedException("Unable to convert native data to Assimp");
                     }
+                    else
+                    {
+                        foreach (var v in geo.morphTargets[0].vertices)
+                        {
+                            var vt = Vector3.Transform(new Vector3(v.X, v.Y, v.Z), transformMatrix);
+                            mesh.Vertices.Add(new Vector3D(vt.X, vt.Y, vt.Z));
+                        }
+
+                        if ((geo.geometryFlags & GeometryFlags.hasNormals) != 0)
+                            foreach (var v in geo.morphTargets[0].normals)
+                                mesh.Normals.Add(new Vector3D(v.X, v.Y, v.Z));
+
+                        if ((geo.geometryFlags & GeometryFlags.hasTextCoords) != 0)
+                            foreach (var v in geo.textCoords)
+                                mesh.TextureCoordinateChannels[0].Add(new Vector3D(v.X, v.Y, 0));
+
+                        if ((geo.geometryFlags & GeometryFlags.hasVertexColors) != 0)
+                            foreach (var color in geo.vertexColors)
+                                mesh.VertexColorChannels[0].Add(new Color4D(color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f));
+
+                        foreach (var t in geo.triangles)
+                            if (t.materialIndex == j)
+                                mesh.Faces.Add(new Face(new int[] { t.vertex1, t.vertex2, t.vertex3 }));
+                    }
+                    scene.Meshes.Add(mesh);
                 }
+                totalMaterials = scene.Materials.Count;
             }
         }
     }
