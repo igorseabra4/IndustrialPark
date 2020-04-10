@@ -575,7 +575,7 @@ namespace IndustrialPark
             {
                 if (numCopies > 1000)
                 {
-                    MessageBox.Show("Something went wrong: the asset your're trying to duplicate, paste or create a template of's name is too long. Due to that, I'll have to give it a new name myself.");
+                    MessageBox.Show("Something went wrong: the asset you're trying to duplicate, paste or create a template of's name is too long. Due to that, I'll have to give it a new name myself.");
                     numCopies = 0;
                     AHDR.ADBG.assetName = AHDR.assetType.ToString();
                 }

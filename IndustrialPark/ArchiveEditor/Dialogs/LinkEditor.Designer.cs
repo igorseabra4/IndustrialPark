@@ -61,8 +61,10 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.comboRecieveEvent = new System.Windows.Forms.ComboBox();
             this.numericUpDownTime = new System.Windows.Forms.NumericUpDown();
-            this.button1 = new System.Windows.Forms.Button();
+            this.buttonHelp = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.buttonTargetPlus1 = new System.Windows.Forms.Button();
+            this.buttonTargetSelf = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBoxEventData.SuspendLayout();
             this.groupBox7.SuspendLayout();
@@ -355,6 +357,8 @@
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.buttonTargetSelf);
+            this.groupBox5.Controls.Add(this.buttonTargetPlus1);
             this.groupBox5.Controls.Add(this.textBoxTargetAsset);
             this.groupBox5.Location = new System.Drawing.Point(8, 125);
             this.groupBox5.Name = "groupBox5";
@@ -428,16 +432,36 @@
             this.numericUpDownTime.Visible = false;
             this.numericUpDownTime.ValueChanged += new System.EventHandler(this.numericUpDownTime_ValueChanged);
             // 
-            // button1
+            // buttonHelp
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button1.Location = new System.Drawing.Point(211, 351);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(105, 23);
-            this.button1.TabIndex = 20;
-            this.button1.Text = "Help!";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.buttonHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonHelp.Location = new System.Drawing.Point(211, 351);
+            this.buttonHelp.Name = "buttonHelp";
+            this.buttonHelp.Size = new System.Drawing.Size(105, 23);
+            this.buttonHelp.TabIndex = 20;
+            this.buttonHelp.Text = "Help!";
+            this.buttonHelp.UseVisualStyleBackColor = true;
+            this.buttonHelp.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // buttonTargetPlus1
+            // 
+            this.buttonTargetPlus1.Location = new System.Drawing.Point(179, 0);
+            this.buttonTargetPlus1.Name = "buttonTargetPlus1";
+            this.buttonTargetPlus1.Size = new System.Drawing.Size(42, 20);
+            this.buttonTargetPlus1.TabIndex = 11;
+            this.buttonTargetPlus1.Text = "+1";
+            this.buttonTargetPlus1.UseVisualStyleBackColor = true;
+            this.buttonTargetPlus1.Click += new System.EventHandler(this.buttonTargetPlus1_Click);
+            // 
+            // buttonTargetSelf
+            // 
+            this.buttonTargetSelf.Location = new System.Drawing.Point(131, 0);
+            this.buttonTargetSelf.Name = "buttonTargetSelf";
+            this.buttonTargetSelf.Size = new System.Drawing.Size(42, 20);
+            this.buttonTargetSelf.TabIndex = 11;
+            this.buttonTargetSelf.Text = "Self";
+            this.buttonTargetSelf.UseVisualStyleBackColor = true;
+            this.buttonTargetSelf.Click += new System.EventHandler(this.buttonTargetSelf_Click);
             // 
             // LinkEditor
             // 
@@ -446,7 +470,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(584, 412);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.buttonHelp);
             this.Controls.Add(this.groupBoxEventData);
             this.Controls.Add(this.buttonOK);
             this.Controls.Add(this.buttonCancel);
@@ -513,8 +537,10 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox groupBox7;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonHelp;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.NumericUpDown numericUpDownTime;
+        private System.Windows.Forms.Button buttonTargetPlus1;
+        private System.Windows.Forms.Button buttonTargetSelf;
     }
 }

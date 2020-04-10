@@ -105,6 +105,7 @@ namespace IndustrialPark
                     events[i] = new LinkBFBB(Data, TimedLinksStartOffset + i * Link.sizeOfStruct, true, EndianConverter.PlatformEndianness(platform));
 
                 LinkListEditor.IsTimed = true;
+                LinkListEditor.thisAssetID = AHDR.assetID;
                 LinkListEditor.endianness = EndianConverter.PlatformEndianness(platform);
                 return events;
             }
@@ -125,6 +126,7 @@ namespace IndustrialPark
                     events[i] = new LinkTSSM(Data, TimedLinksStartOffset + i * Link.sizeOfStruct, true, EndianConverter.PlatformEndianness(platform));
 
                 LinkListEditor.IsTimed = true;
+                LinkListEditor.thisAssetID = AHDR.assetID;
                 LinkListEditor.endianness = EndianConverter.PlatformEndianness(platform);
                 return events;
             }
@@ -145,6 +147,7 @@ namespace IndustrialPark
                     events[i] = new LinkIncredibles(Data, TimedLinksStartOffset + i * Link.sizeOfStruct, true, EndianConverter.PlatformEndianness(platform));
 
                 LinkListEditor.IsTimed = true;
+                LinkListEditor.thisAssetID = AHDR.assetID;
                 LinkListEditor.endianness = EndianConverter.PlatformEndianness(platform);
                 return events;
             }

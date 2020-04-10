@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace IndustrialPark
@@ -15,16 +16,18 @@ namespace IndustrialPark
             Incredibles
         }
 
+        private readonly uint thisAssetID;
         private Endianness endianness;
         private EventType eventType;
         private bool isTimed = false;
 
-        private LinkEditor(bool isTimed, Endianness endianness)
+        private LinkEditor(bool isTimed, Endianness endianness, uint thisAssetID)
         {
             InitializeComponent();
             TopMost = true;
 
             this.endianness = endianness;
+            this.thisAssetID = thisAssetID;
 
             bgColor = textBoxTargetAsset.BackColor;
             
@@ -64,7 +67,8 @@ namespace IndustrialPark
             }
         }
 
-        private LinkEditor(LinkBFBB[] events, bool isTimed, Endianness endianness) : this(isTimed, endianness)
+        private LinkEditor(LinkBFBB[] events, bool isTimed, Endianness endianness, uint thisAssetID) 
+            : this(isTimed, endianness, thisAssetID)
         {
             eventType = EventType.BFBB;
             foreach (EventBFBB o in Enum.GetValues(typeof(EventBFBB)))
@@ -77,7 +81,8 @@ namespace IndustrialPark
                 listBoxLinks.Items.Add(assetEvent);
         }
 
-        private LinkEditor(LinkTSSM[] events, bool isTimed, Endianness endianness) : this(isTimed, endianness)
+        private LinkEditor(LinkTSSM[] events, bool isTimed, Endianness endianness, uint thisAssetID)
+            : this(isTimed, endianness, thisAssetID)
         {
             eventType = EventType.TSSM;
             foreach (EventTSSM o in Enum.GetValues(typeof(EventTSSM)))
@@ -90,7 +95,8 @@ namespace IndustrialPark
                 listBoxLinks.Items.Add(assetEvent);
         }
 
-        private LinkEditor(LinkIncredibles[] events, bool isTimed, Endianness endianness) : this(isTimed, endianness)
+        private LinkEditor(LinkIncredibles[] events, bool isTimed, Endianness endianness, uint thisAssetID)
+            : this(isTimed, endianness, thisAssetID)
         {
             eventType = EventType.Incredibles;
             foreach (EventIncredibles o in Enum.GetValues(typeof(EventIncredibles)))
@@ -123,9 +129,9 @@ namespace IndustrialPark
             return AssetIDTypeConverter.AssetIDFromString(assetName);
         }
 
-        public static LinkBFBB[] GetEvents(LinkBFBB[] links, Endianness endianness, out bool success, bool isTimed)
+        public static LinkBFBB[] GetEvents(LinkBFBB[] links, Endianness endianness, out bool success, bool isTimed, uint thisAssetID)
         {
-            LinkEditor eventEditor = new LinkEditor(links, isTimed, endianness);
+            LinkEditor eventEditor = new LinkEditor(links, isTimed, endianness, thisAssetID);
             eventEditor.ShowDialog();
 
             success = eventEditor.OK;
@@ -137,9 +143,9 @@ namespace IndustrialPark
             return assetEventBFBBs.ToArray();
         }
 
-        public static LinkTSSM[] GetEvents(LinkTSSM[] links, Endianness endianness, out bool success, bool isTimed)
+        public static LinkTSSM[] GetEvents(LinkTSSM[] links, Endianness endianness, out bool success, bool isTimed, uint thisAssetID)
         {
-            LinkEditor eventEditor = new LinkEditor(links, isTimed, endianness);
+            LinkEditor eventEditor = new LinkEditor(links, isTimed, endianness, thisAssetID);
             eventEditor.ShowDialog();
 
             success = eventEditor.OK;
@@ -151,9 +157,9 @@ namespace IndustrialPark
             return assetEventBFBBs.ToArray();
         }
 
-        public static LinkIncredibles[] GetEvents(LinkIncredibles[] links, Endianness endianness, out bool success, bool isTimed)
+        public static LinkIncredibles[] GetEvents(LinkIncredibles[] links, Endianness endianness, out bool success, bool isTimed, uint thisAssetID)
         {
-            LinkEditor eventEditor = new LinkEditor(links, isTimed, endianness);
+            LinkEditor eventEditor = new LinkEditor(links, isTimed, endianness, thisAssetID);
             eventEditor.ShowDialog();
 
             success = eventEditor.OK;
@@ -662,6 +668,24 @@ namespace IndustrialPark
         private void button1_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start(AboutBox.WikiLink + "Events");
+        }
+
+        private void buttonTargetSelf_Click(object sender, EventArgs e)
+        {
+            textBoxTargetAsset.Text = GetAssetName(thisAssetID);
+        }
+
+        private void buttonTargetPlus1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int num = Convert.ToInt32(textBoxTargetAsset.Text.Split('_').Last());
+                textBoxTargetAsset.Text = textBoxTargetAsset.Text.Substring(0, textBoxTargetAsset.Text.LastIndexOf('_')) + '_' + (num + 1).ToString("D2");
+            }
+            catch
+            {
+                MessageBox.Show("Unable to find sequence number in asset name");
+            }
         }
     }
 }

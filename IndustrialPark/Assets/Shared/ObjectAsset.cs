@@ -82,6 +82,7 @@ namespace IndustrialPark
             {
                 LinkListEditor.IsTimed = false;
                 LinkListEditor.endianness = EndianConverter.PlatformEndianness(platform);
+                LinkListEditor.thisAssetID = AHDR.assetID;
                 LinkBFBB[] events = new LinkBFBB[AmountOfEvents];
 
                 for (int i = 0; i < AmountOfEvents; i++)
@@ -98,6 +99,7 @@ namespace IndustrialPark
             {
                 LinkListEditor.IsTimed = false;
                 LinkListEditor.endianness = EndianConverter.PlatformEndianness(platform);
+                LinkListEditor.thisAssetID = AHDR.assetID;
                 LinkTSSM[] events = new LinkTSSM[AmountOfEvents];
 
                 for (int i = 0; i < AmountOfEvents; i++)
@@ -114,6 +116,7 @@ namespace IndustrialPark
             {
                 LinkListEditor.IsTimed = false;
                 LinkListEditor.endianness = EndianConverter.PlatformEndianness(platform);
+                LinkListEditor.thisAssetID = AHDR.assetID;
                 LinkIncredibles[] events = new LinkIncredibles[AmountOfEvents];
 
                 for (int i = 0; i < AmountOfEvents; i++)
