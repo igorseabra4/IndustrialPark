@@ -989,6 +989,16 @@ namespace IndustrialPark
                     {
                         ((AssetSFX)asset).SFXFlag08 = 0x03;
                         ((AssetSFX)asset).SFXFlag09 = 0xE6;
+                        ((AssetSFX)asset).LinksBFBB = new LinkBFBB[]
+                        {
+                            new LinkBFBB(EndianConverter.PlatformEndianness(platform), false)
+                            {
+                                Arguments_Float = new float[4],
+                                TargetAssetID = asset.AHDR.assetID,
+                                EventReceiveID = EventBFBB.ScenePrepare,
+                                EventSendID = EventBFBB.Play
+                            }
+                        };
                     }
                     else
                     {
