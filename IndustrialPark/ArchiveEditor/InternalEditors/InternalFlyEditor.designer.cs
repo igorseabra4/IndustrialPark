@@ -60,10 +60,10 @@
             this.tableLayoutPanel1.SetColumnSpan(this.propertyGridSpecific, 2);
             this.propertyGridSpecific.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGridSpecific.HelpVisible = false;
-            this.propertyGridSpecific.Location = new System.Drawing.Point(3, 262);
+            this.propertyGridSpecific.Location = new System.Drawing.Point(3, 157);
             this.propertyGridSpecific.Name = "propertyGridSpecific";
             this.propertyGridSpecific.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.propertyGridSpecific.Size = new System.Drawing.Size(324, 174);
+            this.propertyGridSpecific.Size = new System.Drawing.Size(308, 174);
             this.propertyGridSpecific.TabIndex = 7;
             this.propertyGridSpecific.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGridSpecific_PropertyValueChanged);
             // 
@@ -96,16 +96,16 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(330, 543);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(314, 438);
             this.tableLayoutPanel1.TabIndex = 8;
             // 
             // buttonView
             // 
             this.buttonView.AutoSize = true;
             this.buttonView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonView.Location = new System.Drawing.Point(168, 498);
+            this.buttonView.Location = new System.Drawing.Point(160, 393);
             this.buttonView.Name = "buttonView";
-            this.buttonView.Size = new System.Drawing.Size(159, 22);
+            this.buttonView.Size = new System.Drawing.Size(151, 22);
             this.buttonView.TabIndex = 30;
             this.buttonView.Text = "View";
             this.buttonView.UseVisualStyleBackColor = true;
@@ -115,9 +115,9 @@
             // 
             this.buttonFindCallers.AutoSize = true;
             this.buttonFindCallers.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonFindCallers.Location = new System.Drawing.Point(3, 498);
+            this.buttonFindCallers.Location = new System.Drawing.Point(3, 393);
             this.buttonFindCallers.Name = "buttonFindCallers";
-            this.buttonFindCallers.Size = new System.Drawing.Size(159, 22);
+            this.buttonFindCallers.Size = new System.Drawing.Size(151, 22);
             this.buttonFindCallers.TabIndex = 28;
             this.buttonFindCallers.Text = "Find Who Targets Me";
             this.buttonFindCallers.UseVisualStyleBackColor = true;
@@ -126,9 +126,9 @@
             // buttonStop
             // 
             this.buttonStop.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonStop.Location = new System.Drawing.Point(168, 470);
+            this.buttonStop.Location = new System.Drawing.Point(160, 365);
             this.buttonStop.Name = "buttonStop";
-            this.buttonStop.Size = new System.Drawing.Size(159, 22);
+            this.buttonStop.Size = new System.Drawing.Size(151, 22);
             this.buttonStop.TabIndex = 27;
             this.buttonStop.Text = "Stop";
             this.buttonStop.UseVisualStyleBackColor = true;
@@ -138,9 +138,9 @@
             // 
             this.buttonGetPos.AutoSize = true;
             this.buttonGetPos.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonGetPos.Location = new System.Drawing.Point(168, 442);
+            this.buttonGetPos.Location = new System.Drawing.Point(160, 337);
             this.buttonGetPos.Name = "buttonGetPos";
-            this.buttonGetPos.Size = new System.Drawing.Size(159, 22);
+            this.buttonGetPos.Size = new System.Drawing.Size(151, 22);
             this.buttonGetPos.TabIndex = 19;
             this.buttonGetPos.Text = "Get View Position";
             this.buttonGetPos.UseVisualStyleBackColor = true;
@@ -150,9 +150,9 @@
             // 
             this.buttonGetDir.AutoSize = true;
             this.buttonGetDir.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonGetDir.Location = new System.Drawing.Point(3, 442);
+            this.buttonGetDir.Location = new System.Drawing.Point(3, 337);
             this.buttonGetDir.Name = "buttonGetDir";
-            this.buttonGetDir.Size = new System.Drawing.Size(159, 22);
+            this.buttonGetDir.Size = new System.Drawing.Size(151, 22);
             this.buttonGetDir.TabIndex = 18;
             this.buttonGetDir.Text = "Get View Direction";
             this.buttonGetDir.UseVisualStyleBackColor = true;
@@ -165,16 +165,16 @@
             this.listBoxFlyEntries.FormattingEnabled = true;
             this.listBoxFlyEntries.Location = new System.Drawing.Point(3, 23);
             this.listBoxFlyEntries.Name = "listBoxFlyEntries";
-            this.listBoxFlyEntries.Size = new System.Drawing.Size(324, 205);
+            this.listBoxFlyEntries.Size = new System.Drawing.Size(308, 100);
             this.listBoxFlyEntries.TabIndex = 23;
             this.listBoxFlyEntries.SelectedIndexChanged += new System.EventHandler(this.listBoxFlyEntries_SelectedIndexChanged);
             // 
             // buttonRemove
             // 
             this.buttonRemove.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonRemove.Location = new System.Drawing.Point(168, 234);
+            this.buttonRemove.Location = new System.Drawing.Point(160, 129);
             this.buttonRemove.Name = "buttonRemove";
-            this.buttonRemove.Size = new System.Drawing.Size(159, 22);
+            this.buttonRemove.Size = new System.Drawing.Size(151, 22);
             this.buttonRemove.TabIndex = 24;
             this.buttonRemove.Text = "Remove";
             this.buttonRemove.UseVisualStyleBackColor = true;
@@ -183,9 +183,9 @@
             // buttonAdd
             // 
             this.buttonAdd.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonAdd.Location = new System.Drawing.Point(3, 234);
+            this.buttonAdd.Location = new System.Drawing.Point(3, 129);
             this.buttonAdd.Name = "buttonAdd";
-            this.buttonAdd.Size = new System.Drawing.Size(159, 22);
+            this.buttonAdd.Size = new System.Drawing.Size(151, 22);
             this.buttonAdd.TabIndex = 25;
             this.buttonAdd.Text = "Add";
             this.buttonAdd.UseVisualStyleBackColor = true;
@@ -194,9 +194,9 @@
             // buttonPlay
             // 
             this.buttonPlay.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonPlay.Location = new System.Drawing.Point(3, 470);
+            this.buttonPlay.Location = new System.Drawing.Point(3, 365);
             this.buttonPlay.Name = "buttonPlay";
-            this.buttonPlay.Size = new System.Drawing.Size(159, 22);
+            this.buttonPlay.Size = new System.Drawing.Size(151, 22);
             this.buttonPlay.TabIndex = 26;
             this.buttonPlay.Text = "Play";
             this.buttonPlay.UseVisualStyleBackColor = true;
@@ -207,9 +207,9 @@
             this.labelFrame.AutoSize = true;
             this.tableLayoutPanel1.SetColumnSpan(this.labelFrame, 2);
             this.labelFrame.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelFrame.Location = new System.Drawing.Point(3, 523);
+            this.labelFrame.Location = new System.Drawing.Point(3, 418);
             this.labelFrame.Name = "labelFrame";
-            this.labelFrame.Size = new System.Drawing.Size(324, 20);
+            this.labelFrame.Size = new System.Drawing.Size(308, 20);
             this.labelFrame.TabIndex = 31;
             this.labelFrame.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -217,7 +217,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(330, 543);
+            this.ClientSize = new System.Drawing.Size(314, 438);
             this.Controls.Add(this.tableLayoutPanel1);
             this.MaximizeBox = false;
             this.Name = "InternalFlyEditor";

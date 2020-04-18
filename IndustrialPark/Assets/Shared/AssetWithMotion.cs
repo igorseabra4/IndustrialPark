@@ -1,6 +1,5 @@
 ﻿using HipHopFile;
 using SharpDX;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -11,21 +10,21 @@ namespace IndustrialPark
     {
         public AssetWithMotion(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
-            _motion = new Motion_Mechanism(Data.Skip(MotionStart).ToArray(), base.game, base.platform);
+            Motion = new Motion_Mechanism(this);
         }
 
-        public override bool HasReference(uint assetID) => _motion.HasReference(assetID) || base.HasReference(assetID);
+        public override bool HasReference(uint assetID) => Motion.HasReference(assetID) || base.HasReference(assetID);
         
         public override void Verify(ref List<string> result)
         {
-            _motion.Verify(ref result);
+            Motion.Verify(ref result);
             base.Verify(ref result);
         }
-
+        
         public override void Draw(SharpRenderer renderer)
         {
             if (movementPreview)
-                _motion.Increment();
+                Motion.Increment();
 
             Matrix localW = LocalWorld();
 
@@ -41,17 +40,17 @@ namespace IndustrialPark
         public override void Reset()
         {
             base.Reset();
-            _motion.Reset();
+            Motion.Reset();
         }
 
         public Matrix PlatLocalTranslation()
         {
-            return _motion.PlatLocalTranslation();
+            return Motion.PlatLocalTranslation();
         }
 
         public override Matrix PlatLocalRotation()
         {
-            return _motion.PlatLocalRotation();
+            return Motion.PlatLocalRotation();
         }
 
         public override Matrix LocalWorld()
@@ -79,23 +78,11 @@ namespace IndustrialPark
             return world;
         }
 
-        protected Motion _motion;
-
-        protected abstract int MotionStart { get; }
+        [Category("Platform")]
+        [TypeConverter(typeof(ExpandableObjectConverter))]
+        public Motion Motion { get; set; }
 
         [Browsable(false)]
-        public Motion Motion
-        {
-            get => _motion;
-            set
-            {
-                _motion = value;
-
-                List<byte> before = Data.Take(MotionStart).ToList();
-                before.AddRange(value.ToByteArray());
-                before.AddRange(Data.Skip(MotionStart + Motion.Size(game)));
-                Data = before.ToArray();
-            }
-        }
+        public abstract int MotionStart { get; }
     }
 }

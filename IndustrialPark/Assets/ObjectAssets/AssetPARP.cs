@@ -7,18 +7,30 @@ using System.Linq;
 
 namespace IndustrialPark
 {
+    public enum Interp_Mode : uint
+    {
+        Null = 0x0,
+        ConstA = 0x48E48E7A,
+        ConstB = 0x48E48E7B,
+        Random = 0x0FE111BF,
+        Linear = 0xB7353B79,
+        Sine = 0x0B326F01,
+        Cosine = 0x498D7119,
+        Time = 0x0B54BC19,
+        Step = 0x0B354BD4,
+    }
+
+    [TypeConverter(typeof(ExpandableObjectConverter))]
     public class StructPARP
     {
-        public float InterpStart { get; set; }
-        public float InterpEnd { get; set; }
-        public AssetID InterpMode { get; set; }
-        public float Frequency { get; set; }
-        public float Frequency2 { get; set; }
+        public float Interp_0 { get; set; }
+        public float Interp_1 { get; set; }
+        public Interp_Mode Interp_Mode { get; set; }
+        public float Frequency_RandLinStep { get; set; }
+        public float Frequency_SinCos { get; set; }
 
-        public StructPARP()
-        {
-            InterpMode = 0;
-        }
+        [ReadOnly(true)]
+        public string EntryFunction { get; set; }
     }
 
     public class AssetPARP : ObjectAsset
@@ -56,13 +68,28 @@ namespace IndustrialPark
                 {
                     list.Add(new StructPARP()
                     {
-                        InterpStart = ReadFloat(0x0C + i * 0x14 + 0x00),
-                        InterpEnd = ReadFloat(0x0C + i * 0x14 + 0x04),
-                        InterpMode = ReadUInt(0x0C + i * 0x14 + 0x08),
-                        Frequency = ReadFloat(0x0C + i * 0x14 + 0x0C),
-                        Frequency2 = ReadFloat(0x0C + i * 0x14 + 0x10)
+                        Interp_0 = ReadFloat(0x0C + i * 0x14 + 0x00),
+                        Interp_1 = ReadFloat(0x0C + i * 0x14 + 0x04),
+                        Interp_Mode = (Interp_Mode)ReadUInt(0x0C + i * 0x14 + 0x08),
+                        Frequency_RandLinStep = ReadFloat(0x0C + i * 0x14 + 0x0C),
+                        Frequency_SinCos = ReadFloat(0x0C + i * 0x14 + 0x10)
                     });
                 }
+
+                list[0].EntryFunction = "Rate (how many times per second a particle is emitted)";
+                list[1].EntryFunction = "Life (particle lifetime in seconds)";
+                list[2].EntryFunction = "Birth size in units";
+                list[3].EntryFunction = "Death size in units";
+                list[4].EntryFunction = "Start color (red component)";
+                list[5].EntryFunction = "Start color (green component)";
+                list[6].EntryFunction = "Start color (blue component)";
+                list[7].EntryFunction = "Start color (alpha component)";
+                list[8].EntryFunction = "End color (red component)";
+                list[9].EntryFunction = "End color (green component)";
+                list[10].EntryFunction = "End color (blue component)";
+                list[11].EntryFunction = "End color (alpha component)";
+                list[12].EntryFunction = "Vel_Scale (unknown/unused)";
+                list[13].EntryFunction = "Vel_Angle (unknown/unused)";
 
                 return list.ToArray();
             }
@@ -80,11 +107,11 @@ namespace IndustrialPark
 
                 foreach (StructPARP a in list)
                 {
-                    before.AddRange(BitConverter.GetBytes(Switch(a.InterpStart)));
-                    before.AddRange(BitConverter.GetBytes(Switch(a.InterpEnd)));
-                    before.AddRange(BitConverter.GetBytes(Switch(a.InterpMode)));
-                    before.AddRange(BitConverter.GetBytes(Switch(a.Frequency)));
-                    before.AddRange(BitConverter.GetBytes(Switch(a.Frequency2)));
+                    before.AddRange(BitConverter.GetBytes(Switch(a.Interp_0)));
+                    before.AddRange(BitConverter.GetBytes(Switch(a.Interp_1)));
+                    before.AddRange(BitConverter.GetBytes(Switch((uint)a.Interp_Mode)));
+                    before.AddRange(BitConverter.GetBytes(Switch(a.Frequency_RandLinStep)));
+                    before.AddRange(BitConverter.GetBytes(Switch(a.Frequency_SinCos)));
                 }
 
                 before.AddRange(Data.Skip(0x124));

@@ -373,5 +373,12 @@ namespace IndustrialPark
                     Write(0xC8, value);
             }
         }
+
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game != Game.Incredibles)
+                dt.RemoveProperty("UnknownIntC8");
+            base.SetDynamicProperties(dt);
+        }
     }
 }

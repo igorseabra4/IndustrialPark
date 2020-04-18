@@ -227,7 +227,7 @@ namespace IndustrialPark.Models
             }
 
             Vertex3 sphereCenter = new Vertex3((max.X + min.X) / 2f, (max.Y + min.Y) / 2f, (max.Z + min.Z) / 2f);
-            float radius = Math.Max((max.X - min.X) / 2f, Math.Max((max.Y - min.Y) / 2f, (max.Z - min.Z) / 2f));
+            float radius = Math.Max((max.X - min.X) / 2f, Math.Max((max.Y - min.Y) / 2f, (max.Z - min.Z) / 2f)) * 2f;
 
             var binMeshes = new List<BinMesh>(materials.Count);
             int k = 0;

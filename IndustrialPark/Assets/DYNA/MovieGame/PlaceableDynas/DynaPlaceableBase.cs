@@ -210,7 +210,7 @@ namespace IndustrialPark
 
         protected static uint InvMask(uint bit)
         {
-            return uint.MaxValue - Mask(bit);
+            return 0xFFFFFFFF ^ Mask(bit);
         }
 
         [Category("Placement Flags")]
@@ -253,13 +253,13 @@ namespace IndustrialPark
         public bool PreciseCollision
         {
             get => (SolidityFlag & Mask(1)) != 0;
-            set => SolidityFlag = (byte)(value ? (VisibilityFlag | Mask(1)) : (VisibilityFlag & InvMask(1)));
+            set => SolidityFlag = (byte)(value ? (SolidityFlag | Mask(1)) : (SolidityFlag & InvMask(1)));
         }
         [Category("Placement Flags")]
         public bool LedgeGrab
         {
             get => (SolidityFlag & Mask(7)) != 0;
-            set => SolidityFlag = (byte)(value ? (VisibilityFlag | Mask(7)) : (VisibilityFlag & InvMask(7)));
+            set => SolidityFlag = (byte)(value ? (SolidityFlag | Mask(7)) : (SolidityFlag & InvMask(7)));
         }
         [Category("Placement References")]
         public AssetID Surface_AssetID { get; set; }

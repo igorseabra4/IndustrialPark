@@ -111,12 +111,7 @@
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_IO.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Sounds.cs" />
     <Compile Include="ArchiveEditor\Gizmos\BoxTrigPositionGizmo.cs" />
-    <Compile Include="ArchiveEditor\InternalEditors\InternalWireEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\InternalWireEditor.Designer.cs">
-      <DependentUpon>InternalWireEditor.cs</DependentUpon>
-    </Compile>
+    <Compile Include="ArchiveEditor\InternalEditors\DynamicTypeDescriptor.cs" />
     <Compile Include="ArchiveEditor\Other\TextureIOHelper.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Textures.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Gizmos.cs" />
@@ -150,36 +145,6 @@
     </Compile>
     <Compile Include="ArchiveEditor\InternalEditors\InternalTextureEditor.Designer.cs">
       <DependentUpon>InternalTextureEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\InternalModelEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\InternalModelEditor.Designer.cs">
-      <DependentUpon>InternalModelEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\InternalButtonEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\InternalButtonEditor.Designer.cs">
-      <DependentUpon>InternalButtonEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\InternalPlatEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\InternalPlatEditor.Designer.cs">
-      <DependentUpon>InternalPlatEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\InternalShrapnelEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\InternalShrapnelEditor.Designer.cs">
-      <DependentUpon>InternalShrapnelEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\InternalGrupEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\InternalGrupEditor.Designer.cs">
-      <DependentUpon>InternalGrupEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="ArchiveEditor\InternalEditors\InternalFlyEditor.cs">
       <SubType>Form</SubType>
@@ -254,11 +219,13 @@
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetDSTR_Scooby.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetNPC.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetPLAT.cs" />
+    <Compile Include="Assets\Shared\AssetSpecifics\AssetSpecific_Generic.cs" />
     <Compile Include="Assets\Shared\AssetWithMotion.cs" />
     <Compile Include="ArchiveEditor\Other\EndianConverter.cs" />
-    <Compile Include="Assets\Shared\Motion.cs" />
-    <Compile Include="Assets\Shared\PlatSpecific.cs" />
-    <Compile Include="Assets\Shared\CamSpecific.cs" />
+    <Compile Include="Assets\Shared\AssetSpecifics\PareSpecific.cs" />
+    <Compile Include="Assets\Shared\AssetSpecifics\Motion.cs" />
+    <Compile Include="Assets\Shared\AssetSpecifics\PlatSpecific.cs" />
+    <Compile Include="Assets\Shared\AssetSpecifics\CamSpecific.cs" />
     <Compile Include="Links\Enums\EventBFBB.cs" />
     <Compile Include="Assets\Shared\Enums\PlatTypeSpecific.cs" />
     <Compile Include="Assets\Shared\Interfaces\IRotatableAsset.cs" />
@@ -330,12 +297,6 @@
     </Compile>
     <Compile Include="ArchiveEditor\InternalEditors\InternalSoundEditor.Designer.cs">
       <DependentUpon>InternalSoundEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\InternalCamEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\InternalCamEditor.Designer.cs">
-      <DependentUpon>InternalCamEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="ArchiveEditor\InternalEditors\InternalDynaEditor.cs">
       <SubType>Form</SubType>
@@ -475,20 +436,8 @@
     <EmbeddedResource Include="ArchiveEditor\Dialogs\ImportModel.resx">
       <DependentUpon>ImportModel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalWireEditor.resx">
-      <DependentUpon>InternalWireEditor.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalTextureEditor.resx">
       <DependentUpon>InternalTextureEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalModelEditor.resx">
-      <DependentUpon>InternalModelEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalButtonEditor.resx">
-      <DependentUpon>InternalButtonEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalPlatEditor.resx">
-      <DependentUpon>InternalPlatEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\Dialogs\LinkEditor.resx">
       <DependentUpon>LinkEditor.cs</DependentUpon>
@@ -537,12 +486,6 @@
     <Compile Include="MainForm\ViewConfig.designer.cs">
       <DependentUpon>ViewConfig.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalShrapnelEditor.resx">
-      <DependentUpon>InternalShrapnelEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalGrupEditor.resx">
-      <DependentUpon>InternalGrupEditor.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalFlyEditor.resx">
       <DependentUpon>InternalFlyEditor.cs</DependentUpon>
     </EmbeddedResource>
@@ -570,9 +513,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalSoundEditor.resx">
       <DependentUpon>InternalSoundEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalCamEditor.resx">
-      <DependentUpon>InternalCamEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalDynaEditor.resx">
       <DependentUpon>InternalDynaEditor.cs</DependentUpon>

@@ -94,10 +94,10 @@ namespace IndustrialPark
             {
                 hipFile = new HipFile(fileName);
             }
-            catch
+            catch (Exception e)
             {
                 progressBar.Close();
-                throw new Exception();
+                throw e;
             }
 
             progressBar.SetProgressBar(0, DICT.ATOC.AHDRList.Count, 1);
@@ -627,15 +627,24 @@ namespace IndustrialPark
             UnsavedChanges = true;
 
             finalIndices = new List<uint>();
+            Dictionary<uint, uint> referenceUpdate = new Dictionary<uint, uint>();
+
             foreach (Asset asset in currentlySelectedAssets)
             {
                 string serializedObject = JsonConvert.SerializeObject(asset.AHDR);
                 Section_AHDR AHDR = JsonConvert.DeserializeObject<Section_AHDR>(serializedObject);
 
+                var previousAssetID = AHDR.assetID;
+
                 AddAssetWithUniqueID(layerIndex, AHDR);
+
+                referenceUpdate.Add(previousAssetID, AHDR.assetID);
 
                 finalIndices.Add(AHDR.assetID);
             }
+
+            if (updateReferencesOnCopy)
+                UpdateReferencesOnCopy(referenceUpdate, (from Asset asset in currentlySelectedAssets select asset.AHDR).ToList());
         }
 
         public void CopyAssetsToClipboard()
@@ -711,9 +720,13 @@ namespace IndustrialPark
                 finalIndices.Add(AHDR.assetID);
             }
 
-            if (updateReferencesOnCopy)
-            {
-                AssetType[] dontUpdate = new AssetType[] {
+            if (updateReferencesOnCopy) 
+                UpdateReferencesOnCopy(referenceUpdate, clipboard.assets);
+        }
+
+        public void UpdateReferencesOnCopy(Dictionary<uint, uint> referenceUpdate, List<Section_AHDR> assets)
+        {
+            AssetType[] dontUpdate = new AssetType[] {
                     AssetType.BSP,
                     AssetType.JSP,
                     AssetType.MODL,
@@ -724,25 +737,24 @@ namespace IndustrialPark
                     AssetType.TEXT
                 };
 
-                Dictionary<uint, uint> newReferenceUpdate;
+            Dictionary<uint, uint> newReferenceUpdate;
 
-                if (EndianConverter.PlatformEndianness(platform) == Endianness.Big)
+            if (EndianConverter.PlatformEndianness(platform) == Endianness.Big)
+            {
+                newReferenceUpdate = new Dictionary<uint, uint>();
+                foreach (var key in referenceUpdate.Keys)
                 {
-                    newReferenceUpdate = new Dictionary<uint, uint>();
-                    foreach (var key in referenceUpdate.Keys)
-                    {
-                        newReferenceUpdate.Add(
-                            BitConverter.ToUInt32(BitConverter.GetBytes(key).Reverse().ToArray(), 0),
-                            BitConverter.ToUInt32(BitConverter.GetBytes(referenceUpdate[key]).Reverse().ToArray(), 0));
-                    }
+                    newReferenceUpdate.Add(
+                        BitConverter.ToUInt32(BitConverter.GetBytes(key).Reverse().ToArray(), 0),
+                        BitConverter.ToUInt32(BitConverter.GetBytes(referenceUpdate[key]).Reverse().ToArray(), 0));
                 }
-                else
-                    newReferenceUpdate = referenceUpdate;
-
-                foreach (Section_AHDR section in clipboard.assets)
-                    if (!dontUpdate.Contains(section.assetType))
-                        section.data = ReplaceReferences(section.data, newReferenceUpdate);
             }
+            else
+                newReferenceUpdate = referenceUpdate;
+
+            foreach (Section_AHDR section in assets)
+                if (!dontUpdate.Contains(section.assetType))
+                    section.data = ReplaceReferences(section.data, newReferenceUpdate);
         }
 
         public void ImportMultipleAssets(int layerIndex, List<Section_AHDR> AHDRs, out List<uint> assetIDs, bool overwrite)

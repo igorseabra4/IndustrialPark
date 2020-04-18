@@ -147,6 +147,14 @@ namespace IndustrialPark
             Verify(Animation_AssetID, ref result);
         }
 
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game != Game.BFBB)
+                dt.RemoveProperty("PaddingC");
+
+            base.SetDynamicProperties(dt);
+        }
+
         [Category("Placement Flags"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte VisibilityFlag
         {
@@ -193,7 +201,7 @@ namespace IndustrialPark
         public bool PreciseCollision
         {
             get => (SolidityFlag & Mask(1)) != 0;
-            set => SolidityFlag = (byte)(value ? (VisibilityFlag | Mask(1)) : (VisibilityFlag & InvMask(1)));
+            set => SolidityFlag = (byte)(value ? (SolidityFlag | Mask(1)) : (SolidityFlag & InvMask(1)));
         }
 
         [Category("Placement")]

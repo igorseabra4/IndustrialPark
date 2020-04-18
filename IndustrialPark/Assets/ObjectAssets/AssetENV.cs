@@ -149,5 +149,12 @@ namespace IndustrialPark
                         Data[0x40 + i] = BitConverter.GetBytes(value)[i];
             }
         }
+
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game == Game.Scooby)
+                dt.RemoveProperty("LoldHeight");
+            base.SetDynamicProperties(dt);
+        }
     }
 }

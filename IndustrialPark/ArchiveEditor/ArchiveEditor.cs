@@ -546,14 +546,14 @@ namespace IndustrialPark
 
         private void importModelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            List<Section_AHDR> AHDRs = ImportModel.GetAssets(archive.game, out bool success, out bool overwrite, out bool makeSimps, out bool piptVcolors);
+            List<Section_AHDR> AHDRs = ImportModel.GetAssets(archive.game, out bool success, out bool overwrite, out bool makeSimps, out bool ledgeGrabSimps, out bool piptVcolors);
             if (success)
             {
                 archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, out List<uint> assetIDs, overwrite);
                 if (piptVcolors)
                     archive.MakePiptVcolors(assetIDs);
                 if (makeSimps)
-                    assetIDs.AddRange(archive.MakeSimps(assetIDs));
+                    assetIDs.AddRange(archive.MakeSimps(assetIDs, ledgeGrabSimps));
                 PopulateLayerComboBox();
                 SetSelectedIndices(assetIDs, true);
             }

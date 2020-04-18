@@ -409,5 +409,16 @@ namespace IndustrialPark
             get => ReadFloat(0x98 + Offset + 2 * Offset2);
             set => Write(0x98 + Offset + 2 * Offset2, value);
         }
+
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game != Game.BFBB)
+            {
+                dt.RemoveProperty("Volume");
+                dt.RemoveProperty("StartFriction");
+            }
+            base.SetDynamicProperties(dt);
+        }
     }
+
 }

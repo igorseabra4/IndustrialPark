@@ -45,6 +45,11 @@ namespace IndustrialPark
             archive.UnsavedChanges = true;
         }
 
+        public void RefreshPropertyGrid()
+        {
+            propertyGridDynaType.Refresh();
+        }
+
         private void buttonFindCallers_Click(object sender, System.EventArgs e)
         {
             Program.MainForm.FindWhoTargets(GetAssetID());

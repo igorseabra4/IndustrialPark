@@ -27,7 +27,7 @@ namespace IndustrialPark
             set => Write(0x58 + Offset, value);
         }
 
-        [Category("Simple Object"), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category("Simple Object"), TypeConverter(typeof(HexByteTypeConverter)), Description("02 = Solid\n82 = Ledge Grab")]
         public byte CollType
         {
             get => ReadByte(0x5C + Offset);

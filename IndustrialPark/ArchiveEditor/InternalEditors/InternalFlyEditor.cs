@@ -18,6 +18,12 @@ namespace IndustrialPark
             UpdateListbox();
         }
 
+        public void RefreshPropertyGrid()
+        {
+            listBoxFlyEntries.Refresh();
+            propertyGridSpecific.Refresh();
+        }
+
         private ArchiveEditorFunctions archive;
 
         private void InternalDynaEditor_FormClosing(object sender, FormClosingEventArgs e)

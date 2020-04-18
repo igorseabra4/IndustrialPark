@@ -112,32 +112,11 @@ namespace IndustrialPark
 
             switch (asset.AHDR.assetType)
             {
-                case AssetType.BUTN:
-                    internalEditors.Add(new InternalButtonEditor((AssetBUTN)asset, this, hideHelp));
-                    break;
-                case AssetType.CAM:
-                    internalEditors.Add(new InternalCamEditor((AssetCAM)asset, this));
-                    break;
                 case AssetType.DYNA:
                     internalEditors.Add(new InternalDynaEditor((AssetDYNA)asset, this, hideHelp));
                     break;
                 case AssetType.FLY:
                     internalEditors.Add(new InternalFlyEditor((AssetFLY)asset, this));
-                    break;
-                case AssetType.GRUP:
-                //case AssetType.ANIM:
-                    internalEditors.Add(new InternalGrupEditor(asset, this));
-                    break;
-                case AssetType.BSP:
-                case AssetType.JSP:
-                case AssetType.MODL:
-                    if (asset is AssetRenderWareModel arwm)
-                        internalEditors.Add(new InternalModelEditor(arwm, this, hideHelp));
-                    else
-                        internalEditors.Add(new InternalAssetEditor(asset, this, hideHelp));
-                    break;
-                case AssetType.PLAT:
-                    internalEditors.Add(new InternalPlatEditor((AssetPLAT)asset, this, hideHelp));
                     break;
                 case AssetType.RWTX:
                     if (asset is AssetRWTX rwtx)
@@ -145,18 +124,12 @@ namespace IndustrialPark
                     else
                         internalEditors.Add(new InternalAssetEditor(asset, this, hideHelp));
                     break;
-                case AssetType.SHRP:
-                    internalEditors.Add(new InternalShrapnelEditor((AssetSHRP)asset, this));
-                    break;
                 case AssetType.SND:
                 case AssetType.SNDS:
                     internalEditors.Add(new InternalSoundEditor(asset, this));
                     break;
                 case AssetType.TEXT:
                     internalEditors.Add(new InternalTextEditor((AssetTEXT)asset, this));
-                    break;
-                case AssetType.WIRE:
-                    internalEditors.Add(new InternalWireEditor((AssetWIRE)asset, this, hideHelp));
                     break;
                 default:
                     internalEditors.Add(new InternalAssetEditor(asset, this, hideHelp));
@@ -794,7 +767,7 @@ namespace IndustrialPark
         }
 
 
-        public List<uint> MakeSimps(List<uint> assetIDs)
+        public List<uint> MakeSimps(List<uint> assetIDs, bool ledgeGrabSimps)
         {
             int layerIndex = DICT.LTOC.LHDRList.Count;
             AddLayer();
@@ -804,8 +777,10 @@ namespace IndustrialPark
                 if (GetFromAssetID(i) is AssetMODL MODL)
                 {
                     string simpName = "SIMP_" + MODL.AHDR.ADBG.assetName.Replace(".dff", "").ToUpper();
-                    uint simpAssetID = PlaceTemplate(new Vector3(), layerIndex, out bool success, ref outAssetIDs, simpName, AssetTemplate.SIMP_Generic);
-                    ((AssetSIMP)GetFromAssetID(simpAssetID)).Model_AssetID = i;
+                    AssetSIMP simp = (AssetSIMP)GetFromAssetID(PlaceTemplate(new Vector3(), layerIndex, out bool success, ref outAssetIDs, simpName, AssetTemplate.SIMP_Generic));
+                    simp.Model_AssetID = i;
+                    if (ledgeGrabSimps)
+                        simp.CollType = 0x82;
                 }
 
             return outAssetIDs;

@@ -20,6 +20,10 @@ namespace IndustrialPark
             labelAssetName.Text = $"[{asset.AHDR.assetType.ToString()}] {asset.ToString()}";
         }
 
+        public void RefreshPropertyGrid()
+        {
+        }
+
         private void InternalAssetEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
             archive.CloseInternalEditor(this);
@@ -37,7 +41,7 @@ namespace IndustrialPark
         {
             OpenFileDialog openFileDialog = new OpenFileDialog()
             {
-                Title = "Select your audio file (GameCube DSP, XBOX PCM, PS2 VAG)"
+                Title = "Select your audio file (GameCube DSP, GameCube FSB3, XBOX PCM, PS2 VAG)"
             };
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)

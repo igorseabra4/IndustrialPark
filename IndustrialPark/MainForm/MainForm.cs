@@ -1309,7 +1309,7 @@ namespace IndustrialPark
                     {
                         string[] ini = File.ReadAllLines(s);
                         for (int i = 0; i < ini.Length; i++)
-                            if (ini[i].StartsWith("BOOT="))
+                            if (ini[i].StartsWith("BOOT"))
                             { 
                                 ini[i] = "BOOT=" + Path.GetFileNameWithoutExtension(hipName).ToUpper();
                                 break;

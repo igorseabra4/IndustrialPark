@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public enum EmmiterType : byte
+    public enum EmitterType : byte
     {
         Point = 0,
         CircleEdge = 1,
@@ -51,9 +51,9 @@ namespace IndustrialPark
         }
 
         [Category("Particle Emitter")]
-        public EmmiterType EmitterType
+        public EmitterType EmitterType
         {
-            get => (EmmiterType)ReadByte(0x9);
+            get => (EmitterType)ReadByte(0x9);
             set => Write(0x9, (byte)value);
         }
 
@@ -71,53 +71,42 @@ namespace IndustrialPark
             set => Write(0xC, value);
         }
 
-        [Category("Particle Emitter"), TypeConverter(typeof(FloatTypeConverter))]
-        public float E_circle
+        [Category("Particle Emitter"), TypeConverter(typeof(ExpandableObjectConverter))]
+        public PareSpecific_Generic PareSpecific
         {
-            get => ReadFloat(0x10);
-            set => Write(0x10, value);
-        }
-
-        [Category("Particle Emitter"), TypeConverter(typeof(FloatTypeConverter))]
-        public float E_sphere
-        {
-            get => ReadFloat(0x14);
-            set => Write(0x14, value);
-        }
-
-        [Category("Particle Emitter"), TypeConverter(typeof(FloatTypeConverter))]
-        public float E_rectangle
-        {
-            get => ReadFloat(0x18);
-            set => Write(0x18, value);
-        }
-
-        [Category("Particle Emitter"), TypeConverter(typeof(FloatTypeConverter))]
-        public float E_line
-        {
-            get => ReadFloat(0x1C);
-            set => Write(0x1C, value);
-        }
-
-        [Category("Particle Emitter"), TypeConverter(typeof(FloatTypeConverter))]
-        public float E_volume
-        {
-            get => ReadFloat(0x20);
-            set => Write(0x20, value);
-        }
-
-        [Category("Particle Emitter"), TypeConverter(typeof(FloatTypeConverter))]
-        public float E_offsetp
-        {
-            get => ReadFloat(0x24);
-            set => Write(0x24, value);
-        }
-
-        [Category("Particle Emitter"), TypeConverter(typeof(FloatTypeConverter))]
-        public float E_vcyl
-        {
-            get => ReadFloat(0x28);
-            set => Write(0x28, value);
+            get
+            {
+                switch (EmitterType)
+                {
+                    case EmitterType.CircleEdge:
+                    case EmitterType.Circle:
+                    case EmitterType.OCircleEdge:
+                    case EmitterType.OCircle:
+                        return new PareSpecific_xPECircle(this);
+                    case EmitterType.RectEdge:
+                    case EmitterType.Rect:
+                        return new PareSpecific_tagEmitRect(this);
+                    case EmitterType.Line:
+                        return new PareSpecific_tagEmitLine(this);
+                    case EmitterType.Volume:
+                        return new PareSpecific_tagEmitVolume(this);
+                    case EmitterType.SphereEdge:
+                    case EmitterType.Sphere:
+                    case EmitterType.SphereEdge10:
+                    case EmitterType.SphereEdge11:
+                        return new PareSpecific_tagEmitSphere(this);
+                    case EmitterType.OffsetPoint:
+                        return new PareSpecific_tagEmitOffsetPoint(this);
+                    case EmitterType.VCylEdge:
+                        return new PareSpecific_xPEVCyl(this);
+                    case EmitterType.EntityBone:
+                        return new PareSpecific_xPEEntBone(this);
+                    case EmitterType.EntityBound:
+                        return new PareSpecific_xPEEntBound(this);
+                    default:
+                        return new PareSpecific_Generic(this);
+                }
+            }
         }
 
         [Category("Particle Emitter")]

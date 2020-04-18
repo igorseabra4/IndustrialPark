@@ -50,7 +50,7 @@
             this.propertyGridAsset.Location = new System.Drawing.Point(3, 23);
             this.propertyGridAsset.Name = "propertyGridAsset";
             this.propertyGridAsset.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.propertyGridAsset.Size = new System.Drawing.Size(324, 176);
+            this.propertyGridAsset.Size = new System.Drawing.Size(308, 175);
             this.propertyGridAsset.TabIndex = 5;
             this.propertyGridAsset.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGridAsset_PropertyValueChanged);
             // 
@@ -86,16 +86,16 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(330, 440);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(314, 438);
             this.tableLayoutPanel1.TabIndex = 7;
             // 
             // buttonHelp
             // 
             this.buttonHelp.AutoSize = true;
             this.buttonHelp.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonHelp.Location = new System.Drawing.Point(3, 415);
+            this.buttonHelp.Location = new System.Drawing.Point(3, 413);
             this.buttonHelp.Name = "buttonHelp";
-            this.buttonHelp.Size = new System.Drawing.Size(159, 22);
+            this.buttonHelp.Size = new System.Drawing.Size(151, 22);
             this.buttonHelp.TabIndex = 13;
             this.buttonHelp.Text = "Help";
             this.buttonHelp.UseVisualStyleBackColor = true;
@@ -105,9 +105,9 @@
             // 
             this.buttonExport.AutoSize = true;
             this.buttonExport.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonExport.Location = new System.Drawing.Point(3, 387);
+            this.buttonExport.Location = new System.Drawing.Point(3, 385);
             this.buttonExport.Name = "buttonExport";
-            this.buttonExport.Size = new System.Drawing.Size(159, 22);
+            this.buttonExport.Size = new System.Drawing.Size(151, 22);
             this.buttonExport.TabIndex = 10;
             this.buttonExport.Text = "Export";
             this.buttonExport.UseVisualStyleBackColor = true;
@@ -117,9 +117,9 @@
             // 
             this.buttonImport.AutoSize = true;
             this.buttonImport.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonImport.Location = new System.Drawing.Point(168, 387);
+            this.buttonImport.Location = new System.Drawing.Point(160, 385);
             this.buttonImport.Name = "buttonImport";
-            this.buttonImport.Size = new System.Drawing.Size(159, 22);
+            this.buttonImport.Size = new System.Drawing.Size(151, 22);
             this.buttonImport.TabIndex = 11;
             this.buttonImport.Text = "Import";
             this.buttonImport.UseVisualStyleBackColor = true;
@@ -129,9 +129,9 @@
             // 
             this.buttonFindCallers.AutoSize = true;
             this.buttonFindCallers.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonFindCallers.Location = new System.Drawing.Point(168, 415);
+            this.buttonFindCallers.Location = new System.Drawing.Point(160, 413);
             this.buttonFindCallers.Name = "buttonFindCallers";
-            this.buttonFindCallers.Size = new System.Drawing.Size(159, 22);
+            this.buttonFindCallers.Size = new System.Drawing.Size(151, 22);
             this.buttonFindCallers.TabIndex = 12;
             this.buttonFindCallers.Text = "Find Who Targets Me";
             this.buttonFindCallers.UseVisualStyleBackColor = true;
@@ -142,9 +142,9 @@
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.tableLayoutPanel1.SetColumnSpan(this.pictureBox1, 2);
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox1.Location = new System.Drawing.Point(3, 205);
+            this.pictureBox1.Location = new System.Drawing.Point(3, 204);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(324, 176);
+            this.pictureBox1.Size = new System.Drawing.Size(308, 175);
             this.pictureBox1.TabIndex = 14;
             this.pictureBox1.TabStop = false;
             // 
@@ -152,7 +152,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(330, 440);
+            this.ClientSize = new System.Drawing.Size(314, 438);
             this.Controls.Add(this.tableLayoutPanel1);
             this.MaximizeBox = false;
             this.Name = "InternalTextureEditor";

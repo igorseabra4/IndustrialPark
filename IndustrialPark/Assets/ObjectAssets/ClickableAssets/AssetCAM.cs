@@ -305,7 +305,8 @@ namespace IndustrialPark
             get => ReadFloat(0x5C);
             set => Write(0x5C, value);
         }
-
+        
+        [Category("Camera"), TypeConverter(typeof(ExpandableObjectConverter))]
         public CamSpecific_Generic CamSpecific
         {
             get
@@ -313,25 +314,18 @@ namespace IndustrialPark
                 switch (CamType)
                 {
                     case CamType.Follow:
-                        return new CamSpecific_Follow(Data.Skip(0x60).ToArray(), platform);
+                        return new CamSpecific_Follow(this);
                     case CamType.Shoulder:
-                        return new CamSpecific_Shoulder(Data.Skip(0x60).ToArray(), platform);
+                        return new CamSpecific_Shoulder(this);
                     case CamType.Static:
-                        return new CamSpecific_Static(Data.Skip(0x60).ToArray(), platform);
+                        return new CamSpecific_Static(this);
                     case CamType.Path:
-                        return new CamSpecific_Path(Data.Skip(0x60).ToArray(), platform);
+                        return new CamSpecific_Path(this);
                     case CamType.StaticFollow:
-                        return new CamSpecific_StaticFollow(Data.Skip(0x60).ToArray(), platform);
+                        return new CamSpecific_StaticFollow(this);
                     default:
-                        return new CamSpecific_Generic(Data.Skip(0x60).ToArray(), platform);
+                        return new CamSpecific_Generic(this);
                 }
-            }
-            set
-            {
-                List<byte> before = Data.Take(0x60).ToList();
-                before.AddRange(value.ToByteArray());
-                before.AddRange(Data.Skip(0x60 + CamSpecific_Generic.Size));
-                Data = before.ToArray();
             }
         }
 

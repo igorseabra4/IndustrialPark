@@ -113,7 +113,7 @@ namespace IndustrialPark
 
         protected void Write(int j, short value)
         {
-            byte[] split = BitConverter.GetBytes(value).ToArray();
+            byte[] split = BitConverter.GetBytes(value);
 
             if (platform == Platform.GameCube)
                 split = split.Reverse().ToArray();
@@ -124,7 +124,7 @@ namespace IndustrialPark
 
         protected void Write(int j, ushort value)
         {
-            byte[] split = BitConverter.GetBytes(value).ToArray();
+            byte[] split = BitConverter.GetBytes(value);
 
             if (platform == Platform.GameCube)
                 split = split.Reverse().ToArray();
@@ -135,7 +135,7 @@ namespace IndustrialPark
 
         protected void Write(int j, int value)
         {
-            byte[] split = BitConverter.GetBytes(value).ToArray();
+            byte[] split = BitConverter.GetBytes(value);
 
             if (platform == Platform.GameCube)
                 split = split.Reverse().ToArray();
@@ -146,7 +146,7 @@ namespace IndustrialPark
 
         protected void Write(int j, uint value)
         {
-            byte[] split = BitConverter.GetBytes(value).ToArray();
+            byte[] split = BitConverter.GetBytes(value);
 
             if (platform == Platform.GameCube)
                 split = split.Reverse().ToArray();
@@ -173,6 +173,10 @@ namespace IndustrialPark
         {
             if (assetID != 0 && !Program.MainForm.AssetExists(assetID))
                 result.Add("Referenced asset 0x" + assetID.ToString("X8") + " was not found in any open archive.");
+        }
+
+        public virtual void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
         }
     }
 }

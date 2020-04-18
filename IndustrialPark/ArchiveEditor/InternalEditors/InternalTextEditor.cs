@@ -16,6 +16,11 @@ namespace IndustrialPark
             richTextBoxAssetText.Text = this.asset.Text;
         }
 
+        public void RefreshPropertyGrid()
+        {
+            richTextBoxAssetText.Refresh();
+        }
+
         private void InternalTextEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
             archive.CloseInternalEditor(this);

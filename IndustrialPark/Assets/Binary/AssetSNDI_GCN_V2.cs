@@ -557,6 +557,26 @@ namespace IndustrialPark
             Entries = newEntries.ToArray();
         }
 
+        public void ImportFSB3(byte[] fsb3_file, uint assetID)
+        {
+            RemoveEntry(assetID);
+
+            FSB3_File temp = new FSB3_File(new BinaryReader(new MemoryStream(fsb3_file)));
+            temp.soundEntries[0].SoundAssetID = assetID;
+
+            List<FSB3_File> newEntries = new List<FSB3_File>();
+
+            FSB3_File first = Entries[0];
+            first.Merge(temp);
+
+            newEntries.Add(first);
+
+            for (int i = 1; i < Entries.Length; i++)
+                newEntries.Add(Entries[i]);
+
+            Entries = newEntries.ToArray();
+        }
+
         public void AddEntry(byte[] soundData, uint assetID)
         {
             RemoveEntry(assetID);

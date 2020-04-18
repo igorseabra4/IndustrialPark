@@ -1,7 +1,6 @@
 ﻿using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 
 namespace IndustrialPark
 {
@@ -11,7 +10,7 @@ namespace IndustrialPark
 
         protected override bool DontRender => dontRender;
 
-        protected override int EventStartOffset => 0x6C + Offset + ScoobyOffset + Motion.Size(game);
+        protected override int EventStartOffset => 0x6C + Offset + ScoobyOffset + (game == Game.Incredibles ? 0x3C : 0x30);
 
         public AssetBUTN(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
@@ -22,6 +21,13 @@ namespace IndustrialPark
             base.Verify(ref result);
 
             Verify(PressedModel_AssetID, ref result);
+        }
+
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game == Game.Scooby)
+                dt.RemoveProperty("PressedModel_AssetID");
+            base.SetDynamicProperties(dt);
         }
 
         [Category("Button")]
@@ -303,6 +309,6 @@ namespace IndustrialPark
             set => HitMask = value ? (HitMask | Mask(31)) : (HitMask & InvMask(31));
         }
         
-        protected override int MotionStart => 0x6C + Offset + ScoobyOffset;
+        public override int MotionStart => 0x6C + Offset + ScoobyOffset;
     }
 }

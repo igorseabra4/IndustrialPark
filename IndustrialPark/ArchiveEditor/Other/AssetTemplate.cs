@@ -14,6 +14,7 @@
         Script,
         Text,
         Timer,
+        CamTweak,
         DuplicatotronSettings,
 
         // BFBB Pickups and Tikis
@@ -125,6 +126,7 @@
         BungeeHook,
         BungeeDrop,
 
+        // TSSM
         Swinger,
         Swinger_PLAT,
         Ring,
@@ -144,36 +146,42 @@
         BungeeHook_SIMP,
 
         // Placeable
+        Camera,
         Marker,
-        BoxTrigger,
-        SphereTrigger,
-        CylinderTrigger,
-        PointMVPT,
-        PointMVPT_TSSM,
-        EnemyAreaMVPT,
+        Box_Trigger,
+        Sphere_Trigger,
+        Cylinder_Trigger,
+        Point_MVPT,
+        Area_MVPT,
         Dyna_Pointer,
         Boulder_Generic,
         Button_Generic,
-        Camera,
         Destructible_Generic,
         ElectricArc_Generic,
+        Hangable_Generic,
+        NPC_Generic,
         Pendulum_Generic,
         Platform_Generic,
         Player_Generic,
         SIMP_Generic,
         VIL_Generic,
+        UI_Generic,
+        UIFT_Generic,
+        SFX_OnEvent,
+        SFX_OnRadius,
+        LightEmitter_Generic,
 
         // Other
         AnimationList,
         CollisionTable,
         Environment,
+        Flythrough,
         JawData,
         LevelOfDetailTable,
         MaterialMap,
         PipeInfoTable,
         ShadowTable,
         SoundInfo,
-
         EmptyBSP,
 
         PasteClipboard

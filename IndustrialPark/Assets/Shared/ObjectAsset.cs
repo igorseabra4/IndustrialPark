@@ -193,5 +193,18 @@ namespace IndustrialPark
                     result.Add("Asset expects mode data than present");
             }
         }
+
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game == Game.Incredibles)
+                dt.RemoveProperty("LinksBFBB");
+            else
+            {
+                dt.RemoveProperty("LinksIncredibles");
+                dt.RemoveProperty("LinksTSSM");
+            }
+
+            base.SetDynamicProperties(dt);
+        }
     }
 }

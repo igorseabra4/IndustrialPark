@@ -24,7 +24,7 @@ namespace IndustrialPark
             Verify(HitModel_AssetID, ref result);
             Verify(DestroyModel_AssetID, ref result);
         }
-
+        
         [Category("Destructable"), Description("Not present in Scooby")]
         public AssetID DestroyShrapnel_AssetID
         {

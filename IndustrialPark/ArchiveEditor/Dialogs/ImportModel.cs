@@ -62,13 +62,14 @@ namespace IndustrialPark
             Close();
         }
 
-        public static List<Section_AHDR> GetAssets(Game game, out bool success, out bool overwrite, out bool simps, out bool piptVcolors)
+        public static List<Section_AHDR> GetAssets(Game game, out bool success, out bool overwrite, out bool simps, out bool ledgegrab, out bool piptVcolors)
         {
             using (ImportModel a = new ImportModel())
                 if (a.ShowDialog() == DialogResult.OK)
                 {
                     List<Section_AHDR> AHDRs = new List<Section_AHDR>();
                     simps = a.checkBoxGenSimps.Checked;
+                    ledgegrab = a.checkBoxLedgeGrab.Checked;
 
                     if (simps)
                         MessageBox.Show("a SIMP for each imported MODL will be generated and placed on a new DEFAULT layer.");
@@ -101,9 +102,14 @@ namespace IndustrialPark
                 }
                 else
                 {
-                    success = overwrite = simps = piptVcolors = false;
+                    success = overwrite = simps = ledgegrab = piptVcolors = false;
                     return null;
                 }
+        }
+
+        private void checkBoxGenSimps_CheckedChanged(object sender, EventArgs e)
+        {
+            checkBoxLedgeGrab.Enabled = checkBoxGenSimps.Checked;
         }
     }
 }

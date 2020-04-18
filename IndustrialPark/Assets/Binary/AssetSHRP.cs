@@ -156,6 +156,47 @@ namespace IndustrialPark
 
             return entries.ToArray();
         }
+
+        public void AddEntry(int type)
+        {
+            List<EntrySHRP> list = SHRPEntries.ToList();
+
+            switch (type)
+            {
+                case 3:
+                    if (game == Game.Incredibles)
+                        list.Add(new EntrySHRP_Type3_TSSM(platform));
+                    else
+                        list.Add(new EntrySHRP_Type3_BFBB(platform));
+                    break;
+                case 4:
+                    if (game == Game.Incredibles)
+                        list.Add(new EntrySHRP_Type4_TSSM(platform));
+                    else
+                        list.Add(new EntrySHRP_Type4_BFBB(platform));
+                    break;
+                case 5:
+                    if (game == Game.Incredibles)
+                        list.Add(new EntrySHRP_Type5_TSSM(platform));
+                    else
+                        list.Add(new EntrySHRP_Type5_BFBB(platform));
+                    break;
+                case 6:
+                    if (game == Game.Incredibles)
+                        list.Add(new EntrySHRP_Type6_TSSM(platform));
+                    else
+                        list.Add(new EntrySHRP_Type6_BFBB(platform));
+                    break;
+                case 8:
+                    list.Add(new EntrySHRP_Type8(platform));
+                    break;
+                case 9:
+                    list.Add(new EntrySHRP_Type9(platform));
+                    break;
+            }
+
+            SHRPEntries = list.ToArray();
+        }
     }
 
     public abstract class EntrySHRP : EndianConvertible

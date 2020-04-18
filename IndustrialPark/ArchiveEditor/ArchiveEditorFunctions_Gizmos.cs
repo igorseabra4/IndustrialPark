@@ -312,6 +312,13 @@ namespace IndustrialPark
                 g.isSelected = false;
         }
 
+        private void RefreshAssetEditor(uint assetID)
+        {
+            foreach (var v in internalEditors)
+                if (v.GetAssetID() == assetID)
+                    v.RefreshPropertyGrid();
+        }
+
         public void MouseMoveForPosition(Matrix viewProjection, int distanceX, int distanceY, bool grid)
         {
             if (positionGizmos[0].isSelected || positionGizmos[1].isSelected || positionGizmos[2].isSelected)
@@ -373,6 +380,7 @@ namespace IndustrialPark
 
                         if (a is AssetDYNA dyna)
                             dyna.OnDynaSpecificPropertyChange(dyna.DynaBase);
+                        RefreshAssetEditor(a.AHDR.assetID);
                     }
 
                     FinishedMovingGizmo = true;
@@ -455,6 +463,7 @@ namespace IndustrialPark
                             if (grid)
                                 ra.Position0Z = SnapToGrid(ra.Position0Z, GizmoType.Z);
                         }
+                        RefreshAssetEditor(a.AHDR.assetID);
                     }
 
                     FinishedMovingGizmo = true;
@@ -524,6 +533,7 @@ namespace IndustrialPark
 
                         if (a is AssetDYNA dyna)
                             dyna.OnDynaSpecificPropertyChange(dyna.DynaBase);
+                        RefreshAssetEditor(a.AHDR.assetID);
                     }
 
                     FinishedMovingGizmo = true;
@@ -584,6 +594,7 @@ namespace IndustrialPark
 
                         if (a is AssetDYNA dyna)
                             dyna.OnDynaSpecificPropertyChange(dyna.DynaBase);
+                        RefreshAssetEditor(a.AHDR.assetID);
                     }
 
                     FinishedMovingGizmo = true;
@@ -638,6 +649,7 @@ namespace IndustrialPark
                             trig.Position0Y = trig.PositionY;
                             trig.Position0Z = trig.PositionZ;
                         }
+                        RefreshAssetEditor(a.AHDR.assetID);
                     }
                 }
 

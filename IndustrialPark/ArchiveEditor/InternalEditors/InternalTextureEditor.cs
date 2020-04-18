@@ -23,10 +23,10 @@ namespace IndustrialPark
             propertyGridAsset.SelectedObject = asset;
             labelAssetName.Text = $"[{asset.AHDR.assetType.ToString()}] {asset.ToString()}";
 
-            ResetImage();
+            RefreshPropertyGrid();
         }
 
-        private void ResetImage()
+        public void RefreshPropertyGrid()
         {
             if (b != null)
                 b.Dispose();
@@ -146,7 +146,7 @@ namespace IndustrialPark
                     asset.Data = data;
                 }
 
-                ResetImage();
+                RefreshPropertyGrid();
                 archive.EnableTextureForDisplay(asset);
             }
         }
