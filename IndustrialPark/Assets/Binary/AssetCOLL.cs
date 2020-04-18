@@ -6,7 +6,6 @@ using HipHopFile;
 
 namespace IndustrialPark
 {
-    [TypeConverter(typeof(ExpandableObjectConverter))]
     public class EntryCOLL
     {
         public AssetID ModelAssetID { get; set; }
