@@ -628,6 +628,7 @@ namespace IndustrialPark
 
             finalIndices = new List<uint>();
             Dictionary<uint, uint> referenceUpdate = new Dictionary<uint, uint>();
+            var newAHDRs = new List<Section_AHDR>();
 
             foreach (Asset asset in currentlySelectedAssets)
             {
@@ -641,10 +642,11 @@ namespace IndustrialPark
                 referenceUpdate.Add(previousAssetID, AHDR.assetID);
 
                 finalIndices.Add(AHDR.assetID);
+                newAHDRs.Add(AHDR);
             }
 
             if (updateReferencesOnCopy)
-                UpdateReferencesOnCopy(referenceUpdate, (from Asset asset in currentlySelectedAssets select asset.AHDR).ToList());
+                UpdateReferencesOnCopy(referenceUpdate, newAHDRs);
         }
 
         public void CopyAssetsToClipboard()

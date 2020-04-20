@@ -29,12 +29,12 @@ namespace IndustrialPark
         public List<Vector3> vertexListG;
         public List<Triangle> triangleList;
         private int triangleListOffset;
-        
+
         public RWSection[] GetAsRWSectionArray()
         {
             return rwSectionArray;
         }
-        
+
         public UvAnimRenderData renderData;
 
         public RenderWareModelFile(SharpDevice device, RWSection[] rwChunkList)
@@ -433,7 +433,7 @@ namespace IndustrialPark
         }
 
         public void Render(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset, AtomicFlags[] atomicFlags)
-        { 
+        {
             renderData.worldViewProjection = world * renderer.viewProjection;
             renderData.Color = color;
             renderData.UvAnimOffset = (Vector4)uvAnimOffset;
@@ -446,7 +446,7 @@ namespace IndustrialPark
             {
                 if (meshList[i] == null || (dontDrawInvisible && (atomicFlags[i] & AtomicFlags.Render) == 0))
                     continue;
-                
+
                 meshList[i].Begin(renderer.device);
                 for (int j = 0; j < meshList[i].SubSets.Count(); j++)
                     meshList[i].Draw(renderer.device, j);

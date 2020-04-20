@@ -458,7 +458,7 @@ namespace IndustrialPark
                         List<IRenderableAsset> renderJSP = new List<IRenderableAsset>(ArchiveEditorFunctions.renderableAssetSetJSP.Count);
                         List<IRenderableAsset> renderCommon = new List<IRenderableAsset>(ArchiveEditorFunctions.renderableAssetSetCommon.Count);
                         List<IRenderableAsset> renderTrans = new List<IRenderableAsset>(ArchiveEditorFunctions.renderableAssetSetTrans.Count);
-                      //  List<IRenderableAsset> renderLarge = new List<IRenderableAsset>();
+                        //  List<IRenderableAsset> renderLarge = new List<IRenderableAsset>();
 
                         renderJSP.AddRange(ArchiveEditorFunctions.renderableAssetSetJSP);
                         renderCommon.AddRange(ArchiveEditorFunctions.renderableAssetSetCommon);

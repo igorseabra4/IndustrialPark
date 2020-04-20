@@ -16,7 +16,7 @@ namespace IndustrialPark
         /// Position
         /// </summary>
         public Vector3 Position;
-        
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -41,7 +41,7 @@ namespace IndustrialPark
         /// Position
         /// </summary>
         public Vector3 Position;
-        
+
         /// <summary>
         /// Texture coordinate
         /// </summary>
@@ -169,7 +169,7 @@ namespace IndustrialPark
         /// Position
         /// </summary>
         public Vector3 Position;
-        
+
         /// <summary>
         /// Texture coordinate
         /// </summary>
@@ -203,7 +203,7 @@ namespace IndustrialPark
         /// Position
         /// </summary>
         public Vector4 Position;
-        
+
         /// <summary>
         /// Normal
         /// </summary>
