@@ -120,7 +120,7 @@ namespace IndustrialPark
             set => Write(0x58 + Offset, (uint)value);
         }
 
-        [Category("VIL")]
+        [Category("VIL"), DisplayName("VilType (Alphabetical)")]
         public VilType_Alphabetical VilType_Alphabetical
         {
             get
@@ -129,7 +129,7 @@ namespace IndustrialPark
                     if (o.ToString() == VilType.ToString())
                         return o;
 
-                throw new Exception();
+                return VilType_Alphabetical.Null;
             }
             set
             {

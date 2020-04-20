@@ -37,7 +37,7 @@ namespace IndustrialPark
 
                     if (d == DialogResult.Yes)
                     {
-                        string updatedIPfileName = "IndustrialPark_" + updatedVersion.version.Replace('p', 'P') + ".zip";
+                        string updatedIPfileName = "IndustrialPark_" + updatedVersion.version + ".zip";
                         string updatedIPURL = "https://github.com/igorseabra4/IndustrialPark/releases/download/" + updatedVersion.version + "/" + updatedIPfileName;
 
                         string updatedIPfilePath = Application.StartupPath + "/Resources/" + updatedIPfileName;
@@ -57,7 +57,6 @@ namespace IndustrialPark
                                 "/Resources/Models",
                                 "/Resources/Scripts",
                                 "/Resources/SharpDX",
-                                "/Resources/txdgen_1.0",
                                 "/Resources/txdgen_1.0",
                                 "/Resources/txdgen_1.0/LICENSES",
                                 "/Resources/txdgen_1.0/LICENSES/eirrepo",
@@ -113,33 +112,6 @@ namespace IndustrialPark
             }
 
             return false;
-        }
-
-        public static void DownloadEditorFiles()
-        {
-            try
-            {
-                string editorFilesZipURL = "https://github.com/igorseabra4/IndustrialPark-EditorFiles/archive/master.zip";
-                string destZipPath = Application.StartupPath + "/Resources/IndustrialPark-EditorFiles.zip";
-                string editorFilesFolder = Application.StartupPath + "/Resources/IndustrialPark-EditorFiles/";
-
-                MessageBox.Show("Will begin download of IndustrialPark-EditorFiles from GitHub to " + editorFilesFolder + ". Please wait as this might take a while. Any previously existing files in the folder will be overwritten.");
-
-                using (var webClient = new WebClient())
-                    webClient.DownloadFile(new Uri(editorFilesZipURL), destZipPath);
-
-                RecursiveDelete(editorFilesFolder);
-
-                ZipFile.ExtractToDirectory(destZipPath, editorFilesFolder);
-
-                File.Delete(destZipPath);
-
-                MessageBox.Show("Downloaded IndustrialPark-EditorFiles from https://github.com/igorseabra4/IndustrialPark-EditorFiles/ to " + editorFilesFolder);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
         }
 
         private static void RecursiveDelete(string directory)
@@ -207,6 +179,47 @@ namespace IndustrialPark
             }
 
             return mustUpdate;
+        }
+
+        public static void DownloadEditorFiles()
+        {
+            DownloadAndUnzip(
+                "https://github.com/igorseabra4/IndustrialPark-EditorFiles/archive/master.zip",
+                Application.StartupPath + "/Resources/IndustrialPark-EditorFiles.zip",
+                Application.StartupPath + "/Resources/IndustrialPark-EditorFiles/",
+                "IndustrialPark-EditorFiles");
+        }
+
+        public static void DownloadVgmstream()
+        {
+            DownloadAndUnzip(
+                "https://github.com/losnoco/vgmstream/releases/download/r1050-2908-g14dc8566/test.zip",
+                Application.StartupPath + "/Resources/vgmstream.zip",
+                Application.StartupPath + "/Resources/vgmstream/",
+                "vgmstream");
+        }
+
+        private static void DownloadAndUnzip(string zipUrl, string destZipPath, string destFolder, string downloadName)
+        {
+            try
+            {
+                MessageBox.Show("Will begin download of " + downloadName + " from GitHub to " + destFolder + ". Please wait as this might take a while. Any previously existing files in the folder will be overwritten.");
+
+                using (var webClient = new WebClient())
+                    webClient.DownloadFile(new Uri(zipUrl), destZipPath);
+
+                RecursiveDelete(destFolder);
+
+                ZipFile.ExtractToDirectory(destZipPath, destFolder);
+
+                File.Delete(destZipPath);
+
+                MessageBox.Show("Downloaded " + downloadName + " from " + zipUrl + " to " + destFolder);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

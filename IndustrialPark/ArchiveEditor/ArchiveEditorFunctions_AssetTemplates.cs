@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using HipHopFile;
+using Newtonsoft.Json;
 using RenderWareFile;
 using RenderWareFile.Sections;
 using SharpDX;
@@ -307,129 +308,42 @@ namespace IndustrialPark
 
         public static bool persistentShinies = true;
 
-        private uint PlaceUserTemplate(Vector3 Position, int layerIndex, out bool success, ref List<uint> assetIDs)
-        {
-            if (!File.Exists(Path.Combine(Program.MainForm.userTemplatesFolder, CurrentUserTemplate)))
-            {
-                success = false;
-                return 0;
-            }
-
-            string assetTypeName = CurrentUserTemplate.Substring(CurrentUserTemplate.IndexOf('[') + 1, CurrentUserTemplate.IndexOf(']') - CurrentUserTemplate.IndexOf('[') - 1);
-            AssetType assetType = AssetType.Null;
-
-            foreach (AssetType o in Enum.GetValues(typeof(AssetType)))
-            {
-                if (o.ToString() == assetTypeName.Trim().ToUpper())
-                {
-                    assetType = o;
-                    break;
-                }
-            }
-            if (assetType == AssetType.Null) throw new Exception("Unknown asset type: " + assetType);
-
-            Section_AHDR newAsset = new Section_AHDR
-            {
-                assetType = assetType,
-                flags = AHDRFlagsFromAssetType(assetType),
-                data = File.ReadAllBytes(Path.Combine(Program.MainForm.userTemplatesFolder, CurrentUserTemplate))
-            };
-
-            newAsset.ADBG = new Section_ADBG(0, CurrentUserTemplate.Substring(CurrentUserTemplate.IndexOf(']') + 2) + "_T001", "", 0);
-
-            Asset asset = GetFromAssetID(AddAssetWithUniqueID(layerIndex, newAsset, giveIDregardless: true));
-
-            success = true;
-
-            if (asset is AssetTRIG trig)
-            {
-                trig.PositionX = Position.X;
-                trig.PositionY = Position.Y;
-                trig.PositionZ = Position.Z;
-
-                if (trig.Shape != TriggerShape.Box)
-                {
-                    trig.Position0X = Position.X;
-                    trig.Position0Y = Position.Y;
-                    trig.Position0Z = Position.Z;
-                }
-                else
-                {
-                    Vector3 translation = Position - trig.Position;
-
-                    trig.Position0X += translation.X;
-                    trig.Position0Y += translation.Y;
-                    trig.Position0Z += translation.Z;
-                    trig.Position1X += translation.X;
-                    trig.Position1Y += translation.Y;
-                    trig.Position1Z += translation.Z;
-                }
-            }
-            else if (asset is PlaceableAsset placeableAsset)
-            {
-                placeableAsset.PositionX = Position.X;
-                placeableAsset.PositionY = Position.Y;
-                placeableAsset.PositionZ = Position.Z;
-            }
-            else if (asset is AssetCAM cam)
-            {
-                cam.SetPosition(Program.MainForm.renderer.Camera.Position);
-                cam.SetNormalizedForward(Program.MainForm.renderer.Camera.Forward);
-                cam.SetNormalizedUp(Program.MainForm.renderer.Camera.Up);
-                cam.SetNormalizedLeft(Program.MainForm.renderer.Camera.Right);
-            }
-            else if (asset is AssetMRKR mrkr)
-            {
-                mrkr.PositionX = Position.X;
-                mrkr.PositionY = Position.Y;
-                mrkr.PositionZ = Position.Z;
-            }
-            else if (asset is AssetMVPT mvpt)
-            {
-                mvpt.PositionX = Position.X;
-                mvpt.PositionY = Position.Y;
-                mvpt.PositionZ = Position.Z;
-            }
-            else if (asset is AssetSFX sfx)
-            {
-                sfx.PositionX = Position.X;
-                sfx.PositionY = Position.Y;
-                sfx.PositionZ = Position.Z;
-            }
-            else if (asset is AssetDYNA dyna)
-            {
-                dyna.PositionX = Position.X;
-                dyna.PositionY = Position.Y;
-                dyna.PositionZ = Position.Z;
-            }
-            else if (asset is AssetLITE lite)
-            {
-                lite.PositionX = Position.X;
-                lite.PositionY = Position.Y;
-                lite.PositionZ = Position.Z;
-            }
-
-            assetIDs.Add(asset.AHDR.assetID);
-
-            return asset.AHDR.assetID;
-        }
-
         public uint PlaceTemplate(Vector3 position, int layerIndex, out bool success, ref List<uint> assetIDs, string customName = "", AssetTemplate template = AssetTemplate.Null)
         {
             if (template == AssetTemplate.Null)
                 template = CurrentAssetTemplate;
-            if (template == AssetTemplate.UserTemplate)
-                return PlaceUserTemplate(position, layerIndex, out success, ref assetIDs);
-            if (template == AssetTemplate.PasteClipboard)
+            if (template == AssetTemplate.UserTemplate || template == AssetTemplate.PasteClipboard)
             {
-                PasteAssetsFromClipboard(layerIndex, out assetIDs);
+                if (template == AssetTemplate.PasteClipboard)
+                    PasteAssetsFromClipboard(layerIndex, out assetIDs);
+                else
+                {
+                    try
+                    {
+                        var clipboard = JsonConvert.DeserializeObject<AssetClipboard>(
+                            File.ReadAllText(Path.Combine(Program.MainForm.userTemplatesFolder, CurrentUserTemplate)));
+                        PasteAssetsFromClipboard(layerIndex, out assetIDs, clipboard, true);
+                    }
+                    catch
+                    {
+                        success = false;
+                        return 0;
+                    }
+                }
 
                 if (assetIDs.Count > 0)
                 {
                     success = true;
                     foreach (uint assetID in assetIDs)
                     {
-                        if (GetFromAssetID(assetID) is IClickableAsset ica)
+                        if (GetFromAssetID(assetID) is AssetCAM cam)
+                        {
+                            cam.SetPosition(Program.MainForm.renderer.Camera.Position);
+                            cam.SetNormalizedForward(Program.MainForm.renderer.Camera.Forward);
+                            cam.SetNormalizedUp(Program.MainForm.renderer.Camera.Up);
+                            cam.SetNormalizedLeft(Program.MainForm.renderer.Camera.Right);
+                        }
+                        else if (GetFromAssetID(assetID) is IClickableAsset ica)
                         {
                             Vector3 delta = position - new Vector3(ica.PositionX, ica.PositionY, ica.PositionZ);
 
@@ -437,7 +351,7 @@ namespace IndustrialPark
                             ica.PositionY = position.Y;
                             ica.PositionZ = position.Z;
 
-                            if (GetFromAssetID(assetID) is AssetTRIG trig)
+                            if (ica is AssetTRIG trig)
                             {
                                 if (trig.Shape == TriggerShape.Box)
                                 {

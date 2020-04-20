@@ -52,7 +52,7 @@
             this.richTextBoxAssetText.Font = new System.Drawing.Font("Courier New", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richTextBoxAssetText.Location = new System.Drawing.Point(3, 23);
             this.richTextBoxAssetText.Name = "richTextBoxAssetText";
-            this.richTextBoxAssetText.Size = new System.Drawing.Size(557, 207);
+            this.richTextBoxAssetText.Size = new System.Drawing.Size(618, 227);
             this.richTextBoxAssetText.TabIndex = 7;
             this.richTextBoxAssetText.Text = "";
             this.richTextBoxAssetText.TextChanged += new System.EventHandler(this.richTextBoxAssetText_TextChanged);
@@ -73,18 +73,18 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(563, 261);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(624, 281);
             this.tableLayoutPanel1.TabIndex = 8;
             // 
             // buttonHelp
             // 
             this.buttonHelp.AutoSize = true;
             this.buttonHelp.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonHelp.Location = new System.Drawing.Point(3, 236);
+            this.buttonHelp.Location = new System.Drawing.Point(3, 256);
             this.buttonHelp.Name = "buttonHelp";
-            this.buttonHelp.Size = new System.Drawing.Size(275, 22);
+            this.buttonHelp.Size = new System.Drawing.Size(306, 22);
             this.buttonHelp.TabIndex = 18;
-            this.buttonHelp.Text = "Help";
+            this.buttonHelp.Text = "Open Wiki Page";
             this.buttonHelp.UseVisualStyleBackColor = true;
             this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
             // 
@@ -92,9 +92,9 @@
             // 
             this.buttonFindCallers.AutoSize = true;
             this.buttonFindCallers.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonFindCallers.Location = new System.Drawing.Point(284, 236);
+            this.buttonFindCallers.Location = new System.Drawing.Point(315, 256);
             this.buttonFindCallers.Name = "buttonFindCallers";
-            this.buttonFindCallers.Size = new System.Drawing.Size(276, 22);
+            this.buttonFindCallers.Size = new System.Drawing.Size(306, 22);
             this.buttonFindCallers.TabIndex = 8;
             this.buttonFindCallers.Text = "Find Who Targets Me";
             this.buttonFindCallers.UseVisualStyleBackColor = true;
@@ -104,7 +104,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(563, 261);
+            this.ClientSize = new System.Drawing.Size(624, 281);
             this.Controls.Add(this.tableLayoutPanel1);
             this.MaximizeBox = false;
             this.Name = "InternalTextEditor";

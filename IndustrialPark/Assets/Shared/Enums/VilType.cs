@@ -251,10 +251,12 @@
         tubelet_bind = 0xD7A7D3A5,
         tubelet_slave_bind = 0xEF2450C9,
         worm_bind = 0x71C779F9,
+        Null = 0,
     }
 
     public enum VilType_Alphabetical : uint
     {
+        Null,
         barnacle_boy_bind,
         boss_patrick_bind,
         boss_sa_bind,

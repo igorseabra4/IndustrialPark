@@ -8,6 +8,7 @@ using HipHopFile;
 using RenderWareFile;
 using RenderWareFile.Sections;
 using static HipHopFile.Functions;
+using System.Diagnostics;
 
 namespace IndustrialPark
 {
@@ -21,6 +22,9 @@ namespace IndustrialPark
 
         public static void PerformTXDConversionExternal(Platform targetPlatform, bool toPC = true, bool compress = false, bool generateMipmaps = false, string custom_output = null)
         {
+            if (!converterInitialized)
+                initConverter();
+
             string ini =
                 "[Main]\r\n" +
                 (custom_output ?? (toPC ?
@@ -54,14 +58,26 @@ namespace IndustrialPark
                 "imgArchivesCompressed=false\r\n" +
                 "ignoreSerializationRegions=true";
 
-            string curr = Directory.GetCurrentDirectory();
-            Directory.SetCurrentDirectory(txdGenFolder);
+            File.WriteAllText(txdGenFolder + "txdgen.ini", ini);
 
-            File.WriteAllText("txdgen.ini", ini);
+            txdgenProcess.Start();
+            txdgenProcess.WaitForExit();
+        }
 
-            System.Diagnostics.Process.Start("txdgen.exe").WaitForExit();
+        private static Process txdgenProcess;
+        private static bool converterInitialized = false;
 
-            Directory.SetCurrentDirectory(curr);
+        public static void initConverter()
+        {
+            txdgenProcess = new Process();
+            txdgenProcess.StartInfo.FileName = txdGenFolder + "txdgen.exe";
+            txdgenProcess.StartInfo.WorkingDirectory = txdGenFolder;
+            txdgenProcess.StartInfo.CreateNoWindow = true;
+            txdgenProcess.StartInfo.RedirectStandardOutput = true;
+            txdgenProcess.StartInfo.RedirectStandardError = true;
+            txdgenProcess.StartInfo.UseShellExecute = false;
+            txdgenProcess.EnableRaisingEvents = true;
+            converterInitialized = true;
         }
 
         public static int scoobyTextureVersion => 0x0C02FFFF;

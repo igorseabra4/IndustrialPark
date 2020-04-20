@@ -273,6 +273,11 @@ namespace IndustrialPark
             AutomaticUpdater.DownloadEditorFiles();
         }
 
+        private void downloadVgmstreamToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AutomaticUpdater.DownloadVgmstream();
+        }
+
         public ProjectJson FromCurrentInstance()
         {
             List<string> hips = new List<string>();
@@ -739,7 +744,7 @@ namespace IndustrialPark
         {
             ColorDialog colorDialog = new ColorDialog();
             if (colorDialog.ShowDialog() == DialogResult.OK)
-                renderer.SetMvptColor(colorDialog.Color);
+                renderer.SetTrigColor(colorDialog.Color);
         }
 
         private void sFXInColorToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1183,6 +1188,7 @@ namespace IndustrialPark
         {
             if (toolStripComboBoxUserTemplate.SelectedIndex != -1)
             {
+                UnselectTemplateButtonRecursive(toolStripMenuItem_Templates);
                 ArchiveEditorFunctions.CurrentAssetTemplate = AssetTemplate.UserTemplate;
                 ArchiveEditorFunctions.CurrentUserTemplate = toolStripComboBoxUserTemplate.SelectedItem.ToString();
                 toolStripStatusLabelTemplate.Text = $"Template: {toolStripComboBoxUserTemplate.SelectedItem.ToString()} (User)";
@@ -1346,6 +1352,12 @@ namespace IndustrialPark
         {
             foreach (ArchiveEditor ae in archiveEditors)
                 ae.RefreshHop(renderer);
+        }
+
+        private void stopSoundToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            System.Media.SoundPlayer player = new System.Media.SoundPlayer();
+            player.Stop();
         }
     }
 }

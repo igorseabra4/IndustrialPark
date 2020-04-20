@@ -45,7 +45,7 @@
             this.propertyGridAsset.Location = new System.Drawing.Point(3, 23);
             this.propertyGridAsset.Name = "propertyGridAsset";
             this.propertyGridAsset.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.propertyGridAsset.Size = new System.Drawing.Size(324, 274);
+            this.propertyGridAsset.Size = new System.Drawing.Size(338, 274);
             this.propertyGridAsset.TabIndex = 5;
             this.propertyGridAsset.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGridAsset_PropertyValueChanged);
             // 
@@ -68,7 +68,7 @@
             this.propertyGridDynaType.Location = new System.Drawing.Point(3, 303);
             this.propertyGridDynaType.Name = "propertyGridDynaType";
             this.propertyGridDynaType.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.propertyGridDynaType.Size = new System.Drawing.Size(324, 246);
+            this.propertyGridDynaType.Size = new System.Drawing.Size(338, 247);
             this.propertyGridDynaType.TabIndex = 7;
             this.propertyGridDynaType.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGridDynaType_PropertyValueChanged);
             // 
@@ -90,18 +90,18 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 280F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(330, 580);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(344, 581);
             this.tableLayoutPanel1.TabIndex = 8;
             // 
             // buttonHelp
             // 
             this.buttonHelp.AutoSize = true;
             this.buttonHelp.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonHelp.Location = new System.Drawing.Point(3, 555);
+            this.buttonHelp.Location = new System.Drawing.Point(3, 556);
             this.buttonHelp.Name = "buttonHelp";
-            this.buttonHelp.Size = new System.Drawing.Size(159, 22);
+            this.buttonHelp.Size = new System.Drawing.Size(166, 22);
             this.buttonHelp.TabIndex = 14;
-            this.buttonHelp.Text = "Help";
+            this.buttonHelp.Text = "Open Wiki Page";
             this.buttonHelp.UseVisualStyleBackColor = true;
             this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
             // 
@@ -109,9 +109,9 @@
             // 
             this.buttonFindCallers.AutoSize = true;
             this.buttonFindCallers.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonFindCallers.Location = new System.Drawing.Point(168, 555);
+            this.buttonFindCallers.Location = new System.Drawing.Point(175, 556);
             this.buttonFindCallers.Name = "buttonFindCallers";
-            this.buttonFindCallers.Size = new System.Drawing.Size(159, 22);
+            this.buttonFindCallers.Size = new System.Drawing.Size(166, 22);
             this.buttonFindCallers.TabIndex = 8;
             this.buttonFindCallers.Text = "Find Who Targets Me";
             this.buttonFindCallers.UseVisualStyleBackColor = true;
@@ -121,7 +121,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(330, 580);
+            this.ClientSize = new System.Drawing.Size(344, 581);
             this.Controls.Add(this.tableLayoutPanel1);
             this.MaximizeBox = false;
             this.Name = "InternalDynaEditor";

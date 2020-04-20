@@ -677,14 +677,14 @@ namespace IndustrialPark
 
         public static bool updateReferencesOnCopy = true;
 
-        public void PasteAssetsFromClipboard(int layerIndex, out List<uint> finalIndices)
+        public void PasteAssetsFromClipboard(int layerIndex, out List<uint> finalIndices, AssetClipboard clipboard = null, bool forceRefUpdate = false)
         {
-            AssetClipboard clipboard;
             finalIndices = new List<uint>();
 
             try
             {
-                clipboard = JsonConvert.DeserializeObject<AssetClipboard>(Clipboard.GetText());
+                if (clipboard == null)
+                    clipboard = JsonConvert.DeserializeObject<AssetClipboard>(Clipboard.GetText());
             }
             catch (Exception ex)
             {
@@ -698,8 +698,18 @@ namespace IndustrialPark
 
             foreach (Section_AHDR section in clipboard.assets)
             {
-                Section_AHDR AHDR = ConvertAssetType(section, clipboard.endianness, EndianConverter.PlatformEndianness(platform), clipboard.game, game);
-                
+                Section_AHDR AHDR;
+
+                try
+                {
+                    AHDR = ConvertAssetType(section, clipboard.endianness, EndianConverter.PlatformEndianness(platform), clipboard.game, game);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message + " The asset will be pasted without conversion.");
+                    AHDR = section;
+                }
+
                 uint previousAssetID = AHDR.assetID;
 
                 AddAssetWithUniqueID(layerIndex, AHDR);
@@ -722,7 +732,7 @@ namespace IndustrialPark
                 finalIndices.Add(AHDR.assetID);
             }
 
-            if (updateReferencesOnCopy) 
+            if (updateReferencesOnCopy || forceRefUpdate) 
                 UpdateReferencesOnCopy(referenceUpdate, clipboard.assets);
         }
 

@@ -51,46 +51,14 @@ namespace IndustrialPark
         private void listBox1_KeyDown(object sender, KeyEventArgs e)
         {
             if ((listBoxTemplates.SelectedItem != null) && (e.KeyCode == Keys.Delete))
-            {
                 buttonDelete_Click(sender, e);
-            }
         }
 
         private void buttonCopy_Click(object sender, EventArgs e)
         {
             if (listBoxTemplates.SelectedIndex < 0) return;
 
-            // Generating Asset AHDR
-            string assetName = listBoxTemplates.SelectedItem.ToString().Substring(listBoxTemplates.SelectedItem.ToString().IndexOf(']') + 2);
-
-            string assetTypeName = listBoxTemplates.SelectedItem.ToString().Substring(listBoxTemplates.SelectedItem.ToString().IndexOf('[') + 1, listBoxTemplates.SelectedItem.ToString().IndexOf(']') - listBoxTemplates.SelectedItem.ToString().IndexOf('[') - 1);
-            AssetType assetType = AssetType.Null;
-            
-            foreach (AssetType o in Enum.GetValues(typeof(AssetType)))
-            {
-                if (o.ToString() == assetTypeName.Trim().ToUpper())
-                {
-                    assetType = o;
-                    break;
-                }
-            }
-            if (assetType == AssetType.Null) throw new Exception("Unknown asset type: " + assetType);
-
-            Section_AHDR newAsset = new Section_AHDR
-            {
-                assetID = Functions.BKDRHash(assetName),
-                assetType = assetType,
-                flags = ArchiveEditorFunctions.AHDRFlagsFromAssetType(assetType),
-                data = File.ReadAllBytes(Path.Combine(Program.MainForm.userTemplatesFolder, listBoxTemplates.SelectedItem.ToString()))
-            };
-
-            newAsset.ADBG = new Section_ADBG(0, assetName, "", 0);
-            
-            // Asset AHDR is done
-            Clipboard.SetText(JsonConvert.SerializeObject(new List<Section_AHDR>
-            {
-               newAsset
-            }));
+            Clipboard.SetText(File.ReadAllText(Path.Combine(Program.MainForm.userTemplatesFolder, listBoxTemplates.SelectedItem.ToString())));
         }
 
         private void buttonPaste_Click(object sender, EventArgs e)
@@ -106,12 +74,14 @@ namespace IndustrialPark
                 MessageBox.Show("Error pasting objects from clipboard: " + ex.Message + ". Are you sure you have assets copied?");
                 return;
             }
-            
+
+            string templateName = "";
             foreach (var AHDR in clipboard.assets)
-            {
-                string templateName = "[" + AHDR.assetType.ToString() + "] " + AHDR.ADBG.assetName;
-                File.WriteAllBytes(Path.Combine(Program.MainForm.userTemplatesFolder, templateName), AHDR.data);
-            }
+                templateName += "[" + AHDR.assetType.ToString() + "][" + AHDR.ADBG.assetName + "]";
+
+            File.WriteAllText(
+                Path.Combine(Program.MainForm.userTemplatesFolder, templateName), 
+                JsonConvert.SerializeObject(clipboard, Formatting.None));
 
             UpdateListBox();
         }
@@ -131,15 +101,13 @@ namespace IndustrialPark
         {
             if (listBoxTemplates.SelectedIndex < 0) return;
 
-            string oldName = listBoxTemplates.SelectedItem.ToString();
-            byte[] oldData = File.ReadAllBytes(Path.Combine(Program.MainForm.userTemplatesFolder, oldName));
-
-            string newName = EditName.GetName(oldName, "Template Name", out bool okED);
+            string newName = EditName.GetName(listBoxTemplates.SelectedItem.ToString(), "Template Name", out bool okED);
 
             if (okED)
             {
-                File.Delete(Path.Combine(Program.MainForm.userTemplatesFolder, oldName));
-                File.WriteAllBytes(Path.Combine(Program.MainForm.userTemplatesFolder, newName), oldData);
+                File.Move(
+                    Path.Combine(Program.MainForm.userTemplatesFolder, listBoxTemplates.SelectedItem.ToString()),
+                    Path.Combine(Program.MainForm.userTemplatesFolder, newName));
 
                 UpdateListBox();
             }

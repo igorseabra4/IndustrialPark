@@ -38,6 +38,7 @@
             this.button1 = new System.Windows.Forms.Button();
             this.checkBoxSendToSNDI = new System.Windows.Forms.CheckBox();
             this.buttonImportJawData = new System.Windows.Forms.Button();
+            this.buttonPlay = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -65,6 +66,7 @@
             this.tableLayoutPanel1.Controls.Add(this.button1, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.checkBoxSendToSNDI, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.buttonImportJawData, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.buttonPlay, 1, 4);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -76,18 +78,18 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(314, 438);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(344, 441);
             this.tableLayoutPanel1.TabIndex = 7;
             // 
             // buttonHelp
             // 
             this.buttonHelp.AutoSize = true;
             this.buttonHelp.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonHelp.Location = new System.Drawing.Point(3, 413);
+            this.buttonHelp.Location = new System.Drawing.Point(3, 416);
             this.buttonHelp.Name = "buttonHelp";
-            this.buttonHelp.Size = new System.Drawing.Size(151, 22);
+            this.buttonHelp.Size = new System.Drawing.Size(166, 22);
             this.buttonHelp.TabIndex = 17;
-            this.buttonHelp.Text = "Help";
+            this.buttonHelp.Text = "Open Wiki Page";
             this.buttonHelp.UseVisualStyleBackColor = true;
             this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
             // 
@@ -95,9 +97,9 @@
             // 
             this.buttonFindCallers.AutoSize = true;
             this.buttonFindCallers.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonFindCallers.Location = new System.Drawing.Point(160, 413);
+            this.buttonFindCallers.Location = new System.Drawing.Point(175, 416);
             this.buttonFindCallers.Name = "buttonFindCallers";
-            this.buttonFindCallers.Size = new System.Drawing.Size(151, 22);
+            this.buttonFindCallers.Size = new System.Drawing.Size(166, 22);
             this.buttonFindCallers.TabIndex = 11;
             this.buttonFindCallers.Text = "Find Who Targets Me";
             this.buttonFindCallers.UseVisualStyleBackColor = true;
@@ -105,11 +107,10 @@
             // 
             // button2
             // 
-            this.tableLayoutPanel1.SetColumnSpan(this.button2, 2);
             this.button2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button2.Location = new System.Drawing.Point(3, 385);
+            this.button2.Location = new System.Drawing.Point(3, 388);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(308, 22);
+            this.button2.Size = new System.Drawing.Size(166, 22);
             this.button2.TabIndex = 10;
             this.button2.Text = "Export Sound Data";
             this.button2.UseVisualStyleBackColor = true;
@@ -122,7 +123,7 @@
             this.richTextBox1.Location = new System.Drawing.Point(3, 73);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(308, 306);
+            this.richTextBox1.Size = new System.Drawing.Size(338, 309);
             this.richTextBox1.TabIndex = 9;
             this.richTextBox1.Text = resources.GetString("richTextBox1.Text");
             // 
@@ -131,7 +132,7 @@
             this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.button1.Location = new System.Drawing.Point(3, 45);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(151, 22);
+            this.button1.Size = new System.Drawing.Size(166, 22);
             this.button1.TabIndex = 7;
             this.button1.Text = "Import Sound Data";
             this.button1.UseVisualStyleBackColor = true;
@@ -151,19 +152,30 @@
             // buttonImportJawData
             // 
             this.buttonImportJawData.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonImportJawData.Location = new System.Drawing.Point(160, 45);
+            this.buttonImportJawData.Location = new System.Drawing.Point(175, 45);
             this.buttonImportJawData.Name = "buttonImportJawData";
-            this.buttonImportJawData.Size = new System.Drawing.Size(151, 22);
+            this.buttonImportJawData.Size = new System.Drawing.Size(166, 22);
             this.buttonImportJawData.TabIndex = 12;
             this.buttonImportJawData.Text = "Import Jaw Data";
             this.buttonImportJawData.UseVisualStyleBackColor = true;
             this.buttonImportJawData.Click += new System.EventHandler(this.buttonImportJawData_Click);
             // 
+            // buttonPlay
+            // 
+            this.buttonPlay.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonPlay.Location = new System.Drawing.Point(175, 388);
+            this.buttonPlay.Name = "buttonPlay";
+            this.buttonPlay.Size = new System.Drawing.Size(166, 22);
+            this.buttonPlay.TabIndex = 18;
+            this.buttonPlay.Text = "Play";
+            this.buttonPlay.UseVisualStyleBackColor = true;
+            this.buttonPlay.Click += new System.EventHandler(this.buttonPlay_Click);
+            // 
             // InternalSoundEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(314, 438);
+            this.ClientSize = new System.Drawing.Size(344, 441);
             this.Controls.Add(this.tableLayoutPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
@@ -188,5 +200,6 @@
         private System.Windows.Forms.Button buttonFindCallers;
         private System.Windows.Forms.Button buttonImportJawData;
         private System.Windows.Forms.Button buttonHelp;
+        private System.Windows.Forms.Button buttonPlay;
     }
 }
