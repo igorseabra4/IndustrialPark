@@ -54,6 +54,12 @@ namespace IndustrialPark
                 ApplyIPSettings(JsonConvert.DeserializeObject<IPSettings>(File.ReadAllText(pathToSettings)));
             else
             {
+                if (AutomaticUpdater.UpdateIndustrialPark(out _))
+                {
+                    Close();
+                    System.Diagnostics.Process.Start(Application.StartupPath + "/IndustrialPark.exe");
+                    return;
+                }
                 MessageBox.Show("It appears this is your first time using Industrial Park.\nPlease consult the documentation on the BFBB Modding Wiki to understand how to use the tool if you haven't already.\nAlso, be sure to check individual asset pages if you're not sure what one of them or their settings do.");
                 Program.AboutBox.Show();
             }

@@ -9,7 +9,6 @@ namespace IndustrialPark
 {
     public class EntrySoundInfo_GCN_V1
     {
-        [Editor(typeof(SoundHeaderEditor), typeof(UITypeEditor))]
         public byte[] SoundHeader { get; set; }
         public AssetID SoundAssetID { get; set; }
 

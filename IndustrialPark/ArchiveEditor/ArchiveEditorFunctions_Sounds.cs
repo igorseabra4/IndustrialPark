@@ -17,7 +17,7 @@ namespace IndustrialPark
                 }
                 else if (a is AssetSNDI_GCN_V2 SNDI_G2)
                 {
-                    SNDI_G2.ImportFSB3(soundData, assetID);
+                    SNDI_G2.AddEntry(soundData, assetID);
                     finalData = new byte[0];
                     return;
                 }

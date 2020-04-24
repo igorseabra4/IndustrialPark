@@ -174,6 +174,7 @@
     <Compile Include="Assets\Binary\AssetSNDI_GCN_V2.cs" />
     <Compile Include="Assets\Binary\AssetVILP.cs" />
     <Compile Include="Assets\Binary\AssetWIRE.cs" />
+    <Compile Include="Assets\Shared\AssetSpecifics\FSB3_File.cs" />
     <Compile Include="Assets\DYNA\BFBB\HudDynas\DynaHudBase.cs" />
     <Compile Include="Assets\DYNA\BFBB\HudDynas\DynaHudMeterBase.cs" />
     <Compile Include="Assets\DYNA\BFBB\FontEnum.cs" />
@@ -330,7 +331,6 @@
     <Compile Include="Assets\Binary\AssetSNDI_PS2.cs" />
     <Compile Include="Assets\Binary\AssetSNDI_XBOX.cs" />
     <Compile Include="Assets\Binary\AssetTEXT.cs" />
-    <Compile Include="Assets\Binary\SoundHeaderEditor.cs" />
     <Compile Include="Assets\ObjectAssets\AssetCNTR.cs" />
     <Compile Include="Assets\ObjectAssets\AssetCOND.cs" />
     <Compile Include="Assets\ObjectAssets\AssetDPAT.cs" />

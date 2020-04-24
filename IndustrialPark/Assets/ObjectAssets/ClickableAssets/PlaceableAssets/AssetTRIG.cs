@@ -69,7 +69,7 @@ namespace IndustrialPark
                     Matrix.Translation(_position);
             }
 
-            pivotWorld = Matrix.Scaling(3) * Matrix.Translation(_position);
+            pivotWorld = Matrix.Translation(_position);
 
             CreateBoundingBox();
         }
@@ -114,7 +114,7 @@ namespace IndustrialPark
                 renderer.DrawCylinder(world, isSelected, renderer.trigColor);
 
             if (isSelected)
-                renderer.DrawSphere(pivotWorld, isSelected, new Vector4(1f, 0.5f, 0.7f, 1f));
+                renderer.DrawCube(pivotWorld, isSelected);
         }
 
         public override float? IntersectsWith(Ray ray)
