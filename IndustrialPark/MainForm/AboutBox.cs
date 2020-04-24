@@ -15,7 +15,7 @@ namespace IndustrialPark
             this.labelCompanyName.Text = AssemblyCompany;
             ComponentResourceManager resources = new ComponentResourceManager(typeof(AboutBox));
             this.textBoxDescription.Text = resources.GetString("textBoxDescription.Text");
-            this.labelVersion.Text = new IPversion().versionName.Split('.')[0];
+            this.labelVersion.Text = new IPversion().versionName;
             TopMost = true;
         }
 

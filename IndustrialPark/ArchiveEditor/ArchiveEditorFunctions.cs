@@ -659,14 +659,14 @@ namespace IndustrialPark
 
                 if (AHDR.assetType == AssetType.SND || AHDR.assetType == AssetType.SNDS)
                 {
-                    //try
-                    //{
+                    try
+                    {
                         AHDR.data = GetSoundData(AHDR.assetID, AHDR.data);
-                    //}
-                    //catch (Exception e)
-                    //{
-                    //    MessageBox.Show(e.Message + " The asset will be copied as it is.");
-                    //}
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show(e.Message + " The asset will be copied as it is.");
+                    }
                 }
 
                 copiedAHDRs.Add(AHDR);
