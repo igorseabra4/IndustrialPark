@@ -24,20 +24,7 @@ namespace IndustrialPark
             e.Cancel = true;
             Hide();
         }
-
-        private void buttonImportRawData_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog() { Multiselect = true };
-
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                foreach (string s in openFileDialog.FileNames)
-                    File.Copy(s, Path.Combine(Program.MainForm.userTemplatesFolder, Path.GetFileName(s)));
-
-                UpdateListBox();
-            }
-        }
-
+        
         private void UpdateListBox()
         {
             listBoxTemplates.Items.Clear();

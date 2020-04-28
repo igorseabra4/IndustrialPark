@@ -22,6 +22,17 @@ namespace IndustrialPark
         SourceAlphaSaturated           = 0x0B
     }
 
+    public enum PiptPreset
+    {
+        None = 0,
+        Default = 9961474,
+        VertexColors = 9961538,
+        AlphaBlend = 9987330,
+        AlphaBlendVertexColors = 9987394,
+        AdditiveAlpha = 10036486,
+        AdditiveAlphaVertexColors = 10036550,
+    }
+
     public class EntryPIPT
     {
         [Category("PIPT Entry")]
@@ -30,7 +41,22 @@ namespace IndustrialPark
         public int SubObjectBits { get; set; }
         [Category("PIPT Entry")]
         public int PipeFlags { get; set; }
-        
+        [Category("PIPT Entry")]
+        public PiptPreset Preset
+        {
+            get
+            {
+                foreach (PiptPreset v in Enum.GetValues(typeof(PiptPreset)))
+                    if ((int)v == PipeFlags)
+                        return v;
+                return PiptPreset.None;
+            }
+            set
+            {
+                PipeFlags = (int)value;
+            }
+        }
+
         [Category("PIPT Pipe Flags")]
         public byte AlphaCompareValue
         {

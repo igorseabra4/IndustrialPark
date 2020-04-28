@@ -584,11 +584,11 @@ namespace IndustrialPark
 
                     TRIG.FixPosition();
                 }
-                else if (a is IClickableAsset clickableAsset)
+                else if (a is IClickableAsset ica)
                 {
-                    ((IClickableAsset)a).PositionX *= factor.X;
-                    ((IClickableAsset)a).PositionY *= factor.Y;
-                    ((IClickableAsset)a).PositionZ *= factor.Z;
+                    ica.PositionX *= factor.X;
+                    ica.PositionY *= factor.Y;
+                    ica.PositionZ *= factor.Z;
 
                     if (a is AssetMVPT MVPT)
                     {
