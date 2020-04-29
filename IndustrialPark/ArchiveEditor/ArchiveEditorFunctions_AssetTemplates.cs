@@ -703,7 +703,7 @@ namespace IndustrialPark
                     return 0;
             }
 
-            string assetName = string.IsNullOrWhiteSpace(customName) ? template.ToString().ToUpper() + "_01" : customName + "_01";
+            string assetName = string.IsNullOrWhiteSpace(customName) ? template.ToString().ToUpper() + "_01" : customName;
             
             Section_AHDR newAsset = new Section_AHDR
             {

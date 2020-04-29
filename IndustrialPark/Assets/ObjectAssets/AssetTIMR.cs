@@ -17,16 +17,11 @@ namespace IndustrialPark
             set => Write(0x8, value);
         }
 
-        [Category("Timer"), TypeConverter(typeof(FloatTypeConverter)), Description("Not present in Scooby.")]
+        [Category("Timer"), TypeConverter(typeof(FloatTypeConverter))]
         public float RandomRange
         {
-            get => game == Game.Scooby ? 0 : BitConverter.ToSingle(Data, 0xC);
-            set
-            {
-                if (game != Game.Scooby)
-                    for (int i = 0; i < 4; i++)
-                        Data[0xC + i] = BitConverter.GetBytes(value)[i];
-            }
+            get => ReadFloat(0xC);
+            set => Write(0xC, value);
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)

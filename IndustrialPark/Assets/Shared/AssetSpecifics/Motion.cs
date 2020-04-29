@@ -36,7 +36,7 @@ namespace IndustrialPark
         }
 
         [Category("Motion")]
-        [Description("0 = None\n1 = Unknown\n2 = Unknown\n4 = Don't start moving\nAdd numbers to enable multiple flags")]
+        [Description("0 = None\n1 = Face Movement Direction\n2 = Unknown\n4 = Don't Start Moving\nAdd numbers to enable multiple flags")]
         public short Flags
         {
             get => ReadShort(2);

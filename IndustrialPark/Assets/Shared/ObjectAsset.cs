@@ -13,7 +13,7 @@ namespace IndustrialPark
             if (AssetID != AHDR.assetID)
                 AssetID = AHDR.assetID;
         }
-
+        
         [Category("Object Base")]
         public AssetID AssetID
         {

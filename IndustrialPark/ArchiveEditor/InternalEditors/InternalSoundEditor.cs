@@ -85,11 +85,7 @@ namespace IndustrialPark
             };
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                if (soundData == null)
-                    InitSound();
-                File.WriteAllBytes(saveFileDialog.FileName, soundData);
-            }
+                File.WriteAllBytes(saveFileDialog.FileName, archive.GetSoundData(asset.AHDR.assetID, asset.Data));
         }
 
         private void buttonFindCallers_Click(object sender, EventArgs e)

@@ -786,7 +786,7 @@ namespace IndustrialPark
             return outAssetIDs;
         }
 
-        private int IndexOfDefaultLayer()
+        private int IndexOfLayerOfType(int layerType)
         {
             int defaultLayerIndex = -1;
             for (int i = 0; i < DICT.LTOC.LHDRList.Count; i++)
@@ -799,6 +799,7 @@ namespace IndustrialPark
             if (defaultLayerIndex == -1)
             {
                 AddLayer();
+                DICT.LTOC.LHDRList.Last().layerType = layerType;
                 defaultLayerIndex = DICT.LTOC.LHDRList.Count - 1;
             }
 
@@ -815,7 +816,7 @@ namespace IndustrialPark
             if (pipt == null)
             {
                 List<uint> assetIDs2 = new List<uint>();
-                pipt = (AssetPIPT)GetFromAssetID(PlaceTemplate(new Vector3(), IndexOfDefaultLayer(), out _, ref assetIDs2, template: AssetTemplate.PipeInfoTable));
+                pipt = (AssetPIPT)GetFromAssetID(PlaceTemplate(new Vector3(), IndexOfLayerOfType((int)LayerType_BFBB.DEFAULT), out _, ref assetIDs2, template: AssetTemplate.PipeInfoTable));
             }
 
             List<EntryPIPT> entries = pipt.PIPT_Entries.ToList();

@@ -31,7 +31,7 @@ namespace IndustrialPark
                 if (!renderableAssetSetCommon.Contains(this))
                     renderableAssetSetCommon.Add(this);
         }
-
+        
         public virtual void CreateTransformMatrix()
         {
             world = Matrix.Scaling(_scale)

@@ -583,19 +583,25 @@ namespace IndustrialPark
                 giveIDregardless = false;
                 numCopies++;
 
-                if (AHDR.ADBG.assetName.Contains(stringToAdd))
-                    try
-                    {
-                        int a = Convert.ToInt32(AHDR.ADBG.assetName.Split(stringToAdd).Last());
-                        AHDR.ADBG.assetName = AHDR.ADBG.assetName.Substring(0, AHDR.ADBG.assetName.LastIndexOf(stringToAdd));
-                    }
-                    catch { }
-
-                AHDR.ADBG.assetName += stringToAdd + numCopies.ToString("D2");
+                AHDR.ADBG.assetName = FindNewAssetName(AHDR.ADBG.assetName, stringToAdd, numCopies);
                 AHDR.assetID = BKDRHash(AHDR.ADBG.assetName);
             }
 
             return AddAsset(layerIndex, AHDR, setTextureDisplay);
+        }
+
+        public string FindNewAssetName(string previousName, char stringToAdd, int numCopies)
+        {
+            if (previousName.Contains(stringToAdd))
+                try
+                {
+                    int a = Convert.ToInt32(previousName.Split(stringToAdd).Last());
+                    previousName = previousName.Substring(0, previousName.LastIndexOf(stringToAdd));
+                }
+                catch { }
+
+            previousName += stringToAdd + numCopies.ToString("D2");
+            return previousName;
         }
 
         public void RemoveAsset(IEnumerable<uint> assetIDs)
@@ -778,6 +784,15 @@ namespace IndustrialPark
             {
                 try
                 {
+                    if (overwrite)
+                    {
+                        if (ContainsAsset(AHDR.assetID))
+                            RemoveAsset(AHDR.assetID);
+                        AddAsset(layerIndex, AHDR, setTextureDisplay: false);
+                    }
+                    else
+                        AddAssetWithUniqueID(layerIndex, AHDR, setTextureDisplay: true);
+
                     if (AHDR.assetType == AssetType.SND || AHDR.assetType == AssetType.SNDS)
                     {
                         try
@@ -790,15 +805,6 @@ namespace IndustrialPark
                             MessageBox.Show(ex.Message);
                         }
                     }
-
-                    if (overwrite)
-                    {
-                        if (ContainsAsset(AHDR.assetID))
-                            RemoveAsset(AHDR.assetID);
-                        AddAsset(layerIndex, AHDR, setTextureDisplay: false);
-                    }
-                    else
-                        AddAssetWithUniqueID(layerIndex, AHDR, setTextureDisplay: true);
 
                     assetIDs.Add(AHDR.assetID);
                 }

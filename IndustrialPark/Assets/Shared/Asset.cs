@@ -24,7 +24,7 @@ namespace IndustrialPark
             this.game = game;
             this.platform = platform;
         }
-
+        
         [Category("Data")]
         public byte[] Data
         {

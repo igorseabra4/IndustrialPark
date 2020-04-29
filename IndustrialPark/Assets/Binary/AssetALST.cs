@@ -8,8 +8,9 @@ namespace IndustrialPark
 {
     public class AssetALST : Asset
     {
-        public AssetALST(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
+        public AssetALST(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        
         public override bool HasReference(uint assetID)
         {
             foreach (AssetID a in ANIM_AssetIDs)

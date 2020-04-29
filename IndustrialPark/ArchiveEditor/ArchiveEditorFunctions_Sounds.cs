@@ -8,6 +8,16 @@ namespace IndustrialPark
     {
         public void AddSoundToSNDI(byte[] soundData, uint assetID, AssetType assetType, out byte[] finalData)
         {
+            if (!ContainsAssetWithType(AssetType.SNDI))
+            {
+                int layerType = (int)LayerType_BFBB.SNDTOC;
+                if (game == Game.Incredibles)
+                    layerType = (int)LayerType_TSSM.SNDTOC;
+
+                var list = new List<uint>();
+                PlaceTemplate(new SharpDX.Vector3(), IndexOfLayerOfType(layerType), out _, ref list, "sound_info", AssetTemplate.SoundInfo);
+            }
+
             foreach (Asset a in assetDictionary.Values)
             {
                 if (a is AssetSNDI_GCN_V1 SNDI_G1)
@@ -32,7 +42,6 @@ namespace IndustrialPark
                     return;
                 }
             }
-
             throw new Exception("Unable to add sound: SNDI asset not found");
         }
 
