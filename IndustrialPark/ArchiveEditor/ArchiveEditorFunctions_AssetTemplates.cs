@@ -24,6 +24,7 @@ namespace IndustrialPark
                 new ToolStripMenuItem(AssetTemplate.Group.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Portal.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Script.ToString()),
+                new ToolStripMenuItem(AssetTemplate.SoundGroup.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Text.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Timer.ToString()),
                 new ToolStripSeparator(),
@@ -240,9 +241,10 @@ namespace IndustrialPark
                 new ToolStripMenuItem(AssetTemplate.Player_Generic.ToString()),
                 new ToolStripMenuItem(AssetTemplate.SIMP_Generic.ToString()),
                 new ToolStripMenuItem(AssetTemplate.VIL_Generic.ToString()),
-                new ToolStripSeparator(),
                 new ToolStripMenuItem(AssetTemplate.UI_Generic.ToString()),
                 new ToolStripMenuItem(AssetTemplate.UIFT_Generic.ToString()),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem(AssetTemplate.SDFX.ToString()),
                 new ToolStripMenuItem(AssetTemplate.LightEmitter_Generic.ToString()),
             });
             foreach (ToolStripItem i in placeable.DropDownItems)
@@ -589,10 +591,18 @@ namespace IndustrialPark
                     dataSize = 0x14;
                     newAssetType = AssetType.SCRP;
                     break;
+                case AssetTemplate.SoundGroup:
+                    dataSize = 0x20;
+                    newAssetType = AssetType.SGRP;
+                    break;
                 case AssetTemplate.SFX_OnEvent:
                 case AssetTemplate.SFX_OnRadius:
                     dataSize = 0x30;
                     newAssetType = AssetType.SFX;
+                    break;
+                case AssetTemplate.SDFX:
+                    dataSize = 0x20;
+                    newAssetType = AssetType.SDFX;
                     break;
                 case AssetTemplate.ShadowTable:
                     dataSize = 4;
@@ -859,7 +869,6 @@ namespace IndustrialPark
                 case AssetTemplate.Platform_Generic:
                     ((AssetPLAT)asset).AssetType = ObjectAssetType.PLAT;
                     ((AssetPLAT)asset).PlatformType = PlatType.Mechanism;
-                    ((AssetPLAT)asset).PlatformSubtype = PlatTypeSpecific.Mechanism;
                     ((AssetPLAT)asset).PlatFlags = 4;
                     ((AssetPLAT)asset).PlatSpecific = new PlatSpecific_Generic((AssetPLAT)asset);
                     ((AssetPLAT)asset).Motion = new Motion_Mechanism((AssetPLAT)asset);
@@ -885,6 +894,15 @@ namespace IndustrialPark
                 case AssetTemplate.Script:
                     ((AssetSCRP)asset).AssetType = ObjectAssetType.SCRP;
                     ((AssetSCRP)asset).UnknownFloat08 = 1f;
+                    break;
+                case AssetTemplate.SoundGroup:
+                    ((AssetSGRP)asset).AssetType = ObjectAssetType.SGRP;
+                    ((AssetSGRP)asset).UnknownByte0E = 0x30;
+                    ((AssetSGRP)asset).UnknownByte0F = 0x80;
+                    ((AssetSGRP)asset).UnknownByte13 = 0x42;
+                    ((AssetSGRP)asset).InnerRadius = 8f;
+                    ((AssetSGRP)asset).OuterRadius = 25f;
+                    ((AssetSGRP)asset).SGRP_Entries = new EntrySGRP[] { new EntrySGRP() };
                     break;
                 case AssetTemplate.SoundInfo:
                     if (asset is AssetSNDI_GCN_V1 sndi)
@@ -924,6 +942,12 @@ namespace IndustrialPark
                     ((AssetSFX)asset).Volume = 91;
                     ((AssetSFX)asset).InnerRadius = 5f;
                     ((AssetSFX)asset).OuterRadius = 10f;
+                    break;
+                case AssetTemplate.SDFX:
+                    ((AssetSDFX)asset).AssetType = ObjectAssetType.SDFX;
+                    ((AssetSDFX)asset).PositionX = position.X;
+                    ((AssetSDFX)asset).PositionY = position.Y;
+                    ((AssetSDFX)asset).PositionZ = position.Z;
                     break;
                 case AssetTemplate.Shiny_Red:
                     ((AssetPKUP)asset).StateIsPersistent = persistentShinies;
@@ -1635,7 +1659,6 @@ namespace IndustrialPark
                     ((AssetPLAT)asset).Model_AssetID = 0x55E9EAB5;
                     ((AssetPLAT)asset).Animation_AssetID = 0x7AAA99BB;
                     ((AssetPLAT)asset).PlatformType = PlatType.Springboard;
-                    ((AssetPLAT)asset).PlatformSubtype = PlatTypeSpecific.Springboard;
                     ((AssetPLAT)asset).PlatFlags = 4;
                     ((AssetPLAT)asset).PlatSpecific = new PlatSpecific_Springboard((AssetPLAT)asset)
                     {
@@ -1654,7 +1677,6 @@ namespace IndustrialPark
                     ((AssetPLAT)asset).Model_AssetID = 0x335EE0C8;
                     ((AssetPLAT)asset).Animation_AssetID = 0x730847B6;
                     ((AssetPLAT)asset).PlatformType = PlatType.Mechanism;
-                    ((AssetPLAT)asset).PlatformSubtype = PlatTypeSpecific.Mechanism;
                     ((AssetPLAT)asset).PlatFlags = 4;
                     ((AssetPLAT)asset).Motion = new Motion_Mechanism((AssetPLAT)asset) {
                         Type = MotionType.Other,

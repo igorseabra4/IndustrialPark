@@ -443,6 +443,7 @@ namespace IndustrialPark
                     case AssetType.RWTX:
                         newAsset = skipTexturesAndModels ? new Asset(AHDR, game, platform) : new AssetRWTX(AHDR, game, platform); break;
                     case AssetType.SCRP: newAsset = new AssetSCRP(AHDR, game, platform); break;
+                    case AssetType.SDFX: newAsset = new AssetSDFX(AHDR, game, platform); break;
                     case AssetType.SFX: newAsset = new AssetSFX(AHDR, game, platform); break;
                     case AssetType.SGRP: newAsset = new AssetSGRP(AHDR, game, platform); break;
                     case AssetType.SIMP: newAsset = new AssetSIMP(AHDR, game, platform); break;
@@ -478,7 +479,6 @@ namespace IndustrialPark
                     case AssetType.NGMS:
                     case AssetType.PGRS:
                     case AssetType.RANM:
-                    case AssetType.SDFX:
                     case AssetType.SLID:
                     case AssetType.SPLN:
                     case AssetType.SSET:

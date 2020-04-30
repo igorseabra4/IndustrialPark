@@ -72,6 +72,7 @@ namespace IndustrialPark
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAllOpenHIPsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runGameF5ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.stopSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.manageUserTemplatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.templatesPersistentShiniesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -127,7 +128,7 @@ namespace IndustrialPark
             this.toolStripMenuItem_Templates = new System.Windows.Forms.ToolStripMenuItem();
             this.userTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripComboBoxUserTemplate = new System.Windows.Forms.ToolStripComboBox();
-            this.stopSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sDFXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStripMain.SuspendLayout();
@@ -469,6 +470,13 @@ namespace IndustrialPark
             this.runGameF5ToolStripMenuItem.Text = "Run Game (F5)";
             this.runGameF5ToolStripMenuItem.Click += new System.EventHandler(this.runGameF5ToolStripMenuItem_Click);
             // 
+            // stopSoundToolStripMenuItem
+            // 
+            this.stopSoundToolStripMenuItem.Name = "stopSoundToolStripMenuItem";
+            this.stopSoundToolStripMenuItem.Size = new System.Drawing.Size(271, 22);
+            this.stopSoundToolStripMenuItem.Text = "Stop Sound";
+            this.stopSoundToolStripMenuItem.Click += new System.EventHandler(this.stopSoundToolStripMenuItem_Click);
+            // 
             // toolStripSeparator8
             // 
             this.toolStripSeparator8.Name = "toolStripSeparator8";
@@ -564,6 +572,7 @@ namespace IndustrialPark
             this.pKUPToolStripMenuItem,
             this.pLATToolStripMenuItem,
             this.pLYRToolStripMenuItem,
+            this.sDFXToolStripMenuItem,
             this.sFXToolStripMenuItem,
             this.sIMPToolStripMenuItem,
             this.tRIGToolStripMenuItem,
@@ -797,14 +806,14 @@ namespace IndustrialPark
             // assetIDGeneratorToolStripMenuItem
             // 
             this.assetIDGeneratorToolStripMenuItem.Name = "assetIDGeneratorToolStripMenuItem";
-            this.assetIDGeneratorToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.assetIDGeneratorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.assetIDGeneratorToolStripMenuItem.Text = "Asset ID Generator";
             this.assetIDGeneratorToolStripMenuItem.Click += new System.EventHandler(this.assetIDGeneratorToolStripMenuItem_Click);
             // 
             // eventSearchToolStripMenuItem
             // 
             this.eventSearchToolStripMenuItem.Name = "eventSearchToolStripMenuItem";
-            this.eventSearchToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.eventSearchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.eventSearchToolStripMenuItem.Text = "Event Search";
             this.eventSearchToolStripMenuItem.Click += new System.EventHandler(this.eventSearchToolStripMenuItem_Click);
             // 
@@ -936,12 +945,14 @@ namespace IndustrialPark
             this.toolStripComboBoxUserTemplate.Size = new System.Drawing.Size(160, 23);
             this.toolStripComboBoxUserTemplate.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxUserTemplate_SelectedIndexChanged);
             // 
-            // stopSoundToolStripMenuItem
+            // sDFXToolStripMenuItem
             // 
-            this.stopSoundToolStripMenuItem.Name = "stopSoundToolStripMenuItem";
-            this.stopSoundToolStripMenuItem.Size = new System.Drawing.Size(271, 22);
-            this.stopSoundToolStripMenuItem.Text = "Stop Sound";
-            this.stopSoundToolStripMenuItem.Click += new System.EventHandler(this.stopSoundToolStripMenuItem_Click);
+            this.sDFXToolStripMenuItem.Checked = true;
+            this.sDFXToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.sDFXToolStripMenuItem.Name = "sDFXToolStripMenuItem";
+            this.sDFXToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.sDFXToolStripMenuItem.Text = "SDFX";
+            this.sDFXToolStripMenuItem.Click += new System.EventHandler(this.sDFXToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -1073,6 +1084,7 @@ namespace IndustrialPark
         private ToolStripMenuItem refreshTexturesToolStripMenuItem;
         private ToolStripMenuItem downloadVgmstreamToolStripMenuItem;
         private ToolStripMenuItem stopSoundToolStripMenuItem;
+        private ToolStripMenuItem sDFXToolStripMenuItem;
     }
 }
 

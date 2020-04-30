@@ -12,6 +12,7 @@
         Group,
         Portal,
         Script,
+        SoundGroup,
         Text,
         Timer,
         CamTweak,
@@ -169,6 +170,7 @@
         UIFT_Generic,
         SFX_OnEvent,
         SFX_OnRadius,
+        SDFX,
         LightEmitter_Generic,
 
         // Other

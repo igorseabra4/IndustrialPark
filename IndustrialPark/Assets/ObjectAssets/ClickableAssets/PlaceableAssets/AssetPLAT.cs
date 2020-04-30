@@ -89,20 +89,14 @@ namespace IndustrialPark
         [Category("Platform")]
         public PlatType PlatformType
         {
-            get => (PlatType)ReadByte(0x09);
+            get => (PlatType)ReadByte(0x54 + Offset);
             set
             {
-                Write(0x09, (byte)value);
-                ChoosePlatSpecific();
-            }
-        }
+                if ((int)value > 3)
+                    TypeFlag = (byte)value;
+                else
+                    TypeFlag = 0;
 
-        [Category("Platform")]
-        public PlatTypeSpecific PlatformSubtype
-        {
-            get => (PlatTypeSpecific)ReadByte(0x54 + Offset);
-            set
-            {
                 Write(0x54 + Offset, (byte)value);
                 ChoosePlatSpecific();
             }
@@ -125,7 +119,7 @@ namespace IndustrialPark
         
         private void ChoosePlatSpecific()
         {
-            switch (PlatformType)
+            switch ((PlatType)TypeFlag)
             {
                 case PlatType.ConveyorBelt:
                     PlatSpecific = new PlatSpecific_ConveryorBelt(this);
@@ -153,33 +147,29 @@ namespace IndustrialPark
                     break;
             }
 
-            switch (PlatformSubtype)
+            switch (PlatformType)
             {
-                case PlatTypeSpecific.ExtendRetract:
+                case PlatType.ExtendRetract:
                     Motion = new Motion_ExtendRetract(this);
                     break;
-                case PlatTypeSpecific.Orbit:
+                case PlatType.Orbit:
                     Motion = new Motion_Orbit(this);
                     break;
-                case PlatTypeSpecific.Spline:
+                case PlatType.Spline:
                     Motion = new Motion_Spline(this);
                     break;
-                case PlatTypeSpecific.Pendulum:
+                case PlatType.Pendulum:
                     Motion = new Motion_Pendulum(this);
                     break;
-                case PlatTypeSpecific.MovePoint:
+                case PlatType.MovePoint:
                     Motion = new Motion_MovePoint(this, Position);
                     break;
                 default:
                     Motion = new Motion_Mechanism(this);
                     break;
             }
-
-            PlatSpecificChosen?.Invoke();
         }
 
-        public Action PlatSpecificChosen;
-        
         public override Matrix LocalWorld()
         {
             if (movementPreview)
@@ -193,7 +183,7 @@ namespace IndustrialPark
                     return base.LocalWorld() * Matrix.Translation(-Position) * Matrix.Translation(skyTranslation);
                 }
                 
-                if (PlatformSubtype == PlatTypeSpecific.MovePoint)
+                if (PlatformType == PlatType.MovePoint)
                     return Matrix.Scaling(_scale)
                         * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                         * PlatLocalTranslation();

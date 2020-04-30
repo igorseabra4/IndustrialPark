@@ -60,7 +60,7 @@ namespace IndustrialPark
 
                 if (found)
                 {
-                    return PlatLocalRotation() * PlatLocalTranslation()
+                    return PlatLocalTranslation() * PlatLocalRotation()
                         * Matrix.Scaling(_scale)
                         * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                         * Matrix.Translation(Position - driver.Position)
@@ -68,7 +68,7 @@ namespace IndustrialPark
                         * Matrix.Translation((Vector3)Vector3.Transform(Vector3.Zero, driver.LocalWorld()));
                 }
 
-                return PlatLocalRotation() * PlatLocalTranslation()
+                return PlatLocalTranslation() * PlatLocalRotation()
                     * Matrix.Scaling(_scale)
                     * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                     * Matrix.Translation(Position);

@@ -602,6 +602,11 @@ namespace IndustrialPark
                         SFX.OuterRadius *= singleFactor;
                         SFX.InnerRadius *= singleFactor;
                     }
+                    else if (a is AssetSGRP SGRP)
+                    {
+                        SGRP.OuterRadius *= singleFactor;
+                        SGRP.InnerRadius *= singleFactor;
+                    }
                     else if (a is PlaceableAsset placeable && !(a is AssetPLYR || a is AssetPKUP || a is AssetUI || a is AssetUIFT || a is AssetVIL || (a is AssetDYNA DYNA && DYNA.Type_BFBB == DynaType_BFBB.game_object__Teleport)))
                     {
                         placeable.ScaleX *= factor.X;

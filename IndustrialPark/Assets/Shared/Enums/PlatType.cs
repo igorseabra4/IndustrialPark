@@ -1,11 +1,11 @@
 ﻿namespace IndustrialPark
-{ 
+{
     public enum PlatType : byte
     {
-        Platform = 0,
-        Type1 = 1,
-        Type2 = 2,
-        Type3 = 3,
+        ExtendRetract = 0,
+        Orbit = 1,
+        Spline = 2,
+        MovePoint = 3,
         Mechanism = 4,
         Pendulum = 5,
         ConveyorBelt = 6,

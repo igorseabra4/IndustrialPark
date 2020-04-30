@@ -135,6 +135,8 @@ namespace IndustrialPark
                     ReversePRJT(ref bytes); break;
                 case AssetType.SCRP:
                     ReverseSCRP(ref bytes); break;
+                case AssetType.SDFX:
+                    ReverseSDFX(ref bytes); break;
                 case AssetType.SFX:
                     ReverseSFX(ref bytes); break;
                 case AssetType.SGRP:
@@ -771,6 +773,16 @@ namespace IndustrialPark
             for (int i = 0; i < timedLinkCount * 8; i++)
                 bytes.AddRange(Reverse(reader.ReadInt32()));
 
+            ReverseLinks(ref bytes, bytes[5]);
+        }
+
+        private void ReverseSDFX(ref List<byte> bytes)
+        {
+            ReverseObject(ref bytes);
+
+            for (int i = 0; i < 6; i++)
+                bytes.AddRange(Reverse(reader.ReadInt32()));
+            
             ReverseLinks(ref bytes, bytes[5]);
         }
 

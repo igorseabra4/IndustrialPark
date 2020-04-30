@@ -18,6 +18,7 @@ namespace IndustrialPark
         public EntrySGRP()
         {
             Sound_AssetID = 0;
+            UnknownFloat04 = 0.8f;
         }
 
         public static int SizeOfEntry => 0x10;
@@ -114,14 +115,14 @@ namespace IndustrialPark
         }
 
         [Category("Sound Group"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat14
+        public float InnerRadius
         {
             get => ReadFloat(0x14);
             set => Write(0x14, value);
         }
 
         [Category("Sound Group"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat18
+        public float OuterRadius
         {
             get => ReadFloat(0x18);
             set => Write(0x18, value);

@@ -52,6 +52,7 @@ namespace IndustrialPark
         public bool dontRenderPKUP;
         public bool dontRenderPLAT;
         public bool dontRenderPLYR;
+        public bool dontRenderSDFX;
         public bool dontRenderSFX;
         public bool dontRenderSIMP;
         public bool dontRenderTRIG;
@@ -106,6 +107,7 @@ namespace IndustrialPark
             dontRenderPKUP = false;
             dontRenderPLAT = false;
             dontRenderPLYR = false;
+            dontRenderSDFX = false;
             dontRenderSFX = false;
             dontRenderSIMP = false;
             dontRenderTRIG = false;

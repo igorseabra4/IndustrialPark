@@ -334,6 +334,7 @@ namespace IndustrialPark
                 dontRenderPKUP = AssetPKUP.dontRender,
                 dontRenderPLAT = AssetPLAT.dontRender,
                 dontRenderPLYR = AssetPLYR.dontRender,
+                dontRenderSDFX = AssetSDFX.dontRender,
                 dontRenderSFX = AssetSFX.dontRender,
                 dontRenderSIMP = AssetSIMP.dontRender,
                 dontRenderTRIG = AssetTRIG.dontRender,
@@ -464,6 +465,9 @@ namespace IndustrialPark
 
             sFXToolStripMenuItem.Checked = !ipSettings.dontRenderSFX;
             AssetSFX.dontRender = ipSettings.dontRenderSFX;
+
+            sDFXToolStripMenuItem.Checked = !ipSettings.dontRenderSDFX;
+            AssetSDFX.dontRender = ipSettings.dontRenderSDFX;
 
             sIMPToolStripMenuItem.Checked = !ipSettings.dontRenderSIMP;
             AssetSIMP.dontRender = ipSettings.dontRenderSIMP;
@@ -996,6 +1000,12 @@ namespace IndustrialPark
         {
             sFXToolStripMenuItem.Checked = !sFXToolStripMenuItem.Checked;
             AssetSFX.dontRender = !sFXToolStripMenuItem.Checked;
+        }
+
+        private void sDFXToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            sDFXToolStripMenuItem.Checked = !sDFXToolStripMenuItem.Checked;
+            AssetSDFX.dontRender = !sDFXToolStripMenuItem.Checked;
         }
 
         private void dYNAToolStripMenuItem_Click(object sender, EventArgs e)
