@@ -1,4 +1,4 @@
 {
-  "version": "v0.1.1",
-  "versionName": "\nv0.1.1\n\n* Adds presets on PIPT editor\n"
+  "version": "v0.1.2",
+  "versionName": "\nv0.1.2\n\n* Adds asset editor: SDFX. Can edit all fields, display (using radius from SGRP) and cross-version copy.\n* Updates asset editors: SGRP, PLAT.\n* Adds templates: SDFX and SoundGroup (SGRP) (Movie/Incredibles/ROTU).\n* Fixes issue that caused Import Multiple Assets to remove sound entries instead of adding when importing them!\n* Fixes issue that made it required for you to download vgmstream to extract sounds, for which it's not necessary.\n* Fixes editing of RandomRange in TIMR assets. Using that should work properly now.\n"
 }
