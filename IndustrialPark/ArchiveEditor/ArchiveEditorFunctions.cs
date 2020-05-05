@@ -267,29 +267,7 @@ namespace IndustrialPark
 
             progressBar.Close();
         }
-
-        public void DisposeForClosing()
-        {
-            List<uint> assetList = new List<uint>();
-            assetList.AddRange(assetDictionary.Keys);
-
-            ProgressBar progressBar = new ProgressBar("Closing Archive");
-            progressBar.Show();
-            progressBar.SetProgressBar(0, assetList.Count, 1);
-
-            foreach (uint assetID in assetList)
-            {
-                if (assetDictionary[assetID] is AssetJSP jsp)
-                    jsp.GetRenderWareModelFile().Dispose();
-                else if (assetDictionary[assetID] is AssetMODL modl)
-                    modl.GetRenderWareModelFile().Dispose();
-
-                progressBar.PerformStep();
-            }
-
-            progressBar.Close();
-        }
-
+        
         public void DisposeOfAsset(uint assetID, bool fast = false)
         {
             currentlySelectedAssets.Remove(assetDictionary[assetID]);
@@ -307,10 +285,8 @@ namespace IndustrialPark
                     renderableAssetSetJSP.Remove((AssetJSP)ra);
             }
 
-            if (assetDictionary[assetID] is AssetJSP jsp)
+            if (assetDictionary[assetID] is AssetRenderWareModel jsp && jsp.HasRenderWareModelFile())
                 jsp.GetRenderWareModelFile().Dispose();
-            else if (assetDictionary[assetID] is AssetMODL modl && modl.HasRenderWareModelFile())
-                modl.GetRenderWareModelFile().Dispose();
             else if (assetDictionary[assetID] is IAssetWithModel iawm)
                 iawm.MovieRemoveFromDictionary();
             else if (assetDictionary[assetID] is AssetPICK pick)
@@ -401,24 +377,25 @@ namespace IndustrialPark
                         break;
                     case AssetType.BOUL: newAsset = new AssetBOUL(AHDR, game, platform); break;
                     case AssetType.BUTN: newAsset = new AssetBUTN(AHDR, game, platform); break;
-                    case AssetType.CAM: newAsset = new AssetCAM(AHDR, game, platform); break;
+                    case AssetType.CAM:  newAsset = new AssetCAM (AHDR, game, platform); break;
                     case AssetType.CNTR: newAsset = new AssetCNTR(AHDR, game, platform); break;
                     case AssetType.COLL: newAsset = new AssetCOLL(AHDR, game, platform); break;
-                    case AssetType.COND: if (game == Game.Scooby) newAsset = new AssetCOND_Scooby(AHDR, game, platform); else newAsset = new AssetCOND(AHDR, game, platform); break;
+                    case AssetType.COND: newAsset = new AssetCOND(AHDR, game, platform); break;
                     case AssetType.CRDT: newAsset = new AssetCRDT(AHDR, game, platform); break;
+                    case AssetType.CSN:  newAsset = new AssetCSN( AHDR, game, platform); break;
                     case AssetType.CSNM: newAsset = new AssetCSNM(AHDR, game, platform); break;
                     case AssetType.DPAT: newAsset = new AssetDPAT(AHDR, game, platform); break;
                     case AssetType.DSCO: newAsset = new AssetDSCO(AHDR, game, platform); break;
-                    case AssetType.DSTR: newAsset = game == Game.Scooby ? new AssetDSTR_Scooby(AHDR, game, platform) : new AssetDSTR(AHDR, game, platform); break;
+                    case AssetType.DSTR: newAsset = new AssetDSTR(AHDR, game, platform); break;
                     case AssetType.DYNA: newAsset = new AssetDYNA(AHDR, game, platform); break;
                     case AssetType.EGEN: newAsset = new AssetEGEN(AHDR, game, platform); break;
-                    case AssetType.ENV: newAsset = game == Game.Incredibles ? new AssetENV_TSSM(AHDR, game, platform) : new AssetENV(AHDR, game, platform); break;
-                    case AssetType.FLY: newAsset = new AssetFLY(AHDR, game, platform); break;
-                    case AssetType.FOG: newAsset = new AssetFOG(AHDR, game, platform); break;
+                    case AssetType.ENV:  newAsset = game == Game.Incredibles ? new AssetENV_TSSM(AHDR, game, platform) : new AssetENV(AHDR, game, platform); break;
+                    case AssetType.FLY:  newAsset = new AssetFLY (AHDR, game, platform); break;
+                    case AssetType.FOG:  newAsset = new AssetFOG (AHDR, game, platform); break;
                     case AssetType.GRUP: newAsset = new AssetGRUP(AHDR, game, platform); break;
                     case AssetType.GUST: newAsset = new AssetGUST(AHDR, game, platform); break;
                     case AssetType.HANG: newAsset = new AssetHANG(AHDR, game, platform); break;
-                    case AssetType.JAW: newAsset = new AssetJAW(AHDR, game, platform); break;
+                    case AssetType.JAW:  newAsset = new AssetJAW (AHDR, game, platform); break;
                     case AssetType.LITE: newAsset = new AssetLITE(AHDR, game, platform); break;
                     case AssetType.LKIT: newAsset = new AssetLKIT(AHDR, game, platform); break;
                     case AssetType.LODT: newAsset = new AssetLODT(AHDR, game, platform); break;
@@ -428,7 +405,7 @@ namespace IndustrialPark
                         newAsset = skipTexturesAndModels ? new Asset(AHDR, game, platform) : new AssetMODL(AHDR, game, platform, Program.MainForm.renderer); break;
                     case AssetType.MRKR: newAsset = new AssetMRKR(AHDR, game, platform); break;
                     case AssetType.MVPT: newAsset = game == Game.Scooby ? new AssetMVPT_Scooby(AHDR, game, platform) : new AssetMVPT(AHDR, game, platform); break;
-                    case AssetType.NPC: newAsset = new AssetNPC(AHDR, game, platform); break;
+                    case AssetType.NPC:  newAsset = new AssetNPC (AHDR, game, platform); break;
                     case AssetType.PARE: newAsset = new AssetPARE(AHDR, game, platform); break;
                     case AssetType.PARP: newAsset = new AssetPARP(AHDR, game, platform); break;
                     case AssetType.PARS: newAsset = new AssetPARS(AHDR, game, platform); break;
@@ -444,7 +421,7 @@ namespace IndustrialPark
                         newAsset = skipTexturesAndModels ? new Asset(AHDR, game, platform) : new AssetRWTX(AHDR, game, platform); break;
                     case AssetType.SCRP: newAsset = new AssetSCRP(AHDR, game, platform); break;
                     case AssetType.SDFX: newAsset = new AssetSDFX(AHDR, game, platform); break;
-                    case AssetType.SFX: newAsset = new AssetSFX(AHDR, game, platform); break;
+                    case AssetType.SFX:  newAsset = new AssetSFX (AHDR, game, platform); break;
                     case AssetType.SGRP: newAsset = new AssetSGRP(AHDR, game, platform); break;
                     case AssetType.SIMP: newAsset = new AssetSIMP(AHDR, game, platform); break;
                     case AssetType.SHDW: newAsset = new AssetSHDW(AHDR, game, platform); break;
@@ -465,9 +442,9 @@ namespace IndustrialPark
                     case AssetType.TEXT: newAsset = new AssetTEXT(AHDR, game, platform); break;
                     case AssetType.TRIG: newAsset = new AssetTRIG(AHDR, game, platform); break;
                     case AssetType.TIMR: newAsset = new AssetTIMR(AHDR, game, platform); break;
-                    case AssetType.UI: newAsset = new AssetUI(AHDR, game, platform); break;
+                    case AssetType.UI:   newAsset = new AssetUI  (AHDR, game, platform); break;
                     case AssetType.UIFT: newAsset = new AssetUIFT(AHDR, game, platform); break;
-                    case AssetType.VIL: newAsset = new AssetVIL(AHDR, game, platform); break;
+                    case AssetType.VIL:  newAsset = new AssetVIL (AHDR, game, platform); break;
                     case AssetType.VILP: newAsset = new AssetVILP(AHDR, game, platform); break;
                     case AssetType.VOLU: newAsset = new AssetVOLU(AHDR, game, platform); break;
                     case AssetType.WIRE: newAsset = new AssetWIRE(AHDR, game, platform); break;
@@ -487,11 +464,10 @@ namespace IndustrialPark
                     case AssetType.TRWT:
                     case AssetType.UIM:
                     case AssetType.ZLIN:
-                        newAsset = new ObjectAsset(AHDR, game, platform);
+                        newAsset = new BaseAsset(AHDR, game, platform);
                         break;
                     case AssetType.ATKT:
                     case AssetType.BINK:
-                    case AssetType.CSN:
                     case AssetType.CSSS:
                     case AssetType.CTOC:
                     case AssetType.DEST:

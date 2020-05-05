@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class AssetLITE : ObjectAsset, IRenderableAsset, IClickableAsset
+    public class AssetLITE : BaseAsset, IRenderableAsset, IClickableAsset
     {
         private Matrix world;
         private BoundingBox boundingBox;

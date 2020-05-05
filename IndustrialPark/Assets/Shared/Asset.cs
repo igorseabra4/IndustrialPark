@@ -1,12 +1,10 @@
 ﻿using HipHopFile;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 
 namespace IndustrialPark
 {
-    public class Asset : EndianConvertible
+    public class Asset : EndianConvertibleWithData
     {
         [Browsable(false)]
         public int Offset => game == Game.BFBB ? 0x00 : -0x04;
@@ -25,8 +23,8 @@ namespace IndustrialPark
             this.platform = platform;
         }
         
-        [Category("Data")]
-        public byte[] Data
+        [Category("Asset")]
+        public override byte[] Data
         {
             get => AHDR.data;
             set => AHDR.data = value; 
@@ -34,137 +32,6 @@ namespace IndustrialPark
 
         public override string ToString() =>  $"{AHDR.ADBG.assetName} [{AHDR.assetID.ToString("X8")}]";
         
-        protected float ReadFloat(int j)
-        {
-            if (platform == Platform.GameCube)
-                return BitConverter.ToSingle(new byte[] {
-                Data[j + 3],
-                Data[j + 2],
-                Data[j + 1],
-                Data[j] }, 0);
-
-            return BitConverter.ToSingle(Data, j);
-        }
-
-        protected byte ReadByte(int j)
-        {
-            return Data[j];
-        }
-
-        protected short ReadShort(int j)
-        {
-            if (platform == Platform.GameCube)
-                return BitConverter.ToInt16(new byte[] {
-                Data[j + 1],
-                Data[j] }, 0);
-
-            return BitConverter.ToInt16(Data, j);
-        }
-
-        protected ushort ReadUShort(int j)
-        {
-            if (platform == Platform.GameCube)
-                return BitConverter.ToUInt16(new byte[] {
-                Data[j + 1],
-                Data[j] }, 0);
-
-            return BitConverter.ToUInt16(Data, j);
-        }
-
-        protected int ReadInt(int j)
-        {
-            if (platform == Platform.GameCube)
-                return BitConverter.ToInt32(new byte[] {
-                Data[j + 3],
-                Data[j + 2],
-                Data[j + 1],
-                Data[j] }, 0);
-
-            return BitConverter.ToInt32(Data, j);
-        }
-
-        protected uint ReadUInt(int j)
-        {
-            if (platform == Platform.GameCube)
-                return BitConverter.ToUInt32(new byte[] {
-                Data[j + 3],
-                Data[j + 2],
-                Data[j + 1],
-                Data[j] }, 0);
-
-            return BitConverter.ToUInt32(Data, j);
-        }
-        
-        protected void Write(int j, float value)
-        {
-            byte[] split = BitConverter.GetBytes(value).ToArray();
-
-            if (platform == Platform.GameCube)
-                split = split.Reverse().ToArray();
-
-            for (int i = 0; i < 4; i++)
-                Data[j + i] = split[i];
-        }
-
-        protected void Write(int j, byte value)
-        {
-            Data[j] = value;
-        }
-
-        protected void Write(int j, short value)
-        {
-            byte[] split = BitConverter.GetBytes(value);
-
-            if (platform == Platform.GameCube)
-                split = split.Reverse().ToArray();
-
-            for (int i = 0; i < 2; i++)
-                Data[j + i] = split[i];
-        }
-
-        protected void Write(int j, ushort value)
-        {
-            byte[] split = BitConverter.GetBytes(value);
-
-            if (platform == Platform.GameCube)
-                split = split.Reverse().ToArray();
-
-            for (int i = 0; i < 2; i++)
-                Data[j + i] = split[i];
-        }
-
-        protected void Write(int j, int value)
-        {
-            byte[] split = BitConverter.GetBytes(value);
-
-            if (platform == Platform.GameCube)
-                split = split.Reverse().ToArray();
-
-            for (int i = 0; i < 4; i++)
-                Data[j + i] = split[i];
-        }
-
-        protected void Write(int j, uint value)
-        {
-            byte[] split = BitConverter.GetBytes(value);
-
-            if (platform == Platform.GameCube)
-                split = split.Reverse().ToArray();
-
-            for (int i = 0; i < 4; i++)
-                Data[j + i] = split[i];
-        }
-
-        protected static uint Mask(uint bit)
-        {
-            return (uint)Math.Pow(2, bit);
-        }
-
-        protected static uint InvMask(uint bit)
-        {
-            return uint.MaxValue - Mask(bit);
-        }
-
         public virtual bool HasReference(uint assetID) => false;
 
         public virtual void Verify(ref List<string> result) { }
@@ -177,6 +44,24 @@ namespace IndustrialPark
 
         public virtual void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
+        }
+
+        public DynamicTypeDescriptor ByteFlagsDescriptor(int offset, params string[] flagNames)
+        {
+            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(typeof(FlagsField_Byte));
+            return dt.FromComponent(new FlagsField_Byte(this, offset, dt, flagNames));
+        }
+
+        public DynamicTypeDescriptor ShortFlagsDescriptor(int offset, params string[] flagNames)
+        {
+            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(typeof(FlagsField_UShort));
+            return dt.FromComponent(new FlagsField_UShort(this, offset, dt, flagNames));
+        }
+
+        public DynamicTypeDescriptor IntFlagsDescriptor(int offset, params string[] flagNames)
+        {
+            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(typeof(FlagsField_UInt));
+            return dt.FromComponent(new FlagsField_UInt(this, offset, dt, flagNames));
         }
     }
 }

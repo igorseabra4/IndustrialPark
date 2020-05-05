@@ -98,41 +98,30 @@ namespace IndustrialPark
 
         public static void ReapplyTextures()
         {
-            List<RenderWareModelFile> models = new List<RenderWareModelFile>();
-            foreach (IAssetWithModel awm in ArchiveEditorFunctions.renderingDictionary.Values)
-                if (awm is AssetMODL MODL && MODL.HasRenderWareModelFile())
-                    models.Add(MODL.GetRenderWareModelFile());
-            foreach (IRenderableAsset awm in ArchiveEditorFunctions.renderableAssetSetJSP)
-                if (awm is AssetJSP JSP && JSP.HasRenderWareModelFile())
-                    models.Add(JSP.GetRenderWareModelFile());
-
-            foreach (RenderWareModelFile m in models)
-                foreach (SharpMesh mesh in m.meshList)
-                    if (mesh != null)
+            foreach (SharpMesh mesh in RenderWareModelFile.completeMeshList)
+                if (mesh != null)
                     foreach (SharpSubSet sub in mesh.SubSets)
                     {
                         if (Textures.ContainsKey(sub.DiffuseMapName))
                         {
                             if (sub.DiffuseMap != Textures[sub.DiffuseMapName])
                             {
-                                if (sub.DiffuseMap != null)
-                                    if (!sub.DiffuseMap.IsDisposed)
-                                        if (sub.DiffuseMap != SharpRenderer.whiteDefault)
-                                            sub.DiffuseMap.Dispose();
-
+                                DisposeIfNotWhiteDefault(sub.DiffuseMap);
                                 sub.DiffuseMap = Textures[sub.DiffuseMapName];
                             }
                         }
                         else
                         {
-                            if (sub.DiffuseMap != null)
-                                if (!sub.DiffuseMap.IsDisposed)
-                                    if (sub.DiffuseMap != SharpRenderer.whiteDefault)
-                                        sub.DiffuseMap.Dispose();
-
+                            DisposeIfNotWhiteDefault(sub.DiffuseMap);
                             sub.DiffuseMap = SharpRenderer.whiteDefault;
                         }
                     }
+        }
+
+        private static void DisposeIfNotWhiteDefault(ShaderResourceView texture)
+        {
+            if (texture != null && !texture.IsDisposed && texture != SharpRenderer.whiteDefault)
+                texture.Dispose();
         }
 
         public static void SetTextureForAnimation(string diffuseMapName, string newMapName)

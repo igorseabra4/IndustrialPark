@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class AssetPRJT : ObjectAsset
+    public class AssetPRJT : BaseAsset
     {
         public AssetPRJT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 

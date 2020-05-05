@@ -1,11 +1,11 @@
-﻿using HipHopFile;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace IndustrialPark
 {
-    public class AssetSpecific_Generic : EndianConvertible
+    public class AssetSpecific_Generic : EndianConvertibleWithData
     {
         protected Asset asset;
         public AssetSpecific_Generic(Asset asset, int specificStart) : base(EndianConverter.PlatformEndianness(asset.platform))
@@ -16,110 +16,75 @@ namespace IndustrialPark
         
         protected readonly int specificStart;
 
+        [Browsable(false)]
+        public override byte[] Data
+        { 
+            get => asset.Data.Skip(specificStart).ToArray();
+            set { }
+        }
+
         public virtual bool HasReference(uint assetID) => false;
 
         public virtual void Verify(ref List<string> result) { }
 
-        protected byte ReadByte(int j) => asset.Data[j + specificStart];
-
-        protected float ReadFloat(int j)
+        protected override void Write(int j, float value)
         {
-            j += specificStart;
-            if (asset.platform == Platform.GameCube)
-                return BitConverter.ToSingle(new byte[] {
-                    asset.Data[j + 3],
-                    asset.Data[j + 2],
-                    asset.Data[j + 1],
-                    asset.Data[j] }, 0);
+            byte[] split = BitConverter.GetBytes(value).ToArray();
 
-            return BitConverter.ToSingle(asset.Data, j);
-        }
-
-        protected short ReadShort(int j)
-        {
-            j += specificStart;
-            if (asset.platform == Platform.GameCube)
-                return BitConverter.ToInt16(new byte[] {
-                    asset.Data[j + 1],
-                    asset.Data[j] }, 0);
-
-            return BitConverter.ToInt16(asset.Data, j);
-        }
-
-        protected int ReadInt(int j)
-        {
-            j += specificStart;
-            if (asset.platform == Platform.GameCube)
-                return BitConverter.ToInt32(new byte[] {
-                    asset.Data[j + 3],
-                    asset.Data[j + 2],
-                    asset.Data[j + 1],
-                    asset.Data[j] }, 0);
-
-            return BitConverter.ToInt32(asset.Data, j);
-        }
-
-        protected uint ReadUInt(int j)
-        {
-            j += specificStart;
-            if (asset.platform == Platform.GameCube)
-                return BitConverter.ToUInt32(new byte[] {
-                    asset.Data[j + 3],
-                    asset.Data[j + 2],
-                    asset.Data[j + 1],
-                    asset.Data[j] }, 0);
-
-            return BitConverter.ToUInt32(asset.Data, j);
-        }
-
-        protected void Write(int j, byte value) => asset.Data[j + specificStart] = value;
-
-        protected void Write(int j, float value)
-        {
-            j += specificStart;
-            var split = BitConverter.GetBytes(value);
-
-            if (asset.platform == Platform.GameCube)
+            if (endianness == Endianness.Big)
                 split = split.Reverse().ToArray();
 
             for (int i = 0; i < 4; i++)
-                asset.Data[j + i] = split[i];
+                asset.Data[j + specificStart + i] = split[i];
         }
 
-        protected void Write(int j, short value)
+        protected override void Write(int j, byte value)
         {
-            j += specificStart;
+            asset.Data[j + specificStart] = value;
+        }
+
+        protected override void Write(int j, short value)
+        {
             byte[] split = BitConverter.GetBytes(value);
 
-            if (asset.platform == Platform.GameCube)
+            if (endianness == Endianness.Big)
                 split = split.Reverse().ToArray();
 
             for (int i = 0; i < 2; i++)
-                asset.Data[j + i] = split[i];
+                asset.Data[j + specificStart + i] = split[i];
         }
 
-        protected void Write(int j, int value)
+        protected override void Write(int j, ushort value)
         {
-            j += specificStart;
             byte[] split = BitConverter.GetBytes(value);
 
-            if (asset.platform == Platform.GameCube)
+            if (endianness == Endianness.Big)
+                split = split.Reverse().ToArray();
+
+            for (int i = 0; i < 2; i++)
+                asset.Data[j + specificStart + i] = split[i];
+        }
+
+        protected override void Write(int j, int value)
+        {
+            byte[] split = BitConverter.GetBytes(value);
+
+            if (endianness == Endianness.Big)
                 split = split.Reverse().ToArray();
 
             for (int i = 0; i < 4; i++)
-                asset.Data[j + i] = split[i];
+                asset.Data[j + specificStart + i] = split[i];
         }
 
-        protected void Write(int j, uint value)
+        protected override void Write(int j, uint value)
         {
-            j += specificStart;
             byte[] split = BitConverter.GetBytes(value);
 
-            if (asset.platform == Platform.GameCube)
+            if (endianness == Endianness.Big)
                 split = split.Reverse().ToArray();
 
             for (int i = 0; i < 4; i++)
-                asset.Data[j + i] = split[i];
+                asset.Data[j + specificStart + i] = split[i];
         }
     }
 }

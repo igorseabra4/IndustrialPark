@@ -19,27 +19,31 @@ namespace IndustrialPark
 
     public class Motion : AssetSpecific_Generic
     {
-        public Motion(AssetWithMotion asset) : base(asset, asset.MotionStart) { }
+        public Motion(AssetWithMotion asset) : base(asset, asset.MotionStart)
+        {
+            Settings = asset.ShortFlagsDescriptor(2 + specificStart,
+                 "Face movement direction", "Unknown", "Don't start moving");
+        }
 
-        [Category("Motion"), ReadOnly(true)]
+        [Browsable(false)]
         public MotionType Type
         {
             get => (MotionType)ReadByte(0);
             set => Write(0, (byte)value);
         }
 
-        [Category("Motion")]
         public byte UseBanking
         {
             get => ReadByte(1);
             set => Write(1, value);
         }
 
-        [Category("Motion")]
-        [Description("0 = None\n1 = Face Movement Direction\n2 = Unknown\n4 = Don't Start Moving\nAdd numbers to enable multiple flags")]
-        public short Flags
+        public DynamicTypeDescriptor Settings { get; set; }
+
+        [Browsable(false)]
+        public ushort Flags
         {
-            get => ReadShort(2);
+            get => ReadByte(2);
             set => Write(2, value);
         }
 
@@ -73,61 +77,61 @@ namespace IndustrialPark
             Type = MotionType.ExtendRetract;
         }
 
-        [Category("Motion: ExtendRetract"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float RetractPositionX
         {
             get => ReadFloat(4);
             set => Write(4, value);
         }
-        [Category("Motion: ExtendRetract"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float RetractPositionY
         {
             get => ReadFloat(8);
             set => Write(8, value);
         }
-        [Category("Motion: ExtendRetract"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float RetractPositionZ
         {
             get => ReadFloat(0xC);
             set => Write(0xC, value);
         }
-        [Category("Motion: ExtendRetract"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float ExtendDeltaPositionX
         {
             get => ReadFloat(0x10);
             set => Write(0x10, value);
         }
-        [Category("Motion: ExtendRetract"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float ExtendDeltaPositionY
         {
             get => ReadFloat(0x14);
             set => Write(0x14, value);
         }
-        [Category("Motion: ExtendRetract"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float ExtendDeltaPositionZ
         {
             get => ReadFloat(0x18);
             set => Write(0x18, value);
         }
-        [Category("Motion: ExtendRetract"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float ExtendTime
         {
             get => ReadFloat(0x1C);
             set => Write(0x1C, value);
         }
-        [Category("Motion: ExtendRetract"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float ExtendWaitTime
         {
             get => ReadFloat(0x20);
             set => Write(0x20, value);
         }
-        [Category("Motion: ExtendRetract"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float RetractTime
         {
             get => ReadFloat(0x24);
             set => Write(0x24, value);
         }
-        [Category("Motion: ExtendRetract"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float RetractWaitTime
         {
             get => ReadFloat(0x28);
@@ -142,37 +146,37 @@ namespace IndustrialPark
             Type = MotionType.Orbit;
         }
 
-        [Category("Motion: Orbit"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float CenterX
         {
             get => ReadFloat(0x4);
             set => Write(0x4, value);
         }
-        [Category("Motion: Orbit"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float CenterY
         {
             get => ReadFloat(0x8);
             set => Write(0x8, value);
         }
-        [Category("Motion: Orbit"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float CenterZ
         {
             get => ReadFloat(0xC);
             set => Write(0xC, value);
         }
-        [Category("Motion: Orbit"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float Width
         {
             get => ReadFloat(0x10);
             set => Write(0x10, value);
         }
-        [Category("Motion: Orbit"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float Height
         {
             get => ReadFloat(0x14);
             set => Write(0x14, value);
         }
-        [Category("Motion: Orbit"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float Period
         {
             get => ReadFloat(0x18);
@@ -187,7 +191,6 @@ namespace IndustrialPark
             Type = MotionType.Spline;
         }
 
-        [Category("Motion: Spline")]
         public int Unknown
         {
             get => ReadInt(0x4);
@@ -201,21 +204,18 @@ namespace IndustrialPark
         {
             Type = MotionType.MovePoint;
             this.initialPosition = initialPosition;
+
+            MovePoint_Flags = asset.IntFlagsDescriptor(4 + specificStart);
         }
 
-        [Category("Motion: MovePoint")]
-        public uint MovePoint_Flags
-        {
-            get => ReadUInt(0x4);
-            set => Write(0x4, value);
-        }
-        [Category("Motion: MovePoint")]
+        public DynamicTypeDescriptor MovePoint_Flags { get; set; }
+
         public AssetID MVPT_AssetID
         {
             get => ReadUInt(0x8);
             set => Write(0x8, value);
         }
-        [Category("Motion: MovePoint"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float Speed
         {
             get => ReadFloat(0xC);
@@ -292,11 +292,76 @@ namespace IndustrialPark
         }
     }
 
+    public class Motion_Mechanism_TSSM : Motion_Mechanism
+    {
+        public Motion_Mechanism_TSSM(AssetWithMotion asset) : base(asset)
+        {
+        }
+
+        public byte Unknown1
+        {
+            get => (asset.game == Game.Incredibles) ? ReadByte(8) : (byte)0;
+            set
+            {
+                if (asset.game == Game.Incredibles)
+                    Write(8, value);
+            }
+        }
+        public byte Unknown2
+        {
+            get => (asset.game == Game.Incredibles) ? ReadByte(9) : (byte)0;
+            set
+            {
+                if (asset.game == Game.Incredibles)
+                    Write(9, value);
+            }
+        }
+        public byte Unknown3
+        {
+            get => (asset.game == Game.Incredibles) ? ReadByte(10) : (byte)0;
+            set
+            {
+                if (asset.game == Game.Incredibles)
+                    Write(10, value);
+            }
+        }
+        public byte Unknown4
+        {
+            get => (asset.game == Game.Incredibles) ? ReadByte(11) : (byte)0;
+            set
+            {
+                if (asset.game == Game.Incredibles)
+                    Write(11, value);
+            }
+        }
+        public float UnknownFloat1
+        {
+            get => (asset.game == Game.Incredibles) ? ReadFloat(0x30 + MechanismOffset) : 0;
+            set
+            {
+                if (asset.game == Game.Incredibles)
+                    Write(0x30 + MechanismOffset, value);
+            }
+        }
+        public float UnknownFloat2
+        {
+            get => (asset.game == Game.Incredibles) ? ReadFloat(0x34 + MechanismOffset) : 0;
+            set
+            {
+                if (asset.game == Game.Incredibles)
+                    Write(0x34 + MechanismOffset, value);
+            }
+        }
+    }
+
     public class Motion_Mechanism : Motion
     {
         public Motion_Mechanism(AssetWithMotion asset) : base(asset)
         {
             Type = MotionType.Mechanism;
+
+            MovementLoopMode = asset.ByteFlagsDescriptor(5 + specificStart,
+                "Return to start after moving", "Don't loop");
         }
 
         public enum EMovementType : byte
@@ -315,154 +380,90 @@ namespace IndustrialPark
             Z = 2
         }
 
-        [Category("Motion: Mechanism")]
         public EMovementType MovementType
         {
             get => (EMovementType)ReadByte(4);
             set => Write(4, (byte)value);
         }
-        [Category("Motion: Mechanism")]
-        [Description("0 = None\n1 = Return to start after moving\n2 = Don't loop\n3 = Both")]
-        public byte MovementLoopMode
+        public DynamicTypeDescriptor MovementLoopMode { get; set; }
+        [Browsable(false)]
+        public byte MovementLoopModeByte
         {
             get => ReadByte(5);
             set => Write(5, value);
         }
-        [Category("Motion: Mechanism")]
         public Axis SlideAxis
         {
             get => (Axis)ReadByte(6);
             set => Write(6, (byte)value);
         }
-        [Category("Motion: Mechanism")]
         public Axis RotateAxis
         {
             get => (Axis)ReadByte(7);
             set => Write(7, (byte)value);
         }
-        [Category("Motion: Mechanism"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float SlideDistance
         {
             get => ReadFloat(0x8 + MechanismOffset);
             set => Write(0x8 + MechanismOffset, value);
         }
-        [Category("Motion: Mechanism"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float SlideTime
         {
             get => ReadFloat(0xC + MechanismOffset);
             set => Write(0xC + MechanismOffset, value);
         }
-        [Category("Motion: Mechanism"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float SlideAccelTime
         {
             get => ReadFloat(0x10 + MechanismOffset);
             set => Write(0x10 + MechanismOffset, value);
         }
-        [Category("Motion: Mechanism"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float SlideDecelTime
         {
             get => ReadFloat(0x14 + MechanismOffset);
             set => Write(0x14 + MechanismOffset, value);
         }
-        [Category("Motion: Mechanism"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float RotateDistance
         {
             get => ReadFloat(0x18 + MechanismOffset);
             set => Write(0x18 + MechanismOffset, value);
         }
-        [Category("Motion: Mechanism"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float RotateTime
         {
             get => ReadFloat(0x1C + MechanismOffset);
             set => Write(0x1C + MechanismOffset, value);
         }
-        [Category("Motion: Mechanism"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float RotateAccelTime
         {
             get => ReadFloat(0x20 + MechanismOffset);
             set => Write(0x20 + MechanismOffset, value);
         }
-        [Category("Motion: Mechanism"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float RotateDecelTime
         {
             get => ReadFloat(0x24 + MechanismOffset);
             set => Write(0x24 + MechanismOffset, value);
         }
-        [Category("Motion: Mechanism"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float RetractDelay
         {
             get => ReadFloat(0x28 + MechanismOffset);
             set => Write(0x28 + MechanismOffset, value);
         }
-        [Category("Motion: Mechanism"), TypeConverter(typeof(FloatTypeConverter))]
+        [TypeConverter(typeof(FloatTypeConverter))]
         public float PostRetractDelay
         {
             get => ReadFloat(0x2C + MechanismOffset);
             set => Write(0x2C + MechanismOffset, value);
         }
 
-        [Category("TSSM Only")]
-        public byte Unknown1
-        {
-            get => (asset.game == Game.Incredibles) ? ReadByte(8) : (byte)0;
-            set
-            {
-                if (asset.game == Game.Incredibles)
-                    Write(8, value);
-            }
-        }
-        [Category("TSSM Only")]
-        public byte Unknown2
-        {
-            get => (asset.game == Game.Incredibles) ? ReadByte(9) : (byte)0;
-            set
-            {
-                if (asset.game == Game.Incredibles)
-                    Write(9, value);
-            }
-        }
-        [Category("TSSM Only")]
-        public byte Unknown3
-        {
-            get => (asset.game == Game.Incredibles) ? ReadByte(10) : (byte)0;
-            set
-            {
-                if (asset.game == Game.Incredibles)
-                    Write(10, value);
-            }
-        }
-        [Category("TSSM Only")]
-        public byte Unknown4
-        {
-            get => (asset.game == Game.Incredibles) ? ReadByte(11) : (byte)0;
-            set
-            {
-                if (asset.game == Game.Incredibles)
-                    Write(11, value);
-            }
-        }
-        [Category("TSSM Only")]
-        public float UnknownFloat1
-        {
-            get => (asset.game == Game.Incredibles) ? ReadFloat(0x30 + MechanismOffset) : 0;
-            set
-            {
-                if (asset.game == Game.Incredibles)
-                    Write(0x30 + MechanismOffset, value);
-            }
-        }
-        [Category("TSSM Only")]
-        public float UnknownFloat2
-        {
-            get => (asset.game == Game.Incredibles) ? ReadFloat(0x34 + MechanismOffset) : 0;
-            set
-            {
-                if (asset.game == Game.Incredibles)
-                    Write(0x34 + MechanismOffset, value);
-            }
-        }
-
-        private int MechanismOffset => asset.game == Game.Incredibles ? 4 : 0;
+        protected int MechanismOffset => asset.game == Game.Incredibles ? 4 : 0;
 
         public enum CurrentMovementAction
         {
@@ -484,7 +485,7 @@ namespace IndustrialPark
         }
 
         private float StartWaitRange => 60 * PostRetractDelay;
-        private float GoingRange => StartWaitRange + 60 * Math.Max(MovementType != 0 ? RotateTime :0, MovementType != EMovementType.Rotate ? SlideTime : 0);
+        private float GoingRange => StartWaitRange + 60 * Math.Max(MovementType != 0 ? RotateTime : 0, MovementType != EMovementType.Rotate ? SlideTime : 0);
         private float EndWaitRange => GoingRange + 60 * RetractDelay;
         private float GoingBackRange => EndWaitRange + 60 * Math.Max(MovementType != 0 ? RotateTime : 0, MovementType != EMovementType.Rotate ? SlideTime : 0);
 
@@ -496,7 +497,7 @@ namespace IndustrialPark
             {
                 float translationMultiplier = 0;
 
-                if ((MovementLoopMode & 1) == 0)
+                if ((MovementLoopModeByte & 1) == 0)
                     switch (currentMovementAction)
                     {
                         case CurrentMovementAction.StartWait:
@@ -510,7 +511,7 @@ namespace IndustrialPark
 
                             if (LocalFrameCounter >= GoingRange)
                             {
-                                if ((MovementLoopMode & 2) == 0)
+                                if ((MovementLoopModeByte & 2) == 0)
                                     amountOfMovementsPerformed++;
                                 else
                                     amountOfMovementsPerformed = 0;
@@ -581,7 +582,7 @@ namespace IndustrialPark
             {
                 float rotationMultiplier = 0;
 
-                if ((MovementLoopMode & 1) == 0)
+                if ((MovementLoopModeByte & 1) == 0)
                     switch (currentMovementAction)
                     {
                         case CurrentMovementAction.StartWait:
@@ -595,7 +596,7 @@ namespace IndustrialPark
 
                             if (LocalFrameCounter >= GoingRange)
                             {
-                                if ((MovementLoopMode & 2) == 0)
+                                if ((MovementLoopModeByte & 2) == 0)
                                     amountOfMovementsPerformed++;
                                 else
                                     amountOfMovementsPerformed = 0;
@@ -640,7 +641,7 @@ namespace IndustrialPark
                             Reset();
                             break;
                     }
-                
+
                 switch (RotateAxis)
                 {
                     case Axis.X:
@@ -665,50 +666,49 @@ namespace IndustrialPark
         {
             Type = MotionType.Pendulum;
         }
-
-        [Category("Motion: Pendulum")]
+                
         public byte PendulumFlags
         {
             get => ReadByte(4);
             set => Write(4, value);
         }
-        [Category("Motion: Pendulum")]
+        
         public byte Plane
         {
             get => ReadByte(5);
             set => Write(5, value);
         }
-        [Category("Motion: Pendulum")]
+        
         public byte Padding1
         {
             get => ReadByte(6);
             set => Write(6, value);
         }
-        [Category("Motion: Pendulum")]
+        
         public byte Padding2
         {
             get => ReadByte(7);
             set => Write(7, value);
         }
-        [Category("Motion: Pendulum")]
+        
         public float Length
         {
             get => ReadFloat(8);
             set => Write(8, value);
         }
-        [Category("Motion: Pendulum")]
+        
         public float Range
         {
             get => ReadFloat(12);
             set => Write(12, value);
         }
-        [Category("Motion: Pendulum")]
+        
         public float Period
         {
             get => ReadFloat(16);
             set => Write(16, value);
         }
-        [Category("Motion: Pendulum")]
+        
         public float Phase
         {
             get => ReadFloat(20);

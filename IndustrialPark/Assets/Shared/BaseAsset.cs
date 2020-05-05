@@ -6,76 +6,54 @@ using System.Linq;
 
 namespace IndustrialPark
 {
-    public class ObjectAsset : Asset
+    public class BaseAsset : Asset
     {
-        public ObjectAsset(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public BaseAsset(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             if (AssetID != AHDR.assetID)
                 AssetID = AHDR.assetID;
         }
-        
-        [Category("Object Base")]
+
+        private const string categoryName = "Base Asset";
+
+        [Category(categoryName)]
         public AssetID AssetID
         {
             get => ReadUInt(0);
             set => Write(0, value);
         }
 
-        [Category("Object Base")]
+        [Category(categoryName)]
         public ObjectAssetType AssetType
         {
             get => (ObjectAssetType)ReadByte(0x4);
             set => Write(0x4, (byte)value);
         }
 
-        [Category("Object Base"), ReadOnly(true)]
-        public byte AmountOfEvents => ReadByte(0x5);
+        [Browsable(false)]
+        public byte LinkCount => ReadByte(0x5);
 
-        [Category("Object Base"), TypeConverter(typeof(HexShortTypeConverter))]
-        public short Flags
+        [Category(categoryName)]
+        public DynamicTypeDescriptor Flags
         {
-            get => ReadShort(0x6);
+            get => ShortFlagsDescriptor(0x6,
+                "Enabled On Start",
+                "State Is Persistent",
+                "Unknown Always True",
+                "Visible During Cutscenes",
+                "Receive Shadows");
+        }
+
+        [Browsable(false)]
+        public ushort BaseUshortFlags
+        {
+            get => ReadUShort(0x6);
             set => Write(0x6, value);
         }
 
-        [Category("Object Base")]
-        public bool EnabledOnStart
-        {
-            get => (Flags & Mask(0)) != 0;
-            set => Flags = (short)(value ? (Flags | (short)Mask(0)) : (Flags & (short)InvMask(0)));
-        }
+        protected virtual int EventStartOffset => Data.Length - LinkCount * Link.sizeOfStruct;
 
-        [Category("Object Base")]
-        public bool StateIsPersistent
-        {
-            get => (Flags & Mask(1)) != 0;
-            set => Flags = (short)(value ? (Flags | (short)Mask(1)) : (Flags & (short)InvMask(1)));
-        }
-
-        [Category("Object Base")]
-        public bool UnknownAlwaysTrue
-        {
-            get => (Flags & Mask(2)) != 0;
-            set => Flags = (short)(value ? (Flags | (short)Mask(2)) : (Flags & (short)InvMask(2)));
-        }
-
-        [Category("Object Base")]
-        public bool VisibleDuringCutscenes
-        {
-            get => (Flags & Mask(3)) != 0;
-            set => Flags = (short)(value ? (Flags | (short)Mask(3)) : (Flags & (short)InvMask(3)));
-        }
-
-        [Category("Object Base")]
-        public bool ReceiveShadows
-        {
-            get => (Flags & Mask(4)) != 0;
-            set => Flags = (short)(value ? (Flags | (short)Mask(4)) : (Flags & (short)InvMask(4)));
-        }
-
-        protected virtual int EventStartOffset => Data.Length - AmountOfEvents * Link.sizeOfStruct;
-
-        [Category("Object Base"), Editor(typeof(LinkListEditor), typeof(UITypeEditor))]
+        [Category(categoryName), Editor(typeof(LinkListEditor), typeof(UITypeEditor))]
         public LinkBFBB[] LinksBFBB
         {
             get
@@ -83,16 +61,16 @@ namespace IndustrialPark
                 LinkListEditor.IsTimed = false;
                 LinkListEditor.endianness = EndianConverter.PlatformEndianness(platform);
                 LinkListEditor.thisAssetID = AHDR.assetID;
-                LinkBFBB[] events = new LinkBFBB[AmountOfEvents];
+                LinkBFBB[] events = new LinkBFBB[LinkCount];
 
-                for (int i = 0; i < AmountOfEvents; i++)
+                for (int i = 0; i < LinkCount; i++)
                     events[i] = new LinkBFBB(Data, EventStartOffset + i * Link.sizeOfStruct, false, EndianConverter.PlatformEndianness(platform));
 
                 return events;
             }
             set => WriteEvents(value);
         }
-        [Category("Object Base"), Editor(typeof(LinkListEditor), typeof(UITypeEditor))]
+        [Category(categoryName), Editor(typeof(LinkListEditor), typeof(UITypeEditor))]
         public LinkTSSM[] LinksTSSM
         {
             get
@@ -100,16 +78,16 @@ namespace IndustrialPark
                 LinkListEditor.IsTimed = false;
                 LinkListEditor.endianness = EndianConverter.PlatformEndianness(platform);
                 LinkListEditor.thisAssetID = AHDR.assetID;
-                LinkTSSM[] events = new LinkTSSM[AmountOfEvents];
+                LinkTSSM[] events = new LinkTSSM[LinkCount];
 
-                for (int i = 0; i < AmountOfEvents; i++)
+                for (int i = 0; i < LinkCount; i++)
                     events[i] = new LinkTSSM(Data, EventStartOffset + i * Link.sizeOfStruct, false, EndianConverter.PlatformEndianness(platform));
 
                 return events;
             }
             set => WriteEvents(value);
         }
-        [Category("Object Base"), Editor(typeof(LinkListEditor), typeof(UITypeEditor))]
+        [Category(categoryName), Editor(typeof(LinkListEditor), typeof(UITypeEditor))]
         public LinkIncredibles[] LinksIncredibles
         {
             get
@@ -117,9 +95,9 @@ namespace IndustrialPark
                 LinkListEditor.IsTimed = false;
                 LinkListEditor.endianness = EndianConverter.PlatformEndianness(platform);
                 LinkListEditor.thisAssetID = AHDR.assetID;
-                LinkIncredibles[] events = new LinkIncredibles[AmountOfEvents];
+                LinkIncredibles[] events = new LinkIncredibles[LinkCount];
 
-                for (int i = 0; i < AmountOfEvents; i++)
+                for (int i = 0; i < LinkCount; i++)
                     events[i] = new LinkIncredibles(Data, EventStartOffset + i * Link.sizeOfStruct, false, EndianConverter.PlatformEndianness(platform));
 
                 return events;
@@ -187,9 +165,9 @@ namespace IndustrialPark
 
             if (!(this is AssetPLYR))
             {
-                if (EventStartOffset + AmountOfEvents * Link.sizeOfStruct < Data.Length)
+                if (EventStartOffset + LinkCount * Link.sizeOfStruct < Data.Length)
                     result.Add("Additional data found at the end of asset data");
-                if (EventStartOffset + AmountOfEvents * Link.sizeOfStruct > Data.Length)
+                if (EventStartOffset + LinkCount * Link.sizeOfStruct > Data.Length)
                     result.Add("Asset expects mode data than present");
             }
         }

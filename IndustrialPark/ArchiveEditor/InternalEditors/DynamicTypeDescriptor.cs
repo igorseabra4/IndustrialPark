@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 
+[TypeConverter(typeof(ExpandableObjectConverter))]
 public sealed class DynamicTypeDescriptor : ICustomTypeDescriptor, INotifyPropertyChanged
 {
     private Type _type;
@@ -515,7 +516,7 @@ public sealed class DynamicTypeDescriptor : ICustomTypeDescriptor, INotifyProper
 
     public override string ToString()
     {
-        return base.ToString() + " (" + Component + ")";
+        return Component.ToString();
     }
 
     public PropertyDescriptorCollection OriginalProperties { get; private set; }

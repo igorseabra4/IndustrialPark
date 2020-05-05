@@ -130,7 +130,7 @@ namespace IndustrialPark
                 if (senderAssetType != AssetType.Null && asset.AHDR.assetType != senderAssetType)
                     continue;
 
-                if (asset is ObjectAsset objectAsset)
+                if (asset is BaseAsset objectAsset)
                     try
                     {
                         foreach (LinkBFBB assetEvent in objectAsset.LinksBFBB)

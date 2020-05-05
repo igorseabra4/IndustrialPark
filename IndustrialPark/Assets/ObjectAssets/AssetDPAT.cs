@@ -2,7 +2,7 @@
 
 namespace IndustrialPark
 {
-    public class AssetDPAT : ObjectAsset
+    public class AssetDPAT : BaseAsset
     {
         public AssetDPAT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 

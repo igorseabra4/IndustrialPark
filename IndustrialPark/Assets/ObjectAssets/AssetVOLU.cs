@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class AssetVOLU : ObjectAsset
+    public class AssetVOLU : BaseAsset
     {
         public AssetVOLU(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 

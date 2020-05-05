@@ -38,6 +38,7 @@
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.propertyGridAsset, 2);
             this.propertyGridAsset.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.propertyGridAsset.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.propertyGridAsset.Location = new System.Drawing.Point(3, 23);
             this.propertyGridAsset.Name = "propertyGridAsset";
             this.propertyGridAsset.PropertySort = System.Windows.Forms.PropertySort.Categorized;

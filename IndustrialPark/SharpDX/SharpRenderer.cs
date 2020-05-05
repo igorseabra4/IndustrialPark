@@ -478,7 +478,7 @@ namespace IndustrialPark
                             //else 
                             if (a is AssetPKUP assetPKUP && AssetPICK.pickEntries.Count == 0)
                                 renderTrans.Add(a);
-                            else if (PlaceableAsset.movementPreview || frustum.Intersects(ref bb))
+                            else if (EntityAsset.movementPreview || frustum.Intersects(ref bb))
                                 a.Draw(this);
                         }
 
@@ -490,7 +490,7 @@ namespace IndustrialPark
                         foreach (IRenderableAsset a in renderTrans)
                         {
                             BoundingBox bb = a.GetBoundingBox();
-                            if (PlaceableAsset.movementPreview || frustum.Intersects(ref bb))
+                            if (EntityAsset.movementPreview || frustum.Intersects(ref bb))
                                 a.Draw(this);
                         }
 
@@ -509,9 +509,7 @@ namespace IndustrialPark
 
                 device.Present();
             });
-
-            Program.MainForm.DisposeAllArchiveEditors();
-
+            
             //release resources
             whiteDefault.Dispose();
             TextureManager.DisposeTextures();

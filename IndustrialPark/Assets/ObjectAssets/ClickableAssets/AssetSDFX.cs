@@ -6,7 +6,7 @@ using IndustrialPark.Models;
 
 namespace IndustrialPark
 {
-    public class AssetSDFX : ObjectAsset, IRenderableAsset, IClickableAsset
+    public class AssetSDFX : BaseAsset, IRenderableAsset, IClickableAsset
     {
         private Matrix world;
         private Matrix world2;
@@ -199,10 +199,6 @@ namespace IndustrialPark
         }
 
         [Category(categoryName), Description("0 = Normal\n4 = Play from Entity")]
-        public int SoundEffectFlags
-        {
-            get => ReadInt(0x1C);
-            set => Write(0x1C, value);
-        }
+        public DynamicTypeDescriptor SoundEffectFlags => IntFlagsDescriptor(0x1C, null, null, "Play from Entity");
     }
 }

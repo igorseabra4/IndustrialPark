@@ -13,8 +13,8 @@ namespace IndustrialPark
         public byte PickupType { get; set; }
         [TypeConverter(typeof(HexByteTypeConverter))]
         public byte PickupIndex { get; set; }
-        [TypeConverter(typeof(HexShortTypeConverter))]
-        public short PickupFlags { get; set; }
+        [TypeConverter(typeof(HexUShortTypeConverter))]
+        public ushort PickupFlags { get; set; }
         public uint Quantity { get; set; }
         public AssetID ModelAssetID { get; set; }
         public AssetID AnimAssetID { get; set; }
@@ -89,7 +89,7 @@ namespace IndustrialPark
                         PickupHash = ReadUInt(8 + i * 0x14),
                         PickupType = ReadByte(12 + i * 0x14),
                         PickupIndex = ReadByte(13 + i * 0x14),
-                        PickupFlags = ReadShort(14 + i * 0x14),
+                        PickupFlags = ReadUShort(14 + i * 0x14),
                         Quantity = ReadUInt(16 + i * 0x14),
                         ModelAssetID = ReadUInt(20 + i * 0x14),
                         AnimAssetID = ReadUInt(24 + i * 0x14)

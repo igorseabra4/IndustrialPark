@@ -7,6 +7,7 @@ using static IndustrialPark.Models.Model_IO_Assimp;
 using System.IO;
 using RenderWareFile;
 using IndustrialPark.Models;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace IndustrialPark
 {
@@ -29,6 +30,7 @@ namespace IndustrialPark
             propertyGridAsset.HelpVisible = !hideHelp;
 
             if (asset is AssetCAM cam) SetupForCam(cam);
+            else if (asset is AssetCSN csn) SetupForCsn(csn);
             else if (asset is AssetGRUP grup) SetupForGrup(grup);
             else if (asset is AssetRenderWareModel arwm) SetupForModel(arwm);
             else if (asset is AssetSHRP shrp) SetupForShrp(shrp);
@@ -127,6 +129,25 @@ namespace IndustrialPark
             };
             tableLayoutPanel1.Controls.Add(buttonAddSelected);
             tableLayoutPanel1.SetColumnSpan(buttonAddSelected, 2);
+        }
+
+        private void SetupForCsn(AssetCSN asset)
+        {
+            AddRow();
+
+            Button buttonExportModlsAnims = new Button() { Dock = DockStyle.Fill, Text = "Export All MODL/ANIM", AutoSize = true };
+            buttonExportModlsAnims.Click += (object sender, EventArgs e) =>
+            {
+                CommonOpenFileDialog saveFile = new CommonOpenFileDialog()
+                {
+                    IsFolderPicker = true,
+                };
+
+                if (saveFile.ShowDialog() == CommonFileDialogResult.Ok)
+                    asset.ExtractToFolder(saveFile.FileName);
+            };
+            tableLayoutPanel1.Controls.Add(buttonExportModlsAnims);
+            tableLayoutPanel1.SetColumnSpan(buttonExportModlsAnims, 2);
         }
 
         private void SetupForModel(AssetRenderWareModel asset)

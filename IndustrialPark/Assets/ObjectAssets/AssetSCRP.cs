@@ -8,7 +8,7 @@ using static HipHopFile.Functions;
 
 namespace IndustrialPark
 {
-    public class AssetSCRP : ObjectAsset
+    public class AssetSCRP : BaseAsset
     {
         public AssetSCRP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 

@@ -5,7 +5,7 @@ using System.Globalization;
 
 namespace IndustrialPark
 {
-    public class HexByteTypeConverter : TypeConverter
+    public class HexUShortTypeConverter : TypeConverter
     {
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
@@ -16,7 +16,7 @@ namespace IndustrialPark
         {
             if (value is string s)
             {
-                return Convert.ToByte(s, 16);
+                return Convert.ToInt16(s, 16);
             }
 
             return base.ConvertFrom(context, culture, value);
@@ -24,19 +24,17 @@ namespace IndustrialPark
 
         public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
         {
-            return destinationType == typeof(byte);
+            return destinationType == typeof(short);
         }
 
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
             if (destinationType == typeof(string))
             {
-                if (value is uint valueUint)
-                    return valueUint.ToString("X2");
-                if (value is ushort valueUshort)
-                    return valueUshort.ToString("X2");
-                if (value is byte valuebyte)
-                    return valuebyte.ToString("X2");
+                if (value is uint vuint)
+                    return vuint.ToString("X4");
+                if (value is ushort vushort)
+                    return vushort.ToString("X4");
             }
 
             return base.ConvertTo(context, culture, value, destinationType);

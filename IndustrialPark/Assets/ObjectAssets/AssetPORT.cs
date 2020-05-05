@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class AssetPORT : ObjectAsset
+    public class AssetPORT : BaseAsset
     {
         public AssetPORT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 

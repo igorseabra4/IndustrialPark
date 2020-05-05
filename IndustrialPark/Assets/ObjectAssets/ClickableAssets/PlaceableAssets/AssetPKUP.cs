@@ -6,7 +6,7 @@ using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
-    public class AssetPKUP : PlaceableAsset
+    public class AssetPKUP : EntityAsset
     {
         public static bool dontRender = false;
 
@@ -81,9 +81,11 @@ namespace IndustrialPark
 
             renderer.DrawCube(LocalWorld(), isSelected);
         }
-        
+
+        private const string categoryName = "Pickup";
+
         [TypeConverter(typeof(HexByteTypeConverter))]
-        [Category("Pickup")]
+        [Category(categoryName)]
         public byte Shape
         {
             get => ReadByte(0x09);
@@ -91,7 +93,7 @@ namespace IndustrialPark
         }
 
         private uint _pickEntryID;
-        [Category("Pickup")]
+        [Category(categoryName)]
         public AssetID PickReferenceID
         {
             get => _pickEntryID;
@@ -102,15 +104,19 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Pickup"),
-        Description("0 = None\n1 = Reappear shortly after collect (Spongeball)\n2 = Initially visible\nAdd numbers to enable multiple flags")]
-        public short PickupFlags
+        [Category(categoryName)]        
+        public DynamicTypeDescriptor PickupFlags => ShortFlagsDescriptor(0x58 + Offset,
+            "Reappear right after collect",
+            "Initially visible");
+
+        [Browsable(false)]
+        public short PickupFlagsShort
         {
             get => ReadShort(0x58 + Offset);
             set => Write(0x58 + Offset, value);
         }
 
-        [Category("Pickup")]
+        [Category(categoryName)]
         public short PickupValue
         {
             get => ReadShort(0x5A + Offset);

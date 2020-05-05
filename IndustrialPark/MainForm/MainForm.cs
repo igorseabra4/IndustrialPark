@@ -20,6 +20,7 @@ namespace IndustrialPark
             InitializeComponent();
 
 #if !DEBUG
+            addTextureFolderToolStripMenuItem.Visible = false;
             addTXDArchiveToolStripMenuItem.Visible = false;
 #endif
 
@@ -323,7 +324,7 @@ namespace IndustrialPark
                 dontRenderBOUL = AssetBOUL.dontRender,
                 dontRenderBUTN = AssetBUTN.dontRender,
                 dontRenderCAM = AssetCAM.dontRender,
-                dontRenderDSTR = AssetDSTR_Scooby.dontRender,
+                dontRenderDSTR = AssetDSTR.dontRender,
                 dontRenderDYNA = AssetDYNA.dontRender,
                 dontRenderEGEN = AssetEGEN.dontRender,
                 dontRenderHANG = AssetHANG.dontRender,
@@ -674,13 +675,7 @@ namespace IndustrialPark
             archiveEditorToolStripMenuItem.DropDownItems.RemoveAt(index + 2);
             archiveEditors.RemoveAt(index);
         }
-
-        public void DisposeAllArchiveEditors()
-        {
-            foreach (ArchiveEditor ae in archiveEditors)
-                ae.DisposeForClosing();
-        }
-
+        
         private bool UnsavedChanges()
         {
             foreach (ArchiveEditor ae in archiveEditors)
@@ -878,16 +873,11 @@ namespace IndustrialPark
             if (openFile.ShowDialog() == DialogResult.OK)
                 TextureManager.LoadTexturesFromTXD(openFile.FileName);
         }
-
-        private void clearTexturesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            TextureManager.ClearTextures();
-        }
-
+        
         private void pLATPreviewToolStripMenuItem_Click(object sender, EventArgs e)
         {
             pLATPreviewToolStripMenuItem.Checked = !pLATPreviewToolStripMenuItem.Checked;
-            PlaceableAsset.movementPreview = pLATPreviewToolStripMenuItem.Checked;
+            EntityAsset.movementPreview = pLATPreviewToolStripMenuItem.Checked;
 
             ResetMovementPreview();
         }
@@ -896,7 +886,7 @@ namespace IndustrialPark
         {
             foreach (ArchiveEditor ae in archiveEditors)
                 foreach (Asset a in ae.archive.GetAllAssets())
-                    if (a is PlaceableAsset p)
+                    if (a is EntityAsset p)
                         p.Reset();
         }
 
@@ -957,7 +947,7 @@ namespace IndustrialPark
         private void dSTRToolStripMenuItem_Click(object sender, EventArgs e)
         {
             dSTRToolStripMenuItem.Checked = !dSTRToolStripMenuItem.Checked;
-            AssetDSTR_Scooby.dontRender = !dSTRToolStripMenuItem.Checked;
+            AssetDSTR.dontRender = !dSTRToolStripMenuItem.Checked;
         }
 
         private void tRIGToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1366,6 +1356,12 @@ namespace IndustrialPark
 
         private void refreshTexturesToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            RefreshTexturesAndModels();
+        }
+
+        public void RefreshTexturesAndModels()
+        {
+            TextureManager.ClearTextures();
             foreach (ArchiveEditor ae in archiveEditors)
                 ae.RefreshHop(renderer);
         }

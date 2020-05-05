@@ -8,7 +8,7 @@ using IndustrialPark.Models;
 
 namespace IndustrialPark
 {
-    public class AssetMVPT_Scooby : ObjectAsset, IRenderableAsset, IClickableAsset, IScalableAsset
+    public class AssetMVPT_Scooby : BaseAsset, IRenderableAsset, IClickableAsset, IScalableAsset
     {
         private Matrix world;
         private BoundingBox boundingBox;
@@ -177,11 +177,11 @@ namespace IndustrialPark
         }
 
         [Category("Move Point")]
-        [TypeConverter(typeof(HexShortTypeConverter))]
+        [TypeConverter(typeof(HexUShortTypeConverter))]
         [Description("Usually 0x2710")]
-        public short Wt
+        public ushort Wt
         {
-            get => ReadShort(0x14);
+            get => ReadUShort(0x14);
             set => Write(0x14, value);
         }
         

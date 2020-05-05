@@ -97,7 +97,7 @@ namespace IndustrialPark
             {
                 willOpen = MessageBox.Show($"Warning: you're going to open {list.Count} Asset Data Editor windows. Are you sure you want to do that?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
             }
-                
+
             if (willOpen)
                 foreach (uint u in list)
                     if (assetDictionary.ContainsKey(u))
@@ -150,7 +150,7 @@ namespace IndustrialPark
             foreach (var ie in internalEditors)
                 ie.SetHideHelp(hideHelp);
         }
-
+        
         public static Vector3 GetRayInterserctionPosition(Ray ray)
         {
             List<IRenderableAsset> l = new List<IRenderableAsset>();
@@ -607,7 +607,7 @@ namespace IndustrialPark
                         SGRP.OuterRadius *= singleFactor;
                         SGRP.InnerRadius *= singleFactor;
                     }
-                    else if (a is PlaceableAsset placeable && !(a is AssetPLYR || a is AssetPKUP || a is AssetUI || a is AssetUIFT || a is AssetVIL || (a is AssetDYNA DYNA && DYNA.Type_BFBB == DynaType_BFBB.game_object__Teleport)))
+                    else if (a is EntityAsset placeable && !(a is AssetPLYR || a is AssetPKUP || a is AssetUI || a is AssetUIFT || a is AssetVIL || (a is AssetDYNA DYNA && DYNA.Type_BFBB == DynaType_BFBB.game_object__Teleport)))
                     {
                         placeable.ScaleX *= factor.X;
                         placeable.ScaleY *= factor.Y;
@@ -785,7 +785,7 @@ namespace IndustrialPark
                     AssetSIMP simp = (AssetSIMP)GetFromAssetID(PlaceTemplate(new Vector3(), layerIndex, out bool success, ref outAssetIDs, simpName, AssetTemplate.SIMP_Generic));
                     simp.Model_AssetID = i;
                     if (ledgeGrabSimps)
-                        simp.CollType = 0x82;
+                        simp.CollTypeByte = 0x82;
                 }
 
             return outAssetIDs;

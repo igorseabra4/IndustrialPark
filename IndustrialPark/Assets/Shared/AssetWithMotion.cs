@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public abstract class AssetWithMotion : PlaceableAsset
+    public abstract class AssetWithMotion : EntityAsset
     {
         public AssetWithMotion(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
@@ -56,7 +56,7 @@ namespace IndustrialPark
         {
             if (movementPreview)
             {
-                PlaceableAsset driver = FindDrivenByAsset(out bool found, out bool useRotation);
+                EntityAsset driver = FindDrivenByAsset(out bool found, out bool useRotation);
 
                 if (found)
                 {

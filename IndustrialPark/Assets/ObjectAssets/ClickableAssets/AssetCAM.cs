@@ -29,7 +29,7 @@ namespace IndustrialPark
         Interp4Rev = 9,
     }
 
-    public class AssetCAM : ObjectAsset, IRenderableAsset, IClickableAsset
+    public class AssetCAM : BaseAsset, IRenderableAsset, IClickableAsset
     {
         private Matrix world;
         private BoundingBox boundingBox;
@@ -288,11 +288,7 @@ namespace IndustrialPark
             set => Write(0x50, (int)value);
         }
         [Category("Camera")]
-        public uint CamFlags
-        {
-            get => ReadUInt(0x54);
-            set => Write(0x54, value);
-        }
+        public DynamicTypeDescriptor CamFlags => IntFlagsDescriptor(0x54);
         [Category("Camera"), TypeConverter(typeof(FloatTypeConverter))]
         public float FadeUp
         {
@@ -329,30 +325,14 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Camera"), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flags1
-        {
-            get => ReadByte(0x78);
-            set => Write(0x78, value);
-        }
-        [Category("Camera"), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flags2
-        {
-            get => ReadByte(0x79);
-            set => Write(0x79, value);
-        }
-        [Category("Camera"), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flags3
-        {
-            get => ReadByte(0x7A);
-            set => Write(0x7A, value);
-        }
-        [Category("Camera"), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flags4
-        {
-            get => ReadByte(0x7B);
-            set => Write(0x7B, value);
-        }
+        [Category("Camera")]
+        public DynamicTypeDescriptor Flags1 => ByteFlagsDescriptor(0x78);
+        [Category("Camera")]
+        public DynamicTypeDescriptor Flags2 => ByteFlagsDescriptor(0x79);
+        [Category("Camera")]
+        public DynamicTypeDescriptor Flags3 => ByteFlagsDescriptor(0x7A);
+        [Category("Camera")]
+        public DynamicTypeDescriptor Flags4 => ByteFlagsDescriptor(0x7B);
         [Category("Camera")]
         public AssetID Marker1AssetID
         {

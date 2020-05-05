@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace IndustrialPark
 {
-    public class AssetGRUP : ObjectAsset
+    public class AssetGRUP : BaseAsset
     {
         public AssetGRUP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 

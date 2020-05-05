@@ -36,11 +36,11 @@ namespace IndustrialPark
         IsVisible = 0x1E42996C
     }
 
-    public class AssetCOND : ObjectAsset
+    public class AssetCOND : BaseAsset
     {
         public AssetCOND(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
-        public override bool HasReference(uint assetID) => AssetUnderEvaluation == assetID || (uint)Conditional == assetID || base.HasReference(assetID);
+        public override bool HasReference(uint assetID) => AssetUnderEvaluation == assetID || ScoobyConditional == assetID || base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {
@@ -50,17 +50,37 @@ namespace IndustrialPark
 
             if ((int)Operation > 6)
                 result.Add("COND with unknown operation type: " + Operation.ToString());
-            if ((int)Conditional == 0)
+            if (ScoobyConditional == 0)
                 result.Add("COND with Conditional set to 0");
         }
 
-        protected override int EventStartOffset => 0x18;
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game == Game.Scooby)
+            {
+                dt.RemoveProperty("Conditional");
+                dt.RemoveProperty("AssetUnderEvaluation");
+            }
+            else
+                dt.RemoveProperty("ScoobyConditional");
+
+            base.SetDynamicProperties(dt);
+        }
+
+        protected override int EventStartOffset => game == Game.Scooby ? 0x14 : 0x18;
 
         [Category("Conditional")]
         public CONDVariable Conditional
         {
             get => (CONDVariable)ReadUInt(0xC);
             set => Write(0xC, (uint)value);
+        }
+
+        [Category("Conditional"), DisplayName("Conditional)")]
+        public AssetID ScoobyConditional
+        {
+            get => ReadUInt(0xC);
+            set => Write(0xC, value);
         }
 
         [Category("Conditional")]

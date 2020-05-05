@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace IndustrialPark
 {
-    public class AssetPARS : ObjectAsset
+    public class AssetPARS : BaseAsset
     {
         public AssetPARS(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
         
@@ -42,11 +42,7 @@ namespace IndustrialPark
         }
 
         [Category("Particle System")]
-        public byte ParsFlags
-        {
-            get => ReadByte(0x14);
-            set => Write(0x14, value);
-        }
+        public DynamicTypeDescriptor ParsFlags => ByteFlagsDescriptor(0x14);
 
         [Category("Particle System")]
         public byte Priority

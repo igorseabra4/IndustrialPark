@@ -5,7 +5,7 @@ using AssetEditorColors;
 
 namespace IndustrialPark
 {
-    public class AssetFOG : ObjectAsset
+    public class AssetFOG : BaseAsset
     {
         public AssetFOG(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 

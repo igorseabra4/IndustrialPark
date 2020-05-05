@@ -27,11 +27,7 @@ namespace IndustrialPark
         }
 
         [Category("UIFont")]
-        public short UIFontFlags
-        {
-            get => ReadShort(0x80 + Offset);
-            set => Write(0x80 + Offset, value);
-        }
+        public DynamicTypeDescriptor UIFontFlags => ShortFlagsDescriptor(0x80 + Offset);
 
         [Category("UIFont")]
         public byte UIFontMode

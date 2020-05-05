@@ -82,7 +82,10 @@ namespace IndustrialPark
 
     public class PlatSpecific_BreakawayPlatform : PlatSpecific_Generic
     {
-        public PlatSpecific_BreakawayPlatform(AssetPLAT plat) : base(plat) { }
+        public PlatSpecific_BreakawayPlatform(AssetPLAT plat) : base(plat) 
+        {
+            Settings = plat.IntFlagsDescriptor(0xC + specificStart);
+        }
 
         [Category("Breakaway Platform")]
         public float BreakawayDelay
@@ -103,17 +106,19 @@ namespace IndustrialPark
             set => Write(0x08, value);
         }
         [Category("Breakaway Platform")]
-        public int Flags
-        {
-            get => ReadInt(0x0C);
-            set => Write(0x0C, value);
-        }
+        public DynamicTypeDescriptor Settings { get; set; }
     }
 
     public class PlatSpecific_Springboard : PlatSpecific_Generic
     {
-        public PlatSpecific_Springboard(AssetPLAT plat) : base(plat) { }
-        
+        public PlatSpecific_Springboard(AssetPLAT plat) : base(plat)
+        {
+            Settings = plat.IntFlagsDescriptor(0x28 + specificStart,
+                "Lock Camera Down",
+                null,
+                "Lock Player Control");
+        }
+
         [Category("Springboard")]
         public float Height1
         {
@@ -174,12 +179,8 @@ namespace IndustrialPark
             get => ReadFloat(0x24);
             set => Write(0x24, value);
         }
-        [Category("Springboard"), Description("0 = None\n1 = Lock Camera Down\n2 = Unknown\n4 = Lock Player Control\nAdd numbers to enable multiple flags")]
-        public int Flags
-        {
-            get => ReadInt(0x28);
-            set => Write(0x28, value);
-        }
+        [Category("Springboard")]
+        public DynamicTypeDescriptor Settings { get; set; }
 
         public override bool HasReference(uint assetID) => Anim1_AssetID == assetID || Anim2_AssetID == assetID || Anim3_AssetID == assetID;
         
@@ -231,7 +232,10 @@ namespace IndustrialPark
 
     public class PlatSpecific_Paddle : PlatSpecific_Generic
     {
-        public PlatSpecific_Paddle(AssetPLAT plat) : base(plat) { }
+        public PlatSpecific_Paddle(AssetPLAT plat) : base(plat)
+        {
+            Settings = plat.IntFlagsDescriptor(0x24 + specificStart);
+        }
 
         [Category("Paddle")]
         public int StartOrient
@@ -291,11 +295,7 @@ namespace IndustrialPark
             set => Write(0x20, value);
         }
         [Category("Paddle")]
-        public int Flags
-        {
-            get => ReadInt(0x24);
-            set => Write(0x24, value);
-        }
+        public DynamicTypeDescriptor Settings { get; set; }
         [Category("Paddle")]
         public float RotateSpeed
         {

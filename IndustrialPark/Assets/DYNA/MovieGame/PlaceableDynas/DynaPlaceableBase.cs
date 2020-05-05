@@ -46,7 +46,7 @@ namespace IndustrialPark
             PaddingInt00 = Switch(BitConverter.ToInt32(Data, 0x0));
             PaddingByte04 = Data[0x04];
             PaddingByte05 = Data[0x05];
-            Flags06 = Switch(BitConverter.ToInt16(Data, 0x06));
+            Flags06 = Switch(BitConverter.ToUInt16(Data, 0x06));
             VisibilityFlag = Data[0x08];
             TypeFlag = Data[0x08];
             UnknownFlag0A = Data[0x08];
@@ -202,17 +202,7 @@ namespace IndustrialPark
         {
             return Vector3.Distance(cameraPosition, new Vector3(PositionX, PositionY, PositionZ));
         }
-
-        protected static uint Mask(uint bit)
-        {
-            return (uint)Math.Pow(2, bit);
-        }
-
-        protected static uint InvMask(uint bit)
-        {
-            return 0xFFFFFFFF ^ Mask(bit);
-        }
-
+        
         [Category("Placement Flags")]
         public int PaddingInt00 { get; set; }
 
@@ -222,12 +212,12 @@ namespace IndustrialPark
         [Category("Placement Flags"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte PaddingByte05 { get; set; }
 
-        [Category("Placement Flags"), TypeConverter(typeof(HexShortTypeConverter))]
-        public short Flags06 { get; set; }
+        [Category("Placement Flags"), TypeConverter(typeof(HexUShortTypeConverter))]
+        public ushort Flags06 { get; set; }
 
         [Category("Placement Flags"), TypeConverter(typeof(HexByteTypeConverter))]
         public byte VisibilityFlag { get; set; }
-
+        
         [Category("Placement Flags")]
         public bool Visible
         {

@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class AssetENV : ObjectAsset
+    public class AssetENV : BaseAsset
     {
         public AssetENV(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 

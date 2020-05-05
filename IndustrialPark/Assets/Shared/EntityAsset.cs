@@ -7,14 +7,14 @@ using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
-    public abstract class PlaceableAsset : ObjectAsset, IRenderableAsset, IClickableAsset, IRotatableAsset, IScalableAsset
+    public abstract class EntityAsset : BaseAsset, IRenderableAsset, IClickableAsset, IRotatableAsset, IScalableAsset
     {
         protected Matrix world;
         protected BoundingBox boundingBox;
 
         protected abstract bool DontRender { get; }
 
-        public PlaceableAsset(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public EntityAsset(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             _yaw = ReadFloat(0x14 + Offset);
             _pitch = ReadFloat(0x18 + Offset);
@@ -155,57 +155,25 @@ namespace IndustrialPark
             base.SetDynamicProperties(dt);
         }
 
-        [Category("Placement Flags"), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte VisibilityFlag
-        {
-            get => ReadByte(0x8);
-            set { Write(0x8, value); }
-        }
+        private const string categoryName = "Entity";
 
-        [Category("Placement Flags")]
-        public bool Visible
-        {
-            get => (VisibilityFlag & Mask(0)) != 0;
-            set => VisibilityFlag = (byte)(value ? (VisibilityFlag | Mask(0)) : (VisibilityFlag & InvMask(0)));
-        }
+        [Category(categoryName)]
+        public DynamicTypeDescriptor VisibilityFlags => ByteFlagsDescriptor(0x9, "Visible", "Stackable");
 
-        [Category("Placement Flags")]
-        public bool UseGravity
-        {
-            get => (VisibilityFlag & Mask(1)) != 0;
-            set => VisibilityFlag = (byte)(value ? (VisibilityFlag | Mask(1)) : (VisibilityFlag & InvMask(1)));
-        }
-
-        [Category("Placement Flags"), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
         public byte TypeFlag
         {
             get => ReadByte(0x9);
             set => Write(0x9, value);
         }
 
-        [Category("Placement Flags"), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownFlag0A
-        {
-            get => ReadByte(0xA);
-            set => Write(0xA, value);
-        }
-
-        [Category("Placement Flags"), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte SolidityFlag
-        {
-            get => ReadByte(0xB);
-            set => Write(0xB, value);
-        }
-
-        [Category("Placement Flags")]
-        public bool PreciseCollision
-        {
-            get => (SolidityFlag & Mask(1)) != 0;
-            set => SolidityFlag = (byte)(value ? (SolidityFlag | Mask(1)) : (SolidityFlag & InvMask(1)));
-        }
-
-        [Category("Placement")]
-        [Description("BFBB only.")]
+        [Category(categoryName)]
+        public DynamicTypeDescriptor UnknownFlag0A => ByteFlagsDescriptor(0xA);
+        
+        [Category(categoryName)]
+        public DynamicTypeDescriptor SolidityFlags => ByteFlagsDescriptor(0xB, "Unused", "Precise Collision");
+        
+        [Category(categoryName)]
         public int PaddingC
         {
             get
@@ -221,7 +189,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement References")]
+        [Category(categoryName + " References")]
         public AssetID Surface_AssetID
         {
             get => ReadUInt(0x10 + Offset);
@@ -243,7 +211,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement")]
+        [Category(categoryName)]
         [TypeConverter(typeof(FloatTypeConverter))]
         public virtual float PositionX
         {
@@ -256,7 +224,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement")]
+        [Category(categoryName)]
         [TypeConverter(typeof(FloatTypeConverter))]
         public virtual float PositionY
         {
@@ -269,7 +237,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement")]
+        [Category(categoryName)]
         [TypeConverter(typeof(FloatTypeConverter))]
         public virtual float PositionZ
         {
@@ -286,7 +254,7 @@ namespace IndustrialPark
         protected float _pitch;
         protected float _roll;
 
-        [Category("Placement")]
+        [Category(categoryName)]
         [TypeConverter(typeof(FloatTypeConverter))]
         public virtual float Yaw
         {
@@ -299,7 +267,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement")]
+        [Category(categoryName)]
         [TypeConverter(typeof(FloatTypeConverter))]
         public virtual float Pitch
         {
@@ -312,7 +280,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement")]
+        [Category(categoryName)]
         [TypeConverter(typeof(FloatTypeConverter))]
         public virtual float Roll
         {
@@ -327,7 +295,7 @@ namespace IndustrialPark
 
         protected Vector3 _scale;
 
-        [Category("Placement")]
+        [Category(categoryName)]
         [TypeConverter(typeof(FloatTypeConverter))]
         public virtual float ScaleX
         {
@@ -340,7 +308,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement")]
+        [Category(categoryName)]
         [TypeConverter(typeof(FloatTypeConverter))]
         public virtual float ScaleY
         {
@@ -353,7 +321,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement")]
+        [Category(categoryName)]
         [TypeConverter(typeof(FloatTypeConverter))]
         public virtual float ScaleZ
         {
@@ -368,7 +336,7 @@ namespace IndustrialPark
 
         protected Vector4 _color;
 
-        [Category("Placement Color"), DisplayName("Red (0 - 1)")]
+        [Category(categoryName + " Color"), DisplayName("Red (0 - 1)")]
         public float ColorRed
         {
             get => ReadFloat(0x38 + Offset);
@@ -379,7 +347,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement Color"), DisplayName("Green (0 - 1)")]
+        [Category(categoryName + " Color"), DisplayName("Green (0 - 1)")]
         public float ColorGreen
         {
             get => ReadFloat(0x3C + Offset);
@@ -390,7 +358,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement Color"), DisplayName("Blue (0 - 1)")]
+        [Category(categoryName + " Color"), DisplayName("Blue (0 - 1)")]
         public float ColorBlue
         {
             get => ReadFloat(0x40 + Offset);
@@ -401,7 +369,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement Color"), DisplayName("Alpha (0 - 1)")]
+        [Category(categoryName + " Color"), DisplayName("Alpha (0 - 1)")]
         public float ColorAlpha
         {
             get => ReadFloat(0x44 + Offset);
@@ -412,7 +380,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement Color"), DisplayName("Color - (A,) R, G, B")]
+        [Category(categoryName + " Color"), DisplayName("Color - (A,) R, G, B")]
         public System.Drawing.Color Color_ARGB
         {
             get => System.Drawing.Color.FromArgb(BitConverter.ToInt32(new byte[] { (byte)(ColorBlue * 255), (byte)(ColorGreen * 255), (byte)(ColorRed * 255), (byte)(ColorAlpha * 255) }, 0));
@@ -425,7 +393,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement Color")]
+        [Category(categoryName + " Color")]
         public float ColorAlphaSpeed
         {
             get => ReadFloat(0x48 + Offset);
@@ -433,7 +401,7 @@ namespace IndustrialPark
         }
 
         protected uint _modelAssetID;
-        [Category("Placement References")]
+        [Category(categoryName + " References")]
         public AssetID Model_AssetID
         {
             get => _modelAssetID;
@@ -445,7 +413,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement References")]
+        [Category(categoryName + " References")]
         public virtual AssetID Animation_AssetID
         {
             get => ReadUInt(0x50 + Offset);
@@ -454,7 +422,7 @@ namespace IndustrialPark
 
         public static bool movementPreview = false;
 
-        protected PlaceableAsset FindDrivenByAsset(out bool found, out bool useRotation)
+        protected EntityAsset FindDrivenByAsset(out bool found, out bool useRotation)
         {
             foreach (LinkBFBB assetEvent in LinksBFBB)
             {
@@ -470,7 +438,7 @@ namespace IndustrialPark
                     if (ae.archive.ContainsAsset(PlatID))
                     {
                         Asset asset = ae.archive.GetFromAssetID(PlatID);
-                        if (asset is PlaceableAsset Placeable)
+                        if (asset is EntityAsset Placeable)
                         {
                             found = true;
                             useRotation = assetEvent.Arguments_Float[0] != 0 || assetEvent.EventSendID == EventBFBB.Mount;
@@ -493,7 +461,7 @@ namespace IndustrialPark
         {
             if (movementPreview)
             {
-                PlaceableAsset driver = FindDrivenByAsset(out bool found, out bool useRotation);
+                EntityAsset driver = FindDrivenByAsset(out bool found, out bool useRotation);
 
                 if (found)
                 {

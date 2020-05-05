@@ -13,7 +13,7 @@ namespace IndustrialPark
         Cylinder = 2
     }
 
-    public class AssetTRIG : PlaceableAsset
+    public class AssetTRIG : EntityAsset
     {
         public static bool dontRender = false;
 
@@ -459,10 +459,6 @@ namespace IndustrialPark
         }
 
         [Category("Trigger")]
-        public int TriggerFlags
-        {
-            get => ReadInt(0x90 + Offset);
-            set => Write(0x90 + Offset, value);
-        }
+        public DynamicTypeDescriptor TriggerFlags => IntFlagsDescriptor(0x90 + Offset);
     }
 }

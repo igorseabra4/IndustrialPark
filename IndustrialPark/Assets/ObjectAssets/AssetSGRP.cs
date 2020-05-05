@@ -26,7 +26,7 @@ namespace IndustrialPark
         public override string ToString() => $"[{Program.MainForm.GetAssetNameFromID(Sound_AssetID)}] - [{UnknownFloat04}]";
     }
 
-    public class AssetSGRP : ObjectAsset
+    public class AssetSGRP : BaseAsset
     {
         public AssetSGRP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 

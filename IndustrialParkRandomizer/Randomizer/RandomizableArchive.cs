@@ -332,7 +332,7 @@ namespace IndustrialPark.Randomizer
                         if (ContainsAsset(0xF70F6FEE))
                         {
                             ((AssetPKUP)GetFromAssetID(0xF70F6FEE)).PickupFlags = 2;
-                            ((AssetPKUP)GetFromAssetID(0xF70F6FEE)).Visible = true;
+                            ((AssetPKUP)GetFromAssetID(0xF70F6FEE)).Data[0x9] = 0;
                         }
                     }
                     break;
@@ -442,13 +442,13 @@ namespace IndustrialPark.Randomizer
         {
             Random r = new Random(seed);
 
-            List<PlaceableAsset> assets = (from asset in assetDictionary.Values
+            List<EntityAsset> assets = (from asset in assetDictionary.Values
                                            where new AssetType[] {
                                                AssetType.BOUL, AssetType.BUTN, AssetType.DSTR, AssetType.PLAT, AssetType.SIMP
                                            }.Contains(asset.AHDR.assetType) && !asset.AHDR.ADBG.assetName.ToLower().Contains("track")
-                                           select asset).Cast<PlaceableAsset>().ToList();
+                                           select asset).Cast<EntityAsset>().ToList();
             
-            foreach (PlaceableAsset a in assets)
+            foreach (EntityAsset a in assets)
             {
                 float scale = r.NextFloat(settings.scaleMin, settings.scaleMax);
 
@@ -466,11 +466,11 @@ namespace IndustrialPark.Randomizer
                 AssetType.BOUL, AssetType.BUTN, AssetType.DSTR, AssetType.HANG, AssetType.NPC, AssetType.PEND,
                 AssetType.PKUP, AssetType.PLAT, AssetType.PLYR, AssetType.SIMP, AssetType.VIL };
 
-            List<PlaceableAsset> assets = (from asset in assetDictionary.Values
+            List<EntityAsset> assets = (from asset in assetDictionary.Values
                                            where allowed.Contains(asset.AHDR.assetType)
-                                           select asset).Cast<PlaceableAsset>().ToList();
+                                           select asset).Cast<EntityAsset>().ToList();
 
-            foreach (PlaceableAsset a in assets)
+            foreach (EntityAsset a in assets)
             {
                 Vector3 color = GetRandomColor(r, brightColors, strongColors);
                 a.ColorRed = color.X;
@@ -635,7 +635,7 @@ namespace IndustrialPark.Randomizer
             {
                 List<AssetBUTN> assets = (from asset in assetDictionary.Values where asset is AssetBUTN butn && butn.ActMethod == (AssetBUTN.ButnActMethod)i select asset).Cast<AssetBUTN>().ToList();
 
-                List<byte[]> datas = (from asset in assets select asset.Data.Skip(8).Take(asset.Data.Length - Link.sizeOfStruct * asset.AmountOfEvents - 8).ToArray()).ToList();
+                List<byte[]> datas = (from asset in assets select asset.Data.Skip(8).Take(asset.Data.Length - Link.sizeOfStruct * asset.LinkCount - 8).ToArray()).ToList();
 
                 foreach (AssetBUTN a in assets)
                 {
@@ -646,7 +646,7 @@ namespace IndustrialPark.Randomizer
                     int value = r.Next(0, datas.Count);
                     var newData = a.Data.Take(8).ToList();
                     newData.AddRange(datas[value]);
-                    newData.AddRange(a.Data.Skip(a.Data.Length - Link.sizeOfStruct * a.AmountOfEvents));
+                    newData.AddRange(a.Data.Skip(a.Data.Length - Link.sizeOfStruct * a.LinkCount));
                     a.Data = newData.ToArray();
                     datas.RemoveAt(value);
 
@@ -854,37 +854,37 @@ namespace IndustrialPark.Randomizer
                     uint gloveIntroTrig = new AssetID("GLOVE_INTRO_TRIG");
 
                     if (ContainsAsset(gloveIntroDisp))
-                        ((AssetDPAT)GetFromAssetID(gloveIntroDisp)).EnabledOnStart = false;
+                        ((AssetDPAT)GetFromAssetID(gloveIntroDisp)).BaseUshortFlags ^= 1; //EnabledOnStart = false;
                     if (ContainsAsset(gloveIntroTrig))
-                        ((AssetTRIG)GetFromAssetID(gloveIntroTrig)).EnabledOnStart = false;
+                        ((AssetTRIG)GetFromAssetID(gloveIntroTrig)).BaseUshortFlags ^= 1; //EnabledOnStart = false;
                     return true;
 
                 case "bb02":
                     uint chuckOffDisp = new AssetID("CHUCK_CINEMATIC_OFF_DISP");
 
                     if (ContainsAsset(chuckOffDisp))
-                        ((AssetDPAT)GetFromAssetID(chuckOffDisp)).EnabledOnStart = true;
+                        ((AssetDPAT)GetFromAssetID(chuckOffDisp)).BaseUshortFlags ^= 1; //EnabledOnStart = false;
                     return true;
 
                 case "bc01":
                     uint arfIntroTrigDisp = new AssetID("ARF_INTRO_TRIG_DISP");
 
                     if (ContainsAsset(arfIntroTrigDisp))
-                        ((AssetDPAT)GetFromAssetID(arfIntroTrigDisp)).EnabledOnStart = false;
+                        ((AssetDPAT)GetFromAssetID(arfIntroTrigDisp)).BaseUshortFlags ^= 1; //EnabledOnStart = false;
                     return true;
 
                 case "gl01":
                     uint moonsoonIntroTrig = new AssetID("MONSOON_INTRO_TRIG");
 
                     if (ContainsAsset(moonsoonIntroTrig))
-                        ((AssetTRIG)GetFromAssetID(moonsoonIntroTrig)).EnabledOnStart = false;
+                        ((AssetTRIG)GetFromAssetID(moonsoonIntroTrig)).BaseUshortFlags ^= 1; //EnabledOnStart = false;
                     return true;
 
                 case "gy01":
                     uint slickIntoDisp = new AssetID("SLICK_INTRO_TRIG_DISP'");
 
                     if (ContainsAsset(slickIntoDisp))
-                        ((AssetDPAT)GetFromAssetID(slickIntoDisp)).EnabledOnStart = false;
+                        ((AssetDPAT)GetFromAssetID(slickIntoDisp)).BaseUshortFlags ^= 1; //EnabledOnStart = false;
                     return true;
 
                 case "jf01":
@@ -905,30 +905,30 @@ namespace IndustrialPark.Randomizer
 
                     uint swCinemaDisp = new AssetID("SWCINEMA_DISP_01");
                     if (ContainsAsset(swCinemaDisp))
-                        ((AssetDPAT)GetFromAssetID(swCinemaDisp)).EnabledOnStart = true;
+                        ((AssetDPAT)GetFromAssetID(swCinemaDisp)).BaseUshortFlags |= 1; //EnabledOnStart = true;
 
                     uint hammerDisp = new AssetID("HAMMERCINEMA_DISP_01");
                     if (ContainsAsset(hammerDisp))
-                        ((AssetDPAT)GetFromAssetID(hammerDisp)).EnabledOnStart = true;
+                        ((AssetDPAT)GetFromAssetID(hammerDisp)).BaseUshortFlags |= 1; //EnabledOnStart = true;
                     return true;
 
                 case "jf03":
                     uint tartarIntroDisp = new AssetID("TARTAR_CUTSCENE_OFF_DISP");
 
                     if (ContainsAsset(tartarIntroDisp))
-                        ((AssetDPAT)GetFromAssetID(tartarIntroDisp)).EnabledOnStart = true;
+                        ((AssetDPAT)GetFromAssetID(tartarIntroDisp)).BaseUshortFlags |= 1; //EnabledOnStart = true;
                     return true;
 
                 case "kf01":
                     LinkBFBB[] csnmLinks = null;
                     uint kf01csnm = new AssetID("TUBELET_CUTSCENE_MGR");
                     if (ContainsAsset(kf01csnm))
-                        csnmLinks = ((ObjectAsset)GetFromAssetID(kf01csnm)).LinksBFBB;
+                        csnmLinks = ((BaseAsset)GetFromAssetID(kf01csnm)).LinksBFBB;
 
                     uint kf01fly = new AssetID("KF01_FLYTHOUGH_WIDGET");
                     if (ContainsAsset(kf01fly))
                     {
-                        ObjectAsset flyWidged = ((ObjectAsset)GetFromAssetID(kf01fly));
+                        BaseAsset flyWidged = ((BaseAsset)GetFromAssetID(kf01fly));
                         List<LinkBFBB> flyLinks = flyWidged.LinksBFBB.ToList();
                         flyLinks.AddRange(csnmLinks);
 
@@ -961,7 +961,7 @@ namespace IndustrialPark.Randomizer
 
                     uint sleepyDpat = new AssetID("SLEEPY_DESP_02");
                     if (ContainsAsset(sleepyDpat))
-                        ((AssetDPAT)GetFromAssetID(sleepyDpat)).StateIsPersistent = false;
+                        ((AssetDPAT)GetFromAssetID(sleepyDpat)).BaseUshortFlags ^= 2; //StateIsPersistent = false;
                     return true;
             }
 
@@ -1340,15 +1340,30 @@ namespace IndustrialPark.Randomizer
 
         private bool MakeObjectsInvisible()
         {
-            var assets = (from asset in assetDictionary.Values where asset.AHDR.assetType == AssetType.SIMP select asset).Cast<AssetSIMP>();
+            bool done = false;
 
-            foreach (var simp in assets)
-            {
-                simp.ColorAlpha = 0f;
-                simp.Visible = false;
-            }
+            uint[] keepvisible = new uint[] {
+                Functions.BKDRHash("fruit_throw.MINF"),
+                Functions.BKDRHash("fruit_freezy_bind.MINF"),
+                Functions.BKDRHash("trailer_hitch")
+            };
 
-            return assets.Count() != 0;
+            foreach (var asset in assetDictionary.Values)
+                if (asset is AssetSIMP simp)
+                {
+                    if (keepvisible.Contains(simp.Model_AssetID))
+                        continue;
+
+                    foreach (var link in simp.LinksBFBB)
+                        if (link.EventReceiveID.ToString().ToLower().Contains("hit"))
+                            continue;
+
+                    simp.ColorAlpha = 0f;
+                    simp.Data[0x9] = 0;
+                    done = true;
+                }
+
+            return done;
         }
 
         public bool ImportCharacters()
@@ -1500,7 +1515,7 @@ namespace IndustrialPark.Randomizer
                     uint dpat = new AssetID("BOSS3_OPEN_DISP");
                     if (ContainsAsset(dpat) && GetFromAssetID(dpat) is AssetDPAT dispatcher)
                     {
-                        dispatcher.EnabledOnStart = false;
+                        dispatcher.BaseUshortFlags ^= 1; //EnabledOnStart = false;
                         int defaultLayer = GetLayerFromAssetID(dpat);
                         List<uint> vs = new List<uint>();
                         AssetTIMR timer = (AssetTIMR)GetFromAssetID(PlaceTemplate(new Vector3(), defaultLayer, out _, ref vs, template: AssetTemplate.Timer));
@@ -1620,7 +1635,7 @@ namespace IndustrialPark.Randomizer
         {
             foreach (uint a in FindWhoTargets(oldAssetID))
             {
-                if (GetFromAssetID(a) is ObjectAsset asset)
+                if (GetFromAssetID(a) is BaseAsset asset)
                 {
                     LinkBFBB[] links = asset.LinksBFBB;
                     for (int i = 0; i < links.Length; i++)
@@ -1993,7 +2008,7 @@ namespace IndustrialPark.Randomizer
                 List<uint> assetIDs = FindWhoTargets(new AssetID(musicDispAssetName));
                 foreach (uint assetID in assetIDs)
                 {
-                    ObjectAsset objectAsset = (ObjectAsset)GetFromAssetID(assetID);
+                    BaseAsset objectAsset = (BaseAsset)GetFromAssetID(assetID);
                     LinkBFBB[] links = objectAsset.LinksBFBB;
                     foreach (LinkBFBB link in links)
                         if (link.EventSendID == EventBFBB.PlayMusic)
@@ -2824,7 +2839,7 @@ namespace IndustrialPark.Randomizer
 
         private void SetGiveShinyObjects(int shinyAmount, uint assetID)
         {
-            if (ContainsAsset(assetID) && GetFromAssetID(assetID) is ObjectAsset objectAsset)
+            if (ContainsAsset(assetID) && GetFromAssetID(assetID) is BaseAsset objectAsset)
             {
                 LinkBFBB[] links = objectAsset.LinksBFBB;
                 for (int i = 0; i < links.Length; i++)
@@ -2852,7 +2867,7 @@ namespace IndustrialPark.Randomizer
         private void SetPlaceableAssetModel(uint assetID, string modelName)
         {
             if (ContainsAsset(assetID))
-                ((PlaceableAsset)GetFromAssetID(assetID)).Model_AssetID = modelName;
+                ((EntityAsset)GetFromAssetID(assetID)).Model_AssetID = modelName;
             else
                 MessageBox.Show("Placeable asset " + assetID.ToString("X8") + " not found on file " + LevelName);
         }

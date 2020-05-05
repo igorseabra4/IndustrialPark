@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class AssetSURF : ObjectAsset
+    public class AssetSURF : BaseAsset
     {
         public AssetSURF(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 

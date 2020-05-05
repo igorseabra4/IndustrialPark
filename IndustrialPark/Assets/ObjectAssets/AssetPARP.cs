@@ -33,7 +33,7 @@ namespace IndustrialPark
         public string EntryFunction { get; set; }
     }
 
-    public class AssetPARP : ObjectAsset
+    public class AssetPARP : BaseAsset
     {
         public AssetPARP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 

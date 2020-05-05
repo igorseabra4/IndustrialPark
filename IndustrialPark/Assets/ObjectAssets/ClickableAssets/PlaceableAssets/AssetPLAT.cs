@@ -44,7 +44,7 @@ namespace IndustrialPark
             base.Verify(ref result);
         }
         
-        [Category("Placement")]
+        [Category("Entity")]
         [TypeConverter(typeof(FloatTypeConverter))]
         public override float PositionX
         {
@@ -58,7 +58,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement")]
+        [Category("Entity")]
         [TypeConverter(typeof(FloatTypeConverter))]
         public override float PositionY
         {
@@ -72,7 +72,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement")]
+        [Category("Entity")]
         [TypeConverter(typeof(FloatTypeConverter))]
         public override float PositionZ
         {
@@ -110,8 +110,9 @@ namespace IndustrialPark
         }
 
         [Category("Platform")]
-        [Description("0 = None\n1 = Shake on Mount\n2 = Unknown\n4 = Solid\nAdd numbers to enable multiple flags")]
-        public short PlatFlags
+        public DynamicTypeDescriptor PlatFlags => ShortFlagsDescriptor(0x56 + Offset, "Shake on Mount", "Unknown", "Solid");
+        [Browsable(false)]
+        public short PlatFlagsShort
         {
             get => ReadShort(0x56 + Offset);
             set => Write(0x56 + Offset, value);

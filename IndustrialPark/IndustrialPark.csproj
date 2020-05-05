@@ -182,9 +182,12 @@
     <Compile Include="Assets\Binary\AssetFLY.cs" />
     <Compile Include="Assets\Binary\AssetLKIT.cs" />
     <Compile Include="Assets\Binary\AssetSNDI_GCN_V2.cs" />
+    <Compile Include="Assets\Binary\AssetCSN.cs" />
     <Compile Include="Assets\Binary\AssetVILP.cs" />
     <Compile Include="Assets\Binary\AssetWIRE.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetSDFX.cs" />
+    <Compile Include="Assets\Shared\AssetSpecifics\FlagsField_Byte.cs" />
+    <Compile Include="Assets\Shared\AssetSpecifics\FlagsField_UInt.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\FSB3_File.cs" />
     <Compile Include="Assets\DYNA\BFBB\HudDynas\DynaHudBase.cs" />
     <Compile Include="Assets\DYNA\BFBB\HudDynas\DynaHudMeterBase.cs" />
@@ -205,7 +208,6 @@
     <Compile Include="Assets\DYNA\MovieGame\DynaVentType.cs" />
     <Compile Include="Assets\Models\AssetJSP_INFO.cs" />
     <Compile Include="Assets\Models\AssetRenderWareModel.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetCOND_Scooby.cs" />
     <Compile Include="Assets\ObjectAssets\AssetCSNM.cs" />
     <Compile Include="Assets\ObjectAssets\AssetENV_TSSM.cs" />
     <Compile Include="Assets\ObjectAssets\AssetGUST.cs" />
@@ -228,7 +230,7 @@
     <Compile Include="Assets\DYNA\MovieGame\DynaSceneProperties.cs" />
     <Compile Include="Assets\ObjectAssets\AssetVOLU.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetMVPT_Scooby.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetDSTR_Scooby.cs" />
+    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetDSTR.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetNPC.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetPLAT.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\AssetSpecific_Generic.cs" />
@@ -238,6 +240,9 @@
     <Compile Include="Assets\Shared\AssetSpecifics\Motion.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\PlatSpecific.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\CamSpecific.cs" />
+    <Compile Include="Assets\Shared\AssetSpecifics\FlagsField_UShort.cs" />
+    <Compile Include="Assets\Shared\AssetSpecifics\FlagsField.cs" />
+    <Compile Include="Assets\Shared\TypeConverter\HexUIntTypeConverter.cs" />
     <Compile Include="Links\Enums\EventBFBB.cs" />
     <Compile Include="Assets\Shared\Enums\PlatType.cs" />
     <Compile Include="Assets\Shared\Interfaces\IRotatableAsset.cs" />
@@ -359,7 +364,6 @@
     <Compile Include="Assets\ObjectAssets\AssetPORT.cs" />
     <Compile Include="Assets\ObjectAssets\AssetTIMR.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetBOUL.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetDSTR.cs" />
     <Compile Include="Assets\DYNA\BFBB\RenderableDynas\DynaTeleport_BFBB.cs" />
     <Compile Include="Assets\DYNA\MovieGame\DynaTeleport_MovieGame.cs" />
     <Compile Include="Assets\Shared\Enums\VilType.cs" />
@@ -390,11 +394,11 @@
     <Compile Include="Assets\Shared\Asset.cs" />
     <Compile Include="Assets\Shared\TypeConverter\FloatTypeConverter.cs" />
     <Compile Include="Assets\Shared\TypeConverter\HexByteTypeConverter.cs" />
-    <Compile Include="Assets\Shared\TypeConverter\HexShortTypeConverter.cs" />
+    <Compile Include="Assets\Shared\TypeConverter\HexUShortTypeConverter.cs" />
     <Compile Include="Assets\Shared\Interfaces\IClickableAsset.cs" />
-    <Compile Include="Assets\Shared\ObjectAsset.cs" />
+    <Compile Include="Assets\Shared\BaseAsset.cs" />
     <Compile Include="Assets\Shared\Enums\ObjectAssetType.cs" />
-    <Compile Include="Assets\Shared\PlaceableAsset.cs" />
+    <Compile Include="Assets\Shared\EntityAsset.cs" />
     <Compile Include="Assets\Shared\Interfaces\IAssetWithModel.cs" />
     <Compile Include="Assets\Shared\Interfaces\IRenderableAsset.cs" />
     <Compile Include="Assets\ObjectAssets\AssetGRUP.cs" />

@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class AssetCNTR : ObjectAsset
+    public class AssetCNTR : BaseAsset
     {
         public AssetCNTR(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
         

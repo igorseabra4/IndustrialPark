@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class AssetVIL : PlaceableAsset
+    public class AssetVIL : EntityAsset
     {
         public static bool dontRender = false;
 
@@ -107,11 +107,7 @@ namespace IndustrialPark
         }
 
         [Category("VIL")]
-        public int VilFlags
-        {
-            get => ReadInt(0x54 + Offset);
-            set => Write(0x54 + Offset, value);
-        }
+        public DynamicTypeDescriptor VilFlags => IntFlagsDescriptor(0x54 + Offset);
 
         [Category("VIL")]
         public VilType VilType

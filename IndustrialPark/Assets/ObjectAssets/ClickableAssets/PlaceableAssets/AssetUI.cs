@@ -7,7 +7,7 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class AssetUI : PlaceableAsset
+    public class AssetUI : EntityAsset
     {
         public static bool dontRender = false;
 
@@ -133,11 +133,7 @@ namespace IndustrialPark
         }
 
         [Category("UserInterface")]
-        public int UIFlags
-        {
-            get => ReadInt(0x54 + Offset);
-            set => Write(0x54 + Offset, value);
-        }
+        public DynamicTypeDescriptor UIFlags => IntFlagsDescriptor(0x54 + Offset);
 
         [Category("UserInterface")]
         public short Width

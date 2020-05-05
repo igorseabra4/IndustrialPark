@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class AssetCSNM : ObjectAsset
+    public class AssetCSNM : BaseAsset
     {
         public AssetCSNM(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
@@ -29,11 +29,7 @@ namespace IndustrialPark
         }
 
         [Category("Cutscene Manager")]
-        public int CsnmFlags
-        {
-            get => ReadInt(0xC);
-            set => Write(0xC, value);
-        }
+        public DynamicTypeDescriptor CsnmFlags => IntFlagsDescriptor(0xC);
 
         [Category("Cutscene Manager")]
         public int InterpSpeed
@@ -358,7 +354,6 @@ namespace IndustrialPark
         }
 
         [Category("Cutscene Manager")]
-        [Description("Movie only.")]
         public int UnknownIntC8
         {
             get

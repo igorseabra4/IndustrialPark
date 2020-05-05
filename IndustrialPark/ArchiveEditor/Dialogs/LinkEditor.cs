@@ -42,7 +42,7 @@ namespace IndustrialPark
                 {
                     sourceAll.Add(a.AHDR.ADBG.assetName);
 
-                    if (a is ObjectAsset oa)
+                    if (a is BaseAsset oa)
                         sourceObjects.Add(oa.AHDR.ADBG.assetName);
                 }
 

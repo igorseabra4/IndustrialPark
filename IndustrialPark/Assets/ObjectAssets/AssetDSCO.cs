@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace IndustrialPark
 {
-    public class AssetDSCO : ObjectAsset
+    public class AssetDSCO : BaseAsset
     {
         public AssetDSCO(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 

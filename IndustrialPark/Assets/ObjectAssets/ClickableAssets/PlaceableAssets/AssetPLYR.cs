@@ -6,7 +6,7 @@ using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
-    public class AssetPLYR : PlaceableAsset
+    public class AssetPLYR : EntityAsset
     {
         public static bool dontRender = false;
 
@@ -24,9 +24,9 @@ namespace IndustrialPark
 
             Verify(LightKit_AssetID, ref result);
 
-            if (EventStartOffset + AmountOfEvents * Link.sizeOfStruct + 4 < Data.Length)
+            if (EventStartOffset + LinkCount * Link.sizeOfStruct + 4 < Data.Length)
                 result.Add("Additional data found at the end of asset data");
-            if (EventStartOffset + AmountOfEvents * Link.sizeOfStruct + 4 > Data.Length)
+            if (EventStartOffset + LinkCount * Link.sizeOfStruct + 4 > Data.Length)
                 result.Add("Asset expects mode data than present");
         }
 
@@ -61,8 +61,8 @@ namespace IndustrialPark
         [Category("Player References")]
         public AssetID LightKit_AssetID
         {
-            get => game == Game.Scooby ? 0 : ReadUInt(EventStartOffset + AmountOfEvents * Link.sizeOfStruct);
-            set { if (game != Game.Scooby) Write(EventStartOffset + AmountOfEvents * Link.sizeOfStruct, value); }
+            get => game == Game.Scooby ? 0 : ReadUInt(EventStartOffset + LinkCount * Link.sizeOfStruct);
+            set { if (game != Game.Scooby) Write(EventStartOffset + LinkCount * Link.sizeOfStruct, value); }
         }
     }
 }

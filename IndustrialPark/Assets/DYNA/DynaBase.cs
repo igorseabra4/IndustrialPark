@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using HipHopFile;
@@ -6,10 +7,10 @@ using SharpDX;
 
 namespace IndustrialPark
 {
-    public class DynaBase : EndianConvertible
+    public class DynaBase : EndianConvertibleWithData
     {
         public virtual string Note { get => "DYNA Placement is unused"; }
-        public byte[] Data { get; set; }
+        public override byte[] Data { get; set; }
 
         public DynaBase(Platform platform) : base(EndianConverter.PlatformEndianness(platform))
         {

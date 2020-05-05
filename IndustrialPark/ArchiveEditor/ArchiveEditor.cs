@@ -225,12 +225,7 @@ namespace IndustrialPark
                 Program.MainForm.CloseArchiveEditor(this);
             Close();
         }
-
-        public void DisposeForClosing()
-        {
-            archive.DisposeForClosing();
-        }
-
+        
         private bool programIsChangingStuff = false;
 
         public bool HasAsset(uint assetID)
@@ -338,6 +333,12 @@ namespace IndustrialPark
 
         private void buttonRemoveLayer_Click(object sender, EventArgs e)
         {
+            int cnt = archive.GetAssetIDsOnLayer(comboBoxLayers.SelectedIndex).Count;
+            if (cnt > 0 && 
+                MessageBox.Show($"Are you sure you want to delete this layer with {cnt} assets?", "Warning", 
+                MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+                return;
+            
             int previndex = comboBoxLayers.SelectedIndex;
 
             archive.RemoveLayer(comboBoxLayers.SelectedIndex);
@@ -540,6 +541,7 @@ namespace IndustrialPark
             {
                 archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, out List<uint> assetIDs, overwrite);
                 comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
+                Program.MainForm.RefreshTexturesAndModels();
                 SetSelectedIndices(assetIDs, true);
             }
         }
@@ -555,6 +557,7 @@ namespace IndustrialPark
                 if (makeSimps)
                     assetIDs.AddRange(archive.MakeSimps(assetIDs, ledgeGrabSimps));
                 PopulateLayerComboBox();
+                Program.MainForm.RefreshTexturesAndModels();
                 SetSelectedIndices(assetIDs, true);
             }
         }
@@ -566,6 +569,7 @@ namespace IndustrialPark
             {
                 archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, out List<uint> assetIDs, overwrite);
                 comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
+                Program.MainForm.RefreshTexturesAndModels();
                 SetSelectedIndices(assetIDs, true);
             }
         }
@@ -612,10 +616,10 @@ namespace IndustrialPark
             comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
 
             archive.UnsavedChanges = true;
-
+            listViewAssets.BeginUpdate();
             foreach (ListViewItem v in listViewAssets.SelectedItems)
                 listViewAssets.Items.Remove(v);
-
+            listViewAssets.EndUpdate();
             programIsChangingStuff = false;
 
             if (a != curType)
@@ -1038,6 +1042,13 @@ namespace IndustrialPark
             {
                 if (buttonEditAsset.Enabled)
                     buttonEditAsset_Click(null, null);
+            }
+            else if (e.KeyCode == Keys.A && e.Modifiers == Keys.Control)
+            {
+                listViewAssets.BeginUpdate();
+                for (int i = 0; i < listViewAssets.Items.Count; i++)
+                    listViewAssets.Items[i].Selected = true;
+                listViewAssets.EndUpdate();
             }
             else if (e.KeyCode == Keys.Delete)
             {

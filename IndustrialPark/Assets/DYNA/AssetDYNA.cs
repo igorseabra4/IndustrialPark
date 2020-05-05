@@ -7,7 +7,7 @@ using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
-    public class AssetDYNA : ObjectAsset, IRenderableAsset, IClickableAsset, IRotatableAsset, IScalableAsset
+    public class AssetDYNA : BaseAsset, IRenderableAsset, IClickableAsset, IRotatableAsset, IScalableAsset
     {
         public AssetDYNA(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {

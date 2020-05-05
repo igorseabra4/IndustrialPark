@@ -7,7 +7,7 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class AssetSFX : ObjectAsset, IRenderableAsset, IClickableAsset, IScalableAsset
+    public class AssetSFX : BaseAsset, IRenderableAsset, IClickableAsset, IScalableAsset
     {
         private Matrix world;
         private Matrix world2;
@@ -111,22 +111,11 @@ namespace IndustrialPark
         {
             return Vector3.Distance(cameraPosition, _position) - _radius;
         }
-        
-        [Category("Sound Effect")]
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte SFXFlag08
-        {
-            get => ReadByte(0x8);
-            set => Write(0x8, value);
-        }
 
         [Category("Sound Effect")]
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte SFXFlag09
-        {
-            get => ReadByte(0x9);
-            set => Write(0x9, value);
-        }
+        public DynamicTypeDescriptor Flags08 => ByteFlagsDescriptor(0x8);
+        [Category("Sound Effect")]
+        public DynamicTypeDescriptor Flags09 => ByteFlagsDescriptor(0x9);
 
         [Category("Sound Effect")]
         public short Frequency

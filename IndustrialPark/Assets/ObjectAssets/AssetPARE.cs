@@ -25,7 +25,7 @@ namespace IndustrialPark
         EntityBound = 16,
     }
 
-    public class AssetPARE : ObjectAsset
+    public class AssetPARE : BaseAsset
     {
         public AssetPARE(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
@@ -44,11 +44,7 @@ namespace IndustrialPark
         }
 
         [Category("Particle Emitter")]
-        public byte EmitterFlags
-        {
-            get => ReadByte(0x8);
-            set => Write(0x8, value);
-        }
+        public DynamicTypeDescriptor EmitterFlags => ByteFlagsDescriptor(0x8);
 
         [Category("Particle Emitter")]
         public EmitterType EmitterType

@@ -67,20 +67,25 @@ namespace IndustrialPark
                         {
                             TriggerGizmo = true;
 
-                            GizmoCenterPosition = TRIG.Position;
-                            float distance = Vector3.Distance(renderer.Camera.Position, TRIG.GetBoundingBox().Center) / 5f;
+                            SetCenterRotation(TRIG.Yaw, TRIG.Pitch, TRIG.Roll);
+
+                            GizmoCenterPosition = TRIG.GetBoundingBox().Center;
+
+                            float radius = Vector3.Distance(renderer.Camera.Position, GizmoCenterPosition) / 5f;
+
+                            Vector3 TrigBound = new Vector3(TRIG.Position1X - TRIG.Position0X, TRIG.Position1Y - TRIG.Position0Y, TRIG.Position1Z - TRIG.Position0Z) / 2f;
 
                             foreach (BoxTrigPositionGizmo g in triggerPositionGizmos)
                             {
-                                g.SetPosition(TRIG.GetBoundingBox(), distance);
+                                g.SetPosition(TRIG.GetBoundingBox().Center, TrigBound, radius, GizmoCenterRotation);
                                 g.Draw(renderer);
                             }
 
-                            distance = Vector3.Distance(renderer.Camera.Position, TRIG.Position) / 5f;
+                            radius = Vector3.Distance(renderer.Camera.Position, TRIG.Position) / 5f;
 
                             foreach (PositionGizmo g in positionGizmos)
                             {
-                                g.SetPosition(TRIG.Position, distance);
+                                g.SetPosition(TRIG.Position, radius);
                                 g.Draw(renderer);
                             }
                         }
@@ -399,8 +404,10 @@ namespace IndustrialPark
                     {
                         if (triggerPositionGizmos[0].isSelected)
                         {
-                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + Vector3.UnitX, viewProjection);
-                            Vector3 direction = direction2 - direction1;
+                            Vector3 movementDirection = (Vector3)Vector3.Transform(Vector3.UnitX, GizmoCenterRotation);
+                            
+                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
+                            Vector3 direction = direction2 - (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
                             direction.Z = 0;
                             direction.Normalize();
 
@@ -410,8 +417,10 @@ namespace IndustrialPark
                         }
                         else if (triggerPositionGizmos[1].isSelected)
                         {
-                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + Vector3.UnitY, viewProjection);
-                            Vector3 direction = direction2 - direction1;
+                            Vector3 movementDirection = (Vector3)Vector3.Transform(Vector3.UnitY, GizmoCenterRotation);
+
+                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
+                            Vector3 direction = direction2 - (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
                             direction.Z = 0;
                             direction.Normalize();
 
@@ -421,8 +430,10 @@ namespace IndustrialPark
                         }
                         else if (triggerPositionGizmos[2].isSelected)
                         {
-                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + Vector3.UnitZ, viewProjection);
-                            Vector3 direction = direction2 - direction1;
+                            Vector3 movementDirection = (Vector3)Vector3.Transform(Vector3.UnitZ, GizmoCenterRotation);
+
+                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
+                            Vector3 direction = direction2 - (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
                             direction.Z = 0;
                             direction.Normalize();
 
@@ -432,8 +443,10 @@ namespace IndustrialPark
                         }
                         else if (triggerPositionGizmos[3].isSelected)
                         {
-                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + Vector3.UnitX, viewProjection);
-                            Vector3 direction = direction2 - direction1;
+                            Vector3 movementDirection = (Vector3)Vector3.Transform(Vector3.UnitX, GizmoCenterRotation);
+
+                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
+                            Vector3 direction = direction2 - (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
                             direction.Z = 0;
                             direction.Normalize();
 
@@ -443,8 +456,10 @@ namespace IndustrialPark
                         }
                         else if (triggerPositionGizmos[4].isSelected)
                         {
-                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + Vector3.UnitY, viewProjection);
-                            Vector3 direction = direction2 - direction1;
+                            Vector3 movementDirection = (Vector3)Vector3.Transform(Vector3.UnitY, GizmoCenterRotation);
+
+                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
+                            Vector3 direction = direction2 - (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
                             direction.Z = 0;
                             direction.Normalize();
 
@@ -454,8 +469,10 @@ namespace IndustrialPark
                         }
                         else if (triggerPositionGizmos[5].isSelected)
                         {
-                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + Vector3.UnitZ, viewProjection);
-                            Vector3 direction = direction2 - direction1;
+                            Vector3 movementDirection = (Vector3)Vector3.Transform(Vector3.UnitZ, GizmoCenterRotation);
+
+                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
+                            Vector3 direction = direction2 - (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
                             direction.Z = 0;
                             direction.Normalize();
 
