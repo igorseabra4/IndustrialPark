@@ -900,46 +900,82 @@ namespace IndustrialPark
 
         private void EditPACKToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (archive.EditPack(out HashSet<uint> unsupported))
+            if (archive.EditPack(out List<uint> unsupported))
             {
-                string message = "Archive PACK edited sucessfully and asset formats were converted\n";
-
                 if (unsupported.Count > 0)
                 {
-                    message += "\nConversion is unsupported for the following assets and they have been left unchanged:\n";
-                    foreach (var v in unsupported)
-                        message += GetAssetNameFromID(v) + ", ";
-                }
+                    MessageBox.Show("Your archive format has been converted, but not all assets in it.");
+                    MessageBox.Show("Will being archive convertion helper!");
 
-                MessageBox.Show(message);
-                
-                #if DEBUG
-                if (unsupported.Count > 0)
-                {
-                    DialogResult result = MessageBox.Show("Do you wish to search for the unsupported assets in external archives? You can choose a folder and Industrial Park will search all HIP/HOP archives in the folder and subfolders for assets that match the ones which were not converted and use them as replacements.", "Automatic Asset Replacement", MessageBoxButtons.YesNo);
-                    if (result == DialogResult.Yes)
-                    {
-                        CommonOpenFileDialog dialog = new CommonOpenFileDialog()
-                        {
-                            IsFolderPicker = true
-                        };
-                        if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
-                        {
-                            archive.ReplaceUnconvertableAssets(dialog.FileName, ref unsupported);
+                    bool hasSound = false;
+                    bool hasJaw = false;
 
-                            if (unsupported.Count > 0)
-                            {
-                                message = "\nThe following assets have not been found and have not been replaced:\n";
-                                    foreach (var v in unsupported)
-                                        message += GetAssetNameFromID(v) + "\n";
-                                MessageBox.Show(message);
-                            }
-                            else
-                                MessageBox.Show("All assets successfully replaced.");
+                    for (int i = 0; i < unsupported.Count; i++)
+                        if (archive.GetFromAssetID(unsupported[i]).AHDR.assetType == AssetType.SND ||
+                            archive.GetFromAssetID(unsupported[i]).AHDR.assetType == AssetType.SNDS)
+                        {
+                            hasSound = true;
                         }
+                        else if (archive.GetFromAssetID(unsupported[i]).AHDR.assetType == AssetType.JAW)
+                        {
+                            hasJaw = true;
+                        }
+                        else if (archive.GetFromAssetID(unsupported[i]).AHDR.assetType == AssetType.SNDI ||
+                            archive.GetFromAssetID(unsupported[i]).AHDR.assetType == AssetType.RWTX ||
+                            archive.GetFromAssetID(unsupported[i]).AHDR.assetType == AssetType.JSP ||
+                            archive.GetFromAssetID(unsupported[i]).AHDR.assetType == AssetType.BSP)
+                        {
+                            unsupported.RemoveAt(i);
+                            i--;
+                        }
+
+                    var tempList = new List<uint>();
+
+                    if (hasSound)
+                    {
+                        foreach (var s in archive.GetAssetsOfType(AssetType.SNDI))
+                        {
+                            unsupported.Remove(s.assetID);
+                            archive.RemoveAsset(s.assetID);
+                        }
+                        int layerType = (int)LayerType_BFBB.SNDTOC;
+                        if (archive.game == Game.Incredibles)
+                            layerType = (int)LayerType_TSSM.SNDTOC;
+
+                        archive.PlaceTemplate(new Vector3(), archive.IndexOfLayerOfType(layerType), out _, ref tempList, "sound_info", AssetTemplate.SoundInfo);
+                    }
+                    if (hasJaw)
+                    {
+                        foreach (var s in archive.GetAssetsOfType(AssetType.JAW)) 
+                        {
+                            unsupported.Remove(s.assetID);
+                            archive.RemoveAsset(s.assetID);
+                        }
+                        archive.PlaceTemplate(new Vector3(), archive.IndexOfLayerOfType(0), out _, ref tempList, template: AssetTemplate.JawData);
+                    }
+
+                    MessageBox.Show("First, I want you to choose a folder. I will import all assets which could not be converted from it, based on their asset IDs.");
+
+                    CommonOpenFileDialog dialog = new CommonOpenFileDialog()
+                    {
+                        IsFolderPicker = true
+                    };
+                    
+                    if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+                    {
+                        archive.ReplaceUnconvertableAssets(dialog.FileName, ref unsupported);
+
+                        if (unsupported.Count > 0)
+                        {
+                            string message = "\nThe following assets have not been found and have not been replaced:\n";
+                            foreach (var v in unsupported)
+                                message += GetAssetNameFromID(v) + "\n";
+                            MessageBox.Show(message);
+                        }
+                        else
+                            MessageBox.Show("All assets successfully replaced. Note that any RWTX assets were left untouched.");
                     }
                 }
-                #endif
 
                 PopulateLayerTypeComboBox();
                 PopulateLayerComboBox();
@@ -1003,8 +1039,10 @@ namespace IndustrialPark
         private void importHIPArchiveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFile = new OpenFileDialog()
-            { Filter = "All supported file types|*.hip;*.hop;*.ini|HIP archives|*.hip|HOP archives|*.hop|HipHopTool INI|*.ini",
-            Multiselect = true };
+            {
+                Filter = "All supported file types|*.hip;*.hop;*.ini|HIP archives|*.hip|HOP archives|*.hop|HipHopTool INI|*.ini",
+                Multiselect = true
+            };
 
             if (openFile.ShowDialog() == DialogResult.OK)
                 archive.ImportHip(openFile.FileNames, false);

@@ -31,7 +31,7 @@ namespace IndustrialPark
         public override bool Equals(object obj)
         {
             if (obj != null && obj is EntryJAW entryJAW)
-                return SoundAssetID == entryJAW.SoundAssetID;
+                return SoundAssetID.Equals(entryJAW.SoundAssetID);
             return false;
         }
 
@@ -122,38 +122,25 @@ namespace IndustrialPark
             List<EntryJAW> entries = JAW_Entries.ToList();
 
             for (int i = 0; i < entries.Count; i++)
-                if (entries[i].SoundAssetID == assetID)
+                if (entries[i].SoundAssetID.Equals(assetID))
                     entries.Remove(entries[i]);
 
             entries.Add(new EntryJAW(assetID, jawData));
 
             JAW_Entries = entries.ToArray();
         }
-
-        public void RemoveEntry(uint assetID)
+        
+        public void Merge(AssetJAW asset)
         {
-            List<EntryJAW> entries = JAW_Entries.ToList();
+            var entries = JAW_Entries.ToList();
 
-            for (int i = 0; i < entries.Count; i++)
-                if (entries[i].SoundAssetID == assetID)
-                    entries.Remove(entries[i]);
+            foreach (var entry in asset.JAW_Entries)
+            {
+                entries.Remove(entry);
+                entries.Add(entry);
+            }
 
             JAW_Entries = entries.ToArray();
-        }
-
-        public void Merge(AssetJAW assetJAW)
-        {
-            List<EntryJAW> entriesJAW = JAW_Entries.ToList();
-            List<uint> assetIDsAlreadyPresent = new List<uint>();
-
-            foreach (EntryJAW entryJAW in entriesJAW)
-                assetIDsAlreadyPresent.Add(entryJAW.SoundAssetID);
-
-            foreach (EntryJAW entryJAW in assetJAW.JAW_Entries)
-                if (!assetIDsAlreadyPresent.Contains(entryJAW.SoundAssetID))
-                    entriesJAW.Add(entryJAW);
-
-            JAW_Entries = entriesJAW.ToArray();
         }
     }
 }

@@ -222,6 +222,18 @@ namespace IndustrialPark
         {
             return $"{Program.MainForm.GetAssetNameFromID(ModelAssetID)} - {SubObjectBits}";
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj != null && obj is EntryPIPT entry)
+                return ModelAssetID.Equals(entry.ModelAssetID);
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return ModelAssetID.GetHashCode();
+        }
     }
 
     public class AssetPIPT : Asset
@@ -308,19 +320,17 @@ namespace IndustrialPark
             }
         }
 
-        public void Merge(AssetPIPT assetPIPT)
+        public void Merge(AssetPIPT asset)
         {
-            List<EntryPIPT> entriesPIPT = PIPT_Entries.ToList();
-            List<uint> assetIDsAlreadyPresent = new List<uint>();
+            var entries = PIPT_Entries.ToList();
 
-            foreach (EntryPIPT entryPIPT in entriesPIPT)
-                assetIDsAlreadyPresent.Add(entryPIPT.ModelAssetID);
+            foreach (var entry in asset.PIPT_Entries)
+            {
+                entries.Remove(entry);
+                entries.Add(entry);
+            }
 
-            foreach (EntryPIPT entryPIPT in assetPIPT.PIPT_Entries)
-                if (!assetIDsAlreadyPresent.Contains(entryPIPT.ModelAssetID))
-                    entriesPIPT.Add(entryPIPT);
-
-            PIPT_Entries = entriesPIPT.ToArray();
+            PIPT_Entries = entries.ToArray();
         }
     }
 }

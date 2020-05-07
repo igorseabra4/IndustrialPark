@@ -4,6 +4,7 @@ using RenderWareFile.Sections;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
 
 namespace IndustrialPark
@@ -30,7 +31,8 @@ namespace IndustrialPark
             }
             catch (Exception ex)
             {
-                model.Dispose();
+                if (model != null)
+                    model.Dispose();
                 model = null;
                 throw new Exception("Error: " + ToString() + " has an unsupported format and cannot be rendered. " + ex.Message);
             }
@@ -97,9 +99,78 @@ namespace IndustrialPark
                 Setup(Program.MainForm.renderer);
             }
         }
+
+        [Category("Model Data"), Editor(typeof(MaterialListEditor), typeof(UITypeEditor))]
+        public Material_0007[] Materials
+        {
+            get
+            {
+                var materials = new List<Material_0007>();
+
+                foreach (RWSection rws in ModelAsRWSections)
+                    if (rws is Clump_0010 clump)
+                        foreach (Geometry_000F geo in clump.geometryList.geometryList)
+                            materials.AddRange(geo.materialList.materialList);
+                
+                return materials.ToArray();
+            }
+            set
+            {
+                RWSection[] sections = ModelAsRWSections;
+
+                int k = 0;
+                foreach (RWSection rws in sections)
+                    if (rws is Clump_0010 clump)
+                    {
+                        for (int i = 0; i < clump.geometryList.geometryList.Count; i++)
+                        {
+                            bool hasMaterialEffects = false;
+                            for (int j = 0; j < clump.geometryList.geometryList[i].materialList.materialList.Length; j++)
+                            {
+                                if (k >= value.Length)
+                                    break;
+                                else
+                                    clump.geometryList.geometryList[i].materialList.materialList[j] = value[k];
+
+                                foreach (var rwss in value[k].materialExtension.extensionSectionList)
+                                    if (rwss is MaterialEffectsPLG_0120)
+                                        hasMaterialEffects = true;
+                                k++;
+                            }
+
+                            // giving the atomic the material effects
+                            if (hasMaterialEffects)
+                            {
+                                var plg = new MaterialEffectsPLG_0120() { value = MaterialEffectType.BumpMap, isAtomicExtension = true };
+
+                                bool newMatEffsFound = false;
+                                for (int j = 0; j < clump.atomicList[i].atomicExtension.extensionSectionList.Count; j++)                                
+                                    if (clump.atomicList[i].atomicExtension.extensionSectionList[j] is MaterialEffectsPLG_0120)
+                                    {
+                                        clump.atomicList[i].atomicExtension.extensionSectionList[j] = plg;
+                                        newMatEffsFound = true;
+                                        break;
+                                    }
+
+                                if (!newMatEffsFound)
+                                    clump.atomicList[i].atomicExtension.extensionSectionList.Add(plg);
+                            }
+                            else
+                            {
+                                for (int j = 0; j < clump.atomicList[i].atomicExtension.extensionSectionList.Count; j++)
+                                    if (clump.atomicList[i].atomicExtension.extensionSectionList[j] is MaterialEffectsPLG_0120 plg)
+                                        clump.atomicList[i].atomicExtension.extensionSectionList.RemoveAt(j--);
+                            }
+                        }
+                    }
+                
+                ModelAsRWSections = sections;
+                Setup(Program.MainForm.renderer);
+            }
+        }
         
         [DisplayName("Colors ([A,] R, G, B)")]
-        public System.Drawing.Color[] Colors
+        private System.Drawing.Color[] Colors
         {
             get
             {
@@ -139,7 +210,7 @@ namespace IndustrialPark
             }
         }
 
-        public string[] TextureNames
+        private string[] TextureNames
         {
             get
             {
@@ -175,7 +246,7 @@ namespace IndustrialPark
                                                 if (i >= value.Length)
                                                     continue;
 
-                                                mat.texture.diffuseTextureName.stringString = value[i];
+                                                mat.texture.diffuseTextureName = new String_0002(value[i]);
                                                 i++;
                                             }
 
@@ -185,6 +256,7 @@ namespace IndustrialPark
 
         protected AtomicFlags[] _atomicFlags;
 
+        [Category("Model Data")]
         public AtomicFlags[] AtomicFlags
         {
             get

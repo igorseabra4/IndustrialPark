@@ -257,40 +257,40 @@ namespace IndustrialPark
             for (int i = 1; i < COLLs.Count; i++)
                 RemoveAsset(COLLs[i].assetID);
             for (int i = 1; i < COLLs.Count; i++)
-                MergeCOLL(COLLs[i]);
+                MergeCOLL(COLLs[i], game, platform);
             
             List<Section_AHDR> JAWs = GetAssetsOfType(AssetType.JAW);
             for (int i = 1; i < JAWs.Count; i++)
                 RemoveAsset(JAWs[i].assetID);
             for (int i = 1; i < JAWs.Count; i++)
-                MergeJAW(JAWs[i]);
+                MergeJAW(JAWs[i], game, platform);
             
             List<Section_AHDR> LODTs = GetAssetsOfType(AssetType.LODT);
             for (int i = 1; i < LODTs.Count; i++)            
                 RemoveAsset(LODTs[i].assetID);
             for (int i = 1; i < LODTs.Count; i++)
-                MergeLODT(LODTs[i]);
+                MergeLODT(LODTs[i], game, platform);
             
             List<Section_AHDR> PIPTs = GetAssetsOfType(AssetType.PIPT);
             for (int i = 1; i < PIPTs.Count; i++)
                 RemoveAsset(PIPTs[i].assetID);
             for (int i = 1; i < PIPTs.Count; i++)
-                MergePIPT(PIPTs[i]);
+                MergePIPT(PIPTs[i], game, platform);
             
             List<Section_AHDR> SHDWs = GetAssetsOfType(AssetType.SHDW);
             for (int i = 1; i < SHDWs.Count; i++)            
                 RemoveAsset(SHDWs[i].assetID);
             for (int i = 1; i < SHDWs.Count; i++)
-                MergeSHDW(SHDWs[i]);
+                MergeSHDW(SHDWs[i], game, platform);
             
             List<Section_AHDR> SNDIs = GetAssetsOfType(AssetType.SNDI);
             for (int i = 1; i < SNDIs.Count; i++)            
                 RemoveAsset(SNDIs[i].assetID);
             for (int i = 1; i < SNDIs.Count; i++)
-                MergeSNDI(SNDIs[i]);
+                MergeSNDI(SNDIs[i], game, platform);
         }
 
-        private void MergeCOLL(Section_AHDR AHDR)
+        private void MergeCOLL(Section_AHDR AHDR, Game game, Platform platform)
         {
             foreach (Asset a in assetDictionary.Values)
             {
@@ -302,7 +302,7 @@ namespace IndustrialPark
             }
         }
 
-        private void MergeJAW(Section_AHDR AHDR)
+        private void MergeJAW(Section_AHDR AHDR, Game game, Platform platform)
         {
             foreach (Asset a in assetDictionary.Values)
             {
@@ -314,7 +314,7 @@ namespace IndustrialPark
             }
         }
 
-        private void MergeLODT(Section_AHDR AHDR)
+        private void MergeLODT(Section_AHDR AHDR, Game game, Platform platform)
         {
             foreach (Asset a in assetDictionary.Values)
             {
@@ -326,7 +326,7 @@ namespace IndustrialPark
             }
         }
 
-        private void MergePIPT(Section_AHDR AHDR)
+        private void MergePIPT(Section_AHDR AHDR, Game game, Platform platform)
         {
             foreach (Asset a in assetDictionary.Values)
             {
@@ -338,7 +338,7 @@ namespace IndustrialPark
             }
         }
 
-        private void MergeSHDW(Section_AHDR AHDR)
+        private void MergeSHDW(Section_AHDR AHDR, Game game, Platform platform)
         {
             foreach (Asset a in assetDictionary.Values)
             {
@@ -350,7 +350,7 @@ namespace IndustrialPark
             }
         }
 
-        private void MergeSNDI(Section_AHDR AHDR)
+        private void MergeSNDI(Section_AHDR AHDR, Game game, Platform platform)
         {
             foreach (Asset a in assetDictionary.Values)
             {
@@ -620,17 +620,13 @@ namespace IndustrialPark
             RecalculateAllMatrices();
         }
 
-        private void ConvertAllAssetTypes(Platform previousPlatform, Game previousGame, out HashSet<uint> unsupported)
+        private void ConvertAllAssetTypes(Platform previousPlatform, Game previousGame, out List<uint> unsupported)
         {
-            unsupported = new HashSet<uint>();
-
-            HashSet<AssetType> unsupportedDefault = new HashSet<AssetType>() { AssetType.SND, AssetType.SNDS, AssetType.SNDI };
+            unsupported = new List<uint>();
 
             foreach (Asset asset in assetDictionary.Values)
                 try
                 {
-                    if (asset.AHDR.assetType == AssetType.RWTX)
-                        continue;
                     if (asset is AssetRenderWareModel MODL && !MODL.IsNativeData)
                     {
                         MODL.Data =
@@ -640,28 +636,15 @@ namespace IndustrialPark
                     }
                     else
                     {
-                        if (unsupportedDefault.Contains(asset.AHDR.assetType))
-                        {
-                            unsupported.Add(asset.AHDR.assetID);
-                            continue;
-                        }
-
                         asset.AHDR = ConvertAssetType(asset.AHDR, EndianConverter.PlatformEndianness(previousPlatform), EndianConverter.PlatformEndianness(platform), previousGame, game);
                     }
 
-                    asset.game = game;
-                    asset.platform = platform;
+                    asset.SetGamePlatform(game, platform);
                 }
                 catch
                 {
                     unsupported.Add(asset.AHDR.assetID);
                 }
-
-            if (ContainsAssetWithType(AssetType.RWTX))
-                if (!PerformTextureConversion())
-                    foreach (var a in assetDictionary.Values)
-                        if (a.AHDR.assetType == AssetType.RWTX)
-                            unsupported.Add(a.AHDR.assetID);
         }
 
         public static Section_AHDR ConvertAssetType(Section_AHDR AHDR, Endianness previousEndianness, Endianness currentEndianness, Game previousGame,  Game currentGame)
@@ -678,99 +661,6 @@ namespace IndustrialPark
 
             return AHDR;
         }
-
-        public void ReplaceUnconvertableAssets(string fileName, ref HashSet<uint> missing)
-        {
-            var soundHeaders = new List<(uint, byte[])>();
-            Platform scoobyPlatform = Platform.Unknown;
-            SearchOnFolder(fileName, ref scoobyPlatform, ref missing, ref soundHeaders);
-            
-            if (soundHeaders.Count > 0)
-                foreach (Asset a in assetDictionary.Values)
-                    if (a.AHDR.assetType == AssetType.SNDI)
-                    {
-                        List<uint> assetIDs = new List<uint>();
-                        uint sndiAssetID = PlaceTemplate(new Vector3(), GetLayerFromAssetID(a.AHDR.assetID), out _, ref assetIDs, "sound_info", AssetTemplate.SoundInfo);
-
-                        RemoveAsset(a.AHDR.assetID);
-
-                        if (platform == Platform.GameCube)
-                        {
-                            if (game == Game.Incredibles)
-                            {
-                                AssetSNDI_GCN_V2 sndi = (AssetSNDI_GCN_V2)GetFromAssetID(sndiAssetID);
-                                foreach (var v in soundHeaders)
-                                    sndi.AddEntry(v.Item2, v.Item1);
-                            }
-                            else
-                            {
-                                AssetSNDI_GCN_V1 sndi = (AssetSNDI_GCN_V1)GetFromAssetID(sndiAssetID);
-                                foreach (var v in soundHeaders)
-                                    sndi.AddEntry(v.Item2, v.Item1, GetFromAssetID(v.Item1).AHDR.assetType, out _);
-                            }
-                        }
-                        else if (platform == Platform.Xbox)
-                        {
-                            AssetSNDI_XBOX sndi = (AssetSNDI_XBOX)GetFromAssetID(sndiAssetID);
-                            foreach (var v in soundHeaders)
-                                sndi.AddEntry(v.Item2, v.Item1, GetFromAssetID(v.Item1).AHDR.assetType, out _);
-                        }
-                        else if (platform == Platform.PS2)
-                        {
-                            AssetSNDI_PS2 sndi = (AssetSNDI_PS2)GetFromAssetID(sndiAssetID);
-                            foreach (var v in soundHeaders)
-                                sndi.AddEntry(v.Item2, v.Item1, GetFromAssetID(v.Item1).AHDR.assetType, out _);
-                        }
-                        break;
-                    }
-        }
-
-        private void SearchOnFolder(string folderPath, ref Platform scoobyPlatform, ref HashSet<uint> missing, ref List<(uint, byte[])> soundHeaders)
-        {
-            if (missing.Count == 0)
-                return;
-
-            foreach (string s in Directory.GetFiles(folderPath))
-            {
-                if (Path.GetExtension(s).ToLower() == ".hip" || Path.GetExtension(s).ToLower() == ".hop")
-                {
-                    ArchiveEditorFunctions otherArchive = new ArchiveEditorFunctions();
-                    otherArchive.OpenFile(s, false, scoobyPlatform, true);
-                    if (scoobyPlatform == Platform.Unknown)
-                        scoobyPlatform = otherArchive.platform;
-
-                    foreach (Asset a in otherArchive.GetAllAssets())
-                    {
-                        if (missing.Contains(a.AHDR.assetID))
-                        {
-                            if (a.AHDR.assetType == AssetType.SND || a.AHDR.assetType == AssetType.SNDS)
-                                try
-                                {
-                                    soundHeaders.Add((a.AHDR.assetID, otherArchive.GetHeaderFromSNDI(a.AHDR.assetID)));
-                                }
-                                catch
-                                {
-                                    continue;
-                                }
-                            
-                            assetDictionary[a.AHDR.assetID].Data = a.Data;
-                            assetDictionary[a.AHDR.assetID].game = a.game;
-                            assetDictionary[a.AHDR.assetID].platform = a.platform;
-
-                            missing.Remove(a.AHDR.assetID);
-                        }
-                    }
-
-                    otherArchive.Dispose(false);
-                }
-
-                if (missing.Count == 0)
-                    return;
-            }
-            foreach (string s in Directory.GetDirectories(folderPath))
-                SearchOnFolder(s, ref scoobyPlatform, ref missing, ref soundHeaders);
-        }
-
 
         public List<uint> MakeSimps(List<uint> assetIDs, bool ledgeGrabSimps)
         {
@@ -791,24 +681,24 @@ namespace IndustrialPark
             return outAssetIDs;
         }
 
-        private int IndexOfLayerOfType(int layerType)
+        public int IndexOfLayerOfType(int layerType)
         {
-            int defaultLayerIndex = -1;
+            int layerIndex = -1;
             for (int i = 0; i < DICT.LTOC.LHDRList.Count; i++)
-                if (DICT.LTOC.LHDRList[i].layerType == 0)
+                if (DICT.LTOC.LHDRList[i].layerType == layerType)
                 {
-                    defaultLayerIndex = i;
+                    layerIndex = i;
                     break;
                 }
 
-            if (defaultLayerIndex == -1)
+            if (layerIndex == -1)
             {
                 AddLayer();
                 DICT.LTOC.LHDRList.Last().layerType = layerType;
-                defaultLayerIndex = DICT.LTOC.LHDRList.Count - 1;
+                layerIndex = DICT.LTOC.LHDRList.Count - 1;
             }
 
-            return defaultLayerIndex;
+            return layerIndex;
         }
 
         public void MakePiptVcolors(List<uint> assetIDs)

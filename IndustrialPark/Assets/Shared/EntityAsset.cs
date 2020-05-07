@@ -158,7 +158,7 @@ namespace IndustrialPark
         private const string categoryName = "Entity";
 
         [Category(categoryName)]
-        public DynamicTypeDescriptor VisibilityFlags => ByteFlagsDescriptor(0x9, "Visible", "Stackable");
+        public DynamicTypeDescriptor VisibilityFlags => ByteFlagsDescriptor(0x8, "Visible", "Stackable");
 
         [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
         public byte TypeFlag

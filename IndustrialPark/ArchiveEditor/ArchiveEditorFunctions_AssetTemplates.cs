@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using HipHopFile;
 using Newtonsoft.Json;
@@ -309,6 +310,8 @@ namespace IndustrialPark
         public static string CurrentUserTemplate { get; set; } = "";
 
         public static bool persistentShinies = true;
+        public static bool chainPointMVPTs = false;
+        public static uint chainPointMVPTlast = 0;
 
         public uint PlaceTemplate(Vector3 position, int layerIndex, out bool success, ref List<uint> assetIDs, string customName = "", AssetTemplate template = AssetTemplate.Null)
         {
@@ -731,7 +734,7 @@ namespace IndustrialPark
                 oa.BaseUshortFlags = 0x1D;
             if (asset is EntityAsset placeableAsset)
             {
-                placeableAsset.Data[0x9] = 0x01; // visible
+                placeableAsset.Data[0x8] = 0x01; // visible
                 placeableAsset.Data[0xB] = 0x02; // solid
 
                 placeableAsset.PositionX = position.X;
@@ -1433,6 +1436,14 @@ namespace IndustrialPark
                     }
                     else
                         ((AssetMVPT_Scooby)asset).ArenaRadius = -1;
+                    if (chainPointMVPTs && ContainsAsset(chainPointMVPTlast))
+                    {
+                        var prev = ((AssetMVPT)GetFromAssetID(chainPointMVPTlast));
+                        var nexts = prev.NextMVPTs.ToList();
+                        nexts.Add(asset.AHDR.assetID);
+                        prev.NextMVPTs = nexts.ToArray();
+                    }
+                    chainPointMVPTlast = asset.AHDR.assetID;
                     break;
                 case AssetTemplate.Box_Trigger:
                     ((AssetTRIG)asset).Shape = TriggerShape.Box;
@@ -1470,7 +1481,7 @@ namespace IndustrialPark
                     ((AssetSIMP)asset).ScaleX = 2f;
                     ((AssetSIMP)asset).ScaleY = 2f;
                     ((AssetSIMP)asset).ScaleZ = 2f;
-                    ((AssetSIMP)asset).Data[0x9] = 0;
+                    ((AssetSIMP)asset).Data[0x8] = 0;
                     ((AssetSIMP)asset).Data[0xB] = 0;
                     ((AssetSIMP)asset).CollTypeByte = 0;
                     break;
@@ -1535,7 +1546,7 @@ namespace IndustrialPark
                     break;
                 case AssetTemplate.BusStop_BusSimp:
                     ((AssetSIMP)asset).PositionX -= 3f;
-                    ((AssetSIMP)asset).Data[0x9] = 0;
+                    ((AssetSIMP)asset).Data[0x8] = 0;
                     ((AssetSIMP)asset).Data[0xB] = 0;
                     ((AssetSIMP)asset).CollTypeByte = 0;
                     ((AssetSIMP)asset).Model_AssetID = "bus_bind";
@@ -2090,10 +2101,6 @@ namespace IndustrialPark
                                 numMeshes = 0,
                                 totalIndexCount = 0,
                                 binMeshList = new BinMesh[0]
-                            },
-                            new MaterialEffectsPLG_0120()
-                            {
-                                value = 0
                             },
                             new CollisionPLG_011D_Scooby()
                             {

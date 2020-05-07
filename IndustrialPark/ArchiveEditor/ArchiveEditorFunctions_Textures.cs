@@ -155,6 +155,7 @@ namespace IndustrialPark
                         Section_ADBG ADBG = new Section_ADBG(0, textureName, "", 0);
                         Section_AHDR AHDR = new Section_AHDR(BKDRHash(textureName), AssetType.RWTX, AHDRFlags.SOURCE_VIRTUAL | AHDRFlags.READ_TRANSFORM, ADBG, data);
 
+
                         AHDRs.Add(AHDR);
                     }
                 }
@@ -325,8 +326,7 @@ namespace IndustrialPark
                             ReadFileMethods.ReadRenderWareFile(
                                 dataDict[rwtx.AHDR.assetID].data),
                             Models.BSP_IO_Shared.modelRenderWareVersion(game));
-                    rwtx.game = game;
-                    rwtx.platform = platform;
+                    rwtx.SetGamePlatform(game, platform);
                 }
 
             ReadFileMethods.treatStuffAsByteArray = false;

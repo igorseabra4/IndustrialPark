@@ -29,7 +29,7 @@ namespace IndustrialPark
         public override bool Equals(object obj)
         {
             if (obj != null && obj is EntryCOLL entryCOLL)
-                return ModelAssetID == entryCOLL.ModelAssetID;
+                return ModelAssetID.Equals(entryCOLL.ModelAssetID);
             return false;
         }
 
@@ -101,19 +101,17 @@ namespace IndustrialPark
             }
         }
 
-        public void Merge(AssetCOLL assetCOLL)
+        public void Merge(AssetCOLL asset)
         {
-            List<EntryCOLL> entriesCOLL = COLL_Entries.ToList();
-            List<uint> assetIDsAlreadyPresent = new List<uint>();
+            var entries = COLL_Entries.ToList();
 
-            foreach (EntryCOLL entryCOLL in entriesCOLL)
-                assetIDsAlreadyPresent.Add(entryCOLL.ModelAssetID);
+            foreach (var entry in asset.COLL_Entries)
+            {
+                entries.Remove(entry);
+                entries.Add(entry);
+            }
 
-            foreach (EntryCOLL entryCOLL in assetCOLL.COLL_Entries)
-                if (!assetIDsAlreadyPresent.Contains(entryCOLL.ModelAssetID))
-                    entriesCOLL.Add(entryCOLL);
-
-            COLL_Entries = entriesCOLL.ToArray();
+            COLL_Entries = entries.ToArray();
         }
     }
 }

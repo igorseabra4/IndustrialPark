@@ -97,7 +97,7 @@ namespace IndustrialPark
             {
                 List<StructPARP> list = value.ToList();
                 if (list.Count != 14)
-                    System.Windows.Forms.MessageBox.Show("Array of PARP structs must have exactly 14 entries!");
+                    MessageBox.Show("Array of PARP structs must have exactly 14 entries!");
                 while (list.Count < 14)
                     list.Add(new StructPARP());
                 while (list.Count > 14)

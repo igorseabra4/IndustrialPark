@@ -55,6 +55,7 @@
         }
 
         #endregion
-        private System.Windows.Forms.RichTextBox richTextBox1;
+
+        public System.Windows.Forms.RichTextBox richTextBox1;
     }
 }

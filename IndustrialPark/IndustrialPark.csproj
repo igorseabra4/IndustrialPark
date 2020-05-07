@@ -120,8 +120,15 @@
   <ItemGroup>
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_IO.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Sounds.cs" />
+    <Compile Include="ArchiveEditor\Dialogs\MaterialEffectEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\Dialogs\MaterialEffectEditor.Designer.cs">
+      <DependentUpon>MaterialEffectEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="ArchiveEditor\Gizmos\BoxTrigPositionGizmo.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\DynamicTypeDescriptor.cs" />
+    <Compile Include="ArchiveEditor\Other\MaterialListEditor.cs" />
     <Compile Include="ArchiveEditor\Other\TextureIOHelper.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Textures.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Gizmos.cs" />
@@ -259,6 +266,7 @@
     <Compile Include="Links\LinkBFBB.cs" />
     <Compile Include="Links\LinkIncredibles.cs" />
     <Compile Include="Links\LinkTSSM.cs" />
+    <Compile Include="MainForm\MessageBox.cs" />
     <Compile Include="Models\BSP_IO_Shared.cs" />
     <Compile Include="Models\ChooseTarget.cs">
       <SubType>Form</SubType>
@@ -444,6 +452,9 @@
     <EmbeddedResource Include="ArchiveEditor\Dialogs\ImportTextures.resx">
       <DependentUpon>ImportTextures.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveEditor\Dialogs\MaterialEffectEditor.resx">
+      <DependentUpon>MaterialEffectEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\Dialogs\ScrollableMessageBox.resx">
       <DependentUpon>ScrollableMessageBox.cs</DependentUpon>
     </EmbeddedResource>
@@ -543,16 +554,6 @@
     <EmbeddedResource Include="MainForm\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <EmbeddedResource Include="MainForm\ViewConfig.resx">
       <DependentUpon>ViewConfig.cs</DependentUpon>
     </EmbeddedResource>

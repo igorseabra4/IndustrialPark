@@ -142,7 +142,7 @@ namespace IndustrialPark
             UnsavedChanges = false;
         }
 
-        public bool EditPack(out HashSet<uint> unsupported)
+        public bool EditPack(out List<uint> unsupported)
         {
             Platform previousPlatform = platform;
             Game previousGame = game;
@@ -150,7 +150,7 @@ namespace IndustrialPark
             NewArchive.GetExistingArchive(platform, game, hipFile.PACK.PCRT.fileDate, hipFile.PACK.PCRT.dateString,
                 out bool OK, out Section_PACK PACK, out Platform newPlatform, out Game newGame);
 
-            unsupported = new HashSet<uint>();
+            unsupported = new List<uint>();
             
             if (OK)
             {

@@ -61,6 +61,8 @@ namespace IndustrialPark
         protected uint ReadUInt(int j)
         {
             if (endianness == Endianness.Big)
+                
+                
                 return BitConverter.ToUInt32(new byte[] {
                 Data[j + 3],
                 Data[j + 2],

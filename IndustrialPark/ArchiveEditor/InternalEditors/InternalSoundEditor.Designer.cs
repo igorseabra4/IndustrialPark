@@ -182,7 +182,6 @@
             this.Name = "InternalSoundEditor";
             this.ShowIcon = false;
             this.Text = "Asset Data Editor";
-            this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.InternalAssetEditor_FormClosing);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();

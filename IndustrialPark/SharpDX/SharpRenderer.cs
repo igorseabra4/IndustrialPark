@@ -97,17 +97,11 @@ namespace IndustrialPark
             tintedBuffer = tintedShader.CreateBuffer<UvAnimRenderData>();
         }
 
-        public const string DefaultTexture = "default";
         public static ShaderResourceView whiteDefault;
 
         public void LoadTexture()
         {
-            if (whiteDefault != null)
-            {
-                if (whiteDefault.IsDisposed)
-                    whiteDefault = device.LoadTextureFromFile(Application.StartupPath + "/Resources/WhiteDefault.png");
-            }
-            else
+            if (whiteDefault == null || (whiteDefault != null && whiteDefault.IsDisposed))
                 whiteDefault = device.LoadTextureFromFile(Application.StartupPath + "/Resources/WhiteDefault.png");
         }
 

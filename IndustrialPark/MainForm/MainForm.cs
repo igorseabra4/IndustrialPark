@@ -121,9 +121,8 @@ namespace IndustrialPark
         {
             if (UnsavedChanges())
             {
-                TopMost = true;
                 DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-                TopMost = false;
+                
                 if (result == DialogResult.Yes)
                     SaveAllChanges();
                 else if (result == DialogResult.Cancel)
@@ -162,9 +161,7 @@ namespace IndustrialPark
                 }
                 catch (Exception ex)
                 {
-                    TopMost = true;
                     MessageBox.Show("Error opening file: " + ex.Message);
-                    TopMost = false;
                 }
         }
 
@@ -178,9 +175,8 @@ namespace IndustrialPark
         {
             if (UnsavedChanges())
             {
-                TopMost = true;
                 DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-                TopMost = false;
+                
                 if (result == DialogResult.Yes)
                     SaveAllChanges();
                 else if (result == DialogResult.Cancel)
@@ -196,9 +192,8 @@ namespace IndustrialPark
         {
             if (UnsavedChanges())
             {
-                TopMost = true;
                 DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-                TopMost = false;
+                
                 if (result == DialogResult.Yes)
                     SaveAllChanges();
                 else if (result == DialogResult.Cancel)
@@ -378,9 +373,7 @@ namespace IndustrialPark
                         AddArchiveEditor(ipSettings.hipPaths[i], ipSettings.scoobyPlatforms[i]);
                     else
                     {
-                        TopMost = true;
                         MessageBox.Show("Error opening " + ipSettings.hipPaths[i] + ": file not found");
-                        TopMost = false;
                     }
                 }
 
@@ -1100,12 +1093,8 @@ namespace IndustrialPark
 
             bool willOpen = true;
             if (whoTargets.Count > 15)
-            {
-                TopMost = true;
                 willOpen = MessageBox.Show($"Warning: you're going to open {whoTargets.Count} Asset Data Editor windows. Are you sure you want to do that?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
-                TopMost = false;
-            }
-
+            
             if (willOpen)
                 foreach (ArchiveEditor archiveEditor in archiveEditors)
                     archiveEditor.archive.OpenInternalEditor(whoTargets, true);
@@ -1133,8 +1122,7 @@ namespace IndustrialPark
 
         private void ensureAssociationsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show("Will set Industrial Park as default application for HIP and HOP file formats on registry.", "Associate HIP/HOP files", MessageBoxButtons.OKCancel);
-            if (result == DialogResult.OK)
+            if (DialogResult.OK == MessageBox.Show("Will set Industrial Park as default application for HIP and HOP file formats on registry.", "Associate HIP/HOP files", MessageBoxButtons.OKCancel))       
                 FileAssociations.FileAssociations.EnsureAssociationsSet();
         }
 
@@ -1167,9 +1155,7 @@ namespace IndustrialPark
                 }
             }
 
-            TopMost = true;
             MessageBox.Show("There was a problem setting your template for placement");
-            TopMost = false;
         }
 
         private void userTemplateToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1210,6 +1196,12 @@ namespace IndustrialPark
         {
             templatesPersistentShiniesToolStripMenuItem.Checked = !templatesPersistentShiniesToolStripMenuItem.Checked;
             ArchiveEditorFunctions.persistentShinies = templatesPersistentShiniesToolStripMenuItem.Checked;
+        }
+
+        private void templatesChainPointMVPTsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            templatesChainPointMVPTsToolStripMenuItem.Checked = !templatesChainPointMVPTsToolStripMenuItem.Checked;
+            ArchiveEditorFunctions.chainPointMVPTs = templatesChainPointMVPTsToolStripMenuItem.Checked;
         }
 
         private void ToggleGizmoType(GizmoMode mode = GizmoMode.Null)
@@ -1271,9 +1263,7 @@ namespace IndustrialPark
             {
             }
         }
-
-        private bool allTopMost = true;
-
+        
         private void SetAllTopMost(bool value)
         {
             Program.AboutBox.TopMost = value;
@@ -1285,8 +1275,6 @@ namespace IndustrialPark
 
             foreach (ArchiveEditor ae in archiveEditors)
                 ae.SetAllTopMost(value);
-
-            allTopMost = value;
         }
 
         private void runGameF5ToolStripMenuItem_Click(object sender, EventArgs e)

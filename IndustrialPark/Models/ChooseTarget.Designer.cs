@@ -114,7 +114,6 @@
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.Text = "Export";
-            this.TopMost = true;
             this.Load += new System.EventHandler(this.ChooseTarget_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);

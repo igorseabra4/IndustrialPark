@@ -31,7 +31,7 @@ namespace IndustrialPark
         public override bool Equals(object obj)
         {
             if (obj != null && obj is EntrySHDW entrySHDW)
-                return ModelAssetID == entrySHDW.ModelAssetID;
+                return ModelAssetID.Equals(entrySHDW.ModelAssetID);
             return false;
         }
     }
@@ -98,19 +98,17 @@ namespace IndustrialPark
             }
         }
 
-        public void Merge(AssetSHDW assetSHDW)
+        public void Merge(AssetSHDW asset)
         {
-            List<EntrySHDW> entriesSHDW = SHDW_Entries.ToList();
-            List<uint> assetIDsAlreadyPresent = new List<uint>();
+            var entries = SHDW_Entries.ToList();
 
-            foreach (EntrySHDW entrySHDW in entriesSHDW)
-                assetIDsAlreadyPresent.Add(entrySHDW.ModelAssetID);
+            foreach (var entry in asset.SHDW_Entries)
+            {
+                entries.Remove(entry);
+                entries.Add(entry);
+            }
 
-            foreach (EntrySHDW entrySHDW in assetSHDW.SHDW_Entries)
-                if (!assetIDsAlreadyPresent.Contains(entrySHDW.ModelAssetID))
-                    entriesSHDW.Add(entrySHDW);
-
-            SHDW_Entries = entriesSHDW.ToArray();
+            SHDW_Entries = entries.ToArray();
         }
     }
 }

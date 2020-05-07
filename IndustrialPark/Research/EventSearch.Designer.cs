@@ -201,7 +201,6 @@
             this.Name = "EventSearch";
             this.ShowIcon = false;
             this.Text = "Event Search";
-            this.TopMost = true;
             this.Load += new System.EventHandler(this.EventSearch_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);

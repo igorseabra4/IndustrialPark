@@ -83,8 +83,8 @@ namespace IndustrialPark
                 case AssetType.FLY:
                     AHDR.data = ((MemoryStream)reader.BaseStream).ToArray();
                     return AHDR;
-                case AssetType.ATBL:
-                    ReverseATBL(ref bytes, AHDR); break;
+                //case AssetType.ATBL:
+                //    ReverseATBL(ref bytes, AHDR); break;
                 case AssetType.BOUL:
                     ReverseBOUL(ref bytes); break;
                 case AssetType.BUTN:

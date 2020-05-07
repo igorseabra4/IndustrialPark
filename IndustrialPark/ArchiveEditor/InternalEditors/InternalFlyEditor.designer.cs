@@ -223,7 +223,6 @@
             this.Name = "InternalFlyEditor";
             this.ShowIcon = false;
             this.Text = "Asset Data Editor";
-            this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.InternalDynaEditor_FormClosing);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();

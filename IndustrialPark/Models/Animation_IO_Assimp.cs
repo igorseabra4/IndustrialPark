@@ -33,7 +33,7 @@ namespace IndustrialPark
 
                 short boneCount = (short)nodeNames.Count;
 
-                System.Windows.Forms.MessageBox.Show(scene.Animations[0].DurationInTicks.ToString());
+                MessageBox.Show(scene.Animations[0].DurationInTicks.ToString());
                 short tickCount = (short)scene.Animations[0].DurationInTicks;
 
                 Vector3D Maximum = new Vector3D();

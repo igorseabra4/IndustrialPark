@@ -204,7 +204,7 @@
             this.editPACKToolStripMenuItem.Enabled = false;
             this.editPACKToolStripMenuItem.Name = "editPACKToolStripMenuItem";
             this.editPACKToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
-            this.editPACKToolStripMenuItem.Text = "Edit PACK";
+            this.editPACKToolStripMenuItem.Text = "Convert Archive";
             this.editPACKToolStripMenuItem.Click += new System.EventHandler(this.EditPACKToolStripMenuItem_Click);
             // 
             // collapseLayersToolStripMenuItem
@@ -510,7 +510,6 @@
             // 
             // AssetIDCol
             // 
-            this.AssetIDCol.DisplayIndex = 0;
             this.AssetIDCol.Text = "Asset ID";
             this.AssetIDCol.Width = 77;
             // 

@@ -6,7 +6,6 @@ using SharpDX;
 using RenderWareFile;
 using RenderWareFile.Sections;
 using Assimp;
-using static IndustrialPark.Models.BSP_IO_Shared;
 
 namespace IndustrialPark.Models
 {
@@ -135,28 +134,22 @@ namespace IndustrialPark.Models
                     {
                         textureStruct = new TextureStruct_0001() // use wrap as default
                         {
-                            filterMode = TextureFilterMode.FILTERLINEAR,
-                            addressModeU =
+                            FilterMode = TextureFilterMode.FILTERLINEAR,
+                            AddressModeU =
                             m.TextureDiffuse.WrapModeU == TextureWrapMode.Clamp ? TextureAddressMode.TEXTUREADDRESSCLAMP :
                             m.TextureDiffuse.WrapModeU == TextureWrapMode.Decal ? TextureAddressMode.TEXTUREADDRESSBORDER :
                             m.TextureDiffuse.WrapModeU == TextureWrapMode.Mirror ? TextureAddressMode.TEXTUREADDRESSMIRROR :
                             TextureAddressMode.TEXTUREADDRESSWRAP,
 
-                            addressModeV =
+                            AddressModeV =
                             m.TextureDiffuse.WrapModeV == TextureWrapMode.Clamp ? TextureAddressMode.TEXTUREADDRESSCLAMP :
                             m.TextureDiffuse.WrapModeV == TextureWrapMode.Decal ? TextureAddressMode.TEXTUREADDRESSBORDER :
                             m.TextureDiffuse.WrapModeV == TextureWrapMode.Mirror ? TextureAddressMode.TEXTUREADDRESSMIRROR :
                             TextureAddressMode.TEXTUREADDRESSWRAP,
-                            useMipLevels = 1
+                            UseMipLevels = 1
                         },
-                        diffuseTextureName = new String_0002()
-                        {
-                            stringString = Path.GetFileNameWithoutExtension(m.TextureDiffuse.FilePath)
-                        },
-                        alphaTextureName = new String_0002()
-                        {
-                            stringString = ""
-                        },
+                        diffuseTextureName = new String_0002(Path.GetFileNameWithoutExtension(m.TextureDiffuse.FilePath)),
+                        alphaTextureName = new String_0002(""),
                         textureExtension = new Extension_0003()
                     } : null,
                     materialExtension = new Extension_0003(),
@@ -392,12 +385,6 @@ namespace IndustrialPark.Models
                     atomicExtension = new Extension_0003() // check this in case something fails
                     {
                         extensionSectionList = new List<RWSection>()
-                        {
-                            new MaterialEffectsPLG_0120()
-                            {
-                                value = 0
-                            }
-                        }
                     }
                 }
                 },

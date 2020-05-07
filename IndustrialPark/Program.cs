@@ -14,9 +14,6 @@ namespace IndustrialPark
         public static EventSearch EventSearch;
         public static AssetIDGenerator AssetIDGenerator;
 
-        /// <summary>
-        /// Ponto de entrada principal para o aplicativo.
-        /// </summary>
         [STAThread]
         static void Main()
         {

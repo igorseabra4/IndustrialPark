@@ -13,8 +13,16 @@ namespace IndustrialPark
         public Section_AHDR AHDR;
         public bool isSelected;
         public bool isInvisible = false;
-        public Game game;
-        public Platform platform;
+        [Browsable(false)]
+        public Game game { get; protected set; }
+        [Browsable(false)]
+        public Platform platform { get; protected set; }
+        public void SetGamePlatform(Game game, Platform platform)
+        {
+            this.game = game;
+            this.platform = platform;
+            this.endianness = EndianConverter.PlatformEndianness(platform);
+        }
 
         public Asset(Section_AHDR AHDR, Game game, Platform platform) : base(EndianConverter.PlatformEndianness(platform))
         {

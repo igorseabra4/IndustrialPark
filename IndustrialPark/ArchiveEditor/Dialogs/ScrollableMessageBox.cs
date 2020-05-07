@@ -15,10 +15,5 @@ namespace IndustrialPark
 
             TopMost = true;
         }
-
-        private void buttonOK_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
     }
 }

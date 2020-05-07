@@ -84,7 +84,7 @@ namespace IndustrialPark
                         if (extensions.Contains(Path.GetExtension(i).ToLower()))
                             AddTextureBitmap(i);
                 }
-                else System.Windows.Forms.MessageBox.Show("Error loading textures from " + folderName + ": folder not found");
+                else MessageBox.Show("Error loading textures from " + folderName + ": folder not found");
             
             ReapplyTextures();
         }

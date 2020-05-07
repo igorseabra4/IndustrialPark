@@ -41,6 +41,18 @@ namespace IndustrialPark
         {
             return $"[{Program.MainForm.GetAssetNameFromID(ModelAssetID)}] - {MaxDistance}";
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj != null && obj is EntryLODT entry)
+                return ModelAssetID.Equals(entry.ModelAssetID);
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return ModelAssetID.GetHashCode();
+        }
     }
 
     public class AssetLODT : Asset
@@ -141,19 +153,17 @@ namespace IndustrialPark
             }
         }
 
-        public void Merge(AssetLODT assetLODT)
+        public void Merge(AssetLODT asset)
         {
-            List<EntryLODT> entriesLODT = LODT_Entries.ToList();
-            List<uint> assetIDsAlreadyPresent = new List<uint>();
+            var entries = LODT_Entries.ToList();
 
-            foreach (EntryLODT entryLODT in entriesLODT)
-                assetIDsAlreadyPresent.Add(entryLODT.ModelAssetID);
+            foreach (var entry in asset.LODT_Entries)
+            {
+                entries.Remove(entry);
+                entries.Add(entry);
+            }
 
-            foreach (EntryLODT entryLODT in assetLODT.LODT_Entries)
-                if (!assetIDsAlreadyPresent.Contains(entryLODT.ModelAssetID))
-                    entriesLODT.Add(entryLODT);
-
-            LODT_Entries = entriesLODT.ToArray();
+            LODT_Entries = entries.ToArray();
         }
     }
 }
