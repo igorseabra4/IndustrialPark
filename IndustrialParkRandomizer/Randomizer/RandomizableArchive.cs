@@ -332,7 +332,7 @@ namespace IndustrialPark.Randomizer
                         if (ContainsAsset(0xF70F6FEE))
                         {
                             ((AssetPKUP)GetFromAssetID(0xF70F6FEE)).PickupFlagsShort = 2;
-                            ((AssetPKUP)GetFromAssetID(0xF70F6FEE)).Data[0x9] = 0;
+                            ((AssetPKUP)GetFromAssetID(0xF70F6FEE)).Data[0x8] = 1;
                         }
                     }
                     break;
