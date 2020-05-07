@@ -1242,6 +1242,7 @@ namespace IndustrialPark
             if (openTXD.ShowDialog() == DialogResult.OK)
             {
                 archive.ImportTextureDictionary(openTXD.FileName, RW3);
+                Program.MainForm.RefreshTexturesAndModels();
                 PopulateLayerComboBox();
             }
         }

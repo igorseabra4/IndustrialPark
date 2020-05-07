@@ -379,7 +379,7 @@ namespace IndustrialPark.Models
                     {
                         frameIndex = 1,
                         geometryIndex = 0,
-                        flags = AtomicFlags.Both,
+                        flags = AtomicFlags.CollisionTestAndRender,
                         unused = 0
                     },
                     atomicExtension = new Extension_0003() // check this in case something fails
@@ -395,11 +395,11 @@ namespace IndustrialPark.Models
             return new RWSection[] { clump };
         }
 
-        public static void ExportAssimp(string fileName, RenderWareModelFile bspFile, bool flipUVs, ExportFormatDescription format, string textureExtension)
+        public static void ExportAssimp(string fileName, RWSection[] bspFile, bool flipUVs, ExportFormatDescription format, string textureExtension)
         {
             Scene scene = new Scene();
 
-            foreach (RWSection rw in bspFile.GetAsRWSectionArray())
+            foreach (RWSection rw in bspFile)
                 if (rw is World_000B w)
                     WorldToScene(scene, w, textureExtension);
                 else if (rw is Clump_0010 c)

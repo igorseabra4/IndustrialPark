@@ -23,30 +23,49 @@ namespace IndustrialPark
             if (model != null)
                 model.Dispose();
 
-            try
-            {
+            //try
+            //{
                 ReadFileMethods.treatStuffAsByteArray = false;
                 model = new RenderWareModelFile(renderer.device, ReadFileMethods.ReadRenderWareFile(Data));
                 _atomicFlags = AtomicFlags;
-            }
-            catch (Exception ex)
-            {
-                if (model != null)
-                    model.Dispose();
-                model = null;
-                throw new Exception("Error: " + ToString() + " has an unsupported format and cannot be rendered. " + ex.Message);
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    if (model != null)
+            //        model.Dispose();
+            //    model = null;
+            //    throw new Exception("Error: " + ToString() + " has an unsupported format and cannot be rendered. " + ex.Message);
+            //}
         }
 
         public RenderWareModelFile GetRenderWareModelFile() => model;
 
         public bool HasRenderWareModelFile() => model != null;
 
-        [Description("If IsNativeData is true, you cannot use the Export function.")]
+        [Category("Model Data"), Description("If IsNativeData is true, you cannot use the Export function.")]
         public bool IsNativeData => model != null ? model.isNativeData : false;
 
         [Browsable(false)]
-        public string[] Textures => TextureNames.Distinct().ToArray();
+        public string[] Textures
+        {
+            get
+            {
+                List<string> names = new List<string>();
+
+                foreach (RWSection rws in ModelAsRWSections)
+                    if (rws is Clump_0010 clump)
+                        foreach (Geometry_000F geo in clump.geometryList.geometryList)
+                            if (geo.materialList != null)
+                                if (geo.materialList.materialList != null)
+                                    foreach (Material_0007 mat in geo.materialList.materialList)
+                                        if (mat.texture != null)
+                                            if (mat.texture.diffuseTextureName != null)
+                                                if (!names.Contains(mat.texture.diffuseTextureName.stringString))
+                                                    names.Add(mat.texture.diffuseTextureName.stringString);
+
+                return names.ToArray();
+            }
+        }
 
         public override bool HasReference(uint assetID)
         {
@@ -169,91 +188,6 @@ namespace IndustrialPark
             }
         }
         
-        [DisplayName("Colors ([A,] R, G, B)")]
-        private System.Drawing.Color[] Colors
-        {
-            get
-            {
-                List<System.Drawing.Color> colors = new List<System.Drawing.Color>();
-
-                foreach (RWSection rws in ModelAsRWSections)
-                    if (rws is Clump_0010 clump)
-                        foreach (Geometry_000F geo in clump.geometryList.geometryList)
-                            foreach (Material_0007 mat in geo.materialList.materialList)
-                            {
-                                Color rwColor = mat.materialStruct.color;
-                                System.Drawing.Color color = System.Drawing.Color.FromArgb(rwColor.A, rwColor.R, rwColor.G, rwColor.B);
-                                colors.Add(color);
-                            }
-                
-                return colors.ToArray();
-            }
-
-            set
-            {
-                int i = 0;
-                RWSection[] sections = ModelAsRWSections;
-
-                foreach (RWSection rws in sections)
-                    if (rws is Clump_0010 clump)
-                        foreach (Geometry_000F geo in clump.geometryList.geometryList)
-                            foreach (Material_0007 mat in geo.materialList.materialList)
-                            {
-                                if (i >= value.Length)
-                                    continue;
-
-                                mat.materialStruct.color = new RenderWareFile.Color(value[i].R, value[i].G, value[i].B, value[i].A);
-                                i++;
-                            }
-
-                ModelAsRWSections = sections;
-            }
-        }
-
-        private string[] TextureNames
-        {
-            get
-            {
-                List<string> names = new List<string>();
-
-                foreach (RWSection rws in ModelAsRWSections)
-                    if (rws is Clump_0010 clump)
-                        foreach (Geometry_000F geo in clump.geometryList.geometryList)
-                            if (geo.materialList != null)
-                                if (geo.materialList.materialList != null)
-                                    foreach (Material_0007 mat in geo.materialList.materialList)
-                                        if (mat.texture != null)
-                                            if (mat.texture.diffuseTextureName != null)
-                                                names.Add(mat.texture.diffuseTextureName.stringString);
-
-                return names.ToArray();
-            }
-
-            set
-            {
-                int i = 0;
-                RWSection[] sections = ModelAsRWSections;
-
-                foreach (RWSection rws in sections)
-                    if (rws is Clump_0010 clump)
-                        foreach (Geometry_000F geo in clump.geometryList.geometryList)
-                            if (geo.materialList != null)
-                                if (geo.materialList.materialList != null)
-                                    foreach (Material_0007 mat in geo.materialList.materialList)
-                                        if (mat.texture != null)
-                                            if (mat.texture.diffuseTextureName != null)
-                                            {
-                                                if (i >= value.Length)
-                                                    continue;
-
-                                                mat.texture.diffuseTextureName = new String_0002(value[i]);
-                                                i++;
-                                            }
-
-                ModelAsRWSections = sections;
-            }
-        }
-
         protected AtomicFlags[] _atomicFlags;
 
         [Category("Model Data")]

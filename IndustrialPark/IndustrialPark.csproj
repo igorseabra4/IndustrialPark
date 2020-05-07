@@ -266,7 +266,7 @@
     <Compile Include="Links\LinkBFBB.cs" />
     <Compile Include="Links\LinkIncredibles.cs" />
     <Compile Include="Links\LinkTSSM.cs" />
-    <Compile Include="MainForm\MessageBox.cs" />
+    <Compile Include="Other\MessageBox.cs" />
     <Compile Include="Models\BSP_IO_Shared.cs" />
     <Compile Include="Models\ChooseTarget.cs">
       <SubType>Form</SubType>

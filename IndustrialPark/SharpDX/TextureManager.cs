@@ -126,20 +126,12 @@ namespace IndustrialPark
 
         public static void SetTextureForAnimation(string diffuseMapName, string newMapName)
         {
-            List<RenderWareModelFile> models = new List<RenderWareModelFile>();
-            foreach (IAssetWithModel awm in ArchiveEditorFunctions.renderingDictionary.Values)
-                if (awm is AssetMODL MODL && MODL.HasRenderWareModelFile())
-                    models.Add(MODL.GetRenderWareModelFile());
-            foreach (IRenderableAsset awm in ArchiveEditorFunctions.renderableAssetSetJSP)
-                if (awm is AssetJSP JSP && JSP.HasRenderWareModelFile())
-                    models.Add(JSP.GetRenderWareModelFile());
-            foreach (RenderWareModelFile m in models)
-                foreach (SharpMesh mesh in m.meshList)
-                    foreach (SharpSubSet sub in mesh.SubSets)
-                    {
-                        if (sub.DiffuseMapName == diffuseMapName)
-                            sub.DiffuseMap = Textures[newMapName];
-                    }
+            foreach (SharpMesh mesh in RenderWareModelFile.completeMeshList)
+                foreach (SharpSubSet sub in mesh.SubSets)
+                {
+                    if (sub.DiffuseMapName == diffuseMapName)
+                        sub.DiffuseMap = Textures[newMapName];
+                }
         }
 
         public static void DisposeTexture(string textureName)

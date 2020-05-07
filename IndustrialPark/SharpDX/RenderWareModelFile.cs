@@ -10,7 +10,6 @@ namespace IndustrialPark
     public class RenderWareModelFile
     {
         private const string DefaultTexture = "default";
-        private RWSection[] rwSectionArray;
         public bool isNativeData = false;
 
         public static bool dontDrawInvisible = false;
@@ -30,17 +29,10 @@ namespace IndustrialPark
         public List<Triangle> triangleList;
         private int triangleListOffset;
 
-        public RWSection[] GetAsRWSectionArray()
-        {
-            return rwSectionArray;
-        }
-
         public UvAnimRenderData renderData;
 
-        public RenderWareModelFile(SharpDevice device, RWSection[] rwChunkList)
+        public RenderWareModelFile(SharpDevice device, RWSection[] rwSectionArray)
         {
-            rwSectionArray = rwChunkList;
-
             meshList = new List<SharpMesh>();
 
             vertexListG = new List<Vector3>();

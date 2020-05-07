@@ -9,7 +9,7 @@ namespace IndustrialPark.Models
 {
     public static class BSP_IO_CreateBSP
     {
-        public static void ConvertBSPtoOBJ(string fileName, RenderWareModelFile bspFile, bool flipUVs)
+        public static void ConvertBSPtoOBJ(string fileName, RWSection[] bspFile, bool flipUVs)
         {
             int totalVertexIndices = 1;
 
@@ -20,7 +20,7 @@ namespace IndustrialPark.Models
 
             List<Triangle> triangleList = new List<Triangle>();
 
-            foreach (RWSection rw in bspFile.GetAsRWSectionArray())
+            foreach (RWSection rw in bspFile)
             {
                 if (rw is World_000B w)
                 {
@@ -323,7 +323,7 @@ namespace IndustrialPark.Models
 
         private static string lastMaterial;
 
-        public static void ConvertDFFtoOBJ(string fileName, RenderWareModelFile renderWareModelFile, bool flipUVs)
+        public static void ConvertDFFtoOBJ(string fileName, RWSection[] dffFile, bool flipUVs)
         {
             lastMaterial = "";
             int totalVertexIndices = 1;
@@ -337,7 +337,7 @@ namespace IndustrialPark.Models
             writer.WriteLine("mtllib " + Path.GetFileName(materialLibrary));
             writer.WriteLine();
 
-            foreach (RWSection rw in renderWareModelFile.GetAsRWSectionArray())
+            foreach (RWSection rw in dffFile)
             {
                 if (rw is Clump_0010 w)
                 {
@@ -354,7 +354,7 @@ namespace IndustrialPark.Models
             MTLWriter.WriteLine("# Exported by Industrial Park");
             MTLWriter.WriteLine();
 
-            foreach (RWSection rw in renderWareModelFile.GetAsRWSectionArray())
+            foreach (RWSection rw in dffFile)
             {
                 if (rw is Clump_0010 w)
                 {

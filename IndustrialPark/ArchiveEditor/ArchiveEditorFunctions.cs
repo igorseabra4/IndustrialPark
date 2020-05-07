@@ -362,8 +362,8 @@ namespace IndustrialPark
             }
 
             Asset newAsset;
-            try
-            { 
+            //try
+            //{ 
                 switch (AHDR.assetType)
                 {
                     case AssetType.ANIM: newAsset = AHDR.ADBG.assetName.Contains("ATBL") ? new Asset(AHDR, game, platform) : newAsset = new AssetANIM(AHDR, game, platform); break;
@@ -485,12 +485,12 @@ namespace IndustrialPark
                     default:
                         throw new Exception($"Unknown asset type ({AHDR.assetType.ToString()})");
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"There was an error loading asset [{AHDR.assetID.ToString("X8")}] {AHDR.ADBG.assetName}: " + ex.Message + ". Industrial Park will not be able to edit this asset.");
-                newAsset = new Asset(AHDR, game, platform);
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show($"There was an error loading asset [{AHDR.assetID.ToString("X8")}] {AHDR.ADBG.assetName}: " + ex.Message + ". Industrial Park will not be able to edit this asset.");
+            //    newAsset = new Asset(AHDR, game, platform);
+            //}
 
             assetDictionary[AHDR.assetID] = newAsset;
             

@@ -202,9 +202,9 @@ namespace IndustrialPark
                         if (format == null)
                             File.WriteAllBytes(a.FileName, asset.Data);
                         else if (format.FileExtension.ToLower().Equals("obj") && asset.AHDR.assetType == HipHopFile.AssetType.BSP)
-                            ConvertBSPtoOBJ(a.FileName, asset.GetRenderWareModelFile(), true);
+                            ConvertBSPtoOBJ(a.FileName, ReadFileMethods.ReadRenderWareFile(asset.Data), true);
                         else
-                            ExportAssimp(Path.ChangeExtension(a.FileName, format.FileExtension), asset.GetRenderWareModelFile(), true, format, textureExtension);
+                            ExportAssimp(Path.ChangeExtension(a.FileName, format.FileExtension), ReadFileMethods.ReadRenderWareFile(asset.Data), true, format, textureExtension);
 
                         if (exportTextures.Checked)
                         {
