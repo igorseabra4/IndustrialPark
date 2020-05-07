@@ -166,7 +166,7 @@ namespace IndustrialPark
                     Motion = new Motion_MovePoint(this, Position);
                     break;
                 default:
-                    Motion = new Motion_Mechanism(this);
+                    Motion = game == Game.Incredibles ? new Motion_Mechanism_TSSM(this) : new Motion_Mechanism(this);
                     break;
             }
         }

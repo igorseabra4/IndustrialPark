@@ -874,7 +874,6 @@ namespace IndustrialPark
                     ((AssetPLAT)asset).PlatformType = PlatType.Mechanism;
                     ((AssetPLAT)asset).PlatFlagsShort = 4;
                     ((AssetPLAT)asset).PlatSpecific = new PlatSpecific_Generic((AssetPLAT)asset);
-                    ((AssetPLAT)asset).Motion = new Motion_Mechanism((AssetPLAT)asset);
                     break;
                 case AssetTemplate.Player_Generic:
                     ((AssetPLYR)asset).AssetType = ObjectAssetType.PLYR;
@@ -1342,16 +1341,28 @@ namespace IndustrialPark
                 case AssetTemplate.Button_Red:
                     ((AssetBUTN)asset).Model_AssetID = "button";
                     ((AssetBUTN)asset).PressedModel_AssetID = "button_grn";
-                    ((AssetBUTN)asset).Motion = new Motion_Mechanism((AssetBUTN)asset)
-                    {
-                        Flags = 4,
-                        MovementType = Motion_Mechanism.EMovementType.SlideAndRotate,
-                        MovementLoopModeByte = 1,
-                        SlideAxis = Motion_Mechanism.Axis.Y,
-                        SlideDistance = -0.2f,
-                        SlideTime = 0.5f,
-                        SlideDecelTime = 0.2f
-                    };
+                    ((AssetBUTN)asset).Motion = game == Game.Incredibles ?
+                        new Motion_Mechanism_TSSM((AssetBUTN)asset)
+                        {
+                            Flags = 4,
+                            MovementType = Motion_Mechanism.EMovementType.SlideAndRotate,
+                            MovementLoopModeByte = 1,
+                            SlideAxis = Motion_Mechanism.Axis.Y,
+                            SlideDistance = -0.2f,
+                            SlideTime = 0.5f,
+                            SlideDecelTime = 0.2f
+                        } :
+                        new Motion_Mechanism((AssetBUTN)asset)
+                        {
+                            Flags = 4,
+                            MovementType = Motion_Mechanism.EMovementType.SlideAndRotate,
+                            MovementLoopModeByte = 1,
+                            SlideAxis = Motion_Mechanism.Axis.Y,
+                            SlideDistance = -0.2f,
+                            SlideTime = 0.5f,
+                            SlideDecelTime = 0.2f
+                        };
+
                     ((AssetBUTN)asset).HitMaskUint =
                         (uint)Math.Pow(2, 0) |
                         (uint)Math.Pow(2, 3) |
@@ -1365,7 +1376,17 @@ namespace IndustrialPark
                     ((AssetBUTN)asset).ActMethod = AssetBUTN.ButnActMethod.PressurePlate;
                     ((AssetBUTN)asset).Model_AssetID = "plate_pressure";
                     ((AssetBUTN)asset).PressedModel_AssetID = 0xCE7F8131;
-                    ((AssetBUTN)asset).Motion = new Motion_Mechanism((AssetBUTN)asset)
+                    ((AssetBUTN)asset).Motion = game == Game.Incredibles ?
+                    new Motion_Mechanism_TSSM((AssetBUTN)asset)
+                    {
+                        Flags = 4,
+                        MovementType = Motion_Mechanism.EMovementType.SlideAndRotate,
+                        MovementLoopModeByte = 1,
+                        SlideAxis = Motion_Mechanism.Axis.Y,
+                        SlideDistance = -0.15f,
+                        SlideTime = 0.15f,
+                    } :
+                    new Motion_Mechanism((AssetBUTN)asset)
                     {
                         Flags = 4,
                         MovementType = Motion_Mechanism.EMovementType.SlideAndRotate,
@@ -1683,7 +1704,6 @@ namespace IndustrialPark
                         Anim2_AssetID = 0xBC4A9A5F,
                         DirectionY = 1f,
                     };
-                    ((AssetPLAT)asset).Motion = new Motion_Mechanism((AssetPLAT)asset) { Type = MotionType.Other };
                     break;
                 case AssetTemplate.HoveringPlatform:
                     ((AssetPLAT)asset).AssetType = ObjectAssetType.PLAT;
@@ -1691,11 +1711,20 @@ namespace IndustrialPark
                     ((AssetPLAT)asset).Animation_AssetID = 0x730847B6;
                     ((AssetPLAT)asset).PlatformType = PlatType.Mechanism;
                     ((AssetPLAT)asset).PlatFlagsShort = 4;
-                    ((AssetPLAT)asset).Motion = new Motion_Mechanism((AssetPLAT)asset) {
+                    ((AssetPLAT)asset).Motion = game == Game.Incredibles ?
+                    new Motion_Mechanism_TSSM((AssetPLAT)asset)
+                    {
                         Type = MotionType.Other,
                         MovementLoopModeByte = 1,
                         SlideAccelTime = 0.4f,
-                        SlideDecelTime = 0.4f                        
+                        SlideDecelTime = 0.4f
+                    } :
+                    new Motion_Mechanism((AssetBUTN)asset)
+                    {
+                        Type = MotionType.Other,
+                        MovementLoopModeByte = 1,
+                        SlideAccelTime = 0.4f,
+                        SlideDecelTime = 0.4f
                     };
                     break;
                 case AssetTemplate.BungeeHook:

@@ -9,7 +9,7 @@ namespace IndustrialPark
     {
         public AssetWithMotion(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
-            Motion = new Motion_Mechanism(this);
+            Motion = game == Game.Incredibles ? new Motion_Mechanism_TSSM(this) : new Motion_Mechanism(this);
         }
 
         public override bool HasReference(uint assetID) => Motion.HasReference(assetID) || base.HasReference(assetID);

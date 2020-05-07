@@ -16,7 +16,7 @@ namespace IndustrialPark
         {
             if (value is string s)
             {
-                return Convert.ToInt16(s, 16);
+                return Convert.ToUInt16(s, 16);
             }
 
             return base.ConvertFrom(context, culture, value);
@@ -24,7 +24,7 @@ namespace IndustrialPark
 
         public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
         {
-            return destinationType == typeof(short);
+            return destinationType == typeof(ushort);
         }
 
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)

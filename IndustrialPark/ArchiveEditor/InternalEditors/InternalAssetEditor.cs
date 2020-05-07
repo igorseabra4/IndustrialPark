@@ -252,7 +252,7 @@ namespace IndustrialPark
             Button buttonImport = new Button() { Dock = DockStyle.Fill, Text = "Import", AutoSize = true };
             buttonImport.Click += (object sender, EventArgs e) =>
             {
-                OpenFileDialog openFile = new OpenFileDialog()
+                OpenFileDialog openFile = new OpenFileDialog
                 {
                     Filter = "OBJ Files|*.obj|All files|*.*",
                 };
