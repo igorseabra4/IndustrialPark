@@ -102,7 +102,7 @@ namespace IndustrialPark.Models
                 (flipUVs ? PostProcessSteps.FlipUVs : 0);
 
             Scene scene = new AssimpContext().ImportFile(fileName, pps);
-            
+
             int vertexCount = scene.Meshes.Sum(m => m.VertexCount);
             int triangleCount = scene.Meshes.Sum(m => m.FaceCount);
 
@@ -117,7 +117,7 @@ namespace IndustrialPark.Models
                     materialStruct = new MaterialStruct_0001()
                     {
                         unusedFlags = 0,
-                        color = ignoreMeshColors ? 
+                        color = ignoreMeshColors ?
                         new RenderWareFile.Color(255, 255, 255, 255) :
                         new RenderWareFile.Color(
                             (byte)(m.ColorDiffuse.R * 255),
@@ -154,27 +154,27 @@ namespace IndustrialPark.Models
                     } : null,
                     materialExtension = new Extension_0003(),
                 });
-            
+
             List<Vertex3> vertices = new List<Vertex3>();
             List<Vertex3> normals = new List<Vertex3>();
             List<Vertex2> textCoords = new List<Vertex2>();
             List<RenderWareFile.Color> vertexColors = new List<RenderWareFile.Color>();
             List<RenderWareFile.Triangle> triangles = new List<RenderWareFile.Triangle>();
-            
+
             foreach (var m in scene.Meshes)
             {
                 int totalVertices = vertices.Count;
 
                 foreach (Vector3D v in m.Vertices)
                     vertices.Add(new Vertex3(v.X, v.Y, v.Z));
-                
+
                 foreach (Vector3D v in m.Normals)
                     normals.Add(new Vertex3(v.X, v.Y, v.Z));
 
                 if (m.HasTextureCoords(0))
                     foreach (Vector3D v in m.TextureCoordinateChannels[0])
                         textCoords.Add(new Vertex2(v.X, v.Y));
-               else
+                else
                     for (int i = 0; i < m.VertexCount; i++)
                         textCoords.Add(new Vertex2(0, 0));
 
@@ -391,7 +391,7 @@ namespace IndustrialPark.Models
 
                 clumpExtension = new Extension_0003()
             };
-            
+
             return new RWSection[] { clump };
         }
 
@@ -428,7 +428,7 @@ namespace IndustrialPark.Models
                 PostProcessSteps.PreTransformVertices |
                 PostProcessSteps.RemoveRedundantMaterials |
                 PostProcessSteps.Triangulate |
-                PostProcessSteps.ValidateDataStructure|
+                PostProcessSteps.ValidateDataStructure |
                 (flipUVs ? PostProcessSteps.FlipUVs : 0));
         }
 
@@ -453,7 +453,10 @@ namespace IndustrialPark.Models
                     Name = mat.materialStruct.isTextured != 0 ? "mat_" + mat.texture.diffuseTextureName.stringString : default,
                 });
 
-                scene.Meshes.Add(new Mesh(PrimitiveType.Triangle) { MaterialIndex = i, Name = "mesh_" +
+                scene.Meshes.Add(new Mesh(PrimitiveType.Triangle)
+                {
+                    MaterialIndex = i,
+                    Name = "mesh_" +
                     (mat.materialStruct.isTextured != 0 ? mat.texture.diffuseTextureName.stringString : ("default_" + i.ToString()))
                 });
             }

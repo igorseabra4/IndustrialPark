@@ -524,6 +524,7 @@ namespace IndustrialPark
             tintedShader.Dispose();
 
             foreach (SharpMesh mesh in RenderWareModelFile.completeMeshList)
+                if (mesh != null)
                 mesh.Dispose();
 
             device.Dispose();
