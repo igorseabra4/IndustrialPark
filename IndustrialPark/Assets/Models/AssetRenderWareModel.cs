@@ -23,19 +23,19 @@ namespace IndustrialPark
             if (model != null)
                 model.Dispose();
 
-            //try
-            //{
+            try
+            {
                 ReadFileMethods.treatStuffAsByteArray = false;
                 model = new RenderWareModelFile(renderer.device, ReadFileMethods.ReadRenderWareFile(Data));
                 _atomicFlags = AtomicFlags;
-            //}
-            //catch (Exception ex)
-            //{
-            //    if (model != null)
-            //        model.Dispose();
-            //    model = null;
-            //    throw new Exception("Error: " + ToString() + " has an unsupported format and cannot be rendered. " + ex.Message);
-            //}
+            }
+            catch (Exception ex)
+            {
+                if (model != null)
+                    model.Dispose();
+                model = null;
+                throw new Exception("Error: " + ToString() + " has an unsupported format and cannot be rendered. " + ex.Message);
+            }
         }
 
         public RenderWareModelFile GetRenderWareModelFile() => model;
