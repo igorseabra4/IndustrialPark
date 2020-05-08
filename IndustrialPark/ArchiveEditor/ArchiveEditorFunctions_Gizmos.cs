@@ -383,8 +383,6 @@ namespace IndustrialPark
                                 trig.Position0Z = trig.PositionZ;
                         }
 
-                        if (a is AssetDYNA dyna)
-                            dyna.OnDynaSpecificPropertyChange(dyna.DynaBase);
                         RefreshAssetEditor(a.AHDR.assetID);
                     }
 
@@ -548,8 +546,6 @@ namespace IndustrialPark
                                 ra.Roll += distanceX;
                         }
 
-                        if (a is AssetDYNA dyna)
-                            dyna.OnDynaSpecificPropertyChange(dyna.DynaBase);
                         RefreshAssetEditor(a.AHDR.assetID);
                     }
 
@@ -609,8 +605,6 @@ namespace IndustrialPark
                             ra.ScaleZ += distanceX / 40f;
                         }
 
-                        if (a is AssetDYNA dyna)
-                            dyna.OnDynaSpecificPropertyChange(dyna.DynaBase);
                         RefreshAssetEditor(a.AHDR.assetID);
                     }
 
@@ -656,10 +650,7 @@ namespace IndustrialPark
                             ra.PositionY += movementDirection.Y * movement / 10f;
                             ra.PositionZ += movementDirection.Z * movement / 10f;
                         }
-
-                        if (a is AssetDYNA dyna)
-                            dyna.OnDynaSpecificPropertyChange(dyna.DynaBase);
-
+                        
                         if (ra is AssetTRIG trig && trig.Shape != TriggerShape.Box)
                         {
                             trig.Position0X = trig.PositionX;

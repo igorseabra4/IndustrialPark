@@ -13,22 +13,10 @@ namespace IndustrialPark
         public Section_AHDR AHDR;
         public bool isSelected;
         public bool isInvisible = false;
-        [Browsable(false)]
-        public Game game { get; protected set; }
-        [Browsable(false)]
-        public Platform platform { get; protected set; }
-        public void SetGamePlatform(Game game, Platform platform)
-        {
-            this.game = game;
-            this.platform = platform;
-            this.endianness = EndianConverter.PlatformEndianness(platform);
-        }
 
-        public Asset(Section_AHDR AHDR, Game game, Platform platform) : base(EndianConverter.PlatformEndianness(platform))
+        public Asset(Section_AHDR AHDR, Game game, Platform platform) : base(game, platform)
         {
             this.AHDR = AHDR;
-            this.game = game;
-            this.platform = platform;
         }
         
         [Category("Asset")]
@@ -52,24 +40,6 @@ namespace IndustrialPark
 
         public virtual void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
-        }
-
-        public DynamicTypeDescriptor ByteFlagsDescriptor(int offset, params string[] flagNames)
-        {
-            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(typeof(FlagsField_Byte));
-            return dt.FromComponent(new FlagsField_Byte(this, offset, dt, flagNames));
-        }
-
-        public DynamicTypeDescriptor ShortFlagsDescriptor(int offset, params string[] flagNames)
-        {
-            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(typeof(FlagsField_UShort));
-            return dt.FromComponent(new FlagsField_UShort(this, offset, dt, flagNames));
-        }
-
-        public DynamicTypeDescriptor IntFlagsDescriptor(int offset, params string[] flagNames)
-        {
-            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(typeof(FlagsField_UInt));
-            return dt.FromComponent(new FlagsField_UInt(this, offset, dt, flagNames));
         }
     }
 }

@@ -8,7 +8,7 @@ namespace IndustrialPark
         private readonly DynamicTypeDescriptor dt;
         public abstract uint Flags { get; set; }
 
-        public FlagsField(Asset asset, int flagLoc, DynamicTypeDescriptor dt)
+        public FlagsField(EndianConvertibleWithData asset, int flagLoc, DynamicTypeDescriptor dt)
             : base(asset, flagLoc)
         {
             this.dt = dt;

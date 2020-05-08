@@ -291,6 +291,8 @@ namespace IndustrialPark
                 iawm.MovieRemoveFromDictionary();
             else if (assetDictionary[assetID] is AssetPICK pick)
                 pick.ClearDictionary();
+            else if (assetDictionary[assetID] is AssetTPIK tpik)
+                tpik.ClearDictionary();
             else if (assetDictionary[assetID] is AssetLODT lodt)
                 lodt.ClearDictionary();
             else if (assetDictionary[assetID] is AssetPIPT pipt)
@@ -398,6 +400,7 @@ namespace IndustrialPark
                     case AssetType.JAW:  newAsset = new AssetJAW (AHDR, game, platform); break;
                     case AssetType.LITE: newAsset = new AssetLITE(AHDR, game, platform); break;
                     case AssetType.LKIT: newAsset = new AssetLKIT(AHDR, game, platform); break;
+                    case AssetType.LOBM: newAsset = new AssetLOBM(AHDR, game, platform); break;
                     case AssetType.LODT: newAsset = new AssetLODT(AHDR, game, platform); break;
                     case AssetType.MAPR: newAsset = new AssetMAPR(AHDR, game, platform); break;
                     case AssetType.MINF: newAsset = new AssetMINF(AHDR, game, platform); break;
@@ -442,6 +445,7 @@ namespace IndustrialPark
                     case AssetType.TEXT: newAsset = new AssetTEXT(AHDR, game, platform); break;
                     case AssetType.TRIG: newAsset = new AssetTRIG(AHDR, game, platform); break;
                     case AssetType.TIMR: newAsset = new AssetTIMR(AHDR, game, platform); break;
+                    case AssetType.TPIK: newAsset = new AssetTPIK(AHDR, game, platform); break;
                     case AssetType.UI:   newAsset = new AssetUI  (AHDR, game, platform); break;
                     case AssetType.UIFT: newAsset = new AssetUIFT(AHDR, game, platform); break;
                     case AssetType.VIL:  newAsset = new AssetVIL (AHDR, game, platform); break;
@@ -452,7 +456,6 @@ namespace IndustrialPark
                     case AssetType.DTRK:
                     case AssetType.DUPC:
                     case AssetType.GRSM:
-                    case AssetType.LOBM:
                     case AssetType.NGMS:
                     case AssetType.PGRS:
                     case AssetType.RANM:
@@ -460,7 +463,6 @@ namespace IndustrialPark
                     case AssetType.SPLN:
                     case AssetType.SSET:
                     case AssetType.SUBT:
-                    case AssetType.TPIK:
                     case AssetType.TRWT:
                     case AssetType.UIM:
                     case AssetType.ZLIN:

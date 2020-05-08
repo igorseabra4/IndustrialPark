@@ -112,9 +112,6 @@ namespace IndustrialPark
 
             switch (asset.AHDR.assetType)
             {
-                case AssetType.DYNA:
-                    internalEditors.Add(new InternalDynaEditor((AssetDYNA)asset, this, hideHelp));
-                    break;
                 case AssetType.FLY:
                     internalEditors.Add(new InternalFlyEditor((AssetFLY)asset, this));
                     break;
@@ -607,7 +604,7 @@ namespace IndustrialPark
                         SGRP.OuterRadius *= singleFactor;
                         SGRP.InnerRadius *= singleFactor;
                     }
-                    else if (a is EntityAsset placeable && !(a is AssetPLYR || a is AssetPKUP || a is AssetUI || a is AssetUIFT || a is AssetVIL || (a is AssetDYNA DYNA && DYNA.Type_BFBB == DynaType_BFBB.game_object__Teleport)))
+                    else if (a is EntityAsset placeable && !(a is AssetPLYR || a is AssetPKUP || a is AssetUI || a is AssetUIFT || a is AssetVIL || (a is AssetDYNA DYNA && DYNA.Type == DynaType.game_object__Teleport)))
                     {
                         placeable.ScaleX *= factor.X;
                         placeable.ScaleY *= factor.Y;

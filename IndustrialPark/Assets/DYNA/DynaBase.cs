@@ -1,36 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using HipHopFile;
+﻿using System.ComponentModel;
 using SharpDX;
 
 namespace IndustrialPark
 {
-    public class DynaBase : EndianConvertibleWithData
+    public class DynaBase : AssetSpecific_Generic
     {
-        public virtual string Note { get => "DYNA Placement is unused"; }
-        public override byte[] Data { get; set; }
-
-        public DynaBase(Platform platform) : base(EndianConverter.PlatformEndianness(platform))
-        {
-            Data = new byte[0];
-        }
-
-        public DynaBase(IEnumerable<byte> enumerable, Platform platform) : this (platform)
-        {
-            Data = enumerable.ToArray();
-        }
-
-        public virtual byte[] ToByteArray()
-        {
-            return Data;
-        }
-
-        public virtual bool HasReference(uint assetID) => false;
-
-        public virtual void Verify(ref List<string> result) { }
-
+        [Browsable(false)]
+        public virtual int StructSize => 0;
+        
+        public DynaBase(AssetDYNA asset) : base(asset, 0x10) { }
+        
         [Browsable(false)]
         public virtual bool IsRenderableClickable => false;
 
@@ -80,8 +59,5 @@ namespace IndustrialPark
         {
             return new BoundingSphere();
         }
-
-        public delegate void DynaBasePropertyChanged(DynaBase value);
-        public DynaBasePropertyChanged dynaSpecificPropertyChanged;
     }
 }

@@ -231,7 +231,7 @@ namespace IndustrialPark.Randomizer
             int layerIndex = -1;
 
             foreach (AssetDYNA dyna in (from asset in assetDictionary.Values
-                                        where asset is AssetDYNA dyna && dyna.Type_BFBB == DynaType_BFBB.game_object__Teleport
+                                        where asset is AssetDYNA dyna && dyna.Type == DynaType.game_object__Teleport
                                         select asset).Cast<AssetDYNA>())
             {
                 dynaTeleportAssetIDs.Add(dyna.AssetID);
@@ -391,7 +391,7 @@ namespace IndustrialPark.Randomizer
             {
                 var whoTargets = FindWhoTargets(assets[i].AssetID);
                 if (whoTargets.Count > 0 && GetFromAssetID(whoTargets[0]) is AssetDYNA dyna
-                    && (dyna.Type_BFBB == DynaType_BFBB.game_object__BusStop || dyna.Type_BFBB == DynaType_BFBB.game_object__Taxi))
+                    && (dyna.Type == DynaType.game_object__BusStop || dyna.Type == DynaType.game_object__Taxi))
                 {
                     assets.RemoveAt(i);
                     i--;
@@ -665,7 +665,7 @@ namespace IndustrialPark.Randomizer
             bool result = false;
 
             foreach (AssetDYNA dyna in (from asset in assetDictionary.Values
-                                        where asset is AssetDYNA dyna && dyna.Type_BFBB == DynaType_BFBB.game_object__BusStop
+                                        where asset is AssetDYNA dyna && dyna.Type == DynaType.game_object__BusStop
                                         select asset).Cast<AssetDYNA>())
             {
                 DynaBusStop dynaBusStop = (DynaBusStop)dyna.DynaBase;
@@ -977,7 +977,7 @@ namespace IndustrialPark.Randomizer
             foreach (Asset a in assetDictionary.Values)
                 if (a is AssetMRKR mrkr && VerifyMarkerStep1(mrkr, noWarps, busStops, teleBox, taxis))
                     assets.Add(mrkr);
-                else if (a is AssetDYNA dyna && pointers && dyna.Type_BFBB == DynaType_BFBB.pointer)
+                else if (a is AssetDYNA dyna && pointers && dyna.Type == DynaType.pointer)
                     assets.Add(dyna);
                 else if (plyrs && a is AssetPLYR plyr)
                     assets.Add(plyr);
@@ -1016,9 +1016,9 @@ namespace IndustrialPark.Randomizer
                 foreach (uint u in whoTargets)
                     if (GetFromAssetID(u) is AssetDYNA dyna)
                     {
-                        if ((busStops && dyna.Type_BFBB == DynaType_BFBB.game_object__BusStop) ||
-                            (taxis && dyna.Type_BFBB == DynaType_BFBB.game_object__Taxi) ||
-                            (teleBox && dyna.Type_BFBB == DynaType_BFBB.game_object__Teleport))
+                        if ((busStops && dyna.Type == DynaType.game_object__BusStop) ||
+                            (taxis && dyna.Type == DynaType.game_object__Taxi) ||
+                            (teleBox && dyna.Type == DynaType.game_object__Teleport))
                             return true;
                     }
                     else if (GetFromAssetID(u) is AssetTRIG trig)

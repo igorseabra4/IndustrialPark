@@ -4,7 +4,7 @@ namespace IndustrialPark
 {
     public class FlagsField_UInt : FlagsField
     {
-        public FlagsField_UInt(Asset asset, int flagsLoc, DynamicTypeDescriptor dt, string[] flagNames)
+        public FlagsField_UInt(EndianConvertibleWithData asset, int flagsLoc, DynamicTypeDescriptor dt, string[] flagNames)
             : base(asset, flagsLoc, dt)
         {
             for (uint i = 0; i < 32; i++)

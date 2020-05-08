@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HipHopFile;
+using System;
+using System.ComponentModel;
 using System.Linq;
 
 namespace IndustrialPark
@@ -7,7 +9,23 @@ namespace IndustrialPark
     {
         public abstract byte[] Data { get; set; }
 
+        [Browsable(false)]
+        public Platform platform { get; protected set; }
+        [Browsable(false)]
+        public Game game { get; protected set; }
+        public void SetGamePlatform(Game game, Platform platform)
+        {
+            this.game = game;
+            this.platform = platform;
+            endianness = EndianConverter.PlatformEndianness(platform);
+        }
+
         public EndianConvertibleWithData(Endianness endianness) : base(endianness) { }
+        public EndianConvertibleWithData(Game game, Platform platform) : base(EndianConverter.PlatformEndianness(platform))
+        {
+            this.game = game;
+            this.platform = platform;
+        }
         
         protected float ReadFloat(int j)
         {
@@ -140,6 +158,24 @@ namespace IndustrialPark
         protected static uint InvMask(uint bit)
         {
             return uint.MaxValue - Mask(bit);
+        }
+
+        public DynamicTypeDescriptor ByteFlagsDescriptor(int offset, params string[] flagNames)
+        {
+            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(typeof(FlagsField_Byte));
+            return dt.FromComponent(new FlagsField_Byte(this, offset, dt, flagNames));
+        }
+
+        public DynamicTypeDescriptor ShortFlagsDescriptor(int offset, params string[] flagNames)
+        {
+            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(typeof(FlagsField_UShort));
+            return dt.FromComponent(new FlagsField_UShort(this, offset, dt, flagNames));
+        }
+
+        public DynamicTypeDescriptor IntFlagsDescriptor(int offset, params string[] flagNames)
+        {
+            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(typeof(FlagsField_UInt));
+            return dt.FromComponent(new FlagsField_UInt(this, offset, dt, flagNames));
         }
     }
 

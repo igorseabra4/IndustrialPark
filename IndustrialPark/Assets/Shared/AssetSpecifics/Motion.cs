@@ -300,57 +300,33 @@ namespace IndustrialPark
 
         public byte Unknown1
         {
-            get => (asset.game == Game.Incredibles) ? ReadByte(8) : (byte)0;
-            set
-            {
-                if (asset.game == Game.Incredibles)
-                    Write(8, value);
-            }
+            get => ReadByte(8);
+            set => Write(8, value);
         }
         public byte Unknown2
         {
-            get => (asset.game == Game.Incredibles) ? ReadByte(9) : (byte)0;
-            set
-            {
-                if (asset.game == Game.Incredibles)
-                    Write(9, value);
-            }
+            get => ReadByte(9);
+            set => Write(9, value);
         }
         public byte Unknown3
         {
-            get => (asset.game == Game.Incredibles) ? ReadByte(10) : (byte)0;
-            set
-            {
-                if (asset.game == Game.Incredibles)
-                    Write(10, value);
-            }
+            get => ReadByte(10);
+            set => Write(10, value);
         }
         public byte Unknown4
         {
-            get => (asset.game == Game.Incredibles) ? ReadByte(11) : (byte)0;
-            set
-            {
-                if (asset.game == Game.Incredibles)
-                    Write(11, value);
-            }
+            get => ReadByte(11);
+            set => Write(11, value);
         }
         public float UnknownFloat1
         {
-            get => (asset.game == Game.Incredibles) ? ReadFloat(0x30 + MechanismOffset) : 0;
-            set
-            {
-                if (asset.game == Game.Incredibles)
-                    Write(0x30 + MechanismOffset, value);
-            }
+            get => ReadFloat(0x30 + MechanismOffset);
+            set => Write(0x30 + MechanismOffset, value);
         }
         public float UnknownFloat2
         {
-            get => (asset.game == Game.Incredibles) ? ReadFloat(0x34 + MechanismOffset) : 0;
-            set
-            {
-                if (asset.game == Game.Incredibles)
-                    Write(0x34 + MechanismOffset, value);
-            }
+            get => ReadFloat(0x34 + MechanismOffset);
+            set => Write(0x34 + MechanismOffset, value);
         }
     }
 

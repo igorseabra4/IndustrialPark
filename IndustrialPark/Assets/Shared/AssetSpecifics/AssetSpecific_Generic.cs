@@ -7,8 +7,8 @@ namespace IndustrialPark
 {
     public class AssetSpecific_Generic : EndianConvertibleWithData
     {
-        protected Asset asset;
-        public AssetSpecific_Generic(Asset asset, int specificStart) : base(EndianConverter.PlatformEndianness(asset.platform))
+        protected EndianConvertibleWithData asset;
+        public AssetSpecific_Generic(EndianConvertibleWithData asset, int specificStart) : base(asset.game, asset.platform)
         {
             this.asset = asset;
             this.specificStart = specificStart;

@@ -366,21 +366,21 @@ namespace IndustrialPark
 
             var linksStart = reader.BaseStream.Length - 32 * bytes[5];
 
-            if ((DynaType_BFBB)dynaType == DynaType_BFBB.hud__meter__font)
+            if ((DynaType)dynaType == DynaType.hud__meter__font)
             {
                 while (reader.BaseStream.Position < linksStart - 12)
                     bytes.AddRange(Reverse(reader.ReadInt32()));
                 for (int i = 0; i < 12; i++)
                     bytes.Add(reader.ReadByte());
             }
-            else if ((DynaType_BFBB)dynaType == DynaType_BFBB.game_object__NPCSettings)
+            else if ((DynaType)dynaType == DynaType.game_object__NPCSettings)
             {
                 bytes.AddRange(Reverse(reader.ReadInt32()));
 
                 for (int i = 0; i < 12; i++)
                     bytes.Add(reader.ReadByte());
             }
-            else if ((DynaType_BFBB)dynaType == DynaType_BFBB.game_object__talk_box)
+            else if ((DynaType)dynaType == DynaType.game_object__talk_box)
             {
                 for (int i = 0; i < 3; i++)
                     bytes.AddRange(Reverse(reader.ReadInt32()));
@@ -391,12 +391,12 @@ namespace IndustrialPark
                 for (int i = 0; i < 4; i++)
                     bytes.Add(reader.ReadByte());
             }
-            else if ((DynaType_BFBB)dynaType == DynaType_BFBB.game_object__task_box)
+            else if ((DynaType)dynaType == DynaType.game_object__task_box)
             {
                 for (int i = 0; i < 4; i++)
                     bytes.Add(reader.ReadByte());
             }
-            else if ((DynaType_BFBB)dynaType == DynaType_BFBB.game_object__text_box)
+            else if ((DynaType)dynaType == DynaType.game_object__text_box)
             {
                 for (int i = 0; i < 10; i++)
                     bytes.AddRange(Reverse(reader.ReadInt32()));
@@ -407,18 +407,18 @@ namespace IndustrialPark
                 for (int i = 0; i < 4; i++)
                     bytes.Add(reader.ReadByte());
             }
-            else if (newGame == Game.Incredibles && new DynaType_TSSM[] {
-                DynaType_TSSM.Enemy__SB__BucketOTron,
-                DynaType_TSSM.Enemy__SB__CastNCrew,
-                DynaType_TSSM.Enemy__SB__Critter,
-                DynaType_TSSM.Enemy__SB__Dennis,
-                DynaType_TSSM.Enemy__SB__FrogFish,
-                DynaType_TSSM.Enemy__SB__Mindy,
-                DynaType_TSSM.Enemy__SB__Neptune,
-                DynaType_TSSM.Enemy__SB__Standard,
-                DynaType_TSSM.Enemy__SB__Turret,
-                DynaType_TSSM.Enemy__SB__SupplyCrate
-            }.Contains((DynaType_TSSM)dynaType))
+            else if (newGame == Game.Incredibles && new DynaType[] {
+                DynaType.Enemy__SB__BucketOTron,
+                DynaType.Enemy__SB__CastNCrew,
+                DynaType.Enemy__SB__Critter,
+                DynaType.Enemy__SB__Dennis,
+                DynaType.Enemy__SB__FrogFish,
+                DynaType.Enemy__SB__Mindy,
+                DynaType.Enemy__SB__Neptune,
+                DynaType.Enemy__SB__Standard,
+                DynaType.Enemy__SB__Turret,
+                DynaType.Enemy__SB__SupplyCrate
+            }.Contains((DynaType)dynaType))
             {
                 bytes.AddRange(Reverse(reader.ReadInt32()));
                 bytes.Add(reader.ReadByte());

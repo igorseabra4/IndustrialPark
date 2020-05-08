@@ -38,6 +38,9 @@ namespace IndustrialPark
 
         public AssetPICK(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
+            if (AssetID != AHDR.assetID)
+                AssetID = AHDR.assetID;
+
             SetupDictionary();
         }
 
@@ -74,15 +77,24 @@ namespace IndustrialPark
             }
         }
 
+        private AssetID AssetID
+        {
+            get => ReadUInt(0x00);
+            set => Write(0x00, value);
+        }
+        private int AmountOfEntries
+        {
+            get => ReadInt(0x04);
+            set => Write(0x04, value);
+        }
+
         [Category("Pickup Table")]
         public EntryPICK[] PICK_Entries
         {
             get
             {
                 List<EntryPICK> entries = new List<EntryPICK>();
-                int amount = ReadInt(0x4);
-
-                for (int i = 0; i < amount; i++)
+                for (int i = 0; i < AmountOfEntries; i++)
                 {
                     entries.Add(new EntryPICK()
                     {
@@ -113,8 +125,9 @@ namespace IndustrialPark
                     newData.AddRange(BitConverter.GetBytes(Switch(i.ModelAssetID)));
                     newData.AddRange(BitConverter.GetBytes(Switch(i.AnimAssetID)));
                 }
-                
+
                 Data = newData.ToArray();
+                SetupDictionary();
             }
         }
     }
