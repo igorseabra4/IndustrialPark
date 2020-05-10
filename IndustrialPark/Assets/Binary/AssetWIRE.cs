@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using HipHopFile;
+using SharpDX;
+using SharpDX.Direct3D11;
 
 namespace IndustrialPark
 {
@@ -44,9 +46,14 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetWIRE : Asset
+    public class AssetWIRE : Asset, IRenderableAsset
     {
-        public AssetWIRE(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        public AssetWIRE(Section_AHDR AHDR, Game game, Platform platform, SharpRenderer renderer) : base(AHDR, game, platform)
+        {
+            Setup(renderer);
+            CreateTransformMatrix();
+            ArchiveEditorFunctions.renderableAssetSetCommon.Add(this);
+        }
 
         public override bool HasReference(uint assetID) => hashID0 == assetID || hashID1 == assetID || base.HasReference(assetID);
 
@@ -89,7 +96,7 @@ namespace IndustrialPark
         private const int vertexSize = 0xC;
 
         [Category("Wireframe Model")]
-        public WireVector[] Vertices
+        public WireVector[] Points
         {
             get
             {
@@ -151,7 +158,7 @@ namespace IndustrialPark
             {
                 objFile.WriteLine("# Created by Industrial Park");
                 objFile.WriteLine();
-                foreach (var v in Vertices)
+                foreach (var v in Points)
                     objFile.WriteLine($"v {v.X} {v.Y} {v.Z}");
                 objFile.WriteLine();
                 objFile.WriteLine("o wireframe_01");
@@ -199,8 +206,85 @@ namespace IndustrialPark
                     for (int i = 1; i < a.Count - 1; i++)
                         lines.Add(FromSpline(a, i, i + 1));
                 }
-            Vertices = vertices.ToArray();
+            Points = vertices.ToArray();
             Lines = lines.ToArray();
+        }
+
+        private BoundingBox boundingBox;
+
+        public static bool dontRender = false;
+
+        private SharpDX.Direct3D11.Buffer vertexBuffer;
+        private int vertexCount;
+
+        public void Setup(SharpRenderer renderer)
+        {
+            renderer.completeVertexBufferList.Remove(vertexBuffer);
+            if (vertexBuffer != null)
+                vertexBuffer.Dispose();
+            List<WireVector> lineList = new List<WireVector>();
+            foreach (Line l in Lines)
+            {
+                lineList.Add(Points[l.vertex0]);
+                lineList.Add(Points[l.vertex1]);
+            }
+            vertexBuffer = SharpDX.Direct3D11.Buffer.Create(renderer.device.Device, BindFlags.VertexBuffer, lineList.ToArray());
+            renderer.completeVertexBufferList.Add(vertexBuffer);
+            vertexCount = lineList.Count;
+        }
+
+        public void Draw(SharpRenderer renderer)
+        {
+            if (isSelected)
+                renderer.DrawSpline(vertexBuffer, vertexCount, Matrix.Identity, Color.YellowGreen.ToVector4(), true);
+        }
+
+        public void CreateTransformMatrix()
+        {
+            if (Points.Length == 0)
+                boundingBox = new BoundingBox();
+            else
+                boundingBox = new BoundingBox(
+                    new Vector3(Points[0].X, Points[0].Y, Points[0].Z),
+                    new Vector3(Points[0].X, Points[0].Y, Points[0].Z));
+
+            foreach (WireVector v in Points)
+            {
+                if (v.X > boundingBox.Maximum.X)
+                    boundingBox.Maximum.X = v.X;
+                if (v.Y > boundingBox.Maximum.Y)
+                    boundingBox.Maximum.Y = v.Y;
+                if (v.Z > boundingBox.Maximum.Z)
+                    boundingBox.Maximum.Z = v.Z;
+                if (v.X < boundingBox.Minimum.X)
+                    boundingBox.Minimum.X = v.X;
+                if (v.Y < boundingBox.Minimum.Y)
+                    boundingBox.Minimum.Y = v.Y;
+                if (v.Z < boundingBox.Minimum.Z)
+                    boundingBox.Minimum.Z = v.Z;
+            }
+        }
+
+        public BoundingBox GetBoundingBox()
+        {
+            return boundingBox;
+        }
+
+        public float GetDistance(Vector3 cameraPosition)
+        {
+            return Vector3.Distance(cameraPosition, boundingBox.Center);
+        }
+
+        public float? IntersectsWith(Ray ray)
+        {
+            if (ray.Intersects(ref boundingBox, out float distance))
+                return distance;
+            return null;
+        }
+
+        public void Dispose()
+        {
+            vertexBuffer.Dispose();
         }
     }
 }

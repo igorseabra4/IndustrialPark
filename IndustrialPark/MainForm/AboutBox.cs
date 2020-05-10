@@ -15,7 +15,7 @@ namespace IndustrialPark
             this.labelCompanyName.Text = AssemblyCompany;
             ComponentResourceManager resources = new ComponentResourceManager(typeof(AboutBox));
             this.textBoxDescription.Text = resources.GetString("textBoxDescription.Text");
-            this.labelVersion.Text = new IPversion().versionName;
+            this.labelVersion.Text = AssemblyVersion;
             TopMost = true;
         }
 
@@ -68,8 +68,21 @@ namespace IndustrialPark
                 return ((AssemblyCompanyAttribute)attributes[0]).Company;
             }
         }
+
+        public static string AssemblyVersion
+        {
+            get
+            {
+                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyVersionAttribute), false);
+                if (attributes.Length == 0)
+                {
+                    return "";
+                }
+                return ((AssemblyVersionAttribute)attributes[0]).Version;
+            }
+        }
         #endregion
-        
+
         private void button1_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start("https://github.com/igorseabra4/IndustrialPark");

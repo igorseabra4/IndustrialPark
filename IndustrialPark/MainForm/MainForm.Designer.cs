@@ -75,6 +75,7 @@ namespace IndustrialPark
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.manageUserTemplatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.templatesPersistentShiniesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.templatesChainPointMVPTsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.downloadIndustrialParkEditorFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.downloadVgmstreamToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -128,7 +129,8 @@ namespace IndustrialPark
             this.toolStripMenuItem_Templates = new System.Windows.Forms.ToolStripMenuItem();
             this.userTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripComboBoxUserTemplate = new System.Windows.Forms.ToolStripComboBox();
-            this.templatesChainPointMVPTsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sPLNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dUPCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStripMain.SuspendLayout();
@@ -491,6 +493,13 @@ namespace IndustrialPark
             this.templatesPersistentShiniesToolStripMenuItem.Text = "Templates: Persistent Shinies";
             this.templatesPersistentShiniesToolStripMenuItem.Click += new System.EventHandler(this.templatesPersistentShiniesToolStripMenuItem_Click);
             // 
+            // templatesChainPointMVPTsToolStripMenuItem
+            // 
+            this.templatesChainPointMVPTsToolStripMenuItem.Name = "templatesChainPointMVPTsToolStripMenuItem";
+            this.templatesChainPointMVPTsToolStripMenuItem.Size = new System.Drawing.Size(271, 22);
+            this.templatesChainPointMVPTsToolStripMenuItem.Text = "Templates: Chain Point MVPTs";
+            this.templatesChainPointMVPTsToolStripMenuItem.Click += new System.EventHandler(this.templatesChainPointMVPTsToolStripMenuItem_Click);
+            // 
             // toolStripSeparator7
             // 
             this.toolStripSeparator7.Name = "toolStripSeparator7";
@@ -555,6 +564,7 @@ namespace IndustrialPark
             this.bUTNToolStripMenuItem,
             this.cAMToolStripMenuItem,
             this.dSTRToolStripMenuItem,
+            this.dUPCToolStripMenuItem,
             this.dYNAToolStripMenuItem,
             this.eGENToolStripMenuItem,
             this.hANGToolStripMenuItem,
@@ -567,6 +577,7 @@ namespace IndustrialPark
             this.pLYRToolStripMenuItem,
             this.sDFXToolStripMenuItem,
             this.sFXToolStripMenuItem,
+            this.sPLNToolStripMenuItem,
             this.sIMPToolStripMenuItem,
             this.tRIGToolStripMenuItem,
             this.uIToolStripMenuItem,
@@ -808,14 +819,14 @@ namespace IndustrialPark
             // assetIDGeneratorToolStripMenuItem
             // 
             this.assetIDGeneratorToolStripMenuItem.Name = "assetIDGeneratorToolStripMenuItem";
-            this.assetIDGeneratorToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.assetIDGeneratorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.assetIDGeneratorToolStripMenuItem.Text = "Asset ID Generator";
             this.assetIDGeneratorToolStripMenuItem.Click += new System.EventHandler(this.assetIDGeneratorToolStripMenuItem_Click);
             // 
             // eventSearchToolStripMenuItem
             // 
             this.eventSearchToolStripMenuItem.Name = "eventSearchToolStripMenuItem";
-            this.eventSearchToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.eventSearchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.eventSearchToolStripMenuItem.Text = "Event Search";
             this.eventSearchToolStripMenuItem.Click += new System.EventHandler(this.eventSearchToolStripMenuItem_Click);
             // 
@@ -947,12 +958,23 @@ namespace IndustrialPark
             this.toolStripComboBoxUserTemplate.Size = new System.Drawing.Size(160, 23);
             this.toolStripComboBoxUserTemplate.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxUserTemplate_SelectedIndexChanged);
             // 
-            // templatesChainPointMVPTsToolStripMenuItem
+            // sPLNToolStripMenuItem
             // 
-            this.templatesChainPointMVPTsToolStripMenuItem.Name = "templatesChainPointMVPTsToolStripMenuItem";
-            this.templatesChainPointMVPTsToolStripMenuItem.Size = new System.Drawing.Size(271, 22);
-            this.templatesChainPointMVPTsToolStripMenuItem.Text = "Templates: Chain Point MVPTs";
-            this.templatesChainPointMVPTsToolStripMenuItem.Click += new System.EventHandler(this.templatesChainPointMVPTsToolStripMenuItem_Click);
+            this.sPLNToolStripMenuItem.Checked = true;
+            this.sPLNToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.sPLNToolStripMenuItem.Name = "sPLNToolStripMenuItem";
+            this.sPLNToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.sPLNToolStripMenuItem.Text = "SPLN";
+            this.sPLNToolStripMenuItem.Click += new System.EventHandler(this.sPLNToolStripMenuItem_Click);
+            // 
+            // dUPCToolStripMenuItem
+            // 
+            this.dUPCToolStripMenuItem.Checked = true;
+            this.dUPCToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.dUPCToolStripMenuItem.Name = "dUPCToolStripMenuItem";
+            this.dUPCToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.dUPCToolStripMenuItem.Text = "DUPC";
+            this.dUPCToolStripMenuItem.Click += new System.EventHandler(this.dUPCToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -1085,6 +1107,8 @@ namespace IndustrialPark
         private ToolStripMenuItem stopSoundToolStripMenuItem;
         private ToolStripMenuItem sDFXToolStripMenuItem;
         private ToolStripMenuItem templatesChainPointMVPTsToolStripMenuItem;
+        private ToolStripMenuItem dUPCToolStripMenuItem;
+        private ToolStripMenuItem sPLNToolStripMenuItem;
     }
 }
 

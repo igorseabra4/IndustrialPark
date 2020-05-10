@@ -753,11 +753,11 @@ namespace IndustrialPark
 
                 if (asset is AssetBUTN butn)
                 {
-                    butn.AssetType = ObjectAssetType.BUTN;
+                    butn.AssetType = ObjectAssetType.Button;
                 }
                 else if (asset is AssetTRIG trig)
                 {
-                    trig.AssetType = ObjectAssetType.TRIG;
+                    trig.AssetType = ObjectAssetType.Trigger;
                     trig.Data[0xB] = 0;
 
                     trig.ColorAlpha = 0;
@@ -768,7 +768,7 @@ namespace IndustrialPark
                 }
                 else if (asset is AssetPKUP pkup)
                 {
-                    pkup.AssetType = ObjectAssetType.PKUP;
+                    pkup.AssetType = ObjectAssetType.Pickup;
                     if (game == Game.BFBB)
                         pkup.Model_AssetID = "pickups.MINF";
                     else if (game == Game.Incredibles)
@@ -776,26 +776,26 @@ namespace IndustrialPark
                 }
                 else if (asset is AssetSIMP simp)
                 {
-                    simp.AssetType = ObjectAssetType.SIMP;
+                    simp.AssetType = ObjectAssetType.Static;
                     simp.AnimSpeed = 1f;
                     simp.CollTypeByte = 2;
                 }
                 else if (asset is AssetVIL vil)
                 {
-                    vil.AssetType = ObjectAssetType.VIL;
+                    vil.AssetType = ObjectAssetType.NPC;
                 }
             }
 
             switch (template)
             {
                 case AssetTemplate.Boulder_Generic:
-                    ((AssetBOUL)asset).AssetType = ObjectAssetType.BOUL;
+                    ((AssetBOUL)asset).AssetType = ObjectAssetType.Boulder;
                     ((AssetBOUL)asset).Data[0xB] = 0;
                     ((AssetBOUL)asset).ColorAlpha = 0;
                     ((AssetBOUL)asset).ColorAlphaSpeed = 0;
                     break;
                 case AssetTemplate.Camera:
-                    ((AssetCAM)asset).AssetType = ObjectAssetType.CAM;
+                    ((AssetCAM)asset).AssetType = ObjectAssetType.Camera;
                     ((AssetCAM)asset).PositionX = position.X;
                     ((AssetCAM)asset).PositionY = position.Y;
                     ((AssetCAM)asset).PositionZ = position.Z;
@@ -809,37 +809,37 @@ namespace IndustrialPark
                     ((AssetCAM)asset).CamType = CamType.Static;
                     break;
                 case AssetTemplate.Counter:
-                    ((AssetCNTR)asset).AssetType = ObjectAssetType.CNTR;
+                    ((AssetCNTR)asset).AssetType = ObjectAssetType.Counter;
                     break;
                 case AssetTemplate.Conditional:
-                    ((BaseAsset)asset).AssetType = ObjectAssetType.COND;
+                    ((BaseAsset)asset).AssetType = ObjectAssetType.Cond;
                     break;
                 case AssetTemplate.Dispatcher:
-                    ((AssetDPAT)asset).AssetType = ObjectAssetType.DPAT;
+                    ((AssetDPAT)asset).AssetType = ObjectAssetType.Dispatcher;
                     break;
                 case AssetTemplate.Destructible_Generic:
-                    ((AssetDSTR)asset).AssetType = ObjectAssetType.DSTR;
+                    ((AssetDSTR)asset).AssetType = ObjectAssetType.DestructObj;
                     ((AssetDSTR)asset).CollType = 2;
                     ((AssetDSTR)asset).BlastRadius = 4f;
                     ((AssetDSTR)asset).BlastStrength = 1f;
                     break;
                 case AssetTemplate.ElectricArc_Generic:
-                    ((AssetEGEN)asset).AssetType = ObjectAssetType.EGEN;
+                    ((AssetEGEN)asset).AssetType = ObjectAssetType.EGenerator;
                     ((AssetEGEN)asset).OnAnim_AssetID = 0xCE7F8131;
                     break;
                 case AssetTemplate.Environment:
-                    ((AssetENV)asset).AssetType = ObjectAssetType.ENV;
+                    ((AssetENV)asset).AssetType = ObjectAssetType.Env;
                     ((AssetENV)asset).StartCameraAssetID = "STARTCAM";
                     ((AssetENV)asset).LoldHeight = 10f;
                     break;
                 case AssetTemplate.Group:
-                    ((AssetGRUP)asset).AssetType = ObjectAssetType.GRUP;
+                    ((AssetGRUP)asset).AssetType = ObjectAssetType.Group;
                     break;
                 case AssetTemplate.Pendulum_Generic:
-                    ((AssetPEND)asset).AssetType = ObjectAssetType.PEND;
+                    ((AssetPEND)asset).AssetType = ObjectAssetType.Pendulum;
                     break;
                 case AssetTemplate.Hangable_Generic:
-                    ((AssetPEND)asset).AssetType = ObjectAssetType.HANG;
+                    ((AssetPEND)asset).AssetType = ObjectAssetType.Hangable;
                     break;
                 case AssetTemplate.UI_Generic:
                 case AssetTemplate.UIFT_Generic:
@@ -850,7 +850,7 @@ namespace IndustrialPark
                     ((AssetUI)asset).TextCoordBottomLeftY = 1f;
                     if (template == AssetTemplate.UIFT_Generic)
                     {
-                        ((AssetUIFT)asset).AssetType = ObjectAssetType.UIFT;
+                        ((AssetUIFT)asset).AssetType = ObjectAssetType.UIFont;
                         ((AssetUIFT)asset).BackgroundColor = new AssetEditorColors.MyColor();
                         ((AssetUIFT)asset).FontColor = new AssetEditorColors.MyColor(255, 255, 255, 255);
                         ((AssetUIFT)asset).Inset_90 = 2;
@@ -864,19 +864,19 @@ namespace IndustrialPark
                     }
                     break;
                 case AssetTemplate.LightEmitter_Generic:
-                    ((AssetLITE)asset).AssetType = ObjectAssetType.LITE;
+                    ((AssetLITE)asset).AssetType = ObjectAssetType.Light;
                     ((AssetLITE)asset).PositionX = position.X;
                     ((AssetLITE)asset).PositionY = position.Y;
                     ((AssetLITE)asset).PositionZ = position.Z;
                     break;
                 case AssetTemplate.Platform_Generic:
-                    ((AssetPLAT)asset).AssetType = ObjectAssetType.PLAT;
+                    ((AssetPLAT)asset).AssetType = ObjectAssetType.Platform;
                     ((AssetPLAT)asset).PlatformType = PlatType.Mechanism;
                     ((AssetPLAT)asset).PlatFlagsShort = 4;
                     ((AssetPLAT)asset).PlatSpecific = new PlatSpecific_Generic((AssetPLAT)asset);
                     break;
                 case AssetTemplate.Player_Generic:
-                    ((AssetPLYR)asset).AssetType = ObjectAssetType.PLYR;
+                    ((AssetPLYR)asset).AssetType = ObjectAssetType.Player;
                     ((AssetPLYR)asset).BaseUshortFlags = 0x0D;
                     ((AssetPLYR)asset).Data[0xB] = 0;
                     ((AssetPLYR)asset).ColorAlpha = 0;
@@ -889,12 +889,12 @@ namespace IndustrialPark
                     ((AssetMRKR)asset).PositionZ = position.Z;
                     break;
                 case AssetTemplate.Portal:
-                    ((AssetPORT)asset).AssetType = ObjectAssetType.PORT;
+                    ((AssetPORT)asset).AssetType = ObjectAssetType.Portal;
                     ((AssetPORT)asset).Camera_AssetID = "STARTCAM";
                     ((AssetPORT)asset).DestinationLevel = "AA00";
                     break;
                 case AssetTemplate.Script:
-                    ((AssetSCRP)asset).AssetType = ObjectAssetType.SCRP;
+                    ((AssetSCRP)asset).AssetType = ObjectAssetType.Script;
                     ((AssetSCRP)asset).UnknownFloat08 = 1f;
                     break;
                 case AssetTemplate.SoundGroup:
@@ -911,7 +911,7 @@ namespace IndustrialPark
                         sndi.Padding = 0xCDCDCDCD;
                     break;
                 case AssetTemplate.Timer:
-                    ((AssetTIMR)asset).AssetType = ObjectAssetType.TIMR;
+                    ((AssetTIMR)asset).AssetType = ObjectAssetType.Timer;
                     break;
                 case AssetTemplate.SFX_OnEvent:
                 case AssetTemplate.SFX_OnRadius:
@@ -1415,13 +1415,13 @@ namespace IndustrialPark
                     break;
                 case AssetTemplate.TexasHitch_PLAT:
                 case AssetTemplate.Swinger_PLAT:
-                    ((AssetPLAT)asset).AssetType = ObjectAssetType.PLAT;
+                    ((AssetPLAT)asset).AssetType = ObjectAssetType.Platform;
                     ((AssetPLAT)asset).Model_AssetID = "trailer_hitch";
                     ((AssetPLAT)asset).PlatSpecific = new PlatSpecific_Generic((AssetPLAT)asset);
                     ((AssetPLAT)asset).Motion = new Motion_Mechanism((AssetPLAT)asset);
                     break;
                 case AssetTemplate.Area_MVPT:
-                    ((AssetMVPT_Scooby)asset).AssetType = ObjectAssetType.MVPT;
+                    ((AssetMVPT_Scooby)asset).AssetType = ObjectAssetType.MovePoint;
                     ((AssetMVPT_Scooby)asset).PositionX = position.X;
                     ((AssetMVPT_Scooby)asset).PositionY = position.Y;
                     ((AssetMVPT_Scooby)asset).PositionZ = position.Z;
@@ -1438,7 +1438,7 @@ namespace IndustrialPark
                         ((AssetMVPT_Scooby)asset).ArenaRadius = 8;
                     break;
                 case AssetTemplate.Point_MVPT:
-                    ((AssetMVPT_Scooby)asset).AssetType = ObjectAssetType.MVPT;
+                    ((AssetMVPT_Scooby)asset).AssetType = ObjectAssetType.MovePoint;
                     ((AssetMVPT_Scooby)asset).PositionX = position.X;
                     ((AssetMVPT_Scooby)asset).PositionY = position.Y;
                     ((AssetMVPT_Scooby)asset).PositionZ = position.Z;
@@ -1507,7 +1507,7 @@ namespace IndustrialPark
                     ((AssetSIMP)asset).CollTypeByte = 0;
                     break;
                 case AssetTemplate.BusStop_Trigger:
-                    ((AssetTRIG)asset).AssetType = ObjectAssetType.TRIG;
+                    ((AssetTRIG)asset).AssetType = ObjectAssetType.Trigger;
                     ((AssetTRIG)asset).Shape = TriggerShape.Sphere;
                     ((AssetTRIG)asset).Position0X = position.X;
                     ((AssetTRIG)asset).Position0Y = position.Y;
@@ -1596,7 +1596,7 @@ namespace IndustrialPark
                 case AssetTemplate.Checkpoint:
                 case AssetTemplate.Checkpoint_Invisible:
                     {
-                        ((AssetTRIG)asset).AssetType = ObjectAssetType.TRIG;
+                        ((AssetTRIG)asset).AssetType = ObjectAssetType.Trigger;
                         ((AssetTRIG)asset).Shape = TriggerShape.Sphere;
                         ((AssetTRIG)asset).Radius = 6f;
                         ((AssetTRIG)asset).Position0X = position.X;
@@ -1633,7 +1633,7 @@ namespace IndustrialPark
                     }
                 case AssetTemplate.Checkpoint_Timer:
                     {
-                        ((AssetTIMR)asset).AssetType = ObjectAssetType.TIMR;
+                        ((AssetTIMR)asset).AssetType = ObjectAssetType.Timer;
                         ((AssetTIMR)asset).Time = 0.5f;
                         uint checkpointSimp = PlaceTemplate(new Vector3(position.X + 2f, position.Y, position.Z), layerIndex, out success, ref assetIDs, "CHECKPOINT_SIMP", AssetTemplate.Checkpoint_SIMP);
                         uint checkpointTalkbox = BKDRHash("CHECKPOINT_TALKBOX_00");
@@ -1689,7 +1689,7 @@ namespace IndustrialPark
                     };
                     break;
                 case AssetTemplate.Springboard:
-                    ((AssetPLAT)asset).AssetType = ObjectAssetType.PLAT;
+                    ((AssetPLAT)asset).AssetType = ObjectAssetType.Platform;
                     ((AssetPLAT)asset).Model_AssetID = 0x55E9EAB5;
                     ((AssetPLAT)asset).Animation_AssetID = 0x7AAA99BB;
                     ((AssetPLAT)asset).PlatformType = PlatType.Springboard;
@@ -1706,7 +1706,7 @@ namespace IndustrialPark
                     };
                     break;
                 case AssetTemplate.HoveringPlatform:
-                    ((AssetPLAT)asset).AssetType = ObjectAssetType.PLAT;
+                    ((AssetPLAT)asset).AssetType = ObjectAssetType.Platform;
                     ((AssetPLAT)asset).Model_AssetID = 0x335EE0C8;
                     ((AssetPLAT)asset).Animation_AssetID = 0x730847B6;
                     ((AssetPLAT)asset).PlatformType = PlatType.Mechanism;

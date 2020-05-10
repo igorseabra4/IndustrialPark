@@ -17,7 +17,7 @@ namespace IndustrialPark
         private const string categoryName = "Base Asset";
 
         [Category(categoryName)]
-        public AssetID AssetID
+        public virtual AssetID AssetID
         {
             get => ReadUInt(0);
             set => Write(0, value);
@@ -115,6 +115,8 @@ namespace IndustrialPark
 
             newData.AddRange(bytesAfterEvents);
             newData[0x05] = (byte)value.Length;
+            if (this is AssetDUPC)
+                newData[0x39] = (byte)value.Length;
 
             Data = newData.ToArray();
         }

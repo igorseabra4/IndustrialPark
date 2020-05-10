@@ -9,6 +9,7 @@ using RenderWareFile;
 using RenderWareFile.Sections;
 using static HipHopFile.Functions;
 using System.Diagnostics;
+using System.Threading;
 
 namespace IndustrialPark
 {
@@ -59,6 +60,13 @@ namespace IndustrialPark
                 "ignoreSerializationRegions=true";
 
             File.WriteAllText(txdGenFolder + "txdgen.ini", ini);
+
+            new Thread(() =>
+            {
+                Thread.Sleep(3000);
+                if (!txdgenProcess.HasExited)
+                    txdgenProcess.Kill();
+            }).Start();
 
             txdgenProcess.Start();
             txdgenProcess.WaitForExit();

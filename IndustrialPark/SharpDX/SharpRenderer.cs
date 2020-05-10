@@ -368,6 +368,23 @@ namespace IndustrialPark
             Plane.Draw(device);
         }
 
+        public List<SharpDX.Direct3D11.Buffer> completeVertexBufferList = new List<SharpDX.Direct3D11.Buffer>();
+
+        public void DrawSpline(SharpDX.Direct3D11.Buffer VertexBuffer, int vertexCount, Matrix world, Vector4 color, bool lineList)
+        {
+            renderData.worldViewProjection = world * viewProjection;
+            renderData.Color = color;
+
+            device.UpdateData(basicBuffer, renderData);
+            device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer);
+            basicShader.Apply();
+
+            device.DeviceContext.InputAssembler.PrimitiveTopology = 
+                lineList ? SharpDX.Direct3D.PrimitiveTopology.LineList : SharpDX.Direct3D.PrimitiveTopology.LineStrip;
+            device.DeviceContext.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(VertexBuffer, 12, 0));
+            device.DeviceContext.Draw(vertexCount, 0);
+        }
+
         private bool playingFly = false;
         private InternalFlyEditor flyToPlay;
 
@@ -525,7 +542,11 @@ namespace IndustrialPark
 
             foreach (SharpMesh mesh in RenderWareModelFile.completeMeshList)
                 if (mesh != null)
-                mesh.Dispose();
+                    mesh.Dispose();
+
+            foreach (var bf in completeVertexBufferList)
+                if (bf != null)
+                    bf.Dispose();
 
             device.Dispose();
         }

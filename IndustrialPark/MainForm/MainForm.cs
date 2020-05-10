@@ -320,6 +320,7 @@ namespace IndustrialPark
                 dontRenderBUTN = AssetBUTN.dontRender,
                 dontRenderCAM = AssetCAM.dontRender,
                 dontRenderDSTR = AssetDSTR.dontRender,
+                dontRenderDUPC = AssetDUPC.dontRender,
                 dontRenderDYNA = AssetDYNA.dontRender,
                 dontRenderEGEN = AssetEGEN.dontRender,
                 dontRenderHANG = AssetHANG.dontRender,
@@ -333,6 +334,7 @@ namespace IndustrialPark
                 dontRenderSDFX = AssetSDFX.dontRender,
                 dontRenderSFX = AssetSFX.dontRender,
                 dontRenderSIMP = AssetSIMP.dontRender,
+                dontRenderSPLN = AssetSPLN.dontRender,
                 dontRenderTRIG = AssetTRIG.dontRender,
                 dontRenderUI = AssetUI.dontRender,
                 dontRenderUIFT = AssetUIFT.dontRender,
@@ -426,6 +428,9 @@ namespace IndustrialPark
 
             dSTRToolStripMenuItem.Checked = !ipSettings.dontRenderDSTR;
             AssetDSTR.dontRender = ipSettings.dontRenderDSTR;
+            
+            dUPCToolStripMenuItem.Checked = !ipSettings.dontRenderDUPC;
+            AssetDUPC.dontRender = ipSettings.dontRenderDUPC;
 
             dYNAToolStripMenuItem.Checked = !ipSettings.dontRenderDYNA;
             AssetDYNA.dontRender = ipSettings.dontRenderDYNA;
@@ -465,6 +470,9 @@ namespace IndustrialPark
 
             sIMPToolStripMenuItem.Checked = !ipSettings.dontRenderSIMP;
             AssetSIMP.dontRender = ipSettings.dontRenderSIMP;
+
+            sPLNToolStripMenuItem.Checked = !ipSettings.dontRenderSPLN;
+            AssetSPLN.dontRender = ipSettings.dontRenderSPLN;
 
             tRIGToolStripMenuItem.Checked = !ipSettings.dontRenderTRIG;
             AssetTRIG.dontRender = ipSettings.dontRenderTRIG;
@@ -1031,6 +1039,18 @@ namespace IndustrialPark
         {
             lITEToolStripMenuItem.Checked = !lITEToolStripMenuItem.Checked;
             AssetLITE.dontRender = !lITEToolStripMenuItem.Checked;
+        }
+
+        private void dUPCToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            dUPCToolStripMenuItem.Checked = !dUPCToolStripMenuItem.Checked;
+            AssetDUPC.dontRender = !dUPCToolStripMenuItem.Checked;
+        }
+
+        private void sPLNToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            sPLNToolStripMenuItem.Checked = !sPLNToolStripMenuItem.Checked;
+            AssetSPLN.dontRender = !sPLNToolStripMenuItem.Checked;
         }
 
         private void uIModeToolStripMenuItem_Click(object sender, EventArgs e)

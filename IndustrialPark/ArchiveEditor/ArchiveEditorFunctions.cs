@@ -297,6 +297,10 @@ namespace IndustrialPark
                 lodt.ClearDictionary();
             else if (assetDictionary[assetID] is AssetPIPT pipt)
                 pipt.ClearDictionary();
+            else if (assetDictionary[assetID] is AssetSPLN spln)
+                spln.Dispose();
+            else if (assetDictionary[assetID] is AssetWIRE wire)
+                wire.Dispose();
             else if (assetDictionary[assetID] is AssetRWTX rwtx)
                 TextureManager.RemoveTexture(rwtx.Name);
         }
@@ -389,9 +393,10 @@ namespace IndustrialPark
                     case AssetType.DPAT: newAsset = new AssetDPAT(AHDR, game, platform); break;
                     case AssetType.DSCO: newAsset = new AssetDSCO(AHDR, game, platform); break;
                     case AssetType.DSTR: newAsset = new AssetDSTR(AHDR, game, platform); break;
+                    case AssetType.DUPC: newAsset = new AssetDUPC(AHDR, game, platform); break;
                     case AssetType.DYNA: newAsset = new AssetDYNA(AHDR, game, platform); break;
                     case AssetType.EGEN: newAsset = new AssetEGEN(AHDR, game, platform); break;
-                    case AssetType.ENV:  newAsset = game == Game.Incredibles ? new AssetENV_TSSM(AHDR, game, platform) : new AssetENV(AHDR, game, platform); break;
+                    case AssetType.ENV:  newAsset = new AssetENV (AHDR, game, platform); break;
                     case AssetType.FLY:  newAsset = new AssetFLY (AHDR, game, platform); break;
                     case AssetType.FOG:  newAsset = new AssetFOG (AHDR, game, platform); break;
                     case AssetType.GRUP: newAsset = new AssetGRUP(AHDR, game, platform); break;
@@ -426,7 +431,7 @@ namespace IndustrialPark
                     case AssetType.SDFX: newAsset = new AssetSDFX(AHDR, game, platform); break;
                     case AssetType.SFX:  newAsset = new AssetSFX (AHDR, game, platform); break;
                     case AssetType.SGRP: newAsset = new AssetSGRP(AHDR, game, platform); break;
-                    case AssetType.SIMP: newAsset = new AssetSIMP(AHDR, game, platform); break;
+                    case AssetType.TRCK: case AssetType.SIMP: newAsset = new AssetSIMP(AHDR, game, platform); break;
                     case AssetType.SHDW: newAsset = new AssetSHDW(AHDR, game, platform); break;
                     case AssetType.SHRP: newAsset = new AssetSHRP(AHDR, game, platform); break;
                     case AssetType.SNDI:
@@ -441,6 +446,7 @@ namespace IndustrialPark
                         else
                             newAsset = new Asset(AHDR, game, platform);
                         break;
+                    case AssetType.SPLN: newAsset = new AssetSPLN(AHDR, game, platform, Program.MainForm.renderer); break;
                     case AssetType.SURF: newAsset = new AssetSURF(AHDR, game, platform); break;
                     case AssetType.TEXT: newAsset = new AssetTEXT(AHDR, game, platform); break;
                     case AssetType.TRIG: newAsset = new AssetTRIG(AHDR, game, platform); break;
@@ -451,16 +457,14 @@ namespace IndustrialPark
                     case AssetType.VIL:  newAsset = new AssetVIL (AHDR, game, platform); break;
                     case AssetType.VILP: newAsset = new AssetVILP(AHDR, game, platform); break;
                     case AssetType.VOLU: newAsset = new AssetVOLU(AHDR, game, platform); break;
-                    case AssetType.WIRE: newAsset = new AssetWIRE(AHDR, game, platform); break;
+                    case AssetType.WIRE: newAsset = new AssetWIRE(AHDR, game, platform, Program.MainForm.renderer); break;
                     case AssetType.CCRV:
                     case AssetType.DTRK:
-                    case AssetType.DUPC:
                     case AssetType.GRSM:
                     case AssetType.NGMS:
                     case AssetType.PGRS:
                     case AssetType.RANM:
                     case AssetType.SLID:
-                    case AssetType.SPLN:
                     case AssetType.SSET:
                     case AssetType.SUBT:
                     case AssetType.TRWT:

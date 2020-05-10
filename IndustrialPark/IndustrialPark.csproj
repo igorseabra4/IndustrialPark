@@ -24,8 +24,8 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>0.1.2.%2a</ApplicationVersion>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>0.1.3.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -47,7 +47,7 @@
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>3</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>icon.ico</ApplicationIcon>
@@ -194,8 +194,10 @@
     <Compile Include="Assets\Binary\AssetVILP.cs" />
     <Compile Include="Assets\Binary\AssetWIRE.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaInPickup.cs" />
+    <Compile Include="Assets\ObjectAssets\AssetSPLN.cs" />
     <Compile Include="Assets\ObjectAssets\AssetLOBM.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetSDFX.cs" />
+    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetDUPC.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\FlagsField_Byte.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\FlagsField_UInt.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\FSB3_File.cs" />
@@ -219,7 +221,6 @@
     <Compile Include="Assets\Models\AssetJSP_INFO.cs" />
     <Compile Include="Assets\Models\AssetRenderWareModel.cs" />
     <Compile Include="Assets\ObjectAssets\AssetCSNM.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetENV_TSSM.cs" />
     <Compile Include="Assets\ObjectAssets\AssetGUST.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetLITE.cs" />
     <Compile Include="Assets\ObjectAssets\AssetPARE.cs" />
@@ -550,6 +551,9 @@
     <EmbeddedResource Include="MainForm\ViewConfig.resx">
       <DependentUpon>ViewConfig.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="release.cmd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
@@ -697,4 +701,15 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\AssimpNet.4.1.0\build\AssimpNet.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\AssimpNet.4.1.0\build\AssimpNet.targets'))" />
   </Target>
+  <Target Name="AfterBuild">
+    <ItemGroup>
+      <MoveToLibFolder Include="$(OutputPath)*.dll" />
+    </ItemGroup>
+    <Move SourceFiles="@(MoveToLibFolder)" DestinationFolder="$(OutputPath)lib" OverwriteReadOnlyFiles="true" />
+  </Target>
+  <PropertyGroup>
+    <PostBuildEvent>; Move all assemblies and related files to lib folder
+ROBOCOPY "$(TargetDir) " "$(TargetDir)lib\ " /XF *.exe *.config *.json *.manifest *.xml *.pdb *.cmd *.application /XD app.publish Resources runtimes lib logs data /E /IS /MOVE
+if %25errorlevel%25 leq 4 exit 0 else exit %25errorlevel%25</PostBuildEvent>
+  </PropertyGroup>
 </Project>

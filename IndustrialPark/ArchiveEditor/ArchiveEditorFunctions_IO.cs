@@ -109,7 +109,8 @@ namespace IndustrialPark
                     else
                         foreach (Section_LHDR LHDR in hip.DICT.LTOC.LHDRList)
                             LHDR.assetIDlist.Remove(AHDR.assetID);
-                    missingAssets.Remove(AHDR.assetID);
+                    if (missingAssets != null)
+                        missingAssets.Remove(AHDR.assetID);
                 }
                 else if (missingAssets == null)
                 {

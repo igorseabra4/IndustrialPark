@@ -26,13 +26,13 @@ namespace IndustrialPark
                     updatedJson = reader.ReadToEnd();
 
                 IPversion updatedVersion = JsonConvert.DeserializeObject<IPversion>(updatedJson);
-                IPversion oldVersion = new IPversion();
+                IPversion oldVersion = IPversion.CurrentVersion;
 
                 hasChecked = true;
 
                 if (oldVersion.version != updatedVersion.version)
                 {
-                    string messageText = "There is an update available for Industrial Park:\n" + updatedVersion.versionName + "\nDo you wish to download it?";
+                    string messageText = $"There is an update available: Industrial Park ({updatedVersion.version}).\n\n{updatedVersion.versionName}\n\nDo you wish to download it?";
                     DialogResult d = MessageBox.Show(messageText, "Update Available", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
                     if (d == DialogResult.Yes)
@@ -53,6 +53,7 @@ namespace IndustrialPark
                         string[] directoryNames = new string[]
                         {
                                 "",
+                                "/lib",
                                 "/Resources",
                                 "/Resources/Models",
                                 "/Resources/Scripts",

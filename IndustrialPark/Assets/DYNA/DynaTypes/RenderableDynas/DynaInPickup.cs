@@ -9,20 +9,12 @@ namespace IndustrialPark
     {
         public string Note => "Version is always 2";
 
-        public override int StructSize => 0x30;
+        public override int StructSize => 0x10;
 
         public DynaInPickup(AssetDYNA asset) : base(asset) { }
 
-        public override bool HasReference(uint assetID) =>
-            PickupHash == assetID || 
-            SCRP_AssetID == assetID;
+        public override bool HasReference(uint assetID) => PickupHash == assetID;
         
-        public override void Verify(ref List<string> result)
-        {
-            Asset.Verify(PickupHash, ref result);
-            Asset.Verify(SCRP_AssetID, ref result);
-        }
-
         public AssetID PickupHash
         {
             get => ReadUInt(0x00);
@@ -63,54 +55,6 @@ namespace IndustrialPark
             }
         }
 
-        [TypeConverter(typeof(HexUShortTypeConverter))]
-        public ushort UnknownShort10
-        {
-            get => ReadUShort(0x10);
-            set => Write(0x10, value);
-        }
-        [TypeConverter(typeof(HexUShortTypeConverter))]
-        public ushort UnknownShort12
-        {
-            get => ReadUShort(0x12);
-            set => Write(0x12, value);
-        }
-
-        public AssetID SCRP_AssetID
-        {
-            get { try { return ReadUInt(0x14); } catch { return 0; } }
-            set { try { Write(0x14, value); ; } catch { } }    
-        }
-        public int Unknown18
-        {
-            get => ReadInt(0x18);
-            set => Write(0x18, value);
-        }
-        public int Unknown1C
-        {
-            get => ReadInt(0x1C);
-            set => Write(0x1C, value);
-        }
-        public int Unknown20
-        {
-            get => ReadInt(0x20);
-            set => Write(0x20, value);
-        }
-        public int Unknown24
-        {
-            get => ReadInt(0x24);
-            set => Write(0x24, value);
-        }
-        public int Unknown28
-        {
-            get => ReadInt(0x28);
-            set => Write(0x28, value);
-        }
-        public int Unknown2C
-        {
-            get => ReadInt(0x2C);
-            set => Write(0x2C, value);
-        }
         public override bool IsRenderableClickable => true;
 
         private Matrix world;
@@ -200,13 +144,16 @@ namespace IndustrialPark
 
         public override float? IntersectsWith(Ray ray)
         {
-            if (ray.Intersects(ref boundingBox))
-                return TriangleIntersection(ray);
+            if (ray.Intersects(ref boundingBox, out float distance))
+                return TriangleIntersection(ray, distance);
             return null;
         }
 
-        private float? TriangleIntersection(Ray r)
+        private float? TriangleIntersection(Ray r, float initialDistance)
         {
+            if (triangles == null)
+                return initialDistance;
+
             bool hasIntersected = false;
             float smallestDistance = 1000f;
 

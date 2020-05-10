@@ -993,9 +993,6 @@ namespace IndustrialPark.Randomizer
                 a.PositionZ = positions[value].Z;
 
                 positions.RemoveAt(value);
-
-                if (a is AssetDYNA dyna)
-                    dyna.OnDynaSpecificPropertyChange(dyna.DynaBase);
             }
 
             return assets.Count != 0;
