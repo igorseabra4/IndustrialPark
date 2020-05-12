@@ -5,8 +5,6 @@ namespace IndustrialPark
 {
     public abstract class DynaHudMeter : DynaHud
     {
-        public string Note => "Version is always 3";
-
         public DynaHudMeter(AssetDYNA asset) : base(asset) { }
         
         public override bool HasReference(uint assetID)

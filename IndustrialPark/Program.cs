@@ -13,6 +13,7 @@ namespace IndustrialPark
 
         public static EventSearch EventSearch;
         public static AssetIDGenerator AssetIDGenerator;
+        public static DynaSearch DynaSearch;
 
         [STAThread]
         static void Main()
@@ -39,6 +40,7 @@ namespace IndustrialPark
 
             EventSearch = new EventSearch();
             AssetIDGenerator = new AssetIDGenerator();
+            DynaSearch = new DynaSearch();
 
             Application.Run(MainForm);
         }

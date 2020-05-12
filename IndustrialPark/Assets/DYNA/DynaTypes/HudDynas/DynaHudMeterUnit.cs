@@ -7,6 +7,8 @@ namespace IndustrialPark
     {
         public override int StructSize => 0x84;
 
+        public string Note => "Version is always 3";
+
         public DynaHudMeterUnit(AssetDYNA asset) : base(asset) { }
         
         public override bool HasReference(uint assetID)

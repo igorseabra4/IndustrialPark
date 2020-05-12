@@ -39,13 +39,6 @@ namespace IndustrialPark
                     if (success)
                         value = events;
                 }
-                else if (value is LinkIncredibles[])
-                {
-                    LinkIncredibles[] events = LinkEditor.GetEvents((LinkIncredibles[])value, endianness, out bool success, IsTimed, thisAssetID);
-
-                    if (success)
-                        value = events;
-                }
             }
 
             IsTimed = false;

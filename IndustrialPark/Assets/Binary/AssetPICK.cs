@@ -38,9 +38,6 @@ namespace IndustrialPark
 
         public AssetPICK(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
-            if (AssetID != AHDR.assetID)
-                AssetID = AHDR.assetID;
-
             SetupDictionary();
         }
 
@@ -77,11 +74,6 @@ namespace IndustrialPark
             }
         }
 
-        private AssetID AssetID
-        {
-            get => ReadUInt(0x00);
-            set => Write(0x00, value);
-        }
         private int AmountOfEntries
         {
             get => ReadInt(0x04);

@@ -1263,7 +1263,12 @@ namespace IndustrialPark
         {
             Program.AssetIDGenerator.Show();
         }
-        
+
+        private void dYNASearchToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.DynaSearch.Show();
+        }
+
         private void MainForm_Resize(object sender, EventArgs e)
         {
             try

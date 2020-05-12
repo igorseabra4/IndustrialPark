@@ -135,26 +135,5 @@ namespace IndustrialPark
                 WriteTimedLinks(value);
             }
         }
-
-        [Category("Scripted Event"), Editor(typeof(LinkListEditor), typeof(UITypeEditor))]
-        public LinkIncredibles[] TimedLinksIncredibles
-        {
-            get
-            {
-                LinkIncredibles[] events = new LinkIncredibles[TimedLinkCount];
-
-                for (int i = 0; i < TimedLinkCount; i++)
-                    events[i] = new LinkIncredibles(Data, TimedLinksStartOffset + i * Link.sizeOfStruct, true, EndianConverter.PlatformEndianness(platform));
-
-                LinkListEditor.IsTimed = true;
-                LinkListEditor.thisAssetID = AHDR.assetID;
-                LinkListEditor.endianness = EndianConverter.PlatformEndianness(platform);
-                return events;
-            }
-            set
-            {
-                WriteTimedLinks(value);
-            }
-        }
     }
 }

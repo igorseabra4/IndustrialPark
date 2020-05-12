@@ -6,14 +6,17 @@ using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
-    public class DynaTeleport_BFBB : DynaBase
+    public class DynaTeleport : DynaBase
     {
-        public string Note => "Version is always 1 or 2. Version 1 doesn't use the Rotation2";
+        public string Note => "Version is always 1 or 2.";
 
         public override int StructSize => version == 1 ? 0x10 : 0x14;
 
-        public DynaTeleport_BFBB(AssetDYNA asset, int version) : base(asset)
+        public DynaTeleport(AssetDYNA asset, int version) : base(asset)
         {
+            if (asset.game == Game.Incredibles)
+                version = 1;
+
             this.version = version;
         }
         
@@ -49,28 +52,6 @@ namespace IndustrialPark
             }
         }
 
-        private void ValidateMRKR()
-        {
-            try
-            {
-                foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                    if (ae.archive.ContainsAsset(MRKR_ID))
-                    {
-                        Asset asset = ae.archive.GetFromAssetID(MRKR_ID);
-                        if (asset is AssetMRKR MRKR)
-                        {
-                            this.MRKR = MRKR;
-                            this.MRKR.isInvisible = true;
-                        }
-                        return;
-                    }
-            }
-            catch
-            {
-            }
-            MRKR = null;
-        }
-
         public int Opened
         {
             get => ReadInt(0x04);
@@ -87,6 +68,7 @@ namespace IndustrialPark
             }
         }
 
+        [Description("Not used in version 1 or Movie.")]
         public int CameraAngle
         {
             get => version == 1 ? 0 : ReadInt(0x0C);
@@ -96,10 +78,23 @@ namespace IndustrialPark
                     Write(0x0C, value);
             }
         }
+
         public AssetID TargetDYNATeleportID
         {
             get => version == 1 ? ReadUInt(0x0C) : ReadUInt(0x10);
             set => Write(version == 1 ? 0x0C : 0x10, value);
+        }
+
+        private void ValidateMRKR()
+        {
+            foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
+                if (ae.archive.ContainsAsset(MRKR_ID) && ae.archive.GetFromAssetID(MRKR_ID) is AssetMRKR MRKR)
+                {
+                    this.MRKR = MRKR;
+                    this.MRKR.isInvisible = true;
+                    return;
+                }
+            MRKR = null;
         }
 
         [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
@@ -107,6 +102,7 @@ namespace IndustrialPark
         {
             get
             {
+                ValidateMRKR();
                 if (MRKR != null)
                     return MRKR.PositionX;
                 return 0;
@@ -125,6 +121,7 @@ namespace IndustrialPark
         {
             get
             {
+                ValidateMRKR();
                 if (MRKR != null)
                     return MRKR.PositionY;
                 return 0;
@@ -143,6 +140,7 @@ namespace IndustrialPark
         {
             get
             {
+                ValidateMRKR();
                 if (MRKR != null)
                     return MRKR.PositionZ;
                 return 0;
@@ -195,7 +193,7 @@ namespace IndustrialPark
                 if (renderingDictionary[_modelAssetID] is AssetMINF MINF)
                 {
                     if (MINF.HasRenderWareModelFile())
-                        triangles = renderingDictionary[_modelAssetID].GetRenderWareModelFile().triangleList.ToArray();
+                        triangles = MINF.GetRenderWareModelFile().triangleList.ToArray();
                     else
                         triangles = null;
                 }

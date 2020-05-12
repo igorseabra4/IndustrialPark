@@ -87,23 +87,6 @@ namespace IndustrialPark
             }
             set => WriteEvents(value);
         }
-        [Category(categoryName), Editor(typeof(LinkListEditor), typeof(UITypeEditor))]
-        public LinkIncredibles[] LinksIncredibles
-        {
-            get
-            {
-                LinkListEditor.IsTimed = false;
-                LinkListEditor.endianness = EndianConverter.PlatformEndianness(platform);
-                LinkListEditor.thisAssetID = AHDR.assetID;
-                LinkIncredibles[] events = new LinkIncredibles[LinkCount];
-
-                for (int i = 0; i < LinkCount; i++)
-                    events[i] = new LinkIncredibles(Data, EventStartOffset + i * Link.sizeOfStruct, false, EndianConverter.PlatformEndianness(platform));
-
-                return events;
-            }
-            set => WriteEvents(value);
-        }
 
         protected void WriteEvents(Link[] value)
         {
@@ -179,11 +162,8 @@ namespace IndustrialPark
             if (game == Game.Incredibles)
                 dt.RemoveProperty("LinksBFBB");
             else
-            {
-                dt.RemoveProperty("LinksIncredibles");
                 dt.RemoveProperty("LinksTSSM");
-            }
-
+            
             base.SetDynamicProperties(dt);
         }
     }

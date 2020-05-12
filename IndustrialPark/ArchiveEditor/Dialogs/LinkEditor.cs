@@ -12,8 +12,7 @@ namespace IndustrialPark
         private enum EventType
         {
             BFBB,
-            TSSM,
-            Incredibles
+            TSSM
         }
 
         private readonly uint thisAssetID;
@@ -95,20 +94,6 @@ namespace IndustrialPark
                 listBoxLinks.Items.Add(assetEvent);
         }
 
-        private LinkEditor(LinkIncredibles[] events, bool isTimed, Endianness endianness, uint thisAssetID)
-            : this(isTimed, endianness, thisAssetID)
-        {
-            eventType = EventType.Incredibles;
-            foreach (EventIncredibles o in Enum.GetValues(typeof(EventIncredibles)))
-            {
-                comboRecieveEvent.Items.Add(o);
-                comboSendEvent.Items.Add(o);
-            }
-
-            foreach (LinkIncredibles assetEvent in events)
-                listBoxLinks.Items.Add(assetEvent);
-        }
-
         private bool OK = false;
 
         private Color bgColor;
@@ -156,21 +141,7 @@ namespace IndustrialPark
 
             return assetEventBFBBs.ToArray();
         }
-
-        public static LinkIncredibles[] GetEvents(LinkIncredibles[] links, Endianness endianness, out bool success, bool isTimed, uint thisAssetID)
-        {
-            LinkEditor eventEditor = new LinkEditor(links, isTimed, endianness, thisAssetID);
-            eventEditor.ShowDialog();
-
-            success = eventEditor.OK;
-
-            List<LinkIncredibles> assetEventBFBBs = new List<LinkIncredibles>();
-            foreach (LinkIncredibles assetEvent in eventEditor.listBoxLinks.Items)
-                assetEventBFBBs.Add(assetEvent);
-
-            return assetEventBFBBs.ToArray();
-        }
-
+        
         private void buttonAdd_Click(object sender, EventArgs e)
         {
             switch (eventType)
@@ -180,9 +151,6 @@ namespace IndustrialPark
                     break;
                 case EventType.TSSM:
                     listBoxLinks.Items.Add(new LinkTSSM(endianness, isTimed));
-                    break;
-                case EventType.Incredibles:
-                    listBoxLinks.Items.Add(new LinkIncredibles(endianness, isTimed));
                     break;
             }
             listBoxLinks.SelectedIndices.Clear();
@@ -242,9 +210,6 @@ namespace IndustrialPark
                     case EventType.TSSM:
                         listBoxLinks.Items.Add(new LinkTSSM(newData, 0, isTimed, endianness));
                         break;
-                    case EventType.Incredibles:
-                        listBoxLinks.Items.Add(new LinkIncredibles(newData, 0, isTimed, endianness));
-                        break;
                 }
                 listBoxLinks.SetSelected(listBoxLinks.Items.Count - 1, true);
             }
@@ -273,11 +238,6 @@ namespace IndustrialPark
                             assetEvent = (LinkTSSM)listBoxLinks.Items[listBoxLinks.SelectedIndex];
                             comboRecieveEvent.SelectedItem = ((LinkTSSM)assetEvent).EventReceiveID;
                             comboSendEvent.SelectedItem = ((LinkTSSM)assetEvent).EventSendID;
-                            break;
-                        case EventType.Incredibles:
-                            assetEvent = (LinkIncredibles)listBoxLinks.Items[listBoxLinks.SelectedIndex];
-                            comboRecieveEvent.SelectedItem = ((LinkIncredibles)assetEvent).EventReceiveID;
-                            comboSendEvent.SelectedItem = ((LinkIncredibles)assetEvent).EventSendID;
                             break;
                     }
 
@@ -321,13 +281,6 @@ namespace IndustrialPark
                                 listBoxLinks.Items[previndex] = previous;
                                 break;
                             }
-                        case EventType.Incredibles:
-                            {
-                                LinkIncredibles previous = (LinkIncredibles)listBoxLinks.Items[previndex - 1];
-                                listBoxLinks.Items[previndex - 1] = (LinkIncredibles)listBoxLinks.Items[previndex];
-                                listBoxLinks.Items[previndex] = previous;
-                                break;
-                            }
                     }
                 }
 
@@ -357,13 +310,6 @@ namespace IndustrialPark
                             {
                                 LinkTSSM post = (LinkTSSM)listBoxLinks.Items[previndex + 1];
                                 listBoxLinks.Items[previndex + 1] = (LinkTSSM)listBoxLinks.Items[previndex];
-                                listBoxLinks.Items[previndex] = post;
-                                break;
-                            }
-                        case EventType.Incredibles:
-                            {
-                                LinkIncredibles post = (LinkIncredibles)listBoxLinks.Items[previndex + 1];
-                                listBoxLinks.Items[previndex + 1] = (LinkIncredibles)listBoxLinks.Items[previndex];
                                 listBoxLinks.Items[previndex] = post;
                                 break;
                             }
@@ -398,9 +344,6 @@ namespace IndustrialPark
                     case EventType.TSSM:
                         ((LinkTSSM)listBoxLinks.Items[listBoxLinks.SelectedIndex]).EventReceiveID = (EventTSSM)comboRecieveEvent.SelectedItem;
                         break;
-                    case EventType.Incredibles:
-                        ((LinkIncredibles)listBoxLinks.Items[listBoxLinks.SelectedIndex]).EventReceiveID = (EventIncredibles)comboRecieveEvent.SelectedItem;
-                        break;
                 }
                 SetListBoxUpdate();
             }
@@ -417,9 +360,6 @@ namespace IndustrialPark
                         break;
                     case EventType.TSSM:
                         ((LinkTSSM)listBoxLinks.Items[listBoxLinks.SelectedIndex]).EventSendID = (EventTSSM)comboSendEvent.SelectedItem;
-                        break;
-                    case EventType.Incredibles:
-                        ((LinkIncredibles)listBoxLinks.Items[listBoxLinks.SelectedIndex]).EventSendID = (EventIncredibles)comboSendEvent.SelectedItem;
                         break;
                 }
                 SetListBoxUpdate();
@@ -507,10 +447,6 @@ namespace IndustrialPark
                     break;
                 case EventType.TSSM:
                     listBoxLinks.Items[listBoxLinks.SelectedIndex] = (LinkTSSM)listBoxLinks.Items[listBoxLinks.SelectedIndex];
-                    break;
-                case EventType.Incredibles:
-                    listBoxLinks.Items[listBoxLinks.SelectedIndex] = (LinkIncredibles)listBoxLinks.Items[listBoxLinks.SelectedIndex];
-                    ((LinkIncredibles)listBoxLinks.Items[listBoxLinks.SelectedIndex]).EventSendID = (EventIncredibles)comboSendEvent.SelectedItem;
                     break;
             }
 

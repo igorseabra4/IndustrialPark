@@ -7,7 +7,7 @@ namespace IndustrialPark
 {
     public class DynaInPickup : DynaBase
     {
-        public string Note => "Version is always 2";
+        public string Note => "Version is always 1";
 
         public override int StructSize => 0x10;
 

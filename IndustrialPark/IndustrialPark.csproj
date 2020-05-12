@@ -193,6 +193,13 @@
     <Compile Include="Assets\Binary\AssetCSN.cs" />
     <Compile Include="Assets\Binary\AssetVILP.cs" />
     <Compile Include="Assets\Binary\AssetWIRE.cs" />
+    <Compile Include="Assets\DYNA\DynaTextBox.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\DynaInteractionLaunch.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\DynaRumbleSphere.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\DynaRumble.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaIncrediblesIcon.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaFlameEmitter.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaSmokeEmitter.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaInPickup.cs" />
     <Compile Include="Assets\ObjectAssets\AssetSPLN.cs" />
     <Compile Include="Assets\ObjectAssets\AssetLOBM.cs" />
@@ -263,11 +270,9 @@
     <Compile Include="ArchiveEditor\Dialogs\ApplyScale.designer.cs">
       <DependentUpon>ApplyScale.cs</DependentUpon>
     </Compile>
-    <Compile Include="Links\Enums\EventIncredibles.cs" />
     <Compile Include="Links\Enums\EventTSSM.cs" />
     <Compile Include="Links\Link.cs" />
     <Compile Include="Links\LinkBFBB.cs" />
-    <Compile Include="Links\LinkIncredibles.cs" />
     <Compile Include="Links\LinkTSSM.cs" />
     <Compile Include="Other\MessageBox.cs" />
     <Compile Include="Models\BSP_IO_Shared.cs" />
@@ -369,8 +374,7 @@
     <Compile Include="Assets\ObjectAssets\AssetPORT.cs" />
     <Compile Include="Assets\ObjectAssets\AssetTIMR.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetBOUL.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaTeleport_BFBB.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaTeleport.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaTeleport.cs" />
     <Compile Include="Assets\Shared\Enums\VilType.cs" />
     <Compile Include="Other\IPSettings.cs" />
     <Compile Include="Other\ProjectJson.cs" />
@@ -473,6 +477,9 @@
     <EmbeddedResource Include="Research\AssetIDGenerator.resx">
       <DependentUpon>AssetIDGenerator.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Research\DynaSearch.resx">
+      <DependentUpon>DynaSearch.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Research\EventSearch.resx">
       <DependentUpon>EventSearch.cs</DependentUpon>
     </EmbeddedResource>
@@ -481,6 +488,12 @@
     </Compile>
     <Compile Include="Research\AssetIDGenerator.Designer.cs">
       <DependentUpon>AssetIDGenerator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Research\DynaSearch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Research\DynaSearch.Designer.cs">
+      <DependentUpon>DynaSearch.cs</DependentUpon>
     </Compile>
     <Compile Include="Research\EventSearch.cs">
       <SubType>Form</SubType>

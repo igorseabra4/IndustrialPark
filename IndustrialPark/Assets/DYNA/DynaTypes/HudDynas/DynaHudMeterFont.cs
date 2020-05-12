@@ -4,11 +4,17 @@ using System.Drawing.Design;
 
 namespace IndustrialPark
 {
-    public class DynaHudMeterFontV3 : DynaHudMeter
+    public class DynaHudMeterFont : DynaHudMeter
     {
-        public override int StructSize => 0x64;
+        public string Note => "Version is always 2 or 3. Version 2 does not use any of the flags.";
 
-        public DynaHudMeterFontV3(AssetDYNA asset) : base(asset) { }
+        public override int StructSize => version == 3 ? 0x64 : 0x60;
+
+        private readonly int version;
+        public DynaHudMeterFont(AssetDYNA asset, int version) : base(asset)
+        {
+            this.version = version;
+        }
                 
         public FontEnum Font
         {
@@ -117,26 +123,42 @@ namespace IndustrialPark
         [TypeConverter(typeof(HexByteTypeConverter))]
         public byte CounterModeFlag
         {
-            get => ReadByte(0x60);
-            set => Write(0x60, value);
+            get => version == 3 ? ReadByte(0x60) : (byte)0;
+            set 
+            {
+                if (version == 3)
+                    Write(0x60, value);
+            }
         }
         [TypeConverter(typeof(HexByteTypeConverter))]
         public byte Flag2
         {
-            get => ReadByte(0x61);
-            set => Write(0x61, value);
+            get => version == 3 ? ReadByte(0x61) : (byte)0;
+            set
+            {
+                if (version == 3)
+                    Write(0x61, value);
+            }
         }
         [TypeConverter(typeof(HexByteTypeConverter))]
         public byte Flag3
         {
-            get => ReadByte(0x62);
-            set => Write(0x62, value);
+            get => version == 3 ? ReadByte(0x62) : (byte)0;
+            set
+            {
+                if (version == 3)
+                    Write(0x62, value);
+            }
         }
         [TypeConverter(typeof(HexByteTypeConverter))]
         public byte Flag4
         {
-            get => ReadByte(0x63);
-            set => Write(0x63, value);
+            get => version == 3 ? ReadByte(0x63) : (byte)0;
+            set
+            {
+                if (version == 3)
+                    Write(0x63, value);
+            }
         }
     }
 }
