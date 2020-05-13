@@ -24,9 +24,7 @@ namespace IndustrialPark
             _radius2 = ReadFloat(0x2C);
 
             CreateTransformMatrix();
-
-            if (!ArchiveEditorFunctions.renderableAssetSetTrans.Contains(this))
-                ArchiveEditorFunctions.renderableAssetSetTrans.Add(this);
+            ArchiveEditorFunctions.renderableAssets.Add(this);
         }
 
         public override bool HasReference(uint assetID) => Sound_AssetID == assetID || base.HasReference(assetID);

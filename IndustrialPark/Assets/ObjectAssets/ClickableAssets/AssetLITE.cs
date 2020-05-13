@@ -16,11 +16,8 @@ namespace IndustrialPark
         public AssetLITE(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             _position = new Vector3(ReadFloat(0x30), ReadFloat(0x34), ReadFloat(0x38));
-
             CreateTransformMatrix();
-
-            if (!ArchiveEditorFunctions.renderableAssetSetTrans.Contains(this))
-                ArchiveEditorFunctions.renderableAssetSetTrans.Add(this);
+            ArchiveEditorFunctions.renderableAssets.Add(this);
         }
 
         public void CreateTransformMatrix()

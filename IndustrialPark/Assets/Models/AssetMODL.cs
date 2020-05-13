@@ -1,6 +1,8 @@
 ﻿using HipHopFile;
 using SharpDX;
 using SharpDX.Direct3D11;
+using System;
+using System.Collections.Generic;
 using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
@@ -32,6 +34,20 @@ namespace IndustrialPark
             nameDictionary.Remove(Functions.BKDRHash(newName));
         }
 
+        private Dictionary<int, (BlendOption, BlendOption)> blendModes;
+
+        public void SetBlendModes((int, BlendFactorType, BlendFactorType)[] sourceDest)
+        {
+            blendModes = new Dictionary<int, (BlendOption, BlendOption)>();
+            foreach (var f in sourceDest)
+                blendModes.Add(f.Item1 == -1 ? -1 : (int)(Math.Log(f.Item1, 2)-1), (GetSharpBlendMode(f.Item2, true), GetSharpBlendMode(f.Item3, false)));
+        }
+
+        public void ResetBlendModes()
+        {
+            blendModes = null;
+        }
+
         public void Draw(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset)
         {
             if (renderBasedOnLodt)
@@ -45,23 +61,18 @@ namespace IndustrialPark
                     return;
             }
 
-            if (renderBasedOnPipt)
+            if (AHDR.ADBG.assetName.Contains("uplicatotron"))
             {
-                if (AssetPIPT.BlendModes.ContainsKey(AHDR.assetID))
-                {
-                    (int, BlendFactorType, BlendFactorType) sourceDest = AssetPIPT.BlendModes[AHDR.assetID];
-                    renderer.device.SetBlend(BlendOperation.Add, GetSharpBlendMode(sourceDest.Item2, true), GetSharpBlendMode(sourceDest.Item3, false));
-                }
-                else
-                    renderer.device.SetDefaultBlendState();
 
-                renderer.device.UpdateAllStates();
             }
 
-            model.Render(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, uvAnimOffset, _atomicFlags);
+            if (renderBasedOnPipt && blendModes != null)
+                model.RenderPipt(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, uvAnimOffset, _atomicFlags, blendModes);            
+            else
+                model.Render(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, uvAnimOffset, _atomicFlags);
         }
 
-        private BlendOption GetSharpBlendMode(BlendFactorType type, bool dest)
+        private static BlendOption GetSharpBlendMode(BlendFactorType type, bool dest)
         {
             switch (type)
             {
@@ -88,11 +99,8 @@ namespace IndustrialPark
                 case BlendFactorType.SourceAlphaSaturated:
                     return BlendOption.SourceAlphaSaturate;
             }
-
-            if (dest)
-                return BlendOption.One;
-            else
-                return BlendOption.Zero;
+            
+            return dest ? BlendOption.One : BlendOption.Zero;
         }
     }
 }

@@ -23,8 +23,7 @@ namespace IndustrialPark
 
             CreateTransformMatrix();
             
-            if (!renderableAssetSetCommon.Contains(this))
-                renderableAssetSetCommon.Add(this);
+            renderableAssets.Add(this);
         }
         
         public virtual void CreateTransformMatrix()

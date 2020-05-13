@@ -139,9 +139,8 @@ namespace IndustrialPark.Randomizer
                 MessageBox.Show(message);
             }
 
-            ArchiveEditorFunctions.renderableAssetSetCommon.Clear();
-            ArchiveEditorFunctions.renderableAssetSetJSP.Clear();
-            ArchiveEditorFunctions.renderableAssetSetTrans.Clear();
+            ArchiveEditorFunctions.renderableAssets.Clear();
+            ArchiveEditorFunctions.renderableJSPs.Clear();
             ArchiveEditorFunctions.renderingDictionary.Clear();
             ArchiveEditorFunctions.nameDictionary.Clear();
         }

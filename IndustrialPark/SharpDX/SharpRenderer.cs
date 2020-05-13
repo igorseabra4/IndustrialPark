@@ -297,6 +297,11 @@ namespace IndustrialPark
             renderData.worldViewProjection = Matrix.Scaling(multiplier) * world * viewProjection;
             renderData.Color = isSelected ? selectedColor : normalColor;
 
+            device.SetCullModeNone();
+            device.ApplyRasterState();
+            device.SetBlendStateAlphaBlend();
+            device.UpdateAllStates();
+
             device.UpdateData(basicBuffer, renderData);
             device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer);
             basicShader.Apply();
@@ -311,6 +316,11 @@ namespace IndustrialPark
 
             renderData.worldViewProjection = Matrix.Scaling(multiplier) * world * viewProjection;
             renderData.Color = isSelected ? selectedColor : normalColor;
+
+            device.SetCullModeNone();
+            device.ApplyRasterState();
+            device.SetBlendStateAlphaBlend();
+            device.UpdateAllStates();
 
             device.UpdateData(basicBuffer, renderData);
             device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer);
@@ -327,6 +337,11 @@ namespace IndustrialPark
             renderData.worldViewProjection = world * viewProjection;
             renderData.Color = isSelected ? selectedColor : normalColor;
 
+            device.SetCullModeNone();
+            device.ApplyRasterState();
+            device.SetBlendStateAlphaBlend();
+            device.UpdateAllStates();
+
             device.UpdateData(basicBuffer, renderData);
             device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer);
             basicShader.Apply();
@@ -341,6 +356,11 @@ namespace IndustrialPark
 
             renderData.worldViewProjection = world * viewProjection;
             renderData.Color = isSelected ? selectedColor : normalColor;
+
+            device.SetCullModeNone();
+            device.ApplyRasterState();
+            device.SetBlendStateAlphaBlend();
+            device.UpdateAllStates();
 
             device.UpdateData(basicBuffer, renderData);
             device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer);
@@ -435,17 +455,10 @@ namespace IndustrialPark
                         device.SetDefaultDepthState();
                         device.UpdateAllStates();
 
-                        List<AssetUI> renderCommon = new List<AssetUI>(ArchiveEditorFunctions.renderableAssetSetCommon.Count);
-
-                        foreach (IRenderableAsset a in ArchiveEditorFunctions.renderableAssetSetCommon)
-                            if (a is AssetUI ui)
-                                renderCommon.Add(ui);
-                            else if (a is AssetUIFT uift)
-                                renderCommon.Add(uift);
-
-                        renderCommon = renderCommon.OrderBy(f => -f.PositionZ).ToList();
-
-                        foreach (IRenderableAsset a in renderCommon)
+                        foreach (IRenderableAsset a in
+                        (from IRenderableAsset asset in ArchiveEditorFunctions.renderableAssets
+                         where asset is AssetUI || asset is AssetUIFT
+                         select (IClickableAsset)asset).OrderBy(f => -f.PositionZ))
                             a.Draw(this);
                     }
                     else
@@ -462,34 +475,18 @@ namespace IndustrialPark
                         device.SetFillModeDefault();
                         device.SetCullModeDefault();
                         device.ApplyRasterState();
-                        device.SetBlendStateAlphaBlend();
                         device.SetDefaultDepthState();
                         device.UpdateAllStates();
-
-                        List<IRenderableAsset> renderJSP = new List<IRenderableAsset>(ArchiveEditorFunctions.renderableAssetSetJSP.Count);
-                        List<IRenderableAsset> renderCommon = new List<IRenderableAsset>(ArchiveEditorFunctions.renderableAssetSetCommon.Count);
-                        List<IRenderableAsset> renderTrans = new List<IRenderableAsset>(ArchiveEditorFunctions.renderableAssetSetTrans.Count);
-                        //  List<IRenderableAsset> renderLarge = new List<IRenderableAsset>();
-
-                        renderJSP.AddRange(ArchiveEditorFunctions.renderableAssetSetJSP);
-                        renderCommon.AddRange(ArchiveEditorFunctions.renderableAssetSetCommon);
-                        renderTrans.AddRange(ArchiveEditorFunctions.renderableAssetSetTrans);
-
-                        //renderCommon = renderCommon.OrderBy(f => f.GetDistance(Camera.Position)).Reverse().ToList();
-                        renderTrans = renderTrans.OrderBy(f => f.GetDistance(Camera.Position)).Reverse().ToList();
-
-                        foreach (IRenderableAsset a in renderJSP)
+                        
+                        foreach (IRenderableAsset a in 
+                        ArchiveEditorFunctions.renderableJSPs)
                             a.Draw(this);
 
-                        foreach (IRenderableAsset a in renderCommon)
+                        foreach (IRenderableAsset a in 
+                        ArchiveEditorFunctions.renderableAssets.OrderBy(f => -f.GetDistance(Camera.Position)))
                         {
                             BoundingBox bb = a.GetBoundingBox();
-                            //if (bb.Width > 100)
-                            //    renderLarge.Add(a);
-                            //else 
-                            if (a is AssetPKUP assetPKUP && AssetPICK.pickEntries.Count == 0)
-                                renderTrans.Add(a);
-                            else if (EntityAsset.movementPreview || frustum.Intersects(ref bb))
+                            if (EntityAsset.movementPreview || frustum.Intersects(ref bb))
                                 a.Draw(this);
                         }
 
@@ -497,24 +494,7 @@ namespace IndustrialPark
                         device.ApplyRasterState();
                         device.SetBlendStateAlphaBlend();
                         device.UpdateAllStates();
-
-                        foreach (IRenderableAsset a in renderTrans)
-                        {
-                            BoundingBox bb = a.GetBoundingBox();
-                            if (EntityAsset.movementPreview || frustum.Intersects(ref bb))
-                                a.Draw(this);
-                        }
-
-                        device.SetCullModeDefault();
-                        device.ApplyRasterState();
-                        device.SetBlendStateAlphaBlend();
-                        device.UpdateAllStates();
-
-                        //  foreach (IRenderableAsset a in renderLarge)
-                        //  {
-                        //        a.Draw(this);
-                        //  }
-
+                        
                         ArchiveEditorFunctions.RenderGizmos(this);
                     }
 

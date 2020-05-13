@@ -41,8 +41,10 @@ namespace IndustrialPark
             TopMost = true;
             this.standalone = standalone;
 
-            archive = new ArchiveEditorFunctions();
-            archive.standalone = standalone;
+            archive = new ArchiveEditorFunctions
+            {
+                standalone = standalone
+            };
             defaultColor = textBoxFindAsset.BackColor;
 
             textBoxFindAsset.AutoCompleteSource = AutoCompleteSource.CustomSource;

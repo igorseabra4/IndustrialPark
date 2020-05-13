@@ -14,7 +14,7 @@ namespace IndustrialPark
         {
             Setup(renderer);
             CreateTransformMatrix();
-            ArchiveEditorFunctions.renderableAssetSetCommon.Add(this);
+            ArchiveEditorFunctions.renderableAssets.Add(this);
         }
 
         public override bool HasReference(uint assetID) => 

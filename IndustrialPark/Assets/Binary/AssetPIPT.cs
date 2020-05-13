@@ -238,23 +238,41 @@ namespace IndustrialPark
 
     public class AssetPIPT : Asset
     {
-        public static Dictionary<uint, (int, BlendFactorType, BlendFactorType)> BlendModes = new Dictionary<uint, (int, BlendFactorType, BlendFactorType)>();
-
-        public AssetPIPT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetPIPT(Section_AHDR AHDR, Game game, Platform platform, ArchiveEditorFunctions.OnPipeInfoTableEdited onPipeInfoTableEdited) : base(AHDR, game, platform)
         {
+            this.onPipeInfoTableEdited = onPipeInfoTableEdited;
             UpdateDictionary();
         }
+        public AssetPIPT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+
+        ArchiveEditorFunctions.OnPipeInfoTableEdited onPipeInfoTableEdited;
 
         public void UpdateDictionary()
         {
+            ClearDictionary();
+
+            Dictionary<uint, (int, BlendFactorType, BlendFactorType)[]> BlendModes = new Dictionary<uint, (int, BlendFactorType, BlendFactorType)[]>();
+
             foreach (EntryPIPT entry in PIPT_Entries)
-                BlendModes[entry.ModelAssetID] = (entry.SubObjectBits, entry.SourceBlend, entry.DestinationBlend);
+            {
+                if (!BlendModes.ContainsKey(entry.ModelAssetID))
+                    BlendModes[entry.ModelAssetID] = new (int, BlendFactorType, BlendFactorType)[0];
+
+                var entries = BlendModes[entry.ModelAssetID].ToList();
+                for (int i = 0; i < entries.Count; i++)
+                    if (entries[i].Item1 == entry.SubObjectBits)
+                        entries.RemoveAt(i--);
+
+                entries.Add((entry.SubObjectBits, entry.SourceBlend, entry.DestinationBlend));
+                BlendModes[entry.ModelAssetID] = entries.ToArray();
+            }
+
+            onPipeInfoTableEdited?.Invoke(BlendModes);
         }
 
         public void ClearDictionary()
         {
-            foreach (EntryPIPT entry in PIPT_Entries)
-                BlendModes.Remove(entry.ModelAssetID);
+            onPipeInfoTableEdited?.Invoke(null);
         }
 
         public override bool HasReference(uint assetID)

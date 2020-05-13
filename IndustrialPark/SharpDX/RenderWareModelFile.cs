@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using RenderWareFile;
 using RenderWareFile.Sections;
+using SharpDX.Direct3D11;
 
 namespace IndustrialPark
 {
@@ -430,6 +431,9 @@ namespace IndustrialPark
             renderData.Color = color;
             renderData.UvAnimOffset = (Vector4)uvAnimOffset;
 
+            renderer.device.SetBlendStateAlphaBlend();
+            renderer.device.UpdateAllStates();
+
             renderer.device.UpdateData(renderer.tintedBuffer, renderData);
             renderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, renderer.tintedBuffer);
             renderer.tintedShader.Apply();
@@ -438,6 +442,36 @@ namespace IndustrialPark
             {
                 if (meshList[i] == null || (dontDrawInvisible && (atomicFlags[i] & AtomicFlags.Render) == 0))
                     continue;
+
+                meshList[i].Begin(renderer.device);
+                for (int j = 0; j < meshList[i].SubSets.Count(); j++)
+                    meshList[i].Draw(renderer.device, j);
+            }
+        }
+
+        public void RenderPipt(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset, AtomicFlags[] atomicFlags, Dictionary<int, (SharpDX.Direct3D11.BlendOption, SharpDX.Direct3D11.BlendOption)> blendModes)
+        {
+            renderData.worldViewProjection = world * renderer.viewProjection;
+            renderData.Color = color;
+            renderData.UvAnimOffset = (Vector4)uvAnimOffset;
+
+            renderer.device.UpdateData(renderer.tintedBuffer, renderData);
+            renderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, renderer.tintedBuffer);
+            renderer.tintedShader.Apply();
+
+            for (int i = meshList.Count -1; i >= 0; i--)
+            {
+                if (meshList[i] == null || (dontDrawInvisible && (atomicFlags[i] & AtomicFlags.Render) == 0))
+                    continue;
+
+                if (blendModes.ContainsKey(i))
+                    renderer.device.SetBlend(BlendOperation.Add, blendModes[i].Item1, blendModes[i].Item2);
+                else if (blendModes.ContainsKey(-1))
+                    renderer.device.SetBlend(BlendOperation.Add, blendModes[-1].Item1, blendModes[-1].Item2);
+                else
+                    renderer.device.SetDefaultBlendState();
+
+                renderer.device.UpdateAllStates();
 
                 meshList[i].Begin(renderer.device);
                 for (int j = 0; j < meshList[i].SubSets.Count(); j++)

@@ -11,9 +11,8 @@ namespace IndustrialPark
 {
     public partial class ArchiveEditorFunctions
     {
-        public static HashSet<IRenderableAsset> renderableAssetSetCommon = new HashSet<IRenderableAsset>();
-        public static HashSet<IRenderableAsset> renderableAssetSetTrans = new HashSet<IRenderableAsset>();
-        public static HashSet<AssetJSP> renderableAssetSetJSP = new HashSet<AssetJSP>();
+        public static HashSet<IRenderableAsset> renderableAssets = new HashSet<IRenderableAsset>();
+        public static HashSet<AssetJSP> renderableJSPs = new HashSet<AssetJSP>();
         public static Dictionary<uint, IAssetWithModel> renderingDictionary = new Dictionary<uint, IAssetWithModel>();
         public static Dictionary<uint, string> nameDictionary = new Dictionary<uint, string>();
 
@@ -106,7 +105,7 @@ namespace IndustrialPark
                 hipFile.platform = platform;
             while (this.platform == Platform.Unknown)
                 hipFile.platform = ChoosePlatformDialog.GetPlatform();
-            
+
             List<string> autoComplete = new List<string>(DICT.ATOC.AHDRList.Count);
 
             foreach (Section_AHDR AHDR in DICT.ATOC.AHDRList)
@@ -124,6 +123,11 @@ namespace IndustrialPark
                 SetupTextureDisplay();
 
             RecalculateAllMatrices();
+
+            if (!skipTexturesAndModels && ContainsAssetWithType(AssetType.PIPT) && ContainsAssetWithType(AssetType.MODL))
+                foreach (var asset in assetDictionary.Values)
+                    if (asset is AssetPIPT PIPT)
+                        PIPT.UpdateDictionary();
 
             progressBar.Close();
 
@@ -151,7 +155,7 @@ namespace IndustrialPark
                 out bool OK, out Section_PACK PACK, out Platform newPlatform, out Game newGame);
 
             unsupported = new List<uint>();
-            
+
             if (OK)
             {
                 hipFile.PACK = PACK;
@@ -170,7 +174,7 @@ namespace IndustrialPark
 
                 if (previousPlatform != platform || previousGame != game)
                     ConvertAllAssetTypes(previousPlatform, previousGame, out unsupported);
-                UnsavedChanges = true; 
+                UnsavedChanges = true;
             }
 
             return OK;
@@ -191,7 +195,7 @@ namespace IndustrialPark
         public List<uint> GetAssetIDsOnLayer(int index) => DICT.LTOC.LHDRList[index].assetIDlist;
 
         public List<Section_AHDR> GetAssetsOfType(AssetType assetType) => (from asset in assetDictionary.Values where asset.AHDR.assetType == assetType select asset.AHDR).ToList();
-        
+
         public void AddLayer()
         {
             DICT.LTOC.LHDRList.Add(new Section_LHDR()
@@ -267,7 +271,7 @@ namespace IndustrialPark
 
             progressBar.Close();
         }
-        
+
         public void DisposeOfAsset(uint assetID, bool fast = false)
         {
             currentlySelectedAssets.Remove(assetDictionary[assetID]);
@@ -277,12 +281,9 @@ namespace IndustrialPark
 
             if (assetDictionary[assetID] is IRenderableAsset ra)
             {
-                if (renderableAssetSetCommon.Contains(ra))
-                    renderableAssetSetCommon.Remove(ra);
-                if (renderableAssetSetTrans.Contains(ra))
-                    renderableAssetSetTrans.Remove(ra);
-                if (renderableAssetSetJSP.Contains(ra))
-                    renderableAssetSetJSP.Remove((AssetJSP)ra);
+                renderableAssets.Remove(ra);
+                if (renderableJSPs.Contains(ra))
+                    renderableJSPs.Remove((AssetJSP)ra);
             }
 
             if (assetDictionary[assetID] is AssetRenderWareModel jsp && jsp.HasRenderWareModelFile())
@@ -340,7 +341,7 @@ namespace IndustrialPark
                     return true;
             return false;
         }
-        
+
         public Asset GetFromAssetID(uint key)
         {
             if (ContainsAsset(key))
@@ -360,7 +361,7 @@ namespace IndustrialPark
         private void AddAssetToDictionary(Section_AHDR AHDR, bool fast, bool skipTexturesAndModels = false)
         {
             allowRender = false;
-            
+
             if (assetDictionary.ContainsKey(AHDR.assetID))
             {
                 assetDictionary.Remove(AHDR.assetID);
@@ -379,16 +380,16 @@ namespace IndustrialPark
                         if (DICT.LTOC.LHDRList[GetLayerFromAssetID(AHDR.assetID)].layerType > 9)
                             newAsset = new AssetJSP_INFO(AHDR, game, platform);
                         else
-                            newAsset = skipTexturesAndModels ? new Asset(AHDR, game, platform) : new AssetJSP(AHDR, game, platform, Program.MainForm.renderer); 
+                            newAsset = skipTexturesAndModels ? new Asset(AHDR, game, platform) : new AssetJSP(AHDR, game, platform, Program.MainForm.renderer);
                         break;
                     case AssetType.BOUL: newAsset = new AssetBOUL(AHDR, game, platform); break;
                     case AssetType.BUTN: newAsset = new AssetBUTN(AHDR, game, platform); break;
-                    case AssetType.CAM:  newAsset = new AssetCAM (AHDR, game, platform); break;
+                    case AssetType.CAM: newAsset = new AssetCAM(AHDR, game, platform); break;
                     case AssetType.CNTR: newAsset = new AssetCNTR(AHDR, game, platform); break;
                     case AssetType.COLL: newAsset = new AssetCOLL(AHDR, game, platform); break;
                     case AssetType.COND: newAsset = new AssetCOND(AHDR, game, platform); break;
                     case AssetType.CRDT: newAsset = new AssetCRDT(AHDR, game, platform); break;
-                    case AssetType.CSN:  newAsset = new AssetCSN( AHDR, game, platform); break;
+                    case AssetType.CSN: newAsset = new AssetCSN(AHDR, game, platform); break;
                     case AssetType.CSNM: newAsset = new AssetCSNM(AHDR, game, platform); break;
                     case AssetType.DPAT: newAsset = new AssetDPAT(AHDR, game, platform); break;
                     case AssetType.DSCO: newAsset = new AssetDSCO(AHDR, game, platform); break;
@@ -396,13 +397,13 @@ namespace IndustrialPark
                     case AssetType.DUPC: newAsset = new AssetDUPC(AHDR, game, platform); break;
                     case AssetType.DYNA: newAsset = new AssetDYNA(AHDR, game, platform); break;
                     case AssetType.EGEN: newAsset = new AssetEGEN(AHDR, game, platform); break;
-                    case AssetType.ENV:  newAsset = new AssetENV (AHDR, game, platform); break;
-                    case AssetType.FLY:  newAsset = new AssetFLY (AHDR, game, platform); break;
-                    case AssetType.FOG:  newAsset = new AssetFOG (AHDR, game, platform); break;
+                    case AssetType.ENV: newAsset = new AssetENV(AHDR, game, platform); break;
+                    case AssetType.FLY: newAsset = new AssetFLY(AHDR, game, platform); break;
+                    case AssetType.FOG: newAsset = new AssetFOG(AHDR, game, platform); break;
                     case AssetType.GRUP: newAsset = new AssetGRUP(AHDR, game, platform); break;
                     case AssetType.GUST: newAsset = new AssetGUST(AHDR, game, platform); break;
                     case AssetType.HANG: newAsset = new AssetHANG(AHDR, game, platform); break;
-                    case AssetType.JAW:  newAsset = new AssetJAW (AHDR, game, platform); break;
+                    case AssetType.JAW: newAsset = new AssetJAW(AHDR, game, platform); break;
                     case AssetType.LITE: newAsset = new AssetLITE(AHDR, game, platform); break;
                     case AssetType.LKIT: newAsset = new AssetLKIT(AHDR, game, platform); break;
                     case AssetType.LOBM: newAsset = new AssetLOBM(AHDR, game, platform); break;
@@ -413,13 +414,13 @@ namespace IndustrialPark
                         newAsset = skipTexturesAndModels ? new Asset(AHDR, game, platform) : new AssetMODL(AHDR, game, platform, Program.MainForm.renderer); break;
                     case AssetType.MRKR: newAsset = new AssetMRKR(AHDR, game, platform); break;
                     case AssetType.MVPT: newAsset = game == Game.Scooby ? new AssetMVPT_Scooby(AHDR, game, platform) : new AssetMVPT(AHDR, game, platform); break;
-                    case AssetType.NPC:  newAsset = new AssetNPC (AHDR, game, platform); break;
+                    case AssetType.NPC: newAsset = new AssetNPC(AHDR, game, platform); break;
                     case AssetType.PARE: newAsset = new AssetPARE(AHDR, game, platform); break;
                     case AssetType.PARP: newAsset = new AssetPARP(AHDR, game, platform); break;
                     case AssetType.PARS: newAsset = new AssetPARS(AHDR, game, platform); break;
                     case AssetType.PEND: newAsset = new AssetPEND(AHDR, game, platform); break;
                     case AssetType.PICK: newAsset = new AssetPICK(AHDR, game, platform); break;
-                    case AssetType.PIPT: newAsset = new AssetPIPT(AHDR, game, platform); break;
+                    case AssetType.PIPT: newAsset = new AssetPIPT(AHDR, game, platform, UpdateModelBlendModes); break;
                     case AssetType.PKUP: newAsset = new AssetPKUP(AHDR, game, platform); break;
                     case AssetType.PLAT: newAsset = new AssetPLAT(AHDR, game, platform); break;
                     case AssetType.PLYR: newAsset = new AssetPLYR(AHDR, game, platform); break;
@@ -429,7 +430,7 @@ namespace IndustrialPark
                         newAsset = skipTexturesAndModels ? new Asset(AHDR, game, platform) : new AssetRWTX(AHDR, game, platform); break;
                     case AssetType.SCRP: newAsset = new AssetSCRP(AHDR, game, platform); break;
                     case AssetType.SDFX: newAsset = new AssetSDFX(AHDR, game, platform); break;
-                    case AssetType.SFX:  newAsset = new AssetSFX (AHDR, game, platform); break;
+                    case AssetType.SFX: newAsset = new AssetSFX(AHDR, game, platform); break;
                     case AssetType.SGRP: newAsset = new AssetSGRP(AHDR, game, platform); break;
                     case AssetType.TRCK: case AssetType.SIMP: newAsset = new AssetSIMP(AHDR, game, platform); break;
                     case AssetType.SHDW: newAsset = new AssetSHDW(AHDR, game, platform); break;
@@ -452,9 +453,9 @@ namespace IndustrialPark
                     case AssetType.TRIG: newAsset = new AssetTRIG(AHDR, game, platform); break;
                     case AssetType.TIMR: newAsset = new AssetTIMR(AHDR, game, platform); break;
                     case AssetType.TPIK: newAsset = new AssetTPIK(AHDR, game, platform); break;
-                    case AssetType.UI:   newAsset = new AssetUI  (AHDR, game, platform); break;
+                    case AssetType.UI: newAsset = new AssetUI(AHDR, game, platform); break;
                     case AssetType.UIFT: newAsset = new AssetUIFT(AHDR, game, platform); break;
-                    case AssetType.VIL:  newAsset = new AssetVIL (AHDR, game, platform); break;
+                    case AssetType.VIL: newAsset = new AssetVIL(AHDR, game, platform); break;
                     case AssetType.VILP: newAsset = new AssetVILP(AHDR, game, platform); break;
                     case AssetType.VOLU: newAsset = new AssetVOLU(AHDR, game, platform); break;
                     case AssetType.WIRE: newAsset = new AssetWIRE(AHDR, game, platform, Program.MainForm.renderer); break;
@@ -499,13 +500,13 @@ namespace IndustrialPark
             }
 
             assetDictionary[AHDR.assetID] = newAsset;
-            
+
             if (hiddenAssets.Contains(AHDR.assetID))
                 assetDictionary[AHDR.assetID].isInvisible = true;
 
             if (!fast)
                 autoCompleteSource.Add(AHDR.ADBG.assetName);
-            
+
             allowRender = true;
         }
 
@@ -720,7 +721,7 @@ namespace IndustrialPark
                 finalIndices.Add(AHDR.assetID);
             }
 
-            if (updateReferencesOnCopy || forceRefUpdate) 
+            if (updateReferencesOnCopy || forceRefUpdate)
                 UpdateReferencesOnCopy(referenceUpdate, clipboard.assets);
         }
 
@@ -850,12 +851,28 @@ namespace IndustrialPark
 
         public void RecalculateAllMatrices()
         {
-            foreach (IRenderableAsset a in renderableAssetSetCommon)
+            foreach (IRenderableAsset a in renderableAssets)
                 a.CreateTransformMatrix();
-            foreach (IRenderableAsset a in renderableAssetSetTrans)
+            foreach (AssetJSP a in renderableJSPs)
                 a.CreateTransformMatrix();
-            foreach (AssetJSP a in renderableAssetSetJSP)
-                a.CreateTransformMatrix();
+        }
+
+        public delegate void OnPipeInfoTableEdited(Dictionary<uint, (int, BlendFactorType, BlendFactorType)[]> blendModes);
+        
+        public void UpdateModelBlendModes(Dictionary<uint, (int, BlendFactorType, BlendFactorType)[]> blendModes)
+        {
+            if (blendModes == null)
+            {
+                foreach (var asset in assetDictionary.Values)
+                    if (asset is AssetMODL MODL)
+                        MODL.ResetBlendModes();
+            }
+            else
+            {
+                foreach (var k in blendModes.Keys)
+                    if (ContainsAsset(k) && GetFromAssetID(k) is AssetMODL MODL)
+                        MODL.SetBlendModes(blendModes[k]);
+            }
         }
     }
 }

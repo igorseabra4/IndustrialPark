@@ -52,7 +52,7 @@ namespace IndustrialPark
         {
             Setup(renderer);
             CreateTransformMatrix();
-            ArchiveEditorFunctions.renderableAssetSetCommon.Add(this);
+            ArchiveEditorFunctions.renderableAssets.Add(this);
         }
 
         public override bool HasReference(uint assetID) => hashID0 == assetID || hashID1 == assetID || base.HasReference(assetID);

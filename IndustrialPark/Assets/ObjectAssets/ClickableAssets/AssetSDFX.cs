@@ -19,11 +19,8 @@ namespace IndustrialPark
         public AssetSDFX(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             _position = new Vector3(ReadFloat(0x10), ReadFloat(0x14), ReadFloat(0x18));
-
             CreateTransformMatrix();
-
-            if (!ArchiveEditorFunctions.renderableAssetSetTrans.Contains(this))
-                ArchiveEditorFunctions.renderableAssetSetTrans.Add(this);
+            ArchiveEditorFunctions.renderableAssets.Add(this);
         }
         
         public override bool HasReference(uint assetID) =>

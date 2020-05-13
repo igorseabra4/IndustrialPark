@@ -27,7 +27,12 @@ namespace IndustrialPark
         }
 
         public override string ToString() =>  $"{AHDR.ADBG.assetName} [{AHDR.assetID.ToString("X8")}]";
-        
+
+        public override int GetHashCode()
+        {
+            return AHDR.assetID.GetHashCode();
+        }
+
         public virtual bool HasReference(uint assetID) => false;
 
         public virtual void Verify(ref List<string> result) { }

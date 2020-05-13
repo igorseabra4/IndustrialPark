@@ -121,20 +121,20 @@ namespace IndustrialPark
                 case DynaType.ui__model:
                 case DynaType.ui__text:
                 case DynaType.ui__text__userstring:
-                case DynaType.Unknown1:
-                case DynaType.Unknown2:
-                case DynaType.Unknown3:
-                case DynaType.Unknown4:
-                case DynaType.Unknown5:
-                case DynaType.Unknown6:
-                case DynaType.Unknown7:
-                case DynaType.Unknown8:
-                case DynaType.Unknown9:
-                case DynaType.Unknown10:
-                case DynaType.Unknown12:
-                case DynaType.Unknown13:
-                case DynaType.Unknown14:
-                case DynaType.Unknown15:
+                case DynaType.Unknown_2CD29541:
+                case DynaType.Unknown_4EE03B24:
+                case DynaType.Unknown_9F234F8E:
+                case DynaType.Unknown_460F4FB2:
+                case DynaType.Unknown_2743B85C:
+                case DynaType.Unknown_A072A4DA:
+                case DynaType.Unknown_AD7CB421:
+                case DynaType.Unknown_C6C76EEE:
+                case DynaType.Unknown_CDB57387:
+                case DynaType.Unknown_CF21DB89:
+                case DynaType.Unknown_E5D82D97:
+                case DynaType.Unknown_E2301EA9:
+                case DynaType.Unknown_EBC04E7B:
+                case DynaType.Unknown_FC2951C1:
                     DynaSpec = new DynaDefault(this, Data.Length - LinkCount * Link.sizeOfStruct - 0x10); break;
                 default:
                     throw new System.Exception("Unknown DYNA type: " + Type.ToString("X8"));
@@ -152,11 +152,10 @@ namespace IndustrialPark
             if (IsRenderableClickable)
             {
                 CreateTransformMatrix();
-                if (!renderableAssetSetCommon.Contains(this))
-                    renderableAssetSetCommon.Add(this);
+                renderableAssets.Add(this);
             }
-            else if (renderableAssetSetCommon.Contains(this))
-                renderableAssetSetCommon.Remove(this);
+            else
+                renderableAssets.Remove(this);
         }
         
         [Category("Dynamic")]

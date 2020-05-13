@@ -26,10 +26,8 @@ namespace IndustrialPark
             _modelAssetID = ReadUInt(0x4C + Offset);
 
             CreateTransformMatrix();
-
-            if (!(this is AssetTRIG))
-                if (!renderableAssetSetCommon.Contains(this))
-                    renderableAssetSetCommon.Add(this);
+            
+            renderableAssets.Add(this);
         }
         
         public virtual void CreateTransformMatrix()
@@ -129,7 +127,14 @@ namespace IndustrialPark
 
         public virtual float GetDistance(Vector3 cameraPosition)
         {
-            return Vector3.Distance(cameraPosition, Position);
+            float min = Vector3.Distance(cameraPosition, Position);
+            float d;
+
+            foreach (var v in boundingBox.GetCorners())
+                if ((d = Vector3.Distance(cameraPosition, v)) < min)
+                    min = d;
+
+            return min;
         }
 
         public override bool HasReference(uint assetID) => Surface_AssetID == assetID || Model_AssetID == assetID || Animation_AssetID == assetID ||

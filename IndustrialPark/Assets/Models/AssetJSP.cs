@@ -16,7 +16,7 @@ namespace IndustrialPark
         {
             base.Setup(renderer);
             CreateTransformMatrix();
-            ArchiveEditorFunctions.renderableAssetSetJSP.Add(this);
+            ArchiveEditorFunctions.renderableJSPs.Add(this);
         }
 
         public void CreateTransformMatrix() => boundingBox = BoundingBox.FromPoints(model.vertexListG.ToArray());

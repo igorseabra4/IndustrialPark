@@ -34,9 +34,6 @@ namespace IndustrialPark
             _trigPos3 = new Vector3(ReadFloat(0x78 + Offset), ReadFloat(0x7C + Offset), ReadFloat(0x80 + Offset));
 
             FixPosition();
-
-            if (!ArchiveEditorFunctions.renderableAssetSetTrans.Contains(this))
-                ArchiveEditorFunctions.renderableAssetSetTrans.Add(this);
         }
 
         public override void CreateTransformMatrix()
@@ -175,7 +172,7 @@ namespace IndustrialPark
         {
             if (Shape == TriggerShape.Sphere)
                 return Vector3.Distance(cameraPosition, boundingSphere.Center) - boundingSphere.Radius;
-            return Vector3.Distance(cameraPosition, boundingBox.Center) - boundingSphere.Radius;
+            return base.GetDistance(cameraPosition);
         }
 
         private byte _shape;

@@ -127,7 +127,7 @@ namespace IndustrialPark
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 data = File.ReadAllBytes(openFileDialog.FileName);
-                textBoxAssetName.Text = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
+                textBoxAssetName.Text = Path.GetFileName(openFileDialog.FileName);
                 labelRawDataSize.Text = "Raw Data Size: " + data.Length.ToString();
                 buttonOK.Enabled = true;
             }

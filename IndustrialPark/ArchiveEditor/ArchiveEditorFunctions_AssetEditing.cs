@@ -153,9 +153,8 @@ namespace IndustrialPark
             List<IRenderableAsset> l = new List<IRenderableAsset>();
             try
             {
-                l.AddRange(renderableAssetSetCommon);
-                l.AddRange(renderableAssetSetTrans);
-                l.AddRange(renderableAssetSetJSP);
+                l.AddRange(renderableAssets);
+                l.AddRange(renderableJSPs);
             }
             catch { return Vector3.Zero; }
 
@@ -177,18 +176,10 @@ namespace IndustrialPark
 
         public static uint GetClickedAssetID(Ray ray)
         {
-            List<IRenderableAsset> l = new List<IRenderableAsset>();
-            try
-            {
-                l.AddRange(renderableAssetSetCommon);
-                l.AddRange(renderableAssetSetTrans);
-            }
-            catch { return 0; }
-
             float smallerDistance = 1000f;
             uint assetID = 0;
 
-            foreach (Asset ra in l)
+            foreach (Asset ra in renderableAssets)
             {
                 if (!ra.isSelected && ra is IClickableAsset)
                 {
@@ -206,23 +197,14 @@ namespace IndustrialPark
 
         public static uint GetClickedAssetID2D(Ray ray, float farPlane)
         {
-            List<IRenderableAsset> l = new List<IRenderableAsset>();
-            try
-            {
-                foreach (IRenderableAsset a in renderableAssetSetCommon)
-                    if (a is AssetUI ui)
-                        l.Add(ui);
-                    else if (a is AssetUIFT uift)
-                        l.Add(uift);
-            }
-            catch { return 0; }
-
             float smallerDistance = 3 * farPlane;
             uint assetID = 0;
 
-            foreach (Asset ra in l)
+            foreach (Asset ra in (from IRenderableAsset asset in renderableAssets
+                                  where asset is AssetUI || asset is AssetUIFT
+                                  select (IClickableAsset)asset))
             {
-                if (!ra.isSelected && ra is IClickableAsset)
+                if (!ra.isSelected)
                 {
                     float? distance = ((IClickableAsset)ra).IntersectsWith(ray);
                     if (distance != null && distance < smallerDistance)
