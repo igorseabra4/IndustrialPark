@@ -26,7 +26,7 @@ namespace IndustrialPark
                     updatedJson = reader.ReadToEnd();
 
                 IPversion updatedVersion = JsonConvert.DeserializeObject<IPversion>(updatedJson);
-                IPversion oldVersion = IPversion.CurrentVersion;
+                IPversion oldVersion = new IPversion();
 
                 hasChecked = true;
 
