@@ -87,7 +87,7 @@ namespace IndustrialPark.Models
             return data;
         }
 
-        public static RWSection[] CreateDFFFromAssimp(string fileName, bool flipUVs, bool ignoreMeshColors)
+        public static RWSection CreateDFFFromAssimp(string fileName, bool flipUVs, bool ignoreMeshColors)
         {
             PostProcessSteps pps =
                 PostProcessSteps.Debone |
@@ -111,7 +111,10 @@ namespace IndustrialPark.Models
 
             var materials = new List<Material_0007>(scene.MaterialCount);
 
+            bool atomicNeedsMaterialEffects = false;
+
             foreach (var m in scene.Materials)
+            {
                 materials.Add(new Material_0007()
                 {
                     materialStruct = new MaterialStruct_0001()
@@ -126,34 +129,32 @@ namespace IndustrialPark.Models
                             (byte)(m.ColorDiffuse.A * 255)),
                         unusedInt2 = 0x2DF53E84,
                         isTextured = m.HasTextureDiffuse ? 1 : 0,
-                        ambient = 1f,
-                        specular = 1f,
-                        diffuse = 1f
+                        ambient = ignoreMeshColors ? 1f : m.ColorAmbient.A,
+                        specular = ignoreMeshColors ? 1f : m.ColorSpecular.A,
+                        diffuse = ignoreMeshColors ? 1f : m.ColorDiffuse.A
                     },
-                    texture = m.HasTextureDiffuse ? new Texture_0006()
+                    texture = m.HasTextureDiffuse ? RWTextureFromAssimpMaterial(m.TextureDiffuse) : null,
+                    materialExtension = new Extension_0003()
                     {
-                        textureStruct = new TextureStruct_0001() // use wrap as default
+                        extensionSectionList = m.HasTextureReflection ? new List<RWSection>()
                         {
-                            FilterMode = TextureFilterMode.FILTERLINEAR,
-                            AddressModeU =
-                            m.TextureDiffuse.WrapModeU == TextureWrapMode.Clamp ? TextureAddressMode.TEXTUREADDRESSCLAMP :
-                            m.TextureDiffuse.WrapModeU == TextureWrapMode.Decal ? TextureAddressMode.TEXTUREADDRESSBORDER :
-                            m.TextureDiffuse.WrapModeU == TextureWrapMode.Mirror ? TextureAddressMode.TEXTUREADDRESSMIRROR :
-                            TextureAddressMode.TEXTUREADDRESSWRAP,
-
-                            AddressModeV =
-                            m.TextureDiffuse.WrapModeV == TextureWrapMode.Clamp ? TextureAddressMode.TEXTUREADDRESSCLAMP :
-                            m.TextureDiffuse.WrapModeV == TextureWrapMode.Decal ? TextureAddressMode.TEXTUREADDRESSBORDER :
-                            m.TextureDiffuse.WrapModeV == TextureWrapMode.Mirror ? TextureAddressMode.TEXTUREADDRESSMIRROR :
-                            TextureAddressMode.TEXTUREADDRESSWRAP,
-                            UseMipLevels = 1
-                        },
-                        diffuseTextureName = new String_0002(Path.GetFileNameWithoutExtension(m.TextureDiffuse.FilePath)),
-                        alphaTextureName = new String_0002(""),
-                        textureExtension = new Extension_0003()
-                    } : null,
-                    materialExtension = new Extension_0003(),
+                            new MaterialEffectsPLG_0120()
+                            {
+                                isAtomicExtension = false,
+                                value = MaterialEffectType.EnvironmentMap,
+                                materialEffect1 = new MaterialEffectEnvironmentMap()
+                                {
+                                    EnvironmentMapTexture = RWTextureFromAssimpMaterial(m.TextureReflection),
+                                    ReflectionCoefficient = m.Reflectivity,
+                                    UseFrameBufferAlphaChannel = false
+                                }
+                            }
+                        } : new List<RWSection>()
+                    },
                 });
+
+                atomicNeedsMaterialEffects |= m.HasTextureReflection;
+            }
 
             List<Vertex3> vertices = new List<Vertex3>();
             List<Vertex3> normals = new List<Vertex3>();
@@ -200,8 +201,8 @@ namespace IndustrialPark.Models
                         });
             }
 
-            Vertex3 max = new Vertex3(vertices[0].X, vertices[0].Y, vertices[0].Z);
-            Vertex3 min = new Vertex3(vertices[0].X, vertices[0].Y, vertices[0].Z);
+            Vector3 max = new Vector3(vertices[0].X, vertices[0].Y, vertices[0].Z);
+            Vector3 min = new Vector3(vertices[0].X, vertices[0].Y, vertices[0].Z);
 
             foreach (Vertex3 v in vertices)
             {
@@ -218,15 +219,10 @@ namespace IndustrialPark.Models
                 if (v.Z < min.Z)
                     min.Z = v.Z;
             }
-
-            Vertex3 sphereCenter = new Vertex3((max.X + min.X) / 2f, (max.Y + min.Y) / 2f, (max.Z + min.Z) / 2f);
-            float radius = Math.Max(max.X - min.X, Math.Max(max.Y - min.Y, max.Z - min.Z));
-
+                        
             var binMeshes = new List<BinMesh>(materials.Count);
-            int k = 0;
-            int totalIndexCount = 0;
 
-            foreach (Material_0007 mat in materials)
+            for (int k = 0; k < materials.Count; k++)
             {
                 List<int> indices = new List<int>(triangleCount * 3);
 
@@ -245,12 +241,18 @@ namespace IndustrialPark.Models
                         indexCount = indices.Count(),
                         vertexIndices = indices.ToArray()
                     });
-
-                k++;
-
-                totalIndexCount += indices.Count;
             }
 
+            return ToClump(materials.ToArray(), new BoundingSphere(max + min / 2f, (max - min).Length()), 
+                vertices.ToArray(), normals.ToArray(), textCoords.ToArray(), vertexColors.ToArray(), triangles.ToArray(),
+                binMeshes.ToArray(), atomicNeedsMaterialEffects);
+        }
+        
+        private static RWSection ToClump
+            (Material_0007[] materials, BoundingSphere boundingSphere, 
+            Vertex3[] vertices, Vertex3[] normals, Vertex2[] textCoords, RenderWareFile.Color[] vertexColors, RenderWareFile.Triangle[] triangles,
+            BinMesh[] binMeshes, bool atomicNeedsMaterialEffects)
+        {
             Clump_0010 clump = new Clump_0010()
             {
                 clumpStruct = new ClumpStruct_0001()
@@ -266,36 +268,14 @@ namespace IndustrialPark.Models
                             new Frame()
                             {
                                 position = new Vertex3(),
-                                rotationMatrix = new RenderWareFile.Sections.Matrix3x3()
-                                {
-                                    M11 = 1f,
-                                    M12 = 0f,
-                                    M13 = 0f,
-                                    M21 = 0f,
-                                    M22 = 1f,
-                                    M23 = 0f,
-                                    M31 = 0f,
-                                    M32 = 0f,
-                                    M33 = 1f,
-                                },
+                                rotationMatrix = RenderWareFile.Sections.Matrix3x3.Identity,
                                 parentFrame = -1,
                                 unknown = 131075
                             },
                             new Frame()
                             {
                                 position = new Vertex3(),
-                                rotationMatrix = new RenderWareFile.Sections.Matrix3x3()
-                                {
-                                    M11 = 1f,
-                                    M12 = 0f,
-                                    M13 = 0f,
-                                    M21 = 0f,
-                                    M22 = 1f,
-                                    M23 = 0f,
-                                    M31 = 0f,
-                                    M32 = 0f,
-                                    M33 = 1f,
-                                },
+                                rotationMatrix = RenderWareFile.Sections.Matrix3x3.Identity,
                                 parentFrame = 0,
                                 unknown = 0
                             }
@@ -321,9 +301,9 @@ namespace IndustrialPark.Models
                             {
                                 materialListStruct = new MaterialListStruct_0001()
                                 {
-                                    materialCount = materials.Count
+                                    materialCount = materials.Length
                                 },
-                                materialList = materials.ToArray()
+                                materialList = materials
                             },
                             geometryStruct = new GeometryStruct_0001()
                             {
@@ -335,25 +315,28 @@ namespace IndustrialPark.Models
                                 GeometryFlags.hasVertexPositions |
                                 GeometryFlags.hasNormals,
                                 geometryFlags2 = (GeometryFlags2)1,
-                                numTriangles = triangles.Count(),
-                                numVertices = vertices.Count(),
+                                numTriangles = triangles.Length,
+                                numVertices = vertices.Length,
                                 numMorphTargets = 1,
                                 ambient = 1f,
                                 specular = 1f,
                                 diffuse = 1f,
-                                vertexColors = vertexColors.ToArray(),
-                                textCoords = textCoords.ToArray(),
-                                triangles = triangles.ToArray(),
+                                vertexColors = vertexColors,
+                                textCoords = textCoords,
+                                triangles = triangles,
                                 morphTargets = new MorphTarget[]
                                 {
                                     new MorphTarget()
                                     {
                                         hasNormals = 1,
                                         hasVertices = 1,
-                                        sphereCenter = sphereCenter,
-                                        radius = radius,
-                                        vertices = vertices.ToArray(),
-                                        normals = normals.ToArray(),
+                                        sphereCenter = new Vertex3(
+                                            boundingSphere.Center.X,
+                                            boundingSphere.Center.Y,
+                                            boundingSphere.Center.Z),
+                                        radius = boundingSphere.Radius,
+                                        vertices = vertices,
+                                        normals = normals,
                                     }
                                 }
                             },
@@ -364,9 +347,9 @@ namespace IndustrialPark.Models
                                     new BinMeshPLG_050E()
                                     {
                                         binMeshHeaderFlags =  BinMeshHeaderFlags.TriangleList,
-                                        numMeshes = binMeshes.Count,
-                                        totalIndexCount = totalIndexCount,
-                                        binMeshList = binMeshes.ToArray()
+                                        numMeshes = binMeshes.Length,
+                                        totalIndexCount = binMeshes.Sum(b => b.indexCount),
+                                        binMeshList = binMeshes
                                     }
                                 }
                             }
@@ -384,7 +367,15 @@ namespace IndustrialPark.Models
                     },
                     atomicExtension = new Extension_0003() // check this in case something fails
                     {
-                        extensionSectionList = new List<RWSection>()
+                        extensionSectionList = atomicNeedsMaterialEffects ? new List<RWSection>()
+                        { 
+                            new MaterialEffectsPLG_0120()
+                            {
+                                isAtomicExtension = true,
+                                value = (MaterialEffectType)1
+                            }
+                        }
+                        : new List<RWSection>()
                     }
                 }
                 },
@@ -392,8 +383,30 @@ namespace IndustrialPark.Models
                 clumpExtension = new Extension_0003()
             };
 
-            return new RWSection[] { clump };
+            return clump;
         }
+
+        private static Texture_0006 RWTextureFromAssimpMaterial(TextureSlot texture) =>
+            new Texture_0006()
+            {
+                textureStruct = new TextureStruct_0001()
+                {
+                    FilterMode = TextureFilterMode.FILTERLINEARMIPLINEAR,
+                    AddressModeU = RWTextureAddressModeFromAssimp(texture.WrapModeU),                 
+                    AddressModeV = RWTextureAddressModeFromAssimp(texture.WrapModeV),
+                    UseMipLevels = 1
+                },
+                diffuseTextureName = new String_0002(Path.GetFileNameWithoutExtension(texture.FilePath)),
+                alphaTextureName = new String_0002(""),
+                textureExtension = new Extension_0003()
+            };
+
+        // use wrap as default
+        private static TextureAddressMode RWTextureAddressModeFromAssimp(TextureWrapMode mode) =>
+            mode == TextureWrapMode.Clamp ? TextureAddressMode.TEXTUREADDRESSCLAMP :
+            mode == TextureWrapMode.Decal ? TextureAddressMode.TEXTUREADDRESSBORDER :
+            mode == TextureWrapMode.Mirror ? TextureAddressMode.TEXTUREADDRESSMIRROR :
+            TextureAddressMode.TEXTUREADDRESSWRAP;
 
         public static void ExportAssimp(string fileName, RWSection[] bspFile, bool flipUVs, ExportFormatDescription format, string textureExtension)
         {
@@ -529,7 +542,6 @@ namespace IndustrialPark.Models
             {
                 Matrix transformMatrix = RenderWareModelFile.CreateMatrix(clump.frameList, clump.atomicList[i].atomicStruct.frameIndex);
 
-                int triangleListOffset = 0;
                 for (int j = 0; j < clump.geometryList.geometryList[i].materialList.materialList.Length; j++)
                 {
                     var geo = clump.geometryList.geometryList[i].geometryStruct;
