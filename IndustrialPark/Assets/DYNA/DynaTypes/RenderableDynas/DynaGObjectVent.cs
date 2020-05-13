@@ -4,13 +4,13 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaVent : DynaBase
+    public class DynaGObjectVent : DynaBase
     {
         public string Note => "Version is always 1";
 
         public override int StructSize => 0x48;
 
-        public DynaVent(AssetDYNA asset) : base(asset) { }
+        public DynaGObjectVent(AssetDYNA asset) : base(asset) { }
 
         public override bool HasReference(uint assetID) => VentType_AssetID == assetID;
         

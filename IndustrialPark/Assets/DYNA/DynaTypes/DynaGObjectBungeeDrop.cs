@@ -3,13 +3,13 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaBungeeDrop : DynaBase
+    public class DynaGObjectBungeeDrop : DynaBase
     {
         public string Note => "Version is always 1";
 
         public override int StructSize => 0xC;
 
-        public DynaBungeeDrop(AssetDYNA asset) : base(asset) { }
+        public DynaGObjectBungeeDrop(AssetDYNA asset) : base(asset) { }
 
         public override bool HasReference(uint assetID)
         {

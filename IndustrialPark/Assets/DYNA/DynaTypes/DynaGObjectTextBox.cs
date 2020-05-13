@@ -5,13 +5,13 @@ using System.Drawing.Design;
 
 namespace IndustrialPark
 {
-    public class DynaTextBox : DynaBase
+    public class DynaGObjectTextBox : DynaBase
     {
         public string Note => "Version is always 1";
 
         public override int StructSize => 0x54;
 
-        public DynaTextBox(AssetDYNA asset) : base(asset) { }
+        public DynaGObjectTextBox(AssetDYNA asset) : base(asset) { }
         
         public override bool HasReference(uint assetID)
         {

@@ -2,13 +2,13 @@
 
 namespace IndustrialPark
 {
-    public class DynaFlythrough : DynaBase
+    public class DynaGObjectFlythrough : DynaBase
     {
         public string Note => "Version is always 1";
 
         public override int StructSize => 0x4;
 
-        public DynaFlythrough(AssetDYNA asset) : base(asset) { }
+        public DynaGObjectFlythrough(AssetDYNA asset) : base(asset) { }
 
         public override bool HasReference(uint assetID) => FLY_ID == assetID || base.HasReference(assetID);
         

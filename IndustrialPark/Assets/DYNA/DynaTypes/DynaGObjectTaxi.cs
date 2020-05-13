@@ -3,13 +3,13 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaTaxi : DynaBase
+    public class DynaGObjectTaxi : DynaBase
     {
         public string Note => "Version is always 1";
 
         public override int StructSize => 0x20;
 
-        public DynaTaxi(AssetDYNA asset) : base(asset) { }
+        public DynaGObjectTaxi(AssetDYNA asset) : base(asset) { }
         
         public override bool HasReference(uint assetID)
         {

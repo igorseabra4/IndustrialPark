@@ -2,7 +2,7 @@
 
 namespace IndustrialPark
 {
-    public class DynaEnemyStandard : DynaPlaceableBase
+    public class DynaEnemyStandard : DynaEnemySB
     {
         public string Note => "Version is always 2";
 

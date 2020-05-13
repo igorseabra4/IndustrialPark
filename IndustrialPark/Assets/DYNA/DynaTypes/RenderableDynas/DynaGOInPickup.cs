@@ -5,13 +5,13 @@ using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
-    public class DynaInPickup : DynaBase
+    public class DynaGObjectInPickup : DynaBase
     {
         public string Note => "Version is always 1";
 
         public override int StructSize => 0x10;
 
-        public DynaInPickup(AssetDYNA asset) : base(asset) { }
+        public DynaGObjectInPickup(AssetDYNA asset) : base(asset) { }
 
         public override bool HasReference(uint assetID) => PickupHash == assetID;
         

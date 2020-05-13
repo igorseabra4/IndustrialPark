@@ -4,7 +4,7 @@ using HipHopFile;
 
 namespace IndustrialPark
 {
-    public class DynaEnemyCastNCrew : DynaPlaceableBase
+    public class DynaEnemyCastNCrew : DynaEnemySB
     {
         public string Note => "Version is always 1";
 

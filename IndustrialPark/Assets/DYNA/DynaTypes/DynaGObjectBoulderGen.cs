@@ -3,12 +3,12 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaBoulderGen : DynaBase
+    public class DynaGObjectBoulderGen : DynaBase
     {
         public string Note => "Version is always 1";
         public override int StructSize => 0x38;
 
-        public DynaBoulderGen(AssetDYNA asset) : base(asset) { }
+        public DynaGObjectBoulderGen(AssetDYNA asset) : base(asset) { }
 
         public override bool HasReference(uint assetID)
         {

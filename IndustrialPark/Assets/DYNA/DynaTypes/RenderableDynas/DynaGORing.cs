@@ -1,38 +1,30 @@
-﻿using System;
+﻿using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
-using SharpDX;
+
 using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
-    public abstract class DynaPlaceableBase : DynaBase
+    public class DynaGORing : DynaBase
     {
-        public override bool IsRenderableClickable => true;
+        public string Note => "Version is always 2";
 
-        public DynaPlaceableBase(AssetDYNA asset) : base(asset) { }
+        public override int StructSize => 0x4C;
+
+        public DynaGORing(AssetDYNA asset) : base(asset) { }
 
         public override bool HasReference(uint assetID)
         {
-            if (Surface_AssetID == assetID)
-                return true;
-            if (Model_AssetID == assetID)
-                return true;
-            if (Unknown44 == assetID)
-                return true;
-            if (Unknown4C == assetID)
-                return true;
-
-            return base.HasReference(assetID);
+            return DriverPLAT_AssetID == assetID;
         }
 
         public override void Verify(ref List<string> result)
         {
-            Asset.Verify(Surface_AssetID, ref result);
-            Asset.Verify(Model_AssetID, ref result);
-            Asset.Verify(Unknown44, ref result);
-            Asset.Verify(Unknown4C, ref result);
+            Asset.Verify(DriverPLAT_AssetID, ref result);
         }
+        
+        public override bool IsRenderableClickable => true;
         
         private Matrix world;
         private BoundingBox boundingBox;
@@ -41,7 +33,7 @@ namespace IndustrialPark
         {
             world = Matrix.Scaling(ScaleX, ScaleY, ScaleZ)
                 * Matrix.RotationYawPitchRoll(
-                    MathUtil.DegreesToRadians(Yaw),
+                    MathUtil.DegreesToRadians(Yaw), 
                     MathUtil.DegreesToRadians(Pitch),
                     MathUtil.DegreesToRadians(Roll))
                 * Matrix.Translation(PositionX, PositionY, PositionZ);
@@ -51,11 +43,11 @@ namespace IndustrialPark
 
         protected virtual void CreateBoundingBox()
         {
-            if (renderingDictionary.ContainsKey(Model_AssetID) &&
-                renderingDictionary[Model_AssetID].HasRenderWareModelFile() &&
-                renderingDictionary[Model_AssetID].GetRenderWareModelFile() != null)
+            if (renderingDictionary.ContainsKey(DynaGObjectRingControl.RingModelAssetID) &&
+                renderingDictionary[DynaGObjectRingControl.RingModelAssetID].HasRenderWareModelFile() &&
+                renderingDictionary[DynaGObjectRingControl.RingModelAssetID].GetRenderWareModelFile() != null)
             {
-                CreateBoundingBox(renderingDictionary[Model_AssetID].GetRenderWareModelFile().vertexListG);
+                CreateBoundingBox(renderingDictionary[DynaGObjectRingControl.RingModelAssetID].GetRenderWareModelFile().vertexListG);
             }
             else
             {
@@ -75,17 +67,17 @@ namespace IndustrialPark
 
             boundingBox = BoundingBox.FromPoints(vertices);
 
-            if (renderingDictionary.ContainsKey(Model_AssetID))
+            if (renderingDictionary.ContainsKey(DynaGObjectRingControl.RingModelAssetID))
             {
-                if (renderingDictionary[Model_AssetID] is AssetMINF MINF)
+                if (renderingDictionary[DynaGObjectRingControl.RingModelAssetID] is AssetMINF MINF)
                 {
                     if (MINF.HasRenderWareModelFile())
-                        triangles = renderingDictionary[Model_AssetID].GetRenderWareModelFile().triangleList.ToArray();
+                        triangles = renderingDictionary[DynaGObjectRingControl.RingModelAssetID].GetRenderWareModelFile().triangleList.ToArray();
                     else
                         triangles = null;
                 }
                 else
-                    triangles = renderingDictionary[Model_AssetID].GetRenderWareModelFile().triangleList.ToArray();
+                    triangles = renderingDictionary[DynaGObjectRingControl.RingModelAssetID].GetRenderWareModelFile().triangleList.ToArray();
             }
             else
                 triangles = null;
@@ -93,9 +85,8 @@ namespace IndustrialPark
 
         public override void Draw(SharpRenderer renderer, bool isSelected)
         {
-            Vector4 Color = new Vector4(ColorRed, ColorGreen, ColorBlue, ColorAlpha);
-            if (renderingDictionary.ContainsKey(Model_AssetID))
-                renderingDictionary[Model_AssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * Color : Color, Vector3.Zero);
+            if (renderingDictionary.ContainsKey(DynaGObjectRingControl.RingModelAssetID))
+                renderingDictionary[DynaGObjectRingControl.RingModelAssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor : Vector4.One, Vector3.Zero);
             else
                 renderer.DrawCube(world, isSelected);
         }
@@ -128,7 +119,7 @@ namespace IndustrialPark
                 return smallestDistance;
             return null;
         }
-        
+
         public override BoundingBox GetBoundingBox()
         {
             return boundingBox;
@@ -138,72 +129,21 @@ namespace IndustrialPark
         {
             return Vector3.Distance(cameraPosition, new Vector3(PositionX, PositionY, PositionZ));
         }
-        
-        public int PaddingInt00
+
+        public override BoundingSphere GetObjectCenter()
         {
-            get => ReadInt(0x00);
-            set => Write(0x00, value);
+            BoundingSphere boundingSphere = new BoundingSphere(new Vector3(PositionX, PositionY, PositionZ), boundingBox.Size.Length());
+            boundingSphere.Radius *= 0.9f;
+            return boundingSphere;
         }
 
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte PaddingByte04
-        {
-            get => ReadByte(0x04);
-            set => Write(0x04, value);
-        }
-
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte PaddingByte05
-        {
-            get => ReadByte(0x05);
-            set => Write(0x05, value);
-        }
-
-        [TypeConverter(typeof(HexUShortTypeConverter))]
-        public ushort Flags06
-        {
-            get => ReadUShort(0x06);
-            set => Write(0x06, value);
-        }
-
-        [Browsable(false)]
-        public byte VisibilityFlag
-        {
-            get => ReadByte(0x08);
-            set => Write(0x08, value);
-        }
-        public DynamicTypeDescriptor VisibilityFlags => ByteFlagsDescriptor(0x8, "Visible", "Stackable");
-
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte TypeFlag
-        {
-            get => ReadByte(0x9);
-            set => Write(0x9, value);
-        }
-
-        public DynamicTypeDescriptor UnknownFlag0A => ByteFlagsDescriptor(0xA);
-
-        [Browsable(false)]
-        public byte SolidityFlag
-        {
-            get => ReadByte(0x0B);
-            set => Write(0x0B, value);
-        }
-        public DynamicTypeDescriptor SolidityFlags => ByteFlagsDescriptor(0xB, "Unused", "Precise Collision");
-        
-        public AssetID Surface_AssetID
-        {
-            get => ReadUInt(0x0C);
-            set => Write(0x0C, value);
-        }
-        
         [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
         public override float PositionX
         {
-            get => ReadFloat(0x1C);
+            get => ReadFloat(0x00);
             set
             {
-                Write(0x1C, value);
+                Write(0x00, value);
                 CreateTransformMatrix();
             }
         }
@@ -211,10 +151,10 @@ namespace IndustrialPark
         [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
         public override float PositionY
         {
-            get => ReadFloat(0x20);
+            get => ReadFloat(0x04);
             set
             {
-                Write(0x20, value);
+                Write(0x04, value);
                 CreateTransformMatrix();
             }
         }
@@ -222,23 +162,27 @@ namespace IndustrialPark
         [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
         public override float PositionZ
         {
-            get => ReadFloat(0x24);
+            get => ReadFloat(0x08);
             set
             {
-                Write(0x24, value);
+                Write(0x08, value);
                 CreateTransformMatrix();
             }
         }
-                
-        public override BoundingSphere GetObjectCenter()
-        {
-            BoundingSphere boundingSphere = new BoundingSphere(new Vector3(PositionX, PositionY, PositionZ), boundingBox.Size.Length());
-            boundingSphere.Radius *= 0.9f;
-            return boundingSphere;
-        }
-        
+
         [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
         public override float Yaw
+        {
+            get => MathUtil.RadiansToDegrees(ReadFloat(0xC));
+            set
+            {
+                Write(0x0C, MathUtil.DegreesToRadians(value));
+                CreateTransformMatrix();
+            }
+        }
+
+        [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
+        public override float Pitch
         {
             get => MathUtil.RadiansToDegrees(ReadFloat(0x10));
             set
@@ -249,7 +193,7 @@ namespace IndustrialPark
         }
 
         [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
-        public override float Pitch
+        public override float Roll
         {
             get => MathUtil.RadiansToDegrees(ReadFloat(0x14));
             set
@@ -259,20 +203,35 @@ namespace IndustrialPark
             }
         }
 
-        [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
-        public override float Roll
+        public int UnknownInt1
         {
-            get => MathUtil.RadiansToDegrees(ReadFloat(0x18));
+            get => ReadInt(0x18);
+            set => Write(0x18, value);
+        }
+        public int UnknownInt2
+        {
+            get => ReadInt(0x1C);
+            set => Write(0x1C, value);
+        }
+        public int UnknownInt3
+        {
+            get => ReadInt(0x20);
+            set => Write(0x20, value);
+        }
+
+        [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
+        public override float ScaleX
+        {
+            get => ReadFloat(0x24);
             set
             {
-                Write(0x18, MathUtil.DegreesToRadians(value));
+                Write(0x24, value);
                 CreateTransformMatrix();
             }
         }
 
-
         [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
-        public override float ScaleX
+        public override float ScaleY
         {
             get => ReadFloat(0x28);
             set
@@ -283,7 +242,7 @@ namespace IndustrialPark
         }
 
         [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
-        public override float ScaleY
+        public override float ScaleZ
         {
             get => ReadFloat(0x2C);
             set
@@ -293,71 +252,45 @@ namespace IndustrialPark
             }
         }
 
-        [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
-        public override float ScaleZ
+        public int UnknownShadowFlag
         {
-            get => ReadFloat(0x30);
-            set
-            {
-                Write(0x30, value);
-                CreateTransformMatrix();
-            }
+            get => ReadInt(0x30);
+            set => Write(0x30, value);
         }
-
-        [DisplayName("Red (0 - 1)")]
-        public float ColorRed
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float CollisionRadius
         {
             get => ReadFloat(0x34);
             set => Write(0x34, value);
         }
-        [DisplayName("Green (0 - 1)")]
-        public float ColorGreen
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float UnknownFloat1
         {
             get => ReadFloat(0x38);
             set => Write(0x38, value);
         }
-        [DisplayName("Blue (0 - 1)")]
-        public float ColorBlue
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float UnknownFloat2
         {
             get => ReadFloat(0x3C);
             set => Write(0x3C, value);
         }
-        [DisplayName("Alpha (0 - 1)")]
-        public float ColorAlpha
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float NormalTimer
         {
             get => ReadFloat(0x40);
             set => Write(0x40, value);
         }
-
-        [DisplayName("Color - (A,) R, G, B")]
-        public System.Drawing.Color Color_ARGB
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float RedTimer
         {
-            get => System.Drawing.Color.FromArgb(BitConverter.ToInt32(new byte[] { (byte)(ColorBlue * 255), (byte)(ColorGreen * 255), (byte)(ColorRed * 255), (byte)(ColorAlpha * 255) }, 0));
-            set
-            {
-                ColorRed = value.R / 255f;
-                ColorGreen = value.G / 255f;
-                ColorBlue = value.B / 255f;
-                ColorAlpha = value.A / 255f;
-            }
-        }
-
-        public AssetID Unknown44
-        {
-            get => ReadUInt(0x44);
+            get => ReadFloat(0x44);
             set => Write(0x44, value);
-        }
-
-        public AssetID Model_AssetID
+        }    
+        public AssetID DriverPLAT_AssetID
         {
             get => ReadUInt(0x48);
             set => Write(0x48, value);
-        }
-
-        public AssetID Unknown4C
-        {
-            get => ReadUInt(0x4C);
-            set => Write(0x4C, value);
         }
     }
 }

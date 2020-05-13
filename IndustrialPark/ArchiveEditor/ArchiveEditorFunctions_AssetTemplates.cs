@@ -1326,7 +1326,7 @@ namespace IndustrialPark
                 case AssetTemplate.DuplicatotronSettings:
                     ((AssetDYNA)asset).Version = 2;
                     ((AssetDYNA)asset).Type = DynaType.game_object__NPCSettings;
-                    ((AssetDYNA)asset).DynaSpec = new DynaNPCSettings((AssetDYNA)asset)
+                    ((AssetDYNA)asset).DynaSpec = new DynaGObjectNPCSettings((AssetDYNA)asset)
                     {
                         AllowDetect = 1,
                         ReduceCollide = 1,
@@ -1534,7 +1534,7 @@ namespace IndustrialPark
                 case AssetTemplate.BusStop_DYNA:
                     ((AssetDYNA)asset).Version = 2;
                     ((AssetDYNA)asset).Type = DynaType.game_object__BusStop;
-                    ((AssetDYNA)asset).DynaSpec = new DynaBusStop((AssetDYNA)asset)
+                    ((AssetDYNA)asset).DynaSpec = new DynaGObjectBusStop((AssetDYNA)asset)
                     {
                         MRKR_ID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper().Replace("DYNA", "MRKR"), AssetTemplate.Marker),
                         Player = 0,
@@ -1576,7 +1576,7 @@ namespace IndustrialPark
                 case AssetTemplate.TeleportBox:
                     ((AssetDYNA)asset).Version = 2;
                     ((AssetDYNA)asset).Type = DynaType.game_object__Teleport;
-                    ((AssetDYNA)asset).DynaSpec = new DynaTeleport((AssetDYNA)asset, 2)
+                    ((AssetDYNA)asset).DynaSpec = new DynaGObjectTeleport((AssetDYNA)asset, 2)
                     {
                         MRKR_ID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, template.ToString().ToUpper() + "_MRKR", AssetTemplate.Marker)
                     };
@@ -1681,7 +1681,7 @@ namespace IndustrialPark
                 case AssetTemplate.Checkpoint_Talkbox:
                     ((AssetDYNA)asset).Version = 11;
                     ((AssetDYNA)asset).Type = DynaType.game_object__talk_box;
-                    ((AssetDYNA)asset).DynaSpec = new DynaTalkBox((AssetDYNA)asset)
+                    ((AssetDYNA)asset).DynaSpec = new DynaGObjectTalkBox((AssetDYNA)asset)
                     {
                         Dialog_TextBoxID = 0x9BC49154,
                         AutoWaitTypeTime = 1,
@@ -1730,7 +1730,7 @@ namespace IndustrialPark
                 case AssetTemplate.BungeeHook:
                     ((AssetDYNA)asset).Version = 13;
                     ((AssetDYNA)asset).Type = DynaType.game_object__bungee_hook;
-                    ((AssetDYNA)asset).DynaSpec = new DynaBungeeHook((AssetDYNA)asset)
+                    ((AssetDYNA)asset).DynaSpec = new DynaGObjectBungeeHook((AssetDYNA)asset)
                     {
                         Placeable_AssetID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, "BUNGEE_SIMP", AssetTemplate.BungeeHook_SIMP),
                         AttachDist = 3,
@@ -1769,7 +1769,7 @@ namespace IndustrialPark
                 case AssetTemplate.BungeeDrop:
                     ((AssetDYNA)asset).Version = 2;
                     ((AssetDYNA)asset).Type = DynaType.game_object__bungee_drop;
-                    ((AssetDYNA)asset).DynaSpec = new DynaBungeeDrop((AssetDYNA)asset)
+                    ((AssetDYNA)asset).DynaSpec = new DynaGObjectBungeeDrop((AssetDYNA)asset)
                     {
                         MRKR_ID = PlaceTemplate(position, layerIndex, out success, ref assetIDs, "BUNGEE_MRKR", AssetTemplate.Marker),
                         SetViewAngle = 1,
@@ -1862,7 +1862,7 @@ namespace IndustrialPark
                 case AssetTemplate.Steel_Crate:
                     ((AssetDYNA)asset).Version = 2;
                     ((AssetDYNA)asset).Type = DynaType.Enemy__SB__SupplyCrate;
-                    ((AssetDYNA)asset).DynaSpec = new DynaSupplyCrate((AssetDYNA)asset)
+                    ((AssetDYNA)asset).DynaSpec = new DynaEnemySupplyCrate((AssetDYNA)asset)
                     {
                         VisibilityFlag = 1,
                         SolidityFlag = 1,
@@ -2028,7 +2028,7 @@ namespace IndustrialPark
                 case AssetTemplate.Ring:
                     ((AssetDYNA)asset).Version = 2;
                     ((AssetDYNA)asset).Type = DynaType.game_object__Ring;
-                    ((AssetDYNA)asset).DynaSpec = new DynaRing((AssetDYNA)asset)
+                    ((AssetDYNA)asset).DynaSpec = new DynaGORing((AssetDYNA)asset)
                     {
                         PositionX = position.X,
                         PositionY = position.Y,
@@ -2047,7 +2047,7 @@ namespace IndustrialPark
                 case AssetTemplate.RingControl:
                     ((AssetDYNA)asset).Version = 3;
                     ((AssetDYNA)asset).Type = DynaType.game_object__RingControl;
-                    ((AssetDYNA)asset).DynaSpec = new DynaRingControl((AssetDYNA)asset)
+                    ((AssetDYNA)asset).DynaSpec = new DynaGObjectRingControl((AssetDYNA)asset)
                     {
                         RingModel_AssetID = "test_ring",
                         UnknownInt1 = 40,
@@ -2062,7 +2062,7 @@ namespace IndustrialPark
                 case AssetTemplate.CamTweak:
                     ((AssetDYNA)asset).Version = 1;
                     ((AssetDYNA)asset).Type = DynaType.game_object__Camera_Tweak;
-                    ((AssetDYNA)asset).DynaSpec = new DynaCamTweak((AssetDYNA)asset);
+                    ((AssetDYNA)asset).DynaSpec = new DynaGObjectCamTweak((AssetDYNA)asset);
                     break;
             }
 

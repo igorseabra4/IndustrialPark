@@ -2,13 +2,13 @@
 
 namespace IndustrialPark
 {
-    public class DynaRumble : DynaBase
+    public class DynaEffectRumble : DynaBase
     {
         public string Note => "Version is always 3";
 
         public override int StructSize => 0x28;
 
-        public DynaRumble(AssetDYNA asset) : base(asset) { }
+        public DynaEffectRumble(AssetDYNA asset) : base(asset) { }
 
         [TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat_00

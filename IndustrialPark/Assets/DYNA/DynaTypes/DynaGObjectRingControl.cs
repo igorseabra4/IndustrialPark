@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace IndustrialPark
 {
-    public class DynaRingControl : DynaBase
+    public class DynaGObjectRingControl : DynaBase
     {
         public static uint RingModelAssetID = 0;
 
@@ -14,7 +14,7 @@ namespace IndustrialPark
 
         public override int StructSize => 0x28 + 4 * RingCount;
 
-        public DynaRingControl(AssetDYNA asset) : base(asset)
+        public DynaGObjectRingControl(AssetDYNA asset) : base(asset)
         {
             RingModel_AssetID = ReadUInt(0x04);
         }

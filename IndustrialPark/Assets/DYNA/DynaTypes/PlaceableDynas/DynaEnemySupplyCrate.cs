@@ -2,13 +2,13 @@
 
 namespace IndustrialPark
 {
-    public class DynaSupplyCrate : DynaPlaceableBase
+    public class DynaEnemySupplyCrate : DynaEnemySB
     {
         public string Note => "Version is always 2";
 
         public override int StructSize => 0x54;
 
-        public DynaSupplyCrate(AssetDYNA asset) : base(asset) { }
+        public DynaEnemySupplyCrate(AssetDYNA asset) : base(asset) { }
         
         public override bool HasReference(uint assetID)
         {

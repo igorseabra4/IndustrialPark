@@ -98,7 +98,7 @@ namespace IndustrialPark
 
         public override void CreateTransformMatrix()
         {
-            world = Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll) * Matrix.Translation(_position);
+            world = Matrix.RotationYawPitchRoll(MathUtil.DegreesToRadians(_yaw), MathUtil.DegreesToRadians(_pitch), MathUtil.DegreesToRadians(_roll)) * Matrix.Translation(_position);
 
             vertices = new Vector3[SharpRenderer.pyramidVertices.Count];
             for (int i = 0; i < SharpRenderer.pyramidVertices.Count; i++)

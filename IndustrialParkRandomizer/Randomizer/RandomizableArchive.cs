@@ -668,8 +668,8 @@ namespace IndustrialPark.Randomizer
                                         where asset is AssetDYNA dyna && dyna.Type == DynaType.game_object__BusStop
                                         select asset).Cast<AssetDYNA>())
             {
-                DynaBusStop dynaBusStop = (DynaBusStop)dyna.DynaSpec;
-                dynaBusStop.Player = (DynaBusStop.PlayerEnum)r.Next(0, 2);
+                DynaGObjectBusStop dynaBusStop = (DynaGObjectBusStop)dyna.DynaSpec;
+                dynaBusStop.Player = (DynaGObjectBusStop.PlayerEnum)r.Next(0, 2);
                 dyna.DynaSpec = dynaBusStop;
                 result = true;
             }

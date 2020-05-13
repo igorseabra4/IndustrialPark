@@ -3,13 +3,13 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaBungeeHook : DynaBase
+    public class DynaGObjectBungeeHook : DynaBase
     {
         public string Note => "Version is always 13";
 
         public override int StructSize => 0x7C;
 
-        public DynaBungeeHook(AssetDYNA asset) : base(asset) { }
+        public DynaGObjectBungeeHook(AssetDYNA asset) : base(asset) { }
 
         public override bool HasReference(uint assetID) => Placeable_AssetID == assetID || base.HasReference(assetID);
         

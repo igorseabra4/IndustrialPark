@@ -6,13 +6,13 @@ using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
-    public class DynaTeleport : DynaBase
+    public class DynaGObjectTeleport : DynaBase
     {
         public string Note => "Version is always 1 or 2.";
 
         public override int StructSize => version == 1 ? 0x10 : 0x14;
 
-        public DynaTeleport(AssetDYNA asset, int version) : base(asset)
+        public DynaGObjectTeleport(AssetDYNA asset, int version) : base(asset)
         {
             if (asset.game == Game.Incredibles)
                 version = 1;

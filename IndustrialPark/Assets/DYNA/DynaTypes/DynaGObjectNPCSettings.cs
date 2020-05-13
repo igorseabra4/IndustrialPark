@@ -2,13 +2,13 @@
 
 namespace IndustrialPark
 {
-    public class DynaNPCSettings : DynaBase
+    public class DynaGObjectNPCSettings : DynaBase
     {
         public string Note => "Version is always 2";
 
         public override int StructSize => 0x1C;
 
-        public DynaNPCSettings(AssetDYNA asset) : base(asset) { }
+        public DynaGObjectNPCSettings(AssetDYNA asset) : base(asset) { }
 
         public int BasisType
         {

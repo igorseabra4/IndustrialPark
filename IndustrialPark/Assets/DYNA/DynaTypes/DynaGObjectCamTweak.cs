@@ -2,13 +2,13 @@
 
 namespace IndustrialPark
 {
-    public class DynaCamTweak : DynaBase
+    public class DynaGObjectCamTweak : DynaBase
     {
         public string Note => "Version is always 1";
 
         public override int StructSize => 0x10;
 
-        public DynaCamTweak(AssetDYNA asset) : base(asset) { }
+        public DynaGObjectCamTweak(AssetDYNA asset) : base(asset) { }
         
         public int Priority
         {

@@ -34,39 +34,42 @@ namespace IndustrialPark
                 case DynaType.Enemy__SB__Mindy: DynaSpec = new DynaEnemyMindy(this); break;
                 case DynaType.Enemy__SB__Neptune: DynaSpec = new DynaEnemyNeptune(this); break;
                 case DynaType.Enemy__SB__Standard: DynaSpec = new DynaEnemyStandard(this); break;
-                case DynaType.Enemy__SB__SupplyCrate: DynaSpec = new DynaSupplyCrate(this); break;
+                case DynaType.Enemy__SB__SupplyCrate: DynaSpec = new DynaEnemySupplyCrate(this); break;
                 case DynaType.Enemy__SB__Turret: DynaSpec = new DynaEnemyTurret(this); break;
                 case DynaType.Incredibles__Icon: DynaSpec = new DynaIncrediblesIcon(this); break;
                 case DynaType.JSPExtraData: DynaSpec = new DynaJSPExtraData(this); break;
                 case DynaType.SceneProperties: DynaSpec = new DynaSceneProperties(this); break;
                 case DynaType.effect__Lightning: DynaSpec = new DynaEffectLightning(this); break;
-                case DynaType.effect__Rumble: DynaSpec = new DynaRumble(this); break;
-                case DynaType.effect__RumbleSphericalEmitter: DynaSpec = new DynaRumbleSphere(this); break;
+                case DynaType.effect__Rumble: DynaSpec = new DynaEffectRumble(this); break;
+                case DynaType.effect__RumbleSphericalEmitter: DynaSpec = new DynaEffectRumbleSphere(this); break;
                 case DynaType.effect__ScreenFade: DynaSpec = new DynaEffectScreenFade(this); break;
-                case DynaType.effect__smoke_emitter: DynaSpec = new DynaSmokeEmitter(this); break;
-                case DynaType.game_object__BoulderGenerator: DynaSpec = new DynaBoulderGen(this); break;
-                case DynaType.game_object__BusStop: DynaSpec = new DynaBusStop(this); break;
-                case DynaType.game_object__Camera_Tweak: DynaSpec = new DynaCamTweak(this); break;
-                case DynaType.game_object__Flythrough: DynaSpec = new DynaFlythrough(this); break;
-                case DynaType.game_object__IN_Pickup: DynaSpec = new DynaInPickup(this); break;
-                case DynaType.game_object__NPCSettings: DynaSpec = new DynaNPCSettings(this); break;
-                case DynaType.game_object__Ring: DynaSpec = new DynaRing(this); break;
-                case DynaType.game_object__RingControl: DynaSpec = new DynaRingControl(this); break;
-                case DynaType.game_object__Taxi: DynaSpec = new DynaTaxi(this); break;
-                case DynaType.game_object__Teleport: DynaSpec = new DynaTeleport(this, Version); break;
-                case DynaType.game_object__Vent: DynaSpec = new DynaVent(this); break;
-                case DynaType.game_object__VentType: DynaSpec = new DynaVentType(this); break;
-                case DynaType.game_object__bungee_drop: DynaSpec = new DynaBungeeDrop(this); break;
-                case DynaType.game_object__bungee_hook: DynaSpec = new DynaBungeeHook(this); break;
-                case DynaType.game_object__flame_emitter: DynaSpec = new DynaFlameEmitter(this); break;
-                case DynaType.game_object__talk_box: DynaSpec = new DynaTalkBox(this); break;
-                case DynaType.game_object__task_box: DynaSpec = new DynaTaskBox(this); break;
-                case DynaType.game_object__text_box: DynaSpec = new DynaTextBox(this); break;
+                case DynaType.effect__smoke_emitter: DynaSpec = new DynaEffectSmokeEmitter(this); break;
+                case DynaType.effect__spotlight: DynaSpec = new DynaEffectSpotlight(this); break;
+                case DynaType.game_object__BoulderGenerator: DynaSpec = new DynaGObjectBoulderGen(this); break;
+                case DynaType.game_object__BusStop: DynaSpec = new DynaGObjectBusStop(this); break;
+                case DynaType.game_object__Camera_Tweak: DynaSpec = new DynaGObjectCamTweak(this); break;
+                case DynaType.game_object__Flythrough: DynaSpec = new DynaGObjectFlythrough(this); break;
+                case DynaType.game_object__IN_Pickup: DynaSpec = new DynaGObjectInPickup(this); break;
+                case DynaType.game_object__NPCSettings: DynaSpec = new DynaGObjectNPCSettings(this); break;
+                case DynaType.game_object__RaceTimer: DynaSpec = new DynaGObjectRaceTimer(this); break;
+                case DynaType.game_object__Ring: DynaSpec = new DynaGORing(this); break;
+                case DynaType.game_object__RingControl: DynaSpec = new DynaGObjectRingControl(this); break;
+                case DynaType.game_object__Taxi: DynaSpec = new DynaGObjectTaxi(this); break;
+                case DynaType.game_object__Teleport: DynaSpec = new DynaGObjectTeleport(this, Version); break;
+                case DynaType.game_object__Vent: DynaSpec = new DynaGObjectVent(this); break;
+                case DynaType.game_object__VentType: DynaSpec = new DynaGObjectVentType(this); break;
+                case DynaType.game_object__bungee_drop: DynaSpec = new DynaGObjectBungeeDrop(this); break;
+                case DynaType.game_object__bungee_hook: DynaSpec = new DynaGObjectBungeeHook(this); break;
+                case DynaType.game_object__flame_emitter: DynaSpec = new DynaGObjectFlameEmitter(this); break;
+                case DynaType.game_object__talk_box: DynaSpec = new DynaGObjectTalkBox(this); break;
+                case DynaType.game_object__task_box: DynaSpec = new DynaGObjectTaskBox(this); break;
+                case DynaType.game_object__text_box: DynaSpec = new DynaGObjectTextBox(this); break;
                 case DynaType.hud__meter__font: DynaSpec = new DynaHudMeterFont(this, Version); break;
                 case DynaType.hud__meter__unit: DynaSpec = new DynaHudMeterUnit(this); break;
                 case DynaType.hud__model: DynaSpec = new DynaHudModel(this); break;
                 case DynaType.hud__text: DynaSpec = new DynaHudText(this); break;
                 case DynaType.interaction__Launch: DynaSpec = new DynaInteractionLaunch(this); break;
+                case DynaType.logic__reference: DynaSpec = new DynaLogicReference(this); break;
                 case DynaType.pointer: DynaSpec = new DynaPointer(this); break;
                 case DynaType.Checkpoint:
                 case DynaType.Effect__particle_generator:
@@ -88,13 +91,11 @@ namespace IndustrialPark
                 case DynaType.effect__grass:
                 case DynaType.effect__light:
                 case DynaType.effect__spark_emitter:
-                case DynaType.effect__spotlight:
                 case DynaType.effect__uber_laser:
                 case DynaType.effect__water_body:
                 case DynaType.game_object__FreezableObject:
                 case DynaType.game_object__Grapple:
                 case DynaType.game_object__Hangable:
-                case DynaType.game_object__RaceTimer:
                 case DynaType.game_object__RubbleGenerator:
                 case DynaType.game_object__Turret:
                 case DynaType.game_object__bullet_mark:
@@ -111,7 +112,6 @@ namespace IndustrialPark
                 case DynaType.interaction__SwitchLever:
                 case DynaType.interaction__Turn:
                 case DynaType.logic__FunctionGenerator:
-                case DynaType.logic__reference:
                 case DynaType.npc__CoverPoint:
                 case DynaType.npc__NPC_Custom_AV:
                 case DynaType.npc__group:

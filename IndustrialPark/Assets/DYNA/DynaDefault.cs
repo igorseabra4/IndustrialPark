@@ -2,7 +2,7 @@
 {
     public class DynaDefault : DynaBase
     {
-        private int structSize;
+        private readonly int structSize;
         public override int StructSize => structSize;
 
         public DynaDefault(AssetDYNA asset, int structSize) : base(asset)

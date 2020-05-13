@@ -3,13 +3,13 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaRumbleSphere : DynaBase
+    public class DynaEffectRumbleSphere : DynaBase
     {
         public string Note => "Version is always 1";
 
         public override int StructSize => 0x18;
 
-        public DynaRumbleSphere(AssetDYNA asset) : base(asset) { }
+        public DynaEffectRumbleSphere(AssetDYNA asset) : base(asset) { }
 
         public override bool HasReference(uint assetID)
         {

@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaEnemyMindy : DynaPlaceableBase
+    public class DynaEnemyMindy : DynaEnemySB
     {
         public string Note => "Version is always 3";
 

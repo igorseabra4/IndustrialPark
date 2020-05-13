@@ -2,13 +2,13 @@
 
 namespace IndustrialPark
 {
-    public class DynaVentType : DynaBase
+    public class DynaGObjectVentType : DynaBase
     {
         public string Note => "Version is always 1";
 
         public override int StructSize => 0x18;
 
-        public DynaVentType(AssetDYNA asset) : base(asset) { }
+        public DynaGObjectVentType(AssetDYNA asset) : base(asset) { }
 
         public override bool HasReference(uint assetID)
         {

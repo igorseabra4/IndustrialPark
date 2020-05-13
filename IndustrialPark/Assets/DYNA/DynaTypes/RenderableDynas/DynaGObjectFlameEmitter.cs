@@ -1,57 +1,44 @@
 ﻿using SharpDX;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaSmokeEmitter : DynaBase
+    public class DynaGObjectFlameEmitter : DynaBase
     {
-        public string Note => "Version is always 1";
+        public string Note => "Version is always 4";
 
-        public override int StructSize => 0x70;
+        public override int StructSize => 0x38;
 
-        public DynaSmokeEmitter(AssetDYNA asset) : base(asset) { }
-
-        public override bool HasReference(uint assetID)
-        {
-            if (Texture_AssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            Asset.Verify(Texture_AssetID, ref result);
-        }
+        public DynaGObjectFlameEmitter(AssetDYNA asset) : base(asset) { }
         
         public int UnknownInt_00
         {
             get => ReadInt(0x00);
             set => Write(0x00, value);
         }
-        public int UnknownInt_04
-        {
-            get => ReadInt(0x04);
-            set => Write(0x04, value);
-        }
         [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
         public override float PositionX
+        {
+            get => ReadFloat(0x04);
+            set { Write(0x04, value); CreateTransformMatrix(); }
+        }
+        [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
+        public override float PositionY
         {
             get => ReadFloat(0x08);
             set { Write(0x08, value); CreateTransformMatrix(); }
         }
         [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public override float PositionY
+        public override float PositionZ
         {
             get => ReadFloat(0x0C);
             set { Write(0x0C, value); CreateTransformMatrix(); }
         }
-        [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public override float PositionZ
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float UnknownFloat_10
         {
             get => ReadFloat(0x10);
-            set { Write(0x10, value); CreateTransformMatrix(); }
+            set => Write(0x10, value);
         }
         [TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat_14
@@ -89,120 +76,23 @@ namespace IndustrialPark
             get => ReadFloat(0x28);
             set => Write(0x28, value);
         }
-        public AssetID Texture_AssetID
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float UnknownFloat_2C
         {
-            get => ReadUInt(0x2C);
+            get => ReadFloat(0x2C);
             set => Write(0x2C, value);
         }
-        [TypeConverter(typeof(HexUShortTypeConverter))]
-        public ushort UnknownShort_30
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float UnknownFloat_30
         {
-            get => ReadUShort(0x30);
+            get => ReadFloat(0x30);
             set => Write(0x30, value);
-        }
-        [TypeConverter(typeof(HexUShortTypeConverter))]
-        public ushort UnknownShort_32
-        {
-            get => ReadUShort(0x32);
-            set => Write(0x32, value);
         }
         [TypeConverter(typeof(FloatTypeConverter))]
         public float UnknownFloat_34
         {
             get => ReadFloat(0x34);
             set => Write(0x34, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_38
-        {
-            get => ReadFloat(0x38);
-            set => Write(0x38, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_3C
-        {
-            get => ReadFloat(0x3C);
-            set => Write(0x3C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_40
-        {
-            get => ReadFloat(0x40);
-            set => Write(0x40, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_44
-        {
-            get => ReadFloat(0x44);
-            set => Write(0x44, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_48
-        {
-            get => ReadFloat(0x48);
-            set => Write(0x48, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_4C
-        {
-            get => ReadFloat(0x4C);
-            set => Write(0x4C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_50
-        {
-            get => ReadFloat(0x50);
-            set => Write(0x50, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_54
-        {
-            get => ReadFloat(0x54);
-            set => Write(0x54, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_58
-        {
-            get => ReadFloat(0x58);
-            set => Write(0x58, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_5C
-        {
-            get => ReadFloat(0x5C);
-            set => Write(0x5C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_60
-        {
-            get => ReadFloat(0x60);
-            set => Write(0x60, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_64
-        {
-            get => ReadFloat(0x64);
-            set => Write(0x64, value);
-        }
-        public short UnknownShort_68
-        {
-            get => ReadShort(0x68);
-            set => Write(0x68, value);
-        }
-        public short UnknownShort_6A
-        {
-            get => ReadShort(0x6A);
-            set => Write(0x6A, value);
-        }
-        public short UnknownShort_6C
-        {
-            get => ReadShort(0x6C);
-            set => Write(0x6C, value);
-        }
-        public short UnknownShort_6E
-        {
-            get => ReadShort(0x6E);
-            set => Write(0x6E, value);
         }
 
         public override bool IsRenderableClickable => true;

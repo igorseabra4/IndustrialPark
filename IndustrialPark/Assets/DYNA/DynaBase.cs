@@ -3,10 +3,10 @@ using SharpDX;
 
 namespace IndustrialPark
 {
-    public class DynaBase : AssetSpecific_Generic
+    public abstract class DynaBase : AssetSpecific_Generic
     {
         [Browsable(false)]
-        public virtual int StructSize => 0;
+        public abstract int StructSize { get; }
         
         public DynaBase(AssetDYNA asset) : base(asset, 0x10) { }
         

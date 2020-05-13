@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace IndustrialPark
 {
-    public class DynaEnemyDennis : DynaPlaceableBase
+    public class DynaEnemyDennis : DynaEnemySB
     {
         public string Note => "Version is always 3";
 

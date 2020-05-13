@@ -3,13 +3,13 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaTalkBox : DynaBase
+    public class DynaGObjectTalkBox : DynaBase
     {
         public  string Note => "Version is always 11";
 
         public override int StructSize => 0x38;
 
-        public DynaTalkBox(AssetDYNA asset) : base(asset) { }
+        public DynaGObjectTalkBox(AssetDYNA asset) : base(asset) { }
 
         public override bool HasReference(uint assetID)
         {
