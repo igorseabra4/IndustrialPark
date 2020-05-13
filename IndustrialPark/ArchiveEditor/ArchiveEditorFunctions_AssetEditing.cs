@@ -654,7 +654,7 @@ namespace IndustrialPark
                     AssetSIMP simp = (AssetSIMP)GetFromAssetID(PlaceTemplate(new Vector3(), layerIndex, out bool success, ref outAssetIDs, simpName, AssetTemplate.SIMP_Generic));
                     simp.Model_AssetID = i;
                     if (ledgeGrabSimps)
-                        simp.CollTypeByte = 0x82;
+                        simp.Data[0xB] = 0x82;
                 }
 
             return outAssetIDs;

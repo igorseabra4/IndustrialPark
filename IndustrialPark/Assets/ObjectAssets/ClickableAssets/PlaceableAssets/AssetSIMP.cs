@@ -31,7 +31,7 @@ namespace IndustrialPark
 
         [Category(categoryName)]
         public DynamicTypeDescriptor CollType => ByteFlagsDescriptor(0x5C + Offset,
-            null, "Solid", null, null, null, null, null, "Ledge Grab");
+            null, "Solid");
 
         [Browsable(false)]
         public byte CollTypeByte
