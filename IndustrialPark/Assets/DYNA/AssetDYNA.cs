@@ -52,7 +52,7 @@ namespace IndustrialPark
                 case DynaType.game_object__IN_Pickup: DynaSpec = new DynaGObjectInPickup(this); break;
                 case DynaType.game_object__NPCSettings: DynaSpec = new DynaGObjectNPCSettings(this); break;
                 case DynaType.game_object__RaceTimer: DynaSpec = new DynaGObjectRaceTimer(this); break;
-                case DynaType.game_object__Ring: DynaSpec = new DynaGORing(this); break;
+                case DynaType.game_object__Ring: DynaSpec = new DynaGObjectRing(this); break;
                 case DynaType.game_object__RingControl: DynaSpec = new DynaGObjectRingControl(this); break;
                 case DynaType.game_object__Taxi: DynaSpec = new DynaGObjectTaxi(this); break;
                 case DynaType.game_object__Teleport: DynaSpec = new DynaGObjectTeleport(this, Version); break;

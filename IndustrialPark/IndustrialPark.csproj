@@ -195,15 +195,15 @@
     <Compile Include="Assets\Binary\AssetWIRE.cs" />
     <Compile Include="Assets\DYNA\DynaDefault.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaEffectSpotlight.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectRaceTimer - Cópia .cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\DynaLogicReference.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectRaceTimer.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaInteractionLaunch.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaEffectRumbleSphere.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaEffectRumble.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaIncrediblesIcon.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaGObjectFlameEmitter.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaEffectSmokeEmitter1.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaGOInPickup.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaEffectSmokeEmitter.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaGObjectInPickup.cs" />
     <Compile Include="Assets\ObjectAssets\AssetSPLN.cs" />
     <Compile Include="Assets\ObjectAssets\AssetLOBM.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetSDFX.cs" />
@@ -245,7 +245,7 @@
     <Compile Include="Assets\DYNA\DynaTypes\DynaEffectScreenFade.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\DynaEnemyCritter.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\DynaEnemySB.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaGORing.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaGObjectRing.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectRingControl.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaSceneProperties.cs" />
     <Compile Include="Assets\ObjectAssets\AssetVOLU.cs" />

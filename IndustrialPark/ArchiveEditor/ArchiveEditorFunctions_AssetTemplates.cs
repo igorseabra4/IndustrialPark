@@ -2028,7 +2028,7 @@ namespace IndustrialPark
                 case AssetTemplate.Ring:
                     ((AssetDYNA)asset).Version = 2;
                     ((AssetDYNA)asset).Type = DynaType.game_object__Ring;
-                    ((AssetDYNA)asset).DynaSpec = new DynaGORing((AssetDYNA)asset)
+                    ((AssetDYNA)asset).DynaSpec = new DynaGObjectRing((AssetDYNA)asset)
                     {
                         PositionX = position.X,
                         PositionY = position.Y,

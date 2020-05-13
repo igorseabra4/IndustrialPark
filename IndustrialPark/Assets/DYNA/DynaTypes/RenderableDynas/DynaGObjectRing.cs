@@ -6,13 +6,13 @@ using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
-    public class DynaGORing : DynaBase
+    public class DynaGObjectRing : DynaBase
     {
         public string Note => "Version is always 2";
 
         public override int StructSize => 0x4C;
 
-        public DynaGORing(AssetDYNA asset) : base(asset) { }
+        public DynaGObjectRing(AssetDYNA asset) : base(asset) { }
 
         public override bool HasReference(uint assetID)
         {
