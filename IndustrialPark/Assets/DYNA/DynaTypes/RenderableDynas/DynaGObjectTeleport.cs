@@ -87,13 +87,14 @@ namespace IndustrialPark
 
         private void ValidateMRKR()
         {
-            foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                if (ae.archive.ContainsAsset(MRKR_ID) && ae.archive.GetFromAssetID(MRKR_ID) is AssetMRKR MRKR)
-                {
-                    this.MRKR = MRKR;
-                    this.MRKR.isInvisible = true;
-                    return;
-                }
+            if (Program.MainForm != null)
+                foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
+                    if (ae.archive.ContainsAsset(MRKR_ID) && ae.archive.GetFromAssetID(MRKR_ID) is AssetMRKR MRKR)
+                    {
+                        this.MRKR = MRKR;
+                        this.MRKR.isInvisible = true;
+                        return;
+                    }
             MRKR = null;
         }
 

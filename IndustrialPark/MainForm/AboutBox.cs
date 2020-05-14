@@ -15,7 +15,7 @@ namespace IndustrialPark
             this.labelCompanyName.Text = AssemblyCompany;
             ComponentResourceManager resources = new ComponentResourceManager(typeof(AboutBox));
             this.textBoxDescription.Text = resources.GetString("textBoxDescription.Text");
-            this.labelVersion.Text = AssemblyVersion;
+            this.labelVersion.Text = new IPversion().version;
             TopMost = true;
         }
 
@@ -66,19 +66,6 @@ namespace IndustrialPark
                     return "";
                 }
                 return ((AssemblyCompanyAttribute)attributes[0]).Company;
-            }
-        }
-
-        public static string AssemblyVersion
-        {
-            get
-            {
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyVersionAttribute), false);
-                if (attributes.Length == 0)
-                {
-                    return "";
-                }
-                return ((AssemblyVersionAttribute)attributes[0]).Version;
             }
         }
         #endregion
