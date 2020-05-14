@@ -242,28 +242,15 @@ namespace IndustrialPark
 
         public override float? IntersectsWith(Ray ray)
         {
+            float? smallestDistance = null;
+
             if (ray.Intersects(ref boundingBox))
-                return TriangleIntersection(ray);
-            return null;
-        }
+                foreach (RenderWareFile.Triangle t in triangles)
+                    if (ray.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
+                        if (smallestDistance == null || distance < smallestDistance)
+                            smallestDistance = distance;
 
-        private float? TriangleIntersection(Ray r)
-        {
-            bool hasIntersected = false;
-            float smallestDistance = 1000f;
-
-            foreach (RenderWareFile.Triangle t in triangles)
-                if (r.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
-                {
-                    hasIntersected = true;
-
-                    if (distance < smallestDistance)
-                        smallestDistance = distance;
-                }
-
-            if (hasIntersected)
-                return smallestDistance;
-            else return null;
+            return smallestDistance;
         }
     }
 }

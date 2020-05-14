@@ -127,31 +127,18 @@ namespace IndustrialPark
         {
             return Vector3.Distance(cameraPosition, new Vector3(PositionX, PositionY, PositionZ));
         }
-
+        
         public override float? IntersectsWith(Ray ray)
         {
-            if (ray.Intersects(ref boundingBox, out float distance))
-                return TriangleIntersection(ray, distance);
-            return null;
-        }
+            float? smallestDistance = null;
 
-        private float? TriangleIntersection(Ray r, float initialDistance)
-        {
-            bool hasIntersected = false;
-            float smallestDistance = 1000f;
-
-            foreach (RenderWareFile.Triangle t in triangles)
-                if (r.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
-                {
-                    hasIntersected = true;
-
-                    if (distance < smallestDistance)
+            if (ray.Intersects(ref boundingBox))
+                foreach (RenderWareFile.Triangle t in triangles)
+                if (ray.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
+                    if (smallestDistance == null || distance < smallestDistance)
                         smallestDistance = distance;
-                }
-
-            if (hasIntersected)
-                return smallestDistance;
-            else return null;
+            
+            return smallestDistance;
         }
     }
 }

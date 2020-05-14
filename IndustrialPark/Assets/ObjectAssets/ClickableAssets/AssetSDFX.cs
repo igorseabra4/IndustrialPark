@@ -54,46 +54,37 @@ namespace IndustrialPark
             boundingBox = BoundingBox.FromSphere(boundingSphere);
         }
 
-        public float? IntersectsWith(Ray ray)
+        public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
-            if (dontRender || isInvisible)
+            if (!ShouldDraw(renderer))
                 return null;
 
             if (ray.Intersects(ref boundingSphere))
-                return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices);
+                return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices, world);
             return null;
         }
 
-        private float? TriangleIntersection(Ray r, List<Triangle> triangles, List<Vector3> vertices)
+        public bool ShouldDraw(SharpRenderer renderer)
         {
-            bool hasIntersected = false;
-            float smallestDistance = 1000f;
+            if (isSelected)
+                return true;
+            if (dontRender)
+                return false;
+            if (isInvisible)
+                return false;
 
-            foreach (Triangle t in triangles)
+            if (AssetMODL.renderBasedOnLodt)
             {
-                Vector3 v1 = (Vector3)Vector3.Transform(vertices[t.vertex1], world);
-                Vector3 v2 = (Vector3)Vector3.Transform(vertices[t.vertex2], world);
-                Vector3 v3 = (Vector3)Vector3.Transform(vertices[t.vertex3], world);
-
-                if (r.Intersects(ref v1, ref v2, ref v3, out float distance))
-                {
-                    hasIntersected = true;
-
-                    if (distance < smallestDistance)
-                        smallestDistance = distance;
-                }
+                if (GetDistanceFrom(renderer.Camera.Position) < SharpRenderer.DefaultLODTDistance)
+                    return renderer.frustum.Intersects(ref boundingBox);
+                return false;
             }
 
-            if (hasIntersected)
-                return smallestDistance;
-            else return null;
+            return renderer.frustum.Intersects(ref boundingBox);
         }
 
         public void Draw(SharpRenderer renderer)
         {
-            if (!isSelected && (dontRender || isInvisible))
-                return;
-
             renderer.DrawSphere(world, isSelected, renderer.sfxColor);
 
             if (isSelected)
@@ -105,7 +96,7 @@ namespace IndustrialPark
             return boundingBox;
         }
 
-        public float GetDistance(Vector3 cameraPosition)
+        public float GetDistanceFrom(Vector3 cameraPosition)
         {
             return Vector3.Distance(cameraPosition, _position) - _radius;
         }

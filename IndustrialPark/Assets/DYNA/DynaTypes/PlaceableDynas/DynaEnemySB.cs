@@ -91,6 +91,21 @@ namespace IndustrialPark
                 triangles = null;
         }
 
+        public override bool ShouldDraw(SharpRenderer renderer)
+        {
+            if (AssetMODL.renderBasedOnLodt)
+            {
+                if (GetDistance(renderer.Camera.Position) <
+                    (AssetLODT.MaxDistances.ContainsKey(Model_AssetID) ?
+                    AssetLODT.MaxDistances[Model_AssetID] : SharpRenderer.DefaultLODTDistance))
+                    return renderer.frustum.Intersects(ref boundingBox);
+
+                return false;
+            }
+
+            return renderer.frustum.Intersects(ref boundingBox);
+        }
+
         public override void Draw(SharpRenderer renderer, bool isSelected)
         {
             Vector4 Color = new Vector4(ColorRed, ColorGreen, ColorBlue, ColorAlpha);
@@ -112,21 +127,14 @@ namespace IndustrialPark
             if (triangles == null)
                 return initialDistance;
 
-            bool hasIntersected = false;
-            float smallestDistance = 1000f;
+            float? smallestDistance = null;
 
             foreach (RenderWareFile.Triangle t in triangles)
                 if (r.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
-                {
-                    hasIntersected = true;
-
-                    if (distance < smallestDistance)
+                    if (smallestDistance == null || distance < smallestDistance)
                         smallestDistance = distance;
-                }
-
-            if (hasIntersected)
-                return smallestDistance;
-            return null;
+            
+            return smallestDistance;
         }
         
         public override BoundingBox GetBoundingBox()

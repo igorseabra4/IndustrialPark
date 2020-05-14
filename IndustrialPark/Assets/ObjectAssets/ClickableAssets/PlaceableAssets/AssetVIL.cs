@@ -96,10 +96,7 @@ namespace IndustrialPark
                 if (localFrameCounter >= int.MaxValue)
                     localFrameCounter = 0;
             }
-
-            if (!isSelected && (dontRender || isInvisible))
-                return;
-
+            
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
                 ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * _color : _color, UvAnimOffset);
             else

@@ -6,12 +6,12 @@ namespace IndustrialPark
     {
         void CreateTransformMatrix();
 
+        float GetDistanceFrom(Vector3 position);
+
+        bool ShouldDraw(SharpRenderer renderer);
+
         void Draw(SharpRenderer renderer);
-
-        BoundingBox GetBoundingBox();
-
-        float GetDistance(Vector3 cameraPosition);
-
-        float? IntersectsWith(Ray ray);
+        
+        float? GetIntersectionPosition(SharpRenderer renderer, Ray ray);
     }
 }

@@ -110,6 +110,25 @@ namespace IndustrialPark
             }
         }
 
+        public override bool ShouldDraw(SharpRenderer renderer)
+        {
+            if (AssetMODL.renderBasedOnLodt)
+            {
+                if (AssetTPIK.tpikEntries.ContainsKey(PickupHash))
+                {
+                    var tpikEntry = AssetTPIK.tpikEntries[PickupHash].Model_AssetID;
+                    if (GetDistance(renderer.Camera.Position) <
+                    (AssetLODT.MaxDistances.ContainsKey(tpikEntry) ?
+                    AssetLODT.MaxDistances[tpikEntry] : SharpRenderer.DefaultLODTDistance))
+                        return renderer.frustum.Intersects(ref boundingBox);
+                }
+
+                return base.ShouldDraw(renderer);
+            }
+
+            return renderer.frustum.Intersects(ref boundingBox);
+        }
+
         public override void Draw(SharpRenderer renderer, bool isSelected)
         {
             bool drew = false;
@@ -154,21 +173,14 @@ namespace IndustrialPark
             if (triangles == null)
                 return initialDistance;
 
-            bool hasIntersected = false;
-            float smallestDistance = 1000f;
+            float? smallestDistance = null;
 
             foreach (RenderWareFile.Triangle t in triangles)
                 if (r.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
-                {
-                    hasIntersected = true;
-
-                    if (distance < smallestDistance)
+                    if (smallestDistance == null || distance < smallestDistance)
                         smallestDistance = distance;
-                }
 
-            if (hasIntersected)
-                return smallestDistance;
-            else return null;
+            return smallestDistance;
         }
     }
 }

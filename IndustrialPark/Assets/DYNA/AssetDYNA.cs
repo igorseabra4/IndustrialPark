@@ -213,9 +213,9 @@ namespace IndustrialPark
         [Browsable(false)]
         public float ScaleZ { get => DynaSpec.ScaleZ; set => DynaSpec.ScaleZ = value; }
 
-        public float? IntersectsWith(Ray ray)
+        public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
-            if (dontRender || isInvisible)
+            if (!ShouldDraw(renderer))
                 return null;
 
             return DynaSpec.IntersectsWith(ray);
@@ -226,11 +226,22 @@ namespace IndustrialPark
             DynaSpec.CreateTransformMatrix();
         }
 
+        public bool ShouldDraw(SharpRenderer renderer)
+        {
+            if (!IsRenderableClickable)
+                return false;
+            if (isSelected)
+                return true;
+            if (dontRender)
+                return false;
+            if (isInvisible)
+                return false;
+
+            return DynaSpec.ShouldDraw(renderer);
+        }
+
         public void Draw(SharpRenderer renderer)
         {
-            if (!isSelected && (dontRender || isInvisible))
-                return;
-
             DynaSpec.Draw(renderer, isSelected);
         }
 
@@ -239,7 +250,7 @@ namespace IndustrialPark
             return DynaSpec.GetBoundingBox();
         }
 
-        public float GetDistance(Vector3 cameraPosition)
+        public float GetDistanceFrom(Vector3 cameraPosition)
         {
             return DynaSpec.GetDistance(cameraPosition);
         }

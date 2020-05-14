@@ -102,28 +102,18 @@ namespace IndustrialPark
         protected Vector3[] vertices;
 
         protected abstract List<Models.Triangle> triangleList { get; }
-
-        public float? IntersectsWith(Ray r)
+        
+        public float? IntersectsWith(Ray ray)
         {
-            if (r.Intersects(ref boundingBox, out float distance))
-                if (TriangleIntersection(r))
-                    return distance;
+            float? smallestDistance = null;
 
-            return null;
-        }
+            if (ray.Intersects(ref boundingBox))
+                foreach (Models.Triangle t in triangleList)
+                    if (ray.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
+                        if (smallestDistance == null || distance < smallestDistance)
+                            smallestDistance = distance;
 
-        public bool TriangleIntersection(Ray r)
-        {
-            foreach (Models.Triangle t in triangleList)
-            {
-                Vector3 v1 = vertices[t.vertex1];
-                Vector3 v2 = vertices[t.vertex2];
-                Vector3 v3 = vertices[t.vertex3];
-
-                if (r.Intersects(ref v1, ref v2, ref v3, out float distance))
-                    return true;
-            }
-            return false;
+            return smallestDistance;
         }
     }
 }

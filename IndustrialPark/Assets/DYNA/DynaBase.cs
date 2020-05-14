@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using SharpDX;
 
 namespace IndustrialPark
@@ -58,6 +59,21 @@ namespace IndustrialPark
         public virtual BoundingSphere GetObjectCenter()
         {
             return new BoundingSphere();
+        }
+
+        public virtual bool ShouldDraw(SharpRenderer renderer)
+        {
+            BoundingBox bb = GetBoundingBox();
+
+            if (AssetMODL.renderBasedOnLodt)
+            {
+                if (GetDistance(renderer.Camera.Position) < SharpRenderer.DefaultLODTDistance)
+                    return renderer.frustum.Intersects(ref bb);
+
+                return false;
+            }
+
+            return renderer.frustum.Intersects(ref bb);
         }
     }
 }

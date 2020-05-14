@@ -291,9 +291,6 @@ namespace IndustrialPark
         DefaultRenderData renderData;
         public void DrawCube(Matrix world, bool isSelected, float multiplier = 0.5f)
         {
-            if (AssetMODL.renderBasedOnLodt && Vector3.Distance(Camera.Position, (Vector3)world.Row4) > 100f)
-                return;
-
             renderData.worldViewProjection = Matrix.Scaling(multiplier) * world * viewProjection;
             renderData.Color = isSelected ? selectedColor : normalColor;
 
@@ -311,9 +308,6 @@ namespace IndustrialPark
 
         public void DrawPyramid(Matrix world, bool isSelected, float multiplier = 0.5f)
         {
-            if (AssetMODL.renderBasedOnLodt && Vector3.Distance(Camera.Position, (Vector3)world.Row4) > 100f)
-                return;
-
             renderData.worldViewProjection = Matrix.Scaling(multiplier) * world * viewProjection;
             renderData.Color = isSelected ? selectedColor : normalColor;
 
@@ -331,9 +325,6 @@ namespace IndustrialPark
 
         public void DrawSphere(Matrix world, bool isSelected, Vector4 normalColor)
         {
-            if (AssetMODL.renderBasedOnLodt && Vector3.Distance(Camera.Position, (Vector3)world.Row4) > 100f)
-                return;
-
             renderData.worldViewProjection = world * viewProjection;
             renderData.Color = isSelected ? selectedColor : normalColor;
 
@@ -351,9 +342,6 @@ namespace IndustrialPark
 
         public void DrawCylinder(Matrix world, bool isSelected, Vector4 normalColor)
         {
-            if (AssetMODL.renderBasedOnLodt && Vector3.Distance(Camera.Position, (Vector3)world.Row4) > 100f)
-                return;
-
             renderData.worldViewProjection = world * viewProjection;
             renderData.Color = isSelected ? selectedColor : normalColor;
 
@@ -371,9 +359,6 @@ namespace IndustrialPark
 
         public void DrawPlane(Matrix world, bool isSelected, uint textureAssetID, Vector3 uvAnimOffset)
         {
-            if (AssetMODL.renderBasedOnLodt && Vector3.Distance(Camera.Position, (Vector3)world.Row4) > 100f)
-                return;
-
             UvAnimRenderData renderData;
             renderData.worldViewProjection = world * viewProjection;
             renderData.Color = isSelected ? selectedColor : Vector4.One;
@@ -425,6 +410,8 @@ namespace IndustrialPark
         public BoundingFrustum frustum;
 
         public bool isDrawingUI = false;
+        public HashSet<IRenderableAsset> renderableAssets = new HashSet<IRenderableAsset>();
+        public const float DefaultLODTDistance = 100f;
 
         public void RunMainLoop(Panel Panel)
         {
@@ -482,13 +469,16 @@ namespace IndustrialPark
                         ArchiveEditorFunctions.renderableJSPs)
                             a.Draw(this);
 
-                        foreach (IRenderableAsset a in 
-                        ArchiveEditorFunctions.renderableAssets.OrderBy(f => -f.GetDistance(Camera.Position)))
+                        foreach (IRenderableAsset a in ArchiveEditorFunctions.renderableAssets)
                         {
-                            BoundingBox bb = a.GetBoundingBox();
-                            if (EntityAsset.movementPreview || frustum.Intersects(ref bb))
-                                a.Draw(this);
+                            if (a.ShouldDraw(this))
+                                renderableAssets.Add(a);
+                            else
+                                renderableAssets.Remove(a);
                         }
+
+                        foreach (IRenderableAsset a in renderableAssets.OrderByDescending(a => a.GetDistanceFrom(Camera.Position)))
+                            a.Draw(this);
 
                         device.SetCullModeNone();
                         device.ApplyRasterState();

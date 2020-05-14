@@ -20,13 +20,11 @@ namespace IndustrialPark
         public AssetDUPC(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             _modelAssetID = ReadUInt(0x7C);
-
             CreateTransformMatrix();
-            
             renderableAssets.Add(this);
         }
         
-        public virtual void CreateTransformMatrix()
+        public void CreateTransformMatrix()
         {
             world = Matrix.Scaling(ScaleX, ScaleY, ScaleZ)
                 * Matrix.RotationYawPitchRoll(ReadFloat(0x44), ReadFloat(0x48), ReadFloat(0x4C))
@@ -35,7 +33,7 @@ namespace IndustrialPark
             CreateBoundingBox();
         }
 
-        protected virtual void CreateBoundingBox()
+        protected void CreateBoundingBox()
         {
             if (renderingDictionary.ContainsKey(_modelAssetID) &&
                 renderingDictionary[_modelAssetID].HasRenderWareModelFile() &&
@@ -52,7 +50,7 @@ namespace IndustrialPark
         protected Vector3[] vertices;
         protected RenderWareFile.Triangle[] triangles;
 
-        protected virtual void CreateBoundingBox(List<Vector3> vertexList, float multiplier = 1f)
+        protected void CreateBoundingBox(List<Vector3> vertexList, float multiplier = 1f)
         {
             vertices = new Vector3[vertexList.Count];
 
@@ -73,20 +71,39 @@ namespace IndustrialPark
                 triangles = null;
         }
 
-        public virtual void Draw(SharpRenderer renderer)
+        public bool ShouldDraw(SharpRenderer renderer)
         {
-            if (!isSelected && (DontRender || isInvisible))
-                return;
+            if (isSelected)
+                return true;
+            if (dontRender)
+                return false;
+            if (isInvisible)
+                return false;
 
+            if (AssetMODL.renderBasedOnLodt)
+            {
+                if (GetDistanceFrom(renderer.Camera.Position) <
+                    (AssetLODT.MaxDistances.ContainsKey(_modelAssetID) ?
+                    AssetLODT.MaxDistances[_modelAssetID] : SharpRenderer.DefaultLODTDistance))
+                    return renderer.frustum.Intersects(ref boundingBox);
+
+                return false;
+            }
+            
+            return renderer.frustum.Intersects(ref boundingBox);
+        }
+
+        public void Draw(SharpRenderer renderer)
+        {
             if (renderingDictionary.ContainsKey(_modelAssetID))
                 renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * _color : _color, new Vector3());
             else
                 renderer.DrawCube(world, isSelected);
         }
 
-        public virtual float? IntersectsWith(Ray ray)
+        public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
-            if (DontRender || isInvisible)
+            if (!ShouldDraw(renderer))
                 return null;
 
             if (ray.Intersects(ref boundingBox, out float distance))
@@ -94,7 +111,7 @@ namespace IndustrialPark
             return null;
         }
 
-        protected virtual float? TriangleIntersection(Ray r, float initialDistance)
+        protected float? TriangleIntersection(Ray r, float initialDistance)
         {
             if (triangles == null)
                 return initialDistance;
@@ -121,7 +138,7 @@ namespace IndustrialPark
             return boundingBox;
         }
 
-        public float GetDistance(Vector3 cameraPosition)
+        public float GetDistanceFrom(Vector3 cameraPosition)
         {
             return Vector3.Distance(cameraPosition, Position);
         }

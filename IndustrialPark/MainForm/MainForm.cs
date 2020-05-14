@@ -822,15 +822,15 @@ namespace IndustrialPark
                     ArchiveEditorFunctions.GizmoSelect(ray);
                 else
                     SetSelectedIndex(renderer.isDrawingUI ?
-                        ArchiveEditorFunctions.GetClickedAssetID2D(ray, renderer.Camera.FarPlane) :
-                        ArchiveEditorFunctions.GetClickedAssetID(ray));
+                        ArchiveEditorFunctions.GetClickedAssetID2D(renderer, ray, renderer.Camera.FarPlane) :
+                        ArchiveEditorFunctions.GetClickedAssetID(renderer, ray));
             }
         }
 
         public Vector3 GetScreenClickedPosition(Rectangle viewRectangle, int X, int Y)
         {
             Ray ray = Ray.GetPickRay(X, Y, new Viewport(viewRectangle), renderer.viewProjection);
-            return ArchiveEditorFunctions.GetRayInterserctionPosition(ray);
+            return ArchiveEditorFunctions.GetRayInterserctionPosition(renderer, ray);
         }
 
         private void renderPanel_MouseUp(object sender, MouseEventArgs e)

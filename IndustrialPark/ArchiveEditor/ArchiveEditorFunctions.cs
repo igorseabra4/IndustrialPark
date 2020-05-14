@@ -262,7 +262,7 @@ namespace IndustrialPark
 
             foreach (uint assetID in assetList)
             {
-                DisposeOfAsset(assetID, true);
+                DisposeOfAsset(assetID);
                 progressBar.PerformStep();
             }
 
@@ -272,7 +272,7 @@ namespace IndustrialPark
             progressBar.Close();
         }
 
-        public void DisposeOfAsset(uint assetID, bool fast = false)
+        public void DisposeOfAsset(uint assetID)
         {
             currentlySelectedAssets.Remove(assetDictionary[assetID]);
             CloseInternalEditor(assetID);
@@ -284,6 +284,7 @@ namespace IndustrialPark
                 renderableAssets.Remove(ra);
                 if (renderableJSPs.Contains(ra))
                     renderableJSPs.Remove((AssetJSP)ra);
+                Program.MainForm.renderer.renderableAssets.Remove(ra);
             }
 
             if (assetDictionary[assetID] is AssetRenderWareModel jsp && jsp.HasRenderWareModelFile())
@@ -589,8 +590,7 @@ namespace IndustrialPark
 
         public void RemoveAsset(IEnumerable<uint> assetIDs)
         {
-            List<uint> assets = assetIDs.ToList();
-            foreach (uint u in assets)
+            foreach (uint u in assetIDs)
                 RemoveAsset(u);
         }
 

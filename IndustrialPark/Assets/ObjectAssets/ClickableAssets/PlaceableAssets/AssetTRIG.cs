@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -73,36 +72,27 @@ namespace IndustrialPark
 
         protected override void CreateBoundingBox()
         {
-            if (Shape == TriggerShape.Box)
-            {
-                boundingBox = new BoundingBox(new Vector3(-1, -1, -1), new Vector3(1, 1, 1));
-                
-                boundingBox.Minimum = (Vector3)Vector3.Transform(boundingBox.Minimum, world);
-                boundingBox.Maximum = (Vector3)Vector3.Transform(boundingBox.Maximum, world);
-
-                boundingSphere = BoundingSphere.FromBox(boundingBox);
-            }
-            else if (Shape == TriggerShape.Sphere)
+            if (Shape == TriggerShape.Sphere)
             {
                 boundingSphere = new BoundingSphere(_trigPos0, Radius);
                 boundingBox = BoundingBox.FromSphere(boundingSphere);
             }
             else
             {
-                boundingBox = new BoundingBox
-                {
-                    Maximum = new Vector3(Position0X, Position0Y, Position0Z) + new Vector3(Radius, Height * 2, Radius),
-                    Minimum = new Vector3(Position0X, Position0Y, Position0Z) - new Vector3(Radius, Height * 2, Radius)
-                };
-                boundingSphere = BoundingSphere.FromBox(boundingBox);
+                List<Vector3> verticesF = Shape == TriggerShape.Box ?
+                    SharpRenderer.cubeVertices : SharpRenderer.cylinderVertices;
+
+                vertices = new Vector3[verticesF.Count];
+
+                for (int i = 0; i < verticesF.Count; i++)
+                    vertices[i] = (Vector3)Vector3.Transform(verticesF[i], world);
+
+                boundingBox = BoundingBox.FromPoints(vertices);
             }
         }
 
         public override void Draw(SharpRenderer renderer)
         {
-            if (!isSelected && (dontRender || isInvisible))
-                return;
-
             if (Shape == TriggerShape.Box)
                 renderer.DrawCube(world, isSelected, 1f);
             else if (Shape == TriggerShape.Sphere)
@@ -114,65 +104,36 @@ namespace IndustrialPark
                 renderer.DrawCube(pivotWorld, isSelected);
         }
 
-        public override float? IntersectsWith(Ray ray)
+        public override float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
-            if (dontRender || isInvisible)
+            if (!ShouldDraw(renderer))
                 return null;
 
             if (Shape == TriggerShape.Box)
             {
                 if (ray.Intersects(ref boundingBox))
-                    return TriangleIntersection(ray, SharpRenderer.cubeTriangles, SharpRenderer.cubeVertices);
+                    return TriangleIntersection(ray, SharpRenderer.cubeTriangles, SharpRenderer.cubeVertices, world);
             }
             else if (Shape == TriggerShape.Sphere)
             {
                 if (ray.Intersects(ref boundingSphere))
-                    return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices);
+                    return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices, world);
             }
             else
             {
                 if (ray.Intersects(ref boundingBox))
-                    return TriangleIntersection(ray, SharpRenderer.cylinderTriangles, SharpRenderer.cylinderVertices);
+                    return TriangleIntersection(ray, SharpRenderer.cylinderTriangles, SharpRenderer.cylinderVertices, world);
             }
 
-            return null;
-        }
-
-        private float? TriangleIntersection(Ray r, List<Triangle> triangles, List<Vector3> vertices)
-        {
-            bool hasIntersected = false;
-            float smallestDistance = 1000f;
-
-            foreach (Triangle t in triangles)
-            {
-                Vector3 v1 = (Vector3)Vector3.Transform(vertices[t.vertex1], world);
-                Vector3 v2 = (Vector3)Vector3.Transform(vertices[t.vertex2], world);
-                Vector3 v3 = (Vector3)Vector3.Transform(vertices[t.vertex3], world);
-
-                if (r.Intersects(ref v1, ref v2, ref v3, out float distance))
-                {
-                    hasIntersected = true;
-
-                    if (distance < smallestDistance)
-                        smallestDistance = distance;
-                }
-            }
-
-            if (hasIntersected)
-                return smallestDistance;
-            else return null;
-        }
-
-        protected override float? TriangleIntersection(Ray r, float distance)
-        {
             return null;
         }
         
-        public override float GetDistance(Vector3 cameraPosition)
+        public override float GetDistanceFrom(Vector3 cameraPosition)
         {
             if (Shape == TriggerShape.Sphere)
                 return Vector3.Distance(cameraPosition, boundingSphere.Center) - boundingSphere.Radius;
-            return base.GetDistance(cameraPosition);
+
+            return base.GetDistanceFrom(cameraPosition);
         }
 
         private byte _shape;

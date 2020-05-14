@@ -121,11 +121,20 @@ namespace IndustrialPark
             vertexCount = PointCountMinus1 + 1;
         }
 
+        public bool ShouldDraw(SharpRenderer renderer)
+        {
+            if (isSelected)
+                return true;
+            if (dontRender)
+                return false;
+            if (isInvisible)
+                return false;
+            
+            return renderer.frustum.Intersects(ref boundingBox);
+        }
+
         public void Draw(SharpRenderer renderer)
         {
-            if (!isSelected && (dontRender || isInvisible))
-                return;
-
             renderer.DrawSpline(vertexBuffer, vertexCount, Matrix.Identity,
                 isSelected ? renderer.selectedObjectColor : Color.YellowGreen.ToVector4(), false);
         }
@@ -155,23 +164,13 @@ namespace IndustrialPark
                     boundingBox.Minimum.Z = v.Z;
             }
         }
-
-        public BoundingBox GetBoundingBox()
-        {
-            return boundingBox;
-        }
-
-        public float GetDistance(Vector3 cameraPosition)
+        
+        public float GetDistanceFrom(Vector3 cameraPosition)
         {
             return Vector3.Distance(cameraPosition, boundingBox.Center);
         }
 
-        public float? IntersectsWith(Ray ray)
-        {
-            if (ray.Intersects(ref boundingBox, out float distance))
-                return distance;
-            return null;
-        }
+        public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray) => null;
 
         public void Dispose()
         {

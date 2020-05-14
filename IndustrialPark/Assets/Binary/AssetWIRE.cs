@@ -51,7 +51,6 @@ namespace IndustrialPark
         public AssetWIRE(Section_AHDR AHDR, Game game, Platform platform, SharpRenderer renderer) : base(AHDR, game, platform)
         {
             Setup(renderer);
-            CreateTransformMatrix();
             ArchiveEditorFunctions.renderableAssets.Add(this);
         }
 
@@ -210,10 +209,6 @@ namespace IndustrialPark
             Lines = lines.ToArray();
         }
 
-        private BoundingBox boundingBox;
-
-        public static bool dontRender = false;
-
         private SharpDX.Direct3D11.Buffer vertexBuffer;
         private int vertexCount;
 
@@ -233,58 +228,27 @@ namespace IndustrialPark
             vertexCount = lineList.Count;
         }
 
+        public bool ShouldDraw(SharpRenderer renderer) => isSelected;
+        
         public void Draw(SharpRenderer renderer)
         {
-            if (isSelected)
-                renderer.DrawSpline(vertexBuffer, vertexCount, Matrix.Identity, Color.YellowGreen.ToVector4(), true);
+            renderer.DrawSpline(vertexBuffer, vertexCount, Matrix.Identity, Color.YellowGreen.ToVector4(), true);
         }
-
-        public void CreateTransformMatrix()
+        
+        public float GetDistanceFrom(Vector3 cameraPosition)
         {
-            if (Points.Length == 0)
-                boundingBox = new BoundingBox();
-            else
-                boundingBox = new BoundingBox(
-                    new Vector3(Points[0].X, Points[0].Y, Points[0].Z),
-                    new Vector3(Points[0].X, Points[0].Y, Points[0].Z));
-
-            foreach (WireVector v in Points)
-            {
-                if (v.X > boundingBox.Maximum.X)
-                    boundingBox.Maximum.X = v.X;
-                if (v.Y > boundingBox.Maximum.Y)
-                    boundingBox.Maximum.Y = v.Y;
-                if (v.Z > boundingBox.Maximum.Z)
-                    boundingBox.Maximum.Z = v.Z;
-                if (v.X < boundingBox.Minimum.X)
-                    boundingBox.Minimum.X = v.X;
-                if (v.Y < boundingBox.Minimum.Y)
-                    boundingBox.Minimum.Y = v.Y;
-                if (v.Z < boundingBox.Minimum.Z)
-                    boundingBox.Minimum.Z = v.Z;
-            }
+            return cameraPosition.Length();
         }
-
-        public BoundingBox GetBoundingBox()
-        {
-            return boundingBox;
-        }
-
-        public float GetDistance(Vector3 cameraPosition)
-        {
-            return Vector3.Distance(cameraPosition, boundingBox.Center);
-        }
-
-        public float? IntersectsWith(Ray ray)
-        {
-            if (ray.Intersects(ref boundingBox, out float distance))
-                return distance;
-            return null;
-        }
-
+        
         public void Dispose()
         {
             vertexBuffer.Dispose();
         }
+
+        public void CreateTransformMatrix()
+        {
+        }
+
+        public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray) => null;
     }
 }

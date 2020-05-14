@@ -21,24 +21,31 @@ namespace IndustrialPark
 
         public void CreateTransformMatrix() => boundingBox = BoundingBox.FromPoints(model.vertexListG.ToArray());
         
-        public BoundingBox GetBoundingBox() => boundingBox;
-
-        public float GetDistance(Vector3 cameraPosition) => 0;
+        public float GetDistanceFrom(Vector3 cameraPosition) => 0;
         
+        public bool ShouldDraw(SharpRenderer renderer)
+        {
+            if (isSelected)
+                return true;
+            if (dontRender)
+                return false;
+            if (isInvisible)
+                return false;
+
+            return renderer.frustum.Intersects(ref boundingBox);
+        }
+
         public void Draw(SharpRenderer renderer)
         {
-            if (!isSelected && (dontRender || isInvisible))
-                return;
-
             model.Render(renderer, Matrix.Identity, isSelected ? renderer.selectedObjectColor : Vector4.One, Vector3.Zero, _atomicFlags);
         }
 
-        public float? IntersectsWith(Ray ray) => dontRender || isInvisible ? null : TriangleIntersection(ray);
-        
-        private float? TriangleIntersection(Ray r)
+        public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
-            bool hasIntersected = false;
-            float smallestDistance = 2000f;
+            if (!ShouldDraw(renderer))
+                return null;
+
+            float? smallestDistance = null;
 
             foreach (Triangle t in model.triangleList)
             {
@@ -46,18 +53,12 @@ namespace IndustrialPark
                 Vector3 v2 = model.vertexListG[t.vertex2];
                 Vector3 v3 = model.vertexListG[t.vertex3];
 
-                if (r.Intersects(ref v1, ref v2, ref v3, out float distance))
-                {
-                    hasIntersected = true;
-
-                    if (distance < smallestDistance)
+                if (ray.Intersects(ref v1, ref v2, ref v3, out float distance))
+                    if (smallestDistance == null || distance < smallestDistance)
                         smallestDistance = distance;
-                }
             }
 
-            if (hasIntersected)
-                return smallestDistance;
-            return null;
+            return smallestDistance;
         }
     }
 }

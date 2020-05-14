@@ -66,9 +66,6 @@ namespace IndustrialPark
 
         public override void Draw(SharpRenderer renderer)
         {
-            if (!isSelected && (dontRender || isInvisible))
-                return;
-
             if (_textureAssetID == 0)
             {
                 base.Draw(renderer);

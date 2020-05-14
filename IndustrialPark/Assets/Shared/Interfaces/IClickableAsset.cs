@@ -8,7 +8,7 @@ namespace IndustrialPark
         float PositionY { get; set; }
         float PositionZ { get; set; }
 
-        float? IntersectsWith(Ray ray);
+        float? GetIntersectionPosition(SharpRenderer renderer, Ray ray);
 
         BoundingBox GetBoundingBox();
     }

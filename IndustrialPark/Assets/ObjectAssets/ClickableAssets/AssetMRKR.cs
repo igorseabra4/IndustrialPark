@@ -35,7 +35,7 @@ namespace IndustrialPark
 
         protected void CreateBoundingBox()
         {
-            Vector3[] vertices = new Vector3[SharpRenderer.pyramidVertices.Count];
+            var vertices = new Vector3[SharpRenderer.pyramidVertices.Count];
 
             for (int i = 0; i < SharpRenderer.pyramidVertices.Count; i++)
                 vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.pyramidVertices[i], world);
@@ -43,46 +43,37 @@ namespace IndustrialPark
             boundingBox = BoundingBox.FromPoints(vertices);
         }
 
-        public float? IntersectsWith(Ray ray)
+        public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
-            if (dontRender || isInvisible)
+            if (!ShouldDraw(renderer))
                 return null;
 
-            if (ray.Intersects(ref boundingBox, out float distance))
-                return TriangleIntersection(ray, distance, SharpRenderer.pyramidTriangles, SharpRenderer.pyramidVertices);
+            if (ray.Intersects(ref boundingBox))
+                return TriangleIntersection(ray, SharpRenderer.pyramidTriangles, SharpRenderer.pyramidVertices, world);
             return null;
         }
         
-        private float? TriangleIntersection(Ray r, float initialDistance, List<Triangle> triangles, List<Vector3> vertices)
+        public bool ShouldDraw(SharpRenderer renderer)
         {
-            bool hasIntersected = false;
-            float smallestDistance = 1000f;
+            if (isSelected)
+                return true;
+            if (dontRender)
+                return false;
+            if (isInvisible)
+                return false;
 
-            foreach (Triangle t in triangles)
+            if (AssetMODL.renderBasedOnLodt)
             {
-                Vector3 v1 = (Vector3)Vector3.Transform(vertices[t.vertex1], world);
-                Vector3 v2 = (Vector3)Vector3.Transform(vertices[t.vertex2], world);
-                Vector3 v3 = (Vector3)Vector3.Transform(vertices[t.vertex3], world);
-
-                if (r.Intersects(ref v1, ref v2, ref v3, out float distance))
-                {
-                    hasIntersected = true;
-
-                    if (distance < smallestDistance)
-                        smallestDistance = distance;
-                }
+                if (GetDistanceFrom(renderer.Camera.Position) < SharpRenderer.DefaultLODTDistance)
+                    return renderer.frustum.Intersects(ref boundingBox);
+                return false;
             }
 
-            if (hasIntersected)
-                return smallestDistance;
-            else return null;
+            return renderer.frustum.Intersects(ref boundingBox);
         }
 
         public void Draw(SharpRenderer renderer)
         {
-            if (!isSelected && (dontRender || isInvisible))
-                return;
-
             renderer.DrawPyramid(world, isSelected, 1f);
         }
         
@@ -91,7 +82,7 @@ namespace IndustrialPark
             return boundingBox;
         }
 
-        public float GetDistance(Vector3 cameraPosition)
+        public float GetDistanceFrom(Vector3 cameraPosition)
         {
             return Vector3.Distance(cameraPosition, _position);
         }

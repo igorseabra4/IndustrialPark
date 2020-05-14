@@ -27,9 +27,6 @@ namespace IndustrialPark
 
             Matrix localW = LocalWorld();
 
-            if (!isSelected && (DontRender || isInvisible))
-                return;
-
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
                 ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, localW, isSelected ? renderer.selectedObjectColor * _color : _color, UvAnimOffset);
             else

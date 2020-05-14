@@ -47,25 +47,9 @@ namespace IndustrialPark
         {
             blendModes = null;
         }
-
+        
         public void Draw(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset)
         {
-            if (renderBasedOnLodt)
-            {
-                if (AssetLODT.MaxDistances.ContainsKey(AHDR.assetID))
-                {
-                    if (Vector3.Distance(Program.MainForm.renderer.Camera.Position, (Vector3)world.Row4) > AssetLODT.MaxDistances[AHDR.assetID])
-                        return;
-                }
-                else if (Vector3.Distance(Program.MainForm.renderer.Camera.Position, (Vector3)world.Row4) > 100f)
-                    return;
-            }
-
-            if (AHDR.ADBG.assetName.Contains("uplicatotron"))
-            {
-
-            }
-
             if (renderBasedOnPipt && blendModes != null)
                 model.RenderPipt(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, uvAnimOffset, _atomicFlags, blendModes);            
             else

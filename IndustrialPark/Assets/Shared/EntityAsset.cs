@@ -77,20 +77,41 @@ namespace IndustrialPark
                 triangles = null;
         }
 
+        public bool ShouldDraw(SharpRenderer renderer)
+        {
+            if (isSelected)
+                return true;
+            if (movementPreview)
+                return true;
+            if (DontRender)
+                return false;
+            if (isInvisible)
+                return false;
+
+            if (AssetMODL.renderBasedOnLodt)
+            {
+                if (GetDistanceFrom(renderer.Camera.Position) <
+                    (AssetLODT.MaxDistances.ContainsKey(_modelAssetID) ?
+                    AssetLODT.MaxDistances[_modelAssetID] : SharpRenderer.DefaultLODTDistance))
+                    return renderer.frustum.Intersects(ref boundingBox);
+                
+                return false;
+            }
+
+            return renderer.frustum.Intersects(ref boundingBox);
+        }
+
         public virtual void Draw(SharpRenderer renderer)
         {
-            if (!isSelected && (DontRender || isInvisible))
-                return;
-
             if (renderingDictionary.ContainsKey(_modelAssetID))
                 renderingDictionary[_modelAssetID].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * _color : _color, UvAnimOffset);
             else
                 renderer.DrawCube(LocalWorld(), isSelected);
         }
 
-        public virtual float? IntersectsWith(Ray ray)
+        public virtual float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
-            if (DontRender || isInvisible)
+            if (!ShouldDraw(renderer))
                 return null;
 
             if (ray.Intersects(ref boundingBox, out float distance))
@@ -103,29 +124,22 @@ namespace IndustrialPark
             if (triangles == null)
                 return initialDistance;
 
-            bool hasIntersected = false;
-            float smallestDistance = 1000f;
+            float? smallestDistance = null;
 
             foreach (RenderWareFile.Triangle t in triangles)
                 if (r.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
-                {
-                    hasIntersected = true;
-
-                    if (distance < smallestDistance)
+                    if (smallestDistance == null || distance < smallestDistance)
                         smallestDistance = distance;
-                }
-
-            if (hasIntersected)
-                return smallestDistance;
-            return null;
+                
+            return smallestDistance;
         }
-        
+
         public BoundingBox GetBoundingBox()
         {
             return boundingBox;
         }
 
-        public virtual float GetDistance(Vector3 cameraPosition)
+        public virtual float GetDistanceFrom(Vector3 cameraPosition)
         {
             float min = Vector3.Distance(cameraPosition, Position);
             float d;

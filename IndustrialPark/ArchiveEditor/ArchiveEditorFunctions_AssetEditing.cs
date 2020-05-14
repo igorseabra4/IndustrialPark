@@ -148,7 +148,7 @@ namespace IndustrialPark
                 ie.SetHideHelp(hideHelp);
         }
         
-        public static Vector3 GetRayInterserctionPosition(Ray ray)
+        public static Vector3 GetRayInterserctionPosition(SharpRenderer renderer, Ray ray)
         {
             List<IRenderableAsset> l = new List<IRenderableAsset>();
             try
@@ -163,7 +163,7 @@ namespace IndustrialPark
 
             foreach (IRenderableAsset ra in l)
             {
-                float? distance = ra.IntersectsWith(ray);
+                float? distance = ra.GetIntersectionPosition(renderer, ray);
                 if (distance != null && distance < smallerDistance)
                 {
                     found = true;
@@ -174,7 +174,7 @@ namespace IndustrialPark
             return ray.Position + Vector3.Normalize(ray.Direction) * (found ? smallerDistance : 2f);
         }
 
-        public static uint GetClickedAssetID(Ray ray)
+        public static uint GetClickedAssetID(SharpRenderer renderer, Ray ray)
         {
             float smallerDistance = 1000f;
             uint assetID = 0;
@@ -183,7 +183,7 @@ namespace IndustrialPark
             {
                 if (!ra.isSelected && ra is IClickableAsset)
                 {
-                    float? distance = ((IClickableAsset)ra).IntersectsWith(ray);
+                    float? distance = ((IClickableAsset)ra).GetIntersectionPosition(renderer, ray);
                     if (distance != null && distance < smallerDistance)
                     {
                         smallerDistance = (float)distance;
@@ -195,7 +195,7 @@ namespace IndustrialPark
             return assetID;
         }
 
-        public static uint GetClickedAssetID2D(Ray ray, float farPlane)
+        public static uint GetClickedAssetID2D(SharpRenderer renderer, Ray ray, float farPlane)
         {
             float smallerDistance = 3 * farPlane;
             uint assetID = 0;
@@ -206,7 +206,7 @@ namespace IndustrialPark
             {
                 if (!ra.isSelected)
                 {
-                    float? distance = ((IClickableAsset)ra).IntersectsWith(ray);
+                    float? distance = ((IClickableAsset)ra).GetIntersectionPosition(renderer, ray);
                     if (distance != null && distance < smallerDistance)
                     {
                         smallerDistance = (float)distance;

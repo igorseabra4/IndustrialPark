@@ -1,5 +1,8 @@
 ﻿using HipHopFile;
+using IndustrialPark.Models;
+using SharpDX;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
@@ -176,6 +179,26 @@ namespace IndustrialPark
         {
             DynamicTypeDescriptor dt = new DynamicTypeDescriptor(typeof(FlagsField_UInt));
             return dt.FromComponent(new FlagsField_UInt(this, offset, dt, flagNames));
+        }
+
+        protected float? TriangleIntersection(Ray r, IList<Triangle> triangles, IList<Vector3> vertices, Matrix world)
+        {
+            float? smallestDistance = null;
+
+            foreach (var t in triangles)
+            {
+                Vector3 v1 = (Vector3)Vector3.Transform(vertices[t.vertex1], world);
+                Vector3 v2 = (Vector3)Vector3.Transform(vertices[t.vertex2], world);
+                Vector3 v3 = (Vector3)Vector3.Transform(vertices[t.vertex3], world);
+
+                if (r.Intersects(ref v1, ref v2, ref v3, out float distance))
+                {
+                    if (smallestDistance == null || distance < smallestDistance)
+                        smallestDistance = distance;
+                }
+            }
+
+            return smallestDistance;
         }
     }
 

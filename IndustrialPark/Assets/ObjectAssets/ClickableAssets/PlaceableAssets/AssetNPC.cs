@@ -27,9 +27,6 @@ namespace IndustrialPark
 
         public override void Draw(SharpRenderer renderer)
         {
-            if (!isSelected && (dontRender || isInvisible))
-                return;
-
             Vector4 Color = _color;
             Color.W = Color.W == 0f ? 1f : Color.W;
 

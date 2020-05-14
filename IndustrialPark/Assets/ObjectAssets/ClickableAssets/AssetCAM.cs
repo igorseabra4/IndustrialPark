@@ -33,8 +33,6 @@ namespace IndustrialPark
     {
         private Matrix world;
         private BoundingBox boundingBox;
-        private Vector3[] vertices;
-        protected RenderWareFile.Triangle[] triangles;
 
         public static bool dontRender = false;
 
@@ -77,70 +75,56 @@ namespace IndustrialPark
         public void CreateTransformMatrix()
         {
             world = Matrix.Translation(_position);
-
             CreateBoundingBox();
         }
 
         protected void CreateBoundingBox()
         {
-            vertices = new Vector3[SharpRenderer.cubeVertices.Count];
+            var vertices = new Vector3[SharpRenderer.cubeVertices.Count];
 
             for (int i = 0; i < SharpRenderer.cubeVertices.Count; i++)
                 vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.cubeVertices[i] * 0.5f, world);
 
             boundingBox = BoundingBox.FromPoints(vertices);
-
-            triangles = new RenderWareFile.Triangle[SharpRenderer.cubeTriangles.Count];
-            for (int i = 0; i < SharpRenderer.cubeTriangles.Count; i++)
-            {
-                triangles[i] = new RenderWareFile.Triangle((ushort)SharpRenderer.cubeTriangles[i].materialIndex,
-                    (ushort)SharpRenderer.cubeTriangles[i].vertex1, (ushort)SharpRenderer.cubeTriangles[i].vertex2, (ushort)SharpRenderer.cubeTriangles[i].vertex3);
-            }
         }
 
-        public float? IntersectsWith(Ray ray)
+        public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
-            if (dontRender || isInvisible)
+            if (!ShouldDraw(renderer))
                 return null;
 
             if (ray.Intersects(ref boundingBox, out float distance))
-                return TriangleIntersection(ray, distance);
+                return distance;
             return null;
         }
 
-        private float? TriangleIntersection(Ray r, float initialDistance)
+        public bool ShouldDraw(SharpRenderer renderer)
         {
-            bool hasIntersected = false;
-            float smallestDistance = 1000f;
+            if (isSelected)
+                return true;
+            if (dontRender)
+                return false;
+            if (isInvisible)
+                return false;
 
-            foreach (RenderWareFile.Triangle t in triangles)
-                if (r.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
-                {
-                    hasIntersected = true;
+            if (AssetMODL.renderBasedOnLodt)
+            {
+                if (GetDistanceFrom(renderer.Camera.Position) < SharpRenderer.DefaultLODTDistance)
+                    return renderer.frustum.Intersects(ref boundingBox);
+                return false;
+            }
 
-                    if (distance < smallestDistance)
-                        smallestDistance = distance;
-                }
-
-            if (hasIntersected)
-                return smallestDistance;
-            else return null;
+            return renderer.frustum.Intersects(ref boundingBox);
         }
 
-        public void Draw(SharpRenderer renderer)
-        {
-            if (!isSelected && (dontRender || isInvisible))
-                return;
-
-            renderer.DrawCube(world, isSelected);
-        }
+        public void Draw(SharpRenderer renderer) => renderer.DrawCube(world, isSelected);
         
         public BoundingBox GetBoundingBox()
         {
             return boundingBox;
         }
 
-        public float GetDistance(Vector3 cameraPosition)
+        public float GetDistanceFrom(Vector3 cameraPosition)
         {
             return Vector3.Distance(cameraPosition, _position);
         }

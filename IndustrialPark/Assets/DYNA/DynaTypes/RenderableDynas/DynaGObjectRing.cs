@@ -83,6 +83,21 @@ namespace IndustrialPark
                 triangles = null;
         }
 
+        public override bool ShouldDraw(SharpRenderer renderer)
+        {
+            if (AssetMODL.renderBasedOnLodt)
+            {
+                if (GetDistance(renderer.Camera.Position) <
+                    (AssetLODT.MaxDistances.ContainsKey(DynaGObjectRingControl.RingModelAssetID) ?
+                    AssetLODT.MaxDistances[DynaGObjectRingControl.RingModelAssetID] : SharpRenderer.DefaultLODTDistance))
+                    return renderer.frustum.Intersects(ref boundingBox);
+
+                return false;
+            }
+
+            return renderer.frustum.Intersects(ref boundingBox);
+        }
+
         public override void Draw(SharpRenderer renderer, bool isSelected)
         {
             if (renderingDictionary.ContainsKey(DynaGObjectRingControl.RingModelAssetID))
@@ -98,26 +113,19 @@ namespace IndustrialPark
             return null;
         }
 
-        protected float? TriangleIntersection(Ray r, float initialDistance)
+        private float? TriangleIntersection(Ray r, float initialDistance)
         {
             if (triangles == null)
                 return initialDistance;
 
-            bool hasIntersected = false;
-            float smallestDistance = 1000f;
+            float? smallestDistance = null;
 
             foreach (RenderWareFile.Triangle t in triangles)
                 if (r.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
-                {
-                    hasIntersected = true;
-
-                    if (distance < smallestDistance)
+                    if (smallestDistance == null || distance < smallestDistance)
                         smallestDistance = distance;
-                }
 
-            if (hasIntersected)
-                return smallestDistance;
-            return null;
+            return smallestDistance;
         }
 
         public override BoundingBox GetBoundingBox()
