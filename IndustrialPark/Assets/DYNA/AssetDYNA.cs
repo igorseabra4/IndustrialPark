@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using SharpDX;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -135,9 +136,10 @@ namespace IndustrialPark
                 case DynaType.Unknown_E2301EA9:
                 case DynaType.Unknown_EBC04E7B:
                 case DynaType.Unknown_FC2951C1:
-                    DynaSpec = new DynaDefault(this, Data.Length - LinkCount * Link.sizeOfStruct - 0x10); break;
+                case DynaType.Null:
+                    DynaSpec = new DynaDefault(this, reset ? 0 : Data.Length - LinkCount * Link.sizeOfStruct - 0x10); break;
                 default:
-                    throw new System.Exception("Unknown DYNA type: " + Type.ToString("X8"));
+                    throw new Exception("Unknown DYNA type: " + Type.ToString("X8"));
             }
 
             if (reset)
@@ -158,7 +160,7 @@ namespace IndustrialPark
                 renderableAssets.Remove(this);
         }
         
-        [Category("Dynamic")]
+        [Category("Dynamic"), Browsable(false)]
         public DynaType Type
         {
             get => (DynaType)ReadUInt(0x8);
@@ -168,7 +170,31 @@ namespace IndustrialPark
                 SetDynaSpecific(true);
             }
         }
-        
+
+        [Category("Dynamic"), DisplayName("Type")]
+        public DynaType_Alphabetical DynaType_Alphabetical
+        {
+            get
+            {
+                foreach (DynaType_Alphabetical o in Enum.GetValues(typeof(DynaType_Alphabetical)))
+                    if (o.ToString() == Type.ToString())
+                        return o;
+
+                return DynaType_Alphabetical.Null;
+            }
+            set
+            {
+                foreach (DynaType o in Enum.GetValues(typeof(DynaType)))
+                    if (o.ToString() == value.ToString())
+                    {
+                        Type = o;
+                        return;
+                    }
+
+                throw new Exception();
+            }
+        }
+
         [Category("Dynamic")]
         public short Version
         {
