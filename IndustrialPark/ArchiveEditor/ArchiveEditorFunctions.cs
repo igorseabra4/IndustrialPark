@@ -274,12 +274,13 @@ namespace IndustrialPark
 
         public void DisposeOfAsset(uint assetID)
         {
-            currentlySelectedAssets.Remove(assetDictionary[assetID]);
+            var asset = assetDictionary[assetID];
+            currentlySelectedAssets.Remove(asset);
             CloseInternalEditor(assetID);
 
             renderingDictionary.Remove(assetID);
 
-            if (assetDictionary[assetID] is IRenderableAsset ra)
+            if (asset is IRenderableAsset ra)
             {
                 renderableAssets.Remove(ra);
                 if (renderableJSPs.Contains(ra))
@@ -287,23 +288,23 @@ namespace IndustrialPark
                 Program.MainForm.renderer.renderableAssets.Remove(ra);
             }
 
-            if (assetDictionary[assetID] is AssetRenderWareModel jsp && jsp.HasRenderWareModelFile())
+            if (asset is AssetRenderWareModel jsp && jsp.HasRenderWareModelFile())
                 jsp.GetRenderWareModelFile().Dispose();
-            else if (assetDictionary[assetID] is IAssetWithModel iawm)
+            else if (asset is IAssetWithModel iawm)
                 iawm.MovieRemoveFromDictionary();
-            else if (assetDictionary[assetID] is AssetPICK pick)
+            else if (asset is AssetPICK pick)
                 pick.ClearDictionary();
-            else if (assetDictionary[assetID] is AssetTPIK tpik)
+            else if (asset is AssetTPIK tpik)
                 tpik.ClearDictionary();
-            else if (assetDictionary[assetID] is AssetLODT lodt)
+            else if (asset is AssetLODT lodt)
                 lodt.ClearDictionary();
-            else if (assetDictionary[assetID] is AssetPIPT pipt)
+            else if (asset is AssetPIPT pipt)
                 pipt.ClearDictionary();
-            else if (assetDictionary[assetID] is AssetSPLN spln)
+            else if (asset is AssetSPLN spln)
                 spln.Dispose();
-            else if (assetDictionary[assetID] is AssetWIRE wire)
+            else if (asset is AssetWIRE wire)
                 wire.Dispose();
-            else if (assetDictionary[assetID] is AssetRWTX rwtx)
+            else if (asset is AssetRWTX rwtx)
                 TextureManager.RemoveTexture(rwtx.Name);
         }
 
@@ -523,9 +524,11 @@ namespace IndustrialPark
 
             if (success)
             {
+                #if !DEBUG
                 try
                 {
-                    while (ContainsAsset(AHDR.assetID))
+                #endif
+                while (ContainsAsset(AHDR.assetID))
                     {
                         MessageBox.Show($"Archive already contains asset id [{AHDR.assetID.ToString("X8")}]. Will change it to [{(AHDR.assetID + 1).ToString("X8")}].");
                         AHDR.assetID++;
@@ -533,11 +536,13 @@ namespace IndustrialPark
                     UnsavedChanges = true;
                     AddAsset(layerIndex, AHDR, true);
                     SetAssetPositionToView(AHDR.assetID);
+                #if !DEBUG
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Unable to add asset: " + ex.Message);
                 }
+                #endif
 
                 assetID = AHDR.assetID;
             }
@@ -861,8 +866,6 @@ namespace IndustrialPark
             foreach (AssetJSP a in renderableJSPs)
                 a.CreateTransformMatrix();
         }
-
-        public delegate void OnPipeInfoTableEdited(Dictionary<uint, (int, BlendFactorType, BlendFactorType)[]> blendModes);
         
         public void UpdateModelBlendModes(Dictionary<uint, (int, BlendFactorType, BlendFactorType)[]> blendModes)
         {
@@ -875,7 +878,7 @@ namespace IndustrialPark
             else
             {
                 foreach (var k in blendModes.Keys)
-                    if (ContainsAsset(k) && GetFromAssetID(k) is AssetMODL MODL)
+                    if (renderingDictionary.ContainsKey(k) && renderingDictionary[k] is AssetMODL MODL)
                         MODL.SetBlendModes(blendModes[k]);
             }
         }

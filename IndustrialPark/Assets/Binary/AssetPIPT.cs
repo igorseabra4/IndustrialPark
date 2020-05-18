@@ -238,14 +238,15 @@ namespace IndustrialPark
 
     public class AssetPIPT : Asset
     {
-        public AssetPIPT(Section_AHDR AHDR, Game game, Platform platform, ArchiveEditorFunctions.OnPipeInfoTableEdited onPipeInfoTableEdited) : base(AHDR, game, platform)
+        public AssetPIPT(Section_AHDR AHDR, Game game, Platform platform, OnPipeInfoTableEdited onPipeInfoTableEdited) : base(AHDR, game, platform)
         {
             this.onPipeInfoTableEdited = onPipeInfoTableEdited;
             UpdateDictionary();
         }
         public AssetPIPT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
-        ArchiveEditorFunctions.OnPipeInfoTableEdited onPipeInfoTableEdited;
+        public delegate void OnPipeInfoTableEdited(Dictionary<uint, (int, BlendFactorType, BlendFactorType)[]> blendModes);
+        OnPipeInfoTableEdited onPipeInfoTableEdited;
 
         public void UpdateDictionary()
         {

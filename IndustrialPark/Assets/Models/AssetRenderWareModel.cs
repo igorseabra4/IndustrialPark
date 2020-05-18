@@ -22,12 +22,15 @@ namespace IndustrialPark
         {
             if (model != null)
                 model.Dispose();
-
+            
+            #if !DEBUG
             try
             {
+            #endif
                 ReadFileMethods.treatStuffAsByteArray = false;
                 model = new RenderWareModelFile(renderer.device, ReadFileMethods.ReadRenderWareFile(Data));
                 _atomicFlags = AtomicFlags;
+            #if !DEBUG
             }
             catch (Exception ex)
             {
@@ -36,6 +39,7 @@ namespace IndustrialPark
                 model = null;
                 throw new Exception("Error: " + ToString() + " has an unsupported format and cannot be rendered. " + ex.Message);
             }
+            #endif
         }
 
         public RenderWareModelFile GetRenderWareModelFile() => model;
