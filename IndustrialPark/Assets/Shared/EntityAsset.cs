@@ -81,12 +81,12 @@ namespace IndustrialPark
         {
             if (isSelected)
                 return true;
-            if (movementPreview)
-                return true;
             if (DontRender)
                 return false;
             if (isInvisible)
                 return false;
+            if (movementPreview)
+                return true;
 
             if (AssetMODL.renderBasedOnLodt)
             {

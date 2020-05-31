@@ -158,20 +158,16 @@ namespace IndustrialPark
             }
             catch { return Vector3.Zero; }
 
-            float smallerDistance = 2000f;
-            bool found = false;
+            float? smallerDistance = null;
 
             foreach (IRenderableAsset ra in l)
             {
                 float? distance = ra.GetIntersectionPosition(renderer, ray);
-                if (distance != null && distance < smallerDistance)
-                {
-                    found = true;
-                    smallerDistance = (float)distance;
-                }
+                if (distance != null && (smallerDistance == null || distance < smallerDistance))
+                    smallerDistance = distance;
             }
 
-            return ray.Position + Vector3.Normalize(ray.Direction) * (found ? smallerDistance : 2f);
+            return ray.Position + Vector3.Normalize(ray.Direction) * (smallerDistance?? 2f);
         }
 
         public static uint GetClickedAssetID(SharpRenderer renderer, Ray ray)

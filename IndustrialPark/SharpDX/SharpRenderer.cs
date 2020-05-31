@@ -454,7 +454,7 @@ namespace IndustrialPark
                             flyToPlay.Play();
 
                         Program.MainForm.SetToolStripStatusLabel(Camera.ToString() + " FPS: " + $"{sharpFPS.FPS:0.0000}");
-
+                        
                         Matrix view = Camera.ViewMatrix;
                         viewProjection = view * Camera.ProjectionMatrix;
                         frustum = new BoundingFrustum(view * Camera.BiggerFovProjectionMatrix);
@@ -465,9 +465,9 @@ namespace IndustrialPark
                         device.SetDefaultDepthState();
                         device.UpdateAllStates();
                         
-                        foreach (IRenderableAsset a in 
-                        ArchiveEditorFunctions.renderableJSPs)
-                            a.Draw(this);
+                        foreach (var a in ArchiveEditorFunctions.renderableJSPs)
+                            if (a.ShouldDraw(this))
+                                a.Draw(this);
 
                         foreach (IRenderableAsset a in ArchiveEditorFunctions.renderableAssets)
                         {
