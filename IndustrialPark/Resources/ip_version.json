@@ -1,4 +1,4 @@
 {
-  "version": "v0.1.4.2",
-  "versionName": "* Improved display/selection of multiple asset types, most noticeably box triggers.\n* Improved performance for rendering files with a large number of assets.\n* Fixed using PIPT for rendering on Movie/Incredibles.\n* Fixed bug in which it was not possible to place a template that contained a DYNA."
+  "version": "v0.1.4.3",
+  "versionName": "* Fixed minor renderer glitches\n* Changed AssimpNet version to a stable release"
 }
