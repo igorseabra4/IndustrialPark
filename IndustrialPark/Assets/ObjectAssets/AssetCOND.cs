@@ -76,7 +76,7 @@ namespace IndustrialPark
             set => Write(0xC, (uint)value);
         }
 
-        [Category("Conditional"), DisplayName("Conditional)")]
+        [Category("Conditional"), DisplayName("Conditional")]
         public AssetID ScoobyConditional
         {
             get => ReadUInt(0xC);
@@ -100,8 +100,12 @@ namespace IndustrialPark
         [Category("Conditional")]
         public AssetID AssetUnderEvaluation
         {
-            get => ReadUInt(0x14);
-            set => Write(0x14, value);
+            get => game == Game.Scooby ? 0 : ReadUInt(0x14);
+            set
+            {
+                if (game != Game.Scooby)
+                    Write(0x14, value);
+            }
         }
     }
 }
