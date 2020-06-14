@@ -296,7 +296,7 @@ namespace IndustrialPark
                 if (entries[i].SoundAssetID == assetID)
                     return entries[i].SoundHeader;
 
-            throw new Exception($"Error: SNDI asset does not contain {assetType.ToString()} sound header for asset [{assetID.ToString("X8")}]");
+            throw new Exception($"Error: SNDI asset does not contain {assetType} sound header for asset [{assetID}]");
         }
 
         public void Merge(AssetSNDI_GCN_V1 assetSNDI)
@@ -333,6 +333,34 @@ namespace IndustrialPark
                     if (!assetIDsAlreadyPresentSound_CIN.Contains(entrySound_CIN.SoundAssetID))
                         entriesSound_CIN.Add(entrySound_CIN);
                 Entries_Sound_CIN = entriesSound_CIN.ToArray();
+            }
+        }
+
+        public void Clean(IEnumerable<uint> assetIDs)
+        {
+            {
+                // SND
+                var entriesSND = Entries_SND.ToList();
+                for (int i = 0; i < entriesSND.Count; i++)
+                    if (!assetIDs.Contains(entriesSND[i].SoundAssetID))
+                        entriesSND.RemoveAt(i--);
+                Entries_SND = entriesSND.ToArray();
+            }
+            {
+                // SNDS
+                var entriesSNDS = Entries_SNDS.ToList();
+                for (int i = 0; i < entriesSNDS.Count; i++)
+                    if (!assetIDs.Contains(entriesSNDS[i].SoundAssetID))
+                        entriesSNDS.RemoveAt(i--);
+                Entries_SNDS = entriesSNDS.ToArray();
+            }
+            {
+                // Sound_CIN
+                var entriesSNDS_CIN = Entries_Sound_CIN.ToList();
+                for (int i = 0; i < entriesSNDS_CIN.Count; i++)
+                    if (!assetIDs.Contains(entriesSNDS_CIN[i].SoundAssetID))
+                        entriesSNDS_CIN.RemoveAt(i--);
+                Entries_Sound_CIN = entriesSNDS_CIN.ToArray();
             }
         }
     }

@@ -44,5 +44,11 @@ namespace IndustrialPark
 
             Application.Run(MainForm);
         }
+
+        public static void StopSound()
+        {
+            System.Media.SoundPlayer player = new System.Media.SoundPlayer();
+            player.Stop();
+        }
     }
 }

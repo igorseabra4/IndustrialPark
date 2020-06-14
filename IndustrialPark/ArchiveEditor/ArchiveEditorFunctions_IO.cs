@@ -140,6 +140,8 @@ namespace IndustrialPark
                 if (missing.Count == 0)
                     break;
             }
+
+            CleanSNDI();
         }
 
         private void SearchOnFolder(string folderPath, ref List<string> hipHops)

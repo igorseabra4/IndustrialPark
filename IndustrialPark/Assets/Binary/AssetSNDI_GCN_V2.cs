@@ -229,9 +229,29 @@ namespace IndustrialPark
                         return SerializeData(r, AHDR).Skip(0x20).ToArray();
                     }
 
-            throw new Exception($"Error: SNDI asset does not contain sound header for asset [{assetID.ToString("X8")}]");
+            throw new Exception($"Error: SNDI asset does not contain sound header for asset [{assetID:X8}]");
         }
 
         private byte[] SerializeData(FSB3_File r, Section_AHDR AHDR) => SerializeData(new FSB3_File[] { r }, AHDR);
+
+        public void Clean(IEnumerable<uint> assetIDs)
+        {
+            var fsb3s = Entries.ToList();
+
+            for (int i = 0; i < fsb3s.Count; i++)
+            {
+                // SND
+                var entries = fsb3s[i].soundEntries.ToList();
+                for (int j = 0; i < entries.Count; j++)
+                    if (!assetIDs.Contains(entries[j].SoundAssetID))
+                        entries.RemoveAt(j--);
+                if (entries.Count == 0)
+                    fsb3s.RemoveAt(i--);
+                else
+                    fsb3s[i].soundEntries = entries.ToArray();
+            }
+
+            Entries = fsb3s.ToArray();
+        }
     }
 }

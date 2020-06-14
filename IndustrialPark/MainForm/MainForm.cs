@@ -1381,8 +1381,7 @@ namespace IndustrialPark
 
         private void stopSoundToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            System.Media.SoundPlayer player = new System.Media.SoundPlayer();
-            player.Stop();
+            Program.StopSound();
         }
     }
 }

@@ -173,6 +173,8 @@ namespace IndustrialPark
 
         public void Save()
         {
+            Program.StopSound();
+
             if (archive.currentlyOpenFilePath == null)
                 saveAsToolStripMenuItem_Click(null, null);
             else
