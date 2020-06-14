@@ -1,4 +1,4 @@
 {
-  "version": "v0.1.4.3",
-  "versionName": "* Fixed minor renderer glitches\n* Changed AssimpNet version to a stable release"
+  "version": "v0.1.4.4",
+  "versionName": "* Fixes crash using Randomizer and Find Who Targets Me on Scooby.\n* Fixes crash caused by saving an archive while playing a sound.\n* Fixes junk data leftover in SNDI after using Convert Archive."
 }

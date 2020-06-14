@@ -296,7 +296,7 @@ namespace IndustrialPark
                 if (entries[i].SoundAssetID == assetID)
                     return entries[i].SoundHeader;
 
-            throw new Exception($"Error: SNDI asset does not contain {assetType} sound header for asset [{assetID}]");
+            throw new Exception($"Error: SNDI asset does not contain {assetType} sound header for asset [{assetID:X8}]");
         }
 
         public void Merge(AssetSNDI_GCN_V1 assetSNDI)
