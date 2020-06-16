@@ -5,7 +5,7 @@ namespace IndustrialPark
     public class FlagsField_Byte_Dyna : FlagsField
     {
         public FlagsField_Byte_Dyna(DynaBase asset, int flagsLoc, DynamicTypeDescriptor dt, string[] flagNames)
-            : base(asset, flagsLoc + 0x10, dt)
+            : base(asset, flagsLoc, dt)
         {
             for (uint i = 0; i < 8; i++)
                 AddPropertyAt(i, flagNames);
@@ -25,7 +25,7 @@ namespace IndustrialPark
 
         protected override void Write(int j, byte value)
         {
-            ((DynaBase)asset).Data[j + specificStart] = value;
+            ((DynaBase)asset).asset.Data[j + specificStart + 0x10] = value;
         }
     }
 }
