@@ -163,24 +163,6 @@ namespace IndustrialPark
             return uint.MaxValue - Mask(bit);
         }
 
-        public DynamicTypeDescriptor ByteFlagsDescriptor(int offset, params string[] flagNames)
-        {
-            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(typeof(FlagsField_Byte));
-            return dt.FromComponent(new FlagsField_Byte(this, offset, dt, flagNames));
-        }
-
-        public DynamicTypeDescriptor ShortFlagsDescriptor(int offset, params string[] flagNames)
-        {
-            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(typeof(FlagsField_UShort));
-            return dt.FromComponent(new FlagsField_UShort(this, offset, dt, flagNames));
-        }
-
-        public DynamicTypeDescriptor IntFlagsDescriptor(int offset, params string[] flagNames)
-        {
-            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(typeof(FlagsField_UInt));
-            return dt.FromComponent(new FlagsField_UInt(this, offset, dt, flagNames));
-        }
-
         protected float? TriangleIntersection(Ray r, IList<Triangle> triangles, IList<Vector3> vertices, Matrix world)
         {
             float? smallestDistance = null;

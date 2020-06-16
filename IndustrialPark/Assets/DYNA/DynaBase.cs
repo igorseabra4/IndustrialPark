@@ -75,5 +75,11 @@ namespace IndustrialPark
 
             return renderer.frustum.Intersects(ref bb);
         }
+
+        public DynamicTypeDescriptor ByteFlagsDescriptor(int offset, params string[] flagNames)
+        {
+            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(typeof(FlagsField_Byte_Dyna));
+            return dt.FromComponent(new FlagsField_Byte_Dyna(this, offset, dt, flagNames));
+        }
     }
 }
