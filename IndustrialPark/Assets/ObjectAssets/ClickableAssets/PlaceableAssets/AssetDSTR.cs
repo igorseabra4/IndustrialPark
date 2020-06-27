@@ -8,7 +8,7 @@ namespace IndustrialPark
     {
         public static bool dontRender = false;
 
-        protected override bool DontRender => dontRender;
+        public override bool DontRender => dontRender;
 
         protected override int EventStartOffset => game == Game.Scooby ? 0x70 : 0x8C + Offset;
 

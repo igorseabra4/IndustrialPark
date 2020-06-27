@@ -408,7 +408,7 @@ namespace IndustrialPark.Models
             mode == TextureWrapMode.Mirror ? TextureAddressMode.TEXTUREADDRESSMIRROR :
             TextureAddressMode.TEXTUREADDRESSWRAP;
 
-        public static void ExportAssimp(string fileName, RWSection[] bspFile, bool flipUVs, ExportFormatDescription format, string textureExtension)
+        public static void ExportAssimp(string fileName, RWSection[] bspFile, bool flipUVs, ExportFormatDescription format, string textureExtension, Matrix worldTransform)
         {
             Scene scene = new Scene();
 
@@ -416,7 +416,7 @@ namespace IndustrialPark.Models
                 if (rw is World_000B w)
                     WorldToScene(scene, w, textureExtension);
                 else if (rw is Clump_0010 c)
-                    ClumpToScene(scene, c, textureExtension);
+                    ClumpToScene(scene, c, textureExtension, worldTransform);
 
             scene.RootNode = new Node() { Name = "root" };
 
@@ -534,7 +534,7 @@ namespace IndustrialPark.Models
             }
         }
 
-        private static void ClumpToScene(Scene scene, Clump_0010 clump, string textureExtension)
+        private static void ClumpToScene(Scene scene, Clump_0010 clump, string textureExtension, Matrix worldTransform)
         {
             int totalMaterials = 0;
 
@@ -592,7 +592,7 @@ namespace IndustrialPark.Models
                     {
                         foreach (var v in geo.morphTargets[0].vertices)
                         {
-                            var vt = Vector3.Transform(new Vector3(v.X, v.Y, v.Z), transformMatrix);
+                            var vt = Vector3.Transform((Vector3)Vector3.Transform(new Vector3(v.X, v.Y, v.Z), transformMatrix), worldTransform);
                             mesh.Vertices.Add(new Vector3D(vt.X, vt.Y, vt.Z));
                         }
 

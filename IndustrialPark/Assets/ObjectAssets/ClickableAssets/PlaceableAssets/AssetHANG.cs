@@ -7,7 +7,7 @@ namespace IndustrialPark
     {
         public static bool dontRender = false;
 
-        protected override bool DontRender => dontRender;
+        public override bool DontRender => dontRender;
         
         public AssetHANG(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 

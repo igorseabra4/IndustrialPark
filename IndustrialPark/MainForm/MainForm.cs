@@ -8,6 +8,8 @@ using System.Linq;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using System.Threading;
+using System.Drawing;
+using Microsoft.SqlServer.Server;
 
 namespace IndustrialPark
 {
@@ -722,7 +724,7 @@ namespace IndustrialPark
                 Color = System.Drawing.Color.FromArgb(BitConverter.ToInt32(BitConverter.GetBytes(renderer.backgroundColor.ToBgra()).Reverse().ToArray(), 0))
             };
             if (colorDialog.ShowDialog() == DialogResult.OK)
-                renderer.backgroundColor = new Color(colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B, colorDialog.Color.A);
+                renderer.backgroundColor = new SharpDX.Color(colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B, colorDialog.Color.A);
         }
 
         private void widgetColorToolStripMenuItem_Click(object sender, EventArgs e)
@@ -775,9 +777,9 @@ namespace IndustrialPark
             Program.ViewConfig.Show();
         }
 
-        private Rectangle ViewRectangle()
+        private SharpDX.Rectangle ViewRectangle()
         {
-            return new Rectangle(
+            return new SharpDX.Rectangle(
                 renderPanel.ClientRectangle.X,
                 renderPanel.ClientRectangle.Y,
                 renderPanel.ClientRectangle.Width,
@@ -810,7 +812,7 @@ namespace IndustrialPark
                 ScreenClicked(ViewRectangle(), e.X, e.Y, true);
         }
 
-        public void ScreenClicked(Rectangle viewRectangle, int X, int Y, bool isMouseDown = false)
+        public void ScreenClicked(SharpDX.Rectangle viewRectangle, int X, int Y, bool isMouseDown = false)
         {
             if (ArchiveEditorFunctions.FinishedMovingGizmo)
                 ArchiveEditorFunctions.FinishedMovingGizmo = false;
@@ -827,7 +829,7 @@ namespace IndustrialPark
             }
         }
 
-        public Vector3 GetScreenClickedPosition(Rectangle viewRectangle, int X, int Y)
+        public Vector3 GetScreenClickedPosition(SharpDX.Rectangle viewRectangle, int X, int Y)
         {
             Ray ray = Ray.GetPickRay(X, Y, new Viewport(viewRectangle), renderer.viewProjection);
             return ArchiveEditorFunctions.GetRayInterserctionPosition(renderer, ray);
@@ -1382,6 +1384,46 @@ namespace IndustrialPark
         private void stopSoundToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.StopSound();
+        }
+
+        private void exportSceneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Assimp.ExportFormatDescription format = null;
+
+            bool success = false;
+            string textureExtension = null;
+
+            while (format == null)
+            {
+                Models.ChooseTarget.GetTarget(out success, out format, out textureExtension);
+
+                if (format == null || textureExtension == null)
+                    MessageBox.Show("Unuspported format for exporting scene");
+            }
+
+            if (success)
+            using (CommonOpenFileDialog a = new CommonOpenFileDialog() { IsFolderPicker = true })
+                if (a.ShowDialog() == CommonFileDialogResult.Ok)
+                {
+                    ArchiveEditorFunctions.ExportScene(a.FileName, format, textureExtension, out string[] textureNames);
+
+                    if (MessageBox.Show("Do you also wish to export textures?", "Export Textures", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        Dictionary<string, Bitmap> bitmaps = new Dictionary<string, Bitmap>();
+
+                        foreach (var ae in archiveEditors)
+                        {
+                            var d = ae.archive.GetTexturesAsBitmaps(textureNames);
+                            foreach (var key in d)
+                                bitmaps.Add(key.Key, key.Value);
+                        }
+
+                        RenderWareFile.ReadFileMethods.treatStuffAsByteArray = false;
+
+                        foreach (string textureName in bitmaps.Keys)
+                            bitmaps[textureName].Save(Path.Combine(a.FileName, textureName + ".png"), System.Drawing.Imaging.ImageFormat.Png);
+                    }
+                }
         }
     }
 }

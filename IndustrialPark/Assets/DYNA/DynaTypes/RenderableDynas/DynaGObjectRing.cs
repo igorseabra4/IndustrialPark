@@ -26,7 +26,8 @@ namespace IndustrialPark
         
         public override bool IsRenderableClickable => true;
         
-        private Matrix world;
+        [Browsable(false)]
+        public Matrix world { get; private set; }
         private BoundingBox boundingBox;
 
         public override void CreateTransformMatrix()

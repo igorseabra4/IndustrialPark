@@ -16,7 +16,7 @@ namespace IndustrialPark
     {
         public static bool dontRender = false;
 
-        protected override bool DontRender => dontRender;
+        public override bool DontRender => dontRender;
 
         protected override int EventStartOffset => 0x94 + Offset;
 

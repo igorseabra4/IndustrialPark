@@ -33,8 +33,9 @@ namespace IndustrialPark
             Asset.Verify(Unknown44, ref result);
             Asset.Verify(Unknown4C, ref result);
         }
-        
-        private Matrix world;
+
+        [Browsable(false)]
+        public Matrix world { get; private set; }
         private BoundingBox boundingBox;
 
         public override void CreateTransformMatrix()

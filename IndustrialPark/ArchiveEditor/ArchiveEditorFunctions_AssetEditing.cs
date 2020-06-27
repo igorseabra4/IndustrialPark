@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Windows.Forms;
 using HipHopFile;
+using IndustrialPark.Models;
 using RenderWareFile;
 using SharpDX;
 
@@ -147,7 +149,7 @@ namespace IndustrialPark
             foreach (var ie in internalEditors)
                 ie.SetHideHelp(hideHelp);
         }
-        
+
         public static Vector3 GetRayInterserctionPosition(SharpRenderer renderer, Ray ray)
         {
             List<IRenderableAsset> l = new List<IRenderableAsset>();
@@ -167,7 +169,7 @@ namespace IndustrialPark
                     smallerDistance = distance;
             }
 
-            return ray.Position + Vector3.Normalize(ray.Direction) * (smallerDistance?? 2f);
+            return ray.Position + Vector3.Normalize(ray.Direction) * (smallerDistance ?? 2f);
         }
 
         public static uint GetClickedAssetID(SharpRenderer renderer, Ray ray)
@@ -233,33 +235,33 @@ namespace IndustrialPark
                 RemoveAsset(COLLs[i].assetID);
             for (int i = 1; i < COLLs.Count; i++)
                 MergeCOLL(COLLs[i], game, platform);
-            
+
             List<Section_AHDR> JAWs = GetAssetsOfType(AssetType.JAW);
             for (int i = 1; i < JAWs.Count; i++)
                 RemoveAsset(JAWs[i].assetID);
             for (int i = 1; i < JAWs.Count; i++)
                 MergeJAW(JAWs[i], game, platform);
-            
+
             List<Section_AHDR> LODTs = GetAssetsOfType(AssetType.LODT);
-            for (int i = 1; i < LODTs.Count; i++)            
+            for (int i = 1; i < LODTs.Count; i++)
                 RemoveAsset(LODTs[i].assetID);
             for (int i = 1; i < LODTs.Count; i++)
                 MergeLODT(LODTs[i], game, platform);
-            
+
             List<Section_AHDR> PIPTs = GetAssetsOfType(AssetType.PIPT);
             for (int i = 1; i < PIPTs.Count; i++)
                 RemoveAsset(PIPTs[i].assetID);
             for (int i = 1; i < PIPTs.Count; i++)
                 MergePIPT(PIPTs[i], game, platform);
-            
+
             List<Section_AHDR> SHDWs = GetAssetsOfType(AssetType.SHDW);
-            for (int i = 1; i < SHDWs.Count; i++)            
+            for (int i = 1; i < SHDWs.Count; i++)
                 RemoveAsset(SHDWs[i].assetID);
             for (int i = 1; i < SHDWs.Count; i++)
                 MergeSHDW(SHDWs[i], game, platform);
-            
+
             List<Section_AHDR> SNDIs = GetAssetsOfType(AssetType.SNDI);
-            for (int i = 1; i < SNDIs.Count; i++)            
+            for (int i = 1; i < SNDIs.Count; i++)
                 RemoveAsset(SNDIs[i].assetID);
             for (int i = 1; i < SNDIs.Count; i++)
                 MergeSNDI(SNDIs[i], game, platform);
@@ -463,7 +465,7 @@ namespace IndustrialPark
             }
 
             UnsavedChanges = true;
-            
+
             DICT.LTOC.LHDRList = new List<Section_LHDR>();
             DICT.LTOC.LHDRList.AddRange(layers.Values.ToList());
             DICT.LTOC.LHDRList.AddRange(bspLayers);
@@ -635,7 +637,7 @@ namespace IndustrialPark
                 }
         }
 
-        public static Section_AHDR ConvertAssetType(Section_AHDR AHDR, Endianness previousEndianness, Endianness currentEndianness, Game previousGame,  Game currentGame)
+        public static Section_AHDR ConvertAssetType(Section_AHDR AHDR, Endianness previousEndianness, Endianness currentEndianness, Game previousGame, Game currentGame)
         {
             if (previousGame != currentGame)
             {
@@ -728,5 +730,86 @@ namespace IndustrialPark
 
             return data;
         }
-    }
+
+        public static void ExportScene(string folderName, Assimp.ExportFormatDescription format, string textureExtension, out string[] textureNames)
+        {
+            List<string> textureNamesList = new List<string>();
+
+            foreach (var v in renderableJSPs)
+                try
+                {
+                    textureNamesList.AddRange(v.Textures);
+                    Model_IO_Assimp.ExportAssimp(
+                    Path.Combine(folderName, v.AHDR.ADBG.assetName + "." + format.FileExtension),
+                    ReadFileMethods.ReadRenderWareFile(v.Data), true, format, textureExtension, Matrix.Identity);
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show($"Unable to export asset {v}: {e.Message}");
+                }
+
+            foreach (var v in renderableAssets)
+                try
+                {
+                    Asset modelAsset;
+                    string assetName;
+                    Matrix world;
+
+                    if (v is EntityAsset entity)
+                    {
+                        if (entity.isInvisible || entity.DontRender || entity is AssetTRIG)
+                            continue;
+
+                        if (entity is AssetPKUP pkup)
+                        {
+                            if (AssetPICK.pickEntries.ContainsKey(pkup.PickReferenceID))
+                                modelAsset = (Asset)renderingDictionary[pkup.PickReferenceID];
+                            else continue;
+                        }
+                        else
+                            modelAsset = (Asset)renderingDictionary[entity.Model_AssetID];
+
+                        assetName = entity.AHDR.ADBG.assetName;
+                        world = entity.world;
+                    }
+                    else if (v is AssetDYNA dyna && !AssetDYNA.dontRender && dyna.IsRenderableClickable)
+                    {
+                        if (dyna.isInvisible)
+                            continue;
+
+                        if (dyna.DynaSpec is DynaGObjectRing ring)
+                        { 
+                            modelAsset = (Asset)renderingDictionary[DynaGObjectRingControl.RingModelAssetID];
+                            world = ring.world;
+                        }
+                        else if (dyna.DynaSpec is DynaEnemySB enemySb)
+                        { 
+                            modelAsset = (Asset)renderingDictionary[enemySb.Model_AssetID];
+                            world = enemySb.world;
+                        }
+                        else continue;
+                        
+                        assetName = dyna.AHDR.ADBG.assetName;
+                    }
+                    else continue;
+
+                    if (modelAsset is AssetMINF minf)
+                        modelAsset = (Asset)renderingDictionary[minf.ModelReferences[0].Model_AssetID];
+
+                    if (modelAsset is AssetMODL modl)
+                        textureNamesList.AddRange(modl.Textures);
+                    else continue;
+
+                    Model_IO_Assimp.ExportAssimp(
+                        Path.Combine(folderName, assetName + "." + format.FileExtension),
+                        ReadFileMethods.ReadRenderWareFile(modelAsset.Data), true, format, textureExtension, world);
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show($"Unable to export asset {v}: {e.Message}");
+                }
+
+            textureNames = textureNamesList.ToArray();
+        }
+    } 
 }

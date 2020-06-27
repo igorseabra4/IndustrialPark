@@ -8,6 +8,7 @@ using System.IO;
 using RenderWareFile;
 using IndustrialPark.Models;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using SharpDX;
 
 namespace IndustrialPark
 {
@@ -204,7 +205,7 @@ namespace IndustrialPark
                         else if (format.FileExtension.ToLower().Equals("obj") && asset.AHDR.assetType == HipHopFile.AssetType.BSP)
                             ConvertBSPtoOBJ(a.FileName, ReadFileMethods.ReadRenderWareFile(asset.Data), true);
                         else
-                            ExportAssimp(Path.ChangeExtension(a.FileName, format.FileExtension), ReadFileMethods.ReadRenderWareFile(asset.Data), true, format, textureExtension);
+                            ExportAssimp(Path.ChangeExtension(a.FileName, format.FileExtension), ReadFileMethods.ReadRenderWareFile(asset.Data), true, format, textureExtension, Matrix.Identity);
 
                         if (exportTextures.Checked)
                         {

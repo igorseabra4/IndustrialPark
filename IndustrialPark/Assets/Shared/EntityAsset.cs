@@ -9,10 +9,11 @@ namespace IndustrialPark
 {
     public abstract class EntityAsset : BaseAsset, IRenderableAsset, IClickableAsset, IRotatableAsset, IScalableAsset
     {
-        protected Matrix world;
+        [Browsable(false)]
+        public Matrix world { get; protected set; }
         protected BoundingBox boundingBox;
 
-        protected abstract bool DontRender { get; }
+        public abstract bool DontRender { get; }
 
         public EntityAsset(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
