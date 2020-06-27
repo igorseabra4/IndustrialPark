@@ -1,4 +1,4 @@
 {
-  "version": "v0.1.4.4",
-  "versionName": "* Fixes crash using Randomizer and Find Who Targets Me on Scooby.\n* Fixes crash caused by saving an archive while playing a sound.\n* Fixes junk data leftover in SNDI after using Convert Archive."
+  "version": "v0.1.4.5",
+  "versionName": "* Adds Export Scene method (under Tools). Exports all visible objects in the scene to individual model files in a folder, each with transformation (position, rotation, scale) applied.\n* Fixes editing of flag fields in DYNAs."
 }
