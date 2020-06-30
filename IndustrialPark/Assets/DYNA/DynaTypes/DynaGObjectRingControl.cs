@@ -122,7 +122,7 @@ namespace IndustrialPark
                 {
                     AssetID[] rings = new AssetID[RingCount];
                     for (int i = 0; i < RingCount; i++)
-                        rings[i] = ReadUInt(RingCount + 4 * i);
+                        rings[i] = ReadUInt(0x28 + 4 * i);
 
                     return rings;
                 }
@@ -133,8 +133,8 @@ namespace IndustrialPark
             }
             set
             {
-                List<byte> newData = Data.Take(0x28).ToList();
-                List<byte> restOfOldData = Data.Skip(0x28 + 4 * RingCount).ToList();
+                List<byte> newData = asset.Data.Take(0x38).ToList();
+                List<byte> restOfOldData = asset.Data.Skip(0x38 + 4 * RingCount).ToList();
 
                 foreach (AssetID i in value)
                     if (platform == Platform.GameCube)
@@ -144,7 +144,7 @@ namespace IndustrialPark
                 
                 newData.AddRange(restOfOldData);
 
-                Data = newData.ToArray();
+                asset.Data = newData.ToArray();
 
                 RingCount = value.Length;
             }

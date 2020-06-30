@@ -210,6 +210,7 @@
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetDUPC.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\FlagsField_Byte_Dyna.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\FlagsField_Byte.cs" />
+    <Compile Include="Assets\Shared\AssetSpecifics\FlagsField_UInt_Dyna.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\FlagsField_UInt.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\FSB3_File.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\HudDynas\DynaHud.cs" />

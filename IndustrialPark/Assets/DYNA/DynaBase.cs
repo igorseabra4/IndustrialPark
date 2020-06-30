@@ -81,5 +81,11 @@ namespace IndustrialPark
             DynamicTypeDescriptor dt = new DynamicTypeDescriptor(typeof(FlagsField_Byte_Dyna));
             return dt.FromComponent(new FlagsField_Byte_Dyna(this, offset, dt, flagNames));
         }
+
+        public DynamicTypeDescriptor IntFlagsDescriptor(int offset, params string[] flagNames)
+        {
+            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(typeof(FlagsField_UInt_Dyna));
+            return dt.FromComponent(new FlagsField_UInt_Dyna(this, offset, dt, flagNames));
+        }
     }
 }

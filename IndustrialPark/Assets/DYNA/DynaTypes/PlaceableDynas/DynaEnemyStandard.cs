@@ -58,11 +58,9 @@ namespace IndustrialPark
             get => ReadUInt(0x54);
             set => Write(0x54, value);
         }
-        public int MaybeFlags
-        {
-            get => ReadInt(0x58);
-            set => Write(0x58, value);
-        }
+
+        public DynamicTypeDescriptor EnemyFlags => IntFlagsDescriptor(0x58, null, null, "Walk on PLATs", "Walk on SIMPs");
+        
         public AssetID Unknown5C
         {
             get => ReadUInt(0x5C);
