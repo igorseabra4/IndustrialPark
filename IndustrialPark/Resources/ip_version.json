@@ -1,4 +1,4 @@
 {
-  "version": "v0.1.4.5",
-  "versionName": "* Adds Export Scene method (under Tools). Exports all visible objects in the scene to individual model files in a folder, each with transformation (position, rotation, scale) applied.\n* Fixes editing of flag fields in DYNAs."
+  "version": "v0.1.4.6",
+  "versionName": "Fixes editing of DYNA Ring Control."
 }
