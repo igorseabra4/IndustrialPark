@@ -3,22 +3,32 @@ using SharpDX;
 using SharpDX.Direct3D11;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using System.Threading;
 using System.Drawing;
 using Microsoft.SqlServer.Server;
+using DiscordRPC;
+using System.Security.Cryptography.X509Certificates;
+using DiscordRPC.Logging;
+using System.Runtime.InteropServices;
 
 namespace IndustrialPark
 {
     public partial class MainForm : Form
     {
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+        [DllImport("user32.dll")]
+        static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
+        public static DiscordRpcClient client;
         public MainForm()
         {
             StartPosition = FormStartPosition.CenterScreen;
-
             InitializeComponent();
 
 #if !DEBUG
@@ -33,7 +43,6 @@ namespace IndustrialPark
 
             renderer = new SharpRenderer(renderPanel);
         }
-
         private void StartRenderer()
         {
             new Thread(() =>
@@ -133,7 +142,6 @@ namespace IndustrialPark
                     return;
                 }
             }
-
             if (autoSaveOnClosingToolStripMenuItem.Checked)
                 SaveProject(currentProjectPath);
 
@@ -145,6 +153,7 @@ namespace IndustrialPark
                 CheckForUpdatesOnStartup = checkForUpdatesOnStartupToolStripMenuItem.Checked,
                 renderBasedOnLodt = AssetMODL.renderBasedOnLodt,
                 renderBasedOnPipt = AssetMODL.renderBasedOnPipt,
+                discordRichPresence = discordRichPresenceToolStripMenuItem.Checked,
                 dontDrawInvisible = RenderWareModelFile.dontDrawInvisible,
                 persistentShinies = ArchiveEditorFunctions.persistentShinies,
                 hideHelp = hideHelpInAssetDataEditorsToolStripMenuItem.Checked
@@ -184,7 +193,8 @@ namespace IndustrialPark
                 else if (result == DialogResult.Cancel)
                     return;
             }
-
+            // updates presence so that it doesn't get stuck on the previously focused window name
+            setPresence("a project");
             currentProjectPath = null;
             ApplySettings(new ProjectJson());
             SetProjectToolStripStatusLabel();
@@ -201,7 +211,8 @@ namespace IndustrialPark
                 else if (result == DialogResult.Cancel)
                     return;
             }
-
+            // updates presence so that it doesn't get stuck on the previously focused window name
+            setPresence("a project");
             OpenFileDialog openFile = new OpenFileDialog()
             { Filter = "JSON files|*.json" };
 
@@ -904,7 +915,80 @@ namespace IndustrialPark
             usePIPTForRenderingToolStripMenuItem.Checked = !usePIPTForRenderingToolStripMenuItem.Checked;
             AssetMODL.renderBasedOnPipt = usePIPTForRenderingToolStripMenuItem.Checked;
         }
+        public void timer1_Tick(object sender, EventArgs e)
+        {
+            //timer that elapses every second to check for active window updates and adjust presence if needed
+            timer1.Stop();
+            GetActiveWindow();
+            timer1.Start();
+        }
+        public void GetActiveWindow()
+        {
+            var activeWindowTemp = "null";
+            const int nChars = 256;
+            IntPtr handle;
+            StringBuilder Buff = new StringBuilder(nChars);
+            handle = GetForegroundWindow();
+            if (GetWindowText(handle, Buff, nChars) > 0)
+            {
+                activeWindowTemp = Buff.ToString();
+            }
+            if (activeWindowTemp != "null")
+            {
+                //ensures that it only updates to archives
+                if (activeWindowTemp.EndsWith(".hip") || (activeWindowTemp.EndsWith(".hop")) || (activeWindowTemp.EndsWith(".HIP")) || (activeWindowTemp.EndsWith(".HOP")))
+                {
+                    var activeWindow = activeWindowTemp;
+                    setPresence(activeWindow);
+                }
+            }
+        }
+        public void discordRichPresenceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            discordRichPresenceToolStripMenuItem.Checked = !discordRichPresenceToolStripMenuItem.Checked;
+            if (discordRichPresenceToolStripMenuItem.Checked == true) 
+            {
+                Initialize();
+            }
+            else
+            {
+                timer1.Enabled = false;
+                client.Dispose();
+            }
+        }
+        public void Initialize()
+        {
+            /*this application ID is assigned to Suprnova#0001 on Discord
+             it can be replaced with any other application ID as long as the name is "Industrial Park" and the image of the logo has the name of "icon"*/
+            client = new DiscordRpcClient("734104261876514836");
+            client.Logger = new ConsoleLogger() { Level = LogLevel.Warning };
+            client.Initialize();
+            var MainFormInst = new MainForm();
+            MainFormInst.timer1.Start();
+            var activeWindowInit = "a project";
+            setPresence(activeWindowInit);
 
+        }
+        public void setPresence(string activeWindow)
+        {
+            try
+            {
+                client.SetPresence(new RichPresence()
+                {
+                    Details = "Editing a Level",
+                    State = "Editing " + activeWindow,
+                    Assets = new Assets()
+                    {
+                        LargeImageKey = "icon",
+                        LargeImageText = "Industrial Park level editor"
+                    }
+                });
+            } catch (ObjectDisposedException)
+            {
+
+            }
+           
+        }
         private void useLegacyAssetIDFormatToolStripMenuItem_Click(object sender, EventArgs e)
         {
             useLegacyAssetIDFormatToolStripMenuItem.Checked = !useLegacyAssetIDFormatToolStripMenuItem.Checked;
