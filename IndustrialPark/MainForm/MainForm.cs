@@ -41,7 +41,7 @@ namespace IndustrialPark
                     renderer.RunMainLoop(renderPanel);
             }).Start();
         }
-        
+
         public static string pathToSettings => Application.StartupPath + "/ip_settings.json";
         private string currentProjectPath;
         public string userTemplatesFolder => Application.StartupPath + "/Resources/UserTemplates/";
@@ -118,13 +118,13 @@ namespace IndustrialPark
         }
 
         private delegate void StartLoop(Panel renderPanel);
-        
+
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (UnsavedChanges())
             {
                 DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-                
+
                 if (result == DialogResult.Yes)
                     SaveAllChanges();
                 else if (result == DialogResult.Cancel)
@@ -178,7 +178,7 @@ namespace IndustrialPark
             if (UnsavedChanges())
             {
                 DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-                
+
                 if (result == DialogResult.Yes)
                     SaveAllChanges();
                 else if (result == DialogResult.Cancel)
@@ -198,7 +198,7 @@ namespace IndustrialPark
             if (UnsavedChanges())
             {
                 DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-                
+
                 if (result == DialogResult.Yes)
                     SaveAllChanges();
                 else if (result == DialogResult.Cancel)
@@ -362,7 +362,7 @@ namespace IndustrialPark
         {
             if (ipSettings.version != ProjectJson.getCurrentVersion)
                 MessageBox.Show("You are trying to open a project file made with a different version of Industrial Park. The program will attempt to load the project, but there is a chance it will not load properly.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            
+
             TextureManager.ClearTextures();
 
             List<ArchiveEditor> archiveEditors = new List<ArchiveEditor>();
@@ -371,7 +371,7 @@ namespace IndustrialPark
                 ae.CloseArchiveEditor();
 
             TextureManager.LoadTexturesFromFolder(ipSettings.TextureFolderPaths);
-            
+
             ArchiveEditorFunctions.hiddenAssets = ipSettings.hiddenAssets;
 
             for (int i = 0; i < ipSettings.hipPaths.Count; i++)
@@ -421,7 +421,7 @@ namespace IndustrialPark
 
             uIModeToolStripMenuItem.Checked = ipSettings.isDrawingUI;
             renderer.isDrawingUI = ipSettings.isDrawingUI;
-            
+
             levelModelToolStripMenuItem.Checked = !ipSettings.dontRenderJSP;
             AssetJSP.dontRender = ipSettings.dontRenderJSP;
 
@@ -436,7 +436,7 @@ namespace IndustrialPark
 
             dSTRToolStripMenuItem.Checked = !ipSettings.dontRenderDSTR;
             AssetDSTR.dontRender = ipSettings.dontRenderDSTR;
-            
+
             dUPCToolStripMenuItem.Checked = !ipSettings.dontRenderDUPC;
             AssetDUPC.dontRender = ipSettings.dontRenderDUPC;
 
@@ -510,7 +510,7 @@ namespace IndustrialPark
         private bool mouseMode = false;
         private System.Drawing.Point MouseCenter = new System.Drawing.Point();
         private MouseEventArgs oldMousePosition = new MouseEventArgs(MouseButtons.None, 0, 0, 0, 0);
-        
+
         private void MouseMoveControl(object sender, MouseEventArgs e)
         {
             if (renderer.isDrawingUI)
@@ -684,7 +684,7 @@ namespace IndustrialPark
             archiveEditorToolStripMenuItem.DropDownItems.RemoveAt(index + 2);
             archiveEditors.RemoveAt(index);
         }
-        
+
         private bool UnsavedChanges()
         {
             foreach (ArchiveEditor ae in archiveEditors)
@@ -882,7 +882,7 @@ namespace IndustrialPark
             if (openFile.ShowDialog() == DialogResult.OK)
                 TextureManager.LoadTexturesFromTXD(openFile.FileName);
         }
-        
+
         private void pLATPreviewToolStripMenuItem_Click(object sender, EventArgs e)
         {
             pLATPreviewToolStripMenuItem.Checked = !pLATPreviewToolStripMenuItem.Checked;
@@ -916,7 +916,7 @@ namespace IndustrialPark
             useLegacyAssetIDFormatToolStripMenuItem.Checked = !useLegacyAssetIDFormatToolStripMenuItem.Checked;
             AssetIDTypeConverter.Legacy = useLegacyAssetIDFormatToolStripMenuItem.Checked;
         }
-        
+
         private void levelModelToolStripMenuItem_Click(object sender, EventArgs e)
         {
             levelModelToolStripMenuItem.Checked = !levelModelToolStripMenuItem.Checked;
@@ -1077,7 +1077,7 @@ namespace IndustrialPark
             renderer.Camera.Reset();
             mouseMode = false;
         }
-        
+
         private void HideHelpInAssetDataEditorsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ArchiveEditorFunctions.hideHelp = !ArchiveEditorFunctions.hideHelp;
@@ -1122,7 +1122,7 @@ namespace IndustrialPark
             bool willOpen = true;
             if (whoTargets.Count > 15)
                 willOpen = MessageBox.Show($"Warning: you're going to open {whoTargets.Count} Asset Data Editor windows. Are you sure you want to do that?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
-            
+
             if (willOpen)
                 foreach (ArchiveEditor archiveEditor in archiveEditors)
                     archiveEditor.archive.OpenInternalEditor(whoTargets, true);
@@ -1142,7 +1142,7 @@ namespace IndustrialPark
             foreach (ArchiveEditor archiveEditor in archiveEditors)
                 archiveEditor.TemplateFocusOff();
         }
-        
+
         private void uIModeAutoSizeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Width = (int)(Height * 656f / 565f);
@@ -1150,7 +1150,7 @@ namespace IndustrialPark
 
         private void ensureAssociationsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (DialogResult.OK == MessageBox.Show("Will set Industrial Park as default application for HIP and HOP file formats on registry.", "Associate HIP/HOP files", MessageBoxButtons.OKCancel))       
+            if (DialogResult.OK == MessageBox.Show("Will set Industrial Park as default application for HIP and HOP file formats on registry.", "Associate HIP/HOP files", MessageBoxButtons.OKCancel))
                 FileAssociations.FileAssociations.EnsureAssociationsSet();
         }
 
@@ -1266,7 +1266,7 @@ namespace IndustrialPark
         {
             Program.EventSearch.Show();
         }
-        
+
         private void assetIDGeneratorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.AssetIDGenerator.Show();
@@ -1296,7 +1296,7 @@ namespace IndustrialPark
             {
             }
         }
-        
+
         private void SetAllTopMost(bool value)
         {
             Program.AboutBox.TopMost = value;
@@ -1320,7 +1320,7 @@ namespace IndustrialPark
             string dolPath = null;
             string filesPath = null;
             string hipName = null;
-            foreach (var ae in archiveEditors) 
+            foreach (var ae in archiveEditors)
             {
                 hipName = ae.GetCurrentlyOpenFileName().ToLower();
                 string rootFolderName = Path.GetDirectoryName(Path.GetDirectoryName(hipName));
@@ -1343,7 +1343,7 @@ namespace IndustrialPark
                         string[] ini = File.ReadAllLines(s);
                         for (int i = 0; i < ini.Length; i++)
                             if (ini[i].StartsWith("BOOT"))
-                            { 
+                            {
                                 ini[i] = "BOOT=" + Path.GetFileNameWithoutExtension(hipName).ToUpper();
                                 break;
                             }
@@ -1408,28 +1408,28 @@ namespace IndustrialPark
             }
 
             if (success)
-            using (CommonOpenFileDialog a = new CommonOpenFileDialog() { IsFolderPicker = true })
-                if (a.ShowDialog() == CommonFileDialogResult.Ok)
-                {
-                    ArchiveEditorFunctions.ExportScene(a.FileName, format, textureExtension, out string[] textureNames);
-
-                    if (MessageBox.Show("Do you also wish to export textures?", "Export Textures", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                using (CommonOpenFileDialog a = new CommonOpenFileDialog() { IsFolderPicker = true })
+                    if (a.ShowDialog() == CommonFileDialogResult.Ok)
                     {
-                        Dictionary<string, Bitmap> bitmaps = new Dictionary<string, Bitmap>();
+                        ArchiveEditorFunctions.ExportScene(a.FileName, format, textureExtension, out string[] textureNames);
 
-                        foreach (var ae in archiveEditors)
+                        if (MessageBox.Show("Do you also wish to export textures?", "Export Textures", MessageBoxButtons.YesNo) == DialogResult.Yes)
                         {
-                            var d = ae.archive.GetTexturesAsBitmaps(textureNames);
-                            foreach (var key in d)
-                                bitmaps.Add(key.Key, key.Value);
+                            Dictionary<string, Bitmap> bitmaps = new Dictionary<string, Bitmap>();
+
+                            foreach (var ae in archiveEditors)
+                            {
+                                var d = ae.archive.GetTexturesAsBitmaps(textureNames);
+                                foreach (var key in d)
+                                    bitmaps.Add(key.Key, key.Value);
+                            }
+
+                            RenderWareFile.ReadFileMethods.treatStuffAsByteArray = false;
+
+                            foreach (string textureName in bitmaps.Keys)
+                                bitmaps[textureName].Save(Path.Combine(a.FileName, textureName + ".png"), System.Drawing.Imaging.ImageFormat.Png);
                         }
-
-                        RenderWareFile.ReadFileMethods.treatStuffAsByteArray = false;
-
-                        foreach (string textureName in bitmaps.Keys)
-                            bitmaps[textureName].Save(Path.Combine(a.FileName, textureName + ".png"), System.Drawing.Imaging.ImageFormat.Png);
                     }
-                }
         }
 
         public void discordRichPresenceToolStripMenuItem_Click(object sender, EventArgs e)
