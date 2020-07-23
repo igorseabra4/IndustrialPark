@@ -27,8 +27,10 @@ namespace IndustrialPark
             {
                 try
                 {
-                    timer1.Enabled = false;
-                    client.Dispose();
+                    if (client != null)
+                        client.Dispose();
+                    if (timer1 != null)
+                        timer1.Enabled = false;
                 }
                 catch { }
             }
@@ -36,8 +38,10 @@ namespace IndustrialPark
 
         public static void Initialize()
         {
-            timer1 = new System.Windows.Forms.Timer();
-            timer1.Interval = 1000;
+            timer1 = new System.Windows.Forms.Timer
+            {
+                Interval = 1000
+            };
             timer1.Tick += timer1_Tick;
 
             /*this application ID is assigned to Suprnova#0001 on Discord

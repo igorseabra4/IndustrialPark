@@ -26,7 +26,7 @@ namespace IndustrialPark
                     if (a.HasReference(assetID))
                         return true;
             }
-            catch (Exception e)
+            catch
             {
 #if DEBUG
                 MessageBox.Show("Error searching for references: " + e.Message + ". It will be skipped on the search.");
