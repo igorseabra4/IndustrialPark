@@ -191,7 +191,7 @@ namespace IndustrialPark
         public DynamicTypeDescriptor UnknownFlag0A => ByteFlagsDescriptor(0xA);
         
         [Category(categoryName)]
-        public DynamicTypeDescriptor SolidityFlags => ByteFlagsDescriptor(0xB, "Unused", "Precise Collision", null, null, null, null, null, "Ledge Grab");
+        public DynamicTypeDescriptor SolidityFlags => ByteFlagsDescriptor(0xB, null, "Precise Collision", null, null, "Hittable", "Animate Collision", null, "Ledge Grab");
         
         [Category(categoryName)]
         public int PaddingC

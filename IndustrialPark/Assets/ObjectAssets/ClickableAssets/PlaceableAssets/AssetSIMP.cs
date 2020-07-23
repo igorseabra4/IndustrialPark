@@ -29,9 +29,9 @@ namespace IndustrialPark
             set => Write(0x58 + Offset, value);
         }
 
-        [Category(categoryName)]
+        [Category(categoryName), Description("Only Static is functional.")]
         public DynamicTypeDescriptor CollType => ByteFlagsDescriptor(0x5C + Offset,
-            null, "Solid");
+            "Trigger", "Static", "Dynamic", "NPC", "Player");
 
         [Browsable(false)]
         public byte CollTypeByte
@@ -40,21 +40,14 @@ namespace IndustrialPark
             set => Write(0x5C + Offset, value);
         }
 
-        [Category(categoryName)]
+        [Category(categoryName), Description("Always 0.")]
         public DynamicTypeDescriptor SimpFlags => ByteFlagsDescriptor(0x5D + Offset);
         
-        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Padding5E
+        [Category(categoryName), TypeConverter(typeof(HexUShortTypeConverter)), Browsable(false)]
+        public short Padding5E
         {
-            get => ReadByte(0x5E + Offset);
+            get => ReadShort(0x5E + Offset);
             set => Write(0x5E + Offset, value);
-        }
-
-        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Padding5F
-        {
-            get => ReadByte(0x5F + Offset);
-            set => Write(0x5F + Offset, value);
         }
     }
 }
