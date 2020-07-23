@@ -1,4 +1,4 @@
 {
   "version": "v0.1.4.7",
-  "versionName": "* Adds Discord Rich Presence, showing Industrial Park and the currently open file under your Discord status, toggleable under Tools (thanks Suprnova123).\n* Adds more info on Entity assets and SIMPs (thanks Seil).\n* Fixes issue with UI and UIFT assets being rendered when not supposed to."
+  "versionName": "* Adds Discord Rich Presence, showing Industrial Park and the currently open file under your Discord status, toggleable under Tools (thanks Suprnova123).\n* Adds more info on Entity assets and SIMPs (thanks Seil).\n* Fixes issue with UI and UIFT assets being rendered when not supposed to.\n* Fixes issue in which texture UIs showed up blank."
 }

@@ -1221,7 +1221,7 @@ namespace IndustrialPark
 
         private void exportRW3ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ExportTXD(true);
+            ExportTXD(CheckState.Checked);
         }
 
         private void importRW3ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1231,7 +1231,7 @@ namespace IndustrialPark
 
         private void exportNoRW3ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ExportTXD(false);
+            ExportTXD(CheckState.Unchecked);
         }
 
         private void importNoRW3ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1256,7 +1256,7 @@ namespace IndustrialPark
             archive.SetHideHelp();
         }
 
-        private void ExportTXD(bool RW3)
+        private void ExportTXD(CheckState RW3)
         {
             SaveFileDialog saveTXD = new SaveFileDialog() { Filter = "TXD archives|*.txd" };
 

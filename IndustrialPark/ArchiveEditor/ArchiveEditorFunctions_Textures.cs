@@ -23,10 +23,8 @@ namespace IndustrialPark
 
             try
             {
-                ExportTextureDictionary(pathToGcTXD, true);
-
+                ExportTextureDictionary(pathToGcTXD, CheckState.Indeterminate);
                 PerformTXDConversionExternal(platform);
-
                 TextureManager.LoadTexturesFromTXD(pathToPcTXD);
             }
             catch (Exception ex)
@@ -55,7 +53,7 @@ namespace IndustrialPark
             File.Delete(pathToPcTXD);
         }
 
-        public void ExportTextureDictionary(string fileName, bool RW3)
+        public void ExportTextureDictionary(string fileName, CheckState RW3)
         {
             ReadFileMethods.treatStuffAsByteArray = true;
 
@@ -64,7 +62,7 @@ namespace IndustrialPark
             int fileVersion = 0;
 
             foreach (Section_AHDR AHDR in GetAssetsOfType(AssetType.RWTX))
-                if ((RW3 && AHDR.ADBG.assetName.Contains(".RW3")) || (!RW3 && !AHDR.ADBG.assetName.Contains(".RW3")))
+                if ((RW3 == CheckState.Indeterminate) || ((RW3 == CheckState.Checked) && AHDR.ADBG.assetName.Contains(".RW3")) || ((RW3 == CheckState.Unchecked) && !AHDR.ADBG.assetName.Contains(".RW3")))
                     try
                     {
                         foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(AHDR.data))
@@ -296,12 +294,12 @@ namespace IndustrialPark
             
             try
             {
-                ExportTextureDictionary(pathToPcTXD, true);
+                ExportTextureDictionary(pathToPcTXD, CheckState.Checked);
                 PerformTXDConversionExternal(platform, false);
                 foreach (var AHDR in GetAssetsFromTextureDictionary(pathToGcTXD, true))
                     dataDict.Add(AHDR.assetID, AHDR);
 
-                ExportTextureDictionary(pathToPcTXD, false);
+                ExportTextureDictionary(pathToPcTXD, CheckState.Unchecked);
                 PerformTXDConversionExternal(platform, false);
                 foreach (var AHDR in GetAssetsFromTextureDictionary(pathToGcTXD, false))
                     dataDict.Add(AHDR.assetID, AHDR);
