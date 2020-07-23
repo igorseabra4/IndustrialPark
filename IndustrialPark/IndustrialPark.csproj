@@ -292,6 +292,7 @@
     </Compile>
     <Compile Include="Models\Animation_IO_Assimp.cs" />
     <Compile Include="Models\Model_IO_Assimp.cs" />
+    <Compile Include="Other\DiscordRPCController.cs" />
     <Compile Include="Other\RemoteControl.cs" />
     <Compile Include="Other\AutomaticUpdater.cs" />
     <Compile Include="MainForm\EditName.cs">
