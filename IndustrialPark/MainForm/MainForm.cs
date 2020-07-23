@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 using System.Threading;
 using System.Drawing;
-using Microsoft.SqlServer.Server;
 
 namespace IndustrialPark
 {
@@ -18,7 +17,6 @@ namespace IndustrialPark
         public MainForm()
         {
             StartPosition = FormStartPosition.CenterScreen;
-
             InitializeComponent();
 
 #if !DEBUG
@@ -33,7 +31,6 @@ namespace IndustrialPark
 
             renderer = new SharpRenderer(renderPanel);
         }
-
         private void StartRenderer()
         {
             new Thread(() =>
@@ -95,6 +92,9 @@ namespace IndustrialPark
             hideHelpInAssetDataEditorsToolStripMenuItem.Checked = settings.hideHelp;
             ArchiveEditorFunctions.hideHelp = settings.hideHelp;
 
+            discordRichPresenceToolStripMenuItem.Checked = settings.discordRichPresence;
+            DiscordRPCController.ToggleDiscordRichPresence(discordRichPresenceToolStripMenuItem.Checked);
+
             if (settings.CheckForUpdatesOnStartup && AutomaticUpdater.UpdateIndustrialPark(out _))
             {
                 Close();
@@ -133,7 +133,6 @@ namespace IndustrialPark
                     return;
                 }
             }
-
             if (autoSaveOnClosingToolStripMenuItem.Checked)
                 SaveProject(currentProjectPath);
 
@@ -145,6 +144,7 @@ namespace IndustrialPark
                 CheckForUpdatesOnStartup = checkForUpdatesOnStartupToolStripMenuItem.Checked,
                 renderBasedOnLodt = AssetMODL.renderBasedOnLodt,
                 renderBasedOnPipt = AssetMODL.renderBasedOnPipt,
+                discordRichPresence = discordRichPresenceToolStripMenuItem.Checked,
                 dontDrawInvisible = RenderWareModelFile.dontDrawInvisible,
                 persistentShinies = ArchiveEditorFunctions.persistentShinies,
                 hideHelp = hideHelpInAssetDataEditorsToolStripMenuItem.Checked
@@ -185,6 +185,9 @@ namespace IndustrialPark
                     return;
             }
 
+            // updates presence so that it doesn't get stuck on the previously focused window name
+            DiscordRPCController.setPresence("a project");
+
             currentProjectPath = null;
             ApplySettings(new ProjectJson());
             SetProjectToolStripStatusLabel();
@@ -201,6 +204,9 @@ namespace IndustrialPark
                 else if (result == DialogResult.Cancel)
                     return;
             }
+
+            // updates presence so that it doesn't get stuck on the previously focused window name
+            DiscordRPCController.setPresence("a project");
 
             OpenFileDialog openFile = new OpenFileDialog()
             { Filter = "JSON files|*.json" };
@@ -1424,6 +1430,12 @@ namespace IndustrialPark
                             bitmaps[textureName].Save(Path.Combine(a.FileName, textureName + ".png"), System.Drawing.Imaging.ImageFormat.Png);
                     }
                 }
+        }
+
+        public void discordRichPresenceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            discordRichPresenceToolStripMenuItem.Checked = !discordRichPresenceToolStripMenuItem.Checked;
+            DiscordRPCController.ToggleDiscordRichPresence(discordRichPresenceToolStripMenuItem.Checked);
         }
     }
 }

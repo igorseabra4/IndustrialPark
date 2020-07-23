@@ -72,6 +72,7 @@ namespace IndustrialPark
             this.saveAllOpenHIPsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runGameF5ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.stopSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.manageUserTemplatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.templatesPersistentShiniesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -82,8 +83,10 @@ namespace IndustrialPark
             this.checkForUpdatesOnEditorFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkForUpdatesOnStartupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkForUpdatesNowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.discordRichPresenceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ensureAssociationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.displayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.levelModelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bOULToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -132,7 +135,6 @@ namespace IndustrialPark
             this.toolStripMenuItem_Templates = new System.Windows.Forms.ToolStripMenuItem();
             this.userTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripComboBoxUserTemplate = new System.Windows.Forms.ToolStripComboBox();
-            this.exportSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStripMain.SuspendLayout();
@@ -446,9 +448,11 @@ namespace IndustrialPark
             this.downloadIndustrialParkEditorFilesToolStripMenuItem,
             this.downloadVgmstreamToolStripMenuItem,
             this.checkForUpdatesOnEditorFilesToolStripMenuItem,
-            this.checkForUpdatesOnStartupToolStripMenuItem,
             this.checkForUpdatesNowToolStripMenuItem,
+            this.checkForUpdatesOnStartupToolStripMenuItem,
+            this.toolStripSeparator2,
             this.ensureAssociationsToolStripMenuItem,
+            this.discordRichPresenceToolStripMenuItem,
             this.aboutToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
@@ -474,6 +478,13 @@ namespace IndustrialPark
             this.stopSoundToolStripMenuItem.Size = new System.Drawing.Size(271, 22);
             this.stopSoundToolStripMenuItem.Text = "Stop Sound";
             this.stopSoundToolStripMenuItem.Click += new System.EventHandler(this.stopSoundToolStripMenuItem_Click);
+            // 
+            // exportSceneToolStripMenuItem
+            // 
+            this.exportSceneToolStripMenuItem.Name = "exportSceneToolStripMenuItem";
+            this.exportSceneToolStripMenuItem.Size = new System.Drawing.Size(271, 22);
+            this.exportSceneToolStripMenuItem.Text = "Export Scene...";
+            this.exportSceneToolStripMenuItem.Click += new System.EventHandler(this.exportSceneToolStripMenuItem_Click);
             // 
             // toolStripSeparator8
             // 
@@ -545,6 +556,15 @@ namespace IndustrialPark
             this.checkForUpdatesNowToolStripMenuItem.Text = "Check For Updates Now...";
             this.checkForUpdatesNowToolStripMenuItem.Click += new System.EventHandler(this.CheckForUpdatesNowToolStripMenuItem_Click);
             // 
+            // discordRichPresenceToolStripMenuItem
+            // 
+            this.discordRichPresenceToolStripMenuItem.Checked = true;
+            this.discordRichPresenceToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.discordRichPresenceToolStripMenuItem.Name = "discordRichPresenceToolStripMenuItem";
+            this.discordRichPresenceToolStripMenuItem.Size = new System.Drawing.Size(271, 22);
+            this.discordRichPresenceToolStripMenuItem.Text = "Discord Rich Presence";
+            this.discordRichPresenceToolStripMenuItem.Click += new System.EventHandler(this.discordRichPresenceToolStripMenuItem_Click);
+            // 
             // ensureAssociationsToolStripMenuItem
             // 
             this.ensureAssociationsToolStripMenuItem.Name = "ensureAssociationsToolStripMenuItem";
@@ -558,6 +578,11 @@ namespace IndustrialPark
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(271, 22);
             this.aboutToolStripMenuItem.Text = "About...";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(268, 6);
             // 
             // displayToolStripMenuItem
             // 
@@ -841,21 +866,21 @@ namespace IndustrialPark
             // assetIDGeneratorToolStripMenuItem
             // 
             this.assetIDGeneratorToolStripMenuItem.Name = "assetIDGeneratorToolStripMenuItem";
-            this.assetIDGeneratorToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.assetIDGeneratorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.assetIDGeneratorToolStripMenuItem.Text = "Asset ID Generator";
             this.assetIDGeneratorToolStripMenuItem.Click += new System.EventHandler(this.assetIDGeneratorToolStripMenuItem_Click);
             // 
             // dYNASearchToolStripMenuItem
             // 
             this.dYNASearchToolStripMenuItem.Name = "dYNASearchToolStripMenuItem";
-            this.dYNASearchToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.dYNASearchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.dYNASearchToolStripMenuItem.Text = "DYNA Search";
             this.dYNASearchToolStripMenuItem.Click += new System.EventHandler(this.dYNASearchToolStripMenuItem_Click);
             // 
             // eventSearchToolStripMenuItem
             // 
             this.eventSearchToolStripMenuItem.Name = "eventSearchToolStripMenuItem";
-            this.eventSearchToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.eventSearchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.eventSearchToolStripMenuItem.Text = "Event Search";
             this.eventSearchToolStripMenuItem.Click += new System.EventHandler(this.eventSearchToolStripMenuItem_Click);
             // 
@@ -986,13 +1011,6 @@ namespace IndustrialPark
             this.toolStripComboBoxUserTemplate.Name = "toolStripComboBoxUserTemplate";
             this.toolStripComboBoxUserTemplate.Size = new System.Drawing.Size(160, 23);
             this.toolStripComboBoxUserTemplate.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxUserTemplate_SelectedIndexChanged);
-            // 
-            // exportSceneToolStripMenuItem
-            // 
-            this.exportSceneToolStripMenuItem.Name = "exportSceneToolStripMenuItem";
-            this.exportSceneToolStripMenuItem.Size = new System.Drawing.Size(271, 22);
-            this.exportSceneToolStripMenuItem.Text = "Export Scene...";
-            this.exportSceneToolStripMenuItem.Click += new System.EventHandler(this.exportSceneToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -1129,6 +1147,8 @@ namespace IndustrialPark
         private ToolStripMenuItem sPLNToolStripMenuItem;
         private ToolStripMenuItem dYNASearchToolStripMenuItem;
         private ToolStripMenuItem exportSceneToolStripMenuItem;
+        private ToolStripMenuItem discordRichPresenceToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator2;
     }
 }
 

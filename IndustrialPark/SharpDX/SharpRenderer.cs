@@ -444,9 +444,9 @@ namespace IndustrialPark
 
                         foreach (IRenderableAsset a in
                         (from IRenderableAsset asset in ArchiveEditorFunctions.renderableAssets
-                         where asset is AssetUI || asset is AssetUIFT
+                         where (asset is AssetUI || asset is AssetUIFT) && asset.ShouldDraw(this)
                          select (IClickableAsset)asset).OrderBy(f => -f.PositionZ))
-                            a.Draw(this);
+                                a.Draw(this);
                     }
                     else
                     {

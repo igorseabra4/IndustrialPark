@@ -9,6 +9,7 @@
 
         public bool renderBasedOnLodt = false;
         public bool renderBasedOnPipt = true;
+        public bool discordRichPresence = true;
         public bool dontDrawInvisible = false;
 
         public bool updateReferencesOnCopy = true;
