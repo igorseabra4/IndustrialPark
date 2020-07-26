@@ -62,7 +62,6 @@
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Asset Type";
-            this.groupBox1.Visible = false;
             // 
             // buttonImportRawData
             // 
@@ -169,12 +168,12 @@
             this.checkBoxIgnoreMeshColors.Text = "Ignore Mesh Colors";
             this.checkBoxIgnoreMeshColors.UseVisualStyleBackColor = true;
             // 
-            // checkBox1
+            // checkBoxLedgeGrab
             // 
             this.checkBoxLedgeGrab.AutoSize = true;
             this.checkBoxLedgeGrab.Enabled = false;
             this.checkBoxLedgeGrab.Location = new System.Drawing.Point(18, 313);
-            this.checkBoxLedgeGrab.Name = "checkBox1";
+            this.checkBoxLedgeGrab.Name = "checkBoxLedgeGrab";
             this.checkBoxLedgeGrab.Size = new System.Drawing.Size(116, 17);
             this.checkBoxLedgeGrab.TabIndex = 16;
             this.checkBoxLedgeGrab.Text = "Ledge Grab SIMPs";

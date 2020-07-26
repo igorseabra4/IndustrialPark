@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using static IndustrialPark.Models.BSP_IO_Shared;
-using static IndustrialPark.Models.BSP_IO_CreateBSP;
-using static IndustrialPark.Models.Model_IO_Assimp;
+using static IndustrialPark.Models.BSP_IO;
+using static IndustrialPark.Models.Assimp_IO;
 using System.IO;
 using RenderWareFile;
 using IndustrialPark.Models;
@@ -173,8 +173,15 @@ namespace IndustrialPark
 
                 if (openFile.ShowDialog() == DialogResult.OK)
                 {
-                    asset.Data = Path.GetExtension(openFile.FileName).ToLower().Equals(".dff") ? File.ReadAllBytes(openFile.FileName) :
-                        ReadFileMethods.ExportRenderWareFile(CreateDFFFromAssimp(openFile.FileName, false, true), modelRenderWareVersion(asset.game));
+                    if (asset.AHDR.assetType == HipHopFile.AssetType.MODL)
+                        asset.Data = Path.GetExtension(openFile.FileName).ToLower().Equals(".dff") ?
+                        File.ReadAllBytes(openFile.FileName) :
+                        ReadFileMethods.ExportRenderWareFile(CreateDFFFromAssimp(openFile.FileName, flipUVs.Checked, ignoreMeshColors.Checked), modelRenderWareVersion(asset.game));
+
+                    if (asset.AHDR.assetType == HipHopFile.AssetType.BSP)
+                        asset.Data = Path.GetExtension(openFile.FileName).ToLower().Equals(".bsp") ?
+                        File.ReadAllBytes(openFile.FileName) :
+                        ReadFileMethods.ExportRenderWareFile(CreateBSPFromAssimp(openFile.FileName, flipUVs.Checked, ignoreMeshColors.Checked), modelRenderWareVersion(asset.game));
 
                     asset.Setup(Program.MainForm.renderer);
 

@@ -9,7 +9,7 @@ using Assimp;
 
 namespace IndustrialPark.Models
 {
-    public static class Model_IO_Assimp
+    public static class Assimp_IO
     {
         public static string GetImportFilter()
         {
@@ -86,6 +86,28 @@ namespace IndustrialPark.Models
 
             return data;
         }
+
+        private static Texture_0006 RWTextureFromAssimpMaterial(TextureSlot texture) =>
+            new Texture_0006()
+            {
+                textureStruct = new TextureStruct_0001()
+                {
+                    FilterMode = TextureFilterMode.FILTERLINEARMIPLINEAR,
+                    AddressModeU = RWTextureAddressModeFromAssimp(texture.WrapModeU),
+                    AddressModeV = RWTextureAddressModeFromAssimp(texture.WrapModeV),
+                    UseMipLevels = 1
+                },
+                diffuseTextureName = new String_0002(Path.GetFileNameWithoutExtension(texture.FilePath)),
+                alphaTextureName = new String_0002(""),
+                textureExtension = new Extension_0003()
+            };
+
+        // use wrap as default
+        public static TextureAddressMode RWTextureAddressModeFromAssimp(TextureWrapMode mode) =>
+            mode == TextureWrapMode.Clamp ? TextureAddressMode.TEXTUREADDRESSCLAMP :
+            mode == TextureWrapMode.Decal ? TextureAddressMode.TEXTUREADDRESSBORDER :
+            mode == TextureWrapMode.Mirror ? TextureAddressMode.TEXTUREADDRESSMIRROR :
+            TextureAddressMode.TEXTUREADDRESSWRAP;
 
         public static RWSection CreateDFFFromAssimp(string fileName, bool flipUVs, bool ignoreMeshColors)
         {
@@ -386,27 +408,215 @@ namespace IndustrialPark.Models
             return clump;
         }
 
-        private static Texture_0006 RWTextureFromAssimpMaterial(TextureSlot texture) =>
-            new Texture_0006()
+        public static RWSection[] CreateBSPFromAssimp(string fileName, bool flipUVs, bool ignoreMeshColors)
+        {
+            PostProcessSteps pps =
+                PostProcessSteps.Debone | PostProcessSteps.FindInstances |
+                PostProcessSteps.FindInvalidData | PostProcessSteps.OptimizeGraph |
+                PostProcessSteps.OptimizeMeshes | PostProcessSteps.Triangulate |
+                PostProcessSteps.PreTransformVertices;
+
+            Scene scene = new AssimpContext().ImportFile(fileName, pps);
+
+            int vertexCount = scene.Meshes.Sum(m => m.VertexCount);
+            int triangleCount = scene.Meshes.Sum(m => m.FaceCount);
+
+            if (vertexCount > 65535 || triangleCount > 65536)
+                throw new ArgumentException("Model has too many vertices or triangles. Please import a simpler model.");
+
+            List<Vertex3> vertices = new List<Vertex3>(vertexCount);
+            List<RenderWareFile.Color> vColors = new List<RenderWareFile.Color>(vertexCount);
+            List<Vertex2> textCoords = new List<Vertex2>(vertexCount);
+            List<RenderWareFile.Triangle> triangles = new List<RenderWareFile.Triangle>(triangleCount);
+
+            int totalVertices = 0;
+
+            foreach (var m in scene.Meshes)
             {
-                textureStruct = new TextureStruct_0001()
+                foreach (Vector3D v in m.Vertices)
+                    vertices.Add(new Vertex3(v.X, v.Y, v.Z));
+
+                if (m.HasTextureCoords(0))
+                    foreach (Vector3D v in m.TextureCoordinateChannels[0])
+                        textCoords.Add(new Vertex2(v.X, flipUVs ? -v.Y : v.Y));
+                else
+                    for (int i = 0; i < m.VertexCount; i++)
+                        textCoords.Add(new Vertex2());
+
+                if (m.HasVertexColors(0))
+                    foreach (Color4D c in m.VertexColorChannels[0])
+                        vColors.Add(new RenderWareFile.Color(
+                            (byte)(c.R * 255),
+                            (byte)(c.G * 255),
+                            (byte)(c.B * 255),
+                            (byte)(c.A * 255)));
+                else
+                    for (int i = 0; i < m.VertexCount; i++)
+                        vColors.Add(new RenderWareFile.Color(255, 255, 255, 255));
+
+                foreach (var t in m.Faces)
+                    triangles.Add(new RenderWareFile.Triangle()
+                    {
+                        vertex1 = (ushort)(t.Indices[0] + totalVertices),
+                        vertex2 = (ushort)(t.Indices[1] + totalVertices),
+                        vertex3 = (ushort)(t.Indices[2] + totalVertices),
+                        materialIndex = (ushort)m.MaterialIndex
+                    });
+
+                totalVertices += m.VertexCount;
+            }
+
+            if (vertices.Count != textCoords.Count || vertices.Count != vColors.Count)
+                throw new ArgumentException("Internal error: texture coordinate or vertex color count is different from vertex count.");
+
+            triangles = triangles.OrderBy(t => t.materialIndex).ToList();
+
+            Vertex3 Max = new Vertex3(vertices[0].X, vertices[0].Y, vertices[0].Z);
+            Vertex3 Min = new Vertex3(vertices[0].X, vertices[0].Y, vertices[0].Z);
+
+            foreach (Vertex3 i in vertices)
+            {
+                if (i.X > Max.X)
+                    Max.X = i.X;
+                if (i.Y > Max.Y)
+                    Max.Y = i.Y;
+                if (i.Z > Max.Z)
+                    Max.Z = i.Z;
+                if (i.X < Min.X)
+                    Min.X = i.X;
+                if (i.Y < Min.Y)
+                    Min.Y = i.Y;
+                if (i.Z < Min.Z)
+                    Min.Z = i.Z;
+            }
+
+            Max = new Vertex3(100000, 100000, 100000);
+            Min = new Vertex3(-100000, -100000, -100000);
+
+            BinMesh[] binMeshes = new BinMesh[scene.MaterialCount];
+
+            Material_0007[] materials = new Material_0007[scene.MaterialCount];
+
+            for (int i = 0; i < scene.MaterialCount; i++)
+            {
+                List<int> indices = new List<int>(triangles.Count);
+                foreach (RenderWareFile.Triangle f in triangles)
+                    if (f.materialIndex == i)
+                    {
+                        indices.Add(f.vertex1);
+                        indices.Add(f.vertex2);
+                        indices.Add(f.vertex3);
+                    }
+
+                binMeshes[i] = new BinMesh()
                 {
-                    FilterMode = TextureFilterMode.FILTERLINEARMIPLINEAR,
-                    AddressModeU = RWTextureAddressModeFromAssimp(texture.WrapModeU),                 
-                    AddressModeV = RWTextureAddressModeFromAssimp(texture.WrapModeV),
-                    UseMipLevels = 1
+                    materialIndex = i,
+                    indexCount = indices.Count(),
+                    vertexIndices = indices.ToArray()
+                };
+
+                materials[i] = new Material_0007()
+                {
+                    materialStruct = new MaterialStruct_0001()
+                    {
+                        unusedFlags = 0,
+                        color = ignoreMeshColors ?
+                       new RenderWareFile.Color(255, 255, 255, 255) :
+                       new RenderWareFile.Color(
+                             (byte)(scene.Materials[i].ColorDiffuse.R / 255),
+                             (byte)(scene.Materials[i].ColorDiffuse.G / 255),
+                             (byte)(scene.Materials[i].ColorDiffuse.B / 255),
+                             (byte)(scene.Materials[i].ColorDiffuse.A / 255)),
+                        unusedInt2 = 0x2DF53E84,
+                        isTextured = scene.Materials[i].HasTextureDiffuse ? 1 : 0,
+                        ambient = ignoreMeshColors ? 1f : scene.Materials[i].ColorAmbient.A,
+                        specular = ignoreMeshColors ? 1f : scene.Materials[i].ColorSpecular.A,
+                        diffuse = ignoreMeshColors ? 1f : scene.Materials[i].ColorDiffuse.A
+                    },
+                    texture = scene.Materials[i].HasTextureDiffuse ? RWTextureFromAssimpMaterial(scene.Materials[i].TextureDiffuse) : null,
+                    materialExtension = new Extension_0003()
+                    {
+                        extensionSectionList = new List<RWSection>()
+                    },
+                };
+            }
+
+            WorldFlags worldFlags = WorldFlags.HasOneSetOfTextCoords | WorldFlags.HasVertexColors | WorldFlags.WorldSectorsOverlap | (WorldFlags)0x00010000;
+
+            World_000B world = new World_000B()
+            {
+                worldStruct = new WorldStruct_0001()
+                {
+                    rootIsWorldSector = 1,
+                    inverseOrigin = new Vertex3(-0f, -0f, -0f),
+                    numTriangles = (uint)triangleCount,
+                    numVertices = (uint)vertexCount,
+                    numPlaneSectors = 0,
+                    numAtomicSectors = 1,
+                    colSectorSize = 0,
+                    worldFlags = worldFlags,
+                    boxMaximum = Max,
+                    boxMinimum = Min,
                 },
-                diffuseTextureName = new String_0002(Path.GetFileNameWithoutExtension(texture.FilePath)),
-                alphaTextureName = new String_0002(""),
-                textureExtension = new Extension_0003()
+
+                materialList = new MaterialList_0008()
+                {
+                    materialListStruct = new MaterialListStruct_0001()
+                    {
+                        materialCount = scene.MaterialCount
+                    },
+                    materialList = materials
+                },
+
+                firstWorldChunk = new AtomicSector_0009()
+                {
+                    atomicSectorStruct = new AtomicSectorStruct_0001()
+                    {
+                        matListWindowBase = 0,
+                        numTriangles = triangleCount,
+                        numVertices = vertexCount,
+                        boxMaximum = Max,
+                        boxMinimum = Min,
+                        collSectorPresent = 0x2F50D984,
+                        unused = 0,
+                        vertexArray = vertices.ToArray(),
+                        colorArray = vColors.ToArray(),
+                        uvArray = textCoords.ToArray(),
+                        triangleArray = triangles.ToArray()
+                    },
+                    atomicSectorExtension = new Extension_0003()
+                    {
+                        extensionSectionList = new List<RWSection>() {
+                            new BinMeshPLG_050E()
+                            {
+                                binMeshHeaderFlags = BinMeshHeaderFlags.TriangleList,
+                                numMeshes = binMeshes.Count(),
+                                totalIndexCount = binMeshes.Sum(b => b.indexCount),
+                                binMeshList = binMeshes
+                            },
+                            new CollisionPLG_011D_Scooby()
+                            {
+                                splits = new Split_Scooby[0],
+                                startIndex_amountOfTriangles = new short[][] { new short[] { 0, (short)triangles.Count } },
+                                triangles = TriangleRange(triangles.Count)
+                            }
+                        }
+                    }
+                },
+
+                worldExtension = new Extension_0003()
             };
 
-        // use wrap as default
-        private static TextureAddressMode RWTextureAddressModeFromAssimp(TextureWrapMode mode) =>
-            mode == TextureWrapMode.Clamp ? TextureAddressMode.TEXTUREADDRESSCLAMP :
-            mode == TextureWrapMode.Decal ? TextureAddressMode.TEXTUREADDRESSBORDER :
-            mode == TextureWrapMode.Mirror ? TextureAddressMode.TEXTUREADDRESSMIRROR :
-            TextureAddressMode.TEXTUREADDRESSWRAP;
+            return new RWSection[] { world };
+        }
+
+        private static int[] TriangleRange(int count)
+        {
+            var result = new int[count];
+            for (int i = 0; i < count; i++)
+                result[i] = i;
+            return result;
+        }
 
         public static void ExportAssimp(string fileName, RWSection[] bspFile, bool flipUVs, ExportFormatDescription format, string textureExtension, Matrix worldTransform)
         {

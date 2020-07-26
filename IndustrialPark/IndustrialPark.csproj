@@ -291,7 +291,7 @@
       <DependentUpon>ChooseTarget.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Animation_IO_Assimp.cs" />
-    <Compile Include="Models\Model_IO_Assimp.cs" />
+    <Compile Include="Models\Assimp_IO.cs" />
     <Compile Include="Other\DiscordRPCController.cs" />
     <Compile Include="Other\RemoteControl.cs" />
     <Compile Include="Other\AutomaticUpdater.cs" />
@@ -387,7 +387,7 @@
     <Compile Include="Assets\Shared\Enums\VilType.cs" />
     <Compile Include="Other\IPSettings.cs" />
     <Compile Include="Other\ProjectJson.cs" />
-    <Compile Include="Models\BSP_IO_CreateBSP.cs" />
+    <Compile Include="Models\BSP_IO.cs" />
     <Compile Include="Models\BSP_IO_ReadOBJ.cs" />
     <Compile Include="Other\FileAssociation.cs" />
     <Compile Include="Assets\Shared\Colors\MyColor.cs" />

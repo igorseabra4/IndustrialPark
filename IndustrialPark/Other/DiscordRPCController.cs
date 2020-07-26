@@ -71,7 +71,7 @@ namespace IndustrialPark
                     }
                 });
             }
-            catch (ObjectDisposedException)
+            catch
             {
 
             }

@@ -7,7 +7,7 @@ using RenderWareFile.Sections;
 
 namespace IndustrialPark.Models
 {
-    public static class BSP_IO_CreateBSP
+    public static class BSP_IO
     {
         public static void ConvertBSPtoOBJ(string fileName, RWSection[] bspFile, bool flipUVs)
         {

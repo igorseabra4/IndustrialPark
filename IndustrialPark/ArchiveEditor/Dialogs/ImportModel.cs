@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using static IndustrialPark.Models.BSP_IO_Shared;
-using static IndustrialPark.Models.Model_IO_Assimp;
+using static IndustrialPark.Models.Assimp_IO;
 
 namespace IndustrialPark
 {
@@ -17,6 +17,9 @@ namespace IndustrialPark
             
             buttonOK.Enabled = false;
             TopMost = true;
+            comboBoxAssetTypes.Items.Add(AssetType.MODL);
+            comboBoxAssetTypes.Items.Add(AssetType.BSP);
+            comboBoxAssetTypes.SelectedItem = AssetType.MODL;
         }
 
         List<string> filePaths = new List<string>();
@@ -77,14 +80,27 @@ namespace IndustrialPark
                     foreach (string filePath in a.filePaths)
                     {
                         string assetName = Path.GetFileNameWithoutExtension(filePath) + ".dff";
-                        AssetType assetType = AssetType.MODL;
-                        byte[] assetData = Path.GetExtension(filePath).ToLower().Equals(".dff") ?
+                        AssetType assetType = (AssetType)a.comboBoxAssetTypes.SelectedItem;
+
+                        byte[] assetData;
+
+                        if (assetType == AssetType.MODL)
+                            assetData = Path.GetExtension(filePath).ToLower().Equals(".dff") ?
                                     File.ReadAllBytes(filePath) :
                                     ReadFileMethods.ExportRenderWareFile(
                                         CreateDFFFromAssimp(filePath,
                                         a.checkBoxFlipUVs.Checked,
                                         a.checkBoxIgnoreMeshColors.Checked),
                                         modelRenderWareVersion(game));
+                        else if (assetType == AssetType.BSP)
+                            assetData = Path.GetExtension(filePath).ToLower().Equals(".bsp") ?
+                                    File.ReadAllBytes(filePath) :
+                                    ReadFileMethods.ExportRenderWareFile(
+                                        CreateBSPFromAssimp(filePath,
+                                        a.checkBoxFlipUVs.Checked,
+                                        a.checkBoxIgnoreMeshColors.Checked),
+                                        modelRenderWareVersion(game));
+                        else throw new ArgumentException();
 
                         AHDRs.Add(
                             new Section_AHDR(

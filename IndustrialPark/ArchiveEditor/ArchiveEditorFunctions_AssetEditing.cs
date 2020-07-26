@@ -739,7 +739,7 @@ namespace IndustrialPark
                 try
                 {
                     textureNamesList.AddRange(v.Textures);
-                    Model_IO_Assimp.ExportAssimp(
+                    Assimp_IO.ExportAssimp(
                     Path.Combine(folderName, v.AHDR.ADBG.assetName + "." + format.FileExtension),
                     ReadFileMethods.ReadRenderWareFile(v.Data), true, format, textureExtension, Matrix.Identity);
                 }
@@ -800,7 +800,7 @@ namespace IndustrialPark
                         textureNamesList.AddRange(modl.Textures);
                     else continue;
 
-                    Model_IO_Assimp.ExportAssimp(
+                    Assimp_IO.ExportAssimp(
                         Path.Combine(folderName, assetName + "." + format.FileExtension),
                         ReadFileMethods.ReadRenderWareFile(modelAsset.Data), true, format, textureExtension, world);
                 }
