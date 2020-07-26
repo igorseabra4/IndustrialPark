@@ -150,7 +150,6 @@
         LKIT_lights,
         LKIT_JF_SB_lights,
         MINF_Pickups,
-        Player,
 
         // Placeable
         Camera,
@@ -161,6 +160,7 @@
         Point_MVPT,
         Area_MVPT,
         Dyna_Pointer,
+        Player,
         Boulder_Generic,
         Button_Generic,
         Destructible_Generic,
@@ -169,7 +169,6 @@
         NPC_Generic,
         Pendulum_Generic,
         Platform_Generic,
-        Player_Generic,
         SIMP_Generic,
         VIL_Generic,
         UI_Generic,

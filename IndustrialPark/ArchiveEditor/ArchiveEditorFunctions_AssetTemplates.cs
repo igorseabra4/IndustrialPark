@@ -231,6 +231,7 @@ namespace IndustrialPark
                 new ToolStripMenuItem(AssetTemplate.SFX_OnEvent.ToString()),
                 new ToolStripMenuItem(AssetTemplate.SFX_OnRadius.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Dyna_Pointer.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Player.ToString()),
                 new ToolStripSeparator(),
                 new ToolStripMenuItem(AssetTemplate.Boulder_Generic.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Button_Generic.ToString()),
@@ -240,7 +241,6 @@ namespace IndustrialPark
                 new ToolStripMenuItem(AssetTemplate.NPC_Generic.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Pendulum_Generic.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Platform_Generic.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Player_Generic.ToString()),
                 new ToolStripMenuItem(AssetTemplate.SIMP_Generic.ToString()),
                 new ToolStripMenuItem(AssetTemplate.VIL_Generic.ToString()),
                 new ToolStripMenuItem(AssetTemplate.UI_Generic.ToString()),
@@ -483,7 +483,7 @@ namespace IndustrialPark
                     newAssetType = AssetType.EGEN;
                     break;
                 case AssetTemplate.Environment:
-                    dataSize = 
+                    dataSize =
                         game == Game.Incredibles ? 0x5C :
                         game == Game.Scooby ? 0x40 : 0x44;
                     newAssetType = AssetType.ENV;
@@ -595,9 +595,8 @@ namespace IndustrialPark
                     }
                     newAssetType = AssetType.PLAT;
                     break;
-                case AssetTemplate.Player_Generic:
                 case AssetTemplate.Player:
-                    dataSize = 0x58 + Asset.DataSizeOffset(game);
+                    dataSize = 0x58 + Asset.DataSizeOffset(game) - (game == Game.Scooby ? 4 : 0);
                     newAssetType = AssetType.PLYR;
                     break;
                 case AssetTemplate.Portal:
@@ -730,7 +729,13 @@ namespace IndustrialPark
             }
 
             string assetName = string.IsNullOrWhiteSpace(customName) ? template.ToString().ToUpper() + "_01" : customName;
-            
+
+            if (template == AssetTemplate.Player)
+            {
+                assetName = playerName;
+                customName = playerName;
+            }
+
             Section_AHDR newAsset = new Section_AHDR
             {
                 assetType = newAssetType,
@@ -920,14 +925,16 @@ namespace IndustrialPark
                     ((AssetPLAT)asset).PlatFlagsShort = 4;
                     ((AssetPLAT)asset).PlatSpecific = new PlatSpecific_Generic((AssetPLAT)asset);
                     break;
-                case AssetTemplate.Player_Generic:
                 case AssetTemplate.Player:
                     ((AssetPLYR)asset).AssetType = ObjectAssetType.Player;
                     ((AssetPLYR)asset).BaseUshortFlags = 0x0D;
                     ((AssetPLYR)asset).Data[0xB] = 0;
                     ((AssetPLYR)asset).ColorAlpha = 0;
                     ((AssetPLYR)asset).ColorAlphaSpeed = 0;
-                    ((AssetPLYR)asset).Model_AssetID = 0x003FE4D5;
+                    if (game == Game.BFBB)
+                        ((AssetPLYR)asset).Model_AssetID = 0x003FE4D5;
+                    else if (game == Game.Scooby)
+                        ((AssetPLYR)asset).Model_AssetID = 0x96E7F1D5;                        
                     break;
                 case AssetTemplate.Marker:
                     ((AssetMRKR)asset).PositionX = position.X;
@@ -2204,7 +2211,7 @@ namespace IndustrialPark
 
         public static string pkupsMinfName => "pickups.MINF";
         public string startCamName => game == Game.Scooby ? "START" : "STARTCAM";
-        public string playerName => game == Game.Scooby ? "SCOOBY" : "SPONGEBOB";
+        public string playerName => game == Game.Scooby ? "SCOOBY" : game == Game.BFBB ? "SPONGEBOB" : "HERO";
         public string environmentName => game == Game.Scooby ? "ENV" : "ENVIRONMENT";
 
         private void PlaceDefaultAssets()
@@ -2217,13 +2224,14 @@ namespace IndustrialPark
             env.BSP_AssetID = PlaceTemplate(new Vector3(), 0, ref assetIDs, customName: "empty_bsp", template: AssetTemplate.EmptyBSP);
             env.StartCameraAssetID = PlaceTemplate(new Vector3(0, 100, 100), 1, ref assetIDs, customName: startCamName, template: AssetTemplate.StartCamera);
 
-            AssetPLYR player = (AssetPLYR)GetFromAssetID(PlaceTemplate(new Vector3(), 1, ref assetIDs, customName: playerName, template: AssetTemplate.Player));
+            PlaceTemplate(new Vector3(), 1, ref assetIDs, customName: pkupsMinfName, template: AssetTemplate.MINF_Pickups);
+
+            AssetPLYR player = (AssetPLYR)GetFromAssetID(PlaceTemplate(new Vector3(), 1, ref assetIDs, template: AssetTemplate.Player));
 
             if (game == Game.BFBB)
             {
                 env.Object_LKIT_AssetID = PlaceTemplate(new Vector3(), 1, ref assetIDs, customName: "lights", template: AssetTemplate.LKIT_lights);
                 player.LightKit_AssetID = PlaceTemplate(new Vector3(), 1, ref assetIDs, customName: "JF_SB_lights", template: AssetTemplate.LKIT_JF_SB_lights);
-                PlaceTemplate(new Vector3(), 1, ref assetIDs, customName: pkupsMinfName, template: AssetTemplate.MINF_Pickups);
             }
         }
     }
