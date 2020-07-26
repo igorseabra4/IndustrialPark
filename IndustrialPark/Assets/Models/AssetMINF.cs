@@ -112,6 +112,17 @@ namespace IndustrialPark
             return renderingDictionary.ContainsKey(_modelAssetID) && renderingDictionary[_modelAssetID].GetRenderWareModelFile() != null;
         }
 
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game == Game.Scooby)
+            {
+                dt.RemoveProperty("CombatID");
+                dt.RemoveProperty("BrainID");
+            }
+
+            base.SetDynamicProperties(dt);
+        }
+
         private uint _modelAssetID;
 
         [Category("Model Info"), Browsable(false)]

@@ -71,16 +71,29 @@ namespace IndustrialPark
                 if (a.ShowDialog() == DialogResult.OK)
                 {
                     List<Section_AHDR> AHDRs = new List<Section_AHDR>();
-                    simps = a.checkBoxGenSimps.Checked;
-                    ledgegrab = a.checkBoxLedgeGrab.Checked;
 
-                    if (simps)
-                        MessageBox.Show("a SIMP for each imported MODL will be generated and placed on a new DEFAULT layer.");
+                    AssetType assetType = (AssetType)a.comboBoxAssetTypes.SelectedItem;
+
+                    if (assetType == AssetType.MODL)
+                    {
+                        piptVcolors = a.checkBoxEnableVcolors.Checked;
+                        simps = a.checkBoxGenSimps.Checked;
+                        ledgegrab = a.checkBoxLedgeGrab.Checked;
+
+                        if (simps)
+                            MessageBox.Show("a SIMP for each imported MODL will be generated and placed on a new DEFAULT layer.");
+                    }
+                    else if (assetType == AssetType.BSP)
+                    {
+                        piptVcolors = false;
+                        simps = false;
+                        ledgegrab = false;
+                    }
+                    else throw new ArgumentException();
 
                     foreach (string filePath in a.filePaths)
                     {
                         string assetName;
-                        AssetType assetType = (AssetType)a.comboBoxAssetTypes.SelectedItem;
 
                         byte[] assetData;
 
@@ -121,7 +134,6 @@ namespace IndustrialPark
 
                     success = true;
                     overwrite = a.checkBoxOverwrite.Checked;
-                    piptVcolors = a.checkBoxEnableVcolors.Checked;
                     return AHDRs;
                 }
                 else
@@ -134,6 +146,25 @@ namespace IndustrialPark
         private void checkBoxGenSimps_CheckedChanged(object sender, EventArgs e)
         {
             checkBoxLedgeGrab.Enabled = checkBoxGenSimps.Checked;
+        }
+
+        private void comboBoxAssetTypes_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if ((AssetType)comboBoxAssetTypes.SelectedItem == AssetType.BSP)
+            {
+                checkBoxGenSimps.Checked = false;
+                checkBoxGenSimps.Enabled = false;
+                checkBoxLedgeGrab.Checked = false;
+                checkBoxLedgeGrab.Enabled = false;
+                checkBoxEnableVcolors.Checked = false;
+                checkBoxEnableVcolors.Enabled = false;
+            }
+            else
+            {
+                checkBoxGenSimps.Enabled = true;
+                checkBoxEnableVcolors.Enabled = true;
+                checkBoxLedgeGrab.Enabled = checkBoxGenSimps.Checked;
+            }
         }
     }
 }

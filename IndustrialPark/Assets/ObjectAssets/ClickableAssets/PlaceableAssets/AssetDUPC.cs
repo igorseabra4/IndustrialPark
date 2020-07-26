@@ -172,11 +172,6 @@ namespace IndustrialPark
             Verify(Settings_AssetID, ref result);
         }
 
-        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
-        {
-            base.SetDynamicProperties(dt);
-        }
-
         private const string categoryName = "Duplicator";
 
         public override AssetID AssetID

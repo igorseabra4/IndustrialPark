@@ -262,6 +262,7 @@ namespace IndustrialPark
                 new ToolStripMenuItem(AssetTemplate.JawData.ToString()),
                 new ToolStripMenuItem(AssetTemplate.LevelOfDetailTable.ToString()),
                 new ToolStripMenuItem(AssetTemplate.MaterialMap.ToString()),
+                new ToolStripMenuItem(AssetTemplate.MINF_Generic.ToString()),
                 new ToolStripMenuItem(AssetTemplate.PipeInfoTable.ToString()),
                 new ToolStripMenuItem(AssetTemplate.ShadowTable.ToString()),
                 new ToolStripMenuItem(AssetTemplate.SoundInfo.ToString()),
@@ -525,8 +526,8 @@ namespace IndustrialPark
                     dataSize = 8;
                     newAssetType = AssetType.MAPR;
                     break;
-                case AssetTemplate.MINF_Pickups:
-                    dataSize = 20;
+                case AssetTemplate.MINF_Generic:
+                    dataSize = game == Game.Scooby ? 12 : 20;
                     newAssetType = AssetType.MINF;
                     break;
                 case AssetTemplate.Marker:
@@ -751,7 +752,7 @@ namespace IndustrialPark
                 template == AssetTemplate.LKIT_JF_SB_lights ||
                 template == AssetTemplate.StartCamera || 
                 template == AssetTemplate.SoundInfo || 
-                template == AssetTemplate.MINF_Pickups ||
+                template == AssetTemplate.MINF_Generic ||
                 template == AssetTemplate.Player);
 
             Asset asset = GetFromAssetID(AddAssetWithUniqueID(layerIndex, newAsset, giveIDregardless: true, ignoreNumber: ignoreNumber));
@@ -2117,7 +2118,7 @@ namespace IndustrialPark
                     ((AssetDYNA)asset).Type = DynaType.game_object__Camera_Tweak;
                     ((AssetDYNA)asset).DynaSpec = new DynaGObjectCamTweak((AssetDYNA)asset);
                     break;
-                case AssetTemplate.MINF_Pickups:
+                case AssetTemplate.MINF_Generic:
                     ((AssetMINF)asset).MINF_Name = "MINF";
                     break;
                 case AssetTemplate.LKIT_lights:
@@ -2224,7 +2225,7 @@ namespace IndustrialPark
             env.BSP_AssetID = PlaceTemplate(new Vector3(), 0, ref assetIDs, customName: "empty_bsp", template: AssetTemplate.EmptyBSP);
             env.StartCameraAssetID = PlaceTemplate(new Vector3(0, 100, 100), 1, ref assetIDs, customName: startCamName, template: AssetTemplate.StartCamera);
 
-            PlaceTemplate(new Vector3(), 1, ref assetIDs, customName: pkupsMinfName, template: AssetTemplate.MINF_Pickups);
+            PlaceTemplate(new Vector3(), 1, ref assetIDs, customName: pkupsMinfName, template: AssetTemplate.MINF_Generic);
 
             AssetPLYR player = (AssetPLYR)GetFromAssetID(PlaceTemplate(new Vector3(), 1, ref assetIDs, template: AssetTemplate.Player));
 

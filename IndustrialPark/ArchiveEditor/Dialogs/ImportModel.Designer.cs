@@ -52,6 +52,7 @@
             this.comboBoxAssetTypes.Name = "comboBoxAssetTypes";
             this.comboBoxAssetTypes.Size = new System.Drawing.Size(190, 21);
             this.comboBoxAssetTypes.TabIndex = 1;
+            this.comboBoxAssetTypes.SelectedIndexChanged += new System.EventHandler(this.comboBoxAssetTypes_SelectedIndexChanged);
             // 
             // groupBox1
             // 

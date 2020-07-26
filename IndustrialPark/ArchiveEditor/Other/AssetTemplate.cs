@@ -149,7 +149,6 @@
         StartCamera, 
         LKIT_lights,
         LKIT_JF_SB_lights,
-        MINF_Pickups,
 
         // Placeable
         Camera,
@@ -186,6 +185,7 @@
         JawData,
         LevelOfDetailTable,
         MaterialMap,
+        MINF_Generic,
         PipeInfoTable,
         ShadowTable,
         SoundInfo,
