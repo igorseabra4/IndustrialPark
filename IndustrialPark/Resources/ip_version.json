@@ -1,4 +1,4 @@
 {
-  "version": "v0.1.4.7",
-  "versionName": "* Adds Discord Rich Presence, showing Industrial Park and the currently open file under your Discord status, toggleable under Tools (thanks Suprnova123).\n* Adds more info on Entity assets and SIMPs (thanks Seil).\n* Fixes issue with UI and UIFT assets being rendered when not supposed to.\n* Fixes issue in which texture UIs showed up blank."
+  "version": "v0.1.4.8",
+  "versionName": "* Import Models: now allows importing of BSP assets. BSPs can be used as static level models in Scooby and BFBB. Set the name of the BSPs to be used in the ENV asset. Due to limitations of the current method, only small files can be imported.\n* \"Add Default Assets\" checkbox when creating a new HIP: when checked, the new archive will be created with the needed assets for the level to load. This essentially removes the need for the blank HIP/HOP.\n* New templates: Fog, MINF_Generic."
 }
