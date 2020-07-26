@@ -31,6 +31,7 @@ namespace IndustrialPark
 
             renderer = new SharpRenderer(renderPanel);
         }
+
         private void StartRenderer()
         {
             new Thread(() =>
@@ -108,7 +109,6 @@ namespace IndustrialPark
                 {
                     AddArchiveEditor(args[1]);
                     SetProjectToolStripStatusLabel();
-                    StartRenderer();
                     return;
                 }
             }

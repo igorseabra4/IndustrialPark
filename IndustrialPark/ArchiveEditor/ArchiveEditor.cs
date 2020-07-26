@@ -946,7 +946,7 @@ namespace IndustrialPark
                         if (archive.game == Game.Incredibles)
                             layerType = (int)LayerType_TSSM.SNDTOC;
 
-                        archive.PlaceTemplate(new Vector3(), archive.IndexOfLayerOfType(layerType), out _, ref tempList, "sound_info", AssetTemplate.SoundInfo);
+                        archive.PlaceTemplate(new Vector3(), archive.IndexOfLayerOfType(layerType), ref tempList, "sound_info", AssetTemplate.SoundInfo);
                     }
                     if (hasJaw)
                     {
@@ -955,7 +955,7 @@ namespace IndustrialPark
                             unsupported.Remove(s.assetID);
                             archive.RemoveAsset(s.assetID);
                         }
-                        archive.PlaceTemplate(new Vector3(), archive.IndexOfLayerOfType(0), out _, ref tempList, template: AssetTemplate.JawData);
+                        archive.PlaceTemplate(new Vector3(), archive.IndexOfLayerOfType(0), ref tempList, template: AssetTemplate.JawData);
                     }
 
                     MessageBox.Show("First, I want you to choose a folder. I will import all assets which could not be converted from it, based on their asset IDs.");
@@ -1144,15 +1144,12 @@ namespace IndustrialPark
 
             List<uint> assetIDs = new List<uint>();
 
-            archive.PlaceTemplate(position, comboBoxLayers.SelectedIndex, out bool success, ref assetIDs, template: template);
-            
-            if (success)
+            archive.PlaceTemplate(position, comboBoxLayers.SelectedIndex, ref assetIDs, template: template);
+
+            if (assetIDs.Count != 0)
             {
                 archive.UnsavedChanges = true;
-
                 comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
-                //PopulateAssetListAndComboBox();
-
                 SetSelectedIndices(assetIDs, true);
             }
         }

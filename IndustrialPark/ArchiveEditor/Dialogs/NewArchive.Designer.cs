@@ -37,6 +37,7 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.textBoxPCRT = new System.Windows.Forms.TextBox();
+            this.checkBoxDefaultAssets = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -64,7 +65,7 @@
             // buttonOK
             // 
             this.buttonOK.Enabled = false;
-            this.buttonOK.Location = new System.Drawing.Point(122, 200);
+            this.buttonOK.Location = new System.Drawing.Point(122, 223);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(98, 23);
             this.buttonOK.TabIndex = 3;
@@ -74,7 +75,7 @@
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Location = new System.Drawing.Point(18, 200);
+            this.buttonCancel.Location = new System.Drawing.Point(18, 223);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(98, 23);
             this.buttonCancel.TabIndex = 4;
@@ -127,11 +128,22 @@
             this.textBoxPCRT.Size = new System.Drawing.Size(202, 20);
             this.textBoxPCRT.TabIndex = 0;
             // 
+            // checkBoxDefaultAssets
+            // 
+            this.checkBoxDefaultAssets.AutoSize = true;
+            this.checkBoxDefaultAssets.Location = new System.Drawing.Point(18, 200);
+            this.checkBoxDefaultAssets.Name = "checkBoxDefaultAssets";
+            this.checkBoxDefaultAssets.Size = new System.Drawing.Size(116, 17);
+            this.checkBoxDefaultAssets.TabIndex = 16;
+            this.checkBoxDefaultAssets.Text = "Add Default Assets";
+            this.checkBoxDefaultAssets.UseVisualStyleBackColor = true;
+            // 
             // NewArchive
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(238, 229);
+            this.ClientSize = new System.Drawing.Size(238, 255);
+            this.Controls.Add(this.checkBoxDefaultAssets);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.buttonCancel);
@@ -147,6 +159,7 @@
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -160,5 +173,6 @@
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.TextBox textBoxPCRT;
         private System.Windows.Forms.DateTimePicker dateTimePicker1;
+        private System.Windows.Forms.CheckBox checkBoxDefaultAssets;
     }
 }

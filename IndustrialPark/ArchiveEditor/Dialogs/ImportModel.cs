@@ -79,12 +79,15 @@ namespace IndustrialPark
 
                     foreach (string filePath in a.filePaths)
                     {
-                        string assetName = Path.GetFileNameWithoutExtension(filePath) + ".dff";
+                        string assetName;
                         AssetType assetType = (AssetType)a.comboBoxAssetTypes.SelectedItem;
 
                         byte[] assetData;
 
                         if (assetType == AssetType.MODL)
+                        {
+                            assetName = Path.GetFileNameWithoutExtension(filePath) + ".dff";
+
                             assetData = Path.GetExtension(filePath).ToLower().Equals(".dff") ?
                                     File.ReadAllBytes(filePath) :
                                     ReadFileMethods.ExportRenderWareFile(
@@ -92,7 +95,11 @@ namespace IndustrialPark
                                         a.checkBoxFlipUVs.Checked,
                                         a.checkBoxIgnoreMeshColors.Checked),
                                         modelRenderWareVersion(game));
+                        }
                         else if (assetType == AssetType.BSP)
+                        {
+                            assetName = Path.GetFileNameWithoutExtension(filePath) + ".bsp";
+
                             assetData = Path.GetExtension(filePath).ToLower().Equals(".bsp") ?
                                     File.ReadAllBytes(filePath) :
                                     ReadFileMethods.ExportRenderWareFile(
@@ -100,6 +107,7 @@ namespace IndustrialPark
                                         a.checkBoxFlipUVs.Checked,
                                         a.checkBoxIgnoreMeshColors.Checked),
                                         modelRenderWareVersion(game));
+                        }
                         else throw new ArgumentException();
 
                         AHDRs.Add(

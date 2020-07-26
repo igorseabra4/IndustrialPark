@@ -47,7 +47,7 @@ namespace IndustrialPark
 
         public bool New()
         {
-            HipFile hipFile = NewArchive.GetNewArchive(out bool OK);
+            HipFile hipFile = NewArchive.GetNewArchive(out bool OK, out bool addDefaultAssets);
 
             if (OK)
             {
@@ -55,7 +55,6 @@ namespace IndustrialPark
 
                 currentlySelectedAssets = new List<Asset>();
                 currentlyOpenFilePath = null;
-                autoCompleteSource.Clear();
                 assetDictionary.Clear();
 
                 this.hipFile = hipFile;
@@ -65,6 +64,9 @@ namespace IndustrialPark
 
                 foreach (Section_AHDR AHDR in DICT.ATOC.AHDRList)
                     AddAssetToDictionary(AHDR, true);
+
+                if (addDefaultAssets)
+                    PlaceDefaultAssets();
 
                 UnsavedChanges = true;
                 RecalculateAllMatrices();
@@ -196,10 +198,11 @@ namespace IndustrialPark
 
         public List<Section_AHDR> GetAssetsOfType(AssetType assetType) => (from asset in assetDictionary.Values where asset.AHDR.assetType == assetType select asset.AHDR).ToList();
 
-        public void AddLayer()
+        public void AddLayer(int layerType = 0)
         {
             DICT.LTOC.LHDRList.Add(new Section_LHDR()
             {
+                layerType = layerType,
                 assetIDlist = new List<uint>(),
                 LDBG = new Section_LDBG(-1)
             });
@@ -560,7 +563,7 @@ namespace IndustrialPark
             return AHDR.assetID;
         }
 
-        public uint AddAssetWithUniqueID(int layerIndex, Section_AHDR AHDR, bool giveIDregardless = false, bool setTextureDisplay = false)
+        public uint AddAssetWithUniqueID(int layerIndex, Section_AHDR AHDR, bool giveIDregardless = false, bool setTextureDisplay = false, bool ignoreNumber = false)
         {
             int numCopies = 0;
             char stringToAdd = '_';
@@ -577,7 +580,9 @@ namespace IndustrialPark
                 giveIDregardless = false;
                 numCopies++;
 
-                AHDR.ADBG.assetName = FindNewAssetName(AHDR.ADBG.assetName, stringToAdd, numCopies);
+                if (!ignoreNumber)
+                    AHDR.ADBG.assetName = FindNewAssetName(AHDR.ADBG.assetName, stringToAdd, numCopies);
+
                 AHDR.assetID = BKDRHash(AHDR.ADBG.assetName);
             }
 

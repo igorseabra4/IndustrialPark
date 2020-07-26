@@ -27,8 +27,8 @@ namespace IndustrialPark
         [Category("Fog"), DisplayName("End Color Alpha (0 - 255)")]
         public byte BackgroundColorAlpha
         {
-            get => ReadByte(11);
-            set => Write(value, 11);
+            get => ReadByte(0x0B);
+            set => Write(0x0B, value);
         }
 
         [Category("Fog"), Editor(typeof(MyColorEditor), typeof(UITypeEditor)), DisplayName("Start Color (R, G, B)")]
@@ -46,8 +46,8 @@ namespace IndustrialPark
         [Category("Fog"), DisplayName("Start Color Alpha (0 - 255)")]
         public byte FogColorAlpha
         {
-            get => ReadByte(15);
-            set => Write(value, 15);
+            get => ReadByte(0x0F);
+            set => Write(0x0F, value);
         }
 
         [Category("Fog"), TypeConverter(typeof(FloatTypeConverter))]

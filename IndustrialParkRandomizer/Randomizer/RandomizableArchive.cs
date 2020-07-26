@@ -251,7 +251,7 @@ namespace IndustrialPark.Randomizer
                     Arguments_Float = new float[4]
                 });
 
-            AssetDPAT dispatcher = (AssetDPAT)GetFromAssetID(PlaceTemplate(new Vector3(), layerIndex, out _, ref dynaTeleportAssetIDs, "IP_TELEBOX", AssetTemplate.Dispatcher));
+            AssetDPAT dispatcher = (AssetDPAT)GetFromAssetID(PlaceTemplate(new Vector3(), layerIndex, ref dynaTeleportAssetIDs, "IP_TELEBOX", AssetTemplate.Dispatcher));
             dispatcher.LinksBFBB = links.ToArray();
 
             return true;
@@ -718,7 +718,7 @@ namespace IndustrialPark.Randomizer
 
             List<uint> outAssetIDs = new List<uint>();
 
-            AssetGRUP group = (AssetGRUP)GetFromAssetID(PlaceTemplate(new Vector3(), defaultLayerIndex, out _, ref outAssetIDs, "IP_RANDO_PLAYER_GRUP", template: AssetTemplate.Group));
+            AssetGRUP group = (AssetGRUP)GetFromAssetID(PlaceTemplate(new Vector3(), defaultLayerIndex, ref outAssetIDs, "IP_RANDO_PLAYER_GRUP", template: AssetTemplate.Group));
             group.ReceiveEventDelegation = AssetGRUP.Delegation.RandomItem;
             group.LinksBFBB = new LinkBFBB[]
             {
@@ -734,7 +734,7 @@ namespace IndustrialPark.Randomizer
             outAssetIDs = new List<uint>();
             for (int i = 0; i < 3; i++)
             {
-                AssetTIMR timer = (AssetTIMR)GetFromAssetID(PlaceTemplate(new Vector3(), defaultLayerIndex, out _, ref outAssetIDs, "IP_RANDO_PLAYER_TIMR", template: AssetTemplate.Timer));
+                AssetTIMR timer = (AssetTIMR)GetFromAssetID(PlaceTemplate(new Vector3(), defaultLayerIndex, ref outAssetIDs, "IP_RANDO_PLAYER_TIMR", template: AssetTemplate.Timer));
                 timer.Time = 0.1f;
                 timer.LinksBFBB = new LinkBFBB[]
                 {
@@ -830,7 +830,7 @@ namespace IndustrialPark.Randomizer
                     int layerIndex = GetLayerFromAssetID(a.AHDR.assetID);
                     Vector3 position = a.Position;
                     List<LinkBFBB> links = a.LinksBFBB.ToList();
-                    AssetVIL vil = (AssetVIL)GetFromAssetID(PlaceTemplate(position, layerIndex, out _, ref assetIDs,
+                    AssetVIL vil = (AssetVIL)GetFromAssetID(PlaceTemplate(position, layerIndex, ref assetIDs,
                         "RANDO_" + (a.VilType == VilType.tubelet_bind ? "TUBELET" : "ARF"),
                        (a.VilType == VilType.tubelet_bind ? AssetTemplate.Tubelet : AssetTemplate.Arf)));
                     links.AddRange(vil.LinksBFBB);
@@ -1484,7 +1484,7 @@ namespace IndustrialPark.Randomizer
             {
                 int defaultLayer = GetLayerFromAssetID(new AssetID("EXIT_TO_HB05"));
                 List<uint> nothing = new List<uint>();
-                AssetPKUP spatula = (AssetPKUP)(GetFromAssetID(PlaceTemplate(new Vector3(8.774022f, 5.877692f, -23.492590f), defaultLayer, out _, ref nothing, template: AssetTemplate.Spatula)));
+                AssetPKUP spatula = (AssetPKUP)(GetFromAssetID(PlaceTemplate(new Vector3(8.774022f, 5.877692f, -23.492590f), defaultLayer, ref nothing, template: AssetTemplate.Spatula)));
                 spatula.LinksBFBB = new LinkBFBB[]
                 {
                 new LinkBFBB(EndianConverter.PlatformEndianness(platform), false)
@@ -1515,7 +1515,7 @@ namespace IndustrialPark.Randomizer
                         dispatcher.BaseUshortFlags ^= 1; //EnabledOnStart = false;
                         int defaultLayer = GetLayerFromAssetID(dpat);
                         List<uint> vs = new List<uint>();
-                        AssetTIMR timer = (AssetTIMR)GetFromAssetID(PlaceTemplate(new Vector3(), defaultLayer, out _, ref vs, template: AssetTemplate.Timer));
+                        AssetTIMR timer = (AssetTIMR)GetFromAssetID(PlaceTemplate(new Vector3(), defaultLayer, ref vs, template: AssetTemplate.Timer));
                         timer.Time = 1f;
                         uint boss = new AssetID("BOSS_NPC");
                         if (ContainsAsset(boss) && GetFromAssetID(boss) is AssetVIL spongebot)
@@ -2036,9 +2036,9 @@ namespace IndustrialPark.Randomizer
                 }
 
             List<uint> outAssetIDs = new List<uint>();
-            uint dpat = PlaceTemplate(new Vector3(), defaultLayerIndex, out _, ref outAssetIDs, musicDispAssetName, template: AssetTemplate.Dispatcher);
+            uint dpat = PlaceTemplate(new Vector3(), defaultLayerIndex, ref outAssetIDs, musicDispAssetName, template: AssetTemplate.Dispatcher);
 
-            AssetGRUP group = (AssetGRUP)GetFromAssetID(PlaceTemplate(new Vector3(), defaultLayerIndex, out _, ref outAssetIDs, musicGroupAssetName, template: AssetTemplate.Group));
+            AssetGRUP group = (AssetGRUP)GetFromAssetID(PlaceTemplate(new Vector3(), defaultLayerIndex, ref outAssetIDs, musicGroupAssetName, template: AssetTemplate.Group));
             group.ReceiveEventDelegation = AssetGRUP.Delegation.RandomItem;
             group.LinksBFBB = new LinkBFBB[]
             {
@@ -2057,7 +2057,7 @@ namespace IndustrialPark.Randomizer
                 if (i == 7 || i == 14)
                     continue;
 
-                AssetTIMR timer = (AssetTIMR)GetFromAssetID(PlaceTemplate(new Vector3(), defaultLayerIndex, out _, ref outAssetIDs, "IP_RANDO_TIMR", template: AssetTemplate.Timer));
+                AssetTIMR timer = (AssetTIMR)GetFromAssetID(PlaceTemplate(new Vector3(), defaultLayerIndex, ref outAssetIDs, "IP_RANDO_TIMR", template: AssetTemplate.Timer));
                 timer.Time = 0.1f;
                 var links = new List<LinkBFBB>()
                 {

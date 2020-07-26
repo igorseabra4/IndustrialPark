@@ -9,6 +9,7 @@
         Counter,
         Conditional,
         Dispatcher,
+        Fog,
         Group,
         Portal,
         Script,
@@ -145,6 +146,11 @@
         Checkpoint_Talkbox,
         Checkpoint_SIMP,
         BungeeHook_SIMP,
+        StartCamera, 
+        LKIT_lights,
+        LKIT_JF_SB_lights,
+        MINF_Pickups,
+        Player,
 
         // Placeable
         Camera,

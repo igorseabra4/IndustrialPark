@@ -6,11 +6,13 @@ namespace IndustrialPark
 {
     public partial class NewArchive : Form
     {
-        public static HipFile GetNewArchive(out bool OK)
+        public static HipFile GetNewArchive(out bool OK, out bool addDefaultAssets)
         {
             NewArchive newArchive = new NewArchive();
             newArchive.ShowDialog();
             OK = newArchive.OK;
+            addDefaultAssets = newArchive.checkBoxDefaultAssets.Checked;
+            
             return newArchive.result;
         }
 
@@ -25,7 +27,7 @@ namespace IndustrialPark
             newGame = newArchive.game;
         }
 
-        public NewArchive()
+        private NewArchive()
         {
             InitializeComponent();
             TopMost = true;
@@ -44,15 +46,10 @@ namespace IndustrialPark
             dateTimePicker1.Value = DateTime.Now;
         }
         
-        public NewArchive(Platform previousPlatform, Game previousGame, int previousDate, string previousDateString)
+        private NewArchive(Platform previousPlatform, Game previousGame, int previousDate, string previousDateString) : this()
         {
-            InitializeComponent();
-            TopMost = true;
+            checkBoxDefaultAssets.Visible = false;
 
-            comboBoxGame.Items.Add("Scooby-Doo: Night Of 100 Frights");
-            comboBoxGame.Items.Add("Spongebob Squarepants: Battle For Bikini Bottom");
-            comboBoxGame.Items.Add("The Incredibles/Movie Game/Rise of the Underminer");
-            
             switch (previousGame)
             {
                 case Game.Scooby:
@@ -66,10 +63,6 @@ namespace IndustrialPark
                     break;
             }
 
-            comboBoxPlatform.Items.Add("GameCube");
-            comboBoxPlatform.Items.Add("Xbox / PC");
-            comboBoxPlatform.Items.Add("Playstation 2");
-
             switch (previousPlatform)
             {
                 case Platform.PS2:
@@ -82,9 +75,6 @@ namespace IndustrialPark
                     comboBoxPlatform.SelectedIndex = 1;
                     break;
             }
-
-            dateTimePicker1.MinDate = DateTime.MinValue;
-            dateTimePicker1.MaxDate = DateTime.MaxValue;
 
             try
             {
@@ -206,6 +196,19 @@ namespace IndustrialPark
                 platform = Platform.PS2;
 
             buttonOK.Enabled = comboBoxGame.SelectedIndex != -1 && comboBoxPlatform.SelectedIndex != -1;
+
+            if (checkBoxDefaultAssets.Visible)
+            {
+                if (game == Game.Incredibles)
+                {
+                    checkBoxDefaultAssets.Checked = false;
+                    checkBoxDefaultAssets.Enabled = false;
+                }
+                else
+                {
+                    checkBoxDefaultAssets.Enabled = true;
+                }
+            }
         }
 
         private void dateTimePicker1_ValueChanged(object sender, EventArgs e)

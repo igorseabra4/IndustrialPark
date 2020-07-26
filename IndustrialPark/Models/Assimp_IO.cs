@@ -408,6 +408,8 @@ namespace IndustrialPark.Models
             return clump;
         }
 
+        public static int MaximumBoundary => 1000;
+
         public static RWSection[] CreateBSPFromAssimp(string fileName, bool flipUVs, bool ignoreMeshColors)
         {
             PostProcessSteps pps =
@@ -490,8 +492,8 @@ namespace IndustrialPark.Models
                     Min.Z = i.Z;
             }
 
-            Max = new Vertex3(100000, 100000, 100000);
-            Min = new Vertex3(-100000, -100000, -100000);
+            Max = new Vertex3(MaximumBoundary, MaximumBoundary, MaximumBoundary);
+            Min = new Vertex3(-MaximumBoundary, -MaximumBoundary, -MaximumBoundary);
 
             BinMesh[] binMeshes = new BinMesh[scene.MaterialCount];
 

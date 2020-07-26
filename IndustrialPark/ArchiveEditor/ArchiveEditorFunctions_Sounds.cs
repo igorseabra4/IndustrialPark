@@ -15,7 +15,7 @@ namespace IndustrialPark
                     layerType = (int)LayerType_TSSM.SNDTOC;
 
                 var list = new List<uint>();
-                PlaceTemplate(new SharpDX.Vector3(), IndexOfLayerOfType(layerType), out _, ref list, "sound_info", AssetTemplate.SoundInfo);
+                PlaceTemplate(new SharpDX.Vector3(), IndexOfLayerOfType(layerType), ref list, "sound_info", AssetTemplate.SoundInfo);
             }
 
             foreach (Asset a in assetDictionary.Values)

@@ -662,7 +662,7 @@ namespace IndustrialPark
                 if (GetFromAssetID(i) is AssetMODL MODL)
                 {
                     string simpName = "SIMP_" + MODL.AHDR.ADBG.assetName.Replace(".dff", "").ToUpper();
-                    AssetSIMP simp = (AssetSIMP)GetFromAssetID(PlaceTemplate(new Vector3(), layerIndex, out bool success, ref outAssetIDs, simpName, AssetTemplate.SIMP_Generic));
+                    AssetSIMP simp = (AssetSIMP)GetFromAssetID(PlaceTemplate(new Vector3(), layerIndex, ref outAssetIDs, simpName, AssetTemplate.SIMP_Generic));
                     simp.Model_AssetID = i;
                     if (ledgeGrabSimps)
                         simp.Data[0xB] = 0x82;
@@ -701,7 +701,7 @@ namespace IndustrialPark
             if (pipt == null)
             {
                 List<uint> assetIDs2 = new List<uint>();
-                pipt = (AssetPIPT)GetFromAssetID(PlaceTemplate(new Vector3(), IndexOfLayerOfType((int)LayerType_BFBB.DEFAULT), out _, ref assetIDs2, template: AssetTemplate.PipeInfoTable));
+                pipt = (AssetPIPT)GetFromAssetID(PlaceTemplate(new Vector3(), IndexOfLayerOfType((int)LayerType_BFBB.DEFAULT), ref assetIDs2, template: AssetTemplate.PipeInfoTable));
             }
 
             List<EntryPIPT> entries = pipt.PIPT_Entries.ToList();

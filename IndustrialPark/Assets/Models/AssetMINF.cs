@@ -114,6 +114,37 @@ namespace IndustrialPark
 
         private uint _modelAssetID;
 
+        [Category("Model Info"), Browsable(false)]
+        public string MINF_Name
+        {
+            get
+            {
+                List<byte> bytes = new List<byte>();
+                for (int i = 0; i < 4; i++)
+                    bytes.Add(Data[i]);
+
+                if (game != Game.Incredibles && platform == Platform.GameCube)
+                    bytes.Reverse();
+
+                return System.Text.Encoding.ASCII.GetString(bytes.ToArray(), 0, 4);
+            }
+            set
+            {
+                List<byte> bytes = new List<byte>();
+                foreach (char c in value)
+                    bytes.Add((byte)c);
+
+                while (bytes.Count < 4)
+                    bytes.Add((byte)' ');
+
+                if (game != Game.Incredibles && platform == Platform.GameCube)
+                    bytes.Reverse();
+
+                for (int i = 0; i < 4; i++)
+                    Data[i] = bytes[i];
+            }
+        }
+
         [Category("Model Info"), ReadOnly(true)]
         public int AmountOfReferences
         {
