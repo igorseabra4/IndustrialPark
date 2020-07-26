@@ -83,13 +83,12 @@ namespace IndustrialPark
                         if (simps)
                             MessageBox.Show("a SIMP for each imported MODL will be generated and placed on a new DEFAULT layer.");
                     }
-                    else if (assetType == AssetType.BSP)
+                    else
                     {
                         piptVcolors = false;
                         simps = false;
                         ledgegrab = false;
                     }
-                    else throw new ArgumentException();
 
                     foreach (string filePath in a.filePaths)
                     {
