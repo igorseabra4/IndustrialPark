@@ -68,12 +68,12 @@
             this.buttonAddLayer = new System.Windows.Forms.Button();
             this.comboBoxLayers = new System.Windows.Forms.ComboBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.checkBoxTemplateFocus = new System.Windows.Forms.CheckBox();
             this.listViewAssets = new System.Windows.Forms.ListView();
             this.AssetNameCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.AssetIDCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.AssetTypeCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.AssetSizeCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.labelTemplateFocus = new System.Windows.Forms.Label();
             this.buttonCopy = new System.Windows.Forms.Button();
             this.buttonPaste = new System.Windows.Forms.Button();
             this.textBoxFindAsset = new System.Windows.Forms.TextBox();
@@ -134,14 +134,14 @@
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.newToolStripMenuItem.Text = "New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
@@ -149,7 +149,7 @@
             // 
             this.saveToolStripMenuItem.Enabled = false;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -157,26 +157,26 @@
             // 
             this.saveAsToolStripMenuItem.Enabled = false;
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.saveAsToolStripMenuItem.Text = "Save As...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(140, 6);
             // 
             // hideButtonsToolStripMenuItem
             // 
             this.hideButtonsToolStripMenuItem.Name = "hideButtonsToolStripMenuItem";
-            this.hideButtonsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.hideButtonsToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.hideButtonsToolStripMenuItem.Text = "Hide Buttons";
             this.hideButtonsToolStripMenuItem.Click += new System.EventHandler(this.hideButtonsToolStripMenuItem_Click);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
@@ -212,7 +212,7 @@
             this.collapseLayersToolStripMenuItem.Enabled = false;
             this.collapseLayersToolStripMenuItem.Name = "collapseLayersToolStripMenuItem";
             this.collapseLayersToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
-            this.collapseLayersToolStripMenuItem.Text = "Collapse Layers";
+            this.collapseLayersToolStripMenuItem.Text = "Organize Layers";
             this.collapseLayersToolStripMenuItem.Click += new System.EventHandler(this.collapseLayersToolStripMenuItem_Click);
             // 
             // mergeSimilarAssetsToolStripMenuItem
@@ -377,7 +377,7 @@
             this.buttonArrowDown.Location = new System.Drawing.Point(568, 19);
             this.buttonArrowDown.Name = "buttonArrowDown";
             this.buttonArrowDown.Size = new System.Drawing.Size(22, 22);
-            this.buttonArrowDown.TabIndex = 6;
+            this.buttonArrowDown.TabIndex = 8;
             this.buttonArrowDown.Text = "▼";
             this.buttonArrowDown.UseVisualStyleBackColor = true;
             this.buttonArrowDown.Click += new System.EventHandler(this.buttonArrowDown_Click);
@@ -389,7 +389,7 @@
             this.buttonArrowUp.Location = new System.Drawing.Point(540, 19);
             this.buttonArrowUp.Name = "buttonArrowUp";
             this.buttonArrowUp.Size = new System.Drawing.Size(22, 22);
-            this.buttonArrowUp.TabIndex = 5;
+            this.buttonArrowUp.TabIndex = 7;
             this.buttonArrowUp.Text = "▲";
             this.buttonArrowUp.UseVisualStyleBackColor = true;
             this.buttonArrowUp.Click += new System.EventHandler(this.buttonArrowUp_Click);
@@ -402,7 +402,7 @@
             this.comboBoxLayerTypes.Location = new System.Drawing.Point(296, 19);
             this.comboBoxLayerTypes.Name = "comboBoxLayerTypes";
             this.comboBoxLayerTypes.Size = new System.Drawing.Size(115, 21);
-            this.comboBoxLayerTypes.TabIndex = 3;
+            this.comboBoxLayerTypes.TabIndex = 4;
             this.comboBoxLayerTypes.SelectedIndexChanged += new System.EventHandler(this.comboBoxLayerTypes_SelectedIndexChanged);
             // 
             // label1
@@ -422,7 +422,7 @@
             this.buttonRemoveLayer.Location = new System.Drawing.Point(471, 19);
             this.buttonRemoveLayer.Name = "buttonRemoveLayer";
             this.buttonRemoveLayer.Size = new System.Drawing.Size(63, 21);
-            this.buttonRemoveLayer.TabIndex = 4;
+            this.buttonRemoveLayer.TabIndex = 6;
             this.buttonRemoveLayer.Text = "Remove";
             this.buttonRemoveLayer.UseVisualStyleBackColor = true;
             this.buttonRemoveLayer.Click += new System.EventHandler(this.buttonRemoveLayer_Click);
@@ -434,7 +434,7 @@
             this.buttonAddLayer.Location = new System.Drawing.Point(417, 19);
             this.buttonAddLayer.Name = "buttonAddLayer";
             this.buttonAddLayer.Size = new System.Drawing.Size(48, 21);
-            this.buttonAddLayer.TabIndex = 3;
+            this.buttonAddLayer.TabIndex = 5;
             this.buttonAddLayer.Text = "Add";
             this.buttonAddLayer.UseVisualStyleBackColor = true;
             this.buttonAddLayer.Click += new System.EventHandler(this.buttonAddLayer_Click);
@@ -453,8 +453,8 @@
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.checkBoxTemplateFocus);
             this.groupBox2.Controls.Add(this.listViewAssets);
-            this.groupBox2.Controls.Add(this.labelTemplateFocus);
             this.groupBox2.Controls.Add(this.buttonCopy);
             this.groupBox2.Controls.Add(this.buttonPaste);
             this.groupBox2.Controls.Add(this.textBoxFindAsset);
@@ -475,6 +475,21 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Assets";
             // 
+            // checkBoxTemplateFocus
+            // 
+            this.checkBoxTemplateFocus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxTemplateFocus.AutoCheck = false;
+            this.checkBoxTemplateFocus.AutoSize = true;
+            this.checkBoxTemplateFocus.Location = new System.Drawing.Point(519, 8);
+            this.checkBoxTemplateFocus.MinimumSize = new System.Drawing.Size(75, 23);
+            this.checkBoxTemplateFocus.Name = "checkBoxTemplateFocus";
+            this.checkBoxTemplateFocus.Size = new System.Drawing.Size(75, 30);
+            this.checkBoxTemplateFocus.TabIndex = 21;
+            this.checkBoxTemplateFocus.Text = "Template\r\nFocus";
+            this.checkBoxTemplateFocus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxTemplateFocus.UseVisualStyleBackColor = true;
+            this.checkBoxTemplateFocus.Click += new System.EventHandler(this.checkBoxTemplateFocus_Click);
+            // 
             // listViewAssets
             // 
             this.listViewAssets.AllowColumnReorder = true;
@@ -493,7 +508,7 @@
             this.listViewAssets.Name = "listViewAssets";
             this.listViewAssets.Size = new System.Drawing.Size(507, 289);
             this.listViewAssets.Sorting = System.Windows.Forms.SortOrder.Ascending;
-            this.listViewAssets.TabIndex = 22;
+            this.listViewAssets.TabIndex = 11;
             this.listViewAssets.UseCompatibleStateImageBehavior = false;
             this.listViewAssets.View = System.Windows.Forms.View.Details;
             this.listViewAssets.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewAssets_ColumnClick);
@@ -523,19 +538,6 @@
             // 
             this.AssetSizeCol.Text = "Size";
             this.AssetSizeCol.Width = 66;
-            // 
-            // labelTemplateFocus
-            // 
-            this.labelTemplateFocus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelTemplateFocus.AutoSize = true;
-            this.labelTemplateFocus.ForeColor = System.Drawing.Color.Red;
-            this.labelTemplateFocus.Location = new System.Drawing.Point(516, 11);
-            this.labelTemplateFocus.Name = "labelTemplateFocus";
-            this.labelTemplateFocus.Size = new System.Drawing.Size(83, 26);
-            this.labelTemplateFocus.TabIndex = 20;
-            this.labelTemplateFocus.Text = "Template Focus\nOFF";
-            this.labelTemplateFocus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.labelTemplateFocus.Click += new System.EventHandler(this.labelTemplateFocus_Click);
             // 
             // buttonCopy
             // 
@@ -569,7 +571,7 @@
             this.textBoxFindAsset.Location = new System.Drawing.Point(296, 13);
             this.textBoxFindAsset.Name = "textBoxFindAsset";
             this.textBoxFindAsset.Size = new System.Drawing.Size(217, 20);
-            this.textBoxFindAsset.TabIndex = 17;
+            this.textBoxFindAsset.TabIndex = 10;
             this.textBoxFindAsset.TextChanged += new System.EventHandler(this.textBoxFindAsset_TextChanged);
             // 
             // label3
@@ -583,7 +585,7 @@
             // 
             // buttonInternalEdit
             // 
-            this.buttonInternalEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonInternalEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonInternalEdit.Enabled = false;
             this.buttonInternalEdit.Location = new System.Drawing.Point(519, 307);
             this.buttonInternalEdit.Name = "buttonInternalEdit";
@@ -595,7 +597,7 @@
             // 
             // buttonView
             // 
-            this.buttonView.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonView.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonView.Enabled = false;
             this.buttonView.Location = new System.Drawing.Point(519, 220);
             this.buttonView.Name = "buttonView";
@@ -607,7 +609,7 @@
             // 
             // buttonExportRaw
             // 
-            this.buttonExportRaw.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonExportRaw.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonExportRaw.Enabled = false;
             this.buttonExportRaw.Location = new System.Drawing.Point(519, 249);
             this.buttonExportRaw.Name = "buttonExportRaw";
@@ -619,7 +621,7 @@
             // 
             // buttonEditAsset
             // 
-            this.buttonEditAsset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonEditAsset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonEditAsset.Enabled = false;
             this.buttonEditAsset.Location = new System.Drawing.Point(519, 278);
             this.buttonEditAsset.Name = "buttonEditAsset";
@@ -660,7 +662,7 @@
             this.buttonAddAsset.Location = new System.Drawing.Point(519, 40);
             this.buttonAddAsset.Name = "buttonAddAsset";
             this.buttonAddAsset.Size = new System.Drawing.Size(75, 23);
-            this.buttonAddAsset.TabIndex = 6;
+            this.buttonAddAsset.TabIndex = 12;
             this.buttonAddAsset.Text = "Import";
             this.buttonAddAsset.UseVisualStyleBackColor = true;
             this.buttonAddAsset.Click += new System.EventHandler(this.buttonAddAsset_Click);
@@ -671,7 +673,7 @@
             this.comboBoxAssetTypes.Location = new System.Drawing.Point(46, 13);
             this.comboBoxAssetTypes.Name = "comboBoxAssetTypes";
             this.comboBoxAssetTypes.Size = new System.Drawing.Size(204, 21);
-            this.comboBoxAssetTypes.TabIndex = 5;
+            this.comboBoxAssetTypes.TabIndex = 9;
             this.comboBoxAssetTypes.SelectedIndexChanged += new System.EventHandler(this.comboBoxAssetTypes_SelectedIndexChanged);
             // 
             // label2
@@ -852,7 +854,6 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_Export;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_EditHeader;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_EditData;
-        private System.Windows.Forms.Label labelTemplateFocus;
         private System.Windows.Forms.ToolStripMenuItem importMultipleAssetsToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelSelectionCount;
@@ -876,5 +877,6 @@
         private System.Windows.Forms.ColumnHeader AssetIDCol;
         private System.Windows.Forms.ColumnHeader AssetTypeCol;
         private System.Windows.Forms.ColumnHeader AssetSizeCol;
+        private System.Windows.Forms.CheckBox checkBoxTemplateFocus;
     }
 }

@@ -53,7 +53,7 @@ namespace IndustrialPark
 
         protected virtual int EventStartOffset => Data.Length - LinkCount * Link.sizeOfStruct;
 
-        [Category(categoryName), Editor(typeof(LinkListEditor), typeof(UITypeEditor))]
+        [Category(categoryName), DisplayName("Links"), Editor(typeof(LinkListEditor), typeof(UITypeEditor))]
         public LinkBFBB[] LinksBFBB
         {
             get
@@ -70,7 +70,7 @@ namespace IndustrialPark
             }
             set => WriteEvents(value);
         }
-        [Category(categoryName), Editor(typeof(LinkListEditor), typeof(UITypeEditor))]
+        [Category(categoryName), DisplayName("Links"), Editor(typeof(LinkListEditor), typeof(UITypeEditor))]
         public LinkTSSM[] LinksTSSM
         {
             get

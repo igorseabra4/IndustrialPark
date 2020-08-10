@@ -13,6 +13,8 @@ namespace IndustrialPark
         public Matrix world { get; protected set; }
         protected BoundingBox boundingBox;
 
+
+        [Browsable(false)]
         public abstract bool DontRender { get; }
 
         public EntityAsset(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)

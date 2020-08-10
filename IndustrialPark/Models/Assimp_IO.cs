@@ -645,7 +645,7 @@ namespace IndustrialPark.Models
             new AssimpContext().ExportFile(scene, fileName, format.FormatId,
                 PostProcessSteps.Debone |
                 PostProcessSteps.FindInstances |
-                PostProcessSteps.GenerateNormals |
+                //PostProcessSteps.GenerateNormals |
                 PostProcessSteps.FindInvalidData |
                 PostProcessSteps.JoinIdenticalVertices |
                 PostProcessSteps.OptimizeGraph |
@@ -715,6 +715,21 @@ namespace IndustrialPark.Models
 
         private static void AtomicToScene(Scene scene, AtomicSector_0009 atomic)
         {
+            if (atomic.atomicSectorStruct.isNativeData)
+            {
+                NativeDataGC n = null;
+
+                foreach (RWSection rws in atomic.atomicSectorExtension.extensionSectionList)
+                    if (rws is NativeDataPLG_0510 native)
+                        n = native.nativeDataStruct.nativeData;
+
+                if (n == null)
+                    throw new Exception("Unable to find native data section");
+
+                GetNativeTriangleList(scene, n);
+                return;
+            }
+
             int[] totalVertexIndices = new int[scene.MeshCount];
 
             for (int i = 0; i < scene.MeshCount; i++)
@@ -743,6 +758,96 @@ namespace IndustrialPark.Models
                         c.G / 255f,
                         c.B / 255f,
                         c.A / 255f));
+            }
+        }
+
+        private static void GetNativeTriangleList(Scene scene, NativeDataGC n, int totalMaterials = 0)
+        {
+            List<Vertex3> vertexList_init = new List<Vertex3>();
+            List<RenderWareFile.Color> colorList_init = new List<RenderWareFile.Color>();
+            List<Vertex2> textCoordList_init = new List<Vertex2>();
+
+            foreach (Declaration d in n.declarations)
+            {
+                foreach (object o in d.entryList)
+                {
+                    if (o is Vertex3 v)
+                        vertexList_init.Add(v);
+                    else if (o is RenderWareFile.Color c)
+                        colorList_init.Add(c);
+                    else if (o is Vertex2 t)
+                        textCoordList_init.Add(t);
+                    else throw new Exception();
+                }
+            }
+
+            foreach (TriangleDeclaration td in n.triangleDeclarations)
+            {
+                Mesh mesh = new Mesh(PrimitiveType.Triangle)
+                {
+                    MaterialIndex = td.MaterialIndex + totalMaterials,
+                    Name = scene.Materials[td.MaterialIndex + totalMaterials].Name.Replace("mat_", "mesh_") + "_" + (scene.MeshCount + 1).ToString()
+                };
+
+                foreach (TriangleList tl in td.TriangleListList)
+                {
+                    int totalVertexIndices = mesh.VertexCount;
+                    int vcount = 0;
+
+                    foreach (int[] objectList in tl.entries)
+                    {
+                        for (int j = 0; j < objectList.Count(); j++)
+                        {
+                            if (n.declarations[j].declarationType == Declarations.Vertex)
+                            {
+                                var v = vertexList_init[objectList[j]];
+                                mesh.Vertices.Add(new Vector3D(v.X, v.Y, v.Z));
+                                vcount++;
+                            }
+                            else if (n.declarations[j].declarationType == Declarations.Color)
+                            {
+                                var c = colorList_init[objectList[j]];
+                                mesh.VertexColorChannels[0].Add(new Color4D(
+                                        c.R / 255f,
+                                        c.G / 255f,
+                                        c.B / 255f,
+                                        c.A / 255f));
+                            }
+                            else if (n.declarations[j].declarationType == Declarations.TextCoord)
+                            {
+                                var v = textCoordList_init[objectList[j]];
+                                mesh.TextureCoordinateChannels[0].Add(new Vector3D(v.X, v.Y, 0f));
+                            }
+                        }
+                    }
+
+                    bool control = true;
+                    for (int i = 2; i < vcount; i++)
+                    {
+                        if (control)
+                        {
+                            mesh.Faces.Add(new Face(new int[] {
+                                i - 2 + totalVertexIndices,
+                                i - 1 + totalVertexIndices,
+                                i + totalVertexIndices
+                            }));
+
+                            control = false;
+                        }
+                        else
+                        {
+                            mesh.Faces.Add(new Face(new int[] {
+                                i - 2 + totalVertexIndices,
+                                i + totalVertexIndices,
+                                i - 1 + totalVertexIndices
+                            }));
+
+                            control = true;
+                        }
+                    }
+                }
+
+                scene.Meshes.Add(mesh);
             }
         }
 
@@ -798,7 +903,9 @@ namespace IndustrialPark.Models
                         if (n == null)
                             throw new Exception("Unable to find native data section");
 
-                        throw new NotImplementedException("Unable to convert native data to Assimp");
+                        GetNativeTriangleList(scene, n, totalMaterials);
+
+                        //throw new NotImplementedException("Unable to convert native data to Assimp");
                     }
                     else
                     {
@@ -823,8 +930,9 @@ namespace IndustrialPark.Models
                         foreach (var t in geo.triangles)
                             if (t.materialIndex == j)
                                 mesh.Faces.Add(new Face(new int[] { t.vertex1, t.vertex2, t.vertex3 }));
+
+                        scene.Meshes.Add(mesh);
                     }
-                    scene.Meshes.Add(mesh);
                 }
                 totalMaterials = scene.Materials.Count;
             }

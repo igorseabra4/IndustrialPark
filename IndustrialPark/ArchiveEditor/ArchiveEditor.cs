@@ -55,6 +55,8 @@ namespace IndustrialPark
 
             ArchiveEditorFunctions.PopulateTemplateMenusAt(addTemplateToolStripMenuItem, TemplateToolStripMenuItem_Click);
             listViewAssets_SizeChanged(null, null);
+            if (standalone)
+                checkBoxTemplateFocus.Enabled = false;
         }
 
         private bool standalone = false;
@@ -1154,36 +1156,18 @@ namespace IndustrialPark
             }
         }
 
-        public bool TemplateFocus { get; private set; } = false;
+        public bool TemplateFocus => checkBoxTemplateFocus.Checked;
 
         public void TemplateFocusOff()
         {
-            TemplateFocus = false;
-
-            labelTemplateFocus.Text = "Template Focus\nOFF";
-            labelTemplateFocus.ForeColor = System.Drawing.Color.Red;
+            checkBoxTemplateFocus.Checked = false;
         }
 
-        public void TemplateFocusOn()
+        private void checkBoxTemplateFocus_Click(object sender, EventArgs e)
         {
-            TemplateFocus = true;
-
-            labelTemplateFocus.Text = "Template Focus\nON";
-            labelTemplateFocus.ForeColor = System.Drawing.Color.Green;
-        }
-
-        private void labelTemplateFocus_Click(object sender, EventArgs e)
-        {
-            if (TemplateFocus)
-            {
-                TemplateFocusOff();
-            }
-            else
-            {
-                if (!standalone)
+            if (!standalone)
                 Program.MainForm.ClearTemplateFocus();
-                TemplateFocusOn();
-            }
+            checkBoxTemplateFocus.Checked = true;
         }
 
         private void hideButtonsToolStripMenuItem_Click(object sender, EventArgs e)

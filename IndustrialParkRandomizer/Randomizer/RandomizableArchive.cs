@@ -316,6 +316,7 @@ namespace IndustrialPark.Randomizer
                         }
                     break;
                 case "bb01":
+                    assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("SHINY_RED_018")));
                     assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("SHINY_RED_019")));
                     break;
                 case "gl01":
