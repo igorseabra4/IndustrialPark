@@ -226,14 +226,6 @@ namespace IndustrialPark
                 }
             };
             tableLayoutPanel1.Controls.Add(buttonExport, 1, 4);
-
-#if RELEASE
-            if (asset.IsNativeData)
-            {
-                buttonExport.Enabled = false;
-                exportTextures.Enabled = false;
-            }
-#endif
         }
 
         private void SetupForShrp(AssetSHRP asset)

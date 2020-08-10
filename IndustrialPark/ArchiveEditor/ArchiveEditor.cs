@@ -1114,8 +1114,10 @@ namespace IndustrialPark
                 toolStripMenuItem_Export.Enabled = buttonExportRaw.Enabled;
                 toolStripMenuItem_EditHeader.Enabled = buttonEditAsset.Enabled;
                 toolStripMenuItem_EditData.Enabled = buttonInternalEdit.Enabled;
-                addTemplateToolStripMenuItem.Enabled = buttonAddAsset.Enabled;
 
+                addTemplateToolStripMenuItem.Enabled = buttonAddAsset.Enabled;
+                ToolStripMenuItem_CreateGroup.Enabled = buttonAddAsset.Enabled;
+                
                 contextMenuStrip_ListBoxAssets.Show(listViewAssets.PointToScreen(e.Location));
             }
         }
@@ -1136,12 +1138,12 @@ namespace IndustrialPark
             MessageBox.Show("There was a problem setting your template for placement");
         }
 
-        public void PlaceTemplate(Vector3 position, AssetTemplate template = AssetTemplate.Null)
+        public List<uint> PlaceTemplate(Vector3 position, AssetTemplate template = AssetTemplate.Null)
         {
             if (comboBoxLayers.SelectedIndex == -1)
             {
                 MessageBox.Show("Please select a layer to place your asset in!");
-                return;
+                return null;
             }
 
             List<uint> assetIDs = new List<uint>();
@@ -1154,6 +1156,16 @@ namespace IndustrialPark
                 comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
                 SetSelectedIndices(assetIDs, true);
             }
+
+            return assetIDs;
+        }
+
+        private void ToolStripMenuItem_CreateGroup_Click(object sender, EventArgs e)
+        {
+            var items = (from a in CurrentlySelectedAssetIDs() select new AssetID(a)).ToArray();
+            var assetIDs = PlaceTemplate(new Vector3(), AssetTemplate.Group);
+            if (assetIDs != null)
+                ((AssetGRUP)archive.GetFromAssetID(assetIDs[0])).GroupItems = items;
         }
 
         public bool TemplateFocus => checkBoxTemplateFocus.Checked;

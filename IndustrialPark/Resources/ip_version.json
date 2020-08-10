@@ -1,4 +1,4 @@
 {
-  "version": "v0.1.4.8",
-  "versionName": "* Import Models: now allows importing of BSP assets. BSPs can be used as static level models in Scooby and BFBB. Set the name of the BSPs to be used in the ENV asset. Due to limitations of the current method, only small files can be imported.\n* \"Add Default Assets\" checkbox when creating a new HIP: when checked, the new archive will be created with the needed assets for the level to load. This essentially removes the need for the blank HIP/HOP.\n* New templates: Fog, MINF_Generic."
+  "version": "v0.1.4.9",
+  "versionName": "* Adds exporting of GameCube native data to Assimp. This allows exporting JSPs and other previously non-exportable GameCube models\n* Adds \"Create Group From Selected\" to Archive Editor context menu\n* Turned Template Focus label into a checkbox to make its function clearer\n* Randomizer: fixes possibility of Spatula inside wall in BB01"
 }

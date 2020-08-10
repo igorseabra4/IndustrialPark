@@ -904,8 +904,6 @@ namespace IndustrialPark.Models
                             throw new Exception("Unable to find native data section");
 
                         GetNativeTriangleList(scene, n, totalMaterials);
-
-                        //throw new NotImplementedException("Unable to convert native data to Assimp");
                     }
                     else
                     {

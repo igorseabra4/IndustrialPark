@@ -89,6 +89,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.contextMenuStrip_ListBoxAssets = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ToolStripMenuItem_CreateGroup = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItem_Add = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_Duplicate = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_Copy = new System.Windows.Forms.ToolStripMenuItem();
@@ -689,6 +691,8 @@
             // 
             this.contextMenuStrip_ListBoxAssets.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addTemplateToolStripMenuItem,
+            this.ToolStripMenuItem_CreateGroup,
+            this.toolStripSeparator4,
             this.toolStripMenuItem_Add,
             this.toolStripMenuItem_Duplicate,
             this.toolStripMenuItem_Copy,
@@ -700,13 +704,25 @@
             this.toolStripMenuItem_EditHeader,
             this.toolStripMenuItem_EditData});
             this.contextMenuStrip_ListBoxAssets.Name = "contextMenuStrip_ListBoxAssets";
-            this.contextMenuStrip_ListBoxAssets.Size = new System.Drawing.Size(189, 230);
+            this.contextMenuStrip_ListBoxAssets.Size = new System.Drawing.Size(223, 258);
             // 
             // addTemplateToolStripMenuItem
             // 
             this.addTemplateToolStripMenuItem.Name = "addTemplateToolStripMenuItem";
             this.addTemplateToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
             this.addTemplateToolStripMenuItem.Text = "Add Template";
+            // 
+            // ToolStripMenuItem_CreateGroup
+            // 
+            this.ToolStripMenuItem_CreateGroup.Name = "ToolStripMenuItem_CreateGroup";
+            this.ToolStripMenuItem_CreateGroup.Size = new System.Drawing.Size(222, 22);
+            this.ToolStripMenuItem_CreateGroup.Text = "Create Group From Selected";
+            this.ToolStripMenuItem_CreateGroup.Click += new System.EventHandler(this.ToolStripMenuItem_CreateGroup_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(185, 6);
             // 
             // toolStripMenuItem_Add
             // 
@@ -878,5 +894,7 @@
         private System.Windows.Forms.ColumnHeader AssetTypeCol;
         private System.Windows.Forms.ColumnHeader AssetSizeCol;
         private System.Windows.Forms.CheckBox checkBoxTemplateFocus;
+        private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItem_CreateGroup;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
     }
 }
