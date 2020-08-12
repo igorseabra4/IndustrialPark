@@ -217,7 +217,8 @@ namespace IndustrialPark
 
         [Browsable(false)]
         public bool IsRenderableClickable { get => DynaSpec.IsRenderableClickable; }
-
+        [Browsable(false)]
+        public bool SpecialBlendMode => true;
         [Browsable(false)]
         public Vector3 Position => new Vector3(PositionX, PositionY, PositionZ);
         [Browsable(false)]

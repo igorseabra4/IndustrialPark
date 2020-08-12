@@ -113,7 +113,10 @@ namespace IndustrialPark
             else
                 renderer.DrawSphere(world, isSelected, renderer.mvptColor);
         }
-        
+
+        [Browsable(false)]
+        public bool SpecialBlendMode => true;
+
         public BoundingBox GetBoundingBox()
         {
             return boundingBox;

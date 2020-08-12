@@ -79,6 +79,10 @@ namespace IndustrialPark
             renderer.DrawCube(LocalWorld(), isSelected);
         }
 
+        [Browsable(false)]
+        public override bool SpecialBlendMode =>
+            !AssetPICK.pickEntries.ContainsKey(_pickEntryID) || !renderingDictionary.ContainsKey(AssetPICK.pickEntries[_pickEntryID]) || renderingDictionary[AssetPICK.pickEntries[_pickEntryID]].SpecialBlendMode;
+
         private const string categoryName = "Pickup";
 
         [TypeConverter(typeof(HexByteTypeConverter))]

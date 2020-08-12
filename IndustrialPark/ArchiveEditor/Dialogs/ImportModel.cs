@@ -96,6 +96,8 @@ namespace IndustrialPark
 
                         byte[] assetData;
 
+                        ReadFileMethods.treatStuffAsByteArray = false;
+
                         if (assetType == AssetType.MODL)
                         {
                             assetName = Path.GetFileNameWithoutExtension(filePath) + ".dff";

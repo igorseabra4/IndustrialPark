@@ -68,6 +68,9 @@ namespace IndustrialPark
             renderer.DrawCube(world, isSelected);
         }
 
+        [Browsable(false)]
+        public bool SpecialBlendMode => true;
+
         protected override int EventStartOffset => 0x44;
         
         [Category("Light")]

@@ -104,6 +104,9 @@ namespace IndustrialPark
                 renderer.DrawCube(pivotWorld, isSelected);
         }
 
+        [Browsable(false)]
+        public override bool SpecialBlendMode => true;
+
         public override float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
             if (!ShouldDraw(renderer))

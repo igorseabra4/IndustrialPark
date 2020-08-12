@@ -176,5 +176,8 @@ namespace IndustrialPark
         {
             vertexBuffer.Dispose();
         }
+
+        [Browsable(false)]
+        public bool SpecialBlendMode => false;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using RenderWareFile;
 using SharpDX;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
@@ -60,5 +61,8 @@ namespace IndustrialPark
 
             return smallestDistance;
         }
+
+        [Browsable(false)]
+        public bool SpecialBlendMode => false;
     }
 }

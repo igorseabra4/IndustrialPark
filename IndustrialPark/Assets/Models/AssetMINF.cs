@@ -99,6 +99,9 @@ namespace IndustrialPark
                 renderer.DrawCube(world, isSelected |isSelected);
         }
 
+        [Browsable(false)]
+        public bool SpecialBlendMode => renderingDictionary.ContainsKey(_modelAssetID) ? renderingDictionary[_modelAssetID].SpecialBlendMode : true;
+
         public RenderWareModelFile GetRenderWareModelFile()
         {
             if (renderingDictionary.ContainsKey(_modelAssetID))

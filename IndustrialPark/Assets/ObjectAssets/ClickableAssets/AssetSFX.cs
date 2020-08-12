@@ -90,7 +90,10 @@ namespace IndustrialPark
             if (isSelected)
                 renderer.DrawSphere(world2, false, renderer.sfxColor);
         }
-        
+
+        [Browsable(false)]
+        public bool SpecialBlendMode => true;
+
         public BoundingBox GetBoundingBox()
         {
             return boundingBox;

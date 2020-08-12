@@ -35,16 +35,22 @@ namespace IndustrialPark
         }
 
         private Dictionary<int, (BlendOption, BlendOption)> blendModes;
+        public bool SpecialBlendMode { get; private set; }
 
         public void SetBlendModes((int, BlendFactorType, BlendFactorType)[] sourceDest)
         {
             blendModes = new Dictionary<int, (BlendOption, BlendOption)>();
+            SpecialBlendMode = false;
             foreach (var f in sourceDest)
-                blendModes.Add(f.Item1 == -1 ? -1 : (int)(Math.Log(f.Item1, 2)-1), (GetSharpBlendMode(f.Item2, true), GetSharpBlendMode(f.Item3, false)));
+            {
+                blendModes.Add(f.Item1 == -1 ? -1 : (int)(Math.Log(f.Item1, 2) - 1), (GetSharpBlendMode(f.Item2, true), GetSharpBlendMode(f.Item3, false)));
+                SpecialBlendMode |= f.Item2 != BlendFactorType.None || f.Item3 != BlendFactorType.None;
+            }
         }
 
         public void ResetBlendModes()
         {
+            SpecialBlendMode = false;
             blendModes = null;
         }
         

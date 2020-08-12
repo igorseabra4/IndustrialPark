@@ -874,13 +874,11 @@ namespace IndustrialPark
         
         public void UpdateModelBlendModes(Dictionary<uint, (int, BlendFactorType, BlendFactorType)[]> blendModes)
         {
-            if (blendModes == null)
-            {
-                foreach (var asset in assetDictionary.Values)
-                    if (asset is AssetMODL MODL)
-                        MODL.ResetBlendModes();
-            }
-            else
+            foreach (var asset in assetDictionary.Values)
+                if (asset is AssetMODL MODL)
+                    MODL.ResetBlendModes();
+
+            if (blendModes != null)
             {
                 foreach (var k in blendModes.Keys)
                     if (renderingDictionary.ContainsKey(k) && renderingDictionary[k] is AssetMODL MODL)

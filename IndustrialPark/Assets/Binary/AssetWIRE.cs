@@ -250,5 +250,8 @@ namespace IndustrialPark
         }
 
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray) => null;
+
+        [Browsable(false)]
+        public bool SpecialBlendMode => false;
     }
 }

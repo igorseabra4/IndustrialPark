@@ -14,5 +14,7 @@ namespace IndustrialPark
         void Draw(SharpRenderer renderer);
         
         float? GetIntersectionPosition(SharpRenderer renderer, SharpDX.Ray ray);
+
+        bool SpecialBlendMode { get; }
     }
 }

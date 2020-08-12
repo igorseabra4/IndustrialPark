@@ -112,6 +112,9 @@ namespace IndustrialPark
                 renderer.DrawCube(LocalWorld(), isSelected);
         }
 
+        [Browsable(false)]
+        public virtual bool SpecialBlendMode => !renderingDictionary.ContainsKey(_modelAssetID) || renderingDictionary[_modelAssetID].SpecialBlendMode;
+
         public virtual float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
             if (!ShouldDraw(renderer))

@@ -143,6 +143,9 @@ namespace IndustrialPark
             return Vector3.Distance(cameraPosition, Position);
         }
 
+        [Browsable(false)]
+        public bool SpecialBlendMode => !renderingDictionary.ContainsKey(_modelAssetID) || renderingDictionary[_modelAssetID].SpecialBlendMode;
+
         public override bool HasReference(uint assetID) => 
             Surface_AssetID == assetID || Model_AssetID == assetID || Animation_AssetID == assetID ||
             (uint)VilType == assetID || NPCSettings_AssetID == assetID || MovePoint_AssetID == assetID ||

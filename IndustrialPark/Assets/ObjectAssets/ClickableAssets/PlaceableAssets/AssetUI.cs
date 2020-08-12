@@ -76,6 +76,9 @@ namespace IndustrialPark
             }
         }
 
+        [Browsable(false)]
+        public override bool SpecialBlendMode => true;
+
         protected override float? TriangleIntersection(Ray r, float initialDistance)
         {
             if (_textureAssetID == 0)

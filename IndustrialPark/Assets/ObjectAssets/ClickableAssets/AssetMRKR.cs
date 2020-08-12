@@ -87,6 +87,9 @@ namespace IndustrialPark
             return Vector3.Distance(cameraPosition, _position);
         }
 
+        [Browsable(false)]
+        public bool SpecialBlendMode => true;
+
         private Vector3 _position;
 
         [Category("Marker")]

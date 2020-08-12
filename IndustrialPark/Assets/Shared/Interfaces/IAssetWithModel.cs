@@ -11,5 +11,7 @@ namespace IndustrialPark
         RenderWareModelFile GetRenderWareModelFile();
 
         void MovieRemoveFromDictionary();
+
+        bool SpecialBlendMode { get; }
     }
 }

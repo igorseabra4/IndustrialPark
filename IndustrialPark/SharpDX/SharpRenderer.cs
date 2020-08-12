@@ -477,7 +477,18 @@ namespace IndustrialPark
                                 renderableAssets.Remove(a);
                         }
 
-                        foreach (IRenderableAsset a in renderableAssets.OrderByDescending(a => a.GetDistanceFrom(Camera.Position)))
+                        //foreach (IRenderableAsset a in renderableAssets.OrderByDescending(a => a.GetDistanceFrom(Camera.Position)))
+                        //    a.Draw(this);
+
+                        HashSet<IRenderableAsset> renderableAssetsTrans = new HashSet<IRenderableAsset>();
+
+                        foreach (IRenderableAsset a in renderableAssets)
+                            if (a.SpecialBlendMode)
+                                renderableAssetsTrans.Add(a);
+                            else
+                                a.Draw(this);
+
+                        foreach (IRenderableAsset a in renderableAssetsTrans.OrderByDescending(a => a.GetDistanceFrom(Camera.Position)))
                             a.Draw(this);
 
                         device.SetCullModeNone();
