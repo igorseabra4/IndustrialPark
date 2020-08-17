@@ -1,4 +1,4 @@
 {
-  "version": "v0.1.4.9",
-  "versionName": "* Adds exporting of GameCube native data to Assimp. This allows exporting JSPs and other previously non-exportable GameCube models\n* Adds \"Create Group From Selected\" to Archive Editor context menu\n* Turned Template Focus label into a checkbox to make its function clearer\n* Randomizer: fixes possibility of Spatula inside wall in BB01"
+  "version": "v0.1.4.10",
+  "versionName": "* Improved UI mode rendering for UIFT and texture UIs.\n* Fixes issue with gizmos not appearing/working in UI mode.\n* Improved UI/UIFT Generic templates.\n* Adds information and flag names to UI/UIFT.\n* Fixes issue with using Import Models on an empty archive.\n* Improved renderer/performance with transparent models.\n* Fixes issue with movement rotation speed not saving to project file."
 }
