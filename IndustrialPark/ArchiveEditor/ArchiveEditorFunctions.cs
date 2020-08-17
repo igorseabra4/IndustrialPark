@@ -182,7 +182,7 @@ namespace IndustrialPark
             return OK;
         }
 
-        public int GetLayerCount() => DICT.LTOC.LHDRList.Count;
+        public int LayerCount => DICT.LTOC.LHDRList.Count;
 
         public int GetLayerType(int index) => DICT.LTOC.LHDRList[index].layerType;
 
@@ -196,7 +196,7 @@ namespace IndustrialPark
 
         public List<uint> GetAssetIDsOnLayer(int index) => DICT.LTOC.LHDRList[index].assetIDlist;
 
-        public List<Section_AHDR> GetAssetsOfType(AssetType assetType) => (from asset in assetDictionary.Values where asset.AHDR.assetType == assetType select asset.AHDR).ToList();
+        public List<Section_AHDR> GetAHDRsOfType(AssetType assetType) => (from asset in assetDictionary.Values where asset.AHDR.assetType == assetType select asset.AHDR).ToList();
 
         public void AddLayer(int layerType = 0)
         {
@@ -206,6 +206,8 @@ namespace IndustrialPark
                 assetIDlist = new List<uint>(),
                 LDBG = new Section_LDBG(-1)
             });
+
+            UnsavedChanges = true;
         }
 
         public void RemoveLayer(int index)
@@ -245,7 +247,7 @@ namespace IndustrialPark
                 if (DICT.LTOC.LHDRList[i].assetIDlist.Contains(assetID))
                     return i;
 
-            throw new Exception($"Asset ID {assetID.ToString("X8")} is not present in any layer.");
+            throw new Exception($"Asset ID {assetID:X8} is not present in any layer.");
         }
 
         public void Dispose(bool showProgress = true)
@@ -316,28 +318,8 @@ namespace IndustrialPark
             return assetDictionary.ContainsKey(key);
         }
 
-        public List<AssetType> AssetTypesOnArchive()
-        {
-            var assetTypeList = new List<AssetType>();
-
-            foreach (Asset asset in assetDictionary.Values)
-                if (!assetTypeList.Contains(asset.AHDR.assetType))
-                    assetTypeList.Add(asset.AHDR.assetType);
-
-            assetTypeList.Sort();
-            return assetTypeList;
-        }
-
-        public List<AssetType> AssetTypesOnLayer(int index)
-        {
-            var assetTypeSet = new HashSet<AssetType>();
-            foreach (uint i in DICT.LTOC.LHDRList[index].assetIDlist)
-                assetTypeSet.Add(assetDictionary[i].AHDR.assetType);
-            var assetTypeList = assetTypeSet.ToList();
-
-            assetTypeList.Sort();
-            return assetTypeList;
-        }
+        public List<AssetType> AssetTypesOnLayer(int index) =>
+            (from uint i in DICT.LTOC.LHDRList[index].assetIDlist select assetDictionary[i].AHDR.assetType).Distinct().OrderBy(f => f).ToList();
 
         public bool ContainsAssetWithType(AssetType assetType)
         {
@@ -392,12 +374,12 @@ namespace IndustrialPark
                         break;
                     case AssetType.BOUL: newAsset = new AssetBOUL(AHDR, game, platform); break;
                     case AssetType.BUTN: newAsset = new AssetBUTN(AHDR, game, platform); break;
-                    case AssetType.CAM: newAsset = new AssetCAM(AHDR, game, platform); break;
+                    case AssetType.CAM:  newAsset = new AssetCAM (AHDR, game, platform); break;
                     case AssetType.CNTR: newAsset = new AssetCNTR(AHDR, game, platform); break;
                     case AssetType.COLL: newAsset = new AssetCOLL(AHDR, game, platform); break;
                     case AssetType.COND: newAsset = new AssetCOND(AHDR, game, platform); break;
                     case AssetType.CRDT: newAsset = new AssetCRDT(AHDR, game, platform); break;
-                    case AssetType.CSN: newAsset = new AssetCSN(AHDR, game, platform); break;
+                    case AssetType.CSN:  newAsset = new AssetCSN (AHDR, game, platform); break;
                     case AssetType.CSNM: newAsset = new AssetCSNM(AHDR, game, platform); break;
                     case AssetType.DPAT: newAsset = new AssetDPAT(AHDR, game, platform); break;
                     case AssetType.DSCO: newAsset = new AssetDSCO(AHDR, game, platform); break;
@@ -405,13 +387,13 @@ namespace IndustrialPark
                     case AssetType.DUPC: newAsset = new AssetDUPC(AHDR, game, platform); break;
                     case AssetType.DYNA: newAsset = new AssetDYNA(AHDR, game, platform); break;
                     case AssetType.EGEN: newAsset = new AssetEGEN(AHDR, game, platform); break;
-                    case AssetType.ENV: newAsset = new AssetENV(AHDR, game, platform); break;
-                    case AssetType.FLY: newAsset = new AssetFLY(AHDR, game, platform); break;
-                    case AssetType.FOG: newAsset = new AssetFOG(AHDR, game, platform); break;
+                    case AssetType.ENV:  newAsset = new AssetENV (AHDR, game, platform); break;
+                    case AssetType.FLY:  newAsset = new AssetFLY (AHDR, game, platform); break;
+                    case AssetType.FOG:  newAsset = new AssetFOG (AHDR, game, platform); break;
                     case AssetType.GRUP: newAsset = new AssetGRUP(AHDR, game, platform); break;
                     case AssetType.GUST: newAsset = new AssetGUST(AHDR, game, platform); break;
                     case AssetType.HANG: newAsset = new AssetHANG(AHDR, game, platform); break;
-                    case AssetType.JAW: newAsset = new AssetJAW(AHDR, game, platform); break;
+                    case AssetType.JAW:  newAsset = new AssetJAW (AHDR, game, platform); break;
                     case AssetType.LITE: newAsset = new AssetLITE(AHDR, game, platform); break;
                     case AssetType.LKIT: newAsset = new AssetLKIT(AHDR, game, platform); break;
                     case AssetType.LOBM: newAsset = new AssetLOBM(AHDR, game, platform); break;
@@ -422,7 +404,7 @@ namespace IndustrialPark
                         newAsset = skipTexturesAndModels ? new Asset(AHDR, game, platform) : new AssetMODL(AHDR, game, platform, Program.MainForm.renderer); break;
                     case AssetType.MRKR: newAsset = new AssetMRKR(AHDR, game, platform); break;
                     case AssetType.MVPT: newAsset = game == Game.Scooby ? new AssetMVPT_Scooby(AHDR, game, platform) : new AssetMVPT(AHDR, game, platform); break;
-                    case AssetType.NPC: newAsset = new AssetNPC(AHDR, game, platform); break;
+                    case AssetType.NPC:  newAsset = new AssetNPC(AHDR, game, platform); break;
                     case AssetType.PARE: newAsset = new AssetPARE(AHDR, game, platform); break;
                     case AssetType.PARP: newAsset = new AssetPARP(AHDR, game, platform); break;
                     case AssetType.PARS: newAsset = new AssetPARS(AHDR, game, platform); break;
@@ -438,7 +420,7 @@ namespace IndustrialPark
                         newAsset = skipTexturesAndModels ? new Asset(AHDR, game, platform) : new AssetRWTX(AHDR, game, platform); break;
                     case AssetType.SCRP: newAsset = new AssetSCRP(AHDR, game, platform); break;
                     case AssetType.SDFX: newAsset = new AssetSDFX(AHDR, game, platform); break;
-                    case AssetType.SFX: newAsset = new AssetSFX(AHDR, game, platform); break;
+                    case AssetType.SFX:  newAsset = new AssetSFX(AHDR, game, platform); break;
                     case AssetType.SGRP: newAsset = new AssetSGRP(AHDR, game, platform); break;
                     case AssetType.TRCK: case AssetType.SIMP: newAsset = new AssetSIMP(AHDR, game, platform); break;
                     case AssetType.SHDW: newAsset = new AssetSHDW(AHDR, game, platform); break;
@@ -461,9 +443,9 @@ namespace IndustrialPark
                     case AssetType.TRIG: newAsset = new AssetTRIG(AHDR, game, platform); break;
                     case AssetType.TIMR: newAsset = new AssetTIMR(AHDR, game, platform); break;
                     case AssetType.TPIK: newAsset = new AssetTPIK(AHDR, game, platform); break;
-                    case AssetType.UI: newAsset = new AssetUI(AHDR, game, platform); break;
+                    case AssetType.UI:   newAsset = new AssetUI  (AHDR, game, platform); break;
                     case AssetType.UIFT: newAsset = new AssetUIFT(AHDR, game, platform); break;
-                    case AssetType.VIL: newAsset = new AssetVIL(AHDR, game, platform); break;
+                    case AssetType.VIL:  newAsset = new AssetVIL (AHDR, game, platform); break;
                     case AssetType.VILP: newAsset = new AssetVILP(AHDR, game, platform); break;
                     case AssetType.VOLU: newAsset = new AssetVOLU(AHDR, game, platform); break;
                     case AssetType.WIRE: newAsset = new AssetWIRE(AHDR, game, platform, Program.MainForm.renderer); break;
@@ -533,7 +515,7 @@ namespace IndustrialPark
                 #endif
                 while (ContainsAsset(AHDR.assetID))
                     {
-                        MessageBox.Show($"Archive already contains asset id [{AHDR.assetID.ToString("X8")}]. Will change it to [{(AHDR.assetID + 1).ToString("X8")}].");
+                        MessageBox.Show($"Archive already contains asset id [{AHDR.assetID:X8}]. Will change it to [{AHDR.assetID + 1:X8}].");
                         AHDR.assetID++;
                     }
                     UnsavedChanges = true;
@@ -617,9 +599,8 @@ namespace IndustrialPark
             for (int i = 0; i < DICT.LTOC.LHDRList.Count; i++)
                 DICT.LTOC.LHDRList[i].assetIDlist.Remove(assetID);
 
-            if (GetFromAssetID(assetID).AHDR.assetType == AssetType.SND || GetFromAssetID(assetID).AHDR.assetType == AssetType.SNDS)
-                if (removeSound)
-                    RemoveSoundFromSNDI(assetID);
+            if (removeSound && (GetFromAssetID(assetID).AHDR.assetType == AssetType.SND || GetFromAssetID(assetID).AHDR.assetType == AssetType.SNDS))
+                RemoveSoundFromSNDI(assetID);
 
             DICT.ATOC.AHDRList.Remove(assetDictionary[assetID].AHDR);
 
@@ -808,7 +789,7 @@ namespace IndustrialPark
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Unable to import asset [{AHDR.assetID.ToString("X8")}] {AHDR.ADBG.assetName}: " + ex.Message);
+                    MessageBox.Show($"Unable to import asset [{AHDR.assetID:X8}] {AHDR.ADBG.assetName}: " + ex.Message);
                 }
             }
         }

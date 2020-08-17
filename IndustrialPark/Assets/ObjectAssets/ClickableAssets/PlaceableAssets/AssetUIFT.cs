@@ -27,8 +27,8 @@ namespace IndustrialPark
         }
 
         [Category("UIFont")]
-        public DynamicTypeDescriptor UIFontFlags => ShortFlagsDescriptor(0x80 + Offset);
-
+        public DynamicTypeDescriptor UIFontFlags => ShortFlagsDescriptor(0x80 + Offset, "Align Left", "Align Right", "Align Center", "Show Background");
+        
         [Category("UIFont")]
         public byte UIFontMode
         {
@@ -37,10 +37,10 @@ namespace IndustrialPark
         }
 
         [Category("UIFont")]
-        public byte FontID
+        public FontEnum FontID
         {
-            get => ReadByte(0x83 + Offset);
-            set => Write(0x83 + Offset, value);
+            get => (FontEnum)ReadByte(0x83 + Offset);
+            set => Write(0x83 + Offset, (byte)value);
         }
 
         [Category("UIFont")]
@@ -89,56 +89,56 @@ namespace IndustrialPark
         }
 
         [Category("UIFont")]
-        public short Inset_90
+        public short Padding_Top
         {
             get => ReadShort(0x90 + Offset);
             set => Write(0x90 + Offset, value);
         }
 
         [Category("UIFont")]
-        public short Inset_92
+        public short Padding_Bottom
         {
             get => ReadShort(0x92 + Offset);
             set => Write(0x92 + Offset, value);
         }
 
         [Category("UIFont")]
-        public short Inset_94
+        public short Padding_Left
         {
             get => ReadShort(0x94 + Offset);
             set => Write(0x94 + Offset, value);
         }
 
         [Category("UIFont")]
-        public short Inset_96
+        public short Padding_Right
         {
             get => ReadShort(0x96 + Offset);
             set => Write(0x96 + Offset, value);
         }
 
         [Category("UIFont")]
-        public short Space_98
+        public short Spacing_Horizontal
         {
             get => ReadShort(0x98 + Offset);
             set => Write(0x98 + Offset, value);
         }
 
         [Category("UIFont")]
-        public short Space_9A
+        public short Spacing_Vertical
         {
             get => ReadShort(0x9A + Offset);
             set => Write(0x9A + Offset, value);
         }
 
         [Category("UIFont")]
-        public short Cdim_9C
+        public short Char_Width
         {
             get => ReadShort(0x9C + Offset);
             set => Write(0x9C + Offset, value);
         }
 
         [Category("UIFont")]
-        public short Cdim_9E
+        public short Char_Height
         {
             get => ReadShort(0x9E + Offset);
             set => Write(0x9E + Offset, value);

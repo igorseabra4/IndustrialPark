@@ -531,9 +531,6 @@ namespace IndustrialPark
                 }
                 else
                 {
-                    int deltaX = e.X - oldMousePosition.X;
-                    int deltaY = e.Y - oldMousePosition.Y;
-
                     if (e.Button == MouseButtons.Middle)
                     {
                         renderer.Camera.AddYaw(MathUtil.DegreesToRadians(e.X - oldMousePosition.X));
@@ -544,16 +541,17 @@ namespace IndustrialPark
                         renderer.Camera.AddPositionSideways(e.X - oldMousePosition.X);
                         renderer.Camera.AddPositionUp(e.Y - oldMousePosition.Y);
                     }
-
-                    foreach (ArchiveEditor ae in archiveEditors)
-                    {
-                        ae.MouseMoveGeneric(renderer.viewProjection, deltaX, deltaY, PressedKeys.Contains(Keys.T));
-                    }
                 }
-
+                
                 if (e.Delta != 0)
                     renderer.Camera.AddPositionForward(e.Delta / 24);
             }
+
+            int deltaX = e.X - oldMousePosition.X;
+            int deltaY = e.Y - oldMousePosition.Y;
+
+            foreach (ArchiveEditor ae in archiveEditors)
+                ae.MouseMoveGeneric(renderer.viewProjection, deltaX, deltaY, PressedKeys.Contains(Keys.T));
 
             oldMousePosition = e;
         }

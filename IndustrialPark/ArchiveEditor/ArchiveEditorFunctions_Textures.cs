@@ -61,7 +61,7 @@ namespace IndustrialPark
 
             int fileVersion = 0;
 
-            foreach (Section_AHDR AHDR in GetAssetsOfType(AssetType.RWTX))
+            foreach (Section_AHDR AHDR in GetAHDRsOfType(AssetType.RWTX))
                 if ((RW3 == CheckState.Indeterminate) || ((RW3 == CheckState.Checked) && AHDR.ADBG.assetName.Contains(".RW3")) || ((RW3 == CheckState.Unchecked) && !AHDR.ADBG.assetName.Contains(".RW3")))
                     try
                     {

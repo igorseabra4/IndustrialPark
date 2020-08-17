@@ -192,7 +192,7 @@ namespace IndustrialPark
             {
                 case GizmoMode.Position:
                     {
-                        float dist = 1000f;
+                        float dist = 10000f;
                         int index = -1;
 
                         if (TriggerGizmo)
@@ -358,6 +358,10 @@ namespace IndustrialPark
                             direction.Normalize();
 
                             float movement = distanceX * direction.X - distanceY * direction.Y;
+
+                            if (ra is AssetUI)
+                                movement *= -1;
+                            
                             if (grid)
                                 ra.PositionY = SnapToGrid(ra.PositionY + movement, GizmoType.Y);
                             else

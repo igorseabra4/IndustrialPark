@@ -80,7 +80,7 @@ namespace IndustrialPark
                 triangles = null;
         }
 
-        public bool ShouldDraw(SharpRenderer renderer)
+        public virtual bool ShouldDraw(SharpRenderer renderer)
         {
             if (isSelected)
                 return true;

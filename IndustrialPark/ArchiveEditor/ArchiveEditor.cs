@@ -257,7 +257,7 @@ namespace IndustrialPark
             programIsChangingStuff = true;
 
             comboBoxLayers.Items.Clear();
-            for (int i = 0; i < archive.GetLayerCount(); i++)
+            for (int i = 0; i < archive.LayerCount; i++)
                 comboBoxLayers.Items.Add(archive.LayerToString(i));
 
             programIsChangingStuff = false;
@@ -326,7 +326,7 @@ namespace IndustrialPark
             try
             {
                 archive.AddLayer();
-                comboBoxLayers.Items.Add(archive.LayerToString(archive.GetLayerCount() - 1));
+                comboBoxLayers.Items.Add(archive.LayerToString(archive.LayerCount - 1));
                 comboBoxLayers.SelectedIndex = comboBoxLayers.Items.Count - 1;
                 PopulateAssetListAndComboBox();
                 archive.UnsavedChanges = true;
@@ -939,7 +939,7 @@ namespace IndustrialPark
 
                     if (hasSound)
                     {
-                        foreach (var s in archive.GetAssetsOfType(AssetType.SNDI))
+                        foreach (var s in archive.GetAHDRsOfType(AssetType.SNDI))
                         {
                             unsupported.Remove(s.assetID);
                             archive.RemoveAsset(s.assetID);
@@ -952,7 +952,7 @@ namespace IndustrialPark
                     }
                     if (hasJaw)
                     {
-                        foreach (var s in archive.GetAssetsOfType(AssetType.JAW)) 
+                        foreach (var s in archive.GetAHDRsOfType(AssetType.JAW)) 
                         {
                             unsupported.Remove(s.assetID);
                             archive.RemoveAsset(s.assetID);

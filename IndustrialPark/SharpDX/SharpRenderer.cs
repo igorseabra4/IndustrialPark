@@ -490,14 +490,14 @@ namespace IndustrialPark
 
                         foreach (IRenderableAsset a in renderableAssetsTrans.OrderByDescending(a => a.GetDistanceFrom(Camera.Position)))
                             a.Draw(this);
-
-                        device.SetCullModeNone();
-                        device.ApplyRasterState();
-                        device.SetBlendStateAlphaBlend();
-                        device.UpdateAllStates();
-                        
-                        ArchiveEditorFunctions.RenderGizmos(this);
                     }
+
+                device.SetCullModeNone();
+                device.ApplyRasterState();
+                device.SetBlendStateAlphaBlend();
+                device.UpdateAllStates();
+
+                ArchiveEditorFunctions.RenderGizmos(this);
 
                 device.Present();
             });

@@ -32,7 +32,7 @@ namespace IndustrialPark
 
         public override void CreateTransformMatrix()
         {
-            if (_textureAssetID == 0)
+            if (AHDR.assetType == HipHopFile.AssetType.UI && _textureAssetID == 0)
             {
                 world = Matrix.Scaling(_scale) * Matrix.Scaling(Width, Height, 1f)
                     * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
@@ -49,7 +49,7 @@ namespace IndustrialPark
 
         protected override void CreateBoundingBox()
         {
-            if (_textureAssetID == 0)
+            if (AHDR.assetType == HipHopFile.AssetType.UI && _textureAssetID == 0)
             {
                 base.CreateBoundingBox();
             }
@@ -66,7 +66,7 @@ namespace IndustrialPark
 
         public override void Draw(SharpRenderer renderer)
         {
-            if (_textureAssetID == 0)
+            if (AHDR.assetType == HipHopFile.AssetType.UI && _textureAssetID == 0)
             {
                 base.Draw(renderer);
             }
@@ -74,6 +74,20 @@ namespace IndustrialPark
             {
                 renderer.DrawPlane(world, isSelected, _textureAssetID, UvAnimOffset);
             }
+        }
+
+        public override bool ShouldDraw(SharpRenderer renderer)
+        {
+            if (isSelected)
+                return true;
+            if (DontRender)
+                return false;
+            if (isInvisible)
+                return false;
+            if (renderer.isDrawingUI)
+                return true;
+            
+            return renderer.frustum.Intersects(ref boundingBox);
         }
 
         [Browsable(false)]
@@ -132,8 +146,15 @@ namespace IndustrialPark
             set => Write(0x50 + Offset, value);
         }
 
+        [Category("UserInterface"), Browsable(false)]
+        public int UIFlags_int
+        {
+            get => ReadInt(0x54 + Offset);
+            set => Write(0x54 + Offset, value);
+        }
+
         [Category("UserInterface")]
-        public DynamicTypeDescriptor UIFlags => IntFlagsDescriptor(0x54 + Offset);
+        public DynamicTypeDescriptor UIFlags => IntFlagsDescriptor(0x54 + Offset, "Focus sets Select", null, "Screen Space", null, "Visible Allowed", "Invisible Allowed");
 
         [Category("UserInterface")]
         public short Width

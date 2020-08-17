@@ -895,6 +895,7 @@ namespace IndustrialPark
                 case AssetTemplate.UI_Generic:
                 case AssetTemplate.UIFT_Generic:
                     ((AssetUI)asset).AssetType = ObjectAssetType.UI;
+                    ((AssetUI)asset).UIFlags_int = 0x34;
                     ((AssetUI)asset).TextCoordTopRightX = 1f;
                     ((AssetUI)asset).TextCoordBottomRightX = 1f;
                     ((AssetUI)asset).TextCoordBottomRightY = 1f;
@@ -902,16 +903,18 @@ namespace IndustrialPark
                     if (template == AssetTemplate.UIFT_Generic)
                     {
                         ((AssetUIFT)asset).AssetType = ObjectAssetType.UIFont;
-                        ((AssetUIFT)asset).BackgroundColor = new AssetEditorColors.MyColor();
+                        ((AssetUIFT)asset).BackgroundColor = new AssetEditorColors.MyColor(128, 128, 128, 128);
+                        ((AssetUIFT)asset).BackgroundColorAlpha = 128;
                         ((AssetUIFT)asset).FontColor = new AssetEditorColors.MyColor(255, 255, 255, 255);
-                        ((AssetUIFT)asset).Inset_90 = 2;
-                        ((AssetUIFT)asset).Inset_92 = 2;
-                        ((AssetUIFT)asset).Inset_94 = 2;
-                        ((AssetUIFT)asset).Inset_96 = 2;
-                        ((AssetUIFT)asset).Space_98 = 24;
-                        ((AssetUIFT)asset).Space_9A = 24;
-                        ((AssetUIFT)asset).Cdim_9C = 24;
-                        ((AssetUIFT)asset).Cdim_9E = 24;
+                        ((AssetUIFT)asset).FontColorAlpha = 255;
+                        ((AssetUIFT)asset).Padding_Top = 2;
+                        ((AssetUIFT)asset).Padding_Bottom = 2;
+                        ((AssetUIFT)asset).Padding_Left = 2;
+                        ((AssetUIFT)asset).Padding_Right = 2;
+                        ((AssetUIFT)asset).Spacing_Horizontal = 24;
+                        ((AssetUIFT)asset).Spacing_Vertical = 24;
+                        ((AssetUIFT)asset).Char_Width = 24;
+                        ((AssetUIFT)asset).Char_Height = 24;
                     }
                     break;
                 case AssetTemplate.LightEmitter_Generic:
