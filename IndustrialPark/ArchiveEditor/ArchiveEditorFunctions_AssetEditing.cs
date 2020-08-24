@@ -358,13 +358,13 @@ namespace IndustrialPark
         {
             foreach (Asset a in assetDictionary.Values)
                 if (a is AssetSNDI_GCN_V1 SNDI_G1)
-                    SNDI_G1.Clean(from Section_AHDR AHDR in assetDictionary.Values select AHDR.assetID);
+                    SNDI_G1.Clean(from Asset a1 in assetDictionary.Values select a1.AHDR.assetID);
                 else if (a is AssetSNDI_GCN_V2 SNDI_G2)
-                    SNDI_G2.Clean(from Section_AHDR AHDR in assetDictionary.Values select AHDR.assetID);
+                    SNDI_G2.Clean(from Asset a2 in assetDictionary.Values select a2.AHDR.assetID);
                 else if (a is AssetSNDI_XBOX SNDI_X)
-                    SNDI_X.Clean(from Section_AHDR AHDR in assetDictionary.Values select AHDR.assetID);
+                    SNDI_X.Clean(from Asset a3 in assetDictionary.Values select a3.AHDR.assetID);
                 else if (a is AssetSNDI_PS2 SNDI_P)
-                    SNDI_P.Clean(from Section_AHDR AHDR in assetDictionary.Values select AHDR.assetID);
+                    SNDI_P.Clean(from Asset a4 in assetDictionary.Values select a4.AHDR.assetID);
         }
 
         public static AHDRFlags AHDRFlagsFromAssetType(AssetType assetType)

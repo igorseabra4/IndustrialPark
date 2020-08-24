@@ -246,6 +246,14 @@ namespace IndustrialPark
                     textBoxSourceCheck.Text = GetAssetName(assetEvent.SourceCheckAssetID);
                     numericUpDownTime.Value = (decimal)assetEvent.Time;
 
+                    if (GetAssetName(assetEvent.Arguments_Hex[0]).StartsWith("0x") &&
+                        GetAssetName(assetEvent.Arguments_Hex[1]).StartsWith("0x") &&
+                        GetAssetName(assetEvent.Arguments_Hex[2]).StartsWith("0x") &&
+                        GetAssetName(assetEvent.Arguments_Hex[3]).StartsWith("0x"))
+                        checkBoxHex.Checked = false;
+                    else
+                        checkBoxHex.Checked = true;
+
                     checkBoxHex_CheckedChanged(null, null);
 
                     ProgramIsChangingStuff = false;

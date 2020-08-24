@@ -10,20 +10,20 @@ namespace IndustrialPark
     public class EntrySGRP
     {
         public AssetID Sound_AssetID { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat04 { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter)), DisplayName("Volume (0-1)")]
+        public float Volume { get; set; }
         public int UnknownInt08 { get; set; }
         public int UnknownInt0C { get; set; }
 
         public EntrySGRP()
         {
             Sound_AssetID = 0;
-            UnknownFloat04 = 0.8f;
+            Volume = 0.8f;
         }
 
         public static int SizeOfEntry => 0x10;
 
-        public override string ToString() => $"[{Program.MainForm.GetAssetNameFromID(Sound_AssetID)}] - [{UnknownFloat04}]";
+        public override string ToString() => $"[{Program.MainForm.GetAssetNameFromID(Sound_AssetID)}] - [{Volume}]";
     }
 
     public class AssetSGRP : BaseAsset
@@ -149,7 +149,7 @@ namespace IndustrialPark
                     entries.Add(new EntrySGRP()
                     {
                         Sound_AssetID = ReadUInt(StartOfSGRPEntries + i * EntrySGRP.SizeOfEntry),
-                        UnknownFloat04 = ReadFloat(StartOfSGRPEntries + i * EntrySGRP.SizeOfEntry + 0x04),
+                        Volume = ReadFloat(StartOfSGRPEntries + i * EntrySGRP.SizeOfEntry + 0x04),
                         UnknownInt08 = ReadInt(StartOfSGRPEntries + i * EntrySGRP.SizeOfEntry + 0x08),
                         UnknownInt0C = ReadInt(StartOfSGRPEntries + i * EntrySGRP.SizeOfEntry + 0x0C)
                     });
@@ -165,7 +165,7 @@ namespace IndustrialPark
                 foreach (EntrySGRP i in value)
                 {
                     newData.AddRange(BitConverter.GetBytes(Switch(i.Sound_AssetID)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.UnknownFloat04)));
+                    newData.AddRange(BitConverter.GetBytes(Switch(i.Volume)));
                     newData.AddRange(BitConverter.GetBytes(Switch(i.UnknownInt08)));
                     newData.AddRange(BitConverter.GetBytes(Switch(i.UnknownInt0C)));
                 }
