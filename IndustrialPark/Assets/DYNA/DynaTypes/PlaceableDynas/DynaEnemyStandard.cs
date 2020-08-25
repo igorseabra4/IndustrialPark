@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
@@ -60,7 +61,12 @@ namespace IndustrialPark
         }
 
         public DynamicTypeDescriptor EnemyFlags => IntFlagsDescriptor(0x58, null, null, "Walk on PLATs", "Walk on SIMPs");
-        
+        [Browsable(false)]
+        public AssetID Unknown58
+        {
+            get => ReadUInt(0x58);
+            set => Write(0x58, value);
+        }
         public AssetID Unknown5C
         {
             get => ReadUInt(0x5C);

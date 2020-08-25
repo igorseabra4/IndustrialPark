@@ -437,7 +437,8 @@ namespace IndustrialPark
                         else
                             newAsset = new Asset(AHDR, game, platform);
                         break;
-                    case AssetType.SPLN: newAsset = new AssetSPLN(AHDR, game, platform, Program.MainForm.renderer); break;
+                    case AssetType.SPLN:
+                    newAsset = skipTexturesAndModels ? new Asset(AHDR, game, platform) : new AssetSPLN(AHDR, game, platform, Program.MainForm.renderer); break; 
                     case AssetType.SURF: newAsset = new AssetSURF(AHDR, game, platform); break;
                     case AssetType.TEXT: newAsset = new AssetTEXT(AHDR, game, platform); break;
                     case AssetType.TRIG: newAsset = new AssetTRIG(AHDR, game, platform); break;

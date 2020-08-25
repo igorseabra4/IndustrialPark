@@ -179,14 +179,14 @@ namespace IndustrialPark.Randomizer
             List<string> hipPaths = new List<string>();
             foreach (string hipPath in Directory.GetFiles(firstDir))
             {
-                if (Path.GetExtension(hipPath).ToLower() != ".hip" || FileInFirstBox(hipPath))
+                if (Path.GetExtension(hipPath).ToLower() != ".hip" || FileInFirstBox(hipPath) || Path.GetFileNameWithoutExtension(hipPath).ToLower().Contains("us"))
                     continue;
                 hipPaths.Add(hipPath);
             }
             foreach (string dir in Directory.GetDirectories(firstDir))
                 foreach (string hipPath in Directory.GetFiles(dir))
                 {
-                    if (Path.GetExtension(hipPath).ToLower() != ".hip" || FileInFirstBox(hipPath))
+                    if (Path.GetExtension(hipPath).ToLower() != ".hip" || FileInFirstBox(hipPath) || Path.GetFileNameWithoutExtension(hipPath).ToLower().Contains("us"))
                         continue;
                     hipPaths.Add(hipPath);
                 }
@@ -367,14 +367,25 @@ namespace IndustrialPark.Randomizer
                 progressBar.PerformStep();
 
                 HashSet<VilType> enemyVils = levelPairs[0].Item1.GetEnemyTypes();
+                HashSet<EnemySupplyCrateType> crateTypes = levelPairs[0].Item1.GetDynaCrateTypes();
+                HashSet<EnemyStandardType> enemyTypes = levelPairs[0].Item1.GetDynaEnemyTypes();
 
                 bool item2shuffled = false;
                 if (levelPairs[0].Item2 != null)
                 {
                     if (enemyVils.Count != 0)
-                    {
-                        //item1shuffled |= levelPairs[0].Item1.UnimportEnemies(enemyVils);
                         item2shuffled |= levelPairs[0].Item2.ImportEnemyTypes(enemyVils);
+
+                    if (crateTypes.Count != 0)
+                    {
+                        item1shuffled |= levelPairs[0].Item1.ImportCrateTypes(crateTypes, true);
+                        item2shuffled |= levelPairs[0].Item2.ImportCrateTypes(crateTypes, false);
+                    }
+
+                    if (enemyTypes.Count != 0)
+                    { 
+                        item1shuffled |= levelPairs[0].Item1.ImportDynaEnemyTypes(enemyTypes, true);
+                        item2shuffled |= levelPairs[0].Item2.ImportDynaEnemyTypes(enemyTypes, false);
                     }
 
                     if (needToAddNumbers)
@@ -494,7 +505,13 @@ namespace IndustrialPark.Randomizer
                 if (File.Exists(filePath))
                     ini = File.ReadAllLines(filePath);
                 else
-                    return false;
+                {
+                    filePath = (string.IsNullOrEmpty(backupDir) ? rootDir : backupDir) + "/SB04.ini";
+                    if (File.Exists(filePath))
+                        ini = File.ReadAllLines(filePath);
+                    else
+                        return false;
+                }
             }
 
             Random r = new Random((int)seed);
@@ -506,18 +523,20 @@ namespace IndustrialPark.Randomizer
                     ini[i] = "BOOT=HB02";
                     settings.BootLevel = "HB02";
                 }
-                else if (ini[i].StartsWith("BOOT=") && settings.bootLevelMode == BootLevelMode.Random)
+                else if (ini[i].StartsWith("BOOT") && settings.bootLevelMode == BootLevelMode.Random)
                     ini[i] = "BOOT=" + namesForBoot[r.Next(0, namesForBoot.Count)];
-                else if (ini[i].StartsWith("BOOT=") && settings.bootLevelMode == BootLevelMode.Set)
+                else if (ini[i].StartsWith("BOOT") && settings.bootLevelMode == BootLevelMode.Set)
                 {
                     if (settings.BootLevel == "HB00")
                         settings.BootLevel = "HB02";
-                    if (!(settings.BootLevel == "HB01" && game == Game.Scooby))
+                    if (game == Game.Incredibles && settings.BootLevel == "HB01")
+                        settings.BootLevel = "BB02";
+                    if (!(settings.BootLevel == "HB01" && game != Game.BFBB))
                         ini[i] = "BOOT=" + settings.BootLevel;
                 }
                 else if (ini[i].StartsWith("ShowMenuOnBoot") && settings.dontShowMenuOnBoot)
                     ini[i] = "ShowMenuOnBoot=0";
-                else if (ini[i].StartsWith("Menu") && settings.allMenuWarpsHB01)
+                else if (ini[i].StartsWith("Menu") && settings.allMenuWarpsHB01 && game == Game.BFBB)
                     ini[i] = ini[i].Substring(0, 9) + "HB 01 01 01 01 01 01 01 01";
                 else if (ini[i].StartsWith("G.TakeDamage") && settings.cheatInvincible)
                     ini[i] = "G.TakeDamage=0";

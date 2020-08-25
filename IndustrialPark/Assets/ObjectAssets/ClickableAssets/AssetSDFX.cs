@@ -108,10 +108,11 @@ namespace IndustrialPark
         {
             get
             {
-                foreach (var ae in Program.MainForm.archiveEditors)
-                    if (ae.archive.ContainsAsset(SoundGroup_AssetID))
-                        if (ae.archive.GetFromAssetID(SoundGroup_AssetID) is AssetSGRP sgrp)
-                            return sgrp;
+                if (Program.MainForm != null)
+                    foreach (var ae in Program.MainForm.archiveEditors)
+                        if (ae.archive.ContainsAsset(SoundGroup_AssetID))
+                            if (ae.archive.GetFromAssetID(SoundGroup_AssetID) is AssetSGRP sgrp)
+                                return sgrp;
                 return null;
             }
         }
@@ -153,6 +154,7 @@ namespace IndustrialPark
         }
 
         private Vector3 _position;
+
         [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
         public float PositionX
         {

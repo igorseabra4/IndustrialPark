@@ -10,7 +10,7 @@ namespace IndustrialPark
             Description("The randomizer will leave these files unnafected.")]
         public string[] skipFiles { get; set; } = new string[]
         {
-            "font", "boot", "plat", "mn", "sp", "pl", "hb10", "db05", "b301", "s006"
+            "font", "boot", "plat", "mn", "sp", "pl", "hb10", "db05", "b301", "s006", "b402"
         };
 
         [Category("Patterns/Files To Skip"),
@@ -59,6 +59,51 @@ namespace IndustrialPark
         public int BombBot { get; set; } = 1;
         [Category("Enemy Probabilities"), Description(probExample)]
         public int BzztBot { get; set; } = 1;
+
+        [Category("Enemy Probabilities (Movie)"), Description(probExample)]
+        public int flinger_v1_bind { get; set; } = 2;
+        [Category("Enemy Probabilities (Movie)"), Description(probExample)]
+        public int flinger_v2_bind { get; set; } = 2;
+        [Category("Enemy Probabilities (Movie)"), Description(probExample)]
+        public int flinger_v3_bind { get; set; } = 2;
+        [Category("Enemy Probabilities (Movie)"), Description(probExample)]
+        public int fogger_de_bind { get; set; } = 1;
+        [Category("Enemy Probabilities (Movie)"), Description(probExample)]
+        public int fogger_gg_bind { get; set; } = 2;
+        [Category("Enemy Probabilities (Movie)"), Description(probExample)]
+        public int fogger_jk_bind { get; set; } = 2;
+        [Category("Enemy Probabilities (Movie)"), Description(probExample)]
+        public int fogger_pt_bind { get; set; } = 1;
+        [Category("Enemy Probabilities (Movie)"), Description(probExample)]
+        public int fogger_tr_bind { get; set; } = 1;
+        [Category("Enemy Probabilities (Movie)"), Description(probExample)]
+        public int fogger_tt_bind { get; set; } = 2;
+        [Category("Enemy Probabilities (Movie)"), Description(probExample)]
+        public int fogger_v1_bind { get; set; } = 1;
+        [Category("Enemy Probabilities (Movie)"), Description(probExample)]
+        public int fogger_v2_bind { get; set; } = 1;
+        [Category("Enemy Probabilities (Movie)"), Description(probExample)]
+        public int fogger_v3_bind { get; set; } = 1;
+        [Category("Enemy Probabilities (Movie)"), Description(probExample)]
+        public int mervyn_v3_bind { get; set; } = 2;
+        [Category("Enemy Probabilities (Movie)"), Description(probExample)]
+        public int minimerv_v1_bind { get; set; } = 2;
+        [Category("Enemy Probabilities (Movie)"), Description(probExample)]
+        public int popper_v1_bind { get; set; } = 2;
+        [Category("Enemy Probabilities (Movie)"), Description(probExample)]
+        public int popper_v3_bind { get; set; } = 2;
+        [Category("Enemy Probabilities (Movie)"), Description(probExample)]
+        public int slammer_v1_bind { get; set; } = 2;
+        [Category("Enemy Probabilities (Movie)"), Description(probExample)]
+        public int slammer_des_bind { get; set; } = 2;
+        [Category("Enemy Probabilities (Movie)"), Description(probExample)]
+        public int slammer_v3_bind { get; set; } = 2;
+        [Category("Enemy Probabilities (Movie)"), Description(probExample)]
+        public int spinner_v1_bind { get; set; } = 2;
+        [Category("Enemy Probabilities (Movie)"), Description(probExample)]
+        public int spinner_v2_bind { get; set; } = 2;
+        [Category("Enemy Probabilities (Movie)"), Description(probExample)]
+        public int spinner_v3_bind { get; set; } = 2;
 
         [Category("Platform Speed Multiplier"),
             DisplayName("Minimum"),

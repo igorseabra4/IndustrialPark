@@ -31,10 +31,18 @@ namespace IndustrialPark
         {
             if (obj is AssetID assetID)
                 return assetID.value == value;
-            if (obj is uint uinteger)
-                return uinteger == value;
             if (obj is string str)
                 return HipHopFile.Functions.BKDRHash(str) == value;
+            if (obj is uint uinteger)
+                return uinteger == value;
+            if (obj is int integer)
+                return integer == value;
+            if (obj is ushort usinteger)
+                return usinteger == value;
+            if (obj is short sinteger)
+                return sinteger == value;
+            if (obj is byte bv)
+                return bv == value;
             return false;
         }
 

@@ -43,17 +43,22 @@ namespace IndustrialPark
             }
             else
             {
-                fmtId = BitConverter.ToInt16(Entry, 0x00);
-                fmtChannels = BitConverter.ToInt16(Entry, 0x02);
-                fmtSampleRate = BitConverter.ToInt32(Entry, 0x04);
-                fmtBytesPerSecond = BitConverter.ToInt32(Entry, 0x08);
-                fmtBlockAlignment = BitConverter.ToInt16(Entry, 0x0C);
-                fmtBitsPerSample = BitConverter.ToInt16(Entry, 0x0E);
-                fmtExtBytes = BitConverter.ToInt16(Entry, 0x10);
-                fmtExtData = BitConverter.ToInt16(Entry, 0x12);
-                dataSize = BitConverter.ToInt32(Entry, 0x14);
+                SetFromEntry(Entry);
                 SoundAssetID = BitConverter.ToUInt32(Entry, 0x18);
             }
+        }
+
+        private void SetFromEntry(byte[] Entry)
+        {
+            fmtId = BitConverter.ToInt16(Entry, 0x00);
+            fmtChannels = BitConverter.ToInt16(Entry, 0x02);
+            fmtSampleRate = BitConverter.ToInt32(Entry, 0x04);
+            fmtBytesPerSecond = BitConverter.ToInt32(Entry, 0x08);
+            fmtBlockAlignment = BitConverter.ToInt16(Entry, 0x0C);
+            fmtBitsPerSample = BitConverter.ToInt16(Entry, 0x0E);
+            fmtExtBytes = BitConverter.ToInt16(Entry, 0x10);
+            fmtExtData = BitConverter.ToInt16(Entry, 0x12);
+            dataSize = BitConverter.ToInt32(Entry, 0x14);
         }
 
         public byte[] ToByteArray()
@@ -73,6 +78,12 @@ namespace IndustrialPark
             array.AddRange(new byte[16]);
 
             return array.ToArray();
+        }
+
+        public byte[] SoundHeader
+        { 
+            get => ToByteArray();
+            set => SetFromEntry(value);
         }
 
         public override string ToString()

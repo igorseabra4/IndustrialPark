@@ -4,7 +4,6 @@ using System.Linq;
 using SharpDX;
 using HipHopFile;
 using System.IO;
-using System.Windows.Forms;
 using Newtonsoft.Json;
 using RenderWareFile;
 using RenderWareFile.Sections;
@@ -69,102 +68,241 @@ namespace IndustrialPark.Randomizer
             if (flags.HasFlag(RandomizerFlags.MovePoint_Radius))
                 shuffled |= RandomizeMovePointRadius(seed, settings);
 
-            if (flags.HasFlag(RandomizerFlags.Tiki_Types) && ContainsAssetWithType(AssetType.VIL))
+            if (game == Game.BFBB)
             {
-                List<VilType> chooseFrom = new List<VilType>();
-                if (settings.WoodenTiki >= 0)
-                    chooseFrom.Add(VilType.tiki_wooden_bind);
-                if (settings.FloatingTiki >= 0)
-                    chooseFrom.Add(VilType.tiki_lovey_dovey_bind);
-                if (settings.ThunderTiki >= 0)
-                    chooseFrom.Add(VilType.tiki_thunder_bind);
-                if (settings.ShhhTiki >= 0)
-                    chooseFrom.Add(VilType.tiki_shhhh_bind);
-                if (settings.StoneTiki >= 0)
-                    chooseFrom.Add(VilType.tiki_stone_bind);
+                if (flags.HasFlag(RandomizerFlags.Tiki_Types) && ContainsAssetWithType(AssetType.VIL))
+                {
+                    List<VilType> chooseFrom = new List<VilType>();
+                    if (settings.WoodenTiki >= 0)
+                        chooseFrom.Add(VilType.tiki_wooden_bind);
+                    if (settings.FloatingTiki >= 0)
+                        chooseFrom.Add(VilType.tiki_lovey_dovey_bind);
+                    if (settings.ThunderTiki >= 0)
+                        chooseFrom.Add(VilType.tiki_thunder_bind);
+                    if (settings.ShhhTiki >= 0)
+                        chooseFrom.Add(VilType.tiki_shhhh_bind);
+                    if (settings.StoneTiki >= 0)
+                        chooseFrom.Add(VilType.tiki_stone_bind);
 
-                List<VilType> setTo = new List<VilType>();
-                for (int i = 0; i < settings.WoodenTiki; i++)
-                    setTo.Add(VilType.tiki_wooden_bind);
-                for (int i = 0; i < settings.FloatingTiki; i++)
-                    setTo.Add(VilType.tiki_lovey_dovey_bind);
-                for (int i = 0; i < settings.ThunderTiki; i++)
-                    setTo.Add(VilType.tiki_thunder_bind);
-                for (int i = 0; i < settings.ShhhTiki; i++)
-                    setTo.Add(VilType.tiki_shhhh_bind);
-                for (int i = 0; i < settings.StoneTiki; i++)
-                    setTo.Add(VilType.tiki_stone_bind);
+                    List<VilType> setTo = new List<VilType>();
+                    for (int i = 0; i < settings.WoodenTiki; i++)
+                        setTo.Add(VilType.tiki_wooden_bind);
+                    for (int i = 0; i < settings.FloatingTiki; i++)
+                        setTo.Add(VilType.tiki_lovey_dovey_bind);
+                    for (int i = 0; i < settings.ThunderTiki; i++)
+                        setTo.Add(VilType.tiki_thunder_bind);
+                    for (int i = 0; i < settings.ShhhTiki; i++)
+                        setTo.Add(VilType.tiki_shhhh_bind);
+                    for (int i = 0; i < settings.StoneTiki; i++)
+                        setTo.Add(VilType.tiki_stone_bind);
 
-                if (LevelName == "kf04")
-                    chooseFrom.Remove(VilType.tiki_stone_bind);
-                
-                shuffled |= ShuffleVilTypes(seed, chooseFrom, setTo,
-                    flags.HasFlag(RandomizerFlags.Tiki_Models),
-                    flags.HasFlag(RandomizerFlags.Tiki_Allow_Any_Type),
-                    false);
+                    if (LevelName == "kf04")
+                        chooseFrom.Remove(VilType.tiki_stone_bind);
+
+                    shuffled |= ShuffleVilTypes(seed, chooseFrom, setTo,
+                        flags.HasFlag(RandomizerFlags.Tiki_Models),
+                        flags.HasFlag(RandomizerFlags.Tiki_Allow_Any_Type),
+                        false);
+                }
+            }
+            else if (game == Game.Incredibles)
+            {
+                if (flags.HasFlag(RandomizerFlags.Tiki_Types) && ContainsAssetWithType(AssetType.DYNA))
+                {
+                    List<EnemySupplyCrateType> chooseFrom = new List<EnemySupplyCrateType>();
+                    if (settings.WoodenTiki >= 0)
+                        chooseFrom.Add(EnemySupplyCrateType.crate_wood_bind);
+                    if (settings.FloatingTiki >= 0)
+                        chooseFrom.Add(EnemySupplyCrateType.crate_hover_bind);
+                    if (settings.ThunderTiki >= 0)
+                        chooseFrom.Add(EnemySupplyCrateType.crate_explode_bind);
+                    if (settings.ShhhTiki >= 0)
+                        chooseFrom.Add(EnemySupplyCrateType.crate_shrink_bind);
+                    if (settings.StoneTiki >= 0)
+                        chooseFrom.Add(EnemySupplyCrateType.crate_steel_bind);
+
+                    List<EnemySupplyCrateType> setTo = new List<EnemySupplyCrateType>();
+                    for (int i = 0; i < settings.WoodenTiki; i++)
+                        setTo.Add(EnemySupplyCrateType.crate_wood_bind);
+                    for (int i = 0; i < settings.FloatingTiki; i++)
+                        setTo.Add(EnemySupplyCrateType.crate_wood_bind);
+                    for (int i = 0; i < settings.ThunderTiki; i++)
+                        setTo.Add(EnemySupplyCrateType.crate_explode_bind);
+                    for (int i = 0; i < settings.ShhhTiki; i++)
+                        setTo.Add(EnemySupplyCrateType.crate_shrink_bind);
+                    for (int i = 0; i < settings.StoneTiki; i++)
+                        setTo.Add(EnemySupplyCrateType.crate_steel_bind);
+
+                    shuffled |= ShuffleBoxDynaTypes(seed, chooseFrom, setTo);
+                }
             }
 
-            if (flags.HasFlag(RandomizerFlags.Enemy_Types) && ContainsAssetWithType(AssetType.VIL))
+            if (game == Game.BFBB)
             {
-                List<VilType> chooseFrom = new List<VilType>(16);
-                if (settings.Fodder >= 0)
-                    chooseFrom.Add(VilType.robot_0a_fodder_bind);
-                if (settings.Hammer >= 0)
-                    chooseFrom.Add(VilType.ham_bind);
-                if (settings.Tartar >= 0)
-                    chooseFrom.Add(VilType.robot_tar_bind);
-                if (settings.GLove >= 0)
-                    chooseFrom.Add(VilType.g_love_bind);
-                if (settings.Chuck >= 0)
-                    chooseFrom.Add(VilType.robot_chuck_bind);
-                if (settings.Monsoon >= 0)
-                    chooseFrom.Add(VilType.robot_4a_monsoon_bind);
-                if (settings.Sleepytime >= 0)
-                    chooseFrom.Add(VilType.robot_sleepytime_bind);
-                if (settings.Arf >= 0)
-                    chooseFrom.Add(VilType.robot_arf_bind);
-                if (settings.Tubelets >= 0)
-                    chooseFrom.Add(VilType.tubelet_bind);
-                if (settings.Slick >= 0)
-                    chooseFrom.Add(VilType.robot_9a_bind);
-                if (settings.BombBot >= 0)
-                    chooseFrom.Add(VilType.robot_0a_bomb_bind);
-                if (settings.BzztBot >= 0)
-                    chooseFrom.Add(VilType.robot_0a_bzzt_bind);
-                if (settings.ChompBot >= 0)
-                    chooseFrom.Add(VilType.robot_0a_chomper_bind);
+                if (flags.HasFlag(RandomizerFlags.Enemy_Types) && ContainsAssetWithType(AssetType.VIL))
+                {
+                    List<VilType> chooseFrom = new List<VilType>(16);
+                    if (settings.Fodder >= 0)
+                        chooseFrom.Add(VilType.robot_0a_fodder_bind);
+                    if (settings.Hammer >= 0)
+                        chooseFrom.Add(VilType.ham_bind);
+                    if (settings.Tartar >= 0)
+                        chooseFrom.Add(VilType.robot_tar_bind);
+                    if (settings.GLove >= 0)
+                        chooseFrom.Add(VilType.g_love_bind);
+                    if (settings.Chuck >= 0)
+                        chooseFrom.Add(VilType.robot_chuck_bind);
+                    if (settings.Monsoon >= 0)
+                        chooseFrom.Add(VilType.robot_4a_monsoon_bind);
+                    if (settings.Sleepytime >= 0)
+                        chooseFrom.Add(VilType.robot_sleepytime_bind);
+                    if (settings.Arf >= 0)
+                        chooseFrom.Add(VilType.robot_arf_bind);
+                    if (settings.Tubelets >= 0)
+                        chooseFrom.Add(VilType.tubelet_bind);
+                    if (settings.Slick >= 0)
+                        chooseFrom.Add(VilType.robot_9a_bind);
+                    if (settings.BombBot >= 0)
+                        chooseFrom.Add(VilType.robot_0a_bomb_bind);
+                    if (settings.BzztBot >= 0)
+                        chooseFrom.Add(VilType.robot_0a_bzzt_bind);
+                    if (settings.ChompBot >= 0)
+                        chooseFrom.Add(VilType.robot_0a_chomper_bind);
 
-                List<VilType> setTo = new List<VilType>();
-                for (int i = 0; i < settings.Fodder; i++)
-                    setTo.Add(VilType.robot_0a_fodder_bind);
-                for (int i = 0; i < settings.Hammer; i++)
-                    setTo.Add(VilType.ham_bind);
-                for (int i = 0; i < settings.Tartar; i++)
-                    setTo.Add(VilType.robot_tar_bind);
-                for (int i = 0; i < settings.GLove; i++)
-                    setTo.Add(VilType.g_love_bind);
-                for (int i = 0; i < settings.Chuck; i++)
-                    setTo.Add(VilType.robot_chuck_bind);
-                for (int i = 0; i < settings.Monsoon; i++)
-                    setTo.Add(VilType.robot_4a_monsoon_bind);
-                for (int i = 0; i < settings.Sleepytime; i++)
-                    setTo.Add(VilType.robot_sleepytime_bind);
-                for (int i = 0; i < settings.Arf; i++)
-                    setTo.Add(VilType.robot_arf_bind);
-                for (int i = 0; i < settings.Tubelets; i++)
-                    setTo.Add(VilType.tubelet_bind);
-                for (int i = 0; i < settings.Slick; i++)
-                    setTo.Add(VilType.robot_9a_bind);
-                for (int i = 0; i < settings.BombBot; i++)
-                    setTo.Add(VilType.robot_0a_bomb_bind);
-                for (int i = 0; i < settings.BzztBot; i++)
-                    setTo.Add(VilType.robot_0a_bzzt_bind);
-                for (int i = 0; i < settings.ChompBot; i++)
-                    setTo.Add(VilType.robot_0a_chomper_bind);
+                    List<VilType> setTo = new List<VilType>();
+                    for (int i = 0; i < settings.Fodder; i++)
+                        setTo.Add(VilType.robot_0a_fodder_bind);
+                    for (int i = 0; i < settings.Hammer; i++)
+                        setTo.Add(VilType.ham_bind);
+                    for (int i = 0; i < settings.Tartar; i++)
+                        setTo.Add(VilType.robot_tar_bind);
+                    for (int i = 0; i < settings.GLove; i++)
+                        setTo.Add(VilType.g_love_bind);
+                    for (int i = 0; i < settings.Chuck; i++)
+                        setTo.Add(VilType.robot_chuck_bind);
+                    for (int i = 0; i < settings.Monsoon; i++)
+                        setTo.Add(VilType.robot_4a_monsoon_bind);
+                    for (int i = 0; i < settings.Sleepytime; i++)
+                        setTo.Add(VilType.robot_sleepytime_bind);
+                    for (int i = 0; i < settings.Arf; i++)
+                        setTo.Add(VilType.robot_arf_bind);
+                    for (int i = 0; i < settings.Tubelets; i++)
+                        setTo.Add(VilType.tubelet_bind);
+                    for (int i = 0; i < settings.Slick; i++)
+                        setTo.Add(VilType.robot_9a_bind);
+                    for (int i = 0; i < settings.BombBot; i++)
+                        setTo.Add(VilType.robot_0a_bomb_bind);
+                    for (int i = 0; i < settings.BzztBot; i++)
+                        setTo.Add(VilType.robot_0a_bzzt_bind);
+                    for (int i = 0; i < settings.ChompBot; i++)
+                        setTo.Add(VilType.robot_0a_chomper_bind);
 
-                shuffled |= ShuffleVilTypes(seed, chooseFrom, setTo, false, flags.HasFlag(RandomizerFlags.Enemies_Allow_Any_Type), true);
+                    shuffled |= ShuffleVilTypes(seed, chooseFrom, setTo, false, flags.HasFlag(RandomizerFlags.Enemies_Allow_Any_Type), true);
+                }
             }
-            
+            else if (game == Game.Incredibles)
+            {
+                if (flags.HasFlag(RandomizerFlags.Enemy_Types) && ContainsAssetWithType(AssetType.DYNA))
+                {
+                    List<EnemyStandardType> chooseFrom = new List<EnemyStandardType>(24);
+
+                    if (settings.flinger_v1_bind >= 0)
+                        chooseFrom.Add(EnemyStandardType.flinger_v1_bind);
+                    if (settings.flinger_v1_bind >= 0)
+                        chooseFrom.Add(EnemyStandardType.flinger_v1_bind);
+                    if (settings.flinger_v2_bind >= 0)
+                        chooseFrom.Add(EnemyStandardType.flinger_v2_bind);
+                    if (settings.flinger_v3_bind >= 0)
+                        chooseFrom.Add(EnemyStandardType.flinger_v3_bind);
+                    if (settings.fogger_de_bind >= 0)
+                        chooseFrom.Add(EnemyStandardType.fogger_de_bind);
+                    if (settings.fogger_gg_bind >= 0)
+                        chooseFrom.Add(EnemyStandardType.fogger_gg_bind);
+                    if (settings.fogger_jk_bind >= 0)
+                        chooseFrom.Add(EnemyStandardType.fogger_jk_bind);
+                    if (settings.fogger_pt_bind >= 0)
+                        chooseFrom.Add(EnemyStandardType.fogger_pt_bind);
+                    if (settings.fogger_tr_bind >= 0)
+                        chooseFrom.Add(EnemyStandardType.fogger_tr_bind);
+                    if (settings.fogger_tt_bind >= 0)
+                        chooseFrom.Add(EnemyStandardType.fogger_tt_bind);
+                    if (settings.fogger_v1_bind >= 0)
+                        chooseFrom.Add(EnemyStandardType.fogger_v1_bind);
+                    if (settings.fogger_v2_bind >= 0)
+                        chooseFrom.Add(EnemyStandardType.fogger_v2_bind);
+                    if (settings.fogger_v3_bind >= 0)
+                        chooseFrom.Add(EnemyStandardType.fogger_v3_bind);
+                    if (settings.mervyn_v3_bind >= 0)
+                        chooseFrom.Add(EnemyStandardType.mervyn_v3_bind);
+                    if (settings.minimerv_v1_bind >= 0)
+                        chooseFrom.Add(EnemyStandardType.minimerv_v1_bind);
+                    if (settings.popper_v1_bind >= 0)
+                        chooseFrom.Add(EnemyStandardType.popper_v1_bind);
+                    if (settings.popper_v3_bind >= 0)
+                        chooseFrom.Add(EnemyStandardType.popper_v3_bind);
+                    if (settings.slammer_v1_bind >= 0)
+                        chooseFrom.Add(EnemyStandardType.slammer_v1_bind);
+                    if (settings.slammer_des_bind >= 0)
+                        chooseFrom.Add(EnemyStandardType.slammer_des_bind);
+                    if (settings.slammer_v3_bind >= 0)
+                        chooseFrom.Add(EnemyStandardType.slammer_v3_bind);
+                    if (settings.spinner_v1_bind >= 0)
+                        chooseFrom.Add(EnemyStandardType.spinner_v1_bind);
+                    if (settings.spinner_v2_bind >= 0)
+                        chooseFrom.Add(EnemyStandardType.spinner_v2_bind);
+                    if (settings.spinner_v3_bind >= 0)
+                        chooseFrom.Add(EnemyStandardType.spinner_v3_bind);
+
+                    List<EnemyStandardType> setTo = new List<EnemyStandardType>();
+                    for (int i = 0; i < settings.flinger_v1_bind; i++)
+                        setTo.Add(EnemyStandardType.flinger_v1_bind);
+                    for (int i = 0; i < settings.flinger_v2_bind; i++)
+                        setTo.Add(EnemyStandardType.flinger_v2_bind);
+                    for (int i = 0; i < settings.flinger_v3_bind; i++)
+                        setTo.Add(EnemyStandardType.flinger_v3_bind);
+                    for (int i = 0; i < settings.fogger_de_bind; i++)
+                        setTo.Add(EnemyStandardType.fogger_de_bind);
+                    for (int i = 0; i < settings.fogger_gg_bind; i++)
+                        setTo.Add(EnemyStandardType.fogger_gg_bind);
+                    for (int i = 0; i < settings.fogger_jk_bind; i++)
+                        setTo.Add(EnemyStandardType.fogger_jk_bind);
+                    for (int i = 0; i < settings.fogger_pt_bind; i++)
+                        setTo.Add(EnemyStandardType.fogger_pt_bind);
+                    for (int i = 0; i < settings.fogger_tr_bind; i++)
+                        setTo.Add(EnemyStandardType.fogger_tr_bind);
+                    for (int i = 0; i < settings.fogger_tt_bind; i++)
+                        setTo.Add(EnemyStandardType.fogger_tt_bind);
+                    for (int i = 0; i < settings.fogger_v1_bind; i++)
+                        setTo.Add(EnemyStandardType.fogger_v1_bind);
+                    for (int i = 0; i < settings.fogger_v2_bind; i++)
+                        setTo.Add(EnemyStandardType.fogger_v2_bind);
+                    for (int i = 0; i < settings.fogger_v3_bind; i++)
+                        setTo.Add(EnemyStandardType.fogger_v3_bind);
+                    for (int i = 0; i < settings.mervyn_v3_bind; i++)
+                        setTo.Add(EnemyStandardType.mervyn_v3_bind);
+                    for (int i = 0; i < settings.minimerv_v1_bind; i++)
+                        setTo.Add(EnemyStandardType.minimerv_v1_bind);
+                    for (int i = 0; i < settings.popper_v1_bind; i++)
+                        setTo.Add(EnemyStandardType.popper_v1_bind);
+                    for (int i = 0; i < settings.popper_v3_bind; i++)
+                        setTo.Add(EnemyStandardType.popper_v3_bind);
+                    for (int i = 0; i < settings.slammer_v1_bind; i++)
+                        setTo.Add(EnemyStandardType.slammer_v1_bind);
+                    for (int i = 0; i < settings.slammer_des_bind; i++)
+                        setTo.Add(EnemyStandardType.slammer_des_bind);
+                    for (int i = 0; i < settings.slammer_v3_bind; i++)
+                        setTo.Add(EnemyStandardType.slammer_v3_bind);
+                    for (int i = 0; i < settings.spinner_v1_bind; i++)
+                        setTo.Add(EnemyStandardType.spinner_v1_bind);
+                    for (int i = 0; i < settings.spinner_v2_bind; i++)
+                        setTo.Add(EnemyStandardType.spinner_v2_bind);
+                    for (int i = 0; i < settings.spinner_v3_bind; i++)
+                        setTo.Add(EnemyStandardType.spinner_v3_bind);
+
+                    shuffled |= ShuffleEnemyDynaTypes(seed, chooseFrom, setTo, flags.HasFlag(RandomizerFlags.Enemies_Allow_Any_Type));
+                }
+            }
+
             if (flags.HasFlag(RandomizerFlags.Marker_Positions) && ContainsAssetWithType(AssetType.MRKR)
                 && !new string[] { "hb02", "b101", "b201", "b302", "b303" }.Contains(LevelName))
                 shuffled |= ShuffleMRKRPositions(seed,
@@ -184,11 +322,13 @@ namespace IndustrialPark.Randomizer
             bool shinyNumbers = false;
             bool spatNumbers = false;
 
-            if (flags.HasFlag(RandomizerFlags.Shiny_Object_Gates) && ContainsAssetWithType(AssetType.COND))
-                shuffled |= ShuffleShinyGates(gateRandom, settings, out shinyNumbers);
+            if (game == Game.BFBB)
+                if (flags.HasFlag(RandomizerFlags.Shiny_Object_Gates) && ContainsAssetWithType(AssetType.COND))
+                    shuffled |= ShuffleShinyGates(gateRandom, settings, out shinyNumbers);
 
-            if ((settings.spatReqChum != 75 || flags.HasFlag(RandomizerFlags.Spatula_Gates)) && ContainsAssetWithType(AssetType.COND))
-                shuffled |= ShuffleSpatulaGates(gateRandom, flags.HasFlag(RandomizerFlags.Spatula_Gates), settings, out spatNumbers);
+            if (game == Game.BFBB)
+                if ((settings.spatReqChum != 75 || flags.HasFlag(RandomizerFlags.Spatula_Gates)) && ContainsAssetWithType(AssetType.COND))
+                    shuffled |= ShuffleSpatulaGates(gateRandom, flags.HasFlag(RandomizerFlags.Spatula_Gates), settings, out spatNumbers);
 
             needToAddNumbers = shinyNumbers | spatNumbers;
 
@@ -204,14 +344,20 @@ namespace IndustrialPark.Randomizer
                 shuffled |= ShufflePlaceableColors(r, settings.brightColors, settings.strongColors) | ShuffleModelColors(r, settings.brightColors, settings.strongColors);
             }
 
-            if (flags.HasFlag(RandomizerFlags.Player_Characters))
-                shuffled |= ShuffleBusStops(gateRandom);
+            if (game == Game.BFBB)
+                if (flags.HasFlag(RandomizerFlags.Player_Characters))
+                    shuffled |= ShuffleBusStops(gateRandom);
             
             if (flags.HasFlag(RandomizerFlags.Music))
                 shuffled |= RandomizePlaylistLocal();
 
-            if (settings.disableCutscenes)
-                shuffled |= DisableCutscenes();
+            if (game == Game.BFBB)
+                if (settings.disableCutscenes)
+                    shuffled |= DisableCutscenes();
+
+            if (game == Game.Incredibles)
+                if (settings.disableCutscenes)
+                    shuffled |= DisableCutscenesMovie();
 
             if (settings.openTeleportBoxes)
                 shuffled |= OpenTeleportBoxes();
@@ -289,76 +435,102 @@ namespace IndustrialPark.Randomizer
             if (assets.Count < 2)
                 return false;
 
-            switch (LevelName)
-            {
-                case "hb01":
-                    assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("GREENSHINY_PICKUP_02")));
-                    assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("GREENSHINY_PICKUP_03")));
-                    assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("GREENSHINY_PICKUP_18")));
-                    assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("GREENSHINY_PICKUP_20")));
-                    for (int i = 0; i < assets.Count; i++)
-                        if (assets[i].AHDR.ADBG.assetName.Contains("GS_MRKRABS_PICKUP") || assets[i].AHDR.ADBG.assetName.Contains("GS_PATRICK_PICKUP"))
-                        {
-                            assets.RemoveAt(i);
-                            i--;
-                        }
-                    break;
-                case "hb02":
-                    for (int i = 0; i < assets.Count; i++)
-                        if (assets[i].AHDR.ADBG.assetName.Contains("RED"))
-                        {
-                            int shinyNum = Convert.ToInt32(assets[i].AHDR.ADBG.assetName.Split('_')[2]);
-                            if (shinyNum >= 32 && shinyNum <= 47 && shinyNum != 42)
+            if (game == Game.BFBB)
+                switch (LevelName)
+                {
+                    case "hb01":
+                        assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("GREENSHINY_PICKUP_02")));
+                        assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("GREENSHINY_PICKUP_03")));
+                        assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("GREENSHINY_PICKUP_18")));
+                        assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("GREENSHINY_PICKUP_20")));
+                        for (int i = 0; i < assets.Count; i++)
+                            if (assets[i].AHDR.ADBG.assetName.Contains("GS_MRKRABS_PICKUP") || assets[i].AHDR.ADBG.assetName.Contains("GS_PATRICK_PICKUP"))
                             {
                                 assets.RemoveAt(i);
                                 i--;
                             }
-                        }
-                    break;
-                case "bb01":
-                    assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("SHINY_RED_018")));
-                    assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("SHINY_RED_019")));
-                    break;
-                case "gl01":
-                    assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("SHINY_YELLOW_004")));
-                    if (ContainsAsset(new AssetID("GOLDENSPATULA_04")))
-                        ((AssetPKUP)GetFromAssetID(new AssetID("GOLDENSPATULA_04"))).PositionY += 2f;
-                    break;
-                case "gl03":
-                    if (ContainsAsset(0x0B48E8AC))
-                    {
-                        AssetDYNA dyna = (AssetDYNA)GetFromAssetID(0x0B48E8AC);
-                        dyna.LinksBFBB = new LinkBFBB[0];
+                        break;
+                    case "hb02":
+                        for (int i = 0; i < assets.Count; i++)
+                            if (assets[i].AHDR.ADBG.assetName.Contains("RED"))
+                            {
+                                int shinyNum = Convert.ToInt32(assets[i].AHDR.ADBG.assetName.Split('_')[2]);
+                                if (shinyNum >= 32 && shinyNum <= 47 && shinyNum != 42)
+                                {
+                                    assets.RemoveAt(i);
+                                    i--;
+                                }
+                            }
+                        break;
+                    case "bb01":
+                        assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("SHINY_RED_018")));
+                        assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("SHINY_RED_019")));
+                        break;
+                    case "gl01":
+                        assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("SHINY_YELLOW_004")));
+                        if (ContainsAsset(new AssetID("GOLDENSPATULA_04")))
+                            ((AssetPKUP)GetFromAssetID(new AssetID("GOLDENSPATULA_04"))).PositionY += 2f;
+                        break;
+                    case "gl03":
+                        if (ContainsAsset(0x0B48E8AC))
+                        {
+                            AssetDYNA dyna = (AssetDYNA)GetFromAssetID(0x0B48E8AC);
+                            dyna.LinksBFBB = new LinkBFBB[0];
 
-                        if (ContainsAsset(0xF70F6FEE))
-                        {
-                            ((AssetPKUP)GetFromAssetID(0xF70F6FEE)).PickupFlagsShort = 2;
-                            ((AssetPKUP)GetFromAssetID(0xF70F6FEE)).Data[0x8] = 1;
-                        }
-                    }
-                    break;
-                case "sm02":
-                    assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("PU_SHINY_RED")));
-                    assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("PU_SHINY_GREEN")));
-                    assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("PU_SHINY_YELLOW")));
-                    assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("PU_SHINY_BLUE")));
-                    assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("PU_SHINY_PURPLE")));
-                    break;
-                case "jf01":
-                case "bc01":
-                case "rb03":
-                case "sm01":
-                    for (int i = 0; i < assets.Count; i++)
-                    {
-                        foreach (LinkBFBB link in assets[i].LinksBFBB)
-                            if (link.EventSendID == EventBFBB.Mount)
+                            if (ContainsAsset(0xF70F6FEE))
                             {
-                                assets.RemoveAt(i);
-                                i--;
-                                break;
+                                ((AssetPKUP)GetFromAssetID(0xF70F6FEE)).PickupFlagsShort = 2;
+                                ((AssetPKUP)GetFromAssetID(0xF70F6FEE)).Data[0x8] = 1;
                             }
-                    }
-                    break;
+                        }
+                        break;
+                    case "sm02":
+                        assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("PU_SHINY_RED")));
+                        assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("PU_SHINY_GREEN")));
+                        assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("PU_SHINY_YELLOW")));
+                        assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("PU_SHINY_BLUE")));
+                        assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("PU_SHINY_PURPLE")));
+                        break;
+                    case "jf01":
+                    case "bc01":
+                    case "rb03":
+                    case "sm01":
+                        for (int i = 0; i < assets.Count; i++)
+                        {
+                            foreach (LinkBFBB link in assets[i].LinksBFBB)
+                                if (link.EventSendID == EventBFBB.Mount)
+                                {
+                                    assets.RemoveAt(i);
+                                    i--;
+                                    break;
+                                }
+                        }
+                        break;
+                }
+            else if (game == Game.Incredibles)
+            {
+                switch (LevelName)
+                {
+                    case "bb01":
+                    case "bl01":
+                    case "bl02":
+                    case "bl03":
+                    case "bl04":
+                    case "de02":
+                    case "fb01":
+                    case "fb02":
+                    case "fb03":
+                    case "gg02":
+                    case "pt02":
+                    case "sc02":
+                    case "tr01":
+                    case "tt02":
+                        for (int i = 0; i < assets.Count; i++)
+                            if (assets[i].PickReferenceID.Equals(0x60F808B7))
+                                    assets.RemoveAt(i--);
+                        
+                        break;
+                }
             }
 
             List<Vector3> positions = (from asset in assets select (new Vector3(asset.PositionX, asset.PositionY, asset.PositionZ))).ToList();
@@ -492,23 +664,23 @@ namespace IndustrialPark.Randomizer
 
             foreach (Asset a in assets)
             {
-                var colors = GetColors(a.Data);
-
-                if (colors.Length == 0)
-                    continue;
-
-                for (int i = 0; i < colors.Length; i++)
-                {
-                    Vector3 color = GetRandomColor(r, brightColors, strongColors);
-
-                    colors[i] = System.Drawing.Color.FromArgb(colors[i].A,
-                        (byte)(color.X * max),
-                        (byte)(color.Y * max),
-                        (byte)(color.Z * max));
-                }
-
                 try
                 {
+                    var colors = GetColors(a.Data);
+
+                    if (colors.Length == 0)
+                        continue;
+
+                    for (int i = 0; i < colors.Length; i++)
+                    {
+                        Vector3 color = GetRandomColor(r, brightColors, strongColors);
+
+                        colors[i] = System.Drawing.Color.FromArgb(colors[i].A,
+                            (byte)(color.X * max),
+                            (byte)(color.Y * max),
+                            (byte)(color.Z * max));
+                    }
+
                     a.Data = SetColors(a.Data, colors);
                     colored = true;
                 }
@@ -845,7 +1017,69 @@ namespace IndustrialPark.Randomizer
 
             return assets.Count != 0;
         }
-        
+
+        private bool ShuffleBoxDynaTypes(int seed, List<EnemySupplyCrateType> chooseFrom, List<EnemySupplyCrateType> setTo)
+        {
+            if (setTo.Count == 0)
+                return false;
+
+            Random r = new Random(seed);
+
+            List<AssetDYNA> assets = (from asset in assetDictionary.Values
+                                                 where
+                                                 asset is AssetDYNA dyna &&
+                                                 dyna.DynaSpec is DynaEnemySupplyCrate dynaC &&
+                                                 chooseFrom.Contains(dynaC.Type)
+                                                 select (AssetDYNA)asset).ToList();
+
+            foreach (AssetDYNA a in assets)
+            {
+                int index = r.Next(0, setTo.Count);
+                ((DynaEnemySupplyCrate)a.DynaSpec).Type = setTo[index];
+            }
+
+            return assets.Count != 0;
+        }
+
+        private bool ShuffleEnemyDynaTypes(int seed, List<EnemyStandardType> chooseFrom, List<EnemyStandardType> setTo, bool veryRandom)
+        {
+            if (setTo.Count == 0)
+                return false;
+
+            Random r = new Random(seed);
+
+            List<AssetDYNA> assets = (from asset in assetDictionary.Values
+                                                 where
+                                                 asset is AssetDYNA dyna &&
+                                                 dyna.DynaSpec is DynaEnemyStandard dynaC &&
+                                                 chooseFrom.Contains(dynaC.Type)
+                                      select (AssetDYNA)asset).ToList();
+
+            List<EnemyStandardType> altSetTo = (from asset in assets select ((DynaEnemyStandard)asset.DynaSpec).Type).ToList();
+
+            foreach (AssetDYNA a in assets)
+            {
+                if (veryRandom)
+                {
+                    int index = r.Next(0, setTo.Count);
+                    ((DynaEnemyStandard)a.DynaSpec).Type = setTo[index];
+                    ((DynaEnemyStandard)a.DynaSpec).Unknown58 = 12;
+                    ((DynaEnemyStandard)a.DynaSpec).Unknown5C = 0;
+                    ((DynaEnemyStandard)a.DynaSpec).Unknown60 = 0;
+                    ((DynaEnemyStandard)a.DynaSpec).Unknown64 = 0;
+                    ((DynaEnemyStandard)a.DynaSpec).Unknown68 = 0;
+                }
+                else
+                {
+                    int index = r.Next(0, altSetTo.Count);
+                    ((DynaEnemyStandard)a.DynaSpec).Type = altSetTo[index];
+                    altSetTo.RemoveAt(index);
+                }
+            }
+
+            return assets.Count != 0;
+        }
+
         private bool DisableCutscenes()
         {
             switch (LevelName)
@@ -966,6 +1200,11 @@ namespace IndustrialPark.Randomizer
                     return true;
             }
 
+            return false;
+        }
+
+        private bool DisableCutscenesMovie()
+        {
             return false;
         }
 
@@ -1197,97 +1436,300 @@ namespace IndustrialPark.Randomizer
 
         public bool RandomizeSounds(int seed, bool mixTypes, bool scoobyBoot = false)
         {
-            Random r = new Random(seed);
-
             bool result = false;
 
             foreach (Asset a in assetDictionary.Values)
-                if (a is AssetSNDI_GCN_V1 sndi)
-                {
-                    List<EntrySoundInfo_GCN_V1> snd = sndi.Entries_SND.ToList();
-                    List<EntrySoundInfo_GCN_V1> snds = sndi.Entries_SNDS.ToList();
-                    
-                    if (scoobyBoot)
-                    {
-                        List<(byte[], byte[])> sounds = new List<(byte[], byte[])>();
-
-                        foreach (var v in snds)
-                            if (!GetFromAssetID(v.SoundAssetID).AHDR.ADBG.assetName.Contains("thera"))
-                                sounds.Add((v.SoundHeader, GetFromAssetID(v.SoundAssetID).Data));
-
-                        foreach (var v in snds)
-                            if (!GetFromAssetID(v.SoundAssetID).AHDR.ADBG.assetName.Contains("thera"))
-                            {
-                                int index = r.Next(0, sounds.Count);
-                                v.SoundHeader = sounds[index].Item1;
-                                GetFromAssetID(v.SoundAssetID).Data = sounds[index].Item2;
-                                sounds.RemoveAt(index);
-                            }
-                    }
-                    else if (mixTypes)
-                    {
-                        List<(byte[], byte[])> sounds = new List<(byte[], byte[])>();
-
-                        foreach (var v in snd)
-                            sounds.Add((v.SoundHeader, GetFromAssetID(v.SoundAssetID).Data));
-
-                        foreach (var v in snds)
-                            sounds.Add((v.SoundHeader, GetFromAssetID(v.SoundAssetID).Data));
-
-                        foreach (var v in snd)
-                        {
-                            int index = r.Next(0, sounds.Count);
-                            v.SoundHeader = sounds[index].Item1;
-                            GetFromAssetID(v.SoundAssetID).Data = sounds[index].Item2;
-                            sounds.RemoveAt(index);
-                        }
-
-                        foreach (var v in snds)
-                        {
-                            int index = r.Next(0, sounds.Count);
-                            v.SoundHeader = sounds[index].Item1;
-                            GetFromAssetID(v.SoundAssetID).Data = sounds[index].Item2;
-                            sounds.RemoveAt(index);
-                        }
-                    }
-                    else
-                    {
-                        List<(byte[], byte[])> soundsSND = new List<(byte[], byte[])>();
-
-                        foreach (var v in snd)
-                            soundsSND.Add((v.SoundHeader, GetFromAssetID(v.SoundAssetID).Data));
-
-                        foreach (var v in snd)
-                        {
-                            int index = r.Next(0, soundsSND.Count);
-                            v.SoundHeader = soundsSND[index].Item1;
-                            GetFromAssetID(v.SoundAssetID).Data = soundsSND[index].Item2;
-                            soundsSND.RemoveAt(index);
-                        }
-
-                        List<(byte[], byte[])> soundsSNDS = new List<(byte[], byte[])>();
-
-                        foreach (var v in snds)
-                            soundsSNDS.Add((v.SoundHeader, GetFromAssetID(v.SoundAssetID).Data));
-
-                        foreach (var v in snds)
-                        {
-                            int index = r.Next(0, soundsSNDS.Count);
-                            v.SoundHeader = soundsSNDS[index].Item1;
-                            GetFromAssetID(v.SoundAssetID).Data = soundsSNDS[index].Item2;
-                            soundsSNDS.RemoveAt(index);
-                        }
-                    }
-
-                    sndi.Entries_SND = snd.ToArray();
-                    sndi.Entries_SNDS = snds.ToArray();
-
-                    result = true;
-                }
+                if (a is AssetSNDI_GCN_V1 sndi1)
+                    result |= RandomizeSNDI_GCN_V1(seed, sndi1, mixTypes, scoobyBoot);
+                else if (a is AssetSNDI_GCN_V2 sndi2)
+                    result |= RandomizeSNDI_GCN_V2(seed, sndi2);
+                else if (a is AssetSNDI_XBOX sndi3)
+                    result |= RandomizeSNDI_XBOX(seed, sndi3, mixTypes, scoobyBoot);
+                else if (a is AssetSNDI_PS2 sndi4)
+                    result |= RandomizeSNDI_PS2(seed, sndi4, mixTypes, scoobyBoot);
 
             return result;
         }
-        
+
+        private bool RandomizeSNDI_GCN_V2(int seed, AssetSNDI_GCN_V2 sndi)
+        {
+            Random r = new Random(seed);
+            List<uint> assetIDs = new List<uint>();
+
+            var entries = sndi.Entries;
+
+            foreach (var v in entries)
+                foreach (var u in v.soundEntries)
+                    assetIDs.Add(u.SoundAssetID);
+
+            foreach (var v in entries)
+                foreach (var u in v.soundEntries)
+                {
+                    int index = r.Next(0, assetIDs.Count);
+                    u.SoundAssetID = assetIDs[index];
+                    assetIDs.RemoveAt(index);
+                }
+
+            sndi.Entries = entries;
+
+            return true;
+        }
+
+        private bool RandomizeSNDI_XBOX(int seed, AssetSNDI_XBOX sndi, bool mixTypes, bool scoobyBoot)
+        {
+            Random r = new Random(seed);
+
+            var snd = sndi.Entries_SND.ToList();
+            var snds = sndi.Entries_SNDS.ToList();
+
+            if (scoobyBoot)
+            {
+                List<(byte[], byte[])> sounds = new List<(byte[], byte[])>();
+
+                foreach (var v in snds)
+                    if (!GetFromAssetID(v.SoundAssetID).AHDR.ADBG.assetName.Contains("thera"))
+                        sounds.Add((v.SoundHeader, GetFromAssetID(v.SoundAssetID).Data));
+
+                foreach (var v in snds)
+                    if (!GetFromAssetID(v.SoundAssetID).AHDR.ADBG.assetName.Contains("thera"))
+                    {
+                        int index = r.Next(0, sounds.Count);
+                        v.SoundHeader = sounds[index].Item1;
+                        GetFromAssetID(v.SoundAssetID).Data = sounds[index].Item2;
+                        sounds.RemoveAt(index);
+                    }
+            }
+            else if (mixTypes)
+            {
+                List<(byte[], byte[])> sounds = new List<(byte[], byte[])>();
+
+                foreach (var v in snd)
+                    sounds.Add((v.SoundHeader, GetFromAssetID(v.SoundAssetID).Data));
+
+                foreach (var v in snds)
+                    sounds.Add((v.SoundHeader, GetFromAssetID(v.SoundAssetID).Data));
+
+                foreach (var v in snd)
+                {
+                    int index = r.Next(0, sounds.Count);
+                    v.SoundHeader = sounds[index].Item1;
+                    GetFromAssetID(v.SoundAssetID).Data = sounds[index].Item2;
+                    sounds.RemoveAt(index);
+                }
+
+                foreach (var v in snds)
+                {
+                    int index = r.Next(0, sounds.Count);
+                    v.SoundHeader = sounds[index].Item1;
+                    GetFromAssetID(v.SoundAssetID).Data = sounds[index].Item2;
+                    sounds.RemoveAt(index);
+                }
+            }
+            else
+            {
+                List<(byte[], byte[])> soundsSND = new List<(byte[], byte[])>();
+
+                foreach (var v in snd)
+                    soundsSND.Add((v.SoundHeader, GetFromAssetID(v.SoundAssetID).Data));
+
+                foreach (var v in snd)
+                {
+                    int index = r.Next(0, soundsSND.Count);
+                    v.SoundHeader = soundsSND[index].Item1;
+                    GetFromAssetID(v.SoundAssetID).Data = soundsSND[index].Item2;
+                    soundsSND.RemoveAt(index);
+                }
+
+                List<(byte[], byte[])> soundsSNDS = new List<(byte[], byte[])>();
+
+                foreach (var v in snds)
+                    soundsSNDS.Add((v.SoundHeader, GetFromAssetID(v.SoundAssetID).Data));
+
+                foreach (var v in snds)
+                {
+                    int index = r.Next(0, soundsSNDS.Count);
+                    v.SoundHeader = soundsSNDS[index].Item1;
+                    GetFromAssetID(v.SoundAssetID).Data = soundsSNDS[index].Item2;
+                    soundsSNDS.RemoveAt(index);
+                }
+            }
+
+            sndi.Entries_SND = snd.ToArray();
+            sndi.Entries_SNDS = snds.ToArray();
+
+            return true;
+        }
+
+        private bool RandomizeSNDI_GCN_V1(int seed, AssetSNDI_GCN_V1 sndi, bool mixTypes, bool scoobyBoot)
+        {
+            Random r = new Random(seed);
+
+            List<EntrySoundInfo_GCN_V1> snd = sndi.Entries_SND.ToList();
+            List<EntrySoundInfo_GCN_V1> snds = sndi.Entries_SNDS.ToList();
+
+            if (scoobyBoot)
+            {
+                List<(byte[], byte[])> sounds = new List<(byte[], byte[])>();
+
+                foreach (var v in snds)
+                    if (!GetFromAssetID(v.SoundAssetID).AHDR.ADBG.assetName.Contains("thera"))
+                        sounds.Add((v.SoundHeader, GetFromAssetID(v.SoundAssetID).Data));
+
+                foreach (var v in snds)
+                    if (!GetFromAssetID(v.SoundAssetID).AHDR.ADBG.assetName.Contains("thera"))
+                    {
+                        int index = r.Next(0, sounds.Count);
+                        v.SoundHeader = sounds[index].Item1;
+                        GetFromAssetID(v.SoundAssetID).Data = sounds[index].Item2;
+                        sounds.RemoveAt(index);
+                    }
+            }
+            else if (mixTypes)
+            {
+                List<(byte[], byte[])> sounds = new List<(byte[], byte[])>();
+
+                foreach (var v in snd)
+                    sounds.Add((v.SoundHeader, GetFromAssetID(v.SoundAssetID).Data));
+
+                foreach (var v in snds)
+                    sounds.Add((v.SoundHeader, GetFromAssetID(v.SoundAssetID).Data));
+
+                foreach (var v in snd)
+                {
+                    int index = r.Next(0, sounds.Count);
+                    v.SoundHeader = sounds[index].Item1;
+                    GetFromAssetID(v.SoundAssetID).Data = sounds[index].Item2;
+                    sounds.RemoveAt(index);
+                }
+
+                foreach (var v in snds)
+                {
+                    int index = r.Next(0, sounds.Count);
+                    v.SoundHeader = sounds[index].Item1;
+                    GetFromAssetID(v.SoundAssetID).Data = sounds[index].Item2;
+                    sounds.RemoveAt(index);
+                }
+            }
+            else
+            {
+                List<(byte[], byte[])> soundsSND = new List<(byte[], byte[])>();
+
+                foreach (var v in snd)
+                    soundsSND.Add((v.SoundHeader, GetFromAssetID(v.SoundAssetID).Data));
+
+                foreach (var v in snd)
+                {
+                    int index = r.Next(0, soundsSND.Count);
+                    v.SoundHeader = soundsSND[index].Item1;
+                    GetFromAssetID(v.SoundAssetID).Data = soundsSND[index].Item2;
+                    soundsSND.RemoveAt(index);
+                }
+
+                List<(byte[], byte[])> soundsSNDS = new List<(byte[], byte[])>();
+
+                foreach (var v in snds)
+                    soundsSNDS.Add((v.SoundHeader, GetFromAssetID(v.SoundAssetID).Data));
+
+                foreach (var v in snds)
+                {
+                    int index = r.Next(0, soundsSNDS.Count);
+                    v.SoundHeader = soundsSNDS[index].Item1;
+                    GetFromAssetID(v.SoundAssetID).Data = soundsSNDS[index].Item2;
+                    soundsSNDS.RemoveAt(index);
+                }
+            }
+
+            sndi.Entries_SND = snd.ToArray();
+            sndi.Entries_SNDS = snds.ToArray();
+
+            return true;
+        }
+
+        private bool RandomizeSNDI_PS2(int seed, AssetSNDI_PS2 sndi, bool mixTypes, bool scoobyBoot)
+        {
+            Random r = new Random(seed);
+
+            var snd = sndi.Entries_SND.ToList();
+            var snds = sndi.Entries_SNDS.ToList();
+
+            if (scoobyBoot)
+            {
+                List<(byte[], byte[])> sounds = new List<(byte[], byte[])>();
+
+                foreach (var v in snds)
+                    if (!GetFromAssetID(v.SoundAssetID).AHDR.ADBG.assetName.Contains("thera"))
+                        sounds.Add((v.SoundHeader, GetFromAssetID(v.SoundAssetID).Data));
+
+                foreach (var v in snds)
+                    if (!GetFromAssetID(v.SoundAssetID).AHDR.ADBG.assetName.Contains("thera"))
+                    {
+                        int index = r.Next(0, sounds.Count);
+                        v.SoundHeader = sounds[index].Item1;
+                        GetFromAssetID(v.SoundAssetID).Data = sounds[index].Item2;
+                        sounds.RemoveAt(index);
+                    }
+            }
+            else if (mixTypes)
+            {
+                List<(byte[], byte[])> sounds = new List<(byte[], byte[])>();
+
+                foreach (var v in snd)
+                    sounds.Add((v.SoundHeader, GetFromAssetID(v.SoundAssetID).Data));
+
+                foreach (var v in snds)
+                    sounds.Add((v.SoundHeader, GetFromAssetID(v.SoundAssetID).Data));
+
+                foreach (var v in snd)
+                {
+                    int index = r.Next(0, sounds.Count);
+                    v.SoundHeader = sounds[index].Item1;
+                    GetFromAssetID(v.SoundAssetID).Data = sounds[index].Item2;
+                    sounds.RemoveAt(index);
+                }
+
+                foreach (var v in snds)
+                {
+                    int index = r.Next(0, sounds.Count);
+                    v.SoundHeader = sounds[index].Item1;
+                    GetFromAssetID(v.SoundAssetID).Data = sounds[index].Item2;
+                    sounds.RemoveAt(index);
+                }
+            }
+            else
+            {
+                List<(byte[], byte[])> soundsSND = new List<(byte[], byte[])>();
+
+                foreach (var v in snd)
+                    soundsSND.Add((v.SoundHeader, GetFromAssetID(v.SoundAssetID).Data));
+
+                foreach (var v in snd)
+                {
+                    int index = r.Next(0, soundsSND.Count);
+                    v.SoundHeader = soundsSND[index].Item1;
+                    GetFromAssetID(v.SoundAssetID).Data = soundsSND[index].Item2;
+                    soundsSND.RemoveAt(index);
+                }
+
+                List<(byte[], byte[])> soundsSNDS = new List<(byte[], byte[])>();
+
+                foreach (var v in snds)
+                    soundsSNDS.Add((v.SoundHeader, GetFromAssetID(v.SoundAssetID).Data));
+
+                foreach (var v in snds)
+                {
+                    int index = r.Next(0, soundsSNDS.Count);
+                    v.SoundHeader = soundsSNDS[index].Item1;
+                    GetFromAssetID(v.SoundAssetID).Data = soundsSNDS[index].Item2;
+                    soundsSNDS.RemoveAt(index);
+                }
+            }
+
+            sndi.Entries_SND = snd.ToArray();
+            sndi.Entries_SNDS = snds.ToArray();
+
+            return true;
+        }
+
         private bool RandomizeMovePointRadius(int seed, RandomizerSettings settings)
         {
             Random r = new Random(seed);
@@ -1451,7 +1893,7 @@ namespace IndustrialPark.Randomizer
                 case "kf04":
                 case "kf05":
                 case "b101":
-                    UnimportHip("Utility", "patrick.hip");
+                    ProgUnimportHip("Utility", "patrick.hip");
                     break;
                 case "bb01":
                 case "bb02":
@@ -1470,7 +1912,7 @@ namespace IndustrialPark.Randomizer
                 case "gy04":
                 case "db02":
                 case "b201":
-                    UnimportHip("Utility", "sandy.hip");
+                    ProgUnimportHip("Utility", "sandy.hip");
                     break;
                 default:
                     return false;
@@ -1623,7 +2065,7 @@ namespace IndustrialPark.Randomizer
                 }
 
                 string folderName = v.ToString().Contains("tiki") ? "Utility" : "Enemies";
-                UnimportHip(folderName, hipFileName);
+                ProgUnimportHip(folderName, hipFileName);
             }
 
             return true;
@@ -1698,6 +2140,70 @@ namespace IndustrialPark.Randomizer
             return outSet;
         }
 
+
+        private static EnemySupplyCrateType[] importCrateTypes = new EnemySupplyCrateType[] {
+            EnemySupplyCrateType.crate_wood_bind,
+            EnemySupplyCrateType.crate_hover_bind,
+            EnemySupplyCrateType.crate_explode_bind,
+            EnemySupplyCrateType.crate_shrink_bind,
+            EnemySupplyCrateType.crate_steel_bind,
+        };
+
+        public HashSet<EnemySupplyCrateType> GetDynaCrateTypes()
+        {
+            var outSet = new HashSet<EnemySupplyCrateType>();
+
+            foreach (DynaEnemySupplyCrate a in from asset in assetDictionary.Values
+                                               where asset is AssetDYNA dyna &&
+                                               dyna.DynaSpec is DynaEnemySupplyCrate crate
+                                               && importCrateTypes.Contains(((DynaEnemySupplyCrate)((AssetDYNA)asset).DynaSpec).Type)
+                                               select (DynaEnemySupplyCrate)((AssetDYNA)asset).DynaSpec)
+                if (!ContainsAsset(new AssetID(a.Type.ToString() + ".MINF")))
+                    outSet.Add(a.Type);
+
+            return outSet;
+        }
+
+        private static EnemyStandardType[] importEnemyTypes = new EnemyStandardType[] {
+            EnemyStandardType.flinger_v1_bind,            
+            EnemyStandardType.flinger_v2_bind,
+            EnemyStandardType.flinger_v3_bind,
+            EnemyStandardType.fogger_de_bind,
+            EnemyStandardType.fogger_gg_bind,
+            EnemyStandardType.fogger_jk_bind,
+            EnemyStandardType.fogger_pt_bind,
+            EnemyStandardType.fogger_tr_bind,
+            EnemyStandardType.fogger_tt_bind,
+            EnemyStandardType.fogger_v1_bind,
+            EnemyStandardType.fogger_v2_bind,
+            EnemyStandardType.fogger_v3_bind,
+            EnemyStandardType.mervyn_v3_bind,
+            EnemyStandardType.minimerv_v1_bind,
+            EnemyStandardType.popper_v1_bind,
+            EnemyStandardType.popper_v3_bind,
+            EnemyStandardType.slammer_v1_bind,
+            EnemyStandardType.slammer_des_bind,
+            EnemyStandardType.slammer_v3_bind,
+            EnemyStandardType.spinner_v1_bind,
+            EnemyStandardType.spinner_v2_bind,
+            EnemyStandardType.spinner_v3_bind
+        };
+
+        public HashSet<EnemyStandardType> GetDynaEnemyTypes()
+        {
+            var outSet = new HashSet<EnemyStandardType>();
+
+            foreach (DynaEnemyStandard a in from asset in assetDictionary.Values
+                                               where asset is AssetDYNA dyna &&
+                                               dyna.DynaSpec is DynaEnemyStandard crate
+                                               && importEnemyTypes.Contains(((DynaEnemyStandard)((AssetDYNA)asset).DynaSpec).Type)
+                                               select (DynaEnemyStandard)((AssetDYNA)asset).DynaSpec)
+                if (!ContainsAsset(new AssetID(a.Type.ToString() + ".MINF")))
+                    outSet.Add(a.Type);
+
+            return outSet;
+        }
+
         public bool ImportEnemyTypes(HashSet<VilType> inSet)
         {
             bool imported = false;
@@ -1756,7 +2262,115 @@ namespace IndustrialPark.Randomizer
 
             return imported;
         }
-        
+
+        public bool ImportCrateTypes(HashSet<EnemySupplyCrateType> inSet, bool unimport)
+        {
+            bool imported = false;
+
+            foreach (EnemySupplyCrateType v in inSet)
+            {
+                if (ContainsAsset(new AssetID(v.ToString() + ".MINF")))
+                    continue;
+
+                string hipFileName = null;
+                switch (v)
+                {
+                    case EnemySupplyCrateType.crate_wood_bind:
+                        hipFileName = "crate_wood.hip"; break;
+                    case EnemySupplyCrateType.crate_hover_bind:
+                        hipFileName = "crate_hover.hip"; break;
+                    case EnemySupplyCrateType.crate_explode_bind:
+                        hipFileName = "crate_explode.hip"; break;
+                    case EnemySupplyCrateType.crate_shrink_bind:
+                        hipFileName = "crate_shrink.hip"; break;
+                    case EnemySupplyCrateType.crate_steel_bind:
+                        hipFileName = "crate_steel.hip"; break;
+                    default:
+                        throw new Exception("Invalid Crate Type");
+                }
+
+                if (unimport)
+                    ProgUnimportHip("Utility", hipFileName);
+                else
+                    ProgImportHip("Utility", hipFileName);
+
+                imported = true;
+            }
+
+            return imported;
+        }
+
+        public bool ImportDynaEnemyTypes(HashSet<EnemyStandardType> inSet, bool unimport)
+        {
+            bool imported = false;
+
+            foreach (EnemyStandardType v in inSet)
+            {
+                if (ContainsAsset(new AssetID(v.ToString() + ".MINF")))
+                    continue;
+
+                string hipFileName = null;
+                switch (v)
+                {
+                    case EnemyStandardType.flinger_v1_bind:
+                        hipFileName = "flinger_desert.hip"; break;
+                    case EnemyStandardType.flinger_v2_bind:
+                        hipFileName = "flinger_trench.hip"; break;
+                    case EnemyStandardType.flinger_v3_bind:
+                        hipFileName = "flinger_junkyard.hip"; break;
+                    case EnemyStandardType.fogger_de_bind:
+                        hipFileName = "fogger_desert.HIP"; break;                        
+                    case EnemyStandardType.fogger_gg_bind:
+                        hipFileName = "fogger_goofy_goober.HIP"; break;
+                    case EnemyStandardType.fogger_jk_bind:
+                        hipFileName = "fogger_junkyard.hip"; break;
+                    case EnemyStandardType.fogger_pt_bind:
+                        hipFileName = "fogger_planktopolis.hip"; break;
+                    case EnemyStandardType.fogger_tr_bind:
+                        hipFileName = "fogger_trench.hip"; break;
+                    case EnemyStandardType.fogger_tt_bind:
+                        hipFileName = "fogger_thugtug.hip"; break;
+                    case EnemyStandardType.fogger_v1_bind:
+                        hipFileName = "fogger_v1.hip"; break;
+                    case EnemyStandardType.fogger_v2_bind:
+                        hipFileName = "fogger_v2.hip"; break;
+                    case EnemyStandardType.fogger_v3_bind:
+                        hipFileName = "fogger_v3.hip"; break;
+                    case EnemyStandardType.mervyn_v3_bind:
+                        hipFileName = "mervyn.hip"; break;
+                    case EnemyStandardType.minimerv_v1_bind:
+                        hipFileName = "mini_merv.hip"; break;
+                    case EnemyStandardType.popper_v1_bind:
+                        hipFileName = "popper_trench.hip"; break;
+                    case EnemyStandardType.popper_v3_bind:
+                        hipFileName = "popper_planktopolis.hip"; break;
+                    case EnemyStandardType.slammer_v1_bind:
+                        hipFileName = "slammer_goofy_goober.hip"; break;
+                    case EnemyStandardType.slammer_des_bind:
+                        hipFileName = "slammer_desert.hip"; break;
+                    case EnemyStandardType.slammer_v3_bind:
+                        hipFileName = "slammer_thugtug.hip"; break;
+                    case EnemyStandardType.spinner_v1_bind:
+                        hipFileName = "spinner_thugtug.hip"; break;
+                    case EnemyStandardType.spinner_v2_bind:
+                        hipFileName = "spinner_junkyard.hip"; break;
+                    case EnemyStandardType.spinner_v3_bind:
+                        hipFileName = "spinner_planktopolis.hip"; break;
+                    default:
+                        throw new Exception("Invalid Enemy Type");
+                }
+
+                if (unimport)
+                    ProgUnimportHip("Enemies", hipFileName);
+                else
+                    ProgImportHip("Enemies", hipFileName);
+
+                imported = true;
+            }
+
+            return imported;
+        }
+
         public bool ImportNumbers()
         {
             ProgImportHip("Utility", "numbers.hip");
@@ -1775,12 +2389,14 @@ namespace IndustrialPark.Randomizer
 
         public void ProgImportHip(string folderName, string fileName)
         {
-            ImportHip(Path.Combine(editorFilesFolder, "BattleForBikiniBottom", platform.ToString(), folderName, fileName), true);
+            string gameName = game == Game.BFBB ? "BattleForBikiniBottom" : "MovieGame";
+            ImportHip(Path.Combine(editorFilesFolder, gameName, platform.ToString(), folderName, fileName), true);
         }
 
-        private void UnimportHip(string folderName, string fileName)
+        private void ProgUnimportHip(string folderName, string fileName)
         {
-            UnimportHip(new HipFile(Path.Combine(editorFilesFolder, "BattleForBikiniBottom", platform.ToString(), folderName, fileName)).DICT);
+            string gameName = game == Game.BFBB ? "BattleForBikiniBottom" : "MovieGame";
+            UnimportHip(new HipFile(Path.Combine(editorFilesFolder, gameName, platform.ToString(), folderName, fileName)).DICT);
         }
         
         public void UnimportHip(Section_DICT dict)
@@ -1947,7 +2563,33 @@ namespace IndustrialPark.Randomizer
                     case "s005":
                         return true;
                 }
-            
+            else if (game == Game.Incredibles)
+                switch (LevelName)
+                {
+                    case "b402":
+                        if (port.AHDR.ADBG.assetName == "B402_PORTAL")
+                            return true;
+                        break;
+                    case "pt01":
+                        if (port.AHDR.ADBG.assetName == "PT02_PORTAL_01")
+                            return true;
+                        break;
+                    case "pt02":
+                        if (port.AHDR.ADBG.assetName == "PORTAL_TO_PT01")
+                            return true;
+                        break;
+                    case "sc02":
+                    case "tr01":
+                        if (port.AHDR.ADBG.assetName == "TO_FINISH_PORTAL")
+                            return true;
+                        if (port.AHDR.ADBG.assetName == "TO_MINDY_PORTAL")
+                            return true;
+                        if (port.AHDR.ADBG.assetName == "TO_NEUTRAL_PORTAL")
+                            return true;
+                        if (port.AHDR.ADBG.assetName == "TO_START_PORTAL")
+                            return true;
+                        break;
+                }
 
             foreach (string s in toSkip)
                 if (dest.Contains(s.ToLower()))
