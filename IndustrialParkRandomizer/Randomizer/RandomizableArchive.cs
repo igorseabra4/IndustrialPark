@@ -12,7 +12,7 @@ namespace IndustrialPark.Randomizer
 {
     public class RandomizableArchive : ArchiveEditorFunctions
     {
-        public bool Randomize(int seed, RandomizerFlags flags, RandomizerFlags2 flags2, RandomizerSettings settings, Random gateRandom, out bool needToAddNumbers)
+        public bool Randomize(int seed, RandomizerSettings settings, Random gateRandom, out bool needToAddNumbers)
         {
             if (LevelName == "hb09")
                 return needToAddNumbers = false;
@@ -21,19 +21,19 @@ namespace IndustrialPark.Randomizer
 
             Random localRandom = new Random(seed);
             foreach (Asset a in assetDictionary.Values)
-                if (a is AssetTIMR timr && flags.HasFlag(RandomizerFlags.Timers))
+                if (a is AssetTIMR timr && settings.Timers)
                 {
                     timr.Time *= localRandom.NextFloat(settings.timerMin, settings.timerMax);
                     shuffled = true;
                 }
-                else if (a is AssetDSCO dsco && flags.HasFlag(RandomizerFlags.Disco_Floors))
+                else if (a is AssetDSCO dsco && settings.Disco_Floors)
                 {
                     byte[] bytes = dsco.PatternController;
                     localRandom.NextBytes(bytes);
                     dsco.PatternController = bytes;
                     shuffled = true;
                 }
-                else if (a is AssetSURF surf && flags.HasFlag(RandomizerFlags.Texture_Animations))
+                else if (a is AssetSURF surf && settings.Texture_Animations)
                 {
                     if (surf.UVEffects1_TransSpeed_X == 0)
                         surf.UVEffects1_TransSpeed_X = localRandom.NextFloat(settings.surfMin, settings.surfMax);
@@ -53,84 +53,81 @@ namespace IndustrialPark.Randomizer
                     shuffled = true;
                 }
 
-            if (flags.HasFlag(RandomizerFlags.Textures))
-                shuffled |= RandomizeTextures(seed, flags.HasFlag(RandomizerFlags.Textures_Special));
+            if (settings.Textures)
+                shuffled |= RandomizeTextures(seed, settings.Textures_Special);
 
-            if (flags.HasFlag(RandomizerFlags.Boulder_Settings))
+            if (settings.BoulderSettings)
                 shuffled |= RandomizeBoulderSettings(seed, settings);
 
-            if (flags.HasFlag(RandomizerFlags.Sounds))
-                shuffled |= RandomizeSounds(seed, flags2.HasFlag(RandomizerFlags2.Mix_SND_SNDS));
+            if (settings.Sounds)
+                shuffled |= RandomizeSounds(seed, settings.Mix_Sound_Types);
 
-            if (flags.HasFlag(RandomizerFlags.Pickup_Positions))
+            if (settings.Pickups)
                 shuffled |= RandomizePickupPositions(seed);
 
-            if (flags.HasFlag(RandomizerFlags.MovePoint_Radius))
+            if (settings.MovePoint_Radius)
                 shuffled |= RandomizeMovePointRadius(seed, settings);
 
             if (game == Game.BFBB)
             {
-                if (flags.HasFlag(RandomizerFlags.Tiki_Types) && ContainsAssetWithType(AssetType.VIL))
+                if (settings.Tiki_Types && ContainsAssetWithType(AssetType.VIL))
                 {
                     List<VilType> chooseFrom = new List<VilType>();
-                    if (settings.WoodenTiki >= 0)
+                    if (settings.TikiProbabilities.WoodenTiki >= 0)
                         chooseFrom.Add(VilType.tiki_wooden_bind);
-                    if (settings.FloatingTiki >= 0)
+                    if (settings.TikiProbabilities.FloatingTiki >= 0)
                         chooseFrom.Add(VilType.tiki_lovey_dovey_bind);
-                    if (settings.ThunderTiki >= 0)
+                    if (settings.TikiProbabilities.ThunderTiki >= 0)
                         chooseFrom.Add(VilType.tiki_thunder_bind);
-                    if (settings.ShhhTiki >= 0)
+                    if (settings.TikiProbabilities.ShhhTiki >= 0)
                         chooseFrom.Add(VilType.tiki_shhhh_bind);
-                    if (settings.StoneTiki >= 0)
+                    if (settings.TikiProbabilities.StoneTiki >= 0)
                         chooseFrom.Add(VilType.tiki_stone_bind);
 
                     List<VilType> setTo = new List<VilType>();
-                    for (int i = 0; i < settings.WoodenTiki; i++)
+                    for (int i = 0; i < settings.TikiProbabilities.WoodenTiki; i++)
                         setTo.Add(VilType.tiki_wooden_bind);
-                    for (int i = 0; i < settings.FloatingTiki; i++)
+                    for (int i = 0; i < settings.TikiProbabilities.FloatingTiki; i++)
                         setTo.Add(VilType.tiki_lovey_dovey_bind);
-                    for (int i = 0; i < settings.ThunderTiki; i++)
+                    for (int i = 0; i < settings.TikiProbabilities.ThunderTiki; i++)
                         setTo.Add(VilType.tiki_thunder_bind);
-                    for (int i = 0; i < settings.ShhhTiki; i++)
+                    for (int i = 0; i < settings.TikiProbabilities.ShhhTiki; i++)
                         setTo.Add(VilType.tiki_shhhh_bind);
-                    for (int i = 0; i < settings.StoneTiki; i++)
+                    for (int i = 0; i < settings.TikiProbabilities.StoneTiki; i++)
                         setTo.Add(VilType.tiki_stone_bind);
 
                     if (LevelName == "kf04")
                         chooseFrom.Remove(VilType.tiki_stone_bind);
 
-                    shuffled |= ShuffleVilTypes(seed, chooseFrom, setTo,
-                        flags.HasFlag(RandomizerFlags.Tiki_Models),
-                        flags.HasFlag(RandomizerFlags.Tiki_Allow_Any_Type),
-                        false);
+                    shuffled |= ShuffleVilTypes(seed, chooseFrom, setTo, settings.Tiki_Models, settings.Tiki_Allow_Any_Type, false);
                 }
             }
             else if (game == Game.Incredibles)
             {
-                if (flags.HasFlag(RandomizerFlags.Tiki_Types) && ContainsAssetWithType(AssetType.DYNA))
+                if (settings.Tiki_Types && ContainsAssetWithType(AssetType.DYNA))
                 {
                     List<EnemySupplyCrateType> chooseFrom = new List<EnemySupplyCrateType>();
-                    if (settings.WoodenTiki >= 0)
+                    if (settings.CrateProbabilities.WoodenTiki >= 0)
                         chooseFrom.Add(EnemySupplyCrateType.crate_wood_bind);
-                    if (settings.FloatingTiki >= 0)
+                    if (settings.CrateProbabilities.FloatingTiki >= 0)
                         chooseFrom.Add(EnemySupplyCrateType.crate_hover_bind);
-                    if (settings.ThunderTiki >= 0)
+                    if (settings.CrateProbabilities.ThunderTiki >= 0)
                         chooseFrom.Add(EnemySupplyCrateType.crate_explode_bind);
-                    if (settings.ShhhTiki >= 0)
+                    if (settings.CrateProbabilities.ShhhTiki >= 0)
                         chooseFrom.Add(EnemySupplyCrateType.crate_shrink_bind);
-                    if (settings.StoneTiki >= 0)
+                    if (settings.CrateProbabilities.StoneTiki >= 0)
                         chooseFrom.Add(EnemySupplyCrateType.crate_steel_bind);
 
                     List<EnemySupplyCrateType> setTo = new List<EnemySupplyCrateType>();
-                    for (int i = 0; i < settings.WoodenTiki; i++)
+                    for (int i = 0; i < settings.CrateProbabilities.WoodenTiki; i++)
                         setTo.Add(EnemySupplyCrateType.crate_wood_bind);
-                    for (int i = 0; i < settings.FloatingTiki; i++)
+                    for (int i = 0; i < settings.CrateProbabilities.FloatingTiki; i++)
                         setTo.Add(EnemySupplyCrateType.crate_wood_bind);
-                    for (int i = 0; i < settings.ThunderTiki; i++)
+                    for (int i = 0; i < settings.CrateProbabilities.ThunderTiki; i++)
                         setTo.Add(EnemySupplyCrateType.crate_explode_bind);
-                    for (int i = 0; i < settings.ShhhTiki; i++)
+                    for (int i = 0; i < settings.CrateProbabilities.ShhhTiki; i++)
                         setTo.Add(EnemySupplyCrateType.crate_shrink_bind);
-                    for (int i = 0; i < settings.StoneTiki; i++)
+                    for (int i = 0; i < settings.CrateProbabilities.StoneTiki; i++)
                         setTo.Add(EnemySupplyCrateType.crate_steel_bind);
 
                     shuffled |= ShuffleBoxDynaTypes(seed, chooseFrom, setTo);
@@ -139,225 +136,227 @@ namespace IndustrialPark.Randomizer
 
             if (game == Game.BFBB)
             {
-                if (flags.HasFlag(RandomizerFlags.Enemy_Types) && ContainsAssetWithType(AssetType.VIL))
+                if (settings.Enemy_Types && ContainsAssetWithType(AssetType.VIL))
                 {
                     List<VilType> chooseFrom = new List<VilType>(16);
-                    if (settings.Fodder >= 0)
+                    if (settings.EnemyProbabilities.Fodder >= 0)
                         chooseFrom.Add(VilType.robot_0a_fodder_bind);
-                    if (settings.Hammer >= 0)
+                    if (settings.EnemyProbabilities.Hammer >= 0)
                         chooseFrom.Add(VilType.ham_bind);
-                    if (settings.Tartar >= 0)
+                    if (settings.EnemyProbabilities.Tartar >= 0)
                         chooseFrom.Add(VilType.robot_tar_bind);
-                    if (settings.GLove >= 0)
+                    if (settings.EnemyProbabilities.GLove >= 0)
                         chooseFrom.Add(VilType.g_love_bind);
-                    if (settings.Chuck >= 0)
+                    if (settings.EnemyProbabilities.Chuck >= 0)
                         chooseFrom.Add(VilType.robot_chuck_bind);
-                    if (settings.Monsoon >= 0)
+                    if (settings.EnemyProbabilities.Monsoon >= 0)
                         chooseFrom.Add(VilType.robot_4a_monsoon_bind);
-                    if (settings.Sleepytime >= 0)
+                    if (settings.EnemyProbabilities.Sleepytime >= 0)
                         chooseFrom.Add(VilType.robot_sleepytime_bind);
-                    if (settings.Arf >= 0)
+                    if (settings.EnemyProbabilities.Arf >= 0)
                         chooseFrom.Add(VilType.robot_arf_bind);
-                    if (settings.Tubelets >= 0)
+                    if (settings.EnemyProbabilities.Tubelets >= 0)
                         chooseFrom.Add(VilType.tubelet_bind);
-                    if (settings.Slick >= 0)
+                    if (settings.EnemyProbabilities.Slick >= 0)
                         chooseFrom.Add(VilType.robot_9a_bind);
-                    if (settings.BombBot >= 0)
+                    if (settings.EnemyProbabilities.BombBot >= 0)
                         chooseFrom.Add(VilType.robot_0a_bomb_bind);
-                    if (settings.BzztBot >= 0)
+                    if (settings.EnemyProbabilities.BzztBot >= 0)
                         chooseFrom.Add(VilType.robot_0a_bzzt_bind);
-                    if (settings.ChompBot >= 0)
+                    if (settings.EnemyProbabilities.ChompBot >= 0)
                         chooseFrom.Add(VilType.robot_0a_chomper_bind);
 
                     List<VilType> setTo = new List<VilType>();
-                    for (int i = 0; i < settings.Fodder; i++)
+                    for (int i = 0; i < settings.EnemyProbabilities.Fodder; i++)
                         setTo.Add(VilType.robot_0a_fodder_bind);
-                    for (int i = 0; i < settings.Hammer; i++)
+                    for (int i = 0; i < settings.EnemyProbabilities.Hammer; i++)
                         setTo.Add(VilType.ham_bind);
-                    for (int i = 0; i < settings.Tartar; i++)
+                    for (int i = 0; i < settings.EnemyProbabilities.Tartar; i++)
                         setTo.Add(VilType.robot_tar_bind);
-                    for (int i = 0; i < settings.GLove; i++)
+                    for (int i = 0; i < settings.EnemyProbabilities.GLove; i++)
                         setTo.Add(VilType.g_love_bind);
-                    for (int i = 0; i < settings.Chuck; i++)
+                    for (int i = 0; i < settings.EnemyProbabilities.Chuck; i++)
                         setTo.Add(VilType.robot_chuck_bind);
-                    for (int i = 0; i < settings.Monsoon; i++)
+                    for (int i = 0; i < settings.EnemyProbabilities.Monsoon; i++)
                         setTo.Add(VilType.robot_4a_monsoon_bind);
-                    for (int i = 0; i < settings.Sleepytime; i++)
+                    for (int i = 0; i < settings.EnemyProbabilities.Sleepytime; i++)
                         setTo.Add(VilType.robot_sleepytime_bind);
-                    for (int i = 0; i < settings.Arf; i++)
+                    for (int i = 0; i < settings.EnemyProbabilities.Arf; i++)
                         setTo.Add(VilType.robot_arf_bind);
-                    for (int i = 0; i < settings.Tubelets; i++)
+                    for (int i = 0; i < settings.EnemyProbabilities.Tubelets; i++)
                         setTo.Add(VilType.tubelet_bind);
-                    for (int i = 0; i < settings.Slick; i++)
+                    for (int i = 0; i < settings.EnemyProbabilities.Slick; i++)
                         setTo.Add(VilType.robot_9a_bind);
-                    for (int i = 0; i < settings.BombBot; i++)
+                    for (int i = 0; i < settings.EnemyProbabilities.BombBot; i++)
                         setTo.Add(VilType.robot_0a_bomb_bind);
-                    for (int i = 0; i < settings.BzztBot; i++)
+                    for (int i = 0; i < settings.EnemyProbabilities.BzztBot; i++)
                         setTo.Add(VilType.robot_0a_bzzt_bind);
-                    for (int i = 0; i < settings.ChompBot; i++)
+                    for (int i = 0; i < settings.EnemyProbabilities.ChompBot; i++)
                         setTo.Add(VilType.robot_0a_chomper_bind);
 
-                    shuffled |= ShuffleVilTypes(seed, chooseFrom, setTo, false, flags.HasFlag(RandomizerFlags.Enemies_Allow_Any_Type), true);
+                    shuffled |= ShuffleVilTypes(seed, chooseFrom, setTo, false, settings.Enemies_Allow_Any_Type, true);
                 }
             }
             else if (game == Game.Incredibles)
             {
-                if (flags.HasFlag(RandomizerFlags.Enemy_Types) && ContainsAssetWithType(AssetType.DYNA))
+                if (settings.Enemy_Types && ContainsAssetWithType(AssetType.DYNA))
                 {
                     List<EnemyStandardType> chooseFrom = new List<EnemyStandardType>(24);
 
-                    if (settings.flinger_v1_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.flinger_v1_bind >= 0)
                         chooseFrom.Add(EnemyStandardType.flinger_v1_bind);
-                    if (settings.flinger_v1_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.flinger_v1_bind >= 0)
                         chooseFrom.Add(EnemyStandardType.flinger_v1_bind);
-                    if (settings.flinger_v2_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.flinger_v2_bind >= 0)
                         chooseFrom.Add(EnemyStandardType.flinger_v2_bind);
-                    if (settings.flinger_v3_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.flinger_v3_bind >= 0)
                         chooseFrom.Add(EnemyStandardType.flinger_v3_bind);
-                    if (settings.fogger_de_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.fogger_de_bind >= 0)
                         chooseFrom.Add(EnemyStandardType.fogger_de_bind);
-                    if (settings.fogger_gg_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.fogger_gg_bind >= 0)
                         chooseFrom.Add(EnemyStandardType.fogger_gg_bind);
-                    if (settings.fogger_jk_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.fogger_jk_bind >= 0)
                         chooseFrom.Add(EnemyStandardType.fogger_jk_bind);
-                    if (settings.fogger_pt_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.fogger_pt_bind >= 0)
                         chooseFrom.Add(EnemyStandardType.fogger_pt_bind);
-                    if (settings.fogger_tr_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.fogger_tr_bind >= 0)
                         chooseFrom.Add(EnemyStandardType.fogger_tr_bind);
-                    if (settings.fogger_tt_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.fogger_tt_bind >= 0)
                         chooseFrom.Add(EnemyStandardType.fogger_tt_bind);
-                    if (settings.fogger_v1_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.fogger_v1_bind >= 0)
                         chooseFrom.Add(EnemyStandardType.fogger_v1_bind);
-                    if (settings.fogger_v2_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.fogger_v2_bind >= 0)
                         chooseFrom.Add(EnemyStandardType.fogger_v2_bind);
-                    if (settings.fogger_v3_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.fogger_v3_bind >= 0)
                         chooseFrom.Add(EnemyStandardType.fogger_v3_bind);
-                    if (settings.mervyn_v3_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.mervyn_v3_bind >= 0)
                         chooseFrom.Add(EnemyStandardType.mervyn_v3_bind);
-                    if (settings.minimerv_v1_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.minimerv_v1_bind >= 0)
                         chooseFrom.Add(EnemyStandardType.minimerv_v1_bind);
-                    if (settings.popper_v1_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.popper_v1_bind >= 0)
                         chooseFrom.Add(EnemyStandardType.popper_v1_bind);
-                    if (settings.popper_v3_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.popper_v3_bind >= 0)
                         chooseFrom.Add(EnemyStandardType.popper_v3_bind);
-                    if (settings.slammer_v1_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.slammer_v1_bind >= 0)
                         chooseFrom.Add(EnemyStandardType.slammer_v1_bind);
-                    if (settings.slammer_des_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.slammer_des_bind >= 0)
                         chooseFrom.Add(EnemyStandardType.slammer_des_bind);
-                    if (settings.slammer_v3_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.slammer_v3_bind >= 0)
                         chooseFrom.Add(EnemyStandardType.slammer_v3_bind);
-                    if (settings.spinner_v1_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.spinner_v1_bind >= 0)
                         chooseFrom.Add(EnemyStandardType.spinner_v1_bind);
-                    if (settings.spinner_v2_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.spinner_v2_bind >= 0)
                         chooseFrom.Add(EnemyStandardType.spinner_v2_bind);
-                    if (settings.spinner_v3_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.spinner_v3_bind >= 0)
                         chooseFrom.Add(EnemyStandardType.spinner_v3_bind);
 
                     List<EnemyStandardType> setTo = new List<EnemyStandardType>();
-                    for (int i = 0; i < settings.flinger_v1_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.flinger_v1_bind; i++)
                         setTo.Add(EnemyStandardType.flinger_v1_bind);
-                    for (int i = 0; i < settings.flinger_v2_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.flinger_v2_bind; i++)
                         setTo.Add(EnemyStandardType.flinger_v2_bind);
-                    for (int i = 0; i < settings.flinger_v3_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.flinger_v3_bind; i++)
                         setTo.Add(EnemyStandardType.flinger_v3_bind);
-                    for (int i = 0; i < settings.fogger_de_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.fogger_de_bind; i++)
                         setTo.Add(EnemyStandardType.fogger_de_bind);
-                    for (int i = 0; i < settings.fogger_gg_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.fogger_gg_bind; i++)
                         setTo.Add(EnemyStandardType.fogger_gg_bind);
-                    for (int i = 0; i < settings.fogger_jk_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.fogger_jk_bind; i++)
                         setTo.Add(EnemyStandardType.fogger_jk_bind);
-                    for (int i = 0; i < settings.fogger_pt_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.fogger_pt_bind; i++)
                         setTo.Add(EnemyStandardType.fogger_pt_bind);
-                    for (int i = 0; i < settings.fogger_tr_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.fogger_tr_bind; i++)
                         setTo.Add(EnemyStandardType.fogger_tr_bind);
-                    for (int i = 0; i < settings.fogger_tt_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.fogger_tt_bind; i++)
                         setTo.Add(EnemyStandardType.fogger_tt_bind);
-                    for (int i = 0; i < settings.fogger_v1_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.fogger_v1_bind; i++)
                         setTo.Add(EnemyStandardType.fogger_v1_bind);
-                    for (int i = 0; i < settings.fogger_v2_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.fogger_v2_bind; i++)
                         setTo.Add(EnemyStandardType.fogger_v2_bind);
-                    for (int i = 0; i < settings.fogger_v3_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.fogger_v3_bind; i++)
                         setTo.Add(EnemyStandardType.fogger_v3_bind);
-                    for (int i = 0; i < settings.mervyn_v3_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.mervyn_v3_bind; i++)
                         setTo.Add(EnemyStandardType.mervyn_v3_bind);
-                    for (int i = 0; i < settings.minimerv_v1_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.minimerv_v1_bind; i++)
                         setTo.Add(EnemyStandardType.minimerv_v1_bind);
-                    for (int i = 0; i < settings.popper_v1_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.popper_v1_bind; i++)
                         setTo.Add(EnemyStandardType.popper_v1_bind);
-                    for (int i = 0; i < settings.popper_v3_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.popper_v3_bind; i++)
                         setTo.Add(EnemyStandardType.popper_v3_bind);
-                    for (int i = 0; i < settings.slammer_v1_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.slammer_v1_bind; i++)
                         setTo.Add(EnemyStandardType.slammer_v1_bind);
-                    for (int i = 0; i < settings.slammer_des_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.slammer_des_bind; i++)
                         setTo.Add(EnemyStandardType.slammer_des_bind);
-                    for (int i = 0; i < settings.slammer_v3_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.slammer_v3_bind; i++)
                         setTo.Add(EnemyStandardType.slammer_v3_bind);
-                    for (int i = 0; i < settings.spinner_v1_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.spinner_v1_bind; i++)
                         setTo.Add(EnemyStandardType.spinner_v1_bind);
-                    for (int i = 0; i < settings.spinner_v2_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.spinner_v2_bind; i++)
                         setTo.Add(EnemyStandardType.spinner_v2_bind);
-                    for (int i = 0; i < settings.spinner_v3_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.spinner_v3_bind; i++)
                         setTo.Add(EnemyStandardType.spinner_v3_bind);
 
-                    shuffled |= ShuffleEnemyDynaTypes(seed, chooseFrom, setTo, flags.HasFlag(RandomizerFlags.Enemies_Allow_Any_Type));
+                    shuffled |= ShuffleEnemyDynaTypes(seed, chooseFrom, setTo, settings.Enemies_Allow_Any_Type);
                 }
             }
 
-            if (flags.HasFlag(RandomizerFlags.Marker_Positions) && ContainsAssetWithType(AssetType.MRKR)
+            if (settings.Marker_Positions && ContainsAssetWithType(AssetType.MRKR)
                 && !new string[] { "hb02", "b101", "b201", "b302", "b303" }.Contains(LevelName))
                 shuffled |= ShuffleMRKRPositions(seed,
                     settings.allMenuWarpsHB01,
-                    flags2.HasFlag(RandomizerFlags2.Pointer_Positions),
-                    flags.HasFlag(RandomizerFlags.Player_Start),
-                    flags2.HasFlag(RandomizerFlags2.Bus_Stop_Positions),
-                    flags2.HasFlag(RandomizerFlags2.Teleport_Box_Positions),
-                    flags2.HasFlag(RandomizerFlags2.Taxi_Positions));
+                    settings.Pointer_Positions,
+                    settings.Player_Start,
+                    settings.Bus_Stop_Trigger_Positions,
+                    settings.Teleport_Box_Positions,
+                    settings.Taxi_Trigger_Positions);
 
-            if (flags.HasFlag(RandomizerFlags.Platform_Speeds))
+            if (settings.PlatformSpeeds)
                 shuffled |= ShufflePlatSpeeds(seed, settings);
             
-            if (flags.HasFlag(RandomizerFlags.Cameras))
+            if (settings.Cameras)
                 shuffled |= ShuffleCameras(seed);
 
             bool shinyNumbers = false;
             bool spatNumbers = false;
 
-            if (game == Game.BFBB)
-                if (flags.HasFlag(RandomizerFlags.Shiny_Object_Gates) && ContainsAssetWithType(AssetType.COND))
+            if (game == Game.BFBB && settings.Shiny_Object_Gates && ContainsAssetWithType(AssetType.COND))
                     shuffled |= ShuffleShinyGates(gateRandom, settings, out shinyNumbers);
 
             if (game == Game.BFBB)
-                if ((settings.spatReqChum != 75 || flags.HasFlag(RandomizerFlags.Spatula_Gates)) && ContainsAssetWithType(AssetType.COND))
-                    shuffled |= ShuffleSpatulaGates(gateRandom, flags.HasFlag(RandomizerFlags.Spatula_Gates), settings, out spatNumbers);
+                if ((settings.spatReqChum != 75 || settings.Spatula_Gates) && ContainsAssetWithType(AssetType.COND))
+                    shuffled |= ShuffleSpatulaGates(gateRandom, settings.Spatula_Gates, settings, out spatNumbers);
 
             needToAddNumbers = shinyNumbers | spatNumbers;
 
-            if (flags2.HasFlag(RandomizerFlags2.Scale_Of_Things))
-               ShuffleScales(seed, settings);
+            if (settings.Scale_Of_Things)
+                shuffled |= ShuffleScales(seed, settings);
             
-            if (flags2.HasFlag(RandomizerFlags2.Buttons))
+            if (settings.Buttons)
                 shuffled |= ShuffleButtons(seed);
 
-            if (flags.HasFlag(RandomizerFlags.Colors))
+            if (settings.FloatingBlockChallenge && game == Game.Incredibles)
+                shuffled |= ShuffleFloatingBlocks(seed);
+
+            if (settings.Colors)
             {
                 Random r = new Random(seed);
-                shuffled |= ShufflePlaceableColors(r, settings.brightColors, settings.strongColors) | ShuffleModelColors(r, settings.brightColors, settings.strongColors);
+                shuffled |= 
+                    ShufflePlaceableColors(r, settings.brightColors, settings.strongColors) | 
+                    ShufflePlaceableDynaColors(r, settings.brightColors, settings.strongColors) | 
+                    ShuffleModelColors(r, settings.brightColors, settings.strongColors);
             }
 
-            if (game == Game.BFBB)
-                if (flags.HasFlag(RandomizerFlags.Player_Characters))
-                    shuffled |= ShuffleBusStops(gateRandom);
+            if (game == Game.BFBB && settings.PlayerCharacters)
+                shuffled |= ShuffleBusStops(gateRandom);
             
-            if (flags.HasFlag(RandomizerFlags.Music))
+            if (settings.Music)
                 shuffled |= RandomizePlaylistLocal();
 
-            if (game == Game.BFBB)
-                if (settings.disableCutscenes)
-                    shuffled |= DisableCutscenes();
+            if (game == Game.BFBB && settings.disableCutscenes)
+                shuffled |= DisableCutscenes();
 
-            if (game == Game.Incredibles)
-                if (settings.disableCutscenes)
-                    shuffled |= DisableCutscenesMovie();
+            if (game == Game.Incredibles && settings.disableCutscenes)
+                shuffled |= DisableCutscenesMovie();
 
             if (settings.openTeleportBoxes)
                 shuffled |= OpenTeleportBoxes();
@@ -544,9 +543,26 @@ namespace IndustrialPark.Randomizer
                 a.PositionZ = positions[value].Z;
 
                 positions.RemoveAt(value);
+
+                if (game == Game.Incredibles)
+                    RemoveFromVolume(a.AHDR.assetID);
             }
 
             return true;
+        }
+
+        private void RemoveFromVolume(uint assetID)
+        {
+            foreach (Asset a in assetDictionary.Values)
+                if (a is AssetGRUP grup && grup.AHDR.ADBG.assetName.ToLower().Contains("volume"))
+                {
+                    var items = (from value in grup.GroupItems select (uint)value).ToList();
+                    if (items.Contains(assetID))
+                    {
+                        items.Remove(assetID);
+                        grup.GroupItems = (from value in items select new AssetID(value)).ToArray();
+                    }
+                }
         }
 
         private bool ShuffleCameras(int seed)
@@ -633,6 +649,70 @@ namespace IndustrialPark.Randomizer
             return assets.Count != 0;
         }
 
+        private bool ShuffleFloatingBlocks(int seed)
+        {
+            switch (LevelName)
+            {
+                case "fb01":
+                case "fb02":
+                case "fb03":
+                    Random r = new Random(seed);
+
+                    List<AssetPLAT> assets = (from asset in assetDictionary.Values where asset is AssetPLAT plat select asset)
+                        .Cast<AssetPLAT>().ToList();
+
+                    for (int i = 0; i < assets.Count; i++)
+                    {
+                        if (assets[i].AHDR.ADBG.assetName.ToLower().Contains("dizzy") || assets[i].Model_AssetID.Equals("fb_platform"))
+                        {
+                            assets.RemoveAt(i--);
+                            continue;
+                        }
+                        foreach (var l in assets[i].LinksTSSM)
+                            if (l.EventSendID == EventTSSM.Drivenby)
+                            {
+                                assets.RemoveAt(i--);
+                                break;
+                            }
+                    }
+
+                    List<Vector3> positions = (from asset in assets select (new Vector3(asset.PositionX, asset.PositionY, asset.PositionZ))).ToList();
+
+                    foreach (AssetPLAT a in assets)
+                    {
+                        int value = r.Next(0, positions.Count);
+
+                        Vector3 delta = positions[value] - a.Position;
+
+                        a.PositionX = positions[value].X;
+                        a.PositionY = positions[value].Y;
+                        a.PositionZ = positions[value].Z;
+
+                        SetDeltaToDriven(a.AHDR.assetID, delta);
+
+                        positions.RemoveAt(value);
+                    }
+
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        private void SetDeltaToDriven(uint assetID, Vector3 delta)
+        {
+            foreach (Asset a in assetDictionary.Values)
+                if (a is EntityAsset entity)
+                    foreach (var l in entity.LinksTSSM)
+                        if (l.EventSendID == EventTSSM.Drivenby && l.TargetAssetID.Equals(assetID))
+                        {
+                            entity.PositionX += delta.X;
+                            entity.PositionY += delta.Y;
+                            entity.PositionZ += delta.Z;
+                            break;
+                        }
+        }
+
         private bool ShufflePlaceableColors(Random r, bool brightColors, bool strongColors)
         {
             AssetType[] allowed = new AssetType[] {
@@ -640,8 +720,8 @@ namespace IndustrialPark.Randomizer
                 AssetType.PKUP, AssetType.PLAT, AssetType.PLYR, AssetType.SIMP, AssetType.VIL };
 
             List<EntityAsset> assets = (from asset in assetDictionary.Values
-                                           where allowed.Contains(asset.AHDR.assetType)
-                                           select asset).Cast<EntityAsset>().ToList();
+                                        where allowed.Contains(asset.AHDR.assetType)
+                                        select asset).Cast<EntityAsset>().ToList();
 
             foreach (EntityAsset a in assets)
             {
@@ -649,6 +729,23 @@ namespace IndustrialPark.Randomizer
                 a.ColorRed = color.X;
                 a.ColorGreen = color.Y;
                 a.ColorBlue = color.Z;
+            }
+
+            return assets.Count != 0;
+        }
+
+        private bool ShufflePlaceableDynaColors(Random r, bool brightColors, bool strongColors)
+        {
+            List<AssetDYNA> assets = (from asset in assetDictionary.Values
+                                        where asset is AssetDYNA dyna && dyna.DynaSpec is DynaEnemySB
+                                      select asset).Cast<AssetDYNA>().ToList();
+
+            foreach (AssetDYNA a in assets)
+            {
+                Vector3 color = GetRandomColor(r, brightColors, strongColors);
+                ((DynaEnemySB)a.DynaSpec).ColorRed = color.X;
+                ((DynaEnemySB)a.DynaSpec).ColorGreen = color.Y;
+                ((DynaEnemySB)a.DynaSpec).ColorBlue = color.Z;
             }
 
             return assets.Count != 0;
@@ -1205,6 +1302,58 @@ namespace IndustrialPark.Randomizer
 
         private bool DisableCutscenesMovie()
         {
+            switch (LevelName)
+            {
+                case "b101":
+                    {
+                        uint dpat1 = new AssetID("AUTOSAVE_DONE_DISP");
+                        if (ContainsAsset(dpat1))
+                        {
+                            var a2 = (BaseAsset)GetFromAssetID(dpat1);
+                            var a3 = a2.LinksTSSM;
+                            a3[0].EventSendID = EventTSSM.Run;
+                            a3[0].TargetAssetID = "FRENCH_NARR2PORTAL_SCRIPT";
+                            a2.LinksTSSM = a3;
+                        }
+                        uint dpat2 = new AssetID("BOSS_DEATH_HAVE_TOKEN_SCRIPT");
+                        if (ContainsAsset(dpat2))
+                        {
+                            var a2 = (AssetSCRP)GetFromAssetID(dpat2);
+                            var a3 = a2.TimedLinksTSSM;
+                            a3[0].EventSendID = EventTSSM.Run;
+                            a3[0].TargetAssetID = "FRENCH_NARR2PORTAL_SCRIPT";
+                            a2.TimedLinksTSSM = a3;
+                        }
+                        uint dpat3 = new AssetID("CIN_PLAY_DISP");
+                        if (ContainsAsset(dpat3))
+                        {
+                            var a2 = (AssetDPAT)GetFromAssetID(dpat3);
+                            var a3 = a2.LinksTSSM;
+                            a3[0].EventSendID = EventTSSM.BossStageSet;
+                            a3[0].TargetAssetID = "FROG_FISH_NME";
+                            a2.LinksTSSM = a3;
+                        }
+                        return true;
+                    }
+                case "b201":
+                    {
+                        uint dpat1 = new AssetID("INTRO_CINE_DISP_01");
+                        if (ContainsAsset(dpat1))
+                            RemoveAsset(dpat1);
+
+                        uint scrp1 = new AssetID("PRE_END_CUTSCENE_SCRIPT");
+                        if (ContainsAsset(scrp1))
+                        {
+                            var a3 = (AssetSCRP)GetFromAssetID(scrp1);
+                            var a4 = a3.TimedLinksTSSM;
+
+                            a4[6].EventSendID = EventTSSM.Done;
+                            a3.TimedLinksTSSM = a4;
+                        }
+                        return true;
+                    }
+            }
+
             return false;
         }
 
@@ -2165,7 +2314,7 @@ namespace IndustrialPark.Randomizer
         }
 
         private static EnemyStandardType[] importEnemyTypes = new EnemyStandardType[] {
-            EnemyStandardType.flinger_v1_bind,            
+            EnemyStandardType.flinger_v1_bind,
             EnemyStandardType.flinger_v2_bind,
             EnemyStandardType.flinger_v3_bind,
             EnemyStandardType.fogger_de_bind,

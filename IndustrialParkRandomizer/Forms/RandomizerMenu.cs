@@ -16,9 +16,6 @@ namespace IndustrialPark.Randomizer
         public RandomizerMenu()
         {
             InitializeComponent();
-
-            string rootDir = null;
-            bool isDir = false;
             
             if (File.Exists(pathToSettings))
             {
@@ -26,10 +23,6 @@ namespace IndustrialPark.Randomizer
                 backupDir = settings.backupDir;
                 useBackupDirectoryToolStripMenuItem.Checked = !string.IsNullOrEmpty(settings.backupDir);
                 checkForUpdatesOnStartupToolStripMenuItem.Checked = settings.checkForUpdatesOnStartup;
-
-                if (!string.IsNullOrEmpty(settings.rootDir))
-                    rootDir = settings.rootDir;
-                isDir = settings.isDir;
 
                 if (settings.checkForUpdatesOnStartup && AutomaticUpdater.UpdateIndustrialPark(out _))
                 {
@@ -45,12 +38,12 @@ namespace IndustrialPark.Randomizer
 
                 File.WriteAllText(pathToSettings, JsonConvert.SerializeObject(new Randomizer_JSON_Settings(), Formatting.Indented));
             }
-            
-            randomizer = new Randomizer(rootDir, isDir);
 
-            textBoxSeed.Text = new Random().Next().ToString();
+            programIsChangingStuff = true;
+            comboBoxGame.SelectedIndex = 0;
+            programIsChangingStuff = false;
 
-            UpdateInterfaceFromRandomizer();
+            ResetRandomizer(false);
         }
 
         private void RandomizerMenu_FormClosing(object sender, FormClosingEventArgs e)
@@ -197,11 +190,24 @@ namespace IndustrialPark.Randomizer
             System.Diagnostics.Process.Start("https://battlepedia.org/Randomizer");
         }
 
+        private void buttonReset_Click(object sender, EventArgs e)
+        {
+            ResetRandomizer(false);
+        }
+
         private void ButtonClear_Click(object sender, EventArgs e)
         {
-            randomizer.flags.Clear();
-            randomizer.settings.SetAllFalse();
+            ResetRandomizer(true);
+        }
 
+        private void ResetRandomizer(bool clear)
+        {
+            randomizer = new Randomizer();
+            if (clear)
+                randomizer.settings.SetAllFalse();
+            else
+                textBoxSeed.Text = new Random().Next().ToString();
+            randomizer.SetSeed(textBoxSeed.Text);
             UpdateInterfaceFromRandomizer();
         }
 
@@ -245,6 +251,8 @@ namespace IndustrialPark.Randomizer
             }
             programIsChangingStuff = true;
 
+            comboBoxGame.SelectedIndex = randomizer.game;
+
             if (string.IsNullOrEmpty(backupDir))
                 labelBackupDir.Text = "Backup Directory: None";
             else
@@ -269,52 +277,30 @@ namespace IndustrialPark.Randomizer
             textBoxSeed.Text = randomizer.seedText.ToString();
             labelSeed.Text = "Seed: " + randomizer.seed.ToString();
 
-            checkedListBoxMethods.Items.Clear();
-            checkedListBoxNotRecommended.Items.Clear();
-
-            int k = 0;
-            foreach (RandomizerFlags i in Enum.GetValues(typeof(RandomizerFlags)))
-            {
-                checkedListBoxMethods.Items.Add(i);
-                checkedListBoxMethods.SetItemChecked(k++, randomizer.flags.Contains(i));
-            }
-            k = 0;
-            foreach (RandomizerFlags2 i in Enum.GetValues(typeof(RandomizerFlags2)))
-            {
-                checkedListBoxNotRecommended.Items.Add(i);
-                checkedListBoxNotRecommended.SetItemChecked(k++, randomizer.flags2.Contains(i));
-            }
-
-            propertyGridAsset.SelectedObject = randomizer.settings;
+            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(randomizer.settings.GetType());
+            randomizer.settings.SetDynamicProperties(dt, comboBoxGame.SelectedIndex);
+            propertyGridAsset.SelectedObject = dt.FromComponent(randomizer.settings);
 
             programIsChangingStuff = false;
         }
         
-        private void CheckedListBoxMethods_ItemCheck(object sender, ItemCheckEventArgs e)
-        {
-            if (!programIsChangingStuff)
-            {
-                if (e.NewValue == CheckState.Checked)
-                    randomizer.flags.Add((RandomizerFlags)checkedListBoxMethods.Items[e.Index]);
-                else
-                    randomizer.flags.Remove((RandomizerFlags)checkedListBoxMethods.Items[e.Index]);
-            }
-        }
-
-        private void CheckedListBoxNotRecommended_ItemCheck(object sender, ItemCheckEventArgs e)
-        {
-            if (!programIsChangingStuff)
-            {
-                if (e.NewValue == CheckState.Checked)
-                    randomizer.flags2.Add((RandomizerFlags2)checkedListBoxNotRecommended.Items[e.Index]);
-                else
-                    randomizer.flags2.Remove((RandomizerFlags2)checkedListBoxNotRecommended.Items[e.Index]);
-            }
-        }
-
         private void CheckForUpdatesOnStartupToolStripMenuItem_Click(object sender, EventArgs e)
         {
             checkForUpdatesOnStartupToolStripMenuItem.Checked = !checkForUpdatesOnStartupToolStripMenuItem.Checked;
+        }
+
+        private void propertyGridAsset_SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e)
+        {
+            richTextBox1.Text = e.NewSelection.PropertyDescriptor == null ? "" : e.NewSelection.PropertyDescriptor.Description;
+        }
+
+        private void comboBoxGame_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!programIsChangingStuff)
+            {
+                randomizer.game = comboBoxGame.SelectedIndex;
+                UpdateInterfaceFromRandomizer();
+            }
         }
     }
 }

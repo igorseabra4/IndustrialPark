@@ -30,9 +30,6 @@
         {
             this.labelRootDir = new System.Windows.Forms.Label();
             this.buttonPerform = new System.Windows.Forms.Button();
-            this.checkedListBoxMethods = new System.Windows.Forms.CheckedListBox();
-            this.checkedListBoxNotRecommended = new System.Windows.Forms.CheckedListBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.buttonHelp = new System.Windows.Forms.Button();
             this.buttonRandomSeed = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
@@ -52,6 +49,9 @@
             this.checkForUpdatesOnStartupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.labelBackupDir = new System.Windows.Forms.Label();
             this.labelSeed = new System.Windows.Forms.Label();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.buttonReset = new System.Windows.Forms.Button();
+            this.comboBoxGame = new System.Windows.Forms.ComboBox();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -66,49 +66,23 @@
             // 
             // buttonPerform
             // 
+            this.buttonPerform.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonPerform.Enabled = false;
-            this.buttonPerform.Location = new System.Drawing.Point(226, 409);
+            this.buttonPerform.Location = new System.Drawing.Point(12, 535);
             this.buttonPerform.Name = "buttonPerform";
-            this.buttonPerform.Size = new System.Drawing.Size(210, 23);
+            this.buttonPerform.Size = new System.Drawing.Size(431, 23);
             this.buttonPerform.TabIndex = 8;
             this.buttonPerform.Text = "Perform";
             this.buttonPerform.UseVisualStyleBackColor = true;
             this.buttonPerform.Click += new System.EventHandler(this.buttonPerform_Click);
             // 
-            // checkedListBoxMethods
-            // 
-            this.checkedListBoxMethods.ColumnWidth = 162;
-            this.checkedListBoxMethods.FormattingEnabled = true;
-            this.checkedListBoxMethods.Location = new System.Drawing.Point(12, 53);
-            this.checkedListBoxMethods.MultiColumn = true;
-            this.checkedListBoxMethods.Name = "checkedListBoxMethods";
-            this.checkedListBoxMethods.Size = new System.Drawing.Size(208, 379);
-            this.checkedListBoxMethods.TabIndex = 13;
-            this.checkedListBoxMethods.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.CheckedListBoxMethods_ItemCheck);
-            // 
-            // checkedListBoxNotRecommended
-            // 
-            this.checkedListBoxNotRecommended.FormattingEnabled = true;
-            this.checkedListBoxNotRecommended.Location = new System.Drawing.Point(226, 150);
-            this.checkedListBoxNotRecommended.Name = "checkedListBoxNotRecommended";
-            this.checkedListBoxNotRecommended.Size = new System.Drawing.Size(210, 229);
-            this.checkedListBoxNotRecommended.TabIndex = 21;
-            this.checkedListBoxNotRecommended.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.CheckedListBoxNotRecommended_ItemCheck);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(226, 134);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(97, 13);
-            this.label2.TabIndex = 22;
-            this.label2.Text = "Not recommended:";
-            // 
             // buttonHelp
             // 
-            this.buttonHelp.Location = new System.Drawing.Point(334, 108);
+            this.buttonHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonHelp.Location = new System.Drawing.Point(391, 132);
             this.buttonHelp.Name = "buttonHelp";
-            this.buttonHelp.Size = new System.Drawing.Size(102, 23);
+            this.buttonHelp.Size = new System.Drawing.Size(52, 23);
             this.buttonHelp.TabIndex = 25;
             this.buttonHelp.Text = "Help";
             this.buttonHelp.UseVisualStyleBackColor = true;
@@ -116,9 +90,9 @@
             // 
             // buttonRandomSeed
             // 
-            this.buttonRandomSeed.Location = new System.Drawing.Point(226, 108);
+            this.buttonRandomSeed.Location = new System.Drawing.Point(12, 132);
             this.buttonRandomSeed.Name = "buttonRandomSeed";
-            this.buttonRandomSeed.Size = new System.Drawing.Size(102, 23);
+            this.buttonRandomSeed.Size = new System.Drawing.Size(95, 23);
             this.buttonRandomSeed.TabIndex = 29;
             this.buttonRandomSeed.Text = "Random Seed";
             this.buttonRandomSeed.UseVisualStyleBackColor = true;
@@ -127,37 +101,46 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(226, 53);
+            this.label3.Location = new System.Drawing.Point(12, 77);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(216, 13);
             this.label3.TabIndex = 27;
-            this.label3.Text = "You can type something to generate a seed.";
+            this.label3.Text = "You can type something to generate a seed:";
             // 
             // textBoxSeed
             // 
-            this.textBoxSeed.Location = new System.Drawing.Point(226, 69);
+            this.textBoxSeed.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxSeed.Location = new System.Drawing.Point(12, 93);
             this.textBoxSeed.Name = "textBoxSeed";
-            this.textBoxSeed.Size = new System.Drawing.Size(210, 20);
+            this.textBoxSeed.Size = new System.Drawing.Size(431, 20);
             this.textBoxSeed.TabIndex = 0;
             this.textBoxSeed.TextChanged += new System.EventHandler(this.TextBox1_TextChanged);
             // 
             // buttonClear
             // 
-            this.buttonClear.Location = new System.Drawing.Point(226, 380);
+            this.buttonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonClear.Location = new System.Drawing.Point(318, 132);
             this.buttonClear.Name = "buttonClear";
-            this.buttonClear.Size = new System.Drawing.Size(210, 23);
+            this.buttonClear.Size = new System.Drawing.Size(67, 23);
             this.buttonClear.TabIndex = 32;
-            this.buttonClear.Text = "Disable Everything";
+            this.buttonClear.Text = "Disable All";
             this.buttonClear.UseVisualStyleBackColor = true;
             this.buttonClear.Click += new System.EventHandler(this.ButtonClear_Click);
             // 
             // propertyGridAsset
             // 
-            this.propertyGridAsset.Location = new System.Drawing.Point(442, 27);
+            this.propertyGridAsset.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.propertyGridAsset.HelpVisible = false;
+            this.propertyGridAsset.Location = new System.Drawing.Point(12, 161);
             this.propertyGridAsset.Name = "propertyGridAsset";
             this.propertyGridAsset.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.propertyGridAsset.Size = new System.Drawing.Size(272, 405);
+            this.propertyGridAsset.Size = new System.Drawing.Size(431, 266);
             this.propertyGridAsset.TabIndex = 34;
+            this.propertyGridAsset.ToolbarVisible = false;
+            this.propertyGridAsset.SelectedGridItemChanged += new System.Windows.Forms.SelectedGridItemChangedEventHandler(this.propertyGridAsset_SelectedGridItemChanged);
             // 
             // menuStrip1
             // 
@@ -167,7 +150,7 @@
             this.optionsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(722, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(455, 24);
             this.menuStrip1.TabIndex = 35;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -183,14 +166,14 @@
             // loadToolStripMenuItem
             // 
             this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
             this.loadToolStripMenuItem.Text = "Load";
             this.loadToolStripMenuItem.Click += new System.EventHandler(this.LoadToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.SaveToolStripMenuItem_Click);
             // 
@@ -260,17 +243,57 @@
             // labelSeed
             // 
             this.labelSeed.AutoSize = true;
-            this.labelSeed.Location = new System.Drawing.Point(226, 92);
+            this.labelSeed.Location = new System.Drawing.Point(12, 116);
             this.labelSeed.Name = "labelSeed";
             this.labelSeed.Size = new System.Drawing.Size(38, 13);
             this.labelSeed.TabIndex = 37;
             this.labelSeed.Text = "Seed: ";
             // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.richTextBox1.Location = new System.Drawing.Point(12, 433);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ReadOnly = true;
+            this.richTextBox1.Size = new System.Drawing.Size(431, 96);
+            this.richTextBox1.TabIndex = 38;
+            this.richTextBox1.Text = "";
+            // 
+            // buttonReset
+            // 
+            this.buttonReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonReset.Location = new System.Drawing.Point(261, 132);
+            this.buttonReset.Name = "buttonReset";
+            this.buttonReset.Size = new System.Drawing.Size(51, 23);
+            this.buttonReset.TabIndex = 39;
+            this.buttonReset.Text = "Reset";
+            this.buttonReset.UseVisualStyleBackColor = true;
+            this.buttonReset.Click += new System.EventHandler(this.buttonReset_Click);
+            // 
+            // comboBoxGame
+            // 
+            this.comboBoxGame.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxGame.FormattingEnabled = true;
+            this.comboBoxGame.Items.AddRange(new object[] {
+            "SpongeBob SquarePants: Battle For Bikini Bottom",
+            "Scooby-Doo: Night of 100 Frights",
+            "The SpongeBob SquarePants Movie"});
+            this.comboBoxGame.Location = new System.Drawing.Point(12, 53);
+            this.comboBoxGame.Name = "comboBoxGame";
+            this.comboBoxGame.Size = new System.Drawing.Size(431, 21);
+            this.comboBoxGame.TabIndex = 40;
+            this.comboBoxGame.SelectedIndexChanged += new System.EventHandler(this.comboBoxGame_SelectedIndexChanged);
+            // 
             // RandomizerMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(722, 439);
+            this.ClientSize = new System.Drawing.Size(455, 570);
+            this.Controls.Add(this.comboBoxGame);
+            this.Controls.Add(this.buttonReset);
+            this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.labelSeed);
             this.Controls.Add(this.labelBackupDir);
             this.Controls.Add(this.propertyGridAsset);
@@ -279,13 +302,9 @@
             this.Controls.Add(this.textBoxSeed);
             this.Controls.Add(this.buttonClear);
             this.Controls.Add(this.buttonHelp);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.checkedListBoxNotRecommended);
-            this.Controls.Add(this.checkedListBoxMethods);
             this.Controls.Add(this.buttonPerform);
             this.Controls.Add(this.labelRootDir);
             this.Controls.Add(this.menuStrip1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
             this.Name = "RandomizerMenu";
@@ -303,9 +322,6 @@
         #endregion
         private System.Windows.Forms.Label labelRootDir;
         private System.Windows.Forms.Button buttonPerform;
-        private System.Windows.Forms.CheckedListBox checkedListBoxMethods;
-        private System.Windows.Forms.CheckedListBox checkedListBoxNotRecommended;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button buttonHelp;
         private System.Windows.Forms.Button buttonRandomSeed;
         private System.Windows.Forms.Label label3;
@@ -325,5 +341,8 @@
         private System.Windows.Forms.ToolStripMenuItem checkForUpdatesOnStartupToolStripMenuItem;
         private System.Windows.Forms.Label labelBackupDir;
         private System.Windows.Forms.Label labelSeed;
+        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.Button buttonReset;
+        private System.Windows.Forms.ComboBox comboBoxGame;
     }
 }
