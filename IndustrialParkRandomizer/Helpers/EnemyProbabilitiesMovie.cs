@@ -2,27 +2,27 @@
 {
     public class EnemyProbabilitiesMovie
     {
-        public int flinger_v1_bind { get; set; } = 2;
-        public int flinger_v2_bind { get; set; } = 2;
-        public int flinger_v3_bind { get; set; } = 2;
-        public int fogger_de_bind { get; set; } = 1;
-        public int fogger_gg_bind { get; set; } = 2;
-        public int fogger_jk_bind { get; set; } = 2;
-        public int fogger_pt_bind { get; set; } = 1;
-        public int fogger_tr_bind { get; set; } = 1;
-        public int fogger_tt_bind { get; set; } = 2;
-        public int fogger_v1_bind { get; set; } = 1;
-        public int fogger_v2_bind { get; set; } = 1;
-        public int fogger_v3_bind { get; set; } = 1;
-        public int mervyn_v3_bind { get; set; } = 2;
-        public int minimerv_v1_bind { get; set; } = 2;
-        public int popper_v1_bind { get; set; } = 2;
-        public int popper_v3_bind { get; set; } = 2;
-        public int slammer_v1_bind { get; set; } = 2;
-        public int slammer_des_bind { get; set; } = 2;
-        public int slammer_v3_bind { get; set; } = 2;
-        public int spinner_v1_bind { get; set; } = 2;
-        public int spinner_v2_bind { get; set; } = 2;
-        public int spinner_v3_bind { get; set; } = 2;
+        public int Fogger_Desert { get; set; } = 1;
+        public int Fogger_Goofy { get; set; } = 2;
+        public int Fogger_Junk { get; set; } = 2;
+        public int Fogger_Plankton { get; set; } = 1;
+        public int Fogger_Trench { get; set; } = 1;
+        public int Fogger_Thug { get; set; } = 2;
+        public int Fogger_Arena1 { get; set; } = 1;
+        public int Fogger_Arena2 { get; set; } = 1;
+        public int Fogger_Arena3 { get; set; } = 1;
+        public int Slammer_Goofy { get; set; } = 2;
+        public int Slammer_Desert { get; set; } = 2;
+        public int Slammer_Thug { get; set; } = 2;
+        public int Flinger_Desert { get; set; } = 2;
+        public int Flinger_Trench { get; set; } = 2;
+        public int Flinger_Junk { get; set; } = 2;
+        public int Spinner_Thug { get; set; } = 2;
+        public int Spinner_Junk { get; set; } = 2;
+        public int Spinner_Plankton { get; set; } = 2;
+        public int Popper_Trench { get; set; } = 2;
+        public int Popper_Plankton { get; set; } = 2;
+        public int Minimerv { get; set; } = 2;
+        public int Mervyn { get; set; } = 2;
     }
 }

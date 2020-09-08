@@ -19,10 +19,11 @@ namespace IndustrialPark
 
     public class Motion : AssetSpecific_Generic
     {
-        public Motion(AssetWithMotion asset) : base(asset, asset.MotionStart)
+        public Motion(AssetWithMotion asset, MotionType type) : base(asset, asset.MotionStart)
         {
             Settings = asset.ShortFlagsDescriptor(2 + specificStart,
                  "Face movement direction", "Unknown", "Don't start moving");
+            Type = type;
         }
 
         [Browsable(false)]
@@ -72,10 +73,7 @@ namespace IndustrialPark
 
     public class Motion_ExtendRetract : Motion
     {
-        public Motion_ExtendRetract(AssetWithMotion asset) : base(asset)
-        {
-            Type = MotionType.ExtendRetract;
-        }
+        public Motion_ExtendRetract(AssetWithMotion asset) : base(asset, MotionType.ExtendRetract) { }
 
         [TypeConverter(typeof(FloatTypeConverter))]
         public float RetractPositionX
@@ -141,10 +139,7 @@ namespace IndustrialPark
 
     public class Motion_Orbit : Motion
     {
-        public Motion_Orbit(AssetWithMotion asset) : base(asset)
-        {
-            Type = MotionType.Orbit;
-        }
+        public Motion_Orbit(AssetWithMotion asset) : base(asset, MotionType.Orbit) { }
 
         [TypeConverter(typeof(FloatTypeConverter))]
         public float CenterX
@@ -186,10 +181,7 @@ namespace IndustrialPark
 
     public class Motion_Spline : Motion
     {
-        public Motion_Spline(AssetWithMotion asset) : base(asset)
-        {
-            Type = MotionType.Spline;
-        }
+        public Motion_Spline(AssetWithMotion asset) : base(asset, MotionType.Spline) { }
 
         public int Unknown
         {
@@ -200,9 +192,8 @@ namespace IndustrialPark
 
     public class Motion_MovePoint : Motion
     {
-        public Motion_MovePoint(AssetWithMotion asset, Vector3 initialPosition) : base(asset)
+        public Motion_MovePoint(AssetWithMotion asset, Vector3 initialPosition) : base(asset, MotionType.MovePoint)
         {
-            Type = MotionType.MovePoint;
             this.initialPosition = initialPosition;
 
             MovePoint_Flags = asset.IntFlagsDescriptor(4 + specificStart);
@@ -294,9 +285,7 @@ namespace IndustrialPark
 
     public class Motion_Mechanism_TSSM : Motion_Mechanism
     {
-        public Motion_Mechanism_TSSM(AssetWithMotion asset) : base(asset)
-        {
-        }
+        public Motion_Mechanism_TSSM(AssetWithMotion asset) : base(asset) { }
 
         public byte Unknown1
         {
@@ -332,10 +321,8 @@ namespace IndustrialPark
 
     public class Motion_Mechanism : Motion
     {
-        public Motion_Mechanism(AssetWithMotion asset) : base(asset)
+        public Motion_Mechanism(AssetWithMotion asset) : base(asset, MotionType.Mechanism)
         {
-            Type = MotionType.Mechanism;
-
             MovementLoopMode = asset.ByteFlagsDescriptor(5 + specificStart,
                 "Return to start after moving", "Don't loop");
         }
@@ -638,11 +625,8 @@ namespace IndustrialPark
 
     public class Motion_Pendulum : Motion
     {
-        public Motion_Pendulum(AssetWithMotion asset) : base(asset)
-        {
-            Type = MotionType.Pendulum;
-        }
-                
+        public Motion_Pendulum(AssetWithMotion asset) : base(asset, MotionType.Pendulum) { }
+        
         public byte PendulumFlags
         {
             get => ReadByte(4);

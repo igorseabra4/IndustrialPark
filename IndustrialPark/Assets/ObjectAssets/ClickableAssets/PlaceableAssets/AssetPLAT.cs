@@ -165,8 +165,11 @@ namespace IndustrialPark
                 case PlatType.MovePoint:
                     Motion = new Motion_MovePoint(this, Position);
                     break;
-                default:
+                case PlatType.Mechanism:
                     Motion = game == Game.Incredibles ? new Motion_Mechanism_TSSM(this) : new Motion_Mechanism(this);
+                    break;
+                default:
+                    Motion = new Motion(this, MotionType.Other);
                     break;
             }
         }

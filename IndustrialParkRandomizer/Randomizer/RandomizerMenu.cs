@@ -39,11 +39,9 @@ namespace IndustrialPark.Randomizer
                 File.WriteAllText(pathToSettings, JsonConvert.SerializeObject(new Randomizer_JSON_Settings(), Formatting.Indented));
             }
 
-            programIsChangingStuff = true;
-            comboBoxGame.SelectedIndex = 0;
-            programIsChangingStuff = false;
-
-            ResetRandomizer(false);
+            randomizer = new Randomizer(0);
+            textBoxSeed.Text = new Random().Next().ToString();
+            UpdateInterfaceFromRandomizer();
         }
 
         private void RandomizerMenu_FormClosing(object sender, FormClosingEventArgs e)
@@ -164,7 +162,7 @@ namespace IndustrialPark.Randomizer
                 
         private void buttonPerform_Click(object sender, EventArgs e)
         {
-            ProgressBar progressBar = new ProgressBar("Performing Randomizer Operation", "Step");
+            ProgressBar progressBar = new ProgressBar("Randomizing...", "Step");
             progressBar.Show();
 
             Enabled = false;
@@ -192,22 +190,14 @@ namespace IndustrialPark.Randomizer
 
         private void buttonReset_Click(object sender, EventArgs e)
         {
-            ResetRandomizer(false);
+            randomizer = new Randomizer(randomizer.rootDir, randomizer.isDir, comboBoxGame.SelectedIndex);
+            randomizer.SetSeed(textBoxSeed.Text);
+            UpdateInterfaceFromRandomizer();
         }
 
         private void ButtonClear_Click(object sender, EventArgs e)
         {
-            ResetRandomizer(true);
-        }
-
-        private void ResetRandomizer(bool clear)
-        {
-            randomizer = new Randomizer();
-            if (clear)
-                randomizer.settings.SetAllFalse();
-            else
-                textBoxSeed.Text = new Random().Next().ToString();
-            randomizer.SetSeed(textBoxSeed.Text);
+            randomizer.settings.SetAllFalse();
             UpdateInterfaceFromRandomizer();
         }
 
@@ -231,7 +221,7 @@ namespace IndustrialPark.Randomizer
                 {
                     Randomizer settings = JsonConvert.DeserializeObject<Randomizer>(File.ReadAllText(openFile.FileName));
 
-                    if (settings.version == new Randomizer().version)
+                    if (settings.version == Randomizer.currVersion)
                         randomizer = settings;
                     else
                         MessageBox.Show("Randomizer settings file was made with a different version of Industrial Park and cannot be opened.");
@@ -279,7 +269,7 @@ namespace IndustrialPark.Randomizer
 
             DynamicTypeDescriptor dt = new DynamicTypeDescriptor(randomizer.settings.GetType());
             randomizer.settings.SetDynamicProperties(dt, comboBoxGame.SelectedIndex);
-            propertyGridAsset.SelectedObject = dt.FromComponent(randomizer.settings);
+            propertyGridSettings.SelectedObject = dt.FromComponent(randomizer.settings);
 
             programIsChangingStuff = false;
         }
@@ -291,7 +281,7 @@ namespace IndustrialPark.Randomizer
 
         private void propertyGridAsset_SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e)
         {
-            richTextBox1.Text = e.NewSelection.PropertyDescriptor == null ? "" : e.NewSelection.PropertyDescriptor.Description;
+            richTextBoxHelp.Text = e.NewSelection.PropertyDescriptor == null ? "" : e.NewSelection.PropertyDescriptor.Description;
         }
 
         private void comboBoxGame_SelectedIndexChanged(object sender, EventArgs e)
@@ -299,8 +289,15 @@ namespace IndustrialPark.Randomizer
             if (!programIsChangingStuff)
             {
                 randomizer.game = comboBoxGame.SelectedIndex;
+                randomizer.settings.ChangeForGame(randomizer.game);
                 UpdateInterfaceFromRandomizer();
             }
+        }
+
+        private void checkForUpdatesOnEditorFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!AutomaticUpdater.VerifyEditorFiles())
+                MessageBox.Show("No update found.");
         }
     }
 }

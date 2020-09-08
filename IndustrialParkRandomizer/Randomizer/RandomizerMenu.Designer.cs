@@ -35,7 +35,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.textBoxSeed = new System.Windows.Forms.TextBox();
             this.buttonClear = new System.Windows.Forms.Button();
-            this.propertyGridAsset = new System.Windows.Forms.PropertyGrid();
+            this.propertyGridSettings = new System.Windows.Forms.PropertyGrid();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.settingsFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -49,9 +49,10 @@
             this.checkForUpdatesOnStartupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.labelBackupDir = new System.Windows.Forms.Label();
             this.labelSeed = new System.Windows.Forms.Label();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.richTextBoxHelp = new System.Windows.Forms.RichTextBox();
             this.buttonReset = new System.Windows.Forms.Button();
             this.comboBoxGame = new System.Windows.Forms.ComboBox();
+            this.checkForUpdatesOnEditorFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -128,19 +129,19 @@
             this.buttonClear.UseVisualStyleBackColor = true;
             this.buttonClear.Click += new System.EventHandler(this.ButtonClear_Click);
             // 
-            // propertyGridAsset
+            // propertyGridSettings
             // 
-            this.propertyGridAsset.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.propertyGridSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.propertyGridAsset.HelpVisible = false;
-            this.propertyGridAsset.Location = new System.Drawing.Point(12, 161);
-            this.propertyGridAsset.Name = "propertyGridAsset";
-            this.propertyGridAsset.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.propertyGridAsset.Size = new System.Drawing.Size(431, 266);
-            this.propertyGridAsset.TabIndex = 34;
-            this.propertyGridAsset.ToolbarVisible = false;
-            this.propertyGridAsset.SelectedGridItemChanged += new System.Windows.Forms.SelectedGridItemChangedEventHandler(this.propertyGridAsset_SelectedGridItemChanged);
+            this.propertyGridSettings.HelpVisible = false;
+            this.propertyGridSettings.Location = new System.Drawing.Point(12, 161);
+            this.propertyGridSettings.Name = "propertyGridSettings";
+            this.propertyGridSettings.PropertySort = System.Windows.Forms.PropertySort.Categorized;
+            this.propertyGridSettings.Size = new System.Drawing.Size(431, 266);
+            this.propertyGridSettings.TabIndex = 34;
+            this.propertyGridSettings.ToolbarVisible = false;
+            this.propertyGridSettings.SelectedGridItemChanged += new System.Windows.Forms.SelectedGridItemChangedEventHandler(this.propertyGridAsset_SelectedGridItemChanged);
             // 
             // menuStrip1
             // 
@@ -166,14 +167,14 @@
             // loadToolStripMenuItem
             // 
             this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.loadToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.loadToolStripMenuItem.Text = "Load";
             this.loadToolStripMenuItem.Click += new System.EventHandler(this.LoadToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.SaveToolStripMenuItem_Click);
             // 
@@ -219,7 +220,8 @@
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.checkForUpdatesOnStartupToolStripMenuItem});
+            this.checkForUpdatesOnStartupToolStripMenuItem,
+            this.checkForUpdatesOnEditorFilesToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.optionsToolStripMenuItem.Text = "Options";
@@ -227,7 +229,7 @@
             // checkForUpdatesOnStartupToolStripMenuItem
             // 
             this.checkForUpdatesOnStartupToolStripMenuItem.Name = "checkForUpdatesOnStartupToolStripMenuItem";
-            this.checkForUpdatesOnStartupToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
+            this.checkForUpdatesOnStartupToolStripMenuItem.Size = new System.Drawing.Size(249, 22);
             this.checkForUpdatesOnStartupToolStripMenuItem.Text = "Check For Updates On Startup";
             this.checkForUpdatesOnStartupToolStripMenuItem.Click += new System.EventHandler(this.CheckForUpdatesOnStartupToolStripMenuItem_Click);
             // 
@@ -249,16 +251,16 @@
             this.labelSeed.TabIndex = 37;
             this.labelSeed.Text = "Seed: ";
             // 
-            // richTextBox1
+            // richTextBoxHelp
             // 
-            this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.richTextBoxHelp.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.richTextBox1.Location = new System.Drawing.Point(12, 433);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(431, 96);
-            this.richTextBox1.TabIndex = 38;
-            this.richTextBox1.Text = "";
+            this.richTextBoxHelp.Location = new System.Drawing.Point(12, 433);
+            this.richTextBoxHelp.Name = "richTextBoxHelp";
+            this.richTextBoxHelp.ReadOnly = true;
+            this.richTextBoxHelp.Size = new System.Drawing.Size(431, 96);
+            this.richTextBoxHelp.TabIndex = 38;
+            this.richTextBoxHelp.Text = "";
             // 
             // buttonReset
             // 
@@ -286,6 +288,13 @@
             this.comboBoxGame.TabIndex = 40;
             this.comboBoxGame.SelectedIndexChanged += new System.EventHandler(this.comboBoxGame_SelectedIndexChanged);
             // 
+            // checkForUpdatesOnEditorFilesToolStripMenuItem
+            // 
+            this.checkForUpdatesOnEditorFilesToolStripMenuItem.Name = "checkForUpdatesOnEditorFilesToolStripMenuItem";
+            this.checkForUpdatesOnEditorFilesToolStripMenuItem.Size = new System.Drawing.Size(258, 22);
+            this.checkForUpdatesOnEditorFilesToolStripMenuItem.Text = "Check For Updates On EditorFiles...";
+            this.checkForUpdatesOnEditorFilesToolStripMenuItem.Click += new System.EventHandler(this.checkForUpdatesOnEditorFilesToolStripMenuItem_Click);
+            // 
             // RandomizerMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -293,10 +302,10 @@
             this.ClientSize = new System.Drawing.Size(455, 570);
             this.Controls.Add(this.comboBoxGame);
             this.Controls.Add(this.buttonReset);
-            this.Controls.Add(this.richTextBox1);
+            this.Controls.Add(this.richTextBoxHelp);
             this.Controls.Add(this.labelSeed);
             this.Controls.Add(this.labelBackupDir);
-            this.Controls.Add(this.propertyGridAsset);
+            this.Controls.Add(this.propertyGridSettings);
             this.Controls.Add(this.buttonRandomSeed);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.textBoxSeed);
@@ -327,7 +336,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox textBoxSeed;
         private System.Windows.Forms.Button buttonClear;
-        private System.Windows.Forms.PropertyGrid propertyGridAsset;
+        private System.Windows.Forms.PropertyGrid propertyGridSettings;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem settingsFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
@@ -341,8 +350,9 @@
         private System.Windows.Forms.ToolStripMenuItem checkForUpdatesOnStartupToolStripMenuItem;
         private System.Windows.Forms.Label labelBackupDir;
         private System.Windows.Forms.Label labelSeed;
-        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.RichTextBox richTextBoxHelp;
         private System.Windows.Forms.Button buttonReset;
         private System.Windows.Forms.ComboBox comboBoxGame;
+        private System.Windows.Forms.ToolStripMenuItem checkForUpdatesOnEditorFilesToolStripMenuItem;
     }
 }

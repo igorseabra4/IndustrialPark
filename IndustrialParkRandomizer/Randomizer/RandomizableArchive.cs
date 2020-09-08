@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using SharpDX;
-using HipHopFile;
-using System.IO;
+﻿using HipHopFile;
 using Newtonsoft.Json;
 using RenderWareFile;
 using RenderWareFile.Sections;
+using SharpDX;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace IndustrialPark.Randomizer
 {
@@ -53,19 +53,19 @@ namespace IndustrialPark.Randomizer
                     shuffled = true;
                 }
 
-            if (settings.Textures)
+            if (settings.Textures && ContainsAssetWithType(AssetType.RWTX))
                 shuffled |= RandomizeTextures(seed, settings.Textures_Special);
 
-            if (settings.BoulderSettings)
+            if (settings.BoulderSettings && ContainsAssetWithType(AssetType.BOUL))
                 shuffled |= RandomizeBoulderSettings(seed, settings);
 
-            if (settings.Sounds)
+            if (settings.Sounds && ContainsAssetWithType(AssetType.SNDI))
                 shuffled |= RandomizeSounds(seed, settings.Mix_Sound_Types);
 
-            if (settings.Pickups)
+            if (settings.Pickups && ContainsAssetWithType(AssetType.PKUP))
                 shuffled |= RandomizePickupPositions(seed);
 
-            if (settings.MovePoint_Radius)
+            if (settings.MovePoint_Radius && ContainsAssetWithType(AssetType.MVPT))
                 shuffled |= RandomizeMovePointRadius(seed, settings);
 
             if (game == Game.BFBB)
@@ -107,27 +107,27 @@ namespace IndustrialPark.Randomizer
                 if (settings.Tiki_Types && ContainsAssetWithType(AssetType.DYNA))
                 {
                     List<EnemySupplyCrateType> chooseFrom = new List<EnemySupplyCrateType>();
-                    if (settings.CrateProbabilities.WoodenTiki >= 0)
+                    if (settings.TikiProbabilities.WoodenTiki >= 0)
                         chooseFrom.Add(EnemySupplyCrateType.crate_wood_bind);
-                    if (settings.CrateProbabilities.FloatingTiki >= 0)
+                    if (settings.TikiProbabilities.FloatingTiki >= 0)
                         chooseFrom.Add(EnemySupplyCrateType.crate_hover_bind);
-                    if (settings.CrateProbabilities.ThunderTiki >= 0)
+                    if (settings.TikiProbabilities.ThunderTiki >= 0)
                         chooseFrom.Add(EnemySupplyCrateType.crate_explode_bind);
-                    if (settings.CrateProbabilities.ShhhTiki >= 0)
+                    if (settings.TikiProbabilities.ShhhTiki >= 0)
                         chooseFrom.Add(EnemySupplyCrateType.crate_shrink_bind);
-                    if (settings.CrateProbabilities.StoneTiki >= 0)
+                    if (settings.TikiProbabilities.StoneTiki >= 0)
                         chooseFrom.Add(EnemySupplyCrateType.crate_steel_bind);
 
                     List<EnemySupplyCrateType> setTo = new List<EnemySupplyCrateType>();
-                    for (int i = 0; i < settings.CrateProbabilities.WoodenTiki; i++)
+                    for (int i = 0; i < settings.TikiProbabilities.WoodenTiki; i++)
                         setTo.Add(EnemySupplyCrateType.crate_wood_bind);
-                    for (int i = 0; i < settings.CrateProbabilities.FloatingTiki; i++)
+                    for (int i = 0; i < settings.TikiProbabilities.FloatingTiki; i++)
                         setTo.Add(EnemySupplyCrateType.crate_wood_bind);
-                    for (int i = 0; i < settings.CrateProbabilities.ThunderTiki; i++)
+                    for (int i = 0; i < settings.TikiProbabilities.ThunderTiki; i++)
                         setTo.Add(EnemySupplyCrateType.crate_explode_bind);
-                    for (int i = 0; i < settings.CrateProbabilities.ShhhTiki; i++)
+                    for (int i = 0; i < settings.TikiProbabilities.ShhhTiki; i++)
                         setTo.Add(EnemySupplyCrateType.crate_shrink_bind);
-                    for (int i = 0; i < settings.CrateProbabilities.StoneTiki; i++)
+                    for (int i = 0; i < settings.TikiProbabilities.StoneTiki; i++)
                         setTo.Add(EnemySupplyCrateType.crate_steel_bind);
 
                     shuffled |= ShuffleBoxDynaTypes(seed, chooseFrom, setTo);
@@ -203,104 +203,104 @@ namespace IndustrialPark.Randomizer
                 {
                     List<EnemyStandardType> chooseFrom = new List<EnemyStandardType>(24);
 
-                    if (settings.EnemyProbabilitiesMovie.flinger_v1_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.Flinger_Desert >= 0)
                         chooseFrom.Add(EnemyStandardType.flinger_v1_bind);
-                    if (settings.EnemyProbabilitiesMovie.flinger_v1_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.Flinger_Desert >= 0)
                         chooseFrom.Add(EnemyStandardType.flinger_v1_bind);
-                    if (settings.EnemyProbabilitiesMovie.flinger_v2_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.Flinger_Trench >= 0)
                         chooseFrom.Add(EnemyStandardType.flinger_v2_bind);
-                    if (settings.EnemyProbabilitiesMovie.flinger_v3_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.Flinger_Junk >= 0)
                         chooseFrom.Add(EnemyStandardType.flinger_v3_bind);
-                    if (settings.EnemyProbabilitiesMovie.fogger_de_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.Fogger_Desert >= 0)
                         chooseFrom.Add(EnemyStandardType.fogger_de_bind);
-                    if (settings.EnemyProbabilitiesMovie.fogger_gg_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.Fogger_Goofy >= 0)
                         chooseFrom.Add(EnemyStandardType.fogger_gg_bind);
-                    if (settings.EnemyProbabilitiesMovie.fogger_jk_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.Fogger_Junk >= 0)
                         chooseFrom.Add(EnemyStandardType.fogger_jk_bind);
-                    if (settings.EnemyProbabilitiesMovie.fogger_pt_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.Fogger_Plankton >= 0)
                         chooseFrom.Add(EnemyStandardType.fogger_pt_bind);
-                    if (settings.EnemyProbabilitiesMovie.fogger_tr_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.Fogger_Trench >= 0)
                         chooseFrom.Add(EnemyStandardType.fogger_tr_bind);
-                    if (settings.EnemyProbabilitiesMovie.fogger_tt_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.Fogger_Thug >= 0)
                         chooseFrom.Add(EnemyStandardType.fogger_tt_bind);
-                    if (settings.EnemyProbabilitiesMovie.fogger_v1_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.Fogger_Arena1 >= 0)
                         chooseFrom.Add(EnemyStandardType.fogger_v1_bind);
-                    if (settings.EnemyProbabilitiesMovie.fogger_v2_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.Fogger_Arena2 >= 0)
                         chooseFrom.Add(EnemyStandardType.fogger_v2_bind);
-                    if (settings.EnemyProbabilitiesMovie.fogger_v3_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.Fogger_Arena3 >= 0)
                         chooseFrom.Add(EnemyStandardType.fogger_v3_bind);
-                    if (settings.EnemyProbabilitiesMovie.mervyn_v3_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.Mervyn >= 0)
                         chooseFrom.Add(EnemyStandardType.mervyn_v3_bind);
-                    if (settings.EnemyProbabilitiesMovie.minimerv_v1_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.Minimerv >= 0)
                         chooseFrom.Add(EnemyStandardType.minimerv_v1_bind);
-                    if (settings.EnemyProbabilitiesMovie.popper_v1_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.Popper_Trench >= 0)
                         chooseFrom.Add(EnemyStandardType.popper_v1_bind);
-                    if (settings.EnemyProbabilitiesMovie.popper_v3_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.Popper_Plankton >= 0)
                         chooseFrom.Add(EnemyStandardType.popper_v3_bind);
-                    if (settings.EnemyProbabilitiesMovie.slammer_v1_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.Slammer_Goofy >= 0)
                         chooseFrom.Add(EnemyStandardType.slammer_v1_bind);
-                    if (settings.EnemyProbabilitiesMovie.slammer_des_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.Slammer_Desert >= 0)
                         chooseFrom.Add(EnemyStandardType.slammer_des_bind);
-                    if (settings.EnemyProbabilitiesMovie.slammer_v3_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.Slammer_Thug >= 0)
                         chooseFrom.Add(EnemyStandardType.slammer_v3_bind);
-                    if (settings.EnemyProbabilitiesMovie.spinner_v1_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.Spinner_Thug >= 0)
                         chooseFrom.Add(EnemyStandardType.spinner_v1_bind);
-                    if (settings.EnemyProbabilitiesMovie.spinner_v2_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.Spinner_Junk >= 0)
                         chooseFrom.Add(EnemyStandardType.spinner_v2_bind);
-                    if (settings.EnemyProbabilitiesMovie.spinner_v3_bind >= 0)
+                    if (settings.EnemyProbabilitiesMovie.Spinner_Plankton >= 0)
                         chooseFrom.Add(EnemyStandardType.spinner_v3_bind);
 
                     List<EnemyStandardType> setTo = new List<EnemyStandardType>();
-                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.flinger_v1_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.Flinger_Desert; i++)
                         setTo.Add(EnemyStandardType.flinger_v1_bind);
-                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.flinger_v2_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.Flinger_Trench; i++)
                         setTo.Add(EnemyStandardType.flinger_v2_bind);
-                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.flinger_v3_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.Flinger_Junk; i++)
                         setTo.Add(EnemyStandardType.flinger_v3_bind);
-                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.fogger_de_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.Fogger_Desert; i++)
                         setTo.Add(EnemyStandardType.fogger_de_bind);
-                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.fogger_gg_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.Fogger_Goofy; i++)
                         setTo.Add(EnemyStandardType.fogger_gg_bind);
-                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.fogger_jk_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.Fogger_Junk; i++)
                         setTo.Add(EnemyStandardType.fogger_jk_bind);
-                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.fogger_pt_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.Fogger_Plankton; i++)
                         setTo.Add(EnemyStandardType.fogger_pt_bind);
-                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.fogger_tr_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.Fogger_Trench; i++)
                         setTo.Add(EnemyStandardType.fogger_tr_bind);
-                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.fogger_tt_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.Fogger_Thug; i++)
                         setTo.Add(EnemyStandardType.fogger_tt_bind);
-                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.fogger_v1_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.Fogger_Arena1; i++)
                         setTo.Add(EnemyStandardType.fogger_v1_bind);
-                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.fogger_v2_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.Fogger_Arena2; i++)
                         setTo.Add(EnemyStandardType.fogger_v2_bind);
-                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.fogger_v3_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.Fogger_Arena3; i++)
                         setTo.Add(EnemyStandardType.fogger_v3_bind);
-                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.mervyn_v3_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.Mervyn; i++)
                         setTo.Add(EnemyStandardType.mervyn_v3_bind);
-                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.minimerv_v1_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.Minimerv; i++)
                         setTo.Add(EnemyStandardType.minimerv_v1_bind);
-                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.popper_v1_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.Popper_Trench; i++)
                         setTo.Add(EnemyStandardType.popper_v1_bind);
-                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.popper_v3_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.Popper_Plankton; i++)
                         setTo.Add(EnemyStandardType.popper_v3_bind);
-                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.slammer_v1_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.Slammer_Goofy; i++)
                         setTo.Add(EnemyStandardType.slammer_v1_bind);
-                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.slammer_des_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.Slammer_Desert; i++)
                         setTo.Add(EnemyStandardType.slammer_des_bind);
-                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.slammer_v3_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.Slammer_Thug; i++)
                         setTo.Add(EnemyStandardType.slammer_v3_bind);
-                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.spinner_v1_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.Spinner_Thug; i++)
                         setTo.Add(EnemyStandardType.spinner_v1_bind);
-                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.spinner_v2_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.Spinner_Junk; i++)
                         setTo.Add(EnemyStandardType.spinner_v2_bind);
-                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.spinner_v3_bind; i++)
+                    for (int i = 0; i < settings.EnemyProbabilitiesMovie.Spinner_Plankton; i++)
                         setTo.Add(EnemyStandardType.spinner_v3_bind);
 
                     shuffled |= ShuffleEnemyDynaTypes(seed, chooseFrom, setTo, settings.Enemies_Allow_Any_Type);
                 }
             }
 
-            if (settings.Marker_Positions && ContainsAssetWithType(AssetType.MRKR)
+            if (settings.Markers && ContainsAssetWithType(AssetType.MRKR)
                 && !new string[] { "hb02", "b101", "b201", "b302", "b303" }.Contains(LevelName))
                 shuffled |= ShuffleMRKRPositions(seed,
                     settings.allMenuWarpsHB01,
@@ -310,45 +310,51 @@ namespace IndustrialPark.Randomizer
                     settings.Teleport_Box_Positions,
                     settings.Taxi_Trigger_Positions);
 
-            if (settings.PlatformSpeeds)
+            if (settings.PlatformSpeed && ContainsAssetWithType(AssetType.PLAT))
                 shuffled |= ShufflePlatSpeeds(seed, settings);
-            
-            if (settings.Cameras)
+
+            if (settings.Cameras && ContainsAssetWithType(AssetType.CAM))
                 shuffled |= ShuffleCameras(seed);
 
             bool shinyNumbers = false;
             bool spatNumbers = false;
 
             if (game == Game.BFBB && settings.Shiny_Object_Gates && ContainsAssetWithType(AssetType.COND))
-                    shuffled |= ShuffleShinyGates(gateRandom, settings, out shinyNumbers);
+                shuffled |= ShuffleShinyGates(gateRandom, settings, out shinyNumbers);
 
             if (game == Game.BFBB)
                 if ((settings.spatReqChum != 75 || settings.Spatula_Gates) && ContainsAssetWithType(AssetType.COND))
                     shuffled |= ShuffleSpatulaGates(gateRandom, settings.Spatula_Gates, settings, out spatNumbers);
 
+            if (game == Game.Incredibles && settings.CombatArenaCounts && ContainsAssetWithType(AssetType.CNTR))
+                shuffled |= ShuffleCombatArenas(gateRandom, settings.combatMin, settings.combatMax);
+
             needToAddNumbers = shinyNumbers | spatNumbers;
 
             if (settings.Scale_Of_Things)
                 shuffled |= ShuffleScales(seed, settings);
-            
-            if (settings.Buttons)
+
+            if (settings.RingSizes && ContainsAssetWithType(AssetType.DYNA))
+                shuffled |= ShuffleRingScales(seed, settings);
+
+            if (settings.Buttons && ContainsAssetWithType(AssetType.BUTN))
                 shuffled |= ShuffleButtons(seed);
 
-            if (settings.FloatingBlockChallenge && game == Game.Incredibles)
+            if (settings.FloatingBlockChallenge && game == Game.Incredibles && ContainsAssetWithType(AssetType.PLAT))
                 shuffled |= ShuffleFloatingBlocks(seed);
 
             if (settings.Colors)
             {
                 Random r = new Random(seed);
-                shuffled |= 
-                    ShufflePlaceableColors(r, settings.brightColors, settings.strongColors) | 
-                    ShufflePlaceableDynaColors(r, settings.brightColors, settings.strongColors) | 
+                shuffled |=
+                    ShufflePlaceableColors(r, settings.brightColors, settings.strongColors) |
+                    ShufflePlaceableDynaColors(r, settings.brightColors, settings.strongColors) |
                     ShuffleModelColors(r, settings.brightColors, settings.strongColors);
             }
 
-            if (game == Game.BFBB && settings.PlayerCharacters)
+            if (game == Game.BFBB && settings.PlayerCharacters && ContainsAssetWithType(AssetType.DYNA))
                 shuffled |= ShuffleBusStops(gateRandom);
-            
+
             if (settings.Music)
                 shuffled |= RandomizePlaylistLocal();
 
@@ -358,13 +364,13 @@ namespace IndustrialPark.Randomizer
             if (game == Game.Incredibles && settings.disableCutscenes)
                 shuffled |= DisableCutscenesMovie();
 
-            if (settings.openTeleportBoxes)
+            if (settings.openTeleportBoxes && ContainsAssetWithType(AssetType.DYNA))
                 shuffled |= OpenTeleportBoxes();
 
-            if (settings.invisibleLevel)
+            if (settings.invisibleLevel && ContainsAssetWithType(AssetType.JSP))
                 shuffled |= MakeLevelInvisible();
 
-            if (settings.invisibleObjects)
+            if (settings.invisibleObjects && ContainsAssetWithType(AssetType.SIMP))
                 shuffled |= MakeObjectsInvisible();
 
             return shuffled;
@@ -406,15 +412,16 @@ namespace IndustrialPark.Randomizer
         {
             Random r = new Random(seed);
 
-            List<Asset> assets = (from asset in assetDictionary.Values where asset.AHDR.assetType == AssetType.RWTX
-                                  && ((hud && asset.AHDR.ADBG.assetName.ToLower().Contains("rw3")) || (!hud))
+            List<Asset> assets = (from asset in assetDictionary.Values
+                                  where asset.AHDR.assetType == AssetType.RWTX
+&& ((hud && asset.AHDR.ADBG.assetName.ToLower().Contains("rw3")) || (!hud))
                                   select asset).ToList();
 
             if (assets.Count < 2)
                 return false;
 
             var datas = (from asset in assets select asset.Data).ToList();
-            
+
             foreach (Asset a in assets)
             {
                 int value = r.Next(0, datas.Count());
@@ -435,102 +442,9 @@ namespace IndustrialPark.Randomizer
                 return false;
 
             if (game == Game.BFBB)
-                switch (LevelName)
-                {
-                    case "hb01":
-                        assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("GREENSHINY_PICKUP_02")));
-                        assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("GREENSHINY_PICKUP_03")));
-                        assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("GREENSHINY_PICKUP_18")));
-                        assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("GREENSHINY_PICKUP_20")));
-                        for (int i = 0; i < assets.Count; i++)
-                            if (assets[i].AHDR.ADBG.assetName.Contains("GS_MRKRABS_PICKUP") || assets[i].AHDR.ADBG.assetName.Contains("GS_PATRICK_PICKUP"))
-                            {
-                                assets.RemoveAt(i);
-                                i--;
-                            }
-                        break;
-                    case "hb02":
-                        for (int i = 0; i < assets.Count; i++)
-                            if (assets[i].AHDR.ADBG.assetName.Contains("RED"))
-                            {
-                                int shinyNum = Convert.ToInt32(assets[i].AHDR.ADBG.assetName.Split('_')[2]);
-                                if (shinyNum >= 32 && shinyNum <= 47 && shinyNum != 42)
-                                {
-                                    assets.RemoveAt(i);
-                                    i--;
-                                }
-                            }
-                        break;
-                    case "bb01":
-                        assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("SHINY_RED_018")));
-                        assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("SHINY_RED_019")));
-                        break;
-                    case "gl01":
-                        assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("SHINY_YELLOW_004")));
-                        if (ContainsAsset(new AssetID("GOLDENSPATULA_04")))
-                            ((AssetPKUP)GetFromAssetID(new AssetID("GOLDENSPATULA_04"))).PositionY += 2f;
-                        break;
-                    case "gl03":
-                        if (ContainsAsset(0x0B48E8AC))
-                        {
-                            AssetDYNA dyna = (AssetDYNA)GetFromAssetID(0x0B48E8AC);
-                            dyna.LinksBFBB = new LinkBFBB[0];
-
-                            if (ContainsAsset(0xF70F6FEE))
-                            {
-                                ((AssetPKUP)GetFromAssetID(0xF70F6FEE)).PickupFlagsShort = 2;
-                                ((AssetPKUP)GetFromAssetID(0xF70F6FEE)).Data[0x8] = 1;
-                            }
-                        }
-                        break;
-                    case "sm02":
-                        assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("PU_SHINY_RED")));
-                        assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("PU_SHINY_GREEN")));
-                        assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("PU_SHINY_YELLOW")));
-                        assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("PU_SHINY_BLUE")));
-                        assets.Remove((AssetPKUP)GetFromAssetID(new AssetID("PU_SHINY_PURPLE")));
-                        break;
-                    case "jf01":
-                    case "bc01":
-                    case "rb03":
-                    case "sm01":
-                        for (int i = 0; i < assets.Count; i++)
-                        {
-                            foreach (LinkBFBB link in assets[i].LinksBFBB)
-                                if (link.EventSendID == EventBFBB.Mount)
-                                {
-                                    assets.RemoveAt(i);
-                                    i--;
-                                    break;
-                                }
-                        }
-                        break;
-                }
+                VerifyPickupsBFBB(ref assets);
             else if (game == Game.Incredibles)
-            {
-                switch (LevelName)
-                {
-                    case "bb01":
-                    case "bl01":
-                    case "bl02":
-                    case "bl03":
-                    case "bl04":
-                    case "de02":
-                    case "fb01":
-                    case "fb02":
-                    case "fb03":
-                    case "gg02":
-                    case "pt02":
-                    case "sc02":
-                    case "tr01":
-                    case "tt02":
-                        for (int i = 0; i < assets.Count; i++)
-                            if (assets[i].PickReferenceID.Equals(0x60F808B7))
-                                    assets.RemoveAt(i--);
-                        
-                        break;
-                }
-            }
+                VerifyPickupsMovie(ref assets);
 
             List<Vector3> positions = (from asset in assets select (new Vector3(asset.PositionX, asset.PositionY, asset.PositionZ))).ToList();
 
@@ -549,6 +463,117 @@ namespace IndustrialPark.Randomizer
             }
 
             return true;
+        }
+
+        private void VerifyPickupsBFBB(ref List<AssetPKUP> assets)
+        {
+            switch (LevelName)
+            {
+                case "hb01":
+                    RemoveAssetsFrom(ref assets, "GREENSHINY_PICKUP_02", "GREENSHINY_PICKUP_03", "GREENSHINY_PICKUP_18", "GREENSHINY_PICKUP_20");
+                    RemoveAssetsFromContains(ref assets, "GS_MRKRABS_PICKUP", "GS_PATRICK_PICKUP");
+                    break;
+                case "hb02":
+                    for (int i = 0; i < assets.Count; i++)
+                        if (assets[i].AHDR.ADBG.assetName.Contains("RED"))
+                        {
+                            int shinyNum = Convert.ToInt32(assets[i].AHDR.ADBG.assetName.Split('_')[2]);
+                            if (shinyNum >= 32 && shinyNum <= 47 && shinyNum != 42)
+                            {
+                                assets.RemoveAt(i);
+                                i--;
+                            }
+                        }
+                    break;
+                case "bb01":
+                    RemoveAssetsFrom(ref assets, "SHINY_RED_018", "SHINY_RED_019");
+                    break;
+                case "gl01":
+                    RemoveAssetsFrom(ref assets, "SHINY_YELLOW_004");
+                    if (ContainsAsset(new AssetID("GOLDENSPATULA_04")))
+                        ((AssetPKUP)GetFromAssetID(new AssetID("GOLDENSPATULA_04"))).PositionY += 2f;
+                    break;
+                case "gl03":
+                    if (ContainsAsset(0x0B48E8AC))
+                    {
+                        AssetDYNA dyna = (AssetDYNA)GetFromAssetID(0x0B48E8AC);
+                        dyna.LinksBFBB = new LinkBFBB[0];
+
+                        if (ContainsAsset(0xF70F6FEE))
+                        {
+                            ((AssetPKUP)GetFromAssetID(0xF70F6FEE)).PickupFlagsShort = 2;
+                            ((AssetPKUP)GetFromAssetID(0xF70F6FEE)).Data[0x8] = 1;
+                        }
+                    }
+                    break;
+                case "sm02":
+                    RemoveAssetsFrom(ref assets, "PU_SHINY_RED", "PU_SHINY_GREEN", "PU_SHINY_YELLOW", "PU_SHINY_BLUE", "PU_SHINY_PURPLE");
+                    break;
+                case "jf01":
+                case "bc01":
+                case "rb03":
+                case "sm01":
+                    for (int i = 0; i < assets.Count; i++)
+                    {
+                        foreach (LinkBFBB link in assets[i].LinksBFBB)
+                            if (link.EventSendID == EventBFBB.Mount)
+                            {
+                                assets.RemoveAt(i);
+                                i--;
+                                break;
+                            }
+                    }
+                    break;
+            }
+        }
+
+        private void RemoveAssetsFrom(ref List<AssetPKUP> assets, params string[] names)
+        {
+            for (int i = 0; i < assets.Count; i++)
+                foreach (string s in names)
+                    if (assets[i].AHDR.ADBG.assetName.Equals(s))
+                    {
+                        assets.RemoveAt(i--);
+                        break;
+                    }
+        }
+
+        private void RemoveAssetsFromContains(ref List<AssetPKUP> assets, params string[] names)
+        {
+            for (int i = 0; i < assets.Count; i++)
+                foreach (string s in names)
+                    if (assets[i].AHDR.ADBG.assetName.Contains(s))
+                    {
+                        assets.RemoveAt(i--);
+                        break;
+                    }
+        }
+
+        private void VerifyPickupsMovie(ref List<AssetPKUP> assets)
+        {
+            switch (LevelName)
+            {
+                case "am04":
+                case "b101":
+                case "b201":
+                case "b301":
+                case "b401":
+                case "bb01":
+                case "de02":
+                case "fb01":
+                case "fb02":
+                case "fb03":
+                case "gg02":
+                case "pt02":
+                case "pt03":
+                case "sc02":
+                case "tr01":
+                case "tt02":
+                    for (int i = 0; i < assets.Count; i++)
+                        if (assets[i].PickReferenceID.Equals(0x60F808B7))
+                            assets.RemoveAt(i--);
+                    break;
+            }
         }
 
         private void RemoveFromVolume(uint assetID)
@@ -588,7 +613,8 @@ namespace IndustrialPark.Randomizer
             }
 
             List<Vector3> positions = (from asset in assets select (new Vector3(asset.PositionX, asset.PositionY, asset.PositionZ))).ToList();
-            List<Vector3[]> angles = (from asset in assets select (new Vector3[] {
+            List<Vector3[]> angles = (from asset in assets
+                                      select (new Vector3[] {
                 new Vector3(asset.NormalizedForwardX, asset.NormalizedForwardY, asset.NormalizedForwardZ),
                 new Vector3(asset.NormalizedUpX, asset.NormalizedUpY, asset.NormalizedUpZ),
                 new Vector3(asset.NormalizedLeftX, asset.NormalizedLeftY, asset.NormalizedLeftZ),
@@ -626,17 +652,17 @@ namespace IndustrialPark.Randomizer
 
             return true;
         }
-        
+
         private bool ShuffleScales(int seed, RandomizerSettings settings)
         {
             Random r = new Random(seed);
 
             List<EntityAsset> assets = (from asset in assetDictionary.Values
-                                           where new AssetType[] {
+                                        where new AssetType[] {
                                                AssetType.BOUL, AssetType.BUTN, AssetType.DSTR, AssetType.PLAT, AssetType.SIMP
                                            }.Contains(asset.AHDR.assetType) && !asset.AHDR.ADBG.assetName.ToLower().Contains("track")
-                                           select asset).Cast<EntityAsset>().ToList();
-            
+                                        select asset).Cast<EntityAsset>().ToList();
+
             foreach (EntityAsset a in assets)
             {
                 float scale = r.NextFloat(settings.scaleMin, settings.scaleMax);
@@ -647,6 +673,31 @@ namespace IndustrialPark.Randomizer
             }
 
             return assets.Count != 0;
+        }
+
+        private bool ShuffleRingScales(int seed, RandomizerSettings settings)
+        {
+            Random r = new Random(seed);
+
+            List<AssetDYNA> assets = (from asset in assetDictionary.Values where asset is AssetDYNA dyna && dyna.Type == DynaType.game_object__Ring select asset).Cast<AssetDYNA>().ToList();
+
+            bool result = assets.Count != 0;
+
+            while (assets.Count > 0)
+            {
+                int index = r.Next(0, assets.Count);
+
+                float scale = r.NextFloat(settings.ringScaleMin, settings.ringScaleMax);
+
+                ((DynaGObjectRing)assets[index].DynaSpec).ScaleX *= scale;
+                ((DynaGObjectRing)assets[index].DynaSpec).ScaleY *= scale;
+                ((DynaGObjectRing)assets[index].DynaSpec).ScaleZ *= scale;
+                ((DynaGObjectRing)assets[index].DynaSpec).CollisionRadius *= 2 * scale;
+
+                assets.RemoveAt(index);
+            }
+
+            return result;
         }
 
         private bool ShuffleFloatingBlocks(int seed)
@@ -663,7 +714,9 @@ namespace IndustrialPark.Randomizer
 
                     for (int i = 0; i < assets.Count; i++)
                     {
-                        if (assets[i].AHDR.ADBG.assetName.ToLower().Contains("dizzy") || assets[i].Model_AssetID.Equals("fb_platform"))
+                        if (assets[i].AHDR.ADBG.assetName.ToLower().Contains("dizzy") ||
+                            assets[i].Model_AssetID.Equals("fb_platform") ||
+                            (LevelName == "fb03" && (assets[i].AHDR.ADBG.assetName.Equals("SPRING_SPRING_06") || assets[i].AHDR.ADBG.assetName.Equals("SPRING_DRIVE_MECH_06"))))
                         {
                             assets.RemoveAt(i--);
                             continue;
@@ -737,7 +790,7 @@ namespace IndustrialPark.Randomizer
         private bool ShufflePlaceableDynaColors(Random r, bool brightColors, bool strongColors)
         {
             List<AssetDYNA> assets = (from asset in assetDictionary.Values
-                                        where asset is AssetDYNA dyna && dyna.DynaSpec is DynaEnemySB
+                                      where asset is AssetDYNA dyna && dyna.DynaSpec is DynaEnemySB
                                       select asset).Cast<AssetDYNA>().ToList();
 
             foreach (AssetDYNA a in assets)
@@ -754,7 +807,8 @@ namespace IndustrialPark.Randomizer
         private bool ShuffleModelColors(Random r, bool brightColors, bool strongColors)
         {
             List<Asset> assets = (from asset in assetDictionary.Values
-                                   where new AssetType[] { AssetType.JSP, AssetType.BSP }.Contains(asset.AHDR.assetType) select asset).ToList();
+                                  where new AssetType[] { AssetType.JSP, AssetType.BSP }.Contains(asset.AHDR.assetType)
+                                  select asset).ToList();
 
             float max = 255f;
             bool colored = false;
@@ -1123,11 +1177,11 @@ namespace IndustrialPark.Randomizer
             Random r = new Random(seed);
 
             List<AssetDYNA> assets = (from asset in assetDictionary.Values
-                                                 where
-                                                 asset is AssetDYNA dyna &&
-                                                 dyna.DynaSpec is DynaEnemySupplyCrate dynaC &&
-                                                 chooseFrom.Contains(dynaC.Type)
-                                                 select (AssetDYNA)asset).ToList();
+                                      where
+                                      asset is AssetDYNA dyna &&
+                                      dyna.DynaSpec is DynaEnemySupplyCrate dynaC &&
+                                      chooseFrom.Contains(dynaC.Type)
+                                      select (AssetDYNA)asset).ToList();
 
             foreach (AssetDYNA a in assets)
             {
@@ -1146,10 +1200,10 @@ namespace IndustrialPark.Randomizer
             Random r = new Random(seed);
 
             List<AssetDYNA> assets = (from asset in assetDictionary.Values
-                                                 where
-                                                 asset is AssetDYNA dyna &&
-                                                 dyna.DynaSpec is DynaEnemyStandard dynaC &&
-                                                 chooseFrom.Contains(dynaC.Type)
+                                      where
+                                      asset is AssetDYNA dyna &&
+                                      dyna.DynaSpec is DynaEnemyStandard dynaC &&
+                                      chooseFrom.Contains(dynaC.Type)
                                       select (AssetDYNA)asset).ToList();
 
             List<EnemyStandardType> altSetTo = (from asset in assets select ((DynaEnemyStandard)asset.DynaSpec).Type).ToList();
@@ -1175,6 +1229,27 @@ namespace IndustrialPark.Randomizer
             }
 
             return assets.Count != 0;
+        }
+
+        private bool ShuffleCombatArenas(Random gateRandom, int combatMin, int combatMax)
+        {
+            switch (LevelName)
+            {
+                case "am01":
+                case "am02":
+                case "am03":
+                    short count1 = (short)gateRandom.Next(combatMin, combatMax + 1);
+                    short count2 = (short)gateRandom.Next(combatMin, combatMax + 1);
+                    short count3 = (short)gateRandom.Next(combatMin, combatMax + 1);
+                    ((AssetCNTR)GetFromAssetID(new AssetID("WAVE_1_COUNTER_01"))).Count = count1;
+                    ((AssetCNTR)GetFromAssetID(new AssetID("WAVE_1_DONE_COUNTER_01"))).Count = count1;
+                    ((AssetCNTR)GetFromAssetID(new AssetID("WAVE_2_COUNTER_01"))).Count = count2;
+                    ((AssetCNTR)GetFromAssetID(new AssetID("WAVE_2_DONE_COUNTER_01"))).Count = count2;
+                    ((AssetCNTR)GetFromAssetID(new AssetID("WAVE_3_COUNTER_01"))).Count = count3;
+                    ((AssetCNTR)GetFromAssetID(new AssetID("WAVE_3_DONE_COUNTER_01"))).Count = count3;
+                    return true;
+            }
+            return false;
         }
 
         private bool DisableCutscenes()
@@ -1366,13 +1441,13 @@ namespace IndustrialPark.Randomizer
             foreach (Asset a in assetDictionary.Values)
                 if (a is AssetMRKR mrkr && VerifyMarkerStep1(mrkr, noWarps, busStops, teleBox, taxis))
                     assets.Add(mrkr);
-                else if (a is AssetDYNA dyna && pointers && dyna.Type == DynaType.pointer)
+                else if (a is AssetDYNA dyna && pointers && dyna.Type == DynaType.pointer && VerifyPointer(dyna))
                     assets.Add(dyna);
                 else if (plyrs && a is AssetPLYR plyr)
                     assets.Add(plyr);
 
             List<Vector3> positions = (from asset in assets select (new Vector3(asset.PositionX, asset.PositionY, asset.PositionZ))).ToList();
-            
+
             foreach (IClickableAsset a in assets)
             {
                 int value = r.Next(0, positions.Count);
@@ -1385,6 +1460,28 @@ namespace IndustrialPark.Randomizer
             }
 
             return assets.Count != 0;
+        }
+
+        private bool VerifyPointer(AssetDYNA pointer)
+        {
+            if (game == Game.Incredibles)
+                switch (LevelName)
+                {
+                    case "bb03":
+                    case "jk01":
+                        if (pointer.AHDR.ADBG.assetName.Contains("RINGRACE_POINTER"))
+                            return false;
+                        break;
+                    case "tt01":
+                        if (pointer.AHDR.ADBG.assetName.Contains("SONICGUITAR_POINTER"))
+                            return false;
+                        break;
+                    case "pt03":
+                        if (pointer.AHDR.ADBG.assetName.Contains("GGTOKEN_POINTER"))
+                            return false;
+                        break;
+                }
+            return true;
         }
 
         private bool VerifyMarkerStep1(AssetMRKR mrkr, bool noWarps, bool busStops, bool teleBox, bool taxis)
@@ -1416,8 +1513,8 @@ namespace IndustrialPark.Randomizer
 
                                 return VerifyMarkerStep2(assetName);
                             }
-                    else if (GetFromAssetID(u) is AssetPORT)
-                        return true;
+                            else if (GetFromAssetID(u) is AssetPORT)
+                                return true;
 
                 return false;
             }
@@ -1554,7 +1651,7 @@ namespace IndustrialPark.Randomizer
 
             return result;
         }
-        
+
         private bool RandomizeBoulderSettings(int seed, RandomizerSettings settings)
         {
             Random r = new Random(seed);
@@ -2343,10 +2440,10 @@ namespace IndustrialPark.Randomizer
             var outSet = new HashSet<EnemyStandardType>();
 
             foreach (DynaEnemyStandard a in from asset in assetDictionary.Values
-                                               where asset is AssetDYNA dyna &&
-                                               dyna.DynaSpec is DynaEnemyStandard crate
-                                               && importEnemyTypes.Contains(((DynaEnemyStandard)((AssetDYNA)asset).DynaSpec).Type)
-                                               select (DynaEnemyStandard)((AssetDYNA)asset).DynaSpec)
+                                            where asset is AssetDYNA dyna &&
+                                            dyna.DynaSpec is DynaEnemyStandard crate
+                                            && importEnemyTypes.Contains(((DynaEnemyStandard)((AssetDYNA)asset).DynaSpec).Type)
+                                            select (DynaEnemyStandard)((AssetDYNA)asset).DynaSpec)
                 if (!ContainsAsset(new AssetID(a.Type.ToString() + ".MINF")))
                     outSet.Add(a.Type);
 
@@ -2468,7 +2565,7 @@ namespace IndustrialPark.Randomizer
                     case EnemyStandardType.flinger_v3_bind:
                         hipFileName = "flinger_junkyard.hip"; break;
                     case EnemyStandardType.fogger_de_bind:
-                        hipFileName = "fogger_desert.HIP"; break;                        
+                        hipFileName = "fogger_desert.HIP"; break;
                     case EnemyStandardType.fogger_gg_bind:
                         hipFileName = "fogger_goofy_goober.HIP"; break;
                     case EnemyStandardType.fogger_jk_bind:
@@ -2547,7 +2644,7 @@ namespace IndustrialPark.Randomizer
             string gameName = game == Game.BFBB ? "BattleForBikiniBottom" : "MovieGame";
             UnimportHip(new HipFile(Path.Combine(editorFilesFolder, gameName, platform.ToString(), folderName, fileName)).DICT);
         }
-        
+
         public void UnimportHip(Section_DICT dict)
         {
             UnsavedChanges = true;
@@ -2652,7 +2749,7 @@ namespace IndustrialPark.Randomizer
                             return true;
                         break;
                     case "h001":
-                        if (dest == "b001" || dest == "c001" || dest == "g001" || dest == "l011" || dest == "mnu5" || 
+                        if (dest == "b001" || dest == "c001" || dest == "g001" || dest == "l011" || dest == "mnu5" ||
                             dest == "o001" || dest == "p001" || dest == "r001" || dest == "s001" || dest == "w020")
                             return true;
                         break;
@@ -2868,7 +2965,7 @@ namespace IndustrialPark.Randomizer
                         TargetAssetID = timer.AssetID
                     },
                 };
-                
+
                 timer.LinksBFBB = links.ToArray();
             }
 
@@ -3615,7 +3712,7 @@ namespace IndustrialPark.Randomizer
                     MessageBox.Show("Text asset " + assetID.ToString("X8") + " on file " + LevelName + " doesn't contain " + originalText);
             }
             else
-                MessageBox.Show("Text asset " + assetID.ToString("X8") + " not found on file " + LevelName); 
+                MessageBox.Show("Text asset " + assetID.ToString("X8") + " not found on file " + LevelName);
         }
 
         private void SetCondEvaluationAmount(int shinyAmount, uint assetID)

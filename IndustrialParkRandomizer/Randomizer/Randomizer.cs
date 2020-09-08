@@ -18,7 +18,8 @@ namespace IndustrialPark.Randomizer
 
     public class Randomizer
     {
-        public int version = 58;
+        public static int currVersion = 58;
+        public int version = currVersion;
         public string rootDir;
         public bool isDir;
         public string seedText;
@@ -26,12 +27,17 @@ namespace IndustrialPark.Randomizer
         public int game;
         public RandomizerSettings settings;
 
-        public Randomizer()
+        private Randomizer()
         {
-            settings = new RandomizerSettings();
         }
 
-        public Randomizer(string rootDir, bool isDir) : this()
+        public Randomizer(int game)
+        {
+            this.game = game;
+            settings = new RandomizerSettings(game);
+        }
+
+        public Randomizer(string rootDir, bool isDir, int game) : this(game)
         {
             this.rootDir = rootDir;
             this.isDir = isDir;
@@ -179,15 +185,15 @@ namespace IndustrialPark.Randomizer
                     game = hip.game;
                     scoobyPlatform = hip.platform;
 
-                    if (!Directory.Exists(ArchiveEditorFunctions.editorFilesFolder))
+                    if (Directory.Exists(ArchiveEditorFunctions.editorFilesFolder))
+                        AutomaticUpdater.VerifyEditorFiles();
+                    else
                     {
                         DialogResult dialogResult = MessageBox.Show("The IndustrialPark-EditorFiles folder has not been found under Resources. You must download it first. Do you wish to download it?", "Note", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
                         if (dialogResult == DialogResult.Yes)
                             AutomaticUpdater.DownloadEditorFiles();
                     }
-                    else
-                        AutomaticUpdater.VerifyEditorFiles();
 
                     platformVerified = true;
                 }
