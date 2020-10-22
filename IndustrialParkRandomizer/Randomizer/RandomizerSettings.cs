@@ -344,6 +344,8 @@ namespace IndustrialPark.Randomizer
                 UnlockCharacters = false;
                 RandomCharacters = false;
                 Taxi_Trigger_Positions = false;
+
+                disableCutscenes = false; // remove this line later
             }
 
             if (game == 1)
@@ -449,6 +451,11 @@ namespace IndustrialPark.Randomizer
                     dt.RemoveProperty("PowerupCheatsMovie");
                     dt.RemoveProperty("FloatingBlockChallenge");
                     dt.RemoveProperty("CombatArenaCounts");
+                    dt.RemoveProperty("combatMin");
+                    dt.RemoveProperty("combatMax");
+                    dt.RemoveProperty("RingSizes");
+                    dt.RemoveProperty("ringScaleMin");
+                    dt.RemoveProperty("ringScaleMax");
                     break;
                 case 1: // Scooby
                     dt.RemoveProperty("Disco_Floors");
@@ -484,6 +491,11 @@ namespace IndustrialPark.Randomizer
                     dt.RemoveProperty("restoreRobotLaugh");
                     dt.RemoveProperty("FloatingBlockChallenge");
                     dt.RemoveProperty("CombatArenaCounts");
+                    dt.RemoveProperty("combatMin");
+                    dt.RemoveProperty("combatMax");
+                    dt.RemoveProperty("RingSizes");
+                    dt.RemoveProperty("ringScaleMin");
+                    dt.RemoveProperty("ringScaleMax");
                     break;
                 case 2: // Movie
                     dt.RemoveProperty("Tiki_Models");
@@ -504,6 +516,9 @@ namespace IndustrialPark.Randomizer
                     dt.RemoveProperty("disableFlythroughs");
                     dt.RemoveProperty("spatReqChum");
                     dt.RemoveProperty("restoreRobotLaugh");
+
+
+                    dt.RemoveProperty("disableCutscenes"); // remove this line later
                     break;
                 default:
                     throw new Exception("Invalid game");
