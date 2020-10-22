@@ -43,7 +43,7 @@ namespace IndustrialPark
             SpecialBlendMode = false;
             foreach (var f in sourceDest)
             {
-                blendModes.Add(f.Item1 == -1 ? -1 : (int)(Math.Log(f.Item1, 2) - 1), (GetSharpBlendMode(f.Item2, true), GetSharpBlendMode(f.Item3, false)));
+                blendModes[f.Item1 == -1 ? -1 : (int)(Math.Log(f.Item1, 2) - 1)] = (GetSharpBlendMode(f.Item2, true), GetSharpBlendMode(f.Item3, false));
                 SpecialBlendMode |= f.Item2 != BlendFactorType.None || f.Item3 != BlendFactorType.None;
             }
         }

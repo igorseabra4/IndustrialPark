@@ -1509,9 +1509,6 @@ namespace IndustrialPark
 
             if (sPLNToolStripMenuItem.Checked)
                 sPLNToolStripMenuItem_Click(sender, e);
-
-            if (uIModeToolStripMenuItem.Checked)
-                uIModeToolStripMenuItem_Click(sender, e);
         }
 
         private void enableAllToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1587,9 +1584,6 @@ namespace IndustrialPark
 
             if (!sPLNToolStripMenuItem.Checked)
                 sPLNToolStripMenuItem_Click(sender, e);
-
-            if (!uIModeToolStripMenuItem.Checked)
-                uIModeToolStripMenuItem_Click(sender, e);
         }
     }
 }
