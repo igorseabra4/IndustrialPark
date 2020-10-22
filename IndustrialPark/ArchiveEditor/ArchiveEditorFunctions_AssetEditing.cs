@@ -699,11 +699,8 @@ namespace IndustrialPark
                 if (a is AssetPIPT PIPT)
                     pipt = PIPT;
             if (pipt == null)
-            {
-                List<uint> assetIDs2 = new List<uint>();
-                pipt = (AssetPIPT)GetFromAssetID(PlaceTemplate(new Vector3(), IndexOfLayerOfType((int)LayerType_BFBB.DEFAULT), ref assetIDs2, template: AssetTemplate.PipeInfoTable));
-            }
-
+                pipt = (AssetPIPT)GetFromAssetID(PlaceTemplate(new Vector3(), IndexOfLayerOfType((int)LayerType_BFBB.DEFAULT), template: AssetTemplate.PipeInfoTable));
+            
             List<EntryPIPT> entries = pipt.PIPT_Entries.ToList();
 
             foreach (uint u in assetIDs)

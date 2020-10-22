@@ -935,8 +935,6 @@ namespace IndustrialPark
                             i--;
                         }
 
-                    var tempList = new List<uint>();
-
                     if (hasSound)
                     {
                         foreach (var s in archive.GetAHDRsOfType(AssetType.SNDI))
@@ -948,7 +946,7 @@ namespace IndustrialPark
                         if (archive.game == Game.Incredibles)
                             layerType = (int)LayerType_TSSM.SNDTOC;
 
-                        archive.PlaceTemplate(new Vector3(), archive.IndexOfLayerOfType(layerType), ref tempList, "sound_info", AssetTemplate.SoundInfo);
+                        archive.PlaceTemplate(new Vector3(), archive.IndexOfLayerOfType(layerType), "sound_info", AssetTemplate.SoundInfo);
                     }
                     if (hasJaw)
                     {
@@ -957,7 +955,7 @@ namespace IndustrialPark
                             unsupported.Remove(s.assetID);
                             archive.RemoveAsset(s.assetID);
                         }
-                        archive.PlaceTemplate(new Vector3(), archive.IndexOfLayerOfType(0), ref tempList, template: AssetTemplate.JawData);
+                        archive.PlaceTemplate(new Vector3(), archive.IndexOfLayerOfType(0), template: AssetTemplate.JawData);
                     }
 
                     MessageBox.Show("First, I want you to choose a folder. I will import all assets which could not be converted from it, based on their asset IDs.");

@@ -117,7 +117,7 @@ namespace IndustrialPark
                 string error = AddAssetToDictionary(AHDR, true, skipTexturesAndModels || standalone, false);
 
                 if (error != null)
-                    assetsWithError += error + ", ";
+                    assetsWithError += error + "\n";
 
                 autoComplete.Add(AHDR.ADBG.assetName);
 
@@ -125,7 +125,7 @@ namespace IndustrialPark
             }
 
             if (assetsWithError != "")
-                MessageBox.Show("There was an error loading the following assets and editing has been disabled for them: " + assetsWithError);
+                MessageBox.Show("There was an error loading the following assets and editing has been disabled for them:\n" + assetsWithError);
 
             autoCompleteSource.AddRange(autoComplete.ToArray());
 
@@ -366,10 +366,10 @@ namespace IndustrialPark
             Asset newAsset;
             string error = null;
 
-            #if !DEBUG
+            //#if !DEBUG
             try
             {
-            #endif
+            //#endif
                 switch (AHDR.assetType)
                 {
                     case AssetType.ANIM: newAsset = AHDR.ADBG.assetName.Contains("ATBL") ? new Asset(AHDR, game, platform) : newAsset = new AssetANIM(AHDR, game, platform); break;
@@ -492,7 +492,7 @@ namespace IndustrialPark
                     default:
                         throw new Exception($"Unknown asset type ({AHDR.assetType})");
                 }
-            #if !DEBUG
+            //#if !DEBUG
             }
             catch (Exception ex)
             {
@@ -503,7 +503,7 @@ namespace IndustrialPark
                 
                 newAsset = new Asset(AHDR, game, platform);
             }
-            #endif
+            //#endif
 
             assetDictionary[AHDR.assetID] = newAsset;
 

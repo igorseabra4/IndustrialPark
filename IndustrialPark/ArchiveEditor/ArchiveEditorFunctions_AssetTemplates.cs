@@ -315,71 +315,81 @@ namespace IndustrialPark
         public static bool chainPointMVPTs = false;
         public static uint chainPointMVPTlast = 0;
 
+        private uint PlaceUserTemplate(Vector3 position, int layerIndex, ref List<uint> assetIDs, AssetTemplate template)
+        {
+            if (template == AssetTemplate.PasteClipboard)
+                PasteAssetsFromClipboard(layerIndex, out assetIDs);
+            else
+            {
+                try
+                {
+                    var clipboard = JsonConvert.DeserializeObject<AssetClipboard>(File.ReadAllText(Path.Combine(Program.MainForm.userTemplatesFolder, CurrentUserTemplate)));
+                    PasteAssetsFromClipboard(layerIndex, out assetIDs, clipboard, true);
+                }
+                catch
+                {
+                    return 0;
+                }
+            }
+
+            if (assetIDs.Count > 0)
+            {
+                foreach (uint assetID in assetIDs)
+                {
+                    if (GetFromAssetID(assetID) is AssetCAM cam)
+                    {
+                        cam.SetPosition(Program.MainForm.renderer.Camera.Position);
+                        cam.SetNormalizedForward(Program.MainForm.renderer.Camera.Forward);
+                        cam.SetNormalizedUp(Program.MainForm.renderer.Camera.Up);
+                        cam.SetNormalizedLeft(Program.MainForm.renderer.Camera.Right);
+                    }
+                    else if (GetFromAssetID(assetID) is IClickableAsset ica)
+                    {
+                        Vector3 delta = position - new Vector3(ica.PositionX, ica.PositionY, ica.PositionZ);
+
+                        ica.PositionX = position.X;
+                        ica.PositionY = position.Y;
+                        ica.PositionZ = position.Z;
+
+                        if (ica is AssetTRIG trig)
+                        {
+                            if (trig.Shape == TriggerShape.Box)
+                            {
+                                trig.SetPositions(
+                                    trig.Position0X + delta.X,
+                                    trig.Position0Y + delta.Y,
+                                    trig.Position0Z + delta.Z,
+                                    trig.Position1X + delta.X,
+                                    trig.Position1Y + delta.Y,
+                                    trig.Position1Z + delta.Z);
+                            }
+                            else
+                            {
+                                trig.Position0X = position.X;
+                                trig.Position0Y = position.Y;
+                                trig.Position0Z = position.Z;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return 0;
+        }
+
+        public uint PlaceTemplate(Vector3 position, int layerIndex, string customName = "", AssetTemplate template = AssetTemplate.Null)
+        {
+            var assetIDs = new List<uint>();
+            return PlaceTemplate(position, layerIndex, ref assetIDs, customName, template);
+        }
+
         public uint PlaceTemplate(Vector3 position, int layerIndex, ref List<uint> assetIDs, string customName = "", AssetTemplate template = AssetTemplate.Null)
         {
             if (template == AssetTemplate.Null)
                 template = CurrentAssetTemplate;
             if (template == AssetTemplate.UserTemplate || template == AssetTemplate.PasteClipboard)
             {
-                if (template == AssetTemplate.PasteClipboard)
-                    PasteAssetsFromClipboard(layerIndex, out assetIDs);
-                else
-                {
-                    try
-                    {
-                        var clipboard = JsonConvert.DeserializeObject<AssetClipboard>(
-                            File.ReadAllText(Path.Combine(Program.MainForm.userTemplatesFolder, CurrentUserTemplate)));
-                        PasteAssetsFromClipboard(layerIndex, out assetIDs, clipboard, true);
-                    }
-                    catch
-                    {
-                        return 0;
-                    }
-                }
-
-                if (assetIDs.Count > 0)
-                {
-                    foreach (uint assetID in assetIDs)
-                    {
-                        if (GetFromAssetID(assetID) is AssetCAM cam)
-                        {
-                            cam.SetPosition(Program.MainForm.renderer.Camera.Position);
-                            cam.SetNormalizedForward(Program.MainForm.renderer.Camera.Forward);
-                            cam.SetNormalizedUp(Program.MainForm.renderer.Camera.Up);
-                            cam.SetNormalizedLeft(Program.MainForm.renderer.Camera.Right);
-                        }
-                        else if (GetFromAssetID(assetID) is IClickableAsset ica)
-                        {
-                            Vector3 delta = position - new Vector3(ica.PositionX, ica.PositionY, ica.PositionZ);
-
-                            ica.PositionX = position.X;
-                            ica.PositionY = position.Y;
-                            ica.PositionZ = position.Z;
-
-                            if (ica is AssetTRIG trig)
-                            {
-                                if (trig.Shape == TriggerShape.Box)
-                                {
-                                    trig.SetPositions(
-                                        trig.Position0X + delta.X,
-                                        trig.Position0Y + delta.Y,
-                                        trig.Position0Z + delta.Z,
-                                        trig.Position1X + delta.X,
-                                        trig.Position1Y + delta.Y,
-                                        trig.Position1Z + delta.Z);
-                                }
-                                else
-                                {
-                                    trig.Position0X = position.X;
-                                    trig.Position0Y = position.Y;
-                                    trig.Position0Z = position.Z;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                return 0;
+                return PlaceUserTemplate(position, layerIndex, ref assetIDs, template);
             }
 
             AssetType newAssetType;
@@ -2135,8 +2145,6 @@ namespace IndustrialPark
             if (asset is AssetDYNA DYNA)
                 DYNA.SetDynaSpecific(false);
 
-            assetIDs.Add(asset.AHDR.assetID);
-
             return asset.AHDR.assetID;
         }
 
@@ -2222,20 +2230,19 @@ namespace IndustrialPark
         {
             AddLayer((int)LayerType_BFBB.BSP);
             AddLayer();
-            List<uint> assetIDs = new List<uint>();
 
-            AssetENV env = (AssetENV)GetFromAssetID(PlaceTemplate(new Vector3(), 1, ref assetIDs, customName: environmentName, template: AssetTemplate.Environment));
-            env.BSP_AssetID = PlaceTemplate(new Vector3(), 0, ref assetIDs, customName: "empty_bsp", template: AssetTemplate.EmptyBSP);
-            env.StartCameraAssetID = PlaceTemplate(new Vector3(0, 100, 100), 1, ref assetIDs, customName: startCamName, template: AssetTemplate.StartCamera);
+            AssetENV env = (AssetENV)GetFromAssetID(PlaceTemplate(new Vector3(), 1, customName: environmentName, template: AssetTemplate.Environment));
+            env.BSP_AssetID = PlaceTemplate(new Vector3(), 0, customName: "empty_bsp", template: AssetTemplate.EmptyBSP);
+            env.StartCameraAssetID = PlaceTemplate(new Vector3(0, 100, 100), 1, customName: startCamName, template: AssetTemplate.StartCamera);
 
-            PlaceTemplate(new Vector3(), 1, ref assetIDs, customName: pkupsMinfName, template: AssetTemplate.MINF_Generic);
+            PlaceTemplate(new Vector3(), 1, customName: pkupsMinfName, template: AssetTemplate.MINF_Generic);
 
-            AssetPLYR player = (AssetPLYR)GetFromAssetID(PlaceTemplate(new Vector3(), 1, ref assetIDs, template: AssetTemplate.Player));
+            AssetPLYR player = (AssetPLYR)GetFromAssetID(PlaceTemplate(new Vector3(), 1, template: AssetTemplate.Player));
 
             if (game == Game.BFBB)
             {
-                env.Object_LKIT_AssetID = PlaceTemplate(new Vector3(), 1, ref assetIDs, customName: "lights", template: AssetTemplate.LKIT_lights);
-                player.LightKit_AssetID = PlaceTemplate(new Vector3(), 1, ref assetIDs, customName: "JF_SB_lights", template: AssetTemplate.LKIT_JF_SB_lights);
+                env.Object_LKIT_AssetID = PlaceTemplate(new Vector3(), 1, customName: "lights", template: AssetTemplate.LKIT_lights);
+                player.LightKit_AssetID = PlaceTemplate(new Vector3(), 1, customName: "JF_SB_lights", template: AssetTemplate.LKIT_JF_SB_lights);
             }
         }
     }
