@@ -186,7 +186,8 @@ namespace IndustrialPark
             
             FSB3_File temp = new FSB3_File(new BinaryReader(new MemoryStream(soundData)));
             temp.soundEntries[0].SoundAssetID = assetID;
-            newEntries[0].Merge(temp);
+            //newEntries[0].Merge(temp);
+            newEntries.Add(temp);
 
             Entries = newEntries.ToArray();
         }
