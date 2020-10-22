@@ -108,16 +108,24 @@ namespace IndustrialPark
             while (this.platform == Platform.Unknown)
                 hipFile.platform = ChoosePlatformDialog.GetPlatform();
 
+            string assetsWithError = "";
+
             List<string> autoComplete = new List<string>(DICT.ATOC.AHDRList.Count);
 
             foreach (Section_AHDR AHDR in DICT.ATOC.AHDRList)
             {
-                AddAssetToDictionary(AHDR, true, skipTexturesAndModels || standalone);
+                string error = AddAssetToDictionary(AHDR, true, skipTexturesAndModels || standalone, false);
+
+                if (error != null)
+                    assetsWithError += error + ", ";
 
                 autoComplete.Add(AHDR.ADBG.assetName);
 
                 progressBar.PerformStep();
             }
+
+            if (assetsWithError != "")
+                MessageBox.Show("There was an error loading the following assets and editing has been disabled for them: " + assetsWithError);
 
             autoCompleteSource.AddRange(autoComplete.ToArray());
 
@@ -345,7 +353,7 @@ namespace IndustrialPark
 
         public static bool allowRender = true;
 
-        private void AddAssetToDictionary(Section_AHDR AHDR, bool fast, bool skipTexturesAndModels = false)
+        private string AddAssetToDictionary(Section_AHDR AHDR, bool fast, bool skipTexturesAndModels = false, bool showMessageBox = true)
         {
             allowRender = false;
 
@@ -356,7 +364,8 @@ namespace IndustrialPark
             }
 
             Asset newAsset;
-            
+            string error = null;
+
             #if !DEBUG
             try
             {
@@ -481,13 +490,17 @@ namespace IndustrialPark
                         newAsset = new Asset(AHDR, game, platform);
                         break;
                     default:
-                        throw new Exception($"Unknown asset type ({AHDR.assetType.ToString()})");
+                        throw new Exception($"Unknown asset type ({AHDR.assetType})");
                 }
             #if !DEBUG
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"There was an error loading asset [{AHDR.assetID.ToString("X8")}] {AHDR.ADBG.assetName}: " + ex.Message + ". Industrial Park will not be able to edit this asset.");
+                error = $"[{ AHDR.assetID:X8}] {AHDR.ADBG.assetName}";
+
+                if (showMessageBox)
+                    MessageBox.Show($"There was an error loading asset {error}:" + ex.Message + ". Industrial Park will not be able to edit this asset.");
+                
                 newAsset = new Asset(AHDR, game, platform);
             }
             #endif
@@ -501,6 +514,8 @@ namespace IndustrialPark
                 autoCompleteSource.Add(AHDR.ADBG.assetName);
 
             allowRender = true;
+
+            return error;
         }
 
         public void CreateNewAsset(int layerIndex, out bool success, out uint assetID)
