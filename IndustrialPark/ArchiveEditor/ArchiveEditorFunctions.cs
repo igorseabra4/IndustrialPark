@@ -499,7 +499,7 @@ namespace IndustrialPark
                 error = $"[{ AHDR.assetID:X8}] {AHDR.ADBG.assetName}";
 
                 if (showMessageBox)
-                    MessageBox.Show($"There was an error loading asset {error}:" + ex.Message + ". Industrial Park will not be able to edit this asset.");
+                    MessageBox.Show($"There was an error loading asset {error}:" + ex.Message + " and editing has been disabled for it.");
                 
                 newAsset = new Asset(AHDR, game, platform);
             }

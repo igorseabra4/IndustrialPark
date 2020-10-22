@@ -333,9 +333,7 @@ namespace IndustrialPark
             }
 
             if (assetIDs.Count > 0)
-            {
                 foreach (uint assetID in assetIDs)
-                {
                     if (GetFromAssetID(assetID) is AssetCAM cam)
                     {
                         cam.SetPosition(Program.MainForm.renderer.Camera.Position);
@@ -371,8 +369,6 @@ namespace IndustrialPark
                             }
                         }
                     }
-                }
-            }
 
             return 0;
         }
@@ -388,9 +384,7 @@ namespace IndustrialPark
             if (template == AssetTemplate.Null)
                 template = CurrentAssetTemplate;
             if (template == AssetTemplate.UserTemplate || template == AssetTemplate.PasteClipboard)
-            {
                 return PlaceUserTemplate(position, layerIndex, ref assetIDs, template);
-            }
 
             AssetType newAssetType;
             int dataSize = -1;
@@ -1512,15 +1506,15 @@ namespace IndustrialPark
                     ((AssetMVPT_Scooby)asset).Wt = 0x2710;
                     ((AssetMVPT_Scooby)asset).IsZone = 0x01;
                     ((AssetMVPT_Scooby)asset).BezIndex = 0x00;
-                    if (asset is AssetMVPT)
+                    if (asset is AssetMVPT mvpt)
                     {
                         if (game == Game.Incredibles)
-                            ((AssetMVPT)asset).Delay = 2;
+                            mvpt.Delay = 2;
                         else
-                            ((AssetMVPT)asset).Delay = 0;
+                            mvpt.Delay = 0;
 
-                        ((AssetMVPT)asset).ZoneRadius = -1;
-                        ((AssetMVPT)asset).ArenaRadius = -1;
+                        mvpt.ZoneRadius = -1;
+                        mvpt.ArenaRadius = -1;
                     }
                     else
                         ((AssetMVPT_Scooby)asset).ArenaRadius = -1;
