@@ -287,7 +287,7 @@ namespace IndustrialPark
     {
         public Motion_Mechanism_TSSM(AssetWithMotion asset) : base(asset) { }
 
-        public byte Unknown1
+        public byte ShrinkType
         {
             get => ReadByte(8);
             set => Write(8, value);
@@ -307,12 +307,12 @@ namespace IndustrialPark
             get => ReadByte(11);
             set => Write(11, value);
         }
-        public float UnknownFloat1
+        public float ShrinkSize
         {
             get => ReadFloat(0x30 + MechanismOffset);
             set => Write(0x30 + MechanismOffset, value);
         }
-        public float UnknownFloat2
+        public float ShrinkTime
         {
             get => ReadFloat(0x34 + MechanismOffset);
             set => Write(0x34 + MechanismOffset, value);
