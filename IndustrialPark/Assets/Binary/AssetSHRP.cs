@@ -582,7 +582,7 @@ namespace IndustrialPark
             UnknownFloat100 = Switch(BitConverter.ToSingle(data, 0x100));
             UnknownInt104 = Switch(BitConverter.ToInt32(data, 0x104));
             UnknownInt108 = Switch(BitConverter.ToInt32(data, 0x108));
-            UnknownFloat10C = Switch(BitConverter.ToSingle(data, 0x0C));
+            UnknownFloat10C = Switch(BitConverter.ToSingle(data, 0x10C));
         }
 
         public override List<byte> ToByteArray()
