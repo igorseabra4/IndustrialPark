@@ -1435,5 +1435,161 @@ namespace IndustrialPark
             discordRichPresenceToolStripMenuItem.Checked = !discordRichPresenceToolStripMenuItem.Checked;
             DiscordRPCController.ToggleDiscordRichPresence(discordRichPresenceToolStripMenuItem.Checked);
         }
+
+        private void disableAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (levelModelToolStripMenuItem.Checked)
+                levelModelToolStripMenuItem_Click(sender, e);
+
+            if (bUTNToolStripMenuItem.Checked)
+                bUTNToolStripMenuItem_Click(sender, e);
+
+            if (bOULToolStripMenuItem.Checked)
+                bOULToolStripMenuItem_Click(sender, e);
+
+            if (cAMToolStripMenuItem.Checked)
+                cAMToolStripMenuItem_Click(sender, e);
+
+            if (mVPTToolStripMenuItem.Checked)
+                mVPTToolStripMenuItem_Click(sender, e);
+
+            if (pKUPToolStripMenuItem.Checked)
+                pKUPToolStripMenuItem_Click(sender, e);
+
+            if (dSTRToolStripMenuItem.Checked)
+                dSTRToolStripMenuItem_Click(sender, e);
+
+            if (tRIGToolStripMenuItem.Checked)
+                tRIGToolStripMenuItem_Click(sender, e);
+
+            if (pLATToolStripMenuItem.Checked)
+                pLATToolStripMenuItem_Click(sender, e);
+
+            if (sIMPToolStripMenuItem.Checked)
+                sIMPToolStripMenuItem_Click(sender, e);
+
+            if (vILToolStripMenuItem.Checked)
+                vILToolStripMenuItem_Click(sender, e);
+
+            if (mRKRToolStripMenuItem.Checked)
+                mRKRToolStripMenuItem_Click(sender, e);
+
+            if (pLYRToolStripMenuItem.Checked)
+                pLYRToolStripMenuItem_Click(sender, e);
+
+            if (sFXToolStripMenuItem.Checked)
+                sFXToolStripMenuItem_Click(sender, e);
+
+            if (sDFXToolStripMenuItem.Checked)
+                sDFXToolStripMenuItem_Click(sender, e);
+
+            if (dYNAToolStripMenuItem.Checked)
+                dYNAToolStripMenuItem_Click(sender, e);
+
+            if (uIToolStripMenuItem.Checked)
+                uIToolStripMenuItem_Click(sender, e);
+
+            if (uIFTToolStripMenuItem.Checked)
+                uIFTToolStripMenuItem_Click(sender, e);
+
+            if (eGENToolStripMenuItem.Checked)
+                eGENToolStripMenuItem_Click(sender, e);
+
+            if (hANGToolStripMenuItem.Checked)
+                hANGToolStripMenuItem_Click(sender, e);
+
+            if (pENDToolStripMenuItem.Checked)
+                pENDToolStripMenuItem_Click(sender, e);
+
+            if (lITEToolStripMenuItem.Checked)
+                lITEToolStripMenuItem_Click(sender, e);
+
+            if (dUPCToolStripMenuItem.Checked)
+                dUPCToolStripMenuItem_Click(sender, e);
+
+            if (sPLNToolStripMenuItem.Checked)
+                sPLNToolStripMenuItem_Click(sender, e);
+
+            if (uIModeToolStripMenuItem.Checked)
+                uIModeToolStripMenuItem_Click(sender, e);
+        }
+
+        private void enableAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!levelModelToolStripMenuItem.Checked)
+                levelModelToolStripMenuItem_Click(sender, e);
+
+            if (!bUTNToolStripMenuItem.Checked)
+                bUTNToolStripMenuItem_Click(sender, e);
+
+            if (!bOULToolStripMenuItem.Checked)
+                bOULToolStripMenuItem_Click(sender, e);
+
+            if (!cAMToolStripMenuItem.Checked)
+                cAMToolStripMenuItem_Click(sender, e);
+
+            if (!mVPTToolStripMenuItem.Checked)
+                mVPTToolStripMenuItem_Click(sender, e);
+
+            if (!pKUPToolStripMenuItem.Checked)
+                pKUPToolStripMenuItem_Click(sender, e);
+
+            if (!dSTRToolStripMenuItem.Checked)
+                dSTRToolStripMenuItem_Click(sender, e);
+
+            if (!tRIGToolStripMenuItem.Checked)
+                tRIGToolStripMenuItem_Click(sender, e);
+
+            if (!pLATToolStripMenuItem.Checked)
+                pLATToolStripMenuItem_Click(sender, e);
+
+            if (!sIMPToolStripMenuItem.Checked)
+                sIMPToolStripMenuItem_Click(sender, e);
+
+            if (!vILToolStripMenuItem.Checked)
+                vILToolStripMenuItem_Click(sender, e);
+
+            if (!mRKRToolStripMenuItem.Checked)
+                mRKRToolStripMenuItem_Click(sender, e);
+
+            if (!pLYRToolStripMenuItem.Checked)
+                pLYRToolStripMenuItem_Click(sender, e);
+
+            if (!sFXToolStripMenuItem.Checked)
+                sFXToolStripMenuItem_Click(sender, e);
+
+            if (!sDFXToolStripMenuItem.Checked)
+                sDFXToolStripMenuItem_Click(sender, e);
+
+            if (!dYNAToolStripMenuItem.Checked)
+                dYNAToolStripMenuItem_Click(sender, e);
+
+            if (!uIToolStripMenuItem.Checked)
+                uIToolStripMenuItem_Click(sender, e);
+
+            if (!uIFTToolStripMenuItem.Checked)
+                uIFTToolStripMenuItem_Click(sender, e);
+
+            if (!eGENToolStripMenuItem.Checked)
+                eGENToolStripMenuItem_Click(sender, e);
+
+            if (!hANGToolStripMenuItem.Checked)
+                hANGToolStripMenuItem_Click(sender, e);
+
+            if (!pENDToolStripMenuItem.Checked)
+                pENDToolStripMenuItem_Click(sender, e);
+
+            if (!lITEToolStripMenuItem.Checked)
+                lITEToolStripMenuItem_Click(sender, e);
+
+            if (!dUPCToolStripMenuItem.Checked)
+                dUPCToolStripMenuItem_Click(sender, e);
+
+            if (!sPLNToolStripMenuItem.Checked)
+                sPLNToolStripMenuItem_Click(sender, e);
+
+            if (!uIModeToolStripMenuItem.Checked)
+                uIModeToolStripMenuItem_Click(sender, e);
+        }
     }
 }
