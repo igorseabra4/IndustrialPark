@@ -72,13 +72,9 @@ namespace IndustrialPark
             get => ReadByte(0x0E);
             set => Write(0x0E, value);
         }
-
-        [Category("Surface: Base"), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte PhysicsFlags
-        {
-            get => ReadByte(0x0F);
-            set => Write(0x0F, value);
-        }
+                
+        [Category("Surface: Base")]
+        public DynamicTypeDescriptor PhysicsFlags => ByteFlagsDescriptor(0x0F, null, null, null, "No Stand", "Out Of Bounds", "No Stand 2", "Ledge Grab");
 
         [Category("Surface: Base"), TypeConverter(typeof(FloatTypeConverter))]
         public float Friction
