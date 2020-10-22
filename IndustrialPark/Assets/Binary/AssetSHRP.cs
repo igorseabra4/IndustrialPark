@@ -545,7 +545,7 @@ namespace IndustrialPark
         public float UnknownFloat100 { get; set; }
         public int UnknownInt104 { get; set; }
         public int UnknownInt108 { get; set; }
-        public float UnknownFloat10C { get; set; }
+        public float Gravity { get; set; }
 
         public EntrySHRP_Type4_TSSM(Platform platform) : base(platform)
         {
@@ -582,7 +582,7 @@ namespace IndustrialPark
             UnknownFloat100 = Switch(BitConverter.ToSingle(data, 0x100));
             UnknownInt104 = Switch(BitConverter.ToInt32(data, 0x104));
             UnknownInt108 = Switch(BitConverter.ToInt32(data, 0x108));
-            UnknownFloat10C = Switch(BitConverter.ToSingle(data, 0x10C));
+            Gravity = Switch(BitConverter.ToSingle(data, 0x10C));
         }
 
         public override List<byte> ToByteArray()
@@ -622,7 +622,7 @@ namespace IndustrialPark
             list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat100)));
             list.AddRange(BitConverter.GetBytes(Switch(UnknownInt104)));
             list.AddRange(BitConverter.GetBytes(Switch(UnknownInt108)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat10C)));
+            list.AddRange(BitConverter.GetBytes(Switch(Gravity)));
 
             return list;
         }
