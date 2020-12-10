@@ -110,6 +110,12 @@
         Turret_v1,
         Turret_v2,
         Turret_v3,
+        BucketOTron_BB,
+        BucketOTron_DE,
+        BucketOTron_GG,
+        BucketOTron_TR,
+        BucketOTron_JK,
+        BucketOTron_PT,
 
         // Stage Items
         Button_Red,

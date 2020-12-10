@@ -12,7 +12,7 @@ namespace IndustrialPark
                 
         public override bool HasReference(uint assetID)
         {
-            if (GRUP_AssetID == assetID)
+            if (Group_AssetID == assetID)
                 return true;
 
             return base.HasReference(assetID);
@@ -22,10 +22,10 @@ namespace IndustrialPark
         {
             base.Verify(ref result);
 
-            if (GRUP_AssetID == 0)
+            if (Group_AssetID == 0)
                 result.Add("DYNA BucketOTron with GRUP Asset ID set to 0");
 
-            Asset.Verify(GRUP_AssetID, ref result);
+            Asset.Verify(Group_AssetID, ref result);
         }
 
         public EnemyBucketOTronType Type
@@ -34,7 +34,7 @@ namespace IndustrialPark
             set => Model_AssetID = (uint)value;
         }
 
-        public AssetID GRUP_AssetID
+        public AssetID Group_AssetID
         {
             get => ReadUInt(0x50);
             set => Write(0x50, value);

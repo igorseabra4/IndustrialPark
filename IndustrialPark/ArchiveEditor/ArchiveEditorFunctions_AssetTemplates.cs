@@ -182,15 +182,29 @@ namespace IndustrialPark
                 new ToolStripSeparator(),
                 new ToolStripMenuItem(AssetTemplate.Minimerv.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Mervyn.ToString()),
-                new ToolStripSeparator(),
+            });
+            foreach (ToolStripItem i in enemiesTSSM.DropDownItems)
+                if (i is ToolStripMenuItem j)
+                    j.Click += eventHandler;
+
+            ToolStripMenuItem moreEnemiesTSSM = new ToolStripMenuItem("Enemies");
+            moreEnemiesTSSM.DropDownItems.AddRange(new ToolStripItem[]
+            {
                 new ToolStripMenuItem(AssetTemplate.Jelly_Critter.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Jelly_Bucket.ToString()),
                 new ToolStripSeparator(),
                 new ToolStripMenuItem(AssetTemplate.Turret_v1.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Turret_v2.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Turret_v3.ToString())
+                new ToolStripMenuItem(AssetTemplate.Turret_v3.ToString()),
+                new ToolStripSeparator(),
+                new ToolStripMenuItem(AssetTemplate.BucketOTron_BB.ToString()),
+                new ToolStripMenuItem(AssetTemplate.BucketOTron_DE.ToString()),
+                new ToolStripMenuItem(AssetTemplate.BucketOTron_GG.ToString()),
+                new ToolStripMenuItem(AssetTemplate.BucketOTron_TR.ToString()),
+                new ToolStripMenuItem(AssetTemplate.BucketOTron_JK.ToString()),
+                new ToolStripMenuItem(AssetTemplate.BucketOTron_PT.ToString())
             });
-            foreach (ToolStripItem i in enemiesTSSM.DropDownItems)
+            foreach (ToolStripItem i in moreEnemiesTSSM.DropDownItems)
                 if (i is ToolStripMenuItem j)
                     j.Click += eventHandler;
 
@@ -215,6 +229,7 @@ namespace IndustrialPark
             {
                 pickupsTSSM,
                 enemiesTSSM,
+                moreEnemiesTSSM,
                 stageitemsTSSM
             });
 
@@ -480,6 +495,12 @@ namespace IndustrialPark
                 case AssetTemplate.Ring:
                 case AssetTemplate.RingControl:
                 case AssetTemplate.CamTweak:
+                case AssetTemplate.BucketOTron_BB:
+                case AssetTemplate.BucketOTron_DE:
+                case AssetTemplate.BucketOTron_GG:
+                case AssetTemplate.BucketOTron_JK:
+                case AssetTemplate.BucketOTron_TR:
+                case AssetTemplate.BucketOTron_PT:
                     dataSize = 0x10;
                     newAssetType = AssetType.DYNA;
                     break;
@@ -760,6 +781,8 @@ namespace IndustrialPark
                 template == AssetTemplate.Player);
 
             Asset asset = GetFromAssetID(AddAssetWithUniqueID(layerIndex, newAsset, giveIDregardless: true, ignoreNumber: ignoreNumber));
+
+            assetIDs.Add(asset.AHDR.assetID);
 
             if (asset is BaseAsset oa)
                 oa.BaseUshortFlags = 0x1D;
@@ -2084,6 +2107,39 @@ namespace IndustrialPark
                         template == AssetTemplate.Turret_v1 ? EnemyTurretType.turret_v1_bind :
                         template == AssetTemplate.Turret_v2 ? EnemyTurretType.turret_v2_bind :
                         template == AssetTemplate.Turret_v3 ? EnemyTurretType.turret_v3_bind : 0
+                    };
+                    break;
+                case AssetTemplate.BucketOTron_BB:
+                case AssetTemplate.BucketOTron_DE:
+                case AssetTemplate.BucketOTron_GG:
+                case AssetTemplate.BucketOTron_JK:
+                case AssetTemplate.BucketOTron_TR:
+                case AssetTemplate.BucketOTron_PT:
+                    ((AssetDYNA)asset).Version = 4;
+                    ((AssetDYNA)asset).Type = DynaType.Enemy__SB__BucketOTron;
+                    ((AssetDYNA)asset).DynaSpec = new DynaEnemyBucketOTron((AssetDYNA)asset)
+                    {
+                        VisibilityFlag = 1,
+                        SolidityFlag = 4,
+                        Flags06 = 0x1D,
+                        PositionX = position.X,
+                        PositionY = position.Y,
+                        PositionZ = position.Z,
+                        ScaleX = 1f,
+                        ScaleY = 1f,
+                        ScaleZ = 1f,
+                        ColorRed = 1f,
+                        ColorGreen = 1f,
+                        ColorBlue = 1f,
+                        ColorAlpha = 1f,
+                        Group_AssetID = PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_GROUP", AssetTemplate.Group),
+                        Type =
+                        template == AssetTemplate.BucketOTron_BB ? EnemyBucketOTronType.buckotron_bb_bind :
+                        template == AssetTemplate.BucketOTron_DE ? EnemyBucketOTronType.buckotron_de_bind :
+                        template == AssetTemplate.BucketOTron_GG ? EnemyBucketOTronType.buckotron_gg_bind :
+                        template == AssetTemplate.BucketOTron_TR ? EnemyBucketOTronType.buckotron_tr_bind :
+                        template == AssetTemplate.BucketOTron_JK ? EnemyBucketOTronType.buckotron_jk_bind :
+                        template == AssetTemplate.BucketOTron_PT ? EnemyBucketOTronType.buckotron_pt_bind : 0
                     };
                     break;
                 case AssetTemplate.Ring:
