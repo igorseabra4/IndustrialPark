@@ -187,7 +187,7 @@ namespace IndustrialPark
                 if (i is ToolStripMenuItem j)
                     j.Click += eventHandler;
 
-            ToolStripMenuItem moreEnemiesTSSM = new ToolStripMenuItem("Enemies");
+            ToolStripMenuItem moreEnemiesTSSM = new ToolStripMenuItem("More Enemies");
             moreEnemiesTSSM.DropDownItems.AddRange(new ToolStripItem[]
             {
                 new ToolStripMenuItem(AssetTemplate.Jelly_Critter.ToString()),
@@ -2185,10 +2185,10 @@ namespace IndustrialPark
                     ((AssetMINF)asset).MINF_Name = "MINF";
                     break;
                 case AssetTemplate.LKIT_lights:
-                    asset.Data = File.ReadAllBytes(Application.StartupPath + "/Resources/lights");
+                    asset.Data = File.ReadAllBytes(Path.Combine(Application.StartupPath, "Resources", "lights"));
                     break;
                 case AssetTemplate.LKIT_JF_SB_lights:
-                    asset.Data = File.ReadAllBytes(Application.StartupPath + "/Resources/JF_SB_lights");
+                    asset.Data = File.ReadAllBytes(Path.Combine(Application.StartupPath, "Resources", "JF_SB_lights"));
                     break;
             }
 

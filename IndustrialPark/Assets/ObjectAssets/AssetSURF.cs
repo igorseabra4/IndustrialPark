@@ -74,7 +74,7 @@ namespace IndustrialPark
         }
                 
         [Category("Surface: Base")]
-        public DynamicTypeDescriptor PhysicsFlags => ByteFlagsDescriptor(0x0F, null, null, null, "No Stand", "Out Of Bounds", "No Stand 2", "Ledge Grab");
+        public DynamicTypeDescriptor PhysicsFlags => ByteFlagsDescriptor(0x0F, "Slide Off Player", "Angle Player", null, "No Stand", "Out Of Bounds", "No Stand 2", "Ledge Grab");
 
         [Category("Surface: Base"), TypeConverter(typeof(FloatTypeConverter))]
         public float Friction

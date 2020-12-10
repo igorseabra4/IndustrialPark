@@ -656,7 +656,7 @@ namespace IndustrialPark
 
             foreach (Asset asset in currentlySelectedAssets)
             {
-                Section_AHDR AHDR = asset.AHDR;
+                Section_AHDR AHDR = JsonConvert.DeserializeObject<Section_AHDR>(JsonConvert.SerializeObject(asset.AHDR));
 
                 if (AHDR.assetType == AssetType.SND || AHDR.assetType == AssetType.SNDS)
                 {
