@@ -128,10 +128,10 @@ namespace IndustrialPark
                 Verify(a, ref result);
             }
 
-            AnimationFile[] b = AnimationFiles;
-            AnimationState[] c = AnimationStates;
-            AnimationEffect[] d = AnimationEffects;
-            int[] e = Entries_Unknown;
+            var b = AnimationFiles;
+            var c = AnimationStates;
+            var d = AnimationEffects;
+            var e = Entries_Unknown;
         }
 
         [Category("Animation Table"), ReadOnly(true)]
@@ -184,6 +184,8 @@ namespace IndustrialPark
             }
             set
             {
+                int prevUnkCount = Entries_Unknown.Length;
+
                 List<byte> newData = Data.Take(RawStart).ToList();
                 List<byte> restOfOldData = Data.Skip(RawStart + 4 * NumRaw).ToList();
 
@@ -200,6 +202,14 @@ namespace IndustrialPark
                 Data = newData.ToArray();
 
                 NumRaw = value.Length;
+
+                if (prevUnkCount < NumRaw)
+                {
+                    var entries = Entries_Unknown.ToList();
+                    for (int i = prevUnkCount; i < NumRaw; i++)
+                        entries.Add(i);
+                    Entries_Unknown = entries.ToArray();
+                }
             }
         }
 
