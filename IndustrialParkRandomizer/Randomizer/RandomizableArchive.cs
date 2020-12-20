@@ -63,7 +63,7 @@ namespace IndustrialPark.Randomizer
                 shuffled |= RandomizeSounds(seed, settings.Mix_Sound_Types);
 
             if (settings.Pickups && ContainsAssetWithType(AssetType.PKUP))
-                shuffled |= RandomizePickupPositions(seed);
+                shuffled |= RandomizePickupPositions(seed, settings.Shiny_Object_Gates && game == Game.Scooby, settings.shinyReqMin, settings.shinyReqMax);
 
             if (settings.MovePoint_Radius && ContainsAssetWithType(AssetType.MVPT))
                 shuffled |= RandomizeMovePointRadius(seed, settings);
@@ -414,7 +414,7 @@ namespace IndustrialPark.Randomizer
 
             List<Asset> assets = (from asset in assetDictionary.Values
                                   where asset.AHDR.assetType == AssetType.RWTX
-&& ((hud && asset.AHDR.ADBG.assetName.ToLower().Contains("rw3")) || (!hud))
+                                  && ((hud && asset.AHDR.ADBG.assetName.ToLower().Contains("rw3")) || (!hud))
                                   select asset).ToList();
 
             if (assets.Count < 2)
@@ -432,7 +432,7 @@ namespace IndustrialPark.Randomizer
             return true;
         }
 
-        private bool RandomizePickupPositions(int seed)
+        private bool RandomizePickupPositions(int seed, bool snackGates, float snackGateMin, float snackGateMax)
         {
             Random r = new Random(seed);
 
@@ -445,6 +445,8 @@ namespace IndustrialPark.Randomizer
                 VerifyPickupsBFBB(ref assets);
             else if (game == Game.Incredibles)
                 VerifyPickupsMovie(ref assets);
+            else if (game == Game.Scooby)
+                VerifyPickupsScooby(ref assets);
 
             List<Vector3> positions = (from asset in assets select (new Vector3(asset.PositionX, asset.PositionY, asset.PositionZ))).ToList();
 
@@ -460,6 +462,9 @@ namespace IndustrialPark.Randomizer
 
                 if (game == Game.Incredibles)
                     RemoveFromVolume(a.AHDR.assetID);
+
+                if (snackGates && a.PickReferenceID.Equals(0x25E4C286))
+                    a.PickupValue = (short)(a.PickupValue * r.NextFloat(snackGateMin, snackGateMax));
             }
 
             return true;
@@ -572,6 +577,22 @@ namespace IndustrialPark.Randomizer
                     for (int i = 0; i < assets.Count; i++)
                         if (assets[i].PickReferenceID.Equals(0x60F808B7))
                             assets.RemoveAt(i--);
+                    break;
+            }
+        }
+
+        private void VerifyPickupsScooby(ref List<AssetPKUP> assets)
+        {
+            switch (LevelName)
+            {
+                case "g009":
+                    RemoveAssetsFromContains(ref assets, "FLOAT");
+                    break;
+                case "o008":
+                    RemoveAssetsFromContains(ref assets, "BOOTS");
+                    break;
+                case "w028":
+                    RemoveAssetsFromContains(ref assets, "GUMMACHINE");
                     break;
             }
         }
@@ -1579,11 +1600,17 @@ namespace IndustrialPark.Randomizer
                             break;
                     }
                 else
+                if (game == Game.Scooby)
                 {
-                    if (LevelName == "r020")
+                    if (assetName.ToUpper().Contains("CAM") || assetName.ToUpper().Contains("RAIL"))
+                        return false;
+
+                    switch (LevelName)
                     {
-                        if (assetName.Contains("FROMR003"))
-                            return false;
+                        case "r020":
+                            if (assetName.Contains("FROMR003"))
+                                return false;
+                            break;
                     }
                 }
             }

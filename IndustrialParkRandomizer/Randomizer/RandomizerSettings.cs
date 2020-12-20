@@ -120,12 +120,12 @@ namespace IndustrialPark.Randomizer
         public float ringScaleMax { get; set; }
 
 
-        [Category("Shiny Object Gates"), DisplayName("Shiny Object Gates"), Description("Randomizes clam/toll gate shiny object requirements in BFBB.")]
+        [Category("Shiny Object/Snack Gates"), DisplayName("Shiny Object/Snack Gates"), Description("Randomizes clam/toll gate shiny object requirements in BFBB or snack gate requirements in Scooby.")]
         public bool Shiny_Object_Gates { get; set; }
-        [Category("Shiny Object Gates"),
+        [Category("Shiny Object/Snack Gates"),
             DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
         public float shinyReqMin { get; set; }
-        [Category("Shiny Object Gates"),
+        [Category("Shiny Object/Snack Gates"),
             DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
         public float shinyReqMax { get; set; }
 
@@ -278,8 +278,6 @@ namespace IndustrialPark.Randomizer
             Taxi_Trigger_Positions = false;
             Bus_Stop_Trigger_Positions = false;
             openTeleportBoxes = false;
-            CombatArenaCounts = false;
-            RingSizes = false;
 
             boulderMin = 0.5f;
             boulderMax = 2f;
@@ -322,7 +320,6 @@ namespace IndustrialPark.Randomizer
         {
             if (game == 0)
             {
-                Shiny_Object_Gates = true;
                 Spatula_Gates = true;
                 Tiki_Models = true;
                 Enemies_Allow_Any_Type = true;
@@ -333,7 +330,6 @@ namespace IndustrialPark.Randomizer
             }
             else
             {
-                Shiny_Object_Gates = false;
                 Spatula_Gates = false;
                 Tiki_Models = false;
                 Enemies_Allow_Any_Type = false;
@@ -374,6 +370,7 @@ namespace IndustrialPark.Randomizer
                 Teleport_Box_Positions = true;
                 CombatArenaCounts = true;
                 RingSizes = true;
+                Shiny_Object_Gates = false;
                 bootLevel = "BB02";
             }
             else
@@ -382,6 +379,7 @@ namespace IndustrialPark.Randomizer
                 Pointer_Positions = false;
                 Teleport_Box_Positions = false;
                 CombatArenaCounts = false;
+                Shiny_Object_Gates = true;
                 RingSizes = false;
             }
         }
@@ -471,9 +469,6 @@ namespace IndustrialPark.Randomizer
                     dt.RemoveProperty("Teleport_Box_Positions");
                     dt.RemoveProperty("Taxi_Trigger_Positions");
                     dt.RemoveProperty("Bus_Stop_Trigger_Positions");
-                    dt.RemoveProperty("Shiny_Object_Gates");
-                    dt.RemoveProperty("shinyReqMin");
-                    dt.RemoveProperty("shinyReqMax");
                     dt.RemoveProperty("Spatula_Gates");
                     dt.RemoveProperty("spatReqMin");
                     dt.RemoveProperty("spatReqMax");

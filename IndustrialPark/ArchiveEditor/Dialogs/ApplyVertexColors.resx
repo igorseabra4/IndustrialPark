@@ -117,4 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="label1.Text" xml:space="preserve">
+    <value>Choose a new color and an operation to be
+applied to all vertex colors in the model. The
+operation is applied per channel, with the first
+operand being the original color and the second
+one being the value above (except for Replace).
+The result will be clamped.</value>
+  </data>
 </root>
