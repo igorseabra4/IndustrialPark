@@ -5,10 +5,10 @@
         Replace,
         Add,
         Subtract,
+        RightHandSubtract,
         Multiply,
         Divide,
-        InverseSubtract,
-        InverseDivide,
+        RightHandDivide,
         Minimum,
         Maximum
     }

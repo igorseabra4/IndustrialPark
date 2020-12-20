@@ -78,7 +78,7 @@
             this.groupBox1.Size = new System.Drawing.Size(424, 49);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Color (R, G, B, A)";
+            this.groupBox1.Text = "Color (Red, Green, Blue, Alpha)";
             // 
             // numericUpDownW
             // 

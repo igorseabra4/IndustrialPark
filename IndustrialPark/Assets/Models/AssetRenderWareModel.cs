@@ -288,10 +288,10 @@ namespace IndustrialPark
                 case Operation.Divide:
                     value = v1 / v2;
                     break;
-                case Operation.InverseSubtract:
+                case Operation.RightHandSubtract:
                     value = v2 - v1;
                     break;
-                case Operation.InverseDivide:
+                case Operation.RightHandDivide:
                     value = v2 / v1;
                     break;
                 case Operation.Minimum:
