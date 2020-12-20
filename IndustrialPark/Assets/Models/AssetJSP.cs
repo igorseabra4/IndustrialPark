@@ -38,7 +38,7 @@ namespace IndustrialPark
 
         public void Draw(SharpRenderer renderer)
         {
-            model.Render(renderer, Matrix.Identity, isSelected ? renderer.selectedObjectColor : Vector4.One, Vector3.Zero, _atomicFlags);
+            model.Render(renderer, Matrix.Identity, isSelected ? renderer.selectedObjectColor : Vector4.One, Vector3.Zero, _dontDrawMeshNumber);
         }
 
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)

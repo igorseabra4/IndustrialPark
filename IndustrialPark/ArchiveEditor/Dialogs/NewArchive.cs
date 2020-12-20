@@ -196,19 +196,6 @@ namespace IndustrialPark
                 platform = Platform.PS2;
 
             buttonOK.Enabled = comboBoxGame.SelectedIndex != -1 && comboBoxPlatform.SelectedIndex != -1;
-
-            if (checkBoxDefaultAssets.Visible)
-            {
-                if (game == Game.Incredibles)
-                {
-                    checkBoxDefaultAssets.Checked = false;
-                    checkBoxDefaultAssets.Enabled = false;
-                }
-                else
-                {
-                    checkBoxDefaultAssets.Enabled = true;
-                }
-            }
         }
 
         private void dateTimePicker1_ValueChanged(object sender, EventArgs e)

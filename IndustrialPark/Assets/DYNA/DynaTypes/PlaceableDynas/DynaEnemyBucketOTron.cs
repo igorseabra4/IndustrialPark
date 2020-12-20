@@ -44,7 +44,7 @@ namespace IndustrialPark
             get => ReadInt(0x54);
             set => Write(0x54, value);
         }
-        public float UnknownFloat58
+        public float SpawnSpeed
         {
             get => ReadFloat(0x58);
             set => Write(0x58, value);

@@ -30,8 +30,8 @@ namespace IndustrialPark
             #endif
                 ReadFileMethods.treatStuffAsByteArray = false;
                 model = new RenderWareModelFile(renderer.device, ReadFileMethods.ReadRenderWareFile(Data));
-                _atomicFlags = AtomicFlags;
-            #if !DEBUG
+                SetupAtomicFlagsForRender();
+#if !DEBUG
             }
             catch (Exception ex)
             {
@@ -40,7 +40,7 @@ namespace IndustrialPark
                 model = null;
                 throw new Exception("Error: " + ToString() + " has an unsupported format and cannot be rendered. " + ex.Message);
             }
-            #endif
+#endif
         }
 
         public RenderWareModelFile GetRenderWareModelFile() => model;
@@ -193,7 +193,7 @@ namespace IndustrialPark
             }
         }
         
-        protected AtomicFlags[] _atomicFlags;
+        protected bool[] _dontDrawMeshNumber;
 
         [Category("Model Data")]
         public AtomicFlags[] AtomicFlags
@@ -227,7 +227,24 @@ namespace IndustrialPark
                         }
 
                 ModelAsRWSections = sections;
-                _atomicFlags = value;
+                SetupAtomicFlagsForRender();
+            }
+        }
+
+        private void SetupAtomicFlagsForRender()
+        {
+            var value = AtomicFlags;
+            if (value.Length == 0)
+            {
+                _dontDrawMeshNumber = new bool[model.meshList.Count];
+                for (int j = 0; j < value.Length; j++)
+                    _dontDrawMeshNumber[j] = false;
+            }
+            else
+            {
+                _dontDrawMeshNumber = new bool[value.Length];
+                for (int j = 0; j < value.Length; j++)
+                    _dontDrawMeshNumber[j] = !((value[j] & RenderWareFile.Sections.AtomicFlags.Render) != 0);
             }
         }
 

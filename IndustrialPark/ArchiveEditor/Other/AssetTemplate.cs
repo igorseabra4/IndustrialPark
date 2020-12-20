@@ -152,9 +152,11 @@
         Checkpoint_Talkbox,
         Checkpoint_SIMP,
         BungeeHook_SIMP,
-        StartCamera, 
+        StartCamera,
         LKIT_lights,
         LKIT_JF_SB_lights,
+        LKIT_jf01_light_kit,
+        Default_Glow_Scene_Prop,
 
         // Placeable
         Camera,

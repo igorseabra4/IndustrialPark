@@ -330,7 +330,7 @@ namespace IndustrialPark
 
         public uint _assetID;
         public AssetID SoundAssetID { get => _assetID; set => _assetID = value; }
-        public byte unk1 { get; set; }
+        public byte loop { get; set; }
         public byte index { get; set; }
         public byte fileIndex { get; set; }
         public byte unk2 { get; set; }
@@ -338,7 +338,7 @@ namespace IndustrialPark
         public void SetEntryPartTwo(BinaryReader binaryReader)
         {
             SoundAssetID = BitConverter.ToUInt32(BitConverter.GetBytes(binaryReader.ReadUInt32()).Reverse().ToArray(), 0);
-            unk1 = binaryReader.ReadByte();
+            loop = binaryReader.ReadByte();
             index = binaryReader.ReadByte();
             fileIndex = binaryReader.ReadByte();
             unk2 = binaryReader.ReadByte();
@@ -347,7 +347,7 @@ namespace IndustrialPark
         public void SetEntryPartTwo(EntrySoundInfo_GCN_V2 tempEntry)
         {
             SoundAssetID = tempEntry.SoundAssetID;
-            unk1 = tempEntry.unk1;
+            loop = tempEntry.loop;
             index = tempEntry.index;
             fileIndex = tempEntry.fileIndex;
             unk2 = tempEntry.unk2;
@@ -358,7 +358,7 @@ namespace IndustrialPark
             List<byte> list = new List<byte>(8);
 
             list.AddRange(BitConverter.GetBytes(SoundAssetID).Reverse());
-            list.Add(unk1);
+            list.Add(loop);
             list.Add(index);
             list.Add(fileIndex);
             list.Add(unk2);

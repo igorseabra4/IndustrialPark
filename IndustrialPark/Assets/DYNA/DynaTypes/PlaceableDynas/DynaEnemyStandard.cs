@@ -60,7 +60,7 @@ namespace IndustrialPark
             set => Write(0x54, value);
         }
 
-        public DynamicTypeDescriptor EnemyFlags => IntFlagsDescriptor(0x58, null, null, "Walk on PLATs", "Walk on SIMPs");
+        public DynamicTypeDescriptor EnemyFlags => IntFlagsDescriptor(0x58, "Prepare for Scare", null, "Walk on PLATs", "Walk on SIMPs");
         [Browsable(false)]
         public AssetID Unknown58
         {

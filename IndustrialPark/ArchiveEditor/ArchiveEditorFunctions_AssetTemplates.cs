@@ -273,6 +273,7 @@ namespace IndustrialPark
             {
                 new ToolStripMenuItem(AssetTemplate.AnimationList.ToString()),
                 new ToolStripMenuItem(AssetTemplate.CollisionTable.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Default_Glow_Scene_Prop.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Environment.ToString()),
                 new ToolStripMenuItem(AssetTemplate.JawData.ToString()),
                 new ToolStripMenuItem(AssetTemplate.LevelOfDetailTable.ToString()),
@@ -501,6 +502,7 @@ namespace IndustrialPark
                 case AssetTemplate.BucketOTron_JK:
                 case AssetTemplate.BucketOTron_TR:
                 case AssetTemplate.BucketOTron_PT:
+                case AssetTemplate.Default_Glow_Scene_Prop:
                     dataSize = 0x10;
                     newAssetType = AssetType.DYNA;
                     break;
@@ -535,6 +537,7 @@ namespace IndustrialPark
                     newAssetType = AssetType.JAW;
                     break;
                 case AssetTemplate.LKIT_JF_SB_lights:
+                case AssetTemplate.LKIT_jf01_light_kit:
                 case AssetTemplate.LKIT_lights:
                     dataSize = 0;
                     newAssetType = AssetType.LKIT;
@@ -771,10 +774,12 @@ namespace IndustrialPark
             };
 
             bool ignoreNumber = !string.IsNullOrEmpty(customName) && (
-                template == AssetTemplate.EmptyBSP || 
+                template == AssetTemplate.Default_Glow_Scene_Prop || 
+                template == AssetTemplate.EmptyBSP ||
                 template == AssetTemplate.Environment || 
                 template == AssetTemplate.LKIT_lights ||
                 template == AssetTemplate.LKIT_JF_SB_lights ||
+                template == AssetTemplate.LKIT_jf01_light_kit ||
                 template == AssetTemplate.StartCamera || 
                 template == AssetTemplate.SoundInfo || 
                 template == AssetTemplate.MINF_Generic ||
@@ -2181,6 +2186,29 @@ namespace IndustrialPark
                     ((AssetDYNA)asset).Type = DynaType.game_object__Camera_Tweak;
                     ((AssetDYNA)asset).DynaSpec = new DynaGObjectCamTweak((AssetDYNA)asset);
                     break;
+                case AssetTemplate.Default_Glow_Scene_Prop:
+                    ((AssetDYNA)asset).Version = 1;
+                    ((AssetDYNA)asset).Type = DynaType.SceneProperties;
+                    ((AssetDYNA)asset).DynaSpec = new DynaSceneProperties((AssetDYNA)asset)
+                    {
+                        UnknownInt00 = 0,
+                        UnknownInt04 = 52,
+                        UnknownInt08 = 0,
+                        UnknownInt0C = 52,
+                        Flag10 = 0x14,
+                        Flag11 = 0x05,
+                        Flag12 = 0x03,
+                        Flag13 = 0x1E,
+                        Sound_AssetID = 0,
+                        UnknownInt18 = 1,
+                        UnknownFloat1C = 0,
+                        UnknownFloat20 = 4,
+                        UnknownInt24 = 0,
+                        UnknownInt28 = 0,
+                        UnknownInt2C = 0,
+                        UnknownInt30 = 0
+                    };
+                    break;
                 case AssetTemplate.MINF_Generic:
                     ((AssetMINF)asset).MINF_Name = "MINF";
                     break;
@@ -2189,6 +2217,9 @@ namespace IndustrialPark
                     break;
                 case AssetTemplate.LKIT_JF_SB_lights:
                     asset.Data = File.ReadAllBytes(Path.Combine(Application.StartupPath, "Resources", "JF_SB_lights"));
+                    break; 
+                case AssetTemplate.LKIT_jf01_light_kit:
+                    asset.Data = File.ReadAllBytes(Path.Combine(Application.StartupPath, "Resources", "jf01_light_kit"));
                     break;
             }
 
@@ -2272,27 +2303,42 @@ namespace IndustrialPark
         }
 
         public static string pkupsMinfName => "pickups.MINF";
-        public string startCamName => game == Game.Scooby ? "START" : "STARTCAM";
         public string playerName => game == Game.Scooby ? "SCOOBY" : game == Game.BFBB ? "SPONGEBOB" : "HERO";
-        public string environmentName => game == Game.Scooby ? "ENV" : "ENVIRONMENT";
+        public string environmentName => game == Game.Scooby ? "ENV" : game == Game.BFBB ? "ENVIRONMENT" : "ENV_THEWORLD";
+        public string startCamName => game == Game.Scooby ? "START" : game == Game.BFBB ? "STARTCAM" : "CAM_START";
 
         private void PlaceDefaultAssets()
         {
-            AddLayer((int)LayerType_BFBB.BSP);
+            if (game != Game.Incredibles)
+                AddLayer((int)LayerType_BFBB.BSP);
             AddLayer();
 
-            AssetENV env = (AssetENV)GetFromAssetID(PlaceTemplate(new Vector3(), 1, customName: environmentName, template: AssetTemplate.Environment));
-            env.BSP_AssetID = PlaceTemplate(new Vector3(), 0, customName: "empty_bsp", template: AssetTemplate.EmptyBSP);
-            env.StartCameraAssetID = PlaceTemplate(new Vector3(0, 100, 100), 1, customName: startCamName, template: AssetTemplate.StartCamera);
+            int defaultLayer = game == Game.Incredibles ? 0 : 1;
 
-            PlaceTemplate(new Vector3(), 1, customName: pkupsMinfName, template: AssetTemplate.MINF_Generic);
+            AssetPLYR player = (AssetPLYR)GetFromAssetID(PlaceTemplate(new Vector3(), defaultLayer, template: AssetTemplate.Player));
 
-            AssetPLYR player = (AssetPLYR)GetFromAssetID(PlaceTemplate(new Vector3(), 1, template: AssetTemplate.Player));
+            AssetENV env = (AssetENV)GetFromAssetID(PlaceTemplate(new Vector3(), defaultLayer, customName: environmentName, template: AssetTemplate.Environment));
+
+            env.StartCameraAssetID = PlaceTemplate(new Vector3(0, 100, 100), defaultLayer, customName: startCamName, template: AssetTemplate.StartCamera);
+
+            if (game != Game.Incredibles)
+            {
+                env.BSP_AssetID = PlaceTemplate(new Vector3(), 0, customName: "empty_bsp", template: AssetTemplate.EmptyBSP);
+                PlaceTemplate(new Vector3(), defaultLayer, customName: pkupsMinfName, template: AssetTemplate.MINF_Generic);
+            }
 
             if (game == Game.BFBB)
             {
-                env.Object_LKIT_AssetID = PlaceTemplate(new Vector3(), 1, customName: "lights", template: AssetTemplate.LKIT_lights);
-                player.LightKit_AssetID = PlaceTemplate(new Vector3(), 1, customName: "JF_SB_lights", template: AssetTemplate.LKIT_JF_SB_lights);
+                env.Object_LKIT_AssetID = PlaceTemplate(new Vector3(), defaultLayer, customName: "lights", template: AssetTemplate.LKIT_lights);
+                player.LightKit_AssetID = PlaceTemplate(new Vector3(), defaultLayer, customName: "JF_SB_lights", template: AssetTemplate.LKIT_JF_SB_lights);
+            }
+            else if (game == Game.Incredibles)
+            {
+                AssetLKIT light_kit = (AssetLKIT)GetFromAssetID(PlaceTemplate(new Vector3(), defaultLayer, customName: "jf01_light_kit", template: AssetTemplate.LKIT_lights));
+                player.LightKit_AssetID = light_kit.AHDR.assetID;
+                env.Object_LKIT_AssetID = light_kit.AHDR.assetID;
+
+                PlaceTemplate(new Vector3(), defaultLayer, customName: "DEFAULT_GLOW_SCENE_PROP", template: AssetTemplate.Default_Glow_Scene_Prop);
             }
         }
     }

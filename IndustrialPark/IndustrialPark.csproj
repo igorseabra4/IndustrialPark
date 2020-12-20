@@ -597,6 +597,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Resources\jf01_light_kit">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\JF_SB_lights">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -425,7 +425,7 @@ namespace IndustrialPark
                 AddToMeshList(null);
         }
 
-        public void Render(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset, AtomicFlags[] atomicFlags)
+        public void Render(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset, bool[] atomicFlags)
         {
             renderData.worldViewProjection = world * renderer.viewProjection;
             renderData.Color = color;
@@ -440,7 +440,7 @@ namespace IndustrialPark
 
             for (int i = 0; i < meshList.Count; i++)
             {
-                if (meshList[i] == null || (dontDrawInvisible && (atomicFlags[i] & AtomicFlags.Render) == 0))
+                if (meshList[i] == null || (dontDrawInvisible && atomicFlags[i]))
                     continue;
 
                 meshList[i].Begin(renderer.device);
@@ -449,7 +449,7 @@ namespace IndustrialPark
             }
         }
 
-        public void RenderPipt(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset, AtomicFlags[] atomicFlags, Dictionary<int, (SharpDX.Direct3D11.BlendOption, SharpDX.Direct3D11.BlendOption)> blendModes)
+        public void RenderPipt(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset, bool[] atomicFlags, Dictionary<int, (SharpDX.Direct3D11.BlendOption, SharpDX.Direct3D11.BlendOption)> blendModes)
         {
             renderData.worldViewProjection = world * renderer.viewProjection;
             renderData.Color = color;
@@ -461,7 +461,7 @@ namespace IndustrialPark
 
             for (int i = meshList.Count -1; i >= 0; i--)
             {
-                if (meshList[i] == null || (dontDrawInvisible && (atomicFlags[i] & AtomicFlags.Render) == 0))
+                if (meshList[i] == null || (dontDrawInvisible && atomicFlags[i]))
                     continue;
 
                 if (blendModes.ContainsKey(i))
