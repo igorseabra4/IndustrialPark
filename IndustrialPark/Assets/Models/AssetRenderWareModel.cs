@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using RenderWareFile;
 using RenderWareFile.Sections;
+using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -228,6 +229,87 @@ namespace IndustrialPark
                 ModelAsRWSections = sections;
                 _atomicFlags = value;
             }
+        }
+
+        public void SetVertexColors(Vector4 color, Operation operation)
+        {
+            RWSection[] sections = ReadFileMethods.ReadRenderWareFile(Data);
+            renderWareVersion = sections[0].renderWareVersion;
+
+            foreach (RWSection rws in sections)
+                if (rws is Clump_0010 clump)
+                    for (int i = 0; i < clump.geometryList.geometryList.Count; i++)
+                        if (clump.geometryList.geometryList[i].geometryStruct.vertexColors != null)
+                            for (int j = 0; j < clump.geometryList.geometryList[i].geometryStruct.vertexColors.Length; j++)
+                            {
+                                var oldColor = clump.geometryList.geometryList[i].geometryStruct.vertexColors[j];
+
+                                var newColor = PerformOperationAndClamp(
+                                    new Vector4((float)oldColor.R / 255, (float)oldColor.G / 255, (float)oldColor.B / 255, (float)oldColor.A / 255), 
+                                    color, operation);
+
+                                clump.geometryList.geometryList[i].geometryStruct.vertexColors[j] = new RenderWareFile.Color(
+                                        (byte)(newColor.X * 255),
+                                        (byte)(newColor.Y * 255),
+                                        (byte)(newColor.Z * 255),
+                                        (byte)(newColor.W * 255));
+                            }
+
+            Data = ReadFileMethods.ExportRenderWareFile(sections, renderWareVersion);
+            Setup(Program.MainForm.renderer);
+        }
+
+        private Vector4 PerformOperationAndClamp(Vector4 v1, Vector4 v2, Operation op)
+        {
+            return new Vector4(
+                PerformOperationAndClamp(v1.X, v2.X, op),
+                PerformOperationAndClamp(v1.Y, v2.Y, op),
+                PerformOperationAndClamp(v1.Z, v2.Z, op),
+                PerformOperationAndClamp(v1.W, v2.W, op));
+        }
+        
+        private float PerformOperationAndClamp(float v1, float v2, Operation op)
+        {
+            float value;
+            switch (op)
+            {
+                case Operation.Replace:
+                    value = v2;
+                    break;
+                case Operation.Add:
+                    value = v1 + v2;
+                    break;
+                case Operation.Subtract:
+                    value = v1 - v2;
+                    break;
+                case Operation.Multiply:
+                    value = v1 * v2;
+                    break;
+                case Operation.Divide:
+                    value = v1 / v2;
+                    break;
+                case Operation.InverseSubtract:
+                    value = v2 - v1;
+                    break;
+                case Operation.InverseDivide:
+                    value = v2 / v1;
+                    break;
+                case Operation.Minimum:
+                    value = Math.Min(v1, v2);
+                    break;
+                case Operation.Maximum:
+                    value = Math.Max(v1, v2);
+                    break;
+                default:
+                    throw new Exception("Unsupported operation");
+            }
+
+            if (value < 0)
+                return 0;
+            if (value > 1)
+                return 1;
+
+            return value;
         }
     }
 }

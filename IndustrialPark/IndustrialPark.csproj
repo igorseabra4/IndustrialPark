@@ -123,6 +123,12 @@
   <ItemGroup>
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_IO.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Sounds.cs" />
+    <Compile Include="ArchiveEditor\Dialogs\ApplyVertexColors.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\Dialogs\ApplyVertexColors.designer.cs">
+      <DependentUpon>ApplyVertexColors.cs</DependentUpon>
+    </Compile>
     <Compile Include="ArchiveEditor\Dialogs\MaterialEffectEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -207,6 +213,7 @@
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaGObjectFlameEmitter.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaEffectSmokeEmitter.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaGObjectInPickup.cs" />
+    <Compile Include="ArchiveEditor\Other\Operation.cs" />
     <Compile Include="Assets\ObjectAssets\AssetSPLN.cs" />
     <Compile Include="Assets\ObjectAssets\AssetLOBM.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetSDFX.cs" />
@@ -459,6 +466,9 @@
     <Compile Include="Models\Vertex.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="ArchiveEditor\Dialogs\ApplyVertexColors.resx">
+      <DependentUpon>ApplyVertexColors.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\Dialogs\ImportTextures.resx">
       <DependentUpon>ImportTextures.cs</DependentUpon>
     </EmbeddedResource>
