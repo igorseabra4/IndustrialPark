@@ -161,11 +161,11 @@ namespace IndustrialPark
             Button buttonSetVertexColors = new Button() { Dock = DockStyle.Fill, Text = "Set Vertex Colors", AutoSize = true };
             buttonSetVertexColors.Click += (object sender, EventArgs e) =>
             {
-                var (success, color, operation) = ApplyVertexColors.GetColor();
+                var (color, operation) = ApplyVertexColors.GetColor();
 
-                if (success)
+                if (color.HasValue)
                 {
-                    asset.SetVertexColors(color, operation);
+                    asset.SetVertexColors(color.Value, operation);
                     archive.UnsavedChanges = true;
                 }
             };
@@ -211,9 +211,9 @@ namespace IndustrialPark
             Button buttonExport = new Button() { Dock = DockStyle.Fill, Text = "Export", AutoSize = true };
             buttonExport.Click += (object sender, EventArgs e) =>
             {
-                ChooseTarget.GetTarget(out bool success, out Assimp.ExportFormatDescription format, out string textureExtension);
+                (Assimp.ExportFormatDescription format, string textureExtension) = ChooseTarget.GetTarget();
 
-                if (success)
+                if (format != null)
                 {
                     SaveFileDialog a = new SaveFileDialog()
                     {

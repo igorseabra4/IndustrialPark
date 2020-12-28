@@ -531,21 +531,22 @@ namespace IndustrialPark
 
         private void buttonAddAsset_Click(object sender, EventArgs e)
         {
-            archive.CreateNewAsset(comboBoxLayers.SelectedIndex, out bool success, out uint assetID);
+            uint? assetID = archive.CreateNewAsset(comboBoxLayers.SelectedIndex);
 
-            if (success)
+            if (assetID.HasValue)
             {
                 comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
-                SetSelectedIndices(new List<uint>() { assetID }, true);
+                SetSelectedIndices(new List<uint>() { assetID.Value }, true);
             }
         }
 
         private void importMultipleAssetsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            List<Section_AHDR> AHDRs = AddMultipleAssets.GetAssets(out bool success, out bool overwrite);
-            if (success)
+            (List<Section_AHDR> AHDRs, bool overwrite) = AddMultipleAssets.GetAssets();
+
+            if (AHDRs != null)
             {
-                archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, out List<uint> assetIDs, overwrite);
+                List<uint> assetIDs = archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, overwrite);
                 comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
                 Program.MainForm.RefreshTexturesAndModels();
                 SetSelectedIndices(assetIDs, true);
@@ -554,10 +555,11 @@ namespace IndustrialPark
 
         private void importModelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            List<Section_AHDR> AHDRs = ImportModel.GetAssets(archive.game, out bool success, out bool overwrite, out bool makeSimps, out bool ledgeGrabSimps, out bool piptVcolors);
-            if (success)
+            (List<Section_AHDR> AHDRs, bool overwrite, bool makeSimps, bool ledgeGrabSimps, bool piptVcolors) = ImportModel.GetModels(archive.game);
+            
+            if (AHDRs != null)
             {
-                archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, out List<uint> assetIDs, overwrite);
+                List<uint> assetIDs = archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, overwrite);
                 if (piptVcolors)
                     archive.MakePiptVcolors(assetIDs);
                 if (makeSimps)
@@ -570,11 +572,11 @@ namespace IndustrialPark
 
         private void ImportTexturesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var (success, overwrite, AHDRs) = ImportTextures.GetAssets(archive.game, archive.platform);
+            var (AHDRs, overwrite) = ImportTextures.GetAssets(archive.game, archive.platform);
 
-            if (success)
+            if (AHDRs != null)
             {
-                archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, out List<uint> assetIDs, overwrite);
+                List<uint> assetIDs = archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, overwrite);
                 comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
                 Program.MainForm.RefreshTexturesAndModels();
                 SetSelectedIndices(assetIDs, true);
@@ -664,23 +666,19 @@ namespace IndustrialPark
             try
             {
                 uint oldAssetID = CurrentlySelectedAssetIDs()[0];
-                Section_AHDR AHDR = AssetHeader.GetAsset(archive.GetFromAssetID(oldAssetID).AHDR, out bool success);
+                Section_AHDR AHDR = AssetHeader.GetAsset(archive.GetFromAssetID(oldAssetID).AHDR);
 
-                if (success)
+                if (AHDR != null)
                 {
                     archive.UnsavedChanges = true;
                     
                     archive.RemoveAsset(oldAssetID, false);
 
                     while (archive.ContainsAsset(AHDR.assetID))
-                    {
-                        MessageBox.Show($"Archive already contains asset id [{AHDR.assetID.ToString("X8")}]. Will change it to [{(AHDR.assetID + 1).ToString("X8")}].");
-                        AHDR.assetID++;
-                    }
-
+                        MessageBox.Show($"Archive already contains asset id [{AHDR.assetID:X8}]. Will change it to [{++AHDR.assetID:X8}].");
+                    
                     archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR, true);
                     
-                    //PopulateAssetListAndComboBox();
                     SetSelectedIndices(new List<uint>() { AHDR.assetID }, true);
                 }
             }
@@ -1017,14 +1015,15 @@ namespace IndustrialPark
 
         private void applyScaleToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Vector3 scale = ApplyScale.GetScale(out bool OKed);
+            var scale = ApplyScale.GetScale();
 
-            if (OKed)
+            if (scale.HasValue)
             {
-                string question = $"Are you sure you want to scale all assets by a factor of [{scale.X}, {scale.Y}, {scale.Z}]? To undo this, you must scale it by a factor of [{1 / scale.X}, {1 / scale.Y}, {1 / scale.Z}], and precision might be lost in the process, resulting in some objects slighly off from their intented placement.";
+                string question = $"Are you sure you want to scale all assets by a factor of [{scale.Value.X}, {scale.Value.Y}, {scale.Value.Z}]? " +
+                    $"To undo this, you must scale it by a factor of [{1 / scale.Value.X}, {1 / scale.Value.Y}, {1 / scale.Value.Z}], and precision might be lost in the process, resulting in some objects slighly off from their intented placement.";
                 DialogResult dialogResult = MessageBox.Show(question, "Apply Scale", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (dialogResult == DialogResult.Yes)
-                    archive.ApplyScale(scale);
+                    archive.ApplyScale(scale.Value);
             }
         }
 

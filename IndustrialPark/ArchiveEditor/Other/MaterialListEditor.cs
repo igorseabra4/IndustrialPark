@@ -22,11 +22,11 @@ namespace IndustrialPark
 
             if (service != null)
             {
-                if (value is Material_0007[])
+                if (value is Material_0007[] materials)
                 {
-                    Material_0007[] materials = MaterialEffectEditor.GetMaterials((Material_0007[])value, out bool success);
+                    materials = MaterialEffectEditor.GetMaterials(materials);
 
-                    if (success)
+                    if (materials != null)
                         value = materials;
                 }
             }

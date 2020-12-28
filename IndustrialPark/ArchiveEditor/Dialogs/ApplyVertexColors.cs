@@ -27,14 +27,15 @@ namespace IndustrialPark
             comboBoxOperation.SelectedIndex = 0;
         }
 
-        public static (bool, Vector4, Operation) GetColor()
+        public static (Vector4?, Operation) GetColor()
         {
             ApplyVertexColors edit = new ApplyVertexColors();
             edit.ShowDialog();
 
-            return (edit.OK,
-                new Vector4((float)edit.numericUpDownX.Value, (float)edit.numericUpDownY.Value, (float)edit.numericUpDownZ.Value, (float)edit.numericUpDownW.Value),
-                (Operation)edit.comboBoxOperation.SelectedItem);
+            if (edit.OK)
+                return (new Vector4((float)edit.numericUpDownX.Value, (float)edit.numericUpDownY.Value, (float)edit.numericUpDownZ.Value, (float)edit.numericUpDownW.Value),
+                    (Operation)edit.comboBoxOperation.SelectedItem);
+            return (null, 0);
         }
 
         private bool OK = false;

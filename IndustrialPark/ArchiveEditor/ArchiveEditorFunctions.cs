@@ -518,35 +518,34 @@ namespace IndustrialPark
             return error;
         }
 
-        public void CreateNewAsset(int layerIndex, out bool success, out uint assetID)
+        public uint? CreateNewAsset(int layerIndex)
         {
-            Section_AHDR AHDR = AssetHeader.GetAsset(new AssetHeader(), out success);
-            assetID = 0;
-
-            if (success)
+            Section_AHDR AHDR = AssetHeader.GetAsset(new AssetHeader());
+            
+            if (AHDR != null)
             {
-                #if !DEBUG
+#if !DEBUG
                 try
                 {
-                #endif
-                while (ContainsAsset(AHDR.assetID))
-                    {
-                        MessageBox.Show($"Archive already contains asset id [{AHDR.assetID:X8}]. Will change it to [{AHDR.assetID + 1:X8}].");
-                        AHDR.assetID++;
-                    }
+#endif
+                    while (ContainsAsset(AHDR.assetID))
+                        MessageBox.Show($"Archive already contains asset id [{AHDR.assetID:X8}]. Will change it to [{++AHDR.assetID:X8}].");
+                    
                     UnsavedChanges = true;
                     AddAsset(layerIndex, AHDR, true);
                     SetAssetPositionToView(AHDR.assetID);
-                #if !DEBUG
+#if !DEBUG
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Unable to add asset: " + ex.Message);
+                    return (false, 0);
                 }
-                #endif
-
-                assetID = AHDR.assetID;
+#endif
+                return AHDR.assetID;
             }
+
+            return null;
         }
 
         public uint AddAsset(int layerIndex, Section_AHDR AHDR, bool setTextureDisplay)
@@ -770,10 +769,10 @@ namespace IndustrialPark
                     section.data = ReplaceReferences(section.data, newReferenceUpdate);
         }
 
-        public void ImportMultipleAssets(int layerIndex, List<Section_AHDR> AHDRs, out List<uint> assetIDs, bool overwrite)
+        public List<uint> ImportMultipleAssets(int layerIndex, List<Section_AHDR> AHDRs, bool overwrite)
         {
             UnsavedChanges = true;
-            assetIDs = new List<uint>();
+            var assetIDs = new List<uint>();
 
             foreach (Section_AHDR AHDR in AHDRs)
             {
@@ -808,6 +807,8 @@ namespace IndustrialPark
                     MessageBox.Show($"Unable to import asset [{AHDR.assetID:X8}] {AHDR.ADBG.assetName}: " + ex.Message);
                 }
             }
+
+            return assetIDs;
         }
 
         private List<Asset> currentlySelectedAssets = new List<Asset>();

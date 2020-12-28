@@ -66,8 +66,7 @@ namespace IndustrialPark
             }
         }
 
-        private LinkEditor(LinkBFBB[] events, bool isTimed, Endianness endianness, uint thisAssetID) 
-            : this(isTimed, endianness, thisAssetID)
+        private LinkEditor(LinkBFBB[] events, bool isTimed, Endianness endianness, uint thisAssetID) : this(isTimed, endianness, thisAssetID)
         {
             eventType = EventType.BFBB;
             foreach (EventBFBB o in Enum.GetValues(typeof(EventBFBB)))
@@ -76,12 +75,11 @@ namespace IndustrialPark
                 comboSendEvent.Items.Add(o);
             }
 
-            foreach (LinkBFBB assetEvent in events)
+            foreach (var assetEvent in events)
                 listBoxLinks.Items.Add(assetEvent);
         }
 
-        private LinkEditor(LinkTSSM[] events, bool isTimed, Endianness endianness, uint thisAssetID)
-            : this(isTimed, endianness, thisAssetID)
+        private LinkEditor(LinkTSSM[] events, bool isTimed, Endianness endianness, uint thisAssetID) : this(isTimed, endianness, thisAssetID)
         {
             eventType = EventType.TSSM;
             foreach (EventTSSM o in Enum.GetValues(typeof(EventTSSM)))
@@ -90,7 +88,7 @@ namespace IndustrialPark
                 comboSendEvent.Items.Add(o);
             }
 
-            foreach (LinkTSSM assetEvent in events)
+            foreach (var assetEvent in events)
                 listBoxLinks.Items.Add(assetEvent);
         }
 
@@ -114,34 +112,40 @@ namespace IndustrialPark
             return AssetIDTypeConverter.AssetIDFromString(assetName);
         }
 
-        public static LinkBFBB[] GetEvents(LinkBFBB[] links, Endianness endianness, out bool success, bool isTimed, uint thisAssetID)
+        public static LinkBFBB[] GetEvents(LinkBFBB[] links, Endianness endianness, bool isTimed, uint thisAssetID)
         {
             LinkEditor eventEditor = new LinkEditor(links, isTimed, endianness, thisAssetID);
             eventEditor.ShowDialog();
 
-            success = eventEditor.OK;
+            if (eventEditor.OK)
+            {
+                List<LinkBFBB> assetEventBFBBs = new List<LinkBFBB>();
+                foreach (LinkBFBB assetEvent in eventEditor.listBoxLinks.Items)
+                    assetEventBFBBs.Add(assetEvent);
 
-            List<LinkBFBB> assetEventBFBBs = new List<LinkBFBB>();
-            foreach (LinkBFBB assetEvent in eventEditor.listBoxLinks.Items)
-                assetEventBFBBs.Add(assetEvent);
+                return assetEventBFBBs.ToArray();
+            }
 
-            return assetEventBFBBs.ToArray();
+            return null;
         }
 
-        public static LinkTSSM[] GetEvents(LinkTSSM[] links, Endianness endianness, out bool success, bool isTimed, uint thisAssetID)
+        public static LinkTSSM[] GetEvents(LinkTSSM[] links, Endianness endianness, bool isTimed, uint thisAssetID)
         {
             LinkEditor eventEditor = new LinkEditor(links, isTimed, endianness, thisAssetID);
             eventEditor.ShowDialog();
 
-            success = eventEditor.OK;
+            if (eventEditor.OK)
+            {
+                List<LinkTSSM> assetEventBFBBs = new List<LinkTSSM>();
+                foreach (LinkTSSM assetEvent in eventEditor.listBoxLinks.Items)
+                    assetEventBFBBs.Add(assetEvent);
 
-            List<LinkTSSM> assetEventBFBBs = new List<LinkTSSM>();
-            foreach (LinkTSSM assetEvent in eventEditor.listBoxLinks.Items)
-                assetEventBFBBs.Add(assetEvent);
+                return assetEventBFBBs.ToArray();
+            }
 
-            return assetEventBFBBs.ToArray();
+            return null;
         }
-        
+
         private void buttonAdd_Click(object sender, EventArgs e)
         {
             switch (eventType)

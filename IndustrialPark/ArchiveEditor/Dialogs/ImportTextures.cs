@@ -18,7 +18,7 @@ namespace IndustrialPark
             buttonOK.Enabled = false;
             TopMost = true;
         }
-        
+
         public static string filter => "All supported formats|*.bmp;*.png;*.gif;*.jpg;*.jpeg;*.jpe;*.jif;*.jfif;*.jfi;*.tif;*.tiff;*.rwtex|All files|*";
 
         private List<string> filePaths = new List<string>();
@@ -49,7 +49,7 @@ namespace IndustrialPark
 
             buttonOK.Enabled = listBox1.Items.Count > 0;
         }
-        
+
         private void listBox1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
@@ -64,7 +64,7 @@ namespace IndustrialPark
             Close();
         }
 
-        public static (bool, bool, List<Section_AHDR>) GetAssets(Game game, Platform platform)
+        public static (List<Section_AHDR> AHDRs, bool overwrite) GetAssets(Game game, Platform platform)
         {
             ImportTextures a = new ImportTextures();
             if (a.ShowDialog() == DialogResult.OK)
@@ -99,7 +99,7 @@ namespace IndustrialPark
                     }
                 }
 
-                AHDRs.AddRange(CreateRWTXsFromBitmaps(game, platform, forBitmap, a.checkBoxRW3.Checked, a.checkBoxFlipTextures.Checked, 
+                AHDRs.AddRange(CreateRWTXsFromBitmaps(game, platform, forBitmap, a.checkBoxRW3.Checked, a.checkBoxFlipTextures.Checked,
                     a.checkBoxMipmaps.Checked, a.checkBoxCompress.Checked, a.checkBoxTransFix.Checked));
 
                 ReadFileMethods.treatStuffAsByteArray = false;
@@ -112,9 +112,9 @@ namespace IndustrialPark
                         AHDRs[i].data = data;
                     }
 
-                return (true, a.checkBoxOverwrite.Checked, AHDRs);
+                return (AHDRs, a.checkBoxOverwrite.Checked);
             }
-            return (false, false, null);
+            return (null, false);
         }
 
         private void checkBoxTransFix_CheckedChanged(object sender, EventArgs e)

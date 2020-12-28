@@ -65,7 +65,7 @@ namespace IndustrialPark
             Close();
         }
 
-        public static List<Section_AHDR> GetAssets(Game game, out bool success, out bool overwrite, out bool simps, out bool ledgegrab, out bool piptVcolors)
+        public static (List<Section_AHDR> AHDRs, bool overwrite, bool simps, bool ledgeGrab, bool piptVColors) GetModels(Game game)
         {
             using (ImportModel a = new ImportModel())
                 if (a.ShowDialog() == DialogResult.OK)
@@ -74,20 +74,16 @@ namespace IndustrialPark
 
                     AssetType assetType = (AssetType)a.comboBoxAssetTypes.SelectedItem;
 
+                    bool simps = false, ledgeGrab = false, piptVColors = false;
+
                     if (assetType == AssetType.MODL)
                     {
-                        piptVcolors = a.checkBoxEnableVcolors.Checked;
+                        piptVColors = a.checkBoxEnableVcolors.Checked;
                         simps = a.checkBoxGenSimps.Checked;
-                        ledgegrab = a.checkBoxLedgeGrab.Checked;
+                        ledgeGrab = a.checkBoxLedgeGrab.Checked;
 
                         if (simps)
                             MessageBox.Show("a SIMP for each imported MODL will be generated and placed on a new DEFAULT layer.");
-                    }
-                    else
-                    {
-                        piptVcolors = false;
-                        simps = false;
-                        ledgegrab = false;
                     }
 
                     foreach (string filePath in a.filePaths)
@@ -124,8 +120,7 @@ namespace IndustrialPark
                         }
                         else throw new ArgumentException();
 
-                        AHDRs.Add(
-                            new Section_AHDR(
+                        AHDRs.Add(new Section_AHDR(
                                 Functions.BKDRHash(assetName),
                                 assetType,
                                 ArchiveEditorFunctions.AHDRFlagsFromAssetType(assetType),
@@ -133,15 +128,10 @@ namespace IndustrialPark
                                 assetData));
                     }
 
-                    success = true;
-                    overwrite = a.checkBoxOverwrite.Checked;
-                    return AHDRs;
+                    return (AHDRs, a.checkBoxOverwrite.Checked, simps, ledgeGrab, piptVColors);
                 }
-                else
-                {
-                    success = overwrite = simps = ledgegrab = piptVcolors = false;
-                    return null;
-                }
+
+            return (null, false, false, false, false);                
         }
 
         private void checkBoxGenSimps_CheckedChanged(object sender, EventArgs e)

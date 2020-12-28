@@ -1394,18 +1394,17 @@ namespace IndustrialPark
         {
             Assimp.ExportFormatDescription format = null;
 
-            bool success = false;
             string textureExtension = null;
 
             while (format == null)
             {
-                Models.ChooseTarget.GetTarget(out success, out format, out textureExtension);
+                (format, textureExtension) = Models.ChooseTarget.GetTarget();
 
                 if (format == null || textureExtension == null)
                     MessageBox.Show("Unuspported format for exporting scene");
             }
 
-            if (success)
+            if (format != null)
                 using (CommonOpenFileDialog a = new CommonOpenFileDialog() { IsFolderPicker = true })
                     if (a.ShowDialog() == CommonFileDialogResult.Ok)
                     {

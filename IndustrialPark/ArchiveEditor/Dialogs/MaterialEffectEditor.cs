@@ -26,18 +26,21 @@ namespace IndustrialPark
 
         private bool OK = false;
         
-        public static Material_0007[] GetMaterials(Material_0007[] materials, out bool success)
+        public static Material_0007[] GetMaterials(Material_0007[] materials)
         {
             MaterialEffectEditor eventEditor = new MaterialEffectEditor(materials);
             eventEditor.ShowDialog();
 
-            success = eventEditor.OK;
+            if (eventEditor.OK)
+            {
+                List<Material_0007> outMaterials = new List<Material_0007>();
+                foreach (Material_0007 material in eventEditor.listBoxMaterials.Items)
+                    outMaterials.Add(material);
 
-            List<Material_0007> outMaterials = new List<Material_0007>();
-            foreach (Material_0007 material in eventEditor.listBoxMaterials.Items)
-                outMaterials.Add(material);
+                return outMaterials.ToArray();
+            }
 
-            return outMaterials.ToArray();
+            return null;
         }
         
         private void buttonCancel_Click(object sender, EventArgs e)

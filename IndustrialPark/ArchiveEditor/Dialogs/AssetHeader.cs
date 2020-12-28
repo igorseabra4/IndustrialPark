@@ -51,10 +51,9 @@ namespace IndustrialPark
             textBoxChecksum.Text = "0x"+ AHDR.ADBG.checksum.ToString("X8");
         }
 
-        public static Section_AHDR GetAsset(AssetHeader a, out bool success)
+        public static Section_AHDR GetAsset(AssetHeader a)
         {
-            DialogResult d = a.ShowDialog();
-            if (d == DialogResult.OK)
+            if (a.ShowDialog() == DialogResult.OK)
             {
                 AHDRFlags flags =
                     (a.checkSourceFile.Checked ? AHDRFlags.SOURCE_FILE : 0) |
@@ -70,19 +69,14 @@ namespace IndustrialPark
                     plusValue = 0
                 };
 
-                success = true;
                 return AHDR;
             }
-            else
-            {
-                success = false;
-                return null;
-            }
+            return null;
         }
 
-        public static Section_AHDR GetAsset(Section_AHDR AHDR, out bool success)
+        public static Section_AHDR GetAsset(Section_AHDR AHDR)
         {
-            return GetAsset(new AssetHeader(AHDR), out success);
+            return GetAsset(new AssetHeader(AHDR));
         }
         
         uint assetID = 0;

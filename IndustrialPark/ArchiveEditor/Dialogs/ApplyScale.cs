@@ -19,13 +19,14 @@ namespace IndustrialPark
             numericUpDownZ.Maximum = decimal.MaxValue;
         }
 
-        public static Vector3 GetScale(out bool OK)
+        public static Vector3? GetScale()
         {
             ApplyScale edit = new ApplyScale();
             edit.ShowDialog();
 
-            OK = edit.OK;
-            return new Vector3((float)edit.numericUpDownX.Value, (float)edit.numericUpDownY.Value, (float)edit.numericUpDownZ.Value);
+            if (edit.OK)
+                return new Vector3((float)edit.numericUpDownX.Value, (float)edit.numericUpDownY.Value, (float)edit.numericUpDownZ.Value);
+            return null;
         }
 
         private bool OK = false;

@@ -72,7 +72,7 @@ namespace IndustrialPark
             Close();
         }
 
-        public static List<Section_AHDR> GetAssets(out bool success, out bool overwrite)
+        public static (List<Section_AHDR> AHDRs, bool overwrite) GetAssets()
         {
             AddMultipleAssets a = new AddMultipleAssets();
             DialogResult d = a.ShowDialog();
@@ -92,17 +92,9 @@ namespace IndustrialPark
                     AHDRs.Add(AHDR);
                 }
 
-                success = true;
-                overwrite = a.checkBoxOverwrite.Checked;
-                return AHDRs;
+                return (AHDRs, a.checkBoxOverwrite.Checked);
             }
-            else
-            {
-                success = false;
-                overwrite = a.checkBoxOverwrite.Checked;
-                return null;
-            }
+            return (null, false);
         }
-
     }
 }
