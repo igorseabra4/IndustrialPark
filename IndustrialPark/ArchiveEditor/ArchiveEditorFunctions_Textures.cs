@@ -118,7 +118,7 @@ namespace IndustrialPark
 
             List<Section_AHDR> AHDRs = GetAssetsFromTextureDictionary(fileName, RW3);
 
-            ImportMultipleAssets(0, AHDRs, out _, true);
+            ImportMultipleAssets(0, AHDRs, true);
         }
 
         public List<Section_AHDR> GetAssetsFromTextureDictionary(string fileName, bool RW3)
