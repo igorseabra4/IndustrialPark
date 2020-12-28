@@ -47,9 +47,9 @@ namespace IndustrialPark
 
         public bool New()
         {
-            HipFile hipFile = NewArchive.GetNewArchive(out bool OK, out bool addDefaultAssets);
+            var (hipFile, addDefaultAssets) = NewArchive.GetNewArchive();
 
-            if (OK)
+            if (hipFile != null)
             {
                 Dispose();
 
@@ -161,12 +161,11 @@ namespace IndustrialPark
             Platform previousPlatform = platform;
             Game previousGame = game;
 
-            NewArchive.GetExistingArchive(platform, game, hipFile.PACK.PCRT.fileDate, hipFile.PACK.PCRT.dateString,
-                out bool OK, out Section_PACK PACK, out Platform newPlatform, out Game newGame);
+            var (PACK, newPlatform, newGame) = NewArchive.GetExistingArchive(platform, game, hipFile.PACK.PCRT.fileDate, hipFile.PACK.PCRT.dateString);
 
             unsupported = new List<uint>();
 
-            if (OK)
+            if (PACK != null)
             {
                 hipFile.PACK = PACK;
 
@@ -184,10 +183,13 @@ namespace IndustrialPark
 
                 if (previousPlatform != platform || previousGame != game)
                     ConvertAllAssetTypes(previousPlatform, previousGame, out unsupported);
+
                 UnsavedChanges = true;
+
+                return true;
             }
 
-            return OK;
+            return false;
         }
 
         public int LayerCount => DICT.LTOC.LHDRList.Count;

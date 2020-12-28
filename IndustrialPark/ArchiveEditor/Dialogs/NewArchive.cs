@@ -6,25 +6,25 @@ namespace IndustrialPark
 {
     public partial class NewArchive : Form
     {
-        public static HipFile GetNewArchive(out bool OK, out bool addDefaultAssets)
+        public static (HipFile hipFile, bool addDefaultAssets) GetNewArchive()
         {
             NewArchive newArchive = new NewArchive();
             newArchive.ShowDialog();
-            OK = newArchive.OK;
-            addDefaultAssets = newArchive.checkBoxDefaultAssets.Checked;
             
-            return newArchive.result;
+            if (newArchive.result != null)
+                return (newArchive.result, newArchive.checkBoxDefaultAssets.Checked);
+            return (null, false);
         }
 
-        public static void GetExistingArchive(Platform previousPlatform, Game previousGame, int previousDate, string previousDateString, 
-            out bool OK, out Section_PACK PACK, out Platform newPlatform, out Game newGame)
+        public static (Section_PACK PACK, Platform newPlatform, Game newGame) GetExistingArchive(Platform previousPlatform, Game previousGame, int previousDate, string previousDateString)
         {
             NewArchive newArchive = new NewArchive(previousPlatform, previousGame, previousDate, previousDateString);
+
             newArchive.ShowDialog();
-            OK = newArchive.OK;
-            PACK = OK ? newArchive.result.PACK : null;
-            newPlatform = newArchive.platform;
-            newGame = newArchive.game;
+
+            if (newArchive.OK)
+                return (newArchive.result.PACK, newArchive.platform, newArchive.game);
+            return (null, 0, 0);
         }
 
         private NewArchive()
