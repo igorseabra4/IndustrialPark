@@ -136,7 +136,8 @@ namespace IndustrialPark
                 }
                 else
                 {
-                    asset.Data = CreateRWTXFromBitmap(archive.game, archive.platform, i, false, false, true, true).data;
+                    asset.Data = CreateRWTXFromBitmap(archive.game, archive.platform, i, false, checkBoxFlipTextures.Checked,
+                        checkBoxMipmaps.Checked, checkBoxCompress.Checked, checkBoxTransFix.Checked).data;
                 }
 
                 if (asset.game == HipHopFile.Game.Scooby)
@@ -153,6 +154,18 @@ namespace IndustrialPark
 
         public void SetHideHelp(bool _)
         {
+        }
+
+        private void checkBoxTransFix_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxTransFix.Checked)
+                checkBoxCompress.Checked = false;
+        }
+
+        private void checkBoxCompress_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxCompress.Checked)
+                checkBoxTransFix.Checked = false;
         }
     }
 }

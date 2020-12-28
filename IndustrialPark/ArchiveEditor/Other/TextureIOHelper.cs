@@ -153,13 +153,17 @@ namespace IndustrialPark
             ReadFileMethods.treatStuffAsByteArray = false;
         }
 
-        public static Section_AHDR CreateRWTXFromBitmap(Game game, Platform platform, string fileName, bool appendRW3, bool flip, bool mipmaps, bool compress)
+        public static Section_AHDR CreateRWTXFromBitmap(Game game, Platform platform, string fileName, bool appendRW3, bool flip, bool mipmaps, bool compress, bool transFix)
         {
-            return CreateRWTXsFromBitmaps(game, platform, new List<string>() { fileName }, appendRW3, flip, mipmaps, compress)[0];
+            return CreateRWTXsFromBitmaps(game, platform, new List<string>() { fileName }, appendRW3, flip, mipmaps, compress, transFix)[0];
         }
 
-        public static List<Section_AHDR> CreateRWTXsFromBitmaps(Game game, Platform platform, List<string> fileNames, bool appendRW3, bool flip, bool mipmaps, bool compress)
+        public static List<Section_AHDR> CreateRWTXsFromBitmaps
+            (Game game, Platform platform, List<string> fileNames, bool appendRW3, bool flip, bool mipmaps, bool compress, bool transFix)
         {
+            if (transFix)
+                compress = false;
+
             List<TextureNative_0015> textureNativeList = new List<TextureNative_0015>();
 
             foreach (string fileName in fileNames)
@@ -236,6 +240,11 @@ namespace IndustrialPark
                         textureNativeList = new List<TextureNative_0015>() { texture },
                         textureDictionaryExtension = new Extension_0003()
                     }, currentTextureVersion(game))));
+
+            // fix for apparent transparency issue
+            if (transFix && platform == Platform.GameCube)
+                foreach (var AHDR in AHDRs)
+                    AHDR.data[0x9B] = 0x01;
 
             ReadFileMethods.treatStuffAsByteArray = false;
 

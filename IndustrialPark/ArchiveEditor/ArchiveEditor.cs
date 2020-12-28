@@ -570,7 +570,8 @@ namespace IndustrialPark
 
         private void ImportTexturesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            List<Section_AHDR> AHDRs = ImportTextures.GetAssets(archive.game, archive.platform, out bool success, out bool overwrite);
+            var (success, overwrite, AHDRs) = ImportTextures.GetAssets(archive.game, archive.platform);
+
             if (success)
             {
                 archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, out List<uint> assetIDs, overwrite);

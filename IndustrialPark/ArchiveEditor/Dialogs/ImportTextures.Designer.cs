@@ -38,6 +38,7 @@
             this.checkBoxCompress = new System.Windows.Forms.CheckBox();
             this.checkBoxRW3 = new System.Windows.Forms.CheckBox();
             this.checkBoxOverwrite = new System.Windows.Forms.CheckBox();
+            this.checkBoxTransFix = new System.Windows.Forms.CheckBox();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -124,6 +125,7 @@
             this.checkBoxCompress.TabIndex = 9;
             this.checkBoxCompress.Text = "Compress";
             this.checkBoxCompress.UseVisualStyleBackColor = true;
+            this.checkBoxCompress.CheckedChanged += new System.EventHandler(this.checkBoxCompress_CheckedChanged);
             // 
             // checkBoxRW3
             // 
@@ -149,6 +151,17 @@
             this.checkBoxOverwrite.Text = "Overwrite";
             this.checkBoxOverwrite.UseVisualStyleBackColor = true;
             // 
+            // checkBoxTransFix
+            // 
+            this.checkBoxTransFix.AutoSize = true;
+            this.checkBoxTransFix.Location = new System.Drawing.Point(101, 257);
+            this.checkBoxTransFix.Name = "checkBoxTransFix";
+            this.checkBoxTransFix.Size = new System.Drawing.Size(113, 17);
+            this.checkBoxTransFix.TabIndex = 12;
+            this.checkBoxTransFix.Text = "Has Transparency";
+            this.checkBoxTransFix.UseVisualStyleBackColor = true;
+            this.checkBoxTransFix.CheckedChanged += new System.EventHandler(this.checkBoxTransFix_CheckedChanged);
+            // 
             // ImportTextures
             // 
             this.AcceptButton = this.buttonOK;
@@ -156,6 +169,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(224, 335);
+            this.Controls.Add(this.checkBoxTransFix);
             this.Controls.Add(this.checkBoxOverwrite);
             this.Controls.Add(this.checkBoxRW3);
             this.Controls.Add(this.checkBoxCompress);
@@ -189,5 +203,6 @@
         private System.Windows.Forms.CheckBox checkBoxCompress;
         private System.Windows.Forms.CheckBox checkBoxRW3;
         private System.Windows.Forms.CheckBox checkBoxOverwrite;
+        private System.Windows.Forms.CheckBox checkBoxTransFix;
     }
 }
