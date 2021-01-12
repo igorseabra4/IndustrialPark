@@ -59,7 +59,7 @@ namespace IndustrialPark
                 checkBoxTemplateFocus.Enabled = false;
         }
 
-        private bool standalone = false;
+        private readonly bool standalone = false;
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {

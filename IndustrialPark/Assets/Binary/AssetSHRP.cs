@@ -26,13 +26,16 @@ namespace IndustrialPark
                     if (a.HasReference(assetID))
                         return true;
             }
+#if DEBUG
             catch (Exception e)
             {
-#if DEBUG
                 MessageBox.Show("Error searching for references: " + e.Message + ". It will be skipped on the search.");
-#endif
             }
-
+#else
+            catch
+            {
+            }
+#endif
             return false;
         }
 

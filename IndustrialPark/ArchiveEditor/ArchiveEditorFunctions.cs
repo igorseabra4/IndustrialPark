@@ -70,9 +70,11 @@ namespace IndustrialPark
 
                 UnsavedChanges = true;
                 RecalculateAllMatrices();
+
+                return true;
             }
 
-            return OK;
+            return false;
         }
 
         public void OpenFile(string fileName, bool displayProgressBar, Platform platform, bool skipTexturesAndModels = false)
@@ -541,7 +543,7 @@ namespace IndustrialPark
                 catch (Exception ex)
                 {
                     MessageBox.Show("Unable to add asset: " + ex.Message);
-                    return (false, 0);
+                    return null;
                 }
 #endif
                 return AHDR.assetID;
