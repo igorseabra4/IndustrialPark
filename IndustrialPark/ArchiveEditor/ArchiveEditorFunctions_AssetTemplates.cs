@@ -284,6 +284,8 @@ namespace IndustrialPark
                 new ToolStripMenuItem(AssetTemplate.SoundInfo.ToString()),
                 new ToolStripSeparator(),
                 new ToolStripMenuItem(AssetTemplate.EmptyBSP.ToString()),
+                new ToolStripMenuItem(AssetTemplate.EmptySND.ToString()),
+                new ToolStripMenuItem(AssetTemplate.EmptySNDS.ToString()),
             });
             foreach (ToolStripItem i in others.DropDownItems)
                 if (i is ToolStripMenuItem j)
@@ -418,6 +420,14 @@ namespace IndustrialPark
                 case AssetTemplate.EmptyBSP:
                     dataSize = 0;
                     newAssetType = AssetType.BSP;
+                    break;
+                case AssetTemplate.EmptySND:
+                    dataSize = 0;
+                    newAssetType = AssetType.SND;
+                    break;
+                case AssetTemplate.EmptySNDS:
+                    dataSize = 0;
+                    newAssetType = AssetType.SNDS;
                     break;
                 case AssetTemplate.Button_Generic:
                 case AssetTemplate.Button_Red:

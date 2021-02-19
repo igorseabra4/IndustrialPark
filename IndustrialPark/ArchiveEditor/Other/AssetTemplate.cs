@@ -197,6 +197,8 @@
         PipeInfoTable,
         ShadowTable,
         SoundInfo,
+        EmptySND,
+        EmptySNDS,
         EmptyBSP,
 
         PasteClipboard
