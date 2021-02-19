@@ -300,7 +300,7 @@ namespace IndustrialPark.Randomizer
                 }
             }
 
-            if (settings.Markers && ContainsAssetWithType(AssetType.MRKR)
+            if (settings.Markers
                 && !new string[] { "hb02", "b101", "b201", "b302", "b303" }.Contains(LevelName))
                 shuffled |= ShuffleMRKRPositions(seed,
                     settings.allMenuWarpsHB01,
@@ -2841,6 +2841,16 @@ namespace IndustrialPark.Randomizer
                 {
                     case "b402":
                         if (port.AHDR.ADBG.assetName == "B402_PORTAL")
+                            return true;
+                        break;
+                    case "jk01":
+                        if (port.AHDR.ADBG.assetName == "FB03_PORTAL")
+                            return true;
+                        break;
+                    case "jk02":
+                        if (port.AHDR.ADBG.assetName == "MINDY_PORTAL_01")
+                            return true;
+                        if (port.AHDR.ADBG.assetName == "RINGRACE_PORTAL")
                             return true;
                         break;
                     case "pt01":
