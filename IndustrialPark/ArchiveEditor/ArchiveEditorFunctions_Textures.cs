@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -193,22 +193,29 @@ namespace IndustrialPark
                         List<System.Drawing.Color> bitmapData = new List<System.Drawing.Color>();
 
                         byte[] imageData = tn.textureNativeStruct.mipMaps[0].data;
-                       
-                        //if (tn.textureNativeStruct.compression == 0)
-                        if (tn.textureNativeStruct.mipMaps[0].dataSize == tn.textureNativeStruct.width * tn.textureNativeStruct.height * 4)
+                        Console.WriteLine(tn.textureNativeStruct.mipMaps[0].dataSize);
+
+                        // if (tn.textureNativeStruct.compression == 0)
+                        if (tn.textureNativeStruct.hasAlpha)
                         {
-                            for (int i = 0; i < imageData.Length; i += 4)
-                                bitmapData.Add(System.Drawing.Color.FromArgb(
-                                    imageData[i + 3],
-                                    imageData[i + 2],
-                                    imageData[i + 1],
-                                    imageData[i]));
+                            for (int i = 0; i < imageData.Length; i += 2)
+                            {
+                                short value = BitConverter.ToInt16(imageData, i);
+
+                                byte B = (byte)(value & 0x0F);
+                                byte G = (byte)((value >> 4) & 0x0F);
+                                byte R = (byte)((value >> 8) & 0x0F);
+                                byte A = (byte)((value >> 12) & 0x0F);
+
+                                bitmapData.Add(System.Drawing.Color.FromArgb(A << 4, R << 4, G << 4, B << 4));
+                            }
                         }
                         else
                         {
                             for (int i = 0; i < imageData.Length; i += 2)
                             {
                                 short value = BitConverter.ToInt16(imageData, i);
+
                                 byte R = (byte)((value >> 11) & 0x1F);
                                 byte G = (byte)((value >> 5) & 0x3F);
                                 byte B = (byte)((value) & 0x1F);
