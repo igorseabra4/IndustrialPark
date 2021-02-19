@@ -681,8 +681,9 @@ namespace IndustrialPark
         }
 
         public static bool updateReferencesOnCopy = true;
-
-        public void PasteAssetsFromClipboard(int layerIndex, out List<uint> finalIndices, AssetClipboard clipboard = null, bool forceRefUpdate = false)
+        public static bool replaceAssetsOnPaste = false;
+        
+        public void PasteAssetsFromClipboard(int layerIndex, out List<uint> finalIndices, AssetClipboard clipboard = null, bool forceRefUpdate = false, bool dontReplace = false)
         {
             finalIndices = new List<uint>();
 
@@ -716,6 +717,9 @@ namespace IndustrialPark
                 }
 
                 uint previousAssetID = AHDR.assetID;
+
+                if (replaceAssetsOnPaste && !dontReplace && ContainsAsset(AHDR.assetID))
+                    RemoveAsset(AHDR.assetID);
 
                 AddAssetWithUniqueID(layerIndex, AHDR);
 

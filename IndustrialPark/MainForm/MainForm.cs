@@ -1385,6 +1385,12 @@ namespace IndustrialPark
             ArchiveEditorFunctions.updateReferencesOnCopy = updateReferencesOnCopyPasteToolStripMenuItem.Checked;
         }
 
+        private void replaceAssetsOnPasteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            replaceAssetsOnPasteToolStripMenuItem.Checked = !replaceAssetsOnPasteToolStripMenuItem.Checked;
+            ArchiveEditorFunctions.replaceAssetsOnPaste = replaceAssetsOnPasteToolStripMenuItem.Checked;
+        }
+
         private void refreshTexturesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             RefreshTexturesAndModels();

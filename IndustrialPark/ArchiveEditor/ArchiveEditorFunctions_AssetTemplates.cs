@@ -334,13 +334,13 @@ namespace IndustrialPark
         private uint PlaceUserTemplate(Vector3 position, int layerIndex, ref List<uint> assetIDs, AssetTemplate template)
         {
             if (template == AssetTemplate.PasteClipboard)
-                PasteAssetsFromClipboard(layerIndex, out assetIDs);
+                PasteAssetsFromClipboard(layerIndex, out assetIDs, dontReplace: true);
             else
             {
                 try
                 {
                     var clipboard = JsonConvert.DeserializeObject<AssetClipboard>(File.ReadAllText(Path.Combine(Program.MainForm.userTemplatesFolder, CurrentUserTemplate)));
-                    PasteAssetsFromClipboard(layerIndex, out assetIDs, clipboard, true);
+                    PasteAssetsFromClipboard(layerIndex, out assetIDs, clipboard, forceRefUpdate: true, dontReplace: true);
                 }
                 catch
                 {
