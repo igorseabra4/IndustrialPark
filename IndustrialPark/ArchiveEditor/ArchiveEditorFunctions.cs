@@ -35,6 +35,7 @@ namespace IndustrialPark
 
         public bool UnsavedChanges { get; set; } = false;
         public string currentlyOpenFilePath { get; private set; }
+        public bool IsNull => hipFile == null;
 
         protected HipFile hipFile;
         protected Dictionary<uint, Asset> assetDictionary = new Dictionary<uint, Asset>();

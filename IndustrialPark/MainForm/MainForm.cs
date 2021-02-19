@@ -295,11 +295,12 @@ namespace IndustrialPark
             List<uint> hiddenAssets = new List<uint>();
 
             foreach (ArchiveEditor ae in archiveEditors)
-            {
-                hips.Add(ae.GetCurrentlyOpenFileName());
-                platforms.Add(ae.archive.platform);
-                hiddenAssets.AddRange(ae.archive.GetHiddenAssets());
-            }
+                if (!ae.archive.IsNull)
+                {
+                    hips.Add(ae.GetCurrentlyOpenFileName());
+                    platforms.Add(ae.archive.platform);
+                    hiddenAssets.AddRange(ae.archive.GetHiddenAssets());
+                }
 
             return new ProjectJson()
             {
