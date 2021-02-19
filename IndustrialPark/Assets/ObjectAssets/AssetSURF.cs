@@ -8,8 +8,6 @@ namespace IndustrialPark
     {
         public AssetSURF(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
-        protected override int EventStartOffset => 0x12C + ScoobyOffset2;
-
         public override bool HasReference(uint assetID) => BumpMapTexture_AssetID == assetID || EnvMapTexture_AssetID == assetID || DualMapTexture_AssetID == assetID ||
             TextureAnim1_GroupAssetID == assetID || TextureAnim2_GroupAssetID == assetID || base.HasReference(assetID);
         
