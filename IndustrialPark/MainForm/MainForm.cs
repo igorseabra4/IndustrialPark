@@ -883,8 +883,8 @@ namespace IndustrialPark
 
         private void pLATPreviewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            pLATPreviewToolStripMenuItem.Checked = !pLATPreviewToolStripMenuItem.Checked;
-            EntityAsset.movementPreview = pLATPreviewToolStripMenuItem.Checked;
+            movementPreviewToolStripMenuItem.Checked = !movementPreviewToolStripMenuItem.Checked;
+            EntityAsset.movementPreview = movementPreviewToolStripMenuItem.Checked;
 
             ResetMovementPreview();
         }
@@ -907,6 +907,18 @@ namespace IndustrialPark
         {
             usePIPTForRenderingToolStripMenuItem.Checked = !usePIPTForRenderingToolStripMenuItem.Checked;
             AssetMODL.renderBasedOnPipt = usePIPTForRenderingToolStripMenuItem.Checked;
+        }
+
+        private void vSyncToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            renderer.device.VSync = !renderer.device.VSync;
+            vSyncToolStripMenuItem.Checked = renderer.device.VSync;
+        }
+
+        private void lowerQualityGraphicsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            renderer.device.SetGraphicsMode(!renderer.device.currentMode);
+            lowerQualityGraphicsToolStripMenuItem.Checked = !renderer.device.currentMode;
         }
 
         private void useLegacyAssetIDFormatToolStripMenuItem_Click(object sender, EventArgs e)

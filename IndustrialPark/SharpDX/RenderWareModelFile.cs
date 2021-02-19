@@ -419,7 +419,7 @@ namespace IndustrialPark
                 triangleListOffset += vertexList.Count;
 
                 VertexColoredTextured[] vertices = vertexList.ToArray();
-                AddToMeshList(SharpMesh.Create(device, vertices, indexList.ToArray(), subSetList, SharpDX.Direct3D.PrimitiveTopology.TriangleStrip));
+                AddToMeshList(SharpMesh.Create(device, vertices, subSetList));
             }
             else
                 AddToMeshList(null);
@@ -444,7 +444,7 @@ namespace IndustrialPark
                     continue;
 
                 meshList[i].Begin(renderer.device);
-                for (int j = 0; j < meshList[i].SubSets.Count(); j++)
+                for (int j = 0; j < meshList[i].SubSets.Count; j++)
                     meshList[i].Draw(renderer.device, j);
             }
         }
@@ -474,7 +474,7 @@ namespace IndustrialPark
                 renderer.device.UpdateAllStates();
 
                 meshList[i].Begin(renderer.device);
-                for (int j = 0; j < meshList[i].SubSets.Count(); j++)
+                for (int j = 0; j < meshList[i].SubSets.Count; j++)
                     meshList[i].Draw(renderer.device, j);
             }
         }

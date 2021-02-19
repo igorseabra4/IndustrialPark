@@ -210,7 +210,7 @@ namespace IndustrialPark
         /// </summary>
         public void Present()
         {
-            SwapChain.Present(VSync, PresentFlags.UseDuration);
+            SwapChain.Present(_vSync, PresentFlags.UseDuration);
         }
 
         /// <summary>
@@ -425,7 +425,7 @@ namespace IndustrialPark
             return Device11.GetSupportedFeatureLevel();
         }
 
-        private bool currentMode = true;
+        public bool currentMode { get; private set; } = true;
 
         public void SetGraphicsMode(bool value)
         {
@@ -433,13 +433,17 @@ namespace IndustrialPark
             Resize();
         }
 
-        private int VSync = 1;
+        private int _vSync = 1;
 
-        public void SetVSync(bool value)
+        public bool VSync
         {
-            if (value) VSync = 1;
-            else VSync = 0;
-            Resize();
+            get => _vSync == 1;
+            set
+            {
+                if (value) _vSync = 1;
+                else _vSync = 0;
+                Resize();
+            }
         }
     }
 }
