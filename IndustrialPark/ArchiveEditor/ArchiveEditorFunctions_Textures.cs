@@ -195,19 +195,30 @@ namespace IndustrialPark
                         byte[] imageData = tn.textureNativeStruct.mipMaps[0].data;
                         Console.WriteLine(tn.textureNativeStruct.mipMaps[0].dataSize);
 
-                        // if (tn.textureNativeStruct.compression == 0)
                         if (tn.textureNativeStruct.hasAlpha)
                         {
-                            for (int i = 0; i < imageData.Length; i += 2)
+                            if (tn.textureNativeStruct.rasterFormatFlags == TextureRasterFormat.RASTER_C4444)
                             {
-                                short value = BitConverter.ToInt16(imageData, i);
+                                for (int i = 0; i < imageData.Length; i += 2)
+                                {
+                                    short value = BitConverter.ToInt16(imageData, i);
 
-                                byte B = (byte)(value & 0x0F);
-                                byte G = (byte)((value >> 4) & 0x0F);
-                                byte R = (byte)((value >> 8) & 0x0F);
-                                byte A = (byte)((value >> 12) & 0x0F);
+                                    byte B = (byte)(value & 0x0F);
+                                    byte G = (byte)((value >> 4) & 0x0F);
+                                    byte R = (byte)((value >> 8) & 0x0F);
+                                    byte A = (byte)((value >> 12) & 0x0F);
 
-                                bitmapData.Add(System.Drawing.Color.FromArgb(A << 4, R << 4, G << 4, B << 4));
+                                    bitmapData.Add(System.Drawing.Color.FromArgb(A << 4, R << 4, G << 4, B << 4));
+                                }
+                            }
+                            else
+                            {
+                                for (int i = 0; i < imageData.Length; i += 4)
+                                    bitmapData.Add(System.Drawing.Color.FromArgb(
+                                        imageData[i + 3],
+                                        imageData[i + 2],
+                                        imageData[i + 1],
+                                        imageData[i]));
                             }
                         }
                         else
