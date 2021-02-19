@@ -212,11 +212,16 @@ namespace IndustrialPark
             stageitemsTSSM.DropDownItems.AddRange(new ToolStripItem[]
             {
                 new ToolStripMenuItem(AssetTemplate.Button_Red.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Checkpoint.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Checkpoint_Invisible.ToString()),
                 new ToolStripMenuItem(AssetTemplate.TeleportBox.ToString()),
                 new ToolStripMenuItem(AssetTemplate.ThrowFruit.ToString()),
                 new ToolStripMenuItem(AssetTemplate.FreezyFruit.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Swinger.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Swinger_PLAT.ToString()),
+                new ToolStripMenuItem(AssetTemplate.CollapsePlatform_Planktopolis.ToString()),
+                new ToolStripMenuItem(AssetTemplate.CollapsePlatform_Spongeball.ToString()),
+                new ToolStripMenuItem(AssetTemplate.CollapsePlatform_ThugTug.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Ring.ToString()),
                 new ToolStripMenuItem(AssetTemplate.RingControl.ToString())
             });
@@ -620,6 +625,9 @@ namespace IndustrialPark
                 case AssetTemplate.Swinger_PLAT:
                 case AssetTemplate.HoveringPlatform:
                 case AssetTemplate.Springboard:
+                case AssetTemplate.CollapsePlatform_Planktopolis:
+                case AssetTemplate.CollapsePlatform_Spongeball:
+                case AssetTemplate.CollapsePlatform_ThugTug:
                     switch (game)
                     {
                         case Game.BFBB:
@@ -643,6 +651,7 @@ namespace IndustrialPark
                     newAssetType = AssetType.PORT;
                     break;
                 case AssetTemplate.Script:
+                case AssetTemplate.Checkpoint_Script:
                     dataSize = 0x14;
                     newAssetType = AssetType.SCRP;
                     break;
@@ -674,6 +683,7 @@ namespace IndustrialPark
                 case AssetTemplate.ThrowFruitBase:
                 case AssetTemplate.FreezyFruit:
                 case AssetTemplate.Checkpoint_SIMP:
+                case AssetTemplate.Checkpoint_SIMP_TSSM:                    
                 case AssetTemplate.BungeeHook_SIMP:
                 case AssetTemplate.Swinger:
                     dataSize = 0x60 + Asset.DataSizeOffset(game);
@@ -980,7 +990,7 @@ namespace IndustrialPark
                     if (game == Game.BFBB)
                         ((AssetPLYR)asset).Model_AssetID = 0x003FE4D5;
                     else if (game == Game.Scooby)
-                        ((AssetPLYR)asset).Model_AssetID = 0x96E7F1D5;                        
+                        ((AssetPLYR)asset).Model_AssetID = 0x96E7F1D5;
                     break;
                 case AssetTemplate.Marker:
                     ((AssetMRKR)asset).PositionX = position.X;
@@ -1702,7 +1712,7 @@ namespace IndustrialPark
                         ((AssetTRIG)asset).Position0Y = position.Y;
                         ((AssetTRIG)asset).Position0Z = position.Z;
 
-                        AssetID checkpointDisp = "CHECKPOINT_DISP_00";
+                        AssetID checkpointDisp = "CHECKPOINT_DISP_01";
                         if (!ContainsAsset(checkpointDisp))
                             checkpointDisp = PlaceTemplate(position, layerIndex, ref assetIDs, "CHECKPOINT_DISP", AssetTemplate.Dispatcher);
 
@@ -1711,14 +1721,16 @@ namespace IndustrialPark
                             new LinkBFBB(EndianConverter.PlatformEndianness(platform), false)
                             {
                                 Arguments_Float = new float[4],
-                                ArgumentAssetID = PlaceTemplate(position, layerIndex, ref assetIDs, "CHECKPOINT_MRKR", AssetTemplate.Marker),
+                                ArgumentAssetID = game == Game.Incredibles ?
+                                PlaceTemplate(position, layerIndex, ref assetIDs, "CHECKPOINT_POINTER", AssetTemplate.Dyna_Pointer) :
+                                PlaceTemplate(position, layerIndex, ref assetIDs, "CHECKPOINT_MRKR", AssetTemplate.Marker),
                                 TargetAssetID = checkpointDisp,
                                 EventReceiveID = EventBFBB.EnterPlayer,
                                 EventSendID = EventBFBB.SetCheckPoint
                             }
                         };
 
-                        if (template == AssetTemplate.Checkpoint)
+                        if (template == AssetTemplate.Checkpoint && game == Game.BFBB)
                             events.Add(new LinkBFBB(EndianConverter.PlatformEndianness(platform), false)
                             {
                                 Arguments_Float = new float[4],
@@ -1726,6 +1738,24 @@ namespace IndustrialPark
                                 EventReceiveID = EventBFBB.EnterPlayer,
                                 EventSendID = EventBFBB.Run
                             });
+
+                        if (template == AssetTemplate.Checkpoint && game == Game.Incredibles)
+                        {
+                            events.Add(new LinkBFBB(EndianConverter.PlatformEndianness(platform), false)
+                            {
+                                Arguments_Float = new float[4],
+                                TargetAssetID = PlaceTemplate(position, layerIndex, ref assetIDs, "CHECKPOINT_SCRIPT", AssetTemplate.Checkpoint_Script),
+                                EventReceiveID = EventBFBB.EnterPlayer,
+                                EventSendID = EventBFBB.Run
+                            });                            
+                            events.Add(new LinkBFBB(EndianConverter.PlatformEndianness(platform), false)
+                            {
+                                Arguments_Float = new float[4],
+                                TargetAssetID = asset.AHDR.assetID,
+                                EventReceiveID = EventBFBB.EnterPlayer,
+                                EventSendID = EventBFBB.Disable
+                            });
+                        }
 
                         ((AssetTRIG)asset).LinksBFBB = events.ToArray();
                         break;
@@ -1770,12 +1800,60 @@ namespace IndustrialPark
                         };
                         break;
                     }
+                case AssetTemplate.Checkpoint_Script:
+                    {
+                        ((AssetSCRP)asset).AssetType = ObjectAssetType.Script;
+                        ((AssetSCRP)asset).UnknownFloat08 = 1f;
+
+                        uint checkpointSdfx = PlaceTemplate(new Vector3(position.X + 2f, position.Y, position.Z), layerIndex, ref assetIDs, "CHECKPOINT_SFX", AssetTemplate.SDFX);
+                        uint checkpointSimp = PlaceTemplate(new Vector3(position.X + 2f, position.Y, position.Z), layerIndex, ref assetIDs, "CHECKPOINT_SIMP", AssetTemplate.Checkpoint_SIMP_TSSM);
+                        
+                        ((AssetSCRP)asset).TimedLinksTSSM = new LinkTSSM[] {
+                            new LinkTSSM(EndianConverter.PlatformEndianness(platform), true)
+                            {
+                                Arguments_Float = new float[] { 0, 0, 0, 0 },
+                                TargetAssetID = checkpointSdfx,
+                                EventSendID = EventTSSM.Play
+                            },
+                            new LinkTSSM(EndianConverter.PlatformEndianness(platform), true)
+                            {
+                                Arguments_Float = new float[] { 0, 0, 0, 10 },
+                                TargetAssetID = checkpointSimp,
+                                EventSendID = EventTSSM.LaunchFireWorks
+                            },
+                            new LinkTSSM(EndianConverter.PlatformEndianness(platform), true)
+                            {
+                                Arguments_Float = new float[] { 2, 0, 0, 0 },
+                                TargetAssetID = checkpointSimp,
+                                EventSendID = EventTSSM.AnimPlay
+                            },
+                            new LinkTSSM(EndianConverter.PlatformEndianness(platform), true)
+                            {
+                                Time = 0.5f,
+                                Arguments_Float = new float[] { 3, 0, 0, 0 },
+                                TargetAssetID = checkpointSimp,
+                                EventSendID = EventTSSM.AnimPlayLoop
+                            },
+                        };
+
+                        var sdfx = (AssetSDFX)(GetFromAssetID(checkpointSdfx));
+                        sdfx.SoundGroup_AssetID = "CHECKPOINT_SGRP";
+                        sdfx.Emitter_AssetID = checkpointSimp;
+
+                        break;
+                    }
                 case AssetTemplate.Checkpoint_SIMP:
                     ((AssetSIMP)asset).ScaleX = 0.75f;
                     ((AssetSIMP)asset).ScaleY = 0.75f;
                     ((AssetSIMP)asset).ScaleZ = 0.75f;
                     ((AssetSIMP)asset).Model_AssetID = "checkpoint_bind";
                     ((AssetSIMP)asset).Animation_AssetID = "CHECKPOINT_ANIMLIST_01";
+                    break;
+                case AssetTemplate.Checkpoint_SIMP_TSSM:
+                    ((AssetSIMP)asset).Model_AssetID = "checkpoint_bind";
+                    ((AssetSIMP)asset).Animation_AssetID = "CHECKPOINT_ANIM";
+                    ((AssetSIMP)asset).Data[0xB] = 0x22;
+                    ((AssetSIMP)asset).Data[0x59] = 0x08;
                     break;
                 case AssetTemplate.Checkpoint_Talkbox:
                     ((AssetDYNA)asset).Version = 11;
@@ -1818,13 +1896,66 @@ namespace IndustrialPark
                         SlideAccelTime = 0.4f,
                         SlideDecelTime = 0.4f
                     } :
-                    new Motion_Mechanism((AssetBUTN)asset)
+                    new Motion_Mechanism((AssetPLAT)asset)
                     {
                         Type = MotionType.Other,
                         MovementLoopModeByte = 1,
                         SlideAccelTime = 0.4f,
                         SlideDecelTime = 0.4f
                     };
+                    break;
+                case AssetTemplate.CollapsePlatform_Planktopolis:
+                case AssetTemplate.CollapsePlatform_ThugTug:
+                case AssetTemplate.CollapsePlatform_Spongeball:
+                    ((AssetPLAT)asset).AssetType = ObjectAssetType.Platform;
+                    ((AssetPLAT)asset).PlatformType = PlatType.BreakawayPlatform;
+                    ((AssetPLAT)asset).PlatFlagsShort = 4;
+                    ((AssetPLAT)asset).Animation_AssetID = 0x7A9BF321;
+                    
+                    if (game == Game.Incredibles)
+                        ((AssetPLAT)asset).PlatSpecific =
+                            new PlatSpecific_BreakawayPlatform_TSSM((AssetPLAT)asset)
+                            {
+                                BreakawayDelay = 1f,
+                                ResetDelay = 3f,
+                                Settings_Int = 1,
+                                UnknownFloat0C = 0.1f
+                            };
+                    else
+                        ((AssetPLAT)asset).PlatSpecific =
+                            new PlatSpecific_BreakawayPlatform((AssetPLAT)asset)
+                            {
+                                BreakawayDelay = 1f,
+                                ResetDelay = 3f,
+                                Settings_Int = 1
+                            };
+
+                    if (template == AssetTemplate.CollapsePlatform_Planktopolis)
+                        ((AssetPLAT)asset).Model_AssetID = 0x6F462432;
+                    else if (template == AssetTemplate.CollapsePlatform_ThugTug)
+                    {
+                        ((AssetPLAT)asset).Animation_AssetID = 0x62C6520F;
+                        ((AssetPLAT)asset).Model_AssetID = 0xED7F1021;
+                    }
+                    else if (template == AssetTemplate.CollapsePlatform_Spongeball)
+                    {
+                        ((AssetPLAT)asset).Model_AssetID = 0x1A38B9AB;
+                        if (game == Game.Incredibles)
+                            ((PlatSpecific_BreakawayPlatform_TSSM)((AssetPLAT)asset).PlatSpecific).BreakawayDelay = 0.4f;
+                        else
+                            ((PlatSpecific_BreakawayPlatform)((AssetPLAT)asset).PlatSpecific).BreakawayDelay = 0.4f;
+                    }
+
+                    ((AssetPLAT)asset).Motion = game == Game.Incredibles ?
+                    new Motion_Mechanism_TSSM((AssetPLAT)asset)
+                    {
+                        Type = MotionType.Other
+                    } :
+                    new Motion_Mechanism((AssetPLAT)asset)
+                    {
+                        Type = MotionType.Other
+                    };
+
                     break;
                 case AssetTemplate.BungeeHook:
                     ((AssetDYNA)asset).Version = 13;

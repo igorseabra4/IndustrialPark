@@ -9,26 +9,14 @@ namespace IndustrialPark
 
         public override int StructSize => 0x18;
 
-        public DynaPointer(AssetDYNA asset) : base(asset)
-        {
-            _position = new Vector3(ReadFloat(0x00), ReadFloat(0x04), ReadFloat(0x08));
-            _yaw = ReadFloat(0x0C);
-            _pitch = ReadFloat(0x10);
-            _roll = ReadFloat(0x14);
-        }
-        
-        private Vector3 _position;
-        private float _yaw;
-        private float _pitch;
-        private float _roll;
+        public DynaPointer(AssetDYNA asset) : base(asset) { }
 
         [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
         public override float PositionX
         {
-            get => _position.X;
+            get => ReadFloat(0x00);
             set
             {
-                _position.X = value;
                 Write(0x00, value);
                 CreateTransformMatrix();
             }
@@ -36,10 +24,9 @@ namespace IndustrialPark
         [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
         public override float PositionY
         {
-            get => _position.Y;
+            get => ReadFloat(0x04);
             set
             {
-                _position.Y = value;
                 Write(0x04, value);
                 CreateTransformMatrix();
             }
@@ -47,10 +34,9 @@ namespace IndustrialPark
         [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
         public override float PositionZ
         {
-            get => _position.Z;
+            get => ReadFloat(0x08);
             set
             {
-                _position.Z = value;
                 Write(0x08, value);
                 CreateTransformMatrix();
             }
@@ -58,10 +44,9 @@ namespace IndustrialPark
         [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
         public override float Yaw
         {
-            get => _yaw;
+            get => ReadFloat(0x0C);
             set
             {
-                _yaw = value;
                 Write(0x0C, value);
                 CreateTransformMatrix();
             }
@@ -69,10 +54,9 @@ namespace IndustrialPark
         [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
         public override float Pitch
         {
-            get => _pitch;
+            get => ReadFloat(0x10);
             set
             {
-                _pitch = value;
                 Write(0x10, value);
                 CreateTransformMatrix();
             }
@@ -80,10 +64,9 @@ namespace IndustrialPark
         [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
         public override float Roll
         {
-            get => _roll;
+            get => ReadFloat(0x14);
             set
             {
-                _roll = value;
                 Write(0x14, value);
                 CreateTransformMatrix();
             }
@@ -98,7 +81,7 @@ namespace IndustrialPark
 
         public override void CreateTransformMatrix()
         {
-            world = Matrix.RotationYawPitchRoll(MathUtil.DegreesToRadians(_yaw), MathUtil.DegreesToRadians(_pitch), MathUtil.DegreesToRadians(_roll)) * Matrix.Translation(_position);
+            world = Matrix.RotationYawPitchRoll(MathUtil.DegreesToRadians(Yaw), MathUtil.DegreesToRadians(Pitch), MathUtil.DegreesToRadians(Roll)) * Matrix.Translation(PositionX, PositionY, PositionZ);
 
             vertices = new Vector3[SharpRenderer.pyramidVertices.Count];
             for (int i = 0; i < SharpRenderer.pyramidVertices.Count; i++)

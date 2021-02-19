@@ -137,6 +137,9 @@
         // TSSM
         Swinger,
         Swinger_PLAT,
+        CollapsePlatform_Planktopolis,
+        CollapsePlatform_Spongeball,
+        CollapsePlatform_ThugTug,
         Ring,
         RingControl,
 
@@ -151,6 +154,8 @@
         Checkpoint_Timer,
         Checkpoint_Talkbox,
         Checkpoint_SIMP,
+        Checkpoint_SIMP_TSSM,
+        Checkpoint_Script,
         BungeeHook_SIMP,
         StartCamera,
         LKIT_lights,

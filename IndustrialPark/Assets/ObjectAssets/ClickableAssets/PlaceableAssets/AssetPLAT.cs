@@ -132,7 +132,10 @@ namespace IndustrialPark
                     PlatSpecific = new PlatSpecific_FR(this);
                     break;
                 case PlatType.BreakawayPlatform:
-                    PlatSpecific = new PlatSpecific_BreakawayPlatform(this);
+                    if (game == Game.Incredibles)
+                        PlatSpecific = new PlatSpecific_BreakawayPlatform_TSSM(this);
+                    else
+                        PlatSpecific = new PlatSpecific_BreakawayPlatform(this);
                     break;
                 case PlatType.Springboard:
                     PlatSpecific = new PlatSpecific_Springboard(this);

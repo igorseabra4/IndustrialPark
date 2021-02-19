@@ -82,7 +82,7 @@ namespace IndustrialPark
 
     public class PlatSpecific_BreakawayPlatform : PlatSpecific_Generic
     {
-        public PlatSpecific_BreakawayPlatform(AssetPLAT plat) : base(plat) 
+        public PlatSpecific_BreakawayPlatform(AssetPLAT plat) : base(plat)
         {
             Settings = plat.IntFlagsDescriptor(0xC + specificStart);
         }
@@ -107,6 +107,47 @@ namespace IndustrialPark
         }
         [Category("Breakaway Platform")]
         public DynamicTypeDescriptor Settings { get; set; }
+        [Category("Breakaway Platform"), Browsable(false)]
+        public int Settings_Int
+        {
+            get => ReadInt(0x0C);
+            set => Write(0x0C, value);
+        }
+    }
+
+    public class PlatSpecific_BreakawayPlatform_TSSM : PlatSpecific_Generic
+    {
+        public PlatSpecific_BreakawayPlatform_TSSM(AssetPLAT plat) : base(plat)
+        {
+            Settings = plat.IntFlagsDescriptor(0x8 + specificStart);
+        }
+
+        [Category("Breakaway Platform")]
+        public float BreakawayDelay
+        {
+            get => ReadFloat(0x00);
+            set => Write(0x00, value);
+        }
+        [Category("Breakaway Platform")]
+        public float ResetDelay
+        {
+            get => ReadFloat(0x04);
+            set => Write(0x04, value);
+        }
+        [Category("Breakaway Platform")]
+        public DynamicTypeDescriptor Settings { get; set; }
+        [Category("Breakaway Platform"), Browsable(false)]
+        public int Settings_Int
+        {
+            get => ReadInt(0x08);
+            set => Write(0x08, value);
+        }
+        [Category("Breakaway Platform")]
+        public float UnknownFloat0C
+        {
+            get => ReadFloat(0x0c);
+            set => Write(0x0c, value);
+        }
     }
 
     public class PlatSpecific_Springboard : PlatSpecific_Generic
