@@ -139,14 +139,18 @@ namespace IndustrialPark
             sphereVertices = new List<Vector3>();
             sphereTriangles = new List<Models.Triangle>();
 
-            for (int i = 0; i < 4; i++)
+            torusVertices = new List<Vector3>();
+            torusTriangles = new List<Models.Triangle>();
+
+            for (int i = 0; i < 5; i++)
             {
                 Models.ModelConverterData objData;
 
                 if (i == 0) objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Box.obj", false);
                 else if (i == 1) objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Cylinder.obj", false);
                 else if (i == 2) objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Pyramid.obj", false);
-                else objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Sphere.obj", false);
+                else if (i == 3) objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Sphere.obj", false);
+                else objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Torus.obj", false);
 
                 List<Vertex> vertexList = new List<Vertex>();
                 foreach (Models.Vertex v in objData.VertexList)
@@ -156,6 +160,7 @@ namespace IndustrialPark
                     else if (i == 1) cylinderVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
                     else if (i == 2) pyramidVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
                     else if (i == 3) sphereVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
+                    else if (i == 4) torusVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
                 }
 
                 List<int> indexList = new List<int>();
@@ -168,6 +173,7 @@ namespace IndustrialPark
                     else if (i == 1) cylinderTriangles.Add(t);
                     else if (i == 2) pyramidTriangles.Add(t);
                     else if (i == 3) sphereTriangles.Add(t);
+                    else if (i == 4) torusTriangles.Add(t);
                 }
 
                 if (!tiny)
@@ -187,18 +193,11 @@ namespace IndustrialPark
                         case 3:
                             Sphere = mesh;
                             break;
+                        case 4:
+                            Torus = mesh;
+                            break;
                     }
                 }
-            }
-
-            if (!tiny)
-            {
-                RenderWareModelFile torusModel = new RenderWareModelFile(device, RenderWareFile.ReadFileMethods.ReadRenderWareFile(Application.StartupPath + "/Resources/Models/Torus.DFF"));
-                Torus = torusModel.meshList[0];
-                torusTriangles = new List<Models.Triangle>();
-                foreach (RenderWareFile.Triangle t in torusModel.triangleList)
-                    torusTriangles.Add(new Models.Triangle() { vertex1 = t.vertex1, vertex2 = t.vertex2, vertex3 = t.vertex3 });
-                torusVertices = torusModel.vertexListG;
             }
 
             CreatePlaneMesh(tiny);

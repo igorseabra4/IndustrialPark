@@ -65,7 +65,7 @@ namespace IndustrialPark
             Close();
         }
 
-        public static (List<Section_AHDR> AHDRs, bool overwrite, bool simps, bool ledgeGrab, bool piptVColors) GetModels(Game game)
+        public static (List<Section_AHDR> AHDRs, bool overwrite, bool simps, bool ledgeGrab, bool piptVColors, bool solidSimps) GetModels(Game game)
         {
             using (ImportModel a = new ImportModel())
                 if (a.ShowDialog() == DialogResult.OK)
@@ -74,15 +74,9 @@ namespace IndustrialPark
 
                     AssetType assetType = (AssetType)a.comboBoxAssetTypes.SelectedItem;
 
-                    bool simps = false, ledgeGrab = false, piptVColors = false;
-
                     if (assetType == AssetType.MODL)
                     {
-                        piptVColors = a.checkBoxEnableVcolors.Checked;
-                        simps = a.checkBoxGenSimps.Checked;
-                        ledgeGrab = a.checkBoxLedgeGrab.Checked;
-
-                        if (simps)
+                        if (a.checkBoxGenSimps.Checked)
                             MessageBox.Show("a SIMP for each imported MODL will be generated and placed on a new DEFAULT layer.");
                     }
 
@@ -128,15 +122,16 @@ namespace IndustrialPark
                                 assetData));
                     }
 
-                    return (AHDRs, a.checkBoxOverwrite.Checked, simps, ledgeGrab, piptVColors);
+                    return (AHDRs, a.checkBoxOverwrite.Checked, a.checkBoxGenSimps.Checked, a.checkBoxLedgeGrab.Checked, a.checkBoxEnableVcolors.Checked, a.checkBoxSolidSimps.Checked);
                 }
 
-            return (null, false, false, false, false);                
+            return (null, false, false, false, false, false);                
         }
 
         private void checkBoxGenSimps_CheckedChanged(object sender, EventArgs e)
         {
             checkBoxLedgeGrab.Enabled = checkBoxGenSimps.Checked;
+            checkBoxSolidSimps.Enabled = checkBoxGenSimps.Checked;
         }
 
         private void comboBoxAssetTypes_SelectedIndexChanged(object sender, EventArgs e)
@@ -145,6 +140,8 @@ namespace IndustrialPark
             {
                 checkBoxGenSimps.Checked = false;
                 checkBoxGenSimps.Enabled = false;
+                checkBoxSolidSimps.Checked = false;
+                checkBoxSolidSimps.Enabled = false;
                 checkBoxLedgeGrab.Checked = false;
                 checkBoxLedgeGrab.Enabled = false;
                 checkBoxEnableVcolors.Checked = false;
@@ -155,6 +152,7 @@ namespace IndustrialPark
                 checkBoxGenSimps.Enabled = true;
                 checkBoxEnableVcolors.Enabled = true;
                 checkBoxLedgeGrab.Enabled = checkBoxGenSimps.Checked;
+                checkBoxSolidSimps.Enabled = checkBoxGenSimps.Checked;
             }
         }
     }

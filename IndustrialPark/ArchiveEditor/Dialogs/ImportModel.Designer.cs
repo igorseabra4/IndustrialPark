@@ -41,6 +41,7 @@
             this.checkBoxEnableVcolors = new System.Windows.Forms.CheckBox();
             this.checkBoxIgnoreMeshColors = new System.Windows.Forms.CheckBox();
             this.checkBoxLedgeGrab = new System.Windows.Forms.CheckBox();
+            this.checkBoxSolidSimps = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -77,7 +78,7 @@
             // buttonOK
             // 
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(116, 336);
+            this.buttonOK.Location = new System.Drawing.Point(116, 359);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(92, 23);
             this.buttonOK.TabIndex = 5;
@@ -88,7 +89,7 @@
             // buttonCancel
             // 
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(18, 336);
+            this.buttonCancel.Location = new System.Drawing.Point(18, 359);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(92, 23);
             this.buttonCancel.TabIndex = 6;
@@ -129,7 +130,7 @@
             this.checkBoxOverwrite.AutoSize = true;
             this.checkBoxOverwrite.Checked = true;
             this.checkBoxOverwrite.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxOverwrite.Location = new System.Drawing.Point(137, 313);
+            this.checkBoxOverwrite.Location = new System.Drawing.Point(137, 336);
             this.checkBoxOverwrite.Name = "checkBoxOverwrite";
             this.checkBoxOverwrite.Size = new System.Drawing.Size(71, 17);
             this.checkBoxOverwrite.TabIndex = 12;
@@ -173,12 +174,25 @@
             // 
             this.checkBoxLedgeGrab.AutoSize = true;
             this.checkBoxLedgeGrab.Enabled = false;
-            this.checkBoxLedgeGrab.Location = new System.Drawing.Point(18, 313);
+            this.checkBoxLedgeGrab.Location = new System.Drawing.Point(18, 336);
             this.checkBoxLedgeGrab.Name = "checkBoxLedgeGrab";
             this.checkBoxLedgeGrab.Size = new System.Drawing.Size(116, 17);
             this.checkBoxLedgeGrab.TabIndex = 16;
             this.checkBoxLedgeGrab.Text = "Ledge Grab SIMPs";
             this.checkBoxLedgeGrab.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxSolidSimps
+            // 
+            this.checkBoxSolidSimps.AutoSize = true;
+            this.checkBoxSolidSimps.Checked = true;
+            this.checkBoxSolidSimps.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxSolidSimps.Enabled = false;
+            this.checkBoxSolidSimps.Location = new System.Drawing.Point(18, 313);
+            this.checkBoxSolidSimps.Name = "checkBoxSolidSimps";
+            this.checkBoxSolidSimps.Size = new System.Drawing.Size(83, 17);
+            this.checkBoxSolidSimps.TabIndex = 17;
+            this.checkBoxSolidSimps.Text = "Solid SIMPs";
+            this.checkBoxSolidSimps.UseVisualStyleBackColor = true;
             // 
             // ImportModel
             // 
@@ -186,7 +200,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(224, 368);
+            this.ClientSize = new System.Drawing.Size(224, 391);
+            this.Controls.Add(this.checkBoxSolidSimps);
             this.Controls.Add(this.checkBoxLedgeGrab);
             this.Controls.Add(this.checkBoxIgnoreMeshColors);
             this.Controls.Add(this.checkBoxEnableVcolors);
@@ -227,5 +242,6 @@
         private System.Windows.Forms.CheckBox checkBoxEnableVcolors;
         private System.Windows.Forms.CheckBox checkBoxIgnoreMeshColors;
         private System.Windows.Forms.CheckBox checkBoxLedgeGrab;
+        private System.Windows.Forms.CheckBox checkBoxSolidSimps;
     }
 }

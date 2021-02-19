@@ -652,7 +652,7 @@ namespace IndustrialPark
             return AHDR;
         }
 
-        public List<uint> MakeSimps(List<uint> assetIDs, bool ledgeGrabSimps)
+        public List<uint> MakeSimps(List<uint> assetIDs, bool solid, bool ledgeGrabSimps)
         {
             int layerIndex = DICT.LTOC.LHDRList.Count;
             AddLayer();
@@ -664,7 +664,9 @@ namespace IndustrialPark
                     string simpName = "SIMP_" + MODL.AHDR.ADBG.assetName.Replace(".dff", "").ToUpper();
                     AssetSIMP simp = (AssetSIMP)GetFromAssetID(PlaceTemplate(new Vector3(), layerIndex, ref outAssetIDs, simpName, AssetTemplate.SIMP_Generic));
                     simp.Model_AssetID = i;
-                    if (ledgeGrabSimps)
+                    if (!solid)
+                        simp.Data[0xB] = 0x00;
+                    else if (ledgeGrabSimps)
                         simp.Data[0xB] = 0x82;
                 }
 
