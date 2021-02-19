@@ -224,7 +224,8 @@ namespace IndustrialPark
 
         public void RemoveLayer(int index)
         {
-            RemoveAsset(DICT.LTOC.LHDRList[index].assetIDlist);
+            foreach (uint u in DICT.LTOC.LHDRList[index].assetIDlist.ToArray())
+                RemoveAsset(u);
 
             DICT.LTOC.LHDRList.RemoveAt(index);
 
