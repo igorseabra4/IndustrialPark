@@ -21,9 +21,9 @@ namespace IndustrialPark
         public float Unknown10_Y { get; set; }
         public float Unknown11_Z { get; set; }
         public float Unknown12 { get; set; }
-        public float Unknown13_X { get; set; }
-        public float Unknown14_Y { get; set; }
-        public float Unknown15_Z { get; set; }
+        public float Direction_X { get; set; }
+        public float Direction_Y { get; set; }
+        public float Direction_Z { get; set; }
         public float Unknown16 { get; set; }
         public float Unknown17_X { get; set; }
         public float Unknown18_Y { get; set; }
@@ -88,9 +88,9 @@ namespace IndustrialPark
                         Unknown10_Y = Switch(binaryReader.ReadSingle()),
                         Unknown11_Z = Switch(binaryReader.ReadSingle()),
                         Unknown12 = Switch(binaryReader.ReadSingle()),
-                        Unknown13_X = Switch(binaryReader.ReadSingle()),
-                        Unknown14_Y = Switch(binaryReader.ReadSingle()),
-                        Unknown15_Z = Switch(binaryReader.ReadSingle()),
+                        Direction_X = Switch(binaryReader.ReadSingle()),
+                        Direction_Y = Switch(binaryReader.ReadSingle()),
+                        Direction_Z = Switch(binaryReader.ReadSingle()),
                         Unknown16 = Switch(binaryReader.ReadSingle()),
                         Unknown17_X = Switch(binaryReader.ReadSingle()),
                         Unknown18_Y = Switch(binaryReader.ReadSingle()),
@@ -122,9 +122,9 @@ namespace IndustrialPark
                     binaryWriter.Write(Switch(entry.Unknown10_Y));
                     binaryWriter.Write(Switch(entry.Unknown11_Z));
                     binaryWriter.Write(Switch(entry.Unknown12));
-                    binaryWriter.Write(Switch(entry.Unknown13_X));
-                    binaryWriter.Write(Switch(entry.Unknown14_Y));
-                    binaryWriter.Write(Switch(entry.Unknown15_Z));
+                    binaryWriter.Write(Switch(entry.Direction_X));
+                    binaryWriter.Write(Switch(entry.Direction_Y));
+                    binaryWriter.Write(Switch(entry.Direction_Z));
                     binaryWriter.Write(Switch(entry.Unknown16));
                     binaryWriter.Write(Switch(entry.Unknown17_X));
                     binaryWriter.Write(Switch(entry.Unknown18_Y));

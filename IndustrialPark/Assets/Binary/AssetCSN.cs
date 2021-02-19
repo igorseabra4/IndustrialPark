@@ -76,14 +76,14 @@ namespace IndustrialPark
             Data = data;
         }
 
-        public int Unknown01
+        public float StartTime
         {
-            get => ReadInt(0x00);
+            get => ReadFloat(0x00);
             set => Write(0x00, value);
         }
-        public int Unknown02
+        public float EndTime
         {
-            get => ReadInt(0x04);
+            get => ReadFloat(0x04);
             set => Write(0x04, value);
         }
         [ReadOnly(true)]
@@ -92,7 +92,7 @@ namespace IndustrialPark
             get => ReadInt(0x08);
             set => Write(0x08, value);
         }
-        public int Unknown04
+        public int EntryIndex
         {
             get => ReadInt(0x0C);
             set => Write(0x0C, value);
