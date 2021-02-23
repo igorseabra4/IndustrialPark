@@ -36,7 +36,9 @@ namespace IndustrialPark
             else if (asset is AssetRenderWareModel arwm) SetupForModel(arwm);
             else if (asset is AssetSHRP shrp) SetupForShrp(shrp);
             else if (asset is AssetWIRE wire) SetupForWire(wire);
-            
+
+            AddRow();
+
             Button buttonHelp = new Button() { Dock = DockStyle.Fill, Text = "Open Wiki Page", AutoSize = true };
             buttonHelp.Click += (object sender, EventArgs e) =>
                 System.Diagnostics.Process.Start(AboutBox.WikiLink + asset.AHDR.assetType.ToString());
@@ -46,6 +48,14 @@ namespace IndustrialPark
             buttonFindCallers.Click += (object sender, EventArgs e) =>
                 Program.MainForm.FindWhoTargets(GetAssetID());
             tableLayoutPanel1.Controls.Add(buttonFindCallers, 1, tableLayoutPanel1.RowCount - 1);
+
+            for (int i = 1; i < tableLayoutPanel1.RowCount; i++)
+            {
+                if (i < tableLayoutPanel1.RowStyles.Count)
+                    tableLayoutPanel1.RowStyles[i] = (new RowStyle(SizeType.Absolute, 28));
+                else
+                    tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 28));
+            }
         }
 
         private void InternalAssetEditor_FormClosing(object sender, FormClosingEventArgs e)
@@ -80,7 +90,6 @@ namespace IndustrialPark
         private void AddRow()
         {
             tableLayoutPanel1.RowCount += 1;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 28));
         }
 
         private void SetupForCam(AssetCAM asset)

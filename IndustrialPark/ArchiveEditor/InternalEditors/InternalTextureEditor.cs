@@ -34,8 +34,8 @@ namespace IndustrialPark
                 b = bitmap;
             pictureBox1.Image = b;
 
-            tableLayoutPanel1.RowStyles[2].SizeType = SizeType.Absolute;
-            tableLayoutPanel1.RowStyles[2].Height = b.Height + 16;
+            tableLayoutPanel1.RowStyles[1].SizeType = SizeType.Absolute;
+            tableLayoutPanel1.RowStyles[1].Height = b.Height + 16;
         }
 
         private void InternalTextureEditor_FormClosing(object sender, FormClosingEventArgs e)

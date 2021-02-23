@@ -1121,6 +1121,7 @@ namespace IndustrialPark
                 toolStripMenuItem_Export.Enabled = buttonExportRaw.Enabled;
                 toolStripMenuItem_EditHeader.Enabled = buttonEditAsset.Enabled;
                 toolStripMenuItem_EditData.Enabled = buttonInternalEdit.Enabled;
+                toolStripMenuItem_MultiEdit.Enabled = buttonMultiEdit.Enabled;
 
                 addTemplateToolStripMenuItem.Enabled = buttonAddAsset.Enabled;
                 ToolStripMenuItem_CreateGroup.Enabled = buttonAddAsset.Enabled;

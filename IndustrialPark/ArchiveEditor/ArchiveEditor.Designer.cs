@@ -102,6 +102,7 @@
             this.toolStripMenuItem_Export = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_EditHeader = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_EditData = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_MultiEdit = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -716,9 +717,10 @@
             this.toolStripMenuItem_View,
             this.toolStripMenuItem_Export,
             this.toolStripMenuItem_EditHeader,
-            this.toolStripMenuItem_EditData});
+            this.toolStripMenuItem_EditData,
+            this.toolStripMenuItem_MultiEdit});
             this.contextMenuStrip_ListBoxAssets.Name = "contextMenuStrip_ListBoxAssets";
-            this.contextMenuStrip_ListBoxAssets.Size = new System.Drawing.Size(223, 258);
+            this.contextMenuStrip_ListBoxAssets.Size = new System.Drawing.Size(223, 302);
             // 
             // addTemplateToolStripMenuItem
             // 
@@ -805,6 +807,13 @@
             this.toolStripMenuItem_EditData.Size = new System.Drawing.Size(222, 22);
             this.toolStripMenuItem_EditData.Text = "Edit Data (Ctrl + G)";
             this.toolStripMenuItem_EditData.Click += new System.EventHandler(this.buttonInternalEdit_Click);
+            // 
+            // multiEditToolStripMenuItem
+            // 
+            this.toolStripMenuItem_MultiEdit.Name = "multiEditToolStripMenuItem";
+            this.toolStripMenuItem_MultiEdit.Size = new System.Drawing.Size(222, 22);
+            this.toolStripMenuItem_MultiEdit.Text = "Multi Edit";
+            this.toolStripMenuItem_MultiEdit.Click += new System.EventHandler(this.buttonMultiEdit_Click);
             // 
             // ArchiveEditor
             // 
@@ -911,5 +920,6 @@
         private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItem_CreateGroup;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.Button buttonMultiEdit;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_MultiEdit;
     }
 }
