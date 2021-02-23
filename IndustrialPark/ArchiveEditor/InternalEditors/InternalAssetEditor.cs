@@ -26,7 +26,7 @@ namespace IndustrialPark
             asset.SetDynamicProperties(dt);
             propertyGridAsset.SelectedObject = dt.FromComponent(asset);
             
-            labelAssetName.Text = $"[{asset.AHDR.assetType.ToString()}] {asset.ToString()}";
+            Text = $"[{asset.AHDR.assetType}] {asset}";
 
             propertyGridAsset.HelpVisible = !hideHelp;
 
@@ -170,13 +170,13 @@ namespace IndustrialPark
                 }
             };
             buttonSetVertexColors.Enabled = !asset.IsNativeData;
-            tableLayoutPanel1.Controls.Add(buttonSetVertexColors, 0, 2);
+            tableLayoutPanel1.Controls.Add(buttonSetVertexColors, 0, 1);
 
             CheckBox ignoreMeshColors = new CheckBox() { Dock = DockStyle.Fill, Text = "Ignore Mesh Colors", AutoSize = true };
             ignoreMeshColors.Checked = true;
-            tableLayoutPanel1.Controls.Add(ignoreMeshColors, 0, 3);
+            tableLayoutPanel1.Controls.Add(ignoreMeshColors, 0, 2);
             CheckBox flipUVs = new CheckBox() { Dock = DockStyle.Fill, Text = "Flip UVs", AutoSize = true };
-            tableLayoutPanel1.Controls.Add(flipUVs, 0, 4);
+            tableLayoutPanel1.Controls.Add(flipUVs, 0, 3);
 
             Button buttonImport = new Button() { Dock = DockStyle.Fill, Text = "Import", AutoSize = true };
             buttonImport.Click += (object sender, EventArgs e) =>
@@ -203,10 +203,10 @@ namespace IndustrialPark
                     archive.UnsavedChanges = true;
                 }
             };
-            tableLayoutPanel1.Controls.Add(buttonImport, 0, 5);
+            tableLayoutPanel1.Controls.Add(buttonImport, 0, 4);
 
             CheckBox exportTextures = new CheckBox() { Dock = DockStyle.Fill, Text = "Export Textures", AutoSize = true };
-            tableLayoutPanel1.Controls.Add(exportTextures, 1, 4);
+            tableLayoutPanel1.Controls.Add(exportTextures, 1, 3);
 
             Button buttonExport = new Button() { Dock = DockStyle.Fill, Text = "Export", AutoSize = true };
             buttonExport.Click += (object sender, EventArgs e) =>
@@ -241,7 +241,7 @@ namespace IndustrialPark
                 }
             };
 
-            tableLayoutPanel1.Controls.Add(buttonExport, 1, 5);
+            tableLayoutPanel1.Controls.Add(buttonExport, 1, 4);
         }
 
         private void SetupForShrp(AssetSHRP asset)

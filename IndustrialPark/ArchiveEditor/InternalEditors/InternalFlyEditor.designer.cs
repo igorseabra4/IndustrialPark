@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.labelAssetName = new System.Windows.Forms.Label();
             this.propertyGridSpecific = new System.Windows.Forms.PropertyGrid();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.buttonView = new System.Windows.Forms.Button();
@@ -43,17 +42,6 @@
             this.labelFrame = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // labelAssetName
-            // 
-            this.labelAssetName.AutoSize = true;
-            this.tableLayoutPanel1.SetColumnSpan(this.labelAssetName, 2);
-            this.labelAssetName.Dock = System.Windows.Forms.DockStyle.Left;
-            this.labelAssetName.Location = new System.Drawing.Point(3, 0);
-            this.labelAssetName.Name = "labelAssetName";
-            this.labelAssetName.Size = new System.Drawing.Size(0, 20);
-            this.labelAssetName.TabIndex = 6;
-            this.labelAssetName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // propertyGridSpecific
             // 
@@ -72,29 +60,28 @@
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Controls.Add(this.buttonView, 0, 6);
-            this.tableLayoutPanel1.Controls.Add(this.buttonFindCallers, 0, 6);
-            this.tableLayoutPanel1.Controls.Add(this.buttonStop, 1, 5);
-            this.tableLayoutPanel1.Controls.Add(this.buttonGetPos, 0, 4);
-            this.tableLayoutPanel1.Controls.Add(this.buttonGetDir, 0, 4);
-            this.tableLayoutPanel1.Controls.Add(this.labelAssetName, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.propertyGridSpecific, 0, 3);
-            this.tableLayoutPanel1.Controls.Add(this.listBoxFlyEntries, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.buttonRemove, 1, 2);
-            this.tableLayoutPanel1.Controls.Add(this.buttonAdd, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.buttonPlay, 0, 5);
-            this.tableLayoutPanel1.Controls.Add(this.labelFrame, 0, 7);
+            this.tableLayoutPanel1.Controls.Add(this.buttonView, 0, 5);
+            this.tableLayoutPanel1.Controls.Add(this.buttonFindCallers, 0, 5);
+            this.tableLayoutPanel1.Controls.Add(this.buttonStop, 1, 4);
+            this.tableLayoutPanel1.Controls.Add(this.buttonGetPos, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.buttonGetDir, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.propertyGridSpecific, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.listBoxFlyEntries, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.buttonRemove, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.buttonAdd, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.buttonPlay, 0, 4);
+            this.tableLayoutPanel1.Controls.Add(this.labelFrame, 0, 6);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 8;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.RowCount = 7;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 180F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(344, 441);
             this.tableLayoutPanel1.TabIndex = 8;
@@ -138,7 +125,7 @@
             // 
             this.buttonGetPos.AutoSize = true;
             this.buttonGetPos.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonGetPos.Location = new System.Drawing.Point(175, 340);
+            this.buttonGetPos.Location = new System.Drawing.Point(3, 340);
             this.buttonGetPos.Name = "buttonGetPos";
             this.buttonGetPos.Size = new System.Drawing.Size(166, 22);
             this.buttonGetPos.TabIndex = 19;
@@ -150,7 +137,7 @@
             // 
             this.buttonGetDir.AutoSize = true;
             this.buttonGetDir.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonGetDir.Location = new System.Drawing.Point(3, 340);
+            this.buttonGetDir.Location = new System.Drawing.Point(175, 340);
             this.buttonGetDir.Name = "buttonGetDir";
             this.buttonGetDir.Size = new System.Drawing.Size(166, 22);
             this.buttonGetDir.TabIndex = 18;
@@ -163,9 +150,9 @@
             this.tableLayoutPanel1.SetColumnSpan(this.listBoxFlyEntries, 2);
             this.listBoxFlyEntries.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listBoxFlyEntries.FormattingEnabled = true;
-            this.listBoxFlyEntries.Location = new System.Drawing.Point(3, 23);
+            this.listBoxFlyEntries.Location = new System.Drawing.Point(3, 3);
             this.listBoxFlyEntries.Name = "listBoxFlyEntries";
-            this.listBoxFlyEntries.Size = new System.Drawing.Size(338, 103);
+            this.listBoxFlyEntries.Size = new System.Drawing.Size(338, 123);
             this.listBoxFlyEntries.TabIndex = 23;
             this.listBoxFlyEntries.SelectedIndexChanged += new System.EventHandler(this.listBoxFlyEntries_SelectedIndexChanged);
             // 
@@ -231,7 +218,6 @@
         }
 
         #endregion
-        private System.Windows.Forms.Label labelAssetName;
         private System.Windows.Forms.PropertyGrid propertyGridSpecific;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Button buttonGetPos;

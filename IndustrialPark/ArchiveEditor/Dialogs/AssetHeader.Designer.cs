@@ -89,7 +89,7 @@
             this.buttonImportRawData.Location = new System.Drawing.Point(182, 209);
             this.buttonImportRawData.Name = "buttonImportRawData";
             this.buttonImportRawData.Size = new System.Drawing.Size(172, 23);
-            this.buttonImportRawData.TabIndex = 4;
+            this.buttonImportRawData.TabIndex = 10;
             this.buttonImportRawData.Text = "Import Raw Data";
             this.buttonImportRawData.UseVisualStyleBackColor = true;
             this.buttonImportRawData.Click += new System.EventHandler(this.buttonImportRawData_Click);
@@ -113,7 +113,7 @@
             this.checkWriteT.Location = new System.Drawing.Point(6, 88);
             this.checkWriteT.Name = "checkWriteT";
             this.checkWriteT.Size = new System.Drawing.Size(136, 17);
-            this.checkWriteT.TabIndex = 3;
+            this.checkWriteT.TabIndex = 8;
             this.checkWriteT.Text = "WRITE_TRANSFORM";
             this.checkWriteT.UseVisualStyleBackColor = true;
             // 
@@ -123,7 +123,7 @@
             this.checkReadT.Location = new System.Drawing.Point(6, 65);
             this.checkReadT.Name = "checkReadT";
             this.checkReadT.Size = new System.Drawing.Size(130, 17);
-            this.checkReadT.TabIndex = 2;
+            this.checkReadT.TabIndex = 7;
             this.checkReadT.Text = "READ_TRANSFORM";
             this.checkReadT.UseVisualStyleBackColor = true;
             // 
@@ -133,7 +133,7 @@
             this.checkSourceVirtual.Location = new System.Drawing.Point(6, 42);
             this.checkSourceVirtual.Name = "checkSourceVirtual";
             this.checkSourceVirtual.Size = new System.Drawing.Size(123, 17);
-            this.checkSourceVirtual.TabIndex = 1;
+            this.checkSourceVirtual.TabIndex = 6;
             this.checkSourceVirtual.Text = "SOURCE_VIRTUAL";
             this.checkSourceVirtual.UseVisualStyleBackColor = true;
             // 
@@ -143,7 +143,7 @@
             this.checkSourceFile.Location = new System.Drawing.Point(6, 19);
             this.checkSourceFile.Name = "checkSourceFile";
             this.checkSourceFile.Size = new System.Drawing.Size(99, 17);
-            this.checkSourceFile.TabIndex = 0;
+            this.checkSourceFile.TabIndex = 5;
             this.checkSourceFile.Text = "SOURCE_FILE";
             this.checkSourceFile.UseVisualStyleBackColor = true;
             // 
@@ -153,7 +153,7 @@
             this.buttonOK.Location = new System.Drawing.Point(271, 251);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(83, 23);
-            this.buttonOK.TabIndex = 5;
+            this.buttonOK.TabIndex = 12;
             this.buttonOK.Text = "OK";
             this.buttonOK.UseVisualStyleBackColor = true;
             this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
@@ -164,7 +164,7 @@
             this.buttonCancel.Location = new System.Drawing.Point(182, 251);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(83, 23);
-            this.buttonCancel.TabIndex = 6;
+            this.buttonCancel.TabIndex = 11;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
             // 
@@ -183,7 +183,7 @@
             this.textBoxAssetID.Location = new System.Drawing.Point(6, 19);
             this.textBoxAssetID.Name = "textBoxAssetID";
             this.textBoxAssetID.Size = new System.Drawing.Size(146, 20);
-            this.textBoxAssetID.TabIndex = 0;
+            this.textBoxAssetID.TabIndex = 3;
             this.textBoxAssetID.TextChanged += new System.EventHandler(this.textBoxAssetID_TextChanged);
             // 
             // groupBox4
@@ -201,7 +201,7 @@
             this.textBoxAssetName.Location = new System.Drawing.Point(6, 19);
             this.textBoxAssetName.Name = "textBoxAssetName";
             this.textBoxAssetName.Size = new System.Drawing.Size(172, 20);
-            this.textBoxAssetName.TabIndex = 0;
+            this.textBoxAssetName.TabIndex = 2;
             this.textBoxAssetName.TextChanged += new System.EventHandler(this.textBoxAssetName_TextChanged);
             // 
             // groupBox5
@@ -219,7 +219,7 @@
             this.textBoxAssetFileName.Location = new System.Drawing.Point(6, 19);
             this.textBoxAssetFileName.Name = "textBoxAssetFileName";
             this.textBoxAssetFileName.Size = new System.Drawing.Size(172, 20);
-            this.textBoxAssetFileName.TabIndex = 0;
+            this.textBoxAssetFileName.TabIndex = 4;
             this.textBoxAssetFileName.TextChanged += new System.EventHandler(this.textBoxAssetFilename_TextChanged);
             // 
             // groupBox6
@@ -237,7 +237,7 @@
             this.textBoxChecksum.Location = new System.Drawing.Point(6, 19);
             this.textBoxChecksum.Name = "textBoxChecksum";
             this.textBoxChecksum.Size = new System.Drawing.Size(172, 20);
-            this.textBoxChecksum.TabIndex = 0;
+            this.textBoxChecksum.TabIndex = 9;
             this.textBoxChecksum.TextChanged += new System.EventHandler(this.textBoxChecksum_TextChanged);
             // 
             // label1
@@ -251,7 +251,7 @@
     " type.";
             this.label1.Visible = false;
             // 
-            // AddAssetDialog
+            // AssetHeader
             // 
             this.AcceptButton = this.buttonOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -271,7 +271,7 @@
             this.Controls.Add(this.labelRawDataSize);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
-            this.Name = "AddAssetDialog";
+            this.Name = "AssetHeader";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Asset Header";

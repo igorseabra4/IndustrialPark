@@ -68,6 +68,7 @@
             this.buttonAddLayer = new System.Windows.Forms.Button();
             this.comboBoxLayers = new System.Windows.Forms.ComboBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.buttonMultiEdit = new System.Windows.Forms.Button();
             this.checkBoxTemplateFocus = new System.Windows.Forms.CheckBox();
             this.listViewAssets = new System.Windows.Forms.ListView();
             this.AssetNameCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -455,6 +456,7 @@
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.buttonMultiEdit);
             this.groupBox2.Controls.Add(this.checkBoxTemplateFocus);
             this.groupBox2.Controls.Add(this.listViewAssets);
             this.groupBox2.Controls.Add(this.buttonCopy);
@@ -476,6 +478,18 @@
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Assets";
+            // 
+            // buttonMultiEdit
+            // 
+            this.buttonMultiEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonMultiEdit.Enabled = false;
+            this.buttonMultiEdit.Location = new System.Drawing.Point(519, 306);
+            this.buttonMultiEdit.Name = "buttonMultiEdit";
+            this.buttonMultiEdit.Size = new System.Drawing.Size(75, 23);
+            this.buttonMultiEdit.TabIndex = 22;
+            this.buttonMultiEdit.Text = "Multi Edit";
+            this.buttonMultiEdit.UseVisualStyleBackColor = true;
+            this.buttonMultiEdit.Click += new System.EventHandler(this.buttonMultiEdit_Click);
             // 
             // checkBoxTemplateFocus
             // 
@@ -589,7 +603,7 @@
             // 
             this.buttonInternalEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonInternalEdit.Enabled = false;
-            this.buttonInternalEdit.Location = new System.Drawing.Point(519, 307);
+            this.buttonInternalEdit.Location = new System.Drawing.Point(519, 277);
             this.buttonInternalEdit.Name = "buttonInternalEdit";
             this.buttonInternalEdit.Size = new System.Drawing.Size(75, 23);
             this.buttonInternalEdit.TabIndex = 15;
@@ -601,7 +615,7 @@
             // 
             this.buttonView.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonView.Enabled = false;
-            this.buttonView.Location = new System.Drawing.Point(519, 220);
+            this.buttonView.Location = new System.Drawing.Point(519, 190);
             this.buttonView.Name = "buttonView";
             this.buttonView.Size = new System.Drawing.Size(75, 23);
             this.buttonView.TabIndex = 14;
@@ -613,7 +627,7 @@
             // 
             this.buttonExportRaw.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonExportRaw.Enabled = false;
-            this.buttonExportRaw.Location = new System.Drawing.Point(519, 249);
+            this.buttonExportRaw.Location = new System.Drawing.Point(519, 219);
             this.buttonExportRaw.Name = "buttonExportRaw";
             this.buttonExportRaw.Size = new System.Drawing.Size(75, 23);
             this.buttonExportRaw.TabIndex = 13;
@@ -625,7 +639,7 @@
             // 
             this.buttonEditAsset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonEditAsset.Enabled = false;
-            this.buttonEditAsset.Location = new System.Drawing.Point(519, 278);
+            this.buttonEditAsset.Location = new System.Drawing.Point(519, 248);
             this.buttonEditAsset.Name = "buttonEditAsset";
             this.buttonEditAsset.Size = new System.Drawing.Size(75, 23);
             this.buttonEditAsset.TabIndex = 12;
@@ -709,7 +723,7 @@
             // addTemplateToolStripMenuItem
             // 
             this.addTemplateToolStripMenuItem.Name = "addTemplateToolStripMenuItem";
-            this.addTemplateToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
+            this.addTemplateToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
             this.addTemplateToolStripMenuItem.Text = "Add Template";
             // 
             // ToolStripMenuItem_CreateGroup
@@ -722,73 +736,73 @@
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(185, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(219, 6);
             // 
             // toolStripMenuItem_Add
             // 
             this.toolStripMenuItem_Add.Name = "toolStripMenuItem_Add";
-            this.toolStripMenuItem_Add.Size = new System.Drawing.Size(188, 22);
+            this.toolStripMenuItem_Add.Size = new System.Drawing.Size(222, 22);
             this.toolStripMenuItem_Add.Text = "Import (Ctrl + I)";
             this.toolStripMenuItem_Add.Click += new System.EventHandler(this.buttonAddAsset_Click);
             // 
             // toolStripMenuItem_Duplicate
             // 
             this.toolStripMenuItem_Duplicate.Name = "toolStripMenuItem_Duplicate";
-            this.toolStripMenuItem_Duplicate.Size = new System.Drawing.Size(188, 22);
+            this.toolStripMenuItem_Duplicate.Size = new System.Drawing.Size(222, 22);
             this.toolStripMenuItem_Duplicate.Text = "Duplicate (Ctrl + D)";
             this.toolStripMenuItem_Duplicate.Click += new System.EventHandler(this.buttonDuplicate_Click);
             // 
             // toolStripMenuItem_Copy
             // 
             this.toolStripMenuItem_Copy.Name = "toolStripMenuItem_Copy";
-            this.toolStripMenuItem_Copy.Size = new System.Drawing.Size(188, 22);
+            this.toolStripMenuItem_Copy.Size = new System.Drawing.Size(222, 22);
             this.toolStripMenuItem_Copy.Text = "Copy (Ctrl + C)";
             this.toolStripMenuItem_Copy.Click += new System.EventHandler(this.buttonCopy_Click);
             // 
             // toolStripMenuItem_Paste
             // 
             this.toolStripMenuItem_Paste.Name = "toolStripMenuItem_Paste";
-            this.toolStripMenuItem_Paste.Size = new System.Drawing.Size(188, 22);
+            this.toolStripMenuItem_Paste.Size = new System.Drawing.Size(222, 22);
             this.toolStripMenuItem_Paste.Text = "Paste (Ctrl + V)";
             this.toolStripMenuItem_Paste.Click += new System.EventHandler(this.buttonPaste_Click);
             // 
             // toolStripMenuItem_Remove
             // 
             this.toolStripMenuItem_Remove.Name = "toolStripMenuItem_Remove";
-            this.toolStripMenuItem_Remove.Size = new System.Drawing.Size(188, 22);
+            this.toolStripMenuItem_Remove.Size = new System.Drawing.Size(222, 22);
             this.toolStripMenuItem_Remove.Text = "Remove (Del)";
             this.toolStripMenuItem_Remove.Click += new System.EventHandler(this.ButtonRemoveAsset_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(185, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(219, 6);
             // 
             // toolStripMenuItem_View
             // 
             this.toolStripMenuItem_View.Name = "toolStripMenuItem_View";
-            this.toolStripMenuItem_View.Size = new System.Drawing.Size(188, 22);
+            this.toolStripMenuItem_View.Size = new System.Drawing.Size(222, 22);
             this.toolStripMenuItem_View.Text = "View";
             this.toolStripMenuItem_View.Click += new System.EventHandler(this.buttonView_Click);
             // 
             // toolStripMenuItem_Export
             // 
             this.toolStripMenuItem_Export.Name = "toolStripMenuItem_Export";
-            this.toolStripMenuItem_Export.Size = new System.Drawing.Size(188, 22);
+            this.toolStripMenuItem_Export.Size = new System.Drawing.Size(222, 22);
             this.toolStripMenuItem_Export.Text = "Export Raw";
             this.toolStripMenuItem_Export.Click += new System.EventHandler(this.buttonExportRaw_Click);
             // 
             // toolStripMenuItem_EditHeader
             // 
             this.toolStripMenuItem_EditHeader.Name = "toolStripMenuItem_EditHeader";
-            this.toolStripMenuItem_EditHeader.Size = new System.Drawing.Size(188, 22);
+            this.toolStripMenuItem_EditHeader.Size = new System.Drawing.Size(222, 22);
             this.toolStripMenuItem_EditHeader.Text = "Edit Header (Ctrl + H)";
             this.toolStripMenuItem_EditHeader.Click += new System.EventHandler(this.buttonEditAsset_Click);
             // 
             // toolStripMenuItem_EditData
             // 
             this.toolStripMenuItem_EditData.Name = "toolStripMenuItem_EditData";
-            this.toolStripMenuItem_EditData.Size = new System.Drawing.Size(188, 22);
+            this.toolStripMenuItem_EditData.Size = new System.Drawing.Size(222, 22);
             this.toolStripMenuItem_EditData.Text = "Edit Data (Ctrl + G)";
             this.toolStripMenuItem_EditData.Click += new System.EventHandler(this.buttonInternalEdit_Click);
             // 
@@ -896,5 +910,6 @@
         private System.Windows.Forms.CheckBox checkBoxTemplateFocus;
         private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItem_CreateGroup;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.Button buttonMultiEdit;
     }
 }

@@ -21,7 +21,7 @@ namespace IndustrialPark
             this.archive = archive;
             
             propertyGridAsset.SelectedObject = asset;
-            labelAssetName.Text = $"[{asset.AHDR.assetType.ToString()}] {asset.ToString()}";
+            Text = $"[{asset.AHDR.assetType}] {asset}";
 
             RefreshPropertyGrid();
         }

@@ -12,7 +12,7 @@ namespace IndustrialPark
             this.asset = asset;
             this.archive = archive;
 
-            labelAssetName.Text = $"[{this.asset.AHDR.assetType.ToString()}] {this.asset.ToString()}";
+            Text = $"[{this.asset.AHDR.assetType}] {this.asset}";
             richTextBoxAssetText.Text = this.asset.Text;
         }
 

@@ -19,7 +19,7 @@ namespace IndustrialPark
             this.asset = asset;
             this.archive = archive;
 
-            labelAssetName.Text = $"[{asset.AHDR.assetType.ToString()}] {asset.ToString()}";
+            Text = $"[{asset.AHDR.assetType}] {asset}";
         }
 
         public void RefreshPropertyGrid()

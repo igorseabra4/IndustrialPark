@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.labelAssetName = new System.Windows.Forms.Label();
             this.richTextBoxAssetText = new System.Windows.Forms.RichTextBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.buttonHelp = new System.Windows.Forms.Button();
@@ -36,23 +35,14 @@
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // labelAssetName
-            // 
-            this.labelAssetName.AutoSize = true;
-            this.tableLayoutPanel1.SetColumnSpan(this.labelAssetName, 2);
-            this.labelAssetName.Location = new System.Drawing.Point(3, 0);
-            this.labelAssetName.Name = "labelAssetName";
-            this.labelAssetName.Size = new System.Drawing.Size(0, 13);
-            this.labelAssetName.TabIndex = 6;
-            // 
             // richTextBoxAssetText
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.richTextBoxAssetText, 2);
             this.richTextBoxAssetText.Dock = System.Windows.Forms.DockStyle.Fill;
             this.richTextBoxAssetText.Font = new System.Drawing.Font("Courier New", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.richTextBoxAssetText.Location = new System.Drawing.Point(3, 23);
+            this.richTextBoxAssetText.Location = new System.Drawing.Point(3, 3);
             this.richTextBoxAssetText.Name = "richTextBoxAssetText";
-            this.richTextBoxAssetText.Size = new System.Drawing.Size(618, 227);
+            this.richTextBoxAssetText.Size = new System.Drawing.Size(618, 247);
             this.richTextBoxAssetText.TabIndex = 7;
             this.richTextBoxAssetText.Text = "";
             this.richTextBoxAssetText.TextChanged += new System.EventHandler(this.richTextBoxAssetText_TextChanged);
@@ -62,17 +52,16 @@
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Controls.Add(this.buttonHelp, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.buttonFindCallers, 1, 2);
-            this.tableLayoutPanel1.Controls.Add(this.labelAssetName, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.richTextBoxAssetText, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.buttonHelp, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.buttonFindCallers, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.richTextBoxAssetText, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(624, 281);
             this.tableLayoutPanel1.TabIndex = 8;
             // 
@@ -118,7 +107,6 @@
         }
 
         #endregion
-        private System.Windows.Forms.Label labelAssetName;
         private System.Windows.Forms.RichTextBox richTextBoxAssetText;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Button buttonFindCallers;

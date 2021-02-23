@@ -380,6 +380,7 @@ namespace IndustrialPark
                 buttonRemoveAsset.Enabled = false;
                 buttonExportRaw.Enabled = false;
                 buttonInternalEdit.Enabled = false;
+                buttonMultiEdit.Enabled = false;
             }
         }
 
@@ -693,6 +694,11 @@ namespace IndustrialPark
             OpenInternalEditors();
         }
 
+        private void buttonMultiEdit_Click(object sender, EventArgs e)
+        {
+            archive.OpenInternalEditorMulti(archive.GetCurrentlySelectedAssetIDs());
+        }
+
         public void OpenInternalEditors()
         {
             archive.OpenInternalEditor(archive.GetCurrentlySelectedAssetIDs(), false);
@@ -778,6 +784,7 @@ namespace IndustrialPark
                 buttonRemoveAsset.Enabled = false;
                 buttonExportRaw.Enabled = false;
                 buttonInternalEdit.Enabled = false;
+                buttonMultiEdit.Enabled = false;
             }
             else
             {
@@ -786,6 +793,7 @@ namespace IndustrialPark
                 buttonRemoveAsset.Enabled = true;
                 buttonExportRaw.Enabled = true;
                 buttonInternalEdit.Enabled = true;
+                buttonMultiEdit.Enabled = true;
             }
 
             if (listViewAssets.SelectedItems.Count == 1)
@@ -999,6 +1007,7 @@ namespace IndustrialPark
             buttonExportRaw.Enabled = false;
             buttonEditAsset.Enabled = false;
             buttonInternalEdit.Enabled = false;
+            buttonMultiEdit.Enabled = false;
         }
 
         private ScrollableMessageBox verifyResult;
@@ -1193,6 +1202,7 @@ namespace IndustrialPark
             buttonEditAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
             buttonExportRaw.Visible = !hideButtonsToolStripMenuItem.Checked;
             buttonInternalEdit.Visible = !hideButtonsToolStripMenuItem.Checked;
+            buttonMultiEdit.Visible = !hideButtonsToolStripMenuItem.Checked;
 
             if (hideButtonsToolStripMenuItem.Checked)
             {

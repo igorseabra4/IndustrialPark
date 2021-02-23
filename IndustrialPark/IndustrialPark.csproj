@@ -137,6 +137,12 @@
     </Compile>
     <Compile Include="ArchiveEditor\Gizmos\BoxTrigPositionGizmo.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\DynamicTypeDescriptor.cs" />
+    <Compile Include="ArchiveEditor\InternalEditors\InternalMultiAssetEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\InternalEditors\InternalMultiAssetEditor.Designer.cs">
+      <DependentUpon>InternalMultiAssetEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="ArchiveEditor\Other\MaterialListEditor.cs" />
     <Compile Include="ArchiveEditor\Other\TextureIOHelper.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Textures.cs" />
@@ -480,6 +486,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\Dialogs\ImportModel.resx">
       <DependentUpon>ImportModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalMultiAssetEditor.resx">
+      <DependentUpon>InternalMultiAssetEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalTextureEditor.resx">
       <DependentUpon>InternalTextureEditor.cs</DependentUpon>

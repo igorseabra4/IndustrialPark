@@ -138,6 +138,29 @@ namespace IndustrialPark
             internalEditors.Last().Show();
         }
 
+        private List<InternalMultiAssetEditor> multiInternalEditors = new List<InternalMultiAssetEditor>();
+
+        public void OpenInternalEditorMulti(List<uint> list)
+        {
+            var assets = new List<Asset>();
+            foreach (var u in list)
+                if (assetDictionary.ContainsKey(u))
+                    assets.Add(assetDictionary[u]);
+
+            multiInternalEditors.Add(new InternalMultiAssetEditor(assets.ToArray(), this, hideHelp));
+            multiInternalEditors.Last().Show();
+        }
+
+        public void CloseInternalEditorMulti(uint assetID)
+        {
+            for (int i = 0; i < multiInternalEditors.Count; i++)
+                if (multiInternalEditors[i].assetIDs.Contains(assetID))
+                {
+                    multiInternalEditors[i].Close();
+                    multiInternalEditors.RemoveAt(i--);
+                }
+        }
+
         public void SetAllTopMost(bool value)
         {
             foreach (var ie in internalEditors)

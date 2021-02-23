@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InternalSoundEditor));
-            this.labelAssetName = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.buttonHelp = new System.Windows.Forms.Button();
             this.buttonFindCallers = new System.Windows.Forms.Button();
@@ -42,36 +41,23 @@
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // labelAssetName
-            // 
-            this.labelAssetName.AutoSize = true;
-            this.tableLayoutPanel1.SetColumnSpan(this.labelAssetName, 2);
-            this.labelAssetName.Dock = System.Windows.Forms.DockStyle.Left;
-            this.labelAssetName.Location = new System.Drawing.Point(3, 0);
-            this.labelAssetName.Name = "labelAssetName";
-            this.labelAssetName.Size = new System.Drawing.Size(0, 20);
-            this.labelAssetName.TabIndex = 6;
-            this.labelAssetName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Controls.Add(this.buttonHelp, 0, 5);
-            this.tableLayoutPanel1.Controls.Add(this.buttonFindCallers, 1, 5);
-            this.tableLayoutPanel1.Controls.Add(this.button2, 0, 4);
-            this.tableLayoutPanel1.Controls.Add(this.labelAssetName, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.richTextBox1, 0, 3);
-            this.tableLayoutPanel1.Controls.Add(this.button1, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.checkBoxSendToSNDI, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.buttonImportJawData, 1, 2);
-            this.tableLayoutPanel1.Controls.Add(this.buttonPlay, 1, 4);
+            this.tableLayoutPanel1.Controls.Add(this.buttonHelp, 0, 4);
+            this.tableLayoutPanel1.Controls.Add(this.buttonFindCallers, 1, 4);
+            this.tableLayoutPanel1.Controls.Add(this.button2, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.richTextBox1, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.button1, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.checkBoxSendToSNDI, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.buttonImportJawData, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.buttonPlay, 1, 3);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 6;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.RowCount = 5;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 22F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -120,17 +106,17 @@
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.richTextBox1, 2);
             this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBox1.Location = new System.Drawing.Point(3, 73);
+            this.richTextBox1.Location = new System.Drawing.Point(3, 53);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(338, 309);
+            this.richTextBox1.Size = new System.Drawing.Size(338, 329);
             this.richTextBox1.TabIndex = 9;
             this.richTextBox1.Text = resources.GetString("richTextBox1.Text");
             // 
             // button1
             // 
             this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button1.Location = new System.Drawing.Point(3, 45);
+            this.button1.Location = new System.Drawing.Point(3, 25);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(166, 22);
             this.button1.TabIndex = 7;
@@ -142,7 +128,7 @@
             // 
             this.checkBoxSendToSNDI.AutoSize = true;
             this.tableLayoutPanel1.SetColumnSpan(this.checkBoxSendToSNDI, 2);
-            this.checkBoxSendToSNDI.Location = new System.Drawing.Point(3, 23);
+            this.checkBoxSendToSNDI.Location = new System.Drawing.Point(3, 3);
             this.checkBoxSendToSNDI.Name = "checkBoxSendToSNDI";
             this.checkBoxSendToSNDI.Size = new System.Drawing.Size(178, 16);
             this.checkBoxSendToSNDI.TabIndex = 8;
@@ -152,7 +138,7 @@
             // buttonImportJawData
             // 
             this.buttonImportJawData.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonImportJawData.Location = new System.Drawing.Point(175, 45);
+            this.buttonImportJawData.Location = new System.Drawing.Point(175, 25);
             this.buttonImportJawData.Name = "buttonImportJawData";
             this.buttonImportJawData.Size = new System.Drawing.Size(166, 22);
             this.buttonImportJawData.TabIndex = 12;
@@ -190,7 +176,6 @@
         }
 
         #endregion
-        private System.Windows.Forms.Label labelAssetName;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.CheckBox checkBoxSendToSNDI;
