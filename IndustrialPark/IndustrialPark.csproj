@@ -206,6 +206,7 @@
     <Compile Include="Assets\Binary\AssetLKIT.cs" />
     <Compile Include="Assets\Binary\AssetSNDI_GCN_V2.cs" />
     <Compile Include="Assets\Binary\AssetCSN.cs" />
+    <Compile Include="Assets\Binary\AssetDEST.cs" />
     <Compile Include="Assets\Binary\AssetVILP.cs" />
     <Compile Include="Assets\Binary\AssetWIRE.cs" />
     <Compile Include="Assets\DYNA\DynaDefault.cs" />

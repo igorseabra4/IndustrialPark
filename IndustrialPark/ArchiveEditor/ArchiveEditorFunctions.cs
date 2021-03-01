@@ -397,6 +397,7 @@ namespace IndustrialPark
                     case AssetType.CRDT: newAsset = new AssetCRDT(AHDR, game, platform); break;
                     case AssetType.CSN:  newAsset = new AssetCSN (AHDR, game, platform); break;
                     case AssetType.CSNM: newAsset = new AssetCSNM(AHDR, game, platform); break;
+                    case AssetType.DEST: newAsset = new AssetDEST(AHDR, game, platform); break;
                     case AssetType.DPAT: newAsset = new AssetDPAT(AHDR, game, platform); break;
                     case AssetType.DSCO: newAsset = new AssetDSCO(AHDR, game, platform); break;
                     case AssetType.DSTR: newAsset = new AssetDSTR(AHDR, game, platform); break;
@@ -484,7 +485,6 @@ namespace IndustrialPark
                     case AssetType.BINK:
                     case AssetType.CSSS:
                     case AssetType.CTOC:
-                    case AssetType.DEST:
                     case AssetType.MPHT:
                     case AssetType.NPCS:
                     case AssetType.ONEL:
