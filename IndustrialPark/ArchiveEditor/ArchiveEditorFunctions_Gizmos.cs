@@ -1,5 +1,6 @@
 ﻿using SharpDX;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace IndustrialPark
@@ -328,67 +329,69 @@ namespace IndustrialPark
         {
             if (positionGizmos[0].isSelected || positionGizmos[1].isSelected || positionGizmos[2].isSelected)
             {
-                foreach (Asset a in currentlySelectedAssets)
+                var selectedClickableAssets = from Asset a in currentlySelectedAssets where a is IClickableAsset ica select (IClickableAsset)a;
+                if (!selectedClickableAssets.Any())
+                    return;
+
+                Vector3 direction1 = (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
+
+                foreach (var ra in selectedClickableAssets)
                 {
-                    Vector3 direction1 = (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
-
-                    if (a is IClickableAsset ra)
+                    if (positionGizmos[0].isSelected)
                     {
-                        if (positionGizmos[0].isSelected)
-                        {
-                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + Vector3.UnitX, viewProjection);
-                            Vector3 direction = direction2 - direction1;
-                            direction.Z = 0;
-                            direction.Normalize();
+                        Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + Vector3.UnitX, viewProjection);
+                        Vector3 direction = direction2 - direction1;
+                        direction.Z = 0;
+                        direction.Normalize();
 
-                            float movement = distanceX * direction.X - distanceY * direction.Y;
-                            if (grid)
-                                ra.PositionX = SnapToGrid(ra.PositionX + movement, GizmoType.X);
-                            else
-                                ra.PositionX += movement / 10;
+                        float movement = distanceX * direction.X - distanceY * direction.Y;
 
-                            if (ra is AssetTRIG trig && trig.Shape != TriggerShape.Box)
-                                trig.Position0X = trig.PositionX;
-                        }
-                        else if (positionGizmos[1].isSelected)
-                        {
-                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + Vector3.UnitY, viewProjection);
-                            Vector3 direction = direction2 - direction1;
-                            direction.Z = 0;
-                            direction.Normalize();
+                        if (grid)
+                            ra.PositionX = SnapToGrid(ra.PositionX + movement, GizmoType.X);
+                        else
+                            ra.PositionX += movement / 10;
 
-                            float movement = distanceX * direction.X - distanceY * direction.Y;
-
-                            if (ra is AssetUI)
-                                movement *= -1;
-                            
-                            if (grid)
-                                ra.PositionY = SnapToGrid(ra.PositionY + movement, GizmoType.Y);
-                            else
-                                ra.PositionY += movement / 10;
-
-                            if (ra is AssetTRIG trig && trig.Shape != TriggerShape.Box)
-                                trig.Position0Y = trig.PositionY;
-                        }
-                        else if (positionGizmos[2].isSelected)
-                        {
-                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + Vector3.UnitZ, viewProjection);
-                            Vector3 direction = direction2 - direction1;
-                            direction.Z = 0;
-                            direction.Normalize();
-
-                            float movement = distanceX * direction.X - distanceY * direction.Y;
-                            if (grid)
-                                ra.PositionZ = SnapToGrid(ra.PositionZ + movement, GizmoType.Z);
-                            else
-                                ra.PositionZ += movement / 10;
-
-                            if (ra is AssetTRIG trig && trig.Shape != TriggerShape.Box)
-                                trig.Position0Z = trig.PositionZ;
-                        }
-
-                        RefreshAssetEditor(a.AHDR.assetID);
+                        if (ra is AssetTRIG trig && trig.Shape != TriggerShape.Box)
+                            trig.Position0X = trig.PositionX;
                     }
+                    else if (positionGizmos[1].isSelected)
+                    {
+                        Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + Vector3.UnitY, viewProjection);
+                        Vector3 direction = direction2 - direction1;
+                        direction.Z = 0;
+                        direction.Normalize();
+
+                        float movement = distanceX * direction.X - distanceY * direction.Y;
+
+                        if (ra is AssetUI)
+                            movement *= -1;
+
+                        if (grid)
+                            ra.PositionY = SnapToGrid(ra.PositionY + movement, GizmoType.Y);
+                        else
+                            ra.PositionY += movement / 10;
+
+                        if (ra is AssetTRIG trig && trig.Shape != TriggerShape.Box)
+                            trig.Position0Y = trig.PositionY;
+                    }
+                    else if (positionGizmos[2].isSelected)
+                    {
+                        Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + Vector3.UnitZ, viewProjection);
+                        Vector3 direction = direction2 - direction1;
+                        direction.Z = 0;
+                        direction.Normalize();
+
+                        float movement = distanceX * direction.X - distanceY * direction.Y;
+                        if (grid)
+                            ra.PositionZ = SnapToGrid(ra.PositionZ + movement, GizmoType.Z);
+                        else
+                            ra.PositionZ += movement / 10;
+
+                        if (ra is AssetTRIG trig && trig.Shape != TriggerShape.Box)
+                            trig.Position0Z = trig.PositionZ;
+                    }
+
+                    RefreshAssetEditor(((Asset)ra).AHDR.assetID);
 
                     FinishedMovingGizmo = true;
                     UnsavedChanges = true;
@@ -398,92 +401,94 @@ namespace IndustrialPark
             if (triggerPositionGizmos[0].isSelected || triggerPositionGizmos[1].isSelected || triggerPositionGizmos[2].isSelected
                 || triggerPositionGizmos[3].isSelected || triggerPositionGizmos[4].isSelected || triggerPositionGizmos[5].isSelected)
             {
-                foreach (Asset a in currentlySelectedAssets)
+                var selectedTriggers = from Asset a in currentlySelectedAssets where a is AssetTRIG ica select (AssetTRIG)a;
+                if (!selectedTriggers.Any())
+                    return;
+
+                foreach (AssetTRIG ra in selectedTriggers)
                 {
                     Vector3 direction1 = (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
 
-                    if (a is AssetTRIG ra)
+                    if (triggerPositionGizmos[0].isSelected)
                     {
-                        if (triggerPositionGizmos[0].isSelected)
-                        {
-                            Vector3 movementDirection = (Vector3)Vector3.Transform(Vector3.UnitX, GizmoCenterRotation);
-                            
-                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
-                            Vector3 direction = direction2 - (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
-                            direction.Z = 0;
-                            direction.Normalize();
+                        Vector3 movementDirection = (Vector3)Vector3.Transform(Vector3.UnitX, GizmoCenterRotation);
 
-                            ra.Position1X += (distanceX * direction.X - distanceY * direction.Y) / 10;
-                            if (grid)
-                                ra.Position1X = SnapToGrid(ra.Position1X, GizmoType.X);
-                        }
-                        else if (triggerPositionGizmos[1].isSelected)
-                        {
-                            Vector3 movementDirection = (Vector3)Vector3.Transform(Vector3.UnitY, GizmoCenterRotation);
+                        Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
+                        Vector3 direction = direction2 - direction1;
+                        direction.Z = 0;
+                        direction.Normalize();
 
-                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
-                            Vector3 direction = direction2 - (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
-                            direction.Z = 0;
-                            direction.Normalize();
-
-                            ra.Position1Y += (distanceX * direction.X - distanceY * direction.Y) / 10;
-                            if (grid)
-                                ra.Position1Y = SnapToGrid(ra.Position1Y, GizmoType.Y);
-                        }
-                        else if (triggerPositionGizmos[2].isSelected)
-                        {
-                            Vector3 movementDirection = (Vector3)Vector3.Transform(Vector3.UnitZ, GizmoCenterRotation);
-
-                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
-                            Vector3 direction = direction2 - (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
-                            direction.Z = 0;
-                            direction.Normalize();
-
-                            ra.Position1Z += (distanceX * direction.X - distanceY * direction.Y) / 10;
-                            if (grid)
-                                ra.Position1Z = SnapToGrid(ra.Position1Z, GizmoType.Z);
-                        }
-                        else if (triggerPositionGizmos[3].isSelected)
-                        {
-                            Vector3 movementDirection = (Vector3)Vector3.Transform(Vector3.UnitX, GizmoCenterRotation);
-
-                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
-                            Vector3 direction = direction2 - (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
-                            direction.Z = 0;
-                            direction.Normalize();
-
-                            ra.Position0X += (distanceX * direction.X - distanceY * direction.Y) / 10;
-                            if (grid)
-                                ra.Position0X = SnapToGrid(ra.Position0X, GizmoType.X);
-                        }
-                        else if (triggerPositionGizmos[4].isSelected)
-                        {
-                            Vector3 movementDirection = (Vector3)Vector3.Transform(Vector3.UnitY, GizmoCenterRotation);
-
-                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
-                            Vector3 direction = direction2 - (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
-                            direction.Z = 0;
-                            direction.Normalize();
-
-                            ra.Position0Y += (distanceX * direction.X - distanceY * direction.Y) / 10;
-                            if (grid)
-                                ra.Position0Y = SnapToGrid(ra.Position0Y, GizmoType.Y);
-                        }
-                        else if (triggerPositionGizmos[5].isSelected)
-                        {
-                            Vector3 movementDirection = (Vector3)Vector3.Transform(Vector3.UnitZ, GizmoCenterRotation);
-
-                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
-                            Vector3 direction = direction2 - (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
-                            direction.Z = 0;
-                            direction.Normalize();
-
-                            ra.Position0Z += (distanceX * direction.X - distanceY * direction.Y) / 10;
-                            if (grid)
-                                ra.Position0Z = SnapToGrid(ra.Position0Z, GizmoType.Z);
-                        }
-                        RefreshAssetEditor(a.AHDR.assetID);
+                        ra.Position1X += (distanceX * direction.X - distanceY * direction.Y) / 10;
+                        if (grid)
+                            ra.Position1X = SnapToGrid(ra.Position1X, GizmoType.X);
                     }
+                    else if (triggerPositionGizmos[1].isSelected)
+                    {
+                        Vector3 movementDirection = (Vector3)Vector3.Transform(Vector3.UnitY, GizmoCenterRotation);
+
+                        Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
+                        Vector3 direction = direction2 - direction1;
+                        direction.Z = 0;
+                        direction.Normalize();
+
+                        ra.Position1Y += (distanceX * direction.X - distanceY * direction.Y) / 10;
+                        if (grid)
+                            ra.Position1Y = SnapToGrid(ra.Position1Y, GizmoType.Y);
+                    }
+                    else if (triggerPositionGizmos[2].isSelected)
+                    {
+                        Vector3 movementDirection = (Vector3)Vector3.Transform(Vector3.UnitZ, GizmoCenterRotation);
+
+                        Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
+                        Vector3 direction = direction2 - direction1;
+                        direction.Z = 0;
+                        direction.Normalize();
+
+                        ra.Position1Z += (distanceX * direction.X - distanceY * direction.Y) / 10;
+                        if (grid)
+                            ra.Position1Z = SnapToGrid(ra.Position1Z, GizmoType.Z);
+                    }
+                    else if (triggerPositionGizmos[3].isSelected)
+                    {
+                        Vector3 movementDirection = (Vector3)Vector3.Transform(Vector3.UnitX, GizmoCenterRotation);
+
+                        Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
+                        Vector3 direction = direction2 - direction1;
+                        direction.Z = 0;
+                        direction.Normalize();
+
+                        ra.Position0X += (distanceX * direction.X - distanceY * direction.Y) / 10;
+                        if (grid)
+                            ra.Position0X = SnapToGrid(ra.Position0X, GizmoType.X);
+                    }
+                    else if (triggerPositionGizmos[4].isSelected)
+                    {
+                        Vector3 movementDirection = (Vector3)Vector3.Transform(Vector3.UnitY, GizmoCenterRotation);
+
+                        Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
+                        Vector3 direction = direction2 - direction1;
+                        direction.Z = 0;
+                        direction.Normalize();
+
+                        ra.Position0Y += (distanceX * direction.X - distanceY * direction.Y) / 10;
+                        if (grid)
+                            ra.Position0Y = SnapToGrid(ra.Position0Y, GizmoType.Y);
+                    }
+                    else if (triggerPositionGizmos[5].isSelected)
+                    {
+                        Vector3 movementDirection = (Vector3)Vector3.Transform(Vector3.UnitZ, GizmoCenterRotation);
+
+                        Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
+                        Vector3 direction = direction2 - direction1;
+                        direction.Z = 0;
+                        direction.Normalize();
+
+                        ra.Position0Z += (distanceX * direction.X - distanceY * direction.Y) / 10;
+                        if (grid)
+                            ra.Position0Z = SnapToGrid(ra.Position0Z, GizmoType.Z);
+                    }
+
+                    RefreshAssetEditor(ra.AHDR.assetID);
 
                     FinishedMovingGizmo = true;
                     UnsavedChanges = true;
@@ -495,63 +500,64 @@ namespace IndustrialPark
         {
             if (rotationGizmos[0].isSelected || rotationGizmos[1].isSelected || rotationGizmos[2].isSelected)
             {
-                foreach (Asset a in currentlySelectedAssets)
+                var selectedRotatableAssets = from Asset a in currentlySelectedAssets where a is IRotatableAsset ica select (IRotatableAsset)a;
+                if (!selectedRotatableAssets.Any())
+                    return;
+
+                foreach (var ra in selectedRotatableAssets)
                 {
                     Vector3 center = (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
 
-                    if (a is IRotatableAsset ra)
+                    if (rotationGizmos[0].isSelected)
                     {
-                        if (rotationGizmos[0].isSelected)
-                        {
-                            //Vector3 direction1 = (Vector3)Vector3.Transform(Vector3.UnitY, GizmoCenterRotation);
-                            //Vector3 direction2 = rotationGizmos[0].clickPosition - GizmoCenterPosition;
-                            //Vector3 tangent = (Vector3)Vector3.Transform(Vector3.Cross(direction2, direction1), viewProjection);
+                        //Vector3 direction1 = (Vector3)Vector3.Transform(Vector3.UnitY, GizmoCenterRotation);
+                        //Vector3 direction2 = rotationGizmos[0].clickPosition - GizmoCenterPosition;
+                        //Vector3 tangent = (Vector3)Vector3.Transform(Vector3.Cross(direction2, direction1), viewProjection);
 
-                            //Vector3 direction = tangent - center;
-                            //direction.Z = 0;
-                            //direction.Normalize();
+                        //Vector3 direction = tangent - center;
+                        //direction.Z = 0;
+                        //direction.Normalize();
 
-                            //ra.Yaw -= (distanceX * direction.X - distanceY * direction.Y) / 10;
-                            if (grid)
-                                ra.Yaw = SnapToGrid(ra.Yaw + distanceX, GizmoType.X);
-                            else
-                                ra.Yaw += distanceX;
-                        }
-                        else if (rotationGizmos[1].isSelected)
-                        {
-                            //Vector3 direction1 = (Vector3)Vector3.Transform(Vector3.UnitX, GizmoCenterRotation);
-                            //Vector3 direction2 = rotationGizmos[1].clickPosition - GizmoCenterPosition;
-                            //Vector3 tangent = (Vector3)Vector3.Transform(Vector3.Cross(direction2, direction1), viewProjection);
-
-                            //Vector3 direction = tangent - center;
-                            //direction.Z = 0;
-                            //direction.Normalize();
-
-                            //ra.Pitch -= (distanceX * direction.X - distanceY * direction.Y) / 10;
-                            if (grid)
-                                ra.Pitch = SnapToGrid(ra.Pitch + distanceX, GizmoType.Y);
-                            else
-                                ra.Pitch += distanceX;
-                        }
-                        else if (rotationGizmos[2].isSelected)
-                        {
-                            //Vector3 direction1 = (Vector3)Vector3.Transform(Vector3.UnitZ, GizmoCenterRotation);
-                            //Vector3 direction2 = rotationGizmos[2].clickPosition - GizmoCenterPosition;
-                            //Vector3 tangent = (Vector3)Vector3.Transform(Vector3.Cross(direction2, direction1), viewProjection);
-
-                            //Vector3 direction = tangent - center;
-                            //direction.Z = 0;
-                            //direction.Normalize();
-
-                            //ra.Roll -= (distanceX * direction.X - distanceY * direction.Y) / 10;
-                            if (grid)
-                                ra.Roll = SnapToGrid(ra.Roll + distanceX, GizmoType.Z);
-                            else
-                                ra.Roll += distanceX;
-                        }
-
-                        RefreshAssetEditor(a.AHDR.assetID);
+                        //ra.Yaw -= (distanceX * direction.X - distanceY * direction.Y) / 10;
+                        if (grid)
+                            ra.Yaw = SnapToGrid(ra.Yaw + distanceX, GizmoType.X);
+                        else
+                            ra.Yaw += distanceX;
                     }
+                    else if (rotationGizmos[1].isSelected)
+                    {
+                        //Vector3 direction1 = (Vector3)Vector3.Transform(Vector3.UnitX, GizmoCenterRotation);
+                        //Vector3 direction2 = rotationGizmos[1].clickPosition - GizmoCenterPosition;
+                        //Vector3 tangent = (Vector3)Vector3.Transform(Vector3.Cross(direction2, direction1), viewProjection);
+
+                        //Vector3 direction = tangent - center;
+                        //direction.Z = 0;
+                        //direction.Normalize();
+
+                        //ra.Pitch -= (distanceX * direction.X - distanceY * direction.Y) / 10;
+                        if (grid)
+                            ra.Pitch = SnapToGrid(ra.Pitch + distanceX, GizmoType.Y);
+                        else
+                            ra.Pitch += distanceX;
+                    }
+                    else if (rotationGizmos[2].isSelected)
+                    {
+                        //Vector3 direction1 = (Vector3)Vector3.Transform(Vector3.UnitZ, GizmoCenterRotation);
+                        //Vector3 direction2 = rotationGizmos[2].clickPosition - GizmoCenterPosition;
+                        //Vector3 tangent = (Vector3)Vector3.Transform(Vector3.Cross(direction2, direction1), viewProjection);
+
+                        //Vector3 direction = tangent - center;
+                        //direction.Z = 0;
+                        //direction.Normalize();
+
+                        //ra.Roll -= (distanceX * direction.X - distanceY * direction.Y) / 10;
+                        if (grid)
+                            ra.Roll = SnapToGrid(ra.Roll + distanceX, GizmoType.Z);
+                        else
+                            ra.Roll += distanceX;
+                    }
+
+                    RefreshAssetEditor(((Asset)ra).AHDR.assetID);
 
                     FinishedMovingGizmo = true;
                     UnsavedChanges = true;
@@ -563,54 +569,55 @@ namespace IndustrialPark
         {
             if (scaleGizmos[0].isSelected || scaleGizmos[1].isSelected || scaleGizmos[2].isSelected || scaleGizmos[3].isSelected)
             {
-                foreach (Asset a in currentlySelectedAssets)
+                var selectedScalableAssets = from Asset a in currentlySelectedAssets where a is IScalableAsset ica select (IScalableAsset)a;
+                if (!selectedScalableAssets.Any())
+                    return;
+
+                foreach (var ra in selectedScalableAssets)
                 {
                     Vector3 direction1 = (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
 
-                    if (a is IScalableAsset ra)
+                    if (scaleGizmos[0].isSelected)
                     {
-                        if (scaleGizmos[0].isSelected)
-                        {
-                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + (Vector3)Vector3.Transform(Vector3.UnitX, GizmoCenterRotation), viewProjection);
-                            Vector3 direction = direction2 - direction1;
-                            direction.Z = 0;
-                            direction.Normalize();
+                        Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + (Vector3)Vector3.Transform(Vector3.UnitX, GizmoCenterRotation), viewProjection);
+                        Vector3 direction = direction2 - direction1;
+                        direction.Z = 0;
+                        direction.Normalize();
 
-                            ra.ScaleX += (distanceX * direction.X - distanceY * direction.Y) / 40f;
-                            if (grid)
-                                ra.ScaleX = SnapToGrid(ra.ScaleX, GizmoType.X);
-                        }
-                        else if (scaleGizmos[1].isSelected)
-                        {
-                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + (Vector3)Vector3.Transform(Vector3.UnitY, GizmoCenterRotation), viewProjection);
-                            Vector3 direction = direction2 - direction1;
-                            direction.Z = 0;
-                            direction.Normalize();
-
-                            ra.ScaleY += (distanceX * direction.X - distanceY * direction.Y) / 40f;
-                            if (grid)
-                                ra.ScaleY = SnapToGrid(ra.ScaleY, GizmoType.Y);
-                        }
-                        else if (scaleGizmos[2].isSelected)
-                        {
-                            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + (Vector3)Vector3.Transform(Vector3.UnitZ, GizmoCenterRotation), viewProjection);
-                            Vector3 direction = direction2 - direction1;
-                            direction.Z = 0;
-                            direction.Normalize();
-
-                            ra.ScaleZ += (distanceX * direction.X - distanceY * direction.Y) / 40f;
-                            if (grid)
-                                ra.ScaleZ = SnapToGrid(ra.ScaleZ, GizmoType.Z);
-                        }
-                        else if (scaleGizmos[3].isSelected)
-                        {
-                            ra.ScaleX += distanceX / 40f;
-                            ra.ScaleY += distanceX / 40f;
-                            ra.ScaleZ += distanceX / 40f;
-                        }
-
-                        RefreshAssetEditor(a.AHDR.assetID);
+                        ra.ScaleX += (distanceX * direction.X - distanceY * direction.Y) / 40f;
+                        if (grid)
+                            ra.ScaleX = SnapToGrid(ra.ScaleX, GizmoType.X);
                     }
+                    else if (scaleGizmos[1].isSelected)
+                    {
+                        Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + (Vector3)Vector3.Transform(Vector3.UnitY, GizmoCenterRotation), viewProjection);
+                        Vector3 direction = direction2 - direction1;
+                        direction.Z = 0;
+                        direction.Normalize();
+
+                        ra.ScaleY += (distanceX * direction.X - distanceY * direction.Y) / 40f;
+                        if (grid)
+                            ra.ScaleY = SnapToGrid(ra.ScaleY, GizmoType.Y);
+                    }
+                    else if (scaleGizmos[2].isSelected)
+                    {
+                        Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + (Vector3)Vector3.Transform(Vector3.UnitZ, GizmoCenterRotation), viewProjection);
+                        Vector3 direction = direction2 - direction1;
+                        direction.Z = 0;
+                        direction.Normalize();
+
+                        ra.ScaleZ += (distanceX * direction.X - distanceY * direction.Y) / 40f;
+                        if (grid)
+                            ra.ScaleZ = SnapToGrid(ra.ScaleZ, GizmoType.Z);
+                    }
+                    else if (scaleGizmos[3].isSelected)
+                    {
+                        ra.ScaleX += distanceX / 40f;
+                        ra.ScaleY += distanceX / 40f;
+                        ra.ScaleZ += distanceX / 40f;
+                    }
+
+                    RefreshAssetEditor(((Asset)ra).AHDR.assetID);
 
                     FinishedMovingGizmo = true;
                     UnsavedChanges = true;
@@ -622,6 +629,10 @@ namespace IndustrialPark
         {
             if (positionLocalGizmos[0].isSelected || positionLocalGizmos[1].isSelected || positionLocalGizmos[2].isSelected)
             {
+                var selectedClickableAssets = from Asset a in currentlySelectedAssets where a is IClickableAsset ica select (IClickableAsset)a;
+                if (!selectedClickableAssets.Any())
+                    return;
+
                 Vector3 movementDirection = new Vector3();
 
                 if (positionLocalGizmos[0].isSelected)
@@ -636,33 +647,30 @@ namespace IndustrialPark
                 direction.Z = 0;
                 direction.Normalize();
 
-                foreach (Asset a in currentlySelectedAssets)
+                foreach (var ra in selectedClickableAssets)
                 {
-                    if (a is IClickableAsset ra)
-                    {
-                        float movement = distanceX * direction.X - distanceY * direction.Y;
+                    float movement = distanceX * direction.X - distanceY * direction.Y;
 
-                        if (grid)
-                        {
-                            ra.PositionX = SnapToGrid(ra.PositionX + movementDirection.X * movement, GizmoType.X);
-                            ra.PositionY = SnapToGrid(ra.PositionY + movementDirection.Y * movement, GizmoType.Y);
-                            ra.PositionZ = SnapToGrid(ra.PositionZ + movementDirection.Z * movement, GizmoType.Z);
-                        }
-                        else
-                        {
-                            ra.PositionX += movementDirection.X * movement / 10f;
-                            ra.PositionY += movementDirection.Y * movement / 10f;
-                            ra.PositionZ += movementDirection.Z * movement / 10f;
-                        }
-                        
-                        if (ra is AssetTRIG trig && trig.Shape != TriggerShape.Box)
-                        {
-                            trig.Position0X = trig.PositionX;
-                            trig.Position0Y = trig.PositionY;
-                            trig.Position0Z = trig.PositionZ;
-                        }
-                        RefreshAssetEditor(a.AHDR.assetID);
+                    if (grid)
+                    {
+                        ra.PositionX = SnapToGrid(ra.PositionX + movementDirection.X * movement, GizmoType.X);
+                        ra.PositionY = SnapToGrid(ra.PositionY + movementDirection.Y * movement, GizmoType.Y);
+                        ra.PositionZ = SnapToGrid(ra.PositionZ + movementDirection.Z * movement, GizmoType.Z);
                     }
+                    else
+                    {
+                        ra.PositionX += movementDirection.X * movement / 10f;
+                        ra.PositionY += movementDirection.Y * movement / 10f;
+                        ra.PositionZ += movementDirection.Z * movement / 10f;
+                    }
+
+                    if (ra is AssetTRIG trig && trig.Shape != TriggerShape.Box)
+                    {
+                        trig.Position0X = trig.PositionX;
+                        trig.Position0Y = trig.PositionY;
+                        trig.Position0Z = trig.PositionZ;
+                    }
+                    RefreshAssetEditor(((Asset)ra).AHDR.assetID);
                 }
 
                 FinishedMovingGizmo = true;

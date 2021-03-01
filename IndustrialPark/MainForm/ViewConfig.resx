@@ -216,7 +216,7 @@
     <value>4</value>
   </data>
   <data name="groupBox4.Text" xml:space="preserve">
-    <value>Interval</value>
+    <value>Move Speed</value>
   </data>
   <data name="&gt;&gt;groupBox4.Name" xml:space="preserve">
     <value>groupBox4</value>
@@ -438,7 +438,7 @@
     <value>5</value>
   </data>
   <data name="groupBox6.Text" xml:space="preserve">
-    <value>Rotation Interval</value>
+    <value>Rotate Speed</value>
   </data>
   <data name="&gt;&gt;groupBox6.Name" xml:space="preserve">
     <value>groupBox6</value>

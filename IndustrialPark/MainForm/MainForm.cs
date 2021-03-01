@@ -548,11 +548,7 @@ namespace IndustrialPark
                     renderer.Camera.AddPositionForward(e.Delta / 24);
             }
 
-            int deltaX = e.X - oldMousePosition.X;
-            int deltaY = e.Y - oldMousePosition.Y;
-
-            foreach (ArchiveEditor ae in archiveEditors)
-                ae.MouseMoveGeneric(renderer.viewProjection, deltaX, deltaY, PressedKeys.Contains(Keys.T));
+            MouseMoveForGizmos(e.X - oldMousePosition.X, e.Y - oldMousePosition.Y);
 
             oldMousePosition = e;
         }
@@ -565,6 +561,12 @@ namespace IndustrialPark
         private void ResetMouseCenter(object sender, EventArgs e)
         {
             MouseCenter = renderPanel.PointToScreen(new System.Drawing.Point(renderPanel.Width / 2, renderPanel.Height / 2));
+        }
+
+        private void MouseMoveForGizmos(int deltaX, int deltaY)
+        {
+            foreach (ArchiveEditor ae in archiveEditors)
+                ae.MouseMoveGeneric(renderer.viewProjection, deltaX, deltaY, PressedKeys.Contains(Keys.T));
         }
 
         private HashSet<Keys> PressedKeys = new HashSet<Keys>();
@@ -669,7 +671,10 @@ namespace IndustrialPark
 
         public void ToolStripClick(object sender, EventArgs e)
         {
-            archiveEditors[archiveEditorToolStripMenuItem.DropDownItems.IndexOf(sender as ToolStripItem) - 2].Show();
+            var ae = archiveEditors[archiveEditorToolStripMenuItem.DropDownItems.IndexOf(sender as ToolStripItem) - 2];
+
+            ae.Show();
+            ae.WindowState = FormWindowState.Normal;
         }
 
         public void SetToolStripItemName(ArchiveEditor sender, string newName)
@@ -782,24 +787,56 @@ namespace IndustrialPark
             Program.ViewConfig.Show();
         }
 
-        private SharpDX.Rectangle ViewRectangle()
+        private void viewControlsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            return new SharpDX.Rectangle(
+            MessageBox.Show(
+                "Keyboard controls:\n" +
+                "W, A, S, D: move view forward, left, backward, right\n" +
+                "Shift + (W, S): move view up, down\n" +
+                "Ctrl + (W, A, S, D): rotate view up, left, down, right\n" +
+                "Q, E: decrease interval, increase interval(view move speed)\n" +
+                "1, 3: decrease rotation interval, increase rotation interval(view rotation speed)\n" +
+                "C: toggles backface culling\n" +
+                "F: toggles wireframe mode\n" +
+                "G: open Asset Data Editor for selected assets\n" +
+                "R: reset view\n" +
+                "T: snap gizmos to grid\n" +
+                "U: toggle UI Mode\n" +
+                "V: cycle between gizmos\n" +
+                "Z: toggle mouse mode\n" +
+                "F1: displays the View Config box\n" +
+                "F4: save all open HIPs\n" +
+                "F5: attempt to run game\n" +
+                "Delete: delete selected assets\n" +
+                "\n" +
+                "Mouse controls:\n" +
+                "Left click on an asset to select it\n" +
+                "Ctrl + Left click to select multiple\n" +
+                "Middle click and drag to rotate view\n" +
+                "Mouse wheel to move forward / backward\n" +
+                "Right click on screen to choose a template\n" +
+                "Shift + Right click to place a template\n" +
+                "Ctrl + Right click and drag to pan(move view up, left, down, right)\n" +
+                "Mouse mode(Z): similar to a first person camera.The view rotates automatically as you move the mouse.Use the keyboard to move around.\n" +
+                "\n" +
+                "Please consult the Industrial Park user guide on Battlepedia for more information");
+        }
+
+        private SharpDX.Rectangle ViewRectangle => new SharpDX.Rectangle(
                 renderPanel.ClientRectangle.X,
                 renderPanel.ClientRectangle.Y,
                 renderPanel.ClientRectangle.Width,
                 renderPanel.ClientRectangle.Height);
-        }
-
+        
         private void renderPanel_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
-                ScreenClicked(ViewRectangle(), e.X, e.Y);
+                ScreenClicked(ViewRectangle, e.X, e.Y, false);
             }
             else if (e.Button == MouseButtons.Right && PressedKeys.Contains(Keys.ShiftKey))
             {
-                Vector3 Position = GetScreenClickedPosition(ViewRectangle(), e.X, e.Y);
+                Vector3 Position = GetScreenClickedPosition(ViewRectangle, e.X, e.Y);
 
                 foreach (ArchiveEditor archiveEditor in archiveEditors)
                     if (archiveEditor.TemplateFocus)
@@ -814,10 +851,10 @@ namespace IndustrialPark
         private void renderPanel_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
-                ScreenClicked(ViewRectangle(), e.X, e.Y, true);
+                ScreenClicked(ViewRectangle, e.X, e.Y, true);
         }
 
-        public void ScreenClicked(SharpDX.Rectangle viewRectangle, int X, int Y, bool isMouseDown = false)
+        public void ScreenClicked(SharpDX.Rectangle viewRectangle, int X, int Y, bool isMouseDown)
         {
             if (ArchiveEditorFunctions.FinishedMovingGizmo)
                 ArchiveEditorFunctions.FinishedMovingGizmo = false;
@@ -834,12 +871,10 @@ namespace IndustrialPark
             }
         }
 
-        public Vector3 GetScreenClickedPosition(SharpDX.Rectangle viewRectangle, int X, int Y)
-        {
-            Ray ray = Ray.GetPickRay(X, Y, new Viewport(viewRectangle), renderer.viewProjection);
-            return ArchiveEditorFunctions.GetRayInterserctionPosition(renderer, ray);
-        }
-
+        public Vector3 GetScreenClickedPosition(SharpDX.Rectangle viewRectangle, int X, int Y) =>
+            ArchiveEditorFunctions.GetRayInterserctionPosition(renderer,
+                Ray.GetPickRay(X, Y, new Viewport(viewRectangle), renderer.viewProjection));
+        
         private void renderPanel_MouseUp(object sender, MouseEventArgs e)
         {
             ArchiveEditorFunctions.ScreenUnclicked();
