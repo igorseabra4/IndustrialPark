@@ -39,10 +39,5 @@ namespace IndustrialPark
             archive.UnsavedChanges = true;
             propertyGridAsset.Refresh();
         }
-        
-        public void SetHideHelp(bool hideHelp)
-        {
-            propertyGridAsset.HelpVisible = !hideHelp;
-        }
     }
 }

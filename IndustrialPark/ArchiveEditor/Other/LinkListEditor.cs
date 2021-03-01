@@ -25,16 +25,16 @@ namespace IndustrialPark
 
             if (service != null)
             {
-                if (value is LinkBFBB[])
+                if (value is LinkBFBB[] linksBFBB)
                 {
-                    LinkBFBB[] events = LinkEditor.GetEvents((LinkBFBB[])value, endianness, IsTimed, thisAssetID);
+                    LinkBFBB[] events = LinkEditor.GetEvents(linksBFBB, endianness, IsTimed, thisAssetID);
 
                     if (events != null)
                         value = events;
                 }
-                else if (value is LinkTSSM[])
+                else if (value is LinkTSSM[] linksTSSM)
                 {
-                    LinkTSSM[] events = LinkEditor.GetEvents((LinkTSSM[])value, endianness, IsTimed, thisAssetID);
+                    LinkTSSM[] events = LinkEditor.GetEvents(linksTSSM, endianness, IsTimed, thisAssetID);
 
                     if (events != null)
                         value = events;

@@ -420,7 +420,7 @@
             this.comboRecieveEvent.Size = new System.Drawing.Size(220, 21);
             this.comboRecieveEvent.TabIndex = 8;
             this.toolTip1.SetToolTip(this.comboRecieveEvent, "Event which activates this link.");
-            this.comboRecieveEvent.SelectedIndexChanged += new System.EventHandler(this.comboRecieveEvent_SelectedIndexChanged);
+            this.comboRecieveEvent.SelectedIndexChanged += new System.EventHandler(this.comboReceiveEvent_SelectedIndexChanged);
             // 
             // numericUpDownTime
             // 
