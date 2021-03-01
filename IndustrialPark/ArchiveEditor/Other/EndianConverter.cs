@@ -97,6 +97,8 @@ namespace IndustrialPark
                     ReverseCOND(ref bytes); break;
                 case AssetType.CSNM:
                     ReverseCSNM(ref bytes); break;
+                case AssetType.DEST:
+                    ReverseDEST(ref bytes); break;
                 case AssetType.DPAT:
                     ReverseDPAT(ref bytes); break;
                 case AssetType.DSTR:
@@ -317,6 +319,18 @@ namespace IndustrialPark
                 bytes.AddRange(Reverse(reader.ReadInt32()));
 
             ReverseLinks(ref bytes, bytes[5]);
+        }
+
+        private void ReverseDEST(ref List<byte> bytes)
+        {
+            for (int i = 0; i < 9; i++)
+                bytes.AddRange(Reverse(reader.ReadInt32()));
+
+            for (int i = 0; i < 4; i++)
+                bytes.Add(reader.ReadByte());
+
+            for (int i = 0; i < 14; i++)
+                bytes.AddRange(Reverse(reader.ReadInt32()));
         }
 
         private void ReverseDPAT(ref List<byte> bytes)
