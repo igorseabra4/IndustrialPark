@@ -103,6 +103,7 @@
             this.toolStripMenuItem_EditHeader = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_EditData = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_MultiEdit = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportAudioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -194,6 +195,7 @@
             this.verifyArchiveToolStripMenuItem,
             this.toolStripSeparator3,
             this.hipHopToolExportToolStripMenuItem,
+            this.exportAudioToolStripMenuItem,
             this.importHIPArchiveToolStripMenuItem,
             this.importMultipleAssetsToolStripMenuItem,
             this.importModelsToolStripMenuItem,
@@ -720,7 +722,7 @@
             this.toolStripMenuItem_EditData,
             this.toolStripMenuItem_MultiEdit});
             this.contextMenuStrip_ListBoxAssets.Name = "contextMenuStrip_ListBoxAssets";
-            this.contextMenuStrip_ListBoxAssets.Size = new System.Drawing.Size(223, 302);
+            this.contextMenuStrip_ListBoxAssets.Size = new System.Drawing.Size(223, 280);
             // 
             // addTemplateToolStripMenuItem
             // 
@@ -808,12 +810,20 @@
             this.toolStripMenuItem_EditData.Text = "Edit Data (Ctrl + G)";
             this.toolStripMenuItem_EditData.Click += new System.EventHandler(this.buttonInternalEdit_Click);
             // 
-            // multiEditToolStripMenuItem
+            // toolStripMenuItem_MultiEdit
             // 
-            this.toolStripMenuItem_MultiEdit.Name = "multiEditToolStripMenuItem";
+            this.toolStripMenuItem_MultiEdit.Name = "toolStripMenuItem_MultiEdit";
             this.toolStripMenuItem_MultiEdit.Size = new System.Drawing.Size(222, 22);
             this.toolStripMenuItem_MultiEdit.Text = "Multi Edit";
             this.toolStripMenuItem_MultiEdit.Click += new System.EventHandler(this.buttonMultiEdit_Click);
+            // 
+            // exportAudioToolStripMenuItem
+            // 
+            this.exportAudioToolStripMenuItem.Enabled = false;
+            this.exportAudioToolStripMenuItem.Name = "exportAudioToolStripMenuItem";
+            this.exportAudioToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.exportAudioToolStripMenuItem.Text = "Export Audio";
+            this.exportAudioToolStripMenuItem.Click += new System.EventHandler(this.exportAudioToolStripMenuItem_Click);
             // 
             // ArchiveEditor
             // 
@@ -921,5 +931,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.Button buttonMultiEdit;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_MultiEdit;
+        private System.Windows.Forms.ToolStripMenuItem exportAudioToolStripMenuItem;
     }
 }

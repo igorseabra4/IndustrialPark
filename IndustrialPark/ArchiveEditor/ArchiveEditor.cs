@@ -85,20 +85,9 @@ namespace IndustrialPark
 
             if (archive.New())
             {
+                EnableToolStripMenuItems();
+
                 PopulateLayerTypeComboBox();
-
-                saveToolStripMenuItem.Enabled = true;
-                saveAsToolStripMenuItem.Enabled = true;
-                buttonAddLayer.Enabled = true;
-                tXDArchiveToolStripMenuItem.Enabled = true;
-                hipHopToolExportToolStripMenuItem.Enabled = true;
-                importHIPArchiveToolStripMenuItem.Enabled = true;
-                editPACKToolStripMenuItem.Enabled = true;
-                collapseLayersToolStripMenuItem.Enabled = true;
-                mergeSimilarAssetsToolStripMenuItem.Enabled = true;
-                verifyArchiveToolStripMenuItem.Enabled = true;
-                applyScaleToolStripMenuItem.Enabled = true;
-
                 PopulateLayerComboBox();
                 PopulateAssetList();
             }
@@ -135,11 +124,19 @@ namespace IndustrialPark
                 Program.MainForm.SetToolStripItemName(this, Text);
             archive.UnsavedChanges = false;
 
-            PopulateLayerTypeComboBox();
+            EnableToolStripMenuItems();
 
+            PopulateLayerTypeComboBox();
+            PopulateLayerComboBox();
+            PopulateAssetList();
+        }
+
+        private void EnableToolStripMenuItems()
+        {
             saveToolStripMenuItem.Enabled = true;
             saveAsToolStripMenuItem.Enabled = true;
             hipHopToolExportToolStripMenuItem.Enabled = true;
+            exportAudioToolStripMenuItem.Enabled = true;
             importHIPArchiveToolStripMenuItem.Enabled = true;
             tXDArchiveToolStripMenuItem.Enabled = true;
             buttonAddLayer.Enabled = true;
@@ -148,9 +145,6 @@ namespace IndustrialPark
             mergeSimilarAssetsToolStripMenuItem.Enabled = true;
             verifyArchiveToolStripMenuItem.Enabled = true;
             applyScaleToolStripMenuItem.Enabled = true;
-
-            PopulateLayerComboBox();
-            PopulateAssetList();
         }
 
         private void PopulateLayerTypeComboBox()
@@ -180,10 +174,7 @@ namespace IndustrialPark
             if (archive.currentlyOpenFilePath == null)
                 saveAsToolStripMenuItem_Click(null, null);
             else
-            {
-                Thread t = new Thread(archive.Save);
-                t.Start();
-            }
+                new Thread(archive.Save).Start();
         }
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1271,6 +1262,42 @@ namespace IndustrialPark
             archive.ResetModels(renderer);
             archive.SetupTextureDisplay();
             archive.RecalculateAllMatrices();
+        }
+
+        private void exportAudioToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!archive.ContainsAssetWithType(AssetType.SND) && !archive.ContainsAssetWithType(AssetType.SNDS))
+                return;
+
+            CommonOpenFileDialog saveFileDialog = new CommonOpenFileDialog()
+            {
+                IsFolderPicker = true
+            };
+            if (saveFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+
+                foreach (Asset asset in archive.GetAllAssets())
+                    if (asset.AHDR.assetType == AssetType.SND || asset.AHDR.assetType == AssetType.SNDS)
+                        try
+                        {
+                            string extension = 
+                                (asset.platform == Platform.GameCube && asset.game != Game.Incredibles) ? ".DSP" :
+                                (asset.platform == Platform.Xbox) ? ".WAV" :
+                                (asset.platform == Platform.PS2) ? ".VAG" :
+                                "";
+
+                            string filename = (extension != "" && asset.AHDR.ADBG.assetName.ToLower().Contains(extension.ToLower())) ?
+                                asset.AHDR.ADBG.assetName :
+                                asset.AHDR.ADBG.assetName + extension;
+
+                            File.WriteAllBytes(Path.Combine(saveFileDialog.FileName, filename),
+                                archive.GetSoundData(asset.AHDR.assetID, asset.Data));
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Unable to export " + asset + ": " + ex.Message);
+                        }
+            }
         }
     }
 }

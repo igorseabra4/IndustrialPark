@@ -345,7 +345,6 @@ namespace IndustrialPark
                         direction.Normalize();
 
                         float movement = distanceX * direction.X - distanceY * direction.Y;
-
                         if (grid)
                             ra.PositionX = SnapToGrid(ra.PositionX + movement, GizmoType.X);
                         else
@@ -670,6 +669,7 @@ namespace IndustrialPark
                         trig.Position0Y = trig.PositionY;
                         trig.Position0Z = trig.PositionZ;
                     }
+
                     RefreshAssetEditor(((Asset)ra).AHDR.assetID);
                 }
 
