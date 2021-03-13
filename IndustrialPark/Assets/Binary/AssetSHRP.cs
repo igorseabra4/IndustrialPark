@@ -212,14 +212,14 @@ namespace IndustrialPark
         public float Unknown10 { get; set; }
         public float Unknown14 { get; set; }
 
-        public EntrySHRP(Platform platform) : base(EndianConverter.PlatformEndianness(platform))
+        public EntrySHRP(Platform platform) : base(platform)
         {
             Unknown04 = 0;
             Unknown08 = 0;
             Unknown0C = 0;
         }
 
-        public EntrySHRP(byte[] data, Platform platform) : base(EndianConverter.PlatformEndianness(platform))
+        public EntrySHRP(byte[] data, Platform platform) : base(platform)
         {
             Type = Switch(BitConverter.ToInt32(data, 0x00));
             Unknown04 = Switch(BitConverter.ToUInt32(data, 0x04));

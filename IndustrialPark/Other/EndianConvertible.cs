@@ -24,7 +24,7 @@ namespace IndustrialPark
         }
 
         public EndianConvertibleWithData(Endianness endianness) : base(endianness) { }
-        public EndianConvertibleWithData(Game game, Platform platform) : base(EndianConverter.PlatformEndianness(platform))
+        public EndianConvertibleWithData(Game game, Platform platform) : base(platform)
         {
             this.game = game;
             this.platform = platform;
@@ -189,6 +189,11 @@ namespace IndustrialPark
         public EndianConvertible(Endianness endianness)
         {
             this.endianness = endianness;
+        }
+
+        public EndianConvertible(Platform platform)
+        {
+            endianness = EndianConverter.PlatformEndianness(platform);
         }
 
         public float Switch(float a)
