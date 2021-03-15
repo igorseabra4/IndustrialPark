@@ -2,6 +2,15 @@
 
 namespace IndustrialPark
 {
+    public enum NpcSettingsBasisType : int
+    {
+        NPCP_BASIS_NONE = 0,
+        NPCP_BASIS_EVILROBOT = 1,
+        NPCP_BASIS_FRIENDLYROBOT = 2,
+        NPCP_BASIS_LOVINGCITIZEN = 3,
+        NPCP_BASIS_GRUMPYCITIZEN = 4
+    }
+
     public class DynaGObjectNPCSettings : DynaBase
     {
         public string Note => "Version is always 2";
@@ -10,10 +19,10 @@ namespace IndustrialPark
 
         public DynaGObjectNPCSettings(AssetDYNA asset) : base(asset) { }
 
-        public int BasisType
+        public NpcSettingsBasisType BasisType
         {
-            get => ReadInt(0x00);
-            set => Write(0x00, value);
+            get => (NpcSettingsBasisType)ReadInt(0x00);
+            set => Write(0x00, (int)value);
         }
         [TypeConverter(typeof(HexByteTypeConverter))]
         public byte AllowDetect
