@@ -8,22 +8,100 @@ namespace IndustrialPark
 {
     public class AssetVIL : EntityAsset
     {
-        public static bool dontRender = false;
+        protected const string categoryName = "VIL";
 
-        public override bool DontRender => dontRender;
+        [Category(categoryName)]
+        public FlagBitmask VilFlags => IntFlagsDescriptor();
+        [Category(categoryName), DisplayName("VilType (Incredibles)")]
+        public AssetID VilType { get; set; }
+        [Category(categoryName), DisplayName("VilType (BFBB)")]
+        public VilType VilType_BFBB 
+        {
+            get => (VilType)(uint)VilType;
+            set => VilType = (uint)value;
+        }
+        [Category(categoryName), DisplayName("VilType (BFBB, Alphabetical)")]
+        public VilType_Alphabetical VilType_Alphabetical
+        {
+            get
+            {
+                foreach (VilType_Alphabetical o in Enum.GetValues(typeof(VilType_Alphabetical)))
+                    if (o.ToString() == VilType.ToString())
+                        return o;
 
-        protected override int EventStartOffset => 0x6C + Offset;
+                return VilType_Alphabetical.Null;
+            }
+            set
+            {
+                foreach (VilType o in Enum.GetValues(typeof(VilType)))
+                    if (o.ToString() == value.ToString())
+                    {
+                        VilType_BFBB = o;
+                        return;
+                    }
 
-        public AssetVIL(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+                throw new ArgumentException("Invalid VilType");
+            }
+        }
 
-        public override bool HasReference(uint assetID) => (uint)VilType == assetID || NPCSettings_AssetID == assetID || MovePoint_AssetID == assetID ||
-            TaskDYNA1_AssetID == assetID || TaskDYNA2_AssetID == assetID || base.HasReference(assetID);
+        [Category(categoryName)]
+        public AssetID NPCSettings_AssetID { get; set; }
+        [Category(categoryName)]
+        public AssetID MovePoint_AssetID { get; set; }
+        [Category(categoryName)]
+        public AssetID TaskDYNA1_AssetID { get; set; }
+        [Category(categoryName)]
+        public AssetID TaskDYNA2_AssetID { get; set; }
+
+        public AssetVIL(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = entityEndPosition;
+
+            VilFlags.FlagValueInt = reader.ReadUInt32();
+            VilType = reader.ReadUInt32();
+            NPCSettings_AssetID = reader.ReadUInt32();
+            MovePoint_AssetID = reader.ReadUInt32();
+            TaskDYNA1_AssetID = reader.ReadUInt32();
+            TaskDYNA2_AssetID = reader.ReadUInt32();
+        }
+
+        // meant for use with DUPC VIL only
+        public AssetVIL(EndianBinaryReader reader) : base(reader)
+        {
+            VilFlags.FlagValueInt = reader.ReadUInt32();
+            VilType = reader.ReadUInt32();
+            NPCSettings_AssetID = reader.ReadUInt32();
+            MovePoint_AssetID = reader.ReadUInt32();
+            TaskDYNA1_AssetID = reader.ReadUInt32();
+            TaskDYNA2_AssetID = reader.ReadUInt32();
+        }
+
+        public override byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write(SerializeEntity(game, platform));
+
+            writer.Write(VilFlags.FlagValueInt);
+            writer.Write(VilType);
+            writer.Write(NPCSettings_AssetID);
+            writer.Write(MovePoint_AssetID);
+            writer.Write(TaskDYNA1_AssetID);
+            writer.Write(TaskDYNA2_AssetID);
+
+            writer.Write(SerializeLinks(platform));
+            return writer.ToArray();
+        }
+
+        public override bool HasReference(uint assetID) => VilType == assetID || NPCSettings_AssetID == assetID ||
+            MovePoint_AssetID == assetID || TaskDYNA1_AssetID == assetID || TaskDYNA2_AssetID == assetID ||
+            base.HasReference(assetID);
         
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
-            if (VilType.ToString() == ((int)VilType).ToString())
+            if (game == Game.BFBB && VilType_BFBB.ToString() == VilType.ToString())
                 result.Add("VIL with unknown VilType 0x" + VilType.ToString("X8"));
 
             Verify(NPCSettings_AssetID, ref result);
@@ -31,7 +109,39 @@ namespace IndustrialPark
             Verify(TaskDYNA1_AssetID, ref result);
             Verify(TaskDYNA2_AssetID, ref result);
         }
-        
+
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game == Game.BFBB)
+                dt.RemoveProperty("VilType");
+            else if (game == Game.Incredibles)
+            {
+                dt.RemoveProperty("VilType_BFBB");
+                dt.RemoveProperty("VilType_Alphabetical");
+            }
+
+            base.SetDynamicProperties(dt);
+        }
+
+        public static bool dontRender = false;
+
+        public override bool DontRender => dontRender;
+
+        public override void Draw(SharpRenderer renderer)
+        {
+            if (movementPreview)
+            {
+                localFrameCounter++;
+                if (localFrameCounter >= int.MaxValue)
+                    localFrameCounter = 0;
+            }
+            
+            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
+                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * _color : _color, UvAnimOffset);
+            else
+                renderer.DrawCube(LocalWorld(), isSelected);
+        }
+
         public override Matrix LocalWorld()
         {
             if (movementPreview && MovePoint_AssetID != 0)
@@ -86,83 +196,6 @@ namespace IndustrialPark
             }
             found = false;
             return null;
-        }
-
-        public override void Draw(SharpRenderer renderer)
-        {
-            if (movementPreview)
-            {
-                localFrameCounter++;
-                if (localFrameCounter >= int.MaxValue)
-                    localFrameCounter = 0;
-            }
-            
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
-                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * _color : _color, UvAnimOffset);
-            else
-                renderer.DrawCube(LocalWorld(), isSelected);
-        }
-
-        [Category("VIL")]
-        public DynamicTypeDescriptor VilFlags => IntFlagsDescriptor(0x54 + Offset);
-
-        [Category("VIL")]
-        public VilType VilType
-        {
-            get => (VilType)ReadUInt(0x58 + Offset);
-            set => Write(0x58 + Offset, (uint)value);
-        }
-
-        [Category("VIL"), DisplayName("VilType (Alphabetical)")]
-        public VilType_Alphabetical VilType_Alphabetical
-        {
-            get
-            {
-                foreach (VilType_Alphabetical o in Enum.GetValues(typeof(VilType_Alphabetical)))
-                    if (o.ToString() == VilType.ToString())
-                        return o;
-
-                return VilType_Alphabetical.Null;
-            }
-            set
-            {
-                foreach (VilType o in Enum.GetValues(typeof(VilType)))
-                    if (o.ToString() == value.ToString())
-                    {
-                        Write(0x58 + Offset, (uint)o);
-                        return;
-                    }
-
-                throw new Exception();
-            }
-        }
-
-        [Category("VIL")]
-        public AssetID NPCSettings_AssetID
-        {
-            get => ReadUInt(0x5C + Offset);
-            set => Write(0x5C + Offset, value);
-        }
-
-        [Category("VIL")]
-        public AssetID MovePoint_AssetID
-        {
-            get => ReadUInt(0x60 + Offset);
-            set => Write(0x60 + Offset, value);
-        }
-
-        [Category("VIL")]
-        public AssetID TaskDYNA1_AssetID
-        {
-            get => ReadUInt(0x64 + Offset);
-            set => Write(0x64 + Offset, value);
-        }
-
-        [Category("VIL")]
-        public AssetID TaskDYNA2_AssetID
-        {
-            get => ReadUInt(0x68 + Offset);
-            set => Write(0x68 + Offset, value);
         }
     }
 }

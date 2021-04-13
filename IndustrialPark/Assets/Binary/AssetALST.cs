@@ -1,19 +1,36 @@
 ﻿using HipHopFile;
 using System.Collections.Generic;
-using System;
-using System.Linq;
 using System.ComponentModel;
 
 namespace IndustrialPark
 {
     public class AssetALST : Asset
     {
+        [Category("Animation List")]
+        public AssetID[] Animation_AssetIDs { get; set; }
 
-        public AssetALST(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
-        
+        public AssetALST(Section_AHDR AHDR, Platform platform) : base(AHDR)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+
+            var assetIDs = new List<AssetID>();
+            while (!reader.EndOfStream)
+                assetIDs.Add(reader.ReadUInt32());
+            Animation_AssetIDs = assetIDs.ToArray();
+        }
+
+        public override byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            foreach (var i in Animation_AssetIDs)
+                writer.Write(i);
+            return writer.ToArray();
+        }
+
         public override bool HasReference(uint assetID)
         {
-            foreach (AssetID a in ANIM_AssetIDs)
+            foreach (var a in Animation_AssetIDs)
                 if (a == assetID)
                     return true;
 
@@ -22,38 +39,11 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
-            if (ANIM_AssetIDs.Length != 10)
-                result.Add("ALST asset has invalid amount of ANIM asset IDs");
+            if (Animation_AssetIDs.Length != 10)
+                result.Add("ALST asset has a number of animation asset IDs different from 10");
 
-            foreach(AssetID assetID in ANIM_AssetIDs)
+            foreach(AssetID assetID in Animation_AssetIDs)
                 Verify(assetID, ref result);
-        }
-
-        [Category("Animation List")]
-        public AssetID[] ANIM_AssetIDs
-        {
-            get
-            {
-                List<AssetID> assetIDs = new List<AssetID>();
-                for (int i = 0; i < Data.Length; i += 4)
-                    assetIDs.Add(ReadUInt(i));
-
-                return assetIDs.ToArray();
-            }
-            set
-            {
-                List<byte> newData = new List<byte>();
-
-                foreach (AssetID i in value)
-                {
-                    if (platform == Platform.GameCube)
-                        newData.AddRange(BitConverter.GetBytes(i).Reverse());
-                    else
-                        newData.AddRange(BitConverter.GetBytes(i));
-                }
-
-                Data = newData.ToArray();
-            }
         }
     }
 }

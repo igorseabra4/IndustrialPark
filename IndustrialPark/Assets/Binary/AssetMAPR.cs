@@ -23,10 +23,38 @@ namespace IndustrialPark
 
     public class AssetMAPR : Asset
     {
-        public AssetMAPR(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        [Category("Surface Map")]
+        public EntryMAPR[] MAPR_Entries { get; set; }
+
+        public AssetMAPR(Section_AHDR AHDR, Platform platform) : base(AHDR)
         {
-            if (AssetID != AHDR.assetID)
-                AssetID = AHDR.assetID;
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            
+            reader.ReadInt32();
+            int maprCount = reader.ReadInt32();
+            MAPR_Entries = new EntryMAPR[maprCount];
+
+            for (int i = 0; i < MAPR_Entries.Length; i++)
+                MAPR_Entries[i] = new EntryMAPR()
+                {
+                    AssetID_SURF = reader.ReadUInt32(),
+                    Unknown = reader.ReadUInt32()
+                };
+        }
+
+        public override byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(AssetID);
+            writer.Write(MAPR_Entries.Length);
+            foreach (var entry in MAPR_Entries)
+            {
+                writer.Write(entry.AssetID_SURF);
+                writer.Write(entry.Unknown);
+            }
+
+            return writer.ToArray();
         }
 
         public override bool HasReference(uint assetID)
@@ -35,7 +63,7 @@ namespace IndustrialPark
                 if (a.AssetID_SURF == assetID || a.Unknown == assetID)
                     return true;
             
-            return base.HasReference(assetID);
+            return false;
         }
 
         public override void Verify(ref List<string> result)
@@ -45,48 +73,6 @@ namespace IndustrialPark
                 if (a.AssetID_SURF == 0)
                     result.Add("MAPR entry with SurfaceAssetID set to 0");
                 Verify(a.AssetID_SURF, ref result);
-            }
-        }
-
-        [Category("Surface Map")]
-        public AssetID AssetID
-        {
-            get => ReadUInt(0);
-            set => Write(0, value);
-        }
-
-        [Category("Surface Map")]
-        public EntryMAPR[] MAPR_Entries
-        {
-            get
-            {
-                List<EntryMAPR> entries = new List<EntryMAPR>();
-                int amount = ReadInt(4);
-
-                for (int i = 0; i < amount; i++)
-                {
-                    entries.Add(new EntryMAPR()
-                    {
-                        AssetID_SURF = ReadUInt(8 + i * 8),
-                        Unknown = ReadUInt(12 + i * 8)
-                    });
-                }
-                
-                return entries.ToArray();
-            }
-            set
-            {
-                List<byte> newData = new List<byte>();
-                newData.AddRange(BitConverter.GetBytes(Switch(AssetID)));
-                newData.AddRange(BitConverter.GetBytes(Switch(value.Length)));
-
-                foreach (EntryMAPR i in value)
-                {
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.AssetID_SURF)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.Unknown)));
-                }
-                
-                Data = newData.ToArray();
             }
         }
     }

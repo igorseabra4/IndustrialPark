@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HipHopFile;
+using System;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Windows.Forms.Design;
@@ -10,8 +11,8 @@ namespace IndustrialPark
         private IWindowsFormsEditorService service;
 
         public static bool IsTimed { get; set; }
-        public static Endianness endianness { get; set; }
         public static uint thisAssetID { get; set; }
+        public static Game game { get; set; }
 
         public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
         {
@@ -25,19 +26,12 @@ namespace IndustrialPark
 
             if (service != null)
             {
-                if (value is LinkBFBB[] linksBFBB)
+                if (value is Link[] links)
                 {
-                    LinkBFBB[] events = LinkEditor.GetEvents(linksBFBB, endianness, IsTimed, thisAssetID);
+                    var newLinks = LinkEditor.GetLinks(game, links, IsTimed, thisAssetID);
 
-                    if (events != null)
-                        value = events;
-                }
-                else if (value is LinkTSSM[] linksTSSM)
-                {
-                    LinkTSSM[] events = LinkEditor.GetEvents(linksTSSM, endianness, IsTimed, thisAssetID);
-
-                    if (events != null)
-                        value = events;
+                    if (newLinks != null)
+                        value = newLinks;
                 }
             }
 

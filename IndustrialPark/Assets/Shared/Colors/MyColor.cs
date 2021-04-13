@@ -1,9 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Drawing.Design;
 
 namespace AssetEditorColors
 {
     [TypeConverter(typeof(MyColorConverter))]
+    [Editor(typeof(MyColorEditor), typeof(UITypeEditor))]
     public class MyColor
     {
         public byte R { get; set; }
@@ -52,7 +54,7 @@ namespace AssetEditorColors
 
         public override string ToString()
         {
-            return $"{R.ToString()}, {G.ToString()}, {B.ToString()}";
+            return $"{R:X2}{G:X2}{B:X2}{A:X2}";
         }
     }
 }

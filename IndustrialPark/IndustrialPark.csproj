@@ -136,6 +136,7 @@
       <DependentUpon>MaterialEffectEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="ArchiveEditor\Gizmos\BoxTrigPositionGizmo.cs" />
+    <Compile Include="ArchiveEditor\InternalEditors\FlagBitmask.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\DynamicTypeDescriptor.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\InternalMultiAssetEditor.cs">
       <SubType>Form</SubType>
@@ -149,7 +150,6 @@
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Gizmos.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetTemplates.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetEditing.cs" />
-    <Compile Include="ArchiveEditor\Other\LinkClipboard.cs" />
     <Compile Include="ArchiveEditor\Other\AssetClipboard.cs" />
     <Compile Include="ArchiveEditor\Dialogs\ImportTextures.cs">
       <SubType>Form</SubType>
@@ -209,7 +209,6 @@
     <Compile Include="Assets\Binary\AssetDEST.cs" />
     <Compile Include="Assets\Binary\AssetVILP.cs" />
     <Compile Include="Assets\Binary\AssetWIRE.cs" />
-    <Compile Include="Assets\DYNA\DynaDefault.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaEffectSpotlight.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaLogicReference.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectRaceTimer.cs" />
@@ -225,8 +224,8 @@
     <Compile Include="Assets\ObjectAssets\AssetLOBM.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetSDFX.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetDUPC.cs" />
+    <Compile Include="Assets\Shared\AssetGeneric.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\FlagsField_Byte_Dyna.cs" />
-    <Compile Include="Assets\Shared\AssetSpecifics\FlagsField_Byte.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\FlagsField_UInt_Dyna.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\FlagsField_UInt.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\FSB3_File.cs" />
@@ -268,18 +267,17 @@
     <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectRingControl.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaSceneProperties.cs" />
     <Compile Include="Assets\ObjectAssets\AssetVOLU.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetMVPT_Scooby.cs" />
+    <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetMVPT.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetDSTR.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetNPC.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetPLAT.cs" />
-    <Compile Include="Assets\Shared\AssetSpecifics\AssetSpecific_Generic.cs" />
+    <Compile Include="Assets\Shared\AssetSpecifics\GenericAssetDataContainer.cs" />
     <Compile Include="Assets\Shared\AssetWithMotion.cs" />
     <Compile Include="ArchiveEditor\Other\EndianConverter.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\PareSpecific.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\Motion.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\PlatSpecific.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\CamSpecific.cs" />
-    <Compile Include="Assets\Shared\AssetSpecifics\FlagsField_UShort.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\FlagsField.cs" />
     <Compile Include="Assets\Shared\TypeConverter\HexUIntTypeConverter.cs" />
     <Compile Include="Links\Enums\EventBFBB.cs" />
@@ -294,8 +292,6 @@
     </Compile>
     <Compile Include="Links\Enums\EventTSSM.cs" />
     <Compile Include="Links\Link.cs" />
-    <Compile Include="Links\LinkBFBB.cs" />
-    <Compile Include="Links\LinkTSSM.cs" />
     <Compile Include="Other\MessageBox.cs" />
     <Compile Include="Models\BSP_IO_Shared.cs" />
     <Compile Include="Models\ChooseTarget.cs">
@@ -407,7 +403,7 @@
     <Compile Include="Assets\Shared\Colors\MyColor.cs" />
     <Compile Include="Assets\Shared\Colors\MyColorConverter.cs" />
     <Compile Include="Assets\Shared\Colors\MyColorEditor.cs" />
-    <Compile Include="Assets\DYNA\DynaBase.cs" />
+    <Compile Include="Assets\DYNA\DynaGeneric.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectBoulderGen.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectBungeeDrop.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectBungeeHook.cs" />
@@ -441,7 +437,6 @@
     <Compile Include="Assets\Models\AssetJSP.cs" />
     <Compile Include="Assets\Models\AssetMINF.cs" />
     <Compile Include="Assets\Models\AssetMODL.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetMVPT.cs" />
     <Compile Include="Assets\Binary\AssetPICK.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetPKUP.cs" />
     <Compile Include="Assets\Models\AssetRWTX.cs" />

@@ -1,13 +1,122 @@
-﻿using HipHopFile;
+﻿using AssetEditorColors;
+using HipHopFile;
 using IndustrialPark.Models;
 using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 
 namespace IndustrialPark
 {
+    public class EndianBinaryReader : BinaryReader
+    {
+        public Endianness endianness { get; private set; }
+
+        public EndianBinaryReader(byte[] data, Platform platform) : base(new MemoryStream(data))
+        {
+            endianness = EndianConverter.PlatformEndianness(platform);
+        }
+
+        public EndianBinaryReader(byte[] data, Endianness endianness) : base(new MemoryStream(data))
+        {
+            this.endianness = endianness;
+        }
+
+        public override float ReadSingle() =>
+            (endianness == Endianness.Little) ?
+            base.ReadSingle() :
+            BitConverter.ToSingle(BitConverter.GetBytes(base.ReadSingle()).Reverse().ToArray(), 0);
+
+        public override short ReadInt16() =>
+            (endianness == Endianness.Little) ?
+            base.ReadInt16() :
+            BitConverter.ToInt16(BitConverter.GetBytes(base.ReadInt16()).Reverse().ToArray(), 0);
+
+        public override int ReadInt32() =>
+            (endianness == Endianness.Little) ?
+            base.ReadInt32() :
+            BitConverter.ToInt16(BitConverter.GetBytes(base.ReadInt32()).Reverse().ToArray(), 0);
+
+        public override ushort ReadUInt16() =>
+            (endianness == Endianness.Little) ?
+            base.ReadUInt16() :
+            BitConverter.ToUInt16(BitConverter.GetBytes(base.ReadUInt16()).Reverse().ToArray(), 0);
+
+        public override uint ReadUInt32() =>
+            (endianness == Endianness.Little) ?
+            base.ReadUInt32() :
+            BitConverter.ToUInt16(BitConverter.GetBytes(base.ReadUInt32()).Reverse().ToArray(), 0);
+
+        public bool EndOfStream => BaseStream.Position == BaseStream.Length;
+    }
+
+    public class EndianBinaryWriter : BinaryWriter
+    {
+        public Endianness endianness { get; private set; }
+
+        public EndianBinaryWriter(Platform platform) : base(new MemoryStream())
+        {
+            endianness = EndianConverter.PlatformEndianness(platform);
+        }
+
+        public EndianBinaryWriter(Endianness endianness) : base(new MemoryStream())
+        {
+            this.endianness = endianness;
+        }
+
+        public byte[] ToArray() => ((MemoryStream)BaseStream).ToArray();
+        
+        public override void Write(float f)
+        {
+            if (endianness == Endianness.Little)
+                base.Write(f);
+            else
+                base.Write(BitConverter.GetBytes(f).Reverse().ToArray());
+        }
+
+        public override void Write(int f)
+        {
+            if (endianness == Endianness.Little)
+                base.Write(f);
+            else
+                base.Write(BitConverter.GetBytes(f).Reverse().ToArray());
+        }
+
+        public override void Write(short f)
+        {
+            if (endianness == Endianness.Little)
+                base.Write(f);
+            else
+                base.Write(BitConverter.GetBytes(f).Reverse().ToArray());
+        }
+
+        public override void Write(uint f)
+        {
+            if (endianness == Endianness.Little)
+                base.Write(f);
+            else
+                base.Write(BitConverter.GetBytes(f).Reverse().ToArray());
+        }
+
+        public override void Write(ushort f)
+        {
+            if (endianness == Endianness.Little)
+                base.Write(f);
+            else
+                base.Write(BitConverter.GetBytes(f).Reverse().ToArray());
+        }
+
+        public void Write(MyColor color)
+        {
+            base.Write(color.R);
+            base.Write(color.G);
+            base.Write(color.B);
+            base.Write(color.A);
+        }
+    }
+
     public abstract class EndianConvertibleWithData : EndianConvertible
     {
         public abstract byte[] Data { get; set; }
@@ -29,8 +138,8 @@ namespace IndustrialPark
             this.game = game;
             this.platform = platform;
         }
-        
-        protected float ReadFloat(int j)
+
+        public float ReadFloat(int j)
         {
             if (endianness == Endianness.Big)
                 return BitConverter.ToSingle(new byte[] {
@@ -42,12 +151,12 @@ namespace IndustrialPark
             return BitConverter.ToSingle(Data, j);
         }
 
-        protected byte ReadByte(int j)
+        public byte ReadByte(int j)
         {
             return Data[j];
         }
 
-        protected short ReadShort(int j)
+        public short ReadShort(int j)
         {
             if (endianness == Endianness.Big)
                 return BitConverter.ToInt16(new byte[] {
@@ -57,7 +166,7 @@ namespace IndustrialPark
             return BitConverter.ToInt16(Data, j);
         }
 
-        protected ushort ReadUShort(int j)
+        public ushort ReadUShort(int j)
         {
             if (endianness == Endianness.Big)
                 return BitConverter.ToUInt16(new byte[] {
@@ -67,7 +176,7 @@ namespace IndustrialPark
             return BitConverter.ToUInt16(Data, j);
         }
 
-        protected int ReadInt(int j)
+        public int ReadInt(int j)
         {
             if (endianness == Endianness.Big)
                 return BitConverter.ToInt32(new byte[] {
@@ -79,7 +188,7 @@ namespace IndustrialPark
             return BitConverter.ToInt32(Data, j);
         }
 
-        protected uint ReadUInt(int j)
+        public uint ReadUInt(int j)
         {
             if (endianness == Endianness.Big)
                 return BitConverter.ToUInt32(new byte[] {
@@ -90,8 +199,8 @@ namespace IndustrialPark
 
             return BitConverter.ToUInt32(Data, j);
         }
-        
-        protected virtual void Write(int j, float value)
+
+        public virtual void Write(int j, float value)
         {
             byte[] split = BitConverter.GetBytes(value).ToArray();
 

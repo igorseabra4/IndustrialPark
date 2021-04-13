@@ -5,155 +5,108 @@ namespace IndustrialPark
 {
     public class AssetVOLU : BaseAsset
     {
-        public AssetVOLU(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        private const string categoryName = "Volume";
 
-        protected override int EventStartOffset => 0x50;
-        
-        [Category("Volume")]
-        public int UnknownInt08
+        [Category(categoryName)]
+        public int UnknownInt08 { get; set; }
+        [Category(categoryName)]
+        public byte UnknownByte0C { get; set; }
+        [Category(categoryName)]
+        public byte UnknownByte0D { get; set; }
+        [Category(categoryName)]
+        public byte UnknownByte0E { get; set; }
+        [Category(categoryName)]
+        public byte UnknownByte0F { get; set; }
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float UnknownFloat10 { get; set; }
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float UnknownFloat14 { get; set; }
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float UnknownFloat18 { get; set; }
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float UnknownFloat1C { get; set; }
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float UnknownFloat20 { get; set; }
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float UnknownFloat24 { get; set; }
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float UnknownFloat28 { get; set; }
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float UnknownFloat2C { get; set; }
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float UnknownFloat30 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt34 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt38 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt3C { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt40 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt44 { get; set; }
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float UnknownFloat48 { get; set; }
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float UnknownFloat4C { get; set; }
+
+        public AssetVOLU(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
-            get => ReadInt(0x8);
-            set => Write(0x8, value);
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = baseEndPosition;
+
+            UnknownInt08 = reader.ReadInt32();
+            UnknownByte0C = reader.ReadByte();
+            UnknownByte0D = reader.ReadByte();
+            UnknownByte0E = reader.ReadByte();
+            UnknownByte0F = reader.ReadByte();
+            UnknownFloat10 = reader.ReadSingle();
+            UnknownFloat14 = reader.ReadSingle();
+            UnknownFloat18 = reader.ReadSingle();
+            UnknownFloat1C = reader.ReadSingle();
+            UnknownFloat20 = reader.ReadSingle();
+            UnknownFloat24 = reader.ReadSingle();
+            UnknownFloat28 = reader.ReadSingle();
+            UnknownFloat2C = reader.ReadSingle();
+            UnknownFloat30 = reader.ReadSingle();
+            UnknownInt34 = reader.ReadInt32();
+            UnknownInt38 = reader.ReadInt32();
+            UnknownInt3C = reader.ReadInt32();
+            UnknownInt40 = reader.ReadInt32();
+            UnknownInt44 = reader.ReadInt32();
+            UnknownFloat48 = reader.ReadSingle();
+            UnknownFloat4C = reader.ReadSingle();
         }
 
-        [Category("Volume")]
-        public byte UnknownByte0C
+        public override byte[] Serialize(Game game, Platform platform)
         {
-            get => ReadByte(0xC);
-            set => Write(0xC, value);
-        }
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write(SerializeBase(platform));
 
-        [Category("Volume")]
-        public byte UnknownByte0D
-        {
-            get => ReadByte(0xD);
-            set => Write(0xD, value);
-        }
+            writer.Write(UnknownInt08);
+            writer.Write(UnknownByte0C);
+            writer.Write(UnknownByte0D);
+            writer.Write(UnknownByte0E);
+            writer.Write(UnknownByte0F);
+            writer.Write(UnknownFloat10);
+            writer.Write(UnknownFloat14);
+            writer.Write(UnknownFloat18);
+            writer.Write(UnknownFloat1C);
+            writer.Write(UnknownFloat20);
+            writer.Write(UnknownFloat24);
+            writer.Write(UnknownFloat28);
+            writer.Write(UnknownFloat2C);
+            writer.Write(UnknownFloat30);
+            writer.Write(UnknownInt34);
+            writer.Write(UnknownInt38);
+            writer.Write(UnknownInt3C);
+            writer.Write(UnknownInt40);
+            writer.Write(UnknownInt44);
+            writer.Write(UnknownFloat48);
+            writer.Write(UnknownFloat4C);
 
-        [Category("Volume")]
-        public byte UnknownByte0E
-        {
-            get => ReadByte(0xE);
-            set => Write(0xE, value);
-        }
-
-        [Category("Volume")]
-        public byte UnknownByte0F
-        {
-            get => ReadByte(0xF);
-            set => Write(0xF, value);
-        }
-        
-        [Category("Volume"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat10
-        {
-            get => ReadFloat(0x10);
-            set => Write(0x10, value);
-        }
-
-        [Category("Volume"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat14
-        {
-            get => ReadFloat(0x14);
-            set => Write(0x14, value);
-        }
-
-        [Category("Volume"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat18
-        {
-            get => ReadFloat(0x18);
-            set => Write(0x18, value);
-        }
-
-        [Category("Volume"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat1C
-        {
-            get => ReadFloat(0x1C);
-            set => Write(0x1C, value);
-        }
-
-        [Category("Volume"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat20
-        {
-            get => ReadFloat(0x20);
-            set => Write(0x20, value);
-        }
-
-        [Category("Volume"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat24
-        {
-            get => ReadFloat(0x24);
-            set => Write(0x24, value);
-        }
-
-        [Category("Volume"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat28
-        {
-            get => ReadFloat(0x28);
-            set => Write(0x28, value);
-        }
-
-        [Category("Volume"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat2C
-        {
-            get => ReadFloat(0x2C);
-            set => Write(0x2C, value);
-        }
-
-        [Category("Volume"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat30
-        {
-            get => ReadFloat(0x30);
-            set => Write(0x30, value);
-        }
-
-        [Category("Volume")]
-        public int UnknownInt34
-        {
-            get => ReadInt(0x34);
-            set => Write(0x34, value);
-        }
-
-        [Category("Volume")]
-        public int UnknownInt38
-        {
-            get => ReadInt(0x38);
-            set => Write(0x38, value);
-        }
-
-        [Category("Volume")]
-        public int UnknownInt3C
-        {
-            get => ReadInt(0x3C);
-            set => Write(0x3C, value);
-        }
-
-        [Category("Volume")]
-        public int UnknownInt40
-        {
-            get => ReadInt(0x40);
-            set => Write(0x40, value);
-        }
-
-        [Category("Volume")]
-        public int UnknownInt44
-        {
-            get => ReadInt(0x44);
-            set => Write(0x44, value);
-        }
-
-        [Category("Volume"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat48
-        {
-            get => ReadFloat(0x48);
-            set => Write(0x48, value);
-        }
-
-        [Category("Volume"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat4C
-        {
-            get => ReadFloat(0x4C);
-            set => Write(0x4C, value);
+            writer.Write(SerializeLinks(platform));
+            return writer.ToArray();
         }
     }
 }

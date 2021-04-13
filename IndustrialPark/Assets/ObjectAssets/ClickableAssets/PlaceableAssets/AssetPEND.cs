@@ -6,139 +6,100 @@ namespace IndustrialPark
 {
     public class AssetPEND : EntityAsset
     {
-        public static bool dontRender = false;
-
-        public override bool DontRender => dontRender;
-        
-        public AssetPEND(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
-
-        protected override int EventStartOffset => 0x84 + Offset;
-
         private const string categoryName = "Pendulum";
 
         [Category(categoryName)]
-        public byte UnknownByte54
-        {
-            get => ReadByte(0x54 + Offset);
-            set => Write(0x54 + Offset, value);
-        }
-
+        public byte UnknownByte54 { get; set; }
         [Category(categoryName)]
-        public byte UnknownByte55
-        {
-            get => ReadByte(0x55 + Offset);
-            set => Write(0x55 + Offset, value);
-        }
-
+        public byte UnknownByte55 { get; set; }
         [Category(categoryName)]
-        public byte UnknownByte56
-        {
-            get => ReadByte(0x56 + Offset);
-            set => Write(0x56 + Offset, value);
-        }
-
+        public byte UnknownByte56 { get; set; }
         [Category(categoryName)]
-        public byte UnknownByte57
-        {
-            get => ReadByte(0x57 + Offset);
-            set => Write(0x57 + Offset, value);
-        }
-
+        public byte UnknownByte57 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt58
-        {
-            get => ReadInt(0x58 + Offset);
-            set => Write(0x58 + Offset, value);
-        }
-
+        public int UnknownInt58 { get; set; }
         [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float MovementDistance
-        {
-            get => ReadFloat(0x5C + Offset);
-            set => Write(0x5C + Offset, value);
-        }
-
+        public float MovementDistance { get; set; }
         [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float SteepnessRad
-        {
-            get => ReadFloat(0x60 + Offset);
-            set => Write(0x60 + Offset, value);
-        }
-
+        public float SteepnessRad { get; set; }
         [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        [Description("In degrees")]
-        public float Steepness
+        public float SteepnessDeg
         {
-            get => MathUtil.RadiansToDegrees(ReadFloat(0x60 + Offset));
-            set => Write(0x60 + Offset, MathUtil.DegreesToRadians(value));
+            get => MathUtil.RadiansToDegrees(SteepnessRad);
+            set => SteepnessRad = MathUtil.DegreesToRadians(value);
         }
-
         [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float MovementTime
-        {
-            get => ReadFloat(0x64 + Offset);
-            set => Write(0x64 + Offset, value);
-        }
-
+        public float MovementTime { get; set; }
         [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        [Description("In radians")]
-        [DisplayName("UnknownFloat68")]
-        public float UnknownFloat68Rad
-        {
-            get => ReadFloat(0x68 + Offset);
-            set => Write(0x68 + Offset, value);
-        }
-
+        public float UnknownFloat68Rad { get; set; }
         [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        [Description("In degrees")]
-        [DisplayName("UnknownFloat68")]
         public float UnknownFloat68Deg
         {
-            get => MathUtil.RadiansToDegrees(ReadFloat(0x68 + Offset));
-            set => Write(0x68 + Offset, MathUtil.DegreesToRadians(value));
+            get => MathUtil.RadiansToDegrees(UnknownFloat68Rad);
+            set => UnknownFloat68Rad = MathUtil.DegreesToRadians(value);
         }
-
         [Category(categoryName)]
-        public int UnknownInt6C
-        {
-            get => ReadInt(0x6C + Offset);
-            set => Write(0x6C + Offset, value);
-        }
-
+        public int UnknownInt6C { get; set; }
         [Category(categoryName)]
-        public int UnknownInt70
-        {
-            get => ReadInt(0x70 + Offset);
-            set => Write(0x70 + Offset, value);
-        }
-
+        public int UnknownInt70 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt74
-        {
-            get => ReadInt(0x74 + Offset);
-            set => Write(0x74 + Offset, value);
-        }
-
+        public int UnknownInt74 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt78
-        {
-            get => ReadInt(0x78 + Offset);
-            set => Write(0x78 + Offset, value);
-        }
-
+        public int UnknownInt78 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt7C
-        {
-            get => ReadInt(0x7C + Offset);
-            set => Write(0x7C + Offset, value);
-        }
-
+        public int UnknownInt7C { get; set; }
         [Category(categoryName)]
-        public int UnknownInt80
+        public int UnknownInt80 { get; set; }
+
+        public AssetPEND(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
-            get => ReadInt(0x80 + Offset);
-            set => Write(0x80 + Offset, value);
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = entityEndPosition;
+
+            UnknownByte54 = reader.ReadByte();
+            UnknownByte55 = reader.ReadByte();
+            UnknownByte56 = reader.ReadByte();
+            UnknownByte57 = reader.ReadByte();
+            UnknownInt58 = reader.ReadInt32();
+            MovementDistance = reader.ReadSingle();
+            SteepnessRad = reader.ReadSingle();
+            MovementTime = reader.ReadSingle();
+            UnknownFloat68Rad = reader.ReadSingle();
+            UnknownInt6C = reader.ReadInt32();
+            UnknownInt70 = reader.ReadInt32();
+            UnknownInt74 = reader.ReadInt32();
+            UnknownInt78 = reader.ReadInt32();
+            UnknownInt7C = reader.ReadInt32();
+            UnknownInt80 = reader.ReadInt32();
         }
 
+        public override byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write(SerializeBase(platform));
+
+            writer.Write(UnknownByte54);
+            writer.Write(UnknownByte55);
+            writer.Write(UnknownByte56);
+            writer.Write(UnknownByte57);
+            writer.Write(UnknownInt58);
+            writer.Write(MovementDistance);
+            writer.Write(SteepnessRad);
+            writer.Write(MovementTime);
+            writer.Write(UnknownFloat68Rad);
+            writer.Write(UnknownInt6C);
+            writer.Write(UnknownInt70);
+            writer.Write(UnknownInt74);
+            writer.Write(UnknownInt78);
+            writer.Write(UnknownInt7C);
+            writer.Write(UnknownInt80);
+
+            writer.Write(SerializeLinks(platform));
+            return writer.ToArray();
+        }
+
+        public static bool dontRender = false;
+
+        public override bool DontRender => dontRender;        
     }
 }

@@ -83,7 +83,6 @@ namespace IndustrialPark
             this.bUTNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cAMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dSTRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.dUPCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dYNAToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eGENToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hANGToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -515,7 +514,6 @@ namespace IndustrialPark
             this.bUTNToolStripMenuItem,
             this.cAMToolStripMenuItem,
             this.dSTRToolStripMenuItem,
-            this.dUPCToolStripMenuItem,
             this.dYNAToolStripMenuItem,
             this.eGENToolStripMenuItem,
             this.hANGToolStripMenuItem,
@@ -601,15 +599,6 @@ namespace IndustrialPark
             this.dSTRToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
             this.dSTRToolStripMenuItem.Text = "DSTR";
             this.dSTRToolStripMenuItem.Click += new System.EventHandler(this.dSTRToolStripMenuItem_Click);
-            // 
-            // dUPCToolStripMenuItem
-            // 
-            this.dUPCToolStripMenuItem.Checked = true;
-            this.dUPCToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.dUPCToolStripMenuItem.Name = "dUPCToolStripMenuItem";
-            this.dUPCToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
-            this.dUPCToolStripMenuItem.Text = "DUPC";
-            this.dUPCToolStripMenuItem.Click += new System.EventHandler(this.dUPCToolStripMenuItem_Click);
             // 
             // dYNAToolStripMenuItem
             // 
@@ -770,7 +759,7 @@ namespace IndustrialPark
             this.vILToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.vILToolStripMenuItem.Name = "vILToolStripMenuItem";
             this.vILToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
-            this.vILToolStripMenuItem.Text = "VIL";
+            this.vILToolStripMenuItem.Text = "VIL/DUPC";
             this.vILToolStripMenuItem.Click += new System.EventHandler(this.vILToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
@@ -1219,7 +1208,6 @@ namespace IndustrialPark
         private ToolStripMenuItem stopSoundToolStripMenuItem;
         private ToolStripMenuItem sDFXToolStripMenuItem;
         private ToolStripMenuItem templatesChainPointMVPTsToolStripMenuItem;
-        private ToolStripMenuItem dUPCToolStripMenuItem;
         private ToolStripMenuItem sPLNToolStripMenuItem;
         private ToolStripMenuItem dYNASearchToolStripMenuItem;
         private ToolStripMenuItem exportSceneToolStripMenuItem;

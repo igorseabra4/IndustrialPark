@@ -42,7 +42,6 @@ namespace IndustrialPark
         public bool dontRenderBUTN;
         public bool dontRenderCAM;
         public bool dontRenderDSTR;
-        public bool dontRenderDUPC;
         public bool dontRenderDYNA;
         public bool dontRenderEGEN;
         public bool dontRenderHANG;
@@ -99,7 +98,6 @@ namespace IndustrialPark
             dontRenderBUTN = false;
             dontRenderCAM = false;
             dontRenderDSTR = false;
-            dontRenderDUPC = false;
             dontRenderDYNA = false;
             dontRenderEGEN = false;
             dontRenderHANG = false;

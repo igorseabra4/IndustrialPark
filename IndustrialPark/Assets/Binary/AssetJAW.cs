@@ -43,15 +43,62 @@ namespace IndustrialPark
 
     public class AssetJAW : Asset
     {
-        public AssetJAW(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        [Category("Jaw Data")]
+        public EntryJAW[] JAW_Entries { get; set; }
+
+        public AssetJAW(Section_AHDR AHDR, Platform platform) : base(AHDR)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, platform))
+            {
+                JAW_Entries = new EntryJAW[reader.ReadInt32()];
+
+                int startOfJawData = 4 + 12 * JAW_Entries.Length;
+
+                for (int i = 0; i < JAW_Entries.Length; i++)
+                {
+                    uint soundAssetID = reader.ReadUInt32();
+                    int offset = reader.ReadInt32();
+
+                    int length = BitConverter.ToInt32(AHDR.data, startOfJawData + offset);
+                    byte[] jawData = AHDR.data.Skip(startOfJawData + offset + 4).Take(length).ToArray();
+
+                    JAW_Entries[i] = new EntryJAW(soundAssetID, jawData);
+                }
+            }
+        }
+
+        public override byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+            List<byte> newJawData = new List<byte>();
+
+            writer.Write(JAW_Entries.Length);
+
+            foreach (var i in JAW_Entries)
+            {
+                writer.Write(i.SoundAssetID);
+                writer.Write(newJawData.Count);
+                writer.Write(i.JawData.Length + 4);
+
+                newJawData.AddRange(BitConverter.GetBytes(i.JawData.Length));
+                newJawData.AddRange(i.JawData);
+
+                while (newJawData.Count % 4 != 0)
+                    newJawData.Add(0);
+            }
+
+            writer.Write(newJawData.ToArray());
+
+            return writer.ToArray();
+        }
 
         public override bool HasReference(uint assetID)
         {
-            foreach (EntryJAW a in JAW_Entries)
+            foreach (var a in JAW_Entries)
                 if (a.SoundAssetID == assetID)
                     return true;
 
-            return base.HasReference(assetID);
+            return false;
         }
 
         public override void Verify(ref List<string> result)
@@ -64,66 +111,13 @@ namespace IndustrialPark
             }
         }
 
-        private int JawDataCount
-        {
-            get => ReadInt(0x00);
-            set => Write(0x00, value);
-        }
-        private int StartOfJawData => 4 + 12 * JawDataCount;
-
-        [Category("Jaw Data")]
-        public EntryJAW[] JAW_Entries
-        {
-            get
-            {
-                List<EntryJAW> entries = new List<EntryJAW>();
-
-                for (int i = 0; i < JawDataCount; i++)
-                {
-                    uint soundAssetID = ReadUInt(4 + i * 0xC);
-                    int offset = ReadInt(8 + i * 0xC);
-
-                    int length = BitConverter.ToInt32(Data, StartOfJawData + offset);
-                    byte[] jawData = Data.Skip(StartOfJawData + offset + 4).Take(length).ToArray();
-
-                    entries.Add(new EntryJAW(soundAssetID, jawData));
-                }
-                
-                return entries.ToArray();
-            }
-            set
-            {
-                List<byte> newData = new List<byte>();
-                List<byte> newJawData = new List<byte>();
-
-                newData.AddRange(BitConverter.GetBytes(Switch(value.Length)));
-
-                foreach (EntryJAW i in value)
-                {
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.SoundAssetID)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(newJawData.Count)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.JawData.Length + 4)));
-
-                    newJawData.AddRange(BitConverter.GetBytes(i.JawData.Length));
-                    newJawData.AddRange(i.JawData);
-
-                    while (newJawData.Count % 4 != 0)
-                        newJawData.Add(0);
-                }
-
-                newData.AddRange(newJawData);
-
-                Data = newData.ToArray();
-            }
-        }
-
         public void AddEntry(byte[] jawData, uint assetID)
         {
             List<EntryJAW> entries = JAW_Entries.ToList();
 
             for (int i = 0; i < entries.Count; i++)
                 if (entries[i].SoundAssetID.Equals(assetID))
-                    entries.Remove(entries[i]);
+                    entries.RemoveAt(i--);
 
             entries.Add(new EntryJAW(assetID, jawData));
 

@@ -1,6 +1,4 @@
-﻿using SharpDX;
-
-namespace IndustrialPark
+﻿namespace IndustrialPark
 {
     public interface IScalableAsset
     {
@@ -8,6 +6,8 @@ namespace IndustrialPark
         float ScaleY { get; set; }
         float ScaleZ { get; set; }
 
-        Vector3 Position { get; }
+        float PositionX { get; }
+        float PositionY { get; }
+        float PositionZ { get; }
     }
 }

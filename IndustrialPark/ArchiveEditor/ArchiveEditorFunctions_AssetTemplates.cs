@@ -810,7 +810,7 @@ namespace IndustrialPark
             assetIDs.Add(asset.AHDR.assetID);
 
             if (asset is BaseAsset oa)
-                oa.BaseUshortFlags = 0x1D;
+                oa.BaseFlags_Internal = 0x1D;
             if (asset is EntityAsset placeableAsset)
             {
                 placeableAsset.Data[0x8] = 0x01; // visible
@@ -886,7 +886,7 @@ namespace IndustrialPark
                     ((AssetCAM)asset).Data[0x79] = 1;
                     ((AssetCAM)asset).Data[0x7A] = 1;
                     ((AssetCAM)asset).Data[0x7B] = 0xC0;
-                    ((AssetCAM)asset).CamType = CamType.Static;
+                    ((AssetCAM)asset)._camType = CamType.Static;
 
                     if (template == AssetTemplate.StartCamera)
                     {
@@ -895,7 +895,7 @@ namespace IndustrialPark
                         ((AssetCAM)asset).NormalizedLeftX = 1;
                         ((AssetCAM)asset).FieldOfView = 85;
                         ((AssetCAM)asset).Data[0x7B] = 0x8F;
-                        ((AssetCAM)asset).CamType = CamType.Follow;
+                        ((AssetCAM)asset)._camType = CamType.Follow;
                         var camSpecific = (CamSpecific_Follow)((AssetCAM)asset).CamSpecific;
                         camSpecific.Distance = -2;
                         camSpecific.Height = 1;
@@ -983,7 +983,7 @@ namespace IndustrialPark
                     break;
                 case AssetTemplate.Player:
                     ((AssetPLYR)asset).AssetType = ObjectAssetType.Player;
-                    ((AssetPLYR)asset).BaseUshortFlags = 0x0D;
+                    ((AssetPLYR)asset).BaseFlags_Internal = 0x0D;
                     ((AssetPLYR)asset).Data[0xB] = 0;
                     ((AssetPLYR)asset).ColorAlpha = 0;
                     ((AssetPLYR)asset).ColorAlphaSpeed = 0;
@@ -1004,7 +1004,7 @@ namespace IndustrialPark
                     break;
                 case AssetTemplate.Script:
                     ((AssetSCRP)asset).AssetType = ObjectAssetType.Script;
-                    ((AssetSCRP)asset).UnknownFloat08 = 1f;
+                    ((AssetSCRP)asset).ScriptStartTime = 1f;
                     break;
                 case AssetTemplate.SoundGroup:
                     ((AssetSGRP)asset).AssetType = ObjectAssetType.SGRP;
@@ -1061,7 +1061,7 @@ namespace IndustrialPark
                     ((AssetSDFX)asset).PositionZ = position.Z;
                     break;
                 case AssetTemplate.Shiny_Red:
-                    ((AssetPKUP)asset).BaseUshortFlags |= (ushort)(persistentShinies ? 2 : 0);
+                    ((AssetPKUP)asset).BaseFlags_Internal |= (ushort)(persistentShinies ? 2 : 0);
                     ((AssetPKUP)asset).Shape = 0x3E;
                     ((AssetPKUP)asset).PickReferenceID = 0x7C8AC53E;
                     ((AssetPKUP)asset).PickupFlagsShort = 2;
@@ -1069,7 +1069,7 @@ namespace IndustrialPark
                     ((AssetPKUP)asset).PositionY += 0.5f;
                     break;
                 case AssetTemplate.Shiny_Yellow:
-                    ((AssetPKUP)asset).BaseUshortFlags |= (ushort)(persistentShinies ? 2 : 0);
+                    ((AssetPKUP)asset).BaseFlags_Internal |= (ushort)(persistentShinies ? 2 : 0);
                     ((AssetPKUP)asset).Shape = 0x3B;
                     ((AssetPKUP)asset).PickReferenceID = 0xB3D6283B;
                     ((AssetPKUP)asset).PickupFlagsShort = 2;
@@ -1077,7 +1077,7 @@ namespace IndustrialPark
                     ((AssetPKUP)asset).PositionY += 0.5f;
                     break;
                 case AssetTemplate.Shiny_Green:
-                    ((AssetPKUP)asset).BaseUshortFlags |= (ushort)(persistentShinies ? 2 : 0);
+                    ((AssetPKUP)asset).BaseFlags_Internal |= (ushort)(persistentShinies ? 2 : 0);
                     ((AssetPKUP)asset).Shape = 0x34;
                     ((AssetPKUP)asset).PickReferenceID = 0x079A0734;
                     ((AssetPKUP)asset).PickupFlagsShort = 2;
@@ -1085,7 +1085,7 @@ namespace IndustrialPark
                     ((AssetPKUP)asset).PositionY += 0.5f;
                     break;
                 case AssetTemplate.Shiny_Blue:
-                    ((AssetPKUP)asset).BaseUshortFlags |= (ushort)(persistentShinies ? 2 : 0);
+                    ((AssetPKUP)asset).BaseFlags_Internal |= (ushort)(persistentShinies ? 2 : 0);
                     ((AssetPKUP)asset).Shape = 0x81;
                     ((AssetPKUP)asset).PickReferenceID = 0x6D4A4181;
                     ((AssetPKUP)asset).PickupFlagsShort = 2;
@@ -1093,7 +1093,7 @@ namespace IndustrialPark
                     ((AssetPKUP)asset).PositionY += 0.5f;
                     break;
                 case AssetTemplate.Shiny_Purple:
-                    ((AssetPKUP)asset).BaseUshortFlags |= (ushort)(persistentShinies ? 2 : 0);
+                    ((AssetPKUP)asset).BaseFlags_Internal |= (ushort)(persistentShinies ? 2 : 0);
                     ((AssetPKUP)asset).Shape = 0xCB;
                     ((AssetPKUP)asset).PickReferenceID = 0xFA607BCB;
                     ((AssetPKUP)asset).PickupFlagsShort = 2;
@@ -1108,7 +1108,7 @@ namespace IndustrialPark
                     ((AssetPKUP)asset).PositionY += 0.5f;
                     break;
                 case AssetTemplate.Spatula:
-                    ((AssetPKUP)asset).BaseUshortFlags |= 2;
+                    ((AssetPKUP)asset).BaseFlags_Internal |= 2;
                     ((AssetPKUP)asset).Shape = 0xDD;
                     ((AssetPKUP)asset).PickReferenceID = 0x8BDFE8DD;
                     ((AssetPKUP)asset).PickupFlagsShort = 2;
@@ -1116,7 +1116,7 @@ namespace IndustrialPark
                     ((AssetPKUP)asset).PositionY += 0.5f;
                     break;
                 case AssetTemplate.Sock:
-                    ((AssetPKUP)asset).BaseUshortFlags |= 2;
+                    ((AssetPKUP)asset).BaseFlags_Internal |= 2;
                     ((AssetPKUP)asset).Shape = 0x24;
                     ((AssetPKUP)asset).PickReferenceID = 0x74B46F24;
                     ((AssetPKUP)asset).PickupFlagsShort = 2;
@@ -1131,7 +1131,7 @@ namespace IndustrialPark
                     ((AssetPKUP)asset).PositionY += 0.5f;
                     break;
                 case AssetTemplate.Golden_Underwear:
-                    ((AssetPKUP)asset).BaseUshortFlags |= 2;
+                    ((AssetPKUP)asset).BaseFlags.FlagValueShort |= 2;
                     ((AssetPKUP)asset).Shape = 0x2E;
                     ((AssetPKUP)asset).PickReferenceID = 0xF650DA2E;
                     ((AssetPKUP)asset).PickupFlagsShort = 2;
@@ -1139,33 +1139,33 @@ namespace IndustrialPark
                     ((AssetPKUP)asset).PositionY += 0.5f;
                     break;
                 case AssetTemplate.Artwork:
-                    ((AssetPKUP)asset).BaseUshortFlags |= 2;
+                    ((AssetPKUP)asset).BaseFlags.FlagValueShort |= 2;
                     ((AssetPKUP)asset).Shape = 0x10;
                     ((AssetPKUP)asset).PickReferenceID = 0x18140B10;
-                    ((AssetPKUP)asset).PickupFlagsShort = 2;
+                    ((AssetPKUP)asset).PickupFlags = EPickupFlags.InitiallyVisible;
                     ((AssetPKUP)asset).PickupValue = 4;
                     ((AssetPKUP)asset).PositionY += 0.5f;
                     break;
                 case AssetTemplate.SteeringWheel:
-                    ((AssetPKUP)asset).BaseUshortFlags |= 2;
+                    ((AssetPKUP)asset).BaseFlags.FlagValueShort |= 2;
                     ((AssetPKUP)asset).Shape = 0x32;
                     ((AssetPKUP)asset).PickReferenceID = 0x4C67C832;
-                    ((AssetPKUP)asset).PickupFlagsShort = 2;
+                    ((AssetPKUP)asset).PickupFlags = EPickupFlags.InitiallyVisible;
                     ((AssetPKUP)asset).PickupValue = 4;
                     ((AssetPKUP)asset).PositionY += 0.5f;
                     break;
                 case AssetTemplate.PowerCrystal:
-                    ((AssetPKUP)asset).BaseUshortFlags |= 2;
+                    ((AssetPKUP)asset).BaseFlags.FlagValueShort |= 2;
                     ((AssetPKUP)asset).Shape = 0xBB;
                     ((AssetPKUP)asset).PickReferenceID = 0xFE7A89BB;
-                    ((AssetPKUP)asset).PickupFlagsShort = 2;
+                    ((AssetPKUP)asset).PickupFlags = EPickupFlags.InitiallyVisible;
                     ((AssetPKUP)asset).PickupValue = 4;
                     ((AssetPKUP)asset).PositionY += 0.5f;
                     break;
                 case AssetTemplate.Smelly_Sundae:
                     ((AssetPKUP)asset).Shape = 0x54;
                     ((AssetPKUP)asset).PickReferenceID = 0x6A779454;
-                    ((AssetPKUP)asset).PickupFlagsShort = 2;
+                    ((AssetPKUP)asset).PickupFlags = EPickupFlags.InitiallyVisible;
                     ((AssetPKUP)asset).PickupValue = 4;
                     ((AssetPKUP)asset).PositionY += 0.5f;
                     break;
@@ -1455,7 +1455,7 @@ namespace IndustrialPark
                         {
                             Flags = 4,
                             MovementType = Motion_Mechanism.EMovementType.SlideAndRotate,
-                            MovementLoopModeByte = 1,
+                            MovementLoopMode = 1,
                             SlideAxis = Motion_Mechanism.Axis.Y,
                             SlideDistance = -0.2f,
                             SlideTime = 0.5f,
@@ -1465,7 +1465,7 @@ namespace IndustrialPark
                         {
                             Flags = 4,
                             MovementType = Motion_Mechanism.EMovementType.SlideAndRotate,
-                            MovementLoopModeByte = 1,
+                            MovementLoopMode = 1,
                             SlideAxis = Motion_Mechanism.Axis.Y,
                             SlideDistance = -0.2f,
                             SlideTime = 0.5f,
@@ -1490,7 +1490,7 @@ namespace IndustrialPark
                     {
                         Flags = 4,
                         MovementType = Motion_Mechanism.EMovementType.SlideAndRotate,
-                        MovementLoopModeByte = 1,
+                        MovementLoopMode = 1,
                         SlideAxis = Motion_Mechanism.Axis.Y,
                         SlideDistance = -0.15f,
                         SlideTime = 0.15f,
@@ -1499,7 +1499,7 @@ namespace IndustrialPark
                     {
                         Flags = 4,
                         MovementType = Motion_Mechanism.EMovementType.SlideAndRotate,
-                        MovementLoopModeByte = 1,
+                        MovementLoopMode = 1,
                         SlideAxis = Motion_Mechanism.Axis.Y,
                         SlideDistance = -0.15f,
                         SlideTime = 0.15f,
@@ -1672,7 +1672,7 @@ namespace IndustrialPark
                     ((AssetCAM)asset).Data[0x79] = 01;
                     ((AssetCAM)asset).Data[0x7A] = 01;
                     ((AssetCAM)asset).Data[0x7B] = 0x8F;
-                    ((AssetCAM)asset).CamType = CamType.Static;
+                    ((AssetCAM)asset)._camType = CamType.Static;
                     break;
                 case AssetTemplate.BusStop_BusSimp:
                     ((AssetSIMP)asset).PositionX -= 3f;
@@ -1803,7 +1803,7 @@ namespace IndustrialPark
                 case AssetTemplate.Checkpoint_Script:
                     {
                         ((AssetSCRP)asset).AssetType = ObjectAssetType.Script;
-                        ((AssetSCRP)asset).UnknownFloat08 = 1f;
+                        ((AssetSCRP)asset).ScriptStartTime = 1f;
 
                         uint checkpointSdfx = PlaceTemplate(new Vector3(position.X + 2f, position.Y, position.Z), layerIndex, ref assetIDs, "CHECKPOINT_SFX", AssetTemplate.SDFX);
                         uint checkpointSimp = PlaceTemplate(new Vector3(position.X + 2f, position.Y, position.Z), layerIndex, ref assetIDs, "CHECKPOINT_SIMP", AssetTemplate.Checkpoint_SIMP_TSSM);
@@ -1892,14 +1892,14 @@ namespace IndustrialPark
                     new Motion_Mechanism_TSSM((AssetPLAT)asset)
                     {
                         Type = MotionType.Other,
-                        MovementLoopModeByte = 1,
+                        MovementLoopMode = 1,
                         SlideAccelTime = 0.4f,
                         SlideDecelTime = 0.4f
                     } :
                     new Motion_Mechanism((AssetPLAT)asset)
                     {
                         Type = MotionType.Other,
-                        MovementLoopModeByte = 1,
+                        MovementLoopMode = 1,
                         SlideAccelTime = 0.4f,
                         SlideDecelTime = 0.4f
                     };
@@ -2016,7 +2016,7 @@ namespace IndustrialPark
                     };
                     break;
                 case AssetTemplate.Manliness_Red:
-                    ((AssetPKUP)asset).BaseUshortFlags |= (ushort)(persistentShinies ? 2 : 0);
+                    ((AssetPKUP)asset).BaseFlags_Internal |= (ushort)(persistentShinies ? 2 : 0);
                     ((AssetPKUP)asset).Shape = 0x17;
                     ((AssetPKUP)asset).PickReferenceID = 0x7C134517;
                     ((AssetPKUP)asset).PickupFlagsShort = 2;
@@ -2024,7 +2024,7 @@ namespace IndustrialPark
                     ((AssetPKUP)asset).PositionY += 0.5f;
                     break;
                 case AssetTemplate.Manliness_Yellow:
-                    ((AssetPKUP)asset).BaseUshortFlags |= (ushort)(persistentShinies ? 2 : 0);
+                    ((AssetPKUP)asset).BaseFlags_Internal |= (ushort)(persistentShinies ? 2 : 0);
                     ((AssetPKUP)asset).Shape = 0x5A;
                     ((AssetPKUP)asset).PickReferenceID = 0xFA454C5A;
                     ((AssetPKUP)asset).PickupFlagsShort = 2;
@@ -2032,7 +2032,7 @@ namespace IndustrialPark
                     ((AssetPKUP)asset).PositionY += 0.5f;
                     break;
                 case AssetTemplate.Manliness_Green:
-                    ((AssetPKUP)asset).BaseUshortFlags |= (ushort)(persistentShinies ? 2 : 0);
+                    ((AssetPKUP)asset).BaseFlags_Internal |= (ushort)(persistentShinies ? 2 : 0);
                     ((AssetPKUP)asset).Shape = 0xD9;
                     ((AssetPKUP)asset).PickReferenceID = 0xA869F4D9;
                     ((AssetPKUP)asset).PickupFlagsShort = 2;
@@ -2040,7 +2040,7 @@ namespace IndustrialPark
                     ((AssetPKUP)asset).PositionY += 0.5f;
                     break;
                 case AssetTemplate.Manliness_Blue:
-                    ((AssetPKUP)asset).BaseUshortFlags |= (ushort)(persistentShinies ? 2 : 0);
+                    ((AssetPKUP)asset).BaseFlags_Internal |= (ushort)(persistentShinies ? 2 : 0);
                     ((AssetPKUP)asset).Shape = 0x4C;
                     ((AssetPKUP)asset).PickReferenceID = 0x7BB95F4C;
                     ((AssetPKUP)asset).PickupFlagsShort = 2;
@@ -2048,7 +2048,7 @@ namespace IndustrialPark
                     ((AssetPKUP)asset).PositionY += 0.5f;
                     break;
                 case AssetTemplate.Manliness_Purple:
-                    ((AssetPKUP)asset).BaseUshortFlags |= (ushort)(persistentShinies ? 2 : 0);
+                    ((AssetPKUP)asset).BaseFlags_Internal |= (ushort)(persistentShinies ? 2 : 0);
                     ((AssetPKUP)asset).Shape = 0x8A;
                     ((AssetPKUP)asset).PickReferenceID = 0x3C48E68A;
                     ((AssetPKUP)asset).PickupFlagsShort = 2;
@@ -2063,7 +2063,7 @@ namespace IndustrialPark
                     ((AssetPKUP)asset).PositionY += 0.5f;
                     break;
                 case AssetTemplate.GoofyGooberToken:
-                    ((AssetPKUP)asset).BaseUshortFlags |= 2;
+                    ((AssetPKUP)asset).BaseFlags_Internal |= 2;
                     ((AssetPKUP)asset).Shape = 0xB7;
                     ((AssetPKUP)asset).PickReferenceID = 0x60F808B7;
                     ((AssetPKUP)asset).PickupFlagsShort = 2;
@@ -2071,7 +2071,7 @@ namespace IndustrialPark
                     ((AssetPKUP)asset).PositionY += 0.5f;
                     break;
                 case AssetTemplate.TreasureChest:
-                    ((AssetPKUP)asset).BaseUshortFlags |= 2;
+                    ((AssetPKUP)asset).BaseFlags_Internal |= 2;
                     ((AssetPKUP)asset).Shape = 0x8A;
                     ((AssetPKUP)asset).PickReferenceID = 0xA613E48A;
                     ((AssetPKUP)asset).PickupFlagsShort = 2;
@@ -2119,7 +2119,7 @@ namespace IndustrialPark
                 case AssetTemplate.Jelly_Bucket:
                     ((AssetDYNA)asset).Version = 2;
                     ((AssetDYNA)asset).Type = DynaType.Enemy__SB__Critter;
-                    ((AssetDYNA)asset).BaseUshortFlags = 0x0D;
+                    ((AssetDYNA)asset).BaseFlags_Internal = 0x0D;
                     ((AssetDYNA)asset).DynaSpec = new DynaEnemyCritter((AssetDYNA)asset)
                     {
                         VisibilityFlag = 1,

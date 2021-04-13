@@ -16,7 +16,17 @@ namespace IndustrialPark
         public Vector3 CameraPosition { get; set; }
         public Vector3 Unknown { get; set; }
 
-        public byte[] ToByteArray()
+        public EntryFLY(BinaryReader binaryReader)
+        {
+            FrameNumer = binaryReader.ReadInt32();
+            CameraNormalizedLeft = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle());
+            CameraNormalizedUp = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle());
+            CameraNormalizedBackward = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle());
+            CameraPosition = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle());
+            Unknown = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle());
+        }
+
+        public byte[] Serialize()
         {
             List<byte> data = new List<byte>();
 
@@ -42,48 +52,34 @@ namespace IndustrialPark
 
         public override string ToString()
         {
-            return $"[{FrameNumer}] - [{CameraPosition.ToString()}]";
+            return $"[{FrameNumer}] - [{CameraPosition}]";
         }
     }
 
     public class AssetFLY : Asset
     {
-        public AssetFLY(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        [Category("Flythrough")]
+        public EntryFLY[] FLY_Entries { get; set; }
 
-        public override void Verify(ref List<string> result)
+        public AssetFLY(Section_AHDR AHDR) : base(AHDR)
         {
-            EntryFLY[] entries = FLY_Entries;
+            List<EntryFLY> entries = new List<EntryFLY>();
+
+            using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(AHDR.data)))
+                while (binaryReader.BaseStream.Position < binaryReader.BaseStream.Length)
+                    entries.Add(new EntryFLY(binaryReader));
+
+            FLY_Entries = entries.ToArray();
         }
 
-        [Category("Flythrough")]
-        public EntryFLY[] FLY_Entries
+        public override byte[] Serialize(Game game, Platform platform)
         {
-            get
-            {
-                List<EntryFLY> entries = new List<EntryFLY>();
-                using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(Data)))
-                    while (binaryReader.BaseStream.Position < binaryReader.BaseStream.Length)
-                        entries.Add(new EntryFLY
-                        {
-                            FrameNumer = binaryReader.ReadInt32(),
-                            CameraNormalizedLeft = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle()),
-                            CameraNormalizedUp = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle()),
-                            CameraNormalizedBackward = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle()),
-                            CameraPosition = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle()),
-                            Unknown = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle())
-                        });
+            List<byte> newData = new List<byte>();
 
-                return entries.ToArray();
-            }
-            set
-            {
-                List<byte> newData = new List<byte>();
+            foreach (EntryFLY i in FLY_Entries)
+                newData.AddRange(i.Serialize());
 
-                foreach (EntryFLY i in value)
-                    newData.AddRange(i.ToByteArray());
-                
-                Data = newData.ToArray();
-            }
+            return newData.ToArray();
         }
     }
 }

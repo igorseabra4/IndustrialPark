@@ -5,22 +5,29 @@ namespace IndustrialPark
 {
     public class AssetCNTR : BaseAsset
     {
-        public AssetCNTR(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
-        
-        protected override int EventStartOffset => 0xC;
-
         [Category("Counter")]
-        public short Count
+        public short Count { get; set; }
+
+        public AssetCNTR(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
-            get => ReadShort(0x8);
-            set => Write(0x8, value);
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = baseEndPosition;
+
+            Count = reader.ReadInt16();
         }
 
-        [Category("Counter")]
-        public short Padding
+        public override byte[] Serialize(Game game, Platform platform)
         {
-            get => ReadShort(0xA);
-            set => Write(0xA, value);
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(SerializeBase(platform));
+
+            writer.Write(Count);
+            writer.Write((short)0);
+
+            writer.Write(SerializeLinks(platform));
+
+            return writer.ToArray();
         }
     }
 }

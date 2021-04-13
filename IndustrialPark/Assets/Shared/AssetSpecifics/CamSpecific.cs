@@ -1,129 +1,150 @@
-﻿using System.ComponentModel;
+﻿using HipHopFile;
+using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class CamSpecific_Generic : AssetSpecific_Generic
+    public class CamSpecific_Generic : GenericAssetDataContainer
     {
-        public CamSpecific_Generic(AssetCAM asset) : base(asset, 0x60) { }
+        public CamSpecific_Generic() { }
     }
 
     public class CamSpecific_Follow : CamSpecific_Generic
     {
-        public CamSpecific_Follow(AssetCAM asset) : base(asset) { }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float Rotation { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float Distance { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float Height { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float RubberBand { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float StartSpeed { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float EndSpeed { get; set; }
 
-        [Category("Follow"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Rotation
+        public CamSpecific_Follow() { }
+        public CamSpecific_Follow(EndianBinaryReader reader)
         {
-            get => ReadFloat(0x00);
-            set => Write(0x00, value);
+            Rotation = reader.ReadSingle();
+            Distance = reader.ReadSingle();
+            Height = reader.ReadSingle();
+            RubberBand = reader.ReadSingle();
+            StartSpeed = reader.ReadSingle();
+            EndSpeed = reader.ReadSingle();
         }
-        [Category("Follow"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Distance
+
+        public override byte[] Serialize(Game game, Platform platform)
         {
-            get => ReadFloat(0x04);
-            set => Write(0x04, value);
-        }
-        [Category("Follow"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Height
-        {
-            get => ReadFloat(0x08);
-            set => Write(0x08, value);
-        }
-        [Category("Follow"), TypeConverter(typeof(FloatTypeConverter))]
-        public float RubberBand
-        {
-            get => ReadFloat(0x0C);
-            set => Write(0x0C, value);
-        }
-        [Category("Follow"), TypeConverter(typeof(FloatTypeConverter))]
-        public float StartSpeed
-        {
-            get => ReadFloat(0x10);
-            set => Write(0x10, value);
-        }
-        [Category("Follow"), TypeConverter(typeof(FloatTypeConverter))]
-        public float EndSpeed
-        {
-            get => ReadFloat(0x14);
-            set => Write(0x14, value);
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write(Rotation);
+            writer.Write(Distance);
+            writer.Write(Height);
+            writer.Write(RubberBand);
+            writer.Write(StartSpeed);
+            writer.Write(EndSpeed);
+            return writer.ToArray();
         }
     }
 
     public class CamSpecific_Shoulder : CamSpecific_Generic
     {
-        public CamSpecific_Shoulder(AssetCAM asset) : base(asset) { }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float Distance { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float Height { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float RealignSpeed { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float RealignDelay { get; set; }
 
-        [Category("Shoulder"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Distance
+        public CamSpecific_Shoulder() { }
+        public CamSpecific_Shoulder(EndianBinaryReader reader)
         {
-            get => ReadFloat(0x0);
-            set => Write(0x0, value);
+            Distance = reader.ReadSingle();
+            Height = reader.ReadSingle();
+            RealignSpeed = reader.ReadSingle();
+            RealignDelay = reader.ReadSingle();
         }
-        [Category("Shoulder"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Height
+
+        public override byte[] Serialize(Game game, Platform platform)
         {
-            get => ReadFloat(0x4);
-            set => Write(0x4, value);
-        }
-        [Category("Shoulder"), TypeConverter(typeof(FloatTypeConverter))]
-        public float RealignSpeed
-        {
-            get => ReadFloat(0x8);
-            set => Write(0x8, value);
-        }
-        [Category("Shoulder"), TypeConverter(typeof(FloatTypeConverter))]
-        public float RealignDelay
-        {
-            get => ReadFloat(0xC);
-            set => Write(0xC, value);
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write(Distance);
+            writer.Write(Height);
+            writer.Write(RealignSpeed);
+            writer.Write(RealignDelay);
+            return writer.ToArray();
         }
     }
 
     public class CamSpecific_Static : CamSpecific_Generic
     {
-        public CamSpecific_Static(AssetCAM asset) : base(asset) { }
+        public int Unused { get; set; }
 
-        [Category("Static")]
-        public int Unused
+        public CamSpecific_Static() { }
+        public CamSpecific_Static(EndianBinaryReader reader)
         {
-            get => ReadInt(0);
-            set => Write(0, value);
+            Unused = reader.ReadInt32();
+        }
+
+        public override byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write(Unused);
+            return writer.ToArray();
         }
     }
 
     public class CamSpecific_Path : CamSpecific_Generic
     {
-        public CamSpecific_Path(AssetCAM asset) : base(asset) { }
+        public AssetID Unknown_AssetID { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float TimeEnd { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float TimeDelay { get; set; }
 
-        [Category("Shoulder")]
-        public AssetID Unknown_AssetID
+        public CamSpecific_Path() 
         {
-            get => ReadUInt(0);
-            set => Write(0, value);
+            Unknown_AssetID = 0;
         }
-        [Category("Shoulder"), TypeConverter(typeof(FloatTypeConverter))]
-        public float TimeEnd
+        public CamSpecific_Path(EndianBinaryReader reader)
         {
-            get => ReadFloat(4);
-            set => Write(4, value);
+            Unknown_AssetID = reader.ReadUInt32();
+            TimeEnd = reader.ReadSingle();
+            TimeDelay = reader.ReadSingle();
         }
-        [Category("Shoulder"), TypeConverter(typeof(FloatTypeConverter))]
-        public float TimeDelay
+
+        public override byte[] Serialize(Game game, Platform platform)
         {
-            get => ReadFloat(8);
-            set => Write(8, value);
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write(Unknown_AssetID);
+            writer.Write(TimeEnd);
+            writer.Write(TimeDelay);
+            return writer.ToArray();
         }
+
+        public override bool HasReference(uint assetID) => Unknown_AssetID == assetID;
+        public override void Verify(ref List<string> result) => Asset.Verify(Unknown_AssetID, ref result);
     }
 
     public class CamSpecific_StaticFollow : CamSpecific_Generic
     {
-        public CamSpecific_StaticFollow(AssetCAM asset) : base(asset) { }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float RubberBand { get; set; }
 
-        [Category("Shoulder"), TypeConverter(typeof(FloatTypeConverter))]
-        public float RubberBand
+        public CamSpecific_StaticFollow() { }
+        public CamSpecific_StaticFollow(EndianBinaryReader reader)
         {
-            get => ReadFloat(0);
-            set => Write(0, value);
+            RubberBand = reader.ReadSingle();
+        }
+
+        public override byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write(RubberBand);
+            return writer.ToArray();
         }
     }
 }

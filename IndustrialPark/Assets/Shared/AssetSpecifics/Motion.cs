@@ -17,35 +17,34 @@ namespace IndustrialPark
         Other = 6,
     }
 
-    public class Motion : AssetSpecific_Generic
+    public class Motion : GenericAssetDataContainer
     {
-        public Motion(AssetWithMotion asset, MotionType type) : base(asset, asset.MotionStart)
+        [Browsable(false)]
+        public MotionType Type { get; set; }
+        public byte UseBanking { get; set; }
+        public FlagBitmask MotionFlags { get; set; } = ShortFlagsDescriptor(
+            "Face movement direction",
+            null,
+            "Don't start moving");
+
+        public Motion(MotionType type)
         {
-            Settings = asset.ShortFlagsDescriptor(2 + specificStart,
-                 "Face movement direction", "Unknown", "Don't start moving");
             Type = type;
         }
 
-        [Browsable(false)]
-        public MotionType Type
+        public Motion(EndianBinaryReader reader) : this((MotionType)reader.ReadByte())
         {
-            get => (MotionType)ReadByte(0);
-            set => Write(0, (byte)value);
+            UseBanking = reader.ReadByte();
+            MotionFlags.FlagValueShort = reader.ReadUInt16();
         }
 
-        public byte UseBanking
+        public override byte[] Serialize(Game game, Platform platform)
         {
-            get => ReadByte(1);
-            set => Write(1, value);
-        }
-
-        public DynamicTypeDescriptor Settings { get; set; }
-
-        [Browsable(false)]
-        public ushort Flags
-        {
-            get => ReadByte(2);
-            set => Write(2, value);
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write((byte)Type);
+            writer.Write(UseBanking);
+            writer.Write(MotionFlags.FlagValueShort);
+            return writer.ToArray();
         }
 
         protected int LocalFrameCounter = -1;
@@ -73,146 +72,160 @@ namespace IndustrialPark
 
     public class Motion_ExtendRetract : Motion
     {
-        public Motion_ExtendRetract(AssetWithMotion asset) : base(asset, MotionType.ExtendRetract) { }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float RetractPositionX { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float RetractPositionY { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float RetractPositionZ { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float ExtendDeltaPositionX { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float ExtendDeltaPositionY { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float ExtendDeltaPositionZ { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float ExtendTime { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float ExtendWaitTime { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float RetractTime { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float RetractWaitTime { get; set; }
 
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float RetractPositionX
+        public Motion_ExtendRetract() : base(MotionType.ExtendRetract) { }
+
+        public Motion_ExtendRetract(EndianBinaryReader reader) : base(reader)
         {
-            get => ReadFloat(4);
-            set => Write(4, value);
+            RetractPositionX = reader.ReadSingle();
+            RetractPositionY = reader.ReadSingle();
+            RetractPositionZ = reader.ReadSingle();
+            ExtendDeltaPositionX = reader.ReadSingle();
+            ExtendDeltaPositionY = reader.ReadSingle();
+            ExtendDeltaPositionZ = reader.ReadSingle();
+            ExtendTime = reader.ReadSingle();
+            ExtendWaitTime = reader.ReadSingle();
+            RetractTime = reader.ReadSingle();
+            RetractWaitTime = reader.ReadSingle();
         }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float RetractPositionY
+
+        public override byte[] Serialize(Game game, Platform platform)
         {
-            get => ReadFloat(8);
-            set => Write(8, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float RetractPositionZ
-        {
-            get => ReadFloat(0xC);
-            set => Write(0xC, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float ExtendDeltaPositionX
-        {
-            get => ReadFloat(0x10);
-            set => Write(0x10, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float ExtendDeltaPositionY
-        {
-            get => ReadFloat(0x14);
-            set => Write(0x14, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float ExtendDeltaPositionZ
-        {
-            get => ReadFloat(0x18);
-            set => Write(0x18, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float ExtendTime
-        {
-            get => ReadFloat(0x1C);
-            set => Write(0x1C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float ExtendWaitTime
-        {
-            get => ReadFloat(0x20);
-            set => Write(0x20, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float RetractTime
-        {
-            get => ReadFloat(0x24);
-            set => Write(0x24, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float RetractWaitTime
-        {
-            get => ReadFloat(0x28);
-            set => Write(0x28, value);
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write(base.Serialize(game, platform));
+
+            writer.Write(RetractPositionX);
+            writer.Write(RetractPositionY);
+            writer.Write(RetractPositionZ);
+            writer.Write(ExtendDeltaPositionX);
+            writer.Write(ExtendDeltaPositionY);
+            writer.Write(ExtendDeltaPositionZ);
+            writer.Write(ExtendTime);
+            writer.Write(ExtendWaitTime);
+            writer.Write(RetractTime);
+            writer.Write(RetractWaitTime);
+
+            return writer.ToArray();
         }
     }
 
     public class Motion_Orbit : Motion
     {
-        public Motion_Orbit(AssetWithMotion asset) : base(asset, MotionType.Orbit) { }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float CenterX { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float CenterY { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float CenterZ { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float Width { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float Height { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float Period { get; set; }
 
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float CenterX
+        public Motion_Orbit() : base(MotionType.Orbit) { }
+        public Motion_Orbit(EndianBinaryReader reader) : base(reader)
         {
-            get => ReadFloat(0x4);
-            set => Write(0x4, value);
+            CenterX = reader.ReadSingle();
+            CenterY = reader.ReadSingle();
+            CenterZ = reader.ReadSingle();
+            Width = reader.ReadSingle();
+            Height = reader.ReadSingle();
+            Period = reader.ReadSingle();
         }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float CenterY
+
+        public override byte[] Serialize(Game game, Platform platform)
         {
-            get => ReadFloat(0x8);
-            set => Write(0x8, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float CenterZ
-        {
-            get => ReadFloat(0xC);
-            set => Write(0xC, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Width
-        {
-            get => ReadFloat(0x10);
-            set => Write(0x10, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Height
-        {
-            get => ReadFloat(0x14);
-            set => Write(0x14, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Period
-        {
-            get => ReadFloat(0x18);
-            set => Write(0x18, value);
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write(base.Serialize(game, platform));
+
+            writer.Write(CenterX);
+            writer.Write(CenterY);
+            writer.Write(CenterZ);
+            writer.Write(Width);
+            writer.Write(Height);
+            writer.Write(Period);
+
+            return writer.ToArray();
         }
     }
 
     public class Motion_Spline : Motion
     {
-        public Motion_Spline(AssetWithMotion asset) : base(asset, MotionType.Spline) { }
+        public int Unknown { get; set; }
 
-        public int Unknown
+        public Motion_Spline() : base(MotionType.Spline) { }
+        public Motion_Spline(EndianBinaryReader reader) : base(reader)
         {
-            get => ReadInt(0x4);
-            set => Write(0x4, value);
+            Unknown = reader.ReadInt32();
+        }
+
+        public override byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write(base.Serialize(game, platform));
+            writer.Write(Unknown);
+            return writer.ToArray();
         }
     }
 
     public class Motion_MovePoint : Motion
     {
-        public Motion_MovePoint(AssetWithMotion asset, Vector3 initialPosition) : base(asset, MotionType.MovePoint)
+        public FlagBitmask MovePointFlags { get; set; } = IntFlagsDescriptor();
+        public AssetID MVPT_AssetID { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+
+        public float Speed { get; set; }
+
+        public Motion_MovePoint(Vector3 initialPosition) : base(MotionType.MovePoint)
         {
             this.initialPosition = initialPosition;
 
-            MovePoint_Flags = asset.IntFlagsDescriptor(4 + specificStart);
+            MVPT_AssetID = 0;
         }
 
-        public DynamicTypeDescriptor MovePoint_Flags { get; set; }
+        public Motion_MovePoint(EndianBinaryReader reader, Vector3 initialPosition) : base(reader)
+        {
+            this.initialPosition = initialPosition;
 
-        public AssetID MVPT_AssetID
-        {
-            get => ReadUInt(0x8);
-            set => Write(0x8, value);
+            MovePointFlags.FlagValueInt = reader.ReadUInt32();
+            MVPT_AssetID = reader.ReadUInt32();
+            Speed = reader.ReadSingle();
         }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Speed
+
+        public override byte[] Serialize(Game game, Platform platform)
         {
-            get => ReadFloat(0xC);
-            set => Write(0xC, value);
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write(base.Serialize(game, platform));
+
+            writer.Write(MovePointFlags.FlagValueInt);
+            writer.Write(MVPT_AssetID);
+            writer.Write(Speed);
+
+            return writer.ToArray();
         }
-        
+
         public override bool HasReference(uint assetID)
         {
             return MVPT_AssetID == assetID;
@@ -222,7 +235,7 @@ namespace IndustrialPark
         {
             if (MVPT_AssetID == 0)
                 result.Add("MovePoint PLAT with MVPT_AssetID set to 0");
-            Asset.Verify(MVPT_AssetID, ref result);
+            Verify(MVPT_AssetID, ref result);
         }
 
         private AssetMVPT currentMVPT;
@@ -281,152 +294,143 @@ namespace IndustrialPark
 
             return Matrix.Translation(oldPosition);
         }
+
+        public void SetInitialPosition(Vector3 position)
+        {
+            initialPosition = position;
+        }
     }
 
-    public class Motion_Mechanism_TSSM : Motion_Mechanism
+    public enum EMovementType : byte
     {
-        public Motion_Mechanism_TSSM(AssetWithMotion asset) : base(asset) { }
+        Slide = 0,
+        Rotate = 1,
+        SlideAndRotate = 2,
+        SlideThenRotate = 3,
+        RotateThenSlide = 4
+    }
 
-        public byte ShrinkType
-        {
-            get => ReadByte(8);
-            set => Write(8, value);
-        }
-        public byte Unknown2
-        {
-            get => ReadByte(9);
-            set => Write(9, value);
-        }
-        public byte Unknown3
-        {
-            get => ReadByte(10);
-            set => Write(10, value);
-        }
-        public byte Unknown4
-        {
-            get => ReadByte(11);
-            set => Write(11, value);
-        }
-        public float ShrinkSize
-        {
-            get => ReadFloat(0x30 + MechanismOffset);
-            set => Write(0x30 + MechanismOffset, value);
-        }
-        public float ShrinkTime
-        {
-            get => ReadFloat(0x34 + MechanismOffset);
-            set => Write(0x34 + MechanismOffset, value);
-        }
+    public enum EMechanismFlags : byte
+    {
+        None = 0,
+        ReturnToStart = 1,
+        DontLoop = 2,
+        ReturnToStartAndDontLoop = 3
+    }
+
+    public enum Axis : byte
+    {
+        X = 0,
+        Y = 1,
+        Z = 2
     }
 
     public class Motion_Mechanism : Motion
     {
-        public Motion_Mechanism(AssetWithMotion asset) : base(asset, MotionType.Mechanism)
+        public EMovementType MovementType { get; set; }
+        public EMechanismFlags MovementLoopMode { get; set; }
+        public Axis SlideAxis { get; set; }
+        public Axis RotateAxis { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float SlideDistance { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float SlideTime { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float SlideAccelTime { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float SlideDecelTime { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float RotateDistance { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float RotateTime { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float RotateAccelTime { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float RotateDecelTime { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float RetractDelay { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float PostRetractDelay { get; set; }
+
+        [Description("Movie only")]
+        public byte ShrinkType { get; set; }
+        [Description("Movie only")]
+        public byte Unknown2 { get; set; }
+        [Description("Movie only")]
+        public byte Unknown3 { get; set; }
+        [Description("Movie only")]
+        public byte Unknown4 { get; set; }
+
+        [TypeConverter(typeof(FloatTypeConverter)), Description("Movie only")]
+        public float ShrinkSize { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter)), Description("Movie only")]
+        public float ShrinkTime { get; set; }
+
+        public Motion_Mechanism() : base(MotionType.Mechanism) { }
+        public Motion_Mechanism(EndianBinaryReader reader, Game game) : base(reader) 
         {
-            MovementLoopMode = asset.ByteFlagsDescriptor(5 + specificStart,
-                "Return to start after moving", "Don't loop");
+            MovementType = (EMovementType)reader.ReadByte();
+            MovementLoopMode = (EMechanismFlags)reader.ReadByte();
+            SlideAxis = (Axis)reader.ReadByte();
+            RotateAxis = (Axis)reader.ReadByte();
+            if (game == Game.Incredibles)
+            {
+                ShrinkType = reader.ReadByte();
+                Unknown2 = reader.ReadByte();
+                Unknown3 = reader.ReadByte();
+                Unknown4 = reader.ReadByte();
+            }
+            SlideDistance = reader.ReadSingle();
+            SlideTime = reader.ReadSingle();
+            SlideAccelTime = reader.ReadSingle();
+            SlideDecelTime = reader.ReadSingle();
+            RotateDistance = reader.ReadSingle();
+            RotateTime = reader.ReadSingle();
+            RotateAccelTime = reader.ReadSingle();
+            RotateDecelTime = reader.ReadSingle();
+            RetractDelay = reader.ReadSingle();
+            PostRetractDelay = reader.ReadSingle();
+            if (game == Game.Incredibles)
+            {
+                ShrinkSize = reader.ReadSingle();
+                ShrinkTime = reader.ReadSingle();
+            }
         }
 
-        public enum EMovementType : byte
+        public override byte[] Serialize(Game game, Platform platform)
         {
-            Slide = 0,
-            Rotate = 1,
-            SlideAndRotate = 2,
-            SlideThenRotate = 3,
-            RotateThenSlide = 4
-        }
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write(base.Serialize(game, platform));
 
-        public enum Axis : byte
-        {
-            X = 0,
-            Y = 1,
-            Z = 2
-        }
+            writer.Write((byte)MovementType);
+            writer.Write((byte)MovementLoopMode);
+            writer.Write((byte)SlideAxis);
+            writer.Write((byte)RotateAxis);
+            if (game == Game.Incredibles)
+            {
+                writer.Write(ShrinkType);
+                writer.Write(Unknown2);
+                writer.Write(Unknown3);
+                writer.Write(Unknown4);
+            }
+            writer.Write(SlideDistance);
+            writer.Write(SlideTime);
+            writer.Write(SlideAccelTime);
+            writer.Write(SlideDecelTime);
+            writer.Write(RotateDistance);
+            writer.Write(RotateTime);
+            writer.Write(RotateAccelTime);
+            writer.Write(RotateDecelTime);
+            writer.Write(RetractDelay);
+            writer.Write(PostRetractDelay);
+            if (game == Game.Incredibles)
+            {
+                writer.Write(ShrinkSize);
+                writer.Write(ShrinkTime);
+            }
 
-        public EMovementType MovementType
-        {
-            get => (EMovementType)ReadByte(4);
-            set => Write(4, (byte)value);
+            return writer.ToArray();
         }
-        public DynamicTypeDescriptor MovementLoopMode { get; set; }
-        [Browsable(false)]
-        public byte MovementLoopModeByte
-        {
-            get => ReadByte(5);
-            set => Write(5, value);
-        }
-        public Axis SlideAxis
-        {
-            get => (Axis)ReadByte(6);
-            set => Write(6, (byte)value);
-        }
-        public Axis RotateAxis
-        {
-            get => (Axis)ReadByte(7);
-            set => Write(7, (byte)value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float SlideDistance
-        {
-            get => ReadFloat(0x8 + MechanismOffset);
-            set => Write(0x8 + MechanismOffset, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float SlideTime
-        {
-            get => ReadFloat(0xC + MechanismOffset);
-            set => Write(0xC + MechanismOffset, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float SlideAccelTime
-        {
-            get => ReadFloat(0x10 + MechanismOffset);
-            set => Write(0x10 + MechanismOffset, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float SlideDecelTime
-        {
-            get => ReadFloat(0x14 + MechanismOffset);
-            set => Write(0x14 + MechanismOffset, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float RotateDistance
-        {
-            get => ReadFloat(0x18 + MechanismOffset);
-            set => Write(0x18 + MechanismOffset, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float RotateTime
-        {
-            get => ReadFloat(0x1C + MechanismOffset);
-            set => Write(0x1C + MechanismOffset, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float RotateAccelTime
-        {
-            get => ReadFloat(0x20 + MechanismOffset);
-            set => Write(0x20 + MechanismOffset, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float RotateDecelTime
-        {
-            get => ReadFloat(0x24 + MechanismOffset);
-            set => Write(0x24 + MechanismOffset, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float RetractDelay
-        {
-            get => ReadFloat(0x28 + MechanismOffset);
-            set => Write(0x28 + MechanismOffset, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float PostRetractDelay
-        {
-            get => ReadFloat(0x2C + MechanismOffset);
-            set => Write(0x2C + MechanismOffset, value);
-        }
-
-        protected int MechanismOffset => asset.game == Game.Incredibles ? 4 : 0;
 
         public enum CurrentMovementAction
         {
@@ -460,7 +464,7 @@ namespace IndustrialPark
             {
                 float translationMultiplier = 0;
 
-                if ((MovementLoopModeByte & 1) == 0)
+                if (((int)MovementLoopMode & 1) == 0)
                     switch (currentMovementAction)
                     {
                         case CurrentMovementAction.StartWait:
@@ -474,7 +478,7 @@ namespace IndustrialPark
 
                             if (LocalFrameCounter >= GoingRange)
                             {
-                                if ((MovementLoopModeByte & 2) == 0)
+                                if (((int)MovementLoopMode & 2) == 0)
                                     amountOfMovementsPerformed++;
                                 else
                                     amountOfMovementsPerformed = 0;
@@ -545,7 +549,7 @@ namespace IndustrialPark
             {
                 float rotationMultiplier = 0;
 
-                if ((MovementLoopModeByte & 1) == 0)
+                if (((int)MovementLoopMode & 1) == 0)
                     switch (currentMovementAction)
                     {
                         case CurrentMovementAction.StartWait:
@@ -559,7 +563,7 @@ namespace IndustrialPark
 
                             if (LocalFrameCounter >= GoingRange)
                             {
-                                if ((MovementLoopModeByte & 2) == 0)
+                                if (((int)MovementLoopMode & 2) == 0)
                                     amountOfMovementsPerformed++;
                                 else
                                     amountOfMovementsPerformed = 0;
@@ -625,54 +629,30 @@ namespace IndustrialPark
 
     public class Motion_Pendulum : Motion
     {
-        public Motion_Pendulum(AssetWithMotion asset) : base(asset, MotionType.Pendulum) { }
-        
-        public byte PendulumFlags
+        [TypeConverter(typeof(HexByteTypeConverter))]
+        public byte PendulumFlags { get; set; }
+        [TypeConverter(typeof(HexByteTypeConverter))]
+        public byte Plane { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float Length { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float Range { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float Period { get; set; }
+        [TypeConverter(typeof(FloatTypeConverter))]
+        public float Phase { get; set; }
+
+        public Motion_Pendulum() : base(MotionType.Pendulum) { }
+        public Motion_Pendulum(EndianBinaryReader reader) : base(reader)
         {
-            get => ReadByte(4);
-            set => Write(4, value);
-        }
-        
-        public byte Plane
-        {
-            get => ReadByte(5);
-            set => Write(5, value);
-        }
-        
-        public byte Padding1
-        {
-            get => ReadByte(6);
-            set => Write(6, value);
-        }
-        
-        public byte Padding2
-        {
-            get => ReadByte(7);
-            set => Write(7, value);
-        }
-        
-        public float Length
-        {
-            get => ReadFloat(8);
-            set => Write(8, value);
-        }
-        
-        public float Range
-        {
-            get => ReadFloat(12);
-            set => Write(12, value);
-        }
-        
-        public float Period
-        {
-            get => ReadFloat(16);
-            set => Write(16, value);
-        }
-        
-        public float Phase
-        {
-            get => ReadFloat(20);
-            set => Write(20, value);
+            PendulumFlags = reader.ReadByte();
+            Plane = reader.ReadByte();
+            reader.ReadByte();
+            reader.ReadByte();
+            Length = reader.ReadSingle();
+            Range = reader.ReadSingle();
+            Period = reader.ReadSingle();
+            Phase = reader.ReadSingle();
         }
     }
 }

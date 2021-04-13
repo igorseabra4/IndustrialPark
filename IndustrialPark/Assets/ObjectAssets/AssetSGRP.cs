@@ -1,9 +1,6 @@
 ﻿using HipHopFile;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-
 
 namespace IndustrialPark
 {
@@ -21,18 +18,113 @@ namespace IndustrialPark
             Volume = 0.8f;
         }
 
-        public static int SizeOfEntry => 0x10;
+        public EntrySGRP(EndianBinaryReader reader)
+        {
+            Sound_AssetID = reader.ReadUInt32();
+            Volume = reader.ReadSingle();
+            UnknownInt08 = reader.ReadInt32();
+            UnknownInt0C = reader.ReadInt32();
+        }
+
+        public byte[] Serialize(Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write(Sound_AssetID);
+            writer.Write(Volume);
+            writer.Write(UnknownInt08);
+            writer.Write(UnknownInt0C);
+            return writer.ToArray();
+        }
 
         public override string ToString() => $"[{Program.MainForm.GetAssetNameFromID(Sound_AssetID)}] - [{Volume}]";
     }
 
     public class AssetSGRP : BaseAsset
     {
-        public AssetSGRP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        private const string categoryName = "Sound Group";
+
+        [Category(categoryName)]
+        public int UnknownInt08 { get; set; }
+        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
+        public byte UnknownByte0D { get; set; }
+        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
+        public byte UnknownByte0E { get; set; }
+        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
+        public byte UnknownByte0F { get; set; }
+        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
+        public byte UnknownByte10 { get; set; }
+        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
+        public byte PlayGlobally { get; set; }
+        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
+        public byte ChooseRandomEntry { get; set; }
+        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
+        public byte UnknownByte13 { get; set; }
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float InnerRadius { get; set; }
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float OuterRadius { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt1C { get; set; }
+        [Category(categoryName)]
+        public EntrySGRP[] SGRP_Entries { get; set; }
+
+        public AssetSGRP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = baseEndPosition;
+
+            UnknownInt08 = reader.ReadInt32();
+
+            byte AmountOfReferences = reader.ReadByte();
+            UnknownByte0D = reader.ReadByte();
+            UnknownByte0E = reader.ReadByte();
+            UnknownByte0F = reader.ReadByte();
+
+            UnknownByte10 = reader.ReadByte();
+            PlayGlobally = reader.ReadByte();
+            ChooseRandomEntry = reader.ReadByte();
+            UnknownByte13 = reader.ReadByte();
+
+            InnerRadius = reader.ReadSingle();
+            OuterRadius = reader.ReadSingle();
+            UnknownInt1C = reader.ReadInt32();
+
+            SGRP_Entries = new EntrySGRP[AmountOfReferences];
+            for (int i = 0; i < SGRP_Entries.Length; i++)
+                SGRP_Entries[i] = new EntrySGRP(reader);
+        }
+
+        public override byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write(SerializeBase(platform));
+
+            writer.Write(UnknownInt08);
+
+            writer.Write((byte)SGRP_Entries.Length);
+            writer.Write(UnknownByte0D);
+            writer.Write(UnknownByte0E);
+            writer.Write(UnknownByte0F);
+
+            writer.Write(UnknownByte10);
+            writer.Write(PlayGlobally);
+            writer.Write(ChooseRandomEntry);
+            writer.Write(UnknownByte13);
+
+            writer.Write(InnerRadius);
+            writer.Write(OuterRadius);
+            writer.Write(UnknownInt1C);
+
+            foreach (var i in SGRP_Entries)
+                writer.Write(i.Serialize(platform));
+
+            writer.Write(SerializeLinks(platform));
+            return writer.ToArray();
+        }
 
         public override bool HasReference(uint assetID)
         {
-            foreach (EntrySGRP i in SGRP_Entries)
+            foreach (var i in SGRP_Entries)
                 if (i.Sound_AssetID == assetID)
                     return true;
 
@@ -43,137 +135,11 @@ namespace IndustrialPark
         {
             base.Verify(ref result);
 
-            foreach (EntrySGRP i in SGRP_Entries)
+            foreach (var i in SGRP_Entries)
             {
                 if (i.Sound_AssetID == 0)
                     result.Add("SGRP entry with Sound_AssetID set to 0");
                 Verify(i.Sound_AssetID, ref result);
-            }
-        }
-
-        [Category("Sound Group")]
-        public int UnknownInt08
-        {
-            get => ReadInt(0x08);
-            set => Write(0x08, value);
-        }
-
-        [Category("Sound Group"), ReadOnly(true)]
-        public byte AmountOfReferences
-        {
-            get => ReadByte(0x0C);
-            set => Write(0x0C, value);
-        }
-
-        [Category("Sound Group"), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte0D
-        {
-            get => ReadByte(0x0D);
-            set => Write(0x0D, value);
-        }
-
-        [Category("Sound Group"), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte0E
-        {
-            get => ReadByte(0x0E);
-            set => Write(0x0E, value);
-        }
-
-        [Category("Sound Group"), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte0F
-        {
-            get => ReadByte(0x0F);
-            set => Write(0x0F, value);
-        }
-
-        [Category("Sound Group"), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte10
-        {
-            get => ReadByte(0x10);
-            set => Write(0x10, value);
-        }
-
-        [Category("Sound Group"), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte PlayGlobally
-        {
-            get => ReadByte(0x11);
-            set => Write(0x11, value);
-        }
-
-        [Category("Sound Group"), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte ChooseRandomEntry
-        {
-            get => ReadByte(0x12);
-            set => Write(0x12, value);
-        }
-
-        [Category("Sound Group"), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte13
-        {
-            get => ReadByte(0x13);
-            set => Write(0x13, value);
-        }
-
-        [Category("Sound Group"), TypeConverter(typeof(FloatTypeConverter))]
-        public float InnerRadius
-        {
-            get => ReadFloat(0x14);
-            set => Write(0x14, value);
-        }
-
-        [Category("Sound Group"), TypeConverter(typeof(FloatTypeConverter))]
-        public float OuterRadius
-        {
-            get => ReadFloat(0x18);
-            set => Write(0x18, value);
-        }
-
-        [Category("Sound Group")]
-        public int UnknownInt1C
-        {
-            get => ReadInt(0x1C);
-            set => Write(0x1C, value);
-        }
-
-        private int StartOfSGRPEntries => 0x20;
-
-        [Category("Sound Group")]
-        public EntrySGRP[] SGRP_Entries
-        {
-            get
-            {
-                List<EntrySGRP> entries = new List<EntrySGRP>();
-
-                for (int i = 0; i < AmountOfReferences; i++)
-                {
-                    entries.Add(new EntrySGRP()
-                    {
-                        Sound_AssetID = ReadUInt(StartOfSGRPEntries + i * EntrySGRP.SizeOfEntry),
-                        Volume = ReadFloat(StartOfSGRPEntries + i * EntrySGRP.SizeOfEntry + 0x04),
-                        UnknownInt08 = ReadInt(StartOfSGRPEntries + i * EntrySGRP.SizeOfEntry + 0x08),
-                        UnknownInt0C = ReadInt(StartOfSGRPEntries + i * EntrySGRP.SizeOfEntry + 0x0C)
-                    });
-                }
-
-                return entries.ToArray();
-            }
-            set
-            {
-                List<byte> newData = new List<byte>();
-                newData.AddRange(Data.Take(StartOfSGRPEntries));
-
-                foreach (EntrySGRP i in value)
-                {
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.Sound_AssetID)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.Volume)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.UnknownInt08)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.UnknownInt0C)));
-                }
-
-                newData.AddRange(Data.Skip(StartOfSGRPEntries + AmountOfReferences * EntrySGRP.SizeOfEntry));
-
-                Data = newData.ToArray();
-                AmountOfReferences = (byte)value.Length;
             }
         }
     }

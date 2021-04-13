@@ -1,15 +1,58 @@
-﻿using System.Collections.Generic;
+﻿using HipHopFile;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaEffectRumbleSphere : DynaBase
+    public class DynaEffectRumbleSphere : AssetDYNA
     {
-        public string Note => "Version is always 1";
+        private const string dynaCategoryName = "effect:Rumble Spherical Emitter";
 
-        public override int StructSize => 0x18;
+        protected override int constVersion => 1;
 
-        public DynaEffectRumbleSphere(AssetDYNA asset) : base(asset) { }
+        [Category(dynaCategoryName)]
+        public AssetID Rumble_AssetID { get; set; }
+        [Category(dynaCategoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float UnknownFloat_04 { get; set; }
+        [Category(dynaCategoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float UnknownFloat_08 { get; set; }
+        [Category(dynaCategoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float UnknownFloat_0C { get; set; }
+        [Category(dynaCategoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float UnknownFloat_10 { get; set; }
+        [Category(dynaCategoryName)]
+        public short UnknownShort_14 { get; set; }
+        [Category(dynaCategoryName)]
+        public short UnknownShort_16 { get; set; }
+
+        public DynaEffectRumbleSphere(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = dynaDataStartPosition;
+
+            Rumble_AssetID = reader.ReadUInt32();
+            UnknownFloat_04 = reader.ReadSingle();
+            UnknownFloat_08 = reader.ReadSingle();
+            UnknownFloat_0C = reader.ReadSingle();
+            UnknownFloat_10 = reader.ReadSingle();
+            UnknownShort_14 = reader.ReadInt16();
+            UnknownShort_16 = reader.ReadInt16();
+        }
+
+        protected override byte[] SerializeDyna(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(Rumble_AssetID);
+            writer.Write(UnknownFloat_04);
+            writer.Write(UnknownFloat_08);
+            writer.Write(UnknownFloat_0C);
+            writer.Write(UnknownFloat_10);
+            writer.Write(UnknownShort_14);
+            writer.Write(UnknownShort_16);
+
+            return writer.ToArray();
+        }
 
         public override bool HasReference(uint assetID)
         {
@@ -21,47 +64,7 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
-            Asset.Verify(Rumble_AssetID, ref result);
-        }
-
-        public AssetID Rumble_AssetID
-        {
-            get => ReadUInt(0x00);
-            set => Write(0x00, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_04
-        {
-            get => ReadFloat(0x04);
-            set => Write(0x04, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_08
-        {
-            get => ReadFloat(0x08);
-            set => Write(0x08, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_0C
-        {
-            get => ReadFloat(0x0C);
-            set => Write(0x0C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_10
-        {
-            get => ReadFloat(0x10);
-            set => Write(0x10, value);
-        }
-        public short UnknownShort_14
-        {
-            get => ReadShort(0x14);
-            set => Write(0x14, value);
-        }
-        public short UnknownShort_16
-        {
-            get => ReadShort(0x16);
-            set => Write(0x16, value);
+            Verify(Rumble_AssetID, ref result);
         }
     }
 }

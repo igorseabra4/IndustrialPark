@@ -329,13 +329,12 @@ namespace IndustrialPark
                 dontRenderBUTN = AssetBUTN.dontRender,
                 dontRenderCAM = AssetCAM.dontRender,
                 dontRenderDSTR = AssetDSTR.dontRender,
-                dontRenderDUPC = AssetDUPC.dontRender,
                 dontRenderDYNA = AssetDYNA.dontRender,
                 dontRenderEGEN = AssetEGEN.dontRender,
                 dontRenderHANG = AssetHANG.dontRender,
                 dontRenderLITE = AssetLITE.dontRender,
                 dontRenderMRKR = AssetMRKR.dontRender,
-                dontRenderMVPT = AssetMVPT_Scooby.dontRender,
+                dontRenderMVPT = AssetMVPT.dontRender,
                 dontRenderPEND = AssetPEND.dontRender,
                 dontRenderPKUP = AssetPKUP.dontRender,
                 dontRenderPLAT = AssetPLAT.dontRender,
@@ -437,9 +436,6 @@ namespace IndustrialPark
 
             dSTRToolStripMenuItem.Checked = !ipSettings.dontRenderDSTR;
             AssetDSTR.dontRender = ipSettings.dontRenderDSTR;
-
-            dUPCToolStripMenuItem.Checked = !ipSettings.dontRenderDUPC;
-            AssetDUPC.dontRender = ipSettings.dontRenderDUPC;
 
             dYNAToolStripMenuItem.Checked = !ipSettings.dontRenderDYNA;
             AssetDYNA.dontRender = ipSettings.dontRenderDYNA;
@@ -990,7 +986,7 @@ namespace IndustrialPark
         private void mVPTToolStripMenuItem_Click(object sender, EventArgs e)
         {
             mVPTToolStripMenuItem.Checked = !mVPTToolStripMenuItem.Checked;
-            AssetMVPT_Scooby.dontRender = !mVPTToolStripMenuItem.Checked;
+            AssetMVPT.dontRender = !mVPTToolStripMenuItem.Checked;
         }
 
         private void pKUPToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1093,12 +1089,6 @@ namespace IndustrialPark
         {
             lITEToolStripMenuItem.Checked = !lITEToolStripMenuItem.Checked;
             AssetLITE.dontRender = !lITEToolStripMenuItem.Checked;
-        }
-
-        private void dUPCToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            dUPCToolStripMenuItem.Checked = !dUPCToolStripMenuItem.Checked;
-            AssetDUPC.dontRender = !dUPCToolStripMenuItem.Checked;
         }
 
         private void sPLNToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1557,9 +1547,6 @@ namespace IndustrialPark
             if (lITEToolStripMenuItem.Checked)
                 lITEToolStripMenuItem_Click(sender, e);
 
-            if (dUPCToolStripMenuItem.Checked)
-                dUPCToolStripMenuItem_Click(sender, e);
-
             if (sPLNToolStripMenuItem.Checked)
                 sPLNToolStripMenuItem_Click(sender, e);
         }
@@ -1631,9 +1618,6 @@ namespace IndustrialPark
 
             if (!lITEToolStripMenuItem.Checked)
                 lITEToolStripMenuItem_Click(sender, e);
-
-            if (!dUPCToolStripMenuItem.Checked)
-                dUPCToolStripMenuItem_Click(sender, e);
 
             if (!sPLNToolStripMenuItem.Checked)
                 sPLNToolStripMenuItem_Click(sender, e);

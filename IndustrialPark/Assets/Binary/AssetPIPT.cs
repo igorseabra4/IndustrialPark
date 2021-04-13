@@ -207,8 +207,6 @@ namespace IndustrialPark
         [Category("PIPT Entry (Movie only)")]
         public int Unknown { get; set; }
 
-        public static int SizeOfStruct(Game game) => game == Game.Incredibles ? 16 : 12;
-
         public EntryPIPT()
         {
             ModelAssetID = 0;
@@ -234,19 +232,95 @@ namespace IndustrialPark
         {
             return ModelAssetID.GetHashCode();
         }
+
+        public EntryPIPT(EndianBinaryReader reader, Game game)
+        {
+            ModelAssetID = reader.ReadUInt32();
+            SubObjectBits = reader.ReadInt32();
+            PipeFlags = reader.ReadInt32();
+            if (game == Game.Incredibles)
+                Unknown = reader.ReadInt32();
+        }
+
+        public byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(ModelAssetID);
+            writer.Write(SubObjectBits);
+            writer.Write(PipeFlags);
+
+            if (game == Game.Incredibles)
+                writer.Write(Unknown);
+
+            return writer.ToArray();
+        }
     }
 
     public class AssetPIPT : Asset
     {
-        public AssetPIPT(Section_AHDR AHDR, Game game, Platform platform, OnPipeInfoTableEdited onPipeInfoTableEdited) : base(AHDR, game, platform)
+        private EntryPIPT[] _pipt_Entries { get; set; }
+        [Category("Pipe Info Table")]
+        public EntryPIPT[] PIPT_Entries
         {
-            this.onPipeInfoTableEdited = onPipeInfoTableEdited;
+            get => _pipt_Entries;
+            set
+            {
+                _pipt_Entries = value; 
+                UpdateDictionary();
+            }
+        }
+
+        public AssetPIPT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+
+            _pipt_Entries = new EntryPIPT[reader.ReadInt32()];
+
+            for (int i = 0; i < _pipt_Entries.Length; i++)
+                _pipt_Entries[i] = new EntryPIPT(reader, game);
+
             UpdateDictionary();
         }
-        public AssetPIPT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+
+        public override byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(_pipt_Entries.Length);
+
+            foreach (var l in _pipt_Entries)
+                writer.Write(l.Serialize(game, platform));
+
+            return writer.ToArray();
+        }
+
+        public AssetPIPT(Section_AHDR AHDR, Game game, Platform platform, OnPipeInfoTableEdited onPipeInfoTableEdited) : this(AHDR, game, platform)
+        {
+            this.onPipeInfoTableEdited = onPipeInfoTableEdited;
+        }
 
         public delegate void OnPipeInfoTableEdited(Dictionary<uint, (int, BlendFactorType, BlendFactorType)[]> blendModes);
-        OnPipeInfoTableEdited onPipeInfoTableEdited;
+        private readonly OnPipeInfoTableEdited onPipeInfoTableEdited;
+
+        public override bool HasReference(uint assetID)
+        {
+            foreach (EntryPIPT a in PIPT_Entries)
+                if (a.ModelAssetID == assetID)
+                    return true;
+
+            return base.HasReference(assetID);
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            foreach (EntryPIPT a in PIPT_Entries)
+            {
+                if (a.ModelAssetID == 0)
+                    result.Add("PIPT entry with ModelAssetID set to 0");
+                Verify(a.ModelAssetID, ref result);
+            }
+        }
 
         public void UpdateDictionary()
         {
@@ -274,69 +348,6 @@ namespace IndustrialPark
         public void ClearDictionary()
         {
             onPipeInfoTableEdited?.Invoke(null);
-        }
-
-        public override bool HasReference(uint assetID)
-        {
-            foreach (EntryPIPT a in PIPT_Entries)
-                if (a.ModelAssetID == assetID)
-                    return true;
-
-            return base.HasReference(assetID);
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            foreach (EntryPIPT a in PIPT_Entries)
-            {
-                if (a.ModelAssetID == 0)
-                    result.Add("PIPT entry with ModelAssetID set to 0");
-                Verify(a.ModelAssetID, ref result);
-            }
-        }
-
-        [Category("Pipe Table")]
-        public EntryPIPT[] PIPT_Entries
-        {
-            get
-            {
-                List<EntryPIPT> entries = new List<EntryPIPT>();
-                
-                for (int i = 4; i < Data.Length; i += EntryPIPT.SizeOfStruct(game))
-                {
-                    EntryPIPT a = new EntryPIPT()
-                    {
-                        ModelAssetID = ReadUInt(i),
-                        SubObjectBits = ReadInt(i + 4),
-                        PipeFlags = ReadInt(i + 8)
-                    };
-
-                    if (game == Game.Incredibles)
-                        a.Unknown = ReadInt(i + 12);
-                    
-                    entries.Add(a);
-                }
-                
-                return entries.ToArray();
-            }
-            set
-            {
-                List<byte> newData = new List<byte>();
-                newData.AddRange(BitConverter.GetBytes(Switch(value.Length)));
-
-                foreach (EntryPIPT i in value)
-                {
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.ModelAssetID)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.SubObjectBits)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.PipeFlags)));
-
-                    if (game == Game.Incredibles)
-                        newData.AddRange(BitConverter.GetBytes(Switch(i.Unknown)));
-                }
-                
-                Data = newData.ToArray();
-                UpdateDictionary();
-            }
         }
 
         public void Merge(AssetPIPT asset)

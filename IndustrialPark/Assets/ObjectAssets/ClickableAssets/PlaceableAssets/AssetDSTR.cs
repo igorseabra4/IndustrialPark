@@ -6,31 +6,107 @@ namespace IndustrialPark
 {
     public class AssetDSTR : EntityAsset
     {
+        protected const string categoryName = "Destructable";
+
+        [Category(categoryName)]
+        public int AnimationSpeed { get; set; }
+        [Category(categoryName)]
+        public int InitialAnimationState { get; set; }
+        [Category(categoryName)]
+        public int Health { get; set; }
+        [Category(categoryName)]
+        public AssetID SpawnItem_AssetID { get; set; }
+        [Category(categoryName)]
+        public FlagBitmask MaybeHitMask => IntFlagsDescriptor();
+        [Category(categoryName)]
+        public byte CollType { get; set; }
+        [Category(categoryName)]
+        public byte FxType { get; set; }
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float BlastRadius { get; set; }
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float BlastStrength { get; set; }
+        [Category(categoryName)]
+        public AssetID DestroyShrapnel_AssetID { get; set; }
+        [Category(categoryName)]
+        public AssetID HitShrapnel_AssetID { get; set; }
+        [Category(categoryName)]
+        public AssetID DestroySFX_AssetID { get; set; }
+        [Category(categoryName)]
+        public AssetID HitSFX_AssetID { get; set; }
+        [Category(categoryName)]
+        public AssetID HitModel_AssetID { get; set; }
+        [Category(categoryName)]
+        public AssetID DestroyModel_AssetID { get; set; }
+
+        public AssetDSTR(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = entityEndPosition;
+
+            AnimationSpeed = reader.ReadInt32();
+            InitialAnimationState = reader.ReadInt32();
+            Health = reader.ReadInt32();
+            SpawnItem_AssetID = reader.ReadUInt32();
+            MaybeHitMask.FlagValueInt = reader.ReadUInt32();
+            CollType = reader.ReadByte();
+            FxType = reader.ReadByte();
+            reader.ReadInt16();
+            BlastRadius = reader.ReadSingle();
+            BlastStrength = reader.ReadSingle();
+            if (game != Game.Scooby)
+            {
+                DestroyShrapnel_AssetID = reader.ReadUInt32();
+                HitShrapnel_AssetID = reader.ReadUInt32();
+                DestroySFX_AssetID = reader.ReadUInt32();
+                HitSFX_AssetID = reader.ReadUInt32();
+                HitModel_AssetID = reader.ReadUInt32();
+                DestroyModel_AssetID = reader.ReadUInt32();
+            }
+        }
+
+        public override byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write(SerializeEntity(game, platform));
+
+            writer.Write(AnimationSpeed);
+            writer.Write(InitialAnimationState);
+            writer.Write(Health);
+            writer.Write(SpawnItem_AssetID);
+            writer.Write(MaybeHitMask.FlagValueInt);
+            writer.Write(CollType);
+            writer.Write(FxType);
+            writer.Write((short)0);
+            writer.Write(BlastRadius);
+            writer.Write(BlastStrength);
+
+            if (game != Game.Scooby)
+            {
+                writer.Write(DestroyShrapnel_AssetID);
+                writer.Write(HitShrapnel_AssetID);
+                writer.Write(DestroySFX_AssetID);
+                writer.Write(HitSFX_AssetID);
+                writer.Write(HitModel_AssetID);
+                writer.Write(DestroyModel_AssetID);
+            }
+
+            writer.Write(SerializeLinks(platform));
+            return writer.ToArray();
+        }
+
         public static bool dontRender = false;
 
         public override bool DontRender => dontRender;
 
-        protected override int EventStartOffset => game == Game.Scooby ? 0x70 : 0x8C + Offset;
-
-        public AssetDSTR(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
-
-        public override bool HasReference(uint assetID) 
-        {
-            if (SpawnItemAssetID == assetID)
-                return true;
-
-            if (game != Game.Scooby)
-                if (DestroyShrapnel_AssetID == assetID || HitShrapnel_AssetID == assetID || DestroySFX_AssetID == assetID ||
-                    HitSFX_AssetID == assetID || HitModel_AssetID == assetID || DestroyModel_AssetID == assetID)
-                    return true;
-            
-            return base.HasReference(assetID);
-        }
+        public override bool HasReference(uint assetID) => SpawnItem_AssetID == assetID || DestroyShrapnel_AssetID == assetID ||
+            HitShrapnel_AssetID == assetID || DestroySFX_AssetID == assetID || HitSFX_AssetID == assetID ||
+            HitModel_AssetID == assetID || DestroyModel_AssetID == assetID || base.HasReference(assetID);
         
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
-            Verify(SpawnItemAssetID, ref result);
+            Verify(SpawnItem_AssetID, ref result);
 
             if (game != Game.Scooby)
             {
@@ -56,116 +132,6 @@ namespace IndustrialPark
             }
 
             base.SetDynamicProperties(dt);
-        }
-
-        protected const string categoryName = "Destructable";
-
-        [Category(categoryName)]
-        public int AnimationSpeed
-        {
-            get => ReadInt(0x54 + Offset);
-            set => Write(0x54 + Offset, value);
-        }
-
-        [Category(categoryName)]
-        public int InitialAnimationState
-        {
-            get => ReadInt(0x58 + Offset);
-            set => Write(0x58 + Offset, value);
-        }
-
-        [Category(categoryName)]
-        public int Health
-        {
-            get => ReadInt(0x5C + Offset);
-            set => Write(0x5C + Offset, value);
-        }
-
-        [Category(categoryName)]
-        public AssetID SpawnItemAssetID
-        {
-            get => ReadUInt(0x60 + Offset);
-            set => Write(0x60 + Offset, value);
-        }
-
-        [Category(categoryName)]
-        public DynamicTypeDescriptor MaybeHitMask => IntFlagsDescriptor(0x64 + Offset);
-        
-        [Category(categoryName)]
-        public byte CollType
-        {
-            get => ReadByte(0x68 + Offset);
-            set => Write(0x68 + Offset, value);
-        }
-
-        [Category(categoryName)]
-        public byte FxType
-        {
-            get => ReadByte(0x69 + Offset);
-            set => Write(0x69 + Offset, value);
-        }
-
-        [Category(categoryName)]
-        public short Padding6A
-        {
-            get => ReadShort(0x6A + Offset);
-            set => Write(0x6A + Offset, value);
-        }
-        
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float BlastRadius
-        {
-            get => ReadFloat(0x6C + Offset);
-            set => Write(0x6C + Offset, value);
-        }
-
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float BlastStrength
-        {
-            get => ReadFloat(0x70 + Offset);
-            set => Write(0x70 + Offset, value);
-        }
-
-        [Category(categoryName)]
-        public AssetID DestroyShrapnel_AssetID
-        {
-            get => ReadUInt(0x74 + Offset);
-            set => Write(0x74 + Offset, value);
-        }
-
-        [Category(categoryName)]
-        public AssetID HitShrapnel_AssetID
-        {
-            get => ReadUInt(0x78 + Offset);
-            set => Write(0x78 + Offset, value);
-        }
-
-        [Category(categoryName)]
-        public AssetID DestroySFX_AssetID
-        {
-            get => ReadUInt(0x7C + Offset);
-            set => Write(0x7C + Offset, value);
-        }
-
-        [Category(categoryName)]
-        public AssetID HitSFX_AssetID
-        {
-            get => ReadUInt(0x80 + Offset);
-            set => Write(0x80 + Offset, value);
-        }
-
-        [Category(categoryName)]
-        public AssetID HitModel_AssetID
-        {
-            get => ReadUInt(0x84 + Offset);
-            set => Write(0x84 + Offset, value);
-        }
-
-        [Category(categoryName)]
-        public AssetID DestroyModel_AssetID
-        {
-            get => ReadUInt(0x88 + Offset);
-            set => Write(0x88 + Offset, value);
         }
     }
 }

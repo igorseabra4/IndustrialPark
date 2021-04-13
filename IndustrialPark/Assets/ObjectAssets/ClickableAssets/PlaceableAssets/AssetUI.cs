@@ -9,39 +9,141 @@ namespace IndustrialPark
 {
     public class AssetUI : EntityAsset
     {
+        private const string categoryName = "User Interface";
+
+        [Category("Entity References")]
+        public AssetID Sound_AssetID
+        {
+            get => Animation_AssetID;
+            set => Animation_AssetID = value;
+        }
+
+        [Category(categoryName)]
+        public FlagBitmask UIFlags { get; set; } = IntFlagsDescriptor(
+            "Focus sets Select",
+            null,
+            "Screen Space",
+            null,
+            "Visible Allowed",
+            "Invisible Allowed");
+
+        private short _width;
+        [Category(categoryName)]
+        public short Width
+        {
+            get => _width;
+            set
+            {
+                _width = value;
+                CreateTransformMatrix();
+            }
+        }
+
+        private short _height;
+        [Category(categoryName)]
+        public short Height
+        {
+            get => _height;
+            set
+            {
+                _height = value;
+                CreateTransformMatrix();
+            }
+        }
+
+        [Category(categoryName)]
+        public AssetID TextureAssetID { get; set; }
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float TextCoordTopLeftX { get; set; }
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float TextCoordTopLeftY { get; set; }
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float TextCoordTopRightX { get; set; }
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float TextCoordTopRightY { get; set; }
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float TextCoordBottomRightX { get; set; }
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float TextCoordBottomRightY { get; set; }
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float TextCoordBottomLeftX { get; set; }
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float TextCoordBottomLeftY { get; set; }
+
+        public AssetUI(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = entityEndPosition;
+
+            UIFlags.FlagValueInt = reader.ReadUInt32();
+            _width = reader.ReadInt16();
+            Height = reader.ReadInt16();
+
+            TextureAssetID = reader.ReadUInt32();
+            TextCoordTopLeftX = reader.ReadSingle();
+            TextCoordTopLeftY = reader.ReadSingle();
+            TextCoordTopRightX = reader.ReadSingle();
+            TextCoordTopRightY = reader.ReadSingle();
+            TextCoordBottomRightX = reader.ReadSingle();
+            TextCoordBottomRightY = reader.ReadSingle();
+            TextCoordBottomLeftX = reader.ReadSingle();
+            TextCoordBottomLeftY = reader.ReadSingle();
+        }
+
+        public override byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write(SerializeEntity(game, platform));
+            writer.Write(SerializeUIData(platform));
+            writer.Write(SerializeLinks(platform));
+            return writer.ToArray();
+        }
+
+        protected byte[] SerializeUIData(Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(UIFlags.FlagValueInt);
+            writer.Write(Width);
+            writer.Write(Height);
+            writer.Write(TextureAssetID);
+            writer.Write(TextCoordTopLeftX);
+            writer.Write(TextCoordTopLeftY);
+            writer.Write(TextCoordTopRightX);
+            writer.Write(TextCoordTopRightY);
+            writer.Write(TextCoordBottomRightX);
+            writer.Write(TextCoordBottomRightY);
+            writer.Write(TextCoordBottomLeftX);
+            writer.Write(TextCoordBottomLeftY);
+
+            return writer.ToArray();
+        }
+
         public static bool dontRender = false;
 
         public override bool DontRender => dontRender;
 
-        protected override int EventStartOffset => 0x80 + Offset;
-
-        public AssetUI(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
-        {
-            _textureAssetID = ReadUInt(0x5C + Offset);
-        }
-
-        public override bool HasReference(uint assetID) => TextureAssetID == assetID || AnimListAssetID == assetID || base.HasReference(assetID);
+        public override bool HasReference(uint assetID) => TextureAssetID == assetID || base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
             Verify(TextureAssetID, ref result);
-            Verify(AnimListAssetID, ref result);
         }
 
         public override void CreateTransformMatrix()
         {
-            if (AHDR.assetType == HipHopFile.AssetType.UI && _textureAssetID == 0)
+            if (this is AssetUI && TextureAssetID == 0)
             {
                 world = Matrix.Scaling(_scale) * Matrix.Scaling(Width, Height, 1f)
                     * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
-                    * Matrix.Translation(Position.X, -Position.Y, -Position.Z);
+                    * Matrix.Translation(PositionX, -PositionY, -PositionZ);
             }
             else
             {
                 world = Matrix.Scaling(Width, Height, 1f)
-                    * Matrix.Translation(Position.X, -Position.Y, -Position.Z);
+                    * Matrix.Translation(PositionX, -PositionY, -PositionZ);
             }
 
             CreateBoundingBox();
@@ -49,7 +151,7 @@ namespace IndustrialPark
 
         protected override void CreateBoundingBox()
         {
-            if (AHDR.assetType == HipHopFile.AssetType.UI && _textureAssetID == 0)
+            if (this is AssetUI && TextureAssetID == 0)
             {
                 base.CreateBoundingBox();
             }
@@ -66,14 +168,10 @@ namespace IndustrialPark
 
         public override void Draw(SharpRenderer renderer)
         {
-            if (AHDR.assetType == HipHopFile.AssetType.UI && _textureAssetID == 0)
-            {
+            if (this is AssetUI && TextureAssetID == 0)
                 base.Draw(renderer);
-            }
             else
-            {
-                renderer.DrawPlane(world, isSelected, _textureAssetID, UvAnimOffset);
-            }
+                renderer.DrawPlane(world, isSelected, TextureAssetID, UvAnimOffset);
         }
 
         public override bool ShouldDraw(SharpRenderer renderer)
@@ -95,7 +193,7 @@ namespace IndustrialPark
 
         protected override float? TriangleIntersection(Ray r, float initialDistance)
         {
-            if (_textureAssetID == 0)
+            if (TextureAssetID == 0)
             {
                 return base.TriangleIntersection(r, initialDistance);
             }
@@ -123,127 +221,6 @@ namespace IndustrialPark
                     return smallestDistance;
                 else return null;
             }
-        }
-
-        [Browsable(false)]
-        public override AssetID Animation_AssetID
-        {
-            get { return ReadUInt(0x50 + Offset); }
-            set { Write(0x50 + Offset, value); }
-        }
-
-        [Category("UserInterface")]
-        public AssetID Sound_AssetID
-        {
-            get { return ReadUInt(0x50 + Offset); }
-            set { Write(0x50 + Offset, value); }
-        }
-
-        [Category("UserInterface")]
-        public AssetID AnimListAssetID
-        {
-            get => ReadUInt(0x50 + Offset);
-            set => Write(0x50 + Offset, value);
-        }
-
-        [Category("UserInterface"), Browsable(false)]
-        public int UIFlags_int
-        {
-            get => ReadInt(0x54 + Offset);
-            set => Write(0x54 + Offset, value);
-        }
-
-        [Category("UserInterface")]
-        public DynamicTypeDescriptor UIFlags => IntFlagsDescriptor(0x54 + Offset, "Focus sets Select", null, "Screen Space", null, "Visible Allowed", "Invisible Allowed");
-
-        [Category("UserInterface")]
-        public short Width
-        {
-            get => ReadShort(0x58 + Offset);
-            set
-            {
-                Write(0x58 + Offset, value);
-                CreateTransformMatrix();
-            }
-        }
-
-        [Category("UserInterface")]
-        public short Height
-        {
-            get => ReadShort(0x5A + Offset);
-            set
-            {
-                Write(0x5A + Offset, value);
-                CreateTransformMatrix();
-            }
-        }
-
-        private uint _textureAssetID;
-        [Category("UserInterface")]
-        public AssetID TextureAssetID
-        {
-            get => _textureAssetID;
-            set
-            {
-                _textureAssetID = value;
-                Write(0x5C + Offset, _textureAssetID);
-            }
-        }
-
-        [Category("UserInterface"), TypeConverter(typeof(FloatTypeConverter))]
-        public float TextCoordTopLeftX
-        {
-            get => ReadFloat(0x60 + Offset);
-            set => Write(0x60 + Offset, value);
-        }
-
-        [Category("UserInterface"), TypeConverter(typeof(FloatTypeConverter))]
-        public float TextCoordTopLeftY
-        {
-            get => ReadFloat(0x64 + Offset);
-            set => Write(0x64 + Offset, value);
-        }
-
-        [Category("UserInterface"), TypeConverter(typeof(FloatTypeConverter))]
-        public float TextCoordTopRightX
-        {
-            get => ReadFloat(0x68 + Offset);
-            set => Write(0x68 + Offset, value);
-        }
-
-        [Category("UserInterface"), TypeConverter(typeof(FloatTypeConverter))]
-        public float TextCoordTopRightY
-        {
-            get => ReadFloat(0x6C + Offset);
-            set => Write(0x6C + Offset, value);
-        }
-
-        [Category("UserInterface"), TypeConverter(typeof(FloatTypeConverter))]
-        public float TextCoordBottomRightX
-        {
-            get => ReadFloat(0x70 + Offset);
-            set => Write(0x70 + Offset, value);
-        }
-
-        [Category("UserInterface"), TypeConverter(typeof(FloatTypeConverter))]
-        public float TextCoordBottomRightY
-        {
-            get => ReadFloat(0x74 + Offset);
-            set => Write(0x74 + Offset, value);
-        }
-
-        [Category("UserInterface"), TypeConverter(typeof(FloatTypeConverter))]
-        public float TextCoordBottomLeftX
-        {
-            get => ReadFloat(0x78 + Offset);
-            set => Write(0x78 + Offset, value);
-        }
-
-        [Category("UserInterface"), TypeConverter(typeof(FloatTypeConverter))]
-        public float TextCoordBottomLeftY
-        {
-            get => ReadFloat(0x7C + Offset);
-            set => Write(0x7C + Offset, value);
         }
     }
 }

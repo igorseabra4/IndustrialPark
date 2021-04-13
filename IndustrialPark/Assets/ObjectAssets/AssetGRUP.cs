@@ -6,19 +6,53 @@ using System.Linq;
 
 namespace IndustrialPark
 {
+    public enum Delegation
+    {
+        AllItems = 0,
+        RandomItem = 1,
+        InOrder = 2
+    }
+
     public class AssetGRUP : BaseAsset
     {
-        public AssetGRUP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        private const string catName = "Group";
 
-        public override bool HasReference(uint assetID)
+        [Category(catName)]
+        public Delegation ReceiveEventDelegation { get; set; }
+        [Category(catName)]
+        public AssetID[] GroupItems { get; set; }
+
+        public AssetGRUP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
-            foreach (AssetID a in GroupItems)
-                if (a == assetID)
-                    return true;
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = baseEndPosition;
 
-            return base.HasReference(assetID);
+            var itemCount = reader.ReadUInt16();
+            ReceiveEventDelegation = (Delegation)reader.ReadInt16();
+
+            GroupItems = new AssetID[itemCount];
+            for (int i = 0; i < GroupItems.Length; i++)
+                GroupItems[i] = reader.ReadUInt32();
         }
 
+        public override byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(SerializeBase(platform));
+
+            writer.Write((short)GroupItems.Length);
+            writer.Write((short)ReceiveEventDelegation);
+            foreach (var a in GroupItems)
+                writer.Write(a);
+
+            writer.Write(SerializeLinks(platform));
+
+            return writer.ToArray();
+        }
+
+        public override bool HasReference(uint assetID) => GroupItems.Any(a => a == assetID) || base.HasReference(assetID);
+        
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
@@ -28,54 +62,6 @@ namespace IndustrialPark
                 if (a == 0)
                     result.Add("GRUP with group item set to 0");
                 Verify(a, ref result);
-            }
-        }
-
-        protected override int EventStartOffset => 0x0C + ItemCount * 4;
-
-        public enum Delegation
-        {
-            AllItems = 0,
-            RandomItem = 1,
-            InOrder = 2
-        }
-
-        [Category("Group"), ReadOnly(true)]
-        public short ItemCount
-        {
-            get => ReadShort(0x08);
-            set => Write(0x08, value);
-        }
-
-        [Category("Group")]
-        public Delegation ReceiveEventDelegation
-        {
-            get => (Delegation)ReadShort(0x0A);
-            set => Write(0x0A, (short)value);
-        }
-
-        [Category("Group")]
-        public AssetID[] GroupItems
-        {
-            get
-            {
-                List<AssetID> group = new List<AssetID>();
-                for (int i = 0; i < ItemCount; i++)
-                    group.Add(ReadUInt(0xC + 4 * i));
-
-                return group.ToArray();
-            }
-            set
-            {
-                List<byte> newData = Data.Take(0xC).ToList();
-
-                foreach (AssetID i in value)
-                    newData.AddRange(BitConverter.GetBytes(Switch(i)));
-
-                newData.AddRange(Data.Skip(EventStartOffset).ToList());
-                
-                Data = newData.ToArray();
-                ItemCount = (short)value.Length;
             }
         }
     }

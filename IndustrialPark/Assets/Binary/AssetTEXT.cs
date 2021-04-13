@@ -1,12 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using HipHopFile;
 
 namespace IndustrialPark
 {
     public class AssetTEXT : Asset
     {
-        public AssetTEXT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        public string Text { get; set; }
+        
+        public AssetTEXT(Section_AHDR AHDR, Platform platform) : base(AHDR)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var length = reader.ReadInt32();
+            Text = System.Text.Encoding.ASCII.GetString(AHDR.data.Skip(4).ToArray(), 4, length);
+        }
+
+        public override byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(Text.Length);
+
+            foreach (char c in Text)
+                writer.Write(c);
+
+            do writer.Write((byte)0);
+            while (writer.BaseStream.Length % 4 != 0);
+
+            return writer.ToArray();
+        }
 
         public override bool HasReference(uint assetID)
         {
@@ -96,25 +118,6 @@ namespace IndustrialPark
                     }
 
                 return assetNames;
-            }
-        }
-        
-        public string Text
-        {
-            get => System.Text.Encoding.ASCII.GetString(Data, 4, ReadInt(0));
-
-            set
-            {
-                List<byte> newData = new List<byte>();
-                newData.AddRange(BitConverter.GetBytes(Switch(value.Length)));
-                foreach (char c in value)
-                    newData.Add((byte)c);
-                newData.Add(0);
-
-                while (newData.Count % 4 != 0)
-                    newData.Add(0);
-
-                Data = newData.ToArray();
             }
         }
     }

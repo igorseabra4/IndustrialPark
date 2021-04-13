@@ -9,7 +9,6 @@ namespace IndustrialPark
     {
         public AssetWithMotion(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
-            Motion = game == Game.Incredibles ? new Motion_Mechanism_TSSM(this) : new Motion_Mechanism(this);
         }
 
         public override bool HasReference(uint assetID) => Motion.HasReference(assetID) || base.HasReference(assetID);
@@ -39,16 +38,10 @@ namespace IndustrialPark
             Motion.Reset();
         }
 
-        public Matrix PlatLocalTranslation()
-        {
-            return Motion.PlatLocalTranslation();
-        }
-
-        public override Matrix PlatLocalRotation()
-        {
-            return Motion.PlatLocalRotation();
-        }
-
+        public Matrix PlatLocalTranslation() => Motion.PlatLocalTranslation();
+        
+        public override Matrix PlatLocalRotation() => Motion.PlatLocalRotation();
+        
         public override Matrix LocalWorld()
         {
             if (movementPreview)
@@ -60,7 +53,7 @@ namespace IndustrialPark
                     return PlatLocalRotation() * PlatLocalTranslation()
                         * Matrix.Scaling(_scale)
                         * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
-                        * Matrix.Translation(Position - driver.Position)
+                        * Matrix.Translation(_position - new Vector3(driver.PositionX, driver.PositionY, driver.PositionZ))
                         * (useRotation ? driver.PlatLocalRotation() : Matrix.Identity)
                         * Matrix.Translation((Vector3)Vector3.Transform(Vector3.Zero, driver.LocalWorld()));
                 }
@@ -68,7 +61,7 @@ namespace IndustrialPark
                 return PlatLocalRotation() * PlatLocalTranslation()
                     * Matrix.Scaling(_scale)
                     * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
-                    * Matrix.Translation(Position);
+                    * Matrix.Translation(_position);
             }
 
             return world;
@@ -77,8 +70,5 @@ namespace IndustrialPark
         [Category("Platform")]
         [TypeConverter(typeof(ExpandableObjectConverter))]
         public Motion Motion { get; set; }
-
-        [Browsable(false)]
-        public abstract int MotionStart { get; }
     }
 }

@@ -15,9 +15,8 @@ namespace AssetEditorColors
 
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destType)
         {
-            if ((destType == typeof(string)) && (value is MyColor))
+            if ((destType == typeof(string)) && (value is MyColor color))
             {
-                MyColor color = (MyColor)value;
                 return color.ToString();
             }
             return base.ConvertTo(context, culture, value, destType);

@@ -8,26 +8,16 @@ namespace IndustrialPark
 {
     public class EntryLODT
     {
-        [Category("LODT Entry")]
         public AssetID ModelAssetID { get; set; }
-        [Category("LODT Entry")]
         public float MaxDistance { get; set; }
-        [Category("LODT Entry")]
         public AssetID LOD1_Model { get; set; }
-        [Category("LODT Entry")]
         public float LOD1_Distance { get; set; }
-        [Category("LODT Entry")]
         public AssetID LOD2_Model { get; set; }
-        [Category("LODT Entry")]
         public float LOD2_Distance { get; set; }
-        [Category("LODT Entry")]
         public AssetID LOD3_Model { get; set; }
-        [Category("LODT Entry")]
         public float LOD3_Distance { get; set; }
-        [Category("LODT Entry"), Description("Movie only.")]
+        [Description("Movie only.")]
         public float Unknown { get; set; }
-
-        public static int SizeOfStruct(Game game) => game == Game.Incredibles ? 0x24 : 0x20;
 
         public EntryLODT()
         {
@@ -35,6 +25,40 @@ namespace IndustrialPark
             LOD1_Model = 0;
             LOD2_Model = 0;
             LOD3_Model = 0;
+        }
+
+        public EntryLODT(EndianBinaryReader reader, Game game)
+        {
+            ModelAssetID = reader.ReadUInt32();
+            MaxDistance = reader.ReadSingle();
+            LOD1_Model = reader.ReadUInt32();
+            LOD1_Distance = reader.ReadSingle();
+            LOD2_Model = reader.ReadUInt32();
+            LOD2_Distance = reader.ReadSingle();
+            LOD3_Model = reader.ReadUInt32();
+            LOD3_Distance = reader.ReadSingle();
+
+            if (game == Game.Incredibles)
+                Unknown = reader.ReadSingle();
+        }
+
+        public byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(ModelAssetID);
+            writer.Write(MaxDistance);
+            writer.Write(LOD1_Model);
+            writer.Write(LOD1_Distance);
+            writer.Write(LOD2_Model);
+            writer.Write(LOD2_Distance);
+            writer.Write(LOD3_Model);
+            writer.Write(LOD3_Distance);
+
+            if (game == Game.Incredibles)
+                writer.Write(Unknown);
+
+            return writer.ToArray();
         }
 
         public override string ToString()
@@ -59,35 +83,54 @@ namespace IndustrialPark
     {
         public static Dictionary<uint, float> MaxDistances = new Dictionary<uint, float>();
 
-        public AssetLODT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        private EntryLODT[] _lodt_Entries;
+        [Category("Level Of Detail Table")]
+        public EntryLODT[] LODT_Entries
         {
+            get => _lodt_Entries;
+            set
+            {
+                _lodt_Entries = value;
+                UpdateDictionary();
+            }
+        }
+
+        public AssetLODT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+
+            _lodt_Entries = new EntryLODT[reader.ReadInt32()];
+
+            for (int i = 0; i < _lodt_Entries.Length; i++)
+                _lodt_Entries[i] = new EntryLODT(reader, game);
+
             UpdateDictionary();
         }
 
-        public void UpdateDictionary()
+        public override byte[] Serialize(Game game, Platform platform)
         {
-            foreach (EntryLODT entry in LODT_Entries)
-                MaxDistances[entry.ModelAssetID] = entry.MaxDistance;
-        }
+            var writer = new EndianBinaryWriter(platform);
 
-        public void ClearDictionary()
-        {
-            foreach (EntryLODT entry in LODT_Entries)
-                MaxDistances.Remove(entry.ModelAssetID);
+            writer.Write(LODT_Entries.Length);
+
+            foreach (var l in LODT_Entries)
+                writer.Write(l.Serialize(game, platform));
+
+            return writer.ToArray();
         }
 
         public override bool HasReference(uint assetID)
         {
-            foreach (EntryLODT a in LODT_Entries)
+            foreach (var a in LODT_Entries)
                 if (a.ModelAssetID == assetID || a.LOD1_Model == assetID || a.LOD2_Model == assetID || a.LOD3_Model == assetID)
                     return true;
             
-            return base.HasReference(assetID);
+            return false;
         }
 
         public override void Verify(ref List<string> result)
         {
-            foreach (EntryLODT a in LODT_Entries)
+            foreach (var a in LODT_Entries)
             {
                 if (a.ModelAssetID == 0)
                     result.Add("LODT entry with ModelAssetID set to 0");
@@ -99,58 +142,16 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Level Of Detail Table")]
-        public EntryLODT[] LODT_Entries
+        public void UpdateDictionary()
         {
-            get
-            {
-                List<EntryLODT> entries = new List<EntryLODT>();
+            foreach (var entry in LODT_Entries)
+                MaxDistances[entry.ModelAssetID] = entry.MaxDistance;
+        }
 
-                for (int i = 4; i < Data.Length; i += EntryLODT.SizeOfStruct(game))
-                {
-                    EntryLODT a = new EntryLODT
-                    {
-                        ModelAssetID = ReadUInt(i + 0x00),
-                        MaxDistance = ReadFloat(i + 0x04),
-                        LOD1_Model = ReadUInt(i + 0x08),
-                        LOD2_Model = ReadUInt(i + 0x0C),
-                        LOD3_Model = ReadUInt(i + 0x10),
-                        LOD1_Distance = ReadFloat(i + 0x14),
-                        LOD2_Distance = ReadFloat(i + 0x18),
-                        LOD3_Distance = ReadFloat(i + 0x1C)
-                    };
-
-                    if (game == Game.Incredibles)
-                        a.Unknown = ReadFloat(i + 0x20);
-                    
-                    entries.Add(a);
-                }
-
-                return entries.ToArray();
-            }
-            set
-            {
-                List<byte> newData = new List<byte>();
-                newData.AddRange(BitConverter.GetBytes(Switch(value.Length)));
-
-                foreach (EntryLODT i in value)
-                {
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.ModelAssetID)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.MaxDistance)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.LOD1_Model)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.LOD2_Model)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.LOD3_Model)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.LOD1_Distance)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.LOD2_Distance)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.LOD3_Distance)));
-
-                    if (game == Game.Incredibles)
-                        newData.AddRange(BitConverter.GetBytes(Switch(i.Unknown)));
-                }
-
-                Data = newData.ToArray();
-                UpdateDictionary();
-            }
+        public void ClearDictionary()
+        {
+            foreach (var entry in LODT_Entries)
+                MaxDistances.Remove(entry.ModelAssetID);
         }
 
         public void Merge(AssetLODT asset)

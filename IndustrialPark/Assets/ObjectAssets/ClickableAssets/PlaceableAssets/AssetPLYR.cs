@@ -8,13 +8,33 @@ namespace IndustrialPark
 {
     public class AssetPLYR : EntityAsset
     {
+        [Category("Player References")]
+        public AssetID LightKit_AssetID { get; set; }
+
+        public AssetPLYR(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        {
+            if (game == Game.Scooby)
+                LightKit_AssetID = 0;
+            else
+            {
+                var reader = new EndianBinaryReader(AHDR.data, platform);
+                reader.BaseStream.Position = reader.BaseStream.Length - 4;
+                LightKit_AssetID = reader.ReadUInt32();
+            }
+        }
+
+        public override byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write(SerializeBase(platform));       
+            writer.Write(SerializeLinks(platform));
+            writer.Write(LightKit_AssetID);
+            return writer.ToArray();
+        }
+
         public static bool dontRender = false;
 
         public override bool DontRender => dontRender;
-
-        protected override int EventStartOffset => 0x54 + Offset;
-
-        public AssetPLYR(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         public override bool HasReference(uint assetID) => LightKit_AssetID == assetID || base.HasReference(assetID);
         
@@ -23,11 +43,14 @@ namespace IndustrialPark
             base.Verify(ref result);
 
             Verify(LightKit_AssetID, ref result);
+        }
 
-            if (EventStartOffset + LinkCount * Link.sizeOfStruct + 4 < Data.Length)
-                result.Add("Additional data found at the end of asset data");
-            if (EventStartOffset + LinkCount * Link.sizeOfStruct + 4 > Data.Length)
-                result.Add("Asset expects mode data than present");
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game == Game.Scooby)
+                dt.RemoveProperty("LightKit_AssetID");
+
+            base.SetDynamicProperties(dt);
         }
 
         protected override void CreateBoundingBox()
@@ -53,13 +76,6 @@ namespace IndustrialPark
                 renderingDictionary[_modelAssetID].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * Color : Color, UvAnimOffset);
             else
                 renderer.DrawPyramid(LocalWorld(), isSelected, 1f);
-        }
-
-        [Category("Player References")]
-        public AssetID LightKit_AssetID
-        {
-            get => game == Game.Scooby ? 0 : ReadUInt(EventStartOffset + LinkCount * Link.sizeOfStruct);
-            set { if (game != Game.Scooby) Write(EventStartOffset + LinkCount * Link.sizeOfStruct, value); }
         }
     }
 }

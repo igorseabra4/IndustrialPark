@@ -37,6 +37,52 @@ namespace IndustrialPark
             Denied_SGRP = 0;
         }
 
+        public EntryTPIK(EndianBinaryReader reader)
+        {
+            PickupHash = reader.ReadUInt32();
+            Model_AssetID = reader.ReadUInt32();
+            RingModel_AssetID = reader.ReadUInt32();
+            UnknownFloat_0C = reader.ReadSingle();
+            UnknownFloat_10 = reader.ReadSingle();
+            UnknownFloat_14 = reader.ReadSingle();
+            RingColorR = reader.ReadSingle();
+            RingColorG = reader.ReadSingle();
+            RingColorB = reader.ReadSingle();
+            Unknown_24 = reader.ReadUInt32();
+            Unknown_28 = reader.ReadUInt32();
+            Pickup_SGRP = reader.ReadUInt32();
+            Denied_SGRP = reader.ReadUInt32();
+            HealthValue = reader.ReadByte();
+            PowerValue = reader.ReadByte();
+            BonusValue = reader.ReadByte();
+            UnknownByte_37 = reader.ReadByte();
+        }
+
+        public byte[] Serialize(Platform platform)
+        {
+            EndianBinaryWriter writer = new EndianBinaryWriter(platform);
+
+            writer.Write(PickupHash);
+            writer.Write(Model_AssetID);
+            writer.Write(RingModel_AssetID);
+            writer.Write(UnknownFloat_0C);
+            writer.Write(UnknownFloat_10);
+            writer.Write(UnknownFloat_14);
+            writer.Write(RingColorR);
+            writer.Write(RingColorG);
+            writer.Write(RingColorB);
+            writer.Write(Unknown_24);
+            writer.Write(Unknown_28);
+            writer.Write(Pickup_SGRP);
+            writer.Write(Denied_SGRP);
+            writer.Write(HealthValue);
+            writer.Write(PowerValue);
+            writer.Write(BonusValue);
+            writer.Write(UnknownByte_37);
+
+            return writer.ToArray();
+        }
+
         [Browsable(false)]
         public static int StructSize => 0x38;
 
@@ -52,17 +98,42 @@ namespace IndustrialPark
 
     public class AssetTPIK : Asset
     {
-        public static Dictionary<uint, EntryTPIK> tpikEntries = new Dictionary<uint, EntryTPIK>();
+        private const string categoryName = "Pickup Types";
 
-        public AssetTPIK(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        [Category(categoryName)]
+        public int Unknown04 { get; set; }
+        [Category(categoryName)]
+        public int Unknown08 { get; set; }
+        private EntryTPIK[] _tpik_Entries;
+        [Category(categoryName)]
+        public EntryTPIK[] TPIK_Entries 
         {
-            if (AssetID != AHDR.assetID)
-                AssetID = AHDR.assetID;
-
-            SetupDictionary();
+            get => _tpik_Entries;
+            set
+            {
+                _tpik_Entries = value;
+                UpdateDictionary();
+            }
         }
 
-        private void SetupDictionary()
+        public AssetTPIK(Section_AHDR AHDR, Platform platform) : base(AHDR)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = 0x4;
+
+            Unknown04 = reader.ReadInt32();
+            Unknown08 = reader.ReadInt32();
+            int amountOfEntries = reader.ReadInt32();
+            TPIK_Entries = new EntryTPIK[amountOfEntries];
+            for (int i = 0; i < TPIK_Entries.Length; i++)
+                TPIK_Entries[i] = new EntryTPIK(reader);
+
+            UpdateDictionary();
+        }
+
+        public static Dictionary<uint, EntryTPIK> tpikEntries = new Dictionary<uint, EntryTPIK>();
+
+        private void UpdateDictionary()
         {
             tpikEntries.Clear();
 
@@ -96,99 +167,6 @@ namespace IndustrialPark
                 Verify(a.Unknown_28, ref result);
                 Verify(a.Pickup_SGRP, ref result);
                 Verify(a.Denied_SGRP, ref result);
-            }
-        }
-
-        private AssetID AssetID
-        {
-            get => ReadUInt(0x00);
-            set => Write(0x00, value);
-        }
-
-        [Category("Pickup Types")]
-        public int Unknown04
-        {
-            get => ReadInt(0x04);
-            set => Write(0x04, value);
-        }
-
-        [Category("Pickup Types")]
-        public int Unknown08
-        {
-            get => ReadInt(0x08);
-            set => Write(0x08, value);
-        }
-
-        private int AmountOfEntries
-        {
-            get => ReadInt(0x0C);
-            set => Write(0x0C, value);
-        }
-
-        private int EntriesStart => 0x10;
-
-        [Category("Pickup Types")]
-        public EntryTPIK[] TPIK_Entries
-        {
-            get
-            {
-                List<EntryTPIK> entries = new List<EntryTPIK>();
-                
-                for (int i = 0; i < AmountOfEntries; i++)
-                {
-                    entries.Add(new EntryTPIK()
-                    {
-                        PickupHash = ReadUInt(EntriesStart + i * EntryTPIK.StructSize + 0x00),
-                        Model_AssetID = ReadUInt(EntriesStart + i * EntryTPIK.StructSize + 0x04),
-                        RingModel_AssetID = ReadUInt(EntriesStart + i * EntryTPIK.StructSize + 0x08),
-                        UnknownFloat_0C = ReadFloat(EntriesStart + i * EntryTPIK.StructSize + 0x0C),
-                        UnknownFloat_10 = ReadFloat(EntriesStart + i * EntryTPIK.StructSize + 0x10),
-                        UnknownFloat_14 = ReadFloat(EntriesStart + i * EntryTPIK.StructSize + 0x14),
-                        RingColorR = ReadFloat(EntriesStart + i * EntryTPIK.StructSize + 0x18),
-                        RingColorG = ReadFloat(EntriesStart + i * EntryTPIK.StructSize + 0x1C),
-                        RingColorB = ReadFloat(EntriesStart + i * EntryTPIK.StructSize + 0x20),
-                        Unknown_24 = ReadUInt(EntriesStart + i * EntryTPIK.StructSize + 0x24),
-                        Unknown_28 = ReadUInt(EntriesStart + i * EntryTPIK.StructSize + 0x28),
-                        Pickup_SGRP = ReadUInt(EntriesStart + i * EntryTPIK.StructSize + 0x2C),
-                        Denied_SGRP = ReadUInt(EntriesStart + i * EntryTPIK.StructSize + 0x30),
-                        HealthValue = ReadByte(EntriesStart + i * EntryTPIK.StructSize + 0x34),
-                        PowerValue = ReadByte(EntriesStart + i * EntryTPIK.StructSize + 0x35),
-                        BonusValue = ReadByte(EntriesStart + i * EntryTPIK.StructSize + 0x36),
-                        UnknownByte_37 = ReadByte(EntriesStart + i * EntryTPIK.StructSize + 0x37)
-                    });
-                }
-                
-                return entries.ToArray();
-            }
-            set
-            {
-                List<byte> newData = Data.Take(4).ToList();
-                newData.AddRange(BitConverter.GetBytes(Switch(value.Length)));
-
-                foreach (var i in value)
-                {
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.PickupHash)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.Model_AssetID)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.RingModel_AssetID)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.UnknownFloat_0C)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.UnknownFloat_10)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.UnknownFloat_14)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.RingColorR)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.RingColorG)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.RingColorB)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.Unknown_24)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.Unknown_28)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.Pickup_SGRP)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.Denied_SGRP)));
-                    newData.Add(i.HealthValue);
-                    newData.Add(i.PowerValue);
-                    newData.Add(i.BonusValue);
-                    newData.Add(i.UnknownByte_37);
-                }
-
-                AmountOfEntries = value.Length;
-                Data = newData.ToArray();
-                SetupDictionary();
             }
         }
     }

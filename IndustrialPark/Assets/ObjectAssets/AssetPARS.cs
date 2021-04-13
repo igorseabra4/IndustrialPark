@@ -1,15 +1,83 @@
 ﻿using HipHopFile;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 
 namespace IndustrialPark
 {
     public class AssetPARS : BaseAsset
     {
-        public AssetPARS(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
-        
+        private const string categoryName = "Particle System";
+
+        [Category(categoryName)]
+        public int PARS_Type { get; set; }
+        [Category(categoryName)]
+        public AssetID PARS_AssetID { get; set; }
+        [Category(categoryName)]
+        public AssetID TextureAssetID { get; set; }
+        [Category(categoryName)]
+        public FlagBitmask ParsFlags { get; set; } = ByteFlagsDescriptor();
+        [Category(categoryName)]
+        public byte Priority { get; set; }
+        [Category(categoryName)]
+        public short MaxParticles { get; set; }
+        [Category(categoryName)]
+        public byte RenderFunction { get; set; }
+        [Category(categoryName)]
+        public byte RenderSourceBlendMode { get; set; }
+        [Category(categoryName)]
+        public byte RenderDestBlendMode { get; set; }
+        [Category(categoryName)]
+        public byte CmdCount { get; set; }
+        [Category(categoryName)]
+        public AssetID[] Cmd { get; set; }
+
+        public AssetPARS(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = baseEndPosition;
+
+            PARS_Type = reader.ReadInt32();
+            PARS_AssetID = reader.ReadUInt32();
+            TextureAssetID = reader.ReadUInt32();
+            ParsFlags.FlagValueByte = reader.ReadByte();
+            Priority = reader.ReadByte();
+            MaxParticles = reader.ReadInt16();
+            RenderFunction = reader.ReadByte();
+            RenderSourceBlendMode = reader.ReadByte();
+            RenderDestBlendMode = reader.ReadByte();
+            CmdCount = reader.ReadByte();
+            int cmdSize = reader.ReadInt32() / 4;
+            Cmd = new AssetID[cmdSize];
+            for (int i = 0; i < cmdSize; i++)
+                Cmd[i] = reader.ReadUInt32();
+        }
+
+        public override byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write(SerializeBase(platform));
+
+            writer.Write(PARS_Type);
+            writer.Write(PARS_AssetID);
+            writer.Write(TextureAssetID);
+
+            writer.Write(ParsFlags.FlagValueByte);
+            writer.Write(Priority);
+            writer.Write(MaxParticles);
+
+            writer.Write(RenderFunction);
+            writer.Write(RenderSourceBlendMode);
+            writer.Write(RenderDestBlendMode);
+            writer.Write(CmdCount);
+
+            writer.Write(Cmd.Length * 4);
+            foreach (var c in Cmd)
+                writer.Write(c);
+
+            writer.Write(SerializeLinks(platform));
+            return writer.ToArray();
+        }
+
         public override bool HasReference(uint assetID) => TextureAssetID == assetID || PARS_AssetID == assetID || base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
@@ -18,105 +86,6 @@ namespace IndustrialPark
 
             Verify(TextureAssetID, ref result);
             Verify(PARS_AssetID, ref result);
-        }
-
-        [Category("Particle System")]
-        public int PARS_Type
-        {
-            get => ReadInt(0x8);
-            set => Write(0x8, value);
-        }
-
-        [Category("Particle System")]
-        public AssetID PARS_AssetID
-        {
-            get => ReadUInt(0xC);
-            set => Write(0xC, value);
-        }
-
-        [Category("Particle System")]
-        public AssetID TextureAssetID
-        {
-            get => ReadUInt(0x10);
-            set => Write(0x10, value);
-        }
-
-        [Category("Particle System")]
-        public DynamicTypeDescriptor ParsFlags => ByteFlagsDescriptor(0x14);
-
-        [Category("Particle System")]
-        public byte Priority
-        {
-            get => ReadByte(0x15);
-            set => Write(0x15, value);
-        }
-
-        [Category("Particle System")]
-        public short MaxParticles
-        {
-            get => ReadShort(0x16);
-            set => Write(0x16, value);
-        }
-        
-        [Category("Particle System")]
-        public byte RenderFunction
-        {
-            get => ReadByte(0x18);
-            set => Write(0x18, value);
-        }
-
-        [Category("Particle System")]
-        public byte RenderSourceBlendMode
-        {
-            get => ReadByte(0x19);
-            set => Write(0x19, value);
-        }
-
-        [Category("Particle System")]
-        public byte RenderDestBlendMode
-        {
-            get => ReadByte(0x1A);
-            set => Write(0x1A, value);
-        }
-
-        [Category("Particle System")]
-        public byte CmdCount
-        {
-            get => ReadByte(0x1B);
-            set => Write(0x1B, value);
-        }
-
-        [Category("Particle System"), ReadOnly(true)]
-        public int CmdSize
-        {
-            get => ReadInt(0x1C);
-            set => Write(0x1C, value);
-        }
-
-        [Category("Particle System")]
-        public AssetID[] Cmd
-        {
-            get
-            {
-                List<AssetID> list = new List<AssetID>();
-
-                for (int i = 0x20; i < 0x20 + CmdSize; i += 4)
-                    list.Add(ReadUInt(i));
-
-                return list.ToArray();
-            }
-            set
-            {
-                List<byte> before = Data.Take(0x20).ToList();
-
-                foreach (AssetID a in value)
-                    before.AddRange(BitConverter.GetBytes(Switch(a)));
-
-                before.AddRange(Data.Skip(0x20 + CmdSize));
-                Data = before.ToArray();
-
-                CmdSize = value.Length * 4;
-            }
         }
     }
 }

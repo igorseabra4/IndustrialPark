@@ -6,7 +6,65 @@ using HipHopFile;
 
 namespace IndustrialPark
 {
-    public class KeyFrame
+    [TypeConverter(typeof(ExpandableObjectConverter))]
+    public class AssetANIM_Header
+    {
+        private char[] _magic;
+        public char[] Magic 
+        {
+            get => _magic;
+            set
+            {
+                if (value.Length != 4)
+                    throw new ArgumentException("Value must be 4 characters long");
+                _magic = value;
+            }
+        }
+        public uint Flags { get; set; }
+        public ushort BoneCount;
+        public ushort TimeCount;
+        public uint KeyCount;
+        public float ScaleX { get; set; }
+        public float ScaleY { get; set; }
+        public float ScaleZ { get; set; }
+
+        public AssetANIM_Header()
+        {
+            Magic = new char[] { 'S', 'K', 'B', '1' };
+        }
+
+        public AssetANIM_Header(EndianBinaryReader reader)
+        {
+            var chars = reader.ReadChars(4);
+            Magic = reader.endianness == Endianness.Big ? chars : chars.Reverse().ToArray();
+            Flags = reader.ReadUInt32();
+            BoneCount = reader.ReadUInt16();
+            TimeCount = reader.ReadUInt16();
+            KeyCount = reader.ReadUInt32();
+            ScaleX = reader.ReadSingle();
+            ScaleY = reader.ReadSingle();
+            ScaleZ = reader.ReadSingle();
+        }
+
+        public byte[] Serialize(Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(writer.endianness == Endianness.Big ? Magic : Magic.Reverse().ToArray());
+
+            writer.Write(Flags);
+            writer.Write(BoneCount);
+            writer.Write(TimeCount);
+            writer.Write(KeyCount);
+            writer.Write(ScaleX);
+            writer.Write(ScaleY);
+            writer.Write(ScaleZ);
+
+            return writer.ToArray();
+        }
+    }
+
+    public class AssetANIM_KeyFrame
     {
         public ushort TimeIndex { get; set; }
         public short RotationX { get; set; }
@@ -16,168 +74,101 @@ namespace IndustrialPark
         public short PositionX { get; set; }
         public short PositionY { get; set; }
         public short PositionZ { get; set; }
+
+        public AssetANIM_KeyFrame(EndianBinaryReader reader)
+        {
+            TimeIndex = reader.ReadUInt16();
+            RotationX = reader.ReadInt16();
+            RotationY = reader.ReadInt16();
+            RotationZ = reader.ReadInt16();
+            RotationW = reader.ReadInt16();
+            PositionX = reader.ReadInt16();
+            PositionY = reader.ReadInt16();
+            PositionZ = reader.ReadInt16();
+        }
+
+        public byte[] Serialize(Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(TimeIndex);
+            writer.Write(RotationX);
+            writer.Write(RotationY);
+            writer.Write(RotationZ);
+            writer.Write(RotationW);
+
+            return writer.ToArray();
+        }
     }
     
     public class AssetANIM : Asset
     {
-        public AssetANIM(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        private const string animCatName = "Animation";
 
-        public override void Verify(ref List<string> result)
+        [Category(animCatName)]
+        public AssetANIM_Header Header { get; set; }
+
+        [Category(animCatName)]
+        public AssetANIM_KeyFrame[] KeyFrames { get; set; }
+
+        [Category(animCatName)]
+        public float[] Times { get; set; }
+
+        [Category(animCatName)]
+        public short[][] Offsets { get; set; }
+
+        public AssetANIM(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR)
         {
-            KeyFrame[] a = KeyFrames;
-            float[] b = Times;
-            short[][] c = Offsets;
-        }
+            var reader = new EndianBinaryReader(AHDR.data, platform);
 
-        [Category("Animation")]
-        public int Flags
-        {
-            get => ReadInt(0x04);
-            set => Write(0x04, value);
-        }
+            Header = new AssetANIM_Header(reader);
 
-        [Category("Animation")]
-        public short BoneCount
-        {
-            get => ReadShort(0x08);
-            set => Write(0x08, value);
-        }
+            var keyFrames = new List<AssetANIM_KeyFrame>();
+            for (int i = 0; i < Header.KeyCount; i++)
+                keyFrames.Add(new AssetANIM_KeyFrame(reader));
+            KeyFrames = keyFrames.ToArray();
 
-        [Category("Animation")]
-        public short FrameCount
-        {
-            get => ReadShort(0x0A);
-            set => Write(0x0A, value);
-        }
+            var times = new List<float>();
+            for (int i = 0; i < Header.TimeCount; i++)
+                times.Add(reader.ReadSingle());
+            Times = times.ToArray();
 
-        [Category("Animation")]
-        public int KeyframeCount
-        {
-            get => ReadInt(0xC);
-            set => Write(0xC, value);
-        }
-
-        [Category("Animation"), TypeConverter(typeof(FloatTypeConverter))]
-        public float ScaleX
-        {
-            get => ReadFloat(0x10);
-            set => Write(0x10, value);
-        }
-
-        [Category("Animation"), TypeConverter(typeof(FloatTypeConverter))]
-        public float ScaleY
-        {
-            get => ReadFloat(0x14);
-            set => Write(0x14, value);
-        }
-
-        [Category("Animation"), TypeConverter(typeof(FloatTypeConverter))]
-        public float ScaleZ
-        {
-            get => ReadFloat(0x18);
-            set => Write(0x18, value);
-        }
-
-        private const int KeyFramesSectionStart = 0x1C;
-
-        [Category("Animation")]
-        public KeyFrame[] KeyFrames
-        {
-            get
+            var offsets = new List<short[]>();
+            for (int i = 0; i < Header.TimeCount - 1; i++)
             {
-                List<KeyFrame> keyFrames = new List<KeyFrame>();
-                for (int i = KeyFramesSectionStart; i < KeyFramesSectionStart + KeyframeCount * 0x10; i += 0x10)
-                {
-                    keyFrames.Add(new KeyFrame
-                    {
-                        TimeIndex = ReadUShort(i + 0x00),
-                        RotationX = ReadShort(i + 0x02),
-                        RotationY = ReadShort(i + 0x04),
-                        RotationZ = ReadShort(i + 0x06),
-                        RotationW = ReadShort(i + 0x08),
-                        PositionX = ReadShort(i + 0x0A),
-                        PositionY = ReadShort(i + 0x0C),
-                        PositionZ = ReadShort(i + 0x0E)
-                    });
-                }
-                return keyFrames.ToArray();
+                var offset = new List<short>();
+                for (int j = 0; j < Header.BoneCount; j++)
+                    offset.Add(reader.ReadInt16());
+                offsets.Add(offset.ToArray());
             }
-            set
-            {
-                List<byte> before = Data.Take(KeyFramesSectionStart).ToList();
-                List<byte> after = Data.Skip(TimesSectionStart).ToList();
-                foreach (KeyFrame k in value)
-                {
-                    before.AddRange(BitConverter.GetBytes(Switch(k.TimeIndex)));
-                    before.AddRange(BitConverter.GetBytes(Switch(k.RotationX)));
-                    before.AddRange(BitConverter.GetBytes(Switch(k.RotationY)));
-                    before.AddRange(BitConverter.GetBytes(Switch(k.RotationZ)));
-                    before.AddRange(BitConverter.GetBytes(Switch(k.RotationW)));
-                    before.AddRange(BitConverter.GetBytes(Switch(k.PositionX)));
-                    before.AddRange(BitConverter.GetBytes(Switch(k.PositionY)));
-                    before.AddRange(BitConverter.GetBytes(Switch(k.PositionZ)));
-                }
-                before.AddRange(after);
-                Data = before.ToArray();
-                KeyframeCount = value.Length;
-            }
+            Offsets = offsets.ToArray();
         }
 
-        private int TimesSectionStart => KeyFramesSectionStart + KeyframeCount * 0x10;
-
-        [Category("Animation")]
-        public float[] Times
+        public override byte[] Serialize(Game game, Platform platform)
         {
-            get
-            {
-                List<float> timeMap = new List<float>();
-                for (int i = TimesSectionStart; i < OffsetsSectionStart; i += 4)
-                    timeMap.Add(ReadFloat(i));
-                return timeMap.ToArray();
-            }
-            set
-            {
-                List<byte> before = Data.Take(TimesSectionStart).ToList();
-                List<byte> after = Data.Skip(OffsetsSectionStart).ToList();
-                foreach (float k in value)
-                    before.AddRange(BitConverter.GetBytes(Switch(k)));
-                before.AddRange(after);
-                Data = before.ToArray();
-                FrameCount = (short)value.Length;
-            }
-        }
+            Header.KeyCount = (uint)KeyFrames.Length;
+            Header.TimeCount = (ushort)Times.Length;
 
-        private int OffsetsSectionStart => TimesSectionStart + FrameCount * 4;
+            if (Offsets.Length > 0)
+                Header.BoneCount = (ushort)Offsets[0].Length;
+            else
+                Header.BoneCount = 0;
 
-        [Category("Animation")]
-        public short[][] Offsets
-        {
-            get
-            {
-                List<short[]> keyFrameMap = new List<short[]>();
-                for (int i = OffsetsSectionStart; i < OffsetsSectionStart + BoneCount * 2 * (FrameCount - 1); i += BoneCount * 2)
-                {
-                    List<short> keyframes = new List<short>();
-                    for (int j = i; j < i + BoneCount * 2; j += 2)
-                        keyframes.Add(ReadShort(j));
+            var writer = new EndianBinaryWriter(platform);
 
-                    keyFrameMap.Add(keyframes.ToArray());
-                }
-                return keyFrameMap.ToArray();
-            }
-            set
-            {
-                List<byte> before = Data.Take(OffsetsSectionStart).ToList();
+            writer.Write(Header.Serialize(platform));
+            foreach (var k in KeyFrames)
+                writer.Write(k.Serialize(platform));
+            foreach (var t in Times)
+                writer.Write(t);
+            foreach (var o in Offsets)
+                foreach (var of in o)
+                    writer.Write(of);
 
-                foreach (short[] i in value)
-                    foreach (short j in i)
-                        before.AddRange(BitConverter.GetBytes(Switch(j)));
+            while (writer.BaseStream.Length % 4 != 0)
+                writer.Write((byte)0xCD);
 
-                while (before.Count % 4 != 0)
-                    before.Add(0xCD);
-
-                Data = before.ToArray();
-            }
+            return writer.ToArray();
         }
     }
 }

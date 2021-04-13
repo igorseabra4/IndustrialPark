@@ -12,18 +12,32 @@ namespace IndustrialPark
 {
     public struct Line
     {
-        public ushort vertex0 { get; set; }
-        public ushort vertex1 { get; set; }
+        public ushort Vertex0 { get; set; }
+        public ushort Vertex1 { get; set; }
 
         public Line(ushort vertex0, ushort vertex1)
         {
-            this.vertex0 = vertex0;
-            this.vertex1 = vertex1;
+            Vertex0 = vertex0;
+            Vertex1 = vertex1;
+        }
+
+        public Line(EndianBinaryReader reader)
+        {
+            Vertex0 = reader.ReadUInt16();
+            Vertex1 = reader.ReadUInt16();
+        }
+
+        public byte[] Serialize(Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write(Vertex0);
+            writer.Write(Vertex1);
+            return writer.ToArray();
         }
 
         public override string ToString()
         {
-            return $"[{vertex0}, {vertex1}]";
+            return $"[{Vertex0}, {Vertex1}]";
         }
     }
 
@@ -38,6 +52,22 @@ namespace IndustrialPark
             this.X = X;
             this.Y = Y;
             this.Z = Z;
+        }
+
+        public WireVector(EndianBinaryReader reader)
+        {
+            X = reader.ReadSingle();
+            Y = reader.ReadSingle();
+            Z = reader.ReadSingle();
+        }
+
+        public byte[] Serialize(Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write(X);
+            writer.Write(Y);
+            writer.Write(Z);
+            return writer.ToArray();
         }
 
         public override string ToString()
@@ -142,8 +172,8 @@ namespace IndustrialPark
                 List<byte> data = Data.Take(lineStart).ToList();
                 foreach (var l in value)
                 {
-                    data.AddRange(BitConverter.GetBytes(Switch(l.vertex0)));
-                    data.AddRange(BitConverter.GetBytes(Switch(l.vertex1)));
+                    data.AddRange(BitConverter.GetBytes(Switch(l.Vertex0)));
+                    data.AddRange(BitConverter.GetBytes(Switch(l.Vertex1)));
                 }
                 Data = data.ToArray();
                 lineAmount = value.Length;
@@ -162,7 +192,7 @@ namespace IndustrialPark
                 objFile.WriteLine();
                 objFile.WriteLine("o wireframe_01");
                 foreach (var v in Lines)
-                    objFile.WriteLine($"l {v.vertex0 + 1} {v.vertex1 + 1}");
+                    objFile.WriteLine($"l {v.Vertex0 + 1} {v.Vertex1 + 1}");
             }
         }
 
@@ -220,8 +250,8 @@ namespace IndustrialPark
             List<WireVector> lineList = new List<WireVector>();
             foreach (Line l in Lines)
             {
-                lineList.Add(Points[l.vertex0]);
-                lineList.Add(Points[l.vertex1]);
+                lineList.Add(Points[l.Vertex0]);
+                lineList.Add(Points[l.Vertex1]);
             }
             vertexBuffer = SharpDX.Direct3D11.Buffer.Create(renderer.device.Device, BindFlags.VertexBuffer, lineList.ToArray());
             renderer.completeVertexBufferList.Add(vertexBuffer);

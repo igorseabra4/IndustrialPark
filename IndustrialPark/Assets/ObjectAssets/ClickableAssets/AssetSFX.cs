@@ -9,22 +9,106 @@ namespace IndustrialPark
 {
     public class AssetSFX : BaseAsset, IRenderableAsset, IClickableAsset, IScalableAsset
     {
-        private Matrix world;
-        private Matrix world2;
-        private BoundingBox boundingBox;
+        private const string categoryName = "Sound Effect";
 
-        public static bool dontRender = false;
-
-        protected override int EventStartOffset => 0x30;
+        [Category(categoryName)]
+        public FlagBitmask Flags08 { get; set; } = ByteFlagsDescriptor();
+        [Category(categoryName)]
+        public FlagBitmask Flags09 { get; set; } = ByteFlagsDescriptor();
+        [Category(categoryName)]
+        public short Frequency { get; set; }
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float MinFrequency { get; set; }
+        [Category(categoryName)]
+        public AssetID Sound_AssetID { get; set; }
+        [Category(categoryName)]
+        public AssetID AttachAssetID { get; set; }
+        [Category(categoryName)]
+        public byte LoopCount { get; set; }
+        [Category(categoryName)]
+        public byte Priority { get; set; }
+        [Category(categoryName)]
+        public byte Volume { get; set; }
+        private Vector3 _position;
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float PositionX
+        {
+            get => _position.X;
+            set { _position.X = value; CreateTransformMatrix(); }
+        }
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float PositionY
+        {
+            get => _position.Y;
+            set { _position.Y = value; CreateTransformMatrix(); }
+        }
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float PositionZ
+        {
+            get => _position.Z;
+            set { _position.Z = value; CreateTransformMatrix(); }
+        }
+        private float _radius;
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float InnerRadius
+        {
+            get => _radius;
+            set { _radius = value; CreateTransformMatrix(); }
+        }
+        private float _radius2;
+        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        public float OuterRadius
+        {
+            get => _radius2;
+            set { _radius2 = value; CreateTransformMatrix(); }
+        }
 
         public AssetSFX(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
-            _position = new Vector3(ReadFloat(0x1C), ReadFloat(0x20), ReadFloat(0x24));
-            _radius = ReadFloat(0x28);
-            _radius2 = ReadFloat(0x2C);
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = baseEndPosition;
 
+            Flags08.FlagValueByte = reader.ReadByte();
+            Flags09.FlagValueByte = reader.ReadByte();
+            Frequency = reader.ReadInt16();
+            MinFrequency = reader.ReadSingle();
+            Sound_AssetID = reader.ReadUInt32();
+            AttachAssetID = reader.ReadUInt32();
+            LoopCount = reader.ReadByte();
+            Priority = reader.ReadByte();
+            Volume = reader.ReadByte();
+            reader.ReadByte();
+            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            _radius = reader.ReadSingle();
+            _radius2 = reader.ReadSingle();
+            
             CreateTransformMatrix();
             ArchiveEditorFunctions.renderableAssets.Add(this);
+        }
+
+        public override byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write(SerializeBase(platform));
+
+            writer.Write(Flags08.FlagValueByte);
+            writer.Write(Flags09.FlagValueByte);
+            writer.Write(Frequency);
+            writer.Write(MinFrequency);
+            writer.Write(Sound_AssetID);
+            writer.Write(AttachAssetID);
+            writer.Write(LoopCount);
+            writer.Write(Priority);
+            writer.Write(Volume);
+            writer.Write((byte)0);
+            writer.Write(_position.X);
+            writer.Write(_position.Y);
+            writer.Write(_position.Z);
+            writer.Write(_radius);
+            writer.Write(_radius2);
+
+            writer.Write(SerializeLinks(platform));
+            return writer.ToArray();
         }
 
         public override bool HasReference(uint assetID) => Sound_AssetID == assetID || base.HasReference(assetID);
@@ -38,6 +122,17 @@ namespace IndustrialPark
             Verify(Sound_AssetID, ref result);
         }
 
+        private Matrix world;
+        private Matrix world2;
+        private BoundingBox boundingBox;
+
+        public static bool dontRender = false;
+
+        [Browsable(false)]
+        public bool SpecialBlendMode => true;
+
+        public BoundingSphere boundingSphere;
+
         public void CreateTransformMatrix()
         {
             world = Matrix.Scaling(_radius * 2f) * Matrix.Translation(_position);
@@ -45,8 +140,6 @@ namespace IndustrialPark
 
             CreateBoundingBox();
         }
-
-        public BoundingSphere boundingSphere;
 
         protected void CreateBoundingBox()
         {
@@ -91,146 +184,10 @@ namespace IndustrialPark
                 renderer.DrawSphere(world2, false, renderer.sfxColor);
         }
 
-        [Browsable(false)]
-        public bool SpecialBlendMode => true;
-
-        public BoundingBox GetBoundingBox()
-        {
-            return boundingBox;
-        }
-
-        public float GetDistanceFrom(Vector3 cameraPosition)
-        {
-            return Vector3.Distance(cameraPosition, _position) - _radius;
-        }
-
-        [Category("Sound Effect")]
-        public DynamicTypeDescriptor Flags08 => ByteFlagsDescriptor(0x8);
-        [Category("Sound Effect")]
-        public DynamicTypeDescriptor Flags09 => ByteFlagsDescriptor(0x9);
-
-        [Category("Sound Effect")]
-        public short Frequency
-        {
-            get => ReadShort(0xA);
-            set => Write(0xA, value);
-        }
-
-        [Category("Sound Effect"), TypeConverter(typeof(FloatTypeConverter))]
-        public float MinFrequency
-        {
-            get => ReadFloat(0xC);
-            set => Write(0xC, value);
-        }
-
-        [Category("Sound Effect")]
-        public AssetID Sound_AssetID
-        {
-            get => ReadUInt(0x10);
-            set => Write(0x10, value);
-        }
-
-        [Category("Sound Effect")]
-        public AssetID AttachAssetID
-        {
-            get => ReadUInt(0x14);
-            set => Write(0x14, value);
-        }
-
-        [Category("Sound Effect")]
-        public byte LoopCount
-        {
-            get => ReadByte(0x18);
-            set => Write(0x18, value);
-        }
-
-        [Category("Sound Effect")]
-        public byte Priority
-        {
-            get => ReadByte(0x19);
-            set => Write(0x19, value);
-        }
-
-        [Category("Sound Effect")]
-        public byte Volume
-        {
-            get => ReadByte(0x1A);
-            set => Write(0x1A, value);
-        }
-
-        [Category("Sound Effect")]
-        public byte Padding1B
-        {
-            get => ReadByte(0x1B);
-            set => Write(0x1B, value);
-        }
-
-        private Vector3 _position;
-        [Browsable(false)]
-        public Vector3 Position => new Vector3(PositionX, PositionY, PositionZ);
-
-        [Category("Sound Effect"), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionX
-        {
-            get { return _position.X; }
-            set
-            {
-                _position.X = value;
-                Write(0x1C, _position.X);
-                CreateTransformMatrix();
-            }
-        }
-
-        [Category("Sound Effect"), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionY
-        {
-            get { return _position.Y; }
-            set
-            {
-                _position.Y = value;
-                Write(0x20, _position.Y);
-                CreateTransformMatrix();
-            }
-        }
-
-        [Category("Sound Effect"), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionZ
-        {
-            get { return _position.Z; }
-            set
-            {
-                _position.Z = value;
-                Write(0x24, _position.Z);
-                CreateTransformMatrix();
-            }
-        }
-
-        private float _radius;
-        [Category("Sound Effect"), TypeConverter(typeof(FloatTypeConverter))]
-        public float InnerRadius
-        {
-            get => _radius;
-            set
-            {
-                _radius = value;
-                Write(0x28, _radius);
-                CreateTransformMatrix();
-            }
-        }
-
-        private float _radius2;
-        [Category("Sound Effect"), TypeConverter(typeof(FloatTypeConverter))]
-        public float OuterRadius
-        {
-            get => _radius2;
-            set
-            {
-                _radius2 = value;
-                Write(0x2C, _radius2);
-                CreateTransformMatrix();
-            }
-        }
-
+        public BoundingBox GetBoundingBox() => boundingBox;
+        
+        public float GetDistanceFrom(Vector3 cameraPosition) => Vector3.Distance(cameraPosition, _position) - _radius;
+        
         [Browsable(false)]
         public float ScaleX
         {

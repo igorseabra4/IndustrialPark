@@ -1,24 +1,77 @@
 ﻿using HipHopFile;
 using SharpDX;
 using SharpDX.Direct3D11;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 
 namespace IndustrialPark
 {
     public class AssetSPLN : BaseAsset, IRenderableAsset
     {
+        private const string categoryName = "Spline";
+
+        [Category(categoryName)]
+        public AssetID UnknownHash_14 { get; set; }
+        [Category(categoryName)]
+        public AssetID UnknownHash_18 { get; set; }
+        private WireVector[] _points;
+        [Category(categoryName)]
+        public WireVector[] Points
+        {
+            get => _points;
+            set
+            {
+                _points = value;
+                Setup(Program.MainForm.renderer);
+            }
+        }
+
         public AssetSPLN(Section_AHDR AHDR, Game game, Platform platform, SharpRenderer renderer) : base(AHDR, game, platform)
         {
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = baseEndPosition;
+
+            reader.ReadInt32(); // unknown, always 3
+            int pointCount = reader.ReadInt32() - 3; // point count plus 3
+            reader.ReadInt32(); // point count minus one
+            UnknownHash_14 = reader.ReadUInt32();
+            UnknownHash_18 = reader.ReadUInt32();
+
+            _points = new WireVector[pointCount];
+            for (int i = 0; i < _points.Length; i++)
+                _points[i] = new WireVector(reader);
+
             Setup(renderer);
             CreateTransformMatrix();
             ArchiveEditorFunctions.renderableAssets.Add(this);
         }
 
-        public override bool HasReference(uint assetID) => 
-            UnknownHash_14 == assetID || UnknownHash_18 == assetID || base.HasReference(assetID);
+        public override byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write(SerializeBase(platform));
+
+            writer.Write(3); // unknown, always 3
+            writer.Write(_points.Length + 3); // point count plus 3
+            writer.Write(_points.Length - 1); // point count minus one
+            writer.Write(UnknownHash_14);
+            writer.Write(UnknownHash_18);
+            foreach (var v in _points)
+                writer.Write(v.Serialize(platform));
+            writer.Write(new byte[16]);
+            float acc = 0;
+            for (int i = 0; i < _points.Length - 1; i++)
+            {
+                acc += Distance(_points[i], _points[i + 1]);
+                writer.Write(acc);
+            }
+            writer.Write(acc);
+
+            writer.Write(SerializeLinks(platform));
+            return writer.ToArray();
+        }
+
+        public override bool HasReference(uint assetID) => UnknownHash_14 == assetID || UnknownHash_18 == assetID || base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {
@@ -26,78 +79,6 @@ namespace IndustrialPark
 
             Verify(UnknownHash_14, ref result);
             Verify(UnknownHash_18, ref result);
-        }
-
-        [Category("Spline")]
-        public int UnknownAlways3
-        {
-            get => ReadInt(0x08);
-            set => Write(0x08, value);
-        }
-        [Category("Spline"), ReadOnly(true)]
-        public int PointCountPlus3
-        {
-            get => ReadInt(0x0C);
-            set => Write(0x0C, value);
-        }
-        [Category("Spline"), ReadOnly(true)]
-        public int PointCountMinus1
-        {
-            get => ReadInt(0x10);
-            set => Write(0x10, value);
-        }
-        [Category("Spline")]
-        public AssetID UnknownHash_14
-        {
-            get => ReadUInt(0x14);
-            set => Write(0x14, value);
-        }
-        [Category("Spline")]
-        public AssetID UnknownHash_18
-        {
-            get => ReadUInt(0x18);
-            set => Write(0x18, value);
-        }
-        private const int pointStart = 0x1C;
-        [Category("Spline")]
-        public WireVector[] Points
-        {
-            get
-            {
-                int pointCount = PointCountPlus3 - 3;
-                var points = new WireVector[pointCount];
-                for (int i = 0; i < pointCount; i++)
-                    points[i] = new WireVector(
-                        ReadFloat(pointStart + i * 0xC),
-                        ReadFloat(pointStart + i * 0xC + 4),
-                        ReadFloat(pointStart + i * 0xC + 8));
-                return points;
-            }
-            set
-            {
-                List<byte> dataBefore = Data.Take(pointStart).ToList();
-                
-                foreach (var v in value)
-                {
-                    dataBefore.AddRange(BitConverter.GetBytes(Switch(v.X)));
-                    dataBefore.AddRange(BitConverter.GetBytes(Switch(v.Y)));
-                    dataBefore.AddRange(BitConverter.GetBytes(Switch(v.Z)));
-                }
-                dataBefore.AddRange(new byte[16]);
-
-                float acc = 0;
-                for (int i = 0; i < value.Length - 1; i++)
-                {
-                    acc += Distance(value[i], value[i + 1]);
-                    dataBefore.AddRange(BitConverter.GetBytes(Switch(acc)));
-                }
-                dataBefore.AddRange(BitConverter.GetBytes(Switch(acc)));
-
-                Data = dataBefore.ToArray();
-                PointCountPlus3 = value.Length + 3;
-                PointCountMinus1 = value.Length - 1;
-                Setup(Program.MainForm.renderer);
-            }
         }
 
         private static float Distance(WireVector v1, WireVector v2) =>
@@ -116,9 +97,9 @@ namespace IndustrialPark
             if (vertexBuffer != null)
                 vertexBuffer.Dispose();
             
-            vertexBuffer = SharpDX.Direct3D11.Buffer.Create(renderer.device.Device, BindFlags.VertexBuffer, Points);
+            vertexBuffer = SharpDX.Direct3D11.Buffer.Create(renderer.device.Device, BindFlags.VertexBuffer, _points);
             renderer.completeVertexBufferList.Add(vertexBuffer);
-            vertexCount = PointCountMinus1 + 1;
+            vertexCount = _points.Length;
         }
 
         public bool ShouldDraw(SharpRenderer renderer)
@@ -141,14 +122,14 @@ namespace IndustrialPark
 
         public void CreateTransformMatrix()
         {
-            if (Points.Length == 0)
+            if (_points.Length == 0)
                 boundingBox = new BoundingBox();
             else
                 boundingBox = new BoundingBox(
-                    new Vector3(Points[0].X, Points[0].Y, Points[0].Z),
-                    new Vector3(Points[0].X, Points[0].Y, Points[0].Z));
+                    new Vector3(_points[0].X, _points[0].Y, _points[0].Z),
+                    new Vector3(_points[0].X, _points[0].Y, _points[0].Z));
 
-            foreach (WireVector v in Points)
+            foreach (WireVector v in _points)
             {
                 if (v.X > boundingBox.Maximum.X)
                     boundingBox.Maximum.X = v.X;

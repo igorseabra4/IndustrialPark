@@ -3,18 +3,24 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public abstract class FlagsField : AssetSpecific_Generic
+    public class FlagsField
     {
+        public uint Flags { get; set; }
         private readonly DynamicTypeDescriptor dt;
-        public abstract uint Flags { get; set; }
 
-        public FlagsField(EndianConvertibleWithData asset, int flagLoc, DynamicTypeDescriptor dt)
-            : base(asset, flagLoc)
+        public FlagsField(int bitSize, string[] flagNames, DynamicTypeDescriptor dt)
         {
+            Flags = 0;
             this.dt = dt;
+
+            for (uint i = 0; i < bitSize; i++)
+                AddPropertyAt(i, flagNames);
+
             dt.PropertyChanged += Dt_PropertyChanged;
         }
 
+        public override string ToString() => Flags.ToString($"X8");
+        
         protected void AddPropertyAt(uint i, string[] flagNames)
         {
             string flagName;
@@ -32,14 +38,10 @@ namespace IndustrialPark
             SetFlag(offset, dt.GetPropertyValue(e.PropertyName, false));
         }
 
-        public void SetFlag(uint offset, bool value)
-        {
-            Flags = value ? (Flags | Mask(offset)) : (Flags & InvMask(offset));
-        }
-
-        public bool GetFlag(uint offset)
-        {
-            return (Flags & Mask(offset)) != 0;
-        }
+        public bool GetFlag(uint offset) => (Flags & Mask(offset)) != 0;
+        public void SetFlag(uint offset, bool value) => Flags = value ? (Flags | Mask(offset)) : (Flags & InvMask(offset));
+        
+        protected static uint Mask(uint bit) => (uint)Math.Pow(2, bit);
+        protected static uint InvMask(uint bit) => uint.MaxValue - Mask(bit);
     }
 }

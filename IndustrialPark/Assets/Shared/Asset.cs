@@ -1,68 +1,42 @@
 ﻿using HipHopFile;
-using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class Asset : EndianConvertibleWithData
+    public abstract class Asset : GenericAssetDataContainer
     {
-        [Browsable(false)]
-        public int Offset => game == Game.BFBB ? 0x00 : -0x04;
-        public static int DataSizeOffset(Game game) => game == Game.BFBB ? 0x00 : -0x04;
-
-        public Section_AHDR AHDR;
         public bool isSelected;
         public bool isInvisible = false;
 
-        public Asset(Section_AHDR AHDR, Game game, Platform platform) : base(game, platform)
-        {
-            this.AHDR = AHDR;
-        }
-        
-        [Category("Asset")]
-        public override byte[] Data
-        {
-            get => AHDR.data;
-            set => AHDR.data = value; 
-        }
+        public AssetID AssetID;
+        public string assetName;
+        public string assetFileName;
+        public int checksum;
 
-        public override string ToString() =>  $"{AHDR.ADBG.assetName} [{AHDR.assetID:X8}]";
-
-        public override int GetHashCode()
+        public Asset(string assetName)
         {
-            return AHDR.assetID.GetHashCode();
+            this.assetName = assetName;
+            AssetID = assetName;
+            assetFileName = "";
+            checksum = 0;
         }
 
-        public virtual bool HasReference(uint assetID) => false;
-
-        public virtual void Verify(ref List<string> result) { }
-
-        public static void Verify(uint assetID, ref List<string> result)
+        public Asset(Section_AHDR AHDR)
         {
-            if (assetID != 0 && !Program.MainForm.AssetExists(assetID))
-                result.Add("Referenced asset 0x" + assetID.ToString("X8") + " was not found in any open archive.");
+            AssetID = AHDR.assetID;
+            assetName = AHDR.ADBG.assetName;
+            assetFileName = AHDR.ADBG.assetFileName;
+            checksum = AHDR.ADBG.checksum;
         }
+
+        // use with DUPC VIL only
+        protected Asset() { }
+
+        public override string ToString() =>  $"{assetName} [{AssetID:X8}]";
+
+        public override int GetHashCode() => AssetID.GetHashCode();
 
         public virtual void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
-        }
-
-        public DynamicTypeDescriptor ByteFlagsDescriptor(int offset, params string[] flagNames)
-        {
-            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(typeof(FlagsField_Byte));
-            return dt.FromComponent(new FlagsField_Byte(this, offset, dt, flagNames));
-        }
-
-        public DynamicTypeDescriptor ShortFlagsDescriptor(int offset, params string[] flagNames)
-        {
-            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(typeof(FlagsField_UShort));
-            return dt.FromComponent(new FlagsField_UShort(this, offset, dt, flagNames));
-        }
-
-        public DynamicTypeDescriptor IntFlagsDescriptor(int offset, params string[] flagNames)
-        {
-            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(typeof(FlagsField_UInt));
-            return dt.FromComponent(new FlagsField_UInt(this, offset, dt, flagNames));
         }
     }
 }

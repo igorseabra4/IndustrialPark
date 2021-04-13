@@ -6,11 +6,61 @@ namespace IndustrialPark
 {
     public class AssetGUST : BaseAsset
     {
-        public AssetGUST(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        private const string catName = "Gust";
 
-        protected override int EventStartOffset => 0x28;
+        [Category(catName)]
+        public int UnknownInt08 { get; set; }
+        [Category(catName)]
+        public AssetID Volume_AssetID { get; set; }
+        [Category(catName)]
+        public int UnknownInt10 { get; set; }
+        [Category(catName)]
+        public int UnknownInt14 { get; set; }
+        [Category(catName), TypeConverter(typeof(FloatTypeConverter))]
+        public float UnknownFloat18 { get; set; }
+        [Category(catName)]
+        public int UnknownInt1C { get; set; }
+        [Category(catName), TypeConverter(typeof(FloatTypeConverter))]
+        public float UnknownFloat20 { get; set; }
+        [Category(catName), TypeConverter(typeof(FloatTypeConverter))]
+        public float UnknownFloat24 { get; set; }
 
-        public override bool HasReference(uint assetID) => Volume_AssetID == assetID ||base.HasReference(assetID);
+        public AssetGUST(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = baseEndPosition;
+
+            UnknownInt08 = reader.ReadInt32();
+            Volume_AssetID = reader.ReadUInt32();
+            UnknownInt10 = reader.ReadInt32();
+            UnknownInt14 = reader.ReadInt32();
+            UnknownFloat18 = reader.ReadSingle();
+            UnknownInt1C = reader.ReadInt32();
+            UnknownFloat20 = reader.ReadSingle();
+            UnknownFloat24 = reader.ReadSingle();
+        }
+
+        public override byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(SerializeBase(platform));
+
+            writer.Write(UnknownInt08);
+            writer.Write(Volume_AssetID);
+            writer.Write(UnknownInt10);
+            writer.Write(UnknownInt14);
+            writer.Write(UnknownFloat18);
+            writer.Write(UnknownInt1C);
+            writer.Write(UnknownFloat20);
+            writer.Write(UnknownFloat24);
+
+            writer.Write(SerializeLinks(platform));
+
+            return writer.ToArray();
+        }
+
+        public override bool HasReference(uint assetID) => Volume_AssetID == assetID || base.HasReference(assetID);
         
         public override void Verify(ref List<string> result)
         {
@@ -19,62 +69,6 @@ namespace IndustrialPark
             if (Volume_AssetID == 0)
                 result.Add("GUST with Volume_AssetID set to 0");
             Verify(Volume_AssetID, ref result);
-        }
-
-        [Category("Gust")]
-        public int UnknownInt08
-        {
-            get => ReadInt(0x8);
-            set => Write(0x8, value);
-        }
-
-        [Category("Gust")]
-        public AssetID Volume_AssetID
-        {
-            get => ReadUInt(0xC);
-            set => Write(0xC, value);
-        }
-
-        [Category("Gust")]
-        public int UnknownInt10
-        {
-            get => ReadInt(0x10);
-            set => Write(0x10, value);
-        }
-
-        [Category("Gust")]
-        public int UnknownInt14
-        {
-            get => ReadInt(0x14);
-            set => Write(0x14, value);
-        }
-
-        [Category("Gust"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat18
-        {
-            get => ReadFloat(0x18);
-            set => Write(0x18, value);
-        }
-
-        [Category("Gust")]
-        public int UnknownInt1C
-        {
-            get => ReadInt(0x1C);
-            set => Write(0x1C, value);
-        }
-
-        [Category("Gust"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat20
-        {
-            get => ReadFloat(0x20);
-            set => Write(0x20, value);
-        }
-
-        [Category("Gust"), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat24
-        {
-            get => ReadFloat(0x24);
-            set => Write(0x24, value);
         }
     }
 }

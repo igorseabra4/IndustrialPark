@@ -26,47 +26,93 @@ namespace IndustrialPark
             PickupHash = 0;
         }
 
-        public override string ToString()
+        public EntryPICK(EndianBinaryReader reader)
         {
-            return $"[{Program.MainForm.GetAssetNameFromID(PickupHash)}] - [{Program.MainForm.GetAssetNameFromID(ModelAssetID)}]";
+            PickupHash = reader.ReadUInt32();
+            PickupType = reader.ReadByte();
+            PickupIndex = reader.ReadByte();
+            PickupFlags = reader.ReadUInt16();
+            Quantity = reader.ReadUInt32();
+            ModelAssetID = reader.ReadUInt32();
+            AnimAssetID = reader.ReadUInt32();
         }
+
+        public byte[] Serialize(Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(PickupHash);
+            writer.Write(PickupType);
+            writer.Write(PickupIndex);
+            writer.Write(PickupFlags);
+            writer.Write(Quantity);
+            writer.Write(ModelAssetID);
+            writer.Write(AnimAssetID);
+
+            return writer.ToArray();
+        }
+
+        public override string ToString() => 
+            $"[{Program.MainForm.GetAssetNameFromID(PickupHash)}] - [{Program.MainForm.GetAssetNameFromID(ModelAssetID)}]";
     }
 
     public class AssetPICK : Asset
     {
         public static Dictionary<uint, uint> pickEntries = new Dictionary<uint, uint>();
 
-        public AssetPICK(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        private EntryPICK[] _pick_Entries;
+        [Category("Pickup Table")]
+        public EntryPICK[] PICK_Entries
         {
-            SetupDictionary();
+            get => _pick_Entries;
+            set
+            {
+                _pick_Entries = value;
+                UpdateDictionary();
+            }
         }
 
-        private void SetupDictionary()
+        public AssetPICK(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR)
         {
-            pickEntries.Clear();
+            var reader = new EndianBinaryReader(AHDR.data, platform);
 
-            foreach (EntryPICK entry in PICK_Entries)
-                pickEntries[entry.PickupHash] = entry.ModelAssetID;
+            reader.ReadInt32();
+
+            _pick_Entries = new EntryPICK[reader.ReadInt32()];
+
+            for (int i = 0; i < _pick_Entries.Length; i++)
+                _pick_Entries[i] = new EntryPICK(reader);
+
+            UpdateDictionary();
         }
 
-        public void ClearDictionary()
+        public override byte[] Serialize(Game game, Platform platform)
         {
-            foreach (EntryPICK entry in PICK_Entries)
-                pickEntries.Remove(entry.PickupHash);
+            var writer = new EndianBinaryWriter(platform);
+
+            var chars = new char[] { 'P', 'I', 'C', 'K' };
+            writer.Write(writer.endianness == Endianness.Little ? chars : chars.Reverse().ToArray());
+
+            writer.Write(_pick_Entries.Length);
+
+            foreach (var l in _pick_Entries)
+                writer.Write(l.Serialize(platform));
+
+            return writer.ToArray();
         }
 
         public override bool HasReference(uint assetID)
         {
-            foreach (EntryPICK a in PICK_Entries)
+            foreach (EntryPICK a in _pick_Entries)
                 if (a.ModelAssetID == assetID)
                     return true;
             
-            return base.HasReference(assetID);
+            return false;
         }
 
         public override void Verify(ref List<string> result)
         {
-            foreach (EntryPICK a in PICK_Entries)
+            foreach (EntryPICK a in _pick_Entries)
             {
                 if (a.ModelAssetID == 0)
                     result.Add("PICK entry with ModelAssetID set to 0");
@@ -74,53 +120,18 @@ namespace IndustrialPark
             }
         }
 
-        private int AmountOfEntries
+        private void UpdateDictionary()
         {
-            get => ReadInt(0x04);
-            set => Write(0x04, value);
+            pickEntries.Clear();
+
+            foreach (EntryPICK entry in _pick_Entries)
+                pickEntries[entry.PickupHash] = entry.ModelAssetID;
         }
 
-        [Category("Pickup Table")]
-        public EntryPICK[] PICK_Entries
+        public void ClearDictionary()
         {
-            get
-            {
-                List<EntryPICK> entries = new List<EntryPICK>();
-                for (int i = 0; i < AmountOfEntries; i++)
-                {
-                    entries.Add(new EntryPICK()
-                    {
-                        PickupHash = ReadUInt(8 + i * 0x14),
-                        PickupType = ReadByte(12 + i * 0x14),
-                        PickupIndex = ReadByte(13 + i * 0x14),
-                        PickupFlags = ReadUShort(14 + i * 0x14),
-                        Quantity = ReadUInt(16 + i * 0x14),
-                        ModelAssetID = ReadUInt(20 + i * 0x14),
-                        AnimAssetID = ReadUInt(24 + i * 0x14)
-                    });
-                }
-                
-                return entries.ToArray();
-            }
-            set
-            {
-                List<byte> newData = Data.Take(4).ToList();
-                newData.AddRange(BitConverter.GetBytes(Switch(value.Length)));
-
-                foreach (var i in value)
-                {
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.PickupHash)));
-                    newData.Add(i.PickupType);
-                    newData.Add(i.PickupIndex);
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.PickupFlags)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.Quantity)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.ModelAssetID)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.AnimAssetID)));
-                }
-
-                Data = newData.ToArray();
-                SetupDictionary();
-            }
+            foreach (EntryPICK entry in _pick_Entries)
+                pickEntries.Remove(entry.PickupHash);
         }
     }
 }
