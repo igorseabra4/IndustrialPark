@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -8,25 +9,30 @@ namespace IndustrialPark
     {
         protected const string categoryName = "Electric Arc";
 
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Src_dpos_X { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Src_dpos_Y { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Src_dpos_Z { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Src_dpos_X { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Src_dpos_Y { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Src_dpos_Z { get; set; }
         [Category(categoryName)]
         public byte DamageType { get; set; }
         [Category(categoryName)]
         public FlagBitmask EgenFlags { get; set; } = ByteFlagsDescriptor();
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float ActiveTimeSeconds { get; set; }
+        [Category(categoryName)]
+        public AssetSingle ActiveTimeSeconds { get; set; }
         [Category(categoryName)]
         public AssetID OnAnim_AssetID { get; set; }
+
+        public AssetEGEN(string assetName, Vector3 position) : base(assetName, AssetType.EGEN, BaseAssetType.EGenerator, position)
+        {
+            OnAnim_AssetID = 0xCE7F8131;
+        }
 
         public AssetEGEN(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = entityEndPosition;
+            reader.BaseStream.Position = entityHeaderEndPosition;
 
             Src_dpos_X = reader.ReadSingle();
             Src_dpos_Y = reader.ReadSingle();

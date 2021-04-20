@@ -26,7 +26,7 @@ namespace IndustrialPark
         public override byte[] Serialize(Game game, Platform platform)
         {
             var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeBase(platform));       
+            writer.Write(SerializeEntity(game, platform));       
             writer.Write(SerializeLinks(platform));
             writer.Write(LightKit_AssetID);
             return writer.ToArray();
@@ -55,16 +55,8 @@ namespace IndustrialPark
 
         protected override void CreateBoundingBox()
         {
-            if (renderingDictionary.ContainsKey(_modelAssetID) &&
-                renderingDictionary[_modelAssetID].HasRenderWareModelFile() &&
-                renderingDictionary[_modelAssetID].GetRenderWareModelFile() != null)
-            {
-                CreateBoundingBox(renderingDictionary[_modelAssetID].GetRenderWareModelFile().vertexListG);
-            }
-            else
-            {
-                CreateBoundingBox(SharpRenderer.pyramidVertices);
-            }
+            var model = GetFromRenderingDictionary(_modelAssetID);
+            CreateBoundingBox(model == null ? SharpRenderer.pyramidVertices : model.vertexListG);
         }
 
         public override void Draw(SharpRenderer renderer)

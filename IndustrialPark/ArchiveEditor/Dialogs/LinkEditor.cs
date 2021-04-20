@@ -28,7 +28,7 @@ namespace IndustrialPark
             AutoCompleteStringCollection sourceObjects = new AutoCompleteStringCollection();
             AutoCompleteStringCollection sourceAll = new AutoCompleteStringCollection();
 
-            if (!AssetIDTypeConverter.Legacy)
+            if (!HexUIntTypeConverter.Legacy)
             foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
                 foreach (Asset a in ae.archive.GetAllAssets())
                 {
@@ -95,16 +95,16 @@ namespace IndustrialPark
 
         private string GetAssetName(AssetID assetID)
         {
-            if (AssetIDTypeConverter.Legacy)
+            if (HexUIntTypeConverter.Legacy)
                 return assetID.ToString("X8");
             return Program.MainForm.GetAssetNameFromID(assetID);
         }
 
         private AssetID GetAssetID(string assetName)
         {
-            if (AssetIDTypeConverter.Legacy)
+            if (HexUIntTypeConverter.Legacy)
                 return Convert.ToUInt32(assetName, 16);
-            return AssetIDTypeConverter.AssetIDFromString(assetName);
+            return HexUIntTypeConverter.AssetIDFromString(assetName);
         }
 
         private void buttonAdd_Click(object sender, EventArgs e)

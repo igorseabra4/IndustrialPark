@@ -1,6 +1,6 @@
 ﻿namespace IndustrialPark
 {
-    public enum ObjectAssetType : byte
+    public enum BaseAssetType : byte
     {
         _DYNA_DSCO_TPIK_TRWT_RANM_SUBT = 0x00,
         Unknown = 0x00,

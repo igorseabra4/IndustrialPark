@@ -17,7 +17,7 @@ namespace IndustrialPark
         public override void Setup(SharpRenderer renderer)
         {
             base.Setup(renderer);
-            AddToRenderingDictionary(AHDR.assetID, this);
+            AddToRenderingDictionary(assetID, this);
 
             if (game == Game.Incredibles)
             {
@@ -26,7 +26,7 @@ namespace IndustrialPark
             }
         }
 
-        private string newName => AHDR.ADBG.assetName.Replace(".dff", "");
+        private string newName => assetName.Replace(".dff", "");
 
         public void MovieRemoveFromDictionary()
         {

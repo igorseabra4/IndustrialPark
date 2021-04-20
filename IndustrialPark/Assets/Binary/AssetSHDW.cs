@@ -58,7 +58,7 @@ namespace IndustrialPark
         [Category("Shadow Map")]
         public EntrySHDW[] SHDW_Entries { get; set; }
 
-        public AssetSHDW(Section_AHDR AHDR, Platform platform) : base(AHDR)
+        public AssetSHDW(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
 

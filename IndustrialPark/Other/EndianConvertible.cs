@@ -1,23 +1,29 @@
 ﻿using AssetEditorColors;
 using HipHopFile;
-using IndustrialPark.Models;
-using SharpDX;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 
 namespace IndustrialPark
 {
+    public enum Endianness
+    {
+        Little,
+        Big
+    }
+
+    public static class Extensions
+    {
+        public static Endianness Endianness(this Platform platform) =>
+            platform == Platform.GameCube ? IndustrialPark.Endianness.Big : IndustrialPark.Endianness.Little;
+    }
+
     public class EndianBinaryReader : BinaryReader
     {
         public Endianness endianness { get; private set; }
 
-        public EndianBinaryReader(byte[] data, Platform platform) : base(new MemoryStream(data))
-        {
-            endianness = EndianConverter.PlatformEndianness(platform);
-        }
+        public EndianBinaryReader(byte[] data, Platform platform) : this(data, platform.Endianness()) { }
 
         public EndianBinaryReader(byte[] data, Endianness endianness) : base(new MemoryStream(data))
         {
@@ -37,7 +43,7 @@ namespace IndustrialPark
         public override int ReadInt32() =>
             (endianness == Endianness.Little) ?
             base.ReadInt32() :
-            BitConverter.ToInt16(BitConverter.GetBytes(base.ReadInt32()).Reverse().ToArray(), 0);
+            BitConverter.ToInt32(BitConverter.GetBytes(base.ReadInt32()).Reverse().ToArray(), 0);
 
         public override ushort ReadUInt16() =>
             (endianness == Endianness.Little) ?
@@ -47,7 +53,7 @@ namespace IndustrialPark
         public override uint ReadUInt32() =>
             (endianness == Endianness.Little) ?
             base.ReadUInt32() :
-            BitConverter.ToUInt16(BitConverter.GetBytes(base.ReadUInt32()).Reverse().ToArray(), 0);
+            BitConverter.ToUInt32(BitConverter.GetBytes(base.ReadUInt32()).Reverse().ToArray(), 0);
 
         public bool EndOfStream => BaseStream.Position == BaseStream.Length;
     }
@@ -58,7 +64,7 @@ namespace IndustrialPark
 
         public EndianBinaryWriter(Platform platform) : base(new MemoryStream())
         {
-            endianness = EndianConverter.PlatformEndianness(platform);
+            endianness = platform.Endianness();
         }
 
         public EndianBinaryWriter(Endianness endianness) : base(new MemoryStream())
@@ -108,7 +114,7 @@ namespace IndustrialPark
                 base.Write(BitConverter.GetBytes(f).Reverse().ToArray());
         }
 
-        public void Write(MyColor color)
+        public void Write(AssetColor color)
         {
             base.Write(color.R);
             base.Write(color.G);
@@ -129,7 +135,7 @@ namespace IndustrialPark
         {
             this.game = game;
             this.platform = platform;
-            endianness = EndianConverter.PlatformEndianness(platform);
+            endianness = platform.Endianness();
         }
 
         public EndianConvertibleWithData(Endianness endianness) : base(endianness) { }
@@ -269,26 +275,6 @@ namespace IndustrialPark
         {
             return uint.MaxValue - Mask(bit);
         }
-
-        protected float? TriangleIntersection(Ray r, IList<Triangle> triangles, IList<Vector3> vertices, Matrix world)
-        {
-            float? smallestDistance = null;
-
-            foreach (var t in triangles)
-            {
-                Vector3 v1 = (Vector3)Vector3.Transform(vertices[t.vertex1], world);
-                Vector3 v2 = (Vector3)Vector3.Transform(vertices[t.vertex2], world);
-                Vector3 v3 = (Vector3)Vector3.Transform(vertices[t.vertex3], world);
-
-                if (r.Intersects(ref v1, ref v2, ref v3, out float distance))
-                {
-                    if (smallestDistance == null || distance < smallestDistance)
-                        smallestDistance = distance;
-                }
-            }
-
-            return smallestDistance;
-        }
     }
 
     public class EndianConvertible
@@ -302,7 +288,7 @@ namespace IndustrialPark
 
         public EndianConvertible(Platform platform)
         {
-            endianness = EndianConverter.PlatformEndianness(platform);
+            endianness = platform.Endianness();
         }
 
         public float Switch(float a)

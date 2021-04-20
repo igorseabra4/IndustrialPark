@@ -21,7 +21,7 @@ namespace IndustrialPark
             this.archive = archive;
             
             propertyGridAsset.SelectedObject = asset;
-            Text = $"[{asset.AHDR.assetType}] {asset}";
+            Text = $"[{asset.assetType}] {asset}";
 
             RefreshPropertyGrid();
         }
@@ -50,7 +50,7 @@ namespace IndustrialPark
 
         public uint GetAssetID()
         {
-            return asset.AHDR.assetID;
+            return asset.assetID;
         }
 
         private void buttonFindCallers_Click(object sender, EventArgs e)
@@ -65,7 +65,7 @@ namespace IndustrialPark
 
         private void buttonHelp_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start(AboutBox.WikiLink + asset.AHDR.assetType.ToString());
+            System.Diagnostics.Process.Start(AboutBox.WikiLink + asset.assetType.ToString());
         }
 
         private void buttonExport_Click(object sender, EventArgs e)
@@ -80,7 +80,7 @@ namespace IndustrialPark
                 "|TIFF Files|*.tiff" +
                 "|RWTEX Files|*.rwtex",
 
-                FileName = Path.ChangeExtension(asset.AHDR.ADBG.assetName, ".png")
+                FileName = Path.ChangeExtension(asset.assetName, ".png")
             };
             if (a.ShowDialog() == DialogResult.OK)
             {

@@ -89,10 +89,14 @@ namespace IndustrialPark
         [Category(catName)]
         public AssetID AssetUnderEvaluation { get; set; }
 
+        public AssetCOND(string assetName) : base(assetName, AssetType.COND, BaseAssetType.Cond)
+        {
+        }
+
         public AssetCOND(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = baseEndPosition;
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
             EvaluationAmount = reader.ReadInt32();
             Conditional_Scooby = reader.ReadUInt32();

@@ -6,8 +6,6 @@ namespace IndustrialPark
     {
         void Draw(SharpRenderer renderer, Matrix worldViewProjection, Vector4 color, Vector3 uvAnimOffset);
 
-        bool HasRenderWareModelFile();
-
         RenderWareModelFile GetRenderWareModelFile();
 
         void MovieRemoveFromDictionary();

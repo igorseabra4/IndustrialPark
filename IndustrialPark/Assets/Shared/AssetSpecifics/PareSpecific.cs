@@ -1,6 +1,5 @@
 ﻿using HipHopFile;
 using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace IndustrialPark
 {
@@ -11,16 +10,11 @@ namespace IndustrialPark
 
     public class PareSpecific_xPECircle : PareSpecific_Generic
     {
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Radius { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Deflection { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float DirX { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float DirY { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float DirZ { get; set; }
+        public AssetSingle Radius { get; set; }
+        public AssetSingle Deflection { get; set; }
+        public AssetSingle DirX { get; set; }
+        public AssetSingle DirY { get; set; }
+        public AssetSingle DirZ { get; set; }
 
         public PareSpecific_xPECircle() { }
         public PareSpecific_xPECircle(EndianBinaryReader reader)
@@ -46,8 +40,7 @@ namespace IndustrialPark
 
     public class PareSpecific_tagEmitSphere : PareSpecific_Generic
     {
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Radius { get; set; }
+        public AssetSingle Radius { get; set; }
 
         public PareSpecific_tagEmitSphere() { }
         public PareSpecific_tagEmitSphere(EndianBinaryReader reader)
@@ -65,10 +58,8 @@ namespace IndustrialPark
 
     public class PareSpecific_tagEmitRect : PareSpecific_Generic
     {
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float X_Len { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Z_Len { get; set; }
+        public AssetSingle X_Len { get; set; }
+        public AssetSingle Z_Len { get; set; }
 
         public PareSpecific_tagEmitRect() { }
         public PareSpecific_tagEmitRect(EndianBinaryReader reader)
@@ -88,20 +79,13 @@ namespace IndustrialPark
 
     public class PareSpecific_tagEmitLine : PareSpecific_Generic
     {
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Position_0_X { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Position_0_Y { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Position_0_Z { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Position_1_X { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Position_1_Y { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Position_1_Z { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Radius { get; set; }
+        public AssetSingle Position_0_X { get; set; }
+        public AssetSingle Position_0_Y { get; set; }
+        public AssetSingle Position_0_Z { get; set; }
+        public AssetSingle Position_1_X { get; set; }
+        public AssetSingle Position_1_Y { get; set; }
+        public AssetSingle Position_1_Z { get; set; }
+        public AssetSingle Radius { get; set; }
 
         public PareSpecific_tagEmitLine() { }
         public PareSpecific_tagEmitLine(EndianBinaryReader reader)
@@ -156,12 +140,9 @@ namespace IndustrialPark
 
     public class PareSpecific_tagEmitOffsetPoint : PareSpecific_Generic
     {
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Position_X { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Position_Y { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Position_Z { get; set; }
+        public AssetSingle Position_X { get; set; }
+        public AssetSingle Position_Y { get; set; }
+        public AssetSingle Position_Z { get; set; }
 
         public PareSpecific_tagEmitOffsetPoint() { }
         public PareSpecific_tagEmitOffsetPoint(EndianBinaryReader reader)
@@ -183,12 +164,9 @@ namespace IndustrialPark
 
     public class PareSpecific_xPEVCyl : PareSpecific_Generic
     {
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Height { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Radius { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Deflection { get; set; }
+        public AssetSingle Height { get; set; }
+        public AssetSingle Radius { get; set; }
+        public AssetSingle Deflection { get; set; }
 
         public PareSpecific_xPEVCyl() { }
         public PareSpecific_xPEVCyl(EndianBinaryReader reader)
@@ -213,16 +191,11 @@ namespace IndustrialPark
         public byte flags { get; set; }
         public byte type { get; set; }
         public byte bone { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float OffsetX { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float OffsetY { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float OffsetZ { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Radius { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Deflection { get; set; }
+        public AssetSingle OffsetX { get; set; }
+        public AssetSingle OffsetY { get; set; }
+        public AssetSingle OffsetZ { get; set; }
+        public AssetSingle Radius { get; set; }
+        public AssetSingle Deflection { get; set; }
 
         public PareSpecific_xPEEntBone() { }
         public PareSpecific_xPEEntBone(EndianBinaryReader reader)
@@ -260,10 +233,9 @@ namespace IndustrialPark
         public byte type { get; set; }
         public byte pad1 { get; set; }
         public byte pad2 { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Expand { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Deflection { get; set; }
+        public AssetSingle Expand { get; set; }
+        public AssetSingle Deflection { get; set; }
+
         public PareSpecific_xPEEntBound() { }
         public PareSpecific_xPEEntBound(EndianBinaryReader reader)
         {

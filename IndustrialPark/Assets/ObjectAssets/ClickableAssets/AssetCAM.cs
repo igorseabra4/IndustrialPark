@@ -33,64 +33,64 @@ namespace IndustrialPark
         private const string categoryName = "Camera";
 
         private Vector3 _position;
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionX
+        [Category(categoryName)]
+        public AssetSingle PositionX
         {
             get => _position.X;
             set { _position.X = value; CreateTransformMatrix(); }
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionY
+        [Category(categoryName)]
+        public AssetSingle PositionY
         {
             get => _position.Y;
             set { _position.Y = value; CreateTransformMatrix(); }
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionZ
+        [Category(categoryName)]
+        public AssetSingle PositionZ
         {
             get => _position.Z;
             set { _position.Z = value; CreateTransformMatrix(); }
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float NormalizedForwardX { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float NormalizedForwardY { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float NormalizedForwardZ { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float NormalizedUpX { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float NormalizedUpY { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float NormalizedUpZ { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float NormalizedLeftX { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float NormalizedLeftY { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float NormalizedLeftZ { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float ViewOffsetX { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float ViewOffsetY { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float ViewOffsetZ { get; set; }
+        [Category(categoryName)]
+        public AssetSingle NormalizedForwardX { get; set; }
+        [Category(categoryName)]
+        public AssetSingle NormalizedForwardY { get; set; }
+        [Category(categoryName)]
+        public AssetSingle NormalizedForwardZ { get; set; }
+        [Category(categoryName)]
+        public AssetSingle NormalizedUpX { get; set; }
+        [Category(categoryName)]
+        public AssetSingle NormalizedUpY { get; set; }
+        [Category(categoryName)]
+        public AssetSingle NormalizedUpZ { get; set; }
+        [Category(categoryName)]
+        public AssetSingle NormalizedLeftX { get; set; }
+        [Category(categoryName)]
+        public AssetSingle NormalizedLeftY { get; set; }
+        [Category(categoryName)]
+        public AssetSingle NormalizedLeftZ { get; set; }
+        [Category(categoryName)]
+        public AssetSingle ViewOffsetX { get; set; }
+        [Category(categoryName)]
+        public AssetSingle ViewOffsetY { get; set; }
+        [Category(categoryName)]
+        public AssetSingle ViewOffsetZ { get; set; }
         [Category(categoryName)]
         public short OffsetStartFrames { get; set; }
         [Category(categoryName)]
         public short OffsetEndFrames { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float FieldOfView { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float TransitionTime { get; set; }
+        [Category(categoryName)]
+        public AssetSingle FieldOfView { get; set; }
+        [Category(categoryName)]
+        public AssetSingle TransitionTime { get; set; }
         [Category(categoryName)]
         public CamTransitionType TransitionType { get; set; }
         [Category(categoryName)]
         public FlagBitmask CamFlags { get; set; } = IntFlagsDescriptor();
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float FadeUp { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float FadeDown { get; set; }
+        [Category(categoryName)]
+        public AssetSingle FadeUp { get; set; }
+        [Category(categoryName)]
+        public AssetSingle FadeDown { get; set; }
         [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter))]
         public CamSpecific_Generic CamSpecific { get; set; }
         [Category(categoryName)]
@@ -137,10 +137,62 @@ namespace IndustrialPark
             }
         }
 
+        public AssetCAM(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.CAM, BaseAssetType.Camera)
+        {
+            _position = position;
+
+            OffsetStartFrames = 30;
+            OffsetEndFrames = 45;
+            FieldOfView = 100;
+            Flags1.FlagValueByte = 0;
+            Flags2.FlagValueByte = 1;
+            Flags3.FlagValueByte = 1;
+            Flags4.FlagValueByte = 0xC0;
+
+            CamType = CamType.Static;
+
+            if (template == AssetTemplate.StartCamera)
+            {
+                NormalizedForwardZ = 1;
+                NormalizedUpY = 1;
+                NormalizedLeftX = 1;
+                FieldOfView = 85;
+                Flags4.FlagValueByte = 0x8F;
+                CamType = CamType.Follow;
+                var camSpecific = (CamSpecific_Follow)CamSpecific;
+                camSpecific.Distance = -2;
+                camSpecific.Height = 1;
+                camSpecific.RubberBand = 1;
+            }
+            else if (template == AssetTemplate.BusStop_Camera)
+            {
+                PositionX -= 7f;
+                PositionY += 2f;
+                NormalizedForwardX = 1f;
+                NormalizedForwardY = 0f;
+                NormalizedForwardZ = 0f;
+                NormalizedUpX = 0f;
+                NormalizedUpX = 1f;
+                NormalizedUpX = 0f;
+                NormalizedLeftX = 0f;
+                NormalizedLeftY = 0f;
+                NormalizedLeftZ = 1f;
+                OffsetStartFrames = 30;
+                OffsetEndFrames = 45;
+                FieldOfView = 60f;
+                TransitionTime = 0.5f;
+                Flags4.FlagValueByte = 0x8F;
+                CamType = CamType.Static;
+            }
+
+            CreateTransformMatrix();
+            ArchiveEditorFunctions.renderableAssets.Add(this);
+        }
+
         public AssetCAM(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = baseEndPosition;
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
             _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
             NormalizedForwardX = reader.ReadSingle();
@@ -296,14 +348,11 @@ namespace IndustrialPark
 
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
-            if (!ShouldDraw(renderer))
-                return null;
-
-            if (ray.Intersects(ref boundingBox, out float distance))
-                return distance;
+            if (ShouldDraw(renderer) && ray.Intersects(ref boundingBox))
+                return TriangleIntersection(ray, SharpRenderer.cubeTriangles, SharpRenderer.cubeVertices, world);
             return null;
         }
-
+        
         public bool ShouldDraw(SharpRenderer renderer)
         {
             if (isSelected)

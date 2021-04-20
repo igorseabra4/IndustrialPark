@@ -7,9 +7,9 @@ namespace IndustrialPark.Randomizer
     {
         [Category("Boulder Settings"), DisplayName("Boulder Settings"), Description("Randomizes floating point values in boulders, such as speed, gravity, mass, lifetime etc.")]
         public bool BoulderSettings { get; set; }
-        [Category("Boulder Settings"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Boulder Settings"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float boulderMin { get; set; } = 0.5f;
-        [Category("Boulder Settings"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Boulder Settings"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float boulderMax { get; set; } = 2f;
 
 
@@ -68,17 +68,17 @@ namespace IndustrialPark.Randomizer
 
         [Category("MovePoint"), DisplayName("MovePoint Radius"), Description("Randomizes MovePoint asset radius. Enemies can move more and see you from further away.")]
         public bool MovePoint_Radius { get; set; }
-        [Category("MovePoint"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("MovePoint"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float mvptMin { get; set; } = 0.9f;
-        [Category("MovePoint"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("MovePoint"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float mvptMax { get; set; } = 1.8f;
 
 
         [Category("Platform Speed"), DisplayName("Platform Speed"), Description("Randomizes spped of platform (moving) assets. Higher values mean faster platforms. Negative values create interesting results.")]
         public bool PlatformSpeed { get; set; }
-        [Category("Platform Speed"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Platform Speed"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float speedMin { get; set; }
-        [Category("Platform Speed"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Platform Speed"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float speedMax { get; set; }
 
 
@@ -98,35 +98,35 @@ namespace IndustrialPark.Randomizer
 
         [Category("Timers"), Description("Randomizes timer values")]
         public bool Timers { get; set; }
-        [Category("Timers"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Timers"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float timerMin { get; set; }
-        [Category("Timers"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Timers"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float timerMax { get; set; }
 
 
         [Category("Scales (Not recommended)"), DisplayName("Scales"), Description("NOT RECOMMENDED\nRandomizes scale (size) of Entity assets.")]
         public bool Scale_Of_Things { get; set; }
-        [Category("Scales (Not recommended)"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Scales (Not recommended)"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float scaleMin { get; set; }
-        [Category("Scales (Not recommended)"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Scales (Not recommended)"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float scaleMax { get; set; }
 
 
         [Category("Ring Challenges"), DisplayName("Ring Sizes"), Description("Randomizes size of rings.")]
         public bool RingSizes { get; set; }
-        [Category("Ring Challenges"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Ring Challenges"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float ringScaleMin { get; set; }
-        [Category("Ring Challenges"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Ring Challenges"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float ringScaleMax { get; set; }
 
 
         [Category("Shiny Object/Snack Gates"), DisplayName("Shiny Object/Snack Gates"), Description("Randomizes clam/toll gate shiny object requirements in BFBB or snack gate requirements in Scooby.")]
         public bool Shiny_Object_Gates { get; set; }
         [Category("Shiny Object/Snack Gates"),
-            DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+            DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float shinyReqMin { get; set; }
         [Category("Shiny Object/Snack Gates"),
-            DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+            DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float shinyReqMax { get; set; }
 
 
@@ -153,10 +153,10 @@ namespace IndustrialPark.Randomizer
         [Category("Texture Animations"), DisplayName("Texture Animations"), Description("Randomizes speed of UV animations on surfaces.")]
         public bool Texture_Animations { get; set; }
         [Category("Texture Animations"),
-            DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+            DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float surfMin { get; set; }
         [Category("Texture Animations"),
-            DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+            DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float surfMax { get; set; }
 
 
@@ -236,7 +236,7 @@ namespace IndustrialPark.Randomizer
 
         [Category("Non-Randomizer: LODT"), DisplayName("boot.HIP LODT multiplier"),
             Description("If true, multiply the render distance for the pickups by this amount."),
-            TypeConverter(typeof(FloatTypeConverter))]
+            TypeConverter(typeof(SingleTypeConverter))]
         public float lodtValue { get; set; }
 
         [Category("Non-Randomizer"), DisplayName("Restore Robot Laugh"), Description("Restores robot laugh sound, which is not present normally in the GameCube version of the game.")]

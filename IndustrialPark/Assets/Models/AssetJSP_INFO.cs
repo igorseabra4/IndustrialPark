@@ -1,12 +1,13 @@
 ﻿using HipHopFile;
 using RenderWareFile;
-using SharpDX;
 
 namespace IndustrialPark
 {
-    public class AssetJSP_INFO : Asset
+    public class AssetJSP_INFO : AssetWithData
     {
         public AssetJSP_INFO(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+
+        public override byte[] Serialize(Game game, Platform platform) => Data;
 
         private int renderWareVersion;
 

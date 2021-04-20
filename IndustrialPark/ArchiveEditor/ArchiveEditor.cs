@@ -28,7 +28,7 @@ namespace IndustrialPark
                 SharpRenderer.sphereTriangles = new List<Models.Triangle>();
                 SharpRenderer.planeTriangles = new List<Models.Triangle>();
                 SharpRenderer.torusTriangles = new List<Models.Triangle>();
-                AssetIDTypeConverter.Legacy = true;
+                HexUIntTypeConverter.Legacy = true;
                 return new ArchiveEditor(null, Platform.Unknown, true);
             }
         }
@@ -232,7 +232,7 @@ namespace IndustrialPark
 
         public string GetAssetNameFromID(uint assetID)
         {
-            return archive.GetFromAssetID(assetID).AHDR.ADBG.assetName;
+            return archive.GetFromAssetID(assetID).assetName;
         }
 
         public string GetCurrentlyOpenFileName()
@@ -421,8 +421,8 @@ namespace IndustrialPark
                 for (int i = 0; i < assetIDs.Count(); i++)
                 {
                     Asset asset = archive.GetFromAssetID(assetIDs[i]);
-                    if (type == AssetType.Null || asset.AHDR.assetType == type)
-                        items.Add(ListViewItemFromAsset(asset, (select == true) && selectionAssetIDs.Contains(asset.AHDR.assetID)));
+                    if (type == AssetType.Null || asset.assetType == type)
+                        items.Add(ListViewItemFromAsset(asset, (select == true) && selectionAssetIDs.Contains(asset.assetID)));
                 }
 
                 listViewAssets.Items.AddRange(items.ToArray());
@@ -449,16 +449,16 @@ namespace IndustrialPark
 
         private ListViewItem ListViewItemFromAsset(Asset asset, bool selected)
         {
-            ListViewItem item = new ListViewItem(asset.AHDR.ADBG.assetName)
+            ListViewItem item = new ListViewItem(asset.assetName)
             {
                 Checked = !asset.isInvisible,
                 Selected = selected
             };
             item.SubItems.AddRange(new ListViewItem.ListViewSubItem[]
             {
-                new ListViewItem.ListViewSubItem(item, asset.AHDR.assetID.ToString("X8")),
-                new ListViewItem.ListViewSubItem(item, asset.AHDR.assetType.ToString()),
-                new ListViewItem.ListViewSubItem(item, asset.AHDR.data.Length.ToString())
+                new ListViewItem.ListViewSubItem(item, asset.assetID.ToString("X8")),
+                new ListViewItem.ListViewSubItem(item, asset.assetType.ToString()),
+                new ListViewItem.ListViewSubItem(item, asset.DataLength)
             });
             return item;
         }
@@ -658,7 +658,7 @@ namespace IndustrialPark
             try
             {
                 uint oldAssetID = CurrentlySelectedAssetIDs()[0];
-                Section_AHDR AHDR = AssetHeader.GetAsset(archive.GetFromAssetID(oldAssetID).AHDR);
+                Section_AHDR AHDR = AssetHeader.GetAsset(archive.GetFromAssetID(oldAssetID).BuildAHDR());
 
                 if (AHDR != null)
                 {
@@ -711,12 +711,13 @@ namespace IndustrialPark
             {
                 SaveFileDialog saveFileDialog = new SaveFileDialog()
                 {
-                    FileName = archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]).AHDR.ADBG.assetName
+                    FileName = archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]).assetName
                 };
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                     try
                     {
-                        File.WriteAllBytes(saveFileDialog.FileName, archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]).Data);
+                        var AHDR = archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]).BuildAHDR();
+                        File.WriteAllBytes(saveFileDialog.FileName, AHDR.data);
                     }
                     catch (Exception ex)
                     {
@@ -733,7 +734,8 @@ namespace IndustrialPark
                     foreach (uint u in CurrentlySelectedAssetIDs())
                         try
                         {
-                            File.WriteAllBytes(saveFileDialog.FileName + "/" + archive.GetFromAssetID(u).AHDR.ADBG.assetName, archive.GetFromAssetID(u).Data);
+                            var AHDR = archive.GetFromAssetID(u).BuildAHDR();
+                            File.WriteAllBytes(saveFileDialog.FileName + "/" + AHDR.ADBG.assetName, AHDR.data);
                         }
                         catch (Exception ex)
                         {
@@ -790,16 +792,7 @@ namespace IndustrialPark
             if (listViewAssets.SelectedItems.Count == 1)
             {
                 buttonEditAsset.Enabled = true;
-
-                if (archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]) is IClickableAsset a)
-                {
-                    if (a is AssetDYNA dyna)
-                        buttonView.Enabled = dyna.IsRenderableClickable;
-                    else
-                        buttonView.Enabled = true;
-                }
-                else
-                    buttonView.Enabled = false;
+                buttonView.Enabled = archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]) is IClickableAsset;
             }
             else
             {
@@ -839,14 +832,14 @@ namespace IndustrialPark
 
             foreach (uint u in assetIDs)
             {
-                assetType = archive.GetFromAssetID(u).AHDR.assetType;
+                assetType = archive.GetFromAssetID(u).assetType;
                 if (archive.GetLayerFromAssetID(u) != comboBoxLayers.SelectedIndex)
                     comboBoxLayers.SelectedIndex = archive.GetLayerFromAssetID(u);
                 break;
             }
 
             foreach (uint u in assetIDs)
-                if (archive.GetFromAssetID(u).AHDR.assetType != assetType)
+                if (archive.GetFromAssetID(u).assetType != assetType)
                 {
                     assetType = AssetType.Null;
                     break;
@@ -884,7 +877,7 @@ namespace IndustrialPark
             try
             {
                 textBoxFindAsset.BackColor = defaultColor;
-                assetID = AssetIDTypeConverter.AssetIDFromString(textBoxFindAsset.Text);
+                assetID = HexUIntTypeConverter.AssetIDFromString(textBoxFindAsset.Text);
             }
             catch
             {
@@ -895,90 +888,17 @@ namespace IndustrialPark
                 SetSelectedIndices(new List<uint>() { assetID }, false);
             else
                 foreach (Asset a in archive.GetAllAssets())
-                    if (a.AHDR.ADBG.assetName.ToLower().Contains(textBoxFindAsset.Text.ToLower()) && !a.isSelected)
+                    if (a.assetName.ToLower().Contains(textBoxFindAsset.Text.ToLower()) && !a.isSelected)
                     {
-                        SetSelectedIndices(new List<uint>() { a.AHDR.assetID }, false);
+                        SetSelectedIndices(new List<uint>() { a.assetID }, false);
                         return;
                     }
         }
 
         private void EditPACKToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (archive.EditPack(out List<uint> unsupported))
+            if (archive.EditPack())
             {
-                if (unsupported.Count > 0)
-                {
-                    MessageBox.Show("Your archive format has been converted, but not all assets in it.");
-                    MessageBox.Show("Will being archive convertion helper!");
-
-                    bool hasSound = false;
-                    bool hasJaw = false;
-
-                    for (int i = 0; i < unsupported.Count; i++)
-                        if (archive.GetFromAssetID(unsupported[i]).AHDR.assetType == AssetType.SND ||
-                            archive.GetFromAssetID(unsupported[i]).AHDR.assetType == AssetType.SNDS)
-                        {
-                            hasSound = true;
-                        }
-                        else if (archive.GetFromAssetID(unsupported[i]).AHDR.assetType == AssetType.JAW)
-                        {
-                            hasJaw = true;
-                        }
-                        else if (archive.GetFromAssetID(unsupported[i]).AHDR.assetType == AssetType.SNDI ||
-                            archive.GetFromAssetID(unsupported[i]).AHDR.assetType == AssetType.RWTX ||
-                            archive.GetFromAssetID(unsupported[i]).AHDR.assetType == AssetType.JSP ||
-                            archive.GetFromAssetID(unsupported[i]).AHDR.assetType == AssetType.BSP)
-                        {
-                            unsupported.RemoveAt(i);
-                            i--;
-                        }
-
-                    if (hasSound)
-                    {
-                        foreach (var s in archive.GetAHDRsOfType(AssetType.SNDI))
-                        {
-                            unsupported.Remove(s.assetID);
-                            archive.RemoveAsset(s.assetID);
-                        }
-                        int layerType = (int)LayerType_BFBB.SNDTOC;
-                        if (archive.game == Game.Incredibles)
-                            layerType = (int)LayerType_TSSM.SNDTOC;
-
-                        archive.PlaceTemplate(new Vector3(), archive.IndexOfLayerOfType(layerType), "sound_info", AssetTemplate.SoundInfo);
-                    }
-                    if (hasJaw)
-                    {
-                        foreach (var s in archive.GetAHDRsOfType(AssetType.JAW)) 
-                        {
-                            unsupported.Remove(s.assetID);
-                            archive.RemoveAsset(s.assetID);
-                        }
-                        archive.PlaceTemplate(new Vector3(), archive.IndexOfLayerOfType(0), template: AssetTemplate.JawData);
-                    }
-
-                    MessageBox.Show("First, I want you to choose a folder. I will import all assets which could not be converted from it, based on their asset IDs.");
-
-                    CommonOpenFileDialog dialog = new CommonOpenFileDialog()
-                    {
-                        IsFolderPicker = true
-                    };
-                    
-                    if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
-                    {
-                        archive.ReplaceUnconvertableAssets(dialog.FileName, ref unsupported);
-
-                        if (unsupported.Count > 0)
-                        {
-                            string message = "\nThe following assets have not been found and have not been replaced:\n";
-                            foreach (var v in unsupported)
-                                message += GetAssetNameFromID(v) + "\n";
-                            MessageBox.Show(message);
-                        }
-                        else
-                            MessageBox.Show("All assets successfully replaced. Note that any RWTX assets were left untouched.");
-                    }
-                }
-
                 PopulateLayerTypeComboBox();
                 PopulateLayerComboBox();
                 PopulateAssetList();
@@ -1276,27 +1196,26 @@ namespace IndustrialPark
             if (saveFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
 
-                foreach (Asset asset in archive.GetAllAssets())
-                    if (asset.AHDR.assetType == AssetType.SND || asset.AHDR.assetType == AssetType.SNDS)
-                        try
-                        {
-                            string extension = 
-                                (asset.platform == Platform.GameCube && asset.game != Game.Incredibles) ? ".DSP" :
-                                (asset.platform == Platform.Xbox) ? ".WAV" :
-                                (asset.platform == Platform.PS2) ? ".VAG" :
-                                "";
+                foreach (var asset in archive.GetAllAssets().OfType<AssetWithData>().Where(asset => asset.assetType == AssetType.SND || asset.assetType == AssetType.SNDS))
+                    try
+                    {
+                        string extension =
+                            (asset.platform == Platform.GameCube && asset.game != Game.Incredibles) ? ".DSP" :
+                            (asset.platform == Platform.Xbox) ? ".WAV" :
+                            (asset.platform == Platform.PS2) ? ".VAG" :
+                            "";
 
-                            string filename = (extension != "" && asset.AHDR.ADBG.assetName.ToLower().Contains(extension.ToLower())) ?
-                                asset.AHDR.ADBG.assetName :
-                                asset.AHDR.ADBG.assetName + extension;
+                        string filename = (extension != "" && asset.assetName.ToLower().Contains(extension.ToLower())) ?
+                            asset.assetName :
+                            asset.assetName + extension;
 
-                            File.WriteAllBytes(Path.Combine(saveFileDialog.FileName, filename),
-                                archive.GetSoundData(asset.AHDR.assetID, asset.Data));
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show("Unable to export " + asset + ": " + ex.Message);
-                        }
+                        File.WriteAllBytes(Path.Combine(saveFileDialog.FileName, filename),
+                            archive.GetSoundData(asset.assetID, asset.Data));
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Unable to export " + asset + ": " + ex.Message);
+                    }
             }
         }
     }

@@ -1,16 +1,63 @@
-﻿using System.Collections.Generic;
+﻿using HipHopFile;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaGObjectTaxi : DynaBase
+    public class DynaGObjectTaxi : AssetDYNA
     {
-        public string Note => "Version is always 1";
+        private const string dynaCategoryName = "game_object:Taxi";
 
-        public override int StructSize => 0x20;
+        protected override int constVersion => 1;
 
-        public DynaGObjectTaxi(AssetDYNA asset) : base(asset) { }
-        
+        [Category(dynaCategoryName)]
+        public AssetID MRKR_ID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID CAM_ID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID PORT_ID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID DYNA_Talkbox_ID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID TEXT_ID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID SIMP_ID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle InvisibleTimer { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle TeleportTimer { get; set; }
+
+        public DynaGObjectTaxi(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.game_object__Taxi, game, platform)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = dynaDataStartPosition;
+
+            MRKR_ID = reader.ReadUInt32();
+            CAM_ID = reader.ReadUInt32();
+            PORT_ID = reader.ReadUInt32();
+            DYNA_Talkbox_ID = reader.ReadUInt32();
+            TEXT_ID = reader.ReadUInt32();
+            SIMP_ID = reader.ReadUInt32();
+            InvisibleTimer = reader.ReadSingle();
+            TeleportTimer = reader.ReadSingle();
+        }
+
+        protected override byte[] SerializeDyna(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(MRKR_ID);
+            writer.Write(CAM_ID);
+            writer.Write(PORT_ID);
+            writer.Write(DYNA_Talkbox_ID);
+            writer.Write(TEXT_ID);
+            writer.Write(SIMP_ID);
+            writer.Write(InvisibleTimer);
+            writer.Write(TeleportTimer);
+
+            return writer.ToArray();
+        }
+
         public override bool HasReference(uint assetID)
         {
             if (MRKR_ID == assetID)
@@ -31,55 +78,12 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
-            Asset.Verify(MRKR_ID, ref result);
-            Asset.Verify(CAM_ID, ref result);
-            Asset.Verify(PORT_ID, ref result);
-            Asset.Verify(DYNA_Talkbox_ID, ref result);
-            Asset.Verify(TEXT_ID, ref result);
-            Asset.Verify(SIMP_ID, ref result);
-        }
-        
-        public AssetID MRKR_ID 
-        {
-            get => ReadUInt(0x00);
-            set => Write(0x00, value);
-        }
-        public AssetID CAM_ID
-        {
-            get => ReadUInt(0x04);
-            set => Write(0x04, value);
-        }
-        public AssetID PORT_ID
-        {
-            get => ReadUInt(0x08);
-            set => Write(0x08, value);
-        }
-        public AssetID DYNA_Talkbox_ID
-        {
-            get => ReadUInt(0x0C);
-            set => Write(0x0C, value);
-        }
-        public AssetID TEXT_ID
-        {
-            get => ReadUInt(0x10);
-            set => Write(0x10, value);
-        }
-        public AssetID SIMP_ID
-        {
-            get => ReadUInt(0x14);
-            set => Write(0x14, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float InvisibleTimer
-        {
-            get => ReadFloat(0x18);
-            set => Write(0x18, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float TeleportTimer
-        {
-            get => ReadFloat(0x1C);
-            set => Write(0x1C, value);
+            Verify(MRKR_ID, ref result);
+            Verify(CAM_ID, ref result);
+            Verify(PORT_ID, ref result);
+            Verify(DYNA_Talkbox_ID, ref result);
+            Verify(TEXT_ID, ref result);
+            Verify(SIMP_ID, ref result);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -22,10 +23,10 @@ namespace IndustrialPark
         public byte CollType { get; set; }
         [Category(categoryName)]
         public byte FxType { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float BlastRadius { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float BlastStrength { get; set; }
+        [Category(categoryName)]
+        public AssetSingle BlastRadius { get; set; }
+        [Category(categoryName)]
+        public AssetSingle BlastStrength { get; set; }
         [Category(categoryName)]
         public AssetID DestroyShrapnel_AssetID { get; set; }
         [Category(categoryName)]
@@ -39,10 +40,17 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID DestroyModel_AssetID { get; set; }
 
+        public AssetDSTR(string assetName, Vector3 position) : base(assetName, AssetType.DSTR, BaseAssetType.DestructObj, position)
+        {
+            CollType = 2;
+            BlastRadius = 4f;
+            BlastStrength = 1f;
+        }
+
         public AssetDSTR(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = entityEndPosition;
+            reader.BaseStream.Position = entityHeaderEndPosition;
 
             AnimationSpeed = reader.ReadInt32();
             InitialAnimationState = reader.ReadInt32();

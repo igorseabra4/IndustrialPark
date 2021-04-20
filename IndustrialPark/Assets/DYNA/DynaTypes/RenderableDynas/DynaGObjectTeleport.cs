@@ -3,25 +3,67 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using HipHopFile;
 using static IndustrialPark.ArchiveEditorFunctions;
+using IndustrialPark.Models;
 
 namespace IndustrialPark
 {
-    public class DynaGObjectTeleport : DynaBase
+    public class DynaGObjectTeleport : RenderableDynaBase
     {
-        public string Note => "Version is always 1 or 2.";
+        private const string dynaCategoryName = "game_object:Teleport";
 
-        public override int StructSize => version == 1 ? 0x10 : 0x14;
+        public override string Note => "Version is always 1 or 2. Version 1 does not use CameraAngle.";
 
-        public DynaGObjectTeleport(AssetDYNA asset, int version) : base(asset)
+        [Category(dynaCategoryName)]
+        public AssetID MRKR_ID { get; set; }
+        [Category(dynaCategoryName)]
+        public bool Opened { get; set; }
+        private int _launchAngle;
+        [Category(dynaCategoryName)]
+        public int LaunchAngle
         {
-            if (asset.game == Game.Incredibles)
-                version = 1;
-
-            this.version = version;
+            get => _launchAngle;
+            set
+            {
+                _launchAngle = value;
+                CreateTransformMatrix();
+            }
         }
-        
-        private readonly int version;
-        
+
+        [Category(dynaCategoryName), Description("Not used in version 1 or Movie.")]
+        public int CameraAngle { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID TargetDYNATeleportID { get; set; }
+
+        public DynaGObjectTeleport(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.game_object__Teleport, game, platform)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = dynaDataStartPosition;
+
+            MRKR_ID = reader.ReadUInt32();
+            Opened = reader.ReadInt32() != 0;
+            _launchAngle = reader.ReadInt32();
+            if (Version > 1 || game != Game.Incredibles)
+                CameraAngle = reader.ReadInt32();
+            TargetDYNATeleportID = reader.ReadUInt32();
+
+            CreateTransformMatrix();
+            renderableAssets.Add(this);
+        }
+
+        protected override byte[] SerializeDyna(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(MRKR_ID);
+            writer.Write(Opened ? 1 : 0);
+            writer.Write(_launchAngle);
+            if (Version > 1 || game != Game.Incredibles)
+                writer.Write(CameraAngle);
+            writer.Write(TargetDYNATeleportID);
+
+            return writer.ToArray();
+        }
+
         public override bool HasReference(uint assetID)
         {
             if (MRKR_ID == assetID)
@@ -36,55 +78,12 @@ namespace IndustrialPark
         {
             if (MRKR_ID == 0)
                 result.Add("Teleport with no MRKR reference");
-            Asset.Verify(MRKR_ID, ref result);
+            Verify(MRKR_ID, ref result);
             if (TargetDYNATeleportID == 0)
                 result.Add("Teleport with no target reference");
-            Asset.Verify(TargetDYNATeleportID, ref result);
+            Verify(TargetDYNATeleportID, ref result);
         }
         
-        public AssetID MRKR_ID
-        {
-            get => ReadUInt(0x00);
-            set
-            {
-                Write(0x00, value);
-                ValidateMRKR();
-            }
-        }
-
-        public int Opened
-        {
-            get => ReadInt(0x04);
-            set => Write(0x04, value);
-        }
-
-        public int LaunchAngle
-        {
-            get => ReadInt(0x08);
-            set
-            {
-                Write(0x08, value);
-                CreateTransformMatrix();
-            }
-        }
-
-        [Description("Not used in version 1 or Movie.")]
-        public int CameraAngle
-        {
-            get => version == 1 ? 0 : ReadInt(0x0C);
-            set
-            {
-                if (version != 1)
-                    Write(0x0C, value);
-            }
-        }
-
-        public AssetID TargetDYNATeleportID
-        {
-            get => version == 1 ? ReadUInt(0x0C) : ReadUInt(0x10);
-            set => Write(version == 1 ? 0x0C : 0x10, value);
-        }
-
         private void ValidateMRKR()
         {
             if (Program.MainForm != null)
@@ -98,8 +97,7 @@ namespace IndustrialPark
             MRKR = null;
         }
 
-        [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public override float PositionX
+        public override AssetSingle PositionX
         {
             get
             {
@@ -117,8 +115,7 @@ namespace IndustrialPark
             }
         }
 
-        [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public override float PositionY
+        public override AssetSingle PositionY
         {
             get
             {
@@ -136,8 +133,7 @@ namespace IndustrialPark
             }
         }
 
-        [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public override float PositionZ
+        public override AssetSingle PositionZ
         {
             get
             {
@@ -155,10 +151,10 @@ namespace IndustrialPark
             }
         }
 
-        public override bool IsRenderableClickable => true;
+        protected override List<Vector3> vertexSource => SharpRenderer.pyramidVertices;
 
-        private Matrix world;
-        private BoundingBox boundingBox;
+        protected override List<Triangle> triangleSource => SharpRenderer.pyramidTriangles;
+
         private static readonly uint _modelAssetID = Functions.BKDRHash("teleportation_box_bind");
 
         private AssetMRKR MRKR;
@@ -168,84 +164,25 @@ namespace IndustrialPark
             ValidateMRKR();
             world = Matrix.RotationY(MathUtil.DegreesToRadians(LaunchAngle)) * Matrix.Translation(PositionX, PositionY, PositionZ);
 
-            if (renderingDictionary.ContainsKey(_modelAssetID) &&
-                renderingDictionary[_modelAssetID].HasRenderWareModelFile() &&
-                renderingDictionary[_modelAssetID].GetRenderWareModelFile() != null)
-            {
-                CreateBoundingBox(renderingDictionary[_modelAssetID].GetRenderWareModelFile().vertexListG);
-            }
-            else
-            {
-                CreateBoundingBox(SharpRenderer.pyramidVertices);
-            }
+            var model = GetFromRenderingDictionary(_modelAssetID);
+            CreateBoundingBox((model != null) ? model.vertexListG : SharpRenderer.pyramidVertices);
+            triangles = model?.triangleList.ToArray();
         }
 
-        protected void CreateBoundingBox(List<Vector3> vertexList, float multiplier = 1f)
+        private void CreateBoundingBox(List<Vector3> vertexList)
         {
             vertices = new Vector3[vertexList.Count];
-
             for (int i = 0; i < vertexList.Count; i++)
-                vertices[i] = (Vector3)Vector3.Transform(vertexList[i] * multiplier, world);
-
+                vertices[i] = (Vector3)Vector3.Transform(vertexList[i], world);
             boundingBox = BoundingBox.FromPoints(vertices);
-
-            if (renderingDictionary.ContainsKey(_modelAssetID))
-            {
-                if (renderingDictionary[_modelAssetID] is AssetMINF MINF)
-                {
-                    if (MINF.HasRenderWareModelFile())
-                        triangles = MINF.GetRenderWareModelFile().triangleList.ToArray();
-                    else
-                        triangles = null;
-                }
-                else
-                    triangles = renderingDictionary[_modelAssetID].GetRenderWareModelFile().triangleList.ToArray();
-            }
-            else
-                triangles = null;
         }
 
-        public override void Draw(SharpRenderer renderer, bool isSelected)
+        public override void Draw(SharpRenderer renderer)
         {
             if (renderingDictionary.ContainsKey(_modelAssetID))
                 renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor : Vector4.One, Vector3.Zero);
             else
                 renderer.DrawPyramid(world, isSelected);
-        }
-
-        public override float? IntersectsWith(Ray ray)
-        {
-            if (ray.Intersects(ref boundingBox, out float distance))
-                return TriangleIntersection(ray, distance);
-            return null;
-        }
-
-        private float? TriangleIntersection(Ray r, float initialDistance)
-        {
-            if (triangles == null)
-                return initialDistance;
-
-            float? smallestDistance = null;
-
-            foreach (RenderWareFile.Triangle t in triangles)
-                if (r.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
-                    if (smallestDistance == null || distance < smallestDistance)
-                        smallestDistance = distance;
-
-            return smallestDistance;
-        }
-
-        protected Vector3[] vertices;
-        protected RenderWareFile.Triangle[] triangles;
-        
-        public override BoundingBox GetBoundingBox()
-        {
-            return boundingBox;
-        }
-
-        public override float GetDistance(Vector3 cameraPosition)
-        {
-            return Vector3.Distance(cameraPosition, new Vector3(PositionX, PositionY, PositionZ));
         }
     }
 }

@@ -300,6 +300,9 @@ namespace IndustrialPark
         public Vector4 selectedObjectColor;
 
         DefaultRenderData renderData;
+
+        public delegate void DrawGeneric(Matrix world, bool isSelected, float multiplier);
+
         public void DrawCube(Matrix world, bool isSelected, float multiplier = 0.5f)
         {
             renderData.worldViewProjection = Matrix.Scaling(multiplier) * world * viewProjection;
@@ -489,7 +492,7 @@ namespace IndustrialPark
                     //foreach (IRenderableAsset a in renderableAssets.OrderByDescending(a => a.GetDistanceFrom(Camera.Position)))
                     //    a.Draw(this);
 
-                    HashSet<IRenderableAsset> renderableAssetsTrans = new HashSet<IRenderableAsset>();
+                    var renderableAssetsTrans = new HashSet<IRenderableAsset>();
 
                     foreach (IRenderableAsset a in renderableAssets)
                         if (a.SpecialBlendMode)

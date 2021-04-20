@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace IndustrialPark
 {
@@ -10,43 +10,53 @@ namespace IndustrialPark
         private const string dynaCategoryName = "Generic Dynamic";
 
         [Category(dynaCategoryName)]
-        public List<AssetID> UnknownData_Hex { get; set; }
+        public byte[] Data { get; set; }
+
         [Category(dynaCategoryName)]
-        public List<float> UnknownData_Float 
+        public AssetID[] Data_AsHex
         {
             get
             {
-                var floats = new List<float>();
-                foreach (var u in UnknownData_Hex)
-                    floats.Add(BitConverter.ToSingle(BitConverter.GetBytes(u), 0));
-                return floats;
+                var values = new List<AssetID>();
+                var reader = new EndianBinaryReader(Data, platform);
+                while (!reader.EndOfStream)
+                    values.Add(reader.ReadUInt32());
+                return values.ToArray();
             }
             set
             {
-                var hex = new List<AssetID>();
+                var writer = new EndianBinaryWriter(platform);
                 foreach (var f in value)
-                    hex.Add(BitConverter.ToUInt32(BitConverter.GetBytes(f), 0));
-                UnknownData_Hex = hex;
+                    writer.Write(f);
+                Data = writer.ToArray();
             }
         }
 
-        public DynaGeneric(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        [Category(dynaCategoryName)]
+        public AssetSingle[] Data_AsFloat
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = dynaDataStartPosition;
-
-            UnknownData_Hex = new List<AssetID>();
-            var lsp = linkStartPosition(reader.BaseStream.Length, _links.Length);
-            while (reader.BaseStream.Position < lsp)
-                UnknownData_Hex.Add(reader.ReadUInt32());
+            get
+            {
+                var values = new List<AssetSingle>();
+                var reader = new EndianBinaryReader(Data, platform);
+                while (!reader.EndOfStream)
+                    values.Add(reader.ReadSingle());
+                return values.ToArray();
+            }
+            set
+            {
+                var writer = new EndianBinaryWriter(platform);
+                foreach (var f in value)
+                    writer.Write(f);
+                Data = writer.ToArray();
+            }
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        public DynaGeneric(Section_AHDR AHDR, DynaType type, Game game, Platform platform) : base(AHDR, type, game, platform)
         {
-            var writer = new EndianBinaryWriter(platform);
-            foreach (var u in UnknownData_Hex)
-                writer.Write(u);
-            return writer.ToArray();
+            Data = AHDR.data.Skip(dynaDataStartPosition).Take(AHDR.data.Length - dynaDataStartPosition - _links.Length * Link.sizeOfStruct).ToArray();
         }
+
+        protected override byte[] SerializeDyna(Game game, Platform platform) => Data;
     }
 }

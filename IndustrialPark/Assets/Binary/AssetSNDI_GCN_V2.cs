@@ -9,7 +9,61 @@ namespace IndustrialPark
 {
     public class AssetSNDI_GCN_V2 : Asset
     {
-        public AssetSNDI_GCN_V2(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        private byte ReadByte(int j)
+        {
+            return Data[j];
+        }
+
+        private short ReadShort(int j)
+        {
+            return BitConverter.ToInt16(new byte[] {
+                Data[j + 1],
+                Data[j] }, 0);
+        }
+
+        private int ReadInt(int j)
+        {
+            return BitConverter.ToInt32(new byte[] {
+                Data[j + 3],
+                Data[j + 2],
+                Data[j + 1],
+                Data[j] }, 0);
+        }
+
+        private void Write(int j, byte value)
+        {
+            Data[j] = value;
+        }
+
+        private void Write(int j, short value)
+        {
+            byte[] split = BitConverter.GetBytes(value).Reverse().ToArray();
+
+            for (int i = 0; i < 2; i++)
+                Data[j + i] = split[i];
+        }
+
+        private void Write(int j, int value)
+        {
+            byte[] split = BitConverter.GetBytes(value).Reverse().ToArray();
+
+            for (int i = 0; i < 4; i++)
+                Data[j + i] = split[i];
+        }
+
+        private Section_AHDR AHDR;
+        private byte[] Data
+        {
+            get => AHDR.data;
+            set => AHDR.data = value;
+        }
+
+        // most of this file is a very hacky temporary thing
+
+        public AssetSNDI_GCN_V2(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        {
+            this.AHDR = AHDR;
+        }
 
         public override bool HasReference(uint assetID)
         {
@@ -32,12 +86,6 @@ namespace IndustrialPark
                 }
         }
 
-        private AssetID AssetID
-        {
-            get => ReadUInt(0x00);
-            set => Write(0x00, value);
-        }
-
         private int FooterOffset
         {
             get => ReadInt(0x04) + 0x20;
@@ -58,7 +106,6 @@ namespace IndustrialPark
 
         private short SoundCountRest
         {
-            get => ReadShort(0x1C);
             set => Write(0x1C, value);
         }
 
@@ -70,7 +117,6 @@ namespace IndustrialPark
 
         private byte UnknownCount
         {
-            get => ReadByte(0x1F);
             set => Write(0x1F, value);
         }
 
@@ -83,6 +129,8 @@ namespace IndustrialPark
             set => Data = SerializeData(value, AHDR);
         }
 
+        private uint Switch(uint a) => BitConverter.ToUInt32(BitConverter.GetBytes(a).Reverse().ToArray(), 0);
+        
         private static FSB3_File[] DeserializeAsset(byte[] data, AssetSNDI_GCN_V2 asset)
         {
             BinaryReader binaryReader = new BinaryReader(new MemoryStream(data));
@@ -142,12 +190,13 @@ namespace IndustrialPark
             //newData.AddRange(Data.Skip(EOF));
 
             byte unkCount = 0; //Data[0x1F];
-            
+
             // hacky solution
-            AssetSNDI_GCN_V2 asset = new AssetSNDI_GCN_V2(new Section_AHDR(AHDR.assetID, AHDR.assetType, AHDR.flags, AHDR.ADBG, newData.ToArray()), Game.Incredibles, Platform.GameCube)
+            AssetSNDI_GCN_V2 asset = new AssetSNDI_GCN_V2(
+                new Section_AHDR(AHDR.assetID, AHDR.assetType, AHDR.flags, AHDR.ADBG, newData.ToArray()), Game.Incredibles, Platform.GameCube)
             {
                 FooterOffset = footerOffset,
-                AssetID = AHDR.assetID,
+                assetID = AHDR.assetID,
                 FileCount = (byte)value.Length,
                 TotalSoundCount = (short)listForPart2.Count,
                 SoundCountFirstFile = (short)(value.Length > 0 ? value[0].numSamples : 0),
@@ -174,7 +223,7 @@ namespace IndustrialPark
 
             Entries = newEntries.ToArray();
         }
-        
+
         public void AddEntry(byte[] soundData, uint assetID)
         {
             RemoveEntry(assetID);
@@ -183,7 +232,7 @@ namespace IndustrialPark
 
             if (newEntries.Count == 0)
                 newEntries.Add(new FSB3_File());
-            
+
             FSB3_File temp = new FSB3_File(new BinaryReader(new MemoryStream(soundData)));
             temp.soundEntries[0].SoundAssetID = assetID;
             newEntries[0].Merge(temp);
@@ -241,7 +290,6 @@ namespace IndustrialPark
 
             for (int i = 0; i < fsb3s.Count; i++)
             {
-                // SND
                 var entries = fsb3s[i].soundEntries.ToList();
                 for (int j = 0; i < entries.Count; j++)
                     if (!assetIDs.Contains(entries[j].SoundAssetID))

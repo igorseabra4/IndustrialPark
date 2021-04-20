@@ -12,67 +12,67 @@ namespace IndustrialPark
         public AssetID Unknown_08 { get; set; }
         [Category(categoryName)]
         public AssetID PRJT_AssetID { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionX { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionY { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionZ { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_1C { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_20 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle PositionX { get; set; }
+        [Category(categoryName)]
+        public AssetSingle PositionY { get; set; }
+        [Category(categoryName)]
+        public AssetSingle PositionZ { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat_1C { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat_20 { get; set; }
         [Category(categoryName)]
         public AssetID Unknown_24 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_28 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_2C { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_30 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_34 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_38 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat_28 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat_2C { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat_30 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat_34 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat_38 { get; set; }
         [Category(categoryName)]
         public int UnknownInt_3C { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_40 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_44 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat_40 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat_44 { get; set; }
         [Category(categoryName)]
         public AssetID Unknown_48 { get; set; }
         [Category(categoryName)]
         public int UnknownInt_4C { get; set; }
         [Category(categoryName)]
         public int UnknownInt_50 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_54 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat_54 { get; set; }
         [Category(categoryName)]
         public int UnknownInt_58 { get; set; }
         [Category(categoryName)]
         public int UnknownInt_5C { get; set; }
         [Category(categoryName)]
         public int UnknownInt_60 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_64 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_68 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_6C { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_70 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_74 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_78 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat_64 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat_68 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat_6C { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat_70 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat_74 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat_78 { get; set; }
         [Category(categoryName)]
         public int UnknownInt_7C { get; set; }
 
         public AssetLOBM(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = baseEndPosition;
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
             Unknown_08 = reader.ReadUInt32();
             PRJT_AssetID = reader.ReadUInt32();

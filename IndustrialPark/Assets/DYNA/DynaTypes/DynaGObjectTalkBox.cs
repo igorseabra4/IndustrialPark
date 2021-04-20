@@ -1,15 +1,122 @@
-﻿using System.Collections.Generic;
+﻿using HipHopFile;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaGObjectTalkBox : DynaBase
+    public class DynaGObjectTalkBox : AssetDYNA
     {
-        public  string Note => "Version is always 11";
+        private const string dynaCategoryName = "game_object:talk_box";
 
-        public override int StructSize => 0x38;
+        protected override int constVersion => 11;
 
-        public DynaGObjectTalkBox(AssetDYNA asset) : base(asset) { }
+        [Category(dynaCategoryName)]
+        public AssetID Dialog_TextBoxID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Prompt_TextBoxID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Quit_TextBoxID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte Trap { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte Pause { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte AllowQuit { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte TriggerPads { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte Page { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte Show { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte Hide { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte AudioEffect { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID TeleportPointerID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte AutoWaitTypeTime { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte AutoWaitTypePrompt { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte AutoWaitTypeSound { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte AutoWaitTypeEvent { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle AutoWaitDelay { get; set; }
+        [Category(dynaCategoryName)]
+        public int AutoWaitWhichEvent { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID PromptSkip_TextID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID PromptNoSkip_TextID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID PromptQuitTextID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID PromptNoQuitTextID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID PromptYesNoTextID { get; set; }
+
+        public DynaGObjectTalkBox(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.game_object__talk_box, game, platform)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = dynaDataStartPosition;
+
+            Dialog_TextBoxID = reader.ReadUInt32();
+            Prompt_TextBoxID = reader.ReadUInt32();
+            Quit_TextBoxID = reader.ReadUInt32();
+            Trap = reader.ReadByte();
+            Pause = reader.ReadByte();
+            AllowQuit = reader.ReadByte();
+            TriggerPads = reader.ReadByte();
+            Page = reader.ReadByte();
+            Show = reader.ReadByte();
+            Hide = reader.ReadByte();
+            AudioEffect = reader.ReadByte();
+            TeleportPointerID = reader.ReadUInt32();
+            AutoWaitTypeTime = reader.ReadByte();
+            AutoWaitTypePrompt = reader.ReadByte();
+            AutoWaitTypeSound = reader.ReadByte();
+            AutoWaitTypeEvent = reader.ReadByte();
+            AutoWaitDelay = reader.ReadSingle();
+            AutoWaitWhichEvent = reader.ReadInt32();
+            PromptSkip_TextID = reader.ReadUInt32();
+            PromptNoSkip_TextID = reader.ReadUInt32();
+            PromptQuitTextID = reader.ReadUInt32();
+            PromptNoQuitTextID = reader.ReadUInt32();
+            PromptYesNoTextID = reader.ReadUInt32();
+        }
+
+        protected override byte[] SerializeDyna(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(Dialog_TextBoxID);
+            writer.Write(Prompt_TextBoxID);
+            writer.Write(Quit_TextBoxID);
+            writer.Write(Trap);
+            writer.Write(Pause);
+            writer.Write(AllowQuit);
+            writer.Write(TriggerPads);
+            writer.Write(Page);
+            writer.Write(Show);
+            writer.Write(Hide);
+            writer.Write(AudioEffect);
+            writer.Write(TeleportPointerID);
+            writer.Write(AutoWaitTypeTime);
+            writer.Write(AutoWaitTypePrompt);
+            writer.Write(AutoWaitTypeSound);
+            writer.Write(AutoWaitTypeEvent);
+            writer.Write(AutoWaitDelay);
+            writer.Write(AutoWaitWhichEvent);
+            writer.Write(PromptSkip_TextID);
+            writer.Write(PromptNoSkip_TextID);
+            writer.Write(PromptQuitTextID);
+            writer.Write(PromptNoQuitTextID);
+            writer.Write(PromptYesNoTextID);
+
+            return writer.ToArray();
+        }
 
         public override bool HasReference(uint assetID)
         {
@@ -37,144 +144,15 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
-            Asset.Verify(Dialog_TextBoxID, ref result);
-            Asset.Verify(Prompt_TextBoxID, ref result);
-            Asset.Verify(Quit_TextBoxID, ref result);
-            Asset.Verify(TeleportPointerID, ref result);
-            Asset.Verify(PromptSkip_TextID, ref result);
-            Asset.Verify(PromptNoSkip_TextID, ref result);
-            Asset.Verify(PromptQuitTextID, ref result);
-            Asset.Verify(PromptNoQuitTextID, ref result);
-            Asset.Verify(PromptYesNoTextID, ref result);
-        }
-        
-        public AssetID Dialog_TextBoxID
-        {
-            get => ReadUInt(0x00);
-            set => Write(0x00, value);
-        }
-        public AssetID Prompt_TextBoxID
-        {
-            get => ReadUInt(0x04);
-            set => Write(0x04, value);
-        }
-        public AssetID Quit_TextBoxID
-        {
-            get => ReadUInt(0x08);
-            set => Write(0x08, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Trap
-        {
-            get => ReadByte(0x0C);
-            set => Write(0x0C, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Pause
-        {
-            get => ReadByte(0x0D);
-            set => Write(0x0D, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte AllowQuit
-        {
-            get => ReadByte(0x0E);
-            set => Write(0x0E, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte TriggerPads
-        {
-            get => ReadByte(0x0F);
-            set => Write(0x0F, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Page
-        {
-            get => ReadByte(0x10);
-            set => Write(0x10, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Show
-        {
-            get => ReadByte(0x11);
-            set => Write(0x11, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Hide
-        {
-            get => ReadByte(0x12);
-            set => Write(0x12, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte AudioEffect
-        {
-            get => ReadByte(0x13);
-            set => Write(0x13, value);
-        }
-        public AssetID TeleportPointerID
-        {
-            get => ReadUInt(0x14);
-            set => Write(0x14, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte AutoWaitTypeTime
-        {
-            get => ReadByte(0x18);
-            set => Write(0x18, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte AutoWaitTypePrompt
-        {
-            get => ReadByte(0x19);
-            set => Write(0x19, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte AutoWaitTypeSound
-        {
-            get => ReadByte(0x1A);
-            set => Write(0x1A, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte AutoWaitTypeEvent
-        {
-            get => ReadByte(0x1B);
-            set => Write(0x1B, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float AutoWaitDelay
-        {
-            get => ReadFloat(0x1C);
-            set => Write(0x1C, value);
-        }
-        public int AutoWaitWhichEvent
-        {
-            get => ReadInt(0x20);
-            set => Write(0x20, value);
-        }
-        public AssetID PromptSkip_TextID
-        {
-            get => ReadUInt(0x24);
-            set => Write(0x24, value);
-        }
-        public AssetID PromptNoSkip_TextID
-        {
-            get => ReadUInt(0x28);
-            set => Write(0x28, value);
-        }
-        public AssetID PromptQuitTextID
-        {
-            get => ReadUInt(0x2C);
-            set => Write(0x2C, value);
-        }
-        public AssetID PromptNoQuitTextID
-        {
-            get => ReadUInt(0x30);
-            set => Write(0x30, value);
-        }
-        public AssetID PromptYesNoTextID
-        {
-            get => ReadUInt(0x34);
-            set => Write(0x34, value);
+            Verify(Dialog_TextBoxID, ref result);
+            Verify(Prompt_TextBoxID, ref result);
+            Verify(Quit_TextBoxID, ref result);
+            Verify(TeleportPointerID, ref result);
+            Verify(PromptSkip_TextID, ref result);
+            Verify(PromptNoSkip_TextID, ref result);
+            Verify(PromptQuitTextID, ref result);
+            Verify(PromptNoQuitTextID, ref result);
+            Verify(PromptYesNoTextID, ref result);
         }
     }
 }

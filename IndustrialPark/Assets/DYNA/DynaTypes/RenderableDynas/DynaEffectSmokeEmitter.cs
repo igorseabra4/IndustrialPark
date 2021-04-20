@@ -1,16 +1,152 @@
-﻿using SharpDX;
+﻿using HipHopFile;
+using IndustrialPark.Models;
+using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
+using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
-    public class DynaEffectSmokeEmitter : DynaBase
+    public class DynaEffectSmokeEmitter : RenderableDynaBase
     {
-        public string Note => "Version is always 1";
+        private const string dynaCategoryName = "effect:smoke_emitter";
 
-        public override int StructSize => 0x70;
+        protected override int constVersion => 2;
 
-        public DynaEffectSmokeEmitter(AssetDYNA asset) : base(asset) { }
+        [Category(dynaCategoryName)]
+        public int UnknownInt_00 { get; set; }
+        [Category(dynaCategoryName)]
+        public int UnknownInt_04 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_14 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_18 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_1C { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_20 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_24 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_28 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Texture_AssetID { get; set; }
+        [Category(dynaCategoryName), TypeConverter(typeof(HexUShortTypeConverter))]
+        public ushort UnknownShort_30 { get; set; }
+        [Category(dynaCategoryName), TypeConverter(typeof(HexUShortTypeConverter))]
+        public ushort UnknownShort_32 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_34 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_38 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_3C { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_40 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_44 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_48 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_4C { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_50 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_54 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_58 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_5C { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_60 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_64 { get; set; }
+        [Category(dynaCategoryName)]
+        public short UnknownShort_68 { get; set; }
+        [Category(dynaCategoryName)]
+        public short UnknownShort_6A { get; set; }
+        [Category(dynaCategoryName)]
+        public short UnknownShort_6C { get; set; }
+        [Category(dynaCategoryName)]
+        public short UnknownShort_6E { get; set; }
+
+        public DynaEffectSmokeEmitter(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.effect__smoke_emitter, game, platform)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = dynaDataStartPosition;
+
+            UnknownInt_00 = reader.ReadInt32();
+            UnknownInt_04 = reader.ReadInt32();
+            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            UnknownFloat_14 = reader.ReadSingle();
+            UnknownFloat_18 = reader.ReadSingle();
+            UnknownFloat_1C = reader.ReadSingle();
+            UnknownFloat_20 = reader.ReadSingle();
+            UnknownFloat_24 = reader.ReadSingle();
+            UnknownFloat_28 = reader.ReadSingle();
+            Texture_AssetID = reader.ReadUInt32();
+            UnknownShort_30 = reader.ReadUInt16();
+            UnknownShort_32 = reader.ReadUInt16();
+            UnknownFloat_34 = reader.ReadSingle();
+            UnknownFloat_38 = reader.ReadSingle();
+            UnknownFloat_3C = reader.ReadSingle();
+            UnknownFloat_40 = reader.ReadSingle();
+            UnknownFloat_44 = reader.ReadSingle();
+            UnknownFloat_48 = reader.ReadSingle();
+            UnknownFloat_4C = reader.ReadSingle();
+            UnknownFloat_50 = reader.ReadSingle();
+            UnknownFloat_54 = reader.ReadSingle();
+            UnknownFloat_58 = reader.ReadSingle();
+            UnknownFloat_5C = reader.ReadSingle();
+            UnknownFloat_60 = reader.ReadSingle();
+            UnknownFloat_64 = reader.ReadSingle();
+            UnknownShort_68 = reader.ReadInt16();
+            UnknownShort_6A = reader.ReadInt16();
+            UnknownShort_6C = reader.ReadInt16();
+            UnknownShort_6E = reader.ReadInt16();
+
+            CreateTransformMatrix();
+            renderableAssets.Add(this);
+        }
+
+        protected override byte[] SerializeDyna(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(UnknownInt_00);
+            writer.Write(UnknownInt_04);
+            writer.Write(_position.X);
+            writer.Write(_position.Y);
+            writer.Write(_position.Z);
+            writer.Write(UnknownFloat_14);
+            writer.Write(UnknownFloat_18);
+            writer.Write(UnknownFloat_1C);
+            writer.Write(UnknownFloat_20);
+            writer.Write(UnknownFloat_24);
+            writer.Write(UnknownFloat_28);
+            writer.Write(Texture_AssetID);
+            writer.Write(UnknownShort_30);
+            writer.Write(UnknownShort_32);
+            writer.Write(UnknownFloat_34);
+            writer.Write(UnknownFloat_38);
+            writer.Write(UnknownFloat_3C);
+            writer.Write(UnknownFloat_40);
+            writer.Write(UnknownFloat_44);
+            writer.Write(UnknownFloat_48);
+            writer.Write(UnknownFloat_4C);
+            writer.Write(UnknownFloat_50);
+            writer.Write(UnknownFloat_54);
+            writer.Write(UnknownFloat_58);
+            writer.Write(UnknownFloat_5C);
+            writer.Write(UnknownFloat_60);
+            writer.Write(UnknownFloat_64);
+            writer.Write(UnknownShort_68);
+            writer.Write(UnknownShort_6A);
+            writer.Write(UnknownShort_6C);
+            writer.Write(UnknownShort_6E);
+
+            return writer.ToArray();
+        }
 
         public override bool HasReference(uint assetID)
         {
@@ -22,239 +158,16 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
-            Asset.Verify(Texture_AssetID, ref result);
-        }
-        
-        public int UnknownInt_00
-        {
-            get => ReadInt(0x00);
-            set => Write(0x00, value);
-        }
-        public int UnknownInt_04
-        {
-            get => ReadInt(0x04);
-            set => Write(0x04, value);
-        }
-        [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public override float PositionX
-        {
-            get => ReadFloat(0x08);
-            set { Write(0x08, value); CreateTransformMatrix(); }
-        }
-        [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public override float PositionY
-        {
-            get => ReadFloat(0x0C);
-            set { Write(0x0C, value); CreateTransformMatrix(); }
-        }
-        [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public override float PositionZ
-        {
-            get => ReadFloat(0x10);
-            set { Write(0x10, value); CreateTransformMatrix(); }
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_14
-        {
-            get => ReadFloat(0x14);
-            set => Write(0x14, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_18
-        {
-            get => ReadFloat(0x18);
-            set => Write(0x18, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_1C
-        {
-            get => ReadFloat(0x1C);
-            set => Write(0x1C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_20
-        {
-            get => ReadFloat(0x20);
-            set => Write(0x20, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_24
-        {
-            get => ReadFloat(0x24);
-            set => Write(0x24, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_28
-        {
-            get => ReadFloat(0x28);
-            set => Write(0x28, value);
-        }
-        public AssetID Texture_AssetID
-        {
-            get => ReadUInt(0x2C);
-            set => Write(0x2C, value);
-        }
-        [TypeConverter(typeof(HexUShortTypeConverter))]
-        public ushort UnknownShort_30
-        {
-            get => ReadUShort(0x30);
-            set => Write(0x30, value);
-        }
-        [TypeConverter(typeof(HexUShortTypeConverter))]
-        public ushort UnknownShort_32
-        {
-            get => ReadUShort(0x32);
-            set => Write(0x32, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_34
-        {
-            get => ReadFloat(0x34);
-            set => Write(0x34, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_38
-        {
-            get => ReadFloat(0x38);
-            set => Write(0x38, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_3C
-        {
-            get => ReadFloat(0x3C);
-            set => Write(0x3C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_40
-        {
-            get => ReadFloat(0x40);
-            set => Write(0x40, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_44
-        {
-            get => ReadFloat(0x44);
-            set => Write(0x44, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_48
-        {
-            get => ReadFloat(0x48);
-            set => Write(0x48, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_4C
-        {
-            get => ReadFloat(0x4C);
-            set => Write(0x4C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_50
-        {
-            get => ReadFloat(0x50);
-            set => Write(0x50, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_54
-        {
-            get => ReadFloat(0x54);
-            set => Write(0x54, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_58
-        {
-            get => ReadFloat(0x58);
-            set => Write(0x58, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_5C
-        {
-            get => ReadFloat(0x5C);
-            set => Write(0x5C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_60
-        {
-            get => ReadFloat(0x60);
-            set => Write(0x60, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_64
-        {
-            get => ReadFloat(0x64);
-            set => Write(0x64, value);
-        }
-        public short UnknownShort_68
-        {
-            get => ReadShort(0x68);
-            set => Write(0x68, value);
-        }
-        public short UnknownShort_6A
-        {
-            get => ReadShort(0x6A);
-            set => Write(0x6A, value);
-        }
-        public short UnknownShort_6C
-        {
-            get => ReadShort(0x6C);
-            set => Write(0x6C, value);
-        }
-        public short UnknownShort_6E
-        {
-            get => ReadShort(0x6E);
-            set => Write(0x6E, value);
+            Verify(Texture_AssetID, ref result);
         }
 
-        public override bool IsRenderableClickable => true;
+        protected override List<Vector3> vertexSource => SharpRenderer.cubeVertices;
 
-        private Matrix world;
-        private BoundingBox boundingBox;
-        private Vector3[] vertices;
-        protected RenderWareFile.Triangle[] triangles;
+        protected override List<Triangle> triangleSource => SharpRenderer.cubeTriangles;
 
-        public override void CreateTransformMatrix()
-        {
-            world = Matrix.Translation(PositionX, PositionY, PositionZ);
-
-            vertices = new Vector3[SharpRenderer.cubeVertices.Count];
-            for (int i = 0; i < SharpRenderer.cubeVertices.Count; i++)
-                vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.cubeVertices[i], world);
-            boundingBox = BoundingBox.FromPoints(vertices);
-
-            triangles = new RenderWareFile.Triangle[SharpRenderer.cubeTriangles.Count];
-            for (int i = 0; i < SharpRenderer.cubeTriangles.Count; i++)
-            {
-                triangles[i] = new RenderWareFile.Triangle((ushort)SharpRenderer.cubeTriangles[i].materialIndex,
-                    (ushort)SharpRenderer.cubeTriangles[i].vertex1, (ushort)SharpRenderer.cubeTriangles[i].vertex2, (ushort)SharpRenderer.cubeTriangles[i].vertex3);
-            }
-        }
-        
-        public override void Draw(SharpRenderer renderer, bool isSelected)
+        public override void Draw(SharpRenderer renderer)
         {
             renderer.DrawCube(world, isSelected);
-        }
-
-        public override BoundingBox GetBoundingBox()
-        {
-            return boundingBox;
-        }
-
-        public override float GetDistance(Vector3 cameraPosition)
-        {
-            return Vector3.Distance(cameraPosition, new Vector3(PositionX, PositionY, PositionZ));
-        }
-
-        public override float? IntersectsWith(Ray ray)
-        {
-            float? smallestDistance = null;
-
-            if (ray.Intersects(ref boundingBox))
-                foreach (RenderWareFile.Triangle t in triangles)
-                    if (ray.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
-                        if (smallestDistance == null || distance < smallestDistance)
-                            smallestDistance = distance;
-
-            return smallestDistance;
         }
     }
 }

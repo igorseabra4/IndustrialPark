@@ -46,7 +46,7 @@ namespace IndustrialPark
         [Category("Jaw Data")]
         public EntryJAW[] JAW_Entries { get; set; }
 
-        public AssetJAW(Section_AHDR AHDR, Platform platform) : base(AHDR)
+        public AssetJAW(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, platform))
             {
@@ -58,6 +58,7 @@ namespace IndustrialPark
                 {
                     uint soundAssetID = reader.ReadUInt32();
                     int offset = reader.ReadInt32();
+                    reader.ReadInt32();
 
                     int length = BitConverter.ToInt32(AHDR.data, startOfJawData + offset);
                     byte[] jawData = AHDR.data.Skip(startOfJawData + offset + 4).Take(length).ToArray();

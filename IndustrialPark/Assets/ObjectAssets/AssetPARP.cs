@@ -22,11 +22,11 @@ namespace IndustrialPark
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public class StructPARP
     {
-        public float Interp_0 { get; set; }
-        public float Interp_1 { get; set; }
+        public AssetSingle Interp_0 { get; set; }
+        public AssetSingle Interp_1 { get; set; }
         public Interp_Mode Interp_Mode { get; set; }
-        public float Frequency_RandLinStep { get; set; }
-        public float Frequency_SinCos { get; set; }
+        public AssetSingle Frequency_RandLinStep { get; set; }
+        public AssetSingle Frequency_SinCos { get; set; }
 
         private readonly int index;
 
@@ -107,12 +107,12 @@ namespace IndustrialPark
                 _structs = list.ToArray();
             } 
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float VelX { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float VelY { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float VelZ { get; set; }
+        [Category(categoryName)]
+        public AssetSingle VelX { get; set; }
+        [Category(categoryName)]
+        public AssetSingle VelY { get; set; }
+        [Category(categoryName)]
+        public AssetSingle VelZ { get; set; }
         [Category(categoryName)]
         public int Emit_Limit { get; set; }
         [Category(categoryName)]
@@ -121,7 +121,7 @@ namespace IndustrialPark
         public AssetPARP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = baseEndPosition;
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
             PARS_AssetID = reader.ReadUInt32();
 

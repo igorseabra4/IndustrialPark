@@ -157,14 +157,14 @@ namespace IndustrialPark
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string file in files)
-                try
-                {
+                //try
+                //{
                     AddArchiveEditor(file);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error opening file: " + ex.Message);
-                }
+                //}
+                //catch (Exception ex)
+                //{
+                //    MessageBox.Show("Error opening file: " + ex.Message);
+                //}
         }
 
         private void MainForm_DragEnter(object sender, DragEventArgs e)
@@ -417,7 +417,7 @@ namespace IndustrialPark
             renderer.SetSfxColor(ipSettings.SfxColor);
 
             useLegacyAssetIDFormatToolStripMenuItem.Checked = ipSettings.UseLegacyAssetIDFormat;
-            AssetIDTypeConverter.Legacy = ipSettings.UseLegacyAssetIDFormat;
+            HexUIntTypeConverter.Legacy = ipSettings.UseLegacyAssetIDFormat;
 
             uIModeToolStripMenuItem.Checked = ipSettings.isDrawingUI;
             renderer.isDrawingUI = ipSettings.isDrawingUI;
@@ -956,7 +956,7 @@ namespace IndustrialPark
         private void useLegacyAssetIDFormatToolStripMenuItem_Click(object sender, EventArgs e)
         {
             useLegacyAssetIDFormatToolStripMenuItem.Checked = !useLegacyAssetIDFormatToolStripMenuItem.Checked;
-            AssetIDTypeConverter.Legacy = useLegacyAssetIDFormatToolStripMenuItem.Checked;
+            HexUIntTypeConverter.Legacy = useLegacyAssetIDFormatToolStripMenuItem.Checked;
         }
 
         private void levelModelToolStripMenuItem_Click(object sender, EventArgs e)

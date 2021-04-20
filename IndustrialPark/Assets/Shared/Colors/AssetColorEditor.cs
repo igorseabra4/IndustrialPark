@@ -7,7 +7,7 @@ using System.Windows.Forms.Design;
 
 namespace AssetEditorColors
 {
-    public class MyColorEditor : UITypeEditor
+    public class AssetColorEditor : UITypeEditor
     {
         private IWindowsFormsEditorService service;
 
@@ -26,13 +26,13 @@ namespace AssetEditorColors
                 ColorDialog selectionControl = new ColorDialog
                 {
                     AnyColor = true,
-                    Color = Color.FromArgb(((MyColor)value).GetARGB()),
+                    Color = Color.FromArgb(((AssetColor)value).GetARGB()),
                     FullOpen = true,
                     SolidColorOnly = false
                 };
 
                 if (selectionControl.ShowDialog() == DialogResult.OK)
-                    value = new MyColor(selectionControl.Color.ToArgb());
+                    value = new AssetColor(selectionControl.Color.ToArgb());
             }
 
             return value;

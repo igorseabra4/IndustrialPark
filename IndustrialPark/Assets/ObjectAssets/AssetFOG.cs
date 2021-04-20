@@ -10,7 +10,7 @@ namespace IndustrialPark
         private const string categoryName = "Fog";
 
         [Category(categoryName), DisplayName("End Color (R, G, B)")]
-        public MyColor BackgroundColor { get; set; }
+        public AssetColor BackgroundColor { get; set; }
         [Category(categoryName), DisplayName("End Color Alpha (0 - 255)")]
         public byte BackgroundColorAlpha
         {
@@ -18,31 +18,40 @@ namespace IndustrialPark
             set => BackgroundColor.A = value;
         }
         [Category(categoryName), DisplayName("Start Color (R, G, B)")]
-        public MyColor FogColor { get; set; }
+        public AssetColor FogColor { get; set; }
         [Category(categoryName), DisplayName("Start Color Alpha (0 - 255)")]
         public byte FogColorAlpha
         {
             get => FogColor.A;
             set => FogColor.A = value;
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float FogDensity { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float StartDistance { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float EndDistance { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float TransitionTime { get; set; }
+        [Category(categoryName)]
+        public AssetSingle FogDensity { get; set; }
+        [Category(categoryName)]
+        public AssetSingle StartDistance { get; set; }
+        [Category(categoryName)]
+        public AssetSingle EndDistance { get; set; }
+        [Category(categoryName)]
+        public AssetSingle TransitionTime { get; set; }
         [Category(categoryName)]
         public byte FogType { get; set; }
+
+        public AssetFOG(string assetName) : base(assetName, AssetType.FOG, BaseAssetType.Fog)
+        {
+            BackgroundColorAlpha = 255;
+            FogColorAlpha = 255;
+            FogDensity = 1;
+            StartDistance = 100;
+            EndDistance = 400;
+        }
 
         public AssetFOG(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = baseEndPosition;
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
-            BackgroundColor = new MyColor(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
-            FogColor = new MyColor(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
+            BackgroundColor = new AssetColor(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
+            FogColor = new AssetColor(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
             FogDensity = reader.ReadSingle();
             StartDistance = reader.ReadSingle();
             EndDistance = reader.ReadSingle();

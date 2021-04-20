@@ -4,18 +4,18 @@ using System.Globalization;
 
 namespace AssetEditorColors
 {
-    public class MyColorConverter : TypeConverter
+    public class AssetColorConverter : TypeConverter
     {
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
             if (value.GetType() == typeof(string))
-                return new MyColor((string)value);
+                return new AssetColor((string)value);
             return base.ConvertFrom(context, culture, value);
         }
 
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destType)
         {
-            if ((destType == typeof(string)) && (value is MyColor color))
+            if ((destType == typeof(string)) && (value is AssetColor color))
             {
                 return color.ToString();
             }

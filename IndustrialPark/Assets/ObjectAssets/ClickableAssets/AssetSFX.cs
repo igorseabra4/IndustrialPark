@@ -17,8 +17,8 @@ namespace IndustrialPark
         public FlagBitmask Flags09 { get; set; } = ByteFlagsDescriptor();
         [Category(categoryName)]
         public short Frequency { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float MinFrequency { get; set; }
+        [Category(categoryName)]
+        public AssetSingle MinFrequency { get; set; }
         [Category(categoryName)]
         public AssetID Sound_AssetID { get; set; }
         [Category(categoryName)]
@@ -30,34 +30,34 @@ namespace IndustrialPark
         [Category(categoryName)]
         public byte Volume { get; set; }
         private Vector3 _position;
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionX
+        [Category(categoryName)]
+        public AssetSingle PositionX
         {
             get => _position.X;
             set { _position.X = value; CreateTransformMatrix(); }
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionY
+        [Category(categoryName)]
+        public AssetSingle PositionY
         {
             get => _position.Y;
             set { _position.Y = value; CreateTransformMatrix(); }
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionZ
+        [Category(categoryName)]
+        public AssetSingle PositionZ
         {
             get => _position.Z;
             set { _position.Z = value; CreateTransformMatrix(); }
         }
         private float _radius;
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float InnerRadius
+        [Category(categoryName)]
+        public AssetSingle InnerRadius
         {
             get => _radius;
             set { _radius = value; CreateTransformMatrix(); }
         }
         private float _radius2;
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float OuterRadius
+        [Category(categoryName)]
+        public AssetSingle OuterRadius
         {
             get => _radius2;
             set { _radius2 = value; CreateTransformMatrix(); }
@@ -66,7 +66,7 @@ namespace IndustrialPark
         public AssetSFX(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = baseEndPosition;
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
             Flags08.FlagValueByte = reader.ReadByte();
             Flags09.FlagValueByte = reader.ReadByte();
@@ -149,10 +149,7 @@ namespace IndustrialPark
 
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
-            if (!ShouldDraw(renderer))
-                return null;
-
-            if (ray.Intersects(ref boundingSphere))
+            if (ShouldDraw(renderer) && ray.Intersects(ref boundingSphere))
                 return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices, world);
             return null;
         }
@@ -189,7 +186,7 @@ namespace IndustrialPark
         public float GetDistanceFrom(Vector3 cameraPosition) => Vector3.Distance(cameraPosition, _position) - _radius;
         
         [Browsable(false)]
-        public float ScaleX
+        public AssetSingle ScaleX
         {
             get => InnerRadius;
             set
@@ -199,7 +196,7 @@ namespace IndustrialPark
             }
         }
         [Browsable(false)]
-        public float ScaleY
+        public AssetSingle ScaleY
         {
             get => InnerRadius;
             set
@@ -209,7 +206,7 @@ namespace IndustrialPark
             }
         }
         [Browsable(false)]
-        public float ScaleZ
+        public AssetSingle ScaleZ
         {
             get => InnerRadius;
             set

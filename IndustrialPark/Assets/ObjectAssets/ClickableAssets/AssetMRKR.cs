@@ -1,8 +1,5 @@
 ﻿using HipHopFile;
-using IndustrialPark.Models;
 using SharpDX;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -13,28 +10,25 @@ namespace IndustrialPark
 
         private Vector3 _position;
         [Category(categoryName)]
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionX
+        public AssetSingle PositionX
         {
             get => _position.X;
             set { _position.X = value; CreateTransformMatrix(); }
         }
         [Category(categoryName)]
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionY
+        public AssetSingle PositionY
         {
             get => _position.Y;
             set { _position.Y = value; CreateTransformMatrix(); }
         }
         [Category(categoryName)]
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionZ
+        public AssetSingle PositionZ
         {
             get => _position.Z;
             set { _position.Z = value; CreateTransformMatrix(); }
         }
 
-        public AssetMRKR(Section_AHDR AHDR, Platform platform) : base(AHDR)
+        public AssetMRKR(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
 
@@ -76,12 +70,10 @@ namespace IndustrialPark
             boundingBox = BoundingBox.FromPoints(vertices);
         }
 
+
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
-            if (!ShouldDraw(renderer))
-                return null;
-
-            if (ray.Intersects(ref boundingBox))
+            if (ShouldDraw(renderer) && ray.Intersects(ref boundingBox))
                 return TriangleIntersection(ray, SharpRenderer.pyramidTriangles, SharpRenderer.pyramidVertices, world);
             return null;
         }

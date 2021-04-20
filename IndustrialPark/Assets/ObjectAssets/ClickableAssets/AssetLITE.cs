@@ -18,50 +18,50 @@ namespace IndustrialPark
         public byte UnknownByte0B { get; set; }
         [Category(categoryName)]
         public int UnknownInt0C { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat10 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat14 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat18 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat1C { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat20 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat24 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat28 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat2C { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat10 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat14 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat18 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat1C { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat20 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat24 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat28 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat2C { get; set; }
         private Vector3 _position;
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionX
+        [Category(categoryName)]
+        public AssetSingle PositionX
         {
             get => _position.X;
             set { _position.X = value; CreateTransformMatrix(); }
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionY
+        [Category(categoryName)]
+        public AssetSingle PositionY
         {
             get => _position.Y;
             set { _position.Y = value; CreateTransformMatrix(); }
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionZ
+        [Category(categoryName)]
+        public AssetSingle PositionZ
         {
             get => _position.Z;
             set { _position.Z = value; CreateTransformMatrix(); }
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat3C { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat40 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat3C { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat40 { get; set; }
 
         public AssetLITE(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = baseEndPosition;
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
             UnknownByte08 = reader.ReadByte();
             UnknownByte09 = reader.ReadByte();
@@ -138,14 +138,11 @@ namespace IndustrialPark
 
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
-            if (!ShouldDraw(renderer))
-                return null;
-
-            if (ray.Intersects(ref boundingBox, out float distance))
-                return distance;
+            if (ShouldDraw(renderer) && ray.Intersects(ref boundingBox))
+                return TriangleIntersection(ray, SharpRenderer.cubeTriangles, SharpRenderer.cubeVertices, world);
             return null;
         }
-        
+
         public bool ShouldDraw(SharpRenderer renderer)
         {
             if (isSelected)

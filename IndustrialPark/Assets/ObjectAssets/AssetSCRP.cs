@@ -11,15 +11,15 @@ namespace IndustrialPark
         private const string categoryName = "Scripted Event";
 
         [Category(categoryName)]
-        public float ScriptStartTime { get; set; }
-        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flag1 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flag2 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flag3 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flag4 { get; set; }
+        public AssetSingle ScriptStartTime { get; set; }
+        [Category(categoryName)]
+        public AssetByte Flag1 { get; set; }
+        [Category(categoryName)]
+        public AssetByte Flag2 { get; set; }
+        [Category(categoryName)]
+        public AssetByte Flag3 { get; set; }
+        [Category(categoryName)]
+        public AssetByte Flag4 { get; set; }
         public Link[] _timedLinks;
         [Category(categoryName), Editor(typeof(LinkListEditor), typeof(UITypeEditor))]
         public Link[] TimedLinks
@@ -27,7 +27,7 @@ namespace IndustrialPark
             get
             {
                 LinkListEditor.IsTimed = true;
-                LinkListEditor.thisAssetID = AssetID;
+                LinkListEditor.thisAssetID = assetID;
                 LinkListEditor.game = game;
 
                 return _timedLinks;
@@ -41,7 +41,7 @@ namespace IndustrialPark
         public AssetSCRP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = baseEndPosition;
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
             ScriptStartTime = reader.ReadSingle();
             int timedLinkCount = reader.ReadInt32();

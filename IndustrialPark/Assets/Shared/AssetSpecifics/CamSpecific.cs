@@ -1,6 +1,5 @@
 ﻿using HipHopFile;
 using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace IndustrialPark
 {
@@ -11,18 +10,12 @@ namespace IndustrialPark
 
     public class CamSpecific_Follow : CamSpecific_Generic
     {
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Rotation { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Distance { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Height { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float RubberBand { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float StartSpeed { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float EndSpeed { get; set; }
+        public AssetSingle Rotation { get; set; }
+        public AssetSingle Distance { get; set; }
+        public AssetSingle Height { get; set; }
+        public AssetSingle RubberBand { get; set; }
+        public AssetSingle StartSpeed { get; set; }
+        public AssetSingle EndSpeed { get; set; }
 
         public CamSpecific_Follow() { }
         public CamSpecific_Follow(EndianBinaryReader reader)
@@ -50,14 +43,10 @@ namespace IndustrialPark
 
     public class CamSpecific_Shoulder : CamSpecific_Generic
     {
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Distance { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Height { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float RealignSpeed { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float RealignDelay { get; set; }
+        public AssetSingle Distance { get; set; }
+        public AssetSingle Height { get; set; }
+        public AssetSingle RealignSpeed { get; set; }
+        public AssetSingle RealignDelay { get; set; }
 
         public CamSpecific_Shoulder() { }
         public CamSpecific_Shoulder(EndianBinaryReader reader)
@@ -100,12 +89,10 @@ namespace IndustrialPark
     public class CamSpecific_Path : CamSpecific_Generic
     {
         public AssetID Unknown_AssetID { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float TimeEnd { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float TimeDelay { get; set; }
+        public AssetSingle TimeEnd { get; set; }
+        public AssetSingle TimeDelay { get; set; }
 
-        public CamSpecific_Path() 
+        public CamSpecific_Path()
         {
             Unknown_AssetID = 0;
         }
@@ -131,8 +118,7 @@ namespace IndustrialPark
 
     public class CamSpecific_StaticFollow : CamSpecific_Generic
     {
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float RubberBand { get; set; }
+        public AssetSingle RubberBand { get; set; }
 
         public CamSpecific_StaticFollow() { }
         public CamSpecific_StaticFollow(EndianBinaryReader reader)

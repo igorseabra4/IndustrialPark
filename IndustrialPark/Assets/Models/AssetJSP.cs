@@ -11,6 +11,8 @@ namespace IndustrialPark
 
         public static bool dontRender = false;
 
+        public AssetJSP(string assetName, AssetType assetType, byte[] data, SharpRenderer renderer) : base(assetName, assetType, data, renderer) { }
+
         public AssetJSP(Section_AHDR AHDR, Game game, Platform platform, SharpRenderer renderer) : base(AHDR, game, platform, renderer) { }
 
         public override void Setup(SharpRenderer renderer)

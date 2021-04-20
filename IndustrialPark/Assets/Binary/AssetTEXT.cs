@@ -8,11 +8,11 @@ namespace IndustrialPark
     {
         public string Text { get; set; }
         
-        public AssetTEXT(Section_AHDR AHDR, Platform platform) : base(AHDR)
+        public AssetTEXT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
             var length = reader.ReadInt32();
-            Text = System.Text.Encoding.ASCII.GetString(AHDR.data.Skip(4).ToArray(), 4, length);
+            Text = new string(reader.ReadChars(length));
         }
 
         public override byte[] Serialize(Game game, Platform platform)

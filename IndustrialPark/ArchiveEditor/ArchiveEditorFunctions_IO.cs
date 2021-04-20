@@ -44,7 +44,7 @@ namespace IndustrialPark
                     foreach (Section_LHDR LHDR in hip.DICT.LTOC.LHDRList)
                         LHDR.assetIDlist.Remove(AHDR.assetID);
 
-                    MergeCOLL(AHDR, hip.game, hip.platform);
+                    MergeCOLL(new AssetCOLL(AHDR, hip.game, hip.platform));
                     continue;
                 }
                 else if (AHDR.assetType == AssetType.JAW && ContainsAssetWithType(AssetType.JAW))
@@ -52,7 +52,7 @@ namespace IndustrialPark
                     foreach (Section_LHDR LHDR in hip.DICT.LTOC.LHDRList)
                         LHDR.assetIDlist.Remove(AHDR.assetID);
 
-                    MergeJAW(AHDR, hip.game, hip.platform);
+                    MergeJAW(new AssetJAW(AHDR, hip.game, hip.platform));
                     continue;
                 }
                 else if (AHDR.assetType == AssetType.LODT && ContainsAssetWithType(AssetType.LODT))
@@ -60,7 +60,7 @@ namespace IndustrialPark
                     foreach (Section_LHDR LHDR in hip.DICT.LTOC.LHDRList)
                         LHDR.assetIDlist.Remove(AHDR.assetID);
 
-                    MergeLODT(AHDR, hip.game, hip.platform);
+                    MergeLODT(new AssetLODT(AHDR, hip.game, hip.platform));
                     continue;
                 }
                 else if (AHDR.assetType == AssetType.PIPT && ContainsAssetWithType(AssetType.PIPT))
@@ -68,7 +68,7 @@ namespace IndustrialPark
                     foreach (Section_LHDR LHDR in hip.DICT.LTOC.LHDRList)
                         LHDR.assetIDlist.Remove(AHDR.assetID);
 
-                    MergePIPT(AHDR, hip.game, hip.platform);
+                    MergePIPT(new AssetPIPT(AHDR, hip.game, hip.platform));
                     continue;
                 }
                 else if (AHDR.assetType == AssetType.SHDW && ContainsAssetWithType(AssetType.SHDW))
@@ -76,7 +76,7 @@ namespace IndustrialPark
                     foreach (Section_LHDR LHDR in hip.DICT.LTOC.LHDRList)
                         LHDR.assetIDlist.Remove(AHDR.assetID);
 
-                    MergeSHDW(AHDR, hip.game, hip.platform);
+                    MergeSHDW(new AssetSHDW(AHDR, hip.game, hip.platform));
                     continue;
                 }
                 else if (AHDR.assetType == AssetType.SNDI && ContainsAssetWithType(AssetType.SNDI))
@@ -84,7 +84,18 @@ namespace IndustrialPark
                     foreach (Section_LHDR LHDR in hip.DICT.LTOC.LHDRList)
                         LHDR.assetIDlist.Remove(AHDR.assetID);
 
-                    MergeSNDI(AHDR, hip.game, hip.platform);
+                    if (hip.platform == Platform.GameCube)
+                    {
+                        if (hip.game == Game.Incredibles)
+                            MergeSNDI(new AssetSNDI_GCN_V2(AHDR, hip.game, hip.platform));
+                        else
+                            MergeSNDI(new AssetSNDI_GCN_V1(AHDR, hip.game, hip.platform));
+                    }
+                    else if (hip.platform == Platform.Xbox)
+                        MergeSNDI(new AssetSNDI_XBOX(AHDR, hip.game, hip.platform));
+                    else if (hip.platform == Platform.PS2)
+                        MergeSNDI(new AssetSNDI_PS2(AHDR, hip.game, hip.platform));
+
                     continue;
                 }
 
@@ -103,7 +114,6 @@ namespace IndustrialPark
                     if (result == DialogResult.Yes)
                     {
                         RemoveAsset(AHDR.assetID, false);
-                        DICT.ATOC.AHDRList.Add(AHDR);
                         AddAssetToDictionary(AHDR, forceOverwrite, forceOverwrite);
                     }
                     else
@@ -114,7 +124,6 @@ namespace IndustrialPark
                 }
                 else if (missingAssets == null)
                 {
-                    DICT.ATOC.AHDRList.Add(AHDR);
                     AddAssetToDictionary(AHDR, forceOverwrite, forceOverwrite);
                 }
             }

@@ -29,7 +29,7 @@ namespace IndustrialPark
         public AssetSPLN(Section_AHDR AHDR, Game game, Platform platform, SharpRenderer renderer) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = baseEndPosition;
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
             reader.ReadInt32(); // unknown, always 3
             int pointCount = reader.ReadInt32() - 3; // point count plus 3

@@ -9,15 +9,15 @@ namespace IndustrialPark
     public class EntryLODT
     {
         public AssetID ModelAssetID { get; set; }
-        public float MaxDistance { get; set; }
+        public AssetSingle MaxDistance { get; set; }
         public AssetID LOD1_Model { get; set; }
-        public float LOD1_Distance { get; set; }
+        public AssetSingle LOD1_Distance { get; set; }
         public AssetID LOD2_Model { get; set; }
-        public float LOD2_Distance { get; set; }
+        public AssetSingle LOD2_Distance { get; set; }
         public AssetID LOD3_Model { get; set; }
-        public float LOD3_Distance { get; set; }
+        public AssetSingle LOD3_Distance { get; set; }
         [Description("Movie only.")]
-        public float Unknown { get; set; }
+        public AssetSingle Unknown { get; set; }
 
         public EntryLODT()
         {
@@ -81,7 +81,10 @@ namespace IndustrialPark
 
     public class AssetLODT : Asset
     {
-        public static Dictionary<uint, float> MaxDistances = new Dictionary<uint, float>();
+        private static Dictionary<uint, float> maxDistances = new Dictionary<uint, float>();
+
+        public static float MaxDistanceTo(uint _modelAssetID) => maxDistances.ContainsKey(_modelAssetID) ?
+            maxDistances[_modelAssetID] : SharpRenderer.DefaultLODTDistance;
 
         private EntryLODT[] _lodt_Entries;
         [Category("Level Of Detail Table")]
@@ -95,7 +98,7 @@ namespace IndustrialPark
             }
         }
 
-        public AssetLODT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR)
+        public AssetLODT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
 
@@ -145,13 +148,13 @@ namespace IndustrialPark
         public void UpdateDictionary()
         {
             foreach (var entry in LODT_Entries)
-                MaxDistances[entry.ModelAssetID] = entry.MaxDistance;
+                maxDistances[entry.ModelAssetID] = entry.MaxDistance;
         }
 
         public void ClearDictionary()
         {
             foreach (var entry in LODT_Entries)
-                MaxDistances.Remove(entry.ModelAssetID);
+                maxDistances.Remove(entry.ModelAssetID);
         }
 
         public void Merge(AssetLODT asset)

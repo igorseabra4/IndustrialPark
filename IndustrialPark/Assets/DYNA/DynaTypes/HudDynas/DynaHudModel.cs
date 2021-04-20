@@ -1,32 +1,40 @@
-﻿using System.Collections.Generic;
+﻿using HipHopFile;
+using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
     public class DynaHudModel : DynaHud
     {
-        public string Note => "Version is always 1";
+        protected override int constVersion => 1;
 
-        public override int StructSize => 0x1C;
+        [Category("hud:model"),
+            Description("It needs to be a hash of the model's name without the .dff or else it won't play the spinning animation for some reason")]
+        public AssetID Model_AssetID { get; set; }
 
-        public DynaHudModel(AssetDYNA asset) : base(asset) { }
-
-        public override bool HasReference(uint assetID)
+        public DynaHudModel(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.hud__model, game, platform)
         {
-            if (Model_AssetID == assetID)
-                return true;
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = dynaHudEnd;
 
-            return base.HasReference(assetID);
+            Model_AssetID = reader.ReadUInt32();
         }
 
+        protected override byte[] SerializeDyna(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(SerializeDynaHud(platform));
+            writer.Write(Model_AssetID);
+
+            return writer.ToArray();
+        }
+
+        public override bool HasReference(uint assetID) => Model_AssetID == assetID || base.HasReference(assetID);
+        
         public override void Verify(ref List<string> result)
         {
-            Asset.Verify(Model_AssetID, ref result);
-        }
-                
-        public AssetID Model_AssetID
-        {
-            get => ReadUInt(0x18);
-            set => Write(0x18, value);
+            Verify(Model_AssetID, ref result);
         }
     }
 }

@@ -1,46 +1,52 @@
-﻿using System.ComponentModel;
+﻿using HipHopFile;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public abstract class DynaHud : DynaBase
+    public abstract class DynaHud : AssetDYNA
     {
-        public DynaHud(AssetDYNA asset) : base(asset) { }
-        
-        [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
-        public override float PositionX
+        private const string dynaCategoryName = "hud";
+
+        [Category(dynaCategoryName)]
+        public AssetSingle PositionX { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle PositionY { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle PositionZ { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle ScaleX { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle ScaleY { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle ScaleZ { get; set; }
+
+        protected int dynaHudEnd => dynaDataStartPosition + 24;
+
+        public DynaHud(Section_AHDR AHDR, DynaType type, Game game, Platform platform) : base(AHDR, type, game, platform)
         {
-            get => ReadFloat(0x00);
-            set => Write(0x00, value);
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = dynaDataStartPosition;
+
+            PositionX = reader.ReadSingle();
+            PositionY = reader.ReadSingle();
+            PositionZ = reader.ReadSingle();
+            ScaleX = reader.ReadSingle();
+            ScaleY = reader.ReadSingle();
+            ScaleZ = reader.ReadSingle();
         }
-        [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
-        public override float PositionY
+
+        protected byte[] SerializeDynaHud(Platform platform)
         {
-            get => ReadFloat(0x04);
-            set => Write(0x04, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
-        public override float PositionZ
-        {
-            get => ReadFloat(0x08);
-            set => Write(0x08, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public override float ScaleX
-        {
-            get => ReadFloat(0x0C);
-            set => Write(0x0C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public override float ScaleY
-        {
-            get => ReadFloat(0x10);
-            set => Write(0x10, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public override float ScaleZ
-        {
-            get => ReadFloat(0x14);
-            set => Write(0x14, value);
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(PositionX);
+            writer.Write(PositionY);
+            writer.Write(PositionZ);
+            writer.Write(ScaleX);
+            writer.Write(ScaleY);
+            writer.Write(ScaleZ);
+
+            return writer.ToArray();
         }
     }
 }

@@ -7,9 +7,9 @@ namespace IndustrialPark
 {
     public abstract class AssetWithMotion : EntityAsset
     {
-        public AssetWithMotion(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
-        {
-        }
+        public AssetWithMotion(string assetName, AssetType assetType, BaseAssetType baseAssetType, Vector3 position) : base(assetName, assetType, baseAssetType, position) { }
+
+        public AssetWithMotion(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
 
         public override bool HasReference(uint assetID) => Motion.HasReference(assetID) || base.HasReference(assetID);
         
@@ -67,8 +67,7 @@ namespace IndustrialPark
             return world;
         }
 
-        [Category("Platform")]
-        [TypeConverter(typeof(ExpandableObjectConverter))]
+        [Category("Platform"), TypeConverter(typeof(ExpandableObjectConverter))]
         public Motion Motion { get; set; }
     }
 }

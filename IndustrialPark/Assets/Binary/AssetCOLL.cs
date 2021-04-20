@@ -50,7 +50,12 @@ namespace IndustrialPark
         [Category("Collision Table")]
         public EntryCOLL[] CollisionTable_Entries { get; set; }
 
-        public AssetCOLL(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR)
+        public AssetCOLL(string assetName) : base(assetName, AssetType.COLL)
+        {
+            CollisionTable_Entries = new EntryCOLL[0];
+        }
+
+        public AssetCOLL(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
 

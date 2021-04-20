@@ -9,30 +9,30 @@ namespace IndustrialPark
 
         protected override int constVersion => 3;
 
-        [Category(dynaCategoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_00 { get; set; }
-        [Category(dynaCategoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_04 { get; set; }
-        [Category(dynaCategoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_08 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_00 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_04 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_08 { get; set; }
         [Category(dynaCategoryName)]
         public short UnknownShort_0C { get; set; }
         [Category(dynaCategoryName)]
         public short UnknownShort_0A { get; set; }
-        [Category(dynaCategoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_10 { get; set; }
-        [Category(dynaCategoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_14 { get; set; }
-        [Category(dynaCategoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_18 { get; set; }
-        [Category(dynaCategoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_1C { get; set; }
-        [Category(dynaCategoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_20 { get; set; }
-        [Category(dynaCategoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_24 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_10 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_14 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_18 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_1C { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_20 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_24 { get; set; }
 
-        public DynaEffectRumble(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public DynaEffectRumble(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.effect__Rumble, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
             reader.BaseStream.Position = dynaDataStartPosition;

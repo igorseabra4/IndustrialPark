@@ -15,9 +15,9 @@ namespace IndustrialPark
         [Category(categoryName), DisplayName("VilType (Incredibles)")]
         public AssetID VilType { get; set; }
         [Category(categoryName), DisplayName("VilType (BFBB)")]
-        public VilType VilType_BFBB 
+        public VilType_BFBB VilType_BFBB 
         {
-            get => (VilType)(uint)VilType;
+            get => (VilType_BFBB)(uint)VilType;
             set => VilType = (uint)value;
         }
         [Category(categoryName), DisplayName("VilType (BFBB, Alphabetical)")]
@@ -33,7 +33,7 @@ namespace IndustrialPark
             }
             set
             {
-                foreach (VilType o in Enum.GetValues(typeof(VilType)))
+                foreach (VilType_BFBB o in Enum.GetValues(typeof(VilType_BFBB)))
                     if (o.ToString() == value.ToString())
                     {
                         VilType_BFBB = o;
@@ -53,10 +53,37 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID TaskDYNA2_AssetID { get; set; }
 
+        public AssetVIL(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.VIL, BaseAssetType.NPC, position)
+        {
+            switch (template)
+            {
+                case AssetTemplate.WoodenTiki:
+                    Model_AssetID = "tiki_wooden_bind.MINF";
+                    VilType_BFBB = VilType_BFBB.tiki_wooden_bind;
+                    break;
+                case AssetTemplate.FloatingTiki:
+                    Model_AssetID = "tiki_lovey_dovey_bind.MINF";
+                    VilType_BFBB = VilType_BFBB.tiki_lovey_dovey_bind;
+                    break;
+                case AssetTemplate.ThunderTiki:
+                    Model_AssetID = "tiki_thunder_bind.MINF";
+                    VilType_BFBB = VilType_BFBB.tiki_thunder_bind;
+                    break;
+                case AssetTemplate.ShhhTiki:
+                    Model_AssetID = "tiki_shhhh_bind.MINF";
+                    VilType_BFBB = VilType_BFBB.tiki_shhhh_bind;
+                    break;
+                case AssetTemplate.StoneTiki:
+                    Model_AssetID = "tiki_stone_bind.MINF";
+                    VilType_BFBB = VilType_BFBB.tiki_stone_bind;
+                    break;
+            }
+        }
+        
         public AssetVIL(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = entityEndPosition;
+            reader.BaseStream.Position = entityHeaderEndPosition;
 
             VilFlags.FlagValueInt = reader.ReadUInt32();
             VilType = reader.ReadUInt32();

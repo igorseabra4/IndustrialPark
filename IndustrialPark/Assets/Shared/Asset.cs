@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
@@ -7,33 +8,55 @@ namespace IndustrialPark
         public bool isSelected;
         public bool isInvisible = false;
 
-        public AssetID AssetID;
+        public Game game;
+        public Platform platform;
+
+        public uint assetID;
         public string assetName;
         public string assetFileName;
+        public AssetType assetType;
+        public AHDRFlags flags;
         public int checksum;
 
-        public Asset(string assetName)
+        [Browsable(false)]
+        public virtual string DataLength => "";
+
+        public Asset(string assetName, AssetType assetType)
         {
+            game = Game.Unknown;
+            platform = Platform.Unknown;
+
+            this.assetType = assetType;
             this.assetName = assetName;
-            AssetID = assetName;
+            assetID = new AssetID(assetName);
             assetFileName = "";
-            checksum = 0;
+            flags = ArchiveEditorFunctions.AHDRFlagsFromAssetType(assetType);
         }
 
-        public Asset(Section_AHDR AHDR)
+        public Asset(Section_AHDR AHDR, Game game, Platform platform)
         {
-            AssetID = AHDR.assetID;
+            this.game = game;
+            this.platform = platform;
+
+            assetID = AHDR.assetID;
             assetName = AHDR.ADBG.assetName;
             assetFileName = AHDR.ADBG.assetFileName;
+            assetType = AHDR.assetType;
+            flags = AHDR.flags;
             checksum = AHDR.ADBG.checksum;
         }
 
         // use with DUPC VIL only
         protected Asset() { }
 
-        public override string ToString() =>  $"{assetName} [{AssetID:X8}]";
+        public Section_AHDR BuildAHDR() =>
+            new Section_AHDR(assetID, assetType, flags,
+                new Section_ADBG(0, assetName, assetFileName, checksum),
+                Serialize(game, platform));
 
-        public override int GetHashCode() => AssetID.GetHashCode();
+        public override string ToString() =>  $"{assetName} [{assetID:X8}]";
+
+        public override int GetHashCode() => assetID.GetHashCode();
 
         public virtual void SetDynamicProperties(DynamicTypeDescriptor dt)
         {

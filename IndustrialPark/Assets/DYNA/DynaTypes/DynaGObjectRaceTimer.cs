@@ -1,47 +1,52 @@
-﻿using System.ComponentModel;
+﻿using HipHopFile;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaGObjectRaceTimer : DynaBase
+    public class DynaGObjectRaceTimer : AssetDYNA
     {
-        public string Note => "Version is always 2";
+        private const string dynaCategoryName = "game_object:RaceTimer";
 
-        public override int StructSize => 0x18;
+        protected override int constVersion => 2;
 
-        public DynaGObjectRaceTimer(AssetDYNA asset) : base(asset) { }
-        
-        public int UnknownInt_00
+        [Category(dynaCategoryName)]
+        public int UnknownInt_00 { get; set; }
+        [Category(dynaCategoryName)]
+        public int UnknownInt_04 { get; set; }
+        [Category(dynaCategoryName)]
+        public int UnknownInt_08 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_0C { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_10 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_14 { get; set; }
+
+        public DynaGObjectRaceTimer(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.game_object__RaceTimer, game, platform)
         {
-            get => ReadInt(0x00);
-            set => Write(0x00, value);
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = dynaDataStartPosition;
+
+            UnknownInt_00 = reader.ReadInt32();
+            UnknownInt_04 = reader.ReadInt32();
+            UnknownInt_08 = reader.ReadInt32();
+            UnknownFloat_0C = reader.ReadSingle();
+            UnknownFloat_10 = reader.ReadSingle();
+            UnknownFloat_14 = reader.ReadSingle();
         }
-        public int UnknownInt_04
+
+        protected override byte[] SerializeDyna(Game game, Platform platform)
         {
-            get => ReadInt(0x04);
-            set => Write(0x04, value);
-        }
-        public int UnknownInt_08
-        {
-            get => ReadInt(0x08);
-            set => Write(0x08, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_0C
-        {
-            get => ReadFloat(0x0C);
-            set => Write(0x0C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_10
-        {
-            get => ReadFloat(0x10);
-            set => Write(0x10, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_14
-        {
-            get => ReadFloat(0x14);
-            set => Write(0x14, value);
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(UnknownInt_00);
+            writer.Write(UnknownInt_04);
+            writer.Write(UnknownInt_08);
+            writer.Write(UnknownFloat_0C);
+            writer.Write(UnknownFloat_10);
+            writer.Write(UnknownFloat_14);
+
+            return writer.ToArray();
         }
     }
 }

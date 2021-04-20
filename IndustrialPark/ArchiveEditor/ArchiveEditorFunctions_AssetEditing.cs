@@ -75,7 +75,7 @@ namespace IndustrialPark
 
         public List<uint> GetHiddenAssets()
         {
-            return (from asset in assetDictionary.Values where asset.isInvisible select asset.AHDR.assetID).ToList();
+            return (from asset in assetDictionary.Values where asset.isInvisible select asset.assetID).ToList();
         }
 
         private List<IInternalEditor> internalEditors = new List<IInternalEditor>();
@@ -110,9 +110,9 @@ namespace IndustrialPark
 
         private void OpenInternalEditor(Asset asset)
         {
-            CloseInternalEditor(asset.AHDR.assetID);
+            CloseInternalEditor(asset.assetID);
 
-            switch (asset.AHDR.assetType)
+            switch (asset.assetType)
             {
                 case AssetType.FLY:
                     internalEditors.Add(new InternalFlyEditor((AssetFLY)asset, this));
@@ -125,7 +125,7 @@ namespace IndustrialPark
                     break;
                 case AssetType.SND:
                 case AssetType.SNDS:
-                    internalEditors.Add(new InternalSoundEditor(asset, this));
+                    internalEditors.Add(new InternalSoundEditor((AssetWithData)asset, this));
                     break;
                 case AssetType.TEXT:
                     internalEditors.Add(new InternalTextEditor((AssetTEXT)asset, this));
@@ -202,13 +202,13 @@ namespace IndustrialPark
 
             foreach (Asset ra in renderableAssets)
             {
-                if (!ra.isSelected && ra is IClickableAsset)
+                if (!ra.isSelected && ra is IClickableAsset ica)
                 {
-                    float? distance = ((IClickableAsset)ra).GetIntersectionPosition(renderer, ray);
+                    float? distance = ica.GetIntersectionPosition(renderer, ray);
                     if (distance != null && distance < smallerDistance)
                     {
                         smallerDistance = (float)distance;
-                        assetID = ra.AHDR.assetID;
+                        assetID = ra.assetID;
                     }
                 }
             }
@@ -221,9 +221,9 @@ namespace IndustrialPark
             float smallerDistance = 3 * farPlane;
             uint assetID = 0;
 
-            foreach (Asset ra in (from IRenderableAsset asset in renderableAssets
-                                  where asset is AssetUI || asset is AssetUIFT
-                                  select (IClickableAsset)asset))
+            foreach (Asset ra in from IRenderableAsset asset in renderableAssets
+                                 where asset is AssetUI || asset is AssetUIFT
+                                 select asset)
             {
                 if (!ra.isSelected)
                 {
@@ -231,7 +231,7 @@ namespace IndustrialPark
                     if (distance != null && distance < smallerDistance)
                     {
                         smallerDistance = (float)distance;
-                        assetID = ra.AHDR.assetID;
+                        assetID = ra.assetID;
                     }
                 }
             }
@@ -244,7 +244,7 @@ namespace IndustrialPark
             List<uint> whoTargets = new List<uint>();
             foreach (Asset asset in assetDictionary.Values)
                 if (asset.HasReference(assetID))
-                    whoTargets.Add(asset.AHDR.assetID);
+                    whoTargets.Add(asset.assetID);
 
             return whoTargets;
         }
@@ -253,141 +253,175 @@ namespace IndustrialPark
         {
             UnsavedChanges = true;
 
-            List<Section_AHDR> COLLs = GetAHDRsOfType(AssetType.COLL);
+            var COLLs = (from asset in assetDictionary.Values where asset.assetType == AssetType.COLL select (AssetCOLL)asset).ToList();
             for (int i = 1; i < COLLs.Count; i++)
                 RemoveAsset(COLLs[i].assetID);
             for (int i = 1; i < COLLs.Count; i++)
-                MergeCOLL(COLLs[i], game, platform);
+                MergeCOLL(COLLs[i]);
 
-            List<Section_AHDR> JAWs = GetAHDRsOfType(AssetType.JAW);
+            var JAWs = (from asset in assetDictionary.Values where asset.assetType == AssetType.JAW select (AssetJAW)asset).ToList();
             for (int i = 1; i < JAWs.Count; i++)
                 RemoveAsset(JAWs[i].assetID);
             for (int i = 1; i < JAWs.Count; i++)
-                MergeJAW(JAWs[i], game, platform);
+                MergeJAW(JAWs[i]);
 
-            List<Section_AHDR> LODTs = GetAHDRsOfType(AssetType.LODT);
+            var LODTs = (from asset in assetDictionary.Values where asset.assetType == AssetType.LODT select (AssetLODT)asset).ToList();
             for (int i = 1; i < LODTs.Count; i++)
                 RemoveAsset(LODTs[i].assetID);
             for (int i = 1; i < LODTs.Count; i++)
-                MergeLODT(LODTs[i], game, platform);
+                MergeLODT(LODTs[i]);
 
-            List<Section_AHDR> PIPTs = GetAHDRsOfType(AssetType.PIPT);
+            var PIPTs = (from asset in assetDictionary.Values where asset.assetType == AssetType.PIPT select (AssetPIPT)asset).ToList();
             for (int i = 1; i < PIPTs.Count; i++)
                 RemoveAsset(PIPTs[i].assetID);
             for (int i = 1; i < PIPTs.Count; i++)
-                MergePIPT(PIPTs[i], game, platform);
+                MergePIPT(PIPTs[i]);
 
-            List<Section_AHDR> SHDWs = GetAHDRsOfType(AssetType.SHDW);
+            var SHDWs = (from asset in assetDictionary.Values where asset.assetType == AssetType.SHDW select (AssetSHDW)asset).ToList();
             for (int i = 1; i < SHDWs.Count; i++)
                 RemoveAsset(SHDWs[i].assetID);
             for (int i = 1; i < SHDWs.Count; i++)
-                MergeSHDW(SHDWs[i], game, platform);
+                MergeSHDW(SHDWs[i]);
 
-            List<Section_AHDR> SNDIs = GetAHDRsOfType(AssetType.SNDI);
-            for (int i = 1; i < SNDIs.Count; i++)
-                RemoveAsset(SNDIs[i].assetID);
-            for (int i = 1; i < SNDIs.Count; i++)
-                MergeSNDI(SNDIs[i], game, platform);
+
+            if (platform == Platform.GameCube)
+            {
+                if (game == Game.Incredibles)
+                {
+                    var SNDIs = (from asset in assetDictionary.Values where asset.assetType == AssetType.SNDI select (AssetSNDI_GCN_V1)asset).ToList();
+                    for (int i = 1; i < SNDIs.Count; i++)
+                        RemoveAsset(SNDIs[i].assetID);
+                    for (int i = 1; i < SNDIs.Count; i++)
+                        MergeSNDI(SNDIs[i]);
+                }
+                else
+                {
+                    var SNDIs = (from asset in assetDictionary.Values where asset.assetType == AssetType.SNDI select (AssetSNDI_GCN_V2)asset).ToList();
+                    for (int i = 1; i < SNDIs.Count; i++)
+                        RemoveAsset(SNDIs[i].assetID);
+                    for (int i = 1; i < SNDIs.Count; i++)
+                        MergeSNDI(SNDIs[i]);
+                }
+            }
+            else if (platform == Platform.Xbox)
+            {
+                var SNDIs = (from asset in assetDictionary.Values where asset.assetType == AssetType.SNDI select (AssetSNDI_XBOX)asset).ToList();
+                for (int i = 1; i < SNDIs.Count; i++)
+                    RemoveAsset(SNDIs[i].assetID);
+                for (int i = 1; i < SNDIs.Count; i++)
+                    MergeSNDI(SNDIs[i]);
+            }
+            else if (platform == Platform.PS2)
+            {
+                var SNDIs = (from asset in assetDictionary.Values where asset.assetType == AssetType.SNDI select (AssetSNDI_PS2)asset).ToList();
+                for (int i = 1; i < SNDIs.Count; i++)
+                    RemoveAsset(SNDIs[i].assetID);
+                for (int i = 1; i < SNDIs.Count; i++)
+                    MergeSNDI(SNDIs[i]);
+            }
         }
 
-        private void MergeCOLL(Section_AHDR AHDR, Game game, Platform platform)
+        private void MergeCOLL(AssetCOLL asset)
         {
             foreach (Asset a in assetDictionary.Values)
-            {
                 if (a is AssetCOLL COLL)
                 {
-                    COLL.Merge(new AssetCOLL(AHDR, game, platform));
+                    COLL.Merge(asset);
                     return;
                 }
-            }
         }
 
-        private void MergeJAW(Section_AHDR AHDR, Game game, Platform platform)
+        private void MergeJAW(AssetJAW asset)
         {
             foreach (Asset a in assetDictionary.Values)
-            {
                 if (a is AssetJAW JAW)
                 {
-                    JAW.Merge(new AssetJAW(AHDR, game, platform));
+                    JAW.Merge(asset);
                     return;
                 }
-            }
         }
 
-        private void MergeLODT(Section_AHDR AHDR, Game game, Platform platform)
+        private void MergeLODT(AssetLODT asset)
         {
             foreach (Asset a in assetDictionary.Values)
-            {
                 if (a is AssetLODT LODT)
                 {
-                    LODT.Merge(new AssetLODT(AHDR, game, platform));
+                    LODT.Merge(asset);
                     return;
                 }
-            }
         }
 
-        private void MergePIPT(Section_AHDR AHDR, Game game, Platform platform)
+        private void MergePIPT(AssetPIPT asset)
         {
             foreach (Asset a in assetDictionary.Values)
-            {
                 if (a is AssetPIPT PIPT)
                 {
-                    PIPT.Merge(new AssetPIPT(AHDR, game, platform));
+                    PIPT.Merge(asset);
                     return;
                 }
-            }
         }
 
-        private void MergeSHDW(Section_AHDR AHDR, Game game, Platform platform)
+        private void MergeSHDW(AssetSHDW asset)
         {
             foreach (Asset a in assetDictionary.Values)
-            {
                 if (a is AssetSHDW SHDW)
                 {
-                    SHDW.Merge(new AssetSHDW(AHDR, game, platform));
+                    SHDW.Merge(asset);
                     return;
                 }
-            }
         }
 
-        private void MergeSNDI(Section_AHDR AHDR, Game game, Platform platform)
+        private void MergeSNDI(AssetSNDI_GCN_V1 asset)
         {
             foreach (Asset a in assetDictionary.Values)
-            {
-                if (a is AssetSNDI_GCN_V1 SNDI_G1)
+                if (a is AssetSNDI_GCN_V1 SNDI)
                 {
-                    SNDI_G1.Merge(new AssetSNDI_GCN_V1(AHDR, game, platform));
+                    SNDI.Merge(asset);
                     return;
                 }
-                else if (a is AssetSNDI_GCN_V2 SNDI_G2)
+        }
+
+        private void MergeSNDI(AssetSNDI_GCN_V2 asset)
+        {
+            foreach (Asset a in assetDictionary.Values)
+                if (a is AssetSNDI_GCN_V2 SNDI)
                 {
-                    SNDI_G2.Merge(new AssetSNDI_GCN_V2(AHDR, game, platform));
+                    SNDI.Merge(asset);
                     return;
                 }
-                else if (a is AssetSNDI_XBOX SNDI_X)
+        }
+
+        private void MergeSNDI(AssetSNDI_XBOX asset)
+        {
+            foreach (Asset a in assetDictionary.Values)
+                if (a is AssetSNDI_XBOX SNDI)
                 {
-                    SNDI_X.Merge(new AssetSNDI_XBOX(AHDR, game, platform));
+                    SNDI.Merge(asset);
                     return;
                 }
-                else if (a is AssetSNDI_PS2 SNDI_P)
+        }
+
+        private void MergeSNDI(AssetSNDI_PS2 asset)
+        {
+            foreach (Asset a in assetDictionary.Values)
+                if (a is AssetSNDI_PS2 SNDI)
                 {
-                    SNDI_P.Merge(new AssetSNDI_PS2(AHDR, game, platform));
+                    SNDI.Merge(asset);
                     return;
                 }
-            }
         }
 
         private void CleanSNDI()
         {
             foreach (Asset a in assetDictionary.Values)
                 if (a is AssetSNDI_GCN_V1 SNDI_G1)
-                    SNDI_G1.Clean(from Asset a1 in assetDictionary.Values select a1.AHDR.assetID);
+                    SNDI_G1.Clean(from Asset a1 in assetDictionary.Values select a1.assetID);
                 else if (a is AssetSNDI_GCN_V2 SNDI_G2)
-                    SNDI_G2.Clean(from Asset a2 in assetDictionary.Values select a2.AHDR.assetID);
+                    SNDI_G2.Clean(from Asset a2 in assetDictionary.Values select a2.assetID);
                 else if (a is AssetSNDI_XBOX SNDI_X)
-                    SNDI_X.Clean(from Asset a3 in assetDictionary.Values select a3.AHDR.assetID);
+                    SNDI_X.Clean(from Asset a3 in assetDictionary.Values select a3.assetID);
                 else if (a is AssetSNDI_PS2 SNDI_P)
-                    SNDI_P.Clean(from Asset a4 in assetDictionary.Values select a4.AHDR.assetID);
+                    SNDI_P.Clean(from Asset a4 in assetDictionary.Values select a4.assetID);
         }
 
         public static AHDRFlags AHDRFlagsFromAssetType(AssetType assetType)
@@ -509,8 +543,8 @@ namespace IndustrialPark
                     if (!ContainsAsset(assetID))
                         result += $"Archive: Asset 0x{assetID.ToString("X8")} appears to be present in a layer, but it's not in the AHDR dictionary. This archive is likely unusable." + endl;
 
-            List<Asset> ordered = assetDictionary.Values.OrderBy(f => f.AHDR.ADBG.assetName).ToList();
-            ordered = ordered.OrderBy(f => f.AHDR.assetType).ToList();
+            List<Asset> ordered = assetDictionary.Values.OrderBy(f => f.assetName).ToList();
+            ordered = ordered.OrderBy(f => f.assetType).ToList();
 
             if (!ContainsAssetWithType(AssetType.JSP))
                 result += $"Archive: Does not contain any JSP asset." + endl;
@@ -521,16 +555,16 @@ namespace IndustrialPark
 
                 foreach (Section_LHDR LHDR in DICT.LTOC.LHDRList)
                     foreach (uint assetID in LHDR.assetIDlist)
-                        if (assetID == asset.AHDR.assetID)
+                        if (assetID == asset.assetID)
                         {
                             if (found == false)
                                 found = true;
                             else
-                                result += $"Archive: Asset {asset.ToString()} is present in more than one layer. This is unexpected." + endl;
+                                result += $"Archive: Asset {asset} is present in more than one layer. This is unexpected." + endl;
                         }
 
                 if (found == false)
-                    result += $"Archive: Asset {asset.ToString()} appears to not be present in the AHDR dictionary, but it's not in any layer. This archive is likely unusable." + endl;
+                    result += $"Archive: Asset {asset} appears to not be present in the AHDR dictionary, but it's not in any layer. This archive is likely unusable." + endl;
 
                 List<string> resultParam = new List<string>();
                 try
@@ -538,11 +572,11 @@ namespace IndustrialPark
                     asset.Verify(ref resultParam);
 
                     foreach (string s in resultParam)
-                        result += $"[{asset.AHDR.assetType.ToString()}] {asset.AHDR.ADBG.assetName}: " + s + endl;
+                        result += $"[{asset.assetType.ToString()}] {asset.assetName}: " + s + endl;
                 }
                 catch (Exception e)
                 {
-                    result += $"Failed verification on [{asset.AHDR.assetType.ToString()}] {asset.AHDR.ADBG.assetName}: " + e.Message + endl;
+                    result += $"Failed verification on [{asset.assetType.ToString()}] {asset.assetName}: " + e.Message + endl;
                 }
 
                 progressBar.PerformStep();
@@ -633,48 +667,6 @@ namespace IndustrialPark
             RecalculateAllMatrices();
         }
 
-        private void ConvertAllAssetTypes(Platform previousPlatform, Game previousGame, out List<uint> unsupported)
-        {
-            unsupported = new List<uint>();
-
-            foreach (Asset asset in assetDictionary.Values)
-                try
-                {
-                    if (asset is AssetRenderWareModel MODL && !MODL.IsNativeData)
-                    {
-                        MODL.Data =
-                            ReadFileMethods.ExportRenderWareFile(
-                            ReadFileMethods.ReadRenderWareFile(asset.Data),
-                            Models.BSP_IO_Shared.modelRenderWareVersion(game));
-                    }
-                    else
-                    {
-                        asset.AHDR = ConvertAssetType(asset.AHDR, EndianConverter.PlatformEndianness(previousPlatform), EndianConverter.PlatformEndianness(platform), previousGame, game);
-                    }
-
-                    asset.SetGamePlatform(game, platform);
-                }
-                catch
-                {
-                    unsupported.Add(asset.AHDR.assetID);
-                }
-        }
-
-        public static Section_AHDR ConvertAssetType(Section_AHDR AHDR, Endianness previousEndianness, Endianness currentEndianness, Game previousGame, Game currentGame)
-        {
-            if (previousGame != currentGame)
-            {
-                AHDR = EndianConverter.GetReversedEndian(AHDR, previousGame, currentGame, previousEndianness);
-
-                if (previousEndianness == currentEndianness)
-                    AHDR = EndianConverter.GetReversedEndian(AHDR, currentGame, currentGame, currentEndianness == Endianness.Big ? Endianness.Little : Endianness.Big);
-            }
-            else if (previousEndianness != currentEndianness)
-                AHDR = EndianConverter.GetReversedEndian(AHDR, previousGame, currentGame, previousEndianness);
-
-            return AHDR;
-        }
-
         public List<uint> MakeSimps(List<uint> assetIDs, bool solid, bool ledgeGrabSimps)
         {
             int layerIndex = DICT.LTOC.LHDRList.Count;
@@ -684,13 +676,18 @@ namespace IndustrialPark
             foreach (uint i in assetIDs)
                 if (GetFromAssetID(i) is AssetMODL MODL)
                 {
-                    string simpName = "SIMP_" + MODL.AHDR.ADBG.assetName.Replace(".dff", "").ToUpper();
+                    string simpName = "SIMP_" + MODL.assetName.Replace(".dff", "").ToUpper();
                     AssetSIMP simp = (AssetSIMP)GetFromAssetID(PlaceTemplate(new Vector3(), layerIndex, ref outAssetIDs, simpName, AssetTemplate.SIMP_Generic));
                     simp.Model_AssetID = i;
                     if (!solid)
-                        simp.Data[0xB] = 0x00;
+                    {
+                        simp.SolidityFlags.FlagValueByte = 0;
+                        simp.CollType.FlagValueByte = 0;
+                    }
                     else if (ledgeGrabSimps)
-                        simp.Data[0xB] = 0x82;
+                    {
+                        simp.SolidityFlags.FlagValueByte = 0x82;
+                    }
                 }
 
             return outAssetIDs;
@@ -762,7 +759,7 @@ namespace IndustrialPark
                 {
                     textureNamesList.AddRange(v.Textures);
                     Assimp_IO.ExportAssimp(
-                    Path.Combine(folderName, v.AHDR.ADBG.assetName + "." + format.FileExtension),
+                    Path.Combine(folderName, v.assetName + "." + format.FileExtension),
                     ReadFileMethods.ReadRenderWareFile(v.Data), true, format, textureExtension, Matrix.Identity);
                 }
                 catch (Exception e)
@@ -791,27 +788,27 @@ namespace IndustrialPark
                         else
                             modelAsset = (Asset)renderingDictionary[entity.Model_AssetID];
 
-                        assetName = entity.AHDR.ADBG.assetName;
+                        assetName = entity.assetName;
                         world = entity.world;
                     }
-                    else if (v is AssetDYNA dyna && !AssetDYNA.dontRender && dyna.IsRenderableClickable)
+                    else if (v is AssetDYNA dyna && !AssetDYNA.dontRender && dyna is IRenderableAsset)
                     {
                         if (dyna.isInvisible)
                             continue;
 
-                        if (dyna.DynaSpec is DynaGObjectRing ring)
+                        if (dyna is DynaGObjectRing ring)
                         { 
                             modelAsset = (Asset)renderingDictionary[DynaGObjectRingControl.RingModelAssetID];
                             world = ring.world;
                         }
-                        else if (dyna.DynaSpec is DynaEnemySB enemySb)
+                        else if (dyna is DynaEnemySB enemySb)
                         { 
                             modelAsset = (Asset)renderingDictionary[enemySb.Model_AssetID];
                             world = enemySb.world;
                         }
                         else continue;
                         
-                        assetName = dyna.AHDR.ADBG.assetName;
+                        assetName = dyna.assetName;
                     }
                     else continue;
 
@@ -824,7 +821,7 @@ namespace IndustrialPark
 
                     Assimp_IO.ExportAssimp(
                         Path.Combine(folderName, assetName + "." + format.FileExtension),
-                        ReadFileMethods.ReadRenderWareFile(modelAsset.Data), true, format, textureExtension, world);
+                        ReadFileMethods.ReadRenderWareFile(modl.Data), true, format, textureExtension, world);
                 }
                 catch (Exception e)
                 {

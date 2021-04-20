@@ -1,36 +1,49 @@
-﻿using System.Collections.Generic;
+﻿using HipHopFile;
+using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaJSPExtraData : DynaBase
+    public class DynaJSPExtraData : AssetDYNA
     {
-        public string Note => "Version is always 1";
+        private const string dynaCategoryName = "JSP Extra Data";
 
-        public override int StructSize => 0x8;
+        protected override int constVersion => 1;
 
-        public DynaJSPExtraData(AssetDYNA asset) : base(asset) { }
+        [Category(dynaCategoryName)]
+        public AssetID JSPInfo_AssetID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Group_AssetID { get; set; }
 
-        public override bool HasReference(uint assetID) => JSPInfo_AssetID == assetID || Group_AssetID == assetID;
+        public DynaJSPExtraData(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.JSPExtraData, game, platform)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = dynaDataStartPosition;
+
+            JSPInfo_AssetID = reader.ReadUInt32();
+            Group_AssetID = reader.ReadUInt32();
+        }
+
+        protected override byte[] SerializeDyna(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(JSPInfo_AssetID);
+            writer.Write(Group_AssetID);
+
+            return writer.ToArray();
+        }
+
+        public override bool HasReference(uint assetID) => JSPInfo_AssetID == assetID || Group_AssetID == assetID || base.HasReference(assetID);
         
         public override void Verify(ref List<string> result)
         {
             if (JSPInfo_AssetID == 0)
                 result.Add("JSP Extra Data with no JSPInfo reference");
-            Asset.Verify(JSPInfo_AssetID, ref result);
+            Verify(JSPInfo_AssetID, ref result);
             if (Group_AssetID == 0)
                 result.Add("JSP Extra Data with no GRUP reference");
-            Asset.Verify(Group_AssetID, ref result);
-        }
-        
-        public AssetID JSPInfo_AssetID
-        {
-            get => ReadUInt(0x00);
-            set => Write(0x00, value);
-        }
-        public AssetID Group_AssetID
-        {
-            get => ReadUInt(0x04);
-            set => Write(0x04, value);
+            Verify(Group_AssetID, ref result);
         }
     }
 }

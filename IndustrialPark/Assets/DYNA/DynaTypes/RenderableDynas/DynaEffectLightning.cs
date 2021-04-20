@@ -1,256 +1,152 @@
 ﻿using AssetEditorColors;
+using HipHopFile;
+using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing.Design;
+using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
-    public class DynaEffectLightning : DynaBase
+    public class DynaEffectLightning : RenderableDynaBase
     {
-        public string Note => "Version is always 2";
+        private const string dynaCategoryName = "effect:Lightning";
 
-        public override int StructSize => 0x4C;
-
-        public DynaEffectLightning(AssetDYNA asset) : base(asset) { }
+        protected override int constVersion => 2;
 
         public override bool HasReference(uint assetID) =>
             LightningTexture_AssetID == assetID || GlowTexture_AssetID == assetID || SIMP1_AssetID == assetID || SIMP2_AssetID == assetID;
         
         public override void Verify(ref List<string> result)
         {
-            Asset.Verify(LightningTexture_AssetID, ref result);
-            Asset.Verify(GlowTexture_AssetID, ref result);
-            Asset.Verify(SIMP1_AssetID, ref result);
-            Asset.Verify(SIMP2_AssetID, ref result);
-        }
-        
-        [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public override float PositionX
-        {
-            get => ReadFloat(0x00);
-            set
-            {
-                Write(0x00, value);
-                CreateTransformMatrix();
-            }
-        }
-        [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public override float PositionY
-        {
-            get => ReadFloat(0x04);
-            set
-            {
-                Write(0x04, value);
-                CreateTransformMatrix();
-            }
-        }
-        [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public override float PositionZ
-        {
-            get => ReadFloat(0x08);
-            set
-            {
-                Write(0x08, value);
-                CreateTransformMatrix();
-            }
+            Verify(LightningTexture_AssetID, ref result);
+            Verify(GlowTexture_AssetID, ref result);
+            Verify(SIMP1_AssetID, ref result);
+            Verify(SIMP2_AssetID, ref result);
         }
 
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionEndX
+        protected Vector3 _positionEnd;
+        [Category(dynaCategoryName)]
+        public AssetSingle PositionEndX
         {
-            get => ReadFloat(0x0C);
-            set
-            {
-                Write(0x0C, value);
-                CreateTransformMatrix();
-            }
+            get => _positionEnd.X;
+            set { _positionEnd.X = value; CreateTransformMatrix(); }
         }
-        [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionEndY
+        [Category(dynaCategoryName)]
+        public AssetSingle PositionEndY
         {
-            get => ReadFloat(0x10);
-            set
-            {
-                Write(0x10, value);
-                CreateTransformMatrix();
-            }
+            get => _positionEnd.Y;
+            set { _positionEnd.Y = value; CreateTransformMatrix(); }
         }
-        [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionEndZ
+        [Category(dynaCategoryName)]
+        public AssetSingle PositionEndZ
         {
-            get => ReadFloat(0x14);
-            set
-            {
-                Write(0x14, value);
-                CreateTransformMatrix();
-            }
+            get => _positionEnd.Z;
+            set { _positionEnd.Z = value; CreateTransformMatrix(); }
         }
 
-        private byte ColorR
-        {
-            get => ReadByte(0x18);
-            set => Write(0x18, value);
-        }
-        private byte ColorG
-        {
-            get => ReadByte(0x19);
-            set => Write(0x19, value);
-        }
-        private byte ColorB
-        {
-            get => ReadByte(0x1A);
-            set => Write(0x1A, value);
-        }
-
-        [Editor(typeof(MyColorEditor), typeof(UITypeEditor)), DisplayName("Color 1 (R, G, B)")]
-        public MyColor Color
-        {
-            get => new MyColor(ColorR, ColorG, ColorB, ColorAlpha);
-            set
-            {
-                ColorR = value.R;
-                ColorG = value.G;
-                ColorB = value.B;
-            }
-        }
-        [DisplayName("Color 1 Alpha (0 - 255)")]
+        [Category(dynaCategoryName), DisplayName("Color (R, G, B)")]
+        public AssetColor Color { get; set; }
+        [Category(dynaCategoryName), DisplayName("Color Alpha (0 - 255)")]
         public byte ColorAlpha
         {
-            get => ReadByte(0x1B);
-            set => Write(0x1B, value);
+            get => Color.A;
+            set => Color.A = value;
         }
 
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Width
+        [Category(dynaCategoryName)]
+        public AssetSingle Width { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID LightningTexture_AssetID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID GlowTexture_AssetID { get; set; }
+        [Category(dynaCategoryName)]
+        public int UnknownInt1 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle KnockbackSpeed { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID SoundGroupID_AssetID { get; set; }
+        [Category(dynaCategoryName)]
+        public int UnknownInt2 { get; set; }
+        [Category(dynaCategoryName)]
+        public int UnknownInt3 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID SIMP1_AssetID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID SIMP2_AssetID { get; set; }
+        [Category(dynaCategoryName)]
+        public bool DamagePlayer { get; set; }
+
+        public DynaEffectLightning(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.effect__Lightning, game, platform)
         {
-            get => ReadFloat(0x1C);
-            set => Write(0x1C, value);
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = dynaDataStartPosition;
+
+            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            _positionEnd = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            Color = new AssetColor(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
+            Width = reader.ReadSingle();
+            UnknownFloat = reader.ReadSingle();
+            LightningTexture_AssetID = reader.ReadUInt32();
+            GlowTexture_AssetID = reader.ReadUInt32();
+            UnknownInt1 = reader.ReadInt32();
+            KnockbackSpeed = reader.ReadSingle();
+            SoundGroupID_AssetID = reader.ReadUInt32();
+            UnknownInt2 = reader.ReadInt32();
+            UnknownInt3 = reader.ReadInt32();
+            SIMP1_AssetID = reader.ReadUInt32();
+            SIMP2_AssetID = reader.ReadUInt32();
+            DamagePlayer = reader.ReadInt32() != 0;
+            
+            CreateTransformMatrix();
+            renderableAssets.Add(this);
         }
 
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat
+        protected override byte[] SerializeDyna(Game game, Platform platform)
         {
-            get => ReadFloat(0x20);
-            set => Write(0x20, value);
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(_position.X);
+            writer.Write(_position.Y);
+            writer.Write(_position.Z);
+            writer.Write(_positionEnd.X);
+            writer.Write(_positionEnd.Y);
+            writer.Write(_positionEnd.Z);
+            writer.Write(Color);
+            writer.Write(Width);
+            writer.Write(UnknownFloat);
+            writer.Write(LightningTexture_AssetID);
+            writer.Write(GlowTexture_AssetID);
+            writer.Write(UnknownInt1);
+            writer.Write(KnockbackSpeed);
+            writer.Write(SoundGroupID_AssetID);
+            writer.Write(UnknownInt2);
+            writer.Write(UnknownInt3);
+            writer.Write(SIMP1_AssetID);
+            writer.Write(SIMP2_AssetID);
+            writer.Write(DamagePlayer ? 1 : 0);
+
+            return writer.ToArray();
         }
 
-        public AssetID LightningTexture_AssetID
-        {
-            get => ReadUInt(0x24);
-            set => Write(0x24, value);
-        }
-
-        public AssetID GlowTexture_AssetID
-        {
-            get => ReadUInt(0x28);
-            set => Write(0x28, value);
-        }
-        
-        public int UnknownInt1
-        {
-            get => ReadInt(0x2C);
-            set => Write(0x2C, value);
-        }
-
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float KnockbackSpeed
-        {
-            get => ReadFloat(0x30);
-            set => Write(0x30, value);
-        }
-
-        public AssetID SoundGroupID_AssetID
-        {
-            get => ReadUInt(0x34);
-            set => Write(0x34, value);
-        }
-
-        public int UnknownInt2
-        {
-            get => ReadInt(0x38);
-            set => Write(0x38, value);
-        }
-
-        public int UnknownInt3
-        {
-            get => ReadInt(0x3C);
-            set => Write(0x3C, value);
-        }
-
-        public AssetID SIMP1_AssetID
-        {
-            get => ReadUInt(0x40);
-            set => Write(0x40, value);
-        }
-
-        public AssetID SIMP2_AssetID
-        {
-            get => ReadUInt(0x44);
-            set => Write(0x44, value);
-        }
-
-        public int DamagePlayer
-        {
-            get => ReadInt(0x48);
-            set => Write(0x48, value);
-        }
-
-        public override bool IsRenderableClickable => true;
-
-        private Matrix world;
         private Matrix world2;
-        private BoundingBox boundingBox;
-        private Vector3[] vertices;
-        protected RenderWareFile.Triangle[] triangles;
 
         public override void CreateTransformMatrix()
         {
-            world = Matrix.Translation(PositionX, PositionY, PositionZ);
-            world2 = Matrix.Translation(PositionEndX, PositionEndY, PositionEndZ);
-
-            vertices = new Vector3[SharpRenderer.cubeVertices.Count];
-
-            for (int i = 0; i < SharpRenderer.cubeVertices.Count; i++)
-                vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.cubeVertices[i], world);
-
-            boundingBox = BoundingBox.FromPoints(vertices);
-
-            triangles = new RenderWareFile.Triangle[SharpRenderer.cubeTriangles.Count];
-            for (int i = 0; i < SharpRenderer.cubeTriangles.Count; i++)
-            {
-                triangles[i] = new RenderWareFile.Triangle((ushort)SharpRenderer.cubeTriangles[i].materialIndex,
-                    (ushort)SharpRenderer.cubeTriangles[i].vertex1, (ushort)SharpRenderer.cubeTriangles[i].vertex2, (ushort)SharpRenderer.cubeTriangles[i].vertex3);
-            }
+            world2 = Matrix.Translation(_positionEnd);
+            base.CreateTransformMatrix();
         }
 
-        public override void Draw(SharpRenderer renderer, bool isSelected)
+        protected override List<Vector3> vertexSource => SharpRenderer.cubeVertices;
+
+        protected override List<Triangle> triangleSource => SharpRenderer.cubeTriangles;
+
+        public override void Draw(SharpRenderer renderer)
         {
             renderer.DrawCube(world, isSelected);
             renderer.DrawCube(world2, isSelected);
-        }
-
-        public override BoundingBox GetBoundingBox()
-        {
-            return boundingBox;
-        }
-
-        public override float GetDistance(Vector3 cameraPosition)
-        {
-            return Vector3.Distance(cameraPosition, new Vector3(PositionX, PositionY, PositionZ));
-        }
-
-        public override float? IntersectsWith(Ray ray)
-        {
-            float? smallestDistance = null;
-
-            if (ray.Intersects(ref boundingBox))
-                foreach (RenderWareFile.Triangle t in triangles)
-                    if (ray.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
-                        if (smallestDistance == null || distance < smallestDistance)
-                            smallestDistance = distance;
-
-            return smallestDistance;
         }
     }
 }

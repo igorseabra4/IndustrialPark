@@ -12,7 +12,7 @@ namespace IndustrialPark
 
     public class PlatSpecific_ConveryorBelt : PlatSpecific_Generic
     {
-        public float Speed { get; set; }
+        public AssetSingle Speed { get; set; }
 
         public PlatSpecific_ConveryorBelt() { }
         public PlatSpecific_ConveryorBelt(EndianBinaryReader reader)
@@ -30,7 +30,7 @@ namespace IndustrialPark
 
     public class PlatSpecific_FallingPlatform : PlatSpecific_Generic
     {
-        public float Speed { get; set; }
+        public AssetSingle Speed { get; set; }
         public AssetID BustModel_AssetID { get; set; }
 
         public PlatSpecific_FallingPlatform()
@@ -57,10 +57,10 @@ namespace IndustrialPark
 
     public class PlatSpecific_FR : PlatSpecific_Generic
     {
-        public float fspeed { get; set; }
-        public float rspeed { get; set; }
-        public float ret_delay { get; set; }
-        public float post_ret_delay { get; set; }
+        public AssetSingle fspeed { get; set; }
+        public AssetSingle rspeed { get; set; }
+        public AssetSingle ret_delay { get; set; }
+        public AssetSingle post_ret_delay { get; set; }
 
         public PlatSpecific_FR() { }
         public PlatSpecific_FR(EndianBinaryReader reader)
@@ -84,13 +84,13 @@ namespace IndustrialPark
 
     public class PlatSpecific_BreakawayPlatform : PlatSpecific_Generic
     {
-        public float BreakawayDelay { get; set; }
+        public AssetSingle BreakawayDelay { get; set; }
         [Description("Not present in Movie")]
         public AssetID BustModel_AssetID { get; set; }
-        public float ResetDelay { get; set; }
+        public AssetSingle ResetDelay { get; set; }
         public FlagBitmask Settings { get; set; } = IntFlagsDescriptor("Allow sneak");
         [Description("Movie only")]
-        public float UnknownFloat0C { get; set; }
+        public AssetSingle UnknownFloat0C { get; set; }
 
         public PlatSpecific_BreakawayPlatform()
         {
@@ -123,16 +123,16 @@ namespace IndustrialPark
 
     public class PlatSpecific_Springboard : PlatSpecific_Generic
     {
-        public float Height1 { get; set; }
-        public float Height2 { get; set; }
-        public float Height3 { get; set; }
-        public float HeightBubbleBounce { get; set; }
+        public AssetSingle Height1 { get; set; }
+        public AssetSingle Height2 { get; set; }
+        public AssetSingle Height3 { get; set; }
+        public AssetSingle HeightBubbleBounce { get; set; }
         public AssetID Anim1_AssetID { get; set; }
         public AssetID Anim2_AssetID { get; set; }
         public AssetID Anim3_AssetID { get; set; }
-        public float DirectionX { get; set; }
-        public float DirectionY { get; set; }
-        public float DirectionZ { get; set; }
+        public AssetSingle DirectionX { get; set; }
+        public AssetSingle DirectionY { get; set; }
+        public AssetSingle DirectionZ { get; set; }
         public FlagBitmask Settings { get; set; } = IntFlagsDescriptor(
             "Lock Camera Down",
             null,
@@ -192,17 +192,17 @@ namespace IndustrialPark
     {
         private float InitialTilt_Rad { get; set; }
         private float MaxTilt_Rad { get; set; }
-        public float InitialTilt_Deg
+        public AssetSingle InitialTilt_Deg
         {
             get => MathUtil.RadiansToDegrees(InitialTilt_Rad);
             set => InitialTilt_Rad = MathUtil.DegreesToRadians(value);
         }
-        public float MaxTilt_Deg
+        public AssetSingle MaxTilt_Deg
         {
             get => MathUtil.RadiansToDegrees(MaxTilt_Rad);
             set => MaxTilt_Rad = MathUtil.DegreesToRadians(value);
         }
-        public float InverseMass { get; set; }
+        public AssetSingle InverseMass { get; set; }
 
         public PlatSpecific_TeeterTotter() { }
         public PlatSpecific_TeeterTotter(EndianBinaryReader reader)
@@ -228,18 +228,18 @@ namespace IndustrialPark
     {
         public int StartOrient { get; set; }
         public int OrientCount { get; set; }
-        public float OrientLoop { get; set; }
-        public float Orient1 { get; set; }
-        public float Orient2 { get; set; }
-        public float Orient3 { get; set; }
-        public float Orient4 { get; set; }
-        public float Orient5 { get; set; }
-        public float Orient6 { get; set; }
+        public AssetSingle OrientLoop { get; set; }
+        public AssetSingle Orient1 { get; set; }
+        public AssetSingle Orient2 { get; set; }
+        public AssetSingle Orient3 { get; set; }
+        public AssetSingle Orient4 { get; set; }
+        public AssetSingle Orient5 { get; set; }
+        public AssetSingle Orient6 { get; set; }
         public FlagBitmask Settings { get; set; } = IntFlagsDescriptor();
-        public float RotateSpeed { get; set; }
-        public float AccelTime { get; set; }
-        public float DecelTime { get; set; }
-        public float HubRadius { get; set; }
+        public AssetSingle RotateSpeed { get; set; }
+        public AssetSingle AccelTime { get; set; }
+        public AssetSingle DecelTime { get; set; }
+        public AssetSingle HubRadius { get; set; }
 
         public PlatSpecific_Paddle() { }
         public PlatSpecific_Paddle(EndianBinaryReader reader)

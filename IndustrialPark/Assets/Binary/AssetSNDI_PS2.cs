@@ -43,7 +43,43 @@ namespace IndustrialPark
 
     public class AssetSNDI_PS2 : Asset
     {
-        public AssetSNDI_PS2(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        private const string categoryName = "Sound Info: GCN V1";
+
+        [Category(categoryName)]
+        public EntrySoundInfo_PS2[] Entries_SND { get; set; }
+        [Category(categoryName)]
+        public EntrySoundInfo_PS2[] Entries_SNDS { get; set; }
+
+        public AssetSNDI_PS2(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, Endianness.Little);
+
+            int entriesSndAmount = reader.ReadInt32();
+            int entriesSndsAmount = reader.ReadInt32();
+
+            Entries_SND = new EntrySoundInfo_PS2[entriesSndAmount];
+            for (int i = 0; i < Entries_SND.Length; i++)
+                Entries_SND[i] = new EntrySoundInfo_PS2(reader.ReadBytes(EntrySoundInfo_PS2.StructSize));
+
+            Entries_SNDS = new EntrySoundInfo_PS2[entriesSndsAmount];
+            for (int i = 0; i < Entries_SNDS.Length; i++)
+                Entries_SNDS[i] = new EntrySoundInfo_PS2(reader.ReadBytes(EntrySoundInfo_PS2.StructSize));
+        }
+
+        public override byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(Entries_SND.Length);
+            writer.Write(Entries_SNDS.Length);
+
+            foreach (var e in Entries_SND)
+                writer.Write(e.SoundHeader);
+            foreach (var e in Entries_SNDS)
+                writer.Write(e.SoundHeader);
+
+            return writer.ToArray();
+        }
 
         public override bool HasReference(uint assetID)
         {
@@ -72,81 +108,6 @@ namespace IndustrialPark
                 if (a.SoundAssetID == 0)
                     result.Add("SNDI entry with SoundAssetID set to 0");
                 Verify(a.SoundAssetID, ref result);
-            }
-        }
-
-        private int Entries_SND_amount
-        {
-            get => ReadInt(0x0);
-            set => Write(0x0, value);
-        }
-        private int Entries_SNDS_amount
-        {
-            get => ReadInt(0x4);
-            set => Write(0x4, value);
-        }
-
-        private int Entries_SND_StartOffset
-        {
-            get => 0x8;
-        }
-        private int Entries_SNDS_StartOffset
-        {
-            get => Entries_SND_StartOffset + Entries_SND_amount * EntrySoundInfo_PS2.StructSize;
-        }
-
-        [Category("Sound Info")]
-        public EntrySoundInfo_PS2[] Entries_SND
-        {
-            get
-            {
-                List<EntrySoundInfo_PS2> entries = new List<EntrySoundInfo_PS2>();
-
-                for (int i = 0; i < Entries_SND_amount; i++)
-                    entries.Add(new EntrySoundInfo_PS2(Data.Skip(Entries_SND_StartOffset + EntrySoundInfo_PS2.StructSize * i).Take(EntrySoundInfo_PS2.StructSize).ToArray()));
-                
-                return entries.ToArray();
-            }
-            set
-            {
-                List<EntrySoundInfo_PS2> newValues = value.ToList();
-
-                List<byte> newData = Data.Take(Entries_SND_StartOffset).ToList();
-                List<byte> restOfData = Data.Skip(Entries_SNDS_StartOffset).ToList();
-
-                foreach (EntrySoundInfo_PS2 i in newValues)
-                    newData.AddRange(i.SoundHeader);
-
-                newData.AddRange(restOfData);
-
-                Data = newData.ToArray();
-                Entries_SND_amount = newValues.Count;
-            }
-        }
-
-        [Category("Sound Info")]
-        public EntrySoundInfo_PS2[] Entries_SNDS
-        {
-            get
-            {
-                List<EntrySoundInfo_PS2> entries = new List<EntrySoundInfo_PS2>();
-
-                for (int i = 0; i < Entries_SNDS_amount; i++)
-                    entries.Add(new EntrySoundInfo_PS2(Data.Skip(Entries_SNDS_StartOffset + EntrySoundInfo_PS2.StructSize * i).Take(EntrySoundInfo_PS2.StructSize).ToArray()));
-
-                return entries.ToArray();
-            }
-            set
-            {
-                List<EntrySoundInfo_PS2> newValues = value.ToList();
-
-                List<byte> newData = Data.Take(Entries_SNDS_StartOffset).ToList();
-
-                foreach (EntrySoundInfo_PS2 i in newValues)
-                    newData.AddRange(i.SoundHeader);
-
-                Data = newData.ToArray();
-                Entries_SNDS_amount = newValues.Count;
             }
         }
 
@@ -200,7 +161,7 @@ namespace IndustrialPark
                 if (entries[i].SoundAssetID == assetID)
                     return entries[i].SoundHeader;
 
-            throw new Exception($"Error: SNDI asset does not contain {assetType.ToString()} sound header for asset [{assetID.ToString("X8")}]");
+            throw new Exception($"Error: SNDI asset does not contain {assetType} sound header for asset [{assetID:X8}]");
         }
 
         public void Merge(AssetSNDI_PS2 assetSNDI)

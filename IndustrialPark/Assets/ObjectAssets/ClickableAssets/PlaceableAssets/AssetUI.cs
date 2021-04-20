@@ -1,9 +1,9 @@
 ﻿using HipHopFile;
 using IndustrialPark.Models;
 using SharpDX;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
@@ -53,27 +53,27 @@ namespace IndustrialPark
 
         [Category(categoryName)]
         public AssetID TextureAssetID { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float TextCoordTopLeftX { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float TextCoordTopLeftY { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float TextCoordTopRightX { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float TextCoordTopRightY { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float TextCoordBottomRightX { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float TextCoordBottomRightY { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float TextCoordBottomLeftX { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float TextCoordBottomLeftY { get; set; }
+        [Category(categoryName)]
+        public AssetSingle TextCoordTopLeftX { get; set; }
+        [Category(categoryName)]
+        public AssetSingle TextCoordTopLeftY { get; set; }
+        [Category(categoryName)]
+        public AssetSingle TextCoordTopRightX { get; set; }
+        [Category(categoryName)]
+        public AssetSingle TextCoordTopRightY { get; set; }
+        [Category(categoryName)]
+        public AssetSingle TextCoordBottomRightX { get; set; }
+        [Category(categoryName)]
+        public AssetSingle TextCoordBottomRightY { get; set; }
+        [Category(categoryName)]
+        public AssetSingle TextCoordBottomLeftX { get; set; }
+        [Category(categoryName)]
+        public AssetSingle TextCoordBottomLeftY { get; set; }
 
         public AssetUI(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = entityEndPosition;
+            reader.BaseStream.Position = entityHeaderEndPosition;
 
             UIFlags.FlagValueInt = reader.ReadUInt32();
             _width = reader.ReadInt16();
@@ -152,17 +152,11 @@ namespace IndustrialPark
         protected override void CreateBoundingBox()
         {
             if (this is AssetUI && TextureAssetID == 0)
-            {
                 base.CreateBoundingBox();
-            }
             else
             {
-                if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID) &&
-                    ArchiveEditorFunctions.renderingDictionary[_modelAssetID].HasRenderWareModelFile() &&
-                    ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile() != null)
-                    CreateBoundingBox(ArchiveEditorFunctions.renderingDictionary[_modelAssetID].GetRenderWareModelFile().vertexListG);
-                else
-                    CreateBoundingBox(SharpRenderer.planeVertices);
+                var model = GetFromRenderingDictionary(_modelAssetID);
+                CreateBoundingBox(model != null ? model.vertexListG : SharpRenderer.planeVertices);
             }
         }
 
@@ -191,36 +185,31 @@ namespace IndustrialPark
         [Browsable(false)]
         public override bool SpecialBlendMode => true;
 
-        protected override float? TriangleIntersection(Ray r, float initialDistance)
+        protected override float? TriangleIntersection(Ray r)
         {
             if (TextureAssetID == 0)
-            {
-                return base.TriangleIntersection(r, initialDistance);
-            }
-            else
-            {
-                bool hasIntersected = false;
-                float smallestDistance = 1000f;
+                return base.TriangleIntersection(r);
 
-                foreach (Triangle t in SharpRenderer.planeTriangles)
+            bool hasIntersected = false;
+            float smallestDistance = 1000f;
+
+            foreach (var t in SharpRenderer.planeTriangles)
+            {
+                var v1 = (Vector3)Vector3.Transform(SharpRenderer.planeVertices[t.vertex1], world);
+                var v2 = (Vector3)Vector3.Transform(SharpRenderer.planeVertices[t.vertex2], world);
+                var v3 = (Vector3)Vector3.Transform(SharpRenderer.planeVertices[t.vertex3], world);
+
+                if (r.Intersects(ref v1, ref v2, ref v3, out float distance))
                 {
-                    Vector3 v1 = (Vector3)Vector3.Transform(SharpRenderer.planeVertices[t.vertex1], world);
-                    Vector3 v2 = (Vector3)Vector3.Transform(SharpRenderer.planeVertices[t.vertex2], world);
-                    Vector3 v3 = (Vector3)Vector3.Transform(SharpRenderer.planeVertices[t.vertex3], world);
-
-                    if (r.Intersects(ref v1, ref v2, ref v3, out float distance))
-                    {
-                        hasIntersected = true;
-
-                        if (distance < smallestDistance)
-                            smallestDistance = distance;
-                    }
+                    hasIntersected = true;
+                    if (distance < smallestDistance)
+                        smallestDistance = distance;
                 }
-
-                if (hasIntersected)
-                    return smallestDistance;
-                else return null;
             }
+
+            if (hasIntersected)
+                return smallestDistance;
+            return null;
         }
     }
 }

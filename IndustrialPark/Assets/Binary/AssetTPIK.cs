@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using HipHopFile;
 
 namespace IndustrialPark
@@ -11,12 +9,12 @@ namespace IndustrialPark
         public AssetID PickupHash { get; set; }
         public AssetID Model_AssetID { get; set; }
         public AssetID RingModel_AssetID { get; set; }
-        public float UnknownFloat_0C { get; set; }
-        public float UnknownFloat_10 { get; set; }
-        public float UnknownFloat_14 { get; set; }
-        public float RingColorR { get; set; }
-        public float RingColorG { get; set; }
-        public float RingColorB { get; set; }
+        public AssetSingle UnknownFloat_0C { get; set; }
+        public AssetSingle UnknownFloat_10 { get; set; }
+        public AssetSingle UnknownFloat_14 { get; set; }
+        public AssetSingle RingColorR { get; set; }
+        public AssetSingle RingColorG { get; set; }
+        public AssetSingle RingColorB { get; set; }
         public AssetID Unknown_24 { get; set; }
         public AssetID Unknown_28 { get; set; }
         public AssetID Pickup_SGRP { get; set; }
@@ -116,7 +114,7 @@ namespace IndustrialPark
             }
         }
 
-        public AssetTPIK(Section_AHDR AHDR, Platform platform) : base(AHDR)
+        public AssetTPIK(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
             reader.BaseStream.Position = 0x4;

@@ -8,10 +8,14 @@ namespace IndustrialPark
         [Category("Counter")]
         public short Count { get; set; }
 
+        public AssetCNTR(string assetName) : base(assetName, AssetType.CNTR, BaseAssetType.Counter)
+        {
+        }
+
         public AssetCNTR(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = baseEndPosition;
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
             Count = reader.ReadInt16();
         }

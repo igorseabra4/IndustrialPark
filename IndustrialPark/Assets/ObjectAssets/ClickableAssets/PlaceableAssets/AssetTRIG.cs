@@ -19,15 +19,15 @@ namespace IndustrialPark
         [Category(categoryName)]
         public TriggerShape Shape
         {
-            get => (TriggerShape)TypeFlag;
+            get => (TriggerShape)(byte)TypeFlag;
             set => TypeFlag = (byte)value;
         }
 
         private Vector3 _trigPos0;
         private Vector3 _trigPos1;
 
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Position0X
+        [Category(categoryName)]
+        public AssetSingle Position0X
         {
             get => _trigPos0.X;
             set
@@ -36,8 +36,8 @@ namespace IndustrialPark
                 FixPosition();
             }
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Position0Y
+        [Category(categoryName)]
+        public AssetSingle Position0Y
         {
             get => _trigPos0.Y;
             set
@@ -46,8 +46,8 @@ namespace IndustrialPark
                 FixPosition();
             }
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Position0Z
+        [Category(categoryName)]
+        public AssetSingle Position0Z
         {
             get => _trigPos0.Z;
             set
@@ -56,23 +56,23 @@ namespace IndustrialPark
                 FixPosition();
             }
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        [Category(categoryName)]
         [Description("Used only for Sphere and Cylinder.")]
-        public float Radius
+        public AssetSingle Radius
         {
             get => Position1X;
             set => Position1X = value;
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        [Category(categoryName)]
         [Description("Used only for Cylinder.")]
-        public float Height
+        public AssetSingle Height
         {
             get => Position1Y;
             set => Position1Y = value;
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        [Category(categoryName)]
         [Description("Used only for Box.")]
-        public float Position1X
+        public AssetSingle Position1X
         {
             get => _trigPos1.X;
             set
@@ -81,9 +81,9 @@ namespace IndustrialPark
                 FixPosition();
             }
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        [Category(categoryName)]
         [Description("Used only for Box.")]
-        public float Position1Y
+        public AssetSingle Position1Y
         {
             get => _trigPos1.Y;
             set
@@ -92,9 +92,9 @@ namespace IndustrialPark
                 FixPosition();
             }
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
+        [Category(categoryName)]
         [Description("Used only for Box.")]
-        public float Position1Z
+        public AssetSingle Position1Z
         {
             get => _trigPos1.Z;
             set
@@ -103,31 +103,40 @@ namespace IndustrialPark
                 FixPosition();
             }
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Position2X { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Position2Y { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Position2Z { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Position3X { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Position3Y { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Position3Z { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float DirectionX { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float DirectionY { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float DirectionZ { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Position2X { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Position2Y { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Position2Z { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Position3X { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Position3Y { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Position3Z { get; set; }
+        [Category(categoryName)]
+        public AssetSingle DirectionX { get; set; }
+        [Category(categoryName)]
+        public AssetSingle DirectionY { get; set; }
+        [Category(categoryName)]
+        public AssetSingle DirectionZ { get; set; }
         [Category(categoryName)]
         public FlagBitmask TriggerFlags { get; set; } = IntFlagsDescriptor();
+
+        public AssetTRIG(string assetName, Vector3 position) : base(assetName, AssetType.TRIG, BaseAssetType.Trigger, position)
+        {
+            SolidityFlags.FlagValueByte = 0;
+            ColorAlpha = 0;
+            ColorAlphaSpeed = 0;
+            DirectionY = -0;
+            DirectionZ = 1f;
+        }
 
         public AssetTRIG(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = entityEndPosition;
+            reader.BaseStream.Position = entityHeaderEndPosition;
 
             _trigPos0 = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
             _trigPos1 = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
@@ -288,19 +297,19 @@ namespace IndustrialPark
             {
                 if (_trigPos0.X > _trigPos1.X)
                 {
-                    float temp = _trigPos1.X;
+                    AssetSingle temp = _trigPos1.X;
                     _trigPos1.X = _trigPos0.X;
                     _trigPos0.X = temp;
                 }
                 if (_trigPos0.Y > _trigPos1.Y)
                 {
-                    float temp = _trigPos1.Y;
+                    AssetSingle temp = _trigPos1.Y;
                     _trigPos1.Y = _trigPos0.Y;
                     _trigPos0.Y = temp;
                 }
                 if (_trigPos0.Z > _trigPos1.Z)
                 {
-                    float temp = _trigPos1.Z;
+                    AssetSingle temp = _trigPos1.Z;
                     _trigPos1.Z = _trigPos0.Z;
                     _trigPos0.Z = temp;
                 }
@@ -309,9 +318,8 @@ namespace IndustrialPark
             CreateTransformMatrix();
         }
         
-        [Category("Placement")]
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public override float ScaleX
+        [Category("Placement")]        
+        public override AssetSingle ScaleX
         {
             get
             {
@@ -327,9 +335,8 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement")]
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public override float ScaleY
+        [Category("Placement")]        
+        public override AssetSingle ScaleY
         {
             get
             {
@@ -349,9 +356,8 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement")]
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public override float ScaleZ
+        [Category("Placement")]        
+        public override AssetSingle ScaleZ
         {
             get
             {
@@ -367,7 +373,7 @@ namespace IndustrialPark
             }
         }
         
-        public void SetPositions(float x0, float y0, float z0, float x1, float y1, float z1)
+        public void SetPositions(float x0, AssetSingle y0, AssetSingle z0, AssetSingle x1, AssetSingle y1, AssetSingle z1)
         {
             _trigPos0.X = x0;
             _trigPos0.Y = y0;

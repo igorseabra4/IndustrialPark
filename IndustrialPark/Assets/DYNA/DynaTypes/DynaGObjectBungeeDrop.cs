@@ -1,44 +1,48 @@
-﻿using System.Collections.Generic;
+﻿using HipHopFile;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaGObjectBungeeDrop : DynaBase
+    public class DynaGObjectBungeeDrop : AssetDYNA
     {
-        public string Note => "Version is always 1";
+        private const string dynaCategoryName = "game_object:bungee_drop";
 
-        public override int StructSize => 0xC;
+        protected override int constVersion => 1;
 
-        public DynaGObjectBungeeDrop(AssetDYNA asset) : base(asset) { }
+        [Category(dynaCategoryName)]
+        public AssetID MRKR_ID { get; set; }
+        [Category(dynaCategoryName)]
+        public int SetViewAngle { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle ViewAngle { get; set; }
 
-        public override bool HasReference(uint assetID)
+        public DynaGObjectBungeeDrop(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.game_object__bungee_drop, game, platform)
         {
-            if (MRKR_ID == assetID)
-                return true;
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = dynaDataStartPosition;
 
-            return base.HasReference(assetID);
+            MRKR_ID = reader.ReadUInt32();
+            SetViewAngle = reader.ReadInt32();
+            ViewAngle = reader.ReadSingle();
         }
+
+        protected override byte[] SerializeDyna(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(MRKR_ID);
+            writer.Write(SetViewAngle);
+            writer.Write(ViewAngle);
+
+            return writer.ToArray();
+        }
+
+        public override bool HasReference(uint assetID) => MRKR_ID == assetID || base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {
-            Asset.Verify(MRKR_ID, ref result);
-        }
-        
-        public AssetID MRKR_ID
-        {
-            get => ReadUInt(0x00);
-            set => Write(0x00, value);
-        }
-        public int SetViewAngle
-        {
-            get => ReadInt(0x04);
-            set => Write(0x04, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float ViewAngle
-        {
-            get => ReadFloat(0x08);
-            set => Write(0x08, value);
+            Verify(MRKR_ID, ref result);
         }
     }
 }

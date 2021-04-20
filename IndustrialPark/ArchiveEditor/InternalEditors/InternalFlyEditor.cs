@@ -14,7 +14,7 @@ namespace IndustrialPark
             this.asset = asset;
             this.archive = archive;
 
-            Text = $"[{asset.AHDR.assetType}] {asset}";
+            Text = $"[{asset.assetType}] {asset}";
             UpdateListbox();
         }
 
@@ -34,7 +34,7 @@ namespace IndustrialPark
 
         public uint GetAssetID()
         {
-            return asset.AHDR.assetID;
+            return asset.assetID;
         }
 
         private void buttonFindCallers_Click(object sender, EventArgs e)

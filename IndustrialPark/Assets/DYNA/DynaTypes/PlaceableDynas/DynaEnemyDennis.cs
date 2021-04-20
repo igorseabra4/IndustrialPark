@@ -1,19 +1,76 @@
 ﻿using HipHopFile;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 
 namespace IndustrialPark
 {
+    public enum EnemyDennisType : uint
+    {
+        dennis_junk_bind = 0xCB1BBC20,
+        dennis_hoff_bind = 0x3D6C5895
+    }
+
     public class DynaEnemyDennis : DynaEnemySB
     {
-        public string Note => "Version is always 3";
+        private const string dynaCategoryName = "Enemy:SB:Dennis";
 
-        public override int StructSize => 0x70;
+        protected override int constVersion => 3;
 
-        public DynaEnemyDennis(AssetDYNA asset) : base(asset) { }
-                
+        [Category(dynaCategoryName)]
+        public EnemyDennisType DennisType
+        {
+            get => (EnemyDennisType)(uint)Model_AssetID;
+            set => Model_AssetID = (uint)value;
+        }
+        [Category(dynaCategoryName)]
+        public AssetID Unknown50 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Unknown54 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Unknown58 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Unknown5C { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Unknown60 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Unknown64 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Unknown68 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Unknown6C { get; set; }
+
+        public DynaEnemyDennis(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.Enemy__SB__Dennis, game, platform)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = entityDynaEndPosition;
+
+            Unknown50 = reader.ReadUInt32();
+            Unknown54 = reader.ReadUInt32();
+            Unknown58 = reader.ReadUInt32();
+            Unknown5C = reader.ReadUInt32();
+            Unknown60 = reader.ReadUInt32();
+            Unknown64 = reader.ReadUInt32();
+            Unknown68 = reader.ReadUInt32();
+            Unknown6C = reader.ReadUInt32();
+        }
+
+        protected override byte[] SerializeDyna(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write(SerializeEntityDyna(platform));
+
+            writer.Write(Unknown50);
+            writer.Write(Unknown54);
+            writer.Write(Unknown58);
+            writer.Write(Unknown5C);
+            writer.Write(Unknown60);
+            writer.Write(Unknown64);
+            writer.Write(Unknown68);
+            writer.Write(Unknown6C);
+
+            return writer.ToArray();
+        }
+
         public override bool HasReference(uint assetID)
         {
             if (Unknown50 == assetID)
@@ -40,60 +97,14 @@ namespace IndustrialPark
         {
             base.Verify(ref result);
             
-            Asset.Verify(Unknown50, ref result);
-            Asset.Verify(Unknown54, ref result);
-            Asset.Verify(Unknown58, ref result);
-            Asset.Verify(Unknown5C, ref result);
-            Asset.Verify(Unknown60, ref result);
-            Asset.Verify(Unknown64, ref result);
-            Asset.Verify(Unknown68, ref result);
-            Asset.Verify(Unknown6C, ref result);
-        }
-
-        public EnemyDennisType Type
-        {
-            get => (EnemyDennisType)(uint)Model_AssetID;
-            set => Model_AssetID = (uint)value;
-        }
-        public AssetID Unknown50
-        {
-            get => ReadUInt(0x50);
-            set => Write(0x50, value);
-        }
-        public AssetID Unknown54
-        {
-            get => ReadUInt(0x54);
-            set => Write(0x54, value);
-        }
-        public AssetID Unknown58
-        {
-            get => ReadUInt(0x58);
-            set => Write(0x58, value);
-        }
-        public AssetID Unknown5C
-        {
-            get => ReadUInt(0x5C);
-            set => Write(0x5C, value);
-        }
-        public AssetID Unknown60
-        {
-            get => ReadUInt(0x60);
-            set => Write(0x60, value);
-        }
-        public AssetID Unknown64
-        {
-            get => ReadUInt(0x64);
-            set => Write(0x64, value);
-        }
-        public AssetID Unknown68
-        {
-            get => ReadUInt(0x68);
-            set => Write(0x68, value);
-        }
-        public AssetID Unknown6C
-        {
-            get => ReadUInt(0x6C);
-            set => Write(0x6C, value);
+            Verify(Unknown50, ref result);
+            Verify(Unknown54, ref result);
+            Verify(Unknown58, ref result);
+            Verify(Unknown5C, ref result);
+            Verify(Unknown60, ref result);
+            Verify(Unknown64, ref result);
+            Verify(Unknown68, ref result);
+            Verify(Unknown6C, ref result);
         }
     }
 }

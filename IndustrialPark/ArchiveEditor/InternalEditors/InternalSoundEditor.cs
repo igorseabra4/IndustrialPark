@@ -11,7 +11,7 @@ namespace IndustrialPark
 {
     public partial class InternalSoundEditor : Form, IInternalEditor
     {
-        public InternalSoundEditor(Asset asset, ArchiveEditorFunctions archive)
+        public InternalSoundEditor(AssetWithData asset, ArchiveEditorFunctions archive)
         {
             InitializeComponent();
             TopMost = true;
@@ -19,7 +19,7 @@ namespace IndustrialPark
             this.asset = asset;
             this.archive = archive;
 
-            Text = $"[{asset.AHDR.assetType}] {asset}";
+            Text = $"[{asset.assetType}] {asset}";
         }
 
         public void RefreshPropertyGrid()
@@ -34,12 +34,12 @@ namespace IndustrialPark
             archive.CloseInternalEditor(this);
         }
 
-        private Asset asset;
+        private AssetWithData asset;
         private ArchiveEditorFunctions archive;
 
         public uint GetAssetID()
         {
-            return asset.AHDR.assetID;
+            return asset.assetID;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -56,7 +56,7 @@ namespace IndustrialPark
                 {
                     try
                     {
-                        archive.AddSoundToSNDI(file, asset.AHDR.assetID, asset.AHDR.assetType, out byte[] soundData);
+                        archive.AddSoundToSNDI(file, asset.assetID, asset.assetType, out byte[] soundData);
                         asset.Data = soundData;
                     }
                     catch (Exception ex)
@@ -76,7 +76,7 @@ namespace IndustrialPark
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog()
             {
-                FileName = asset.AHDR.ADBG.assetName + (
+                FileName = asset.assetName + (
                 (asset.platform == Platform.GameCube && asset.game != Game.Incredibles) ? ".DSP" :
                 (asset.platform == Platform.Xbox) ? ".WAV" :
                 (asset.platform == Platform.PS2) ? ".VAG" :
@@ -85,7 +85,7 @@ namespace IndustrialPark
             };
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
-                File.WriteAllBytes(saveFileDialog.FileName, archive.GetSoundData(asset.AHDR.assetID, asset.Data));
+                File.WriteAllBytes(saveFileDialog.FileName, archive.GetSoundData(asset.assetID, asset.Data));
         }
 
         private void buttonFindCallers_Click(object sender, EventArgs e)
@@ -106,7 +106,7 @@ namespace IndustrialPark
 
                 try
                 {
-                    archive.AddJawDataToJAW(file, asset.AHDR.assetID);
+                    archive.AddJawDataToJAW(file, asset.assetID);
                 }
                 catch (Exception ex)
                 {
@@ -119,7 +119,7 @@ namespace IndustrialPark
 
         private void buttonHelp_Click(object sender, EventArgs e)
         {
-            Process.Start(AboutBox.WikiLink + asset.AHDR.assetType.ToString());
+            Process.Start(AboutBox.WikiLink + asset.assetType.ToString());
         }
 
         public void SetHideHelp(bool _)
@@ -159,7 +159,7 @@ namespace IndustrialPark
                 if (!initConverter())
                     return false;
 
-            soundData = archive.GetSoundData(asset.AHDR.assetID, asset.Data);
+            soundData = archive.GetSoundData(asset.assetID, asset.Data);
 
             File.WriteAllBytes(inPath, soundData);
             Convert(inPath, outPath);

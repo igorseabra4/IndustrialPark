@@ -9,58 +9,170 @@ using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
-    public class ModelInst
+    public class ModelInst : GenericAssetDataContainer
     {
         public static int Size => 56;
         public AssetID Model_AssetID { get; set; }
         public ushort Flags { get; set; }
         public byte Parent { get; set; }
         public byte Bone { get; set; }
-        public float RightX { get; set; }
-        public float RightY { get; set; }
-        public float RightZ { get; set; }
-        public float UpX { get; set; }
-        public float UpY { get; set; }
-        public float UpZ { get; set; }
-        public float AtX { get; set; }
-        public float AtY { get; set; }
-        public float AtZ { get; set; }
-        public float PosX { get; set; }
-        public float PosY { get; set; }
-        public float PosZ { get; set; }
+        public AssetSingle RightX { get; set; }
+        public AssetSingle RightY { get; set; }
+        public AssetSingle RightZ { get; set; }
+        public AssetSingle UpX { get; set; }
+        public AssetSingle UpY { get; set; }
+        public AssetSingle UpZ { get; set; }
+        public AssetSingle AtX { get; set; }
+        public AssetSingle AtY { get; set; }
+        public AssetSingle AtZ { get; set; }
+        public AssetSingle PosX { get; set; }
+        public AssetSingle PosY { get; set; }
+        public AssetSingle PosZ { get; set; }
 
         public ModelInst()
         {
             Model_AssetID = 0;
         }
+
+        public ModelInst(EndianBinaryReader reader)
+        {
+            Model_AssetID = reader.ReadUInt32();
+            Flags = reader.ReadUInt16();
+            Parent = reader.ReadByte();
+            Bone = reader.ReadByte();
+            RightX = reader.ReadSingle();
+            RightY = reader.ReadSingle();
+            RightZ = reader.ReadSingle();
+            UpX = reader.ReadSingle();
+            UpY = reader.ReadSingle();
+            UpZ = reader.ReadSingle();
+            AtX = reader.ReadSingle();
+            AtY = reader.ReadSingle();
+            AtZ = reader.ReadSingle();
+            PosX = reader.ReadSingle();
+            PosY = reader.ReadSingle();
+            PosZ = reader.ReadSingle();
+        }
+
+        public override byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(Model_AssetID);
+            writer.Write(Flags);
+            writer.Write(Parent);
+            writer.Write(Bone);
+            writer.Write(RightX);
+            writer.Write(RightY);
+            writer.Write(RightZ);
+            writer.Write(UpX);
+            writer.Write(UpY);
+            writer.Write(UpZ);
+            writer.Write(AtX);
+            writer.Write(AtY);
+            writer.Write(AtZ);
+            writer.Write(PosX);
+            writer.Write(PosY);
+            writer.Write(PosZ);
+
+            return writer.ToArray();
+        }
     }
 
     public class AssetMINF : Asset, IAssetWithModel
     {
+        private const string categoryName = "Model Info";
+
+        private char[] _magic;
+        [Category(categoryName)]
+        public char[] Magic
+        {
+            get => _magic;
+            set
+            {
+                if (value.Length != 4)
+                    throw new ArgumentException("Value must be 4 characters long");
+                _magic = value;
+            }
+        }
+        [Category(categoryName)]
+        public AssetID ATBL_AssetID { get; set; }
+        [Category(categoryName)]
+        public AssetID CombatID { get; set; }
+        [Category(categoryName)]
+        public AssetID BrainID { get; set; }
+        [Category(categoryName)]
+        public ModelInst[] ModelReferences { get; set; }
+        [Category(categoryName)]
+        public byte[] UnknownData { get; set; }
+
         public AssetMINF(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
-            try
-            {
-                if (base.game == Game.Scooby)
-                    _modelAssetID = ReadUInt(0x0C);
-                else
-                    _modelAssetID = ReadUInt(0x14);
+            var reader = new EndianBinaryReader(AHDR.data, platform);
 
+            var chars = reader.ReadChars(4);
+            Magic = reader.endianness == Endianness.Big ? chars : chars.Reverse().ToArray();
+
+            int amountOfReferences = reader.ReadInt32();
+            ATBL_AssetID = reader.ReadUInt32();
+            if (game != Game.Scooby)
+            {
+                CombatID = reader.ReadUInt32();
+                BrainID = reader.ReadUInt32();
+            }
+
+            ModelReferences = new ModelInst[amountOfReferences];
+            for (int i = 0; i < ModelReferences.Length; i++)
+                ModelReferences[i] = new ModelInst(reader);
+
+            var unknownData = new List<byte>();
+
+            while (!reader.EndOfStream)
+                unknownData.Add(reader.ReadByte());
+            UnknownData = unknownData.ToArray();
+
+            if (ModelReferences.Length > 0)
+                _modelAssetID = ModelReferences[0].Model_AssetID;
+            else _modelAssetID = 0;
+
+            if (_modelAssetID != 0)
+            {
                 AddToRenderingDictionary(AHDR.assetID, this);
 
-                if (base.game == Game.Incredibles)
+                if (game == Game.Incredibles)
                 {
                     AddToRenderingDictionary(Functions.BKDRHash(newName), this);
                     AddToNameDictionary(Functions.BKDRHash(newName), newName);
                 }
             }
-            catch
-            {
-                _modelAssetID = 0;
-            }
+
         }
 
-        private string newName => AHDR.ADBG.assetName.Replace(".MINF", "");
+        public override byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(writer.endianness == Endianness.Big ? Magic : Magic.Reverse().ToArray());
+            writer.Write(ModelReferences.Length);
+            writer.Write(ATBL_AssetID);
+
+            if (game != Game.Scooby)
+            {
+                writer.Write(CombatID);
+                writer.Write(BrainID);
+            }
+
+            foreach (var r in ModelReferences)
+                writer.Write(r.Serialize(game, platform));
+            foreach (var b in UnknownData)
+                writer.Write(b);
+
+            return writer.ToArray();
+        }
+
+        private string newName => assetName.Replace(".MINF", "");
+
+        private uint _modelAssetID;
 
         public void MovieRemoveFromDictionary()
         {
@@ -96,24 +208,13 @@ namespace IndustrialPark
             if (renderingDictionary.ContainsKey(_modelAssetID))
                 renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, uvAnimOffset);
             else
-                renderer.DrawCube(world, isSelected |isSelected);
+                renderer.DrawCube(world, isSelected | isSelected);
         }
 
         [Browsable(false)]
         public bool SpecialBlendMode => renderingDictionary.ContainsKey(_modelAssetID) ? renderingDictionary[_modelAssetID].SpecialBlendMode : true;
 
-        public RenderWareModelFile GetRenderWareModelFile()
-        {
-            if (renderingDictionary.ContainsKey(_modelAssetID))
-                return renderingDictionary[_modelAssetID].GetRenderWareModelFile();
-
-            throw new Exception("Error: MINF asset " + AHDR.ADBG.assetName + " could not find its RenderWareModelFile");
-        }
-
-        public bool HasRenderWareModelFile()
-        {
-            return renderingDictionary.ContainsKey(_modelAssetID) && renderingDictionary[_modelAssetID].GetRenderWareModelFile() != null;
-        }
+        public RenderWareModelFile GetRenderWareModelFile() => GetFromRenderingDictionary(_modelAssetID);
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
@@ -124,181 +225,6 @@ namespace IndustrialPark
             }
 
             base.SetDynamicProperties(dt);
-        }
-
-        private uint _modelAssetID;
-
-        [Category("Model Info"), Browsable(false)]
-        public string MINF_Name
-        {
-            get
-            {
-                List<byte> bytes = new List<byte>();
-                for (int i = 0; i < 4; i++)
-                    bytes.Add(Data[i]);
-
-                if (game != Game.Incredibles && platform == Platform.GameCube)
-                    bytes.Reverse();
-
-                return System.Text.Encoding.ASCII.GetString(bytes.ToArray(), 0, 4);
-            }
-            set
-            {
-                List<byte> bytes = new List<byte>();
-                foreach (char c in value)
-                    bytes.Add((byte)c);
-
-                while (bytes.Count < 4)
-                    bytes.Add((byte)' ');
-
-                if (game != Game.Incredibles && platform == Platform.GameCube)
-                    bytes.Reverse();
-
-                for (int i = 0; i < 4; i++)
-                    Data[i] = bytes[i];
-            }
-        }
-
-        [Category("Model Info"), ReadOnly(true)]
-        public int AmountOfReferences
-        {
-            get => ReadInt(0x04);
-            set => Write(0x04, value);
-        }
-
-        [Category("Model Info")]
-        public AssetID ATBL_AssetID
-        {
-            get => ReadUInt(0x08);
-            set => Write(0x08, value);
-        }
-
-        [Category("Model Info")]
-        public AssetID CombatID
-        {
-            get
-            {
-                if (game != Game.Scooby)
-                    return ReadUInt(0x0C);
-                return 0;
-            }
-            set
-            {
-                if (game != Game.Scooby)
-                    Write(0x0C, value);
-            }
-        }
-
-        [Category("Model Info")]
-        public AssetID BrainID
-        {
-            get
-            {
-                if (game != Game.Scooby)
-                    return ReadUInt(0x10);
-                return 0;
-            }
-            set
-            {
-                if (game != Game.Scooby)
-                    Write(0x10, value);
-            }
-        }
-
-        private int ModelReferencesStart => game == Game.Scooby ? 0xC : 0x14;
-
-        [Category("Model Info")]
-        public ModelInst[] ModelReferences
-        {
-            get
-            {
-                List<ModelInst> references = new List<ModelInst>();
-
-                for (int i = 0; i < AmountOfReferences; i++)
-                {
-                    references.Add(new ModelInst()
-                    {
-                        Model_AssetID = ReadUInt(ModelReferencesStart + i * ModelInst.Size),
-                        Flags = ReadUShort(ModelReferencesStart + i * ModelInst.Size + 0x04),
-                        Parent = ReadByte(ModelReferencesStart + i * ModelInst.Size + 0x06),
-                        Bone = ReadByte(ModelReferencesStart + i * ModelInst.Size + 0x07),
-                        RightX = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x08),
-                        RightY = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x0C),
-                        RightZ = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x10),
-                        UpX = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x14),
-                        UpY = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x18),
-                        UpZ = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x1C),
-                        AtX = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x20),
-                        AtY = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x24),
-                        AtZ = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x28),
-                        PosX = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x2C),
-                        PosY = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x30),
-                        PosZ = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x34),
-                    });
-                }
-
-                return references.ToArray();
-            }
-            set
-            {
-                List<byte> before = new List<byte>();
-
-                before.AddRange(Data.Take(ModelReferencesStart));
-
-                if (value.Length > 0)
-                    _modelAssetID = value[0].Model_AssetID;
-
-                foreach (ModelInst m in value)
-                {
-                    before.AddRange(BitConverter.GetBytes(Switch(m.Model_AssetID)));
-                    before.AddRange(BitConverter.GetBytes(Switch(m.Flags)));
-                    before.Add(m.Parent);
-                    before.Add(m.Bone);
-                    before.AddRange(BitConverter.GetBytes(Switch(m.RightX)));
-                    before.AddRange(BitConverter.GetBytes(Switch(m.RightY)));
-                    before.AddRange(BitConverter.GetBytes(Switch(m.RightZ)));
-                    before.AddRange(BitConverter.GetBytes(Switch(m.UpX)));
-                    before.AddRange(BitConverter.GetBytes(Switch(m.UpY)));
-                    before.AddRange(BitConverter.GetBytes(Switch(m.UpZ)));
-                    before.AddRange(BitConverter.GetBytes(Switch(m.AtX)));
-                    before.AddRange(BitConverter.GetBytes(Switch(m.AtY)));
-                    before.AddRange(BitConverter.GetBytes(Switch(m.AtZ)));
-                    before.AddRange(BitConverter.GetBytes(Switch(m.PosX)));
-                    before.AddRange(BitConverter.GetBytes(Switch(m.PosY)));
-                    before.AddRange(BitConverter.GetBytes(Switch(m.PosZ)));
-                }
-
-                before.AddRange(Data.Skip(EndOfModelReferenceData));
-
-                Data = before.ToArray();
-
-                AmountOfReferences = value.Length;
-            }
-        }
-
-        private int EndOfModelReferenceData => ModelReferencesStart + ModelInst.Size * AmountOfReferences;
-
-        [Category("Model Info")]
-        public AssetID[] RestOfData
-        {
-            get
-            {
-                List<AssetID> list = new List<AssetID>();
-
-                for (int i = EndOfModelReferenceData; i < Data.Length; i += 4)
-                    list.Add(ReadUInt(i));
-
-                return list.ToArray();
-            }
-            set
-            {
-                List<byte> before = Data.Take(EndOfModelReferenceData).ToList();
-
-                foreach (AssetID a in value)
-                    before.AddRange(BitConverter.GetBytes(Switch(a)));
-
-                Data = before.ToArray();
-            }
         }
     }
 }

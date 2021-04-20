@@ -32,7 +32,7 @@ namespace IndustrialPark
 
         [Category(categoryName)]
         public FlagBitmask EmitterFlags { get; set; } = ByteFlagsDescriptor();
-        private EmitterType _emitterType { get; set; }
+        private EmitterType _emitterType;
         [Category(categoryName)]
         public EmitterType EmitterType
         {
@@ -88,29 +88,29 @@ namespace IndustrialPark
         public PareSpecific_Generic PareSpecific { get; set; }
         [Category(categoryName)]
         public AssetID Emitter_AssetID { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Emitter_PosX { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Emitter_PosY { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Emitter_PosZ { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Velocity_X { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Velocity_Y { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Velocity_Z { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Velocity_AngleVariation { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Emitter_PosX { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Emitter_PosY { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Emitter_PosZ { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Velocity_X { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Velocity_Y { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Velocity_Z { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Velocity_AngleVariation { get; set; }
         [Category(categoryName)]
         public int CullMode { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float CullDistanceSqr { get; set; }
+        [Category(categoryName)]
+        public AssetSingle CullDistanceSqr { get; set; }
 
         public AssetPARE(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = baseEndPosition;
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
             EmitterFlags.FlagValueByte = reader.ReadByte();
             _emitterType = (EmitterType)reader.ReadByte();
@@ -177,7 +177,7 @@ namespace IndustrialPark
             var writer = new EndianBinaryWriter(platform);
             writer.Write(SerializeBase(platform));
 
-            writer.Write(EmitterFlags_Internal);
+            writer.Write(EmitterFlags.FlagValueByte);
             writer.Write((byte)_emitterType);
             writer.Write((byte)0);
             writer.Write((byte)0);

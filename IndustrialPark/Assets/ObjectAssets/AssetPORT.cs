@@ -14,8 +14,8 @@ namespace IndustrialPark
         public AssetID Camera_AssetID { get; set; }
         [Category(categoryName)]
         public AssetID Destination_MRKR_AssetID { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Rotation { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Rotation { get; set; }
         [Category(categoryName)]
         private char[] _destinationLevel;
         [Category(categoryName)]
@@ -33,7 +33,7 @@ namespace IndustrialPark
         public AssetPORT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = baseEndPosition;
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
             Camera_AssetID = reader.ReadUInt32();
             Destination_MRKR_AssetID = reader.ReadUInt32();

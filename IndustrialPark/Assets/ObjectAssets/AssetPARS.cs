@@ -34,7 +34,7 @@ namespace IndustrialPark
         public AssetPARS(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = baseEndPosition;
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
             PARS_Type = reader.ReadInt32();
             PARS_AssetID = reader.ReadUInt32();

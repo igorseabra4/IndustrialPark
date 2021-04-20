@@ -21,20 +21,20 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID Emitter_AssetID { get; set; }
         private Vector3 _position;
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionX
+        [Category(categoryName)]
+        public AssetSingle PositionX
         {
             get => _position.X;
             set { _position.X = value; CreateTransformMatrix(); }
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionY
+        [Category(categoryName)]
+        public AssetSingle PositionY
         {
             get => _position.Y;
             set { _position.Y = value; CreateTransformMatrix(); }
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionZ
+        [Category(categoryName)]
+        public AssetSingle PositionZ
         {
             get => _position.Z;
             set { _position.Z = value; CreateTransformMatrix(); }
@@ -49,7 +49,7 @@ namespace IndustrialPark
         public AssetSDFX(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = baseEndPosition;
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
             _soundGroup_AssetID = reader.ReadUInt32();
             Emitter_AssetID = reader.ReadUInt32();
@@ -115,10 +115,7 @@ namespace IndustrialPark
 
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
-            if (!ShouldDraw(renderer))
-                return null;
-
-            if (ray.Intersects(ref boundingSphere))
+            if (ShouldDraw(renderer) && ray.Intersects(ref boundingSphere))
                 return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices, world);
             return null;
         }

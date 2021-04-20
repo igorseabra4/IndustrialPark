@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using SharpDX;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -7,8 +8,8 @@ namespace IndustrialPark
     {
         private const string categoryName = "Simple Object";
 
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float AnimSpeed { get; set; }
+        [Category(categoryName)]
+        public AssetSingle AnimSpeed { get; set; }
         [Category(categoryName)]
         public int InitialAnimState { get; set; }
         [Category(categoryName), Description("Only Static is functional.")]
@@ -21,10 +22,20 @@ namespace IndustrialPark
         [Category(categoryName), Description("Always 0.")]
         public FlagBitmask SimpFlags { get; set; } = ByteFlagsDescriptor();
 
+        public AssetSIMP(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.BUTN, BaseAssetType.Static, position)
+        {
+            AnimSpeed = 1f;
+            CollType.FlagValueByte = 2;
+
+            if (template == AssetTemplate.Button_Red)
+            {
+            }
+        }
+
         public AssetSIMP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = entityEndPosition;
+            reader.BaseStream.Position = entityHeaderEndPosition;
 
             AnimSpeed = reader.ReadSingle();
             InitialAnimState = reader.ReadInt32();

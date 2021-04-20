@@ -24,9 +24,9 @@ namespace IndustrialPark
         public ushort BoneCount;
         public ushort TimeCount;
         public uint KeyCount;
-        public float ScaleX { get; set; }
-        public float ScaleY { get; set; }
-        public float ScaleZ { get; set; }
+        public AssetSingle ScaleX { get; set; }
+        public AssetSingle ScaleY { get; set; }
+        public AssetSingle ScaleZ { get; set; }
 
         public AssetANIM_Header()
         {
@@ -103,21 +103,21 @@ namespace IndustrialPark
     
     public class AssetANIM : Asset
     {
-        private const string animCatName = "Animation";
+        private const string categoryName = "Animation";
 
-        [Category(animCatName)]
+        [Category(categoryName)]
         public AssetANIM_Header Header { get; set; }
 
-        [Category(animCatName)]
+        [Category(categoryName)]
         public AssetANIM_KeyFrame[] KeyFrames { get; set; }
 
-        [Category(animCatName)]
-        public float[] Times { get; set; }
+        [Category(categoryName)]
+        public AssetSingle[] Times { get; set; }
 
-        [Category(animCatName)]
+        [Category(categoryName)]
         public short[][] Offsets { get; set; }
 
-        public AssetANIM(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR)
+        public AssetANIM(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
 
@@ -128,7 +128,7 @@ namespace IndustrialPark
                 keyFrames.Add(new AssetANIM_KeyFrame(reader));
             KeyFrames = keyFrames.ToArray();
 
-            var times = new List<float>();
+            var times = new List<AssetSingle>();
             for (int i = 0; i < Header.TimeCount; i++)
                 times.Add(reader.ReadSingle());
             Times = times.ToArray();

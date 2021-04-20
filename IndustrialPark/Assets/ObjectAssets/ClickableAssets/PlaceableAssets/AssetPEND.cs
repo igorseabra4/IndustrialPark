@@ -18,22 +18,22 @@ namespace IndustrialPark
         public byte UnknownByte57 { get; set; }
         [Category(categoryName)]
         public int UnknownInt58 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float MovementDistance { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float SteepnessRad { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float SteepnessDeg
+        [Category(categoryName)]
+        public AssetSingle MovementDistance { get; set; }
+        [Category(categoryName)]
+        public AssetSingle SteepnessRad { get; set; }
+        [Category(categoryName)]
+        public AssetSingle SteepnessDeg
         {
             get => MathUtil.RadiansToDegrees(SteepnessRad);
             set => SteepnessRad = MathUtil.DegreesToRadians(value);
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float MovementTime { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat68Rad { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat68Deg
+        [Category(categoryName)]
+        public AssetSingle MovementTime { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat68Rad { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat68Deg
         {
             get => MathUtil.RadiansToDegrees(UnknownFloat68Rad);
             set => UnknownFloat68Rad = MathUtil.DegreesToRadians(value);
@@ -54,7 +54,7 @@ namespace IndustrialPark
         public AssetPEND(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = entityEndPosition;
+            reader.BaseStream.Position = entityHeaderEndPosition;
 
             UnknownByte54 = reader.ReadByte();
             UnknownByte55 = reader.ReadByte();

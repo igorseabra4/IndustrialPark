@@ -1,12 +1,11 @@
 ﻿using System;
-using System.ComponentModel;
 using HipHopFile;
 
 namespace IndustrialPark
 {
     public class Link
     {
-        public static readonly int sizeOfStruct = 32;
+        public static int sizeOfStruct => 32;
 
         private Game game;
 
@@ -128,7 +127,7 @@ namespace IndustrialPark
             var recEvent = Enum.GetName(game == Game.Incredibles ? typeof(EventTSSM) : typeof(EventBFBB), EventReceiveID);
             var sndEvent = Enum.GetName(game == Game.Incredibles ? typeof(EventTSSM) : typeof(EventBFBB), EventSendID);
 
-            return (IsTimed ? Time.ToString() : recEvent) + $" => {sndEvent} => " + (AssetIDTypeConverter.Legacy ? TargetAssetID.ToString("X8") : Program.MainForm.GetAssetNameFromID(TargetAssetID));
+            return (IsTimed ? Time.ToString() : recEvent) + $" => {sndEvent} => " + (HexUIntTypeConverter.Legacy ? TargetAssetID.ToString("X8") : Program.MainForm.GetAssetNameFromID(TargetAssetID));
         }
     }
 }

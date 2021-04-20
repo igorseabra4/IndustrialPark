@@ -15,10 +15,10 @@ namespace IndustrialPark
         public AssetID StartCameraAssetID { get; set; }
         [Category(categoryName)]
         public int ClimateFlags { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float ClimateStrengthMin { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float ClimateStrengthMax { get; set; }
+        [Category(categoryName)]
+        public AssetSingle ClimateStrengthMin { get; set; }
+        [Category(categoryName)]
+        public AssetSingle ClimateStrengthMax { get; set; }
         [Category(categoryName)]
         public AssetID BSP_LKIT_AssetID { get; set; }
         [Category(categoryName)]
@@ -37,8 +37,8 @@ namespace IndustrialPark
         public AssetID BSP_MAPR_Collision_AssetID { get; set; }
         [Category(categoryName)]
         public AssetID BSP_MAPR_FX_AssetID { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float LoldHeight { get; set; }
+        [Category(categoryName)]
+        public AssetSingle LoldHeight { get; set; }
         [Category(categoryName)]
         public int UnknownInt44 { get; set; }
         [Category(categoryName)]
@@ -52,10 +52,16 @@ namespace IndustrialPark
         [Category(categoryName)]
         public int UnknownInt58 { get; set; }
 
+        public AssetENV(string assetName, string startCamName) : base(assetName, AssetType.ENV, BaseAssetType.Env)
+        {
+            StartCameraAssetID = startCamName;
+            LoldHeight = 10f;
+        }
+
         public AssetENV(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = baseEndPosition;
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
             BSP_AssetID = reader.ReadUInt32();
             StartCameraAssetID = reader.ReadUInt32();
@@ -104,7 +110,7 @@ namespace IndustrialPark
             writer.Write(BSP_MAPR_Collision_AssetID);
             writer.Write(BSP_MAPR_FX_AssetID);
             if (game != Game.Scooby)
-                writer.Write(LoldHeight);
+                writer.Write(BitConverter.GetBytes(LoldHeight));
             if (game == Game.Incredibles)
             {
                 writer.Write(UnknownInt44);

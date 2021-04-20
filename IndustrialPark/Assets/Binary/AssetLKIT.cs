@@ -7,29 +7,29 @@ namespace IndustrialPark
     public class EntryLKIT
     {
         public int Type { get; set; }
-        public float ColorR { get; set; }
-        public float ColorG { get; set; }
-        public float ColorB { get; set; }
-        public float Unknown04 { get; set; }
-        public float Unknown05_X { get; set; }
-        public float Unknown06_Y { get; set; }
-        public float Unknown07_Z { get; set; }
-        public float Unknown08 { get; set; }
-        public float Unknown09_X { get; set; }
-        public float Unknown10_Y { get; set; }
-        public float Unknown11_Z { get; set; }
-        public float Unknown12 { get; set; }
-        public float Direction_X { get; set; }
-        public float Direction_Y { get; set; }
-        public float Direction_Z { get; set; }
-        public float Unknown16 { get; set; }
-        public float Unknown17_X { get; set; }
-        public float Unknown18_Y { get; set; }
-        public float Unknown19_Z { get; set; }
-        public float Unknown20 { get; set; }
-        public float Unknown21_X { get; set; }
-        public float Unknown22_Y { get; set; }
-        public float Unknown23_Z { get; set; }
+        public AssetSingle ColorR { get; set; }
+        public AssetSingle ColorG { get; set; }
+        public AssetSingle ColorB { get; set; }
+        public AssetSingle Unknown04 { get; set; }
+        public AssetSingle Unknown05_X { get; set; }
+        public AssetSingle Unknown06_Y { get; set; }
+        public AssetSingle Unknown07_Z { get; set; }
+        public AssetSingle Unknown08 { get; set; }
+        public AssetSingle Unknown09_X { get; set; }
+        public AssetSingle Unknown10_Y { get; set; }
+        public AssetSingle Unknown11_Z { get; set; }
+        public AssetSingle Unknown12 { get; set; }
+        public AssetSingle Direction_X { get; set; }
+        public AssetSingle Direction_Y { get; set; }
+        public AssetSingle Direction_Z { get; set; }
+        public AssetSingle Unknown16 { get; set; }
+        public AssetSingle Unknown17_X { get; set; }
+        public AssetSingle Unknown18_Y { get; set; }
+        public AssetSingle Unknown19_Z { get; set; }
+        public AssetSingle Unknown20 { get; set; }
+        public AssetSingle Unknown21_X { get; set; }
+        public AssetSingle Unknown22_Y { get; set; }
+        public AssetSingle Unknown23_Z { get; set; }
 
         public EntryLKIT(EndianBinaryReader reader)
         {
@@ -97,7 +97,7 @@ namespace IndustrialPark
         [Category("Light Kit")]
         public EntryLKIT[] Lights { get; set; }
 
-        public AssetLKIT(Section_AHDR AHDR, Platform platform) : base(AHDR)
+        public AssetLKIT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
 

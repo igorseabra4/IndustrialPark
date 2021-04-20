@@ -4,9 +4,9 @@ namespace IndustrialPark
 {
     public interface IClickableAsset
     {
-        float PositionX { get; set; }
-        float PositionY { get; set; }
-        float PositionZ { get; set; }
+        AssetSingle PositionX { get; set; }
+        AssetSingle PositionY { get; set; }
+        AssetSingle PositionZ { get; set; }
 
         float? GetIntersectionPosition(SharpRenderer renderer, Ray ray);
 

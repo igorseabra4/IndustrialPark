@@ -15,8 +15,8 @@ namespace IndustrialPark
         public FlagBitmask VisibilityFlags { get; set; } = ByteFlagsDescriptor(
             "Visible",
             "Stackable");
-        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte TypeFlag { get; set; }
+        [Category(categoryName)]
+        public AssetByte TypeFlag { get; set; }
         [Category(categoryName)]
         public FlagBitmask Flag0A { get; set; } = ByteFlagsDescriptor();
         [Category(categoryName)]
@@ -31,64 +31,64 @@ namespace IndustrialPark
             "Ledge Grab");
 
         protected Vector3 _position;
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionX
+        [Category(categoryName)]
+        public virtual AssetSingle PositionX
         {
             get => _position.X;
             set { _position.X = value; CreateTransformMatrix(); }
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionY
+        [Category(categoryName)]
+        public virtual AssetSingle PositionY
         {
             get => _position.Y;
             set { _position.Y = value; CreateTransformMatrix(); }
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionZ
+        [Category(categoryName)]
+        public virtual AssetSingle PositionZ
         {
             get => _position.Z;
             set { _position.Z = value; CreateTransformMatrix(); }
         }
 
-        protected float _yaw;
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public virtual float Yaw
+        protected AssetSingle _yaw;
+        [Category(categoryName)]
+        public AssetSingle Yaw
         {
             get => MathUtil.RadiansToDegrees(_yaw);
             set { _yaw = MathUtil.DegreesToRadians(value); CreateTransformMatrix(); }
         }
 
-        protected float _pitch;
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public virtual float Pitch
+        protected AssetSingle _pitch;
+        [Category(categoryName)]
+        public AssetSingle Pitch
         {
             get => MathUtil.RadiansToDegrees(_pitch);
             set { _pitch = MathUtil.DegreesToRadians(value); CreateTransformMatrix(); }
         }
 
-        protected float _roll;
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public virtual float Roll
+        protected AssetSingle _roll;
+        [Category(categoryName)]
+        public AssetSingle Roll
         {
             get => MathUtil.RadiansToDegrees(_roll);
             set { _roll = MathUtil.DegreesToRadians(value); CreateTransformMatrix(); }
         }
 
         protected Vector3 _scale;
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public virtual float ScaleX
+        [Category(categoryName)]
+        public virtual AssetSingle ScaleX
         {
             get => _scale.X;
             set { _scale.X = value; CreateTransformMatrix(); }
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public virtual float ScaleY
+        [Category(categoryName)]
+        public virtual AssetSingle ScaleY
         {
             get => _scale.Y;
             set { _scale.Y = value; CreateTransformMatrix(); }
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public virtual float ScaleZ
+        [Category(categoryName)]
+        public virtual AssetSingle ScaleZ
         {
             get => _scale.Z;
             set { _scale.Z = value; CreateTransformMatrix(); }
@@ -96,25 +96,25 @@ namespace IndustrialPark
 
         protected Vector4 _color;
         [Category(categoryName + " Color"), DisplayName("Red (0 - 1)")]
-        public float ColorRed
+        public AssetSingle ColorRed
         {
             get => _color.X;
             set => _color.X = value;
         }
         [Category(categoryName + " Color"), DisplayName("Green (0 - 1)")]
-        public float ColorGreen
+        public AssetSingle ColorGreen
         {
             get => _color.Y;
             set => _color.Y = value;
         }
         [Category(categoryName + " Color"), DisplayName("Blue (0 - 1)")]
-        public float ColorBlue
+        public AssetSingle ColorBlue
         {
             get => _color.Z;
             set => _color.Z = value;
         }
         [Category(categoryName + " Color"), DisplayName("Alpha (0 - 1)")]
-        public float ColorAlpha
+        public AssetSingle ColorAlpha
         {
             get => _color.W;
             set => _color.W = value;
@@ -133,7 +133,7 @@ namespace IndustrialPark
         }
 
         [Category(categoryName + " Color")]
-        public float ColorAlphaSpeed { get; set; }
+        public AssetSingle ColorAlphaSpeed { get; set; }
 
         protected uint _modelAssetID;
         [Category(categoryName + " References")]
@@ -144,17 +144,30 @@ namespace IndustrialPark
         }
 
         [Category(categoryName + " References")]
-        public AssetID Surface_AssetID { get; set; }
-
-        [Category(categoryName + " References")]
         public virtual AssetID Animation_AssetID { get; set; }
 
-        protected int entityEndPosition => game == Game.BFBB ? 0x54 : 0x50;
+        [Category(categoryName + " References")]
+        public AssetID Surface_AssetID { get; set; }
+
+        protected int entityHeaderEndPosition => game == Game.BFBB ? 0x54 : 0x50;
+
+        public EntityAsset(string assetName, AssetType assetType, BaseAssetType baseAssetType, Vector3 position) : base(assetName, assetType, baseAssetType)
+        {
+            VisibilityFlags.FlagValueByte = 1;
+            SolidityFlags.FlagValueByte = 2;
+            _position = position;
+            _scale = new Vector3(1f, 1f, 1f);
+            _color = new Vector4(1f, 1f, 1f, 1f);
+            ColorAlphaSpeed = 255f;
+
+            CreateTransformMatrix();
+            renderableAssets.Add(this);
+        }
 
         public EntityAsset(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = baseEndPosition;
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
             VisibilityFlags.FlagValueByte = reader.ReadByte();
             TypeFlag = reader.ReadByte();
@@ -174,7 +187,6 @@ namespace IndustrialPark
             Animation_AssetID = reader.ReadUInt32();
 
             CreateTransformMatrix();
-
             renderableAssets.Add(this);
         }
 
@@ -199,7 +211,7 @@ namespace IndustrialPark
             Animation_AssetID = reader.ReadUInt32();
         }
 
-        public byte[] SerializeEntity(Game game, Platform platform)
+        protected byte[] SerializeEntity(Game game, Platform platform)
         {
             var writer = new EndianBinaryWriter(platform);
             writer.Write(SerializeBase(platform));
@@ -249,16 +261,11 @@ namespace IndustrialPark
 
         protected virtual void CreateBoundingBox()
         {
-            if (renderingDictionary.ContainsKey(_modelAssetID) &&
-                renderingDictionary[_modelAssetID].HasRenderWareModelFile() &&
-                renderingDictionary[_modelAssetID].GetRenderWareModelFile() != null)
-            {
-                CreateBoundingBox(renderingDictionary[_modelAssetID].GetRenderWareModelFile().vertexListG);
-            }
+            var model = GetFromRenderingDictionary(_modelAssetID);
+            if (model != null)
+                CreateBoundingBox(model.vertexListG);
             else
-            {
                 CreateBoundingBox(SharpRenderer.cubeVertices, 0.5f);
-            }
         }
 
         protected Vector3[] vertices;
@@ -267,22 +274,10 @@ namespace IndustrialPark
         protected virtual void CreateBoundingBox(List<Vector3> vertexList, float multiplier = 1f)
         {
             vertices = new Vector3[vertexList.Count];
-
             for (int i = 0; i < vertexList.Count; i++)
                 vertices[i] = (Vector3)Vector3.Transform(vertexList[i] * multiplier, world);
-
             boundingBox = BoundingBox.FromPoints(vertices);
-
-            if (renderingDictionary.ContainsKey(_modelAssetID))
-            {
-                IAssetWithModel assetWithModel = renderingDictionary[_modelAssetID];
-                if (assetWithModel.HasRenderWareModelFile())
-                    triangles = assetWithModel.GetRenderWareModelFile().triangleList.ToArray();
-                else
-                    triangles = null;
-            }
-            else
-                triangles = null;
+            triangles = GetFromRenderingDictionary(_modelAssetID)?.triangleList.ToArray();
         }
 
         public virtual bool ShouldDraw(SharpRenderer renderer)
@@ -298,9 +293,7 @@ namespace IndustrialPark
 
             if (AssetMODL.renderBasedOnLodt)
             {
-                if (GetDistanceFrom(renderer.Camera.Position) <
-                    (AssetLODT.MaxDistances.ContainsKey(_modelAssetID) ?
-                    AssetLODT.MaxDistances[_modelAssetID] : SharpRenderer.DefaultLODTDistance))
+                if (GetDistanceFrom(renderer.Camera.Position) < AssetLODT.MaxDistanceTo(_modelAssetID))
                     return renderer.frustum.Intersects(ref boundingBox);
                 
                 return false;
@@ -322,23 +315,17 @@ namespace IndustrialPark
 
         public virtual float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
-            if (!ShouldDraw(renderer))
-                return null;
-
-            if (ray.Intersects(ref boundingBox, out float distance))
-                return TriangleIntersection(ray, distance);
+            if (ShouldDraw(renderer) && ray.Intersects(ref boundingBox))
+                return triangles == null ? TriangleIntersection(ray, SharpRenderer.cubeTriangles, SharpRenderer.cubeVertices, world) : TriangleIntersection(ray);
             return null;
         }
 
-        protected virtual float? TriangleIntersection(Ray r, float initialDistance)
+        protected virtual float? TriangleIntersection(Ray ray)
         {
-            if (triangles == null)
-                return initialDistance;
-
             float? smallestDistance = null;
 
             foreach (RenderWareFile.Triangle t in triangles)
-                if (r.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
+                if (ray.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
                     if (smallestDistance == null || distance < smallestDistance)
                         smallestDistance = distance;
                 
@@ -375,14 +362,6 @@ namespace IndustrialPark
             if (!(this is AssetTRIG))
                 Verify(Model_AssetID, ref result);
             Verify(Animation_AssetID, ref result);
-        }
-
-        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
-        {
-            if (game != Game.BFBB)
-                dt.RemoveProperty("PaddingC");
-
-            base.SetDynamicProperties(dt);
         }
 
         public static bool movementPreview = false;
@@ -426,7 +405,7 @@ namespace IndustrialPark
         {
             if (movementPreview)
             {
-                EntityAsset driver = FindDrivenByAsset(out bool found, out bool useRotation);
+                var driver = FindDrivenByAsset(out bool found, out bool useRotation);
 
                 if (found)
                 {
@@ -456,7 +435,7 @@ namespace IndustrialPark
                 if (ae.archive.ContainsAsset(Surface_AssetID))
                     if (ae.archive.GetFromAssetID(Surface_AssetID) is AssetSURF SURF)
                     {
-                        uvTransSpeed = new Vector3(SURF.UVEffects1_TransSpeed_X, SURF.UVEffects1_TransSpeed_Y, SURF.UVEffects1_TransSpeed_Z);
+                        uvTransSpeed = new Vector3(SURF.zSurfUVFX.TransSpeed_X, SURF.zSurfUVFX.TransSpeed_Y, SURF.zSurfUVFX.TransSpeed_Z);
                         return;
                     }
             uvTransSpeed = Vector3.Zero;

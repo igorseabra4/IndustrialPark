@@ -82,11 +82,13 @@ namespace IndustrialPark
                                 g.Draw(renderer);
                             }
 
-                            radius = Vector3.Distance(renderer.Camera.Position, TRIG.Position) / 5f;
+                            var trig_pos = new Vector3(TRIG.PositionX, TRIG.PositionY, TRIG.PositionZ);
+
+                            radius = Vector3.Distance(renderer.Camera.Position, trig_pos) / 5f;
 
                             foreach (PositionGizmo g in positionGizmos)
                             {
-                                g.SetPosition(TRIG.Position, radius);
+                                g.SetPosition(trig_pos, radius);
                                 g.Draw(renderer);
                             }
                         }
@@ -98,14 +100,14 @@ namespace IndustrialPark
                             bool found = false;
 
                             foreach (IClickableAsset a in allCurrentlySelectedAssets.OfType<IClickableAsset>())
-                                if (!found && ShouldUseDyna(a))
+                                if (!found)
                                 {
                                     found = true;
                                     bb = a.GetBoundingBox();
                                 }
-                                else if (ShouldUseDyna(a))
+                                else
                                     bb = BoundingBox.Merge(bb, a.GetBoundingBox());
-                            
+
                             if (found)
                             {
                                 GizmoCenterPosition = bb.Center;
@@ -126,12 +128,13 @@ namespace IndustrialPark
                         IRotatableAsset ira = allCurrentlySelectedAssets.OfType<IRotatableAsset>().FirstOrDefault();
                         SetCenterRotation(ira.Yaw, ira.Pitch, ira.Roll);
 
-                        GizmoCenterPosition = ira.Position;
-                        float distance = Vector3.Distance(renderer.Camera.Position, ira.Position) / 2f;
+                        var ira_pos = new Vector3(ira.PositionX, ira.PositionY, ira.PositionZ);
+                        GizmoCenterPosition = ira_pos;
+                        float distance = Vector3.Distance(renderer.Camera.Position, ira_pos) / 2f;
 
                         for (int i = 2; i >= 0; i--)
                         {
-                            rotationGizmos[i].SetPosition(ira.Position, distance, GizmoCenterRotation);
+                            rotationGizmos[i].SetPosition(ira_pos, distance, GizmoCenterRotation);
                             rotationGizmos[i].Draw(renderer);
                         }
                     }
@@ -145,12 +148,13 @@ namespace IndustrialPark
                         else
                             SetCenterRotation(0, 0, 0);
 
-                        GizmoCenterPosition = isa.Position;
-                        float distance = Vector3.Distance(renderer.Camera.Position, isa.Position) / 5f;
+                        var isa_pos = new Vector3(isa.PositionX, isa.PositionY, isa.PositionZ);
+                        GizmoCenterPosition = isa_pos;
+                        float distance = Vector3.Distance(renderer.Camera.Position, isa_pos) / 5f;
                         
                         foreach (ScaleGizmo g in scaleGizmos)
                         {
-                            g.SetPosition(isa.Position, distance, GizmoCenterRotation);
+                            g.SetPosition(isa_pos, distance, GizmoCenterRotation);
                             g.Draw(renderer);
                         }
                     }
@@ -176,9 +180,7 @@ namespace IndustrialPark
                     break;
             }
         }
-
-        private static bool ShouldUseDyna(IClickableAsset a) => !(a is AssetDYNA dyna && !dyna.IsRenderableClickable);
-        
+                
         private static Vector3 GizmoCenterPosition;
         private static Matrix GizmoCenterRotation;
         
@@ -390,7 +392,7 @@ namespace IndustrialPark
                             trig.Position0Z = trig.PositionZ;
                     }
 
-                    RefreshAssetEditor(((Asset)ra).AHDR.assetID);
+                    RefreshAssetEditor(((Asset)ra).assetID);
 
                     FinishedMovingGizmo = true;
                     UnsavedChanges = true;
@@ -487,7 +489,7 @@ namespace IndustrialPark
                             ra.Position0Z = SnapToGrid(ra.Position0Z, GizmoType.Z);
                     }
 
-                    RefreshAssetEditor(ra.AHDR.assetID);
+                    RefreshAssetEditor(ra.assetID);
 
                     FinishedMovingGizmo = true;
                     UnsavedChanges = true;
@@ -556,7 +558,7 @@ namespace IndustrialPark
                             ra.Roll += distanceX;
                     }
 
-                    RefreshAssetEditor(((Asset)ra).AHDR.assetID);
+                    RefreshAssetEditor(((Asset)ra).assetID);
 
                     FinishedMovingGizmo = true;
                     UnsavedChanges = true;
@@ -616,7 +618,7 @@ namespace IndustrialPark
                         ra.ScaleZ += distanceX / 40f;
                     }
 
-                    RefreshAssetEditor(((Asset)ra).AHDR.assetID);
+                    RefreshAssetEditor(((Asset)ra).assetID);
 
                     FinishedMovingGizmo = true;
                     UnsavedChanges = true;
@@ -670,7 +672,7 @@ namespace IndustrialPark
                         trig.Position0Z = trig.PositionZ;
                     }
 
-                    RefreshAssetEditor(((Asset)ra).AHDR.assetID);
+                    RefreshAssetEditor(((Asset)ra).assetID);
                 }
 
                 FinishedMovingGizmo = true;

@@ -9,24 +9,24 @@ namespace IndustrialPark
     {
         private const string categoryName = "Boulder";
 
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Gravity { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Mass { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float BounceFactor { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Friction { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))] // bfbb only
-        public float StartFriction { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float MaxLinearVelocity { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float MaxAngularVelocity { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Stickiness { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float BounceDamp { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Gravity { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Mass { get; set; }
+        [Category(categoryName)]
+        public AssetSingle BounceFactor { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Friction { get; set; }
+        [Category(categoryName)] // bfbb only
+        public AssetSingle StartFriction { get; set; }
+        [Category(categoryName)]
+        public AssetSingle MaxLinearVelocity { get; set; }
+        [Category(categoryName)]
+        public AssetSingle MaxAngularVelocity { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Stickiness { get; set; }
+        [Category(categoryName)]
+        public AssetSingle BounceDamp { get; set; }
         [Category(categoryName)]
         public FlagBitmask BoulderFlags { get; set; } = IntFlagsDescriptor(
             "Can Hit Walls", 
@@ -39,27 +39,34 @@ namespace IndustrialPark
                 null, 
                 "Die on player attack",
                 "Die after kill timer");
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float KillTimer { get; set; }
+        [Category(categoryName)]
+        public AssetSingle KillTimer { get; set; }
         [Category(categoryName)]
         public int Hitpoints { get; set; }
         [Category(categoryName)]
         public AssetID Sound_AssetID { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))] // bfbb only
-        public float Volume { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float MinSoundVel { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float MaxSoundVel { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float InnerRadius { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float OuterRadius { get; set; }
+        [Category(categoryName)] // bfbb only
+        public AssetSingle Volume { get; set; }
+        [Category(categoryName)]
+        public AssetSingle MinSoundVel { get; set; }
+        [Category(categoryName)]
+        public AssetSingle MaxSoundVel { get; set; }
+        [Category(categoryName)]
+        public AssetSingle InnerRadius { get; set; }
+        [Category(categoryName)]
+        public AssetSingle OuterRadius { get; set; }
+
+        public AssetBOUL(string assetName, Vector3 position) : base(assetName, AssetType.BOUL, BaseAssetType.Boulder, position)
+        {
+            SolidityFlags.FlagValueByte = 0;
+            ColorAlpha = 0;
+            ColorAlphaSpeed = 0;
+        }
 
         public AssetBOUL(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = entityEndPosition;
+            reader.BaseStream.Position = entityHeaderEndPosition;
 
             Gravity = reader.ReadSingle();
             Mass = reader.ReadSingle();

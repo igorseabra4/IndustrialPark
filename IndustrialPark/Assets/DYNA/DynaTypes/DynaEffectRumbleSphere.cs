@@ -12,20 +12,20 @@ namespace IndustrialPark
 
         [Category(dynaCategoryName)]
         public AssetID Rumble_AssetID { get; set; }
-        [Category(dynaCategoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_04 { get; set; }
-        [Category(dynaCategoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_08 { get; set; }
-        [Category(dynaCategoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_0C { get; set; }
-        [Category(dynaCategoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_10 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_04 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_08 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_0C { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_10 { get; set; }
         [Category(dynaCategoryName)]
         public short UnknownShort_14 { get; set; }
         [Category(dynaCategoryName)]
         public short UnknownShort_16 { get; set; }
 
-        public DynaEffectRumbleSphere(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public DynaEffectRumbleSphere(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.effect__RumbleSphericalEmitter, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
             reader.BaseStream.Position = dynaDataStartPosition;
@@ -54,14 +54,8 @@ namespace IndustrialPark
             return writer.ToArray();
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (Rumble_AssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
+        public override bool HasReference(uint assetID) => Rumble_AssetID == assetID || base.HasReference(assetID);
+        
         public override void Verify(ref List<string> result)
         {
             Verify(Rumble_AssetID, ref result);

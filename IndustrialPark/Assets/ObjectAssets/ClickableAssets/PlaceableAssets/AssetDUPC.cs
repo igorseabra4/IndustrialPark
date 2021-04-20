@@ -20,8 +20,8 @@ namespace IndustrialPark
         public ushort UnknownShort_0C { get; set; }
         [Category(categoryName), TypeConverter(typeof(HexUShortTypeConverter))]
         public ushort UnknownShort_0E { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_10 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat_10 { get; set; }
         [Category(categoryName)]
         public int UnknownInt_14 { get; set; }
         [Category(categoryName)]
@@ -49,7 +49,7 @@ namespace IndustrialPark
         public AssetDUPC(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = entityEndPosition;
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
             UnknownShort_08 = reader.ReadUInt16();
             UnknownShort_0A = reader.ReadUInt16();
@@ -91,8 +91,8 @@ namespace IndustrialPark
             writer.Write(NavMesh1_AssetID);
             writer.Write(UnknownInt_30);
 
-            writer.Write(AssetID);
-            writer.Write((byte)ObjectAssetType.NPC);
+            writer.Write(assetID);
+            writer.Write((byte)BaseAssetType.NPC);
             writer.Write((byte)_links.Length);
             writer.Write(VIL.Serialize(game, platform).Skip(6).ToArray());
 
@@ -124,14 +124,14 @@ namespace IndustrialPark
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray) => VIL.GetIntersectionPosition(renderer, ray);
         public BoundingBox GetBoundingBox() => VIL.GetBoundingBox();        
         public bool SpecialBlendMode => VIL.SpecialBlendMode;
-        public float PositionX { get => VIL.PositionX; set => VIL.PositionX = value; }
-        public float PositionY { get => VIL.PositionY; set => VIL.PositionY = value; }
-        public float PositionZ { get => VIL.PositionZ; set => VIL.PositionZ = value; }
-        public float Yaw { get => VIL.Yaw; set => VIL.Yaw = value; }
-        public float Pitch { get => VIL.Pitch; set => VIL.Pitch = value; }
-        public float Roll { get => VIL.Roll; set => VIL.Roll = value; }
-        public float ScaleX { get => VIL.ScaleX; set => VIL.ScaleX = value; }
-        public float ScaleY { get => VIL.ScaleY; set => VIL.ScaleY = value; }
-        public float ScaleZ { get => VIL.ScaleZ; set => VIL.ScaleZ = value; }
+        public AssetSingle PositionX { get => VIL.PositionX; set => VIL.PositionX = value; }
+        public AssetSingle PositionY { get => VIL.PositionY; set => VIL.PositionY = value; }
+        public AssetSingle PositionZ { get => VIL.PositionZ; set => VIL.PositionZ = value; }
+        public AssetSingle Yaw { get => VIL.Yaw; set => VIL.Yaw = value; }
+        public AssetSingle Pitch { get => VIL.Pitch; set => VIL.Pitch = value; }
+        public AssetSingle Roll { get => VIL.Roll; set => VIL.Roll = value; }
+        public AssetSingle ScaleX { get => VIL.ScaleX; set => VIL.ScaleX = value; }
+        public AssetSingle ScaleY { get => VIL.ScaleY; set => VIL.ScaleY = value; }
+        public AssetSingle ScaleZ { get => VIL.ScaleZ; set => VIL.ScaleZ = value; }
     }
 }

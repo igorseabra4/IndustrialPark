@@ -271,7 +271,7 @@ namespace IndustrialPark
             }
         }
 
-        public AssetPIPT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR)
+        public AssetPIPT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
 

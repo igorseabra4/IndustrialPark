@@ -2,12 +2,12 @@
 {
     public interface IRotatableAsset
     {
-        float Yaw { get; set; }
-        float Pitch { get; set; }
-        float Roll { get; set; }
+        AssetSingle Yaw { get; set; }
+        AssetSingle Pitch { get; set; }
+        AssetSingle Roll { get; set; }
 
-        float PositionX { get; }
-        float PositionY { get; }
-        float PositionZ { get; }
+        AssetSingle PositionX { get; }
+        AssetSingle PositionY { get; }
+        AssetSingle PositionZ { get; }
     }
 }

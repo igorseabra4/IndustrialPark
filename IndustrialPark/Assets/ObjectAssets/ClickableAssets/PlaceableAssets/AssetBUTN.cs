@@ -1,4 +1,6 @@
 ﻿using HipHopFile;
+using SharpDX;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -22,8 +24,8 @@ namespace IndustrialPark
         public int InitialButtonState { get; set; }
         [Category(categoryName)]
         public bool ResetAfterDelay { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float ResetDelay { get; set; }
+        [Category(categoryName)]
+        public AssetSingle ResetDelay { get; set; }
         [Category(categoryName)]
         public FlagBitmask HitMask { get; set; } = IntFlagsDescriptor(
                "Bubble Spin/Sliding",
@@ -45,17 +47,66 @@ namespace IndustrialPark
                "(Pressure Plate) Throw Fruit",
                "Patrick Cartwheel");
 
+        public AssetBUTN(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.BUTN, BaseAssetType.Button, position)
+        {
+            if (template == AssetTemplate.Button_Red)
+            {
+                Model_AssetID = "button";
+                PressedModel_AssetID = "button_grn";
+                HitMask.FlagValueInt =
+                    2 << 0 |
+                    2 << 3 |
+                    2 << 4 |
+                    2 << 6 |
+                    2 << 7 |
+                    2 << 14 |
+                    2 << 15;
+                Motion = new Motion_Mechanism()
+                {
+                    MovementType = EMovementType.SlideAndRotate,
+                    MovementLoopMode = EMechanismFlags.ReturnToStart,
+                    SlideAxis = Axis.Y,
+                    SlideDistance = -0.2f,
+                    SlideTime = 0.5f,
+                    SlideDecelTime = 0.2f
+                };
+                Motion.MotionFlags.FlagValueInt = 4;
+            }
+            else if (template == AssetTemplate.PressurePlate)
+            {
+                ActMethod = ButnActMethod.PressurePlate;
+                Model_AssetID = "plate_pressure";
+                PressedModel_AssetID = 0xCE7F8131;
+                HitMask.FlagValueInt =
+                    2 << 10 |
+                    2 << 12 |
+                    2 << 13 |
+                    2 << 16;
+                Motion = new Motion_Mechanism()
+                {
+                    MovementType = EMovementType.SlideAndRotate,
+                    MovementLoopMode = EMechanismFlags.ReturnToStart,
+                    SlideAxis = Axis.Y,
+                    SlideDistance = -0.15f,
+                    SlideTime = 0.15f,
+                };
+                Motion.MotionFlags.FlagValueInt = 4;
+            }
+            else
+                Motion = new Motion_Mechanism();
+        }
+
         public AssetBUTN(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = entityEndPosition;
+            reader.BaseStream.Position = entityHeaderEndPosition;
 
             if (game != Game.Scooby)
                 PressedModel_AssetID = reader.ReadUInt32();
             ActMethod = (ButnActMethod)reader.ReadInt32();
             InitialButtonState = reader.ReadInt32();
             ResetAfterDelay = reader.ReadInt32() != 0;
-            ResetDelay = reader.ReadInt32();
+            ResetDelay = reader.ReadSingle();
             HitMask.FlagValueInt = reader.ReadUInt32();
 
             Motion = new Motion_Mechanism(reader, game);
@@ -70,7 +121,7 @@ namespace IndustrialPark
                 writer.Write(PressedModel_AssetID);
             writer.Write((int)ActMethod);
             writer.Write(InitialButtonState);
-            writer.Write(ResetAfterDelay ? 1: 0);
+            writer.Write(ResetAfterDelay ? 1 : 0);
             writer.Write(ResetDelay);
             writer.Write(HitMask.FlagValueInt);
             writer.Write(Motion.Serialize(game, platform));

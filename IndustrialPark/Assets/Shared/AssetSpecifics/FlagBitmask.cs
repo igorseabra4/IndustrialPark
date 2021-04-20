@@ -4,36 +4,36 @@ using System.ComponentModel;
 
 public class FlagBitmask : DynamicTypeDescriptor
 {
-    public FlagBitmask() : base() { }
+    public FlagBitmask(FlagField ff) : base() { _flagField = ff; }
 
     public FlagBitmask(Type type) : base(type) { }
 
-    private FlagsField _flags_Field;
+    private FlagField _flagField;
     [Browsable(false)]
     public uint FlagValueInt
     {
-        get => _flags_Field.Flags;
-        set => _flags_Field.Flags = value;
+        get => _flagField.Flags;
+        set => _flagField.Flags = value;
     }
     [Browsable(false)]
     public ushort FlagValueShort
     {
-        get => (ushort)_flags_Field.Flags;
-        set => _flags_Field.Flags = value;
+        get => (ushort)_flagField.Flags;
+        set => _flagField.Flags = value;
     }
     [Browsable(false)]
     public byte FlagValueByte
     {
-        get => (byte)_flags_Field.Flags;
-        set => _flags_Field.Flags = value;
+        get => (byte)_flagField.Flags;
+        set => _flagField.Flags = value;
     }
 
     public override FlagBitmask DFD_FromComponent(object component)
     {
-        if (component is FlagsField ff)
-            _flags_Field = ff;
+        if (component is FlagField ff)
+            _flagField = ff;
         else throw new ArgumentException();
 
-        return base.DFD_FromComponent(component);
+        return base.DFD_FromComponent(ff);
     }
 }

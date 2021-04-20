@@ -22,11 +22,11 @@ namespace IndustrialPark
         [Category(vilpName)]
         public int Unknown_18 { get; set; }
         [Category(vilpName)]
-        public float Unknown_1C { get; set; }
+        public AssetSingle Unknown_1C { get; set; }
         [Category(vilpName)]
         public int Unknown_20 { get; set; }
 
-        public AssetVILP(Section_AHDR AHDR, Platform platform) : base(AHDR)
+        public AssetVILP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
 

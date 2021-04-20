@@ -16,19 +16,19 @@ namespace IndustrialPark
         public int UnknownInt10 { get; set; }
         [Category(catName)]
         public int UnknownInt14 { get; set; }
-        [Category(catName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat18 { get; set; }
+        [Category(catName)]
+        public AssetSingle UnknownFloat18 { get; set; }
         [Category(catName)]
         public int UnknownInt1C { get; set; }
-        [Category(catName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat20 { get; set; }
-        [Category(catName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat24 { get; set; }
+        [Category(catName)]
+        public AssetSingle UnknownFloat20 { get; set; }
+        [Category(catName)]
+        public AssetSingle UnknownFloat24 { get; set; }
 
         public AssetGUST(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = baseEndPosition;
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
             UnknownInt08 = reader.ReadInt32();
             Volume_AssetID = reader.ReadUInt32();

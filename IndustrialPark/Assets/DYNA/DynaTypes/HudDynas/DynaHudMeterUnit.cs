@@ -1,16 +1,104 @@
-﻿using System.Collections.Generic;
+﻿using HipHopFile;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
 {
     public class DynaHudMeterUnit : DynaHudMeter
     {
-        public override int StructSize => 0x84;
+        private const string dynaCategoryName = "hud:meter:unit";
 
-        public string Note => "Version is always 3";
+        protected override int constVersion => 3;
 
-        public DynaHudMeterUnit(AssetDYNA asset) : base(asset) { }
-        
+        [Category(dynaCategoryName)]
+        public AssetID EmptyModel_AssetID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle EmptyOffset_X { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle EmptyOffset_Y { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle EmptyOffset_Z { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle EmptyScale_X { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle EmptyScale_Y { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle EmptyScale_Z { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID FullModel_AssetID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle FullOffset_X { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle FullOffset_Y { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle FullOffset_Z { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle FullScale_X { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle FullScale_Y { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle FullScale_Z { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle Spacing_X { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle Spacing_Y { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle Spacing_Z { get; set; }
+        [Category(dynaCategoryName)]
+        public int MeterFillDirection { get; set; }
+
+        public DynaHudMeterUnit(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.hud__meter__unit, game, platform)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = dynaHudMeterEnd;
+
+            EmptyModel_AssetID = reader.ReadUInt32();
+            EmptyOffset_X = reader.ReadSingle();
+            EmptyOffset_Y = reader.ReadSingle();
+            EmptyOffset_Z = reader.ReadSingle();
+            EmptyScale_X = reader.ReadSingle();
+            EmptyScale_Y = reader.ReadSingle();
+            EmptyScale_Z = reader.ReadSingle();
+            FullModel_AssetID = reader.ReadUInt32();
+            FullOffset_X = reader.ReadSingle();
+            FullOffset_Y = reader.ReadSingle();
+            FullOffset_Z = reader.ReadSingle();
+            FullScale_X = reader.ReadSingle();
+            FullScale_Y = reader.ReadSingle();
+            FullScale_Z = reader.ReadSingle();
+            Spacing_X = reader.ReadSingle();
+            Spacing_Y = reader.ReadSingle();
+            Spacing_Z = reader.ReadSingle();
+            MeterFillDirection = reader.ReadInt32();
+        }
+
+        protected override byte[] SerializeDyna(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(SerializeDynaHudMeter(platform));
+            writer.Write(EmptyModel_AssetID);
+            writer.Write(EmptyOffset_X);
+            writer.Write(EmptyOffset_Y);
+            writer.Write(EmptyOffset_Z);
+            writer.Write(EmptyScale_X);
+            writer.Write(EmptyScale_Y);
+            writer.Write(EmptyScale_Z);
+            writer.Write(FullModel_AssetID);
+            writer.Write(FullOffset_X);
+            writer.Write(FullOffset_Y);
+            writer.Write(FullOffset_Z);
+            writer.Write(FullScale_X);
+            writer.Write(FullScale_Y);
+            writer.Write(FullScale_Z);
+            writer.Write(Spacing_X);
+            writer.Write(Spacing_Y);
+            writer.Write(Spacing_Z);
+            writer.Write(MeterFillDirection);
+
+            return writer.ToArray();
+        }
+
         public override bool HasReference(uint assetID)
         {
             if (EmptyModel_AssetID == assetID)
@@ -23,114 +111,8 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
-            Asset.Verify(EmptyModel_AssetID, ref result);
-            Asset.Verify(FullModel_AssetID, ref result);
-        }
-        
-        public AssetID EmptyModel_AssetID
-        {
-            get => ReadUInt(0x3C);
-            set => Write(0x3C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float EmptyOffset_X
-        {
-            get => ReadFloat(0x40);
-            set => Write(0x40, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float EmptyOffset_Y
-        {
-            get => ReadFloat(0x44);
-            set => Write(0x44, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float EmptyOffset_Z
-        {
-            get => ReadFloat(0x48);
-            set => Write(0x48, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float EmptyScale_X
-        {
-            get => ReadFloat(0x4C);
-            set => Write(0x4C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float EmptyScale_Y
-        {
-            get => ReadFloat(0x50);
-            set => Write(0x50, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float EmptyScale_Z
-        {
-            get => ReadFloat(0x54);
-            set => Write(0x54, value);
-        }
-        public AssetID FullModel_AssetID
-        {
-            get => ReadUInt(0x58);
-            set => Write(0x58, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float FullOffset_X
-        {
-            get => ReadFloat(0x5C);
-            set => Write(0x5C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float FullOffset_Y
-        {
-            get => ReadFloat(0x60);
-            set => Write(0x60, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float FullOffset_Z
-        {
-            get => ReadFloat(0x64);
-            set => Write(0x64, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float FullScale_X
-        {
-            get => ReadFloat(0x68);
-            set => Write(0x68, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float FullScale_Y
-        {
-            get => ReadFloat(0x6C);
-            set => Write(0x6C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float FullScale_Z
-        {
-            get => ReadFloat(0x70);
-            set => Write(0x70, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Spacing_X
-        {
-            get => ReadFloat(0x74);
-            set => Write(0x74, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Spacing_Y
-        {
-            get => ReadFloat(0x78);
-            set => Write(0x78, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Spacing_Z
-        {
-            get => ReadFloat(0x7C);
-            set => Write(0x7C, value);
-        }
-        public int MeterFillDirection
-        {
-            get => ReadInt(0x80);
-            set => Write(0x80, value);
+            Verify(EmptyModel_AssetID, ref result);
+            Verify(FullModel_AssetID, ref result);
         }
     }
 }

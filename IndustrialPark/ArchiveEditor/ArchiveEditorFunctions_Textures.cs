@@ -43,7 +43,7 @@ namespace IndustrialPark
             if (!Directory.Exists(tempPcTxdsDir))
                 Directory.CreateDirectory(tempPcTxdsDir);
 
-            ExportSingleTextureToDictionary(pathToGcTXD, RWTX.Data, RWTX.AHDR.ADBG.assetName);
+            ExportSingleTextureToDictionary(pathToGcTXD, RWTX.Data, RWTX.assetName);
 
             PerformTXDConversionExternal(platform);
 
@@ -61,22 +61,22 @@ namespace IndustrialPark
 
             int fileVersion = 0;
 
-            foreach (Section_AHDR AHDR in GetAHDRsOfType(AssetType.RWTX))
-                if ((RW3 == CheckState.Indeterminate) || ((RW3 == CheckState.Checked) && AHDR.ADBG.assetName.Contains(".RW3")) || ((RW3 == CheckState.Unchecked) && !AHDR.ADBG.assetName.Contains(".RW3")))
+            foreach (var asset in GetAllAssets().OfType<AssetRWTX>())
+                if ((RW3 == CheckState.Indeterminate) || ((RW3 == CheckState.Checked) && asset.assetName.Contains(".RW3")) || ((RW3 == CheckState.Unchecked) && !asset.assetName.Contains(".RW3")))
                     try
                     {
-                        foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(AHDR.data))
+                        foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(asset.Data))
                             if (rw is TextureDictionary_0016 td)
                                 foreach (TextureNative_0015 tn in td.textureNativeList)
                                 {
                                     fileVersion = tn.renderWareVersion;
-                                    tn.textureNativeStruct.textureName = AHDR.ADBG.assetName.Replace(".RW3", "");
+                                    tn.textureNativeStruct.textureName = asset.assetName.Replace(".RW3", "");
                                     textNativeList.Add(tn);
                                 }
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Unable to add RWTX asset {GetFromAssetID(AHDR.assetID).ToString()} to TXD archive: {ex.Message}");
+                        MessageBox.Show($"Unable to add RWTX asset {GetFromAssetID(asset.assetID)} to TXD archive: {ex.Message}");
                     }
 
             TextureDictionary_0016 rws = new TextureDictionary_0016()
@@ -334,16 +334,16 @@ namespace IndustrialPark
 
             ReadFileMethods.treatStuffAsByteArray = true;
 
-            foreach (var a in assetDictionary.Values)
-                if (a is AssetRWTX rwtx)
-                {
-                    rwtx.Data =
-                            ReadFileMethods.ExportRenderWareFile(
-                            ReadFileMethods.ReadRenderWareFile(
-                                dataDict[rwtx.AHDR.assetID].data),
-                            Models.BSP_IO_Shared.modelRenderWareVersion(game));
-                    rwtx.SetGamePlatform(game, platform);
-                }
+            foreach (var rwtx in assetDictionary.Values.OfType<AssetRWTX>())
+            {
+                rwtx.Data =
+                        ReadFileMethods.ExportRenderWareFile(
+                        ReadFileMethods.ReadRenderWareFile(
+                            dataDict[rwtx.assetID].data),
+                        Models.BSP_IO_Shared.modelRenderWareVersion(game));
+                rwtx.game = game;
+                rwtx.platform = platform;
+            }
 
             ReadFileMethods.treatStuffAsByteArray = false;
             return true;

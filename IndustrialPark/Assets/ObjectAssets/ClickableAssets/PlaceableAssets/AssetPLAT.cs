@@ -18,12 +18,12 @@ namespace IndustrialPark
             {
                 _platformType = value;
 
-                if ((int)value > 3)
+                if ((int)value > 3 || (int)value == 13)
                     TypeFlag = (byte)value;
                 else
                     TypeFlag = 0;
 
-                switch ((PlatType)TypeFlag)
+                switch ((PlatType)(byte)TypeFlag)
                 {
                     case PlatType.ConveyorBelt:
                         PlatSpecific = new PlatSpecific_ConveryorBelt();
@@ -92,19 +92,15 @@ namespace IndustrialPark
         public AssetPLAT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = entityEndPosition;
+            reader.BaseStream.Position = entityHeaderEndPosition;
 
             _platformType = (PlatType)reader.ReadByte();
-            if ((int)_platformType > 3)
-                TypeFlag = (byte)_platformType;
-            else
-                TypeFlag = 0;
-
+            
             reader.ReadByte();
 
             PlatFlags.FlagValueShort = reader.ReadUInt16();
 
-            switch ((PlatType)TypeFlag)
+            switch ((PlatType)(byte)TypeFlag)
             {
                 case PlatType.ConveyorBelt:
                     PlatSpecific = new PlatSpecific_ConveryorBelt(reader);
@@ -201,8 +197,8 @@ namespace IndustrialPark
 
         public override bool DontRender => dontRender;
 
-        [Category("Entity"), TypeConverter(typeof(FloatTypeConverter))]
-        public new float PositionX
+        [Category("Entity")]
+        public override AssetSingle PositionX
         {
             get => base.PositionX;
             set
@@ -213,8 +209,8 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Entity"), TypeConverter(typeof(FloatTypeConverter))]
-        public new float PositionY
+        [Category("Entity")]
+        public override AssetSingle PositionY
         {
             get => base.PositionY;
             set
@@ -225,8 +221,8 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Entity"), TypeConverter(typeof(FloatTypeConverter))]
-        public new float PositionZ
+        [Category("Entity")]
+        public override AssetSingle PositionZ
         {
             get => base.PositionZ;
             set
@@ -272,7 +268,7 @@ namespace IndustrialPark
             isSkyBox = false;
             skyBoxUseY = false;
             foreach (Link link in _links)
-                if ((EventBFBB)link.EventSendID == EventBFBB.SetasSkydome && link.TargetAssetID.Equals(AssetID))
+                if ((EventBFBB)link.EventSendID == EventBFBB.SetasSkydome && link.TargetAssetID.Equals(assetID))
                 {
                     isSkyBox = true;
                     if (link.FloatParameter2 == 1f)

@@ -1,9 +1,10 @@
 ﻿using HipHopFile;
+using SharpDX;
 using System.Collections.Generic;
 
 namespace IndustrialPark
 {
-    public class GenericAssetDataContainer
+    public abstract class GenericAssetDataContainer
     {
         public virtual byte[] Serialize(Game game, Platform platform) => new byte[0];
 
@@ -25,9 +26,29 @@ namespace IndustrialPark
 
         private static FlagBitmask FlagsDescriptor(int bitSize, params string[] flagNames)
         {
-            var dt = new DynamicTypeDescriptor(typeof(FlagsField));
-            var ff = new FlagsField(bitSize, flagNames, dt);
+            var dt = new FlagBitmask(typeof(FlagField));
+            var ff = new FlagField(bitSize, flagNames, dt);
             return dt.DFD_FromComponent(ff);
+        }
+
+        protected static float? TriangleIntersection(Ray r, IList<Models.Triangle> triangles, IList<Vector3> vertices, Matrix world)
+        {
+            float? smallestDistance = null;
+
+            foreach (var t in triangles)
+            {
+                var v1 = (Vector3)Vector3.Transform(vertices[t.vertex1], world);
+                var v2 = (Vector3)Vector3.Transform(vertices[t.vertex2], world);
+                var v3 = (Vector3)Vector3.Transform(vertices[t.vertex3], world);
+
+                if (r.Intersects(ref v1, ref v2, ref v3, out float distance))
+                {
+                    if (smallestDistance == null || distance < smallestDistance)
+                        smallestDistance = distance;
+                }
+            }
+
+            return smallestDistance;
         }
     }
 }

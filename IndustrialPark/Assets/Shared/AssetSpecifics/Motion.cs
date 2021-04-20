@@ -72,26 +72,16 @@ namespace IndustrialPark
 
     public class Motion_ExtendRetract : Motion
     {
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float RetractPositionX { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float RetractPositionY { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float RetractPositionZ { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float ExtendDeltaPositionX { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float ExtendDeltaPositionY { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float ExtendDeltaPositionZ { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float ExtendTime { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float ExtendWaitTime { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float RetractTime { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float RetractWaitTime { get; set; }
+        public AssetSingle RetractPositionX { get; set; }
+        public AssetSingle RetractPositionY { get; set; }
+        public AssetSingle RetractPositionZ { get; set; }
+        public AssetSingle ExtendDeltaPositionX { get; set; }
+        public AssetSingle ExtendDeltaPositionY { get; set; }
+        public AssetSingle ExtendDeltaPositionZ { get; set; }
+        public AssetSingle ExtendTime { get; set; }
+        public AssetSingle ExtendWaitTime { get; set; }
+        public AssetSingle RetractTime { get; set; }
+        public AssetSingle RetractWaitTime { get; set; }
 
         public Motion_ExtendRetract() : base(MotionType.ExtendRetract) { }
 
@@ -131,18 +121,12 @@ namespace IndustrialPark
 
     public class Motion_Orbit : Motion
     {
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float CenterX { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float CenterY { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float CenterZ { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Width { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Height { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Period { get; set; }
+        public AssetSingle CenterX { get; set; }
+        public AssetSingle CenterY { get; set; }
+        public AssetSingle CenterZ { get; set; }
+        public AssetSingle Width { get; set; }
+        public AssetSingle Height { get; set; }
+        public AssetSingle Period { get; set; }
 
         public Motion_Orbit() : base(MotionType.Orbit) { }
         public Motion_Orbit(EndianBinaryReader reader) : base(reader)
@@ -194,9 +178,7 @@ namespace IndustrialPark
     {
         public FlagBitmask MovePointFlags { get; set; } = IntFlagsDescriptor();
         public AssetID MVPT_AssetID { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-
-        public float Speed { get; set; }
+        public AssetSingle Speed { get; set; }
 
         public Motion_MovePoint(Vector3 initialPosition) : base(MotionType.MovePoint)
         {
@@ -331,26 +313,16 @@ namespace IndustrialPark
         public EMechanismFlags MovementLoopMode { get; set; }
         public Axis SlideAxis { get; set; }
         public Axis RotateAxis { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float SlideDistance { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float SlideTime { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float SlideAccelTime { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float SlideDecelTime { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float RotateDistance { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float RotateTime { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float RotateAccelTime { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float RotateDecelTime { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float RetractDelay { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float PostRetractDelay { get; set; }
+        public AssetSingle SlideDistance { get; set; }
+        public AssetSingle SlideTime { get; set; }
+        public AssetSingle SlideAccelTime { get; set; }
+        public AssetSingle SlideDecelTime { get; set; }
+        public AssetSingle RotateDistance { get; set; }
+        public AssetSingle RotateTime { get; set; }
+        public AssetSingle RotateAccelTime { get; set; }
+        public AssetSingle RotateDecelTime { get; set; }
+        public AssetSingle RetractDelay { get; set; }
+        public AssetSingle PostRetractDelay { get; set; }
 
         [Description("Movie only")]
         public byte ShrinkType { get; set; }
@@ -361,10 +333,10 @@ namespace IndustrialPark
         [Description("Movie only")]
         public byte Unknown4 { get; set; }
 
-        [TypeConverter(typeof(FloatTypeConverter)), Description("Movie only")]
-        public float ShrinkSize { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter)), Description("Movie only")]
-        public float ShrinkTime { get; set; }
+        [Description("Movie only")]
+        public AssetSingle ShrinkSize { get; set; }
+        [Description("Movie only")]
+        public AssetSingle ShrinkTime { get; set; }
 
         public Motion_Mechanism() : base(MotionType.Mechanism) { }
         public Motion_Mechanism(EndianBinaryReader reader, Game game) : base(reader) 
@@ -462,7 +434,7 @@ namespace IndustrialPark
 
             if (MovementType != EMovementType.Rotate)
             {
-                float translationMultiplier = 0;
+                AssetSingle translationMultiplier = 0;
 
                 if (((int)MovementLoopMode & 1) == 0)
                     switch (currentMovementAction)
@@ -547,7 +519,7 @@ namespace IndustrialPark
 
             if (MovementType > 0)
             {
-                float rotationMultiplier = 0;
+                AssetSingle rotationMultiplier = 0;
 
                 if (((int)MovementLoopMode & 1) == 0)
                     switch (currentMovementAction)
@@ -629,18 +601,12 @@ namespace IndustrialPark
 
     public class Motion_Pendulum : Motion
     {
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte PendulumFlags { get; set; }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Plane { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Length { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Range { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Period { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Phase { get; set; }
+        public AssetByte PendulumFlags { get; set; }
+        public AssetByte Plane { get; set; }
+        public AssetSingle Length { get; set; }
+        public AssetSingle Range { get; set; }
+        public AssetSingle Period { get; set; }
+        public AssetSingle Phase { get; set; }
 
         public Motion_Pendulum() : base(MotionType.Pendulum) { }
         public Motion_Pendulum(EndianBinaryReader reader) : base(reader)

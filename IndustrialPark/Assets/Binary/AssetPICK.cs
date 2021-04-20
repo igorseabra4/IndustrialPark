@@ -9,10 +9,8 @@ namespace IndustrialPark
     public class EntryPICK
     {
         public AssetID PickupHash { get; set; }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte PickupType { get; set; }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte PickupIndex { get; set; }
+        public AssetByte PickupType { get; set; }
+        public AssetByte PickupIndex { get; set; }
         [TypeConverter(typeof(HexUShortTypeConverter))]
         public ushort PickupFlags { get; set; }
         public uint Quantity { get; set; }
@@ -72,7 +70,7 @@ namespace IndustrialPark
             }
         }
 
-        public AssetPICK(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR)
+        public AssetPICK(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
 

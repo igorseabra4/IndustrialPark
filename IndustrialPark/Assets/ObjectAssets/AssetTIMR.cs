@@ -7,15 +7,15 @@ namespace IndustrialPark
     {
         private const string categoryName = "Timer";
 
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Time { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float RandomRange { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Time { get; set; }
+        [Category(categoryName)]
+        public AssetSingle RandomRange { get; set; }
 
         public AssetTIMR(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = baseEndPosition;
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
             Time = reader.ReadSingle();
 

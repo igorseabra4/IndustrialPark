@@ -1,68 +1,51 @@
 ﻿using AssetEditorColors;
+using HipHopFile;
 using System.ComponentModel;
-using System.Drawing.Design;
 
 namespace IndustrialPark
 {
-    public class DynaEffectScreenFade : DynaBase
+    public class DynaEffectScreenFade : AssetDYNA
     {
-        public string Note => "Version is always 1";
+        private const string dynaCategoryName = "effect:ScreenFade";
 
-        public override int StructSize => 0x10;
-
-        public DynaEffectScreenFade(AssetDYNA asset) : base(asset) { }
-                
-        private byte ColorR
-        {
-            get => ReadByte(0x00);
-            set => Write(0x00, value);
-        }
-        private byte ColorG
-        {
-            get => ReadByte(0x01);
-            set => Write(0x01, value);
-        }
-        private byte ColorB
-        {
-            get => ReadByte(0x02);
-            set => Write(0x02, value);
-        }
-
-        [Editor(typeof(MyColorEditor), typeof(UITypeEditor)), DisplayName("Color 1 (R, G, B)")]
-        public MyColor Color
-        {
-            get => new MyColor(ColorR, ColorG, ColorB, ColorAlpha);
-            set
-            {
-                ColorR = value.R;
-                ColorG = value.G;
-                ColorB = value.B;
-            }
-        }
-        [DisplayName("Color 1 Alpha (0 - 255)")]
+        protected override int constVersion => 1;
+        
+        [Category(dynaCategoryName), DisplayName("Color (R, G, B)")]
+        public AssetColor Color { get; set; }
+        [Category(dynaCategoryName), DisplayName("Color Alpha (0 - 255)")]
         public byte ColorAlpha
         {
-            get => ReadByte(0x03);
-            set => Write(0x03, value);
+            get => Color.A;
+            set => Color.A = value;
+        }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat1 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat2 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat3 { get; set; }
+
+        public DynaEffectScreenFade(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.effect__ScreenFade, game, platform)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = dynaDataStartPosition;
+
+            Color = new AssetColor(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
+            UnknownFloat1 = reader.ReadSingle();
+            UnknownFloat2 = reader.ReadSingle();
+            UnknownFloat3 = reader.ReadSingle();
         }
 
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat1
+        protected override byte[] SerializeDyna(Game game, Platform platform)
         {
-            get => ReadFloat(0x04);
-            set => Write(0x04, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat2
-        {
-            get => ReadFloat(0x08);
-            set => Write(0x08, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat3
-        {
-            get => ReadFloat(0x0C);
-            set => Write(0x0C, value);
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(Color);
+            writer.Write(UnknownFloat1);
+            writer.Write(UnknownFloat2);
+            writer.Write(UnknownFloat3);
+
+            return writer.ToArray();
         }
     }
 }

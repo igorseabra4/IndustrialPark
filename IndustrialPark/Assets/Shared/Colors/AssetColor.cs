@@ -4,16 +4,15 @@ using System.Drawing.Design;
 
 namespace AssetEditorColors
 {
-    [TypeConverter(typeof(MyColorConverter))]
-    [Editor(typeof(MyColorEditor), typeof(UITypeEditor))]
-    public class MyColor
+    [TypeConverter(typeof(AssetColorConverter)), Editor(typeof(AssetColorEditor), typeof(UITypeEditor))]
+    public class AssetColor
     {
         public byte R { get; set; }
         public byte G { get; set; }
         public byte B { get; set; }
         public byte A { get; set; }
         
-        public MyColor()
+        public AssetColor()
         {
             R = 0;
             G = 0;
@@ -21,7 +20,7 @@ namespace AssetEditorColors
             A = 0;
         }
 
-        public MyColor(byte r, byte g, byte b, byte a)
+        public AssetColor(byte r, byte g, byte b, byte a)
         {
             R = r;
             G = g;
@@ -29,7 +28,7 @@ namespace AssetEditorColors
             A = a;
         }
 
-        public MyColor(string value)
+        public AssetColor(string value)
         {
             R = Convert.ToByte(value.Substring(0, 2), 16);
             G = Convert.ToByte(value.Substring(2, 2), 16);
@@ -37,7 +36,7 @@ namespace AssetEditorColors
             A = Convert.ToByte(value.Substring(6, 2), 16);
         }
 
-        public MyColor(int ARGB)
+        public AssetColor(int ARGB)
         {
             byte[] argb = BitConverter.GetBytes(ARGB);
 

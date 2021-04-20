@@ -22,7 +22,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID TextAssetID { get; set; }
         [Category(categoryName), DisplayName("Background Color (R, G, B)")]
-        public MyColor BackgroundColor { get; set; }
+        public AssetColor BackgroundColor { get; set; }
         [Category(categoryName), DisplayName("Background Color Alpha (0 - 255)")]
         public byte BackgroundColorAlpha
         {
@@ -30,7 +30,7 @@ namespace IndustrialPark
             set => BackgroundColor.A = value;
         }
         [Category(categoryName), DisplayName("Font Color (R, G, B)")]
-        public MyColor FontColor { get; set; }
+        public AssetColor FontColor { get; set; }
         [Category(categoryName), DisplayName("Font Color Alpha (0 - 255)")]
         public byte FontColorAlpha
         {
@@ -65,8 +65,8 @@ namespace IndustrialPark
             UIFontMode = reader.ReadByte();
             FontID = (FontEnum)reader.ReadByte();
             TextAssetID = reader.ReadUInt32();
-            BackgroundColor = new MyColor(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte());            
-            FontColor = new MyColor(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
+            BackgroundColor = new AssetColor(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
+            FontColor = new AssetColor(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
         }
 
         public override byte[] Serialize(Game game, Platform platform)

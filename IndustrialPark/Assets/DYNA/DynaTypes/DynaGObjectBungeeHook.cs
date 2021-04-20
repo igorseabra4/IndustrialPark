@@ -1,204 +1,160 @@
-﻿using System.Collections.Generic;
+﻿using HipHopFile;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaGObjectBungeeHook : DynaBase
+    public class DynaGObjectBungeeHook : AssetDYNA
     {
-        public string Note => "Version is always 13";
+        private const string dynaCategoryName = "game_object:bungee_hook";
 
-        public override int StructSize => 0x7C;
+        protected override int constVersion => 13;
 
-        public DynaGObjectBungeeHook(AssetDYNA asset) : base(asset) { }
+        [Category(dynaCategoryName)]
+        public AssetID Placeable_AssetID { get; set; }
+        [Category(dynaCategoryName)]
+        public int EnterX { get; set; }
+        [Category(dynaCategoryName)]
+        public int EnterY { get; set; }
+        [Category(dynaCategoryName)]
+        public int EnterZ { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle AttachDist { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle AttachTravelTime { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle DetachDist { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle DetachFreeFallTime { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle DetachAccel { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle TurnUnused1 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle TurnUnused2 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle VerticalFrequency { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle VerticalGravity { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle VerticalDive { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle VerticalMinDist { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle VerticalMaxDist { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle VerticalDamp { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle HorizontalMaxDist { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle CameraRestDist { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle Cameraview_angle { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle CameraOffset { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle CameraOffsetDir { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle CameraTurnSpeed { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle CameraVelScale { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle CameraRollSpeed { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle CameraUnused1_X { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle CameraUnused1_Y { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle CameraUnused1_Z { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle CollisionHitLoss { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle CollisionDamageVelocity { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle CollisionHitVelocity { get; set; }
+
+        public DynaGObjectBungeeHook(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.game_object__bungee_hook, game, platform)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = dynaDataStartPosition;
+
+            Placeable_AssetID = reader.ReadUInt32();
+            EnterX = reader.ReadInt32();
+            EnterY = reader.ReadInt32();
+            EnterZ = reader.ReadInt32();
+            AttachDist = reader.ReadSingle();
+            AttachTravelTime = reader.ReadSingle();
+            DetachDist = reader.ReadSingle();
+            DetachFreeFallTime = reader.ReadSingle();
+            DetachAccel = reader.ReadSingle();
+            TurnUnused1 = reader.ReadSingle();
+            TurnUnused2 = reader.ReadSingle();
+            VerticalFrequency = reader.ReadSingle();
+            VerticalGravity = reader.ReadSingle();
+            VerticalDive = reader.ReadSingle();
+            VerticalMinDist = reader.ReadSingle();
+            VerticalMaxDist = reader.ReadSingle();
+            VerticalDamp = reader.ReadSingle();
+            HorizontalMaxDist = reader.ReadSingle();
+            CameraRestDist = reader.ReadSingle();
+            Cameraview_angle = reader.ReadSingle();
+            CameraOffset = reader.ReadSingle();
+            CameraOffsetDir = reader.ReadSingle();
+            CameraTurnSpeed = reader.ReadSingle();
+            CameraVelScale = reader.ReadSingle();
+            CameraRollSpeed = reader.ReadSingle();
+            CameraUnused1_X = reader.ReadSingle();
+            CameraUnused1_Y = reader.ReadSingle();
+            CameraUnused1_Z = reader.ReadSingle();
+            CollisionHitLoss = reader.ReadSingle();
+            CollisionDamageVelocity = reader.ReadSingle();
+            CollisionHitVelocity = reader.ReadSingle();
+        }
+
+        protected override byte[] SerializeDyna(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(Placeable_AssetID);
+            writer.Write(EnterX);
+            writer.Write(EnterY);
+            writer.Write(EnterZ);
+            writer.Write(AttachDist);
+            writer.Write(AttachTravelTime);
+            writer.Write(DetachDist);
+            writer.Write(DetachFreeFallTime);
+            writer.Write(DetachAccel);
+            writer.Write(TurnUnused1);
+            writer.Write(TurnUnused2);
+            writer.Write(VerticalFrequency);
+            writer.Write(VerticalGravity);
+            writer.Write(VerticalDive);
+            writer.Write(VerticalMinDist);
+            writer.Write(VerticalMaxDist);
+            writer.Write(VerticalDamp);
+            writer.Write(HorizontalMaxDist);
+            writer.Write(CameraRestDist);
+            writer.Write(Cameraview_angle);
+            writer.Write(CameraOffset);
+            writer.Write(CameraOffsetDir);
+            writer.Write(CameraTurnSpeed);
+            writer.Write(CameraVelScale);
+            writer.Write(CameraRollSpeed);
+            writer.Write(CameraUnused1_X);
+            writer.Write(CameraUnused1_Y);
+            writer.Write(CameraUnused1_Z);
+            writer.Write(CollisionHitLoss);
+            writer.Write(CollisionDamageVelocity);
+            writer.Write(CollisionHitVelocity);
+
+            return writer.ToArray();
+        }
 
         public override bool HasReference(uint assetID) => Placeable_AssetID == assetID || base.HasReference(assetID);
-        
+
         public override void Verify(ref List<string> result)
         {
-            Asset.Verify(Placeable_AssetID, ref result);
-        }
-
-        public AssetID Placeable_AssetID
-        {
-            get => ReadUInt(0x00);
-            set => Write(0x00, value);
-        }
-        public int EnterX
-        {
-            get => ReadInt(0x04);
-            set => Write(0x04, value);
-        }
-        public int EnterY
-        {
-            get => ReadInt(0x08);
-            set => Write(0x08, value);
-        }
-        public int EnterZ
-        {
-            get => ReadInt(0x0C);
-            set => Write(0x0C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float AttachDist
-        {
-            get => ReadFloat(0x10);
-            set => Write(0x10, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float AttachTravelTime
-        {
-            get => ReadFloat(0x14);
-            set => Write(0x14, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float DetachDist
-        {
-            get => ReadFloat(0x18);
-            set => Write(0x18, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float DetachFreeFallTime
-        {
-            get => ReadFloat(0x1C);
-            set => Write(0x1C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float DetachAccel
-        {
-            get => ReadFloat(0x20);
-            set => Write(0x20, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float TurnUnused1
-        {
-            get => ReadFloat(0x24);
-            set => Write(0x24, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float TurnUnused2
-        {
-            get => ReadFloat(0x28);
-            set => Write(0x28, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float VerticalFrequency
-        {
-            get => ReadFloat(0x2C);
-            set => Write(0x2C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float VerticalGravity
-        {
-            get => ReadFloat(0x30);
-            set => Write(0x30, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float VerticalDive
-        {
-            get => ReadFloat(0x34);
-            set => Write(0x34, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float VerticalMinDist
-        {
-            get => ReadFloat(0x38);
-            set => Write(0x38, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float VerticalMaxDist
-        {
-            get => ReadFloat(0x3C);
-            set => Write(0x3C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float VerticalDamp
-        {
-            get => ReadFloat(0x40);
-            set => Write(0x40, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float HorizontalMaxDist
-        {
-            get => ReadFloat(0x44);
-            set => Write(0x44, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float CameraRestDist
-        {
-            get => ReadFloat(0x48);
-            set => Write(0x48, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Cameraview_angle
-        {
-            get => ReadFloat(0x4C);
-            set => Write(0x4C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float CameraOffset
-        {
-            get => ReadFloat(0x50);
-            set => Write(0x50, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float CameraOffsetDir
-        {
-            get => ReadFloat(0x54);
-            set => Write(0x54, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float CameraTurnSpeed
-        {
-            get => ReadFloat(0x58);
-            set => Write(0x58, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float CameraVelScale
-        {
-            get => ReadFloat(0x5C);
-            set => Write(0x5C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float CameraRollSpeed
-        {
-            get => ReadFloat(0x60);
-            set => Write(0x60, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float CameraUnused1_X
-        {
-            get => ReadFloat(0x64);
-            set => Write(0x64, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float CameraUnused1_Y
-        {
-            get => ReadFloat(0x68);
-            set => Write(0x68, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float CameraUnused1_Z
-        {
-            get => ReadFloat(0x6C);
-            set => Write(0x6C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float CollisionHitLoss
-        {
-            get => ReadFloat(0x70);
-            set => Write(0x70, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float CollisionDamageVelocity
-        {
-            get => ReadFloat(0x74);
-            set => Write(0x74, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float CollisionHitVelocity
-        {
-            get => ReadFloat(0x78);
-            set => Write(0x78, value);
+            Verify(Placeable_AssetID, ref result);
         }
     }
 }

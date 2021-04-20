@@ -1,128 +1,125 @@
-﻿using SharpDX;
+﻿using HipHopFile;
+using SharpDX;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaEffectSpotlight : DynaBase
+    public class DynaEffectSpotlight : AssetDYNA
     {
-        public string Note => "Version is always 2";
+        private const string dynaCategoryName = "effect:spotlight";
 
-        public override int StructSize => 0x38;
+        protected override int constVersion => 2;
 
-        public DynaEffectSpotlight(AssetDYNA asset) : base(asset) { }
+        [Category(dynaCategoryName)]
+        public int UnknownInt_00 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Origin_Entity_AssetID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Target_Entity_AssetID { get; set; }
+        [Category(dynaCategoryName)]
+        public int UnknownInt_0C { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_10 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_14_Rad { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_14_Deg
+        {
+            get => MathUtil.RadiansToDegrees(UnknownFloat_14_Rad);
+            set => UnknownFloat_14_Rad = MathUtil.DegreesToRadians(value);
+        }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_18 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte UnknownByte_1C { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte UnknownByte_1D { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte UnknownByte_1E { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte UnknownByte_1F { get; set; }
+        [Category(dynaCategoryName)]
+        public int UnknownInt_20 { get; set; }
+        [Category(dynaCategoryName)]
+        public int UnknownInt_24 { get; set; }
+        [Category(dynaCategoryName)]
+        public int UnknownInt_28 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_2C { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_30 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte UnknownByte_34 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte UnknownByte_35 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte UnknownByte_36 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte UnknownByte_37 { get; set; }
 
-        public int UnknownInt_00
+        public DynaEffectSpotlight(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.effect__spotlight, game, platform)
         {
-            get => ReadInt(0x00);
-            set => Write(0x00, value);
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = dynaDataStartPosition;
+
+            UnknownInt_00 = reader.ReadInt32();
+            Origin_Entity_AssetID = reader.ReadUInt32();
+            Target_Entity_AssetID = reader.ReadUInt32();
+            UnknownInt_0C = reader.ReadInt32();
+            UnknownFloat_10 = reader.ReadSingle();
+            UnknownFloat_14_Rad = reader.ReadSingle();
+            UnknownFloat_18 = reader.ReadSingle();
+            UnknownByte_1C = reader.ReadByte();
+            UnknownByte_1D = reader.ReadByte();
+            UnknownByte_1E = reader.ReadByte();
+            UnknownByte_1F = reader.ReadByte();
+            UnknownInt_20 = reader.ReadInt32();
+            UnknownInt_24 = reader.ReadInt32();
+            UnknownInt_28 = reader.ReadInt32();
+            UnknownFloat_2C = reader.ReadSingle();
+            UnknownFloat_30 = reader.ReadSingle();
+            UnknownByte_34 = reader.ReadByte();
+            UnknownByte_35 = reader.ReadByte();
+            UnknownByte_36 = reader.ReadByte();
+            UnknownByte_37 = reader.ReadByte();
         }
-        public AssetID Origin_Entity_AssetID
+
+        protected override byte[] SerializeDyna(Game game, Platform platform)
         {
-            get => ReadUInt(0x04);
-            set => Write(0x04, value);
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(UnknownInt_00);
+            writer.Write(Origin_Entity_AssetID);
+            writer.Write(Target_Entity_AssetID);
+            writer.Write(UnknownInt_0C);
+            writer.Write(UnknownFloat_10);
+            writer.Write(UnknownFloat_14_Rad);
+            writer.Write(UnknownFloat_18);
+            writer.Write(UnknownByte_1C);
+            writer.Write(UnknownByte_1D);
+            writer.Write(UnknownByte_1E);
+            writer.Write(UnknownByte_1F);
+            writer.Write(UnknownInt_20);
+            writer.Write(UnknownInt_24);
+            writer.Write(UnknownInt_28);
+            writer.Write(UnknownFloat_2C);
+            writer.Write(UnknownFloat_30);
+            writer.Write(UnknownByte_34);
+            writer.Write(UnknownByte_35);
+            writer.Write(UnknownByte_36);
+            writer.Write(UnknownByte_37);
+
+            return writer.ToArray();
         }
-        public AssetID Target_Entity_AssetID
+
+        public override bool HasReference(uint assetID) =>
+            Origin_Entity_AssetID == assetID || Target_Entity_AssetID == assetID || base.HasReference(assetID);
+
+        public override void Verify(ref List<string> result)
         {
-            get => ReadUInt(0x08);
-            set => Write(0x08, value);
-        }
-        public int UnknownInt_0C
-        {
-            get => ReadInt(0x0C);
-            set => Write(0x0C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_10
-        {
-            get => ReadFloat(0x10);
-            set => Write(0x10, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_14
-        {
-            get => MathUtil.RadiansToDegrees(ReadFloat(0x14));
-            set => Write(0x14, MathUtil.DegreesToRadians(value));
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_18
-        {
-            get => ReadFloat(0x18);
-            set => Write(0x18, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte_1C 
-        {
-            get => ReadByte(0x1C);
-            set => Write(0x1C, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte_1D
-        {
-            get => ReadByte(0x1D);
-            set => Write(0x1D, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte_1E
-        {
-            get => ReadByte(0x1E);
-            set => Write(0x1E, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte_1F
-        {
-            get => ReadByte(0x1F);
-            set => Write(0x1F, value);
-        }
-        public int UnknownInt_20
-        {
-            get => ReadInt(0x20);
-            set => Write(0x20, value);
-        }
-        public int UnknownInt_24
-        {
-            get => ReadInt(0x24);
-            set => Write(0x24, value);
-        }
-        public int UnknownInt_28
-        {
-            get => ReadInt(0x28);
-            set => Write(0x28, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_2C
-        {
-            get => ReadFloat(0x2C);
-            set => Write(0x2C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_30
-        {
-            get => ReadFloat(0x30);
-            set => Write(0x30, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte_34
-        {
-            get => ReadByte(0x34);
-            set => Write(0x34, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte_35
-        {
-            get => ReadByte(0x35);
-            set => Write(0x35, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte_36
-        {
-            get => ReadByte(0x36);
-            set => Write(0x36, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte_37
-        {
-            get => ReadByte(0x37);
-            set => Write(0x37, value);
+            Verify(Origin_Entity_AssetID, ref result);
+            Verify(Target_Entity_AssetID, ref result);
         }
     }
 }

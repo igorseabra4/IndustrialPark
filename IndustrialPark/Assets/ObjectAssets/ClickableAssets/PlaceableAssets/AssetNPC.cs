@@ -9,22 +9,22 @@ namespace IndustrialPark
     {
         private const string categoryName = "NPC";
 
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat54 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat58 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat5C { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat60 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat64 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat68 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat6C { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat70 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat54 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat58 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat5C { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat60 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat64 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat68 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat6C { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat70 { get; set; }
         [Category(categoryName)]
         public short UnknownShort74 { get; set; }
         [Category(categoryName)]
@@ -49,32 +49,32 @@ namespace IndustrialPark
         public byte UnknownByte82 { get; set; }
         [Category(categoryName)]
         public byte UnknownByte83 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat84 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat88 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat8C { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat84 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat88 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat8C { get; set; }
         [Category(categoryName)]
         public int UnknownInt90 { get; set; }
         [Category(categoryName)]
         public int UnknownInt94 { get; set; }
         [Category(categoryName)]
         public int UnknownInt98 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat9C { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatA0 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatA4 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatA8 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatAC { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatB0 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloatB4 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloat9C { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloatA0 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloatA4 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloatA8 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloatAC { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloatB0 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle UnknownFloatB4 { get; set; }
         [Category(categoryName)]
         public AssetID MovePoint_AssetID { get; set; }
         [Category(categoryName)]
@@ -87,7 +87,7 @@ namespace IndustrialPark
         public AssetNPC(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = entityEndPosition;
+            reader.BaseStream.Position = entityHeaderEndPosition;
 
             UnknownFloat54 = reader.ReadSingle();
             UnknownFloat58 = reader.ReadSingle();

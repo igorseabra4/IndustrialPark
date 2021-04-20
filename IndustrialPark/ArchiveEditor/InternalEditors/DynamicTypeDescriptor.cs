@@ -563,7 +563,7 @@ public class DynamicTypeDescriptor : ICustomTypeDescriptor, INotifyPropertyChang
         if (!_type.IsAssignableFrom(component.GetType()))
             throw new ArgumentException(null, "component");
 
-        FlagBitmask desc = new FlagBitmask();
+        FlagBitmask desc = new FlagBitmask((IndustrialPark.FlagField)component);
         desc._type = _type;
         desc.Component = component;
 

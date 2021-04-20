@@ -1,64 +1,67 @@
-﻿using System.Collections.Generic;
+﻿using HipHopFile;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaInteractionLaunch : DynaBase
+    public class DynaInteractionLaunch : AssetDYNA
     {
-        public string Note => "Version is always 2";
+        private const string dynaCategoryName = "interaction:Launch";
 
-        public override int StructSize => 0x1C;
+        protected override int constVersion => 2;
 
-        public DynaInteractionLaunch(AssetDYNA asset) : base(asset) { }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_00 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID SIMP_AssetID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Marker_AssetID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_0C { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_10 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_14 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle UnknownFloat_18 { get; set; }
+
+        public DynaInteractionLaunch(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.interaction__Launch, game, platform)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = dynaDataStartPosition;
+
+            UnknownFloat_00 = reader.ReadSingle();
+            SIMP_AssetID = reader.ReadUInt32();
+            Marker_AssetID = reader.ReadUInt32();
+            UnknownFloat_0C = reader.ReadSingle();
+            UnknownFloat_10 = reader.ReadSingle();
+            UnknownFloat_14 = reader.ReadSingle();
+            UnknownFloat_18 = reader.ReadSingle();
+        }
+
+        protected override byte[] SerializeDyna(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(UnknownFloat_00);
+            writer.Write(SIMP_AssetID);
+            writer.Write(Marker_AssetID);
+            writer.Write(UnknownFloat_0C);
+            writer.Write(UnknownFloat_10);
+            writer.Write(UnknownFloat_14);
+            writer.Write(UnknownFloat_18);
+
+            return writer.ToArray();
+        }
 
         public override bool HasReference(uint assetID) =>
             SIMP_AssetID == assetID || Marker_AssetID == assetID || base.HasReference(assetID);
-        
+
         public override void Verify(ref List<string> result)
         {
-            Asset.Verify(SIMP_AssetID, ref result);
-            Asset.Verify(Marker_AssetID, ref result);
+            Verify(SIMP_AssetID, ref result);
+            Verify(Marker_AssetID, ref result);
         }
 
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_00
-        {
-            get => ReadFloat(0x00);
-            set => Write(0x00, value);
-        }
-        public AssetID SIMP_AssetID
-        {
-            get => ReadUInt(0x04);
-            set => Write(0x04, value);
-        }
-        public AssetID Marker_AssetID
-        {
-            get => ReadUInt(0x08);
-            set => Write(0x08, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_0C
-        {
-            get => ReadFloat(0x0C);
-            set => Write(0x0C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_10
-        {
-            get => ReadFloat(0x10);
-            set => Write(0x10, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_14
-        {
-            get => ReadFloat(0x14);
-            set => Write(0x14, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_18
-        {
-            get => ReadFloat(0x18);
-            set => Write(0x18, value);
-        }
     }
 }

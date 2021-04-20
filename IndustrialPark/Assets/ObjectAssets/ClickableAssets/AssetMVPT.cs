@@ -10,20 +10,20 @@ namespace IndustrialPark
         private const string categoryName = "Move Point";
 
         private Vector3 _position;
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionX
+        [Category(categoryName)]
+        public AssetSingle PositionX
         {
             get => _position.X;
             set { _position.X = value; CreateTransformMatrix(); }
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionY
+        [Category(categoryName)]
+        public AssetSingle PositionY
         {
             get => _position.Y;
             set { _position.Y = value; CreateTransformMatrix(); }
         }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionZ
+        [Category(categoryName)]
+        public AssetSingle PositionZ
         {
             get => _position.Z;
             set { _position.Z = value; CreateTransformMatrix(); }
@@ -31,27 +31,27 @@ namespace IndustrialPark
 
         [Category(categoryName), TypeConverter(typeof(HexUShortTypeConverter)), Description("Usually 0x2710")]
         public ushort Wt { get; set; }
-        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter)), Description("0x00 for arena (can see you), 0x01 for zone")]
-        public byte IsZone { get; set; }
-        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter)), Description("Usually 0x00")]
-        public byte BezIndex { get; set; }
-        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flg_Props { get; set; }
+        [Category(categoryName), Description("0x00 for arena (can see you), 0x01 for zone")]
+        public AssetByte IsZone { get; set; }
+        [Category(categoryName), Description("Usually 0x00")]
+        public AssetByte BezIndex { get; set; }
+        [Category(categoryName)]
+        public AssetByte Flg_Props { get; set; }
 
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter)), Description("Movement Angle - Enemy will rotate around the point this amount, -1 means disabled")]
-        public float Delay { get; set; }
+        [Category(categoryName), Description("Movement Angle - Enemy will rotate around the point this amount, -1 means disabled")]
+        public AssetSingle Delay { get; set; }
 
         private float _zoneRadius;
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter)), Description("Enemy will circle around the point in this distance, -1 means disabled")]
-        public float ZoneRadius
+        [Category(categoryName), Description("Enemy will circle around the point in this distance, -1 means disabled")]
+        public AssetSingle ZoneRadius
         {
             get => _zoneRadius;
             set { _zoneRadius = value; CreateTransformMatrix(); }
         }
 
         private float _arenaRadius;
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter)), Description("Enemy will be able to see you from this radius (as in a sphere trigger), -1 means disabled")]
-        public float ArenaRadius
+        [Category(categoryName), Description("Enemy will be able to see you from this radius (as in a sphere trigger), -1 means disabled")]
+        public AssetSingle ArenaRadius
         {
             get => _arenaRadius;
             set { _arenaRadius = value; CreateTransformMatrix(); }
@@ -63,7 +63,7 @@ namespace IndustrialPark
         public AssetMVPT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = baseEndPosition;
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
             _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
             Wt = reader.ReadUInt16();
@@ -171,15 +171,13 @@ namespace IndustrialPark
 
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
-            if (!ShouldDraw(renderer))
-                return null;
-
-            if (ray.Intersects(ref boundingSphere))
-            {
-                if (IsZone == 1 || _arenaRadius == -1f)
-                    return TriangleIntersection(ray, SharpRenderer.pyramidTriangles, SharpRenderer.pyramidVertices, world);
-                return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices, world);
-            }
+            if (ShouldDraw(renderer))
+                if (ray.Intersects(ref boundingSphere))
+                {
+                    if (IsZone == 1 || _arenaRadius == -1f)
+                        return TriangleIntersection(ray, SharpRenderer.pyramidTriangles, SharpRenderer.pyramidVertices, world);
+                    return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices, world);
+                }
             return null;
         }
 
@@ -225,19 +223,19 @@ namespace IndustrialPark
         }
 
         [Browsable(false)]
-        public float ScaleX
+        public AssetSingle ScaleX
         {
             get => GetScale();
             set => SetScale(value);
         }
         [Browsable(false)]
-        public float ScaleY
+        public AssetSingle ScaleY
         {
             get => GetScale();
             set => SetScale(value);
         }
         [Browsable(false)]
-        public float ScaleZ
+        public AssetSingle ScaleZ
         {
             get => GetScale();
             set => SetScale(value);

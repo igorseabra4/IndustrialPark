@@ -1,14 +1,29 @@
-﻿using System.Collections.Generic;
+﻿using HipHopFile;
+using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaGObjectFlythrough : DynaBase
+    public class DynaGObjectFlythrough : AssetDYNA
     {
-        public string Note => "Version is always 1";
+        protected override int constVersion => 1;
 
-        public override int StructSize => 0x4;
+        [Category("game_object:Flythrough")]
+        public AssetID FLY_ID { get; set; }
 
-        public DynaGObjectFlythrough(AssetDYNA asset) : base(asset) { }
+        public DynaGObjectFlythrough(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.game_object__Flythrough, game, platform)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = dynaDataStartPosition;
+            FLY_ID = reader.ReadUInt32();
+        }
+
+        protected override byte[] SerializeDyna(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write(FLY_ID);
+            return writer.ToArray();
+        }
 
         public override bool HasReference(uint assetID) => FLY_ID == assetID || base.HasReference(assetID);
         
@@ -16,13 +31,7 @@ namespace IndustrialPark
         {
             if (FLY_ID == 0)
                 result.Add("Flythrough with no FLY reference");
-            Asset.Verify(FLY_ID, ref result);
-        }
-        
-        public AssetID FLY_ID
-        {
-            get => ReadUInt(0x00);
-            set => Write(0x00, value);
+            Verify(FLY_ID, ref result);
         }
     }
 }

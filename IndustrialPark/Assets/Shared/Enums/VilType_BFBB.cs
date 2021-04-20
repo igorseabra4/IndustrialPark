@@ -1,6 +1,6 @@
 ﻿namespace IndustrialPark
 {
-    public enum VilType : uint
+    public enum VilType_BFBB : uint
     {
         barnacle_boy_bind = 0xE8A70701,
         boss_patrick_bind = 0xCF3BCEA4,

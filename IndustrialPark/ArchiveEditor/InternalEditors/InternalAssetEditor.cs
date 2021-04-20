@@ -26,22 +26,22 @@ namespace IndustrialPark
             asset.SetDynamicProperties(dt);
             propertyGridAsset.SelectedObject = dt.FromComponent(asset);
             
-            Text = $"[{asset.AHDR.assetType}] {asset}";
+            Text = $"[{asset.assetType}] {asset}";
 
             propertyGridAsset.HelpVisible = !hideHelp;
 
             if (asset is AssetCAM cam) SetupForCam(cam);
-            else if (asset is AssetCSN csn) SetupForCsn(csn);
+            //else if (asset is AssetCSN csn) SetupForCsn(csn);
             else if (asset is AssetGRUP grup) SetupForGrup(grup);
             else if (asset is AssetRenderWareModel arwm) SetupForModel(arwm);
-            else if (asset is AssetSHRP shrp) SetupForShrp(shrp);
+            //else if (asset is AssetSHRP shrp) SetupForShrp(shrp);
             else if (asset is AssetWIRE wire) SetupForWire(wire);
 
             AddRow();
 
             Button buttonHelp = new Button() { Dock = DockStyle.Fill, Text = "Open Wiki Page", AutoSize = true };
             buttonHelp.Click += (object sender, EventArgs e) =>
-                System.Diagnostics.Process.Start(AboutBox.WikiLink + asset.AHDR.assetType.ToString());
+                System.Diagnostics.Process.Start(AboutBox.WikiLink + asset.assetType.ToString());
             tableLayoutPanel1.Controls.Add(buttonHelp, 0, tableLayoutPanel1.RowCount - 1);
 
             Button buttonFindCallers = new Button() { Dock = DockStyle.Fill, Text = "Find Who Targets Me", AutoSize = true };
@@ -68,7 +68,7 @@ namespace IndustrialPark
 
         public uint GetAssetID()
         {
-            return asset.AHDR.assetID;
+            return asset.assetID;
         }
         
         public void RefreshPropertyGrid()
@@ -141,24 +141,24 @@ namespace IndustrialPark
             tableLayoutPanel1.SetColumnSpan(buttonAddSelected, 2);
         }
 
-        private void SetupForCsn(AssetCSN asset)
-        {
-            AddRow();
+        //private void SetupForCsn(AssetCSN asset)
+        //{
+        //    AddRow();
 
-            Button buttonExportModlsAnims = new Button() { Dock = DockStyle.Fill, Text = "Export All MODL/ANIM", AutoSize = true };
-            buttonExportModlsAnims.Click += (object sender, EventArgs e) =>
-            {
-                CommonOpenFileDialog saveFile = new CommonOpenFileDialog()
-                {
-                    IsFolderPicker = true,
-                };
+        //    Button buttonExportModlsAnims = new Button() { Dock = DockStyle.Fill, Text = "Export All MODL/ANIM", AutoSize = true };
+        //    buttonExportModlsAnims.Click += (object sender, EventArgs e) =>
+        //    {
+        //        CommonOpenFileDialog saveFile = new CommonOpenFileDialog()
+        //        {
+        //            IsFolderPicker = true,
+        //        };
 
-                if (saveFile.ShowDialog() == CommonFileDialogResult.Ok)
-                    asset.ExtractToFolder(saveFile.FileName);
-            };
-            tableLayoutPanel1.Controls.Add(buttonExportModlsAnims);
-            tableLayoutPanel1.SetColumnSpan(buttonExportModlsAnims, 2);
-        }
+        //        if (saveFile.ShowDialog() == CommonFileDialogResult.Ok)
+        //            asset.ExtractToFolder(saveFile.FileName);
+        //    };
+        //    tableLayoutPanel1.Controls.Add(buttonExportModlsAnims);
+        //    tableLayoutPanel1.SetColumnSpan(buttonExportModlsAnims, 2);
+        //}
 
         private void SetupForModel(AssetRenderWareModel asset)
         {
@@ -197,12 +197,12 @@ namespace IndustrialPark
 
                 if (openFile.ShowDialog() == DialogResult.OK)
                 {
-                    if (asset.AHDR.assetType == HipHopFile.AssetType.MODL)
+                    if (asset.assetType == HipHopFile.AssetType.MODL)
                         asset.Data = Path.GetExtension(openFile.FileName).ToLower().Equals(".dff") ?
                         File.ReadAllBytes(openFile.FileName) :
                         ReadFileMethods.ExportRenderWareFile(CreateDFFFromAssimp(openFile.FileName, flipUVs.Checked, ignoreMeshColors.Checked), modelRenderWareVersion(asset.game));
 
-                    if (asset.AHDR.assetType == HipHopFile.AssetType.BSP)
+                    if (asset.assetType == HipHopFile.AssetType.BSP)
                         asset.Data = Path.GetExtension(openFile.FileName).ToLower().Equals(".bsp") ?
                         File.ReadAllBytes(openFile.FileName) :
                         ReadFileMethods.ExportRenderWareFile(CreateBSPFromAssimp(openFile.FileName, flipUVs.Checked, ignoreMeshColors.Checked), modelRenderWareVersion(asset.game));
@@ -233,7 +233,7 @@ namespace IndustrialPark
                     {
                         if (format == null)
                             File.WriteAllBytes(a.FileName, asset.Data);
-                        else if (format.FileExtension.ToLower().Equals("obj") && asset.AHDR.assetType == HipHopFile.AssetType.BSP)
+                        else if (format.FileExtension.ToLower().Equals("obj") && asset.assetType == HipHopFile.AssetType.BSP)
                             ConvertBSPtoOBJ(a.FileName, ReadFileMethods.ReadRenderWareFile(asset.Data), true);
                         else
                             ExportAssimp(Path.ChangeExtension(a.FileName, format.FileExtension), ReadFileMethods.ReadRenderWareFile(asset.Data), true, format, textureExtension, Matrix.Identity);
@@ -253,24 +253,24 @@ namespace IndustrialPark
             tableLayoutPanel1.Controls.Add(buttonExport, 1, 4);
         }
 
-        private void SetupForShrp(AssetSHRP asset)
-        {
-            AddRow();
-            AddRow();
-            AddRow();
+        //private void SetupForShrp(AssetSHRP asset)
+        //{
+        //    AddRow();
+        //    AddRow();
+        //    AddRow();
 
-            foreach (var i in new int[] { 3, 4, 5, 6, 8, 9 })
-            {
-                Button buttonAdd = new Button() { Dock = DockStyle.Fill, Text = $"Add Type {i}", AutoSize = true };
-                buttonAdd.Click += (object sender, EventArgs e) =>
-                {
-                    asset.AddEntry(i);
-                    propertyGridAsset.Refresh();
-                    archive.UnsavedChanges = true;
-                };
-                tableLayoutPanel1.Controls.Add(buttonAdd);
-            }
-        }
+        //    foreach (var i in new int[] { 3, 4, 5, 6, 8, 9 })
+        //    {
+        //        Button buttonAdd = new Button() { Dock = DockStyle.Fill, Text = $"Add Type {i}", AutoSize = true };
+        //        buttonAdd.Click += (object sender, EventArgs e) =>
+        //        {
+        //            asset.AddEntry(i);
+        //            propertyGridAsset.Refresh();
+        //            archive.UnsavedChanges = true;
+        //        };
+        //        tableLayoutPanel1.Controls.Add(buttonAdd);
+        //    }
+        //}
 
         private void SetupForWire(AssetWIRE asset)
         {

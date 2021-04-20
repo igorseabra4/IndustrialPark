@@ -9,12 +9,10 @@ namespace IndustrialPark
 {
     public abstract class BaseAsset : Asset
     {
-        private const string categoryName = "Base Asset";
-
-        public Game game;
+        private const string categoryName = "Base";
 
         [Category(categoryName)]
-        public ObjectAssetType AssetType { get; set; }
+        public BaseAssetType BaseAssetType { get; set; }
 
         [Category(categoryName)]
         public FlagBitmask BaseFlags { get; set; } = ShortFlagsDescriptor(
@@ -31,7 +29,7 @@ namespace IndustrialPark
             get
             {
                 LinkListEditor.IsTimed = false;
-                LinkListEditor.thisAssetID = AssetID;
+                LinkListEditor.thisAssetID = assetID;
                 LinkListEditor.game = game;
 
                 return _links;
@@ -42,26 +40,30 @@ namespace IndustrialPark
             }
         }
 
-        protected int baseEndPosition => 0x8;
-        protected int linkStartPosition(long streamLength, int linkCount) => (int)(streamLength - linkCount * Link.sizeOfStruct);
+        protected int baseHeaderEndPosition => 8;
 
-        public BaseAsset(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR)
+        protected int linkStartPosition(long streamLength, int linkCount) =>
+            (int)(streamLength - linkCount * Link.sizeOfStruct - (this is AssetPLYR ? 4 : 0));
+
+        public BaseAsset(string assetName, AssetType assetType, BaseAssetType baseAssetType) : base(assetName, assetType)
         {
-            this.game = game;
+            BaseAssetType = baseAssetType;
+            BaseFlags.FlagValueShort = 0x1D;
+            _links = new Link[0];
+        }
 
+        public BaseAsset(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        {
             var reader = new EndianBinaryReader(AHDR.data, platform);
             reader.BaseStream.Position = 0x4;
 
-            AssetType = (ObjectAssetType)reader.ReadByte();
+            BaseAssetType = (BaseAssetType)reader.ReadByte();
             byte LinkCount = reader.ReadByte();
 
             BaseFlags.FlagValueShort = reader.ReadUInt16();
 
             reader.BaseStream.Position = linkStartPosition(reader.BaseStream.Length, LinkCount);
-
-            if (this is AssetPLYR)
-                reader.BaseStream.Position -= 4;
-            
+                        
             _links = new Link[LinkCount];
             for (int i = 0; i < _links.Length; i++)
                 _links[i] = new Link(reader, false, game);
@@ -70,19 +72,19 @@ namespace IndustrialPark
         // meant for use with DUPC VIL only
         protected BaseAsset(EndianBinaryReader reader)
         {
-            AssetID = reader.ReadUInt32();
-            AssetType = (ObjectAssetType)reader.ReadByte();
+            assetID = reader.ReadUInt32();
+            BaseAssetType = (BaseAssetType)reader.ReadByte();
             reader.ReadByte();
             BaseFlags.FlagValueShort = reader.ReadUInt16();
             _links = new Link[0];
         }
 
-        public byte[] SerializeBase(Platform platform)
+        protected byte[] SerializeBase(Platform platform)
         {
             var writer = new EndianBinaryWriter(platform);
 
-            writer.Write(AssetID);
-            writer.Write((byte)AssetType);
+            writer.Write(assetID);
+            writer.Write((byte)BaseAssetType);
             writer.Write((byte)_links.Length);
             writer.Write(BaseFlags.FlagValueShort);
 

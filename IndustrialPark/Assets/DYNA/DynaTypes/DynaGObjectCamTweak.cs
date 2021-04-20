@@ -1,37 +1,44 @@
-﻿using System.ComponentModel;
+﻿using HipHopFile;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaGObjectCamTweak : DynaBase
+    public class DynaGObjectCamTweak : AssetDYNA
     {
-        public string Note => "Version is always 1";
+        private const string dynaCategoryName = "game_object:Camera_Tweak";
 
-        public override int StructSize => 0x10;
+        protected override int constVersion => 1;
 
-        public DynaGObjectCamTweak(AssetDYNA asset) : base(asset) { }
-        
-        public int Priority
+        [Category(dynaCategoryName)]
+        public int Priority { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle Time { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle PitchAdjust { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle DistAdjust { get; set; }
+
+        public DynaGObjectCamTweak(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.game_object__Camera_Tweak, game, platform)
         {
-            get => ReadInt(0x00);
-            set => Write(0x00, value);
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = dynaDataStartPosition;
+
+            Priority = reader.ReadInt32();
+            Time = reader.ReadSingle();
+            PitchAdjust = reader.ReadSingle();
+            DistAdjust = reader.ReadSingle();
         }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Time
+
+        protected override byte[] SerializeDyna(Game game, Platform platform)
         {
-            get => ReadFloat(0x04);
-            set => Write(0x04, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float PitchAdjust
-        {
-            get => ReadFloat(0x08);
-            set => Write(0x08, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float DistAdjust
-        {
-            get => ReadFloat(0x0C);
-            set => Write(0x0C, value);
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(Priority);
+            writer.Write(Time);
+            writer.Write(PitchAdjust);
+            writer.Write(DistAdjust);
+
+            return writer.ToArray();
         }
     }
 }

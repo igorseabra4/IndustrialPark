@@ -16,6 +16,7 @@ namespace IndustrialPark
         public Vector3 CameraPosition { get; set; }
         public Vector3 Unknown { get; set; }
 
+        public EntryFLY() { }
         public EntryFLY(BinaryReader binaryReader)
         {
             FrameNumer = binaryReader.ReadInt32();
@@ -61,7 +62,7 @@ namespace IndustrialPark
         [Category("Flythrough")]
         public EntryFLY[] FLY_Entries { get; set; }
 
-        public AssetFLY(Section_AHDR AHDR) : base(AHDR)
+        public AssetFLY(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             List<EntryFLY> entries = new List<EntryFLY>();
 

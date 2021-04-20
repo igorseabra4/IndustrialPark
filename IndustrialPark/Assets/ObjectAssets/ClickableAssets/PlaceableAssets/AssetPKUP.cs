@@ -18,8 +18,8 @@ namespace IndustrialPark
     {
         private const string categoryName = "Pickup";
 
-        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Shape { get => TypeFlag; set => TypeFlag = value; }
+        [Category(categoryName)]
+        public AssetByte Shape { get => TypeFlag; set => TypeFlag = value; }
 
         [Category(categoryName)]
         public AssetID PickReferenceID { get; set; }
@@ -30,10 +30,18 @@ namespace IndustrialPark
         [Category(categoryName)]
         public short PickupValue { get; set; }
 
+        public AssetPKUP(string assetName, Vector3 position) : base(assetName, AssetType.PKUP, BaseAssetType.Pickup, position)
+        {
+            if (game == Game.BFBB)
+                Model_AssetID = pkupsMinfName;
+            else if (game == Game.Incredibles)
+                Model_AssetID = 0x94E25463;
+        }
+
         public AssetPKUP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = entityEndPosition;
+            reader.BaseStream.Position = entityHeaderEndPosition;
 
             PickReferenceID = reader.ReadUInt32();
             PickupFlags = (EPickupFlags)reader.ReadUInt16();
@@ -43,7 +51,7 @@ namespace IndustrialPark
         public override byte[] Serialize(Game game, Platform platform)
         {
             var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeBase(platform));
+            writer.Write(SerializeEntity(game, platform));
 
             writer.Write(PickReferenceID);
             writer.Write((ushort)PickupFlags);
@@ -69,42 +77,31 @@ namespace IndustrialPark
 
         protected override void CreateBoundingBox()
         {
-            if (AssetPICK.pickEntries.ContainsKey(PickReferenceID) &&
-                renderingDictionary.ContainsKey(AssetPICK.pickEntries[PickReferenceID]) &&
-                renderingDictionary[AssetPICK.pickEntries[PickReferenceID]].HasRenderWareModelFile() &&
-                renderingDictionary[AssetPICK.pickEntries[PickReferenceID]].GetRenderWareModelFile() != null)
+            if (AssetPICK.pickEntries.ContainsKey(PickReferenceID))
             {
-                List<Vector3> vertexList = renderingDictionary[AssetPICK.pickEntries[PickReferenceID]].GetRenderWareModelFile().vertexListG;
-
-                vertices = new Vector3[vertexList.Count];
-                for (int i = 0; i < vertexList.Count; i++)
-                    vertices[i] = (Vector3)Vector3.Transform(vertexList[i], world);
-                boundingBox = BoundingBox.FromPoints(vertices);
-
-                if (renderingDictionary.ContainsKey(AssetPICK.pickEntries[PickReferenceID]))
+                var model = GetFromRenderingDictionary(AssetPICK.pickEntries[PickReferenceID]);
+                if (model != null)
                 {
-                    if (renderingDictionary[AssetPICK.pickEntries[PickReferenceID]] is AssetMINF MINF)
-                    {
-                        if (MINF.HasRenderWareModelFile())
-                            triangles = renderingDictionary[AssetPICK.pickEntries[PickReferenceID]].GetRenderWareModelFile().triangleList.ToArray();
-                        else
-                            triangles = null;
-                    }
-                    else
-                        triangles = renderingDictionary[AssetPICK.pickEntries[PickReferenceID]].GetRenderWareModelFile().triangleList.ToArray();
+                    var vertexList = model.vertexListG;
+
+                    vertices = new Vector3[vertexList.Count];
+                    for (int i = 0; i < vertexList.Count; i++)
+                        vertices[i] = (Vector3)Vector3.Transform(vertexList[i], world);
+                    boundingBox = BoundingBox.FromPoints(vertices);
+
+                    triangles = model.triangleList.ToArray();
+                    return;
                 }
-                else
-                    triangles = null;
             }
-            else
-            {
-                vertices = new Vector3[SharpRenderer.cubeVertices.Count];
-                for (int i = 0; i < SharpRenderer.cubeVertices.Count; i++)
-                    vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.cubeVertices[i] * 0.5f, world);
-                boundingBox = BoundingBox.FromPoints(vertices);
-            }
+
+            vertices = new Vector3[SharpRenderer.cubeVertices.Count];
+            for (int i = 0; i < SharpRenderer.cubeVertices.Count; i++)
+                vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.cubeVertices[i] * 0.5f, world);
+            boundingBox = BoundingBox.FromPoints(vertices);
+
+            triangles = null;
         }
-        
+
         public override void Draw(SharpRenderer renderer)
         {
             if (AssetPICK.pickEntries.ContainsKey(PickReferenceID))

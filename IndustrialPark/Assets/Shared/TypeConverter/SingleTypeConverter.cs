@@ -4,7 +4,7 @@ using System.Globalization;
 
 namespace IndustrialPark
 {
-    public class FloatTypeConverter : TypeConverter
+    public class SingleTypeConverter : TypeConverter
     {
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
@@ -21,13 +21,13 @@ namespace IndustrialPark
 
         public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
         {
-            return destinationType == typeof(float);
+            return destinationType == typeof(float) || destinationType == typeof(AssetSingle);
         }
 
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
             if (destinationType == typeof(string))
-                return string.Format("{0:0.000000}", (float)value);
+                return string.Format("{0:0.000000}", (float)(AssetSingle)value);
 
             return base.ConvertTo(context, culture, value, destinationType);
         }

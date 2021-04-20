@@ -7,8 +7,8 @@ namespace IndustrialPark
     public class EntrySGRP
     {
         public AssetID Sound_AssetID { get; set; }
-        [TypeConverter(typeof(FloatTypeConverter)), DisplayName("Volume (0-1)")]
-        public float Volume { get; set; }
+        [DisplayName("Volume (0-1)")]
+        public AssetSingle Volume { get; set; }
         public int UnknownInt08 { get; set; }
         public int UnknownInt0C { get; set; }
 
@@ -45,24 +45,24 @@ namespace IndustrialPark
 
         [Category(categoryName)]
         public int UnknownInt08 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte0D { get; set; }
-        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte0E { get; set; }
-        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte0F { get; set; }
-        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte10 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte PlayGlobally { get; set; }
-        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte ChooseRandomEntry { get; set; }
-        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte13 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float InnerRadius { get; set; }
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float OuterRadius { get; set; }
+        [Category(categoryName)]
+        public AssetByte UnknownByte0D { get; set; }
+        [Category(categoryName)]
+        public AssetByte UnknownByte0E { get; set; }
+        [Category(categoryName)]
+        public AssetByte UnknownByte0F { get; set; }
+        [Category(categoryName)]
+        public AssetByte UnknownByte10 { get; set; }
+        [Category(categoryName)]
+        public AssetByte PlayGlobally { get; set; }
+        [Category(categoryName)]
+        public AssetByte ChooseRandomEntry { get; set; }
+        [Category(categoryName)]
+        public AssetByte UnknownByte13 { get; set; }
+        [Category(categoryName)]
+        public AssetSingle InnerRadius { get; set; }
+        [Category(categoryName)]
+        public AssetSingle OuterRadius { get; set; }
         [Category(categoryName)]
         public int UnknownInt1C { get; set; }
         [Category(categoryName)]
@@ -71,7 +71,7 @@ namespace IndustrialPark
         public AssetSGRP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
-            reader.BaseStream.Position = baseEndPosition;
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
             UnknownInt08 = reader.ReadInt32();
 

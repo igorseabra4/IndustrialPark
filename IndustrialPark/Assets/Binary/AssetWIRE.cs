@@ -43,11 +43,11 @@ namespace IndustrialPark
 
     public struct WireVector
     {
-        public float X { get; set; }
-        public float Y { get; set; }
-        public float Z { get; set; }
+        public AssetSingle X { get; set; }
+        public AssetSingle Y { get; set; }
+        public AssetSingle Z { get; set; }
 
-        public WireVector(float X, float Y, float Z)
+        public WireVector(float X, AssetSingle Y, AssetSingle Z)
         {
             this.X = X;
             this.Y = Y;
@@ -78,108 +78,65 @@ namespace IndustrialPark
 
     public class AssetWIRE : Asset, IRenderableAsset
     {
+        private const string categoryName = "Wireframe Model";
+
+        [Category(categoryName)]
+        public WireVector[] Points { get; set; }
+        [Category(categoryName)]
+        public Line[] Lines { get; set; }
+        [Category(categoryName)]
+        public AssetID hashID0 { get; set; }
+        [Category(categoryName)]
+        public AssetID hashID1 { get; set; }
+
         public AssetWIRE(Section_AHDR AHDR, Game game, Platform platform, SharpRenderer renderer) : base(AHDR, game, platform)
         {
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+
+            reader.ReadInt32();
+            int vertexAmount = reader.ReadInt32();
+            int lineAmount = reader.ReadInt32();
+            hashID0 = reader.ReadUInt32();
+            hashID1 = reader.ReadUInt32();
+
+            var Points = new WireVector[vertexAmount];
+            for (int i = 0; i < Points.Length; i++)
+                Points[i] = new WireVector(reader);
+
+            var Lines = new Line[lineAmount];
+            for (int i = 0; i < Lines.Length; i++)
+                Lines[i] = new Line(reader);
+
             Setup(renderer);
             ArchiveEditorFunctions.renderableAssets.Add(this);
         }
 
+        public override byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(0);
+            writer.Write(0);
+            writer.Write(0);
+            writer.Write(hashID0);
+            writer.Write(hashID1);
+
+            foreach (var p in Points)
+                writer.Write(p.Serialize(platform));
+
+            foreach (var l in Lines)
+                writer.Write(l.Serialize(platform));
+
+            writer.BaseStream.Position = 0;
+
+            writer.Write((int)writer.BaseStream.Length);
+            writer.Write(Points.Length);
+            writer.Write(Lines.Length);
+
+            return writer.ToArray();
+        }
+
         public override bool HasReference(uint assetID) => hashID0 == assetID || hashID1 == assetID || base.HasReference(assetID);
-
-        [Category("Wireframe Model"), ReadOnly(true)]
-        public int totalFileSize
-        {
-            get => ReadInt(0x00);
-            set => Write(0x00, value);
-        }
-
-        [Category("Wireframe Model"), ReadOnly(true)]
-        public int vertexAmount
-        {
-            get => ReadInt(0x04);
-            set => Write(0x04, value);
-        }
-        
-        [Category("Wireframe Model"), ReadOnly(true)]
-        public int lineAmount
-        {
-            get => ReadInt(0x08);
-            set => Write(0x08, value);
-        }
-
-        [Category("Wireframe Model")]
-        public AssetID hashID0
-        {
-            get => ReadUInt(0x0C);
-            set => Write(0x0C, value);
-        }
-
-        [Category("Wireframe Model")]
-        public AssetID hashID1
-        {
-            get => ReadUInt(0x10);
-            set => Write(0x10, value);
-        }
-
-        private const int vertexStart = 0x14;
-        private const int vertexSize = 0xC;
-
-        [Category("Wireframe Model")]
-        public WireVector[] Points
-        {
-            get
-            {
-                var vertices = new WireVector[vertexAmount];
-                for (int i = 0; i < vertexAmount; i++)
-                    vertices[i] = new WireVector(
-                        ReadFloat(vertexStart + i * vertexSize),
-                        ReadFloat(vertexStart + i * vertexSize + 4),
-                        ReadFloat(vertexStart + i * vertexSize + 8));
-                
-                return vertices;
-            }
-            set
-            {
-                List<byte> data = Data.Take(vertexStart).ToList();
-                foreach (var v in value)
-                {
-                    data.AddRange(BitConverter.GetBytes(Switch(v.X)));
-                    data.AddRange(BitConverter.GetBytes(Switch(v.Y)));
-                    data.AddRange(BitConverter.GetBytes(Switch(v.Z)));
-                }
-                data.AddRange(Data.Skip(lineStart));
-                Data = data.ToArray();
-                vertexAmount = value.Length;
-                totalFileSize = Data.Length;
-            }
-        }
-
-        private int lineStart => vertexStart + vertexAmount * vertexSize;
-        private const int lineSize = 0x4;
-
-        [Category("Wireframe Model")]
-        public Line[] Lines
-        {
-            get
-            {
-                var lines = new Line[lineAmount];
-                for (int i = 0; i < lineAmount; i++)
-                    lines[i] = new Line(ReadUShort(lineStart + i * lineSize), ReadUShort(lineStart + i * lineSize + 2));
-                return lines;
-            }
-            set
-            {
-                List<byte> data = Data.Take(lineStart).ToList();
-                foreach (var l in value)
-                {
-                    data.AddRange(BitConverter.GetBytes(Switch(l.Vertex0)));
-                    data.AddRange(BitConverter.GetBytes(Switch(l.Vertex1)));
-                }
-                Data = data.ToArray();
-                lineAmount = value.Length;
-                totalFileSize = Data.Length;
-            }
-        }
 
         public void ToObj(string fileName)
         {
@@ -265,10 +222,7 @@ namespace IndustrialPark
             renderer.DrawSpline(vertexBuffer, vertexCount, Matrix.Identity, Color.YellowGreen.ToVector4(), true);
         }
         
-        public float GetDistanceFrom(Vector3 cameraPosition)
-        {
-            return cameraPosition.Length();
-        }
+        public float GetDistanceFrom(Vector3 cameraPosition) => cameraPosition.Length();
         
         public void Dispose()
         {

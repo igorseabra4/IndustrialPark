@@ -63,7 +63,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID UnknownInt_5C { get; set; }
 
-        public AssetDEST(Section_AHDR AHDR, Platform platform) : base(AHDR)
+        public AssetDEST(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
 
