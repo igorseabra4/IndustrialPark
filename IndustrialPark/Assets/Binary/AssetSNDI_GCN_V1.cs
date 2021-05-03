@@ -89,7 +89,7 @@ namespace IndustrialPark
             var writer = new EndianBinaryWriter(platform);
 
             writer.Write(Entries_SND.Length);
-            writer.Write(0);
+            writer.Write(0xCDCDCDCD);
             writer.Write(Entries_SNDS.Length);
             if (game == Game.BFBB)
                 writer.Write(Entries_Sound_CIN.Length);

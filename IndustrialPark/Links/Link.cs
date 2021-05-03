@@ -3,6 +3,13 @@ using HipHopFile;
 
 namespace IndustrialPark
 {
+    public enum LinkType
+    {
+        Normal,
+        Timed,
+        Progress
+    }
+
     public class Link
     {
         public static int sizeOfStruct => 32;
@@ -39,42 +46,19 @@ namespace IndustrialPark
         public AssetID ArgumentAssetID { get; set; }
         public AssetID SourceCheckAssetID { get; set; }
 
-        protected bool IsTimed = false;
-        public float Time { get; set; }
+        public float Time { get; set; } // only for timed
+        public int Flags { get; set; } // only for progress
 
-        public Link(bool isTimed, Game game)
+        public Link(Game game)
         {
             this.game = game;
-
-            EventReceiveID = 0;
-            EventSendID = 0;
-            TargetAssetID = 0;
-            Parameter1 = 0;
-            Parameter2 = 0;
-            Parameter3 = 0;
-            Parameter4 = 0;
-            ArgumentAssetID = 0;
-            SourceCheckAssetID = 0;
-            IsTimed = isTimed;
         }
 
-        public Link(EndianBinaryReader reader, bool isTimed, Game game)
+        public Link(EndianBinaryReader reader, LinkType type, Game game)
         {
             this.game = game;
 
-            if (IsTimed = isTimed)
-            {
-                Time = reader.ReadSingle();
-                TargetAssetID = reader.ReadUInt32();
-                EventSendID = (ushort)reader.ReadUInt32();
-                Parameter1 = reader.ReadUInt32();
-                Parameter2 = reader.ReadUInt32();
-                Parameter3 = reader.ReadUInt32();
-                Parameter4 = reader.ReadUInt32();
-                ArgumentAssetID = reader.ReadUInt32();
-                SourceCheckAssetID = 0;
-            }
-            else
+            if (type == LinkType.Normal)
             {
                 EventReceiveID = reader.ReadUInt16();
                 EventSendID = reader.ReadUInt16();
@@ -86,24 +70,26 @@ namespace IndustrialPark
                 ArgumentAssetID = reader.ReadUInt32();
                 SourceCheckAssetID = reader.ReadUInt32();
             }
+            else
+            {
+                Time = reader.ReadSingle();
+                if (type == LinkType.Progress)
+                    Flags = reader.ReadInt32();
+                TargetAssetID = reader.ReadUInt32();
+                EventSendID = (ushort)reader.ReadUInt32();
+                Parameter1 = reader.ReadUInt32();
+                Parameter2 = reader.ReadUInt32();
+                Parameter3 = reader.ReadUInt32();
+                Parameter4 = reader.ReadUInt32();
+                ArgumentAssetID = reader.ReadUInt32();
+            }
         }
 
-        public byte[] Serialize(Platform platform)
+        public byte[] Serialize(LinkType type, Platform platform)
         {
             var writer = new EndianBinaryWriter(platform);
 
-            if (IsTimed)
-            {
-                writer.Write(Time);
-                writer.Write(TargetAssetID);
-                writer.Write((int)EventSendID);
-                writer.Write(Parameter1);
-                writer.Write(Parameter2);
-                writer.Write(Parameter3);
-                writer.Write(Parameter4);
-                writer.Write(ArgumentAssetID);
-            }
-            else
+            if (type == LinkType.Normal)
             {
                 writer.Write(EventReceiveID);
                 writer.Write(EventSendID);
@@ -114,6 +100,19 @@ namespace IndustrialPark
                 writer.Write(Parameter4);
                 writer.Write(ArgumentAssetID);
                 writer.Write(SourceCheckAssetID);
+            }
+            else
+            {
+                writer.Write(Time);
+                if (type == LinkType.Progress)
+                    writer.Write(Flags);
+                writer.Write(TargetAssetID);
+                writer.Write((int)EventSendID);
+                writer.Write(Parameter1);
+                writer.Write(Parameter2);
+                writer.Write(Parameter3);
+                writer.Write(Parameter4);
+                writer.Write(ArgumentAssetID);
             }
 
             return writer.ToArray();
@@ -127,7 +126,13 @@ namespace IndustrialPark
             var recEvent = Enum.GetName(game == Game.Incredibles ? typeof(EventTSSM) : typeof(EventBFBB), EventReceiveID);
             var sndEvent = Enum.GetName(game == Game.Incredibles ? typeof(EventTSSM) : typeof(EventBFBB), EventSendID);
 
-            return (IsTimed ? Time.ToString() : recEvent) + $" => {sndEvent} => " + (HexUIntTypeConverter.Legacy ? TargetAssetID.ToString("X8") : Program.MainForm.GetAssetNameFromID(TargetAssetID));
+            string result = "";
+
+            result += Time != 0 ? Time.ToString() : recEvent;
+            result += $" => {sndEvent} => ";
+            result += HexUIntTypeConverter.Legacy ? TargetAssetID.ToString("X8") : Program.MainForm.GetAssetNameFromID(TargetAssetID);
+
+            return result;
         }
     }
 }

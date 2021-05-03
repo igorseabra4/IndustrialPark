@@ -46,6 +46,7 @@
             this.verifyArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.hipHopToolExportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportAudioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importHIPArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importMultipleAssetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importModelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -103,7 +104,6 @@
             this.toolStripMenuItem_EditHeader = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_EditData = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_MultiEdit = new System.Windows.Forms.ToolStripMenuItem();
-            this.exportAudioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -257,6 +257,14 @@
             this.hipHopToolExportToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.hipHopToolExportToolStripMenuItem.Text = "Export Assets + INI";
             this.hipHopToolExportToolStripMenuItem.Click += new System.EventHandler(this.hipHopToolExportToolStripMenuItem_Click);
+            // 
+            // exportAudioToolStripMenuItem
+            // 
+            this.exportAudioToolStripMenuItem.Enabled = false;
+            this.exportAudioToolStripMenuItem.Name = "exportAudioToolStripMenuItem";
+            this.exportAudioToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.exportAudioToolStripMenuItem.Text = "Export Audio";
+            this.exportAudioToolStripMenuItem.Click += new System.EventHandler(this.exportAudioToolStripMenuItem_Click);
             // 
             // importHIPArchiveToolStripMenuItem
             // 
@@ -555,7 +563,7 @@
             // 
             // AssetSizeCol
             // 
-            this.AssetSizeCol.Text = "Size";
+            this.AssetSizeCol.Text = "Info";
             this.AssetSizeCol.Width = 66;
             // 
             // buttonCopy
@@ -816,14 +824,6 @@
             this.toolStripMenuItem_MultiEdit.Size = new System.Drawing.Size(222, 22);
             this.toolStripMenuItem_MultiEdit.Text = "Multi Edit";
             this.toolStripMenuItem_MultiEdit.Click += new System.EventHandler(this.buttonMultiEdit_Click);
-            // 
-            // exportAudioToolStripMenuItem
-            // 
-            this.exportAudioToolStripMenuItem.Enabled = false;
-            this.exportAudioToolStripMenuItem.Name = "exportAudioToolStripMenuItem";
-            this.exportAudioToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
-            this.exportAudioToolStripMenuItem.Text = "Export Audio";
-            this.exportAudioToolStripMenuItem.Click += new System.EventHandler(this.exportAudioToolStripMenuItem_Click);
             // 
             // ArchiveEditor
             // 

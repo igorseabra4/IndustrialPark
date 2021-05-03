@@ -65,6 +65,11 @@ namespace IndustrialPark
             this.AHDR = AHDR;
         }
 
+        public override byte[] Serialize(Game game, Platform platform)
+        {
+            return AHDR.data;
+        }
+
         public override bool HasReference(uint assetID)
         {
             foreach (FSB3_File a in Entries)

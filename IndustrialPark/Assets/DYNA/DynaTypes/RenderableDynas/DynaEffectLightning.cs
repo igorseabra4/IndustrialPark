@@ -86,7 +86,7 @@ namespace IndustrialPark
 
             _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
             _positionEnd = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            Color = new AssetColor(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
+            Color = reader.ReadColor();
             Width = reader.ReadSingle();
             UnknownFloat = reader.ReadSingle();
             LightningTexture_AssetID = reader.ReadUInt32();

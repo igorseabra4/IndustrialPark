@@ -458,7 +458,7 @@ namespace IndustrialPark
             {
                 new ListViewItem.ListViewSubItem(item, asset.assetID.ToString("X8")),
                 new ListViewItem.ListViewSubItem(item, asset.assetType.ToString()),
-                new ListViewItem.ListViewSubItem(item, asset.DataLength)
+                new ListViewItem.ListViewSubItem(item, asset.AssetInfo)
             });
             return item;
         }
@@ -488,10 +488,19 @@ namespace IndustrialPark
             {
                 if (Column == 1)
                     return GetAssetIDFromName(x).CompareTo(GetAssetIDFromName(y));
-                else if (Column == 3)
-                    return Convert.ToInt32(x.SubItems[Column].Text).CompareTo(Convert.ToInt32(y.SubItems[Column].Text));
-                else
-                    return x.SubItems[Column].Text.CompareTo(y.SubItems[Column].Text);
+
+                if (Column == 3)
+                {
+                    if (x.SubItems[Column].Text.EndsWith(" bytes") && y.SubItems[Column].Text.EndsWith(" bytes"))
+                    {
+                        int bytes1 = Convert.ToInt32(x.SubItems[Column].Text.Replace(" bytes", ""));
+                        int bytes2 = Convert.ToInt32(y.SubItems[Column].Text.Replace(" bytes", ""));
+
+                        return bytes1.CompareTo(bytes2);
+                    }
+                }
+
+                return x.SubItems[Column].Text.CompareTo(y.SubItems[Column].Text);
             }
 
             public int Compare(object x, object y)

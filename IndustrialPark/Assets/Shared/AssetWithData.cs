@@ -6,7 +6,7 @@ namespace IndustrialPark
     {
         public byte[] Data { get; set; }
 
-        public override string DataLength => Data.Length.ToString();
+        public override string AssetInfo => Data.Length.ToString() + " bytes";
 
         public AssetWithData(string assetName, AssetType assetType, byte[] data) : base(assetName, assetType)
         {

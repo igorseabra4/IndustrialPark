@@ -4,6 +4,78 @@ using HipHopFile;
 
 namespace IndustrialPark
 {
+    public class DestState : GenericAssetDataContainer
+    {  
+        public int percent { get; set; }
+        public AssetID Model_AssetID { get; set; }
+        public AssetID Shrapnel_Destroy_AssetID { get; set; }
+        public AssetID Shrapnel_Hit_AssetID { get; set; }
+        public AssetID SoundGroup_Idle_AssetID { get; set; }
+        public AssetID SoundGroup_Fx_AssetID { get; set; }
+        public AssetID SoundGroup_Hit_AssetID { get; set; }
+        public AssetID SoundGroup_Fx_Switch_AssetID { get; set; }
+        public AssetID SoundGroup_Hit_Switch_AssetID { get; set; }
+        public AssetID Rumble_Hit_AssetID { get; set; }
+        public AssetID Rumble_Switch_AssetID { get; set; }
+        public int FxFlags { get; set; }
+        public int nAnimations { get; set; }
+        public AssetID Animation_AssetID { get; set; }
+
+        public DestState() { }
+        public DestState(EndianBinaryReader reader)
+        {
+            percent = reader.ReadInt32();
+            Model_AssetID = reader.ReadUInt32();
+            Shrapnel_Destroy_AssetID = reader.ReadUInt32();
+            Shrapnel_Hit_AssetID = reader.ReadUInt32();
+            SoundGroup_Idle_AssetID = reader.ReadUInt32();
+            SoundGroup_Fx_AssetID = reader.ReadUInt32();
+            SoundGroup_Hit_AssetID = reader.ReadUInt32();
+            SoundGroup_Fx_Switch_AssetID = reader.ReadUInt32();
+            SoundGroup_Hit_Switch_AssetID = reader.ReadUInt32();
+            Rumble_Hit_AssetID = reader.ReadUInt32();
+            Rumble_Switch_AssetID = reader.ReadUInt32();
+            FxFlags = reader.ReadInt32();
+            nAnimations = reader.ReadInt32();
+            Animation_AssetID = reader.ReadUInt32();
+        }
+
+        public override byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+
+            writer.Write(percent);
+            writer.Write(Model_AssetID);
+            writer.Write(Shrapnel_Destroy_AssetID);
+            writer.Write(Shrapnel_Hit_AssetID);
+            writer.Write(SoundGroup_Idle_AssetID);
+            writer.Write(SoundGroup_Fx_AssetID);
+            writer.Write(SoundGroup_Hit_AssetID);
+            writer.Write(SoundGroup_Fx_Switch_AssetID);
+            writer.Write(SoundGroup_Hit_Switch_AssetID);
+            writer.Write(Rumble_Hit_AssetID);
+            writer.Write(Rumble_Switch_AssetID);
+            writer.Write(FxFlags);
+            writer.Write(nAnimations);
+            writer.Write(Animation_AssetID);
+
+            return writer.ToArray();
+        }
+
+        public override bool HasReference(uint assetID) =>
+            Model_AssetID == assetID ||
+            Shrapnel_Destroy_AssetID == assetID ||
+            Shrapnel_Hit_AssetID == assetID ||
+            SoundGroup_Idle_AssetID == assetID ||
+            SoundGroup_Fx_AssetID == assetID ||
+            SoundGroup_Hit_AssetID == assetID ||
+            SoundGroup_Fx_Switch_AssetID == assetID ||
+            SoundGroup_Hit_Switch_AssetID == assetID ||
+            Rumble_Hit_AssetID == assetID ||
+            Rumble_Switch_AssetID == assetID ||
+            Animation_AssetID == assetID;
+    }
+
     public class AssetDEST : Asset
     {
         private const string categoryName = "Destructible";
@@ -11,89 +83,44 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID MINF_AssetID { get; set; }
         [Category(categoryName)]
-        public int UnknownInt_04 { get; set; }
+        public int HitPoints { get; set; }
         [Category(categoryName)]
-        public int UnknownInt_08 { get; set; }
+        public int HitFilter { get; set; }
         [Category(categoryName)]
-        public int UnknownInt_0C { get; set; }
+        public int LaunchFlag { get; set; }
         [Category(categoryName)]
-        public int UnknownInt_10 { get; set; }
+        public int Behavior { get; set; }
         [Category(categoryName)]
-        public int UnknownInt_14 { get; set; }
+        public FlagBitmask Flags { get; set; } = IntFlagsDescriptor();
         [Category(categoryName)]
-        public int UnknownInt_18 { get; set; }
+        public AssetID SoundGroup_Idle_AssetID { get; set; }
         [Category(categoryName)]
-        public int UnknownInt_1C { get; set; }
+        public AssetSingle Respawn { get; set; }
         [Category(categoryName)]
-        public int UnknownInt_20 { get; set; }
+        public byte TargetPriority { get; set; }
         [Category(categoryName)]
-        public byte UnknownByte_24 { get; set; }
-        [Category(categoryName)]
-        public byte UnknownByte_25 { get; set; }
-        [Category(categoryName)]
-        public byte UnknownByte_26 { get; set; }
-        [Category(categoryName)]
-        public byte UnknownByte_27 { get; set; }
-        [Category(categoryName)]
-        public int UnknownInt_28 { get; set; }
-        [Category(categoryName)]
-        public AssetID Model_AssetID { get; set; }
-        [Category(categoryName)]
-        public AssetID SHRP_AssetID { get; set; }
-        [Category(categoryName)]
-        public int UnknownInt_34 { get; set; }
-        [Category(categoryName)]
-        public int UnknownInt_38 { get; set; }
-        [Category(categoryName)]
-        public int UnknownInt_3C { get; set; }
-        [Category(categoryName)]
-        public int UnknownInt_40 { get; set; }
-        [Category(categoryName)]
-        public int UnknownInt_44 { get; set; }
-        [Category(categoryName)]
-        public int UnknownInt_48 { get; set; }
-        [Category(categoryName)]
-        public int UnknownInt_4C { get; set; }
-        [Category(categoryName)]
-        public int UnknownInt_50 { get; set; }
-        [Category(categoryName)]
-        public int UnknownInt_54 { get; set; }
-        [Category(categoryName)]
-        public int UnknownInt_58 { get; set; }
-        [Category(categoryName)]
-        public AssetID UnknownInt_5C { get; set; }
+        public DestState[] States { get; set; }
 
         public AssetDEST(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
 
             MINF_AssetID = reader.ReadUInt32();
-            UnknownInt_04 = reader.ReadInt32();
-            UnknownInt_08 = reader.ReadInt32();
-            UnknownInt_0C = reader.ReadInt32();
-            UnknownInt_10 = reader.ReadInt32();
-            UnknownInt_14 = reader.ReadInt32();
-            UnknownInt_18 = reader.ReadInt32();
-            UnknownInt_1C = reader.ReadInt32();
-            UnknownInt_20 = reader.ReadInt32();
-            UnknownByte_24 = reader.ReadByte();
-            UnknownByte_25 = reader.ReadByte();
-            UnknownByte_26 = reader.ReadByte();
-            UnknownByte_27 = reader.ReadByte();
-            UnknownInt_28 = reader.ReadInt32();
-            Model_AssetID = reader.ReadUInt32();
-            SHRP_AssetID = reader.ReadUInt32();
-            UnknownInt_34 = reader.ReadInt32();
-            UnknownInt_38 = reader.ReadInt32();
-            UnknownInt_3C = reader.ReadInt32();
-            UnknownInt_40 = reader.ReadInt32();
-            UnknownInt_44 = reader.ReadInt32();
-            UnknownInt_48 = reader.ReadInt32();
-            UnknownInt_4C = reader.ReadInt32();
-            UnknownInt_50 = reader.ReadInt32();
-            UnknownInt_54 = reader.ReadInt32();
-            UnknownInt_58 = reader.ReadInt32();
-            UnknownInt_5C = reader.ReadUInt32();
+            int numStates = reader.ReadInt32();
+            HitPoints = reader.ReadInt32();
+            HitFilter = reader.ReadInt32();
+            LaunchFlag = reader.ReadInt32();
+            Behavior = reader.ReadInt32();
+            Flags.FlagValueInt = reader.ReadUInt32();
+            SoundGroup_Idle_AssetID = reader.ReadUInt32();
+            Respawn = reader.ReadSingle();
+            TargetPriority = reader.ReadByte();
+            reader.ReadByte();
+            reader.ReadByte();
+            reader.ReadByte();
+            States = new DestState[numStates];
+            for (int i = 0; i < States.Length; i++)
+                States[i] = new DestState(reader);
         }
 
         public override byte[] Serialize(Game game, Platform platform)
@@ -101,38 +128,34 @@ namespace IndustrialPark
             var writer = new EndianBinaryWriter(platform);
 
             writer.Write(MINF_AssetID);
-            writer.Write(UnknownInt_04);
-            writer.Write(UnknownInt_08);
-            writer.Write(UnknownInt_0C);
-            writer.Write(UnknownInt_10);
-            writer.Write(UnknownInt_14);
-            writer.Write(UnknownInt_18);
-            writer.Write(UnknownInt_1C);
-            writer.Write(UnknownInt_20);
-            writer.Write(UnknownByte_24);
-            writer.Write(UnknownByte_25);
-            writer.Write(UnknownByte_26);
-            writer.Write(UnknownByte_27);
-            writer.Write(UnknownInt_28);
-            writer.Write(Model_AssetID);
-            writer.Write(SHRP_AssetID);
-            writer.Write(UnknownInt_34);
-            writer.Write(UnknownInt_38);
-            writer.Write(UnknownInt_3C);
-            writer.Write(UnknownInt_40);
-            writer.Write(UnknownInt_44);
-            writer.Write(UnknownInt_48);
-            writer.Write(UnknownInt_4C);
-            writer.Write(UnknownInt_50);
-            writer.Write(UnknownInt_54);
-            writer.Write(UnknownInt_58);
-            writer.Write(UnknownInt_5C);
+            writer.Write(States.Length);
+            writer.Write(HitPoints);
+            writer.Write(HitFilter);
+            writer.Write(LaunchFlag);
+            writer.Write(Behavior);
+            writer.Write(Flags.FlagValueInt);
+            writer.Write(SoundGroup_Idle_AssetID);
+            writer.Write(Respawn);
+            writer.Write(TargetPriority);
+            writer.Write((byte)0);
+            writer.Write((byte)0);
+            writer.Write((byte)0);
+            foreach (var state in States)
+                writer.Write(state.Serialize(game, platform));
 
             return writer.ToArray();
         }
 
-        public override bool HasReference(uint assetID) =>
-            MINF_AssetID == assetID || Model_AssetID == assetID || SHRP_AssetID == assetID || base.HasReference(assetID);
+        public override bool HasReference(uint assetID)
+        {
+            if (MINF_AssetID == assetID)
+                return true;
+            foreach (var s in States)
+                if (s.HasReference(assetID))
+                    return true;
+
+            return false;
+        }
         
         public override void Verify(ref List<string> result)
         {
@@ -140,10 +163,6 @@ namespace IndustrialPark
 
             if (MINF_AssetID == 0)
                 result.Add("DEST with MINF_AssetID set to 0");
-            if (Model_AssetID == 0)
-                result.Add("DEST with Model_AssetID set to 0");
-            if (SHRP_AssetID == 0)
-                result.Add("DEST with SHRP_AssetID set to 0");
         }
     }
 }

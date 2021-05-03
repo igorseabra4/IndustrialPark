@@ -12,7 +12,7 @@ namespace IndustrialPark
         {
             var reader = new EndianBinaryReader(AHDR.data, platform);
             var length = reader.ReadInt32();
-            Text = new string(reader.ReadChars(length));
+            Text = System.Text.Encoding.GetEncoding(1252).GetString(reader.ReadBytes(length));
         }
 
         public override byte[] Serialize(Game game, Platform platform)
@@ -21,7 +21,7 @@ namespace IndustrialPark
 
             writer.Write(Text.Length);
 
-            foreach (char c in Text)
+            foreach (byte c in System.Text.Encoding.GetEncoding(1252).GetBytes(Text))
                 writer.Write(c);
 
             do writer.Write((byte)0);

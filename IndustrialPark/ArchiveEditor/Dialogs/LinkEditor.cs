@@ -12,9 +12,8 @@ namespace IndustrialPark
     {
         private readonly uint thisAssetID;
         private Game game;
-        private bool isTimed = false;
 
-        private LinkEditor(Game game, Link[] events, bool isTimed, uint thisAssetID)
+        private LinkEditor(Game game, Link[] events, LinkType linkType, uint thisAssetID)
         {
             InitializeComponent();
             TopMost = true;
@@ -42,20 +41,29 @@ namespace IndustrialPark
             textBoxTargetAsset.AutoCompleteCustomSource = sourceObjects;
             textBoxArgumentAsset.AutoCompleteSource = AutoCompleteSource.CustomSource;
             textBoxArgumentAsset.AutoCompleteCustomSource = sourceAll;
-            textBoxSourceCheck.AutoCompleteSource = AutoCompleteSource.CustomSource;
-            textBoxSourceCheck.AutoCompleteCustomSource = sourceObjects;
+            textBoxSourceCheckOrFlags.AutoCompleteSource = AutoCompleteSource.CustomSource;
+            textBoxSourceCheckOrFlags.AutoCompleteCustomSource = sourceObjects;
 
             numericUpDownTime.Minimum = decimal.MinValue;
             numericUpDownTime.Maximum = decimal.MaxValue;
 
-            this.isTimed = isTimed;
-            if (isTimed)
+            if (linkType != LinkType.Normal)
             {
-                groupBox3.Text = "Time";
+                if (linkType == LinkType.Timed)
+                {
+                    groupBoxSourceEvent.Text = "Time";
+                    groupBoxSourceCheckOrFlags.Visible = false;
+                }
+                else if (linkType == LinkType.Progress)
+                {
+                    groupBoxSourceEvent.Text = "Percent";
+                    groupBoxSourceCheckOrFlags.Text = "Flags";
+                }
+
                 numericUpDownTime.Visible = true;
                 comboRecieveEvent.Visible = false;
-                groupBox7.Visible = false;
-                textBoxSourceCheck.Visible = false;
+
+                textBoxSourceCheckOrFlags.Visible = false;
             }
 
             this.game = game;
@@ -70,9 +78,9 @@ namespace IndustrialPark
                 listBoxLinks.Items.Add(assetEvent);
         }
 
-        public static Link[] GetLinks(Game game, Link[] links, bool isTimed, uint thisAssetID)
+        public static Link[] GetLinks(Game game, Link[] links, LinkType linkType, uint thisAssetID)
         {
-            LinkEditor linkEditor = new LinkEditor(game, links, isTimed, thisAssetID);
+            LinkEditor linkEditor = new LinkEditor(game, links, linkType, thisAssetID);
             linkEditor.ShowDialog();
 
             if (linkEditor.OK)
@@ -109,7 +117,7 @@ namespace IndustrialPark
 
         private void buttonAdd_Click(object sender, EventArgs e)
         {
-            listBoxLinks.Items.Add(new Link(isTimed, game));
+            listBoxLinks.Items.Add(new Link(game));
             listBoxLinks.SelectedIndices.Clear();
             listBoxLinks.SelectedIndex = listBoxLinks.Items.Count - 1;
         }
@@ -172,7 +180,12 @@ namespace IndustrialPark
 
                     textBoxTargetAsset.Text = GetAssetName(assetEvent.TargetAssetID);
                     textBoxArgumentAsset.Text = GetAssetName(assetEvent.ArgumentAssetID);
-                    textBoxSourceCheck.Text = GetAssetName(assetEvent.SourceCheckAssetID);
+
+                    if (groupBoxSourceCheckOrFlags.Text == "Flags")
+                        textBoxSourceCheckOrFlags.Text = assetEvent.Flags.ToString();
+                    else
+                        textBoxSourceCheckOrFlags.Text = GetAssetName(assetEvent.SourceCheckAssetID);
+
                     numericUpDownTime.Value = (decimal)assetEvent.Time;
 
                     if (GetAssetName(assetEvent.Parameter1).StartsWith("0x") &&
@@ -304,16 +317,20 @@ namespace IndustrialPark
         {
             if (!ProgramIsChangingStuff)
             {
-                textBoxSourceCheck.BackColor = bgColor;
+                textBoxSourceCheckOrFlags.BackColor = bgColor;
 
                 try
                 {
-                    foreach (int i in listBoxLinks.SelectedIndices)
-                        ((Link)listBoxLinks.Items[i]).SourceCheckAssetID = GetAssetID(textBoxSourceCheck.Text);
+                    if (groupBoxSourceCheckOrFlags.Text == "Flags")
+                        foreach (int i in listBoxLinks.SelectedIndices)
+                            ((Link)listBoxLinks.Items[i]).Flags = Convert.ToInt32(textBoxSourceCheckOrFlags.Text);
+                    else
+                        foreach (int i in listBoxLinks.SelectedIndices)
+                            ((Link)listBoxLinks.Items[i]).SourceCheckAssetID = GetAssetID(textBoxSourceCheckOrFlags.Text);
                 }
                 catch
                 {
-                    textBoxSourceCheck.BackColor = Color.Red;
+                    textBoxSourceCheckOrFlags.BackColor = Color.Red;
                 }
             }
         }
@@ -382,7 +399,7 @@ namespace IndustrialPark
             if (listBoxLinks.SelectedItems.Count == 1)
             {
                 ProgramIsChangingStuff = true;
-                textBoxSourceCheck.Text = GetAssetName(((Link)listBoxLinks.Items[listBoxLinks.SelectedIndex]).SourceCheckAssetID);
+                textBoxSourceCheckOrFlags.Text = GetAssetName(((Link)listBoxLinks.Items[listBoxLinks.SelectedIndex]).SourceCheckAssetID);
                 ProgramIsChangingStuff = false;
             }
         }

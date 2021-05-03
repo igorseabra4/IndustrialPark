@@ -138,6 +138,14 @@
     <Compile Include="ArchiveEditor\Gizmos\BoxTrigPositionGizmo.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\RenderableRotatableDynaBase.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\RenderableDynaBase.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\UIDynas\DynaUITextUserString.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\UIDynas\DynaUIText.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\UIDynas\DynaUIModel.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\UIDynas\DynaUIImage.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\UIDynas\DynaUIController.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\UIDynas\DynaUIBox.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\UIDynas\DynaUI.cs" />
+    <Compile Include="Assets\ObjectAssets\AssetPGRS.cs" />
     <Compile Include="Assets\Shared\AssetGenericBase.cs" />
     <Compile Include="Assets\Shared\AssetWithData.cs" />
     <Compile Include="Assets\Shared\DataTypes\AssetByte.cs" />

@@ -19,7 +19,7 @@ namespace IndustrialPark
         public int checksum;
 
         [Browsable(false)]
-        public virtual string DataLength => "";
+        public virtual string AssetInfo => "";
 
         public Asset(string assetName, AssetType assetType)
         {

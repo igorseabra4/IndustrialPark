@@ -55,8 +55,8 @@ namespace IndustrialPark
             FontSpace = reader.ReadSingle();
             ShadowXOffset = reader.ReadSingle();
             ShadowYOffset = reader.ReadSingle();
-            Color = new AssetColor(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
-            ShadowColor = new AssetColor(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
+            Color = reader.ReadColor();
+            ShadowColor = reader.ReadColor();
 
             if (Version == 3)
                 CounterModeFlag = reader.ReadByte();

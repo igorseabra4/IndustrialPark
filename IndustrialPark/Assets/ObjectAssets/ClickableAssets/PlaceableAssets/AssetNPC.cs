@@ -5,10 +5,58 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
+    public enum NPCType
+    {
+        Bat = 0x00,
+        Geronimo = 0x02,
+        Creeper = 0x03,
+        SeaCreature = 0x04,
+        Gargoyle = 0x05,
+        Ghost = 0x06,
+        GhostDiver = 0x07,
+        HeadlessSpecter = 0x09,
+        FunlandRobot = 0x0C,
+        Scarecrow = 0x0D,
+        Shark = 0x0E,
+        SpaceKook = 0x0F,
+        TarMonster = 0x10,
+        Witch = 0x11,
+        WitchDoctor = 0x12,
+        Wolfman = 0x13,
+        Zombie = 0x14,
+        Crab = 0x15,
+        Rat = 0x16,
+        FlyingFish = 0x17,
+        Spider = 0x18,
+        KillerPlant = 0x1A,
+        Shaggy0 = 0x1C,
+        Shaggy1 = 0x1D,
+        Shaggy4 = 0x20,
+        Shaggy5 = 0x21,
+        Shaggy8 = 0x24,
+        Fred = 0x26,
+        Daphne = 0x27,
+        Velma = 0x28,
+        BlackKnight = 0x29,
+        GreenGhost = 0x2A,
+        Redbeard = 0x2B,
+        Mastermind = 0x2C,
+        GhostOfCaptainMoody = 0x2D,
+        Caveman = 0x2E,
+        Holly = 0x2F,
+        Groundskeeper = 0x30
+    }
+
     public class AssetNPC : EntityAsset
     {
         private const string categoryName = "NPC";
 
+        [Category(categoryName)]
+        public NPCType NPCCType
+        {
+            get => (NPCType)(byte)TypeFlag;
+            set => TypeFlag = (byte)value;
+        }
         [Category(categoryName)]
         public AssetSingle UnknownFloat54 { get; set; }
         [Category(categoryName)]

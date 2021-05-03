@@ -10,9 +10,9 @@ namespace IndustrialPark
     {
         private IWindowsFormsEditorService service;
 
-        public static bool IsTimed { get; set; }
-        public static uint thisAssetID { get; set; }
-        public static Game game { get; set; }
+        public static LinkType LinkType { get; set; }
+        public static uint ThisAssetID { get; set; }
+        public static Game Game { get; set; }
 
         public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
         {
@@ -28,14 +28,13 @@ namespace IndustrialPark
             {
                 if (value is Link[] links)
                 {
-                    var newLinks = LinkEditor.GetLinks(game, links, IsTimed, thisAssetID);
+                    var newLinks = LinkEditor.GetLinks(Game, links, LinkType, ThisAssetID);
 
                     if (newLinks != null)
                         value = newLinks;
                 }
             }
 
-            IsTimed = false;
             return value;
         }
     }

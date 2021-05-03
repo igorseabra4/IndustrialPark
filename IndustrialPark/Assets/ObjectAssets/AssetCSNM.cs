@@ -1,377 +1,245 @@
-﻿//using HipHopFile;
-//using System.Collections.Generic;
-//using System.ComponentModel;
+﻿using HipHopFile;
+using System.Collections.Generic;
+using System.ComponentModel;
 
-//namespace IndustrialPark
-//{
-//    public class AssetCSNM : BaseAsset
-//    {
-//        public AssetCSNM(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+namespace IndustrialPark
+{
+    public class AssetCSNM : BaseAsset
+    {
+        private const string categoryName = "Cutscene Manager";
 
-//        public override bool HasReference(uint assetID) => CSN_AssetID == assetID || base.HasReference(assetID);
-        
-//        public override void Verify(ref List<string> result)
-//        {
-//            base.Verify(ref result);
+        [Category(categoryName)]
+        public AssetID CSN_AssetID { get; set; }
+        [Category(categoryName)]
+        public FlagBitmask CsnmFlags { get; set; } = IntFlagsDescriptor();
+        [Category(categoryName)]
+        public int InterpSpeed { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt14 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt18 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt1C { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt20 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt24 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt28 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt2C { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt30 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt34 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt38 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt3C { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt40 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt44 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt48 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt4C { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt50 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt54 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt58 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt5C { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt60 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt64 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt68 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt6C { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt70 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt74 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt78 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt7C { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt80 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt84 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt88 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt8C { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt90 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt94 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt98 { get; set; }
+        [Category(categoryName)]
+        public int UnknownInt9C { get; set; }
+        [Category(categoryName)]
+        public int UnknownIntA0 { get; set; }
+        [Category(categoryName)]
+        public int UnknownIntA4 { get; set; }
+        [Category(categoryName)]
+        public int UnknownIntA8 { get; set; }
+        [Category(categoryName)]
+        public int UnknownIntAC { get; set; }
+        [Category(categoryName)]
+        public int UnknownIntB0 { get; set; }
+        [Category(categoryName)]
+        public int UnknownIntB4 { get; set; }
+        [Category(categoryName)]
+        public int UnknownIntB8 { get; set; }
+        [Category(categoryName)]
+        public int UnknownIntBC { get; set; }
+        [Category(categoryName)]
+        public int UnknownIntC0 { get; set; }
+        [Category(categoryName)]
+        public int UnknownIntC4 { get; set; }
+        [Category(categoryName)] // incredibles only
+        public int UnknownIntC8 { get; set; }
 
-//            if (CSN_AssetID == 0)
-//                result.Add("CNSM with CSN_AssetID set to 0");
-//            Verify(CSN_AssetID, ref result);
-//        }
+        public AssetCSNM(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, platform);
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
-//        [Category("Cutscene Manager")]
-//        public AssetID CSN_AssetID
-//        {
-//            get => ReadUInt(0x8);
-//            set => Write(0x8, value);
-//        }
+            CSN_AssetID = reader.ReadUInt32();
+            CsnmFlags.FlagValueInt = reader.ReadUInt32();
+            InterpSpeed = reader.ReadInt32();
+            UnknownInt14 = reader.ReadInt32();
+            UnknownInt18 = reader.ReadInt32();
+            UnknownInt1C = reader.ReadInt32();
+            UnknownInt20 = reader.ReadInt32();
+            UnknownInt24 = reader.ReadInt32();
+            UnknownInt28 = reader.ReadInt32();
+            UnknownInt2C = reader.ReadInt32();
+            UnknownInt30 = reader.ReadInt32();
+            UnknownInt34 = reader.ReadInt32();
+            UnknownInt38 = reader.ReadInt32();
+            UnknownInt3C = reader.ReadInt32();
+            UnknownInt40 = reader.ReadInt32();
+            UnknownInt44 = reader.ReadInt32();
+            UnknownInt48 = reader.ReadInt32();
+            UnknownInt4C = reader.ReadInt32();
+            UnknownInt50 = reader.ReadInt32();
+            UnknownInt54 = reader.ReadInt32();
+            UnknownInt58 = reader.ReadInt32();
+            UnknownInt5C = reader.ReadInt32();
+            UnknownInt60 = reader.ReadInt32();
+            UnknownInt64 = reader.ReadInt32();
+            UnknownInt68 = reader.ReadInt32();
+            UnknownInt6C = reader.ReadInt32();
+            UnknownInt70 = reader.ReadInt32();
+            UnknownInt74 = reader.ReadInt32();
+            UnknownInt78 = reader.ReadInt32();
+            UnknownInt7C = reader.ReadInt32();
+            UnknownInt80 = reader.ReadInt32();
+            UnknownInt84 = reader.ReadInt32();
+            UnknownInt88 = reader.ReadInt32();
+            UnknownInt8C = reader.ReadInt32();
+            UnknownInt90 = reader.ReadInt32();
+            UnknownInt94 = reader.ReadInt32();
+            UnknownInt98 = reader.ReadInt32();
+            UnknownInt9C = reader.ReadInt32();
+            UnknownIntA0 = reader.ReadInt32();
+            UnknownIntA4 = reader.ReadInt32();
+            UnknownIntA8 = reader.ReadInt32();
+            UnknownIntAC = reader.ReadInt32();
+            UnknownIntB0 = reader.ReadInt32();
+            UnknownIntB4 = reader.ReadInt32();
+            UnknownIntB8 = reader.ReadInt32();
+            UnknownIntBC = reader.ReadInt32();
+            UnknownIntC0 = reader.ReadInt32();
+            UnknownIntC4 = reader.ReadInt32();
+            if (game == Game.Incredibles)
+                UnknownIntC8 = reader.ReadInt32();
+        }
 
-//        [Category("Cutscene Manager")]
-//        public DynamicTypeDescriptor CsnmFlags => IntFlagsDescriptor(0xC);
+        public override byte[] Serialize(Game game, Platform platform)
+        {
+            var writer = new EndianBinaryWriter(platform);
+            writer.Write(SerializeBase(platform));
 
-//        [Category("Cutscene Manager")]
-//        public int InterpSpeed
-//        {
-//            get => ReadInt(0x10);
-//            set => Write(0x10, value);
-//        }
+            writer.Write(CSN_AssetID);
+            writer.Write(CsnmFlags.FlagValueInt);
+            writer.Write(InterpSpeed);
+            writer.Write(UnknownInt14);
+            writer.Write(UnknownInt18);
+            writer.Write(UnknownInt1C);
+            writer.Write(UnknownInt20);
+            writer.Write(UnknownInt24);
+            writer.Write(UnknownInt28);
+            writer.Write(UnknownInt2C);
+            writer.Write(UnknownInt30);
+            writer.Write(UnknownInt34);
+            writer.Write(UnknownInt38);
+            writer.Write(UnknownInt3C);
+            writer.Write(UnknownInt40);
+            writer.Write(UnknownInt44);
+            writer.Write(UnknownInt48);
+            writer.Write(UnknownInt4C);
+            writer.Write(UnknownInt50);
+            writer.Write(UnknownInt54);
+            writer.Write(UnknownInt58);
+            writer.Write(UnknownInt5C);
+            writer.Write(UnknownInt60);
+            writer.Write(UnknownInt64);
+            writer.Write(UnknownInt68);
+            writer.Write(UnknownInt6C);
+            writer.Write(UnknownInt70);
+            writer.Write(UnknownInt74);
+            writer.Write(UnknownInt78);
+            writer.Write(UnknownInt7C);
+            writer.Write(UnknownInt80);
+            writer.Write(UnknownInt84);
+            writer.Write(UnknownInt88);
+            writer.Write(UnknownInt8C);
+            writer.Write(UnknownInt90);
+            writer.Write(UnknownInt94);
+            writer.Write(UnknownInt98);
+            writer.Write(UnknownInt9C);
+            writer.Write(UnknownIntA0);
+            writer.Write(UnknownIntA4);
+            writer.Write(UnknownIntA8);
+            writer.Write(UnknownIntAC);
+            writer.Write(UnknownIntB0);
+            writer.Write(UnknownIntB4);
+            writer.Write(UnknownIntB8);
+            writer.Write(UnknownIntBC);
+            writer.Write(UnknownIntC0);
+            writer.Write(UnknownIntC4);
+            if (game == Game.Incredibles)
+                writer.Write(UnknownIntC8);
 
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt14
-//        {
-//            get => ReadInt(0x14);
-//            set => Write(0x14, value);
-//        }
+            writer.Write(SerializeLinks(platform));
+            return writer.ToArray();
+        }
 
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt18
-//        {
-//            get => ReadInt(0x18);
-//            set => Write(0x18, value);
-//        }
+        public override bool HasReference(uint assetID) => CSN_AssetID == assetID || base.HasReference(assetID);
 
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt1C
-//        {
-//            get => ReadInt(0x1C);
-//            set => Write(0x1C, value);
-//        }
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
 
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt20
-//        {
-//            get => ReadInt(0x20);
-//            set => Write(0x20, value);
-//        }
+            if (CSN_AssetID == 0)
+                result.Add("CNSM with CSN_AssetID set to 0");
+            Verify(CSN_AssetID, ref result);
+        }
 
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt24
-//        {
-//            get => ReadInt(0x24);
-//            set => Write(0x24, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt28
-//        {
-//            get => ReadInt(0x28);
-//            set => Write(0x28, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt2C
-//        {
-//            get => ReadInt(0x2C);
-//            set => Write(0x2C, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt30
-//        {
-//            get => ReadInt(0x30);
-//            set => Write(0x30, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt34
-//        {
-//            get => ReadInt(0x34);
-//            set => Write(0x34, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt38
-//        {
-//            get => ReadInt(0x38);
-//            set => Write(0x38, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt3C
-//        {
-//            get => ReadInt(0x3C);
-//            set => Write(0x3C, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt40
-//        {
-//            get => ReadInt(0x40);
-//            set => Write(0x40, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt44
-//        {
-//            get => ReadInt(0x44);
-//            set => Write(0x44, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt48
-//        {
-//            get => ReadInt(0x48);
-//            set => Write(0x48, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt4C
-//        {
-//            get => ReadInt(0x4C);
-//            set => Write(0x4C, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt50
-//        {
-//            get => ReadInt(0x50);
-//            set => Write(0x50, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt54
-//        {
-//            get => ReadInt(0x54);
-//            set => Write(0x54, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt58
-//        {
-//            get => ReadInt(0x58);
-//            set => Write(0x58, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt5C
-//        {
-//            get => ReadInt(0x5C);
-//            set => Write(0x5C, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt60
-//        {
-//            get => ReadInt(0x60);
-//            set => Write(0x60, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt64
-//        {
-//            get => ReadInt(0x64);
-//            set => Write(0x64, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt68
-//        {
-//            get => ReadInt(0x68);
-//            set => Write(0x68, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt6C
-//        {
-//            get => ReadInt(0x6C);
-//            set => Write(0x6C, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt70
-//        {
-//            get => ReadInt(0x70);
-//            set => Write(0x70, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt74
-//        {
-//            get => ReadInt(0x74);
-//            set => Write(0x74, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt78
-//        {
-//            get => ReadInt(0x78);
-//            set => Write(0x78, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt7C
-//        {
-//            get => ReadInt(0x7C);
-//            set => Write(0x7C, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt80
-//        {
-//            get => ReadInt(0x80);
-//            set => Write(0x80, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt84
-//        {
-//            get => ReadInt(0x84);
-//            set => Write(0x84, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt88
-//        {
-//            get => ReadInt(0x88);
-//            set => Write(0x88, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt8C
-//        {
-//            get => ReadInt(0x8C);
-//            set => Write(0x8C, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt90
-//        {
-//            get => ReadInt(0x90);
-//            set => Write(0x90, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt94
-//        {
-//            get => ReadInt(0x94);
-//            set => Write(0x94, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt98
-//        {
-//            get => ReadInt(0x98);
-//            set => Write(0x98, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownInt9C
-//        {
-//            get => ReadInt(0x9C);
-//            set => Write(0x9C, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownIntA0
-//        {
-//            get => ReadInt(0xA0);
-//            set => Write(0xA0, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownIntA4
-//        {
-//            get => ReadInt(0xA4);
-//            set => Write(0xA4, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownIntA8
-//        {
-//            get => ReadInt(0xA8);
-//            set => Write(0xA8, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownIntAC
-//        {
-//            get => ReadInt(0xAC);
-//            set => Write(0xAC, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownIntB0
-//        {
-//            get => ReadInt(0xB0);
-//            set => Write(0xB0, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownIntB4
-//        {
-//            get => ReadInt(0xB4);
-//            set => Write(0xB4, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownIntB8
-//        {
-//            get => ReadInt(0xB8);
-//            set => Write(0xB8, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownIntBC
-//        {
-//            get => ReadInt(0xBC);
-//            set => Write(0xBC, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownIntC0
-//        {
-//            get => ReadInt(0xC0);
-//            set => Write(0xC0, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownIntC4
-//        {
-//            get => ReadInt(0xC4);
-//            set => Write(0xC4, value);
-//        }
-
-//        [Category("Cutscene Manager")]
-//        public int UnknownIntC8
-//        {
-//            get
-//            {
-//                if (game == Game.Incredibles)
-//                    return ReadInt(0xC8);
-//                return 0;
-//            }
-//            set
-//            {
-//                if (game == Game.Incredibles)
-//                    Write(0xC8, value);
-//            }
-//        }
-
-//        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
-//        {
-//            if (game != Game.Incredibles)
-//                dt.RemoveProperty("UnknownIntC8");
-//            base.SetDynamicProperties(dt);
-//        }
-//    }
-//}
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game != Game.Incredibles)
+                dt.RemoveProperty("UnknownIntC8");
+            base.SetDynamicProperties(dt);
+        }
+    }
+}

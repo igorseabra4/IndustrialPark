@@ -65,8 +65,18 @@ namespace IndustrialPark
             UIFontMode = reader.ReadByte();
             FontID = (FontEnum)reader.ReadByte();
             TextAssetID = reader.ReadUInt32();
-            BackgroundColor = new AssetColor(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
-            FontColor = new AssetColor(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
+            BackgroundColor = reader.ReadColor();
+            FontColor = reader.ReadColor();
+            Padding_Top = reader.ReadInt16();
+            Padding_Bottom = reader.ReadInt16();
+            Padding_Left = reader.ReadInt16();
+            Padding_Right = reader.ReadInt16();
+            Spacing_Horizontal = reader.ReadInt16();
+            Spacing_Vertical = reader.ReadInt16();
+            Char_Width = reader.ReadInt16();
+            Char_Height = reader.ReadInt16();
+            if (game != Game.Scooby)
+                MaxHeight = reader.ReadInt32();
         }
 
         public override byte[] Serialize(Game game, Platform platform)
@@ -81,6 +91,16 @@ namespace IndustrialPark
             writer.Write(TextAssetID);
             writer.Write(BackgroundColor);
             writer.Write(FontColor);
+            writer.Write(Padding_Top);
+            writer.Write(Padding_Bottom);
+            writer.Write(Padding_Left);
+            writer.Write(Padding_Right);
+            writer.Write(Spacing_Horizontal);
+            writer.Write(Spacing_Vertical);
+            writer.Write(Char_Width);
+            writer.Write(Char_Height);
+            if (game != Game.Scooby)
+                writer.Write(MaxHeight);
 
             writer.Write(SerializeLinks(platform));
             return writer.ToArray();

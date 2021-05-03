@@ -99,11 +99,11 @@ namespace IndustrialPark
             hashID0 = reader.ReadUInt32();
             hashID1 = reader.ReadUInt32();
 
-            var Points = new WireVector[vertexAmount];
+            Points = new WireVector[vertexAmount];
             for (int i = 0; i < Points.Length; i++)
                 Points[i] = new WireVector(reader);
 
-            var Lines = new Line[lineAmount];
+            Lines = new Line[lineAmount];
             for (int i = 0; i < Lines.Length; i++)
                 Lines[i] = new Line(reader);
 

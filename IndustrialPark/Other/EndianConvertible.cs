@@ -33,7 +33,7 @@ namespace IndustrialPark
         public override float ReadSingle() =>
             (endianness == Endianness.Little) ?
             base.ReadSingle() :
-            BitConverter.ToSingle(BitConverter.GetBytes(base.ReadSingle()).Reverse().ToArray(), 0);
+            BitConverter.ToSingle(base.ReadBytes(4).Reverse().ToArray(), 0);
 
         public override short ReadInt16() =>
             (endianness == Endianness.Little) ?
@@ -55,6 +55,8 @@ namespace IndustrialPark
             base.ReadUInt32() :
             BitConverter.ToUInt32(BitConverter.GetBytes(base.ReadUInt32()).Reverse().ToArray(), 0);
 
+        public AssetColor ReadColor() => new AssetColor(ReadByte(), ReadByte(), ReadByte(), ReadByte());
+        
         public bool EndOfStream => BaseStream.Position == BaseStream.Length;
     }
 

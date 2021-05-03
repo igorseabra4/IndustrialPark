@@ -18,7 +18,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID SpawnItem_AssetID { get; set; }
         [Category(categoryName)]
-        public FlagBitmask MaybeHitMask => IntFlagsDescriptor();
+        public FlagBitmask HitMask { get; set; } = IntFlagsDescriptor();
         [Category(categoryName)]
         public byte CollType { get; set; }
         [Category(categoryName)]
@@ -56,7 +56,7 @@ namespace IndustrialPark
             InitialAnimationState = reader.ReadInt32();
             Health = reader.ReadInt32();
             SpawnItem_AssetID = reader.ReadUInt32();
-            MaybeHitMask.FlagValueInt = reader.ReadUInt32();
+            HitMask.FlagValueInt = reader.ReadUInt32();
             CollType = reader.ReadByte();
             FxType = reader.ReadByte();
             reader.ReadInt16();
@@ -82,7 +82,7 @@ namespace IndustrialPark
             writer.Write(InitialAnimationState);
             writer.Write(Health);
             writer.Write(SpawnItem_AssetID);
-            writer.Write(MaybeHitMask.FlagValueInt);
+            writer.Write(HitMask.FlagValueInt);
             writer.Write(CollType);
             writer.Write(FxType);
             writer.Write((short)0);

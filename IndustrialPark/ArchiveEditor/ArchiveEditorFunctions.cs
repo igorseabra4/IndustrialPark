@@ -447,13 +447,13 @@ namespace IndustrialPark
                     case AssetType.ALST: return new AssetALST(AHDR, game, platform);
                     case AssetType.BOUL: return new AssetBOUL(AHDR, game, platform);
                     case AssetType.BUTN: return new AssetBUTN(AHDR, game, platform);
-                    case AssetType.CAM: return new AssetCAM(AHDR, game, platform);
+                    case AssetType.CAM:  return new AssetCAM (AHDR, game, platform);
                     case AssetType.CNTR: return new AssetCNTR(AHDR, game, platform);
                     case AssetType.COLL: return new AssetCOLL(AHDR, game, platform);
                     case AssetType.COND: return new AssetCOND(AHDR, game, platform);
-                    //case AssetType.CRDT: return new AssetCRDT(AHDR, game, platform);
+                    case AssetType.CRDT: return new AssetCRDT(AHDR, game, platform);
                     //case AssetType.CSN: return new AssetCSN(AHDR, game, platform);
-                    //case AssetType.CSNM: return new AssetCSNM(AHDR, game, platform);
+                    case AssetType.CSNM: return new AssetCSNM(AHDR, game, platform);
                     case AssetType.DEST: return new AssetDEST(AHDR, game, platform);
                     case AssetType.DPAT: return new AssetDPAT(AHDR, game, platform);
                     case AssetType.DSCO: return new AssetDSCO(AHDR, game, platform);
@@ -461,13 +461,13 @@ namespace IndustrialPark
                     case AssetType.DYNA: return CreateDYNA(AHDR);
                     case AssetType.DUPC: return new AssetDUPC(AHDR, game, platform);
                     case AssetType.EGEN: return new AssetEGEN(AHDR, game, platform);
-                    case AssetType.ENV: return new AssetENV(AHDR, game, platform);
-                    case AssetType.FLY: return new AssetFLY(AHDR, game, platform);
-                    case AssetType.FOG: return new AssetFOG(AHDR, game, platform);
+                    case AssetType.ENV:  return new AssetENV (AHDR, game, platform);
+                    case AssetType.FLY:  return new AssetFLY (AHDR, game, platform);
+                    case AssetType.FOG:  return new AssetFOG (AHDR, game, platform);
                     case AssetType.GRUP: return new AssetGRUP(AHDR, game, platform);
                     case AssetType.GUST: return new AssetGUST(AHDR, game, platform);
                     case AssetType.HANG: return new AssetHANG(AHDR, game, platform);
-                    case AssetType.JAW: return new AssetJAW(AHDR, game, platform);
+                    case AssetType.JAW:  return new AssetJAW (AHDR, game, platform);
                     case AssetType.LITE: return new AssetLITE(AHDR, game, platform);
                     case AssetType.LKIT: return new AssetLKIT(AHDR, game, platform);
                     case AssetType.LOBM: return new AssetLOBM(AHDR, game, platform);
@@ -476,11 +476,12 @@ namespace IndustrialPark
                     case AssetType.MINF: return new AssetMINF(AHDR, game, platform);
                     case AssetType.MRKR: return new AssetMRKR(AHDR, game, platform);
                     case AssetType.MVPT: return new AssetMVPT(AHDR, game, platform);
-                    case AssetType.NPC: return new AssetNPC(AHDR, game, platform);
+                    case AssetType.NPC:  return new AssetNPC (AHDR, game, platform);
                     case AssetType.PARE: return new AssetPARE(AHDR, game, platform);
                     case AssetType.PARP: return new AssetPARP(AHDR, game, platform);
                     case AssetType.PARS: return new AssetPARS(AHDR, game, platform);
                     case AssetType.PEND: return new AssetPEND(AHDR, game, platform);
+                    case AssetType.PGRS: return new AssetPGRS(AHDR, game, platform);
                     case AssetType.PICK: return new AssetPICK(AHDR, game, platform);
                     case AssetType.PIPT: return new AssetPIPT(AHDR, game, platform, UpdateModelBlendModes);
                     case AssetType.PKUP: return new AssetPKUP(AHDR, game, platform);
@@ -490,31 +491,31 @@ namespace IndustrialPark
                     case AssetType.PRJT: return new AssetPRJT(AHDR, game, platform);
                     case AssetType.SCRP: return new AssetSCRP(AHDR, game, platform);
                     case AssetType.SDFX: return new AssetSDFX(AHDR, game, platform);
-                    case AssetType.SFX: return new AssetSFX(AHDR, game, platform);
+                    case AssetType.SFX:  return new AssetSFX (AHDR, game, platform);
                     case AssetType.SGRP: return new AssetSGRP(AHDR, game, platform);
                     case AssetType.TRCK:
                     case AssetType.SIMP: return new AssetSIMP(AHDR, game, platform);
                     case AssetType.SHDW: return new AssetSHDW(AHDR, game, platform);
-                    //case AssetType.SHRP: return new AssetSHRP(AHDR, game, platform);
+                    case AssetType.SHRP: return new AssetSHRP(AHDR, game, platform);
                     case AssetType.SURF: return new AssetSURF(AHDR, game, platform);
                     case AssetType.TEXT: return new AssetTEXT(AHDR, game, platform);
                     case AssetType.TRIG: return new AssetTRIG(AHDR, game, platform);
                     case AssetType.TIMR: return new AssetTIMR(AHDR, game, platform);
                     case AssetType.TPIK: return new AssetTPIK(AHDR, game, platform);
-                    case AssetType.UI: return new AssetUI(AHDR, game, platform);
+                    case AssetType.UI:   return new AssetUI  (AHDR, game, platform);
                     case AssetType.UIFT: return new AssetUIFT(AHDR, game, platform);
-                    case AssetType.VIL: return new AssetVIL(AHDR, game, platform);
+                    case AssetType.VIL:  return new AssetVIL (AHDR, game, platform);
                     case AssetType.VILP: return new AssetVILP(AHDR, game, platform);
                     case AssetType.VOLU: return new AssetVOLU(AHDR, game, platform);
 
                     case AssetType.SND:
                     case AssetType.SNDS:
                         return new AssetWithData(AHDR, game, platform);
+
                     case AssetType.CCRV:
                     case AssetType.DTRK:
                     case AssetType.GRSM:
                     case AssetType.NGMS:
-                    case AssetType.PGRS:
                     case AssetType.RANM:
                     case AssetType.SLID:
                     case AssetType.SSET:
@@ -523,6 +524,7 @@ namespace IndustrialPark
                     case AssetType.UIM:
                     case AssetType.ZLIN:
                         return new AssetGenericBase(AHDR, game, platform);
+
                     case AssetType.ATKT:
                     case AssetType.BINK:
                     case AssetType.CSSS:
@@ -535,11 +537,10 @@ namespace IndustrialPark
                     case AssetType.TEXS:
                     case AssetType.UIFN:
                         return new AssetGeneric(AHDR, game, platform);
+
                     case AssetType.CSN:
-                    case AssetType.CSNM:
-                    case AssetType.SHRP:
-                    case AssetType.CRDT:
                         return new AssetGeneric(AHDR, game, platform);
+
                     default:
                         throw new Exception($"Unknown asset type ({AHDR.assetType})");
                 }
@@ -610,6 +611,12 @@ namespace IndustrialPark
                 case DynaType.interaction__Launch: return new DynaInteractionLaunch(AHDR, game, platform);
                 case DynaType.logic__reference: return new DynaLogicReference(AHDR, game, platform);
                 case DynaType.pointer: return new DynaPointer(AHDR, game, platform);
+                case DynaType.ui__box: return new DynaUIBox(AHDR, game, platform);
+                case DynaType.ui__controller: return new DynaUIController(AHDR, game, platform);
+                case DynaType.ui__image: return new DynaUIImage(AHDR, game, platform);
+                case DynaType.ui__model: return new DynaUIModel(AHDR, game, platform);
+                case DynaType.ui__text: return new DynaUIText(AHDR, game, platform);
+                case DynaType.ui__text__userstring: return new DynaUITextUserString(AHDR, game, platform);
                 case DynaType.Checkpoint:
                 case DynaType.Effect__particle_generator:
                 case DynaType.Enemy__SB:
@@ -654,12 +661,6 @@ namespace IndustrialPark
                 case DynaType.npc__CoverPoint:
                 case DynaType.npc__NPC_Custom_AV:
                 case DynaType.npc__group:
-                case DynaType.ui__box:
-                case DynaType.ui__controller:
-                case DynaType.ui__image:
-                case DynaType.ui__model:
-                case DynaType.ui__text:
-                case DynaType.ui__text__userstring:
                 case DynaType.Unknown_2CD29541:
                 case DynaType.Unknown_4EE03B24:
                 case DynaType.Unknown_9F234F8E:

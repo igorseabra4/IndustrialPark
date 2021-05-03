@@ -26,9 +26,9 @@ namespace IndustrialPark
         {
             get
             {
-                LinkListEditor.IsTimed = true;
-                LinkListEditor.thisAssetID = assetID;
-                LinkListEditor.game = game;
+                LinkListEditor.LinkType = LinkType.Timed;
+                LinkListEditor.ThisAssetID = assetID;
+                LinkListEditor.Game = game;
 
                 return _timedLinks;
             }
@@ -56,7 +56,7 @@ namespace IndustrialPark
 
             _timedLinks = new Link[timedLinkCount];
             for (int i = 0; i < _timedLinks.Length; i++)
-                _timedLinks[i] = new Link(reader, true, game);
+                _timedLinks[i] = new Link(reader, LinkType.Timed, game);
         }
 
         public override byte[] Serialize(Game game, Platform platform)
@@ -76,7 +76,7 @@ namespace IndustrialPark
             }
 
             foreach (var l in _timedLinks)
-                writer.Write(l.Serialize(platform));
+                writer.Write(l.Serialize(LinkType.Timed, platform));
 
             writer.Write(SerializeLinks(platform));
             return writer.ToArray();

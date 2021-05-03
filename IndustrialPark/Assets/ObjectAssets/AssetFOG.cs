@@ -50,8 +50,8 @@ namespace IndustrialPark
             var reader = new EndianBinaryReader(AHDR.data, platform);
             reader.BaseStream.Position = baseHeaderEndPosition;
 
-            BackgroundColor = new AssetColor(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
-            FogColor = new AssetColor(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
+            BackgroundColor = reader.ReadColor();
+            FogColor = reader.ReadColor();
             FogDensity = reader.ReadSingle();
             StartDistance = reader.ReadSingle();
             EndDistance = reader.ReadSingle();

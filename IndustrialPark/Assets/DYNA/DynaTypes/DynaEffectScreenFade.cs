@@ -30,7 +30,7 @@ namespace IndustrialPark
             var reader = new EndianBinaryReader(AHDR.data, platform);
             reader.BaseStream.Position = dynaDataStartPosition;
 
-            Color = new AssetColor(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
+            Color = reader.ReadColor();
             UnknownFloat1 = reader.ReadSingle();
             UnknownFloat2 = reader.ReadSingle();
             UnknownFloat3 = reader.ReadSingle();

@@ -1,6 +1,8 @@
 ﻿using HipHopFile;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace IndustrialPark
 {
@@ -9,12 +11,11 @@ namespace IndustrialPark
         public AssetID Sound_AssetID { get; set; }
         [DisplayName("Volume (0-1)")]
         public AssetSingle Volume { get; set; }
-        public int UnknownInt08 { get; set; }
-        public int UnknownInt0C { get; set; }
+        public AssetSingle MinPitchMult { get; set; }
+        public AssetSingle MaxPitchMult { get; set; }
 
         public EntrySGRP()
         {
-            Sound_AssetID = 0;
             Volume = 0.8f;
         }
 
@@ -22,8 +23,8 @@ namespace IndustrialPark
         {
             Sound_AssetID = reader.ReadUInt32();
             Volume = reader.ReadSingle();
-            UnknownInt08 = reader.ReadInt32();
-            UnknownInt0C = reader.ReadInt32();
+            MinPitchMult = reader.ReadSingle();
+            MaxPitchMult = reader.ReadSingle();
         }
 
         public byte[] Serialize(Platform platform)
@@ -31,8 +32,8 @@ namespace IndustrialPark
             var writer = new EndianBinaryWriter(platform);
             writer.Write(Sound_AssetID);
             writer.Write(Volume);
-            writer.Write(UnknownInt08);
-            writer.Write(UnknownInt0C);
+            writer.Write(MinPitchMult);
+            writer.Write(MaxPitchMult);
             return writer.ToArray();
         }
 
@@ -44,27 +45,39 @@ namespace IndustrialPark
         private const string categoryName = "Sound Group";
 
         [Category(categoryName)]
-        public int UnknownInt08 { get; set; }
+        public int uPlayedMask { get; set; }
         [Category(categoryName)]
-        public AssetByte UnknownByte0D { get; set; }
+        public AssetByte uSetBits { get; set; }
         [Category(categoryName)]
-        public AssetByte UnknownByte0E { get; set; }
+        public AssetByte nMaxPlays { get; set; }
         [Category(categoryName)]
-        public AssetByte UnknownByte0F { get; set; }
+        public AssetByte uPriority { get; set; }
         [Category(categoryName)]
-        public AssetByte UnknownByte10 { get; set; }
+        public FlagBitmask uFlags { get; set; } = ByteFlagsDescriptor("Play globally");
         [Category(categoryName)]
-        public AssetByte PlayGlobally { get; set; }
+        public FlagBitmask eSoundCategory { get; set; } = ByteFlagsDescriptor("Choose random entry");
         [Category(categoryName)]
-        public AssetByte ChooseRandomEntry { get; set; }
+        public AssetByte ePlayRule { get; set; }
         [Category(categoryName)]
-        public AssetByte UnknownByte13 { get; set; }
+        public AssetByte uInfoPad0 { get; set; }        
         [Category(categoryName)]
         public AssetSingle InnerRadius { get; set; }
         [Category(categoryName)]
         public AssetSingle OuterRadius { get; set; }
+
+        private char[] _pszGroupName;
         [Category(categoryName)]
-        public int UnknownInt1C { get; set; }
+        public string pszGroupName
+        {
+            get => new string(_pszGroupName);
+            set
+            {
+                if (value.Length != 4)
+                    throw new ArgumentException("Value must be 4 characters long");
+                _pszGroupName = value.ToCharArray();
+            }
+        }
+
         [Category(categoryName)]
         public EntrySGRP[] SGRP_Entries { get; set; }
 
@@ -73,23 +86,25 @@ namespace IndustrialPark
             var reader = new EndianBinaryReader(AHDR.data, platform);
             reader.BaseStream.Position = baseHeaderEndPosition;
 
-            UnknownInt08 = reader.ReadInt32();
+            uPlayedMask = reader.ReadInt32();
 
-            byte AmountOfReferences = reader.ReadByte();
-            UnknownByte0D = reader.ReadByte();
-            UnknownByte0E = reader.ReadByte();
-            UnknownByte0F = reader.ReadByte();
+            byte entryCount = reader.ReadByte();
+            uSetBits = reader.ReadByte();
+            nMaxPlays = reader.ReadByte();
+            uPriority = reader.ReadByte();
 
-            UnknownByte10 = reader.ReadByte();
-            PlayGlobally = reader.ReadByte();
-            ChooseRandomEntry = reader.ReadByte();
-            UnknownByte13 = reader.ReadByte();
+            uFlags.FlagValueByte = reader.ReadByte();
+            eSoundCategory.FlagValueByte = reader.ReadByte();
+            ePlayRule = reader.ReadByte();
+            uInfoPad0 = reader.ReadByte();
 
             InnerRadius = reader.ReadSingle();
             OuterRadius = reader.ReadSingle();
-            UnknownInt1C = reader.ReadInt32();
 
-            SGRP_Entries = new EntrySGRP[AmountOfReferences];
+            var chars = reader.ReadChars(4);
+            _pszGroupName = reader.endianness == Endianness.Big ? chars : chars.Reverse().ToArray();
+
+            SGRP_Entries = new EntrySGRP[entryCount];
             for (int i = 0; i < SGRP_Entries.Length; i++)
                 SGRP_Entries[i] = new EntrySGRP(reader);
         }
@@ -99,21 +114,22 @@ namespace IndustrialPark
             var writer = new EndianBinaryWriter(platform);
             writer.Write(SerializeBase(platform));
 
-            writer.Write(UnknownInt08);
+            writer.Write(uPlayedMask);
 
             writer.Write((byte)SGRP_Entries.Length);
-            writer.Write(UnknownByte0D);
-            writer.Write(UnknownByte0E);
-            writer.Write(UnknownByte0F);
+            writer.Write(uSetBits);
+            writer.Write(nMaxPlays);
+            writer.Write(uPriority);
 
-            writer.Write(UnknownByte10);
-            writer.Write(PlayGlobally);
-            writer.Write(ChooseRandomEntry);
-            writer.Write(UnknownByte13);
+            writer.Write(uFlags.FlagValueByte);
+            writer.Write(eSoundCategory.FlagValueByte);
+            writer.Write(ePlayRule);
+            writer.Write(uInfoPad0);
 
             writer.Write(InnerRadius);
             writer.Write(OuterRadius);
-            writer.Write(UnknownInt1C);
+
+            writer.Write(writer.endianness == Endianness.Big ? _pszGroupName : _pszGroupName.Reverse().ToArray());
 
             foreach (var i in SGRP_Entries)
                 writer.Write(i.Serialize(platform));

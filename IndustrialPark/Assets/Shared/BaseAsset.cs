@@ -28,9 +28,9 @@ namespace IndustrialPark
         {
             get
             {
-                LinkListEditor.IsTimed = false;
-                LinkListEditor.thisAssetID = assetID;
-                LinkListEditor.game = game;
+                LinkListEditor.LinkType = LinkType.Normal;
+                LinkListEditor.ThisAssetID = assetID;
+                LinkListEditor.Game = game;
 
                 return _links;
             }
@@ -66,7 +66,7 @@ namespace IndustrialPark
                         
             _links = new Link[LinkCount];
             for (int i = 0; i < _links.Length; i++)
-                _links[i] = new Link(reader, false, game);
+                _links[i] = new Link(reader, LinkType.Normal, game);
         }
 
         // meant for use with DUPC VIL only
@@ -96,7 +96,7 @@ namespace IndustrialPark
             var writer = new EndianBinaryWriter(platform);
 
             foreach(var l in _links)
-                writer.Write(l.Serialize(platform));
+                writer.Write(l.Serialize(LinkType.Normal, platform));
 
             return writer.ToArray();
         }

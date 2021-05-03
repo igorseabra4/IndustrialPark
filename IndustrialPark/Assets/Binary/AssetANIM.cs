@@ -96,6 +96,9 @@ namespace IndustrialPark
             writer.Write(RotationY);
             writer.Write(RotationZ);
             writer.Write(RotationW);
+            writer.Write(PositionX);
+            writer.Write(PositionY);
+            writer.Write(PositionZ);
 
             return writer.ToArray();
         }

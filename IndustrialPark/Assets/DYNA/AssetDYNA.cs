@@ -17,6 +17,8 @@ namespace IndustrialPark
         public virtual string Note => $"Version is {(constVersion == -1 ? "unknown" : $"always {constVersion}")}";
         protected virtual int constVersion => -1;
 
+        public override string AssetInfo => Type.ToString();
+
         protected int dynaDataStartPosition => baseHeaderEndPosition + 8;
 
         public static bool dontRender = false;

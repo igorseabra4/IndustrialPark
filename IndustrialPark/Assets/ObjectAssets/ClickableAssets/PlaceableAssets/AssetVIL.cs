@@ -11,7 +11,7 @@ namespace IndustrialPark
         protected const string categoryName = "VIL";
 
         [Category(categoryName)]
-        public FlagBitmask VilFlags => IntFlagsDescriptor();
+        public FlagBitmask VilFlags { get; set; } = IntFlagsDescriptor();
         [Category(categoryName), DisplayName("VilType (Incredibles)")]
         public AssetID VilType { get; set; }
         [Category(categoryName), DisplayName("VilType (BFBB)")]
