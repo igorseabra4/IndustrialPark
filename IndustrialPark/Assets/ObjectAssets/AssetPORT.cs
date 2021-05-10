@@ -19,20 +19,26 @@ namespace IndustrialPark
         [Category(categoryName)]
         private char[] _destinationLevel;
         [Category(categoryName)]
-        public char[] DestinationLevel
+        public string DestinationLevel
         {
-            get => _destinationLevel;
+            get => new string(_destinationLevel);
             set
             {
                 if (value.Length != 4)
                     throw new ArgumentException("Value must be 4 characters long");
-                _destinationLevel = value;
+                _destinationLevel = value.ToCharArray();
             }
         }
 
-        public AssetPORT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetPORT(string assetName) : base(assetName, AssetType.PORT, BaseAssetType.Portal)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            Camera_AssetID = "STARTCAM";
+            DestinationLevel = "AA00";
+        }
+
+        public AssetPORT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = baseHeaderEndPosition;
 
             Camera_AssetID = reader.ReadUInt32();
@@ -40,20 +46,20 @@ namespace IndustrialPark
             Rotation = reader.ReadSingle();
 
             var chars = reader.ReadChars(4);
-            _destinationLevel = reader.endianness == Endianness.Big ? chars : chars.Reverse().ToArray();
+            _destinationLevel = reader.endianness == Endianness.Little ? chars : chars.Reverse().ToArray();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeBase(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeBase(endianness));
 
             writer.Write(Camera_AssetID);
             writer.Write(Destination_MRKR_AssetID);
             writer.Write(Rotation);
-            writer.Write(writer.endianness == Endianness.Big ? DestinationLevel : DestinationLevel.Reverse().ToArray());
+            writer.WriteMagic(new string(_destinationLevel.ToArray()));
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
 

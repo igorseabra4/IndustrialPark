@@ -8,7 +8,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "game_object:Taxi";
 
-        protected override int constVersion => 1;
+        protected override short constVersion => 1;
 
         [Category(dynaCategoryName)]
         public AssetID MRKR_ID { get; set; }
@@ -27,9 +27,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle TeleportTimer { get; set; }
 
-        public DynaGObjectTaxi(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.game_object__Taxi, game, platform)
+        public DynaGObjectTaxi(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__Taxi, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             MRKR_ID = reader.ReadUInt32();
@@ -42,9 +42,9 @@ namespace IndustrialPark
             TeleportTimer = reader.ReadSingle();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(MRKR_ID);
             writer.Write(CAM_ID);

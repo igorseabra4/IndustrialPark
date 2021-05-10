@@ -14,7 +14,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "Enemy:SB:Dennis";
 
-        protected override int constVersion => 3;
+        protected override short constVersion => 3;
 
         [Category(dynaCategoryName)]
         public EnemyDennisType DennisType
@@ -39,9 +39,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID Unknown6C { get; set; }
 
-        public DynaEnemyDennis(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.Enemy__SB__Dennis, game, platform)
+        public DynaEnemyDennis(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__Dennis, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = entityDynaEndPosition;
 
             Unknown50 = reader.ReadUInt32();
@@ -54,10 +54,10 @@ namespace IndustrialPark
             Unknown6C = reader.ReadUInt32();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeEntityDyna(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeEntityDyna(endianness));
 
             writer.Write(Unknown50);
             writer.Write(Unknown54);

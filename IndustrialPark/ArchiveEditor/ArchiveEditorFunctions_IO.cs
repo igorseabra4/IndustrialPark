@@ -13,7 +13,10 @@ namespace IndustrialPark
 
         public void ExportHip(string fileName)
         {
-            hipFile.ToIni(fileName, true, true);
+            foreach (var asset in assetDictionary.Values)
+                DICT.ATOC.AHDRList.Add(asset.BuildAHDR(game, platform.Endianness(), false));
+            hipFile.ToIni(game, fileName, true, true);
+            DICT.ATOC.AHDRList.Clear();
         }
         
         public void ImportHip(string[] fileNames, bool forceOverwrite, List<uint> assetIDs = null)
@@ -25,83 +28,83 @@ namespace IndustrialPark
         public void ImportHip(string fileName, bool forceOverwrite, List<uint> assetIDs = null)
         {
             if (Path.GetExtension(fileName).ToLower() == ".hip" || Path.GetExtension(fileName).ToLower() == ".hop")
-                ImportHip(new HipFile(fileName), forceOverwrite, assetIDs);
+                ImportHip(HipFile.FromPath(fileName), forceOverwrite, assetIDs);
             else if (Path.GetExtension(fileName).ToLower() == ".ini")
                 ImportHip(HipFile.FromINI(fileName), forceOverwrite, assetIDs);
             else
                 MessageBox.Show("Invalid file: " + fileName);
         }
 
-        public void ImportHip(HipFile hip, bool forceOverwrite, List<uint> missingAssets)
+        public void ImportHip((HipFile, Game, Platform) hip, bool forceOverwrite, List<uint> missingAssets)
         {
             UnsavedChanges = true;
             forceOverwrite |= missingAssets != null;
 
-            foreach (Section_AHDR AHDR in hip.DICT.ATOC.AHDRList)
+            foreach (Section_AHDR AHDR in hip.Item1.DICT.ATOC.AHDRList)
             {
                 if (AHDR.assetType == AssetType.COLL && ContainsAssetWithType(AssetType.COLL))
                 {
-                    foreach (Section_LHDR LHDR in hip.DICT.LTOC.LHDRList)
+                    foreach (Section_LHDR LHDR in hip.Item1.DICT.LTOC.LHDRList)
                         LHDR.assetIDlist.Remove(AHDR.assetID);
 
-                    MergeCOLL(new AssetCOLL(AHDR, hip.game, hip.platform));
+                    MergeCOLL(new AssetCOLL(AHDR, hip.Item2, hip.Item3.Endianness()));
                     continue;
                 }
                 else if (AHDR.assetType == AssetType.JAW && ContainsAssetWithType(AssetType.JAW))
                 {
-                    foreach (Section_LHDR LHDR in hip.DICT.LTOC.LHDRList)
+                    foreach (Section_LHDR LHDR in hip.Item1.DICT.LTOC.LHDRList)
                         LHDR.assetIDlist.Remove(AHDR.assetID);
 
-                    MergeJAW(new AssetJAW(AHDR, hip.game, hip.platform));
+                    MergeJAW(new AssetJAW(AHDR, hip.Item2, hip.Item3.Endianness()));
                     continue;
                 }
                 else if (AHDR.assetType == AssetType.LODT && ContainsAssetWithType(AssetType.LODT))
                 {
-                    foreach (Section_LHDR LHDR in hip.DICT.LTOC.LHDRList)
+                    foreach (Section_LHDR LHDR in hip.Item1.DICT.LTOC.LHDRList)
                         LHDR.assetIDlist.Remove(AHDR.assetID);
 
-                    MergeLODT(new AssetLODT(AHDR, hip.game, hip.platform));
+                    MergeLODT(new AssetLODT(AHDR, hip.Item2, hip.Item3.Endianness()));
                     continue;
                 }
                 else if (AHDR.assetType == AssetType.PIPT && ContainsAssetWithType(AssetType.PIPT))
                 {
-                    foreach (Section_LHDR LHDR in hip.DICT.LTOC.LHDRList)
+                    foreach (Section_LHDR LHDR in hip.Item1.DICT.LTOC.LHDRList)
                         LHDR.assetIDlist.Remove(AHDR.assetID);
 
-                    MergePIPT(new AssetPIPT(AHDR, hip.game, hip.platform));
+                    MergePIPT(new AssetPIPT(AHDR, hip.Item2, hip.Item3.Endianness()));
                     continue;
                 }
                 else if (AHDR.assetType == AssetType.SHDW && ContainsAssetWithType(AssetType.SHDW))
                 {
-                    foreach (Section_LHDR LHDR in hip.DICT.LTOC.LHDRList)
+                    foreach (Section_LHDR LHDR in hip.Item1.DICT.LTOC.LHDRList)
                         LHDR.assetIDlist.Remove(AHDR.assetID);
 
-                    MergeSHDW(new AssetSHDW(AHDR, hip.game, hip.platform));
+                    MergeSHDW(new AssetSHDW(AHDR, hip.Item2, hip.Item3.Endianness()));
                     continue;
                 }
                 else if (AHDR.assetType == AssetType.SNDI && ContainsAssetWithType(AssetType.SNDI))
                 {
-                    foreach (Section_LHDR LHDR in hip.DICT.LTOC.LHDRList)
+                    foreach (Section_LHDR LHDR in hip.Item1.DICT.LTOC.LHDRList)
                         LHDR.assetIDlist.Remove(AHDR.assetID);
 
-                    if (hip.platform == Platform.GameCube)
+                    if (hip.Item3 == Platform.GameCube)
                     {
-                        if (hip.game == Game.Incredibles)
-                            MergeSNDI(new AssetSNDI_GCN_V2(AHDR, hip.game, hip.platform));
+                        if (hip.Item2 == Game.Incredibles)
+                            MergeSNDI(new AssetSNDI_GCN_V2(AHDR, hip.Item2, hip.Item3.Endianness()));
                         else
-                            MergeSNDI(new AssetSNDI_GCN_V1(AHDR, hip.game, hip.platform));
+                            MergeSNDI(new AssetSNDI_GCN_V1(AHDR, hip.Item2, hip.Item3.Endianness()));
                     }
-                    else if (hip.platform == Platform.Xbox)
-                        MergeSNDI(new AssetSNDI_XBOX(AHDR, hip.game, hip.platform));
-                    else if (hip.platform == Platform.PS2)
-                        MergeSNDI(new AssetSNDI_PS2(AHDR, hip.game, hip.platform));
+                    else if (hip.Item3 == Platform.Xbox)
+                        MergeSNDI(new AssetSNDI_XBOX(AHDR, hip.Item2, hip.Item3.Endianness()));
+                    else if (hip.Item3 == Platform.PS2)
+                        MergeSNDI(new AssetSNDI_PS2(AHDR, hip.Item2, hip.Item3.Endianness()));
 
                     continue;
                 }
 
                 if (missingAssets != null && !missingAssets.Contains(AHDR.assetID))
                 {
-                    foreach (Section_LHDR LHDR in hip.DICT.LTOC.LHDRList)
+                    foreach (Section_LHDR LHDR in hip.Item1.DICT.LTOC.LHDRList)
                         LHDR.assetIDlist.Remove(AHDR.assetID);
                     continue;
                 }
@@ -114,21 +117,21 @@ namespace IndustrialPark
                     if (result == DialogResult.Yes)
                     {
                         RemoveAsset(AHDR.assetID, false);
-                        AddAssetToDictionary(AHDR, forceOverwrite, forceOverwrite);
+                        AddAssetToDictionary(AHDR, hip.Item2, hip.Item3.Endianness(), forceOverwrite, forceOverwrite);
                     }
                     else
-                        foreach (Section_LHDR LHDR in hip.DICT.LTOC.LHDRList)
+                        foreach (Section_LHDR LHDR in hip.Item1.DICT.LTOC.LHDRList)
                             LHDR.assetIDlist.Remove(AHDR.assetID);
                     if (missingAssets != null)
                         missingAssets.Remove(AHDR.assetID);
                 }
                 else if (missingAssets == null)
                 {
-                    AddAssetToDictionary(AHDR, forceOverwrite, forceOverwrite);
+                    AddAssetToDictionary(AHDR, hip.Item2, hip.Item3.Endianness(), forceOverwrite, forceOverwrite);
                 }
             }
 
-            foreach (Section_LHDR LHDR in hip.DICT.LTOC.LHDRList)
+            foreach (Section_LHDR LHDR in hip.Item1.DICT.LTOC.LHDRList)
                 if (LHDR.assetIDlist.Count != 0)
                     DICT.LTOC.LHDRList.Add(LHDR);
 

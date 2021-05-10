@@ -27,9 +27,9 @@ namespace IndustrialPark
             MaxPitchMult = reader.ReadSingle();
         }
 
-        public byte[] Serialize(Platform platform)
+        public byte[] Serialize(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
             writer.Write(Sound_AssetID);
             writer.Write(Volume);
             writer.Write(MinPitchMult);
@@ -81,9 +81,19 @@ namespace IndustrialPark
         [Category(categoryName)]
         public EntrySGRP[] SGRP_Entries { get; set; }
 
-        public AssetSGRP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetSGRP(string assetName) : base(assetName, AssetType.SGRP, BaseAssetType.SGRP)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            nMaxPlays = 0x30;
+            uPriority = 0x80;
+            uInfoPad0 = 0x42;
+            InnerRadius = 8f;
+            OuterRadius = 25f;
+            SGRP_Entries = new EntrySGRP[] { new EntrySGRP() };
+        }
+        
+        public AssetSGRP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = baseHeaderEndPosition;
 
             uPlayedMask = reader.ReadInt32();
@@ -102,17 +112,17 @@ namespace IndustrialPark
             OuterRadius = reader.ReadSingle();
 
             var chars = reader.ReadChars(4);
-            _pszGroupName = reader.endianness == Endianness.Big ? chars : chars.Reverse().ToArray();
+            _pszGroupName = reader.endianness == Endianness.Little ? chars : chars.Reverse().ToArray();
 
             SGRP_Entries = new EntrySGRP[entryCount];
             for (int i = 0; i < SGRP_Entries.Length; i++)
                 SGRP_Entries[i] = new EntrySGRP(reader);
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeBase(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeBase(endianness));
 
             writer.Write(uPlayedMask);
 
@@ -129,12 +139,12 @@ namespace IndustrialPark
             writer.Write(InnerRadius);
             writer.Write(OuterRadius);
 
-            writer.Write(writer.endianness == Endianness.Big ? _pszGroupName : _pszGroupName.Reverse().ToArray());
+            writer.WriteMagic(new string(_pszGroupName.ToArray()));
 
             foreach (var i in SGRP_Entries)
-                writer.Write(i.Serialize(platform));
+                writer.Write(i.Serialize(endianness));
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
 

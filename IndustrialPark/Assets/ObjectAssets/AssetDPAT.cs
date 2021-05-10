@@ -6,13 +6,13 @@ namespace IndustrialPark
     {
         public AssetDPAT(string assetName) : base(assetName, AssetType.DPAT, BaseAssetType.Dispatcher) { }
 
-        public AssetDPAT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        public AssetDPAT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness) { }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeBase(platform));
-            writer.Write(SerializeLinks(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeBase(endianness));
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
     }

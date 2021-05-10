@@ -46,9 +46,17 @@ namespace IndustrialPark
             null,
             "Play from Entity");
 
-        public AssetSDFX(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetSDFX(string assetName, Vector3 position) : base(assetName, AssetType.SDFX, BaseAssetType.SDFX)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            _position = position;
+
+            CreateTransformMatrix();
+            ArchiveEditorFunctions.AddToRenderableAssets(this);
+        }
+
+        public AssetSDFX(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = baseHeaderEndPosition;
 
             _soundGroup_AssetID = reader.ReadUInt32();
@@ -57,13 +65,13 @@ namespace IndustrialPark
             SoundEffectFlags.FlagValueInt = reader.ReadUInt32();
 
             CreateTransformMatrix();
-            ArchiveEditorFunctions.renderableAssets.Add(this);
+            ArchiveEditorFunctions.AddToRenderableAssets(this);
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeBase(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeBase(endianness));
 
             writer.Write(_soundGroup_AssetID);
             writer.Write(Emitter_AssetID);
@@ -72,7 +80,7 @@ namespace IndustrialPark
             writer.Write(_position.Z);
             writer.Write(SoundEffectFlags.FlagValueInt);
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
 

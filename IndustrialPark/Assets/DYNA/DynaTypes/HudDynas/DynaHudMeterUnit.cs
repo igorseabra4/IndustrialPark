@@ -8,7 +8,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "hud:meter:unit";
 
-        protected override int constVersion => 3;
+        protected override short constVersion => 3;
 
         [Category(dynaCategoryName)]
         public AssetID EmptyModel_AssetID { get; set; }
@@ -47,9 +47,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public int MeterFillDirection { get; set; }
 
-        public DynaHudMeterUnit(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.hud__meter__unit, game, platform)
+        public DynaHudMeterUnit(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.hud__meter__unit, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaHudMeterEnd;
 
             EmptyModel_AssetID = reader.ReadUInt32();
@@ -72,11 +72,11 @@ namespace IndustrialPark
             MeterFillDirection = reader.ReadInt32();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
-            writer.Write(SerializeDynaHudMeter(platform));
+            writer.Write(SerializeDynaHudMeter(endianness));
             writer.Write(EmptyModel_AssetID);
             writer.Write(EmptyOffset_X);
             writer.Write(EmptyOffset_Y);

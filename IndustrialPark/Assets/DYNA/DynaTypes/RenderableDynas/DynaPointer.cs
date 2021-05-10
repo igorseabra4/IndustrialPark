@@ -8,11 +8,17 @@ namespace IndustrialPark
 {
     public class DynaPointer : RenderableRotatableDynaBase
     {
-        protected override int constVersion => 1;
+        protected override short constVersion => 1;
 
-        public DynaPointer(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.pointer, game, platform)
+        public DynaPointer(string assetName, Vector3 position) : base(assetName, DynaType.pointer, 1, position)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            CreateTransformMatrix();
+            AddToRenderableAssets(this);
+        }
+
+        public DynaPointer(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.pointer, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
@@ -21,12 +27,12 @@ namespace IndustrialPark
             _roll = reader.ReadSingle();
 
             CreateTransformMatrix();
-            renderableAssets.Add(this);
+            AddToRenderableAssets(this);
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(_position.X);
             writer.Write(_position.Y);

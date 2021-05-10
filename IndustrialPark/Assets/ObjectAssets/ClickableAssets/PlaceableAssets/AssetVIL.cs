@@ -26,7 +26,7 @@ namespace IndustrialPark
             get
             {
                 foreach (VilType_Alphabetical o in Enum.GetValues(typeof(VilType_Alphabetical)))
-                    if (o.ToString() == VilType.ToString())
+                    if (o.ToString() == VilType_BFBB.ToString())
                         return o;
 
                 return VilType_Alphabetical.Null;
@@ -53,8 +53,10 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID TaskDYNA2_AssetID { get; set; }
 
-        public AssetVIL(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.VIL, BaseAssetType.NPC, position)
+        public AssetVIL(string assetName, Vector3 position, AssetTemplate template, uint mvptAssetID) : base(assetName, AssetType.VIL, BaseAssetType.NPC, position)
         {
+            MovePoint_AssetID = mvptAssetID;
+
             switch (template)
             {
                 case AssetTemplate.WoodenTiki:
@@ -77,12 +79,88 @@ namespace IndustrialPark
                     Model_AssetID = "tiki_stone_bind.MINF";
                     VilType_BFBB = VilType_BFBB.tiki_stone_bind;
                     break;
+                case AssetTemplate.Fodder:
+                    Model_AssetID = "robot_0a_fodder_bind.MINF";
+                    VilType_BFBB = VilType_BFBB.robot_0a_fodder_bind;
+                    break;
+                case AssetTemplate.Hammer:
+                    Model_AssetID = "ham_bind.MINF";
+                    VilType_BFBB = VilType_BFBB.ham_bind;
+                    break;
+                case AssetTemplate.TarTar:
+                    Model_AssetID = "robot_tar_bind.MINF";
+                    VilType_BFBB = VilType_BFBB.robot_tar_bind;
+                    break;
+                case AssetTemplate.ChompBot:
+                    Model_AssetID = "robot_0a_chomper_bind.MINF";
+                    VilType_BFBB = VilType_BFBB.robot_0a_chomper_bind;
+                    break;
+                case AssetTemplate.GLove:
+                    Model_AssetID = "g_love_bind.MINF";
+                    VilType_BFBB = VilType_BFBB.g_love_bind;
+                    break;
+                case AssetTemplate.Chuck:
+                case AssetTemplate.Chuck_Trigger:
+                    Model_AssetID = "robot_chuck_bind.MINF";
+                    VilType_BFBB = VilType_BFBB.robot_chuck_bind;
+                    break;
+                case AssetTemplate.Monsoon:
+                case AssetTemplate.Monsoon_Trigger:
+                    Model_AssetID = "robot_4a_monsoon_bind.MINF";
+                    VilType_BFBB = VilType_BFBB.robot_4a_monsoon_bind;
+                    break;
+                case AssetTemplate.Sleepytime:
+                case AssetTemplate.Sleepytime_Moving:
+                    Model_AssetID = "robot_sleepy-time_bind.MINF";
+                    VilType_BFBB = VilType_BFBB.robot_sleepytime_bind;
+                    break;
+                case AssetTemplate.Arf:
+                    Model_AssetID = "robot_arf_bind.MINF";
+                    VilType_BFBB = VilType_BFBB.robot_arf_bind;
+                    break;
+                case AssetTemplate.ArfDog:
+                    Model_AssetID = "robot_arf_dog_bind.MINF";
+                    VilType_BFBB = VilType_BFBB.robot_arf_dog_bind;
+                    break;
+                case AssetTemplate.BombBot:
+                    Model_AssetID = "robot_0a_bomb_bind.MINF";
+                    VilType_BFBB = VilType_BFBB.robot_0a_bomb_bind;
+                    break;
+                case AssetTemplate.Tubelet:
+                    Model_AssetID = "tubelet_bind.MINF";
+                    VilType_BFBB = VilType_BFBB.tubelet_bind;
+                    break;
+                case AssetTemplate.TubeletSlave:
+                    Model_AssetID = "tubelet_slave_bind.MINF";
+                    VilType_BFBB = VilType_BFBB.tubelet_slave_bind;
+                    break;
+                case AssetTemplate.BzztBot:
+                    Model_AssetID = "robot_0a_bzzt_bind.MINF";
+                    VilType_BFBB = VilType_BFBB.robot_0a_bzzt_bind;
+                    break;
+                case AssetTemplate.Slick:
+                case AssetTemplate.Slick_Trigger:
+                    Model_AssetID = "robot_9a_bind.MINF";
+                    VilType_BFBB = VilType_BFBB.robot_9a_bind;
+                    break;
+                case AssetTemplate.Jellyfish_Pink:
+                    Model_AssetID = "jellyfish_pink_bind.MINF";
+                    VilType_BFBB = VilType_BFBB.jellyfish_pink_bind;
+                    break;
+                case AssetTemplate.Jellyfish_Blue:
+                    Model_AssetID = "jellyfish_blue_bind.MINF";
+                    VilType_BFBB = VilType_BFBB.jellyfish_blue_bind;
+                    break;
+                case AssetTemplate.Duplicatotron:
+                    Model_AssetID = "duplicatotron1000_bind.MINF";
+                    VilType_BFBB = VilType_BFBB.duplicatotron1000_bind;
+                    break;
             }
         }
         
-        public AssetVIL(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetVIL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = entityHeaderEndPosition;
 
             VilFlags.FlagValueInt = reader.ReadUInt32();
@@ -104,10 +182,10 @@ namespace IndustrialPark
             TaskDYNA2_AssetID = reader.ReadUInt32();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeEntity(game, platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeEntity(game, endianness));
 
             writer.Write(VilFlags.FlagValueInt);
             writer.Write(VilType);
@@ -116,7 +194,7 @@ namespace IndustrialPark
             writer.Write(TaskDYNA1_AssetID);
             writer.Write(TaskDYNA2_AssetID);
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
 

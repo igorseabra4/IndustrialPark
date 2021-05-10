@@ -51,9 +51,12 @@ namespace IndustrialPark
         [Category(categoryName)]
         public int UnknownInt80 { get; set; }
 
-        public AssetPEND(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetPEND(string assetName, Vector3 position) : base(assetName, AssetType.PEND, BaseAssetType.Pendulum, position)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+        }
+        public AssetPEND(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = entityHeaderEndPosition;
 
             UnknownByte54 = reader.ReadByte();
@@ -73,10 +76,10 @@ namespace IndustrialPark
             UnknownInt80 = reader.ReadInt32();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeBase(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeBase(endianness));
 
             writer.Write(UnknownByte54);
             writer.Write(UnknownByte55);
@@ -94,7 +97,7 @@ namespace IndustrialPark
             writer.Write(UnknownInt7C);
             writer.Write(UnknownInt80);
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
 

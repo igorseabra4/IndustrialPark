@@ -22,9 +22,9 @@ namespace IndustrialPark
 
         protected int dynaHudEnd => dynaDataStartPosition + 24;
 
-        public DynaHud(Section_AHDR AHDR, DynaType type, Game game, Platform platform) : base(AHDR, type, game, platform)
+        public DynaHud(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             PositionX = reader.ReadSingle();
@@ -35,9 +35,9 @@ namespace IndustrialPark
             ScaleZ = reader.ReadSingle();
         }
 
-        protected byte[] SerializeDynaHud(Platform platform)
+        protected byte[] SerializeDynaHud(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(PositionX);
             writer.Write(PositionY);

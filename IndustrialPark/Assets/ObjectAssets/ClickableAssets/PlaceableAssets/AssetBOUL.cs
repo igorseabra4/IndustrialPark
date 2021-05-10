@@ -63,9 +63,9 @@ namespace IndustrialPark
             ColorAlphaSpeed = 0;
         }
 
-        public AssetBOUL(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetBOUL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = entityHeaderEndPosition;
 
             Gravity = reader.ReadSingle();
@@ -90,10 +90,10 @@ namespace IndustrialPark
             OuterRadius = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeEntity(game, platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeEntity(game, endianness));
 
             writer.Write(Gravity);
             writer.Write(Mass);
@@ -116,7 +116,7 @@ namespace IndustrialPark
             writer.Write(InnerRadius);
             writer.Write(OuterRadius);
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
 

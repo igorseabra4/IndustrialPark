@@ -242,9 +242,9 @@ namespace IndustrialPark
                 Unknown = reader.ReadInt32();
         }
 
-        public byte[] Serialize(Game game, Platform platform)
+        public byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(ModelAssetID);
             writer.Write(SubObjectBits);
@@ -271,9 +271,14 @@ namespace IndustrialPark
             }
         }
 
-        public AssetPIPT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetPIPT(string assetName) : base(assetName, AssetType.PIPT)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            PIPT_Entries = new EntryPIPT[0];
+        }
+
+        public AssetPIPT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
 
             _pipt_Entries = new EntryPIPT[reader.ReadInt32()];
 
@@ -283,19 +288,19 @@ namespace IndustrialPark
             UpdateDictionary();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(_pipt_Entries.Length);
 
             foreach (var l in _pipt_Entries)
-                writer.Write(l.Serialize(game, platform));
+                writer.Write(l.Serialize(game, endianness));
 
             return writer.ToArray();
         }
 
-        public AssetPIPT(Section_AHDR AHDR, Game game, Platform platform, OnPipeInfoTableEdited onPipeInfoTableEdited) : this(AHDR, game, platform)
+        public AssetPIPT(Section_AHDR AHDR, Game game, Endianness endianness, OnPipeInfoTableEdited onPipeInfoTableEdited) : this(AHDR, game, endianness)
         {
             this.onPipeInfoTableEdited = onPipeInfoTableEdited;
         }

@@ -18,7 +18,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "game_object:RingControl";
 
-        protected override int constVersion => 3;
+        protected override short constVersion => 3;
         
         public static uint RingModelAssetID = 0;
 
@@ -52,9 +52,18 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID[] Ring_AssetIDs { get; set; }
 
-        public DynaGObjectRingControl(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.game_object__RingControl, game, platform)
+        public DynaGObjectRingControl(string assetName) : base(assetName, DynaType.game_object__RingControl, 3)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            RingModel_AssetID = "test_ring";
+            UnknownInt1 = 40;
+            RingSoundGroup_AssetID = "RING_SGRP";
+            RingsAreVisible = true;
+            Ring_AssetIDs = new AssetID[0];
+        }
+
+        public DynaGObjectRingControl(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__RingControl, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             PlayerType = (DynaRingControlPlayerType)reader.ReadInt32();
@@ -66,15 +75,15 @@ namespace IndustrialPark
             UnknownInt2 = reader.ReadInt32();
             UnknownInt3 = reader.ReadInt32();
             UnknownInt4 = reader.ReadInt32();
-            RingsAreVisible = reader.ReadInt32() != 0;
+            RingsAreVisible = reader.ReadInt32Bool();
             Ring_AssetIDs = new AssetID[ringCount];
             for (int i = 0; i < Ring_AssetIDs.Length; i++)
                 Ring_AssetIDs[i] = reader.ReadUInt32();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write((int)PlayerType);
             writer.Write(RingModel_AssetID);

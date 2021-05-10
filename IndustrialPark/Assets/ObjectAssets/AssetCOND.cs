@@ -93,9 +93,9 @@ namespace IndustrialPark
         {
         }
 
-        public AssetCOND(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetCOND(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = baseHeaderEndPosition;
 
             EvaluationAmount = reader.ReadInt32();
@@ -105,11 +105,11 @@ namespace IndustrialPark
                 AssetUnderEvaluation = reader.ReadUInt32();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
-            writer.Write(SerializeBase(platform));
+            writer.Write(SerializeBase(endianness));
 
             writer.Write(EvaluationAmount);
             writer.Write(Conditional_Scooby);
@@ -117,7 +117,7 @@ namespace IndustrialPark
             if (game != Game.Scooby)
                 writer.Write(AssetUnderEvaluation);
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
 
             return writer.ToArray();
         }

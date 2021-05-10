@@ -107,9 +107,9 @@ namespace IndustrialPark
         [Category(categoryName)] // incredibles only
         public int UnknownIntC8 { get; set; }
 
-        public AssetCSNM(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetCSNM(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = baseHeaderEndPosition;
 
             CSN_AssetID = reader.ReadUInt32();
@@ -164,10 +164,10 @@ namespace IndustrialPark
                 UnknownIntC8 = reader.ReadInt32();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeBase(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeBase(endianness));
 
             writer.Write(CSN_AssetID);
             writer.Write(CsnmFlags.FlagValueInt);
@@ -220,7 +220,7 @@ namespace IndustrialPark
             if (game == Game.Incredibles)
                 writer.Write(UnknownIntC8);
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
 

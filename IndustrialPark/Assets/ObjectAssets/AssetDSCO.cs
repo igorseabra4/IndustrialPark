@@ -14,9 +14,37 @@ namespace IndustrialPark
         Unused = 3
     }
 
+    public class DiscoPattern
+    {
+        public DiscoTileState[] Pattern { get; set; }
+        public DiscoPattern()
+        {
+            Pattern = new DiscoTileState[0];
+        }
+        public DiscoPattern(int count)
+        {
+            Pattern = new DiscoTileState[count];
+        }
+        public void Fix(int amountOfTiles)
+        {
+            while (amountOfTiles % 4 != 0)
+                amountOfTiles++;
+            if (Pattern.Length != amountOfTiles)
+            {
+                var pattern = Pattern.ToList();
+                while (pattern.Count < amountOfTiles)
+                    pattern.Add(DiscoTileState.Off);
+                while (pattern.Count > amountOfTiles)
+                    pattern.RemoveAt(pattern.Count - 1);
+                Pattern = pattern.ToArray();
+            }
+        }
+    }
+
     public class AssetDSCO : BaseAsset
     {
         private const string categoryName = "Disco Floor";
+        private const string discoDesc = "You can add/remove patterns as you want. Make sure each pattern has the correct amount of tiles. When saving, for each pattern, missing tiles will be added (set to Off) and extra tiles will be removed.";
 
         [Category(categoryName)]
         public FlagBitmask Flags { get; set; } = IntFlagsDescriptor("Loop", "Enabled");
@@ -24,18 +52,20 @@ namespace IndustrialPark
         public float TimeYellow { get; set; }
         [Category(categoryName)]
         public float TimeRed { get; set; }
+        [Category(categoryName), Description(discoDesc)]
+        public int AmountOfTiles { get; set; }
         [Category(categoryName)]
         public string TileName_FirstWhite { get; set; }
         [Category(categoryName)]
         public string TileName_FirstYellow { get; set; }
         [Category(categoryName)]
         public string TileName_FirstRed { get; set; }
-        [Category(categoryName)]
-        public DiscoTileState[][] PatternController { get; set; }
+        [Category(categoryName), Description(discoDesc)]
+        public DiscoPattern[] Patterns { get; set; }
 
-        public AssetDSCO(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetDSCO(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = baseHeaderEndPosition;
 
             Flags.FlagValueInt = reader.ReadUInt32();
@@ -44,7 +74,7 @@ namespace IndustrialPark
             int OffPrefixOffset = reader.ReadInt32() + 8;
             int TransitionPrefixOffset = reader.ReadInt32() + 8;
             int OnPrefixOffset = reader.ReadInt32() + 8;
-            int AmountOfTiles = reader.ReadInt32();
+            AmountOfTiles = reader.ReadInt32();
             int StatesOffset = reader.ReadInt32() + 8;
             int AmountOfPhases = reader.ReadInt32();
 
@@ -62,29 +92,33 @@ namespace IndustrialPark
             for (int i = 0; i < PhaseOffsets.Length; i++)
                 PhaseOffsets[i] = reader.ReadInt32() + 8;
 
-            PatternController = new DiscoTileState[AmountOfPhases][];
-            for (int i = 0; i < PatternController.Length; i++)
+            Patterns = new DiscoPattern[AmountOfPhases];
+            for (int i = 0; i < Patterns.Length; i++)
             {
                 reader.BaseStream.Position = PhaseOffsets[i];
-                PatternController[i] = new DiscoTileState[AmountOfTiles];
 
-                for (int j = 0; j < PatternController[i].Length; j += 4)
+                var counter = AmountOfTiles;
+                while (counter % 4 != 0)
+                    counter++;
+
+                Patterns[i] = new DiscoPattern(counter);
+                int k = 0;
+                while (k < AmountOfTiles)
                 {
                     byte entry = reader.ReadByte();
-                    for (int k = 0; k < 4; k++, j++)
-                        if (j + k < PatternController[i].Length)
-                        {
-                            int mask = 0b00000011 << (2 * k);
-                            PatternController[i][j + k] = (DiscoTileState)((entry & mask) >> (2 * k));
-                        }
+                    for (int j = 0; j < 4; j++)
+                    {
+                        int mask = 0b00000011 << (2 * j);
+                        Patterns[i].Pattern[k++] = (DiscoTileState)((entry & mask) >> (2 * j));
+                    }
                 }
             }
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeBase(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeBase(endianness));
 
             for (int i = 0; i < 9; i++)
                 writer.Write(0);
@@ -100,33 +134,29 @@ namespace IndustrialPark
             
             int StatesOffset = (int)writer.BaseStream.Position - 8;
 
-            for (int i = 0; i < PatternController.Length; i++)
+            for (int i = 0; i < Patterns.Length; i++)
                 writer.Write(0); // int[] Phases
 
-            int[] PhaseOffsets = new int[PatternController.Length];
+            int[] PhaseOffsets = new int[Patterns.Length];
 
-            int AmountOfTiles = -1;
-
-            for (int i = 0; i < PatternController.Length; i++)
+            for (int i = 0; i < Patterns.Length; i++)
             {
                 PhaseOffsets[i] = (int)writer.BaseStream.Position - 8;
 
-                if (AmountOfTiles == -1)
-                    AmountOfTiles = PatternController[i].Length;
-                else if (AmountOfTiles != PatternController[i].Length)
-                    throw new ArgumentException("Disco patterns with variable amount of tiles");
+                Patterns[i].Fix(AmountOfTiles);
 
-                for (int j = 0; j < PatternController[i].Length; j += 4)
+                for (int j = 0; j < Patterns[i].Pattern.Length; j += 4)
                 {
                     byte entry = 0;
-                    for (int k = 0; k < 4; k++, j++)
-                        if (j + k < PatternController[i].Length)
-                            entry |= (byte)(((int)PatternController[i][j + k]) << (2 * k));
+                    for (int k = 0; k < 4; k++)
+                        if (j + k < Patterns[i].Pattern.Length)
+                            entry |= (byte)(((int)Patterns[i].Pattern[j + k]) << (2 * k));
                     writer.Write(entry);
                 }
-                while (writer.BaseStream.Position % 4 != 0)
-                    writer.Write((byte)0);
             }
+
+            while (writer.BaseStream.Position % 4 != 0)
+                writer.Write((byte)0);
 
             writer.BaseStream.Position = baseHeaderEndPosition;
 
@@ -138,14 +168,16 @@ namespace IndustrialPark
             writer.Write(OnPrefixOffset);
             writer.Write(AmountOfTiles);
             writer.Write(StatesOffset);
-            writer.Write(PatternController.Length);
+            writer.Write(Patterns.Length);
 
             writer.BaseStream.Position = StatesOffset + 8;
 
-            for (int i = 0; i < PatternController.Length; i++)
+            for (int i = 0; i < PhaseOffsets.Length; i++)
                 writer.Write(PhaseOffsets[i]);
 
-            writer.Write(SerializeLinks(platform));
+            writer.BaseStream.Position = writer.BaseStream.Length;
+
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
 

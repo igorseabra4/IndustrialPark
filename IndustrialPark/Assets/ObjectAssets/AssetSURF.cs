@@ -25,9 +25,9 @@ namespace IndustrialPark
             DualMapTexture_AssetID = reader.ReadUInt32();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
             writer.Write(Flags.FlagValueInt);
             writer.Write(BumpMapTexture_AssetID);
             writer.Write(EnvMapTexture_AssetID);
@@ -65,9 +65,9 @@ namespace IndustrialPark
             Speed = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
             writer.Write(Flags.FlagValueShort);
             writer.Write(Mode);
             writer.Write(Speed);
@@ -92,9 +92,9 @@ namespace IndustrialPark
             Speed = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
             writer.Write(Padding);
             writer.Write(Mode);
             writer.Write(Group_AssetID);
@@ -163,9 +163,9 @@ namespace IndustrialPark
             MinMaxSpeed_Z = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
             writer.Write(Mode);
             writer.Write(Rot);
             writer.Write(RotSpd);
@@ -251,7 +251,9 @@ namespace IndustrialPark
         public AssetSingle DamageTimer { get; set; }
         [Category(categoryName)]
         public AssetSingle DamageBounce { get; set; }
-
+        [Category(categoryName)]
+        public int UnknownInt { get; set; }
+        
         public AssetSURF(string assetName) : base(assetName, AssetType.SURF, BaseAssetType.Surface)
         {
             zSurfMatFX = new zSurfMatFX();
@@ -262,9 +264,9 @@ namespace IndustrialPark
             zSurfUVFX2 = new zSurfUVFX();
         }
 
-        public AssetSURF(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetSURF(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = baseHeaderEndPosition;
 
             DamageType = reader.ReadByte();
@@ -299,12 +301,21 @@ namespace IndustrialPark
             WalljumpScaleY = reader.ReadSingle();
             DamageTimer = reader.ReadSingle();
             DamageBounce = reader.ReadSingle();
+
+            if (game == Game.Scooby)
+            {
+                UnknownInt = reader.ReadInt32();
+                On = reader.ReadByte();
+                reader.ReadByte();
+                reader.ReadByte();
+                reader.ReadByte();
+            }
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeBase(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeBase(endianness));
 
             writer.Write(DamageType);
             writer.Write(Sticky);
@@ -315,16 +326,16 @@ namespace IndustrialPark
             writer.Write(SlideStop);
             writer.Write(PhysicsFlags.FlagValueByte);
             writer.Write(Friction);
-            writer.Write(zSurfMatFX.Serialize(game, platform));
-            writer.Write(zSurfColorFX.Serialize(game, platform));
+            writer.Write(zSurfMatFX.Serialize(game, endianness));
+            writer.Write(zSurfColorFX.Serialize(game, endianness));
             writer.Write(TextureAnimFlags.FlagValueInt);
-            writer.Write(zSurfTextureAnim1.Serialize(game, platform));
-            writer.Write(zSurfTextureAnim2.Serialize(game, platform));
+            writer.Write(zSurfTextureAnim1.Serialize(game, endianness));
+            writer.Write(zSurfTextureAnim2.Serialize(game, endianness));
             writer.Write(UVEffectsFlags.FlagValueInt);
-            writer.Write(zSurfUVFX.Serialize(game, platform));
+            writer.Write(zSurfUVFX.Serialize(game, endianness));
             if (game != Game.Scooby)
             {
-                writer.Write(zSurfUVFX2.Serialize(game, platform));
+                writer.Write(zSurfUVFX2.Serialize(game, endianness));
                 writer.Write(On);
                 writer.Write((byte)0);
                 writer.Write((byte)0);
@@ -335,8 +346,16 @@ namespace IndustrialPark
             writer.Write(WalljumpScaleY);
             writer.Write(DamageTimer);
             writer.Write(DamageBounce);
+            if (game == Game.Scooby)
+            {
+                writer.Write(UnknownInt);
+                writer.Write(On);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+            }
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
 
@@ -354,6 +373,16 @@ namespace IndustrialPark
             zSurfColorFX.Verify(ref result);
             zSurfTextureAnim1.Verify(ref result);
             zSurfTextureAnim2.Verify(ref result);
+        }
+
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game == Game.Scooby)
+                dt.RemoveProperty("zSurfUVFX2");
+            else
+                dt.RemoveProperty("UnknownInt");
+
+            base.SetDynamicProperties(dt);
         }
     }
 }

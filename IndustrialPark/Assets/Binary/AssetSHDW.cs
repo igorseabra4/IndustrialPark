@@ -24,9 +24,9 @@ namespace IndustrialPark
             Unknown = reader.ReadInt32();
         }
 
-        public byte[] Serialize(Platform platform)
+        public byte[] Serialize(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(ModelAssetID);
             writer.Write(ShadowModelAssetID);
@@ -58,9 +58,14 @@ namespace IndustrialPark
         [Category("Shadow Map")]
         public EntrySHDW[] SHDW_Entries { get; set; }
 
-        public AssetSHDW(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetSHDW(string assetName) : base(assetName, AssetType.SHDW)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            SHDW_Entries = new EntrySHDW[0];
+        }
+
+        public AssetSHDW(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
 
             SHDW_Entries = new EntrySHDW[reader.ReadInt32()];
 
@@ -68,14 +73,14 @@ namespace IndustrialPark
                 SHDW_Entries[i] = new EntrySHDW(reader);
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(SHDW_Entries.Length);
 
             foreach (var l in SHDW_Entries)
-                writer.Write(l.Serialize(platform));
+                writer.Write(l.Serialize(endianness));
 
             return writer.ToArray();
         }

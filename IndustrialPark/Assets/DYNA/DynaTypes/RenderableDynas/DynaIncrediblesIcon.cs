@@ -11,16 +11,16 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "Incredibles:Icon";
 
-        protected override int constVersion => 1;
+        protected override short constVersion => 1;
         
         [Category(dynaCategoryName)]
         public AssetSingle UnknownFloat_18 { get; set; }
         [Category(dynaCategoryName)]
         public int UnknownInt_1C { get; set; }
 
-        public DynaIncrediblesIcon(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.Incredibles__Icon, game, platform)
+        public DynaIncrediblesIcon(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Incredibles__Icon, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
@@ -31,12 +31,12 @@ namespace IndustrialPark
             UnknownInt_1C = reader.ReadInt32();
 
             CreateTransformMatrix();
-            renderableAssets.Add(this);
+            AddToRenderableAssets(this);
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(_position.X);
             writer.Write(_position.Y);

@@ -8,32 +8,46 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "Scene Properties";
 
-        protected override int constVersion => 1;
+        protected override short constVersion => 1;
+
+        //unsigned int idle03ExtraCount;
+        //xAnimFile** idle03Extras;
+        //unsigned int idle04ExtraCount;
+        //xAnimFile** idle04Extras;
+        //unsigned char bombCount;
+        //unsigned char extraIdleDelay;
+        //unsigned char hdrGlow;
+        //unsigned char hdrDarken;
+        //unsigned int uDefaultMusicHash;
+        //unsigned int flags;
+        //float waterTileWidth;
+        //float lodFadeDistance;
+        //unsigned int pad[4];
 
         [Category(dynaCategoryName)]
-        public int UnknownInt00 { get; set; }
+        public int idle03ExtraCount { get; set; }
         [Category(dynaCategoryName)]
-        public int UnknownInt04 { get; set; }
+        public int idle03Extras { get; set; }
         [Category(dynaCategoryName)]
-        public int UnknownInt08 { get; set; }
+        public int idle04ExtraCount { get; set; }
         [Category(dynaCategoryName)]
-        public int UnknownInt0C { get; set; }
+        public int idle04Extras { get; set; }
         [Category(dynaCategoryName)]
-        public AssetByte Flag10 { get; set; }
+        public AssetByte bombCount { get; set; }
         [Category(dynaCategoryName)]
-        public AssetByte Flag11 { get; set; }
+        public AssetByte extraIdleDelay { get; set; }
         [Category(dynaCategoryName)]
-        public AssetByte Flag12 { get; set; }
+        public AssetByte hdrGlow { get; set; }
         [Category(dynaCategoryName)]
-        public AssetByte Flag13 { get; set; }
+        public AssetByte hdrDarken { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID Sound_AssetID { get; set; }
+        public AssetID BackgroundMusic_SoundAssetID { get; set; }
         [Category(dynaCategoryName)]
-        public int UnknownInt18 { get; set; }
+        public int scenePropertiesFlags { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat1C { get; set; }
+        public AssetSingle waterTileWidth { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat20 { get; set; }
+        public AssetSingle lodFadeDistance { get; set; }
         [Category(dynaCategoryName)]
         public int UnknownInt24 { get; set; }
         [Category(dynaCategoryName)]
@@ -43,45 +57,65 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public int UnknownInt30 { get; set; }
 
-        public DynaSceneProperties(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.SceneProperties, game, platform)
+        public DynaSceneProperties(string assetName) : base(assetName, DynaType.SceneProperties, 1)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            idle03ExtraCount = 0;
+            idle03Extras = 52;
+            idle04ExtraCount = 0;
+            idle04Extras = 52;
+            bombCount = 0x14;
+            extraIdleDelay = 0x05;
+            hdrGlow = 0x03;
+            hdrDarken = 0x1E;
+            BackgroundMusic_SoundAssetID = 0;
+            scenePropertiesFlags = 1;
+            waterTileWidth = 0;
+            lodFadeDistance = 4;
+            UnknownInt24 = 0;
+            UnknownInt28 = 0;
+            UnknownInt2C = 0;
+            UnknownInt30 = 0;
+        }
+
+        public DynaSceneProperties(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.SceneProperties, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
             
-            UnknownInt00 = reader.ReadInt32();
-            UnknownInt04 = reader.ReadInt32();
-            UnknownInt08 = reader.ReadInt32();
-            UnknownInt0C = reader.ReadInt32();
-            Flag10 = reader.ReadByte();
-            Flag11 = reader.ReadByte();
-            Flag12 = reader.ReadByte();
-            Flag13 = reader.ReadByte();
-            Sound_AssetID = reader.ReadUInt32();
-            UnknownInt18 = reader.ReadInt32();
-            UnknownFloat1C = reader.ReadSingle();
-            UnknownFloat20 = reader.ReadSingle();
+            idle03ExtraCount = reader.ReadInt32();
+            idle03Extras = reader.ReadInt32();
+            idle04ExtraCount = reader.ReadInt32();
+            idle04Extras = reader.ReadInt32();
+            bombCount = reader.ReadByte();
+            extraIdleDelay = reader.ReadByte();
+            hdrGlow = reader.ReadByte();
+            hdrDarken = reader.ReadByte();
+            BackgroundMusic_SoundAssetID = reader.ReadUInt32();
+            scenePropertiesFlags = reader.ReadInt32();
+            waterTileWidth = reader.ReadSingle();
+            lodFadeDistance = reader.ReadSingle();
             UnknownInt24 = reader.ReadInt32();
             UnknownInt28 = reader.ReadInt32();
             UnknownInt2C = reader.ReadInt32();
             UnknownInt30 = reader.ReadInt32();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
-            writer.Write(UnknownInt00);
-            writer.Write(UnknownInt04);
-            writer.Write(UnknownInt08);
-            writer.Write(UnknownInt0C);
-            writer.Write(Flag10);
-            writer.Write(Flag11);
-            writer.Write(Flag12);
-            writer.Write(Flag13);
-            writer.Write(Sound_AssetID);
-            writer.Write(UnknownInt18);
-            writer.Write(UnknownFloat1C);
-            writer.Write(UnknownFloat20);
+            writer.Write(idle03ExtraCount);
+            writer.Write(idle03Extras);
+            writer.Write(idle04ExtraCount);
+            writer.Write(idle04Extras);
+            writer.Write(bombCount);
+            writer.Write(extraIdleDelay);
+            writer.Write(hdrGlow);
+            writer.Write(hdrDarken);
+            writer.Write(BackgroundMusic_SoundAssetID);
+            writer.Write(scenePropertiesFlags);
+            writer.Write(waterTileWidth);
+            writer.Write(lodFadeDistance);
             writer.Write(UnknownInt24);
             writer.Write(UnknownInt28);
             writer.Write(UnknownInt2C);
@@ -90,13 +124,13 @@ namespace IndustrialPark
             return writer.ToArray();
         }
 
-        public override bool HasReference(uint assetID) => Sound_AssetID == assetID || base.HasReference(assetID);
+        public override bool HasReference(uint assetID) => BackgroundMusic_SoundAssetID == assetID || base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {
-            if (Sound_AssetID == 0)
+            if (BackgroundMusic_SoundAssetID == 0)
                 result.Add("Scene Properties with no song reference");
-            Verify(Sound_AssetID, ref result);
+            Verify(BackgroundMusic_SoundAssetID, ref result);
         }
     }
 }

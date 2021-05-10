@@ -45,9 +45,9 @@ namespace IndustrialPark
             this.index = index;
         }
 
-        public byte[] Serialize(Platform platform)
+        public byte[] Serialize(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
             writer.Write(Interp_0);
             writer.Write(Interp_1);
             writer.Write((uint)Interp_Mode);
@@ -118,9 +118,9 @@ namespace IndustrialPark
         [Category(categoryName)]
         public int Emit_limit_reset_time { get; set; }
 
-        public AssetPARP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetPARP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = baseHeaderEndPosition;
 
             PARS_AssetID = reader.ReadUInt32();
@@ -137,17 +137,17 @@ namespace IndustrialPark
             Emit_limit_reset_time = reader.ReadInt32();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeBase(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeBase(endianness));
 
             writer.Write(PARS_AssetID);
 
             if (_structs.Length != 14)
                 throw new Exception("PARS structs must be exactly 14 entries.");
             foreach (var p in _structs)
-                writer.Write(p.Serialize(platform));
+                writer.Write(p.Serialize(endianness));
 
             writer.Write(VelX);
             writer.Write(VelY);
@@ -155,7 +155,7 @@ namespace IndustrialPark
             writer.Write(Emit_Limit);
             writer.Write(Emit_limit_reset_time);
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
 

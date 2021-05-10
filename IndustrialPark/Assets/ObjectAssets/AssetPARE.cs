@@ -107,9 +107,9 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle CullDistanceSqr { get; set; }
 
-        public AssetPARE(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetPARE(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = baseHeaderEndPosition;
 
             EmitterFlags.FlagValueByte = reader.ReadByte();
@@ -172,17 +172,17 @@ namespace IndustrialPark
             CullDistanceSqr = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeBase(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeBase(endianness));
 
             writer.Write(EmitterFlags.FlagValueByte);
             writer.Write((byte)_emitterType);
             writer.Write((byte)0);
             writer.Write((byte)0);
             writer.Write(PARP_AssetID);
-            writer.Write(PareSpecific.Serialize(game, platform));
+            writer.Write(PareSpecific.Serialize(game, endianness));
             while (writer.BaseStream.Length < 0x2C)
                 writer.Write((byte)0);
             writer.Write(Emitter_AssetID);
@@ -196,7 +196,7 @@ namespace IndustrialPark
             writer.Write(CullMode);
             writer.Write(CullDistanceSqr);
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
 

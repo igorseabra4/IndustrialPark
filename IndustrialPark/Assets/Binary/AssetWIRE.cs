@@ -27,9 +27,9 @@ namespace IndustrialPark
             Vertex1 = reader.ReadUInt16();
         }
 
-        public byte[] Serialize(Platform platform)
+        public byte[] Serialize(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
             writer.Write(Vertex0);
             writer.Write(Vertex1);
             return writer.ToArray();
@@ -38,41 +38,6 @@ namespace IndustrialPark
         public override string ToString()
         {
             return $"[{Vertex0}, {Vertex1}]";
-        }
-    }
-
-    public struct WireVector
-    {
-        public AssetSingle X { get; set; }
-        public AssetSingle Y { get; set; }
-        public AssetSingle Z { get; set; }
-
-        public WireVector(float X, AssetSingle Y, AssetSingle Z)
-        {
-            this.X = X;
-            this.Y = Y;
-            this.Z = Z;
-        }
-
-        public WireVector(EndianBinaryReader reader)
-        {
-            X = reader.ReadSingle();
-            Y = reader.ReadSingle();
-            Z = reader.ReadSingle();
-        }
-
-        public byte[] Serialize(Platform platform)
-        {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(X);
-            writer.Write(Y);
-            writer.Write(Z);
-            return writer.ToArray();
-        }
-
-        public override string ToString()
-        {
-            return $"[{X}, {Y}, {Z}]";
         }
     }
 
@@ -89,9 +54,9 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID hashID1 { get; set; }
 
-        public AssetWIRE(Section_AHDR AHDR, Game game, Platform platform, SharpRenderer renderer) : base(AHDR, game, platform)
+        public AssetWIRE(Section_AHDR AHDR, Game game, Endianness endianness, SharpRenderer renderer) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
 
             reader.ReadInt32();
             int vertexAmount = reader.ReadInt32();
@@ -108,12 +73,12 @@ namespace IndustrialPark
                 Lines[i] = new Line(reader);
 
             Setup(renderer);
-            ArchiveEditorFunctions.renderableAssets.Add(this);
+            ArchiveEditorFunctions.AddToRenderableAssets(this);
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(0);
             writer.Write(0);
@@ -122,10 +87,10 @@ namespace IndustrialPark
             writer.Write(hashID1);
 
             foreach (var p in Points)
-                writer.Write(p.Serialize(platform));
+                writer.Write(p.Serialize(endianness));
 
             foreach (var l in Lines)
-                writer.Write(l.Serialize(platform));
+                writer.Write(l.Serialize(endianness));
 
             writer.BaseStream.Position = 0;
 

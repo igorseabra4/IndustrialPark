@@ -43,9 +43,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetByte CounterModeFlag { get; set; }
 
-        public DynaHudMeterFont(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.hud__meter__font, game, platform)
+        public DynaHudMeterFont(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.hud__meter__font, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaHudMeterEnd;
 
             Font = (FontEnum)reader.ReadInt32();
@@ -62,11 +62,11 @@ namespace IndustrialPark
                 CounterModeFlag = reader.ReadByte();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
-            writer.Write(SerializeDynaHudMeter(platform));
+            writer.Write(SerializeDynaHudMeter(endianness));
             writer.Write((int)Font);
             writer.Write(FontJustify);
             writer.Write(FontWidth);

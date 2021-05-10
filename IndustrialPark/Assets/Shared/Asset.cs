@@ -9,7 +9,7 @@ namespace IndustrialPark
         public bool isInvisible = false;
 
         public Game game;
-        public Platform platform;
+        public Endianness endianness;
 
         public uint assetID;
         public string assetName;
@@ -19,12 +19,12 @@ namespace IndustrialPark
         public int checksum;
 
         [Browsable(false)]
-        public virtual string AssetInfo => "";
+        public virtual string AssetInfo => game.ToString() + " " + endianness.ToString() + " Endian";
 
         public Asset(string assetName, AssetType assetType)
         {
             game = Game.Unknown;
-            platform = Platform.Unknown;
+            endianness = Endianness.Unknown;
 
             this.assetType = assetType;
             this.assetName = assetName;
@@ -33,10 +33,10 @@ namespace IndustrialPark
             flags = ArchiveEditorFunctions.AHDRFlagsFromAssetType(assetType);
         }
 
-        public Asset(Section_AHDR AHDR, Game game, Platform platform)
+        public Asset(Section_AHDR AHDR, Game game, Endianness endianness)
         {
             this.game = game;
-            this.platform = platform;
+            this.endianness = endianness;
 
             assetID = AHDR.assetID;
             assetName = AHDR.ADBG.assetName;
@@ -49,10 +49,25 @@ namespace IndustrialPark
         // use with DUPC VIL only
         protected Asset() { }
 
-        public Section_AHDR BuildAHDR() =>
-            new Section_AHDR(assetID, assetType, flags,
+        public Section_AHDR BuildAHDR()
+        {
+            return new Section_AHDR(assetID, assetType, flags,
                 new Section_ADBG(0, assetName, assetFileName, checksum),
-                Serialize(game, platform));
+                Serialize(game, endianness));
+        }
+
+        public Section_AHDR BuildAHDR(Game game, Endianness endianness, bool overwrite = true)
+        {
+            if (!overwrite)
+            {
+                this.game = game;
+                this.endianness = endianness;
+            }
+
+            return new Section_AHDR(assetID, assetType, flags,
+                new Section_ADBG(0, assetName, assetFileName, checksum),
+                Serialize(game, endianness));
+        }
 
         public override string ToString() =>  $"{assetName} [{assetID:X8}]";
 

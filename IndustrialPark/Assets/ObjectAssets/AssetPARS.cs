@@ -31,9 +31,9 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID[] Cmd { get; set; }
 
-        public AssetPARS(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetPARS(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = baseHeaderEndPosition;
 
             PARS_Type = reader.ReadInt32();
@@ -52,10 +52,10 @@ namespace IndustrialPark
                 Cmd[i] = reader.ReadUInt32();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeBase(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeBase(endianness));
 
             writer.Write(PARS_Type);
             writer.Write(PARS_AssetID);
@@ -74,7 +74,7 @@ namespace IndustrialPark
             foreach (var c in Cmd)
                 writer.Write(c);
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
 

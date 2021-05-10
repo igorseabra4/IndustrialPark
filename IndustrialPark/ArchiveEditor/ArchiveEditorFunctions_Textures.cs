@@ -342,7 +342,7 @@ namespace IndustrialPark
                             dataDict[rwtx.assetID].data),
                         Models.BSP_IO_Shared.modelRenderWareVersion(game));
                 rwtx.game = game;
-                rwtx.platform = platform;
+                rwtx.endianness = platform.Endianness();
             }
 
             ReadFileMethods.treatStuffAsByteArray = false;

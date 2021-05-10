@@ -10,7 +10,8 @@ namespace IndustrialPark
     public enum Endianness
     {
         Little,
-        Big
+        Big,
+        Unknown
     }
 
     public static class Extensions
@@ -54,6 +55,12 @@ namespace IndustrialPark
             (endianness == Endianness.Little) ?
             base.ReadUInt32() :
             BitConverter.ToUInt32(BitConverter.GetBytes(base.ReadUInt32()).Reverse().ToArray(), 0);
+
+        public bool ReadByteBool() => base.ReadByte() != 0;
+
+        public bool ReadInt16Bool() => base.ReadInt16() != 0;
+
+        public bool ReadInt32Bool() => base.ReadInt32() != 0;
 
         public AssetColor ReadColor() => new AssetColor(ReadByte(), ReadByte(), ReadByte(), ReadByte());
         
@@ -122,6 +129,14 @@ namespace IndustrialPark
             base.Write(color.G);
             base.Write(color.B);
             base.Write(color.A);
+        }
+
+        public void WriteMagic(string magic)
+        {
+            if (magic.Length != 4)
+                throw new ArgumentException("Magic word must have 4 characters");
+            var chars = magic.ToCharArray();
+            Write(endianness == Endianness.Little ? chars : chars.Reverse().ToArray());
         }
     }
 

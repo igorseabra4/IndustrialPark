@@ -8,7 +8,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "ui:text";
 
-        protected override int constVersion => 2;
+        protected override short constVersion => 2;
 
         [Category(dynaCategoryName)]
         public AssetID Text_AssetID { get; set; }
@@ -55,11 +55,11 @@ namespace IndustrialPark
 
         protected int dynaUITextEnd => dynaUIEnd + 36;
 
-        public DynaUIText(Section_AHDR AHDR, Game game, Platform platform) : this(AHDR, DynaType.ui__text, game, platform) { }
+        public DynaUIText(Section_AHDR AHDR, Game game, Endianness endianness) : this(AHDR, DynaType.ui__text, game, endianness) { }
 
-        protected DynaUIText(Section_AHDR AHDR, DynaType type, Game game, Platform platform) : base(AHDR, type, game, platform)
+        protected DynaUIText(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaUIEnd;
 
             Text_AssetID = reader.ReadUInt32();
@@ -82,10 +82,10 @@ namespace IndustrialPark
             shadowScaleY = reader.ReadSingle();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeDynaUI(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeDynaUI(endianness));
 
             writer.Write(Text_AssetID);
             writer.Write(font);

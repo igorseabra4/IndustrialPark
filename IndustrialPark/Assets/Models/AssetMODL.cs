@@ -12,7 +12,7 @@ namespace IndustrialPark
         public static bool renderBasedOnLodt = false;
         public static bool renderBasedOnPipt = true;
 
-        public AssetMODL(Section_AHDR AHDR, Game game, Platform platform, SharpRenderer renderer) : base(AHDR, game, platform, renderer) { }
+        public AssetMODL(Section_AHDR AHDR, Game game, Endianness endianness, SharpRenderer renderer) : base(AHDR, game, endianness, renderer) { }
 
         public override void Setup(SharpRenderer renderer)
         {
@@ -30,8 +30,8 @@ namespace IndustrialPark
 
         public void MovieRemoveFromDictionary()
         {
-            renderingDictionary.Remove(Functions.BKDRHash(newName));
-            nameDictionary.Remove(Functions.BKDRHash(newName));
+            RemoveFromRenderingDictionary(Functions.BKDRHash(newName));
+            RemoveFromNameDictionary(Functions.BKDRHash(newName));
         }
 
         private Dictionary<int, (BlendOption, BlendOption)> blendModes;

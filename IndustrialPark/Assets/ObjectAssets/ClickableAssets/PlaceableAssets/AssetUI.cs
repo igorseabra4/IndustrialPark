@@ -70,9 +70,23 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle TextCoordBottomLeftY { get; set; }
 
-        public AssetUI(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetUI(string assetName, Vector3 position) : this(assetName, AssetType.UI, BaseAssetType.UI, position)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+        }
+        
+        public AssetUI(string assetName, AssetType assetType, BaseAssetType baseAssetType, Vector3 position) :
+            base(assetName, assetType, baseAssetType, position)
+        {
+            UIFlags.FlagValueInt = 0x34;
+            TextCoordTopRightX = 1f;
+            TextCoordBottomRightX = 1f;
+            TextCoordBottomRightY = 1f;
+            TextCoordBottomLeftY = 1f;
+        }
+
+        public AssetUI(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = entityHeaderEndPosition;
 
             UIFlags.FlagValueInt = reader.ReadUInt32();
@@ -90,18 +104,18 @@ namespace IndustrialPark
             TextCoordBottomLeftY = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeEntity(game, platform));
-            writer.Write(SerializeUIData(platform));
-            writer.Write(SerializeLinks(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeEntity(game, endianness));
+            writer.Write(SerializeUIData(endianness));
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
 
-        protected byte[] SerializeUIData(Platform platform)
+        protected byte[] SerializeUIData(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(UIFlags.FlagValueInt);
             writer.Write(Width);

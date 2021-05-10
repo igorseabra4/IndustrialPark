@@ -56,9 +56,9 @@ namespace IndustrialPark
             UnknownByte_37 = reader.ReadByte();
         }
 
-        public byte[] Serialize(Platform platform)
+        public byte[] Serialize(Endianness endianness)
         {
-            EndianBinaryWriter writer = new EndianBinaryWriter(platform);
+            EndianBinaryWriter writer = new EndianBinaryWriter(endianness);
 
             writer.Write(PickupHash);
             writer.Write(Model_AssetID);
@@ -114,9 +114,9 @@ namespace IndustrialPark
             }
         }
 
-        public AssetTPIK(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetTPIK(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = 0x4;
 
             Unknown04 = reader.ReadInt32();

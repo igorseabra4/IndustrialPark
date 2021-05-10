@@ -38,9 +38,9 @@ namespace IndustrialPark
             MotionFlags.FlagValueShort = reader.ReadUInt16();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
             writer.Write((byte)Type);
             writer.Write(UseBanking);
             writer.Write(MotionFlags.FlagValueShort);
@@ -99,10 +99,10 @@ namespace IndustrialPark
             RetractWaitTime = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(base.Serialize(game, platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(base.Serialize(game, endianness));
 
             writer.Write(RetractPositionX);
             writer.Write(RetractPositionY);
@@ -139,10 +139,10 @@ namespace IndustrialPark
             Period = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(base.Serialize(game, platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(base.Serialize(game, endianness));
 
             writer.Write(CenterX);
             writer.Write(CenterY);
@@ -165,10 +165,10 @@ namespace IndustrialPark
             Unknown = reader.ReadInt32();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(base.Serialize(game, platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(base.Serialize(game, endianness));
             writer.Write(Unknown);
             return writer.ToArray();
         }
@@ -196,10 +196,10 @@ namespace IndustrialPark
             Speed = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(base.Serialize(game, platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(base.Serialize(game, endianness));
 
             writer.Write(MovePointFlags.FlagValueInt);
             writer.Write(MVPT_AssetID);
@@ -338,7 +338,8 @@ namespace IndustrialPark
         [Description("Movie only")]
         public AssetSingle ShrinkTime { get; set; }
 
-        public Motion_Mechanism() : base(MotionType.Mechanism) { }
+        public Motion_Mechanism() : this(MotionType.Mechanism) { }
+        public Motion_Mechanism(MotionType motionType) : base(motionType) { }
         public Motion_Mechanism(EndianBinaryReader reader, Game game) : base(reader) 
         {
             MovementType = (EMovementType)reader.ReadByte();
@@ -369,10 +370,10 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(base.Serialize(game, platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(base.Serialize(game, endianness));
 
             writer.Write((byte)MovementType);
             writer.Write((byte)MovementLoopMode);

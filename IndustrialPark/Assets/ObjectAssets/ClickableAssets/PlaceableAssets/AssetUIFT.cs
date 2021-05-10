@@ -1,5 +1,6 @@
 ﻿using AssetEditorColors;
 using HipHopFile;
+using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -56,9 +57,23 @@ namespace IndustrialPark
         [Category(categoryName)]
         public int MaxHeight { get; set; } // not in scooby
 
-        public AssetUIFT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetUIFT(string assetName, Vector3 position) : base(assetName, AssetType.UIFT, BaseAssetType.UIFont, position)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            BackgroundColor = new AssetColor(128, 128, 128, 128);
+            FontColor = new AssetColor(255, 255, 255, 255);
+            Padding_Top = 2;
+            Padding_Bottom = 2;
+            Padding_Left = 2;
+            Padding_Right = 2;
+            Spacing_Horizontal = 24;
+            Spacing_Vertical = 24;
+            Char_Width = 24;
+            Char_Height = 24;
+        }
+
+        public AssetUIFT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = game == Game.BFBB ? 0x80 : 0x7C;
 
             UIFontFlags.FlagValueShort = reader.ReadUInt16();
@@ -79,11 +94,11 @@ namespace IndustrialPark
                 MaxHeight = reader.ReadInt32();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeEntity(game, platform));
-            writer.Write(SerializeUIData(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeEntity(game, endianness));
+            writer.Write(SerializeUIData(endianness));
 
             writer.Write(UIFontFlags.FlagValueShort);
             writer.Write(UIFontMode);
@@ -102,7 +117,7 @@ namespace IndustrialPark
             if (game != Game.Scooby)
                 writer.Write(MaxHeight);
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
 

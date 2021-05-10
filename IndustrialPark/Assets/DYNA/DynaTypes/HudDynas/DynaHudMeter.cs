@@ -29,9 +29,9 @@ namespace IndustrialPark
 
         protected int dynaHudMeterEnd => dynaHudEnd + 36;
 
-        public DynaHudMeter(Section_AHDR AHDR, DynaType type, Game game, Platform platform) : base(AHDR, type, game, platform)
+        public DynaHudMeter(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaHudEnd;
 
             StartValue = reader.ReadSingle();
@@ -45,11 +45,11 @@ namespace IndustrialPark
             Decrement_SoundAssetID = reader.ReadUInt32();
         }
 
-        protected byte[] SerializeDynaHudMeter(Platform platform)
+        protected byte[] SerializeDynaHudMeter(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
-            writer.Write(SerializeDynaHud(platform));
+            writer.Write(SerializeDynaHud(endianness));
             writer.Write(StartValue);
             writer.Write(MinValue);
             writer.Write(MaxValue);

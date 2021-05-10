@@ -124,18 +124,49 @@ namespace IndustrialPark
         [Category(categoryName)]
         public FlagBitmask TriggerFlags { get; set; } = IntFlagsDescriptor();
 
-        public AssetTRIG(string assetName, Vector3 position) : base(assetName, AssetType.TRIG, BaseAssetType.Trigger, position)
+        public AssetTRIG(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.TRIG, BaseAssetType.Trigger, position)
         {
             SolidityFlags.FlagValueByte = 0;
             ColorAlpha = 0;
             ColorAlphaSpeed = 0;
             DirectionY = -0;
             DirectionZ = 1f;
+
+            switch (template)
+            {
+                case AssetTemplate.Box_Trigger:
+                    Shape = TriggerShape.Box;
+                    SetPositions(position.X + 5f, position.Y + 5f, position.Z + 5f, position.X - 5f, position.Y - 5f, position.Z - 5f);
+                    break;
+                case AssetTemplate.Sphere_Trigger:
+                case AssetTemplate.Checkpoint:
+                case AssetTemplate.Checkpoint_Invisible:
+                case AssetTemplate.BusStop_Trigger:
+                    Shape = TriggerShape.Sphere;
+                    Position0X = position.X;
+                    Position0Y = position.Y;
+                    Position0Z = position.Z;
+                    if (template == AssetTemplate.Sphere_Trigger)
+                        Radius = 10f;
+                    else if (template == AssetTemplate.BusStop_Trigger)
+                        Radius = 2.5f;
+                    else
+                        Radius = 6f;
+                    break;
+                case AssetTemplate.Cylinder_Trigger:
+                   Shape = TriggerShape.Cylinder;
+                    Radius = 10f;
+                    Height = 5f;
+                    Position0X = position.X;
+                    Position0Y = position.Y;
+                    Position0Z = position.Z;
+                    break;
+            }
         }
 
-        public AssetTRIG(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetTRIG(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = entityHeaderEndPosition;
 
             _trigPos0 = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
@@ -154,10 +185,10 @@ namespace IndustrialPark
             FixPosition();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeEntity(game, platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeEntity(game, endianness));
 
             writer.Write(Position0X);
             writer.Write(Position0Y);
@@ -176,7 +207,7 @@ namespace IndustrialPark
             writer.Write(DirectionZ);
             writer.Write(TriggerFlags.FlagValueInt);
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
 

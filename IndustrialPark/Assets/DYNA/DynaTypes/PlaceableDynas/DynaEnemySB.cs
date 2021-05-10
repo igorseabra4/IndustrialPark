@@ -171,9 +171,23 @@ namespace IndustrialPark
 
         protected int entityDynaEndPosition => dynaDataStartPosition + 0x50;
 
-        public DynaEnemySB(Section_AHDR AHDR, DynaType type, Game game, Platform platform) : base(AHDR, type, game, platform)
+        public DynaEnemySB(string assetName, DynaType type, short version, Vector3 position) : base(assetName, type, version)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            PseudoBaseFlags.FlagValueShort = 0x1D;
+            PseudoVisibilityFlags.FlagValueByte = 1;
+            PseudoSolidityFlags.FlagValueByte = 1;
+
+            _position = position;
+            _scale = new Vector3(1f);
+            _color = new Vector4(1f);
+            
+            CreateTransformMatrix();
+            AddToRenderableAssets(this);
+        }
+
+        public DynaEnemySB(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             PseudoAssetID = reader.ReadUInt32();
@@ -196,12 +210,12 @@ namespace IndustrialPark
             PseudoAnimation_AssetID = reader.ReadUInt32();
 
             CreateTransformMatrix();
-            renderableAssets.Add(this);
+            AddToRenderableAssets(this);
         }
 
-        protected byte[] SerializeEntityDyna(Platform platform)
+        protected byte[] SerializeEntityDyna(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(PseudoAssetID);
             writer.Write(PseudoAssetType);

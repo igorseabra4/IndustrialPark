@@ -25,9 +25,9 @@ namespace IndustrialPark
         [Category(catName)]
         public AssetSingle UnknownFloat24 { get; set; }
 
-        public AssetGUST(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetGUST(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = baseHeaderEndPosition;
 
             UnknownInt08 = reader.ReadInt32();
@@ -40,11 +40,11 @@ namespace IndustrialPark
             UnknownFloat24 = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
-            writer.Write(SerializeBase(platform));
+            writer.Write(SerializeBase(endianness));
 
             writer.Write(UnknownInt08);
             writer.Write(Volume_AssetID);
@@ -55,7 +55,7 @@ namespace IndustrialPark
             writer.Write(UnknownFloat20);
             writer.Write(UnknownFloat24);
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
 
             return writer.ToArray();
         }

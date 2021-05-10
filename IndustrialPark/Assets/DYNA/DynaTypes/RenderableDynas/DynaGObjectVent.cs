@@ -11,7 +11,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "game_object:Vent";
 
-        protected override int constVersion => 1;
+        protected override short constVersion => 1;
 
         [Category(dynaCategoryName)]
         public AssetID VentType_AssetID { get; set; }
@@ -38,9 +38,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle UnknownFloat44 { get; set; }
 
-        public DynaGObjectVent(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.game_object__Vent, game, platform)
+        public DynaGObjectVent(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__Vent, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             VentType_AssetID = reader.ReadUInt32();
@@ -61,12 +61,12 @@ namespace IndustrialPark
             UnknownFloat44 = reader.ReadSingle();
 
             CreateTransformMatrix();
-            renderableAssets.Add(this);
+            AddToRenderableAssets(this);
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(VentType_AssetID);
             writer.Write(_position.X);

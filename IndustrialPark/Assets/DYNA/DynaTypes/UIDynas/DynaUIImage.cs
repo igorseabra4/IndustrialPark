@@ -8,7 +8,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "ui:image";
 
-        protected override int constVersion => 1;
+        protected override short constVersion => 1;
 
         [Category(dynaCategoryName)]
         public AssetID Texture_AssetID { get; set; }
@@ -74,9 +74,9 @@ namespace IndustrialPark
 
         private bool extraFieldPresent = false;
 
-        public DynaUIImage(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.ui__image, game, platform)
+        public DynaUIImage(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.ui__image, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaUIEnd;
 
             Texture_AssetID = reader.ReadUInt32();
@@ -104,10 +104,10 @@ namespace IndustrialPark
             }
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeDynaUI(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeDynaUI(endianness));
 
             writer.Write(Texture_AssetID);
             writer.Write(uv1u);

@@ -13,11 +13,17 @@ namespace IndustrialPark
             Data = data;
         }
 
-        public AssetWithData(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetWithData(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
             Data = AHDR.data;
         }
 
-        public override byte[] Serialize(Game game, Platform platform) => Data;
+        public override byte[] Serialize(Game game, Endianness endianness) => Data;
+
+        public string RwVersion(int renderWareVersion)
+        {
+            var str = RenderWareFile.Shared.UnpackLibraryVersion(renderWareVersion).ToString("X5");
+            return $"RW {str[0]}.{str[1]}.{str[2]}.{str[3]}{str[4]}";
+        }
     }
 }

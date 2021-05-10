@@ -55,9 +55,9 @@ namespace IndustrialPark
             CollisionTable_Entries = new EntryCOLL[0];
         }
 
-        public AssetCOLL(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetCOLL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
 
             var entries = new EntryCOLL[reader.ReadInt32()];
             for (int i = 0; i < entries.Length; i++)
@@ -66,9 +66,9 @@ namespace IndustrialPark
             CollisionTable_Entries = entries;
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(CollisionTable_Entries.Length);
 

@@ -13,18 +13,20 @@ namespace IndustrialPark
     {
         protected RenderWareModelFile model;
 
+        public override string AssetInfo => RwVersion(renderWareVersion) + " " + base.AssetInfo;
+
         public AssetRenderWareModel(string assetName, AssetType assetType, byte[] data, SharpRenderer renderer) : base(assetName, assetType, data)
         {
             if (renderer != null)
                 Setup(renderer);
         }
 
-        public AssetRenderWareModel(Section_AHDR AHDR, Game game, Platform platform, SharpRenderer renderer) : base(AHDR, game, platform)
+        public AssetRenderWareModel(Section_AHDR AHDR, Game game, Endianness endianness, SharpRenderer renderer) : base(AHDR, game, endianness)
         {
             Setup(renderer);
         }
 
-        public override byte[] Serialize(Game game, Platform platform) => Data;
+        public override byte[] Serialize(Game game, Endianness endianness) => Data;
 
         public virtual void Setup(SharpRenderer renderer)
         {
@@ -36,7 +38,10 @@ namespace IndustrialPark
             {
 #endif
             ReadFileMethods.treatStuffAsByteArray = false;
-            model = new RenderWareModelFile(renderer.device, ReadFileMethods.ReadRenderWareFile(Data));
+            var rwSecArray = ReadFileMethods.ReadRenderWareFile(Data);
+            model = new RenderWareModelFile(renderer.device, rwSecArray);
+            if (rwSecArray.Length > 0)
+                renderWareVersion = rwSecArray[0].renderWareVersion;
             SetupAtomicFlagsForRender();
 #if !DEBUG
             }

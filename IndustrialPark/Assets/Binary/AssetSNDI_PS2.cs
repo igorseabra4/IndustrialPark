@@ -50,7 +50,13 @@ namespace IndustrialPark
         [Category(categoryName)]
         public EntrySoundInfo_PS2[] Entries_SNDS { get; set; }
 
-        public AssetSNDI_PS2(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetSNDI_PS2(string assetName) : base(assetName, AssetType.SNDI)
+        {
+            Entries_SND = new EntrySoundInfo_PS2[0];
+            Entries_SNDS = new EntrySoundInfo_PS2[0];
+        }
+
+        public AssetSNDI_PS2(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
             var reader = new EndianBinaryReader(AHDR.data, Endianness.Little);
 
@@ -66,9 +72,9 @@ namespace IndustrialPark
                 Entries_SNDS[i] = new EntrySoundInfo_PS2(reader.ReadBytes(EntrySoundInfo_PS2.StructSize));
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(Entries_SND.Length);
             writer.Write(Entries_SNDS.Length);

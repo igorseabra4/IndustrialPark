@@ -12,7 +12,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "game_object:Ring";
 
-        protected override int constVersion => 2;
+        protected override short constVersion => 2;
 
         [Category(dynaCategoryName)]
         public int UnknownInt1 { get; set; }
@@ -54,9 +54,25 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID DriverPLAT_AssetID { get; set; }
 
-        public DynaGObjectRing(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.game_object__Ring, game, platform)
+        public DynaGObjectRing(string assetName, Vector3 position) : base(assetName, DynaType.game_object__Ring, 2, position)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            ScaleX = 1f;
+            ScaleY = 1f;
+            ScaleZ = 1f;
+            UnknownShadowFlag = 1;
+            CollisionRadius = 3.5f;
+            UnknownFloat1 = 4f;
+            UnknownFloat2 = 4f;
+            NormalTimer = 5f;
+            RedTimer = -1f;
+
+            CreateTransformMatrix();
+            AddToRenderableAssets(this);
+        }
+
+        public DynaGObjectRing(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__Ring, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
@@ -76,12 +92,12 @@ namespace IndustrialPark
             DriverPLAT_AssetID = reader.ReadUInt32();
 
             CreateTransformMatrix();
-            renderableAssets.Add(this);
+            AddToRenderableAssets(this);
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(_position.X);
             writer.Write(_position.Y);

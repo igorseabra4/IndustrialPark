@@ -18,7 +18,7 @@ namespace IndustrialPark
             {
                 _platformType = value;
 
-                if ((int)value > 3 || (int)value == 13)
+                if ((int)value > 3)
                     TypeFlag = (byte)value;
                 else
                     TypeFlag = 0;
@@ -89,9 +89,70 @@ namespace IndustrialPark
             game == Game.BFBB? 0x90 :
             game == Game.Incredibles? 0x8C : 0;
 
-        public AssetPLAT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetPLAT(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.PLAT, BaseAssetType.Platform, position)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            PlatformType = PlatType.Mechanism;
+            PlatFlags.FlagValueShort = 4;
+
+            switch (template)
+            {
+                case AssetTemplate.HoveringPlatform:
+                    Model_AssetID = 0x335EE0C8;
+                    Animation_AssetID = 0x730847B6;
+                    Motion = new Motion_Mechanism()
+                    {
+                        Type = MotionType.Other,
+                        MovementLoopMode = EMechanismFlags.ReturnToStart,
+                        SlideAccelTime = 0.4f,
+                        SlideDecelTime = 0.4f
+                    };
+                    break;
+                case AssetTemplate.TexasHitch_PLAT:
+                case AssetTemplate.Swinger:
+                    Model_AssetID = "trailer_hitch";
+                    break;
+                case AssetTemplate.Springboard:
+                    Model_AssetID = 0x55E9EAB5;
+                    Animation_AssetID = 0x7AAA99BB;
+                    PlatformType = PlatType.Springboard;
+                    PlatSpecific = new PlatSpecific_Springboard()
+                    {
+                        Height1 = 10,
+                        Height2 = 10,
+                        Height3 = 10,
+                        HeightBubbleBounce = 10,
+                        Anim1_AssetID = 0x6DAE0759,
+                        Anim2_AssetID = 0xBC4A9A5F,
+                        DirectionY = 1f,
+                    };
+                    break;
+                case AssetTemplate.CollapsePlatform_Planktopolis:
+                case AssetTemplate.CollapsePlatform_ThugTug:
+                case AssetTemplate.CollapsePlatform_Spongeball:
+                    PlatformType = PlatType.BreakawayPlatform;
+                    Animation_AssetID = 0x7A9BF321;
+                    if (template == AssetTemplate.CollapsePlatform_Planktopolis)
+                    {
+                        Model_AssetID = 0x6F462432;
+                    }
+                    else if (template == AssetTemplate.CollapsePlatform_ThugTug)
+                    {
+                        Animation_AssetID = 0x62C6520F;
+                        Model_AssetID = 0xED7F1021;
+                    }
+                    else if (template == AssetTemplate.CollapsePlatform_Spongeball)
+                    {
+                        Model_AssetID = 0x1A38B9AB;
+                    }
+                    PlatSpecific = new PlatSpecific_BreakawayPlatform(template);
+                    Motion = new Motion_Mechanism(MotionType.Other);
+                    break;
+            }
+        }
+
+        public AssetPLAT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = entityHeaderEndPosition;
 
             _platformType = (PlatType)reader.ReadByte();
@@ -156,22 +217,22 @@ namespace IndustrialPark
             }
         }
         
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeEntity(game, platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeEntity(game, endianness));
             
             writer.Write((byte)_platformType);
             writer.Write((byte)0);
             writer.Write(PlatFlags.FlagValueShort);
 
-            writer.Write(PlatSpecific.Serialize(game, platform));
+            writer.Write(PlatSpecific.Serialize(game, endianness));
 
             var motionStart = this.motionStart(game);
             while (writer.BaseStream.Length < motionStart)
                 writer.Write((byte)0);
 
-            writer.Write(Motion.Serialize(game, platform));
+            writer.Write(Motion.Serialize(game, endianness));
 
             int linkStart =
                 game == Game.BFBB ? 0xC0 :
@@ -181,7 +242,7 @@ namespace IndustrialPark
             while (writer.BaseStream.Length < linkStart)
                 writer.Write((byte)0);
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
 

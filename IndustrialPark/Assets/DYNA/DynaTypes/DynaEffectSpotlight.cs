@@ -9,7 +9,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "effect:spotlight";
 
-        protected override int constVersion => 2;
+        protected override short constVersion => 2;
 
         [Category(dynaCategoryName)]
         public int UnknownInt_00 { get; set; }
@@ -58,9 +58,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetByte UnknownByte_37 { get; set; }
 
-        public DynaEffectSpotlight(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.effect__spotlight, game, platform)
+        public DynaEffectSpotlight(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__spotlight, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             UnknownInt_00 = reader.ReadInt32();
@@ -85,9 +85,9 @@ namespace IndustrialPark
             UnknownByte_37 = reader.ReadByte();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(UnknownInt_00);
             writer.Write(Origin_Entity_AssetID);

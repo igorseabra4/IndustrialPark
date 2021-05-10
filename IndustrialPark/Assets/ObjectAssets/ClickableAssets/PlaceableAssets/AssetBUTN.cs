@@ -96,26 +96,26 @@ namespace IndustrialPark
                 Motion = new Motion_Mechanism();
         }
 
-        public AssetBUTN(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetBUTN(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = entityHeaderEndPosition;
 
             if (game != Game.Scooby)
                 PressedModel_AssetID = reader.ReadUInt32();
             ActMethod = (ButnActMethod)reader.ReadInt32();
             InitialButtonState = reader.ReadInt32();
-            ResetAfterDelay = reader.ReadInt32() != 0;
+            ResetAfterDelay = reader.ReadInt32Bool();
             ResetDelay = reader.ReadSingle();
             HitMask.FlagValueInt = reader.ReadUInt32();
 
             Motion = new Motion_Mechanism(reader, game);
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeEntity(game, platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeEntity(game, endianness));
 
             if (game != Game.Scooby)
                 writer.Write(PressedModel_AssetID);
@@ -124,7 +124,7 @@ namespace IndustrialPark
             writer.Write(ResetAfterDelay ? 1 : 0);
             writer.Write(ResetDelay);
             writer.Write(HitMask.FlagValueInt);
-            writer.Write(Motion.Serialize(game, platform));
+            writer.Write(Motion.Serialize(game, endianness));
 
             int linkStart =
                 game == Game.Scooby ? 0x94 :
@@ -134,7 +134,7 @@ namespace IndustrialPark
             while (writer.BaseStream.Length < linkStart)
                 writer.Write((byte)0);
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
 

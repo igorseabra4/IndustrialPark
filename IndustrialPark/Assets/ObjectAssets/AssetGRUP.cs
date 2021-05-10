@@ -12,7 +12,7 @@ namespace IndustrialPark
         RandomItem = 1,
         InOrder = 2
     }
-
+    
     public class AssetGRUP : BaseAsset
     {
         private const string catName = "Group";
@@ -22,9 +22,14 @@ namespace IndustrialPark
         [Category(catName)]
         public AssetID[] GroupItems { get; set; }
 
-        public AssetGRUP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetGRUP(string assetName) : base(assetName, AssetType.GRUP, BaseAssetType.Group)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            GroupItems = new AssetID[0];
+        }
+
+        public AssetGRUP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = baseHeaderEndPosition;
 
             var itemCount = reader.ReadUInt16();
@@ -35,18 +40,18 @@ namespace IndustrialPark
                 GroupItems[i] = reader.ReadUInt32();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
-            writer.Write(SerializeBase(platform));
+            writer.Write(SerializeBase(endianness));
 
             writer.Write((short)GroupItems.Length);
             writer.Write((short)ReceiveEventDelegation);
             foreach (var a in GroupItems)
                 writer.Write(a);
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
 
             return writer.ToArray();
         }

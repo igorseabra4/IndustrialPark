@@ -98,11 +98,14 @@ namespace IndustrialPark
         }
 
         public static ShaderResourceView whiteDefault;
+        public static ShaderResourceView arrowDefault;
 
         public void LoadTexture()
         {
             if (whiteDefault == null || (whiteDefault != null && whiteDefault.IsDisposed))
                 whiteDefault = device.LoadTextureFromFile(Application.StartupPath + "/Resources/WhiteDefault.png");
+            if (arrowDefault == null || (arrowDefault != null && arrowDefault.IsDisposed))
+                arrowDefault = device.LoadTextureFromFile(Application.StartupPath + "/Resources/ArrowDefault.png");
         }
 
         public static SharpMesh Cube { get; private set; }
@@ -283,12 +286,14 @@ namespace IndustrialPark
 
         public void ResetColors()
         {
+            var defaultAlpha = 0.5f;
+
             backgroundColor = new Color4(0.05f, 0.05f, 0.15f, 1f);
-            normalColor = new Vector4(0.2f, 0.6f, 0.8f, 0.55f);
-            trigColor = new Vector4(0.3f, 0.8f, 0.7f, 0.4f);
-            mvptColor = new Vector4(0.7f, 0.2f, 0.6f, 0.5f);
-            sfxColor = new Vector4(1f, 0.2f, 0.2f, 0.35f);
-            selectedColor = new Vector4(1f, 0.5f, 0.1f, 0.5f);
+            normalColor = new Vector4(0.2f, 0.6f, 0.8f, defaultAlpha);
+            trigColor = new Vector4(0.3f, 0.8f, 0.7f, defaultAlpha);
+            mvptColor = new Vector4(0.7f, 0.2f, 0.6f, defaultAlpha);
+            sfxColor = new Vector4(1f, 0.2f, 0.2f, defaultAlpha);
+            selectedColor = new Vector4(1f, 0.5f, 0.1f, defaultAlpha - 0.1f);
             selectedObjectColor = new Vector4(1f, 0f, 0f, 1f);
         }
 
@@ -427,6 +432,8 @@ namespace IndustrialPark
         public HashSet<IRenderableAsset> renderableAssets = new HashSet<IRenderableAsset>();
         public const float DefaultLODTDistance = 100f;
 
+        public bool allowRender = true;
+
         private void MainLoop(System.Drawing.Size controlSize)
         {
             //Resizing
@@ -442,7 +449,8 @@ namespace IndustrialPark
 
             device.Clear(backgroundColor);
 
-            if (ArchiveEditorFunctions.allowRender)
+            if (allowRender)
+                lock(renderableAssets)
                 if (isDrawingUI)
                 {
                     viewProjection = Matrix.OrthoOffCenterRH(0, 640, -480, 0, -Camera.FarPlane, Camera.FarPlane);
@@ -454,6 +462,7 @@ namespace IndustrialPark
                     device.SetDefaultDepthState();
                     device.UpdateAllStates();
 
+                    lock(ArchiveEditorFunctions.renderableAssets)
                     foreach (IRenderableAsset a in
                     (from IRenderableAsset asset in ArchiveEditorFunctions.renderableAssets
                      where (asset is AssetUI || asset is AssetUIFT) && asset.ShouldDraw(this)
@@ -477,28 +486,30 @@ namespace IndustrialPark
                     device.SetDefaultDepthState();
                     device.UpdateAllStates();
 
-                    foreach (var a in ArchiveEditorFunctions.renderableJSPs)
-                        if (a.ShouldDraw(this))
-                            a.Draw(this);
+                    lock (ArchiveEditorFunctions.renderableJSPs)
+                        foreach (var a in ArchiveEditorFunctions.renderableJSPs)
+                            if (a.ShouldDraw(this))
+                                a.Draw(this);
 
-                    foreach (IRenderableAsset a in ArchiveEditorFunctions.renderableAssets)
-                    {
-                        if (a.ShouldDraw(this))
-                            renderableAssets.Add(a);
-                        else
-                            renderableAssets.Remove(a);
-                    }
+                    lock (ArchiveEditorFunctions.renderableAssets)
+                        foreach (IRenderableAsset a in ArchiveEditorFunctions.renderableAssets)
+                        {
+                            if (a.ShouldDraw(this))
+                                renderableAssets.Add(a);
+                            else
+                                renderableAssets.Remove(a);
+                        }
 
                     //foreach (IRenderableAsset a in renderableAssets.OrderByDescending(a => a.GetDistanceFrom(Camera.Position)))
                     //    a.Draw(this);
 
                     var renderableAssetsTrans = new HashSet<IRenderableAsset>();
 
-                    foreach (IRenderableAsset a in renderableAssets)
-                        if (a.SpecialBlendMode)
-                            renderableAssetsTrans.Add(a);
-                        else
-                            a.Draw(this);
+                        foreach (IRenderableAsset a in renderableAssets)
+                            if (a.SpecialBlendMode)
+                                renderableAssetsTrans.Add(a);
+                            else
+                                a.Draw(this);
 
                     foreach (IRenderableAsset a in renderableAssetsTrans.OrderByDescending(a => a.GetDistanceFrom(Camera.Position)))
                         a.Draw(this);
@@ -522,6 +533,7 @@ namespace IndustrialPark
             
             // main loop is done; release resources
 
+            arrowDefault.Dispose();
             whiteDefault.Dispose();
             TextureManager.DisposeTextures();
 

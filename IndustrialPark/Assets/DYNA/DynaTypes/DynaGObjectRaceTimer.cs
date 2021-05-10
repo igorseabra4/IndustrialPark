@@ -7,7 +7,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "game_object:RaceTimer";
 
-        protected override int constVersion => 2;
+        protected override short constVersion => 2;
 
         [Category(dynaCategoryName)]
         public int UnknownInt_00 { get; set; }
@@ -22,9 +22,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle UnknownFloat_14 { get; set; }
 
-        public DynaGObjectRaceTimer(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.game_object__RaceTimer, game, platform)
+        public DynaGObjectRaceTimer(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__RaceTimer, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             UnknownInt_00 = reader.ReadInt32();
@@ -35,9 +35,9 @@ namespace IndustrialPark
             UnknownFloat_14 = reader.ReadSingle();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(UnknownInt_00);
             writer.Write(UnknownInt_04);

@@ -161,12 +161,12 @@ namespace IndustrialPark
             ColorAlphaSpeed = 255f;
 
             CreateTransformMatrix();
-            renderableAssets.Add(this);
+            AddToRenderableAssets(this);
         }
 
-        public EntityAsset(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public EntityAsset(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = baseHeaderEndPosition;
 
             VisibilityFlags.FlagValueByte = reader.ReadByte();
@@ -187,7 +187,7 @@ namespace IndustrialPark
             Animation_AssetID = reader.ReadUInt32();
 
             CreateTransformMatrix();
-            renderableAssets.Add(this);
+            AddToRenderableAssets(this);
         }
 
         // meant for use with DUPC VIL only
@@ -211,10 +211,10 @@ namespace IndustrialPark
             Animation_AssetID = reader.ReadUInt32();
         }
 
-        protected byte[] SerializeEntity(Game game, Platform platform)
+        protected byte[] SerializeEntity(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeBase(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeBase(endianness));
 
             writer.Write(VisibilityFlags.FlagValueByte);
             writer.Write(TypeFlag);

@@ -18,14 +18,14 @@ namespace IndustrialPark
             get
             {
                 var values = new List<AssetID>();
-                var reader = new EndianBinaryReader(Data, platform);
+                var reader = new EndianBinaryReader(Data, endianness);
                 while (!reader.EndOfStream)
                     values.Add(reader.ReadUInt32());
                 return values.ToArray();
             }
             set
             {
-                var writer = new EndianBinaryWriter(platform);
+                var writer = new EndianBinaryWriter(endianness);
                 foreach (var f in value)
                     writer.Write(f);
                 Data = writer.ToArray();
@@ -38,25 +38,25 @@ namespace IndustrialPark
             get
             {
                 var values = new List<AssetSingle>();
-                var reader = new EndianBinaryReader(Data, platform);
+                var reader = new EndianBinaryReader(Data, endianness);
                 while (!reader.EndOfStream)
                     values.Add(reader.ReadSingle());
                 return values.ToArray();
             }
             set
             {
-                var writer = new EndianBinaryWriter(platform);
+                var writer = new EndianBinaryWriter(endianness);
                 foreach (var f in value)
                     writer.Write(f);
                 Data = writer.ToArray();
             }
         }
 
-        public DynaGeneric(Section_AHDR AHDR, DynaType type, Game game, Platform platform) : base(AHDR, type, game, platform)
+        public DynaGeneric(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness)
         {
             Data = AHDR.data.Skip(dynaDataStartPosition).Take(AHDR.data.Length - dynaDataStartPosition - _links.Length * Link.sizeOfStruct).ToArray();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform) => Data;
+        protected override byte[] SerializeDyna(Game game, Endianness endianness) => Data;
     }
 }

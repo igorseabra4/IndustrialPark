@@ -9,26 +9,26 @@ namespace IndustrialPark
 {
     public class DynaGObjectInPickup : RenderableDynaBase
     {
-        protected override int constVersion => 1;
+        protected override short constVersion => 1;
 
         [Category("game_object:IN_pickup")]
         public AssetID PickupHash { get; set; }
 
-        public DynaGObjectInPickup(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.game_object__IN_Pickup, game, platform)
+        public DynaGObjectInPickup(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__IN_Pickup, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             PickupHash = reader.ReadUInt32();
             _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
 
             CreateTransformMatrix();
-            renderableAssets.Add(this);
+            AddToRenderableAssets(this);
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(PickupHash);
             writer.Write(_position.X);

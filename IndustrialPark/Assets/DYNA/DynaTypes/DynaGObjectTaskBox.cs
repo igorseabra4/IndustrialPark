@@ -8,7 +8,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "game_object:task_box";
 
-        protected override int constVersion => 2;
+        protected override short constVersion => 2;
 
         [Category(dynaCategoryName)]
         public AssetByte Persistent { get; set; }
@@ -35,9 +35,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID End_TextID { get; set; }
 
-        public DynaGObjectTaskBox(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.game_object__task_box, game, platform)
+        public DynaGObjectTaskBox(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__task_box, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             Persistent = reader.ReadByte();
@@ -54,9 +54,9 @@ namespace IndustrialPark
             End_TextID = reader.ReadUInt32();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(Persistent);
             writer.Write(Loop);

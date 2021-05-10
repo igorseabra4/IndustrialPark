@@ -63,9 +63,43 @@ namespace IndustrialPark
             set { _radius2 = value; CreateTransformMatrix(); }
         }
 
-        public AssetSFX(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetSFX(string assetName, Vector3 position, Game game, bool onRadius) : base(assetName, AssetType.SFX, BaseAssetType.SFX)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            _position = position;
+
+            if (onRadius)
+            {
+                Flags08.FlagValueByte = 0x03;
+                Flags09.FlagValueByte = 0xE6;
+                _links = new Link[]
+                {
+                    new Link(game)
+                    {
+                        TargetAssetID = assetID,
+                        EventReceiveID = (ushort)EventBFBB.ScenePrepare,
+                        EventSendID = (ushort)EventBFBB.Play
+                    }
+                };
+            }
+            else
+            {
+                Flags08.FlagValueByte = 0x01;
+                Flags09.FlagValueByte = 0xC0;
+            }
+            
+            MinFrequency = 1f;
+            Priority = 128;
+            Volume = 91;
+            InnerRadius = 5f;
+            OuterRadius = 10f;
+
+            CreateTransformMatrix();
+            ArchiveEditorFunctions.AddToRenderableAssets(this);
+        }
+
+        public AssetSFX(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = baseHeaderEndPosition;
 
             Flags08.FlagValueByte = reader.ReadByte();
@@ -83,13 +117,13 @@ namespace IndustrialPark
             _radius2 = reader.ReadSingle();
             
             CreateTransformMatrix();
-            ArchiveEditorFunctions.renderableAssets.Add(this);
+            ArchiveEditorFunctions.AddToRenderableAssets(this);
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeBase(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeBase(endianness));
 
             writer.Write(Flags08.FlagValueByte);
             writer.Write(Flags09.FlagValueByte);
@@ -107,7 +141,7 @@ namespace IndustrialPark
             writer.Write(_radius);
             writer.Write(_radius2);
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
 

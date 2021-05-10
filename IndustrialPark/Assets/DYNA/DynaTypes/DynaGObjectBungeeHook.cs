@@ -8,10 +8,10 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "game_object:bungee_hook";
 
-        protected override int constVersion => 13;
+        protected override short constVersion => 13;
 
         [Category(dynaCategoryName)]
-        public AssetID Placeable_AssetID { get; set; }
+        public AssetID Entity_AssetID { get; set; }
         [Category(dynaCategoryName)]
         public int EnterX { get; set; }
         [Category(dynaCategoryName)]
@@ -73,12 +73,45 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle CollisionHitVelocity { get; set; }
 
-        public DynaGObjectBungeeHook(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.game_object__bungee_hook, game, platform)
+        public DynaGObjectBungeeHook(string assetName, uint entityAssetID) : base(assetName, DynaType.game_object__bungee_hook, 13)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            Entity_AssetID = entityAssetID;
+
+            AttachDist = 3;
+            AttachTravelTime = 0.5f;
+            DetachDist = 10;
+            DetachFreeFallTime = 1;
+            DetachAccel = 2;
+            TurnUnused1 = 25;
+            TurnUnused2 = 0.95f;
+            VerticalFrequency = 2;
+            VerticalGravity = 9.8f;
+            VerticalDive = 2;
+            VerticalMinDist = 2;
+            VerticalMaxDist = 40;
+            VerticalDamp = 0.05f;
+            HorizontalMaxDist = 2;
+            CameraRestDist = 5;
+            Cameraview_angle = 220;
+            CameraOffset = 0.5f;
+            CameraOffsetDir = 180;
+            CameraTurnSpeed = 0.05f;
+            CameraVelScale = 0;
+            CameraRollSpeed = 0.05f;
+            CameraUnused1_X = 0.2f;
+            CameraUnused1_Y = 0.25f;
+            CameraUnused1_Z = 0.2f;
+            CollisionHitLoss = 0.1f;
+            CollisionDamageVelocity = 0.6f;
+            CollisionHitVelocity = 0.2f;
+        }
+
+        public DynaGObjectBungeeHook(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__bungee_hook, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
-            Placeable_AssetID = reader.ReadUInt32();
+            Entity_AssetID = reader.ReadUInt32();
             EnterX = reader.ReadInt32();
             EnterY = reader.ReadInt32();
             EnterZ = reader.ReadInt32();
@@ -111,11 +144,11 @@ namespace IndustrialPark
             CollisionHitVelocity = reader.ReadSingle();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
-            writer.Write(Placeable_AssetID);
+            writer.Write(Entity_AssetID);
             writer.Write(EnterX);
             writer.Write(EnterY);
             writer.Write(EnterZ);
@@ -150,11 +183,11 @@ namespace IndustrialPark
             return writer.ToArray();
         }
 
-        public override bool HasReference(uint assetID) => Placeable_AssetID == assetID || base.HasReference(assetID);
+        public override bool HasReference(uint assetID) => Entity_AssetID == assetID || base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {
-            Verify(Placeable_AssetID, ref result);
+            Verify(Entity_AssetID, ref result);
         }
     }
 }

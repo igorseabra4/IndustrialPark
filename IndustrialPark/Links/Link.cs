@@ -85,9 +85,9 @@ namespace IndustrialPark
             }
         }
 
-        public byte[] Serialize(LinkType type, Platform platform)
+        public byte[] Serialize(LinkType type, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             if (type == LinkType.Normal)
             {

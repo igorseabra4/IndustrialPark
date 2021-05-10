@@ -7,7 +7,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "effect:Rumble";
 
-        protected override int constVersion => 3;
+        protected override short constVersion => 3;
 
         [Category(dynaCategoryName)]
         public AssetSingle UnknownFloat_00 { get; set; }
@@ -32,9 +32,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle UnknownFloat_24 { get; set; }
 
-        public DynaEffectRumble(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.effect__Rumble, game, platform)
+        public DynaEffectRumble(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__Rumble, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             UnknownFloat_00 = reader.ReadSingle();
@@ -50,9 +50,9 @@ namespace IndustrialPark
             UnknownFloat_24 = reader.ReadSingle();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(UnknownFloat_00);
             writer.Write(UnknownFloat_04);

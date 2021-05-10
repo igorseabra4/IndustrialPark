@@ -59,9 +59,9 @@ namespace IndustrialPark
             Unknown23_Z = reader.ReadSingle();
         }
 
-        public byte[] Serialize(Platform platform)
+        public byte[] Serialize(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(Type);
             writer.Write(ColorR);
@@ -97,9 +97,9 @@ namespace IndustrialPark
         [Category("Light Kit")]
         public EntryLKIT[] Lights { get; set; }
 
-        public AssetLKIT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetLKIT(string assetName, byte[] data, Platform platform) : base(assetName, AssetType.LKIT)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(data, platform);
 
             reader.BaseStream.Position = 0x08;
             int lightCount = reader.ReadInt32();
@@ -110,19 +110,31 @@ namespace IndustrialPark
                 Lights[i] = new EntryLKIT(reader);
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public AssetLKIT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
 
-            var chars = new char[] { 'L', 'K', 'I', 'T' };
-            writer.Write(writer.endianness == Endianness.Little ? chars : chars.Reverse().ToArray());
+            reader.BaseStream.Position = 0x08;
+            int lightCount = reader.ReadInt32();
+            Lights = new EntryLKIT[lightCount];
+
+            reader.BaseStream.Position = 0x10;
+            for (int i = 0; i < lightCount; i++)
+                Lights[i] = new EntryLKIT(reader);
+        }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            var writer = new EndianBinaryWriter(endianness);
+
+            writer.WriteMagic("LKIT");
 
             writer.Write(0);
             writer.Write(Lights.Length);
             writer.Write(0);
 
             foreach (var l in Lights)
-                writer.Write(l.Serialize(platform));
+                writer.Write(l.Serialize(endianness));
 
             return writer.ToArray();
         }

@@ -49,9 +49,9 @@ namespace IndustrialPark
 
         protected int dynaUIEnd => dynaDataStartPosition + 64;
 
-        public DynaUI(Section_AHDR AHDR, DynaType type, Game game, Platform platform) : base(AHDR, type, game, platform)
+        public DynaUI(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             PositionX = reader.ReadSingle();
@@ -75,9 +75,9 @@ namespace IndustrialPark
             customWidget = reader.ReadUInt32();
         }
 
-        protected byte[] SerializeDynaUI(Platform platform)
+        protected byte[] SerializeDynaUI(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(PositionX);
             writer.Write(PositionY);

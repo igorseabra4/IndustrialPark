@@ -7,7 +7,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "ui:model";
 
-        protected override int constVersion => 2;
+        protected override short constVersion => 2;
 
         [Category(dynaCategoryName)]
         public AssetID Model_AssetID { get; set; }
@@ -16,9 +16,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID Surface_AssetID { get; set; }
 
-        public DynaUIModel(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.ui__model, game, platform)
+        public DynaUIModel(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.ui__model, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaUIEnd;
 
             Model_AssetID = reader.ReadUInt32();
@@ -26,10 +26,10 @@ namespace IndustrialPark
             Surface_AssetID = reader.ReadUInt32();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeDynaUI(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeDynaUI(endianness));
 
             writer.Write(Model_AssetID);
             writer.Write(AnimList_AssetID);

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using HipHopFile;
 using System.ComponentModel;
+using SharpDX;
 
 namespace IndustrialPark
 {
@@ -17,7 +18,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "Enemy:SB:SupplyCrate";
 
-        protected override int constVersion => 2;
+        protected override short constVersion => 2;
 
         [Category(dynaCategoryName)]
         public EnemySupplyCrateType CrateType
@@ -28,18 +29,28 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID MVPT_AssetID { get; set; }
 
-        public DynaEnemySupplyCrate(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.Enemy__SB__SupplyCrate, game, platform)
+        public DynaEnemySupplyCrate(string assetName, AssetTemplate template, Vector3 position) : base(assetName, DynaType.Enemy__SB__SupplyCrate, 2, position)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            CrateType =
+                template == AssetTemplate.Wood_Crate ? EnemySupplyCrateType.crate_wood_bind :
+                template == AssetTemplate.Hover_Crate ? EnemySupplyCrateType.crate_hover_bind :
+                template == AssetTemplate.Explode_Crate ? EnemySupplyCrateType.crate_explode_bind :
+                template == AssetTemplate.Shrink_Crate ? EnemySupplyCrateType.crate_shrink_bind :
+                template == AssetTemplate.Steel_Crate ? EnemySupplyCrateType.crate_steel_bind : 0;
+        }
+
+        public DynaEnemySupplyCrate(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__SupplyCrate, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = entityDynaEndPosition;
 
             MVPT_AssetID = reader.ReadUInt32();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeEntityDyna(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeEntityDyna(endianness));
 
             writer.Write(MVPT_AssetID);
 

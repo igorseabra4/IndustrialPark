@@ -9,17 +9,6 @@ namespace IndustrialPark
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public class AssetANIM_Header
     {
-        private char[] _magic;
-        public char[] Magic 
-        {
-            get => _magic;
-            set
-            {
-                if (value.Length != 4)
-                    throw new ArgumentException("Value must be 4 characters long");
-                _magic = value;
-            }
-        }
         public uint Flags { get; set; }
         public ushort BoneCount;
         public ushort TimeCount;
@@ -28,15 +17,10 @@ namespace IndustrialPark
         public AssetSingle ScaleY { get; set; }
         public AssetSingle ScaleZ { get; set; }
 
-        public AssetANIM_Header()
-        {
-            Magic = new char[] { 'S', 'K', 'B', '1' };
-        }
-
+        public AssetANIM_Header() { }
         public AssetANIM_Header(EndianBinaryReader reader)
         {
-            var chars = reader.ReadChars(4);
-            Magic = reader.endianness == Endianness.Big ? chars : chars.Reverse().ToArray();
+            reader.ReadUInt32();
             Flags = reader.ReadUInt32();
             BoneCount = reader.ReadUInt16();
             TimeCount = reader.ReadUInt16();
@@ -46,11 +30,11 @@ namespace IndustrialPark
             ScaleZ = reader.ReadSingle();
         }
 
-        public byte[] Serialize(Platform platform)
+        public byte[] Serialize(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
-            writer.Write(writer.endianness == Endianness.Big ? Magic : Magic.Reverse().ToArray());
+            writer.WriteMagic("SKB1");
 
             writer.Write(Flags);
             writer.Write(BoneCount);
@@ -87,9 +71,9 @@ namespace IndustrialPark
             PositionZ = reader.ReadInt16();
         }
 
-        public byte[] Serialize(Platform platform)
+        public byte[] Serialize(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(TimeIndex);
             writer.Write(RotationX);
@@ -120,9 +104,9 @@ namespace IndustrialPark
         [Category(categoryName)]
         public short[][] Offsets { get; set; }
 
-        public AssetANIM(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetANIM(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
 
             Header = new AssetANIM_Header(reader);
 
@@ -147,7 +131,7 @@ namespace IndustrialPark
             Offsets = offsets.ToArray();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
             Header.KeyCount = (uint)KeyFrames.Length;
             Header.TimeCount = (ushort)Times.Length;
@@ -157,11 +141,11 @@ namespace IndustrialPark
             else
                 Header.BoneCount = 0;
 
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
-            writer.Write(Header.Serialize(platform));
+            writer.Write(Header.Serialize(endianness));
             foreach (var k in KeyFrames)
-                writer.Write(k.Serialize(platform));
+                writer.Write(k.Serialize(endianness));
             foreach (var t in Times)
                 writer.Write(t);
             foreach (var o in Offsets)

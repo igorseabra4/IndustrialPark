@@ -228,7 +228,7 @@
 
 //    public class AssetCSN : Asset
 //    {
-//        public AssetCSN(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+//        public AssetCSN(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness) { }
 
 //        public override bool HasReference(uint assetID)
 //        {

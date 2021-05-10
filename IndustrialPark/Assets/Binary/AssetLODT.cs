@@ -42,9 +42,9 @@ namespace IndustrialPark
                 Unknown = reader.ReadSingle();
         }
 
-        public byte[] Serialize(Game game, Platform platform)
+        public byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(ModelAssetID);
             writer.Write(MaxDistance);
@@ -98,9 +98,14 @@ namespace IndustrialPark
             }
         }
 
-        public AssetLODT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetLODT(string assetName) : base(assetName, AssetType.LODT)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            LODT_Entries = new EntryLODT[0];
+        }
+
+        public AssetLODT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
 
             _lodt_Entries = new EntryLODT[reader.ReadInt32()];
 
@@ -110,14 +115,14 @@ namespace IndustrialPark
             UpdateDictionary();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(LODT_Entries.Length);
 
             foreach (var l in LODT_Entries)
-                writer.Write(l.Serialize(game, platform));
+                writer.Write(l.Serialize(game, endianness));
 
             return writer.ToArray();
         }

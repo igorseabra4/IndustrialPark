@@ -47,9 +47,9 @@ namespace IndustrialPark
             BlastStrength = 1f;
         }
 
-        public AssetDSTR(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetDSTR(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = entityHeaderEndPosition;
 
             AnimationSpeed = reader.ReadInt32();
@@ -73,10 +73,10 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeEntity(game, platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeEntity(game, endianness));
 
             writer.Write(AnimationSpeed);
             writer.Write(InitialAnimationState);
@@ -99,7 +99,7 @@ namespace IndustrialPark
                 writer.Write(DestroyModel_AssetID);
             }
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
 

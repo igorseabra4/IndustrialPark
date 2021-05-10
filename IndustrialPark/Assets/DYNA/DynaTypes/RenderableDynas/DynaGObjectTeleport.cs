@@ -34,25 +34,30 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID TargetDYNATeleportID { get; set; }
 
-        public DynaGObjectTeleport(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.game_object__Teleport, game, platform)
+        public DynaGObjectTeleport(string assetName, uint mrkrId) : base(assetName, DynaType.game_object__Teleport, 2)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            MRKR_ID = mrkrId;
+        }
+
+        public DynaGObjectTeleport(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__Teleport, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             MRKR_ID = reader.ReadUInt32();
-            Opened = reader.ReadInt32() != 0;
+            Opened = reader.ReadInt32Bool();
             _launchAngle = reader.ReadInt32();
             if (Version > 1 || game != Game.Incredibles)
                 CameraAngle = reader.ReadInt32();
             TargetDYNATeleportID = reader.ReadUInt32();
 
             CreateTransformMatrix();
-            renderableAssets.Add(this);
+            AddToRenderableAssets(this);
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(MRKR_ID);
             writer.Write(Opened ? 1 : 0);

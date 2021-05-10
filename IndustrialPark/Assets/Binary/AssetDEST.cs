@@ -19,7 +19,6 @@ namespace IndustrialPark
         public AssetID Rumble_Switch_AssetID { get; set; }
         public int FxFlags { get; set; }
         public int nAnimations { get; set; }
-        public AssetID Animation_AssetID { get; set; }
 
         public DestState() { }
         public DestState(EndianBinaryReader reader)
@@ -37,12 +36,11 @@ namespace IndustrialPark
             Rumble_Switch_AssetID = reader.ReadUInt32();
             FxFlags = reader.ReadInt32();
             nAnimations = reader.ReadInt32();
-            Animation_AssetID = reader.ReadUInt32();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(percent);
             writer.Write(Model_AssetID);
@@ -57,7 +55,6 @@ namespace IndustrialPark
             writer.Write(Rumble_Switch_AssetID);
             writer.Write(FxFlags);
             writer.Write(nAnimations);
-            writer.Write(Animation_AssetID);
 
             return writer.ToArray();
         }
@@ -72,8 +69,7 @@ namespace IndustrialPark
             SoundGroup_Fx_Switch_AssetID == assetID ||
             SoundGroup_Hit_Switch_AssetID == assetID ||
             Rumble_Hit_AssetID == assetID ||
-            Rumble_Switch_AssetID == assetID ||
-            Animation_AssetID == assetID;
+            Rumble_Switch_AssetID == assetID;
     }
 
     public class AssetDEST : Asset
@@ -100,10 +96,12 @@ namespace IndustrialPark
         public byte TargetPriority { get; set; }
         [Category(categoryName)]
         public DestState[] States { get; set; }
+        [Category(categoryName)]
+        public AssetID Unknown { get; set; }
 
-        public AssetDEST(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetDEST(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
 
             MINF_AssetID = reader.ReadUInt32();
             int numStates = reader.ReadInt32();
@@ -121,11 +119,12 @@ namespace IndustrialPark
             States = new DestState[numStates];
             for (int i = 0; i < States.Length; i++)
                 States[i] = new DestState(reader);
+            Unknown = reader.ReadUInt32();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(MINF_AssetID);
             writer.Write(States.Length);
@@ -141,7 +140,8 @@ namespace IndustrialPark
             writer.Write((byte)0);
             writer.Write((byte)0);
             foreach (var state in States)
-                writer.Write(state.Serialize(game, platform));
+                writer.Write(state.Serialize(game, endianness));
+            writer.Write(Unknown);
 
             return writer.ToArray();
         }

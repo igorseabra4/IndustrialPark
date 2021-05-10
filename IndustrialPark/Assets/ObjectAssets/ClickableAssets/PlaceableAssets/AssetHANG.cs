@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using SharpDX;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -24,9 +25,13 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle StopDeceleration { get; set; }
 
-        public AssetHANG(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetHANG(string assetName, Vector3 position) : base(assetName, AssetType.HANG, BaseAssetType.Hangable, position)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+        }
+
+        public AssetHANG(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = entityHeaderEndPosition;
 
             HangFlags.FlagValueInt = reader.ReadUInt32();
@@ -39,10 +44,10 @@ namespace IndustrialPark
             StopDeceleration = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeEntity(game, platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeEntity(game, endianness));
 
             writer.Write(HangFlags.FlagValueInt);
             writer.Write(PivotOffset);
@@ -53,7 +58,7 @@ namespace IndustrialPark
             writer.Write(GrabDelay);
             writer.Write(StopDeceleration);
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
 

@@ -344,7 +344,7 @@
             this.toolStripStatusLabelCurrentFilename,
             this.toolStripStatusLabel1,
             this.toolStripStatusLabelSelectionCount});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 419);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 431);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(624, 22);
             this.statusStrip1.TabIndex = 1;
@@ -485,7 +485,7 @@
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Location = new System.Drawing.Point(12, 80);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(600, 336);
+            this.groupBox2.Size = new System.Drawing.Size(600, 348);
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Assets";
@@ -494,7 +494,7 @@
             // 
             this.buttonMultiEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonMultiEdit.Enabled = false;
-            this.buttonMultiEdit.Location = new System.Drawing.Point(519, 306);
+            this.buttonMultiEdit.Location = new System.Drawing.Point(519, 202);
             this.buttonMultiEdit.Name = "buttonMultiEdit";
             this.buttonMultiEdit.Size = new System.Drawing.Size(75, 23);
             this.buttonMultiEdit.TabIndex = 22;
@@ -533,7 +533,7 @@
             this.listViewAssets.HideSelection = false;
             this.listViewAssets.Location = new System.Drawing.Point(9, 40);
             this.listViewAssets.Name = "listViewAssets";
-            this.listViewAssets.Size = new System.Drawing.Size(507, 289);
+            this.listViewAssets.Size = new System.Drawing.Size(507, 301);
             this.listViewAssets.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.listViewAssets.TabIndex = 11;
             this.listViewAssets.UseCompatibleStateImageBehavior = false;
@@ -541,7 +541,6 @@
             this.listViewAssets.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewAssets_ColumnClick);
             this.listViewAssets.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.checkedListBoxAssets_ItemCheck);
             this.listViewAssets.SelectedIndexChanged += new System.EventHandler(this.checkedListBoxAssets_SelectedIndexChanged);
-            this.listViewAssets.SizeChanged += new System.EventHandler(this.listViewAssets_SizeChanged);
             this.listViewAssets.KeyDown += new System.Windows.Forms.KeyEventHandler(this.checkedListBoxAssets_KeyDown);
             this.listViewAssets.MouseDown += new System.Windows.Forms.MouseEventHandler(this.checkedListBoxAssets_MouseDown);
             // 
@@ -614,7 +613,7 @@
             // 
             this.buttonInternalEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonInternalEdit.Enabled = false;
-            this.buttonInternalEdit.Location = new System.Drawing.Point(519, 277);
+            this.buttonInternalEdit.Location = new System.Drawing.Point(519, 318);
             this.buttonInternalEdit.Name = "buttonInternalEdit";
             this.buttonInternalEdit.Size = new System.Drawing.Size(75, 23);
             this.buttonInternalEdit.TabIndex = 15;
@@ -626,7 +625,7 @@
             // 
             this.buttonView.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonView.Enabled = false;
-            this.buttonView.Location = new System.Drawing.Point(519, 190);
+            this.buttonView.Location = new System.Drawing.Point(519, 231);
             this.buttonView.Name = "buttonView";
             this.buttonView.Size = new System.Drawing.Size(75, 23);
             this.buttonView.TabIndex = 14;
@@ -638,7 +637,7 @@
             // 
             this.buttonExportRaw.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonExportRaw.Enabled = false;
-            this.buttonExportRaw.Location = new System.Drawing.Point(519, 219);
+            this.buttonExportRaw.Location = new System.Drawing.Point(519, 260);
             this.buttonExportRaw.Name = "buttonExportRaw";
             this.buttonExportRaw.Size = new System.Drawing.Size(75, 23);
             this.buttonExportRaw.TabIndex = 13;
@@ -650,7 +649,7 @@
             // 
             this.buttonEditAsset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonEditAsset.Enabled = false;
-            this.buttonEditAsset.Location = new System.Drawing.Point(519, 248);
+            this.buttonEditAsset.Location = new System.Drawing.Point(519, 289);
             this.buttonEditAsset.Name = "buttonEditAsset";
             this.buttonEditAsset.Size = new System.Drawing.Size(75, 23);
             this.buttonEditAsset.TabIndex = 12;
@@ -829,7 +828,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(624, 441);
+            this.ClientSize = new System.Drawing.Size(624, 453);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.statusStrip1);

@@ -6,26 +6,33 @@ namespace IndustrialPark
 {
     public class AssetTEXT : Asset
     {
+        public const int Codepage = 1252;
         public string Text { get; set; }
-        
-        public AssetTEXT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+
+        public AssetTEXT(string assetName) : base(assetName, AssetType.TEXT)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
-            var length = reader.ReadInt32();
-            Text = System.Text.Encoding.GetEncoding(1252).GetString(reader.ReadBytes(length));
+            Text = "";
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public AssetTEXT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
+            var length = reader.ReadInt32();
+            Text = System.Text.Encoding.GetEncoding(Codepage).GetString(reader.ReadBytes(length));
+        }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(Text.Length);
 
-            foreach (byte c in System.Text.Encoding.GetEncoding(1252).GetBytes(Text))
+            foreach (byte c in System.Text.Encoding.GetEncoding(Codepage).GetBytes(Text))
                 writer.Write(c);
-
-            do writer.Write((byte)0);
-            while (writer.BaseStream.Length % 4 != 0);
+            
+            if (Text.Length == 0 || writer.BaseStream.Length % 4 != 0 || (writer.BaseStream.Length % 4 == 0 && Text[Text.Length - 1] != '\0'))
+                do writer.Write((byte)0);
+                    while (writer.BaseStream.Length % 4 != 0);
 
             return writer.ToArray();
         }

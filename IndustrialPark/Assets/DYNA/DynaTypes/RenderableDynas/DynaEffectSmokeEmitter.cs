@@ -11,7 +11,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "effect:smoke_emitter";
 
-        protected override int constVersion => 2;
+        protected override short constVersion => 2;
 
         [Category(dynaCategoryName)]
         public int UnknownInt_00 { get; set; }
@@ -70,9 +70,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public short UnknownShort_6E { get; set; }
 
-        public DynaEffectSmokeEmitter(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.effect__smoke_emitter, game, platform)
+        public DynaEffectSmokeEmitter(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__smoke_emitter, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             UnknownInt_00 = reader.ReadInt32();
@@ -106,12 +106,12 @@ namespace IndustrialPark
             UnknownShort_6E = reader.ReadInt16();
 
             CreateTransformMatrix();
-            renderableAssets.Add(this);
+            AddToRenderableAssets(this);
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(UnknownInt_00);
             writer.Write(UnknownInt_04);

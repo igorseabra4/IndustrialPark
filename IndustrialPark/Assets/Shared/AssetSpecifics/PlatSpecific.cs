@@ -20,9 +20,9 @@ namespace IndustrialPark
             Speed = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
             writer.Write(Speed);
             return writer.ToArray();
         }
@@ -43,9 +43,9 @@ namespace IndustrialPark
             BustModel_AssetID = reader.ReadUInt32();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
             writer.Write(Speed);
             writer.Write(BustModel_AssetID);
             return writer.ToArray();
@@ -71,9 +71,9 @@ namespace IndustrialPark
             post_ret_delay = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
             writer.Write(fspeed);
             writer.Write(rspeed);
             writer.Write(ret_delay);
@@ -96,6 +96,18 @@ namespace IndustrialPark
         {
             BustModel_AssetID = 0;
         }
+
+        public PlatSpecific_BreakawayPlatform(AssetTemplate template)
+        {
+            BreakawayDelay = 1f;
+            ResetDelay = 3f;
+            Settings.FlagValueInt = 1;
+            UnknownFloat0C = 0.1f;
+
+            if (template == AssetTemplate.CollapsePlatform_Spongeball)
+                BreakawayDelay = 0.4f;
+        }
+
         public PlatSpecific_BreakawayPlatform(EndianBinaryReader reader, Game game)
         {
             BreakawayDelay = reader.ReadSingle();
@@ -107,9 +119,9 @@ namespace IndustrialPark
                 UnknownFloat0C = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
             writer.Write(BreakawayDelay);
             if (game != Game.Incredibles)
                 writer.Write(BustModel_AssetID);
@@ -144,6 +156,7 @@ namespace IndustrialPark
             Anim2_AssetID = 0;
             Anim3_AssetID = 0;
         }
+
         public PlatSpecific_Springboard(EndianBinaryReader reader) : this()
         {
             Height1 = reader.ReadSingle();
@@ -159,9 +172,9 @@ namespace IndustrialPark
             Settings.FlagValueInt = reader.ReadUInt32();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(Height1);
             writer.Write(Height2);
@@ -212,9 +225,9 @@ namespace IndustrialPark
             InverseMass = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(InitialTilt_Rad);
             writer.Write(MaxTilt_Rad);
@@ -260,9 +273,9 @@ namespace IndustrialPark
             HubRadius = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(StartOrient);
             writer.Write(OrientCount);

@@ -106,7 +106,7 @@ namespace IndustrialPark
                 if (Path.GetExtension(s).ToLower() == ".hip" || Path.GetExtension(s).ToLower() == ".hop")
                 {
                     ArchiveEditorFunctions archive = new ArchiveEditorFunctions();
-                    archive.OpenFile(s, false, scoobyPlatform, true);
+                    archive.OpenFile(s, false, scoobyPlatform, out _, true);
                     if (scoobyPlatform == Platform.Unknown)
                         scoobyPlatform = archive.platform;
                     WriteWhatIFound(archive);

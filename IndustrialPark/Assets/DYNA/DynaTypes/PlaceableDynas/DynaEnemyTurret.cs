@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -15,7 +16,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "Enemy:SB:Turret";
 
-        protected override int constVersion => 4;
+        protected override short constVersion => 4;
 
         [Category(dynaCategoryName)]
         public EnemyTurretType TurretType
@@ -34,9 +35,20 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID Unknown60 { get; set; }
 
-        public DynaEnemyTurret(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.Enemy__SB__Turret, game, platform)
+        public DynaEnemyTurret(string assetName, AssetTemplate template, Vector3 position) : base(assetName, DynaType.Enemy__SB__Turret, 4, position)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            UnknownFloat50 = 30f;
+            UnknownInt58 = 1;
+            
+            TurretType =
+            template == AssetTemplate.Turret_v1 ? EnemyTurretType.turret_v1_bind :
+            template == AssetTemplate.Turret_v2 ? EnemyTurretType.turret_v2_bind :
+            template == AssetTemplate.Turret_v3 ? EnemyTurretType.turret_v3_bind : 0;
+        }
+
+        public DynaEnemyTurret(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__Turret, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = entityDynaEndPosition;
 
             UnknownFloat50 = reader.ReadSingle();
@@ -46,10 +58,10 @@ namespace IndustrialPark
             Unknown60 = reader.ReadUInt32();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeEntityDyna(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeEntityDyna(endianness));
 
             writer.Write(UnknownFloat50);
             writer.Write(Unknown54);

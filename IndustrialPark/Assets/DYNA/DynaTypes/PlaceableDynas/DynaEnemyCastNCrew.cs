@@ -11,7 +11,7 @@ namespace IndustrialPark
 
     public class DynaEnemyCastNCrew : DynaEnemySB
     {
-        protected override int constVersion => 1;
+        protected override short constVersion => 1;
 
         [Category("Enemy:SB:CastNCrew")]
         public EnemyCastNCrewType CastNCrewType
@@ -20,12 +20,12 @@ namespace IndustrialPark
             set => Model_AssetID = (uint)value;
         }
 
-        public DynaEnemyCastNCrew(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.Enemy__SB__CastNCrew, game, platform) { }
+        public DynaEnemyCastNCrew(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__CastNCrew, game, endianness) { }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeEntityDyna(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeEntityDyna(endianness));
             return writer.ToArray();
         }
     }

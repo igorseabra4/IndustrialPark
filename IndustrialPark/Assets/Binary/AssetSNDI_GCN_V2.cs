@@ -60,12 +60,17 @@ namespace IndustrialPark
 
         // most of this file is a very hacky temporary thing
 
-        public AssetSNDI_GCN_V2(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetSNDI_GCN_V2(string assetName) : base(assetName, AssetType.SNDI)
+        {
+            AHDR = new Section_AHDR(assetID, assetType, flags, new Section_ADBG(0, assetName, assetFileName, checksum), new byte[0x20]);
+        }
+
+        public AssetSNDI_GCN_V2(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
             this.AHDR = AHDR;
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
             return AHDR.data;
         }
@@ -198,7 +203,7 @@ namespace IndustrialPark
 
             // hacky solution
             AssetSNDI_GCN_V2 asset = new AssetSNDI_GCN_V2(
-                new Section_AHDR(AHDR.assetID, AHDR.assetType, AHDR.flags, AHDR.ADBG, newData.ToArray()), Game.Incredibles, Platform.GameCube)
+                new Section_AHDR(AHDR.assetID, AHDR.assetType, AHDR.flags, AHDR.ADBG, newData.ToArray()), Game.Incredibles, Endianness.Big)
             {
                 FooterOffset = footerOffset,
                 assetID = AHDR.assetID,

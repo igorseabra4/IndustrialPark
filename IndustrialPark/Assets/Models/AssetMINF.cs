@@ -1,11 +1,8 @@
 ﻿using HipHopFile;
 using SharpDX;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using static IndustrialPark.ArchiveEditorFunctions;
-
 
 namespace IndustrialPark
 {
@@ -54,9 +51,9 @@ namespace IndustrialPark
             PosZ = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(Model_AssetID);
             writer.Write(Flags);
@@ -83,18 +80,6 @@ namespace IndustrialPark
     {
         private const string categoryName = "Model Info";
 
-        private char[] _magic;
-        [Category(categoryName)]
-        public char[] Magic
-        {
-            get => _magic;
-            set
-            {
-                if (value.Length != 4)
-                    throw new ArgumentException("Value must be 4 characters long");
-                _magic = value;
-            }
-        }
         [Category(categoryName)]
         public AssetID ATBL_AssetID { get; set; }
         [Category(categoryName)]
@@ -105,14 +90,36 @@ namespace IndustrialPark
         public ModelInst[] ModelReferences { get; set; }
         [Category(categoryName)]
         public byte[] UnknownData { get; set; }
-
-        public AssetMINF(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        [Category(categoryName)]
+        public AssetID[] UnknownDataHexInts
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            get
+            {
+                var reader = new EndianBinaryReader(UnknownData, endianness);
+                var result = new AssetID[UnknownData.Length / 4];
+                for (int i = 0; i < result.Length; i++)
+                    result[i] = reader.ReadUInt32();
+                return result;
+            }
+            set
+            {
+                var writer = new EndianBinaryWriter(endianness);
+                foreach (var i in value)
+                    writer.Write(i);
+                UnknownData = writer.ToArray();
+            }
+        }
 
-            var chars = reader.ReadChars(4);
-            Magic = reader.endianness == Endianness.Big ? chars : chars.Reverse().ToArray();
+        public AssetMINF(string assetName) : base(assetName, AssetType.MINF)
+        {
+            ModelReferences = new ModelInst[0];
+        }
 
+        public AssetMINF(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
+
+            reader.ReadInt32();
             int amountOfReferences = reader.ReadInt32();
             ATBL_AssetID = reader.ReadUInt32();
             if (game != Game.Scooby)
@@ -148,11 +155,11 @@ namespace IndustrialPark
 
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
-            writer.Write(writer.endianness == Endianness.Big ? Magic : Magic.Reverse().ToArray());
+            writer.WriteMagic("MINF");
             writer.Write(ModelReferences.Length);
             writer.Write(ATBL_AssetID);
 
@@ -163,7 +170,7 @@ namespace IndustrialPark
             }
 
             foreach (var r in ModelReferences)
-                writer.Write(r.Serialize(game, platform));
+                writer.Write(r.Serialize(game, endianness));
             foreach (var b in UnknownData)
                 writer.Write(b);
 
@@ -176,8 +183,8 @@ namespace IndustrialPark
 
         public void MovieRemoveFromDictionary()
         {
-            renderingDictionary.Remove(Functions.BKDRHash(newName));
-            nameDictionary.Remove(Functions.BKDRHash(newName));
+            RemoveFromRenderingDictionary(Functions.BKDRHash(newName));
+            RemoveFromNameDictionary(Functions.BKDRHash(newName));
         }
 
         public override bool HasReference(uint assetID)

@@ -47,12 +47,12 @@
             this.chooseSingleFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkForUpdatesOnStartupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.checkForUpdatesOnEditorFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.labelBackupDir = new System.Windows.Forms.Label();
             this.labelSeed = new System.Windows.Forms.Label();
             this.richTextBoxHelp = new System.Windows.Forms.RichTextBox();
             this.buttonReset = new System.Windows.Forms.Button();
             this.comboBoxGame = new System.Windows.Forms.ComboBox();
-            this.checkForUpdatesOnEditorFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -74,7 +74,7 @@
             this.buttonPerform.Name = "buttonPerform";
             this.buttonPerform.Size = new System.Drawing.Size(431, 23);
             this.buttonPerform.TabIndex = 8;
-            this.buttonPerform.Text = "Perform";
+            this.buttonPerform.Text = "Run";
             this.buttonPerform.UseVisualStyleBackColor = true;
             this.buttonPerform.Click += new System.EventHandler(this.buttonPerform_Click);
             // 
@@ -167,14 +167,14 @@
             // loadToolStripMenuItem
             // 
             this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
             this.loadToolStripMenuItem.Text = "Load";
             this.loadToolStripMenuItem.Click += new System.EventHandler(this.LoadToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.SaveToolStripMenuItem_Click);
             // 
@@ -229,9 +229,16 @@
             // checkForUpdatesOnStartupToolStripMenuItem
             // 
             this.checkForUpdatesOnStartupToolStripMenuItem.Name = "checkForUpdatesOnStartupToolStripMenuItem";
-            this.checkForUpdatesOnStartupToolStripMenuItem.Size = new System.Drawing.Size(249, 22);
+            this.checkForUpdatesOnStartupToolStripMenuItem.Size = new System.Drawing.Size(258, 22);
             this.checkForUpdatesOnStartupToolStripMenuItem.Text = "Check For Updates On Startup";
             this.checkForUpdatesOnStartupToolStripMenuItem.Click += new System.EventHandler(this.CheckForUpdatesOnStartupToolStripMenuItem_Click);
+            // 
+            // checkForUpdatesOnEditorFilesToolStripMenuItem
+            // 
+            this.checkForUpdatesOnEditorFilesToolStripMenuItem.Name = "checkForUpdatesOnEditorFilesToolStripMenuItem";
+            this.checkForUpdatesOnEditorFilesToolStripMenuItem.Size = new System.Drawing.Size(258, 22);
+            this.checkForUpdatesOnEditorFilesToolStripMenuItem.Text = "Check For Updates On EditorFiles...";
+            this.checkForUpdatesOnEditorFilesToolStripMenuItem.Click += new System.EventHandler(this.checkForUpdatesOnEditorFilesToolStripMenuItem_Click);
             // 
             // labelBackupDir
             // 
@@ -287,13 +294,6 @@
             this.comboBoxGame.Size = new System.Drawing.Size(431, 21);
             this.comboBoxGame.TabIndex = 40;
             this.comboBoxGame.SelectedIndexChanged += new System.EventHandler(this.comboBoxGame_SelectedIndexChanged);
-            // 
-            // checkForUpdatesOnEditorFilesToolStripMenuItem
-            // 
-            this.checkForUpdatesOnEditorFilesToolStripMenuItem.Name = "checkForUpdatesOnEditorFilesToolStripMenuItem";
-            this.checkForUpdatesOnEditorFilesToolStripMenuItem.Size = new System.Drawing.Size(258, 22);
-            this.checkForUpdatesOnEditorFilesToolStripMenuItem.Text = "Check For Updates On EditorFiles...";
-            this.checkForUpdatesOnEditorFilesToolStripMenuItem.Click += new System.EventHandler(this.checkForUpdatesOnEditorFilesToolStripMenuItem_Click);
             // 
             // RandomizerMenu
             // 

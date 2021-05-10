@@ -132,9 +132,12 @@ namespace IndustrialPark
         [Category(categoryName)]
         public int UnknownIntC4 { get; set; }
 
-        public AssetNPC(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetNPC(string assetName, Vector3 position) : base(assetName, AssetType.NPC, BaseAssetType.NPC, position)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+        }
+        public AssetNPC(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = entityHeaderEndPosition;
 
             UnknownFloat54 = reader.ReadSingle();
@@ -176,10 +179,10 @@ namespace IndustrialPark
             UnknownIntC4 = reader.ReadInt32();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeEntity(game, platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeEntity(game, endianness));
 
             writer.Write(UnknownFloat54);
             writer.Write(UnknownFloat58);
@@ -219,7 +222,7 @@ namespace IndustrialPark
             writer.Write(UnknownIntC0);
             writer.Write(UnknownIntC4);
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
 

@@ -8,7 +8,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "effect:ScreenFade";
 
-        protected override int constVersion => 1;
+        protected override short constVersion => 1;
         
         [Category(dynaCategoryName), DisplayName("Color (R, G, B)")]
         public AssetColor Color { get; set; }
@@ -25,9 +25,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle UnknownFloat3 { get; set; }
 
-        public DynaEffectScreenFade(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.effect__ScreenFade, game, platform)
+        public DynaEffectScreenFade(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__ScreenFade, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             Color = reader.ReadColor();
@@ -36,9 +36,9 @@ namespace IndustrialPark
             UnknownFloat3 = reader.ReadSingle();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(Color);
             writer.Write(UnknownFloat1);

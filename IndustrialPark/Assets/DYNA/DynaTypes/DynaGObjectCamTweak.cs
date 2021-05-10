@@ -7,7 +7,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "game_object:Camera_Tweak";
 
-        protected override int constVersion => 1;
+        protected override short constVersion => 1;
 
         [Category(dynaCategoryName)]
         public int Priority { get; set; }
@@ -18,9 +18,12 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle DistAdjust { get; set; }
 
-        public DynaGObjectCamTweak(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.game_object__Camera_Tweak, game, platform)
+        public DynaGObjectCamTweak(string assetName) : base(assetName, DynaType.game_object__Camera_Tweak, 1)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+        }
+        public DynaGObjectCamTweak(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__Camera_Tweak, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             Priority = reader.ReadInt32();
@@ -29,9 +32,9 @@ namespace IndustrialPark
             DistAdjust = reader.ReadSingle();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(Priority);
             writer.Write(Time);

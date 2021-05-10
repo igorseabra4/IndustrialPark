@@ -26,9 +26,9 @@ namespace IndustrialPark
             DirZ = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
             writer.Write(Radius);
             writer.Write(Deflection);
             writer.Write(DirX);
@@ -48,9 +48,9 @@ namespace IndustrialPark
             Radius = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
             writer.Write(Radius);
             return writer.ToArray();
         }
@@ -68,9 +68,9 @@ namespace IndustrialPark
             Z_Len = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
             writer.Write(X_Len);
             writer.Write(Z_Len);
             return writer.ToArray();
@@ -99,9 +99,9 @@ namespace IndustrialPark
             Radius = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
             writer.Write(Position_0_X);
             writer.Write(Position_0_Y);
             writer.Write(Position_0_Z);
@@ -127,9 +127,9 @@ namespace IndustrialPark
             VolumeAssetID = reader.ReadUInt32();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
             writer.Write(VolumeAssetID);
             return writer.ToArray();
         }
@@ -152,9 +152,9 @@ namespace IndustrialPark
             Position_Z = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
             writer.Write(Position_X);
             writer.Write(Position_Y);
             writer.Write(Position_Z);
@@ -176,9 +176,9 @@ namespace IndustrialPark
             Deflection = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
             writer.Write(Height);
             writer.Write(Radius);
             writer.Write(Deflection);
@@ -211,9 +211,9 @@ namespace IndustrialPark
             Deflection = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
             writer.Write(flags);
             writer.Write(type);
             writer.Write(bone);
@@ -247,9 +247,9 @@ namespace IndustrialPark
             Deflection = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
             writer.Write(flags);
             writer.Write(type);
             writer.Write((byte)0);

@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -18,7 +19,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "Enemy:SB:BucketOTron";
 
-        protected override int constVersion => 4;
+        protected override short constVersion => 4;
 
         [Category(dynaCategoryName)]
         public EnemyBucketOTronType BucketOTronType
@@ -37,9 +38,22 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public int UnknownInt60 { get; set; }
 
-        public DynaEnemyBucketOTron(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.Enemy__SB__BucketOTron, game, platform)
+        public DynaEnemyBucketOTron(string assetName, AssetTemplate template, Vector3 position, uint groupAssetID) : base(assetName, DynaType.Enemy__SB__BucketOTron, 4, position)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            BucketOTronType =
+                        template == AssetTemplate.BucketOTron_BB ? EnemyBucketOTronType.buckotron_bb_bind :
+                        template == AssetTemplate.BucketOTron_DE ? EnemyBucketOTronType.buckotron_de_bind :
+                        template == AssetTemplate.BucketOTron_GG ? EnemyBucketOTronType.buckotron_gg_bind :
+                        template == AssetTemplate.BucketOTron_TR ? EnemyBucketOTronType.buckotron_tr_bind :
+                        template == AssetTemplate.BucketOTron_JK ? EnemyBucketOTronType.buckotron_jk_bind :
+                        template == AssetTemplate.BucketOTron_PT ? EnemyBucketOTronType.buckotron_pt_bind : 0;
+
+            Group_AssetID = groupAssetID;
+        }
+
+        public DynaEnemyBucketOTron(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__BucketOTron, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = entityDynaEndPosition;
 
             Group_AssetID = reader.ReadUInt32();
@@ -49,10 +63,10 @@ namespace IndustrialPark
             UnknownInt60 = reader.ReadInt32();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeEntityDyna(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeEntityDyna(endianness));
 
             writer.Write(Group_AssetID);
             writer.Write(UnknownInt54);

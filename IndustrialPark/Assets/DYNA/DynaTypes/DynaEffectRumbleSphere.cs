@@ -8,7 +8,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "effect:Rumble Spherical Emitter";
 
-        protected override int constVersion => 1;
+        protected override short constVersion => 1;
 
         [Category(dynaCategoryName)]
         public AssetID Rumble_AssetID { get; set; }
@@ -25,9 +25,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public short UnknownShort_16 { get; set; }
 
-        public DynaEffectRumbleSphere(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.effect__RumbleSphericalEmitter, game, platform)
+        public DynaEffectRumbleSphere(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__RumbleSphericalEmitter, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             Rumble_AssetID = reader.ReadUInt32();
@@ -39,9 +39,9 @@ namespace IndustrialPark
             UnknownShort_16 = reader.ReadInt16();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(Rumble_AssetID);
             writer.Write(UnknownFloat_04);

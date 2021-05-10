@@ -677,7 +677,7 @@ namespace IndustrialPark
                 if (GetFromAssetID(i) is AssetMODL MODL)
                 {
                     string simpName = "SIMP_" + MODL.assetName.Replace(".dff", "").ToUpper();
-                    AssetSIMP simp = (AssetSIMP)GetFromAssetID(PlaceTemplate(new Vector3(), layerIndex, ref outAssetIDs, simpName, AssetTemplate.SIMP_Generic));
+                    AssetSIMP simp = (AssetSIMP)PlaceTemplate(new Vector3(), layerIndex, ref outAssetIDs, simpName, AssetTemplate.SIMP_Generic);
                     simp.Model_AssetID = i;
                     if (!solid)
                     {
@@ -719,9 +719,12 @@ namespace IndustrialPark
 
             foreach (Asset a in assetDictionary.Values)
                 if (a is AssetPIPT PIPT)
+                {
                     pipt = PIPT;
+                    break;
+                }
             if (pipt == null)
-                pipt = (AssetPIPT)GetFromAssetID(PlaceTemplate(new Vector3(), IndexOfLayerOfType((int)LayerType_BFBB.DEFAULT), template: AssetTemplate.PipeInfoTable));
+                pipt = (AssetPIPT)PlaceTemplate(new Vector3(), IndexOfLayerOfType((int)LayerType_BFBB.DEFAULT), template: AssetTemplate.PipeInfoTable);
             
             List<EntryPIPT> entries = pipt.PIPT_Entries.ToList();
 

@@ -46,9 +46,9 @@ namespace IndustrialPark
         [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter))]
         public AssetVIL VIL { get; set; }
 
-        public AssetDUPC(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetDUPC(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = baseHeaderEndPosition;
 
             UnknownShort_08 = reader.ReadUInt16();
@@ -69,13 +69,13 @@ namespace IndustrialPark
             Settings_AssetID = reader.ReadUInt32();
 
             CreateTransformMatrix();
-            renderableAssets.Add(this);
+            AddToRenderableAssets(this);
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeBase(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeBase(endianness));
 
             writer.Write(UnknownShort_08);
             writer.Write(UnknownShort_0A);
@@ -94,12 +94,12 @@ namespace IndustrialPark
             writer.Write(assetID);
             writer.Write((byte)BaseAssetType.NPC);
             writer.Write((byte)_links.Length);
-            writer.Write(VIL.Serialize(game, platform).Skip(6).ToArray());
+            writer.Write(VIL.Serialize(game, endianness).Skip(6).ToArray());
 
             writer.Write(NavMesh2_AssetID);
             writer.Write(Settings_AssetID);
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
 

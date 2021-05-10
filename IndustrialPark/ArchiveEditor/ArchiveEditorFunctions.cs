@@ -12,20 +12,64 @@ namespace IndustrialPark
     public partial class ArchiveEditorFunctions
     {
         public static HashSet<IRenderableAsset> renderableAssets = new HashSet<IRenderableAsset>();
+        public static void AddToRenderableAssets(IRenderableAsset ira)
+        {
+            lock (renderableAssets)
+                renderableAssets.Add(ira);
+        }
+        public static void RemoveFromRenderableAssets(IRenderableAsset ira)
+        {
+            lock (renderableAssets)
+                renderableAssets.Remove(ira);
+        }
+
         public static HashSet<AssetJSP> renderableJSPs = new HashSet<AssetJSP>();
+        public static void AddToRenderableJSPs(AssetJSP jsp)
+        {
+            lock (renderableJSPs)
+                renderableJSPs.Add(jsp);
+        }
+
         public static Dictionary<uint, IAssetWithModel> renderingDictionary = new Dictionary<uint, IAssetWithModel>();
-        public static Dictionary<uint, string> nameDictionary = new Dictionary<uint, string>();
+        public static void AddToRenderingDictionary(uint assetID, IAssetWithModel value)
+        {
+            lock (renderingDictionary)
+                renderingDictionary[assetID] = value;
+        }
+        public static void RemoveFromRenderingDictionary(uint assetID)
+        {
+            lock (renderingDictionary)
+                renderingDictionary.Remove(assetID);
+        }
+        public static RenderWareModelFile GetFromRenderingDictionary(uint assetID)
+        {
+            lock (renderingDictionary)
+                return renderingDictionary.ContainsKey(assetID) ? renderingDictionary[assetID].GetRenderWareModelFile() : null;
+        }
 
-        public static void AddToRenderingDictionary(uint assetID, IAssetWithModel value) =>
-            renderingDictionary[assetID] = value;
+        private static Dictionary<uint, string> nameDictionary = new Dictionary<uint, string>();
+        public static void AddToNameDictionary(uint assetID, string value)
+        {
+            lock (nameDictionary)
+                nameDictionary[assetID] = value;
+        }
+        public static void RemoveFromNameDictionary(uint assetID)
+        {
+            lock (nameDictionary)
+                nameDictionary.Remove(assetID);
+        }
+        public static string GetFromNameDictionary(uint assetID)
+        {
+            lock (nameDictionary)
+                return nameDictionary.ContainsKey(assetID) ? nameDictionary[assetID] : null;
+        }
+        public static void ClearNameDictionary()
+        {
+            lock (nameDictionary)
+                nameDictionary.Clear();
+        }
 
-        public static RenderWareModelFile GetFromRenderingDictionary(uint assetID) =>
-            renderingDictionary.ContainsKey(assetID) ? renderingDictionary[assetID].GetRenderWareModelFile() : null;
-        
-        public static void AddToNameDictionary(uint assetID, string value) =>
-            nameDictionary[assetID] = value;
-
-        private AutoCompleteStringCollection autoCompleteSource = new AutoCompleteStringCollection();
+        public AutoCompleteStringCollection autoCompleteSource = new AutoCompleteStringCollection();
 
         public void SetTextboxForAutocomplete(TextBox textBoxFindAsset) =>
             textBoxFindAsset.AutoCompleteCustomSource = autoCompleteSource;
@@ -37,8 +81,8 @@ namespace IndustrialPark
         protected HipFile hipFile;
         protected Dictionary<uint, Asset> assetDictionary = new Dictionary<uint, Asset>();
 
-        public Game game => hipFile.game;
-        public Platform platform => hipFile.platform;
+        public Game game;
+        public Platform platform;
         protected Section_DICT DICT => hipFile.DICT;
 
         public bool standalone;
@@ -60,11 +104,6 @@ namespace IndustrialPark
                 if (platform == Platform.Unknown)
                     new ChoosePlatformDialog().ShowDialog();
 
-                foreach (Section_AHDR AHDR in DICT.ATOC.AHDRList)
-                    AddAssetToDictionary(AHDR, true);
-
-                DICT.ATOC.AHDRList.Clear();
-
                 if (addDefaultAssets)
                     PlaceDefaultAssets();
 
@@ -77,10 +116,8 @@ namespace IndustrialPark
             return false;
         }
 
-        public void OpenFile(string fileName, bool displayProgressBar, Platform platform, bool skipTexturesAndModels = false)
+        public void OpenFile(string fileName, bool displayProgressBar, Platform platform, out string[] autoCompleteSource, bool skipTexturesAndModels = false)
         {
-            allowRender = false;
-
             Dispose();
 
             ProgressBar progressBar = new ProgressBar("Opening Archive");
@@ -95,7 +132,7 @@ namespace IndustrialPark
 
             try
             {
-                hipFile = new HipFile(fileName);
+                (hipFile, game, this.platform) = HipFile.FromPath(fileName);
             }
             catch (Exception e)
             {
@@ -105,18 +142,22 @@ namespace IndustrialPark
 
             progressBar.SetProgressBar(0, DICT.ATOC.AHDRList.Count, 1);
 
-            if (this.platform == Platform.Unknown)
-                hipFile.platform = platform;
+            if (platform != Platform.Unknown)
+                this.platform = platform;
             while (this.platform == Platform.Unknown)
-                hipFile.platform = ChoosePlatformDialog.GetPlatform();
+                this.platform = ChoosePlatformDialog.GetPlatform();
 
             string assetsWithError = "";
 
             List<string> autoComplete = new List<string>(DICT.ATOC.AHDRList.Count);
 
+#if DEBUG
+            var tempAhdrUglyDict = new Dictionary<uint, Section_AHDR>();
+#endif
+
             foreach (Section_AHDR AHDR in DICT.ATOC.AHDRList)
             {
-                string error = AddAssetToDictionary(AHDR, true, skipTexturesAndModels || standalone, false);
+                string error = AddAssetToDictionary(AHDR, game, this.platform.Endianness(), true, skipTexturesAndModels || standalone, false);
 
                 if (error != null)
                     assetsWithError += error + "\n";
@@ -124,6 +165,10 @@ namespace IndustrialPark
                 autoComplete.Add(AHDR.ADBG.assetName);
 
                 progressBar.PerformStep();
+
+#if DEBUG
+                tempAhdrUglyDict[AHDR.assetID] = AHDR;
+#endif
             }
 
             DICT.ATOC.AHDRList.Clear();
@@ -131,12 +176,12 @@ namespace IndustrialPark
             if (assetsWithError != "")
                 MessageBox.Show("There was an error loading the following assets and editing has been disabled for them:\n" + assetsWithError);
 
-            autoCompleteSource.AddRange(autoComplete.ToArray());
-
             if (!(skipTexturesAndModels || standalone) && ContainsAssetWithType(AssetType.RWTX))
                 SetupTextureDisplay();
 
             RecalculateAllMatrices();
+
+            autoCompleteSource = autoComplete.ToArray();
 
             if (!skipTexturesAndModels && ContainsAssetWithType(AssetType.PIPT) && ContainsAssetWithType(AssetType.MODL))
                 foreach (var asset in assetDictionary.Values)
@@ -145,7 +190,61 @@ namespace IndustrialPark
 
             progressBar.Close();
 
-            allowRender = true;
+#if DEBUG
+            LogAssetOrder(tempAhdrUglyDict);
+#endif
+        }
+
+        private void LogAssetOrder(Dictionary<uint, Section_AHDR> tempAhdrUglyDict)
+        {
+            var tempLog = new List<string>();
+            var diff = false;
+            foreach (var layer in DICT.LTOC.LHDRList)
+            {
+                tempLog.Add(layer.layerType.ToString());
+                foreach (var u in layer.assetIDlist)
+                {
+                    var asset = GetFromAssetID(u);
+                    string line = asset.assetType.ToString();
+                    if (asset is AssetPLAT plat)
+                        line += " " + plat.PlatformType.ToString();
+                    else if (asset is AssetDYNA dyna)
+                        line += " " + dyna.Type.ToString();
+                    if (!tempLog.Contains(line))
+                        tempLog.Add(line);
+                }
+
+                var list = layer.assetIDlist;
+                var sortedList = layer.assetIDlist.OrderBy(u => tempAhdrUglyDict[u].GetCompareValue(game, this.platform)).ToList();
+                if (ListsAreDifferent(list, sortedList))
+                {
+                    diff = true;
+                    tempLog.Add("sorting failed");
+                    var exp = "";
+                    foreach (var l in list)
+                        exp += l.ToString("X8") + " ";
+                    var res = "";
+                    foreach (var l in sortedList)
+                        res += l.ToString("X8") + " ";
+                    tempLog.Add(exp);
+                    tempLog.Add(res);
+                }
+
+                tempLog.Add("");
+            }
+
+            if (diff)
+                File.WriteAllLines(Path.GetFileName(currentlyOpenFilePath) + "_orderlog.txt", tempLog.ToArray());
+        }
+
+        private bool ListsAreDifferent(List<uint> list1, List<uint> list2)
+        {
+            if (list1.Count != list2.Count)
+                return true;
+            for (int i = 0; i < list1.Count; i++)
+                if (list1[i] != list2[i])
+                    return true;
+            return false;
         }
 
         public void Save(string path)
@@ -157,8 +256,8 @@ namespace IndustrialPark
         public void Save()
         {
             foreach (var asset in assetDictionary.Values)
-                DICT.ATOC.AHDRList.Add(asset.BuildAHDR());
-            File.WriteAllBytes(currentlyOpenFilePath, hipFile.ToBytes());
+                DICT.ATOC.AHDRList.Add(asset.BuildAHDR(game, platform.Endianness()));
+            File.WriteAllBytes(currentlyOpenFilePath, hipFile.ToBytes(game, platform));
             DICT.ATOC.AHDRList.Clear();
             UnsavedChanges = false;
         }
@@ -171,8 +270,8 @@ namespace IndustrialPark
             {
                 hipFile.PACK = PACK;
 
-                hipFile.platform = newPlatform;
-                hipFile.game = newGame;
+                platform = newPlatform;
+                game = newGame;
 
                 if (platform == Platform.Unknown)
                     new ChoosePlatformDialog().ShowDialog();
@@ -260,8 +359,6 @@ namespace IndustrialPark
 
         public void Dispose(bool showProgress = true)
         {
-            autoCompleteSource.Clear();
-
             List<uint> assetList = new List<uint>();
             assetList.AddRange(assetDictionary.Keys);
 
@@ -296,10 +393,11 @@ namespace IndustrialPark
 
             if (asset is IRenderableAsset ra)
             {
-                renderableAssets.Remove(ra);
+                RemoveFromRenderableAssets(ra);
                 if (renderableJSPs.Contains(ra))
                     renderableJSPs.Remove((AssetJSP)ra);
-                Program.MainForm.renderer.renderableAssets.Remove(ra);
+                lock (Program.MainForm.renderer.renderableAssets)
+                    Program.MainForm.renderer.renderableAssets.Remove(ra);
             }
 
             if (asset is AssetRenderWareModel jsp)
@@ -318,6 +416,8 @@ namespace IndustrialPark
                 spln.Dispose();
             else if (asset is AssetWIRE wire)
                 wire.Dispose();
+            else if (asset is AssetDTRK dtrk)
+                dtrk.Dispose();
             else if (asset is AssetRWTX rwtx)
                 TextureManager.RemoveTexture(rwtx.Name);
         }
@@ -345,6 +445,13 @@ namespace IndustrialPark
             throw new KeyNotFoundException("Asset not present in dictionary.");
         }
 
+        public Section_AHDR GetAHDRFromAssetID(uint key)
+        {
+            if (ContainsAsset(key))
+                return assetDictionary[key].BuildAHDR();
+            throw new KeyNotFoundException("Asset not present in dictionary.");
+        }
+
         public Dictionary<uint, Asset>.ValueCollection GetAllAssets()
         {
             return assetDictionary.Values;
@@ -352,12 +459,8 @@ namespace IndustrialPark
 
         public int AssetCount => assetDictionary.Values.Count;
 
-        public static bool allowRender = true;
-
-        private string AddAssetToDictionary(Section_AHDR AHDR, bool fast, bool skipTexturesAndModels = false, bool showMessageBox = true)
+        private string AddAssetToDictionary(Section_AHDR AHDR, Game game, Endianness endianness, bool fast, bool skipTexturesAndModels = false, bool showMessageBox = true)
         {
-            allowRender = false;
-
             if (assetDictionary.ContainsKey(AHDR.assetID))
             {
                 assetDictionary.Remove(AHDR.assetID);
@@ -367,21 +470,21 @@ namespace IndustrialPark
             Asset newAsset;
             string error = null;
 
-            newAsset = CreateAsset(AHDR, skipTexturesAndModels, showMessageBox, ref error);
+            newAsset = CreateAsset(AHDR, game, endianness, skipTexturesAndModels, showMessageBox, ref error);
 
-            //
+#if DEBUG
+            // testing if build works
             var built = newAsset.BuildAHDR().data;
             if (!Enumerable.SequenceEqual(AHDR.data, built))
             {
-                string folder = "build_test\\";
+                string folder = "build_test" + Path.GetFileName(currentlyOpenFilePath) + "_out\\";
                 if (!Directory.Exists(folder))
                     Directory.CreateDirectory(folder);
                 string assetName = $"[{AHDR.assetType}] {AHDR.ADBG.assetName}";
-                File.WriteAllBytes(folder + assetName + " proper", AHDR.data);
-                File.WriteAllBytes(folder + assetName + " wrong", built);
+                File.WriteAllBytes(folder + assetName + " ok", AHDR.data);
+                File.WriteAllBytes(folder + assetName + " bad", built);
             }
-            //
-
+#endif
             assetDictionary[AHDR.assetID] = newAsset;
 
             if (hiddenAssets.Contains(AHDR.assetID))
@@ -390,14 +493,29 @@ namespace IndustrialPark
             if (!fast)
                 autoCompleteSource.Add(AHDR.ADBG.assetName);
 
-            allowRender = true;
-
             return error;
         }
 
-        private Asset CreateAsset(Section_AHDR AHDR, bool skipTexturesAndModels, bool showMessageBox, ref string error)
+        private void AddAssetToDictionary(Asset asset, bool fast)
         {
-            #if !DEBUG
+            if (assetDictionary.ContainsKey(asset.assetID))
+            {
+                assetDictionary.Remove(asset.assetID);
+                MessageBox.Show("Duplicate asset ID found: " + asset.assetID.ToString("X8"));
+            }
+
+            assetDictionary[asset.assetID] = asset;
+
+            if (hiddenAssets.Contains(asset.assetID))
+                assetDictionary[asset.assetID].isInvisible = true;
+
+            if (!fast)
+                autoCompleteSource.Add(asset.assetName);
+        }
+
+        private Asset CreateAsset(Section_AHDR AHDR, Game game, Endianness endianness, bool skipTexturesAndModels, bool showMessageBox, ref string error)
+        {
+            #if DEBUG
             try
             {
                 #endif
@@ -405,115 +523,116 @@ namespace IndustrialPark
                 {
                     case AssetType.ANIM:
                         if (AHDR.ADBG.assetName.Contains("ATBL"))
-                            return new AssetGeneric(AHDR, game, platform);
-                        return new AssetANIM(AHDR, game, platform);
-                    case AssetType.ATBL:
-                        //if (game == Game.Scooby)
-                            return new AssetGeneric(AHDR, game, platform);
-                        //return new AssetATBL(AHDR, game, platform);
+                            return new AssetGeneric(AHDR, game, endianness);
+                        return new AssetANIM(AHDR, game, endianness);
                     case AssetType.BSP:
                     case AssetType.JSP:
                         if (DICT.LTOC.LHDRList[GetLayerFromAssetID(AHDR.assetID)].layerType > 9)
-                            return new AssetJSP_INFO(AHDR, game, platform);
+                            return new AssetJSP_INFO(AHDR, game, endianness);
                         if (skipTexturesAndModels)
-                            return new AssetGeneric(AHDR, game, platform);
-                        return new AssetJSP(AHDR, game, platform, Program.MainForm.renderer);
+                            return new AssetGeneric(AHDR, game, endianness);
+                        return new AssetJSP(AHDR, game, endianness, Program.MainForm.renderer);
                     case AssetType.MODL:
                         if (skipTexturesAndModels)
-                            return new AssetGeneric(AHDR, game, platform);
-                        return new AssetMODL(AHDR, game, platform, Program.MainForm.renderer);
+                            return new AssetGeneric(AHDR, game, endianness);
+                        return new AssetMODL(AHDR, game, endianness, Program.MainForm.renderer);
                     case AssetType.RWTX:
                         if (skipTexturesAndModels)
-                            return new AssetGeneric(AHDR, game, platform);
-                        return new AssetRWTX(AHDR, game, platform);
+                            return new AssetGeneric(AHDR, game, endianness);
+                        return new AssetRWTX(AHDR, game, endianness);
                     case AssetType.SNDI:
                         if (platform == Platform.GameCube && (game == Game.BFBB || game == Game.Scooby))
-                            return new AssetSNDI_GCN_V1(AHDR, game, platform);
+                            return new AssetSNDI_GCN_V1(AHDR, game, endianness);
                         if (platform == Platform.GameCube)
-                            return new AssetSNDI_GCN_V2(AHDR, game, platform);
+                            return new AssetSNDI_GCN_V2(AHDR, game, endianness);
                         if (platform == Platform.Xbox)
-                            return new AssetSNDI_XBOX(AHDR, game, platform);
+                            return new AssetSNDI_XBOX(AHDR, game, endianness);
                         if (platform == Platform.PS2)
-                            return new AssetSNDI_PS2(AHDR, game, platform);
-                        return new AssetGeneric(AHDR, game, platform);
+                            return new AssetSNDI_PS2(AHDR, game, endianness);
+                        return new AssetGeneric(AHDR, game, endianness);
                     case AssetType.SPLN:
                         if (skipTexturesAndModels)
-                            return new AssetGeneric(AHDR, game, platform);
-                        return new AssetSPLN(AHDR, game, platform, Program.MainForm.renderer);
+                            return new AssetGeneric(AHDR, game, endianness);
+                        return new AssetSPLN(AHDR, game, endianness, Program.MainForm.renderer);
                     case AssetType.WIRE:
                         if (skipTexturesAndModels)
-                            return new AssetGeneric(AHDR, game, platform);
-                        return new AssetWIRE(AHDR, game, platform, Program.MainForm.renderer);
-                    case AssetType.ALST: return new AssetALST(AHDR, game, platform);
-                    case AssetType.BOUL: return new AssetBOUL(AHDR, game, platform);
-                    case AssetType.BUTN: return new AssetBUTN(AHDR, game, platform);
-                    case AssetType.CAM:  return new AssetCAM (AHDR, game, platform);
-                    case AssetType.CNTR: return new AssetCNTR(AHDR, game, platform);
-                    case AssetType.COLL: return new AssetCOLL(AHDR, game, platform);
-                    case AssetType.COND: return new AssetCOND(AHDR, game, platform);
-                    case AssetType.CRDT: return new AssetCRDT(AHDR, game, platform);
+                            return new AssetGeneric(AHDR, game, endianness);
+                        return new AssetWIRE(AHDR, game, endianness, Program.MainForm.renderer);
+                    case AssetType.ALST: return new AssetALST(AHDR, game, endianness);
+                    case AssetType.ATBL: return new AssetATBL(AHDR, game, endianness);
+                    case AssetType.BOUL: return new AssetBOUL(AHDR, game, endianness);
+                    case AssetType.BUTN: return new AssetBUTN(AHDR, game, endianness);
+                    case AssetType.CAM:  return new AssetCAM (AHDR, game, endianness);
+                    case AssetType.CNTR: return new AssetCNTR(AHDR, game, endianness);
+                    case AssetType.COLL: return new AssetCOLL(AHDR, game, endianness);
+                    case AssetType.COND: return new AssetCOND(AHDR, game, endianness);
+                    case AssetType.CRDT: return new AssetCRDT(AHDR, game, endianness);
                     //case AssetType.CSN: return new AssetCSN(AHDR, game, platform);
-                    case AssetType.CSNM: return new AssetCSNM(AHDR, game, platform);
-                    case AssetType.DEST: return new AssetDEST(AHDR, game, platform);
-                    case AssetType.DPAT: return new AssetDPAT(AHDR, game, platform);
-                    case AssetType.DSCO: return new AssetDSCO(AHDR, game, platform);
-                    case AssetType.DSTR: return new AssetDSTR(AHDR, game, platform);
+                    case AssetType.CSNM: return new AssetCSNM(AHDR, game, endianness);
+                    case AssetType.DEST: return new AssetDEST(AHDR, game, endianness);
+                    case AssetType.DPAT: return new AssetDPAT(AHDR, game, endianness);
+                    case AssetType.DSCO: return new AssetDSCO(AHDR, game, endianness);
+                    case AssetType.DSTR: return new AssetDSTR(AHDR, game, endianness);
+                    case AssetType.DTRK: return new AssetDTRK(AHDR, game, endianness);
                     case AssetType.DYNA: return CreateDYNA(AHDR);
-                    case AssetType.DUPC: return new AssetDUPC(AHDR, game, platform);
-                    case AssetType.EGEN: return new AssetEGEN(AHDR, game, platform);
-                    case AssetType.ENV:  return new AssetENV (AHDR, game, platform);
-                    case AssetType.FLY:  return new AssetFLY (AHDR, game, platform);
-                    case AssetType.FOG:  return new AssetFOG (AHDR, game, platform);
-                    case AssetType.GRUP: return new AssetGRUP(AHDR, game, platform);
-                    case AssetType.GUST: return new AssetGUST(AHDR, game, platform);
-                    case AssetType.HANG: return new AssetHANG(AHDR, game, platform);
-                    case AssetType.JAW:  return new AssetJAW (AHDR, game, platform);
-                    case AssetType.LITE: return new AssetLITE(AHDR, game, platform);
-                    case AssetType.LKIT: return new AssetLKIT(AHDR, game, platform);
-                    case AssetType.LOBM: return new AssetLOBM(AHDR, game, platform);
-                    case AssetType.LODT: return new AssetLODT(AHDR, game, platform);
-                    case AssetType.MAPR: return new AssetMAPR(AHDR, game, platform);
-                    case AssetType.MINF: return new AssetMINF(AHDR, game, platform);
-                    case AssetType.MRKR: return new AssetMRKR(AHDR, game, platform);
-                    case AssetType.MVPT: return new AssetMVPT(AHDR, game, platform);
-                    case AssetType.NPC:  return new AssetNPC (AHDR, game, platform);
-                    case AssetType.PARE: return new AssetPARE(AHDR, game, platform);
-                    case AssetType.PARP: return new AssetPARP(AHDR, game, platform);
-                    case AssetType.PARS: return new AssetPARS(AHDR, game, platform);
-                    case AssetType.PEND: return new AssetPEND(AHDR, game, platform);
-                    case AssetType.PGRS: return new AssetPGRS(AHDR, game, platform);
-                    case AssetType.PICK: return new AssetPICK(AHDR, game, platform);
-                    case AssetType.PIPT: return new AssetPIPT(AHDR, game, platform, UpdateModelBlendModes);
-                    case AssetType.PKUP: return new AssetPKUP(AHDR, game, platform);
-                    case AssetType.PLAT: return new AssetPLAT(AHDR, game, platform);
-                    case AssetType.PLYR: return new AssetPLYR(AHDR, game, platform);
-                    case AssetType.PORT: return new AssetPORT(AHDR, game, platform);
-                    case AssetType.PRJT: return new AssetPRJT(AHDR, game, platform);
-                    case AssetType.SCRP: return new AssetSCRP(AHDR, game, platform);
-                    case AssetType.SDFX: return new AssetSDFX(AHDR, game, platform);
-                    case AssetType.SFX:  return new AssetSFX (AHDR, game, platform);
-                    case AssetType.SGRP: return new AssetSGRP(AHDR, game, platform);
+                    case AssetType.DUPC: return new AssetDUPC(AHDR, game, endianness);
+                    case AssetType.EGEN: return new AssetEGEN(AHDR, game, endianness);
+                    case AssetType.ENV:  return new AssetENV (AHDR, game, endianness);
+                    case AssetType.FLY:  return new AssetFLY (AHDR, game, endianness);
+                    case AssetType.FOG:  return new AssetFOG (AHDR, game, endianness);
+                    case AssetType.GRUP: return new AssetGRUP(AHDR, game, endianness);
+                    case AssetType.GUST: return new AssetGUST(AHDR, game, endianness);
+                    case AssetType.HANG: return new AssetHANG(AHDR, game, endianness);
+                    case AssetType.JAW:  return new AssetJAW (AHDR, game, endianness);
+                    case AssetType.LITE: return new AssetLITE(AHDR, game, endianness);
+                    case AssetType.LKIT: return new AssetLKIT(AHDR, game, endianness);
+                    case AssetType.LOBM: return new AssetLOBM(AHDR, game, endianness);
+                    case AssetType.LODT: return new AssetLODT(AHDR, game, endianness);
+                    case AssetType.MAPR: return new AssetMAPR(AHDR, game, endianness);
+                    case AssetType.MINF: return new AssetMINF(AHDR, game, endianness);
+                    case AssetType.MRKR: return new AssetMRKR(AHDR, game, endianness);
+                    case AssetType.MVPT: return new AssetMVPT(AHDR, game, endianness);
+                    case AssetType.NPC:  return new AssetNPC (AHDR, game, endianness);
+                    case AssetType.ONEL: return new AssetONEL(AHDR, game, endianness);
+                    case AssetType.PARE:
+                        if (game != Game.Scooby)
+                            return new AssetPARE(AHDR, game, endianness);
+                        return new AssetGeneric(AHDR, game, endianness); // unsupported pare for scooby
+                    case AssetType.PARP: return new AssetPARP(AHDR, game, endianness);
+                    case AssetType.PARS: return new AssetPARS(AHDR, game, endianness);
+                    case AssetType.PEND: return new AssetPEND(AHDR, game, endianness);
+                    case AssetType.PGRS: return new AssetPGRS(AHDR, game, endianness);
+                    case AssetType.PICK: return new AssetPICK(AHDR, game, endianness);
+                    case AssetType.PIPT: return new AssetPIPT(AHDR, game, endianness, UpdateModelBlendModes);
+                    case AssetType.PKUP: return new AssetPKUP(AHDR, game, endianness);
+                    case AssetType.PLAT: return new AssetPLAT(AHDR, game, endianness);
+                    case AssetType.PLYR: return new AssetPLYR(AHDR, game, endianness);
+                    case AssetType.PORT: return new AssetPORT(AHDR, game, endianness);
+                    case AssetType.PRJT: return new AssetPRJT(AHDR, game, endianness);
+                    case AssetType.SCRP: return new AssetSCRP(AHDR, game, endianness);
+                    case AssetType.SDFX: return new AssetSDFX(AHDR, game, endianness);
+                    case AssetType.SFX:  return new AssetSFX (AHDR, game, endianness);
+                    case AssetType.SGRP: return new AssetSGRP(AHDR, game, endianness);
                     case AssetType.TRCK:
-                    case AssetType.SIMP: return new AssetSIMP(AHDR, game, platform);
-                    case AssetType.SHDW: return new AssetSHDW(AHDR, game, platform);
-                    case AssetType.SHRP: return new AssetSHRP(AHDR, game, platform);
-                    case AssetType.SURF: return new AssetSURF(AHDR, game, platform);
-                    case AssetType.TEXT: return new AssetTEXT(AHDR, game, platform);
-                    case AssetType.TRIG: return new AssetTRIG(AHDR, game, platform);
-                    case AssetType.TIMR: return new AssetTIMR(AHDR, game, platform);
-                    case AssetType.TPIK: return new AssetTPIK(AHDR, game, platform);
-                    case AssetType.UI:   return new AssetUI  (AHDR, game, platform);
-                    case AssetType.UIFT: return new AssetUIFT(AHDR, game, platform);
-                    case AssetType.VIL:  return new AssetVIL (AHDR, game, platform);
-                    case AssetType.VILP: return new AssetVILP(AHDR, game, platform);
-                    case AssetType.VOLU: return new AssetVOLU(AHDR, game, platform);
+                    case AssetType.SIMP: return new AssetSIMP(AHDR, game, endianness);
+                    case AssetType.SHDW: return new AssetSHDW(AHDR, game, endianness);
+                    case AssetType.SHRP: return new AssetSHRP(AHDR, game, endianness);
+                    case AssetType.SURF: return new AssetSURF(AHDR, game, endianness);
+                    case AssetType.TEXT: return new AssetTEXT(AHDR, game, endianness);
+                    case AssetType.TRIG: return new AssetTRIG(AHDR, game, endianness);
+                    case AssetType.TIMR: return new AssetTIMR(AHDR, game, endianness);
+                    case AssetType.TPIK: return new AssetTPIK(AHDR, game, endianness);
+                    case AssetType.UI:   return new AssetUI  (AHDR, game, endianness);
+                    case AssetType.UIFT: return new AssetUIFT(AHDR, game, endianness);
+                    case AssetType.VIL:  return new AssetVIL (AHDR, game, endianness);
+                    case AssetType.VILP: return new AssetVILP(AHDR, game, endianness);
+                    case AssetType.VOLU: return new AssetVOLU(AHDR, game, endianness);
 
                     case AssetType.SND:
                     case AssetType.SNDS:
-                        return new AssetWithData(AHDR, game, platform);
+                        return new AssetWithData(AHDR, game, endianness);
 
                     case AssetType.CCRV:
-                    case AssetType.DTRK:
                     case AssetType.GRSM:
                     case AssetType.NGMS:
                     case AssetType.RANM:
@@ -523,7 +642,7 @@ namespace IndustrialPark
                     case AssetType.TRWT:
                     case AssetType.UIM:
                     case AssetType.ZLIN:
-                        return new AssetGenericBase(AHDR, game, platform);
+                        return new AssetGenericBase(AHDR, game, endianness);
 
                     case AssetType.ATKT:
                     case AssetType.BINK:
@@ -531,20 +650,19 @@ namespace IndustrialPark
                     case AssetType.CTOC:
                     case AssetType.MPHT:
                     case AssetType.NPCS:
-                    case AssetType.ONEL:
                     case AssetType.RAW:
                     case AssetType.SPLP:
                     case AssetType.TEXS:
                     case AssetType.UIFN:
-                        return new AssetGeneric(AHDR, game, platform);
+                        return new AssetGeneric(AHDR, game, endianness);
 
                     case AssetType.CSN:
-                        return new AssetGeneric(AHDR, game, platform);
+                        return new AssetGeneric(AHDR, game, endianness);
 
                     default:
                         throw new Exception($"Unknown asset type ({AHDR.assetType})");
                 }
-                #if !DEBUG
+                #if DEBUG
             }
             catch (Exception ex)
             {
@@ -553,70 +671,72 @@ namespace IndustrialPark
                 if (showMessageBox)
                     MessageBox.Show($"There was an error loading asset {error}:" + ex.Message + " and editing has been disabled for it.");
 
-                return new AssetGeneric(AHDR, game, platform);
+                return new AssetGeneric(AHDR, game, endianness);
             }
             #endif
         }
 
         private AssetDYNA CreateDYNA(Section_AHDR AHDR)
         {
-            EndianBinaryReader reader = new EndianBinaryReader(AHDR.data, platform);
+            var endianness = platform.Endianness();
+
+            EndianBinaryReader reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = 8;
             DynaType type = (DynaType)reader.ReadUInt32();
 
             switch (type)
             {
-                case DynaType.Enemy__SB__BucketOTron: return new DynaEnemyBucketOTron(AHDR, game, platform);
-                case DynaType.Enemy__SB__CastNCrew: return new DynaEnemyCastNCrew(AHDR, game, platform);
-                case DynaType.Enemy__SB__Critter: return new DynaEnemyCritter(AHDR, game, platform);
-                case DynaType.Enemy__SB__Dennis: return new DynaEnemyDennis(AHDR, game, platform);
-                case DynaType.Enemy__SB__FrogFish: return new DynaEnemyFrogFish(AHDR, game, platform);
-                case DynaType.Enemy__SB__Mindy: return new DynaEnemyMindy(AHDR, game, platform);
-                case DynaType.Enemy__SB__Neptune: return new DynaEnemyNeptune(AHDR, game, platform);
-                case DynaType.Enemy__SB__Standard: return new DynaEnemyStandard(AHDR, game, platform);
-                case DynaType.Enemy__SB__SupplyCrate: return new DynaEnemySupplyCrate(AHDR, game, platform);
-                case DynaType.Enemy__SB__Turret: return new DynaEnemyTurret(AHDR, game, platform);
-                case DynaType.Incredibles__Icon: return new DynaIncrediblesIcon(AHDR, game, platform);
-                case DynaType.JSPExtraData: return new DynaJSPExtraData(AHDR, game, platform);
-                case DynaType.SceneProperties: return new DynaSceneProperties(AHDR, game, platform);
-                case DynaType.effect__Lightning: return new DynaEffectLightning(AHDR, game, platform);
-                case DynaType.effect__Rumble: return new DynaEffectRumble(AHDR, game, platform);
-                case DynaType.effect__RumbleSphericalEmitter: return new DynaEffectRumbleSphere(AHDR, game, platform);
-                case DynaType.effect__ScreenFade: return new DynaEffectScreenFade(AHDR, game, platform);
-                case DynaType.effect__smoke_emitter: return new DynaEffectSmokeEmitter(AHDR, game, platform);
-                case DynaType.effect__spotlight: return new DynaEffectSpotlight(AHDR, game, platform);
-                case DynaType.game_object__BoulderGenerator: return new DynaGObjectBoulderGen(AHDR, game, platform);
-                case DynaType.game_object__BusStop: return new DynaGObjectBusStop(AHDR, game, platform);
-                case DynaType.game_object__Camera_Tweak: return new DynaGObjectCamTweak(AHDR, game, platform);
-                case DynaType.game_object__Flythrough: return new DynaGObjectFlythrough(AHDR, game, platform);
-                case DynaType.game_object__IN_Pickup: return new DynaGObjectInPickup(AHDR, game, platform);
-                case DynaType.game_object__NPCSettings: return new DynaGObjectNPCSettings(AHDR, game, platform);
-                case DynaType.game_object__RaceTimer: return new DynaGObjectRaceTimer(AHDR, game, platform);
-                case DynaType.game_object__Ring: return new DynaGObjectRing(AHDR, game, platform);
-                case DynaType.game_object__RingControl: return new DynaGObjectRingControl(AHDR, game, platform);
-                case DynaType.game_object__Taxi: return new DynaGObjectTaxi(AHDR, game, platform);
-                case DynaType.game_object__Teleport: return new DynaGObjectTeleport(AHDR, game, platform);
-                case DynaType.game_object__Vent: return new DynaGObjectVent(AHDR, game, platform);
-                case DynaType.game_object__VentType: return new DynaGObjectVentType(AHDR, game, platform);
-                case DynaType.game_object__bungee_drop: return new DynaGObjectBungeeDrop(AHDR, game, platform);
-                case DynaType.game_object__bungee_hook: return new DynaGObjectBungeeHook(AHDR, game, platform);
-                case DynaType.game_object__flame_emitter: return new DynaGObjectFlameEmitter(AHDR, game, platform);
-                case DynaType.game_object__talk_box: return new DynaGObjectTalkBox(AHDR, game, platform);
-                case DynaType.game_object__task_box: return new DynaGObjectTaskBox(AHDR, game, platform);
-                case DynaType.game_object__text_box: return new DynaGObjectTextBox(AHDR, game, platform);
-                case DynaType.hud__meter__font: return new DynaHudMeterFont(AHDR, game, platform);
-                case DynaType.hud__meter__unit: return new DynaHudMeterUnit(AHDR, game, platform);
-                case DynaType.hud__model: return new DynaHudModel(AHDR, game, platform);
-                case DynaType.hud__text: return new DynaHudText(AHDR, game, platform);
-                case DynaType.interaction__Launch: return new DynaInteractionLaunch(AHDR, game, platform);
-                case DynaType.logic__reference: return new DynaLogicReference(AHDR, game, platform);
-                case DynaType.pointer: return new DynaPointer(AHDR, game, platform);
-                case DynaType.ui__box: return new DynaUIBox(AHDR, game, platform);
-                case DynaType.ui__controller: return new DynaUIController(AHDR, game, platform);
-                case DynaType.ui__image: return new DynaUIImage(AHDR, game, platform);
-                case DynaType.ui__model: return new DynaUIModel(AHDR, game, platform);
-                case DynaType.ui__text: return new DynaUIText(AHDR, game, platform);
-                case DynaType.ui__text__userstring: return new DynaUITextUserString(AHDR, game, platform);
+                case DynaType.Enemy__SB__BucketOTron: return new DynaEnemyBucketOTron(AHDR, game, endianness);
+                case DynaType.Enemy__SB__CastNCrew: return new DynaEnemyCastNCrew(AHDR, game, endianness);
+                case DynaType.Enemy__SB__Critter: return new DynaEnemyCritter(AHDR, game, endianness);
+                case DynaType.Enemy__SB__Dennis: return new DynaEnemyDennis(AHDR, game, endianness);
+                case DynaType.Enemy__SB__FrogFish: return new DynaEnemyFrogFish(AHDR, game, endianness);
+                case DynaType.Enemy__SB__Mindy: return new DynaEnemyMindy(AHDR, game, endianness);
+                case DynaType.Enemy__SB__Neptune: return new DynaEnemyNeptune(AHDR, game, endianness);
+                case DynaType.Enemy__SB__Standard: return new DynaEnemyStandard(AHDR, game, endianness);
+                case DynaType.Enemy__SB__SupplyCrate: return new DynaEnemySupplyCrate(AHDR, game, endianness);
+                case DynaType.Enemy__SB__Turret: return new DynaEnemyTurret(AHDR, game, endianness);
+                case DynaType.Incredibles__Icon: return new DynaIncrediblesIcon(AHDR, game, endianness);
+                case DynaType.JSPExtraData: return new DynaJSPExtraData(AHDR, game, endianness);
+                case DynaType.SceneProperties: return new DynaSceneProperties(AHDR, game, endianness);
+                case DynaType.effect__Lightning: return new DynaEffectLightning(AHDR, game, endianness);
+                case DynaType.effect__Rumble: return new DynaEffectRumble(AHDR, game, endianness);
+                case DynaType.effect__RumbleSphericalEmitter: return new DynaEffectRumbleSphere(AHDR, game, endianness);
+                case DynaType.effect__ScreenFade: return new DynaEffectScreenFade(AHDR, game, endianness);
+                case DynaType.effect__smoke_emitter: return new DynaEffectSmokeEmitter(AHDR, game, endianness);
+                case DynaType.effect__spotlight: return new DynaEffectSpotlight(AHDR, game, endianness);
+                case DynaType.game_object__BoulderGenerator: return new DynaGObjectBoulderGen(AHDR, game, endianness);
+                case DynaType.game_object__BusStop: return new DynaGObjectBusStop(AHDR, game, endianness);
+                case DynaType.game_object__Camera_Tweak: return new DynaGObjectCamTweak(AHDR, game, endianness);
+                case DynaType.game_object__Flythrough: return new DynaGObjectFlythrough(AHDR, game, endianness);
+                case DynaType.game_object__IN_Pickup: return new DynaGObjectInPickup(AHDR, game, endianness);
+                case DynaType.game_object__NPCSettings: return new DynaGObjectNPCSettings(AHDR, game, endianness);
+                case DynaType.game_object__RaceTimer: return new DynaGObjectRaceTimer(AHDR, game, endianness);
+                case DynaType.game_object__Ring: return new DynaGObjectRing(AHDR, game, endianness);
+                case DynaType.game_object__RingControl: return new DynaGObjectRingControl(AHDR, game, endianness);
+                case DynaType.game_object__Taxi: return new DynaGObjectTaxi(AHDR, game, endianness);
+                case DynaType.game_object__Teleport: return new DynaGObjectTeleport(AHDR, game, endianness);
+                case DynaType.game_object__Vent: return new DynaGObjectVent(AHDR, game, endianness);
+                case DynaType.game_object__VentType: return new DynaGObjectVentType(AHDR, game, endianness);
+                case DynaType.game_object__bungee_drop: return new DynaGObjectBungeeDrop(AHDR, game, endianness);
+                case DynaType.game_object__bungee_hook: return new DynaGObjectBungeeHook(AHDR, game, endianness);
+                case DynaType.game_object__flame_emitter: return new DynaGObjectFlameEmitter(AHDR, game, endianness);
+                case DynaType.game_object__talk_box: return new DynaGObjectTalkBox(AHDR, game, endianness);
+                case DynaType.game_object__task_box: return new DynaGObjectTaskBox(AHDR, game, endianness);
+                case DynaType.game_object__text_box: return new DynaGObjectTextBox(AHDR, game, endianness);
+                case DynaType.hud__meter__font: return new DynaHudMeterFont(AHDR, game, endianness);
+                case DynaType.hud__meter__unit: return new DynaHudMeterUnit(AHDR, game, endianness);
+                case DynaType.hud__model: return new DynaHudModel(AHDR, game, endianness);
+                case DynaType.hud__text: return new DynaHudText(AHDR, game, endianness);
+                case DynaType.interaction__Launch: return new DynaInteractionLaunch(AHDR, game, endianness);
+                case DynaType.logic__reference: return new DynaLogicReference(AHDR, game, endianness);
+                case DynaType.pointer: return new DynaPointer(AHDR, game, endianness);
+                case DynaType.ui__box: return new DynaUIBox(AHDR, game, endianness);
+                case DynaType.ui__controller: return new DynaUIController(AHDR, game, endianness);
+                case DynaType.ui__image: return new DynaUIImage(AHDR, game, endianness);
+                case DynaType.ui__model: return new DynaUIModel(AHDR, game, endianness);
+                case DynaType.ui__text: return new DynaUIText(AHDR, game, endianness);
+                case DynaType.ui__text__userstring: return new DynaUITextUserString(AHDR, game, endianness);
                 case DynaType.Checkpoint:
                 case DynaType.Effect__particle_generator:
                 case DynaType.Enemy__SB:
@@ -676,7 +796,7 @@ namespace IndustrialPark
                 case DynaType.Unknown_EBC04E7B:
                 case DynaType.Unknown_FC2951C1:
                 case DynaType.Null:
-                    return new DynaGeneric(AHDR, type, game, platform);
+                    return new DynaGeneric(AHDR, type, game, endianness);
                 default:
                     throw new Exception("Unknown DYNA type: " + type.ToString("X8"));
             }
@@ -696,7 +816,7 @@ namespace IndustrialPark
                         MessageBox.Show($"Archive already contains asset id [{AHDR.assetID:X8}]. Will change it to [{++AHDR.assetID:X8}].");
                     
                     UnsavedChanges = true;
-                    AddAsset(layerIndex, AHDR, true);
+                    AddAsset(layerIndex, AHDR, game, platform.Endianness(), true);
                     SetAssetPositionToView(AHDR.assetID);
 #if !DEBUG
                 }
@@ -712,10 +832,10 @@ namespace IndustrialPark
             return null;
         }
 
-        public uint AddAsset(int layerIndex, Section_AHDR AHDR, bool setTextureDisplay)
+        public uint AddAsset(int layerIndex, Section_AHDR AHDR, Game game, Endianness endianness, bool setTextureDisplay)
         {
             DICT.LTOC.LHDRList[layerIndex].assetIDlist.Add(AHDR.assetID);
-            AddAssetToDictionary(AHDR, false);
+            AddAssetToDictionary(AHDR, game, endianness, false);
 
             if (setTextureDisplay && GetFromAssetID(AHDR.assetID) is AssetRWTX rwtx)
                 EnableTextureForDisplay(rwtx);
@@ -723,33 +843,55 @@ namespace IndustrialPark
             return AHDR.assetID;
         }
 
-        public uint AddAssetWithUniqueID(int layerIndex, Section_AHDR AHDR, bool giveIDregardless = false, bool setTextureDisplay = false, bool ignoreNumber = false)
+        public uint AddAsset(int layerIndex, Asset asset, bool setTextureDisplay)
+        {
+            DICT.LTOC.LHDRList[layerIndex].assetIDlist.Add(asset.assetID);
+            AddAssetToDictionary(asset, false);
+
+            if (setTextureDisplay && asset is AssetRWTX rwtx)
+                EnableTextureForDisplay(rwtx);
+
+            return asset.assetID;
+        }
+
+        public uint AddAssetWithUniqueID(int layerIndex, Section_AHDR AHDR, Game game, Endianness endianness, bool giveIDregardless = false, bool setTextureDisplay = false, bool ignoreNumber = false)
+        {
+            var assetName = GetUniqueAssetName(AHDR.ADBG.assetName, AHDR.assetID, giveIDregardless, ignoreNumber);
+            
+            AHDR.ADBG.assetName = assetName;
+            AHDR.assetID = BKDRHash(assetName);
+
+            return AddAsset(layerIndex, AHDR, game, endianness, setTextureDisplay);
+        }
+
+        private string GetUniqueAssetName(string assetName, uint assetID, bool giveIDregardless, bool ignoreNumber)
         {
             int numCopies = 0;
             char stringToAdd = '_';
 
-            while (ContainsAsset(AHDR.assetID) || giveIDregardless)
+            while (ContainsAsset(assetID) || giveIDregardless)
             {
-                if (numCopies > 1000)
+                if (numCopies > 10000)
                 {
-                    MessageBox.Show("Something went wrong: the asset you're trying to duplicate, paste or create a template of's name is too long. Due to that, I'll have to give it a new name myself.");
+                    MessageBox.Show("There was a problem naming the placed template. It will be given a generic name (ASSET_XX)");
                     numCopies = 0;
-                    AHDR.ADBG.assetName = AHDR.assetType.ToString();
+                    ignoreNumber = false;
+                    assetName = "ASSET_01";
                 }
 
                 giveIDregardless = false;
                 numCopies++;
 
                 if (!ignoreNumber)
-                    AHDR.ADBG.assetName = FindNewAssetName(AHDR.ADBG.assetName, stringToAdd, numCopies);
+                    assetName = FindNewAssetName(assetName, stringToAdd, numCopies);
 
-                AHDR.assetID = BKDRHash(AHDR.ADBG.assetName);
+                assetID = BKDRHash(assetName);
             }
 
-            return AddAsset(layerIndex, AHDR, setTextureDisplay);
+            return assetName;
         }
 
-        public string FindNewAssetName(string previousName, char stringToAdd, int numCopies)
+        private string FindNewAssetName(string previousName, char stringToAdd, int numCopies)
         {
             if (previousName.Contains(stringToAdd))
                 try
@@ -796,14 +938,14 @@ namespace IndustrialPark
             Dictionary<uint, uint> referenceUpdate = new Dictionary<uint, uint>();
             var newAHDRs = new List<Section_AHDR>();
 
-            foreach (Asset asset in currentlySelectedAssets)
+            foreach (var asset in currentlySelectedAssets)
             {
                 string serializedObject = JsonConvert.SerializeObject(asset.BuildAHDR());
                 Section_AHDR AHDR = JsonConvert.DeserializeObject<Section_AHDR>(serializedObject);
 
                 var previousAssetID = AHDR.assetID;
 
-                AddAssetWithUniqueID(layerIndex, AHDR);
+                AddAssetWithUniqueID(layerIndex, AHDR, asset.game, asset.endianness);
 
                 referenceUpdate.Add(previousAssetID, AHDR.assetID);
 
@@ -817,6 +959,8 @@ namespace IndustrialPark
 
         public void CopyAssetsToClipboard()
         {
+            List<Game> copiedGames = new List<Game>();
+            List<Endianness> copiedEndiannesses = new List<Endianness>();
             List<Section_AHDR> copiedAHDRs = new List<Section_AHDR>();
 
             foreach (Asset asset in currentlySelectedAssets)
@@ -835,10 +979,12 @@ namespace IndustrialPark
                     }
                 }
 
+                copiedGames.Add(asset.game);
+                copiedEndiannesses.Add(asset.endianness);
                 copiedAHDRs.Add(AHDR);
             }
 
-            Clipboard.SetText(JsonConvert.SerializeObject(new AssetClipboard(game, platform.Endianness(), copiedAHDRs), Formatting.Indented));
+            Clipboard.SetText(JsonConvert.SerializeObject(new AssetClipboard(copiedGames, copiedEndiannesses, copiedAHDRs), Formatting.Indented));
         }
 
         public static bool updateReferencesOnCopy = true;
@@ -872,7 +1018,7 @@ namespace IndustrialPark
                 if (replaceAssetsOnPaste && !dontReplace && ContainsAsset(AHDR.assetID))
                     RemoveAsset(AHDR.assetID);
 
-                AddAssetWithUniqueID(layerIndex, clipboard.assets[i]);
+                AddAssetWithUniqueID(layerIndex, clipboard.assets[i], clipboard.games[i], clipboard.endiannesses[i]);
 
                 referenceUpdate.Add(previousAssetID, AHDR.assetID);
 
@@ -897,9 +1043,9 @@ namespace IndustrialPark
 
             for (int i = 0; i < clipboard.assets.Count; i++)
             {
-                Section_AHDR AHDR = clipboard.assets[i];
+                var AHDR = clipboard.assets[i];
                 string error = "";
-                assetDictionary[AHDR.assetID] = CreateAsset(AHDR, standalone, false, ref error);
+                assetDictionary[AHDR.assetID] = CreateAsset(AHDR, clipboard.games[i], clipboard.endiannesses[i], false, true, ref error);
             }
         }
 
@@ -949,10 +1095,10 @@ namespace IndustrialPark
                     {
                         if (ContainsAsset(AHDR.assetID))
                             RemoveAsset(AHDR.assetID);
-                        AddAsset(layerIndex, AHDR, setTextureDisplay: false);
+                        AddAsset(layerIndex, AHDR, game, platform.Endianness(), setTextureDisplay: false);
                     }
                     else
-                        AddAssetWithUniqueID(layerIndex, AHDR, setTextureDisplay: true);
+                        AddAssetWithUniqueID(layerIndex, AHDR, game, platform.Endianness(), setTextureDisplay: true);
 
                     if (AHDR.assetType == AssetType.SND || AHDR.assetType == AssetType.SNDS)
                     {

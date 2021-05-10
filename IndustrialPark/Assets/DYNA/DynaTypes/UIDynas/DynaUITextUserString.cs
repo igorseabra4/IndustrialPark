@@ -12,19 +12,19 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public byte softMaxChars { get; set; }
 
-        public DynaUITextUserString(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.ui__text__userstring, game, platform)
+        public DynaUITextUserString(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.ui__text__userstring, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaUITextEnd;
 
             hardMaxChars = reader.ReadByte();
             softMaxChars = reader.ReadByte();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(base.SerializeDyna(game, platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(base.SerializeDyna(game, endianness));
 
             writer.Write(hardMaxChars);
             writer.Write(softMaxChars);

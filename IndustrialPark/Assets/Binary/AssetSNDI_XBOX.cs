@@ -18,6 +18,7 @@ namespace IndustrialPark
         public short fmtExtData { get; set; }
         public int dataSize { get; set; }
         public AssetID SoundAssetID { get; set; }
+        public int unknown { get; set; }
 
         public static int StructSize = 0x2C;
 
@@ -26,21 +27,12 @@ namespace IndustrialPark
             SoundAssetID = 0;
         }
 
-        public EntrySoundInfo_XBOX(byte[] Entry, uint assetID)
+        public EntrySoundInfo_XBOX(EndianBinaryReader reader)
         {
-            fmtId = BitConverter.ToInt16(Entry, 0x00 + 0x14);
-            fmtChannels = BitConverter.ToInt16(Entry, 0x02 + 0x14);
-            fmtSampleRate = BitConverter.ToInt32(Entry, 0x04 + 0x14);
-            fmtBytesPerSecond = BitConverter.ToInt32(Entry, 0x08 + 0x14);
-            fmtBlockAlignment = BitConverter.ToInt16(Entry, 0x0C + 0x14);
-            fmtBitsPerSample = BitConverter.ToInt16(Entry, 0x0E + 0x14);
-            fmtExtBytes = BitConverter.ToInt16(Entry, 0x10 + 0x14);
-            fmtExtData = BitConverter.ToInt16(Entry, 0x12 + 0x14);
-            dataSize = BitConverter.ToInt32(Entry, 0x14 + 0x18);
-            SoundAssetID = assetID;
+            Read(reader);
         }
 
-        public EntrySoundInfo_XBOX(EndianBinaryReader reader)
+        private void Read(EndianBinaryReader reader)
         {
             fmtId = reader.ReadInt16();
             fmtChannels = reader.ReadInt16();
@@ -52,8 +44,9 @@ namespace IndustrialPark
             fmtExtData = reader.ReadInt16();
             dataSize = reader.ReadInt32();
             SoundAssetID = reader.ReadUInt32();
+            unknown = reader.ReadInt32();
 
-            reader.BaseStream.Position += 16;
+            reader.BaseStream.Position += 12;
         }
 
         public byte[] Serialize()
@@ -70,26 +63,16 @@ namespace IndustrialPark
             array.AddRange(BitConverter.GetBytes(fmtExtData));
             array.AddRange(BitConverter.GetBytes(dataSize));
             array.AddRange(BitConverter.GetBytes(SoundAssetID));
-            array.AddRange(new byte[16]);
+            array.AddRange(BitConverter.GetBytes(unknown));
+            array.AddRange(new byte[12]);
 
             return array.ToArray();
         }
 
         public byte[] SoundHeader
-        { 
-            get => Serialize();
-            set
-            {
-                fmtId = BitConverter.ToInt16(value, 0x00);
-                fmtChannels = BitConverter.ToInt16(value, 0x02);
-                fmtSampleRate = BitConverter.ToInt32(value, 0x04);
-                fmtBytesPerSecond = BitConverter.ToInt32(value, 0x08);
-                fmtBlockAlignment = BitConverter.ToInt16(value, 0x0C);
-                fmtBitsPerSample = BitConverter.ToInt16(value, 0x0E);
-                fmtExtBytes = BitConverter.ToInt16(value, 0x10);
-                fmtExtData = BitConverter.ToInt16(value, 0x12);
-                dataSize = BitConverter.ToInt32(value, 0x14);
-            }
+        {
+            get => Serialize();            
+            set => Read(new EndianBinaryReader(value, Endianness.Little));
         }
 
         public override string ToString()
@@ -111,7 +94,14 @@ namespace IndustrialPark
         [Category(categoryName)]
         public EntrySoundInfo_XBOX[] Entries_Sound_CIN { get; set; }
 
-        public AssetSNDI_XBOX(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetSNDI_XBOX(string assetName) : base(assetName, AssetType.SNDI)
+        {
+            Entries_SND = new EntrySoundInfo_XBOX[0];
+            Entries_SNDS = new EntrySoundInfo_XBOX[0];
+            Entries_Sound_CIN = new EntrySoundInfo_XBOX[0];
+        }
+
+        public AssetSNDI_XBOX(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
             var reader = new EndianBinaryReader(AHDR.data, Endianness.Little);
 
@@ -130,6 +120,24 @@ namespace IndustrialPark
             Entries_Sound_CIN = new EntrySoundInfo_XBOX[entriesCinAmount];
             for (int i = 0; i < Entries_Sound_CIN.Length; i++)
                 Entries_Sound_CIN[i] = new EntrySoundInfo_XBOX(reader);
+        }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            var writer = new EndianBinaryWriter(endianness);
+
+            writer.Write(Entries_SND.Length);
+            writer.Write(Entries_SNDS.Length);
+            writer.Write(Entries_Sound_CIN.Length);
+
+            foreach (var e in Entries_SND)
+                writer.Write(e.Serialize());
+            foreach (var e in Entries_SNDS)
+                writer.Write(e.Serialize());
+            foreach (var e in Entries_Sound_CIN)
+                writer.Write(e.Serialize());
+
+            return writer.ToArray();
         }
 
         public override bool HasReference(uint assetID)
@@ -183,7 +191,10 @@ namespace IndustrialPark
             else
                 entries = Entries_SNDS.ToList();
 
-            entries.Add(new EntrySoundInfo_XBOX(soundData, assetID));
+            var reader = new EndianBinaryReader(soundData, Endianness.Little);
+            reader.BaseStream.Position = 0x14;
+
+            entries.Add(new EntrySoundInfo_XBOX(reader) { SoundAssetID = assetID });
 
             finalData = soundData.Skip(0x30).ToArray();
 
@@ -235,7 +246,7 @@ namespace IndustrialPark
             }
 
             if (entry == null)
-                throw new Exception($"Error: SNDI asset does not contain {assetType.ToString()} sound header for asset [{assetID.ToString("X8")}]");
+                throw new Exception($"Error: SNDI asset does not contain {assetType} sound header for asset [{assetID:X8}]");
 
             List<byte> bytes = new List<byte>
                 {

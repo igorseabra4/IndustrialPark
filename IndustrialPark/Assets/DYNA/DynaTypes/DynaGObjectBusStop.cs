@@ -14,7 +14,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "game_object:BusStop";
 
-        protected override int constVersion => 2;
+        protected override short constVersion => 2;
 
         [Category(dynaCategoryName)]
         public AssetID MRKR_ID { get; set; }
@@ -27,9 +27,18 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle Delay { get; set; }
 
-        public DynaGObjectBusStop(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.game_object__BusStop, game, platform)
+        public DynaGObjectBusStop(string assetName, uint mrkrAssetId, uint camAssetId, uint simpAssetId) : base(assetName, DynaType.game_object__BusStop, 2)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            MRKR_ID = mrkrAssetId;
+            CAM_ID = camAssetId;
+            SIMP_ID = simpAssetId;
+
+            Delay = 1.5f;
+        }
+
+        public DynaGObjectBusStop(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__BusStop, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             MRKR_ID = reader.ReadUInt32();
@@ -39,9 +48,9 @@ namespace IndustrialPark
             Delay = reader.ReadSingle();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(MRKR_ID);
             writer.Write((int)Player);

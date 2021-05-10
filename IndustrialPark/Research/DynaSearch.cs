@@ -58,7 +58,7 @@ namespace IndustrialPark
                 progressBar1.PerformStep();
 
                 ArchiveEditorFunctions archive = new ArchiveEditorFunctions();
-                archive.OpenFile(s, false, Platform.Unknown, true);
+                archive.OpenFile(s, false, Platform.Unknown, out _, true);
                 Check(archive, ref dynas);
                 archive.Dispose(false);
             }

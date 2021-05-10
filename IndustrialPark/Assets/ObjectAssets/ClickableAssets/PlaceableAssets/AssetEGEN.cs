@@ -29,9 +29,9 @@ namespace IndustrialPark
             OnAnim_AssetID = 0xCE7F8131;
         }
 
-        public AssetEGEN(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetEGEN(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = entityHeaderEndPosition;
 
             Src_dpos_X = reader.ReadSingle();
@@ -45,10 +45,10 @@ namespace IndustrialPark
             OnAnim_AssetID = reader.ReadUInt32();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeEntity(game, platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeEntity(game, endianness));
 
             writer.Write(Src_dpos_X);
             writer.Write(Src_dpos_Y);
@@ -59,7 +59,7 @@ namespace IndustrialPark
             writer.Write(ActiveTimeSeconds);
             writer.Write(OnAnim_AssetID);
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
 

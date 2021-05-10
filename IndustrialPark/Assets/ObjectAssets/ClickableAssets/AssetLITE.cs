@@ -58,9 +58,17 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle UnknownFloat40 { get; set; }
 
-        public AssetLITE(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetLITE(string assetName, Vector3 position) : base(assetName, AssetType.LITE, BaseAssetType.Light)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            _position = position;
+
+            CreateTransformMatrix();
+            ArchiveEditorFunctions.AddToRenderableAssets(this);
+        }
+
+        public AssetLITE(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = baseHeaderEndPosition;
 
             UnknownByte08 = reader.ReadByte();
@@ -81,13 +89,13 @@ namespace IndustrialPark
             UnknownFloat40 = reader.ReadSingle();
 
             CreateTransformMatrix();
-            ArchiveEditorFunctions.renderableAssets.Add(this);
+            ArchiveEditorFunctions.AddToRenderableAssets(this);
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeBase(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeBase(endianness));
 
             writer.Write(UnknownByte08);
             writer.Write(UnknownByte09);
@@ -108,7 +116,7 @@ namespace IndustrialPark
             writer.Write(UnknownFloat3C);
             writer.Write(UnknownFloat40);
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
 

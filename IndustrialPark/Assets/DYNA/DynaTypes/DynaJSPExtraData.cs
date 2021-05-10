@@ -8,25 +8,25 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "JSP Extra Data";
 
-        protected override int constVersion => 1;
+        protected override short constVersion => 1;
 
         [Category(dynaCategoryName)]
         public AssetID JSPInfo_AssetID { get; set; }
         [Category(dynaCategoryName)]
         public AssetID Group_AssetID { get; set; }
 
-        public DynaJSPExtraData(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.JSPExtraData, game, platform)
+        public DynaJSPExtraData(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.JSPExtraData, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             JSPInfo_AssetID = reader.ReadUInt32();
             Group_AssetID = reader.ReadUInt32();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(JSPInfo_AssetID);
             writer.Write(Group_AssetID);

@@ -88,9 +88,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName), Description("Only in version 3")]
         public AssetSingle ShadowOffsetY { get; set; }
 
-        public DynaGObjectTextBox(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.game_object__text_box, game, platform)
+        public DynaGObjectTextBox(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__text_box, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             DefaultTextID = reader.ReadUInt32();
@@ -128,9 +128,9 @@ namespace IndustrialPark
             }
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(DefaultTextID);
             writer.Write(XPosition);

@@ -22,28 +22,28 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "game_object:NPCSettings";
 
-        protected override int constVersion => 2;
+        protected override short constVersion => 2;
 
         [Category(dynaCategoryName)]
         public NpcSettingsBasisType BasisType { get; set; }
         [Category(dynaCategoryName)]
-        public AssetByte AllowDetect { get; set; }
+        public bool AllowDetect { get; set; }
         [Category(dynaCategoryName)]
-        public AssetByte AllowPatrol { get; set; }
+        public bool AllowPatrol { get; set; }
         [Category(dynaCategoryName)]
-        public AssetByte AllowWander { get; set; }
+        public bool AllowWander { get; set; }
         [Category(dynaCategoryName)]
-        public AssetByte ReduceCollide { get; set; }
+        public bool ReduceCollide { get; set; }
         [Category(dynaCategoryName)]
-        public AssetByte UseNavSplines { get; set; }
+        public bool UseNavSplines { get; set; }
         [Category(dynaCategoryName)]
-        public AssetByte AllowChase { get; set; }
+        public bool AllowChase { get; set; }
         [Category(dynaCategoryName)]
-        public AssetByte AllowAttack { get; set; }
+        public bool AllowAttack { get; set; }
         [Category(dynaCategoryName)]
-        public AssetByte AssumeLOS { get; set; }
+        public bool AssumeLOS { get; set; }
         [Category(dynaCategoryName)]
-        public AssetByte AssumeFOV { get; set; }
+        public bool AssumeFOV { get; set; }
         [Category(dynaCategoryName)]
         public En_dupowavmod DuploWaveMode { get; set; }
         [Category(dynaCategoryName)]
@@ -51,32 +51,44 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public int DuploSpawnLifeMax { get; set; }
 
-        public DynaGObjectNPCSettings(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.game_object__NPCSettings, game, platform)
+        public DynaGObjectNPCSettings(string assetName) : base(assetName, DynaType.game_object__NPCSettings, 2)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            AllowDetect = true;
+            ReduceCollide = true;
+            UseNavSplines = true;
+            AllowAttack = true;
+            AssumeLOS = true;
+            AssumeFOV = true;
+            DuploSpawnDelay = 1f;
+            DuploSpawnLifeMax = -1;
+        }
+
+        public DynaGObjectNPCSettings(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__NPCSettings, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             BasisType = (NpcSettingsBasisType)reader.ReadInt32();
-            AllowDetect = reader.ReadByte();
-            AllowPatrol = reader.ReadByte();
-            AllowWander = reader.ReadByte();
-            ReduceCollide = reader.ReadByte();
-            UseNavSplines = reader.ReadByte();
+            AllowDetect = reader.ReadByteBool();
+            AllowPatrol = reader.ReadByteBool();
+            AllowWander = reader.ReadByteBool();
+            ReduceCollide = reader.ReadByteBool();
+            UseNavSplines = reader.ReadByteBool();
             reader.ReadByte();
             reader.ReadByte();
             reader.ReadByte();
-            AllowChase = reader.ReadByte();
-            AllowAttack = reader.ReadByte();
-            AssumeLOS = reader.ReadByte();
-            AssumeFOV = reader.ReadByte();
+            AllowChase = reader.ReadByteBool();
+            AllowAttack = reader.ReadByteBool();
+            AssumeLOS = reader.ReadByteBool();
+            AssumeFOV = reader.ReadByteBool();
             DuploWaveMode = (En_dupowavmod)reader.ReadInt32();
             DuploSpawnDelay = reader.ReadSingle();
             DuploSpawnLifeMax = reader.ReadInt32();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write((int)BasisType);
             writer.Write(AllowDetect);

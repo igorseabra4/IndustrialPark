@@ -6,7 +6,7 @@ namespace IndustrialPark
 {
     public abstract class GenericAssetDataContainer
     {
-        public virtual byte[] Serialize(Game game, Platform platform) => new byte[0];
+        public virtual byte[] Serialize(Game game, Endianness endianness) => new byte[0];
 
         public virtual bool HasReference(uint assetID) => false;
 

@@ -46,6 +46,7 @@ namespace IndustrialPark
             this.autoLoadOnStartupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewControlsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addTextureFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addTXDArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshTexturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -83,6 +84,7 @@ namespace IndustrialPark
             this.bUTNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cAMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dSTRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dTRKToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dYNAToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eGENToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hANGToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -142,7 +144,7 @@ namespace IndustrialPark
             this.toolStripMenuItem_Templates = new System.Windows.Forms.ToolStripMenuItem();
             this.userTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripComboBoxUserTemplate = new System.Windows.Forms.ToolStripComboBox();
-            this.viewControlsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStripMain.SuspendLayout();
@@ -176,14 +178,14 @@ namespace IndustrialPark
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
             this.newToolStripMenuItem.Text = "Open New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(127, 6);
             // 
             // projectToolStripMenuItem
             // 
@@ -277,6 +279,13 @@ namespace IndustrialPark
             this.viewConfigToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
             this.viewConfigToolStripMenuItem.Text = "View Config (F1)";
             this.viewConfigToolStripMenuItem.Click += new System.EventHandler(this.viewConfigToolStripMenuItem_Click);
+            // 
+            // viewControlsToolStripMenuItem
+            // 
+            this.viewControlsToolStripMenuItem.Name = "viewControlsToolStripMenuItem";
+            this.viewControlsToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
+            this.viewControlsToolStripMenuItem.Text = "View Controls...";
+            this.viewControlsToolStripMenuItem.Click += new System.EventHandler(this.viewControlsToolStripMenuItem_Click);
             // 
             // addTextureFolderToolStripMenuItem
             // 
@@ -514,6 +523,7 @@ namespace IndustrialPark
             this.bUTNToolStripMenuItem,
             this.cAMToolStripMenuItem,
             this.dSTRToolStripMenuItem,
+            this.dTRKToolStripMenuItem,
             this.dYNAToolStripMenuItem,
             this.eGENToolStripMenuItem,
             this.hANGToolStripMenuItem,
@@ -599,6 +609,15 @@ namespace IndustrialPark
             this.dSTRToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
             this.dSTRToolStripMenuItem.Text = "DSTR";
             this.dSTRToolStripMenuItem.Click += new System.EventHandler(this.dSTRToolStripMenuItem_Click);
+            // 
+            // dTRKToolStripMenuItem
+            // 
+            this.dTRKToolStripMenuItem.Checked = true;
+            this.dTRKToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.dTRKToolStripMenuItem.Name = "dTRKToolStripMenuItem";
+            this.dTRKToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
+            this.dTRKToolStripMenuItem.Text = "DTRK";
+            this.dTRKToolStripMenuItem.Click += new System.EventHandler(this.dTRKToolStripMenuItem_Click);
             // 
             // dYNAToolStripMenuItem
             // 
@@ -772,11 +791,12 @@ namespace IndustrialPark
             this.colorsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.resetColorsToolStripMenuItem,
             this.backgroundColorToolStripMenuItem1,
+            this.selectionColorToolStripMenuItem1,
+            this.toolStripSeparator11,
             this.widgetColorToolStripMenuItem,
             this.mVPTColorToolStripMenuItem,
             this.tRIGColorToolStripMenuItem,
-            this.sFXInColorToolStripMenuItem,
-            this.selectionColorToolStripMenuItem1});
+            this.sFXInColorToolStripMenuItem});
             this.colorsToolStripMenuItem.Name = "colorsToolStripMenuItem";
             this.colorsToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.colorsToolStripMenuItem.Text = "Colors";
@@ -784,49 +804,49 @@ namespace IndustrialPark
             // resetColorsToolStripMenuItem
             // 
             this.resetColorsToolStripMenuItem.Name = "resetColorsToolStripMenuItem";
-            this.resetColorsToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.resetColorsToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
             this.resetColorsToolStripMenuItem.Text = "Reset Colors";
             this.resetColorsToolStripMenuItem.Click += new System.EventHandler(this.resetColorsToolStripMenuItem_Click);
             // 
             // backgroundColorToolStripMenuItem1
             // 
             this.backgroundColorToolStripMenuItem1.Name = "backgroundColorToolStripMenuItem1";
-            this.backgroundColorToolStripMenuItem1.Size = new System.Drawing.Size(179, 22);
+            this.backgroundColorToolStripMenuItem1.Size = new System.Drawing.Size(222, 22);
             this.backgroundColorToolStripMenuItem1.Text = "Background Color...";
             this.backgroundColorToolStripMenuItem1.Click += new System.EventHandler(this.backgroundColorToolStripMenuItem1_Click);
             // 
             // widgetColorToolStripMenuItem
             // 
             this.widgetColorToolStripMenuItem.Name = "widgetColorToolStripMenuItem";
-            this.widgetColorToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
-            this.widgetColorToolStripMenuItem.Text = "Widget Color...";
+            this.widgetColorToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
+            this.widgetColorToolStripMenuItem.Text = "Box/Triangle Widget Color...";
             this.widgetColorToolStripMenuItem.Click += new System.EventHandler(this.widgetColorToolStripMenuItem_Click);
             // 
             // mVPTColorToolStripMenuItem
             // 
             this.mVPTColorToolStripMenuItem.Name = "mVPTColorToolStripMenuItem";
-            this.mVPTColorToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
-            this.mVPTColorToolStripMenuItem.Text = "MVPT Color...";
+            this.mVPTColorToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
+            this.mVPTColorToolStripMenuItem.Text = "MVPT/DTRK Color...";
             this.mVPTColorToolStripMenuItem.Click += new System.EventHandler(this.mVPTColorToolStripMenuItem_Click);
             // 
             // tRIGColorToolStripMenuItem
             // 
             this.tRIGColorToolStripMenuItem.Name = "tRIGColorToolStripMenuItem";
-            this.tRIGColorToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
-            this.tRIGColorToolStripMenuItem.Text = "TRIG Color...";
+            this.tRIGColorToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
+            this.tRIGColorToolStripMenuItem.Text = "Sphere TRIG Color...";
             this.tRIGColorToolStripMenuItem.Click += new System.EventHandler(this.tRIGColorToolStripMenuItem_Click);
             // 
             // sFXInColorToolStripMenuItem
             // 
             this.sFXInColorToolStripMenuItem.Name = "sFXInColorToolStripMenuItem";
-            this.sFXInColorToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
-            this.sFXInColorToolStripMenuItem.Text = "SFX Color...";
+            this.sFXInColorToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
+            this.sFXInColorToolStripMenuItem.Text = "SFX/SDFX Color...";
             this.sFXInColorToolStripMenuItem.Click += new System.EventHandler(this.sFXInColorToolStripMenuItem_Click);
             // 
             // selectionColorToolStripMenuItem1
             // 
             this.selectionColorToolStripMenuItem1.Name = "selectionColorToolStripMenuItem1";
-            this.selectionColorToolStripMenuItem1.Size = new System.Drawing.Size(179, 22);
+            this.selectionColorToolStripMenuItem1.Size = new System.Drawing.Size(222, 22);
             this.selectionColorToolStripMenuItem1.Text = "Selection Color...";
             this.selectionColorToolStripMenuItem1.Click += new System.EventHandler(this.selectionColorToolStripMenuItem_Click);
             // 
@@ -1073,12 +1093,10 @@ namespace IndustrialPark
             this.toolStripComboBoxUserTemplate.Size = new System.Drawing.Size(160, 23);
             this.toolStripComboBoxUserTemplate.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxUserTemplate_SelectedIndexChanged);
             // 
-            // viewControlsToolStripMenuItem
+            // toolStripSeparator11
             // 
-            this.viewControlsToolStripMenuItem.Name = "viewControlsToolStripMenuItem";
-            this.viewControlsToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
-            this.viewControlsToolStripMenuItem.Text = "View Controls...";
-            this.viewControlsToolStripMenuItem.Click += new System.EventHandler(this.viewControlsToolStripMenuItem_Click);
+            this.toolStripSeparator11.Name = "toolStripSeparator11";
+            this.toolStripSeparator11.Size = new System.Drawing.Size(219, 6);
             // 
             // MainForm
             // 
@@ -1225,6 +1243,8 @@ namespace IndustrialPark
         private ToolStripSeparator toolStripSeparator7;
         private ToolStripMenuItem replaceAssetsOnPasteToolStripMenuItem;
         private ToolStripMenuItem viewControlsToolStripMenuItem;
+        private ToolStripMenuItem dTRKToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator11;
     }
 }
 

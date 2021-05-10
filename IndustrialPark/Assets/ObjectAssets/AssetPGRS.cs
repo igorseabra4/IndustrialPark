@@ -28,9 +28,9 @@ namespace IndustrialPark
             }
         }
 
-        public AssetPGRS(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetPGRS(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = baseHeaderEndPosition;
 
             int progressLinkCount = reader.ReadInt32();
@@ -40,17 +40,17 @@ namespace IndustrialPark
                 _progressLinks[i] = new Link(reader, LinkType.Progress, game);
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeBase(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeBase(endianness));
 
             writer.Write(_progressLinks.Length);
 
             foreach (var l in _progressLinks)
-                writer.Write(l.Serialize(LinkType.Progress, platform));
+                writer.Write(l.Serialize(LinkType.Progress, endianness));
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
 

@@ -29,7 +29,16 @@ namespace IndustrialPark
             set { _position.Z = value; CreateTransformMatrix(); }
         }
 
-        public RenderableDynaBase(Section_AHDR AHDR, DynaType type, Game game, Platform platform) : base(AHDR, type, game, platform) { }
+        public RenderableDynaBase(string assetName, DynaType dynaType, short version) : base(assetName, dynaType, version)
+        {
+        }
+
+        public RenderableDynaBase(string assetName, DynaType dynaType, short version, Vector3 position) : base(assetName, dynaType, version)
+        {
+            _position = position;
+        }
+
+        public RenderableDynaBase(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness) { }
 
         public Matrix world { get; protected set; }
         protected BoundingBox boundingBox;

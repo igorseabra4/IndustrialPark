@@ -13,7 +13,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "Enemy:SB:FrogFish";
 
-        protected override int constVersion => 2;
+        protected override short constVersion => 2;
 
         [Category(dynaCategoryName)]
         public EnemyFrogFishType FrogFishType
@@ -38,9 +38,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID Unknown60 { get; set; }
 
-        public DynaEnemyFrogFish(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.Enemy__SB__FrogFish, game, platform)
+        public DynaEnemyFrogFish(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__FrogFish, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = entityDynaEndPosition;
 
             Player_AssetID = reader.ReadUInt32();
@@ -53,10 +53,10 @@ namespace IndustrialPark
             Unknown60 = reader.ReadUInt32();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeEntityDyna(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeEntityDyna(endianness));
 
             writer.Write(Player_AssetID);
             writer.Write(UnknownByte54);

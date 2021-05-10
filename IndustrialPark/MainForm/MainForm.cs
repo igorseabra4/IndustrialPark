@@ -157,14 +157,14 @@ namespace IndustrialPark
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string file in files)
-                //try
-                //{
+                try
+                {
                     AddArchiveEditor(file);
-                //}
-                //catch (Exception ex)
-                //{
-                //    MessageBox.Show("Error opening file: " + ex.Message);
-                //}
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error opening file: " + ex.Message);
+                }
         }
 
         private void MainForm_DragEnter(object sender, DragEventArgs e)
@@ -329,6 +329,7 @@ namespace IndustrialPark
                 dontRenderBUTN = AssetBUTN.dontRender,
                 dontRenderCAM = AssetCAM.dontRender,
                 dontRenderDSTR = AssetDSTR.dontRender,
+                dontRenderDTRK = AssetDTRK.dontRender,
                 dontRenderDYNA = AssetDYNA.dontRender,
                 dontRenderEGEN = AssetEGEN.dontRender,
                 dontRenderHANG = AssetHANG.dontRender,
@@ -436,6 +437,9 @@ namespace IndustrialPark
 
             dSTRToolStripMenuItem.Checked = !ipSettings.dontRenderDSTR;
             AssetDSTR.dontRender = ipSettings.dontRenderDSTR;
+
+            dTRKToolStripMenuItem.Checked = !ipSettings.dontRenderDTRK;
+            AssetDTRK.dontRender = ipSettings.dontRenderDTRK;
 
             dYNAToolStripMenuItem.Checked = !ipSettings.dontRenderDYNA;
             AssetDYNA.dontRender = ipSettings.dontRenderDYNA;
@@ -655,9 +659,11 @@ namespace IndustrialPark
 
         private void AddArchiveEditor(string filePath = null, HipHopFile.Platform scoobyPlatform = HipHopFile.Platform.Unknown)
         {
-            ArchiveEditor temp = new ArchiveEditor(filePath, scoobyPlatform);
-            archiveEditors.Add(temp);
+            ArchiveEditor temp = new ArchiveEditor();
             temp.Show();
+            temp.Hide();
+            temp.Begin(filePath, scoobyPlatform);
+            archiveEditors.Add(temp);
 
             ToolStripMenuItem tempMenuItem = new ToolStripMenuItem(Path.GetFileName(temp.GetCurrentlyOpenFileName()));
             tempMenuItem.Click += new EventHandler(ToolStripClick);
@@ -1097,6 +1103,12 @@ namespace IndustrialPark
             AssetSPLN.dontRender = !sPLNToolStripMenuItem.Checked;
         }
 
+        private void dTRKToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            dTRKToolStripMenuItem.Checked = !dTRKToolStripMenuItem.Checked;
+            AssetDTRK.dontRender = !dTRKToolStripMenuItem.Checked;
+        }
+
         private void uIModeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             uIModeToolStripMenuItem.Checked = !uIModeToolStripMenuItem.Checked;
@@ -1133,10 +1145,7 @@ namespace IndustrialPark
                 if (archiveEditor.HasAsset(assetID))
                     return archiveEditor.GetAssetNameFromID(assetID);
 
-            if (ArchiveEditorFunctions.nameDictionary.ContainsKey(assetID))
-                return ArchiveEditorFunctions.nameDictionary[assetID];
-
-            return "0x" + assetID.ToString("X8");
+            return ArchiveEditorFunctions.GetFromNameDictionary(assetID) ?? "0x" + assetID.ToString("X8");
         }
 
         public bool AssetExists(uint assetID)
@@ -1145,7 +1154,7 @@ namespace IndustrialPark
                 if (archiveEditor.HasAsset(assetID))
                     return true;
 
-            if (ArchiveEditorFunctions.nameDictionary.ContainsKey(assetID))
+            if (ArchiveEditorFunctions.GetFromNameDictionary(assetID) != null)
                 return true;
 
             return false;
@@ -1319,12 +1328,12 @@ namespace IndustrialPark
             {
                 if (WindowState == FormWindowState.Minimized)
                 {
-                    ArchiveEditorFunctions.allowRender = false;
+                    renderer.allowRender = false;
                     SetAllTopMost(false);
                 }
                 else
                 {
-                    ArchiveEditorFunctions.allowRender = true;
+                    renderer.allowRender = true;
                     SetAllTopMost(true);
                 }
             }
@@ -1549,6 +1558,9 @@ namespace IndustrialPark
 
             if (sPLNToolStripMenuItem.Checked)
                 sPLNToolStripMenuItem_Click(sender, e);
+
+            if (dTRKToolStripMenuItem.Checked)
+                dTRKToolStripMenuItem_Click(sender, e);
         }
 
         private void enableAllToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1621,6 +1633,9 @@ namespace IndustrialPark
 
             if (!sPLNToolStripMenuItem.Checked)
                 sPLNToolStripMenuItem_Click(sender, e);
+
+            if (!dTRKToolStripMenuItem.Checked)
+                dTRKToolStripMenuItem_Click(sender, e);
         }
     }
 }

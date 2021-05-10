@@ -11,7 +11,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "game_object:flame_emitter";
 
-        protected override int constVersion => 4;
+        protected override short constVersion => 4;
 
         [Category(dynaCategoryName)]
         public int UnknownInt_00 { get; set; }
@@ -36,9 +36,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle UnknownFloat_34 { get; set; }
 
-        public DynaGObjectFlameEmitter(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.game_object__flame_emitter, game, platform)
+        public DynaGObjectFlameEmitter(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__flame_emitter, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             UnknownInt_00 = reader.ReadInt32();
@@ -55,12 +55,12 @@ namespace IndustrialPark
             UnknownFloat_34 = reader.ReadSingle();
 
             CreateTransformMatrix();
-            renderableAssets.Add(this);
+            AddToRenderableAssets(this);
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(UnknownInt_00);
             writer.Write(_position.X);

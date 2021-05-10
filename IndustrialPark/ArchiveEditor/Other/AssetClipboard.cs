@@ -5,14 +5,14 @@ namespace IndustrialPark
 {
     public class AssetClipboard
     {
-        public Game game;
-        public Endianness endianness;
+        public List<Game> games;
+        public List<Endianness> endiannesses;
         public List<Section_AHDR> assets;
 
-        public AssetClipboard(Game game, Endianness endianness, List<Section_AHDR> assets)
+        public AssetClipboard(List<Game> games, List<Endianness> endiannesses, List<Section_AHDR> assets)
         {
-            this.game = game;
-            this.endianness = endianness;
+            this.games = games;
+            this.endiannesses = endiannesses;
             this.assets = assets;
         }
     }

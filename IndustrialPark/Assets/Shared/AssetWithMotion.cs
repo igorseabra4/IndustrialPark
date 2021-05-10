@@ -9,7 +9,7 @@ namespace IndustrialPark
     {
         public AssetWithMotion(string assetName, AssetType assetType, BaseAssetType baseAssetType, Vector3 position) : base(assetName, assetType, baseAssetType, position) { }
 
-        public AssetWithMotion(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        public AssetWithMotion(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness) { }
 
         public override bool HasReference(uint assetID) => Motion.HasReference(assetID) || base.HasReference(assetID);
         

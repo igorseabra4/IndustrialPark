@@ -1,387 +1,310 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.ComponentModel;
-//using System.Linq;
-//using HipHopFile;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using HipHopFile;
 
-//namespace IndustrialPark
-//{
-//    public enum ConstructFunc : uint
-//    {
-//        zEntPlayer_AnimTable = 0,
-//        ZNPC_AnimTable_Common = 1,
-//        zPatrick_AnimTable = 2,
-//        zSandy_AnimTable = 3,
-//        ZNPC_AnimTable_Villager = 4,
-//        zSpongeBobTongue_AnimTable = 5,
-//        ZNPC_AnimTable_LassoGuide = 6,
-//        ZNPC_AnimTable_Hammer = 7,
-//        ZNPC_AnimTable_TarTar = 8,
-//        ZNPC_AnimTable_GLove = 9,
-//        ZNPC_AnimTable_Monsoon = 10,
-//        ZNPC_AnimTable_SleepyTime = 11,
-//        ZNPC_AnimTable_ArfDog = 12,
-//        ZNPC_AnimTable_ArfArf = 13,
-//        ZNPC_AnimTable_Chuck = 14,
-//        ZNPC_AnimTable_Tubelet = 15,
-//        ZNPC_AnimTable_Slick = 16,
-//        ZNPC_AnimTable_Ambient = 17,
-//        ZNPC_AnimTable_Tiki = 18,
-//        ZNPC_AnimTable_Fodder = 19,
-//        ZNPC_AnimTable_Duplotron = 20,
-//        ZNPC_AnimTable_Jelly = 21,
-//        ZNPC_AnimTable_Test = 22,
-//        ZNPC_AnimTable_Neptune = 23,
-//        ZNPC_AnimTable_KingJelly = 24,
-//        ZNPC_AnimTable_Dutchman = 25,
-//        ZNPC_AnimTable_Prawn = 26,
-//        ZNPC_AnimTable_BossSandy = 27,
-//        ZNPC_AnimTable_BossPatrick = 28,
-//        ZNPC_AnimTable_BossSB1 = 29,
-//        ZNPC_AnimTable_BossSB2 = 30,
-//        ZNPC_AnimTable_BossSBobbyArm = 31,
-//        ZNPC_AnimTable_BossPlankton = 32,
-//        zEntPlayer_BoulderVehicleAnimTable = 33,
-//        ZNPC_AnimTable_BossSandyHead = 34,
-//        ZNPC_AnimTable_BalloonBoy = 35,
-//        xEnt_AnimTable_AutoEventSmall = 36,
-//        ZNPC_AnimTable_SlickShield = 37,
-//        ZNPC_AnimTable_SuperFriend = 38,
-//        ZNPC_AnimTable_ThunderCloud = 39,
-//        XHUD_AnimTable_Idle = 40,
-//        ZNPC_AnimTable_NightLight = 41,
-//        ZNPC_AnimTable_HazardStd = 42,
-//        ZNPC_AnimTable_FloatDevice = 43,
-//        cruise_bubble__anim_table = 44,
-//        ZNPC_AnimTable_BossSandyScoreboard = 45,
-//        zEntPlayer_TreeDomeSBAnimTable = 46
-//    }
+namespace IndustrialPark
+{
+    public enum ConstructFunc : uint
+    {
+        zEntPlayer_AnimTable = 0,
+        ZNPC_AnimTable_Common = 1,
+        zPatrick_AnimTable = 2,
+        zSandy_AnimTable = 3,
+        ZNPC_AnimTable_Villager = 4,
+        zSpongeBobTongue_AnimTable = 5,
+        ZNPC_AnimTable_LassoGuide = 6,
+        ZNPC_AnimTable_Hammer = 7,
+        ZNPC_AnimTable_TarTar = 8,
+        ZNPC_AnimTable_GLove = 9,
+        ZNPC_AnimTable_Monsoon = 10,
+        ZNPC_AnimTable_SleepyTime = 11,
+        ZNPC_AnimTable_ArfDog = 12,
+        ZNPC_AnimTable_ArfArf = 13,
+        ZNPC_AnimTable_Chuck = 14,
+        ZNPC_AnimTable_Tubelet = 15,
+        ZNPC_AnimTable_Slick = 16,
+        ZNPC_AnimTable_Ambient = 17,
+        ZNPC_AnimTable_Tiki = 18,
+        ZNPC_AnimTable_Fodder = 19,
+        ZNPC_AnimTable_Duplotron = 20,
+        ZNPC_AnimTable_Jelly = 21,
+        ZNPC_AnimTable_Test = 22,
+        ZNPC_AnimTable_Neptune = 23,
+        ZNPC_AnimTable_KingJelly = 24,
+        ZNPC_AnimTable_Dutchman = 25,
+        ZNPC_AnimTable_Prawn = 26,
+        ZNPC_AnimTable_BossSandy = 27,
+        ZNPC_AnimTable_BossPatrick = 28,
+        ZNPC_AnimTable_BossSB1 = 29,
+        ZNPC_AnimTable_BossSB2 = 30,
+        ZNPC_AnimTable_BossSBobbyArm = 31,
+        ZNPC_AnimTable_BossPlankton = 32,
+        zEntPlayer_BoulderVehicleAnimTable = 33,
+        ZNPC_AnimTable_BossSandyHead = 34,
+        ZNPC_AnimTable_BalloonBoy = 35,
+        xEnt_AnimTable_AutoEventSmall = 36,
+        ZNPC_AnimTable_SlickShield = 37,
+        ZNPC_AnimTable_SuperFriend = 38,
+        ZNPC_AnimTable_ThunderCloud = 39,
+        XHUD_AnimTable_Idle = 40,
+        ZNPC_AnimTable_NightLight = 41,
+        ZNPC_AnimTable_HazardStd = 42,
+        ZNPC_AnimTable_FloatDevice = 43,
+        cruise_bubble__anim_table = 44,
+        ZNPC_AnimTable_BossSandyScoreboard = 45,
+        zEntPlayer_TreeDomeSBAnimTable = 46
+    }
 
-//    public class AnimationFile
-//    {
-//        public int FileFlags { get; set; }
-//        public AssetSingle Duration { get; set; }
-//        public AssetSingle TimeOffset { get; set; }
-//        public short NumAnims1 { get; set; }
-//        public short NumAnims2 { get; set; }
-//        public int RawData { get; set; }
-//        public int Physics { get; set; }
-//        public int StartPose { get; set; }
-//        public int EndPose { get; set; }
-//    }
+    public class AnimationFile
+    {
+        public int FileFlags { get; set; }
+        public AssetSingle Duration { get; set; }
+        public AssetSingle TimeOffset { get; set; }
+        public byte NumAnims1 { get; set; }
+        public byte NumAnims2 { get; set; }
+        public int[] RawData { get; set; }
+        public int Physics { get; set; }
+        public int StartPose { get; set; }
+        public int EndPose { get; set; }
 
-//    public class AnimationState
-//    {
-//        public AssetID StateID { get; set; }
-//        public int FileIndex { get; set; }
-//        public int EffectCount { get; set; }
-//        public int EffectOffset { get; set; }
-//        public AssetSingle Speed { get; set; }
-//        public int SubStateID { get; set; }
-//        public int SubStateCount { get; set; }
+        public AnimationFile() { }
+        public AnimationFile(EndianBinaryReader reader)
+        {
+            FileFlags = reader.ReadInt32();
+            Duration = reader.ReadSingle();
+            TimeOffset = reader.ReadSingle();
+            var animCount = reader.ReadInt16();
+            NumAnims1 = reader.ReadByte();
+            NumAnims2 = reader.ReadByte();
+            var rawDataOffset = reader.ReadUInt32();
+            Physics = reader.ReadInt32();
+            StartPose = reader.ReadInt32();
+            EndPose = reader.ReadInt32();
 
-//        public AnimationState()
-//        {
-//            StateID = 0;
-//        }
-//    }
+            RawData = new int[animCount];
 
-//    public class AnimationEffect
-//    {
-//        public int StateID { get; set; }
-//        public AssetSingle StartTime { get; set; }
-//        public AssetSingle EndTime { get; set; }
-//        public int Flags { get; set; }
-//        public int EffectType { get; set; }
-//        public int UserDataSize { get; set; }
-//        public int Unknown { get; set; }
+            var currPos = reader.BaseStream.Position;
+            reader.BaseStream.Position = rawDataOffset;
+            for (int i = 0; i < animCount; i++)
+                RawData[i] = reader.ReadInt32();
+            reader.BaseStream.Position = currPos;
+        }
 
-//        public AnimationEffect()
-//        {
-//            StateID = 0;
-//        }
-//    }
+        public int RawDataOffset;
 
-//    public class AssetATBL : Asset
-//    {
-//        public AssetATBL(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        public void Serialize(EndianBinaryWriter writer)
+        {
+            writer.Write(FileFlags);
+            writer.Write(Duration);
+            writer.Write(TimeOffset);
+            writer.Write((short)RawData.Length);
+            writer.Write(NumAnims1);
+            writer.Write(NumAnims2);
+            writer.Write(RawDataOffset);
+            writer.Write(Physics);
+            writer.Write(StartPose);
+            writer.Write(EndPose);
+        }
+    }
 
-//        public override bool HasReference(uint assetID)
-//        {
-//            foreach (AssetID a in Animations)
-//                if (a == assetID)
-//                    return true;
+    public class AnimationState
+    {
+        public AssetID StateID { get; set; }
+        public int AnimFileIndex { get; set; }
+        public AssetSingle Speed { get; set; }
+        public int SubStateID { get; set; }
+        public int SubStateCount { get; set; }
 
-//            foreach (AnimationState a in AnimationStates)
-//                if (a.StateID == assetID)
-//                    return true;
+        public AnimationEffect[] AnimationEffects { get; set; }
 
-//            return base.HasReference(assetID);
-//        }
+        public AnimationState() { }
+        public AnimationState(EndianBinaryReader reader, Game game)
+        {
+            StateID = reader.ReadUInt32();
+            AnimFileIndex = reader.ReadInt32();
+            var effectCount = reader.ReadInt32();
+            var effectOffset = reader.ReadUInt32();
+            Speed = reader.ReadSingle();
 
-//        public override void Verify(ref List<string> result)
-//        {
-//            foreach (AssetID a in Animations)
-//            {
-//                if (a == 0)
-//                    result.Add("ATBL entry with animation asset ID set to 0");
-//                Verify(a, ref result);
-//            }
+            if (game != Game.Scooby)
+            {
+                SubStateID = reader.ReadInt32();
+                SubStateCount = reader.ReadInt32();
+            }
 
-//            var b = AnimationFiles;
-//            var c = AnimationStates;
-//            var d = AnimationEffects;
-//            var e = Entries_Unknown;
-//        }
+            AnimationEffects = new AnimationEffect[effectCount];
 
-//        [Category("Animation Table"), ReadOnly(true)]
-//        public int NumRaw
-//        {
-//            get => ReadInt(0x04);
-//            set => Write(0x04, value);
-//        }
+            if (effectCount > 0)
+            {
+                var currPos = reader.BaseStream.Position;
+                reader.BaseStream.Position = effectOffset;
+                for (int i = 0; i < AnimationEffects.Length; i++)
+                    AnimationEffects[i] = new AnimationEffect(reader);
+                reader.BaseStream.Position = currPos;
+            }
+        }
 
-//        [Category("Animation Table"), ReadOnly(true)]
-//        public int NumFiles
-//        {
-//            get => ReadInt(0x08);
-//            set => Write(0x08, value);
-//        }
+        public int EffectOffset;
 
-//        [Category("Animation Table"), ReadOnly(true)]
-//        public int NumStates
-//        {
-//            get => ReadInt(0x0C);
-//            set => Write(0x0C, value);
-//        }
+        public void Serialize(EndianBinaryWriter writer, Game game)
+        {
+            writer.Write(StateID);
+            writer.Write(AnimFileIndex);
+            writer.Write(AnimationEffects.Length);
+            writer.Write(EffectOffset);
+            writer.Write(Speed);
+            if (game != Game.Scooby)
+            {
+                writer.Write(SubStateID);
+                writer.Write(SubStateCount);
+            }
+        }
+    }
 
-//        [Category("Animation Table")]
-//        public ConstructFunc ConstructFunc_Enum
-//        {
-//            get => (ConstructFunc)(uint)ConstructFunc_Hash;
-//            set => ConstructFunc_Hash = (uint)value;
-//        }
+    public class AnimationEffect : GenericAssetDataContainer
+    {
+        public int StateID { get; set; }
+        public AssetSingle StartTime { get; set; }
+        public AssetSingle EndTime { get; set; }
+        public int Flags { get; set; }
+        public int EffectType { get; set; }
+        public byte[] UserDataBytes { get; set; }
 
-//        [Category("Animation Table")]
-//        public AssetID ConstructFunc_Hash
-//        {
-//            get => ReadUInt(0x10);
-//            set => Write(0x10, value);
-//        }
+        public AnimationEffect() { }
+        public AnimationEffect(EndianBinaryReader reader)
+        {
+            StateID = reader.ReadInt32();
+            StartTime = reader.ReadSingle();
+            EndTime = reader.ReadSingle();
+            Flags = reader.ReadInt32();
+            EffectType = reader.ReadInt32();
+            var userDataSize = reader.ReadInt32();
+            UserDataBytes = reader.ReadBytes(userDataSize);
+        }
 
-//        private int RawStart => 0x14;
+        public void Serialize(EndianBinaryWriter writer)
+        {
+            writer.Write(StateID);
+            writer.Write(StartTime);
+            writer.Write(EndTime);
+            writer.Write(Flags);
+            writer.Write(EffectType);
+            writer.Write(UserDataBytes.Length);
+            writer.Write(UserDataBytes);
+        }
+    }
 
-//        [Category("Animation Table")]
-//        public AssetID[] Animations
-//        {
-//            get
-//            {
-//                AssetID[] animations = new AssetID[NumRaw];
-//                for (int i = 0; i < NumRaw; i++)
-//                    animations[i] = ReadUInt(RawStart + 4 * i);
+    public class AssetATBL : Asset
+    {
+        private const string categoryName = "Animation Table";
 
-//                return animations;
-//            }
-//            set
-//            {
-//                int prevUnkCount = Entries_Unknown.Length;
+        [Category(categoryName)]
+        public ConstructFunc ConstructFunc_Enum
+        {
+            get => (ConstructFunc)(uint)ConstructFunc_Hash;
+            set => ConstructFunc_Hash = (uint)value;
+        }
 
-//                List<byte> newData = Data.Take(RawStart).ToList();
-//                List<byte> restOfOldData = Data.Skip(RawStart + 4 * NumRaw).ToList();
+        [Category(categoryName)]
+        public AssetID ConstructFunc_Hash { get; set; }
+        [Category(categoryName)]
+        public AssetID[] Animations { get; set; }
+        [Category(categoryName)]
+        public AnimationFile[] AnimationFiles { get; set; }
 
-//                foreach (AssetID i in value)
-//                {
-//                    if (platform == Platform.GameCube)
-//                        newData.AddRange(BitConverter.GetBytes(i).Reverse());
-//                    else
-//                        newData.AddRange(BitConverter.GetBytes(i));
-//                }
+        [Category(categoryName)]
+        public AnimationState[] AnimationStates { get; set; }
 
-//                newData.AddRange(restOfOldData);
+        public AssetATBL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
 
-//                Data = newData.ToArray();
+            reader.ReadInt32();
+            int numRaw = reader.ReadInt32();
+            int numFiles = reader.ReadInt32();
+            int numStates = reader.ReadInt32();
+            ConstructFunc_Hash = reader.ReadUInt32();
 
-//                NumRaw = value.Length;
+            Animations = new AssetID[numRaw];
+            for (int i = 0; i < Animations.Length; i++)
+                Animations[i] = reader.ReadUInt32();
 
-//                if (prevUnkCount < NumRaw)
-//                {
-//                    var entries = Entries_Unknown.ToList();
-//                    for (int i = prevUnkCount; i < NumRaw; i++)
-//                        entries.Add(i);
-//                    Entries_Unknown = entries.ToArray();
-//                }
-//            }
-//        }
+            AnimationFiles = new AnimationFile[numFiles];
+            for (int i = 0; i < AnimationFiles.Length; i++)
+                AnimationFiles[i] = new AnimationFile(reader);
 
-//        private int AnimationFilesStart => RawStart + NumRaw * 4;
+            AnimationStates = new AnimationState[numStates];
+            for (int i = 0; i < AnimationStates.Length; i++)
+                AnimationStates[i] = new AnimationState(reader, game);
+        }
 
-//        [Category("Animation Table")]
-//        public AnimationFile[] AnimationFiles
-//        {
-//            get
-//            {
-//                List<AnimationFile> entries = new List<AnimationFile>();
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.WriteMagic("ATBL");
 
-//                for (int i = 0; i < NumFiles; i++)
-//                {
-//                    entries.Add(new AnimationFile()
-//                    {
-//                        FileFlags = ReadInt(AnimationFilesStart + i * 0x20),
-//                        Duration = ReadInt(AnimationFilesStart + i * 0x20 + 0x4),
-//                        TimeOffset = ReadFloat(AnimationFilesStart + i * 0x20 + 0x8),
-//                        NumAnims1 = ReadShort(AnimationFilesStart + i * 0x20 + 0xC),
-//                        NumAnims2 = ReadShort(AnimationFilesStart + i * 0x20 + 0xE),
-//                        RawData = ReadInt(AnimationFilesStart + i * 0x20 + 0x10),
-//                        Physics = ReadInt(AnimationFilesStart + i * 0x20 + 0x14),
-//                        StartPose = ReadInt(AnimationFilesStart + i * 0x20 + 0x18),
-//                        EndPose = ReadInt(AnimationFilesStart + i * 0x20 + 0x1C),
-//                    });
-//                }
-
-//                return entries.ToArray();
-//            }
-//            set
-//            {
-//                List<byte> newData = Data.Take(AnimationFilesStart).ToList();
-//                List<byte> restOfData = Data.Skip(AnimationStatesStart).ToList();
-
-//                foreach (AnimationFile i in value)
-//                {
-//                    newData.AddRange(BitConverter.GetBytes(Switch(i.FileFlags)));
-//                    newData.AddRange(BitConverter.GetBytes(Switch(i.Duration)));
-//                    newData.AddRange(BitConverter.GetBytes(Switch(i.TimeOffset)));
-//                    newData.AddRange(BitConverter.GetBytes(Switch(i.NumAnims1)));
-//                    newData.AddRange(BitConverter.GetBytes(Switch(i.NumAnims2)));
-//                    newData.AddRange(BitConverter.GetBytes(Switch(i.RawData)));
-//                    newData.AddRange(BitConverter.GetBytes(Switch(i.Physics)));
-//                    newData.AddRange(BitConverter.GetBytes(Switch(i.StartPose)));
-//                    newData.AddRange(BitConverter.GetBytes(Switch(i.EndPose)));
-//                }
-
-//                newData.AddRange(restOfData);
-
-//                Data = newData.ToArray();
-//                NumFiles = value.Length;
-//            }
-//        }
-
-//        private int AnimationStatesStart => AnimationFilesStart + NumFiles * 0x20;
-
-//        [Category("Animation Table")]
-//        public AnimationState[] AnimationStates
-//        {
-//            get
-//            {
-//                List<AnimationState> entries = new List<AnimationState>();
-
-//                for (int i = 0; i < NumStates; i++)
-//                {
-//                    entries.Add(new AnimationState()
-//                    {
-//                        StateID = ReadUInt(AnimationStatesStart + i * 0x1C),
-//                        FileIndex = ReadInt(AnimationStatesStart + i * 0x1C + 0x4),
-//                        EffectCount = ReadInt(AnimationStatesStart + i * 0x1C + 0x8),
-//                        EffectOffset = ReadInt(AnimationStatesStart + i * 0x1C + 0xC),
-//                        Speed = ReadFloat(AnimationStatesStart + i * 0x1C + 0x10),
-//                        SubStateID = ReadInt(AnimationStatesStart + i * 0x1C + 0x14),
-//                        SubStateCount = ReadInt(AnimationStatesStart + i * 0x1C + 0x18),
-//                    });
-//                }
-
-//                return entries.ToArray();
-//            }
-//            set
-//            {
-//                List<byte> newData = Data.Take(AnimationStatesStart).ToList();
-//                List<byte> restOfData = Data.Skip(AnimationEffectsStart).ToList();
-
-//                foreach (AnimationState i in value)
-//                {
-//                    newData.AddRange(BitConverter.GetBytes(Switch(i.StateID)));
-//                    newData.AddRange(BitConverter.GetBytes(Switch(i.FileIndex)));
-//                    newData.AddRange(BitConverter.GetBytes(Switch(i.EffectCount)));
-//                    newData.AddRange(BitConverter.GetBytes(Switch(i.EffectOffset)));
-//                    newData.AddRange(BitConverter.GetBytes(Switch(i.Speed)));
-//                    newData.AddRange(BitConverter.GetBytes(Switch(i.SubStateID)));
-//                    newData.AddRange(BitConverter.GetBytes(Switch(i.SubStateCount)));
-//                }
-
-//                newData.AddRange(restOfData);
-
-//                Data = newData.ToArray();
-//                NumStates = value.Length;
-//            }
-//        }
-
-//        private int AnimationEffectsStart => AnimationStatesStart + NumStates * 0x1C;
-
-//        [Category("Animation Table")]
-//        public AnimationEffect[] AnimationEffects
-//        {
-//            get
-//            {
-//                List<AnimationEffect> entries = new List<AnimationEffect>();
-
-//                for (int i = AnimationEffectsStart; i < ListUnknown5Start; i += 0x1C)
-//                {
-//                    entries.Add(new AnimationEffect()
-//                    {
-//                        StateID = ReadInt(i),
-//                        StartTime = ReadFloat(i + 4),
-//                        EndTime = ReadFloat(i + 8),
-//                        Flags = ReadInt(i + 12),
-//                        EffectType = ReadInt(i + 16),
-//                        UserDataSize = ReadInt(i + 20),
-//                        Unknown = ReadInt(i + 24)
-//                    });
-//                }
-
-//                return entries.ToArray();
-//            }
-//            set
-//            {
-//                List<byte> newData = Data.Take(AnimationEffectsStart).ToList();
-//                List<byte> restOfData = Data.Skip(ListUnknown5Start).ToList();
-
-//                foreach (AnimationEffect i in value)
-//                {
-//                    newData.AddRange(BitConverter.GetBytes(Switch(i.StateID)));
-//                    newData.AddRange(BitConverter.GetBytes(Switch(i.StartTime)));
-//                    newData.AddRange(BitConverter.GetBytes(Switch(i.EndTime)));
-//                    newData.AddRange(BitConverter.GetBytes(Switch(i.Flags)));
-//                    newData.AddRange(BitConverter.GetBytes(Switch(i.EffectType)));
-//                    newData.AddRange(BitConverter.GetBytes(Switch(i.UserDataSize)));
-//                    newData.AddRange(BitConverter.GetBytes(Switch(i.Unknown)));
-//                }
-
-//                newData.AddRange(restOfData);
-
-//                Data = newData.ToArray();
-//            }
-//        }
-//        private int ListUnknown5Start => Data.Count() - NumRaw * 0x04;
-
-//        [Category("Animation Table")]
-//        public int[] Entries_Unknown
-//        {
-//            get
-//            {
-//                List<int> entries = new List<int>();
-
-//                for (int i = ListUnknown5Start; i < Data.Length; i += 4)
-//                    entries.Add(ReadInt(i));
-
-//                return entries.ToArray();
-//            }
-//            set
-//            {
-//                List<byte> newData = Data.Take(ListUnknown5Start).ToList();
-
-//                foreach (int i in value)
-//                    newData.AddRange(BitConverter.GetBytes(Switch(i)));
+                writer.Write(Animations.Length);
+                writer.Write(AnimationFiles.Length);
+                writer.Write(AnimationStates.Length);
+                writer.Write(ConstructFunc_Hash);
                 
-//                Data = newData.ToArray();
-//            }
-//        }
-//    }
-//}
+                foreach (var anim in Animations)
+                    writer.Write(anim);
+
+                var filesStartPos = writer.BaseStream.Position;
+
+                writer.BaseStream.Position += 32 * AnimationFiles.Length + (game == Game.Scooby ? 20 : 28) * AnimationStates.Length;
+
+                for (int i = 0; i < AnimationStates.Length; i++)
+                {
+                    AnimationStates[i].EffectOffset = (int)writer.BaseStream.Position;
+                    foreach (var j in AnimationStates[i].AnimationEffects)
+                        j.Serialize(writer);
+                }
+
+                for (int i = 0; i < AnimationFiles.Length; i++)
+                {
+                    AnimationFiles[i].RawDataOffset = (int)writer.BaseStream.Position;
+
+                    foreach (var j in AnimationFiles[i].RawData)
+                        writer.Write(j);
+                }
+
+                writer.BaseStream.Position = filesStartPos;
+                
+                foreach (var animFile in AnimationFiles)
+                    animFile.Serialize(writer);
+
+                foreach (var animState in AnimationStates)
+                    animState.Serialize(writer, game);
+
+                return writer.ToArray();
+            }
+        }
+
+        public override bool HasReference(uint assetID)
+        {
+            foreach (var a in Animations)
+                if (a == assetID)
+                    return true;
+
+            foreach (var a in AnimationStates)
+                if (a.StateID == assetID)
+                    return true;
+
+            return false;
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            foreach (var a in Animations)
+            {
+                if (a == 0)
+                    result.Add("ATBL entry with animation asset ID set to 0");
+                Verify(a, ref result);
+            }
+        }
+    }
+}

@@ -11,12 +11,12 @@ namespace IndustrialPark
         [Category(categoryName)]
         public byte[] Data { get; set; }
 
-        public AssetGeneric(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetGeneric(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
             Data = AHDR.data;
         }
 
-        public override byte[] Serialize(Game game, Platform platform) => Data;
+        public override byte[] Serialize(Game game, Endianness endianness) => Data;
 
         public override bool HasReference(uint assetID)
         {
@@ -33,14 +33,14 @@ namespace IndustrialPark
             get
             {
                 var values = new List<AssetID>();
-                var reader = new EndianBinaryReader(Data, platform);
+                var reader = new EndianBinaryReader(Data, endianness);
                 while (!reader.EndOfStream)
                     values.Add(reader.ReadUInt32());
                 return values.ToArray();
             }
             set
             {
-                var writer = new EndianBinaryWriter(platform);
+                var writer = new EndianBinaryWriter(endianness);
                 foreach (var f in value)
                     writer.Write(f);
                 Data = writer.ToArray();
@@ -53,14 +53,14 @@ namespace IndustrialPark
             get
             {
                 var values = new List<AssetSingle>();
-                var reader = new EndianBinaryReader(Data, platform);
+                var reader = new EndianBinaryReader(Data, endianness);
                 while (!reader.EndOfStream)
                     values.Add(reader.ReadSingle());
                 return values.ToArray();
             }
             set
             {
-                var writer = new EndianBinaryWriter(platform);
+                var writer = new EndianBinaryWriter(endianness);
                 foreach (var f in value)
                     writer.Write(f);
                 Data = writer.ToArray();

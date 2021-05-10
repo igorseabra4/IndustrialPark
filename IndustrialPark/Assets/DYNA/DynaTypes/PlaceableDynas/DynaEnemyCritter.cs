@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -14,7 +15,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "Enemy:SB:Critter";
 
-        protected override int constVersion => 2;
+        protected override short constVersion => 2;
 
         [Category(dynaCategoryName)]
         public EnemyCritterType CritterType
@@ -27,19 +28,30 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID Unknown54 { get; set; }
 
-        public DynaEnemyCritter(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.Enemy__SB__Critter, game, platform)
+        public DynaEnemyCritter(string assetName, AssetTemplate template, Vector3 position, uint mvptAssetID) : base(assetName, DynaType.Enemy__SB__Critter, 2, position)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            BaseFlags.FlagValueShort = 0x0D;
+
+            CritterType =
+            template == AssetTemplate.Jelly_Critter ? EnemyCritterType.jellyfish_v1_bind :
+            template == AssetTemplate.Jelly_Bucket ? EnemyCritterType.jellybucket_v1_bind : 0;
+
+            MVPT_AssetID = mvptAssetID;
+        }
+        
+        public DynaEnemyCritter(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__Critter, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = entityDynaEndPosition;
 
             MVPT_AssetID = reader.ReadUInt32();
             Unknown54 = reader.ReadUInt32();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeEntityDyna(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeEntityDyna(endianness));
             writer.Write(MVPT_AssetID);
             writer.Write(Unknown54);
             return writer.ToArray();

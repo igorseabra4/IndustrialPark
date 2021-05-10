@@ -169,7 +169,7 @@ namespace IndustrialPark
                     break;
             }
 
-            result = new HipFile(game, platform, HIPA, PACK, DICT, STRM);
+            result = new HipFile(HIPA, PACK, DICT, STRM);
 
             Close();
         }

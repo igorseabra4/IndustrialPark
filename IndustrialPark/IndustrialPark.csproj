@@ -136,6 +136,8 @@
       <DependentUpon>MaterialEffectEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="ArchiveEditor\Gizmos\BoxTrigPositionGizmo.cs" />
+    <Compile Include="Assets\Binary\AssetONEL.cs" />
+    <Compile Include="Assets\Shared\DataTypes\WireVector.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\RenderableRotatableDynaBase.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\RenderableDynaBase.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\UIDynas\DynaUITextUserString.cs" />
@@ -145,6 +147,7 @@
     <Compile Include="Assets\DYNA\DynaTypes\UIDynas\DynaUIController.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\UIDynas\DynaUIBox.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\UIDynas\DynaUI.cs" />
+    <Compile Include="Assets\ObjectAssets\AssetDTRK.cs" />
     <Compile Include="Assets\ObjectAssets\AssetPGRS.cs" />
     <Compile Include="Assets\Shared\AssetGenericBase.cs" />
     <Compile Include="Assets\Shared\AssetWithData.cs" />
@@ -269,7 +272,6 @@
     <Compile Include="Assets\ObjectAssets\AssetSGRP.cs" />
     <Compile Include="Assets\ObjectAssets\AssetSURF.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectTaskBox.cs" />
-    <Compile Include="Assets\DYNA\DynaType.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaEffectScreenFade.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\DynaEnemyCritter.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\DynaEnemySB.cs" />
@@ -696,6 +698,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\AboutImage3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ArrowDefault.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Scripts\readme.txt">

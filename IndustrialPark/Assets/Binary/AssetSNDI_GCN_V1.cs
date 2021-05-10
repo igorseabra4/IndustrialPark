@@ -57,7 +57,14 @@ namespace IndustrialPark
         [Category(categoryName)]
         public EntrySoundInfo_GCN_V1[] Entries_Sound_CIN { get; set; }
 
-        public AssetSNDI_GCN_V1(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetSNDI_GCN_V1(string assetName) : base(assetName, AssetType.SNDI)
+        {
+            Entries_SND = new EntrySoundInfo_GCN_V1[0];
+            Entries_SNDS = new EntrySoundInfo_GCN_V1[0];
+            Entries_Sound_CIN = new EntrySoundInfo_GCN_V1[0];
+        }
+
+        public AssetSNDI_GCN_V1(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
             var reader = new EndianBinaryReader(AHDR.data, Platform.GameCube);
 
@@ -84,9 +91,9 @@ namespace IndustrialPark
                 Entries_Sound_CIN = new EntrySoundInfo_GCN_V1[0];
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(Entries_SND.Length);
             writer.Write(0xCDCDCDCD);
@@ -214,7 +221,7 @@ namespace IndustrialPark
             {
                 // SND
                 var entries = Entries_SND.ToList();
-                var assetIDsAlreadyPresent = (from entry in entries select entry.SoundAssetID).Cast<uint>();
+                var assetIDsAlreadyPresent = (from entry in entries select (uint)entry.SoundAssetID).ToList();
 
                 foreach (var entry in assetSNDI.Entries_SND)
                     if (!assetIDsAlreadyPresent.Contains(entry.SoundAssetID))
@@ -225,7 +232,7 @@ namespace IndustrialPark
             {
                 // SNDS
                 var entries = Entries_SNDS.ToList();
-                var assetIDsAlreadyPresent = (from entry in entries select entry.SoundAssetID).Cast<uint>();
+                var assetIDsAlreadyPresent = (from entry in entries select (uint)entry.SoundAssetID).ToList();
 
                 foreach (var entry in assetSNDI.Entries_SNDS)
                     if (!assetIDsAlreadyPresent.Contains(entry.SoundAssetID))
@@ -236,7 +243,7 @@ namespace IndustrialPark
             {
                 // Sound_CIN
                 var entries = Entries_Sound_CIN.ToList();
-                var assetIDsAlreadyPresent = (from entry in entries select entry.SoundAssetID).Cast<uint>();
+                var assetIDsAlreadyPresent = (from entry in entries select (uint)entry.SoundAssetID).ToList();
 
                 foreach (var entry in assetSNDI.Entries_Sound_CIN)
                     if (!assetIDsAlreadyPresent.Contains(entry.SoundAssetID))

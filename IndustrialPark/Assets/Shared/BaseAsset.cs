@@ -52,9 +52,9 @@ namespace IndustrialPark
             _links = new Link[0];
         }
 
-        public BaseAsset(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public BaseAsset(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = 0x4;
 
             BaseAssetType = (BaseAssetType)reader.ReadByte();
@@ -79,9 +79,9 @@ namespace IndustrialPark
             _links = new Link[0];
         }
 
-        protected byte[] SerializeBase(Platform platform)
+        protected byte[] SerializeBase(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(assetID);
             writer.Write((byte)BaseAssetType);
@@ -91,12 +91,12 @@ namespace IndustrialPark
             return writer.ToArray();
         }
 
-        public byte[] SerializeLinks(Platform platform)
+        public byte[] SerializeLinks(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             foreach(var l in _links)
-                writer.Write(l.Serialize(LinkType.Normal, platform));
+                writer.Write(l.Serialize(LinkType.Normal, endianness));
 
             return writer.ToArray();
         }

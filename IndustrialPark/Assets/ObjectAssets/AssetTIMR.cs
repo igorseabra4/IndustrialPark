@@ -12,9 +12,14 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle RandomRange { get; set; }
 
-        public AssetTIMR(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetTIMR(string assetName) : base(assetName, AssetType.TIMR, BaseAssetType.Timer)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            Time = 1;
+        }
+
+        public AssetTIMR(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = baseHeaderEndPosition;
 
             Time = reader.ReadSingle();
@@ -23,17 +28,17 @@ namespace IndustrialPark
                 RandomRange = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeBase(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeBase(endianness));
 
             writer.Write(Time);
 
             if (game != Game.Scooby)
                 writer.Write(RandomRange);
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
 
             return writer.ToArray();
         }

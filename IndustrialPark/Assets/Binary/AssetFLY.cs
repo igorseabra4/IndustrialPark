@@ -62,7 +62,12 @@ namespace IndustrialPark
         [Category("Flythrough")]
         public EntryFLY[] FLY_Entries { get; set; }
 
-        public AssetFLY(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetFLY(string assetName) : base(assetName, AssetType.FLY)
+        {
+            FLY_Entries = new EntryFLY[0];
+        }
+
+        public AssetFLY(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
             List<EntryFLY> entries = new List<EntryFLY>();
 
@@ -73,7 +78,7 @@ namespace IndustrialPark
             FLY_Entries = entries.ToArray();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
             List<byte> newData = new List<byte>();
 

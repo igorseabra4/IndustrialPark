@@ -48,9 +48,9 @@ namespace IndustrialPark
             reader.ReadByte();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(Texture_AssetID);
             writer.Write(Color);
@@ -78,7 +78,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "ui:box";
 
-        protected override int constVersion => 2;
+        protected override short constVersion => 2;
 
         private UIBoxPart[] _parts { get; set; }
         [Category(dynaCategoryName), Description("UI Box must have exactly 9 parts")]
@@ -115,9 +115,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public byte forceAlphaWrite { get; set; }
 
-        public DynaUIBox(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.ui__box, game, platform)
+        public DynaUIBox(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.ui__box, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaUIEnd;
 
             _parts = new UIBoxPart[9];
@@ -140,13 +140,13 @@ namespace IndustrialPark
             reader.ReadByte();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeDynaUI(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeDynaUI(endianness));
 
             foreach (var p in _parts)
-                writer.Write(p.Serialize(game, platform));
+                writer.Write(p.Serialize(game, endianness));
 
             writer.Write(borderWidth);
             writer.Write(borderHeight);

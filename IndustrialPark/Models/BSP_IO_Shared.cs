@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace IndustrialPark.Models
+﻿namespace IndustrialPark.Models
 {
     public static class BSP_IO_Shared
     {
@@ -14,13 +8,13 @@ namespace IndustrialPark.Models
 
         public static int modelRenderWareVersion(HipHopFile.Game game)
         {
-                if (game == HipHopFile.Game.Scooby)
-                    return scoobyRenderWareVersion;
-                if (game == HipHopFile.Game.BFBB)
-                    return bfbbRenderWareVersion;
-                if (game == HipHopFile.Game.Incredibles)
-                    return tssmRenderWareVersion;
-                return 0;
+            if (game == HipHopFile.Game.Scooby)
+                return scoobyRenderWareVersion;
+            if (game == HipHopFile.Game.BFBB)
+                return bfbbRenderWareVersion;
+            if (game == HipHopFile.Game.Incredibles)
+                return tssmRenderWareVersion;
+            return 0;
         }
     }
 }

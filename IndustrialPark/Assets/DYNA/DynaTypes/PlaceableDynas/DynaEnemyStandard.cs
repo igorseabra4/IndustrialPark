@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -34,7 +35,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "Enemy:SB:Standard";
 
-        protected override int constVersion => 2;
+        protected override short constVersion => 7;
 
         [Category(dynaCategoryName)]
         public EnemyStandardType EnemyType
@@ -61,9 +62,39 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID Unknown68 { get; set; }
 
-        public DynaEnemyStandard(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.Enemy__SB__Standard, game, platform)
+        public DynaEnemyStandard(string assetName, AssetTemplate template, Vector3 position, uint mvptAssetID) : base(assetName, DynaType.Enemy__SB__Standard, 7, position)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            switch (template)
+            {
+                case AssetTemplate.Fogger_GoofyGoober: EnemyType = EnemyStandardType.fogger_gg_bind; break;
+                case AssetTemplate.Fogger_Desert: EnemyType = EnemyStandardType.fogger_de_bind; break;
+                case AssetTemplate.Fogger_ThugTug: EnemyType = EnemyStandardType.fogger_tt_bind; break;
+                case AssetTemplate.Fogger_Trench: EnemyType = EnemyStandardType.fogger_tr_bind; break;
+                case AssetTemplate.Fogger_Junkyard: EnemyType = EnemyStandardType.fogger_jk_bind; break;
+                case AssetTemplate.Fogger_Planktopolis: EnemyType = EnemyStandardType.fogger_pt_bind; break;
+                case AssetTemplate.Fogger_v1: EnemyType = EnemyStandardType.fogger_v1_bind; break;
+                case AssetTemplate.Fogger_v2: EnemyType = EnemyStandardType.fogger_v2_bind; break;
+                case AssetTemplate.Fogger_v3: EnemyType = EnemyStandardType.fogger_v3_bind; break;
+                case AssetTemplate.Slammer_GoofyGoober: EnemyType = EnemyStandardType.slammer_v1_bind; break;
+                case AssetTemplate.Slammer_Desert: EnemyType = EnemyStandardType.slammer_des_bind; break;
+                case AssetTemplate.Slammer_ThugTug: EnemyType = EnemyStandardType.slammer_v3_bind; break;
+                case AssetTemplate.Spinner_ThugTug: EnemyType = EnemyStandardType.spinner_v1_bind; break;
+                case AssetTemplate.Spinner_Junkyard: EnemyType = EnemyStandardType.spinner_v2_bind; break;
+                case AssetTemplate.Spinner_Planktopolis: EnemyType = EnemyStandardType.spinner_v3_bind; break;
+                case AssetTemplate.Minimerv: EnemyType = EnemyStandardType.minimerv_v1_bind; break;
+                case AssetTemplate.Mervyn: EnemyType = EnemyStandardType.mervyn_v3_bind; break;
+                case AssetTemplate.Flinger_Desert: EnemyType = EnemyStandardType.flinger_v1_bind; break;
+                case AssetTemplate.Flinger_Trench: EnemyType = EnemyStandardType.flinger_v2_bind; break;
+                case AssetTemplate.Flinger_Junkyard: EnemyType = EnemyStandardType.flinger_v3_bind; break;
+                case AssetTemplate.Popper_Trench: EnemyType = EnemyStandardType.popper_v1_bind; break;
+                case AssetTemplate.Popper_Planktopolis: EnemyType = EnemyStandardType.popper_v3_bind; break;
+            }
+            MVPT_AssetID = mvptAssetID;
+        }
+
+        public DynaEnemyStandard(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__Standard, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = entityDynaEndPosition;
 
             MVPT_AssetID = reader.ReadUInt32();
@@ -75,10 +106,10 @@ namespace IndustrialPark
             Unknown68 = reader.ReadUInt32();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeEntityDyna(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeEntityDyna(endianness));
 
             writer.Write(MVPT_AssetID);
             writer.Write(MVPT_Group_AssetID);

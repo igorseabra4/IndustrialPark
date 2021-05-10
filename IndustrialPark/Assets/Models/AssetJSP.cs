@@ -13,13 +13,13 @@ namespace IndustrialPark
 
         public AssetJSP(string assetName, AssetType assetType, byte[] data, SharpRenderer renderer) : base(assetName, assetType, data, renderer) { }
 
-        public AssetJSP(Section_AHDR AHDR, Game game, Platform platform, SharpRenderer renderer) : base(AHDR, game, platform, renderer) { }
+        public AssetJSP(Section_AHDR AHDR, Game game, Endianness endianness, SharpRenderer renderer) : base(AHDR, game, endianness, renderer) { }
 
         public override void Setup(SharpRenderer renderer)
         {
             base.Setup(renderer);
             CreateTransformMatrix();
-            ArchiveEditorFunctions.renderableJSPs.Add(this);
+            ArchiveEditorFunctions.AddToRenderableJSPs(this);
         }
 
         public void CreateTransformMatrix() => boundingBox = BoundingBox.FromPoints(model.vertexListG.ToArray());

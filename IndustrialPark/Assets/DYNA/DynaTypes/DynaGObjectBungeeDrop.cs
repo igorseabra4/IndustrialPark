@@ -8,7 +8,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "game_object:bungee_drop";
 
-        protected override int constVersion => 1;
+        protected override short constVersion => 1;
 
         [Category(dynaCategoryName)]
         public AssetID MRKR_ID { get; set; }
@@ -17,9 +17,15 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle ViewAngle { get; set; }
 
-        public DynaGObjectBungeeDrop(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.game_object__bungee_drop, game, platform)
+        public DynaGObjectBungeeDrop(string assetName, uint mrkrAssetId) : base(assetName, DynaType.game_object__bungee_drop, 1)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            MRKR_ID = mrkrAssetId;
+            SetViewAngle = 1;
+        }
+
+        public DynaGObjectBungeeDrop(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__bungee_drop, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             MRKR_ID = reader.ReadUInt32();
@@ -27,9 +33,9 @@ namespace IndustrialPark
             ViewAngle = reader.ReadSingle();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(MRKR_ID);
             writer.Write(SetViewAngle);

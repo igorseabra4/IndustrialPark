@@ -15,17 +15,23 @@ namespace IndustrialPark
         public short Handle { get; set; }
         [Category(categoryName)]
         public virtual string Note => $"Version is {(constVersion == -1 ? "unknown" : $"always {constVersion}")}";
-        protected virtual int constVersion => -1;
+        protected virtual short constVersion => -1;
 
-        public override string AssetInfo => Type.ToString();
+        public override string AssetInfo => Type.ToString() + " " + base.AssetInfo;
 
         protected int dynaDataStartPosition => baseHeaderEndPosition + 8;
 
         public static bool dontRender = false;
 
-        public AssetDYNA(Section_AHDR AHDR, DynaType type, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetDYNA(string assetName, DynaType type, short version) : base(assetName, AssetType.DYNA, BaseAssetType._DYNA_DSCO_TPIK_TRWT_RANM_SUBT)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            Type = type;
+            Version = version;
+        }
+
+        public AssetDYNA(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = baseHeaderEndPosition + 4;
 
             Type = type;
@@ -33,20 +39,20 @@ namespace IndustrialPark
             Handle = reader.ReadInt16();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
-            writer.Write(SerializeBase(platform));
+            writer.Write(SerializeBase(endianness));
             writer.Write((uint)Type);
             writer.Write(Version);
             writer.Write(Handle);
-            writer.Write(SerializeDyna(game, platform));
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeDyna(game, endianness));
+            writer.Write(SerializeLinks(endianness));
 
             return writer.ToArray();
         }
 
-        protected abstract byte[] SerializeDyna(Game game, Platform platform);
+        protected abstract byte[] SerializeDyna(Game game, Endianness endianness);
     }
 }

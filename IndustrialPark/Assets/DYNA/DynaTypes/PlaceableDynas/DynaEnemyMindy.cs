@@ -15,7 +15,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "Enemy:SB:Mindy";
 
-        protected override int constVersion => 3;
+        protected override short constVersion => 3;
 
         [Category(dynaCategoryName)]
         public EnemyMindyType MindyType
@@ -36,9 +36,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID TaskBox2_AssetID { get; set; }
 
-        public DynaEnemyMindy(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.Enemy__SB__Mindy, game, platform)
+        public DynaEnemyMindy(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__Mindy, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = entityDynaEndPosition;
 
             TaskBox1_AssetID = reader.ReadUInt32();
@@ -49,10 +49,10 @@ namespace IndustrialPark
             TaskBox2_AssetID = reader.ReadUInt32();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeEntityDyna(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeEntityDyna(endianness));
 
             writer.Write(TaskBox1_AssetID);
             writer.Write(UnknownFloat54);

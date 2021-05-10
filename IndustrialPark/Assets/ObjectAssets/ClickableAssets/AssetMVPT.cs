@@ -60,9 +60,36 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID[] NextMVPTs { get; set; }
 
-        public AssetMVPT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetMVPT(string assetName, Vector3 position, Game game, AssetTemplate template) : base(assetName, AssetType.MVPT, BaseAssetType.MovePoint)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            _position = position;
+            Wt = 0x2710;
+            BezIndex = 0x00;
+            NextMVPTs = new AssetID[0];
+
+            switch (template)
+            {
+                case AssetTemplate.Area_MVPT:
+                    IsZone = 0x00;
+                    Delay = 360;
+                    ZoneRadius = 4;
+                    ArenaRadius = 8;
+                    break;
+                case AssetTemplate.Point_MVPT:
+                    IsZone = 0x01;
+                    Delay = game == Game.Incredibles ? 2 : 0;
+                    ZoneRadius = -1;
+                    ArenaRadius = -1;
+                    break;
+            }
+
+            CreateTransformMatrix();
+            ArchiveEditorFunctions.AddToRenderableAssets(this);
+        }
+
+        public AssetMVPT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = baseHeaderEndPosition;
 
             _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
@@ -84,13 +111,13 @@ namespace IndustrialPark
                 NextMVPTs[i] = reader.ReadUInt32();
 
             CreateTransformMatrix();
-            ArchiveEditorFunctions.renderableAssets.Add(this);
+            ArchiveEditorFunctions.AddToRenderableAssets(this);
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
-            writer.Write(SerializeBase(platform));
+            var writer = new EndianBinaryWriter(endianness);
+            writer.Write(SerializeBase(endianness));
 
             writer.Write(_position.X);
             writer.Write(_position.Y);
@@ -109,7 +136,7 @@ namespace IndustrialPark
             foreach (var i in NextMVPTs)
                 writer.Write(i);
 
-            writer.Write(SerializeLinks(platform));
+            writer.Write(SerializeLinks(endianness));
             return writer.ToArray();
         }
 

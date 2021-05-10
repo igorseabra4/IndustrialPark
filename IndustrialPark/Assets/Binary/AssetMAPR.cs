@@ -25,9 +25,14 @@ namespace IndustrialPark
         [Category("Surface Map")]
         public EntryMAPR[] MAPR_Entries { get; set; }
 
-        public AssetMAPR(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetMAPR(string assetName) : base(assetName, AssetType.MAPR)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            MAPR_Entries = new EntryMAPR[0];
+        }
+
+        public AssetMAPR(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             
             reader.ReadInt32();
             int maprCount = reader.ReadInt32();
@@ -41,9 +46,9 @@ namespace IndustrialPark
                 };
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(assetID);
             writer.Write(MAPR_Entries.Length);

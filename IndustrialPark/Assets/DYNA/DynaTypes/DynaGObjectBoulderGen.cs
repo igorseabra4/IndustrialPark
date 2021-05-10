@@ -8,7 +8,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "game_object:BoulderGenerator";
 
-        protected override int constVersion => 1;
+        protected override short constVersion => 1;
 
         [Category(dynaCategoryName)]
         public AssetID ObjectAssetID { get; set; }
@@ -39,9 +39,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle AngVel { get; set; }
 
-        public DynaGObjectBoulderGen(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.game_object__BoulderGenerator, game, platform)
+        public DynaGObjectBoulderGen(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__BoulderGenerator, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             ObjectAssetID = reader.ReadUInt32();
@@ -60,9 +60,9 @@ namespace IndustrialPark
             AngVel = reader.ReadSingle();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
             
             writer.Write(ObjectAssetID);
             writer.Write(OffsetX);

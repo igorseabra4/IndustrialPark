@@ -28,18 +28,24 @@ namespace IndustrialPark
             set { _position.Z = value; CreateTransformMatrix(); }
         }
 
-        public AssetMRKR(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetMRKR(string assetName, Vector3 position) : base(assetName, AssetType.MRKR)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
-
-            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            _position = position;
             CreateTransformMatrix();
-            ArchiveEditorFunctions.renderableAssets.Add(this);
+            ArchiveEditorFunctions.AddToRenderableAssets(this);
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public AssetMRKR(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
+            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            CreateTransformMatrix();
+            ArchiveEditorFunctions.AddToRenderableAssets(this);
+        }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            var writer = new EndianBinaryWriter(endianness);
             writer.Write(_position.X);
             writer.Write(_position.Y);
             writer.Write(_position.Z);

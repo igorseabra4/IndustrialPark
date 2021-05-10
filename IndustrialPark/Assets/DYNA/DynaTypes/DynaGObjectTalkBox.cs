@@ -8,7 +8,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "game_object:talk_box";
 
-        protected override int constVersion => 11;
+        protected override short constVersion => 11;
 
         [Category(dynaCategoryName)]
         public AssetID Dialog_TextBoxID { get; set; }
@@ -57,9 +57,19 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID PromptYesNoTextID { get; set; }
 
-        public DynaGObjectTalkBox(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.game_object__talk_box, game, platform)
+        public DynaGObjectTalkBox(string assetName, bool checkpointTalkbox) : base(assetName, DynaType.game_object__talk_box, 11)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            if (checkpointTalkbox)
+            {
+                Dialog_TextBoxID = 0x9BC49154;
+                AutoWaitTypeTime = 1;
+                AutoWaitDelay = 2f;
+            }
+        }
+
+        public DynaGObjectTalkBox(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__talk_box, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
 
             Dialog_TextBoxID = reader.ReadUInt32();
@@ -87,9 +97,9 @@ namespace IndustrialPark
             PromptYesNoTextID = reader.ReadUInt32();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(Dialog_TextBoxID);
             writer.Write(Prompt_TextBoxID);

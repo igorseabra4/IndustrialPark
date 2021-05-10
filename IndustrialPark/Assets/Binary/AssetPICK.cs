@@ -35,9 +35,9 @@ namespace IndustrialPark
             AnimAssetID = reader.ReadUInt32();
         }
 
-        public byte[] Serialize(Platform platform)
+        public byte[] Serialize(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
             writer.Write(PickupHash);
             writer.Write(PickupType);
@@ -70,9 +70,9 @@ namespace IndustrialPark
             }
         }
 
-        public AssetPICK(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetPICK(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
 
             reader.ReadInt32();
 
@@ -84,17 +84,16 @@ namespace IndustrialPark
             UpdateDictionary();
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
 
-            var chars = new char[] { 'P', 'I', 'C', 'K' };
-            writer.Write(writer.endianness == Endianness.Little ? chars : chars.Reverse().ToArray());
+            writer.WriteMagic("PICK");
 
             writer.Write(_pick_Entries.Length);
 
             foreach (var l in _pick_Entries)
-                writer.Write(l.Serialize(platform));
+                writer.Write(l.Serialize(endianness));
 
             return writer.ToArray();
         }

@@ -6,21 +6,21 @@ namespace IndustrialPark
 {
     public class DynaGObjectFlythrough : AssetDYNA
     {
-        protected override int constVersion => 1;
+        protected override short constVersion => 1;
 
         [Category("game_object:Flythrough")]
         public AssetID FLY_ID { get; set; }
 
-        public DynaGObjectFlythrough(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, DynaType.game_object__Flythrough, game, platform)
+        public DynaGObjectFlythrough(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__Flythrough, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, platform);
+            var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = dynaDataStartPosition;
             FLY_ID = reader.ReadUInt32();
         }
 
-        protected override byte[] SerializeDyna(Game game, Platform platform)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
             writer.Write(FLY_ID);
             return writer.ToArray();
         }

@@ -29,34 +29,40 @@ namespace IndustrialPark
                 SharpRenderer.planeTriangles = new List<Models.Triangle>();
                 SharpRenderer.torusTriangles = new List<Models.Triangle>();
                 HexUIntTypeConverter.Legacy = true;
-                return new ArchiveEditor(null, Platform.Unknown, true);
+                var ae = new ArchiveEditor(true);
+                ae.Begin(null, Platform.Unknown);
+                return ae;
             }
         }
 
         public ArchiveEditorFunctions archive;
         
-        public ArchiveEditor(string filePath, Platform scoobyPlatform, bool standalone = false)
+        public ArchiveEditor(bool standalone = false)
         {
             InitializeComponent();
             TopMost = true;
+
             this.standalone = standalone;
 
+            defaultColor = textBoxFindAsset.BackColor;
+            if (standalone)
+                checkBoxTemplateFocus.Enabled = false;
+
+            ArchiveEditorFunctions.PopulateTemplateMenusAt(addTemplateToolStripMenuItem, TemplateToolStripMenuItem_Click);
+        }
+
+        public void Begin(string filePath, Platform scoobyPlatform)
+        {
             archive = new ArchiveEditorFunctions
             {
                 standalone = standalone
             };
-            defaultColor = textBoxFindAsset.BackColor;
 
             textBoxFindAsset.AutoCompleteSource = AutoCompleteSource.CustomSource;
             archive.SetTextboxForAutocomplete(textBoxFindAsset);
 
             if (!string.IsNullOrWhiteSpace(filePath))
                 OpenFile(filePath, scoobyPlatform);
-
-            ArchiveEditorFunctions.PopulateTemplateMenusAt(addTemplateToolStripMenuItem, TemplateToolStripMenuItem_Click);
-            listViewAssets_SizeChanged(null, null);
-            if (standalone)
-                checkBoxTemplateFocus.Enabled = false;
         }
 
         private readonly bool standalone = false;
@@ -85,6 +91,7 @@ namespace IndustrialPark
 
             if (archive.New())
             {
+                archive.autoCompleteSource.Clear();
                 EnableToolStripMenuItems();
 
                 PopulateLayerTypeComboBox();
@@ -116,12 +123,21 @@ namespace IndustrialPark
 
         private void OpenFile(string fileName, Platform scoobyPlatform = Platform.Unknown)
         {
-            archive.OpenFile(fileName, true, scoobyPlatform);
+            archive.autoCompleteSource.Clear();
+            new Thread(() => {
+                archive.OpenFile(fileName, true, scoobyPlatform, out string[] autoComplete);
+                Invoke(new Action(() =>
+                {
+                    archive.autoCompleteSource.AddRange(autoComplete.ToArray());
+                    OpenFileDone(fileName);
+                }));
+            }).Start();
+        }
 
+        private void OpenFileDone(string fileName)
+        {
             toolStripStatusLabelCurrentFilename.Text = "File: " + fileName;
             Text = Path.GetFileName(fileName);
-            if (!standalone)
-                Program.MainForm.SetToolStripItemName(this, Text);
             archive.UnsavedChanges = false;
 
             EnableToolStripMenuItems();
@@ -129,6 +145,12 @@ namespace IndustrialPark
             PopulateLayerTypeComboBox();
             PopulateLayerComboBox();
             PopulateAssetList();
+
+            if (!standalone)
+            {
+                Program.MainForm.SetToolStripItemName(this, Text);
+                Show();
+            }
         }
 
         private void EnableToolStripMenuItems()
@@ -216,6 +238,7 @@ namespace IndustrialPark
                 if (!verifyResult.IsDisposed)
                     verifyResult.Close();
 
+            archive.autoCompleteSource.Clear();
             archive.Dispose();
 
             if (!standalone)
@@ -468,11 +491,6 @@ namespace IndustrialPark
             archive.GetFromAssetID(GetAssetIDFromName(listViewAssets.Items[e.Index])).isInvisible = e.NewValue != CheckState.Checked;
         }
 
-        private void listViewAssets_SizeChanged(object sender, EventArgs e)
-        {
-            //columnHeader1.Width = listViewAssets.Width - 28;
-        }
-
         private class AssetListViewSorter : System.Collections.IComparer
         {
             public int Column { get; set; }
@@ -667,7 +685,10 @@ namespace IndustrialPark
             try
             {
                 uint oldAssetID = CurrentlySelectedAssetIDs()[0];
-                Section_AHDR AHDR = AssetHeader.GetAsset(archive.GetFromAssetID(oldAssetID).BuildAHDR());
+
+                var asset = archive.GetFromAssetID(oldAssetID);
+
+                Section_AHDR AHDR = AssetHeader.GetAsset(asset.BuildAHDR());
 
                 if (AHDR != null)
                 {
@@ -678,7 +699,7 @@ namespace IndustrialPark
                     while (archive.ContainsAsset(AHDR.assetID))
                         MessageBox.Show($"Archive already contains asset id [{AHDR.assetID:X8}]. Will change it to [{++AHDR.assetID:X8}].");
                     
-                    archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR, true);
+                    archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR, asset.game, asset.endianness, true);
                     
                     SetSelectedIndices(new List<uint>() { AHDR.assetID }, true);
                 }
@@ -725,7 +746,7 @@ namespace IndustrialPark
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                     try
                     {
-                        var AHDR = archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]).BuildAHDR();
+                        var AHDR = archive.GetAHDRFromAssetID(CurrentlySelectedAssetIDs()[0]);
                         File.WriteAllBytes(saveFileDialog.FileName, AHDR.data);
                     }
                     catch (Exception ex)
@@ -743,7 +764,7 @@ namespace IndustrialPark
                     foreach (uint u in CurrentlySelectedAssetIDs())
                         try
                         {
-                            var AHDR = archive.GetFromAssetID(u).BuildAHDR();
+                            var AHDR = archive.GetAHDRFromAssetID(u);
                             File.WriteAllBytes(saveFileDialog.FileName + "/" + AHDR.ADBG.assetName, AHDR.data);
                         }
                         catch (Exception ex)
@@ -1209,9 +1230,9 @@ namespace IndustrialPark
                     try
                     {
                         string extension =
-                            (asset.platform == Platform.GameCube && asset.game != Game.Incredibles) ? ".DSP" :
-                            (asset.platform == Platform.Xbox) ? ".WAV" :
-                            (asset.platform == Platform.PS2) ? ".VAG" :
+                            (archive.platform == Platform.GameCube && asset.game != Game.Incredibles) ? ".DSP" :
+                            (archive.platform == Platform.Xbox) ? ".WAV" :
+                            (archive.platform == Platform.PS2) ? ".VAG" :
                             "";
 
                         string filename = (extension != "" && asset.assetName.ToLower().Contains(extension.ToLower())) ?

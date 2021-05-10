@@ -46,9 +46,14 @@ namespace IndustrialPark
         [Category("Jaw Data")]
         public EntryJAW[] JAW_Entries { get; set; }
 
-        public AssetJAW(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        public AssetJAW(string assetName) : base(assetName, AssetType.JAW)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, platform))
+            JAW_Entries = new EntryJAW[0];
+        }
+
+        public AssetJAW(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
                 JAW_Entries = new EntryJAW[reader.ReadInt32()];
 
@@ -68,9 +73,9 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Platform platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(platform);
+            var writer = new EndianBinaryWriter(endianness);
             List<byte> newJawData = new List<byte>();
 
             writer.Write(JAW_Entries.Length);
