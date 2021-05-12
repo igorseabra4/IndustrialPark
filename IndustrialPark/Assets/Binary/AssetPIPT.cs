@@ -113,7 +113,7 @@ namespace IndustrialPark
                 }
             }
         }
-        
+
         [Category("PIPT Pipe Flags")]
         public BlendFactorType DestinationBlend
         {
@@ -204,7 +204,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("PIPT Entry (Movie only)")]
+        [Category("PIPT Entry (Incredibles only)")]
         public int Unknown { get; set; }
 
         public EntryPIPT()
@@ -215,7 +215,7 @@ namespace IndustrialPark
             UnknownFlagC = 4;
             UnknownFlagJ = 2;
         }
-        
+
         public override string ToString()
         {
             return $"{Program.MainForm.GetAssetNameFromID(ModelAssetID)} - {SubObjectBits}";
@@ -244,16 +244,17 @@ namespace IndustrialPark
 
         public byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(ModelAssetID);
+                writer.Write(SubObjectBits);
+                writer.Write(PipeFlags);
 
-            writer.Write(ModelAssetID);
-            writer.Write(SubObjectBits);
-            writer.Write(PipeFlags);
+                if (game == Game.Incredibles)
+                    writer.Write(Unknown);
 
-            if (game == Game.Incredibles)
-                writer.Write(Unknown);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
     }
 
@@ -278,26 +279,28 @@ namespace IndustrialPark
 
         public AssetPIPT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                _pipt_Entries = new EntryPIPT[reader.ReadInt32()];
 
-            _pipt_Entries = new EntryPIPT[reader.ReadInt32()];
+                for (int i = 0; i < _pipt_Entries.Length; i++)
+                    _pipt_Entries[i] = new EntryPIPT(reader, game);
 
-            for (int i = 0; i < _pipt_Entries.Length; i++)
-                _pipt_Entries[i] = new EntryPIPT(reader, game);
-
-            UpdateDictionary();
+                UpdateDictionary();
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(_pipt_Entries.Length);
 
-            writer.Write(_pipt_Entries.Length);
+                foreach (var l in _pipt_Entries)
+                    writer.Write(l.Serialize(game, endianness));
 
-            foreach (var l in _pipt_Entries)
-                writer.Write(l.Serialize(game, endianness));
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public AssetPIPT(Section_AHDR AHDR, Game game, Endianness endianness, OnPipeInfoTableEdited onPipeInfoTableEdited) : this(AHDR, game, endianness)

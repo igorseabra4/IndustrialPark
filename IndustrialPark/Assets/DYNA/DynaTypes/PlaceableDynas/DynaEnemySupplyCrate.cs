@@ -41,20 +41,23 @@ namespace IndustrialPark
 
         public DynaEnemySupplyCrate(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__SupplyCrate, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = entityDynaEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = entityDynaEndPosition;
 
-            MVPT_AssetID = reader.ReadUInt32();
+                MVPT_AssetID = reader.ReadUInt32();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntityDyna(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntityDyna(endianness));
+                writer.Write(MVPT_AssetID);
 
-            writer.Write(MVPT_AssetID);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)

@@ -32,33 +32,35 @@ namespace IndustrialPark
 
         public AssetMAPR(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            
-            reader.ReadInt32();
-            int maprCount = reader.ReadInt32();
-            MAPR_Entries = new EntryMAPR[maprCount];
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.ReadInt32();
+                int maprCount = reader.ReadInt32();
+                MAPR_Entries = new EntryMAPR[maprCount];
 
-            for (int i = 0; i < MAPR_Entries.Length; i++)
-                MAPR_Entries[i] = new EntryMAPR()
-                {
-                    AssetID_SURF = reader.ReadUInt32(),
-                    Unknown = reader.ReadUInt32()
-                };
+                for (int i = 0; i < MAPR_Entries.Length; i++)
+                    MAPR_Entries[i] = new EntryMAPR()
+                    {
+                        AssetID_SURF = reader.ReadUInt32(),
+                        Unknown = reader.ReadUInt32()
+                    };
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-
-            writer.Write(assetID);
-            writer.Write(MAPR_Entries.Length);
-            foreach (var entry in MAPR_Entries)
+            using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(entry.AssetID_SURF);
-                writer.Write(entry.Unknown);
-            }
+                writer.Write(assetID);
+                writer.Write(MAPR_Entries.Length);
+                foreach (var entry in MAPR_Entries)
+                {
+                    writer.Write(entry.AssetID_SURF);
+                    writer.Write(entry.Unknown);
+                }
 
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)

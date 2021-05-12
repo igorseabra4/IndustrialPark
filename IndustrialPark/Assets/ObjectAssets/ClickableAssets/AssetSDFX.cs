@@ -56,32 +56,34 @@ namespace IndustrialPark
 
         public AssetSDFX(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = baseHeaderEndPosition;
 
-            _soundGroup_AssetID = reader.ReadUInt32();
-            Emitter_AssetID = reader.ReadUInt32();
-            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            SoundEffectFlags.FlagValueInt = reader.ReadUInt32();
+                _soundGroup_AssetID = reader.ReadUInt32();
+                Emitter_AssetID = reader.ReadUInt32();
+                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                SoundEffectFlags.FlagValueInt = reader.ReadUInt32();
 
-            CreateTransformMatrix();
-            ArchiveEditorFunctions.AddToRenderableAssets(this);
+                CreateTransformMatrix();
+                ArchiveEditorFunctions.AddToRenderableAssets(this);
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeBase(endianness));
-
-            writer.Write(_soundGroup_AssetID);
-            writer.Write(Emitter_AssetID);
-            writer.Write(_position.X);
-            writer.Write(_position.Y);
-            writer.Write(_position.Z);
-            writer.Write(SoundEffectFlags.FlagValueInt);
-
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
+                writer.Write(_soundGroup_AssetID);
+                writer.Write(Emitter_AssetID);
+                writer.Write(_position.X);
+                writer.Write(_position.Y);
+                writer.Write(_position.Z);
+                writer.Write(SoundEffectFlags.FlagValueInt);
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
 
         private Matrix world;

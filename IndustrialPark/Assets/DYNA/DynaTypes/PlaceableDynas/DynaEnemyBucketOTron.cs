@@ -53,28 +53,31 @@ namespace IndustrialPark
 
         public DynaEnemyBucketOTron(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__BucketOTron, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = entityDynaEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = entityDynaEndPosition;
 
-            Group_AssetID = reader.ReadUInt32();
-            UnknownInt54 = reader.ReadInt32();
-            SpawnSpeed = reader.ReadSingle();
-            UnknownInt5C = reader.ReadInt32();
-            UnknownInt60 = reader.ReadInt32();
+                Group_AssetID = reader.ReadUInt32();
+                UnknownInt54 = reader.ReadInt32();
+                SpawnSpeed = reader.ReadSingle();
+                UnknownInt5C = reader.ReadInt32();
+                UnknownInt60 = reader.ReadInt32();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntityDyna(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntityDyna(endianness));
+                writer.Write(Group_AssetID);
+                writer.Write(UnknownInt54);
+                writer.Write(SpawnSpeed);
+                writer.Write(UnknownInt5C);
+                writer.Write(UnknownInt60);
 
-            writer.Write(Group_AssetID);
-            writer.Write(UnknownInt54);
-            writer.Write(SpawnSpeed);
-            writer.Write(UnknownInt5C);
-            writer.Write(UnknownInt60);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
                         
         public override bool HasReference(uint assetID)

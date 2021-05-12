@@ -17,22 +17,25 @@ namespace IndustrialPark
 
         public DynaHudText(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.hud__text, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaHudEnd;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaHudEnd;
 
-            TextBoxID = reader.ReadUInt32();
-            TextID = reader.ReadUInt32();
+                TextBoxID = reader.ReadUInt32();
+                TextID = reader.ReadUInt32();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeDynaHud(endianness));
+                writer.Write(TextBoxID);
+                writer.Write(TextID);
 
-            writer.Write(SerializeDynaHud(endianness));
-            writer.Write(TextBoxID);
-            writer.Write(TextID);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)

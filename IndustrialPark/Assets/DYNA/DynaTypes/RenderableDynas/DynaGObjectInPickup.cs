@@ -16,26 +16,29 @@ namespace IndustrialPark
 
         public DynaGObjectInPickup(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__IN_Pickup, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
 
-            PickupHash = reader.ReadUInt32();
-            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                PickupHash = reader.ReadUInt32();
+                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
 
-            CreateTransformMatrix();
-            AddToRenderableAssets(this);
+                CreateTransformMatrix();
+                AddToRenderableAssets(this);
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(PickupHash);
+                writer.Write(_position.X);
+                writer.Write(_position.Y);
+                writer.Write(_position.Z);
 
-            writer.Write(PickupHash);
-            writer.Write(_position.X);
-            writer.Write(_position.Y);
-            writer.Write(_position.Z);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => PickupHash == assetID;

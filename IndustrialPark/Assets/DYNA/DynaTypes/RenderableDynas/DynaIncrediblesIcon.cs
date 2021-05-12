@@ -20,34 +20,37 @@ namespace IndustrialPark
 
         public DynaIncrediblesIcon(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Incredibles__Icon, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
 
-            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            _yaw = reader.ReadSingle();
-            _pitch = reader.ReadSingle();
-            _roll = reader.ReadSingle();
-            UnknownFloat_18 = reader.ReadSingle();
-            UnknownInt_1C = reader.ReadInt32();
+                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                _yaw = reader.ReadSingle();
+                _pitch = reader.ReadSingle();
+                _roll = reader.ReadSingle();
+                UnknownFloat_18 = reader.ReadSingle();
+                UnknownInt_1C = reader.ReadInt32();
 
-            CreateTransformMatrix();
-            AddToRenderableAssets(this);
+                CreateTransformMatrix();
+                AddToRenderableAssets(this);
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(_position.X);
+                writer.Write(_position.Y);
+                writer.Write(_position.Z);
+                writer.Write(_yaw);
+                writer.Write(_pitch);
+                writer.Write(_roll);
+                writer.Write(UnknownFloat_18);
+                writer.Write(UnknownInt_1C);
 
-            writer.Write(_position.X);
-            writer.Write(_position.Y);
-            writer.Write(_position.Z);
-            writer.Write(_yaw);
-            writer.Write(_pitch);
-            writer.Write(_roll);
-            writer.Write(UnknownFloat_18);
-            writer.Write(UnknownInt_1C);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         protected override List<Vector3> vertexSource => SharpRenderer.cubeVertices;

@@ -25,23 +25,26 @@ namespace IndustrialPark
 
         public DynaGObjectBungeeDrop(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__bungee_drop, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
 
-            MRKR_ID = reader.ReadUInt32();
-            SetViewAngle = reader.ReadInt32();
-            ViewAngle = reader.ReadSingle();
+                MRKR_ID = reader.ReadUInt32();
+                SetViewAngle = reader.ReadInt32();
+                ViewAngle = reader.ReadSingle();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(MRKR_ID);
+                writer.Write(SetViewAngle);
+                writer.Write(ViewAngle);
 
-            writer.Write(MRKR_ID);
-            writer.Write(SetViewAngle);
-            writer.Write(ViewAngle);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => MRKR_ID == assetID || base.HasReference(assetID);

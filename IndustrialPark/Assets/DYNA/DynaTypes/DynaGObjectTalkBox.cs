@@ -69,63 +69,66 @@ namespace IndustrialPark
 
         public DynaGObjectTalkBox(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__talk_box, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
 
-            Dialog_TextBoxID = reader.ReadUInt32();
-            Prompt_TextBoxID = reader.ReadUInt32();
-            Quit_TextBoxID = reader.ReadUInt32();
-            Trap = reader.ReadByte();
-            Pause = reader.ReadByte();
-            AllowQuit = reader.ReadByte();
-            TriggerPads = reader.ReadByte();
-            Page = reader.ReadByte();
-            Show = reader.ReadByte();
-            Hide = reader.ReadByte();
-            AudioEffect = reader.ReadByte();
-            TeleportPointerID = reader.ReadUInt32();
-            AutoWaitTypeTime = reader.ReadByte();
-            AutoWaitTypePrompt = reader.ReadByte();
-            AutoWaitTypeSound = reader.ReadByte();
-            AutoWaitTypeEvent = reader.ReadByte();
-            AutoWaitDelay = reader.ReadSingle();
-            AutoWaitWhichEvent = reader.ReadInt32();
-            PromptSkip_TextID = reader.ReadUInt32();
-            PromptNoSkip_TextID = reader.ReadUInt32();
-            PromptQuitTextID = reader.ReadUInt32();
-            PromptNoQuitTextID = reader.ReadUInt32();
-            PromptYesNoTextID = reader.ReadUInt32();
+                Dialog_TextBoxID = reader.ReadUInt32();
+                Prompt_TextBoxID = reader.ReadUInt32();
+                Quit_TextBoxID = reader.ReadUInt32();
+                Trap = reader.ReadByte();
+                Pause = reader.ReadByte();
+                AllowQuit = reader.ReadByte();
+                TriggerPads = reader.ReadByte();
+                Page = reader.ReadByte();
+                Show = reader.ReadByte();
+                Hide = reader.ReadByte();
+                AudioEffect = reader.ReadByte();
+                TeleportPointerID = reader.ReadUInt32();
+                AutoWaitTypeTime = reader.ReadByte();
+                AutoWaitTypePrompt = reader.ReadByte();
+                AutoWaitTypeSound = reader.ReadByte();
+                AutoWaitTypeEvent = reader.ReadByte();
+                AutoWaitDelay = reader.ReadSingle();
+                AutoWaitWhichEvent = reader.ReadInt32();
+                PromptSkip_TextID = reader.ReadUInt32();
+                PromptNoSkip_TextID = reader.ReadUInt32();
+                PromptQuitTextID = reader.ReadUInt32();
+                PromptNoQuitTextID = reader.ReadUInt32();
+                PromptYesNoTextID = reader.ReadUInt32();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Dialog_TextBoxID);
+                writer.Write(Prompt_TextBoxID);
+                writer.Write(Quit_TextBoxID);
+                writer.Write(Trap);
+                writer.Write(Pause);
+                writer.Write(AllowQuit);
+                writer.Write(TriggerPads);
+                writer.Write(Page);
+                writer.Write(Show);
+                writer.Write(Hide);
+                writer.Write(AudioEffect);
+                writer.Write(TeleportPointerID);
+                writer.Write(AutoWaitTypeTime);
+                writer.Write(AutoWaitTypePrompt);
+                writer.Write(AutoWaitTypeSound);
+                writer.Write(AutoWaitTypeEvent);
+                writer.Write(AutoWaitDelay);
+                writer.Write(AutoWaitWhichEvent);
+                writer.Write(PromptSkip_TextID);
+                writer.Write(PromptNoSkip_TextID);
+                writer.Write(PromptQuitTextID);
+                writer.Write(PromptNoQuitTextID);
+                writer.Write(PromptYesNoTextID);
 
-            writer.Write(Dialog_TextBoxID);
-            writer.Write(Prompt_TextBoxID);
-            writer.Write(Quit_TextBoxID);
-            writer.Write(Trap);
-            writer.Write(Pause);
-            writer.Write(AllowQuit);
-            writer.Write(TriggerPads);
-            writer.Write(Page);
-            writer.Write(Show);
-            writer.Write(Hide);
-            writer.Write(AudioEffect);
-            writer.Write(TeleportPointerID);
-            writer.Write(AutoWaitTypeTime);
-            writer.Write(AutoWaitTypePrompt);
-            writer.Write(AutoWaitTypeSound);
-            writer.Write(AutoWaitTypeEvent);
-            writer.Write(AutoWaitDelay);
-            writer.Write(AutoWaitWhichEvent);
-            writer.Write(PromptSkip_TextID);
-            writer.Write(PromptNoSkip_TextID);
-            writer.Write(PromptQuitTextID);
-            writer.Write(PromptNoQuitTextID);
-            writer.Write(PromptYesNoTextID);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)

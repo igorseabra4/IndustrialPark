@@ -24,29 +24,32 @@ namespace IndustrialPark
 
         public DynaHud(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
 
-            PositionX = reader.ReadSingle();
-            PositionY = reader.ReadSingle();
-            PositionZ = reader.ReadSingle();
-            ScaleX = reader.ReadSingle();
-            ScaleY = reader.ReadSingle();
-            ScaleZ = reader.ReadSingle();
+                PositionX = reader.ReadSingle();
+                PositionY = reader.ReadSingle();
+                PositionZ = reader.ReadSingle();
+                ScaleX = reader.ReadSingle();
+                ScaleY = reader.ReadSingle();
+                ScaleZ = reader.ReadSingle();
+            }
         }
 
         protected byte[] SerializeDynaHud(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(PositionX);
+                writer.Write(PositionY);
+                writer.Write(PositionZ);
+                writer.Write(ScaleX);
+                writer.Write(ScaleY);
+                writer.Write(ScaleZ);
 
-            writer.Write(PositionX);
-            writer.Write(PositionY);
-            writer.Write(PositionZ);
-            writer.Write(ScaleX);
-            writer.Write(ScaleY);
-            writer.Write(ScaleZ);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
     }
 }

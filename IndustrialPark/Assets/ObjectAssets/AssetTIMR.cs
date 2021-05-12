@@ -19,28 +19,30 @@ namespace IndustrialPark
 
         public AssetTIMR(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = baseHeaderEndPosition;
 
-            Time = reader.ReadSingle();
+                Time = reader.ReadSingle();
 
-            if (game != Game.Scooby)
-                RandomRange = reader.ReadSingle();
+                if (game != Game.Scooby)
+                    RandomRange = reader.ReadSingle();
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeBase(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
+                writer.Write(Time);
 
-            writer.Write(Time);
+                if (game != Game.Scooby)
+                    writer.Write(RandomRange);
+                writer.Write(SerializeLinks(endianness));
 
-            if (game != Game.Scooby)
-                writer.Write(RandomRange);
-
-            writer.Write(SerializeLinks(endianness));
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)

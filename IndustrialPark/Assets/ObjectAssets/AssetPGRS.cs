@@ -30,28 +30,30 @@ namespace IndustrialPark
 
         public AssetPGRS(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = baseHeaderEndPosition;
 
-            int progressLinkCount = reader.ReadInt32();
+                int progressLinkCount = reader.ReadInt32();
 
-            _progressLinks = new Link[progressLinkCount];
-            for (int i = 0; i < _progressLinks.Length; i++)
-                _progressLinks[i] = new Link(reader, LinkType.Progress, game);
+                _progressLinks = new Link[progressLinkCount];
+                for (int i = 0; i < _progressLinks.Length; i++)
+                    _progressLinks[i] = new Link(reader, LinkType.Progress, game);
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeBase(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
+                writer.Write(_progressLinks.Length);
 
-            writer.Write(_progressLinks.Length);
-
-            foreach (var l in _progressLinks)
-                writer.Write(l.Serialize(LinkType.Progress, endianness));
-
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
+                foreach (var l in _progressLinks)
+                    writer.Write(l.Serialize(LinkType.Progress, endianness));
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => _progressLinks.Any(link => link.HasReference(assetID)) || base.HasReference(assetID);

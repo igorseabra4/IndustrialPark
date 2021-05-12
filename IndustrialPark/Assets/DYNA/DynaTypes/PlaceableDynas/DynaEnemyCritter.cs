@@ -30,7 +30,7 @@ namespace IndustrialPark
 
         public DynaEnemyCritter(string assetName, AssetTemplate template, Vector3 position, uint mvptAssetID) : base(assetName, DynaType.Enemy__SB__Critter, 2, position)
         {
-            BaseFlags.FlagValueShort = 0x0D;
+            BaseFlags = 0x0D;
 
             CritterType =
             template == AssetTemplate.Jelly_Critter ? EnemyCritterType.jellyfish_v1_bind :
@@ -38,23 +38,27 @@ namespace IndustrialPark
 
             MVPT_AssetID = mvptAssetID;
         }
-        
+
         public DynaEnemyCritter(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__Critter, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = entityDynaEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = entityDynaEndPosition;
 
-            MVPT_AssetID = reader.ReadUInt32();
-            Unknown54 = reader.ReadUInt32();
+                MVPT_AssetID = reader.ReadUInt32();
+                Unknown54 = reader.ReadUInt32();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntityDyna(endianness));
-            writer.Write(MVPT_AssetID);
-            writer.Write(Unknown54);
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntityDyna(endianness));
+                writer.Write(MVPT_AssetID);
+                writer.Write(Unknown54);
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)

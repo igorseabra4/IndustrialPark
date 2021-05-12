@@ -27,31 +27,34 @@ namespace IndustrialPark
 
         public DynaEffectRumbleSphere(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__RumbleSphericalEmitter, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
 
-            Rumble_AssetID = reader.ReadUInt32();
-            UnknownFloat_04 = reader.ReadSingle();
-            UnknownFloat_08 = reader.ReadSingle();
-            UnknownFloat_0C = reader.ReadSingle();
-            UnknownFloat_10 = reader.ReadSingle();
-            UnknownShort_14 = reader.ReadInt16();
-            UnknownShort_16 = reader.ReadInt16();
+                Rumble_AssetID = reader.ReadUInt32();
+                UnknownFloat_04 = reader.ReadSingle();
+                UnknownFloat_08 = reader.ReadSingle();
+                UnknownFloat_0C = reader.ReadSingle();
+                UnknownFloat_10 = reader.ReadSingle();
+                UnknownShort_14 = reader.ReadInt16();
+                UnknownShort_16 = reader.ReadInt16();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Rumble_AssetID);
+                writer.Write(UnknownFloat_04);
+                writer.Write(UnknownFloat_08);
+                writer.Write(UnknownFloat_0C);
+                writer.Write(UnknownFloat_10);
+                writer.Write(UnknownShort_14);
+                writer.Write(UnknownShort_16);
 
-            writer.Write(Rumble_AssetID);
-            writer.Write(UnknownFloat_04);
-            writer.Write(UnknownFloat_08);
-            writer.Write(UnknownFloat_0C);
-            writer.Write(UnknownFloat_10);
-            writer.Write(UnknownShort_14);
-            writer.Write(UnknownShort_16);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => Rumble_AssetID == assetID || base.HasReference(assetID);

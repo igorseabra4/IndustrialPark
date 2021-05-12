@@ -22,63 +22,31 @@ namespace IndustrialPark
             set => Model_AssetID = (uint)value;
         }
         [Category(dynaCategoryName)]
-        public AssetID Player_AssetID { get; set; }
-        [Category(dynaCategoryName)]
-        public byte UnknownByte54 { get; set; }
-        [Category(dynaCategoryName)]
-        public byte UnknownByte55 { get; set; }
-        [Category(dynaCategoryName)]
-        public byte UnknownByte56 { get; set; }
-        [Category(dynaCategoryName)]
-        public byte UnknownByte57 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetID Unknown58 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetID Unknown5C { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetID Unknown60 { get; set; }
+        public AssetID Unknown { get; set; }
 
         public DynaEnemyFrogFish(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__FrogFish, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = entityDynaEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = entityDynaEndPosition;
 
-            Player_AssetID = reader.ReadUInt32();
-            UnknownByte54 = reader.ReadByte();
-            UnknownByte55 = reader.ReadByte();
-            UnknownByte56 = reader.ReadByte();
-            UnknownByte57 = reader.ReadByte();
-            Unknown58 = reader.ReadUInt32();
-            Unknown5C = reader.ReadUInt32();
-            Unknown60 = reader.ReadUInt32();
+                Unknown = reader.ReadUInt32();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntityDyna(endianness));
-
-            writer.Write(Player_AssetID);
-            writer.Write(UnknownByte54);
-            writer.Write(UnknownByte55);
-            writer.Write(UnknownByte56);
-            writer.Write(UnknownByte57);
-            writer.Write(Unknown58);
-            writer.Write(Unknown5C);
-            writer.Write(Unknown60);
-
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntityDyna(endianness));
+                writer.Write(Unknown);
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)
         {
-            if (Player_AssetID == assetID)
-                return true;
-            if (Unknown58 == assetID)
-                return true;
-            if (Unknown5C == assetID)
-                return true;
-            if (Unknown60 == assetID)
+            if (Unknown == assetID)
                 return true;
 
             return base.HasReference(assetID);
@@ -88,10 +56,7 @@ namespace IndustrialPark
         {
             base.Verify(ref result);
 
-            Verify(Player_AssetID, ref result);
-            Verify(Unknown58, ref result);
-            Verify(Unknown5C, ref result);
-            Verify(Unknown60, ref result);
+            Verify(Unknown, ref result);
         }
     }
 }

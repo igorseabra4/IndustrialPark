@@ -1,6 +1,4 @@
-﻿using HipHopFile;
-
-namespace IndustrialPark
+﻿namespace IndustrialPark
 {
     public struct WireVector
     {
@@ -24,11 +22,13 @@ namespace IndustrialPark
 
         public byte[] Serialize(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(X);
-            writer.Write(Y);
-            writer.Write(Z);
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(X);
+                writer.Write(Y);
+                writer.Write(Z);
+                return writer.ToArray();
+            }
         }
 
         public override string ToString()

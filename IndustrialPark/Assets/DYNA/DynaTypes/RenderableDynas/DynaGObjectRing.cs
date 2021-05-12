@@ -72,54 +72,57 @@ namespace IndustrialPark
 
         public DynaGObjectRing(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__Ring, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
 
-            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            _yaw = reader.ReadSingle();
-            _pitch = reader.ReadSingle();
-            _roll = reader.ReadSingle();
-            UnknownInt1 = reader.ReadInt32();
-            UnknownInt2 = reader.ReadInt32();
-            UnknownInt3 = reader.ReadInt32();
-            _scale = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            UnknownShadowFlag = reader.ReadInt32();
-            CollisionRadius = reader.ReadSingle();
-            UnknownFloat1 = reader.ReadSingle();
-            UnknownFloat2 = reader.ReadSingle();
-            NormalTimer = reader.ReadSingle();
-            RedTimer = reader.ReadSingle();
-            DriverPLAT_AssetID = reader.ReadUInt32();
+                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                _yaw = reader.ReadSingle();
+                _pitch = reader.ReadSingle();
+                _roll = reader.ReadSingle();
+                UnknownInt1 = reader.ReadInt32();
+                UnknownInt2 = reader.ReadInt32();
+                UnknownInt3 = reader.ReadInt32();
+                _scale = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                UnknownShadowFlag = reader.ReadInt32();
+                CollisionRadius = reader.ReadSingle();
+                UnknownFloat1 = reader.ReadSingle();
+                UnknownFloat2 = reader.ReadSingle();
+                NormalTimer = reader.ReadSingle();
+                RedTimer = reader.ReadSingle();
+                DriverPLAT_AssetID = reader.ReadUInt32();
 
-            CreateTransformMatrix();
-            AddToRenderableAssets(this);
+                CreateTransformMatrix();
+                AddToRenderableAssets(this);
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(_position.X);
+                writer.Write(_position.Y);
+                writer.Write(_position.Z);
+                writer.Write(_yaw);
+                writer.Write(_pitch);
+                writer.Write(_roll);
+                writer.Write(UnknownInt1);
+                writer.Write(UnknownInt2);
+                writer.Write(UnknownInt3);
+                writer.Write(_scale.X);
+                writer.Write(_scale.Y);
+                writer.Write(_scale.Z);
+                writer.Write(UnknownShadowFlag);
+                writer.Write(CollisionRadius);
+                writer.Write(UnknownFloat1);
+                writer.Write(UnknownFloat2);
+                writer.Write(NormalTimer);
+                writer.Write(RedTimer);
+                writer.Write(DriverPLAT_AssetID);
 
-            writer.Write(_position.X);
-            writer.Write(_position.Y);
-            writer.Write(_position.Z);
-            writer.Write(_yaw);
-            writer.Write(_pitch);
-            writer.Write(_roll);
-            writer.Write(UnknownInt1);
-            writer.Write(UnknownInt2);
-            writer.Write(UnknownInt3);
-            writer.Write(_scale.X);
-            writer.Write(_scale.Y);
-            writer.Write(_scale.Z);
-            writer.Write(UnknownShadowFlag);
-            writer.Write(CollisionRadius);
-            writer.Write(UnknownFloat1);
-            writer.Write(UnknownFloat2);
-            writer.Write(NormalTimer);
-            writer.Write(RedTimer);
-            writer.Write(DriverPLAT_AssetID);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => DriverPLAT_AssetID == assetID || base.HasReference(assetID);

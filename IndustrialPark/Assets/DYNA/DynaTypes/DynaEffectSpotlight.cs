@@ -60,57 +60,60 @@ namespace IndustrialPark
 
         public DynaEffectSpotlight(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__spotlight, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
 
-            UnknownInt_00 = reader.ReadInt32();
-            Origin_Entity_AssetID = reader.ReadUInt32();
-            Target_Entity_AssetID = reader.ReadUInt32();
-            UnknownInt_0C = reader.ReadInt32();
-            UnknownFloat_10 = reader.ReadSingle();
-            UnknownFloat_14_Rad = reader.ReadSingle();
-            UnknownFloat_18 = reader.ReadSingle();
-            UnknownByte_1C = reader.ReadByte();
-            UnknownByte_1D = reader.ReadByte();
-            UnknownByte_1E = reader.ReadByte();
-            UnknownByte_1F = reader.ReadByte();
-            UnknownInt_20 = reader.ReadInt32();
-            UnknownInt_24 = reader.ReadInt32();
-            UnknownInt_28 = reader.ReadInt32();
-            UnknownFloat_2C = reader.ReadSingle();
-            UnknownFloat_30 = reader.ReadSingle();
-            UnknownByte_34 = reader.ReadByte();
-            UnknownByte_35 = reader.ReadByte();
-            UnknownByte_36 = reader.ReadByte();
-            UnknownByte_37 = reader.ReadByte();
+                UnknownInt_00 = reader.ReadInt32();
+                Origin_Entity_AssetID = reader.ReadUInt32();
+                Target_Entity_AssetID = reader.ReadUInt32();
+                UnknownInt_0C = reader.ReadInt32();
+                UnknownFloat_10 = reader.ReadSingle();
+                UnknownFloat_14_Rad = reader.ReadSingle();
+                UnknownFloat_18 = reader.ReadSingle();
+                UnknownByte_1C = reader.ReadByte();
+                UnknownByte_1D = reader.ReadByte();
+                UnknownByte_1E = reader.ReadByte();
+                UnknownByte_1F = reader.ReadByte();
+                UnknownInt_20 = reader.ReadInt32();
+                UnknownInt_24 = reader.ReadInt32();
+                UnknownInt_28 = reader.ReadInt32();
+                UnknownFloat_2C = reader.ReadSingle();
+                UnknownFloat_30 = reader.ReadSingle();
+                UnknownByte_34 = reader.ReadByte();
+                UnknownByte_35 = reader.ReadByte();
+                UnknownByte_36 = reader.ReadByte();
+                UnknownByte_37 = reader.ReadByte();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(UnknownInt_00);
+                writer.Write(Origin_Entity_AssetID);
+                writer.Write(Target_Entity_AssetID);
+                writer.Write(UnknownInt_0C);
+                writer.Write(UnknownFloat_10);
+                writer.Write(UnknownFloat_14_Rad);
+                writer.Write(UnknownFloat_18);
+                writer.Write(UnknownByte_1C);
+                writer.Write(UnknownByte_1D);
+                writer.Write(UnknownByte_1E);
+                writer.Write(UnknownByte_1F);
+                writer.Write(UnknownInt_20);
+                writer.Write(UnknownInt_24);
+                writer.Write(UnknownInt_28);
+                writer.Write(UnknownFloat_2C);
+                writer.Write(UnknownFloat_30);
+                writer.Write(UnknownByte_34);
+                writer.Write(UnknownByte_35);
+                writer.Write(UnknownByte_36);
+                writer.Write(UnknownByte_37);
 
-            writer.Write(UnknownInt_00);
-            writer.Write(Origin_Entity_AssetID);
-            writer.Write(Target_Entity_AssetID);
-            writer.Write(UnknownInt_0C);
-            writer.Write(UnknownFloat_10);
-            writer.Write(UnknownFloat_14_Rad);
-            writer.Write(UnknownFloat_18);
-            writer.Write(UnknownByte_1C);
-            writer.Write(UnknownByte_1D);
-            writer.Write(UnknownByte_1E);
-            writer.Write(UnknownByte_1F);
-            writer.Write(UnknownInt_20);
-            writer.Write(UnknownInt_24);
-            writer.Write(UnknownInt_28);
-            writer.Write(UnknownFloat_2C);
-            writer.Write(UnknownFloat_30);
-            writer.Write(UnknownByte_34);
-            writer.Write(UnknownByte_35);
-            writer.Write(UnknownByte_36);
-            writer.Write(UnknownByte_37);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) =>

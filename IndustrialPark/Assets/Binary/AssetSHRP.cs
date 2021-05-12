@@ -17,69 +17,71 @@ namespace IndustrialPark
 
         public AssetSHRP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-
-            int amountOfEntries = reader.ReadInt32();
-            reader.ReadInt32(); // assetID
-            Unknown = reader.ReadInt32();
-            SHRPEntries = new EntrySHRP[amountOfEntries];
-
-            for (int i = 0; i < SHRPEntries.Length; i++)
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                int entryType = reader.ReadInt32();
+                int amountOfEntries = reader.ReadInt32();
+                reader.ReadInt32(); // assetID
+                Unknown = reader.ReadInt32();
+                SHRPEntries = new EntrySHRP[amountOfEntries];
 
-                EntrySHRP entry = null;
+                for (int i = 0; i < SHRPEntries.Length; i++)
+                {
+                    int entryType = reader.ReadInt32();
 
-                if (entryType == 3)
-                {
-                    if (game == Game.BFBB)
-                        entry = new EntrySHRP_Type3_BFBB(reader);
-                    else if (game == Game.Incredibles)
-                        entry = new EntrySHRP_Type3_TSSM(reader);
-                }
-                else if (entryType == 4)
-                {
-                    if (game == Game.BFBB)
-                        entry = new EntrySHRP_Type4_BFBB(reader);
-                    else if (game == Game.Incredibles)
-                        entry = new EntrySHRP_Type4_TSSM(reader);
-                }
-                else if (entryType == 5)
-                {
-                    if (game == Game.BFBB)
-                        entry = new EntrySHRP_Type5_BFBB(reader);
-                    else if (game == Game.Incredibles)
-                        entry = new EntrySHRP_Type5_TSSM(reader);
-                }
-                else if (entryType == 6)
-                {
-                    if (game == Game.BFBB)
-                        entry = new EntrySHRP_Type6_BFBB(reader);
-                    else if (game == Game.Incredibles)
-                        entry = new EntrySHRP_Type6_TSSM(reader);
-                }
-                else if (entryType == 8)
-                    entry = new EntrySHRP_Type8(reader);
-                else if (entryType == 9)
-                    entry = new EntrySHRP_Type9(reader);
-                else
-                    throw new Exception("Unknown SHRP entry type " + entryType.ToString() + " found in asset " + ToString() + ". This SHRP asset cannot be edited by Industrial Park.");
+                    EntrySHRP entry = null;
 
-                SHRPEntries[i] = entry;
+                    if (entryType == 3)
+                    {
+                        if (game == Game.BFBB)
+                            entry = new EntrySHRP_Type3_BFBB(reader);
+                        else if (game == Game.Incredibles)
+                            entry = new EntrySHRP_Type3_TSSM(reader);
+                    }
+                    else if (entryType == 4)
+                    {
+                        if (game == Game.BFBB)
+                            entry = new EntrySHRP_Type4_BFBB(reader);
+                        else if (game == Game.Incredibles)
+                            entry = new EntrySHRP_Type4_TSSM(reader);
+                    }
+                    else if (entryType == 5)
+                    {
+                        if (game == Game.BFBB)
+                            entry = new EntrySHRP_Type5_BFBB(reader);
+                        else if (game == Game.Incredibles)
+                            entry = new EntrySHRP_Type5_TSSM(reader);
+                    }
+                    else if (entryType == 6)
+                    {
+                        if (game == Game.BFBB)
+                            entry = new EntrySHRP_Type6_BFBB(reader);
+                        else if (game == Game.Incredibles)
+                            entry = new EntrySHRP_Type6_TSSM(reader);
+                    }
+                    else if (entryType == 8)
+                        entry = new EntrySHRP_Type8(reader);
+                    else if (entryType == 9)
+                        entry = new EntrySHRP_Type9(reader);
+                    else
+                        throw new Exception("Unknown SHRP entry type " + entryType.ToString() + " found in asset " + ToString() + ". This SHRP asset cannot be edited by Industrial Park.");
+
+                    SHRPEntries[i] = entry;
+                }
             }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SHRPEntries.Length);
+                writer.Write(assetID);
+                writer.Write(Unknown);
+                foreach (var e in SHRPEntries)
+                    writer.Write(e.Serialize(game, endianness));
 
-            writer.Write(SHRPEntries.Length);
-            writer.Write(assetID);
-            writer.Write(Unknown);
-            foreach (var e in SHRPEntries)
-                writer.Write(e.Serialize(game, endianness));
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)
@@ -204,16 +206,17 @@ namespace IndustrialPark
 
         public byte[] SerializeEntryShrpBase(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Type);
+                writer.Write(Unknown04);
+                writer.Write(Unknown08);
+                writer.Write(Unknown0C);
+                writer.Write(Unknown10);
+                writer.Write(Unknown14);
 
-            writer.Write(Type);
-            writer.Write(Unknown04);
-            writer.Write(Unknown08);
-            writer.Write(Unknown0C);
-            writer.Write(Unknown10);
-            writer.Write(Unknown14);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)
@@ -226,6 +229,21 @@ namespace IndustrialPark
                 return true;
 
             return false;
+        }
+
+        private const byte padB = 0xCD;
+
+        protected void ReadPad(EndianBinaryReader reader, int count)
+        {
+            for (int i = 0; i < count; i++)
+                if (reader.ReadByte() != padB)
+                    throw new Exception("Error reading SHRP padding: non-padding byte found at " + (reader.BaseStream.Position - 1).ToString());
+        }
+
+        protected void WritePad(EndianBinaryWriter writer, int count)
+        {
+            for (int i = 0; i < count; i++)
+                writer.Write(padB);
         }
     }
 
@@ -255,56 +273,50 @@ namespace IndustrialPark
             Unknown20 = reader.ReadSingle();
             Unknown24 = reader.ReadSingle();
             Unknown28 = reader.ReadSingle();
-            for (int i = 0; i < 0x10; i++)
-                reader.ReadByte();
+            ReadPad(reader, 0x10);
             Unknown3C = reader.ReadInt32();
             Unknown40 = reader.ReadInt32();
             Unknown44 = reader.ReadInt32();
             Unknown48 = reader.ReadSingle();
             Unknown4C = reader.ReadSingle();
-            for (int i = 0; i < 0x14; i++)
-                reader.ReadByte();
+            ReadPad(reader, 0x14);
             Unknown64 = reader.ReadByte();
-            for (int i = 0; i < 0x133; i++)
-                reader.ReadByte();
+            ReadPad(reader, 0x133);
             Unknown198 = reader.ReadInt16();
             Unknown19A = reader.ReadInt16();
-            for (int i = 0; i < 0x30; i++)
-                reader.ReadByte();
+            ReadPad(reader, 0x30);
             PARE_AssetID = reader.ReadUInt32();
             Unknown1D0 = reader.ReadInt32();
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntryShrpBase(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntryShrpBase(endianness));
 
-            writer.Write(Unknown18);
-            writer.Write(Unknown1C);
-            writer.Write(Unknown20);
-            writer.Write(Unknown24);
-            writer.Write(Unknown28);
-            for (int i = 0; i < 0x10; i++)
-                writer.Write((byte)0xCD);
-            writer.Write(Unknown3C);
-            writer.Write(Unknown40);
-            writer.Write(Unknown44);
-            writer.Write(Unknown48);
-            writer.Write(Unknown4C);
-            for (int i = 0; i < 0x14; i++)
-                writer.Write((byte)0xCD);
-            writer.Write(Unknown64);
-            for (int i = 0; i < 0x133; i++)
-                writer.Write((byte)0xCD);
-            writer.Write(Unknown198);
-            writer.Write(Unknown19A);
-            for (int i = 0; i < 0x30; i++)
-                writer.Write((byte)0xCD);
-            writer.Write(PARE_AssetID);
-            writer.Write(Unknown1D0);
+                writer.Write(Unknown18);
+                writer.Write(Unknown1C);
+                writer.Write(Unknown20);
+                writer.Write(Unknown24);
+                writer.Write(Unknown28);
+                WritePad(writer, 0x10);
+                writer.Write(Unknown3C);
+                writer.Write(Unknown40);
+                writer.Write(Unknown44);
+                writer.Write(Unknown48);
+                writer.Write(Unknown4C);
+                WritePad(writer, 0x14);
+                writer.Write(Unknown64);
+                WritePad(writer, 0x133);
+                writer.Write(Unknown198);
+                writer.Write(Unknown19A);
+                WritePad(writer, 0x30);
+                writer.Write(PARE_AssetID);
+                writer.Write(Unknown1D0);
 
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => PARE_AssetID == assetID || base.HasReference(assetID);
@@ -323,6 +335,8 @@ namespace IndustrialPark
         public AssetSingle Unknown48 { get; set; }
         public AssetSingle Unknown4C { get; set; }
         public int Unknown50 { get; set; }
+        public int Unknown64 { get; set; }
+        public byte Unknown6C { get; set; }
         public short Unknown1A0 { get; set; }
         public short Unknown1A2 { get; set; }
         public byte Unknown1EC { get; set; }
@@ -340,20 +354,21 @@ namespace IndustrialPark
             Unknown20 = reader.ReadSingle();
             Unknown24 = reader.ReadSingle();
             Unknown28 = reader.ReadSingle();
-            for (int i = 0; i < 0x10; i++)
-                reader.ReadByte();
+            ReadPad(reader, 0x10);
             Unknown3C = reader.ReadInt32();
             Unknown40 = reader.ReadInt32();
             Unknown44 = reader.ReadInt32();
             Unknown48 = reader.ReadSingle();
             Unknown4C = reader.ReadSingle();
             Unknown50 = reader.ReadInt32();
-            for (int i = 0; i < 0x14C; i++)
-                reader.ReadByte();
+            ReadPad(reader, 0x10);
+            Unknown64 = reader.ReadInt32();
+            ReadPad(reader, 0x4);
+            Unknown6C = reader.ReadByte();
+            ReadPad(reader, 0x133);
             Unknown1A0 = reader.ReadInt16();
             Unknown1A2 = reader.ReadInt16();
-            for (int i = 0; i < 0x48; i++)
-                reader.ReadByte();
+            ReadPad(reader, 0x48);
             Unknown1EC = reader.ReadByte();
             Unknown1ED = reader.ReadByte();
             Unknown1EE = reader.ReadByte();
@@ -364,36 +379,39 @@ namespace IndustrialPark
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntryShrpBase(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntryShrpBase(endianness));
 
-            writer.Write(Unknown18);
-            writer.Write(Unknown1C);
-            writer.Write(Unknown20);
-            writer.Write(Unknown24);
-            writer.Write(Unknown28);
-            for (int i = 0; i < 0x10; i++)
-                writer.Write((byte)0xCD);
-            writer.Write(Unknown3C);
-            writer.Write(Unknown40);
-            writer.Write(Unknown44);
-            writer.Write(Unknown48);
-            writer.Write(Unknown4C);
-            writer.Write(Unknown50);
-            for (int i = 0; i < 0x14C; i++)
-                writer.Write((byte)0xCD);
-            writer.Write(Unknown1A0);
-            writer.Write(Unknown1A2);
-            for (int i = 0; i < 0x48; i++)
-                writer.Write((byte)0xCD);
-            writer.Write(Unknown1EC);
-            writer.Write(Unknown1ED);
-            writer.Write(Unknown1EE);
-            writer.Write(Unknown1EF);
-            writer.Write(Unknown1F0);
-            writer.Write(Unknown1F4);
+                writer.Write(Unknown18);
+                writer.Write(Unknown1C);
+                writer.Write(Unknown20);
+                writer.Write(Unknown24);
+                writer.Write(Unknown28);
+                WritePad(writer, 0x10);
+                writer.Write(Unknown3C);
+                writer.Write(Unknown40);
+                writer.Write(Unknown44);
+                writer.Write(Unknown48);
+                writer.Write(Unknown4C);
+                writer.Write(Unknown50);
+                WritePad(writer, 0x10);
+                writer.Write(Unknown64);
+                WritePad(writer, 0x4);
+                writer.Write(Unknown6C);
+                WritePad(writer, 0x133);
+                writer.Write(Unknown1A0);
+                writer.Write(Unknown1A2);
+                WritePad(writer, 0x48);
+                writer.Write(Unknown1EC);
+                writer.Write(Unknown1ED);
+                writer.Write(Unknown1EE);
+                writer.Write(Unknown1EF);
+                writer.Write(Unknown1F0);
+                writer.Write(Unknown1F4);
 
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => Unknown1F0 == assetID || base.HasReference(assetID);
@@ -431,8 +449,7 @@ namespace IndustrialPark
             OffsetX = reader.ReadSingle();
             OffsetY = reader.ReadSingle();
             OffsetZ = reader.ReadSingle();
-            for (int i = 0; i < 0x34; i++)
-                reader.ReadByte();
+            ReadPad(reader, 0x34);
             Unknown68 = reader.ReadSingle();
             Unknown6C = reader.ReadInt32();
             Unknown70 = reader.ReadInt32();
@@ -447,30 +464,31 @@ namespace IndustrialPark
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntryShrpBase(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntryShrpBase(endianness));
 
-            writer.Write(ModelAssetID);
-            writer.Write(Unknown1C);
-            writer.Write(Unknown20);
-            writer.Write(Unknown24);
-            writer.Write(OffsetX);
-            writer.Write(OffsetY);
-            writer.Write(OffsetZ);
-            for (int i = 0; i < 0x34; i++)
-                writer.Write((byte)0xCD);
-            writer.Write(Unknown68);
-            writer.Write(Unknown6C);
-            writer.Write(Unknown70);
-            writer.Write(UnknownAssetID74);
-            writer.Write(Unknown78);
-            writer.Write(Unknown7C);
-            writer.Write(Unknown80);
-            writer.Write(Unknown84);
-            writer.Write(Unknown88);
-            writer.Write(Gravity);
+                writer.Write(ModelAssetID);
+                writer.Write(Unknown1C);
+                writer.Write(Unknown20);
+                writer.Write(Unknown24);
+                writer.Write(OffsetX);
+                writer.Write(OffsetY);
+                writer.Write(OffsetZ);
+                WritePad(writer, 0x34);
+                writer.Write(Unknown68);
+                writer.Write(Unknown6C);
+                writer.Write(Unknown70);
+                writer.Write(UnknownAssetID74);
+                writer.Write(Unknown78);
+                writer.Write(Unknown7C);
+                writer.Write(Unknown80);
+                writer.Write(Unknown84);
+                writer.Write(Unknown88);
+                writer.Write(Gravity);
 
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)
@@ -499,11 +517,31 @@ namespace IndustrialPark
         public int UnknownInt50 { get; set; }
         public int UnknownInt54 { get; set; }
         public int UnknownInt58 { get; set; }
+        public int UnknownInt6C { get; set; }
+        public byte UnknownByte70 { get; set; }
+        public byte UnknownByte71 { get; set; }
+        public byte UnknownByte72 { get; set; }
+        public byte UnknownByte73 { get; set; }
+        public int UnknownInt74 { get; set; }
+        public AssetSingle UnknownFloat78 { get; set; }
+        public AssetSingle UnknownFloat7C { get; set; }
+        public AssetSingle UnknownFloat80 { get; set; }
+        public int UnknownInt94 { get; set; }
         public int UnknownInt98 { get; set; }
         public int UnknownInt9C { get; set; }
         public int UnknownIntA0 { get; set; }
         public int UnknownIntA4 { get; set; }
         public int UnknownIntA8 { get; set; }
+        public int UnknownIntBC { get; set; }
+        public byte UnknownByteC0 { get; set; }
+        public byte UnknownByteC1 { get; set; }
+        public byte UnknownByteC2 { get; set; }
+        public byte UnknownByteC3 { get; set; }
+        public int UnknownIntC4 { get; set; }
+        public AssetSingle UnknownFloatC8 { get; set; }
+        public AssetSingle UnknownFloatCC { get; set; }
+        public AssetSingle UnknownFloatD0 { get; set; }
+        public int UnknownIntE4 { get; set; }
         public AssetSingle UnknownFloatE8 { get; set; }
         public int UnknownIntEC { get; set; }
         public int UnknownIntF0 { get; set; }
@@ -525,23 +563,42 @@ namespace IndustrialPark
             OffsetX = reader.ReadSingle();
             OffsetY = reader.ReadSingle();
             OffsetZ = reader.ReadSingle();
-            for (int i = 0; i < 0x10; i++)
-                reader.ReadByte();
+            ReadPad(reader, 0x10);
             UnknownInt44 = reader.ReadInt32();
             UnknownInt48 = reader.ReadInt32();
             UnknownInt4C = reader.ReadInt32();
             UnknownInt50 = reader.ReadInt32();
             UnknownInt54 = reader.ReadInt32();
             UnknownInt58 = reader.ReadInt32();
-            for (int i = 0; i < 0x3C; i++)
-                reader.ReadByte();
+            ReadPad(reader, 0x10);
+            UnknownInt6C = reader.ReadInt32();
+            UnknownByte70 = reader.ReadByte();
+            UnknownByte71 = reader.ReadByte();
+            UnknownByte72 = reader.ReadByte();
+            UnknownByte73 = reader.ReadByte();
+            UnknownInt74 = reader.ReadInt32();
+            UnknownFloat78 = reader.ReadSingle();
+            UnknownFloat7C = reader.ReadSingle();
+            UnknownFloat80 = reader.ReadSingle();
+            ReadPad(reader, 0x10);
+            UnknownInt94 = reader.ReadInt32();
             UnknownInt98 = reader.ReadInt32();
             UnknownInt9C = reader.ReadInt32();
             UnknownIntA0 = reader.ReadInt32();
             UnknownIntA4 = reader.ReadInt32();
             UnknownIntA8 = reader.ReadInt32();
-            for (int i = 0; i < 0x3C; i++)
-                reader.ReadByte();
+            ReadPad(reader, 0x10);
+            UnknownIntBC = reader.ReadInt32();
+            UnknownByteC0 = reader.ReadByte();
+            UnknownByteC1 = reader.ReadByte();
+            UnknownByteC2 = reader.ReadByte();
+            UnknownByteC3 = reader.ReadByte();
+            UnknownIntC4 = reader.ReadInt32();
+            UnknownFloatC8 = reader.ReadSingle();
+            UnknownFloatCC = reader.ReadSingle();
+            UnknownFloatD0 = reader.ReadSingle();
+            ReadPad(reader, 0x10);
+            UnknownIntE4 = reader.ReadInt32();
             UnknownFloatE8 = reader.ReadSingle();
             UnknownIntEC = reader.ReadInt32();
             UnknownIntF0 = reader.ReadInt32();
@@ -556,45 +613,66 @@ namespace IndustrialPark
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntryShrpBase(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntryShrpBase(endianness));
 
-            writer.Write(ModelAssetID);
-            writer.Write(Unknown1C);
-            writer.Write(Unknown20);
-            writer.Write(Unknown24);
-            writer.Write(OffsetX);
-            writer.Write(OffsetY);
-            writer.Write(OffsetZ);
-            for (int i = 0; i < 0x10; i++)
-                writer.Write((byte)0xCD);
-            writer.Write(UnknownInt44);
-            writer.Write(UnknownInt48);
-            writer.Write(UnknownInt4C);
-            writer.Write(UnknownInt50);
-            writer.Write(UnknownInt54);
-            writer.Write(UnknownInt58);
-            for (int i = 0; i < 0x3C; i++)
-                writer.Write((byte)0xCD);
-            writer.Write(UnknownInt98);
-            writer.Write(UnknownInt9C);
-            writer.Write(UnknownIntA0);
-            writer.Write(UnknownIntA4);
-            writer.Write(UnknownIntA8);
-            for (int i = 0; i < 0x3C; i++)
-                writer.Write((byte)0xCD);
-            writer.Write(UnknownFloatE8);
-            writer.Write(UnknownIntEC);
-            writer.Write(UnknownIntF0);
-            writer.Write(UnknownIntF4);
-            writer.Write(UnknownIntF8);
-            writer.Write(UnknownFloatFC);
-            writer.Write(UnknownFloat100);
-            writer.Write(UnknownInt104);
-            writer.Write(UnknownInt108);
-            writer.Write(Gravity);
+                writer.Write(ModelAssetID);
+                writer.Write(Unknown1C);
+                writer.Write(Unknown20);
+                writer.Write(Unknown24);
+                writer.Write(OffsetX);
+                writer.Write(OffsetY);
+                writer.Write(OffsetZ);
+                WritePad(writer, 0x10);
+                writer.Write(UnknownInt44);
+                writer.Write(UnknownInt48);
+                writer.Write(UnknownInt4C);
+                writer.Write(UnknownInt50);
+                writer.Write(UnknownInt54);
+                writer.Write(UnknownInt58);
+                WritePad(writer, 0x10);
+                writer.Write(UnknownInt6C);
+                writer.Write(UnknownByte70);
+                writer.Write(UnknownByte71);
+                writer.Write(UnknownByte72);
+                writer.Write(UnknownByte73);
+                writer.Write(UnknownInt74);
+                writer.Write(UnknownFloat78);
+                writer.Write(UnknownFloat7C);
+                writer.Write(UnknownFloat80);
+                WritePad(writer, 0x10);
+                writer.Write(UnknownInt94);
+                writer.Write(UnknownInt98);
+                writer.Write(UnknownInt9C);
+                writer.Write(UnknownIntA0);
+                writer.Write(UnknownIntA4);
+                writer.Write(UnknownIntA8);
+                WritePad(writer, 0x10);
+                writer.Write(UnknownIntBC);
+                writer.Write(UnknownByteC0);
+                writer.Write(UnknownByteC1);
+                writer.Write(UnknownByteC2);
+                writer.Write(UnknownByteC3);
+                writer.Write(UnknownIntC4);
+                writer.Write(UnknownFloatC8);
+                writer.Write(UnknownFloatCC);
+                writer.Write(UnknownFloatD0);
+                WritePad(writer, 0x10);
+                writer.Write(UnknownIntE4);
+                writer.Write(UnknownFloatE8);
+                writer.Write(UnknownIntEC);
+                writer.Write(UnknownIntF0);
+                writer.Write(UnknownIntF4);
+                writer.Write(UnknownIntF8);
+                writer.Write(UnknownFloatFC);
+                writer.Write(UnknownFloat100);
+                writer.Write(UnknownInt104);
+                writer.Write(UnknownInt108);
+                writer.Write(Gravity);
 
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)
@@ -627,38 +705,36 @@ namespace IndustrialPark
             Unknown20 = reader.ReadSingle();
             Unknown24 = reader.ReadUInt32();
             Unknown28 = reader.ReadUInt32();
-            for (int i = 0; i < 0x10; i++)
-                reader.ReadByte();
+            ReadPad(reader, 0x10);
             Unknown3C = reader.ReadInt32();
             Unknown40 = reader.ReadUInt32();
             Unknown44 = reader.ReadSingle();
             Unknown48 = reader.ReadUInt32();
             Unknown4C = reader.ReadUInt32();
-            for (int i = 0; i < 0x18; i++)
-                reader.ReadByte();
+            ReadPad(reader, 0x18);
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntryShrpBase(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntryShrpBase(endianness));
 
-            writer.Write(Unknown18);
-            writer.Write(Unknown1C);
-            writer.Write(Unknown20);
-            writer.Write(Unknown24);
-            writer.Write(Unknown28);
-            for (int i = 0; i < 0x10; i++)
-                writer.Write((byte)0xCD);
-            writer.Write(Unknown3C);
-            writer.Write(Unknown40);
-            writer.Write(Unknown44);
-            writer.Write(Unknown48);
-            writer.Write(Unknown4C);
-            for (int i = 0; i < 0x18; i++)
-                writer.Write((byte)0xCD);
+                writer.Write(Unknown18);
+                writer.Write(Unknown1C);
+                writer.Write(Unknown20);
+                writer.Write(Unknown24);
+                writer.Write(Unknown28);
+                WritePad(writer, 0x10);
+                writer.Write(Unknown3C);
+                writer.Write(Unknown40);
+                writer.Write(Unknown44);
+                writer.Write(Unknown48);
+                writer.Write(Unknown4C);
+                WritePad(writer, 0x18);
 
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)
@@ -702,46 +778,42 @@ namespace IndustrialPark
             Unknown20 = reader.ReadSingle();
             Unknown24 = reader.ReadInt32();
             Unknown28 = reader.ReadInt32();
-            for (int i = 0; i < 0x10; i++)
-                reader.ReadByte();
+            ReadPad(reader, 0x10);
             Unknown3C = reader.ReadInt32();
             Unknown40 = reader.ReadInt32();
             Unknown44 = reader.ReadSingle();
             Unknown48 = reader.ReadInt32();
             Unknown4C = reader.ReadInt32();
             Unknown50 = reader.ReadInt32();
-            for (int i = 0; i < 0x10; i++)
-                reader.ReadByte();
+            ReadPad(reader, 0x10);
             Unknown64 = reader.ReadInt32();
-            for (int i = 0; i < 0x8; i++)
-                reader.ReadByte();
+            ReadPad(reader, 0x8);
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntryShrpBase(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntryShrpBase(endianness));
 
-            writer.Write(Unknown18);
-            writer.Write(Unknown1C);
-            writer.Write(Unknown20);
-            writer.Write(Unknown24);
-            writer.Write(Unknown28);
-            for (int i = 0; i < 0x10; i++)
-                writer.Write((byte)0xCD);
-            writer.Write(Unknown3C);
-            writer.Write(Unknown40);
-            writer.Write(Unknown44);
-            writer.Write(Unknown48);
-            writer.Write(Unknown4C);
-            writer.Write(Unknown50);
-            for (int i = 0; i < 0x10; i++)
-                writer.Write((byte)0xCD);
-            writer.Write(Unknown64);
-            for (int i = 0; i < 0x8; i++)
-                writer.Write((byte)0xCD);
+                writer.Write(Unknown18);
+                writer.Write(Unknown1C);
+                writer.Write(Unknown20);
+                writer.Write(Unknown24);
+                writer.Write(Unknown28);
+                WritePad(writer, 0x10);
+                writer.Write(Unknown3C);
+                writer.Write(Unknown40);
+                writer.Write(Unknown44);
+                writer.Write(Unknown48);
+                writer.Write(Unknown4C);
+                writer.Write(Unknown50);
+                WritePad(writer, 0x10);
+                writer.Write(Unknown64);
+                WritePad(writer, 0x8);
 
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)
@@ -783,8 +855,7 @@ namespace IndustrialPark
             Unknown24 = reader.ReadInt32();
             Unknown28 = reader.ReadInt32();
             Unknown2C = reader.ReadInt32();
-            for (int i = 0; i < 0x10; i++)
-                reader.ReadByte();
+            ReadPad(reader, 0x10);
             Unknown40 = reader.ReadSingle();
             Unknown44 = reader.ReadSingle();
             Unknown48 = reader.ReadSingle();
@@ -792,22 +863,23 @@ namespace IndustrialPark
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntryShrpBase(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntryShrpBase(endianness));
 
-            writer.Write(SoundAssetID);
-            writer.Write(Unknown1C);
-            writer.Write(Unknown20);
-            writer.Write(Unknown24);
-            writer.Write(Unknown28);
-            writer.Write(Unknown2C);
-            for (int i = 0; i < 0x10; i++)
-                writer.Write((byte)0xCD);
-            writer.Write(Unknown40);
-            writer.Write(Unknown44);
-            writer.Write(Unknown48);
+                writer.Write(SoundAssetID);
+                writer.Write(Unknown1C);
+                writer.Write(Unknown20);
+                writer.Write(Unknown24);
+                writer.Write(Unknown28);
+                writer.Write(Unknown2C);
+                WritePad(writer, 0x10);
+                writer.Write(Unknown40);
+                writer.Write(Unknown44);
+                writer.Write(Unknown48);
 
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)
@@ -838,27 +910,27 @@ namespace IndustrialPark
             Unknown24 = reader.ReadInt32();
             Unknown28 = reader.ReadInt32();
             Unknown2C = reader.ReadInt32();
-            for (int i = 0; i < 0x10; i++)
-                reader.ReadByte();
+            ReadPad(reader, 0x10);
             Unknown40 = reader.ReadSingle();
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntryShrpBase(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntryShrpBase(endianness));
 
-            writer.Write(SoundAssetID);
-            writer.Write(Unknown1C);
-            writer.Write(Unknown20);
-            writer.Write(Unknown24);
-            writer.Write(Unknown28);
-            writer.Write(Unknown2C);
-            for (int i = 0; i < 0x10; i++)
-                writer.Write((byte)0xCD);
-            writer.Write(Unknown40);
+                writer.Write(SoundAssetID);
+                writer.Write(Unknown1C);
+                writer.Write(Unknown20);
+                writer.Write(Unknown24);
+                writer.Write(Unknown28);
+                writer.Write(Unknown2C);
+                WritePad(writer, 0x10);
+                writer.Write(Unknown40);
 
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)
@@ -892,29 +964,29 @@ namespace IndustrialPark
             UnknownAssetID24 = reader.ReadUInt32();
             UnknownAssetID28 = reader.ReadUInt32();
             UnknownAssetID2C = reader.ReadUInt32();
-            for (int i = 0; i < 0x10; i++)
-                reader.ReadByte();
+            ReadPad(reader, 0x10);
             Unknown40 = reader.ReadSingle();
             Unknown44 = reader.ReadSingle();
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntryShrpBase(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntryShrpBase(endianness));
 
-            writer.Write(UnknownAssetID18);
-            writer.Write(Unknown1C);
-            writer.Write(Unknown20);
-            writer.Write(UnknownAssetID24);
-            writer.Write(UnknownAssetID28);
-            writer.Write(UnknownAssetID2C);
-            for (int i = 0; i < 0x10; i++)
-                writer.Write((byte)0xCD);
-            writer.Write(Unknown40);
-            writer.Write(Unknown44);
+                writer.Write(UnknownAssetID18);
+                writer.Write(Unknown1C);
+                writer.Write(Unknown20);
+                writer.Write(UnknownAssetID24);
+                writer.Write(UnknownAssetID28);
+                writer.Write(UnknownAssetID2C);
+                WritePad(writer, 0x10);
+                writer.Write(Unknown40);
+                writer.Write(Unknown44);
 
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)
@@ -951,8 +1023,7 @@ namespace IndustrialPark
             Unknown24 = reader.ReadInt32();
             Unknown28 = reader.ReadSingle();
             Unknown2C = reader.ReadInt32();
-            for (int i = 0; i < 0x10; i++)
-                reader.ReadByte();
+            ReadPad(reader, 0x10);
             Unknown40 = reader.ReadInt32();
             Unknown44 = reader.ReadInt32();
             Unknown48 = reader.ReadSingle();
@@ -964,26 +1035,27 @@ namespace IndustrialPark
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntryShrpBase(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntryShrpBase(endianness));
 
-            writer.Write(UnknownAssetID18);
-            writer.Write(Unknown1C);
-            writer.Write(Unknown20);
-            writer.Write(Unknown24);
-            writer.Write(Unknown28);
-            writer.Write(Unknown2C);
-            for (int i = 0; i < 0x10; i++)
-                writer.Write((byte)0xCD);
-            writer.Write(Unknown40);
-            writer.Write(Unknown44);
-            writer.Write(Unknown48);
-            writer.Write(Unknown4C);
-            writer.Write(Unknown50);
-            writer.Write(Unknown54);
-            writer.Write(Unknown58);
+                writer.Write(UnknownAssetID18);
+                writer.Write(Unknown1C);
+                writer.Write(Unknown20);
+                writer.Write(Unknown24);
+                writer.Write(Unknown28);
+                writer.Write(Unknown2C);
+                WritePad(writer, 0x10);
+                writer.Write(Unknown40);
+                writer.Write(Unknown44);
+                writer.Write(Unknown48);
+                writer.Write(Unknown4C);
+                writer.Write(Unknown50);
+                writer.Write(Unknown54);
+                writer.Write(Unknown58);
 
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)

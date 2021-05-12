@@ -71,80 +71,83 @@ namespace IndustrialPark
 
         public AssetLOBM(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = baseHeaderEndPosition;
 
-            Unknown_08 = reader.ReadUInt32();
-            PRJT_AssetID = reader.ReadUInt32();
-            PositionX = reader.ReadSingle();
-            PositionY = reader.ReadSingle();
-            PositionZ = reader.ReadSingle();
-            UnknownFloat_1C = reader.ReadSingle();
-            UnknownFloat_20 = reader.ReadSingle();
-            Unknown_24 = reader.ReadUInt32();
-            UnknownFloat_28 = reader.ReadSingle();
-            UnknownFloat_2C = reader.ReadSingle();
-            UnknownFloat_30 = reader.ReadSingle();
-            UnknownFloat_34 = reader.ReadSingle();
-            UnknownFloat_38 = reader.ReadSingle();
-            UnknownInt_3C = reader.ReadInt32();
-            UnknownFloat_40 = reader.ReadSingle();
-            UnknownFloat_44 = reader.ReadSingle();
-            Unknown_48 = reader.ReadUInt32();
-            UnknownInt_4C = reader.ReadInt32();
-            UnknownInt_50 = reader.ReadInt32();
-            UnknownFloat_54 = reader.ReadSingle();
-            UnknownInt_58 = reader.ReadInt32();
-            UnknownInt_5C = reader.ReadInt32();
-            UnknownInt_60 = reader.ReadInt32();
-            UnknownFloat_64 = reader.ReadSingle();
-            UnknownFloat_68 = reader.ReadSingle();
-            UnknownFloat_6C = reader.ReadSingle();
-            UnknownFloat_70 = reader.ReadSingle();
-            UnknownFloat_74 = reader.ReadSingle();
-            UnknownFloat_78 = reader.ReadSingle();
-            UnknownInt_7C = reader.ReadInt32();
+                Unknown_08 = reader.ReadUInt32();
+                PRJT_AssetID = reader.ReadUInt32();
+                PositionX = reader.ReadSingle();
+                PositionY = reader.ReadSingle();
+                PositionZ = reader.ReadSingle();
+                UnknownFloat_1C = reader.ReadSingle();
+                UnknownFloat_20 = reader.ReadSingle();
+                Unknown_24 = reader.ReadUInt32();
+                UnknownFloat_28 = reader.ReadSingle();
+                UnknownFloat_2C = reader.ReadSingle();
+                UnknownFloat_30 = reader.ReadSingle();
+                UnknownFloat_34 = reader.ReadSingle();
+                UnknownFloat_38 = reader.ReadSingle();
+                UnknownInt_3C = reader.ReadInt32();
+                UnknownFloat_40 = reader.ReadSingle();
+                UnknownFloat_44 = reader.ReadSingle();
+                Unknown_48 = reader.ReadUInt32();
+                UnknownInt_4C = reader.ReadInt32();
+                UnknownInt_50 = reader.ReadInt32();
+                UnknownFloat_54 = reader.ReadSingle();
+                UnknownInt_58 = reader.ReadInt32();
+                UnknownInt_5C = reader.ReadInt32();
+                UnknownInt_60 = reader.ReadInt32();
+                UnknownFloat_64 = reader.ReadSingle();
+                UnknownFloat_68 = reader.ReadSingle();
+                UnknownFloat_6C = reader.ReadSingle();
+                UnknownFloat_70 = reader.ReadSingle();
+                UnknownFloat_74 = reader.ReadSingle();
+                UnknownFloat_78 = reader.ReadSingle();
+                UnknownInt_7C = reader.ReadInt32();
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
+                writer.Write(Unknown_08);
+                writer.Write(PRJT_AssetID);
+                writer.Write(PositionX);
+                writer.Write(PositionY);
+                writer.Write(PositionZ);
+                writer.Write(UnknownFloat_1C);
+                writer.Write(UnknownFloat_20);
+                writer.Write(Unknown_24);
+                writer.Write(UnknownFloat_28);
+                writer.Write(UnknownFloat_2C);
+                writer.Write(UnknownFloat_30);
+                writer.Write(UnknownFloat_34);
+                writer.Write(UnknownFloat_38);
+                writer.Write(UnknownInt_3C);
+                writer.Write(UnknownFloat_40);
+                writer.Write(UnknownFloat_44);
+                writer.Write(Unknown_48);
+                writer.Write(UnknownInt_4C);
+                writer.Write(UnknownInt_50);
+                writer.Write(UnknownFloat_54);
+                writer.Write(UnknownInt_58);
+                writer.Write(UnknownInt_5C);
+                writer.Write(UnknownInt_60);
+                writer.Write(UnknownFloat_64);
+                writer.Write(UnknownFloat_68);
+                writer.Write(UnknownFloat_6C);
+                writer.Write(UnknownFloat_70);
+                writer.Write(UnknownFloat_74);
+                writer.Write(UnknownFloat_78);
+                writer.Write(UnknownInt_7C);
 
-            writer.Write(SerializeBase(endianness));
-            writer.Write(Unknown_08);
-            writer.Write(PRJT_AssetID);
-            writer.Write(PositionX);
-            writer.Write(PositionY);
-            writer.Write(PositionZ);
-            writer.Write(UnknownFloat_1C);
-            writer.Write(UnknownFloat_20);
-            writer.Write(Unknown_24);
-            writer.Write(UnknownFloat_28);
-            writer.Write(UnknownFloat_2C);
-            writer.Write(UnknownFloat_30);
-            writer.Write(UnknownFloat_34);
-            writer.Write(UnknownFloat_38);
-            writer.Write(UnknownInt_3C);
-            writer.Write(UnknownFloat_40);
-            writer.Write(UnknownFloat_44);
-            writer.Write(Unknown_48);
-            writer.Write(UnknownInt_4C);
-            writer.Write(UnknownInt_50);
-            writer.Write(UnknownFloat_54);
-            writer.Write(UnknownInt_58);
-            writer.Write(UnknownInt_5C);
-            writer.Write(UnknownInt_60);
-            writer.Write(UnknownFloat_64);
-            writer.Write(UnknownFloat_68);
-            writer.Write(UnknownFloat_6C);
-            writer.Write(UnknownFloat_70);
-            writer.Write(UnknownFloat_74);
-            writer.Write(UnknownFloat_78);
-            writer.Write(UnknownInt_7C);
+                writer.Write(SerializeLinks(endianness));
 
-            writer.Write(SerializeLinks(endianness));
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) =>

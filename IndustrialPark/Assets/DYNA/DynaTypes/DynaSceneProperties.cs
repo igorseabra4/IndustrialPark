@@ -10,20 +10,6 @@ namespace IndustrialPark
 
         protected override short constVersion => 1;
 
-        //unsigned int idle03ExtraCount;
-        //xAnimFile** idle03Extras;
-        //unsigned int idle04ExtraCount;
-        //xAnimFile** idle04Extras;
-        //unsigned char bombCount;
-        //unsigned char extraIdleDelay;
-        //unsigned char hdrGlow;
-        //unsigned char hdrDarken;
-        //unsigned int uDefaultMusicHash;
-        //unsigned int flags;
-        //float waterTileWidth;
-        //float lodFadeDistance;
-        //unsigned int pad[4];
-
         [Category(dynaCategoryName)]
         public int idle03ExtraCount { get; set; }
         [Category(dynaCategoryName)]
@@ -79,49 +65,52 @@ namespace IndustrialPark
 
         public DynaSceneProperties(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.SceneProperties, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
-            
-            idle03ExtraCount = reader.ReadInt32();
-            idle03Extras = reader.ReadInt32();
-            idle04ExtraCount = reader.ReadInt32();
-            idle04Extras = reader.ReadInt32();
-            bombCount = reader.ReadByte();
-            extraIdleDelay = reader.ReadByte();
-            hdrGlow = reader.ReadByte();
-            hdrDarken = reader.ReadByte();
-            BackgroundMusic_SoundAssetID = reader.ReadUInt32();
-            scenePropertiesFlags = reader.ReadInt32();
-            waterTileWidth = reader.ReadSingle();
-            lodFadeDistance = reader.ReadSingle();
-            UnknownInt24 = reader.ReadInt32();
-            UnknownInt28 = reader.ReadInt32();
-            UnknownInt2C = reader.ReadInt32();
-            UnknownInt30 = reader.ReadInt32();
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
+
+                idle03ExtraCount = reader.ReadInt32();
+                idle03Extras = reader.ReadInt32();
+                idle04ExtraCount = reader.ReadInt32();
+                idle04Extras = reader.ReadInt32();
+                bombCount = reader.ReadByte();
+                extraIdleDelay = reader.ReadByte();
+                hdrGlow = reader.ReadByte();
+                hdrDarken = reader.ReadByte();
+                BackgroundMusic_SoundAssetID = reader.ReadUInt32();
+                scenePropertiesFlags = reader.ReadInt32();
+                waterTileWidth = reader.ReadSingle();
+                lodFadeDistance = reader.ReadSingle();
+                UnknownInt24 = reader.ReadInt32();
+                UnknownInt28 = reader.ReadInt32();
+                UnknownInt2C = reader.ReadInt32();
+                UnknownInt30 = reader.ReadInt32();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(idle03ExtraCount);
+                writer.Write(idle03Extras);
+                writer.Write(idle04ExtraCount);
+                writer.Write(idle04Extras);
+                writer.Write(bombCount);
+                writer.Write(extraIdleDelay);
+                writer.Write(hdrGlow);
+                writer.Write(hdrDarken);
+                writer.Write(BackgroundMusic_SoundAssetID);
+                writer.Write(scenePropertiesFlags);
+                writer.Write(waterTileWidth);
+                writer.Write(lodFadeDistance);
+                writer.Write(UnknownInt24);
+                writer.Write(UnknownInt28);
+                writer.Write(UnknownInt2C);
+                writer.Write(UnknownInt30);
 
-            writer.Write(idle03ExtraCount);
-            writer.Write(idle03Extras);
-            writer.Write(idle04ExtraCount);
-            writer.Write(idle04Extras);
-            writer.Write(bombCount);
-            writer.Write(extraIdleDelay);
-            writer.Write(hdrGlow);
-            writer.Write(hdrDarken);
-            writer.Write(BackgroundMusic_SoundAssetID);
-            writer.Write(scenePropertiesFlags);
-            writer.Write(waterTileWidth);
-            writer.Write(lodFadeDistance);
-            writer.Write(UnknownInt24);
-            writer.Write(UnknownInt28);
-            writer.Write(UnknownInt2C);
-            writer.Write(UnknownInt30);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => BackgroundMusic_SoundAssetID == assetID || base.HasReference(assetID);

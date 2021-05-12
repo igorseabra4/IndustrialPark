@@ -65,49 +65,52 @@ namespace IndustrialPark
 
         public DynaGObjectNPCSettings(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__NPCSettings, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
 
-            BasisType = (NpcSettingsBasisType)reader.ReadInt32();
-            AllowDetect = reader.ReadByteBool();
-            AllowPatrol = reader.ReadByteBool();
-            AllowWander = reader.ReadByteBool();
-            ReduceCollide = reader.ReadByteBool();
-            UseNavSplines = reader.ReadByteBool();
-            reader.ReadByte();
-            reader.ReadByte();
-            reader.ReadByte();
-            AllowChase = reader.ReadByteBool();
-            AllowAttack = reader.ReadByteBool();
-            AssumeLOS = reader.ReadByteBool();
-            AssumeFOV = reader.ReadByteBool();
-            DuploWaveMode = (En_dupowavmod)reader.ReadInt32();
-            DuploSpawnDelay = reader.ReadSingle();
-            DuploSpawnLifeMax = reader.ReadInt32();
+                BasisType = (NpcSettingsBasisType)reader.ReadInt32();
+                AllowDetect = reader.ReadByteBool();
+                AllowPatrol = reader.ReadByteBool();
+                AllowWander = reader.ReadByteBool();
+                ReduceCollide = reader.ReadByteBool();
+                UseNavSplines = reader.ReadByteBool();
+                reader.ReadByte();
+                reader.ReadByte();
+                reader.ReadByte();
+                AllowChase = reader.ReadByteBool();
+                AllowAttack = reader.ReadByteBool();
+                AssumeLOS = reader.ReadByteBool();
+                AssumeFOV = reader.ReadByteBool();
+                DuploWaveMode = (En_dupowavmod)reader.ReadInt32();
+                DuploSpawnDelay = reader.ReadSingle();
+                DuploSpawnLifeMax = reader.ReadInt32();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write((int)BasisType);
+                writer.Write(AllowDetect);
+                writer.Write(AllowPatrol);
+                writer.Write(AllowWander);
+                writer.Write(ReduceCollide);
+                writer.Write(UseNavSplines);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+                writer.Write(AllowChase);
+                writer.Write(AllowAttack);
+                writer.Write(AssumeLOS);
+                writer.Write(AssumeFOV);
+                writer.Write((int)DuploWaveMode);
+                writer.Write(DuploSpawnDelay);
+                writer.Write(DuploSpawnLifeMax);
 
-            writer.Write((int)BasisType);
-            writer.Write(AllowDetect);
-            writer.Write(AllowPatrol);
-            writer.Write(AllowWander);
-            writer.Write(ReduceCollide);
-            writer.Write(UseNavSplines);
-            writer.Write((byte)0);
-            writer.Write((byte)0);
-            writer.Write((byte)0);
-            writer.Write(AllowChase);
-            writer.Write(AllowAttack);
-            writer.Write(AssumeLOS);
-            writer.Write(AssumeFOV);
-            writer.Write((int)DuploWaveMode);
-            writer.Write(DuploSpawnDelay);
-            writer.Write(DuploSpawnLifeMax);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
     }
 }

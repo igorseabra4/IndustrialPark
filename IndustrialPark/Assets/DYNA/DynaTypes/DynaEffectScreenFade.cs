@@ -27,25 +27,28 @@ namespace IndustrialPark
 
         public DynaEffectScreenFade(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__ScreenFade, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
 
-            Color = reader.ReadColor();
-            UnknownFloat1 = reader.ReadSingle();
-            UnknownFloat2 = reader.ReadSingle();
-            UnknownFloat3 = reader.ReadSingle();
+                Color = reader.ReadColor();
+                UnknownFloat1 = reader.ReadSingle();
+                UnknownFloat2 = reader.ReadSingle();
+                UnknownFloat3 = reader.ReadSingle();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Color);
+                writer.Write(UnknownFloat1);
+                writer.Write(UnknownFloat2);
+                writer.Write(UnknownFloat3);
 
-            writer.Write(Color);
-            writer.Write(UnknownFloat1);
-            writer.Write(UnknownFloat2);
-            writer.Write(UnknownFloat3);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
     }
 }

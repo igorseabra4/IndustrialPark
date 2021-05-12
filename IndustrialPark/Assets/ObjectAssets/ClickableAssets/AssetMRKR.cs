@@ -37,19 +37,23 @@ namespace IndustrialPark
 
         public AssetMRKR(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            CreateTransformMatrix();
-            ArchiveEditorFunctions.AddToRenderableAssets(this);
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                CreateTransformMatrix();
+                ArchiveEditorFunctions.AddToRenderableAssets(this);
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(_position.X);
-            writer.Write(_position.Y);
-            writer.Write(_position.Z);
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(_position.X);
+                writer.Write(_position.Y);
+                writer.Write(_position.Z);
+                return writer.ToArray();
+            }
         }
 
         private Matrix world;

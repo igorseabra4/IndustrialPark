@@ -1057,7 +1057,7 @@ namespace IndustrialPark
                             template == AssetTemplate.LKIT_JF_SB_lights ? "JF_SB_lights" :
                             template == AssetTemplate.LKIT_jf01_light_kit ? "jf01_light_kit" : "";
                         var data = File.ReadAllBytes(Path.Combine(Application.StartupPath, "Resources", fileName));
-                        asset = new AssetLKIT(assetName, data, Platform.GameCube);
+                        asset = new AssetLKIT(assetName, data, Endianness.Big);
                     }
                     break;
                 default:

@@ -13,7 +13,7 @@ namespace IndustrialPark
 
         public AssetPLYR(string assetName, Vector3 position, Game game) : base(assetName, AssetType.PLYR, BaseAssetType.Player, position)
         {
-            BaseFlags.FlagValueShort = 0x0D;
+            BaseFlags = 0x0D;
             SolidityFlags.FlagValueByte = 0;
 
             ColorAlpha = 0;
@@ -27,21 +27,25 @@ namespace IndustrialPark
         public AssetPLYR(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
             if (game != Game.Scooby)
-            {
-                var reader = new EndianBinaryReader(AHDR.data, endianness);
-                reader.BaseStream.Position = reader.BaseStream.Length - 4;
-                LightKit_AssetID = reader.ReadUInt32();
-            }
+                using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+                {
+                    reader.BaseStream.Position = reader.BaseStream.Length - 4;
+                    LightKit_AssetID = reader.ReadUInt32();
+                }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntity(game, endianness));       
-            writer.Write(SerializeLinks(endianness));
-            if (game != Game.Scooby)
-                writer.Write(LightKit_AssetID);
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntity(game, endianness));
+                writer.Write(SerializeLinks(endianness));
+                if (game != Game.Scooby)
+                {
+                    writer.Write(LightKit_AssetID);
+                }
+                return writer.ToArray();
+            }
         }
 
         public static bool dontRender = false;

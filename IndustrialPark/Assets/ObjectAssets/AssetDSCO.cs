@@ -65,51 +65,53 @@ namespace IndustrialPark
 
         public AssetDSCO(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
-
-            Flags.FlagValueInt = reader.ReadUInt32();
-            TimeYellow = reader.ReadSingle();
-            TimeRed = reader.ReadSingle();
-            int OffPrefixOffset = reader.ReadInt32() + 8;
-            int TransitionPrefixOffset = reader.ReadInt32() + 8;
-            int OnPrefixOffset = reader.ReadInt32() + 8;
-            AmountOfTiles = reader.ReadInt32();
-            int StatesOffset = reader.ReadInt32() + 8;
-            int AmountOfPhases = reader.ReadInt32();
-
-            reader.BaseStream.Position = OffPrefixOffset;
-            TileName_FirstWhite = ReadString(reader);
-
-            reader.BaseStream.Position = TransitionPrefixOffset;
-            TileName_FirstYellow = ReadString(reader);
-
-            reader.BaseStream.Position = OnPrefixOffset;
-            TileName_FirstRed = ReadString(reader);
-
-            reader.BaseStream.Position = StatesOffset;
-            int[] PhaseOffsets = new int[AmountOfPhases];
-            for (int i = 0; i < PhaseOffsets.Length; i++)
-                PhaseOffsets[i] = reader.ReadInt32() + 8;
-
-            Patterns = new DiscoPattern[AmountOfPhases];
-            for (int i = 0; i < Patterns.Length; i++)
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                reader.BaseStream.Position = PhaseOffsets[i];
+                reader.BaseStream.Position = baseHeaderEndPosition;
 
-                var counter = AmountOfTiles;
-                while (counter % 4 != 0)
-                    counter++;
+                Flags.FlagValueInt = reader.ReadUInt32();
+                TimeYellow = reader.ReadSingle();
+                TimeRed = reader.ReadSingle();
+                int OffPrefixOffset = reader.ReadInt32() + 8;
+                int TransitionPrefixOffset = reader.ReadInt32() + 8;
+                int OnPrefixOffset = reader.ReadInt32() + 8;
+                AmountOfTiles = reader.ReadInt32();
+                int StatesOffset = reader.ReadInt32() + 8;
+                int AmountOfPhases = reader.ReadInt32();
 
-                Patterns[i] = new DiscoPattern(counter);
-                int k = 0;
-                while (k < AmountOfTiles)
+                reader.BaseStream.Position = OffPrefixOffset;
+                TileName_FirstWhite = ReadString(reader);
+
+                reader.BaseStream.Position = TransitionPrefixOffset;
+                TileName_FirstYellow = ReadString(reader);
+
+                reader.BaseStream.Position = OnPrefixOffset;
+                TileName_FirstRed = ReadString(reader);
+
+                reader.BaseStream.Position = StatesOffset;
+                int[] PhaseOffsets = new int[AmountOfPhases];
+                for (int i = 0; i < PhaseOffsets.Length; i++)
+                    PhaseOffsets[i] = reader.ReadInt32() + 8;
+
+                Patterns = new DiscoPattern[AmountOfPhases];
+                for (int i = 0; i < Patterns.Length; i++)
                 {
-                    byte entry = reader.ReadByte();
-                    for (int j = 0; j < 4; j++)
+                    reader.BaseStream.Position = PhaseOffsets[i];
+
+                    var counter = AmountOfTiles;
+                    while (counter % 4 != 0)
+                        counter++;
+
+                    Patterns[i] = new DiscoPattern(counter);
+                    int k = 0;
+                    while (k < AmountOfTiles)
                     {
-                        int mask = 0b00000011 << (2 * j);
-                        Patterns[i].Pattern[k++] = (DiscoTileState)((entry & mask) >> (2 * j));
+                        byte entry = reader.ReadByte();
+                        for (int j = 0; j < 4; j++)
+                        {
+                            int mask = 0b00000011 << (2 * j);
+                            Patterns[i].Pattern[k++] = (DiscoTileState)((entry & mask) >> (2 * j));
+                        }
                     }
                 }
             }
@@ -117,68 +119,68 @@ namespace IndustrialPark
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeBase(endianness));
-
-            for (int i = 0; i < 9; i++)
-                writer.Write(0);
-
-            int OffPrefixOffset = (int)writer.BaseStream.Position - 8;
-            WriteString(TileName_FirstWhite, writer);
-
-            int TransitionPrefixOffset = (int)writer.BaseStream.Position - 8;
-            WriteString(TileName_FirstYellow, writer);
-
-            int OnPrefixOffset = (int)writer.BaseStream.Position - 8;
-            WriteString(TileName_FirstRed, writer);
-            
-            int StatesOffset = (int)writer.BaseStream.Position - 8;
-
-            for (int i = 0; i < Patterns.Length; i++)
-                writer.Write(0); // int[] Phases
-
-            int[] PhaseOffsets = new int[Patterns.Length];
-
-            for (int i = 0; i < Patterns.Length; i++)
+            using (var writer = new EndianBinaryWriter(endianness))
             {
-                PhaseOffsets[i] = (int)writer.BaseStream.Position - 8;
+                writer.Write(SerializeBase(endianness));
 
-                Patterns[i].Fix(AmountOfTiles);
+                for (int i = 0; i < 9; i++)
+                    writer.Write(0);
 
-                for (int j = 0; j < Patterns[i].Pattern.Length; j += 4)
+                int OffPrefixOffset = (int)writer.BaseStream.Position - 8;
+                WriteString(TileName_FirstWhite, writer);
+
+                int TransitionPrefixOffset = (int)writer.BaseStream.Position - 8;
+                WriteString(TileName_FirstYellow, writer);
+
+                int OnPrefixOffset = (int)writer.BaseStream.Position - 8;
+                WriteString(TileName_FirstRed, writer);
+
+                int StatesOffset = (int)writer.BaseStream.Position - 8;
+
+                for (int i = 0; i < Patterns.Length; i++)
+                    writer.Write(0); // int[] Phases
+
+                int[] PhaseOffsets = new int[Patterns.Length];
+
+                for (int i = 0; i < Patterns.Length; i++)
                 {
-                    byte entry = 0;
-                    for (int k = 0; k < 4; k++)
-                        if (j + k < Patterns[i].Pattern.Length)
-                            entry |= (byte)(((int)Patterns[i].Pattern[j + k]) << (2 * k));
-                    writer.Write(entry);
+                    PhaseOffsets[i] = (int)writer.BaseStream.Position - 8;
+
+                    Patterns[i].Fix(AmountOfTiles);
+
+                    for (int j = 0; j < Patterns[i].Pattern.Length; j += 4)
+                    {
+                        byte entry = 0;
+                        for (int k = 0; k < 4; k++)
+                            if (j + k < Patterns[i].Pattern.Length)
+                                entry |= (byte)(((int)Patterns[i].Pattern[j + k]) << (2 * k));
+                        writer.Write(entry);
+                    }
                 }
+
+                while (writer.BaseStream.Position % 4 != 0)
+                    writer.Write((byte)0);
+
+                writer.BaseStream.Position = baseHeaderEndPosition;
+                writer.Write(Flags.FlagValueInt);
+                writer.Write(TimeYellow);
+                writer.Write(TimeRed);
+                writer.Write(OffPrefixOffset);
+                writer.Write(TransitionPrefixOffset);
+                writer.Write(OnPrefixOffset);
+                writer.Write(AmountOfTiles);
+                writer.Write(StatesOffset);
+                writer.Write(Patterns.Length);
+
+                writer.BaseStream.Position = StatesOffset + 8;
+
+                for (int i = 0; i < PhaseOffsets.Length; i++)
+                    writer.Write(PhaseOffsets[i]);
+
+                writer.BaseStream.Position = writer.BaseStream.Length;
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
             }
-
-            while (writer.BaseStream.Position % 4 != 0)
-                writer.Write((byte)0);
-
-            writer.BaseStream.Position = baseHeaderEndPosition;
-
-            writer.Write(Flags.FlagValueInt);
-            writer.Write(TimeYellow);
-            writer.Write(TimeRed);
-            writer.Write(OffPrefixOffset);
-            writer.Write(TransitionPrefixOffset);
-            writer.Write(OnPrefixOffset);
-            writer.Write(AmountOfTiles);
-            writer.Write(StatesOffset);
-            writer.Write(Patterns.Length);
-
-            writer.BaseStream.Position = StatesOffset + 8;
-
-            for (int i = 0; i < PhaseOffsets.Length; i++)
-                writer.Write(PhaseOffsets[i]);
-
-            writer.BaseStream.Position = writer.BaseStream.Length;
-
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
         }
 
         private string ReadString(EndianBinaryReader reader)

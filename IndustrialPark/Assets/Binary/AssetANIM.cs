@@ -1,53 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using HipHopFile;
 
 namespace IndustrialPark
 {
-    [TypeConverter(typeof(ExpandableObjectConverter))]
-    public class AssetANIM_Header
-    {
-        public uint Flags { get; set; }
-        public ushort BoneCount;
-        public ushort TimeCount;
-        public uint KeyCount;
-        public AssetSingle ScaleX { get; set; }
-        public AssetSingle ScaleY { get; set; }
-        public AssetSingle ScaleZ { get; set; }
-
-        public AssetANIM_Header() { }
-        public AssetANIM_Header(EndianBinaryReader reader)
-        {
-            reader.ReadUInt32();
-            Flags = reader.ReadUInt32();
-            BoneCount = reader.ReadUInt16();
-            TimeCount = reader.ReadUInt16();
-            KeyCount = reader.ReadUInt32();
-            ScaleX = reader.ReadSingle();
-            ScaleY = reader.ReadSingle();
-            ScaleZ = reader.ReadSingle();
-        }
-
-        public byte[] Serialize(Endianness endianness)
-        {
-            var writer = new EndianBinaryWriter(endianness);
-
-            writer.WriteMagic("SKB1");
-
-            writer.Write(Flags);
-            writer.Write(BoneCount);
-            writer.Write(TimeCount);
-            writer.Write(KeyCount);
-            writer.Write(ScaleX);
-            writer.Write(ScaleY);
-            writer.Write(ScaleZ);
-
-            return writer.ToArray();
-        }
-    }
-
     public class AssetANIM_KeyFrame
     {
         public ushort TimeIndex { get; set; }
@@ -71,10 +27,8 @@ namespace IndustrialPark
             PositionZ = reader.ReadInt16();
         }
 
-        public byte[] Serialize(Endianness endianness)
+        public void Serialize(EndianBinaryWriter writer)
         {
-            var writer = new EndianBinaryWriter(endianness);
-
             writer.Write(TimeIndex);
             writer.Write(RotationX);
             writer.Write(RotationY);
@@ -83,79 +37,94 @@ namespace IndustrialPark
             writer.Write(PositionX);
             writer.Write(PositionY);
             writer.Write(PositionZ);
-
-            return writer.ToArray();
         }
     }
-    
+
     public class AssetANIM : Asset
     {
         private const string categoryName = "Animation";
 
         [Category(categoryName)]
-        public AssetANIM_Header Header { get; set; }
-
+        public FlagBitmask Flags { get; set; } = IntFlagsDescriptor();
+        [Category(categoryName)]
+        public AssetSingle ScaleX { get; set; }
+        [Category(categoryName)]
+        public AssetSingle ScaleY { get; set; }
+        [Category(categoryName)]
+        public AssetSingle ScaleZ { get; set; }
         [Category(categoryName)]
         public AssetANIM_KeyFrame[] KeyFrames { get; set; }
-
         [Category(categoryName)]
         public AssetSingle[] Times { get; set; }
-
         [Category(categoryName)]
         public short[][] Offsets { get; set; }
 
         public AssetANIM(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-
-            Header = new AssetANIM_Header(reader);
-
-            var keyFrames = new List<AssetANIM_KeyFrame>();
-            for (int i = 0; i < Header.KeyCount; i++)
-                keyFrames.Add(new AssetANIM_KeyFrame(reader));
-            KeyFrames = keyFrames.ToArray();
-
-            var times = new List<AssetSingle>();
-            for (int i = 0; i < Header.TimeCount; i++)
-                times.Add(reader.ReadSingle());
-            Times = times.ToArray();
-
-            var offsets = new List<short[]>();
-            for (int i = 0; i < Header.TimeCount - 1; i++)
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                var offset = new List<short>();
-                for (int j = 0; j < Header.BoneCount; j++)
-                    offset.Add(reader.ReadInt16());
-                offsets.Add(offset.ToArray());
+                reader.ReadUInt32();
+                Flags.FlagValueInt = reader.ReadUInt32();
+                var boneCount = reader.ReadUInt16();
+                var timeCount = reader.ReadUInt16();
+                var keyCount = reader.ReadUInt32();
+                ScaleX = reader.ReadSingle();
+                ScaleY = reader.ReadSingle();
+                ScaleZ = reader.ReadSingle();
+
+                var keyFrames = new List<AssetANIM_KeyFrame>();
+                for (int i = 0; i < keyCount; i++)
+                    keyFrames.Add(new AssetANIM_KeyFrame(reader));
+                KeyFrames = keyFrames.ToArray();
+
+                var times = new List<AssetSingle>();
+                for (int i = 0; i < timeCount; i++)
+                    times.Add(reader.ReadSingle());
+                Times = times.ToArray();
+
+                var offsets = new List<short[]>();
+                for (int i = 0; i < timeCount - 1; i++)
+                {
+                    var offset = new List<short>();
+                    for (int j = 0; j < boneCount; j++)
+                        offset.Add(reader.ReadInt16());
+                    offsets.Add(offset.ToArray());
+                }
+                Offsets = offsets.ToArray();
             }
-            Offsets = offsets.ToArray();
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            Header.KeyCount = (uint)KeyFrames.Length;
-            Header.TimeCount = (ushort)Times.Length;
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.WriteMagic("SKB1");
+                writer.Write(Flags.FlagValueInt);
 
-            if (Offsets.Length > 0)
-                Header.BoneCount = (ushort)Offsets[0].Length;
-            else
-                Header.BoneCount = 0;
+                if (Offsets.Length > 0)
+                    writer.Write((ushort)Offsets[0].Length);
+                else
+                    writer.Write((ushort)0);
 
-            var writer = new EndianBinaryWriter(endianness);
+                writer.Write((ushort)Times.Length);
+                writer.Write(KeyFrames.Length);
+                writer.Write(ScaleX);
+                writer.Write(ScaleY);
+                writer.Write(ScaleZ);
 
-            writer.Write(Header.Serialize(endianness));
-            foreach (var k in KeyFrames)
-                writer.Write(k.Serialize(endianness));
-            foreach (var t in Times)
-                writer.Write(t);
-            foreach (var o in Offsets)
-                foreach (var of in o)
-                    writer.Write(of);
+                foreach (var k in KeyFrames)
+                    k.Serialize(writer);
+                foreach (var t in Times)
+                    writer.Write(t);
+                foreach (var o in Offsets)
+                    foreach (var of in o)
+                        writer.Write(of);
 
-            while (writer.BaseStream.Length % 4 != 0)
-                writer.Write((byte)0xCD);
+                while (writer.BaseStream.Length % 4 != 0)
+                    writer.Write((byte)0xCD);
 
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
     }
 }

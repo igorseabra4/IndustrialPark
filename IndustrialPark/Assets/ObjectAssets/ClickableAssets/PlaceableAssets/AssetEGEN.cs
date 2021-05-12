@@ -31,36 +31,40 @@ namespace IndustrialPark
 
         public AssetEGEN(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = entityHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = entityHeaderEndPosition;
 
-            Src_dpos_X = reader.ReadSingle();
-            Src_dpos_Y = reader.ReadSingle();
-            Src_dpos_Z = reader.ReadSingle();
-            DamageType = reader.ReadByte();
-            EgenFlags.FlagValueByte = reader.ReadByte();
-            reader.ReadByte();
-            reader.ReadByte();
-            ActiveTimeSeconds = reader.ReadSingle();
-            OnAnim_AssetID = reader.ReadUInt32();
+                Src_dpos_X = reader.ReadSingle();
+                Src_dpos_Y = reader.ReadSingle();
+                Src_dpos_Z = reader.ReadSingle();
+                DamageType = reader.ReadByte();
+                EgenFlags.FlagValueByte = reader.ReadByte();
+                reader.ReadByte();
+                reader.ReadByte();
+                ActiveTimeSeconds = reader.ReadSingle();
+                OnAnim_AssetID = reader.ReadUInt32();
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntity(game, endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntity(game, endianness));
 
-            writer.Write(Src_dpos_X);
-            writer.Write(Src_dpos_Y);
-            writer.Write(Src_dpos_Z);
-            writer.Write(DamageType);
-            writer.Write(EgenFlags.FlagValueByte);
-            writer.Write((short)0);
-            writer.Write(ActiveTimeSeconds);
-            writer.Write(OnAnim_AssetID);
+                writer.Write(Src_dpos_X);
+                writer.Write(Src_dpos_Y);
+                writer.Write(Src_dpos_Z);
+                writer.Write(DamageType);
+                writer.Write(EgenFlags.FlagValueByte);
+                writer.Write((short)0);
+                writer.Write(ActiveTimeSeconds);
+                writer.Write(OnAnim_AssetID);
 
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
 
         public static bool dontRender = false;

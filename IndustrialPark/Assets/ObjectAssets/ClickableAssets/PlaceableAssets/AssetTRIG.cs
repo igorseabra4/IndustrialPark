@@ -166,49 +166,51 @@ namespace IndustrialPark
 
         public AssetTRIG(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = entityHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = entityHeaderEndPosition;
 
-            _trigPos0 = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            _trigPos1 = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            Position2X = reader.ReadSingle();
-            Position2Y = reader.ReadSingle();
-            Position2Z = reader.ReadSingle();
-            Position3X = reader.ReadSingle();
-            Position3Y = reader.ReadSingle();
-            Position3Z = reader.ReadSingle();
-            DirectionX = reader.ReadSingle();
-            DirectionY = reader.ReadSingle();
-            DirectionZ = reader.ReadSingle();
-            TriggerFlags.FlagValueInt = reader.ReadUInt32();
+                _trigPos0 = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                _trigPos1 = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                Position2X = reader.ReadSingle();
+                Position2Y = reader.ReadSingle();
+                Position2Z = reader.ReadSingle();
+                Position3X = reader.ReadSingle();
+                Position3Y = reader.ReadSingle();
+                Position3Z = reader.ReadSingle();
+                DirectionX = reader.ReadSingle();
+                DirectionY = reader.ReadSingle();
+                DirectionZ = reader.ReadSingle();
+                TriggerFlags.FlagValueInt = reader.ReadUInt32();
 
-            FixPosition();
+                FixPosition();
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntity(game, endianness));
-
-            writer.Write(Position0X);
-            writer.Write(Position0Y);
-            writer.Write(Position0Z);
-            writer.Write(Position1X);
-            writer.Write(Position1Y);
-            writer.Write(Position1Z);
-            writer.Write(Position2X);
-            writer.Write(Position2Y);
-            writer.Write(Position2Z);
-            writer.Write(Position3X);
-            writer.Write(Position3Y);
-            writer.Write(Position3Z);
-            writer.Write(DirectionX);
-            writer.Write(DirectionY);
-            writer.Write(DirectionZ);
-            writer.Write(TriggerFlags.FlagValueInt);
-
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntity(game, endianness));
+                writer.Write(Position0X);
+                writer.Write(Position0Y);
+                writer.Write(Position0Z);
+                writer.Write(Position1X);
+                writer.Write(Position1Y);
+                writer.Write(Position1Z);
+                writer.Write(Position2X);
+                writer.Write(Position2Y);
+                writer.Write(Position2Z);
+                writer.Write(Position3X);
+                writer.Write(Position3Y);
+                writer.Write(Position3Z);
+                writer.Write(DirectionX);
+                writer.Write(DirectionY);
+                writer.Write(DirectionZ);
+                writer.Write(TriggerFlags.FlagValueInt);
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
 
         public static bool dontRender = false;

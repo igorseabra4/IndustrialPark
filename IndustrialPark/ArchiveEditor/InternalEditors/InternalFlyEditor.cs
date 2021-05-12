@@ -107,10 +107,6 @@ namespace IndustrialPark
             UpdateAssetEntries();
         }
 
-        public void SetHideHelp(bool _)
-        {
-        }
-
         private void buttonGetPos_Click(object sender, EventArgs e)
         {
             ((EntryFLY)propertyGridSpecific.SelectedObject).CameraPosition = Program.MainForm.renderer.Camera.Position;

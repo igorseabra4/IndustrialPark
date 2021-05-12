@@ -37,17 +37,18 @@ namespace IndustrialPark
 
         public byte[] Serialize(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(PickupHash);
+                writer.Write(PickupType);
+                writer.Write(PickupIndex);
+                writer.Write(PickupFlags);
+                writer.Write(Quantity);
+                writer.Write(ModelAssetID);
+                writer.Write(AnimAssetID);
 
-            writer.Write(PickupHash);
-            writer.Write(PickupType);
-            writer.Write(PickupIndex);
-            writer.Write(PickupFlags);
-            writer.Write(Quantity);
-            writer.Write(ModelAssetID);
-            writer.Write(AnimAssetID);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override string ToString() => 
@@ -72,30 +73,28 @@ namespace IndustrialPark
 
         public AssetPICK(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.ReadInt32();
+                _pick_Entries = new EntryPICK[reader.ReadInt32()];
+                for (int i = 0; i < _pick_Entries.Length; i++)
+                    _pick_Entries[i] = new EntryPICK(reader);
 
-            reader.ReadInt32();
-
-            _pick_Entries = new EntryPICK[reader.ReadInt32()];
-
-            for (int i = 0; i < _pick_Entries.Length; i++)
-                _pick_Entries[i] = new EntryPICK(reader);
-
-            UpdateDictionary();
+                UpdateDictionary();
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.WriteMagic("PICK");
+                writer.Write(_pick_Entries.Length);
+                foreach (var l in _pick_Entries)
+                    writer.Write(l.Serialize(endianness));
 
-            writer.WriteMagic("PICK");
-
-            writer.Write(_pick_Entries.Length);
-
-            foreach (var l in _pick_Entries)
-                writer.Write(l.Serialize(endianness));
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)

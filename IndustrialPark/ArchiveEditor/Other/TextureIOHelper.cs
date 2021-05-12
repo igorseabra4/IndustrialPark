@@ -15,6 +15,8 @@ namespace IndustrialPark
 {
     public static class TextureIOHelper
     {
+        public static readonly object locker = new object();
+
         public static string txdGenFolder => Application.StartupPath + "/Resources/txdgen_1.0/";
         public static string tempGcTxdsDir => txdGenFolder + "Temp/txds_gc/";
         public static string tempPcTxdsDir => txdGenFolder + "Temp/txds_pc/";
@@ -23,53 +25,55 @@ namespace IndustrialPark
 
         public static void PerformTXDConversionExternal(Platform targetPlatform, bool toPC = true, bool compress = false, bool generateMipmaps = false, string custom_output = null)
         {
-            if (!converterInitialized)
-                initConverter();
-
-            string ini =
-                "[Main]\r\n" +
-                (custom_output ?? (toPC ?
-                "gameRoot=" + tempGcTxdsDir + "\r\n" +
-                "outputRoot=" + tempPcTxdsDir + "\r\n" +
-                "targetVersion=VC\r\n" +
-                "targetPlatform=PC\r\n"
-                :
-                "gameRoot=" + tempPcTxdsDir + "\r\n" +
-                "outputRoot=" + tempGcTxdsDir + "\r\n" +
-                "targetVersion=VC\r\n" +
-                "targetPlatform=" +
-                (targetPlatform == Platform.GameCube ? "Gamecube" :
-                targetPlatform == Platform.Xbox ? "XBOX" :
-                targetPlatform == Platform.PS2 ? "PS2" : "PC")
-                + "\r\n")) +
-                "clearMipmaps=false\r\n" +
-                "generateMipmaps=" + generateMipmaps.ToString().ToLower() + "\r\n" +
-                "mipGenMode=default\r\n" +
-                "mipGenMaxLevel=10\r\n" +
-                "improveFiltering=true\r\n" +
-                "compressTextures=" + compress.ToString().ToLower() + "\r\n" +
-                "compressionQuality=1.0\r\n" +
-                "palRuntimeType=PNGQUANT\r\n" +
-                "dxtRuntimeType=SQUISH\r\n" +
-                "warningLevel=1\r\n" +
-                "ignoreSecureWarnings=true\r\n" +
-                "reconstructIMGArchives=false\r\n" +
-                "fixIncompatibleRasters=true\r\n" +
-                "dxtPackedDecompression=false\r\n" +
-                "imgArchivesCompressed=false\r\n" +
-                "ignoreSerializationRegions=true";
-
-            File.WriteAllText(txdGenFolder + "txdgen.ini", ini);
-
-            new Thread(() =>
+            lock (locker)
             {
-                Thread.Sleep(3000);
-                if (!txdgenProcess.HasExited)
-                    txdgenProcess.Kill();
-            }).Start();
+                if (!converterInitialized)
+                    initConverter();
 
-            txdgenProcess.Start();
-            txdgenProcess.WaitForExit();
+                string ini =
+                    "[Main]\r\n" +
+                    (custom_output ?? (toPC ?
+                    "gameRoot=" + tempGcTxdsDir + "\r\n" +
+                    "outputRoot=" + tempPcTxdsDir + "\r\n" +
+                    "targetVersion=VC\r\n" +
+                    "targetPlatform=PC\r\n"
+                    :
+                    "gameRoot=" + tempPcTxdsDir + "\r\n" +
+                    "outputRoot=" + tempGcTxdsDir + "\r\n" +
+                    "targetVersion=VC\r\n" +
+                    "targetPlatform=" +
+                    (targetPlatform == Platform.GameCube ? "Gamecube" :
+                    targetPlatform == Platform.Xbox ? "XBOX" :
+                    targetPlatform == Platform.PS2 ? "PS2" : "PC")
+                    + "\r\n")) +
+                    "clearMipmaps=false\r\n" +
+                    "generateMipmaps=" + generateMipmaps.ToString().ToLower() + "\r\n" +
+                    "mipGenMode=default\r\n" +
+                    "mipGenMaxLevel=10\r\n" +
+                    "improveFiltering=true\r\n" +
+                    "compressTextures=" + compress.ToString().ToLower() + "\r\n" +
+                    "compressionQuality=1.0\r\n" +
+                    "palRuntimeType=PNGQUANT\r\n" +
+                    "dxtRuntimeType=SQUISH\r\n" +
+                    "warningLevel=1\r\n" +
+                    "ignoreSecureWarnings=true\r\n" +
+                    "reconstructIMGArchives=false\r\n" +
+                    "fixIncompatibleRasters=true\r\n" +
+                    "dxtPackedDecompression=false\r\n" +
+                    "imgArchivesCompressed=false\r\n" +
+                    "ignoreSerializationRegions=true";
+
+                File.WriteAllText(txdGenFolder + "txdgen.ini", ini);
+
+                new Thread(() =>
+                {
+                    Thread.Sleep(3000);
+                    closeConverter();
+                }).Start();
+
+                txdgenProcess.Start();
+                txdgenProcess.WaitForExit();
+            }
         }
 
         private static Process txdgenProcess;
@@ -86,6 +90,13 @@ namespace IndustrialPark
             txdgenProcess.StartInfo.UseShellExecute = false;
             txdgenProcess.EnableRaisingEvents = true;
             converterInitialized = true;
+        }
+
+        public static void closeConverter()
+        {
+            if (converterInitialized)
+                if (!txdgenProcess.HasExited)
+                    txdgenProcess.Kill();
         }
 
         public static int scoobyTextureVersion => 0x0C02FFFF;
@@ -117,40 +128,41 @@ namespace IndustrialPark
 
         public static void ExportSingleTextureToDictionary(string fileName, byte[] data, string textureName)
         {
-            ReadFileMethods.treatStuffAsByteArray = true;
+                ReadFileMethods.treatStuffAsByteArray = true;
 
-            List<TextureNative_0015> textNativeList = new List<TextureNative_0015>();
+                List<TextureNative_0015> textNativeList = new List<TextureNative_0015>();
 
-            int fileVersion = 0;
+                int fileVersion = 0;
 
-            foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(data))
-                if (rw is TextureDictionary_0016 td)
-                    foreach (TextureNative_0015 tn in td.textureNativeList)
+                foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(data))
+                    if (rw is TextureDictionary_0016 td)
+                        foreach (TextureNative_0015 tn in td.textureNativeList)
+                        {
+                            fileVersion = tn.renderWareVersion;
+                            tn.textureNativeStruct.textureName = textureName.Replace(".RW3", "");
+                            textNativeList.Add(tn);
+                        }
+
+                TextureDictionary_0016 rws = new TextureDictionary_0016()
+                {
+                    textureDictionaryStruct = new TextureDictionaryStruct_0001()
                     {
-                        fileVersion = tn.renderWareVersion;
-                        tn.textureNativeStruct.textureName = textureName.Replace(".RW3", "");
-                        textNativeList.Add(tn);
+                        textureCount = (short)textNativeList.Count(),
+                        unknown = 0
+                    },
+                    textureNativeList = textNativeList,
+                    textureDictionaryExtension = new Extension_0003()
+                    {
+                        extensionSectionList = new List<RWSection>()
                     }
+                };
 
-            TextureDictionary_0016 rws = new TextureDictionary_0016()
-            {
-                textureDictionaryStruct = new TextureDictionaryStruct_0001()
-                {
-                    textureCount = (short)textNativeList.Count(),
-                    unknown = 0
-                },
-                textureNativeList = textNativeList,
-                textureDictionaryExtension = new Extension_0003()
-                {
-                    extensionSectionList = new List<RWSection>()
-                }
-            };
+                rws.textureNativeList = rws.textureNativeList.OrderBy(f => f.textureNativeStruct.textureName).ToList();
 
-            rws.textureNativeList = rws.textureNativeList.OrderBy(f => f.textureNativeStruct.textureName).ToList();
+                File.WriteAllBytes(fileName, ReadFileMethods.ExportRenderWareFile(rws, fileVersion));
 
-            File.WriteAllBytes(fileName, ReadFileMethods.ExportRenderWareFile(rws, fileVersion));
-
-            ReadFileMethods.treatStuffAsByteArray = false;
+                ReadFileMethods.treatStuffAsByteArray = false;
+            
         }
 
         public static Section_AHDR CreateRWTXFromBitmap(Game game, Platform platform, string fileName, bool appendRW3, bool flip, bool mipmaps, bool compress, bool transFix)
@@ -161,97 +173,100 @@ namespace IndustrialPark
         public static List<Section_AHDR> CreateRWTXsFromBitmaps
             (Game game, Platform platform, List<string> fileNames, bool appendRW3, bool flip, bool mipmaps, bool compress, bool transFix)
         {
-            if (transFix)
-                compress = false;
-
-            List<TextureNative_0015> textureNativeList = new List<TextureNative_0015>();
-
-            foreach (string fileName in fileNames)
+            lock (locker)
             {
-                string textureName = Path.GetFileNameWithoutExtension(fileName);
-                Bitmap bitmap = new Bitmap(fileName);
+                if (transFix)
+                    compress = false;
 
-                List<byte> bitmapData = new List<byte>(bitmap.Width * bitmap.Height * 4);
+                List<TextureNative_0015> textureNativeList = new List<TextureNative_0015>();
 
-                if (flip)
-                    bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
+                foreach (string fileName in fileNames)
+                {
+                    string textureName = Path.GetFileNameWithoutExtension(fileName);
+                    Bitmap bitmap = new Bitmap(fileName);
 
-                for (int j = 0; j < bitmap.Height; j++)
-                    for (int i = 0; i < bitmap.Width; i++)
-                    {
-                        bitmapData.Add(bitmap.GetPixel(i, j).B);
-                        bitmapData.Add(bitmap.GetPixel(i, j).G);
-                        bitmapData.Add(bitmap.GetPixel(i, j).R);
-                        bitmapData.Add(bitmap.GetPixel(i, j).A);
-                    }
+                    List<byte> bitmapData = new List<byte>(bitmap.Width * bitmap.Height * 4);
 
-                textureNativeList.Add(
-                    new TextureNative_0015()
-                    {
-                        textureNativeStruct = new TextureNativeStruct_0001()
+                    if (flip)
+                        bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
+
+                    for (int j = 0; j < bitmap.Height; j++)
+                        for (int i = 0; i < bitmap.Width; i++)
                         {
-                            textureName = textureName + (appendRW3 ? ".RW3" : ""),
-                            alphaName = "",
-                            height = (short)bitmap.Height,
-                            width = (short)bitmap.Width,
-                            mipMapCount = 1,
-                            addressModeU = TextureAddressMode.TEXTUREADDRESSWRAP,
-                            addressModeV = TextureAddressMode.TEXTUREADDRESSWRAP,
-                            filterMode = TextureFilterMode.FILTERLINEAR,
-                            bitDepth = 32,
-                            platformType = 8,
-                            compression = 0,
-                            hasAlpha = false,
-                            rasterFormatFlags = TextureRasterFormat.RASTER_C8888,
-                            type = 4,
-                            mipMaps = new MipMapEntry[] { new MipMapEntry(bitmapData.Count, bitmapData.ToArray()) },
-                        },
-                        textureNativeExtension = new Extension_0003()
-                    }
-                );
+                            bitmapData.Add(bitmap.GetPixel(i, j).B);
+                            bitmapData.Add(bitmap.GetPixel(i, j).G);
+                            bitmapData.Add(bitmap.GetPixel(i, j).R);
+                            bitmapData.Add(bitmap.GetPixel(i, j).A);
+                        }
 
-                bitmap.Dispose();
+                    textureNativeList.Add(
+                        new TextureNative_0015()
+                        {
+                            textureNativeStruct = new TextureNativeStruct_0001()
+                            {
+                                textureName = textureName + (appendRW3 ? ".RW3" : ""),
+                                alphaName = "",
+                                height = (short)bitmap.Height,
+                                width = (short)bitmap.Width,
+                                mipMapCount = 1,
+                                addressModeU = TextureAddressMode.TEXTUREADDRESSWRAP,
+                                addressModeV = TextureAddressMode.TEXTUREADDRESSWRAP,
+                                filterMode = TextureFilterMode.FILTERLINEAR,
+                                bitDepth = 32,
+                                platformType = 8,
+                                compression = 0,
+                                hasAlpha = false,
+                                rasterFormatFlags = TextureRasterFormat.RASTER_C8888,
+                                type = 4,
+                                mipMaps = new MipMapEntry[] { new MipMapEntry(bitmapData.Count, bitmapData.ToArray()) },
+                            },
+                            textureNativeExtension = new Extension_0003()
+                        }
+                    );
+
+                    bitmap.Dispose();
+                }
+
+                if (!Directory.Exists(tempPcTxdsDir))
+                    Directory.CreateDirectory(tempPcTxdsDir);
+                if (!Directory.Exists(tempGcTxdsDir))
+                    Directory.CreateDirectory(tempGcTxdsDir);
+
+                File.WriteAllBytes(pathToPcTXD, ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016()
+                {
+                    textureDictionaryStruct = new TextureDictionaryStruct_0001() { textureCount = (short)textureNativeList.Count, unknown = 0 },
+                    textureNativeList = textureNativeList,
+                    textureDictionaryExtension = new Extension_0003()
+                }, currentTextureVersion(game)));
+
+                PerformTXDConversionExternal(platform, false, compress, mipmaps);
+
+                ReadFileMethods.treatStuffAsByteArray = true;
+
+                List<Section_AHDR> AHDRs = new List<Section_AHDR>();
+
+                foreach (TextureNative_0015 texture in ((TextureDictionary_0016)ReadFileMethods.ReadRenderWareFile(pathToGcTXD)[0]).textureNativeList)
+                    AHDRs.Add(new Section_AHDR(BKDRHash(texture.textureNativeStruct.textureName), AssetType.RWTX, ArchiveEditorFunctions.AHDRFlagsFromAssetType(AssetType.RWTX),
+                        new Section_ADBG(0, texture.textureNativeStruct.textureName, "", 0),
+                        ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016()
+                        {
+                            textureDictionaryStruct = new TextureDictionaryStruct_0001() { textureCount = 1, unknown = 0 },
+                            textureNativeList = new List<TextureNative_0015>() { texture },
+                            textureDictionaryExtension = new Extension_0003()
+                        }, currentTextureVersion(game))));
+
+                // fix for apparent transparency issue
+                if (transFix && platform == Platform.GameCube)
+                    foreach (var AHDR in AHDRs)
+                        AHDR.data[0x9B] = 0x01;
+
+                ReadFileMethods.treatStuffAsByteArray = false;
+
+                File.Delete(pathToGcTXD);
+                File.Delete(pathToPcTXD);
+
+                return AHDRs;
             }
-
-            if (!Directory.Exists(tempPcTxdsDir))
-                Directory.CreateDirectory(tempPcTxdsDir);
-            if (!Directory.Exists(tempGcTxdsDir))
-                Directory.CreateDirectory(tempGcTxdsDir);
-
-            File.WriteAllBytes(pathToPcTXD, ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016()
-            {
-                textureDictionaryStruct = new TextureDictionaryStruct_0001() { textureCount = (short)textureNativeList.Count, unknown = 0 },
-                textureNativeList = textureNativeList,
-                textureDictionaryExtension = new Extension_0003()
-            }, currentTextureVersion(game)));
-
-            PerformTXDConversionExternal(platform, false, compress, mipmaps);
-
-            ReadFileMethods.treatStuffAsByteArray = true;
-
-            List<Section_AHDR> AHDRs = new List<Section_AHDR>();
-
-            foreach (TextureNative_0015 texture in ((TextureDictionary_0016)ReadFileMethods.ReadRenderWareFile(pathToGcTXD)[0]).textureNativeList)
-                AHDRs.Add(new Section_AHDR(BKDRHash(texture.textureNativeStruct.textureName), AssetType.RWTX, ArchiveEditorFunctions.AHDRFlagsFromAssetType(AssetType.RWTX),
-                    new Section_ADBG(0, texture.textureNativeStruct.textureName, "", 0),
-                    ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016()
-                    {
-                        textureDictionaryStruct = new TextureDictionaryStruct_0001() { textureCount = 1, unknown = 0 },
-                        textureNativeList = new List<TextureNative_0015>() { texture },
-                        textureDictionaryExtension = new Extension_0003()
-                    }, currentTextureVersion(game))));
-
-            // fix for apparent transparency issue
-            if (transFix && platform == Platform.GameCube)
-                foreach (var AHDR in AHDRs)
-                    AHDR.data[0x9B] = 0x01;
-
-            ReadFileMethods.treatStuffAsByteArray = false;
-
-            File.Delete(pathToGcTXD);
-            File.Delete(pathToPcTXD);
-
-            return AHDRs;
         }
 
         public static void FixTextureForScooby(ref byte[] data)

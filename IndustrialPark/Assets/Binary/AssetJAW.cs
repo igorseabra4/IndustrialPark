@@ -75,27 +75,29 @@ namespace IndustrialPark
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            List<byte> newJawData = new List<byte>();
-
-            writer.Write(JAW_Entries.Length);
-
-            foreach (var i in JAW_Entries)
+            using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(i.SoundAssetID);
-                writer.Write(newJawData.Count);
-                writer.Write(i.JawData.Length + 4);
+                List<byte> newJawData = new List<byte>();
 
-                newJawData.AddRange(BitConverter.GetBytes(i.JawData.Length));
-                newJawData.AddRange(i.JawData);
+                writer.Write(JAW_Entries.Length);
 
-                while (newJawData.Count % 4 != 0)
-                    newJawData.Add(0);
+                foreach (var i in JAW_Entries)
+                {
+                    writer.Write(i.SoundAssetID);
+                    writer.Write(newJawData.Count);
+                    writer.Write(i.JawData.Length + 4);
+
+                    newJawData.AddRange(BitConverter.GetBytes(i.JawData.Length));
+                    newJawData.AddRange(i.JawData);
+
+                    while (newJawData.Count % 4 != 0)
+                        newJawData.Add(0);
+                }
+
+                writer.Write(newJawData.ToArray());
+
+                return writer.ToArray();
             }
-
-            writer.Write(newJawData.ToArray());
-
-            return writer.ToArray();
         }
 
         public override bool HasReference(uint assetID)

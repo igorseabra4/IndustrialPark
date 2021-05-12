@@ -94,28 +94,31 @@ namespace IndustrialPark
 
         public AssetSIMP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = entityHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = entityHeaderEndPosition;
 
-            AnimSpeed = reader.ReadSingle();
-            InitialAnimState = reader.ReadInt32();
-            CollType.FlagValueByte = reader.ReadByte();
-            SimpFlags.FlagValueByte = reader.ReadByte();
+                AnimSpeed = reader.ReadSingle();
+                InitialAnimState = reader.ReadInt32();
+                CollType.FlagValueByte = reader.ReadByte();
+                SimpFlags.FlagValueByte = reader.ReadByte();
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntity(game, endianness));
-            
-            writer.Write(AnimSpeed);
-            writer.Write(InitialAnimState);
-            writer.Write(CollType.FlagValueByte);
-            writer.Write(SimpFlags.FlagValueByte);
-            writer.Write((short)0);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntity(game, endianness));
 
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
+                writer.Write(AnimSpeed);
+                writer.Write(InitialAnimState);
+                writer.Write(CollType.FlagValueByte);
+                writer.Write(SimpFlags.FlagValueByte);
+                writer.Write((short)0);
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
 
         public static bool dontRender = false;

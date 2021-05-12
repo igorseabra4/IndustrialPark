@@ -58,28 +58,29 @@ namespace IndustrialPark
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(m_soundGroupNameHash);
+                writer.Write(m_fSoundStartDelay);
+                writer.Write(m_fTimeSpan);
+                writer.Write(m_fTimeLastPlayed);
+                writer.Write(m_uNumPlays);
+                writer.Write(m_fDelayBetweenPlays);
+                writer.Write(m_fProbability);
+                writer.Write(m_fDefaultDuration);
+                writer.Write(m_fLastDuration);
+                writer.Write(m_uMaxPlays);
+                writer.Write(m_soundGroupHandle);
+                writer.Write(m_pOLManager);
+                writer.Write(m_eventType);
+                writer.Write(m_bPlaysInMusicChannel);
+                writer.Write(m_pData);
+                writer.Write((int)m_playerType);
+                writer.Write(m_testerDataFirstParam);
+                writer.Write(m_testerDataSecondParam);
 
-            writer.Write(m_soundGroupNameHash);
-            writer.Write(m_fSoundStartDelay);
-            writer.Write(m_fTimeSpan);
-            writer.Write(m_fTimeLastPlayed);
-            writer.Write(m_uNumPlays);
-            writer.Write(m_fDelayBetweenPlays);
-            writer.Write(m_fProbability);
-            writer.Write(m_fDefaultDuration);
-            writer.Write(m_fLastDuration);
-            writer.Write(m_uMaxPlays);
-            writer.Write(m_soundGroupHandle);
-            writer.Write(m_pOLManager);
-            writer.Write(m_eventType);
-            writer.Write(m_bPlaysInMusicChannel);
-            writer.Write(m_pData);
-            writer.Write((int)m_playerType);
-            writer.Write(m_testerDataFirstParam);
-            writer.Write(m_testerDataSecondParam);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) =>
@@ -96,25 +97,29 @@ namespace IndustrialPark
 
         public AssetONEL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
 
-            int numStates = reader.ReadInt32();
-            OneLiners = new xOneLiner[numStates];
-            for (int i = 0; i < OneLiners.Length; i++)
-                OneLiners[i] = new xOneLiner(reader);
-            reader.ReadBytes(unkByteCount);
+                int numStates = reader.ReadInt32();
+                OneLiners = new xOneLiner[numStates];
+                for (int i = 0; i < OneLiners.Length; i++)
+                    OneLiners[i] = new xOneLiner(reader);
+                reader.ReadBytes(unkByteCount);
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
 
-            writer.Write(OneLiners.Length);
-            foreach (var state in OneLiners)
-                writer.Write(state.Serialize(game, endianness));
-            writer.Write(new byte[unkByteCount]);
+                writer.Write(OneLiners.Length);
+                foreach (var state in OneLiners)
+                    writer.Write(state.Serialize(game, endianness));
+                writer.Write(new byte[unkByteCount]);
 
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)

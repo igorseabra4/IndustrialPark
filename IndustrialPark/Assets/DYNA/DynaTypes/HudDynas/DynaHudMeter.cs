@@ -31,36 +31,39 @@ namespace IndustrialPark
 
         public DynaHudMeter(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaHudEnd;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaHudEnd;
 
-            StartValue = reader.ReadSingle();
-            MinValue = reader.ReadSingle();
-            MaxValue = reader.ReadSingle();
-            IncrementTime = reader.ReadSingle();
-            DecrementTime = reader.ReadSingle();
-            StartIncrement_SoundAssetID = reader.ReadUInt32();
-            Increment_SoundAssetID = reader.ReadUInt32();
-            StartDecrement_SoundAssetID = reader.ReadUInt32();
-            Decrement_SoundAssetID = reader.ReadUInt32();
+                StartValue = reader.ReadSingle();
+                MinValue = reader.ReadSingle();
+                MaxValue = reader.ReadSingle();
+                IncrementTime = reader.ReadSingle();
+                DecrementTime = reader.ReadSingle();
+                StartIncrement_SoundAssetID = reader.ReadUInt32();
+                Increment_SoundAssetID = reader.ReadUInt32();
+                StartDecrement_SoundAssetID = reader.ReadUInt32();
+                Decrement_SoundAssetID = reader.ReadUInt32();
+            }
         }
 
         protected byte[] SerializeDynaHudMeter(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeDynaHud(endianness));
+                writer.Write(StartValue);
+                writer.Write(MinValue);
+                writer.Write(MaxValue);
+                writer.Write(IncrementTime);
+                writer.Write(DecrementTime);
+                writer.Write(StartIncrement_SoundAssetID);
+                writer.Write(Increment_SoundAssetID);
+                writer.Write(StartDecrement_SoundAssetID);
+                writer.Write(Decrement_SoundAssetID);
 
-            writer.Write(SerializeDynaHud(endianness));
-            writer.Write(StartValue);
-            writer.Write(MinValue);
-            writer.Write(MaxValue);
-            writer.Write(IncrementTime);
-            writer.Write(DecrementTime);
-            writer.Write(StartIncrement_SoundAssetID);
-            writer.Write(Increment_SoundAssetID);
-            writer.Write(StartDecrement_SoundAssetID);
-            writer.Write(Decrement_SoundAssetID);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)

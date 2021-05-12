@@ -106,8 +106,6 @@ namespace IndustrialPark
                         OpenInternalEditor(assetDictionary[u]);
         }
 
-        public static bool hideHelp { get; set; }
-
         private void OpenInternalEditor(Asset asset)
         {
             CloseInternalEditor(asset.assetID);
@@ -119,9 +117,9 @@ namespace IndustrialPark
                     break;
                 case AssetType.RWTX:
                     if (asset is AssetRWTX rwtx)
-                        internalEditors.Add(new InternalTextureEditor(rwtx, this, hideHelp));
+                        internalEditors.Add(new InternalTextureEditor(rwtx, this));
                     else
-                        internalEditors.Add(new InternalAssetEditor(asset, this, hideHelp));
+                        internalEditors.Add(new InternalAssetEditor(asset, this));
                     break;
                 case AssetType.SND:
                 case AssetType.SNDS:
@@ -131,7 +129,7 @@ namespace IndustrialPark
                     internalEditors.Add(new InternalTextEditor((AssetTEXT)asset, this));
                     break;
                 default:
-                    internalEditors.Add(new InternalAssetEditor(asset, this, hideHelp));
+                    internalEditors.Add(new InternalAssetEditor(asset, this));
                     break;
             }
 
@@ -147,7 +145,7 @@ namespace IndustrialPark
                 if (assetDictionary.ContainsKey(u))
                     assets.Add(assetDictionary[u]);
 
-            multiInternalEditors.Add(new InternalMultiAssetEditor(assets.ToArray(), this, hideHelp));
+            multiInternalEditors.Add(new InternalMultiAssetEditor(assets.ToArray(), this));
             multiInternalEditors.Last().Show();
         }
 
@@ -165,12 +163,6 @@ namespace IndustrialPark
         {
             foreach (var ie in internalEditors)
                 ie.TopMost = value;
-        }
-
-        internal void SetHideHelp()
-        {
-            foreach (var ie in internalEditors)
-                ie.SetHideHelp(hideHelp);
         }
 
         public static Vector3 GetRayInterserctionPosition(SharpRenderer renderer, Ray ray)
@@ -757,6 +749,7 @@ namespace IndustrialPark
         {
             List<string> textureNamesList = new List<string>();
 
+            lock(renderableJSPs)
             foreach (var v in renderableJSPs)
                 try
                 {
@@ -770,7 +763,8 @@ namespace IndustrialPark
                     MessageBox.Show($"Unable to export asset {v}: {e.Message}");
                 }
 
-            foreach (var v in renderableAssets)
+            lock (renderableAssets)
+                foreach (var v in renderableAssets)
                 try
                 {
                     Asset modelAsset;

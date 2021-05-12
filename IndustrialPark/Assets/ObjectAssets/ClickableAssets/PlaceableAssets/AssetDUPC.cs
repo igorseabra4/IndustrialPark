@@ -1,6 +1,5 @@
 ﻿using HipHopFile;
 using SharpDX;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -48,59 +47,63 @@ namespace IndustrialPark
 
         public AssetDUPC(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = baseHeaderEndPosition;
 
-            UnknownShort_08 = reader.ReadUInt16();
-            UnknownShort_0A = reader.ReadUInt16();
-            UnknownShort_0C = reader.ReadUInt16();
-            UnknownShort_0E = reader.ReadUInt16();
-            UnknownFloat_10 = reader.ReadSingle();
-            UnknownInt_14 = reader.ReadInt32();
-            UnknownInt_18 = reader.ReadInt32();
-            UnknownInt_1C = reader.ReadInt32();
-            UnknownInt_20 = reader.ReadInt32();
-            UnknownInt_24 = reader.ReadInt32();
-            UnknownInt_28 = reader.ReadInt32();
-            NavMesh1_AssetID = reader.ReadUInt32();
-            UnknownInt_30 = reader.ReadInt32();
-            VIL = new AssetVIL(reader);
-            NavMesh2_AssetID = reader.ReadUInt32();
-            Settings_AssetID = reader.ReadUInt32();
+                UnknownShort_08 = reader.ReadUInt16();
+                UnknownShort_0A = reader.ReadUInt16();
+                UnknownShort_0C = reader.ReadUInt16();
+                UnknownShort_0E = reader.ReadUInt16();
+                UnknownFloat_10 = reader.ReadSingle();
+                UnknownInt_14 = reader.ReadInt32();
+                UnknownInt_18 = reader.ReadInt32();
+                UnknownInt_1C = reader.ReadInt32();
+                UnknownInt_20 = reader.ReadInt32();
+                UnknownInt_24 = reader.ReadInt32();
+                UnknownInt_28 = reader.ReadInt32();
+                NavMesh1_AssetID = reader.ReadUInt32();
+                UnknownInt_30 = reader.ReadInt32();
+                VIL = new AssetVIL(reader);
+                NavMesh2_AssetID = reader.ReadUInt32();
+                Settings_AssetID = reader.ReadUInt32();
 
-            CreateTransformMatrix();
-            AddToRenderableAssets(this);
+                CreateTransformMatrix();
+                AddToRenderableAssets(this);
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeBase(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
 
-            writer.Write(UnknownShort_08);
-            writer.Write(UnknownShort_0A);
-            writer.Write(UnknownShort_0C);
-            writer.Write(UnknownShort_0E);
-            writer.Write(UnknownFloat_10);
-            writer.Write(UnknownInt_14);
-            writer.Write(UnknownInt_18);
-            writer.Write(UnknownInt_1C);
-            writer.Write(UnknownInt_20);
-            writer.Write(UnknownInt_24);
-            writer.Write(UnknownInt_28);
-            writer.Write(NavMesh1_AssetID);
-            writer.Write(UnknownInt_30);
+                writer.Write(UnknownShort_08);
+                writer.Write(UnknownShort_0A);
+                writer.Write(UnknownShort_0C);
+                writer.Write(UnknownShort_0E);
+                writer.Write(UnknownFloat_10);
+                writer.Write(UnknownInt_14);
+                writer.Write(UnknownInt_18);
+                writer.Write(UnknownInt_1C);
+                writer.Write(UnknownInt_20);
+                writer.Write(UnknownInt_24);
+                writer.Write(UnknownInt_28);
+                writer.Write(NavMesh1_AssetID);
+                writer.Write(UnknownInt_30);
 
-            writer.Write(assetID);
-            writer.Write((byte)BaseAssetType.NPC);
-            writer.Write((byte)_links.Length);
-            writer.Write(VIL.Serialize(game, endianness).Skip(6).ToArray());
+                writer.Write(assetID);
+                writer.Write((byte)BaseAssetType.NPC);
+                writer.Write((byte)_links.Length);
+                writer.Write(VIL.Serialize(game, endianness).Skip(6).ToArray());
 
-            writer.Write(NavMesh2_AssetID);
-            writer.Write(Settings_AssetID);
+                writer.Write(NavMesh2_AssetID);
+                writer.Write(Settings_AssetID);
 
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => NavMesh1_AssetID == assetID || NavMesh2_AssetID == assetID ||

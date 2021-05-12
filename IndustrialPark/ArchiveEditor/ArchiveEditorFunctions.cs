@@ -515,16 +515,19 @@ namespace IndustrialPark
 
         private Asset CreateAsset(Section_AHDR AHDR, Game game, Endianness endianness, bool skipTexturesAndModels, bool showMessageBox, ref string error)
         {
-            #if DEBUG
             try
             {
-                #endif
                 switch (AHDR.assetType)
                 {
                     case AssetType.ANIM:
-                        if (AHDR.ADBG.assetName.Contains("ATBL"))
+                        {
+                            var magic = AHDR.data.Take(4).ToArray();
+                            if (endianness == Endianness.Big)
+                                magic = magic.Reverse().ToArray();
+                            if (magic[0] == 'S' && magic[1] == 'K' && magic[2] == 'B' && magic[3] == '1')
+                                return new AssetANIM(AHDR, game, endianness);
                             return new AssetGeneric(AHDR, game, endianness);
-                        return new AssetANIM(AHDR, game, endianness);
+                        }
                     case AssetType.BSP:
                     case AssetType.JSP:
                         if (DICT.LTOC.LHDRList[GetLayerFromAssetID(AHDR.assetID)].layerType > 9)
@@ -562,12 +565,15 @@ namespace IndustrialPark
                     case AssetType.ATBL: return new AssetATBL(AHDR, game, endianness);
                     case AssetType.BOUL: return new AssetBOUL(AHDR, game, endianness);
                     case AssetType.BUTN: return new AssetBUTN(AHDR, game, endianness);
-                    case AssetType.CAM:  return new AssetCAM (AHDR, game, endianness);
+                    case AssetType.CAM:  return new AssetCAM(AHDR, game, endianness);
                     case AssetType.CNTR: return new AssetCNTR(AHDR, game, endianness);
                     case AssetType.COLL: return new AssetCOLL(AHDR, game, endianness);
                     case AssetType.COND: return new AssetCOND(AHDR, game, endianness);
-                    case AssetType.CRDT: return new AssetCRDT(AHDR, game, endianness);
-                    //case AssetType.CSN: return new AssetCSN(AHDR, game, platform);
+                    case AssetType.CRDT:
+                        if (game == Game.BFBB)
+                            return new AssetCRDT(AHDR, game, endianness);
+                        return new AssetGeneric(AHDR, game, endianness); // unsupported CRDT for non bfbb
+                    // case AssetType.CSN: return new AssetCSN(AHDR, game, platform);
                     case AssetType.CSNM: return new AssetCSNM(AHDR, game, endianness);
                     case AssetType.DEST: return new AssetDEST(AHDR, game, endianness);
                     case AssetType.DPAT: return new AssetDPAT(AHDR, game, endianness);
@@ -655,25 +661,21 @@ namespace IndustrialPark
                     case AssetType.TEXS:
                     case AssetType.UIFN:
                         return new AssetGeneric(AHDR, game, endianness);
-
                     case AssetType.CSN:
                         return new AssetGeneric(AHDR, game, endianness);
-
                     default:
                         throw new Exception($"Unknown asset type ({AHDR.assetType})");
                 }
-                #if DEBUG
             }
             catch (Exception ex)
             {
-                error = $"[{ AHDR.assetID:X8}] {AHDR.ADBG.assetName}";
+                error = $"[{ AHDR.assetID:X8}] {AHDR.ADBG.assetName} ({ex.Message})";
 
                 if (showMessageBox)
                     MessageBox.Show($"There was an error loading asset {error}:" + ex.Message + " and editing has been disabled for it.");
 
                 return new AssetGeneric(AHDR, game, endianness);
             }
-            #endif
         }
 
         private AssetDYNA CreateDYNA(Section_AHDR AHDR)
@@ -1177,10 +1179,12 @@ namespace IndustrialPark
 
         public void RecalculateAllMatrices()
         {
-            foreach (IRenderableAsset a in renderableAssets)
-                a.CreateTransformMatrix();
-            foreach (AssetJSP a in renderableJSPs)
-                a.CreateTransformMatrix();
+            lock(renderableAssets)
+                foreach (IRenderableAsset a in renderableAssets)
+                    a.CreateTransformMatrix();
+            lock (renderableJSPs)
+                foreach (AssetJSP a in renderableJSPs)
+                    a.CreateTransformMatrix();
         }
         
         public void UpdateModelBlendModes(Dictionary<uint, (int, BlendFactorType, BlendFactorType)[]> blendModes)

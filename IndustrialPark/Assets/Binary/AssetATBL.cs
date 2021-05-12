@@ -61,33 +61,39 @@ namespace IndustrialPark
         public int FileFlags { get; set; }
         public AssetSingle Duration { get; set; }
         public AssetSingle TimeOffset { get; set; }
-        public byte NumAnims1 { get; set; }
-        public byte NumAnims2 { get; set; }
-        public int[] RawData { get; set; }
+        public int[][] RawData { get; set; }
         public int Physics { get; set; }
         public int StartPose { get; set; }
         public int EndPose { get; set; }
 
-        public AnimationFile() { }
+        public AnimationFile() 
+        {
+            RawData = new int[1][];
+            RawData[1] = new int[1];
+        }
+
         public AnimationFile(EndianBinaryReader reader)
         {
             FileFlags = reader.ReadInt32();
             Duration = reader.ReadSingle();
             TimeOffset = reader.ReadSingle();
-            var animCount = reader.ReadInt16();
-            NumAnims1 = reader.ReadByte();
-            NumAnims2 = reader.ReadByte();
+            var animCount1 = reader.ReadInt16();
+            var animCount2 = reader.ReadInt16();
             var rawDataOffset = reader.ReadUInt32();
             Physics = reader.ReadInt32();
             StartPose = reader.ReadInt32();
             EndPose = reader.ReadInt32();
 
-            RawData = new int[animCount];
+            RawData = new int[animCount1][];
 
             var currPos = reader.BaseStream.Position;
             reader.BaseStream.Position = rawDataOffset;
-            for (int i = 0; i < animCount; i++)
-                RawData[i] = reader.ReadInt32();
+            for (int i = 0; i < animCount1; i++)
+            {
+                RawData[i] = new int[animCount2];
+                for (int j = 0; j < animCount2; j++)
+                    RawData[i][j] = reader.ReadInt32();
+            }
             reader.BaseStream.Position = currPos;
         }
 
@@ -99,8 +105,7 @@ namespace IndustrialPark
             writer.Write(Duration);
             writer.Write(TimeOffset);
             writer.Write((short)RawData.Length);
-            writer.Write(NumAnims1);
-            writer.Write(NumAnims2);
+            writer.Write((short)RawData[0].Length);
             writer.Write(RawDataOffset);
             writer.Write(Physics);
             writer.Write(StartPose);
@@ -132,15 +137,17 @@ namespace IndustrialPark
                 SubStateID = reader.ReadInt32();
                 SubStateCount = reader.ReadInt32();
             }
-
+            
             AnimationEffects = new AnimationEffect[effectCount];
 
             if (effectCount > 0)
             {
                 var currPos = reader.BaseStream.Position;
                 reader.BaseStream.Position = effectOffset;
+
                 for (int i = 0; i < AnimationEffects.Length; i++)
-                    AnimationEffects[i] = new AnimationEffect(reader);
+                        AnimationEffects[i] = new AnimationEffect(reader, game);
+
                 reader.BaseStream.Position = currPos;
             }
         }
@@ -168,30 +175,86 @@ namespace IndustrialPark
         public AssetSingle StartTime { get; set; }
         public AssetSingle EndTime { get; set; }
         public int Flags { get; set; }
+
+        [Description("BFBB/Scooby only")]
         public int EffectType { get; set; }
+        [Description("BFBB/Scooby only")]
         public byte[] UserDataBytes { get; set; }
 
-        public AnimationEffect() { }
-        public AnimationEffect(EndianBinaryReader reader)
+        [Description("Incredibles only")]
+        public byte UnknownByte10 { get; set; }
+        [Description("Incredibles only")]
+        public byte UnknownByte11 { get; set; }
+        [Description("Incredibles only")]
+        public byte UnknownByte12 { get; set; }
+        [Description("Incredibles only")]
+        public byte UnknownByte13 { get; set; }
+        [Description("Incredibles only")]
+        public AssetID Unknown14 { get; set; }
+        [Description("Incredibles only")]
+        public byte UnknownByte18 { get; set; }
+        [Description("Incredibles only")]
+        public byte UnknownByte19 { get; set; }
+        [Description("Incredibles only")]
+        public byte UnknownByte1A { get; set; }
+        [Description("Incredibles only")]
+        public byte UnknownByte1B { get; set; }
+
+        public AnimationEffect()
+        {
+            UserDataBytes = new byte[0];
+        }
+        public AnimationEffect(EndianBinaryReader reader, Game game)
         {
             StateID = reader.ReadInt32();
             StartTime = reader.ReadSingle();
             EndTime = reader.ReadSingle();
             Flags = reader.ReadInt32();
-            EffectType = reader.ReadInt32();
-            var userDataSize = reader.ReadInt32();
-            UserDataBytes = reader.ReadBytes(userDataSize);
+            if (game != Game.Incredibles)
+            {
+                EffectType = reader.ReadInt32();
+                var userDataSize = reader.ReadInt32();
+                UserDataBytes = reader.ReadBytes(userDataSize);
+            }
+            else
+            {
+                UnknownByte10 = reader.ReadByte();
+                UnknownByte11 = reader.ReadByte();
+                UnknownByte12 = reader.ReadByte();
+                UnknownByte13 = reader.ReadByte();
+                Unknown14 = reader.ReadUInt32();
+                UnknownByte18 = reader.ReadByte();
+                UnknownByte19 = reader.ReadByte();
+                UnknownByte1A = reader.ReadByte();
+                UnknownByte1B = reader.ReadByte();
+            }
         }
 
-        public void Serialize(EndianBinaryWriter writer)
+        public virtual void Serialize(EndianBinaryWriter writer, Game game)
         {
             writer.Write(StateID);
             writer.Write(StartTime);
             writer.Write(EndTime);
             writer.Write(Flags);
-            writer.Write(EffectType);
-            writer.Write(UserDataBytes.Length);
-            writer.Write(UserDataBytes);
+
+            if (game != Game.Incredibles)
+            {
+                writer.Write(EffectType);
+                writer.Write(UserDataBytes.Length);
+                writer.Write(UserDataBytes);
+            }
+            else
+            {
+                writer.Write(UnknownByte10);
+                writer.Write(UnknownByte11);
+                writer.Write(UnknownByte12);
+                writer.Write(UnknownByte13);
+                writer.Write(Unknown14);
+                writer.Write(UnknownByte18);
+                writer.Write(UnknownByte19);
+                writer.Write(UnknownByte1A);
+                writer.Write(UnknownByte1B);
+            }
         }
     }
 
@@ -218,25 +281,26 @@ namespace IndustrialPark
 
         public AssetATBL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.ReadInt32();
+                int numRaw = reader.ReadInt32();
+                int numFiles = reader.ReadInt32();
+                int numStates = reader.ReadInt32();
+                ConstructFunc_Hash = reader.ReadUInt32();
 
-            reader.ReadInt32();
-            int numRaw = reader.ReadInt32();
-            int numFiles = reader.ReadInt32();
-            int numStates = reader.ReadInt32();
-            ConstructFunc_Hash = reader.ReadUInt32();
+                Animations = new AssetID[numRaw];
+                for (int i = 0; i < Animations.Length; i++)
+                    Animations[i] = reader.ReadUInt32();
 
-            Animations = new AssetID[numRaw];
-            for (int i = 0; i < Animations.Length; i++)
-                Animations[i] = reader.ReadUInt32();
+                AnimationFiles = new AnimationFile[numFiles];
+                for (int i = 0; i < AnimationFiles.Length; i++)
+                    AnimationFiles[i] = new AnimationFile(reader);
 
-            AnimationFiles = new AnimationFile[numFiles];
-            for (int i = 0; i < AnimationFiles.Length; i++)
-                AnimationFiles[i] = new AnimationFile(reader);
-
-            AnimationStates = new AnimationState[numStates];
-            for (int i = 0; i < AnimationStates.Length; i++)
-                AnimationStates[i] = new AnimationState(reader, game);
+                AnimationStates = new AnimationState[numStates];
+                for (int i = 0; i < AnimationStates.Length; i++)
+                    AnimationStates[i] = new AnimationState(reader, game);
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
@@ -249,7 +313,7 @@ namespace IndustrialPark
                 writer.Write(AnimationFiles.Length);
                 writer.Write(AnimationStates.Length);
                 writer.Write(ConstructFunc_Hash);
-                
+
                 foreach (var anim in Animations)
                     writer.Write(anim);
 
@@ -261,7 +325,7 @@ namespace IndustrialPark
                 {
                     AnimationStates[i].EffectOffset = (int)writer.BaseStream.Position;
                     foreach (var j in AnimationStates[i].AnimationEffects)
-                        j.Serialize(writer);
+                        j.Serialize(writer, game);
                 }
 
                 for (int i = 0; i < AnimationFiles.Length; i++)
@@ -269,11 +333,12 @@ namespace IndustrialPark
                     AnimationFiles[i].RawDataOffset = (int)writer.BaseStream.Position;
 
                     foreach (var j in AnimationFiles[i].RawData)
-                        writer.Write(j);
+                        foreach (var k in j)
+                            writer.Write(k);
                 }
 
                 writer.BaseStream.Position = filesStartPos;
-                
+
                 foreach (var animFile in AnimationFiles)
                     animFile.Serialize(writer);
 

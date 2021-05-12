@@ -86,51 +86,56 @@ namespace IndustrialPark
 
         public AssetUI(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = entityHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = entityHeaderEndPosition;
 
-            UIFlags.FlagValueInt = reader.ReadUInt32();
-            _width = reader.ReadInt16();
-            Height = reader.ReadInt16();
+                UIFlags.FlagValueInt = reader.ReadUInt32();
+                _width = reader.ReadInt16();
+                Height = reader.ReadInt16();
 
-            TextureAssetID = reader.ReadUInt32();
-            TextCoordTopLeftX = reader.ReadSingle();
-            TextCoordTopLeftY = reader.ReadSingle();
-            TextCoordTopRightX = reader.ReadSingle();
-            TextCoordTopRightY = reader.ReadSingle();
-            TextCoordBottomRightX = reader.ReadSingle();
-            TextCoordBottomRightY = reader.ReadSingle();
-            TextCoordBottomLeftX = reader.ReadSingle();
-            TextCoordBottomLeftY = reader.ReadSingle();
+                TextureAssetID = reader.ReadUInt32();
+                TextCoordTopLeftX = reader.ReadSingle();
+                TextCoordTopLeftY = reader.ReadSingle();
+                TextCoordTopRightX = reader.ReadSingle();
+                TextCoordTopRightY = reader.ReadSingle();
+                TextCoordBottomRightX = reader.ReadSingle();
+                TextCoordBottomRightY = reader.ReadSingle();
+                TextCoordBottomLeftX = reader.ReadSingle();
+                TextCoordBottomLeftY = reader.ReadSingle();
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntity(game, endianness));
-            writer.Write(SerializeUIData(endianness));
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntity(game, endianness));
+                writer.Write(SerializeUIData(endianness));
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
 
         protected byte[] SerializeUIData(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(UIFlags.FlagValueInt);
+                writer.Write(Width);
+                writer.Write(Height);
+                writer.Write(TextureAssetID);
+                writer.Write(TextCoordTopLeftX);
+                writer.Write(TextCoordTopLeftY);
+                writer.Write(TextCoordTopRightX);
+                writer.Write(TextCoordTopRightY);
+                writer.Write(TextCoordBottomRightX);
+                writer.Write(TextCoordBottomRightY);
+                writer.Write(TextCoordBottomLeftX);
+                writer.Write(TextCoordBottomLeftY);
 
-            writer.Write(UIFlags.FlagValueInt);
-            writer.Write(Width);
-            writer.Write(Height);
-            writer.Write(TextureAssetID);
-            writer.Write(TextCoordTopLeftX);
-            writer.Write(TextCoordTopLeftY);
-            writer.Write(TextCoordTopRightX);
-            writer.Write(TextCoordTopRightY);
-            writer.Write(TextCoordBottomRightX);
-            writer.Write(TextCoordBottomRightY);
-            writer.Write(TextCoordBottomLeftX);
-            writer.Write(TextCoordBottomLeftY);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public static bool dontRender = false;

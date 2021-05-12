@@ -38,29 +38,31 @@ namespace IndustrialPark
 
         public AssetPORT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = baseHeaderEndPosition;
 
-            Camera_AssetID = reader.ReadUInt32();
-            Destination_MRKR_AssetID = reader.ReadUInt32();
-            Rotation = reader.ReadSingle();
+                Camera_AssetID = reader.ReadUInt32();
+                Destination_MRKR_AssetID = reader.ReadUInt32();
+                Rotation = reader.ReadSingle();
 
-            var chars = reader.ReadChars(4);
-            _destinationLevel = reader.endianness == Endianness.Little ? chars : chars.Reverse().ToArray();
+                var chars = reader.ReadChars(4);
+                _destinationLevel = reader.endianness == Endianness.Little ? chars : chars.Reverse().ToArray();
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeBase(endianness));
-
-            writer.Write(Camera_AssetID);
-            writer.Write(Destination_MRKR_AssetID);
-            writer.Write(Rotation);
-            writer.WriteMagic(new string(_destinationLevel.ToArray()));
-
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
+                writer.Write(Camera_AssetID);
+                writer.Write(Destination_MRKR_AssetID);
+                writer.Write(Rotation);
+                writer.WriteMagic(new string(_destinationLevel.ToArray()));
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => Camera_AssetID == assetID || Destination_MRKR_AssetID == assetID || base.HasReference(assetID);

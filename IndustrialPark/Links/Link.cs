@@ -87,35 +87,36 @@ namespace IndustrialPark
 
         public byte[] Serialize(LinkType type, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-
-            if (type == LinkType.Normal)
+            using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(EventReceiveID);
-                writer.Write(EventSendID);
-                writer.Write(TargetAssetID);
-                writer.Write(Parameter1);
-                writer.Write(Parameter2);
-                writer.Write(Parameter3);
-                writer.Write(Parameter4);
-                writer.Write(ArgumentAssetID);
-                writer.Write(SourceCheckAssetID);
-            }
-            else
-            {
-                writer.Write(Time);
-                if (type == LinkType.Progress)
-                    writer.Write(Flags);
-                writer.Write(TargetAssetID);
-                writer.Write((int)EventSendID);
-                writer.Write(Parameter1);
-                writer.Write(Parameter2);
-                writer.Write(Parameter3);
-                writer.Write(Parameter4);
-                writer.Write(ArgumentAssetID);
-            }
+                if (type == LinkType.Normal)
+                {
+                    writer.Write(EventReceiveID);
+                    writer.Write(EventSendID);
+                    writer.Write(TargetAssetID);
+                    writer.Write(Parameter1);
+                    writer.Write(Parameter2);
+                    writer.Write(Parameter3);
+                    writer.Write(Parameter4);
+                    writer.Write(ArgumentAssetID);
+                    writer.Write(SourceCheckAssetID);
+                }
+                else
+                {
+                    writer.Write(Time);
+                    if (type == LinkType.Progress)
+                        writer.Write(Flags);
+                    writer.Write(TargetAssetID);
+                    writer.Write((int)EventSendID);
+                    writer.Write(Parameter1);
+                    writer.Write(Parameter2);
+                    writer.Write(Parameter3);
+                    writer.Write(Parameter4);
+                    writer.Write(ArgumentAssetID);
+                }
 
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public bool HasReference(uint assetID) => TargetAssetID == assetID || ArgumentAssetID == assetID || SourceCheckAssetID == assetID
@@ -128,7 +129,7 @@ namespace IndustrialPark
 
             string result = "";
 
-            result += Time != 0 ? Time.ToString() : recEvent;
+            result += EventReceiveID != 0 ? recEvent.ToString() : Time.ToString();
             result += $" => {sndEvent} => ";
             result += HexUIntTypeConverter.Legacy ? TargetAssetID.ToString("X8") : Program.MainForm.GetAssetNameFromID(TargetAssetID);
 

@@ -49,54 +49,57 @@ namespace IndustrialPark
 
         public DynaHudMeterUnit(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.hud__meter__unit, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaHudMeterEnd;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaHudMeterEnd;
 
-            EmptyModel_AssetID = reader.ReadUInt32();
-            EmptyOffset_X = reader.ReadSingle();
-            EmptyOffset_Y = reader.ReadSingle();
-            EmptyOffset_Z = reader.ReadSingle();
-            EmptyScale_X = reader.ReadSingle();
-            EmptyScale_Y = reader.ReadSingle();
-            EmptyScale_Z = reader.ReadSingle();
-            FullModel_AssetID = reader.ReadUInt32();
-            FullOffset_X = reader.ReadSingle();
-            FullOffset_Y = reader.ReadSingle();
-            FullOffset_Z = reader.ReadSingle();
-            FullScale_X = reader.ReadSingle();
-            FullScale_Y = reader.ReadSingle();
-            FullScale_Z = reader.ReadSingle();
-            Spacing_X = reader.ReadSingle();
-            Spacing_Y = reader.ReadSingle();
-            Spacing_Z = reader.ReadSingle();
-            MeterFillDirection = reader.ReadInt32();
+                EmptyModel_AssetID = reader.ReadUInt32();
+                EmptyOffset_X = reader.ReadSingle();
+                EmptyOffset_Y = reader.ReadSingle();
+                EmptyOffset_Z = reader.ReadSingle();
+                EmptyScale_X = reader.ReadSingle();
+                EmptyScale_Y = reader.ReadSingle();
+                EmptyScale_Z = reader.ReadSingle();
+                FullModel_AssetID = reader.ReadUInt32();
+                FullOffset_X = reader.ReadSingle();
+                FullOffset_Y = reader.ReadSingle();
+                FullOffset_Z = reader.ReadSingle();
+                FullScale_X = reader.ReadSingle();
+                FullScale_Y = reader.ReadSingle();
+                FullScale_Z = reader.ReadSingle();
+                Spacing_X = reader.ReadSingle();
+                Spacing_Y = reader.ReadSingle();
+                Spacing_Z = reader.ReadSingle();
+                MeterFillDirection = reader.ReadInt32();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeDynaHudMeter(endianness));
+                writer.Write(EmptyModel_AssetID);
+                writer.Write(EmptyOffset_X);
+                writer.Write(EmptyOffset_Y);
+                writer.Write(EmptyOffset_Z);
+                writer.Write(EmptyScale_X);
+                writer.Write(EmptyScale_Y);
+                writer.Write(EmptyScale_Z);
+                writer.Write(FullModel_AssetID);
+                writer.Write(FullOffset_X);
+                writer.Write(FullOffset_Y);
+                writer.Write(FullOffset_Z);
+                writer.Write(FullScale_X);
+                writer.Write(FullScale_Y);
+                writer.Write(FullScale_Z);
+                writer.Write(Spacing_X);
+                writer.Write(Spacing_Y);
+                writer.Write(Spacing_Z);
+                writer.Write(MeterFillDirection);
 
-            writer.Write(SerializeDynaHudMeter(endianness));
-            writer.Write(EmptyModel_AssetID);
-            writer.Write(EmptyOffset_X);
-            writer.Write(EmptyOffset_Y);
-            writer.Write(EmptyOffset_Z);
-            writer.Write(EmptyScale_X);
-            writer.Write(EmptyScale_Y);
-            writer.Write(EmptyScale_Z);
-            writer.Write(FullModel_AssetID);
-            writer.Write(FullOffset_X);
-            writer.Write(FullOffset_Y);
-            writer.Write(FullOffset_Z);
-            writer.Write(FullScale_X);
-            writer.Write(FullScale_Y);
-            writer.Write(FullScale_Z);
-            writer.Write(Spacing_X);
-            writer.Write(Spacing_Y);
-            writer.Write(Spacing_Z);
-            writer.Write(MeterFillDirection);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)

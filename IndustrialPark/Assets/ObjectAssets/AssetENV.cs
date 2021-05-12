@@ -60,70 +60,77 @@ namespace IndustrialPark
 
         public AssetENV(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
-
-            BSP_AssetID = reader.ReadUInt32();
-            StartCameraAssetID = reader.ReadUInt32();
-            ClimateFlags = reader.ReadInt32();
-            ClimateStrengthMin = reader.ReadSingle();
-            ClimateStrengthMax = reader.ReadSingle();
-            BSP_LKIT_AssetID = reader.ReadUInt32();
-            Object_LKIT_AssetID = reader.ReadUInt32();
-            Padding24 = reader.ReadInt32();
-            BSP_Collision_AssetID = reader.ReadUInt32();
-            BSP_FX_AssetID = reader.ReadUInt32();
-            BSP_Camera_AssetID = reader.ReadUInt32();
-            BSP_MAPR_AssetID = reader.ReadUInt32();
-            BSP_MAPR_Collision_AssetID = reader.ReadUInt32();
-            BSP_MAPR_FX_AssetID = reader.ReadUInt32();
-            if (game != Game.Scooby)
-                LoldHeight = BitConverter.ToSingle(AHDR.data, 0x40);
-            if (game == Game.Incredibles)
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                UnknownInt44 = reader.ReadInt32();
-                UnknownInt48 = reader.ReadInt32();
-                UnknownInt4C = reader.ReadInt32();
-                UnknownInt50 = reader.ReadInt32();
-                UnknownInt54 = reader.ReadInt32();
-                UnknownInt58 = reader.ReadInt32();
+                reader.BaseStream.Position = baseHeaderEndPosition;
+
+                BSP_AssetID = reader.ReadUInt32();
+                StartCameraAssetID = reader.ReadUInt32();
+                ClimateFlags = reader.ReadInt32();
+                ClimateStrengthMin = reader.ReadSingle();
+                ClimateStrengthMax = reader.ReadSingle();
+                BSP_LKIT_AssetID = reader.ReadUInt32();
+                Object_LKIT_AssetID = reader.ReadUInt32();
+                Padding24 = reader.ReadInt32();
+                BSP_Collision_AssetID = reader.ReadUInt32();
+                BSP_FX_AssetID = reader.ReadUInt32();
+                BSP_Camera_AssetID = reader.ReadUInt32();
+                BSP_MAPR_AssetID = reader.ReadUInt32();
+                BSP_MAPR_Collision_AssetID = reader.ReadUInt32();
+                BSP_MAPR_FX_AssetID = reader.ReadUInt32();
+                if (game != Game.Scooby)
+                {
+                    reader.ReadInt32();
+                    LoldHeight = BitConverter.ToSingle(AHDR.data, 0x40);
+                }
+                if (game == Game.Incredibles)
+                {
+                    UnknownInt44 = reader.ReadInt32();
+                    UnknownInt48 = reader.ReadInt32();
+                    UnknownInt4C = reader.ReadInt32();
+                    UnknownInt50 = reader.ReadInt32();
+                    UnknownInt54 = reader.ReadInt32();
+                    UnknownInt58 = reader.ReadInt32();
+                }
             }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-
-            writer.Write(SerializeBase(endianness));
-            writer.Write(BSP_AssetID);
-            writer.Write(StartCameraAssetID);
-            writer.Write(ClimateFlags);
-            writer.Write(ClimateStrengthMin);
-            writer.Write(ClimateStrengthMax);
-            writer.Write(BSP_LKIT_AssetID);
-            writer.Write(Object_LKIT_AssetID);
-            writer.Write(Padding24);
-            writer.Write(BSP_Collision_AssetID);
-            writer.Write(BSP_FX_AssetID);
-            writer.Write(BSP_Camera_AssetID);
-            writer.Write(BSP_MAPR_AssetID);
-            writer.Write(BSP_MAPR_Collision_AssetID);
-            writer.Write(BSP_MAPR_FX_AssetID);
-            if (game != Game.Scooby)
-                writer.Write(BitConverter.GetBytes(LoldHeight));
-            if (game == Game.Incredibles)
+            using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(UnknownInt44);
-                writer.Write(UnknownInt48);
-                writer.Write(UnknownInt4C);
-                writer.Write(UnknownInt50);
-                writer.Write(UnknownInt54);
-                writer.Write(UnknownInt58);
+
+                writer.Write(SerializeBase(endianness));
+                writer.Write(BSP_AssetID);
+                writer.Write(StartCameraAssetID);
+                writer.Write(ClimateFlags);
+                writer.Write(ClimateStrengthMin);
+                writer.Write(ClimateStrengthMax);
+                writer.Write(BSP_LKIT_AssetID);
+                writer.Write(Object_LKIT_AssetID);
+                writer.Write(Padding24);
+                writer.Write(BSP_Collision_AssetID);
+                writer.Write(BSP_FX_AssetID);
+                writer.Write(BSP_Camera_AssetID);
+                writer.Write(BSP_MAPR_AssetID);
+                writer.Write(BSP_MAPR_Collision_AssetID);
+                writer.Write(BSP_MAPR_FX_AssetID);
+                if (game != Game.Scooby)
+                    writer.Write(BitConverter.GetBytes(LoldHeight));
+                if (game == Game.Incredibles)
+                {
+                    writer.Write(UnknownInt44);
+                    writer.Write(UnknownInt48);
+                    writer.Write(UnknownInt4C);
+                    writer.Write(UnknownInt50);
+                    writer.Write(UnknownInt54);
+                    writer.Write(UnknownInt58);
+                }
+
+                writer.Write(SerializeLinks(endianness));
+
+                return writer.ToArray();
             }
-
-            writer.Write(SerializeLinks(endianness));
-
-            return writer.ToArray();
         }
 
         public override bool HasReference(uint assetID) => BSP_AssetID == assetID || StartCameraAssetID == assetID || BSP_LKIT_AssetID == assetID ||

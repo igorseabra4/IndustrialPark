@@ -53,26 +53,27 @@ namespace IndustrialPark
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Model_AssetID);
+                writer.Write(Flags);
+                writer.Write(Parent);
+                writer.Write(Bone);
+                writer.Write(RightX);
+                writer.Write(RightY);
+                writer.Write(RightZ);
+                writer.Write(UpX);
+                writer.Write(UpY);
+                writer.Write(UpZ);
+                writer.Write(AtX);
+                writer.Write(AtY);
+                writer.Write(AtZ);
+                writer.Write(PosX);
+                writer.Write(PosY);
+                writer.Write(PosZ);
 
-            writer.Write(Model_AssetID);
-            writer.Write(Flags);
-            writer.Write(Parent);
-            writer.Write(Bone);
-            writer.Write(RightX);
-            writer.Write(RightY);
-            writer.Write(RightZ);
-            writer.Write(UpX);
-            writer.Write(UpY);
-            writer.Write(UpZ);
-            writer.Write(AtX);
-            writer.Write(AtY);
-            writer.Write(AtZ);
-            writer.Write(PosX);
-            writer.Write(PosY);
-            writer.Write(PosZ);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
     }
 
@@ -103,10 +104,12 @@ namespace IndustrialPark
             }
             set
             {
-                var writer = new EndianBinaryWriter(endianness);
-                foreach (var i in value)
-                    writer.Write(i);
-                UnknownData = writer.ToArray();
+                using (var writer = new EndianBinaryWriter(endianness))
+                {
+                    foreach (var i in value)
+                        writer.Write(i);
+                    UnknownData = writer.ToArray();
+                }
             }
         }
 
@@ -117,64 +120,65 @@ namespace IndustrialPark
 
         public AssetMINF(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-
-            reader.ReadInt32();
-            int amountOfReferences = reader.ReadInt32();
-            ATBL_AssetID = reader.ReadUInt32();
-            if (game != Game.Scooby)
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                CombatID = reader.ReadUInt32();
-                BrainID = reader.ReadUInt32();
-            }
-
-            ModelReferences = new ModelInst[amountOfReferences];
-            for (int i = 0; i < ModelReferences.Length; i++)
-                ModelReferences[i] = new ModelInst(reader);
-
-            var unknownData = new List<byte>();
-
-            while (!reader.EndOfStream)
-                unknownData.Add(reader.ReadByte());
-            UnknownData = unknownData.ToArray();
-
-            if (ModelReferences.Length > 0)
-                _modelAssetID = ModelReferences[0].Model_AssetID;
-            else _modelAssetID = 0;
-
-            if (_modelAssetID != 0)
-            {
-                AddToRenderingDictionary(AHDR.assetID, this);
-
-                if (game == Game.Incredibles)
+                reader.ReadInt32();
+                int amountOfReferences = reader.ReadInt32();
+                ATBL_AssetID = reader.ReadUInt32();
+                if (game != Game.Scooby)
                 {
-                    AddToRenderingDictionary(Functions.BKDRHash(newName), this);
-                    AddToNameDictionary(Functions.BKDRHash(newName), newName);
+                    CombatID = reader.ReadUInt32();
+                    BrainID = reader.ReadUInt32();
+                }
+
+                ModelReferences = new ModelInst[amountOfReferences];
+                for (int i = 0; i < ModelReferences.Length; i++)
+                    ModelReferences[i] = new ModelInst(reader);
+
+                var unknownData = new List<byte>();
+
+                while (!reader.EndOfStream)
+                    unknownData.Add(reader.ReadByte());
+                UnknownData = unknownData.ToArray();
+
+                if (ModelReferences.Length > 0)
+                    _modelAssetID = ModelReferences[0].Model_AssetID;
+                else _modelAssetID = 0;
+
+                if (_modelAssetID != 0)
+                {
+                    AddToRenderingDictionary(AHDR.assetID, this);
+
+                    if (game == Game.Incredibles)
+                    {
+                        AddToRenderingDictionary(Functions.BKDRHash(newName), this);
+                        AddToNameDictionary(Functions.BKDRHash(newName), newName);
+                    }
                 }
             }
-
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-
-            writer.WriteMagic("MINF");
-            writer.Write(ModelReferences.Length);
-            writer.Write(ATBL_AssetID);
-
-            if (game != Game.Scooby)
+            using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(CombatID);
-                writer.Write(BrainID);
+                writer.WriteMagic("MINF");
+                writer.Write(ModelReferences.Length);
+                writer.Write(ATBL_AssetID);
+
+                if (game != Game.Scooby)
+                {
+                    writer.Write(CombatID);
+                    writer.Write(BrainID);
+                }
+
+                foreach (var r in ModelReferences)
+                    writer.Write(r.Serialize(game, endianness));
+                foreach (var b in UnknownData)
+                    writer.Write(b);
+
+                return writer.ToArray();
             }
-
-            foreach (var r in ModelReferences)
-                writer.Write(r.Serialize(game, endianness));
-            foreach (var b in UnknownData)
-                writer.Write(b);
-
-            return writer.ToArray();
         }
 
         private string newName => assetName.Replace(".MINF", "");

@@ -89,55 +89,59 @@ namespace IndustrialPark
 
         public AssetMVPT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = baseHeaderEndPosition;
 
-            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            Wt = reader.ReadUInt16();
-            IsZone = reader.ReadByte();
-            BezIndex = reader.ReadByte();
-            Flg_Props = reader.ReadByte();
-            reader.ReadByte(); // pad
-            ushort pointCount = reader.ReadUInt16();
+                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                Wt = reader.ReadUInt16();
+                IsZone = reader.ReadByte();
+                BezIndex = reader.ReadByte();
+                Flg_Props = reader.ReadByte();
+                reader.ReadByte(); // pad
+                ushort pointCount = reader.ReadUInt16();
 
-            if (game != Game.Scooby)
-                Delay = reader.ReadSingle();
-            _zoneRadius = reader.ReadSingle();
-            if (game != Game.Scooby)
-                _arenaRadius = reader.ReadSingle();
+                if (game != Game.Scooby)
+                    Delay = reader.ReadSingle();
+                _zoneRadius = reader.ReadSingle();
+                if (game != Game.Scooby)
+                    _arenaRadius = reader.ReadSingle();
 
-            NextMVPTs = new AssetID[pointCount];
-            for (int i = 0; i < NextMVPTs.Length; i++)
-                NextMVPTs[i] = reader.ReadUInt32();
+                NextMVPTs = new AssetID[pointCount];
+                for (int i = 0; i < NextMVPTs.Length; i++)
+                    NextMVPTs[i] = reader.ReadUInt32();
 
-            CreateTransformMatrix();
-            ArchiveEditorFunctions.AddToRenderableAssets(this);
+                CreateTransformMatrix();
+                ArchiveEditorFunctions.AddToRenderableAssets(this);
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeBase(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
 
-            writer.Write(_position.X);
-            writer.Write(_position.Y);
-            writer.Write(_position.Z);
-            writer.Write(Wt);
-            writer.Write(IsZone);
-            writer.Write(BezIndex);
-            writer.Write(Flg_Props);
-            writer.Write((byte)0);
-            writer.Write((ushort)NextMVPTs.Length);
-            if (game != Game.Scooby)
-                writer.Write(Delay);
-            writer.Write(_zoneRadius);
-            if (game != Game.Scooby)
-                writer.Write(_arenaRadius);
-            foreach (var i in NextMVPTs)
-                writer.Write(i);
+                writer.Write(_position.X);
+                writer.Write(_position.Y);
+                writer.Write(_position.Z);
+                writer.Write(Wt);
+                writer.Write(IsZone);
+                writer.Write(BezIndex);
+                writer.Write(Flg_Props);
+                writer.Write((byte)0);
+                writer.Write((ushort)NextMVPTs.Length);
+                if (game != Game.Scooby)
+                    writer.Write(Delay);
+                writer.Write(_zoneRadius);
+                if (game != Game.Scooby)
+                    writer.Write(_arenaRadius);
+                foreach (var i in NextMVPTs)
+                    writer.Write(i);
 
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
 
         private Matrix world;

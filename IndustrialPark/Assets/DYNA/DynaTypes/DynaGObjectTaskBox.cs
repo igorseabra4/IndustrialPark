@@ -37,41 +37,44 @@ namespace IndustrialPark
 
         public DynaGObjectTaskBox(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__task_box, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
 
-            Persistent = reader.ReadByte();
-            Loop = reader.ReadByte();
-            Enable = reader.ReadByte();
-            Retry = reader.ReadByte();
-            TalkBox_AssetID = reader.ReadUInt32();
-            NextTaskBox_AssetID = reader.ReadUInt32();
-            Begin_TextID = reader.ReadUInt32();
-            Description_TextID = reader.ReadUInt32();
-            Reminder_TextID = reader.ReadUInt32();
-            Success_TextID = reader.ReadUInt32();
-            Failure_TextID = reader.ReadUInt32();
-            End_TextID = reader.ReadUInt32();
+                Persistent = reader.ReadByte();
+                Loop = reader.ReadByte();
+                Enable = reader.ReadByte();
+                Retry = reader.ReadByte();
+                TalkBox_AssetID = reader.ReadUInt32();
+                NextTaskBox_AssetID = reader.ReadUInt32();
+                Begin_TextID = reader.ReadUInt32();
+                Description_TextID = reader.ReadUInt32();
+                Reminder_TextID = reader.ReadUInt32();
+                Success_TextID = reader.ReadUInt32();
+                Failure_TextID = reader.ReadUInt32();
+                End_TextID = reader.ReadUInt32();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Persistent);
+                writer.Write(Loop);
+                writer.Write(Enable);
+                writer.Write(Retry);
+                writer.Write(TalkBox_AssetID);
+                writer.Write(NextTaskBox_AssetID);
+                writer.Write(Begin_TextID);
+                writer.Write(Description_TextID);
+                writer.Write(Reminder_TextID);
+                writer.Write(Success_TextID);
+                writer.Write(Failure_TextID);
+                writer.Write(End_TextID);
 
-            writer.Write(Persistent);
-            writer.Write(Loop);
-            writer.Write(Enable);
-            writer.Write(Retry);
-            writer.Write(TalkBox_AssetID);
-            writer.Write(NextTaskBox_AssetID);
-            writer.Write(Begin_TextID);
-            writer.Write(Description_TextID);
-            writer.Write(Reminder_TextID);
-            writer.Write(Success_TextID);
-            writer.Write(Failure_TextID);
-            writer.Write(End_TextID);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)

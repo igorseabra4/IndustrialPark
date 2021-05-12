@@ -17,21 +17,24 @@ namespace IndustrialPark
 
         public DynaJSPExtraData(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.JSPExtraData, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
 
-            JSPInfo_AssetID = reader.ReadUInt32();
-            Group_AssetID = reader.ReadUInt32();
+                JSPInfo_AssetID = reader.ReadUInt32();
+                Group_AssetID = reader.ReadUInt32();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(JSPInfo_AssetID);
+                writer.Write(Group_AssetID);
 
-            writer.Write(JSPInfo_AssetID);
-            writer.Write(Group_AssetID);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => JSPInfo_AssetID == assetID || Group_AssetID == assetID || base.HasReference(assetID);

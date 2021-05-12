@@ -16,21 +16,23 @@ namespace IndustrialPark
 
         public AssetALST(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-
-            var assetIDs = new List<AssetID>();
-            while (!reader.EndOfStream)
-                assetIDs.Add(reader.ReadUInt32());
-            Animation_AssetIDs = assetIDs.ToArray();
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                var assetIDs = new List<AssetID>();
+                while (!reader.EndOfStream)
+                    assetIDs.Add(reader.ReadUInt32());
+                Animation_AssetIDs = assetIDs.ToArray();
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-
-            foreach (var i in Animation_AssetIDs)
-                writer.Write(i);
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                foreach (var i in Animation_AssetIDs)
+                    writer.Write(i);
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)

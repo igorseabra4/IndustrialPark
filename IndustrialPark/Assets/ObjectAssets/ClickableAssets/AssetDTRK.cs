@@ -38,18 +38,20 @@ namespace IndustrialPark
 
         public byte[] Serialize(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(Vertex1);
-            writer.Write(Vertex2);
-            writer.Write(Vertex3);
-            writer.Write(Flags);
-            writer.Write(U1);
-            writer.Write(U2);
-            writer.Write(U3);
-            writer.Write(V1);
-            writer.Write(V2);
-            writer.Write(V3);
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Vertex1);
+                writer.Write(Vertex2);
+                writer.Write(Vertex3);
+                writer.Write(Flags);
+                writer.Write(U1);
+                writer.Write(U2);
+                writer.Write(U3);
+                writer.Write(V1);
+                writer.Write(V2);
+                writer.Write(V3);
+                return writer.ToArray();
+            }
         }
     }
 
@@ -72,11 +74,13 @@ namespace IndustrialPark
 
         public byte[] Serialize(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(Vertex1);
-            writer.Write(Vertex2);
-            writer.Write(Vertex3);
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Vertex1);
+                writer.Write(Vertex2);
+                writer.Write(Vertex3);
+                return writer.ToArray();
+            }
         }
     }
 
@@ -111,69 +115,70 @@ namespace IndustrialPark
 
         public AssetDTRK(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = baseHeaderEndPosition;
 
-            var numVertices = reader.ReadUInt32();
-            var numTriangles = reader.ReadUInt32();
-            LandableStart = reader.ReadUInt32();
-            LeavableStart = reader.ReadUInt32();
-            Unknown1 = reader.ReadUInt32();
-            Unknown2 = reader.ReadUInt32();
-            Unknown3 = reader.ReadUInt32();
+                var numVertices = reader.ReadUInt32();
+                var numTriangles = reader.ReadUInt32();
+                LandableStart = reader.ReadUInt32();
+                LeavableStart = reader.ReadUInt32();
+                Unknown1 = reader.ReadUInt32();
+                Unknown2 = reader.ReadUInt32();
+                Unknown3 = reader.ReadUInt32();
 
-            Vertices = new Vector3[numVertices];
-            for (int i = 0; i < Vertices.Length; i++)
-                Vertices[i] = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                Vertices = new Vector3[numVertices];
+                for (int i = 0; i < Vertices.Length; i++)
+                    Vertices[i] = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
 
-            Triangles = new DashTrackTriangle[numTriangles];
-            for (int i = 0; i < Triangles.Length; i++)
-                Triangles[i] = new DashTrackTriangle(reader);
+                Triangles = new DashTrackTriangle[numTriangles];
+                for (int i = 0; i < Triangles.Length; i++)
+                    Triangles[i] = new DashTrackTriangle(reader);
 
-            Portals = new DashTrackPortal[numTriangles];
-            for (int i = 0; i < Portals.Length; i++)
-                Portals[i] = new DashTrackPortal(reader);
+                Portals = new DashTrackPortal[numTriangles];
+                for (int i = 0; i < Portals.Length; i++)
+                    Portals[i] = new DashTrackPortal(reader);
 
-            LastTriangle = reader.ReadUInt32();
-            LastPositionX = reader.ReadSingle();
-            LastPositionY = reader.ReadSingle();
+                LastTriangle = reader.ReadUInt32();
+                LastPositionX = reader.ReadSingle();
+                LastPositionY = reader.ReadSingle();
 
-            CreateTransformMatrix();
-            ArchiveEditorFunctions.AddToRenderableAssets(this);
+                CreateTransformMatrix();
+                ArchiveEditorFunctions.AddToRenderableAssets(this);
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeBase(endianness));
-
-            writer.Write(Vertices.Length);
-            writer.Write(Triangles.Length);
-            writer.Write(LandableStart);
-            writer.Write(LeavableStart);
-            writer.Write(Unknown1);
-            writer.Write(Unknown2);
-            writer.Write(Unknown3);
-
-            foreach (var v in Vertices)
+            using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(v.X);
-                writer.Write(v.Y);
-                writer.Write(v.Z);
+                writer.Write(SerializeBase(endianness));
+                writer.Write(Vertices.Length);
+                writer.Write(Triangles.Length);
+                writer.Write(LandableStart);
+                writer.Write(LeavableStart);
+                writer.Write(Unknown1);
+                writer.Write(Unknown2);
+                writer.Write(Unknown3);
+
+                foreach (var v in Vertices)
+                {
+                    writer.Write(v.X);
+                    writer.Write(v.Y);
+                    writer.Write(v.Z);
+                }
+
+                foreach (var t in Triangles)
+                    writer.Write(t.Serialize(endianness));
+
+                foreach (var p in Portals)
+                    writer.Write(p.Serialize(endianness));
+                writer.Write(LastTriangle);
+                writer.Write(LastPositionX);
+                writer.Write(LastPositionY);
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
             }
-
-            foreach (var t in Triangles)
-                writer.Write(t.Serialize(endianness));
-
-            foreach (var p in Portals)
-                writer.Write(p.Serialize(endianness));
-
-            writer.Write(LastTriangle);
-            writer.Write(LastPositionX);
-            writer.Write(LastPositionY);
-
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
         }
         
         public void CreateTransformMatrix()

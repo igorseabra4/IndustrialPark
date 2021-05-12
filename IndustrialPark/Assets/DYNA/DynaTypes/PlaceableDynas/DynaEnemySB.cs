@@ -187,67 +187,69 @@ namespace IndustrialPark
 
         public DynaEnemySB(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
 
-            PseudoAssetID = reader.ReadUInt32();
-            PseudoAssetType = reader.ReadByte();
-            PseudoLinkCount = reader.ReadByte();
-            PseudoBaseFlags.FlagValueShort = reader.ReadUInt16();
-            PseudoVisibilityFlags.FlagValueByte = reader.ReadByte();
-            PseudoTypeFlag = reader.ReadByte();
-            PseudoFlag0A.FlagValueByte = reader.ReadByte();
-            PseudoSolidityFlags.FlagValueByte = reader.ReadByte();
-            Surface_AssetID = reader.ReadUInt32();
-            _yaw = reader.ReadSingle();
-            _pitch = reader.ReadSingle();
-            _roll = reader.ReadSingle();
-            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            _scale = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            _color = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            PseudoColorAlphaSpeed = reader.ReadSingle();
-            _modelAssetID = reader.ReadUInt32();
-            PseudoAnimation_AssetID = reader.ReadUInt32();
+                PseudoAssetID = reader.ReadUInt32();
+                PseudoAssetType = reader.ReadByte();
+                PseudoLinkCount = reader.ReadByte();
+                PseudoBaseFlags.FlagValueShort = reader.ReadUInt16();
+                PseudoVisibilityFlags.FlagValueByte = reader.ReadByte();
+                PseudoTypeFlag = reader.ReadByte();
+                PseudoFlag0A.FlagValueByte = reader.ReadByte();
+                PseudoSolidityFlags.FlagValueByte = reader.ReadByte();
+                Surface_AssetID = reader.ReadUInt32();
+                _yaw = reader.ReadSingle();
+                _pitch = reader.ReadSingle();
+                _roll = reader.ReadSingle();
+                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                _scale = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                _color = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                PseudoColorAlphaSpeed = reader.ReadSingle();
+                _modelAssetID = reader.ReadUInt32();
+                PseudoAnimation_AssetID = reader.ReadUInt32();
 
-            CreateTransformMatrix();
-            AddToRenderableAssets(this);
+                CreateTransformMatrix();
+                AddToRenderableAssets(this);
+            }
         }
 
         protected byte[] SerializeEntityDyna(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(PseudoAssetID);
+                writer.Write(PseudoAssetType);
+                writer.Write(PseudoLinkCount);
+                writer.Write(PseudoBaseFlags.FlagValueShort);
+                writer.Write(PseudoVisibilityFlags.FlagValueByte);
+                writer.Write(PseudoTypeFlag);
+                writer.Write(PseudoFlag0A.FlagValueByte);
+                writer.Write(PseudoSolidityFlags.FlagValueByte);
+                writer.Write(Surface_AssetID);
+                writer.Write(_yaw);
+                writer.Write(_pitch);
+                writer.Write(_roll);
+                writer.Write(_position.X);
+                writer.Write(_position.Y);
+                writer.Write(_position.Z);
+                writer.Write(_scale.X);
+                writer.Write(_scale.Y);
+                writer.Write(_scale.Z);
+                writer.Write(_color.X);
+                writer.Write(_color.Y);
+                writer.Write(_color.Z);
+                writer.Write(_color.W);
+                writer.Write(PseudoColorAlphaSpeed);
+                writer.Write(_modelAssetID);
+                writer.Write(PseudoAnimation_AssetID);
 
-            writer.Write(PseudoAssetID);
-            writer.Write(PseudoAssetType);
-            writer.Write(PseudoLinkCount);
-            writer.Write(PseudoBaseFlags.FlagValueShort);
-
-            writer.Write(PseudoVisibilityFlags.FlagValueByte);
-            writer.Write(PseudoTypeFlag);
-            writer.Write(PseudoFlag0A.FlagValueByte);
-            writer.Write(PseudoSolidityFlags.FlagValueByte);
-
-            writer.Write(Surface_AssetID);
-            writer.Write(_yaw);
-            writer.Write(_pitch);
-            writer.Write(_roll);
-            writer.Write(_position.X);
-            writer.Write(_position.Y);
-            writer.Write(_position.Z);
-            writer.Write(_scale.X);
-            writer.Write(_scale.Y);
-            writer.Write(_scale.Z);
-            writer.Write(_color.X);
-            writer.Write(_color.Y);
-            writer.Write(_color.Z);
-            writer.Write(_color.W);
-            writer.Write(PseudoColorAlphaSpeed);
-            writer.Write(_modelAssetID);
-            writer.Write(PseudoAnimation_AssetID);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
+        [Browsable(false)]
         public Matrix world { get; private set; }
         private BoundingBox boundingBox;
 

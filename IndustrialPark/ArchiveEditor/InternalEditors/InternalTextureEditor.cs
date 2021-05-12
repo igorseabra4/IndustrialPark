@@ -12,7 +12,7 @@ namespace IndustrialPark
 {
     public partial class InternalTextureEditor : Form, IInternalEditor
     {
-        public InternalTextureEditor(AssetRWTX asset, ArchiveEditorFunctions archive, bool hideHelp)
+        public InternalTextureEditor(AssetRWTX asset, ArchiveEditorFunctions archive)
         {
             InitializeComponent();
             TopMost = true;
@@ -150,10 +150,6 @@ namespace IndustrialPark
                 RefreshPropertyGrid();
                 archive.EnableTextureForDisplay(asset);
             }
-        }
-
-        public void SetHideHelp(bool _)
-        {
         }
 
         private void checkBoxTransFix_CheckedChanged(object sender, EventArgs e)

@@ -152,98 +152,99 @@ namespace IndustrialPark
 
         public AssetPLAT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = entityHeaderEndPosition;
-
-            _platformType = (PlatType)reader.ReadByte();
-            
-            reader.ReadByte();
-
-            PlatFlags.FlagValueShort = reader.ReadUInt16();
-
-            switch ((PlatType)(byte)TypeFlag)
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                case PlatType.ConveyorBelt:
-                    PlatSpecific = new PlatSpecific_ConveryorBelt(reader);
-                    break;
-                case PlatType.FallingPlatform:
-                    PlatSpecific = new PlatSpecific_FallingPlatform(reader);
-                    break;
-                case PlatType.FR:
-                    PlatSpecific = new PlatSpecific_FR(reader);
-                    break;
-                case PlatType.BreakawayPlatform:
-                    PlatSpecific = new PlatSpecific_BreakawayPlatform(reader, game);
-                    break;
-                case PlatType.Springboard:
-                    PlatSpecific = new PlatSpecific_Springboard(reader);
-                    break;
-                case PlatType.TeeterTotter:
-                    PlatSpecific = new PlatSpecific_TeeterTotter(reader);
-                    break;
-                case PlatType.Paddle:
-                    PlatSpecific = new PlatSpecific_Paddle(reader);
-                    break;
-                default:
-                    PlatSpecific = new PlatSpecific_Generic();
-                    break;
-            }
+                reader.BaseStream.Position = entityHeaderEndPosition;
 
-            reader.BaseStream.Position = motionStart(game);
+                _platformType = (PlatType)reader.ReadByte();
 
-            switch (PlatformType)
-            {
-                case PlatType.ExtendRetract:
-                    Motion = new Motion_ExtendRetract(reader);
-                    break;
-                case PlatType.Orbit:
-                    Motion = new Motion_Orbit(reader);
-                    break;
-                case PlatType.Spline:
-                    Motion = new Motion_Spline(reader);
-                    break;
-                case PlatType.Pendulum:
-                    Motion = new Motion_Pendulum(reader);
-                    break;
-                case PlatType.MovePoint:
-                    Motion = new Motion_MovePoint(reader, _position);
-                    break;
-                case PlatType.Mechanism:
-                    Motion = new Motion_Mechanism(reader, game);
-                    break;
-                default:
-                    Motion = new Motion(reader);
-                    break;
+                reader.ReadByte();
+
+                PlatFlags.FlagValueShort = reader.ReadUInt16();
+
+                switch ((PlatType)(byte)TypeFlag)
+                {
+                    case PlatType.ConveyorBelt:
+                        PlatSpecific = new PlatSpecific_ConveryorBelt(reader);
+                        break;
+                    case PlatType.FallingPlatform:
+                        PlatSpecific = new PlatSpecific_FallingPlatform(reader);
+                        break;
+                    case PlatType.FR:
+                        PlatSpecific = new PlatSpecific_FR(reader);
+                        break;
+                    case PlatType.BreakawayPlatform:
+                        PlatSpecific = new PlatSpecific_BreakawayPlatform(reader, game);
+                        break;
+                    case PlatType.Springboard:
+                        PlatSpecific = new PlatSpecific_Springboard(reader, game);
+                        break;
+                    case PlatType.TeeterTotter:
+                        PlatSpecific = new PlatSpecific_TeeterTotter(reader);
+                        break;
+                    case PlatType.Paddle:
+                        PlatSpecific = new PlatSpecific_Paddle(reader);
+                        break;
+                    default:
+                        PlatSpecific = new PlatSpecific_Generic();
+                        break;
+                }
+
+                reader.BaseStream.Position = motionStart(game);
+
+                switch (PlatformType)
+                {
+                    case PlatType.ExtendRetract:
+                        Motion = new Motion_ExtendRetract(reader);
+                        break;
+                    case PlatType.Orbit:
+                        Motion = new Motion_Orbit(reader);
+                        break;
+                    case PlatType.Spline:
+                        Motion = new Motion_Spline(reader);
+                        break;
+                    case PlatType.Pendulum:
+                        Motion = new Motion_Pendulum(reader);
+                        break;
+                    case PlatType.MovePoint:
+                        Motion = new Motion_MovePoint(reader, _position);
+                        break;
+                    case PlatType.Mechanism:
+                        Motion = new Motion_Mechanism(reader, game);
+                        break;
+                    default:
+                        Motion = new Motion(reader);
+                        break;
+                }
             }
         }
-        
+
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntity(game, endianness));
-            
-            writer.Write((byte)_platformType);
-            writer.Write((byte)0);
-            writer.Write(PlatFlags.FlagValueShort);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntity(game, endianness));
 
-            writer.Write(PlatSpecific.Serialize(game, endianness));
-
-            var motionStart = this.motionStart(game);
-            while (writer.BaseStream.Length < motionStart)
+                writer.Write((byte)_platformType);
                 writer.Write((byte)0);
+                writer.Write(PlatFlags.FlagValueShort);
+                writer.Write(PlatSpecific.Serialize(game, endianness));
 
-            writer.Write(Motion.Serialize(game, endianness));
+                var motionStart = this.motionStart(game);
+                while (writer.BaseStream.Length < motionStart)
+                    writer.Write((byte)0);
+                writer.Write(Motion.Serialize(game, endianness));
 
-            int linkStart =
-                game == Game.BFBB ? 0xC0 :
-                game == Game.Incredibles ? 0xC8 :
-                game == Game.Scooby ? 0xA8 : throw new System.ArgumentException("Invalid game");
+                int linkStart =
+                    game == Game.BFBB ? 0xC0 :
+                    game == Game.Incredibles ? 0xC8 :
+                    game == Game.Scooby ? 0xA8 : throw new System.ArgumentException("Invalid game");
 
-            while (writer.BaseStream.Length < linkStart)
-                writer.Write((byte)0);
-
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
+                while (writer.BaseStream.Length < linkStart)
+                    writer.Write((byte)0);
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => PlatSpecific.HasReference(assetID) || base.HasReference(assetID);

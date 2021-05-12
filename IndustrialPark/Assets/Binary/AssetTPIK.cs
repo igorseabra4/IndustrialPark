@@ -58,27 +58,28 @@ namespace IndustrialPark
 
         public byte[] Serialize(Endianness endianness)
         {
-            EndianBinaryWriter writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(PickupHash);
+                writer.Write(Model_AssetID);
+                writer.Write(RingModel_AssetID);
+                writer.Write(UnknownFloat_0C);
+                writer.Write(UnknownFloat_10);
+                writer.Write(UnknownFloat_14);
+                writer.Write(RingColorR);
+                writer.Write(RingColorG);
+                writer.Write(RingColorB);
+                writer.Write(Unknown_24);
+                writer.Write(Unknown_28);
+                writer.Write(Pickup_SGRP);
+                writer.Write(Denied_SGRP);
+                writer.Write(HealthValue);
+                writer.Write(PowerValue);
+                writer.Write(BonusValue);
+                writer.Write(UnknownByte_37);
 
-            writer.Write(PickupHash);
-            writer.Write(Model_AssetID);
-            writer.Write(RingModel_AssetID);
-            writer.Write(UnknownFloat_0C);
-            writer.Write(UnknownFloat_10);
-            writer.Write(UnknownFloat_14);
-            writer.Write(RingColorR);
-            writer.Write(RingColorG);
-            writer.Write(RingColorB);
-            writer.Write(Unknown_24);
-            writer.Write(Unknown_28);
-            writer.Write(Pickup_SGRP);
-            writer.Write(Denied_SGRP);
-            writer.Write(HealthValue);
-            writer.Write(PowerValue);
-            writer.Write(BonusValue);
-            writer.Write(UnknownByte_37);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         [Browsable(false)]
@@ -116,17 +117,33 @@ namespace IndustrialPark
 
         public AssetTPIK(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = 0x4;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = 0x4;
 
-            Unknown04 = reader.ReadInt32();
-            Unknown08 = reader.ReadInt32();
-            int amountOfEntries = reader.ReadInt32();
-            TPIK_Entries = new EntryTPIK[amountOfEntries];
-            for (int i = 0; i < TPIK_Entries.Length; i++)
-                TPIK_Entries[i] = new EntryTPIK(reader);
+                Unknown04 = reader.ReadInt32();
+                Unknown08 = reader.ReadInt32();
+                int amountOfEntries = reader.ReadInt32();
+                TPIK_Entries = new EntryTPIK[amountOfEntries];
+                for (int i = 0; i < TPIK_Entries.Length; i++)
+                    TPIK_Entries[i] = new EntryTPIK(reader);
 
-            UpdateDictionary();
+                UpdateDictionary();
+            }
+        }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(assetID);
+                writer.Write(Unknown04);
+                writer.Write(Unknown08);
+                writer.Write(TPIK_Entries.Length);
+                foreach (var t in TPIK_Entries)
+                    writer.Write(t.Serialize(endianness));
+                return writer.ToArray();
+            }
         }
 
         public static Dictionary<uint, EntryTPIK> tpikEntries = new Dictionary<uint, EntryTPIK>();

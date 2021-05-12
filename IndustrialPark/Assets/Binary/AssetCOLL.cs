@@ -57,29 +57,32 @@ namespace IndustrialPark
 
         public AssetCOLL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
 
-            var entries = new EntryCOLL[reader.ReadInt32()];
-            for (int i = 0; i < entries.Length; i++)
-                entries[i] = new EntryCOLL(reader);
+                var entries = new EntryCOLL[reader.ReadInt32()];
+                for (int i = 0; i < entries.Length; i++)
+                    entries[i] = new EntryCOLL(reader);
 
-            CollisionTable_Entries = entries;
+                CollisionTable_Entries = entries;
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-
-            writer.Write(CollisionTable_Entries.Length);
-
-            foreach (var entry in CollisionTable_Entries)
+            using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(entry.ModelAssetID);
-                writer.Write(entry.Collision_ModelAssetID);
-                writer.Write(entry.CameraCollision_ModelAssetID);
-            }
+                writer.Write(CollisionTable_Entries.Length);
 
-            return writer.ToArray();
+                foreach (var entry in CollisionTable_Entries)
+                {
+                    writer.Write(entry.ModelAssetID);
+                    writer.Write(entry.Collision_ModelAssetID);
+                    writer.Write(entry.CameraCollision_ModelAssetID);
+                }
+
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)

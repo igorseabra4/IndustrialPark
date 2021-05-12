@@ -41,32 +41,35 @@ namespace IndustrialPark
 
         public DynaGObjectTeleport(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__Teleport, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
 
-            MRKR_ID = reader.ReadUInt32();
-            Opened = reader.ReadInt32Bool();
-            _launchAngle = reader.ReadInt32();
-            if (Version > 1 || game != Game.Incredibles)
-                CameraAngle = reader.ReadInt32();
-            TargetDYNATeleportID = reader.ReadUInt32();
+                MRKR_ID = reader.ReadUInt32();
+                Opened = reader.ReadInt32Bool();
+                _launchAngle = reader.ReadInt32();
+                if (game != Game.Incredibles && Version > 1)
+                    CameraAngle = reader.ReadInt32();
+                TargetDYNATeleportID = reader.ReadUInt32();
 
-            CreateTransformMatrix();
-            AddToRenderableAssets(this);
+                CreateTransformMatrix();
+                AddToRenderableAssets(this);
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(MRKR_ID);
+                writer.Write(Opened ? 1 : 0);
+                writer.Write(_launchAngle);
+                if (game != Game.Incredibles && Version > 1)
+                    writer.Write(CameraAngle);
+                writer.Write(TargetDYNATeleportID);
 
-            writer.Write(MRKR_ID);
-            writer.Write(Opened ? 1 : 0);
-            writer.Write(_launchAngle);
-            if (Version > 1 || game != Game.Incredibles)
-                writer.Write(CameraAngle);
-            writer.Write(TargetDYNATeleportID);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)

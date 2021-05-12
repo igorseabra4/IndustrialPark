@@ -99,50 +99,52 @@ namespace IndustrialPark
 
         public AssetSFX(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = baseHeaderEndPosition;
 
-            Flags08.FlagValueByte = reader.ReadByte();
-            Flags09.FlagValueByte = reader.ReadByte();
-            Frequency = reader.ReadInt16();
-            MinFrequency = reader.ReadSingle();
-            Sound_AssetID = reader.ReadUInt32();
-            AttachAssetID = reader.ReadUInt32();
-            LoopCount = reader.ReadByte();
-            Priority = reader.ReadByte();
-            Volume = reader.ReadByte();
-            reader.ReadByte();
-            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            _radius = reader.ReadSingle();
-            _radius2 = reader.ReadSingle();
-            
-            CreateTransformMatrix();
-            ArchiveEditorFunctions.AddToRenderableAssets(this);
+                Flags08.FlagValueByte = reader.ReadByte();
+                Flags09.FlagValueByte = reader.ReadByte();
+                Frequency = reader.ReadInt16();
+                MinFrequency = reader.ReadSingle();
+                Sound_AssetID = reader.ReadUInt32();
+                AttachAssetID = reader.ReadUInt32();
+                LoopCount = reader.ReadByte();
+                Priority = reader.ReadByte();
+                Volume = reader.ReadByte();
+                reader.ReadByte();
+                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                _radius = reader.ReadSingle();
+                _radius2 = reader.ReadSingle();
+
+                CreateTransformMatrix();
+                ArchiveEditorFunctions.AddToRenderableAssets(this);
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeBase(endianness));
-
-            writer.Write(Flags08.FlagValueByte);
-            writer.Write(Flags09.FlagValueByte);
-            writer.Write(Frequency);
-            writer.Write(MinFrequency);
-            writer.Write(Sound_AssetID);
-            writer.Write(AttachAssetID);
-            writer.Write(LoopCount);
-            writer.Write(Priority);
-            writer.Write(Volume);
-            writer.Write((byte)0);
-            writer.Write(_position.X);
-            writer.Write(_position.Y);
-            writer.Write(_position.Z);
-            writer.Write(_radius);
-            writer.Write(_radius2);
-
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
+                writer.Write(Flags08.FlagValueByte);
+                writer.Write(Flags09.FlagValueByte);
+                writer.Write(Frequency);
+                writer.Write(MinFrequency);
+                writer.Write(Sound_AssetID);
+                writer.Write(AttachAssetID);
+                writer.Write(LoopCount);
+                writer.Write(Priority);
+                writer.Write(Volume);
+                writer.Write((byte)0);
+                writer.Write(_position.X);
+                writer.Write(_position.Y);
+                writer.Write(_position.Z);
+                writer.Write(_radius);
+                writer.Write(_radius2);
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => Sound_AssetID == assetID || base.HasReference(assetID);

@@ -63,42 +63,45 @@ namespace IndustrialPark
 
         public DynaGObjectRingControl(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__RingControl, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
 
-            PlayerType = (DynaRingControlPlayerType)reader.ReadInt32();
-            RingModel_AssetID = reader.ReadUInt32();
-            UnknownFloat1 = reader.ReadSingle();
-            int ringCount = reader.ReadInt32();
-            UnknownInt1 = reader.ReadInt32();
-            RingSoundGroup_AssetID = reader.ReadUInt32();
-            UnknownInt2 = reader.ReadInt32();
-            UnknownInt3 = reader.ReadInt32();
-            UnknownInt4 = reader.ReadInt32();
-            RingsAreVisible = reader.ReadInt32Bool();
-            Ring_AssetIDs = new AssetID[ringCount];
-            for (int i = 0; i < Ring_AssetIDs.Length; i++)
-                Ring_AssetIDs[i] = reader.ReadUInt32();
+                PlayerType = (DynaRingControlPlayerType)reader.ReadInt32();
+                RingModel_AssetID = reader.ReadUInt32();
+                UnknownFloat1 = reader.ReadSingle();
+                int ringCount = reader.ReadInt32();
+                UnknownInt1 = reader.ReadInt32();
+                RingSoundGroup_AssetID = reader.ReadUInt32();
+                UnknownInt2 = reader.ReadInt32();
+                UnknownInt3 = reader.ReadInt32();
+                UnknownInt4 = reader.ReadInt32();
+                RingsAreVisible = reader.ReadInt32Bool();
+                Ring_AssetIDs = new AssetID[ringCount];
+                for (int i = 0; i < Ring_AssetIDs.Length; i++)
+                    Ring_AssetIDs[i] = reader.ReadUInt32();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write((int)PlayerType);
+                writer.Write(RingModel_AssetID);
+                writer.Write(UnknownFloat1);
+                writer.Write(Ring_AssetIDs.Length);
+                writer.Write(UnknownInt1);
+                writer.Write(RingSoundGroup_AssetID);
+                writer.Write(UnknownInt2);
+                writer.Write(UnknownInt3);
+                writer.Write(UnknownInt4);
+                writer.Write(RingsAreVisible ? 1 : 0);
+                foreach (var i in Ring_AssetIDs)
+                    writer.Write(i);
 
-            writer.Write((int)PlayerType);
-            writer.Write(RingModel_AssetID);
-            writer.Write(UnknownFloat1);
-            writer.Write(Ring_AssetIDs.Length);
-            writer.Write(UnknownInt1);
-            writer.Write(RingSoundGroup_AssetID);
-            writer.Write(UnknownInt2);
-            writer.Write(UnknownInt3);
-            writer.Write(UnknownInt4);
-            writer.Write(RingsAreVisible ? 1 : 0);
-            foreach (var i in Ring_AssetIDs)
-                writer.Write(i);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)

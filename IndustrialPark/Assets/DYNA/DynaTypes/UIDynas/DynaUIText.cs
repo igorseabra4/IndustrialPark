@@ -59,54 +59,57 @@ namespace IndustrialPark
 
         protected DynaUIText(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaUIEnd;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaUIEnd;
 
-            Text_AssetID = reader.ReadUInt32();
-            font = reader.ReadByte();
-            fontSizeW = reader.ReadByte();
-            fontSizeH = reader.ReadByte();
-            fontSpacingX = reader.ReadByte();
-            fontSpacingY = reader.ReadByte();
-            textBoxInsetTop = reader.ReadByte();
-            textBoxInsetLeft = reader.ReadByte();
-            textBoxInsetRight = reader.ReadByte();
-            textBoxInsetBottom = reader.ReadByte();
-            justifyX = reader.ReadByte();
-            justifyY = reader.ReadByte();
-            textFlags = reader.ReadByte();
-            ShadowColor = reader.ReadColor();
-            shadowOffsetX = reader.ReadSingle();
-            shadowOffsetY = reader.ReadSingle();
-            shadowScaleX = reader.ReadSingle();
-            shadowScaleY = reader.ReadSingle();
+                Text_AssetID = reader.ReadUInt32();
+                font = reader.ReadByte();
+                fontSizeW = reader.ReadByte();
+                fontSizeH = reader.ReadByte();
+                fontSpacingX = reader.ReadByte();
+                fontSpacingY = reader.ReadByte();
+                textBoxInsetTop = reader.ReadByte();
+                textBoxInsetLeft = reader.ReadByte();
+                textBoxInsetRight = reader.ReadByte();
+                textBoxInsetBottom = reader.ReadByte();
+                justifyX = reader.ReadByte();
+                justifyY = reader.ReadByte();
+                textFlags = reader.ReadByte();
+                ShadowColor = reader.ReadColor();
+                shadowOffsetX = reader.ReadSingle();
+                shadowOffsetY = reader.ReadSingle();
+                shadowScaleX = reader.ReadSingle();
+                shadowScaleY = reader.ReadSingle();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeDynaUI(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeDynaUI(endianness));
+                writer.Write(Text_AssetID);
+                writer.Write(font);
+                writer.Write(fontSizeW);
+                writer.Write(fontSizeH);
+                writer.Write(fontSpacingX);
+                writer.Write(fontSpacingY);
+                writer.Write(textBoxInsetTop);
+                writer.Write(textBoxInsetLeft);
+                writer.Write(textBoxInsetRight);
+                writer.Write(textBoxInsetBottom);
+                writer.Write(justifyX);
+                writer.Write(justifyY);
+                writer.Write(textFlags);
+                writer.Write(ShadowColor);
+                writer.Write(shadowOffsetX);
+                writer.Write(shadowOffsetY);
+                writer.Write(shadowScaleX);
+                writer.Write(shadowScaleY);
 
-            writer.Write(Text_AssetID);
-            writer.Write(font);
-            writer.Write(fontSizeW);
-            writer.Write(fontSizeH);
-            writer.Write(fontSpacingX);
-            writer.Write(fontSpacingY);
-            writer.Write(textBoxInsetTop);
-            writer.Write(textBoxInsetLeft);
-            writer.Write(textBoxInsetRight);
-            writer.Write(textBoxInsetBottom);
-            writer.Write(justifyX);
-            writer.Write(justifyY);
-            writer.Write(textFlags);
-            writer.Write(ShadowColor);
-            writer.Write(shadowOffsetX);
-            writer.Write(shadowOffsetY);
-            writer.Write(shadowScaleX);
-            writer.Write(shadowScaleY);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => Text_AssetID == assetID || base.HasReference(assetID);

@@ -8,7 +8,7 @@ namespace IndustrialPark
         private const string categoryName = "Volume";
 
         [Category(categoryName)]
-        public int UnknownInt08 { get; set; }
+        public FlagBitmask Flags { get; set; } = IntFlagsDescriptor();
         [Category(categoryName)]
         public byte UnknownByte0C { get; set; }
         [Category(categoryName)]
@@ -52,61 +52,63 @@ namespace IndustrialPark
 
         public AssetVOLU(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = baseHeaderEndPosition;
 
-            UnknownInt08 = reader.ReadInt32();
-            UnknownByte0C = reader.ReadByte();
-            UnknownByte0D = reader.ReadByte();
-            UnknownByte0E = reader.ReadByte();
-            UnknownByte0F = reader.ReadByte();
-            UnknownFloat10 = reader.ReadSingle();
-            UnknownFloat14 = reader.ReadSingle();
-            UnknownFloat18 = reader.ReadSingle();
-            UnknownFloat1C = reader.ReadSingle();
-            UnknownFloat20 = reader.ReadSingle();
-            UnknownFloat24 = reader.ReadSingle();
-            UnknownFloat28 = reader.ReadSingle();
-            UnknownFloat2C = reader.ReadSingle();
-            UnknownFloat30 = reader.ReadSingle();
-            UnknownInt34 = reader.ReadInt32();
-            UnknownInt38 = reader.ReadInt32();
-            UnknownInt3C = reader.ReadInt32();
-            UnknownInt40 = reader.ReadInt32();
-            UnknownInt44 = reader.ReadInt32();
-            UnknownFloat48 = reader.ReadSingle();
-            UnknownFloat4C = reader.ReadSingle();
+                Flags.FlagValueInt = reader.ReadUInt32();
+                UnknownByte0C = reader.ReadByte();
+                UnknownByte0D = reader.ReadByte();
+                UnknownByte0E = reader.ReadByte();
+                UnknownByte0F = reader.ReadByte();
+                UnknownFloat10 = reader.ReadSingle();
+                UnknownFloat14 = reader.ReadSingle();
+                UnknownFloat18 = reader.ReadSingle();
+                UnknownFloat1C = reader.ReadSingle();
+                UnknownFloat20 = reader.ReadSingle();
+                UnknownFloat24 = reader.ReadSingle();
+                UnknownFloat28 = reader.ReadSingle();
+                UnknownFloat2C = reader.ReadSingle();
+                UnknownFloat30 = reader.ReadSingle();
+                UnknownInt34 = reader.ReadInt32();
+                UnknownInt38 = reader.ReadInt32();
+                UnknownInt3C = reader.ReadInt32();
+                UnknownInt40 = reader.ReadInt32();
+                UnknownInt44 = reader.ReadInt32();
+                UnknownFloat48 = reader.ReadSingle();
+                UnknownFloat4C = reader.ReadSingle();
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeBase(endianness));
-
-            writer.Write(UnknownInt08);
-            writer.Write(UnknownByte0C);
-            writer.Write(UnknownByte0D);
-            writer.Write(UnknownByte0E);
-            writer.Write(UnknownByte0F);
-            writer.Write(UnknownFloat10);
-            writer.Write(UnknownFloat14);
-            writer.Write(UnknownFloat18);
-            writer.Write(UnknownFloat1C);
-            writer.Write(UnknownFloat20);
-            writer.Write(UnknownFloat24);
-            writer.Write(UnknownFloat28);
-            writer.Write(UnknownFloat2C);
-            writer.Write(UnknownFloat30);
-            writer.Write(UnknownInt34);
-            writer.Write(UnknownInt38);
-            writer.Write(UnknownInt3C);
-            writer.Write(UnknownInt40);
-            writer.Write(UnknownInt44);
-            writer.Write(UnknownFloat48);
-            writer.Write(UnknownFloat4C);
-
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
+                writer.Write(Flags.FlagValueInt);
+                writer.Write(UnknownByte0C);
+                writer.Write(UnknownByte0D);
+                writer.Write(UnknownByte0E);
+                writer.Write(UnknownByte0F);
+                writer.Write(UnknownFloat10);
+                writer.Write(UnknownFloat14);
+                writer.Write(UnknownFloat18);
+                writer.Write(UnknownFloat1C);
+                writer.Write(UnknownFloat20);
+                writer.Write(UnknownFloat24);
+                writer.Write(UnknownFloat28);
+                writer.Write(UnknownFloat2C);
+                writer.Write(UnknownFloat30);
+                writer.Write(UnknownInt34);
+                writer.Write(UnknownInt38);
+                writer.Write(UnknownInt3C);
+                writer.Write(UnknownInt40);
+                writer.Write(UnknownInt44);
+                writer.Write(UnknownFloat48);
+                writer.Write(UnknownFloat4C);
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
     }
 }

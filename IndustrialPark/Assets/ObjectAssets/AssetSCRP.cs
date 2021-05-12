@@ -46,46 +46,48 @@ namespace IndustrialPark
 
         public AssetSCRP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
-
-            ScriptStartTime = reader.ReadSingle();
-            int timedLinkCount = reader.ReadInt32();
-
-            if (game == Game.Incredibles)
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                Flag1 = reader.ReadByte();
-                Flag2 = reader.ReadByte();
-                Flag3 = reader.ReadByte();
-                Flag4 = reader.ReadByte();
-            }
+                reader.BaseStream.Position = baseHeaderEndPosition;
 
-            _timedLinks = new Link[timedLinkCount];
-            for (int i = 0; i < _timedLinks.Length; i++)
-                _timedLinks[i] = new Link(reader, LinkType.Timed, game);
+                ScriptStartTime = reader.ReadSingle();
+                int timedLinkCount = reader.ReadInt32();
+
+                if (game == Game.Incredibles)
+                {
+                    Flag1 = reader.ReadByte();
+                    Flag2 = reader.ReadByte();
+                    Flag3 = reader.ReadByte();
+                    Flag4 = reader.ReadByte();
+                }
+
+                _timedLinks = new Link[timedLinkCount];
+                for (int i = 0; i < _timedLinks.Length; i++)
+                    _timedLinks[i] = new Link(reader, LinkType.Timed, game);
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeBase(endianness));
-
-            writer.Write(ScriptStartTime);
-            writer.Write(_timedLinks.Length);
-
-            if (game == Game.Incredibles)
+            using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(Flag1);
-                writer.Write(Flag2);
-                writer.Write(Flag3);
-                writer.Write(Flag4);
+                writer.Write(SerializeBase(endianness));
+                writer.Write(ScriptStartTime);
+                writer.Write(_timedLinks.Length);
+
+                if (game == Game.Incredibles)
+                {
+                    writer.Write(Flag1);
+                    writer.Write(Flag2);
+                    writer.Write(Flag3);
+                    writer.Write(Flag4);
+                }
+
+                foreach (var l in _timedLinks)
+                    writer.Write(l.Serialize(LinkType.Timed, endianness));
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
             }
-
-            foreach (var l in _timedLinks)
-                writer.Write(l.Serialize(LinkType.Timed, endianness));
-
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
         }
 
         public override bool HasReference(uint assetID) => _timedLinks.Any(link => link.HasReference(assetID)) || base.HasReference(assetID);

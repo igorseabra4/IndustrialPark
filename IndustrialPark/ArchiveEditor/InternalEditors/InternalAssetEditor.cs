@@ -7,14 +7,13 @@ using static IndustrialPark.Models.Assimp_IO;
 using System.IO;
 using RenderWareFile;
 using IndustrialPark.Models;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using SharpDX;
 
 namespace IndustrialPark
 {
     public partial class InternalAssetEditor : Form, IInternalEditor
     {
-        public InternalAssetEditor(Asset asset, ArchiveEditorFunctions archive, bool hideHelp)
+        public InternalAssetEditor(Asset asset, ArchiveEditorFunctions archive)
         {
             InitializeComponent();
             TopMost = true;
@@ -27,8 +26,6 @@ namespace IndustrialPark
             propertyGridAsset.SelectedObject = dt.FromComponent(asset);
             
             Text = $"[{asset.assetType}] {asset}";
-
-            propertyGridAsset.HelpVisible = !hideHelp;
 
             if (asset is AssetCAM cam) SetupForCam(cam);
             //else if (asset is AssetCSN csn) SetupForCsn(csn);
@@ -82,11 +79,6 @@ namespace IndustrialPark
             propertyGridAsset.Refresh();
         }
         
-        public void SetHideHelp(bool hideHelp)
-        {
-            propertyGridAsset.HelpVisible = !hideHelp;
-        }
-
         private void AddRow()
         {
             tableLayoutPanel1.RowCount += 1;

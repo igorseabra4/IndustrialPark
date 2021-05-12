@@ -81,54 +81,57 @@ namespace IndustrialPark
 
         public DynaEffectLightning(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__Lightning, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
 
-            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            _positionEnd = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            Color = reader.ReadColor();
-            Width = reader.ReadSingle();
-            UnknownFloat = reader.ReadSingle();
-            LightningTexture_AssetID = reader.ReadUInt32();
-            GlowTexture_AssetID = reader.ReadUInt32();
-            UnknownInt1 = reader.ReadInt32();
-            KnockbackSpeed = reader.ReadSingle();
-            SoundGroupID_AssetID = reader.ReadUInt32();
-            UnknownInt2 = reader.ReadInt32();
-            UnknownInt3 = reader.ReadInt32();
-            SIMP1_AssetID = reader.ReadUInt32();
-            SIMP2_AssetID = reader.ReadUInt32();
-            DamagePlayer = reader.ReadInt32Bool();
-            
-            CreateTransformMatrix();
-            AddToRenderableAssets(this);
+                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                _positionEnd = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                Color = reader.ReadColor();
+                Width = reader.ReadSingle();
+                UnknownFloat = reader.ReadSingle();
+                LightningTexture_AssetID = reader.ReadUInt32();
+                GlowTexture_AssetID = reader.ReadUInt32();
+                UnknownInt1 = reader.ReadInt32();
+                KnockbackSpeed = reader.ReadSingle();
+                SoundGroupID_AssetID = reader.ReadUInt32();
+                UnknownInt2 = reader.ReadInt32();
+                UnknownInt3 = reader.ReadInt32();
+                SIMP1_AssetID = reader.ReadUInt32();
+                SIMP2_AssetID = reader.ReadUInt32();
+                DamagePlayer = reader.ReadInt32Bool();
+
+                CreateTransformMatrix();
+                AddToRenderableAssets(this);
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(_position.X);
+                writer.Write(_position.Y);
+                writer.Write(_position.Z);
+                writer.Write(_positionEnd.X);
+                writer.Write(_positionEnd.Y);
+                writer.Write(_positionEnd.Z);
+                writer.Write(Color);
+                writer.Write(Width);
+                writer.Write(UnknownFloat);
+                writer.Write(LightningTexture_AssetID);
+                writer.Write(GlowTexture_AssetID);
+                writer.Write(UnknownInt1);
+                writer.Write(KnockbackSpeed);
+                writer.Write(SoundGroupID_AssetID);
+                writer.Write(UnknownInt2);
+                writer.Write(UnknownInt3);
+                writer.Write(SIMP1_AssetID);
+                writer.Write(SIMP2_AssetID);
+                writer.Write(DamagePlayer ? 1 : 0);
 
-            writer.Write(_position.X);
-            writer.Write(_position.Y);
-            writer.Write(_position.Z);
-            writer.Write(_positionEnd.X);
-            writer.Write(_positionEnd.Y);
-            writer.Write(_positionEnd.Z);
-            writer.Write(Color);
-            writer.Write(Width);
-            writer.Write(UnknownFloat);
-            writer.Write(LightningTexture_AssetID);
-            writer.Write(GlowTexture_AssetID);
-            writer.Write(UnknownInt1);
-            writer.Write(KnockbackSpeed);
-            writer.Write(SoundGroupID_AssetID);
-            writer.Write(UnknownInt2);
-            writer.Write(UnknownInt3);
-            writer.Write(SIMP1_AssetID);
-            writer.Write(SIMP2_AssetID);
-            writer.Write(DamagePlayer ? 1 : 0);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         private Matrix world2;

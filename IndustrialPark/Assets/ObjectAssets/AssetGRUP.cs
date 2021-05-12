@@ -29,31 +29,32 @@ namespace IndustrialPark
 
         public AssetGRUP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = baseHeaderEndPosition;
 
-            var itemCount = reader.ReadUInt16();
-            ReceiveEventDelegation = (Delegation)reader.ReadInt16();
+                var itemCount = reader.ReadUInt16();
+                ReceiveEventDelegation = (Delegation)reader.ReadInt16();
 
-            GroupItems = new AssetID[itemCount];
-            for (int i = 0; i < GroupItems.Length; i++)
-                GroupItems[i] = reader.ReadUInt32();
+                GroupItems = new AssetID[itemCount];
+                for (int i = 0; i < GroupItems.Length; i++)
+                    GroupItems[i] = reader.ReadUInt32();
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
+                writer.Write((short)GroupItems.Length);
+                writer.Write((short)ReceiveEventDelegation);
+                foreach (var a in GroupItems)
+                    writer.Write(a);
+                writer.Write(SerializeLinks(endianness));
 
-            writer.Write(SerializeBase(endianness));
-
-            writer.Write((short)GroupItems.Length);
-            writer.Write((short)ReceiveEventDelegation);
-            foreach (var a in GroupItems)
-                writer.Write(a);
-
-            writer.Write(SerializeLinks(endianness));
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => GroupItems.Any(a => a == assetID) || base.HasReference(assetID);

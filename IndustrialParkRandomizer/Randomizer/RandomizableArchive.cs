@@ -1248,37 +1248,37 @@ namespace IndustrialPark.Randomizer
                     uint gloveIntroTrig = new AssetID("GLOVE_INTRO_TRIG");
 
                     if (ContainsAsset(gloveIntroDisp))
-                        ((AssetDPAT)GetFromAssetID(gloveIntroDisp)).BaseFlags.FlagValueShort ^= 1; //EnabledOnStart = false;
+                        ((AssetDPAT)GetFromAssetID(gloveIntroDisp)).EnabledOnStart = false;
                     if (ContainsAsset(gloveIntroTrig))
-                        ((AssetTRIG)GetFromAssetID(gloveIntroTrig)).BaseFlags.FlagValueShort ^= 1; //EnabledOnStart = false;
+                        ((AssetTRIG)GetFromAssetID(gloveIntroTrig)).EnabledOnStart = false;
                     return true;
 
                 case "bb02":
                     uint chuckOffDisp = new AssetID("CHUCK_CINEMATIC_OFF_DISP");
 
                     if (ContainsAsset(chuckOffDisp))
-                        ((AssetDPAT)GetFromAssetID(chuckOffDisp)).BaseFlags.FlagValueShort ^= 1; //EnabledOnStart = false;
+                        ((AssetDPAT)GetFromAssetID(chuckOffDisp)).EnabledOnStart = false;
                     return true;
 
                 case "bc01":
                     uint arfIntroTrigDisp = new AssetID("ARF_INTRO_TRIG_DISP");
 
                     if (ContainsAsset(arfIntroTrigDisp))
-                        ((AssetDPAT)GetFromAssetID(arfIntroTrigDisp)).BaseFlags.FlagValueShort ^= 1; //EnabledOnStart = false;
+                        ((AssetDPAT)GetFromAssetID(arfIntroTrigDisp)).EnabledOnStart = false;
                     return true;
 
                 case "gl01":
                     uint moonsoonIntroTrig = new AssetID("MONSOON_INTRO_TRIG");
 
                     if (ContainsAsset(moonsoonIntroTrig))
-                        ((AssetTRIG)GetFromAssetID(moonsoonIntroTrig)).BaseFlags.FlagValueShort ^= 1; //EnabledOnStart = false;
+                        ((AssetTRIG)GetFromAssetID(moonsoonIntroTrig)).EnabledOnStart = false;
                     return true;
 
                 case "gy01":
                     uint slickIntoDisp = new AssetID("SLICK_INTRO_TRIG_DISP'");
 
                     if (ContainsAsset(slickIntoDisp))
-                        ((AssetDPAT)GetFromAssetID(slickIntoDisp)).BaseFlags.FlagValueShort ^= 1; //EnabledOnStart = false;
+                        ((AssetDPAT)GetFromAssetID(slickIntoDisp)).EnabledOnStart = false;
                     return true;
 
                 case "jf01":
@@ -1299,18 +1299,18 @@ namespace IndustrialPark.Randomizer
 
                     uint swCinemaDisp = new AssetID("SWCINEMA_DISP_01");
                     if (ContainsAsset(swCinemaDisp))
-                        ((AssetDPAT)GetFromAssetID(swCinemaDisp)).BaseFlags.FlagValueShort |= 1; //EnabledOnStart = true;
+                        ((AssetDPAT)GetFromAssetID(swCinemaDisp)).EnabledOnStart = true;
 
                     uint hammerDisp = new AssetID("HAMMERCINEMA_DISP_01");
                     if (ContainsAsset(hammerDisp))
-                        ((AssetDPAT)GetFromAssetID(hammerDisp)).BaseFlags.FlagValueShort |= 1; //EnabledOnStart = true;
+                        ((AssetDPAT)GetFromAssetID(hammerDisp)).EnabledOnStart = true;
                     return true;
 
                 case "jf03":
                     uint tartarIntroDisp = new AssetID("TARTAR_CUTSCENE_OFF_DISP");
 
                     if (ContainsAsset(tartarIntroDisp))
-                        ((AssetDPAT)GetFromAssetID(tartarIntroDisp)).BaseFlags.FlagValueShort |= 1; //EnabledOnStart = true;
+                        ((AssetDPAT)GetFromAssetID(tartarIntroDisp)).EnabledOnStart = true;
                     return true;
 
                 case "kf01":
@@ -1355,7 +1355,7 @@ namespace IndustrialPark.Randomizer
 
                     uint sleepyDpat = new AssetID("SLEEPY_DESP_02");
                     if (ContainsAsset(sleepyDpat))
-                        ((AssetDPAT)GetFromAssetID(sleepyDpat)).BaseFlags.FlagValueShort ^= 2; //StateIsPersistent = false;
+                        ((AssetDPAT)GetFromAssetID(sleepyDpat)).StateIsPersistent = false;
                     return true;
             }
 
@@ -2182,7 +2182,7 @@ namespace IndustrialPark.Randomizer
                     uint dpat = new AssetID("BOSS3_OPEN_DISP");
                     if (ContainsAsset(dpat) && GetFromAssetID(dpat) is AssetDPAT dispatcher)
                     {
-                        dispatcher.BaseFlags.FlagValueShort ^= 1; //EnabledOnStart = false;
+                        dispatcher.EnabledOnStart = false;
                         int defaultLayer = GetLayerFromAssetID(dpat);
                         List<uint> vs = new List<uint>();
                         AssetTIMR timer = (AssetTIMR)PlaceTemplate(new Vector3(), defaultLayer, ref vs, template: AssetTemplate.Timer);

@@ -27,14 +27,16 @@ namespace IndustrialPark
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(Flags.FlagValueInt);
-            writer.Write(BumpMapTexture_AssetID);
-            writer.Write(EnvMapTexture_AssetID);
-            writer.Write(Shininess);
-            writer.Write(Bumpiness);
-            writer.Write(DualMapTexture_AssetID);
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Flags.FlagValueInt);
+                writer.Write(BumpMapTexture_AssetID);
+                writer.Write(EnvMapTexture_AssetID);
+                writer.Write(Shininess);
+                writer.Write(Bumpiness);
+                writer.Write(DualMapTexture_AssetID);
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) =>
@@ -67,11 +69,13 @@ namespace IndustrialPark
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(Flags.FlagValueShort);
-            writer.Write(Mode);
-            writer.Write(Speed);
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Flags.FlagValueShort);
+                writer.Write(Mode);
+                writer.Write(Speed);
+                return writer.ToArray();
+            }
         }
     }
 
@@ -91,15 +95,17 @@ namespace IndustrialPark
             Group_AssetID = reader.ReadUInt32();
             Speed = reader.ReadSingle();
         }
-
+        
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(Padding);
-            writer.Write(Mode);
-            writer.Write(Group_AssetID);
-            writer.Write(Speed);
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Padding);
+                writer.Write(Mode);
+                writer.Write(Group_AssetID);
+                writer.Write(Speed);
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => Group_AssetID == assetID;
@@ -165,33 +171,121 @@ namespace IndustrialPark
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(Mode);
-            writer.Write(Rot);
-            writer.Write(RotSpd);
-            writer.Write(Trans_X);
-            writer.Write(Trans_Y);
-            writer.Write(Trans_Z);
-            writer.Write(TransSpeed_X);
-            writer.Write(TransSpeed_Y);
-            writer.Write(TransSpeed_Z);
-            writer.Write(Scale_X);
-            writer.Write(Scale_Y);
-            writer.Write(Scale_Z);
-            writer.Write(ScaleSpeed_X);
-            writer.Write(ScaleSpeed_Y);
-            writer.Write(ScaleSpeed_Z);
-            writer.Write(Min_X);
-            writer.Write(Min_Y);
-            writer.Write(Min_Z);
-            writer.Write(Max_X);
-            writer.Write(Max_Y);
-            writer.Write(Max_Z);
-            writer.Write(MinMaxSpeed_X);
-            writer.Write(MinMaxSpeed_Y);
-            writer.Write(MinMaxSpeed_Z);
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Mode);
+                writer.Write(Rot);
+                writer.Write(RotSpd);
+                writer.Write(Trans_X);
+                writer.Write(Trans_Y);
+                writer.Write(Trans_Z);
+                writer.Write(TransSpeed_X);
+                writer.Write(TransSpeed_Y);
+                writer.Write(TransSpeed_Z);
+                writer.Write(Scale_X);
+                writer.Write(Scale_Y);
+                writer.Write(Scale_Z);
+                writer.Write(ScaleSpeed_X);
+                writer.Write(ScaleSpeed_Y);
+                writer.Write(ScaleSpeed_Z);
+                writer.Write(Min_X);
+                writer.Write(Min_Y);
+                writer.Write(Min_Z);
+                writer.Write(Max_X);
+                writer.Write(Max_Y);
+                writer.Write(Max_Z);
+                writer.Write(MinMaxSpeed_X);
+                writer.Write(MinMaxSpeed_Y);
+                writer.Write(MinMaxSpeed_Z);
+                return writer.ToArray();
+            }
         }
+    }
+
+    [TypeConverter(typeof(ExpandableObjectConverter))]
+    public class zFootstepsData : GenericAssetDataContainer
+    {
+        public AssetID PARE_AssetID;
+        public AssetID Sound_AssetID;
+        public AssetID Texture_AssetID;
+        public AssetSingle Duration;
+
+        public zFootstepsData() { }
+        public zFootstepsData(EndianBinaryReader reader)
+        {
+            PARE_AssetID = reader.ReadUInt32();
+            Sound_AssetID = reader.ReadUInt32();
+            Texture_AssetID = reader.ReadUInt32();
+            Duration = reader.ReadSingle();
+        }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(PARE_AssetID);
+                writer.Write(Sound_AssetID);
+                writer.Write(Texture_AssetID);
+                writer.Write(Duration);
+
+                return writer.ToArray();
+            }
+        }
+    }
+
+    [TypeConverter(typeof(ExpandableObjectConverter))]
+    public class zHitDecalData : GenericAssetDataContainer
+    {
+        public AssetID Texture_AssetID;
+        public AssetSingle SizeX;
+        public AssetSingle SizeY;
+
+        public zHitDecalData() { }
+        public zHitDecalData(EndianBinaryReader reader)
+        {
+            Texture_AssetID = reader.ReadUInt32();
+            SizeX = reader.ReadSingle();
+            SizeY = reader.ReadSingle();
+        }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Texture_AssetID);
+                writer.Write(SizeX);
+                writer.Write(SizeY);
+
+                return writer.ToArray();
+            }
+        }
+    }
+
+    public enum zHitSource : uint
+    {
+        zHS_EVENT,
+        zHS_GENERAL,
+        zHS_PROJECTILE,
+        zHS_EXPLOSION,
+        zHS_LASER,
+        zHS_ENERGY,
+        zHS_FIRE,
+        zHS_SURFACE,
+        zHS_MELEE_HIGH,
+        zHS_MELEE_MID,
+        zHS_MELEE_LOW,
+        zHS_MELEE_UP,
+        zHS_MELEE_BACK,
+        zHS_MELEE_DIZZY,
+        zHS_THROW,
+        zHS_WATER,
+        zHS_DEATHPLANE,
+        zHS_INCREDI,
+        zHS_KNOCKBACK,
+        zHS_LASERBEAM,
+        zHS_INFINITE_FALL,
+        zHS_COUNT,
+        zHS_FORCE_INT = 0xffffffff
     }
 
     public class AssetSURF : BaseAsset
@@ -253,7 +347,61 @@ namespace IndustrialPark
         public AssetSingle DamageBounce { get; set; }
         [Category(categoryName)]
         public int UnknownInt { get; set; }
-        
+
+        // TSSM/Incredibles Only
+        [Category(categoryName)]
+        public AssetID ImpactSound_AssetID { get; set; }
+        [Category(categoryName)]
+        public byte DashImpactType { get; set; }
+        [Category(categoryName)]
+        public float DashImpactThrowBack { get; set; }
+        [Category(categoryName)]
+        public float DashSprayMagnitude { get; set; }
+        [Category(categoryName)]
+        public float DashCoolRate { get; set; }
+        [Category(categoryName)]
+        public float DashCoolAmount { get; set; }
+        [Category(categoryName)]
+        public float DashPass { get; set; }
+        [Category(categoryName)]
+        public float DashRampMaxDistance { get; set; }
+        [Category(categoryName)]
+        public float DashRampMinDistance { get; set; }
+        [Category(categoryName)]
+        public float DashRampKeySpeed { get; set; }
+        [Category(categoryName)]
+        public float DashRampMaxHeight { get; set; }
+        [Category(categoryName)]
+        public AssetID DashRampTarget_MovePoint_AssetID { get; set; }
+        [Category(categoryName)]
+        public int DamageAmount { get; set; }
+        [Category(categoryName)]
+        public zHitSource HitSourceDamageType { get; set; }
+        [Category(categoryName)]
+        public zFootstepsData OffSurface { get; set; }
+        [Category(categoryName)]
+        public zFootstepsData OnSurface { get; set; }
+        [Category(categoryName)]
+        public zHitDecalData HitDecalData0 { get; set; }
+        [Category(categoryName)]
+        public zHitDecalData HitDecalData1 { get; set; }
+        [Category(categoryName)]
+        public zHitDecalData HitDecalData2 { get; set; }
+        [Category(categoryName)]
+        public float OffSurfaceTime { get; set; }
+        [Category(categoryName)]
+        public byte SwimmableSurface { get; set; }
+        [Category(categoryName)]
+        public byte DashFall { get; set; }
+        [Category(categoryName)]
+        public byte NeedButtonPress { get; set; }
+        [Category(categoryName)]
+        public byte DashAttack { get; set; }
+        [Category(categoryName)]
+        public byte FootstepDecals { get; set; }
+        [Category(categoryName)]
+        public byte DrivingSurfaceType { get; set; }
+
         public AssetSURF(string assetName) : base(assetName, AssetType.SURF, BaseAssetType.Surface)
         {
             zSurfMatFX = new zSurfMatFX();
@@ -262,101 +410,179 @@ namespace IndustrialPark
             zSurfTextureAnim2 = new zSurfTextureAnim();
             zSurfUVFX = new zSurfUVFX();
             zSurfUVFX2 = new zSurfUVFX();
+            OffSurface = new zFootstepsData();
+            OnSurface = new zFootstepsData();
+            HitDecalData0 = new zHitDecalData();
+            HitDecalData1 = new zHitDecalData();
+            HitDecalData2 = new zHitDecalData();
         }
 
         public AssetSURF(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
-
-            DamageType = reader.ReadByte();
-            Sticky = reader.ReadByte();
-            DamageFlags = reader.ReadByte();
-            SurfaceType = reader.ReadByte();
-            Phys_Pad = reader.ReadByte();
-            SlideStart = reader.ReadByte();
-            SlideStop = reader.ReadByte();
-            PhysicsFlags.FlagValueByte = reader.ReadByte();
-            Friction = reader.ReadSingle();
-            zSurfMatFX = new zSurfMatFX(reader);
-            zSurfColorFX = new zSurfColorFX(reader);
-            TextureAnimFlags.FlagValueInt = reader.ReadUInt32();
-            zSurfTextureAnim1 = new zSurfTextureAnim(reader);
-            zSurfTextureAnim2 = new zSurfTextureAnim(reader);
-            UVEffectsFlags.FlagValueInt = reader.ReadUInt32();
-            zSurfUVFX = new zSurfUVFX(reader);
-
-            if (game != Game.Scooby)
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                zSurfUVFX2 = new zSurfUVFX(reader);
-                On = reader.ReadByte();
-                reader.ReadByte();
-                reader.ReadByte();
-                reader.ReadByte();
-            }
-            else zSurfUVFX2 = null;
+                reader.BaseStream.Position = baseHeaderEndPosition;
 
-            OutOfBoundsDelay = reader.ReadSingle();
-            WalljumpScaleXZ = reader.ReadSingle();
-            WalljumpScaleY = reader.ReadSingle();
-            DamageTimer = reader.ReadSingle();
-            DamageBounce = reader.ReadSingle();
+                DamageType = reader.ReadByte();
+                Sticky = reader.ReadByte();
+                DamageFlags = reader.ReadByte();
+                SurfaceType = reader.ReadByte();
+                Phys_Pad = reader.ReadByte();
+                SlideStart = reader.ReadByte();
+                SlideStop = reader.ReadByte();
+                PhysicsFlags.FlagValueByte = reader.ReadByte();
+                Friction = reader.ReadSingle();
+                zSurfMatFX = new zSurfMatFX(reader);
+                zSurfColorFX = new zSurfColorFX(reader);
+                TextureAnimFlags.FlagValueInt = reader.ReadUInt32();
+                zSurfTextureAnim1 = new zSurfTextureAnim(reader);
+                zSurfTextureAnim2 = new zSurfTextureAnim(reader);
+                UVEffectsFlags.FlagValueInt = reader.ReadUInt32();
+                zSurfUVFX = new zSurfUVFX(reader);
 
-            if (game == Game.Scooby)
-            {
-                UnknownInt = reader.ReadInt32();
-                On = reader.ReadByte();
-                reader.ReadByte();
-                reader.ReadByte();
-                reader.ReadByte();
+                if (game != Game.Scooby)
+                {
+                    zSurfUVFX2 = new zSurfUVFX(reader);
+                    On = reader.ReadByte();
+                    reader.ReadByte();
+                    reader.ReadByte();
+                    reader.ReadByte();
+                }
+                else zSurfUVFX2 = null;
+
+                OutOfBoundsDelay = reader.ReadSingle();
+                WalljumpScaleXZ = reader.ReadSingle();
+                WalljumpScaleY = reader.ReadSingle();
+                DamageTimer = reader.ReadSingle();
+                DamageBounce = reader.ReadSingle();
+
+                if (game == Game.Scooby)
+                {
+                    UnknownInt = reader.ReadInt32();
+                    On = reader.ReadByte();
+                    reader.ReadByte();
+                    reader.ReadByte();
+                    reader.ReadByte();
+                }
+
+                if (game == Game.Incredibles)
+                {
+                    ImpactSound_AssetID = reader.ReadUInt32();
+                    DashImpactType = reader.ReadByte();
+                    reader.ReadByte();
+                    reader.ReadByte();
+                    reader.ReadByte();
+                    DashImpactThrowBack = reader.ReadSingle();
+                    DashSprayMagnitude = reader.ReadSingle();
+                    DashCoolRate = reader.ReadSingle();
+                    DashCoolAmount = reader.ReadSingle();
+                    DashPass = reader.ReadSingle();
+                    DashRampMaxDistance = reader.ReadSingle();
+                    DashRampMinDistance = reader.ReadSingle();
+                    DashRampKeySpeed = reader.ReadSingle();
+                    DashRampMaxHeight = reader.ReadSingle();
+                    DashRampTarget_MovePoint_AssetID = reader.ReadUInt32();
+                    DamageAmount = reader.ReadInt32();
+                    HitSourceDamageType = (zHitSource)reader.ReadInt32();
+                    OffSurface = new zFootstepsData(reader);
+                    OnSurface = new zFootstepsData(reader);
+                    HitDecalData0 = new zHitDecalData(reader);
+                    HitDecalData1 = new zHitDecalData(reader);
+                    HitDecalData2 = new zHitDecalData(reader);
+                    OffSurfaceTime = reader.ReadSingle();
+                    SwimmableSurface = reader.ReadByte();
+                    DashFall = reader.ReadByte();
+                    NeedButtonPress = reader.ReadByte();
+                    DashAttack = reader.ReadByte();
+                    FootstepDecals = reader.ReadByte();
+                    reader.ReadInt32();
+                    DrivingSurfaceType = reader.ReadByte();
+                    reader.ReadByte();
+                    reader.ReadByte();
+                }
             }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeBase(endianness));
-
-            writer.Write(DamageType);
-            writer.Write(Sticky);
-            writer.Write(DamageFlags);
-            writer.Write(SurfaceType);
-            writer.Write(Phys_Pad);
-            writer.Write(SlideStart);
-            writer.Write(SlideStop);
-            writer.Write(PhysicsFlags.FlagValueByte);
-            writer.Write(Friction);
-            writer.Write(zSurfMatFX.Serialize(game, endianness));
-            writer.Write(zSurfColorFX.Serialize(game, endianness));
-            writer.Write(TextureAnimFlags.FlagValueInt);
-            writer.Write(zSurfTextureAnim1.Serialize(game, endianness));
-            writer.Write(zSurfTextureAnim2.Serialize(game, endianness));
-            writer.Write(UVEffectsFlags.FlagValueInt);
-            writer.Write(zSurfUVFX.Serialize(game, endianness));
-            if (game != Game.Scooby)
+            using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(zSurfUVFX2.Serialize(game, endianness));
-                writer.Write(On);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
+                writer.Write(SerializeBase(endianness));
+                writer.Write(DamageType);
+                writer.Write(Sticky);
+                writer.Write(DamageFlags);
+                writer.Write(SurfaceType);
+                writer.Write(Phys_Pad);
+                writer.Write(SlideStart);
+                writer.Write(SlideStop);
+                writer.Write(PhysicsFlags.FlagValueByte);
+                writer.Write(Friction);
+                writer.Write(zSurfMatFX.Serialize(game, endianness));
+                writer.Write(zSurfColorFX.Serialize(game, endianness));
+                writer.Write(TextureAnimFlags.FlagValueInt);
+                writer.Write(zSurfTextureAnim1.Serialize(game, endianness));
+                writer.Write(zSurfTextureAnim2.Serialize(game, endianness));
+                writer.Write(UVEffectsFlags.FlagValueInt);
+                writer.Write(zSurfUVFX.Serialize(game, endianness));
+                if (game != Game.Scooby)
+                {
+                    writer.Write(zSurfUVFX2.Serialize(game, endianness));
+                    writer.Write(On);
+                    writer.Write((byte)0);
+                    writer.Write((byte)0);
+                    writer.Write((byte)0);
+                }
+                writer.Write(OutOfBoundsDelay);
+                writer.Write(WalljumpScaleXZ);
+                writer.Write(WalljumpScaleY);
+                writer.Write(DamageTimer);
+                writer.Write(DamageBounce);
+                if (game == Game.Scooby)
+                {
+                    writer.Write(UnknownInt);
+                    writer.Write(On);
+                    writer.Write((byte)0);
+                    writer.Write((byte)0);
+                    writer.Write((byte)0);
+                }
+                if (game == Game.Incredibles)
+                {
+                    writer.Write(ImpactSound_AssetID);
+                    writer.Write(DashImpactType);
+                    writer.Write((byte)0);
+                    writer.Write((byte)0);
+                    writer.Write((byte)0);
+                    writer.Write(DashImpactThrowBack);
+                    writer.Write(DashSprayMagnitude);
+                    writer.Write(DashCoolRate);
+                    writer.Write(DashCoolAmount);
+                    writer.Write(DashPass);
+                    writer.Write(DashRampMaxDistance);
+                    writer.Write(DashRampMinDistance);
+                    writer.Write(DashRampKeySpeed);
+                    writer.Write(DashRampMaxHeight);
+                    writer.Write(DashRampTarget_MovePoint_AssetID);
+                    writer.Write(DamageAmount);
+                    writer.Write((int)HitSourceDamageType);
+                    writer.Write(OffSurface.Serialize(game, endianness));
+                    writer.Write(OnSurface.Serialize(game, endianness));
+                    writer.Write(HitDecalData0.Serialize(game, endianness));
+                    writer.Write(HitDecalData1.Serialize(game, endianness));
+                    writer.Write(HitDecalData2.Serialize(game, endianness));
+                    writer.Write(OffSurfaceTime);
+                    writer.Write(SwimmableSurface);
+                    writer.Write(DashFall);
+                    writer.Write(NeedButtonPress);
+                    writer.Write(DashAttack);
+                    writer.Write(FootstepDecals);
+                    writer.Write(0);
+                    writer.Write(DrivingSurfaceType);
+                    writer.Write((byte)0);
+                    writer.Write((byte)0);
+                }
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
             }
-            writer.Write(OutOfBoundsDelay);
-            writer.Write(WalljumpScaleXZ);
-            writer.Write(WalljumpScaleY);
-            writer.Write(DamageTimer);
-            writer.Write(DamageBounce);
-            if (game == Game.Scooby)
-            {
-                writer.Write(UnknownInt);
-                writer.Write(On);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-            }
-
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
         }
 
         public override bool HasReference(uint assetID) =>
@@ -381,6 +607,36 @@ namespace IndustrialPark
                 dt.RemoveProperty("zSurfUVFX2");
             else
                 dt.RemoveProperty("UnknownInt");
+
+            if (game != Game.Incredibles)
+            {
+                dt.RemoveProperty("ImpactSound_AssetID");
+                dt.RemoveProperty("DashImpactType");
+                dt.RemoveProperty("DashImpactThrowBack");
+                dt.RemoveProperty("DashSprayMagnitude");
+                dt.RemoveProperty("DashCoolRate");
+                dt.RemoveProperty("DashCoolAmount");
+                dt.RemoveProperty("DashPass");
+                dt.RemoveProperty("DashRampMaxDistance");
+                dt.RemoveProperty("DashRampMinDistance");
+                dt.RemoveProperty("DashRampKeySpeed");
+                dt.RemoveProperty("DashRampMaxHeight");
+                dt.RemoveProperty("DashRampTarget_MovePoint_AssetID");
+                dt.RemoveProperty("DamageAmount");
+                dt.RemoveProperty("HitSourceDamageType");
+                dt.RemoveProperty("OffSurface");
+                dt.RemoveProperty("OnSurface");
+                dt.RemoveProperty("HitDecalData0");
+                dt.RemoveProperty("HitDecalData1");
+                dt.RemoveProperty("HitDecalData2");
+                dt.RemoveProperty("OffSurfaceTime");
+                dt.RemoveProperty("SwimmableSurface");
+                dt.RemoveProperty("DashFall");
+                dt.RemoveProperty("NeedButtonPress");
+                dt.RemoveProperty("DashAttack");
+                dt.RemoveProperty("FootstepDecals");
+                dt.RemoveProperty("DrivingSurfaceType");
+            }
 
             base.SetDynamicProperties(dt);
         }

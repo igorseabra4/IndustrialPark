@@ -108,79 +108,82 @@ namespace IndustrialPark
 
         public DynaGObjectBungeeHook(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__bungee_hook, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
 
-            Entity_AssetID = reader.ReadUInt32();
-            EnterX = reader.ReadInt32();
-            EnterY = reader.ReadInt32();
-            EnterZ = reader.ReadInt32();
-            AttachDist = reader.ReadSingle();
-            AttachTravelTime = reader.ReadSingle();
-            DetachDist = reader.ReadSingle();
-            DetachFreeFallTime = reader.ReadSingle();
-            DetachAccel = reader.ReadSingle();
-            TurnUnused1 = reader.ReadSingle();
-            TurnUnused2 = reader.ReadSingle();
-            VerticalFrequency = reader.ReadSingle();
-            VerticalGravity = reader.ReadSingle();
-            VerticalDive = reader.ReadSingle();
-            VerticalMinDist = reader.ReadSingle();
-            VerticalMaxDist = reader.ReadSingle();
-            VerticalDamp = reader.ReadSingle();
-            HorizontalMaxDist = reader.ReadSingle();
-            CameraRestDist = reader.ReadSingle();
-            Cameraview_angle = reader.ReadSingle();
-            CameraOffset = reader.ReadSingle();
-            CameraOffsetDir = reader.ReadSingle();
-            CameraTurnSpeed = reader.ReadSingle();
-            CameraVelScale = reader.ReadSingle();
-            CameraRollSpeed = reader.ReadSingle();
-            CameraUnused1_X = reader.ReadSingle();
-            CameraUnused1_Y = reader.ReadSingle();
-            CameraUnused1_Z = reader.ReadSingle();
-            CollisionHitLoss = reader.ReadSingle();
-            CollisionDamageVelocity = reader.ReadSingle();
-            CollisionHitVelocity = reader.ReadSingle();
+                Entity_AssetID = reader.ReadUInt32();
+                EnterX = reader.ReadInt32();
+                EnterY = reader.ReadInt32();
+                EnterZ = reader.ReadInt32();
+                AttachDist = reader.ReadSingle();
+                AttachTravelTime = reader.ReadSingle();
+                DetachDist = reader.ReadSingle();
+                DetachFreeFallTime = reader.ReadSingle();
+                DetachAccel = reader.ReadSingle();
+                TurnUnused1 = reader.ReadSingle();
+                TurnUnused2 = reader.ReadSingle();
+                VerticalFrequency = reader.ReadSingle();
+                VerticalGravity = reader.ReadSingle();
+                VerticalDive = reader.ReadSingle();
+                VerticalMinDist = reader.ReadSingle();
+                VerticalMaxDist = reader.ReadSingle();
+                VerticalDamp = reader.ReadSingle();
+                HorizontalMaxDist = reader.ReadSingle();
+                CameraRestDist = reader.ReadSingle();
+                Cameraview_angle = reader.ReadSingle();
+                CameraOffset = reader.ReadSingle();
+                CameraOffsetDir = reader.ReadSingle();
+                CameraTurnSpeed = reader.ReadSingle();
+                CameraVelScale = reader.ReadSingle();
+                CameraRollSpeed = reader.ReadSingle();
+                CameraUnused1_X = reader.ReadSingle();
+                CameraUnused1_Y = reader.ReadSingle();
+                CameraUnused1_Z = reader.ReadSingle();
+                CollisionHitLoss = reader.ReadSingle();
+                CollisionDamageVelocity = reader.ReadSingle();
+                CollisionHitVelocity = reader.ReadSingle();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Entity_AssetID);
+                writer.Write(EnterX);
+                writer.Write(EnterY);
+                writer.Write(EnterZ);
+                writer.Write(AttachDist);
+                writer.Write(AttachTravelTime);
+                writer.Write(DetachDist);
+                writer.Write(DetachFreeFallTime);
+                writer.Write(DetachAccel);
+                writer.Write(TurnUnused1);
+                writer.Write(TurnUnused2);
+                writer.Write(VerticalFrequency);
+                writer.Write(VerticalGravity);
+                writer.Write(VerticalDive);
+                writer.Write(VerticalMinDist);
+                writer.Write(VerticalMaxDist);
+                writer.Write(VerticalDamp);
+                writer.Write(HorizontalMaxDist);
+                writer.Write(CameraRestDist);
+                writer.Write(Cameraview_angle);
+                writer.Write(CameraOffset);
+                writer.Write(CameraOffsetDir);
+                writer.Write(CameraTurnSpeed);
+                writer.Write(CameraVelScale);
+                writer.Write(CameraRollSpeed);
+                writer.Write(CameraUnused1_X);
+                writer.Write(CameraUnused1_Y);
+                writer.Write(CameraUnused1_Z);
+                writer.Write(CollisionHitLoss);
+                writer.Write(CollisionDamageVelocity);
+                writer.Write(CollisionHitVelocity);
 
-            writer.Write(Entity_AssetID);
-            writer.Write(EnterX);
-            writer.Write(EnterY);
-            writer.Write(EnterZ);
-            writer.Write(AttachDist);
-            writer.Write(AttachTravelTime);
-            writer.Write(DetachDist);
-            writer.Write(DetachFreeFallTime);
-            writer.Write(DetachAccel);
-            writer.Write(TurnUnused1);
-            writer.Write(TurnUnused2);
-            writer.Write(VerticalFrequency);
-            writer.Write(VerticalGravity);
-            writer.Write(VerticalDive);
-            writer.Write(VerticalMinDist);
-            writer.Write(VerticalMaxDist);
-            writer.Write(VerticalDamp);
-            writer.Write(HorizontalMaxDist);
-            writer.Write(CameraRestDist);
-            writer.Write(Cameraview_angle);
-            writer.Write(CameraOffset);
-            writer.Write(CameraOffsetDir);
-            writer.Write(CameraTurnSpeed);
-            writer.Write(CameraVelScale);
-            writer.Write(CameraRollSpeed);
-            writer.Write(CameraUnused1_X);
-            writer.Write(CameraUnused1_Y);
-            writer.Write(CameraUnused1_Z);
-            writer.Write(CollisionHitLoss);
-            writer.Write(CollisionDamageVelocity);
-            writer.Write(CollisionHitVelocity);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => Entity_AssetID == assetID || base.HasReference(assetID);

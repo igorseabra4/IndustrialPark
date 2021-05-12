@@ -14,24 +14,24 @@ namespace IndustrialPark
 
         public AssetCNTR(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
-
-            Count = reader.ReadInt16();
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = baseHeaderEndPosition;
+                Count = reader.ReadInt16();
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
+                writer.Write(Count);
+                writer.Write((short)0);
+                writer.Write(SerializeLinks(endianness));
 
-            writer.Write(SerializeBase(endianness));
-
-            writer.Write(Count);
-            writer.Write((short)0);
-
-            writer.Write(SerializeLinks(endianness));
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
     }
 }

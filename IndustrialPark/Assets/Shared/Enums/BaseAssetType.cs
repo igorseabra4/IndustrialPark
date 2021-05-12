@@ -2,8 +2,7 @@
 {
     public enum BaseAssetType : byte
     {
-        _DYNA_DSCO_TPIK_TRWT_RANM_SUBT = 0x00,
-        Unknown = 0x00,
+        Unknown_Other = 0x00,
         Trigger = 0x01,
         Villain = 0x02,
         Player = 0x03,
@@ -75,7 +74,6 @@
         CameraTweak = 0x45,
         SlideProps = 0x46,
         HUD_text = 0x47,
-
         SGRP = 0x4A,
         SDFX = 0x4B,
         UIM = 0x53,
@@ -83,6 +81,6 @@
         PGRS = 0x75,
         CCRV = 0x8D,
         RotuNGMS = 0x9A,
-        _DTRK_GRSM_IncNGMS = 0xCD
+        DTRK_GRSM_IncNGMS = 0xCD
     }
 }

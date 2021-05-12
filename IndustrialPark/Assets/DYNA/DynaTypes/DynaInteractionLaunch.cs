@@ -27,31 +27,34 @@ namespace IndustrialPark
 
         public DynaInteractionLaunch(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.interaction__Launch, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
 
-            UnknownFloat_00 = reader.ReadSingle();
-            SIMP_AssetID = reader.ReadUInt32();
-            Marker_AssetID = reader.ReadUInt32();
-            UnknownFloat_0C = reader.ReadSingle();
-            UnknownFloat_10 = reader.ReadSingle();
-            UnknownFloat_14 = reader.ReadSingle();
-            UnknownFloat_18 = reader.ReadSingle();
+                UnknownFloat_00 = reader.ReadSingle();
+                SIMP_AssetID = reader.ReadUInt32();
+                Marker_AssetID = reader.ReadUInt32();
+                UnknownFloat_0C = reader.ReadSingle();
+                UnknownFloat_10 = reader.ReadSingle();
+                UnknownFloat_14 = reader.ReadSingle();
+                UnknownFloat_18 = reader.ReadSingle();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(UnknownFloat_00);
+                writer.Write(SIMP_AssetID);
+                writer.Write(Marker_AssetID);
+                writer.Write(UnknownFloat_0C);
+                writer.Write(UnknownFloat_10);
+                writer.Write(UnknownFloat_14);
+                writer.Write(UnknownFloat_18);
 
-            writer.Write(UnknownFloat_00);
-            writer.Write(SIMP_AssetID);
-            writer.Write(Marker_AssetID);
-            writer.Write(UnknownFloat_0C);
-            writer.Write(UnknownFloat_10);
-            writer.Write(UnknownFloat_14);
-            writer.Write(UnknownFloat_18);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) =>

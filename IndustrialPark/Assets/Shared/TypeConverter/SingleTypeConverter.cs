@@ -14,14 +14,14 @@ namespace IndustrialPark
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
             if (value is string s)
-                return Convert.ToSingle(s);
+                return new AssetSingle(Convert.ToSingle(s));
 
             return base.ConvertFrom(context, culture, value);
         }
 
         public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
         {
-            return destinationType == typeof(float) || destinationType == typeof(AssetSingle);
+            return destinationType == typeof(AssetSingle);
         }
 
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)

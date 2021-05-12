@@ -65,59 +65,61 @@ namespace IndustrialPark
 
         public AssetBOUL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = entityHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = entityHeaderEndPosition;
 
-            Gravity = reader.ReadSingle();
-            Mass = reader.ReadSingle();
-            BounceFactor = reader.ReadSingle();
-            Friction = reader.ReadSingle();
-            if (game == Game.BFBB)
-                StartFriction = reader.ReadSingle();
-            MaxLinearVelocity = reader.ReadSingle();
-            MaxAngularVelocity = reader.ReadSingle();
-            Stickiness = reader.ReadSingle();
-            BounceDamp = reader.ReadSingle();
-            BoulderFlags.FlagValueInt = reader.ReadUInt32();
-            KillTimer = reader.ReadSingle();
-            Hitpoints = reader.ReadInt32();
-            Sound_AssetID = reader.ReadUInt32();
-            if (game == Game.BFBB)
-                Volume = reader.ReadSingle();
-            MinSoundVel = reader.ReadSingle();
-            MaxSoundVel = reader.ReadSingle();
-            InnerRadius = reader.ReadSingle();
-            OuterRadius = reader.ReadSingle();
+                Gravity = reader.ReadSingle();
+                Mass = reader.ReadSingle();
+                BounceFactor = reader.ReadSingle();
+                Friction = reader.ReadSingle();
+                if (game == Game.BFBB)
+                    StartFriction = reader.ReadSingle();
+                MaxLinearVelocity = reader.ReadSingle();
+                MaxAngularVelocity = reader.ReadSingle();
+                Stickiness = reader.ReadSingle();
+                BounceDamp = reader.ReadSingle();
+                BoulderFlags.FlagValueInt = reader.ReadUInt32();
+                KillTimer = reader.ReadSingle();
+                Hitpoints = reader.ReadInt32();
+                Sound_AssetID = reader.ReadUInt32();
+                if (game == Game.BFBB)
+                    Volume = reader.ReadSingle();
+                MinSoundVel = reader.ReadSingle();
+                MaxSoundVel = reader.ReadSingle();
+                InnerRadius = reader.ReadSingle();
+                OuterRadius = reader.ReadSingle();
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntity(game, endianness));
-
-            writer.Write(Gravity);
-            writer.Write(Mass);
-            writer.Write(BounceFactor);
-            writer.Write(Friction);
-            if (game == Game.BFBB)
-                writer.Write(StartFriction);
-            writer.Write(MaxLinearVelocity);
-            writer.Write(MaxAngularVelocity);
-            writer.Write(Stickiness);
-            writer.Write(BounceDamp);
-            writer.Write(BoulderFlags.FlagValueInt);
-            writer.Write(KillTimer);
-            writer.Write(Hitpoints);
-            writer.Write(Sound_AssetID);
-            if (game == Game.BFBB)
-                writer.Write(Volume);
-            writer.Write(MinSoundVel);
-            writer.Write(MaxSoundVel);
-            writer.Write(InnerRadius);
-            writer.Write(OuterRadius);
-
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntity(game, endianness));
+                writer.Write(Gravity);
+                writer.Write(Mass);
+                writer.Write(BounceFactor);
+                writer.Write(Friction);
+                if (game == Game.BFBB)
+                    writer.Write(StartFriction);
+                writer.Write(MaxLinearVelocity);
+                writer.Write(MaxAngularVelocity);
+                writer.Write(Stickiness);
+                writer.Write(BounceDamp);
+                writer.Write(BoulderFlags.FlagValueInt);
+                writer.Write(KillTimer);
+                writer.Write(Hitpoints);
+                writer.Write(Sound_AssetID);
+                if (game == Game.BFBB)
+                    writer.Write(Volume);
+                writer.Write(MinSoundVel);
+                writer.Write(MaxSoundVel);
+                writer.Write(InnerRadius);
+                writer.Write(OuterRadius);
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
 
         public static bool dontRender = false;

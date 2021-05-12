@@ -40,6 +40,7 @@ namespace IndustrialPark
 
         public RenderableDynaBase(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness) { }
 
+        [Browsable(false)]
         public Matrix world { get; protected set; }
         protected BoundingBox boundingBox;
         protected Vector3[] vertices;

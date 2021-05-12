@@ -14,23 +14,26 @@ namespace IndustrialPark
 
         public DynaUITextUserString(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.ui__text__userstring, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaUITextEnd;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaUITextEnd;
 
-            hardMaxChars = reader.ReadByte();
-            softMaxChars = reader.ReadByte();
+                hardMaxChars = reader.ReadByte();
+                softMaxChars = reader.ReadByte();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(base.SerializeDyna(game, endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(base.SerializeDyna(game, endianness));
+                writer.Write(hardMaxChars);
+                writer.Write(softMaxChars);
+                writer.Write((short)0);
 
-            writer.Write(hardMaxChars);
-            writer.Write(softMaxChars);
-            writer.Write((short)0);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
     }
 }

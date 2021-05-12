@@ -40,54 +40,57 @@ namespace IndustrialPark
 
         public DynaGObjectVent(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__Vent, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
 
-            VentType_AssetID = reader.ReadUInt32();
-            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            _yaw = reader.ReadSingle();
-            _pitch = reader.ReadSingle();
-            _roll = reader.ReadSingle();
-            UnknownFloat1C = reader.ReadSingle();
-            UnknownFloat20 = reader.ReadSingle();
-            UnknownFloat24 = reader.ReadSingle();
-            UnknownFloat28 = reader.ReadSingle();
-            VentDistance = reader.ReadSingle();
-            UnknownFloat30 = reader.ReadSingle();
-            LaunchSpeed = reader.ReadSingle();
-            UnknownInt38 = reader.ReadSingle();
-            UnknownFloat3C = reader.ReadSingle();
-            UnknownFloat40 = reader.ReadSingle();
-            UnknownFloat44 = reader.ReadSingle();
+                VentType_AssetID = reader.ReadUInt32();
+                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                _yaw = reader.ReadSingle();
+                _pitch = reader.ReadSingle();
+                _roll = reader.ReadSingle();
+                UnknownFloat1C = reader.ReadSingle();
+                UnknownFloat20 = reader.ReadSingle();
+                UnknownFloat24 = reader.ReadSingle();
+                UnknownFloat28 = reader.ReadSingle();
+                VentDistance = reader.ReadSingle();
+                UnknownFloat30 = reader.ReadSingle();
+                LaunchSpeed = reader.ReadSingle();
+                UnknownInt38 = reader.ReadSingle();
+                UnknownFloat3C = reader.ReadSingle();
+                UnknownFloat40 = reader.ReadSingle();
+                UnknownFloat44 = reader.ReadSingle();
 
-            CreateTransformMatrix();
-            AddToRenderableAssets(this);
+                CreateTransformMatrix();
+                AddToRenderableAssets(this);
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(VentType_AssetID);
+                writer.Write(_position.X);
+                writer.Write(_position.Y);
+                writer.Write(_position.Z);
+                writer.Write(_yaw);
+                writer.Write(_pitch);
+                writer.Write(_roll);
+                writer.Write(UnknownFloat1C);
+                writer.Write(UnknownFloat20);
+                writer.Write(UnknownFloat24);
+                writer.Write(UnknownFloat28);
+                writer.Write(VentDistance);
+                writer.Write(UnknownFloat30);
+                writer.Write(LaunchSpeed);
+                writer.Write(UnknownInt38);
+                writer.Write(UnknownFloat3C);
+                writer.Write(UnknownFloat40);
+                writer.Write(UnknownFloat44);
 
-            writer.Write(VentType_AssetID);
-            writer.Write(_position.X);
-            writer.Write(_position.Y);
-            writer.Write(_position.Z);
-            writer.Write(_yaw);
-            writer.Write(_pitch);
-            writer.Write(_roll);
-            writer.Write(UnknownFloat1C);
-            writer.Write(UnknownFloat20);
-            writer.Write(UnknownFloat24);
-            writer.Write(UnknownFloat28);
-            writer.Write(VentDistance);
-            writer.Write(UnknownFloat30);
-            writer.Write(LaunchSpeed);
-            writer.Write(UnknownInt38);
-            writer.Write(UnknownFloat3C);
-            writer.Write(UnknownFloat40);
-            writer.Write(UnknownFloat44);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => VentType_AssetID == assetID;

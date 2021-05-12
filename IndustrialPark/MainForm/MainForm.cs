@@ -84,14 +84,8 @@ namespace IndustrialPark
             hideInvisibleMeshesToolStripMenuItem.Checked = settings.dontDrawInvisible;
             RenderWareModelFile.dontDrawInvisible = settings.dontDrawInvisible;
 
-            updateReferencesOnCopyPasteToolStripMenuItem.Checked = settings.updateReferencesOnCopy;
-            ArchiveEditorFunctions.updateReferencesOnCopy = settings.updateReferencesOnCopy;
-
             templatesPersistentShiniesToolStripMenuItem.Checked = settings.persistentShinies;
             ArchiveEditorFunctions.persistentShinies = settings.persistentShinies;
-
-            hideHelpInAssetDataEditorsToolStripMenuItem.Checked = settings.hideHelp;
-            ArchiveEditorFunctions.hideHelp = settings.hideHelp;
 
             discordRichPresenceToolStripMenuItem.Checked = settings.discordRichPresence;
             DiscordRPCController.ToggleDiscordRichPresence(discordRichPresenceToolStripMenuItem.Checked);
@@ -133,6 +127,9 @@ namespace IndustrialPark
                     return;
                 }
             }
+
+            TextureIOHelper.closeConverter();
+
             if (autoSaveOnClosingToolStripMenuItem.Checked)
                 SaveProject(currentProjectPath);
 
@@ -146,8 +143,7 @@ namespace IndustrialPark
                 renderBasedOnPipt = AssetMODL.renderBasedOnPipt,
                 discordRichPresence = discordRichPresenceToolStripMenuItem.Checked,
                 dontDrawInvisible = RenderWareModelFile.dontDrawInvisible,
-                persistentShinies = ArchiveEditorFunctions.persistentShinies,
-                hideHelp = hideHelpInAssetDataEditorsToolStripMenuItem.Checked
+                persistentShinies = ArchiveEditorFunctions.persistentShinies
             };
 
             File.WriteAllText(pathToSettings, JsonConvert.SerializeObject(settings, Formatting.Indented));
@@ -157,14 +153,18 @@ namespace IndustrialPark
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string file in files)
+#if !DEBUG
                 try
                 {
-                    AddArchiveEditor(file);
+#endif
+                AddArchiveEditor(file);
+#if !DEBUG
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Error opening file: " + ex.Message);
                 }
+#endif
         }
 
         private void MainForm_DragEnter(object sender, DragEventArgs e)
@@ -1124,14 +1124,6 @@ namespace IndustrialPark
 
             renderer.Camera.Reset();
             mouseMode = false;
-        }
-
-        private void HideHelpInAssetDataEditorsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ArchiveEditorFunctions.hideHelp = !ArchiveEditorFunctions.hideHelp;
-            hideHelpInAssetDataEditorsToolStripMenuItem.Checked = ArchiveEditorFunctions.hideHelp;
-            foreach (ArchiveEditor ae in archiveEditors)
-                ae.SetHideHelp();
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)

@@ -29,33 +29,36 @@ namespace IndustrialPark
 
         public DynaGObjectTaxi(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__Taxi, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
 
-            MRKR_ID = reader.ReadUInt32();
-            CAM_ID = reader.ReadUInt32();
-            PORT_ID = reader.ReadUInt32();
-            DYNA_Talkbox_ID = reader.ReadUInt32();
-            TEXT_ID = reader.ReadUInt32();
-            SIMP_ID = reader.ReadUInt32();
-            InvisibleTimer = reader.ReadSingle();
-            TeleportTimer = reader.ReadSingle();
+                MRKR_ID = reader.ReadUInt32();
+                CAM_ID = reader.ReadUInt32();
+                PORT_ID = reader.ReadUInt32();
+                DYNA_Talkbox_ID = reader.ReadUInt32();
+                TEXT_ID = reader.ReadUInt32();
+                SIMP_ID = reader.ReadUInt32();
+                InvisibleTimer = reader.ReadSingle();
+                TeleportTimer = reader.ReadSingle();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(MRKR_ID);
+                writer.Write(CAM_ID);
+                writer.Write(PORT_ID);
+                writer.Write(DYNA_Talkbox_ID);
+                writer.Write(TEXT_ID);
+                writer.Write(SIMP_ID);
+                writer.Write(InvisibleTimer);
+                writer.Write(TeleportTimer);
 
-            writer.Write(MRKR_ID);
-            writer.Write(CAM_ID);
-            writer.Write(PORT_ID);
-            writer.Write(DYNA_Talkbox_ID);
-            writer.Write(TEXT_ID);
-            writer.Write(SIMP_ID);
-            writer.Write(InvisibleTimer);
-            writer.Write(TeleportTimer);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)

@@ -109,119 +109,121 @@ namespace IndustrialPark
 
         public AssetCSNM(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = baseHeaderEndPosition;
 
-            CSN_AssetID = reader.ReadUInt32();
-            CsnmFlags.FlagValueInt = reader.ReadUInt32();
-            InterpSpeed = reader.ReadInt32();
-            UnknownInt14 = reader.ReadInt32();
-            UnknownInt18 = reader.ReadInt32();
-            UnknownInt1C = reader.ReadInt32();
-            UnknownInt20 = reader.ReadInt32();
-            UnknownInt24 = reader.ReadInt32();
-            UnknownInt28 = reader.ReadInt32();
-            UnknownInt2C = reader.ReadInt32();
-            UnknownInt30 = reader.ReadInt32();
-            UnknownInt34 = reader.ReadInt32();
-            UnknownInt38 = reader.ReadInt32();
-            UnknownInt3C = reader.ReadInt32();
-            UnknownInt40 = reader.ReadInt32();
-            UnknownInt44 = reader.ReadInt32();
-            UnknownInt48 = reader.ReadInt32();
-            UnknownInt4C = reader.ReadInt32();
-            UnknownInt50 = reader.ReadInt32();
-            UnknownInt54 = reader.ReadInt32();
-            UnknownInt58 = reader.ReadInt32();
-            UnknownInt5C = reader.ReadInt32();
-            UnknownInt60 = reader.ReadInt32();
-            UnknownInt64 = reader.ReadInt32();
-            UnknownInt68 = reader.ReadInt32();
-            UnknownInt6C = reader.ReadInt32();
-            UnknownInt70 = reader.ReadInt32();
-            UnknownInt74 = reader.ReadInt32();
-            UnknownInt78 = reader.ReadInt32();
-            UnknownInt7C = reader.ReadInt32();
-            UnknownInt80 = reader.ReadInt32();
-            UnknownInt84 = reader.ReadInt32();
-            UnknownInt88 = reader.ReadInt32();
-            UnknownInt8C = reader.ReadInt32();
-            UnknownInt90 = reader.ReadInt32();
-            UnknownInt94 = reader.ReadInt32();
-            UnknownInt98 = reader.ReadInt32();
-            UnknownInt9C = reader.ReadInt32();
-            UnknownIntA0 = reader.ReadInt32();
-            UnknownIntA4 = reader.ReadInt32();
-            UnknownIntA8 = reader.ReadInt32();
-            UnknownIntAC = reader.ReadInt32();
-            UnknownIntB0 = reader.ReadInt32();
-            UnknownIntB4 = reader.ReadInt32();
-            UnknownIntB8 = reader.ReadInt32();
-            UnknownIntBC = reader.ReadInt32();
-            UnknownIntC0 = reader.ReadInt32();
-            UnknownIntC4 = reader.ReadInt32();
-            if (game == Game.Incredibles)
-                UnknownIntC8 = reader.ReadInt32();
+                CSN_AssetID = reader.ReadUInt32();
+                CsnmFlags.FlagValueInt = reader.ReadUInt32();
+                InterpSpeed = reader.ReadInt32();
+                UnknownInt14 = reader.ReadInt32();
+                UnknownInt18 = reader.ReadInt32();
+                UnknownInt1C = reader.ReadInt32();
+                UnknownInt20 = reader.ReadInt32();
+                UnknownInt24 = reader.ReadInt32();
+                UnknownInt28 = reader.ReadInt32();
+                UnknownInt2C = reader.ReadInt32();
+                UnknownInt30 = reader.ReadInt32();
+                UnknownInt34 = reader.ReadInt32();
+                UnknownInt38 = reader.ReadInt32();
+                UnknownInt3C = reader.ReadInt32();
+                UnknownInt40 = reader.ReadInt32();
+                UnknownInt44 = reader.ReadInt32();
+                UnknownInt48 = reader.ReadInt32();
+                UnknownInt4C = reader.ReadInt32();
+                UnknownInt50 = reader.ReadInt32();
+                UnknownInt54 = reader.ReadInt32();
+                UnknownInt58 = reader.ReadInt32();
+                UnknownInt5C = reader.ReadInt32();
+                UnknownInt60 = reader.ReadInt32();
+                UnknownInt64 = reader.ReadInt32();
+                UnknownInt68 = reader.ReadInt32();
+                UnknownInt6C = reader.ReadInt32();
+                UnknownInt70 = reader.ReadInt32();
+                UnknownInt74 = reader.ReadInt32();
+                UnknownInt78 = reader.ReadInt32();
+                UnknownInt7C = reader.ReadInt32();
+                UnknownInt80 = reader.ReadInt32();
+                UnknownInt84 = reader.ReadInt32();
+                UnknownInt88 = reader.ReadInt32();
+                UnknownInt8C = reader.ReadInt32();
+                UnknownInt90 = reader.ReadInt32();
+                UnknownInt94 = reader.ReadInt32();
+                UnknownInt98 = reader.ReadInt32();
+                UnknownInt9C = reader.ReadInt32();
+                UnknownIntA0 = reader.ReadInt32();
+                UnknownIntA4 = reader.ReadInt32();
+                UnknownIntA8 = reader.ReadInt32();
+                UnknownIntAC = reader.ReadInt32();
+                UnknownIntB0 = reader.ReadInt32();
+                UnknownIntB4 = reader.ReadInt32();
+                UnknownIntB8 = reader.ReadInt32();
+                UnknownIntBC = reader.ReadInt32();
+                UnknownIntC0 = reader.ReadInt32();
+                UnknownIntC4 = reader.ReadInt32();
+                if (game == Game.Incredibles)
+                    UnknownIntC8 = reader.ReadInt32();
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeBase(endianness));
-
-            writer.Write(CSN_AssetID);
-            writer.Write(CsnmFlags.FlagValueInt);
-            writer.Write(InterpSpeed);
-            writer.Write(UnknownInt14);
-            writer.Write(UnknownInt18);
-            writer.Write(UnknownInt1C);
-            writer.Write(UnknownInt20);
-            writer.Write(UnknownInt24);
-            writer.Write(UnknownInt28);
-            writer.Write(UnknownInt2C);
-            writer.Write(UnknownInt30);
-            writer.Write(UnknownInt34);
-            writer.Write(UnknownInt38);
-            writer.Write(UnknownInt3C);
-            writer.Write(UnknownInt40);
-            writer.Write(UnknownInt44);
-            writer.Write(UnknownInt48);
-            writer.Write(UnknownInt4C);
-            writer.Write(UnknownInt50);
-            writer.Write(UnknownInt54);
-            writer.Write(UnknownInt58);
-            writer.Write(UnknownInt5C);
-            writer.Write(UnknownInt60);
-            writer.Write(UnknownInt64);
-            writer.Write(UnknownInt68);
-            writer.Write(UnknownInt6C);
-            writer.Write(UnknownInt70);
-            writer.Write(UnknownInt74);
-            writer.Write(UnknownInt78);
-            writer.Write(UnknownInt7C);
-            writer.Write(UnknownInt80);
-            writer.Write(UnknownInt84);
-            writer.Write(UnknownInt88);
-            writer.Write(UnknownInt8C);
-            writer.Write(UnknownInt90);
-            writer.Write(UnknownInt94);
-            writer.Write(UnknownInt98);
-            writer.Write(UnknownInt9C);
-            writer.Write(UnknownIntA0);
-            writer.Write(UnknownIntA4);
-            writer.Write(UnknownIntA8);
-            writer.Write(UnknownIntAC);
-            writer.Write(UnknownIntB0);
-            writer.Write(UnknownIntB4);
-            writer.Write(UnknownIntB8);
-            writer.Write(UnknownIntBC);
-            writer.Write(UnknownIntC0);
-            writer.Write(UnknownIntC4);
-            if (game == Game.Incredibles)
-                writer.Write(UnknownIntC8);
-
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
+                writer.Write(CSN_AssetID);
+                writer.Write(CsnmFlags.FlagValueInt);
+                writer.Write(InterpSpeed);
+                writer.Write(UnknownInt14);
+                writer.Write(UnknownInt18);
+                writer.Write(UnknownInt1C);
+                writer.Write(UnknownInt20);
+                writer.Write(UnknownInt24);
+                writer.Write(UnknownInt28);
+                writer.Write(UnknownInt2C);
+                writer.Write(UnknownInt30);
+                writer.Write(UnknownInt34);
+                writer.Write(UnknownInt38);
+                writer.Write(UnknownInt3C);
+                writer.Write(UnknownInt40);
+                writer.Write(UnknownInt44);
+                writer.Write(UnknownInt48);
+                writer.Write(UnknownInt4C);
+                writer.Write(UnknownInt50);
+                writer.Write(UnknownInt54);
+                writer.Write(UnknownInt58);
+                writer.Write(UnknownInt5C);
+                writer.Write(UnknownInt60);
+                writer.Write(UnknownInt64);
+                writer.Write(UnknownInt68);
+                writer.Write(UnknownInt6C);
+                writer.Write(UnknownInt70);
+                writer.Write(UnknownInt74);
+                writer.Write(UnknownInt78);
+                writer.Write(UnknownInt7C);
+                writer.Write(UnknownInt80);
+                writer.Write(UnknownInt84);
+                writer.Write(UnknownInt88);
+                writer.Write(UnknownInt8C);
+                writer.Write(UnknownInt90);
+                writer.Write(UnknownInt94);
+                writer.Write(UnknownInt98);
+                writer.Write(UnknownInt9C);
+                writer.Write(UnknownIntA0);
+                writer.Write(UnknownIntA4);
+                writer.Write(UnknownIntA8);
+                writer.Write(UnknownIntAC);
+                writer.Write(UnknownIntB0);
+                writer.Write(UnknownIntB4);
+                writer.Write(UnknownIntB8);
+                writer.Write(UnknownIntBC);
+                writer.Write(UnknownIntC0);
+                writer.Write(UnknownIntC4);
+                if (game == Game.Incredibles)
+                    writer.Write(UnknownIntC8);
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => CSN_AssetID == assetID || base.HasReference(assetID);

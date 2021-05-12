@@ -35,7 +35,8 @@ namespace IndustrialPark
         public override void Reset()
         {
             base.Reset();
-            Motion.Reset();
+            if (Motion != null)
+                Motion.Reset();
         }
 
         public Matrix PlatLocalTranslation() => Motion.PlatLocalTranslation();
@@ -46,9 +47,9 @@ namespace IndustrialPark
         {
             if (movementPreview)
             {
-                EntityAsset driver = FindDrivenByAsset(out bool found, out bool useRotation);
+                var driver = FindDrivenByAsset(out bool useRotation);
 
-                if (found)
+                if (driver != null)
                 {
                     return PlatLocalRotation() * PlatLocalTranslation()
                         * Matrix.Scaling(_scale)
@@ -57,6 +58,9 @@ namespace IndustrialPark
                         * (useRotation ? driver.PlatLocalRotation() : Matrix.Identity)
                         * Matrix.Translation((Vector3)Vector3.Transform(Vector3.Zero, driver.LocalWorld()));
                 }
+
+                if (Motion is Motion_ExtendRetract)
+                    return Matrix.Scaling(_scale) * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll) * PlatLocalTranslation();
 
                 return PlatLocalRotation() * PlatLocalTranslation()
                     * Matrix.Scaling(_scale)
@@ -67,7 +71,7 @@ namespace IndustrialPark
             return world;
         }
 
-        [Category("Platform"), TypeConverter(typeof(ExpandableObjectConverter))]
+        [Category("Motion"), TypeConverter(typeof(ExpandableObjectConverter))]
         public Motion Motion { get; set; }
     }
 }

@@ -40,23 +40,24 @@ namespace IndustrialPark
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(percent);
+                writer.Write(Model_AssetID);
+                writer.Write(Shrapnel_Destroy_AssetID);
+                writer.Write(Shrapnel_Hit_AssetID);
+                writer.Write(SoundGroup_Idle_AssetID);
+                writer.Write(SoundGroup_Fx_AssetID);
+                writer.Write(SoundGroup_Hit_AssetID);
+                writer.Write(SoundGroup_Fx_Switch_AssetID);
+                writer.Write(SoundGroup_Hit_Switch_AssetID);
+                writer.Write(Rumble_Hit_AssetID);
+                writer.Write(Rumble_Switch_AssetID);
+                writer.Write(FxFlags);
+                writer.Write(nAnimations);
 
-            writer.Write(percent);
-            writer.Write(Model_AssetID);
-            writer.Write(Shrapnel_Destroy_AssetID);
-            writer.Write(Shrapnel_Hit_AssetID);
-            writer.Write(SoundGroup_Idle_AssetID);
-            writer.Write(SoundGroup_Fx_AssetID);
-            writer.Write(SoundGroup_Hit_AssetID);
-            writer.Write(SoundGroup_Fx_Switch_AssetID);
-            writer.Write(SoundGroup_Hit_Switch_AssetID);
-            writer.Write(Rumble_Hit_AssetID);
-            writer.Write(Rumble_Switch_AssetID);
-            writer.Write(FxFlags);
-            writer.Write(nAnimations);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) =>
@@ -97,53 +98,63 @@ namespace IndustrialPark
         [Category(categoryName)]
         public DestState[] States { get; set; }
         [Category(categoryName)]
-        public AssetID Unknown { get; set; }
+        public AssetID Unknown1 { get; set; }
+        [Category(categoryName)]
+        public AssetID? Unknown2 { get; set; }
 
         public AssetDEST(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-
-            MINF_AssetID = reader.ReadUInt32();
-            int numStates = reader.ReadInt32();
-            HitPoints = reader.ReadInt32();
-            HitFilter = reader.ReadInt32();
-            LaunchFlag = reader.ReadInt32();
-            Behavior = reader.ReadInt32();
-            Flags.FlagValueInt = reader.ReadUInt32();
-            SoundGroup_Idle_AssetID = reader.ReadUInt32();
-            Respawn = reader.ReadSingle();
-            TargetPriority = reader.ReadByte();
-            reader.ReadByte();
-            reader.ReadByte();
-            reader.ReadByte();
-            States = new DestState[numStates];
-            for (int i = 0; i < States.Length; i++)
-                States[i] = new DestState(reader);
-            Unknown = reader.ReadUInt32();
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                MINF_AssetID = reader.ReadUInt32();
+                int numStates = reader.ReadInt32();
+                HitPoints = reader.ReadInt32();
+                HitFilter = reader.ReadInt32();
+                LaunchFlag = reader.ReadInt32();
+                Behavior = reader.ReadInt32();
+                Flags.FlagValueInt = reader.ReadUInt32();
+                SoundGroup_Idle_AssetID = reader.ReadUInt32();
+                Respawn = reader.ReadSingle();
+                TargetPriority = reader.ReadByte();
+                reader.ReadByte();
+                reader.ReadByte();
+                reader.ReadByte();
+                States = new DestState[numStates];
+                for (int i = 0; i < States.Length; i++)
+                    States[i] = new DestState(reader);
+                Unknown1 = reader.ReadUInt32();
+                if (!reader.EndOfStream)
+                    Unknown2 = reader.ReadUInt32();
+                else
+                    Unknown2 = null;
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(MINF_AssetID);
+                writer.Write(States.Length);
+                writer.Write(HitPoints);
+                writer.Write(HitFilter);
+                writer.Write(LaunchFlag);
+                writer.Write(Behavior);
+                writer.Write(Flags.FlagValueInt);
+                writer.Write(SoundGroup_Idle_AssetID);
+                writer.Write(Respawn);
+                writer.Write(TargetPriority);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+                foreach (var state in States)
+                    writer.Write(state.Serialize(game, endianness));
+                writer.Write(Unknown1);
+                if (Unknown2.HasValue)
+                    writer.Write(Unknown2.Value);
 
-            writer.Write(MINF_AssetID);
-            writer.Write(States.Length);
-            writer.Write(HitPoints);
-            writer.Write(HitFilter);
-            writer.Write(LaunchFlag);
-            writer.Write(Behavior);
-            writer.Write(Flags.FlagValueInt);
-            writer.Write(SoundGroup_Idle_AssetID);
-            writer.Write(Respawn);
-            writer.Write(TargetPriority);
-            writer.Write((byte)0);
-            writer.Write((byte)0);
-            writer.Write((byte)0);
-            foreach (var state in States)
-                writer.Write(state.Serialize(game, endianness));
-            writer.Write(Unknown);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)

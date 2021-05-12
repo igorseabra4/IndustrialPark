@@ -19,11 +19,13 @@ namespace IndustrialPark
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeBase(endianness));
-            writer.Write(Data);
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
+                writer.Write(Data);
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)
@@ -48,10 +50,12 @@ namespace IndustrialPark
             }
             set
             {
-                var writer = new EndianBinaryWriter(endianness);
-                foreach (var f in value)
-                    writer.Write(f);
-                Data = writer.ToArray();
+                using (var writer = new EndianBinaryWriter(endianness))
+                {
+                    foreach (var f in value)
+                        writer.Write(f);
+                    Data = writer.ToArray();
+                }
             }
         }
 
@@ -68,10 +72,12 @@ namespace IndustrialPark
             }
             set
             {
-                var writer = new EndianBinaryWriter(endianness);
-                foreach (var f in value)
-                    writer.Write(f);
-                Data = writer.ToArray();
+                using (var writer = new EndianBinaryWriter(endianness))
+                {
+                    foreach (var f in value)
+                        writer.Write(f);
+                    Data = writer.ToArray();
+                }
             }
         }
     }

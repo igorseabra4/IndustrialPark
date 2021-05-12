@@ -39,18 +39,20 @@ namespace IndustrialPark
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
 
-            writer.Write(Unknown_00_1);
-            writer.Write(Color);
-            writer.Write(CharWidth);
-            writer.Write(CharHeight);
-            writer.Write(Unknown1);
-            writer.Write(Unknown2);
-            writer.Write(MaxScreenWidth);
-            writer.Write(MaxScreenHeight);
+                writer.Write(Unknown_00_1);
+                writer.Write(Color);
+                writer.Write(CharWidth);
+                writer.Write(CharHeight);
+                writer.Write(Unknown1);
+                writer.Write(Unknown2);
+                writer.Write(MaxScreenWidth);
+                writer.Write(MaxScreenHeight);
 
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
     }
 
@@ -81,16 +83,18 @@ namespace IndustrialPark
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
 
-            writer.Write(Unknown_00);
-            writer.Write(Unknown_02);
-            writer.Write(Unknown_04);
-            writer.Write(Unknown_08);
-            writer.Write(TextStyle.Serialize(game, endianness));
-            writer.Write(BackdropStyle.Serialize(game, endianness));
+                writer.Write(Unknown_00);
+                writer.Write(Unknown_02);
+                writer.Write(Unknown_04);
+                writer.Write(Unknown_08);
+                writer.Write(TextStyle.Serialize(game, endianness));
+                writer.Write(BackdropStyle.Serialize(game, endianness));
 
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
     }
 
@@ -122,26 +126,28 @@ namespace IndustrialPark
 
         public byte[] Serialize(int prevFileSize, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
 
-            writer.Write(0);
-            writer.Write(StyleIndex);
-            writer.Write(StartTime);
-            writer.Write(EndTime);
-            writer.Write((int)(prevFileSize + writer.BaseStream.Position + 8)); // text offset
-            writer.Write(Unknown);
+                writer.Write(0);
+                writer.Write(StyleIndex);
+                writer.Write(StartTime);
+                writer.Write(EndTime);
+                writer.Write((int)(prevFileSize + writer.BaseStream.Position + 8)); // text offset
+                writer.Write(Unknown);
 
-            foreach (byte c in System.Text.Encoding.GetEncoding(AssetTEXT.Codepage).GetBytes(Text))
-                writer.Write(c);
-            writer.Write((byte)0);
-
-            while (writer.BaseStream.Length % 4 != 0)
+                foreach (byte c in System.Text.Encoding.GetEncoding(AssetTEXT.Codepage).GetBytes(Text))
+                    writer.Write(c);
                 writer.Write((byte)0);
 
-            writer.BaseStream.Position = 0;
-            writer.Write((int)writer.BaseStream.Length);
+                while (writer.BaseStream.Length % 4 != 0)
+                    writer.Write((byte)0);
 
-            return writer.ToArray();
+                writer.BaseStream.Position = 0;
+                writer.Write((int)writer.BaseStream.Length);
+
+                return writer.ToArray();
+            }
         }
 
         public override string ToString()
@@ -197,32 +203,33 @@ namespace IndustrialPark
 
         public byte[] Serialize(int prevSize, Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(0); // size
+                writer.Write(Duration);
+                writer.Write(Unknown_08);
+                writer.Write(Unknown_0C);
+                writer.Write(BeginY);
+                writer.Write(Unknown_14);
+                writer.Write(EndY);
+                writer.Write(Unknown_1C);
+                writer.Write(Unknown_20);
+                writer.Write(FadeInBegin);
+                writer.Write(FadeInEnd);
+                writer.Write(FadeOutBegin);
+                writer.Write(FadeOutEnd);
+                writer.Write(Styles.Length);
 
-            writer.Write(0); // size
-            writer.Write(Duration);
-            writer.Write(Unknown_08);
-            writer.Write(Unknown_0C);
-            writer.Write(BeginY);
-            writer.Write(Unknown_14);
-            writer.Write(EndY);
-            writer.Write(Unknown_1C);
-            writer.Write(Unknown_20);
-            writer.Write(FadeInBegin);
-            writer.Write(FadeInEnd);
-            writer.Write(FadeOutBegin);
-            writer.Write(FadeOutEnd);
-            writer.Write(Styles.Length);
+                foreach (var s in Styles)
+                    writer.Write(s.Serialize(game, endianness));
+                foreach (var t in Titles)
+                    writer.Write(t.Serialize((int)writer.BaseStream.Length + prevSize, endianness));
 
-            foreach (var s in Styles)
-                writer.Write(s.Serialize(game, endianness));
-            foreach (var t in Titles)
-                writer.Write(t.Serialize((int)writer.BaseStream.Length + prevSize, endianness));
+                writer.BaseStream.Position = 0;
+                writer.Write((int)writer.BaseStream.Length);
 
-            writer.BaseStream.Position = 0;
-            writer.Write((int)writer.BaseStream.Length);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
     }
 
@@ -245,37 +252,39 @@ namespace IndustrialPark
 
         public AssetCRDT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-
-            Unknown00 = reader.ReadUInt32();
-            Unknown04 = reader.ReadInt32();
-            Unknown08 = reader.ReadInt32();
-            Unknown0C = reader.ReadInt32();
-            Duration = reader.ReadSingle();
-            reader.ReadInt32(); // file size
-            var sections = new List<SectionEntry>();
-            while (!reader.EndOfStream)
-                sections.Add(new SectionEntry(reader));            
-            Sections = sections.ToArray();
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                Unknown00 = reader.ReadUInt32();
+                Unknown04 = reader.ReadInt32();
+                Unknown08 = reader.ReadInt32();
+                Unknown0C = reader.ReadInt32();
+                Duration = reader.ReadSingle();
+                reader.ReadInt32(); // file size
+                var sections = new List<SectionEntry>();
+                while (!reader.EndOfStream)
+                    sections.Add(new SectionEntry(reader));
+                Sections = sections.ToArray();
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Unknown00);
+                writer.Write(Unknown04);
+                writer.Write(Unknown08);
+                writer.Write(Unknown0C);
+                writer.Write(Duration);
+                writer.Write(0); // size
+                foreach (var s in Sections)
+                    writer.Write(s.Serialize((int)writer.BaseStream.Length, game, endianness));
 
-            writer.Write(Unknown00);
-            writer.Write(Unknown04);
-            writer.Write(Unknown08);
-            writer.Write(Unknown0C);
-            writer.Write(Duration);
-            writer.Write(0); // size
-            foreach (var s in Sections)
-                writer.Write(s.Serialize((int)writer.BaseStream.Length, game, endianness));
+                writer.BaseStream.Position = 0x14;
+                writer.Write((int)writer.BaseStream.Length);
 
-            writer.BaseStream.Position = 0x14;
-            writer.Write((int)writer.BaseStream.Length);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
     }
 }

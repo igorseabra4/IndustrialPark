@@ -50,25 +50,26 @@ namespace IndustrialPark
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Texture_AssetID);
+                writer.Write(Color);
+                writer.Write(uv1u);
+                writer.Write(uv1v);
+                writer.Write(uv2u);
+                writer.Write(uv2v);
+                writer.Write(uv3u);
+                writer.Write(uv3v);
+                writer.Write(uv4u);
+                writer.Write(uv4v);
+                writer.Write(rotation);
+                writer.Write(enabled);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
 
-            writer.Write(Texture_AssetID);
-            writer.Write(Color);
-            writer.Write(uv1u);
-            writer.Write(uv1v);
-            writer.Write(uv2u);
-            writer.Write(uv2v);
-            writer.Write(uv3u);
-            writer.Write(uv3v);
-            writer.Write(uv4u);
-            writer.Write(uv4v);
-            writer.Write(rotation);
-            writer.Write(enabled);
-            writer.Write((byte)0);
-            writer.Write((byte)0);
-            writer.Write((byte)0);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => Texture_AssetID == assetID;
@@ -117,53 +118,56 @@ namespace IndustrialPark
 
         public DynaUIBox(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.ui__box, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaUIEnd;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaUIEnd;
 
-            _parts = new UIBoxPart[9];
-            for (int i = 0; i < _parts.Length; i++)
-                _parts[i] = new UIBoxPart(reader);
+                _parts = new UIBoxPart[9];
+                for (int i = 0; i < _parts.Length; i++)
+                    _parts[i] = new UIBoxPart(reader);
 
-            borderWidth = reader.ReadSingle();
-            borderHeight = reader.ReadSingle();
-            widthPerUV = reader.ReadSingle();
-            heightPerUV = reader.ReadSingle();
-            centerWidthPerUV = reader.ReadSingle();
-            centerHeightPerUV = reader.ReadSingle();
-            scaleHSide = reader.ReadByte();
-            scaleVSide = reader.ReadByte();
-            scaleCenter = reader.ReadByte();
-            stretchUVsOnMotionScale = reader.ReadByte();
-            forceAlphaWrite = reader.ReadByte();
-            reader.ReadByte();
-            reader.ReadByte();
-            reader.ReadByte();
+                borderWidth = reader.ReadSingle();
+                borderHeight = reader.ReadSingle();
+                widthPerUV = reader.ReadSingle();
+                heightPerUV = reader.ReadSingle();
+                centerWidthPerUV = reader.ReadSingle();
+                centerHeightPerUV = reader.ReadSingle();
+                scaleHSide = reader.ReadByte();
+                scaleVSide = reader.ReadByte();
+                scaleCenter = reader.ReadByte();
+                stretchUVsOnMotionScale = reader.ReadByte();
+                forceAlphaWrite = reader.ReadByte();
+                reader.ReadByte();
+                reader.ReadByte();
+                reader.ReadByte();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeDynaUI(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeDynaUI(endianness));
 
-            foreach (var p in _parts)
-                writer.Write(p.Serialize(game, endianness));
+                foreach (var p in _parts)
+                    writer.Write(p.Serialize(game, endianness));
+                writer.Write(borderWidth);
+                writer.Write(borderHeight);
+                writer.Write(widthPerUV);
+                writer.Write(heightPerUV);
+                writer.Write(centerWidthPerUV);
+                writer.Write(centerHeightPerUV);
+                writer.Write(scaleHSide);
+                writer.Write(scaleVSide);
+                writer.Write(scaleCenter);
+                writer.Write(stretchUVsOnMotionScale);
+                writer.Write(forceAlphaWrite);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
 
-            writer.Write(borderWidth);
-            writer.Write(borderHeight);
-            writer.Write(widthPerUV);
-            writer.Write(heightPerUV);
-            writer.Write(centerWidthPerUV);
-            writer.Write(centerHeightPerUV);
-            writer.Write(scaleHSide);
-            writer.Write(scaleVSide);
-            writer.Write(scaleCenter);
-            writer.Write(stretchUVsOnMotionScale);
-            writer.Write(forceAlphaWrite);
-            writer.Write((byte)0);
-            writer.Write((byte)0);
-            writer.Write((byte)0);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => _parts.Any(p => p.HasReference(assetID)) || base.HasReference(assetID);

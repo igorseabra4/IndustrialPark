@@ -14,10 +14,8 @@ namespace IndustrialPark
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
             if (value is string s)
-            {
-                return Convert.ToByte(s, 16);
-            }
-
+                return new AssetByte(Convert.ToByte(s, 16));
+            
             return base.ConvertFrom(context, culture, value);
         }
 

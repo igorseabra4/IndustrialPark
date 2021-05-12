@@ -33,51 +33,50 @@ namespace IndustrialPark
         public AssetSingle UnknownFloat_2C { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle UnknownFloat_30 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_34 { get; set; }
 
         public DynaGObjectFlameEmitter(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__flame_emitter, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
 
-            UnknownInt_00 = reader.ReadInt32();
-            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            UnknownFloat_10 = reader.ReadSingle();
-            UnknownFloat_14 = reader.ReadSingle();
-            UnknownFloat_18 = reader.ReadSingle();
-            UnknownFloat_1C = reader.ReadSingle();
-            UnknownFloat_20 = reader.ReadSingle();
-            UnknownFloat_24 = reader.ReadSingle();
-            UnknownFloat_28 = reader.ReadSingle();
-            UnknownFloat_2C = reader.ReadSingle();
-            UnknownFloat_30 = reader.ReadSingle();
-            UnknownFloat_34 = reader.ReadSingle();
+                UnknownInt_00 = reader.ReadInt32();
+                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                UnknownFloat_10 = reader.ReadSingle();
+                UnknownFloat_14 = reader.ReadSingle();
+                UnknownFloat_18 = reader.ReadSingle();
+                UnknownFloat_1C = reader.ReadSingle();
+                UnknownFloat_20 = reader.ReadSingle();
+                UnknownFloat_24 = reader.ReadSingle();
+                UnknownFloat_28 = reader.ReadSingle();
+                UnknownFloat_2C = reader.ReadSingle();
+                UnknownFloat_30 = reader.ReadSingle();
 
-            CreateTransformMatrix();
-            AddToRenderableAssets(this);
+                CreateTransformMatrix();
+                AddToRenderableAssets(this);
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(UnknownInt_00);
+                writer.Write(_position.X);
+                writer.Write(_position.Y);
+                writer.Write(_position.Z);
+                writer.Write(UnknownFloat_10);
+                writer.Write(UnknownFloat_14);
+                writer.Write(UnknownFloat_18);
+                writer.Write(UnknownFloat_1C);
+                writer.Write(UnknownFloat_20);
+                writer.Write(UnknownFloat_24);
+                writer.Write(UnknownFloat_28);
+                writer.Write(UnknownFloat_2C);
+                writer.Write(UnknownFloat_30);
 
-            writer.Write(UnknownInt_00);
-            writer.Write(_position.X);
-            writer.Write(_position.Y);
-            writer.Write(_position.Z);
-            writer.Write(UnknownFloat_10);
-            writer.Write(UnknownFloat_14);
-            writer.Write(UnknownFloat_18);
-            writer.Write(UnknownFloat_1C);
-            writer.Write(UnknownFloat_20);
-            writer.Write(UnknownFloat_24);
-            writer.Write(UnknownFloat_28);
-            writer.Write(UnknownFloat_2C);
-            writer.Write(UnknownFloat_30);
-            writer.Write(UnknownFloat_34);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         protected override List<Vector3> vertexSource => SharpRenderer.cubeVertices;

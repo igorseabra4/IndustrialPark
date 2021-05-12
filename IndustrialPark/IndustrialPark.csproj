@@ -147,7 +147,7 @@
     <Compile Include="Assets\DYNA\DynaTypes\UIDynas\DynaUIController.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\UIDynas\DynaUIBox.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\UIDynas\DynaUI.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetDTRK.cs" />
+    <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetDTRK.cs" />
     <Compile Include="Assets\ObjectAssets\AssetPGRS.cs" />
     <Compile Include="Assets\Shared\AssetGenericBase.cs" />
     <Compile Include="Assets\Shared\AssetWithData.cs" />

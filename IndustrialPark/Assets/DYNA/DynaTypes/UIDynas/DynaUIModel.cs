@@ -18,24 +18,27 @@ namespace IndustrialPark
 
         public DynaUIModel(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.ui__model, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaUIEnd;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaUIEnd;
 
-            Model_AssetID = reader.ReadUInt32();
-            AnimList_AssetID = reader.ReadUInt32();
-            Surface_AssetID = reader.ReadUInt32();
+                Model_AssetID = reader.ReadUInt32();
+                AnimList_AssetID = reader.ReadUInt32();
+                Surface_AssetID = reader.ReadUInt32();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeDynaUI(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeDynaUI(endianness));
+                writer.Write(Model_AssetID);
+                writer.Write(AnimList_AssetID);
+                writer.Write(Surface_AssetID);
 
-            writer.Write(Model_AssetID);
-            writer.Write(AnimList_AssetID);
-            writer.Write(Surface_AssetID);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) =>

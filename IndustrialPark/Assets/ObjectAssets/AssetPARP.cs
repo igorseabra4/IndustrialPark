@@ -47,13 +47,15 @@ namespace IndustrialPark
 
         public byte[] Serialize(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(Interp_0);
-            writer.Write(Interp_1);
-            writer.Write((uint)Interp_Mode);
-            writer.Write(Frequency_RandLinStep);
-            writer.Write(Frequency_SinCos);
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Interp_0);
+                writer.Write(Interp_1);
+                writer.Write((uint)Interp_Mode);
+                writer.Write(Frequency_RandLinStep);
+                writer.Write(Frequency_SinCos);
+                return writer.ToArray();
+            }
         }
 
         public string EntryFunction 
@@ -120,43 +122,44 @@ namespace IndustrialPark
 
         public AssetPARP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = baseHeaderEndPosition;
 
-            PARS_AssetID = reader.ReadUInt32();
+                PARS_AssetID = reader.ReadUInt32();
 
-            _structs = new StructPARP[14];
+                _structs = new StructPARP[14];
 
-            for (int i = 0; i < _structs.Length; i++)
-                _structs[i] = new StructPARP(reader, i);
+                for (int i = 0; i < _structs.Length; i++)
+                    _structs[i] = new StructPARP(reader, i);
 
-            VelX = reader.ReadSingle();
-            VelY = reader.ReadSingle();
-            VelZ = reader.ReadSingle();
-            Emit_Limit = reader.ReadInt32();
-            Emit_limit_reset_time = reader.ReadInt32();
+                VelX = reader.ReadSingle();
+                VelY = reader.ReadSingle();
+                VelZ = reader.ReadSingle();
+                Emit_Limit = reader.ReadInt32();
+                Emit_limit_reset_time = reader.ReadInt32();
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeBase(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
+                writer.Write(PARS_AssetID);
 
-            writer.Write(PARS_AssetID);
-
-            if (_structs.Length != 14)
-                throw new Exception("PARS structs must be exactly 14 entries.");
-            foreach (var p in _structs)
-                writer.Write(p.Serialize(endianness));
-
-            writer.Write(VelX);
-            writer.Write(VelY);
-            writer.Write(VelZ);
-            writer.Write(Emit_Limit);
-            writer.Write(Emit_limit_reset_time);
-
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
+                if (_structs.Length != 14)
+                    throw new Exception("PARS structs must be exactly 14 entries.");
+                foreach (var p in _structs)
+                    writer.Write(p.Serialize(endianness));
+                writer.Write(VelX);
+                writer.Write(VelY);
+                writer.Write(VelZ);
+                writer.Write(Emit_Limit);
+                writer.Write(Emit_limit_reset_time);
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => PARS_AssetID == assetID || base.HasReference(assetID);

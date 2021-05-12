@@ -16,25 +16,28 @@ namespace IndustrialPark
 
         public AssetTEXT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            var length = reader.ReadInt32();
-            Text = System.Text.Encoding.GetEncoding(Codepage).GetString(reader.ReadBytes(length));
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                var length = reader.ReadInt32();
+                Text = System.Text.Encoding.GetEncoding(Codepage).GetString(reader.ReadBytes(length));
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Text.Length);
 
-            writer.Write(Text.Length);
+                foreach (byte c in System.Text.Encoding.GetEncoding(Codepage).GetBytes(Text))
+                    writer.Write(c);
 
-            foreach (byte c in System.Text.Encoding.GetEncoding(Codepage).GetBytes(Text))
-                writer.Write(c);
-            
-            if (Text.Length == 0 || writer.BaseStream.Length % 4 != 0 || (writer.BaseStream.Length % 4 == 0 && Text[Text.Length - 1] != '\0'))
-                do writer.Write((byte)0);
+                if (Text.Length == 0 || writer.BaseStream.Length % 4 != 0 || (writer.BaseStream.Length % 4 == 0 && Text[Text.Length - 1] != '\0'))
+                    do writer.Write((byte)0);
                     while (writer.BaseStream.Length % 4 != 0);
 
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)

@@ -41,45 +41,49 @@ namespace IndustrialPark
 
         public DynaGObjectBoulderGen(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__BoulderGenerator, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
 
-            ObjectAssetID = reader.ReadUInt32();
-            OffsetX = reader.ReadSingle();
-            OffsetY = reader.ReadSingle();
-            OffsetZ = reader.ReadSingle();
-            OffsetRand = reader.ReadSingle();
-            InitVelX = reader.ReadSingle();
-            InitVelY = reader.ReadSingle();
-            InitVelZ = reader.ReadSingle();
-            VelAngleRand = reader.ReadSingle();
-            VelMagRand = reader.ReadSingle();
-            InitAxisX = reader.ReadSingle();
-            InitAxisY = reader.ReadSingle();
-            InitAxisZ = reader.ReadSingle();
-            AngVel = reader.ReadSingle();
+                ObjectAssetID = reader.ReadUInt32();
+                OffsetX = reader.ReadSingle();
+                OffsetY = reader.ReadSingle();
+                OffsetZ = reader.ReadSingle();
+                OffsetRand = reader.ReadSingle();
+                InitVelX = reader.ReadSingle();
+                InitVelY = reader.ReadSingle();
+                InitVelZ = reader.ReadSingle();
+                VelAngleRand = reader.ReadSingle();
+                VelMagRand = reader.ReadSingle();
+                InitAxisX = reader.ReadSingle();
+                InitAxisY = reader.ReadSingle();
+                InitAxisZ = reader.ReadSingle();
+                AngVel = reader.ReadSingle();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            
-            writer.Write(ObjectAssetID);
-            writer.Write(OffsetX);
-            writer.Write(OffsetY);
-            writer.Write(OffsetZ);
-            writer.Write(OffsetRand);
-            writer.Write(InitVelX);
-            writer.Write(InitVelY);
-            writer.Write(InitVelZ);
-            writer.Write(VelAngleRand);
-            writer.Write(VelMagRand);
-            writer.Write(InitAxisX);
-            writer.Write(InitAxisY);
-            writer.Write(InitAxisZ);
-            writer.Write(AngVel);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
 
-            return writer.ToArray();
+                writer.Write(ObjectAssetID);
+                writer.Write(OffsetX);
+                writer.Write(OffsetY);
+                writer.Write(OffsetZ);
+                writer.Write(OffsetRand);
+                writer.Write(InitVelX);
+                writer.Write(InitVelY);
+                writer.Write(InitVelZ);
+                writer.Write(VelAngleRand);
+                writer.Write(VelMagRand);
+                writer.Write(InitAxisX);
+                writer.Write(InitAxisY);
+                writer.Write(InitAxisZ);
+                writer.Write(AngVel);
+
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => ObjectAssetID == assetID || base.HasReference(assetID);

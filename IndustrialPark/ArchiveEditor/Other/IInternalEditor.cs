@@ -7,8 +7,6 @@
         void Close();
         void Show();
 
-        void SetHideHelp(bool hideHelp);
-
         void RefreshPropertyGrid();
     }
 }

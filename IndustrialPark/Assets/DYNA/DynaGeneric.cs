@@ -25,10 +25,12 @@ namespace IndustrialPark
             }
             set
             {
-                var writer = new EndianBinaryWriter(endianness);
-                foreach (var f in value)
-                    writer.Write(f);
-                Data = writer.ToArray();
+                using (var writer = new EndianBinaryWriter(endianness))
+                {
+                    foreach (var f in value)
+                        writer.Write(f);
+                    Data = writer.ToArray();
+                }
             }
         }
 
@@ -45,10 +47,12 @@ namespace IndustrialPark
             }
             set
             {
-                var writer = new EndianBinaryWriter(endianness);
-                foreach (var f in value)
-                    writer.Write(f);
-                Data = writer.ToArray();
+                using (var writer = new EndianBinaryWriter(endianness))
+                {
+                    foreach (var f in value)
+                        writer.Write(f);
+                    Data = writer.ToArray();
+                }
             }
         }
 

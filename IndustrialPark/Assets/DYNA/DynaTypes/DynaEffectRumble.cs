@@ -34,39 +34,42 @@ namespace IndustrialPark
 
         public DynaEffectRumble(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__Rumble, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
 
-            UnknownFloat_00 = reader.ReadSingle();
-            UnknownFloat_04 = reader.ReadSingle();
-            UnknownFloat_08 = reader.ReadSingle();
-            UnknownShort_0C = reader.ReadInt16();
-            UnknownShort_0A = reader.ReadInt16();
-            UnknownFloat_10 = reader.ReadSingle();
-            UnknownFloat_14 = reader.ReadSingle();
-            UnknownFloat_18 = reader.ReadSingle();
-            UnknownFloat_1C = reader.ReadSingle();
-            UnknownFloat_20 = reader.ReadSingle();
-            UnknownFloat_24 = reader.ReadSingle();
+                UnknownFloat_00 = reader.ReadSingle();
+                UnknownFloat_04 = reader.ReadSingle();
+                UnknownFloat_08 = reader.ReadSingle();
+                UnknownShort_0C = reader.ReadInt16();
+                UnknownShort_0A = reader.ReadInt16();
+                UnknownFloat_10 = reader.ReadSingle();
+                UnknownFloat_14 = reader.ReadSingle();
+                UnknownFloat_18 = reader.ReadSingle();
+                UnknownFloat_1C = reader.ReadSingle();
+                UnknownFloat_20 = reader.ReadSingle();
+                UnknownFloat_24 = reader.ReadSingle();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(UnknownFloat_00);
+                writer.Write(UnknownFloat_04);
+                writer.Write(UnknownFloat_08);
+                writer.Write(UnknownShort_0C);
+                writer.Write(UnknownShort_0A);
+                writer.Write(UnknownFloat_10);
+                writer.Write(UnknownFloat_14);
+                writer.Write(UnknownFloat_18);
+                writer.Write(UnknownFloat_1C);
+                writer.Write(UnknownFloat_20);
+                writer.Write(UnknownFloat_24);
 
-            writer.Write(UnknownFloat_00);
-            writer.Write(UnknownFloat_04);
-            writer.Write(UnknownFloat_08);
-            writer.Write(UnknownShort_0C);
-            writer.Write(UnknownShort_0A);
-            writer.Write(UnknownFloat_10);
-            writer.Write(UnknownFloat_14);
-            writer.Write(UnknownFloat_18);
-            writer.Write(UnknownFloat_1C);
-            writer.Write(UnknownFloat_20);
-            writer.Write(UnknownFloat_24);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
     }
 }

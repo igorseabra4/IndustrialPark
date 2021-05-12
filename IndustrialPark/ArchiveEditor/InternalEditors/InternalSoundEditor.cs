@@ -122,10 +122,6 @@ namespace IndustrialPark
             Process.Start(AboutBox.WikiLink + asset.assetType.ToString());
         }
 
-        public void SetHideHelp(bool _)
-        {
-        }
-
         byte[] soundData;
         SoundPlayer player;
 

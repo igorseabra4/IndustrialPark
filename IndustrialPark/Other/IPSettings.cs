@@ -12,8 +12,6 @@
         public bool discordRichPresence = true;
         public bool dontDrawInvisible = false;
 
-        public bool updateReferencesOnCopy = true;
         public bool persistentShinies = true;
-        public bool hideHelp = false;
     }
 }

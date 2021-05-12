@@ -38,30 +38,33 @@ namespace IndustrialPark
 
         public DynaEnemyMindy(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__Mindy, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = entityDynaEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = entityDynaEndPosition;
 
-            TaskBox1_AssetID = reader.ReadUInt32();
-            UnknownFloat54 = reader.ReadSingle();
-            UnknownFloat58 = reader.ReadSingle();
-            UnknownFloat5C = reader.ReadSingle();
-            UnknownInt60 = reader.ReadInt32();
-            TaskBox2_AssetID = reader.ReadUInt32();
+                TaskBox1_AssetID = reader.ReadUInt32();
+                UnknownFloat54 = reader.ReadSingle();
+                UnknownFloat58 = reader.ReadSingle();
+                UnknownFloat5C = reader.ReadSingle();
+                UnknownInt60 = reader.ReadInt32();
+                TaskBox2_AssetID = reader.ReadUInt32();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntityDyna(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntityDyna(endianness));
+                writer.Write(TaskBox1_AssetID);
+                writer.Write(UnknownFloat54);
+                writer.Write(UnknownFloat58);
+                writer.Write(UnknownFloat5C);
+                writer.Write(UnknownInt60);
+                writer.Write(TaskBox2_AssetID);
 
-            writer.Write(TaskBox1_AssetID);
-            writer.Write(UnknownFloat54);
-            writer.Write(UnknownFloat58);
-            writer.Write(UnknownFloat5C);
-            writer.Write(UnknownInt60);
-            writer.Write(TaskBox2_AssetID);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)

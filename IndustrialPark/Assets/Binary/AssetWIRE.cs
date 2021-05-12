@@ -29,10 +29,12 @@ namespace IndustrialPark
 
         public byte[] Serialize(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(Vertex0);
-            writer.Write(Vertex1);
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Vertex0);
+                writer.Write(Vertex1);
+                return writer.ToArray();
+            }
         }
 
         public override string ToString()
@@ -56,49 +58,51 @@ namespace IndustrialPark
 
         public AssetWIRE(Section_AHDR AHDR, Game game, Endianness endianness, SharpRenderer renderer) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.ReadInt32();
+                int vertexAmount = reader.ReadInt32();
+                int lineAmount = reader.ReadInt32();
+                hashID0 = reader.ReadUInt32();
+                hashID1 = reader.ReadUInt32();
 
-            reader.ReadInt32();
-            int vertexAmount = reader.ReadInt32();
-            int lineAmount = reader.ReadInt32();
-            hashID0 = reader.ReadUInt32();
-            hashID1 = reader.ReadUInt32();
+                Points = new WireVector[vertexAmount];
+                for (int i = 0; i < Points.Length; i++)
+                    Points[i] = new WireVector(reader);
 
-            Points = new WireVector[vertexAmount];
-            for (int i = 0; i < Points.Length; i++)
-                Points[i] = new WireVector(reader);
+                Lines = new Line[lineAmount];
+                for (int i = 0; i < Lines.Length; i++)
+                    Lines[i] = new Line(reader);
 
-            Lines = new Line[lineAmount];
-            for (int i = 0; i < Lines.Length; i++)
-                Lines[i] = new Line(reader);
-
-            Setup(renderer);
-            ArchiveEditorFunctions.AddToRenderableAssets(this);
+                Setup(renderer);
+                ArchiveEditorFunctions.AddToRenderableAssets(this);
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(0);
+                writer.Write(0);
+                writer.Write(0);
+                writer.Write(hashID0);
+                writer.Write(hashID1);
 
-            writer.Write(0);
-            writer.Write(0);
-            writer.Write(0);
-            writer.Write(hashID0);
-            writer.Write(hashID1);
+                foreach (var p in Points)
+                    writer.Write(p.Serialize(endianness));
 
-            foreach (var p in Points)
-                writer.Write(p.Serialize(endianness));
+                foreach (var l in Lines)
+                    writer.Write(l.Serialize(endianness));
 
-            foreach (var l in Lines)
-                writer.Write(l.Serialize(endianness));
+                writer.BaseStream.Position = 0;
 
-            writer.BaseStream.Position = 0;
+                writer.Write((int)writer.BaseStream.Length);
+                writer.Write(Points.Length);
+                writer.Write(Lines.Length);
 
-            writer.Write((int)writer.BaseStream.Length);
-            writer.Write(Points.Length);
-            writer.Write(Lines.Length);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => hashID0 == assetID || hashID1 == assetID || base.HasReference(assetID);

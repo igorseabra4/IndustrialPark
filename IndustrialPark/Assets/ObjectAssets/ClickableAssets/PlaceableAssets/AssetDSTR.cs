@@ -49,58 +49,60 @@ namespace IndustrialPark
 
         public AssetDSTR(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = entityHeaderEndPosition;
-
-            AnimationSpeed = reader.ReadInt32();
-            InitialAnimationState = reader.ReadInt32();
-            Health = reader.ReadInt32();
-            SpawnItem_AssetID = reader.ReadUInt32();
-            HitMask.FlagValueInt = reader.ReadUInt32();
-            CollType = reader.ReadByte();
-            FxType = reader.ReadByte();
-            reader.ReadInt16();
-            BlastRadius = reader.ReadSingle();
-            BlastStrength = reader.ReadSingle();
-            if (game != Game.Scooby)
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                DestroyShrapnel_AssetID = reader.ReadUInt32();
-                HitShrapnel_AssetID = reader.ReadUInt32();
-                DestroySFX_AssetID = reader.ReadUInt32();
-                HitSFX_AssetID = reader.ReadUInt32();
-                HitModel_AssetID = reader.ReadUInt32();
-                DestroyModel_AssetID = reader.ReadUInt32();
+                reader.BaseStream.Position = entityHeaderEndPosition;
+
+                AnimationSpeed = reader.ReadInt32();
+                InitialAnimationState = reader.ReadInt32();
+                Health = reader.ReadInt32();
+                SpawnItem_AssetID = reader.ReadUInt32();
+                HitMask.FlagValueInt = reader.ReadUInt32();
+                CollType = reader.ReadByte();
+                FxType = reader.ReadByte();
+                reader.ReadInt16();
+                BlastRadius = reader.ReadSingle();
+                BlastStrength = reader.ReadSingle();
+                if (game != Game.Scooby)
+                {
+                    DestroyShrapnel_AssetID = reader.ReadUInt32();
+                    HitShrapnel_AssetID = reader.ReadUInt32();
+                    DestroySFX_AssetID = reader.ReadUInt32();
+                    HitSFX_AssetID = reader.ReadUInt32();
+                    HitModel_AssetID = reader.ReadUInt32();
+                    DestroyModel_AssetID = reader.ReadUInt32();
+                }
             }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntity(game, endianness));
-
-            writer.Write(AnimationSpeed);
-            writer.Write(InitialAnimationState);
-            writer.Write(Health);
-            writer.Write(SpawnItem_AssetID);
-            writer.Write(HitMask.FlagValueInt);
-            writer.Write(CollType);
-            writer.Write(FxType);
-            writer.Write((short)0);
-            writer.Write(BlastRadius);
-            writer.Write(BlastStrength);
-
-            if (game != Game.Scooby)
+            using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(DestroyShrapnel_AssetID);
-                writer.Write(HitShrapnel_AssetID);
-                writer.Write(DestroySFX_AssetID);
-                writer.Write(HitSFX_AssetID);
-                writer.Write(HitModel_AssetID);
-                writer.Write(DestroyModel_AssetID);
-            }
+                writer.Write(SerializeEntity(game, endianness));
+                writer.Write(AnimationSpeed);
+                writer.Write(InitialAnimationState);
+                writer.Write(Health);
+                writer.Write(SpawnItem_AssetID);
+                writer.Write(HitMask.FlagValueInt);
+                writer.Write(CollType);
+                writer.Write(FxType);
+                writer.Write((short)0);
+                writer.Write(BlastRadius);
+                writer.Write(BlastStrength);
 
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
+                if (game != Game.Scooby)
+                {
+                    writer.Write(DestroyShrapnel_AssetID);
+                    writer.Write(HitShrapnel_AssetID);
+                    writer.Write(DestroySFX_AssetID);
+                    writer.Write(HitSFX_AssetID);
+                    writer.Write(HitModel_AssetID);
+                    writer.Write(DestroyModel_AssetID);
+                }
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
 
         public static bool dontRender = false;

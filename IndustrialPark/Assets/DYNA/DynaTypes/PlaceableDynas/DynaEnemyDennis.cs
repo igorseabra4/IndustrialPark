@@ -30,45 +30,32 @@ namespace IndustrialPark
         public AssetID Unknown58 { get; set; }
         [Category(dynaCategoryName)]
         public AssetID Unknown5C { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetID Unknown60 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetID Unknown64 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetID Unknown68 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetID Unknown6C { get; set; }
 
         public DynaEnemyDennis(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__Dennis, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = entityDynaEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = entityDynaEndPosition;
 
-            Unknown50 = reader.ReadUInt32();
-            Unknown54 = reader.ReadUInt32();
-            Unknown58 = reader.ReadUInt32();
-            Unknown5C = reader.ReadUInt32();
-            Unknown60 = reader.ReadUInt32();
-            Unknown64 = reader.ReadUInt32();
-            Unknown68 = reader.ReadUInt32();
-            Unknown6C = reader.ReadUInt32();
+                Unknown50 = reader.ReadUInt32();
+                Unknown54 = reader.ReadUInt32();
+                Unknown58 = reader.ReadUInt32();
+                Unknown5C = reader.ReadUInt32();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntityDyna(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntityDyna(endianness));
+                writer.Write(Unknown50);
+                writer.Write(Unknown54);
+                writer.Write(Unknown58);
+                writer.Write(Unknown5C);
 
-            writer.Write(Unknown50);
-            writer.Write(Unknown54);
-            writer.Write(Unknown58);
-            writer.Write(Unknown5C);
-            writer.Write(Unknown60);
-            writer.Write(Unknown64);
-            writer.Write(Unknown68);
-            writer.Write(Unknown6C);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)
@@ -80,14 +67,6 @@ namespace IndustrialPark
             if (Unknown58 == assetID)
                 return true;
             if (Unknown5C == assetID)
-                return true;
-            if (Unknown60 == assetID)
-                return true;
-            if (Unknown64 == assetID)
-                return true;
-            if (Unknown68 == assetID)
-                return true;
-            if (Unknown6C == assetID)
                 return true;
 
             return base.HasReference(assetID);
@@ -101,10 +80,6 @@ namespace IndustrialPark
             Verify(Unknown54, ref result);
             Verify(Unknown58, ref result);
             Verify(Unknown5C, ref result);
-            Verify(Unknown60, ref result);
-            Verify(Unknown64, ref result);
-            Verify(Unknown68, ref result);
-            Verify(Unknown6C, ref result);
         }
     }
 }

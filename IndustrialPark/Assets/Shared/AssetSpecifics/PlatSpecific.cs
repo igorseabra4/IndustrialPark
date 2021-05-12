@@ -22,9 +22,11 @@ namespace IndustrialPark
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(Speed);
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Speed);
+                return writer.ToArray();
+            }
         }
     }
 
@@ -45,10 +47,12 @@ namespace IndustrialPark
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(Speed);
-            writer.Write(BustModel_AssetID);
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Speed);
+                writer.Write(BustModel_AssetID);
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => BustModel_AssetID == assetID;
@@ -73,12 +77,14 @@ namespace IndustrialPark
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(fspeed);
-            writer.Write(rspeed);
-            writer.Write(ret_delay);
-            writer.Write(post_ret_delay);
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(fspeed);
+                writer.Write(rspeed);
+                writer.Write(ret_delay);
+                writer.Write(post_ret_delay);
+                return writer.ToArray();
+            }
         }
     }
 
@@ -89,7 +95,7 @@ namespace IndustrialPark
         public AssetID BustModel_AssetID { get; set; }
         public AssetSingle ResetDelay { get; set; }
         public FlagBitmask Settings { get; set; } = IntFlagsDescriptor("Allow sneak");
-        [Description("Movie only")]
+        [Description("Incredibles only")]
         public AssetSingle UnknownFloat0C { get; set; }
 
         public PlatSpecific_BreakawayPlatform()
@@ -121,15 +127,17 @@ namespace IndustrialPark
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(BreakawayDelay);
-            if (game != Game.Incredibles)
-                writer.Write(BustModel_AssetID);
-            writer.Write(ResetDelay);
-            writer.Write(Settings.FlagValueInt);
-            if (game == Game.Incredibles)
-                writer.Write(UnknownFloat0C);
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(BreakawayDelay);
+                if (game != Game.Incredibles)
+                    writer.Write(BustModel_AssetID);
+                writer.Write(ResetDelay);
+                writer.Write(Settings.FlagValueInt);
+                if (game == Game.Incredibles)
+                    writer.Write(UnknownFloat0C);
+                return writer.ToArray();
+            }
         }
     }
 
@@ -138,6 +146,7 @@ namespace IndustrialPark
         public AssetSingle Height1 { get; set; }
         public AssetSingle Height2 { get; set; }
         public AssetSingle Height3 { get; set; }
+        [Description("Not present in Scooby")]
         public AssetSingle HeightBubbleBounce { get; set; }
         public AssetID Anim1_AssetID { get; set; }
         public AssetID Anim2_AssetID { get; set; }
@@ -145,6 +154,7 @@ namespace IndustrialPark
         public AssetSingle DirectionX { get; set; }
         public AssetSingle DirectionY { get; set; }
         public AssetSingle DirectionZ { get; set; }
+        [Description("Not present in Scooby")]
         public FlagBitmask Settings { get; set; } = IntFlagsDescriptor(
             "Lock Camera Down",
             null,
@@ -157,38 +167,43 @@ namespace IndustrialPark
             Anim3_AssetID = 0;
         }
 
-        public PlatSpecific_Springboard(EndianBinaryReader reader) : this()
+        public PlatSpecific_Springboard(EndianBinaryReader reader, Game game) : this()
         {
             Height1 = reader.ReadSingle();
             Height2 = reader.ReadSingle();
             Height3 = reader.ReadSingle();
-            HeightBubbleBounce = reader.ReadSingle();
+            if (game != Game.Scooby)
+                HeightBubbleBounce = reader.ReadSingle();
             Anim1_AssetID = reader.ReadUInt32();
             Anim2_AssetID = reader.ReadUInt32();
             Anim3_AssetID = reader.ReadUInt32();
             DirectionX = reader.ReadSingle();
             DirectionY = reader.ReadSingle();
             DirectionZ = reader.ReadSingle();
-            Settings.FlagValueInt = reader.ReadUInt32();
+            if (game != Game.Scooby)
+                Settings.FlagValueInt = reader.ReadUInt32();
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Height1);
+                writer.Write(Height2);
+                writer.Write(Height3);
+                if (game != Game.Scooby)
+                    writer.Write(HeightBubbleBounce);
+                writer.Write(Anim1_AssetID);
+                writer.Write(Anim2_AssetID);
+                writer.Write(Anim3_AssetID);
+                writer.Write(DirectionX);
+                writer.Write(DirectionY);
+                writer.Write(DirectionZ);
+                if (game != Game.Scooby)
+                    writer.Write(Settings.FlagValueInt);
 
-            writer.Write(Height1);
-            writer.Write(Height2);
-            writer.Write(Height3);
-            writer.Write(HeightBubbleBounce);
-            writer.Write(Anim1_AssetID);
-            writer.Write(Anim2_AssetID);
-            writer.Write(Anim3_AssetID);
-            writer.Write(DirectionX);
-            writer.Write(DirectionY);
-            writer.Write(DirectionZ);
-            writer.Write(Settings.FlagValueInt);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => Anim1_AssetID == assetID || Anim2_AssetID == assetID || Anim3_AssetID == assetID;
@@ -227,13 +242,14 @@ namespace IndustrialPark
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(InitialTilt_Rad);
+                writer.Write(MaxTilt_Rad);
+                writer.Write(InverseMass);
 
-            writer.Write(InitialTilt_Rad);
-            writer.Write(MaxTilt_Rad);
-            writer.Write(InverseMass);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
     }
 
@@ -275,24 +291,25 @@ namespace IndustrialPark
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(StartOrient);
+                writer.Write(OrientCount);
+                writer.Write(OrientLoop);
+                writer.Write(Orient1);
+                writer.Write(Orient2);
+                writer.Write(Orient3);
+                writer.Write(Orient4);
+                writer.Write(Orient5);
+                writer.Write(Orient6);
+                writer.Write(Settings.FlagValueInt);
+                writer.Write(RotateSpeed);
+                writer.Write(AccelTime);
+                writer.Write(DecelTime);
+                writer.Write(HubRadius);
 
-            writer.Write(StartOrient);
-            writer.Write(OrientCount);
-            writer.Write(OrientLoop);
-            writer.Write(Orient1);
-            writer.Write(Orient2);
-            writer.Write(Orient3);
-            writer.Write(Orient4);
-            writer.Write(Orient5);
-            writer.Write(Orient6);
-            writer.Write(Settings.FlagValueInt);
-            writer.Write(RotateSpeed);
-            writer.Write(AccelTime);
-            writer.Write(DecelTime);
-            writer.Write(HubRadius);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
     }
 }

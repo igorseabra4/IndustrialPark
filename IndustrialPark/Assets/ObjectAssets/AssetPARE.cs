@@ -109,95 +109,97 @@ namespace IndustrialPark
 
         public AssetPARE(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
-
-            EmitterFlags.FlagValueByte = reader.ReadByte();
-            _emitterType = (EmitterType)reader.ReadByte();
-            reader.BaseStream.Position += 2;
-            PARP_AssetID = reader.ReadUInt32();
-
-            // should be at 0x10 now
-            switch (_emitterType)
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                case EmitterType.CircleEdge:
-                case EmitterType.Circle:
-                case EmitterType.OCircleEdge:
-                case EmitterType.OCircle:
-                    PareSpecific = new PareSpecific_xPECircle(reader);
-                    break;
-                case EmitterType.RectEdge:
-                case EmitterType.Rect:
-                    PareSpecific = new PareSpecific_tagEmitRect(reader);
-                    break;
-                case EmitterType.Line:
-                    PareSpecific = new PareSpecific_tagEmitLine(reader);
-                    break;
-                case EmitterType.Volume:
-                    PareSpecific = new PareSpecific_tagEmitVolume(reader);
-                    break;
-                case EmitterType.SphereEdge:
-                case EmitterType.Sphere:
-                case EmitterType.SphereEdge10:
-                case EmitterType.SphereEdge11:
-                    PareSpecific = new PareSpecific_tagEmitSphere(reader);
-                    break;
-                case EmitterType.OffsetPoint:
-                    PareSpecific = new PareSpecific_tagEmitOffsetPoint(reader);
-                    break;
-                case EmitterType.VCylEdge:
-                    PareSpecific = new PareSpecific_xPEVCyl(reader);
-                    break;
-                case EmitterType.EntityBone:
-                    PareSpecific = new PareSpecific_xPEEntBone(reader);
-                    break;
-                case EmitterType.EntityBound:
-                    PareSpecific = new PareSpecific_xPEEntBound(reader);
-                    break;
-                default:
-                    PareSpecific = new PareSpecific_Generic();
-                    break;
-            } // 0x1C in size
+                reader.BaseStream.Position = baseHeaderEndPosition;
 
-            reader.BaseStream.Position = 0x2C;
-            Emitter_AssetID = reader.ReadUInt32();
-            Emitter_PosX = reader.ReadSingle();
-            Emitter_PosY = reader.ReadSingle();
-            Emitter_PosZ = reader.ReadSingle();
-            Velocity_X = reader.ReadSingle();
-            Velocity_Y = reader.ReadSingle();
-            Velocity_Z = reader.ReadSingle();
-            Velocity_AngleVariation = reader.ReadSingle();
-            CullMode = reader.ReadInt32();
-            CullDistanceSqr = reader.ReadSingle();
+                EmitterFlags.FlagValueByte = reader.ReadByte();
+                _emitterType = (EmitterType)reader.ReadByte();
+                reader.BaseStream.Position += 2;
+                PARP_AssetID = reader.ReadUInt32();
+
+                // should be at 0x10 now
+                switch (_emitterType)
+                {
+                    case EmitterType.CircleEdge:
+                    case EmitterType.Circle:
+                    case EmitterType.OCircleEdge:
+                    case EmitterType.OCircle:
+                        PareSpecific = new PareSpecific_xPECircle(reader);
+                        break;
+                    case EmitterType.RectEdge:
+                    case EmitterType.Rect:
+                        PareSpecific = new PareSpecific_tagEmitRect(reader);
+                        break;
+                    case EmitterType.Line:
+                        PareSpecific = new PareSpecific_tagEmitLine(reader);
+                        break;
+                    case EmitterType.Volume:
+                        PareSpecific = new PareSpecific_tagEmitVolume(reader);
+                        break;
+                    case EmitterType.SphereEdge:
+                    case EmitterType.Sphere:
+                    case EmitterType.SphereEdge10:
+                    case EmitterType.SphereEdge11:
+                        PareSpecific = new PareSpecific_tagEmitSphere(reader);
+                        break;
+                    case EmitterType.OffsetPoint:
+                        PareSpecific = new PareSpecific_tagEmitOffsetPoint(reader);
+                        break;
+                    case EmitterType.VCylEdge:
+                        PareSpecific = new PareSpecific_xPEVCyl(reader);
+                        break;
+                    case EmitterType.EntityBone:
+                        PareSpecific = new PareSpecific_xPEEntBone(reader);
+                        break;
+                    case EmitterType.EntityBound:
+                        PareSpecific = new PareSpecific_xPEEntBound(reader);
+                        break;
+                    default:
+                        PareSpecific = new PareSpecific_Generic();
+                        break;
+                } // 0x1C in size
+
+                reader.BaseStream.Position = 0x2C;
+                Emitter_AssetID = reader.ReadUInt32();
+                Emitter_PosX = reader.ReadSingle();
+                Emitter_PosY = reader.ReadSingle();
+                Emitter_PosZ = reader.ReadSingle();
+                Velocity_X = reader.ReadSingle();
+                Velocity_Y = reader.ReadSingle();
+                Velocity_Z = reader.ReadSingle();
+                Velocity_AngleVariation = reader.ReadSingle();
+                CullMode = reader.ReadInt32();
+                CullDistanceSqr = reader.ReadSingle();
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeBase(endianness));
-
-            writer.Write(EmitterFlags.FlagValueByte);
-            writer.Write((byte)_emitterType);
-            writer.Write((byte)0);
-            writer.Write((byte)0);
-            writer.Write(PARP_AssetID);
-            writer.Write(PareSpecific.Serialize(game, endianness));
-            while (writer.BaseStream.Length < 0x2C)
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
+                writer.Write(EmitterFlags.FlagValueByte);
+                writer.Write((byte)_emitterType);
                 writer.Write((byte)0);
-            writer.Write(Emitter_AssetID);
-            writer.Write(Emitter_PosX);
-            writer.Write(Emitter_PosY);
-            writer.Write(Emitter_PosZ);
-            writer.Write(Velocity_X);
-            writer.Write(Velocity_Y);
-            writer.Write(Velocity_Z);
-            writer.Write(Velocity_AngleVariation);
-            writer.Write(CullMode);
-            writer.Write(CullDistanceSqr);
-
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
+                writer.Write((byte)0);
+                writer.Write(PARP_AssetID);
+                writer.Write(PareSpecific.Serialize(game, endianness));
+                while (writer.BaseStream.Length < 0x2C)
+                    writer.Write((byte)0);
+                writer.Write(Emitter_AssetID);
+                writer.Write(Emitter_PosX);
+                writer.Write(Emitter_PosY);
+                writer.Write(Emitter_PosZ);
+                writer.Write(Velocity_X);
+                writer.Write(Velocity_Y);
+                writer.Write(Velocity_Z);
+                writer.Write(Velocity_AngleVariation);
+                writer.Write(CullMode);
+                writer.Write(CullDistanceSqr);
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) =>

@@ -6,7 +6,7 @@ namespace IndustrialPark
 {
     public partial class InternalMultiAssetEditor : Form
     {
-        public InternalMultiAssetEditor(Asset[] assets, ArchiveEditorFunctions archive, bool hideHelp)
+        public InternalMultiAssetEditor(Asset[] assets, ArchiveEditorFunctions archive)
         {
             InitializeComponent();
             TopMost = true;
@@ -27,8 +27,6 @@ namespace IndustrialPark
             }
 
             propertyGridAsset.SelectedObjects = typeDescriptors.ToArray();
-
-            propertyGridAsset.HelpVisible = !hideHelp;
         }
 
         private ArchiveEditorFunctions archive;

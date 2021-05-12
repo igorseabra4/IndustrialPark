@@ -137,93 +137,95 @@ namespace IndustrialPark
         }
         public AssetNPC(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = entityHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = entityHeaderEndPosition;
 
-            UnknownFloat54 = reader.ReadSingle();
-            UnknownFloat58 = reader.ReadSingle();
-            UnknownFloat5C = reader.ReadSingle();
-            UnknownFloat60 = reader.ReadSingle();
-            UnknownFloat64 = reader.ReadSingle();
-            UnknownFloat68 = reader.ReadSingle();
-            UnknownFloat6C = reader.ReadSingle();
-            UnknownFloat70 = reader.ReadSingle();
-            UnknownShort74 = reader.ReadInt16();
-            UnknownShort76 = reader.ReadInt16();
-            UnknownShort78 = reader.ReadInt16();
-            UnknownShort7A = reader.ReadInt16();
-            UnknownByte7C = reader.ReadByte();
-            UnknownByte7D = reader.ReadByte();
-            UnknownByte7E = reader.ReadByte();
-            UnknownByte7F = reader.ReadByte();
-            UnknownByte80 = reader.ReadByte();
-            UnknownByte81 = reader.ReadByte();
-            UnknownByte82 = reader.ReadByte();
-            UnknownByte83 = reader.ReadByte();
-            UnknownFloat84 = reader.ReadSingle();
-            UnknownFloat88 = reader.ReadSingle();
-            UnknownFloat8C = reader.ReadSingle();
-            UnknownInt90 = reader.ReadInt32();
-            UnknownInt94 = reader.ReadInt32();
-            UnknownInt98 = reader.ReadInt32();
-            UnknownFloat9C = reader.ReadSingle();
-            UnknownFloatA0 = reader.ReadSingle();
-            UnknownFloatA4 = reader.ReadSingle();
-            UnknownFloatA8 = reader.ReadSingle();
-            UnknownFloatAC = reader.ReadSingle();
-            UnknownFloatB0 = reader.ReadSingle();
-            UnknownFloatB4 = reader.ReadSingle();
-            MovePoint_AssetID = reader.ReadUInt32();
-            UnknownAssetID_BC = reader.ReadUInt32();
-            UnknownIntC0 = reader.ReadInt32();
-            UnknownIntC4 = reader.ReadInt32();
+                UnknownFloat54 = reader.ReadSingle();
+                UnknownFloat58 = reader.ReadSingle();
+                UnknownFloat5C = reader.ReadSingle();
+                UnknownFloat60 = reader.ReadSingle();
+                UnknownFloat64 = reader.ReadSingle();
+                UnknownFloat68 = reader.ReadSingle();
+                UnknownFloat6C = reader.ReadSingle();
+                UnknownFloat70 = reader.ReadSingle();
+                UnknownShort74 = reader.ReadInt16();
+                UnknownShort76 = reader.ReadInt16();
+                UnknownShort78 = reader.ReadInt16();
+                UnknownShort7A = reader.ReadInt16();
+                UnknownByte7C = reader.ReadByte();
+                UnknownByte7D = reader.ReadByte();
+                UnknownByte7E = reader.ReadByte();
+                UnknownByte7F = reader.ReadByte();
+                UnknownByte80 = reader.ReadByte();
+                UnknownByte81 = reader.ReadByte();
+                UnknownByte82 = reader.ReadByte();
+                UnknownByte83 = reader.ReadByte();
+                UnknownFloat84 = reader.ReadSingle();
+                UnknownFloat88 = reader.ReadSingle();
+                UnknownFloat8C = reader.ReadSingle();
+                UnknownInt90 = reader.ReadInt32();
+                UnknownInt94 = reader.ReadInt32();
+                UnknownInt98 = reader.ReadInt32();
+                UnknownFloat9C = reader.ReadSingle();
+                UnknownFloatA0 = reader.ReadSingle();
+                UnknownFloatA4 = reader.ReadSingle();
+                UnknownFloatA8 = reader.ReadSingle();
+                UnknownFloatAC = reader.ReadSingle();
+                UnknownFloatB0 = reader.ReadSingle();
+                UnknownFloatB4 = reader.ReadSingle();
+                MovePoint_AssetID = reader.ReadUInt32();
+                UnknownAssetID_BC = reader.ReadUInt32();
+                UnknownIntC0 = reader.ReadInt32();
+                UnknownIntC4 = reader.ReadInt32();
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntity(game, endianness));
-
-            writer.Write(UnknownFloat54);
-            writer.Write(UnknownFloat58);
-            writer.Write(UnknownFloat5C);
-            writer.Write(UnknownFloat60);
-            writer.Write(UnknownFloat64);
-            writer.Write(UnknownFloat68);
-            writer.Write(UnknownFloat6C);
-            writer.Write(UnknownFloat70);
-            writer.Write(UnknownShort74);
-            writer.Write(UnknownShort76);
-            writer.Write(UnknownShort78);
-            writer.Write(UnknownShort7A);
-            writer.Write(UnknownByte7C);
-            writer.Write(UnknownByte7D);
-            writer.Write(UnknownByte7E);
-            writer.Write(UnknownByte7F);
-            writer.Write(UnknownByte80);
-            writer.Write(UnknownByte81);
-            writer.Write(UnknownByte82);
-            writer.Write(UnknownByte83);
-            writer.Write(UnknownFloat84);
-            writer.Write(UnknownFloat88);
-            writer.Write(UnknownFloat8C);
-            writer.Write(UnknownInt90);
-            writer.Write(UnknownInt94);
-            writer.Write(UnknownInt98);
-            writer.Write(UnknownFloat9C);
-            writer.Write(UnknownFloatA0);
-            writer.Write(UnknownFloatA4);
-            writer.Write(UnknownFloatA8);
-            writer.Write(UnknownFloatAC);
-            writer.Write(UnknownFloatB0);
-            writer.Write(UnknownFloatB4);
-            writer.Write(MovePoint_AssetID);
-            writer.Write(UnknownAssetID_BC);
-            writer.Write(UnknownIntC0);
-            writer.Write(UnknownIntC4);
-
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntity(game, endianness));
+                writer.Write(UnknownFloat54);
+                writer.Write(UnknownFloat58);
+                writer.Write(UnknownFloat5C);
+                writer.Write(UnknownFloat60);
+                writer.Write(UnknownFloat64);
+                writer.Write(UnknownFloat68);
+                writer.Write(UnknownFloat6C);
+                writer.Write(UnknownFloat70);
+                writer.Write(UnknownShort74);
+                writer.Write(UnknownShort76);
+                writer.Write(UnknownShort78);
+                writer.Write(UnknownShort7A);
+                writer.Write(UnknownByte7C);
+                writer.Write(UnknownByte7D);
+                writer.Write(UnknownByte7E);
+                writer.Write(UnknownByte7F);
+                writer.Write(UnknownByte80);
+                writer.Write(UnknownByte81);
+                writer.Write(UnknownByte82);
+                writer.Write(UnknownByte83);
+                writer.Write(UnknownFloat84);
+                writer.Write(UnknownFloat88);
+                writer.Write(UnknownFloat8C);
+                writer.Write(UnknownInt90);
+                writer.Write(UnknownInt94);
+                writer.Write(UnknownInt98);
+                writer.Write(UnknownFloat9C);
+                writer.Write(UnknownFloatA0);
+                writer.Write(UnknownFloatA4);
+                writer.Write(UnknownFloatA8);
+                writer.Write(UnknownFloatAC);
+                writer.Write(UnknownFloatB0);
+                writer.Write(UnknownFloatB4);
+                writer.Write(MovePoint_AssetID);
+                writer.Write(UnknownAssetID_BC);
+                writer.Write(UnknownIntC0);
+                writer.Write(UnknownIntC4);
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
 
         public static bool dontRender = false;

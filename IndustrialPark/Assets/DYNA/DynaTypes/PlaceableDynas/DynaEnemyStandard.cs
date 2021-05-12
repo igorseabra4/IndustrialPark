@@ -94,32 +94,35 @@ namespace IndustrialPark
 
         public DynaEnemyStandard(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__Standard, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = entityDynaEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = entityDynaEndPosition;
 
-            MVPT_AssetID = reader.ReadUInt32();
-            MVPT_Group_AssetID = reader.ReadUInt32();
-            EnemyFlags.FlagValueInt = reader.ReadUInt32();
-            Unknown5C = reader.ReadUInt32();
-            Unknown60 = reader.ReadUInt32();
-            Unknown64 = reader.ReadUInt32();
-            Unknown68 = reader.ReadUInt32();
+                MVPT_AssetID = reader.ReadUInt32();
+                MVPT_Group_AssetID = reader.ReadUInt32();
+                EnemyFlags.FlagValueInt = reader.ReadUInt32();
+                Unknown5C = reader.ReadUInt32();
+                Unknown60 = reader.ReadUInt32();
+                Unknown64 = reader.ReadUInt32();
+                Unknown68 = reader.ReadUInt32();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntityDyna(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntityDyna(endianness));
+                writer.Write(MVPT_AssetID);
+                writer.Write(MVPT_Group_AssetID);
+                writer.Write(EnemyFlags.FlagValueInt);
+                writer.Write(Unknown5C);
+                writer.Write(Unknown60);
+                writer.Write(Unknown64);
+                writer.Write(Unknown68);
 
-            writer.Write(MVPT_AssetID);
-            writer.Write(MVPT_Group_AssetID);
-            writer.Write(EnemyFlags.FlagValueInt);
-            writer.Write(Unknown5C);
-            writer.Write(Unknown60);
-            writer.Write(Unknown64);
-            writer.Write(Unknown68);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)

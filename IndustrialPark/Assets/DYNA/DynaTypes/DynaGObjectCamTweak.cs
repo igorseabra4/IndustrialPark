@@ -23,25 +23,28 @@ namespace IndustrialPark
         }
         public DynaGObjectCamTweak(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__Camera_Tweak, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
 
-            Priority = reader.ReadInt32();
-            Time = reader.ReadSingle();
-            PitchAdjust = reader.ReadSingle();
-            DistAdjust = reader.ReadSingle();
+                Priority = reader.ReadInt32();
+                Time = reader.ReadSingle();
+                PitchAdjust = reader.ReadSingle();
+                DistAdjust = reader.ReadSingle();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Priority);
+                writer.Write(Time);
+                writer.Write(PitchAdjust);
+                writer.Write(DistAdjust);
 
-            writer.Write(Priority);
-            writer.Write(Time);
-            writer.Write(PitchAdjust);
-            writer.Write(DistAdjust);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
     }
 }

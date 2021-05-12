@@ -31,35 +31,37 @@ namespace IndustrialPark
 
         public AssetHANG(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = entityHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = entityHeaderEndPosition;
 
-            HangFlags.FlagValueInt = reader.ReadUInt32();
-            PivotOffset = reader.ReadSingle();
-            LeverArm = reader.ReadSingle();
-            Gravity = reader.ReadSingle();
-            Acceleration = reader.ReadSingle();
-            Decay = reader.ReadSingle();
-            GrabDelay = reader.ReadSingle();
-            StopDeceleration = reader.ReadSingle();
+                HangFlags.FlagValueInt = reader.ReadUInt32();
+                PivotOffset = reader.ReadSingle();
+                LeverArm = reader.ReadSingle();
+                Gravity = reader.ReadSingle();
+                Acceleration = reader.ReadSingle();
+                Decay = reader.ReadSingle();
+                GrabDelay = reader.ReadSingle();
+                StopDeceleration = reader.ReadSingle();
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntity(game, endianness));
-
-            writer.Write(HangFlags.FlagValueInt);
-            writer.Write(PivotOffset);
-            writer.Write(LeverArm);
-            writer.Write(Gravity);
-            writer.Write(Acceleration);
-            writer.Write(Decay);
-            writer.Write(GrabDelay);
-            writer.Write(StopDeceleration);
-
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntity(game, endianness));
+                writer.Write(HangFlags.FlagValueInt);
+                writer.Write(PivotOffset);
+                writer.Write(LeverArm);
+                writer.Write(Gravity);
+                writer.Write(Acceleration);
+                writer.Write(Decay);
+                writer.Write(GrabDelay);
+                writer.Write(StopDeceleration);
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
 
         public static bool dontRender = false;

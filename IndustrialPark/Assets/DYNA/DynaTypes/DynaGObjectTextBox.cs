@@ -90,83 +90,86 @@ namespace IndustrialPark
 
         public DynaGObjectTextBox(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__text_box, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
-
-            DefaultTextID = reader.ReadUInt32();
-            XPosition = reader.ReadSingle();
-            YPosition = reader.ReadSingle();
-            Width = reader.ReadSingle();
-            Height = reader.ReadSingle();
-            Font = (FontEnum)reader.ReadInt32();
-            TextWidth = reader.ReadSingle();
-            TextHeight = reader.ReadSingle();
-            CharSpacingX = reader.ReadSingle();
-            CharSpacingY = reader.ReadSingle();
-            Color = reader.ReadColor();
-            LeftMargin = reader.ReadSingle();
-            TopMargin = reader.ReadSingle();
-            RightMargin = reader.ReadSingle();
-            BottomMargin = reader.ReadSingle();
-            XAlignment = reader.ReadInt32();
-            if (Version == 3)
-                YAlignment = reader.ReadInt32();
-            ExpandMode = reader.ReadInt32();
-            MaxHeight = reader.ReadSingle();
-            BackgroundMode = reader.ReadInt32();
-            BackdropColor = reader.ReadColor();
-            BackgroundTextureID = reader.ReadUInt32();
-            if (Version == 3)
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                BackgroundBorderU = reader.ReadSingle();
-                BackgroundBorderV = reader.ReadSingle();
-                BackgroundBorderWidth = reader.ReadSingle();
-                BackgroundBorderHeight = reader.ReadSingle();
-                ShadowColor = reader.ReadColor();
-                ShadowOffsetX = reader.ReadSingle();
-                ShadowOffsetY = reader.ReadSingle();
+                reader.BaseStream.Position = dynaDataStartPosition;
+
+                DefaultTextID = reader.ReadUInt32();
+                XPosition = reader.ReadSingle();
+                YPosition = reader.ReadSingle();
+                Width = reader.ReadSingle();
+                Height = reader.ReadSingle();
+                Font = (FontEnum)reader.ReadInt32();
+                TextWidth = reader.ReadSingle();
+                TextHeight = reader.ReadSingle();
+                CharSpacingX = reader.ReadSingle();
+                CharSpacingY = reader.ReadSingle();
+                Color = reader.ReadColor();
+                LeftMargin = reader.ReadSingle();
+                TopMargin = reader.ReadSingle();
+                RightMargin = reader.ReadSingle();
+                BottomMargin = reader.ReadSingle();
+                XAlignment = reader.ReadInt32();
+                if (Version == 3)
+                    YAlignment = reader.ReadInt32();
+                ExpandMode = reader.ReadInt32();
+                MaxHeight = reader.ReadSingle();
+                BackgroundMode = reader.ReadInt32();
+                BackdropColor = reader.ReadColor();
+                BackgroundTextureID = reader.ReadUInt32();
+                if (Version == 3)
+                {
+                    BackgroundBorderU = reader.ReadSingle();
+                    BackgroundBorderV = reader.ReadSingle();
+                    BackgroundBorderWidth = reader.ReadSingle();
+                    BackgroundBorderHeight = reader.ReadSingle();
+                    ShadowColor = reader.ReadColor();
+                    ShadowOffsetX = reader.ReadSingle();
+                    ShadowOffsetY = reader.ReadSingle();
+                }
             }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-
-            writer.Write(DefaultTextID);
-            writer.Write(XPosition);
-            writer.Write(YPosition);
-            writer.Write(Width);
-            writer.Write(Height);
-            writer.Write((int)Font);
-            writer.Write(TextWidth);
-            writer.Write(TextHeight);
-            writer.Write(CharSpacingX);
-            writer.Write(CharSpacingY);
-            writer.Write(Color);
-            writer.Write(LeftMargin);
-            writer.Write(TopMargin);
-            writer.Write(RightMargin);
-            writer.Write(BottomMargin);
-            writer.Write(XAlignment);
-            if (Version == 3)
-                writer.Write(YAlignment);
-            writer.Write(ExpandMode);
-            writer.Write(MaxHeight);
-            writer.Write(BackgroundMode);
-            writer.Write(BackdropColor);
-            writer.Write(BackgroundTextureID);
-            if (Version == 3)
+            using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(BackgroundBorderU);
-                writer.Write(BackgroundBorderV);
-                writer.Write(BackgroundBorderWidth);
-                writer.Write(BackgroundBorderHeight);
-                writer.Write(ShadowColor);
-                writer.Write(ShadowOffsetX);
-                writer.Write(ShadowOffsetY);
-            }
+                writer.Write(DefaultTextID);
+                writer.Write(XPosition);
+                writer.Write(YPosition);
+                writer.Write(Width);
+                writer.Write(Height);
+                writer.Write((int)Font);
+                writer.Write(TextWidth);
+                writer.Write(TextHeight);
+                writer.Write(CharSpacingX);
+                writer.Write(CharSpacingY);
+                writer.Write(Color);
+                writer.Write(LeftMargin);
+                writer.Write(TopMargin);
+                writer.Write(RightMargin);
+                writer.Write(BottomMargin);
+                writer.Write(XAlignment);
+                if (Version == 3)
+                    writer.Write(YAlignment);
+                writer.Write(ExpandMode);
+                writer.Write(MaxHeight);
+                writer.Write(BackgroundMode);
+                writer.Write(BackdropColor);
+                writer.Write(BackgroundTextureID);
+                if (Version == 3)
+                {
+                    writer.Write(BackgroundBorderU);
+                    writer.Write(BackgroundBorderV);
+                    writer.Write(BackgroundBorderWidth);
+                    writer.Write(BackgroundBorderHeight);
+                    writer.Write(ShadowColor);
+                    writer.Write(ShadowOffsetX);
+                    writer.Write(ShadowOffsetY);
+                }
 
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)

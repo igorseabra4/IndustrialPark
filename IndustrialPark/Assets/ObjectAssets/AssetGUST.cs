@@ -27,37 +27,38 @@ namespace IndustrialPark
 
         public AssetGUST(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = baseHeaderEndPosition;
 
-            UnknownInt08 = reader.ReadInt32();
-            Volume_AssetID = reader.ReadUInt32();
-            UnknownInt10 = reader.ReadInt32();
-            UnknownInt14 = reader.ReadInt32();
-            UnknownFloat18 = reader.ReadSingle();
-            UnknownInt1C = reader.ReadInt32();
-            UnknownFloat20 = reader.ReadSingle();
-            UnknownFloat24 = reader.ReadSingle();
+                UnknownInt08 = reader.ReadInt32();
+                Volume_AssetID = reader.ReadUInt32();
+                UnknownInt10 = reader.ReadInt32();
+                UnknownInt14 = reader.ReadInt32();
+                UnknownFloat18 = reader.ReadSingle();
+                UnknownInt1C = reader.ReadInt32();
+                UnknownFloat20 = reader.ReadSingle();
+                UnknownFloat24 = reader.ReadSingle();
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
+                writer.Write(UnknownInt08);
+                writer.Write(Volume_AssetID);
+                writer.Write(UnknownInt10);
+                writer.Write(UnknownInt14);
+                writer.Write(UnknownFloat18);
+                writer.Write(UnknownInt1C);
+                writer.Write(UnknownFloat20);
+                writer.Write(UnknownFloat24);
+                writer.Write(SerializeLinks(endianness));
 
-            writer.Write(SerializeBase(endianness));
-
-            writer.Write(UnknownInt08);
-            writer.Write(Volume_AssetID);
-            writer.Write(UnknownInt10);
-            writer.Write(UnknownInt14);
-            writer.Write(UnknownFloat18);
-            writer.Write(UnknownInt1C);
-            writer.Write(UnknownFloat20);
-            writer.Write(UnknownFloat24);
-
-            writer.Write(SerializeLinks(endianness));
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => Volume_AssetID == assetID || base.HasReference(assetID);

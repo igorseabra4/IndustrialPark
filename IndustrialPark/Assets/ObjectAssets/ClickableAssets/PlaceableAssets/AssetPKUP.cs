@@ -38,7 +38,8 @@ namespace IndustrialPark
                 Model_AssetID = 0x94E25463;
 
             if (template.ToString().Contains("Shiny") || template.ToString().Contains("Manliness"))
-                BaseFlags.FlagValueShort |= (ushort)(persistentShinies ? 2 : 0);
+                if (persistentShinies)
+                    StateIsPersistent = true;
             
             PickupFlags = EPickupFlags.InitiallyVisible;
             PickupValue = 4;
@@ -71,12 +72,12 @@ namespace IndustrialPark
                     PickReferenceID = 0x28F55613;   
                     break;
                 case AssetTemplate.Spatula:
-                    BaseFlags.FlagValueShort |= 2;
+                    StateIsPersistent = true;
                     Shape = 0xDD;
                     PickReferenceID = 0x8BDFE8DD;
                     break;
                 case AssetTemplate.Sock:
-                    BaseFlags.FlagValueShort |= 2;
+                    StateIsPersistent = true;
                     Shape = 0x24;
                     PickReferenceID = 0x74B46F24;
                     break;
@@ -86,22 +87,22 @@ namespace IndustrialPark
                     PickupFlags = EPickupFlags.Both;
                     break;
                 case AssetTemplate.Golden_Underwear:
-                    BaseFlags.FlagValueShort |= 2;
+                    StateIsPersistent = true;
                     Shape = 0x2E;
                     PickReferenceID = 0xF650DA2E;
                     break;
                 case AssetTemplate.Artwork:
-                    BaseFlags.FlagValueShort |= 2;
+                    StateIsPersistent = true;
                     Shape = 0x10;
                     PickReferenceID = 0x18140B10;
                     break;
                 case AssetTemplate.SteeringWheel:
-                    BaseFlags.FlagValueShort |= 2;
+                    StateIsPersistent = true;
                     Shape = 0x32;
                     PickReferenceID = 0x4C67C832;
                     break;
                 case AssetTemplate.PowerCrystal:
-                    BaseFlags.FlagValueShort |= 2;
+                    StateIsPersistent = true;
                     Shape = 0xBB;
                     PickReferenceID = 0xFE7A89BB;
                     break;
@@ -134,12 +135,12 @@ namespace IndustrialPark
                     PickReferenceID = 0xACC4FBD1;
                     break;
                 case AssetTemplate.GoofyGooberToken:
-                    BaseFlags.FlagValueShort |= 2;
+                    StateIsPersistent = true;
                     Shape = 0xB7;
                     PickReferenceID = 0x60F808B7;
                     break;
                 case AssetTemplate.TreasureChest:
-                    BaseFlags.FlagValueShort |= 2;
+                    StateIsPersistent = true;
                     Shape = 0x8A;
                     PickReferenceID = 0xA613E48A;
                     break;
@@ -155,25 +156,27 @@ namespace IndustrialPark
 
         public AssetPKUP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = entityHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = entityHeaderEndPosition;
 
-            PickReferenceID = reader.ReadUInt32();
-            PickupFlags = (EPickupFlags)reader.ReadUInt16();
-            PickupValue = reader.ReadInt16();
+                PickReferenceID = reader.ReadUInt32();
+                PickupFlags = (EPickupFlags)reader.ReadUInt16();
+                PickupValue = reader.ReadInt16();
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntity(game, endianness));
-
-            writer.Write(PickReferenceID);
-            writer.Write((ushort)PickupFlags);
-            writer.Write(PickupValue);
-
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntity(game, endianness));
+                writer.Write(PickReferenceID);
+                writer.Write((ushort)PickupFlags);
+                writer.Write(PickupValue);
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
 
         public static bool dontRender = false;
@@ -232,5 +235,34 @@ namespace IndustrialPark
         [Browsable(false)]
         public override bool SpecialBlendMode =>
             !AssetPICK.pickEntries.ContainsKey(PickReferenceID) || !renderingDictionary.ContainsKey(AssetPICK.pickEntries[PickReferenceID]) || renderingDictionary[AssetPICK.pickEntries[PickReferenceID]].SpecialBlendMode;
+
+        public override Matrix PlatLocalRotation() 
+        {
+            return Matrix.RotationY(localFrameCounter * MathUtil.Pi / 60f);
+        }
+
+        public override Matrix LocalWorld()
+        {
+            if (movementPreview)
+            {
+                var driver = FindDrivenByAsset(out bool useRotation);
+
+                if (driver != null)
+                {
+                    return PlatLocalRotation() * Matrix.Scaling(_scale)
+                        * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
+                        * Matrix.Translation(_position - new Vector3(driver.PositionX, driver.PositionY, driver.PositionZ))
+                        * (useRotation ? driver.PlatLocalRotation() : Matrix.Identity)
+                        * Matrix.Translation((Vector3)Vector3.Transform(Vector3.Zero, driver.LocalWorld()));
+                }
+
+                return PlatLocalRotation()
+                    * Matrix.Scaling(_scale)
+                    * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
+                    * Matrix.Translation(_position);
+            }
+
+            return world;
+        }
     }
 }

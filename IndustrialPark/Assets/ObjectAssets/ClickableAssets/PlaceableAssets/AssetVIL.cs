@@ -157,18 +157,20 @@ namespace IndustrialPark
                     break;
             }
         }
-        
+
         public AssetVIL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = entityHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = entityHeaderEndPosition;
 
-            VilFlags.FlagValueInt = reader.ReadUInt32();
-            VilType = reader.ReadUInt32();
-            NPCSettings_AssetID = reader.ReadUInt32();
-            MovePoint_AssetID = reader.ReadUInt32();
-            TaskDYNA1_AssetID = reader.ReadUInt32();
-            TaskDYNA2_AssetID = reader.ReadUInt32();
+                VilFlags.FlagValueInt = reader.ReadUInt32();
+                VilType = reader.ReadUInt32();
+                NPCSettings_AssetID = reader.ReadUInt32();
+                MovePoint_AssetID = reader.ReadUInt32();
+                TaskDYNA1_AssetID = reader.ReadUInt32();
+                TaskDYNA2_AssetID = reader.ReadUInt32();
+            }
         }
 
         // meant for use with DUPC VIL only
@@ -184,18 +186,18 @@ namespace IndustrialPark
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntity(game, endianness));
-
-            writer.Write(VilFlags.FlagValueInt);
-            writer.Write(VilType);
-            writer.Write(NPCSettings_AssetID);
-            writer.Write(MovePoint_AssetID);
-            writer.Write(TaskDYNA1_AssetID);
-            writer.Write(TaskDYNA2_AssetID);
-
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntity(game, endianness));
+                writer.Write(VilFlags.FlagValueInt);
+                writer.Write(VilType);
+                writer.Write(NPCSettings_AssetID);
+                writer.Write(MovePoint_AssetID);
+                writer.Write(TaskDYNA1_AssetID);
+                writer.Write(TaskDYNA2_AssetID);
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => VilType == assetID || NPCSettings_AssetID == assetID ||

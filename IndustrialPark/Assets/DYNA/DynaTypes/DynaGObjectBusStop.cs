@@ -38,27 +38,30 @@ namespace IndustrialPark
 
         public DynaGObjectBusStop(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__BusStop, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
 
-            MRKR_ID = reader.ReadUInt32();
-            Player = (PlayerEnum)reader.ReadInt32();
-            CAM_ID = reader.ReadUInt32();
-            SIMP_ID = reader.ReadUInt32();
-            Delay = reader.ReadSingle();
+                MRKR_ID = reader.ReadUInt32();
+                Player = (PlayerEnum)reader.ReadInt32();
+                CAM_ID = reader.ReadUInt32();
+                SIMP_ID = reader.ReadUInt32();
+                Delay = reader.ReadSingle();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(MRKR_ID);
+                writer.Write((int)Player);
+                writer.Write(CAM_ID);
+                writer.Write(SIMP_ID);
+                writer.Write(Delay);
 
-            writer.Write(MRKR_ID);
-            writer.Write((int)Player);
-            writer.Write(CAM_ID);
-            writer.Write(SIMP_ID);
-            writer.Write(Delay);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)

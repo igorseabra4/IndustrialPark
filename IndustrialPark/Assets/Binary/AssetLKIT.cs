@@ -1,6 +1,5 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
-using System.Linq;
 
 namespace IndustrialPark
 {
@@ -31,6 +30,7 @@ namespace IndustrialPark
         public AssetSingle Unknown22_Y { get; set; }
         public AssetSingle Unknown23_Z { get; set; }
 
+        public EntryLKIT() { }
         public EntryLKIT(EndianBinaryReader reader)
         {
             Type = reader.ReadInt32();
@@ -61,34 +61,35 @@ namespace IndustrialPark
 
         public byte[] Serialize(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Type);
+                writer.Write(ColorR);
+                writer.Write(ColorG);
+                writer.Write(ColorB);
+                writer.Write(Unknown04);
+                writer.Write(Unknown05_X);
+                writer.Write(Unknown06_Y);
+                writer.Write(Unknown07_Z);
+                writer.Write(Unknown08);
+                writer.Write(Unknown09_X);
+                writer.Write(Unknown10_Y);
+                writer.Write(Unknown11_Z);
+                writer.Write(Unknown12);
+                writer.Write(Direction_X);
+                writer.Write(Direction_Y);
+                writer.Write(Direction_Z);
+                writer.Write(Unknown16);
+                writer.Write(Unknown17_X);
+                writer.Write(Unknown18_Y);
+                writer.Write(Unknown19_Z);
+                writer.Write(Unknown20);
+                writer.Write(Unknown21_X);
+                writer.Write(Unknown22_Y);
+                writer.Write(Unknown23_Z);
 
-            writer.Write(Type);
-            writer.Write(ColorR);
-            writer.Write(ColorG);
-            writer.Write(ColorB);
-            writer.Write(Unknown04);
-            writer.Write(Unknown05_X);
-            writer.Write(Unknown06_Y);
-            writer.Write(Unknown07_Z);
-            writer.Write(Unknown08);
-            writer.Write(Unknown09_X);
-            writer.Write(Unknown10_Y);
-            writer.Write(Unknown11_Z);
-            writer.Write(Unknown12);
-            writer.Write(Direction_X);
-            writer.Write(Direction_Y);
-            writer.Write(Direction_Z);
-            writer.Write(Unknown16);
-            writer.Write(Unknown17_X);
-            writer.Write(Unknown18_Y);
-            writer.Write(Unknown19_Z);
-            writer.Write(Unknown20);
-            writer.Write(Unknown21_X);
-            writer.Write(Unknown22_Y);
-            writer.Write(Unknown23_Z);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
     }
 
@@ -97,46 +98,51 @@ namespace IndustrialPark
         [Category("Light Kit")]
         public EntryLKIT[] Lights { get; set; }
 
-        public AssetLKIT(string assetName, byte[] data, Platform platform) : base(assetName, AssetType.LKIT)
+        public AssetLKIT(string assetName, byte[] data, Endianness endianness) : base(assetName, AssetType.LKIT)
         {
-            var reader = new EndianBinaryReader(data, platform);
-
-            reader.BaseStream.Position = 0x08;
-            int lightCount = reader.ReadInt32();
-            Lights = new EntryLKIT[lightCount];
-
-            reader.BaseStream.Position = 0x10;
-            for (int i = 0; i < lightCount; i++)
-                Lights[i] = new EntryLKIT(reader);
+            Read(data, endianness);
         }
 
         public AssetLKIT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
+            if (AHDR.data.Length == 0)
+                return;
 
-            reader.BaseStream.Position = 0x08;
-            int lightCount = reader.ReadInt32();
-            Lights = new EntryLKIT[lightCount];
+            Read(AHDR.data, endianness);
+        }
 
-            reader.BaseStream.Position = 0x10;
-            for (int i = 0; i < lightCount; i++)
-                Lights[i] = new EntryLKIT(reader);
+        private void Read(byte[] data, Endianness endianness)
+        {
+            using (var reader = new EndianBinaryReader(data, endianness))
+            {
+                reader.BaseStream.Position = 0x08;
+                int lightCount = reader.ReadInt32();
+                Lights = new EntryLKIT[lightCount];
+
+                reader.BaseStream.Position = 0x10;
+                for (int i = 0; i < lightCount; i++)
+                    Lights[i] = new EntryLKIT(reader);
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            if (Lights == null)
+                return new byte[0];
 
-            writer.WriteMagic("LKIT");
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.WriteMagic("LKIT");
 
-            writer.Write(0);
-            writer.Write(Lights.Length);
-            writer.Write(0);
+                writer.Write(0);
+                writer.Write(Lights.Length);
+                writer.Write(0);
 
-            foreach (var l in Lights)
-                writer.Write(l.Serialize(endianness));
+                foreach (var l in Lights)
+                    writer.Write(l.Serialize(endianness));
 
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
     }
 }

@@ -76,61 +76,64 @@ namespace IndustrialPark
 
         public DynaUIImage(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.ui__image, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaUIEnd;
-
-            Texture_AssetID = reader.ReadUInt32();
-            uv1u = reader.ReadSingle();
-            uv1v = reader.ReadSingle();
-            uv2u = reader.ReadSingle();
-            uv2v = reader.ReadSingle();
-            uv3u = reader.ReadSingle();
-            uv3v = reader.ReadSingle();
-            uv4u = reader.ReadSingle();
-            uv4v = reader.ReadSingle();
-            rotation = reader.ReadSingle();
-            UIImageFlags.FlagValueShort = reader.ReadUInt16();
-            addreasMoveU = reader.ReadByte();
-            addreasMoveV = reader.ReadByte();
-            Color1 = reader.ReadColor();
-            Color2 = reader.ReadColor();
-            Color3 = reader.ReadColor();
-            Color4 = reader.ReadColor();
-
-            if (reader.BaseStream.Position != linkStartPosition(reader.BaseStream.Length, _links.Length))
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                extraFieldPresent = true;
-                Unknown = reader.ReadInt32();
+                reader.BaseStream.Position = dynaUIEnd;
+
+                Texture_AssetID = reader.ReadUInt32();
+                uv1u = reader.ReadSingle();
+                uv1v = reader.ReadSingle();
+                uv2u = reader.ReadSingle();
+                uv2v = reader.ReadSingle();
+                uv3u = reader.ReadSingle();
+                uv3v = reader.ReadSingle();
+                uv4u = reader.ReadSingle();
+                uv4v = reader.ReadSingle();
+                rotation = reader.ReadSingle();
+                UIImageFlags.FlagValueShort = reader.ReadUInt16();
+                addreasMoveU = reader.ReadByte();
+                addreasMoveV = reader.ReadByte();
+                Color1 = reader.ReadColor();
+                Color2 = reader.ReadColor();
+                Color3 = reader.ReadColor();
+                Color4 = reader.ReadColor();
+
+                if (reader.BaseStream.Position != linkStartPosition(reader.BaseStream.Length, _links.Length))
+                {
+                    extraFieldPresent = true;
+                    Unknown = reader.ReadInt32();
+                }
             }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeDynaUI(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeDynaUI(endianness));
+                writer.Write(Texture_AssetID);
+                writer.Write(uv1u);
+                writer.Write(uv1v);
+                writer.Write(uv2u);
+                writer.Write(uv2v);
+                writer.Write(uv3u);
+                writer.Write(uv3v);
+                writer.Write(uv4u);
+                writer.Write(uv4v);
+                writer.Write(rotation);
+                writer.Write(UIImageFlags.FlagValueShort);
+                writer.Write(addreasMoveU);
+                writer.Write(addreasMoveV);
+                writer.Write(Color1);
+                writer.Write(Color2);
+                writer.Write(Color3);
+                writer.Write(Color4);
 
-            writer.Write(Texture_AssetID);
-            writer.Write(uv1u);
-            writer.Write(uv1v);
-            writer.Write(uv2u);
-            writer.Write(uv2v);
-            writer.Write(uv3u);
-            writer.Write(uv3v);
-            writer.Write(uv4u);
-            writer.Write(uv4v);
-            writer.Write(rotation);
-            writer.Write(UIImageFlags.FlagValueShort);
-            writer.Write(addreasMoveU);
-            writer.Write(addreasMoveV);
-            writer.Write(Color1);
-            writer.Write(Color2);
-            writer.Write(Color3);
-            writer.Write(Color4);
+                if (extraFieldPresent)
+                    writer.Write(Unknown);
 
-            if (extraFieldPresent)
-                writer.Write(Unknown);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => Texture_AssetID == assetID || base.HasReference(assetID);

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using HipHopFile;
@@ -16,7 +15,7 @@ namespace IndustrialPark
         public AssetSingle LOD2_Distance { get; set; }
         public AssetID LOD3_Model { get; set; }
         public AssetSingle LOD3_Distance { get; set; }
-        [Description("Movie only.")]
+        [Description("Incredibles only")]
         public AssetSingle Unknown { get; set; }
 
         public EntryLODT()
@@ -44,21 +43,22 @@ namespace IndustrialPark
 
         public byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(ModelAssetID);
+                writer.Write(MaxDistance);
+                writer.Write(LOD1_Model);
+                writer.Write(LOD1_Distance);
+                writer.Write(LOD2_Model);
+                writer.Write(LOD2_Distance);
+                writer.Write(LOD3_Model);
+                writer.Write(LOD3_Distance);
 
-            writer.Write(ModelAssetID);
-            writer.Write(MaxDistance);
-            writer.Write(LOD1_Model);
-            writer.Write(LOD1_Distance);
-            writer.Write(LOD2_Model);
-            writer.Write(LOD2_Distance);
-            writer.Write(LOD3_Model);
-            writer.Write(LOD3_Distance);
+                if (game == Game.Incredibles)
+                    writer.Write(Unknown);
 
-            if (game == Game.Incredibles)
-                writer.Write(Unknown);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override string ToString()
@@ -105,26 +105,28 @@ namespace IndustrialPark
 
         public AssetLODT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                _lodt_Entries = new EntryLODT[reader.ReadInt32()];
 
-            _lodt_Entries = new EntryLODT[reader.ReadInt32()];
+                for (int i = 0; i < _lodt_Entries.Length; i++)
+                    _lodt_Entries[i] = new EntryLODT(reader, game);
 
-            for (int i = 0; i < _lodt_Entries.Length; i++)
-                _lodt_Entries[i] = new EntryLODT(reader, game);
-
-            UpdateDictionary();
+                UpdateDictionary();
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(LODT_Entries.Length);
 
-            writer.Write(LODT_Entries.Length);
+                foreach (var l in LODT_Entries)
+                    writer.Write(l.Serialize(game, endianness));
 
-            foreach (var l in LODT_Entries)
-                writer.Write(l.Serialize(game, endianness));
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)

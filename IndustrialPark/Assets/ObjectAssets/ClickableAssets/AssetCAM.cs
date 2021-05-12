@@ -107,8 +107,8 @@ namespace IndustrialPark
         public AssetID Marker2AssetID { get; set; }
         private CamType _camType;
         [Category(categoryName)]
-        public CamType CamType 
-        { 
+        public CamType CamType
+        {
             get => _camType;
             set
             {
@@ -131,7 +131,7 @@ namespace IndustrialPark
                         CamSpecific = new CamSpecific_StaticFollow();
                         break;
                     default:
-                        CamSpecific = new CamSpecific_Generic();
+                        CamSpecific = new CamSpecific_Other();
                         break;
                 }
             }
@@ -191,110 +191,114 @@ namespace IndustrialPark
 
         public AssetCAM(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
-
-            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            NormalizedForwardX = reader.ReadSingle();
-            NormalizedForwardY = reader.ReadSingle();
-            NormalizedForwardZ = reader.ReadSingle();
-            NormalizedUpX = reader.ReadSingle();
-            NormalizedUpY = reader.ReadSingle();
-            NormalizedUpZ = reader.ReadSingle();
-            NormalizedLeftX = reader.ReadSingle();
-            NormalizedLeftY = reader.ReadSingle();
-            NormalizedLeftZ = reader.ReadSingle();
-            ViewOffsetX = reader.ReadSingle();
-            ViewOffsetY = reader.ReadSingle();
-            ViewOffsetZ = reader.ReadSingle();
-            OffsetStartFrames = reader.ReadInt16();
-            OffsetEndFrames = reader.ReadInt16();
-            FieldOfView = reader.ReadSingle();
-            TransitionTime = reader.ReadSingle();
-            TransitionType = (CamTransitionType)reader.ReadInt32();
-            CamFlags.FlagValueInt = reader.ReadUInt32();
-            FadeUp = reader.ReadSingle();
-            FadeDown = reader.ReadSingle();
-
-            reader.BaseStream.Position = 0x78;
-            Flags1.FlagValueByte = reader.ReadByte();
-            Flags2.FlagValueByte = reader.ReadByte();
-            Flags3.FlagValueByte = reader.ReadByte();
-            Flags4.FlagValueByte = reader.ReadByte();
-            Marker1AssetID = reader.ReadUInt32();
-            Marker2AssetID = reader.ReadUInt32();
-            _camType = (CamType)reader.ReadByte();
-
-            reader.BaseStream.Position = 0x60;
-            switch (_camType)
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                case CamType.Follow:
-                    CamSpecific = new CamSpecific_Follow(reader);
-                    break;
-                case CamType.Shoulder:
-                    CamSpecific = new CamSpecific_Shoulder(reader);
-                    break;
-                case CamType.Static:
-                    CamSpecific = new CamSpecific_Static(reader);
-                    break;
-                case CamType.Path:
-                    CamSpecific = new CamSpecific_Path(reader);
-                    break;
-                case CamType.StaticFollow:
-                    CamSpecific = new CamSpecific_StaticFollow(reader);
-                    break;
-                default:
-                    CamSpecific = new CamSpecific_Generic();
-                    break;
-            }
+                reader.BaseStream.Position = baseHeaderEndPosition;
 
-            CreateTransformMatrix();
-            ArchiveEditorFunctions.AddToRenderableAssets(this);
+                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                NormalizedForwardX = reader.ReadSingle();
+                NormalizedForwardY = reader.ReadSingle();
+                NormalizedForwardZ = reader.ReadSingle();
+                NormalizedUpX = reader.ReadSingle();
+                NormalizedUpY = reader.ReadSingle();
+                NormalizedUpZ = reader.ReadSingle();
+                NormalizedLeftX = reader.ReadSingle();
+                NormalizedLeftY = reader.ReadSingle();
+                NormalizedLeftZ = reader.ReadSingle();
+                ViewOffsetX = reader.ReadSingle();
+                ViewOffsetY = reader.ReadSingle();
+                ViewOffsetZ = reader.ReadSingle();
+                OffsetStartFrames = reader.ReadInt16();
+                OffsetEndFrames = reader.ReadInt16();
+                FieldOfView = reader.ReadSingle();
+                TransitionTime = reader.ReadSingle();
+                TransitionType = (CamTransitionType)reader.ReadInt32();
+                CamFlags.FlagValueInt = reader.ReadUInt32();
+                FadeUp = reader.ReadSingle();
+                FadeDown = reader.ReadSingle();
+
+                reader.BaseStream.Position = 0x78;
+                Flags1.FlagValueByte = reader.ReadByte();
+                Flags2.FlagValueByte = reader.ReadByte();
+                Flags3.FlagValueByte = reader.ReadByte();
+                Flags4.FlagValueByte = reader.ReadByte();
+                Marker1AssetID = reader.ReadUInt32();
+                Marker2AssetID = reader.ReadUInt32();
+                _camType = (CamType)reader.ReadByte();
+
+                reader.BaseStream.Position = 0x60;
+                switch (_camType)
+                {
+                    case CamType.Follow:
+                        CamSpecific = new CamSpecific_Follow(reader);
+                        break;
+                    case CamType.Shoulder:
+                        CamSpecific = new CamSpecific_Shoulder(reader);
+                        break;
+                    case CamType.Static:
+                        CamSpecific = new CamSpecific_Static(reader);
+                        break;
+                    case CamType.Path:
+                        CamSpecific = new CamSpecific_Path(reader);
+                        break;
+                    case CamType.StaticFollow:
+                        CamSpecific = new CamSpecific_StaticFollow(reader);
+                        break;
+                    default:
+                        CamSpecific = new CamSpecific_Other(reader);
+                        break;
+                }
+
+                CreateTransformMatrix();
+                ArchiveEditorFunctions.AddToRenderableAssets(this);
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeBase(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
 
-            writer.Write(_position.X);
-            writer.Write(_position.Y);
-            writer.Write(_position.Z);
-            writer.Write(NormalizedForwardX);
-            writer.Write(NormalizedForwardY);
-            writer.Write(NormalizedForwardZ);
-            writer.Write(NormalizedUpX);
-            writer.Write(NormalizedUpY);
-            writer.Write(NormalizedUpZ);
-            writer.Write(NormalizedLeftX);
-            writer.Write(NormalizedLeftY);
-            writer.Write(NormalizedLeftZ);
-            writer.Write(ViewOffsetX);
-            writer.Write(ViewOffsetY);
-            writer.Write(ViewOffsetZ);
-            writer.Write(OffsetStartFrames);
-            writer.Write(OffsetEndFrames);
-            writer.Write(FieldOfView);
-            writer.Write(TransitionTime);
-            writer.Write((int)TransitionType);
-            writer.Write(CamFlags.FlagValueInt);
-            writer.Write(FadeUp);
-            writer.Write(FadeDown);
-            writer.Write(CamSpecific.Serialize(game, endianness));
-            while (writer.BaseStream.Length < 0x78)
-                writer.Write((byte)0);
-            writer.Write(Flags1.FlagValueByte);
-            writer.Write(Flags2.FlagValueByte);
-            writer.Write(Flags3.FlagValueByte);
-            writer.Write(Flags4.FlagValueByte);
-            writer.Write(Marker1AssetID);
-            writer.Write(Marker2AssetID);
-            writer.Write((byte)_camType);
-            while (writer.BaseStream.Length < 0x88)
-                writer.Write((byte)0);
+                writer.Write(_position.X);
+                writer.Write(_position.Y);
+                writer.Write(_position.Z);
+                writer.Write(NormalizedForwardX);
+                writer.Write(NormalizedForwardY);
+                writer.Write(NormalizedForwardZ);
+                writer.Write(NormalizedUpX);
+                writer.Write(NormalizedUpY);
+                writer.Write(NormalizedUpZ);
+                writer.Write(NormalizedLeftX);
+                writer.Write(NormalizedLeftY);
+                writer.Write(NormalizedLeftZ);
+                writer.Write(ViewOffsetX);
+                writer.Write(ViewOffsetY);
+                writer.Write(ViewOffsetZ);
+                writer.Write(OffsetStartFrames);
+                writer.Write(OffsetEndFrames);
+                writer.Write(FieldOfView);
+                writer.Write(TransitionTime);
+                writer.Write((int)TransitionType);
+                writer.Write(CamFlags.FlagValueInt);
+                writer.Write(FadeUp);
+                writer.Write(FadeDown);
+                writer.Write(CamSpecific.Serialize(game, endianness));
+                while (writer.BaseStream.Length < 0x78)
+                    writer.Write((byte)0);
+                writer.Write(Flags1.FlagValueByte);
+                writer.Write(Flags2.FlagValueByte);
+                writer.Write(Flags3.FlagValueByte);
+                writer.Write(Flags4.FlagValueByte);
+                writer.Write(Marker1AssetID);
+                writer.Write(Marker2AssetID);
+                writer.Write((byte)_camType);
+                while (writer.BaseStream.Length < 0x88)
+                    writer.Write((byte)0);
 
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
 
         private Matrix world;

@@ -24,29 +24,32 @@ namespace IndustrialPark
 
         public DynaGObjectRaceTimer(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__RaceTimer, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
 
-            UnknownInt_00 = reader.ReadInt32();
-            UnknownInt_04 = reader.ReadInt32();
-            UnknownInt_08 = reader.ReadInt32();
-            UnknownFloat_0C = reader.ReadSingle();
-            UnknownFloat_10 = reader.ReadSingle();
-            UnknownFloat_14 = reader.ReadSingle();
+                UnknownInt_00 = reader.ReadInt32();
+                UnknownInt_04 = reader.ReadInt32();
+                UnknownInt_08 = reader.ReadInt32();
+                UnknownFloat_0C = reader.ReadSingle();
+                UnknownFloat_10 = reader.ReadSingle();
+                UnknownFloat_14 = reader.ReadSingle();
+            }
         }
 
         protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(UnknownInt_00);
+                writer.Write(UnknownInt_04);
+                writer.Write(UnknownInt_08);
+                writer.Write(UnknownFloat_0C);
+                writer.Write(UnknownFloat_10);
+                writer.Write(UnknownFloat_14);
 
-            writer.Write(UnknownInt_00);
-            writer.Write(UnknownInt_04);
-            writer.Write(UnknownInt_08);
-            writer.Write(UnknownFloat_0C);
-            writer.Write(UnknownFloat_10);
-            writer.Write(UnknownFloat_14);
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
     }
 }

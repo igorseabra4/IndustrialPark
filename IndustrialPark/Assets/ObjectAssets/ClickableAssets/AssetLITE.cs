@@ -68,56 +68,60 @@ namespace IndustrialPark
 
         public AssetLITE(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = baseHeaderEndPosition;
 
-            UnknownByte08 = reader.ReadByte();
-            UnknownByte09 = reader.ReadByte();
-            UnknownByte0A = reader.ReadByte();
-            UnknownByte0B = reader.ReadByte();
-            UnknownInt0C = reader.ReadInt32();
-            UnknownFloat10 = reader.ReadSingle();
-            UnknownFloat14 = reader.ReadSingle();
-            UnknownFloat18 = reader.ReadSingle();   
-            UnknownFloat1C = reader.ReadSingle();
-            UnknownFloat20 = reader.ReadSingle();
-            UnknownFloat24 = reader.ReadSingle();
-            UnknownFloat28 = reader.ReadSingle();
-            UnknownFloat2C = reader.ReadSingle();
-            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            UnknownFloat3C = reader.ReadSingle();
-            UnknownFloat40 = reader.ReadSingle();
+                UnknownByte08 = reader.ReadByte();
+                UnknownByte09 = reader.ReadByte();
+                UnknownByte0A = reader.ReadByte();
+                UnknownByte0B = reader.ReadByte();
+                UnknownInt0C = reader.ReadInt32();
+                UnknownFloat10 = reader.ReadSingle();
+                UnknownFloat14 = reader.ReadSingle();
+                UnknownFloat18 = reader.ReadSingle();
+                UnknownFloat1C = reader.ReadSingle();
+                UnknownFloat20 = reader.ReadSingle();
+                UnknownFloat24 = reader.ReadSingle();
+                UnknownFloat28 = reader.ReadSingle();
+                UnknownFloat2C = reader.ReadSingle();
+                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                UnknownFloat3C = reader.ReadSingle();
+                UnknownFloat40 = reader.ReadSingle();
 
-            CreateTransformMatrix();
-            ArchiveEditorFunctions.AddToRenderableAssets(this);
+                CreateTransformMatrix();
+                ArchiveEditorFunctions.AddToRenderableAssets(this);
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeBase(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
 
-            writer.Write(UnknownByte08);
-            writer.Write(UnknownByte09);
-            writer.Write(UnknownByte0A);
-            writer.Write(UnknownByte0B);
-            writer.Write(UnknownInt0C);
-            writer.Write(UnknownFloat10);
-            writer.Write(UnknownFloat14);
-            writer.Write(UnknownFloat18);
-            writer.Write(UnknownFloat1C);
-            writer.Write(UnknownFloat20);
-            writer.Write(UnknownFloat24);
-            writer.Write(UnknownFloat28);
-            writer.Write(UnknownFloat2C);
-            writer.Write(_position.X);
-            writer.Write(_position.Y);
-            writer.Write(_position.Z);
-            writer.Write(UnknownFloat3C);
-            writer.Write(UnknownFloat40);
+                writer.Write(UnknownByte08);
+                writer.Write(UnknownByte09);
+                writer.Write(UnknownByte0A);
+                writer.Write(UnknownByte0B);
+                writer.Write(UnknownInt0C);
+                writer.Write(UnknownFloat10);
+                writer.Write(UnknownFloat14);
+                writer.Write(UnknownFloat18);
+                writer.Write(UnknownFloat1C);
+                writer.Write(UnknownFloat20);
+                writer.Write(UnknownFloat24);
+                writer.Write(UnknownFloat28);
+                writer.Write(UnknownFloat2C);
+                writer.Write(_position.X);
+                writer.Write(_position.Y);
+                writer.Write(_position.Z);
+                writer.Write(UnknownFloat3C);
+                writer.Write(UnknownFloat40);
 
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
 
         private Matrix world;

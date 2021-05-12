@@ -124,14 +124,15 @@ namespace IndustrialPark
         private void OpenFile(string fileName, Platform scoobyPlatform = Platform.Unknown)
         {
             archive.autoCompleteSource.Clear();
-            new Thread(() => {
-                archive.OpenFile(fileName, true, scoobyPlatform, out string[] autoComplete);
-                Invoke(new Action(() =>
-                {
-                    archive.autoCompleteSource.AddRange(autoComplete.ToArray());
-                    OpenFileDone(fileName);
-                }));
-            }).Start();
+            //new Thread(() =>
+            //{
+            archive.OpenFile(fileName, true, scoobyPlatform, out string[] autoComplete);
+            //    Invoke(new Action(() =>
+            //   {
+            archive.autoCompleteSource.AddRange(autoComplete);
+            OpenFileDone(fileName);
+            //   }));
+            //}).Start();
         }
 
         private void OpenFileDone(string fileName)
@@ -1192,11 +1193,6 @@ namespace IndustrialPark
                 Program.MainForm.RefreshTexturesAndModels();
                 PopulateLayerComboBox();
             }
-        }
-
-        internal void SetHideHelp()
-        {
-            archive.SetHideHelp();
         }
 
         private void ExportTXD(CheckState RW3)

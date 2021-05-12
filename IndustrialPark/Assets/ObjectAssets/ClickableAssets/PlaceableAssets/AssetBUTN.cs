@@ -98,44 +98,46 @@ namespace IndustrialPark
 
         public AssetBUTN(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = entityHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = entityHeaderEndPosition;
 
-            if (game != Game.Scooby)
-                PressedModel_AssetID = reader.ReadUInt32();
-            ActMethod = (ButnActMethod)reader.ReadInt32();
-            InitialButtonState = reader.ReadInt32();
-            ResetAfterDelay = reader.ReadInt32Bool();
-            ResetDelay = reader.ReadSingle();
-            HitMask.FlagValueInt = reader.ReadUInt32();
-
-            Motion = new Motion_Mechanism(reader, game);
+                if (game != Game.Scooby)
+                    PressedModel_AssetID = reader.ReadUInt32();
+                ActMethod = (ButnActMethod)reader.ReadInt32();
+                InitialButtonState = reader.ReadInt32();
+                ResetAfterDelay = reader.ReadInt32Bool();
+                ResetDelay = reader.ReadSingle();
+                HitMask.FlagValueInt = reader.ReadUInt32();
+                Motion = new Motion_Mechanism(reader, game);
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeEntity(game, endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntity(game, endianness));
 
-            if (game != Game.Scooby)
-                writer.Write(PressedModel_AssetID);
-            writer.Write((int)ActMethod);
-            writer.Write(InitialButtonState);
-            writer.Write(ResetAfterDelay ? 1 : 0);
-            writer.Write(ResetDelay);
-            writer.Write(HitMask.FlagValueInt);
-            writer.Write(Motion.Serialize(game, endianness));
+                if (game != Game.Scooby)
+                    writer.Write(PressedModel_AssetID);
+                writer.Write((int)ActMethod);
+                writer.Write(InitialButtonState);
+                writer.Write(ResetAfterDelay ? 1 : 0);
+                writer.Write(ResetDelay);
+                writer.Write(HitMask.FlagValueInt);
+                writer.Write(Motion.Serialize(game, endianness));
 
-            int linkStart =
-                game == Game.Scooby ? 0x94 :
-                game == Game.BFBB ? 0x9C :
-                game == Game.Incredibles ? 0xA8 : throw new System.ArgumentException("Invalid game");
+                int linkStart =
+                    game == Game.Scooby ? 0x94 :
+                    game == Game.BFBB ? 0x9C :
+                    game == Game.Incredibles ? 0xA4 : throw new ArgumentException("Invalid game");
 
-            while (writer.BaseStream.Length < linkStart)
-                writer.Write((byte)0);
-
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
+                while (writer.BaseStream.Length < linkStart)
+                    writer.Write((byte)0);
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
 
         public static bool dontRender = false;

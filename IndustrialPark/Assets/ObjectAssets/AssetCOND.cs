@@ -95,31 +95,32 @@ namespace IndustrialPark
 
         public AssetCOND(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = baseHeaderEndPosition;
 
-            EvaluationAmount = reader.ReadInt32();
-            Conditional_Scooby = reader.ReadUInt32();
-            Operation = (ConditionalOperation)reader.ReadUInt32();
-            if (game != Game.Scooby)
-                AssetUnderEvaluation = reader.ReadUInt32();
+                EvaluationAmount = reader.ReadInt32();
+                Conditional_Scooby = reader.ReadUInt32();
+                Operation = (ConditionalOperation)reader.ReadUInt32();
+                if (game != Game.Scooby)
+                    AssetUnderEvaluation = reader.ReadUInt32();
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
+                writer.Write(EvaluationAmount);
+                writer.Write(Conditional_Scooby);
+                writer.Write((uint)Operation);
+                if (game != Game.Scooby)
+                    writer.Write(AssetUnderEvaluation);
+                writer.Write(SerializeLinks(endianness));
 
-            writer.Write(SerializeBase(endianness));
-
-            writer.Write(EvaluationAmount);
-            writer.Write(Conditional_Scooby);
-            writer.Write((uint)Operation);
-            if (game != Game.Scooby)
-                writer.Write(AssetUnderEvaluation);
-
-            writer.Write(SerializeLinks(endianness));
-
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID) => AssetUnderEvaluation == assetID || Conditional_Scooby == assetID || base.HasReference(assetID);

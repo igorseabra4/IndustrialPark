@@ -29,12 +29,14 @@ namespace IndustrialPark
 
         public byte[] Serialize(Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(Sound_AssetID);
-            writer.Write(Volume);
-            writer.Write(MinPitchMult);
-            writer.Write(MaxPitchMult);
-            return writer.ToArray();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Sound_AssetID);
+                writer.Write(Volume);
+                writer.Write(MinPitchMult);
+                writer.Write(MaxPitchMult);
+                return writer.ToArray();
+            }
         }
 
         public override string ToString() => $"[{Program.MainForm.GetAssetNameFromID(Sound_AssetID)}] - [{Volume}]";
@@ -90,62 +92,60 @@ namespace IndustrialPark
             OuterRadius = 25f;
             SGRP_Entries = new EntrySGRP[] { new EntrySGRP() };
         }
-        
+
         public AssetSGRP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = baseHeaderEndPosition;
 
-            uPlayedMask = reader.ReadInt32();
+                uPlayedMask = reader.ReadInt32();
 
-            byte entryCount = reader.ReadByte();
-            uSetBits = reader.ReadByte();
-            nMaxPlays = reader.ReadByte();
-            uPriority = reader.ReadByte();
+                byte entryCount = reader.ReadByte();
+                uSetBits = reader.ReadByte();
+                nMaxPlays = reader.ReadByte();
+                uPriority = reader.ReadByte();
 
-            uFlags.FlagValueByte = reader.ReadByte();
-            eSoundCategory.FlagValueByte = reader.ReadByte();
-            ePlayRule = reader.ReadByte();
-            uInfoPad0 = reader.ReadByte();
+                uFlags.FlagValueByte = reader.ReadByte();
+                eSoundCategory.FlagValueByte = reader.ReadByte();
+                ePlayRule = reader.ReadByte();
+                uInfoPad0 = reader.ReadByte();
 
-            InnerRadius = reader.ReadSingle();
-            OuterRadius = reader.ReadSingle();
+                InnerRadius = reader.ReadSingle();
+                OuterRadius = reader.ReadSingle();
 
-            var chars = reader.ReadChars(4);
-            _pszGroupName = reader.endianness == Endianness.Little ? chars : chars.Reverse().ToArray();
+                var chars = reader.ReadChars(4);
+                _pszGroupName = reader.endianness == Endianness.Little ? chars : chars.Reverse().ToArray();
 
-            SGRP_Entries = new EntrySGRP[entryCount];
-            for (int i = 0; i < SGRP_Entries.Length; i++)
-                SGRP_Entries[i] = new EntrySGRP(reader);
+                SGRP_Entries = new EntrySGRP[entryCount];
+                for (int i = 0; i < SGRP_Entries.Length; i++)
+                    SGRP_Entries[i] = new EntrySGRP(reader);
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeBase(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
+                writer.Write(uPlayedMask);
+                writer.Write((byte)SGRP_Entries.Length);
+                writer.Write(uSetBits);
+                writer.Write(nMaxPlays);
+                writer.Write(uPriority);
+                writer.Write(uFlags.FlagValueByte);
+                writer.Write(eSoundCategory.FlagValueByte);
+                writer.Write(ePlayRule);
+                writer.Write(uInfoPad0);
+                writer.Write(InnerRadius);
+                writer.Write(OuterRadius);
+                writer.WriteMagic(new string(_pszGroupName.ToArray()));
 
-            writer.Write(uPlayedMask);
-
-            writer.Write((byte)SGRP_Entries.Length);
-            writer.Write(uSetBits);
-            writer.Write(nMaxPlays);
-            writer.Write(uPriority);
-
-            writer.Write(uFlags.FlagValueByte);
-            writer.Write(eSoundCategory.FlagValueByte);
-            writer.Write(ePlayRule);
-            writer.Write(uInfoPad0);
-
-            writer.Write(InnerRadius);
-            writer.Write(OuterRadius);
-
-            writer.WriteMagic(new string(_pszGroupName.ToArray()));
-
-            foreach (var i in SGRP_Entries)
-                writer.Write(i.Serialize(endianness));
-
-            writer.Write(SerializeLinks(endianness));
-            return writer.ToArray();
+                foreach (var i in SGRP_Entries)
+                    writer.Write(i.Serialize(endianness));
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)

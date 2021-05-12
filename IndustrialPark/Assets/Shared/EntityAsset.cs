@@ -166,28 +166,30 @@ namespace IndustrialPark
 
         public EntityAsset(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = baseHeaderEndPosition;
 
-            VisibilityFlags.FlagValueByte = reader.ReadByte();
-            TypeFlag = reader.ReadByte();
-            Flag0A.FlagValueByte = reader.ReadByte();
-            SolidityFlags.FlagValueByte = reader.ReadByte();
-            if (game == Game.BFBB)
-                reader.ReadInt32();
-            Surface_AssetID = reader.ReadUInt32();
-            _yaw = reader.ReadSingle();
-            _pitch = reader.ReadSingle();
-            _roll = reader.ReadSingle();
-            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            _scale = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            _color = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            ColorAlphaSpeed = reader.ReadSingle();
-            _modelAssetID = reader.ReadUInt32();
-            Animation_AssetID = reader.ReadUInt32();
+                VisibilityFlags.FlagValueByte = reader.ReadByte();
+                TypeFlag = reader.ReadByte();
+                Flag0A.FlagValueByte = reader.ReadByte();
+                SolidityFlags.FlagValueByte = reader.ReadByte();
+                if (game == Game.BFBB)
+                    reader.ReadInt32();
+                Surface_AssetID = reader.ReadUInt32();
+                _yaw = reader.ReadSingle();
+                _pitch = reader.ReadSingle();
+                _roll = reader.ReadSingle();
+                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                _scale = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                _color = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                ColorAlphaSpeed = reader.ReadSingle();
+                _modelAssetID = reader.ReadUInt32();
+                Animation_AssetID = reader.ReadUInt32();
 
-            CreateTransformMatrix();
-            AddToRenderableAssets(this);
+                CreateTransformMatrix();
+                AddToRenderableAssets(this);
+            }
         }
 
         // meant for use with DUPC VIL only
@@ -213,34 +215,36 @@ namespace IndustrialPark
 
         protected byte[] SerializeEntity(Game game, Endianness endianness)
         {
-            var writer = new EndianBinaryWriter(endianness);
-            writer.Write(SerializeBase(endianness));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
 
-            writer.Write(VisibilityFlags.FlagValueByte);
-            writer.Write(TypeFlag);
-            writer.Write(Flag0A.FlagValueByte);
-            writer.Write(SolidityFlags.FlagValueByte);
-            if (game == Game.BFBB)
-                writer.Write(0);
-            writer.Write(Surface_AssetID);
-            writer.Write(_yaw);
-            writer.Write(_pitch);
-            writer.Write(_roll);
-            writer.Write(_position.X);
-            writer.Write(_position.Y);
-            writer.Write(_position.Z);
-            writer.Write(_scale.X);
-            writer.Write(_scale.Y);
-            writer.Write(_scale.Z);
-            writer.Write(_color.X);
-            writer.Write(_color.Y);
-            writer.Write(_color.Z);
-            writer.Write(_color.W);
-            writer.Write(ColorAlphaSpeed);
-            writer.Write(_modelAssetID);
-            writer.Write(Animation_AssetID);
+                writer.Write(VisibilityFlags.FlagValueByte);
+                writer.Write(TypeFlag);
+                writer.Write(Flag0A.FlagValueByte);
+                writer.Write(SolidityFlags.FlagValueByte);
+                if (game == Game.BFBB)
+                    writer.Write(0);
+                writer.Write(Surface_AssetID);
+                writer.Write(_yaw);
+                writer.Write(_pitch);
+                writer.Write(_roll);
+                writer.Write(_position.X);
+                writer.Write(_position.Y);
+                writer.Write(_position.Z);
+                writer.Write(_scale.X);
+                writer.Write(_scale.Y);
+                writer.Write(_scale.Z);
+                writer.Write(_color.X);
+                writer.Write(_color.Y);
+                writer.Write(_color.Z);
+                writer.Write(_color.W);
+                writer.Write(ColorAlphaSpeed);
+                writer.Write(_modelAssetID);
+                writer.Write(Animation_AssetID);
 
-            return writer.ToArray();
+                return writer.ToArray();
+            }
         }
 
         [Browsable(false)]
@@ -257,6 +261,7 @@ namespace IndustrialPark
                 * Matrix.Translation(_position);
 
             CreateBoundingBox();
+            Reset();
         }
 
         protected virtual void CreateBoundingBox()
@@ -366,32 +371,30 @@ namespace IndustrialPark
 
         public static bool movementPreview = false;
 
-        protected EntityAsset FindDrivenByAsset(out bool found, out bool useRotation)
+        protected EntityAsset FindDrivenByAsset(out bool useRotation)
         {
-            foreach (Link assetEvent in _links)
+            foreach (var link in _links)
             {
                 uint PlatID = 0;
 
-                if ((EventBFBB)assetEvent.EventSendID == EventBFBB.Drivenby)
-                    PlatID = assetEvent.TargetAssetID;
-                else if ((EventBFBB)assetEvent.EventSendID == EventBFBB.Mount)
-                    PlatID = assetEvent.ArgumentAssetID;
+                if ((EventBFBB)link.EventSendID == EventBFBB.Drivenby)
+                    PlatID = link.TargetAssetID;
+                else if ((EventBFBB)link.EventSendID == EventBFBB.Mount)
+                    PlatID = link.ArgumentAssetID;
                 else continue;
 
-                foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
+                foreach (var ae in Program.MainForm.archiveEditors)
                     if (ae.archive.ContainsAsset(PlatID))
                     {
-                        Asset asset = ae.archive.GetFromAssetID(PlatID);
-                        if (asset is EntityAsset Placeable)
+                        var asset = ae.archive.GetFromAssetID(PlatID);
+                        if (asset is EntityAsset entity)
                         {
-                            found = true;
-                            useRotation = assetEvent.FloatParameter1 != 0 || (EventBFBB)assetEvent.EventSendID == EventBFBB.Mount;
-                            return Placeable;
+                            useRotation = link.FloatParameter1 != 0 || (EventBFBB)link.EventSendID == EventBFBB.Mount;
+                            return entity;
                         }
                     }
             }
 
-            found = false;
             useRotation = false;
             return null;
         }
@@ -405,9 +408,9 @@ namespace IndustrialPark
         {
             if (movementPreview)
             {
-                var driver = FindDrivenByAsset(out bool found, out bool useRotation);
+                var driver = FindDrivenByAsset(out bool useRotation);
 
-                if (found)
+                if (driver != null)
                 {
                     return Matrix.Scaling(_scale)
                         * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
