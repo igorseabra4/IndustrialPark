@@ -24,17 +24,7 @@ namespace IndustrialPark
         public byte BonusValue { get; set; }
         public byte UnknownByte_37 { get; set; }
 
-        public EntryTPIK()
-        {
-            PickupHash = 0;
-            Model_AssetID = 0;
-            RingModel_AssetID = 0;
-            Unknown_24 = 0;
-            Unknown_28 = 0;
-            Pickup_SGRP = 0;
-            Denied_SGRP = 0;
-        }
-
+        public EntryTPIK() { }
         public EntryTPIK(EndianBinaryReader reader)
         {
             PickupHash = reader.ReadUInt32();

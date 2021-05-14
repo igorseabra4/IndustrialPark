@@ -18,14 +18,7 @@ namespace IndustrialPark
         [Description("Incredibles only")]
         public AssetSingle Unknown { get; set; }
 
-        public EntryLODT()
-        {
-            ModelAssetID = 0;
-            LOD1_Model = 0;
-            LOD2_Model = 0;
-            LOD3_Model = 0;
-        }
-
+        public EntryLODT() { }
         public EntryLODT(EndianBinaryReader reader, Game game)
         {
             ModelAssetID = reader.ReadUInt32();

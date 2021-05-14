@@ -24,7 +24,10 @@ namespace IndustrialPark
         public AssetSingle MaxScreenWidth { get; set; }
         public AssetSingle MaxScreenHeight { get; set; }
 
-        public StyleStyleEntry() { }
+        public StyleStyleEntry() 
+        { 
+            Color = new AssetColor();
+        }
         public StyleStyleEntry(EndianBinaryReader reader)
         {
             Unknown_00_1 = reader.ReadInt32();

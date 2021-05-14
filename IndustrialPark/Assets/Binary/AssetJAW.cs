@@ -13,10 +13,8 @@ namespace IndustrialPark
 
         public EntryJAW()
         {
-            SoundAssetID = 0;
             JawData = new byte[0];
         }
-
         public EntryJAW(AssetID soundAssetID, byte[] jawData)
         {
             SoundAssetID = soundAssetID;

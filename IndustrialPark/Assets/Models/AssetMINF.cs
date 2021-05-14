@@ -26,11 +26,7 @@ namespace IndustrialPark
         public AssetSingle PosY { get; set; }
         public AssetSingle PosZ { get; set; }
 
-        public ModelInst()
-        {
-            Model_AssetID = 0;
-        }
-
+        public ModelInst() { }
         public ModelInst(EndianBinaryReader reader)
         {
             Model_AssetID = reader.ReadUInt32();
@@ -116,6 +112,7 @@ namespace IndustrialPark
         public AssetMINF(string assetName) : base(assetName, AssetType.MINF)
         {
             ModelReferences = new ModelInst[0];
+            UnknownData = new byte[0];
         }
 
         public AssetMINF(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)

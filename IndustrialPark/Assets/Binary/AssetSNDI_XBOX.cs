@@ -22,11 +22,7 @@ namespace IndustrialPark
 
         public static int StructSize = 0x2C;
 
-        public EntrySoundInfo_XBOX()
-        {
-            SoundAssetID = 0;
-        }
-
+        public EntrySoundInfo_XBOX() { }
         public EntrySoundInfo_XBOX(EndianBinaryReader reader)
         {
             Read(reader);

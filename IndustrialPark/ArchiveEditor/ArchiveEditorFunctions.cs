@@ -89,7 +89,7 @@ namespace IndustrialPark
 
         public bool New()
         {
-            var (hipFile, addDefaultAssets) = NewArchive.GetNewArchive();
+            var (hipFile, platform, game, addDefaultAssets) = NewArchive.GetNewArchive();
 
             if (hipFile != null)
             {
@@ -100,9 +100,8 @@ namespace IndustrialPark
                 assetDictionary.Clear();
 
                 this.hipFile = hipFile;
-
-                if (platform == Platform.Unknown)
-                    new ChoosePlatformDialog().ShowDialog();
+                this.platform = platform;
+                this.game = game;
 
                 if (addDefaultAssets)
                     PlaceDefaultAssets();

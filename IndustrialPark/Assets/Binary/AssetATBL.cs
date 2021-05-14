@@ -169,7 +169,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AnimationEffect : GenericAssetDataContainer
+    public class AnimationEffect
     {
         public int StateID { get; set; }
         public AssetSingle StartTime { get; set; }

@@ -104,10 +104,7 @@ namespace IndustrialPark
         public AssetSingle TimeEnd { get; set; }
         public AssetSingle TimeDelay { get; set; }
 
-        public CamSpecific_Path()
-        {
-            Unknown_AssetID = 0;
-        }
+        public CamSpecific_Path() { }
         public CamSpecific_Path(EndianBinaryReader reader)
         {
             Unknown_AssetID = reader.ReadUInt32();

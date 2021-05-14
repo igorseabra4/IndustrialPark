@@ -17,13 +17,7 @@ namespace IndustrialPark
         public AssetID ModelAssetID { get; set; }
         public AssetID AnimAssetID { get; set; }
 
-        public EntryPICK()
-        {
-            ModelAssetID = 0;
-            AnimAssetID = 0;
-            PickupHash = 0;
-        }
-
+        public EntryPICK() { }
         public EntryPICK(EndianBinaryReader reader)
         {
             PickupHash = reader.ReadUInt32();

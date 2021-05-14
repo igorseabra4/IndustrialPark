@@ -38,7 +38,8 @@ namespace IndustrialPark
 
         public AssetFOG(string assetName) : base(assetName, AssetType.FOG, BaseAssetType.Fog)
         {
-            BackgroundColorAlpha = 255;
+            BackgroundColor = new AssetColor();
+            FogColor = new AssetColor();
             FogColorAlpha = 255;
             FogDensity = 1;
             StartDistance = 100;

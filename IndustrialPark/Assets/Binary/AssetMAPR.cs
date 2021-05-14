@@ -9,11 +9,7 @@ namespace IndustrialPark
         public AssetID AssetID_SURF { get; set; }
         public AssetID Unknown { get; set; }
 
-        public EntryMAPR()
-        {
-            AssetID_SURF = 0;
-        }
-
+        public EntryMAPR() { }
         public override string ToString()
         {
             return $"[{Program.MainForm.GetAssetNameFromID(AssetID_SURF)}] - [{Program.MainForm.GetAssetNameFromID(Unknown)}]";

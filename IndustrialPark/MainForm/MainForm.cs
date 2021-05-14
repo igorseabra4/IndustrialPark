@@ -655,6 +655,7 @@ namespace IndustrialPark
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AddArchiveEditor();
+            archiveEditors.Last().Show();
         }
 
         private void AddArchiveEditor(string filePath = null, HipHopFile.Platform scoobyPlatform = HipHopFile.Platform.Unknown)

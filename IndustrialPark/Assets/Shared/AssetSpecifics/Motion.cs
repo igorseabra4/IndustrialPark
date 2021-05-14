@@ -232,6 +232,16 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
+
+        public override Matrix PlatLocalTranslation()
+        {
+            var param = MathUtil.Pi + LocalFrameCounter * MathUtil.TwoPi / (Period * 60);
+
+            return Matrix.Translation(
+                Width + Width * (float)Math.Cos(param),
+                0,
+                Height * (float)Math.Sin(param));
+        }
     }
 
     public class Motion_Spline : Motion

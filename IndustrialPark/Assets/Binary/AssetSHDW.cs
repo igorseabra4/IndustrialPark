@@ -11,12 +11,7 @@ namespace IndustrialPark
         public AssetID ShadowModelAssetID { get; set; }
         public int Unknown { get; set; }
 
-        public EntrySHDW()
-        {
-            ModelAssetID = 0;
-            ShadowModelAssetID = 0;
-        }
-
+        public EntrySHDW() { }
         public EntrySHDW(EndianBinaryReader reader)
         {
             ModelAssetID = reader.ReadUInt32();

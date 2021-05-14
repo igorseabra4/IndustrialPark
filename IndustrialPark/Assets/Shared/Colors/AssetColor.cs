@@ -17,7 +17,7 @@ namespace AssetEditorColors
             R = 0;
             G = 0;
             B = 0;
-            A = 0;
+            A = 255;
         }
 
         public AssetColor(byte r, byte g, byte b, byte a)

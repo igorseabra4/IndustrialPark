@@ -11,13 +11,7 @@ namespace IndustrialPark
         public AssetID Collision_ModelAssetID { get; set; }
         public AssetID CameraCollision_ModelAssetID { get; set; }
 
-        public EntryCOLL()
-        {
-            ModelAssetID = 0;
-            Collision_ModelAssetID = 0;
-            CameraCollision_ModelAssetID = 0;
-        }
-
+        public EntryCOLL() { }
         public EntryCOLL(EndianBinaryReader reader)
         {
             ModelAssetID = reader.ReadUInt32();

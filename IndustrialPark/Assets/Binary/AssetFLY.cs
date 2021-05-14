@@ -71,9 +71,9 @@ namespace IndustrialPark
         {
             List<EntryFLY> entries = new List<EntryFLY>();
 
-            using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(AHDR.data)))
-                while (binaryReader.BaseStream.Position < binaryReader.BaseStream.Length)
-                    entries.Add(new EntryFLY(binaryReader));
+            using (var reader = new BinaryReader(new MemoryStream(AHDR.data)))
+                while (reader.BaseStream.Position < reader.BaseStream.Length)
+                    entries.Add(new EntryFLY(reader));
 
             FLY_Entries = entries.ToArray();
         }
@@ -81,10 +81,8 @@ namespace IndustrialPark
         public override byte[] Serialize(Game game, Endianness endianness)
         {
             List<byte> newData = new List<byte>();
-
-            foreach (EntryFLY i in FLY_Entries)
+            foreach (var i in FLY_Entries)
                 newData.AddRange(i.Serialize());
-
             return newData.ToArray();
         }
     }
