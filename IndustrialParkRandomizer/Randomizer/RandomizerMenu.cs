@@ -40,7 +40,7 @@ namespace IndustrialPark.Randomizer
             }
 
             randomizer = new Randomizer(0);
-            textBoxSeed.Text = new Random().Next().ToString();
+            randomizer.RandomSeed();
             UpdateInterfaceFromRandomizer();
         }
 
@@ -264,7 +264,7 @@ namespace IndustrialPark.Randomizer
             else
                 buttonPerform.Enabled = false;
 
-            textBoxSeed.Text = randomizer.seedText.ToString();
+            textBoxSeed.Text = randomizer.seedText;
             labelSeed.Text = "Seed: " + randomizer.seed.ToString();
 
             DynamicTypeDescriptor dt = new DynamicTypeDescriptor(randomizer.settings.GetType());

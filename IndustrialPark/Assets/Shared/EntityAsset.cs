@@ -434,13 +434,14 @@ namespace IndustrialPark
 
         private void FindSurf()
         {
-            foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                if (ae.archive.ContainsAsset(Surface_AssetID))
-                    if (ae.archive.GetFromAssetID(Surface_AssetID) is AssetSURF SURF)
-                    {
-                        uvTransSpeed = new Vector3(SURF.zSurfUVFX.TransSpeed_X, SURF.zSurfUVFX.TransSpeed_Y, SURF.zSurfUVFX.TransSpeed_Z);
-                        return;
-                    }
+            if (Program.MainForm != null && Surface_AssetID != 0)
+                foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
+                    if (ae.archive.ContainsAsset(Surface_AssetID))
+                        if (ae.archive.GetFromAssetID(Surface_AssetID) is AssetSURF SURF)
+                        {
+                            uvTransSpeed = new Vector3(SURF.zSurfUVFX.TransSpeed_X, SURF.zSurfUVFX.TransSpeed_Y, SURF.zSurfUVFX.TransSpeed_Z);
+                            return;
+                        }
             uvTransSpeed = Vector3.Zero;
         }
 

@@ -12,12 +12,10 @@ namespace IndustrialPark.Randomizer
 {
     public class RandomizableArchive : ArchiveEditorFunctions
     {
-        private Random random;
+        public static Random random;
 
-        public bool Randomize(Random rd, RandomizerSettings settings, out bool needToAddNumbers)
+        public bool Randomize(RandomizerSettings settings, out bool needToAddNumbers)
         {
-            random = rd;
-
             if (LevelName == "hb09")
                 return needToAddNumbers = false;
 
@@ -59,7 +57,7 @@ namespace IndustrialPark.Randomizer
                 shuffled |= RandomizeBoulderSettings(settings);
 
             if (settings.Sounds && ContainsAssetWithType(AssetType.SNDI))
-                shuffled |= RandomizeSounds(random, settings.Mix_Sound_Types);
+                shuffled |= RandomizeSounds(settings.Mix_Sound_Types);
 
             if (settings.Pickups && ContainsAssetWithType(AssetType.PKUP))
                 shuffled |= RandomizePickupPositions();
@@ -316,7 +314,7 @@ namespace IndustrialPark.Randomizer
                 shuffled |= ShufflePlatSpeeds(settings);
 
             if (settings.Cameras && ContainsAssetWithType(AssetType.CAM))
-                shuffled |= ShuffleCameras(random);
+                shuffled |= ShuffleCameras();
 
             bool shinyNumbers = false;
             bool spatNumbers = false;
@@ -340,13 +338,13 @@ namespace IndustrialPark.Randomizer
                 shuffled |= ShuffleRingScales(settings);
 
             if (settings.FloatingBlockChallenge && game == Game.Incredibles && ContainsAssetWithType(AssetType.PLAT))
-                shuffled |= ShuffleFloatingBlocks(random);
+                shuffled |= ShuffleFloatingBlocks();
 
             if (settings.Colors)
                 shuffled |=
                     ShufflePlaceableColors(settings.brightColors, settings.strongColors) |
                     ShufflePlaceableDynaColors(settings.brightColors, settings.strongColors) |
-                    ShuffleModelColors(settings.brightColors, settings.strongColors);
+                    ShuffleLevelModelColors(settings.brightColors, settings.strongColors);
             
             if (game == Game.BFBB && settings.PlayerCharacters && ContainsAssetWithType(AssetType.DYNA))
                 shuffled |= ShuffleBusStops();
@@ -408,7 +406,7 @@ namespace IndustrialPark.Randomizer
             var assets = (from asset in assetDictionary.Values
                           where asset.assetType == AssetType.RWTX
                           && ((hud && asset.assetName.ToLower().Contains("rw3")) || (!hud))
-                          select (AssetRWTX)asset).ToList();
+                          select (AssetWithData)asset).ToList();
             
             if (assets.Count < 2)
                 return false;
@@ -634,7 +632,7 @@ namespace IndustrialPark.Randomizer
                 }
         }
 
-        private bool ShuffleCameras(Random random)
+        private bool ShuffleCameras()
         {
             var assets = (from asset in assetDictionary.Values
                           where asset.assetType == AssetType.CAM && asset.assetName != "STARTCAM"
@@ -738,7 +736,7 @@ namespace IndustrialPark.Randomizer
             return result;
         }
 
-        private bool ShuffleFloatingBlocks(Random random)
+        private bool ShuffleFloatingBlocks()
         {
             switch (LevelName)
             {
@@ -839,11 +837,11 @@ namespace IndustrialPark.Randomizer
             return assets.Count != 0;
         }
 
-        private bool ShuffleModelColors(bool brightColors, bool strongColors)
+        private bool ShuffleLevelModelColors(bool brightColors, bool strongColors)
         {
-            List<AssetJSP> assets = (from asset in assetDictionary.Values
-                                  where new AssetType[] { AssetType.JSP, AssetType.BSP }.Contains(asset.assetType)
-                                  select (AssetJSP)asset).ToList();
+            var assets = (from asset in assetDictionary.Values
+                          where new AssetType[] { AssetType.JSP, AssetType.BSP }.Contains(asset.assetType)
+                          select (AssetWithData)asset).ToList();
 
             float max = 255f;
             bool colored = false;
@@ -1671,7 +1669,7 @@ namespace IndustrialPark.Randomizer
             return assets.Count > 0;
         }
 
-        public bool RandomizeSounds(Random random, bool mixTypes, bool scoobyBoot = false)
+        public bool RandomizeSounds(bool mixTypes, bool scoobyBoot = false)
         {
             bool result = false;
 
@@ -1985,7 +1983,7 @@ namespace IndustrialPark.Randomizer
 
         private bool MakeLevelInvisible()
         {
-            var assets = (from asset in assetDictionary.Values where asset is AssetJSP select (AssetJSP)asset).ToList();
+            var assets = (from asset in assetDictionary.Values where asset.assetType == AssetType.JSP select (AssetWithData)asset).ToList();
 
             foreach (var a in assets)
             {
@@ -2834,7 +2832,7 @@ namespace IndustrialPark.Randomizer
             return false;
         }
 
-        public bool SetWarpNames(Random random, ref List<string> warpNames, ref List<(string, string, string)> warpRandomizerOutput, HashSet<string> unique)
+        public bool SetWarpNames(ref List<string> warpNames, ref List<(string, string, string)> warpRandomizerOutput, HashSet<string> unique)
         {
             foreach (AssetPORT port in warpsRandomizer)
             {

@@ -532,15 +532,15 @@ namespace IndustrialPark
                         if (DICT.LTOC.LHDRList[GetLayerFromAssetID(AHDR.assetID)].layerType > 9)
                             return new AssetJSP_INFO(AHDR, game, endianness);
                         if (skipTexturesAndModels)
-                            return new AssetGeneric(AHDR, game, endianness);
+                            return new AssetWithData(AHDR, game, endianness);
                         return new AssetJSP(AHDR, game, endianness, Program.MainForm.renderer);
                     case AssetType.MODL:
                         if (skipTexturesAndModels)
-                            return new AssetGeneric(AHDR, game, endianness);
+                            return new AssetWithData(AHDR, game, endianness);
                         return new AssetMODL(AHDR, game, endianness, Program.MainForm.renderer);
                     case AssetType.RWTX:
                         if (skipTexturesAndModels)
-                            return new AssetGeneric(AHDR, game, endianness);
+                            return new AssetWithData(AHDR, game, endianness);
                         return new AssetRWTX(AHDR, game, endianness);
                     case AssetType.SNDI:
                         if (platform == Platform.GameCube && (game == Game.BFBB || game == Game.Scooby))

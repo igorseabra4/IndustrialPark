@@ -2,7 +2,7 @@
 
 namespace IndustrialPark
 {
-    [TypeConverter(typeof(SingleTypeConverter))]
+    [TypeConverter(typeof(AssetSingleTypeConverter))]
     public struct AssetSingle
     {
         public AssetSingle(float value)

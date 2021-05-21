@@ -344,13 +344,14 @@ namespace IndustrialPark
 
         private AssetMVPT FindMVPT(uint assetID)
         {
-            foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                if (ae.archive.ContainsAsset(assetID))
-                {
-                    Asset asset = ae.archive.GetFromAssetID(assetID);
-                    if (asset is AssetMVPT MVPT)
-                        return MVPT;
-                }
+            if (Program.MainForm != null && assetID != 0)
+                foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
+                    if (ae.archive.ContainsAsset(assetID))
+                    {
+                        Asset asset = ae.archive.GetFromAssetID(assetID);
+                        if (asset is AssetMVPT MVPT)
+                            return MVPT;
+                    }
             return null;
         }
 

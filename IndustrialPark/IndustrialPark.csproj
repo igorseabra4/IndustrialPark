@@ -290,6 +290,7 @@
     <Compile Include="Assets\Shared\AssetSpecifics\PlatSpecific.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\CamSpecific.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\FlagField.cs" />
+    <Compile Include="Assets\Shared\TypeConverter\SingleTypeConverter.cs" />
     <Compile Include="Links\Enums\EventBFBB.cs" />
     <Compile Include="Assets\Shared\Enums\PlatType.cs" />
     <Compile Include="Assets\Shared\Interfaces\IRotatableAsset.cs" />
@@ -430,7 +431,7 @@
     <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectTaxi.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectTextBox.cs" />
     <Compile Include="Assets\Shared\Asset.cs" />
-    <Compile Include="Assets\Shared\TypeConverter\SingleTypeConverter.cs" />
+    <Compile Include="Assets\Shared\TypeConverter\AssetSingleTypeConverter.cs" />
     <Compile Include="Assets\Shared\TypeConverter\HexByteTypeConverter.cs" />
     <Compile Include="Assets\Shared\TypeConverter\HexUShortTypeConverter.cs" />
     <Compile Include="Assets\Shared\Interfaces\IClickableAsset.cs" />
