@@ -449,7 +449,7 @@ namespace IndustrialPark
             }
         }
 
-        public void RenderPipt(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset, bool[] atomicFlags, Dictionary<int, (SharpDX.Direct3D11.BlendOption, SharpDX.Direct3D11.BlendOption)> blendModes)
+        public void RenderPipt(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset, bool[] atomicFlags, Dictionary<uint, (SharpDX.Direct3D11.BlendOption, SharpDX.Direct3D11.BlendOption)> blendModes)
         {
             renderData.worldViewProjection = world * renderer.viewProjection;
             renderData.Color = color;
@@ -464,10 +464,10 @@ namespace IndustrialPark
                 if (meshList[i] == null || (dontDrawInvisible && atomicFlags[i]))
                     continue;
 
-                if (blendModes.ContainsKey(i))
-                    renderer.device.SetBlend(BlendOperation.Add, blendModes[i].Item1, blendModes[i].Item2);
-                else if (blendModes.ContainsKey(-1))
-                    renderer.device.SetBlend(BlendOperation.Add, blendModes[-1].Item1, blendModes[-1].Item2);
+                if (blendModes.ContainsKey((uint)i))
+                    renderer.device.SetBlend(BlendOperation.Add, blendModes[(uint)i].Item1, blendModes[(uint)i].Item2);
+                else if (blendModes.ContainsKey(uint.MaxValue))
+                    renderer.device.SetBlend(BlendOperation.Add, blendModes[uint.MaxValue].Item1, blendModes[uint.MaxValue].Item2);
                 else
                     renderer.device.SetDefaultBlendState();
 

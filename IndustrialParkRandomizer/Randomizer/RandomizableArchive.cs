@@ -386,6 +386,8 @@ namespace IndustrialPark.Randomizer
             if (dynaTeleportAssetIDs.Count == 0)
                 return false;
 
+            AssetDPAT dispatcher = (AssetDPAT)PlaceTemplate(new Vector3(), layerIndex, "IP_TELEBOX", AssetTemplate.Dispatcher);
+
             var links = new List<Link>();
             foreach (uint u in dynaTeleportAssetIDs)
                 links.Add(new Link(game)
@@ -395,7 +397,6 @@ namespace IndustrialPark.Randomizer
                     TargetAssetID = u,
                 });
 
-            AssetDPAT dispatcher = (AssetDPAT)PlaceTemplate(new Vector3(), layerIndex, ref dynaTeleportAssetIDs, "IP_TELEBOX", AssetTemplate.Dispatcher);
             dispatcher.Links = links.ToArray();
 
             return true;
@@ -1037,9 +1038,7 @@ namespace IndustrialPark.Randomizer
                     break;
                 }
 
-            List<uint> outAssetIDs = new List<uint>();
-
-            var group = (AssetGRUP)PlaceTemplate(new Vector3(), defaultLayerIndex, ref outAssetIDs, "IP_RANDO_PLAYER_GRUP", template: AssetTemplate.Group);
+            var group = (AssetGRUP)PlaceTemplate(new Vector3(), defaultLayerIndex, "IP_RANDO_PLAYER_GRUP", template: AssetTemplate.Group);
             group.ReceiveEventDelegation = Delegation.RandomItem;
             group.Links = new Link[]
             {
@@ -1051,30 +1050,30 @@ namespace IndustrialPark.Randomizer
                 }
             };
 
-            outAssetIDs = new List<uint>();
+            var outAssetIDs = new List<uint>();
             for (int i = 0; i < 3; i++)
             {
                 var timer = (AssetTIMR)PlaceTemplate(new Vector3(), defaultLayerIndex, ref outAssetIDs, "IP_RANDO_PLAYER_TIMR", template: AssetTemplate.Timer);
                 timer.Time = 0.1f;
                 timer.Links = new Link[]
                 {
-                                    new Link(game)
-                                    {
-                                        FloatParameter1 = i,
-                                        EventReceiveID = (ushort)EventBFBB.Expired,
-                                        EventSendID = (ushort)EventBFBB.SwitchPlayerCharacter,
-                                        TargetAssetID = "SPONGEBOB"
-                                    },
-                                    new Link(game)
-                                    {
-                                        EventReceiveID = (ushort)EventBFBB.Expired,
-                                        EventSendID = (ushort)EventBFBB.Reset,
-                                        TargetAssetID = timer.assetID
-                                    }
+                    new Link(game)
+                    {
+                        FloatParameter1 = i,
+                        EventReceiveID = (ushort)EventBFBB.Expired,
+                        EventSendID = (ushort)EventBFBB.SwitchPlayerCharacter,
+                        TargetAssetID = "SPONGEBOB"
+                    },
+                    new Link(game)
+                    {
+                        EventReceiveID = (ushort)EventBFBB.Expired,
+                        EventSendID = (ushort)EventBFBB.Reset,
+                        TargetAssetID = timer.assetID
+                    }
                 };
             }
 
-            List<AssetID> assetIDs = new List<AssetID>();
+            var assetIDs = new List<AssetID>();
             foreach (uint i in outAssetIDs)
                 assetIDs.Add(new AssetID(i));
             group.GroupItems = assetIDs.ToArray();
@@ -1108,7 +1107,8 @@ namespace IndustrialPark.Randomizer
 
             foreach (AssetVIL a in assets)
             {
-                VilType_BFBB prevVilType = a.VilType_BFBB;
+                if (a.VilType_BFBB == VilType_BFBB.robot_arf_bind || a.VilType_BFBB == VilType_BFBB.tubelet_bind)
+                    KillKids(a);
 
                 int viltypes_value = random.Next(0, viltypes.Count);
                 int model_value = mixModels ? random.Next(0, viltypes.Count) : viltypes_value;
@@ -1119,47 +1119,96 @@ namespace IndustrialPark.Randomizer
                     a.Model_AssetID =
                         a.VilType_BFBB == VilType_BFBB.robot_sleepytime_bind ?
                         "robot_sleepy-time_bind.MINF" :
-                        a.VilType.ToString() + ".MINF";
+                        a.VilType_BFBB.ToString() + ".MINF";
 
                 else a.Model_AssetID = models[model_value];
 
                 viltypes.RemoveAt(viltypes_value);
                 models.RemoveAt(model_value);
 
-                if (prevVilType == VilType_BFBB.robot_arf_bind || prevVilType == VilType_BFBB.tubelet_bind)
-                {
-                    List<Link> links = a.Links.ToList();
-                    for (int i = 0; i < links.Count; i++)
-                        if (links[i].EventSendID == (ushort)EventBFBB.Connect_IOwnYou && ContainsAsset(links[i].TargetAssetID) &&
-                            GetFromAssetID(links[i].TargetAssetID) is AssetVIL vil &&
-                            (vil.VilType_BFBB == VilType_BFBB.tubelet_slave_bind || vil.VilType_BFBB == VilType_BFBB.robot_arf_dog_bind))
-                        {
-                            RemoveAsset(links[i].TargetAssetID);
-                            links.RemoveAt(i);
-                            i--;
-                        }
-                    a.Links = links.ToArray();
-                }
-
                 if (a.VilType_BFBB == VilType_BFBB.robot_arf_bind || a.VilType_BFBB == VilType_BFBB.tubelet_bind)
-                {
-                    List<uint> assetIDs = new List<uint>();
-                    int layerIndex = GetLayerFromAssetID(a.assetID);
-                    Vector3 position = new Vector3(a.PositionX, a.PositionY, a.PositionZ);
-                    List<Link> links = a.Links.ToList();
-                    AssetVIL vil = (AssetVIL)PlaceTemplate(position, layerIndex, ref assetIDs,
-                        "RANDO_" + (a.VilType_BFBB == VilType_BFBB.tubelet_bind ? "TUBELET" : "ARF"),
-                       a.VilType_BFBB == VilType_BFBB.tubelet_bind ? AssetTemplate.Tubelet : AssetTemplate.Arf);
-                    links.AddRange(vil.Links);
-                    a.Links = links.ToArray();
-                    RemoveAsset(vil.assetID);
-                    foreach (uint u in assetIDs)
-                        if (ContainsAsset(u) && GetFromAssetID(u) is AssetMVPT)
-                            RemoveAsset(u);
-                }
+                    CreateKids(a);
             }
 
             return assets.Count != 0;
+        }
+
+        private void KillKids(AssetVIL vil)
+        {
+            var links = vil.Links.ToList();
+            for (int i = 0; i < links.Count; i++)
+                if (links[i].EventSendID == (ushort)EventBFBB.Connect_IOwnYou &&
+                    ContainsAsset(links[i].TargetAssetID) &&
+                    GetFromAssetID(links[i].TargetAssetID) is AssetVIL child &&
+                    (child.VilType_BFBB == VilType_BFBB.tubelet_slave_bind || child.VilType_BFBB == VilType_BFBB.robot_arf_dog_bind))
+                {
+                    RemoveAsset(links[i].TargetAssetID);
+                    links.RemoveAt(i);
+                    i--;
+                }
+            vil.Links = links.ToArray();
+        }
+
+        private void CreateKids(AssetVIL vil)
+        {
+            int layerIndex = GetLayerFromAssetID(vil.assetID);
+            var position = new Vector3(vil.PositionX, vil.PositionY, vil.PositionZ);
+            var links = new List<Link>(); // vil.Links.ToList();
+
+            if (vil.VilType_BFBB == VilType_BFBB.robot_arf_bind)
+            {
+                var dogCount = 3;
+                for (int i = 0; i < dogCount; i++)
+                {
+                    var dog = PlaceTemplate(position, layerIndex, vil.assetName + "_DOG" + i.ToString(), AssetTemplate.ArfDog);
+                    links.Add(new Link(game)
+                    {
+                        TargetAssetID = dog.assetID,
+                        EventReceiveID = (ushort)EventBFBB.ScenePrepare,
+                        EventSendID = (ushort)EventBFBB.Connect_IOwnYou
+                    });
+                    links.Add(new Link(game)
+                    {
+                        TargetAssetID = dog.assetID,
+                        EventReceiveID = (ushort)EventBFBB.NPCSetActiveOff,
+                        EventSendID = (ushort)EventBFBB.NPCSetActiveOff
+                    });
+                    links.Add(new Link(game)
+                    {
+                        TargetAssetID = dog.assetID,
+                        EventReceiveID = (ushort)EventBFBB.NPCSetActiveOn,
+                        EventSendID = (ushort)EventBFBB.NPCSetActiveOn
+                    });
+                }
+            }
+            else if (vil.VilType_BFBB == VilType_BFBB.tubelet_bind)
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    var slave = PlaceTemplate(position, layerIndex, vil.assetName + "_SLAVE" + i.ToString(), AssetTemplate.TubeletSlave);
+                    links.Add(new Link(game)
+                    {
+                        TargetAssetID = slave.assetID,
+                        EventReceiveID = (ushort)EventBFBB.ScenePrepare,
+                        EventSendID = (ushort)EventBFBB.Connect_IOwnYou
+                    });
+                    links.Add(new Link(game)
+                    {
+                        TargetAssetID = slave.assetID,
+                        EventReceiveID = (ushort)EventBFBB.NPCSetActiveOff,
+                        EventSendID = (ushort)EventBFBB.NPCSetActiveOff
+                    });
+                    links.Add(new Link(game)
+                    {
+                        TargetAssetID = slave.assetID,
+                        EventReceiveID = (ushort)EventBFBB.NPCSetActiveOn,
+                        EventSendID = (ushort)EventBFBB.NPCSetActiveOn
+                    });
+                }
+            }
+
+            links.AddRange(vil.Links);
+            vil.Links = links.ToArray();
         }
 
         private bool ShuffleBoxDynaTypes(List<EnemySupplyCrateType> chooseFrom, List<EnemySupplyCrateType> setTo)
@@ -2152,8 +2201,7 @@ namespace IndustrialPark.Randomizer
             if (LevelName == "hb01")
             {
                 int defaultLayer = GetLayerFromAssetID(new AssetID("EXIT_TO_HB05"));
-                List<uint> nothing = new List<uint>();
-                AssetPKUP spatula = (AssetPKUP)PlaceTemplate(new Vector3(8.774022f, 5.877692f, -23.492590f), defaultLayer, ref nothing, template: AssetTemplate.Spatula);
+                AssetPKUP spatula = (AssetPKUP)PlaceTemplate(new Vector3(8.774022f, 5.877692f, -23.492590f), defaultLayer, template: AssetTemplate.Spatula);
                 spatula.Links = new Link[]
                 {
                     new Link(game)
@@ -2182,8 +2230,7 @@ namespace IndustrialPark.Randomizer
                     {
                         dispatcher.EnabledOnStart = false;
                         int defaultLayer = GetLayerFromAssetID(dpat);
-                        List<uint> vs = new List<uint>();
-                        AssetTIMR timer = (AssetTIMR)PlaceTemplate(new Vector3(), defaultLayer, ref vs, template: AssetTemplate.Timer);
+                        AssetTIMR timer = (AssetTIMR)PlaceTemplate(new Vector3(), defaultLayer, template: AssetTemplate.Timer);
                         timer.Time = 1f;
                         uint boss = new AssetID("BOSS_NPC");
                         if (ContainsAsset(boss) && GetFromAssetID(boss) is AssetVIL spongebot)
@@ -2909,10 +2956,9 @@ namespace IndustrialPark.Randomizer
                     break;
                 }
 
-            List<uint> outAssetIDs = new List<uint>();
-            var dpat = PlaceTemplate(new Vector3(), defaultLayerIndex, ref outAssetIDs, musicDispAssetName, template: AssetTemplate.Dispatcher);
+            var dpat = PlaceTemplate(new Vector3(), defaultLayerIndex, musicDispAssetName, template: AssetTemplate.Dispatcher);
 
-            var group = (AssetGRUP)PlaceTemplate(new Vector3(), defaultLayerIndex, ref outAssetIDs, musicGroupAssetName, template: AssetTemplate.Group);
+            var group = (AssetGRUP)PlaceTemplate(new Vector3(), defaultLayerIndex, musicGroupAssetName, template: AssetTemplate.Group);
             group.ReceiveEventDelegation = Delegation.RandomItem;
             group.Links = new Link[]
             {
@@ -2924,7 +2970,7 @@ namespace IndustrialPark.Randomizer
                 }
             };
 
-            outAssetIDs = new List<uint>();
+            var outAssetIDs = new List<uint>();
             for (int i = 0; i < 17; i++)
             {
                 if (i == 7 || i == 14)
@@ -2933,21 +2979,21 @@ namespace IndustrialPark.Randomizer
                 var timer = (AssetTIMR)PlaceTemplate(new Vector3(), defaultLayerIndex, ref outAssetIDs, "IP_RANDO_TIMR", template: AssetTemplate.Timer);
                 timer.Time = 0.1f;
                 var links = new List<Link>()
-                            {
-                                new Link(game)
-                                {
-                                    FloatParameter1 = i,
-                                    EventReceiveID = (ushort)EventBFBB.Expired,
-                                    EventSendID = (ushort)EventBFBB.PlayMusic,
-                                    TargetAssetID = dpat.assetID
-                                },
-                                new Link(game)
-                                {
-                                    EventReceiveID = (ushort)EventBFBB.Expired,
-                                    EventSendID = (ushort)EventBFBB.Reset,
-                                    TargetAssetID = timer.assetID
-                                },
-                            };
+                {
+                    new Link(game)
+                    {
+                        FloatParameter1 = i,
+                        EventReceiveID = (ushort)EventBFBB.Expired,
+                        EventSendID = (ushort)EventBFBB.PlayMusic,
+                        TargetAssetID = dpat.assetID
+                    },
+                    new Link(game)
+                    {
+                        EventReceiveID = (ushort)EventBFBB.Expired,
+                        EventSendID = (ushort)EventBFBB.Reset,
+                        TargetAssetID = timer.assetID
+                    },
+                };
 
                 timer.Links = links.ToArray();
             }
@@ -2971,9 +3017,9 @@ namespace IndustrialPark.Randomizer
                     foreach (var t in lodtEntries)
                     {
                         t.MaxDistance *= value;
-                        t.LOD1_Distance *= value;
-                        t.LOD2_Distance *= value;
-                        t.LOD3_Distance *= value;
+                        t.LOD1_MinDistance *= value;
+                        t.LOD2_MinDistance *= value;
+                        t.LOD3_MinDistance *= value;
                     }
 
                     lodt.LODT_Entries = lodtEntries;

@@ -1,4 +1,5 @@
-﻿using HipHopFile;
+﻿using AssetEditorColors;
+using HipHopFile;
 using SharpDX;
 using System;
 using System.Collections.Generic;
@@ -119,10 +120,10 @@ namespace IndustrialPark
             get => _color.W;
             set => _color.W = value;
         }
-        [Category(categoryName + " Color"), DisplayName("Color - (A,) R, G, B")]
-        public System.Drawing.Color Color_ARGB
+        [Category(categoryName + " Color")]
+        public AssetColor Color_RBGA
         {
-            get => System.Drawing.Color.FromArgb(BitConverter.ToInt32(new byte[] { (byte)(ColorBlue * 255), (byte)(ColorGreen * 255), (byte)(ColorRed * 255), (byte)(ColorAlpha * 255) }, 0));
+            get => new AssetColor((byte)(ColorRed * 255), (byte)(ColorGreen * 255), (byte)(ColorBlue * 255), (byte)(ColorAlpha * 255));
             set
             {
                 ColorRed = value.R / 255f;
@@ -295,14 +296,8 @@ namespace IndustrialPark
                 return false;
             if (movementPreview)
                 return true;
-
-            if (AssetMODL.renderBasedOnLodt)
-            {
-                if (GetDistanceFrom(renderer.Camera.Position) < AssetLODT.MaxDistanceTo(_modelAssetID))
-                    return renderer.frustum.Intersects(ref boundingBox);
-                
+            if (AssetMODL.renderBasedOnLodt && GetDistanceFrom(renderer.Camera.Position) > AssetLODT.MaxDistanceTo(_modelAssetID))
                 return false;
-            }
 
             return renderer.frustum.Intersects(ref boundingBox);
         }

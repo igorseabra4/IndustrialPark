@@ -24,22 +24,10 @@ namespace IndustrialPark
         public AssetSingle ShadowXOffset { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle ShadowYOffset { get; set; }
-        [Category(dynaCategoryName), DisplayName("Color (R, G, B)")]
+        [Category(dynaCategoryName)]
         public AssetColor Color { get; set; }
-        [Category(dynaCategoryName), DisplayName("Color Alpha (0 - 255)")]
-        public byte ColorAlpha
-        {
-            get => Color.A;
-            set => Color.A = value;
-        }
-        [Category(dynaCategoryName), DisplayName("Color (R, G, B)")]
+        [Category(dynaCategoryName)]
         public AssetColor ShadowColor { get; set; }
-        [Category(dynaCategoryName), DisplayName("Color Alpha (0 - 255)")]
-        public byte ShadowColorAlpha
-        {
-            get => ShadowColor.A;
-            set => ShadowColor.A = value;
-        }
         [Category(dynaCategoryName)]
         public AssetByte CounterModeFlag { get; set; }
 
@@ -60,7 +48,12 @@ namespace IndustrialPark
                 ShadowColor = reader.ReadColor();
 
                 if (Version == 3)
+                {
                     CounterModeFlag = reader.ReadByte();
+                    reader.ReadByte();
+                    reader.ReadByte();
+                    reader.ReadByte();
+                }
             }
         }
 
@@ -79,7 +72,11 @@ namespace IndustrialPark
                 writer.Write(Color);
                 writer.Write(ShadowColor);
                 if (Version == 3)
+                {
                     writer.Write(CounterModeFlag);
+                    writer.Write((byte)0);
+                    writer.Write((short)0);
+                }
 
                 return writer.ToArray();
             }

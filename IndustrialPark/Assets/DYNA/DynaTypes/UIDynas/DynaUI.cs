@@ -20,14 +20,8 @@ namespace IndustrialPark
         public AssetSingle Height { get; set; }
         [Category(dynaCategoryName)]
         public FlagBitmask Flags { get; set; } = IntFlagsDescriptor();
-        [Category(dynaCategoryName), DisplayName("Color (R, G, B)")]
+        [Category(dynaCategoryName)]
         public AssetColor Color { get; set; }
-        [Category(dynaCategoryName), DisplayName("Color Alpha (0 - 255)")]
-        public byte ColorAlpha
-        {
-            get => Color.A;
-            set => Color.A = value;
-        }
         [Category(dynaCategoryName)]
         public AssetID UIMotion_Selected_AssetID { get; set; }
         [Category(dynaCategoryName)]

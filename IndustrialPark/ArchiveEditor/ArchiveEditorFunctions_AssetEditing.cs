@@ -123,7 +123,7 @@ namespace IndustrialPark
                     break;
                 case AssetType.SND:
                 case AssetType.SNDS:
-                    internalEditors.Add(new InternalSoundEditor((AssetWithData)asset, this));
+                    internalEditors.Add(new InternalSoundEditor((AssetSound)asset, this));
                     break;
                 case AssetType.TEXT:
                     internalEditors.Add(new InternalTextEditor((AssetTEXT)asset, this));
@@ -589,36 +589,36 @@ namespace IndustrialPark
                 {
                     if (TRIG.Shape != TriggerShape.Box)
                     {
-                        TRIG.Position0X *= factor.X;
-                        TRIG.Position0Y *= factor.Y;
-                        TRIG.Position0Z *= factor.Z;
+                        TRIG.MinimumX *= factor.X;
+                        TRIG.MinimumY *= factor.Y;
+                        TRIG.MinimumZ *= factor.Z;
                         TRIG.Radius *= singleFactor;
                         TRIG.Height *= singleFactor;
                     }
                     else
                     {
-                        Vector3 TrigCenter = new Vector3(TRIG.Position0X + TRIG.Radius, TRIG.Position0Y + TRIG.Position1Y, TRIG.Position0Z + TRIG.Position1Z) / 2f;
+                        Vector3 TrigCenter = new Vector3(TRIG.MinimumX + TRIG.Radius, TRIG.MinimumY + TRIG.MaximumY, TRIG.MinimumZ + TRIG.MaximumZ) / 2f;
 
-                        TRIG.Position0X -= TrigCenter.X;
-                        TRIG.Position0Y -= TrigCenter.Y;
-                        TRIG.Position0Z -= TrigCenter.Z;
-                        TRIG.Position0X -= TrigCenter.X;
-                        TRIG.Position1Y -= TrigCenter.Y;
-                        TRIG.Position1Z -= TrigCenter.Z;
+                        TRIG.MinimumX -= TrigCenter.X;
+                        TRIG.MinimumY -= TrigCenter.Y;
+                        TRIG.MinimumZ -= TrigCenter.Z;
+                        TRIG.MinimumX -= TrigCenter.X;
+                        TRIG.MaximumY -= TrigCenter.Y;
+                        TRIG.MaximumZ -= TrigCenter.Z;
 
-                        TRIG.Position0X *= factor.X;
-                        TRIG.Position0Y *= factor.Y;
-                        TRIG.Position0Z *= factor.Z;
-                        TRIG.Position0X *= factor.X;
-                        TRIG.Position1Y *= factor.Y;
-                        TRIG.Position1Z *= factor.Z;
+                        TRIG.MinimumX *= factor.X;
+                        TRIG.MinimumY *= factor.Y;
+                        TRIG.MinimumZ *= factor.Z;
+                        TRIG.MinimumX *= factor.X;
+                        TRIG.MaximumY *= factor.Y;
+                        TRIG.MaximumZ *= factor.Z;
 
-                        TRIG.Position0X += TrigCenter.X * factor.X;
-                        TRIG.Position0Y += TrigCenter.Y * factor.Y;
-                        TRIG.Position0Z += TrigCenter.Z * factor.Z;
-                        TRIG.Position0X += TrigCenter.X * factor.X;
-                        TRIG.Position1Y += TrigCenter.Y * factor.Y;
-                        TRIG.Position1Z += TrigCenter.Z * factor.Z;
+                        TRIG.MinimumX += TrigCenter.X * factor.X;
+                        TRIG.MinimumY += TrigCenter.Y * factor.Y;
+                        TRIG.MinimumZ += TrigCenter.Z * factor.Z;
+                        TRIG.MinimumX += TrigCenter.X * factor.X;
+                        TRIG.MaximumY += TrigCenter.Y * factor.Y;
+                        TRIG.MaximumZ += TrigCenter.Z * factor.Z;
                     }
 
                     TRIG.FixPosition();

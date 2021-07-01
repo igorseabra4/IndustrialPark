@@ -43,6 +43,8 @@ namespace IndustrialPark
 
     public class AssetSNDI_PS2 : Asset
     {
+        public override string AssetInfo => "PS2 SNDI";
+
         private const string categoryName = "Sound Info: GCN V1";
 
         [Category(categoryName)]

@@ -79,6 +79,8 @@ namespace IndustrialPark
 
     public class AssetSNDI_XBOX : Asset
     {
+        public override string AssetInfo => "Xbox SNDI";
+
         private const string categoryName = "Sound Info: Xbox";
 
         [Category(categoryName)]

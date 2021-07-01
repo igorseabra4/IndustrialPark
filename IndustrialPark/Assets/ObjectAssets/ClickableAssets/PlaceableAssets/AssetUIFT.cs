@@ -22,22 +22,10 @@ namespace IndustrialPark
         public FontEnum FontID { get; set; }
         [Category(categoryName)]
         public AssetID TextAssetID { get; set; }
-        [Category(categoryName), DisplayName("Background Color (R, G, B)")]
+        [Category(categoryName)]
         public AssetColor BackgroundColor { get; set; }
-        [Category(categoryName), DisplayName("Background Color Alpha (0 - 255)")]
-        public byte BackgroundColorAlpha
-        {
-            get => BackgroundColor.A;
-            set => BackgroundColor.A = value;
-        }
-        [Category(categoryName), DisplayName("Font Color (R, G, B)")]
+        [Category(categoryName)]
         public AssetColor FontColor { get; set; }
-        [Category(categoryName), DisplayName("Font Color Alpha (0 - 255)")]
-        public byte FontColorAlpha
-        {
-            get => BackgroundColor.A;
-            set => BackgroundColor.A = value;
-        }
         [Category(categoryName)]
         public short Padding_Top { get; set; }
         [Category(categoryName)]

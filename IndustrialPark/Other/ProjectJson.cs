@@ -49,6 +49,7 @@ namespace IndustrialPark
         public bool dontRenderLITE;
         public bool dontRenderMRKR;
         public bool dontRenderMVPT;
+        public bool dontRenderNPC;
         public bool dontRenderPEND;
         public bool dontRenderPKUP;
         public bool dontRenderPLAT;
@@ -61,7 +62,8 @@ namespace IndustrialPark
         public bool dontRenderUI;
         public bool dontRenderUIFT;
         public bool dontRenderVIL;
-        
+        public bool dontRenderVOLU;
+
         public ProjectJson()
         {
             version = getCurrentVersion;
@@ -106,6 +108,7 @@ namespace IndustrialPark
             dontRenderLITE = false;
             dontRenderMRKR = false;
             dontRenderMVPT = false;
+            dontRenderNPC = false;
             dontRenderPEND = false;
             dontRenderPKUP = false;
             dontRenderPLAT = false;
@@ -118,6 +121,7 @@ namespace IndustrialPark
             dontRenderUI = true;
             dontRenderUIFT = true;
             dontRenderVIL = false;
+            dontRenderVOLU = false;
         }
     }
 }

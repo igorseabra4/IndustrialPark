@@ -34,16 +34,16 @@ namespace IndustrialPark
             RemoveFromNameDictionary(Functions.BKDRHash(newName));
         }
 
-        private Dictionary<int, (BlendOption, BlendOption)> blendModes;
+        private Dictionary<uint, (BlendOption, BlendOption)> blendModes;
         public bool SpecialBlendMode { get; private set; }
 
-        public void SetBlendModes((int, BlendFactorType, BlendFactorType)[] sourceDest)
+        public void SetBlendModes((uint, BlendFactorType, BlendFactorType)[] sourceDest)
         {
-            blendModes = new Dictionary<int, (BlendOption, BlendOption)>();
+            blendModes = new Dictionary<uint, (BlendOption, BlendOption)>();
             SpecialBlendMode = false;
             foreach (var f in sourceDest)
             {
-                blendModes[f.Item1 == -1 ? -1 : (int)(Math.Log(f.Item1, 2) - 1)] = (GetSharpBlendMode(f.Item2, true), GetSharpBlendMode(f.Item3, false));
+                blendModes[f.Item1 == 0xFFFFFFFF ? 0xFFFFFFFF : (uint)(Math.Log(f.Item1, 2) - 1)] = (GetSharpBlendMode(f.Item2, true), GetSharpBlendMode(f.Item3, false));
                 SpecialBlendMode |= f.Item2 != BlendFactorType.None || f.Item3 != BlendFactorType.None;
             }
         }

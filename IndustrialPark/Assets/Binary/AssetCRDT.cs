@@ -9,14 +9,7 @@ namespace IndustrialPark
     public class StyleStyleEntry : GenericAssetDataContainer
     {
         public int Unknown_00_1 { get; set; }
-        [DisplayName("Color (R, G, B)")]
         public AssetColor Color { get; set; }
-        [DisplayName("Color Alpha (0 - 255)")]
-        public byte ColorAlpha
-        {
-            get => Color.A;
-            set => Color.A = value;
-        }
         public AssetSingle CharWidth { get; set; }
         public AssetSingle CharHeight { get; set; }
         public AssetSingle Unknown1 { get; set; }
@@ -141,10 +134,9 @@ namespace IndustrialPark
 
                 foreach (byte c in System.Text.Encoding.GetEncoding(AssetTEXT.Codepage).GetBytes(Text))
                     writer.Write(c);
-                writer.Write((byte)0);
 
-                while (writer.BaseStream.Length % 4 != 0)
-                    writer.Write((byte)0);
+                do writer.Write((byte)0);
+                while (writer.BaseStream.Length % 4 != 0);
 
                 writer.BaseStream.Position = 0;
                 writer.Write((int)writer.BaseStream.Length);

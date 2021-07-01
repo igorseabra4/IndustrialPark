@@ -14,78 +14,78 @@ namespace IndustrialPark
 
     public class xOneLiner : GenericAssetDataContainer
     {
-        public AssetID m_soundGroupNameHash { get; set; }
-        public AssetSingle m_fSoundStartDelay { get; set; }
-        public AssetSingle m_fTimeSpan { get; set; }
-        public AssetSingle m_fTimeLastPlayed { get; set; }
-        public uint m_uNumPlays { get; set; }
-        public AssetSingle m_fDelayBetweenPlays { get; set; }
-        public AssetSingle m_fProbability { get; set; }
-        public AssetSingle m_fDefaultDuration { get; set; }
-        public AssetSingle m_fLastDuration { get; set; }
-        public uint m_uMaxPlays { get; set; }
-        public int m_soundGroupHandle { get; set; }
-        public int m_pOLManager { get; set; }
-        public short m_eventType { get; set; }
-        public short m_bPlaysInMusicChannel { get; set; }
-        public AssetID m_pData { get; set; }
-        public ePlayerType m_playerType { get; set; }
-        public int m_testerDataFirstParam { get; set; }
-        public AssetSingle m_testerDataSecondParam { get; set; }
+        public AssetID SoundGroupNameHash { get; set; }
+        public AssetSingle SoundStartDelay { get; set; }
+        public AssetSingle TimeSpan { get; set; }
+        public AssetSingle TimeLastPlayed { get; set; }
+        public uint NumPlays { get; set; }
+        public AssetSingle DelayBetweenPlays { get; set; }
+        public AssetSingle Probability { get; set; }
+        public AssetSingle DefaultDuration { get; set; }
+        public AssetSingle LastDuration { get; set; }
+        public uint MaxPlays { get; set; }
+        public int SoundGroupHandle { get; set; }
+        public AssetID OLManager { get; set; }
+        public short EventType { get; set; }
+        public short PlaysInMusicChannel { get; set; }
+        public AssetID pData { get; set; }
+        public ePlayerType PlayerType { get; set; }
+        public int TesterDataFirstParam { get; set; }
+        public AssetSingle TesterDataSecondParam { get; set; }
 
         public xOneLiner() { }
         public xOneLiner(EndianBinaryReader reader)
         {
-            m_soundGroupNameHash = reader.ReadUInt32();
-            m_fSoundStartDelay = reader.ReadSingle();
-            m_fTimeSpan = reader.ReadSingle();
-            m_fTimeLastPlayed = reader.ReadSingle();
-            m_uNumPlays = reader.ReadUInt32();
-            m_fDelayBetweenPlays = reader.ReadSingle();
-            m_fProbability = reader.ReadSingle();
-            m_fDefaultDuration = reader.ReadSingle();
-            m_fLastDuration = reader.ReadSingle();
-            m_uMaxPlays = reader.ReadUInt32();
-            m_soundGroupHandle = reader.ReadInt32();
-            m_pOLManager = reader.ReadInt32();
-            m_eventType = reader.ReadInt16();
-            m_bPlaysInMusicChannel = reader.ReadInt16();
-            m_pData = reader.ReadUInt32();
-            m_playerType = (ePlayerType)reader.ReadInt32();
-            m_testerDataFirstParam = reader.ReadInt32();
-            m_testerDataSecondParam = reader.ReadSingle();
+            SoundGroupNameHash = reader.ReadUInt32();
+            SoundStartDelay = reader.ReadSingle();
+            TimeSpan = reader.ReadSingle();
+            TimeLastPlayed = reader.ReadSingle();
+            NumPlays = reader.ReadUInt32();
+            DelayBetweenPlays = reader.ReadSingle();
+            Probability = reader.ReadSingle();
+            DefaultDuration = reader.ReadSingle();
+            LastDuration = reader.ReadSingle();
+            MaxPlays = reader.ReadUInt32();
+            SoundGroupHandle = reader.ReadInt32();
+            OLManager = reader.ReadUInt32();
+            EventType = reader.ReadInt16();
+            PlaysInMusicChannel = reader.ReadInt16();
+            pData = reader.ReadUInt32();
+            PlayerType = (ePlayerType)reader.ReadInt32();
+            TesterDataFirstParam = reader.ReadInt32();
+            TesterDataSecondParam = reader.ReadSingle();
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(m_soundGroupNameHash);
-                writer.Write(m_fSoundStartDelay);
-                writer.Write(m_fTimeSpan);
-                writer.Write(m_fTimeLastPlayed);
-                writer.Write(m_uNumPlays);
-                writer.Write(m_fDelayBetweenPlays);
-                writer.Write(m_fProbability);
-                writer.Write(m_fDefaultDuration);
-                writer.Write(m_fLastDuration);
-                writer.Write(m_uMaxPlays);
-                writer.Write(m_soundGroupHandle);
-                writer.Write(m_pOLManager);
-                writer.Write(m_eventType);
-                writer.Write(m_bPlaysInMusicChannel);
-                writer.Write(m_pData);
-                writer.Write((int)m_playerType);
-                writer.Write(m_testerDataFirstParam);
-                writer.Write(m_testerDataSecondParam);
+                writer.Write(SoundGroupNameHash);
+                writer.Write(SoundStartDelay);
+                writer.Write(TimeSpan);
+                writer.Write(TimeLastPlayed);
+                writer.Write(NumPlays);
+                writer.Write(DelayBetweenPlays);
+                writer.Write(Probability);
+                writer.Write(DefaultDuration);
+                writer.Write(LastDuration);
+                writer.Write(MaxPlays);
+                writer.Write(SoundGroupHandle);
+                writer.Write(OLManager);
+                writer.Write(EventType);
+                writer.Write(PlaysInMusicChannel);
+                writer.Write(pData);
+                writer.Write((int)PlayerType);
+                writer.Write(TesterDataFirstParam);
+                writer.Write(TesterDataSecondParam);
 
                 return writer.ToArray();
             }
         }
 
         public override bool HasReference(uint assetID) =>
-            m_soundGroupNameHash == assetID ||
-            m_pData == assetID;
+            SoundGroupNameHash == assetID ||
+            pData == assetID;
     }
 
     public class AssetONEL : Asset
@@ -99,9 +99,8 @@ namespace IndustrialPark
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-
-                int numStates = reader.ReadInt32();
-                OneLiners = new xOneLiner[numStates];
+                int num = reader.ReadInt32();
+                OneLiners = new xOneLiner[num];
                 for (int i = 0; i < OneLiners.Length; i++)
                     OneLiners[i] = new xOneLiner(reader);
                 reader.ReadBytes(unkByteCount);
@@ -112,7 +111,6 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-
                 writer.Write(OneLiners.Length);
                 foreach (var state in OneLiners)
                     writer.Write(state.Serialize(game, endianness));
@@ -127,7 +125,6 @@ namespace IndustrialPark
             foreach (var s in OneLiners)
                 if (s.HasReference(assetID))
                     return true;
-
             return false;
         }
     }

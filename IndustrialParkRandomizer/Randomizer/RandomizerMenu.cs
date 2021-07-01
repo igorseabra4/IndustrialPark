@@ -162,7 +162,7 @@ namespace IndustrialPark.Randomizer
                 
         private void buttonPerform_Click(object sender, EventArgs e)
         {
-            ProgressBar progressBar = new ProgressBar("Randomizing...", "Step");
+            ProgressBar progressBar = new ProgressBar("Randomizing...");
             progressBar.Show();
 
             Enabled = false;

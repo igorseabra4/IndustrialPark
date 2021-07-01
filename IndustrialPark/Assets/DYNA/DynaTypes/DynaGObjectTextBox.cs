@@ -31,14 +31,8 @@ namespace IndustrialPark
         public AssetSingle CharSpacingX { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle CharSpacingY { get; set; }
-        [Category(dynaCategoryName), DisplayName("Color (R, G, B)")]
+        [Category(dynaCategoryName)]
         public AssetColor Color { get; set; }
-        [Category(dynaCategoryName), DisplayName("Color Alpha (0 - 255)")]
-        public byte ColorAlpha
-        {
-            get => Color.A;
-            set => Color.A = value;
-        }
         [Category(dynaCategoryName)]
         public AssetSingle LeftMargin { get; set; }
         [Category(dynaCategoryName)]
@@ -57,16 +51,11 @@ namespace IndustrialPark
         public AssetSingle MaxHeight { get; set; }
         [Category(dynaCategoryName)]
         public int BackgroundMode { get; set; }
-        [Category(dynaCategoryName), DisplayName("Backdrop Color (R, G, B)")]
+        [Category(dynaCategoryName)]
         public AssetColor BackdropColor { get; set; }
-        [Category(dynaCategoryName), DisplayName("Backdrop Color Alpha (0 - 255)")]
-        public byte BackdropColorAlpha
-        {
-            get => BackdropColor.A;
-            set => BackdropColor.A = value;
-        }
         [Category(dynaCategoryName)]
         public AssetID BackgroundTextureID { get; set; }
+
         [Category(dynaCategoryName), Description("Only in version 3")]
         public AssetSingle BackgroundBorderU { get; set; }
         [Category(dynaCategoryName), Description("Only in version 3")]
@@ -75,14 +64,8 @@ namespace IndustrialPark
         public AssetSingle BackgroundBorderWidth { get; set; }
         [Category(dynaCategoryName), Description("Only in version 3")]
         public AssetSingle BackgroundBorderHeight { get; set; }
-        [Category(dynaCategoryName), DisplayName("Shadow Color (R, G, B)"), Description("Only in version 3")]
+        [Category(dynaCategoryName), Description("Only in version 3")]
         public AssetColor ShadowColor { get; set; }
-        [Category(dynaCategoryName), DisplayName("Shadow Color Alpha (0 - 255)"), Description("Only in version 3")]
-        public byte ShadowColorAlpha
-        {
-            get => ShadowColor.A;
-            set => ShadowColor.A = value;
-        }
         [Category(dynaCategoryName), Description("Only in version 3")]
         public AssetSingle ShadowOffsetX { get; set; }
         [Category(dynaCategoryName), Description("Only in version 3")]
@@ -127,6 +110,7 @@ namespace IndustrialPark
                     ShadowOffsetX = reader.ReadSingle();
                     ShadowOffsetY = reader.ReadSingle();
                 }
+                else ShadowColor = new AssetColor();
             }
         }
 

@@ -9,22 +9,10 @@ namespace IndustrialPark
     {
         private const string categoryName = "Fog";
 
-        [Category(categoryName), DisplayName("End Color (R, G, B)")]
-        public AssetColor BackgroundColor { get; set; }
-        [Category(categoryName), DisplayName("End Color Alpha (0 - 255)")]
-        public byte BackgroundColorAlpha
-        {
-            get => BackgroundColor.A;
-            set => BackgroundColor.A = value;
-        }
-        [Category(categoryName), DisplayName("Start Color (R, G, B)")]
-        public AssetColor FogColor { get; set; }
-        [Category(categoryName), DisplayName("Start Color Alpha (0 - 255)")]
-        public byte FogColorAlpha
-        {
-            get => FogColor.A;
-            set => FogColor.A = value;
-        }
+        [Category(categoryName)]
+        public AssetColor StartColor { get; set; }
+        [Category(categoryName)]
+        public AssetColor EndColor { get; set; }
         [Category(categoryName)]
         public AssetSingle FogDensity { get; set; }
         [Category(categoryName)]
@@ -38,9 +26,8 @@ namespace IndustrialPark
 
         public AssetFOG(string assetName) : base(assetName, AssetType.FOG, BaseAssetType.Fog)
         {
-            BackgroundColor = new AssetColor();
-            FogColor = new AssetColor();
-            FogColorAlpha = 255;
+            EndColor = new AssetColor();
+            StartColor = new AssetColor();
             FogDensity = 1;
             StartDistance = 100;
             EndDistance = 400;
@@ -52,8 +39,8 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = baseHeaderEndPosition;
 
-                BackgroundColor = reader.ReadColor();
-                FogColor = reader.ReadColor();
+                EndColor = reader.ReadColor();
+                StartColor = reader.ReadColor();
                 FogDensity = reader.ReadSingle();
                 StartDistance = reader.ReadSingle();
                 EndDistance = reader.ReadSingle();
@@ -68,8 +55,8 @@ namespace IndustrialPark
             {
                 writer.Write(SerializeBase(endianness));
 
-                writer.Write(BackgroundColor);
-                writer.Write(FogColor);
+                writer.Write(EndColor);
+                writer.Write(StartColor);
                 writer.Write(FogDensity);
                 writer.Write(StartDistance);
                 writer.Write(EndDistance);

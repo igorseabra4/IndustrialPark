@@ -37,5 +37,20 @@ namespace AssetEditorColors
 
             return value;
         }
+
+        public override bool GetPaintValueSupported(ITypeDescriptorContext context)
+        {
+            return true;
+        }
+
+        public override void PaintValue(PaintValueEventArgs e)
+        {
+            if (e.Value is AssetColor)
+            {
+                var b = new SolidBrush(Color.FromArgb(((AssetColor)e.Value).GetARGB()));
+                e.Graphics.FillRectangle(b, e.Bounds);
+                b.Dispose();
+            }
+        }
     }
 }

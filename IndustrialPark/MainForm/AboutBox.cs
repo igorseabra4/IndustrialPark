@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -85,7 +87,7 @@ namespace IndustrialPark
             System.Diagnostics.Process.Start(WikiLink);
         }
 
-        public static string WikiLink => "https://battlepedia.org/";
+        public static string WikiLink => "https://heavyironmodding.org/wiki/";
 
         private void button3_Click(object sender, EventArgs e)
         {
@@ -102,23 +104,22 @@ namespace IndustrialPark
             SetRandomImage();
         }
 
+        private int num = -1;
+        private readonly Random random = new Random();
+
         private void SetRandomImage()
         {
-            switch (new Random((int)DateTime.UtcNow.ToBinary()).Next(0, 6))
-            {
-                case 1:
-                    logoPictureBox.Image = System.Drawing.Image.FromFile(Application.StartupPath + "/Resources/AboutImage1.png");
-                    break;
-                case 2:
-                    logoPictureBox.Image = System.Drawing.Image.FromFile(Application.StartupPath + "/Resources/AboutImage2.png");
-                    break;
-                case 3:
-                    logoPictureBox.Image = System.Drawing.Image.FromFile(Application.StartupPath + "/Resources/AboutImage3.png");
-                    break;
-                default:
-                    logoPictureBox.Image = System.Drawing.Image.FromFile(Application.StartupPath + "/Resources/AboutImage0.png");
-                    break;
-            }
+            var images = (from fileName in Directory.GetFiles(Application.StartupPath + "/Resources/")
+                          where Path.GetFileName(fileName).StartsWith("AboutImage") select fileName).ToArray();
+
+            int newNum;
+
+            do newNum = random.Next(0, images.Length);
+            while (newNum == num);
+
+            num = newNum;
+
+            logoPictureBox.Image = System.Drawing.Image.FromFile(images[num]);
         }
     }
 }

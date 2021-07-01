@@ -312,9 +312,9 @@ namespace IndustrialPark
                 trig.PositionY = Position.Y;
                 trig.PositionZ = Position.Z;
 
-                trig.Position0X = Position.X;
-                trig.Position0Y = Position.Y;
-                trig.Position0Z = Position.Z;
+                trig.MinimumX = Position.X;
+                trig.MinimumY = Position.Y;
+                trig.MinimumZ = Position.Z;
             }
             else if (GetFromAssetID(assetID) is AssetCAM cam)
             {
@@ -377,18 +377,18 @@ namespace IndustrialPark
                             if (trig.Shape == TriggerShape.Box)
                             {
                                 trig.SetPositions(
-                                    trig.Position0X + delta.X,
-                                    trig.Position0Y + delta.Y,
-                                    trig.Position0Z + delta.Z,
-                                    trig.Position1X + delta.X,
-                                    trig.Position1Y + delta.Y,
-                                    trig.Position1Z + delta.Z);
+                                    trig.MinimumX + delta.X,
+                                    trig.MinimumY + delta.Y,
+                                    trig.MinimumZ + delta.Z,
+                                    trig.MaximumX + delta.X,
+                                    trig.MaximumY + delta.Y,
+                                    trig.MaximumZ + delta.Z);
                             }
                             else
                             {
-                                trig.Position0X = position.X;
-                                trig.Position0Y = position.Y;
-                                trig.Position0Z = position.Z;
+                                trig.MinimumX = position.X;
+                                trig.MinimumY = position.Y;
+                                trig.MinimumZ = position.Z;
                             }
                         }
                     }
@@ -765,10 +765,8 @@ namespace IndustrialPark
                     else asset = null;
                     break;
                 case AssetTemplate.EmptySND:
-                    asset = new AssetWithData(assetName, AssetType.SND, new byte[0]);
-                    break;
                 case AssetTemplate.EmptySNDS:
-                    asset = new AssetWithData(assetName, AssetType.SNDS, new byte[0]);
+                    asset = new AssetSound(assetName, template == AssetTemplate.EmptySND ? AssetType.SND : AssetType.SNDS, game, platform, new byte[0]);
                     break;
                 case AssetTemplate.EmptyBSP:
                     asset = new AssetJSP(assetName, AssetType.BSP, GenerateBlankBSP(), standalone ? Program.MainForm.renderer : null);

@@ -4,7 +4,7 @@ using System.Drawing.Design;
 
 namespace AssetEditorColors
 {
-    [TypeConverter(typeof(AssetColorConverter)), Editor(typeof(AssetColorEditor), typeof(UITypeEditor))]
+    [TypeConverter(typeof(AssetColorConverter)), Editor(typeof(AssetColorEditor), typeof(UITypeEditor)), Description("Hex Color (RRGGBBAA)")]
     public class AssetColor
     {
         public byte R { get; set; }

@@ -211,8 +211,6 @@ namespace IndustrialPark.Randomizer
 
                     if (!FileInSecondBox(hipPath))
                         levelPathPairs.Add((hipPath, hopPath));
-
-                    progressBar.PerformStep();
                 }
                 else
                 {
@@ -220,9 +218,9 @@ namespace IndustrialPark.Randomizer
 
                     if (!FileInSecondBox(hipPath))
                         levelPathPairs.Add((hipPath, null));
-
-                    progressBar.PerformStep();
                 }
+
+                progressBar.PerformStep();
 
                 string nameForBoot = Path.GetFileNameWithoutExtension(hipPath).ToUpper();
                 if (settings.bootLevelMode == BootLevelMode.Random && !namesForBoot.Contains(nameForBoot))
@@ -355,11 +353,9 @@ namespace IndustrialPark.Randomizer
                         item2shuffled = levelPairs[0].Item2.UnimportCharacters();
 
                     item2shuffled |= levelPairs[0].Item2.Randomize(settings, out _);
-
-                    progressBar.PerformStep();
                 }
-                else
-                    progressBar.PerformStep();
+
+                progressBar.PerformStep();
 
                 levelPairs[0].Item1.CollapseLayers();
                 if (levelPairs[0].Item2 != null)

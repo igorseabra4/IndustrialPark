@@ -11,7 +11,8 @@ namespace IndustrialPark
         public Game game;
         public Endianness endianness;
 
-        public uint assetID;
+        [Browsable(false)]
+        public uint assetID { get; set; }
         public string assetName;
         public string assetFileName;
         public AssetType assetType;

@@ -9,17 +9,17 @@ namespace IndustrialPark
         private const string catName = "Gust";
 
         [Category(catName)]
-        public int UnknownInt08 { get; set; }
+        public FlagBitmask GustFlags { get; set; } = IntFlagsDescriptor("Start on", "No leaves");
         [Category(catName)]
         public AssetID Volume_AssetID { get; set; }
         [Category(catName)]
         public int UnknownInt10 { get; set; }
         [Category(catName)]
-        public int UnknownInt14 { get; set; }
+        public AssetSingle StrengthX { get; set; }
         [Category(catName)]
-        public AssetSingle UnknownFloat18 { get; set; }
+        public AssetSingle StrengthY { get; set; }
         [Category(catName)]
-        public int UnknownInt1C { get; set; }
+        public AssetSingle StrengthZ { get; set; }
         [Category(catName)]
         public AssetSingle UnknownFloat20 { get; set; }
         [Category(catName)]
@@ -31,12 +31,12 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = baseHeaderEndPosition;
 
-                UnknownInt08 = reader.ReadInt32();
+                GustFlags.FlagValueInt = reader.ReadUInt32();
                 Volume_AssetID = reader.ReadUInt32();
                 UnknownInt10 = reader.ReadInt32();
-                UnknownInt14 = reader.ReadInt32();
-                UnknownFloat18 = reader.ReadSingle();
-                UnknownInt1C = reader.ReadInt32();
+                StrengthX = reader.ReadSingle();
+                StrengthY = reader.ReadSingle();
+                StrengthZ = reader.ReadSingle();
                 UnknownFloat20 = reader.ReadSingle();
                 UnknownFloat24 = reader.ReadSingle();
             }
@@ -47,12 +47,12 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeBase(endianness));
-                writer.Write(UnknownInt08);
+                writer.Write(GustFlags.FlagValueInt);
                 writer.Write(Volume_AssetID);
                 writer.Write(UnknownInt10);
-                writer.Write(UnknownInt14);
-                writer.Write(UnknownFloat18);
-                writer.Write(UnknownInt1C);
+                writer.Write(StrengthX);
+                writer.Write(StrengthY);
+                writer.Write(StrengthZ);
                 writer.Write(UnknownFloat20);
                 writer.Write(UnknownFloat24);
                 writer.Write(SerializeLinks(endianness));

@@ -138,13 +138,8 @@ namespace IndustrialPark
                 return false;
             if (isInvisible)
                 return false;
-
-            if (AssetMODL.renderBasedOnLodt)
-            {
-                if (GetDistanceFrom(renderer.Camera.Position) < SharpRenderer.DefaultLODTDistance)
-                    return renderer.frustum.Intersects(ref boundingBox);
+            if (AssetMODL.renderBasedOnLodt && GetDistanceFrom(renderer.Camera.Position) > SharpRenderer.DefaultLODTDistance)
                 return false;
-            }
 
             return renderer.frustum.Intersects(ref boundingBox);
         }

@@ -36,38 +36,14 @@ namespace IndustrialPark
         public byte addreasMoveU { get; set; }
         [Category(dynaCategoryName)]
         public byte addreasMoveV { get; set; }
-        [Category(dynaCategoryName), DisplayName("Color 1 (R, G, B)")]
+        [Category(dynaCategoryName)]
         public AssetColor Color1 { get; set; }
-        [Category(dynaCategoryName), DisplayName("Color 1 Alpha (0 - 255)")]
-        public byte Color1Alpha
-        {
-            get => Color1.A;
-            set => Color1.A = value;
-        }
-        [Category(dynaCategoryName), DisplayName("Color 2 (R, G, B)")]
+        [Category(dynaCategoryName)]
         public AssetColor Color2 { get; set; }
-        [Category(dynaCategoryName), DisplayName("Color 2 Alpha (0 - 255)")]
-        public byte Color2Alpha
-        {
-            get => Color2.A;
-            set => Color2.A = value;
-        }
-        [Category(dynaCategoryName), DisplayName("Color 3 (R, G, B)")]
+        [Category(dynaCategoryName)]
         public AssetColor Color3 { get; set; }
-        [Category(dynaCategoryName), DisplayName("Color 3 Alpha (0 - 255)")]
-        public byte Color3Alpha
-        {
-            get => Color3.A;
-            set => Color3.A = value;
-        }
-        [Category(dynaCategoryName), DisplayName("Color 4 (R, G, B)")]
+        [Category(dynaCategoryName)]
         public AssetColor Color4 { get; set; }
-        [Category(dynaCategoryName), DisplayName("Color 4 Alpha (0 - 255)")]
-        public byte Color4Alpha
-        {
-            get => Color4.A;
-            set => Color4.A = value;
-        }
 
         [Category(dynaCategoryName), Description("This unusual field is present in Incredibles, but not Movie.")]
         public int Unknown { get; set; }

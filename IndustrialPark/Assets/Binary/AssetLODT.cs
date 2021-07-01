@@ -7,28 +7,28 @@ namespace IndustrialPark
 {
     public class EntryLODT
     {
-        public AssetID ModelAssetID { get; set; }
+        public AssetID BaseModelAssetID { get; set; }
         public AssetSingle MaxDistance { get; set; }
         public AssetID LOD1_Model { get; set; }
-        public AssetSingle LOD1_Distance { get; set; }
+        public AssetSingle LOD1_MinDistance { get; set; }
         public AssetID LOD2_Model { get; set; }
-        public AssetSingle LOD2_Distance { get; set; }
+        public AssetSingle LOD2_MinDistance { get; set; }
         public AssetID LOD3_Model { get; set; }
-        public AssetSingle LOD3_Distance { get; set; }
+        public AssetSingle LOD3_MinDistance { get; set; }
         [Description("Incredibles only")]
         public AssetSingle Unknown { get; set; }
 
         public EntryLODT() { }
         public EntryLODT(EndianBinaryReader reader, Game game)
         {
-            ModelAssetID = reader.ReadUInt32();
+            BaseModelAssetID = reader.ReadUInt32();
             MaxDistance = reader.ReadSingle();
             LOD1_Model = reader.ReadUInt32();
-            LOD1_Distance = reader.ReadSingle();
             LOD2_Model = reader.ReadUInt32();
-            LOD2_Distance = reader.ReadSingle();
             LOD3_Model = reader.ReadUInt32();
-            LOD3_Distance = reader.ReadSingle();
+            LOD1_MinDistance = reader.ReadSingle();
+            LOD2_MinDistance = reader.ReadSingle();
+            LOD3_MinDistance = reader.ReadSingle();
 
             if (game == Game.Incredibles)
                 Unknown = reader.ReadSingle();
@@ -38,14 +38,14 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(ModelAssetID);
+                writer.Write(BaseModelAssetID);
                 writer.Write(MaxDistance);
                 writer.Write(LOD1_Model);
-                writer.Write(LOD1_Distance);
                 writer.Write(LOD2_Model);
-                writer.Write(LOD2_Distance);
                 writer.Write(LOD3_Model);
-                writer.Write(LOD3_Distance);
+                writer.Write(LOD1_MinDistance);
+                writer.Write(LOD2_MinDistance);
+                writer.Write(LOD3_MinDistance);
 
                 if (game == Game.Incredibles)
                     writer.Write(Unknown);
@@ -56,19 +56,19 @@ namespace IndustrialPark
 
         public override string ToString()
         {
-            return $"[{Program.MainForm.GetAssetNameFromID(ModelAssetID)}] - {MaxDistance}";
+            return $"[{Program.MainForm.GetAssetNameFromID(BaseModelAssetID)}] - {MaxDistance}";
         }
 
         public override bool Equals(object obj)
         {
             if (obj != null && obj is EntryLODT entry)
-                return ModelAssetID.Equals(entry.ModelAssetID);
+                return BaseModelAssetID.Equals(entry.BaseModelAssetID);
             return false;
         }
 
         public override int GetHashCode()
         {
-            return ModelAssetID.GetHashCode();
+            return BaseModelAssetID.GetHashCode();
         }
     }
 
@@ -76,8 +76,7 @@ namespace IndustrialPark
     {
         private static Dictionary<uint, float> maxDistances = new Dictionary<uint, float>();
 
-        public static float MaxDistanceTo(uint _modelAssetID) => maxDistances.ContainsKey(_modelAssetID) ?
-            maxDistances[_modelAssetID] : SharpRenderer.DefaultLODTDistance;
+        public static float MaxDistanceTo(uint _modelAssetID) => maxDistances.ContainsKey(_modelAssetID) ? maxDistances[_modelAssetID] : SharpRenderer.DefaultLODTDistance;
 
         private EntryLODT[] _lodt_Entries;
         [Category("Level Of Detail Table")]
@@ -125,7 +124,7 @@ namespace IndustrialPark
         public override bool HasReference(uint assetID)
         {
             foreach (var a in LODT_Entries)
-                if (a.ModelAssetID == assetID || a.LOD1_Model == assetID || a.LOD2_Model == assetID || a.LOD3_Model == assetID)
+                if (a.BaseModelAssetID == assetID || a.LOD1_Model == assetID || a.LOD2_Model == assetID || a.LOD3_Model == assetID)
                     return true;
             
             return false;
@@ -135,10 +134,10 @@ namespace IndustrialPark
         {
             foreach (var a in LODT_Entries)
             {
-                if (a.ModelAssetID == 0)
+                if (a.BaseModelAssetID == 0)
                     result.Add("LODT entry with ModelAssetID set to 0");
 
-                Verify(a.ModelAssetID, ref result);
+                Verify(a.BaseModelAssetID, ref result);
                 Verify(a.LOD1_Model, ref result);
                 Verify(a.LOD2_Model, ref result);
                 Verify(a.LOD3_Model, ref result);
@@ -148,13 +147,13 @@ namespace IndustrialPark
         public void UpdateDictionary()
         {
             foreach (var entry in LODT_Entries)
-                maxDistances[entry.ModelAssetID] = entry.MaxDistance;
+                maxDistances[entry.BaseModelAssetID] = entry.MaxDistance;
         }
 
         public void ClearDictionary()
         {
             foreach (var entry in LODT_Entries)
-                maxDistances.Remove(entry.ModelAssetID);
+                maxDistances.Remove(entry.BaseModelAssetID);
         }
 
         public void Merge(AssetLODT asset)

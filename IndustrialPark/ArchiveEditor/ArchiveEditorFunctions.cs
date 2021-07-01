@@ -395,8 +395,9 @@ namespace IndustrialPark
                 RemoveFromRenderableAssets(ra);
                 if (renderableJSPs.Contains(ra))
                     renderableJSPs.Remove((AssetJSP)ra);
-                lock (Program.MainForm.renderer.renderableAssets)
-                    Program.MainForm.renderer.renderableAssets.Remove(ra);
+                if (Program.MainForm != null)
+                    lock (Program.MainForm.renderer.renderableAssets)
+                        Program.MainForm.renderer.renderableAssets.Remove(ra);
             }
 
             if (asset is AssetRenderWareModel jsp)
@@ -473,15 +474,18 @@ namespace IndustrialPark
 
 #if DEBUG
             // testing if build works
-            var built = newAsset.BuildAHDR().data;
-            if (!Enumerable.SequenceEqual(AHDR.data, built))
+            if (fast)
             {
-                string folder = "build_test" + Path.GetFileName(currentlyOpenFilePath) + "_out\\";
-                if (!Directory.Exists(folder))
-                    Directory.CreateDirectory(folder);
-                string assetName = $"[{AHDR.assetType}] {AHDR.ADBG.assetName}";
-                File.WriteAllBytes(folder + assetName + " ok", AHDR.data);
-                File.WriteAllBytes(folder + assetName + " bad", built);
+                var built = newAsset.BuildAHDR().data;
+                if (!Enumerable.SequenceEqual(AHDR.data, built))
+                {
+                    string folder = "build_test" + Path.GetFileName(currentlyOpenFilePath) + "_out\\";
+                    if (!Directory.Exists(folder))
+                        Directory.CreateDirectory(folder);
+                    string assetName = $"[{AHDR.assetType}] {AHDR.ADBG.assetName}";
+                    File.WriteAllBytes(folder + assetName + " ok", AHDR.data);
+                    File.WriteAllBytes(folder + assetName + " bad", built);
+                }
             }
 #endif
             assetDictionary[AHDR.assetID] = newAsset;
@@ -514,12 +518,14 @@ namespace IndustrialPark
 
         private Asset CreateAsset(Section_AHDR AHDR, Game game, Endianness endianness, bool skipTexturesAndModels, bool showMessageBox, ref string error)
         {
-            try
-            {
+            //try
+            //{
                 switch (AHDR.assetType)
                 {
                     case AssetType.ANIM:
                         {
+                            if (AHDR.data.Length == 0)
+                                return new AssetGeneric(AHDR, game, endianness);
                             var magic = AHDR.data.Take(4).ToArray();
                             if (endianness == Endianness.Big)
                                 magic = magic.Reverse().ToArray();
@@ -564,7 +570,7 @@ namespace IndustrialPark
                     case AssetType.ATBL: return new AssetATBL(AHDR, game, endianness);
                     case AssetType.BOUL: return new AssetBOUL(AHDR, game, endianness);
                     case AssetType.BUTN: return new AssetBUTN(AHDR, game, endianness);
-                    case AssetType.CAM:  return new AssetCAM(AHDR, game, endianness);
+                    case AssetType.CAM:  return new AssetCAM (AHDR, game, endianness);
                     case AssetType.CNTR: return new AssetCNTR(AHDR, game, endianness);
                     case AssetType.COLL: return new AssetCOLL(AHDR, game, endianness);
                     case AssetType.COND: return new AssetCOND(AHDR, game, endianness);
@@ -635,7 +641,7 @@ namespace IndustrialPark
 
                     case AssetType.SND:
                     case AssetType.SNDS:
-                        return new AssetWithData(AHDR, game, endianness);
+                        return new AssetSound(AHDR, game, platform);
 
                     case AssetType.CCRV:
                     case AssetType.GRSM:
@@ -665,16 +671,16 @@ namespace IndustrialPark
                     default:
                         throw new Exception($"Unknown asset type ({AHDR.assetType})");
                 }
-            }
-            catch (Exception ex)
-            {
-                error = $"[{ AHDR.assetID:X8}] {AHDR.ADBG.assetName} ({ex.Message})";
+            //}
+            //catch (Exception ex)
+            //{
+            //    error = $"[{ AHDR.assetID:X8}] {AHDR.ADBG.assetName} ({ex.Message})";
 
-                if (showMessageBox)
-                    MessageBox.Show($"There was an error loading asset {error}:" + ex.Message + " and editing has been disabled for it.");
+            //    if (showMessageBox)
+            //        MessageBox.Show($"There was an error loading asset {error}:" + ex.Message + " and editing has been disabled for it.");
 
-                return new AssetGeneric(AHDR, game, endianness);
-            }
+            //    return new AssetGeneric(AHDR, game, endianness);
+            //}
         }
 
         private AssetDYNA CreateDYNA(Section_AHDR AHDR)
@@ -1186,7 +1192,7 @@ namespace IndustrialPark
                     a.CreateTransformMatrix();
         }
         
-        public void UpdateModelBlendModes(Dictionary<uint, (int, BlendFactorType, BlendFactorType)[]> blendModes)
+        public void UpdateModelBlendModes(Dictionary<uint, (uint, BlendFactorType, BlendFactorType)[]> blendModes)
         {
             foreach (var asset in assetDictionary.Values)
                 if (asset is AssetMODL MODL)

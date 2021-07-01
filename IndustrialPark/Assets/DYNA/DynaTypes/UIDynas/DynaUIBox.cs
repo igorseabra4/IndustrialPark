@@ -9,14 +9,7 @@ namespace IndustrialPark
     public class UIBoxPart : GenericAssetDataContainer
     {
         public AssetID Texture_AssetID { get; set; }
-        [DisplayName("Color (R, G, B)")]
         public AssetColor Color { get; set; }
-        [DisplayName("Color Alpha (0 - 255)")]
-        public byte ColorAlpha
-        {
-            get => Color.A;
-            set => Color.A = value;
-        }
         public AssetSingle uv1u { get; set; }
         public AssetSingle uv1v { get; set; }
         public AssetSingle uv2u { get; set; }

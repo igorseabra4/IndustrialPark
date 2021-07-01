@@ -12,7 +12,7 @@ namespace IndustrialPark
         Cylinder = 2
     }
 
-    public class AssetTRIG : EntityAsset
+    public class AssetTRIG : EntityAsset, IVolumeAsset
     {
         private const string categoryName = "Trigger";
 
@@ -23,36 +23,36 @@ namespace IndustrialPark
             set => TypeFlag = (byte)value;
         }
 
-        private Vector3 _trigPos0;
-        private Vector3 _trigPos1;
+        private Vector3 _minimum;
+        private Vector3 _maximum;
 
-        [Category(categoryName)]
-        public AssetSingle Position0X
+        [Category(categoryName), Description("Center position for Sphere and Cylinder")]
+        public AssetSingle MinimumX
         {
-            get => _trigPos0.X;
+            get => _minimum.X;
             set
             {
-                _trigPos0.X = value;
+                _minimum.X = value;
                 FixPosition();
             }
         }
-        [Category(categoryName)]
-        public AssetSingle Position0Y
+        [Category(categoryName), Description("Center position for Sphere and Cylinder")]
+        public AssetSingle MinimumY
         {
-            get => _trigPos0.Y;
+            get => _minimum.Y;
             set
             {
-                _trigPos0.Y = value;
+                _minimum.Y = value;
                 FixPosition();
             }
         }
-        [Category(categoryName)]
-        public AssetSingle Position0Z
+        [Category(categoryName), Description("Center position for Sphere and Cylinder")]
+        public AssetSingle MinimumZ
         {
-            get => _trigPos0.Z;
+            get => _minimum.Z;
             set
             {
-                _trigPos0.Z = value;
+                _minimum.Z = value;
                 FixPosition();
             }
         }
@@ -60,46 +60,46 @@ namespace IndustrialPark
         [Description("Used only for Sphere and Cylinder.")]
         public AssetSingle Radius
         {
-            get => Position1X;
-            set => Position1X = value;
+            get => MaximumX;
+            set => MaximumX = value;
         }
         [Category(categoryName)]
         [Description("Used only for Cylinder.")]
         public AssetSingle Height
         {
-            get => Position1Y;
-            set => Position1Y = value;
+            get => MaximumY;
+            set => MaximumY = value;
         }
         [Category(categoryName)]
         [Description("Used only for Box.")]
-        public AssetSingle Position1X
+        public AssetSingle MaximumX
         {
-            get => _trigPos1.X;
+            get => _maximum.X;
             set
             {
-                _trigPos1.X = value;
+                _maximum.X = value;
                 FixPosition();
             }
         }
         [Category(categoryName)]
         [Description("Used only for Box.")]
-        public AssetSingle Position1Y
+        public AssetSingle MaximumY
         {
-            get => _trigPos1.Y;
+            get => _maximum.Y;
             set
             {
-                _trigPos1.Y = value;
+                _maximum.Y = value;
                 FixPosition();
             }
         }
         [Category(categoryName)]
         [Description("Used only for Box.")]
-        public AssetSingle Position1Z
+        public AssetSingle MaximumZ
         {
-            get => _trigPos1.Z;
+            get => _maximum.Z;
             set
             {
-                _trigPos1.Z = value;
+                _maximum.Z = value;
                 FixPosition();
             }
         }
@@ -143,9 +143,9 @@ namespace IndustrialPark
                 case AssetTemplate.Checkpoint_Invisible:
                 case AssetTemplate.BusStop_Trigger:
                     Shape = TriggerShape.Sphere;
-                    Position0X = position.X;
-                    Position0Y = position.Y;
-                    Position0Z = position.Z;
+                    MinimumX = position.X;
+                    MinimumY = position.Y;
+                    MinimumZ = position.Z;
                     if (template == AssetTemplate.Sphere_Trigger)
                         Radius = 10f;
                     else if (template == AssetTemplate.BusStop_Trigger)
@@ -157,9 +157,9 @@ namespace IndustrialPark
                    Shape = TriggerShape.Cylinder;
                     Radius = 10f;
                     Height = 5f;
-                    Position0X = position.X;
-                    Position0Y = position.Y;
-                    Position0Z = position.Z;
+                    MinimumX = position.X;
+                    MinimumY = position.Y;
+                    MinimumZ = position.Z;
                     break;
             }
         }
@@ -170,8 +170,8 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = entityHeaderEndPosition;
 
-                _trigPos0 = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                _trigPos1 = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                _minimum = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                _maximum = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
                 Position2X = reader.ReadSingle();
                 Position2Y = reader.ReadSingle();
                 Position2Z = reader.ReadSingle();
@@ -192,12 +192,12 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeEntity(game, endianness));
-                writer.Write(Position0X);
-                writer.Write(Position0Y);
-                writer.Write(Position0Z);
-                writer.Write(Position1X);
-                writer.Write(Position1Y);
-                writer.Write(Position1Z);
+                writer.Write(MinimumX);
+                writer.Write(MinimumY);
+                writer.Write(MinimumZ);
+                writer.Write(MaximumX);
+                writer.Write(MaximumY);
+                writer.Write(MaximumZ);
                 writer.Write(Position2X);
                 writer.Write(Position2Y);
                 writer.Write(Position2Z);
@@ -224,8 +224,8 @@ namespace IndustrialPark
         {
             if (Shape == TriggerShape.Box)
             {
-                Vector3 boxSize = _trigPos1 - _trigPos0;
-                Vector3 midPos = (_trigPos0 + _trigPos1) / 2f;
+                Vector3 boxSize = _maximum - _minimum;
+                Vector3 midPos = (_minimum + _maximum) / 2f;
 
                 world = Matrix.Scaling(boxSize) *
                     Matrix.Translation(midPos) *
@@ -236,7 +236,7 @@ namespace IndustrialPark
             else if (Shape == TriggerShape.Sphere)
             {
                 world = Matrix.Scaling(Radius * 2f) *
-                    Matrix.Translation(_trigPos0) *
+                    Matrix.Translation(_minimum) *
                     Matrix.Translation(-_position) *
                     Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll) *
                     Matrix.Translation(_position);
@@ -244,7 +244,7 @@ namespace IndustrialPark
             else
             {
                 world = Matrix.Scaling(Radius * 2f, Height * 2f, Radius * 2f) *
-                    Matrix.Translation(_trigPos0) *
+                    Matrix.Translation(_minimum) *
                     Matrix.Translation(-_position) *
                     Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll) *
                     Matrix.Translation(_position);
@@ -259,7 +259,7 @@ namespace IndustrialPark
         {
             if (Shape == TriggerShape.Sphere)
             {
-                boundingSphere = new BoundingSphere(_trigPos0, Radius);
+                boundingSphere = new BoundingSphere(_minimum, Radius);
                 boundingBox = BoundingBox.FromSphere(boundingSphere);
             }
             else
@@ -328,23 +328,23 @@ namespace IndustrialPark
         {
             if (Shape == TriggerShape.Box)
             {
-                if (_trigPos0.X > _trigPos1.X)
+                if (_minimum.X > _maximum.X)
                 {
-                    AssetSingle temp = _trigPos1.X;
-                    _trigPos1.X = _trigPos0.X;
-                    _trigPos0.X = temp;
+                    var temp = _maximum.X;
+                    _maximum.X = _minimum.X;
+                    _minimum.X = temp;
                 }
-                if (_trigPos0.Y > _trigPos1.Y)
+                if (_minimum.Y > _maximum.Y)
                 {
-                    AssetSingle temp = _trigPos1.Y;
-                    _trigPos1.Y = _trigPos0.Y;
-                    _trigPos0.Y = temp;
+                    var temp = _maximum.Y;
+                    _maximum.Y = _minimum.Y;
+                    _minimum.Y = temp;
                 }
-                if (_trigPos0.Z > _trigPos1.Z)
+                if (_minimum.Z > _maximum.Z)
                 {
-                    AssetSingle temp = _trigPos1.Z;
-                    _trigPos1.Z = _trigPos0.Z;
-                    _trigPos0.Z = temp;
+                    var temp = _maximum.Z;
+                    _maximum.Z = _minimum.Z;
+                    _minimum.Z = temp;
                 }
             }
 
@@ -408,12 +408,12 @@ namespace IndustrialPark
         
         public void SetPositions(float x0, AssetSingle y0, AssetSingle z0, AssetSingle x1, AssetSingle y1, AssetSingle z1)
         {
-            _trigPos0.X = x0;
-            _trigPos0.Y = y0;
-            _trigPos0.Z = z0;
-            _trigPos1.X = x1;
-            _trigPos1.Y = y1;
-            _trigPos1.Z = z1;
+            _minimum.X = x0;
+            _minimum.Y = y0;
+            _minimum.Z = z0;
+            _maximum.X = x1;
+            _maximum.Y = y1;
+            _maximum.Z = z1;
             FixPosition();
         }
     }

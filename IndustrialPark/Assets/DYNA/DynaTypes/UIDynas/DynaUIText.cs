@@ -36,14 +36,8 @@ namespace IndustrialPark
         public byte justifyY { get; set; }
         [Category(dynaCategoryName)]
         public byte textFlags { get; set; }
-        [Category(dynaCategoryName), DisplayName("Shadow Color (R, G, B)")]
+        [Category(dynaCategoryName)]
         public AssetColor ShadowColor { get; set; }
-        [Category(dynaCategoryName), DisplayName("Shadow Color Alpha (0 - 255)")]
-        public byte ShadowColorAlpha
-        {
-            get => ShadowColor.A;
-            set => ShadowColor.A = value;
-        }
         [Category(dynaCategoryName)]
         public AssetSingle shadowOffsetX { get; set; }
         [Category(dynaCategoryName)]

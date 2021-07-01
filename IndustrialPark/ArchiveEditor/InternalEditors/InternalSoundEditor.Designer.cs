@@ -127,6 +127,8 @@
             // checkBoxSendToSNDI
             // 
             this.checkBoxSendToSNDI.AutoSize = true;
+            this.checkBoxSendToSNDI.Checked = true;
+            this.checkBoxSendToSNDI.CheckState = System.Windows.Forms.CheckState.Checked;
             this.tableLayoutPanel1.SetColumnSpan(this.checkBoxSendToSNDI, 2);
             this.checkBoxSendToSNDI.Location = new System.Drawing.Point(3, 3);
             this.checkBoxSendToSNDI.Name = "checkBoxSendToSNDI";

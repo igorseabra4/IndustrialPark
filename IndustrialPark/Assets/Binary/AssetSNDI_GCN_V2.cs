@@ -9,6 +9,8 @@ namespace IndustrialPark
 {
     public class AssetSNDI_GCN_V2 : Asset
     {
+        public override string AssetInfo => "GameCube " + game.ToString() + " SNDI";
+
         private byte ReadByte(int j)
         {
             return Data[j];

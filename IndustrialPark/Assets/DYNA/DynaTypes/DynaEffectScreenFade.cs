@@ -10,14 +10,8 @@ namespace IndustrialPark
 
         protected override short constVersion => 1;
         
-        [Category(dynaCategoryName), DisplayName("Color (R, G, B)")]
+        [Category(dynaCategoryName)]
         public AssetColor Color { get; set; }
-        [Category(dynaCategoryName), DisplayName("Color Alpha (0 - 255)")]
-        public byte ColorAlpha
-        {
-            get => Color.A;
-            set => Color.A = value;
-        }
         [Category(dynaCategoryName)]
         public AssetSingle UnknownFloat1 { get; set; }
         [Category(dynaCategoryName)]

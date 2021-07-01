@@ -11,7 +11,7 @@ namespace IndustrialPark
 {
     public partial class InternalSoundEditor : Form, IInternalEditor
     {
-        public InternalSoundEditor(AssetWithData asset, ArchiveEditorFunctions archive)
+        public InternalSoundEditor(AssetSound asset, ArchiveEditorFunctions archive)
         {
             InitializeComponent();
             TopMost = true;
@@ -34,7 +34,7 @@ namespace IndustrialPark
             archive.CloseInternalEditor(this);
         }
 
-        private AssetWithData asset;
+        private AssetSound asset;
         private ArchiveEditorFunctions archive;
 
         public uint GetAssetID()

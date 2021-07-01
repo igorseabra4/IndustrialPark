@@ -336,6 +336,7 @@ namespace IndustrialPark
                 dontRenderLITE = AssetLITE.dontRender,
                 dontRenderMRKR = AssetMRKR.dontRender,
                 dontRenderMVPT = AssetMVPT.dontRender,
+                dontRenderNPC = AssetNPC.dontRender,
                 dontRenderPEND = AssetPEND.dontRender,
                 dontRenderPKUP = AssetPKUP.dontRender,
                 dontRenderPLAT = AssetPLAT.dontRender,
@@ -348,6 +349,7 @@ namespace IndustrialPark
                 dontRenderUI = AssetUI.dontRender,
                 dontRenderUIFT = AssetUIFT.dontRender,
                 dontRenderVIL = AssetVIL.dontRender,
+                dontRenderVOLU = AssetVOLU.dontRender,
                 Grid = ArchiveEditorFunctions.Grid,
             };
         }
@@ -459,6 +461,9 @@ namespace IndustrialPark
             mVPTToolStripMenuItem.Checked = !ipSettings.dontRenderMVPT;
             AssetMVPT.dontRender = ipSettings.dontRenderMVPT;
 
+            nPCToolStripMenuItem.Checked = !ipSettings.dontRenderNPC;
+            AssetNPC.dontRender = ipSettings.dontRenderNPC;
+
             pENDToolStripMenuItem.Checked = !ipSettings.dontRenderPEND;
             AssetPEND.dontRender = ipSettings.dontRenderPEND;
 
@@ -494,6 +499,9 @@ namespace IndustrialPark
 
             vILToolStripMenuItem.Checked = !ipSettings.dontRenderVIL;
             AssetVIL.dontRender = ipSettings.dontRenderVIL;
+
+            vOLUToolStripMenuItem.Checked = !ipSettings.dontRenderVOLU;
+            AssetVOLU.dontRender = ipSettings.dontRenderVOLU;
         }
 
         public void SetToolStripStatusLabel(string Text)
@@ -1110,6 +1118,18 @@ namespace IndustrialPark
             AssetDTRK.dontRender = !dTRKToolStripMenuItem.Checked;
         }
 
+        private void vOLUToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            vOLUToolStripMenuItem.Checked = !vOLUToolStripMenuItem.Checked;
+            AssetVOLU.dontRender = !vOLUToolStripMenuItem.Checked;
+        }
+
+        private void nPCToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            nPCToolStripMenuItem.Checked = !nPCToolStripMenuItem.Checked;
+            AssetNPC.dontRender = !nPCToolStripMenuItem.Checked;
+        }
+
         private void uIModeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             uIModeToolStripMenuItem.Checked = !uIModeToolStripMenuItem.Checked;
@@ -1554,6 +1574,12 @@ namespace IndustrialPark
 
             if (dTRKToolStripMenuItem.Checked)
                 dTRKToolStripMenuItem_Click(sender, e);
+
+            if (nPCToolStripMenuItem.Checked)
+                nPCToolStripMenuItem_Click(sender, e);
+
+            if (vOLUToolStripMenuItem.Checked)
+                vOLUToolStripMenuItem_Click(sender, e);
         }
 
         private void enableAllToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1629,6 +1655,50 @@ namespace IndustrialPark
 
             if (!dTRKToolStripMenuItem.Checked)
                 dTRKToolStripMenuItem_Click(sender, e);
+
+            if (!nPCToolStripMenuItem.Checked)
+                nPCToolStripMenuItem_Click(sender, e);
+
+            if (!vOLUToolStripMenuItem.Checked)
+                vOLUToolStripMenuItem_Click(sender, e);
+        }
+
+        private void openFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var chooseFolder = new CommonOpenFileDialog()
+            {
+                IsFolderPicker = true
+            };
+            if (chooseFolder.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                var dirList = new List<string> { chooseFolder.FileName };
+                foreach (var s in Directory.GetDirectories(chooseFolder.FileName))
+                    dirList.Add(s);
+
+                var hipList = new List<string>();
+                foreach (var s in dirList)
+                    foreach (var ss in Directory.GetFiles(s))
+                        if (Path.GetExtension(ss).ToLower().Equals(".hip") || Path.GetExtension(ss).ToLower().Equals(".hop"))
+                            hipList.Add(ss);
+
+                var scoobyPlat = HipHopFile.Platform.Unknown;
+
+                var p = new ProgressBar("Opening files...");
+                p.SetProgressBar(0, hipList.Count, 1);
+                p.Show();
+
+                foreach (var hip in hipList)
+                {
+                    p.Text = Path.GetFileName(hip);
+                    ArchiveEditorFunctions archive = new ArchiveEditorFunctions();
+                    archive.OpenFile(hip, false, scoobyPlat, out _, false);
+                    scoobyPlat = archive.platform;
+                    archive.Dispose();
+                    p.PerformStep();
+                }
+
+                p.Close();
+            }
         }
     }
 }

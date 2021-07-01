@@ -9,7 +9,8 @@ namespace IndustrialPark
     public enum ButnActMethod
     {
         Button = 0,
-        PressurePlate = 1
+        PressurePlate = 1,
+        Other = 2
     }
 
     public class AssetBUTN : AssetWithMotion

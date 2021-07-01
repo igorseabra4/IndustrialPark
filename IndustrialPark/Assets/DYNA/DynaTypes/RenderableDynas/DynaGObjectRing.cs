@@ -168,13 +168,8 @@ namespace IndustrialPark
 
         public override bool ShouldDraw(SharpRenderer renderer)
         {
-            if (AssetMODL.renderBasedOnLodt)
-            {
-                if (GetDistanceFrom(renderer.Camera.Position) < AssetLODT.MaxDistanceTo(DynaGObjectRingControl.RingModelAssetID))
-                    return renderer.frustum.Intersects(ref boundingBox);
-
+            if (AssetMODL.renderBasedOnLodt && GetDistanceFrom(renderer.Camera.Position) > AssetLODT.MaxDistanceTo(DynaGObjectRingControl.RingModelAssetID))
                 return false;
-            }
 
             return renderer.frustum.Intersects(ref boundingBox);
         }

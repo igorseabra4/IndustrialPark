@@ -12,7 +12,7 @@ namespace IndustrialPark
 {
     public partial class ProgressBar : Form
     {
-        public ProgressBar(string text, string text2 = "Asset")
+        public ProgressBar(string text)
         {
             InitializeComponent();
             Text = text;

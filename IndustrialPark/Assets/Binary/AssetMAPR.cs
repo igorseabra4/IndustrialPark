@@ -6,19 +6,19 @@ namespace IndustrialPark
 {
     public class EntryMAPR
     {
-        public AssetID AssetID_SURF { get; set; }
+        public AssetID Surface_AssetID { get; set; }
         public AssetID Unknown { get; set; }
 
         public EntryMAPR() { }
         public override string ToString()
         {
-            return $"[{Program.MainForm.GetAssetNameFromID(AssetID_SURF)}] - [{Program.MainForm.GetAssetNameFromID(Unknown)}]";
+            return $"[{Program.MainForm.GetAssetNameFromID(Surface_AssetID)}] - [{Program.MainForm.GetAssetNameFromID(Unknown)}]";
         }
     }
 
     public class AssetMAPR : Asset
     {
-        [Category("Surface Map")]
+        [Category("Surface Mapper")]
         public EntryMAPR[] MAPR_Entries { get; set; }
 
         public AssetMAPR(string assetName) : base(assetName, AssetType.MAPR)
@@ -37,7 +37,7 @@ namespace IndustrialPark
                 for (int i = 0; i < MAPR_Entries.Length; i++)
                     MAPR_Entries[i] = new EntryMAPR()
                     {
-                        AssetID_SURF = reader.ReadUInt32(),
+                        Surface_AssetID = reader.ReadUInt32(),
                         Unknown = reader.ReadUInt32()
                     };
             }
@@ -51,7 +51,7 @@ namespace IndustrialPark
                 writer.Write(MAPR_Entries.Length);
                 foreach (var entry in MAPR_Entries)
                 {
-                    writer.Write(entry.AssetID_SURF);
+                    writer.Write(entry.Surface_AssetID);
                     writer.Write(entry.Unknown);
                 }
 
@@ -62,7 +62,7 @@ namespace IndustrialPark
         public override bool HasReference(uint assetID)
         {
             foreach (EntryMAPR a in MAPR_Entries)
-                if (a.AssetID_SURF == assetID || a.Unknown == assetID)
+                if (a.Surface_AssetID == assetID || a.Unknown == assetID)
                     return true;
             
             return false;
@@ -72,9 +72,9 @@ namespace IndustrialPark
         {
             foreach (EntryMAPR a in MAPR_Entries)
             {
-                if (a.AssetID_SURF == 0)
+                if (a.Surface_AssetID == 0)
                     result.Add("MAPR entry with SurfaceAssetID set to 0");
-                Verify(a.AssetID_SURF, ref result);
+                Verify(a.Surface_AssetID, ref result);
             }
         }
     }

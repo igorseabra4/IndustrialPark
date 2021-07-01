@@ -31,7 +31,7 @@ namespace IndustrialPark
             //else if (asset is AssetCSN csn) SetupForCsn(csn);
             else if (asset is AssetGRUP grup) SetupForGrup(grup);
             else if (asset is AssetRenderWareModel arwm) SetupForModel(arwm);
-            //else if (asset is AssetSHRP shrp) SetupForShrp(shrp);
+            else if (asset is AssetSHRP shrp) SetupForShrp(shrp);
             else if (asset is AssetWIRE wire) SetupForWire(wire);
 
             AddRow();
@@ -245,24 +245,24 @@ namespace IndustrialPark
             tableLayoutPanel1.Controls.Add(buttonExport, 1, 4);
         }
 
-        //private void SetupForShrp(AssetSHRP asset)
-        //{
-        //    AddRow();
-        //    AddRow();
-        //    AddRow();
+        private void SetupForShrp(AssetSHRP asset)
+        {
+            AddRow();
+            AddRow();
+            AddRow();
 
-        //    foreach (var i in new int[] { 3, 4, 5, 6, 8, 9 })
-        //    {
-        //        Button buttonAdd = new Button() { Dock = DockStyle.Fill, Text = $"Add Type {i}", AutoSize = true };
-        //        buttonAdd.Click += (object sender, EventArgs e) =>
-        //        {
-        //            asset.AddEntry(i);
-        //            propertyGridAsset.Refresh();
-        //            archive.UnsavedChanges = true;
-        //        };
-        //        tableLayoutPanel1.Controls.Add(buttonAdd);
-        //    }
-        //}
+            foreach (var i in new int[] { 3, 4, 5, 6, 8, 9 })
+            {
+                Button buttonAdd = new Button() { Dock = DockStyle.Fill, Text = $"Add Type {i}", AutoSize = true };
+                buttonAdd.Click += (object sender, EventArgs e) =>
+                {
+                    asset.AddEntry(i);
+                    propertyGridAsset.Refresh();
+                    archive.UnsavedChanges = true;
+                };
+                tableLayoutPanel1.Controls.Add(buttonAdd);
+            }
+        }
 
         private void SetupForWire(AssetWIRE asset)
         {

@@ -32,7 +32,7 @@ namespace IndustrialPark
 
         public byte[] Serialize()
         {
-            using (var writer = new EndianBinaryWriter(Platform.GameCube))
+            using (var writer = new EndianBinaryWriter(Endianness.Big))
             {
                 writer.Write(SoundHeader);
                 writer.Write(SoundAssetID);
@@ -49,6 +49,8 @@ namespace IndustrialPark
 
     public class AssetSNDI_GCN_V1 : Asset
     {
+        public override string AssetInfo => "GameCube " + game.ToString() + " SNDI";
+
         private const string categoryName = "Sound Info: GCN V1";
 
         [Category(categoryName)]
@@ -67,7 +69,7 @@ namespace IndustrialPark
 
         public AssetSNDI_GCN_V1(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, Platform.GameCube);
+            var reader = new EndianBinaryReader(AHDR.data, Endianness.Big);
 
             int entriesSndAmount = reader.ReadInt32();
             reader.ReadInt32();

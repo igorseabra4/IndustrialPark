@@ -65,14 +65,16 @@ namespace IndustrialPark
 
                 File.WriteAllText(txdGenFolder + "txdgen.ini", ini);
 
-                new Thread(() =>
+                var t = new Thread(() =>
                 {
-                    Thread.Sleep(3000);
+                    Thread.Sleep(5000);
                     closeConverter();
-                }).Start();
+                });
+                t.Start();
 
                 txdgenProcess.Start();
                 txdgenProcess.WaitForExit();
+                t.Abort();
             }
         }
 
@@ -94,9 +96,8 @@ namespace IndustrialPark
 
         public static void closeConverter()
         {
-            if (converterInitialized)
-                if (!txdgenProcess.HasExited)
-                    txdgenProcess.Kill();
+            if (converterInitialized && txdgenProcess != null && !txdgenProcess.HasExited)
+                txdgenProcess.Kill();
         }
 
         public static int scoobyTextureVersion => 0x0C02FFFF;

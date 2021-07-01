@@ -428,6 +428,11 @@ namespace IndustrialPark
         public AssetSingle OffsetX { get; set; }
         public AssetSingle OffsetY { get; set; }
         public AssetSingle OffsetZ { get; set; }
+        public int Unknown44 { get; set; }
+        public int Unknown48 { get; set; }
+        public AssetSingle Unknown4C { get; set; }
+        public AssetSingle Unknown50 { get; set; }
+        public AssetSingle Unknown54 { get; set; }
         public AssetSingle Unknown68 { get; set; }
         public int Unknown6C { get; set; }
         public int Unknown70 { get; set; }
@@ -449,7 +454,13 @@ namespace IndustrialPark
             OffsetX = reader.ReadSingle();
             OffsetY = reader.ReadSingle();
             OffsetZ = reader.ReadSingle();
-            ReadPad(reader, 0x34);
+            ReadPad(reader, 0x10);
+            Unknown44 = reader.ReadInt32();
+            Unknown48 = reader.ReadInt32();
+            Unknown4C = reader.ReadSingle();
+            Unknown50 = reader.ReadSingle();
+            Unknown54 = reader.ReadSingle();
+            ReadPad(reader, 0x10);
             Unknown68 = reader.ReadSingle();
             Unknown6C = reader.ReadInt32();
             Unknown70 = reader.ReadInt32();
@@ -475,7 +486,13 @@ namespace IndustrialPark
                 writer.Write(OffsetX);
                 writer.Write(OffsetY);
                 writer.Write(OffsetZ);
-                WritePad(writer, 0x34);
+                WritePad(writer, 0x10);
+                writer.Write(Unknown44);
+                writer.Write(Unknown48);
+                writer.Write(Unknown4C);
+                writer.Write(Unknown50);
+                writer.Write(Unknown54);
+                WritePad(writer, 0x10);
                 writer.Write(Unknown68);
                 writer.Write(Unknown6C);
                 writer.Write(Unknown70);
