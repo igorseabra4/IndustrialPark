@@ -61,7 +61,7 @@ namespace IndustrialPark
                     System.Diagnostics.Process.Start(Application.StartupPath + "/IndustrialPark.exe");
                     return;
                 }
-                MessageBox.Show("It appears this is your first time using Industrial Park.\nPlease consult the documentation on the BFBB Modding Wiki to understand how to use the tool if you haven't already.\nAlso, be sure to check individual asset pages if you're not sure what one of them or their settings do.");
+                MessageBox.Show("It appears this is your first time using Industrial Park.\nPlease consult the documentation on the Heavy Iron Modding Wiki to understand how to use the tool if you haven't already.\nAlso, be sure to check individual asset pages if you're not sure what one of them or their settings do.");
                 Program.AboutBox.Show();
             }
 
@@ -819,7 +819,7 @@ namespace IndustrialPark
                 "Ctrl + Right click and drag to pan(move view up, left, down, right)\n" +
                 "Mouse mode(Z): similar to a first person camera.The view rotates automatically as you move the mouse.Use the keyboard to move around.\n" +
                 "\n" +
-                "Please consult the Industrial Park user guide on Battlepedia for more information");
+                "Please consult the Industrial Park user guide on the Heavy Iron Modding Wiki for more information");
         }
 
         private SharpDX.Rectangle ViewRectangle => new SharpDX.Rectangle(
