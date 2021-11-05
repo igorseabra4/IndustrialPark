@@ -26,11 +26,11 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID TaskBox1_AssetID { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat54 { get; set; }
+        public AssetSingle ClamOpenDistance { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat58 { get; set; }
+        public AssetSingle ClamCloseDistance { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat5C { get; set; }
+        public AssetID TextBox_AssetID { get; set; }
         [Category(dynaCategoryName)]
         public int UnknownInt60 { get; set; }
         [Category(dynaCategoryName)]
@@ -43,9 +43,9 @@ namespace IndustrialPark
                 reader.BaseStream.Position = entityDynaEndPosition;
 
                 TaskBox1_AssetID = reader.ReadUInt32();
-                UnknownFloat54 = reader.ReadSingle();
-                UnknownFloat58 = reader.ReadSingle();
-                UnknownFloat5C = reader.ReadSingle();
+                ClamOpenDistance = reader.ReadSingle();
+                ClamCloseDistance = reader.ReadSingle();
+                TextBox_AssetID = reader.ReadUInt32();
                 UnknownInt60 = reader.ReadInt32();
                 TaskBox2_AssetID = reader.ReadUInt32();
             }
@@ -57,9 +57,9 @@ namespace IndustrialPark
             {
                 writer.Write(SerializeEntityDyna(endianness));
                 writer.Write(TaskBox1_AssetID);
-                writer.Write(UnknownFloat54);
-                writer.Write(UnknownFloat58);
-                writer.Write(UnknownFloat5C);
+                writer.Write(ClamOpenDistance);
+                writer.Write(ClamCloseDistance);
+                writer.Write(TextBox_AssetID);
                 writer.Write(UnknownInt60);
                 writer.Write(TaskBox2_AssetID);
 
@@ -67,22 +67,16 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (TaskBox1_AssetID == assetID)
-                return true;
-            if (TaskBox2_AssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
+        public override bool HasReference(uint assetID) =>
+            TaskBox1_AssetID == assetID || TaskBox2_AssetID == assetID || TextBox_AssetID == assetID || base.HasReference(assetID);
+        
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
             Verify(TaskBox1_AssetID, ref result);
             Verify(TaskBox2_AssetID, ref result);
+            Verify(TextBox_AssetID, ref result);
         }
     }
 }

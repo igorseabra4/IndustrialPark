@@ -13,6 +13,8 @@ namespace IndustrialPark
         [Category(categoryName)]
         public int Unknown { get; set; }
         [Category(categoryName)]
+        public AssetID AssetID_Internal { get; set; }
+        [Category(categoryName)]
         public EntrySHRP[] SHRPEntries { get; set; }
 
         public AssetSHRP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
@@ -20,7 +22,7 @@ namespace IndustrialPark
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
                 int amountOfEntries = reader.ReadInt32();
-                reader.ReadInt32(); // assetID
+                AssetID_Internal = reader.ReadUInt32();
                 Unknown = reader.ReadInt32();
                 SHRPEntries = new EntrySHRP[amountOfEntries];
 
@@ -75,7 +77,7 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SHRPEntries.Length);
-                writer.Write(assetID);
+                writer.Write(AssetID_Internal);
                 writer.Write(Unknown);
                 foreach (var e in SHRPEntries)
                     writer.Write(e.Serialize(game, endianness));

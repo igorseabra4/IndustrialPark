@@ -114,9 +114,9 @@ namespace IndustrialPark
                 Unknown04 = reader.ReadInt32();
                 Unknown08 = reader.ReadInt32();
                 int amountOfEntries = reader.ReadInt32();
-                TPIK_Entries = new EntryTPIK[amountOfEntries];
-                for (int i = 0; i < TPIK_Entries.Length; i++)
-                    TPIK_Entries[i] = new EntryTPIK(reader);
+                _tpik_Entries = new EntryTPIK[amountOfEntries];
+                for (int i = 0; i < _tpik_Entries.Length; i++)
+                    _tpik_Entries[i] = new EntryTPIK(reader);
 
                 UpdateDictionary();
             }

@@ -10,27 +10,29 @@ namespace IndustrialPark
         protected override short constVersion => 3;
 
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_00 { get; set; }
+        public AssetSingle Time { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_04 { get; set; }
+        public AssetSingle Intensity { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_08 { get; set; }
+        public AssetSingle ID { get; set; }
         [Category(dynaCategoryName)]
-        public short UnknownShort_0C { get; set; }
+        public AssetByte Priority { get; set; }
         [Category(dynaCategoryName)]
-        public short UnknownShort_0A { get; set; }
+        public AssetByte RumbleType { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_10 { get; set; }
+        public AssetByte RumbleInPause { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_14 { get; set; }
+        public AssetSingle Param1 { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_18 { get; set; }
+        public AssetSingle Param2 { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_1C { get; set; }
+        public AssetSingle ShakeMagnitude { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_20 { get; set; }
+        public AssetSingle ShakeCycleMax { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_24 { get; set; }
+        public AssetSingle ShakeRotationalMagnitude { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte ShakeY { get; set; }
 
         public DynaEffectRumble(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__Rumble, game, endianness)
         {
@@ -38,17 +40,19 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
 
-                UnknownFloat_00 = reader.ReadSingle();
-                UnknownFloat_04 = reader.ReadSingle();
-                UnknownFloat_08 = reader.ReadSingle();
-                UnknownShort_0C = reader.ReadInt16();
-                UnknownShort_0A = reader.ReadInt16();
-                UnknownFloat_10 = reader.ReadSingle();
-                UnknownFloat_14 = reader.ReadSingle();
-                UnknownFloat_18 = reader.ReadSingle();
-                UnknownFloat_1C = reader.ReadSingle();
-                UnknownFloat_20 = reader.ReadSingle();
-                UnknownFloat_24 = reader.ReadSingle();
+                Time = reader.ReadSingle();
+                Intensity = reader.ReadSingle();
+                ID = reader.ReadSingle();
+                Priority = reader.ReadByte();
+                RumbleType = reader.ReadByte();
+                RumbleInPause = reader.ReadByte();
+                reader.ReadByte();
+                Param1 = reader.ReadSingle();
+                Param2 = reader.ReadSingle();
+                ShakeMagnitude = reader.ReadSingle();
+                ShakeCycleMax = reader.ReadSingle();
+                ShakeRotationalMagnitude = reader.ReadSingle();
+                ShakeY = reader.ReadByte();
             }
         }
 
@@ -56,17 +60,22 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(UnknownFloat_00);
-                writer.Write(UnknownFloat_04);
-                writer.Write(UnknownFloat_08);
-                writer.Write(UnknownShort_0C);
-                writer.Write(UnknownShort_0A);
-                writer.Write(UnknownFloat_10);
-                writer.Write(UnknownFloat_14);
-                writer.Write(UnknownFloat_18);
-                writer.Write(UnknownFloat_1C);
-                writer.Write(UnknownFloat_20);
-                writer.Write(UnknownFloat_24);
+                writer.Write(Time);
+                writer.Write(Intensity);
+                writer.Write(ID);
+                writer.Write(Priority);
+                writer.Write(RumbleType);
+                writer.Write(RumbleInPause);
+                writer.Write((byte)0);
+                writer.Write(Param1);
+                writer.Write(Param2);
+                writer.Write(ShakeMagnitude);
+                writer.Write(ShakeCycleMax);
+                writer.Write(ShakeRotationalMagnitude);
+                writer.Write(ShakeY);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
 
                 return writer.ToArray();
             }

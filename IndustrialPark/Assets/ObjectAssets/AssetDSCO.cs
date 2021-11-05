@@ -119,6 +119,10 @@ namespace IndustrialPark
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
+            byte fillerByte = 0;
+            if (game == Game.Incredibles)
+                fillerByte = 0xCD;
+            
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeBase(endianness));
@@ -127,13 +131,13 @@ namespace IndustrialPark
                     writer.Write(0);
 
                 int OffPrefixOffset = (int)writer.BaseStream.Position - 8;
-                WriteString(TileName_FirstWhite, writer);
+                WriteString(TileName_FirstWhite, writer, fillerByte);
 
                 int TransitionPrefixOffset = (int)writer.BaseStream.Position - 8;
-                WriteString(TileName_FirstYellow, writer);
+                WriteString(TileName_FirstYellow, writer, fillerByte);
 
                 int OnPrefixOffset = (int)writer.BaseStream.Position - 8;
-                WriteString(TileName_FirstRed, writer);
+                WriteString(TileName_FirstRed, writer, fillerByte);
 
                 int StatesOffset = (int)writer.BaseStream.Position - 8;
 
@@ -159,7 +163,7 @@ namespace IndustrialPark
                 }
 
                 while (writer.BaseStream.Position % 4 != 0)
-                    writer.Write((byte)0);
+                    writer.Write(fillerByte);
 
                 writer.BaseStream.Position = baseHeaderEndPosition;
                 writer.Write(Flags.FlagValueInt);
@@ -197,13 +201,14 @@ namespace IndustrialPark
             return new string(charList.ToArray());
         }
 
-        private void WriteString(string writeString, EndianBinaryWriter writer)
+        private void WriteString(string writeString, EndianBinaryWriter writer, byte fillerByte)
         {
             foreach (char i in writeString)
                 writer.Write(i);
 
-            do writer.Write((byte)0);
-            while (writer.BaseStream.Length % 4 != 0);
+            writer.Write((byte)0);
+            while (writer.BaseStream.Length % 4 != 0)
+                writer.Write(fillerByte);
         }
     }
 }

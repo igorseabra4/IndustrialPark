@@ -36,28 +36,31 @@ namespace IndustrialPark
             }
         }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat1 { get; set; }
+        public AssetSingle DefaultWarningTime { get; set; }
         [Category(dynaCategoryName)]
-        public int UnknownInt1 { get; set; }
+        public int UnusedOffset { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID RingSoundGroup_AssetID { get; set; }
+        public AssetID RingSoundGroup_AssetID1 { get; set; }
         [Category(dynaCategoryName)]
-        public int UnknownInt2 { get; set; }
+        public AssetID RingSoundGroup_AssetID2 { get; set; }
         [Category(dynaCategoryName)]
-        public int UnknownInt3 { get; set; }
+        public AssetID RingSoundGroup_AssetID3 { get; set; }
         [Category(dynaCategoryName)]
-        public int UnknownInt4 { get; set; }
+        public AssetID RingSoundGroup_AssetID4 { get; set; }
         [Category(dynaCategoryName)]
-        public bool RingsAreVisible { get; set; }
+        public int NumNextRingsToShow { get; set; }
         [Category(dynaCategoryName)]
         public AssetID[] Ring_AssetIDs { get; set; }
 
         public DynaGObjectRingControl(string assetName) : base(assetName, DynaType.game_object__RingControl, 3)
         {
             RingModel_AssetID = "test_ring";
-            UnknownInt1 = 40;
-            RingSoundGroup_AssetID = "RING_SGRP";
-            RingsAreVisible = true;
+            UnusedOffset = 40;
+            RingSoundGroup_AssetID1 = "RING_SGRP";
+            RingSoundGroup_AssetID2 = 0;
+            RingSoundGroup_AssetID3 = 0;
+            RingSoundGroup_AssetID4 = 0;
+            NumNextRingsToShow = 1;
             Ring_AssetIDs = new AssetID[0];
         }
 
@@ -69,14 +72,14 @@ namespace IndustrialPark
 
                 PlayerType = (DynaRingControlPlayerType)reader.ReadInt32();
                 RingModel_AssetID = reader.ReadUInt32();
-                UnknownFloat1 = reader.ReadSingle();
+                DefaultWarningTime = reader.ReadSingle();
                 int ringCount = reader.ReadInt32();
-                UnknownInt1 = reader.ReadInt32();
-                RingSoundGroup_AssetID = reader.ReadUInt32();
-                UnknownInt2 = reader.ReadInt32();
-                UnknownInt3 = reader.ReadInt32();
-                UnknownInt4 = reader.ReadInt32();
-                RingsAreVisible = reader.ReadInt32Bool();
+                UnusedOffset = reader.ReadInt32();
+                RingSoundGroup_AssetID1 = reader.ReadUInt32();
+                RingSoundGroup_AssetID2 = reader.ReadUInt32();
+                RingSoundGroup_AssetID3 = reader.ReadUInt32();
+                RingSoundGroup_AssetID4 = reader.ReadUInt32();
+                NumNextRingsToShow = reader.ReadInt32();
                 Ring_AssetIDs = new AssetID[ringCount];
                 for (int i = 0; i < Ring_AssetIDs.Length; i++)
                     Ring_AssetIDs[i] = reader.ReadUInt32();
@@ -89,14 +92,14 @@ namespace IndustrialPark
             {
                 writer.Write((int)PlayerType);
                 writer.Write(RingModel_AssetID);
-                writer.Write(UnknownFloat1);
+                writer.Write(DefaultWarningTime);
                 writer.Write(Ring_AssetIDs.Length);
-                writer.Write(UnknownInt1);
-                writer.Write(RingSoundGroup_AssetID);
-                writer.Write(UnknownInt2);
-                writer.Write(UnknownInt3);
-                writer.Write(UnknownInt4);
-                writer.Write(RingsAreVisible ? 1 : 0);
+                writer.Write(UnusedOffset);
+                writer.Write(RingSoundGroup_AssetID1);
+                writer.Write(RingSoundGroup_AssetID2);
+                writer.Write(RingSoundGroup_AssetID3);
+                writer.Write(RingSoundGroup_AssetID4);
+                writer.Write(NumNextRingsToShow);
                 foreach (var i in Ring_AssetIDs)
                     writer.Write(i);
 
@@ -108,7 +111,13 @@ namespace IndustrialPark
         {
             if (RingModel_AssetID == assetID)
                 return true;
-            if (RingSoundGroup_AssetID == assetID)
+            if (RingSoundGroup_AssetID1 == assetID)
+                return true;
+            if (RingSoundGroup_AssetID2 == assetID)
+                return true;
+            if (RingSoundGroup_AssetID3 == assetID)
+                return true;
+            if (RingSoundGroup_AssetID4 == assetID)
                 return true;
             foreach (var ring in Ring_AssetIDs)
                 if (ring == assetID)
@@ -123,9 +132,9 @@ namespace IndustrialPark
                 result.Add("Ring Control with no Ring Model reference");
             Verify(RingModel_AssetID, ref result);
 
-            if (RingSoundGroup_AssetID == 0)
+            if (RingSoundGroup_AssetID1 == 0)
                 result.Add("Ring Control with no SGRP reference");
-            Verify(RingSoundGroup_AssetID, ref result);
+            Verify(RingSoundGroup_AssetID1, ref result);
 
             foreach (var ring in Ring_AssetIDs)
                 Verify(ring, ref result);

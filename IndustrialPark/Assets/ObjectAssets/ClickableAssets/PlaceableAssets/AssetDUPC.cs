@@ -37,10 +37,6 @@ namespace IndustrialPark
         public AssetID NavMesh1_AssetID { get; set; }
         [Category(categoryName)]
         public int UnknownInt_30 { get; set; }
-        [Category(categoryName)]
-        public AssetID NavMesh2_AssetID { get; set; }
-        [Category(categoryName)]
-        public AssetID Settings_AssetID { get; set; }
 
         [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter))]
         public AssetVIL VIL { get; set; }
@@ -65,8 +61,6 @@ namespace IndustrialPark
                 NavMesh1_AssetID = reader.ReadUInt32();
                 UnknownInt_30 = reader.ReadInt32();
                 VIL = new AssetVIL(reader);
-                NavMesh2_AssetID = reader.ReadUInt32();
-                Settings_AssetID = reader.ReadUInt32();
 
                 CreateTransformMatrix();
                 AddToRenderableAssets(this);
@@ -98,22 +92,17 @@ namespace IndustrialPark
                 writer.Write((byte)_links.Length);
                 writer.Write(VIL.Serialize(game, endianness).Skip(6).ToArray());
 
-                writer.Write(NavMesh2_AssetID);
-                writer.Write(Settings_AssetID);
-
                 writer.Write(SerializeLinks(endianness));
                 return writer.ToArray();
             }
         }
 
-        public override bool HasReference(uint assetID) => NavMesh1_AssetID == assetID || NavMesh2_AssetID == assetID ||
-            Settings_AssetID == assetID || VIL.HasReference(assetID) || base.HasReference(assetID);
+        public override bool HasReference(uint assetID) => NavMesh1_AssetID == assetID ||
+            VIL.HasReference(assetID) || base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {
             Verify(NavMesh1_AssetID, ref result);
-            Verify(NavMesh2_AssetID, ref result);
-            Verify(Settings_AssetID, ref result);
 
             VIL.Verify(ref result);
 

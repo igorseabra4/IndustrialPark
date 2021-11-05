@@ -31,10 +31,11 @@ namespace IndustrialPark
         public static bool CloseDolphin()
         {
             foreach (var p in Process.GetProcessesByName("Dolphin"))
-            {
-                p.CloseMainWindow();
-                p.WaitForExit();
-            }
+                if (!p.HasExited)
+                {
+                    p.CloseMainWindow();
+                    p.WaitForExit();
+                }
 
             return true;
         }

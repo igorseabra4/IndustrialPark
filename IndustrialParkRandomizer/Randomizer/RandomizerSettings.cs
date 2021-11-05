@@ -208,37 +208,40 @@ namespace IndustrialPark.Randomizer
             Description("If true, all menu warps will lead to the hub.")]
         public bool allMenuWarpsHB01 { get; set; }
 
-        [Category("Non-Randomizer"), DisplayName("Open Teleport Boxes")]
-        public bool openTeleportBoxes { get; set; }
+        [Category("Patches"), DisplayName("Restore Robot Laugh"), Description("Restores robot laugh sound, which is not present normally in the GameCube version of the game.")]
+        public bool restoreRobotLaugh { get; set; }
 
-        [Category("Non-Randomizer"), DisplayName("Invisible Level"), Description("Makes all levels invisible.")]
-        public bool invisibleLevel { get; set; }
+        [Category("Patches"), DisplayName("Widescreen Menu"), Description("Makes the pause menu background fit a 16:9 resolution. Should be used with a widescreen code.")]
+        public bool widescreenMenu { get; set; }
 
-        [Category("Non-Randomizer"), DisplayName("Invisible Objects"), Description("Makes all objects invisible.")]
-        public bool invisibleObjects { get; set; }
-
-        [Category("Non-Randomizer"), DisplayName("Disable Cutscenes")]
+        [Category("Patches"), DisplayName("Disable Cutscenes")]
         public bool disableCutscenes { get; set; }
 
-        [Category("Non-Randomizer"), DisplayName("Disable Flythroughs")]
+        [Category("Patches"), DisplayName("Disable Flythroughs")]
         public bool disableFlythroughs { get; set; }
 
-        [Category("Non-Randomizer"),
+        [Category("Patches"), DisplayName("Open Teleport Boxes")]
+        public bool openTeleportBoxes { get; set; }
+
+        [Category("Patches"),
             DisplayName("Spatulas for Chum Bucket Lab"),
             Description("This will be the amount of spatulas needed for the final boss. Set to -1 to include it in the Spatula Gates randomizer method.")]
         public int spatReqChum { get; set; }
 
-        [Category("Non-Randomizer: LODT"), DisplayName("boot.HIP LODT multiplier"),
+        [Category("Patches"), DisplayName("Invisible Level"), Description("Makes all levels invisible.")]
+        public bool invisibleLevel { get; set; }
+
+        [Category("Patches"), DisplayName("Invisible Objects"), Description("Makes all objects invisible.")]
+        public bool invisibleObjects { get; set; }
+        
+        [Category("Patches: LODT"), DisplayName("boot.HIP LODT multiplier"),
             Description("If true, multiply the render distance for the pickups by this amount.")]
         public bool bootHipLodtMulti { get; set; }
 
-        [Category("Non-Randomizer: LODT"), DisplayName("boot.HIP LODT multiplier"),
+        [Category("Patches: LODT"), DisplayName("boot.HIP LODT multiplier"),
             Description("If true, multiply the render distance for the pickups by this amount."),
             TypeConverter(typeof(SingleTypeConverter))]
         public float lodtValue { get; set; }
-
-        [Category("Non-Randomizer"), DisplayName("Restore Robot Laugh"), Description("Restores robot laugh sound, which is not present normally in the GameCube version of the game.")]
-        public bool restoreRobotLaugh { get; set; }
 
         public RandomizerSettings(int game)
         {
@@ -275,6 +278,7 @@ namespace IndustrialPark.Randomizer
             Taxi_Trigger_Positions = false;
             Bus_Stop_Trigger_Positions = false;
             openTeleportBoxes = false;
+            widescreenMenu = false;
 
             boulderMin = 0.5f;
             boulderMax = 2f;
@@ -487,6 +491,7 @@ namespace IndustrialPark.Randomizer
                     dt.RemoveProperty("RingSizes");
                     dt.RemoveProperty("ringScaleMin");
                     dt.RemoveProperty("ringScaleMax");
+                    dt.RemoveProperty("widescreenMenu");
                     break;
                 case 2: // Movie
                     dt.RemoveProperty("Tiki_Models");
@@ -507,6 +512,7 @@ namespace IndustrialPark.Randomizer
                     dt.RemoveProperty("disableFlythroughs");
                     dt.RemoveProperty("spatReqChum");
                     dt.RemoveProperty("restoreRobotLaugh");
+                    dt.RemoveProperty("widescreenMenu");
 
 
                     dt.RemoveProperty("disableCutscenes"); // remove this line later

@@ -25,11 +25,11 @@ namespace IndustrialPark
             set => Model_AssetID = (uint)value;
         }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat50 { get; set; }
+        public AssetSingle Rotation { get; set; }
         [Category(dynaCategoryName)]
         public AssetID Unknown54 { get; set; }
         [Category(dynaCategoryName)]
-        public int UnknownInt58 { get; set; }
+        public int TargetPlayer { get; set; }
         [Category(dynaCategoryName)]
         public AssetID Unknown5C { get; set; }
         [Category(dynaCategoryName)]
@@ -37,8 +37,8 @@ namespace IndustrialPark
 
         public DynaEnemyTurret(string assetName, AssetTemplate template, Vector3 position) : base(assetName, DynaType.Enemy__SB__Turret, 4, position)
         {
-            UnknownFloat50 = 30f;
-            UnknownInt58 = 1;
+            Rotation = 30f;
+            TargetPlayer = 1;
             
             TurretType =
             template == AssetTemplate.Turret_v1 ? EnemyTurretType.turret_v1_bind :
@@ -52,9 +52,9 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = entityDynaEndPosition;
 
-                UnknownFloat50 = reader.ReadSingle();
+                Rotation = reader.ReadSingle();
                 Unknown54 = reader.ReadUInt32();
-                UnknownInt58 = reader.ReadInt32();
+                TargetPlayer = reader.ReadInt32();
                 Unknown5C = reader.ReadUInt32();
                 Unknown60 = reader.ReadUInt32();
             }
@@ -65,9 +65,9 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeEntityDyna(endianness));
-                writer.Write(UnknownFloat50);
+                writer.Write(Rotation);
                 writer.Write(Unknown54);
-                writer.Write(UnknownInt58);
+                writer.Write(TargetPlayer);
                 writer.Write(Unknown5C);
                 writer.Write(Unknown60);
 

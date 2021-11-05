@@ -4,7 +4,6 @@ using SharpDX.Direct3D11;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 
 namespace IndustrialPark
 {
@@ -60,6 +59,8 @@ namespace IndustrialPark
     {
         private const string categoryName = "Spline";
 
+        [Category(categoryName), Description("Always 1 or 3, I don't recommend changing this on existing splines")]
+        public int SplineType { get; set; }
         [Category(categoryName)]
         public AssetID UnknownHash_14 { get; set; }
         [Category(categoryName)]
@@ -75,6 +76,16 @@ namespace IndustrialPark
                 Setup(Program.MainForm.renderer);
             }
         }
+        private AssetSingle[] _points2;
+        [Category(categoryName)]
+        public AssetSingle[] Points2
+        {
+            get => _points2;
+            set
+            {
+                _points2 = value;
+            }
+        }
 
         public AssetSPLN(Section_AHDR AHDR, Game game, Endianness endianness, SharpRenderer renderer) : base(AHDR, game, endianness)
         {
@@ -84,8 +95,8 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = baseHeaderEndPosition;
 
-                reader.ReadInt32(); // unknown, always 3
-                int pointCount = reader.ReadInt32() - 3; // point count plus 3
+                SplineType = reader.ReadInt32();
+                int pointCount = reader.ReadInt32() - SplineType; // point count plus 3
                 reader.ReadInt32(); // point count minus one
                 UnknownHash_14 = reader.ReadUInt32();
                 UnknownHash_18 = reader.ReadUInt32();
@@ -94,7 +105,10 @@ namespace IndustrialPark
                 for (int i = 0; i < _points.Length; i++)
                     _points[i] = new SplineVector(reader);
 
-                reader.BaseStream.Position += 16;
+                if (SplineType == 1)
+                    reader.BaseStream.Position += 8;
+                else if (SplineType == 3)
+                    reader.BaseStream.Position += 16;
 
                 for (int i = 0; i < _points.Length; i++)
                     _points[i].W = reader.ReadSingle();
@@ -110,14 +124,17 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeBase(Endianness.Little));
-                writer.Write(3); // unknown, always 3
-                writer.Write(_points.Length + 3); // point count plus 3
+                writer.Write(SplineType);
+                writer.Write(_points.Length + SplineType); // point count plus 3
                 writer.Write(_points.Length - 1); // point count minus one
                 writer.Write(UnknownHash_14);
                 writer.Write(UnknownHash_18);
                 foreach (var v in _points)
                     writer.Write(v.Serialize(endianness));
-                writer.Write(new byte[16]);
+                if (SplineType == 1)
+                    writer.Write(new byte[8]);
+                else if (SplineType == 3)
+                    writer.Write(new byte[16]);
                 foreach (var v in _points)
                     writer.Write(v.W);
 

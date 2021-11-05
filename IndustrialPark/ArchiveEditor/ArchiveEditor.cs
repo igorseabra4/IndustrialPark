@@ -431,7 +431,7 @@ namespace IndustrialPark
 
         AssetType curType = AssetType.Null;
 
-        private void PopulateAssetList(AssetType type = AssetType.Null, bool select = false, List<uint> selectionAssetIDs = null)
+        private void PopulateAssetList(AssetType type = AssetType.Null, List<uint> assetIDs = null, bool select = false, List<uint> selectionAssetIDs = null)
         {
             curType = type;
             listViewAssets.BeginUpdate();
@@ -439,7 +439,10 @@ namespace IndustrialPark
             
             if (comboBoxLayers.SelectedItem != null)
             {
-                List<uint> assetIDs = archive.GetAssetIDsOnLayer(comboBoxLayers.SelectedIndex);
+                if (assetIDs == null) {
+                    assetIDs = archive.GetAssetIDsOnLayer(comboBoxLayers.SelectedIndex);
+                }
+
                 List<ListViewItem> items = new List<ListViewItem>(assetIDs.Count());
 
                 for (int i = 0; i < assetIDs.Count(); i++)
@@ -883,7 +886,7 @@ namespace IndustrialPark
                 else
                     comboBoxAssetTypes.SelectedItem = assetType;
 
-                PopulateAssetList(assetType, true, assetIDs);
+                PopulateAssetList(assetType, null, true, assetIDs);
                 return;
             }
             else
@@ -915,15 +918,25 @@ namespace IndustrialPark
                 textBoxFindAsset.BackColor = System.Drawing.Color.Red;
             }
 
+            var assetIDs = new List<uint>();
+
             if (assetID != 0 && archive.ContainsAsset(assetID))
-                SetSelectedIndices(new List<uint>() { assetID }, false);
+                assetIDs.Add(assetID);
             else
                 foreach (Asset a in archive.GetAllAssets())
-                    if (a.assetName.ToLower().Contains(textBoxFindAsset.Text.ToLower()) && !a.isSelected)
-                    {
-                        SetSelectedIndices(new List<uint>() { a.assetID }, false);
-                        return;
-                    }
+                    if (a.assetName.ToLower().Contains(textBoxFindAsset.Text.ToLower()))
+                        assetIDs.Add(a.assetID);
+
+            foreach (uint u in assetIDs)
+            {
+                if (archive.GetLayerFromAssetID(u) != comboBoxLayers.SelectedIndex || comboBoxLayers.SelectedIndex == -1)
+                    comboBoxLayers.SelectedIndex = archive.GetLayerFromAssetID(u);
+                break;
+            }
+
+            if (comboBoxAssetTypes.Items.Count > 0)
+                comboBoxAssetTypes.SelectedIndex = 0;
+            PopulateAssetList(AssetType.Null, assetIDs);
         }
 
         private void EditPACKToolStripMenuItem_Click(object sender, EventArgs e)

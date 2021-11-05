@@ -60,6 +60,8 @@ namespace IndustrialPark
 
         public bool ReadInt32Bool() => ReadInt32() != 0;
 
+        public string ReadString(int length) => System.Text.Encoding.GetEncoding(1252).GetString(ReadBytes(length));
+        
         public AssetColor ReadColor() => new AssetColor(ReadByte(), ReadByte(), ReadByte(), ReadByte());
         
         public bool EndOfStream => BaseStream.Position == BaseStream.Length;
@@ -112,6 +114,12 @@ namespace IndustrialPark
         }
 
         private void WriteReverse(byte[] bytes) => base.Write(bytes.Reverse().ToArray());
+
+        public override void Write(string f)
+        {
+            foreach (byte c in System.Text.Encoding.GetEncoding(1252).GetBytes(f))
+                Write(c);
+        }
 
         public void Write(AssetColor color)
         {

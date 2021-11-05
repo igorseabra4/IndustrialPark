@@ -95,7 +95,10 @@ namespace IndustrialPark
 
     public class AssetLKIT : Asset
     {
-        [Category("Light Kit")]
+        private const string categoryName = "Light Kit";
+        [Category(categoryName)]
+        public AssetID Group_AssetID { get; set; }
+        [Category(categoryName)]
         public EntryLKIT[] Lights { get; set; }
 
         public AssetLKIT(string assetName, byte[] data, Endianness endianness) : base(assetName, AssetType.LKIT)
@@ -115,7 +118,8 @@ namespace IndustrialPark
         {
             using (var reader = new EndianBinaryReader(data, endianness))
             {
-                reader.BaseStream.Position = 0x08;
+                reader.BaseStream.Position = 0x04;
+                Group_AssetID = reader.ReadUInt32();
                 int lightCount = reader.ReadInt32();
                 Lights = new EntryLKIT[lightCount];
 
@@ -134,7 +138,7 @@ namespace IndustrialPark
             {
                 writer.WriteMagic("LKIT");
 
-                writer.Write(0);
+                writer.Write(Group_AssetID);
                 writer.Write(Lights.Length);
                 writer.Write(0);
 
@@ -144,5 +148,7 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
+
+        public override bool HasReference(uint assetID) => Group_AssetID == assetID;
     }
 }

@@ -22,10 +22,13 @@ namespace IndustrialPark
 #if !DEBUG
             addTextureFolderToolStripMenuItem.Visible = false;
             addTXDArchiveToolStripMenuItem.Visible = false;
+            openFolderToolStripMenuItem.Visible = false;
 #endif
 
+            autoShowDropDowns = false;
             uIToolStripMenuItem_Click(null, null);
             uIFTToolStripMenuItem_Click(null, null);
+            autoShowDropDowns = true;
 
             ArchiveEditorFunctions.PopulateTemplateMenusAt(toolStripMenuItem_Templates, TemplateToolStripItemClick);
 
@@ -974,160 +977,197 @@ namespace IndustrialPark
             HexUIntTypeConverter.Legacy = useLegacyAssetIDFormatToolStripMenuItem.Checked;
         }
 
+        private bool autoShowDropDowns = true;
+
+        private void ShowDropDowns()
+        {
+            if (autoShowDropDowns)
+            {
+                displayToolStripMenuItem.ShowDropDown();
+                assetTypesToolStripMenuItem.ShowDropDown();
+            }
+        }
+
         private void levelModelToolStripMenuItem_Click(object sender, EventArgs e)
         {
             levelModelToolStripMenuItem.Checked = !levelModelToolStripMenuItem.Checked;
             AssetJSP.dontRender = !levelModelToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void bUTNToolStripMenuItem_Click(object sender, EventArgs e)
         {
             bUTNToolStripMenuItem.Checked = !bUTNToolStripMenuItem.Checked;
             AssetBUTN.dontRender = !bUTNToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void bOULToolStripMenuItem_Click(object sender, EventArgs e)
         {
             bOULToolStripMenuItem.Checked = !bOULToolStripMenuItem.Checked;
             AssetBOUL.dontRender = !bOULToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void cAMToolStripMenuItem_Click(object sender, EventArgs e)
         {
             cAMToolStripMenuItem.Checked = !cAMToolStripMenuItem.Checked;
             AssetCAM.dontRender = !cAMToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void mVPTToolStripMenuItem_Click(object sender, EventArgs e)
         {
             mVPTToolStripMenuItem.Checked = !mVPTToolStripMenuItem.Checked;
             AssetMVPT.dontRender = !mVPTToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void pKUPToolStripMenuItem_Click(object sender, EventArgs e)
         {
             pKUPToolStripMenuItem.Checked = !pKUPToolStripMenuItem.Checked;
             AssetPKUP.dontRender = !pKUPToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void dSTRToolStripMenuItem_Click(object sender, EventArgs e)
         {
             dSTRToolStripMenuItem.Checked = !dSTRToolStripMenuItem.Checked;
             AssetDSTR.dontRender = !dSTRToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void tRIGToolStripMenuItem_Click(object sender, EventArgs e)
         {
             tRIGToolStripMenuItem.Checked = !tRIGToolStripMenuItem.Checked;
             AssetTRIG.dontRender = !tRIGToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void pLATToolStripMenuItem_Click(object sender, EventArgs e)
         {
             pLATToolStripMenuItem.Checked = !pLATToolStripMenuItem.Checked;
             AssetPLAT.dontRender = !pLATToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void sIMPToolStripMenuItem_Click(object sender, EventArgs e)
         {
             sIMPToolStripMenuItem.Checked = !sIMPToolStripMenuItem.Checked;
             AssetSIMP.dontRender = !sIMPToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void vILToolStripMenuItem_Click(object sender, EventArgs e)
         {
             vILToolStripMenuItem.Checked = !vILToolStripMenuItem.Checked;
             AssetVIL.dontRender = !vILToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void mRKRToolStripMenuItem_Click(object sender, EventArgs e)
         {
             mRKRToolStripMenuItem.Checked = !mRKRToolStripMenuItem.Checked;
             AssetMRKR.dontRender = !mRKRToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void pLYRToolStripMenuItem_Click(object sender, EventArgs e)
         {
             pLYRToolStripMenuItem.Checked = !pLYRToolStripMenuItem.Checked;
             AssetPLYR.dontRender = !pLYRToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void sFXToolStripMenuItem_Click(object sender, EventArgs e)
         {
             sFXToolStripMenuItem.Checked = !sFXToolStripMenuItem.Checked;
             AssetSFX.dontRender = !sFXToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void sDFXToolStripMenuItem_Click(object sender, EventArgs e)
         {
             sDFXToolStripMenuItem.Checked = !sDFXToolStripMenuItem.Checked;
             AssetSDFX.dontRender = !sDFXToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void dYNAToolStripMenuItem_Click(object sender, EventArgs e)
         {
             dYNAToolStripMenuItem.Checked = !dYNAToolStripMenuItem.Checked;
             AssetDYNA.dontRender = !dYNAToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void uIToolStripMenuItem_Click(object sender, EventArgs e)
         {
             uIToolStripMenuItem.Checked = !uIToolStripMenuItem.Checked;
             AssetUI.dontRender = !uIToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void uIFTToolStripMenuItem_Click(object sender, EventArgs e)
         {
             uIFTToolStripMenuItem.Checked = !uIFTToolStripMenuItem.Checked;
             AssetUIFT.dontRender = !uIFTToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void eGENToolStripMenuItem_Click(object sender, EventArgs e)
         {
             eGENToolStripMenuItem.Checked = !eGENToolStripMenuItem.Checked;
             AssetEGEN.dontRender = !eGENToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void hANGToolStripMenuItem_Click(object sender, EventArgs e)
         {
             hANGToolStripMenuItem.Checked = !hANGToolStripMenuItem.Checked;
             AssetHANG.dontRender = !hANGToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void pENDToolStripMenuItem_Click(object sender, EventArgs e)
         {
             pENDToolStripMenuItem.Checked = !pENDToolStripMenuItem.Checked;
             AssetPEND.dontRender = !pENDToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void lITEToolStripMenuItem_Click(object sender, EventArgs e)
         {
             lITEToolStripMenuItem.Checked = !lITEToolStripMenuItem.Checked;
             AssetLITE.dontRender = !lITEToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void sPLNToolStripMenuItem_Click(object sender, EventArgs e)
         {
             sPLNToolStripMenuItem.Checked = !sPLNToolStripMenuItem.Checked;
             AssetSPLN.dontRender = !sPLNToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void dTRKToolStripMenuItem_Click(object sender, EventArgs e)
         {
             dTRKToolStripMenuItem.Checked = !dTRKToolStripMenuItem.Checked;
             AssetDTRK.dontRender = !dTRKToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void vOLUToolStripMenuItem_Click(object sender, EventArgs e)
         {
             vOLUToolStripMenuItem.Checked = !vOLUToolStripMenuItem.Checked;
             AssetVOLU.dontRender = !vOLUToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void nPCToolStripMenuItem_Click(object sender, EventArgs e)
         {
             nPCToolStripMenuItem.Checked = !nPCToolStripMenuItem.Checked;
             AssetNPC.dontRender = !nPCToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void uIModeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1503,6 +1543,8 @@ namespace IndustrialPark
 
         private void disableAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            autoShowDropDowns = false;
+
             if (levelModelToolStripMenuItem.Checked)
                 levelModelToolStripMenuItem_Click(sender, e);
 
@@ -1580,10 +1622,15 @@ namespace IndustrialPark
 
             if (vOLUToolStripMenuItem.Checked)
                 vOLUToolStripMenuItem_Click(sender, e);
+
+            autoShowDropDowns = true;
+            ShowDropDowns();
         }
 
         private void enableAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            autoShowDropDowns = false;
+
             if (!levelModelToolStripMenuItem.Checked)
                 levelModelToolStripMenuItem_Click(sender, e);
 
@@ -1661,6 +1708,9 @@ namespace IndustrialPark
 
             if (!vOLUToolStripMenuItem.Checked)
                 vOLUToolStripMenuItem_Click(sender, e);
+
+            autoShowDropDowns = true;
+            ShowDropDowns();
         }
 
         private void openFolderToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1678,14 +1728,19 @@ namespace IndustrialPark
                 var hipList = new List<string>();
                 foreach (var s in dirList)
                     foreach (var ss in Directory.GetFiles(s))
-                        if (Path.GetExtension(ss).ToLower().Equals(".hip") || Path.GetExtension(ss).ToLower().Equals(".hop"))
+                    {
+                        var extensionToLower = Path.GetExtension(ss).ToLower();
+                        if (extensionToLower.Equals(".hip") || extensionToLower.Equals(".hop"))
                             hipList.Add(ss);
+                    }
 
                 var scoobyPlat = HipHopFile.Platform.Unknown;
 
                 var p = new ProgressBar("Opening files...");
                 p.SetProgressBar(0, hipList.Count, 1);
                 p.Show();
+
+                List<(MinfAssetParam, int, string)> minfParamsByteCount = new List<(MinfAssetParam, int, string)>();
 
                 foreach (var hip in hipList)
                 {
@@ -1697,6 +1752,10 @@ namespace IndustrialPark
                     p.PerformStep();
                 }
 
+                using (var writer = new StreamWriter(new FileStream("minfs.txt", FileMode.Create)))                
+                    foreach (var v in minfParamsByteCount)
+                        writer.WriteLine($"{v.Item1} {v.Item2} {v.Item3}");
+                
                 p.Close();
             }
         }

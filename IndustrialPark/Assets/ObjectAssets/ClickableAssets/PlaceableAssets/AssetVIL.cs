@@ -52,6 +52,10 @@ namespace IndustrialPark
         public AssetID TaskDYNA1_AssetID { get; set; }
         [Category(categoryName)]
         public AssetID TaskDYNA2_AssetID { get; set; }
+        [Category(categoryName)]
+        public AssetID NavMesh2_AssetID { get; set; }
+        [Category(categoryName)]
+        public AssetID Settings_AssetID { get; set; }
 
         public AssetVIL(string assetName, Vector3 position, AssetTemplate template, uint mvptAssetID) : base(assetName, AssetType.VIL, BaseAssetType.NPC, position)
         {
@@ -170,6 +174,12 @@ namespace IndustrialPark
                 MovePoint_AssetID = reader.ReadUInt32();
                 TaskDYNA1_AssetID = reader.ReadUInt32();
                 TaskDYNA2_AssetID = reader.ReadUInt32();
+
+                if (game == Game.Incredibles)
+                {
+                    NavMesh2_AssetID = reader.ReadUInt32();
+                    Settings_AssetID = reader.ReadUInt32();
+                }
             }
         }
 
@@ -182,6 +192,8 @@ namespace IndustrialPark
             MovePoint_AssetID = reader.ReadUInt32();
             TaskDYNA1_AssetID = reader.ReadUInt32();
             TaskDYNA2_AssetID = reader.ReadUInt32();
+            NavMesh2_AssetID = reader.ReadUInt32();
+            Settings_AssetID = reader.ReadUInt32();
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
@@ -195,6 +207,11 @@ namespace IndustrialPark
                 writer.Write(MovePoint_AssetID);
                 writer.Write(TaskDYNA1_AssetID);
                 writer.Write(TaskDYNA2_AssetID);
+                if (game == Game.Incredibles)
+                {
+                    writer.Write(NavMesh2_AssetID);
+                    writer.Write(Settings_AssetID);
+                }
                 writer.Write(SerializeLinks(endianness));
                 return writer.ToArray();
             }
@@ -202,7 +219,7 @@ namespace IndustrialPark
 
         public override bool HasReference(uint assetID) => VilType == assetID || NPCSettings_AssetID == assetID ||
             MovePoint_AssetID == assetID || TaskDYNA1_AssetID == assetID || TaskDYNA2_AssetID == assetID ||
-            base.HasReference(assetID);
+            NavMesh2_AssetID == assetID || Settings_AssetID == assetID || base.HasReference(assetID);
         
         public override void Verify(ref List<string> result)
         {
@@ -215,12 +232,18 @@ namespace IndustrialPark
             Verify(MovePoint_AssetID, ref result);
             Verify(TaskDYNA1_AssetID, ref result);
             Verify(TaskDYNA2_AssetID, ref result);
+            Verify(NavMesh2_AssetID, ref result);
+            Verify(Settings_AssetID, ref result);
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
             if (game == Game.BFBB)
+            {
                 dt.RemoveProperty("VilType");
+                dt.RemoveProperty("NavMesh2_AssetID");
+                dt.RemoveProperty("Settings_AssetID");
+            }
             else if (game == Game.Incredibles)
             {
                 dt.RemoveProperty("VilType_BFBB");

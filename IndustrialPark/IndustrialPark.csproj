@@ -137,6 +137,9 @@
     </Compile>
     <Compile Include="ArchiveEditor\Gizmos\BoxTrigPositionGizmo.cs" />
     <Compile Include="Assets\Binary\AssetONEL.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\DynaEffectGrass.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\DynaNpcGroup.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\HudDynas\DynaHudImage.cs" />
     <Compile Include="Assets\Shared\AssetSound.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\VolumeSpecific.cs" />
     <Compile Include="Assets\Shared\DataTypes\WireVector.cs" />
@@ -232,7 +235,7 @@
     <Compile Include="Assets\DYNA\DynaTypes\DynaLogicReference.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectRaceTimer.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaInteractionLaunch.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaEffectRumbleSphere.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaEffectRumbleSphere.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaEffectRumble.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaIncrediblesIcon.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaGObjectFlameEmitter.cs" />
@@ -767,7 +770,7 @@
   </Target>
   <PropertyGroup>
     <PostBuildEvent>; Move all assemblies and related files to lib folder
-ROBOCOPY "$(TargetDir) " "$(TargetDir)lib\ " /XF *.exe *.config *.json *.manifest *.xml *.pdb *.cmd *.application /XD app.publish Resources runtimes lib logs data /E /IS /MOVE
+ROBOCOPY "$(TargetDir) " "$(TargetDir)lib\ " /XF *.exe *.config *.json *.manifest *.xml *.pdb *.txt *.cmd *.application /XD app.publish Resources runtimes lib logs data /E /IS /MOVE
 if %25errorlevel%25 leq 4 exit 0 else exit %25errorlevel%25</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\AssimpNet.4.1.0\build\AssimpNet.targets" Condition="Exists('..\packages\AssimpNet.4.1.0\build\AssimpNet.targets')" />

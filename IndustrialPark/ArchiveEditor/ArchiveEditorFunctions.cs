@@ -472,22 +472,28 @@ namespace IndustrialPark
 
             newAsset = CreateAsset(AHDR, game, endianness, skipTexturesAndModels, showMessageBox, ref error);
 
-#if DEBUG
             // testing if build works
             if (fast)
             {
                 var built = newAsset.BuildAHDR().data;
                 if (!Enumerable.SequenceEqual(AHDR.data, built))
                 {
+                    error = $"[{ AHDR.assetID:X8}] { AHDR.ADBG.assetName} (unsupported format)";
+                    if (showMessageBox)
+                        MessageBox.Show($"There was an error loading asset " + error + " and editing has been disabled for it.");
+
+                    newAsset = new AssetGeneric(AHDR, game, endianness);
+#if DEBUG
                     string folder = "build_test" + Path.GetFileName(currentlyOpenFilePath) + "_out\\";
                     if (!Directory.Exists(folder))
                         Directory.CreateDirectory(folder);
                     string assetName = $"[{AHDR.assetType}] {AHDR.ADBG.assetName}";
                     File.WriteAllBytes(folder + assetName + " ok", AHDR.data);
                     File.WriteAllBytes(folder + assetName + " bad", built);
+#endif
                 }
             }
-#endif
+
             assetDictionary[AHDR.assetID] = newAsset;
 
             if (hiddenAssets.Contains(AHDR.assetID))
@@ -518,8 +524,8 @@ namespace IndustrialPark
 
         private Asset CreateAsset(Section_AHDR AHDR, Game game, Endianness endianness, bool skipTexturesAndModels, bool showMessageBox, ref string error)
         {
-            //try
-            //{
+            try
+            {
                 switch (AHDR.assetType)
                 {
                     case AssetType.ANIM:
@@ -585,7 +591,7 @@ namespace IndustrialPark
                     case AssetType.DSCO: return new AssetDSCO(AHDR, game, endianness);
                     case AssetType.DSTR: return new AssetDSTR(AHDR, game, endianness);
                     case AssetType.DTRK: return new AssetDTRK(AHDR, game, endianness);
-                    case AssetType.DYNA: return CreateDYNA(AHDR);
+                    case AssetType.DYNA: return CreateDYNA(AHDR, game, endianness);
                     case AssetType.DUPC: return new AssetDUPC(AHDR, game, endianness);
                     case AssetType.EGEN: return new AssetEGEN(AHDR, game, endianness);
                     case AssetType.ENV:  return new AssetENV (AHDR, game, endianness);
@@ -649,7 +655,6 @@ namespace IndustrialPark
                     case AssetType.RANM:
                     case AssetType.SLID:
                     case AssetType.SSET:
-                    case AssetType.SUBT:
                     case AssetType.TRWT:
                     case AssetType.UIM:
                     case AssetType.ZLIN:
@@ -663,6 +668,7 @@ namespace IndustrialPark
                     case AssetType.NPCS:
                     case AssetType.RAW:
                     case AssetType.SPLP:
+                    case AssetType.SUBT:
                     case AssetType.TEXS:
                     case AssetType.UIFN:
                         return new AssetGeneric(AHDR, game, endianness);
@@ -671,22 +677,20 @@ namespace IndustrialPark
                     default:
                         throw new Exception($"Unknown asset type ({AHDR.assetType})");
                 }
-            //}
-            //catch (Exception ex)
-            //{
-            //    error = $"[{ AHDR.assetID:X8}] {AHDR.ADBG.assetName} ({ex.Message})";
+            }
+            catch (Exception ex)
+            {
+                error = $"[{ AHDR.assetID:X8}] {AHDR.ADBG.assetName} ({ex.Message})";
 
-            //    if (showMessageBox)
-            //        MessageBox.Show($"There was an error loading asset {error}:" + ex.Message + " and editing has been disabled for it.");
+                if (showMessageBox)
+                    MessageBox.Show($"There was an error loading asset {error}:" + ex.Message + " and editing has been disabled for it.");
 
-            //    return new AssetGeneric(AHDR, game, endianness);
-            //}
+                return new AssetGeneric(AHDR, game, endianness);
+            }
         }
 
-        private AssetDYNA CreateDYNA(Section_AHDR AHDR)
+        private AssetDYNA CreateDYNA(Section_AHDR AHDR, Game game, Endianness endianness)
         {
-            var endianness = platform.Endianness();
-
             EndianBinaryReader reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = 8;
             DynaType type = (DynaType)reader.ReadUInt32();
@@ -706,6 +710,7 @@ namespace IndustrialPark
                 case DynaType.Incredibles__Icon: return new DynaIncrediblesIcon(AHDR, game, endianness);
                 case DynaType.JSPExtraData: return new DynaJSPExtraData(AHDR, game, endianness);
                 case DynaType.SceneProperties: return new DynaSceneProperties(AHDR, game, endianness);
+                case DynaType.effect__grass: return new DynaEffectGrass(AHDR, game, endianness);
                 case DynaType.effect__Lightning: return new DynaEffectLightning(AHDR, game, endianness);
                 case DynaType.effect__Rumble: return new DynaEffectRumble(AHDR, game, endianness);
                 case DynaType.effect__RumbleSphericalEmitter: return new DynaEffectRumbleSphere(AHDR, game, endianness);
@@ -731,12 +736,14 @@ namespace IndustrialPark
                 case DynaType.game_object__talk_box: return new DynaGObjectTalkBox(AHDR, game, endianness);
                 case DynaType.game_object__task_box: return new DynaGObjectTaskBox(AHDR, game, endianness);
                 case DynaType.game_object__text_box: return new DynaGObjectTextBox(AHDR, game, endianness);
+                case DynaType.hud__image: return new DynaHudImage(AHDR, game, endianness);
                 case DynaType.hud__meter__font: return new DynaHudMeterFont(AHDR, game, endianness);
                 case DynaType.hud__meter__unit: return new DynaHudMeterUnit(AHDR, game, endianness);
                 case DynaType.hud__model: return new DynaHudModel(AHDR, game, endianness);
                 case DynaType.hud__text: return new DynaHudText(AHDR, game, endianness);
                 case DynaType.interaction__Launch: return new DynaInteractionLaunch(AHDR, game, endianness);
                 case DynaType.logic__reference: return new DynaLogicReference(AHDR, game, endianness);
+                case DynaType.npc__group: return new DynaNPCGroup(AHDR, game, endianness);
                 case DynaType.pointer: return new DynaPointer(AHDR, game, endianness);
                 case DynaType.ui__box: return new DynaUIBox(AHDR, game, endianness);
                 case DynaType.ui__controller: return new DynaUIController(AHDR, game, endianness);
@@ -761,7 +768,6 @@ namespace IndustrialPark
                 case DynaType.effect__ScreenWarp:
                 case DynaType.effect__Splash:
                 case DynaType.effect__Waterhose:
-                case DynaType.effect__grass:
                 case DynaType.effect__light:
                 case DynaType.effect__spark_emitter:
                 case DynaType.effect__uber_laser:
@@ -779,7 +785,6 @@ namespace IndustrialPark
                 case DynaType.game_object__rband_camera_asset:
                 case DynaType.game_object__train_car:
                 case DynaType.game_object__train_junction:
-                case DynaType.hud__image:
                 case DynaType.interaction__IceBridge:
                 case DynaType.interaction__Lift:
                 case DynaType.interaction__SwitchLever:
@@ -787,7 +792,6 @@ namespace IndustrialPark
                 case DynaType.logic__FunctionGenerator:
                 case DynaType.npc__CoverPoint:
                 case DynaType.npc__NPC_Custom_AV:
-                case DynaType.npc__group:
                 case DynaType.Unknown_2CD29541:
                 case DynaType.Unknown_4EE03B24:
                 case DynaType.Unknown_9F234F8E:

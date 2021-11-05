@@ -14,25 +14,29 @@ namespace IndustrialPark
         protected override short constVersion => 4;
 
         [Category(dynaCategoryName)]
-        public int UnknownInt_00 { get; set; }
+        public FlagBitmask Flags { get; set; } = IntFlagsDescriptor(null, "Visible");
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_10 { get; set; }
+        public AssetSingle DirectionX { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_14 { get; set; }
+        public AssetSingle DirectionY { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_18 { get; set; }
+        public AssetSingle DirectionZ { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_1C { get; set; }
+        public AssetSingle ScaleX { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_20 { get; set; }
+        public AssetSingle ScaleY { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_24 { get; set; }
+        public AssetSingle ScaleZ { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_28 { get; set; }
+        public AssetSingle HeatRandom { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_2C { get; set; }
+        public AssetSingle Damage { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_30 { get; set; }
+        public AssetSingle Knockback { get; set; }
+        [Category(dynaCategoryName)]
+        public int Unknown { get; set; }
+
+        private bool inc = false;
 
         public DynaGObjectFlameEmitter(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__flame_emitter, game, endianness)
         {
@@ -40,17 +44,23 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
 
-                UnknownInt_00 = reader.ReadInt32();
+                Flags.FlagValueInt = reader.ReadUInt32();
                 _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                UnknownFloat_10 = reader.ReadSingle();
-                UnknownFloat_14 = reader.ReadSingle();
-                UnknownFloat_18 = reader.ReadSingle();
-                UnknownFloat_1C = reader.ReadSingle();
-                UnknownFloat_20 = reader.ReadSingle();
-                UnknownFloat_24 = reader.ReadSingle();
-                UnknownFloat_28 = reader.ReadSingle();
-                UnknownFloat_2C = reader.ReadSingle();
-                UnknownFloat_30 = reader.ReadSingle();
+                DirectionX = reader.ReadSingle();
+                DirectionY = reader.ReadSingle();
+                DirectionZ = reader.ReadSingle();
+                ScaleX = reader.ReadSingle();
+                ScaleY = reader.ReadSingle();
+                ScaleZ = reader.ReadSingle();
+                HeatRandom = reader.ReadSingle();
+                Damage = reader.ReadSingle();
+                Knockback = reader.ReadSingle();
+
+                if (reader.BaseStream.Position - _links.Length * Link.sizeOfStruct != reader.BaseStream.Length)
+                {
+                    inc = true;
+                    Unknown = reader.ReadInt32();
+                }
 
                 CreateTransformMatrix();
                 AddToRenderableAssets(this);
@@ -61,19 +71,22 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(UnknownInt_00);
+                writer.Write(Flags.FlagValueInt);
                 writer.Write(_position.X);
                 writer.Write(_position.Y);
                 writer.Write(_position.Z);
-                writer.Write(UnknownFloat_10);
-                writer.Write(UnknownFloat_14);
-                writer.Write(UnknownFloat_18);
-                writer.Write(UnknownFloat_1C);
-                writer.Write(UnknownFloat_20);
-                writer.Write(UnknownFloat_24);
-                writer.Write(UnknownFloat_28);
-                writer.Write(UnknownFloat_2C);
-                writer.Write(UnknownFloat_30);
+                writer.Write(DirectionX);
+                writer.Write(DirectionY);
+                writer.Write(DirectionZ);
+                writer.Write(ScaleX);
+                writer.Write(ScaleY);
+                writer.Write(ScaleZ);
+                writer.Write(HeatRandom);
+                writer.Write(Damage);
+                writer.Write(Knockback);
+
+                if (inc)
+                    writer.Write(Unknown);
 
                 return writer.ToArray();
             }
@@ -83,9 +96,6 @@ namespace IndustrialPark
 
         protected override List<Triangle> triangleSource => SharpRenderer.cubeTriangles;
 
-        public override void Draw(SharpRenderer renderer)
-        {
-            renderer.DrawCube(world, isSelected);
-        }
+        public override void Draw(SharpRenderer renderer) => renderer.DrawCube(world, isSelected);
     }
 }

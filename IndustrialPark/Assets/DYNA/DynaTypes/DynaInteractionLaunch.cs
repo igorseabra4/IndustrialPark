@@ -11,19 +11,19 @@ namespace IndustrialPark
         protected override short constVersion => 2;
 
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_00 { get; set; }
+        public int LaunchType { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID SIMP_AssetID { get; set; }
+        public AssetID LaunchObject_AssetID { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID Marker_AssetID { get; set; }
+        public AssetID Target_AssetID { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_0C { get; set; }
+        public AssetSingle Gravity { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_10 { get; set; }
+        public AssetSingle Height { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_14 { get; set; }
+        public int LeavesBone { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_18 { get; set; }
+        public FlagBitmask LaunchFlags { get; set; } = IntFlagsDescriptor();
 
         public DynaInteractionLaunch(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.interaction__Launch, game, endianness)
         {
@@ -31,13 +31,13 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
 
-                UnknownFloat_00 = reader.ReadSingle();
-                SIMP_AssetID = reader.ReadUInt32();
-                Marker_AssetID = reader.ReadUInt32();
-                UnknownFloat_0C = reader.ReadSingle();
-                UnknownFloat_10 = reader.ReadSingle();
-                UnknownFloat_14 = reader.ReadSingle();
-                UnknownFloat_18 = reader.ReadSingle();
+                LaunchType = reader.ReadInt32();
+                LaunchObject_AssetID = reader.ReadUInt32();
+                Target_AssetID = reader.ReadUInt32();
+                Gravity = reader.ReadSingle();
+                Height = reader.ReadSingle();
+                LeavesBone = reader.ReadInt32();
+                LaunchFlags.FlagValueInt = reader.ReadUInt32();
             }
         }
 
@@ -45,25 +45,25 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(UnknownFloat_00);
-                writer.Write(SIMP_AssetID);
-                writer.Write(Marker_AssetID);
-                writer.Write(UnknownFloat_0C);
-                writer.Write(UnknownFloat_10);
-                writer.Write(UnknownFloat_14);
-                writer.Write(UnknownFloat_18);
+                writer.Write(LaunchType);
+                writer.Write(LaunchObject_AssetID);
+                writer.Write(Target_AssetID);
+                writer.Write(Gravity);
+                writer.Write(Height);
+                writer.Write(LeavesBone);
+                writer.Write(LaunchFlags.FlagValueInt);
 
                 return writer.ToArray();
             }
         }
 
         public override bool HasReference(uint assetID) =>
-            SIMP_AssetID == assetID || Marker_AssetID == assetID || base.HasReference(assetID);
+            LaunchObject_AssetID == assetID || Target_AssetID == assetID || base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {
-            Verify(SIMP_AssetID, ref result);
-            Verify(Marker_AssetID, ref result);
+            Verify(LaunchObject_AssetID, ref result);
+            Verify(Target_AssetID, ref result);
         }
 
     }

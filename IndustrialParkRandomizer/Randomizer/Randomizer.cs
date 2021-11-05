@@ -280,7 +280,7 @@ namespace IndustrialPark.Randomizer
 
             progressBar.PerformStep();
 
-            if (settings.restoreRobotLaugh)
+            if (settings.restoreRobotLaugh || settings.widescreenMenu)
             {
                 string mnu5path = (string.IsNullOrEmpty(backupDir) ? rootDir : backupDir) + "/mn/mnu5.hip";
                 if (File.Exists(mnu5path))
@@ -288,7 +288,14 @@ namespace IndustrialPark.Randomizer
                     var mnu5 = new RandomizableArchive();
                     mnu5.OpenFile(mnu5path, false, scoobyPlatform, out _, true);
 
-                    if (mnu5.RestoreRobotLaugh())
+                    var shouldSave = false;
+
+                    if (settings.restoreRobotLaugh)
+                        shouldSave |= mnu5.RestoreRobotLaugh();
+                    if (settings.widescreenMenu)
+                        shouldSave |= mnu5.WidescreenMenu();
+
+                    if (shouldSave)
                     {
                         if (string.IsNullOrEmpty(backupDir))
                             mnu5.Save();

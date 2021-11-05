@@ -6,7 +6,6 @@ namespace IndustrialPark
 {
     public class AssetTEXT : Asset
     {
-        public const int Codepage = 1252;
         public string Text { get; set; }
 
         public AssetTEXT(string assetName) : base(assetName, AssetType.TEXT)
@@ -19,7 +18,7 @@ namespace IndustrialPark
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
                 var length = reader.ReadInt32();
-                Text = System.Text.Encoding.GetEncoding(Codepage).GetString(reader.ReadBytes(length));
+                Text = reader.ReadString(length);
             }
         }
 
@@ -28,9 +27,7 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(Text.Length);
-
-                foreach (byte c in System.Text.Encoding.GetEncoding(Codepage).GetBytes(Text))
-                    writer.Write(c);
+                writer.Write(Text);
 
                 if (Text.Length == 0 || writer.BaseStream.Length % 4 != 0 || (writer.BaseStream.Length % 4 == 0 && Text[Text.Length - 1] != '\0'))
                     do writer.Write((byte)0);

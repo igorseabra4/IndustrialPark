@@ -2656,6 +2656,33 @@ namespace IndustrialPark.Randomizer
             return true;
         }
 
+        public bool WidescreenMenu()
+        {
+            foreach(var u in new uint[] {
+                new AssetID("AAA MNU4 CAUSTICS SURFACE UI"),
+                new AssetID("BLUE ALPHA 1 BAMBOO UI"),
+                new AssetID("BLUE ALPHA 2 BAMBOO UI"),
+                new AssetID("BLUE ALPHA 3 BAMBOO UI"),
+            })
+            {
+                var ui = (AssetUI)GetFromAssetID(u);
+                ui.ScaleX *= 4f / 3f;
+            }
+
+            foreach (var u in new uint[] {
+                new AssetID("BLUE ALPHA 1 UI"),
+                new AssetID("BLUE ALPHA 2 UI"),
+                new AssetID("BLUE ALPHA 3 UI"),
+            })
+            {
+                var ui = (AssetUI)GetFromAssetID(u);
+                ui.Width = (short)(ui.Width * 4f / 3f);
+                ui.PositionX -= 107f;
+            }
+
+            return true;
+        }
+
         public void ProgImportHip(string folderName, string fileName)
         {
             string gameName = game == Game.BFBB ? "BattleForBikiniBottom" : "MovieGame";

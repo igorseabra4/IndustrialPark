@@ -10,17 +10,17 @@ namespace IndustrialPark
         protected override short constVersion => 2;
 
         [Category(dynaCategoryName)]
-        public int UnknownInt_00 { get; set; }
+        public int CountDown { get; set; }
         [Category(dynaCategoryName)]
-        public int UnknownInt_04 { get; set; }
+        public int StartTime { get; set; }
         [Category(dynaCategoryName)]
-        public int UnknownInt_08 { get; set; }
+        public int VictoryTime { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_0C { get; set; }
+        public AssetSingle WarnTime1 { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_10 { get; set; }
+        public AssetSingle WarnTime2 { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_14 { get; set; }
+        public AssetSingle WarnTime3 { get; set; }
 
         public DynaGObjectRaceTimer(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__RaceTimer, game, endianness)
         {
@@ -28,12 +28,12 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
 
-                UnknownInt_00 = reader.ReadInt32();
-                UnknownInt_04 = reader.ReadInt32();
-                UnknownInt_08 = reader.ReadInt32();
-                UnknownFloat_0C = reader.ReadSingle();
-                UnknownFloat_10 = reader.ReadSingle();
-                UnknownFloat_14 = reader.ReadSingle();
+                CountDown = reader.ReadInt32();
+                StartTime = reader.ReadInt32();
+                VictoryTime = reader.ReadInt32();
+                WarnTime1 = reader.ReadSingle();
+                WarnTime2 = reader.ReadSingle();
+                WarnTime3 = reader.ReadSingle();
             }
         }
 
@@ -41,12 +41,12 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(UnknownInt_00);
-                writer.Write(UnknownInt_04);
-                writer.Write(UnknownInt_08);
-                writer.Write(UnknownFloat_0C);
-                writer.Write(UnknownFloat_10);
-                writer.Write(UnknownFloat_14);
+                writer.Write(CountDown);
+                writer.Write(StartTime);
+                writer.Write(VictoryTime);
+                writer.Write(WarnTime1);
+                writer.Write(WarnTime2);
+                writer.Write(WarnTime3);
 
                 return writer.ToArray();
             }

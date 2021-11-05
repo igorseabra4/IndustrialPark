@@ -131,9 +131,7 @@ namespace IndustrialPark
                 writer.Write(EndTime);
                 writer.Write((int)(prevFileSize + writer.BaseStream.Position + 8)); // text offset
                 writer.Write(Unknown);
-
-                foreach (byte c in System.Text.Encoding.GetEncoding(AssetTEXT.Codepage).GetBytes(Text))
-                    writer.Write(c);
+                writer.Write(Text);
 
                 do writer.Write((byte)0);
                 while (writer.BaseStream.Length % 4 != 0);

@@ -114,8 +114,8 @@ namespace IndustrialPark
                 InnerRadius = reader.ReadSingle();
                 OuterRadius = reader.ReadSingle();
 
-                var chars = reader.ReadChars(4);
-                _pszGroupName = reader.endianness == Endianness.Little ? chars : chars.Reverse().ToArray();
+                _pszGroupName = reader.ReadString(4).ToCharArray();
+                _pszGroupName = reader.endianness == Endianness.Little ? _pszGroupName : _pszGroupName.Reverse().ToArray();
 
                 SGRP_Entries = new EntrySGRP[entryCount];
                 for (int i = 0; i < SGRP_Entries.Length; i++)
@@ -139,7 +139,7 @@ namespace IndustrialPark
                 writer.Write(uInfoPad0);
                 writer.Write(InnerRadius);
                 writer.Write(OuterRadius);
-                writer.WriteMagic(new string(_pszGroupName.ToArray()));
+                writer.Write(new string(endianness == Endianness.Little ? _pszGroupName : _pszGroupName.Reverse().ToArray()));
 
                 foreach (var i in SGRP_Entries)
                     writer.Write(i.Serialize(endianness));

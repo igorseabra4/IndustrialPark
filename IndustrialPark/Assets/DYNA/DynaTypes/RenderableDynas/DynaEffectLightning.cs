@@ -50,21 +50,21 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle Width { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat { get; set; }
+        public AssetSingle BranchSpeed { get; set; }
         [Category(dynaCategoryName)]
         public AssetID LightningTexture_AssetID { get; set; }
         [Category(dynaCategoryName)]
         public AssetID GlowTexture_AssetID { get; set; }
         [Category(dynaCategoryName)]
-        public int UnknownInt1 { get; set; }
+        public int Damage { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle KnockbackSpeed { get; set; }
         [Category(dynaCategoryName)]
         public AssetID SoundGroupID_AssetID { get; set; }
         [Category(dynaCategoryName)]
-        public int UnknownInt2 { get; set; }
+        public AssetID SoundHit1_AssetID { get; set; }
         [Category(dynaCategoryName)]
-        public int UnknownInt3 { get; set; }
+        public AssetID SoundHit2_AssetID { get; set; }
         [Category(dynaCategoryName)]
         public AssetID SIMP1_AssetID { get; set; }
         [Category(dynaCategoryName)]
@@ -82,14 +82,14 @@ namespace IndustrialPark
                 _positionEnd = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
                 Color = reader.ReadColor();
                 Width = reader.ReadSingle();
-                UnknownFloat = reader.ReadSingle();
+                BranchSpeed = reader.ReadSingle();
                 LightningTexture_AssetID = reader.ReadUInt32();
                 GlowTexture_AssetID = reader.ReadUInt32();
-                UnknownInt1 = reader.ReadInt32();
+                Damage = reader.ReadInt32();
                 KnockbackSpeed = reader.ReadSingle();
                 SoundGroupID_AssetID = reader.ReadUInt32();
-                UnknownInt2 = reader.ReadInt32();
-                UnknownInt3 = reader.ReadInt32();
+                SoundHit1_AssetID = reader.ReadUInt32();
+                SoundHit2_AssetID = reader.ReadUInt32();
                 SIMP1_AssetID = reader.ReadUInt32();
                 SIMP2_AssetID = reader.ReadUInt32();
                 DamagePlayer = reader.ReadInt32Bool();
@@ -111,14 +111,14 @@ namespace IndustrialPark
                 writer.Write(_positionEnd.Z);
                 writer.Write(Color);
                 writer.Write(Width);
-                writer.Write(UnknownFloat);
+                writer.Write(BranchSpeed);
                 writer.Write(LightningTexture_AssetID);
                 writer.Write(GlowTexture_AssetID);
-                writer.Write(UnknownInt1);
+                writer.Write(Damage);
                 writer.Write(KnockbackSpeed);
                 writer.Write(SoundGroupID_AssetID);
-                writer.Write(UnknownInt2);
-                writer.Write(UnknownInt3);
+                writer.Write(SoundHit1_AssetID);
+                writer.Write(SoundHit2_AssetID);
                 writer.Write(SIMP1_AssetID);
                 writer.Write(SIMP2_AssetID);
                 writer.Write(DamagePlayer ? 1 : 0);

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Windows.Forms;
 using HipHopFile;
 using IndustrialPark.Models;
@@ -810,7 +809,7 @@ namespace IndustrialPark
                     else continue;
 
                     if (modelAsset is AssetMINF minf)
-                        modelAsset = (Asset)renderingDictionary[minf.ModelReferences[0].Model_AssetID];
+                        modelAsset = (Asset)renderingDictionary[minf.MinfReferences[0].Model_AssetID];
 
                     if (modelAsset is AssetMODL modl)
                         textureNamesList.AddRange(modl.Textures);
