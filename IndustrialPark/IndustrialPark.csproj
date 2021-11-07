@@ -140,6 +140,7 @@
     <Compile Include="Assets\DYNA\DynaTypes\DynaEffectGrass.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaNpcGroup.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\HudDynas\DynaHudImage.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaGObjectVent.cs" />
     <Compile Include="Assets\Shared\AssetSound.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\VolumeSpecific.cs" />
     <Compile Include="Assets\Shared\DataTypes\WireVector.cs" />
@@ -262,7 +263,7 @@
     <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\DynaEnemyBucketOTron.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\DynaEnemyStandard.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\DynaEnemySupplyCrate.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaGObjectVent.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaEffectParticleGenerator.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectVentType.cs" />
     <Compile Include="Assets\Models\AssetJSP_INFO.cs" />
     <Compile Include="Assets\Models\AssetRenderWareModel.cs" />

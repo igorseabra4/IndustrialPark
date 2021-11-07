@@ -729,7 +729,7 @@ namespace IndustrialPark.Randomizer
                 assets[index].ScaleX *= scale;
                 assets[index].ScaleY *= scale;
                 assets[index].ScaleZ *= scale;
-                assets[index].CollisionRadius *= 2 * scale;
+                assets[index].Radius *= 2 * scale;
 
                 assets.RemoveAt(index);
             }

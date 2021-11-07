@@ -15,11 +15,11 @@ namespace IndustrialPark
         protected override short constVersion => 2;
 
         [Category(dynaCategoryName)]
-        public int UnknownInt1 { get; set; }
+        public int OffsetX { get; set; }
         [Category(dynaCategoryName)]
-        public int UnknownInt2 { get; set; }
+        public int OffsetY { get; set; }
         [Category(dynaCategoryName)]
-        public int UnknownInt3 { get; set; }
+        public int OffsetZ { get; set; }
         protected Vector3 _scale;
         [Category(dynaCategoryName)]
         public AssetSingle ScaleX
@@ -39,14 +39,14 @@ namespace IndustrialPark
             get => _scale.Z;
             set { _scale.Z = value; CreateTransformMatrix(); }
         }
+        [Category(dynaCategoryName), Description("0 = half size shadow, 1 = full size shadow")]
+        public int TriggerBoundsType { get; set; }
         [Category(dynaCategoryName)]
-        public int UnknownShadowFlag { get; set; }
+        public AssetSingle Radius { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle CollisionRadius { get; set; }
+        public AssetSingle Width { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat1 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat2 { get; set; }
+        public AssetSingle Height { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle NormalTimer { get; set; }
         [Category(dynaCategoryName)]
@@ -59,10 +59,10 @@ namespace IndustrialPark
             ScaleX = 1f;
             ScaleY = 1f;
             ScaleZ = 1f;
-            UnknownShadowFlag = 1;
-            CollisionRadius = 3.5f;
-            UnknownFloat1 = 4f;
-            UnknownFloat2 = 4f;
+            TriggerBoundsType = 1;
+            Radius = 3.5f;
+            Width = 4f;
+            Height = 4f;
             NormalTimer = 5f;
             RedTimer = -1f;
 
@@ -80,14 +80,14 @@ namespace IndustrialPark
                 _yaw = reader.ReadSingle();
                 _pitch = reader.ReadSingle();
                 _roll = reader.ReadSingle();
-                UnknownInt1 = reader.ReadInt32();
-                UnknownInt2 = reader.ReadInt32();
-                UnknownInt3 = reader.ReadInt32();
+                OffsetX = reader.ReadInt32();
+                OffsetY = reader.ReadInt32();
+                OffsetZ = reader.ReadInt32();
                 _scale = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                UnknownShadowFlag = reader.ReadInt32();
-                CollisionRadius = reader.ReadSingle();
-                UnknownFloat1 = reader.ReadSingle();
-                UnknownFloat2 = reader.ReadSingle();
+                TriggerBoundsType = reader.ReadInt32();
+                Radius = reader.ReadSingle();
+                Width = reader.ReadSingle();
+                Height = reader.ReadSingle();
                 NormalTimer = reader.ReadSingle();
                 RedTimer = reader.ReadSingle();
                 DriverPLAT_AssetID = reader.ReadUInt32();
@@ -107,16 +107,16 @@ namespace IndustrialPark
                 writer.Write(_yaw);
                 writer.Write(_pitch);
                 writer.Write(_roll);
-                writer.Write(UnknownInt1);
-                writer.Write(UnknownInt2);
-                writer.Write(UnknownInt3);
+                writer.Write(OffsetX);
+                writer.Write(OffsetY);
+                writer.Write(OffsetZ);
                 writer.Write(_scale.X);
                 writer.Write(_scale.Y);
                 writer.Write(_scale.Z);
-                writer.Write(UnknownShadowFlag);
-                writer.Write(CollisionRadius);
-                writer.Write(UnknownFloat1);
-                writer.Write(UnknownFloat2);
+                writer.Write(TriggerBoundsType);
+                writer.Write(Radius);
+                writer.Write(Width);
+                writer.Write(Height);
                 writer.Write(NormalTimer);
                 writer.Write(RedTimer);
                 writer.Write(DriverPLAT_AssetID);

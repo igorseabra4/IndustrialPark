@@ -1,4 +1,5 @@
-﻿using HipHopFile;
+﻿using AssetEditorColors;
+using HipHopFile;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,52 +12,53 @@ namespace IndustrialPark
 
         protected override short constVersion => 2;
 
+        //0x24	uint flareTexture	
+        //0x28	xColor_tag flareColor	
+        //0x2C	float size_min	
+        //0x30	float size_max	
+        //0x34	byte glow_min	
+        //0x35	byte glow_max	
+        //0x36	byte pad1	
+        //0x37	byte pad2
+
         [Category(dynaCategoryName)]
-        public int UnknownInt_00 { get; set; }
+        public FlagBitmask Flags { get; set; } = IntFlagsDescriptor();
         [Category(dynaCategoryName)]
         public AssetID Origin_Entity_AssetID { get; set; }
         [Category(dynaCategoryName)]
         public AssetID Target_Entity_AssetID { get; set; }
         [Category(dynaCategoryName)]
-        public int UnknownInt_0C { get; set; }
+        public AssetByte AttachBone { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_10 { get; set; }
+        public AssetByte TargetBone { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_14_Rad { get; set; }
+        public AssetSingle Radius { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_14_Deg
+        public AssetSingle ViewAngle_Rad { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle ViewAngle_Deg
         {
-            get => MathUtil.RadiansToDegrees(UnknownFloat_14_Rad);
-            set => UnknownFloat_14_Rad = MathUtil.DegreesToRadians(value);
+            get => MathUtil.RadiansToDegrees(ViewAngle_Rad);
+            set => ViewAngle_Rad = MathUtil.DegreesToRadians(value);
         }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_18 { get; set; }
+        public AssetSingle MaxDist { get; set; }
         [Category(dynaCategoryName)]
-        public AssetByte UnknownByte_1C { get; set; }
+        public AssetColor LightColor { get; set; }
         [Category(dynaCategoryName)]
-        public AssetByte UnknownByte_1D { get; set; }
+        public AssetColor AuraColor { get; set; }
         [Category(dynaCategoryName)]
-        public AssetByte UnknownByte_1E { get; set; }
+        public AssetID FlareTexture { get; set; }
         [Category(dynaCategoryName)]
-        public AssetByte UnknownByte_1F { get; set; }
+        public AssetColor FlareColor { get; set; }
         [Category(dynaCategoryName)]
-        public int UnknownInt_20 { get; set; }
+        public AssetSingle SizeMin { get; set; }
         [Category(dynaCategoryName)]
-        public int UnknownInt_24 { get; set; }
+        public AssetSingle SizeMax { get; set; }
         [Category(dynaCategoryName)]
-        public int UnknownInt_28 { get; set; }
+        public AssetByte GlowMin { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_2C { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_30 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetByte UnknownByte_34 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetByte UnknownByte_35 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetByte UnknownByte_36 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetByte UnknownByte_37 { get; set; }
+        public AssetByte GlowMax { get; set; }
 
         public DynaEffectSpotlight(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__spotlight, game, endianness)
         {
@@ -64,26 +66,24 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
 
-                UnknownInt_00 = reader.ReadInt32();
+                Flags.FlagValueInt = reader.ReadUInt32();
                 Origin_Entity_AssetID = reader.ReadUInt32();
                 Target_Entity_AssetID = reader.ReadUInt32();
-                UnknownInt_0C = reader.ReadInt32();
-                UnknownFloat_10 = reader.ReadSingle();
-                UnknownFloat_14_Rad = reader.ReadSingle();
-                UnknownFloat_18 = reader.ReadSingle();
-                UnknownByte_1C = reader.ReadByte();
-                UnknownByte_1D = reader.ReadByte();
-                UnknownByte_1E = reader.ReadByte();
-                UnknownByte_1F = reader.ReadByte();
-                UnknownInt_20 = reader.ReadInt32();
-                UnknownInt_24 = reader.ReadInt32();
-                UnknownInt_28 = reader.ReadInt32();
-                UnknownFloat_2C = reader.ReadSingle();
-                UnknownFloat_30 = reader.ReadSingle();
-                UnknownByte_34 = reader.ReadByte();
-                UnknownByte_35 = reader.ReadByte();
-                UnknownByte_36 = reader.ReadByte();
-                UnknownByte_37 = reader.ReadByte();
+                AttachBone = reader.ReadByte();
+                TargetBone = reader.ReadByte();
+                reader.ReadInt16();
+                Radius = reader.ReadSingle();
+                ViewAngle_Rad = reader.ReadSingle();
+                MaxDist = reader.ReadSingle();
+                LightColor = reader.ReadColor();
+                AuraColor = reader.ReadColor();
+                FlareTexture = reader.ReadUInt32();
+                FlareColor = reader.ReadColor();
+                SizeMin = reader.ReadSingle();
+                SizeMax = reader.ReadSingle();
+                GlowMin = reader.ReadByte();
+                GlowMax = reader.ReadByte();
+                reader.ReadInt16();
             }
         }
 
@@ -91,38 +91,37 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(UnknownInt_00);
+                writer.Write(Flags.FlagValueInt);
                 writer.Write(Origin_Entity_AssetID);
                 writer.Write(Target_Entity_AssetID);
-                writer.Write(UnknownInt_0C);
-                writer.Write(UnknownFloat_10);
-                writer.Write(UnknownFloat_14_Rad);
-                writer.Write(UnknownFloat_18);
-                writer.Write(UnknownByte_1C);
-                writer.Write(UnknownByte_1D);
-                writer.Write(UnknownByte_1E);
-                writer.Write(UnknownByte_1F);
-                writer.Write(UnknownInt_20);
-                writer.Write(UnknownInt_24);
-                writer.Write(UnknownInt_28);
-                writer.Write(UnknownFloat_2C);
-                writer.Write(UnknownFloat_30);
-                writer.Write(UnknownByte_34);
-                writer.Write(UnknownByte_35);
-                writer.Write(UnknownByte_36);
-                writer.Write(UnknownByte_37);
+                writer.Write(AttachBone);
+                writer.Write(TargetBone);
+                writer.Write((short)0);
+                writer.Write(Radius);
+                writer.Write(ViewAngle_Rad);
+                writer.Write(MaxDist);
+                writer.Write(LightColor);
+                writer.Write(AuraColor);
+                writer.Write(FlareTexture);
+                writer.Write(FlareColor);
+                writer.Write(SizeMin);
+                writer.Write(SizeMax);
+                writer.Write(GlowMin);
+                writer.Write(GlowMax);
+                writer.Write((short)0);
 
                 return writer.ToArray();
             }
         }
 
         public override bool HasReference(uint assetID) =>
-            Origin_Entity_AssetID == assetID || Target_Entity_AssetID == assetID || base.HasReference(assetID);
+            Origin_Entity_AssetID == assetID || Target_Entity_AssetID == assetID || FlareTexture == assetID || base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {
             Verify(Origin_Entity_AssetID, ref result);
             Verify(Target_Entity_AssetID, ref result);
+            Verify(FlareTexture, ref result);
         }
     }
 }

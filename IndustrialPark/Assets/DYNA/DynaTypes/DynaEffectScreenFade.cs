@@ -13,11 +13,11 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetColor Color { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat1 { get; set; }
+        public AssetSingle FadeDownTime { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat2 { get; set; }
+        public AssetSingle WaitTime { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat3 { get; set; }
+        public AssetSingle FadeUpTime { get; set; }
 
         public DynaEffectScreenFade(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__ScreenFade, game, endianness)
         {
@@ -26,9 +26,9 @@ namespace IndustrialPark
                 reader.BaseStream.Position = dynaDataStartPosition;
 
                 Color = reader.ReadColor();
-                UnknownFloat1 = reader.ReadSingle();
-                UnknownFloat2 = reader.ReadSingle();
-                UnknownFloat3 = reader.ReadSingle();
+                FadeDownTime = reader.ReadSingle();
+                WaitTime = reader.ReadSingle();
+                FadeUpTime = reader.ReadSingle();
             }
         }
 
@@ -37,9 +37,9 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(Color);
-                writer.Write(UnknownFloat1);
-                writer.Write(UnknownFloat2);
-                writer.Write(UnknownFloat3);
+                writer.Write(FadeDownTime);
+                writer.Write(WaitTime);
+                writer.Write(FadeUpTime);
 
                 return writer.ToArray();
             }

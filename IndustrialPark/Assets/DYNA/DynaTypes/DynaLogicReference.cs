@@ -10,7 +10,7 @@ namespace IndustrialPark
         protected override short constVersion => 1;
 
         [Category(dynaCategoryName)]
-        public AssetID Unknown { get; set; }
+        public AssetID Initial { get; set; }
 
         public DynaLogicReference(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.logic__reference, game, endianness)
         {
@@ -18,7 +18,7 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
 
-                Unknown = reader.ReadUInt32();
+                Initial = reader.ReadUInt32();
             }
         }
 
@@ -26,12 +26,12 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(Unknown);
+                writer.Write(Initial);
 
                 return writer.ToArray();
             }
         }
 
-        public override bool HasReference(uint assetID) => Unknown == assetID || base.HasReference(assetID);
+        public override bool HasReference(uint assetID) => Initial == assetID || base.HasReference(assetID);
     }
 }
