@@ -37,6 +37,7 @@ namespace IndustrialPark
         public override void Verify(ref List<string> result)
         {
             Verify(Model_AssetID, ref result);
+            base.Verify(ref result);
         }
     }
 }

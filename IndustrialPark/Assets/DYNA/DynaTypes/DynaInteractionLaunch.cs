@@ -64,6 +64,7 @@ namespace IndustrialPark
         {
             Verify(LaunchObject_AssetID, ref result);
             Verify(Target_AssetID, ref result);
+            base.Verify(ref result);
         }
 
     }

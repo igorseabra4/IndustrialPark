@@ -5,6 +5,35 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
+    public class DashTrackVertex
+    {
+        public AssetSingle X { get; set; }
+        public AssetSingle Y { get; set; }
+        public AssetSingle Z { get; set; }
+
+        public DashTrackVertex()
+        {
+        }
+
+        public DashTrackVertex(EndianBinaryReader reader)
+        {
+            X = reader.ReadSingle();
+            Y = reader.ReadSingle();
+            Z = reader.ReadSingle();
+        }
+
+        public byte[] Serialize(Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(X);
+                writer.Write(Y);
+                writer.Write(Z);
+                return writer.ToArray();
+            }
+        }
+    }
+
     public class DashTrackTriangle
     {
         public ushort Vertex1 { get; set; }
@@ -99,7 +128,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID Unknown3 { get; set; }
         [Category(categoryName)]
-        public Vector3[] Vertices { get; set; }
+        public DashTrackVertex[] Vertices { get; set; }
         [Category(categoryName)]
         public DashTrackTriangle[] Triangles { get; set; }
         [Category(categoryName)]
@@ -111,6 +140,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle LastPositionY { get; set; }
 
+        [Browsable(false)]
         public bool SpecialBlendMode => true;
 
         public AssetDTRK(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
@@ -127,9 +157,9 @@ namespace IndustrialPark
                 Unknown2 = reader.ReadUInt32();
                 Unknown3 = reader.ReadUInt32();
 
-                Vertices = new Vector3[numVertices];
+                Vertices = new DashTrackVertex[numVertices];
                 for (int i = 0; i < Vertices.Length; i++)
-                    Vertices[i] = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                    Vertices[i] = new DashTrackVertex(reader);
 
                 Triangles = new DashTrackTriangle[numTriangles];
                 for (int i = 0; i < Triangles.Length; i++)
@@ -207,7 +237,7 @@ namespace IndustrialPark
                 if (v.Z < boundingBox.Minimum.Z)
                     boundingBox.Minimum.Z = v.Z;
 
-                vertices.Add(new VertexColoredTextured(v, new Vector2(0, 0), new Color(255, 255, 255, 0)));
+                vertices.Add(new VertexColoredTextured(new Vector3(v.X, v.Y, v.Z), new Vector2(0, 0), new Color(255, 255, 255, 0)));
             }
 
             triangles = new List<Models.Triangle>(Triangles.Length);
@@ -341,8 +371,11 @@ namespace IndustrialPark
         public void Draw(SharpRenderer renderer)
         {
             renderData.worldViewProjection = renderer.viewProjection;
-            renderData.Color = renderer.mvptColor;
             renderData.UvAnimOffset = Vector4.Zero;
+            if (isSelected)
+                renderData.Color = renderer.selectedObjectColor;
+            else
+                renderData.Color = Vector4.One;
 
             renderer.device.UpdateData(renderer.tintedBuffer, renderData);
             renderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, renderer.tintedBuffer);
@@ -371,8 +404,11 @@ namespace IndustrialPark
 
         public BoundingBox GetBoundingBox() => boundingBox;
         
+        [Browsable(false)]
         public AssetSingle PositionX { get => 0; set { } }
+        [Browsable(false)]
         public AssetSingle PositionY { get => 0; set { } }
+        [Browsable(false)]
         public AssetSingle PositionZ { get => 0; set { } }
     }
 }

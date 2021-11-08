@@ -12,15 +12,6 @@ namespace IndustrialPark
 
         protected override short constVersion => 2;
 
-        //0x24	uint flareTexture	
-        //0x28	xColor_tag flareColor	
-        //0x2C	float size_min	
-        //0x30	float size_max	
-        //0x34	byte glow_min	
-        //0x35	byte glow_max	
-        //0x36	byte pad1	
-        //0x37	byte pad2
-
         [Category(dynaCategoryName)]
         public FlagBitmask Flags { get; set; } = IntFlagsDescriptor();
         [Category(dynaCategoryName)]
@@ -122,6 +113,8 @@ namespace IndustrialPark
             Verify(Origin_Entity_AssetID, ref result);
             Verify(Target_Entity_AssetID, ref result);
             Verify(FlareTexture, ref result);
+
+            base.Verify(ref result);
         }
     }
 }

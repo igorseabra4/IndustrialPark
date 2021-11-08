@@ -45,6 +45,7 @@ namespace IndustrialPark
         public bool dontRenderDTRK;
         public bool dontRenderDYNA;
         public bool dontRenderEGEN;
+        public bool dontRenderGRSM;
         public bool dontRenderHANG;
         public bool dontRenderLITE;
         public bool dontRenderMRKR;
@@ -105,6 +106,7 @@ namespace IndustrialPark
             dontRenderDYNA = false;
             dontRenderEGEN = false;
             dontRenderHANG = false;
+            dontRenderGRSM = false;
             dontRenderLITE = false;
             dontRenderMRKR = false;
             dontRenderMVPT = false;

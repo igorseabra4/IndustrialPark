@@ -187,6 +187,7 @@ namespace IndustrialPark
             if (BackgroundMusic_SoundAssetID == 0)
                 result.Add("Scene Properties with no song reference");
             Verify(BackgroundMusic_SoundAssetID, ref result);
+            base.Verify(ref result);
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)

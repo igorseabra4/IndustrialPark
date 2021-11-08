@@ -109,6 +109,7 @@ namespace IndustrialPark
             Verify(Success_TextID, ref result);
             Verify(Failure_TextID, ref result);
             Verify(End_TextID, ref result);
+            base.Verify(ref result);
         }
     }
 }

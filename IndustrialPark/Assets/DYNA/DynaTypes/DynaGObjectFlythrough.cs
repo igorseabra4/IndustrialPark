@@ -36,6 +36,8 @@ namespace IndustrialPark
             if (FLY_ID == 0)
                 result.Add("Flythrough with no FLY reference");
             Verify(FLY_ID, ref result);
+
+            base.Verify(ref result);
         }
     }
 }

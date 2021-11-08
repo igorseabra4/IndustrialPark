@@ -86,6 +86,7 @@ namespace IndustrialPark
             Verify(Increment_SoundAssetID, ref result);
             Verify(StartDecrement_SoundAssetID, ref result);
             Verify(Decrement_SoundAssetID, ref result);
+            base.Verify(ref result);
         }
     }
 }

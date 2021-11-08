@@ -191,6 +191,8 @@ namespace IndustrialPark
         public override void Verify(ref List<string> result)
         {
             Verify(Entity_AssetID, ref result);
+
+            base.Verify(ref result);
         }
     }
 }

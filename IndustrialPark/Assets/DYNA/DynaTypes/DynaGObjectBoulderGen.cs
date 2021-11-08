@@ -66,7 +66,6 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-
                 writer.Write(ObjectAssetID);
                 writer.Write(OffsetX);
                 writer.Write(OffsetY);
@@ -91,6 +90,7 @@ namespace IndustrialPark
         public override void Verify(ref List<string> result)
         {
             Verify(ObjectAssetID, ref result);
+            base.Verify(ref result);
         }
     }
 }

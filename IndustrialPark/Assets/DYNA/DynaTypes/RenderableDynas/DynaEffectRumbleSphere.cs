@@ -65,6 +65,7 @@ namespace IndustrialPark
         public override void Verify(ref List<string> result)
         {
             Verify(Rumble_AssetID, ref result);
+            base.Verify(ref result);
         }
 
         protected override List<Vector3> vertexSource => SharpRenderer.cubeVertices;

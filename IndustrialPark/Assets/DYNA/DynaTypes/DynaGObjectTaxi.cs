@@ -87,6 +87,7 @@ namespace IndustrialPark
             Verify(DYNA_Talkbox_ID, ref result);
             Verify(TEXT_ID, ref result);
             Verify(SIMP_ID, ref result);
+            base.Verify(ref result);
         }
     }
 }

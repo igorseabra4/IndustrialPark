@@ -52,6 +52,8 @@ namespace IndustrialPark
         public override void Verify(ref List<string> result)
         {
             Verify(MRKR_ID, ref result);
+
+            base.Verify(ref result);
         }
     }
 }

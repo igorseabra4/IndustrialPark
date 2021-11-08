@@ -23,6 +23,7 @@ namespace IndustrialPark
             Verify(GlowTexture_AssetID, ref result);
             Verify(SIMP1_AssetID, ref result);
             Verify(SIMP2_AssetID, ref result);
+            base.Verify(ref result);
         }
 
         protected Vector3 _positionEnd;

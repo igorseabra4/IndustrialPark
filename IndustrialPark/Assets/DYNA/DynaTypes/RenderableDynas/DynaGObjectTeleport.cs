@@ -90,6 +90,7 @@ namespace IndustrialPark
             if (TargetDYNATeleportID == 0)
                 result.Add("Teleport with no target reference");
             Verify(TargetDYNATeleportID, ref result);
+            base.Verify(ref result);
         }
         
         private void ValidateMRKR()

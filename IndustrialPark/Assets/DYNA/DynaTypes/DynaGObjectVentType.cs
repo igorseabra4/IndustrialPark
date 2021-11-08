@@ -79,6 +79,7 @@ namespace IndustrialPark
             Verify(Warning_SGRP, ref result);
             Verify(Emit_PARE, ref result);
             Verify(Emit_SGRP, ref result);
+            base.Verify(ref result);
         }
     }
 }

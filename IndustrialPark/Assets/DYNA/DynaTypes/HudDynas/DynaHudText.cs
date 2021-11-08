@@ -50,6 +50,7 @@ namespace IndustrialPark
         {
             Verify(TextBoxID, ref result);
             Verify(TextID, ref result);
+            base.Verify(ref result);
         }
     }
 }

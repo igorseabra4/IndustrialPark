@@ -170,6 +170,7 @@ namespace IndustrialPark
         {
             Verify(DefaultTextID, ref result);
             Verify(BackgroundTextureID, ref result);
+            base.Verify(ref result);
         }
     }
 }

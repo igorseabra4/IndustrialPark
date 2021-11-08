@@ -166,6 +166,7 @@ namespace IndustrialPark
             Verify(PromptQuitTextID, ref result);
             Verify(PromptNoQuitTextID, ref result);
             Verify(PromptYesNoTextID, ref result);
+            base.Verify(ref result);
         }
     }
 }

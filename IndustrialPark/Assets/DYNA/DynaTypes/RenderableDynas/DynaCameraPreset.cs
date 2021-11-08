@@ -1,35 +1,36 @@
 ﻿using HipHopFile;
-using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
+using IndustrialPark.Models;
 using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
-    public class DynaIncrediblesIcon : RenderableRotatableDynaBase
+    public class DynaCameraPreset : RenderableRotatableDynaBase
     {
-        private const string dynaCategoryName = "Incredibles:Icon";
+        private const string dynaCategoryName = "camera:preset";
 
         protected override short constVersion => 1;
-        
-        [Category(dynaCategoryName)]
-        public AssetSingle Radius { get; set; }
-        [Category(dynaCategoryName)]
-        public FlagBitmask IconFlags { get; set; } = IntFlagsDescriptor();
 
-        public DynaIncrediblesIcon(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Incredibles__Icon, game, endianness)
+        [Category(dynaCategoryName)]
+        public FlagBitmask CameraPresetFlags { get; set; } = IntFlagsDescriptor();
+        [Category(dynaCategoryName)]
+        public AssetID Checkpoint_AssetID { get; set; }
+
+        public DynaCameraPreset(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.camera__preset, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
 
+                CameraPresetFlags.FlagValueInt = reader.ReadUInt32();
+                Checkpoint_AssetID = reader.ReadUInt32();
+
                 _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
                 _yaw = reader.ReadSingle();
                 _pitch = reader.ReadSingle();
                 _roll = reader.ReadSingle();
-                Radius = reader.ReadSingle();
-                IconFlags.FlagValueInt = reader.ReadUInt32();
 
                 CreateTransformMatrix();
                 AddToRenderableAssets(this);
@@ -40,26 +41,32 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
+                writer.Write(CameraPresetFlags.FlagValueInt);
+                writer.Write(Checkpoint_AssetID);
                 writer.Write(_position.X);
                 writer.Write(_position.Y);
                 writer.Write(_position.Z);
                 writer.Write(_yaw);
                 writer.Write(_pitch);
                 writer.Write(_roll);
-                writer.Write(Radius);
-                writer.Write(IconFlags.FlagValueInt);
 
                 return writer.ToArray();
             }
         }
 
-        protected override List<Vector3> vertexSource => SharpRenderer.cubeVertices;
+        public override bool HasReference(uint assetID) => Checkpoint_AssetID == assetID || base.HasReference(assetID);
 
-        protected override List<Triangle> triangleSource => SharpRenderer.cubeTriangles;
-
-        public override void Draw(SharpRenderer renderer)
+        public override void Verify(ref List<string> result)
         {
-            renderer.DrawCube(world, isSelected);
+            Verify(Checkpoint_AssetID, ref result);
+
+            base.Verify(ref result);
         }
+
+        protected override List<Vector3> vertexSource => SharpRenderer.pyramidVertices;
+
+        protected override List<Triangle> triangleSource => SharpRenderer.pyramidTriangles;
+
+        public override void Draw(SharpRenderer renderer) => renderer.DrawPyramid(world, isSelected);
     }
 }

@@ -4,22 +4,21 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaLogicReference : AssetDYNA
+    public class DynaGObjectDashCameraSpline : AssetDYNA
     {
-        private const string dynaCategoryName = "logic:reference";
+        private const string dynaCategoryName = "game_object:dash_camera_spline";
 
-        protected override short constVersion => 1;
+        protected override short constVersion => 2;
 
         [Category(dynaCategoryName)]
-        public AssetID Initial { get; set; }
+        public AssetID Spline_AssetID { get; set; }
 
-        public DynaLogicReference(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.logic__reference, game, endianness)
+        public DynaGObjectDashCameraSpline(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__dash_camera_spline, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
-
-                Initial = reader.ReadUInt32();
+                Spline_AssetID = reader.ReadUInt32();
             }
         }
 
@@ -27,17 +26,16 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(Initial);
-
+                writer.Write(Spline_AssetID);
                 return writer.ToArray();
             }
         }
 
-        public override bool HasReference(uint assetID) => Initial == assetID || base.HasReference(assetID);
-
+        public override bool HasReference(uint assetID) => Spline_AssetID == assetID || base.HasReference(assetID);
+        
         public override void Verify(ref List<string> result)
         {
-            Verify(Initial, ref result);
+            Verify(Spline_AssetID, ref result);
             base.Verify(ref result);
         }
     }

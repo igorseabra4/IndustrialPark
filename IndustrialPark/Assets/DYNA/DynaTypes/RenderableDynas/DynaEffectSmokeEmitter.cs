@@ -7,60 +7,54 @@ using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
-    public class DynaEffectSmokeEmitter : RenderableDynaBase
+    public class DynaEffectSmokeEmitter : RenderableRotatableDynaBase
     {
         private const string dynaCategoryName = "effect:smoke_emitter";
 
-        protected override short constVersion => 2;
+        protected override short constVersion => 1;
 
         [Category(dynaCategoryName)]
-        public int UnknownInt_00 { get; set; }
+        public FlagBitmask SmokeEmitterFlags { get; set; } = IntFlagsDescriptor();
         [Category(dynaCategoryName)]
-        public int UnknownInt_04 { get; set; }
+        public AssetID AttachTo { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_14 { get; set; }
+        public AssetSingle ScaleX { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_18 { get; set; }
+        public AssetSingle ScaleY { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_1C { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_20 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_24 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_28 { get; set; }
+        public AssetSingle ScaleZ { get; set; }
         [Category(dynaCategoryName)]
         public AssetID Texture_AssetID { get; set; }
         [Category(dynaCategoryName), TypeConverter(typeof(HexUShortTypeConverter))]
-        public ushort UnknownShort_30 { get; set; }
+        public ushort TextureRows { get; set; }
         [Category(dynaCategoryName), TypeConverter(typeof(HexUShortTypeConverter))]
-        public ushort UnknownShort_32 { get; set; }
+        public ushort TextureColumns { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_34 { get; set; }
+        public AssetSingle Rate { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_38 { get; set; }
+        public AssetSingle LifeMin { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_3C { get; set; }
+        public AssetSingle LifeMax { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_40 { get; set; }
+        public AssetSingle SizeMin { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_44 { get; set; }
+        public AssetSingle SizeMax { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_48 { get; set; }
+        public AssetSingle VelMin { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_4C { get; set; }
+        public AssetSingle VelMax { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_50 { get; set; }
+        public AssetSingle Growth { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_54 { get; set; }
+        public AssetSingle VelDirX { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_58 { get; set; }
+        public AssetSingle VelDirY { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_5C { get; set; }
+        public AssetSingle VelDirZ { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_60 { get; set; }
+        public AssetSingle VelDirVary { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle UnknownFloat_64 { get; set; }
+        public AssetSingle Wind { get; set; }
         [Category(dynaCategoryName)]
         public short UnknownShort_68 { get; set; }
         [Category(dynaCategoryName)]
@@ -76,31 +70,31 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
 
-                UnknownInt_00 = reader.ReadInt32();
-                UnknownInt_04 = reader.ReadInt32();
+                SmokeEmitterFlags.FlagValueInt = reader.ReadUInt32();
+                AttachTo = reader.ReadUInt32();
                 _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                UnknownFloat_14 = reader.ReadSingle();
-                UnknownFloat_18 = reader.ReadSingle();
-                UnknownFloat_1C = reader.ReadSingle();
-                UnknownFloat_20 = reader.ReadSingle();
-                UnknownFloat_24 = reader.ReadSingle();
-                UnknownFloat_28 = reader.ReadSingle();
+                _yaw = reader.ReadSingle();
+                _pitch = reader.ReadSingle();
+                _roll = reader.ReadSingle();
+                ScaleX = reader.ReadSingle();
+                ScaleY = reader.ReadSingle();
+                ScaleZ = reader.ReadSingle();
                 Texture_AssetID = reader.ReadUInt32();
-                UnknownShort_30 = reader.ReadUInt16();
-                UnknownShort_32 = reader.ReadUInt16();
-                UnknownFloat_34 = reader.ReadSingle();
-                UnknownFloat_38 = reader.ReadSingle();
-                UnknownFloat_3C = reader.ReadSingle();
-                UnknownFloat_40 = reader.ReadSingle();
-                UnknownFloat_44 = reader.ReadSingle();
-                UnknownFloat_48 = reader.ReadSingle();
-                UnknownFloat_4C = reader.ReadSingle();
-                UnknownFloat_50 = reader.ReadSingle();
-                UnknownFloat_54 = reader.ReadSingle();
-                UnknownFloat_58 = reader.ReadSingle();
-                UnknownFloat_5C = reader.ReadSingle();
-                UnknownFloat_60 = reader.ReadSingle();
-                UnknownFloat_64 = reader.ReadSingle();
+                TextureRows = reader.ReadUInt16();
+                TextureColumns = reader.ReadUInt16();
+                Rate = reader.ReadSingle();
+                LifeMin = reader.ReadSingle();
+                LifeMax = reader.ReadSingle();
+                SizeMin = reader.ReadSingle();
+                SizeMax = reader.ReadSingle();
+                VelMin = reader.ReadSingle();
+                VelMax = reader.ReadSingle();
+                Growth = reader.ReadSingle();
+                VelDirX = reader.ReadSingle();
+                VelDirY = reader.ReadSingle();
+                VelDirZ = reader.ReadSingle();
+                VelDirVary = reader.ReadSingle();
+                Wind = reader.ReadSingle();
                 UnknownShort_68 = reader.ReadInt16();
                 UnknownShort_6A = reader.ReadInt16();
                 UnknownShort_6C = reader.ReadInt16();
@@ -115,33 +109,33 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(UnknownInt_00);
-                writer.Write(UnknownInt_04);
+                writer.Write(SmokeEmitterFlags.FlagValueInt);
+                writer.Write(AttachTo);
                 writer.Write(_position.X);
                 writer.Write(_position.Y);
                 writer.Write(_position.Z);
-                writer.Write(UnknownFloat_14);
-                writer.Write(UnknownFloat_18);
-                writer.Write(UnknownFloat_1C);
-                writer.Write(UnknownFloat_20);
-                writer.Write(UnknownFloat_24);
-                writer.Write(UnknownFloat_28);
+                writer.Write(_yaw);
+                writer.Write(_pitch);
+                writer.Write(_roll);
+                writer.Write(ScaleX);
+                writer.Write(ScaleY);
+                writer.Write(ScaleZ);
                 writer.Write(Texture_AssetID);
-                writer.Write(UnknownShort_30);
-                writer.Write(UnknownShort_32);
-                writer.Write(UnknownFloat_34);
-                writer.Write(UnknownFloat_38);
-                writer.Write(UnknownFloat_3C);
-                writer.Write(UnknownFloat_40);
-                writer.Write(UnknownFloat_44);
-                writer.Write(UnknownFloat_48);
-                writer.Write(UnknownFloat_4C);
-                writer.Write(UnknownFloat_50);
-                writer.Write(UnknownFloat_54);
-                writer.Write(UnknownFloat_58);
-                writer.Write(UnknownFloat_5C);
-                writer.Write(UnknownFloat_60);
-                writer.Write(UnknownFloat_64);
+                writer.Write(TextureRows);
+                writer.Write(TextureColumns);
+                writer.Write(Rate);
+                writer.Write(LifeMin);
+                writer.Write(LifeMax);
+                writer.Write(SizeMin);
+                writer.Write(SizeMax);
+                writer.Write(VelMin);
+                writer.Write(VelMax);
+                writer.Write(Growth);
+                writer.Write(VelDirX);
+                writer.Write(VelDirY);
+                writer.Write(VelDirZ);
+                writer.Write(VelDirVary);
+                writer.Write(Wind);
                 writer.Write(UnknownShort_68);
                 writer.Write(UnknownShort_6A);
                 writer.Write(UnknownShort_6C);
@@ -151,26 +145,20 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (Texture_AssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
+        public override bool HasReference(uint assetID) => Texture_AssetID == assetID || AttachTo == assetID || base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {
             Verify(Texture_AssetID, ref result);
+            Verify(AttachTo, ref result);
+
+            base.Verify(ref result);
         }
 
-        protected override List<Vector3> vertexSource => SharpRenderer.cubeVertices;
+        protected override List<Vector3> vertexSource => SharpRenderer.pyramidVertices;
 
-        protected override List<Triangle> triangleSource => SharpRenderer.cubeTriangles;
+        protected override List<Triangle> triangleSource => SharpRenderer.pyramidTriangles;
 
-        public override void Draw(SharpRenderer renderer)
-        {
-            renderer.DrawCube(world, isSelected);
-        }
+        public override void Draw(SharpRenderer renderer) => renderer.DrawPyramid(world, isSelected);
     }
 }

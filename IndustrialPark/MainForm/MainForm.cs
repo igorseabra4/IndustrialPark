@@ -335,6 +335,7 @@ namespace IndustrialPark
                 dontRenderDTRK = AssetDTRK.dontRender,
                 dontRenderDYNA = AssetDYNA.dontRender,
                 dontRenderEGEN = AssetEGEN.dontRender,
+                dontRenderGRSM = AssetGRSM.dontRender,
                 dontRenderHANG = AssetHANG.dontRender,
                 dontRenderLITE = AssetLITE.dontRender,
                 dontRenderMRKR = AssetMRKR.dontRender,
@@ -451,6 +452,9 @@ namespace IndustrialPark
 
             eGENToolStripMenuItem.Checked = !ipSettings.dontRenderEGEN;
             AssetEGEN.dontRender = ipSettings.dontRenderEGEN;
+
+            gRSMToolStripMenuItem.Checked = !ipSettings.dontRenderGRSM;
+            AssetGRSM.dontRender = ipSettings.dontRenderGRSM;
 
             hANGToolStripMenuItem.Checked = !ipSettings.dontRenderHANG;
             AssetHANG.dontRender = ipSettings.dontRenderHANG;
@@ -1170,6 +1174,13 @@ namespace IndustrialPark
             ShowDropDowns();
         }
 
+        private void gRSMToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            gRSMToolStripMenuItem.Checked = !gRSMToolStripMenuItem.Checked;
+            AssetGRSM.dontRender = !gRSMToolStripMenuItem.Checked;
+            ShowDropDowns();
+        }
+
         private void uIModeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             uIModeToolStripMenuItem.Checked = !uIModeToolStripMenuItem.Checked;
@@ -1434,9 +1445,11 @@ namespace IndustrialPark
                 dolPath = null;
             }
 
+            var validIniNames = new string[] { "sb.ini", "sb04.ini", "sd2.ini", "in.ini", "in2.ini" };
+
             if (hipName != null && !(hipName.Contains("boot") || hipName.Contains("font") || hipName.Contains("plat")) && filesPath != null)
                 foreach (string s in Directory.GetFiles(filesPath))
-                    if (Path.GetExtension(s).ToLower().Equals(".ini"))
+                    if (validIniNames.Contains(Path.GetFileName(s).ToLower()))
                     {
                         string[] ini = File.ReadAllLines(s);
                         for (int i = 0; i < ini.Length; i++)
@@ -1623,6 +1636,9 @@ namespace IndustrialPark
             if (vOLUToolStripMenuItem.Checked)
                 vOLUToolStripMenuItem_Click(sender, e);
 
+            if (gRSMToolStripMenuItem.Checked)
+                gRSMToolStripMenuItem_Click(sender, e);
+
             autoShowDropDowns = true;
             ShowDropDowns();
         }
@@ -1709,6 +1725,9 @@ namespace IndustrialPark
             if (!vOLUToolStripMenuItem.Checked)
                 vOLUToolStripMenuItem_Click(sender, e);
 
+            if (!gRSMToolStripMenuItem.Checked)
+                gRSMToolStripMenuItem_Click(sender, e);
+
             autoShowDropDowns = true;
             ShowDropDowns();
         }
@@ -1758,6 +1777,57 @@ namespace IndustrialPark
                 
                 p.Close();
             }
+        }
+
+        private void aToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var unkDtypes = new uint[] {
+                0x4EE03B24,
+                0x9F234F8E,
+                0x460F4FB2,
+                0x2743B85C,
+                0xA072A4DA,
+                0xAD7CB421,
+                0xC6C76EEE,
+                0xCDB57387,
+                0xCF21DB89,
+                0xE5D82D97,
+                0xE2301EA9,
+                0xEBC04E7B,
+                0xFC2951C1
+            };
+
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                byte[] file = File.ReadAllBytes(openFileDialog.FileName);
+                EndianBinaryReader reader = new EndianBinaryReader(file, Endianness.Little);
+                var strings = new List<string>();
+                while (!reader.EndOfStream)
+                {
+                    var str = ReadZeroTerminatedString(reader);
+                    var hash = HipHopFile.Functions.BKDRHash(str);
+                    if (unkDtypes.Contains(hash))
+                    {
+                        MessageBox.Show("Found: [" + str + "] " + hash.ToString("X8"));
+                    }
+                }
+                MessageBox.Show("Finished");
+            }
+        }
+
+        public string ReadZeroTerminatedString(EndianBinaryReader reader)
+        {
+            var bytes = new List<char>();
+            while(!reader.EndOfStream)
+            {                
+                var b = reader.ReadByte();
+                if (b != 0)
+                    bytes.Add((char)b);
+                else break;
+            }
+
+            return new string(bytes.ToArray());
         }
     }
 }

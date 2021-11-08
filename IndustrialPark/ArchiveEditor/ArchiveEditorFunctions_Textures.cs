@@ -169,7 +169,7 @@ namespace IndustrialPark
             return AHDRs;
         }
 
-        public Dictionary<string, Bitmap> ExportTXDToBitmap(byte[] txdFile)
+        public Dictionary<string, Bitmap> ExportTXDToBitmap(byte[] txdFile, bool hasTransparency = false)
         {
             lock (locker)
             {
@@ -184,7 +184,9 @@ namespace IndustrialPark
                 "gameRoot=" + tempPcTxdsDir + "\r\n" +
                 "outputRoot=" + tempGcTxdsDir + "\r\n" +
                 "targetVersion=VC\r\n" +
-                "targetPlatform=uncompressed_mobile\r\n"
+                (hasTransparency ? 
+                "targetPlatform=PC\r\n" :
+                "targetPlatform=uncompressed_mobile\r\n")
                 );
 
                 PerformTXDConversionExternal(platform);
@@ -205,7 +207,7 @@ namespace IndustrialPark
 
                             if (tn.textureNativeStruct.hasAlpha)
                             {
-                                if (tn.textureNativeStruct.rasterFormatFlags == TextureRasterFormat.RASTER_C4444)
+                                if ((tn.textureNativeStruct.rasterFormatFlags & TextureRasterFormat.RASTER_C4444) != 0)
                                 {
                                     for (int i = 0; i < imageData.Length; i += 2)
                                     {

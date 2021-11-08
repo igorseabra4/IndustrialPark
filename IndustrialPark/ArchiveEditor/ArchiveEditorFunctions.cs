@@ -524,8 +524,8 @@ namespace IndustrialPark
 
         private Asset CreateAsset(Section_AHDR AHDR, Game game, Endianness endianness, bool skipTexturesAndModels, bool showMessageBox, ref string error)
         {
-            try
-            {
+            //try
+            //{
                 switch (AHDR.assetType)
                 {
                     case AssetType.ANIM:
@@ -598,6 +598,7 @@ namespace IndustrialPark
                     case AssetType.FLY:  return new AssetFLY (AHDR, game, endianness);
                     case AssetType.FOG:  return new AssetFOG (AHDR, game, endianness);
                     case AssetType.GRUP: return new AssetGRUP(AHDR, game, endianness);
+                    case AssetType.GRSM: return new AssetGRSM(AHDR, game, endianness);
                     case AssetType.GUST: return new AssetGUST(AHDR, game, endianness);
                     case AssetType.HANG: return new AssetHANG(AHDR, game, endianness);
                     case AssetType.JAW:  return new AssetJAW (AHDR, game, endianness);
@@ -650,7 +651,6 @@ namespace IndustrialPark
                         return new AssetSound(AHDR, game, platform);
 
                     case AssetType.CCRV:
-                    case AssetType.GRSM:
                     case AssetType.NGMS:
                     case AssetType.RANM:
                     case AssetType.SLID:
@@ -677,16 +677,16 @@ namespace IndustrialPark
                     default:
                         throw new Exception($"Unknown asset type ({AHDR.assetType})");
                 }
-            }
-            catch (Exception ex)
-            {
-                error = $"[{ AHDR.assetID:X8}] {AHDR.ADBG.assetName} ({ex.Message})";
+            //}
+            //catch (Exception ex)
+            //{
+            //    error = $"[{ AHDR.assetID:X8}] {AHDR.ADBG.assetName} ({ex.Message})";
 
-                if (showMessageBox)
-                    MessageBox.Show($"There was an error loading asset {error}:" + ex.Message + " and editing has been disabled for it.");
+            //    if (showMessageBox)
+            //        MessageBox.Show($"There was an error loading asset {error}:" + ex.Message + " and editing has been disabled for it.");
 
-                return new AssetGeneric(AHDR, game, endianness);
-            }
+            //    return new AssetGeneric(AHDR, game, endianness);
+            //}
         }
 
         private AssetDYNA CreateDYNA(Section_AHDR AHDR, Game game, Endianness endianness)
@@ -697,6 +697,7 @@ namespace IndustrialPark
 
             switch (type)
             {
+                case DynaType.camera__preset: return new DynaCameraPreset(AHDR, game, endianness);
                 case DynaType.Enemy__SB__BucketOTron: return new DynaEnemyBucketOTron(AHDR, game, endianness);
                 case DynaType.Enemy__SB__CastNCrew: return new DynaEnemyCastNCrew(AHDR, game, endianness);
                 case DynaType.Enemy__SB__Critter: return new DynaEnemyCritter(AHDR, game, endianness);
@@ -710,17 +711,26 @@ namespace IndustrialPark
                 case DynaType.Incredibles__Icon: return new DynaIncrediblesIcon(AHDR, game, endianness);
                 case DynaType.JSPExtraData: return new DynaJSPExtraData(AHDR, game, endianness);
                 case DynaType.SceneProperties: return new DynaSceneProperties(AHDR, game, endianness);
-                case DynaType.effect__grass: return new DynaEffectGrass(AHDR, game, endianness);
+                case DynaType.effect__Flamethrower: return new DynaEffectFlamethrower(AHDR, game, endianness);
+                case DynaType.effect__LensFlareElement: return new DynaEffectLensFlare(AHDR, game, endianness);
+                case DynaType.Unknown_LensFlareSomething: return new DynaEffectLensFlareSomething(AHDR, game, endianness);
                 case DynaType.effect__Lightning: return new DynaEffectLightning(AHDR, game, endianness);
                 case DynaType.effect__Rumble: return new DynaEffectRumble(AHDR, game, endianness);
                 case DynaType.effect__RumbleSphericalEmitter: return new DynaEffectRumbleSphere(AHDR, game, endianness);
                 case DynaType.effect__ScreenFade: return new DynaEffectScreenFade(AHDR, game, endianness);
+                case DynaType.effect__Splash: return new DynaEffectSplash(AHDR, game, endianness);
+                case DynaType.effect__grass: return new DynaEffectGrass(AHDR, game, endianness);
                 case DynaType.effect__smoke_emitter: return new DynaEffectSmokeEmitter(AHDR, game, endianness);
                 case DynaType.effect__spotlight: return new DynaEffectSpotlight(AHDR, game, endianness);
+                case DynaType.effect__uber_laser: return new DynaEffectUberLaser(AHDR, game, endianness);
+                case DynaType.effect__water_body: return new DynaEffectWaterBody(AHDR, game, endianness);
+                case DynaType.Effect__particle_generator: return new DynaEffectParticleGenerator(AHDR, game, endianness);
                 case DynaType.game_object__BoulderGenerator: return new DynaGObjectBoulderGen(AHDR, game, endianness);
                 case DynaType.game_object__BusStop: return new DynaGObjectBusStop(AHDR, game, endianness);
                 case DynaType.game_object__Camera_Tweak: return new DynaGObjectCamTweak(AHDR, game, endianness);
                 case DynaType.game_object__Flythrough: return new DynaGObjectFlythrough(AHDR, game, endianness);
+                case DynaType.game_object__Grapple: return new DynaGObjectGrapple(AHDR, game, endianness);
+                case DynaType.game_object__Hangable: return new DynaGObjectHangable(AHDR, game, endianness);
                 case DynaType.game_object__IN_Pickup: return new DynaGObjectInPickup(AHDR, game, endianness);
                 case DynaType.game_object__NPCSettings: return new DynaGObjectNPCSettings(AHDR, game, endianness);
                 case DynaType.game_object__RaceTimer: return new DynaGObjectRaceTimer(AHDR, game, endianness);
@@ -728,21 +738,30 @@ namespace IndustrialPark
                 case DynaType.game_object__RingControl: return new DynaGObjectRingControl(AHDR, game, endianness);
                 case DynaType.game_object__Taxi: return new DynaGObjectTaxi(AHDR, game, endianness);
                 case DynaType.game_object__Teleport: return new DynaGObjectTeleport(AHDR, game, endianness);
+                case DynaType.game_object__Turret: return new DynaGObjectTurret(AHDR, game, endianness);
                 case DynaType.game_object__Vent: return new DynaGObjectVent(AHDR, game, endianness);
                 case DynaType.game_object__VentType: return new DynaGObjectVentType(AHDR, game, endianness);
                 case DynaType.game_object__bungee_drop: return new DynaGObjectBungeeDrop(AHDR, game, endianness);
                 case DynaType.game_object__bungee_hook: return new DynaGObjectBungeeHook(AHDR, game, endianness);
+                case DynaType.game_object__camera_param_asset: return new DynaGObjectCameraParamAsset(AHDR, game, endianness);
+                case DynaType.game_object__dash_camera_spline: return new DynaGObjectDashCameraSpline(AHDR, game, endianness);
                 case DynaType.game_object__flame_emitter: return new DynaGObjectFlameEmitter(AHDR, game, endianness);
+                case DynaType.game_object__laser_beam: return new DynaGObjectLaserBeam(AHDR, game, endianness);
                 case DynaType.game_object__talk_box: return new DynaGObjectTalkBox(AHDR, game, endianness);
                 case DynaType.game_object__task_box: return new DynaGObjectTaskBox(AHDR, game, endianness);
                 case DynaType.game_object__text_box: return new DynaGObjectTextBox(AHDR, game, endianness);
+                case DynaType.game_object__train_car: return new DynaGObjectTrainCar(AHDR, game, endianness);
+                case DynaType.game_object__train_junction: return new DynaGObjectTrainJunction(AHDR, game, endianness);
                 case DynaType.hud__image: return new DynaHudImage(AHDR, game, endianness);
                 case DynaType.hud__meter__font: return new DynaHudMeterFont(AHDR, game, endianness);
                 case DynaType.hud__meter__unit: return new DynaHudMeterUnit(AHDR, game, endianness);
                 case DynaType.hud__model: return new DynaHudModel(AHDR, game, endianness);
                 case DynaType.hud__text: return new DynaHudText(AHDR, game, endianness);
                 case DynaType.interaction__Launch: return new DynaInteractionLaunch(AHDR, game, endianness);
+                case DynaType.interaction__Lift: return new DynaInteractionLift(AHDR, game, endianness);
+                case DynaType.interaction__Turn: return new DynaInteractionTurn(AHDR, game, endianness);
                 case DynaType.logic__reference: return new DynaLogicReference(AHDR, game, endianness);
+                case DynaType.logic__FunctionGenerator: return new DynaLogicFunctionGenerator(AHDR, game, endianness);
                 case DynaType.npc__group: return new DynaNPCGroup(AHDR, game, endianness);
                 case DynaType.pointer: return new DynaPointer(AHDR, game, endianness);
                 case DynaType.ui__box: return new DynaUIBox(AHDR, game, endianness);
@@ -752,60 +771,41 @@ namespace IndustrialPark
                 case DynaType.ui__text: return new DynaUIText(AHDR, game, endianness);
                 case DynaType.ui__text__userstring: return new DynaUITextUserString(AHDR, game, endianness);
                 case DynaType.Checkpoint:
-                case DynaType.Effect__particle_generator:
                 case DynaType.Enemy__SB:
                 case DynaType.Interest_Pointer:
                 case DynaType.audio__conversation:
                 case DynaType.camera__binary_poi:
-                case DynaType.camera__preset:
                 case DynaType.camera__transition_path:
                 case DynaType.camera__transition_time:
                 case DynaType.effect__BossBrain:
-                case DynaType.effect__Flamethrower:
                 case DynaType.effect__LightEffectFlicker:
                 case DynaType.effect__LightEffectStrobe:
                 case DynaType.effect__RumbleBoxEmitter:
                 case DynaType.effect__ScreenWarp:
-                case DynaType.effect__Splash:
                 case DynaType.effect__Waterhose:
                 case DynaType.effect__light:
                 case DynaType.effect__spark_emitter:
-                case DynaType.effect__uber_laser:
-                case DynaType.effect__water_body:
                 case DynaType.game_object__FreezableObject:
-                case DynaType.game_object__Grapple:
-                case DynaType.game_object__Hangable:
-                case DynaType.game_object__RubbleGenerator:
-                case DynaType.game_object__Turret:
-                case DynaType.game_object__bullet_mark:
-                case DynaType.game_object__bullet_time:
-                case DynaType.game_object__camera_param_asset:
-                case DynaType.game_object__dash_camera_spline:
-                case DynaType.game_object__laser_beam:
-                case DynaType.game_object__rband_camera_asset:
-                case DynaType.game_object__train_car:
-                case DynaType.game_object__train_junction:
+                case DynaType.game_object__RubbleGenerator: // incredibles
+                case DynaType.game_object__bullet_mark: // incredibles
+                case DynaType.game_object__bullet_time: // incredibles
+                case DynaType.game_object__rband_camera_asset: // incredibles
                 case DynaType.interaction__IceBridge:
-                case DynaType.interaction__Lift:
                 case DynaType.interaction__SwitchLever:
-                case DynaType.interaction__Turn:
-                case DynaType.logic__FunctionGenerator:
                 case DynaType.npc__CoverPoint:
                 case DynaType.npc__NPC_Custom_AV:
-                case DynaType.Unknown_2CD29541:
-                case DynaType.Unknown_4EE03B24:
-                case DynaType.Unknown_9F234F8E:
-                case DynaType.Unknown_460F4FB2:
-                case DynaType.Unknown_2743B85C:
-                case DynaType.Unknown_A072A4DA:
-                case DynaType.Unknown_AD7CB421:
-                case DynaType.Unknown_C6C76EEE:
-                case DynaType.Unknown_CDB57387:
-                case DynaType.Unknown_CF21DB89:
-                case DynaType.Unknown_E5D82D97:
-                case DynaType.Unknown_E2301EA9:
-                case DynaType.Unknown_EBC04E7B:
-                case DynaType.Unknown_FC2951C1:
+                case DynaType.Enemy__IN2__BossUnderminerDrill:
+                case DynaType.Enemy__IN2__Rat:
+                case DynaType.Enemy__IN2__Chicken:
+                case DynaType.Enemy__IN2__Humanoid:
+                case DynaType.Enemy__IN2__RobotTank:
+                case DynaType.Enemy__IN2__Bomber:
+                case DynaType.Enemy__IN2__BossUnderminerUM:
+                case DynaType.Enemy__IN2__Driller:
+                case DynaType.Enemy__IN2__Enforcer:
+                case DynaType.Enemy__IN2__Scientist:
+                case DynaType.Enemy__IN2__Shooter:
+                case DynaType.Unknown_EBC04E7B: // incredibles
                 case DynaType.Null:
                     return new DynaGeneric(AHDR, type, game, endianness);
                 default:

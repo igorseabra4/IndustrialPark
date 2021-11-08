@@ -116,6 +116,7 @@ namespace IndustrialPark
         {
             Verify(EmptyModel_AssetID, ref result);
             Verify(FullModel_AssetID, ref result);
+            base.Verify(ref result);
         }
     }
 }

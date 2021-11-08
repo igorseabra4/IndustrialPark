@@ -232,8 +232,11 @@ namespace IndustrialPark
             Verify(MovePoint_AssetID, ref result);
             Verify(TaskDYNA1_AssetID, ref result);
             Verify(TaskDYNA2_AssetID, ref result);
-            Verify(NavMesh2_AssetID, ref result);
-            Verify(Settings_AssetID, ref result);
+            if (game == Game.Incredibles)
+            {
+                Verify(NavMesh2_AssetID, ref result);
+                Verify(Settings_AssetID, ref result);
+            }
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)

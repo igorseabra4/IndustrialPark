@@ -47,6 +47,7 @@ namespace IndustrialPark
             if (Group_AssetID == 0)
                 result.Add("JSP Extra Data with no GRUP reference");
             Verify(Group_AssetID, ref result);
+            base.Verify(ref result);
         }
     }
 }

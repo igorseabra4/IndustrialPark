@@ -87,6 +87,8 @@ namespace IndustrialPark
             if (SIMP_ID == 0)
                 result.Add("Bus stop with no SIMP reference");
             Verify(SIMP_ID, ref result);
+
+            base.Verify(ref result);
         }
     }
 }

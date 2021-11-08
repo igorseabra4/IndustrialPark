@@ -138,6 +138,8 @@ namespace IndustrialPark
 
             foreach (var ring in Ring_AssetIDs)
                 Verify(ring, ref result);
+
+            base.Verify(ref result);
         }
     }
 }
