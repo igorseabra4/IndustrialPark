@@ -49,7 +49,7 @@ namespace IndustrialPark
             if (Animation_AssetIDs.Length != 10)
                 result.Add("ALST asset has a number of animation asset IDs different from 10");
 
-            foreach(AssetID assetID in Animation_AssetIDs)
+            foreach (AssetID assetID in Animation_AssetIDs)
                 Verify(assetID, ref result);
         }
     }

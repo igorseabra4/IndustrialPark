@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using HipHopFile;
+﻿using HipHopFile;
+using System.Collections.Generic;
 
 namespace IndustrialPark
 {
@@ -42,7 +41,7 @@ namespace IndustrialPark
             foreach (string s in AssetNamesInText)
                 if (Functions.BKDRHash(s) == assetID || Functions.BKDRHash(s + ".RW3") == assetID)
                     return true;
-            
+
             return base.HasReference(assetID);
         }
 

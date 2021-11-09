@@ -32,7 +32,7 @@ namespace IndustrialPark
         public AssetSingle DropGravity { get; set; }
         [Category(dynaCategoryName)]
         public FlagBitmask LiftFlags { get; set; } = IntFlagsDescriptor();
-        
+
         public DynaInteractionLift(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.interaction__Lift, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))

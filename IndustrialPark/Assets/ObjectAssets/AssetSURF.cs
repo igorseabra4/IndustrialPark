@@ -95,7 +95,7 @@ namespace IndustrialPark
             Group_AssetID = reader.ReadUInt32();
             Speed = reader.ReadSingle();
         }
-        
+
         public override byte[] Serialize(Game game, Endianness endianness)
         {
             using (var writer = new EndianBinaryWriter(endianness))

@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using HipHopFile;
+using System.Collections.Generic;
 using System.ComponentModel;
-using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -43,7 +43,7 @@ namespace IndustrialPark
             }
         }
 
-        public override string ToString() => 
+        public override string ToString() =>
             $"[{Program.MainForm.GetAssetNameFromID(PickupHash)}] - [{Program.MainForm.GetAssetNameFromID(ModelAssetID)}]";
     }
 
@@ -94,7 +94,7 @@ namespace IndustrialPark
             foreach (EntryPICK a in _pick_Entries)
                 if (a.ModelAssetID == assetID)
                     return true;
-            
+
             return false;
         }
 

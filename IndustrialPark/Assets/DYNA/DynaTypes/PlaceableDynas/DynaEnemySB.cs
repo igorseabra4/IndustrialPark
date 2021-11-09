@@ -1,8 +1,8 @@
-﻿using System;
+﻿using HipHopFile;
+using SharpDX;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using HipHopFile;
-using SharpDX;
 using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
@@ -180,7 +180,7 @@ namespace IndustrialPark
             _position = position;
             _scale = new Vector3(1f);
             _color = new Vector4(1f);
-            
+
             CreateTransformMatrix();
             AddToRenderableAssets(this);
         }
@@ -332,7 +332,7 @@ namespace IndustrialPark
 
             return smallestDistance;
         }
-                
+
         public BoundingBox GetBoundingBox()
         {
             return boundingBox;
@@ -341,13 +341,6 @@ namespace IndustrialPark
         public float GetDistanceFrom(Vector3 cameraPosition)
         {
             return Vector3.Distance(cameraPosition, new Vector3(PositionX, PositionY, PositionZ));
-        }
-
-        public BoundingSphere GetObjectCenter()
-        {
-            BoundingSphere boundingSphere = new BoundingSphere(new Vector3(PositionX, PositionY, PositionZ), boundingBox.Size.Length());
-            boundingSphere.Radius *= 0.9f;
-            return boundingSphere;
         }
 
         public override bool HasReference(uint assetID)

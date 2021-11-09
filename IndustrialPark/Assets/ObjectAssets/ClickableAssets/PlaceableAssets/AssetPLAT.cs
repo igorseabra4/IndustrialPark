@@ -85,9 +85,9 @@ namespace IndustrialPark
             "Solid");
 
         private int motionStart(Game game) =>
-            game == Game.Scooby? 0x78 :
-            game == Game.BFBB? 0x90 :
-            game == Game.Incredibles? 0x8C : 0;
+            game == Game.Scooby ? 0x78 :
+            game == Game.BFBB ? 0x90 :
+            game == Game.Incredibles ? 0x8C : 0;
 
         public AssetPLAT(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.PLAT, BaseAssetType.Platform, position)
         {
@@ -248,7 +248,7 @@ namespace IndustrialPark
         }
 
         public override bool HasReference(uint assetID) => PlatSpecific.HasReference(assetID) || base.HasReference(assetID);
-        
+
         public override void Verify(ref List<string> result)
         {
             PlatSpecific.Verify(ref result);
@@ -307,7 +307,7 @@ namespace IndustrialPark
 
                     return base.LocalWorld() * Matrix.Translation(-_position) * Matrix.Translation(skyTranslation);
                 }
-                
+
                 if (PlatformType == PlatType.MovePoint)
                     return Matrix.Scaling(_scale)
                         * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
@@ -321,7 +321,7 @@ namespace IndustrialPark
         [Category("Platform")]
         [TypeConverter(typeof(ExpandableObjectConverter))]
         public PlatSpecific_Generic PlatSpecific { get; set; }
-        
+
         private bool isSkyBox = false;
         private bool skyBoxUseY = false;
 

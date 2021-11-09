@@ -58,8 +58,8 @@ namespace IndustrialPark
             }
         }
 
-        public string EntryFunction 
-        { 
+        public string EntryFunction
+        {
             get
             {
                 switch (index)
@@ -93,9 +93,9 @@ namespace IndustrialPark
         [Category(categoryName)]
         private StructPARP[] _structs { get; set; }
         [Category(categoryName), Description("Each of the 14 structs has a different function. Check wiki page for more info.")]
-        public StructPARP[] Structs 
-        { 
-            get => _structs; 
+        public StructPARP[] Structs
+        {
+            get => _structs;
             set
             {
                 List<StructPARP> list = value.ToList();
@@ -107,7 +107,7 @@ namespace IndustrialPark
                     list.RemoveAt(list.Count - 1);
 
                 _structs = list.ToArray();
-            } 
+            }
         }
         [Category(categoryName)]
         public AssetSingle VelX { get; set; }
@@ -163,7 +163,7 @@ namespace IndustrialPark
         }
 
         public override bool HasReference(uint assetID) => PARS_AssetID == assetID || base.HasReference(assetID);
-        
+
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);

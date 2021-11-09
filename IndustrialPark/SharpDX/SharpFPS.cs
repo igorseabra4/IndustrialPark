@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace IndustrialPark
+﻿namespace IndustrialPark
 {
     /// <summary>
     /// Helper to count frame per seconds
@@ -18,7 +12,7 @@ namespace IndustrialPark
 
         private int n1;
         private long timeout;
-        
+
         private System.Diagnostics.Stopwatch watch;
 
         /// <summary>
@@ -26,8 +20,8 @@ namespace IndustrialPark
         /// </summary>
         public SharpFPS()
         {
-            watch=new System.Diagnostics.Stopwatch();
-            Reset();   
+            watch = new System.Diagnostics.Stopwatch();
+            Reset();
         }
 
         /// <summary>

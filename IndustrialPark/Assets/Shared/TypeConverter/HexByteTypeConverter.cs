@@ -15,7 +15,7 @@ namespace IndustrialPark
         {
             if (value is string s)
                 return new AssetByte(Convert.ToByte(s, 16));
-            
+
             return base.ConvertFrom(context, culture, value);
         }
 

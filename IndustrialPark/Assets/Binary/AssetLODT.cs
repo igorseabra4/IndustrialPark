@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using HipHopFile;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -126,7 +126,7 @@ namespace IndustrialPark
             foreach (var a in LODT_Entries)
                 if (a.BaseModelAssetID == assetID || a.LOD1_Model == assetID || a.LOD2_Model == assetID || a.LOD3_Model == assetID)
                     return true;
-            
+
             return false;
         }
 

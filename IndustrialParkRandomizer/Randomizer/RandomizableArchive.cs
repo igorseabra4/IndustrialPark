@@ -345,7 +345,7 @@ namespace IndustrialPark.Randomizer
                     ShufflePlaceableColors(settings.brightColors, settings.strongColors) |
                     ShufflePlaceableDynaColors(settings.brightColors, settings.strongColors) |
                     ShuffleLevelModelColors(settings.brightColors, settings.strongColors);
-            
+
             if (game == Game.BFBB && settings.PlayerCharacters && ContainsAssetWithType(AssetType.DYNA))
                 shuffled |= ShuffleBusStops();
 
@@ -408,7 +408,7 @@ namespace IndustrialPark.Randomizer
                           where asset.assetType == AssetType.RWTX
                           && ((hud && asset.assetName.ToLower().Contains("rw3")) || (!hud))
                           select (AssetWithData)asset).ToList();
-            
+
             if (assets.Count < 2)
                 return false;
 
@@ -427,7 +427,7 @@ namespace IndustrialPark.Randomizer
         private bool RandomizeDisco()
         {
             var assets = (from asset in assetDictionary.Values where asset.assetType == AssetType.DSCO select (AssetDSCO)asset).ToList();
-                        
+
             foreach (var dsco in assets)
             {
                 var patterns = dsco.Patterns;
@@ -488,7 +488,7 @@ namespace IndustrialPark.Randomizer
 
             foreach (var a in assets)
                 a.PickupValue = (short)(a.PickupValue * random.NextFloat(snackGateMin, snackGateMax));
-            
+
             return true;
         }
 
@@ -824,8 +824,8 @@ namespace IndustrialPark.Randomizer
         private bool ShufflePlaceableDynaColors(bool brightColors, bool strongColors)
         {
             List<DynaEnemySB> assets = (from asset in assetDictionary.Values
-                                      where asset is DynaEnemySB
-                                      select asset).Cast<DynaEnemySB>().ToList();
+                                        where asset is DynaEnemySB
+                                        select asset).Cast<DynaEnemySB>().ToList();
 
             foreach (DynaEnemySB a in assets)
             {
@@ -2024,7 +2024,7 @@ namespace IndustrialPark.Randomizer
                         mvpt.ZoneRadius *= random.NextFloat(min, max);
                     if (mvpt.Delay != -1)
                         mvpt.Delay *= random.NextFloat(min, max);
-                }            
+                }
             }
 
             return assets.Count != 0;
@@ -2464,9 +2464,9 @@ namespace IndustrialPark.Randomizer
             var outSet = new HashSet<EnemyStandardType>();
 
             foreach (var a in from asset in assetDictionary.Values
-                                            where asset is DynaEnemyStandard enemy
-                                            && importEnemyTypes.Contains(enemy.EnemyType)
-                                            select (DynaEnemyStandard)asset)
+                              where asset is DynaEnemyStandard enemy
+                              && importEnemyTypes.Contains(enemy.EnemyType)
+                              select (DynaEnemyStandard)asset)
                 if (!ContainsAsset(new AssetID(a.Type.ToString() + ".MINF")))
                     outSet.Add(a.EnemyType);
 
@@ -2658,7 +2658,7 @@ namespace IndustrialPark.Randomizer
 
         public bool WidescreenMenu()
         {
-            foreach(var u in new uint[] {
+            foreach (var u in new uint[] {
                 new AssetID("AAA MNU4 CAUSTICS SURFACE UI"),
                 new AssetID("BLUE ALPHA 1 BAMBOO UI"),
                 new AssetID("BLUE ALPHA 2 BAMBOO UI"),

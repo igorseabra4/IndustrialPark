@@ -73,7 +73,8 @@ namespace IndustrialPark
             {
                 listBoxFlyEntries.SelectedIndex = selectedIndex;
             }
-            catch {
+            catch
+            {
                 try
                 {
                     listBoxFlyEntries.SelectedIndex = selectedIndex - 1;

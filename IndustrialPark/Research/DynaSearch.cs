@@ -2,13 +2,9 @@
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace IndustrialPark
@@ -40,7 +36,7 @@ namespace IndustrialPark
                 labelRootDir.Text = "Root Directory: " + rootDir;
             }
         }
-        
+
         private void buttonPerform_Click(object sender, EventArgs e)
         {
             List<string> fileList = new List<string>();
@@ -81,7 +77,7 @@ namespace IndustrialPark
             foreach (string s in Directory.GetDirectories(folderPath))
                 AddFolder(s, ref fileList);
         }
-        
+
         private void Check(ArchiveEditorFunctions archive, ref Dictionary<(DynaType, int), int> dynas)
         {
             foreach (Asset asset in archive.GetAllAssets())

@@ -61,7 +61,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetByte ePlayRule { get; set; }
         [Category(categoryName)]
-        public AssetByte uInfoPad0 { get; set; }        
+        public AssetByte uInfoPad0 { get; set; }
         [Category(categoryName)]
         public AssetSingle InnerRadius { get; set; }
         [Category(categoryName)]

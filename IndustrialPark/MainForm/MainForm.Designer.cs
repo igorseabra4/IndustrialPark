@@ -132,6 +132,7 @@ namespace IndustrialPark
             this.dYNASearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eventSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dynaNameSearcherToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -148,7 +149,6 @@ namespace IndustrialPark
             this.toolStripMenuItem_Templates = new System.Windows.Forms.ToolStripMenuItem();
             this.userTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripComboBoxUserTemplate = new System.Windows.Forms.ToolStripComboBox();
-            this.aToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStripMain.SuspendLayout();
@@ -972,7 +972,7 @@ namespace IndustrialPark
             this.dYNASearchToolStripMenuItem,
             this.eventSearchToolStripMenuItem,
             this.openFolderToolStripMenuItem,
-            this.aToolStripMenuItem});
+            this.dynaNameSearcherToolStripMenuItem});
             this.researchToolStripMenuItem.Name = "researchToolStripMenuItem";
             this.researchToolStripMenuItem.Size = new System.Drawing.Size(124, 20);
             this.researchToolStripMenuItem.Text = "Research/Advanced";
@@ -980,30 +980,37 @@ namespace IndustrialPark
             // assetIDGeneratorToolStripMenuItem
             // 
             this.assetIDGeneratorToolStripMenuItem.Name = "assetIDGeneratorToolStripMenuItem";
-            this.assetIDGeneratorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.assetIDGeneratorToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.assetIDGeneratorToolStripMenuItem.Text = "Asset ID Generator";
             this.assetIDGeneratorToolStripMenuItem.Click += new System.EventHandler(this.assetIDGeneratorToolStripMenuItem_Click);
             // 
             // dYNASearchToolStripMenuItem
             // 
             this.dYNASearchToolStripMenuItem.Name = "dYNASearchToolStripMenuItem";
-            this.dYNASearchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.dYNASearchToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.dYNASearchToolStripMenuItem.Text = "DYNA Search";
             this.dYNASearchToolStripMenuItem.Click += new System.EventHandler(this.dYNASearchToolStripMenuItem_Click);
             // 
             // eventSearchToolStripMenuItem
             // 
             this.eventSearchToolStripMenuItem.Name = "eventSearchToolStripMenuItem";
-            this.eventSearchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.eventSearchToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.eventSearchToolStripMenuItem.Text = "Event Search";
             this.eventSearchToolStripMenuItem.Click += new System.EventHandler(this.eventSearchToolStripMenuItem_Click);
             // 
             // openFolderToolStripMenuItem
             // 
             this.openFolderToolStripMenuItem.Name = "openFolderToolStripMenuItem";
-            this.openFolderToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openFolderToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.openFolderToolStripMenuItem.Text = "Open Folder";
             this.openFolderToolStripMenuItem.Click += new System.EventHandler(this.openFolderToolStripMenuItem_Click);
+            // 
+            // dynaNameSearcherToolStripMenuItem
+            // 
+            this.dynaNameSearcherToolStripMenuItem.Name = "dynaNameSearcherToolStripMenuItem";
+            this.dynaNameSearcherToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.dynaNameSearcherToolStripMenuItem.Text = "Dyna Name Searcher";
+            this.dynaNameSearcherToolStripMenuItem.Click += new System.EventHandler(this.dynaNameSearcherToolStripMenuItem_Click);
             // 
             // statusStrip1
             // 
@@ -1132,13 +1139,6 @@ namespace IndustrialPark
             this.toolStripComboBoxUserTemplate.Name = "toolStripComboBoxUserTemplate";
             this.toolStripComboBoxUserTemplate.Size = new System.Drawing.Size(160, 23);
             this.toolStripComboBoxUserTemplate.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxUserTemplate_SelectedIndexChanged);
-            // 
-            // aToolStripMenuItem
-            // 
-            this.aToolStripMenuItem.Name = "aToolStripMenuItem";
-            this.aToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.aToolStripMenuItem.Text = "a";
-            this.aToolStripMenuItem.Click += new System.EventHandler(this.aToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -1290,7 +1290,7 @@ namespace IndustrialPark
         private ToolStripMenuItem gRSMToolStripMenuItem;
         private ToolStripMenuItem nPCToolStripMenuItem;
         private ToolStripMenuItem openFolderToolStripMenuItem;
-        private ToolStripMenuItem aToolStripMenuItem;
+        private ToolStripMenuItem dynaNameSearcherToolStripMenuItem;
     }
 }
 

@@ -1,7 +1,5 @@
 ﻿using HipHopFile;
-using IndustrialPark.Models;
 using SharpDX;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -86,7 +84,7 @@ namespace IndustrialPark
                 Flags08.FlagValueByte = 0x01;
                 Flags09.FlagValueByte = 0xC0;
             }
-            
+
             MinFrequency = 1f;
             Priority = 128;
             Volume = 91;
@@ -189,7 +187,7 @@ namespace IndustrialPark
                 return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices, world);
             return null;
         }
-        
+
         public bool ShouldDraw(SharpRenderer renderer)
         {
             if (isSelected)
@@ -213,9 +211,9 @@ namespace IndustrialPark
         }
 
         public BoundingBox GetBoundingBox() => boundingBox;
-        
+
         public float GetDistanceFrom(Vector3 cameraPosition) => Vector3.Distance(cameraPosition, _position) - _radius;
-        
+
         [Browsable(false)]
         public AssetSingle ScaleX
         {

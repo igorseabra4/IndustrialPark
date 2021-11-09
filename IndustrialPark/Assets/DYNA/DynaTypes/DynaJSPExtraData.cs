@@ -38,7 +38,7 @@ namespace IndustrialPark
         }
 
         public override bool HasReference(uint assetID) => JSPInfo_AssetID == assetID || Group_AssetID == assetID || base.HasReference(assetID);
-        
+
         public override void Verify(ref List<string> result)
         {
             if (JSPInfo_AssetID == 0)

@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using HipHopFile;
+using System.Collections.Generic;
 using System.ComponentModel;
-using HipHopFile;
 
 namespace IndustrialPark
 {
     public class DestState : GenericAssetDataContainer
-    {  
+    {
         public int percent { get; set; }
         public AssetID Model_AssetID { get; set; }
         public AssetID Shrapnel_Destroy_AssetID { get; set; }
@@ -167,7 +167,7 @@ namespace IndustrialPark
 
             return false;
         }
-        
+
         public override void Verify(ref List<string> result)
         {
             Verify(MINF_AssetID, ref result);

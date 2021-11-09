@@ -1,13 +1,12 @@
 ﻿using SharpDX;
-using System.Windows.Forms;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Windows;
-using System.Collections.Generic;
-using static IndustrialPark.Models.BSP_IO_ReadOBJ;
-using System.Linq;
-using System.IO;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
+using static IndustrialPark.Models.BSP_IO_ReadOBJ;
 
 namespace IndustrialPark
 {
@@ -403,7 +402,7 @@ namespace IndustrialPark
             device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer);
             basicShader.Apply();
 
-            device.DeviceContext.InputAssembler.PrimitiveTopology = 
+            device.DeviceContext.InputAssembler.PrimitiveTopology =
                 lineList ? SharpDX.Direct3D.PrimitiveTopology.LineList : SharpDX.Direct3D.PrimitiveTopology.LineStrip;
             device.DeviceContext.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(VertexBuffer, 12, 0));
             device.DeviceContext.Draw(vertexCount, 0);
@@ -442,7 +441,7 @@ namespace IndustrialPark
                 device.Resize();
                 Camera.AspectRatio = (float)controlSize.Width / controlSize.Height;
             }
-            
+
             Program.MainForm.KeyboardController();
 
             sharpFPS.Update();
@@ -450,60 +449,60 @@ namespace IndustrialPark
             device.Clear(backgroundColor);
 
             if (allowRender)
-                lock(renderableAssets)
-                if (isDrawingUI)
-                {
-                    viewProjection = Matrix.OrthoOffCenterRH(0, 640, -480, 0, -Camera.FarPlane, Camera.FarPlane);
+                lock (renderableAssets)
+                    if (isDrawingUI)
+                    {
+                        viewProjection = Matrix.OrthoOffCenterRH(0, 640, -480, 0, -Camera.FarPlane, Camera.FarPlane);
 
-                    device.SetFillModeDefault();
-                    device.SetCullModeDefault();
-                    device.ApplyRasterState();
-                    device.SetBlendStateAlphaBlend();
-                    device.SetDefaultDepthState();
-                    device.UpdateAllStates();
+                        device.SetFillModeDefault();
+                        device.SetCullModeDefault();
+                        device.ApplyRasterState();
+                        device.SetBlendStateAlphaBlend();
+                        device.SetDefaultDepthState();
+                        device.UpdateAllStates();
 
-                    lock(ArchiveEditorFunctions.renderableAssets)
-                    foreach (IRenderableAsset a in
-                    (from IRenderableAsset asset in ArchiveEditorFunctions.renderableAssets
-                     where (asset is AssetUI || asset is AssetUIFT) && asset.ShouldDraw(this)
-                     select (IClickableAsset)asset).OrderBy(f => -f.PositionZ))
-                        a.Draw(this);
-                }
-                else
-                {
-                    if (playingFly)
-                        flyToPlay.Play();
-
-                    Program.MainForm.SetToolStripStatusLabel(Camera.ToString() + " FPS: " + $"{sharpFPS.FPS:0.0000}");
-
-                    Matrix view = Camera.ViewMatrix;
-                    viewProjection = view * Camera.ProjectionMatrix;
-                    frustum = new BoundingFrustum(view * Camera.BiggerFovProjectionMatrix);
-
-                    device.SetFillModeDefault();
-                    device.SetCullModeDefault();
-                    device.ApplyRasterState();
-                    device.SetDefaultDepthState();
-                    device.UpdateAllStates();
-
-                    lock (ArchiveEditorFunctions.renderableJSPs)
-                        foreach (var a in ArchiveEditorFunctions.renderableJSPs)
-                            if (a.ShouldDraw(this))
+                        lock (ArchiveEditorFunctions.renderableAssets)
+                            foreach (IRenderableAsset a in
+                            (from IRenderableAsset asset in ArchiveEditorFunctions.renderableAssets
+                             where (asset is AssetUI || asset is AssetUIFT) && asset.ShouldDraw(this)
+                             select (IClickableAsset)asset).OrderBy(f => -f.PositionZ))
                                 a.Draw(this);
+                    }
+                    else
+                    {
+                        if (playingFly)
+                            flyToPlay.Play();
 
-                    lock (ArchiveEditorFunctions.renderableAssets)
-                        foreach (IRenderableAsset a in ArchiveEditorFunctions.renderableAssets)
-                        {
-                            if (a.ShouldDraw(this))
-                                renderableAssets.Add(a);
-                            else
-                                renderableAssets.Remove(a);
-                        }
+                        Program.MainForm.SetToolStripStatusLabel(Camera.ToString() + " FPS: " + $"{sharpFPS.FPS:0.0000}");
 
-                    //foreach (IRenderableAsset a in renderableAssets.OrderByDescending(a => a.GetDistanceFrom(Camera.Position)))
-                    //    a.Draw(this);
+                        Matrix view = Camera.ViewMatrix;
+                        viewProjection = view * Camera.ProjectionMatrix;
+                        frustum = new BoundingFrustum(view * Camera.BiggerFovProjectionMatrix);
 
-                    var renderableAssetsTrans = new HashSet<IRenderableAsset>();
+                        device.SetFillModeDefault();
+                        device.SetCullModeDefault();
+                        device.ApplyRasterState();
+                        device.SetDefaultDepthState();
+                        device.UpdateAllStates();
+
+                        lock (ArchiveEditorFunctions.renderableJSPs)
+                            foreach (var a in ArchiveEditorFunctions.renderableJSPs)
+                                if (a.ShouldDraw(this))
+                                    a.Draw(this);
+
+                        lock (ArchiveEditorFunctions.renderableAssets)
+                            foreach (IRenderableAsset a in ArchiveEditorFunctions.renderableAssets)
+                            {
+                                if (a.ShouldDraw(this))
+                                    renderableAssets.Add(a);
+                                else
+                                    renderableAssets.Remove(a);
+                            }
+
+                        //foreach (IRenderableAsset a in renderableAssets.OrderByDescending(a => a.GetDistanceFrom(Camera.Position)))
+                        //    a.Draw(this);
+
+                        var renderableAssetsTrans = new HashSet<IRenderableAsset>();
 
                         foreach (IRenderableAsset a in renderableAssets)
                             if (a.SpecialBlendMode)
@@ -511,9 +510,9 @@ namespace IndustrialPark
                             else
                                 a.Draw(this);
 
-                    foreach (IRenderableAsset a in renderableAssetsTrans.OrderByDescending(a => a.GetDistanceFrom(Camera.Position)))
-                        a.Draw(this);
-                }
+                        foreach (IRenderableAsset a in renderableAssetsTrans.OrderByDescending(a => a.GetDistanceFrom(Camera.Position)))
+                            a.Draw(this);
+                    }
 
             device.SetCullModeNone();
             device.ApplyRasterState();
@@ -528,9 +527,9 @@ namespace IndustrialPark
         public void RunMainLoop(Control control)
         {
             using (var loop = new RenderLoop(control))
-                while(loop.NextFrame())
+                while (loop.NextFrame())
                     MainLoop(control.Size);
-            
+
             // main loop is done; release resources
 
             arrowDefault.Dispose();

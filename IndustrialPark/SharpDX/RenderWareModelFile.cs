@@ -1,10 +1,10 @@
-﻿using SharpDX;
+﻿using RenderWareFile;
+using RenderWareFile.Sections;
+using SharpDX;
+using SharpDX.Direct3D11;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using RenderWareFile;
-using RenderWareFile.Sections;
-using SharpDX.Direct3D11;
 
 namespace IndustrialPark
 {
@@ -459,7 +459,7 @@ namespace IndustrialPark
             renderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, renderer.tintedBuffer);
             renderer.tintedShader.Apply();
 
-            for (int i = meshList.Count -1; i >= 0; i--)
+            for (int i = meshList.Count - 1; i >= 0; i--)
             {
                 if (meshList[i] == null || (dontDrawInvisible && atomicFlags[i]))
                     continue;

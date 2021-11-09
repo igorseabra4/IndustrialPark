@@ -1,8 +1,8 @@
-﻿using System;
-using System.Text;
-using DiscordRPC;
+﻿using DiscordRPC;
 using DiscordRPC.Logging;
+using System;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace IndustrialPark
 {

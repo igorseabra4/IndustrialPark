@@ -69,7 +69,7 @@ namespace IndustrialPark
 
         public override bool HasReference(uint assetID) =>
             TaskBox1_AssetID == assetID || TaskBox2_AssetID == assetID || TextBox_AssetID == assetID || base.HasReference(assetID);
-        
+
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);

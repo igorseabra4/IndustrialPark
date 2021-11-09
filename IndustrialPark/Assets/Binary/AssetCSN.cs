@@ -397,7 +397,7 @@
 //                        .Skip(startOffsets[i])
 //                        .Take(startOffsets[i + 1] - startOffsets[i])
 //                        .ToArray(), EndianConverter.PlatformEndianness(platform));
-                
+
 //                return entries;
 //            }
 //        }

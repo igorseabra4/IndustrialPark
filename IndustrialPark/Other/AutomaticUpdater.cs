@@ -98,7 +98,7 @@ namespace IndustrialPark
                                     File.Move(previousFile, newFilePath);
                                 }
                             }
-                        
+
                         ZipFile.ExtractToDirectory(updatedIPfilePath, Application.StartupPath);
 
                         File.Delete(updatedIPfilePath);

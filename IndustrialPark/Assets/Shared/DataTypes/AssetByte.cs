@@ -13,11 +13,11 @@ namespace IndustrialPark
         private byte value;
 
         public override int GetHashCode() => value.GetHashCode();
-                
+
         public override string ToString() => value.ToString("X2");
-        
+
         public static implicit operator byte(AssetByte value) => value.value;
-        
+
         public static implicit operator AssetByte(byte value) => new AssetByte(value);
 
         public override bool Equals(object obj)

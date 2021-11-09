@@ -1,14 +1,14 @@
 ﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using Newtonsoft.Json;
 using SharpDX;
 using SharpDX.Direct3D11;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
-using Newtonsoft.Json;
 using System.Threading;
-using System.Drawing;
+using System.Windows.Forms;
 
 namespace IndustrialPark
 {
@@ -23,6 +23,7 @@ namespace IndustrialPark
             addTextureFolderToolStripMenuItem.Visible = false;
             addTXDArchiveToolStripMenuItem.Visible = false;
             openFolderToolStripMenuItem.Visible = false;
+            dynaNameSearcherToolStripMenuItem.Visible = false;
 #endif
 
             autoShowDropDowns = false;
@@ -558,7 +559,7 @@ namespace IndustrialPark
                         renderer.Camera.AddPositionUp(e.Y - oldMousePosition.Y);
                     }
                 }
-                
+
                 if (e.Delta != 0)
                     renderer.Camera.AddPositionForward(e.Delta / 24);
             }
@@ -812,8 +813,8 @@ namespace IndustrialPark
                 "W, A, S, D: move view forward, left, backward, right\n" +
                 "Shift + (W, S): move view up, down\n" +
                 "Ctrl + (W, A, S, D): rotate view up, left, down, right\n" +
-                "Q, E: decrease interval, increase interval(view move speed)\n" +
-                "1, 3: decrease rotation interval, increase rotation interval(view rotation speed)\n" +
+                "Q, E: decrease interval, increase interval (view move speed)\n" +
+                "1, 3: decrease rotation interval, increase rotation interval (view rotation speed)\n" +
                 "C: toggles backface culling\n" +
                 "F: toggles wireframe mode\n" +
                 "G: open Asset Data Editor for selected assets\n" +
@@ -831,13 +832,13 @@ namespace IndustrialPark
                 "Left click on an asset to select it\n" +
                 "Ctrl + Left click to select multiple\n" +
                 "Middle click and drag to rotate view\n" +
-                "Mouse wheel to move forward / backward\n" +
+                "Mouse wheel to move forward/backward\n" +
                 "Right click on screen to choose a template\n" +
                 "Shift + Right click to place a template\n" +
-                "Ctrl + Right click and drag to pan(move view up, left, down, right)\n" +
-                "Mouse mode(Z): similar to a first person camera.The view rotates automatically as you move the mouse.Use the keyboard to move around.\n" +
+                "Ctrl + Right click and drag to pan (move view up, left, down, right)\n" +
+                "Mouse mode (Z): similar to a first person camera. The view rotates automatically as you move the mouse. Use the keyboard to move around.\n" +
                 "\n" +
-                "Please consult the Industrial Park user guide on Battlepedia for more information");
+                "Please consult the Industrial Park user guide on Heavy Iron Modding for more information");
         }
 
         private SharpDX.Rectangle ViewRectangle => new SharpDX.Rectangle(
@@ -845,7 +846,7 @@ namespace IndustrialPark
                 renderPanel.ClientRectangle.Y,
                 renderPanel.ClientRectangle.Width,
                 renderPanel.ClientRectangle.Height);
-        
+
         private void renderPanel_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -892,7 +893,7 @@ namespace IndustrialPark
         public Vector3 GetScreenClickedPosition(SharpDX.Rectangle viewRectangle, int X, int Y) =>
             ArchiveEditorFunctions.GetRayInterserctionPosition(renderer,
                 Ray.GetPickRay(X, Y, new Viewport(viewRectangle), renderer.viewProjection));
-        
+
         private void renderPanel_MouseUp(object sender, MouseEventArgs e)
         {
             ArchiveEditorFunctions.ScreenUnclicked();
@@ -1771,63 +1772,60 @@ namespace IndustrialPark
                     p.PerformStep();
                 }
 
-                using (var writer = new StreamWriter(new FileStream("minfs.txt", FileMode.Create)))                
+                using (var writer = new StreamWriter(new FileStream("minfs.txt", FileMode.Create)))
                     foreach (var v in minfParamsByteCount)
                         writer.WriteLine($"{v.Item1} {v.Item2} {v.Item3}");
-                
+
                 p.Close();
             }
         }
 
-        private void aToolStripMenuItem_Click(object sender, EventArgs e)
+        private void dynaNameSearcherToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var unkDtypes = new uint[] {
-                0x4EE03B24,
-                0x9F234F8E,
-                0x460F4FB2,
-                0x2743B85C,
-                0xA072A4DA,
-                0xAD7CB421,
-                0xC6C76EEE,
-                0xCDB57387,
-                0xCF21DB89,
-                0xE5D82D97,
-                0xE2301EA9,
-                0xEBC04E7B,
-                0xFC2951C1
-            };
-
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
+                var unkDtypes = new uint[] {
+                    0x4EE03B24,
+                    0x9F234F8E,
+                    0x460F4FB2,
+                    0x2743B85C,
+                    0xA072A4DA,
+                    0xAD7CB421,
+                    0xC6C76EEE,
+                    0xCDB57387,
+                    0xCF21DB89,
+                    0xE5D82D97,
+                    0xE2301EA9,
+                    0xEBC04E7B,
+                    0xFC2951C1
+                };
+
+                string ReadZeroTerminatedString(EndianBinaryReader r)
+                {
+                    var bytes = new List<char>();
+                    while (!r.EndOfStream)
+                    {
+                        var b = r.ReadByte();
+                        if (b != 0)
+                            bytes.Add((char)b);
+                        else break;
+                    }
+
+                    return new string(bytes.ToArray());
+                }
+
                 byte[] file = File.ReadAllBytes(openFileDialog.FileName);
                 EndianBinaryReader reader = new EndianBinaryReader(file, Endianness.Little);
-                var strings = new List<string>();
                 while (!reader.EndOfStream)
                 {
                     var str = ReadZeroTerminatedString(reader);
                     var hash = HipHopFile.Functions.BKDRHash(str);
                     if (unkDtypes.Contains(hash))
-                    {
                         MessageBox.Show("Found: [" + str + "] " + hash.ToString("X8"));
-                    }
                 }
                 MessageBox.Show("Finished");
             }
-        }
-
-        public string ReadZeroTerminatedString(EndianBinaryReader reader)
-        {
-            var bytes = new List<char>();
-            while(!reader.EndOfStream)
-            {                
-                var b = reader.ReadByte();
-                if (b != 0)
-                    bytes.Add((char)b);
-                else break;
-            }
-
-            return new string(bytes.ToArray());
         }
     }
 }

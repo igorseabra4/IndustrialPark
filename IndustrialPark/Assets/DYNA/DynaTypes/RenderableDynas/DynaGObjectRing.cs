@@ -126,13 +126,13 @@ namespace IndustrialPark
         }
 
         public override bool HasReference(uint assetID) => DriverPLAT_AssetID == assetID || base.HasReference(assetID);
-        
+
         public override void Verify(ref List<string> result)
         {
             Verify(DriverPLAT_AssetID, ref result);
             base.Verify(ref result);
         }
-        
+
         public override void CreateTransformMatrix()
         {
             world = Matrix.Scaling(_scale)

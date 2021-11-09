@@ -54,6 +54,6 @@ namespace IndustrialPark
 
         public static bool dontRender = false;
 
-        public override bool DontRender => dontRender;        
+        public override bool DontRender => dontRender;
     }
 }

@@ -1,7 +1,6 @@
 ﻿using AssetEditorColors;
 using HipHopFile;
 using SharpDX;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using static IndustrialPark.ArchiveEditorFunctions;
@@ -328,7 +327,7 @@ namespace IndustrialPark
                 if (ray.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
                     if (smallestDistance == null || distance < smallestDistance)
                         smallestDistance = distance;
-                
+
             return smallestDistance;
         }
 

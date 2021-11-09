@@ -331,7 +331,7 @@ namespace IndustrialPark
         }
 
         public override bool HasReference(uint assetID) => Texture_AssetID == assetID || Entity_AssetID == assetID || base.HasReference(assetID);
-        
+
         public override void Verify(ref List<string> result)
         {
             Verify(Texture_AssetID, ref result);

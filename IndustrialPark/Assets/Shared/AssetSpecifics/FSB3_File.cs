@@ -149,7 +149,7 @@ namespace IndustrialPark
                 soundEntries[0].lengthsamples = lengthsamples;
                 soundEntries[0].templengthcompressedbytes = templengthcompressedbytes;
             }
-            
+
             for (int i = 0; i < numSamples; i++)
                 soundEntries[i].Data = binaryReader.ReadBytes(soundEntries[i].templengthcompressedbytes);
         }
@@ -182,7 +182,7 @@ namespace IndustrialPark
             list.AddRange(BitConverter.GetBytes(numchannels));
             list.AddRange(BitConverter.GetBytes(mindistance));
             list.AddRange(BitConverter.GetBytes(maxdistance));
-            
+
             for (int i = 0; i < numSamples; i++)
             {
                 list.AddRange(soundEntries[i].PartOneToByteArray(i));
@@ -210,7 +210,7 @@ namespace IndustrialPark
             foreach (EntrySoundInfo_GCN_V2 s in file.soundEntries)
                 if (!existingSounds.Contains(s.SoundAssetID))
                     list.Add(s);
-            
+
             soundEntries = list.ToArray();
         }
     }

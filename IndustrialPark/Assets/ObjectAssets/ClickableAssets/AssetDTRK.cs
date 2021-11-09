@@ -5,35 +5,6 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DashTrackVertex
-    {
-        public AssetSingle X { get; set; }
-        public AssetSingle Y { get; set; }
-        public AssetSingle Z { get; set; }
-
-        public DashTrackVertex()
-        {
-        }
-
-        public DashTrackVertex(EndianBinaryReader reader)
-        {
-            X = reader.ReadSingle();
-            Y = reader.ReadSingle();
-            Z = reader.ReadSingle();
-        }
-
-        public byte[] Serialize(Endianness endianness)
-        {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(X);
-                writer.Write(Y);
-                writer.Write(Z);
-                return writer.ToArray();
-            }
-        }
-    }
-
     public class DashTrackTriangle
     {
         public ushort Vertex1 { get; set; }
@@ -128,7 +99,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID Unknown3 { get; set; }
         [Category(categoryName)]
-        public DashTrackVertex[] Vertices { get; set; }
+        public WireVector[] Vertices { get; set; }
         [Category(categoryName)]
         public DashTrackTriangle[] Triangles { get; set; }
         [Category(categoryName)]
@@ -157,9 +128,9 @@ namespace IndustrialPark
                 Unknown2 = reader.ReadUInt32();
                 Unknown3 = reader.ReadUInt32();
 
-                Vertices = new DashTrackVertex[numVertices];
+                Vertices = new WireVector[numVertices];
                 for (int i = 0; i < Vertices.Length; i++)
-                    Vertices[i] = new DashTrackVertex(reader);
+                    Vertices[i] = new WireVector(reader);
 
                 Triangles = new DashTrackTriangle[numTriangles];
                 for (int i = 0; i < Triangles.Length; i++)
@@ -210,7 +181,7 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-        
+
         public void CreateTransformMatrix()
         {
             if (Vertices.Length == 0)
@@ -324,7 +295,7 @@ namespace IndustrialPark
             this.vertices = new List<Vector3>(Vertices.Length);
             foreach (var v in vertices)
                 this.vertices.Add((Vector3)v.Position);
-            
+
             Setup(Program.MainForm.renderer, vertices);
         }
 
@@ -340,12 +311,12 @@ namespace IndustrialPark
                 indices.Add(t.vertex3);
             }
 
-            mesh = SharpMesh.Create(renderer.device, vertices.ToArray(), indices.ToArray(), 
+            mesh = SharpMesh.Create(renderer.device, vertices.ToArray(), indices.ToArray(),
                 new List<SharpSubSet>() { new SharpSubSet(0, indices.Count, SharpRenderer.arrowDefault) }, SharpDX.Direct3D.PrimitiveTopology.TriangleList);
         }
 
         public float GetDistanceFrom(Vector3 position) => Vector3.Distance(position, boundingBox.Center);
-        
+
         public static bool dontRender = false;
 
         private SharpMesh mesh;
@@ -403,7 +374,7 @@ namespace IndustrialPark
         }
 
         public BoundingBox GetBoundingBox() => boundingBox;
-        
+
         [Browsable(false)]
         public AssetSingle PositionX { get => 0; set { } }
         [Browsable(false)]

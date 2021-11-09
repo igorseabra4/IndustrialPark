@@ -170,7 +170,7 @@ namespace IndustrialPark
         }
 
         public void Draw(SharpRenderer renderer) => renderer.DrawCube(world, isSelected);
-        
+
         public BoundingBox GetBoundingBox() => boundingBox;
 
         public float GetDistanceFrom(Vector3 cameraPosition) => Vector3.Distance(cameraPosition, _position);

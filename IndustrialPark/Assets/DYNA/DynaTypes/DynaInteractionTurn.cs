@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaInteractionTurn  : AssetDYNA
+    public class DynaInteractionTurn : AssetDYNA
     {
         private const string dynaCategoryName = "interaction:Turn";
 
@@ -30,7 +30,7 @@ namespace IndustrialPark
         public int MaxIncrement { get; set; }
         [Category(dynaCategoryName)]
         public FlagBitmask TurnFlags { get; set; } = IntFlagsDescriptor();
-        
+
         public DynaInteractionTurn(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.interaction__Turn, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))

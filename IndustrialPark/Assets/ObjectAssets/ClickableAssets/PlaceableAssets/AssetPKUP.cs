@@ -40,7 +40,7 @@ namespace IndustrialPark
             if (template.ToString().Contains("Shiny") || template.ToString().Contains("Manliness"))
                 if (persistentShinies)
                     StateIsPersistent = true;
-            
+
             PickupFlags = EPickupFlags.InitiallyVisible;
             PickupValue = 4;
             PositionY += 0.5f;
@@ -69,7 +69,7 @@ namespace IndustrialPark
                     break;
                 case AssetTemplate.Underwear:
                     Shape = 0x13;
-                    PickReferenceID = 0x28F55613;   
+                    PickReferenceID = 0x28F55613;
                     break;
                 case AssetTemplate.Spatula:
                     StateIsPersistent = true;
@@ -184,7 +184,7 @@ namespace IndustrialPark
         public override bool DontRender => dontRender;
 
         public override bool HasReference(uint assetID) => PickReferenceID == assetID || base.HasReference(assetID);
-        
+
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
@@ -236,7 +236,7 @@ namespace IndustrialPark
         public override bool SpecialBlendMode =>
             !AssetPICK.pickEntries.ContainsKey(PickReferenceID) || !renderingDictionary.ContainsKey(AssetPICK.pickEntries[PickReferenceID]) || renderingDictionary[AssetPICK.pickEntries[PickReferenceID]].SpecialBlendMode;
 
-        public override Matrix PlatLocalRotation() 
+        public override Matrix PlatLocalRotation()
         {
             return Matrix.RotationY(localFrameCounter * MathUtil.Pi / 60f);
         }

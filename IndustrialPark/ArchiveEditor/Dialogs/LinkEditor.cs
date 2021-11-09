@@ -21,21 +21,21 @@ namespace IndustrialPark
             this.thisAssetID = thisAssetID;
 
             bgColor = textBoxTargetAsset.BackColor;
-            
+
             groupBoxEventData.Enabled = false;
 
             AutoCompleteStringCollection sourceObjects = new AutoCompleteStringCollection();
             AutoCompleteStringCollection sourceAll = new AutoCompleteStringCollection();
 
             if (!HexUIntTypeConverter.Legacy)
-            foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                foreach (Asset a in ae.archive.GetAllAssets())
-                {
-                    sourceAll.Add(a.assetName);
+                foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
+                    foreach (Asset a in ae.archive.GetAllAssets())
+                    {
+                        sourceAll.Add(a.assetName);
 
-                    if (a is BaseAsset oa)
-                        sourceObjects.Add(oa.assetName);
-                }
+                        if (a is BaseAsset oa)
+                            sourceObjects.Add(oa.assetName);
+                    }
 
             textBoxTargetAsset.AutoCompleteSource = AutoCompleteSource.CustomSource;
             textBoxTargetAsset.AutoCompleteCustomSource = sourceObjects;
@@ -97,7 +97,7 @@ namespace IndustrialPark
 
         private bool OK = false;
 
-        private Color bgColor;
+        private readonly Color bgColor;
         private bool ProgramIsChangingStuff = false;
         private bool ListBoxShouldUpdate = true;
 
@@ -230,7 +230,7 @@ namespace IndustrialPark
             if (listBoxLinks.SelectedItems.Count == 1)
             {
                 int previndex = listBoxLinks.SelectedIndex;
-                
+
                 if (previndex < listBoxLinks.Items.Count - 1)
                 {
                     Link post = (Link)listBoxLinks.Items[previndex + 1];
@@ -253,7 +253,7 @@ namespace IndustrialPark
             OK = true;
             Close();
         }
-        
+
         private void comboReceiveEvent_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (!ProgramIsChangingStuff)

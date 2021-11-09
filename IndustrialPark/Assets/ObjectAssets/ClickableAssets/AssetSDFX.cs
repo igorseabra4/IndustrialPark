@@ -2,7 +2,6 @@
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
-using IndustrialPark.Models;
 
 namespace IndustrialPark
 {
@@ -156,9 +155,9 @@ namespace IndustrialPark
         public bool SpecialBlendMode => true;
 
         public BoundingBox GetBoundingBox() => boundingBox;
-        
+
         public float GetDistanceFrom(Vector3 cameraPosition) => Vector3.Distance(cameraPosition, _position) - _radius;
-        
+
         private AssetSGRP soundGroup
         {
             get

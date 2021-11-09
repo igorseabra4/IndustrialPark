@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using SharpDX;
-using SharpDX.DXGI;
-using SharpDX.Direct3D11;
+﻿using SharpDX;
 using SharpDX.Direct3D;
-
+using SharpDX.Direct3D11;
+using SharpDX.DXGI;
+using System;
+using System.Collections.Generic;
 using Buffer11 = SharpDX.Direct3D11.Buffer;
 
 namespace IndustrialPark

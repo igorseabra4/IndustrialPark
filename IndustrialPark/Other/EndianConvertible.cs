@@ -1,7 +1,6 @@
 ﻿using AssetEditorColors;
 using HipHopFile;
 using System;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 
@@ -61,9 +60,9 @@ namespace IndustrialPark
         public bool ReadInt32Bool() => ReadInt32() != 0;
 
         public string ReadString(int length) => System.Text.Encoding.GetEncoding(1252).GetString(ReadBytes(length));
-        
+
         public AssetColor ReadColor() => new AssetColor(ReadByte(), ReadByte(), ReadByte(), ReadByte());
-        
+
         public bool EndOfStream => BaseStream.Position == BaseStream.Length;
     }
 
@@ -77,7 +76,7 @@ namespace IndustrialPark
         }
 
         public byte[] ToArray() => ((MemoryStream)BaseStream).ToArray();
-        
+
         public override void Write(float f)
         {
             if (endianness == Endianness.Little)

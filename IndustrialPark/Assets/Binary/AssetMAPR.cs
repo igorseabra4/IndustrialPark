@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using HipHopFile;
+using System.Collections.Generic;
 using System.ComponentModel;
-using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -64,7 +64,7 @@ namespace IndustrialPark
             foreach (EntryMAPR a in MAPR_Entries)
                 if (a.Surface_AssetID == assetID || a.Unknown == assetID)
                     return true;
-            
+
             return false;
         }
 

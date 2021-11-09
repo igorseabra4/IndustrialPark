@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace IndustrialPark
@@ -31,7 +24,7 @@ namespace IndustrialPark
             richTextBox2.Clear();
             foreach (string s in richTextBox1.Lines)
             {
-                richTextBox2.Text += HipHopFile.Functions.BKDRHash(s).ToString("X8") + '\r'+'\n';
+                richTextBox2.Text += HipHopFile.Functions.BKDRHash(s).ToString("X8") + '\r' + '\n';
             }
         }
     }

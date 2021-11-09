@@ -114,9 +114,7 @@ namespace IndustrialPark
             if (AssetMODL.renderBasedOnLodt && GetDistanceFrom(renderer.Camera.Position) > SharpRenderer.DefaultLODTDistance)
                 return false;
 
-            BoundingBox bb = GetBoundingBox();
-
-            return renderer.frustum.Intersects(ref bb);
+            return renderer.frustum.Intersects(ref boundingBox);
         }
     }
 }

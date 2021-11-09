@@ -1,12 +1,12 @@
-﻿using System;
+﻿using HipHopFile;
+using SharpDX;
+using SharpDX.Direct3D11;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using HipHopFile;
-using SharpDX;
-using SharpDX.Direct3D11;
 
 namespace IndustrialPark
 {
@@ -185,14 +185,14 @@ namespace IndustrialPark
         }
 
         public bool ShouldDraw(SharpRenderer renderer) => isSelected;
-        
+
         public void Draw(SharpRenderer renderer)
         {
             renderer.DrawSpline(vertexBuffer, vertexCount, Matrix.Identity, Color.YellowGreen.ToVector4(), true);
         }
-        
+
         public float GetDistanceFrom(Vector3 cameraPosition) => cameraPosition.Length();
-        
+
         public void Dispose()
         {
             vertexBuffer.Dispose();

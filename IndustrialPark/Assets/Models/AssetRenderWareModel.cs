@@ -87,7 +87,7 @@ namespace IndustrialPark
             foreach (string s in Textures)
                 if (Functions.BKDRHash(s + ".RW3") == assetID || Functions.BKDRHash(s) == assetID)
                     return true;
-            
+
             return base.HasReference(assetID);
         }
 
@@ -99,7 +99,7 @@ namespace IndustrialPark
             foreach (string s in Textures)
                 if (!Program.MainForm.AssetExists(Functions.BKDRHash(s + ".RW3")) && !Program.MainForm.AssetExists(Functions.BKDRHash(s)))
                     result.Add($"I haven't found texture {s}, used by the model. This might just mean I haven't looked properly for it, though.");
-            
+
             if (Program.MainForm.WhoTargets(assetID).Count == 0)
                 result.Add("Model appears to be unused, as no other asset references it. This might just mean I haven't looked properly for an asset which does does, though.");
         }
@@ -145,7 +145,7 @@ namespace IndustrialPark
                     if (rws is Clump_0010 clump)
                         foreach (Geometry_000F geo in clump.geometryList.geometryList)
                             materials.AddRange(geo.materialList.materialList);
-                
+
                 return materials.ToArray();
             }
             set
@@ -178,7 +178,7 @@ namespace IndustrialPark
                                 var plg = new MaterialEffectsPLG_0120() { value = MaterialEffectType.BumpMap, isAtomicExtension = true };
 
                                 bool newMatEffsFound = false;
-                                for (int j = 0; j < clump.atomicList[i].atomicExtension.extensionSectionList.Count; j++)                                
+                                for (int j = 0; j < clump.atomicList[i].atomicExtension.extensionSectionList.Count; j++)
                                     if (clump.atomicList[i].atomicExtension.extensionSectionList[j] is MaterialEffectsPLG_0120)
                                     {
                                         clump.atomicList[i].atomicExtension.extensionSectionList[j] = plg;
@@ -197,12 +197,12 @@ namespace IndustrialPark
                             }
                         }
                     }
-                
+
                 ModelAsRWSections = sections;
                 Setup(Program.MainForm.renderer);
             }
         }
-        
+
         protected bool[] _dontDrawMeshNumber;
 
         [Category("Model Data")]
@@ -272,7 +272,7 @@ namespace IndustrialPark
                                 var oldColor = clump.geometryList.geometryList[i].geometryStruct.vertexColors[j];
 
                                 var newColor = PerformOperationAndClamp(
-                                    new Vector4((float)oldColor.R / 255, (float)oldColor.G / 255, (float)oldColor.B / 255, (float)oldColor.A / 255), 
+                                    new Vector4((float)oldColor.R / 255, (float)oldColor.G / 255, (float)oldColor.B / 255, (float)oldColor.A / 255),
                                     color, operation);
 
                                 clump.geometryList.geometryList[i].geometryStruct.vertexColors[j] = new RenderWareFile.Color(
@@ -294,7 +294,7 @@ namespace IndustrialPark
                 PerformOperationAndClamp(v1.Z, v2.Z, op),
                 PerformOperationAndClamp(v1.W, v2.W, op));
         }
-        
+
         private float PerformOperationAndClamp(float v1, float v2, Operation op)
         {
             float value;

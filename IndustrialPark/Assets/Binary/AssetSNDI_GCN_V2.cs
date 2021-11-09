@@ -1,9 +1,9 @@
-﻿using System;
+﻿using HipHopFile;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -142,7 +142,7 @@ namespace IndustrialPark
         }
 
         private uint Switch(uint a) => BitConverter.ToUInt32(BitConverter.GetBytes(a).Reverse().ToArray(), 0);
-        
+
         private static FSB3_File[] DeserializeAsset(byte[] data, AssetSNDI_GCN_V2 asset)
         {
             BinaryReader binaryReader = new BinaryReader(new MemoryStream(data));

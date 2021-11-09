@@ -33,7 +33,7 @@ namespace IndustrialPark
         }
 
         public override bool HasReference(uint assetID) => Model_AssetID == assetID || base.HasReference(assetID);
-        
+
         public override void Verify(ref List<string> result)
         {
             Verify(Model_AssetID, ref result);

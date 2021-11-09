@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using SharpDX.Direct3D11;
+﻿using HipHopFile;
 using RenderWareFile;
 using RenderWareFile.Sections;
-using HipHopFile;
+using SharpDX.Direct3D11;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace IndustrialPark
@@ -85,7 +85,7 @@ namespace IndustrialPark
                             AddTextureBitmap(i);
                 }
                 else MessageBox.Show("Error loading textures from " + folderName + ": folder not found");
-            
+
             ReapplyTextures();
         }
 

@@ -1,8 +1,8 @@
 ﻿using HipHopFile;
+using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
-using IndustrialPark.Models;
 using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark

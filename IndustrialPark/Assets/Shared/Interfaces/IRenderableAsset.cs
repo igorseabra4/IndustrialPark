@@ -1,5 +1,4 @@
-﻿using Assimp;
-using SharpDX;
+﻿using SharpDX;
 
 namespace IndustrialPark
 {
@@ -12,7 +11,7 @@ namespace IndustrialPark
         bool ShouldDraw(SharpRenderer renderer);
 
         void Draw(SharpRenderer renderer);
-        
+
         float? GetIntersectionPosition(SharpRenderer renderer, SharpDX.Ray ray);
 
         bool SpecialBlendMode { get; }

@@ -31,7 +31,7 @@ namespace AssetEditorColors
         {
             if ((destType == typeof(string)) && (value is AssetColor color))
                 return color.ToString();
-            
+
             return base.ConvertTo(context, culture, value, destType);
         }
     }

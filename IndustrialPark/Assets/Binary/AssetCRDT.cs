@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
-using AssetEditorColors;
+﻿using AssetEditorColors;
 using HipHopFile;
+using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
@@ -17,8 +17,8 @@ namespace IndustrialPark
         public AssetSingle MaxScreenWidth { get; set; }
         public AssetSingle MaxScreenHeight { get; set; }
 
-        public StyleStyleEntry() 
-        { 
+        public StyleStyleEntry()
+        {
             Color = new AssetColor();
         }
         public StyleStyleEntry(EndianBinaryReader reader)
@@ -115,7 +115,7 @@ namespace IndustrialPark
             reader.ReadInt32(); // text offset
             Unknown = reader.ReadInt32();
             Text = Functions.ReadString(reader);
-            
+
             while (reader.BaseStream.Position % 4 != 0)
                 reader.BaseStream.Position++;
         }
@@ -165,7 +165,7 @@ namespace IndustrialPark
         public AssetSingle FadeOutEnd { get; set; }
         public StyleEntry[] Styles { get; set; }
         public TitleEntry[] Titles { get; set; }
-        
+
         public SectionEntry(EndianBinaryReader reader)
         {
             var start = reader.BaseStream.Position;

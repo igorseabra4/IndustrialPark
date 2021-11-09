@@ -10,7 +10,7 @@ namespace IndustrialPark
         {
             NewArchive newArchive = new NewArchive();
             newArchive.ShowDialog();
-            
+
             if (newArchive.result != null)
                 return (newArchive.result, newArchive.platform, newArchive.game, newArchive.checkBoxDefaultAssets.Checked);
             return (null, Platform.Unknown, Game.Unknown, false);
@@ -45,7 +45,7 @@ namespace IndustrialPark
 
             dateTimePicker1.Value = DateTime.Now;
         }
-        
+
         private NewArchive(Platform previousPlatform, Game previousGame, int previousDate, string previousDateString) : this()
         {
             checkBoxDefaultAssets.Visible = false;

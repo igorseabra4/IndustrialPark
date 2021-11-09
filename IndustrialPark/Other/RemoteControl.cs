@@ -16,7 +16,7 @@ namespace IndustrialPark
                 CloseDolphin();
                 Process.Start(dolPath);
             });
-            
+
             ScheduleAction(t.Abort, 10000);
 
             t.Start();

@@ -128,7 +128,7 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-        
+
         public void CreateTransformMatrix()
         {
             if (Vertices.Length == 0)
@@ -183,7 +183,7 @@ namespace IndustrialPark
             vertices = new List<Vector3>(Vertices.Length);
             foreach (var v in verticesCT)
                 vertices.Add((Vector3)v.Position);
-            
+
             Setup(Program.MainForm.renderer, verticesCT);
         }
 
@@ -199,12 +199,12 @@ namespace IndustrialPark
                 indices.Add(t.vertex3);
             }
 
-            mesh = SharpMesh.Create(renderer.device, vertices.ToArray(), indices.ToArray(), 
+            mesh = SharpMesh.Create(renderer.device, vertices.ToArray(), indices.ToArray(),
                 new List<SharpSubSet>() { new SharpSubSet(0, indices.Count, SharpRenderer.whiteDefault) }, SharpDX.Direct3D.PrimitiveTopology.TriangleList);
         }
 
         public float GetDistanceFrom(Vector3 position) => Vector3.Distance(position, boundingBox.Center);
-        
+
         public static bool dontRender = false;
 
         private SharpMesh mesh;

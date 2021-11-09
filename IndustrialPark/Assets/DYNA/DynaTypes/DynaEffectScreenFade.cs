@@ -9,7 +9,7 @@ namespace IndustrialPark
         private const string dynaCategoryName = "effect:ScreenFade";
 
         protected override short constVersion => 1;
-        
+
         [Category(dynaCategoryName)]
         public AssetColor Color { get; set; }
         [Category(dynaCategoryName)]

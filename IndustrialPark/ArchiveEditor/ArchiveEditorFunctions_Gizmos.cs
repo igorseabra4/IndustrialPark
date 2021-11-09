@@ -174,7 +174,7 @@ namespace IndustrialPark
                         var isa_pos = new Vector3(isa.PositionX, isa.PositionY, isa.PositionZ);
                         GizmoCenterPosition = isa_pos;
                         float distance = Vector3.Distance(renderer.Camera.Position, isa_pos) / 5f;
-                        
+
                         foreach (ScaleGizmo g in scaleGizmos)
                         {
                             g.SetPosition(isa_pos, distance, GizmoCenterRotation);
@@ -198,7 +198,7 @@ namespace IndustrialPark
                         float radius = Vector3.Distance(renderer.Camera.Position, GizmoCenterPosition) / 5f;
 
                         foreach (PositionLocalGizmo g in positionLocalGizmos)
-                        { 
+                        {
                             g.SetPosition(ica.GetBoundingBox().Center, radius, GizmoCenterRotation);
                             g.Draw(renderer);
                         }
@@ -206,10 +206,10 @@ namespace IndustrialPark
                     break;
             }
         }
-                
+
         private static Vector3 GizmoCenterPosition;
         private static Matrix GizmoCenterRotation;
-        
+
         private static void SetCenterRotation(float Yaw, float Pitch, float Roll)
         {
             GizmoCenterRotation = Matrix.RotationYawPitchRoll(MathUtil.DegreesToRadians(Yaw), MathUtil.DegreesToRadians(Pitch), MathUtil.DegreesToRadians(Roll));
@@ -331,7 +331,7 @@ namespace IndustrialPark
                     break;
             }
         }
-        
+
         public static void ScreenUnclicked()
         {
             foreach (PositionGizmo g in positionGizmos)
@@ -437,7 +437,7 @@ namespace IndustrialPark
                 var selectedVolumes = new List<IVolumeAsset>();
                 selectedVolumes.AddRange((from a in currentlySelectedAssets where a is AssetTRIG trig && trig.Shape == TriggerShape.Box select (AssetTRIG)a).ToList());
                 selectedVolumes.AddRange((from a in currentlySelectedAssets where a is AssetVOLU volu && volu.VolumeShape is VolumeBox select (VolumeBox)((AssetVOLU)a).VolumeShape).ToList());
-                
+
                 if (!selectedVolumes.Any())
                     return;
 

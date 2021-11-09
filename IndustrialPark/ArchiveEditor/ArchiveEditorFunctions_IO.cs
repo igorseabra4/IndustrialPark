@@ -1,8 +1,8 @@
 ﻿using HipHopFile;
-using System.Linq;
-using System.IO;
-using System.Windows.Forms;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace IndustrialPark
 {
@@ -18,7 +18,7 @@ namespace IndustrialPark
             hipFile.ToIni(game, fileName, true, true);
             DICT.ATOC.AHDRList.Clear();
         }
-        
+
         public void ImportHip(string[] fileNames, bool forceOverwrite, List<uint> assetIDs = null)
         {
             foreach (string fileName in fileNames)

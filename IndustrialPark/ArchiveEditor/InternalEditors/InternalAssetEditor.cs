@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using static IndustrialPark.Models.BSP_IO_Shared;
-using static IndustrialPark.Models.BSP_IO;
-using static IndustrialPark.Models.Assimp_IO;
-using System.IO;
+﻿using IndustrialPark.Models;
 using RenderWareFile;
-using IndustrialPark.Models;
 using SharpDX;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Windows.Forms;
+using static IndustrialPark.Models.Assimp_IO;
+using static IndustrialPark.Models.BSP_IO;
+using static IndustrialPark.Models.BSP_IO_Shared;
 
 namespace IndustrialPark
 {
@@ -24,7 +24,7 @@ namespace IndustrialPark
             DynamicTypeDescriptor dt = new DynamicTypeDescriptor(asset.GetType());
             asset.SetDynamicProperties(dt);
             propertyGridAsset.SelectedObject = dt.FromComponent(asset);
-            
+
             Text = $"[{asset.assetType}] {asset}";
 
             if (asset is AssetCAM cam) SetupForCam(cam);
@@ -67,7 +67,7 @@ namespace IndustrialPark
         {
             return asset.assetID;
         }
-        
+
         public void RefreshPropertyGrid()
         {
             propertyGridAsset.Refresh();
@@ -78,7 +78,7 @@ namespace IndustrialPark
             archive.UnsavedChanges = true;
             propertyGridAsset.Refresh();
         }
-        
+
         private void AddRow()
         {
             tableLayoutPanel1.RowCount += 1;
@@ -87,7 +87,7 @@ namespace IndustrialPark
         private void SetupForCam(AssetCAM asset)
         {
             AddRow();
-            
+
             Button buttonGetPos = new Button() { Dock = DockStyle.Fill, Text = "Get View Position", AutoSize = true };
             buttonGetPos.Click += (object sender, EventArgs e) =>
             {
@@ -267,7 +267,7 @@ namespace IndustrialPark
         private void SetupForWire(AssetWIRE asset)
         {
             AddRow();
-            
+
             Button buttonImport = new Button() { Dock = DockStyle.Fill, Text = "Import", AutoSize = true };
             buttonImport.Click += (object sender, EventArgs e) =>
             {
@@ -283,7 +283,7 @@ namespace IndustrialPark
                 }
             };
             tableLayoutPanel1.Controls.Add(buttonImport);
-            
+
             Button buttonExport = new Button() { Dock = DockStyle.Fill, Text = "Export", AutoSize = true };
             buttonExport.Click += (object sender, EventArgs e) =>
             {

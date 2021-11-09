@@ -1,10 +1,10 @@
-﻿using System;
+﻿using HipHopFile;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using HipHopFile;
-using Newtonsoft.Json;
 using static HipHopFile.Functions;
 
 namespace IndustrialPark
@@ -393,8 +393,8 @@ namespace IndustrialPark
             if (asset is IRenderableAsset ra)
             {
                 RemoveFromRenderableAssets(ra);
-                if (renderableJSPs.Contains(ra))
-                    renderableJSPs.Remove((AssetJSP)ra);
+                if (ra is AssetJSP bsp)
+                    renderableJSPs.Remove(bsp);
                 if (Program.MainForm != null)
                     lock (Program.MainForm.renderer.renderableAssets)
                         Program.MainForm.renderer.renderableAssets.Remove(ra);
@@ -418,6 +418,8 @@ namespace IndustrialPark
                 wire.Dispose();
             else if (asset is AssetDTRK dtrk)
                 dtrk.Dispose();
+            else if (asset is AssetGRSM grsm)
+                grsm.Dispose();
             else if (asset is AssetRWTX rwtx)
                 TextureManager.RemoveTexture(rwtx.Name);
         }
@@ -524,8 +526,8 @@ namespace IndustrialPark
 
         private Asset CreateAsset(Section_AHDR AHDR, Game game, Endianness endianness, bool skipTexturesAndModels, bool showMessageBox, ref string error)
         {
-            //try
-            //{
+            try
+            {
                 switch (AHDR.assetType)
                 {
                     case AssetType.ANIM:
@@ -576,7 +578,7 @@ namespace IndustrialPark
                     case AssetType.ATBL: return new AssetATBL(AHDR, game, endianness);
                     case AssetType.BOUL: return new AssetBOUL(AHDR, game, endianness);
                     case AssetType.BUTN: return new AssetBUTN(AHDR, game, endianness);
-                    case AssetType.CAM:  return new AssetCAM (AHDR, game, endianness);
+                    case AssetType.CAM: return new AssetCAM(AHDR, game, endianness);
                     case AssetType.CNTR: return new AssetCNTR(AHDR, game, endianness);
                     case AssetType.COLL: return new AssetCOLL(AHDR, game, endianness);
                     case AssetType.COND: return new AssetCOND(AHDR, game, endianness);
@@ -594,14 +596,14 @@ namespace IndustrialPark
                     case AssetType.DYNA: return CreateDYNA(AHDR, game, endianness);
                     case AssetType.DUPC: return new AssetDUPC(AHDR, game, endianness);
                     case AssetType.EGEN: return new AssetEGEN(AHDR, game, endianness);
-                    case AssetType.ENV:  return new AssetENV (AHDR, game, endianness);
-                    case AssetType.FLY:  return new AssetFLY (AHDR, game, endianness);
-                    case AssetType.FOG:  return new AssetFOG (AHDR, game, endianness);
+                    case AssetType.ENV: return new AssetENV(AHDR, game, endianness);
+                    case AssetType.FLY: return new AssetFLY(AHDR, game, endianness);
+                    case AssetType.FOG: return new AssetFOG(AHDR, game, endianness);
                     case AssetType.GRUP: return new AssetGRUP(AHDR, game, endianness);
                     case AssetType.GRSM: return new AssetGRSM(AHDR, game, endianness);
                     case AssetType.GUST: return new AssetGUST(AHDR, game, endianness);
                     case AssetType.HANG: return new AssetHANG(AHDR, game, endianness);
-                    case AssetType.JAW:  return new AssetJAW (AHDR, game, endianness);
+                    case AssetType.JAW: return new AssetJAW(AHDR, game, endianness);
                     case AssetType.LITE: return new AssetLITE(AHDR, game, endianness);
                     case AssetType.LKIT: return new AssetLKIT(AHDR, game, endianness);
                     case AssetType.LOBM: return new AssetLOBM(AHDR, game, endianness);
@@ -610,7 +612,7 @@ namespace IndustrialPark
                     case AssetType.MINF: return new AssetMINF(AHDR, game, endianness);
                     case AssetType.MRKR: return new AssetMRKR(AHDR, game, endianness);
                     case AssetType.MVPT: return new AssetMVPT(AHDR, game, endianness);
-                    case AssetType.NPC:  return new AssetNPC (AHDR, game, endianness);
+                    case AssetType.NPC: return new AssetNPC(AHDR, game, endianness);
                     case AssetType.ONEL: return new AssetONEL(AHDR, game, endianness);
                     case AssetType.PARE:
                         if (game != Game.Scooby)
@@ -629,7 +631,7 @@ namespace IndustrialPark
                     case AssetType.PRJT: return new AssetPRJT(AHDR, game, endianness);
                     case AssetType.SCRP: return new AssetSCRP(AHDR, game, endianness);
                     case AssetType.SDFX: return new AssetSDFX(AHDR, game, endianness);
-                    case AssetType.SFX:  return new AssetSFX (AHDR, game, endianness);
+                    case AssetType.SFX: return new AssetSFX(AHDR, game, endianness);
                     case AssetType.SGRP: return new AssetSGRP(AHDR, game, endianness);
                     case AssetType.TRCK:
                     case AssetType.SIMP: return new AssetSIMP(AHDR, game, endianness);
@@ -640,9 +642,9 @@ namespace IndustrialPark
                     case AssetType.TRIG: return new AssetTRIG(AHDR, game, endianness);
                     case AssetType.TIMR: return new AssetTIMR(AHDR, game, endianness);
                     case AssetType.TPIK: return new AssetTPIK(AHDR, game, endianness);
-                    case AssetType.UI:   return new AssetUI  (AHDR, game, endianness);
+                    case AssetType.UI: return new AssetUI(AHDR, game, endianness);
                     case AssetType.UIFT: return new AssetUIFT(AHDR, game, endianness);
-                    case AssetType.VIL:  return new AssetVIL (AHDR, game, endianness);
+                    case AssetType.VIL: return new AssetVIL(AHDR, game, endianness);
                     case AssetType.VILP: return new AssetVILP(AHDR, game, endianness);
                     case AssetType.VOLU: return new AssetVOLU(AHDR, game, endianness);
 
@@ -677,16 +679,16 @@ namespace IndustrialPark
                     default:
                         throw new Exception($"Unknown asset type ({AHDR.assetType})");
                 }
-            //}
-            //catch (Exception ex)
-            //{
-            //    error = $"[{ AHDR.assetID:X8}] {AHDR.ADBG.assetName} ({ex.Message})";
+            }
+            catch (Exception ex)
+            {
+                error = $"[{ AHDR.assetID:X8}] {AHDR.ADBG.assetName} ({ex.Message})";
 
-            //    if (showMessageBox)
-            //        MessageBox.Show($"There was an error loading asset {error}:" + ex.Message + " and editing has been disabled for it.");
+                if (showMessageBox)
+                    MessageBox.Show($"There was an error loading asset {error}:" + ex.Message + " and editing has been disabled for it.");
 
-            //    return new AssetGeneric(AHDR, game, endianness);
-            //}
+                return new AssetGeneric(AHDR, game, endianness);
+            }
         }
 
         private AssetDYNA CreateDYNA(Section_AHDR AHDR, Game game, Endianness endianness)
@@ -816,19 +818,19 @@ namespace IndustrialPark
         public uint? CreateNewAsset(int layerIndex)
         {
             Section_AHDR AHDR = AssetHeader.GetAsset(new AssetHeader());
-            
+
             if (AHDR != null)
             {
 #if !DEBUG
                 try
                 {
 #endif
-                    while (ContainsAsset(AHDR.assetID))
-                        MessageBox.Show($"Archive already contains asset id [{AHDR.assetID:X8}]. Will change it to [{++AHDR.assetID:X8}].");
-                    
-                    UnsavedChanges = true;
-                    AddAsset(layerIndex, AHDR, game, platform.Endianness(), true);
-                    SetAssetPositionToView(AHDR.assetID);
+                while (ContainsAsset(AHDR.assetID))
+                    MessageBox.Show($"Archive already contains asset id [{AHDR.assetID:X8}]. Will change it to [{++AHDR.assetID:X8}].");
+
+                UnsavedChanges = true;
+                AddAsset(layerIndex, AHDR, game, platform.Endianness(), true);
+                SetAssetPositionToView(AHDR.assetID);
 #if !DEBUG
                 }
                 catch (Exception ex)
@@ -868,7 +870,7 @@ namespace IndustrialPark
         public uint AddAssetWithUniqueID(int layerIndex, Section_AHDR AHDR, Game game, Endianness endianness, bool giveIDregardless = false, bool setTextureDisplay = false, bool ignoreNumber = false)
         {
             var assetName = GetUniqueAssetName(AHDR.ADBG.assetName, AHDR.assetID, giveIDregardless, ignoreNumber);
-            
+
             AHDR.ADBG.assetName = assetName;
             AHDR.assetID = BKDRHash(assetName);
 
@@ -1188,14 +1190,14 @@ namespace IndustrialPark
 
         public void RecalculateAllMatrices()
         {
-            lock(renderableAssets)
+            lock (renderableAssets)
                 foreach (IRenderableAsset a in renderableAssets)
                     a.CreateTransformMatrix();
             lock (renderableJSPs)
                 foreach (AssetJSP a in renderableJSPs)
                     a.CreateTransformMatrix();
         }
-        
+
         public void UpdateModelBlendModes(Dictionary<uint, (uint, BlendFactorType, BlendFactorType)[]> blendModes)
         {
             foreach (var asset in assetDictionary.Values)

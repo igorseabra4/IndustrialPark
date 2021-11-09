@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -12,7 +11,7 @@ namespace IndustrialPark
         RandomItem = 1,
         InOrder = 2
     }
-    
+
     public class AssetGRUP : BaseAsset
     {
         private const string catName = "Group";
@@ -58,7 +57,7 @@ namespace IndustrialPark
         }
 
         public override bool HasReference(uint assetID) => GroupItems.Any(a => a == assetID) || base.HasReference(assetID);
-        
+
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);

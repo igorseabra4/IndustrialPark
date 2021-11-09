@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -73,7 +72,7 @@ namespace IndustrialPark
         public AssetUI(string assetName, Vector3 position) : this(assetName, AssetType.UI, BaseAssetType.UI, position)
         {
         }
-        
+
         public AssetUI(string assetName, AssetType assetType, BaseAssetType baseAssetType, Vector3 position) :
             base(assetName, assetType, baseAssetType, position)
         {
@@ -197,7 +196,7 @@ namespace IndustrialPark
                 return false;
             if (renderer.isDrawingUI)
                 return true;
-            
+
             return renderer.frustum.Intersects(ref boundingBox);
         }
 

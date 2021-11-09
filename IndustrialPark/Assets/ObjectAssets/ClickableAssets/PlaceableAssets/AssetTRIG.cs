@@ -154,7 +154,7 @@ namespace IndustrialPark
                         Radius = 6f;
                     break;
                 case AssetTemplate.Cylinder_Trigger:
-                   Shape = TriggerShape.Cylinder;
+                    Shape = TriggerShape.Cylinder;
                     Radius = 10f;
                     Height = 5f;
                     MinimumX = position.X;
@@ -315,7 +315,7 @@ namespace IndustrialPark
 
             return null;
         }
-        
+
         public override float GetDistanceFrom(Vector3 cameraPosition)
         {
             if (Shape == TriggerShape.Sphere)
@@ -350,8 +350,8 @@ namespace IndustrialPark
 
             CreateTransformMatrix();
         }
-        
-        [Category("Placement")]        
+
+        [Category("Placement")]
         public override AssetSingle ScaleX
         {
             get
@@ -368,7 +368,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement")]        
+        [Category("Placement")]
         public override AssetSingle ScaleY
         {
             get
@@ -389,7 +389,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement")]        
+        [Category("Placement")]
         public override AssetSingle ScaleZ
         {
             get
@@ -405,7 +405,7 @@ namespace IndustrialPark
                 base.ScaleZ = value;
             }
         }
-        
+
         public void SetPositions(float x0, AssetSingle y0, AssetSingle z0, AssetSingle x1, AssetSingle y1, AssetSingle z1)
         {
             _minimum.X = x0;

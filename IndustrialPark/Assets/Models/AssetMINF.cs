@@ -152,7 +152,8 @@ namespace IndustrialPark
     public class MinfParam
     {
         public AssetID Type_Hex { get; set; }
-        public MinfAssetParam Type_Enum {
+        public MinfAssetParam Type_Enum
+        {
             get
             {
                 foreach (MinfAssetParam map in Enum.GetValues(typeof(MinfAssetParam)))
@@ -198,7 +199,7 @@ namespace IndustrialPark
 
                 do writer.Write((byte)0);
                 while (writer.BaseStream.Length % 4 != 0);
-                
+
                 return writer.ToArray();
             }
         }

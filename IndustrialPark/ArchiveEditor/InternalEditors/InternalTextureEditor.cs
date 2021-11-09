@@ -1,11 +1,11 @@
 ﻿using RenderWareFile;
+using RenderWareFile.Sections;
 using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
-using RenderWareFile.Sections;
-using System.Collections.Generic;
-using System.Drawing.Imaging;
-using System.Drawing;
 using static IndustrialPark.TextureIOHelper;
 
 namespace IndustrialPark
@@ -19,7 +19,7 @@ namespace IndustrialPark
 
             this.asset = asset;
             this.archive = archive;
-            
+
             propertyGridAsset.SelectedObject = asset;
             Text = $"[{asset.assetType}] {asset}";
 
@@ -46,7 +46,7 @@ namespace IndustrialPark
 
         private AssetRWTX asset;
         private ArchiveEditorFunctions archive;
-        private Bitmap b; 
+        private Bitmap b;
 
         public uint GetAssetID()
         {

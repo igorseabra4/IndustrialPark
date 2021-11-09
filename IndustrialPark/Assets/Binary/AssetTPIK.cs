@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using HipHopFile;
+using System.Collections.Generic;
 using System.ComponentModel;
-using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -95,7 +95,7 @@ namespace IndustrialPark
         public int Unknown08 { get; set; }
         private EntryTPIK[] _tpik_Entries;
         [Category(categoryName)]
-        public EntryTPIK[] TPIK_Entries 
+        public EntryTPIK[] TPIK_Entries
         {
             get => _tpik_Entries;
             set
@@ -157,7 +157,7 @@ namespace IndustrialPark
             foreach (EntryTPIK a in TPIK_Entries)
                 if (a.HasReference(assetID))
                     return true;
-                
+
             return base.HasReference(assetID);
         }
 

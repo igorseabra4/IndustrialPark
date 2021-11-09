@@ -1,12 +1,12 @@
-﻿using System;
+﻿using HipHopFile;
+using IndustrialPark.Models;
+using RenderWareFile;
+using SharpDX;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using HipHopFile;
-using IndustrialPark.Models;
-using RenderWareFile;
-using SharpDX;
 
 namespace IndustrialPark
 {
@@ -716,7 +716,7 @@ namespace IndustrialPark
                 }
             if (pipt == null)
                 pipt = (AssetPIPT)PlaceTemplate(new Vector3(), IndexOfLayerOfType((int)LayerType_BFBB.DEFAULT), template: AssetTemplate.PipeInfoTable);
-            
+
             List<EntryPIPT> entries = pipt.PIPT_Entries.ToList();
 
             foreach (uint u in assetIDs)
@@ -748,83 +748,83 @@ namespace IndustrialPark
         {
             List<string> textureNamesList = new List<string>();
 
-            lock(renderableJSPs)
-            foreach (var v in renderableJSPs)
-                try
-                {
-                    textureNamesList.AddRange(v.Textures);
-                    Assimp_IO.ExportAssimp(
-                    Path.Combine(folderName, v.assetName + "." + format.FileExtension),
-                    ReadFileMethods.ReadRenderWareFile(v.Data), true, format, textureExtension, Matrix.Identity);
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show($"Unable to export asset {v}: {e.Message}");
-                }
+            lock (renderableJSPs)
+                foreach (var v in renderableJSPs)
+                    try
+                    {
+                        textureNamesList.AddRange(v.Textures);
+                        Assimp_IO.ExportAssimp(
+                        Path.Combine(folderName, v.assetName + "." + format.FileExtension),
+                        ReadFileMethods.ReadRenderWareFile(v.Data), true, format, textureExtension, Matrix.Identity);
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show($"Unable to export asset {v}: {e.Message}");
+                    }
 
             lock (renderableAssets)
                 foreach (var v in renderableAssets)
-                try
-                {
-                    Asset modelAsset;
-                    string assetName;
-                    Matrix world;
-
-                    if (v is EntityAsset entity)
+                    try
                     {
-                        if (entity.isInvisible || entity.DontRender || entity is AssetTRIG)
-                            continue;
+                        Asset modelAsset;
+                        string assetName;
+                        Matrix world;
 
-                        if (entity is AssetPKUP pkup)
+                        if (v is EntityAsset entity)
                         {
-                            if (AssetPICK.pickEntries.ContainsKey(pkup.PickReferenceID))
-                                modelAsset = (Asset)renderingDictionary[pkup.PickReferenceID];
+                            if (entity.isInvisible || entity.DontRender || entity is AssetTRIG)
+                                continue;
+
+                            if (entity is AssetPKUP pkup)
+                            {
+                                if (AssetPICK.pickEntries.ContainsKey(pkup.PickReferenceID))
+                                    modelAsset = (Asset)renderingDictionary[pkup.PickReferenceID];
+                                else continue;
+                            }
+                            else
+                                modelAsset = (Asset)renderingDictionary[entity.Model_AssetID];
+
+                            assetName = entity.assetName;
+                            world = entity.world;
+                        }
+                        else if (v is AssetDYNA dyna && !AssetDYNA.dontRender && dyna is IRenderableAsset)
+                        {
+                            if (dyna.isInvisible)
+                                continue;
+
+                            if (dyna is DynaGObjectRing ring)
+                            {
+                                modelAsset = (Asset)renderingDictionary[DynaGObjectRingControl.RingModelAssetID];
+                                world = ring.world;
+                            }
+                            else if (dyna is DynaEnemySB enemySb)
+                            {
+                                modelAsset = (Asset)renderingDictionary[enemySb.Model_AssetID];
+                                world = enemySb.world;
+                            }
                             else continue;
-                        }
-                        else
-                            modelAsset = (Asset)renderingDictionary[entity.Model_AssetID];
 
-                        assetName = entity.assetName;
-                        world = entity.world;
-                    }
-                    else if (v is AssetDYNA dyna && !AssetDYNA.dontRender && dyna is IRenderableAsset)
-                    {
-                        if (dyna.isInvisible)
-                            continue;
-
-                        if (dyna is DynaGObjectRing ring)
-                        { 
-                            modelAsset = (Asset)renderingDictionary[DynaGObjectRingControl.RingModelAssetID];
-                            world = ring.world;
-                        }
-                        else if (dyna is DynaEnemySB enemySb)
-                        { 
-                            modelAsset = (Asset)renderingDictionary[enemySb.Model_AssetID];
-                            world = enemySb.world;
+                            assetName = dyna.assetName;
                         }
                         else continue;
-                        
-                        assetName = dyna.assetName;
+
+                        if (modelAsset is AssetMINF minf)
+                            modelAsset = (Asset)renderingDictionary[minf.MinfReferences[0].Model_AssetID];
+
+                        if (modelAsset is AssetMODL modl)
+                            textureNamesList.AddRange(modl.Textures);
+                        else continue;
+
+                        Assimp_IO.ExportAssimp(
+                            Path.Combine(folderName, assetName + "." + format.FileExtension),
+                            ReadFileMethods.ReadRenderWareFile(modl.Data), true, format, textureExtension, world);
                     }
-                    else continue;
-
-                    if (modelAsset is AssetMINF minf)
-                        modelAsset = (Asset)renderingDictionary[minf.MinfReferences[0].Model_AssetID];
-
-                    if (modelAsset is AssetMODL modl)
-                        textureNamesList.AddRange(modl.Textures);
-                    else continue;
-
-                    Assimp_IO.ExportAssimp(
-                        Path.Combine(folderName, assetName + "." + format.FileExtension),
-                        ReadFileMethods.ReadRenderWareFile(modl.Data), true, format, textureExtension, world);
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show($"Unable to export asset {v}: {e.Message}");
-                }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show($"Unable to export asset {v}: {e.Message}");
+                    }
 
             textureNames = textureNamesList.ToArray();
         }
-    } 
+    }
 }

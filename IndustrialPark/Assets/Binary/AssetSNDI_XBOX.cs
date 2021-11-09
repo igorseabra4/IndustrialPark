@@ -1,8 +1,8 @@
-﻿using System;
+﻿using HipHopFile;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -67,7 +67,7 @@ namespace IndustrialPark
 
         public byte[] SoundHeader
         {
-            get => Serialize();            
+            get => Serialize();
             set => Read(new EndianBinaryReader(value, Endianness.Little));
         }
 

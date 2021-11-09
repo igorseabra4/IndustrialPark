@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -122,7 +121,7 @@ namespace IndustrialPark
             byte fillerByte = 0;
             if (game == Game.Incredibles)
                 fillerByte = 0xCD;
-            
+
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeBase(endianness));

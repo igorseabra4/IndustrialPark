@@ -31,7 +31,7 @@ namespace IndustrialPark
         }
 
         #region Acessório de Atributos do Assembly
-                
+
         public string AssemblyProduct
         {
             get
@@ -110,7 +110,8 @@ namespace IndustrialPark
         private void SetRandomImage()
         {
             var images = (from fileName in Directory.GetFiles(Application.StartupPath + "/Resources/")
-                          where Path.GetFileName(fileName).StartsWith("AboutImage") select fileName).ToArray();
+                          where Path.GetFileName(fileName).StartsWith("AboutImage")
+                          select fileName).ToArray();
 
             int newNum;
 

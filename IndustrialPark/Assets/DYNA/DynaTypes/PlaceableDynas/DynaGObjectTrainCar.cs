@@ -1,8 +1,8 @@
 ﻿using HipHopFile;
+using SharpDX;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System;
-using SharpDX;
 using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
@@ -178,19 +178,19 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle InitialU { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle front_axle_dist { get; set; }
+        public AssetSingle FrontAxleDist { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle rear_axle_dist { get; set; }
+        public AssetSingle RearAxleDist { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle front_hitch_dist { get; set; }
+        public AssetSingle FrontHitchDist { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle rear_hitch_dist { get; set; }
+        public AssetSingle RearHitchDist { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle axle_width { get; set; }
+        public AssetSingle AxleWidth { get; set; }
         [Category(dynaCategoryName)]
-        public AssetByte have_sparks { get; set; }
+        public AssetByte HaveSparks { get; set; }
         [Category(dynaCategoryName)]
-        public AssetByte isdestructible { get; set; }
+        public AssetByte IsDestructible { get; set; }
         [Category(dynaCategoryName)]
         public AssetID NavMesh_AssetID { get; set; }
         [Category(dynaCategoryName)]
@@ -226,13 +226,13 @@ namespace IndustrialPark
                 ParentCar_AssetID = reader.ReadUInt32();
                 StartSpline_AssetID = reader.ReadUInt32();
                 InitialU = reader.ReadSingle();
-                front_axle_dist = reader.ReadSingle();
-                rear_axle_dist = reader.ReadSingle();
-                front_hitch_dist = reader.ReadSingle();
-                rear_hitch_dist = reader.ReadSingle();
-                axle_width = reader.ReadSingle();
-                have_sparks = reader.ReadByte();
-                isdestructible = reader.ReadByte();
+                FrontAxleDist = reader.ReadSingle();
+                RearAxleDist = reader.ReadSingle();
+                FrontHitchDist = reader.ReadSingle();
+                RearHitchDist = reader.ReadSingle();
+                AxleWidth = reader.ReadSingle();
+                HaveSparks = reader.ReadByte();
+                IsDestructible = reader.ReadByte();
                 reader.ReadByte();
                 reader.ReadByte();
                 NavMesh_AssetID = reader.ReadUInt32();
@@ -276,13 +276,13 @@ namespace IndustrialPark
                 writer.Write(ParentCar_AssetID);
                 writer.Write(StartSpline_AssetID);
                 writer.Write(InitialU);
-                writer.Write(front_axle_dist);
-                writer.Write(rear_axle_dist);
-                writer.Write(front_hitch_dist);
-                writer.Write(rear_hitch_dist);
-                writer.Write(axle_width);
-                writer.Write(have_sparks);
-                writer.Write(isdestructible);
+                writer.Write(FrontAxleDist);
+                writer.Write(RearAxleDist);
+                writer.Write(FrontHitchDist);
+                writer.Write(RearHitchDist);
+                writer.Write(AxleWidth);
+                writer.Write(HaveSparks);
+                writer.Write(IsDestructible);
                 writer.Write((short)0);
                 writer.Write(NavMesh_AssetID);
                 writer.Write(NavMeshGroupIndex);
@@ -384,14 +384,7 @@ namespace IndustrialPark
 
         public float GetDistanceFrom(Vector3 cameraPosition)
         {
-            return Vector3.Distance(cameraPosition, new Vector3(PositionX, PositionY, PositionZ));
-        }
-
-        public BoundingSphere GetObjectCenter()
-        {
-            BoundingSphere boundingSphere = new BoundingSphere(new Vector3(PositionX, PositionY, PositionZ), boundingBox.Size.Length());
-            boundingSphere.Radius *= 0.9f;
-            return boundingSphere;
+            return Vector3.Distance(cameraPosition, _position);
         }
 
         public override bool HasReference(uint assetID)
@@ -402,6 +395,12 @@ namespace IndustrialPark
                 return true;
             if (PseudoAnimation_AssetID == assetID)
                 return true;
+            if (ParentCar_AssetID == assetID)
+                return true;
+            if (StartSpline_AssetID == assetID)
+                return true;
+            if (NavMesh_AssetID == assetID)
+                return true;
 
             return base.HasReference(assetID);
         }
@@ -411,6 +410,9 @@ namespace IndustrialPark
             Verify(Surface_AssetID, ref result);
             Verify(Model_AssetID, ref result);
             Verify(PseudoAnimation_AssetID, ref result);
+            Verify(ParentCar_AssetID, ref result);
+            Verify(StartSpline_AssetID, ref result);
+            Verify(NavMesh_AssetID, ref result);
 
             base.Verify(ref result);
         }

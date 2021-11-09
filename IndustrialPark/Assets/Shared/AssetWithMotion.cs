@@ -12,13 +12,13 @@ namespace IndustrialPark
         public AssetWithMotion(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness) { }
 
         public override bool HasReference(uint assetID) => Motion.HasReference(assetID) || base.HasReference(assetID);
-        
+
         public override void Verify(ref List<string> result)
         {
             Motion.Verify(ref result);
             base.Verify(ref result);
         }
-        
+
         public override void Draw(SharpRenderer renderer)
         {
             if (movementPreview)
@@ -31,7 +31,7 @@ namespace IndustrialPark
             else
                 renderer.DrawCube(localW, isSelected);
         }
-        
+
         public override void Reset()
         {
             base.Reset();
@@ -40,9 +40,9 @@ namespace IndustrialPark
         }
 
         public Matrix PlatLocalTranslation() => Motion.PlatLocalTranslation();
-        
+
         public override Matrix PlatLocalRotation() => Motion.PlatLocalRotation();
-        
+
         public override Matrix LocalWorld()
         {
             if (movementPreview)

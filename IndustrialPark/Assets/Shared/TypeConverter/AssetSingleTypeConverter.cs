@@ -28,7 +28,7 @@ namespace IndustrialPark
         {
             if (destinationType == typeof(string))
                 return string.Format("{0:0.000000}", (float)(AssetSingle)value);
-            
+
             return base.ConvertTo(context, culture, value, destinationType);
         }
     }

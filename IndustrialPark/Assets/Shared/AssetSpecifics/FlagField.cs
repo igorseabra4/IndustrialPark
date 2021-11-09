@@ -34,7 +34,7 @@ namespace IndustrialPark
         }
 
         public override string ToString() => _flags.ToString($"X{bitSize / 4}");
-        
+
         protected void AddPropertyAt(int i, string[] flagNames)
         {
             string flagName;
@@ -54,7 +54,7 @@ namespace IndustrialPark
 
         public bool GetFlag(int offset) => (_flags & Mask(offset)) != 0;
         public void SetFlag(int offset, bool value) => _flags = value ? (_flags | Mask(offset)) : (_flags & InvMask(offset));
-        
+
         protected static uint Mask(int bit) => (uint)(1 << bit);
         protected static uint InvMask(int bit) => uint.MaxValue ^ Mask(bit);
     }

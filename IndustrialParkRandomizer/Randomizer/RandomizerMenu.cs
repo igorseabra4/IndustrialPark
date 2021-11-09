@@ -16,7 +16,7 @@ namespace IndustrialPark.Randomizer
         public RandomizerMenu()
         {
             InitializeComponent();
-            
+
             if (File.Exists(pathToSettings))
             {
                 Randomizer_JSON_Settings settings = JsonConvert.DeserializeObject<Randomizer_JSON_Settings>(File.ReadAllText(pathToSettings));
@@ -109,12 +109,13 @@ namespace IndustrialPark.Randomizer
             bool success = false;
             try
             {
-                void WindowsFolderPicker() {
+                void WindowsFolderPicker()
+                {
                     using (CommonOpenFileDialog openFile = new CommonOpenFileDialog() { Title = "Please choose your game root (files) directory.", IsFolderPicker = true })
                         if (openFile.ShowDialog() == CommonFileDialogResult.Ok)
                         {
                             randomizer.SetRootDir(openFile.FileName);
-                            success =  true;
+                            success = true;
                         }
                 }
 
@@ -159,7 +160,7 @@ namespace IndustrialPark.Randomizer
                 UpdateInterfaceFromRandomizer();
             }
         }
-                
+
         private void buttonPerform_Click(object sender, EventArgs e)
         {
             ProgressBar progressBar = new ProgressBar("Randomizing...");
@@ -185,7 +186,7 @@ namespace IndustrialPark.Randomizer
 
         private void ButtonHelp_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("https://battlepedia.org/Randomizer");
+            System.Diagnostics.Process.Start("https://heavyironmodding.org/wiki/Randomizer");
         }
 
         private void buttonReset_Click(object sender, EventArgs e)
@@ -210,7 +211,7 @@ namespace IndustrialPark.Randomizer
                 if (saveFile.ShowDialog() == DialogResult.OK)
                     File.WriteAllText(saveFile.FileName, JsonConvert.SerializeObject(randomizer, Formatting.Indented));
         }
-        
+
         private void LoadToolStripMenuItem_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFile = new OpenFileDialog()
@@ -273,7 +274,7 @@ namespace IndustrialPark.Randomizer
 
             programIsChangingStuff = false;
         }
-        
+
         private void CheckForUpdatesOnStartupToolStripMenuItem_Click(object sender, EventArgs e)
         {
             checkForUpdatesOnStartupToolStripMenuItem.Checked = !checkForUpdatesOnStartupToolStripMenuItem.Checked;

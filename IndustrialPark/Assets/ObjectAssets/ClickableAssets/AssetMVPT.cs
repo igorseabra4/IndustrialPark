@@ -235,7 +235,7 @@ namespace IndustrialPark
         }
 
         public BoundingBox GetBoundingBox() => boundingBox;
-        
+
         public float GetDistanceFrom(Vector3 cameraPosition) => Vector3.Distance(cameraPosition, _position) - (_arenaRadius == -1f ? 0 : _arenaRadius);
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)

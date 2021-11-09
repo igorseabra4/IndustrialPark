@@ -1,12 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Windows.Forms;
-using System.Drawing;
 using HipHopFile;
 using RenderWareFile;
 using RenderWareFile.Sections;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
 using static HipHopFile.Functions;
 using static IndustrialPark.TextureIOHelper;
 
@@ -151,7 +151,7 @@ namespace IndustrialPark
                             textureDictionaryExtension = new Extension_0003(),
                             textureNativeList = new List<TextureNative_0015>() { tn }
                         }, tn.renderWareVersion);
-                        
+
                         if (game == Game.Scooby)
                             FixTextureForScooby(ref data);
 
@@ -184,7 +184,7 @@ namespace IndustrialPark
                 "gameRoot=" + tempPcTxdsDir + "\r\n" +
                 "outputRoot=" + tempGcTxdsDir + "\r\n" +
                 "targetVersion=VC\r\n" +
-                (hasTransparency ? 
+                (hasTransparency ?
                 "targetPlatform=PC\r\n" :
                 "targetPlatform=uncompressed_mobile\r\n")
                 );

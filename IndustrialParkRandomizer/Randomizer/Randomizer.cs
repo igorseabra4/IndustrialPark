@@ -1,11 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using HipHopFile;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows.Forms;
-using HipHopFile;
-using static HipHopFile.Functions;
 using System.Linq;
+using System.Windows.Forms;
+using static HipHopFile.Functions;
 
 namespace IndustrialPark.Randomizer
 {
@@ -42,7 +42,7 @@ namespace IndustrialPark.Randomizer
             this.rootDir = rootDir;
             this.isDir = isDir;
         }
-        
+
         public void SetRootDir(string fileName)
         {
             rootDir = fileName;
@@ -75,7 +75,7 @@ namespace IndustrialPark.Randomizer
             seed = BitConverter.ToUInt32(bytes, 0);
             seedText = seed.ToString();
         }
-        
+
         public void Perform(string backupDir, ProgressBar progressBar)
         {
             RandomizableArchive.random = new Random((int)this.seed);
@@ -431,7 +431,7 @@ namespace IndustrialPark.Randomizer
 
             MessageBox.Show(message);
         }
-        
+
         private bool FileInFirstBox(string levelName)
         {
             foreach (string s in settings.skipFiles)

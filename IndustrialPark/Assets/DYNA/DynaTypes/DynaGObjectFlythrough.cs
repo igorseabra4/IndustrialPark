@@ -30,7 +30,7 @@ namespace IndustrialPark
         }
 
         public override bool HasReference(uint assetID) => FLY_ID == assetID || base.HasReference(assetID);
-        
+
         public override void Verify(ref List<string> result)
         {
             if (FLY_ID == 0)

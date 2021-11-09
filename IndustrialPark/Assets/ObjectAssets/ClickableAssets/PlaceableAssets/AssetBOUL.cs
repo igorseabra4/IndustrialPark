@@ -29,14 +29,14 @@ namespace IndustrialPark
         public AssetSingle BounceDamp { get; set; }
         [Category(categoryName)]
         public FlagBitmask BoulderFlags { get; set; } = IntFlagsDescriptor(
-            "Can Hit Walls", 
-                "Damage Player", 
+            "Can Hit Walls",
+                "Damage Player",
                 "Something related to destructibles",
                 "Damage NPCs",
                 null,
                 "Die on OOB surfaces",
-                null, 
-                null, 
+                null,
+                null,
                 "Die on player attack",
                 "Die after kill timer");
         [Category(categoryName)]
@@ -127,7 +127,7 @@ namespace IndustrialPark
         public override bool DontRender => dontRender;
 
         public override bool HasReference(uint assetID) => Sound_AssetID == assetID || base.HasReference(assetID);
-        
+
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);

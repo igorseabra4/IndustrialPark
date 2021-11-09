@@ -1,6 +1,4 @@
-﻿using AssetEditorColors;
-using HipHopFile;
-using System.Collections.Generic;
+﻿using HipHopFile;
 using System.ComponentModel;
 
 namespace IndustrialPark

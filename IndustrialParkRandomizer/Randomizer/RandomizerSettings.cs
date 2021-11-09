@@ -233,7 +233,7 @@ namespace IndustrialPark.Randomizer
 
         [Category("Patches"), DisplayName("Invisible Objects"), Description("Makes all objects invisible.")]
         public bool invisibleObjects { get; set; }
-        
+
         [Category("Patches: LODT"), DisplayName("boot.HIP LODT multiplier"),
             Description("If true, multiply the render distance for the pickups by this amount.")]
         public bool bootHipLodtMulti { get; set; }

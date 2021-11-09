@@ -11,7 +11,7 @@ namespace AssetEditorColors
         public byte G { get; set; }
         public byte B { get; set; }
         public byte A { get; set; }
-        
+
         public AssetColor()
         {
             R = 0;

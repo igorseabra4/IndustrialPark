@@ -39,7 +39,7 @@ namespace IndustrialPark
         {
             Rotation = 30f;
             TargetPlayer = 1;
-            
+
             TurretType =
             template == AssetTemplate.Turret_v1 ? EnemyTurretType.turret_v1_bind :
             template == AssetTemplate.Turret_v2 ? EnemyTurretType.turret_v2_bind :

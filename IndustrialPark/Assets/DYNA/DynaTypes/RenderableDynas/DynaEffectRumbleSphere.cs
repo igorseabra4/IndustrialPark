@@ -23,7 +23,7 @@ namespace IndustrialPark
         public AssetByte FallOff { get; set; }
         [Category(dynaCategoryName)]
         public AssetByte OnlyOnFloor { get; set; }
-        
+
         public DynaEffectRumbleSphere(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__RumbleSphericalEmitter, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
@@ -61,7 +61,7 @@ namespace IndustrialPark
         }
 
         public override bool HasReference(uint assetID) => Rumble_AssetID == assetID || base.HasReference(assetID);
-        
+
         public override void Verify(ref List<string> result)
         {
             Verify(Rumble_AssetID, ref result);

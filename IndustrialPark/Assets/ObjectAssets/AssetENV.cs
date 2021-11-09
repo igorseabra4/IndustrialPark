@@ -136,7 +136,7 @@ namespace IndustrialPark
         public override bool HasReference(uint assetID) => BSP_AssetID == assetID || StartCameraAssetID == assetID || BSP_LKIT_AssetID == assetID ||
             Object_LKIT_AssetID == assetID || BSP_Collision_AssetID == assetID || BSP_FX_AssetID == assetID || BSP_Camera_AssetID == assetID ||
             BSP_MAPR_AssetID == assetID || BSP_MAPR_Collision_AssetID == assetID || BSP_MAPR_FX_AssetID == assetID || base.HasReference(assetID);
-        
+
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);

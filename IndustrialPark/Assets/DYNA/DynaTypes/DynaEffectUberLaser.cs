@@ -6,7 +6,7 @@ namespace IndustrialPark
 {
     public class DynaEffectUberLaser : AssetDYNA
     {
-        private const string dynaCategoryName = "effect:Splash";
+        private const string dynaCategoryName = "effect:uber_laser";
 
         protected override short constVersion => 1;
 

@@ -1,9 +1,9 @@
-﻿using SharpDX;
+﻿using HipHopFile;
+using IndustrialPark.Models;
+using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
-using HipHopFile;
 using static IndustrialPark.ArchiveEditorFunctions;
-using IndustrialPark.Models;
 
 namespace IndustrialPark
 {
@@ -92,7 +92,7 @@ namespace IndustrialPark
             Verify(TargetDYNATeleportID, ref result);
             base.Verify(ref result);
         }
-        
+
         private void ValidateMRKR()
         {
             if (Program.MainForm != null)

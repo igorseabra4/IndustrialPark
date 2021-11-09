@@ -48,7 +48,7 @@ namespace IndustrialPark
         }
 
         public static implicit operator Vector3(SplineVector vector) => new Vector3(vector.X, vector.Y, vector.Z);
-        
+
         public override string ToString()
         {
             return $"[{X}, {Y}, {Z}]";
@@ -112,7 +112,7 @@ namespace IndustrialPark
 
                 for (int i = 0; i < _points.Length; i++)
                     _points[i].W = reader.ReadSingle();
-                
+
                 Setup(renderer);
                 CreateTransformMatrix();
                 ArchiveEditorFunctions.AddToRenderableAssets(this);
@@ -183,7 +183,7 @@ namespace IndustrialPark
                 return false;
             if (isInvisible)
                 return false;
-            
+
             return renderer.frustum.Intersects(ref boundingBox);
         }
 
@@ -213,13 +213,13 @@ namespace IndustrialPark
                     boundingBox.Minimum.Z = v.Z;
             }
         }
-        
+
         public float GetDistanceFrom(Vector3 cameraPosition) => Vector3.Distance(cameraPosition, boundingBox.Center);
-        
+
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray) => null;
 
         public void Dispose() => vertexBuffer.Dispose();
-        
+
         [Browsable(false)]
         public bool SpecialBlendMode => false;
     }

@@ -38,7 +38,7 @@ namespace IndustrialPark
         }
 
         public string Name { get => Path.GetFileNameWithoutExtension(assetName); }
-        
+
         private int renderWareVersion;
 
         private RWSection[] TextureAsRWSections

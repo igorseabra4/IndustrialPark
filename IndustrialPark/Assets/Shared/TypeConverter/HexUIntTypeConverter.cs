@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.ComponentModel;
 using System.Globalization;
-using Newtonsoft.Json;
 
 namespace IndustrialPark
 {

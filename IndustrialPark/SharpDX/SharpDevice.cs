@@ -1,10 +1,10 @@
-﻿using System;
-using SharpDX;
+﻿using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
-using Device11 = SharpDX.Direct3D11.Device;
+using System;
 using Buffer11 = SharpDX.Direct3D11.Buffer;
+using Device11 = SharpDX.Direct3D11.Device;
 
 namespace IndustrialPark
 {
@@ -57,7 +57,7 @@ namespace IndustrialPark
         /// View to Depth Buffer
         /// </summary>
         public DepthStencilView ZBufferView => _zbufferView;
-        
+
         SampleDescription multisampleDesc = new SampleDescription(1, 0);
 
         private static FeatureLevel featureLevel = FeatureLevel.Level_11_0;
@@ -113,7 +113,7 @@ namespace IndustrialPark
             //Resize all items
             Resize();
         }
-        
+
         /// <summary>
         /// Create and Resize all items
         /// </summary>
@@ -318,7 +318,7 @@ namespace IndustrialPark
             description.RenderTarget[0].SourceBlend = source;
             description.RenderTarget[0].DestinationBlend = destination;
             description.RenderTarget[0].IsBlendEnabled = true;
-            
+
             _blendState = new BlendState(Device, description);
         }
 
@@ -414,9 +414,9 @@ namespace IndustrialPark
         /// <returns>Supported</returns>
         public static bool IsDirectX11Supported()
         {
-            #if DEBUG
+#if DEBUG
             featureLevel = SharpDX.Direct3D11.Device.GetSupportedFeatureLevel();
-            #endif
+#endif
             return Device11.GetSupportedFeatureLevel() >= FeatureLevel.Level_10_0;
         }
 

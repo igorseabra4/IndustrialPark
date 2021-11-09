@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace IndustrialPark
@@ -33,7 +26,7 @@ namespace IndustrialPark
         }
 
         private delegate void SetValue(int min, int max, int step);
-        
+
         public void PerformStep()
         {
             if (InvokeRequired)
@@ -41,7 +34,7 @@ namespace IndustrialPark
             else
             {
                 pBar.PerformStep();
-                labelLoading.Text = $"Progress: {100 * pBar.Value/pBar.Maximum}%";
+                labelLoading.Text = $"Progress: {100 * pBar.Value / pBar.Maximum}%";
                 if (pBar.Value >= pBar.Maximum)
                     Close();
             }

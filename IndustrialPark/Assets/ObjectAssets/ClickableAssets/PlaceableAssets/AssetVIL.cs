@@ -15,7 +15,7 @@ namespace IndustrialPark
         [Category(categoryName), DisplayName("VilType (Incredibles)")]
         public AssetID VilType { get; set; }
         [Category(categoryName), DisplayName("VilType (BFBB)")]
-        public VilType_BFBB VilType_BFBB 
+        public VilType_BFBB VilType_BFBB
         {
             get => (VilType_BFBB)(uint)VilType;
             set => VilType = (uint)value;
@@ -220,7 +220,7 @@ namespace IndustrialPark
         public override bool HasReference(uint assetID) => VilType == assetID || NPCSettings_AssetID == assetID ||
             MovePoint_AssetID == assetID || TaskDYNA1_AssetID == assetID || TaskDYNA2_AssetID == assetID ||
             NavMesh2_AssetID == assetID || Settings_AssetID == assetID || base.HasReference(assetID);
-        
+
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
@@ -268,7 +268,7 @@ namespace IndustrialPark
                 if (localFrameCounter >= int.MaxValue)
                     localFrameCounter = 0;
             }
-            
+
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
                 ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * _color : _color, UvAnimOffset);
             else

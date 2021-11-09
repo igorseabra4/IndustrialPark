@@ -112,7 +112,7 @@ namespace IndustrialPark
         public override bool HasReference(uint assetID) => SpawnItem_AssetID == assetID || DestroyShrapnel_AssetID == assetID ||
             HitShrapnel_AssetID == assetID || DestroySFX_AssetID == assetID || HitSFX_AssetID == assetID ||
             HitModel_AssetID == assetID || DestroyModel_AssetID == assetID || base.HasReference(assetID);
-        
+
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);

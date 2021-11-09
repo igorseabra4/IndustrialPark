@@ -1,12 +1,11 @@
 ﻿using HipHopFile;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
 {
     public class DynaLogicFunctionGenerator : AssetDYNA
     {
-        private const string dynaCategoryName = "interaction:Lift";
+        private const string dynaCategoryName = "logic:Function Generator";
 
         protected override short constVersion => 1;
 

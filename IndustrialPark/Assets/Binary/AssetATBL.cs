@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using HipHopFile;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -66,7 +65,7 @@ namespace IndustrialPark
         public int StartPose { get; set; }
         public int EndPose { get; set; }
 
-        public AnimationFile() 
+        public AnimationFile()
         {
             RawData = new int[1][];
             RawData[1] = new int[1];
@@ -137,7 +136,7 @@ namespace IndustrialPark
                 SubStateID = reader.ReadInt32();
                 SubStateCount = reader.ReadInt32();
             }
-            
+
             AnimationEffects = new AnimationEffect[effectCount];
 
             if (effectCount > 0)
@@ -146,7 +145,7 @@ namespace IndustrialPark
                 reader.BaseStream.Position = effectOffset;
 
                 for (int i = 0; i < AnimationEffects.Length; i++)
-                        AnimationEffects[i] = new AnimationEffect(reader, game);
+                    AnimationEffects[i] = new AnimationEffect(reader, game);
 
                 reader.BaseStream.Position = currPos;
             }

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using HipHopFile;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -129,7 +129,7 @@ namespace IndustrialPark
 
             JAW_Entries = entries.ToArray();
         }
-        
+
         public void Merge(AssetJAW asset)
         {
             var entries = JAW_Entries.ToList();

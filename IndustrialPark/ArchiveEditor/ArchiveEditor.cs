@@ -36,7 +36,7 @@ namespace IndustrialPark
         }
 
         public ArchiveEditorFunctions archive;
-        
+
         public ArchiveEditor(bool standalone = false)
         {
             InitializeComponent();
@@ -84,7 +84,7 @@ namespace IndustrialPark
             if (archive.UnsavedChanges)
             {
                 DialogResult result = MessageBox.Show("You have unsaved changes. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-                
+
                 if (result == DialogResult.Cancel) return;
                 if (result == DialogResult.Yes) archive.Save();
             }
@@ -105,7 +105,7 @@ namespace IndustrialPark
             if (archive.UnsavedChanges)
             {
                 DialogResult result = MessageBox.Show("You have unsaved changes. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-                
+
                 if (result == DialogResult.Cancel) return;
                 if (result == DialogResult.Yes) archive.Save();
             }
@@ -184,7 +184,7 @@ namespace IndustrialPark
 
             programIsChangingStuff = false;
         }
-        
+
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Save();
@@ -225,7 +225,7 @@ namespace IndustrialPark
             if (archive.UnsavedChanges)
             {
                 DialogResult result = MessageBox.Show("You have unsaved changes. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-                
+
                 if (result == DialogResult.Cancel) return;
                 if (result == DialogResult.Yes) archive.Save();
             }
@@ -246,7 +246,7 @@ namespace IndustrialPark
                 Program.MainForm.CloseArchiveEditor(this);
             Close();
         }
-        
+
         private bool programIsChangingStuff = false;
 
         public bool HasAsset(uint assetID)
@@ -325,7 +325,7 @@ namespace IndustrialPark
 
             programIsChangingStuff = false;
         }
-        
+
         private void comboBoxLayerTypes_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (programIsChangingStuff || comboBoxLayers.SelectedItem == null)
@@ -355,11 +355,11 @@ namespace IndustrialPark
         private void buttonRemoveLayer_Click(object sender, EventArgs e)
         {
             int cnt = archive.GetAssetIDsOnLayer(comboBoxLayers.SelectedIndex).Count;
-            if (cnt > 0 && 
-                MessageBox.Show($"Are you sure you want to delete this layer with {cnt} assets?", "Warning", 
+            if (cnt > 0 &&
+                MessageBox.Show($"Are you sure you want to delete this layer with {cnt} assets?", "Warning",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
                 return;
-            
+
             int previndex = comboBoxLayers.SelectedIndex;
 
             archive.RemoveLayer(comboBoxLayers.SelectedIndex);
@@ -418,7 +418,7 @@ namespace IndustrialPark
         private void PopulateAssetListAndComboBox()
         {
             programIsChangingStuff = true;
-            
+
             comboBoxAssetTypes.Items.Clear();
             comboBoxAssetTypes.Items.Add("All");
             comboBoxAssetTypes.Items.AddRange(archive.AssetTypesOnLayer(comboBoxLayers.SelectedIndex).Cast<object>().ToArray());
@@ -436,10 +436,11 @@ namespace IndustrialPark
             curType = type;
             listViewAssets.BeginUpdate();
             listViewAssets.Items.Clear();
-            
+
             if (comboBoxLayers.SelectedItem != null)
             {
-                if (assetIDs == null) {
+                if (assetIDs == null)
+                {
                     assetIDs = archive.GetAssetIDsOnLayer(comboBoxLayers.SelectedIndex);
                 }
 
@@ -538,7 +539,7 @@ namespace IndustrialPark
         {
             if (e.Column == prevColumn)
                 reverseSorting = !reverseSorting;
-            else 
+            else
                 reverseSorting = false;
             prevColumn = e.Column;
 
@@ -579,7 +580,7 @@ namespace IndustrialPark
         private void importModelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             (List<Section_AHDR> AHDRs, bool overwrite, bool makeSimps, bool ledgeGrabSimps, bool piptVcolors, bool solidSimps) = ImportModel.GetModels(archive.game);
-            
+
             if (AHDRs != null)
             {
                 List<uint> assetIDs = archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, overwrite);
@@ -611,7 +612,7 @@ namespace IndustrialPark
             if (listViewAssets.SelectedItems.Count == 0) return;
 
             archive.DuplicateSelectedAssets(comboBoxLayers.SelectedIndex, out List<uint> finalIndices);
-            
+
             comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
             SetSelectedIndices(finalIndices, false);
         }
@@ -628,7 +629,7 @@ namespace IndustrialPark
             archive.PasteAssetsFromClipboard(comboBoxLayers.SelectedIndex, out List<uint> finalIndices);
 
             comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
-            
+
             SetSelectedIndices(finalIndices, true);
         }
 
@@ -697,14 +698,14 @@ namespace IndustrialPark
                 if (AHDR != null)
                 {
                     archive.UnsavedChanges = true;
-                    
+
                     archive.RemoveAsset(oldAssetID, false);
 
                     while (archive.ContainsAsset(AHDR.assetID))
                         MessageBox.Show($"Archive already contains asset id [{AHDR.assetID:X8}]. Will change it to [{++AHDR.assetID:X8}].");
-                    
+
                     archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR, asset.game, asset.endianness, true);
-                    
+
                     SetSelectedIndices(new List<uint>() { AHDR.assetID }, true);
                 }
             }
@@ -797,7 +798,7 @@ namespace IndustrialPark
                 return;
 
             toolStripStatusLabelSelectionCount.Text = $"{listViewAssets.SelectedItems.Count}/{listViewAssets.Items.Count} assets selected";
-       
+
             List<uint> selected = new List<uint>(listViewAssets.SelectedItems.Count);
             foreach (ListViewItem v in listViewAssets.SelectedItems)
                 selected.Add(GetAssetIDFromName(v));
@@ -1080,7 +1081,7 @@ namespace IndustrialPark
 
                 addTemplateToolStripMenuItem.Enabled = buttonAddAsset.Enabled;
                 ToolStripMenuItem_CreateGroup.Enabled = buttonAddAsset.Enabled;
-                
+
                 contextMenuStrip_ListBoxAssets.Show(listViewAssets.PointToScreen(e.Location));
             }
         }

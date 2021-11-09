@@ -23,9 +23,9 @@ namespace IndustrialPark
         }
 
         public void CreateTransformMatrix() => boundingBox = BoundingBox.FromPoints(model.vertexListG.ToArray());
-        
+
         public float GetDistanceFrom(Vector3 cameraPosition) => 0;
-        
+
         public bool ShouldDraw(SharpRenderer renderer)
         {
             if (isSelected)

@@ -19,7 +19,7 @@ namespace IndustrialPark
         private const string dynaCategoryName = "game_object:RingControl";
 
         protected override short constVersion => 3;
-        
+
         public static uint RingModelAssetID = 0;
 
         [Category(dynaCategoryName)]

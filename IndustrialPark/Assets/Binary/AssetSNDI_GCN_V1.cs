@@ -1,9 +1,8 @@
-﻿using System;
+﻿using HipHopFile;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing.Design;
 using System.Linq;
-using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -121,11 +120,11 @@ namespace IndustrialPark
             foreach (var a in Entries_SND)
                 if (a.SoundAssetID == assetID)
                     return true;
-            
+
             foreach (var a in Entries_SNDS)
                 if (a.SoundAssetID == assetID)
                     return true;
-            
+
             foreach (var a in Entries_Sound_CIN)
                 if (a.SoundAssetID == assetID)
                     return true;

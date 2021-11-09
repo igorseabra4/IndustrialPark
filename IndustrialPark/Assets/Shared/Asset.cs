@@ -70,7 +70,7 @@ namespace IndustrialPark
                 Serialize(game, endianness));
         }
 
-        public override string ToString() =>  $"{assetName} [{assetID:X8}]";
+        public override string ToString() => $"{assetName} [{assetID:X8}]";
 
         public override int GetHashCode() => assetID.GetHashCode();
 

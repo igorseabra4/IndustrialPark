@@ -53,7 +53,7 @@ namespace IndustrialPark
         public override bool DontRender => dontRender;
 
         public override bool HasReference(uint assetID) => LightKit_AssetID == assetID || base.HasReference(assetID);
-        
+
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);

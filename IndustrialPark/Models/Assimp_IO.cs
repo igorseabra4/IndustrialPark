@@ -1,11 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using SharpDX;
+﻿using Assimp;
 using RenderWareFile;
 using RenderWareFile.Sections;
-using Assimp;
+using SharpDX;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace IndustrialPark.Models
 {
@@ -184,7 +184,7 @@ namespace IndustrialPark.Models
                 if (v.Z < min.Z)
                     min.Z = v.Z;
             }
-                        
+
             var binMeshes = new List<BinMesh>(materials.Count);
 
             for (int k = 0; k < materials.Count; k++)
@@ -208,13 +208,13 @@ namespace IndustrialPark.Models
                     });
             }
 
-            return ToClump(materials.ToArray(), new BoundingSphere(max + min / 2f, (max - min).Length()), 
+            return ToClump(materials.ToArray(), new BoundingSphere(max + min / 2f, (max - min).Length()),
                 vertices.ToArray(), normals.ToArray(), textCoords.ToArray(), vertexColors.ToArray(), triangles.ToArray(),
                 binMeshes.ToArray(), atomicNeedsMaterialEffects);
         }
-        
+
         private static RWSection ToClump
-            (Material_0007[] materials, BoundingSphere boundingSphere, 
+            (Material_0007[] materials, BoundingSphere boundingSphere,
             Vertex3[] vertices, Vertex3[] normals, Vertex2[] textCoords, RenderWareFile.Color[] vertexColors, RenderWareFile.Triangle[] triangles,
             BinMesh[] binMeshes, bool atomicNeedsMaterialEffects)
         {
@@ -333,7 +333,7 @@ namespace IndustrialPark.Models
                     atomicExtension = new Extension_0003() // check this in case something fails
                     {
                         extensionSectionList = atomicNeedsMaterialEffects ? new List<RWSection>()
-                        { 
+                        {
                             new MaterialEffectsPLG_0120()
                             {
                                 isAtomicExtension = true,

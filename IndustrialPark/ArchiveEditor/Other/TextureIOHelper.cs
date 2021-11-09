@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Windows.Forms;
-using System.Drawing;
-using HipHopFile;
+﻿using HipHopFile;
 using RenderWareFile;
 using RenderWareFile.Sections;
-using static HipHopFile.Functions;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Threading;
+using System.Windows.Forms;
+using static HipHopFile.Functions;
 
 namespace IndustrialPark
 {
@@ -129,41 +128,41 @@ namespace IndustrialPark
 
         public static void ExportSingleTextureToDictionary(string fileName, byte[] data, string textureName)
         {
-                ReadFileMethods.treatStuffAsByteArray = true;
+            ReadFileMethods.treatStuffAsByteArray = true;
 
-                List<TextureNative_0015> textNativeList = new List<TextureNative_0015>();
+            List<TextureNative_0015> textNativeList = new List<TextureNative_0015>();
 
-                int fileVersion = 0;
+            int fileVersion = 0;
 
-                foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(data))
-                    if (rw is TextureDictionary_0016 td)
-                        foreach (TextureNative_0015 tn in td.textureNativeList)
-                        {
-                            fileVersion = tn.renderWareVersion;
-                            tn.textureNativeStruct.textureName = textureName.Replace(".RW3", "");
-                            textNativeList.Add(tn);
-                        }
-
-                TextureDictionary_0016 rws = new TextureDictionary_0016()
-                {
-                    textureDictionaryStruct = new TextureDictionaryStruct_0001()
+            foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(data))
+                if (rw is TextureDictionary_0016 td)
+                    foreach (TextureNative_0015 tn in td.textureNativeList)
                     {
-                        textureCount = (short)textNativeList.Count(),
-                        unknown = 0
-                    },
-                    textureNativeList = textNativeList,
-                    textureDictionaryExtension = new Extension_0003()
-                    {
-                        extensionSectionList = new List<RWSection>()
+                        fileVersion = tn.renderWareVersion;
+                        tn.textureNativeStruct.textureName = textureName.Replace(".RW3", "");
+                        textNativeList.Add(tn);
                     }
-                };
 
-                rws.textureNativeList = rws.textureNativeList.OrderBy(f => f.textureNativeStruct.textureName).ToList();
+            TextureDictionary_0016 rws = new TextureDictionary_0016()
+            {
+                textureDictionaryStruct = new TextureDictionaryStruct_0001()
+                {
+                    textureCount = (short)textNativeList.Count(),
+                    unknown = 0
+                },
+                textureNativeList = textNativeList,
+                textureDictionaryExtension = new Extension_0003()
+                {
+                    extensionSectionList = new List<RWSection>()
+                }
+            };
 
-                File.WriteAllBytes(fileName, ReadFileMethods.ExportRenderWareFile(rws, fileVersion));
+            rws.textureNativeList = rws.textureNativeList.OrderBy(f => f.textureNativeStruct.textureName).ToList();
 
-                ReadFileMethods.treatStuffAsByteArray = false;
-            
+            File.WriteAllBytes(fileName, ReadFileMethods.ExportRenderWareFile(rws, fileVersion));
+
+            ReadFileMethods.treatStuffAsByteArray = false;
+
         }
 
         public static Section_AHDR CreateRWTXFromBitmap(Game game, Platform platform, string fileName, bool appendRW3, bool flip, bool mipmaps, bool compress, bool transFix)

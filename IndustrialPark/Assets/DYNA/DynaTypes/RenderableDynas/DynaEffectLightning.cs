@@ -16,7 +16,7 @@ namespace IndustrialPark
 
         public override bool HasReference(uint assetID) =>
             LightningTexture_AssetID == assetID || GlowTexture_AssetID == assetID || SIMP1_AssetID == assetID || SIMP2_AssetID == assetID;
-        
+
         public override void Verify(ref List<string> result)
         {
             Verify(LightningTexture_AssetID, ref result);

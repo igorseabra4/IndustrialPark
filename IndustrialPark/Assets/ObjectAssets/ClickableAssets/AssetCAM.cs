@@ -356,7 +356,7 @@ namespace IndustrialPark
                 return TriangleIntersection(ray, SharpRenderer.cubeTriangles, SharpRenderer.cubeVertices, world);
             return null;
         }
-        
+
         public bool ShouldDraw(SharpRenderer renderer)
         {
             if (isSelected)

@@ -1,6 +1,6 @@
-﻿using SharpDX;
+﻿using HipHopFile;
+using SharpDX;
 using System.Collections.Generic;
-using HipHopFile;
 
 namespace IndustrialPark
 {

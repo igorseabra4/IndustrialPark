@@ -232,8 +232,8 @@ namespace IndustrialPark
 
         public override bool DontRender => dontRender;
 
-        public override bool HasReference(uint assetID) =>MovePoint_AssetID == assetID || UnknownAssetID_BC == assetID || base.HasReference(assetID);
-        
+        public override bool HasReference(uint assetID) => MovePoint_AssetID == assetID || UnknownAssetID_BC == assetID || base.HasReference(assetID);
+
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
@@ -253,5 +253,5 @@ namespace IndustrialPark
                 renderer.DrawCube(LocalWorld(), isSelected);
         }
 
- }
+    }
 }

@@ -142,13 +142,13 @@ namespace IndustrialPark
                 MessageBox.Show("Unable to play sound: " + ex);
             }
         }
-        
+
         private static bool converterInitialized = false;
         private static string vgmstreamFolder => Path.Combine(Path.Combine(Application.StartupPath, "Resources"), "vgmstream");
         private static string vgmstreamPath => Path.Combine(vgmstreamFolder, "test.exe");
         private static string inPath => vgmstreamFolder + "/test_sound_in";
         private static string outPath => vgmstreamFolder + "/test_sound_out.wav";
-        
+
         private bool InitSound()
         {
             if (!converterInitialized)
@@ -161,7 +161,7 @@ namespace IndustrialPark
             Convert(inPath, outPath);
 
             player = new SoundPlayer(new MemoryStream(File.ReadAllBytes(outPath)));
-            
+
             File.Delete(inPath);
             File.Delete(outPath);
 

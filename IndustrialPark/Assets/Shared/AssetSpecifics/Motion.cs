@@ -1,8 +1,8 @@
-﻿using SharpDX;
+﻿using HipHopFile;
+using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -436,7 +436,7 @@ namespace IndustrialPark
 
         public Motion_Mechanism() : this(MotionType.Mechanism) { }
         public Motion_Mechanism(MotionType motionType) : base(motionType) { }
-        public Motion_Mechanism(EndianBinaryReader reader, Game game) : base(reader) 
+        public Motion_Mechanism(EndianBinaryReader reader, Game game) : base(reader)
         {
             MovementType = (EMovementType)reader.ReadByte();
             MovementLoopMode = (EMechanismFlags)reader.ReadByte();
@@ -762,7 +762,7 @@ namespace IndustrialPark
             //    angle = Range_Rad - LocalFrameCounter * speed;
             //else
             //    angle = -Range_Rad + LocalFrameCounter * speed;
-            
+
             angle = (comingBack ? 1 : -1) * (Range_Rad - LocalFrameCounter * speed);
 
             return Matrix.Translation(0, -Length, 0) *

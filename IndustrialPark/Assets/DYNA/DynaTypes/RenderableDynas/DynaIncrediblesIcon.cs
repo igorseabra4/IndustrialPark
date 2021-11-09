@@ -12,7 +12,7 @@ namespace IndustrialPark
         private const string dynaCategoryName = "Incredibles:Icon";
 
         protected override short constVersion => 1;
-        
+
         [Category(dynaCategoryName)]
         public AssetSingle Radius { get; set; }
         [Category(dynaCategoryName)]

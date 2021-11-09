@@ -53,11 +53,11 @@ namespace IndustrialPark
             SpecialBlendMode = false;
             blendModes = null;
         }
-        
+
         public void Draw(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset)
         {
             if (renderBasedOnPipt && blendModes != null)
-                model.RenderPipt(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, uvAnimOffset, _dontDrawMeshNumber, blendModes);            
+                model.RenderPipt(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, uvAnimOffset, _dontDrawMeshNumber, blendModes);
             else
                 model.Render(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, uvAnimOffset, _dontDrawMeshNumber);
         }
@@ -89,7 +89,7 @@ namespace IndustrialPark
                 case BlendFactorType.SourceAlphaSaturated:
                     return BlendOption.SourceAlphaSaturate;
             }
-            
+
             return dest ? BlendOption.One : BlendOption.Zero;
         }
     }

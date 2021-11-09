@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using HipHopFile;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -25,7 +25,7 @@ namespace IndustrialPark
                 return $"[{Program.MainForm.GetAssetNameFromID(ModelAssetID)}] - [{Program.MainForm.GetAssetNameFromID(Collision_ModelAssetID)}]";
             return $"[{Program.MainForm.GetAssetNameFromID(ModelAssetID)}] - [{Program.MainForm.GetAssetNameFromID(CameraCollision_ModelAssetID)}]";
         }
-        
+
         public override bool Equals(object obj)
         {
             if (obj != null && obj is EntryCOLL entryCOLL)
@@ -84,7 +84,7 @@ namespace IndustrialPark
             foreach (var a in CollisionTable_Entries)
                 if (a.ModelAssetID == assetID || a.Collision_ModelAssetID == assetID || a.CameraCollision_ModelAssetID == assetID)
                     return true;
-            
+
             return false;
         }
 
