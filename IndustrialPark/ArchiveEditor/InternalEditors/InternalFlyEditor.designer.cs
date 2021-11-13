@@ -32,14 +32,14 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.buttonView = new System.Windows.Forms.Button();
             this.buttonFindCallers = new System.Windows.Forms.Button();
-            this.buttonStop = new System.Windows.Forms.Button();
             this.buttonGetPos = new System.Windows.Forms.Button();
-            this.buttonGetDir = new System.Windows.Forms.Button();
+            this.buttonRecord = new System.Windows.Forms.Button();
             this.listBoxFlyEntries = new System.Windows.Forms.ListBox();
             this.buttonRemove = new System.Windows.Forms.Button();
             this.buttonAdd = new System.Windows.Forms.Button();
             this.buttonPlay = new System.Windows.Forms.Button();
             this.labelFrame = new System.Windows.Forms.Label();
+            this.buttonHelp = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -60,11 +60,11 @@
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Controls.Add(this.buttonView, 0, 5);
-            this.tableLayoutPanel1.Controls.Add(this.buttonFindCallers, 0, 5);
-            this.tableLayoutPanel1.Controls.Add(this.buttonStop, 1, 4);
-            this.tableLayoutPanel1.Controls.Add(this.buttonGetPos, 0, 3);
-            this.tableLayoutPanel1.Controls.Add(this.buttonGetDir, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.buttonHelp, 0, 4);
+            this.tableLayoutPanel1.Controls.Add(this.buttonView, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.buttonFindCallers, 1, 5);
+            this.tableLayoutPanel1.Controls.Add(this.buttonGetPos, 1, 3);
+            this.tableLayoutPanel1.Controls.Add(this.buttonRecord, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.propertyGridSpecific, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.listBoxFlyEntries, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.buttonRemove, 1, 1);
@@ -90,11 +90,11 @@
             // 
             this.buttonView.AutoSize = true;
             this.buttonView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonView.Location = new System.Drawing.Point(175, 396);
+            this.buttonView.Location = new System.Drawing.Point(3, 340);
             this.buttonView.Name = "buttonView";
             this.buttonView.Size = new System.Drawing.Size(166, 22);
             this.buttonView.TabIndex = 30;
-            this.buttonView.Text = "View";
+            this.buttonView.Text = "See View";
             this.buttonView.UseVisualStyleBackColor = true;
             this.buttonView.Click += new System.EventHandler(this.buttonView_Click);
             // 
@@ -102,7 +102,7 @@
             // 
             this.buttonFindCallers.AutoSize = true;
             this.buttonFindCallers.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonFindCallers.Location = new System.Drawing.Point(3, 396);
+            this.buttonFindCallers.Location = new System.Drawing.Point(175, 396);
             this.buttonFindCallers.Name = "buttonFindCallers";
             this.buttonFindCallers.Size = new System.Drawing.Size(166, 22);
             this.buttonFindCallers.TabIndex = 28;
@@ -110,40 +110,29 @@
             this.buttonFindCallers.UseVisualStyleBackColor = true;
             this.buttonFindCallers.Click += new System.EventHandler(this.buttonFindCallers_Click);
             // 
-            // buttonStop
-            // 
-            this.buttonStop.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonStop.Location = new System.Drawing.Point(175, 368);
-            this.buttonStop.Name = "buttonStop";
-            this.buttonStop.Size = new System.Drawing.Size(166, 22);
-            this.buttonStop.TabIndex = 27;
-            this.buttonStop.Text = "Stop";
-            this.buttonStop.UseVisualStyleBackColor = true;
-            this.buttonStop.Click += new System.EventHandler(this.buttonStop_Click);
-            // 
             // buttonGetPos
             // 
             this.buttonGetPos.AutoSize = true;
             this.buttonGetPos.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonGetPos.Location = new System.Drawing.Point(3, 340);
+            this.buttonGetPos.Location = new System.Drawing.Point(175, 340);
             this.buttonGetPos.Name = "buttonGetPos";
             this.buttonGetPos.Size = new System.Drawing.Size(166, 22);
             this.buttonGetPos.TabIndex = 19;
-            this.buttonGetPos.Text = "Get View Position";
+            this.buttonGetPos.Text = "Get View";
             this.buttonGetPos.UseVisualStyleBackColor = true;
-            this.buttonGetPos.Click += new System.EventHandler(this.buttonGetPos_Click);
+            this.buttonGetPos.Click += new System.EventHandler(this.buttonGetView_Click);
             // 
-            // buttonGetDir
+            // buttonRecord
             // 
-            this.buttonGetDir.AutoSize = true;
-            this.buttonGetDir.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonGetDir.Location = new System.Drawing.Point(175, 340);
-            this.buttonGetDir.Name = "buttonGetDir";
-            this.buttonGetDir.Size = new System.Drawing.Size(166, 22);
-            this.buttonGetDir.TabIndex = 18;
-            this.buttonGetDir.Text = "Get View Direction";
-            this.buttonGetDir.UseVisualStyleBackColor = true;
-            this.buttonGetDir.Click += new System.EventHandler(this.buttonGetDir_Click);
+            this.buttonRecord.AutoSize = true;
+            this.buttonRecord.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonRecord.Location = new System.Drawing.Point(175, 368);
+            this.buttonRecord.Name = "buttonRecord";
+            this.buttonRecord.Size = new System.Drawing.Size(166, 22);
+            this.buttonRecord.TabIndex = 18;
+            this.buttonRecord.Text = "Start Recording";
+            this.buttonRecord.UseVisualStyleBackColor = true;
+            this.buttonRecord.Click += new System.EventHandler(this.buttonRecord_Click);
             // 
             // listBoxFlyEntries
             // 
@@ -200,6 +189,18 @@
             this.labelFrame.TabIndex = 31;
             this.labelFrame.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // buttonHelp
+            // 
+            this.buttonHelp.AutoSize = true;
+            this.buttonHelp.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonHelp.Location = new System.Drawing.Point(3, 396);
+            this.buttonHelp.Name = "buttonHelp";
+            this.buttonHelp.Size = new System.Drawing.Size(166, 22);
+            this.buttonHelp.TabIndex = 32;
+            this.buttonHelp.Text = "Open Wiki Page";
+            this.buttonHelp.UseVisualStyleBackColor = true;
+            this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
+            // 
             // InternalFlyEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -221,14 +222,14 @@
         private System.Windows.Forms.PropertyGrid propertyGridSpecific;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Button buttonGetPos;
-        private System.Windows.Forms.Button buttonGetDir;
+        private System.Windows.Forms.Button buttonRecord;
         private System.Windows.Forms.ListBox listBoxFlyEntries;
         private System.Windows.Forms.Button buttonRemove;
         private System.Windows.Forms.Button buttonAdd;
         private System.Windows.Forms.Button buttonPlay;
-        private System.Windows.Forms.Button buttonStop;
         private System.Windows.Forms.Button buttonFindCallers;
         private System.Windows.Forms.Button buttonView;
         private System.Windows.Forms.Label labelFrame;
+        private System.Windows.Forms.Button buttonHelp;
     }
 }

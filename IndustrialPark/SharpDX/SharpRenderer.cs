@@ -409,6 +409,7 @@ namespace IndustrialPark
         }
 
         private bool playingFly = false;
+        private bool recordingFly = false;
         private InternalFlyEditor flyToPlay;
 
         public void PlayFly(InternalFlyEditor internalFlyEditor)
@@ -417,9 +418,16 @@ namespace IndustrialPark
             flyToPlay = internalFlyEditor;
         }
 
+        public void RecordFly(InternalFlyEditor internalFlyEditor)
+        {
+            recordingFly = true;
+            flyToPlay = internalFlyEditor;
+        }
+
         public void StopFly()
         {
             playingFly = false;
+            recordingFly = false;
             flyToPlay = null;
         }
 
@@ -470,7 +478,9 @@ namespace IndustrialPark
                     }
                     else
                     {
-                        if (playingFly)
+                        if (recordingFly)
+                            flyToPlay.Record();
+                        else if (playingFly)
                             flyToPlay.Play();
 
                         Program.MainForm.SetToolStripStatusLabel(Camera.ToString() + " FPS: " + $"{sharpFPS.FPS:0.0000}");

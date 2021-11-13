@@ -23,6 +23,7 @@ namespace IndustrialPark
                 new ToolStripMenuItem(AssetTemplate.Conditional.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Dispatcher.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Fog.ToString()),
+                new ToolStripMenuItem(AssetTemplate.Flythrough.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Group.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Portal.ToString()),
                 new ToolStripMenuItem(AssetTemplate.Script.ToString()),
@@ -425,6 +426,7 @@ namespace IndustrialPark
                 case AssetTemplate.LKIT_JF_SB_lights:
                 case AssetTemplate.LKIT_jf01_light_kit:
                 case AssetTemplate.MINF_Generic:
+                case AssetTemplate.Flythrough_Widget:
                     ignoreNumber = true;
                     break;
                 case AssetTemplate.StartCamera:
@@ -731,6 +733,11 @@ namespace IndustrialPark
                     break;
                 case AssetTemplate.Flythrough:
                     asset = new AssetFLY(assetName);
+                    var flyWidget = (DynaGObjectFlythrough)PlaceTemplate(position, layerIndex, ref assetIDs, asset.assetName + "_WIDGET", AssetTemplate.Flythrough_Widget);
+                    flyWidget.FLY_ID = asset.assetID;
+                    break;
+                case AssetTemplate.Flythrough_Widget:
+                    asset = new DynaGObjectFlythrough(assetName);
                     break;
                 case AssetTemplate.JawData:
                     asset = new AssetJAW(assetName);

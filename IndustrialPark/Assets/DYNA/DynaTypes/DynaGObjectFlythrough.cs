@@ -11,6 +11,11 @@ namespace IndustrialPark
         [Category("game_object:Flythrough")]
         public AssetID FLY_ID { get; set; }
 
+        public DynaGObjectFlythrough(string assetName) : base(assetName, DynaType.game_object__Flythrough, 1)
+        {
+            FLY_ID = 0;
+        }
+
         public DynaGObjectFlythrough(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__Flythrough, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))

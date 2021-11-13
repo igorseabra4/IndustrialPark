@@ -53,6 +53,7 @@
         CollisionTable,
         Environment,
         Flythrough,
+        Flythrough_Widget,
         JawData,
         LevelOfDetailTable,
         MaterialMap,
