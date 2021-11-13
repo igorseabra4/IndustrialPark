@@ -1,92 +1,80 @@
-﻿using System;
+﻿using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
-using HipHopFile;
 
 namespace IndustrialPark
 {
     public class EntryMAPR
     {
-        public AssetID AssetID_SURF { get; set; }
+        public AssetID Surface_AssetID { get; set; }
         public AssetID Unknown { get; set; }
 
-        public EntryMAPR()
-        {
-            AssetID_SURF = 0;
-        }
-
+        public EntryMAPR() { }
         public override string ToString()
         {
-            return $"[{Program.MainForm.GetAssetNameFromID(AssetID_SURF)}] - [{Program.MainForm.GetAssetNameFromID(Unknown)}]";
+            return $"[{Program.MainForm.GetAssetNameFromID(Surface_AssetID)}] - [{Program.MainForm.GetAssetNameFromID(Unknown)}]";
         }
     }
 
     public class AssetMAPR : Asset
     {
-        public AssetMAPR(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        [Category("Surface Mapper")]
+        public EntryMAPR[] MAPR_Entries { get; set; }
+
+        public AssetMAPR(string assetName) : base(assetName, AssetType.MAPR)
         {
-            if (AssetID != AHDR.assetID)
-                AssetID = AHDR.assetID;
+            MAPR_Entries = new EntryMAPR[0];
+        }
+
+        public AssetMAPR(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.ReadInt32();
+                int maprCount = reader.ReadInt32();
+                MAPR_Entries = new EntryMAPR[maprCount];
+
+                for (int i = 0; i < MAPR_Entries.Length; i++)
+                    MAPR_Entries[i] = new EntryMAPR()
+                    {
+                        Surface_AssetID = reader.ReadUInt32(),
+                        Unknown = reader.ReadUInt32()
+                    };
+            }
+        }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(assetID);
+                writer.Write(MAPR_Entries.Length);
+                foreach (var entry in MAPR_Entries)
+                {
+                    writer.Write(entry.Surface_AssetID);
+                    writer.Write(entry.Unknown);
+                }
+
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)
         {
             foreach (EntryMAPR a in MAPR_Entries)
-                if (a.AssetID_SURF == assetID || a.Unknown == assetID)
+                if (a.Surface_AssetID == assetID || a.Unknown == assetID)
                     return true;
-            
-            return base.HasReference(assetID);
+
+            return false;
         }
 
         public override void Verify(ref List<string> result)
         {
             foreach (EntryMAPR a in MAPR_Entries)
             {
-                if (a.AssetID_SURF == 0)
+                if (a.Surface_AssetID == 0)
                     result.Add("MAPR entry with SurfaceAssetID set to 0");
-                Verify(a.AssetID_SURF, ref result);
-            }
-        }
-
-        [Category("Surface Map")]
-        public AssetID AssetID
-        {
-            get => ReadUInt(0);
-            set => Write(0, value);
-        }
-
-        [Category("Surface Map")]
-        public EntryMAPR[] MAPR_Entries
-        {
-            get
-            {
-                List<EntryMAPR> entries = new List<EntryMAPR>();
-                int amount = ReadInt(4);
-
-                for (int i = 0; i < amount; i++)
-                {
-                    entries.Add(new EntryMAPR()
-                    {
-                        AssetID_SURF = ReadUInt(8 + i * 8),
-                        Unknown = ReadUInt(12 + i * 8)
-                    });
-                }
-                
-                return entries.ToArray();
-            }
-            set
-            {
-                List<byte> newData = new List<byte>();
-                newData.AddRange(BitConverter.GetBytes(Switch(AssetID)));
-                newData.AddRange(BitConverter.GetBytes(Switch(value.Length)));
-
-                foreach (EntryMAPR i in value)
-                {
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.AssetID_SURF)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.Unknown)));
-                }
-                
-                Data = newData.ToArray();
+                Verify(a.Surface_AssetID, ref result);
             }
         }
     }

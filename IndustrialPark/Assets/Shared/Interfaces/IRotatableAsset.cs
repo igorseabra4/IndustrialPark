@@ -1,13 +1,13 @@
-﻿using SharpDX;
-
-namespace IndustrialPark
+﻿namespace IndustrialPark
 {
     public interface IRotatableAsset
     {
-        float Yaw { get; set; }
-        float Pitch { get; set; }
-        float Roll { get; set; }
+        AssetSingle Yaw { get; set; }
+        AssetSingle Pitch { get; set; }
+        AssetSingle Roll { get; set; }
 
-        Vector3 Position { get; }
+        AssetSingle PositionX { get; }
+        AssetSingle PositionY { get; }
+        AssetSingle PositionZ { get; }
     }
 }

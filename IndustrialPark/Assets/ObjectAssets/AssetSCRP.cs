@@ -1,31 +1,102 @@
 ﻿using HipHopFile;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
-using static HipHopFile.Functions;
 
 namespace IndustrialPark
 {
     public class AssetSCRP : BaseAsset
     {
-        public AssetSCRP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        private const string categoryName = "Scripted Event";
 
-        public override bool HasReference(uint assetID)
+        [Category(categoryName)]
+        public AssetSingle ScriptStartTime { get; set; }
+        [Category(categoryName)]
+        public AssetByte Flag1 { get; set; }
+        [Category(categoryName)]
+        public AssetByte Flag2 { get; set; }
+        [Category(categoryName)]
+        public AssetByte Flag3 { get; set; }
+        [Category(categoryName)]
+        public AssetByte Flag4 { get; set; }
+        public Link[] _timedLinks;
+        [Category(categoryName), Editor(typeof(LinkListEditor), typeof(UITypeEditor))]
+        public Link[] TimedLinks
         {
-            foreach (Link link in TimedLinksBFBB)
-                if (link.TargetAssetID == assetID || link.ArgumentAssetID == assetID || link.SourceCheckAssetID == assetID)
-                    return true;
-            
-            return base.HasReference(assetID);
+            get
+            {
+                LinkListEditor.LinkType = LinkType.Timed;
+                LinkListEditor.ThisAssetID = assetID;
+                LinkListEditor.Game = game;
+
+                return _timedLinks;
+            }
+            set
+            {
+                _timedLinks = value;
+            }
         }
+
+        public AssetSCRP(string assetName) : base(assetName, AssetType.SCRP, BaseAssetType.Script)
+        {
+            _timedLinks = new Link[0];
+            ScriptStartTime = 1f;
+        }
+
+        public AssetSCRP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = baseHeaderEndPosition;
+
+                ScriptStartTime = reader.ReadSingle();
+                int timedLinkCount = reader.ReadInt32();
+
+                if (game == Game.Incredibles)
+                {
+                    Flag1 = reader.ReadByte();
+                    Flag2 = reader.ReadByte();
+                    Flag3 = reader.ReadByte();
+                    Flag4 = reader.ReadByte();
+                }
+
+                _timedLinks = new Link[timedLinkCount];
+                for (int i = 0; i < _timedLinks.Length; i++)
+                    _timedLinks[i] = new Link(reader, LinkType.Timed, game);
+            }
+        }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
+                writer.Write(ScriptStartTime);
+                writer.Write(_timedLinks.Length);
+
+                if (game == Game.Incredibles)
+                {
+                    writer.Write(Flag1);
+                    writer.Write(Flag2);
+                    writer.Write(Flag3);
+                    writer.Write(Flag4);
+                }
+
+                foreach (var l in _timedLinks)
+                    writer.Write(l.Serialize(LinkType.Timed, endianness));
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
+        }
+
+        public override bool HasReference(uint assetID) => _timedLinks.Any(link => link.HasReference(assetID)) || base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
-            foreach (LinkTSSM link in TimedLinksTSSM)
+            foreach (Link link in _timedLinks)
             {
                 Verify(link.TargetAssetID, ref result);
                 Verify(link.ArgumentAssetID, ref result);
@@ -35,105 +106,17 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Scripted Event")]
-        public float UnknownFloat08
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
-            get => ReadFloat(0x08);
-            set => Write(0x08, value);
-        }
-
-        [Category("Scripted Event"), ReadOnly(true)]
-        public int TimedLinkCount
-        {
-            get => ReadInt(0x0C);
-            set => Write(0x0C, value);
-        }
-
-        [Category("Scripted Event"), Description("Movie only."), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flag1
-        {
-            get => ReadByte(0x10);
-            set => Write(0x10, value);
-        }
-
-        [Category("Scripted Event"), Description("Movie only."), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flag2
-        {
-            get => ReadByte(0x11);
-            set => Write(0x11, value);
-        }
-
-        [Category("Scripted Event"), Description("Movie only."), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flag3
-        {
-            get => ReadByte(0x12);
-            set => Write(0x12, value);
-        }
-
-        [Category("Scripted Event"), Description("Movie only."), TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Flag4
-        {
-            get => ReadByte(0x13);
-            set => Write(0x13, value);
-        }
-
-        private int TimedLinksStartOffset => game == Game.Incredibles ? 0x14 : 0x10;
-
-        private void WriteTimedLinks(Link[] links)
-        {
-            List<byte> newData = Data.Take(TimedLinksStartOffset).ToList();
-            List<byte> restOfOldData = Data.Skip(TimedLinksStartOffset + Link.sizeOfStruct * TimedLinkCount).ToList();
-
-            foreach (Link i in links)
-                newData.AddRange(i.ToByteArray());
-
-            newData.AddRange(restOfOldData);
-            Data = newData.ToArray();
-
-            TimedLinkCount = links.Length;
-        }
-
-        
-        [Category("Scripted Event"), Editor(typeof(LinkListEditor), typeof(UITypeEditor))]
-        public LinkBFBB[] TimedLinksBFBB
-        {
-            get
+            if (game != Game.Incredibles)
             {
-                LinkBFBB[] events = new LinkBFBB[TimedLinkCount];
-
-                for (int i = 0; i < TimedLinkCount; i++)
-                    events[i] = new LinkBFBB(Data, TimedLinksStartOffset + i * Link.sizeOfStruct, true, EndianConverter.PlatformEndianness(platform));
-
-                LinkListEditor.IsTimed = true;
-                LinkListEditor.thisAssetID = AHDR.assetID;
-                LinkListEditor.endianness = EndianConverter.PlatformEndianness(platform);
-                return events;
+                dt.RemoveProperty("Flag1");
+                dt.RemoveProperty("Flag2");
+                dt.RemoveProperty("Flag3");
+                dt.RemoveProperty("Flag4");
             }
-            set
-            {
-                WriteTimedLinks(value);
-            }
-        }
 
-        [Category("Scripted Event"), Editor(typeof(LinkListEditor), typeof(UITypeEditor))]
-        public LinkTSSM[] TimedLinksTSSM
-        {
-            get
-            {
-                LinkTSSM[] events = new LinkTSSM[TimedLinkCount];
-
-                for (int i = 0; i < TimedLinkCount; i++)
-                    events[i] = new LinkTSSM(Data, TimedLinksStartOffset + i * Link.sizeOfStruct, true, EndianConverter.PlatformEndianness(platform));
-
-                LinkListEditor.IsTimed = true;
-                LinkListEditor.thisAssetID = AHDR.assetID;
-                LinkListEditor.endianness = EndianConverter.PlatformEndianness(platform);
-                return events;
-            }
-            set
-            {
-                WriteTimedLinks(value);
-            }
+            base.SetDynamicProperties(dt);
         }
     }
 }

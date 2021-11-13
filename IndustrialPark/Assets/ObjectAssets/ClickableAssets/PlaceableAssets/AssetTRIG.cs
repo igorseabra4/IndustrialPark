@@ -12,35 +12,220 @@ namespace IndustrialPark
         Cylinder = 2
     }
 
-    public class AssetTRIG : EntityAsset
+    public class AssetTRIG : EntityAsset, IVolumeAsset
     {
+        private const string categoryName = "Trigger";
+
+        [Category(categoryName)]
+        public TriggerShape Shape
+        {
+            get => (TriggerShape)(byte)TypeFlag;
+            set => TypeFlag = (byte)value;
+        }
+
+        private Vector3 _minimum;
+        private Vector3 _maximum;
+
+        [Category(categoryName), Description("Center position for Sphere and Cylinder")]
+        public AssetSingle MinimumX
+        {
+            get => _minimum.X;
+            set
+            {
+                _minimum.X = value;
+                FixPosition();
+            }
+        }
+        [Category(categoryName), Description("Center position for Sphere and Cylinder")]
+        public AssetSingle MinimumY
+        {
+            get => _minimum.Y;
+            set
+            {
+                _minimum.Y = value;
+                FixPosition();
+            }
+        }
+        [Category(categoryName), Description("Center position for Sphere and Cylinder")]
+        public AssetSingle MinimumZ
+        {
+            get => _minimum.Z;
+            set
+            {
+                _minimum.Z = value;
+                FixPosition();
+            }
+        }
+        [Category(categoryName)]
+        [Description("Used only for Sphere and Cylinder.")]
+        public AssetSingle Radius
+        {
+            get => MaximumX;
+            set => MaximumX = value;
+        }
+        [Category(categoryName)]
+        [Description("Used only for Cylinder.")]
+        public AssetSingle Height
+        {
+            get => MaximumY;
+            set => MaximumY = value;
+        }
+        [Category(categoryName)]
+        [Description("Used only for Box.")]
+        public AssetSingle MaximumX
+        {
+            get => _maximum.X;
+            set
+            {
+                _maximum.X = value;
+                FixPosition();
+            }
+        }
+        [Category(categoryName)]
+        [Description("Used only for Box.")]
+        public AssetSingle MaximumY
+        {
+            get => _maximum.Y;
+            set
+            {
+                _maximum.Y = value;
+                FixPosition();
+            }
+        }
+        [Category(categoryName)]
+        [Description("Used only for Box.")]
+        public AssetSingle MaximumZ
+        {
+            get => _maximum.Z;
+            set
+            {
+                _maximum.Z = value;
+                FixPosition();
+            }
+        }
+        [Category(categoryName)]
+        public AssetSingle Position2X { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Position2Y { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Position2Z { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Position3X { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Position3Y { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Position3Z { get; set; }
+        [Category(categoryName)]
+        public AssetSingle DirectionX { get; set; }
+        [Category(categoryName)]
+        public AssetSingle DirectionY { get; set; }
+        [Category(categoryName)]
+        public AssetSingle DirectionZ { get; set; }
+        [Category(categoryName)]
+        public FlagBitmask TriggerFlags { get; set; } = IntFlagsDescriptor();
+
+        public AssetTRIG(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.TRIG, BaseAssetType.Trigger, position)
+        {
+            SolidityFlags.FlagValueByte = 0;
+            ColorAlpha = 0;
+            ColorAlphaSpeed = 0;
+            DirectionY = -0;
+            DirectionZ = 1f;
+
+            switch (template)
+            {
+                case AssetTemplate.Box_Trigger:
+                    Shape = TriggerShape.Box;
+                    SetPositions(position.X + 5f, position.Y + 5f, position.Z + 5f, position.X - 5f, position.Y - 5f, position.Z - 5f);
+                    break;
+                case AssetTemplate.Sphere_Trigger:
+                case AssetTemplate.Checkpoint:
+                case AssetTemplate.Checkpoint_Invisible:
+                case AssetTemplate.BusStop_Trigger:
+                    Shape = TriggerShape.Sphere;
+                    MinimumX = position.X;
+                    MinimumY = position.Y;
+                    MinimumZ = position.Z;
+                    if (template == AssetTemplate.Sphere_Trigger)
+                        Radius = 10f;
+                    else if (template == AssetTemplate.BusStop_Trigger)
+                        Radius = 2.5f;
+                    else
+                        Radius = 6f;
+                    break;
+                case AssetTemplate.Cylinder_Trigger:
+                    Shape = TriggerShape.Cylinder;
+                    Radius = 10f;
+                    Height = 5f;
+                    MinimumX = position.X;
+                    MinimumY = position.Y;
+                    MinimumZ = position.Z;
+                    break;
+            }
+        }
+
+        public AssetTRIG(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = entityHeaderEndPosition;
+
+                _minimum = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                _maximum = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                Position2X = reader.ReadSingle();
+                Position2Y = reader.ReadSingle();
+                Position2Z = reader.ReadSingle();
+                Position3X = reader.ReadSingle();
+                Position3Y = reader.ReadSingle();
+                Position3Z = reader.ReadSingle();
+                DirectionX = reader.ReadSingle();
+                DirectionY = reader.ReadSingle();
+                DirectionZ = reader.ReadSingle();
+                TriggerFlags.FlagValueInt = reader.ReadUInt32();
+
+                FixPosition();
+            }
+        }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntity(game, endianness));
+                writer.Write(MinimumX);
+                writer.Write(MinimumY);
+                writer.Write(MinimumZ);
+                writer.Write(MaximumX);
+                writer.Write(MaximumY);
+                writer.Write(MaximumZ);
+                writer.Write(Position2X);
+                writer.Write(Position2Y);
+                writer.Write(Position2Z);
+                writer.Write(Position3X);
+                writer.Write(Position3Y);
+                writer.Write(Position3Z);
+                writer.Write(DirectionX);
+                writer.Write(DirectionY);
+                writer.Write(DirectionZ);
+                writer.Write(TriggerFlags.FlagValueInt);
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
+        }
+
         public static bool dontRender = false;
 
         public override bool DontRender => dontRender;
 
-        protected override int EventStartOffset => 0x94 + Offset;
-
         public BoundingSphere boundingSphere;
         private Matrix pivotWorld;
-
-        public AssetTRIG(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
-        {
-            _shape = ReadByte(9);
-
-            _trigPos0 = new Vector3(ReadFloat(0x54 + Offset), ReadFloat(0x58 + Offset), ReadFloat(0x5C + Offset));
-            _trigPos1 = new Vector3(ReadFloat(0x60 + Offset), ReadFloat(0x64 + Offset), ReadFloat(0x68 + Offset));
-            _trigPos2 = new Vector3(ReadFloat(0x6C + Offset), ReadFloat(0x70 + Offset), ReadFloat(0x74 + Offset));
-            _trigPos3 = new Vector3(ReadFloat(0x78 + Offset), ReadFloat(0x7C + Offset), ReadFloat(0x80 + Offset));
-
-            FixPosition();
-        }
 
         public override void CreateTransformMatrix()
         {
             if (Shape == TriggerShape.Box)
             {
-                Vector3 boxSize = _trigPos1 - _trigPos0;
-                Vector3 midPos = (_trigPos0 + _trigPos1) / 2f;
+                Vector3 boxSize = _maximum - _minimum;
+                Vector3 midPos = (_minimum + _maximum) / 2f;
 
                 world = Matrix.Scaling(boxSize) *
                     Matrix.Translation(midPos) *
@@ -51,7 +236,7 @@ namespace IndustrialPark
             else if (Shape == TriggerShape.Sphere)
             {
                 world = Matrix.Scaling(Radius * 2f) *
-                    Matrix.Translation(_trigPos0) *
+                    Matrix.Translation(_minimum) *
                     Matrix.Translation(-_position) *
                     Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll) *
                     Matrix.Translation(_position);
@@ -59,7 +244,7 @@ namespace IndustrialPark
             else
             {
                 world = Matrix.Scaling(Radius * 2f, Height * 2f, Radius * 2f) *
-                    Matrix.Translation(_trigPos0) *
+                    Matrix.Translation(_minimum) *
                     Matrix.Translation(-_position) *
                     Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll) *
                     Matrix.Translation(_position);
@@ -74,7 +259,7 @@ namespace IndustrialPark
         {
             if (Shape == TriggerShape.Sphere)
             {
-                boundingSphere = new BoundingSphere(_trigPos0, Radius);
+                boundingSphere = new BoundingSphere(_minimum, Radius);
                 boundingBox = BoundingBox.FromSphere(boundingSphere);
             }
             else
@@ -130,7 +315,7 @@ namespace IndustrialPark
 
             return null;
         }
-        
+
         public override float GetDistanceFrom(Vector3 cameraPosition)
         {
             if (Shape == TriggerShape.Sphere)
@@ -139,55 +324,35 @@ namespace IndustrialPark
             return base.GetDistanceFrom(cameraPosition);
         }
 
-        private byte _shape;
-        [Category("Trigger")]
-        public TriggerShape Shape
-        {
-            get => (TriggerShape)_shape;
-            set
-            {
-                _shape = (byte)value;
-                Write(0x09, _shape);
-            }
-        }
-                
         public void FixPosition()
         {
             if (Shape == TriggerShape.Box)
             {
-                if (_trigPos0.X > _trigPos1.X)
+                if (_minimum.X > _maximum.X)
                 {
-                    float temp = _trigPos1.X;
-                    _trigPos1.X = _trigPos0.X;
-                    _trigPos0.X = temp;
+                    var temp = _maximum.X;
+                    _maximum.X = _minimum.X;
+                    _minimum.X = temp;
                 }
-                if (_trigPos0.Y > _trigPos1.Y)
+                if (_minimum.Y > _maximum.Y)
                 {
-                    float temp = _trigPos1.Y;
-                    _trigPos1.Y = _trigPos0.Y;
-                    _trigPos0.Y = temp;
+                    var temp = _maximum.Y;
+                    _maximum.Y = _minimum.Y;
+                    _minimum.Y = temp;
                 }
-                if (_trigPos0.Z > _trigPos1.Z)
+                if (_minimum.Z > _maximum.Z)
                 {
-                    float temp = _trigPos1.Z;
-                    _trigPos1.Z = _trigPos0.Z;
-                    _trigPos0.Z = temp;
+                    var temp = _maximum.Z;
+                    _maximum.Z = _minimum.Z;
+                    _minimum.Z = temp;
                 }
             }
 
-            Write(0x54 + Offset, _trigPos0.X);
-            Write(0x58 + Offset, _trigPos0.Y);
-            Write(0x5C + Offset, _trigPos0.Z);
-            Write(0x60 + Offset, _trigPos1.X);
-            Write(0x64 + Offset, _trigPos1.Y);
-            Write(0x68 + Offset, _trigPos1.Z);
-
             CreateTransformMatrix();
         }
-        
+
         [Category("Placement")]
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public override float ScaleX
+        public override AssetSingle ScaleX
         {
             get
             {
@@ -204,8 +369,7 @@ namespace IndustrialPark
         }
 
         [Category("Placement")]
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public override float ScaleY
+        public override AssetSingle ScaleY
         {
             get
             {
@@ -226,8 +390,7 @@ namespace IndustrialPark
         }
 
         [Category("Placement")]
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public override float ScaleZ
+        public override AssetSingle ScaleZ
         {
             get
             {
@@ -243,183 +406,15 @@ namespace IndustrialPark
             }
         }
 
-        private Vector3 _trigPos0;
-        private Vector3 _trigPos1;
-        private Vector3 _trigPos2;
-        private Vector3 _trigPos3;
-
-        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Position0X
+        public void SetPositions(float x0, AssetSingle y0, AssetSingle z0, AssetSingle x1, AssetSingle y1, AssetSingle z1)
         {
-            get => _trigPos0.X;
-            set
-            {
-                _trigPos0.X = value;
-                FixPosition();
-            }
-        }
-        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Position0Y
-        {
-            get => _trigPos0.Y;
-            set
-            {
-                _trigPos0.Y = value;
-                FixPosition();
-            }
-        }
-        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Position0Z
-        {
-            get => _trigPos0.Z;
-            set
-            {
-                _trigPos0.Z = value;
-                FixPosition();
-            }
-        }
-        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
-        [Description("Used only for Sphere and Cylinder.")]
-        public float Radius
-        {
-            get => Position1X;
-            set => Position1X = value;
-        }
-        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
-        [Description("Used only for Cylinder.")]
-        public float Height
-        {
-            get => Position1Y;
-            set => Position1Y = value;
-        }
-        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
-        [Description("Used only for Box.")]
-        public float Position1X
-        {
-            get => _trigPos1.X;
-            set
-            {
-                _trigPos1.X = value;
-                FixPosition();
-            }
-        }
-        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
-        [Description("Used only for Box.")]
-        public float Position1Y
-        {
-            get => _trigPos1.Y;
-            set
-            {
-                _trigPos1.Y = value;
-                FixPosition();
-            }
-        }
-        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
-        [Description("Used only for Box.")]
-        public float Position1Z
-        {
-            get => _trigPos1.Z;
-            set
-            {
-                _trigPos1.Z = value;
-                FixPosition();
-            }
-        }
-
-        public void SetPositions(float x0, float y0, float z0, float x1, float y1, float z1)
-        {
-            _trigPos0.X = x0;
-            _trigPos0.Y = y0;
-            _trigPos0.Z = z0;
-            _trigPos1.X = x1;
-            _trigPos1.Y = y1;
-            _trigPos1.Z = z1;
+            _minimum.X = x0;
+            _minimum.Y = y0;
+            _minimum.Z = z0;
+            _maximum.X = x1;
+            _maximum.Y = y1;
+            _maximum.Z = z1;
             FixPosition();
         }
-
-        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Position2X
-        {
-            get => _trigPos2.X;
-            set
-            {
-                _trigPos2.X = value;
-                Write(0x6C + Offset, _trigPos2.X);
-            }
-        }
-        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Position2Y
-        {
-            get => _trigPos2.Y;
-            set
-            {
-                _trigPos2.Y = value;
-                Write(0x70 + Offset, _trigPos2.Y);
-            }
-        }
-        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Position2Z
-        {
-            get => _trigPos2.Z;
-            set
-            {
-                _trigPos2.Z = value;
-                Write(0x74 + Offset, _trigPos2.Z);
-            }
-        }
-        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Position3X
-        {
-            get => _trigPos3.X;
-            set
-            {
-                _trigPos3.X = value;
-                Write(0x78 + Offset, _trigPos3.X);
-            }
-        }
-        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Position3Y
-        {
-            get => _trigPos3.Y;
-            set
-            {
-                _trigPos3.Y = value;
-                Write(0x7C + Offset, _trigPos3.Y);
-            }
-        }
-        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Position3Z
-        {
-            get => _trigPos3.Z;
-            set
-            {
-                _trigPos3.Z = value;
-                Write(0x80 + Offset, _trigPos3.Z);
-            }
-        }
-
-        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
-        public float DirectionX
-        {
-            get => ReadFloat(0x84 + Offset);
-            set => Write(0x84 + Offset, value);
-        }
-
-        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
-        public float DirectionY
-        {
-            get => ReadFloat(0x88 + Offset);
-            set => Write(0x88 + Offset, value);
-        }
-
-        [Category("Trigger"), TypeConverter(typeof(FloatTypeConverter))]
-        public float DirectionZ
-        {
-            get => ReadFloat(0x8C + Offset);
-            set => Write(0x8C + Offset, value);
-        }
-
-        [Category("Trigger")]
-        public DynamicTypeDescriptor TriggerFlags => IntFlagsDescriptor(0x90 + Offset);
     }
 }

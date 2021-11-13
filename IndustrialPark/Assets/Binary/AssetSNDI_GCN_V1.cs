@@ -1,9 +1,8 @@
-﻿using System;
+﻿using HipHopFile;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing.Design;
 using System.Linq;
-using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -12,12 +11,33 @@ namespace IndustrialPark
         public byte[] SoundHeader { get; set; }
         public AssetID SoundAssetID { get; set; }
 
-        public static int StructSize = 0x64;
-
         public EntrySoundInfo_GCN_V1()
         {
             SoundHeader = new byte[0x60];
             SoundAssetID = 0;
+        }
+
+        public EntrySoundInfo_GCN_V1(byte[] soundHeader, uint soundAssetID)
+        {
+            SoundHeader = soundHeader;
+            SoundAssetID = soundAssetID;
+        }
+
+        public EntrySoundInfo_GCN_V1(EndianBinaryReader reader)
+        {
+            SoundHeader = reader.ReadBytes(0x60);
+            SoundAssetID = reader.ReadUInt32();
+        }
+
+        public byte[] Serialize()
+        {
+            using (var writer = new EndianBinaryWriter(Endianness.Big))
+            {
+                writer.Write(SoundHeader);
+                writer.Write(SoundAssetID);
+
+                return writer.ToArray();
+            }
         }
 
         public override string ToString()
@@ -28,23 +48,88 @@ namespace IndustrialPark
 
     public class AssetSNDI_GCN_V1 : Asset
     {
-        public AssetSNDI_GCN_V1(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        public override string AssetInfo => "GameCube " + game.ToString() + " SNDI";
+
+        private const string categoryName = "Sound Info: GCN V1";
+
+        [Category(categoryName)]
+        public EntrySoundInfo_GCN_V1[] Entries_SND { get; set; }
+        [Category(categoryName)]
+        public EntrySoundInfo_GCN_V1[] Entries_SNDS { get; set; }
+        [Category(categoryName)]
+        public EntrySoundInfo_GCN_V1[] Entries_Sound_CIN { get; set; }
+
+        public AssetSNDI_GCN_V1(string assetName) : base(assetName, AssetType.SNDI)
+        {
+            Entries_SND = new EntrySoundInfo_GCN_V1[0];
+            Entries_SNDS = new EntrySoundInfo_GCN_V1[0];
+            Entries_Sound_CIN = new EntrySoundInfo_GCN_V1[0];
+        }
+
+        public AssetSNDI_GCN_V1(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            var reader = new EndianBinaryReader(AHDR.data, Endianness.Big);
+
+            int entriesSndAmount = reader.ReadInt32();
+            reader.ReadInt32();
+            int entriesSndsAmount = reader.ReadInt32();
+            int entriesCinAmount = game == Game.BFBB ? reader.ReadInt32() : 0;
+
+            Entries_SND = new EntrySoundInfo_GCN_V1[entriesSndAmount];
+            for (int i = 0; i < Entries_SND.Length; i++)
+                Entries_SND[i] = new EntrySoundInfo_GCN_V1(reader);
+
+            Entries_SNDS = new EntrySoundInfo_GCN_V1[entriesSndsAmount];
+            for (int i = 0; i < Entries_SNDS.Length; i++)
+                Entries_SNDS[i] = new EntrySoundInfo_GCN_V1(reader);
+
+            if (game == Game.BFBB)
+            {
+                Entries_Sound_CIN = new EntrySoundInfo_GCN_V1[entriesCinAmount];
+                for (int i = 0; i < Entries_Sound_CIN.Length; i++)
+                    Entries_Sound_CIN[i] = new EntrySoundInfo_GCN_V1(reader);
+            }
+            else
+                Entries_Sound_CIN = new EntrySoundInfo_GCN_V1[0];
+        }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Entries_SND.Length);
+                writer.Write(0xCDCDCDCD);
+                writer.Write(Entries_SNDS.Length);
+                if (game == Game.BFBB)
+                    writer.Write(Entries_Sound_CIN.Length);
+
+                foreach (var e in Entries_SND)
+                    writer.Write(e.Serialize());
+                foreach (var e in Entries_SNDS)
+                    writer.Write(e.Serialize());
+                if (game == Game.BFBB)
+                    foreach (var e in Entries_Sound_CIN)
+                        writer.Write(e.Serialize());
+
+                return writer.ToArray();
+            }
+        }
 
         public override bool HasReference(uint assetID)
         {
-            foreach (EntrySoundInfo_GCN_V1 a in Entries_SND)
+            foreach (var a in Entries_SND)
                 if (a.SoundAssetID == assetID)
                     return true;
-            
-            foreach (EntrySoundInfo_GCN_V1 a in Entries_SNDS)
+
+            foreach (var a in Entries_SNDS)
                 if (a.SoundAssetID == assetID)
                     return true;
-            
-            foreach (EntrySoundInfo_GCN_V1 a in Entries_Sound_CIN)
+
+            foreach (var a in Entries_Sound_CIN)
                 if (a.SoundAssetID == assetID)
                     return true;
-            
-            return base.HasReference(assetID);
+
+            return false;
         }
 
         public override void Verify(ref List<string> result)
@@ -71,176 +156,10 @@ namespace IndustrialPark
             }
         }
 
-        private int Entries_SND_amount
-        {
-            get => ReadInt(0x0);
-            set => Write(0x0, value);
-        }
-        [Browsable(false)]
-        public uint Padding
-        {
-            get => ReadUInt(0x4);
-            set => Write(0x4, value);
-        }
-        private int Entries_SNDS_amount
-        {
-            get => ReadInt(0x8);
-            set => Write(0x8, value);
-        }
-        private int Entries_SND_CIN_amount
-        {
-            get
-            {
-                if (game == Game.BFBB)
-                    return ReadInt(0xC);
-
-                return 0;
-            }
-            set
-            {
-                if (game == Game.BFBB)
-                    Write(0xC, value);
-            }
-        }
-
-        private int Entries_SND_StartOffset
-        {
-            get
-            {
-                if (game == Game.BFBB)
-                    return 0x10;
-                return 0xC;
-            }
-        }
-        private int Entries_SNDS_StartOffset
-        {
-            get => Entries_SND_StartOffset + Entries_SND_amount * EntrySoundInfo_GCN_V1.StructSize;
-        }
-        private int Entries_SND_CIN_StartOffset
-        {
-            get => Entries_SNDS_StartOffset + Entries_SNDS_amount * EntrySoundInfo_GCN_V1.StructSize;
-        }
-
-        [Category("Sound Info")]
-        public EntrySoundInfo_GCN_V1[] Entries_SND
-        {
-            get
-            {
-                List<EntrySoundInfo_GCN_V1> entries = new List<EntrySoundInfo_GCN_V1>();
-
-                for (int i = 0; i < Entries_SND_amount; i++)
-                {
-                    entries.Add(new EntrySoundInfo_GCN_V1()
-                    {
-                        SoundHeader = Data.Skip(Entries_SND_StartOffset + EntrySoundInfo_GCN_V1.StructSize * i).Take(0x60).ToArray(),
-                        SoundAssetID = ReadUInt(Entries_SND_StartOffset + EntrySoundInfo_GCN_V1.StructSize * i + 0x60)
-                    });
-                }
-
-                return entries.ToArray();
-            }
-            set
-            {
-                List<EntrySoundInfo_GCN_V1> newValues = value.ToList();
-
-                List<byte> newData = Data.Take(Entries_SND_StartOffset).ToList();
-                List<byte> restOfData = Data.Skip(Entries_SNDS_StartOffset).ToList();
-
-                foreach (EntrySoundInfo_GCN_V1 i in newValues)
-                {
-                    newData.AddRange(i.SoundHeader);
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.SoundAssetID)));
-                }
-
-                newData.AddRange(restOfData);
-
-                Data = newData.ToArray();
-                Entries_SND_amount = newValues.Count;
-            }
-        }
-
-        [Category("Sound Info")]
-        public EntrySoundInfo_GCN_V1[] Entries_SNDS
-        {
-            get
-            {
-                List<EntrySoundInfo_GCN_V1> entries = new List<EntrySoundInfo_GCN_V1>();
-
-                for (int i = 0; i < Entries_SNDS_amount; i++)
-                {
-                    entries.Add(new EntrySoundInfo_GCN_V1()
-                    {
-                        SoundHeader = Data.Skip(Entries_SNDS_StartOffset + EntrySoundInfo_GCN_V1.StructSize * i).Take(0x60).ToArray(),
-                        SoundAssetID = ReadUInt(Entries_SNDS_StartOffset + EntrySoundInfo_GCN_V1.StructSize * i + 0x60)
-                    });
-                }
-
-                return entries.ToArray();
-            }
-            set
-            {
-                List<EntrySoundInfo_GCN_V1> newValues = value.ToList();
-
-                List<byte> newData = Data.Take(Entries_SNDS_StartOffset).ToList();
-                List<byte> restOfData = Data.Skip(Entries_SND_CIN_StartOffset).ToList();
-
-                foreach (EntrySoundInfo_GCN_V1 i in newValues)
-                {
-                    newData.AddRange(i.SoundHeader);
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.SoundAssetID)));
-                }
-
-                newData.AddRange(restOfData);
-
-                Data = newData.ToArray();
-                Entries_SNDS_amount = newValues.Count;
-            }
-        }
-
-        [Category("Sound Info")]
-        public EntrySoundInfo_GCN_V1[] Entries_Sound_CIN
-        {
-            get
-            {
-                if (game == Game.Scooby)
-                    return new EntrySoundInfo_GCN_V1[0];
-
-                List<EntrySoundInfo_GCN_V1> entries = new List<EntrySoundInfo_GCN_V1>();
-
-                for (int i = 0; i < Entries_SND_CIN_amount; i++)
-                {
-                    entries.Add(new EntrySoundInfo_GCN_V1()
-                    {
-                        SoundHeader = Data.Skip(Entries_SND_CIN_StartOffset + EntrySoundInfo_GCN_V1.StructSize * i).Take(0x60).ToArray(),
-                        SoundAssetID = ReadUInt(Entries_SND_CIN_StartOffset + EntrySoundInfo_GCN_V1.StructSize * i + 0x60)
-                    });
-                }
-
-                return entries.ToArray();
-            }
-            set
-            {
-                if (game == Game.Scooby)
-                    return;
-
-                List<EntrySoundInfo_GCN_V1> newValues = value.ToList();
-
-                List<byte> newData = Data.Take(Entries_SND_CIN_StartOffset).ToList();
-
-                foreach (EntrySoundInfo_GCN_V1 i in newValues)
-                {
-                    newData.AddRange(i.SoundHeader);
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.SoundAssetID)));
-                }
-
-                Data = newData.ToArray();
-                Entries_SND_CIN_amount = newValues.Count;
-            }
-        }
-
         public void AddEntry(byte[] soundData, uint assetID, AssetType assetType, out byte[] finalData)
         {
             List<EntrySoundInfo_GCN_V1> entries;
+
             if (assetType == AssetType.SND)
                 entries = Entries_SND.ToList();
             else
@@ -248,11 +167,11 @@ namespace IndustrialPark
 
             for (int i = 0; i < entries.Count; i++)
                 if (entries[i].SoundAssetID == assetID)
-                    entries.Remove(entries[i]);
+                    entries.Remove(entries[i--]);
 
-            entries.Add(new EntrySoundInfo_GCN_V1() { SoundAssetID = assetID, SoundHeader = soundData.Take(EntrySoundInfo_GCN_V1.StructSize - 4).ToArray() });
+            entries.Add(new EntrySoundInfo_GCN_V1(soundData.Take(0x60).ToArray(), assetID));
 
-            finalData = soundData.Skip(EntrySoundInfo_GCN_V1.StructSize - 4).ToArray();
+            finalData = soundData.Skip(0x60).ToArray();
 
             if (assetType == AssetType.SND)
                 Entries_SND = entries.ToArray();
@@ -263,6 +182,7 @@ namespace IndustrialPark
         public void RemoveEntry(uint assetID, AssetType assetType)
         {
             List<EntrySoundInfo_GCN_V1> entries;
+
             if (assetType == AssetType.SND)
                 entries = Entries_SND.ToList();
             else
@@ -270,7 +190,7 @@ namespace IndustrialPark
 
             for (int i = 0; i < entries.Count; i++)
                 if (entries[i].SoundAssetID == assetID)
-                    entries.Remove(entries[i]);
+                    entries.Remove(entries[i--]);
 
             if (assetType == AssetType.SND)
                 Entries_SND = entries.ToArray();
@@ -303,36 +223,36 @@ namespace IndustrialPark
         {
             {
                 // SND
-                List<EntrySoundInfo_GCN_V1> entriesSND = Entries_SND.ToList();
-                List<uint> assetIDsAlreadyPresentSND = new List<uint>();
-                foreach (EntrySoundInfo_GCN_V1 entrySND in entriesSND)
-                    assetIDsAlreadyPresentSND.Add(entrySND.SoundAssetID);
-                foreach (EntrySoundInfo_GCN_V1 entrySND in assetSNDI.Entries_SND)
-                    if (!assetIDsAlreadyPresentSND.Contains(entrySND.SoundAssetID))
-                        entriesSND.Add(entrySND);
-                Entries_SND = entriesSND.ToArray();
+                var entries = Entries_SND.ToList();
+                var assetIDsAlreadyPresent = (from entry in entries select (uint)entry.SoundAssetID).ToList();
+
+                foreach (var entry in assetSNDI.Entries_SND)
+                    if (!assetIDsAlreadyPresent.Contains(entry.SoundAssetID))
+                        entries.Add(entry);
+
+                Entries_SND = entries.ToArray();
             }
             {
                 // SNDS
-                List<EntrySoundInfo_GCN_V1> entriesSNDS = Entries_SNDS.ToList();
-                List<uint> assetIDsAlreadyPresentSNDS = new List<uint>();
-                foreach (EntrySoundInfo_GCN_V1 entrySNDS in entriesSNDS)
-                    assetIDsAlreadyPresentSNDS.Add(entrySNDS.SoundAssetID);
-                foreach (EntrySoundInfo_GCN_V1 entrySNDS in assetSNDI.Entries_SNDS)
-                    if (!assetIDsAlreadyPresentSNDS.Contains(entrySNDS.SoundAssetID))
-                        entriesSNDS.Add(entrySNDS);
-                Entries_SNDS = entriesSNDS.ToArray();
+                var entries = Entries_SNDS.ToList();
+                var assetIDsAlreadyPresent = (from entry in entries select (uint)entry.SoundAssetID).ToList();
+
+                foreach (var entry in assetSNDI.Entries_SNDS)
+                    if (!assetIDsAlreadyPresent.Contains(entry.SoundAssetID))
+                        entries.Add(entry);
+
+                Entries_SNDS = entries.ToArray();
             }
             {
                 // Sound_CIN
-                List<EntrySoundInfo_GCN_V1> entriesSound_CIN = Entries_Sound_CIN.ToList();
-                List<uint> assetIDsAlreadyPresentSound_CIN = new List<uint>();
-                foreach (EntrySoundInfo_GCN_V1 entrySound_CIN in entriesSound_CIN)
-                    assetIDsAlreadyPresentSound_CIN.Add(entrySound_CIN.SoundAssetID);
-                foreach (EntrySoundInfo_GCN_V1 entrySound_CIN in assetSNDI.Entries_Sound_CIN)
-                    if (!assetIDsAlreadyPresentSound_CIN.Contains(entrySound_CIN.SoundAssetID))
-                        entriesSound_CIN.Add(entrySound_CIN);
-                Entries_Sound_CIN = entriesSound_CIN.ToArray();
+                var entries = Entries_Sound_CIN.ToList();
+                var assetIDsAlreadyPresent = (from entry in entries select (uint)entry.SoundAssetID).ToList();
+
+                foreach (var entry in assetSNDI.Entries_Sound_CIN)
+                    if (!assetIDsAlreadyPresent.Contains(entry.SoundAssetID))
+                        entries.Add(entry);
+
+                Entries_Sound_CIN = entries.ToArray();
             }
         }
 
@@ -340,27 +260,27 @@ namespace IndustrialPark
         {
             {
                 // SND
-                var entriesSND = Entries_SND.ToList();
-                for (int i = 0; i < entriesSND.Count; i++)
-                    if (!assetIDs.Contains(entriesSND[i].SoundAssetID))
-                        entriesSND.RemoveAt(i--);
-                Entries_SND = entriesSND.ToArray();
+                var entries = Entries_SND.ToList();
+                for (int i = 0; i < entries.Count; i++)
+                    if (!assetIDs.Contains(entries[i].SoundAssetID))
+                        entries.RemoveAt(i--);
+                Entries_SND = entries.ToArray();
             }
             {
                 // SNDS
-                var entriesSNDS = Entries_SNDS.ToList();
-                for (int i = 0; i < entriesSNDS.Count; i++)
-                    if (!assetIDs.Contains(entriesSNDS[i].SoundAssetID))
-                        entriesSNDS.RemoveAt(i--);
-                Entries_SNDS = entriesSNDS.ToArray();
+                var entries = Entries_SNDS.ToList();
+                for (int i = 0; i < entries.Count; i++)
+                    if (!assetIDs.Contains(entries[i].SoundAssetID))
+                        entries.RemoveAt(i--);
+                Entries_SNDS = entries.ToArray();
             }
             {
                 // Sound_CIN
-                var entriesSNDS_CIN = Entries_Sound_CIN.ToList();
-                for (int i = 0; i < entriesSNDS_CIN.Count; i++)
-                    if (!assetIDs.Contains(entriesSNDS_CIN[i].SoundAssetID))
-                        entriesSNDS_CIN.RemoveAt(i--);
-                Entries_Sound_CIN = entriesSNDS_CIN.ToArray();
+                var entries = Entries_Sound_CIN.ToList();
+                for (int i = 0; i < entries.Count; i++)
+                    if (!assetIDs.Contains(entries[i].SoundAssetID))
+                        entries.RemoveAt(i--);
+                Entries_Sound_CIN = entries.ToArray();
             }
         }
     }

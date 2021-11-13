@@ -1,14 +1,42 @@
-﻿using System.Collections.Generic;
+﻿using HipHopFile;
+using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
     public class DynaHudText : DynaHud
     {
-        public string Note => "Version is always 1";
+        protected override short constVersion => 1;
 
-        public override int StructSize => 0x20;
+        private const string dynaCategoryName = "hud:text";
 
-        public DynaHudText(AssetDYNA asset) : base(asset) { }
+        [Category(dynaCategoryName)]
+        public AssetID TextBoxID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID TextID { get; set; }
+
+        public DynaHudText(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.hud__text, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaHudEnd;
+
+                TextBoxID = reader.ReadUInt32();
+                TextID = reader.ReadUInt32();
+            }
+        }
+
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeDynaHud(endianness));
+                writer.Write(TextBoxID);
+                writer.Write(TextID);
+
+                return writer.ToArray();
+            }
+        }
 
         public override bool HasReference(uint assetID)
         {
@@ -20,19 +48,9 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
-            Asset.Verify(TextBoxID, ref result);
-            Asset.Verify(TextID, ref result);
-        }
-        
-        public AssetID TextBoxID
-        {
-            get => ReadUInt(0x18);
-            set => Write(0x18, value);
-        }
-        public AssetID TextID
-        {
-            get => ReadUInt(0x1C);
-            set => Write(0x1C, value);
+            Verify(TextBoxID, ref result);
+            Verify(TextID, ref result);
+            base.Verify(ref result);
         }
     }
 }

@@ -6,31 +6,43 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
-using System.Linq;
 
 namespace IndustrialPark
 {
-    public class AssetRenderWareModel : Asset
+    public class AssetRenderWareModel : AssetWithData
     {
         protected RenderWareModelFile model;
 
-        public AssetRenderWareModel(Section_AHDR AHDR, Game game, Platform platform, SharpRenderer renderer) : base(AHDR, game, platform)
+        public override string AssetInfo => RwVersion(renderWareVersion) + " " + base.AssetInfo;
+
+        public AssetRenderWareModel(string assetName, AssetType assetType, byte[] data, SharpRenderer renderer) : base(assetName, assetType, data)
+        {
+            if (renderer != null)
+                Setup(renderer);
+        }
+
+        public AssetRenderWareModel(Section_AHDR AHDR, Game game, Endianness endianness, SharpRenderer renderer) : base(AHDR, game, endianness)
         {
             Setup(renderer);
         }
+
+        public override byte[] Serialize(Game game, Endianness endianness) => Data;
 
         public virtual void Setup(SharpRenderer renderer)
         {
             if (model != null)
                 model.Dispose();
-            
-            #if !DEBUG
+
+#if !DEBUG
             try
             {
-            #endif
-                ReadFileMethods.treatStuffAsByteArray = false;
-                model = new RenderWareModelFile(renderer.device, ReadFileMethods.ReadRenderWareFile(Data));
-                SetupAtomicFlagsForRender();
+#endif
+            ReadFileMethods.treatStuffAsByteArray = false;
+            var rwSecArray = ReadFileMethods.ReadRenderWareFile(Data);
+            model = new RenderWareModelFile(renderer.device, rwSecArray);
+            if (rwSecArray.Length > 0)
+                renderWareVersion = rwSecArray[0].renderWareVersion;
+            SetupAtomicFlagsForRender();
 #if !DEBUG
             }
             catch (Exception ex)
@@ -45,10 +57,8 @@ namespace IndustrialPark
 
         public RenderWareModelFile GetRenderWareModelFile() => model;
 
-        public bool HasRenderWareModelFile() => model != null;
-
         [Category("Model Data"), Description("If IsNativeData is true, you cannot use the Export function.")]
-        public bool IsNativeData => model != null ? model.isNativeData : false;
+        public bool IsNativeData => model != null && model.isNativeData;
 
         [Browsable(false)]
         public string[] Textures
@@ -77,7 +87,7 @@ namespace IndustrialPark
             foreach (string s in Textures)
                 if (Functions.BKDRHash(s + ".RW3") == assetID || Functions.BKDRHash(s) == assetID)
                     return true;
-            
+
             return base.HasReference(assetID);
         }
 
@@ -89,8 +99,8 @@ namespace IndustrialPark
             foreach (string s in Textures)
                 if (!Program.MainForm.AssetExists(Functions.BKDRHash(s + ".RW3")) && !Program.MainForm.AssetExists(Functions.BKDRHash(s)))
                     result.Add($"I haven't found texture {s}, used by the model. This might just mean I haven't looked properly for it, though.");
-            
-            if (Program.MainForm.WhoTargets(AHDR.assetID).Count == 0)
+
+            if (Program.MainForm.WhoTargets(assetID).Count == 0)
                 result.Add("Model appears to be unused, as no other asset references it. This might just mean I haven't looked properly for an asset which does does, though.");
         }
 
@@ -135,7 +145,7 @@ namespace IndustrialPark
                     if (rws is Clump_0010 clump)
                         foreach (Geometry_000F geo in clump.geometryList.geometryList)
                             materials.AddRange(geo.materialList.materialList);
-                
+
                 return materials.ToArray();
             }
             set
@@ -168,7 +178,7 @@ namespace IndustrialPark
                                 var plg = new MaterialEffectsPLG_0120() { value = MaterialEffectType.BumpMap, isAtomicExtension = true };
 
                                 bool newMatEffsFound = false;
-                                for (int j = 0; j < clump.atomicList[i].atomicExtension.extensionSectionList.Count; j++)                                
+                                for (int j = 0; j < clump.atomicList[i].atomicExtension.extensionSectionList.Count; j++)
                                     if (clump.atomicList[i].atomicExtension.extensionSectionList[j] is MaterialEffectsPLG_0120)
                                     {
                                         clump.atomicList[i].atomicExtension.extensionSectionList[j] = plg;
@@ -187,12 +197,12 @@ namespace IndustrialPark
                             }
                         }
                     }
-                
+
                 ModelAsRWSections = sections;
                 Setup(Program.MainForm.renderer);
             }
         }
-        
+
         protected bool[] _dontDrawMeshNumber;
 
         [Category("Model Data")]
@@ -262,7 +272,7 @@ namespace IndustrialPark
                                 var oldColor = clump.geometryList.geometryList[i].geometryStruct.vertexColors[j];
 
                                 var newColor = PerformOperationAndClamp(
-                                    new Vector4((float)oldColor.R / 255, (float)oldColor.G / 255, (float)oldColor.B / 255, (float)oldColor.A / 255), 
+                                    new Vector4((float)oldColor.R / 255, (float)oldColor.G / 255, (float)oldColor.B / 255, (float)oldColor.A / 255),
                                     color, operation);
 
                                 clump.geometryList.geometryList[i].geometryStruct.vertexColors[j] = new RenderWareFile.Color(
@@ -284,7 +294,7 @@ namespace IndustrialPark
                 PerformOperationAndClamp(v1.Z, v2.Z, op),
                 PerformOperationAndClamp(v1.W, v2.W, op));
         }
-        
+
         private float PerformOperationAndClamp(float v1, float v2, Operation op)
         {
             float value;

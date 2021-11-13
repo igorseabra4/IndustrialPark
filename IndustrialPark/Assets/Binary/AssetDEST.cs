@@ -1,217 +1,179 @@
-﻿using System.Collections.Generic;
+﻿using HipHopFile;
+using System.Collections.Generic;
 using System.ComponentModel;
-using HipHopFile;
 
 namespace IndustrialPark
 {
-    public class AssetDEST : Asset
+    public class DestState : GenericAssetDataContainer
     {
-        public AssetDEST(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        public int percent { get; set; }
+        public AssetID Model_AssetID { get; set; }
+        public AssetID Shrapnel_Destroy_AssetID { get; set; }
+        public AssetID Shrapnel_Hit_AssetID { get; set; }
+        public AssetID SoundGroup_Idle_AssetID { get; set; }
+        public AssetID SoundGroup_Fx_AssetID { get; set; }
+        public AssetID SoundGroup_Hit_AssetID { get; set; }
+        public AssetID SoundGroup_Fx_Switch_AssetID { get; set; }
+        public AssetID SoundGroup_Hit_Switch_AssetID { get; set; }
+        public AssetID Rumble_Hit_AssetID { get; set; }
+        public AssetID Rumble_Switch_AssetID { get; set; }
+        public int FxFlags { get; set; }
+        public int nAnimations { get; set; }
 
-        private const string destName = "Destructible";
+        public DestState() { }
+        public DestState(EndianBinaryReader reader)
+        {
+            percent = reader.ReadInt32();
+            Model_AssetID = reader.ReadUInt32();
+            Shrapnel_Destroy_AssetID = reader.ReadUInt32();
+            Shrapnel_Hit_AssetID = reader.ReadUInt32();
+            SoundGroup_Idle_AssetID = reader.ReadUInt32();
+            SoundGroup_Fx_AssetID = reader.ReadUInt32();
+            SoundGroup_Hit_AssetID = reader.ReadUInt32();
+            SoundGroup_Fx_Switch_AssetID = reader.ReadUInt32();
+            SoundGroup_Hit_Switch_AssetID = reader.ReadUInt32();
+            Rumble_Hit_AssetID = reader.ReadUInt32();
+            Rumble_Switch_AssetID = reader.ReadUInt32();
+            FxFlags = reader.ReadInt32();
+            nAnimations = reader.ReadInt32();
+        }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(percent);
+                writer.Write(Model_AssetID);
+                writer.Write(Shrapnel_Destroy_AssetID);
+                writer.Write(Shrapnel_Hit_AssetID);
+                writer.Write(SoundGroup_Idle_AssetID);
+                writer.Write(SoundGroup_Fx_AssetID);
+                writer.Write(SoundGroup_Hit_AssetID);
+                writer.Write(SoundGroup_Fx_Switch_AssetID);
+                writer.Write(SoundGroup_Hit_Switch_AssetID);
+                writer.Write(Rumble_Hit_AssetID);
+                writer.Write(Rumble_Switch_AssetID);
+                writer.Write(FxFlags);
+                writer.Write(nAnimations);
+
+                return writer.ToArray();
+            }
+        }
 
         public override bool HasReference(uint assetID) =>
-            MINF_AssetID == assetID || Model_AssetID == assetID || SHRP_AssetID == assetID || base.HasReference(assetID);
-        
+            Model_AssetID == assetID ||
+            Shrapnel_Destroy_AssetID == assetID ||
+            Shrapnel_Hit_AssetID == assetID ||
+            SoundGroup_Idle_AssetID == assetID ||
+            SoundGroup_Fx_AssetID == assetID ||
+            SoundGroup_Hit_AssetID == assetID ||
+            SoundGroup_Fx_Switch_AssetID == assetID ||
+            SoundGroup_Hit_Switch_AssetID == assetID ||
+            Rumble_Hit_AssetID == assetID ||
+            Rumble_Switch_AssetID == assetID;
+    }
+
+    public class AssetDEST : Asset
+    {
+        private const string categoryName = "Destructible";
+
+        [Category(categoryName)]
+        public AssetID MINF_AssetID { get; set; }
+        [Category(categoryName)]
+        public int HitPoints { get; set; }
+        [Category(categoryName)]
+        public int HitFilter { get; set; }
+        [Category(categoryName)]
+        public int LaunchFlag { get; set; }
+        [Category(categoryName)]
+        public int Behavior { get; set; }
+        [Category(categoryName)]
+        public FlagBitmask Flags { get; set; } = IntFlagsDescriptor();
+        [Category(categoryName)]
+        public AssetID SoundGroup_Idle_AssetID { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Respawn { get; set; }
+        [Category(categoryName)]
+        public byte TargetPriority { get; set; }
+        [Category(categoryName)]
+        public DestState[] States { get; set; }
+        [Category(categoryName)]
+        public AssetID Unknown1 { get; set; }
+        [Category(categoryName)]
+        public AssetID? Unknown2 { get; set; }
+
+        public AssetDEST(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                MINF_AssetID = reader.ReadUInt32();
+                int numStates = reader.ReadInt32();
+                HitPoints = reader.ReadInt32();
+                HitFilter = reader.ReadInt32();
+                LaunchFlag = reader.ReadInt32();
+                Behavior = reader.ReadInt32();
+                Flags.FlagValueInt = reader.ReadUInt32();
+                SoundGroup_Idle_AssetID = reader.ReadUInt32();
+                Respawn = reader.ReadSingle();
+                TargetPriority = reader.ReadByte();
+                reader.ReadByte();
+                reader.ReadByte();
+                reader.ReadByte();
+                States = new DestState[numStates];
+                for (int i = 0; i < States.Length; i++)
+                    States[i] = new DestState(reader);
+                Unknown1 = reader.ReadUInt32();
+                if (!reader.EndOfStream)
+                    Unknown2 = reader.ReadUInt32();
+                else
+                    Unknown2 = null;
+            }
+        }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(MINF_AssetID);
+                writer.Write(States.Length);
+                writer.Write(HitPoints);
+                writer.Write(HitFilter);
+                writer.Write(LaunchFlag);
+                writer.Write(Behavior);
+                writer.Write(Flags.FlagValueInt);
+                writer.Write(SoundGroup_Idle_AssetID);
+                writer.Write(Respawn);
+                writer.Write(TargetPriority);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+                foreach (var state in States)
+                    writer.Write(state.Serialize(game, endianness));
+                writer.Write(Unknown1);
+                if (Unknown2.HasValue)
+                    writer.Write(Unknown2.Value);
+
+                return writer.ToArray();
+            }
+        }
+
+        public override bool HasReference(uint assetID)
+        {
+            if (MINF_AssetID == assetID)
+                return true;
+            foreach (var s in States)
+                if (s.HasReference(assetID))
+                    return true;
+
+            return false;
+        }
+
         public override void Verify(ref List<string> result)
         {
             Verify(MINF_AssetID, ref result);
 
             if (MINF_AssetID == 0)
                 result.Add("DEST with MINF_AssetID set to 0");
-            if (Model_AssetID == 0)
-                result.Add("DEST with Model_AssetID set to 0");
-            if (SHRP_AssetID == 0)
-                result.Add("DEST with SHRP_AssetID set to 0");
-        }
-
-        [Category(destName)]
-        public AssetID MINF_AssetID
-        {
-            get => ReadUInt(0x00);
-            set => Write(0x00, value);
-        }
-
-        [Category(destName)]
-        public int UnknownInt_04
-        {
-            get => ReadInt(0x04);
-            set => Write(0x04, value);
-        }
-
-        [Category(destName)]
-        public int UnknownInt_08
-        {
-            get => ReadInt(0x08);
-            set => Write(0x08, value);
-        }
-
-        [Category(destName)]
-        public int UnknownInt_0C
-        {
-            get => ReadInt(0x0C);
-            set => Write(0x0C, value);
-        }
-
-        [Category(destName)]
-        public int UnknownInt_10
-        {
-            get => ReadInt(0x10);
-            set => Write(0x10, value);
-        }
-
-        [Category(destName)]
-        public int UnknownInt_14
-        {
-            get => ReadInt(0x14);
-            set => Write(0x14, value);
-        }
-
-        [Category(destName)]
-        public int UnknownInt_18
-        {
-            get => ReadInt(0x18);
-            set => Write(0x18, value);
-        }
-
-        [Category(destName)]
-        public int UnknownInt_1C
-        {
-            get => ReadInt(0x1C);
-            set => Write(0x1C, value);
-        }
-
-        [Category(destName)]
-        public int UnknownInt_20
-        {
-            get => ReadInt(0x20);
-            set => Write(0x20, value);
-        }
-
-        [Category(destName)]
-        public byte UnknownByte_24
-        {
-            get => ReadByte(0x24);
-            set => Write(0x24, value);
-        }
-
-        [Category(destName)]
-        public byte UnknownByte_25
-        {
-            get => ReadByte(0x25);
-            set => Write(0x25, value);
-        }
-
-        [Category(destName)]
-        public byte UnknownByte_26
-        {
-            get => ReadByte(0x26);
-            set => Write(0x26, value);
-        }
-
-        [Category(destName)]
-        public byte UnknownByte_27
-        {
-            get => ReadByte(0x27);
-            set => Write(0x27, value);
-        }
-
-        [Category(destName)]
-        public int UnknownInt_28
-        {
-            get => ReadInt(0x28);
-            set => Write(0x28, value);
-        }
-
-        [Category(destName)]
-        public AssetID Model_AssetID
-        {
-            get => ReadUInt(0x2C);
-            set => Write(0x2C, value);
-        }
-
-        [Category(destName)]
-        public AssetID SHRP_AssetID
-        {
-            get => ReadUInt(0x30);
-            set => Write(0x30, value);
-        }
-
-        [Category(destName)]
-        public int UnknownInt_34
-        {
-            get => ReadInt(0x34);
-            set => Write(0x34, value);
-        }
-
-        [Category(destName)]
-        public int UnknownInt_38
-        {
-            get => ReadInt(0x38);
-            set => Write(0x38, value);
-        }
-
-        [Category(destName)]
-        public int UnknownInt_3C
-        {
-            get => ReadInt(0x3C);
-            set => Write(0x3C, value);
-        }
-
-        [Category(destName)]
-        public int UnknownInt_40
-        {
-            get => ReadInt(0x40);
-            set => Write(0x40, value);
-        }
-
-        [Category(destName)]
-        public int UnknownInt_44
-        {
-            get => ReadInt(0x44);
-            set => Write(0x44, value);
-        }
-
-        [Category(destName)]
-        public int UnknownInt_48
-        {
-            get => ReadInt(0x48);
-            set => Write(0x48, value);
-        }
-
-        [Category(destName)]
-        public int UnknownInt_4C
-        {
-            get => ReadInt(0x4C);
-            set => Write(0x4C, value);
-        }
-
-        [Category(destName)]
-        public int UnknownInt_50
-        {
-            get => ReadInt(0x50);
-            set => Write(0x50, value);
-        }
-
-        [Category(destName)]
-        public int UnknownInt_54
-        {
-            get => ReadInt(0x54);
-            set => Write(0x54, value);
-        }
-
-        [Category(destName)]
-        public int UnknownInt_58
-        {
-            get => ReadInt(0x58);
-            set => Write(0x58, value);
-        }
-
-        [Category(destName)]
-        public AssetID UnknownInt_5C
-        {
-            get => ReadUInt(0x5C);
-            set => Write(0x5C, value);
         }
     }
 }

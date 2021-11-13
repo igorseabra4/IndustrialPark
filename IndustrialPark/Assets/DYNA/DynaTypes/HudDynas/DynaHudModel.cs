@@ -1,32 +1,43 @@
-﻿using System.Collections.Generic;
+﻿using HipHopFile;
+using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
     public class DynaHudModel : DynaHud
     {
-        public string Note => "Version is always 1";
+        protected override short constVersion => 1;
 
-        public override int StructSize => 0x1C;
+        [Category("hud:model"),
+            Description("It needs to be a hash of the model's name without the .dff or else it won't play the spinning animation for some reason")]
+        public AssetID Model_AssetID { get; set; }
 
-        public DynaHudModel(AssetDYNA asset) : base(asset) { }
-
-        public override bool HasReference(uint assetID)
+        public DynaHudModel(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.hud__model, game, endianness)
         {
-            if (Model_AssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaHudEnd;
+                Model_AssetID = reader.ReadUInt32();
+            }
         }
+
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeDynaHud(endianness));
+                writer.Write(Model_AssetID);
+
+                return writer.ToArray();
+            }
+        }
+
+        public override bool HasReference(uint assetID) => Model_AssetID == assetID || base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {
-            Asset.Verify(Model_AssetID, ref result);
-        }
-                
-        public AssetID Model_AssetID
-        {
-            get => ReadUInt(0x18);
-            set => Write(0x18, value);
+            Verify(Model_AssetID, ref result);
+            base.Verify(ref result);
         }
     }
 }

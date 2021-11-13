@@ -52,7 +52,7 @@ namespace IndustrialPark
                 if (a is AssetSNDI_GCN_V1 SNDI_G1)
                 {
                     if (SNDI_G1.HasReference(assetID))
-                        SNDI_G1.RemoveEntry(assetID, GetFromAssetID(assetID).AHDR.assetType);
+                        SNDI_G1.RemoveEntry(assetID, GetFromAssetID(assetID).assetType);
                 }
                 else if (a is AssetSNDI_GCN_V2 SNDI_G2)
                 {
@@ -62,12 +62,12 @@ namespace IndustrialPark
                 else if (a is AssetSNDI_XBOX SNDI_X)
                 {
                     if (SNDI_X.HasReference(assetID))
-                        SNDI_X.RemoveEntry(assetID, GetFromAssetID(assetID).AHDR.assetType);
+                        SNDI_X.RemoveEntry(assetID, GetFromAssetID(assetID).assetType);
                 }
                 else if (a is AssetSNDI_PS2 SNDI_P)
                 {
                     if (SNDI_P.HasReference(assetID))
-                        SNDI_P.RemoveEntry(assetID, GetFromAssetID(assetID).AHDR.assetType);
+                        SNDI_P.RemoveEntry(assetID, GetFromAssetID(assetID).assetType);
                 }
             }
         }
@@ -79,7 +79,7 @@ namespace IndustrialPark
                 if (a is AssetSNDI_GCN_V1 SNDI_G1)
                 {
                     if (SNDI_G1.HasReference(assetID))
-                        return SNDI_G1.GetHeader(assetID, GetFromAssetID(assetID).AHDR.assetType);
+                        return SNDI_G1.GetHeader(assetID, GetFromAssetID(assetID).assetType);
                 }
                 else if (a is AssetSNDI_GCN_V2 SNDI_G2)
                 {
@@ -89,12 +89,12 @@ namespace IndustrialPark
                 else if (a is AssetSNDI_XBOX SNDI_X)
                 {
                     if (SNDI_X.HasReference(assetID))
-                        return SNDI_X.GetHeader(assetID, GetFromAssetID(assetID).AHDR.assetType);
+                        return SNDI_X.GetHeader(assetID, GetFromAssetID(assetID).assetType);
                 }
                 else if (a is AssetSNDI_PS2 SNDI_P)
                 {
                     if (SNDI_P.HasReference(assetID))
-                        return SNDI_P.GetHeader(assetID, GetFromAssetID(assetID).AHDR.assetType);
+                        return SNDI_P.GetHeader(assetID, GetFromAssetID(assetID).assetType);
                 }
             }
 

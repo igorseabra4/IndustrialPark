@@ -1,21 +1,34 @@
-﻿using System.Collections.Generic;
+﻿using HipHopFile;
 using System.ComponentModel;
-using HipHopFile;
 
 namespace IndustrialPark
 {
+    public enum EnemyCastNCrewType : uint
+    {
+        gram_bind = 0x470806A1,
+        sb_bat_bind = 0xFF2ABE7F
+    }
+
     public class DynaEnemyCastNCrew : DynaEnemySB
     {
-        public string Note => "Version is always 1";
+        protected override short constVersion => 1;
 
-        public override int StructSize => 0x50;
-
-        public DynaEnemyCastNCrew(AssetDYNA asset) : base(asset) { }
-        
-        public EnemyCastNCrewType Type
+        [Category("Enemy:SB:CastNCrew")]
+        public EnemyCastNCrewType CastNCrewType
         {
             get => (EnemyCastNCrewType)(uint)Model_AssetID;
             set => Model_AssetID = (uint)value;
+        }
+
+        public DynaEnemyCastNCrew(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__CastNCrew, game, endianness) { }
+
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntityDyna(endianness));
+                return writer.ToArray();
+            }
         }
     }
 }

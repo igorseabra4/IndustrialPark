@@ -1,15 +1,81 @@
-﻿using System.Collections.Generic;
+﻿using HipHopFile;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaGObjectTaskBox : DynaBase
+    public class DynaGObjectTaskBox : AssetDYNA
     {
-        public string Note => "Version is always 2";
+        private const string dynaCategoryName = "game_object:task_box";
 
-        public override int StructSize => 0x24;
+        protected override short constVersion => 2;
 
-        public DynaGObjectTaskBox(AssetDYNA asset) : base(asset) { }
+        [Category(dynaCategoryName)]
+        public AssetByte Persistent { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte Loop { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte Enable { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte Retry { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID TalkBox_AssetID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID NextTaskBox_AssetID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Begin_TextID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Description_TextID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Reminder_TextID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Success_TextID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Failure_TextID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID End_TextID { get; set; }
+
+        public DynaGObjectTaskBox(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__task_box, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
+
+                Persistent = reader.ReadByte();
+                Loop = reader.ReadByte();
+                Enable = reader.ReadByte();
+                Retry = reader.ReadByte();
+                TalkBox_AssetID = reader.ReadUInt32();
+                NextTaskBox_AssetID = reader.ReadUInt32();
+                Begin_TextID = reader.ReadUInt32();
+                Description_TextID = reader.ReadUInt32();
+                Reminder_TextID = reader.ReadUInt32();
+                Success_TextID = reader.ReadUInt32();
+                Failure_TextID = reader.ReadUInt32();
+                End_TextID = reader.ReadUInt32();
+            }
+        }
+
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Persistent);
+                writer.Write(Loop);
+                writer.Write(Enable);
+                writer.Write(Retry);
+                writer.Write(TalkBox_AssetID);
+                writer.Write(NextTaskBox_AssetID);
+                writer.Write(Begin_TextID);
+                writer.Write(Description_TextID);
+                writer.Write(Reminder_TextID);
+                writer.Write(Success_TextID);
+                writer.Write(Failure_TextID);
+                writer.Write(End_TextID);
+
+                return writer.ToArray();
+            }
+        }
 
         public override bool HasReference(uint assetID)
         {
@@ -35,79 +101,15 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
-            Asset.Verify(TalkBox_AssetID, ref result);
-            Asset.Verify(NextTaskBox_AssetID, ref result);
-            Asset.Verify(Begin_TextID, ref result);
-            Asset.Verify(Description_TextID, ref result);
-            Asset.Verify(Reminder_TextID, ref result);
-            Asset.Verify(Success_TextID, ref result);
-            Asset.Verify(Failure_TextID, ref result);
-            Asset.Verify(End_TextID, ref result);
-        }
-        
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Persistent
-        {
-            get => ReadByte(0x00);
-            set => Write(0x00, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Loop
-        {
-            get => ReadByte(0x01);
-            set => Write(0x01, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Enable
-        {
-            get => ReadByte(0x02);
-            set => Write(0x02, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Retry
-        {
-            get => ReadByte(0x03);
-            set => Write(0x03, value);
-        }
-        public AssetID TalkBox_AssetID
-        {
-            get => ReadUInt(0x04);
-            set => Write(0x04, value);
-        }
-        public AssetID NextTaskBox_AssetID
-        {
-            get => ReadUInt(0x08);
-            set => Write(0x08, value);
-        }
-        public AssetID Begin_TextID
-        {
-            get => ReadUInt(0x0C);
-            set => Write(0x0C, value);
-        }
-        public AssetID Description_TextID
-        {
-            get => ReadUInt(0x10);
-            set => Write(0x10, value);
-        }
-        public AssetID Reminder_TextID
-        {
-            get => ReadUInt(0x14);
-            set => Write(0x14, value);
-        }
-        public AssetID Success_TextID
-        {
-            get => ReadUInt(0x18);
-            set => Write(0x18, value);
-        }
-        public AssetID Failure_TextID
-        {
-            get => ReadUInt(0x1C);
-            set => Write(0x1C, value);
-        }
-        public AssetID End_TextID
-        {
-            get => ReadUInt(0x20);
-            set => Write(0x20, value);
+            Verify(TalkBox_AssetID, ref result);
+            Verify(NextTaskBox_AssetID, ref result);
+            Verify(Begin_TextID, ref result);
+            Verify(Description_TextID, ref result);
+            Verify(Reminder_TextID, ref result);
+            Verify(Success_TextID, ref result);
+            Verify(Failure_TextID, ref result);
+            Verify(End_TextID, ref result);
+            base.Verify(ref result);
         }
     }
 }

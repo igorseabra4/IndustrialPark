@@ -1,109 +1,73 @@
-﻿using HipHopFile;
+﻿using AssetEditorColors;
+using HipHopFile;
 using System.ComponentModel;
-using System.Drawing.Design;
-using AssetEditorColors;
 
 namespace IndustrialPark
 {
     public class AssetFOG : BaseAsset
     {
-        public AssetFOG(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        private const string categoryName = "Fog";
 
-        protected override int EventStartOffset => 0x24;
-        
-        [Category("Fog"), Editor(typeof(MyColorEditor), typeof(UITypeEditor)), DisplayName("End Color (R, G, B)")]
-        public MyColor BackgroundColor
+        [Category(categoryName)]
+        public AssetColor StartColor { get; set; }
+        [Category(categoryName)]
+        public AssetColor EndColor { get; set; }
+        [Category(categoryName)]
+        public AssetSingle FogDensity { get; set; }
+        [Category(categoryName)]
+        public AssetSingle StartDistance { get; set; }
+        [Category(categoryName)]
+        public AssetSingle EndDistance { get; set; }
+        [Category(categoryName)]
+        public AssetSingle TransitionTime { get; set; }
+        [Category(categoryName)]
+        public byte FogType { get; set; }
+
+        public AssetFOG(string assetName) : base(assetName, AssetType.FOG, BaseAssetType.Fog)
         {
-            get => new MyColor(Data[8], Data[9], Data[10], Data[11]);
-            
-            set
+            EndColor = new AssetColor();
+            StartColor = new AssetColor();
+            FogDensity = 1;
+            StartDistance = 100;
+            EndDistance = 400;
+        }
+
+        public AssetFOG(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                Data[8] = value.R;
-                Data[9] = value.G;
-                Data[10] = value.B;
+                reader.BaseStream.Position = baseHeaderEndPosition;
+
+                EndColor = reader.ReadColor();
+                StartColor = reader.ReadColor();
+                FogDensity = reader.ReadSingle();
+                StartDistance = reader.ReadSingle();
+                EndDistance = reader.ReadSingle();
+                TransitionTime = reader.ReadSingle();
+                FogType = reader.ReadByte();
             }
         }
 
-        [Category("Fog"), DisplayName("End Color Alpha (0 - 255)")]
-        public byte BackgroundColorAlpha
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            get => ReadByte(0x0B);
-            set => Write(0x0B, value);
-        }
-
-        [Category("Fog"), Editor(typeof(MyColorEditor), typeof(UITypeEditor)), DisplayName("Start Color (R, G, B)")]
-        public MyColor FogColor
-        {
-            get => new MyColor(Data[12], Data[13], Data[14], Data[15]);
-            set
+            using (var writer = new EndianBinaryWriter(endianness))
             {
-                Data[12] = value.R;
-                Data[13] = value.G;
-                Data[14] = value.B;
+                writer.Write(SerializeBase(endianness));
+
+                writer.Write(EndColor);
+                writer.Write(StartColor);
+                writer.Write(FogDensity);
+                writer.Write(StartDistance);
+                writer.Write(EndDistance);
+                writer.Write(TransitionTime);
+                writer.Write(FogType);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
             }
-        }
-
-        [Category("Fog"), DisplayName("Start Color Alpha (0 - 255)")]
-        public byte FogColorAlpha
-        {
-            get => ReadByte(0x0F);
-            set => Write(0x0F, value);
-        }
-
-        [Category("Fog"), TypeConverter(typeof(FloatTypeConverter))]
-        public float FogDensity
-        {
-            get => ReadFloat(0x10);
-            set => Write(0x10, value);
-        }
-
-        [Category("Fog"), TypeConverter(typeof(FloatTypeConverter))]
-        public float StartDistance
-        {
-            get => ReadFloat(0x14);
-            set => Write(0x14, value);
-        }
-
-        [Category("Fog"), TypeConverter(typeof(FloatTypeConverter))]
-        public float EndDistance
-        {
-            get => ReadFloat(0x18);
-            set => Write(0x18, value);
-        }
-
-        [Category("Fog"), TypeConverter(typeof(FloatTypeConverter))]
-        public float TransitionTime
-        {
-            get => ReadFloat(0x1C);
-            set => Write(0x1C, value);
-        }
-
-        [Category("Fog")]
-        public byte FogType
-        {
-            get => ReadByte(0x20);
-            set => Write(0x20, value);
-        }
-
-        [Category("Fog")]
-        public byte Padding21
-        {
-            get => ReadByte(0x21);
-            set => Write(0x21, value);
-        }
-
-        [Category("Fog")]
-        public byte Padding22
-        {
-            get => ReadByte(0x22);
-            set => Write(0x22, value);
-        }
-
-        [Category("Fog")]
-        public byte Padding23
-        {
-            get => ReadByte(0x23);
-            set => Write(0x23, value);
         }
     }
 }

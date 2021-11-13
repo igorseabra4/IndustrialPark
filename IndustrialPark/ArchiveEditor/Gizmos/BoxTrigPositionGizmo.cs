@@ -51,7 +51,7 @@ namespace IndustrialPark
                         Rotation * Matrix.Translation(Position);
                     break;
             }
-            
+
             for (int i = 0; i < SharpRenderer.pyramidVertices.Count; i++)
                 vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.pyramidVertices[i], transformMatrix);
             boundingBox = BoundingBox.FromPoints(vertices);

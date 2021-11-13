@@ -1,19 +1,44 @@
-﻿using System.ComponentModel;
+﻿using HipHopFile;
+using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaLogicReference : DynaBase
+    public class DynaLogicReference : AssetDYNA
     {
-        public string Note => "Version is always 1";
+        private const string dynaCategoryName = "logic:reference";
 
-        public override int StructSize => 0x4;
+        protected override short constVersion => 1;
 
-        public DynaLogicReference(AssetDYNA asset) : base(asset) { }
-        
-        public AssetID Unknown
+        [Category(dynaCategoryName)]
+        public AssetID Initial { get; set; }
+
+        public DynaLogicReference(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.logic__reference, game, endianness)
         {
-            get => ReadUInt(0x00);
-            set => Write(0x00, value);
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
+
+                Initial = reader.ReadUInt32();
+            }
+        }
+
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Initial);
+
+                return writer.ToArray();
+            }
+        }
+
+        public override bool HasReference(uint assetID) => Initial == assetID || base.HasReference(assetID);
+
+        public override void Verify(ref List<string> result)
+        {
+            Verify(Initial, ref result);
+            base.Verify(ref result);
         }
     }
 }

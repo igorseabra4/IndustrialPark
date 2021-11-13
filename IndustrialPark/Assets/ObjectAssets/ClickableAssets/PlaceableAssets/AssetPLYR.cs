@@ -8,40 +8,71 @@ namespace IndustrialPark
 {
     public class AssetPLYR : EntityAsset
     {
+        [Category("Player References")]
+        public AssetID LightKit_AssetID { get; set; }
+
+        public AssetPLYR(string assetName, Vector3 position, Game game) : base(assetName, AssetType.PLYR, BaseAssetType.Player, position)
+        {
+            BaseFlags = 0x0D;
+            SolidityFlags.FlagValueByte = 0;
+
+            ColorAlpha = 0;
+            ColorAlphaSpeed = 0;
+            if (game == Game.BFBB)
+                Model_AssetID = 0x003FE4D5;
+            else if (game == Game.Scooby)
+                Model_AssetID = 0x96E7F1D5;
+        }
+
+        public AssetPLYR(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            if (game != Game.Scooby)
+                using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+                {
+                    reader.BaseStream.Position = reader.BaseStream.Length - 4;
+                    LightKit_AssetID = reader.ReadUInt32();
+                }
+        }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntity(game, endianness));
+                writer.Write(SerializeLinks(endianness));
+                if (game != Game.Scooby)
+                {
+                    writer.Write(LightKit_AssetID);
+                }
+                return writer.ToArray();
+            }
+        }
+
         public static bool dontRender = false;
 
         public override bool DontRender => dontRender;
 
-        protected override int EventStartOffset => 0x54 + Offset;
-
-        public AssetPLYR(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
-
         public override bool HasReference(uint assetID) => LightKit_AssetID == assetID || base.HasReference(assetID);
-        
+
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
             Verify(LightKit_AssetID, ref result);
+        }
 
-            if (EventStartOffset + LinkCount * Link.sizeOfStruct + 4 < Data.Length)
-                result.Add("Additional data found at the end of asset data");
-            if (EventStartOffset + LinkCount * Link.sizeOfStruct + 4 > Data.Length)
-                result.Add("Asset expects mode data than present");
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game == Game.Scooby)
+                dt.RemoveProperty("LightKit_AssetID");
+
+            base.SetDynamicProperties(dt);
         }
 
         protected override void CreateBoundingBox()
         {
-            if (renderingDictionary.ContainsKey(_modelAssetID) &&
-                renderingDictionary[_modelAssetID].HasRenderWareModelFile() &&
-                renderingDictionary[_modelAssetID].GetRenderWareModelFile() != null)
-            {
-                CreateBoundingBox(renderingDictionary[_modelAssetID].GetRenderWareModelFile().vertexListG);
-            }
-            else
-            {
-                CreateBoundingBox(SharpRenderer.pyramidVertices);
-            }
+            var model = GetFromRenderingDictionary(_modelAssetID);
+            CreateBoundingBox(model == null ? SharpRenderer.pyramidVertices : model.vertexListG);
         }
 
         public override void Draw(SharpRenderer renderer)
@@ -53,13 +84,6 @@ namespace IndustrialPark
                 renderingDictionary[_modelAssetID].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * Color : Color, UvAnimOffset);
             else
                 renderer.DrawPyramid(LocalWorld(), isSelected, 1f);
-        }
-
-        [Category("Player References")]
-        public AssetID LightKit_AssetID
-        {
-            get => game == Game.Scooby ? 0 : ReadUInt(EventStartOffset + LinkCount * Link.sizeOfStruct);
-            set { if (game != Game.Scooby) Write(EventStartOffset + LinkCount * Link.sizeOfStruct, value); }
         }
     }
 }

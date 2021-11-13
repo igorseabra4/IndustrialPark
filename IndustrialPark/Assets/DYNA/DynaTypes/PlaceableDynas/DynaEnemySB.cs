@@ -1,344 +1,145 @@
-﻿using System;
+﻿using HipHopFile;
+using SharpDX;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using SharpDX;
 using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
-    public abstract class DynaEnemySB : DynaBase
+    public abstract class DynaEnemySB : AssetDYNA, IRenderableAsset, IClickableAsset, IRotatableAsset, IScalableAsset
     {
-        public override bool IsRenderableClickable => true;
+        private const string dynaCategoryName = "Enemy:SB";
 
-        public DynaEnemySB(AssetDYNA asset) : base(asset) { }
+        [Category(dynaCategoryName + " Base")]
+        public AssetID PseudoAssetID { get; set; }
 
-        public override bool HasReference(uint assetID)
+        [Category(dynaCategoryName + " Base")]
+        public AssetByte PseudoAssetType { get; set; }
+
+        [Category(dynaCategoryName + " Base")]
+        public AssetByte PseudoLinkCount { get; set; }
+
+        [Category(dynaCategoryName + " Base")]
+        public FlagBitmask PseudoBaseFlags { get; set; } = ShortFlagsDescriptor(
+                "Enabled On Start",
+                "State Is Persistent",
+                "Unknown Always True",
+                "Visible During Cutscenes",
+                "Receive Shadows");
+
+        [Category(dynaCategoryName + " Entity")]
+        public FlagBitmask PseudoVisibilityFlags { get; set; } = ByteFlagsDescriptor(
+            "Visible",
+            "Stackable");
+
+        [Category(dynaCategoryName + " Entity")]
+        public AssetByte PseudoTypeFlag { get; set; }
+
+        [Category(dynaCategoryName + " Entity")]
+        public FlagBitmask PseudoFlag0A { get; set; } = ByteFlagsDescriptor();
+
+        [Category(dynaCategoryName + " Entity")]
+        public FlagBitmask PseudoSolidityFlags { get; set; } = ByteFlagsDescriptor(
+            null,
+            "Precise Collision",
+            null,
+            null,
+            "Hittable",
+            "Animate Collision",
+            null,
+            "Ledge Grab");
+
+        protected Vector3 _position;
+        [Category(dynaCategoryName + " Entity Placement")]
+        public AssetSingle PositionX
         {
-            if (Surface_AssetID == assetID)
-                return true;
-            if (Model_AssetID == assetID)
-                return true;
-            if (Unknown44 == assetID)
-                return true;
-            if (Unknown4C == assetID)
-                return true;
-
-            return base.HasReference(assetID);
+            get => _position.X;
+            set { _position.X = value; CreateTransformMatrix(); }
+        }
+        [Category(dynaCategoryName + " Entity Placement")]
+        public AssetSingle PositionY
+        {
+            get => _position.Y;
+            set { _position.Y = value; CreateTransformMatrix(); }
+        }
+        [Category(dynaCategoryName + " Entity Placement")]
+        public AssetSingle PositionZ
+        {
+            get => _position.Z;
+            set { _position.Z = value; CreateTransformMatrix(); }
         }
 
-        public override void Verify(ref List<string> result)
+        protected float _yaw;
+        [Category(dynaCategoryName + " Entity Placement")]
+        public AssetSingle Yaw
         {
-            Asset.Verify(Surface_AssetID, ref result);
-            Asset.Verify(Model_AssetID, ref result);
-            Asset.Verify(Unknown44, ref result);
-            Asset.Verify(Unknown4C, ref result);
+            get => MathUtil.RadiansToDegrees(_yaw);
+            set { _yaw = MathUtil.DegreesToRadians(value); CreateTransformMatrix(); }
         }
 
-        [Browsable(false)]
-        public Matrix world { get; private set; }
-        private BoundingBox boundingBox;
-
-        public override void CreateTransformMatrix()
+        protected float _pitch;
+        [Category(dynaCategoryName + " Entity Placement")]
+        public AssetSingle Pitch
         {
-            world = Matrix.Scaling(ScaleX, ScaleY, ScaleZ)
-                * Matrix.RotationYawPitchRoll(
-                    MathUtil.DegreesToRadians(Yaw),
-                    MathUtil.DegreesToRadians(Pitch),
-                    MathUtil.DegreesToRadians(Roll))
-                * Matrix.Translation(PositionX, PositionY, PositionZ);
-
-            CreateBoundingBox();
+            get => MathUtil.RadiansToDegrees(_pitch);
+            set { _pitch = MathUtil.DegreesToRadians(value); CreateTransformMatrix(); }
         }
 
-        protected virtual void CreateBoundingBox()
+        protected float _roll;
+        [Category(dynaCategoryName + " Entity Placement")]
+        public AssetSingle Roll
         {
-            if (renderingDictionary.ContainsKey(Model_AssetID) &&
-                renderingDictionary[Model_AssetID].HasRenderWareModelFile() &&
-                renderingDictionary[Model_AssetID].GetRenderWareModelFile() != null)
-            {
-                CreateBoundingBox(renderingDictionary[Model_AssetID].GetRenderWareModelFile().vertexListG);
-            }
-            else
-            {
-                CreateBoundingBox(SharpRenderer.cubeVertices, 0.5f);
-            }
+            get => MathUtil.RadiansToDegrees(_roll);
+            set { _roll = MathUtil.DegreesToRadians(value); CreateTransformMatrix(); }
         }
 
-        protected Vector3[] vertices;
-        protected RenderWareFile.Triangle[] triangles;
-
-        protected void CreateBoundingBox(List<Vector3> vertexList, float multiplier = 1f)
+        protected Vector3 _scale;
+        [Category(dynaCategoryName + " Entity Placement")]
+        public AssetSingle ScaleX
         {
-            vertices = new Vector3[vertexList.Count];
-
-            for (int i = 0; i < vertexList.Count; i++)
-                vertices[i] = (Vector3)Vector3.Transform(vertexList[i] * multiplier, world);
-
-            boundingBox = BoundingBox.FromPoints(vertices);
-
-            if (renderingDictionary.ContainsKey(Model_AssetID))
-            {
-                if (renderingDictionary[Model_AssetID] is AssetMINF MINF)
-                {
-                    if (MINF.HasRenderWareModelFile())
-                        triangles = renderingDictionary[Model_AssetID].GetRenderWareModelFile().triangleList.ToArray();
-                    else
-                        triangles = null;
-                }
-                else
-                    triangles = renderingDictionary[Model_AssetID].GetRenderWareModelFile().triangleList.ToArray();
-            }
-            else
-                triangles = null;
+            get => _scale.X;
+            set { _scale.X = value; CreateTransformMatrix(); }
+        }
+        [Category(dynaCategoryName + " Entity Placement")]
+        public AssetSingle ScaleY
+        {
+            get => _scale.Y;
+            set { _scale.Y = value; CreateTransformMatrix(); }
+        }
+        [Category(dynaCategoryName + " Entity Placement")]
+        public AssetSingle ScaleZ
+        {
+            get => _scale.Z;
+            set { _scale.Z = value; CreateTransformMatrix(); }
         }
 
-        public override bool ShouldDraw(SharpRenderer renderer)
+        protected Vector4 _color;
+        [Category(dynaCategoryName + " Entity Color"), DisplayName("Red (0 - 1)")]
+        public AssetSingle ColorRed
         {
-            if (AssetMODL.renderBasedOnLodt)
-            {
-                if (GetDistance(renderer.Camera.Position) <
-                    (AssetLODT.MaxDistances.ContainsKey(Model_AssetID) ?
-                    AssetLODT.MaxDistances[Model_AssetID] : SharpRenderer.DefaultLODTDistance))
-                    return renderer.frustum.Intersects(ref boundingBox);
-
-                return false;
-            }
-
-            return renderer.frustum.Intersects(ref boundingBox);
+            get => _color.X;
+            set => _color.X = value;
         }
-
-        public override void Draw(SharpRenderer renderer, bool isSelected)
+        [Category(dynaCategoryName + " Entity Color"), DisplayName("Green (0 - 1)")]
+        public AssetSingle ColorGreen
         {
-            Vector4 Color = new Vector4(ColorRed, ColorGreen, ColorBlue, ColorAlpha);
-            if (renderingDictionary.ContainsKey(Model_AssetID))
-                renderingDictionary[Model_AssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * Color : Color, Vector3.Zero);
-            else
-                renderer.DrawCube(world, isSelected);
+            get => _color.Y;
+            set => _color.Y = value;
         }
-
-        public override float? IntersectsWith(Ray ray)
+        [Category(dynaCategoryName + " Entity Color"), DisplayName("Blue (0 - 1)")]
+        public AssetSingle ColorBlue
         {
-            if (ray.Intersects(ref boundingBox, out float distance))
-                return TriangleIntersection(ray, distance);
-            return null;
+            get => _color.Z;
+            set => _color.Z = value;
         }
-
-        protected float? TriangleIntersection(Ray r, float initialDistance)
+        [Category(dynaCategoryName + " Entity Color"), DisplayName("Alpha (0 - 1)")]
+        public AssetSingle ColorAlpha
         {
-            if (triangles == null)
-                return initialDistance;
-
-            float? smallestDistance = null;
-
-            foreach (RenderWareFile.Triangle t in triangles)
-                if (r.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
-                    if (smallestDistance == null || distance < smallestDistance)
-                        smallestDistance = distance;
-            
-            return smallestDistance;
+            get => _color.W;
+            set => _color.W = value;
         }
-        
-        public override BoundingBox GetBoundingBox()
-        {
-            return boundingBox;
-        }
-
-        public override float GetDistance(Vector3 cameraPosition)
-        {
-            return Vector3.Distance(cameraPosition, new Vector3(PositionX, PositionY, PositionZ));
-        }
-        
-        public int PaddingInt00
-        {
-            get => ReadInt(0x00);
-            set => Write(0x00, value);
-        }
-
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte PaddingByte04
-        {
-            get => ReadByte(0x04);
-            set => Write(0x04, value);
-        }
-
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte PaddingByte05
-        {
-            get => ReadByte(0x05);
-            set => Write(0x05, value);
-        }
-
-        [TypeConverter(typeof(HexUShortTypeConverter))]
-        public ushort Flags06
-        {
-            get => ReadUShort(0x06);
-            set => Write(0x06, value);
-        }
-
-        [Browsable(false)]
-        public byte VisibilityFlag
-        {
-            get => ReadByte(0x08);
-            set => Write(0x08, value);
-        }
-        public DynamicTypeDescriptor VisibilityFlags => ByteFlagsDescriptor(0x8, "Visible", "Stackable");
-
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte TypeFlag
-        {
-            get => ReadByte(0x9);
-            set => Write(0x9, value);
-        }
-
-        public DynamicTypeDescriptor UnknownFlag0A => ByteFlagsDescriptor(0xA);
-
-        [Browsable(false)]
-        public byte SolidityFlag
-        {
-            get => ReadByte(0x0B);
-            set => Write(0x0B, value);
-        }
-        public DynamicTypeDescriptor SolidityFlags => ByteFlagsDescriptor(0xB, "Unused", "Precise Collision");
-        
-        public AssetID Surface_AssetID
-        {
-            get => ReadUInt(0x0C);
-            set => Write(0x0C, value);
-        }
-        
-        [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
-        public override float PositionX
-        {
-            get => ReadFloat(0x1C);
-            set
-            {
-                Write(0x1C, value);
-                CreateTransformMatrix();
-            }
-        }
-
-        [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
-        public override float PositionY
-        {
-            get => ReadFloat(0x20);
-            set
-            {
-                Write(0x20, value);
-                CreateTransformMatrix();
-            }
-        }
-
-        [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
-        public override float PositionZ
-        {
-            get => ReadFloat(0x24);
-            set
-            {
-                Write(0x24, value);
-                CreateTransformMatrix();
-            }
-        }
-                
-        public override BoundingSphere GetObjectCenter()
-        {
-            BoundingSphere boundingSphere = new BoundingSphere(new Vector3(PositionX, PositionY, PositionZ), boundingBox.Size.Length());
-            boundingSphere.Radius *= 0.9f;
-            return boundingSphere;
-        }
-        
-        [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
-        public override float Yaw
-        {
-            get => MathUtil.RadiansToDegrees(ReadFloat(0x10));
-            set
-            {
-                Write(0x10, MathUtil.DegreesToRadians(value));
-                CreateTransformMatrix();
-            }
-        }
-
-        [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
-        public override float Pitch
-        {
-            get => MathUtil.RadiansToDegrees(ReadFloat(0x14));
-            set
-            {
-                Write(0x14, MathUtil.DegreesToRadians(value));
-                CreateTransformMatrix();
-            }
-        }
-
-        [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
-        public override float Roll
-        {
-            get => MathUtil.RadiansToDegrees(ReadFloat(0x18));
-            set
-            {
-                Write(0x18, MathUtil.DegreesToRadians(value));
-                CreateTransformMatrix();
-            }
-        }
-
-
-        [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
-        public override float ScaleX
-        {
-            get => ReadFloat(0x28);
-            set
-            {
-                Write(0x28, value);
-                CreateTransformMatrix();
-            }
-        }
-
-        [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
-        public override float ScaleY
-        {
-            get => ReadFloat(0x2C);
-            set
-            {
-                Write(0x2C, value);
-                CreateTransformMatrix();
-            }
-        }
-
-        [TypeConverter(typeof(FloatTypeConverter)), Browsable(true)]
-        public override float ScaleZ
-        {
-            get => ReadFloat(0x30);
-            set
-            {
-                Write(0x30, value);
-                CreateTransformMatrix();
-            }
-        }
-
-        [DisplayName("Red (0 - 1)")]
-        public float ColorRed
-        {
-            get => ReadFloat(0x34);
-            set => Write(0x34, value);
-        }
-        [DisplayName("Green (0 - 1)")]
-        public float ColorGreen
-        {
-            get => ReadFloat(0x38);
-            set => Write(0x38, value);
-        }
-        [DisplayName("Blue (0 - 1)")]
-        public float ColorBlue
-        {
-            get => ReadFloat(0x3C);
-            set => Write(0x3C, value);
-        }
-        [DisplayName("Alpha (0 - 1)")]
-        public float ColorAlpha
-        {
-            get => ReadFloat(0x40);
-            set => Write(0x40, value);
-        }
-
-        [DisplayName("Color - (A,) R, G, B")]
+        [Category(dynaCategoryName + " Entity Color"), DisplayName("Color - (A,) R, G, B")]
         public System.Drawing.Color Color_ARGB
         {
             get => System.Drawing.Color.FromArgb(BitConverter.ToInt32(new byte[] { (byte)(ColorBlue * 255), (byte)(ColorGreen * 255), (byte)(ColorRed * 255), (byte)(ColorAlpha * 255) }, 0));
@@ -351,22 +152,216 @@ namespace IndustrialPark
             }
         }
 
-        public AssetID Unknown44
-        {
-            get => ReadUInt(0x44);
-            set => Write(0x44, value);
-        }
+        [Category(dynaCategoryName + " Entity Color")]
+        public AssetSingle PseudoColorAlphaSpeed { get; set; }
 
+        protected uint _modelAssetID;
+        [Category(dynaCategoryName + " Entity References")]
         public AssetID Model_AssetID
         {
-            get => ReadUInt(0x48);
-            set => Write(0x48, value);
+            get => _modelAssetID;
+            set { _modelAssetID = value; CreateTransformMatrix(); }
         }
 
-        public AssetID Unknown4C
+        [Category(dynaCategoryName + " Entity References")]
+        public AssetID PseudoAnimation_AssetID { get; set; }
+
+        [Category(dynaCategoryName + " Entity References")]
+        public AssetID Surface_AssetID { get; set; }
+
+        protected int entityDynaEndPosition => dynaDataStartPosition + 0x50;
+
+        public DynaEnemySB(string assetName, DynaType type, short version, Vector3 position) : base(assetName, type, version)
         {
-            get => ReadUInt(0x4C);
-            set => Write(0x4C, value);
+            PseudoBaseFlags.FlagValueShort = 0x1D;
+            PseudoVisibilityFlags.FlagValueByte = 1;
+            PseudoSolidityFlags.FlagValueByte = 1;
+
+            _position = position;
+            _scale = new Vector3(1f);
+            _color = new Vector4(1f);
+
+            CreateTransformMatrix();
+            AddToRenderableAssets(this);
+        }
+
+        public DynaEnemySB(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
+
+                PseudoAssetID = reader.ReadUInt32();
+                PseudoAssetType = reader.ReadByte();
+                PseudoLinkCount = reader.ReadByte();
+                PseudoBaseFlags.FlagValueShort = reader.ReadUInt16();
+                PseudoVisibilityFlags.FlagValueByte = reader.ReadByte();
+                PseudoTypeFlag = reader.ReadByte();
+                PseudoFlag0A.FlagValueByte = reader.ReadByte();
+                PseudoSolidityFlags.FlagValueByte = reader.ReadByte();
+                Surface_AssetID = reader.ReadUInt32();
+                _yaw = reader.ReadSingle();
+                _pitch = reader.ReadSingle();
+                _roll = reader.ReadSingle();
+                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                _scale = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                _color = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                PseudoColorAlphaSpeed = reader.ReadSingle();
+                _modelAssetID = reader.ReadUInt32();
+                PseudoAnimation_AssetID = reader.ReadUInt32();
+
+                CreateTransformMatrix();
+                AddToRenderableAssets(this);
+            }
+        }
+
+        protected byte[] SerializeEntityDyna(Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(PseudoAssetID);
+                writer.Write(PseudoAssetType);
+                writer.Write(PseudoLinkCount);
+                writer.Write(PseudoBaseFlags.FlagValueShort);
+                writer.Write(PseudoVisibilityFlags.FlagValueByte);
+                writer.Write(PseudoTypeFlag);
+                writer.Write(PseudoFlag0A.FlagValueByte);
+                writer.Write(PseudoSolidityFlags.FlagValueByte);
+                writer.Write(Surface_AssetID);
+                writer.Write(_yaw);
+                writer.Write(_pitch);
+                writer.Write(_roll);
+                writer.Write(_position.X);
+                writer.Write(_position.Y);
+                writer.Write(_position.Z);
+                writer.Write(_scale.X);
+                writer.Write(_scale.Y);
+                writer.Write(_scale.Z);
+                writer.Write(_color.X);
+                writer.Write(_color.Y);
+                writer.Write(_color.Z);
+                writer.Write(_color.W);
+                writer.Write(PseudoColorAlphaSpeed);
+                writer.Write(_modelAssetID);
+                writer.Write(PseudoAnimation_AssetID);
+
+                return writer.ToArray();
+            }
+        }
+
+        [Browsable(false)]
+        public Matrix world { get; private set; }
+        private BoundingBox boundingBox;
+
+        public void CreateTransformMatrix()
+        {
+            world = Matrix.Scaling(_scale)
+                * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
+                * Matrix.Translation(_position);
+
+            CreateBoundingBox();
+        }
+
+        protected void CreateBoundingBox()
+        {
+            var model = GetFromRenderingDictionary(Model_AssetID);
+            if (model != null)
+            {
+                triangles = model.triangleList.ToArray();
+                CreateBoundingBox(model.vertexListG);
+            }
+            else
+            {
+                triangles = null;
+                CreateBoundingBox(SharpRenderer.cubeVertices, 0.5f);
+            }
+        }
+
+        protected Vector3[] vertices;
+        protected RenderWareFile.Triangle[] triangles;
+
+        protected void CreateBoundingBox(List<Vector3> vertexList, float multiplier = 1f)
+        {
+            vertices = new Vector3[vertexList.Count];
+            for (int i = 0; i < vertexList.Count; i++)
+                vertices[i] = (Vector3)Vector3.Transform(vertexList[i] * multiplier, world);
+            boundingBox = BoundingBox.FromPoints(vertices);
+        }
+
+        public bool ShouldDraw(SharpRenderer renderer)
+        {
+            if (isSelected)
+                return true;
+            if (dontRender)
+                return false;
+            if (isInvisible)
+                return false;
+            if (AssetMODL.renderBasedOnLodt && GetDistanceFrom(renderer.Camera.Position) > AssetLODT.MaxDistanceTo(_modelAssetID))
+                return false;
+
+            return renderer.frustum.Intersects(ref boundingBox);
+        }
+
+        [Browsable(false)]
+        public bool SpecialBlendMode => !renderingDictionary.ContainsKey(_modelAssetID) || renderingDictionary[_modelAssetID].SpecialBlendMode;
+
+        public void Draw(SharpRenderer renderer)
+        {
+            Vector4 Color = new Vector4(ColorRed, ColorGreen, ColorBlue, ColorAlpha);
+            if (renderingDictionary.ContainsKey(_modelAssetID))
+                renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * Color : Color, Vector3.Zero);
+            else
+                renderer.DrawCube(world, isSelected);
+        }
+
+        public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
+        {
+            if (ShouldDraw(renderer) && ray.Intersects(ref boundingBox))
+                return triangles == null ? TriangleIntersection(ray, SharpRenderer.cubeTriangles, SharpRenderer.cubeVertices, world) : TriangleIntersection(ray);
+            return null;
+        }
+
+        private float? TriangleIntersection(Ray ray)
+        {
+            float? smallestDistance = null;
+
+            foreach (RenderWareFile.Triangle t in triangles)
+                if (ray.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
+                    if (smallestDistance == null || distance < smallestDistance)
+                        smallestDistance = distance;
+
+            return smallestDistance;
+        }
+
+        public BoundingBox GetBoundingBox()
+        {
+            return boundingBox;
+        }
+
+        public float GetDistanceFrom(Vector3 cameraPosition)
+        {
+            return Vector3.Distance(cameraPosition, new Vector3(PositionX, PositionY, PositionZ));
+        }
+
+        public override bool HasReference(uint assetID)
+        {
+            if (Surface_AssetID == assetID)
+                return true;
+            if (Model_AssetID == assetID)
+                return true;
+            if (PseudoAnimation_AssetID == assetID)
+                return true;
+
+            return base.HasReference(assetID);
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            Verify(Surface_AssetID, ref result);
+            Verify(Model_AssetID, ref result);
+            Verify(PseudoAnimation_AssetID, ref result);
+
+            base.Verify(ref result);
         }
     }
 }

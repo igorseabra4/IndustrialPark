@@ -1,149 +1,101 @@
-﻿using SharpDX;
+﻿using HipHopFile;
+using IndustrialPark.Models;
+using SharpDX;
+using System.Collections.Generic;
 using System.ComponentModel;
+using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
-    public class DynaGObjectFlameEmitter : DynaBase
+    public class DynaGObjectFlameEmitter : RenderableDynaBase
     {
-        public string Note => "Version is always 4";
+        private const string dynaCategoryName = "game_object:flame_emitter";
 
-        public override int StructSize => 0x38;
+        protected override short constVersion => 4;
 
-        public DynaGObjectFlameEmitter(AssetDYNA asset) : base(asset) { }
-        
-        public int UnknownInt_00
-        {
-            get => ReadInt(0x00);
-            set => Write(0x00, value);
-        }
-        [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public override float PositionX
-        {
-            get => ReadFloat(0x04);
-            set { Write(0x04, value); CreateTransformMatrix(); }
-        }
-        [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public override float PositionY
-        {
-            get => ReadFloat(0x08);
-            set { Write(0x08, value); CreateTransformMatrix(); }
-        }
-        [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public override float PositionZ
-        {
-            get => ReadFloat(0x0C);
-            set { Write(0x0C, value); CreateTransformMatrix(); }
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_10
-        {
-            get => ReadFloat(0x10);
-            set => Write(0x10, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_14
-        {
-            get => ReadFloat(0x14);
-            set => Write(0x14, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_18
-        {
-            get => ReadFloat(0x18);
-            set => Write(0x18, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_1C
-        {
-            get => ReadFloat(0x1C);
-            set => Write(0x1C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_20
-        {
-            get => ReadFloat(0x20);
-            set => Write(0x20, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_24
-        {
-            get => ReadFloat(0x24);
-            set => Write(0x24, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_28
-        {
-            get => ReadFloat(0x28);
-            set => Write(0x28, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_2C
-        {
-            get => ReadFloat(0x2C);
-            set => Write(0x2C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_30
-        {
-            get => ReadFloat(0x30);
-            set => Write(0x30, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_34
-        {
-            get => ReadFloat(0x34);
-            set => Write(0x34, value);
-        }
+        [Category(dynaCategoryName)]
+        public FlagBitmask Flags { get; set; } = IntFlagsDescriptor(null, "Visible");
+        [Category(dynaCategoryName)]
+        public AssetSingle DirectionX { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle DirectionY { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle DirectionZ { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle ScaleX { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle ScaleY { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle ScaleZ { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle HeatRandom { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle Damage { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle Knockback { get; set; }
+        [Category(dynaCategoryName)]
+        public int Unknown { get; set; }
 
-        public override bool IsRenderableClickable => true;
+        private bool inc = false;
 
-        private Matrix world;
-        private BoundingBox boundingBox;
-        private Vector3[] vertices;
-        protected RenderWareFile.Triangle[] triangles;
-
-        public override void CreateTransformMatrix()
+        public DynaGObjectFlameEmitter(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__flame_emitter, game, endianness)
         {
-            world = Matrix.Translation(PositionX, PositionY, PositionZ);
-
-            vertices = new Vector3[SharpRenderer.cubeVertices.Count];
-            for (int i = 0; i < SharpRenderer.cubeVertices.Count; i++)
-                vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.cubeVertices[i], world);
-            boundingBox = BoundingBox.FromPoints(vertices);
-
-            triangles = new RenderWareFile.Triangle[SharpRenderer.cubeTriangles.Count];
-            for (int i = 0; i < SharpRenderer.cubeTriangles.Count; i++)
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                triangles[i] = new RenderWareFile.Triangle((ushort)SharpRenderer.cubeTriangles[i].materialIndex,
-                    (ushort)SharpRenderer.cubeTriangles[i].vertex1, (ushort)SharpRenderer.cubeTriangles[i].vertex2, (ushort)SharpRenderer.cubeTriangles[i].vertex3);
+                reader.BaseStream.Position = dynaDataStartPosition;
+
+                Flags.FlagValueInt = reader.ReadUInt32();
+                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                DirectionX = reader.ReadSingle();
+                DirectionY = reader.ReadSingle();
+                DirectionZ = reader.ReadSingle();
+                ScaleX = reader.ReadSingle();
+                ScaleY = reader.ReadSingle();
+                ScaleZ = reader.ReadSingle();
+                HeatRandom = reader.ReadSingle();
+                Damage = reader.ReadSingle();
+                Knockback = reader.ReadSingle();
+
+                if (reader.BaseStream.Position - _links.Length * Link.sizeOfStruct != reader.BaseStream.Length)
+                {
+                    inc = true;
+                    Unknown = reader.ReadInt32();
+                }
+
+                CreateTransformMatrix();
+                AddToRenderableAssets(this);
             }
         }
 
-        public override void Draw(SharpRenderer renderer, bool isSelected)
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            renderer.DrawCube(world, isSelected);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Flags.FlagValueInt);
+                writer.Write(_position.X);
+                writer.Write(_position.Y);
+                writer.Write(_position.Z);
+                writer.Write(DirectionX);
+                writer.Write(DirectionY);
+                writer.Write(DirectionZ);
+                writer.Write(ScaleX);
+                writer.Write(ScaleY);
+                writer.Write(ScaleZ);
+                writer.Write(HeatRandom);
+                writer.Write(Damage);
+                writer.Write(Knockback);
+
+                if (inc)
+                    writer.Write(Unknown);
+
+                return writer.ToArray();
+            }
         }
 
-        public override BoundingBox GetBoundingBox()
-        {
-            return boundingBox;
-        }
+        protected override List<Vector3> vertexSource => SharpRenderer.cubeVertices;
 
-        public override float GetDistance(Vector3 cameraPosition)
-        {
-            return Vector3.Distance(cameraPosition, new Vector3(PositionX, PositionY, PositionZ));
-        }
+        protected override List<Triangle> triangleSource => SharpRenderer.cubeTriangles;
 
-        public override float? IntersectsWith(Ray ray)
-        {
-            float? smallestDistance = null;
-
-            if (ray.Intersects(ref boundingBox))
-                foreach (RenderWareFile.Triangle t in triangles)
-                    if (ray.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
-                        if (smallestDistance == null || distance < smallestDistance)
-                            smallestDistance = distance;
-            return smallestDistance;
-        }
+        public override void Draw(SharpRenderer renderer) => renderer.DrawCube(world, isSelected);
     }
 }

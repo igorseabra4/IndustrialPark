@@ -1,145 +1,154 @@
 ﻿using HipHopFile;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
 
 namespace IndustrialPark
 {
     public class EntryLKIT
     {
         public int Type { get; set; }
-        public float ColorR { get; set; }
-        public float ColorG { get; set; }
-        public float ColorB { get; set; }
-        public float Unknown04 { get; set; }
-        public float Unknown05_X { get; set; }
-        public float Unknown06_Y { get; set; }
-        public float Unknown07_Z { get; set; }
-        public float Unknown08 { get; set; }
-        public float Unknown09_X { get; set; }
-        public float Unknown10_Y { get; set; }
-        public float Unknown11_Z { get; set; }
-        public float Unknown12 { get; set; }
-        public float Direction_X { get; set; }
-        public float Direction_Y { get; set; }
-        public float Direction_Z { get; set; }
-        public float Unknown16 { get; set; }
-        public float Unknown17_X { get; set; }
-        public float Unknown18_Y { get; set; }
-        public float Unknown19_Z { get; set; }
-        public float Unknown20 { get; set; }
-        public float Unknown21_X { get; set; }
-        public float Unknown22_Y { get; set; }
-        public float Unknown23_Z { get; set; }
+        public AssetSingle ColorR { get; set; }
+        public AssetSingle ColorG { get; set; }
+        public AssetSingle ColorB { get; set; }
+        public AssetSingle Unknown04 { get; set; }
+        public AssetSingle Unknown05_X { get; set; }
+        public AssetSingle Unknown06_Y { get; set; }
+        public AssetSingle Unknown07_Z { get; set; }
+        public AssetSingle Unknown08 { get; set; }
+        public AssetSingle Unknown09_X { get; set; }
+        public AssetSingle Unknown10_Y { get; set; }
+        public AssetSingle Unknown11_Z { get; set; }
+        public AssetSingle Unknown12 { get; set; }
+        public AssetSingle Direction_X { get; set; }
+        public AssetSingle Direction_Y { get; set; }
+        public AssetSingle Direction_Z { get; set; }
+        public AssetSingle Unknown16 { get; set; }
+        public AssetSingle Unknown17_X { get; set; }
+        public AssetSingle Unknown18_Y { get; set; }
+        public AssetSingle Unknown19_Z { get; set; }
+        public AssetSingle Unknown20 { get; set; }
+        public AssetSingle Unknown21_X { get; set; }
+        public AssetSingle Unknown22_Y { get; set; }
+        public AssetSingle Unknown23_Z { get; set; }
+
+        public EntryLKIT() { }
+        public EntryLKIT(EndianBinaryReader reader)
+        {
+            Type = reader.ReadInt32();
+            ColorR = reader.ReadSingle();
+            ColorG = reader.ReadSingle();
+            ColorB = reader.ReadSingle();
+            Unknown04 = reader.ReadSingle();
+            Unknown05_X = reader.ReadSingle();
+            Unknown06_Y = reader.ReadSingle();
+            Unknown07_Z = reader.ReadSingle();
+            Unknown08 = reader.ReadSingle();
+            Unknown09_X = reader.ReadSingle();
+            Unknown10_Y = reader.ReadSingle();
+            Unknown11_Z = reader.ReadSingle();
+            Unknown12 = reader.ReadSingle();
+            Direction_X = reader.ReadSingle();
+            Direction_Y = reader.ReadSingle();
+            Direction_Z = reader.ReadSingle();
+            Unknown16 = reader.ReadSingle();
+            Unknown17_X = reader.ReadSingle();
+            Unknown18_Y = reader.ReadSingle();
+            Unknown19_Z = reader.ReadSingle();
+            Unknown20 = reader.ReadSingle();
+            Unknown21_X = reader.ReadSingle();
+            Unknown22_Y = reader.ReadSingle();
+            Unknown23_Z = reader.ReadSingle();
+        }
+
+        public byte[] Serialize(Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Type);
+                writer.Write(ColorR);
+                writer.Write(ColorG);
+                writer.Write(ColorB);
+                writer.Write(Unknown04);
+                writer.Write(Unknown05_X);
+                writer.Write(Unknown06_Y);
+                writer.Write(Unknown07_Z);
+                writer.Write(Unknown08);
+                writer.Write(Unknown09_X);
+                writer.Write(Unknown10_Y);
+                writer.Write(Unknown11_Z);
+                writer.Write(Unknown12);
+                writer.Write(Direction_X);
+                writer.Write(Direction_Y);
+                writer.Write(Direction_Z);
+                writer.Write(Unknown16);
+                writer.Write(Unknown17_X);
+                writer.Write(Unknown18_Y);
+                writer.Write(Unknown19_Z);
+                writer.Write(Unknown20);
+                writer.Write(Unknown21_X);
+                writer.Write(Unknown22_Y);
+                writer.Write(Unknown23_Z);
+
+                return writer.ToArray();
+            }
+        }
     }
 
     public class AssetLKIT : Asset
     {
-        public AssetLKIT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        private const string categoryName = "Light Kit";
+        [Category(categoryName)]
+        public AssetID Group_AssetID { get; set; }
+        [Category(categoryName)]
+        public EntryLKIT[] Lights { get; set; }
 
-        public override void Verify(ref List<string> result)
+        public AssetLKIT(string assetName, byte[] data, Endianness endianness) : base(assetName, AssetType.LKIT)
         {
-            EntryLKIT[] entries = Lights;
+            Read(data, endianness);
         }
 
-        [Category("Light Kit")]
-        public int UnknownInt04
+        public AssetLKIT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            get => ReadInt(0x4);
-            set => Write(0x4, value);
+            if (AHDR.data.Length == 0)
+                return;
+
+            Read(AHDR.data, endianness);
         }
 
-        [Category("Light Kit"), ReadOnly(true)]
-        public int AmountOfLights
+        private void Read(byte[] data, Endianness endianness)
         {
-            get => ReadInt(0x8);
-            set => Write(0x8, value);
-        }
-
-        [Category("Light Kit")]
-        public int UnknownInt0C
-        {
-            get => ReadInt(0xC);
-            set => Write(0xC, value);
-        }
-
-        [Category("Light Kit")]
-        public EntryLKIT[] Lights
-        {
-            get
+            using (var reader = new EndianBinaryReader(data, endianness))
             {
-                BinaryReader binaryReader = new BinaryReader(new MemoryStream(Data.Skip(0x10).ToArray()));
-                List<EntryLKIT> lights = new List<EntryLKIT>();
-                for (int i = 0; i < AmountOfLights; i++)
-                {
-                    lights.Add(new EntryLKIT()
-                    {
-                        Type = Switch(binaryReader.ReadInt32()),
-                        ColorR = Switch(binaryReader.ReadSingle()),
-                        ColorG = Switch(binaryReader.ReadSingle()),
-                        ColorB = Switch(binaryReader.ReadSingle()),
-                        Unknown04 = Switch(binaryReader.ReadSingle()),
-                        Unknown05_X = Switch(binaryReader.ReadSingle()),
-                        Unknown06_Y = Switch(binaryReader.ReadSingle()),
-                        Unknown07_Z = Switch(binaryReader.ReadSingle()),
-                        Unknown08 = Switch(binaryReader.ReadSingle()),
-                        Unknown09_X = Switch(binaryReader.ReadSingle()),
-                        Unknown10_Y = Switch(binaryReader.ReadSingle()),
-                        Unknown11_Z = Switch(binaryReader.ReadSingle()),
-                        Unknown12 = Switch(binaryReader.ReadSingle()),
-                        Direction_X = Switch(binaryReader.ReadSingle()),
-                        Direction_Y = Switch(binaryReader.ReadSingle()),
-                        Direction_Z = Switch(binaryReader.ReadSingle()),
-                        Unknown16 = Switch(binaryReader.ReadSingle()),
-                        Unknown17_X = Switch(binaryReader.ReadSingle()),
-                        Unknown18_Y = Switch(binaryReader.ReadSingle()),
-                        Unknown19_Z = Switch(binaryReader.ReadSingle()),
-                        Unknown20 = Switch(binaryReader.ReadSingle()),
-                        Unknown21_X = Switch(binaryReader.ReadSingle()),
-                        Unknown22_Y = Switch(binaryReader.ReadSingle()),
-                        Unknown23_Z = Switch(binaryReader.ReadSingle())
-                    });
-                }
+                reader.BaseStream.Position = 0x04;
+                Group_AssetID = reader.ReadUInt32();
+                int lightCount = reader.ReadInt32();
+                Lights = new EntryLKIT[lightCount];
 
-                return lights.ToArray();
-            }
-            set
-            {
-                BinaryWriter binaryWriter = new BinaryWriter(new MemoryStream(value.Length * 24 * 4));
-                foreach (EntryLKIT entry in value)
-                {
-                    binaryWriter.Write(Switch(entry.Type));
-                    binaryWriter.Write(Switch(entry.ColorR));
-                    binaryWriter.Write(Switch(entry.ColorG));
-                    binaryWriter.Write(Switch(entry.ColorB));
-                    binaryWriter.Write(Switch(entry.Unknown04));
-                    binaryWriter.Write(Switch(entry.Unknown05_X));
-                    binaryWriter.Write(Switch(entry.Unknown06_Y));
-                    binaryWriter.Write(Switch(entry.Unknown07_Z));
-                    binaryWriter.Write(Switch(entry.Unknown08));
-                    binaryWriter.Write(Switch(entry.Unknown09_X));
-                    binaryWriter.Write(Switch(entry.Unknown10_Y));
-                    binaryWriter.Write(Switch(entry.Unknown11_Z));
-                    binaryWriter.Write(Switch(entry.Unknown12));
-                    binaryWriter.Write(Switch(entry.Direction_X));
-                    binaryWriter.Write(Switch(entry.Direction_Y));
-                    binaryWriter.Write(Switch(entry.Direction_Z));
-                    binaryWriter.Write(Switch(entry.Unknown16));
-                    binaryWriter.Write(Switch(entry.Unknown17_X));
-                    binaryWriter.Write(Switch(entry.Unknown18_Y));
-                    binaryWriter.Write(Switch(entry.Unknown19_Z));
-                    binaryWriter.Write(Switch(entry.Unknown20));
-                    binaryWriter.Write(Switch(entry.Unknown21_X));
-                    binaryWriter.Write(Switch(entry.Unknown22_Y));
-                    binaryWriter.Write(Switch(entry.Unknown23_Z));
-                }
-
-                List<byte> newData = Data.Take(0x10).ToList();
-                newData.AddRange(((MemoryStream)binaryWriter.BaseStream).ToArray());
-                Data = newData.ToArray();
-                AmountOfLights = value.Length;
+                reader.BaseStream.Position = 0x10;
+                for (int i = 0; i < lightCount; i++)
+                    Lights[i] = new EntryLKIT(reader);
             }
         }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            if (Lights == null)
+                return new byte[0];
+
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.WriteMagic("LKIT");
+
+                writer.Write(Group_AssetID);
+                writer.Write(Lights.Length);
+                writer.Write(0);
+
+                foreach (var l in Lights)
+                    writer.Write(l.Serialize(endianness));
+
+                return writer.ToArray();
+            }
+        }
+
+        public override bool HasReference(uint assetID) => Group_AssetID == assetID;
     }
 }

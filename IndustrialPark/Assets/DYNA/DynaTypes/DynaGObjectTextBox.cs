@@ -1,18 +1,161 @@
 ﻿using AssetEditorColors;
+using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing.Design;
 
 namespace IndustrialPark
 {
-    public class DynaGObjectTextBox : DynaBase
+    public class DynaGObjectTextBox : AssetDYNA
     {
-        public string Note => "Version is always 1";
+        private const string dynaCategoryName = "game_object:text_box";
 
-        public override int StructSize => 0x54;
+        public override string Note => "Version is always 1 for BFBB or 3 for Movie/Incredibles.";
 
-        public DynaGObjectTextBox(AssetDYNA asset) : base(asset) { }
-        
+        [Category(dynaCategoryName)]
+        public AssetID DefaultTextID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle XPosition { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle YPosition { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle Width { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle Height { get; set; }
+        [Category(dynaCategoryName)]
+        public FontEnum Font { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle TextWidth { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle TextHeight { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle CharSpacingX { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle CharSpacingY { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetColor Color { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle LeftMargin { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle TopMargin { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle RightMargin { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle BottomMargin { get; set; }
+        [Category(dynaCategoryName)]
+        public int XAlignment { get; set; }
+        [Category(dynaCategoryName), Description("Only in version 3")]
+        public int YAlignment { get; set; }
+        [Category(dynaCategoryName)]
+        public int ExpandMode { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle MaxHeight { get; set; }
+        [Category(dynaCategoryName)]
+        public int BackgroundMode { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetColor BackdropColor { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID BackgroundTextureID { get; set; }
+
+        [Category(dynaCategoryName), Description("Only in version 3")]
+        public AssetSingle BackgroundBorderU { get; set; }
+        [Category(dynaCategoryName), Description("Only in version 3")]
+        public AssetSingle BackgroundBorderV { get; set; }
+        [Category(dynaCategoryName), Description("Only in version 3")]
+        public AssetSingle BackgroundBorderWidth { get; set; }
+        [Category(dynaCategoryName), Description("Only in version 3")]
+        public AssetSingle BackgroundBorderHeight { get; set; }
+        [Category(dynaCategoryName), Description("Only in version 3")]
+        public AssetColor ShadowColor { get; set; }
+        [Category(dynaCategoryName), Description("Only in version 3")]
+        public AssetSingle ShadowOffsetX { get; set; }
+        [Category(dynaCategoryName), Description("Only in version 3")]
+        public AssetSingle ShadowOffsetY { get; set; }
+
+        public DynaGObjectTextBox(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__text_box, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
+
+                DefaultTextID = reader.ReadUInt32();
+                XPosition = reader.ReadSingle();
+                YPosition = reader.ReadSingle();
+                Width = reader.ReadSingle();
+                Height = reader.ReadSingle();
+                Font = (FontEnum)reader.ReadInt32();
+                TextWidth = reader.ReadSingle();
+                TextHeight = reader.ReadSingle();
+                CharSpacingX = reader.ReadSingle();
+                CharSpacingY = reader.ReadSingle();
+                Color = reader.ReadColor();
+                LeftMargin = reader.ReadSingle();
+                TopMargin = reader.ReadSingle();
+                RightMargin = reader.ReadSingle();
+                BottomMargin = reader.ReadSingle();
+                XAlignment = reader.ReadInt32();
+                if (Version == 3)
+                    YAlignment = reader.ReadInt32();
+                ExpandMode = reader.ReadInt32();
+                MaxHeight = reader.ReadSingle();
+                BackgroundMode = reader.ReadInt32();
+                BackdropColor = reader.ReadColor();
+                BackgroundTextureID = reader.ReadUInt32();
+                if (Version == 3)
+                {
+                    BackgroundBorderU = reader.ReadSingle();
+                    BackgroundBorderV = reader.ReadSingle();
+                    BackgroundBorderWidth = reader.ReadSingle();
+                    BackgroundBorderHeight = reader.ReadSingle();
+                    ShadowColor = reader.ReadColor();
+                    ShadowOffsetX = reader.ReadSingle();
+                    ShadowOffsetY = reader.ReadSingle();
+                }
+                else ShadowColor = new AssetColor();
+            }
+        }
+
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(DefaultTextID);
+                writer.Write(XPosition);
+                writer.Write(YPosition);
+                writer.Write(Width);
+                writer.Write(Height);
+                writer.Write((int)Font);
+                writer.Write(TextWidth);
+                writer.Write(TextHeight);
+                writer.Write(CharSpacingX);
+                writer.Write(CharSpacingY);
+                writer.Write(Color);
+                writer.Write(LeftMargin);
+                writer.Write(TopMargin);
+                writer.Write(RightMargin);
+                writer.Write(BottomMargin);
+                writer.Write(XAlignment);
+                if (Version == 3)
+                    writer.Write(YAlignment);
+                writer.Write(ExpandMode);
+                writer.Write(MaxHeight);
+                writer.Write(BackgroundMode);
+                writer.Write(BackdropColor);
+                writer.Write(BackgroundTextureID);
+                if (Version == 3)
+                {
+                    writer.Write(BackgroundBorderU);
+                    writer.Write(BackgroundBorderV);
+                    writer.Write(BackgroundBorderWidth);
+                    writer.Write(BackgroundBorderHeight);
+                    writer.Write(ShadowColor);
+                    writer.Write(ShadowOffsetX);
+                    writer.Write(ShadowOffsetY);
+                }
+
+                return writer.ToArray();
+            }
+        }
+
         public override bool HasReference(uint assetID)
         {
             if (DefaultTextID == assetID)
@@ -25,170 +168,9 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
-            Asset.Verify(DefaultTextID, ref result);
-            Asset.Verify(BackgroundTextureID, ref result);
-        }
-        
-        public AssetID DefaultTextID
-        {
-            get => ReadUInt(0x00);
-            set => Write(0x00, value);
-        }
-        public float XPosition
-        {
-            get => ReadFloat(0x04);
-            set => Write(0x04, value);
-        }
-        public float YPosition
-        {
-            get => ReadFloat(0x08);
-            set => Write(0x08, value);
-        }
-        public float Width
-        {
-            get => ReadFloat(0x0C);
-            set => Write(0x0C, value);
-        }
-        public float Height
-        {
-            get => ReadFloat(0x10);
-            set => Write(0x10, value);
-        }
-        public FontEnum Font
-        {
-            get => (FontEnum)ReadInt(0x14);
-            set => Write(0x14, (int)value);
-        }
-        public float TextWidth
-        {
-            get => ReadFloat(0x18);
-            set => Write(0x18, value);
-        }
-        public float TextHeight
-        {
-            get => ReadFloat(0x1C);
-            set => Write(0x1C, value);
-        }
-        public float CharSpacingX
-        {
-            get => ReadFloat(0x20);
-            set => Write(0x20, value);
-        }
-        public float CharSpacingY
-        {
-            get => ReadFloat(0x24);
-            set => Write(0x24, value);
-        }
-
-        private byte Color1R
-        {
-            get => ReadByte(0x28);
-            set => Write(0x28, value);
-        }
-        private byte Color1G
-        {
-            get => ReadByte(0x29);
-            set => Write(0x29, value);
-        }
-        private byte Color1B
-        {
-            get => ReadByte(0x2A);
-            set => Write(0x2A, value);
-        }
-        [Editor(typeof(MyColorEditor), typeof(UITypeEditor)), DisplayName("Color 1 (R, G, B)")]
-        public MyColor TextColor
-        {
-            get => new MyColor(Color1R, Color1G, Color1B, Color1Alpha);            
-            set
-            {
-                Color1R = value.R;
-                Color1G = value.G;
-                Color1B = value.B;
-            }
-        }
-        [DisplayName("Color 1 Alpha (0 - 255)")]
-        public byte Color1Alpha
-        {
-            get => ReadByte(0x2B);
-            set => Write(0x2B, value);
-        }
-        public float LeftMargin
-        {
-            get => ReadFloat(0x2C);
-            set => Write(0x2C, value);
-        }
-        public float TopMargin
-        {
-            get => ReadFloat(0x30);
-            set => Write(0x30, value);
-        }
-        public float RightMargin
-        {
-            get => ReadFloat(0x34);
-            set => Write(0x34, value);
-        }
-        public float BottomMargin
-        {
-            get => ReadFloat(0x38);
-            set => Write(0x38, value);
-        }
-        public int TextAlign
-        {
-            get => ReadInt(0x3C);
-            set => Write(0x3C, value);
-        }
-        public int ExpandMode
-        {
-            get => ReadInt(0x40);
-            set => Write(0x40, value);
-        }
-        public float MaxHeight
-        {
-            get => ReadFloat(0x44);
-            set => Write(0x44, value);
-        }
-        public int BackgroundMode
-        {
-            get => ReadInt(0x48);
-            set => Write(0x48, value);
-        }
-        private byte Color2R
-        {
-            get => ReadByte(0x4C);
-            set => Write(0x4C, value);
-        }
-        private byte Color2G
-        {
-            get => ReadByte(0x4D);
-            set => Write(0x4D, value);
-        }
-        private byte Color2B
-        {
-            get => ReadByte(0x4E);
-            set => Write(0x4E, value);
-        }
-        [Editor(typeof(MyColorEditor), typeof(UITypeEditor)), DisplayName("Color 2 (R, G, B)")]
-        public MyColor BackgroundColor
-        {
-            get => new MyColor(Color2R, Color2G, Color2B, Color2Alpha);
-            set
-            {
-                Color2R = value.R;
-                Color2G = value.G;
-                Color2B = value.B;
-            }
-        }
-        [DisplayName("Color 2 Alpha (0 - 255)")]
-        public byte Color2Alpha
-        {
-            get => ReadByte(0x4F);
-            set => Write(0x4F, value);
-        }
-
-        public AssetID BackgroundTextureID
-        {
-            get => ReadUInt(0x50);
-            set => Write(0x50, value);
+            Verify(DefaultTextID, ref result);
+            Verify(BackgroundTextureID, ref result);
+            base.Verify(ref result);
         }
     }
 }

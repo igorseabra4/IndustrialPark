@@ -1,7 +1,7 @@
-﻿using System;
+﻿using SharpDX;
+using System;
 using System.Threading;
 using System.Windows.Forms;
-using SharpDX;
 
 namespace IndustrialPark
 {

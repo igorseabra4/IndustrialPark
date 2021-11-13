@@ -1,78 +1,84 @@
-﻿using System.ComponentModel;
+﻿using HipHopFile;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaEffectRumble : DynaBase
+    public class DynaEffectRumble : AssetDYNA
     {
-        public string Note => "Version is always 3";
+        private const string dynaCategoryName = "effect:Rumble";
 
-        public override int StructSize => 0x28;
+        protected override short constVersion => 3;
 
-        public DynaEffectRumble(AssetDYNA asset) : base(asset) { }
+        [Category(dynaCategoryName)]
+        public AssetSingle Time { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle Intensity { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle ID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte Priority { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte RumbleType { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte RumbleInPause { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle Param1 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle Param2 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle ShakeMagnitude { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle ShakeCycleMax { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle ShakeRotationalMagnitude { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte ShakeY { get; set; }
 
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_00
+        public DynaEffectRumble(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__Rumble, game, endianness)
         {
-            get => ReadFloat(0x00);
-            set => Write(0x00, value);
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
+
+                Time = reader.ReadSingle();
+                Intensity = reader.ReadSingle();
+                ID = reader.ReadSingle();
+                Priority = reader.ReadByte();
+                RumbleType = reader.ReadByte();
+                RumbleInPause = reader.ReadByte();
+                reader.ReadByte();
+                Param1 = reader.ReadSingle();
+                Param2 = reader.ReadSingle();
+                ShakeMagnitude = reader.ReadSingle();
+                ShakeCycleMax = reader.ReadSingle();
+                ShakeRotationalMagnitude = reader.ReadSingle();
+                ShakeY = reader.ReadByte();
+            }
         }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_04
+
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            get => ReadFloat(0x04);
-            set => Write(0x04, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_08
-        {
-            get => ReadFloat(0x08);
-            set => Write(0x08, value);
-        }
-        public short UnknownShort_0C
-        {
-            get => ReadShort(0x0C);
-            set => Write(0x0C, value);
-        }
-        public short UnknownShort_0A
-        {
-            get => ReadShort(0x0A);
-            set => Write(0x0A, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_10
-        {
-            get => ReadFloat(0x10);
-            set => Write(0x10, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_14
-        {
-            get => ReadFloat(0x14);
-            set => Write(0x14, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_18
-        {
-            get => ReadFloat(0x18);
-            set => Write(0x18, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_1C
-        {
-            get => ReadFloat(0x1C);
-            set => Write(0x1C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_20
-        {
-            get => ReadFloat(0x20);
-            set => Write(0x20, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_24
-        {
-            get => ReadFloat(0x24);
-            set => Write(0x24, value);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Time);
+                writer.Write(Intensity);
+                writer.Write(ID);
+                writer.Write(Priority);
+                writer.Write(RumbleType);
+                writer.Write(RumbleInPause);
+                writer.Write((byte)0);
+                writer.Write(Param1);
+                writer.Write(Param2);
+                writer.Write(ShakeMagnitude);
+                writer.Write(ShakeCycleMax);
+                writer.Write(ShakeRotationalMagnitude);
+                writer.Write(ShakeY);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+
+                return writer.ToArray();
+            }
         }
     }
 }

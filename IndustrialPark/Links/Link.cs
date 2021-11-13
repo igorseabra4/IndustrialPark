@@ -1,138 +1,139 @@
-﻿using System;
-using System.ComponentModel;
-using System.Collections.Generic;
+﻿using HipHopFile;
+using System;
 
 namespace IndustrialPark
 {
-    public abstract class Link : EndianConvertible
+    public enum LinkType
     {
-        public static readonly int sizeOfStruct = 32;
+        Normal,
+        Timed,
+        Progress
+    }
 
-        [DisplayName("Target Asset")]
+    public class Link
+    {
+        public static int sizeOfStruct => 32;
+
+        private Game game;
+
         public AssetID TargetAssetID { get; set; }
-        protected ushort _eventReceiveID;
-        protected ushort _eventSendID;
-        protected byte[] arguments;
+        public ushort EventReceiveID;
+        public ushort EventSendID;
+        public AssetID Parameter1 { get; set; }
+        public AssetID Parameter2 { get; set; }
+        public AssetID Parameter3 { get; set; }
+        public AssetID Parameter4 { get; set; }
+        public float FloatParameter1
+        {
+            get => BitConverter.ToSingle(BitConverter.GetBytes(Parameter1), 0);
+            set => Parameter1 = BitConverter.ToUInt32(BitConverter.GetBytes(value), 0);
+        }
+        public float FloatParameter2
+        {
+            get => BitConverter.ToSingle(BitConverter.GetBytes(Parameter2), 0);
+            set => Parameter2 = BitConverter.ToUInt32(BitConverter.GetBytes(value), 0);
+        }
+        public float FloatParameter3
+        {
+            get => BitConverter.ToSingle(BitConverter.GetBytes(Parameter3), 0);
+            set => Parameter3 = BitConverter.ToUInt32(BitConverter.GetBytes(value), 0);
+        }
+        public float FloatParameter4
+        {
+            get => BitConverter.ToSingle(BitConverter.GetBytes(Parameter4), 0);
+            set => Parameter4 = BitConverter.ToUInt32(BitConverter.GetBytes(value), 0);
+        }
         public AssetID ArgumentAssetID { get; set; }
         public AssetID SourceCheckAssetID { get; set; }
 
-        protected bool IsTimed = false;
-        public float Time { get; set; }
+        public float Time { get; set; } // only for timed
+        public int Flags { get; set; } // only for progress
 
-        protected Link(Endianness endianness, bool isTimed) : base(endianness)
+        public Link(Game game)
         {
-            _eventReceiveID = 0;
-            _eventSendID = 0;
-            TargetAssetID = 0;
-            arguments = new byte[16];
-            ArgumentAssetID = 0;
-            SourceCheckAssetID = 0;
-            IsTimed = isTimed;
+            this.game = game;
         }
 
-        protected Link(byte[] data, int offset, bool isTimed, Endianness endianness) : base(endianness)
+        public Link(EndianBinaryReader reader, LinkType type, Game game)
         {
-            IsTimed = isTimed;
+            this.game = game;
 
-            TargetAssetID = Switch(BitConverter.ToUInt32(data, offset + 4));
-
-            if (isTimed)
+            if (type == LinkType.Normal)
             {
-                Time = Switch(BitConverter.ToSingle(data, offset));
-                _eventSendID = (ushort)Switch(BitConverter.ToInt32(data, offset + 8));
-
-                arguments = new byte[16];
-                for (int i = 0; i < 16; i++)
-                    arguments[i] = data[offset + 12 + i];
-
-                ArgumentAssetID = Switch(BitConverter.ToUInt32(data, offset + 0x1C));
-                SourceCheckAssetID = 0;
+                EventReceiveID = reader.ReadUInt16();
+                EventSendID = reader.ReadUInt16();
+                TargetAssetID = reader.ReadUInt32();
+                Parameter1 = reader.ReadUInt32();
+                Parameter2 = reader.ReadUInt32();
+                Parameter3 = reader.ReadUInt32();
+                Parameter4 = reader.ReadUInt32();
+                ArgumentAssetID = reader.ReadUInt32();
+                SourceCheckAssetID = reader.ReadUInt32();
             }
             else
             {
-                _eventReceiveID = Switch(BitConverter.ToUInt16(data, offset));
-                _eventSendID = Switch(BitConverter.ToUInt16(data, offset + 2));
-
-                arguments = new byte[16];
-                for (int i = 0; i < 16; i++)
-                    arguments[i] = data[offset + 8 + i];
-
-                ArgumentAssetID = Switch(BitConverter.ToUInt32(data, offset + 0x18));
-                SourceCheckAssetID = Switch(BitConverter.ToUInt32(data, offset + 0x1C));
+                Time = reader.ReadSingle();
+                if (type == LinkType.Progress)
+                    Flags = reader.ReadInt32();
+                TargetAssetID = reader.ReadUInt32();
+                EventSendID = (ushort)reader.ReadUInt32();
+                Parameter1 = reader.ReadUInt32();
+                Parameter2 = reader.ReadUInt32();
+                Parameter3 = reader.ReadUInt32();
+                Parameter4 = reader.ReadUInt32();
+                ArgumentAssetID = reader.ReadUInt32();
             }
         }
 
-        public float[] Arguments_Float
+        public byte[] Serialize(LinkType type, Endianness endianness)
         {
-            get
+            using (var writer = new EndianBinaryWriter(endianness))
             {
-                float[] result = new float[4];
-                for (int i = 0; i < 4; i++)
-                    result[i] = Switch(BitConverter.ToSingle(arguments, 4 * i));
-
-                return result;
-            }
-            set
-            {
-                for (int i = 0; i < 4; i++)
+                if (type == LinkType.Normal)
                 {
-                    byte[] r = BitConverter.GetBytes(Switch(value[i]));
-
-                    arguments[i * 4 + 0] = r[0];
-                    arguments[i * 4 + 1] = r[1];
-                    arguments[i * 4 + 2] = r[2];
-                    arguments[i * 4 + 3] = r[3];
+                    writer.Write(EventReceiveID);
+                    writer.Write(EventSendID);
+                    writer.Write(TargetAssetID);
+                    writer.Write(Parameter1);
+                    writer.Write(Parameter2);
+                    writer.Write(Parameter3);
+                    writer.Write(Parameter4);
+                    writer.Write(ArgumentAssetID);
+                    writer.Write(SourceCheckAssetID);
                 }
-            }
-        }
-
-        public AssetID[] Arguments_Hex
-        {
-            get
-            {
-                AssetID[] result = new AssetID[4];
-                for (int i = 0; i < 4; i++)
-                    result[i] = Switch(BitConverter.ToUInt32(arguments, 4 * i));
-
-                return result;
-            }
-            set
-            {
-                for (int i = 0; i < 4; i++)
+                else
                 {
-                    byte[] r = BitConverter.GetBytes(Switch(value[i]));
-
-                    arguments[i * 4 + 0] = r[0];
-                    arguments[i * 4 + 1] = r[1];
-                    arguments[i * 4 + 2] = r[2];
-                    arguments[i * 4 + 3] = r[3];
+                    writer.Write(Time);
+                    if (type == LinkType.Progress)
+                        writer.Write(Flags);
+                    writer.Write(TargetAssetID);
+                    writer.Write((int)EventSendID);
+                    writer.Write(Parameter1);
+                    writer.Write(Parameter2);
+                    writer.Write(Parameter3);
+                    writer.Write(Parameter4);
+                    writer.Write(ArgumentAssetID);
                 }
+
+                return writer.ToArray();
             }
         }
 
-        public byte[] ToByteArray()
+        public bool HasReference(uint assetID) => TargetAssetID == assetID || ArgumentAssetID == assetID || SourceCheckAssetID == assetID
+            || Parameter1 == assetID || Parameter2 == assetID || Parameter3 == assetID || Parameter4 == assetID;
+
+        public override string ToString()
         {
-            List<byte> data = new List<byte>();
+            var recEvent = Enum.GetName(game == Game.Incredibles ? typeof(EventTSSM) : typeof(EventBFBB), EventReceiveID);
+            var sndEvent = Enum.GetName(game == Game.Incredibles ? typeof(EventTSSM) : typeof(EventBFBB), EventSendID);
 
-            if (IsTimed)
-            {
-                data.AddRange(BitConverter.GetBytes(Switch(Time)));
-                data.AddRange(BitConverter.GetBytes(Switch(TargetAssetID)));
-                data.AddRange(BitConverter.GetBytes(Switch((int)_eventSendID)));
-                data.AddRange(arguments);
-                data.AddRange(BitConverter.GetBytes(Switch(ArgumentAssetID)));
-            }
-            else
-            {
-                data.AddRange(BitConverter.GetBytes(Switch(_eventReceiveID)));
-                data.AddRange(BitConverter.GetBytes(Switch(_eventSendID)));
-                data.AddRange(BitConverter.GetBytes(Switch(TargetAssetID)));
-                data.AddRange(arguments);
-                data.AddRange(BitConverter.GetBytes(Switch(ArgumentAssetID)));
-                data.AddRange(BitConverter.GetBytes(Switch(SourceCheckAssetID)));
-            }
+            string result = "";
 
-            return data.ToArray();
+            result += EventReceiveID != 0 ? recEvent.ToString() : Time.ToString();
+            result += $" => {sndEvent} => ";
+            result += HexUIntTypeConverter.Legacy ? TargetAssetID.ToString("X8") : Program.MainForm.GetAssetNameFromID(TargetAssetID);
+
+            return result;
         }
     }
 }

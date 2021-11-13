@@ -2,13 +2,7 @@
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace IndustrialPark
@@ -106,7 +100,7 @@ namespace IndustrialPark
                 if (Path.GetExtension(s).ToLower() == ".hip" || Path.GetExtension(s).ToLower() == ".hop")
                 {
                     ArchiveEditorFunctions archive = new ArchiveEditorFunctions();
-                    archive.OpenFile(s, false, scoobyPlatform, true);
+                    archive.OpenFile(s, false, scoobyPlatform, out _, true);
                     if (scoobyPlatform == Platform.Unknown)
                         scoobyPlatform = archive.platform;
                     WriteWhatIFound(archive);
@@ -127,17 +121,17 @@ namespace IndustrialPark
             {
                 progressBar1.PerformStep();
 
-                if (senderAssetType != AssetType.Null && asset.AHDR.assetType != senderAssetType)
+                if (senderAssetType != AssetType.Null && asset.assetType != senderAssetType)
                     continue;
 
                 if (asset is BaseAsset objectAsset)
                     try
                     {
-                        foreach (LinkBFBB assetEvent in objectAsset.LinksBFBB)
+                        foreach (Link assetEvent in objectAsset.Links)
                         {
-                            if (recieveEventType != EventBFBB.Unknown && assetEvent.EventReceiveID != recieveEventType)
+                            if (recieveEventType != EventBFBB.Unknown && (EventBFBB)assetEvent.EventReceiveID != recieveEventType)
                                 continue;
-                            if (targetEventType != EventBFBB.Unknown && assetEvent.EventSendID != targetEventType)
+                            if (targetEventType != EventBFBB.Unknown && (EventBFBB)assetEvent.EventSendID != targetEventType)
                                 continue;
 
                             Asset targetAsset = null;
@@ -146,32 +140,32 @@ namespace IndustrialPark
 
                             if (recieverAssetType != AssetType.Null)
                             {
-                                if (targetAsset != null && targetAsset.AHDR.assetType != recieverAssetType)
+                                if (targetAsset != null && targetAsset.assetType != recieverAssetType)
                                     continue;
                                 if (targetAsset == null)
                                     continue;
                             }
 
-                            string eventName = $"{objectAsset.AHDR.ADBG.assetName} ({assetEvent.EventReceiveID.ToString()}) => {assetEvent.EventSendID.ToString()} => ";
+                            string eventName = $"{objectAsset.assetName} ({assetEvent.EventReceiveID}) => {assetEvent.EventSendID} => ";
 
                             if (targetAsset == null)
                                 eventName += $"0x{assetEvent.TargetAssetID.ToString("X8")}";
                             else
-                                eventName += $"{targetAsset.AHDR.ADBG.assetName}";
+                                eventName += $"{targetAsset.assetName}";
 
-                            eventName += $" [{assetEvent.Arguments_Float[0]}, {assetEvent.Arguments_Float[1]}, {assetEvent.Arguments_Float[2]}, {assetEvent.Arguments_Float[3]}";
+                            eventName += $" [{assetEvent.FloatParameter1}, {assetEvent.FloatParameter2}, {assetEvent.FloatParameter3}, {assetEvent.FloatParameter4}";
 
                             if (assetEvent.ArgumentAssetID != 0)
                             {
                                 if (archive.ContainsAsset(assetEvent.ArgumentAssetID))
-                                    eventName += $", {archive.GetFromAssetID(assetEvent.ArgumentAssetID).AHDR.ADBG.assetName}";
+                                    eventName += $", {archive.GetFromAssetID(assetEvent.ArgumentAssetID).assetName}";
                                 else
                                     eventName += $", 0x{assetEvent.ArgumentAssetID.ToString("X8")}";
                             }
                             if (assetEvent.SourceCheckAssetID != 0)
                             {
                                 if (archive.ContainsAsset(assetEvent.SourceCheckAssetID))
-                                    eventName += $", {archive.GetFromAssetID(assetEvent.SourceCheckAssetID).AHDR.ADBG.assetName}";
+                                    eventName += $", {archive.GetFromAssetID(assetEvent.SourceCheckAssetID).assetName}";
                                 else
                                     eventName += $", 0x{assetEvent.SourceCheckAssetID.ToString("X8")}";
                             }
@@ -179,11 +173,11 @@ namespace IndustrialPark
                             eventName += "]";
 
                             richTextBox1.AppendText(eventName + "\n");
-                            senders.Add(objectAsset.AHDR.assetType);
+                            senders.Add(objectAsset.assetType);
                             if (targetAsset != null)
-                                recievers.Add(targetAsset.AHDR.assetType);
-                            recievedEvents.Add(assetEvent.EventReceiveID);
-                            sentEvents.Add(assetEvent.EventSendID);
+                                recievers.Add(targetAsset.assetType);
+                            recievedEvents.Add((EventBFBB)assetEvent.EventReceiveID);
+                            sentEvents.Add((EventBFBB)assetEvent.EventSendID);
                             total++;
                         }
                     }

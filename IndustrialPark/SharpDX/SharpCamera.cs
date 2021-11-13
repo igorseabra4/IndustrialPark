@@ -124,16 +124,16 @@ namespace IndustrialPark
             this.Position = Position;
             UpdateCamera();
         }
-        
+
         public Matrix ViewMatrix => Matrix.LookAtRH(Position, Position + Forward, Up);
-        
+
         public Matrix ProjectionMatrix => Matrix.PerspectiveFovRH(FieldOfView, AspectRatio, NearPlane, FarPlane);
-        
+
         public Matrix BiggerFovProjectionMatrix => Matrix.PerspectiveFovRH(1.3f * FieldOfView, AspectRatio, NearPlane, FarPlane);
-        
+
         public override string ToString() => string.Format("Position: [{0:0.0000}, {1:0.0000}, {2:0.0000}] Rotation: [{3:0.0000}, {4:0.0000}]",
                 Position.X, Position.Y, Position.Z, Yaw, Pitch);
-        
+
         public void SetPositionCamera(AssetCAM cam)
         {
             Position = new Vector3(cam.PositionX, cam.PositionY, cam.PositionZ);

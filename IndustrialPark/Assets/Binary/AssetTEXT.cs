@@ -1,19 +1,47 @@
-﻿using System;
+﻿using HipHopFile;
 using System.Collections.Generic;
-using HipHopFile;
 
 namespace IndustrialPark
 {
     public class AssetTEXT : Asset
     {
-        public AssetTEXT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        public string Text { get; set; }
+
+        public AssetTEXT(string assetName) : base(assetName, AssetType.TEXT)
+        {
+            Text = "";
+        }
+
+        public AssetTEXT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                var length = reader.ReadInt32();
+                Text = reader.ReadString(length);
+            }
+        }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Text.Length);
+                writer.Write(Text);
+
+                if (Text.Length == 0 || writer.BaseStream.Length % 4 != 0 || (writer.BaseStream.Length % 4 == 0 && Text[Text.Length - 1] != '\0'))
+                    do writer.Write((byte)0);
+                    while (writer.BaseStream.Length % 4 != 0);
+
+                return writer.ToArray();
+            }
+        }
 
         public override bool HasReference(uint assetID)
         {
             foreach (string s in AssetNamesInText)
                 if (Functions.BKDRHash(s) == assetID || Functions.BKDRHash(s + ".RW3") == assetID)
                     return true;
-            
+
             return base.HasReference(assetID);
         }
 
@@ -96,25 +124,6 @@ namespace IndustrialPark
                     }
 
                 return assetNames;
-            }
-        }
-        
-        public string Text
-        {
-            get => System.Text.Encoding.ASCII.GetString(Data, 4, ReadInt(0));
-
-            set
-            {
-                List<byte> newData = new List<byte>();
-                newData.AddRange(BitConverter.GetBytes(Switch(value.Length)));
-                foreach (char c in value)
-                    newData.Add((byte)c);
-                newData.Add(0);
-
-                while (newData.Count % 4 != 0)
-                    newData.Add(0);
-
-                Data = newData.ToArray();
             }
         }
     }

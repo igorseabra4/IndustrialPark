@@ -14,7 +14,7 @@ namespace IndustrialPark
             this.asset = asset;
             this.archive = archive;
 
-            Text = $"[{asset.AHDR.assetType}] {asset}";
+            Text = $"[{asset.assetType}] {asset}";
             UpdateListbox();
         }
 
@@ -34,7 +34,7 @@ namespace IndustrialPark
 
         public uint GetAssetID()
         {
-            return asset.AHDR.assetID;
+            return asset.assetID;
         }
 
         private void buttonFindCallers_Click(object sender, EventArgs e)
@@ -73,7 +73,8 @@ namespace IndustrialPark
             {
                 listBoxFlyEntries.SelectedIndex = selectedIndex;
             }
-            catch {
+            catch
+            {
                 try
                 {
                     listBoxFlyEntries.SelectedIndex = selectedIndex - 1;
@@ -105,10 +106,6 @@ namespace IndustrialPark
         private void propertyGridSpecific_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             UpdateAssetEntries();
-        }
-
-        public void SetHideHelp(bool _)
-        {
         }
 
         private void buttonGetPos_Click(object sender, EventArgs e)

@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Drawing.Design;
 
 [TypeConverter(typeof(ExpandableObjectConverter))]
-public sealed class DynamicTypeDescriptor : ICustomTypeDescriptor, INotifyPropertyChanged
+public class DynamicTypeDescriptor : ICustomTypeDescriptor, INotifyPropertyChanged
 {
     private Type _type;
     private AttributeCollection _attributes;
@@ -16,7 +16,7 @@ public sealed class DynamicTypeDescriptor : ICustomTypeDescriptor, INotifyProper
 
     public event PropertyChangedEventHandler PropertyChanged;
 
-    private DynamicTypeDescriptor()
+    protected DynamicTypeDescriptor()
     {
     }
 
@@ -531,6 +531,39 @@ public sealed class DynamicTypeDescriptor : ICustomTypeDescriptor, INotifyProper
             throw new ArgumentException(null, "component");
 
         DynamicTypeDescriptor desc = new DynamicTypeDescriptor();
+        desc._type = _type;
+        desc.Component = component;
+
+        // shallow copy on purpose
+        desc._typeConverter = _typeConverter;
+        desc._editors = _editors;
+        desc._defaultEvent = _defaultEvent;
+        desc._defaultProperty = _defaultProperty;
+        desc._attributes = _attributes;
+        desc._events = _events;
+        desc.OriginalProperties = OriginalProperties;
+
+        // track values
+        List<PropertyDescriptor> properties = new List<PropertyDescriptor>();
+        foreach (PropertyDescriptor pd in Properties)
+        {
+            DynamicProperty ap = new DynamicProperty(desc, pd, component);
+            properties.Add(ap);
+        }
+
+        desc.Properties = new PropertyDescriptorCollection(properties.ToArray());
+        return desc;
+    }
+
+    public virtual FlagBitmask DFD_FromComponent(object component)
+    {
+        if (component == null)
+            throw new ArgumentNullException("component");
+
+        if (!_type.IsAssignableFrom(component.GetType()))
+            throw new ArgumentException(null, "component");
+
+        FlagBitmask desc = new FlagBitmask((IndustrialPark.FlagField)component);
         desc._type = _type;
         desc.Component = component;
 

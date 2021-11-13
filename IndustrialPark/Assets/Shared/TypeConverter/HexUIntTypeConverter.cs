@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections;
+﻿using Newtonsoft.Json;
+using System;
 using System.ComponentModel;
 using System.Globalization;
 
@@ -7,6 +7,8 @@ namespace IndustrialPark
 {
     public class HexUIntTypeConverter : TypeConverter
     {
+        public static bool Legacy;
+
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
             return sourceType == typeof(string);
@@ -16,21 +18,47 @@ namespace IndustrialPark
         {
             if (value is string s)
             {
-                return Convert.ToInt32(s, 16);
+                if (Legacy)
+                    return new AssetID(Convert.ToUInt32(s, 16));
+
+                return AssetIDFromString(s);
             }
 
             return base.ConvertFrom(context, culture, value);
         }
 
+        public static AssetID AssetIDFromString(string s)
+        {
+            if (s.ToLower().StartsWith("0x"))
+                return Convert.ToUInt32(s, 16);
+
+            if (s.StartsWith("{") && s.EndsWith("}"))
+            {
+                try
+                {
+                    var assets = JsonConvert.DeserializeObject<AssetClipboard>(s);
+                    return assets.assets[0].assetID;
+                }
+                catch { }
+            }
+
+            return s;
+        }
+
         public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
         {
-            return destinationType == typeof(uint);
+            return destinationType == typeof(AssetID);
         }
 
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
             if (destinationType == typeof(string))
-                return ((uint)value).ToString("X8");
+            {
+                if (Legacy)
+                    return ((AssetID)value).ToString("X8");
+
+                return Program.MainForm.GetAssetNameFromID((AssetID)value);
+            }
 
             return base.ConvertTo(context, culture, value, destinationType);
         }

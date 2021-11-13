@@ -27,152 +27,192 @@ namespace IndustrialPark
 
     public class AssetPARE : BaseAsset
     {
-        public AssetPARE(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        private const string categoryName = "Particle Emitter";
 
-        protected override int EventStartOffset => 0x54;
-
-        public override bool HasReference(uint assetID) => PARP_AssetID == assetID || Emitter_AssetID == assetID || base.HasReference(assetID);
-
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            if (PARP_AssetID == 0)
-                result.Add("PARE with PARP_AssetID set to 0");
-            Verify(PARP_AssetID, ref result);
-            Verify(Emitter_AssetID, ref result);
-        }
-
-        [Category("Particle Emitter")]
-        public DynamicTypeDescriptor EmitterFlags => ByteFlagsDescriptor(0x8);
-
-        [Category("Particle Emitter")]
+        [Category(categoryName)]
+        public FlagBitmask EmitterFlags { get; set; } = ByteFlagsDescriptor();
+        private EmitterType _emitterType;
+        [Category(categoryName)]
         public EmitterType EmitterType
         {
-            get => (EmitterType)ReadByte(0x9);
-            set => Write(0x9, (byte)value);
-        }
-
-        [Category("Particle Emitter")]
-        public short Padding0A
-        {
-            get => ReadShort(0xA);
-            set => Write(0xA, value);
-        }
-
-        [Category("Particle Emitter")]
-        public AssetID PARP_AssetID
-        {
-            get => ReadUInt(0xC);
-            set => Write(0xC, value);
-        }
-
-        [Category("Particle Emitter"), TypeConverter(typeof(ExpandableObjectConverter))]
-        public PareSpecific_Generic PareSpecific
-        {
-            get
+            get => _emitterType;
+            set
             {
-                switch (EmitterType)
+                _emitterType = value;
+                switch (_emitterType)
                 {
                     case EmitterType.CircleEdge:
                     case EmitterType.Circle:
                     case EmitterType.OCircleEdge:
                     case EmitterType.OCircle:
-                        return new PareSpecific_xPECircle(this);
+                        PareSpecific = new PareSpecific_xPECircle();
+                        break;
                     case EmitterType.RectEdge:
                     case EmitterType.Rect:
-                        return new PareSpecific_tagEmitRect(this);
+                        PareSpecific = new PareSpecific_tagEmitRect();
+                        break;
                     case EmitterType.Line:
-                        return new PareSpecific_tagEmitLine(this);
+                        PareSpecific = new PareSpecific_tagEmitLine();
+                        break;
                     case EmitterType.Volume:
-                        return new PareSpecific_tagEmitVolume(this);
+                        PareSpecific = new PareSpecific_tagEmitVolume();
+                        break;
                     case EmitterType.SphereEdge:
                     case EmitterType.Sphere:
                     case EmitterType.SphereEdge10:
                     case EmitterType.SphereEdge11:
-                        return new PareSpecific_tagEmitSphere(this);
+                        PareSpecific = new PareSpecific_tagEmitSphere();
+                        break;
                     case EmitterType.OffsetPoint:
-                        return new PareSpecific_tagEmitOffsetPoint(this);
+                        PareSpecific = new PareSpecific_tagEmitOffsetPoint();
+                        break;
                     case EmitterType.VCylEdge:
-                        return new PareSpecific_xPEVCyl(this);
+                        PareSpecific = new PareSpecific_xPEVCyl();
+                        break;
                     case EmitterType.EntityBone:
-                        return new PareSpecific_xPEEntBone(this);
+                        PareSpecific = new PareSpecific_xPEEntBone();
+                        break;
                     case EmitterType.EntityBound:
-                        return new PareSpecific_xPEEntBound(this);
+                        PareSpecific = new PareSpecific_xPEEntBound();
+                        break;
                     default:
-                        return new PareSpecific_Generic(this);
+                        PareSpecific = new PareSpecific_Generic();
+                        break;
                 }
             }
         }
+        [Category(categoryName)]
+        public AssetID PARP_AssetID { get; set; }
+        [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter))]
+        public PareSpecific_Generic PareSpecific { get; set; }
+        [Category(categoryName)]
+        public AssetID Emitter_AssetID { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Emitter_PosX { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Emitter_PosY { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Emitter_PosZ { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Velocity_X { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Velocity_Y { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Velocity_Z { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Velocity_AngleVariation { get; set; }
+        [Category(categoryName)]
+        public int CullMode { get; set; }
+        [Category(categoryName)]
+        public AssetSingle CullDistanceSqr { get; set; }
 
-        [Category("Particle Emitter")]
-        public AssetID Emitter_AssetID
+        public AssetPARE(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            get => ReadUInt(0x2C);
-            set => Write(0x2C, value);
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = baseHeaderEndPosition;
+
+                EmitterFlags.FlagValueByte = reader.ReadByte();
+                _emitterType = (EmitterType)reader.ReadByte();
+                reader.BaseStream.Position += 2;
+                PARP_AssetID = reader.ReadUInt32();
+
+                // should be at 0x10 now
+                switch (_emitterType)
+                {
+                    case EmitterType.CircleEdge:
+                    case EmitterType.Circle:
+                    case EmitterType.OCircleEdge:
+                    case EmitterType.OCircle:
+                        PareSpecific = new PareSpecific_xPECircle(reader);
+                        break;
+                    case EmitterType.RectEdge:
+                    case EmitterType.Rect:
+                        PareSpecific = new PareSpecific_tagEmitRect(reader);
+                        break;
+                    case EmitterType.Line:
+                        PareSpecific = new PareSpecific_tagEmitLine(reader);
+                        break;
+                    case EmitterType.Volume:
+                        PareSpecific = new PareSpecific_tagEmitVolume(reader);
+                        break;
+                    case EmitterType.SphereEdge:
+                    case EmitterType.Sphere:
+                    case EmitterType.SphereEdge10:
+                    case EmitterType.SphereEdge11:
+                        PareSpecific = new PareSpecific_tagEmitSphere(reader);
+                        break;
+                    case EmitterType.OffsetPoint:
+                        PareSpecific = new PareSpecific_tagEmitOffsetPoint(reader);
+                        break;
+                    case EmitterType.VCylEdge:
+                        PareSpecific = new PareSpecific_xPEVCyl(reader);
+                        break;
+                    case EmitterType.EntityBone:
+                        PareSpecific = new PareSpecific_xPEEntBone(reader);
+                        break;
+                    case EmitterType.EntityBound:
+                        PareSpecific = new PareSpecific_xPEEntBound(reader);
+                        break;
+                    default:
+                        PareSpecific = new PareSpecific_Generic();
+                        break;
+                } // 0x1C in size
+
+                reader.BaseStream.Position = 0x2C;
+                Emitter_AssetID = reader.ReadUInt32();
+                Emitter_PosX = reader.ReadSingle();
+                Emitter_PosY = reader.ReadSingle();
+                Emitter_PosZ = reader.ReadSingle();
+                Velocity_X = reader.ReadSingle();
+                Velocity_Y = reader.ReadSingle();
+                Velocity_Z = reader.ReadSingle();
+                Velocity_AngleVariation = reader.ReadSingle();
+                CullMode = reader.ReadInt32();
+                CullDistanceSqr = reader.ReadSingle();
+            }
         }
 
-        [Category("Particle Emitter"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Emitter_PosX
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            get => ReadFloat(0x30);
-            set => Write(0x30, value);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
+                writer.Write(EmitterFlags.FlagValueByte);
+                writer.Write((byte)_emitterType);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+                writer.Write(PARP_AssetID);
+                writer.Write(PareSpecific.Serialize(game, endianness));
+                while (writer.BaseStream.Length < 0x2C)
+                    writer.Write((byte)0);
+                writer.Write(Emitter_AssetID);
+                writer.Write(Emitter_PosX);
+                writer.Write(Emitter_PosY);
+                writer.Write(Emitter_PosZ);
+                writer.Write(Velocity_X);
+                writer.Write(Velocity_Y);
+                writer.Write(Velocity_Z);
+                writer.Write(Velocity_AngleVariation);
+                writer.Write(CullMode);
+                writer.Write(CullDistanceSqr);
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
         }
 
-        [Category("Particle Emitter"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Emitter_PosY
-        {
-            get => ReadFloat(0x34);
-            set => Write(0x34, value);
-        }
+        public override bool HasReference(uint assetID) =>
+            PareSpecific.HasReference(assetID) || PARP_AssetID == assetID || Emitter_AssetID == assetID || base.HasReference(assetID);
 
-        [Category("Particle Emitter"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Emitter_PosZ
+        public override void Verify(ref List<string> result)
         {
-            get => ReadFloat(0x38);
-            set => Write(0x38, value);
-        }
+            base.Verify(ref result);
+            PareSpecific.Verify(ref result);
 
-        [Category("Particle Emitter"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Velocity_X
-        {
-            get => ReadFloat(0x3C);
-            set => Write(0x3C, value);
-        }
-
-        [Category("Particle Emitter"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Velocity_Y
-        {
-            get => ReadFloat(0x40);
-            set => Write(0x40, value);
-        }
-
-        [Category("Particle Emitter"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Velocity_Z
-        {
-            get => ReadFloat(0x44);
-            set => Write(0x44, value);
-        }
-
-        [Category("Particle Emitter"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Velocity_AngleVariation
-        {
-            get => ReadFloat(0x48);
-            set => Write(0x48, value);
-        }
-
-        [Category("Particle Emitter")]
-        public int CullMode
-        {
-            get => ReadInt(0x4C);
-            set => Write(0x4C, value);
-        }
-
-        [Category("Particle Emitter"), TypeConverter(typeof(FloatTypeConverter))]
-        public float CullDistanceSqr
-        {
-            get => ReadFloat(0x50);
-            set => Write(0x50, value);
+            if (PARP_AssetID == 0)
+                result.Add("PARE with PARP_AssetID set to 0");
+            Verify(PARP_AssetID, ref result);
+            Verify(Emitter_AssetID, ref result);
         }
     }
 }

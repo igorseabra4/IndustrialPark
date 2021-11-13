@@ -12,7 +12,7 @@ namespace IndustrialPark
             this.asset = asset;
             this.archive = archive;
 
-            Text = $"[{this.asset.AHDR.assetType}] {this.asset}";
+            Text = $"[{this.asset.assetType}] {this.asset}";
             richTextBoxAssetText.Text = this.asset.Text;
         }
 
@@ -37,7 +37,7 @@ namespace IndustrialPark
 
         public uint GetAssetID()
         {
-            return asset.AHDR.assetID;
+            return asset.assetID;
         }
 
         private void buttonFindCallers_Click(object sender, System.EventArgs e)
@@ -47,10 +47,7 @@ namespace IndustrialPark
 
         private void buttonHelp_Click(object sender, System.EventArgs e)
         {
-            System.Diagnostics.Process.Start(AboutBox.WikiLink + asset.AHDR.assetType.ToString());
-        }
-        public void SetHideHelp(bool _)
-        {
+            System.Diagnostics.Process.Start(AboutBox.WikiLink + asset.assetType.ToString());
         }
     }
 }

@@ -1,179 +1,297 @@
 ﻿using HipHopFile;
 using SharpDX;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 
 namespace IndustrialPark
 {
     public class AssetPLAT : AssetWithMotion
     {
-        public static bool dontRender = false;
+        private const string categoryName = "Platform";
 
-        public override bool DontRender => dontRender;
-
-        protected override int EventStartOffset
-        {
-            get
-            {
-                switch (game)
-                {
-                    case Game.BFBB:
-                        return 0xC0;
-                    case Game.Incredibles:
-                        return 0xC8;
-                    case Game.Scooby:
-                        return 0xA8;
-                }
-
-                return 0;
-            }
-        }
-
-        public AssetPLAT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
-        {
-            ChoosePlatSpecific();
-        }
-
-        public override bool HasReference(uint assetID) => PlatSpecific.HasReference(assetID) || base.HasReference(assetID);
-        
-        public override void Verify(ref List<string> result)
-        {
-            PlatSpecific.Verify(ref result);
-            base.Verify(ref result);
-        }
-        
-        [Category("Entity")]
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public override float PositionX
-        {
-            get => Position.X;
-            set
-            {
-                _position.X = value;
-                Write(0x20 + Offset, Position.X);
-                CreateTransformMatrix();
-                ChoosePlatSpecific();
-            }
-        }
-
-        [Category("Entity")]
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public override float PositionY
-        {
-            get => Position.Y;
-            set
-            {
-                _position.Y = value;
-                Write(0x24 + Offset, Position.Y);
-                CreateTransformMatrix();
-                ChoosePlatSpecific();
-            }
-        }
-
-        [Category("Entity")]
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public override float PositionZ
-        {
-            get => Position.Z;
-            set
-            {
-                _position.Z = value;
-                Write(0x28 + Offset, Position.Z);
-                CreateTransformMatrix();
-                ChoosePlatSpecific();
-            }
-        }
-        
-        [Category("Platform")]
+        private PlatType _platformType;
+        [Category(categoryName)]
         public PlatType PlatformType
         {
-            get => (PlatType)ReadByte(0x54 + Offset);
+            get => _platformType;
             set
             {
+                _platformType = value;
+
                 if ((int)value > 3)
                     TypeFlag = (byte)value;
                 else
                     TypeFlag = 0;
 
-                Write(0x54 + Offset, (byte)value);
-                ChoosePlatSpecific();
+                switch ((PlatType)(byte)TypeFlag)
+                {
+                    case PlatType.ConveyorBelt:
+                        PlatSpecific = new PlatSpecific_ConveryorBelt();
+                        break;
+                    case PlatType.FallingPlatform:
+                        PlatSpecific = new PlatSpecific_FallingPlatform();
+                        break;
+                    case PlatType.FR:
+                        PlatSpecific = new PlatSpecific_FR();
+                        break;
+                    case PlatType.BreakawayPlatform:
+                        PlatSpecific = new PlatSpecific_BreakawayPlatform();
+                        break;
+                    case PlatType.Springboard:
+                        PlatSpecific = new PlatSpecific_Springboard();
+                        break;
+                    case PlatType.TeeterTotter:
+                        PlatSpecific = new PlatSpecific_TeeterTotter();
+                        break;
+                    case PlatType.Paddle:
+                        PlatSpecific = new PlatSpecific_Paddle();
+                        break;
+                    default:
+                        PlatSpecific = new PlatSpecific_Generic();
+                        break;
+                }
+
+                switch (PlatformType)
+                {
+                    case PlatType.ExtendRetract:
+                        Motion = new Motion_ExtendRetract();
+                        break;
+                    case PlatType.Orbit:
+                        Motion = new Motion_Orbit();
+                        break;
+                    case PlatType.Spline:
+                        Motion = new Motion_Spline();
+                        break;
+                    case PlatType.Pendulum:
+                        Motion = new Motion_Pendulum();
+                        break;
+                    case PlatType.MovePoint:
+                        Motion = new Motion_MovePoint(_position);
+                        break;
+                    case PlatType.Mechanism:
+                        Motion = new Motion_Mechanism();
+                        break;
+                    default:
+                        Motion = new Motion(MotionType.Other);
+                        break;
+                }
             }
         }
 
-        [Category("Platform")]
-        public byte Padding55
-        {
-            get => ReadByte(0x55 + Offset);
-            set => Write(0x55 + Offset, value);
-        }
+        [Category(categoryName)]
+        public FlagBitmask PlatFlags { get; set; } = ShortFlagsDescriptor(
+            "Shake on Mount",
+            "Unknown",
+            "Solid");
 
-        [Category("Platform")]
-        public DynamicTypeDescriptor PlatFlags => ShortFlagsDescriptor(0x56 + Offset, "Shake on Mount", "Unknown", "Solid");
-        [Browsable(false)]
-        public short PlatFlagsShort
+        private int motionStart(Game game) =>
+            game == Game.Scooby ? 0x78 :
+            game == Game.BFBB ? 0x90 :
+            game == Game.Incredibles ? 0x8C : 0;
+
+        public AssetPLAT(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.PLAT, BaseAssetType.Platform, position)
         {
-            get => ReadShort(0x56 + Offset);
-            set => Write(0x56 + Offset, value);
-        }
-        
-        private void ChoosePlatSpecific()
-        {
-            switch ((PlatType)TypeFlag)
+            PlatformType = PlatType.Mechanism;
+            PlatFlags.FlagValueShort = 4;
+
+            switch (template)
             {
-                case PlatType.ConveyorBelt:
-                    PlatSpecific = new PlatSpecific_ConveryorBelt(this);
+                case AssetTemplate.HoveringPlatform:
+                    Model_AssetID = 0x335EE0C8;
+                    Animation_AssetID = 0x730847B6;
+                    Motion = new Motion_Mechanism()
+                    {
+                        Type = MotionType.Other,
+                        MovementLoopMode = EMechanismFlags.ReturnToStart,
+                        SlideAccelTime = 0.4f,
+                        SlideDecelTime = 0.4f
+                    };
                     break;
-                case PlatType.FallingPlatform:
-                    PlatSpecific = new PlatSpecific_FallingPlatform(this);
+                case AssetTemplate.TexasHitch_PLAT:
+                case AssetTemplate.Swinger:
+                    Model_AssetID = "trailer_hitch";
                     break;
-                case PlatType.FR:
-                    PlatSpecific = new PlatSpecific_FR(this);
+                case AssetTemplate.Springboard:
+                    Model_AssetID = 0x55E9EAB5;
+                    Animation_AssetID = 0x7AAA99BB;
+                    PlatformType = PlatType.Springboard;
+                    PlatSpecific = new PlatSpecific_Springboard()
+                    {
+                        Height1 = 10,
+                        Height2 = 10,
+                        Height3 = 10,
+                        HeightBubbleBounce = 10,
+                        Anim1_AssetID = 0x6DAE0759,
+                        Anim2_AssetID = 0xBC4A9A5F,
+                        DirectionY = 1f,
+                    };
                     break;
-                case PlatType.BreakawayPlatform:
-                    if (game == Game.Incredibles)
-                        PlatSpecific = new PlatSpecific_BreakawayPlatform_TSSM(this);
-                    else
-                        PlatSpecific = new PlatSpecific_BreakawayPlatform(this);
-                    break;
-                case PlatType.Springboard:
-                    PlatSpecific = new PlatSpecific_Springboard(this);
-                    break;
-                case PlatType.TeeterTotter:
-                    PlatSpecific = new PlatSpecific_TeeterTotter(this);
-                    break;
-                case PlatType.Paddle:
-                    PlatSpecific = new PlatSpecific_Paddle(this);
-                    break;
-                default:
-                    PlatSpecific = new PlatSpecific_Generic(this);
+                case AssetTemplate.CollapsePlatform_Planktopolis:
+                case AssetTemplate.CollapsePlatform_ThugTug:
+                case AssetTemplate.CollapsePlatform_Spongeball:
+                    PlatformType = PlatType.BreakawayPlatform;
+                    Animation_AssetID = 0x7A9BF321;
+                    if (template == AssetTemplate.CollapsePlatform_Planktopolis)
+                    {
+                        Model_AssetID = 0x6F462432;
+                    }
+                    else if (template == AssetTemplate.CollapsePlatform_ThugTug)
+                    {
+                        Animation_AssetID = 0x62C6520F;
+                        Model_AssetID = 0xED7F1021;
+                    }
+                    else if (template == AssetTemplate.CollapsePlatform_Spongeball)
+                    {
+                        Model_AssetID = 0x1A38B9AB;
+                    }
+                    PlatSpecific = new PlatSpecific_BreakawayPlatform(template);
+                    Motion = new Motion_Mechanism(MotionType.Other);
                     break;
             }
+        }
 
-            switch (PlatformType)
+        public AssetPLAT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                case PlatType.ExtendRetract:
-                    Motion = new Motion_ExtendRetract(this);
-                    break;
-                case PlatType.Orbit:
-                    Motion = new Motion_Orbit(this);
-                    break;
-                case PlatType.Spline:
-                    Motion = new Motion_Spline(this);
-                    break;
-                case PlatType.Pendulum:
-                    Motion = new Motion_Pendulum(this);
-                    break;
-                case PlatType.MovePoint:
-                    Motion = new Motion_MovePoint(this, Position);
-                    break;
-                case PlatType.Mechanism:
-                    Motion = game == Game.Incredibles ? new Motion_Mechanism_TSSM(this) : new Motion_Mechanism(this);
-                    break;
-                default:
-                    Motion = new Motion(this, MotionType.Other);
-                    break;
+                reader.BaseStream.Position = entityHeaderEndPosition;
+
+                _platformType = (PlatType)reader.ReadByte();
+
+                reader.ReadByte();
+
+                PlatFlags.FlagValueShort = reader.ReadUInt16();
+
+                switch ((PlatType)(byte)TypeFlag)
+                {
+                    case PlatType.ConveyorBelt:
+                        PlatSpecific = new PlatSpecific_ConveryorBelt(reader);
+                        break;
+                    case PlatType.FallingPlatform:
+                        PlatSpecific = new PlatSpecific_FallingPlatform(reader);
+                        break;
+                    case PlatType.FR:
+                        PlatSpecific = new PlatSpecific_FR(reader);
+                        break;
+                    case PlatType.BreakawayPlatform:
+                        PlatSpecific = new PlatSpecific_BreakawayPlatform(reader, game);
+                        break;
+                    case PlatType.Springboard:
+                        PlatSpecific = new PlatSpecific_Springboard(reader, game);
+                        break;
+                    case PlatType.TeeterTotter:
+                        PlatSpecific = new PlatSpecific_TeeterTotter(reader);
+                        break;
+                    case PlatType.Paddle:
+                        PlatSpecific = new PlatSpecific_Paddle(reader);
+                        break;
+                    default:
+                        PlatSpecific = new PlatSpecific_Generic();
+                        break;
+                }
+
+                reader.BaseStream.Position = motionStart(game);
+
+                switch (PlatformType)
+                {
+                    case PlatType.ExtendRetract:
+                        Motion = new Motion_ExtendRetract(reader);
+                        break;
+                    case PlatType.Orbit:
+                        Motion = new Motion_Orbit(reader);
+                        break;
+                    case PlatType.Spline:
+                        Motion = new Motion_Spline(reader);
+                        break;
+                    case PlatType.Pendulum:
+                        Motion = new Motion_Pendulum(reader);
+                        break;
+                    case PlatType.MovePoint:
+                        Motion = new Motion_MovePoint(reader, _position);
+                        break;
+                    case PlatType.Mechanism:
+                        Motion = new Motion_Mechanism(reader, game);
+                        break;
+                    default:
+                        Motion = new Motion(reader);
+                        break;
+                }
+            }
+        }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntity(game, endianness));
+
+                writer.Write((byte)_platformType);
+                writer.Write((byte)0);
+                writer.Write(PlatFlags.FlagValueShort);
+                writer.Write(PlatSpecific.Serialize(game, endianness));
+
+                var motionStart = this.motionStart(game);
+                while (writer.BaseStream.Length < motionStart)
+                    writer.Write((byte)0);
+                writer.Write(Motion.Serialize(game, endianness));
+
+                int linkStart =
+                    game == Game.BFBB ? 0xC0 :
+                    game == Game.Incredibles ? 0xC8 :
+                    game == Game.Scooby ? 0xA8 : throw new System.ArgumentException("Invalid game");
+
+                while (writer.BaseStream.Length < linkStart)
+                    writer.Write((byte)0);
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
+        }
+
+        public override bool HasReference(uint assetID) => PlatSpecific.HasReference(assetID) || base.HasReference(assetID);
+
+        public override void Verify(ref List<string> result)
+        {
+            PlatSpecific.Verify(ref result);
+            base.Verify(ref result);
+        }
+
+        public static bool dontRender = false;
+
+        public override bool DontRender => dontRender;
+
+        [Category("Entity")]
+        public override AssetSingle PositionX
+        {
+            get => base.PositionX;
+            set
+            {
+                if (Motion is Motion_MovePoint mp)
+                    mp.SetInitialPosition(_position);
+                base.PositionX = value;
+            }
+        }
+
+        [Category("Entity")]
+        public override AssetSingle PositionY
+        {
+            get => base.PositionY;
+            set
+            {
+                if (Motion is Motion_MovePoint mp)
+                    mp.SetInitialPosition(_position);
+                base.PositionY = value;
+            }
+        }
+
+        [Category("Entity")]
+        public override AssetSingle PositionZ
+        {
+            get => base.PositionZ;
+            set
+            {
+                if (Motion is Motion_MovePoint mp)
+                    mp.SetInitialPosition(_position);
+                base.PositionZ = value;
             }
         }
 
@@ -187,9 +305,9 @@ namespace IndustrialPark
                     if (!skyBoxUseY)
                         skyTranslation.Y = PositionY;
 
-                    return base.LocalWorld() * Matrix.Translation(-Position) * Matrix.Translation(skyTranslation);
+                    return base.LocalWorld() * Matrix.Translation(-_position) * Matrix.Translation(skyTranslation);
                 }
-                
+
                 if (PlatformType == PlatType.MovePoint)
                     return Matrix.Scaling(_scale)
                         * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
@@ -203,8 +321,6 @@ namespace IndustrialPark
         [Category("Platform")]
         [TypeConverter(typeof(ExpandableObjectConverter))]
         public PlatSpecific_Generic PlatSpecific { get; set; }
-        
-        public override int MotionStart => game == Game.Scooby ? 0x78 : 0x90 + Offset;
 
         private bool isSkyBox = false;
         private bool skyBoxUseY = false;
@@ -213,11 +329,11 @@ namespace IndustrialPark
         {
             isSkyBox = false;
             skyBoxUseY = false;
-            foreach (LinkBFBB link in LinksBFBB)
-                if (link.EventSendID == EventBFBB.SetasSkydome && link.TargetAssetID.Equals(AssetID))
+            foreach (Link link in _links)
+                if ((EventBFBB)link.EventSendID == EventBFBB.SetasSkydome && link.TargetAssetID.Equals(assetID))
                 {
                     isSkyBox = true;
-                    if (link.Arguments_Float[1] == 1f)
+                    if (link.FloatParameter2 == 1f)
                         skyBoxUseY = true;
                 }
             base.Reset();

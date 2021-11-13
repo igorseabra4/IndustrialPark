@@ -7,16 +7,127 @@ namespace IndustrialPark
 {
     public class AssetBOUL : EntityAsset
     {
+        private const string categoryName = "Boulder";
+
+        [Category(categoryName)]
+        public AssetSingle Gravity { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Mass { get; set; }
+        [Category(categoryName)]
+        public AssetSingle BounceFactor { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Friction { get; set; }
+        [Category(categoryName)] // bfbb only
+        public AssetSingle StartFriction { get; set; }
+        [Category(categoryName)]
+        public AssetSingle MaxLinearVelocity { get; set; }
+        [Category(categoryName)]
+        public AssetSingle MaxAngularVelocity { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Stickiness { get; set; }
+        [Category(categoryName)]
+        public AssetSingle BounceDamp { get; set; }
+        [Category(categoryName)]
+        public FlagBitmask BoulderFlags { get; set; } = IntFlagsDescriptor(
+            "Can Hit Walls",
+                "Damage Player",
+                "Something related to destructibles",
+                "Damage NPCs",
+                null,
+                "Die on OOB surfaces",
+                null,
+                null,
+                "Die on player attack",
+                "Die after kill timer");
+        [Category(categoryName)]
+        public AssetSingle KillTimer { get; set; }
+        [Category(categoryName)]
+        public int Hitpoints { get; set; }
+        [Category(categoryName)]
+        public AssetID Sound_AssetID { get; set; }
+        [Category(categoryName)] // bfbb only
+        public AssetSingle Volume { get; set; }
+        [Category(categoryName)]
+        public AssetSingle MinSoundVel { get; set; }
+        [Category(categoryName)]
+        public AssetSingle MaxSoundVel { get; set; }
+        [Category(categoryName)]
+        public AssetSingle InnerRadius { get; set; }
+        [Category(categoryName)]
+        public AssetSingle OuterRadius { get; set; }
+
+        public AssetBOUL(string assetName, Vector3 position) : base(assetName, AssetType.BOUL, BaseAssetType.Boulder, position)
+        {
+            SolidityFlags.FlagValueByte = 0;
+            ColorAlpha = 0;
+            ColorAlphaSpeed = 0;
+        }
+
+        public AssetBOUL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = entityHeaderEndPosition;
+
+                Gravity = reader.ReadSingle();
+                Mass = reader.ReadSingle();
+                BounceFactor = reader.ReadSingle();
+                Friction = reader.ReadSingle();
+                if (game == Game.BFBB)
+                    StartFriction = reader.ReadSingle();
+                MaxLinearVelocity = reader.ReadSingle();
+                MaxAngularVelocity = reader.ReadSingle();
+                Stickiness = reader.ReadSingle();
+                BounceDamp = reader.ReadSingle();
+                BoulderFlags.FlagValueInt = reader.ReadUInt32();
+                KillTimer = reader.ReadSingle();
+                Hitpoints = reader.ReadInt32();
+                Sound_AssetID = reader.ReadUInt32();
+                if (game == Game.BFBB)
+                    Volume = reader.ReadSingle();
+                MinSoundVel = reader.ReadSingle();
+                MaxSoundVel = reader.ReadSingle();
+                InnerRadius = reader.ReadSingle();
+                OuterRadius = reader.ReadSingle();
+            }
+        }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntity(game, endianness));
+                writer.Write(Gravity);
+                writer.Write(Mass);
+                writer.Write(BounceFactor);
+                writer.Write(Friction);
+                if (game == Game.BFBB)
+                    writer.Write(StartFriction);
+                writer.Write(MaxLinearVelocity);
+                writer.Write(MaxAngularVelocity);
+                writer.Write(Stickiness);
+                writer.Write(BounceDamp);
+                writer.Write(BoulderFlags.FlagValueInt);
+                writer.Write(KillTimer);
+                writer.Write(Hitpoints);
+                writer.Write(Sound_AssetID);
+                if (game == Game.BFBB)
+                    writer.Write(Volume);
+                writer.Write(MinSoundVel);
+                writer.Write(MaxSoundVel);
+                writer.Write(InnerRadius);
+                writer.Write(OuterRadius);
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
+        }
+
         public static bool dontRender = false;
 
         public override bool DontRender => dontRender;
 
-        protected override int EventStartOffset => 0x9C + Offset + 2 * Offset2;
-
-        public AssetBOUL(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
-
         public override bool HasReference(uint assetID) => Sound_AssetID == assetID || base.HasReference(assetID);
-        
+
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
@@ -33,162 +144,6 @@ namespace IndustrialPark
                 ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * Color : Color, UvAnimOffset);
             else
                 renderer.DrawCube(LocalWorld(), isSelected);
-        }
-
-        private const string categoryName = "Boulder";
-
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Gravity
-        {
-            get => ReadFloat(0x54 + Offset);
-            set => Write(0x54 + Offset, value);
-        }
-
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Mass
-        {
-            get => ReadFloat(0x58 + Offset);
-            set => Write(0x58 + Offset, value);
-        }
-
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float BounceFactor
-        {
-            get => ReadFloat(0x5C + Offset);
-            set => Write(0x5C + Offset, value);
-        }
-
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Friction
-        {
-            get => ReadFloat(0x60 + Offset);
-            set => Write(0x60 + Offset, value);
-        }
-
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        [Description("BFBB Only")]
-        public float StartFriction
-        {
-            get
-            {
-                if (game == Game.BFBB)
-                    return ReadFloat(0x64 + Offset);
-                return 0;
-            }
-            set
-            {
-                if (game == Game.BFBB)
-                    Write(0x64 + Offset, value);
-            }
-        }
-
-        private int Offset2 => game == Game.Incredibles ? -0x04 : 0x00;
-
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float MaxLinearVelocity
-        {
-            get => ReadFloat(0x68 + Offset + Offset2);
-            set => Write(0x68 + Offset + Offset2, value);
-        }
-
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float MaxAngularVelocity
-        {
-            get => ReadFloat(0x6C + Offset + Offset2);
-            set => Write(0x6C + Offset + Offset2, value);
-        }
-
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float Stickiness
-        {
-            get => ReadFloat(0x70 + Offset + Offset2);
-            set => Write(0x70 + Offset + Offset2, value);
-        }
-
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float BounceDamp
-        {
-            get => ReadFloat(0x74 + Offset + Offset2);
-            set => Write(0x74 + Offset + Offset2, value);
-        }
-
-        [Category(categoryName)]
-        public DynamicTypeDescriptor BoulderFlags => IntFlagsDescriptor(0x78 + Offset + Offset2,
-            "Can Hit Walls",
-            "Damage Player",
-            "Something related to destructibles",
-            "Damage NPCs",
-            null,
-            "Die on OOB surfaces",
-            null,
-            null,
-            "Die on player attack",
-            "Die after kill timer");
-
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float KillTimer
-        {
-            get => ReadFloat(0x7C + Offset + Offset2);
-            set => Write(0x7C + Offset + Offset2, value);
-        }
-
-        [Category(categoryName)]
-        public int Hitpoints
-        {
-            get => ReadInt(0x80 + Offset + Offset2);
-            set => Write(0x80 + Offset, value);
-        }
-
-        [Category(categoryName)]
-        public AssetID Sound_AssetID
-        {
-            get => ReadUInt(0x84 + Offset + Offset2);
-            set => Write(0x84 + Offset + Offset2, value);
-        }
-
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        [Description("BFBB Only")]
-        public float Volume
-        {
-            get
-            {
-                if (game == Game.BFBB)
-                    return ReadFloat(0x88 + Offset);
-                return 0;
-            }
-            set
-            {
-                if (game == Game.BFBB)
-                    Write(0x88 + Offset, value);
-            }
-        }
-
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float MinSoundVel
-        {
-            get => ReadFloat(0x8C + Offset + 2 * Offset2);
-            set => Write(0x8C + Offset + 2 * Offset2, value);
-        }
-
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float MaxSoundVel
-        {
-            get => ReadFloat(0x90 + Offset + 2 * Offset2);
-            set => Write(0x90 + Offset + 2 * Offset2, value);
-        }
-
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float InnerRadius
-        {
-            get => ReadFloat(0x94 + Offset + 2 * Offset2);
-            set => Write(0x94 + Offset + 2 * Offset2, value);
-        }
-
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float OuterRadius
-        {
-            get => ReadFloat(0x98 + Offset + 2 * Offset2);
-            set => Write(0x98 + Offset + 2 * Offset2, value);
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)

@@ -1,10 +1,9 @@
-﻿using System;
+﻿using SharpDX;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using SharpDX;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 
 namespace IndustrialPark.Models
 {
@@ -29,7 +28,7 @@ namespace IndustrialPark.Models
             string[] OBJFile = File.ReadAllLines(InputFile);
 
             int CurrentMaterial = -1;
-            
+
             foreach (string j in OBJFile)
             {
                 if (j.Length > 2)
@@ -121,7 +120,7 @@ namespace IndustrialPark.Models
                         objData.MTLLib = j.Substring(7).Split('\\').LastOrDefault();
                 }
             }
-            
+
             // Special code
             if (objData.ColorList.Count == objData.VertexList.Count)
                 for (int i = 0; i < objData.VertexList.Count; i++)

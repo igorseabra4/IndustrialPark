@@ -1,16 +1,80 @@
-﻿using System.Collections.Generic;
+﻿using HipHopFile;
+using SharpDX;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
 {
+    public enum EnemyTurretType : uint
+    {
+        turret_v1_bind = 0xE7A67E0E,
+        turret_v2_bind = 0xE32AC981,
+        turret_v3_bind = 0xDEAF14F4
+    }
+
     public class DynaEnemyTurret : DynaEnemySB
     {
-        public string Note => "Version is always 4";
+        private const string dynaCategoryName = "Enemy:SB:Turret";
 
-        public override int StructSize => 0x64;
+        protected override short constVersion => 4;
 
-        public DynaEnemyTurret(AssetDYNA asset) : base(asset) { }
-        
+        [Category(dynaCategoryName)]
+        public EnemyTurretType TurretType
+        {
+            get => (EnemyTurretType)(uint)Model_AssetID;
+            set => Model_AssetID = (uint)value;
+        }
+        [Category(dynaCategoryName)]
+        public AssetSingle Rotation { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Unknown54 { get; set; }
+        [Category(dynaCategoryName)]
+        public int TargetPlayer { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Unknown5C { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Unknown60 { get; set; }
+
+        public DynaEnemyTurret(string assetName, AssetTemplate template, Vector3 position) : base(assetName, DynaType.Enemy__SB__Turret, 4, position)
+        {
+            Rotation = 30f;
+            TargetPlayer = 1;
+
+            TurretType =
+            template == AssetTemplate.Turret_v1 ? EnemyTurretType.turret_v1_bind :
+            template == AssetTemplate.Turret_v2 ? EnemyTurretType.turret_v2_bind :
+            template == AssetTemplate.Turret_v3 ? EnemyTurretType.turret_v3_bind : 0;
+        }
+
+        public DynaEnemyTurret(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__Turret, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = entityDynaEndPosition;
+
+                Rotation = reader.ReadSingle();
+                Unknown54 = reader.ReadUInt32();
+                TargetPlayer = reader.ReadInt32();
+                Unknown5C = reader.ReadUInt32();
+                Unknown60 = reader.ReadUInt32();
+            }
+        }
+
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntityDyna(endianness));
+                writer.Write(Rotation);
+                writer.Write(Unknown54);
+                writer.Write(TargetPlayer);
+                writer.Write(Unknown5C);
+                writer.Write(Unknown60);
+
+                return writer.ToArray();
+            }
+        }
+
         public override bool HasReference(uint assetID)
         {
             if (Unknown54 == assetID)
@@ -27,40 +91,9 @@ namespace IndustrialPark
         {
             base.Verify(ref result);
 
-            Asset.Verify(Unknown54, ref result);
-            Asset.Verify(Unknown5C, ref result);
-            Asset.Verify(Unknown60, ref result);
-        }
-        public EnemyTurretType Type
-        {
-            get => (EnemyTurretType)(uint)Model_AssetID;
-            set => Model_AssetID = (uint)value;
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat50
-        {
-            get => ReadFloat(0x50);
-            set => Write(0x50, value);
-        }
-        public AssetID Unknown54
-        {
-            get => ReadUInt(0x54);
-            set => Write(0x54, value);
-        }
-        public int UnknownInt58
-        {
-            get => ReadInt(0x58);
-            set => Write(0x58, value);
-        }
-        public AssetID Unknown5C
-        {
-            get => ReadUInt(0x5C);
-            set => Write(0x5C, value);
-        }
-        public AssetID Unknown60
-        {
-            get => ReadUInt(0x60);
-            set => Write(0x60, value);
+            Verify(Unknown54, ref result);
+            Verify(Unknown5C, ref result);
+            Verify(Unknown60, ref result);
         }
     }
 }

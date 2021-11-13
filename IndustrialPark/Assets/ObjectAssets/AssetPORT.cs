@@ -1,15 +1,72 @@
 ﻿using HipHopFile;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace IndustrialPark
 {
     public class AssetPORT : BaseAsset
     {
-        public AssetPORT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        private const string categoryName = "Portal";
+
+        [Category(categoryName)]
+        public AssetID Camera_AssetID { get; set; }
+        [Category(categoryName)]
+        public AssetID Destination_MRKR_AssetID { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Rotation { get; set; }
+        [Category(categoryName)]
+        private char[] _destinationLevel;
+        [Category(categoryName)]
+        public string DestinationLevel
+        {
+            get => new string(_destinationLevel);
+            set
+            {
+                if (value.Length != 4)
+                    throw new ArgumentException("Value must be 4 characters long");
+                _destinationLevel = value.ToCharArray();
+            }
+        }
+
+        public AssetPORT(string assetName) : base(assetName, AssetType.PORT, BaseAssetType.Portal)
+        {
+            Camera_AssetID = "STARTCAM";
+            DestinationLevel = "AA00";
+        }
+
+        public AssetPORT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = baseHeaderEndPosition;
+
+                Camera_AssetID = reader.ReadUInt32();
+                Destination_MRKR_AssetID = reader.ReadUInt32();
+                Rotation = reader.ReadSingle();
+
+                var chars = reader.ReadChars(4);
+                _destinationLevel = reader.endianness == Endianness.Little ? chars : chars.Reverse().ToArray();
+            }
+        }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
+                writer.Write(Camera_AssetID);
+                writer.Write(Destination_MRKR_AssetID);
+                writer.Write(Rotation);
+                writer.WriteMagic(new string(_destinationLevel.ToArray()));
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
+        }
 
         public override bool HasReference(uint assetID) => Camera_AssetID == assetID || Destination_MRKR_AssetID == assetID || base.HasReference(assetID);
-        
+
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
@@ -18,60 +75,6 @@ namespace IndustrialPark
                 result.Add("PORT with Camera_AssetID set to 0");
             if (Destination_MRKR_AssetID == 0)
                 result.Add("PORT with Destination_MRKR_AssetID set to 0");
-        }
-
-        protected override int EventStartOffset => 0x18;
-
-        [Category("Portal")]
-        public AssetID Camera_AssetID
-        {
-            get => ReadUInt(0x8);
-            set => Write(0x8, value);
-        }
-
-        [Category("Portal")]
-        public AssetID Destination_MRKR_AssetID
-        {
-            get => ReadUInt(0xC);
-            set => Write(0xC, value);
-        }
-
-        [Category("Portal"), TypeConverter(typeof(FloatTypeConverter))]
-        public float Rotation
-        {
-            get => ReadFloat(0x10);
-            set => Write(0x10, value);
-        }
-
-        [Category("Portal")]
-        public string DestinationLevel
-        {
-            get
-            {
-                List<byte> bytes = new List<byte>();
-                for (int i = 0; i < 4; i++)
-                    bytes.Add(Data[0x14 + i]);
-
-                if (game != Game.Incredibles && platform == Platform.GameCube)
-                    bytes.Reverse();
-
-                return System.Text.Encoding.ASCII.GetString(bytes.ToArray(), 0, 4);
-            }
-            set
-            {
-                List<byte> bytes = new List<byte>();
-                foreach (char c in value)
-                    bytes.Add((byte)c);
-
-                while (bytes.Count < 4)
-                    bytes.Add((byte)' ');
-
-                if (game != Game.Incredibles && platform == Platform.GameCube)
-                    bytes.Reverse();
-
-                for (int i = 0; i < 4; i++)
-                    Data[0x14 + i] = bytes[i];
-            }
         }
     }
 }

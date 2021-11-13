@@ -12,12 +12,12 @@ namespace IndustrialPark
         public static bool renderBasedOnLodt = false;
         public static bool renderBasedOnPipt = true;
 
-        public AssetMODL(Section_AHDR AHDR, Game game, Platform platform, SharpRenderer renderer) : base(AHDR, game, platform, renderer) { }
+        public AssetMODL(Section_AHDR AHDR, Game game, Endianness endianness, SharpRenderer renderer) : base(AHDR, game, endianness, renderer) { }
 
         public override void Setup(SharpRenderer renderer)
         {
             base.Setup(renderer);
-            AddToRenderingDictionary(AHDR.assetID, this);
+            AddToRenderingDictionary(assetID, this);
 
             if (game == Game.Incredibles)
             {
@@ -26,24 +26,24 @@ namespace IndustrialPark
             }
         }
 
-        private string newName => AHDR.ADBG.assetName.Replace(".dff", "");
+        private string newName => assetName.Replace(".dff", "");
 
         public void MovieRemoveFromDictionary()
         {
-            renderingDictionary.Remove(Functions.BKDRHash(newName));
-            nameDictionary.Remove(Functions.BKDRHash(newName));
+            RemoveFromRenderingDictionary(Functions.BKDRHash(newName));
+            RemoveFromNameDictionary(Functions.BKDRHash(newName));
         }
 
-        private Dictionary<int, (BlendOption, BlendOption)> blendModes;
+        private Dictionary<uint, (BlendOption, BlendOption)> blendModes;
         public bool SpecialBlendMode { get; private set; }
 
-        public void SetBlendModes((int, BlendFactorType, BlendFactorType)[] sourceDest)
+        public void SetBlendModes((uint, BlendFactorType, BlendFactorType)[] sourceDest)
         {
-            blendModes = new Dictionary<int, (BlendOption, BlendOption)>();
+            blendModes = new Dictionary<uint, (BlendOption, BlendOption)>();
             SpecialBlendMode = false;
             foreach (var f in sourceDest)
             {
-                blendModes[f.Item1 == -1 ? -1 : (int)(Math.Log(f.Item1, 2) - 1)] = (GetSharpBlendMode(f.Item2, true), GetSharpBlendMode(f.Item3, false));
+                blendModes[f.Item1 == 0xFFFFFFFF ? 0xFFFFFFFF : (uint)(Math.Log(f.Item1, 2) - 1)] = (GetSharpBlendMode(f.Item2, true), GetSharpBlendMode(f.Item3, false));
                 SpecialBlendMode |= f.Item2 != BlendFactorType.None || f.Item3 != BlendFactorType.None;
             }
         }
@@ -53,11 +53,11 @@ namespace IndustrialPark
             SpecialBlendMode = false;
             blendModes = null;
         }
-        
+
         public void Draw(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset)
         {
             if (renderBasedOnPipt && blendModes != null)
-                model.RenderPipt(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, uvAnimOffset, _dontDrawMeshNumber, blendModes);            
+                model.RenderPipt(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, uvAnimOffset, _dontDrawMeshNumber, blendModes);
             else
                 model.Render(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, uvAnimOffset, _dontDrawMeshNumber);
         }
@@ -89,7 +89,7 @@ namespace IndustrialPark
                 case BlendFactorType.SourceAlphaSaturated:
                     return BlendOption.SourceAlphaSaturate;
             }
-            
+
             return dest ? BlendOption.One : BlendOption.Zero;
         }
     }

@@ -1,6 +1,6 @@
-﻿using SharpDX;
+﻿using HipHopFile;
+using SharpDX;
 using System.Collections.Generic;
-using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -42,13 +42,15 @@ namespace IndustrialPark
         public bool dontRenderBUTN;
         public bool dontRenderCAM;
         public bool dontRenderDSTR;
-        public bool dontRenderDUPC;
+        public bool dontRenderDTRK;
         public bool dontRenderDYNA;
         public bool dontRenderEGEN;
+        public bool dontRenderGRSM;
         public bool dontRenderHANG;
         public bool dontRenderLITE;
         public bool dontRenderMRKR;
         public bool dontRenderMVPT;
+        public bool dontRenderNPC;
         public bool dontRenderPEND;
         public bool dontRenderPKUP;
         public bool dontRenderPLAT;
@@ -61,7 +63,8 @@ namespace IndustrialPark
         public bool dontRenderUI;
         public bool dontRenderUIFT;
         public bool dontRenderVIL;
-        
+        public bool dontRenderVOLU;
+
         public ProjectJson()
         {
             version = getCurrentVersion;
@@ -99,13 +102,15 @@ namespace IndustrialPark
             dontRenderBUTN = false;
             dontRenderCAM = false;
             dontRenderDSTR = false;
-            dontRenderDUPC = false;
+            dontRenderDTRK = false;
             dontRenderDYNA = false;
             dontRenderEGEN = false;
             dontRenderHANG = false;
+            dontRenderGRSM = false;
             dontRenderLITE = false;
             dontRenderMRKR = false;
             dontRenderMVPT = false;
+            dontRenderNPC = false;
             dontRenderPEND = false;
             dontRenderPKUP = false;
             dontRenderPLAT = false;
@@ -118,6 +123,7 @@ namespace IndustrialPark
             dontRenderUI = true;
             dontRenderUIFT = true;
             dontRenderVIL = false;
+            dontRenderVOLU = false;
         }
     }
 }

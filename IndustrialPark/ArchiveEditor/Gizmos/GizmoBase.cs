@@ -72,7 +72,7 @@ namespace IndustrialPark
             }
             isSelected = false;
         }
-        
+
         protected DefaultRenderData renderData;
 
         public void Draw(SharpRenderer renderer)
@@ -102,7 +102,7 @@ namespace IndustrialPark
         protected Vector3[] vertices;
 
         protected abstract List<Models.Triangle> triangleList { get; }
-        
+
         public float? IntersectsWith(Ray ray)
         {
             float? smallestDistance = null;

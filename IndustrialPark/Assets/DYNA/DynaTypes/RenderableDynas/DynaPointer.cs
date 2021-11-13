@@ -1,127 +1,59 @@
-﻿using SharpDX;
-using System.ComponentModel;
+﻿using HipHopFile;
+using IndustrialPark.Models;
+using SharpDX;
+using System.Collections.Generic;
+using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
-    public class DynaPointer : DynaBase
+    public class DynaPointer : RenderableRotatableDynaBase
     {
-        public string Note => "Version is always 1";
+        protected override short constVersion => 1;
 
-        public override int StructSize => 0x18;
-
-        public DynaPointer(AssetDYNA asset) : base(asset) { }
-
-        [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public override float PositionX
+        public DynaPointer(string assetName, Vector3 position) : base(assetName, DynaType.pointer, 1, position)
         {
-            get => ReadFloat(0x00);
-            set
+            CreateTransformMatrix();
+            AddToRenderableAssets(this);
+        }
+
+        public DynaPointer(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.pointer, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                Write(0x00, value);
+                reader.BaseStream.Position = dynaDataStartPosition;
+
+                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                _yaw = reader.ReadSingle();
+                _pitch = reader.ReadSingle();
+                _roll = reader.ReadSingle();
+
                 CreateTransformMatrix();
-            }
-        }
-        [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public override float PositionY
-        {
-            get => ReadFloat(0x04);
-            set
-            {
-                Write(0x04, value);
-                CreateTransformMatrix();
-            }
-        }
-        [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public override float PositionZ
-        {
-            get => ReadFloat(0x08);
-            set
-            {
-                Write(0x08, value);
-                CreateTransformMatrix();
-            }
-        }
-        [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public override float Yaw
-        {
-            get => ReadFloat(0x0C);
-            set
-            {
-                Write(0x0C, value);
-                CreateTransformMatrix();
-            }
-        }
-        [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public override float Pitch
-        {
-            get => ReadFloat(0x10);
-            set
-            {
-                Write(0x10, value);
-                CreateTransformMatrix();
-            }
-        }
-        [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public override float Roll
-        {
-            get => ReadFloat(0x14);
-            set
-            {
-                Write(0x14, value);
-                CreateTransformMatrix();
+                AddToRenderableAssets(this);
             }
         }
 
-        public override bool IsRenderableClickable => true;
-
-        private Matrix world;
-        private BoundingBox boundingBox;
-        private Vector3[] vertices;
-        protected RenderWareFile.Triangle[] triangles;
-
-        public override void CreateTransformMatrix()
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            world = Matrix.RotationYawPitchRoll(MathUtil.DegreesToRadians(Yaw), MathUtil.DegreesToRadians(Pitch), MathUtil.DegreesToRadians(Roll)) * Matrix.Translation(PositionX, PositionY, PositionZ);
-
-            vertices = new Vector3[SharpRenderer.pyramidVertices.Count];
-            for (int i = 0; i < SharpRenderer.pyramidVertices.Count; i++)
-                vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.pyramidVertices[i], world);
-            boundingBox = BoundingBox.FromPoints(vertices);
-
-            triangles = new RenderWareFile.Triangle[SharpRenderer.pyramidTriangles.Count];
-            for (int i = 0; i < SharpRenderer.pyramidTriangles.Count; i++)
+            using (var writer = new EndianBinaryWriter(endianness))
             {
-                triangles[i] = new RenderWareFile.Triangle((ushort)SharpRenderer.pyramidTriangles[i].materialIndex,
-                    (ushort)SharpRenderer.pyramidTriangles[i].vertex1, (ushort)SharpRenderer.pyramidTriangles[i].vertex2, (ushort)SharpRenderer.pyramidTriangles[i].vertex3);
+                writer.Write(_position.X);
+                writer.Write(_position.Y);
+                writer.Write(_position.Z);
+                writer.Write(_yaw);
+                writer.Write(_pitch);
+                writer.Write(_roll);
+
+                return writer.ToArray();
             }
         }
 
-        public override void Draw(SharpRenderer renderer, bool isSelected)
+        protected override List<Vector3> vertexSource => SharpRenderer.cubeVertices;
+
+        protected override List<Triangle> triangleSource => SharpRenderer.cubeTriangles;
+
+        public override void Draw(SharpRenderer renderer)
         {
             renderer.DrawPyramid(world, isSelected, 1f);
-        }
-
-        public override BoundingBox GetBoundingBox()
-        {
-            return boundingBox;
-        }
-
-        public override float GetDistance(Vector3 cameraPosition)
-        {
-            return Vector3.Distance(cameraPosition, new Vector3(PositionX, PositionY, PositionZ));
-        }
-        
-        public override float? IntersectsWith(Ray ray)
-        {
-            float? smallestDistance = null;
-
-            if (ray.Intersects(ref boundingBox))
-                foreach (RenderWareFile.Triangle t in triangles)
-                if (ray.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
-                    if (smallestDistance == null || distance < smallestDistance)
-                        smallestDistance = distance;
-            
-            return smallestDistance;
         }
     }
 }

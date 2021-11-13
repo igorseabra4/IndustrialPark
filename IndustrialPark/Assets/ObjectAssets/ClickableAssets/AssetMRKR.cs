@@ -1,31 +1,68 @@
 ﻿using HipHopFile;
-using IndustrialPark.Models;
 using SharpDX;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
 {
     public class AssetMRKR : Asset, IRenderableAsset, IClickableAsset
     {
+        private const string categoryName = "Marker";
+
+        private Vector3 _position;
+        [Category(categoryName)]
+        public AssetSingle PositionX
+        {
+            get => _position.X;
+            set { _position.X = value; CreateTransformMatrix(); }
+        }
+        [Category(categoryName)]
+        public AssetSingle PositionY
+        {
+            get => _position.Y;
+            set { _position.Y = value; CreateTransformMatrix(); }
+        }
+        [Category(categoryName)]
+        public AssetSingle PositionZ
+        {
+            get => _position.Z;
+            set { _position.Z = value; CreateTransformMatrix(); }
+        }
+
+        public AssetMRKR(string assetName, Vector3 position) : base(assetName, AssetType.MRKR)
+        {
+            _position = position;
+            CreateTransformMatrix();
+            ArchiveEditorFunctions.AddToRenderableAssets(this);
+        }
+
+        public AssetMRKR(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                CreateTransformMatrix();
+                ArchiveEditorFunctions.AddToRenderableAssets(this);
+            }
+        }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(_position.X);
+                writer.Write(_position.Y);
+                writer.Write(_position.Z);
+                return writer.ToArray();
+            }
+        }
+
         private Matrix world;
         private BoundingBox boundingBox;
 
         public static bool dontRender = false;
 
-        public AssetMRKR(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
-        {
-            _position = new Vector3(ReadFloat(0x0), ReadFloat(0x4), ReadFloat(0x8));
-            CreateTransformMatrix();
-            ArchiveEditorFunctions.renderableAssets.Add(this);
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            if (Data.Length != 12)
-                result.Add("MRKR data length is invalid");
-        }
+        [Browsable(false)]
+        public bool SpecialBlendMode => true;
 
         public void CreateTransformMatrix()
         {
@@ -43,16 +80,14 @@ namespace IndustrialPark
             boundingBox = BoundingBox.FromPoints(vertices);
         }
 
+
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
-            if (!ShouldDraw(renderer))
-                return null;
-
-            if (ray.Intersects(ref boundingBox))
+            if (ShouldDraw(renderer) && ray.Intersects(ref boundingBox))
                 return TriangleIntersection(ray, SharpRenderer.pyramidTriangles, SharpRenderer.pyramidVertices, world);
             return null;
         }
-        
+
         public bool ShouldDraw(SharpRenderer renderer)
         {
             if (isSelected)
@@ -61,74 +96,16 @@ namespace IndustrialPark
                 return false;
             if (isInvisible)
                 return false;
-
-            if (AssetMODL.renderBasedOnLodt)
-            {
-                if (GetDistanceFrom(renderer.Camera.Position) < SharpRenderer.DefaultLODTDistance)
-                    return renderer.frustum.Intersects(ref boundingBox);
+            if (AssetMODL.renderBasedOnLodt && GetDistanceFrom(renderer.Camera.Position) > SharpRenderer.DefaultLODTDistance)
                 return false;
-            }
 
             return renderer.frustum.Intersects(ref boundingBox);
         }
 
-        public void Draw(SharpRenderer renderer)
-        {
-            renderer.DrawPyramid(world, isSelected, 1f);
-        }
-        
-        public BoundingBox GetBoundingBox()
-        {
-            return boundingBox;
-        }
+        public void Draw(SharpRenderer renderer) => renderer.DrawPyramid(world, isSelected, 1f);
 
-        public float GetDistanceFrom(Vector3 cameraPosition)
-        {
-            return Vector3.Distance(cameraPosition, _position);
-        }
+        public BoundingBox GetBoundingBox() => boundingBox;
 
-        [Browsable(false)]
-        public bool SpecialBlendMode => true;
-
-        private Vector3 _position;
-
-        [Category("Marker")]
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionX
-        {
-            get => _position.X;
-            set
-            {
-                _position.X = value;
-                Write(0x0, _position.X);
-                CreateTransformMatrix();
-            }
-        }
-
-        [Category("Marker")]
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionY
-        {
-            get => _position.Y;
-            set
-            {
-                _position.Y = value;
-                Write(0x4, _position.Y);
-                CreateTransformMatrix();
-            }
-        }
-
-        [Category("Marker")]
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionZ
-        {
-            get => _position.Z;
-            set
-            {
-                _position.Z = value;
-                Write(0x8, _position.Z);
-                CreateTransformMatrix();
-            }
-        }
+        public float GetDistanceFrom(Vector3 cameraPosition) => Vector3.Distance(cameraPosition, _position);
     }
 }

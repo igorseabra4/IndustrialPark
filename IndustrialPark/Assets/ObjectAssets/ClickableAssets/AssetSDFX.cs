@@ -2,27 +2,95 @@
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
-using IndustrialPark.Models;
 
 namespace IndustrialPark
 {
     public class AssetSDFX : BaseAsset, IRenderableAsset, IClickableAsset
     {
+        private const string categoryName = "Sound Effect";
+
+        private uint _soundGroup_AssetID;
+        [Category(categoryName)]
+        public AssetID SoundGroup_AssetID
+        {
+            get => _soundGroup_AssetID;
+            set { _soundGroup_AssetID = value; CreateTransformMatrix(); }
+        }
+
+        [Category(categoryName)]
+        public AssetID Emitter_AssetID { get; set; }
+        private Vector3 _position;
+        [Category(categoryName)]
+        public AssetSingle PositionX
+        {
+            get => _position.X;
+            set { _position.X = value; CreateTransformMatrix(); }
+        }
+        [Category(categoryName)]
+        public AssetSingle PositionY
+        {
+            get => _position.Y;
+            set { _position.Y = value; CreateTransformMatrix(); }
+        }
+        [Category(categoryName)]
+        public AssetSingle PositionZ
+        {
+            get => _position.Z;
+            set { _position.Z = value; CreateTransformMatrix(); }
+        }
+
+        [Category(categoryName)]
+        public FlagBitmask SoundEffectFlags { get; set; } = IntFlagsDescriptor(
+            null,
+            null,
+            "Play from Entity");
+
+        public AssetSDFX(string assetName, Vector3 position) : base(assetName, AssetType.SDFX, BaseAssetType.SDFX)
+        {
+            _position = position;
+
+            CreateTransformMatrix();
+            ArchiveEditorFunctions.AddToRenderableAssets(this);
+        }
+
+        public AssetSDFX(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = baseHeaderEndPosition;
+
+                _soundGroup_AssetID = reader.ReadUInt32();
+                Emitter_AssetID = reader.ReadUInt32();
+                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                SoundEffectFlags.FlagValueInt = reader.ReadUInt32();
+
+                CreateTransformMatrix();
+                ArchiveEditorFunctions.AddToRenderableAssets(this);
+            }
+        }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
+                writer.Write(_soundGroup_AssetID);
+                writer.Write(Emitter_AssetID);
+                writer.Write(_position.X);
+                writer.Write(_position.Y);
+                writer.Write(_position.Z);
+                writer.Write(SoundEffectFlags.FlagValueInt);
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
+        }
+
         private Matrix world;
         private Matrix world2;
         private BoundingBox boundingBox;
 
         public static bool dontRender = false;
 
-        protected override int EventStartOffset => 0x20;
-
-        public AssetSDFX(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
-        {
-            _position = new Vector3(ReadFloat(0x10), ReadFloat(0x14), ReadFloat(0x18));
-            CreateTransformMatrix();
-            ArchiveEditorFunctions.renderableAssets.Add(this);
-        }
-        
         public override bool HasReference(uint assetID) =>
             SoundGroup_AssetID == assetID ||
             Emitter_AssetID == assetID ||
@@ -56,10 +124,7 @@ namespace IndustrialPark
 
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
-            if (!ShouldDraw(renderer))
-                return null;
-
-            if (ray.Intersects(ref boundingSphere))
+            if (ShouldDraw(renderer) && ray.Intersects(ref boundingSphere))
                 return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices, world);
             return null;
         }
@@ -72,13 +137,8 @@ namespace IndustrialPark
                 return false;
             if (isInvisible)
                 return false;
-
-            if (AssetMODL.renderBasedOnLodt)
-            {
-                if (GetDistanceFrom(renderer.Camera.Position) < SharpRenderer.DefaultLODTDistance)
-                    return renderer.frustum.Intersects(ref boundingBox);
+            if (AssetMODL.renderBasedOnLodt && GetDistanceFrom(renderer.Camera.Position) > SharpRenderer.DefaultLODTDistance)
                 return false;
-            }
 
             return renderer.frustum.Intersects(ref boundingBox);
         }
@@ -94,16 +154,10 @@ namespace IndustrialPark
         [Browsable(false)]
         public bool SpecialBlendMode => true;
 
-        public BoundingBox GetBoundingBox()
-        {
-            return boundingBox;
-        }
+        public BoundingBox GetBoundingBox() => boundingBox;
 
-        public float GetDistanceFrom(Vector3 cameraPosition)
-        {
-            return Vector3.Distance(cameraPosition, _position) - _radius;
-        }
-        
+        public float GetDistanceFrom(Vector3 cameraPosition) => Vector3.Distance(cameraPosition, _position) - _radius;
+
         private AssetSGRP soundGroup
         {
             get
@@ -121,8 +175,9 @@ namespace IndustrialPark
         {
             get
             {
-                if (soundGroup != null)
-                    return soundGroup.InnerRadius;
+                var sg = soundGroup;
+                if (sg != null)
+                    return sg.InnerRadius;
                 return 1f;
             }
         }
@@ -131,67 +186,11 @@ namespace IndustrialPark
         {
             get
             {
-                if (soundGroup != null)
-                    return soundGroup.OuterRadius;
+                var sg = soundGroup;
+                if (sg != null)
+                    return sg.OuterRadius;
                 return 1f;
             }
         }
-
-        private const string categoryName = "Sound Effect";
-
-        [Category(categoryName)]
-        public AssetID SoundGroup_AssetID
-        {
-            get => ReadUInt(0x8);
-            set { Write(0x8, value); CreateTransformMatrix(); }
-        }
-
-        [Category(categoryName)]
-        public AssetID Emitter_AssetID
-        {
-            get => ReadUInt(0xC);
-            set => Write(0xC, value);
-        }
-
-        private Vector3 _position;
-
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionX
-        {
-            get { return _position.X; }
-            set
-            {
-                _position.X = value;
-                Write(0x10, _position.X);
-                CreateTransformMatrix();
-            }
-        }
-
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionY
-        {
-            get { return _position.Y; }
-            set
-            {
-                _position.Y = value;
-                Write(0x14, _position.Y);
-                CreateTransformMatrix();
-            }
-        }
-
-        [Category(categoryName), TypeConverter(typeof(FloatTypeConverter))]
-        public float PositionZ
-        {
-            get { return _position.Z; }
-            set
-            {
-                _position.Z = value;
-                Write(0x18, _position.Z);
-                CreateTransformMatrix();
-            }
-        }
-
-        [Category(categoryName), Description("0 = Normal\n4 = Play from Entity")]
-        public DynamicTypeDescriptor SoundEffectFlags => IntFlagsDescriptor(0x1C, null, null, "Play from Entity");
     }
 }

@@ -1,25 +1,25 @@
-﻿using System;
+﻿using HipHopFile;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using HipHopFile;
 
 namespace IndustrialPark
 {
     public enum BlendFactorType
     {
         None = 0x00,
-        Zero                           = 0x01,
-        One                            = 0x02,
-        SourceColor                    = 0x03,
-        InverseSourceColor             = 0x04,
-        SourceAlpha                    = 0x05,
-        InverseSourceAlpha             = 0x06,
-        DestinationAlpha               = 0x07,
-        InverseDestinationAlpha        = 0x08,
-        DestinationColor               = 0x09,
-        InverseDestinationColor        = 0x0A,
-        SourceAlphaSaturated           = 0x0B
+        Zero = 0x01,
+        One = 0x02,
+        SourceColor = 0x03,
+        InverseSourceColor = 0x04,
+        SourceAlpha = 0x05,
+        InverseSourceAlpha = 0x06,
+        DestinationAlpha = 0x07,
+        InverseDestinationAlpha = 0x08,
+        DestinationColor = 0x09,
+        InverseDestinationColor = 0x0A,
+        SourceAlphaSaturated = 0x0B
     }
 
     public enum PiptPreset
@@ -33,12 +33,12 @@ namespace IndustrialPark
         AdditiveAlphaVertexColors = 10036550,
     }
 
-    public class EntryPIPT
+    public class EntryPIPT : GenericAssetDataContainer
     {
         [Category("PIPT Entry")]
         public AssetID ModelAssetID { get; set; }
         [Category("PIPT Entry")]
-        public int SubObjectBits { get; set; }
+        public FlagBitmask SubObjectBits { get; set; } = IntFlagsDescriptor();
         [Category("PIPT Entry")]
         public int PipeFlags { get; set; }
         [Category("PIPT Entry")]
@@ -113,7 +113,7 @@ namespace IndustrialPark
                 }
             }
         }
-        
+
         [Category("PIPT Pipe Flags")]
         public BlendFactorType DestinationBlend
         {
@@ -204,20 +204,18 @@ namespace IndustrialPark
             }
         }
 
-        [Category("PIPT Entry (Movie only)")]
+        [Category("PIPT Entry (Incredibles only)")]
         public int Unknown { get; set; }
-
-        public static int SizeOfStruct(Game game) => game == Game.Incredibles ? 16 : 12;
 
         public EntryPIPT()
         {
             ModelAssetID = 0;
-            SubObjectBits = -1;
+            SubObjectBits.FlagValueInt = 0xFFFFFFFF;
             UnknownFlagB = 9;
             UnknownFlagC = 4;
             UnknownFlagJ = 2;
         }
-        
+
         public override string ToString()
         {
             return $"{Program.MainForm.GetAssetNameFromID(ModelAssetID)} - {SubObjectBits}";
@@ -234,47 +232,84 @@ namespace IndustrialPark
         {
             return ModelAssetID.GetHashCode();
         }
+
+        public EntryPIPT(EndianBinaryReader reader, Game game)
+        {
+            ModelAssetID = reader.ReadUInt32();
+            SubObjectBits.FlagValueInt = reader.ReadUInt32();
+            PipeFlags = reader.ReadInt32();
+            if (game == Game.Incredibles)
+                Unknown = reader.ReadInt32();
+        }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(ModelAssetID);
+                writer.Write(SubObjectBits.FlagValueInt);
+                writer.Write(PipeFlags);
+
+                if (game == Game.Incredibles)
+                    writer.Write(Unknown);
+
+                return writer.ToArray();
+            }
+        }
     }
 
     public class AssetPIPT : Asset
     {
-        public AssetPIPT(Section_AHDR AHDR, Game game, Platform platform, OnPipeInfoTableEdited onPipeInfoTableEdited) : base(AHDR, game, platform)
+        private EntryPIPT[] _pipt_Entries { get; set; }
+        [Category("Pipe Info Table")]
+        public EntryPIPT[] PIPT_Entries
+        {
+            get => _pipt_Entries;
+            set
+            {
+                _pipt_Entries = value;
+                UpdateDictionary();
+            }
+        }
+
+        public AssetPIPT(string assetName) : base(assetName, AssetType.PIPT)
+        {
+            PIPT_Entries = new EntryPIPT[0];
+        }
+
+        public AssetPIPT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                _pipt_Entries = new EntryPIPT[reader.ReadInt32()];
+
+                for (int i = 0; i < _pipt_Entries.Length; i++)
+                    _pipt_Entries[i] = new EntryPIPT(reader, game);
+
+                UpdateDictionary();
+            }
+        }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(_pipt_Entries.Length);
+
+                foreach (var l in _pipt_Entries)
+                    writer.Write(l.Serialize(game, endianness));
+
+                return writer.ToArray();
+            }
+        }
+
+        public AssetPIPT(Section_AHDR AHDR, Game game, Endianness endianness, OnPipeInfoTableEdited onPipeInfoTableEdited) : this(AHDR, game, endianness)
         {
             this.onPipeInfoTableEdited = onPipeInfoTableEdited;
-            UpdateDictionary();
-        }
-        public AssetPIPT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
-
-        public delegate void OnPipeInfoTableEdited(Dictionary<uint, (int, BlendFactorType, BlendFactorType)[]> blendModes);
-        OnPipeInfoTableEdited onPipeInfoTableEdited;
-
-        public void UpdateDictionary()
-        {
-            ClearDictionary();
-
-            Dictionary<uint, (int, BlendFactorType, BlendFactorType)[]> BlendModes = new Dictionary<uint, (int, BlendFactorType, BlendFactorType)[]>();
-
-            foreach (EntryPIPT entry in PIPT_Entries)
-            {
-                if (!BlendModes.ContainsKey(entry.ModelAssetID))
-                    BlendModes[entry.ModelAssetID] = new (int, BlendFactorType, BlendFactorType)[0];
-
-                var entries = BlendModes[entry.ModelAssetID].ToList();
-                for (int i = 0; i < entries.Count; i++)
-                    if (entries[i].Item1 == entry.SubObjectBits)
-                        entries.RemoveAt(i--);
-
-                entries.Add((entry.SubObjectBits, entry.SourceBlend, entry.DestinationBlend));
-                BlendModes[entry.ModelAssetID] = entries.ToArray();
-            }
-
-            onPipeInfoTableEdited?.Invoke(BlendModes);
         }
 
-        public void ClearDictionary()
-        {
-            onPipeInfoTableEdited?.Invoke(null);
-        }
+        public delegate void OnPipeInfoTableEdited(Dictionary<uint, (uint, BlendFactorType, BlendFactorType)[]> blendModes);
+        private readonly OnPipeInfoTableEdited onPipeInfoTableEdited;
 
         public override bool HasReference(uint assetID)
         {
@@ -295,48 +330,32 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Pipe Table")]
-        public EntryPIPT[] PIPT_Entries
+        public void UpdateDictionary()
         {
-            get
+            ClearDictionary();
+
+            Dictionary<uint, (uint, BlendFactorType, BlendFactorType)[]> BlendModes = new Dictionary<uint, (uint, BlendFactorType, BlendFactorType)[]>();
+
+            foreach (EntryPIPT entry in PIPT_Entries)
             {
-                List<EntryPIPT> entries = new List<EntryPIPT>();
-                
-                for (int i = 4; i < Data.Length; i += EntryPIPT.SizeOfStruct(game))
-                {
-                    EntryPIPT a = new EntryPIPT()
-                    {
-                        ModelAssetID = ReadUInt(i),
-                        SubObjectBits = ReadInt(i + 4),
-                        PipeFlags = ReadInt(i + 8)
-                    };
+                if (!BlendModes.ContainsKey(entry.ModelAssetID))
+                    BlendModes[entry.ModelAssetID] = new (uint, BlendFactorType, BlendFactorType)[0];
 
-                    if (game == Game.Incredibles)
-                        a.Unknown = ReadInt(i + 12);
-                    
-                    entries.Add(a);
-                }
-                
-                return entries.ToArray();
+                var entries = BlendModes[entry.ModelAssetID].ToList();
+                for (int i = 0; i < entries.Count; i++)
+                    if (entries[i].Item1 == entry.SubObjectBits.FlagValueInt)
+                        entries.RemoveAt(i--);
+
+                entries.Add((entry.SubObjectBits.FlagValueInt, entry.SourceBlend, entry.DestinationBlend));
+                BlendModes[entry.ModelAssetID] = entries.ToArray();
             }
-            set
-            {
-                List<byte> newData = new List<byte>();
-                newData.AddRange(BitConverter.GetBytes(Switch(value.Length)));
 
-                foreach (EntryPIPT i in value)
-                {
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.ModelAssetID)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.SubObjectBits)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.PipeFlags)));
+            onPipeInfoTableEdited?.Invoke(BlendModes);
+        }
 
-                    if (game == Game.Incredibles)
-                        newData.AddRange(BitConverter.GetBytes(Switch(i.Unknown)));
-                }
-                
-                Data = newData.ToArray();
-                UpdateDictionary();
-            }
+        public void ClearDictionary()
+        {
+            onPipeInfoTableEdited?.Invoke(null);
         }
 
         public void Merge(AssetPIPT asset)

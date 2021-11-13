@@ -1,113 +1,78 @@
-﻿using SharpDX;
+﻿using HipHopFile;
+using IndustrialPark.Models;
+using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
 using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
-    public class DynaGObjectInPickup : DynaBase
+    public class DynaGObjectInPickup : RenderableDynaBase
     {
-        public string Note => "Version is always 1";
+        protected override short constVersion => 1;
 
-        public override int StructSize => 0x10;
+        [Category("game_object:IN_pickup")]
+        public AssetID PickupHash { get; set; }
 
-        public DynaGObjectInPickup(AssetDYNA asset) : base(asset) { }
+        public DynaGObjectInPickup(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__IN_Pickup, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
+
+                PickupHash = reader.ReadUInt32();
+                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+
+                CreateTransformMatrix();
+                AddToRenderableAssets(this);
+            }
+        }
+
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(PickupHash);
+                writer.Write(_position.X);
+                writer.Write(_position.Y);
+                writer.Write(_position.Z);
+
+                return writer.ToArray();
+            }
+        }
 
         public override bool HasReference(uint assetID) => PickupHash == assetID;
-        
-        public AssetID PickupHash
-        {
-            get => ReadUInt(0x00);
-            set
-            {
-                Write(0x00, value);
-                CreateTransformMatrix();
-            }
-        }
-        [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public override float PositionX
-        {
-            get => ReadFloat(0x04);
-            set
-            {
-                Write(0x04, value);
-                CreateTransformMatrix();
-            }
-        }
-        [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public override float PositionY
-        {
-            get => ReadFloat(0x08);
-            set
-            {
-                Write(0x08, value);
-                CreateTransformMatrix();
-            }
-        }
-        [Browsable(true), TypeConverter(typeof(FloatTypeConverter))]
-        public override float PositionZ
-        {
-            get => ReadFloat(0x0C);
-            set
-            {
-                Write(0x0C, value);
-                CreateTransformMatrix();
-            }
-        }
 
-        public override bool IsRenderableClickable => true;
+        protected override List<Vector3> vertexSource => null;
 
-        private Matrix world;
-        private BoundingBox boundingBox;
-        private Vector3[] vertices;
-        protected RenderWareFile.Triangle[] triangles;
+        protected override List<Triangle> triangleSource => null;
 
         public override void CreateTransformMatrix()
         {
             world = Matrix.Translation(PositionX, PositionY, PositionZ);
 
-            vertices = new Vector3[SharpRenderer.cubeVertices.Count];
-
-            for (int i = 0; i < SharpRenderer.cubeVertices.Count; i++)
-                vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.cubeVertices[i], world);
-
             if (AssetTPIK.tpikEntries.ContainsKey(PickupHash))
             {
-                var u = AssetTPIK.tpikEntries[PickupHash].Model_AssetID;
-                if (renderingDictionary.ContainsKey(u) &&
-                    renderingDictionary[u].HasRenderWareModelFile() &&
-                    renderingDictionary[u].GetRenderWareModelFile() != null)
+                var model = GetFromRenderingDictionary(AssetTPIK.tpikEntries[PickupHash].Model_AssetID);
+                if (model != null)
                 {
-                    List<Vector3> vertexList = renderingDictionary[u].GetRenderWareModelFile().vertexListG;
+                    var vertexList = model.vertexListG;
 
                     vertices = new Vector3[vertexList.Count];
                     for (int i = 0; i < vertexList.Count; i++)
                         vertices[i] = (Vector3)Vector3.Transform(vertexList[i], world);
                     boundingBox = BoundingBox.FromPoints(vertices);
 
-                    if (renderingDictionary.ContainsKey(u))
-                    {
-                        if (renderingDictionary[u] is AssetMINF MINF)
-                        {
-                            if (MINF.HasRenderWareModelFile())
-                                triangles = renderingDictionary[u].GetRenderWareModelFile().triangleList.ToArray();
-                            else
-                                triangles = null;
-                        }
-                        else
-                            triangles = renderingDictionary[u].GetRenderWareModelFile().triangleList.ToArray();
-                    }
-                    else
-                        triangles = null;
+                    triangles = model.triangleList.ToArray();
+                    return;
                 }
             }
-            else
-            {
-                vertices = new Vector3[SharpRenderer.cubeVertices.Count];
-                for (int i = 0; i < SharpRenderer.cubeVertices.Count; i++)
-                    vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.cubeVertices[i] * 0.5f, world);
-                boundingBox = BoundingBox.FromPoints(vertices);
-            }
+
+            vertices = new Vector3[SharpRenderer.cubeVertices.Count];
+            for (int i = 0; i < SharpRenderer.cubeVertices.Count; i++)
+                vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.cubeVertices[i] * 0.5f, world);
+            boundingBox = BoundingBox.FromPoints(vertices);
+            triangles = null;
         }
 
         public override bool ShouldDraw(SharpRenderer renderer)
@@ -117,9 +82,7 @@ namespace IndustrialPark
                 if (AssetTPIK.tpikEntries.ContainsKey(PickupHash))
                 {
                     var tpikEntry = AssetTPIK.tpikEntries[PickupHash].Model_AssetID;
-                    if (GetDistance(renderer.Camera.Position) <
-                    (AssetLODT.MaxDistances.ContainsKey(tpikEntry) ?
-                    AssetLODT.MaxDistances[tpikEntry] : SharpRenderer.DefaultLODTDistance))
+                    if (GetDistanceFrom(renderer.Camera.Position) < AssetLODT.MaxDistanceTo(tpikEntry))
                         return renderer.frustum.Intersects(ref boundingBox);
                 }
 
@@ -129,7 +92,7 @@ namespace IndustrialPark
             return renderer.frustum.Intersects(ref boundingBox);
         }
 
-        public override void Draw(SharpRenderer renderer, bool isSelected)
+        public override void Draw(SharpRenderer renderer)
         {
             bool drew = false;
             if (AssetTPIK.tpikEntries.ContainsKey(PickupHash))
@@ -149,38 +112,6 @@ namespace IndustrialPark
             }
             if (!drew)
                 renderer.DrawCube(world, isSelected);
-        }
-        
-        public override BoundingBox GetBoundingBox()
-        {
-            return boundingBox;
-        }
-
-        public override float GetDistance(Vector3 cameraPosition)
-        {
-            return Vector3.Distance(cameraPosition, new Vector3(PositionX, PositionY, PositionZ));
-        }
-
-        public override float? IntersectsWith(Ray ray)
-        {
-            if (ray.Intersects(ref boundingBox, out float distance))
-                return TriangleIntersection(ray, distance);
-            return null;
-        }
-
-        private float? TriangleIntersection(Ray r, float initialDistance)
-        {
-            if (triangles == null)
-                return initialDistance;
-
-            float? smallestDistance = null;
-
-            foreach (RenderWareFile.Triangle t in triangles)
-                if (r.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
-                    if (smallestDistance == null || distance < smallestDistance)
-                        smallestDistance = distance;
-
-            return smallestDistance;
         }
     }
 }

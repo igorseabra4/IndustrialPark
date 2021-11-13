@@ -2,24 +2,92 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 
 namespace IndustrialPark
 {
     public class AssetSHRP : Asset
     {
-        public AssetSHRP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        private const string categoryName = "Shrapnel";
+
+        [Category(categoryName)]
+        public int Unknown { get; set; }
+        [Category(categoryName)]
+        public AssetID AssetID_Internal { get; set; }
+        [Category(categoryName)]
+        public EntrySHRP[] SHRPEntries { get; set; }
+
+        public AssetSHRP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            if (AssetID != AHDR.assetID)
-                AssetID = AHDR.assetID;
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                int amountOfEntries = reader.ReadInt32();
+                AssetID_Internal = reader.ReadUInt32();
+                Unknown = reader.ReadInt32();
+                SHRPEntries = new EntrySHRP[amountOfEntries];
+
+                for (int i = 0; i < SHRPEntries.Length; i++)
+                {
+                    int entryType = reader.ReadInt32();
+
+                    EntrySHRP entry = null;
+
+                    if (entryType == 3)
+                    {
+                        if (game == Game.BFBB)
+                            entry = new EntrySHRP_Type3_BFBB(reader);
+                        else if (game == Game.Incredibles)
+                            entry = new EntrySHRP_Type3_TSSM(reader);
+                    }
+                    else if (entryType == 4)
+                    {
+                        if (game == Game.BFBB)
+                            entry = new EntrySHRP_Type4_BFBB(reader);
+                        else if (game == Game.Incredibles)
+                            entry = new EntrySHRP_Type4_TSSM(reader);
+                    }
+                    else if (entryType == 5)
+                    {
+                        if (game == Game.BFBB)
+                            entry = new EntrySHRP_Type5_BFBB(reader);
+                        else if (game == Game.Incredibles)
+                            entry = new EntrySHRP_Type5_TSSM(reader);
+                    }
+                    else if (entryType == 6)
+                    {
+                        if (game == Game.BFBB)
+                            entry = new EntrySHRP_Type6_BFBB(reader);
+                        else if (game == Game.Incredibles)
+                            entry = new EntrySHRP_Type6_TSSM(reader);
+                    }
+                    else if (entryType == 8)
+                        entry = new EntrySHRP_Type8(reader);
+                    else if (entryType == 9)
+                        entry = new EntrySHRP_Type9(reader);
+                    else
+                        throw new Exception("Unknown SHRP entry type " + entryType.ToString() + " found in asset " + ToString() + ". This SHRP asset cannot be edited by Industrial Park.");
+
+                    SHRPEntries[i] = entry;
+                }
+            }
+        }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SHRPEntries.Length);
+                writer.Write(AssetID_Internal);
+                writer.Write(Unknown);
+                foreach (var e in SHRPEntries)
+                    writer.Write(e.Serialize(game, endianness));
+
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)
         {
-            if (AssetID == assetID)
-                return true;
-
             try
             {
                 foreach (EntrySHRP a in SHRPEntries)
@@ -71,95 +139,6 @@ namespace IndustrialPark
                 }
         }
 
-        [Category("Shrapnel"), ReadOnly(true)]
-        public int AmountOfEntries
-        {
-            get => ReadInt(0x00);
-            set => Write(0x00, value);
-        }
-
-        [Category("Shrapnel")]
-        public AssetID AssetID
-        {
-            get => ReadUInt(0x04);
-            set => Write(0x04, value);
-        }
-
-        [Category("Shrapnel")]
-        public int UnknownInt08
-        {
-            get => ReadInt(0x08);
-            set => Write(0x08, value);
-        }
-
-        [Category("Shrapnel")]
-        public EntrySHRP[] SHRPEntries
-        {
-            get => GetEntries();
-
-            set
-            {
-                List<byte> newData = Data.Take(0xC).ToList();
-                foreach (EntrySHRP entry in value)
-                    newData.AddRange(entry.ToByteArray());
-                Data = newData.ToArray();
-                AmountOfEntries = value.Length;
-            }
-        }
-
-        public EntrySHRP[] GetEntries()
-        {
-            List<EntrySHRP> entries = new List<EntrySHRP>();
-            BinaryReader binaryReader = new BinaryReader(new MemoryStream(Data.Skip(0xC).ToArray()));
-
-            for (int i = 0; i < AmountOfEntries; i++)
-            {
-                int Type = Switch(binaryReader.ReadInt32());
-                binaryReader.BaseStream.Position -= 4;
-
-                EntrySHRP entry = null;
-
-                if (Type == 3)
-                {
-                    if (game == Game.BFBB)
-                        entry = new EntrySHRP_Type3_BFBB(binaryReader.ReadBytes(EntrySHRP_Type3_BFBB.SizeOfEntry), platform);
-                    else if (game == Game.Incredibles)
-                        entry = new EntrySHRP_Type3_TSSM(binaryReader.ReadBytes(EntrySHRP_Type3_TSSM.SizeOfEntry), platform);
-                }
-                else if (Type == 4)
-                {
-                    if (game == Game.BFBB)
-                        entry = new EntrySHRP_Type4_BFBB(binaryReader.ReadBytes(EntrySHRP_Type4_BFBB.SizeOfEntry), platform);
-                    else if (game == Game.Incredibles)
-                        entry = new EntrySHRP_Type4_TSSM(binaryReader.ReadBytes(EntrySHRP_Type4_TSSM.SizeOfEntry), platform);
-                }
-                else if (Type == 5)
-                {
-                    if (game == Game.BFBB)
-                        entry = new EntrySHRP_Type5_BFBB(binaryReader.ReadBytes(EntrySHRP_Type5_BFBB.SizeOfEntry), platform);
-                    else if (game == Game.Incredibles)
-                        entry = new EntrySHRP_Type5_TSSM(binaryReader.ReadBytes(EntrySHRP_Type5_TSSM.SizeOfEntry), platform);
-                }
-                else if (Type == 6)
-                {
-                    if (game == Game.BFBB)
-                        entry = new EntrySHRP_Type6_BFBB(binaryReader.ReadBytes(EntrySHRP_Type6_BFBB.SizeOfEntry), platform);
-                    else if (game == Game.Incredibles)
-                        entry = new EntrySHRP_Type6_TSSM(binaryReader.ReadBytes(EntrySHRP_Type6_TSSM.SizeOfEntry), platform);
-                }
-                else if (Type == 8)
-                    entry = new EntrySHRP_Type8(binaryReader.ReadBytes(EntrySHRP_Type8.SizeOfEntry), platform);
-                else if (Type == 9)
-                    entry = new EntrySHRP_Type9(binaryReader.ReadBytes(EntrySHRP_Type9.SizeOfEntry), platform);
-                else
-                    throw new Exception("Unknown SHRP entry type " + Type.ToString() + " found in asset " + ToString() + ". This SHRP asset cannot be edited by Industrial Park.");
-
-                entries.Add(entry);
-            }
-
-            return entries.ToArray();
-        }
-
         public void AddEntry(int type)
         {
             List<EntrySHRP> list = SHRPEntries.ToList();
@@ -168,33 +147,33 @@ namespace IndustrialPark
             {
                 case 3:
                     if (game == Game.Incredibles)
-                        list.Add(new EntrySHRP_Type3_TSSM(platform));
+                        list.Add(new EntrySHRP_Type3_TSSM());
                     else
-                        list.Add(new EntrySHRP_Type3_BFBB(platform));
+                        list.Add(new EntrySHRP_Type3_BFBB());
                     break;
                 case 4:
                     if (game == Game.Incredibles)
-                        list.Add(new EntrySHRP_Type4_TSSM(platform));
+                        list.Add(new EntrySHRP_Type4_TSSM());
                     else
-                        list.Add(new EntrySHRP_Type4_BFBB(platform));
+                        list.Add(new EntrySHRP_Type4_BFBB());
                     break;
                 case 5:
                     if (game == Game.Incredibles)
-                        list.Add(new EntrySHRP_Type5_TSSM(platform));
+                        list.Add(new EntrySHRP_Type5_TSSM());
                     else
-                        list.Add(new EntrySHRP_Type5_BFBB(platform));
+                        list.Add(new EntrySHRP_Type5_BFBB());
                     break;
                 case 6:
                     if (game == Game.Incredibles)
-                        list.Add(new EntrySHRP_Type6_TSSM(platform));
+                        list.Add(new EntrySHRP_Type6_TSSM());
                     else
-                        list.Add(new EntrySHRP_Type6_BFBB(platform));
+                        list.Add(new EntrySHRP_Type6_BFBB());
                     break;
                 case 8:
-                    list.Add(new EntrySHRP_Type8(platform));
+                    list.Add(new EntrySHRP_Type8());
                     break;
                 case 9:
-                    list.Add(new EntrySHRP_Type9(platform));
+                    list.Add(new EntrySHRP_Type9());
                     break;
             }
 
@@ -202,48 +181,47 @@ namespace IndustrialPark
         }
     }
 
-    public abstract class EntrySHRP : EndianConvertible
+    public abstract class EntrySHRP : GenericAssetDataContainer
     {
         [ReadOnly(true)]
         public int Type { get; set; }
         public AssetID Unknown04 { get; set; }
         public AssetID Unknown08 { get; set; }
         public AssetID Unknown0C { get; set; }
-        public float Unknown10 { get; set; }
-        public float Unknown14 { get; set; }
+        public AssetSingle Unknown10 { get; set; }
+        public AssetSingle Unknown14 { get; set; }
 
-        public EntrySHRP(Platform platform) : base(platform)
+        public EntrySHRP(int type)
         {
-            Unknown04 = 0;
-            Unknown08 = 0;
-            Unknown0C = 0;
+            Type = type;
         }
 
-        public EntrySHRP(byte[] data, Platform platform) : base(platform)
+        public EntrySHRP(int type, EndianBinaryReader reader)
         {
-            Type = Switch(BitConverter.ToInt32(data, 0x00));
-            Unknown04 = Switch(BitConverter.ToUInt32(data, 0x04));
-            Unknown08 = Switch(BitConverter.ToUInt32(data, 0x08));
-            Unknown0C = Switch(BitConverter.ToUInt32(data, 0x0C));
-            Unknown10 = Switch(BitConverter.ToSingle(data, 0x10));
-            Unknown14 = Switch(BitConverter.ToSingle(data, 0x14));
+            Type = type;
+            Unknown04 = reader.ReadUInt32();
+            Unknown08 = reader.ReadUInt32();
+            Unknown0C = reader.ReadUInt32();
+            Unknown10 = reader.ReadSingle();
+            Unknown14 = reader.ReadSingle();
         }
 
-        public virtual List<byte> ToByteArray()
+        public byte[] SerializeEntryShrpBase(Endianness endianness)
         {
-            List<byte> list = new List<byte>();
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Type);
+                writer.Write(Unknown04);
+                writer.Write(Unknown08);
+                writer.Write(Unknown0C);
+                writer.Write(Unknown10);
+                writer.Write(Unknown14);
 
-            list.AddRange(BitConverter.GetBytes(Switch(Type)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown04)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown08)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown0C)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown10)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown14)));
-
-            return list;
+                return writer.ToArray();
+            }
         }
 
-        public virtual bool HasReference(uint assetID)
+        public override bool HasReference(uint assetID)
         {
             if (Unknown04 == assetID)
                 return true;
@@ -255,100 +233,112 @@ namespace IndustrialPark
             return false;
         }
 
-        internal IEnumerable<byte> ToReverseByteArray()
+        private const byte padB = 0xCD;
+
+        protected void ReadPad(EndianBinaryReader reader, int count)
         {
-            endianness = endianness == Endianness.Big ? Endianness.Little : Endianness.Big;
-            return ToByteArray();
+            for (int i = 0; i < count; i++)
+                if (reader.ReadByte() != padB)
+                    throw new Exception("Error reading SHRP padding: non-padding byte found at " + (reader.BaseStream.Position - 1).ToString());
+        }
+
+        protected void WritePad(EndianBinaryWriter writer, int count)
+        {
+            for (int i = 0; i < count; i++)
+                writer.Write(padB);
         }
     }
 
     public class EntrySHRP_Type3_BFBB : EntrySHRP
     {
-        public static int SizeOfEntry => 0x1D4;
-
         public int Unknown18 { get; set; }
         public int Unknown1C { get; set; }
-        public float Unknown20 { get; set; }
-        public float Unknown24 { get; set; }
-        public float Unknown28 { get; set; }
+        public AssetSingle Unknown20 { get; set; }
+        public AssetSingle Unknown24 { get; set; }
+        public AssetSingle Unknown28 { get; set; }
         public int Unknown3C { get; set; }
         public int Unknown40 { get; set; }
         public int Unknown44 { get; set; }
-        public float Unknown48 { get; set; }
-        public float Unknown4C { get; set; }
+        public AssetSingle Unknown48 { get; set; }
+        public AssetSingle Unknown4C { get; set; }
+        public byte Unknown64 { get; set; }
+        public short Unknown198 { get; set; }
+        public short Unknown19A { get; set; }
         public AssetID PARE_AssetID { get; set; }
         public int Unknown1D0 { get; set; }
 
-        public EntrySHRP_Type3_BFBB(Platform platform) : base(platform)
+        public EntrySHRP_Type3_BFBB() : base(3) { }
+        public EntrySHRP_Type3_BFBB(EndianBinaryReader reader) : base(3, reader)
         {
-            Type = 3;
-            PARE_AssetID = 0;
+            Unknown18 = reader.ReadInt32();
+            Unknown1C = reader.ReadInt32();
+            Unknown20 = reader.ReadSingle();
+            Unknown24 = reader.ReadSingle();
+            Unknown28 = reader.ReadSingle();
+            ReadPad(reader, 0x10);
+            Unknown3C = reader.ReadInt32();
+            Unknown40 = reader.ReadInt32();
+            Unknown44 = reader.ReadInt32();
+            Unknown48 = reader.ReadSingle();
+            Unknown4C = reader.ReadSingle();
+            ReadPad(reader, 0x14);
+            Unknown64 = reader.ReadByte();
+            ReadPad(reader, 0x133);
+            Unknown198 = reader.ReadInt16();
+            Unknown19A = reader.ReadInt16();
+            ReadPad(reader, 0x30);
+            PARE_AssetID = reader.ReadUInt32();
+            Unknown1D0 = reader.ReadInt32();
         }
 
-        public EntrySHRP_Type3_BFBB(byte[] data, Platform platform) : base(data, platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            Unknown18 = Switch(BitConverter.ToInt32(data, 0x18));
-            Unknown1C = Switch(BitConverter.ToInt32(data, 0x1C));
-            Unknown20 = Switch(BitConverter.ToSingle(data, 0x20));
-            Unknown24 = Switch(BitConverter.ToSingle(data, 0x24));
-            Unknown28 = Switch(BitConverter.ToSingle(data, 0x28));
-            Unknown3C = Switch(BitConverter.ToInt32(data, 0x3C));
-            Unknown40 = Switch(BitConverter.ToInt32(data, 0x40));
-            Unknown44 = Switch(BitConverter.ToInt32(data, 0x44));
-            Unknown48 = Switch(BitConverter.ToSingle(data, 0x48));
-            Unknown4C = Switch(BitConverter.ToSingle(data, 0x4C));
-            PARE_AssetID = Switch(BitConverter.ToUInt32(data, 0x1CC));
-            Unknown1D0 = Switch(BitConverter.ToInt32(data, 0x1D0));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntryShrpBase(endianness));
+
+                writer.Write(Unknown18);
+                writer.Write(Unknown1C);
+                writer.Write(Unknown20);
+                writer.Write(Unknown24);
+                writer.Write(Unknown28);
+                WritePad(writer, 0x10);
+                writer.Write(Unknown3C);
+                writer.Write(Unknown40);
+                writer.Write(Unknown44);
+                writer.Write(Unknown48);
+                writer.Write(Unknown4C);
+                WritePad(writer, 0x14);
+                writer.Write(Unknown64);
+                WritePad(writer, 0x133);
+                writer.Write(Unknown198);
+                writer.Write(Unknown19A);
+                WritePad(writer, 0x30);
+                writer.Write(PARE_AssetID);
+                writer.Write(Unknown1D0);
+
+                return writer.ToArray();
+            }
         }
 
-        public override List<byte> ToByteArray()
-        {
-            List<byte> list = base.ToByteArray();
-
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown18)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown1C)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown20)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown24)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown28)));
-            for (int i = 0; i < 0x10; i++)
-                list.Add(0xCD);
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown3C)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown40)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown44)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown48)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown4C)));
-            for (int i = 0; i < 0x17C; i++)
-                list.Add(0xCD);
-            list.AddRange(BitConverter.GetBytes(Switch(PARE_AssetID)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown1D0)));
-
-            return list;
-        }
-
-        public override bool HasReference(uint assetID)
-        {
-            if (PARE_AssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
+        public override bool HasReference(uint assetID) => PARE_AssetID == assetID || base.HasReference(assetID);
     }
 
     public class EntrySHRP_Type3_TSSM : EntrySHRP
     {
-        public static int SizeOfEntry => 0x1F8;
-
         public int Unknown18 { get; set; }
         public int Unknown1C { get; set; }
-        public float Unknown20 { get; set; }
-        public float Unknown24 { get; set; }
-        public float Unknown28 { get; set; }
+        public AssetSingle Unknown20 { get; set; }
+        public AssetSingle Unknown24 { get; set; }
+        public AssetSingle Unknown28 { get; set; }
         public int Unknown3C { get; set; }
         public int Unknown40 { get; set; }
         public int Unknown44 { get; set; }
-        public float Unknown48 { get; set; }
-        public float Unknown4C { get; set; }
+        public AssetSingle Unknown48 { get; set; }
+        public AssetSingle Unknown4C { get; set; }
         public int Unknown50 { get; set; }
+        public int Unknown64 { get; set; }
+        public byte Unknown6C { get; set; }
         public short Unknown1A0 { get; set; }
         public short Unknown1A2 { get; set; }
         public byte Unknown1EC { get; set; }
@@ -358,75 +348,75 @@ namespace IndustrialPark
         public AssetID Unknown1F0 { get; set; }
         public int Unknown1F4 { get; set; }
 
-        public EntrySHRP_Type3_TSSM(Platform platform) : base(platform)
+        public EntrySHRP_Type3_TSSM() : base(3) { }
+        public EntrySHRP_Type3_TSSM(EndianBinaryReader reader) : base(3, reader)
         {
-            Type = 3;
-            Unknown1F0 = 0;
+            Unknown18 = reader.ReadInt32();
+            Unknown1C = reader.ReadInt32();
+            Unknown20 = reader.ReadSingle();
+            Unknown24 = reader.ReadSingle();
+            Unknown28 = reader.ReadSingle();
+            ReadPad(reader, 0x10);
+            Unknown3C = reader.ReadInt32();
+            Unknown40 = reader.ReadInt32();
+            Unknown44 = reader.ReadInt32();
+            Unknown48 = reader.ReadSingle();
+            Unknown4C = reader.ReadSingle();
+            Unknown50 = reader.ReadInt32();
+            ReadPad(reader, 0x10);
+            Unknown64 = reader.ReadInt32();
+            ReadPad(reader, 0x4);
+            Unknown6C = reader.ReadByte();
+            ReadPad(reader, 0x133);
+            Unknown1A0 = reader.ReadInt16();
+            Unknown1A2 = reader.ReadInt16();
+            ReadPad(reader, 0x48);
+            Unknown1EC = reader.ReadByte();
+            Unknown1ED = reader.ReadByte();
+            Unknown1EE = reader.ReadByte();
+            Unknown1EF = reader.ReadByte();
+            Unknown1F0 = reader.ReadUInt32();
+            Unknown1F4 = reader.ReadInt32();
         }
 
-        public EntrySHRP_Type3_TSSM(byte[] data, Platform platform) : base(data, platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            Unknown18 = Switch(BitConverter.ToInt32(data, 0x18));
-            Unknown1C = Switch(BitConverter.ToInt32(data, 0x1C));
-            Unknown20 = Switch(BitConverter.ToSingle(data, 0x20));
-            Unknown24 = Switch(BitConverter.ToSingle(data, 0x24));
-            Unknown28 = Switch(BitConverter.ToSingle(data, 0x28));
-            Unknown3C = Switch(BitConverter.ToInt32(data, 0x3C));
-            Unknown40 = Switch(BitConverter.ToInt32(data, 0x40));
-            Unknown44 = Switch(BitConverter.ToInt32(data, 0x44));
-            Unknown48 = Switch(BitConverter.ToSingle(data, 0x48));
-            Unknown4C = Switch(BitConverter.ToSingle(data, 0x4C));
-            Unknown50 = Switch(BitConverter.ToInt32(data, 0x50));
-            Unknown1A0 = Switch(BitConverter.ToInt16(data, 0x1A0));
-            Unknown1A2 = Switch(BitConverter.ToInt16(data, 0x1A2));
-            Unknown1EC = data[0x1EC];
-            Unknown1ED = data[0x1ED];
-            Unknown1EE = data[0x1EE];
-            Unknown1EF = data[0x1EF];
-            Unknown1F0 = Switch(BitConverter.ToUInt32(data, 0x1F0));
-            Unknown1F4 = Switch(BitConverter.ToInt32(data, 0x1F4));
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntryShrpBase(endianness));
+
+                writer.Write(Unknown18);
+                writer.Write(Unknown1C);
+                writer.Write(Unknown20);
+                writer.Write(Unknown24);
+                writer.Write(Unknown28);
+                WritePad(writer, 0x10);
+                writer.Write(Unknown3C);
+                writer.Write(Unknown40);
+                writer.Write(Unknown44);
+                writer.Write(Unknown48);
+                writer.Write(Unknown4C);
+                writer.Write(Unknown50);
+                WritePad(writer, 0x10);
+                writer.Write(Unknown64);
+                WritePad(writer, 0x4);
+                writer.Write(Unknown6C);
+                WritePad(writer, 0x133);
+                writer.Write(Unknown1A0);
+                writer.Write(Unknown1A2);
+                WritePad(writer, 0x48);
+                writer.Write(Unknown1EC);
+                writer.Write(Unknown1ED);
+                writer.Write(Unknown1EE);
+                writer.Write(Unknown1EF);
+                writer.Write(Unknown1F0);
+                writer.Write(Unknown1F4);
+
+                return writer.ToArray();
+            }
         }
 
-        public override List<byte> ToByteArray()
-        {
-            List<byte> list = base.ToByteArray();
-
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown18)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown1C)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown20)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown24)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown28)));
-            for (int i = 0; i < 0x10; i++)
-                list.Add(0xCD);
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown3C)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown40)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown44)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown48)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown4C)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown50)));
-            for (int i = 0; i < 0x14C; i++)
-                list.Add(0xCD);
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown1A0)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown1A2)));
-            for (int i = 0; i < 0x48; i++)
-                list.Add(0xCD);
-            list.Add(Unknown1EC);
-            list.Add(Unknown1ED);
-            list.Add(Unknown1EE);
-            list.Add(Unknown1EF);
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown1F0)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown1F4)));
-
-            return list;
-        }
-
-        public override bool HasReference(uint assetID)
-        {
-            if (Unknown1F0 == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
+        public override bool HasReference(uint assetID) => Unknown1F0 == assetID || base.HasReference(assetID);
     }
 
     public class EntrySHRP_Type4_BFBB : EntrySHRP
@@ -437,73 +427,87 @@ namespace IndustrialPark
         public int Unknown1C { get; set; }
         public int Unknown20 { get; set; }
         public int Unknown24 { get; set; }
-        public float OffsetX { get; set; }
-        public float OffsetY { get; set; }
-        public float OffsetZ { get; set; }
-        public float Unknown68 { get; set; }
+        public AssetSingle OffsetX { get; set; }
+        public AssetSingle OffsetY { get; set; }
+        public AssetSingle OffsetZ { get; set; }
+        public int Unknown44 { get; set; }
+        public int Unknown48 { get; set; }
+        public AssetSingle Unknown4C { get; set; }
+        public AssetSingle Unknown50 { get; set; }
+        public AssetSingle Unknown54 { get; set; }
+        public AssetSingle Unknown68 { get; set; }
         public int Unknown6C { get; set; }
         public int Unknown70 { get; set; }
         public AssetID UnknownAssetID74 { get; set; }
-        public float Unknown78 { get; set; }
-        public float Unknown7C { get; set; }
-        public float Unknown80 { get; set; }
-        public float Unknown84 { get; set; }
-        public float Unknown88 { get; set; }
-        public float Gravity { get; set; }
+        public AssetSingle Unknown78 { get; set; }
+        public AssetSingle Unknown7C { get; set; }
+        public AssetSingle Unknown80 { get; set; }
+        public AssetSingle Unknown84 { get; set; }
+        public AssetSingle Unknown88 { get; set; }
+        public AssetSingle Gravity { get; set; }
 
-        public EntrySHRP_Type4_BFBB(Platform platform) : base(platform)
+        public EntrySHRP_Type4_BFBB() : base(4) { }
+        public EntrySHRP_Type4_BFBB(EndianBinaryReader reader) : base(4, reader)
         {
-            Type = 4;
-            ModelAssetID = 0;
-            UnknownAssetID74 = 0;
+            ModelAssetID = reader.ReadUInt32();
+            Unknown1C = reader.ReadInt32();
+            Unknown20 = reader.ReadInt32();
+            Unknown24 = reader.ReadInt32();
+            OffsetX = reader.ReadSingle();
+            OffsetY = reader.ReadSingle();
+            OffsetZ = reader.ReadSingle();
+            ReadPad(reader, 0x10);
+            Unknown44 = reader.ReadInt32();
+            Unknown48 = reader.ReadInt32();
+            Unknown4C = reader.ReadSingle();
+            Unknown50 = reader.ReadSingle();
+            Unknown54 = reader.ReadSingle();
+            ReadPad(reader, 0x10);
+            Unknown68 = reader.ReadSingle();
+            Unknown6C = reader.ReadInt32();
+            Unknown70 = reader.ReadInt32();
+            UnknownAssetID74 = reader.ReadUInt32();
+            Unknown78 = reader.ReadSingle();
+            Unknown7C = reader.ReadSingle();
+            Unknown80 = reader.ReadSingle();
+            Unknown84 = reader.ReadSingle();
+            Unknown88 = reader.ReadSingle();
+            Gravity = reader.ReadSingle();
         }
 
-        public EntrySHRP_Type4_BFBB(byte[] data, Platform platform) : base(data, platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            ModelAssetID = Switch(BitConverter.ToUInt32(data, 0x18));
-            Unknown1C = Switch(BitConverter.ToInt32(data, 0x1C));
-            Unknown20 = Switch(BitConverter.ToInt32(data, 0x20));
-            Unknown24 = Switch(BitConverter.ToInt32(data, 0x24));
-            OffsetX = Switch(BitConverter.ToSingle(data, 0x28));
-            OffsetY = Switch(BitConverter.ToSingle(data, 0x2C));
-            OffsetZ = Switch(BitConverter.ToSingle(data, 0x30));
-            Unknown68 = Switch(BitConverter.ToSingle(data, 0x68));
-            Unknown6C = Switch(BitConverter.ToInt32(data, 0x6C));
-            Unknown70 = Switch(BitConverter.ToInt32(data, 0x70));
-            UnknownAssetID74 = Switch(BitConverter.ToUInt32(data, 0x74));
-            Unknown78 = Switch(BitConverter.ToSingle(data, 0x78));
-            Unknown7C = Switch(BitConverter.ToSingle(data, 0x7C));
-            Unknown80 = Switch(BitConverter.ToSingle(data, 0x80));
-            Unknown84 = Switch(BitConverter.ToSingle(data, 0x84));
-            Unknown88 = Switch(BitConverter.ToSingle(data, 0x88));
-            Gravity = Switch(BitConverter.ToSingle(data, 0x8C));
-        }
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntryShrpBase(endianness));
 
-        public override List<byte> ToByteArray()
-        {
-            List<byte> list = base.ToByteArray();
+                writer.Write(ModelAssetID);
+                writer.Write(Unknown1C);
+                writer.Write(Unknown20);
+                writer.Write(Unknown24);
+                writer.Write(OffsetX);
+                writer.Write(OffsetY);
+                writer.Write(OffsetZ);
+                WritePad(writer, 0x10);
+                writer.Write(Unknown44);
+                writer.Write(Unknown48);
+                writer.Write(Unknown4C);
+                writer.Write(Unknown50);
+                writer.Write(Unknown54);
+                WritePad(writer, 0x10);
+                writer.Write(Unknown68);
+                writer.Write(Unknown6C);
+                writer.Write(Unknown70);
+                writer.Write(UnknownAssetID74);
+                writer.Write(Unknown78);
+                writer.Write(Unknown7C);
+                writer.Write(Unknown80);
+                writer.Write(Unknown84);
+                writer.Write(Unknown88);
+                writer.Write(Gravity);
 
-            list.AddRange(BitConverter.GetBytes(Switch(ModelAssetID)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown1C)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown20)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown24)));
-            list.AddRange(BitConverter.GetBytes(Switch(OffsetX)));
-            list.AddRange(BitConverter.GetBytes(Switch(OffsetY)));
-            list.AddRange(BitConverter.GetBytes(Switch(OffsetZ)));
-            for (int i = 0; i < 0x34; i++)
-                list.Add(0xCD);
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown68)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown6C)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown70)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownAssetID74)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown78)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown7C)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown80)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown84)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown88)));
-            list.AddRange(BitConverter.GetBytes(Switch(Gravity)));
-
-            return list;
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)
@@ -519,115 +523,175 @@ namespace IndustrialPark
 
     public class EntrySHRP_Type4_TSSM : EntrySHRP
     {
-        public static int SizeOfEntry => 0x110;
-
         public AssetID ModelAssetID { get; set; }
         public int Unknown1C { get; set; }
         public int Unknown20 { get; set; }
         public int Unknown24 { get; set; }
-        public float OffsetX { get; set; }
-        public float OffsetY { get; set; }
-        public float OffsetZ { get; set; }
+        public AssetSingle OffsetX { get; set; }
+        public AssetSingle OffsetY { get; set; }
+        public AssetSingle OffsetZ { get; set; }
         public int UnknownInt44 { get; set; }
         public int UnknownInt48 { get; set; }
         public int UnknownInt4C { get; set; }
         public int UnknownInt50 { get; set; }
         public int UnknownInt54 { get; set; }
         public int UnknownInt58 { get; set; }
+        public int UnknownInt6C { get; set; }
+        public byte UnknownByte70 { get; set; }
+        public byte UnknownByte71 { get; set; }
+        public byte UnknownByte72 { get; set; }
+        public byte UnknownByte73 { get; set; }
+        public int UnknownInt74 { get; set; }
+        public AssetSingle UnknownFloat78 { get; set; }
+        public AssetSingle UnknownFloat7C { get; set; }
+        public AssetSingle UnknownFloat80 { get; set; }
+        public int UnknownInt94 { get; set; }
         public int UnknownInt98 { get; set; }
         public int UnknownInt9C { get; set; }
         public int UnknownIntA0 { get; set; }
         public int UnknownIntA4 { get; set; }
         public int UnknownIntA8 { get; set; }
-        public float UnknownFloatE8 { get; set; }
+        public int UnknownIntBC { get; set; }
+        public byte UnknownByteC0 { get; set; }
+        public byte UnknownByteC1 { get; set; }
+        public byte UnknownByteC2 { get; set; }
+        public byte UnknownByteC3 { get; set; }
+        public int UnknownIntC4 { get; set; }
+        public AssetSingle UnknownFloatC8 { get; set; }
+        public AssetSingle UnknownFloatCC { get; set; }
+        public AssetSingle UnknownFloatD0 { get; set; }
+        public int UnknownIntE4 { get; set; }
+        public AssetSingle UnknownFloatE8 { get; set; }
         public int UnknownIntEC { get; set; }
         public int UnknownIntF0 { get; set; }
         public int UnknownIntF4 { get; set; }
         public int UnknownIntF8 { get; set; }
-        public float UnknownFloatFC { get; set; }
-        public float UnknownFloat100 { get; set; }
+        public AssetSingle UnknownFloatFC { get; set; }
+        public AssetSingle UnknownFloat100 { get; set; }
         public int UnknownInt104 { get; set; }
         public int UnknownInt108 { get; set; }
-        public float Gravity { get; set; }
+        public AssetSingle Gravity { get; set; }
 
-        public EntrySHRP_Type4_TSSM(Platform platform) : base(platform)
+        public EntrySHRP_Type4_TSSM() : base(4) { }
+        public EntrySHRP_Type4_TSSM(EndianBinaryReader reader) : base(4, reader)
         {
-            Type = 4;
-            ModelAssetID = 0;
+            ModelAssetID = reader.ReadUInt32();
+            Unknown1C = reader.ReadInt32();
+            Unknown20 = reader.ReadInt32();
+            Unknown24 = reader.ReadInt32();
+            OffsetX = reader.ReadSingle();
+            OffsetY = reader.ReadSingle();
+            OffsetZ = reader.ReadSingle();
+            ReadPad(reader, 0x10);
+            UnknownInt44 = reader.ReadInt32();
+            UnknownInt48 = reader.ReadInt32();
+            UnknownInt4C = reader.ReadInt32();
+            UnknownInt50 = reader.ReadInt32();
+            UnknownInt54 = reader.ReadInt32();
+            UnknownInt58 = reader.ReadInt32();
+            ReadPad(reader, 0x10);
+            UnknownInt6C = reader.ReadInt32();
+            UnknownByte70 = reader.ReadByte();
+            UnknownByte71 = reader.ReadByte();
+            UnknownByte72 = reader.ReadByte();
+            UnknownByte73 = reader.ReadByte();
+            UnknownInt74 = reader.ReadInt32();
+            UnknownFloat78 = reader.ReadSingle();
+            UnknownFloat7C = reader.ReadSingle();
+            UnknownFloat80 = reader.ReadSingle();
+            ReadPad(reader, 0x10);
+            UnknownInt94 = reader.ReadInt32();
+            UnknownInt98 = reader.ReadInt32();
+            UnknownInt9C = reader.ReadInt32();
+            UnknownIntA0 = reader.ReadInt32();
+            UnknownIntA4 = reader.ReadInt32();
+            UnknownIntA8 = reader.ReadInt32();
+            ReadPad(reader, 0x10);
+            UnknownIntBC = reader.ReadInt32();
+            UnknownByteC0 = reader.ReadByte();
+            UnknownByteC1 = reader.ReadByte();
+            UnknownByteC2 = reader.ReadByte();
+            UnknownByteC3 = reader.ReadByte();
+            UnknownIntC4 = reader.ReadInt32();
+            UnknownFloatC8 = reader.ReadSingle();
+            UnknownFloatCC = reader.ReadSingle();
+            UnknownFloatD0 = reader.ReadSingle();
+            ReadPad(reader, 0x10);
+            UnknownIntE4 = reader.ReadInt32();
+            UnknownFloatE8 = reader.ReadSingle();
+            UnknownIntEC = reader.ReadInt32();
+            UnknownIntF0 = reader.ReadInt32();
+            UnknownIntF4 = reader.ReadInt32();
+            UnknownIntF8 = reader.ReadInt32();
+            UnknownFloatFC = reader.ReadSingle();
+            UnknownFloat100 = reader.ReadSingle();
+            UnknownInt104 = reader.ReadInt32();
+            UnknownInt108 = reader.ReadInt32();
+            Gravity = reader.ReadSingle();
         }
 
-        public EntrySHRP_Type4_TSSM(byte[] data, Platform platform) : base(data, platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            ModelAssetID = Switch(BitConverter.ToUInt32(data, 0x18));
-            Unknown1C = Switch(BitConverter.ToInt32(data, 0x1C));
-            Unknown20 = Switch(BitConverter.ToInt32(data, 0x20));
-            Unknown24 = Switch(BitConverter.ToInt32(data, 0x24));
-            OffsetX = Switch(BitConverter.ToSingle(data, 0x28));
-            OffsetY = Switch(BitConverter.ToSingle(data, 0x2C));
-            OffsetZ = Switch(BitConverter.ToSingle(data, 0x30));
-            UnknownInt44 = Switch(BitConverter.ToInt32(data, 0x44));
-            UnknownInt48 = Switch(BitConverter.ToInt32(data, 0x48));
-            UnknownInt4C = Switch(BitConverter.ToInt32(data, 0x4C));
-            UnknownInt50 = Switch(BitConverter.ToInt32(data, 0x50));
-            UnknownInt54 = Switch(BitConverter.ToInt32(data, 0x54));
-            UnknownInt58 = Switch(BitConverter.ToInt32(data, 0x58));
-            UnknownInt98 = Switch(BitConverter.ToInt32(data, 0x98));
-            UnknownInt9C = Switch(BitConverter.ToInt32(data, 0x9C));
-            UnknownIntA0 = Switch(BitConverter.ToInt32(data, 0xA0));
-            UnknownIntA4 = Switch(BitConverter.ToInt32(data, 0xA4));
-            UnknownIntA8 = Switch(BitConverter.ToInt32(data, 0xA8));
-            UnknownFloatE8 = Switch(BitConverter.ToSingle(data, 0xE8));
-            UnknownIntEC = Switch(BitConverter.ToInt32(data, 0xEC));
-            UnknownIntF0 = Switch(BitConverter.ToInt32(data, 0xF0));
-            UnknownIntF4 = Switch(BitConverter.ToInt32(data, 0xF4));
-            UnknownIntF8 = Switch(BitConverter.ToInt32(data, 0xF8));
-            UnknownFloatFC = Switch(BitConverter.ToSingle(data, 0xFC));
-            UnknownFloat100 = Switch(BitConverter.ToSingle(data, 0x100));
-            UnknownInt104 = Switch(BitConverter.ToInt32(data, 0x104));
-            UnknownInt108 = Switch(BitConverter.ToInt32(data, 0x108));
-            Gravity = Switch(BitConverter.ToSingle(data, 0x10C));
-        }
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntryShrpBase(endianness));
 
-        public override List<byte> ToByteArray()
-        {
-            List<byte> list = base.ToByteArray();
+                writer.Write(ModelAssetID);
+                writer.Write(Unknown1C);
+                writer.Write(Unknown20);
+                writer.Write(Unknown24);
+                writer.Write(OffsetX);
+                writer.Write(OffsetY);
+                writer.Write(OffsetZ);
+                WritePad(writer, 0x10);
+                writer.Write(UnknownInt44);
+                writer.Write(UnknownInt48);
+                writer.Write(UnknownInt4C);
+                writer.Write(UnknownInt50);
+                writer.Write(UnknownInt54);
+                writer.Write(UnknownInt58);
+                WritePad(writer, 0x10);
+                writer.Write(UnknownInt6C);
+                writer.Write(UnknownByte70);
+                writer.Write(UnknownByte71);
+                writer.Write(UnknownByte72);
+                writer.Write(UnknownByte73);
+                writer.Write(UnknownInt74);
+                writer.Write(UnknownFloat78);
+                writer.Write(UnknownFloat7C);
+                writer.Write(UnknownFloat80);
+                WritePad(writer, 0x10);
+                writer.Write(UnknownInt94);
+                writer.Write(UnknownInt98);
+                writer.Write(UnknownInt9C);
+                writer.Write(UnknownIntA0);
+                writer.Write(UnknownIntA4);
+                writer.Write(UnknownIntA8);
+                WritePad(writer, 0x10);
+                writer.Write(UnknownIntBC);
+                writer.Write(UnknownByteC0);
+                writer.Write(UnknownByteC1);
+                writer.Write(UnknownByteC2);
+                writer.Write(UnknownByteC3);
+                writer.Write(UnknownIntC4);
+                writer.Write(UnknownFloatC8);
+                writer.Write(UnknownFloatCC);
+                writer.Write(UnknownFloatD0);
+                WritePad(writer, 0x10);
+                writer.Write(UnknownIntE4);
+                writer.Write(UnknownFloatE8);
+                writer.Write(UnknownIntEC);
+                writer.Write(UnknownIntF0);
+                writer.Write(UnknownIntF4);
+                writer.Write(UnknownIntF8);
+                writer.Write(UnknownFloatFC);
+                writer.Write(UnknownFloat100);
+                writer.Write(UnknownInt104);
+                writer.Write(UnknownInt108);
+                writer.Write(Gravity);
 
-            list.AddRange(BitConverter.GetBytes(Switch(ModelAssetID)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown1C)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown20)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown24)));
-            list.AddRange(BitConverter.GetBytes(Switch(OffsetX)));
-            list.AddRange(BitConverter.GetBytes(Switch(OffsetY)));
-            list.AddRange(BitConverter.GetBytes(Switch(OffsetZ)));
-            for (int i = 0; i < 0x10; i++)
-                list.Add(0xCD);
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownInt44)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownInt48)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownInt4C)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownInt50)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownInt54)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownInt58)));
-            for (int i = 0; i < 0x3C; i++)
-                list.Add(0xCD);
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownInt98)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownInt9C)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownIntA0)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownIntA4)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownIntA8)));
-            for (int i = 0; i < 0x3C; i++)
-                list.Add(0xCD);
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloatE8)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownIntEC)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownIntF0)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownIntF4)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownIntF8)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloatFC)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownFloat100)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownInt104)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownInt108)));
-            list.AddRange(BitConverter.GetBytes(Switch(Gravity)));
-
-            return list;
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)
@@ -641,64 +705,55 @@ namespace IndustrialPark
 
     public class EntrySHRP_Type5_BFBB : EntrySHRP
     {
-        public static int SizeOfEntry => 0x68;
-
         public int Unknown18 { get; set; }
         public AssetID Unknown1C { get; set; }
-        public float Unknown20 { get; set; }
+        public AssetSingle Unknown20 { get; set; }
         public AssetID Unknown24 { get; set; }
         public AssetID Unknown28 { get; set; }
         public int Unknown3C { get; set; }
         public AssetID Unknown40 { get; set; }
-        public float Unknown44 { get; set; }
+        public AssetSingle Unknown44 { get; set; }
         public AssetID Unknown48 { get; set; }
         public AssetID Unknown4C { get; set; }
 
-        public EntrySHRP_Type5_BFBB(Platform platform) : base(platform)
+        public EntrySHRP_Type5_BFBB() : base(5) { }
+        public EntrySHRP_Type5_BFBB(EndianBinaryReader reader) : base(5, reader)
         {
-            Type = 5;
-            Unknown1C = 0;
-            Unknown24 = 0;
-            Unknown28 = 0;
-            Unknown40 = 0;
-            Unknown48 = 0;
-            Unknown4C = 0;
+            Unknown18 = reader.ReadInt32();
+            Unknown1C = reader.ReadUInt32();
+            Unknown20 = reader.ReadSingle();
+            Unknown24 = reader.ReadUInt32();
+            Unknown28 = reader.ReadUInt32();
+            ReadPad(reader, 0x10);
+            Unknown3C = reader.ReadInt32();
+            Unknown40 = reader.ReadUInt32();
+            Unknown44 = reader.ReadSingle();
+            Unknown48 = reader.ReadUInt32();
+            Unknown4C = reader.ReadUInt32();
+            ReadPad(reader, 0x18);
         }
 
-        public EntrySHRP_Type5_BFBB(byte[] data, Platform platform) : base(data, platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            Unknown18 = Switch(BitConverter.ToInt32(data, 0x18));
-            Unknown1C = Switch(BitConverter.ToUInt32(data, 0x1C));
-            Unknown20 = Switch(BitConverter.ToSingle(data, 0x20));
-            Unknown24 = Switch(BitConverter.ToUInt32(data, 0x24));
-            Unknown28 = Switch(BitConverter.ToUInt32(data, 0x28));
-            Unknown3C = Switch(BitConverter.ToInt32(data, 0x3C));
-            Unknown40 = Switch(BitConverter.ToUInt32(data, 0x40));
-            Unknown44 = Switch(BitConverter.ToSingle(data, 0x44));
-            Unknown48 = Switch(BitConverter.ToUInt32(data, 0x48));
-            Unknown4C = Switch(BitConverter.ToUInt32(data, 0x4C));
-        }
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntryShrpBase(endianness));
 
-        public override List<byte> ToByteArray()
-        {
-            List<byte> list = base.ToByteArray();
+                writer.Write(Unknown18);
+                writer.Write(Unknown1C);
+                writer.Write(Unknown20);
+                writer.Write(Unknown24);
+                writer.Write(Unknown28);
+                WritePad(writer, 0x10);
+                writer.Write(Unknown3C);
+                writer.Write(Unknown40);
+                writer.Write(Unknown44);
+                writer.Write(Unknown48);
+                writer.Write(Unknown4C);
+                WritePad(writer, 0x18);
 
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown18)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown1C)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown20)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown24)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown28)));
-            for (int i = 0; i < 0x10; i++)
-                list.Add(0xCD);
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown3C)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown40)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown44)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown48)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown4C)));
-            for (int i = 0; i < 0x18; i++)
-                list.Add(0xCD);
-
-            return list;
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)
@@ -721,66 +776,63 @@ namespace IndustrialPark
 
     public class EntrySHRP_Type5_TSSM : EntrySHRP
     {
-        public static int SizeOfEntry => 0x70;
-
         public int Unknown18 { get; set; }
         public int Unknown1C { get; set; }
-        public float Unknown20 { get; set; }
+        public AssetSingle Unknown20 { get; set; }
         public int Unknown24 { get; set; }
         public int Unknown28 { get; set; }
         public int Unknown3C { get; set; }
         public int Unknown40 { get; set; }
-        public float Unknown44 { get; set; }
+        public AssetSingle Unknown44 { get; set; }
         public int Unknown48 { get; set; }
         public int Unknown4C { get; set; }
         public int Unknown50 { get; set; }
         public int Unknown64 { get; set; }
 
-        public EntrySHRP_Type5_TSSM(Platform platform) : base(platform)
+        public EntrySHRP_Type5_TSSM() : base(5) { }
+        public EntrySHRP_Type5_TSSM(EndianBinaryReader reader) : base(5, reader)
         {
-            Type = 5;
+            Unknown18 = reader.ReadInt32();
+            Unknown1C = reader.ReadInt32();
+            Unknown20 = reader.ReadSingle();
+            Unknown24 = reader.ReadInt32();
+            Unknown28 = reader.ReadInt32();
+            ReadPad(reader, 0x10);
+            Unknown3C = reader.ReadInt32();
+            Unknown40 = reader.ReadInt32();
+            Unknown44 = reader.ReadSingle();
+            Unknown48 = reader.ReadInt32();
+            Unknown4C = reader.ReadInt32();
+            Unknown50 = reader.ReadInt32();
+            ReadPad(reader, 0x10);
+            Unknown64 = reader.ReadInt32();
+            ReadPad(reader, 0x8);
         }
 
-        public EntrySHRP_Type5_TSSM(byte[] data, Platform platform) : base(data, platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            Unknown18 = Switch(BitConverter.ToInt32(data, 0x18));
-            Unknown1C = Switch(BitConverter.ToInt32(data, 0x1C));
-            Unknown20 = Switch(BitConverter.ToSingle(data, 0x20));
-            Unknown24 = Switch(BitConverter.ToInt32(data, 0x24));
-            Unknown28 = Switch(BitConverter.ToInt32(data, 0x28));
-            Unknown3C = Switch(BitConverter.ToInt32(data, 0x3C));
-            Unknown40 = Switch(BitConverter.ToInt32(data, 0x40));
-            Unknown44 = Switch(BitConverter.ToSingle(data, 0x44));
-            Unknown48 = Switch(BitConverter.ToInt32(data, 0x48));
-            Unknown4C = Switch(BitConverter.ToInt32(data, 0x4C));
-            Unknown50 = Switch(BitConverter.ToInt32(data, 0x50));
-            Unknown64 = Switch(BitConverter.ToInt32(data, 0x64));
-        }
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntryShrpBase(endianness));
 
-        public override List<byte> ToByteArray()
-        {
-            List<byte> list = base.ToByteArray();
+                writer.Write(Unknown18);
+                writer.Write(Unknown1C);
+                writer.Write(Unknown20);
+                writer.Write(Unknown24);
+                writer.Write(Unknown28);
+                WritePad(writer, 0x10);
+                writer.Write(Unknown3C);
+                writer.Write(Unknown40);
+                writer.Write(Unknown44);
+                writer.Write(Unknown48);
+                writer.Write(Unknown4C);
+                writer.Write(Unknown50);
+                WritePad(writer, 0x10);
+                writer.Write(Unknown64);
+                WritePad(writer, 0x8);
 
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown18)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown1C)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown20)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown24)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown28)));
-            for (int i = 0; i < 0x10; i++)
-                list.Add(0xCD);
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown3C)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown40)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown44)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown48)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown4C)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown50)));
-            for (int i = 0; i < 0x10; i++)
-                list.Add(0xCD);
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown64)));
-            for (int i = 0; i < 0x8; i++)
-                list.Add(0xCD);
-
-            return list;
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)
@@ -803,54 +855,50 @@ namespace IndustrialPark
 
     public class EntrySHRP_Type6_BFBB : EntrySHRP
     {
-        public static int SizeOfEntry => 0x4C;
-
         public AssetID SoundAssetID { get; set; }
         public int Unknown1C { get; set; }
         public int Unknown20 { get; set; }
         public int Unknown24 { get; set; }
         public int Unknown28 { get; set; }
         public int Unknown2C { get; set; }
-        public float Unknown40 { get; set; }
-        public float Unknown44 { get; set; }
-        public float Unknown48 { get; set; }
+        public AssetSingle Unknown40 { get; set; }
+        public AssetSingle Unknown44 { get; set; }
+        public AssetSingle Unknown48 { get; set; }
 
-        public EntrySHRP_Type6_BFBB(Platform platform) : base(platform)
+        public EntrySHRP_Type6_BFBB() : base(6) { }
+        public EntrySHRP_Type6_BFBB(EndianBinaryReader reader) : base(6, reader)
         {
-            Type = 6;
-            SoundAssetID = 0;
+            SoundAssetID = reader.ReadUInt32();
+            Unknown1C = reader.ReadInt32();
+            Unknown20 = reader.ReadInt32();
+            Unknown24 = reader.ReadInt32();
+            Unknown28 = reader.ReadInt32();
+            Unknown2C = reader.ReadInt32();
+            ReadPad(reader, 0x10);
+            Unknown40 = reader.ReadSingle();
+            Unknown44 = reader.ReadSingle();
+            Unknown48 = reader.ReadSingle();
         }
 
-        public EntrySHRP_Type6_BFBB(byte[] data, Platform platform) : base(data, platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            SoundAssetID = Switch(BitConverter.ToUInt32(data, 0x18));
-            Unknown1C = Switch(BitConverter.ToInt32(data, 0x1C));
-            Unknown20 = Switch(BitConverter.ToInt32(data, 0x20));
-            Unknown24 = Switch(BitConverter.ToInt32(data, 0x24));
-            Unknown28 = Switch(BitConverter.ToInt32(data, 0x28));
-            Unknown2C = Switch(BitConverter.ToInt32(data, 0x2C));
-            Unknown40 = Switch(BitConverter.ToSingle(data, 0x40));
-            Unknown44 = Switch(BitConverter.ToSingle(data, 0x44));
-            Unknown48 = Switch(BitConverter.ToSingle(data, 0x48));
-        }
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntryShrpBase(endianness));
 
-        public override List<byte> ToByteArray()
-        {
-            List<byte> list = base.ToByteArray();
+                writer.Write(SoundAssetID);
+                writer.Write(Unknown1C);
+                writer.Write(Unknown20);
+                writer.Write(Unknown24);
+                writer.Write(Unknown28);
+                writer.Write(Unknown2C);
+                WritePad(writer, 0x10);
+                writer.Write(Unknown40);
+                writer.Write(Unknown44);
+                writer.Write(Unknown48);
 
-            list.AddRange(BitConverter.GetBytes(Switch(SoundAssetID)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown1C)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown20)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown24)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown28)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown2C)));
-            for (int i = 0; i < 0x10; i++)
-                list.Add(0xCD);
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown40)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown44)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown48)));
-
-            return list;
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)
@@ -864,48 +912,44 @@ namespace IndustrialPark
 
     public class EntrySHRP_Type6_TSSM : EntrySHRP
     {
-        public static int SizeOfEntry => 0x44;
-
         public AssetID SoundAssetID { get; set; }
         public int Unknown1C { get; set; }
         public int Unknown20 { get; set; }
         public int Unknown24 { get; set; }
         public int Unknown28 { get; set; }
         public int Unknown2C { get; set; }
-        public float Unknown40 { get; set; }
+        public AssetSingle Unknown40 { get; set; }
 
-        public EntrySHRP_Type6_TSSM(Platform platform) : base(platform)
+        public EntrySHRP_Type6_TSSM() : base(6) { }
+        public EntrySHRP_Type6_TSSM(EndianBinaryReader reader) : base(6, reader)
         {
-            Type = 6;
-            SoundAssetID = 0;
+            SoundAssetID = reader.ReadUInt32();
+            Unknown1C = reader.ReadInt32();
+            Unknown20 = reader.ReadInt32();
+            Unknown24 = reader.ReadInt32();
+            Unknown28 = reader.ReadInt32();
+            Unknown2C = reader.ReadInt32();
+            ReadPad(reader, 0x10);
+            Unknown40 = reader.ReadSingle();
         }
 
-        public EntrySHRP_Type6_TSSM(byte[] data, Platform platform) : base(data, platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            SoundAssetID = Switch(BitConverter.ToUInt32(data, 0x18));
-            Unknown1C = Switch(BitConverter.ToInt32(data, 0x1C));
-            Unknown20 = Switch(BitConverter.ToInt32(data, 0x20));
-            Unknown24 = Switch(BitConverter.ToInt32(data, 0x24));
-            Unknown28 = Switch(BitConverter.ToInt32(data, 0x28));
-            Unknown2C = Switch(BitConverter.ToInt32(data, 0x2C));
-            Unknown40 = Switch(BitConverter.ToSingle(data, 0x40));
-        }
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntryShrpBase(endianness));
 
-        public override List<byte> ToByteArray()
-        {
-            List<byte> list = base.ToByteArray();
+                writer.Write(SoundAssetID);
+                writer.Write(Unknown1C);
+                writer.Write(Unknown20);
+                writer.Write(Unknown24);
+                writer.Write(Unknown28);
+                writer.Write(Unknown2C);
+                WritePad(writer, 0x10);
+                writer.Write(Unknown40);
 
-            list.AddRange(BitConverter.GetBytes(Switch(SoundAssetID)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown1C)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown20)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown24)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown28)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown2C)));
-            for (int i = 0; i < 0x10; i++)
-                list.Add(0xCD);
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown40)));
-
-            return list;
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)
@@ -927,46 +971,41 @@ namespace IndustrialPark
         public AssetID UnknownAssetID24 { get; set; }
         public AssetID UnknownAssetID28 { get; set; }
         public AssetID UnknownAssetID2C { get; set; }
-        public float Unknown40 { get; set; }
-        public float Unknown44 { get; set; }
+        public AssetSingle Unknown40 { get; set; }
+        public AssetSingle Unknown44 { get; set; }
 
-        public EntrySHRP_Type8(Platform platform) : base(platform)
+        public EntrySHRP_Type8() : base(8) { }
+        public EntrySHRP_Type8(EndianBinaryReader reader) : base(8, reader)
         {
-            Type = 8;
-            UnknownAssetID18 = 0;
-            UnknownAssetID24 = 0;
-            UnknownAssetID28 = 0;
-            UnknownAssetID2C = 0;
+            UnknownAssetID18 = reader.ReadUInt32();
+            Unknown1C = reader.ReadInt32();
+            Unknown20 = reader.ReadInt32();
+            UnknownAssetID24 = reader.ReadUInt32();
+            UnknownAssetID28 = reader.ReadUInt32();
+            UnknownAssetID2C = reader.ReadUInt32();
+            ReadPad(reader, 0x10);
+            Unknown40 = reader.ReadSingle();
+            Unknown44 = reader.ReadSingle();
         }
 
-        public EntrySHRP_Type8(byte[] data, Platform platform) : base(data, platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            UnknownAssetID18 = Switch(BitConverter.ToUInt32(data, 0x18));
-            Unknown1C = Switch(BitConverter.ToInt32(data, 0x1C));
-            Unknown20 = Switch(BitConverter.ToInt32(data, 0x20));
-            UnknownAssetID24 = Switch(BitConverter.ToUInt32(data, 0x24));
-            UnknownAssetID28 = Switch(BitConverter.ToUInt32(data, 0x28));
-            UnknownAssetID2C = Switch(BitConverter.ToUInt32(data, 0x2C));
-            Unknown40 = Switch(BitConverter.ToSingle(data, 0x40));
-            Unknown44 = Switch(BitConverter.ToSingle(data, 0x44));
-        }
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntryShrpBase(endianness));
 
-        public override List<byte> ToByteArray()
-        {
-            List<byte> list = base.ToByteArray();
+                writer.Write(UnknownAssetID18);
+                writer.Write(Unknown1C);
+                writer.Write(Unknown20);
+                writer.Write(UnknownAssetID24);
+                writer.Write(UnknownAssetID28);
+                writer.Write(UnknownAssetID2C);
+                WritePad(writer, 0x10);
+                writer.Write(Unknown40);
+                writer.Write(Unknown44);
 
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownAssetID18)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown1C)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown20)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownAssetID24)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownAssetID28)));
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownAssetID2C)));
-            for (int i = 0; i < 0x10; i++)
-                list.Add(0xCD);
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown40)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown44)));
-
-            return list;
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)
@@ -980,66 +1019,62 @@ namespace IndustrialPark
 
     public class EntrySHRP_Type9 : EntrySHRP
     {
-        public static int SizeOfEntry => 0x5C;
-        
         public AssetID UnknownAssetID18 { get; set; }
         public int Unknown1C { get; set; }
         public int Unknown20 { get; set; }
         public int Unknown24 { get; set; }
-        public float Unknown28 { get; set; }
+        public AssetSingle Unknown28 { get; set; }
         public int Unknown2C { get; set; }
         public int Unknown40 { get; set; }
         public int Unknown44 { get; set; }
-        public float Unknown48 { get; set; }
-        public float Unknown4C { get; set; }
-        public float Unknown50 { get; set; }
-        public float Unknown54 { get; set; }
-        public float Unknown58 { get; set; }
+        public AssetSingle Unknown48 { get; set; }
+        public AssetSingle Unknown4C { get; set; }
+        public AssetSingle Unknown50 { get; set; }
+        public AssetSingle Unknown54 { get; set; }
+        public AssetSingle Unknown58 { get; set; }
 
-        public EntrySHRP_Type9(Platform platform) : base(platform)
+        public EntrySHRP_Type9() : base(9) { }
+        public EntrySHRP_Type9(EndianBinaryReader reader) : base(9, reader)
         {
-            Type = 8;
-            UnknownAssetID18 = 0;
+            UnknownAssetID18 = reader.ReadUInt32();
+            Unknown1C = reader.ReadInt32();
+            Unknown20 = reader.ReadInt32();
+            Unknown24 = reader.ReadInt32();
+            Unknown28 = reader.ReadSingle();
+            Unknown2C = reader.ReadInt32();
+            ReadPad(reader, 0x10);
+            Unknown40 = reader.ReadInt32();
+            Unknown44 = reader.ReadInt32();
+            Unknown48 = reader.ReadSingle();
+            Unknown4C = reader.ReadSingle();
+            Unknown50 = reader.ReadSingle();
+            Unknown54 = reader.ReadSingle();
+            Unknown58 = reader.ReadSingle();
         }
 
-        public EntrySHRP_Type9(byte[] data, Platform platform) : base(data, platform)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
-            UnknownAssetID18 = Switch(BitConverter.ToUInt32(data, 0x18));
-            Unknown1C = Switch(BitConverter.ToInt32(data, 0x1C));
-            Unknown20 = Switch(BitConverter.ToInt32(data, 0x20));
-            Unknown24 = Switch(BitConverter.ToInt32(data, 0x24));
-            Unknown28 = Switch(BitConverter.ToSingle(data, 0x28));
-            Unknown2C = Switch(BitConverter.ToInt32(data, 0x2C));
-            Unknown40 = Switch(BitConverter.ToInt32(data, 0x40));
-            Unknown44 = Switch(BitConverter.ToInt32(data, 0x44));
-            Unknown48 = Switch(BitConverter.ToSingle(data, 0x48));
-            Unknown4C = Switch(BitConverter.ToSingle(data, 0x4C));
-            Unknown50 = Switch(BitConverter.ToSingle(data, 0x50));
-            Unknown54 = Switch(BitConverter.ToSingle(data, 0x54));
-            Unknown58 = Switch(BitConverter.ToSingle(data, 0x58));
-        }
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeEntryShrpBase(endianness));
 
-        public override List<byte> ToByteArray()
-        {
-            List<byte> list = base.ToByteArray();
+                writer.Write(UnknownAssetID18);
+                writer.Write(Unknown1C);
+                writer.Write(Unknown20);
+                writer.Write(Unknown24);
+                writer.Write(Unknown28);
+                writer.Write(Unknown2C);
+                WritePad(writer, 0x10);
+                writer.Write(Unknown40);
+                writer.Write(Unknown44);
+                writer.Write(Unknown48);
+                writer.Write(Unknown4C);
+                writer.Write(Unknown50);
+                writer.Write(Unknown54);
+                writer.Write(Unknown58);
 
-            list.AddRange(BitConverter.GetBytes(Switch(UnknownAssetID18)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown1C)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown20)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown24)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown28)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown2C)));
-            for (int i = 0; i < 0x10; i++)
-                list.Add(0xCD);
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown40)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown44)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown48)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown4C)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown50)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown54)));
-            list.AddRange(BitConverter.GetBytes(Switch(Unknown58)));
-
-            return list;
+                return writer.ToArray();
+            }
         }
 
         public override bool HasReference(uint assetID)

@@ -1,68 +1,81 @@
 ﻿using HipHopFile;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class Asset : EndianConvertibleWithData
+    public abstract class Asset : GenericAssetDataContainer
     {
-        [Browsable(false)]
-        public int Offset => game == Game.BFBB ? 0x00 : -0x04;
-        public static int DataSizeOffset(Game game) => game == Game.BFBB ? 0x00 : -0x04;
-
-        public Section_AHDR AHDR;
         public bool isSelected;
         public bool isInvisible = false;
 
-        public Asset(Section_AHDR AHDR, Game game, Platform platform) : base(game, platform)
+        public Game game;
+        public Endianness endianness;
+
+        [Browsable(false)]
+        public uint assetID { get; set; }
+        public string assetName;
+        public string assetFileName;
+        public AssetType assetType;
+        public AHDRFlags flags;
+        public int checksum;
+
+        [Browsable(false)]
+        public virtual string AssetInfo => game.ToString() + " " + endianness.ToString() + " Endian";
+
+        public Asset(string assetName, AssetType assetType)
         {
-            this.AHDR = AHDR;
+            game = Game.Unknown;
+            endianness = Endianness.Unknown;
+
+            this.assetType = assetType;
+            this.assetName = assetName;
+            assetID = new AssetID(assetName);
+            assetFileName = "";
+            flags = ArchiveEditorFunctions.AHDRFlagsFromAssetType(assetType);
         }
-        
-        [Category("Asset")]
-        public override byte[] Data
+
+        public Asset(Section_AHDR AHDR, Game game, Endianness endianness)
         {
-            get => AHDR.data;
-            set => AHDR.data = value; 
+            this.game = game;
+            this.endianness = endianness;
+
+            assetID = AHDR.assetID;
+            assetName = AHDR.ADBG.assetName;
+            assetFileName = AHDR.ADBG.assetFileName;
+            assetType = AHDR.assetType;
+            flags = AHDR.flags;
+            checksum = AHDR.ADBG.checksum;
         }
 
-        public override string ToString() =>  $"{AHDR.ADBG.assetName} [{AHDR.assetID:X8}]";
+        // use with DUPC VIL only
+        protected Asset() { }
 
-        public override int GetHashCode()
+        public Section_AHDR BuildAHDR()
         {
-            return AHDR.assetID.GetHashCode();
+            return new Section_AHDR(assetID, assetType, flags,
+                new Section_ADBG(0, assetName, assetFileName, checksum),
+                Serialize(game, endianness));
         }
 
-        public virtual bool HasReference(uint assetID) => false;
-
-        public virtual void Verify(ref List<string> result) { }
-
-        public static void Verify(uint assetID, ref List<string> result)
+        public Section_AHDR BuildAHDR(Game game, Endianness endianness, bool overwrite = true)
         {
-            if (assetID != 0 && !Program.MainForm.AssetExists(assetID))
-                result.Add("Referenced asset 0x" + assetID.ToString("X8") + " was not found in any open archive.");
+            if (!overwrite)
+            {
+                this.game = game;
+                this.endianness = endianness;
+            }
+
+            return new Section_AHDR(assetID, assetType, flags,
+                new Section_ADBG(0, assetName, assetFileName, checksum),
+                Serialize(game, endianness));
         }
+
+        public override string ToString() => $"{assetName} [{assetID:X8}]";
+
+        public override int GetHashCode() => assetID.GetHashCode();
 
         public virtual void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
-        }
-
-        public DynamicTypeDescriptor ByteFlagsDescriptor(int offset, params string[] flagNames)
-        {
-            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(typeof(FlagsField_Byte));
-            return dt.FromComponent(new FlagsField_Byte(this, offset, dt, flagNames));
-        }
-
-        public DynamicTypeDescriptor ShortFlagsDescriptor(int offset, params string[] flagNames)
-        {
-            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(typeof(FlagsField_UShort));
-            return dt.FromComponent(new FlagsField_UShort(this, offset, dt, flagNames));
-        }
-
-        public DynamicTypeDescriptor IntFlagsDescriptor(int offset, params string[] flagNames)
-        {
-            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(typeof(FlagsField_UInt));
-            return dt.FromComponent(new FlagsField_UInt(this, offset, dt, flagNames));
         }
     }
 }

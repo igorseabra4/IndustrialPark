@@ -40,8 +40,8 @@
             this.buttonOK = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.groupBoxEventData = new System.Windows.Forms.GroupBox();
-            this.groupBox7 = new System.Windows.Forms.GroupBox();
-            this.textBoxSourceCheck = new System.Windows.Forms.TextBox();
+            this.groupBoxSourceCheckOrFlags = new System.Windows.Forms.GroupBox();
+            this.textBoxSourceCheckOrFlags = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.textBoxArgumentAsset = new System.Windows.Forms.TextBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
@@ -55,25 +55,25 @@
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.buttonTargetSelf = new System.Windows.Forms.Button();
+            this.buttonTargetPlus1 = new System.Windows.Forms.Button();
             this.textBoxTargetAsset = new System.Windows.Forms.TextBox();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.comboSendEvent = new System.Windows.Forms.ComboBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.comboRecieveEvent = new System.Windows.Forms.ComboBox();
-            this.numericUpDownTime = new System.Windows.Forms.NumericUpDown();
             this.buttonHelp = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.buttonTargetPlus1 = new System.Windows.Forms.Button();
-            this.buttonTargetSelf = new System.Windows.Forms.Button();
+            this.comboSendEvent = new System.Windows.Forms.ComboBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.numericUpDownTime = new System.Windows.Forms.NumericUpDown();
+            this.comboRecieveEvent = new System.Windows.Forms.ComboBox();
+            this.groupBoxSourceEvent = new System.Windows.Forms.GroupBox();
             this.groupBox1.SuspendLayout();
             this.groupBoxEventData.SuspendLayout();
-            this.groupBox7.SuspendLayout();
+            this.groupBoxSourceCheckOrFlags.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.groupBox4.SuspendLayout();
-            this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTime)).BeginInit();
+            this.groupBoxSourceEvent.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -194,12 +194,12 @@
             // groupBoxEventData
             // 
             this.groupBoxEventData.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBoxEventData.Controls.Add(this.groupBox7);
+            this.groupBoxEventData.Controls.Add(this.groupBoxSourceCheckOrFlags);
             this.groupBoxEventData.Controls.Add(this.groupBox2);
             this.groupBoxEventData.Controls.Add(this.groupBox6);
             this.groupBoxEventData.Controls.Add(this.groupBox5);
             this.groupBoxEventData.Controls.Add(this.groupBox4);
-            this.groupBoxEventData.Controls.Add(this.groupBox3);
+            this.groupBoxEventData.Controls.Add(this.groupBoxSourceEvent);
             this.groupBoxEventData.Location = new System.Drawing.Point(328, 12);
             this.groupBoxEventData.Name = "groupBoxEventData";
             this.groupBoxEventData.Size = new System.Drawing.Size(244, 360);
@@ -209,25 +209,25 @@
             // 
             // groupBox7
             // 
-            this.groupBox7.Controls.Add(this.textBoxSourceCheck);
-            this.groupBox7.Location = new System.Drawing.Point(8, 231);
-            this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(230, 47);
-            this.groupBox7.TabIndex = 11;
-            this.groupBox7.TabStop = false;
-            this.groupBox7.Text = "Source Check";
-            this.toolTip1.SetToolTip(this.groupBox7, "Link will only be activated if the sender asset matches this one. Optional.");
+            this.groupBoxSourceCheckOrFlags.Controls.Add(this.textBoxSourceCheckOrFlags);
+            this.groupBoxSourceCheckOrFlags.Location = new System.Drawing.Point(8, 231);
+            this.groupBoxSourceCheckOrFlags.Name = "groupBox7";
+            this.groupBoxSourceCheckOrFlags.Size = new System.Drawing.Size(230, 47);
+            this.groupBoxSourceCheckOrFlags.TabIndex = 11;
+            this.groupBoxSourceCheckOrFlags.TabStop = false;
+            this.groupBoxSourceCheckOrFlags.Text = "Source Check";
+            this.toolTip1.SetToolTip(this.groupBoxSourceCheckOrFlags, "Link will only be activated if the sender asset matches this one. Optional.");
             // 
             // textBoxSourceCheck
             // 
-            this.textBoxSourceCheck.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-            this.textBoxSourceCheck.Location = new System.Drawing.Point(6, 19);
-            this.textBoxSourceCheck.Name = "textBoxSourceCheck";
-            this.textBoxSourceCheck.Size = new System.Drawing.Size(218, 20);
-            this.textBoxSourceCheck.TabIndex = 17;
-            this.toolTip1.SetToolTip(this.textBoxSourceCheck, "Link will only be activated if the sender asset matches this one. Optional.");
-            this.textBoxSourceCheck.TextChanged += new System.EventHandler(this.textBoxSourceCheck_TextChanged);
-            this.textBoxSourceCheck.Leave += new System.EventHandler(this.textBoxSourceCheck_Leave);
+            this.textBoxSourceCheckOrFlags.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.textBoxSourceCheckOrFlags.Location = new System.Drawing.Point(6, 19);
+            this.textBoxSourceCheckOrFlags.Name = "textBoxSourceCheck";
+            this.textBoxSourceCheckOrFlags.Size = new System.Drawing.Size(218, 20);
+            this.textBoxSourceCheckOrFlags.TabIndex = 17;
+            this.toolTip1.SetToolTip(this.textBoxSourceCheckOrFlags, "Link will only be activated if the sender asset matches this one. Optional.");
+            this.textBoxSourceCheckOrFlags.TextChanged += new System.EventHandler(this.textBoxSourceCheck_TextChanged);
+            this.textBoxSourceCheckOrFlags.Leave += new System.EventHandler(this.textBoxSourceCheck_Leave);
             // 
             // groupBox2
             // 
@@ -368,6 +368,26 @@
             this.groupBox5.Text = "Target Asset";
             this.toolTip1.SetToolTip(this.groupBox5, "Asset to which this link will be sent.");
             // 
+            // buttonTargetSelf
+            // 
+            this.buttonTargetSelf.Location = new System.Drawing.Point(131, 0);
+            this.buttonTargetSelf.Name = "buttonTargetSelf";
+            this.buttonTargetSelf.Size = new System.Drawing.Size(42, 20);
+            this.buttonTargetSelf.TabIndex = 11;
+            this.buttonTargetSelf.Text = "Self";
+            this.buttonTargetSelf.UseVisualStyleBackColor = true;
+            this.buttonTargetSelf.Click += new System.EventHandler(this.buttonTargetSelf_Click);
+            // 
+            // buttonTargetPlus1
+            // 
+            this.buttonTargetPlus1.Location = new System.Drawing.Point(179, 0);
+            this.buttonTargetPlus1.Name = "buttonTargetPlus1";
+            this.buttonTargetPlus1.Size = new System.Drawing.Size(42, 20);
+            this.buttonTargetPlus1.TabIndex = 11;
+            this.buttonTargetPlus1.Text = "+1";
+            this.buttonTargetPlus1.UseVisualStyleBackColor = true;
+            this.buttonTargetPlus1.Click += new System.EventHandler(this.buttonTargetPlus1_Click);
+            // 
             // textBoxTargetAsset
             // 
             this.textBoxTargetAsset.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
@@ -378,59 +398,6 @@
             this.toolTip1.SetToolTip(this.textBoxTargetAsset, "Asset to which this link will be sent.");
             this.textBoxTargetAsset.TextChanged += new System.EventHandler(this.textBoxTargetAsset_TextChanged);
             this.textBoxTargetAsset.Leave += new System.EventHandler(this.textBoxTargetAsset_Leave);
-            // 
-            // groupBox4
-            // 
-            this.groupBox4.Controls.Add(this.comboSendEvent);
-            this.groupBox4.Location = new System.Drawing.Point(8, 72);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(230, 47);
-            this.groupBox4.TabIndex = 2;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Target Event";
-            this.toolTip1.SetToolTip(this.groupBox4, "Event sent by this link.");
-            // 
-            // comboSendEvent
-            // 
-            this.comboSendEvent.FormattingEnabled = true;
-            this.comboSendEvent.Location = new System.Drawing.Point(6, 19);
-            this.comboSendEvent.Name = "comboSendEvent";
-            this.comboSendEvent.Size = new System.Drawing.Size(218, 21);
-            this.comboSendEvent.TabIndex = 9;
-            this.toolTip1.SetToolTip(this.comboSendEvent, "Event sent by this link.");
-            this.comboSendEvent.SelectedIndexChanged += new System.EventHandler(this.comboSendEvent_SelectedIndexChanged);
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.comboRecieveEvent);
-            this.groupBox3.Controls.Add(this.numericUpDownTime);
-            this.groupBox3.Location = new System.Drawing.Point(6, 19);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(232, 47);
-            this.groupBox3.TabIndex = 1;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Source Event";
-            this.toolTip1.SetToolTip(this.groupBox3, "Event which activates this link.");
-            // 
-            // comboRecieveEvent
-            // 
-            this.comboRecieveEvent.FormattingEnabled = true;
-            this.comboRecieveEvent.Location = new System.Drawing.Point(6, 19);
-            this.comboRecieveEvent.Name = "comboRecieveEvent";
-            this.comboRecieveEvent.Size = new System.Drawing.Size(220, 21);
-            this.comboRecieveEvent.TabIndex = 8;
-            this.toolTip1.SetToolTip(this.comboRecieveEvent, "Event which activates this link.");
-            this.comboRecieveEvent.SelectedIndexChanged += new System.EventHandler(this.comboReceiveEvent_SelectedIndexChanged);
-            // 
-            // numericUpDownTime
-            // 
-            this.numericUpDownTime.DecimalPlaces = 4;
-            this.numericUpDownTime.Location = new System.Drawing.Point(8, 19);
-            this.numericUpDownTime.Name = "numericUpDownTime";
-            this.numericUpDownTime.Size = new System.Drawing.Size(218, 20);
-            this.numericUpDownTime.TabIndex = 18;
-            this.numericUpDownTime.Visible = false;
-            this.numericUpDownTime.ValueChanged += new System.EventHandler(this.numericUpDownTime_ValueChanged);
             // 
             // buttonHelp
             // 
@@ -443,25 +410,58 @@
             this.buttonHelp.UseVisualStyleBackColor = true;
             this.buttonHelp.Click += new System.EventHandler(this.button1_Click);
             // 
-            // buttonTargetPlus1
+            // comboSendEvent
             // 
-            this.buttonTargetPlus1.Location = new System.Drawing.Point(179, 0);
-            this.buttonTargetPlus1.Name = "buttonTargetPlus1";
-            this.buttonTargetPlus1.Size = new System.Drawing.Size(42, 20);
-            this.buttonTargetPlus1.TabIndex = 11;
-            this.buttonTargetPlus1.Text = "+1";
-            this.buttonTargetPlus1.UseVisualStyleBackColor = true;
-            this.buttonTargetPlus1.Click += new System.EventHandler(this.buttonTargetPlus1_Click);
+            this.comboSendEvent.FormattingEnabled = true;
+            this.comboSendEvent.Location = new System.Drawing.Point(6, 19);
+            this.comboSendEvent.Name = "comboSendEvent";
+            this.comboSendEvent.Size = new System.Drawing.Size(218, 21);
+            this.comboSendEvent.TabIndex = 9;
+            this.toolTip1.SetToolTip(this.comboSendEvent, "Event sent by this link.");
+            this.comboSendEvent.SelectedIndexChanged += new System.EventHandler(this.comboSendEvent_SelectedIndexChanged);
             // 
-            // buttonTargetSelf
+            // groupBox4
             // 
-            this.buttonTargetSelf.Location = new System.Drawing.Point(131, 0);
-            this.buttonTargetSelf.Name = "buttonTargetSelf";
-            this.buttonTargetSelf.Size = new System.Drawing.Size(42, 20);
-            this.buttonTargetSelf.TabIndex = 11;
-            this.buttonTargetSelf.Text = "Self";
-            this.buttonTargetSelf.UseVisualStyleBackColor = true;
-            this.buttonTargetSelf.Click += new System.EventHandler(this.buttonTargetSelf_Click);
+            this.groupBox4.Controls.Add(this.comboSendEvent);
+            this.groupBox4.Location = new System.Drawing.Point(8, 72);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(230, 47);
+            this.groupBox4.TabIndex = 2;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Target Event";
+            this.toolTip1.SetToolTip(this.groupBox4, "Event sent by this link.");
+            // 
+            // numericUpDownTime
+            // 
+            this.numericUpDownTime.DecimalPlaces = 4;
+            this.numericUpDownTime.Location = new System.Drawing.Point(8, 19);
+            this.numericUpDownTime.Name = "numericUpDownTime";
+            this.numericUpDownTime.Size = new System.Drawing.Size(218, 20);
+            this.numericUpDownTime.TabIndex = 18;
+            this.numericUpDownTime.Visible = false;
+            this.numericUpDownTime.ValueChanged += new System.EventHandler(this.numericUpDownTime_ValueChanged);
+            // 
+            // comboRecieveEvent
+            // 
+            this.comboRecieveEvent.FormattingEnabled = true;
+            this.comboRecieveEvent.Location = new System.Drawing.Point(6, 19);
+            this.comboRecieveEvent.Name = "comboRecieveEvent";
+            this.comboRecieveEvent.Size = new System.Drawing.Size(220, 21);
+            this.comboRecieveEvent.TabIndex = 8;
+            this.toolTip1.SetToolTip(this.comboRecieveEvent, "Event which activates this link.");
+            this.comboRecieveEvent.SelectedIndexChanged += new System.EventHandler(this.comboReceiveEvent_SelectedIndexChanged);
+            // 
+            // groupBox3
+            // 
+            this.groupBoxSourceEvent.Controls.Add(this.comboRecieveEvent);
+            this.groupBoxSourceEvent.Controls.Add(this.numericUpDownTime);
+            this.groupBoxSourceEvent.Location = new System.Drawing.Point(6, 19);
+            this.groupBoxSourceEvent.Name = "groupBox3";
+            this.groupBoxSourceEvent.Size = new System.Drawing.Size(232, 47);
+            this.groupBoxSourceEvent.TabIndex = 1;
+            this.groupBoxSourceEvent.TabStop = false;
+            this.groupBoxSourceEvent.Text = "Source Event";
+            this.toolTip1.SetToolTip(this.groupBoxSourceEvent, "Event which activates this link.");
             // 
             // LinkEditor
             // 
@@ -489,8 +489,8 @@
             this.Text = "Link List Editor";
             this.groupBox1.ResumeLayout(false);
             this.groupBoxEventData.ResumeLayout(false);
-            this.groupBox7.ResumeLayout(false);
-            this.groupBox7.PerformLayout();
+            this.groupBoxSourceCheckOrFlags.ResumeLayout(false);
+            this.groupBoxSourceCheckOrFlags.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox6.ResumeLayout(false);
@@ -498,8 +498,8 @@
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             this.groupBox4.ResumeLayout(false);
-            this.groupBox3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTime)).EndInit();
+            this.groupBoxSourceEvent.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -517,14 +517,10 @@
         private System.Windows.Forms.Button buttonOK;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.GroupBox groupBoxEventData;
-        private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.ComboBox comboRecieveEvent;
         private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.ComboBox comboSendEvent;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.TextBox textBoxArgumentAsset;
-        private System.Windows.Forms.TextBox textBoxSourceCheck;
+        private System.Windows.Forms.TextBox textBoxSourceCheckOrFlags;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.TextBox textBox4;
         private System.Windows.Forms.TextBox textBox2;
@@ -535,12 +531,16 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.GroupBox groupBox7;
+        private System.Windows.Forms.GroupBox groupBoxSourceCheckOrFlags;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button buttonHelp;
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.NumericUpDown numericUpDownTime;
         private System.Windows.Forms.Button buttonTargetPlus1;
         private System.Windows.Forms.Button buttonTargetSelf;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.ComboBox comboSendEvent;
+        private System.Windows.Forms.GroupBox groupBoxSourceEvent;
+        private System.Windows.Forms.ComboBox comboRecieveEvent;
+        private System.Windows.Forms.NumericUpDown numericUpDownTime;
     }
 }

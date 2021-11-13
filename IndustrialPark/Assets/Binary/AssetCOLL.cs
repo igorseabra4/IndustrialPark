@@ -1,8 +1,7 @@
-﻿using System;
+﻿using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -12,11 +11,12 @@ namespace IndustrialPark
         public AssetID Collision_ModelAssetID { get; set; }
         public AssetID CameraCollision_ModelAssetID { get; set; }
 
-        public EntryCOLL()
+        public EntryCOLL() { }
+        public EntryCOLL(EndianBinaryReader reader)
         {
-            ModelAssetID = 0;
-            Collision_ModelAssetID = 0;
-            CameraCollision_ModelAssetID = 0;
+            ModelAssetID = reader.ReadUInt32();
+            Collision_ModelAssetID = reader.ReadUInt32();
+            CameraCollision_ModelAssetID = reader.ReadUInt32();
         }
 
         public override string ToString()
@@ -25,7 +25,7 @@ namespace IndustrialPark
                 return $"[{Program.MainForm.GetAssetNameFromID(ModelAssetID)}] - [{Program.MainForm.GetAssetNameFromID(Collision_ModelAssetID)}]";
             return $"[{Program.MainForm.GetAssetNameFromID(ModelAssetID)}] - [{Program.MainForm.GetAssetNameFromID(CameraCollision_ModelAssetID)}]";
         }
-        
+
         public override bool Equals(object obj)
         {
             if (obj != null && obj is EntryCOLL entryCOLL)
@@ -41,20 +41,56 @@ namespace IndustrialPark
 
     public class AssetCOLL : Asset
     {
-        public AssetCOLL(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        [Category("Collision Table")]
+        public EntryCOLL[] CollisionTable_Entries { get; set; }
+
+        public AssetCOLL(string assetName) : base(assetName, AssetType.COLL)
+        {
+            CollisionTable_Entries = new EntryCOLL[0];
+        }
+
+        public AssetCOLL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+
+                var entries = new EntryCOLL[reader.ReadInt32()];
+                for (int i = 0; i < entries.Length; i++)
+                    entries[i] = new EntryCOLL(reader);
+
+                CollisionTable_Entries = entries;
+            }
+        }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(CollisionTable_Entries.Length);
+
+                foreach (var entry in CollisionTable_Entries)
+                {
+                    writer.Write(entry.ModelAssetID);
+                    writer.Write(entry.Collision_ModelAssetID);
+                    writer.Write(entry.CameraCollision_ModelAssetID);
+                }
+
+                return writer.ToArray();
+            }
+        }
 
         public override bool HasReference(uint assetID)
         {
-            foreach (EntryCOLL a in COLL_Entries)
+            foreach (var a in CollisionTable_Entries)
                 if (a.ModelAssetID == assetID || a.Collision_ModelAssetID == assetID || a.CameraCollision_ModelAssetID == assetID)
                     return true;
-            
-            return base.HasReference(assetID);
+
+            return false;
         }
 
         public override void Verify(ref List<string> result)
         {
-            foreach (EntryCOLL a in COLL_Entries)
+            foreach (var a in CollisionTable_Entries)
             {
                 if (a.ModelAssetID == 0)
                     result.Add("COLL entry with ModelAssetID set to 0");
@@ -65,53 +101,17 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Collision Table")]
-        public EntryCOLL[] COLL_Entries
-        {
-            get
-            {
-                List<EntryCOLL> entries = new List<EntryCOLL>();
-                int amount = ReadInt(0);
-
-                for (int i = 0; i < amount; i++)
-                {
-                    entries.Add(new EntryCOLL()
-                    {
-                        ModelAssetID = ReadUInt(4 + i * 0xC),
-                        Collision_ModelAssetID = ReadUInt(8 + i * 0xC),
-                        CameraCollision_ModelAssetID = ReadUInt(12 + i * 0xC)
-                    });
-                }
-                
-                return entries.ToArray();
-            }
-            set
-            {
-                List<byte> newData = new List<byte>();
-                newData.AddRange(BitConverter.GetBytes(Switch(value.Length)));
-
-                foreach (EntryCOLL i in value)
-                {
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.ModelAssetID)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.Collision_ModelAssetID)));
-                    newData.AddRange(BitConverter.GetBytes(Switch(i.CameraCollision_ModelAssetID)));
-                }
-                
-                Data = newData.ToArray();
-            }
-        }
-
         public void Merge(AssetCOLL asset)
         {
-            var entries = COLL_Entries.ToList();
+            var entries = CollisionTable_Entries.ToList();
 
-            foreach (var entry in asset.COLL_Entries)
+            foreach (var entry in asset.CollisionTable_Entries)
             {
                 entries.Remove(entry);
                 entries.Add(entry);
             }
 
-            COLL_Entries = entries.ToArray();
+            CollisionTable_Entries = entries.ToArray();
         }
     }
 }

@@ -4,8 +4,18 @@ namespace IndustrialPark
 {
     public class AssetDPAT : BaseAsset
     {
-        public AssetDPAT(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        public AssetDPAT(string assetName) : base(assetName, AssetType.DPAT, BaseAssetType.Dispatcher) { }
 
-        protected override int EventStartOffset => 0x8;
+        public AssetDPAT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness) { }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
+                writer.Write(SerializeLinks(endianness));
+                return writer.ToArray();
+            }
+        }
     }
 }

@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using static IndustrialPark.Models.BSP_IO_Shared;
-using static IndustrialPark.Models.BSP_IO;
-using static IndustrialPark.Models.Assimp_IO;
-using System.IO;
+﻿using IndustrialPark.Models;
 using RenderWareFile;
-using IndustrialPark.Models;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using SharpDX;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Windows.Forms;
+using static IndustrialPark.Models.Assimp_IO;
+using static IndustrialPark.Models.BSP_IO;
+using static IndustrialPark.Models.BSP_IO_Shared;
 
 namespace IndustrialPark
 {
     public partial class InternalAssetEditor : Form, IInternalEditor
     {
-        public InternalAssetEditor(Asset asset, ArchiveEditorFunctions archive, bool hideHelp)
+        public InternalAssetEditor(Asset asset, ArchiveEditorFunctions archive)
         {
             InitializeComponent();
             TopMost = true;
@@ -25,13 +24,11 @@ namespace IndustrialPark
             DynamicTypeDescriptor dt = new DynamicTypeDescriptor(asset.GetType());
             asset.SetDynamicProperties(dt);
             propertyGridAsset.SelectedObject = dt.FromComponent(asset);
-            
-            Text = $"[{asset.AHDR.assetType}] {asset}";
 
-            propertyGridAsset.HelpVisible = !hideHelp;
+            Text = $"[{asset.assetType}] {asset}";
 
             if (asset is AssetCAM cam) SetupForCam(cam);
-            else if (asset is AssetCSN csn) SetupForCsn(csn);
+            //else if (asset is AssetCSN csn) SetupForCsn(csn);
             else if (asset is AssetGRUP grup) SetupForGrup(grup);
             else if (asset is AssetRenderWareModel arwm) SetupForModel(arwm);
             else if (asset is AssetSHRP shrp) SetupForShrp(shrp);
@@ -41,7 +38,7 @@ namespace IndustrialPark
 
             Button buttonHelp = new Button() { Dock = DockStyle.Fill, Text = "Open Wiki Page", AutoSize = true };
             buttonHelp.Click += (object sender, EventArgs e) =>
-                System.Diagnostics.Process.Start(AboutBox.WikiLink + asset.AHDR.assetType.ToString());
+                System.Diagnostics.Process.Start(AboutBox.WikiLink + asset.assetType.ToString());
             tableLayoutPanel1.Controls.Add(buttonHelp, 0, tableLayoutPanel1.RowCount - 1);
 
             Button buttonFindCallers = new Button() { Dock = DockStyle.Fill, Text = "Find Who Targets Me", AutoSize = true };
@@ -68,9 +65,9 @@ namespace IndustrialPark
 
         public uint GetAssetID()
         {
-            return asset.AHDR.assetID;
+            return asset.assetID;
         }
-        
+
         public void RefreshPropertyGrid()
         {
             propertyGridAsset.Refresh();
@@ -81,11 +78,6 @@ namespace IndustrialPark
             archive.UnsavedChanges = true;
             propertyGridAsset.Refresh();
         }
-        
-        public void SetHideHelp(bool hideHelp)
-        {
-            propertyGridAsset.HelpVisible = !hideHelp;
-        }
 
         private void AddRow()
         {
@@ -95,7 +87,7 @@ namespace IndustrialPark
         private void SetupForCam(AssetCAM asset)
         {
             AddRow();
-            
+
             Button buttonGetPos = new Button() { Dock = DockStyle.Fill, Text = "Get View Position", AutoSize = true };
             buttonGetPos.Click += (object sender, EventArgs e) =>
             {
@@ -141,24 +133,24 @@ namespace IndustrialPark
             tableLayoutPanel1.SetColumnSpan(buttonAddSelected, 2);
         }
 
-        private void SetupForCsn(AssetCSN asset)
-        {
-            AddRow();
+        //private void SetupForCsn(AssetCSN asset)
+        //{
+        //    AddRow();
 
-            Button buttonExportModlsAnims = new Button() { Dock = DockStyle.Fill, Text = "Export All MODL/ANIM", AutoSize = true };
-            buttonExportModlsAnims.Click += (object sender, EventArgs e) =>
-            {
-                CommonOpenFileDialog saveFile = new CommonOpenFileDialog()
-                {
-                    IsFolderPicker = true,
-                };
+        //    Button buttonExportModlsAnims = new Button() { Dock = DockStyle.Fill, Text = "Export All MODL/ANIM", AutoSize = true };
+        //    buttonExportModlsAnims.Click += (object sender, EventArgs e) =>
+        //    {
+        //        CommonOpenFileDialog saveFile = new CommonOpenFileDialog()
+        //        {
+        //            IsFolderPicker = true,
+        //        };
 
-                if (saveFile.ShowDialog() == CommonFileDialogResult.Ok)
-                    asset.ExtractToFolder(saveFile.FileName);
-            };
-            tableLayoutPanel1.Controls.Add(buttonExportModlsAnims);
-            tableLayoutPanel1.SetColumnSpan(buttonExportModlsAnims, 2);
-        }
+        //        if (saveFile.ShowDialog() == CommonFileDialogResult.Ok)
+        //            asset.ExtractToFolder(saveFile.FileName);
+        //    };
+        //    tableLayoutPanel1.Controls.Add(buttonExportModlsAnims);
+        //    tableLayoutPanel1.SetColumnSpan(buttonExportModlsAnims, 2);
+        //}
 
         private void SetupForModel(AssetRenderWareModel asset)
         {
@@ -197,12 +189,12 @@ namespace IndustrialPark
 
                 if (openFile.ShowDialog() == DialogResult.OK)
                 {
-                    if (asset.AHDR.assetType == HipHopFile.AssetType.MODL)
+                    if (asset.assetType == HipHopFile.AssetType.MODL)
                         asset.Data = Path.GetExtension(openFile.FileName).ToLower().Equals(".dff") ?
                         File.ReadAllBytes(openFile.FileName) :
                         ReadFileMethods.ExportRenderWareFile(CreateDFFFromAssimp(openFile.FileName, flipUVs.Checked, ignoreMeshColors.Checked), modelRenderWareVersion(asset.game));
 
-                    if (asset.AHDR.assetType == HipHopFile.AssetType.BSP)
+                    if (asset.assetType == HipHopFile.AssetType.BSP)
                         asset.Data = Path.GetExtension(openFile.FileName).ToLower().Equals(".bsp") ?
                         File.ReadAllBytes(openFile.FileName) :
                         ReadFileMethods.ExportRenderWareFile(CreateBSPFromAssimp(openFile.FileName, flipUVs.Checked, ignoreMeshColors.Checked), modelRenderWareVersion(asset.game));
@@ -233,7 +225,7 @@ namespace IndustrialPark
                     {
                         if (format == null)
                             File.WriteAllBytes(a.FileName, asset.Data);
-                        else if (format.FileExtension.ToLower().Equals("obj") && asset.AHDR.assetType == HipHopFile.AssetType.BSP)
+                        else if (format.FileExtension.ToLower().Equals("obj") && asset.assetType == HipHopFile.AssetType.BSP)
                             ConvertBSPtoOBJ(a.FileName, ReadFileMethods.ReadRenderWareFile(asset.Data), true);
                         else
                             ExportAssimp(Path.ChangeExtension(a.FileName, format.FileExtension), ReadFileMethods.ReadRenderWareFile(asset.Data), true, format, textureExtension, Matrix.Identity);
@@ -275,7 +267,7 @@ namespace IndustrialPark
         private void SetupForWire(AssetWIRE asset)
         {
             AddRow();
-            
+
             Button buttonImport = new Button() { Dock = DockStyle.Fill, Text = "Import", AutoSize = true };
             buttonImport.Click += (object sender, EventArgs e) =>
             {
@@ -291,7 +283,7 @@ namespace IndustrialPark
                 }
             };
             tableLayoutPanel1.Controls.Add(buttonImport);
-            
+
             Button buttonExport = new Button() { Dock = DockStyle.Fill, Text = "Export", AutoSize = true };
             buttonExport.Click += (object sender, EventArgs e) =>
             {

@@ -1,23 +1,62 @@
 ﻿using HipHopFile;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
 namespace IndustrialPark
 {
+    public enum Delegation
+    {
+        AllItems = 0,
+        RandomItem = 1,
+        InOrder = 2
+    }
+
     public class AssetGRUP : BaseAsset
     {
-        public AssetGRUP(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        private const string catName = "Group";
 
-        public override bool HasReference(uint assetID)
+        [Category(catName)]
+        public Delegation ReceiveEventDelegation { get; set; }
+        [Category(catName)]
+        public AssetID[] GroupItems { get; set; }
+
+        public AssetGRUP(string assetName) : base(assetName, AssetType.GRUP, BaseAssetType.Group)
         {
-            foreach (AssetID a in GroupItems)
-                if (a == assetID)
-                    return true;
-
-            return base.HasReference(assetID);
+            GroupItems = new AssetID[0];
         }
+
+        public AssetGRUP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = baseHeaderEndPosition;
+
+                var itemCount = reader.ReadUInt16();
+                ReceiveEventDelegation = (Delegation)reader.ReadInt16();
+
+                GroupItems = new AssetID[itemCount];
+                for (int i = 0; i < GroupItems.Length; i++)
+                    GroupItems[i] = reader.ReadUInt32();
+            }
+        }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(SerializeBase(endianness));
+                writer.Write((short)GroupItems.Length);
+                writer.Write((short)ReceiveEventDelegation);
+                foreach (var a in GroupItems)
+                    writer.Write(a);
+                writer.Write(SerializeLinks(endianness));
+
+                return writer.ToArray();
+            }
+        }
+
+        public override bool HasReference(uint assetID) => GroupItems.Any(a => a == assetID) || base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {
@@ -28,54 +67,6 @@ namespace IndustrialPark
                 if (a == 0)
                     result.Add("GRUP with group item set to 0");
                 Verify(a, ref result);
-            }
-        }
-
-        protected override int EventStartOffset => 0x0C + ItemCount * 4;
-
-        public enum Delegation
-        {
-            AllItems = 0,
-            RandomItem = 1,
-            InOrder = 2
-        }
-
-        [Category("Group"), ReadOnly(true)]
-        public short ItemCount
-        {
-            get => ReadShort(0x08);
-            set => Write(0x08, value);
-        }
-
-        [Category("Group")]
-        public Delegation ReceiveEventDelegation
-        {
-            get => (Delegation)ReadShort(0x0A);
-            set => Write(0x0A, (short)value);
-        }
-
-        [Category("Group")]
-        public AssetID[] GroupItems
-        {
-            get
-            {
-                List<AssetID> group = new List<AssetID>();
-                for (int i = 0; i < ItemCount; i++)
-                    group.Add(ReadUInt(0xC + 4 * i));
-
-                return group.ToArray();
-            }
-            set
-            {
-                List<byte> newData = Data.Take(0xC).ToList();
-
-                foreach (AssetID i in value)
-                    newData.AddRange(BitConverter.GetBytes(Switch(i)));
-
-                newData.AddRange(Data.Skip(EventStartOffset).ToList());
-                
-                Data = newData.ToArray();
-                ItemCount = (short)value.Length;
             }
         }
     }

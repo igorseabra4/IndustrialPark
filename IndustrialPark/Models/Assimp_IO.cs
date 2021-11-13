@@ -1,11 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using SharpDX;
+﻿using Assimp;
 using RenderWareFile;
 using RenderWareFile.Sections;
-using Assimp;
+using SharpDX;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace IndustrialPark.Models
 {
@@ -28,63 +28,6 @@ namespace IndustrialPark.Models
             filter += "|All files|*.*";
 
             return filter;
-        }
-
-        public static ModelConverterData ReadAssimp(string fileName)
-        {
-            Scene scene = new AssimpContext().ImportFile(fileName,
-                PostProcessSteps.Debone | PostProcessSteps.FindInstances | PostProcessSteps.FindInvalidData |
-                PostProcessSteps.OptimizeGraph | PostProcessSteps.OptimizeMeshes | PostProcessSteps.Triangulate |
-                PostProcessSteps.PreTransformVertices);
-
-            ModelConverterData data = new ModelConverterData()
-            {
-                MaterialList = new List<string>(),
-                VertexList = new List<Vertex>(),
-                UVList = new List<Vector2>(),
-                ColorList = new List<SharpDX.Color>(),
-                TriangleList = new List<Triangle>()
-            };
-
-            foreach (var mat in scene.Materials)
-                if (mat.TextureDiffuse.FilePath == null)
-                    data.MaterialList.Add(Path.GetFileNameWithoutExtension(""));
-                else
-                    data.MaterialList.Add(Path.GetFileNameWithoutExtension(mat.TextureDiffuse.FilePath));
-
-            int totalVertices = 0;
-
-            foreach (var m in scene.Meshes)
-            {
-                for (int i = 0; i < m.VertexCount; i++)
-                {
-                    Vertex v = new Vertex() { Position = new Vector3(m.Vertices[i].X, m.Vertices[i].Y, m.Vertices[i].Z) };
-
-                    if (m.HasTextureCoords(0))
-                        v.TexCoord = new Vector2(m.TextureCoordinateChannels[0][i].X, m.TextureCoordinateChannels[0][i].Y);
-                    else
-                        v.TexCoord = new Vector2();
-
-                    if (m.HasVertexColors(0))
-                        v.Color = new SharpDX.Color(m.VertexColorChannels[0][i].R, m.VertexColorChannels[0][i].G, m.VertexColorChannels[0][i].B, m.VertexColorChannels[0][i].A);
-                    else
-                        v.Color = SharpDX.Color.White;
-
-                    data.VertexList.Add(v);
-                }
-
-                foreach (var t in m.Faces)
-                    data.TriangleList.Add(new Triangle()
-                    {
-                        vertex1 = t.Indices[0] + totalVertices,
-                        vertex2 = t.Indices[1] + totalVertices,
-                        vertex3 = t.Indices[2] + totalVertices,
-                        materialIndex = m.MaterialIndex
-                    });
-                totalVertices += m.VertexCount;
-            }
-
-            return data;
         }
 
         private static Texture_0006 RWTextureFromAssimpMaterial(TextureSlot texture) =>
@@ -241,7 +184,7 @@ namespace IndustrialPark.Models
                 if (v.Z < min.Z)
                     min.Z = v.Z;
             }
-                        
+
             var binMeshes = new List<BinMesh>(materials.Count);
 
             for (int k = 0; k < materials.Count; k++)
@@ -265,13 +208,13 @@ namespace IndustrialPark.Models
                     });
             }
 
-            return ToClump(materials.ToArray(), new BoundingSphere(max + min / 2f, (max - min).Length()), 
+            return ToClump(materials.ToArray(), new BoundingSphere(max + min / 2f, (max - min).Length()),
                 vertices.ToArray(), normals.ToArray(), textCoords.ToArray(), vertexColors.ToArray(), triangles.ToArray(),
                 binMeshes.ToArray(), atomicNeedsMaterialEffects);
         }
-        
+
         private static RWSection ToClump
-            (Material_0007[] materials, BoundingSphere boundingSphere, 
+            (Material_0007[] materials, BoundingSphere boundingSphere,
             Vertex3[] vertices, Vertex3[] normals, Vertex2[] textCoords, RenderWareFile.Color[] vertexColors, RenderWareFile.Triangle[] triangles,
             BinMesh[] binMeshes, bool atomicNeedsMaterialEffects)
         {
@@ -390,7 +333,7 @@ namespace IndustrialPark.Models
                     atomicExtension = new Extension_0003() // check this in case something fails
                     {
                         extensionSectionList = atomicNeedsMaterialEffects ? new List<RWSection>()
-                        { 
+                        {
                             new MaterialEffectsPLG_0120()
                             {
                                 isAtomicExtension = true,

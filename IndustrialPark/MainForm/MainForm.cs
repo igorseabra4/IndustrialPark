@@ -1,14 +1,14 @@
 ﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using Newtonsoft.Json;
 using SharpDX;
 using SharpDX.Direct3D11;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
-using Newtonsoft.Json;
 using System.Threading;
-using System.Drawing;
+using System.Windows.Forms;
 
 namespace IndustrialPark
 {
@@ -22,10 +22,14 @@ namespace IndustrialPark
 #if !DEBUG
             addTextureFolderToolStripMenuItem.Visible = false;
             addTXDArchiveToolStripMenuItem.Visible = false;
+            openFolderToolStripMenuItem.Visible = false;
+            dynaNameSearcherToolStripMenuItem.Visible = false;
 #endif
 
+            autoShowDropDowns = false;
             uIToolStripMenuItem_Click(null, null);
             uIFTToolStripMenuItem_Click(null, null);
+            autoShowDropDowns = true;
 
             ArchiveEditorFunctions.PopulateTemplateMenusAt(toolStripMenuItem_Templates, TemplateToolStripItemClick);
 
@@ -84,14 +88,8 @@ namespace IndustrialPark
             hideInvisibleMeshesToolStripMenuItem.Checked = settings.dontDrawInvisible;
             RenderWareModelFile.dontDrawInvisible = settings.dontDrawInvisible;
 
-            updateReferencesOnCopyPasteToolStripMenuItem.Checked = settings.updateReferencesOnCopy;
-            ArchiveEditorFunctions.updateReferencesOnCopy = settings.updateReferencesOnCopy;
-
             templatesPersistentShiniesToolStripMenuItem.Checked = settings.persistentShinies;
             ArchiveEditorFunctions.persistentShinies = settings.persistentShinies;
-
-            hideHelpInAssetDataEditorsToolStripMenuItem.Checked = settings.hideHelp;
-            ArchiveEditorFunctions.hideHelp = settings.hideHelp;
 
             discordRichPresenceToolStripMenuItem.Checked = settings.discordRichPresence;
             DiscordRPCController.ToggleDiscordRichPresence(discordRichPresenceToolStripMenuItem.Checked);
@@ -133,6 +131,9 @@ namespace IndustrialPark
                     return;
                 }
             }
+
+            TextureIOHelper.closeConverter();
+
             if (autoSaveOnClosingToolStripMenuItem.Checked)
                 SaveProject(currentProjectPath);
 
@@ -146,8 +147,7 @@ namespace IndustrialPark
                 renderBasedOnPipt = AssetMODL.renderBasedOnPipt,
                 discordRichPresence = discordRichPresenceToolStripMenuItem.Checked,
                 dontDrawInvisible = RenderWareModelFile.dontDrawInvisible,
-                persistentShinies = ArchiveEditorFunctions.persistentShinies,
-                hideHelp = hideHelpInAssetDataEditorsToolStripMenuItem.Checked
+                persistentShinies = ArchiveEditorFunctions.persistentShinies
             };
 
             File.WriteAllText(pathToSettings, JsonConvert.SerializeObject(settings, Formatting.Indented));
@@ -157,14 +157,18 @@ namespace IndustrialPark
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string file in files)
+#if !DEBUG
                 try
                 {
-                    AddArchiveEditor(file);
+#endif
+                AddArchiveEditor(file);
+#if !DEBUG
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Error opening file: " + ex.Message);
                 }
+#endif
         }
 
         private void MainForm_DragEnter(object sender, DragEventArgs e)
@@ -329,13 +333,15 @@ namespace IndustrialPark
                 dontRenderBUTN = AssetBUTN.dontRender,
                 dontRenderCAM = AssetCAM.dontRender,
                 dontRenderDSTR = AssetDSTR.dontRender,
-                dontRenderDUPC = AssetDUPC.dontRender,
+                dontRenderDTRK = AssetDTRK.dontRender,
                 dontRenderDYNA = AssetDYNA.dontRender,
                 dontRenderEGEN = AssetEGEN.dontRender,
+                dontRenderGRSM = AssetGRSM.dontRender,
                 dontRenderHANG = AssetHANG.dontRender,
                 dontRenderLITE = AssetLITE.dontRender,
                 dontRenderMRKR = AssetMRKR.dontRender,
-                dontRenderMVPT = AssetMVPT_Scooby.dontRender,
+                dontRenderMVPT = AssetMVPT.dontRender,
+                dontRenderNPC = AssetNPC.dontRender,
                 dontRenderPEND = AssetPEND.dontRender,
                 dontRenderPKUP = AssetPKUP.dontRender,
                 dontRenderPLAT = AssetPLAT.dontRender,
@@ -348,6 +354,7 @@ namespace IndustrialPark
                 dontRenderUI = AssetUI.dontRender,
                 dontRenderUIFT = AssetUIFT.dontRender,
                 dontRenderVIL = AssetVIL.dontRender,
+                dontRenderVOLU = AssetVOLU.dontRender,
                 Grid = ArchiveEditorFunctions.Grid,
             };
         }
@@ -418,7 +425,7 @@ namespace IndustrialPark
             renderer.SetSfxColor(ipSettings.SfxColor);
 
             useLegacyAssetIDFormatToolStripMenuItem.Checked = ipSettings.UseLegacyAssetIDFormat;
-            AssetIDTypeConverter.Legacy = ipSettings.UseLegacyAssetIDFormat;
+            HexUIntTypeConverter.Legacy = ipSettings.UseLegacyAssetIDFormat;
 
             uIModeToolStripMenuItem.Checked = ipSettings.isDrawingUI;
             renderer.isDrawingUI = ipSettings.isDrawingUI;
@@ -438,14 +445,17 @@ namespace IndustrialPark
             dSTRToolStripMenuItem.Checked = !ipSettings.dontRenderDSTR;
             AssetDSTR.dontRender = ipSettings.dontRenderDSTR;
 
-            dUPCToolStripMenuItem.Checked = !ipSettings.dontRenderDUPC;
-            AssetDUPC.dontRender = ipSettings.dontRenderDUPC;
+            dTRKToolStripMenuItem.Checked = !ipSettings.dontRenderDTRK;
+            AssetDTRK.dontRender = ipSettings.dontRenderDTRK;
 
             dYNAToolStripMenuItem.Checked = !ipSettings.dontRenderDYNA;
             AssetDYNA.dontRender = ipSettings.dontRenderDYNA;
 
             eGENToolStripMenuItem.Checked = !ipSettings.dontRenderEGEN;
             AssetEGEN.dontRender = ipSettings.dontRenderEGEN;
+
+            gRSMToolStripMenuItem.Checked = !ipSettings.dontRenderGRSM;
+            AssetGRSM.dontRender = ipSettings.dontRenderGRSM;
 
             hANGToolStripMenuItem.Checked = !ipSettings.dontRenderHANG;
             AssetHANG.dontRender = ipSettings.dontRenderHANG;
@@ -458,6 +468,9 @@ namespace IndustrialPark
 
             mVPTToolStripMenuItem.Checked = !ipSettings.dontRenderMVPT;
             AssetMVPT.dontRender = ipSettings.dontRenderMVPT;
+
+            nPCToolStripMenuItem.Checked = !ipSettings.dontRenderNPC;
+            AssetNPC.dontRender = ipSettings.dontRenderNPC;
 
             pENDToolStripMenuItem.Checked = !ipSettings.dontRenderPEND;
             AssetPEND.dontRender = ipSettings.dontRenderPEND;
@@ -494,6 +507,9 @@ namespace IndustrialPark
 
             vILToolStripMenuItem.Checked = !ipSettings.dontRenderVIL;
             AssetVIL.dontRender = ipSettings.dontRenderVIL;
+
+            vOLUToolStripMenuItem.Checked = !ipSettings.dontRenderVOLU;
+            AssetVOLU.dontRender = ipSettings.dontRenderVOLU;
         }
 
         public void SetToolStripStatusLabel(string Text)
@@ -543,7 +559,7 @@ namespace IndustrialPark
                         renderer.Camera.AddPositionUp(e.Y - oldMousePosition.Y);
                     }
                 }
-                
+
                 if (e.Delta != 0)
                     renderer.Camera.AddPositionForward(e.Delta / 24);
             }
@@ -655,13 +671,16 @@ namespace IndustrialPark
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AddArchiveEditor();
+            archiveEditors.Last().Show();
         }
 
         private void AddArchiveEditor(string filePath = null, HipHopFile.Platform scoobyPlatform = HipHopFile.Platform.Unknown)
         {
-            ArchiveEditor temp = new ArchiveEditor(filePath, scoobyPlatform);
-            archiveEditors.Add(temp);
+            ArchiveEditor temp = new ArchiveEditor();
             temp.Show();
+            temp.Hide();
+            temp.Begin(filePath, scoobyPlatform);
+            archiveEditors.Add(temp);
 
             ToolStripMenuItem tempMenuItem = new ToolStripMenuItem(Path.GetFileName(temp.GetCurrentlyOpenFileName()));
             tempMenuItem.Click += new EventHandler(ToolStripClick);
@@ -794,8 +813,8 @@ namespace IndustrialPark
                 "W, A, S, D: move view forward, left, backward, right\n" +
                 "Shift + (W, S): move view up, down\n" +
                 "Ctrl + (W, A, S, D): rotate view up, left, down, right\n" +
-                "Q, E: decrease interval, increase interval(view move speed)\n" +
-                "1, 3: decrease rotation interval, increase rotation interval(view rotation speed)\n" +
+                "Q, E: decrease interval, increase interval (view move speed)\n" +
+                "1, 3: decrease rotation interval, increase rotation interval (view rotation speed)\n" +
                 "C: toggles backface culling\n" +
                 "F: toggles wireframe mode\n" +
                 "G: open Asset Data Editor for selected assets\n" +
@@ -813,13 +832,13 @@ namespace IndustrialPark
                 "Left click on an asset to select it\n" +
                 "Ctrl + Left click to select multiple\n" +
                 "Middle click and drag to rotate view\n" +
-                "Mouse wheel to move forward / backward\n" +
+                "Mouse wheel to move forward/backward\n" +
                 "Right click on screen to choose a template\n" +
                 "Shift + Right click to place a template\n" +
-                "Ctrl + Right click and drag to pan(move view up, left, down, right)\n" +
-                "Mouse mode(Z): similar to a first person camera.The view rotates automatically as you move the mouse.Use the keyboard to move around.\n" +
+                "Ctrl + Right click and drag to pan (move view up, left, down, right)\n" +
+                "Mouse mode (Z): similar to a first person camera. The view rotates automatically as you move the mouse. Use the keyboard to move around.\n" +
                 "\n" +
-                "Please consult the Industrial Park user guide on Battlepedia for more information");
+                "Please consult the Industrial Park user guide on Heavy Iron Modding for more information");
         }
 
         private SharpDX.Rectangle ViewRectangle => new SharpDX.Rectangle(
@@ -827,7 +846,7 @@ namespace IndustrialPark
                 renderPanel.ClientRectangle.Y,
                 renderPanel.ClientRectangle.Width,
                 renderPanel.ClientRectangle.Height);
-        
+
         private void renderPanel_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -874,7 +893,7 @@ namespace IndustrialPark
         public Vector3 GetScreenClickedPosition(SharpDX.Rectangle viewRectangle, int X, int Y) =>
             ArchiveEditorFunctions.GetRayInterserctionPosition(renderer,
                 Ray.GetPickRay(X, Y, new Viewport(viewRectangle), renderer.viewProjection));
-        
+
         private void renderPanel_MouseUp(object sender, MouseEventArgs e)
         {
             ArchiveEditorFunctions.ScreenUnclicked();
@@ -960,151 +979,207 @@ namespace IndustrialPark
         private void useLegacyAssetIDFormatToolStripMenuItem_Click(object sender, EventArgs e)
         {
             useLegacyAssetIDFormatToolStripMenuItem.Checked = !useLegacyAssetIDFormatToolStripMenuItem.Checked;
-            AssetIDTypeConverter.Legacy = useLegacyAssetIDFormatToolStripMenuItem.Checked;
+            HexUIntTypeConverter.Legacy = useLegacyAssetIDFormatToolStripMenuItem.Checked;
+        }
+
+        private bool autoShowDropDowns = true;
+
+        private void ShowDropDowns()
+        {
+            if (autoShowDropDowns)
+            {
+                displayToolStripMenuItem.ShowDropDown();
+                assetTypesToolStripMenuItem.ShowDropDown();
+            }
         }
 
         private void levelModelToolStripMenuItem_Click(object sender, EventArgs e)
         {
             levelModelToolStripMenuItem.Checked = !levelModelToolStripMenuItem.Checked;
             AssetJSP.dontRender = !levelModelToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void bUTNToolStripMenuItem_Click(object sender, EventArgs e)
         {
             bUTNToolStripMenuItem.Checked = !bUTNToolStripMenuItem.Checked;
             AssetBUTN.dontRender = !bUTNToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void bOULToolStripMenuItem_Click(object sender, EventArgs e)
         {
             bOULToolStripMenuItem.Checked = !bOULToolStripMenuItem.Checked;
             AssetBOUL.dontRender = !bOULToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void cAMToolStripMenuItem_Click(object sender, EventArgs e)
         {
             cAMToolStripMenuItem.Checked = !cAMToolStripMenuItem.Checked;
             AssetCAM.dontRender = !cAMToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void mVPTToolStripMenuItem_Click(object sender, EventArgs e)
         {
             mVPTToolStripMenuItem.Checked = !mVPTToolStripMenuItem.Checked;
-            AssetMVPT_Scooby.dontRender = !mVPTToolStripMenuItem.Checked;
+            AssetMVPT.dontRender = !mVPTToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void pKUPToolStripMenuItem_Click(object sender, EventArgs e)
         {
             pKUPToolStripMenuItem.Checked = !pKUPToolStripMenuItem.Checked;
             AssetPKUP.dontRender = !pKUPToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void dSTRToolStripMenuItem_Click(object sender, EventArgs e)
         {
             dSTRToolStripMenuItem.Checked = !dSTRToolStripMenuItem.Checked;
             AssetDSTR.dontRender = !dSTRToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void tRIGToolStripMenuItem_Click(object sender, EventArgs e)
         {
             tRIGToolStripMenuItem.Checked = !tRIGToolStripMenuItem.Checked;
             AssetTRIG.dontRender = !tRIGToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void pLATToolStripMenuItem_Click(object sender, EventArgs e)
         {
             pLATToolStripMenuItem.Checked = !pLATToolStripMenuItem.Checked;
             AssetPLAT.dontRender = !pLATToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void sIMPToolStripMenuItem_Click(object sender, EventArgs e)
         {
             sIMPToolStripMenuItem.Checked = !sIMPToolStripMenuItem.Checked;
             AssetSIMP.dontRender = !sIMPToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void vILToolStripMenuItem_Click(object sender, EventArgs e)
         {
             vILToolStripMenuItem.Checked = !vILToolStripMenuItem.Checked;
             AssetVIL.dontRender = !vILToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void mRKRToolStripMenuItem_Click(object sender, EventArgs e)
         {
             mRKRToolStripMenuItem.Checked = !mRKRToolStripMenuItem.Checked;
             AssetMRKR.dontRender = !mRKRToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void pLYRToolStripMenuItem_Click(object sender, EventArgs e)
         {
             pLYRToolStripMenuItem.Checked = !pLYRToolStripMenuItem.Checked;
             AssetPLYR.dontRender = !pLYRToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void sFXToolStripMenuItem_Click(object sender, EventArgs e)
         {
             sFXToolStripMenuItem.Checked = !sFXToolStripMenuItem.Checked;
             AssetSFX.dontRender = !sFXToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void sDFXToolStripMenuItem_Click(object sender, EventArgs e)
         {
             sDFXToolStripMenuItem.Checked = !sDFXToolStripMenuItem.Checked;
             AssetSDFX.dontRender = !sDFXToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void dYNAToolStripMenuItem_Click(object sender, EventArgs e)
         {
             dYNAToolStripMenuItem.Checked = !dYNAToolStripMenuItem.Checked;
             AssetDYNA.dontRender = !dYNAToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void uIToolStripMenuItem_Click(object sender, EventArgs e)
         {
             uIToolStripMenuItem.Checked = !uIToolStripMenuItem.Checked;
             AssetUI.dontRender = !uIToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void uIFTToolStripMenuItem_Click(object sender, EventArgs e)
         {
             uIFTToolStripMenuItem.Checked = !uIFTToolStripMenuItem.Checked;
             AssetUIFT.dontRender = !uIFTToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void eGENToolStripMenuItem_Click(object sender, EventArgs e)
         {
             eGENToolStripMenuItem.Checked = !eGENToolStripMenuItem.Checked;
             AssetEGEN.dontRender = !eGENToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void hANGToolStripMenuItem_Click(object sender, EventArgs e)
         {
             hANGToolStripMenuItem.Checked = !hANGToolStripMenuItem.Checked;
             AssetHANG.dontRender = !hANGToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void pENDToolStripMenuItem_Click(object sender, EventArgs e)
         {
             pENDToolStripMenuItem.Checked = !pENDToolStripMenuItem.Checked;
             AssetPEND.dontRender = !pENDToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void lITEToolStripMenuItem_Click(object sender, EventArgs e)
         {
             lITEToolStripMenuItem.Checked = !lITEToolStripMenuItem.Checked;
             AssetLITE.dontRender = !lITEToolStripMenuItem.Checked;
-        }
-
-        private void dUPCToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            dUPCToolStripMenuItem.Checked = !dUPCToolStripMenuItem.Checked;
-            AssetDUPC.dontRender = !dUPCToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void sPLNToolStripMenuItem_Click(object sender, EventArgs e)
         {
             sPLNToolStripMenuItem.Checked = !sPLNToolStripMenuItem.Checked;
             AssetSPLN.dontRender = !sPLNToolStripMenuItem.Checked;
+            ShowDropDowns();
+        }
+
+        private void dTRKToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            dTRKToolStripMenuItem.Checked = !dTRKToolStripMenuItem.Checked;
+            AssetDTRK.dontRender = !dTRKToolStripMenuItem.Checked;
+            ShowDropDowns();
+        }
+
+        private void vOLUToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            vOLUToolStripMenuItem.Checked = !vOLUToolStripMenuItem.Checked;
+            AssetVOLU.dontRender = !vOLUToolStripMenuItem.Checked;
+            ShowDropDowns();
+        }
+
+        private void nPCToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            nPCToolStripMenuItem.Checked = !nPCToolStripMenuItem.Checked;
+            AssetNPC.dontRender = !nPCToolStripMenuItem.Checked;
+            ShowDropDowns();
+        }
+
+        private void gRSMToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            gRSMToolStripMenuItem.Checked = !gRSMToolStripMenuItem.Checked;
+            AssetGRSM.dontRender = !gRSMToolStripMenuItem.Checked;
+            ShowDropDowns();
         }
 
         private void uIModeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1124,14 +1199,6 @@ namespace IndustrialPark
             mouseMode = false;
         }
 
-        private void HideHelpInAssetDataEditorsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ArchiveEditorFunctions.hideHelp = !ArchiveEditorFunctions.hideHelp;
-            hideHelpInAssetDataEditorsToolStripMenuItem.Checked = ArchiveEditorFunctions.hideHelp;
-            foreach (ArchiveEditor ae in archiveEditors)
-                ae.SetHideHelp();
-        }
-
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.AboutBox.Show();
@@ -1143,10 +1210,7 @@ namespace IndustrialPark
                 if (archiveEditor.HasAsset(assetID))
                     return archiveEditor.GetAssetNameFromID(assetID);
 
-            if (ArchiveEditorFunctions.nameDictionary.ContainsKey(assetID))
-                return ArchiveEditorFunctions.nameDictionary[assetID];
-
-            return "0x" + assetID.ToString("X8");
+            return ArchiveEditorFunctions.GetFromNameDictionary(assetID) ?? "0x" + assetID.ToString("X8");
         }
 
         public bool AssetExists(uint assetID)
@@ -1155,7 +1219,7 @@ namespace IndustrialPark
                 if (archiveEditor.HasAsset(assetID))
                     return true;
 
-            if (ArchiveEditorFunctions.nameDictionary.ContainsKey(assetID))
+            if (ArchiveEditorFunctions.GetFromNameDictionary(assetID) != null)
                 return true;
 
             return false;
@@ -1329,12 +1393,12 @@ namespace IndustrialPark
             {
                 if (WindowState == FormWindowState.Minimized)
                 {
-                    ArchiveEditorFunctions.allowRender = false;
+                    renderer.allowRender = false;
                     SetAllTopMost(false);
                 }
                 else
                 {
-                    ArchiveEditorFunctions.allowRender = true;
+                    renderer.allowRender = true;
                     SetAllTopMost(true);
                 }
             }
@@ -1382,9 +1446,11 @@ namespace IndustrialPark
                 dolPath = null;
             }
 
+            var validIniNames = new string[] { "sb.ini", "sb04.ini", "sd2.ini", "in.ini", "in2.ini" };
+
             if (hipName != null && !(hipName.Contains("boot") || hipName.Contains("font") || hipName.Contains("plat")) && filesPath != null)
                 foreach (string s in Directory.GetFiles(filesPath))
-                    if (Path.GetExtension(s).ToLower().Equals(".ini"))
+                    if (validIniNames.Contains(Path.GetFileName(s).ToLower()))
                     {
                         string[] ini = File.ReadAllLines(s);
                         for (int i = 0; i < ini.Length; i++)
@@ -1491,6 +1557,8 @@ namespace IndustrialPark
 
         private void disableAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            autoShowDropDowns = false;
+
             if (levelModelToolStripMenuItem.Checked)
                 levelModelToolStripMenuItem_Click(sender, e);
 
@@ -1557,15 +1625,29 @@ namespace IndustrialPark
             if (lITEToolStripMenuItem.Checked)
                 lITEToolStripMenuItem_Click(sender, e);
 
-            if (dUPCToolStripMenuItem.Checked)
-                dUPCToolStripMenuItem_Click(sender, e);
-
             if (sPLNToolStripMenuItem.Checked)
                 sPLNToolStripMenuItem_Click(sender, e);
+
+            if (dTRKToolStripMenuItem.Checked)
+                dTRKToolStripMenuItem_Click(sender, e);
+
+            if (nPCToolStripMenuItem.Checked)
+                nPCToolStripMenuItem_Click(sender, e);
+
+            if (vOLUToolStripMenuItem.Checked)
+                vOLUToolStripMenuItem_Click(sender, e);
+
+            if (gRSMToolStripMenuItem.Checked)
+                gRSMToolStripMenuItem_Click(sender, e);
+
+            autoShowDropDowns = true;
+            ShowDropDowns();
         }
 
         private void enableAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            autoShowDropDowns = false;
+
             if (!levelModelToolStripMenuItem.Checked)
                 levelModelToolStripMenuItem_Click(sender, e);
 
@@ -1632,11 +1714,118 @@ namespace IndustrialPark
             if (!lITEToolStripMenuItem.Checked)
                 lITEToolStripMenuItem_Click(sender, e);
 
-            if (!dUPCToolStripMenuItem.Checked)
-                dUPCToolStripMenuItem_Click(sender, e);
-
             if (!sPLNToolStripMenuItem.Checked)
                 sPLNToolStripMenuItem_Click(sender, e);
+
+            if (!dTRKToolStripMenuItem.Checked)
+                dTRKToolStripMenuItem_Click(sender, e);
+
+            if (!nPCToolStripMenuItem.Checked)
+                nPCToolStripMenuItem_Click(sender, e);
+
+            if (!vOLUToolStripMenuItem.Checked)
+                vOLUToolStripMenuItem_Click(sender, e);
+
+            if (!gRSMToolStripMenuItem.Checked)
+                gRSMToolStripMenuItem_Click(sender, e);
+
+            autoShowDropDowns = true;
+            ShowDropDowns();
+        }
+
+        private void openFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var chooseFolder = new CommonOpenFileDialog()
+            {
+                IsFolderPicker = true
+            };
+            if (chooseFolder.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                var dirList = new List<string> { chooseFolder.FileName };
+                foreach (var s in Directory.GetDirectories(chooseFolder.FileName))
+                    dirList.Add(s);
+
+                var hipList = new List<string>();
+                foreach (var s in dirList)
+                    foreach (var ss in Directory.GetFiles(s))
+                    {
+                        var extensionToLower = Path.GetExtension(ss).ToLower();
+                        if (extensionToLower.Equals(".hip") || extensionToLower.Equals(".hop"))
+                            hipList.Add(ss);
+                    }
+
+                var scoobyPlat = HipHopFile.Platform.Unknown;
+
+                var p = new ProgressBar("Opening files...");
+                p.SetProgressBar(0, hipList.Count, 1);
+                p.Show();
+
+                List<(MinfAssetParam, int, string)> minfParamsByteCount = new List<(MinfAssetParam, int, string)>();
+
+                foreach (var hip in hipList)
+                {
+                    p.Text = Path.GetFileName(hip);
+                    ArchiveEditorFunctions archive = new ArchiveEditorFunctions();
+                    archive.OpenFile(hip, false, scoobyPlat, out _, false);
+                    scoobyPlat = archive.platform;
+                    archive.Dispose();
+                    p.PerformStep();
+                }
+
+                using (var writer = new StreamWriter(new FileStream("minfs.txt", FileMode.Create)))
+                    foreach (var v in minfParamsByteCount)
+                        writer.WriteLine($"{v.Item1} {v.Item2} {v.Item3}");
+
+                p.Close();
+            }
+        }
+
+        private void dynaNameSearcherToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                var unkDtypes = new uint[] {
+                    0x4EE03B24,
+                    0x9F234F8E,
+                    0x460F4FB2,
+                    0x2743B85C,
+                    0xA072A4DA,
+                    0xAD7CB421,
+                    0xC6C76EEE,
+                    0xCDB57387,
+                    0xCF21DB89,
+                    0xE5D82D97,
+                    0xE2301EA9,
+                    0xEBC04E7B,
+                    0xFC2951C1
+                };
+
+                string ReadZeroTerminatedString(EndianBinaryReader r)
+                {
+                    var bytes = new List<char>();
+                    while (!r.EndOfStream)
+                    {
+                        var b = r.ReadByte();
+                        if (b != 0)
+                            bytes.Add((char)b);
+                        else break;
+                    }
+
+                    return new string(bytes.ToArray());
+                }
+
+                byte[] file = File.ReadAllBytes(openFileDialog.FileName);
+                EndianBinaryReader reader = new EndianBinaryReader(file, Endianness.Little);
+                while (!reader.EndOfStream)
+                {
+                    var str = ReadZeroTerminatedString(reader);
+                    var hash = HipHopFile.Functions.BKDRHash(str);
+                    if (unkDtypes.Contains(hash))
+                        MessageBox.Show("Found: [" + str + "] " + hash.ToString("X8"));
+                }
+                MessageBox.Show("Finished");
+            }
         }
     }
 }

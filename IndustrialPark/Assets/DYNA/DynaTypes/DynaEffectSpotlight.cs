@@ -1,128 +1,120 @@
-﻿using SharpDX;
+﻿using AssetEditorColors;
+using HipHopFile;
+using SharpDX;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaEffectSpotlight : DynaBase
+    public class DynaEffectSpotlight : AssetDYNA
     {
-        public string Note => "Version is always 2";
+        private const string dynaCategoryName = "effect:spotlight";
 
-        public override int StructSize => 0x38;
+        protected override short constVersion => 2;
 
-        public DynaEffectSpotlight(AssetDYNA asset) : base(asset) { }
+        [Category(dynaCategoryName)]
+        public FlagBitmask Flags { get; set; } = IntFlagsDescriptor();
+        [Category(dynaCategoryName)]
+        public AssetID Origin_Entity_AssetID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Target_Entity_AssetID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte AttachBone { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte TargetBone { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle Radius { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle ViewAngle_Rad { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle ViewAngle_Deg
+        {
+            get => MathUtil.RadiansToDegrees(ViewAngle_Rad);
+            set => ViewAngle_Rad = MathUtil.DegreesToRadians(value);
+        }
+        [Category(dynaCategoryName)]
+        public AssetSingle MaxDist { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetColor LightColor { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetColor AuraColor { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID FlareTexture { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetColor FlareColor { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle SizeMin { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle SizeMax { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte GlowMin { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetByte GlowMax { get; set; }
 
-        public int UnknownInt_00
+        public DynaEffectSpotlight(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__spotlight, game, endianness)
         {
-            get => ReadInt(0x00);
-            set => Write(0x00, value);
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
+
+                Flags.FlagValueInt = reader.ReadUInt32();
+                Origin_Entity_AssetID = reader.ReadUInt32();
+                Target_Entity_AssetID = reader.ReadUInt32();
+                AttachBone = reader.ReadByte();
+                TargetBone = reader.ReadByte();
+                reader.ReadInt16();
+                Radius = reader.ReadSingle();
+                ViewAngle_Rad = reader.ReadSingle();
+                MaxDist = reader.ReadSingle();
+                LightColor = reader.ReadColor();
+                AuraColor = reader.ReadColor();
+                FlareTexture = reader.ReadUInt32();
+                FlareColor = reader.ReadColor();
+                SizeMin = reader.ReadSingle();
+                SizeMax = reader.ReadSingle();
+                GlowMin = reader.ReadByte();
+                GlowMax = reader.ReadByte();
+                reader.ReadInt16();
+            }
         }
-        public AssetID Origin_Entity_AssetID
+
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            get => ReadUInt(0x04);
-            set => Write(0x04, value);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Flags.FlagValueInt);
+                writer.Write(Origin_Entity_AssetID);
+                writer.Write(Target_Entity_AssetID);
+                writer.Write(AttachBone);
+                writer.Write(TargetBone);
+                writer.Write((short)0);
+                writer.Write(Radius);
+                writer.Write(ViewAngle_Rad);
+                writer.Write(MaxDist);
+                writer.Write(LightColor);
+                writer.Write(AuraColor);
+                writer.Write(FlareTexture);
+                writer.Write(FlareColor);
+                writer.Write(SizeMin);
+                writer.Write(SizeMax);
+                writer.Write(GlowMin);
+                writer.Write(GlowMax);
+                writer.Write((short)0);
+
+                return writer.ToArray();
+            }
         }
-        public AssetID Target_Entity_AssetID
+
+        public override bool HasReference(uint assetID) =>
+            Origin_Entity_AssetID == assetID || Target_Entity_AssetID == assetID || FlareTexture == assetID || base.HasReference(assetID);
+
+        public override void Verify(ref List<string> result)
         {
-            get => ReadUInt(0x08);
-            set => Write(0x08, value);
-        }
-        public int UnknownInt_0C
-        {
-            get => ReadInt(0x0C);
-            set => Write(0x0C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_10
-        {
-            get => ReadFloat(0x10);
-            set => Write(0x10, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_14
-        {
-            get => MathUtil.RadiansToDegrees(ReadFloat(0x14));
-            set => Write(0x14, MathUtil.DegreesToRadians(value));
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_18
-        {
-            get => ReadFloat(0x18);
-            set => Write(0x18, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte_1C 
-        {
-            get => ReadByte(0x1C);
-            set => Write(0x1C, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte_1D
-        {
-            get => ReadByte(0x1D);
-            set => Write(0x1D, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte_1E
-        {
-            get => ReadByte(0x1E);
-            set => Write(0x1E, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte_1F
-        {
-            get => ReadByte(0x1F);
-            set => Write(0x1F, value);
-        }
-        public int UnknownInt_20
-        {
-            get => ReadInt(0x20);
-            set => Write(0x20, value);
-        }
-        public int UnknownInt_24
-        {
-            get => ReadInt(0x24);
-            set => Write(0x24, value);
-        }
-        public int UnknownInt_28
-        {
-            get => ReadInt(0x28);
-            set => Write(0x28, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_2C
-        {
-            get => ReadFloat(0x2C);
-            set => Write(0x2C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_30
-        {
-            get => ReadFloat(0x30);
-            set => Write(0x30, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte_34
-        {
-            get => ReadByte(0x34);
-            set => Write(0x34, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte_35
-        {
-            get => ReadByte(0x35);
-            set => Write(0x35, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte_36
-        {
-            get => ReadByte(0x36);
-            set => Write(0x36, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UnknownByte_37
-        {
-            get => ReadByte(0x37);
-            set => Write(0x37, value);
+            Verify(Origin_Entity_AssetID, ref result);
+            Verify(Target_Entity_AssetID, ref result);
+            Verify(FlareTexture, ref result);
+
+            base.Verify(ref result);
         }
     }
 }

@@ -1,68 +1,48 @@
 ﻿using AssetEditorColors;
+using HipHopFile;
 using System.ComponentModel;
-using System.Drawing.Design;
 
 namespace IndustrialPark
 {
-    public class DynaEffectScreenFade : DynaBase
+    public class DynaEffectScreenFade : AssetDYNA
     {
-        public string Note => "Version is always 1";
+        private const string dynaCategoryName = "effect:ScreenFade";
 
-        public override int StructSize => 0x10;
+        protected override short constVersion => 1;
 
-        public DynaEffectScreenFade(AssetDYNA asset) : base(asset) { }
-                
-        private byte ColorR
-        {
-            get => ReadByte(0x00);
-            set => Write(0x00, value);
-        }
-        private byte ColorG
-        {
-            get => ReadByte(0x01);
-            set => Write(0x01, value);
-        }
-        private byte ColorB
-        {
-            get => ReadByte(0x02);
-            set => Write(0x02, value);
-        }
+        [Category(dynaCategoryName)]
+        public AssetColor Color { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle FadeDownTime { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle WaitTime { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle FadeUpTime { get; set; }
 
-        [Editor(typeof(MyColorEditor), typeof(UITypeEditor)), DisplayName("Color 1 (R, G, B)")]
-        public MyColor Color
+        public DynaEffectScreenFade(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__ScreenFade, game, endianness)
         {
-            get => new MyColor(ColorR, ColorG, ColorB, ColorAlpha);
-            set
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                ColorR = value.R;
-                ColorG = value.G;
-                ColorB = value.B;
+                reader.BaseStream.Position = dynaDataStartPosition;
+
+                Color = reader.ReadColor();
+                FadeDownTime = reader.ReadSingle();
+                WaitTime = reader.ReadSingle();
+                FadeUpTime = reader.ReadSingle();
             }
         }
-        [DisplayName("Color 1 Alpha (0 - 255)")]
-        public byte ColorAlpha
-        {
-            get => ReadByte(0x03);
-            set => Write(0x03, value);
-        }
 
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat1
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
         {
-            get => ReadFloat(0x04);
-            set => Write(0x04, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat2
-        {
-            get => ReadFloat(0x08);
-            set => Write(0x08, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat3
-        {
-            get => ReadFloat(0x0C);
-            set => Write(0x0C, value);
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Color);
+                writer.Write(FadeDownTime);
+                writer.Write(WaitTime);
+                writer.Write(FadeUpTime);
+
+                return writer.ToArray();
+            }
         }
     }
 }

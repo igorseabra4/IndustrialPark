@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using HipHopFile;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
@@ -11,112 +12,105 @@ namespace IndustrialPark
         NPCP_BASIS_GRUMPYCITIZEN = 4
     }
 
-    public class DynaGObjectNPCSettings : DynaBase
+    public enum En_dupowavmod
     {
-        public string Note => "Version is always 2";
+        NPCP_DUPOWAVE_CONTINUOUS = 0,
+        NPCP_DUPOWAVE_DISCREET = 1
+    }
 
-        public override int StructSize => 0x1C;
+    public class DynaGObjectNPCSettings : AssetDYNA
+    {
+        private const string dynaCategoryName = "game_object:NPCSettings";
 
-        public DynaGObjectNPCSettings(AssetDYNA asset) : base(asset) { }
+        protected override short constVersion => 2;
 
-        public NpcSettingsBasisType BasisType
+        [Category(dynaCategoryName)]
+        public NpcSettingsBasisType BasisType { get; set; }
+        [Category(dynaCategoryName)]
+        public bool AllowDetect { get; set; }
+        [Category(dynaCategoryName)]
+        public bool AllowPatrol { get; set; }
+        [Category(dynaCategoryName)]
+        public bool AllowWander { get; set; }
+        [Category(dynaCategoryName)]
+        public bool ReduceCollide { get; set; }
+        [Category(dynaCategoryName)]
+        public bool UseNavSplines { get; set; }
+        [Category(dynaCategoryName)]
+        public bool AllowChase { get; set; }
+        [Category(dynaCategoryName)]
+        public bool AllowAttack { get; set; }
+        [Category(dynaCategoryName)]
+        public bool AssumeLOS { get; set; }
+        [Category(dynaCategoryName)]
+        public bool AssumeFOV { get; set; }
+        [Category(dynaCategoryName)]
+        public En_dupowavmod DuploWaveMode { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle DuploSpawnDelay { get; set; }
+        [Category(dynaCategoryName)]
+        public int DuploSpawnLifeMax { get; set; }
+
+        public DynaGObjectNPCSettings(string assetName) : base(assetName, DynaType.game_object__NPCSettings, 2)
         {
-            get => (NpcSettingsBasisType)ReadInt(0x00);
-            set => Write(0x00, (int)value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte AllowDetect
-        {
-            get => ReadByte(0x04);
-            set => Write(0x04, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte AllowPatrol
-        {
-            get => ReadByte(0x05);
-            set => Write(0x05, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte AllowWander
-        {
-            get => ReadByte(0x06);
-            set => Write(0x06, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte ReduceCollide
-        {
-            get => ReadByte(0x07);
-            set => Write(0x07, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte UseNavSplines
-        {
-            get => ReadByte(0x08);
-            set => Write(0x08, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Padding09
-        {
-            get => ReadByte(0x09);
-            set => Write(0x09, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Padding0A
-        {
-            get => ReadByte(0x0A);
-            set => Write(0x0A, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte Padding0B
-        {
-            get => ReadByte(0x0B);
-            set => Write(0x0B, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte AllowChase
-        {
-            get => ReadByte(0x0C);
-            set => Write(0x0C, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte AllowAttack
-        {
-            get => ReadByte(0x0D);
-            set => Write(0x0D, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte AssumeLOS
-        {
-            get => ReadByte(0x0E);
-            set => Write(0x0E, value);
-        }
-        [TypeConverter(typeof(HexByteTypeConverter))]
-        public byte AssumeFOV
-        {
-            get => ReadByte(0x0F);
-            set => Write(0x0F, value);
-        }
-        public En_dupowavmod DuploWaveMode
-        {
-            get => (En_dupowavmod)ReadInt(0x10);
-            set => Write(0x10, (int)value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float DuploSpawnDelay
-        {
-            get => ReadFloat(0x14);
-            set => Write(0x14, value);
-        }
-        public int DuploSpawnLifeMax
-        {
-            get => ReadInt(0x18);
-            set => Write(0x18, value);
+            AllowDetect = true;
+            ReduceCollide = true;
+            UseNavSplines = true;
+            AllowAttack = true;
+            AssumeLOS = true;
+            AssumeFOV = true;
+            DuploSpawnDelay = 1f;
+            DuploSpawnLifeMax = -1;
         }
 
-        public enum En_dupowavmod
+        public DynaGObjectNPCSettings(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__NPCSettings, game, endianness)
         {
-            NPCP_DUPOWAVE_CONTINUOUS = 0,
-            NPCP_DUPOWAVE_DISCREET = 1
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
+
+                BasisType = (NpcSettingsBasisType)reader.ReadInt32();
+                AllowDetect = reader.ReadByteBool();
+                AllowPatrol = reader.ReadByteBool();
+                AllowWander = reader.ReadByteBool();
+                ReduceCollide = reader.ReadByteBool();
+                UseNavSplines = reader.ReadByteBool();
+                reader.ReadByte();
+                reader.ReadByte();
+                reader.ReadByte();
+                AllowChase = reader.ReadByteBool();
+                AllowAttack = reader.ReadByteBool();
+                AssumeLOS = reader.ReadByteBool();
+                AssumeFOV = reader.ReadByteBool();
+                DuploWaveMode = (En_dupowavmod)reader.ReadInt32();
+                DuploSpawnDelay = reader.ReadSingle();
+                DuploSpawnLifeMax = reader.ReadInt32();
+            }
+        }
+
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write((int)BasisType);
+                writer.Write(AllowDetect);
+                writer.Write(AllowPatrol);
+                writer.Write(AllowWander);
+                writer.Write(ReduceCollide);
+                writer.Write(UseNavSplines);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+                writer.Write(AllowChase);
+                writer.Write(AllowAttack);
+                writer.Write(AssumeLOS);
+                writer.Write(AssumeFOV);
+                writer.Write((int)DuploWaveMode);
+                writer.Write(DuploSpawnDelay);
+                writer.Write(DuploSpawnLifeMax);
+
+                return writer.ToArray();
+            }
         }
     }
 }

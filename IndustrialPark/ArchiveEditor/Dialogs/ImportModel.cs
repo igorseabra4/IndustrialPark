@@ -4,8 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
-using static IndustrialPark.Models.BSP_IO_Shared;
 using static IndustrialPark.Models.Assimp_IO;
+using static IndustrialPark.Models.BSP_IO_Shared;
 
 namespace IndustrialPark
 {
@@ -14,7 +14,7 @@ namespace IndustrialPark
         public ImportModel()
         {
             InitializeComponent();
-            
+
             buttonOK.Enabled = false;
             TopMost = true;
             comboBoxAssetTypes.Items.Add(AssetType.MODL);
@@ -50,7 +50,7 @@ namespace IndustrialPark
 
             buttonOK.Enabled = listBox1.Items.Count > 0;
         }
-        
+
         private void listBox1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
@@ -125,7 +125,7 @@ namespace IndustrialPark
                     return (AHDRs, a.checkBoxOverwrite.Checked, a.checkBoxGenSimps.Checked, a.checkBoxLedgeGrab.Checked, a.checkBoxEnableVcolors.Checked, a.checkBoxSolidSimps.Checked);
                 }
 
-            return (null, false, false, false, false, false);                
+            return (null, false, false, false, false, false);
         }
 
         private void checkBoxGenSimps_CheckedChanged(object sender, EventArgs e)

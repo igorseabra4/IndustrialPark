@@ -1,15 +1,13 @@
-﻿using Newtonsoft.Json;
-using RenderWareFile.Sections;
+﻿using RenderWareFile.Sections;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace IndustrialPark
 {
     public partial class MaterialEffectEditor : Form
-    {        
+    {
         private MaterialEffectEditor(Material_0007[] materials)
         {
             InitializeComponent();
@@ -25,7 +23,7 @@ namespace IndustrialPark
         }
 
         private bool OK = false;
-        
+
         public static Material_0007[] GetMaterials(Material_0007[] materials)
         {
             MaterialEffectEditor eventEditor = new MaterialEffectEditor(materials);
@@ -42,7 +40,7 @@ namespace IndustrialPark
 
             return null;
         }
-        
+
         private void buttonCancel_Click(object sender, EventArgs e)
         {
             Close();
@@ -105,8 +103,8 @@ namespace IndustrialPark
                 currentMaterial.materialStruct.color.B)
             };
 
-            if (dialog.ShowDialog() == DialogResult.OK) 
-            { 
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
                 currentMaterial.materialStruct.color = new RenderWareFile.Color(
                     dialog.Color.R,
                     dialog.Color.G,
@@ -115,7 +113,7 @@ namespace IndustrialPark
                 panelColor.BackColor = dialog.Color;
             }
         }
-        
+
         private void comboBoxMatEffects_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (programIsChangingStuff || currentMaterial == null)

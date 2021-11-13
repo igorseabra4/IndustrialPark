@@ -1,31 +1,125 @@
 ﻿using HipHopFile;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 
 namespace IndustrialPark
 {
-    public class DynaGObjectRingControl : DynaBase
+    public enum DynaRingControlPlayerType
     {
+        Drive = 0,
+        SpongebobPatrick = 1,
+        Spongeball = 2,
+        Unknown3 = 3,
+        Slide = 4,
+        SonicWaveGuitar = 5
+    }
+
+    public class DynaGObjectRingControl : AssetDYNA
+    {
+        private const string dynaCategoryName = "game_object:RingControl";
+
+        protected override short constVersion => 3;
+
         public static uint RingModelAssetID = 0;
 
-        public string Note => "Version is always 3";
-
-        public override int StructSize => 0x28 + 4 * RingCount;
-
-        public DynaGObjectRingControl(AssetDYNA asset) : base(asset)
+        [Category(dynaCategoryName)]
+        public DynaRingControlPlayerType PlayerType { get; set; }
+        private uint _ringModelAssetID;
+        [Category(dynaCategoryName)]
+        public AssetID RingModel_AssetID
         {
-            RingModel_AssetID = ReadUInt(0x04);
+            get => _ringModelAssetID;
+            set
+            {
+                _ringModelAssetID = value;
+                RingModelAssetID = value;
+            }
         }
-        
+        [Category(dynaCategoryName)]
+        public AssetSingle DefaultWarningTime { get; set; }
+        [Category(dynaCategoryName)]
+        public int UnusedOffset { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID RingSoundGroup_AssetID1 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID RingSoundGroup_AssetID2 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID RingSoundGroup_AssetID3 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID RingSoundGroup_AssetID4 { get; set; }
+        [Category(dynaCategoryName)]
+        public int NumNextRingsToShow { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID[] Ring_AssetIDs { get; set; }
+
+        public DynaGObjectRingControl(string assetName) : base(assetName, DynaType.game_object__RingControl, 3)
+        {
+            RingModel_AssetID = "test_ring";
+            UnusedOffset = 40;
+            RingSoundGroup_AssetID1 = "RING_SGRP";
+            RingSoundGroup_AssetID2 = 0;
+            RingSoundGroup_AssetID3 = 0;
+            RingSoundGroup_AssetID4 = 0;
+            NumNextRingsToShow = 1;
+            Ring_AssetIDs = new AssetID[0];
+        }
+
+        public DynaGObjectRingControl(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__RingControl, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
+
+                PlayerType = (DynaRingControlPlayerType)reader.ReadInt32();
+                RingModel_AssetID = reader.ReadUInt32();
+                DefaultWarningTime = reader.ReadSingle();
+                int ringCount = reader.ReadInt32();
+                UnusedOffset = reader.ReadInt32();
+                RingSoundGroup_AssetID1 = reader.ReadUInt32();
+                RingSoundGroup_AssetID2 = reader.ReadUInt32();
+                RingSoundGroup_AssetID3 = reader.ReadUInt32();
+                RingSoundGroup_AssetID4 = reader.ReadUInt32();
+                NumNextRingsToShow = reader.ReadInt32();
+                Ring_AssetIDs = new AssetID[ringCount];
+                for (int i = 0; i < Ring_AssetIDs.Length; i++)
+                    Ring_AssetIDs[i] = reader.ReadUInt32();
+            }
+        }
+
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write((int)PlayerType);
+                writer.Write(RingModel_AssetID);
+                writer.Write(DefaultWarningTime);
+                writer.Write(Ring_AssetIDs.Length);
+                writer.Write(UnusedOffset);
+                writer.Write(RingSoundGroup_AssetID1);
+                writer.Write(RingSoundGroup_AssetID2);
+                writer.Write(RingSoundGroup_AssetID3);
+                writer.Write(RingSoundGroup_AssetID4);
+                writer.Write(NumNextRingsToShow);
+                foreach (var i in Ring_AssetIDs)
+                    writer.Write(i);
+
+                return writer.ToArray();
+            }
+        }
+
         public override bool HasReference(uint assetID)
         {
             if (RingModel_AssetID == assetID)
                 return true;
-            if (RingSoundGroup_AssetID == assetID)
+            if (RingSoundGroup_AssetID1 == assetID)
                 return true;
-            foreach (AssetID ring in Rings_AssetIDs)
+            if (RingSoundGroup_AssetID2 == assetID)
+                return true;
+            if (RingSoundGroup_AssetID3 == assetID)
+                return true;
+            if (RingSoundGroup_AssetID4 == assetID)
+                return true;
+            foreach (var ring in Ring_AssetIDs)
                 if (ring == assetID)
                     return true;
 
@@ -36,118 +130,16 @@ namespace IndustrialPark
         {
             if (RingModel_AssetID == 0)
                 result.Add("Ring Control with no Ring Model reference");
-            Asset.Verify(RingModel_AssetID, ref result);
+            Verify(RingModel_AssetID, ref result);
 
-            if (RingSoundGroup_AssetID == 0)
+            if (RingSoundGroup_AssetID1 == 0)
                 result.Add("Ring Control with no SGRP reference");
-            Asset.Verify(RingSoundGroup_AssetID, ref result);
+            Verify(RingSoundGroup_AssetID1, ref result);
 
-            foreach (AssetID ring in Rings_AssetIDs)
-                Asset.Verify(ring, ref result);
-        }
-        
-        public enum DynaRingControlPlayerType
-        {
-            Drive = 0,
-            SpongebobPatrick = 1,
-            Spongeball = 2,
-            Unknown3 = 3,
-            Slide = 4,
-            SonicWaveGuitar = 5
-        }
+            foreach (var ring in Ring_AssetIDs)
+                Verify(ring, ref result);
 
-        public DynaRingControlPlayerType PlayerType
-        {
-            get => (DynaRingControlPlayerType)ReadInt(0x00);
-            set => Write(0x00, (int)value);
-        }
-        private uint _ringModelAssetID;
-        
-        public AssetID RingModel_AssetID
-        {
-            get => _ringModelAssetID;
-            set
-            {
-                _ringModelAssetID = value;
-                RingModelAssetID = value;
-                Write(0x04, value);
-            }
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat1
-        {
-            get => ReadFloat(0x08);
-            set => Write(0x08, value);
-        }
-        private int RingCount
-        {
-            get => ReadInt(0x0C);
-            set => Write(0x0C, value);
-        }
-        public int UnknownInt1
-        {
-            get => ReadInt(0x10);
-            set => Write(0x10, value);
-        }
-        public AssetID RingSoundGroup_AssetID
-        {
-            get => ReadUInt(0x14);
-            set => Write(0x14, value);
-        }
-        public int UnknownInt2
-        {
-            get => ReadInt(0x18);
-            set => Write(0x18, value);
-        }
-        public int UnknownInt3
-        {
-            get => ReadInt(0x1C);
-            set => Write(0x1C, value);
-        }
-        public int UnknownInt4
-        {
-            get => ReadInt(0x20);
-            set => Write(0x20, value);
-        }
-        public int RingsAreVisible
-        {
-            get => ReadInt(0x24);
-            set => Write(0x24, value);
-        }
-        public AssetID[] Rings_AssetIDs
-        {
-            get
-            {
-                try
-                {
-                    AssetID[] rings = new AssetID[RingCount];
-                    for (int i = 0; i < RingCount; i++)
-                        rings[i] = ReadUInt(0x28 + 4 * i);
-
-                    return rings;
-                }
-                catch
-                {
-                    return new AssetID[0];
-                }
-            }
-            set
-            {
-                List<byte> newData = asset.Data.Take(0x38).ToList();
-                List<byte> restOfOldData = asset.Data.Skip(0x38 + 4 * RingCount).ToList();
-
-                foreach (AssetID i in value)
-                    if (platform == Platform.GameCube)
-                        newData.AddRange(BitConverter.GetBytes(i).Reverse());
-                    else
-                        newData.AddRange(BitConverter.GetBytes(i));
-                
-                newData.AddRange(restOfOldData);
-
-                asset.Data = newData.ToArray();
-
-                RingCount = value.Length;
-            }
+            base.Verify(ref result);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using HipHopFile;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -9,67 +10,65 @@ namespace IndustrialPark
 {
     public partial class LinkEditor : Form
     {
-        private enum EventType
-        {
-            BFBB,
-            TSSM
-        }
-
         private readonly uint thisAssetID;
-        private Endianness endianness;
-        private EventType eventType;
-        private bool isTimed = false;
+        private Game game;
 
-        private LinkEditor(bool isTimed, Endianness endianness, uint thisAssetID)
+        private LinkEditor(Game game, Link[] events, LinkType linkType, uint thisAssetID)
         {
             InitializeComponent();
             TopMost = true;
 
-            this.endianness = endianness;
             this.thisAssetID = thisAssetID;
 
             bgColor = textBoxTargetAsset.BackColor;
-            
+
             groupBoxEventData.Enabled = false;
 
             AutoCompleteStringCollection sourceObjects = new AutoCompleteStringCollection();
             AutoCompleteStringCollection sourceAll = new AutoCompleteStringCollection();
 
-            if (!AssetIDTypeConverter.Legacy)
-            foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                foreach (Asset a in ae.archive.GetAllAssets())
-                {
-                    sourceAll.Add(a.AHDR.ADBG.assetName);
+            if (!HexUIntTypeConverter.Legacy)
+                foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
+                    foreach (Asset a in ae.archive.GetAllAssets())
+                    {
+                        sourceAll.Add(a.assetName);
 
-                    if (a is BaseAsset oa)
-                        sourceObjects.Add(oa.AHDR.ADBG.assetName);
-                }
+                        if (a is BaseAsset oa)
+                            sourceObjects.Add(oa.assetName);
+                    }
 
             textBoxTargetAsset.AutoCompleteSource = AutoCompleteSource.CustomSource;
             textBoxTargetAsset.AutoCompleteCustomSource = sourceObjects;
             textBoxArgumentAsset.AutoCompleteSource = AutoCompleteSource.CustomSource;
             textBoxArgumentAsset.AutoCompleteCustomSource = sourceAll;
-            textBoxSourceCheck.AutoCompleteSource = AutoCompleteSource.CustomSource;
-            textBoxSourceCheck.AutoCompleteCustomSource = sourceObjects;
+            textBoxSourceCheckOrFlags.AutoCompleteSource = AutoCompleteSource.CustomSource;
+            textBoxSourceCheckOrFlags.AutoCompleteCustomSource = sourceObjects;
 
             numericUpDownTime.Minimum = decimal.MinValue;
             numericUpDownTime.Maximum = decimal.MaxValue;
 
-            this.isTimed = isTimed;
-            if (isTimed)
+            if (linkType != LinkType.Normal)
             {
-                groupBox3.Text = "Time";
+                if (linkType == LinkType.Timed)
+                {
+                    groupBoxSourceEvent.Text = "Time";
+                    groupBoxSourceCheckOrFlags.Visible = false;
+                }
+                else if (linkType == LinkType.Progress)
+                {
+                    groupBoxSourceEvent.Text = "Percent";
+                    groupBoxSourceCheckOrFlags.Text = "Flags";
+                }
+
                 numericUpDownTime.Visible = true;
                 comboRecieveEvent.Visible = false;
-                groupBox7.Visible = false;
-                textBoxSourceCheck.Visible = false;
-            }
-        }
 
-        private LinkEditor(LinkBFBB[] events, bool isTimed, Endianness endianness, uint thisAssetID) : this(isTimed, endianness, thisAssetID)
-        {
-            eventType = EventType.BFBB;
-            foreach (EventBFBB o in Enum.GetValues(typeof(EventBFBB)))
+                textBoxSourceCheckOrFlags.Visible = false;
+            }
+
+            this.game = game;
+
+            foreach (var o in Enum.GetValues(game == Game.Incredibles ? typeof(EventTSSM) : typeof(EventBFBB)))
             {
                 comboRecieveEvent.Items.Add(o);
                 comboSendEvent.Items.Add(o);
@@ -79,84 +78,46 @@ namespace IndustrialPark
                 listBoxLinks.Items.Add(assetEvent);
         }
 
-        private LinkEditor(LinkTSSM[] events, bool isTimed, Endianness endianness, uint thisAssetID) : this(isTimed, endianness, thisAssetID)
+        public static Link[] GetLinks(Game game, Link[] links, LinkType linkType, uint thisAssetID)
         {
-            eventType = EventType.TSSM;
-            foreach (EventTSSM o in Enum.GetValues(typeof(EventTSSM)))
+            LinkEditor linkEditor = new LinkEditor(game, links, linkType, thisAssetID);
+            linkEditor.ShowDialog();
+
+            if (linkEditor.OK)
             {
-                comboRecieveEvent.Items.Add(o);
-                comboSendEvent.Items.Add(o);
+                List<Link> newLinks = new List<Link>();
+                foreach (Link l in linkEditor.listBoxLinks.Items)
+                    newLinks.Add(l);
+
+                return newLinks.ToArray();
             }
 
-            foreach (var assetEvent in events)
-                listBoxLinks.Items.Add(assetEvent);
+            return null;
         }
 
         private bool OK = false;
 
-        private Color bgColor;
+        private readonly Color bgColor;
         private bool ProgramIsChangingStuff = false;
         private bool ListBoxShouldUpdate = true;
 
         private string GetAssetName(AssetID assetID)
         {
-            if (AssetIDTypeConverter.Legacy)
+            if (HexUIntTypeConverter.Legacy)
                 return assetID.ToString("X8");
             return Program.MainForm.GetAssetNameFromID(assetID);
         }
 
         private AssetID GetAssetID(string assetName)
         {
-            if (AssetIDTypeConverter.Legacy)
+            if (HexUIntTypeConverter.Legacy)
                 return Convert.ToUInt32(assetName, 16);
-            return AssetIDTypeConverter.AssetIDFromString(assetName);
-        }
-
-        public static LinkBFBB[] GetEvents(LinkBFBB[] links, Endianness endianness, bool isTimed, uint thisAssetID)
-        {
-            LinkEditor eventEditor = new LinkEditor(links, isTimed, endianness, thisAssetID);
-            eventEditor.ShowDialog();
-
-            if (eventEditor.OK)
-            {
-                List<LinkBFBB> assetEventBFBBs = new List<LinkBFBB>();
-                foreach (LinkBFBB assetEvent in eventEditor.listBoxLinks.Items)
-                    assetEventBFBBs.Add(assetEvent);
-
-                return assetEventBFBBs.ToArray();
-            }
-
-            return null;
-        }
-
-        public static LinkTSSM[] GetEvents(LinkTSSM[] links, Endianness endianness, bool isTimed, uint thisAssetID)
-        {
-            LinkEditor eventEditor = new LinkEditor(links, isTimed, endianness, thisAssetID);
-            eventEditor.ShowDialog();
-
-            if (eventEditor.OK)
-            {
-                List<LinkTSSM> assetEventBFBBs = new List<LinkTSSM>();
-                foreach (LinkTSSM assetEvent in eventEditor.listBoxLinks.Items)
-                    assetEventBFBBs.Add(assetEvent);
-
-                return assetEventBFBBs.ToArray();
-            }
-
-            return null;
+            return HexUIntTypeConverter.AssetIDFromString(assetName);
         }
 
         private void buttonAdd_Click(object sender, EventArgs e)
         {
-            switch (eventType)
-            {
-                case EventType.BFBB:
-                    listBoxLinks.Items.Add(new LinkBFBB(endianness, isTimed));
-                    break;
-                case EventType.TSSM:
-                    listBoxLinks.Items.Add(new LinkTSSM(endianness, isTimed));
-                    break;
-            }
+            listBoxLinks.Items.Add(new Link(game));
             listBoxLinks.SelectedIndices.Clear();
             listBoxLinks.SelectedIndex = listBoxLinks.Items.Count - 1;
         }
@@ -177,45 +138,29 @@ namespace IndustrialPark
 
         private void buttonCopy_Click(object sender, EventArgs e)
         {
-            List<byte[]> assetEventBFBBs = new List<byte[]>();
-            foreach (Link assetEvent in listBoxLinks.SelectedItems)
-                assetEventBFBBs.Add(assetEvent.ToByteArray());
-
-            Clipboard.SetText(JsonConvert.SerializeObject(new LinkClipboard(endianness, assetEventBFBBs), Formatting.Indented));
+            var selectedLinks = new List<Link>();
+            foreach (var l in listBoxLinks.SelectedItems)
+                selectedLinks.Add((Link)l);
+            Clipboard.SetText(JsonConvert.SerializeObject(selectedLinks, Formatting.Indented));
         }
 
         private void buttonPaste_Click(object sender, EventArgs e)
         {
-            LinkClipboard linkClipboard;
             try
             {
-                linkClipboard = JsonConvert.DeserializeObject<LinkClipboard>(Clipboard.GetText());
+                var links = JsonConvert.DeserializeObject<List<Link>>(Clipboard.GetText());
+
+                listBoxLinks.SelectedIndices.Clear();
+                foreach (var link in links)
+                {
+                    listBoxLinks.Items.Add(link);
+
+                    listBoxLinks.SetSelected(listBoxLinks.Items.Count - 1, true);
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Unable to paste links: " + ex.Message + ". Are you sure you have links copied?");
-                return;
-            }
-
-            listBoxLinks.SelectedIndices.Clear();
-            foreach (byte[] data in linkClipboard.links)
-            {
-                byte[] newData = isTimed ?
-                    (linkClipboard.endianness != endianness ?
-                    EndianConverter.GetTimedLinksReversedEndian(data) : data) :
-                    (linkClipboard.endianness != endianness ?
-                    EndianConverter.GetLinksReversedEndian(data) : data);
-
-                switch (eventType)
-                {
-                    case EventType.BFBB:
-                        listBoxLinks.Items.Add(new LinkBFBB(newData, 0, isTimed, endianness));
-                        break;
-                    case EventType.TSSM:
-                        listBoxLinks.Items.Add(new LinkTSSM(newData, 0, isTimed, endianness));
-                        break;
-                }
-                listBoxLinks.SetSelected(listBoxLinks.Items.Count - 1, true);
             }
         }
 
@@ -229,31 +174,24 @@ namespace IndustrialPark
                         groupBoxEventData.Enabled = true;
                     ProgramIsChangingStuff = true;
 
-                    Link assetEvent = null;
-
-                    switch (eventType)
-                    {
-                        case EventType.BFBB:
-                            assetEvent = (LinkBFBB)listBoxLinks.Items[listBoxLinks.SelectedIndex];
-                            comboRecieveEvent.SelectedItem = ((LinkBFBB)assetEvent).EventReceiveID;
-                            comboSendEvent.SelectedItem = ((LinkBFBB)assetEvent).EventSendID;
-                            break;
-                        case EventType.TSSM:
-                            assetEvent = (LinkTSSM)listBoxLinks.Items[listBoxLinks.SelectedIndex];
-                            comboRecieveEvent.SelectedItem = ((LinkTSSM)assetEvent).EventReceiveID;
-                            comboSendEvent.SelectedItem = ((LinkTSSM)assetEvent).EventSendID;
-                            break;
-                    }
+                    Link assetEvent = (Link)listBoxLinks.Items[listBoxLinks.SelectedIndex];
+                    comboRecieveEvent.SelectedIndex = assetEvent.EventReceiveID;
+                    comboSendEvent.SelectedIndex = assetEvent.EventSendID;
 
                     textBoxTargetAsset.Text = GetAssetName(assetEvent.TargetAssetID);
                     textBoxArgumentAsset.Text = GetAssetName(assetEvent.ArgumentAssetID);
-                    textBoxSourceCheck.Text = GetAssetName(assetEvent.SourceCheckAssetID);
+
+                    if (groupBoxSourceCheckOrFlags.Text == "Flags")
+                        textBoxSourceCheckOrFlags.Text = assetEvent.Flags.ToString();
+                    else
+                        textBoxSourceCheckOrFlags.Text = GetAssetName(assetEvent.SourceCheckAssetID);
+
                     numericUpDownTime.Value = (decimal)assetEvent.Time;
 
-                    if (GetAssetName(assetEvent.Arguments_Hex[0]).StartsWith("0x") &&
-                        GetAssetName(assetEvent.Arguments_Hex[1]).StartsWith("0x") &&
-                        GetAssetName(assetEvent.Arguments_Hex[2]).StartsWith("0x") &&
-                        GetAssetName(assetEvent.Arguments_Hex[3]).StartsWith("0x"))
+                    if (GetAssetName(assetEvent.Parameter1).StartsWith("0x") &&
+                        GetAssetName(assetEvent.Parameter2).StartsWith("0x") &&
+                        GetAssetName(assetEvent.Parameter3).StartsWith("0x") &&
+                        GetAssetName(assetEvent.Parameter4).StartsWith("0x"))
                         checkBoxHex.Checked = false;
                     else
                         checkBoxHex.Checked = true;
@@ -277,23 +215,9 @@ namespace IndustrialPark
 
                 if (previndex > 0)
                 {
-                    switch (eventType)
-                    {
-                        case EventType.BFBB:
-                            {
-                                LinkBFBB previous = (LinkBFBB)listBoxLinks.Items[previndex - 1];
-                                listBoxLinks.Items[previndex - 1] = (LinkBFBB)listBoxLinks.Items[previndex];
-                                listBoxLinks.Items[previndex] = previous;
-                                break;
-                            }
-                        case EventType.TSSM:
-                            {
-                                LinkTSSM previous = (LinkTSSM)listBoxLinks.Items[previndex - 1];
-                                listBoxLinks.Items[previndex - 1] = (LinkTSSM)listBoxLinks.Items[previndex];
-                                listBoxLinks.Items[previndex] = previous;
-                                break;
-                            }
-                    }
+                    Link previous = (Link)listBoxLinks.Items[previndex - 1];
+                    listBoxLinks.Items[previndex - 1] = (Link)listBoxLinks.Items[previndex];
+                    listBoxLinks.Items[previndex] = previous;
                 }
 
                 listBoxLinks.SelectedIndices.Clear();
@@ -306,26 +230,12 @@ namespace IndustrialPark
             if (listBoxLinks.SelectedItems.Count == 1)
             {
                 int previndex = listBoxLinks.SelectedIndex;
-                
+
                 if (previndex < listBoxLinks.Items.Count - 1)
                 {
-                    switch (eventType)
-                    {
-                        case EventType.BFBB:
-                            {
-                                LinkBFBB post = (LinkBFBB)listBoxLinks.Items[previndex + 1];
-                                listBoxLinks.Items[previndex + 1] = (LinkBFBB)listBoxLinks.Items[previndex];
-                                listBoxLinks.Items[previndex] = post;
-                                break;
-                            }
-                        case EventType.TSSM:
-                            {
-                                LinkTSSM post = (LinkTSSM)listBoxLinks.Items[previndex + 1];
-                                listBoxLinks.Items[previndex + 1] = (LinkTSSM)listBoxLinks.Items[previndex];
-                                listBoxLinks.Items[previndex] = post;
-                                break;
-                            }
-                    }
+                    Link post = (Link)listBoxLinks.Items[previndex + 1];
+                    listBoxLinks.Items[previndex + 1] = (Link)listBoxLinks.Items[previndex];
+                    listBoxLinks.Items[previndex] = post;
                 }
 
                 listBoxLinks.SelectedIndices.Clear();
@@ -343,22 +253,14 @@ namespace IndustrialPark
             OK = true;
             Close();
         }
-        
+
         private void comboReceiveEvent_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (!ProgramIsChangingStuff)
             {
-                switch (eventType)
-                {
-                    case EventType.BFBB:
-                        foreach (int i in listBoxLinks.SelectedIndices)
-                            ((LinkBFBB)listBoxLinks.Items[i]).EventReceiveID = (EventBFBB)comboRecieveEvent.SelectedItem;
-                        break;
-                    case EventType.TSSM:
-                        foreach (int i in listBoxLinks.SelectedIndices)
-                            ((LinkTSSM)listBoxLinks.Items[i]).EventReceiveID = (EventTSSM)comboRecieveEvent.SelectedItem;
-                        break;
-                }
+                foreach (int i in listBoxLinks.SelectedIndices)
+                    ((Link)listBoxLinks.Items[i]).EventReceiveID = (ushort)comboRecieveEvent.SelectedIndex;
+
                 SetListBoxUpdate();
             }
         }
@@ -367,17 +269,9 @@ namespace IndustrialPark
         {
             if (!ProgramIsChangingStuff)
             {
-                switch (eventType)
-                {
-                    case EventType.BFBB:
-                        foreach (int i in listBoxLinks.SelectedIndices)
-                            ((LinkBFBB)listBoxLinks.Items[i]).EventSendID = (EventBFBB)comboSendEvent.SelectedItem;
-                        break;
-                    case EventType.TSSM:
-                        foreach (int i in listBoxLinks.SelectedIndices)
-                            ((LinkTSSM)listBoxLinks.Items[i]).EventSendID = (EventTSSM)comboSendEvent.SelectedItem;
-                        break;
-                }
+                foreach (int i in listBoxLinks.SelectedIndices)
+                    ((Link)listBoxLinks.Items[i]).EventSendID = (ushort)comboSendEvent.SelectedIndex;
+
                 SetListBoxUpdate();
             }
         }
@@ -423,16 +317,20 @@ namespace IndustrialPark
         {
             if (!ProgramIsChangingStuff)
             {
-                textBoxSourceCheck.BackColor = bgColor;
+                textBoxSourceCheckOrFlags.BackColor = bgColor;
 
                 try
                 {
-                    foreach (int i in listBoxLinks.SelectedIndices)
-                        ((Link)listBoxLinks.Items[i]).SourceCheckAssetID = GetAssetID(textBoxSourceCheck.Text);
+                    if (groupBoxSourceCheckOrFlags.Text == "Flags")
+                        foreach (int i in listBoxLinks.SelectedIndices)
+                            ((Link)listBoxLinks.Items[i]).Flags = Convert.ToInt32(textBoxSourceCheckOrFlags.Text);
+                    else
+                        foreach (int i in listBoxLinks.SelectedIndices)
+                            ((Link)listBoxLinks.Items[i]).SourceCheckAssetID = GetAssetID(textBoxSourceCheckOrFlags.Text);
                 }
                 catch
                 {
-                    textBoxSourceCheck.BackColor = Color.Red;
+                    textBoxSourceCheckOrFlags.BackColor = Color.Red;
                 }
             }
         }
@@ -467,17 +365,8 @@ namespace IndustrialPark
 
             listBoxLinks.SelectedIndices.Clear();
 
-            switch (eventType)
-            {
-                case EventType.BFBB:
-                    for (int i = 0; i < listBoxLinks.Items.Count; i++)
-                        listBoxLinks.Items[i] = (LinkBFBB)listBoxLinks.Items[i];
-                    break;
-                case EventType.TSSM:
-                    for (int i = 0; i < listBoxLinks.Items.Count; i++)
-                        listBoxLinks.Items[i] = (LinkTSSM)listBoxLinks.Items[i];
-                    break;
-            }
+            for (int i = 0; i < listBoxLinks.Items.Count; i++)
+                listBoxLinks.Items[i] = (Link)listBoxLinks.Items[i];
 
             foreach (int i in indices)
                 listBoxLinks.SetSelected(i, true);
@@ -510,7 +399,7 @@ namespace IndustrialPark
             if (listBoxLinks.SelectedItems.Count == 1)
             {
                 ProgramIsChangingStuff = true;
-                textBoxSourceCheck.Text = GetAssetName(((Link)listBoxLinks.Items[listBoxLinks.SelectedIndex]).SourceCheckAssetID);
+                textBoxSourceCheckOrFlags.Text = GetAssetName(((Link)listBoxLinks.Items[listBoxLinks.SelectedIndex]).SourceCheckAssetID);
                 ProgramIsChangingStuff = false;
             }
         }
@@ -522,39 +411,20 @@ namespace IndustrialPark
             Link assetEvent = (Link)listBoxLinks.Items[listBoxLinks.SelectedIndex];
             if (checkBoxHex.Checked)
             {
-                textBox1.Text = GetAssetName(assetEvent.Arguments_Hex[0]);
-                textBox2.Text = GetAssetName(assetEvent.Arguments_Hex[1]);
-                textBox3.Text = GetAssetName(assetEvent.Arguments_Hex[2]);
-                textBox4.Text = GetAssetName(assetEvent.Arguments_Hex[3]);
+                textBox1.Text = GetAssetName(assetEvent.Parameter1);
+                textBox2.Text = GetAssetName(assetEvent.Parameter2);
+                textBox3.Text = GetAssetName(assetEvent.Parameter3);
+                textBox4.Text = GetAssetName(assetEvent.Parameter4);
             }
             else
             {
-                textBox1.Text = assetEvent.Arguments_Float[0].ToString("0.0000");
-                textBox2.Text = assetEvent.Arguments_Float[1].ToString("0.0000");
-                textBox3.Text = assetEvent.Arguments_Float[2].ToString("0.0000");
-                textBox4.Text = assetEvent.Arguments_Float[3].ToString("0.0000");
+                textBox1.Text = assetEvent.FloatParameter1.ToString("0.0000");
+                textBox2.Text = assetEvent.FloatParameter2.ToString("0.0000");
+                textBox3.Text = assetEvent.FloatParameter3.ToString("0.0000");
+                textBox4.Text = assetEvent.FloatParameter4.ToString("0.0000");
             }
 
             ProgramIsChangingStuff = false;
-        }
-
-        private void SetArgument(int index, string text)
-        {
-            foreach (int i in listBoxLinks.SelectedIndices)
-                if (checkBoxHex.Checked)
-                {
-                    AssetID[] Arguments_Hex = ((Link)listBoxLinks.Items[i]).Arguments_Hex;
-                    Arguments_Hex[index] = GetAssetID(text);
-                    ((Link)listBoxLinks.Items[i]).Arguments_Hex = Arguments_Hex;
-                }
-                else
-                {
-                    float[] Arguments_Float = ((Link)listBoxLinks.Items[i]).Arguments_Float;
-                    Arguments_Float[index] = float.Parse(text);
-                    ((Link)listBoxLinks.Items[i]).Arguments_Float = Arguments_Float;
-                }
-
-            SetListBoxUpdate();
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -565,7 +435,12 @@ namespace IndustrialPark
             {
                 try
                 {
-                    SetArgument(0, textBox1.Text);
+                    foreach (int i in listBoxLinks.SelectedIndices)
+                        if (checkBoxHex.Checked)
+                            ((Link)listBoxLinks.Items[i]).Parameter1 = GetAssetID(textBox1.Text);
+                        else
+                            ((Link)listBoxLinks.Items[i]).FloatParameter1 = float.Parse(textBox1.Text);
+
                     SetListBoxUpdate();
                 }
                 catch
@@ -583,7 +458,12 @@ namespace IndustrialPark
             {
                 try
                 {
-                    SetArgument(1, textBox2.Text);
+                    foreach (int i in listBoxLinks.SelectedIndices)
+                        if (checkBoxHex.Checked)
+                            ((Link)listBoxLinks.Items[i]).Parameter2 = GetAssetID(textBox2.Text);
+                        else
+                            ((Link)listBoxLinks.Items[i]).FloatParameter2 = float.Parse(textBox2.Text);
+
                     SetListBoxUpdate();
                 }
                 catch
@@ -601,7 +481,12 @@ namespace IndustrialPark
             {
                 try
                 {
-                    SetArgument(2, textBox3.Text);
+                    foreach (int i in listBoxLinks.SelectedIndices)
+                        if (checkBoxHex.Checked)
+                            ((Link)listBoxLinks.Items[i]).Parameter3 = GetAssetID(textBox3.Text);
+                        else
+                            ((Link)listBoxLinks.Items[i]).FloatParameter3 = float.Parse(textBox3.Text);
+
                     SetListBoxUpdate();
                 }
                 catch
@@ -619,7 +504,12 @@ namespace IndustrialPark
             {
                 try
                 {
-                    SetArgument(3, textBox4.Text);
+                    foreach (int i in listBoxLinks.SelectedIndices)
+                        if (checkBoxHex.Checked)
+                            ((Link)listBoxLinks.Items[i]).Parameter4 = GetAssetID(textBox4.Text);
+                        else
+                            ((Link)listBoxLinks.Items[i]).FloatParameter4 = float.Parse(textBox4.Text);
+
                     SetListBoxUpdate();
                 }
                 catch

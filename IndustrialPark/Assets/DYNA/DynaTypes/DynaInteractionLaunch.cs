@@ -1,64 +1,71 @@
-﻿using System.Collections.Generic;
+﻿using HipHopFile;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaInteractionLaunch : DynaBase
+    public class DynaInteractionLaunch : AssetDYNA
     {
-        public string Note => "Version is always 2";
+        private const string dynaCategoryName = "interaction:Launch";
 
-        public override int StructSize => 0x1C;
+        protected override short constVersion => 2;
 
-        public DynaInteractionLaunch(AssetDYNA asset) : base(asset) { }
+        [Category(dynaCategoryName)]
+        public int LaunchType { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID LaunchObject_AssetID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Target_AssetID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle Gravity { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle Height { get; set; }
+        [Category(dynaCategoryName)]
+        public int LeavesBone { get; set; }
+        [Category(dynaCategoryName)]
+        public FlagBitmask LaunchFlags { get; set; } = IntFlagsDescriptor();
+
+        public DynaInteractionLaunch(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.interaction__Launch, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
+
+                LaunchType = reader.ReadInt32();
+                LaunchObject_AssetID = reader.ReadUInt32();
+                Target_AssetID = reader.ReadUInt32();
+                Gravity = reader.ReadSingle();
+                Height = reader.ReadSingle();
+                LeavesBone = reader.ReadInt32();
+                LaunchFlags.FlagValueInt = reader.ReadUInt32();
+            }
+        }
+
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(LaunchType);
+                writer.Write(LaunchObject_AssetID);
+                writer.Write(Target_AssetID);
+                writer.Write(Gravity);
+                writer.Write(Height);
+                writer.Write(LeavesBone);
+                writer.Write(LaunchFlags.FlagValueInt);
+
+                return writer.ToArray();
+            }
+        }
 
         public override bool HasReference(uint assetID) =>
-            SIMP_AssetID == assetID || Marker_AssetID == assetID || base.HasReference(assetID);
-        
+            LaunchObject_AssetID == assetID || Target_AssetID == assetID || base.HasReference(assetID);
+
         public override void Verify(ref List<string> result)
         {
-            Asset.Verify(SIMP_AssetID, ref result);
-            Asset.Verify(Marker_AssetID, ref result);
+            Verify(LaunchObject_AssetID, ref result);
+            Verify(Target_AssetID, ref result);
+            base.Verify(ref result);
         }
 
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_00
-        {
-            get => ReadFloat(0x00);
-            set => Write(0x00, value);
-        }
-        public AssetID SIMP_AssetID
-        {
-            get => ReadUInt(0x04);
-            set => Write(0x04, value);
-        }
-        public AssetID Marker_AssetID
-        {
-            get => ReadUInt(0x08);
-            set => Write(0x08, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_0C
-        {
-            get => ReadFloat(0x0C);
-            set => Write(0x0C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_10
-        {
-            get => ReadFloat(0x10);
-            set => Write(0x10, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_14
-        {
-            get => ReadFloat(0x14);
-            set => Write(0x14, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float UnknownFloat_18
-        {
-            get => ReadFloat(0x18);
-            set => Write(0x18, value);
-        }
     }
 }

@@ -35,9 +35,10 @@ namespace IndustrialPark
 
         public static Platform GetPlatform()
         {
-            ChoosePlatformDialog a = new ChoosePlatformDialog();
-            a.ShowDialog();
-            return a.platform;
+            using (var dialog = new ChoosePlatformDialog())
+                if (dialog.ShowDialog() == DialogResult.OK)
+                    return dialog.platform;
+            return Platform.Unknown;
         }
     }
 }

@@ -1,7 +1,5 @@
-﻿using HipHopFile;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 
@@ -24,7 +22,7 @@ namespace IndustrialPark
             e.Cancel = true;
             Hide();
         }
-        
+
         private void UpdateListBox()
         {
             listBoxTemplates.Items.Clear();
@@ -67,7 +65,7 @@ namespace IndustrialPark
                 templateName += "[" + AHDR.assetType.ToString() + "][" + AHDR.ADBG.assetName + "]";
 
             File.WriteAllText(
-                Path.Combine(Program.MainForm.userTemplatesFolder, templateName), 
+                Path.Combine(Program.MainForm.userTemplatesFolder, templateName),
                 JsonConvert.SerializeObject(clipboard, Formatting.None));
 
             UpdateListBox();

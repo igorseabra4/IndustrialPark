@@ -3,69 +3,301 @@ using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using static IndustrialPark.ArchiveEditorFunctions;
-
 
 namespace IndustrialPark
 {
-    public class ModelInst
+    public enum MinfAssetParam : uint
+    {
+        Unknown = 0,
+        AlertTime = 0xE1F06C25,
+        AttackFOV = 0x542DEDB9,
+        AttackFrames01 = 0x08DD3607,
+        AttackFrames01a = 0x8932A5D6,
+        AttackFrames01b = 0x8932A5D7,
+        AttackFrames02 = 0x08DD3608,
+        AttackFrames02a = 0x8932A659,
+        AttackFrames02b = 0x8932A65A,
+        AttackFrames03 = 0x08DD3609,
+        AttackFrames03a = 0x8932A6DC,
+        AttackFrames03b = 0x8932A6DD,
+        AttackPeriod = 0x7E0D772D,
+        AttackRadius = 0x2CFEF976,
+        AttackSize01 = 0xB7E2838E,
+        Bogus_Share = 0x21471CD4,
+        BoundMainCenter = 0x7FC3A6D8,
+        BoundMainExtent = 0xC51AAE79,
+        BoundMainIsBox = 0x897929FA,
+        DelayFidget = 0xCE24D474,
+        DetectHeight = 0x3527643A,
+        DetectOffset = 0x26EF64C2,
+        DetectRadius = 0xC1708625,
+        DistShadowCast = 0xAD40A895,
+        Empty = 0xC5989999,
+        EndTag_INIOnly = 0x4E7E7FA0,
+        EndTag_PropsOnly = 0xFAC5F4FC,
+        EndTag_Shared = 0xADC60725,
+        EsteemSlotA = 0xE41EF9D0,
+        EsteemSlotB = 0xE41EF9D1,
+        EsteemSlotC = 0xE41EF9D2,
+        EsteemSlotD = 0xE41EF9D3,
+        EsteemSlotE = 0xE41EF9D4,
+        FactorAccel = 0x760DAEFD,
+        FactorDrift = 0xACBAF0C6,
+        FactorElasticity = 0x5E65A9CC,
+        FactorGravKnoc = 0x6BB17A76,
+        FactorMass = 0x1BE96B2B,
+        FirstMovepoint = 0x10DB9FC3,
+        HitPoints = 0x716A0BCE,
+        IsBucketHead = 0x5505FA6C,
+        MoveSpeed = 0x9CFD776A,
+        NonRandomTalkAnims = 0x870AB6C2,
+        ScaleModel = 0x50E7A4A3,
+        ShadowCacheRadius = 0x22822228,
+        ShadowRasterRadius = 0xDF02CEFF,
+        Shrapnel = 0x98615EC9,
+        SoundRadius = 0x77E1B6C1,
+        StunTime = 0xE807BCBB,
+        TestCount = 0x282BF925,
+        TurnSpeed = 0x1DB516BA,
+        VtxAttack = 0x60FF93CA,
+        VtxAttack1 = 0xA2C8A08F,
+        VtxAttack2 = 0xA2C8A090,
+        VtxAttack3 = 0xA2C8A091,
+        VtxAttack4 = 0xA2C8A092,
+        VtxAttackBase = 0x3D1A90E7,
+        VtxDmgFlameA = 0x9BAE0B2E,
+        VtxDmgFlameB = 0x9BAE0B2F,
+        VtxDmgFlameC = 0x9BAE0B30,
+        VtxDmgSmokeA = 0x74D34EBE,
+        VtxDmgSmokeB = 0x74D34EBF,
+        VtxDmgSmokeC = 0x74D34EC0,
+        VtxExhaust = 0x91046CD0,
+        VtxEyeball = 0x57FCA29A,
+        VtxGen01 = 0xC3E4972B,
+        VtxGen02 = 0xC3E4972C,
+        VtxGen03 = 0xC3E4972D,
+        VtxGen04 = 0xC3E4972E,
+        VtxGen05 = 0xC3E4972F,
+        VtxPropel = 0xF9FCFD6C,
+    }
+
+    public class MinfReference : GenericAssetDataContainer
     {
         public static int Size => 56;
         public AssetID Model_AssetID { get; set; }
         public ushort Flags { get; set; }
         public byte Parent { get; set; }
         public byte Bone { get; set; }
-        public float RightX { get; set; }
-        public float RightY { get; set; }
-        public float RightZ { get; set; }
-        public float UpX { get; set; }
-        public float UpY { get; set; }
-        public float UpZ { get; set; }
-        public float AtX { get; set; }
-        public float AtY { get; set; }
-        public float AtZ { get; set; }
-        public float PosX { get; set; }
-        public float PosY { get; set; }
-        public float PosZ { get; set; }
+        public AssetSingle RightX { get; set; }
+        public AssetSingle RightY { get; set; }
+        public AssetSingle RightZ { get; set; }
+        public AssetSingle UpX { get; set; }
+        public AssetSingle UpY { get; set; }
+        public AssetSingle UpZ { get; set; }
+        public AssetSingle AtX { get; set; }
+        public AssetSingle AtY { get; set; }
+        public AssetSingle AtZ { get; set; }
+        public AssetSingle PosX { get; set; }
+        public AssetSingle PosY { get; set; }
+        public AssetSingle PosZ { get; set; }
 
-        public ModelInst()
+        public MinfReference() { }
+        public MinfReference(EndianBinaryReader reader)
         {
-            Model_AssetID = 0;
+            Model_AssetID = reader.ReadUInt32();
+            Flags = reader.ReadUInt16();
+            Parent = reader.ReadByte();
+            Bone = reader.ReadByte();
+            RightX = reader.ReadSingle();
+            RightY = reader.ReadSingle();
+            RightZ = reader.ReadSingle();
+            UpX = reader.ReadSingle();
+            UpY = reader.ReadSingle();
+            UpZ = reader.ReadSingle();
+            AtX = reader.ReadSingle();
+            AtY = reader.ReadSingle();
+            AtZ = reader.ReadSingle();
+            PosX = reader.ReadSingle();
+            PosY = reader.ReadSingle();
+            PosZ = reader.ReadSingle();
         }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Model_AssetID);
+                writer.Write(Flags);
+                writer.Write(Parent);
+                writer.Write(Bone);
+                writer.Write(RightX);
+                writer.Write(RightY);
+                writer.Write(RightZ);
+                writer.Write(UpX);
+                writer.Write(UpY);
+                writer.Write(UpZ);
+                writer.Write(AtX);
+                writer.Write(AtY);
+                writer.Write(AtZ);
+                writer.Write(PosX);
+                writer.Write(PosY);
+                writer.Write(PosZ);
+
+                return writer.ToArray();
+            }
+        }
+    }
+
+    public class MinfParam
+    {
+        public AssetID Type_Hex { get; set; }
+        public MinfAssetParam Type_Enum
+        {
+            get
+            {
+                foreach (MinfAssetParam map in Enum.GetValues(typeof(MinfAssetParam)))
+                    if ((uint)map == Type_Hex)
+                        return map;
+                return MinfAssetParam.Unknown;
+            }
+            set
+            {
+                Type_Hex = (uint)value;
+            }
+        }
+        public string Value { get; set; }
+
+        public string Value_Note => "Value is a string (in this case, representing one or more numbers), but it's not an actual number - so be careful with the formatting! Anything you type will be accepted";
+
+        public MinfParam()
+        {
+            Type_Hex = 0;
+            Value = "0.0";
+        }
+
+        public MinfParam(EndianBinaryReader reader)
+        {
+            Type_Hex = reader.ReadUInt32();
+            var count = reader.ReadByte();
+            Value = reader.ReadString(count * 4 + 3);
+            Value = Value.Trim('\0');
+        }
+
+        public byte[] Serialize(Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Type_Hex);
+
+                var pDataLen = Value.Length + 2;
+                while (pDataLen % 4 != 0)
+                    pDataLen++;
+
+                writer.Write((byte)(pDataLen / 4 - 1));
+                writer.Write(Value);
+
+                do writer.Write((byte)0);
+                while (writer.BaseStream.Length % 4 != 0);
+
+                return writer.ToArray();
+            }
+        }
+
+        public override string ToString() => $"[{Type_Enum}] " + Value;
     }
 
     public class AssetMINF : Asset, IAssetWithModel
     {
-        public AssetMINF(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform)
+        private const string categoryName = "Model Info";
+
+        [Category(categoryName)]
+        public AssetID ATBL_AssetID { get; set; }
+        [Category(categoryName)]
+        public AssetID CombatID { get; set; }
+        [Category(categoryName)]
+        public AssetID BrainID { get; set; }
+        [Category(categoryName)]
+        public MinfReference[] MinfReferences { get; set; }
+        [Category(categoryName)]
+        public MinfParam[] MinfParams { get; set; }
+
+        public AssetMINF(string assetName) : base(assetName, AssetType.MINF)
         {
-            try
+            MinfReferences = new MinfReference[0];
+            MinfParams = new MinfParam[0];
+        }
+
+        public AssetMINF(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                if (base.game == Game.Scooby)
-                    _modelAssetID = ReadUInt(0x0C);
-                else
-                    _modelAssetID = ReadUInt(0x14);
-
-                AddToRenderingDictionary(AHDR.assetID, this);
-
-                if (base.game == Game.Incredibles)
+                reader.ReadInt32();
+                int amountOfReferences = reader.ReadInt32();
+                ATBL_AssetID = reader.ReadUInt32();
+                if (game != Game.Scooby)
                 {
-                    AddToRenderingDictionary(Functions.BKDRHash(newName), this);
-                    AddToNameDictionary(Functions.BKDRHash(newName), newName);
+                    CombatID = reader.ReadUInt32();
+                    BrainID = reader.ReadUInt32();
                 }
-            }
-            catch
-            {
-                _modelAssetID = 0;
+
+                MinfReferences = new MinfReference[amountOfReferences];
+                for (int i = 0; i < MinfReferences.Length; i++)
+                    MinfReferences[i] = new MinfReference(reader);
+
+                var mParams = new List<MinfParam>();
+                while (!reader.EndOfStream)
+                    mParams.Add(new MinfParam(reader));
+                MinfParams = mParams.ToArray();
+
+                if (MinfReferences.Length > 0)
+                    _modelAssetID = MinfReferences[0].Model_AssetID;
+                else _modelAssetID = 0;
+
+                if (_modelAssetID != 0)
+                {
+                    AddToRenderingDictionary(AHDR.assetID, this);
+
+                    if (game == Game.Incredibles)
+                    {
+                        AddToRenderingDictionary(Functions.BKDRHash(newName), this);
+                        AddToNameDictionary(Functions.BKDRHash(newName), newName);
+                    }
+                }
             }
         }
 
-        private string newName => AHDR.ADBG.assetName.Replace(".MINF", "");
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.WriteMagic("MINF");
+                writer.Write(MinfReferences.Length);
+                writer.Write(ATBL_AssetID);
+
+                if (game != Game.Scooby)
+                {
+                    writer.Write(CombatID);
+                    writer.Write(BrainID);
+                }
+
+                foreach (var r in MinfReferences)
+                    writer.Write(r.Serialize(game, endianness));
+                foreach (var b in MinfParams)
+                    writer.Write(b.Serialize(endianness));
+
+                return writer.ToArray();
+            }
+        }
+
+        private string newName => assetName.Replace(".MINF", "");
+
+        private uint _modelAssetID;
 
         public void MovieRemoveFromDictionary()
         {
-            renderingDictionary.Remove(Functions.BKDRHash(newName));
-            nameDictionary.Remove(Functions.BKDRHash(newName));
+            RemoveFromRenderingDictionary(Functions.BKDRHash(newName));
+            RemoveFromNameDictionary(Functions.BKDRHash(newName));
         }
 
         public override bool HasReference(uint assetID)
@@ -73,7 +305,7 @@ namespace IndustrialPark
             if (ATBL_AssetID == assetID)
                 return true;
 
-            foreach (ModelInst m in ModelReferences)
+            foreach (MinfReference m in MinfReferences)
                 if (m.Model_AssetID == assetID)
                     return true;
 
@@ -83,7 +315,7 @@ namespace IndustrialPark
         public override void Verify(ref List<string> result)
         {
             Verify(ATBL_AssetID, ref result);
-            foreach (ModelInst m in ModelReferences)
+            foreach (MinfReference m in MinfReferences)
             {
                 if (m.Model_AssetID == 0)
                     result.Add("MINF model reference with Model_AssetID set to 0");
@@ -96,24 +328,13 @@ namespace IndustrialPark
             if (renderingDictionary.ContainsKey(_modelAssetID))
                 renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, uvAnimOffset);
             else
-                renderer.DrawCube(world, isSelected |isSelected);
+                renderer.DrawCube(world, isSelected | isSelected);
         }
 
         [Browsable(false)]
         public bool SpecialBlendMode => renderingDictionary.ContainsKey(_modelAssetID) ? renderingDictionary[_modelAssetID].SpecialBlendMode : true;
 
-        public RenderWareModelFile GetRenderWareModelFile()
-        {
-            if (renderingDictionary.ContainsKey(_modelAssetID))
-                return renderingDictionary[_modelAssetID].GetRenderWareModelFile();
-
-            throw new Exception("Error: MINF asset " + AHDR.ADBG.assetName + " could not find its RenderWareModelFile");
-        }
-
-        public bool HasRenderWareModelFile()
-        {
-            return renderingDictionary.ContainsKey(_modelAssetID) && renderingDictionary[_modelAssetID].GetRenderWareModelFile() != null;
-        }
+        public RenderWareModelFile GetRenderWareModelFile() => GetFromRenderingDictionary(_modelAssetID);
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
@@ -124,181 +345,6 @@ namespace IndustrialPark
             }
 
             base.SetDynamicProperties(dt);
-        }
-
-        private uint _modelAssetID;
-
-        [Category("Model Info"), Browsable(false)]
-        public string MINF_Name
-        {
-            get
-            {
-                List<byte> bytes = new List<byte>();
-                for (int i = 0; i < 4; i++)
-                    bytes.Add(Data[i]);
-
-                if (game != Game.Incredibles && platform == Platform.GameCube)
-                    bytes.Reverse();
-
-                return System.Text.Encoding.ASCII.GetString(bytes.ToArray(), 0, 4);
-            }
-            set
-            {
-                List<byte> bytes = new List<byte>();
-                foreach (char c in value)
-                    bytes.Add((byte)c);
-
-                while (bytes.Count < 4)
-                    bytes.Add((byte)' ');
-
-                if (game != Game.Incredibles && platform == Platform.GameCube)
-                    bytes.Reverse();
-
-                for (int i = 0; i < 4; i++)
-                    Data[i] = bytes[i];
-            }
-        }
-
-        [Category("Model Info"), ReadOnly(true)]
-        public int AmountOfReferences
-        {
-            get => ReadInt(0x04);
-            set => Write(0x04, value);
-        }
-
-        [Category("Model Info")]
-        public AssetID ATBL_AssetID
-        {
-            get => ReadUInt(0x08);
-            set => Write(0x08, value);
-        }
-
-        [Category("Model Info")]
-        public AssetID CombatID
-        {
-            get
-            {
-                if (game != Game.Scooby)
-                    return ReadUInt(0x0C);
-                return 0;
-            }
-            set
-            {
-                if (game != Game.Scooby)
-                    Write(0x0C, value);
-            }
-        }
-
-        [Category("Model Info")]
-        public AssetID BrainID
-        {
-            get
-            {
-                if (game != Game.Scooby)
-                    return ReadUInt(0x10);
-                return 0;
-            }
-            set
-            {
-                if (game != Game.Scooby)
-                    Write(0x10, value);
-            }
-        }
-
-        private int ModelReferencesStart => game == Game.Scooby ? 0xC : 0x14;
-
-        [Category("Model Info")]
-        public ModelInst[] ModelReferences
-        {
-            get
-            {
-                List<ModelInst> references = new List<ModelInst>();
-
-                for (int i = 0; i < AmountOfReferences; i++)
-                {
-                    references.Add(new ModelInst()
-                    {
-                        Model_AssetID = ReadUInt(ModelReferencesStart + i * ModelInst.Size),
-                        Flags = ReadUShort(ModelReferencesStart + i * ModelInst.Size + 0x04),
-                        Parent = ReadByte(ModelReferencesStart + i * ModelInst.Size + 0x06),
-                        Bone = ReadByte(ModelReferencesStart + i * ModelInst.Size + 0x07),
-                        RightX = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x08),
-                        RightY = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x0C),
-                        RightZ = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x10),
-                        UpX = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x14),
-                        UpY = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x18),
-                        UpZ = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x1C),
-                        AtX = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x20),
-                        AtY = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x24),
-                        AtZ = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x28),
-                        PosX = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x2C),
-                        PosY = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x30),
-                        PosZ = ReadFloat(ModelReferencesStart + i * ModelInst.Size + 0x34),
-                    });
-                }
-
-                return references.ToArray();
-            }
-            set
-            {
-                List<byte> before = new List<byte>();
-
-                before.AddRange(Data.Take(ModelReferencesStart));
-
-                if (value.Length > 0)
-                    _modelAssetID = value[0].Model_AssetID;
-
-                foreach (ModelInst m in value)
-                {
-                    before.AddRange(BitConverter.GetBytes(Switch(m.Model_AssetID)));
-                    before.AddRange(BitConverter.GetBytes(Switch(m.Flags)));
-                    before.Add(m.Parent);
-                    before.Add(m.Bone);
-                    before.AddRange(BitConverter.GetBytes(Switch(m.RightX)));
-                    before.AddRange(BitConverter.GetBytes(Switch(m.RightY)));
-                    before.AddRange(BitConverter.GetBytes(Switch(m.RightZ)));
-                    before.AddRange(BitConverter.GetBytes(Switch(m.UpX)));
-                    before.AddRange(BitConverter.GetBytes(Switch(m.UpY)));
-                    before.AddRange(BitConverter.GetBytes(Switch(m.UpZ)));
-                    before.AddRange(BitConverter.GetBytes(Switch(m.AtX)));
-                    before.AddRange(BitConverter.GetBytes(Switch(m.AtY)));
-                    before.AddRange(BitConverter.GetBytes(Switch(m.AtZ)));
-                    before.AddRange(BitConverter.GetBytes(Switch(m.PosX)));
-                    before.AddRange(BitConverter.GetBytes(Switch(m.PosY)));
-                    before.AddRange(BitConverter.GetBytes(Switch(m.PosZ)));
-                }
-
-                before.AddRange(Data.Skip(EndOfModelReferenceData));
-
-                Data = before.ToArray();
-
-                AmountOfReferences = value.Length;
-            }
-        }
-
-        private int EndOfModelReferenceData => ModelReferencesStart + ModelInst.Size * AmountOfReferences;
-
-        [Category("Model Info")]
-        public AssetID[] RestOfData
-        {
-            get
-            {
-                List<AssetID> list = new List<AssetID>();
-
-                for (int i = EndOfModelReferenceData; i < Data.Length; i += 4)
-                    list.Add(ReadUInt(i));
-
-                return list.ToArray();
-            }
-            set
-            {
-                List<byte> before = Data.Take(EndOfModelReferenceData).ToList();
-
-                foreach (AssetID a in value)
-                    before.AddRange(BitConverter.GetBytes(Switch(a)));
-
-                Data = before.ToArray();
-            }
         }
     }
 }

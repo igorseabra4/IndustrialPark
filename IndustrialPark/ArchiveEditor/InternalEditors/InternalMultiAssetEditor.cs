@@ -6,12 +6,12 @@ namespace IndustrialPark
 {
     public partial class InternalMultiAssetEditor : Form
     {
-        public InternalMultiAssetEditor(Asset[] assets, ArchiveEditorFunctions archive, bool hideHelp)
+        public InternalMultiAssetEditor(Asset[] assets, ArchiveEditorFunctions archive)
         {
             InitializeComponent();
             TopMost = true;
 
-            assetIDs = (from Asset a in assets select a.AHDR.assetID).ToArray();
+            assetIDs = (from Asset a in assets select a.assetID).ToArray();
             this.archive = archive;
 
             var typeDescriptors = new List<DynamicTypeDescriptor>();
@@ -23,12 +23,10 @@ namespace IndustrialPark
                 DynamicTypeDescriptor dt = new DynamicTypeDescriptor(asset.GetType());
                 asset.SetDynamicProperties(dt);
                 typeDescriptors.Add(dt.FromComponent(asset));
-                labelAssetName.Text += asset.AHDR.ADBG.assetName.ToString() + " | ";
+                labelAssetName.Text += asset.assetName.ToString() + " | ";
             }
 
             propertyGridAsset.SelectedObjects = typeDescriptors.ToArray();
-
-            propertyGridAsset.HelpVisible = !hideHelp;
         }
 
         private ArchiveEditorFunctions archive;

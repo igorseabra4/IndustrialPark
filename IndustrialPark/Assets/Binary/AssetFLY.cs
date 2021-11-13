@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using SharpDX;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 
@@ -16,7 +16,18 @@ namespace IndustrialPark
         public Vector3 CameraPosition { get; set; }
         public Vector3 Unknown { get; set; }
 
-        public byte[] ToByteArray()
+        public EntryFLY() { }
+        public EntryFLY(BinaryReader binaryReader)
+        {
+            FrameNumer = binaryReader.ReadInt32();
+            CameraNormalizedLeft = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle());
+            CameraNormalizedUp = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle());
+            CameraNormalizedBackward = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle());
+            CameraPosition = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle());
+            Unknown = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle());
+        }
+
+        public byte[] Serialize()
         {
             List<byte> data = new List<byte>();
 
@@ -42,48 +53,37 @@ namespace IndustrialPark
 
         public override string ToString()
         {
-            return $"[{FrameNumer}] - [{CameraPosition.ToString()}]";
+            return $"[{FrameNumer}] - [{CameraPosition}]";
         }
     }
 
     public class AssetFLY : Asset
     {
-        public AssetFLY(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform) { }
+        [Category("Flythrough")]
+        public EntryFLY[] FLY_Entries { get; set; }
 
-        public override void Verify(ref List<string> result)
+        public AssetFLY(string assetName) : base(assetName, AssetType.FLY)
         {
-            EntryFLY[] entries = FLY_Entries;
+            FLY_Entries = new EntryFLY[0];
         }
 
-        [Category("Flythrough")]
-        public EntryFLY[] FLY_Entries
+        public AssetFLY(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            get
-            {
-                List<EntryFLY> entries = new List<EntryFLY>();
-                using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(Data)))
-                    while (binaryReader.BaseStream.Position < binaryReader.BaseStream.Length)
-                        entries.Add(new EntryFLY
-                        {
-                            FrameNumer = binaryReader.ReadInt32(),
-                            CameraNormalizedLeft = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle()),
-                            CameraNormalizedUp = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle()),
-                            CameraNormalizedBackward = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle()),
-                            CameraPosition = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle()),
-                            Unknown = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle())
-                        });
+            List<EntryFLY> entries = new List<EntryFLY>();
 
-                return entries.ToArray();
-            }
-            set
-            {
-                List<byte> newData = new List<byte>();
+            using (var reader = new BinaryReader(new MemoryStream(AHDR.data)))
+                while (reader.BaseStream.Position < reader.BaseStream.Length)
+                    entries.Add(new EntryFLY(reader));
 
-                foreach (EntryFLY i in value)
-                    newData.AddRange(i.ToByteArray());
-                
-                Data = newData.ToArray();
-            }
+            FLY_Entries = entries.ToArray();
+        }
+
+        public override byte[] Serialize(Game game, Endianness endianness)
+        {
+            List<byte> newData = new List<byte>();
+            foreach (var i in FLY_Entries)
+                newData.AddRange(i.Serialize());
+            return newData.ToArray();
         }
     }
 }

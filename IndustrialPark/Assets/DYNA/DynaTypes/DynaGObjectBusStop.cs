@@ -1,15 +1,68 @@
-﻿using System.Collections.Generic;
+﻿using HipHopFile;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaGObjectBusStop : DynaBase
+    public enum PlayerEnum
     {
-        public string Note => "Version is always 2";
+        Patrick = 0,
+        Sandy = 1
+    }
 
-        public override int StructSize => 0x14;
+    public class DynaGObjectBusStop : AssetDYNA
+    {
+        private const string dynaCategoryName = "game_object:BusStop";
 
-        public DynaGObjectBusStop(AssetDYNA asset) : base(asset) { }
+        protected override short constVersion => 2;
+
+        [Category(dynaCategoryName)]
+        public AssetID MRKR_ID { get; set; }
+        [Category(dynaCategoryName)]
+        public PlayerEnum Player { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID CAM_ID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID SIMP_ID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle Delay { get; set; }
+
+        public DynaGObjectBusStop(string assetName, uint mrkrAssetId, uint camAssetId, uint simpAssetId) : base(assetName, DynaType.game_object__BusStop, 2)
+        {
+            MRKR_ID = mrkrAssetId;
+            CAM_ID = camAssetId;
+            SIMP_ID = simpAssetId;
+
+            Delay = 1.5f;
+        }
+
+        public DynaGObjectBusStop(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__BusStop, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
+
+                MRKR_ID = reader.ReadUInt32();
+                Player = (PlayerEnum)reader.ReadInt32();
+                CAM_ID = reader.ReadUInt32();
+                SIMP_ID = reader.ReadUInt32();
+                Delay = reader.ReadSingle();
+            }
+        }
+
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(MRKR_ID);
+                writer.Write((int)Player);
+                writer.Write(CAM_ID);
+                writer.Write(SIMP_ID);
+                writer.Write(Delay);
+
+                return writer.ToArray();
+            }
+        }
 
         public override bool HasReference(uint assetID)
         {
@@ -27,45 +80,15 @@ namespace IndustrialPark
         {
             if (MRKR_ID == 0)
                 result.Add("Bus stop with no MRKR reference");
-            Asset.Verify(MRKR_ID, ref result);
+            Verify(MRKR_ID, ref result);
             if (CAM_ID == 0)
                 result.Add("Bus stop with no CAM reference");
-            Asset.Verify(CAM_ID, ref result);
+            Verify(CAM_ID, ref result);
             if (SIMP_ID == 0)
                 result.Add("Bus stop with no SIMP reference");
-            Asset.Verify(SIMP_ID, ref result);
-        }
-                
-        public AssetID MRKR_ID
-        {
-            get => ReadUInt(0x00);
-            set => Write(0x00, value);
-        }
-        public enum PlayerEnum
-        {
-            Patrick = 0,
-            Sandy = 1
-        }
-        public PlayerEnum Player
-        {
-            get => (PlayerEnum)ReadInt(0x04);
-            set => Write(0x04, (int)value);
-        }
-        public AssetID CAM_ID
-        {
-            get => ReadUInt(0x08);
-            set => Write(0x08, value);
-        }
-        public AssetID SIMP_ID
-        {
-            get => ReadUInt(0x0C);
-            set => Write(0x0C, value);
-        }
-        [TypeConverter(typeof(FloatTypeConverter))]
-        public float Delay
-        {
-            get => ReadFloat(0x10);
-            set => Write(0x10, value);
+            Verify(SIMP_ID, ref result);
+
+            base.Verify(ref result);
         }
     }
 }

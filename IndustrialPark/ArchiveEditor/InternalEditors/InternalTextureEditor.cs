@@ -1,27 +1,27 @@
 ﻿using RenderWareFile;
+using RenderWareFile.Sections;
 using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
-using RenderWareFile.Sections;
-using System.Collections.Generic;
-using System.Drawing.Imaging;
-using System.Drawing;
 using static IndustrialPark.TextureIOHelper;
 
 namespace IndustrialPark
 {
     public partial class InternalTextureEditor : Form, IInternalEditor
     {
-        public InternalTextureEditor(AssetRWTX asset, ArchiveEditorFunctions archive, bool hideHelp)
+        public InternalTextureEditor(AssetRWTX asset, ArchiveEditorFunctions archive)
         {
             InitializeComponent();
             TopMost = true;
 
             this.asset = asset;
             this.archive = archive;
-            
+
             propertyGridAsset.SelectedObject = asset;
-            Text = $"[{asset.AHDR.assetType}] {asset}";
+            Text = $"[{asset.assetType}] {asset}";
 
             RefreshPropertyGrid();
         }
@@ -46,11 +46,11 @@ namespace IndustrialPark
 
         private AssetRWTX asset;
         private ArchiveEditorFunctions archive;
-        private Bitmap b; 
+        private Bitmap b;
 
         public uint GetAssetID()
         {
-            return asset.AHDR.assetID;
+            return asset.assetID;
         }
 
         private void buttonFindCallers_Click(object sender, EventArgs e)
@@ -65,7 +65,7 @@ namespace IndustrialPark
 
         private void buttonHelp_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start(AboutBox.WikiLink + asset.AHDR.assetType.ToString());
+            System.Diagnostics.Process.Start(AboutBox.WikiLink + asset.assetType.ToString());
         }
 
         private void buttonExport_Click(object sender, EventArgs e)
@@ -80,7 +80,7 @@ namespace IndustrialPark
                 "|TIFF Files|*.tiff" +
                 "|RWTEX Files|*.rwtex",
 
-                FileName = Path.ChangeExtension(asset.AHDR.ADBG.assetName, ".png")
+                FileName = Path.ChangeExtension(asset.assetName, ".png")
             };
             if (a.ShowDialog() == DialogResult.OK)
             {
@@ -150,10 +150,6 @@ namespace IndustrialPark
                 RefreshPropertyGrid();
                 archive.EnableTextureForDisplay(asset);
             }
-        }
-
-        public void SetHideHelp(bool _)
-        {
         }
 
         private void checkBoxTransFix_CheckedChanged(object sender, EventArgs e)

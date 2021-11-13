@@ -7,9 +7,9 @@ namespace IndustrialPark.Randomizer
     {
         [Category("Boulder Settings"), DisplayName("Boulder Settings"), Description("Randomizes floating point values in boulders, such as speed, gravity, mass, lifetime etc.")]
         public bool BoulderSettings { get; set; }
-        [Category("Boulder Settings"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Boulder Settings"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float boulderMin { get; set; } = 0.5f;
-        [Category("Boulder Settings"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Boulder Settings"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float boulderMax { get; set; } = 2f;
 
 
@@ -36,8 +36,6 @@ namespace IndustrialPark.Randomizer
 
         [Category("Randomizer (Not recommended)"), DisplayName("Mix Sound Types"), Description("NOT RECOMMENDED\nMixes sound effects and voices.")]
         public bool Mix_Sound_Types { get; set; }
-        [Category("Randomizer (Not recommended)"), Description("NOT RECOMMENDED\nRandomizes links of button assets. High chance of softlocks and unbeatable tasks.")]
-        public bool Buttons { get; set; }
         [Category("Randomizer (Not recommended)"), DisplayName("Level Files"), Description("NOT RECOMMENDED\nRandomizes level files with each other. WILL break multiple levels and tasks and cause softlocks.")]
         public bool Level_Files { get; set; }
 
@@ -68,17 +66,17 @@ namespace IndustrialPark.Randomizer
 
         [Category("MovePoint"), DisplayName("MovePoint Radius"), Description("Randomizes MovePoint asset radius. Enemies can move more and see you from further away.")]
         public bool MovePoint_Radius { get; set; }
-        [Category("MovePoint"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("MovePoint"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float mvptMin { get; set; } = 0.9f;
-        [Category("MovePoint"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("MovePoint"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float mvptMax { get; set; } = 1.8f;
 
 
         [Category("Platform Speed"), DisplayName("Platform Speed"), Description("Randomizes spped of platform (moving) assets. Higher values mean faster platforms. Negative values create interesting results.")]
         public bool PlatformSpeed { get; set; }
-        [Category("Platform Speed"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Platform Speed"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float speedMin { get; set; }
-        [Category("Platform Speed"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Platform Speed"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float speedMax { get; set; }
 
 
@@ -98,35 +96,35 @@ namespace IndustrialPark.Randomizer
 
         [Category("Timers"), Description("Randomizes timer values")]
         public bool Timers { get; set; }
-        [Category("Timers"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Timers"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float timerMin { get; set; }
-        [Category("Timers"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Timers"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float timerMax { get; set; }
 
 
         [Category("Scales (Not recommended)"), DisplayName("Scales"), Description("NOT RECOMMENDED\nRandomizes scale (size) of Entity assets.")]
         public bool Scale_Of_Things { get; set; }
-        [Category("Scales (Not recommended)"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Scales (Not recommended)"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float scaleMin { get; set; }
-        [Category("Scales (Not recommended)"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Scales (Not recommended)"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float scaleMax { get; set; }
 
 
         [Category("Ring Challenges"), DisplayName("Ring Sizes"), Description("Randomizes size of rings.")]
         public bool RingSizes { get; set; }
-        [Category("Ring Challenges"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Ring Challenges"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float ringScaleMin { get; set; }
-        [Category("Ring Challenges"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+        [Category("Ring Challenges"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float ringScaleMax { get; set; }
 
 
         [Category("Shiny Object/Snack Gates"), DisplayName("Shiny Object/Snack Gates"), Description("Randomizes clam/toll gate shiny object requirements in BFBB or snack gate requirements in Scooby.")]
         public bool Shiny_Object_Gates { get; set; }
         [Category("Shiny Object/Snack Gates"),
-            DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+            DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float shinyReqMin { get; set; }
         [Category("Shiny Object/Snack Gates"),
-            DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+            DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float shinyReqMax { get; set; }
 
 
@@ -153,10 +151,10 @@ namespace IndustrialPark.Randomizer
         [Category("Texture Animations"), DisplayName("Texture Animations"), Description("Randomizes speed of UV animations on surfaces.")]
         public bool Texture_Animations { get; set; }
         [Category("Texture Animations"),
-            DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+            DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float surfMin { get; set; }
         [Category("Texture Animations"),
-            DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(FloatTypeConverter))]
+            DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float surfMax { get; set; }
 
 
@@ -210,37 +208,40 @@ namespace IndustrialPark.Randomizer
             Description("If true, all menu warps will lead to the hub.")]
         public bool allMenuWarpsHB01 { get; set; }
 
-        [Category("Non-Randomizer"), DisplayName("Open Teleport Boxes")]
-        public bool openTeleportBoxes { get; set; }
+        [Category("Patches"), DisplayName("Restore Robot Laugh"), Description("Restores robot laugh sound, which is not present normally in the GameCube version of the game.")]
+        public bool restoreRobotLaugh { get; set; }
 
-        [Category("Non-Randomizer"), DisplayName("Invisible Level"), Description("Makes all levels invisible.")]
-        public bool invisibleLevel { get; set; }
+        [Category("Patches"), DisplayName("Widescreen Menu"), Description("Makes the pause menu background fit a 16:9 resolution. Should be used with a widescreen code.")]
+        public bool widescreenMenu { get; set; }
 
-        [Category("Non-Randomizer"), DisplayName("Invisible Objects"), Description("Makes all objects invisible.")]
-        public bool invisibleObjects { get; set; }
-
-        [Category("Non-Randomizer"), DisplayName("Disable Cutscenes")]
+        [Category("Patches"), DisplayName("Disable Cutscenes")]
         public bool disableCutscenes { get; set; }
 
-        [Category("Non-Randomizer"), DisplayName("Disable Flythroughs")]
+        [Category("Patches"), DisplayName("Disable Flythroughs")]
         public bool disableFlythroughs { get; set; }
 
-        [Category("Non-Randomizer"),
+        [Category("Patches"), DisplayName("Open Teleport Boxes")]
+        public bool openTeleportBoxes { get; set; }
+
+        [Category("Patches"),
             DisplayName("Spatulas for Chum Bucket Lab"),
             Description("This will be the amount of spatulas needed for the final boss. Set to -1 to include it in the Spatula Gates randomizer method.")]
         public int spatReqChum { get; set; }
 
-        [Category("Non-Randomizer: LODT"), DisplayName("boot.HIP LODT multiplier"),
+        [Category("Patches"), DisplayName("Invisible Level"), Description("Makes all levels invisible.")]
+        public bool invisibleLevel { get; set; }
+
+        [Category("Patches"), DisplayName("Invisible Objects"), Description("Makes all objects invisible.")]
+        public bool invisibleObjects { get; set; }
+
+        [Category("Patches: LODT"), DisplayName("boot.HIP LODT multiplier"),
             Description("If true, multiply the render distance for the pickups by this amount.")]
         public bool bootHipLodtMulti { get; set; }
 
-        [Category("Non-Randomizer: LODT"), DisplayName("boot.HIP LODT multiplier"),
+        [Category("Patches: LODT"), DisplayName("boot.HIP LODT multiplier"),
             Description("If true, multiply the render distance for the pickups by this amount."),
-            TypeConverter(typeof(FloatTypeConverter))]
+            TypeConverter(typeof(SingleTypeConverter))]
         public float lodtValue { get; set; }
-
-        [Category("Non-Randomizer"), DisplayName("Restore Robot Laugh"), Description("Restores robot laugh sound, which is not present normally in the GameCube version of the game.")]
-        public bool restoreRobotLaugh { get; set; }
 
         public RandomizerSettings(int game)
         {
@@ -254,7 +255,6 @@ namespace IndustrialPark.Randomizer
             Textures_Special = false;
             Sounds = false;
             Mix_Sound_Types = false;
-            Buttons = false;
             Level_Files = false;
             Warps = true;
             Scale_Of_Things = false;
@@ -278,6 +278,7 @@ namespace IndustrialPark.Randomizer
             Taxi_Trigger_Positions = false;
             Bus_Stop_Trigger_Positions = false;
             openTeleportBoxes = false;
+            widescreenMenu = false;
 
             boulderMin = 0.5f;
             boulderMax = 2f;
@@ -415,7 +416,6 @@ namespace IndustrialPark.Randomizer
             Sounds = false;
             Mix_Sound_Types = false;
             FloatingBlockChallenge = false;
-            Buttons = false;
             Timers = false;
             Level_Files = false;
             brightColors = false;
@@ -491,6 +491,7 @@ namespace IndustrialPark.Randomizer
                     dt.RemoveProperty("RingSizes");
                     dt.RemoveProperty("ringScaleMin");
                     dt.RemoveProperty("ringScaleMax");
+                    dt.RemoveProperty("widescreenMenu");
                     break;
                 case 2: // Movie
                     dt.RemoveProperty("Tiki_Models");
@@ -511,6 +512,7 @@ namespace IndustrialPark.Randomizer
                     dt.RemoveProperty("disableFlythroughs");
                     dt.RemoveProperty("spatReqChum");
                     dt.RemoveProperty("restoreRobotLaugh");
+                    dt.RemoveProperty("widescreenMenu");
 
 
                     dt.RemoveProperty("disableCutscenes"); // remove this line later

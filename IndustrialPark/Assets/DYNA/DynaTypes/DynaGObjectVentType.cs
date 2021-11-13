@@ -1,14 +1,57 @@
-﻿using System.Collections.Generic;
+﻿using HipHopFile;
+using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaGObjectVentType : DynaBase
+    public class DynaGObjectVentType : AssetDYNA
     {
-        public string Note => "Version is always 1";
+        private const string dynaCategoryName = "game_object:VentType";
 
-        public override int StructSize => 0x18;
+        protected override short constVersion => 1;
 
-        public DynaGObjectVentType(AssetDYNA asset) : base(asset) { }
+        [Category(dynaCategoryName)]
+        public AssetID Constant_PARE { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Constant_SGRP { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Warning_PARE { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Warning_SGRP { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Emit_PARE { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID Emit_SGRP { get; set; }
+
+        public DynaGObjectVentType(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__VentType, game, endianness)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.BaseStream.Position = dynaDataStartPosition;
+
+                Constant_PARE = reader.ReadUInt32();
+                Constant_SGRP = reader.ReadUInt32();
+                Warning_PARE = reader.ReadUInt32();
+                Warning_SGRP = reader.ReadUInt32();
+                Emit_PARE = reader.ReadUInt32();
+                Emit_SGRP = reader.ReadUInt32();
+            }
+        }
+
+        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                writer.Write(Constant_PARE);
+                writer.Write(Constant_SGRP);
+                writer.Write(Warning_PARE);
+                writer.Write(Warning_SGRP);
+                writer.Write(Emit_PARE);
+                writer.Write(Emit_SGRP);
+
+                return writer.ToArray();
+            }
+        }
 
         public override bool HasReference(uint assetID)
         {
@@ -25,48 +68,18 @@ namespace IndustrialPark
             if (Emit_SGRP == assetID)
                 return true;
 
-            return false;
+            return base.HasReference(assetID);
         }
 
         public override void Verify(ref List<string> result)
         {
-            Asset.Verify(Constant_PARE, ref result);
-            Asset.Verify(Constant_SGRP, ref result);
-            Asset.Verify(Warning_PARE, ref result);
-            Asset.Verify(Warning_SGRP, ref result);
-            Asset.Verify(Emit_PARE, ref result);
-            Asset.Verify(Emit_SGRP, ref result);
-        }
-                
-        public AssetID Constant_PARE
-        {
-            get => ReadUInt(0x00);
-            set => Write(0x00, value);
-        }
-        public AssetID Constant_SGRP
-        {
-            get => ReadUInt(0x04);
-            set => Write(0x04, value);
-        }
-        public AssetID Warning_PARE
-        {
-            get => ReadUInt(0x08);
-            set => Write(0x08, value);
-        }
-        public AssetID Warning_SGRP
-        {
-            get => ReadUInt(0x0C);
-            set => Write(0x0C, value);
-        }
-        public AssetID Emit_PARE
-        {
-            get => ReadUInt(0x10);
-            set => Write(0x10, value);
-        }
-        public AssetID Emit_SGRP
-        {
-            get => ReadUInt(0x14);
-            set => Write(0x14, value);
+            Verify(Constant_PARE, ref result);
+            Verify(Constant_SGRP, ref result);
+            Verify(Warning_PARE, ref result);
+            Verify(Warning_SGRP, ref result);
+            Verify(Emit_PARE, ref result);
+            Verify(Emit_SGRP, ref result);
+            base.Verify(ref result);
         }
     }
 }
