@@ -60,8 +60,8 @@ namespace IndustrialPark
             archive.CloseInternalEditor(this);
         }
 
-        private Asset asset;
-        private ArchiveEditorFunctions archive;
+        private readonly Asset asset;
+        private readonly ArchiveEditorFunctions archive;
 
         public uint GetAssetID()
         {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace IndustrialPark
@@ -24,12 +25,19 @@ namespace IndustrialPark
             propertyGridSpecific.Refresh();
         }
 
-        private ArchiveEditorFunctions archive;
+        private readonly ArchiveEditorFunctions archive;
 
         private void InternalDynaEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Program.MainForm.renderer.StopFly();
-            archive.CloseInternalEditor(this);
+            if (recording || playing)
+            {
+                e.Cancel = true;
+            }
+            else
+            {
+                Program.MainForm.renderer.StopFly();
+                archive.CloseInternalEditor(this);
+            }
         }
 
         public uint GetAssetID()
@@ -42,7 +50,7 @@ namespace IndustrialPark
             Program.MainForm.FindWhoTargets(GetAssetID());
         }
 
-        private AssetFLY asset;
+        private readonly AssetFLY asset;
 
         private void UpdateListbox()
         {
@@ -59,10 +67,14 @@ namespace IndustrialPark
             int selectedIndex = listBoxFlyEntries.SelectedIndex;
 
             List<EntryFLY> entries = new List<EntryFLY>();
+            var count = 0;
+            maxFrame = 0;
             foreach (EntryFLY entry in listBoxFlyEntries.Items)
             {
+                entry.FrameNumer = count++;
                 entries.Add(entry);
-                maxFrame = entry.FrameNumer > maxFrame ? entry.FrameNumer : maxFrame;
+                if (entry.FrameNumer > maxFrame)
+                    maxFrame = entry.FrameNumer;
             }
             asset.FLY_Entries = entries.ToArray();
             archive.UnsavedChanges = true;
@@ -90,8 +102,9 @@ namespace IndustrialPark
 
         private void buttonAdd_Click(object sender, EventArgs e)
         {
-            listBoxFlyEntries.Items.Add(new EntryFLY() { FrameNumer = listBoxFlyEntries.Items.Count });
-            UpdateAssetEntries();
+            var entry = new EntryFLY() { FrameNumer = listBoxFlyEntries.Items.Count };
+            SetViewToFly(entry);
+            listBoxFlyEntries.Items.Add(entry);
         }
 
         private void buttonRemove_Click(object sender, EventArgs e)
@@ -105,21 +118,22 @@ namespace IndustrialPark
 
         private void propertyGridSpecific_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
-            UpdateAssetEntries();
+            RefreshPropertyGrid();
         }
 
-        private void buttonGetPos_Click(object sender, EventArgs e)
+        private void buttonGetView_Click(object sender, EventArgs e)
         {
-            ((EntryFLY)propertyGridSpecific.SelectedObject).CameraPosition = Program.MainForm.renderer.Camera.Position;
-            UpdateAssetEntries();
+            if (listBoxFlyEntries.SelectedIndex != -1)
+                SetViewToFly((EntryFLY)propertyGridSpecific.SelectedObject);
+            RefreshPropertyGrid();
         }
 
-        private void buttonGetDir_Click(object sender, EventArgs e)
+        private void SetViewToFly(EntryFLY entry)
         {
-            ((EntryFLY)propertyGridSpecific.SelectedObject).CameraNormalizedLeft = -Program.MainForm.renderer.Camera.Right;
-            ((EntryFLY)propertyGridSpecific.SelectedObject).CameraNormalizedUp = Program.MainForm.renderer.Camera.Up;
-            ((EntryFLY)propertyGridSpecific.SelectedObject).CameraNormalizedBackward = -Program.MainForm.renderer.Camera.Forward;
-            UpdateAssetEntries();
+            entry.CameraPosition = Program.MainForm.renderer.Camera.Position;
+            entry.CameraNormalizedRight = Program.MainForm.renderer.Camera.Right;
+            entry.CameraNormalizedUp = Program.MainForm.renderer.Camera.Up;
+            entry.CameraNormalizedBackward = -Program.MainForm.renderer.Camera.Forward;
         }
 
         private void buttonView_Click(object sender, EventArgs e)
@@ -128,13 +142,72 @@ namespace IndustrialPark
                 Program.MainForm.renderer.Camera.SetPositionFlyEntry(flyEntry);
         }
 
+        private bool playing = false;
+
         private void buttonPlay_Click(object sender, EventArgs e)
         {
-            Program.MainForm.renderer.PlayFly(this);
+            if (playing)
+            {
+                Stop();
+
+                buttonPlay.Text = "Preview";
+
+                buttonAdd.Enabled = true;
+                buttonRemove.Enabled = true;
+                buttonRecord.Enabled = true;
+                buttonGetPos.Enabled = true;
+                buttonView.Enabled = true;
+            }
+            else
+            {
+                playing = true;
+
+                buttonPlay.Text = "Stop Preview";
+
+                buttonAdd.Enabled = false;
+                buttonRemove.Enabled = false;
+                buttonRecord.Enabled = false;
+                buttonGetPos.Enabled = false;
+                buttonView.Enabled = false;
+
+                Program.MainForm.renderer.PlayFly(this);
+            }
         }
 
-        private void buttonStop_Click(object sender, EventArgs e)
+        private bool recording = false;
+
+        private void buttonRecord_Click(object sender, EventArgs e)
         {
+            if (recording)
+            {
+                Stop();
+
+                buttonRecord.Text = "Start Recording";
+                UpdateAssetEntries();
+
+                buttonRemove.Enabled = true;
+                buttonGetPos.Enabled = true;
+                buttonPlay.Enabled = true;
+                buttonView.Enabled = true;
+            }
+            else
+            {
+                buttonRemove.Enabled = false;
+                buttonGetPos.Enabled = false;
+                buttonPlay.Enabled = false;
+                buttonView.Enabled = false;
+
+                recording = true;
+                Program.MainForm.renderer.RecordFly(this);
+                buttonRecord.Text = "Stop Recording";
+            }
+        }
+
+        private void Stop()
+        {
+            playing = false;
+            recording = false;
+
             currentFrame = 0;
             labelFrame.Text = "";
             Program.MainForm.renderer.StopFly();
@@ -163,6 +236,33 @@ namespace IndustrialPark
                     currentFrame = 0;
                 labelFrame.Text = "Frame: " + currentFrame;
             }
+        }
+
+        public void Record()
+        {
+            var newFly = new EntryFLY
+            {
+                FrameNumer = listBoxFlyEntries.Items.Count,
+                ApertureX = 0.98f,
+                ApertureY = 0.735f,
+                Focal = 26.69057f
+            };
+            SetViewToFly(newFly);
+
+            var lastIndex = listBoxFlyEntries.Items.Count - 1;
+
+            if (lastIndex < 0 || !((EntryFLY)listBoxFlyEntries.Items[lastIndex]).NearlySimilar(newFly))
+            {
+                switcher = !switcher;
+                if (switcher)
+                    listBoxFlyEntries.Items.Add(newFly);
+                labelFrame.Text = "Frame: " + newFly.FrameNumer;
+            }
+        }
+
+        private void buttonHelp_Click(object sender, EventArgs e)
+        {
+            Process.Start(AboutBox.WikiLink + asset.assetType.ToString());
         }
     }
 }

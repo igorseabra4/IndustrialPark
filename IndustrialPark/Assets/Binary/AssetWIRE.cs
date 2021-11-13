@@ -173,7 +173,7 @@ namespace IndustrialPark
             renderer.completeVertexBufferList.Remove(vertexBuffer);
             if (vertexBuffer != null)
                 vertexBuffer.Dispose();
-            List<WireVector> lineList = new List<WireVector>();
+            List<Vector3> lineList = new List<Vector3>();
             foreach (Line l in Lines)
             {
                 lineList.Add(Points[l.Vertex0]);

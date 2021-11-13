@@ -34,8 +34,8 @@ namespace IndustrialPark
             archive.CloseInternalEditor(this);
         }
 
-        private AssetSound asset;
-        private ArchiveEditorFunctions archive;
+        private readonly AssetSound asset;
+        private readonly ArchiveEditorFunctions archive;
 
         public uint GetAssetID()
         {

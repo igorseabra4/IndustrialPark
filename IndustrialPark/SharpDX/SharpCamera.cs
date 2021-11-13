@@ -152,7 +152,7 @@ namespace IndustrialPark
             Position = cam.CameraPosition;
             Forward = -cam.CameraNormalizedBackward;
             Up = cam.CameraNormalizedUp;
-            Right = -cam.CameraNormalizedLeft;
+            Right = -cam.CameraNormalizedRight;
             _pitch = MathUtil.RadiansToDegrees((float)Math.Asin(Forward.Y));
             _yaw = 270f - MathUtil.RadiansToDegrees((float)Math.Atan2(Forward.Z, Forward.X));
             _yaw = _yaw % 360f;

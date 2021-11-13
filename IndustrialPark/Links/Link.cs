@@ -49,6 +49,10 @@ namespace IndustrialPark
         public float Time { get; set; } // only for timed
         public int Flags { get; set; } // only for progress
 
+        private Link()
+        {
+        }
+
         public Link(Game game)
         {
             this.game = game;

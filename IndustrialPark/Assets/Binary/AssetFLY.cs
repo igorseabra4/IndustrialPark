@@ -10,21 +10,32 @@ namespace IndustrialPark
     public class EntryFLY
     {
         public int FrameNumer { get; set; }
-        public Vector3 CameraNormalizedLeft { get; set; }
-        public Vector3 CameraNormalizedUp { get; set; }
-        public Vector3 CameraNormalizedBackward { get; set; }
-        public Vector3 CameraPosition { get; set; }
-        public Vector3 Unknown { get; set; }
+        public WireVector CameraNormalizedRight { get; set; }
+        public WireVector CameraNormalizedUp { get; set; }
+        public WireVector CameraNormalizedBackward { get; set; }
+        public WireVector CameraPosition { get; set; }
+        public AssetSingle ApertureX { get; set; }
+        public AssetSingle ApertureY { get; set; }
+        public AssetSingle Focal { get; set; }
 
-        public EntryFLY() { }
+        public EntryFLY()
+        {
+            CameraNormalizedRight = new WireVector();
+            CameraNormalizedUp = new WireVector();
+            CameraNormalizedBackward = new WireVector();
+            CameraPosition = new WireVector();
+        }
+
         public EntryFLY(BinaryReader binaryReader)
         {
             FrameNumer = binaryReader.ReadInt32();
-            CameraNormalizedLeft = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle());
-            CameraNormalizedUp = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle());
-            CameraNormalizedBackward = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle());
-            CameraPosition = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle());
-            Unknown = new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle());
+            CameraNormalizedRight = new WireVector(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle());
+            CameraNormalizedUp = new WireVector(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle());
+            CameraNormalizedBackward = new WireVector(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle());
+            CameraPosition = new WireVector(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle());
+            ApertureX = binaryReader.ReadSingle();
+            ApertureY = binaryReader.ReadSingle();
+            Focal = binaryReader.ReadSingle();
         }
 
         public byte[] Serialize()
@@ -32,9 +43,9 @@ namespace IndustrialPark
             List<byte> data = new List<byte>();
 
             data.AddRange(BitConverter.GetBytes(FrameNumer));
-            data.AddRange(BitConverter.GetBytes(CameraNormalizedLeft.X));
-            data.AddRange(BitConverter.GetBytes(CameraNormalizedLeft.Y));
-            data.AddRange(BitConverter.GetBytes(CameraNormalizedLeft.Z));
+            data.AddRange(BitConverter.GetBytes(CameraNormalizedRight.X));
+            data.AddRange(BitConverter.GetBytes(CameraNormalizedRight.Y));
+            data.AddRange(BitConverter.GetBytes(CameraNormalizedRight.Z));
             data.AddRange(BitConverter.GetBytes(CameraNormalizedUp.X));
             data.AddRange(BitConverter.GetBytes(CameraNormalizedUp.Y));
             data.AddRange(BitConverter.GetBytes(CameraNormalizedUp.Z));
@@ -44,9 +55,9 @@ namespace IndustrialPark
             data.AddRange(BitConverter.GetBytes(CameraPosition.X));
             data.AddRange(BitConverter.GetBytes(CameraPosition.Y));
             data.AddRange(BitConverter.GetBytes(CameraPosition.Z));
-            data.AddRange(BitConverter.GetBytes(Unknown.X));
-            data.AddRange(BitConverter.GetBytes(Unknown.Y));
-            data.AddRange(BitConverter.GetBytes(Unknown.Z));
+            data.AddRange(BitConverter.GetBytes(ApertureX));
+            data.AddRange(BitConverter.GetBytes(ApertureY));
+            data.AddRange(BitConverter.GetBytes(Focal));
 
             return data.ToArray();
         }
@@ -54,6 +65,14 @@ namespace IndustrialPark
         public override string ToString()
         {
             return $"[{FrameNumer}] - [{CameraPosition}]";
+        }
+
+        public bool NearlySimilar(EntryFLY other)
+        {
+            return CameraPosition.NearEqual(other.CameraPosition) &&
+                CameraNormalizedRight.NearEqual(other.CameraNormalizedRight) &&
+                CameraNormalizedUp.NearEqual(other.CameraNormalizedUp) &&
+                CameraNormalizedBackward.NearEqual(other.CameraNormalizedBackward);
         }
     }
 
