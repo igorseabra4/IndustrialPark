@@ -23,10 +23,10 @@ namespace IndustrialPark
                 DynamicTypeDescriptor dt = new DynamicTypeDescriptor(asset.GetType());
                 asset.SetDynamicProperties(dt);
                 typeDescriptors.Add(dt.FromComponent(asset));
-                labelAssetName.Text += asset.assetName.ToString() + " | ";
             }
 
             propertyGridAsset.SelectedObjects = typeDescriptors.ToArray();
+            labelAssetName.Text = string.Join(" | ", from Asset asset in assets select asset.assetName);
         }
 
         private ArchiveEditorFunctions archive;

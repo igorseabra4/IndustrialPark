@@ -65,8 +65,12 @@ namespace IndustrialPark
             Textures[tnStruct.textureName] = texture;
         }
 
-        public static void RemoveTexture(string textureName)
+        public static void RemoveTexture(string textureName, ArchiveEditorFunctions sender, uint assetID)
         {
+            foreach (var ae in Program.MainForm.archiveEditors)
+                if (ae.archive != sender && ae.archive.ContainsAsset(assetID))
+                    return;
+
             DisposeTexture(textureName);
             Textures.Remove(textureName);
             ReapplyTextures();

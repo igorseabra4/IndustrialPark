@@ -72,7 +72,14 @@ namespace IndustrialPark
 
         public override string ToString() => $"{assetName} [{assetID:X8}]";
 
-        public override int GetHashCode() => assetID.GetHashCode();
+        public override int GetHashCode() => (int)assetID;
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Asset other)
+                return other.GetHashCode() == GetHashCode();
+            return false;
+        }
 
         public virtual void SetDynamicProperties(DynamicTypeDescriptor dt)
         {

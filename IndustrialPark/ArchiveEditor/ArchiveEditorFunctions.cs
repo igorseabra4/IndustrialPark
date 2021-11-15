@@ -15,19 +15,20 @@ namespace IndustrialPark
         public static void AddToRenderableAssets(IRenderableAsset ira)
         {
             lock (renderableAssets)
-                renderableAssets.Add(ira);
-        }
-        public static void RemoveFromRenderableAssets(IRenderableAsset ira)
-        {
-            lock (renderableAssets)
+            {
                 renderableAssets.Remove(ira);
+                renderableAssets.Add(ira);
+            }
         }
 
         public static HashSet<AssetJSP> renderableJSPs = new HashSet<AssetJSP>();
         public static void AddToRenderableJSPs(AssetJSP jsp)
         {
             lock (renderableJSPs)
+            {
+                renderableJSPs.Remove(jsp);
                 renderableJSPs.Add(jsp);
+            }
         }
 
         public static Dictionary<uint, IAssetWithModel> renderingDictionary = new Dictionary<uint, IAssetWithModel>();
@@ -392,7 +393,8 @@ namespace IndustrialPark
 
             if (asset is IRenderableAsset ra)
             {
-                RemoveFromRenderableAssets(ra);
+                lock (renderableAssets)
+                    renderableAssets.Remove(ra);
                 if (ra is AssetJSP bsp)
                     renderableJSPs.Remove(bsp);
                 if (Program.MainForm != null)
@@ -421,7 +423,7 @@ namespace IndustrialPark
             else if (asset is AssetGRSM grsm)
                 grsm.Dispose();
             else if (asset is AssetRWTX rwtx)
-                TextureManager.RemoveTexture(rwtx.Name);
+                TextureManager.RemoveTexture(rwtx.Name, this, rwtx.assetID);
         }
 
         public bool ContainsAsset(uint key)
