@@ -526,13 +526,13 @@ namespace IndustrialPark
             char endl = '\n';
 
             ProgressBar progressBar = new ProgressBar("Verify Archive");
-            progressBar.SetProgressBar(0, DICT.ATOC.AHDRList.Count, 1);
+            progressBar.SetProgressBar(0, assetDictionary.Values.Count, 1);
             progressBar.Show();
 
-            foreach (Section_LHDR LHDR in DICT.LTOC.LHDRList)
-                foreach (uint assetID in LHDR.assetIDlist)
-                    if (!ContainsAsset(assetID))
-                        result += $"Archive: Asset 0x{assetID.ToString("X8")} appears to be present in a layer, but it's not in the AHDR dictionary. This archive is likely unusable." + endl;
+            //foreach (Section_LHDR LHDR in DICT.LTOC.LHDRList)
+            //    foreach (uint assetID in LHDR.assetIDlist)
+            //        if (!ContainsAsset(assetID))
+            //            result += $"Archive: Asset 0x{assetID.ToString("X8")} appears to be present in a layer, but it's not in the AHDR dictionary. This archive is likely unusable." + endl;
 
             List<Asset> ordered = assetDictionary.Values.OrderBy(f => f.assetName).ToList();
             ordered = ordered.OrderBy(f => f.assetType).ToList();
@@ -563,11 +563,11 @@ namespace IndustrialPark
                     asset.Verify(ref resultParam);
 
                     foreach (string s in resultParam)
-                        result += $"[{asset.assetType.ToString()}] {asset.assetName}: " + s + endl;
+                        result += $"[{asset.assetType}] {asset.assetName}: " + s + endl;
                 }
                 catch (Exception e)
                 {
-                    result += $"Failed verification on [{asset.assetType.ToString()}] {asset.assetName}: " + e.Message + endl;
+                    result += $"Failed verification on [{asset.assetType}] {asset.assetName}: " + e.Message + endl;
                 }
 
                 progressBar.PerformStep();
