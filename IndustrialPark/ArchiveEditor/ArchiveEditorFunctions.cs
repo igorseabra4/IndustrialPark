@@ -873,8 +873,11 @@ namespace IndustrialPark
         {
             var assetName = GetUniqueAssetName(AHDR.ADBG.assetName, AHDR.assetID, giveIDregardless, ignoreNumber);
 
-            AHDR.ADBG.assetName = assetName;
-            AHDR.assetID = BKDRHash(assetName);
+            if (assetName != AHDR.ADBG.assetName || AHDR.assetID == 0 || string.IsNullOrEmpty(AHDR.ADBG.assetName))
+            {
+                AHDR.assetID = BKDRHash(assetName);
+                AHDR.ADBG.assetName = assetName;
+            }
 
             return AddAsset(layerIndex, AHDR, game, endianness, setTextureDisplay);
         }

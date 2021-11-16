@@ -35,14 +35,16 @@ namespace IndustrialPark
 
     public class EntryPIPT : GenericAssetDataContainer
     {
-        [Category("PIPT Entry")]
+        private const string categoryName = "PIPT Entry";
+
+        [Category(categoryName)]
         public AssetID ModelAssetID { get; set; }
-        [Category("PIPT Entry")]
+        [Category(categoryName)]
         public FlagBitmask SubObjectBits { get; set; } = IntFlagsDescriptor();
-        [Category("PIPT Entry")]
+        [Category(categoryName)]
         public int PipeFlags { get; set; }
-        [Category("PIPT Entry")]
-        public PiptPreset Preset
+        [Category(categoryName)]
+        public PiptPreset PipeFlags_Preset
         {
             get
             {
@@ -57,7 +59,9 @@ namespace IndustrialPark
             }
         }
 
-        [Category("PIPT Pipe Flags")]
+        private const string categoryNameFlags = "PIPT Pipe Flags";
+
+        [Category(categoryNameFlags)]
         public byte AlphaCompareValue
         {
             get => (byte)((PipeFlags & 0xFF000000) >> 24);
@@ -69,7 +73,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("PIPT Pipe Flags")]
+        [Category(categoryNameFlags)]
         public byte UnknownFlagB
         {
             get => (byte)((PipeFlags & 0x00F00000) >> 20);
@@ -84,7 +88,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("PIPT Pipe Flags")]
+        [Category(categoryNameFlags)]
         public byte UnknownFlagC
         {
             get => (byte)((PipeFlags & 0x000E0000) >> 17);
@@ -99,7 +103,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("PIPT Pipe Flags")]
+        [Category(categoryNameFlags)]
         public bool IgnoreFog
         {
             get => ((PipeFlags & 0x00010000) >> 16) != 0;
@@ -114,7 +118,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("PIPT Pipe Flags")]
+        [Category(categoryNameFlags)]
         public BlendFactorType DestinationBlend
         {
             get => (BlendFactorType)((PipeFlags & 0x0000F000) >> 12);
@@ -129,7 +133,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("PIPT Pipe Flags")]
+        [Category(categoryNameFlags)]
         public BlendFactorType SourceBlend
         {
             get => (BlendFactorType)((PipeFlags & 0x0000F00) >> 8);
@@ -144,7 +148,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("PIPT Pipe Flags")]
+        [Category(categoryNameFlags)]
         public byte LightingMode
         {
             get => (byte)((PipeFlags & 0x000000C0) >> 6);
@@ -159,7 +163,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("PIPT Pipe Flags")]
+        [Category(categoryNameFlags)]
         public byte CullMode
         {
             get => (byte)((PipeFlags & 0x00000030) >> 4);
@@ -174,7 +178,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("PIPT Pipe Flags")]
+        [Category(categoryNameFlags)]
         public byte ZWriteMode
         {
             get => (byte)((PipeFlags & 0x000000C) >> 2);
@@ -189,7 +193,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("PIPT Pipe Flags")]
+        [Category(categoryNameFlags)]
         public byte UnknownFlagJ
         {
             get => (byte)(PipeFlags & 0x00000003);
