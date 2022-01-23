@@ -47,7 +47,7 @@ namespace IndustrialPark
 
             textBoxAssetName.Text = AHDR.ADBG.assetName;
             textBoxAssetFileName.Text = AHDR.ADBG.assetFileName;
-            labelRawDataSize.Text = "Raw Data Size: " + AHDR.fileSize.ToString();
+            labelRawDataSize.Text = "Raw Data Size: " + AHDR.data.Length.ToString();
             textBoxChecksum.Text = "0x" + AHDR.ADBG.checksum.ToString("X8");
         }
 

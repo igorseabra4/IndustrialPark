@@ -433,7 +433,7 @@ namespace IndustrialPark
                     assetName = startCamName;
                     ignoreNumber = true;
                     break;
-                case AssetTemplate.SoundGroup:
+                case AssetTemplate.SoundInfo:
                     assetName = "sound_info";
                     ignoreNumber = true;
                     break;
@@ -644,7 +644,7 @@ namespace IndustrialPark
                 case AssetTemplate.Button_Generic:
                 case AssetTemplate.Button_Red:
                 case AssetTemplate.PressurePlate:
-                    asset = new AssetBUTN(assetName, position, template);
+                    asset = new AssetBUTN(game, assetName, position, template);
                     if (template == AssetTemplate.PressurePlate)
                         PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_BASE", AssetTemplate.PressurePlateBase);
                     break;
@@ -671,7 +671,7 @@ namespace IndustrialPark
                 case AssetTemplate.CollapsePlatform_Planktopolis:
                 case AssetTemplate.CollapsePlatform_ThugTug:
                 case AssetTemplate.CollapsePlatform_Spongeball:
-                    asset = new AssetPLAT(assetName, position, template);
+                    asset = new AssetPLAT(game, assetName, position, template);
                     break;
                 case AssetTemplate.SIMP_Generic:
                 case AssetTemplate.TaxiStand:
@@ -885,11 +885,10 @@ namespace IndustrialPark
                         }
                         else if (template == AssetTemplate.Arf)
                         {
-                            var dogCount = 3;
                             var links = new List<Link>();
-                            for (int i = 0; i < dogCount; i++)
+                            foreach (string i in new string[] { "A", "B", "C" })
                             {
-                                var dog = PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_DOG" + i.ToString(), AssetTemplate.ArfDog);
+                                var dog = PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_DOG_" + i, AssetTemplate.ArfDog);
                                 links.Add(new Link(game)
                                 {
                                     TargetAssetID = dog.assetID,
@@ -902,9 +901,9 @@ namespace IndustrialPark
                         else if (template == AssetTemplate.Tubelet)
                         {
                             var links = new List<Link>();
-                            for (int i = 0; i < 2; i++)
+                            foreach (string i in new string[] { "A", "B" })
                             {
-                                var slave = PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_SLAVE" + i.ToString(), AssetTemplate.TubeletSlave);
+                                var slave = PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_SLAVE_" + i, AssetTemplate.TubeletSlave);
                                 links.Add(new Link(game)
                                 {
                                     TargetAssetID = slave.assetID,
@@ -978,7 +977,7 @@ namespace IndustrialPark
                 case AssetTemplate.TeleportBox:
                     {
                         var mrkr = PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_MRKR", AssetTemplate.Marker);
-                        asset = new DynaGObjectTeleport(assetName, mrkr.assetID);
+                        asset = new DynaGObjectTeleport(assetName, mrkr.assetID, GetMRKR);
                     }
                     break;
                 case AssetTemplate.BungeeHook:

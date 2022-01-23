@@ -1,15 +1,18 @@
-﻿using System.ComponentModel;
+﻿using Newtonsoft.Json;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
     [TypeConverter(typeof(HexUIntTypeConverter))]
     public struct AssetID
     {
-        public AssetID(uint value)
+        [JsonConstructor]
+        public AssetID(uint value = 0)
         {
             this.value = value;
         }
 
+        [JsonRequired]
         private uint value;
 
         public override int GetHashCode() => value.GetHashCode();

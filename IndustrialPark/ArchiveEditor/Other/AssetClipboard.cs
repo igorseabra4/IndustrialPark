@@ -9,11 +9,18 @@ namespace IndustrialPark
         public List<Endianness> endiannesses;
         public List<Section_AHDR> assets;
 
-        public AssetClipboard(List<Game> games, List<Endianness> endiannesses, List<Section_AHDR> assets)
+        public AssetClipboard()
         {
-            this.games = games;
-            this.endiannesses = endiannesses;
-            this.assets = assets;
+            games = new List<Game>();
+            endiannesses = new List<Endianness>();
+            assets = new List<Section_AHDR>();
+        }
+        
+        public void Add(Game game, Endianness endianness, Section_AHDR asset)
+        {
+            games.Add(game);
+            endiannesses.Add(endianness);
+            assets.Add(asset);
         }
     }
 }

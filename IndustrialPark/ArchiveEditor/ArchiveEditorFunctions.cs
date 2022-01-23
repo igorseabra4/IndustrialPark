@@ -741,7 +741,7 @@ namespace IndustrialPark
                 case DynaType.game_object__Ring: return new DynaGObjectRing(AHDR, game, endianness);
                 case DynaType.game_object__RingControl: return new DynaGObjectRingControl(AHDR, game, endianness);
                 case DynaType.game_object__Taxi: return new DynaGObjectTaxi(AHDR, game, endianness);
-                case DynaType.game_object__Teleport: return new DynaGObjectTeleport(AHDR, game, endianness);
+                case DynaType.game_object__Teleport: return new DynaGObjectTeleport(AHDR, game, endianness, GetMRKR);
                 case DynaType.game_object__Turret: return new DynaGObjectTurret(AHDR, game, endianness);
                 case DynaType.game_object__Vent: return new DynaGObjectVent(AHDR, game, endianness);
                 case DynaType.game_object__VentType: return new DynaGObjectVentType(AHDR, game, endianness);
@@ -977,9 +977,7 @@ namespace IndustrialPark
 
         public void CopyAssetsToClipboard()
         {
-            List<Game> copiedGames = new List<Game>();
-            List<Endianness> copiedEndiannesses = new List<Endianness>();
-            List<Section_AHDR> copiedAHDRs = new List<Section_AHDR>();
+            var clipboard = new AssetClipboard();
 
             foreach (Asset asset in currentlySelectedAssets)
             {
@@ -997,12 +995,10 @@ namespace IndustrialPark
                     }
                 }
 
-                copiedGames.Add(asset.game);
-                copiedEndiannesses.Add(asset.endianness);
-                copiedAHDRs.Add(AHDR);
+                clipboard.Add(asset.game, asset.endianness, AHDR);
             }
 
-            Clipboard.SetText(JsonConvert.SerializeObject(new AssetClipboard(copiedGames, copiedEndiannesses, copiedAHDRs), Formatting.Indented));
+            Clipboard.SetText(JsonConvert.SerializeObject(clipboard, Formatting.Indented));
         }
 
         public static bool updateReferencesOnCopy = true;
@@ -1215,6 +1211,13 @@ namespace IndustrialPark
                     if (renderingDictionary.ContainsKey(k) && renderingDictionary[k] is AssetMODL MODL)
                         MODL.SetBlendModes(blendModes[k]);
             }
+        }
+
+        public AssetMRKR GetMRKR(uint MRKR_ID)
+        {
+            if (ContainsAsset(MRKR_ID) && GetFromAssetID(MRKR_ID) is AssetMRKR MRKR)
+                return MRKR;
+            return null;
         }
     }
 }

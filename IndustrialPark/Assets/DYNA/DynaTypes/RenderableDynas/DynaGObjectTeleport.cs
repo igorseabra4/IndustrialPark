@@ -14,9 +14,20 @@ namespace IndustrialPark
         public override string Note => "Version is always 1 or 2. Version 1 does not use CameraAngle.";
 
         [Category(dynaCategoryName)]
-        public AssetID MRKR_ID { get; set; }
+        private uint _mRKR_ID;
+        public AssetID MRKR_ID
+        {
+            get => _mRKR_ID;
+            set
+            {
+                _mRKR_ID = value;
+                CreateTransformMatrix();
+            }
+        }
+
         [Category(dynaCategoryName)]
         public bool Opened { get; set; }
+
         private int _launchAngle;
         [Category(dynaCategoryName)]
         public int LaunchAngle
@@ -31,21 +42,28 @@ namespace IndustrialPark
 
         [Category(dynaCategoryName), Description("Not used in version 1 or Movie.")]
         public int CameraAngle { get; set; }
+
         [Category(dynaCategoryName)]
         public AssetID TargetDYNATeleportID { get; set; }
 
-        public DynaGObjectTeleport(string assetName, uint mrkrId) : base(assetName, DynaType.game_object__Teleport, 2)
+        public DynaGObjectTeleport(string assetName, uint mrkrId, DynaGObjectTeleportGetMRKR getMRKR) : base(assetName, DynaType.game_object__Teleport, 2)
         {
-            MRKR_ID = mrkrId;
+            _mRKR_ID = mrkrId;
+            this.GetMRKR = getMRKR;
         }
 
-        public DynaGObjectTeleport(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__Teleport, game, endianness)
+        public delegate AssetMRKR DynaGObjectTeleportGetMRKR(uint MRKR_ID);
+        private DynaGObjectTeleportGetMRKR GetMRKR;
+
+        public DynaGObjectTeleport(Section_AHDR AHDR, Game game, Endianness endianness, DynaGObjectTeleportGetMRKR getMRKR) : base(AHDR, DynaType.game_object__Teleport, game, endianness)
         {
+            this.GetMRKR = getMRKR;
+
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
 
-                MRKR_ID = reader.ReadUInt32();
+                _mRKR_ID = reader.ReadUInt32();
                 Opened = reader.ReadInt32Bool();
                 _launchAngle = reader.ReadInt32();
                 if (game != Game.Incredibles && Version > 1)
@@ -61,7 +79,7 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(MRKR_ID);
+                writer.Write(_mRKR_ID);
                 writer.Write(Opened ? 1 : 0);
                 writer.Write(_launchAngle);
                 if (game != Game.Incredibles && Version > 1)
@@ -74,7 +92,7 @@ namespace IndustrialPark
 
         public override bool HasReference(uint assetID)
         {
-            if (MRKR_ID == assetID)
+            if (_mRKR_ID == assetID)
                 return true;
             if (TargetDYNATeleportID == assetID)
                 return true;
@@ -84,9 +102,9 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
-            if (MRKR_ID == 0)
+            if (_mRKR_ID == 0)
                 result.Add("Teleport with no MRKR reference");
-            Verify(MRKR_ID, ref result);
+            Verify(_mRKR_ID, ref result);
             if (TargetDYNATeleportID == 0)
                 result.Add("Teleport with no target reference");
             Verify(TargetDYNATeleportID, ref result);
@@ -95,15 +113,7 @@ namespace IndustrialPark
 
         private void ValidateMRKR()
         {
-            if (Program.MainForm != null)
-                foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                    if (ae.archive.ContainsAsset(MRKR_ID) && ae.archive.GetFromAssetID(MRKR_ID) is AssetMRKR MRKR)
-                    {
-                        this.MRKR = MRKR;
-                        this.MRKR.isInvisible = true;
-                        return;
-                    }
-            MRKR = null;
+            MRKR = GetMRKR(_mRKR_ID);
         }
 
         public override AssetSingle PositionX
@@ -111,9 +121,7 @@ namespace IndustrialPark
             get
             {
                 ValidateMRKR();
-                if (MRKR != null)
-                    return MRKR.PositionX;
-                return 0;
+                return MRKR != null ? MRKR.PositionX : 0;
             }
             set
             {
@@ -129,9 +137,7 @@ namespace IndustrialPark
             get
             {
                 ValidateMRKR();
-                if (MRKR != null)
-                    return MRKR.PositionY;
-                return 0;
+                return MRKR != null ? MRKR.PositionY : 0;
             }
             set
             {
@@ -147,9 +153,7 @@ namespace IndustrialPark
             get
             {
                 ValidateMRKR();
-                if (MRKR != null)
-                    return MRKR.PositionZ;
-                return 0;
+                return MRKR != null ? MRKR.PositionZ : 0;
             }
             set
             {
@@ -170,7 +174,6 @@ namespace IndustrialPark
 
         public override void CreateTransformMatrix()
         {
-            ValidateMRKR();
             world = Matrix.RotationY(MathUtil.DegreesToRadians(LaunchAngle)) * Matrix.Translation(PositionX, PositionY, PositionZ);
 
             var model = GetFromRenderingDictionary(_modelAssetID);

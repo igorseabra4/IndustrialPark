@@ -279,7 +279,7 @@ namespace IndustrialPark
             {
                 if (game == Game.Incredibles)
                 {
-                    var SNDIs = (from asset in assetDictionary.Values where asset.assetType == AssetType.SNDI select (AssetSNDI_GCN_V1)asset).ToList();
+                    var SNDIs = (from asset in assetDictionary.Values where asset.assetType == AssetType.SNDI select (AssetSNDI_GCN_V2)asset).ToList();
                     for (int i = 1; i < SNDIs.Count; i++)
                         RemoveAsset(SNDIs[i].assetID);
                     for (int i = 1; i < SNDIs.Count; i++)
@@ -287,7 +287,7 @@ namespace IndustrialPark
                 }
                 else
                 {
-                    var SNDIs = (from asset in assetDictionary.Values where asset.assetType == AssetType.SNDI select (AssetSNDI_GCN_V2)asset).ToList();
+                    var SNDIs = (from asset in assetDictionary.Values where asset.assetType == AssetType.SNDI select (AssetSNDI_GCN_V1)asset).ToList();
                     for (int i = 1; i < SNDIs.Count; i++)
                         RemoveAsset(SNDIs[i].assetID);
                     for (int i = 1; i < SNDIs.Count; i++)
@@ -526,7 +526,7 @@ namespace IndustrialPark
             char endl = '\n';
 
             ProgressBar progressBar = new ProgressBar("Verify Archive");
-            progressBar.SetProgressBar(0, assetDictionary.Values.Count, 1);
+            progressBar.SetProgressBar(0, assetDictionary.Values.Count + 1, 1);
             progressBar.Show();
 
             //foreach (Section_LHDR LHDR in DICT.LTOC.LHDRList)
@@ -539,6 +539,8 @@ namespace IndustrialPark
 
             if (!ContainsAssetWithType(AssetType.JSP))
                 result += $"Archive: Does not contain any JSP asset." + endl;
+
+            progressBar.PerformStep();
 
             foreach (Asset asset in ordered)
             {

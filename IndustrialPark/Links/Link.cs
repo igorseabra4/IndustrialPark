@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using Newtonsoft.Json;
 using System;
 
 namespace IndustrialPark
@@ -23,21 +24,25 @@ namespace IndustrialPark
         public AssetID Parameter2 { get; set; }
         public AssetID Parameter3 { get; set; }
         public AssetID Parameter4 { get; set; }
+        [JsonIgnore]
         public float FloatParameter1
         {
             get => BitConverter.ToSingle(BitConverter.GetBytes(Parameter1), 0);
             set => Parameter1 = BitConverter.ToUInt32(BitConverter.GetBytes(value), 0);
         }
+        [JsonIgnore]
         public float FloatParameter2
         {
             get => BitConverter.ToSingle(BitConverter.GetBytes(Parameter2), 0);
             set => Parameter2 = BitConverter.ToUInt32(BitConverter.GetBytes(value), 0);
         }
+        [JsonIgnore]
         public float FloatParameter3
         {
             get => BitConverter.ToSingle(BitConverter.GetBytes(Parameter3), 0);
             set => Parameter3 = BitConverter.ToUInt32(BitConverter.GetBytes(value), 0);
         }
+        [JsonIgnore]
         public float FloatParameter4
         {
             get => BitConverter.ToSingle(BitConverter.GetBytes(Parameter4), 0);
