@@ -92,25 +92,65 @@ namespace IndustrialPark
                         {
                             assetName = Path.GetFileNameWithoutExtension(filePath) + ".dff";
 
-                            assetData = Path.GetExtension(filePath).ToLower().Equals(".dff") ?
+                            try
+                            {
+                                assetData = Path.GetExtension(filePath).ToLower().Equals(".dff") ?
                                     File.ReadAllBytes(filePath) :
                                     ReadFileMethods.ExportRenderWareFile(
                                         CreateDFFFromAssimp(filePath,
                                         a.checkBoxFlipUVs.Checked,
                                         a.checkBoxIgnoreMeshColors.Checked),
                                         modelRenderWareVersion(game));
+                            } 
+                            catch (ArgumentException)
+                            {
+                                MessageBox.Show("Model could not be imported.\nPlease check that the vertex/triangle counts do not exceed " 
+                                    + TRI_AND_VERTEX_LIMIT + ".", 
+                                    "Error Importing Model",
+                                    MessageBoxButtons.OK, 
+                                    MessageBoxIcon.Error);
+                                return (null, false, false, false, false, false);
+                            } catch (Exception)
+                            {
+                                MessageBox.Show("Model could not be imported.",
+                                    "Error Importing Model",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Error);
+                                return (null, false, false, false, false, false);
+                            }
+                            
                         }
                         else if (assetType == AssetType.BSP)
                         {
                             assetName = Path.GetFileNameWithoutExtension(filePath) + ".bsp";
 
-                            assetData = Path.GetExtension(filePath).ToLower().Equals(".bsp") ?
+                            try
+                            {
+                                assetData = Path.GetExtension(filePath).ToLower().Equals(".bsp") ?
                                     File.ReadAllBytes(filePath) :
                                     ReadFileMethods.ExportRenderWareFile(
                                         CreateBSPFromAssimp(filePath,
                                         a.checkBoxFlipUVs.Checked,
                                         a.checkBoxIgnoreMeshColors.Checked),
                                         modelRenderWareVersion(game));
+                            } catch (ArgumentException)
+                            {
+                                MessageBox.Show("Model could not be imported.\nPlease check that:\n- Vertex/triangle counts do not exceed "
+                                    + TRI_AND_VERTEX_LIMIT + "\n- Number of vertices matches texture coordinate and vertex color counts",
+                                    "Error Importing Model",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Error);
+                                return (null, false, false, false, false, false);
+                            }
+                            catch (Exception)
+                            {
+                                MessageBox.Show("Model could not be imported.",
+                                    "Error Importing Model",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Error);
+                                return (null, false, false, false, false, false);
+                            }
+
                         }
                         else throw new ArgumentException();
 

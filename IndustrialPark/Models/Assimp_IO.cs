@@ -11,6 +11,9 @@ namespace IndustrialPark.Models
 {
     public static class Assimp_IO
     {
+
+        public const int TRI_AND_VERTEX_LIMIT = 65535;
+
         public static string GetImportFilter()
         {
             string[] formats = new AssimpContext().GetSupportedImportFormats();
@@ -71,7 +74,7 @@ namespace IndustrialPark.Models
             int vertexCount = scene.Meshes.Sum(m => m.VertexCount);
             int triangleCount = scene.Meshes.Sum(m => m.FaceCount);
 
-            if (vertexCount > 65535 || triangleCount > 65536)
+            if (vertexCount > TRI_AND_VERTEX_LIMIT || triangleCount > TRI_AND_VERTEX_LIMIT)
                 throw new ArgumentException("Model has too many vertices or triangles. Please import a simpler model.");
 
             var materials = new List<Material_0007>(scene.MaterialCount);
@@ -366,7 +369,7 @@ namespace IndustrialPark.Models
             int vertexCount = scene.Meshes.Sum(m => m.VertexCount);
             int triangleCount = scene.Meshes.Sum(m => m.FaceCount);
 
-            if (vertexCount > 65535 || triangleCount > 65536)
+            if (vertexCount > TRI_AND_VERTEX_LIMIT || triangleCount > TRI_AND_VERTEX_LIMIT)
                 throw new ArgumentException("Model has too many vertices or triangles. Please import a simpler model.");
 
             List<Vertex3> vertices = new List<Vertex3>(vertexCount);
