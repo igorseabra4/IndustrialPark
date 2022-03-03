@@ -76,7 +76,7 @@
             this.groupBox1.Controls.Add(this.numericUpDownX);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(424, 49);
+            this.groupBox1.Size = new System.Drawing.Size(358, 49);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Color (Red, Green, Blue, Alpha)";
@@ -89,9 +89,9 @@
             0,
             0,
             65536});
-            this.numericUpDownW.Location = new System.Drawing.Point(318, 19);
+            this.numericUpDownW.Location = new System.Drawing.Point(266, 19);
             this.numericUpDownW.Name = "numericUpDownW";
-            this.numericUpDownW.Size = new System.Drawing.Size(98, 20);
+            this.numericUpDownW.Size = new System.Drawing.Size(80, 20);
             this.numericUpDownW.TabIndex = 7;
             this.numericUpDownW.Value = new decimal(new int[] {
             1,
@@ -107,15 +107,16 @@
             0,
             0,
             65536});
-            this.numericUpDownZ.Location = new System.Drawing.Point(214, 19);
+            this.numericUpDownZ.Location = new System.Drawing.Point(178, 19);
             this.numericUpDownZ.Name = "numericUpDownZ";
-            this.numericUpDownZ.Size = new System.Drawing.Size(98, 20);
+            this.numericUpDownZ.Size = new System.Drawing.Size(80, 20);
             this.numericUpDownZ.TabIndex = 6;
             this.numericUpDownZ.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
+            this.numericUpDownZ.ValueChanged += new System.EventHandler(this.numericUpDown_ValueChanged);
             // 
             // numericUpDownY
             // 
@@ -125,15 +126,16 @@
             0,
             0,
             65536});
-            this.numericUpDownY.Location = new System.Drawing.Point(110, 19);
+            this.numericUpDownY.Location = new System.Drawing.Point(92, 19);
             this.numericUpDownY.Name = "numericUpDownY";
-            this.numericUpDownY.Size = new System.Drawing.Size(98, 20);
+            this.numericUpDownY.Size = new System.Drawing.Size(80, 20);
             this.numericUpDownY.TabIndex = 5;
             this.numericUpDownY.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
+            this.numericUpDownY.ValueChanged += new System.EventHandler(this.numericUpDown_ValueChanged);
             // 
             // numericUpDownX
             // 
@@ -145,13 +147,14 @@
             65536});
             this.numericUpDownX.Location = new System.Drawing.Point(6, 19);
             this.numericUpDownX.Name = "numericUpDownX";
-            this.numericUpDownX.Size = new System.Drawing.Size(98, 20);
+            this.numericUpDownX.Size = new System.Drawing.Size(80, 20);
             this.numericUpDownX.TabIndex = 4;
             this.numericUpDownX.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
+            this.numericUpDownX.ValueChanged += new System.EventHandler(this.numericUpDown_ValueChanged);
             // 
             // groupBox2
             // 
@@ -199,6 +202,8 @@
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.Text = "Apply Vertex Colors";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ApplyVertexColors_FormClosing);
+            this.Shown += new System.EventHandler(this.ApplyVertexColors_Shown);
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownW)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownZ)).EndInit();
