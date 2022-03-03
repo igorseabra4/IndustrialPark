@@ -69,6 +69,11 @@ namespace IndustrialPark.Models
                 PostProcessSteps.Triangulate |
                 (flipUVs ? PostProcessSteps.FlipUVs : 0);
 
+            // NOTE:
+            // Collada (.dae) files are imported incorrectly by Assimpnet.
+            // The alpha channel in the vertex colors overrides the red channel,
+            // and all the alpha values are set to 1.
+            // See https://github.com/assimp/assimp/issues/1417
             Scene scene = new AssimpContext().ImportFile(fileName, pps);
 
             int vertexCount = scene.Meshes.Sum(m => m.VertexCount);
