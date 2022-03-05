@@ -39,6 +39,7 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.comboBoxOperation = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.colorPickerBtn = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownW)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownZ)).BeginInit();
@@ -49,7 +50,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(355, 117);
+            this.button1.Location = new System.Drawing.Point(361, 145);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 1;
@@ -60,7 +61,7 @@
             // button2
             // 
             this.button2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button2.Location = new System.Drawing.Point(274, 117);
+            this.button2.Location = new System.Drawing.Point(280, 145);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 2;
@@ -70,13 +71,14 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.colorPickerBtn);
             this.groupBox1.Controls.Add(this.numericUpDownW);
             this.groupBox1.Controls.Add(this.numericUpDownZ);
             this.groupBox1.Controls.Add(this.numericUpDownY);
             this.groupBox1.Controls.Add(this.numericUpDownX);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(358, 49);
+            this.groupBox1.Size = new System.Drawing.Size(354, 75);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Color (Red, Green, Blue, Alpha)";
@@ -159,7 +161,7 @@
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.comboBoxOperation);
-            this.groupBox2.Location = new System.Drawing.Point(272, 64);
+            this.groupBox2.Location = new System.Drawing.Point(272, 92);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(164, 47);
             this.groupBox2.TabIndex = 8;
@@ -177,11 +179,21 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 64);
+            this.label1.Location = new System.Drawing.Point(12, 90);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(236, 78);
             this.label1.TabIndex = 9;
             this.label1.Text = resources.GetString("label1.Text");
+            // 
+            // colorPickerBtn
+            // 
+            this.colorPickerBtn.Location = new System.Drawing.Point(237, 46);
+            this.colorPickerBtn.Name = "colorPickerBtn";
+            this.colorPickerBtn.Size = new System.Drawing.Size(109, 23);
+            this.colorPickerBtn.TabIndex = 10;
+            this.colorPickerBtn.Text = "Color Picker...";
+            this.colorPickerBtn.UseVisualStyleBackColor = true;
+            this.colorPickerBtn.Click += new System.EventHandler(this.colorPickerBtn_Click);
             // 
             // ApplyVertexColors
             // 
@@ -189,7 +201,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.button2;
-            this.ClientSize = new System.Drawing.Size(442, 149);
+            this.ClientSize = new System.Drawing.Size(442, 180);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -226,5 +238,6 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.ComboBox comboBoxOperation;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button colorPickerBtn;
     }
 }

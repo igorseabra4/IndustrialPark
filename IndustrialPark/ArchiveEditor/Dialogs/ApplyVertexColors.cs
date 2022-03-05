@@ -9,6 +9,10 @@ namespace IndustrialPark
     {
         SolidBrush colorPreview;
         readonly Graphics previewGraphics;
+        private const int COLOR_PREVIEW_X_POS = 380;
+        private const int COLOR_PREVIEW_Y_POS = 15;
+        private const int COLOR_PREVIEW_SIZE = 50;
+        private const int COLOR_PREVIEW_BORDER_WIDTH = 1;
 
         public ApplyVertexColors()
         {
@@ -47,13 +51,27 @@ namespace IndustrialPark
 
         private void UpdateColorPreview()
         {
+            // Get color from control values
             colorPreview.Color = System.Drawing.Color.FromArgb(
                 255,
                 ClampToByteRange((int)(numericUpDownX.Value * 255)),
                 ClampToByteRange((int)(numericUpDownY.Value * 255)),
                 ClampToByteRange((int)(numericUpDownZ.Value * 255)));
 
-            previewGraphics.FillRectangle(colorPreview, new System.Drawing.Rectangle(380, 15, 50, 50));
+            // TODO: Fix scaling on non-100% display scale for the color preview
+
+            // Draw preview outline
+            previewGraphics.FillRectangle(new SolidBrush(System.Drawing.Color.FromArgb(222, 0, 0, 0)),
+                COLOR_PREVIEW_X_POS - COLOR_PREVIEW_BORDER_WIDTH,
+                COLOR_PREVIEW_Y_POS - COLOR_PREVIEW_BORDER_WIDTH,
+                COLOR_PREVIEW_SIZE + (2 * COLOR_PREVIEW_BORDER_WIDTH),
+                COLOR_PREVIEW_SIZE + (2 * COLOR_PREVIEW_BORDER_WIDTH));
+            // Draw preview
+            previewGraphics.FillRectangle(colorPreview, new System.Drawing.Rectangle(
+                COLOR_PREVIEW_X_POS,
+                COLOR_PREVIEW_Y_POS,
+                COLOR_PREVIEW_SIZE,
+                COLOR_PREVIEW_SIZE));
         }
 
         public static (Vector4?, Operation) GetColor()
@@ -94,6 +112,29 @@ namespace IndustrialPark
         {
             colorPreview.Dispose();
             previewGraphics.Dispose();
+        }
+
+        private void colorPickerBtn_Click(object sender, EventArgs e)
+        {
+            var colorDialog = new ColorDialog()
+            {
+                FullOpen = true,
+                ShowHelp = true,
+                Color = System.Drawing.Color.FromArgb(
+                    255,
+                    ClampToByteRange((int)(numericUpDownX.Value * 255)),
+                    ClampToByteRange((int)(numericUpDownY.Value * 255)),
+                    ClampToByteRange((int)(numericUpDownZ.Value * 255))
+                )
+            };
+
+            // Update the text box color if the user clicks OK 
+            if (colorDialog.ShowDialog() == DialogResult.OK)
+            {
+                numericUpDownX.Value = (decimal)colorDialog.Color.R / 255;
+                numericUpDownY.Value = (decimal)colorDialog.Color.G / 255;
+                numericUpDownZ.Value = (decimal)colorDialog.Color.B / 255;
+            }
         }
     }
 }
