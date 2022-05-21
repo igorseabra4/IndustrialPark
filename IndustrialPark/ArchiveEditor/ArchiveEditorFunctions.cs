@@ -138,7 +138,7 @@ namespace IndustrialPark
         {
             Dispose();
 
-            ProgressBar progressBar = new ProgressBar("Opening Archive");
+            ProgressBar progressBar = new ProgressBar("Opening " + Path.GetFileName(fileName));
 
             if (displayProgressBar)
                 progressBar.Show();

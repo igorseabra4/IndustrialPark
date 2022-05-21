@@ -1152,7 +1152,7 @@ namespace IndustrialPark
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.Name = "MainForm";
-            this.Text = "Industrial Park Fork v1.0";
+            this.Text = "Industrial Park Fork 1.1";
             this.Deactivate += new System.EventHandler(this.MainForm_Deactivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);

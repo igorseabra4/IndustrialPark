@@ -74,7 +74,7 @@ namespace IndustrialPark
 
             // Program name and version
             builder.Append("Industrial Park Fork ");
-            builder.Append("1.0");
+            builder.Append("1.1");
 
             // Prevents a crash if form is updated from a different thread.
             if (InvokeRequired)
@@ -117,7 +117,11 @@ namespace IndustrialPark
                     System.Diagnostics.Process.Start(Application.StartupPath + "/IndustrialPark.exe");
                     return;
                 }
-                MessageBox.Show("It appears this is your first time using Industrial Park.\nPlease consult the documentation on the BFBB Modding Wiki to understand how to use the tool if you haven't already.\nAlso, be sure to check individual asset pages if you're not sure what one of them or their settings do.");
+                MessageBox.Show(
+                    "It appears this is your first time using Industrial Park.\nPlease consult the documentation on the Heavy Iron Modding Wiki to understand how to use the tool if you haven't already.\nAlso, be sure to check individual asset pages if you're not sure what one of them or their settings do.",
+                    "Welcome!",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
                 Program.AboutBox.Show();
             }
 
