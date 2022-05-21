@@ -243,7 +243,10 @@ namespace IndustrialPark
             archive.Dispose();
 
             if (!standalone)
+            {
                 Program.MainForm.CloseArchiveEditor(this);
+                Program.MainForm.UpdateTitleBar();
+            }
             Close();
         }
 

@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using SharpDX;
 using SharpDX.Direct3D11;
 using System;
+using System.Text;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -34,6 +35,57 @@ namespace IndustrialPark
             ArchiveEditorFunctions.PopulateTemplateMenusAt(toolStripMenuItem_Templates, TemplateToolStripItemClick);
 
             renderer = new SharpRenderer(renderPanel);
+        }
+
+        private delegate void SafeCallDelegate(string text);
+
+        public void UpdateTitleBar()
+        {
+            char startOfArchiveList = '[';
+            char endOfArchiveList = ']';
+            char archiveDelimiter = ',';
+            char unsavedChanges = '*';
+
+            StringBuilder builder = new StringBuilder();
+
+            if (archiveEditors.Count > 0)
+            {
+                builder.Append(startOfArchiveList);
+                for (int i = 0; i < archiveEditors.Count; i++)
+                {
+   
+                    builder.Append(Path.GetFileName(archiveEditors[i].GetCurrentlyOpenFileName()));
+
+                    // Unsaved changes
+                    if (archiveEditors[i].archive.UnsavedChanges)
+                    {
+                        builder.Append(unsavedChanges);
+                    }
+                    
+                    // Separator
+                    if (i < archiveEditors.Count - 1)
+                    {
+                        builder.Append(archiveDelimiter + " ");
+                    }
+                }
+                builder.Append(endOfArchiveList);
+                builder.Append(" - ");
+            }
+
+            // Program name and version
+            builder.Append("Industrial Park Fork ");
+            builder.Append("1.0");
+
+            // Prevents a crash if form is updated from a different thread.
+            if (InvokeRequired)
+            {
+                Action<string> updateTitleSafe = (string s) => Text = s;
+                Invoke(updateTitleSafe, builder.ToString());
+            } else
+            {
+                Text = builder.ToString();
+            }
+
         }
 
         private void StartRenderer()
@@ -71,6 +123,7 @@ namespace IndustrialPark
 
             SetProjectToolStripStatusLabel();
             StartRenderer();
+            UpdateTitleBar();
         }
 
         private void ApplyIPSettings(IPSettings settings)
@@ -686,13 +739,25 @@ namespace IndustrialPark
             tempMenuItem.Click += new EventHandler(ToolStripClick);
 
             archiveEditorToolStripMenuItem.DropDownItems.Add(tempMenuItem);
+            temp.archive.ChangesMade += UpdateTitleBar;
+            UpdateTitleBar();
         }
 
         public void ToolStripClick(object sender, EventArgs e)
         {
-            var ae = archiveEditors[archiveEditorToolStripMenuItem.DropDownItems.IndexOf(sender as ToolStripItem) - 2];
+            int numOfDropDownItemsBeforeArchives = 2;
 
+            var ae = archiveEditors[
+                archiveEditorToolStripMenuItem.DropDownItems.IndexOf(sender as ToolStripItem) 
+                - numOfDropDownItemsBeforeArchives];
+
+            // 0 = new archive
+            // 1 = separator
+            // 2+ = archives
+
+            
             ae.Show();
+
             ae.WindowState = FormWindowState.Normal;
         }
 
@@ -1826,6 +1891,16 @@ namespace IndustrialPark
                 }
                 MessageBox.Show("Finished");
             }
+        }
+
+        private void closeAllArchivesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void closeAllArchivesToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
