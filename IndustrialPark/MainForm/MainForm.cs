@@ -178,7 +178,11 @@ namespace IndustrialPark
         {
             if (UnsavedChanges())
             {
-                DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                DialogResult result = MessageBox.Show(
+                    "You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?", 
+                    "Warning", 
+                    MessageBoxButtons.YesNoCancel, 
+                    MessageBoxIcon.Warning);
 
                 if (result == DialogResult.Yes)
                     SaveAllChanges();
@@ -592,7 +596,8 @@ namespace IndustrialPark
                 float x = ((e.X - renderPanel.ClientRectangle.X) * 640f / renderPanel.ClientRectangle.Width);
                 float y = ((e.Y - renderPanel.ClientRectangle.Y) * 480f / renderPanel.ClientRectangle.Height);
 
-                SetToolStripStatusLabel(string.Format("Position: [{0:0.0000}, {1:0.0000}]", x, y) + " FPS: " + $"{renderer.sharpFPS.FPS:0.0000}");
+                SetToolStripStatusLabel(string.Format("Position: [{0:0.0000}, {1:0.0000}]", x, y)
+                    + " FPS: "+ $"{renderer.sharpFPS.FPS:0.0000}");
             }
             else
             {
@@ -609,6 +614,11 @@ namespace IndustrialPark
                     {
                         renderer.Camera.AddYaw(MathUtil.DegreesToRadians(e.X - oldMousePosition.X));
                         renderer.Camera.AddPitch(MathUtil.DegreesToRadians(e.Y - oldMousePosition.Y));
+                        // Clamp camera pitch so it doesn't loop around
+                        float pitchPadding = 0.01f;
+                        renderer.Camera.Pitch = MathUtil.Clamp(renderer.Camera.Pitch,
+                            -90 + pitchPadding,
+                            90 - pitchPadding);
                     }
                     if (e.Button == MouseButtons.Right && PressedKeys.Contains(Keys.ControlKey))
                     {
@@ -721,6 +731,11 @@ namespace IndustrialPark
 
             if (PressedKeys.Contains(Keys.R))
                 renderer.Camera.Reset();
+
+            float pitchPadding = 0.01f;
+            renderer.Camera.Pitch = MathUtil.Clamp(renderer.Camera.Pitch,
+                -90 + pitchPadding,
+                90 - pitchPadding);
         }
 
         public List<ArchiveEditor> archiveEditors = new List<ArchiveEditor>();
