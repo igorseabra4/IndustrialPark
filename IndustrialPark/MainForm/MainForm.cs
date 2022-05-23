@@ -688,6 +688,13 @@ namespace IndustrialPark
                 saveAllOpenHIPsToolStripMenuItem_Click(sender, e);
             else if (e.KeyCode == Keys.F5)
                 TryToRunGame();
+
+            if (PressedKeys.Contains(Keys.S) 
+                && PressedKeys.Contains(Keys.ControlKey)
+                && PressedKeys.Contains(Keys.ShiftKey))
+            {
+                saveAllOpenHIPsToolStripMenuItem_Click(sender, e);
+            }
         }
 
         private void MainForm_KeyUp(object sender, KeyEventArgs e)
