@@ -1261,5 +1261,47 @@ namespace IndustrialPark
                     }
             }
         }
+
+        private HashSet<Keys> PressedKeys = new HashSet<Keys>();
+
+        private void ArchiveEditor_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!PressedKeys.Contains(e.KeyCode))
+                PressedKeys.Add(e.KeyCode);
+
+            if (PressedKeys.Contains(Keys.ControlKey) 
+                && PressedKeys.Contains(Keys.S))
+            {
+                Save();
+            }
+
+            if (PressedKeys.Contains(Keys.ControlKey)
+                && PressedKeys.Contains(Keys.N))
+            {
+                newToolStripMenuItem_Click(sender, e);
+            }
+
+            if (PressedKeys.Contains(Keys.ControlKey)
+                && PressedKeys.Contains(Keys.O))
+            {
+                openToolStripMenuItem_Click(sender, e);
+            }
+
+            if (PressedKeys.Contains(Keys.ControlKey)
+                && PressedKeys.Contains(Keys.W))
+            {
+                closeToolStripMenuItem_Click(sender, e);
+            }
+        }
+
+        private void ArchiveEditor_KeyUp(object sender, KeyEventArgs e)
+        {
+            PressedKeys.Remove(e.KeyCode);
+        }
+
+        private void ArchiveEditor_Deactivate(object sender, EventArgs e)
+        {
+            PressedKeys.Clear();
+        }
     }
 }
