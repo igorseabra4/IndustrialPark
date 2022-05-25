@@ -49,7 +49,7 @@
             this.groupBox1.Controls.Add(this.listBoxMaterials);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(170, 354);
+            this.groupBox1.Size = new System.Drawing.Size(170, 383);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Materials";
@@ -60,15 +60,15 @@
             this.listBoxMaterials.Location = new System.Drawing.Point(6, 19);
             this.listBoxMaterials.Name = "listBoxMaterials";
             this.listBoxMaterials.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBoxMaterials.Size = new System.Drawing.Size(158, 329);
+            this.listBoxMaterials.Size = new System.Drawing.Size(158, 355);
             this.listBoxMaterials.TabIndex = 1;
             this.listBoxMaterials.SelectedIndexChanged += new System.EventHandler(this.listBoxMaterials_SelectedIndexChanged);
             // 
             // buttonOK
             // 
-            this.buttonOK.Location = new System.Drawing.Point(18, 372);
+            this.buttonOK.Location = new System.Drawing.Point(318, 401);
             this.buttonOK.Name = "buttonOK";
-            this.buttonOK.Size = new System.Drawing.Size(76, 23);
+            this.buttonOK.Size = new System.Drawing.Size(91, 23);
             this.buttonOK.TabIndex = 18;
             this.buttonOK.Text = "OK";
             this.buttonOK.UseVisualStyleBackColor = true;
@@ -77,9 +77,9 @@
             // buttonCancel
             // 
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(100, 372);
+            this.buttonCancel.Location = new System.Drawing.Point(415, 401);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(76, 23);
+            this.buttonCancel.Size = new System.Drawing.Size(91, 23);
             this.buttonCancel.TabIndex = 19;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
@@ -158,7 +158,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(520, 402);
+            this.ClientSize = new System.Drawing.Size(520, 432);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.propertyGridTextureInfo);
             this.Controls.Add(this.groupBox2);
