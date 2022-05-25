@@ -71,25 +71,25 @@
             this.buttonImportRawData.Name = "buttonImportRawData";
             this.buttonImportRawData.Size = new System.Drawing.Size(190, 23);
             this.buttonImportRawData.TabIndex = 4;
-            this.buttonImportRawData.Text = "Import";
+            this.buttonImportRawData.Text = "Select Models...";
             this.buttonImportRawData.UseVisualStyleBackColor = true;
             this.buttonImportRawData.Click += new System.EventHandler(this.buttonImportRawData_Click);
             // 
             // buttonOK
             // 
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(116, 359);
+            this.buttonOK.Location = new System.Drawing.Point(18, 359);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(92, 23);
             this.buttonOK.TabIndex = 5;
-            this.buttonOK.Text = "OK";
+            this.buttonOK.Text = "Import";
             this.buttonOK.UseVisualStyleBackColor = true;
             this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
             // 
             // buttonCancel
             // 
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(18, 359);
+            this.buttonCancel.Location = new System.Drawing.Point(116, 359);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(92, 23);
             this.buttonCancel.TabIndex = 6;
