@@ -35,6 +35,8 @@ namespace IndustrialPark
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.archiveEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importLevelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.closeAllEditorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.projectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -167,7 +169,7 @@ namespace IndustrialPark
             this.menuStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1263, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1264, 23);
             this.menuStrip1.TabIndex = 2;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -175,17 +177,35 @@ namespace IndustrialPark
             // 
             this.archiveEditorToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripMenuItem,
+            this.importLevelToolStripMenuItem,
+            this.closeAllEditorsToolStripMenuItem,
             this.toolStripSeparator3});
             this.archiveEditorToolStripMenuItem.Name = "archiveEditorToolStripMenuItem";
-            this.archiveEditorToolStripMenuItem.Size = new System.Drawing.Size(93, 20);
+            this.archiveEditorToolStripMenuItem.Size = new System.Drawing.Size(93, 19);
             this.archiveEditorToolStripMenuItem.Text = "&Archive Editor";
             // 
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.newToolStripMenuItem.Text = "Open &New";
+            this.newToolStripMenuItem.Text = "&New Editor";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
+            // 
+            // importLevelToolStripMenuItem
+            // 
+            this.importLevelToolStripMenuItem.Enabled = false;
+            this.importLevelToolStripMenuItem.Name = "importLevelToolStripMenuItem";
+            this.importLevelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.importLevelToolStripMenuItem.Text = "&Import Level...";
+            this.importLevelToolStripMenuItem.Click += new System.EventHandler(this.importLevelToolStripMenuItem_Click);
+            // 
+            // closeAllEditorsToolStripMenuItem
+            // 
+            this.closeAllEditorsToolStripMenuItem.Enabled = false;
+            this.closeAllEditorsToolStripMenuItem.Name = "closeAllEditorsToolStripMenuItem";
+            this.closeAllEditorsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.closeAllEditorsToolStripMenuItem.Text = "&Close All Editors";
+            this.closeAllEditorsToolStripMenuItem.Click += new System.EventHandler(this.closeAllEditorsToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
@@ -203,7 +223,7 @@ namespace IndustrialPark
             this.autoSaveOnClosingToolStripMenuItem,
             this.autoLoadOnStartupToolStripMenuItem});
             this.projectToolStripMenuItem.Name = "projectToolStripMenuItem";
-            this.projectToolStripMenuItem.Size = new System.Drawing.Size(56, 20);
+            this.projectToolStripMenuItem.Size = new System.Drawing.Size(56, 19);
             this.projectToolStripMenuItem.Text = "&Project";
             // 
             // newToolStripMenuItem1
@@ -274,7 +294,7 @@ namespace IndustrialPark
             this.replaceAssetsOnPasteToolStripMenuItem,
             this.useLegacyAssetIDFormatToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 19);
             this.optionsToolStripMenuItem.Text = "&Options";
             // 
             // viewConfigToolStripMenuItem
@@ -386,14 +406,14 @@ namespace IndustrialPark
             this.discordRichPresenceToolStripMenuItem,
             this.aboutToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 19);
             this.toolsToolStripMenuItem.Text = "&Tools";
             // 
             // saveAllOpenHIPsToolStripMenuItem
             // 
             this.saveAllOpenHIPsToolStripMenuItem.Name = "saveAllOpenHIPsToolStripMenuItem";
             this.saveAllOpenHIPsToolStripMenuItem.Size = new System.Drawing.Size(271, 22);
-            this.saveAllOpenHIPsToolStripMenuItem.Text = "Save All Open HIPs (F4)";
+            this.saveAllOpenHIPsToolStripMenuItem.Text = "Save All Open HIPs (Ctrl + Shift + S)";
             this.saveAllOpenHIPsToolStripMenuItem.Click += new System.EventHandler(this.saveAllOpenHIPsToolStripMenuItem_Click);
             // 
             // runGameF5ToolStripMenuItem
@@ -506,7 +526,7 @@ namespace IndustrialPark
             this.hideInvisibleMeshesToolStripMenuItem,
             this.movementPreviewToolStripMenuItem});
             this.displayToolStripMenuItem.Name = "displayToolStripMenuItem";
-            this.displayToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
+            this.displayToolStripMenuItem.Size = new System.Drawing.Size(57, 19);
             this.displayToolStripMenuItem.Text = "&Display";
             // 
             // assetTypesToolStripMenuItem
@@ -975,7 +995,7 @@ namespace IndustrialPark
             this.openFolderToolStripMenuItem,
             this.dynaNameSearcherToolStripMenuItem});
             this.researchToolStripMenuItem.Name = "researchToolStripMenuItem";
-            this.researchToolStripMenuItem.Size = new System.Drawing.Size(124, 20);
+            this.researchToolStripMenuItem.Size = new System.Drawing.Size(124, 19);
             this.researchToolStripMenuItem.Text = "&Research/Advanced";
             // 
             // assetIDGeneratorToolStripMenuItem
@@ -1022,9 +1042,9 @@ namespace IndustrialPark
             this.toolStripStatusLabelProject,
             this.toolStripStatusLabel3,
             this.toolStripStatusLabelTemplate});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 816);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 659);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1263, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1264, 22);
             this.statusStrip1.TabIndex = 3;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -1059,9 +1079,9 @@ namespace IndustrialPark
             // renderPanel
             // 
             this.renderPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.renderPanel.Location = new System.Drawing.Point(0, 24);
+            this.renderPanel.Location = new System.Drawing.Point(0, 23);
             this.renderPanel.Name = "renderPanel";
-            this.renderPanel.Size = new System.Drawing.Size(1263, 792);
+            this.renderPanel.Size = new System.Drawing.Size(1264, 636);
             this.renderPanel.TabIndex = 4;
             this.renderPanel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.renderPanel_MouseClick);
             this.renderPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.renderPanel_MouseDown);
@@ -1146,7 +1166,7 @@ namespace IndustrialPark
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1263, 838);
+            this.ClientSize = new System.Drawing.Size(1264, 681);
             this.Controls.Add(this.renderPanel);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
@@ -1293,6 +1313,8 @@ namespace IndustrialPark
         private ToolStripMenuItem nPCToolStripMenuItem;
         private ToolStripMenuItem openFolderToolStripMenuItem;
         private ToolStripMenuItem dynaNameSearcherToolStripMenuItem;
+        private ToolStripMenuItem importLevelToolStripMenuItem;
+        private ToolStripMenuItem closeAllEditorsToolStripMenuItem;
     }
 }
 

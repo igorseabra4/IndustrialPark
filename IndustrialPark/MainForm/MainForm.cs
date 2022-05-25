@@ -74,8 +74,8 @@ namespace IndustrialPark
 
             // Program name and version
             builder.Append("Industrial Park Fork ");
-            // I would use IPVersion here but it screws up the auto-updater if I set the version to 1.1
-            builder.Append("1.1");
+            // I would use IPVersion here but it screws up the auto-updater if i change the version
+            builder.Append("1.2");
 
             // Prevents a crash if form is updated from a different thread.
             if (InvokeRequired)
@@ -301,7 +301,7 @@ namespace IndustrialPark
         private void SaveProject(string fileName)
         {
             if (string.IsNullOrWhiteSpace(fileName))
-                fileName = Application.StartupPath + "/default_project.json";
+                fileName = Application.StartupPath + "\\default_project.json";
             currentProjectPath = fileName;
             SaveProject();
         }
@@ -653,7 +653,7 @@ namespace IndustrialPark
                 ae.MouseMoveGeneric(renderer.viewProjection, deltaX, deltaY, PressedKeys.Contains(Keys.T));
         }
 
-        private HashSet<Keys> PressedKeys = new HashSet<Keys>();
+        private readonly HashSet<Keys> PressedKeys = new HashSet<Keys>();
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
@@ -696,6 +696,52 @@ namespace IndustrialPark
             {
                 saveAllOpenHIPsToolStripMenuItem_Click(sender, e);
             }
+
+            // Close all forms that are not Main Form/Archive Editors
+            if (PressedKeys.Contains(Keys.ControlKey) 
+                && PressedKeys.Contains(Keys.ShiftKey)
+                && PressedKeys.Contains(Keys.H))
+            {
+                var openForms = Application.OpenForms;
+                var formsToClose = new List<Form>();
+
+                for (int i = 0; i < openForms.Count; i++)
+                {
+                    if (openForms[i].GetType() != typeof(MainForm) 
+                        && openForms[i].GetType() != typeof(ArchiveEditor))
+                    {
+                        formsToClose.Add(openForms[i]);
+                    }
+                }
+
+                foreach (Form form in formsToClose)
+                {
+                    form.Close();
+                }
+            }
+
+            // in enum, Keys.D1 through Keys.D9 are numbers 49 to 57.
+            int numberKeyOffset = 49;
+            var editorsToShow = new List<Form>();
+
+            // Open archive editors with ctrl and 1-9
+            if (PressedKeys.Contains(Keys.ControlKey))
+            {
+                foreach (var item in PressedKeys)
+                {
+                    if ((int)item >= numberKeyOffset
+                        && (int)item <= numberKeyOffset + 8
+                        && (int)item - numberKeyOffset < archiveEditors.Count)
+                    {
+                        editorsToShow.Add(archiveEditors[(int)item - numberKeyOffset]);
+                    }
+                }
+
+                foreach (var form in editorsToShow)
+                {
+                    form.Show();
+                }
+            }
         }
 
         private void MainForm_KeyUp(object sender, KeyEventArgs e)
@@ -730,11 +776,12 @@ namespace IndustrialPark
             else if (PressedKeys.Contains(Keys.W))
                 renderer.Camera.AddPositionForward(0.25f);
 
-            if (PressedKeys.Contains(Keys.S) & PressedKeys.Contains(Keys.ControlKey))
+            // Added extra conditions to stop camera moving when saving all archive editors
+            if (PressedKeys.Contains(Keys.S) & PressedKeys.Contains(Keys.ControlKey) & !PressedKeys.Contains(Keys.ShiftKey))
                 renderer.Camera.AddPitch(0.05f);
-            else if (PressedKeys.Contains(Keys.S) & PressedKeys.Contains(Keys.ShiftKey))
+            else if (PressedKeys.Contains(Keys.S) & PressedKeys.Contains(Keys.ShiftKey) & !PressedKeys.Contains(Keys.ControlKey))
                 renderer.Camera.AddPositionUp(-0.25f);
-            else if (PressedKeys.Contains(Keys.S))
+            else if (PressedKeys.Contains(Keys.S) & !PressedKeys.Contains(Keys.ShiftKey) & !PressedKeys.Contains(Keys.ControlKey))
                 renderer.Camera.AddPositionForward(-0.25f);
 
             if (PressedKeys.Contains(Keys.R))
@@ -745,7 +792,7 @@ namespace IndustrialPark
                 -90 + pitchPadding,
                 90 - pitchPadding);
         }
-
+        
         public List<ArchiveEditor> archiveEditors = new List<ArchiveEditor>();
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
@@ -767,12 +814,19 @@ namespace IndustrialPark
 
             archiveEditorToolStripMenuItem.DropDownItems.Add(tempMenuItem);
             temp.archive.ChangesMade += UpdateTitleBar;
+            temp.EditorClosed += _updateCloseAllArchiveMenuItem;
             UpdateTitleBar();
+            closeAllEditorsToolStripMenuItem.Enabled = true;
+        }
+
+        private void  _updateCloseAllArchiveMenuItem()
+        {
+            closeAllEditorsToolStripMenuItem.Enabled = archiveEditors.Count > 0;
         }
 
         public void ToolStripClick(object sender, EventArgs e)
         {
-            int numOfDropDownItemsBeforeArchives = 2;
+            int numOfDropDownItemsBeforeArchives = 4;
 
             var ae = archiveEditors[
                 archiveEditorToolStripMenuItem.DropDownItems.IndexOf(sender as ToolStripItem) 
@@ -790,13 +844,13 @@ namespace IndustrialPark
 
         public void SetToolStripItemName(ArchiveEditor sender, string newName)
         {
-            archiveEditorToolStripMenuItem.DropDownItems[archiveEditors.IndexOf(sender) + 2].Text = newName;
+            archiveEditorToolStripMenuItem.DropDownItems[archiveEditors.IndexOf(sender) + 4].Text = newName;
         }
 
         public void CloseArchiveEditor(ArchiveEditor sender)
         {
             int index = archiveEditors.IndexOf(sender);
-            archiveEditorToolStripMenuItem.DropDownItems.RemoveAt(index + 2);
+            archiveEditorToolStripMenuItem.DropDownItems.RemoveAt(index + 4);
             archiveEditors.RemoveAt(index);
         }
 
@@ -916,7 +970,6 @@ namespace IndustrialPark
                 "V: cycle between gizmos\n" +
                 "Z: toggle mouse mode\n" +
                 "F1: displays the View Config box\n" +
-                "F4: save all open HIPs\n" +
                 "F5: attempt to run game\n" +
                 "Delete: delete selected assets\n" +
                 "\n" +
@@ -929,6 +982,10 @@ namespace IndustrialPark
                 "Shift + Right click to place a template\n" +
                 "Ctrl + Right click and drag to pan (move view up, left, down, right)\n" +
                 "Mouse mode (Z): similar to a first person camera. The view rotates automatically as you move the mouse. Use the keyboard to move around.\n" +
+                "\n" +
+                "Ctrl + Shift + S or F4: Save all open editors\n" +
+                "Ctrl + Shift + H: Close all windows excluding archive editors\n" +
+                "Ctrl + 1 to 9: Open the corresponding archive editor's window\n" +
                 "\n" +
                 "Please consult the Industrial Park user guide on Heavy Iron Modding for more information");
         }
@@ -1413,7 +1470,7 @@ namespace IndustrialPark
                 UnselectTemplateButtonRecursive(toolStripMenuItem_Templates);
                 ArchiveEditorFunctions.CurrentAssetTemplate = AssetTemplate.UserTemplate;
                 ArchiveEditorFunctions.CurrentUserTemplate = toolStripComboBoxUserTemplate.SelectedItem.ToString();
-                toolStripStatusLabelTemplate.Text = $"Template: {toolStripComboBoxUserTemplate.SelectedItem.ToString()} (User)";
+                toolStripStatusLabelTemplate.Text = $"Template: {toolStripComboBoxUserTemplate.SelectedItem} (User)";
             }
         }
 
@@ -1928,6 +1985,36 @@ namespace IndustrialPark
         private void closeAllArchivesToolStripMenuItem1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void importLevelToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ImportLevel level = new ImportLevel();
+
+            level.Show();
+        }
+
+        private void closeAllEditorsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (UnsavedChanges())
+            {
+                DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+
+                if (result == DialogResult.Yes)
+                    SaveAllChanges();
+                else if (result == DialogResult.Cancel)
+                    return;
+            }
+
+            ArchiveEditor[] editorsToClose = archiveEditors.ToArray();
+
+            // close all editors
+            foreach (var editor in editorsToClose)
+            {
+                editor.CloseArchiveEditor();
+            }
+
+            closeAllEditorsToolStripMenuItem.Enabled = false;
         }
     }
 }
