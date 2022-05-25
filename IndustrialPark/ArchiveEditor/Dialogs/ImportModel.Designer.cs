@@ -42,8 +42,12 @@
             this.checkBoxIgnoreMeshColors = new System.Windows.Forms.CheckBox();
             this.checkBoxLedgeGrab = new System.Windows.Forms.CheckBox();
             this.checkBoxSolidSimps = new System.Windows.Forms.CheckBox();
+            this.grpImportSettings = new System.Windows.Forms.GroupBox();
+            this.grpSIMP = new System.Windows.Forms.GroupBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.grpImportSettings.SuspendLayout();
+            this.grpSIMP.SuspendLayout();
             this.SuspendLayout();
             // 
             // comboBoxAssetTypes
@@ -51,16 +55,16 @@
             this.comboBoxAssetTypes.FormattingEnabled = true;
             this.comboBoxAssetTypes.Location = new System.Drawing.Point(6, 19);
             this.comboBoxAssetTypes.Name = "comboBoxAssetTypes";
-            this.comboBoxAssetTypes.Size = new System.Drawing.Size(190, 21);
+            this.comboBoxAssetTypes.Size = new System.Drawing.Size(248, 21);
             this.comboBoxAssetTypes.TabIndex = 1;
             this.comboBoxAssetTypes.SelectedIndexChanged += new System.EventHandler(this.comboBoxAssetTypes_SelectedIndexChanged);
             // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.comboBoxAssetTypes);
-            this.groupBox1.Location = new System.Drawing.Point(12, 211);
+            this.groupBox1.Location = new System.Drawing.Point(225, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(202, 50);
+            this.groupBox1.Size = new System.Drawing.Size(260, 50);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Asset Type";
@@ -78,7 +82,7 @@
             // buttonOK
             // 
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(18, 359);
+            this.buttonOK.Location = new System.Drawing.Point(295, 231);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(92, 23);
             this.buttonOK.TabIndex = 5;
@@ -89,7 +93,7 @@
             // buttonCancel
             // 
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(116, 359);
+            this.buttonCancel.Location = new System.Drawing.Point(393, 231);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(92, 23);
             this.buttonCancel.TabIndex = 6;
@@ -101,7 +105,7 @@
             this.groupBox2.Controls.Add(this.listBox1);
             this.groupBox2.Location = new System.Drawing.Point(12, 41);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(202, 164);
+            this.groupBox2.Size = new System.Drawing.Size(202, 213);
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Assets";
@@ -111,14 +115,14 @@
             this.listBox1.FormattingEnabled = true;
             this.listBox1.Location = new System.Drawing.Point(6, 19);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(190, 134);
+            this.listBox1.Size = new System.Drawing.Size(190, 186);
             this.listBox1.TabIndex = 9;
             this.listBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listBox1_KeyDown);
             // 
             // checkBoxFlipUVs
             // 
             this.checkBoxFlipUVs.AutoSize = true;
-            this.checkBoxFlipUVs.Location = new System.Drawing.Point(18, 267);
+            this.checkBoxFlipUVs.Location = new System.Drawing.Point(15, 19);
             this.checkBoxFlipUVs.Name = "checkBoxFlipUVs";
             this.checkBoxFlipUVs.Size = new System.Drawing.Size(65, 17);
             this.checkBoxFlipUVs.TabIndex = 7;
@@ -130,7 +134,7 @@
             this.checkBoxOverwrite.AutoSize = true;
             this.checkBoxOverwrite.Checked = true;
             this.checkBoxOverwrite.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxOverwrite.Location = new System.Drawing.Point(137, 336);
+            this.checkBoxOverwrite.Location = new System.Drawing.Point(150, 37);
             this.checkBoxOverwrite.Name = "checkBoxOverwrite";
             this.checkBoxOverwrite.Size = new System.Drawing.Size(71, 17);
             this.checkBoxOverwrite.TabIndex = 12;
@@ -140,7 +144,7 @@
             // checkBoxGenSimps
             // 
             this.checkBoxGenSimps.AutoSize = true;
-            this.checkBoxGenSimps.Location = new System.Drawing.Point(18, 290);
+            this.checkBoxGenSimps.Location = new System.Drawing.Point(15, 19);
             this.checkBoxGenSimps.Name = "checkBoxGenSimps";
             this.checkBoxGenSimps.Size = new System.Drawing.Size(104, 17);
             this.checkBoxGenSimps.TabIndex = 13;
@@ -151,7 +155,7 @@
             // checkBoxEnableVcolors
             // 
             this.checkBoxEnableVcolors.AutoSize = true;
-            this.checkBoxEnableVcolors.Location = new System.Drawing.Point(124, 290);
+            this.checkBoxEnableVcolors.Location = new System.Drawing.Point(150, 19);
             this.checkBoxEnableVcolors.Name = "checkBoxEnableVcolors";
             this.checkBoxEnableVcolors.Size = new System.Drawing.Size(84, 17);
             this.checkBoxEnableVcolors.TabIndex = 14;
@@ -163,7 +167,7 @@
             this.checkBoxIgnoreMeshColors.AutoSize = true;
             this.checkBoxIgnoreMeshColors.Checked = true;
             this.checkBoxIgnoreMeshColors.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxIgnoreMeshColors.Location = new System.Drawing.Point(91, 267);
+            this.checkBoxIgnoreMeshColors.Location = new System.Drawing.Point(15, 37);
             this.checkBoxIgnoreMeshColors.Name = "checkBoxIgnoreMeshColors";
             this.checkBoxIgnoreMeshColors.Size = new System.Drawing.Size(117, 17);
             this.checkBoxIgnoreMeshColors.TabIndex = 15;
@@ -174,7 +178,7 @@
             // 
             this.checkBoxLedgeGrab.AutoSize = true;
             this.checkBoxLedgeGrab.Enabled = false;
-            this.checkBoxLedgeGrab.Location = new System.Drawing.Point(18, 336);
+            this.checkBoxLedgeGrab.Location = new System.Drawing.Point(43, 37);
             this.checkBoxLedgeGrab.Name = "checkBoxLedgeGrab";
             this.checkBoxLedgeGrab.Size = new System.Drawing.Size(116, 17);
             this.checkBoxLedgeGrab.TabIndex = 16;
@@ -187,12 +191,37 @@
             this.checkBoxSolidSimps.Checked = true;
             this.checkBoxSolidSimps.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxSolidSimps.Enabled = false;
-            this.checkBoxSolidSimps.Location = new System.Drawing.Point(18, 313);
+            this.checkBoxSolidSimps.Location = new System.Drawing.Point(43, 55);
             this.checkBoxSolidSimps.Name = "checkBoxSolidSimps";
             this.checkBoxSolidSimps.Size = new System.Drawing.Size(83, 17);
             this.checkBoxSolidSimps.TabIndex = 17;
             this.checkBoxSolidSimps.Text = "Solid SIMPs";
             this.checkBoxSolidSimps.UseVisualStyleBackColor = true;
+            // 
+            // grpImportSettings
+            // 
+            this.grpImportSettings.Controls.Add(this.checkBoxIgnoreMeshColors);
+            this.grpImportSettings.Controls.Add(this.checkBoxFlipUVs);
+            this.grpImportSettings.Controls.Add(this.checkBoxEnableVcolors);
+            this.grpImportSettings.Controls.Add(this.checkBoxOverwrite);
+            this.grpImportSettings.Location = new System.Drawing.Point(225, 68);
+            this.grpImportSettings.Name = "grpImportSettings";
+            this.grpImportSettings.Size = new System.Drawing.Size(261, 66);
+            this.grpImportSettings.TabIndex = 18;
+            this.grpImportSettings.TabStop = false;
+            this.grpImportSettings.Text = "Import Settings";
+            // 
+            // grpSIMP
+            // 
+            this.grpSIMP.Controls.Add(this.checkBoxLedgeGrab);
+            this.grpSIMP.Controls.Add(this.checkBoxGenSimps);
+            this.grpSIMP.Controls.Add(this.checkBoxSolidSimps);
+            this.grpSIMP.Location = new System.Drawing.Point(225, 140);
+            this.grpSIMP.Name = "grpSIMP";
+            this.grpSIMP.Size = new System.Drawing.Size(261, 82);
+            this.grpSIMP.TabIndex = 19;
+            this.grpSIMP.TabStop = false;
+            this.grpSIMP.Text = "SIMP Settings";
             // 
             // ImportModel
             // 
@@ -200,14 +229,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(224, 391);
-            this.Controls.Add(this.checkBoxSolidSimps);
-            this.Controls.Add(this.checkBoxLedgeGrab);
-            this.Controls.Add(this.checkBoxIgnoreMeshColors);
-            this.Controls.Add(this.checkBoxEnableVcolors);
-            this.Controls.Add(this.checkBoxGenSimps);
-            this.Controls.Add(this.checkBoxOverwrite);
-            this.Controls.Add(this.checkBoxFlipUVs);
+            this.ClientSize = new System.Drawing.Size(497, 266);
+            this.Controls.Add(this.grpSIMP);
+            this.Controls.Add(this.grpImportSettings);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.groupBox1);
@@ -222,8 +246,11 @@
             this.Text = "Import Models";
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
+            this.grpImportSettings.ResumeLayout(false);
+            this.grpImportSettings.PerformLayout();
+            this.grpSIMP.ResumeLayout(false);
+            this.grpSIMP.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -243,5 +270,7 @@
         private System.Windows.Forms.CheckBox checkBoxIgnoreMeshColors;
         private System.Windows.Forms.CheckBox checkBoxLedgeGrab;
         private System.Windows.Forms.CheckBox checkBoxSolidSimps;
+        private System.Windows.Forms.GroupBox grpImportSettings;
+        private System.Windows.Forms.GroupBox grpSIMP;
     }
 }
