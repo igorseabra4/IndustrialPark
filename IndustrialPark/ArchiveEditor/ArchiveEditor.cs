@@ -117,7 +117,34 @@ namespace IndustrialPark
             };
             if (openFile.ShowDialog() == DialogResult.OK)
             {
-                OpenFile(openFile.FileName);
+                bool shouldOpenFile = true;
+
+                if (!standalone)
+                {
+                    foreach (var archiveEditor in Program.MainForm.archiveEditors)
+                    {
+                        if (Path.GetFileName(archiveEditor.GetCurrentlyOpenFileName()) ==
+                            Path.GetFileName(openFile.FileName))
+                        {
+                            var result = MessageBox.Show(
+                                            $"A file named {Path.GetFileName(openFile.FileName)} is already open. Would you still like to open it?",
+                                            "Duplicate file detected",
+                                            MessageBoxButtons.YesNo,
+                                            MessageBoxIcon.Warning);
+
+                            if (result != DialogResult.Yes)
+                            {
+                                shouldOpenFile = false;
+                            }
+                        }
+                    }
+                }
+
+                if (shouldOpenFile)
+                {
+                    OpenFile(openFile.FileName);
+                }
+                
             }
         }
 
@@ -233,6 +260,13 @@ namespace IndustrialPark
             CloseArchiveEditor();
         }
 
+        public event Action EditorClosed;
+
+        protected virtual void OnEditorClosed()
+        {
+            EditorClosed?.Invoke();
+        }
+
         public void CloseArchiveEditor()
         {
             if (verifyResult != null)
@@ -248,6 +282,7 @@ namespace IndustrialPark
                 Program.MainForm.UpdateTitleBar();
             }
             Close();
+            OnEditorClosed();
         }
 
         private bool programIsChangingStuff = false;
