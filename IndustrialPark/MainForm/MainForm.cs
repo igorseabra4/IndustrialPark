@@ -74,6 +74,7 @@ namespace IndustrialPark
 
             // Program name and version
             builder.Append("Industrial Park Fork ");
+            // I would use IPVersion here but it screws up the auto-updater if I set the version to 1.1
             builder.Append("1.1");
 
             // Prevents a crash if form is updated from a different thread.
