@@ -998,7 +998,7 @@ namespace IndustrialPark
                 clipboard.Add(asset.game, asset.endianness, AHDR);
             }
 
-            Clipboard.SetText(JsonConvert.SerializeObject(clipboard, Formatting.Indented));
+            Clipboard.SetText(JsonConvert.SerializeObject(clipboard, Formatting.None));
         }
 
         public static bool updateReferencesOnCopy = true;

@@ -58,79 +58,69 @@ namespace IndustrialPark
             set => TypeFlag = (byte)value;
         }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat54 { get; set; }
+        public AssetSingle ActivateRadius { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat58 { get; set; }
+        public AssetSingle ActivateFOV { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat5C { get; set; }
+        public AssetSingle DetectHeight { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat60 { get; set; }
+        public AssetSingle DetectHeightOffset { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat64 { get; set; }
+        public AssetSingle SpeedMovement { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat68 { get; set; }
+        public AssetSingle SpeedPursue { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat6C { get; set; }
+        public AssetSingle SpeedTurn { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat70 { get; set; }
+        public AssetSingle PursuitRange { get; set; }
         [Category(categoryName)]
-        public short UnknownShort74 { get; set; }
+        public short DurDazedState { get; set; }
         [Category(categoryName)]
-        public short UnknownShort76 { get; set; }
+        public short DurGloatState { get; set; }
         [Category(categoryName)]
-        public short UnknownShort78 { get; set; }
+        public short DurGummedState { get; set; }
         [Category(categoryName)]
-        public short UnknownShort7A { get; set; }
+        public short DurBubbleState { get; set; }
         [Category(categoryName)]
-        public byte UnknownByte7C { get; set; }
+        public byte Hitpoints { get; set; }
         [Category(categoryName)]
-        public byte UnknownByte7D { get; set; }
+        public byte BehaviorState { get; set; }
         [Category(categoryName)]
-        public byte UnknownByte7E { get; set; }
+        public FlagBitmask Flags { get; set; } = IntFlagsDescriptor();
         [Category(categoryName)]
-        public byte UnknownByte7F { get; set; }
+        public AssetSingle LobSpeed { get; set; }
         [Category(categoryName)]
-        public byte UnknownByte80 { get; set; }
+        public AssetSingle LobDurReload { get; set; }
         [Category(categoryName)]
-        public byte UnknownByte81 { get; set; }
+        public AssetSingle LobRange { get; set; }
         [Category(categoryName)]
-        public byte UnknownByte82 { get; set; }
+        public int LobSalvo { get; set; }
         [Category(categoryName)]
-        public byte UnknownByte83 { get; set; }
+        public AssetID ProjectileType_AssetID { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat84 { get; set; }
+        public AssetID Bullseye_MovePoint_AssetID { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat88 { get; set; }
+        public AssetSingle LobArcness { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat8C { get; set; }
+        public AssetSingle LobHeavy { get; set; }
         [Category(categoryName)]
-        public int UnknownInt90 { get; set; }
+        public AssetSingle ExtenderRange { get; set; }
         [Category(categoryName)]
-        public int UnknownInt94 { get; set; }
+        public AssetSingle ExtenderWidth { get; set; }
         [Category(categoryName)]
-        public int UnknownInt98 { get; set; }
+        public AssetSingle ExtenderDuration { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat9C { get; set; }
+        public AssetSingle ExtenderRate { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloatA0 { get; set; }
-        [Category(categoryName)]
-        public AssetSingle UnknownFloatA4 { get; set; }
-        [Category(categoryName)]
-        public AssetSingle UnknownFloatA8 { get; set; }
-        [Category(categoryName)]
-        public AssetSingle UnknownFloatAC { get; set; }
-        [Category(categoryName)]
-        public AssetSingle UnknownFloatB0 { get; set; }
-        [Category(categoryName)]
-        public AssetSingle UnknownFloatB4 { get; set; }
+        public AssetSingle ExtenderReloadTime { get; set; }
         [Category(categoryName)]
         public AssetID MovePoint_AssetID { get; set; }
         [Category(categoryName)]
-        public AssetID UnknownAssetID_BC { get; set; }
+        public AssetID Path_AssetID { get; set; }
         [Category(categoryName)]
-        public int UnknownIntC0 { get; set; }
+        public int MinPlayerPowerups { get; set; }
         [Category(categoryName)]
-        public int UnknownIntC4 { get; set; }
+        public int MinGameDifficulty { get; set; }
 
         public AssetNPC(string assetName, Vector3 position) : base(assetName, AssetType.NPC, BaseAssetType.NPC, position)
         {
@@ -141,43 +131,39 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = entityHeaderEndPosition;
 
-                UnknownFloat54 = reader.ReadSingle();
-                UnknownFloat58 = reader.ReadSingle();
-                UnknownFloat5C = reader.ReadSingle();
-                UnknownFloat60 = reader.ReadSingle();
-                UnknownFloat64 = reader.ReadSingle();
-                UnknownFloat68 = reader.ReadSingle();
-                UnknownFloat6C = reader.ReadSingle();
-                UnknownFloat70 = reader.ReadSingle();
-                UnknownShort74 = reader.ReadInt16();
-                UnknownShort76 = reader.ReadInt16();
-                UnknownShort78 = reader.ReadInt16();
-                UnknownShort7A = reader.ReadInt16();
-                UnknownByte7C = reader.ReadByte();
-                UnknownByte7D = reader.ReadByte();
-                UnknownByte7E = reader.ReadByte();
-                UnknownByte7F = reader.ReadByte();
-                UnknownByte80 = reader.ReadByte();
-                UnknownByte81 = reader.ReadByte();
-                UnknownByte82 = reader.ReadByte();
-                UnknownByte83 = reader.ReadByte();
-                UnknownFloat84 = reader.ReadSingle();
-                UnknownFloat88 = reader.ReadSingle();
-                UnknownFloat8C = reader.ReadSingle();
-                UnknownInt90 = reader.ReadInt32();
-                UnknownInt94 = reader.ReadInt32();
-                UnknownInt98 = reader.ReadInt32();
-                UnknownFloat9C = reader.ReadSingle();
-                UnknownFloatA0 = reader.ReadSingle();
-                UnknownFloatA4 = reader.ReadSingle();
-                UnknownFloatA8 = reader.ReadSingle();
-                UnknownFloatAC = reader.ReadSingle();
-                UnknownFloatB0 = reader.ReadSingle();
-                UnknownFloatB4 = reader.ReadSingle();
+                ActivateRadius = reader.ReadSingle();
+                ActivateFOV = reader.ReadSingle();
+                DetectHeight = reader.ReadSingle();
+                DetectHeightOffset = reader.ReadSingle();
+                SpeedMovement = reader.ReadSingle();
+                SpeedPursue = reader.ReadSingle();
+                SpeedTurn = reader.ReadSingle();
+                PursuitRange = reader.ReadSingle();
+                DurDazedState = reader.ReadInt16();
+                DurGloatState = reader.ReadInt16();
+                DurGummedState = reader.ReadInt16();
+                DurBubbleState = reader.ReadInt16();
+                Hitpoints = reader.ReadByte();
+                BehaviorState = reader.ReadByte();
+                reader.ReadInt16();
+                Flags.FlagValueInt = reader.ReadUInt32();
+                LobSpeed = reader.ReadSingle();
+                LobDurReload = reader.ReadSingle();
+                LobRange = reader.ReadSingle();
+                LobSalvo = reader.ReadInt32();
+                ProjectileType_AssetID = reader.ReadUInt32();
+                Bullseye_MovePoint_AssetID = reader.ReadUInt32();
+                LobArcness = reader.ReadSingle();
+                LobHeavy = reader.ReadSingle();
+                ExtenderRange = reader.ReadSingle();
+                ExtenderWidth = reader.ReadSingle();
+                ExtenderDuration = reader.ReadSingle();
+                ExtenderRate = reader.ReadSingle();
+                ExtenderReloadTime = reader.ReadSingle();
                 MovePoint_AssetID = reader.ReadUInt32();
-                UnknownAssetID_BC = reader.ReadUInt32();
-                UnknownIntC0 = reader.ReadInt32();
-                UnknownIntC4 = reader.ReadInt32();
+                Path_AssetID = reader.ReadUInt32();
+                MinPlayerPowerups = reader.ReadInt32();
+                MinGameDifficulty = reader.ReadInt32();
             }
         }
 
@@ -186,43 +172,39 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeEntity(game, endianness));
-                writer.Write(UnknownFloat54);
-                writer.Write(UnknownFloat58);
-                writer.Write(UnknownFloat5C);
-                writer.Write(UnknownFloat60);
-                writer.Write(UnknownFloat64);
-                writer.Write(UnknownFloat68);
-                writer.Write(UnknownFloat6C);
-                writer.Write(UnknownFloat70);
-                writer.Write(UnknownShort74);
-                writer.Write(UnknownShort76);
-                writer.Write(UnknownShort78);
-                writer.Write(UnknownShort7A);
-                writer.Write(UnknownByte7C);
-                writer.Write(UnknownByte7D);
-                writer.Write(UnknownByte7E);
-                writer.Write(UnknownByte7F);
-                writer.Write(UnknownByte80);
-                writer.Write(UnknownByte81);
-                writer.Write(UnknownByte82);
-                writer.Write(UnknownByte83);
-                writer.Write(UnknownFloat84);
-                writer.Write(UnknownFloat88);
-                writer.Write(UnknownFloat8C);
-                writer.Write(UnknownInt90);
-                writer.Write(UnknownInt94);
-                writer.Write(UnknownInt98);
-                writer.Write(UnknownFloat9C);
-                writer.Write(UnknownFloatA0);
-                writer.Write(UnknownFloatA4);
-                writer.Write(UnknownFloatA8);
-                writer.Write(UnknownFloatAC);
-                writer.Write(UnknownFloatB0);
-                writer.Write(UnknownFloatB4);
+                writer.Write(ActivateRadius);
+                writer.Write(ActivateFOV);
+                writer.Write(DetectHeight);
+                writer.Write(DetectHeightOffset);
+                writer.Write(SpeedMovement);
+                writer.Write(SpeedPursue);
+                writer.Write(SpeedTurn);
+                writer.Write(PursuitRange);
+                writer.Write(DurDazedState);
+                writer.Write(DurGloatState);
+                writer.Write(DurGummedState);
+                writer.Write(DurBubbleState);
+                writer.Write(Hitpoints);
+                writer.Write(BehaviorState);
+                writer.Write((short)0);
+                writer.Write(Flags.FlagValueInt);
+                writer.Write(LobSpeed);
+                writer.Write(LobDurReload);
+                writer.Write(LobRange);
+                writer.Write(LobSalvo);
+                writer.Write(ProjectileType_AssetID);
+                writer.Write(Bullseye_MovePoint_AssetID);
+                writer.Write(LobArcness);
+                writer.Write(LobHeavy);
+                writer.Write(ExtenderRange);
+                writer.Write(ExtenderWidth);
+                writer.Write(ExtenderDuration);
+                writer.Write(ExtenderRate);
+                writer.Write(ExtenderReloadTime);
                 writer.Write(MovePoint_AssetID);
-                writer.Write(UnknownAssetID_BC);
-                writer.Write(UnknownIntC0);
-                writer.Write(UnknownIntC4);
+                writer.Write(Path_AssetID);
+                writer.Write(MinPlayerPowerups);
+                writer.Write(MinGameDifficulty);
                 writer.Write(SerializeLinks(endianness));
                 return writer.ToArray();
             }
@@ -232,14 +214,21 @@ namespace IndustrialPark
 
         public override bool DontRender => dontRender;
 
-        public override bool HasReference(uint assetID) => MovePoint_AssetID == assetID || UnknownAssetID_BC == assetID || base.HasReference(assetID);
-
+        public override bool HasReference(uint assetID) =>
+            ProjectileType_AssetID == assetID ||
+            Bullseye_MovePoint_AssetID == assetID ||
+            MovePoint_AssetID == assetID ||
+            Path_AssetID == assetID ||
+            base.HasReference(assetID);
+     
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
+            Verify(ProjectileType_AssetID, ref result);
+            Verify(Bullseye_MovePoint_AssetID, ref result);
             Verify(MovePoint_AssetID, ref result);
-            Verify(UnknownAssetID_BC, ref result);
+            Verify(Path_AssetID, ref result);
         }
 
         public override void Draw(SharpRenderer renderer)
@@ -252,6 +241,5 @@ namespace IndustrialPark
             else
                 renderer.DrawCube(LocalWorld(), isSelected);
         }
-
     }
 }

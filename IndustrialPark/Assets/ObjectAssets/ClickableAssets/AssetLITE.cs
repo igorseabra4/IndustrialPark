@@ -1,39 +1,101 @@
 ﻿using HipHopFile;
 using SharpDX;
 using System.ComponentModel;
+using AssetEditorColors;
 
 namespace IndustrialPark
 {
+    public enum LightType : byte
+    {
+        Point = 0,
+        Spot = 1,
+        Point2 = 2,
+        Point3 = 3
+    }
+
+    public enum LightEffect : byte
+    {
+        None = 0,
+        None1 = 1,
+        FlickerSlow = 2,
+        Flicker = 3,
+        FlickerErratic = 4,
+        StrobeSlow = 5,
+        Strobe = 6,
+        StrobeFast = 7,
+        DimSlow = 8,
+        Dim = 9,
+        DimFast = 10,
+        HalfDimSlow = 11,
+        HalfDim = 12,
+        HalfDimFast = 13,
+        RandomColSlow = 14,
+        RandomCol = 15,
+        RandomColFast = 16,
+        Cauldron = 17,
+    }
+
     public class AssetLITE : BaseAsset, IRenderableAsset, IClickableAsset
     {
         private const string categoryName = "Light";
 
         [Category(categoryName)]
-        public byte UnknownByte08 { get; set; }
+        public LightType LightType { get; set; }
         [Category(categoryName)]
-        public byte UnknownByte09 { get; set; }
+        public LightEffect LightEffect { get; set; }
         [Category(categoryName)]
-        public byte UnknownByte0A { get; set; }
+        public FlagBitmask Flags { get; set; } = IntFlagsDescriptor(null, null, null, "Environment", null, "On");
+        protected Vector4 _color;
+        [Category(categoryName + " Color"), DisplayName("Red (0 - 1)")]
+        public AssetSingle ColorRed
+        {
+            get => _color.X;
+            set => _color.X = value;
+        }
+        [Category(categoryName + " Color"), DisplayName("Green (0 - 1)")]
+        public AssetSingle ColorGreen
+        {
+            get => _color.Y;
+            set => _color.Y = value;
+        }
+        [Category(categoryName + " Color"), DisplayName("Blue (0 - 1)")]
+        public AssetSingle ColorBlue
+        {
+            get => _color.Z;
+            set => _color.Z = value;
+        }
+        [Category(categoryName + " Color"), DisplayName("Alpha (0 - 1)")]
+        public AssetSingle ColorAlpha
+        {
+            get => _color.W;
+            set => _color.W = value;
+        }
+        [Category(categoryName + " Color")]
+        public AssetColor Color_RBGA
+        {
+            get => new AssetColor((byte)(ColorRed * 255), (byte)(ColorGreen * 255), (byte)(ColorBlue * 255), (byte)(ColorAlpha * 255));
+            set
+            {
+                ColorRed = value.R / 255f;
+                ColorGreen = value.G / 255f;
+                ColorBlue = value.B / 255f;
+                ColorAlpha = value.A / 255f;
+            }
+        }
         [Category(categoryName)]
-        public byte UnknownByte0B { get; set; }
+        public AssetSingle DirectionX { get; set; }
         [Category(categoryName)]
-        public int UnknownInt0C { get; set; }
+        public AssetSingle DirectionY { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat10 { get; set; }
+        public AssetSingle DirectionZ { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat14 { get; set; }
+        public AssetSingle LightConeAngleRad { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat18 { get; set; }
-        [Category(categoryName)]
-        public AssetSingle UnknownFloat1C { get; set; }
-        [Category(categoryName)]
-        public AssetSingle UnknownFloat20 { get; set; }
-        [Category(categoryName)]
-        public AssetSingle UnknownFloat24 { get; set; }
-        [Category(categoryName)]
-        public AssetSingle UnknownFloat28 { get; set; }
-        [Category(categoryName)]
-        public AssetSingle UnknownFloat2C { get; set; }
+        public AssetSingle LightConeAngleDeg 
+        {
+            get => MathUtil.RadiansToDegrees(LightConeAngleRad); 
+            set => LightConeAngleRad = MathUtil.DegreesToRadians(value);
+        }
         private Vector3 _position;
         [Category(categoryName)]
         public AssetSingle PositionX
@@ -54,9 +116,9 @@ namespace IndustrialPark
             set { _position.Z = value; CreateTransformMatrix(); }
         }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat3C { get; set; }
+        public AssetSingle Radius { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat40 { get; set; }
+        public AssetID Attach_AssetID { get; set; }
 
         public AssetLITE(string assetName, Vector3 position) : base(assetName, AssetType.LITE, BaseAssetType.Light)
         {
@@ -72,22 +134,18 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = baseHeaderEndPosition;
 
-                UnknownByte08 = reader.ReadByte();
-                UnknownByte09 = reader.ReadByte();
-                UnknownByte0A = reader.ReadByte();
-                UnknownByte0B = reader.ReadByte();
-                UnknownInt0C = reader.ReadInt32();
-                UnknownFloat10 = reader.ReadSingle();
-                UnknownFloat14 = reader.ReadSingle();
-                UnknownFloat18 = reader.ReadSingle();
-                UnknownFloat1C = reader.ReadSingle();
-                UnknownFloat20 = reader.ReadSingle();
-                UnknownFloat24 = reader.ReadSingle();
-                UnknownFloat28 = reader.ReadSingle();
-                UnknownFloat2C = reader.ReadSingle();
+                LightType = (LightType)reader.ReadByte();
+                LightEffect = (LightEffect)reader.ReadByte();
+                reader.ReadInt16();
+                Flags.FlagValueInt = reader.ReadUInt32();
+                _color = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                DirectionX = reader.ReadSingle();
+                DirectionY = reader.ReadSingle();
+                DirectionZ = reader.ReadSingle();
+                LightConeAngleRad = reader.ReadSingle();
                 _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                UnknownFloat3C = reader.ReadSingle();
-                UnknownFloat40 = reader.ReadSingle();
+                Radius = reader.ReadSingle();
+                Attach_AssetID = reader.ReadUInt32();
 
                 CreateTransformMatrix();
                 ArchiveEditorFunctions.AddToRenderableAssets(this);
@@ -100,24 +158,23 @@ namespace IndustrialPark
             {
                 writer.Write(SerializeBase(endianness));
 
-                writer.Write(UnknownByte08);
-                writer.Write(UnknownByte09);
-                writer.Write(UnknownByte0A);
-                writer.Write(UnknownByte0B);
-                writer.Write(UnknownInt0C);
-                writer.Write(UnknownFloat10);
-                writer.Write(UnknownFloat14);
-                writer.Write(UnknownFloat18);
-                writer.Write(UnknownFloat1C);
-                writer.Write(UnknownFloat20);
-                writer.Write(UnknownFloat24);
-                writer.Write(UnknownFloat28);
-                writer.Write(UnknownFloat2C);
+                writer.Write((byte)LightType);
+                writer.Write((byte)LightEffect);
+                writer.Write((short)0);
+                writer.Write(Flags.FlagValueInt);
+                writer.Write(_color.X);
+                writer.Write(_color.Y);
+                writer.Write(_color.Z);
+                writer.Write(_color.W);
+                writer.Write(DirectionX);
+                writer.Write(DirectionY);
+                writer.Write(DirectionZ);
+                writer.Write(LightConeAngleRad);
                 writer.Write(_position.X);
                 writer.Write(_position.Y);
                 writer.Write(_position.Z);
-                writer.Write(UnknownFloat3C);
-                writer.Write(UnknownFloat40);
+                writer.Write(Radius);
+                writer.Write(Attach_AssetID);
 
                 writer.Write(SerializeLinks(endianness));
                 return writer.ToArray();

@@ -280,7 +280,7 @@ namespace IndustrialPark.Randomizer
 
             progressBar.PerformStep();
 
-            if (settings.restoreRobotLaugh || settings.widescreenMenu)
+            if (settings.restoreRobotLaugh)
             {
                 string mnu5path = (string.IsNullOrEmpty(backupDir) ? rootDir : backupDir) + "/mn/mnu5.hip";
                 if (File.Exists(mnu5path))
@@ -288,19 +288,32 @@ namespace IndustrialPark.Randomizer
                     var mnu5 = new RandomizableArchive();
                     mnu5.OpenFile(mnu5path, false, scoobyPlatform, out _, true);
 
-                    var shouldSave = false;
-
-                    if (settings.restoreRobotLaugh)
-                        shouldSave |= mnu5.RestoreRobotLaugh();
-                    if (settings.widescreenMenu)
-                        shouldSave |= mnu5.WidescreenMenu();
-
-                    if (shouldSave)
+                    if (mnu5.RestoreRobotLaugh())
                     {
                         if (string.IsNullOrEmpty(backupDir))
                             mnu5.Save();
                         else
                             mnu5.Save(mnu5.currentlyOpenFilePath.Replace(backupDir, rootDir));
+                    }
+                }
+            }
+
+            progressBar.PerformStep();
+
+            if (settings.widescreenMenu)
+            {
+                string mnu4path = (string.IsNullOrEmpty(backupDir) ? rootDir : backupDir) + "/mn/mnu4.hip";
+                if (File.Exists(mnu4path))
+                {
+                    var mnu4 = new RandomizableArchive();
+                    mnu4.OpenFile(mnu4path, false, scoobyPlatform, out _, true);
+                    
+                    if (mnu4.WidescreenMenu())
+                    {
+                        if (string.IsNullOrEmpty(backupDir))
+                            mnu4.Save();
+                        else
+                            mnu4.Save(mnu4.currentlyOpenFilePath.Replace(backupDir, rootDir));
                     }
                 }
             }

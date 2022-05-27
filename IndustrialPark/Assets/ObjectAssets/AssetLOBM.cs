@@ -9,7 +9,7 @@ namespace IndustrialPark
         private const string categoryName = "LobMaster";
 
         [Category(categoryName)]
-        public AssetID Unknown_08 { get; set; }
+        public AssetID LobMasterType { get; set; }
         [Category(categoryName)]
         public AssetID PRJT_AssetID { get; set; }
         [Category(categoryName)]
@@ -19,55 +19,55 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle PositionZ { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat_1C { get; set; }
+        public AssetSingle RotationX { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat_20 { get; set; }
+        public AssetSingle RotationY { get; set; }
         [Category(categoryName)]
-        public AssetID Unknown_24 { get; set; }
+        public AssetSingle RotationZ { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat_28 { get; set; }
+        public AssetSingle LaunchSpeed { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat_2C { get; set; }
+        public AssetSingle SpeedRandomPct { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat_30 { get; set; }
+        public AssetSingle ScaleX { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat_34 { get; set; }
+        public AssetSingle ScaleY { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat_38 { get; set; }
+        public AssetSingle ScaleZ { get; set; }
         [Category(categoryName)]
-        public int UnknownInt_3C { get; set; }
+        public FlagBitmask Flags { get; set; } = IntFlagsDescriptor();
         [Category(categoryName)]
-        public AssetSingle UnknownFloat_40 { get; set; }
+        public AssetSingle MaxLifetime { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat_44 { get; set; }
+        public AssetSingle MaxDistance { get; set; }
         [Category(categoryName)]
-        public AssetID Unknown_48 { get; set; }
+        public AssetID Aid_MovePoint_AssetID { get; set; }
         [Category(categoryName)]
-        public int UnknownInt_4C { get; set; }
+        public int SalvoCount { get; set; }
         [Category(categoryName)]
-        public int UnknownInt_50 { get; set; }
+        public int AmmoCount { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat_54 { get; set; }
+        public AssetSingle ArcCoeffFactor { get; set; }
         [Category(categoryName)]
-        public int UnknownInt_58 { get; set; }
+        public int DebrisConeAngle { get; set; }
         [Category(categoryName)]
-        public int UnknownInt_5C { get; set; }
+        public int NumBounce { get; set; }
         [Category(categoryName)]
-        public int UnknownInt_60 { get; set; }
+        public int PowerupType { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat_64 { get; set; }
+        public AssetSingle HeavyFactor { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat_68 { get; set; }
+        public AssetSingle TumbleRotationX { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat_6C { get; set; }
+        public AssetSingle TumbleRotationY { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat_70 { get; set; }
+        public AssetSingle TumbleRotationZ { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat_74 { get; set; }
+        public AssetSingle CollideDelay { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat_78 { get; set; }
+        public AssetSingle AtRestPeriod { get; set; }
         [Category(categoryName)]
-        public int UnknownInt_7C { get; set; }
+        public int Mode { get; set; }
 
         public AssetLOBM(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
@@ -75,36 +75,36 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = baseHeaderEndPosition;
 
-                Unknown_08 = reader.ReadUInt32();
+                LobMasterType = reader.ReadUInt32();
                 PRJT_AssetID = reader.ReadUInt32();
                 PositionX = reader.ReadSingle();
                 PositionY = reader.ReadSingle();
                 PositionZ = reader.ReadSingle();
-                UnknownFloat_1C = reader.ReadSingle();
-                UnknownFloat_20 = reader.ReadSingle();
-                Unknown_24 = reader.ReadUInt32();
-                UnknownFloat_28 = reader.ReadSingle();
-                UnknownFloat_2C = reader.ReadSingle();
-                UnknownFloat_30 = reader.ReadSingle();
-                UnknownFloat_34 = reader.ReadSingle();
-                UnknownFloat_38 = reader.ReadSingle();
-                UnknownInt_3C = reader.ReadInt32();
-                UnknownFloat_40 = reader.ReadSingle();
-                UnknownFloat_44 = reader.ReadSingle();
-                Unknown_48 = reader.ReadUInt32();
-                UnknownInt_4C = reader.ReadInt32();
-                UnknownInt_50 = reader.ReadInt32();
-                UnknownFloat_54 = reader.ReadSingle();
-                UnknownInt_58 = reader.ReadInt32();
-                UnknownInt_5C = reader.ReadInt32();
-                UnknownInt_60 = reader.ReadInt32();
-                UnknownFloat_64 = reader.ReadSingle();
-                UnknownFloat_68 = reader.ReadSingle();
-                UnknownFloat_6C = reader.ReadSingle();
-                UnknownFloat_70 = reader.ReadSingle();
-                UnknownFloat_74 = reader.ReadSingle();
-                UnknownFloat_78 = reader.ReadSingle();
-                UnknownInt_7C = reader.ReadInt32();
+                RotationX = reader.ReadSingle();
+                RotationY = reader.ReadSingle();
+                RotationZ = reader.ReadSingle();
+                LaunchSpeed = reader.ReadSingle();
+                SpeedRandomPct = reader.ReadSingle();
+                ScaleX = reader.ReadSingle();
+                ScaleY = reader.ReadSingle();
+                ScaleZ = reader.ReadSingle();
+                Flags.FlagValueInt = reader.ReadUInt32();
+                MaxLifetime = reader.ReadSingle();
+                MaxDistance = reader.ReadSingle();
+                Aid_MovePoint_AssetID = reader.ReadUInt32();
+                SalvoCount = reader.ReadInt32();
+                AmmoCount = reader.ReadInt32();
+                ArcCoeffFactor = reader.ReadSingle();
+                DebrisConeAngle = reader.ReadInt32();
+                NumBounce = reader.ReadInt32();
+                PowerupType = reader.ReadInt32();
+                HeavyFactor = reader.ReadSingle();
+                TumbleRotationX = reader.ReadSingle();
+                TumbleRotationY = reader.ReadSingle();
+                TumbleRotationZ = reader.ReadSingle();
+                CollideDelay = reader.ReadSingle();
+                AtRestPeriod = reader.ReadSingle();
+                Mode = reader.ReadInt32();
             }
         }
 
@@ -113,36 +113,36 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeBase(endianness));
-                writer.Write(Unknown_08);
+                writer.Write(LobMasterType);
                 writer.Write(PRJT_AssetID);
                 writer.Write(PositionX);
                 writer.Write(PositionY);
                 writer.Write(PositionZ);
-                writer.Write(UnknownFloat_1C);
-                writer.Write(UnknownFloat_20);
-                writer.Write(Unknown_24);
-                writer.Write(UnknownFloat_28);
-                writer.Write(UnknownFloat_2C);
-                writer.Write(UnknownFloat_30);
-                writer.Write(UnknownFloat_34);
-                writer.Write(UnknownFloat_38);
-                writer.Write(UnknownInt_3C);
-                writer.Write(UnknownFloat_40);
-                writer.Write(UnknownFloat_44);
-                writer.Write(Unknown_48);
-                writer.Write(UnknownInt_4C);
-                writer.Write(UnknownInt_50);
-                writer.Write(UnknownFloat_54);
-                writer.Write(UnknownInt_58);
-                writer.Write(UnknownInt_5C);
-                writer.Write(UnknownInt_60);
-                writer.Write(UnknownFloat_64);
-                writer.Write(UnknownFloat_68);
-                writer.Write(UnknownFloat_6C);
-                writer.Write(UnknownFloat_70);
-                writer.Write(UnknownFloat_74);
-                writer.Write(UnknownFloat_78);
-                writer.Write(UnknownInt_7C);
+                writer.Write(RotationX);
+                writer.Write(RotationY);
+                writer.Write(RotationZ);
+                writer.Write(LaunchSpeed);
+                writer.Write(SpeedRandomPct);
+                writer.Write(ScaleX);
+                writer.Write(ScaleY);
+                writer.Write(ScaleZ);
+                writer.Write(Flags.FlagValueInt);
+                writer.Write(MaxLifetime);
+                writer.Write(MaxDistance);
+                writer.Write(Aid_MovePoint_AssetID);
+                writer.Write(SalvoCount);
+                writer.Write(AmmoCount);
+                writer.Write(ArcCoeffFactor);
+                writer.Write(DebrisConeAngle);
+                writer.Write(NumBounce);
+                writer.Write(PowerupType);
+                writer.Write(HeavyFactor);
+                writer.Write(TumbleRotationX);
+                writer.Write(TumbleRotationY);
+                writer.Write(TumbleRotationZ);
+                writer.Write(CollideDelay);
+                writer.Write(AtRestPeriod);
+                writer.Write(Mode);
 
                 writer.Write(SerializeLinks(endianness));
 
@@ -151,8 +151,8 @@ namespace IndustrialPark
         }
 
         public override bool HasReference(uint assetID) =>
-            Unknown_08 == assetID || PRJT_AssetID == assetID || Unknown_24 == assetID ||
-            Unknown_48 == assetID || base.HasReference(assetID);
+            LobMasterType == assetID || PRJT_AssetID == assetID ||
+            Aid_MovePoint_AssetID == assetID || base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {

@@ -13,7 +13,7 @@ namespace IndustrialPark
         [Category(catName)]
         public AssetID Volume_AssetID { get; set; }
         [Category(catName)]
-        public int UnknownInt10 { get; set; }
+        public AssetID Effect_AssetID { get; set; }
         [Category(catName)]
         public AssetSingle StrengthX { get; set; }
         [Category(catName)]
@@ -21,9 +21,9 @@ namespace IndustrialPark
         [Category(catName)]
         public AssetSingle StrengthZ { get; set; }
         [Category(catName)]
-        public AssetSingle UnknownFloat20 { get; set; }
+        public AssetSingle Fade { get; set; }
         [Category(catName)]
-        public AssetSingle UnknownFloat24 { get; set; }
+        public AssetSingle PartMod { get; set; }
 
         public AssetGUST(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
@@ -33,12 +33,12 @@ namespace IndustrialPark
 
                 GustFlags.FlagValueInt = reader.ReadUInt32();
                 Volume_AssetID = reader.ReadUInt32();
-                UnknownInt10 = reader.ReadInt32();
+                Effect_AssetID = reader.ReadUInt32();
                 StrengthX = reader.ReadSingle();
                 StrengthY = reader.ReadSingle();
                 StrengthZ = reader.ReadSingle();
-                UnknownFloat20 = reader.ReadSingle();
-                UnknownFloat24 = reader.ReadSingle();
+                Fade = reader.ReadSingle();
+                PartMod = reader.ReadSingle();
             }
         }
 
@@ -49,19 +49,19 @@ namespace IndustrialPark
                 writer.Write(SerializeBase(endianness));
                 writer.Write(GustFlags.FlagValueInt);
                 writer.Write(Volume_AssetID);
-                writer.Write(UnknownInt10);
+                writer.Write(Effect_AssetID);
                 writer.Write(StrengthX);
                 writer.Write(StrengthY);
                 writer.Write(StrengthZ);
-                writer.Write(UnknownFloat20);
-                writer.Write(UnknownFloat24);
+                writer.Write(Fade);
+                writer.Write(PartMod);
                 writer.Write(SerializeLinks(endianness));
 
                 return writer.ToArray();
             }
         }
 
-        public override bool HasReference(uint assetID) => Volume_AssetID == assetID || base.HasReference(assetID);
+        public override bool HasReference(uint assetID) => Volume_AssetID == assetID || Effect_AssetID == assetID || base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {
@@ -70,6 +70,7 @@ namespace IndustrialPark
             if (Volume_AssetID == 0)
                 result.Add("GUST with Volume_AssetID set to 0");
             Verify(Volume_AssetID, ref result);
+            Verify(Effect_AssetID, ref result);
         }
     }
 }
