@@ -14,6 +14,7 @@ namespace IndustrialPark
             Thread t = new Thread(() =>
             {
                 CloseDolphin();
+                // this might throw a win32exception if .dol is not associated with Dolphin
                 Process.Start(dolPath);
             });
 
