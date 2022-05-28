@@ -170,7 +170,7 @@ namespace IndustrialPark
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1264, 23);
-            this.menuStrip1.TabIndex = 2;
+            this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
             // archiveEditorToolStripMenuItem
@@ -187,15 +187,16 @@ namespace IndustrialPark
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.newToolStripMenuItem.Text = "&New Editor";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // importLevelToolStripMenuItem
             // 
-            this.importLevelToolStripMenuItem.Enabled = false;
             this.importLevelToolStripMenuItem.Name = "importLevelToolStripMenuItem";
-            this.importLevelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.importLevelToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
+            this.importLevelToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.importLevelToolStripMenuItem.Text = "&Import Level...";
             this.importLevelToolStripMenuItem.Click += new System.EventHandler(this.importLevelToolStripMenuItem_Click);
             // 
@@ -203,14 +204,14 @@ namespace IndustrialPark
             // 
             this.closeAllEditorsToolStripMenuItem.Enabled = false;
             this.closeAllEditorsToolStripMenuItem.Name = "closeAllEditorsToolStripMenuItem";
-            this.closeAllEditorsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.closeAllEditorsToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.closeAllEditorsToolStripMenuItem.Text = "&Close All Editors";
             this.closeAllEditorsToolStripMenuItem.Click += new System.EventHandler(this.closeAllEditorsToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(183, 6);
             // 
             // projectToolStripMenuItem
             // 
@@ -1082,7 +1083,7 @@ namespace IndustrialPark
             this.renderPanel.Location = new System.Drawing.Point(0, 23);
             this.renderPanel.Name = "renderPanel";
             this.renderPanel.Size = new System.Drawing.Size(1264, 636);
-            this.renderPanel.TabIndex = 4;
+            this.renderPanel.TabIndex = 1;
             this.renderPanel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.renderPanel_MouseClick);
             this.renderPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.renderPanel_MouseDown);
             this.renderPanel.MouseLeave += new System.EventHandler(this.renderPanel_MouseLeave);

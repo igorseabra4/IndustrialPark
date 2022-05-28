@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
@@ -36,8 +37,6 @@ namespace IndustrialPark
 
             renderer = new SharpRenderer(renderPanel);
         }
-
-        private delegate void SafeCallDelegate(string text);
 
         public void UpdateTitleBar()
         {
@@ -690,7 +689,7 @@ namespace IndustrialPark
             else if (e.KeyCode == Keys.F5)
                 TryToRunGame();
 
-            if (PressedKeys.Contains(Keys.S) 
+            if (PressedKeys.Contains(Keys.S)
                 && PressedKeys.Contains(Keys.ControlKey)
                 && PressedKeys.Contains(Keys.ShiftKey))
             {
@@ -698,7 +697,7 @@ namespace IndustrialPark
             }
 
             // Close all forms that are not Main Form/Archive Editors
-            if (PressedKeys.Contains(Keys.ControlKey) 
+            if (PressedKeys.Contains(Keys.ControlKey)
                 && PressedKeys.Contains(Keys.ShiftKey)
                 && PressedKeys.Contains(Keys.H))
             {
@@ -707,7 +706,7 @@ namespace IndustrialPark
 
                 for (int i = 0; i < openForms.Count; i++)
                 {
-                    if (openForms[i].GetType() != typeof(MainForm) 
+                    if (openForms[i].GetType() != typeof(MainForm)
                         && openForms[i].GetType() != typeof(ArchiveEditor))
                     {
                         formsToClose.Add(openForms[i]);
@@ -741,6 +740,18 @@ namespace IndustrialPark
                 {
                     form.Show();
                 }
+            }
+
+            if (PressedKeys.Contains(Keys.ControlKey)
+                && PressedKeys.Contains(Keys.N))
+            {
+                newToolStripMenuItem_Click(sender, e);
+            }
+
+            if (PressedKeys.Contains(Keys.ControlKey)
+                && PressedKeys.Contains(Keys.I))
+            {
+                importLevelToolStripMenuItem_Click(sender, e);
             }
         }
 
@@ -814,12 +825,12 @@ namespace IndustrialPark
 
             archiveEditorToolStripMenuItem.DropDownItems.Add(tempMenuItem);
             temp.archive.ChangesMade += UpdateTitleBar;
-            temp.EditorClosed += _updateCloseAllArchiveMenuItem;
+            temp.EditorClosed += UpdateCloseAllArchiveMenuItem;
             UpdateTitleBar();
             closeAllEditorsToolStripMenuItem.Enabled = true;
         }
 
-        private void  _updateCloseAllArchiveMenuItem()
+        public void  UpdateCloseAllArchiveMenuItem()
         {
             closeAllEditorsToolStripMenuItem.Enabled = archiveEditors.Count > 0;
         }
@@ -852,6 +863,18 @@ namespace IndustrialPark
             int index = archiveEditors.IndexOf(sender);
             archiveEditorToolStripMenuItem.DropDownItems.RemoveAt(index + 4);
             archiveEditors.RemoveAt(index);
+        }
+
+        public void AddArchiveDropdownListEntry(string filename)
+        {
+            ToolStripMenuItem tempMenuItem = new ToolStripMenuItem(filename);
+            tempMenuItem.Click += new EventHandler(ToolStripClick);
+            archiveEditorToolStripMenuItem.DropDownItems.Add(tempMenuItem);
+        }
+
+        public void SetCloseAllArchivesEnabled(bool enabled)
+        {
+            closeAllEditorsToolStripMenuItem.Enabled = enabled;
         }
 
         private bool UnsavedChanges()
@@ -1613,8 +1636,19 @@ namespace IndustrialPark
                     }
 
             if (dolPath == null)
-                MessageBox.Show("Unable to find DOL to launch.");
-            else RemoteControl.TryToRunGame(dolPath);
+                MessageBox.Show("Unable to find DOL to launch.", "Unable to find DOL", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            else
+            {
+                
+                try
+                {
+                    RemoteControl.TryToRunGame(dolPath);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Failed to open Dolphin.", "Error opening Dolphin", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }     
         }
 
         private void saveAllOpenHIPsToolStripMenuItem_Click(object sender, EventArgs e)
