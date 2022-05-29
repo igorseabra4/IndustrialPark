@@ -303,6 +303,7 @@ namespace IndustrialPark
             txtHOP.Text = txtHIP.Text = txtBOOT.Text = string.Empty;
             lstLocalization.Items.Clear();
             checkBoxUpdated(sender, e);
+            Text = "Import Level";
         }
     }
 }

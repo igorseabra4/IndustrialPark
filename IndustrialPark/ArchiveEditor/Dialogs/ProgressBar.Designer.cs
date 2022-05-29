@@ -32,10 +32,10 @@
             this.labelLoading = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // progressBar1
+            // pBar
             // 
             this.pBar.Location = new System.Drawing.Point(12, 12);
-            this.pBar.Name = "progressBar1";
+            this.pBar.Name = "pBar";
             this.pBar.Size = new System.Drawing.Size(382, 23);
             this.pBar.TabIndex = 0;
             // 
@@ -58,6 +58,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(428, 113);
             this.Name = "ProgressBar";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
