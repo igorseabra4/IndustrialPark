@@ -1,6 +1,6 @@
 ﻿namespace IndustrialPark
 {
-    partial class ImportLevel
+    partial class OpenLevel
     {
         /// <summary>
         /// Required designer variable.
@@ -72,7 +72,7 @@
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(98, 23);
             this.btnImport.TabIndex = 13;
-            this.btnImport.Text = "Import Level";
+            this.btnImport.Text = "Open Level";
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
@@ -99,7 +99,7 @@
             this.grpImportSettings.Size = new System.Drawing.Size(412, 245);
             this.grpImportSettings.TabIndex = 0;
             this.grpImportSettings.TabStop = false;
-            this.grpImportSettings.Text = "Import Files";
+            this.grpImportSettings.Text = "Select Files";
             // 
             // btnResetAll
             // 
@@ -262,7 +262,7 @@
             this.chkBOOT.UseVisualStyleBackColor = true;
             this.chkBOOT.CheckedChanged += new System.EventHandler(this.checkBoxUpdated);
             // 
-            // ImportLevel
+            // OpenLevel
             // 
             this.AcceptButton = this.btnImport;
             this.AccessibleDescription = "Import a level into Industrial Park";
@@ -277,10 +277,10 @@
             this.Controls.Add(this.btnCancel);
             this.MaximizeBox = false;
             this.MinimumSize = new System.Drawing.Size(305, 280);
-            this.Name = "ImportLevel";
+            this.Name = "OpenLevel";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Import Level";
+            this.Text = "Open Level";
             this.grpImportSettings.ResumeLayout(false);
             this.grpImportSettings.PerformLayout();
             this.ctxLocalization.ResumeLayout(false);

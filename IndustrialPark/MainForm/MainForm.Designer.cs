@@ -158,7 +158,7 @@ namespace IndustrialPark
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.newToolStripMenuItem.Text = "&New Editor";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
@@ -166,22 +166,22 @@ namespace IndustrialPark
             // 
             this.importLevelToolStripMenuItem.Name = "importLevelToolStripMenuItem";
             this.importLevelToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
-            this.importLevelToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
-            this.importLevelToolStripMenuItem.Text = "&Import Level...";
+            this.importLevelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.importLevelToolStripMenuItem.Text = "&Open Level...";
             this.importLevelToolStripMenuItem.Click += new System.EventHandler(this.importLevelToolStripMenuItem_Click);
             // 
             // closeAllEditorsToolStripMenuItem
             // 
             this.closeAllEditorsToolStripMenuItem.Enabled = false;
             this.closeAllEditorsToolStripMenuItem.Name = "closeAllEditorsToolStripMenuItem";
-            this.closeAllEditorsToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.closeAllEditorsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.closeAllEditorsToolStripMenuItem.Text = "&Close All Editors";
             this.closeAllEditorsToolStripMenuItem.Click += new System.EventHandler(this.closeAllEditorsToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(183, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
             // 
             // projectToolStripMenuItem
             // 
@@ -271,8 +271,9 @@ namespace IndustrialPark
             // viewConfigToolStripMenuItem
             // 
             this.viewConfigToolStripMenuItem.Name = "viewConfigToolStripMenuItem";
+            this.viewConfigToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
             this.viewConfigToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
-            this.viewConfigToolStripMenuItem.Text = "View Config (F1)";
+            this.viewConfigToolStripMenuItem.Text = "View Config";
             this.viewConfigToolStripMenuItem.Click += new System.EventHandler(this.viewConfigToolStripMenuItem_Click);
             // 
             // viewControlsToolStripMenuItem
@@ -383,15 +384,18 @@ namespace IndustrialPark
             // saveAllOpenHIPsToolStripMenuItem
             // 
             this.saveAllOpenHIPsToolStripMenuItem.Name = "saveAllOpenHIPsToolStripMenuItem";
+            this.saveAllOpenHIPsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.S)));
             this.saveAllOpenHIPsToolStripMenuItem.Size = new System.Drawing.Size(271, 22);
-            this.saveAllOpenHIPsToolStripMenuItem.Text = "Save All Open HIPs (Ctrl + Shift + S)";
+            this.saveAllOpenHIPsToolStripMenuItem.Text = "Save All Open HIPs";
             this.saveAllOpenHIPsToolStripMenuItem.Click += new System.EventHandler(this.saveAllOpenHIPsToolStripMenuItem_Click);
             // 
             // runGameF5ToolStripMenuItem
             // 
             this.runGameF5ToolStripMenuItem.Name = "runGameF5ToolStripMenuItem";
+            this.runGameF5ToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
             this.runGameF5ToolStripMenuItem.Size = new System.Drawing.Size(271, 22);
-            this.runGameF5ToolStripMenuItem.Text = "Run Game (F5)";
+            this.runGameF5ToolStripMenuItem.Text = "Run Game";
             this.runGameF5ToolStripMenuItem.Click += new System.EventHandler(this.runGameF5ToolStripMenuItem_Click);
             // 
             // stopSoundToolStripMenuItem
@@ -501,7 +505,7 @@ namespace IndustrialPark
             this.displayToolStripMenuItem.Text = "&Display";
             // 
             // assetTypesToolStripMenuItem
-            //            
+            // 
             this.assetTypesToolStripMenuItem.Name = "assetTypesToolStripMenuItem";
             this.assetTypesToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.assetTypesToolStripMenuItem.Text = "Asset Types";
@@ -852,7 +856,7 @@ namespace IndustrialPark
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
-            this.Text = "Industrial Park Fork 1.1";
+            this.Text = "Industrial Park";
             this.Deactivate += new System.EventHandler(this.MainForm_Deactivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);

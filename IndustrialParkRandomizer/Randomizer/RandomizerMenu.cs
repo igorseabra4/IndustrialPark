@@ -32,7 +32,7 @@ namespace IndustrialPark.Randomizer
             }
             else
             {
-                MessageBox.Show("It appears this is your first time using Industrial Park's Randomizer.\nPlease consult the documentation on the BFBB Modding Wiki to understand how to use the tool if you haven't already.");
+                MessageBox.Show("It appears this is your first time using Industrial Park's Randomizer.\nPlease consult the documentation on the Heavy Iron Modding Wiki to understand how to use the tool if you haven't already.");
 
                 checkForUpdatesOnStartupToolStripMenuItem.Checked = true;
 

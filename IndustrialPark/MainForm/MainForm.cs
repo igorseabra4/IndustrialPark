@@ -83,7 +83,6 @@ namespace IndustrialPark
                 builder.Append(startOfArchiveList);
                 for (int i = 0; i < archiveEditors.Count; i++)
                 {
-   
                     builder.Append(Path.GetFileName(archiveEditors[i].GetCurrentlyOpenFileName()));
 
                     // Unsaved changes
@@ -103,9 +102,8 @@ namespace IndustrialPark
             }
 
             // Program name and version
-            builder.Append("Industrial Park Fork ");
-            // I would use IPVersion here but it screws up the auto-updater if i change the version
-            builder.Append("1.2");
+            builder.Append("Industrial Park ");
+            builder.Append(new IPversion().version);
 
             // Prevents a crash if form is updated from a different thread.
             if (InvokeRequired)
@@ -116,7 +114,6 @@ namespace IndustrialPark
             {
                 Text = builder.ToString();
             }
-
         }
 
         private void StartRenderer()
@@ -769,7 +766,7 @@ namespace IndustrialPark
             archiveEditors.Last().Show();
         }
 
-        private void AddArchiveEditor(string filePath = null, HipHopFile.Platform scoobyPlatform = HipHopFile.Platform.Unknown)
+        public void AddArchiveEditor(string filePath = null, HipHopFile.Platform scoobyPlatform = HipHopFile.Platform.Unknown)
         {
             ArchiveEditor temp = new ArchiveEditor();
             temp.Show();
@@ -777,10 +774,7 @@ namespace IndustrialPark
             temp.Begin(filePath, scoobyPlatform);
             archiveEditors.Add(temp);
 
-            ToolStripMenuItem tempMenuItem = new ToolStripMenuItem(Path.GetFileName(temp.GetCurrentlyOpenFileName()));
-            tempMenuItem.Click += new EventHandler(ToolStripClick);
-
-            archiveEditorToolStripMenuItem.DropDownItems.Add(tempMenuItem);
+            AddArchiveDropdownListEntry(Path.GetFileName(temp.GetCurrentlyOpenFileName()), temp);
             temp.archive.ChangesMade += UpdateTitleBar;
             temp.EditorClosed += UpdateCloseAllArchiveMenuItem;
             UpdateTitleBar();
@@ -790,24 +784,6 @@ namespace IndustrialPark
         public void  UpdateCloseAllArchiveMenuItem()
         {
             closeAllEditorsToolStripMenuItem.Enabled = archiveEditors.Count > 0;
-        }
-
-        public void ToolStripClick(object sender, EventArgs e)
-        {
-            int numOfDropDownItemsBeforeArchives = 4;
-
-            var ae = archiveEditors[
-                archiveEditorToolStripMenuItem.DropDownItems.IndexOf(sender as ToolStripItem) 
-                - numOfDropDownItemsBeforeArchives];
-
-            // 0 = new archive
-            // 1 = separator
-            // 2+ = archives
-
-            
-            ae.Show();
-
-            ae.WindowState = FormWindowState.Normal;
         }
 
         public void SetToolStripItemName(ArchiveEditor sender, string newName)
@@ -822,10 +798,14 @@ namespace IndustrialPark
             archiveEditors.RemoveAt(index);
         }
 
-        public void AddArchiveDropdownListEntry(string filename)
+        public void AddArchiveDropdownListEntry(string filename, ArchiveEditor ae)
         {
             ToolStripMenuItem tempMenuItem = new ToolStripMenuItem(filename);
-            tempMenuItem.Click += new EventHandler(ToolStripClick);
+            tempMenuItem.Click += new EventHandler((object sender, EventArgs e) =>
+            {
+                ae.Show();
+                ae.WindowState = FormWindowState.Normal;
+            });
             archiveEditorToolStripMenuItem.DropDownItems.Add(tempMenuItem);
         }
 
@@ -1475,14 +1455,13 @@ namespace IndustrialPark
                 MessageBox.Show("Unable to find DOL to launch.", "Unable to find DOL", MessageBoxButtons.OK, MessageBoxIcon.Error);
             else
             {
-                
                 try
                 {
                     RemoteControl.TryToRunGame(dolPath);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Failed to open Dolphin.", "Error opening Dolphin", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Failed to open Dolphin: " + ex.Message, "Error opening Dolphin", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }     
         }
@@ -1681,7 +1660,7 @@ namespace IndustrialPark
 
         private void importLevelToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ImportLevel level = new ImportLevel();
+            OpenLevel level = new OpenLevel();
 
             level.Show();
         }

@@ -121,7 +121,7 @@
   <data name="logoPictureBox.InitialImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAIMAAAEDCAIAAACZOCBdAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wgAADsIBFShKgAAA/7JJREFUeF6U/QV0JFmSJQx71XRPVyVKSjEmSQmCAIWYmSlTzMzMUoqZmSEUChYz
+        wAAADsABataJCQAA/7JJREFUeF6U/QV0JFmSJQx71XRPVyVKSjEmSQmCAIWYmSlTzMzMUoqZmSEUChYz
         K6GSmbOwu6uxuKq7d2d2Zr7Znfrv88jKzqnZ/b79z7HjxyPk7vHcrtm1a89fhKhwU7U4O71Ym1NBxkeC
         OUdDTOTDTJWibXViHfXinGG6cU56xJz14h114+1PRVtrRZqpRVpqhuBgzlHsRNrohHGU4mxPR1tpBhkf
         CDR+/z/bgUD2+0HM90MY7wezD0dYqkdZaQUzjwQzD+PNYJMj0TbHw8yVgjmHsR/MORRpoZropB9upZHs
@@ -1431,8 +1431,7 @@
 </value>
   </data>
   <data name="textBoxDescription.Text" xml:space="preserve">
-    <value>This is a fork of Industrial Park created by Pepperpot.
-Industrial Park is made by igorseabra4 using C# and SharpDX.
+    <value>Industrial Park is made by igorseabra4 using C# and SharpDX.
 
 It is a HIP/HOP archive viewer and editor for the following games:
 - SpongeBob SquarePants: Battle For Bikini Bottom
@@ -1446,6 +1445,7 @@ Additional credits go to:
 - actualchatterteeth
 - Dark
 - MinecraftFreak73
+- Pepperpot
 - Seil
 - Suprnova123
 - TetraxZ
@@ -1455,6 +1455,6 @@ External tools used:
 - TxdGen
 - vgmstream
 
-For questions, suggestions, problems or any other reasons you can contact me at Heavy Iron Modding, GitHub, YouTube, or even better, on Discord: please join the BFBB Modding server. ~igorseabra4</value>
+For questions, suggestions, problems or any other reasons you can contact me at Heavy Iron Modding, GitHub, YouTube, or even better, on Discord: please join the Heavy Iron Modding server. ~igorseabra4</value>
   </data>
 </root>

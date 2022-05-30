@@ -12,9 +12,9 @@ using System.Windows.Forms;
 
 namespace IndustrialPark
 {
-    public partial class ImportLevel : Form
+    public partial class OpenLevel : Form
     {
-        public ImportLevel()
+        public OpenLevel()
         {
             InitializeComponent();
         }
@@ -48,18 +48,11 @@ namespace IndustrialPark
             {
                 try
                 {
-                    ArchiveEditor temp = new ArchiveEditor();
-                    //temp.Show();
-                    //temp.Hide();
-                    temp.Begin(txtHIP.Text, HipHopFile.Platform.Unknown);
-                    Program.MainForm.archiveEditors.Add(temp);
-                    temp.archive.ChangesMade += Program.MainForm.UpdateTitleBar;
-                    temp.EditorClosed += Program.MainForm.UpdateCloseAllArchiveMenuItem;
-                    Program.MainForm.AddArchiveDropdownListEntry(Path.GetFileName(temp.GetCurrentlyOpenFileName()));
+                    Program.MainForm.AddArchiveEditor(txtHIP.Text);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("HIP could not be imported.", "Import failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("HIP could not be opened: " + ex.Message, "Import failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     importSuccessful = false;
                 }
             }
@@ -70,18 +63,11 @@ namespace IndustrialPark
             {
                 try
                 {
-                    ArchiveEditor temp = new ArchiveEditor();
-                    //temp.Show();
-                    //temp.Hide();
-                    temp.Begin(txtHOP.Text, HipHopFile.Platform.Unknown);
-                    Program.MainForm.archiveEditors.Add(temp);
-                    temp.archive.ChangesMade += Program.MainForm.UpdateTitleBar;
-                    temp.EditorClosed += Program.MainForm.UpdateCloseAllArchiveMenuItem;
-                    Program.MainForm.AddArchiveDropdownListEntry(Path.GetFileName(temp.GetCurrentlyOpenFileName()));
+                    Program.MainForm.AddArchiveEditor(txtHOP.Text);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("HOP could not be imported.", "Import failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("HOP could not be opened: " + ex.Message, "Import failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     importSuccessful = false;
                 }
             }
@@ -90,18 +76,11 @@ namespace IndustrialPark
             {
                 try
                 {
-                    ArchiveEditor temp = new ArchiveEditor();
-                    //temp.Show();
-                    //temp.Hide();
-                    temp.Begin(txtBOOT.Text, HipHopFile.Platform.Unknown);
-                    Program.MainForm.archiveEditors.Add(temp);
-                    temp.archive.ChangesMade += Program.MainForm.UpdateTitleBar;
-                    temp.EditorClosed += Program.MainForm.UpdateCloseAllArchiveMenuItem;
-                    Program.MainForm.AddArchiveDropdownListEntry(Path.GetFileName(temp.GetCurrentlyOpenFileName()));
+                    Program.MainForm.AddArchiveEditor(txtBOOT.Text);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("BOOT.HIP could not be imported.", "Import failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("BOOT.HIP could not be opened: " + ex.Message, "Import failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     importSuccessful = false;
                 }
             }
@@ -112,25 +91,16 @@ namespace IndustrialPark
                 {
                     try
                     {
-                        ArchiveEditor temp = new ArchiveEditor();
-                        //temp.Show();
-                        //temp.Hide();
-                        temp.Begin(item.ToString(), HipHopFile.Platform.Unknown);
-                        Program.MainForm.archiveEditors.Add(temp);
-                        temp.archive.ChangesMade += Program.MainForm.UpdateTitleBar;
-                        temp.EditorClosed += Program.MainForm.UpdateCloseAllArchiveMenuItem;
-                        Program.MainForm.AddArchiveDropdownListEntry(Path.GetFileName(temp.GetCurrentlyOpenFileName()));
+                        Program.MainForm.AddArchiveEditor(item.ToString());
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Localization file could not be imported.", "Import failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Localization file could not be opened: " + ex.Message, "Import failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         importSuccessful = false;
                     }
                 }
-            }
-            
+            }            
 
-            Program.MainForm.UpdateTitleBar();
             if (importSuccessful)
             {
                 Close();
@@ -144,7 +114,6 @@ namespace IndustrialPark
 
         private void _findCorrespondingFiles(string filePath, bool findHIP, bool findHOP)
         {
-
             // Try to find HIP
             if (findHIP && File.Exists(Path.GetDirectoryName(filePath) + "\\" + Path.GetFileNameWithoutExtension(filePath) + ".HIP"))
             {
@@ -154,9 +123,9 @@ namespace IndustrialPark
                 txtHIP.SelectionStart = txtHIP.Text.Length;
                 txtHIP.SelectionLength = 0;
             }
-
-                // Try to find HOP
-                if (findHOP && File.Exists(Path.GetDirectoryName(filePath) + "\\" + Path.GetFileNameWithoutExtension(filePath) + ".HOP"))
+            
+            // Try to find HOP
+            if (findHOP && File.Exists(Path.GetDirectoryName(filePath) + "\\" + Path.GetFileNameWithoutExtension(filePath) + ".HOP"))
             {
                 txtHOP.Text = Path.GetDirectoryName(filePath) + "\\" + Path.GetFileNameWithoutExtension(filePath) + ".HOP";
                 chkHOP.Checked = true;
@@ -186,6 +155,8 @@ namespace IndustrialPark
                     lstLocalization.Items.Add(fileName, true);
                 }
             }
+
+            checkBoxUpdated(null, null);
         }
 
         private void btnHIPSelect_Click(object sender, EventArgs e)

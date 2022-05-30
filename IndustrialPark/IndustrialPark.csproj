@@ -329,11 +329,11 @@
     </Compile>
     <Compile Include="Links\Enums\EventTSSM.cs" />
     <Compile Include="Links\Link.cs" />
-    <Compile Include="MainForm\ImportLevel.cs">
+    <Compile Include="MainForm\OpenLevel.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainForm\ImportLevel.Designer.cs">
-      <DependentUpon>ImportLevel.cs</DependentUpon>
+    <Compile Include="MainForm\OpenLevel.Designer.cs">
+      <DependentUpon>OpenLevel.cs</DependentUpon>
     </Compile>
     <Compile Include="Other\MessageBox.cs" />
     <Compile Include="Models\BSP_IO_Shared.cs" />
@@ -540,8 +540,8 @@
     <EmbeddedResource Include="ArchiveEditor\Dialogs\ApplyScale.resx">
       <DependentUpon>ApplyScale.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainForm\ImportLevel.resx">
-      <DependentUpon>ImportLevel.cs</DependentUpon>
+    <EmbeddedResource Include="MainForm\OpenLevel.resx">
+      <DependentUpon>OpenLevel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Research\AssetIDGenerator.resx">
       <DependentUpon>AssetIDGenerator.cs</DependentUpon>
