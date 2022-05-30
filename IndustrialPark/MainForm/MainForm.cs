@@ -26,10 +26,41 @@ namespace IndustrialPark
             dynaNameSearcherToolStripMenuItem.Visible = false;
 #endif
 
-            autoShowDropDowns = false;
-            uIToolStripMenuItem_Click(null, null);
-            uIFTToolStripMenuItem_Click(null, null);
-            autoShowDropDowns = true;
+            var enableAll = new ToolStripMenuItem("Enable All");
+            enableAll.Click += (object sender, EventArgs e) =>
+            {
+                autoShowDropDowns = false;
+                foreach (var item in assetViewToolStripMenuItems)
+                {
+                    if (!item.Checked)
+                        item.PerformClick();
+                }
+                autoShowDropDowns = true;
+                ShowDropDowns();
+            };
+
+            var disableAll = new ToolStripMenuItem("Disable All");
+            disableAll.Click += (object sender, EventArgs e) =>
+            {
+                autoShowDropDowns = false;
+                foreach (var item in assetViewToolStripMenuItems)
+                {
+                    if (item.Checked)
+                        item.PerformClick();
+                }
+                autoShowDropDowns = true;
+                ShowDropDowns();
+            };
+
+            assetTypesToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] {
+                enableAll,
+                disableAll,
+                new ToolStripSeparator()
+            });
+            assetViewToolStripMenuItems = GetAssetViewToolStripMenuItems();
+            assetTypesToolStripMenuItem.DropDownItems.AddRange(assetViewToolStripMenuItems);
+
+            SetUiAssetsVisibility(false);
 
             ArchiveEditorFunctions.PopulateTemplateMenusAt(toolStripMenuItem_Templates, TemplateToolStripItemClick);
 
@@ -430,86 +461,12 @@ namespace IndustrialPark
             uIModeToolStripMenuItem.Checked = ipSettings.isDrawingUI;
             renderer.isDrawingUI = ipSettings.isDrawingUI;
 
-            levelModelToolStripMenuItem.Checked = !ipSettings.dontRenderJSP;
-            AssetJSP.dontRender = ipSettings.dontRenderJSP;
-
-            bOULToolStripMenuItem.Checked = !ipSettings.dontRenderBOUL;
-            AssetBOUL.dontRender = ipSettings.dontRenderBOUL;
-
-            bUTNToolStripMenuItem.Checked = !ipSettings.dontRenderBUTN;
-            AssetBUTN.dontRender = ipSettings.dontRenderBUTN;
-
-            cAMToolStripMenuItem.Checked = !ipSettings.dontRenderCAM;
-            AssetCAM.dontRender = ipSettings.dontRenderCAM;
-
-            dSTRToolStripMenuItem.Checked = !ipSettings.dontRenderDSTR;
-            AssetDSTR.dontRender = ipSettings.dontRenderDSTR;
-
-            dTRKToolStripMenuItem.Checked = !ipSettings.dontRenderDTRK;
-            AssetDTRK.dontRender = ipSettings.dontRenderDTRK;
-
-            dYNAToolStripMenuItem.Checked = !ipSettings.dontRenderDYNA;
-            AssetDYNA.dontRender = ipSettings.dontRenderDYNA;
-
-            eGENToolStripMenuItem.Checked = !ipSettings.dontRenderEGEN;
-            AssetEGEN.dontRender = ipSettings.dontRenderEGEN;
-
-            gRSMToolStripMenuItem.Checked = !ipSettings.dontRenderGRSM;
-            AssetGRSM.dontRender = ipSettings.dontRenderGRSM;
-
-            hANGToolStripMenuItem.Checked = !ipSettings.dontRenderHANG;
-            AssetHANG.dontRender = ipSettings.dontRenderHANG;
-
-            lITEToolStripMenuItem.Checked = !ipSettings.dontRenderLITE;
-            AssetLITE.dontRender = ipSettings.dontRenderLITE;
-
-            mRKRToolStripMenuItem.Checked = !ipSettings.dontRenderMRKR;
-            AssetMRKR.dontRender = ipSettings.dontRenderMRKR;
-
-            mVPTToolStripMenuItem.Checked = !ipSettings.dontRenderMVPT;
-            AssetMVPT.dontRender = ipSettings.dontRenderMVPT;
-
-            nPCToolStripMenuItem.Checked = !ipSettings.dontRenderNPC;
-            AssetNPC.dontRender = ipSettings.dontRenderNPC;
-
-            pENDToolStripMenuItem.Checked = !ipSettings.dontRenderPEND;
-            AssetPEND.dontRender = ipSettings.dontRenderPEND;
-
-            pKUPToolStripMenuItem.Checked = !ipSettings.dontRenderPKUP;
-            AssetPKUP.dontRender = ipSettings.dontRenderPKUP;
-
-            pLATToolStripMenuItem.Checked = !ipSettings.dontRenderPLAT;
-            AssetPLAT.dontRender = ipSettings.dontRenderPLAT;
-
-            pLYRToolStripMenuItem.Checked = !ipSettings.dontRenderPLYR;
-            AssetPLYR.dontRender = ipSettings.dontRenderPLYR;
-
-            sFXToolStripMenuItem.Checked = !ipSettings.dontRenderSFX;
-            AssetSFX.dontRender = ipSettings.dontRenderSFX;
-
-            sDFXToolStripMenuItem.Checked = !ipSettings.dontRenderSDFX;
-            AssetSDFX.dontRender = ipSettings.dontRenderSDFX;
-
-            sIMPToolStripMenuItem.Checked = !ipSettings.dontRenderSIMP;
-            AssetSIMP.dontRender = ipSettings.dontRenderSIMP;
-
-            sPLNToolStripMenuItem.Checked = !ipSettings.dontRenderSPLN;
-            AssetSPLN.dontRender = ipSettings.dontRenderSPLN;
-
-            tRIGToolStripMenuItem.Checked = !ipSettings.dontRenderTRIG;
-            AssetTRIG.dontRender = ipSettings.dontRenderTRIG;
-
-            uIToolStripMenuItem.Checked = !ipSettings.dontRenderUI;
-            AssetUI.dontRender = ipSettings.dontRenderUI;
-
-            uIFTToolStripMenuItem.Checked = !ipSettings.dontRenderUIFT;
-            AssetUIFT.dontRender = ipSettings.dontRenderUIFT;
-
-            vILToolStripMenuItem.Checked = !ipSettings.dontRenderVIL;
-            AssetVIL.dontRender = ipSettings.dontRenderVIL;
-
-            vOLUToolStripMenuItem.Checked = !ipSettings.dontRenderVOLU;
-            AssetVOLU.dontRender = ipSettings.dontRenderVOLU;
+            for (int i = 0; i < assetViewToolStripMenuItems.Length; i++)
+            {
+                bool value = (bool)typeof(ProjectJson).GetField("dontRender" + assetViewToolStripMenuItems[i].Name).GetValue(ipSettings);
+                assetViewToolStripMenuItems[i].Checked = !value;
+                assetViewTypes[i].GetField("dontRender").SetValue(null, value);
+            }
         }
 
         public void SetToolStripStatusLabel(string Text)
@@ -993,210 +950,89 @@ namespace IndustrialPark
             }
         }
 
-        private void levelModelToolStripMenuItem_Click(object sender, EventArgs e)
+        private Type[] assetViewTypes = new Type[]
         {
-            levelModelToolStripMenuItem.Checked = !levelModelToolStripMenuItem.Checked;
-            AssetJSP.dontRender = !levelModelToolStripMenuItem.Checked;
-            ShowDropDowns();
-        }
+            typeof(AssetJSP),
+            typeof(AssetBUTN),
+            typeof(AssetBOUL),
+            typeof(AssetCAM),
+            typeof(AssetDSTR),
+            typeof(AssetDTRK),
+            typeof(AssetDYNA),
+            typeof(AssetEGEN),
+            typeof(AssetGRSM),
+            typeof(AssetHANG),
+            typeof(AssetLITE),
+            typeof(AssetMRKR),
+            typeof(AssetMVPT),
+            typeof(AssetNPC),
+            typeof(AssetPEND),
+            typeof(AssetPKUP),
+            typeof(AssetPLAT),
+            typeof(AssetPLYR),
+            typeof(AssetSFX),
+            typeof(AssetSDFX),
+            typeof(AssetSIMP),
+            typeof(AssetSPLN),
+            typeof(AssetTRIG),
+            typeof(AssetUI),
+            typeof(AssetUIFT),
+            typeof(AssetVIL),
+            typeof(AssetVOLU)
+        };
 
-        private void bUTNToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            bUTNToolStripMenuItem.Checked = !bUTNToolStripMenuItem.Checked;
-            AssetBUTN.dontRender = !bUTNToolStripMenuItem.Checked;
-            ShowDropDowns();
-        }
+        private ToolStripMenuItem[] assetViewToolStripMenuItems;
 
-        private void bOULToolStripMenuItem_Click(object sender, EventArgs e)
+        private ToolStripMenuItem[] GetAssetViewToolStripMenuItems()
         {
-            bOULToolStripMenuItem.Checked = !bOULToolStripMenuItem.Checked;
-            AssetBOUL.dontRender = !bOULToolStripMenuItem.Checked;
-            ShowDropDowns();
-        }
+            var items = new List<ToolStripMenuItem>();
+            foreach (var assetType in assetViewTypes)
+            {
+                var text = new string(assetType.Name.Skip(5).ToArray());
+                var name = text;
+                if (assetType == typeof(AssetJSP))
+                    text = "BSP/JSP";
+                else if (assetType == typeof(AssetVIL))
+                    text = "VIL/DUPC";
+                ToolStripMenuItem item = new ToolStripMenuItem(text)
+                {
+                    Checked = true,
+                    CheckState = CheckState.Checked,
+                    Name = name,
+                    Size = new Size(129, 22)
+                };
+                item.Click += (object sender, EventArgs e) =>
+                {
+                    item.Checked = !item.Checked;
+                    var field = assetType.GetField("dontRender");
+                    field.SetValue(null, !item.Checked);
+                    ShowDropDowns();
+                };
+                items.Add(item);
+            }
 
-        private void cAMToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            cAMToolStripMenuItem.Checked = !cAMToolStripMenuItem.Checked;
-            AssetCAM.dontRender = !cAMToolStripMenuItem.Checked;
-            ShowDropDowns();
-        }
-
-        private void mVPTToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            mVPTToolStripMenuItem.Checked = !mVPTToolStripMenuItem.Checked;
-            AssetMVPT.dontRender = !mVPTToolStripMenuItem.Checked;
-            ShowDropDowns();
-        }
-
-        private void pKUPToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            pKUPToolStripMenuItem.Checked = !pKUPToolStripMenuItem.Checked;
-            AssetPKUP.dontRender = !pKUPToolStripMenuItem.Checked;
-            ShowDropDowns();
-        }
-
-        private void dSTRToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            dSTRToolStripMenuItem.Checked = !dSTRToolStripMenuItem.Checked;
-            AssetDSTR.dontRender = !dSTRToolStripMenuItem.Checked;
-            ShowDropDowns();
-        }
-
-        private void tRIGToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            tRIGToolStripMenuItem.Checked = !tRIGToolStripMenuItem.Checked;
-            AssetTRIG.dontRender = !tRIGToolStripMenuItem.Checked;
-            ShowDropDowns();
-        }
-
-        private void pLATToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            pLATToolStripMenuItem.Checked = !pLATToolStripMenuItem.Checked;
-            AssetPLAT.dontRender = !pLATToolStripMenuItem.Checked;
-            ShowDropDowns();
-        }
-
-        private void sIMPToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            sIMPToolStripMenuItem.Checked = !sIMPToolStripMenuItem.Checked;
-            AssetSIMP.dontRender = !sIMPToolStripMenuItem.Checked;
-            ShowDropDowns();
-        }
-
-        private void vILToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            vILToolStripMenuItem.Checked = !vILToolStripMenuItem.Checked;
-            AssetVIL.dontRender = !vILToolStripMenuItem.Checked;
-            ShowDropDowns();
-        }
-
-        private void mRKRToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            mRKRToolStripMenuItem.Checked = !mRKRToolStripMenuItem.Checked;
-            AssetMRKR.dontRender = !mRKRToolStripMenuItem.Checked;
-            ShowDropDowns();
-        }
-
-        private void pLYRToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            pLYRToolStripMenuItem.Checked = !pLYRToolStripMenuItem.Checked;
-            AssetPLYR.dontRender = !pLYRToolStripMenuItem.Checked;
-            ShowDropDowns();
-        }
-
-        private void sFXToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            sFXToolStripMenuItem.Checked = !sFXToolStripMenuItem.Checked;
-            AssetSFX.dontRender = !sFXToolStripMenuItem.Checked;
-            ShowDropDowns();
-        }
-
-        private void sDFXToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            sDFXToolStripMenuItem.Checked = !sDFXToolStripMenuItem.Checked;
-            AssetSDFX.dontRender = !sDFXToolStripMenuItem.Checked;
-            ShowDropDowns();
-        }
-
-        private void dYNAToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            dYNAToolStripMenuItem.Checked = !dYNAToolStripMenuItem.Checked;
-            AssetDYNA.dontRender = !dYNAToolStripMenuItem.Checked;
-            ShowDropDowns();
-        }
-
-        private void uIToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            uIToolStripMenuItem.Checked = !uIToolStripMenuItem.Checked;
-            AssetUI.dontRender = !uIToolStripMenuItem.Checked;
-            ShowDropDowns();
-        }
-
-        private void uIFTToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            uIFTToolStripMenuItem.Checked = !uIFTToolStripMenuItem.Checked;
-            AssetUIFT.dontRender = !uIFTToolStripMenuItem.Checked;
-            ShowDropDowns();
-        }
-
-        private void eGENToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            eGENToolStripMenuItem.Checked = !eGENToolStripMenuItem.Checked;
-            AssetEGEN.dontRender = !eGENToolStripMenuItem.Checked;
-            ShowDropDowns();
-        }
-
-        private void hANGToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            hANGToolStripMenuItem.Checked = !hANGToolStripMenuItem.Checked;
-            AssetHANG.dontRender = !hANGToolStripMenuItem.Checked;
-            ShowDropDowns();
-        }
-
-        private void pENDToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            pENDToolStripMenuItem.Checked = !pENDToolStripMenuItem.Checked;
-            AssetPEND.dontRender = !pENDToolStripMenuItem.Checked;
-            ShowDropDowns();
-        }
-
-        private void lITEToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            lITEToolStripMenuItem.Checked = !lITEToolStripMenuItem.Checked;
-            AssetLITE.dontRender = !lITEToolStripMenuItem.Checked;
-            ShowDropDowns();
-        }
-
-        private void sPLNToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            sPLNToolStripMenuItem.Checked = !sPLNToolStripMenuItem.Checked;
-            AssetSPLN.dontRender = !sPLNToolStripMenuItem.Checked;
-            ShowDropDowns();
-        }
-
-        private void dTRKToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            dTRKToolStripMenuItem.Checked = !dTRKToolStripMenuItem.Checked;
-            AssetDTRK.dontRender = !dTRKToolStripMenuItem.Checked;
-            ShowDropDowns();
-        }
-
-        private void vOLUToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            vOLUToolStripMenuItem.Checked = !vOLUToolStripMenuItem.Checked;
-            AssetVOLU.dontRender = !vOLUToolStripMenuItem.Checked;
-            ShowDropDowns();
-        }
-
-        private void nPCToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            nPCToolStripMenuItem.Checked = !nPCToolStripMenuItem.Checked;
-            AssetNPC.dontRender = !nPCToolStripMenuItem.Checked;
-            ShowDropDowns();
-        }
-
-        private void gRSMToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            gRSMToolStripMenuItem.Checked = !gRSMToolStripMenuItem.Checked;
-            AssetGRSM.dontRender = !gRSMToolStripMenuItem.Checked;
-            ShowDropDowns();
+            return items.ToArray();
         }
 
         private void uIModeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             uIModeToolStripMenuItem.Checked = !uIModeToolStripMenuItem.Checked;
             renderer.isDrawingUI = uIModeToolStripMenuItem.Checked;
-
-            if (renderer.isDrawingUI)
-            {
-                if (AssetUI.dontRender)
-                    uIToolStripMenuItem_Click(null, null);
-                if (AssetUIFT.dontRender)
-                    uIFTToolStripMenuItem_Click(null, null);
-            }
-
+            SetUiAssetsVisibility(renderer.isDrawingUI);
             renderer.Camera.Reset();
             mouseMode = false;
+        }
+
+        private void SetUiAssetsVisibility(bool value)
+        {
+            autoShowDropDowns = false;
+            var clickThis = new string[] { "UI", "UIFT" };
+            foreach (var item in assetViewToolStripMenuItems)
+                if (clickThis.Contains(item.Name) && item.Checked != value)
+                    item.PerformClick();
+                else if (item.Checked == value)
+                    item.PerformClick();
+            autoShowDropDowns = true;
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1553,184 +1389,6 @@ namespace IndustrialPark
         {
             discordRichPresenceToolStripMenuItem.Checked = !discordRichPresenceToolStripMenuItem.Checked;
             DiscordRPCController.ToggleDiscordRichPresence(discordRichPresenceToolStripMenuItem.Checked);
-        }
-
-        private void disableAllToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            autoShowDropDowns = false;
-
-            if (levelModelToolStripMenuItem.Checked)
-                levelModelToolStripMenuItem_Click(sender, e);
-
-            if (bUTNToolStripMenuItem.Checked)
-                bUTNToolStripMenuItem_Click(sender, e);
-
-            if (bOULToolStripMenuItem.Checked)
-                bOULToolStripMenuItem_Click(sender, e);
-
-            if (cAMToolStripMenuItem.Checked)
-                cAMToolStripMenuItem_Click(sender, e);
-
-            if (mVPTToolStripMenuItem.Checked)
-                mVPTToolStripMenuItem_Click(sender, e);
-
-            if (pKUPToolStripMenuItem.Checked)
-                pKUPToolStripMenuItem_Click(sender, e);
-
-            if (dSTRToolStripMenuItem.Checked)
-                dSTRToolStripMenuItem_Click(sender, e);
-
-            if (tRIGToolStripMenuItem.Checked)
-                tRIGToolStripMenuItem_Click(sender, e);
-
-            if (pLATToolStripMenuItem.Checked)
-                pLATToolStripMenuItem_Click(sender, e);
-
-            if (sIMPToolStripMenuItem.Checked)
-                sIMPToolStripMenuItem_Click(sender, e);
-
-            if (vILToolStripMenuItem.Checked)
-                vILToolStripMenuItem_Click(sender, e);
-
-            if (mRKRToolStripMenuItem.Checked)
-                mRKRToolStripMenuItem_Click(sender, e);
-
-            if (pLYRToolStripMenuItem.Checked)
-                pLYRToolStripMenuItem_Click(sender, e);
-
-            if (sFXToolStripMenuItem.Checked)
-                sFXToolStripMenuItem_Click(sender, e);
-
-            if (sDFXToolStripMenuItem.Checked)
-                sDFXToolStripMenuItem_Click(sender, e);
-
-            if (dYNAToolStripMenuItem.Checked)
-                dYNAToolStripMenuItem_Click(sender, e);
-
-            if (uIToolStripMenuItem.Checked)
-                uIToolStripMenuItem_Click(sender, e);
-
-            if (uIFTToolStripMenuItem.Checked)
-                uIFTToolStripMenuItem_Click(sender, e);
-
-            if (eGENToolStripMenuItem.Checked)
-                eGENToolStripMenuItem_Click(sender, e);
-
-            if (hANGToolStripMenuItem.Checked)
-                hANGToolStripMenuItem_Click(sender, e);
-
-            if (pENDToolStripMenuItem.Checked)
-                pENDToolStripMenuItem_Click(sender, e);
-
-            if (lITEToolStripMenuItem.Checked)
-                lITEToolStripMenuItem_Click(sender, e);
-
-            if (sPLNToolStripMenuItem.Checked)
-                sPLNToolStripMenuItem_Click(sender, e);
-
-            if (dTRKToolStripMenuItem.Checked)
-                dTRKToolStripMenuItem_Click(sender, e);
-
-            if (nPCToolStripMenuItem.Checked)
-                nPCToolStripMenuItem_Click(sender, e);
-
-            if (vOLUToolStripMenuItem.Checked)
-                vOLUToolStripMenuItem_Click(sender, e);
-
-            if (gRSMToolStripMenuItem.Checked)
-                gRSMToolStripMenuItem_Click(sender, e);
-
-            autoShowDropDowns = true;
-            ShowDropDowns();
-        }
-
-        private void enableAllToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            autoShowDropDowns = false;
-
-            if (!levelModelToolStripMenuItem.Checked)
-                levelModelToolStripMenuItem_Click(sender, e);
-
-            if (!bUTNToolStripMenuItem.Checked)
-                bUTNToolStripMenuItem_Click(sender, e);
-
-            if (!bOULToolStripMenuItem.Checked)
-                bOULToolStripMenuItem_Click(sender, e);
-
-            if (!cAMToolStripMenuItem.Checked)
-                cAMToolStripMenuItem_Click(sender, e);
-
-            if (!mVPTToolStripMenuItem.Checked)
-                mVPTToolStripMenuItem_Click(sender, e);
-
-            if (!pKUPToolStripMenuItem.Checked)
-                pKUPToolStripMenuItem_Click(sender, e);
-
-            if (!dSTRToolStripMenuItem.Checked)
-                dSTRToolStripMenuItem_Click(sender, e);
-
-            if (!tRIGToolStripMenuItem.Checked)
-                tRIGToolStripMenuItem_Click(sender, e);
-
-            if (!pLATToolStripMenuItem.Checked)
-                pLATToolStripMenuItem_Click(sender, e);
-
-            if (!sIMPToolStripMenuItem.Checked)
-                sIMPToolStripMenuItem_Click(sender, e);
-
-            if (!vILToolStripMenuItem.Checked)
-                vILToolStripMenuItem_Click(sender, e);
-
-            if (!mRKRToolStripMenuItem.Checked)
-                mRKRToolStripMenuItem_Click(sender, e);
-
-            if (!pLYRToolStripMenuItem.Checked)
-                pLYRToolStripMenuItem_Click(sender, e);
-
-            if (!sFXToolStripMenuItem.Checked)
-                sFXToolStripMenuItem_Click(sender, e);
-
-            if (!sDFXToolStripMenuItem.Checked)
-                sDFXToolStripMenuItem_Click(sender, e);
-
-            if (!dYNAToolStripMenuItem.Checked)
-                dYNAToolStripMenuItem_Click(sender, e);
-
-            if (!uIToolStripMenuItem.Checked)
-                uIToolStripMenuItem_Click(sender, e);
-
-            if (!uIFTToolStripMenuItem.Checked)
-                uIFTToolStripMenuItem_Click(sender, e);
-
-            if (!eGENToolStripMenuItem.Checked)
-                eGENToolStripMenuItem_Click(sender, e);
-
-            if (!hANGToolStripMenuItem.Checked)
-                hANGToolStripMenuItem_Click(sender, e);
-
-            if (!pENDToolStripMenuItem.Checked)
-                pENDToolStripMenuItem_Click(sender, e);
-
-            if (!lITEToolStripMenuItem.Checked)
-                lITEToolStripMenuItem_Click(sender, e);
-
-            if (!sPLNToolStripMenuItem.Checked)
-                sPLNToolStripMenuItem_Click(sender, e);
-
-            if (!dTRKToolStripMenuItem.Checked)
-                dTRKToolStripMenuItem_Click(sender, e);
-
-            if (!nPCToolStripMenuItem.Checked)
-                nPCToolStripMenuItem_Click(sender, e);
-
-            if (!vOLUToolStripMenuItem.Checked)
-                vOLUToolStripMenuItem_Click(sender, e);
-
-            if (!gRSMToolStripMenuItem.Checked)
-                gRSMToolStripMenuItem_Click(sender, e);
-
-            autoShowDropDowns = true;
-            ShowDropDowns();
         }
 
         private void openFolderToolStripMenuItem_Click(object sender, EventArgs e)
