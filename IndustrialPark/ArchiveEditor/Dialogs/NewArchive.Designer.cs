@@ -48,7 +48,7 @@
             this.comboBoxGame.FormattingEnabled = true;
             this.comboBoxGame.Location = new System.Drawing.Point(6, 19);
             this.comboBoxGame.Name = "comboBoxGame";
-            this.comboBoxGame.Size = new System.Drawing.Size(202, 21);
+            this.comboBoxGame.Size = new System.Drawing.Size(281, 21);
             this.comboBoxGame.TabIndex = 1;
             this.comboBoxGame.SelectedIndexChanged += new System.EventHandler(this.comboBox_SelectedIndexChanged);
             // 
@@ -57,7 +57,7 @@
             this.groupBox1.Controls.Add(this.comboBoxGame);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(214, 48);
+            this.groupBox1.Size = new System.Drawing.Size(293, 48);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Game";
@@ -65,17 +65,18 @@
             // buttonOK
             // 
             this.buttonOK.Enabled = false;
-            this.buttonOK.Location = new System.Drawing.Point(122, 223);
+            this.buttonOK.Location = new System.Drawing.Point(97, 220);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(98, 23);
             this.buttonOK.TabIndex = 3;
-            this.buttonOK.Text = "OK";
+            this.buttonOK.Text = "Create Archive";
             this.buttonOK.UseVisualStyleBackColor = true;
             this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Location = new System.Drawing.Point(18, 223);
+            this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.buttonCancel.Location = new System.Drawing.Point(201, 220);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(98, 23);
             this.buttonCancel.TabIndex = 4;
@@ -88,7 +89,7 @@
             this.groupBox2.Controls.Add(this.comboBoxPlatform);
             this.groupBox2.Location = new System.Drawing.Point(12, 66);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(214, 48);
+            this.groupBox2.Size = new System.Drawing.Size(293, 48);
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Platform";
@@ -98,7 +99,7 @@
             this.comboBoxPlatform.FormattingEnabled = true;
             this.comboBoxPlatform.Location = new System.Drawing.Point(6, 19);
             this.comboBoxPlatform.Name = "comboBoxPlatform";
-            this.comboBoxPlatform.Size = new System.Drawing.Size(202, 21);
+            this.comboBoxPlatform.Size = new System.Drawing.Size(281, 21);
             this.comboBoxPlatform.TabIndex = 1;
             this.comboBoxPlatform.SelectedIndexChanged += new System.EventHandler(this.comboBox_SelectedIndexChanged);
             // 
@@ -108,7 +109,7 @@
             this.groupBox3.Controls.Add(this.textBoxPCRT);
             this.groupBox3.Location = new System.Drawing.Point(12, 120);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(214, 74);
+            this.groupBox3.Size = new System.Drawing.Size(287, 74);
             this.groupBox3.TabIndex = 4;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Date/Time Information";
@@ -117,7 +118,7 @@
             // 
             this.dateTimePicker1.Location = new System.Drawing.Point(6, 19);
             this.dateTimePicker1.Name = "dateTimePicker1";
-            this.dateTimePicker1.Size = new System.Drawing.Size(202, 20);
+            this.dateTimePicker1.Size = new System.Drawing.Size(275, 20);
             this.dateTimePicker1.TabIndex = 1;
             this.dateTimePicker1.ValueChanged += new System.EventHandler(this.dateTimePicker1_ValueChanged);
             // 
@@ -125,7 +126,7 @@
             // 
             this.textBoxPCRT.Location = new System.Drawing.Point(6, 45);
             this.textBoxPCRT.Name = "textBoxPCRT";
-            this.textBoxPCRT.Size = new System.Drawing.Size(202, 20);
+            this.textBoxPCRT.Size = new System.Drawing.Size(275, 20);
             this.textBoxPCRT.TabIndex = 0;
             // 
             // checkBoxDefaultAssets
@@ -140,14 +141,16 @@
             // 
             // NewArchive
             // 
+            this.AcceptButton = this.buttonOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(238, 255);
+            this.CancelButton = this.buttonCancel;
+            this.ClientSize = new System.Drawing.Size(317, 255);
             this.Controls.Add(this.checkBoxDefaultAssets);
             this.Controls.Add(this.groupBox3);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOK);
+            this.Controls.Add(this.buttonCancel);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;

@@ -1,11 +1,19 @@
 ﻿using SharpDX;
 using System;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace IndustrialPark
 {
     public partial class ApplyVertexColors : Form
     {
+        SolidBrush colorPreview;
+        readonly Graphics previewGraphics;
+        private const int COLOR_PREVIEW_X_POS = 380;
+        private const int COLOR_PREVIEW_Y_POS = 15;
+        private const int COLOR_PREVIEW_SIZE = 50;
+        private const int COLOR_PREVIEW_BORDER_WIDTH = 1;
+
         public ApplyVertexColors()
         {
             InitializeComponent();
@@ -25,6 +33,45 @@ namespace IndustrialPark
                 comboBoxOperation.Items.Add(v);
 
             comboBoxOperation.SelectedIndex = 0;
+
+            colorPreview = new SolidBrush(System.Drawing.Color.FromArgb(
+                255,
+                ClampToByteRange((int)(numericUpDownX.Value * 255)),
+                ClampToByteRange((int)(numericUpDownY.Value * 255)),
+                ClampToByteRange((int)(numericUpDownZ.Value * 255))));
+
+            previewGraphics = CreateGraphics();
+            UpdateColorPreview();
+        }
+
+        private int ClampToByteRange(int num)
+        {
+            return Math.Min(Math.Max(num, 0), 255);
+        }
+
+        private void UpdateColorPreview()
+        {
+            // Get color from control values
+            colorPreview.Color = System.Drawing.Color.FromArgb(
+                255,
+                ClampToByteRange((int)(numericUpDownX.Value * 255)),
+                ClampToByteRange((int)(numericUpDownY.Value * 255)),
+                ClampToByteRange((int)(numericUpDownZ.Value * 255)));
+
+            // TODO: Fix scaling on non-100% display scale for the color preview
+
+            // Draw preview outline
+            previewGraphics.FillRectangle(new SolidBrush(System.Drawing.Color.FromArgb(222, 0, 0, 0)),
+                COLOR_PREVIEW_X_POS - COLOR_PREVIEW_BORDER_WIDTH,
+                COLOR_PREVIEW_Y_POS - COLOR_PREVIEW_BORDER_WIDTH,
+                COLOR_PREVIEW_SIZE + (2 * COLOR_PREVIEW_BORDER_WIDTH),
+                COLOR_PREVIEW_SIZE + (2 * COLOR_PREVIEW_BORDER_WIDTH));
+            // Draw preview
+            previewGraphics.FillRectangle(colorPreview, new System.Drawing.Rectangle(
+                COLOR_PREVIEW_X_POS,
+                COLOR_PREVIEW_Y_POS,
+                COLOR_PREVIEW_SIZE,
+                COLOR_PREVIEW_SIZE));
         }
 
         public static (Vector4?, Operation) GetColor()
@@ -49,6 +96,45 @@ namespace IndustrialPark
         private void button2_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void numericUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateColorPreview();
+        }
+
+        private void ApplyVertexColors_Shown(object sender, EventArgs e)
+        {
+            UpdateColorPreview();
+        }
+
+        private void ApplyVertexColors_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            colorPreview.Dispose();
+            previewGraphics.Dispose();
+        }
+
+        private void colorPickerBtn_Click(object sender, EventArgs e)
+        {
+            var colorDialog = new ColorDialog()
+            {
+                FullOpen = true,
+                ShowHelp = true,
+                Color = System.Drawing.Color.FromArgb(
+                    255,
+                    ClampToByteRange((int)(numericUpDownX.Value * 255)),
+                    ClampToByteRange((int)(numericUpDownY.Value * 255)),
+                    ClampToByteRange((int)(numericUpDownZ.Value * 255))
+                )
+            };
+
+            // Update the text box color if the user clicks OK 
+            if (colorDialog.ShowDialog() == DialogResult.OK)
+            {
+                numericUpDownX.Value = (decimal)colorDialog.Color.R / 255;
+                numericUpDownY.Value = (decimal)colorDialog.Color.G / 255;
+                numericUpDownZ.Value = (decimal)colorDialog.Color.B / 255;
+            }
         }
     }
 }

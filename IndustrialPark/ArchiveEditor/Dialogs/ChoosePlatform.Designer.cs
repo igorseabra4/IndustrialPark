@@ -41,7 +41,7 @@
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(167, 23);
             this.buttonOK.TabIndex = 5;
-            this.buttonOK.Text = "OK";
+            this.buttonOK.Text = "Confirm";
             this.buttonOK.UseVisualStyleBackColor = true;
             this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
             // 
@@ -82,7 +82,7 @@
             this.MinimizeBox = false;
             this.Name = "ChoosePlatformDialog";
             this.ShowIcon = false;
-            this.Text = "Hey!";
+            this.Text = "Choose Platform";
             this.ResumeLayout(false);
             this.PerformLayout();
 

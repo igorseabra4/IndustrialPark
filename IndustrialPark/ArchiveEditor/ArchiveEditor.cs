@@ -117,7 +117,34 @@ namespace IndustrialPark
             };
             if (openFile.ShowDialog() == DialogResult.OK)
             {
-                OpenFile(openFile.FileName);
+                bool shouldOpenFile = true;
+
+                if (!standalone)
+                {
+                    foreach (var archiveEditor in Program.MainForm.archiveEditors)
+                    {
+                        if (Path.GetFileName(archiveEditor.GetCurrentlyOpenFileName()) ==
+                            Path.GetFileName(openFile.FileName))
+                        {
+                            var result = MessageBox.Show(
+                                            $"A file named {Path.GetFileName(openFile.FileName)} is already open. Would you still like to open it?",
+                                            "Duplicate file detected",
+                                            MessageBoxButtons.YesNo,
+                                            MessageBoxIcon.Warning);
+
+                            if (result != DialogResult.Yes)
+                            {
+                                shouldOpenFile = false;
+                            }
+                        }
+                    }
+                }
+
+                if (shouldOpenFile)
+                {
+                    OpenFile(openFile.FileName);
+                }
+                
             }
         }
 
@@ -233,6 +260,13 @@ namespace IndustrialPark
             CloseArchiveEditor();
         }
 
+        public event Action EditorClosed;
+
+        protected virtual void OnEditorClosed()
+        {
+            EditorClosed?.Invoke();
+        }
+
         public void CloseArchiveEditor()
         {
             if (verifyResult != null)
@@ -243,8 +277,12 @@ namespace IndustrialPark
             archive.Dispose();
 
             if (!standalone)
+            {
                 Program.MainForm.CloseArchiveEditor(this);
+                Program.MainForm.UpdateTitleBar();
+            }
             Close();
+            OnEditorClosed();
         }
 
         private bool programIsChangingStuff = false;
@@ -1257,6 +1295,48 @@ namespace IndustrialPark
                         MessageBox.Show("Unable to export " + asset + ": " + ex.Message);
                     }
             }
+        }
+
+        private HashSet<Keys> PressedKeys = new HashSet<Keys>();
+
+        private void ArchiveEditor_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!PressedKeys.Contains(e.KeyCode))
+                PressedKeys.Add(e.KeyCode);
+
+            if (PressedKeys.Contains(Keys.ControlKey) 
+                && PressedKeys.Contains(Keys.S))
+            {
+                Save();
+            }
+
+            if (PressedKeys.Contains(Keys.ControlKey)
+                && PressedKeys.Contains(Keys.N))
+            {
+                newToolStripMenuItem_Click(sender, e);
+            }
+
+            if (PressedKeys.Contains(Keys.ControlKey)
+                && PressedKeys.Contains(Keys.O))
+            {
+                openToolStripMenuItem_Click(sender, e);
+            }
+
+            if (PressedKeys.Contains(Keys.ControlKey)
+                && PressedKeys.Contains(Keys.W))
+            {
+                closeToolStripMenuItem_Click(sender, e);
+            }
+        }
+
+        private void ArchiveEditor_KeyUp(object sender, KeyEventArgs e)
+        {
+            PressedKeys.Remove(e.KeyCode);
+        }
+
+        private void ArchiveEditor_Deactivate(object sender, EventArgs e)
+        {
+            PressedKeys.Clear();
         }
     }
 }

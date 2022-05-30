@@ -75,7 +75,25 @@ namespace IndustrialPark
         public void SetTextboxForAutocomplete(TextBox textBoxFindAsset) =>
             textBoxFindAsset.AutoCompleteCustomSource = autoCompleteSource;
 
-        public bool UnsavedChanges { get; set; } = false;
+        private bool _unsavedChanges;
+        public bool UnsavedChanges {
+            get
+            {
+                return _unsavedChanges;
+            }
+            set { 
+                _unsavedChanges = value;
+                OnChangesMade();
+            } 
+        }
+
+        public event Action ChangesMade;
+
+        protected virtual void OnChangesMade()
+        {
+            ChangesMade?.Invoke();
+        }
+
         public string currentlyOpenFilePath { get; private set; }
         public bool IsNull => hipFile == null;
 
@@ -120,7 +138,7 @@ namespace IndustrialPark
         {
             Dispose();
 
-            ProgressBar progressBar = new ProgressBar("Opening Archive");
+            ProgressBar progressBar = new ProgressBar("Opening " + Path.GetFileName(fileName));
 
             if (displayProgressBar)
                 progressBar.Show();
