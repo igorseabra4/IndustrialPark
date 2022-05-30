@@ -34,9 +34,12 @@
             // 
             // pBar
             // 
+            this.pBar.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pBar.Location = new System.Drawing.Point(12, 12);
             this.pBar.Name = "pBar";
-            this.pBar.Size = new System.Drawing.Size(382, 23);
+            this.pBar.Size = new System.Drawing.Size(388, 23);
             this.pBar.TabIndex = 0;
             // 
             // labelLoading
@@ -51,14 +54,13 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(406, 57);
+            this.ClientSize = new System.Drawing.Size(412, 57);
             this.ControlBox = false;
             this.Controls.Add(this.labelLoading);
             this.Controls.Add(this.pBar);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(428, 113);
             this.Name = "ProgressBar";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
