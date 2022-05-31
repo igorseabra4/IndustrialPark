@@ -60,7 +60,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID[] NextMVPTs { get; set; }
 
-        public AssetMVPT(string assetName, Vector3 position, Game game, AssetTemplate template) : base(assetName, AssetType.MVPT, BaseAssetType.MovePoint)
+        public AssetMVPT(string assetName, Vector3 position, Game game, AssetTemplate template) : base(assetName, AssetType.MovePoint, BaseAssetType.MovePoint)
         {
             _position = position;
             Wt = 0x2710;

@@ -38,6 +38,9 @@ namespace IndustrialPark
 
         private bool inc = false;
 
+        public static bool dontRender = false;
+        public override bool DontRender => dontRender;
+
         public DynaGObjectFlameEmitter(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__flame_emitter, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))

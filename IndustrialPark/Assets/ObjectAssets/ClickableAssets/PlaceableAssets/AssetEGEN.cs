@@ -24,7 +24,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID OnAnim_AssetID { get; set; }
 
-        public AssetEGEN(string assetName, Vector3 position) : base(assetName, AssetType.EGEN, BaseAssetType.EGenerator, position)
+        public AssetEGEN(string assetName, Vector3 position) : base(assetName, AssetType.ElectricArcGenerator, BaseAssetType.EGenerator, position)
         {
             OnAnim_AssetID = 0xCE7F8131;
         }

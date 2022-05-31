@@ -25,7 +25,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle StopDeceleration { get; set; }
 
-        public AssetHANG(string assetName, Vector3 position) : base(assetName, AssetType.HANG, BaseAssetType.Hangable, position)
+        public AssetHANG(string assetName, Vector3 position) : base(assetName, AssetType.Hangable, BaseAssetType.Hangable, position)
         {
         }
 

@@ -59,7 +59,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public EntrySoundInfo_GCN_V1[] Entries_Sound_CIN { get; set; }
 
-        public AssetSNDI_GCN_V1(string assetName) : base(assetName, AssetType.SNDI)
+        public AssetSNDI_GCN_V1(string assetName) : base(assetName, AssetType.SoundInfo)
         {
             Entries_SND = new EntrySoundInfo_GCN_V1[0];
             Entries_SNDS = new EntrySoundInfo_GCN_V1[0];
@@ -160,7 +160,7 @@ namespace IndustrialPark
         {
             List<EntrySoundInfo_GCN_V1> entries;
 
-            if (assetType == AssetType.SND)
+            if (assetType == AssetType.Sound)
                 entries = Entries_SND.ToList();
             else
                 entries = Entries_SNDS.ToList();
@@ -173,7 +173,7 @@ namespace IndustrialPark
 
             finalData = soundData.Skip(0x60).ToArray();
 
-            if (assetType == AssetType.SND)
+            if (assetType == AssetType.Sound)
                 Entries_SND = entries.ToArray();
             else
                 Entries_SNDS = entries.ToArray();
@@ -183,7 +183,7 @@ namespace IndustrialPark
         {
             List<EntrySoundInfo_GCN_V1> entries;
 
-            if (assetType == AssetType.SND)
+            if (assetType == AssetType.Sound)
                 entries = Entries_SND.ToList();
             else
                 entries = Entries_SNDS.ToList();
@@ -192,7 +192,7 @@ namespace IndustrialPark
                 if (entries[i].SoundAssetID == assetID)
                     entries.Remove(entries[i--]);
 
-            if (assetType == AssetType.SND)
+            if (assetType == AssetType.Sound)
                 Entries_SND = entries.ToArray();
             else
                 Entries_SNDS = entries.ToArray();
@@ -201,7 +201,7 @@ namespace IndustrialPark
         public byte[] GetHeader(uint assetID, AssetType assetType)
         {
             List<EntrySoundInfo_GCN_V1> entries;
-            if (assetType == AssetType.SND)
+            if (assetType == AssetType.Sound)
                 entries = Entries_SND.ToList();
             else
                 entries = Entries_SNDS.ToList();

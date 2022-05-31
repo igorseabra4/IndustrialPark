@@ -58,5 +58,8 @@ namespace IndustrialPark
 
             Verify(Unknown, ref result);
         }
+
+        public static bool dontRender = false;
+        public override bool DontRender { get => dontRender; }
     }
 }

@@ -56,7 +56,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle OuterRadius { get; set; }
 
-        public AssetBOUL(string assetName, Vector3 position) : base(assetName, AssetType.BOUL, BaseAssetType.Boulder, position)
+        public AssetBOUL(string assetName, Vector3 position) : base(assetName, AssetType.Boulder, BaseAssetType.Boulder, position)
         {
             SolidityFlags.FlagValueByte = 0;
             ColorAlpha = 0;

@@ -21,7 +21,7 @@ namespace IndustrialPark
         [Category(catName)]
         public AssetID[] GroupItems { get; set; }
 
-        public AssetGRUP(string assetName) : base(assetName, AssetType.GRUP, BaseAssetType.Group)
+        public AssetGRUP(string assetName) : base(assetName, AssetType.Group, BaseAssetType.Group)
         {
             GroupItems = new AssetID[0];
         }

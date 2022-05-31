@@ -89,7 +89,7 @@ namespace IndustrialPark
         [Category(catName)]
         public AssetID AssetUnderEvaluation { get; set; }
 
-        public AssetCOND(string assetName) : base(assetName, AssetType.COND, BaseAssetType.Cond)
+        public AssetCOND(string assetName) : base(assetName, AssetType.Conditional, BaseAssetType.Cond)
         {
         }
 

@@ -83,7 +83,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public EntrySGRP[] SGRP_Entries { get; set; }
 
-        public AssetSGRP(string assetName) : base(assetName, AssetType.SGRP, BaseAssetType.SGRP)
+        public AssetSGRP(string assetName) : base(assetName, AssetType.SoundGroup, BaseAssetType.SGRP)
         {
             nMaxPlays = 0x30;
             uPriority = 0x80;

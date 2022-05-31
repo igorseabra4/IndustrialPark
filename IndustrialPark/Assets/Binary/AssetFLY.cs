@@ -81,7 +81,7 @@ namespace IndustrialPark
         [Category("Flythrough")]
         public EntryFLY[] FLY_Entries { get; set; }
 
-        public AssetFLY(string assetName) : base(assetName, AssetType.FLY)
+        public AssetFLY(string assetName) : base(assetName, AssetType.Flythrough)
         {
             FLY_Entries = new EntryFLY[0];
         }

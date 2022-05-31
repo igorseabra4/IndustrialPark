@@ -145,5 +145,8 @@ namespace IndustrialPark
             renderer.DrawCube(world, isSelected);
             renderer.DrawCube(world2, isSelected);
         }
+
+        public static bool dontRender = false;
+        public override bool DontRender => dontRender;
     }
 }

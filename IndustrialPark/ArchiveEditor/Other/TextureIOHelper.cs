@@ -246,7 +246,7 @@ namespace IndustrialPark
                 List<Section_AHDR> AHDRs = new List<Section_AHDR>();
 
                 foreach (TextureNative_0015 texture in ((TextureDictionary_0016)ReadFileMethods.ReadRenderWareFile(pathToGcTXD)[0]).textureNativeList)
-                    AHDRs.Add(new Section_AHDR(BKDRHash(texture.textureNativeStruct.textureName), AssetType.RWTX, ArchiveEditorFunctions.AHDRFlagsFromAssetType(AssetType.RWTX),
+                    AHDRs.Add(new Section_AHDR(BKDRHash(texture.textureNativeStruct.textureName), AssetType.Texture, ArchiveEditorFunctions.AHDRFlagsFromAssetType(AssetType.Texture),
                         new Section_ADBG(0, texture.textureNativeStruct.textureName, "", 0),
                         ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016()
                         {

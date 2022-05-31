@@ -30,7 +30,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public short PickupValue { get; set; }
 
-        public AssetPKUP(string assetName, Game game, Vector3 position, AssetTemplate template) : base(assetName, AssetType.PKUP, BaseAssetType.Pickup, position)
+        public AssetPKUP(string assetName, Game game, Vector3 position, AssetTemplate template) : base(assetName, AssetType.Pickup, BaseAssetType.Pickup, position)
         {
             if (game == Game.BFBB)
                 Model_AssetID = pkupsMinfName;

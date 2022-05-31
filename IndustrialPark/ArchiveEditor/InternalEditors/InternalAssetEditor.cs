@@ -189,7 +189,7 @@ namespace IndustrialPark
 
                 if (openFile.ShowDialog() == DialogResult.OK)
                 {
-                    if (asset.assetType == HipHopFile.AssetType.MODL)
+                    if (asset.assetType == HipHopFile.AssetType.Model)
                         asset.Data = Path.GetExtension(openFile.FileName).ToLower().Equals(".dff") ?
                         File.ReadAllBytes(openFile.FileName) :
                         ReadFileMethods.ExportRenderWareFile(CreateDFFFromAssimp(openFile.FileName, flipUVs.Checked, ignoreMeshColors.Checked), modelRenderWareVersion(asset.game));

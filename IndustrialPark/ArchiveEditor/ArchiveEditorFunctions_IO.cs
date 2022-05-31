@@ -42,7 +42,7 @@ namespace IndustrialPark
 
             foreach (Section_AHDR AHDR in hip.Item1.DICT.ATOC.AHDRList)
             {
-                if (AHDR.assetType == AssetType.COLL && ContainsAssetWithType(AssetType.COLL))
+                if (AHDR.assetType == AssetType.CollisionTable && ContainsAssetWithType(AssetType.CollisionTable))
                 {
                     foreach (Section_LHDR LHDR in hip.Item1.DICT.LTOC.LHDRList)
                         LHDR.assetIDlist.Remove(AHDR.assetID);
@@ -50,7 +50,7 @@ namespace IndustrialPark
                     MergeCOLL(new AssetCOLL(AHDR, hip.Item2, hip.Item3.Endianness()));
                     continue;
                 }
-                else if (AHDR.assetType == AssetType.JAW && ContainsAssetWithType(AssetType.JAW))
+                else if (AHDR.assetType == AssetType.JawDataTable && ContainsAssetWithType(AssetType.JawDataTable))
                 {
                     foreach (Section_LHDR LHDR in hip.Item1.DICT.LTOC.LHDRList)
                         LHDR.assetIDlist.Remove(AHDR.assetID);
@@ -58,7 +58,7 @@ namespace IndustrialPark
                     MergeJAW(new AssetJAW(AHDR, hip.Item2, hip.Item3.Endianness()));
                     continue;
                 }
-                else if (AHDR.assetType == AssetType.LODT && ContainsAssetWithType(AssetType.LODT))
+                else if (AHDR.assetType == AssetType.LevelOfDetailTable && ContainsAssetWithType(AssetType.LevelOfDetailTable))
                 {
                     foreach (Section_LHDR LHDR in hip.Item1.DICT.LTOC.LHDRList)
                         LHDR.assetIDlist.Remove(AHDR.assetID);
@@ -66,7 +66,7 @@ namespace IndustrialPark
                     MergeLODT(new AssetLODT(AHDR, hip.Item2, hip.Item3.Endianness()));
                     continue;
                 }
-                else if (AHDR.assetType == AssetType.PIPT && ContainsAssetWithType(AssetType.PIPT))
+                else if (AHDR.assetType == AssetType.PipeInfoTable && ContainsAssetWithType(AssetType.PipeInfoTable))
                 {
                     foreach (Section_LHDR LHDR in hip.Item1.DICT.LTOC.LHDRList)
                         LHDR.assetIDlist.Remove(AHDR.assetID);
@@ -74,7 +74,7 @@ namespace IndustrialPark
                     MergePIPT(new AssetPIPT(AHDR, hip.Item2, hip.Item3.Endianness()));
                     continue;
                 }
-                else if (AHDR.assetType == AssetType.SHDW && ContainsAssetWithType(AssetType.SHDW))
+                else if (AHDR.assetType == AssetType.SimpleShadowTable && ContainsAssetWithType(AssetType.SimpleShadowTable))
                 {
                     foreach (Section_LHDR LHDR in hip.Item1.DICT.LTOC.LHDRList)
                         LHDR.assetIDlist.Remove(AHDR.assetID);
@@ -82,7 +82,7 @@ namespace IndustrialPark
                     MergeSHDW(new AssetSHDW(AHDR, hip.Item2, hip.Item3.Endianness()));
                     continue;
                 }
-                else if (AHDR.assetType == AssetType.SNDI && ContainsAssetWithType(AssetType.SNDI))
+                else if (AHDR.assetType == AssetType.SoundInfo && ContainsAssetWithType(AssetType.SoundInfo))
                 {
                     foreach (Section_LHDR LHDR in hip.Item1.DICT.LTOC.LHDRList)
                         LHDR.assetIDlist.Remove(AHDR.assetID);

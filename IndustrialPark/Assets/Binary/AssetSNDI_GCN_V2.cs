@@ -62,7 +62,7 @@ namespace IndustrialPark
 
         // most of this file is a very hacky temporary thing
 
-        public AssetSNDI_GCN_V2(string assetName) : base(assetName, AssetType.SNDI)
+        public AssetSNDI_GCN_V2(string assetName) : base(assetName, AssetType.SoundInfo)
         {
             AHDR = new Section_AHDR(assetID, assetType, flags, new Section_ADBG(0, assetName, assetFileName, checksum), new byte[0x20]);
         }

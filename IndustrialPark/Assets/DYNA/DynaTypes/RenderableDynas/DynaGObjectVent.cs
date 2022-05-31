@@ -118,5 +118,8 @@ namespace IndustrialPark
         {
             renderer.DrawPyramid(world, isSelected, 1f);
         }
+
+        public static bool dontRender = false;
+        public override bool DontRender => dontRender;
     }
 }

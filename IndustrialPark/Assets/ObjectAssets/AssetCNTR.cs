@@ -8,7 +8,7 @@ namespace IndustrialPark
         [Category("Counter")]
         public short Count { get; set; }
 
-        public AssetCNTR(string assetName) : base(assetName, AssetType.CNTR, BaseAssetType.Counter)
+        public AssetCNTR(string assetName) : base(assetName, AssetType.Counter, BaseAssetType.Counter)
         {
         }
 

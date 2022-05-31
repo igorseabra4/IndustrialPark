@@ -69,7 +69,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle TextCoordBottomLeftY { get; set; }
 
-        public AssetUI(string assetName, Vector3 position) : this(assetName, AssetType.UI, BaseAssetType.UI, position)
+        public AssetUI(string assetName, Vector3 position) : this(assetName, AssetType.UserInterface, BaseAssetType.UI, position)
         {
         }
 

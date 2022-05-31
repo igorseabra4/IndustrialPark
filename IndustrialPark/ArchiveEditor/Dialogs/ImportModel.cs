@@ -17,9 +17,9 @@ namespace IndustrialPark
 
             buttonOK.Enabled = false;
             TopMost = true;
-            comboBoxAssetTypes.Items.Add(AssetType.MODL);
+            comboBoxAssetTypes.Items.Add(AssetType.Model);
             comboBoxAssetTypes.Items.Add(AssetType.BSP);
-            comboBoxAssetTypes.SelectedItem = AssetType.MODL;
+            comboBoxAssetTypes.SelectedItem = AssetType.Model;
         }
 
         List<string> filePaths = new List<string>();
@@ -74,7 +74,7 @@ namespace IndustrialPark
 
                     AssetType assetType = (AssetType)a.comboBoxAssetTypes.SelectedItem;
 
-                    if (assetType == AssetType.MODL)
+                    if (assetType == AssetType.Model)
                     {
                         if (a.checkBoxGenSimps.Checked)
                             MessageBox.Show("a SIMP for each imported MODL will be generated and placed on a new DEFAULT layer.");
@@ -88,7 +88,7 @@ namespace IndustrialPark
 
                         ReadFileMethods.treatStuffAsByteArray = false;
 
-                        if (assetType == AssetType.MODL)
+                        if (assetType == AssetType.Model)
                         {
                             assetName = Path.GetFileNameWithoutExtension(filePath) + ".dff";
 

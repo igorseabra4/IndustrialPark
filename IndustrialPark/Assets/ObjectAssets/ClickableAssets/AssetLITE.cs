@@ -120,7 +120,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID Attach_AssetID { get; set; }
 
-        public AssetLITE(string assetName, Vector3 position) : base(assetName, AssetType.LITE, BaseAssetType.Light)
+        public AssetLITE(string assetName, Vector3 position) : base(assetName, AssetType.Light, BaseAssetType.Light)
         {
             _position = position;
 

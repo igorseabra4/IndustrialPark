@@ -30,7 +30,7 @@ namespace IndustrialPark
             }
         }
 
-        public AssetPORT(string assetName) : base(assetName, AssetType.PORT, BaseAssetType.Portal)
+        public AssetPORT(string assetName) : base(assetName, AssetType.Portal, BaseAssetType.Portal)
         {
             Camera_AssetID = "STARTCAM";
             DestinationLevel = "AA00";

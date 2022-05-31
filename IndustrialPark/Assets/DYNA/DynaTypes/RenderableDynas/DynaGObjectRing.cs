@@ -54,6 +54,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID DriverPLAT_AssetID { get; set; }
 
+        public static bool dontRender = false;
+        public override bool DontRender => dontRender;
+
         public DynaGObjectRing(string assetName, Vector3 position) : base(assetName, DynaType.game_object__Ring, 2, position)
         {
             ScaleX = 1f;
@@ -168,6 +171,13 @@ namespace IndustrialPark
 
         public override bool ShouldDraw(SharpRenderer renderer)
         {
+            if (isSelected)
+                return true;
+            if (isInvisible)
+                return false;
+            if (dontRender)
+                return false;
+
             if (AssetMODL.renderBasedOnLodt && GetDistanceFrom(renderer.Camera.Position) > AssetLODT.MaxDistanceTo(DynaGObjectRingControl.RingModelAssetID))
                 return false;
 

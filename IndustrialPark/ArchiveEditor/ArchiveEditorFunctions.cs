@@ -194,14 +194,14 @@ namespace IndustrialPark
             if (assetsWithError != "")
                 MessageBox.Show("There was an error loading the following assets and editing has been disabled for them:\n" + assetsWithError);
 
-            if (!(skipTexturesAndModels || standalone) && ContainsAssetWithType(AssetType.RWTX))
+            if (!(skipTexturesAndModels || standalone) && ContainsAssetWithType(AssetType.Texture))
                 SetupTextureDisplay();
 
             RecalculateAllMatrices();
 
             autoCompleteSource = autoComplete.ToArray();
 
-            if (!skipTexturesAndModels && ContainsAssetWithType(AssetType.PIPT) && ContainsAssetWithType(AssetType.MODL))
+            if (!skipTexturesAndModels && ContainsAssetWithType(AssetType.PipeInfoTable) && ContainsAssetWithType(AssetType.Model))
                 foreach (var asset in assetDictionary.Values)
                     if (asset is AssetPIPT PIPT)
                         PIPT.UpdateDictionary();
@@ -548,9 +548,12 @@ namespace IndustrialPark
         {
             try
             {
+                if (AHDR.IsDyna)
+                    return CreateDYNA(AHDR, game, endianness);
+
                 switch (AHDR.assetType)
                 {
-                    case AssetType.ANIM:
+                    case AssetType.Animation:
                         {
                             if (AHDR.data.Length == 0)
                                 return new AssetGeneric(AHDR, game, endianness);
@@ -568,15 +571,15 @@ namespace IndustrialPark
                         if (skipTexturesAndModels)
                             return new AssetWithData(AHDR, game, endianness);
                         return new AssetJSP(AHDR, game, endianness, Program.MainForm.renderer);
-                    case AssetType.MODL:
+                    case AssetType.Model:
                         if (skipTexturesAndModels)
                             return new AssetWithData(AHDR, game, endianness);
                         return new AssetMODL(AHDR, game, endianness, Program.MainForm.renderer);
-                    case AssetType.RWTX:
+                    case AssetType.Texture:
                         if (skipTexturesAndModels)
                             return new AssetWithData(AHDR, game, endianness);
                         return new AssetRWTX(AHDR, game, endianness);
-                    case AssetType.SNDI:
+                    case AssetType.SoundInfo:
                         if (platform == Platform.GameCube && (game == Game.BFBB || game == Game.Scooby))
                             return new AssetSNDI_GCN_V1(AHDR, game, endianness);
                         if (platform == Platform.GameCube)
@@ -586,115 +589,114 @@ namespace IndustrialPark
                         if (platform == Platform.PS2)
                             return new AssetSNDI_PS2(AHDR, game, endianness);
                         return new AssetGeneric(AHDR, game, endianness);
-                    case AssetType.SPLN:
+                    case AssetType.Spline:
                         if (skipTexturesAndModels)
                             return new AssetGeneric(AHDR, game, endianness);
                         return new AssetSPLN(AHDR, game, endianness, Program.MainForm.renderer);
-                    case AssetType.WIRE:
+                    case AssetType.WireframeModel:
                         if (skipTexturesAndModels)
                             return new AssetGeneric(AHDR, game, endianness);
                         return new AssetWIRE(AHDR, game, endianness, Program.MainForm.renderer);
-                    case AssetType.ALST: return new AssetALST(AHDR, game, endianness);
-                    case AssetType.ATBL: return new AssetATBL(AHDR, game, endianness);
-                    case AssetType.BOUL: return new AssetBOUL(AHDR, game, endianness);
-                    case AssetType.BUTN: return new AssetBUTN(AHDR, game, endianness);
-                    case AssetType.CAM: return new AssetCAM(AHDR, game, endianness);
-                    case AssetType.CNTR: return new AssetCNTR(AHDR, game, endianness);
-                    case AssetType.COLL: return new AssetCOLL(AHDR, game, endianness);
-                    case AssetType.COND: return new AssetCOND(AHDR, game, endianness);
-                    case AssetType.CRDT:
+                    case AssetType.AnimList: return new AssetALST(AHDR, game, endianness);
+                    case AssetType.AnimTable: return new AssetATBL(AHDR, game, endianness);
+                    case AssetType.Boulder: return new AssetBOUL(AHDR, game, endianness);
+                    case AssetType.Button: return new AssetBUTN(AHDR, game, endianness);
+                    case AssetType.Camera: return new AssetCAM(AHDR, game, endianness);
+                    case AssetType.Counter: return new AssetCNTR(AHDR, game, endianness);
+                    case AssetType.CollisionTable: return new AssetCOLL(AHDR, game, endianness);
+                    case AssetType.Conditional: return new AssetCOND(AHDR, game, endianness);
+                    case AssetType.Credits:
                         if (game == Game.BFBB)
                             return new AssetCRDT(AHDR, game, endianness);
                         return new AssetGeneric(AHDR, game, endianness); // unsupported CRDT for non bfbb
                     // case AssetType.CSN: return new AssetCSN(AHDR, game, platform);
-                    case AssetType.CSNM: return new AssetCSNM(AHDR, game, endianness);
-                    case AssetType.DEST: return new AssetDEST(AHDR, game, endianness);
-                    case AssetType.DPAT: return new AssetDPAT(AHDR, game, endianness);
-                    case AssetType.DSCO: return new AssetDSCO(AHDR, game, endianness);
-                    case AssetType.DSTR: return new AssetDSTR(AHDR, game, endianness);
-                    case AssetType.DTRK: return new AssetDTRK(AHDR, game, endianness);
-                    case AssetType.DYNA: return CreateDYNA(AHDR, game, endianness);
-                    case AssetType.DUPC: return new AssetDUPC(AHDR, game, endianness);
-                    case AssetType.EGEN: return new AssetEGEN(AHDR, game, endianness);
-                    case AssetType.ENV: return new AssetENV(AHDR, game, endianness);
-                    case AssetType.FLY: return new AssetFLY(AHDR, game, endianness);
-                    case AssetType.FOG: return new AssetFOG(AHDR, game, endianness);
-                    case AssetType.GRUP: return new AssetGRUP(AHDR, game, endianness);
-                    case AssetType.GRSM: return new AssetGRSM(AHDR, game, endianness);
-                    case AssetType.GUST: return new AssetGUST(AHDR, game, endianness);
-                    case AssetType.HANG: return new AssetHANG(AHDR, game, endianness);
-                    case AssetType.JAW: return new AssetJAW(AHDR, game, endianness);
-                    case AssetType.LITE: return new AssetLITE(AHDR, game, endianness);
-                    case AssetType.LKIT: return new AssetLKIT(AHDR, game, endianness);
-                    case AssetType.LOBM: return new AssetLOBM(AHDR, game, endianness);
-                    case AssetType.LODT: return new AssetLODT(AHDR, game, endianness);
-                    case AssetType.MAPR: return new AssetMAPR(AHDR, game, endianness);
-                    case AssetType.MINF: return new AssetMINF(AHDR, game, endianness);
-                    case AssetType.MRKR: return new AssetMRKR(AHDR, game, endianness);
-                    case AssetType.MVPT: return new AssetMVPT(AHDR, game, endianness);
+                    case AssetType.CutsceneManager: return new AssetCSNM(AHDR, game, endianness);
+                    case AssetType.Destructible: return new AssetDEST(AHDR, game, endianness);
+                    case AssetType.Dispatcher: return new AssetDPAT(AHDR, game, endianness);
+                    case AssetType.DiscoFloor: return new AssetDSCO(AHDR, game, endianness);
+                    case AssetType.DestructibleObject: return new AssetDSTR(AHDR, game, endianness);
+                    case AssetType.DashTrack: return new AssetDTRK(AHDR, game, endianness);
+                    case AssetType.Duplicator: return new AssetDUPC(AHDR, game, endianness);
+                    case AssetType.ElectricArcGenerator: return new AssetEGEN(AHDR, game, endianness);
+                    case AssetType.Environment: return new AssetENV(AHDR, game, endianness);
+                    case AssetType.Flythrough: return new AssetFLY(AHDR, game, endianness);
+                    case AssetType.Fog: return new AssetFOG(AHDR, game, endianness);
+                    case AssetType.Group: return new AssetGRUP(AHDR, game, endianness);
+                    case AssetType.GrassMesh: return new AssetGRSM(AHDR, game, endianness);
+                    case AssetType.Gust: return new AssetGUST(AHDR, game, endianness);
+                    case AssetType.Hangable: return new AssetHANG(AHDR, game, endianness);
+                    case AssetType.JawDataTable: return new AssetJAW(AHDR, game, endianness);
+                    case AssetType.Light: return new AssetLITE(AHDR, game, endianness);
+                    case AssetType.LightKit: return new AssetLKIT(AHDR, game, endianness);
+                    case AssetType.LobMaster: return new AssetLOBM(AHDR, game, endianness);
+                    case AssetType.LevelOfDetailTable: return new AssetLODT(AHDR, game, endianness);
+                    case AssetType.SurfaceMapper: return new AssetMAPR(AHDR, game, endianness);
+                    case AssetType.ModelInfo: return new AssetMINF(AHDR, game, endianness);
+                    case AssetType.Marker: return new AssetMRKR(AHDR, game, endianness);
+                    case AssetType.MovePoint: return new AssetMVPT(AHDR, game, endianness);
                     case AssetType.NPC: return new AssetNPC(AHDR, game, endianness);
-                    case AssetType.ONEL: return new AssetONEL(AHDR, game, endianness);
-                    case AssetType.PARE:
+                    case AssetType.OneLiner: return new AssetONEL(AHDR, game, endianness);
+                    case AssetType.ParticleEmitter:
                         if (game != Game.Scooby)
                             return new AssetPARE(AHDR, game, endianness);
                         return new AssetGeneric(AHDR, game, endianness); // unsupported pare for scooby
-                    case AssetType.PARP: return new AssetPARP(AHDR, game, endianness);
-                    case AssetType.PARS: return new AssetPARS(AHDR, game, endianness);
-                    case AssetType.PEND: return new AssetPEND(AHDR, game, endianness);
-                    case AssetType.PGRS: return new AssetPGRS(AHDR, game, endianness);
-                    case AssetType.PICK: return new AssetPICK(AHDR, game, endianness);
-                    case AssetType.PIPT: return new AssetPIPT(AHDR, game, endianness, UpdateModelBlendModes);
-                    case AssetType.PKUP: return new AssetPKUP(AHDR, game, endianness);
-                    case AssetType.PLAT: return new AssetPLAT(AHDR, game, endianness);
-                    case AssetType.PLYR: return new AssetPLYR(AHDR, game, endianness);
-                    case AssetType.PORT: return new AssetPORT(AHDR, game, endianness);
-                    case AssetType.PRJT: return new AssetPRJT(AHDR, game, endianness);
-                    case AssetType.SCRP: return new AssetSCRP(AHDR, game, endianness);
+                    case AssetType.ParticleProperties: return new AssetPARP(AHDR, game, endianness);
+                    case AssetType.ParticleSystem: return new AssetPARS(AHDR, game, endianness);
+                    case AssetType.Pendulum: return new AssetPEND(AHDR, game, endianness);
+                    case AssetType.ProgressScript: return new AssetPGRS(AHDR, game, endianness);
+                    case AssetType.PickupTable: return new AssetPICK(AHDR, game, endianness);
+                    case AssetType.PipeInfoTable: return new AssetPIPT(AHDR, game, endianness, UpdateModelBlendModes);
+                    case AssetType.Pickup: return new AssetPKUP(AHDR, game, endianness);
+                    case AssetType.Platform: return new AssetPLAT(AHDR, game, endianness);
+                    case AssetType.Player: return new AssetPLYR(AHDR, game, endianness);
+                    case AssetType.Portal: return new AssetPORT(AHDR, game, endianness);
+                    case AssetType.Projectile: return new AssetPRJT(AHDR, game, endianness);
+                    case AssetType.Script: return new AssetSCRP(AHDR, game, endianness);
                     case AssetType.SDFX: return new AssetSDFX(AHDR, game, endianness);
                     case AssetType.SFX: return new AssetSFX(AHDR, game, endianness);
-                    case AssetType.SGRP: return new AssetSGRP(AHDR, game, endianness);
-                    case AssetType.TRCK:
-                    case AssetType.SIMP: return new AssetSIMP(AHDR, game, endianness);
-                    case AssetType.SHDW: return new AssetSHDW(AHDR, game, endianness);
-                    case AssetType.SHRP: return new AssetSHRP(AHDR, game, endianness);
-                    case AssetType.SURF: return new AssetSURF(AHDR, game, endianness);
-                    case AssetType.TEXT: return new AssetTEXT(AHDR, game, endianness);
-                    case AssetType.TRIG: return new AssetTRIG(AHDR, game, endianness);
-                    case AssetType.TIMR: return new AssetTIMR(AHDR, game, endianness);
-                    case AssetType.TPIK: return new AssetTPIK(AHDR, game, endianness);
-                    case AssetType.UI: return new AssetUI(AHDR, game, endianness);
-                    case AssetType.UIFT: return new AssetUIFT(AHDR, game, endianness);
+                    case AssetType.SoundGroup: return new AssetSGRP(AHDR, game, endianness);
+                    case AssetType.Track:
+                    case AssetType.SimpleObject: return new AssetSIMP(AHDR, game, endianness);
+                    case AssetType.SimpleShadowTable: return new AssetSHDW(AHDR, game, endianness);
+                    case AssetType.Shrapnel: return new AssetSHRP(AHDR, game, endianness);
+                    case AssetType.Surface: return new AssetSURF(AHDR, game, endianness);
+                    case AssetType.Text: return new AssetTEXT(AHDR, game, endianness);
+                    case AssetType.Trigger: return new AssetTRIG(AHDR, game, endianness);
+                    case AssetType.Timer: return new AssetTIMR(AHDR, game, endianness);
+                    case AssetType.PickupTypes: return new AssetTPIK(AHDR, game, endianness);
+                    case AssetType.UserInterface: return new AssetUI(AHDR, game, endianness);
+                    case AssetType.UserInterfaceFont: return new AssetUIFT(AHDR, game, endianness);
                     case AssetType.VIL: return new AssetVIL(AHDR, game, endianness);
-                    case AssetType.VILP: return new AssetVILP(AHDR, game, endianness);
-                    case AssetType.VOLU: return new AssetVOLU(AHDR, game, endianness);
+                    case AssetType.VILProperties: return new AssetVILP(AHDR, game, endianness);
+                    case AssetType.Volume: return new AssetVOLU(AHDR, game, endianness);
 
-                    case AssetType.SND:
-                    case AssetType.SNDS:
+                    case AssetType.Sound:
+                    case AssetType.StreamingSound:
                         return new AssetSound(AHDR, game, platform);
 
-                    case AssetType.CCRV:
-                    case AssetType.NGMS:
-                    case AssetType.RANM:
-                    case AssetType.SLID:
-                    case AssetType.SSET:
-                    case AssetType.TRWT:
-                    case AssetType.UIM:
-                    case AssetType.ZLIN:
+                    case AssetType.CameraCurve:
+                    case AssetType.NavigationMesh:
+                    case AssetType.ReactiveAnimation:
+                    case AssetType.SlideProperty:
+                    case AssetType.SceneSettings:
+                    case AssetType.ThrowableTable:
+                    case AssetType.UserInterfaceMotion:
+                    case AssetType.ZipLine:
                         return new AssetGenericBase(AHDR, game, endianness);
 
-                    case AssetType.ATKT:
-                    case AssetType.BINK:
-                    case AssetType.CSSS:
-                    case AssetType.CTOC:
-                    case AssetType.MPHT:
-                    case AssetType.NPCS:
-                    case AssetType.RAW:
-                    case AssetType.SPLP:
-                    case AssetType.SUBT:
+                    case AssetType.AttackTable:
+                    case AssetType.BinkVideo:
+                    case AssetType.CutsceneStreamingSound:
+                    case AssetType.CutsceneTableOfContents:
+                    case AssetType.MorphTarget:
+                    case AssetType.NPCSettings:
+                    case AssetType.RawImage:
+                    case AssetType.SplinePath:
+                    case AssetType.Subtitles:
                     case AssetType.TEXS:
                     case AssetType.UIFN:
                         return new AssetGeneric(AHDR, game, endianness);
-                    case AssetType.CSN:
+                    case AssetType.Cutscene:
                         return new AssetGeneric(AHDR, game, endianness);
                     default:
                         throw new Exception($"Unknown asset type ({AHDR.assetType})");
@@ -1001,7 +1003,7 @@ namespace IndustrialPark
             {
                 Section_AHDR AHDR = JsonConvert.DeserializeObject<Section_AHDR>(JsonConvert.SerializeObject(asset.BuildAHDR()));
 
-                if (AHDR.assetType == AssetType.SND || AHDR.assetType == AssetType.SNDS)
+                if (AHDR.assetType == AssetType.Sound || AHDR.assetType == AssetType.StreamingSound)
                 {
                     try
                     {
@@ -1054,7 +1056,7 @@ namespace IndustrialPark
 
                 referenceUpdate.Add(previousAssetID, AHDR.assetID);
 
-                if (AHDR.assetType == AssetType.SND || AHDR.assetType == AssetType.SNDS)
+                if (AHDR.assetType == AssetType.Sound || AHDR.assetType == AssetType.StreamingSound)
                 {
                     try
                     {
@@ -1086,12 +1088,12 @@ namespace IndustrialPark
             AssetType[] dontUpdate = new AssetType[] {
                     AssetType.BSP,
                     AssetType.JSP,
-                    AssetType.MODL,
-                    AssetType.RWTX,
-                    AssetType.SND,
-                    AssetType.SNDI,
-                    AssetType.SNDS,
-                    AssetType.TEXT
+                    AssetType.Model,
+                    AssetType.Texture,
+                    AssetType.Sound,
+                    AssetType.SoundInfo,
+                    AssetType.StreamingSound,
+                    AssetType.Text
                 };
 
             Dictionary<uint, uint> newReferenceUpdate;
@@ -1132,7 +1134,7 @@ namespace IndustrialPark
                     else
                         AddAssetWithUniqueID(layerIndex, AHDR, game, platform.Endianness(), setTextureDisplay: true);
 
-                    if (AHDR.assetType == AssetType.SND || AHDR.assetType == AssetType.SNDS)
+                    if (AHDR.assetType == AssetType.Sound || AHDR.assetType == AssetType.StreamingSound)
                     {
                         try
                         {

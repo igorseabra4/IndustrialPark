@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using System.ComponentModel;
+using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -28,39 +29,7 @@ namespace IndustrialPark
             dynaNameSearcherToolStripMenuItem.Visible = false;
 #endif
 
-            var enableAll = new ToolStripMenuItem("Enable All");
-            enableAll.Click += (object sender, EventArgs e) =>
-            {
-                autoShowDropDowns = false;
-                foreach (var item in assetViewToolStripMenuItems)
-                {
-                    if (!item.Checked)
-                        item.PerformClick();
-                }
-                autoShowDropDowns = true;
-                ShowDropDowns();
-            };
-
-            var disableAll = new ToolStripMenuItem("Disable All");
-            disableAll.Click += (object sender, EventArgs e) =>
-            {
-                autoShowDropDowns = false;
-                foreach (var item in assetViewToolStripMenuItems)
-                {
-                    if (item.Checked)
-                        item.PerformClick();
-                }
-                autoShowDropDowns = true;
-                ShowDropDowns();
-            };
-
-            assetTypesToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] {
-                enableAll,
-                disableAll,
-                new ToolStripSeparator()
-            });
-            assetViewToolStripMenuItems = GetAssetViewToolStripMenuItems();
-            assetTypesToolStripMenuItem.DropDownItems.AddRange(assetViewToolStripMenuItems);
+            SetupAssetVisibilityButtons();
 
             SetUiAssetsVisibility(false);
 
@@ -423,7 +392,7 @@ namespace IndustrialPark
                 dontRenderCAM = AssetCAM.dontRender,
                 dontRenderDSTR = AssetDSTR.dontRender,
                 dontRenderDTRK = AssetDTRK.dontRender,
-                dontRenderDYNA = AssetDYNA.dontRender,
+                //dontRenderDYNA = AssetDYNA.dontRender,
                 dontRenderEGEN = AssetEGEN.dontRender,
                 dontRenderGRSM = AssetGRSM.dontRender,
                 dontRenderHANG = AssetHANG.dontRender,
@@ -521,9 +490,10 @@ namespace IndustrialPark
 
             for (int i = 0; i < assetViewToolStripMenuItems.Length; i++)
             {
-                bool value = (bool)typeof(ProjectJson).GetField("dontRender" + assetViewToolStripMenuItems[i].Name).GetValue(ipSettings);
+                AssetType type = (AssetType)assetViewToolStripMenuItems[i].Tag;
+                bool value = (bool)typeof(ProjectJson).GetField("dontRender" + type.GetCode()).GetValue(ipSettings);
                 assetViewToolStripMenuItems[i].Checked = !value;
-                assetViewTypes[i].GetField("dontRender").SetValue(null, value);
+                assetViewTypes[type].GetField("dontRender").SetValue(null, value);
             }
         }
 
@@ -768,20 +738,27 @@ namespace IndustrialPark
 
         public void AddArchiveEditor(string filePath = null, HipHopFile.Platform scoobyPlatform = HipHopFile.Platform.Unknown)
         {
-            ArchiveEditor temp = new ArchiveEditor();
-            temp.Show();
-            temp.Hide();
-            temp.Begin(filePath, scoobyPlatform);
-            archiveEditors.Add(temp);
+            ArchiveEditor ae = new ArchiveEditor();
+            ae.Show();
+            ae.Hide();
+            ae.Begin(filePath, scoobyPlatform);
+            archiveEditors.Add(ae);
 
-            AddArchiveDropdownListEntry(Path.GetFileName(temp.GetCurrentlyOpenFileName()), temp);
-            temp.archive.ChangesMade += UpdateTitleBar;
-            temp.EditorClosed += UpdateCloseAllArchiveMenuItem;
+            ToolStripMenuItem tempMenuItem = new ToolStripMenuItem(Path.GetFileName(ae.GetCurrentlyOpenFileName()));
+            tempMenuItem.Click += new EventHandler((object sender, EventArgs e) =>
+            {
+                ae.Show();
+                ae.WindowState = FormWindowState.Normal;
+            });
+            archiveEditorToolStripMenuItem.DropDownItems.Add(tempMenuItem);
+
+            ae.archive.ChangesMade += UpdateTitleBar;
+            ae.EditorClosed += UpdateCloseAllArchiveMenuItem;
             UpdateTitleBar();
             closeAllEditorsToolStripMenuItem.Enabled = true;
         }
 
-        public void  UpdateCloseAllArchiveMenuItem()
+        public void UpdateCloseAllArchiveMenuItem()
         {
             closeAllEditorsToolStripMenuItem.Enabled = archiveEditors.Count > 0;
         }
@@ -796,17 +773,6 @@ namespace IndustrialPark
             int index = archiveEditors.IndexOf(sender);
             archiveEditorToolStripMenuItem.DropDownItems.RemoveAt(index + 4);
             archiveEditors.RemoveAt(index);
-        }
-
-        public void AddArchiveDropdownListEntry(string filename, ArchiveEditor ae)
-        {
-            ToolStripMenuItem tempMenuItem = new ToolStripMenuItem(filename);
-            tempMenuItem.Click += new EventHandler((object sender, EventArgs e) =>
-            {
-                ae.Show();
-                ae.WindowState = FormWindowState.Normal;
-            });
-            archiveEditorToolStripMenuItem.DropDownItems.Add(tempMenuItem);
         }
 
         public void SetCloseAllArchivesEnabled(bool enabled)
@@ -1102,68 +1068,128 @@ namespace IndustrialPark
             }
         }
 
-        private Type[] assetViewTypes = new Type[]
+        private void SetupAssetVisibilityButtons()
         {
-            typeof(AssetJSP),
-            typeof(AssetBUTN),
-            typeof(AssetBOUL),
-            typeof(AssetCAM),
-            typeof(AssetDSTR),
-            typeof(AssetDTRK),
-            typeof(AssetDYNA),
-            typeof(AssetEGEN),
-            typeof(AssetGRSM),
-            typeof(AssetHANG),
-            typeof(AssetLITE),
-            typeof(AssetMRKR),
-            typeof(AssetMVPT),
-            typeof(AssetNPC),
-            typeof(AssetPEND),
-            typeof(AssetPKUP),
-            typeof(AssetPLAT),
-            typeof(AssetPLYR),
-            typeof(AssetSFX),
-            typeof(AssetSDFX),
-            typeof(AssetSIMP),
-            typeof(AssetSPLN),
-            typeof(AssetTRIG),
-            typeof(AssetUI),
-            typeof(AssetUIFT),
-            typeof(AssetVIL),
-            typeof(AssetVOLU)
+            var enableAll = new ToolStripMenuItem("Enable All");
+            enableAll.Click += (object sender, EventArgs e) =>
+            {
+                autoShowDropDowns = false;
+                foreach (var item in assetViewToolStripMenuItems)
+                {
+                    if (!item.Checked)
+                        item.PerformClick();
+                }
+                autoShowDropDowns = true;
+                ShowDropDowns();
+            };
+
+            var disableAll = new ToolStripMenuItem("Disable All");
+            disableAll.Click += (object sender, EventArgs e) =>
+            {
+                autoShowDropDowns = false;
+                foreach (var item in assetViewToolStripMenuItems)
+                {
+                    if (item.Checked)
+                        item.PerformClick();
+                }
+                autoShowDropDowns = true;
+                ShowDropDowns();
+            };
+
+            assetTypesToolStripMenuItem.DropDownItems.Clear();
+            assetTypesToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] {
+                enableAll,
+                disableAll,
+                new ToolStripSeparator()
+            });
+            SetAssetViewToolStripMenuItems();
+            assetTypesToolStripMenuItem.DropDownItems.AddRange(assetViewToolStripMenuItems);
+        }
+
+        private Dictionary<AssetType, Type> assetViewTypes = new Dictionary<AssetType, Type>
+        {
+            { AssetType.JSP, typeof(AssetJSP) },
+            { AssetType.Button, typeof(AssetBUTN) },
+            { AssetType.Boulder, typeof(AssetBOUL) },
+            { AssetType.Camera, typeof(AssetCAM) },
+            { AssetType.DestructibleObject, typeof(AssetDSTR) },
+            { AssetType.DashTrack, typeof(AssetDTRK) },
+            { AssetType.ElectricArcGenerator, typeof(AssetEGEN) },
+            { AssetType.GrassMesh, typeof(AssetGRSM) },
+            { AssetType.Hangable, typeof(AssetHANG) },
+            { AssetType.Light, typeof(AssetLITE) },
+            { AssetType.Marker, typeof(AssetMRKR) },
+            { AssetType.MovePoint, typeof(AssetMVPT) },
+            { AssetType.NPC, typeof(AssetNPC) },
+            { AssetType.Pendulum, typeof(AssetPEND) },
+            { AssetType.Pickup, typeof(AssetPKUP) },
+            { AssetType.Platform, typeof(AssetPLAT) },
+            { AssetType.Player, typeof(AssetPLYR) },
+            { AssetType.SFX, typeof(AssetSFX) },
+            { AssetType.SDFX, typeof(AssetSDFX) },
+            { AssetType.SimpleObject, typeof(AssetSIMP) },
+            { AssetType.Spline, typeof(AssetSPLN) },
+            { AssetType.Trigger, typeof(AssetTRIG) },
+            { AssetType.UserInterface, typeof(AssetUI) },
+            { AssetType.UserInterfaceFont, typeof(AssetUIFT) },
+            { AssetType.VIL, typeof(AssetVIL) },
+            { AssetType.Volume, typeof(AssetVOLU) },
+
+            { AssetType.CameraPreset, typeof(DynaCameraPreset) },
+            { AssetType.FlameEmitter, typeof(DynaGObjectFlameEmitter) },
+            { AssetType.Flamethrower, typeof(DynaEffectFlamethrower) },
+            { AssetType.IncrediblesIcon, typeof(DynaIncrediblesIcon) },
+            { AssetType.IncrediblesPickup, typeof(DynaGObjectInPickup) },
+            { AssetType.Lightning, typeof(DynaEffectLightning) },
+            { AssetType.ParticleGenerator, typeof(DynaEffectParticleGenerator) },
+            { AssetType.Pointer, typeof(DynaPointer) },
+            { AssetType.Ring, typeof(DynaGObjectRing) },
+            { AssetType.RumbleSphericalEmitter, typeof(DynaEffectRumbleSphere) },
+            { AssetType.SmokeEmitter, typeof(DynaEffectSmokeEmitter) },
+            { AssetType.TeleportBox, typeof(DynaGObjectTeleport) },
+            { AssetType.TrainCar, typeof(DynaGObjectTrainCar) },
+
+            { AssetType.BucketOTron, typeof(DynaEnemyBucketOTron) },
+            { AssetType.CastNCrew, typeof(DynaEnemyCastNCrew) },
+            { AssetType.Critter, typeof(DynaEnemyCritter) },
+            { AssetType.Dennis, typeof(DynaEnemyDennis) },
+            { AssetType.FrogFish, typeof(DynaEnemyFrogFish) },
+            { AssetType.Mindy, typeof(DynaEnemyMindy) },
+            { AssetType.Neptune, typeof(DynaEnemyNeptune) },
+            { AssetType.Enemy, typeof(DynaEnemyStandard) },
+            { AssetType.Crate, typeof(DynaEnemySupplyCrate) },
+            { AssetType.Turret, typeof(DynaEnemyTurret) },
         };
 
         private ToolStripMenuItem[] assetViewToolStripMenuItems;
 
-        private ToolStripMenuItem[] GetAssetViewToolStripMenuItems()
+        private void SetAssetViewToolStripMenuItems()
         {
             var items = new List<ToolStripMenuItem>();
-            foreach (var assetType in assetViewTypes)
+            foreach (var assetType in assetViewTypes.Keys.OrderBy(f => f.ToString()))
             {
-                var text = new string(assetType.Name.Skip(5).ToArray());
-                var name = text;
-                if (assetType == typeof(AssetJSP))
+                var text = assetType.ToString();
+                if (assetType == AssetType.JSP)
                     text = "BSP/JSP";
-                else if (assetType == typeof(AssetVIL))
-                    text = "VIL/DUPC";
+                else if (assetType == AssetType.VIL)
+                    text = "VIL/Duplicator";
                 ToolStripMenuItem item = new ToolStripMenuItem(text)
                 {
                     Checked = true,
                     CheckState = CheckState.Checked,
-                    Name = name,
-                    Size = new Size(129, 22)
+                    Tag = assetType
                 };
                 item.Click += (object sender, EventArgs e) =>
                 {
                     item.Checked = !item.Checked;
-                    var field = assetType.GetField("dontRender");
+                    var field = assetViewTypes[assetType].GetField("dontRender");
                     field.SetValue(null, !item.Checked);
                     ShowDropDowns();
                 };
                 items.Add(item);
             }
 
-            return items.ToArray();
+            assetViewToolStripMenuItems = items.ToArray();
         }
 
         private void uIModeToolStripMenuItem_Click(object sender, EventArgs e)

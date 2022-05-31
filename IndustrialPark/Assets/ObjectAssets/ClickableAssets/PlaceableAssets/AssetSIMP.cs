@@ -22,7 +22,7 @@ namespace IndustrialPark
         [Category(categoryName), Description("Always 0.")]
         public FlagBitmask SimpFlags { get; set; } = ByteFlagsDescriptor();
 
-        public AssetSIMP(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.SIMP, BaseAssetType.Static, position)
+        public AssetSIMP(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.SimpleObject, BaseAssetType.Static, position)
         {
             AnimSpeed = 1f;
             CollType.FlagValueByte = 2;

@@ -773,7 +773,7 @@ namespace IndustrialPark
                     break;
                 case AssetTemplate.EmptySND:
                 case AssetTemplate.EmptySNDS:
-                    asset = new AssetSound(assetName, template == AssetTemplate.EmptySND ? AssetType.SND : AssetType.SNDS, game, platform, new byte[0]);
+                    asset = new AssetSound(assetName, template == AssetTemplate.EmptySND ? AssetType.Sound : AssetType.StreamingSound, game, platform, new byte[0]);
                     break;
                 case AssetTemplate.EmptyBSP:
                     asset = new AssetJSP(assetName, AssetType.BSP, GenerateBlankBSP(), standalone ? Program.MainForm.renderer : null);

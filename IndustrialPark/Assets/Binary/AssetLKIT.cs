@@ -101,7 +101,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public EntryLKIT[] Lights { get; set; }
 
-        public AssetLKIT(string assetName, byte[] data, Endianness endianness) : base(assetName, AssetType.LKIT)
+        public AssetLKIT(string assetName, byte[] data, Endianness endianness) : base(assetName, AssetType.LightKit)
         {
             Read(data, endianness);
         }

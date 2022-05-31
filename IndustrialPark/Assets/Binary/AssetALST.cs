@@ -9,7 +9,7 @@ namespace IndustrialPark
         [Category("Animation List")]
         public AssetID[] Animation_AssetIDs { get; set; }
 
-        public AssetALST(string assetName) : base(assetName, AssetType.ALST)
+        public AssetALST(string assetName) : base(assetName, AssetType.AnimList)
         {
             Animation_AssetIDs = new AssetID[10];
         }

@@ -73,5 +73,8 @@ namespace IndustrialPark
             base.Verify(ref result);
             Verify(MVPT_AssetID, ref result);
         }
+
+        public static bool dontRender = false;
+        public override bool DontRender { get => dontRender; }
     }
 }

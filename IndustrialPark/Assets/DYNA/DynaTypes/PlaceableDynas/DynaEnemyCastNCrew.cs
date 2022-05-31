@@ -30,5 +30,8 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
+
+        public static bool dontRender = false;
+        public override bool DontRender { get => dontRender; }
     }
 }

@@ -38,7 +38,7 @@ namespace IndustrialPark
             }
         }
 
-        public AssetSCRP(string assetName) : base(assetName, AssetType.SCRP, BaseAssetType.Script)
+        public AssetSCRP(string assetName) : base(assetName, AssetType.Script, BaseAssetType.Script)
         {
             _timedLinks = new Link[0];
             ScriptStartTime = 1f;

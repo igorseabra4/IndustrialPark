@@ -52,7 +52,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public EntrySoundInfo_PS2[] Entries_SNDS { get; set; }
 
-        public AssetSNDI_PS2(string assetName) : base(assetName, AssetType.SNDI)
+        public AssetSNDI_PS2(string assetName) : base(assetName, AssetType.SoundInfo)
         {
             Entries_SND = new EntrySoundInfo_PS2[0];
             Entries_SNDS = new EntrySoundInfo_PS2[0];
@@ -125,7 +125,7 @@ namespace IndustrialPark
             RemoveEntry(assetID, assetType);
 
             List<EntrySoundInfo_PS2> entries;
-            if (assetType == AssetType.SND)
+            if (assetType == AssetType.Sound)
                 entries = Entries_SND.ToList();
             else
                 entries = Entries_SNDS.ToList();
@@ -134,7 +134,7 @@ namespace IndustrialPark
 
             finalData = soundData.Skip(EntrySoundInfo_PS2.StructSize).ToArray();
 
-            if (assetType == AssetType.SND)
+            if (assetType == AssetType.Sound)
                 Entries_SND = entries.ToArray();
             else
                 Entries_SNDS = entries.ToArray();
@@ -143,7 +143,7 @@ namespace IndustrialPark
         public void RemoveEntry(uint assetID, AssetType assetType)
         {
             List<EntrySoundInfo_PS2> entries;
-            if (assetType == AssetType.SND)
+            if (assetType == AssetType.Sound)
                 entries = Entries_SND.ToList();
             else
                 entries = Entries_SNDS.ToList();
@@ -152,7 +152,7 @@ namespace IndustrialPark
                 if (entries[i].SoundAssetID == assetID)
                     entries.Remove(entries[i]);
 
-            if (assetType == AssetType.SND)
+            if (assetType == AssetType.Sound)
                 Entries_SND = entries.ToArray();
             else
                 Entries_SNDS = entries.ToArray();
@@ -161,7 +161,7 @@ namespace IndustrialPark
         public byte[] GetHeader(uint assetID, AssetType assetType)
         {
             List<EntrySoundInfo_PS2> entries;
-            if (assetType == AssetType.SND)
+            if (assetType == AssetType.Sound)
                 entries = Entries_SND.ToList();
             else
                 entries = Entries_SNDS.ToList();

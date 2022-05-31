@@ -97,5 +97,8 @@ namespace IndustrialPark
 
             Verify(Group_AssetID, ref result);
         }
+
+        public static bool dontRender = false;
+        public override bool DontRender { get => dontRender; }
     }
 }

@@ -111,20 +111,20 @@ namespace IndustrialPark
 
             switch (asset.assetType)
             {
-                case AssetType.FLY:
+                case AssetType.Flythrough:
                     internalEditors.Add(new InternalFlyEditor((AssetFLY)asset, this));
                     break;
-                case AssetType.RWTX:
+                case AssetType.Texture:
                     if (asset is AssetRWTX rwtx)
                         internalEditors.Add(new InternalTextureEditor(rwtx, this));
                     else
                         internalEditors.Add(new InternalAssetEditor(asset, this));
                     break;
-                case AssetType.SND:
-                case AssetType.SNDS:
+                case AssetType.Sound:
+                case AssetType.StreamingSound:
                     internalEditors.Add(new InternalSoundEditor((AssetSound)asset, this));
                     break;
-                case AssetType.TEXT:
+                case AssetType.Text:
                     internalEditors.Add(new InternalTextEditor((AssetTEXT)asset, this));
                     break;
                 default:
@@ -244,31 +244,31 @@ namespace IndustrialPark
         {
             UnsavedChanges = true;
 
-            var COLLs = (from asset in assetDictionary.Values where asset.assetType == AssetType.COLL select (AssetCOLL)asset).ToList();
+            var COLLs = (from asset in assetDictionary.Values where asset.assetType == AssetType.CollisionTable select (AssetCOLL)asset).ToList();
             for (int i = 1; i < COLLs.Count; i++)
                 RemoveAsset(COLLs[i].assetID);
             for (int i = 1; i < COLLs.Count; i++)
                 MergeCOLL(COLLs[i]);
 
-            var JAWs = (from asset in assetDictionary.Values where asset.assetType == AssetType.JAW select (AssetJAW)asset).ToList();
+            var JAWs = (from asset in assetDictionary.Values where asset.assetType == AssetType.JawDataTable select (AssetJAW)asset).ToList();
             for (int i = 1; i < JAWs.Count; i++)
                 RemoveAsset(JAWs[i].assetID);
             for (int i = 1; i < JAWs.Count; i++)
                 MergeJAW(JAWs[i]);
 
-            var LODTs = (from asset in assetDictionary.Values where asset.assetType == AssetType.LODT select (AssetLODT)asset).ToList();
+            var LODTs = (from asset in assetDictionary.Values where asset.assetType == AssetType.LevelOfDetailTable select (AssetLODT)asset).ToList();
             for (int i = 1; i < LODTs.Count; i++)
                 RemoveAsset(LODTs[i].assetID);
             for (int i = 1; i < LODTs.Count; i++)
                 MergeLODT(LODTs[i]);
 
-            var PIPTs = (from asset in assetDictionary.Values where asset.assetType == AssetType.PIPT select (AssetPIPT)asset).ToList();
+            var PIPTs = (from asset in assetDictionary.Values where asset.assetType == AssetType.PipeInfoTable select (AssetPIPT)asset).ToList();
             for (int i = 1; i < PIPTs.Count; i++)
                 RemoveAsset(PIPTs[i].assetID);
             for (int i = 1; i < PIPTs.Count; i++)
                 MergePIPT(PIPTs[i]);
 
-            var SHDWs = (from asset in assetDictionary.Values where asset.assetType == AssetType.SHDW select (AssetSHDW)asset).ToList();
+            var SHDWs = (from asset in assetDictionary.Values where asset.assetType == AssetType.SimpleShadowTable select (AssetSHDW)asset).ToList();
             for (int i = 1; i < SHDWs.Count; i++)
                 RemoveAsset(SHDWs[i].assetID);
             for (int i = 1; i < SHDWs.Count; i++)
@@ -279,7 +279,7 @@ namespace IndustrialPark
             {
                 if (game == Game.Incredibles)
                 {
-                    var SNDIs = (from asset in assetDictionary.Values where asset.assetType == AssetType.SNDI select (AssetSNDI_GCN_V2)asset).ToList();
+                    var SNDIs = (from asset in assetDictionary.Values where asset.assetType == AssetType.SoundInfo select (AssetSNDI_GCN_V2)asset).ToList();
                     for (int i = 1; i < SNDIs.Count; i++)
                         RemoveAsset(SNDIs[i].assetID);
                     for (int i = 1; i < SNDIs.Count; i++)
@@ -287,7 +287,7 @@ namespace IndustrialPark
                 }
                 else
                 {
-                    var SNDIs = (from asset in assetDictionary.Values where asset.assetType == AssetType.SNDI select (AssetSNDI_GCN_V1)asset).ToList();
+                    var SNDIs = (from asset in assetDictionary.Values where asset.assetType == AssetType.SoundInfo select (AssetSNDI_GCN_V1)asset).ToList();
                     for (int i = 1; i < SNDIs.Count; i++)
                         RemoveAsset(SNDIs[i].assetID);
                     for (int i = 1; i < SNDIs.Count; i++)
@@ -296,7 +296,7 @@ namespace IndustrialPark
             }
             else if (platform == Platform.Xbox)
             {
-                var SNDIs = (from asset in assetDictionary.Values where asset.assetType == AssetType.SNDI select (AssetSNDI_XBOX)asset).ToList();
+                var SNDIs = (from asset in assetDictionary.Values where asset.assetType == AssetType.SoundInfo select (AssetSNDI_XBOX)asset).ToList();
                 for (int i = 1; i < SNDIs.Count; i++)
                     RemoveAsset(SNDIs[i].assetID);
                 for (int i = 1; i < SNDIs.Count; i++)
@@ -304,7 +304,7 @@ namespace IndustrialPark
             }
             else if (platform == Platform.PS2)
             {
-                var SNDIs = (from asset in assetDictionary.Values where asset.assetType == AssetType.SNDI select (AssetSNDI_PS2)asset).ToList();
+                var SNDIs = (from asset in assetDictionary.Values where asset.assetType == AssetType.SoundInfo select (AssetSNDI_PS2)asset).ToList();
                 for (int i = 1; i < SNDIs.Count; i++)
                     RemoveAsset(SNDIs[i].assetID);
                 for (int i = 1; i < SNDIs.Count; i++)
@@ -417,73 +417,74 @@ namespace IndustrialPark
 
         public static AHDRFlags AHDRFlagsFromAssetType(AssetType assetType)
         {
+            if (assetType.IsDyna())
+                return AHDRFlags.SOURCE_VIRTUAL;
             switch (assetType)
             {
-                case AssetType.ALST:
-                case AssetType.BOUL:
-                case AssetType.BUTN:
-                case AssetType.CAM:
-                case AssetType.CNTR:
-                case AssetType.COLL:
-                case AssetType.COND:
-                case AssetType.CSNM:
-                case AssetType.CTOC:
-                case AssetType.DPAT:
-                case AssetType.DSCO:
-                case AssetType.DSTR:
-                case AssetType.DYNA:
-                case AssetType.EGEN:
-                case AssetType.ENV:
-                case AssetType.FOG:
-                case AssetType.HANG:
-                case AssetType.GRUP:
-                case AssetType.JAW:
-                case AssetType.LODT:
-                case AssetType.MAPR:
-                case AssetType.MINF:
-                case AssetType.MRKR:
-                case AssetType.MVPT:
-                case AssetType.PARE:
-                case AssetType.PARP:
-                case AssetType.PARS:
-                case AssetType.PEND:
-                case AssetType.PICK:
-                case AssetType.PIPT:
-                case AssetType.PKUP:
-                case AssetType.PLAT:
-                case AssetType.PLYR:
-                case AssetType.PORT:
+                case AssetType.AnimList:
+                case AssetType.Boulder:
+                case AssetType.Button:
+                case AssetType.Camera:
+                case AssetType.Counter:
+                case AssetType.CollisionTable:
+                case AssetType.Conditional:
+                case AssetType.CutsceneManager:
+                case AssetType.CutsceneTableOfContents:
+                case AssetType.Dispatcher:
+                case AssetType.DiscoFloor:
+                case AssetType.DestructibleObject:
+                case AssetType.ElectricArcGenerator:
+                case AssetType.Environment:
+                case AssetType.Fog:
+                case AssetType.Hangable:
+                case AssetType.Group:
+                case AssetType.JawDataTable:
+                case AssetType.LevelOfDetailTable:
+                case AssetType.SurfaceMapper:
+                case AssetType.ModelInfo:
+                case AssetType.Marker:
+                case AssetType.MovePoint:
+                case AssetType.ParticleEmitter:
+                case AssetType.ParticleProperties:
+                case AssetType.ParticleSystem:
+                case AssetType.Pendulum:
+                case AssetType.PickupTable:
+                case AssetType.PipeInfoTable:
+                case AssetType.Pickup:
+                case AssetType.Platform:
+                case AssetType.Player:
+                case AssetType.Portal:
                 case AssetType.SFX:
-                case AssetType.SHDW:
-                case AssetType.SHRP:
-                case AssetType.SIMP:
-                case AssetType.SNDI:
-                case AssetType.SURF:
-                case AssetType.TEXT:
-                case AssetType.TIMR:
-                case AssetType.TRIG:
-                case AssetType.UI:
-                case AssetType.UIFT:
+                case AssetType.SimpleShadowTable:
+                case AssetType.Shrapnel:
+                case AssetType.SimpleObject:
+                case AssetType.SoundInfo:
+                case AssetType.Surface:
+                case AssetType.Text:
+                case AssetType.Timer:
+                case AssetType.Trigger:
+                case AssetType.UserInterface:
+                case AssetType.UserInterfaceFont:
                 case AssetType.VIL:
-                case AssetType.VILP:
+                case AssetType.VILProperties:
                     return AHDRFlags.SOURCE_VIRTUAL;
-                case AssetType.CSN:
-                case AssetType.FLY:
-                case AssetType.RAW:
+                case AssetType.Cutscene:
+                case AssetType.Flythrough:
+                case AssetType.RawImage:
                     return AHDRFlags.SOURCE_FILE;
-                case AssetType.ANIM:
-                case AssetType.CRDT:
-                case AssetType.SND:
-                case AssetType.SNDS:
+                case AssetType.Animation:
+                case AssetType.Credits:
+                case AssetType.Sound:
+                case AssetType.StreamingSound:
                     return AHDRFlags.SOURCE_FILE | AHDRFlags.WRITE_TRANSFORM;
                 case AssetType.BSP:
-                case AssetType.MODL:
+                case AssetType.Model:
                     return AHDRFlags.SOURCE_FILE | AHDRFlags.READ_TRANSFORM;
-                case AssetType.ATBL:
+                case AssetType.AnimTable:
                 case AssetType.JSP:
-                case AssetType.RWTX:
+                case AssetType.Texture:
                     return AHDRFlags.SOURCE_VIRTUAL | AHDRFlags.READ_TRANSFORM;
-                case AssetType.LKIT:
+                case AssetType.LightKit:
                     return AHDRFlags.SOURCE_FILE | AHDRFlags.READ_TRANSFORM | AHDRFlags.WRITE_TRANSFORM;
                 default:
                     return 0;
@@ -789,24 +790,23 @@ namespace IndustrialPark
                             assetName = entity.assetName;
                             world = entity.world;
                         }
-                        else if (v is AssetDYNA dyna && !AssetDYNA.dontRender && dyna is IRenderableAsset)
+                        else if (v is DynaGObjectRing ring)
                         {
-                            if (dyna.isInvisible)
+                            if (ring.isInvisible || DynaGObjectRing.dontRender)
                                 continue;
 
-                            if (dyna is DynaGObjectRing ring)
-                            {
-                                modelAsset = (Asset)renderingDictionary[DynaGObjectRingControl.RingModelAssetID];
-                                world = ring.world;
-                            }
-                            else if (dyna is DynaEnemySB enemySb)
-                            {
-                                modelAsset = (Asset)renderingDictionary[enemySb.Model_AssetID];
-                                world = enemySb.world;
-                            }
-                            else continue;
+                            modelAsset = (Asset)renderingDictionary[DynaGObjectRingControl.RingModelAssetID];
+                            world = ring.world;
+                            assetName = ring.assetName;
+                        }
+                        else if (v is DynaEnemySB enemySb)
+                        {
+                            if (enemySb.isInvisible || enemySb.DontRender)
+                                continue;
 
-                            assetName = dyna.assetName;
+                            modelAsset = (Asset)renderingDictionary[enemySb.Model_AssetID];
+                            world = enemySb.world;
+                            assetName = enemySb.assetName;
                         }
                         else continue;
 

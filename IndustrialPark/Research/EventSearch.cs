@@ -3,6 +3,7 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace IndustrialPark
@@ -16,7 +17,7 @@ namespace IndustrialPark
 
         private void EventSearch_Load(object sender, EventArgs e)
         {
-            foreach (AssetType o in Enum.GetValues(typeof(AssetType)))
+            foreach (AssetType o in Enum.GetValues(typeof(AssetType)).Cast<AssetType>().OrderBy(f => f.ToString()))
             {
                 comboSenderAsset.Items.Add(o);
                 comboTargetAsset.Items.Add(o);

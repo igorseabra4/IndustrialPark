@@ -137,7 +137,7 @@ namespace IndustrialPark
             }
         }
 
-        public AssetCAM(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.CAM, BaseAssetType.Camera)
+        public AssetCAM(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.Camera, BaseAssetType.Camera)
         {
             _position = position;
 

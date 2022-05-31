@@ -124,7 +124,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public FlagBitmask TriggerFlags { get; set; } = IntFlagsDescriptor();
 
-        public AssetTRIG(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.TRIG, BaseAssetType.Trigger, position)
+        public AssetTRIG(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.Trigger, BaseAssetType.Trigger, position)
         {
             SolidityFlags.FlagValueByte = 0;
             ColorAlpha = 0;

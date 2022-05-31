@@ -52,7 +52,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public int UnknownInt58 { get; set; }
 
-        public AssetENV(string assetName, string startCamName) : base(assetName, AssetType.ENV, BaseAssetType.Env)
+        public AssetENV(string assetName, string startCamName) : base(assetName, AssetType.Environment, BaseAssetType.Env)
         {
             StartCameraAssetID = startCamName;
             LoldHeight = 10f;

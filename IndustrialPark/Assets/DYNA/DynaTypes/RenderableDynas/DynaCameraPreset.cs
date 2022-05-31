@@ -18,6 +18,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID Checkpoint_AssetID { get; set; }
 
+        public static bool dontRender = false;
+        public override bool DontRender => dontRender;
+
         public DynaCameraPreset(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.camera__preset, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))

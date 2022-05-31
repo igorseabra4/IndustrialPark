@@ -276,7 +276,7 @@ namespace IndustrialPark
             }
         }
 
-        public AssetPIPT(string assetName) : base(assetName, AssetType.PIPT)
+        public AssetPIPT(string assetName) : base(assetName, AssetType.PipeInfoTable)
         {
             PIPT_Entries = new EntryPIPT[0];
         }

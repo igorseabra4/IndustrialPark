@@ -402,7 +402,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public byte DrivingSurfaceType { get; set; }
 
-        public AssetSURF(string assetName) : base(assetName, AssetType.SURF, BaseAssetType.Surface)
+        public AssetSURF(string assetName) : base(assetName, AssetType.Surface, BaseAssetType.Surface)
         {
             zSurfMatFX = new zSurfMatFX();
             zSurfColorFX = new zSurfColorFX();

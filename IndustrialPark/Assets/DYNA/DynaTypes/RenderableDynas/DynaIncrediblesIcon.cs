@@ -61,5 +61,8 @@ namespace IndustrialPark
         {
             renderer.DrawCube(world, isSelected);
         }
+
+        public static bool dontRender = false;
+        public override bool DontRender => dontRender;
     }
 }

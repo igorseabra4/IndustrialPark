@@ -4,7 +4,7 @@ namespace IndustrialPark
 {
     public class AssetDPAT : BaseAsset
     {
-        public AssetDPAT(string assetName) : base(assetName, AssetType.DPAT, BaseAssetType.Dispatcher) { }
+        public AssetDPAT(string assetName) : base(assetName, AssetType.Dispatcher, BaseAssetType.Dispatcher) { }
 
         public AssetDPAT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness) { }
 

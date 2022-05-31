@@ -23,7 +23,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public byte FogType { get; set; }
 
-        public AssetFOG(string assetName) : base(assetName, AssetType.FOG, BaseAssetType.Fog)
+        public AssetFOG(string assetName) : base(assetName, AssetType.Fog, BaseAssetType.Fog)
         {
             EndColor = new AssetColor();
             StartColor = new AssetColor();

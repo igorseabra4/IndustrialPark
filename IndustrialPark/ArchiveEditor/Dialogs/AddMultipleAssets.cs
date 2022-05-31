@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace IndustrialPark
@@ -12,7 +13,7 @@ namespace IndustrialPark
         {
             InitializeComponent();
 
-            foreach (AssetType o in Enum.GetValues(typeof(AssetType)))
+            foreach (AssetType o in Enum.GetValues(typeof(AssetType)).Cast<AssetType>().OrderBy(f => f.ToString()))
                 comboBoxAssetTypes.Items.Add(o);
 
             buttonOK.Enabled = false;

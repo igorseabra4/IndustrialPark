@@ -24,6 +24,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetByte OnlyOnFloor { get; set; }
 
+        public static bool dontRender = false;
+        public override bool DontRender => dontRender;
+
         public DynaEffectRumbleSphere(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__RumbleSphericalEmitter, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))

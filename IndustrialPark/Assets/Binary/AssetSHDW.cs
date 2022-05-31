@@ -54,7 +54,7 @@ namespace IndustrialPark
         [Category("Shadow Map")]
         public EntrySHDW[] SHDW_Entries { get; set; }
 
-        public AssetSHDW(string assetName) : base(assetName, AssetType.SHDW)
+        public AssetSHDW(string assetName) : base(assetName, AssetType.SimpleShadowTable)
         {
             SHDW_Entries = new EntrySHDW[0];
         }

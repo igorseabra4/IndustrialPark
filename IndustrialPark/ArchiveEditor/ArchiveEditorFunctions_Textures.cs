@@ -157,7 +157,7 @@ namespace IndustrialPark
 
                         // And add the new dictionary as an asset.
                         Section_ADBG ADBG = new Section_ADBG(0, textureName, "", 0);
-                        Section_AHDR AHDR = new Section_AHDR(BKDRHash(textureName), AssetType.RWTX, AHDRFlags.SOURCE_VIRTUAL | AHDRFlags.READ_TRANSFORM, ADBG, data);
+                        Section_AHDR AHDR = new Section_AHDR(BKDRHash(textureName), AssetType.Texture, AHDRFlags.SOURCE_VIRTUAL | AHDRFlags.READ_TRANSFORM, ADBG, data);
 
 
                         AHDRs.Add(AHDR);

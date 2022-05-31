@@ -8,7 +8,7 @@ namespace IndustrialPark
     {
         public void AddSoundToSNDI(byte[] soundData, uint assetID, AssetType assetType, out byte[] finalData)
         {
-            if (!ContainsAssetWithType(AssetType.SNDI))
+            if (!ContainsAssetWithType(AssetType.SoundInfo))
             {
                 int layerType = (int)LayerType_BFBB.SNDTOC;
                 if (game == Game.Incredibles)

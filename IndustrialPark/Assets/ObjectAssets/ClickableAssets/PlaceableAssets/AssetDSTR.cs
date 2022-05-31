@@ -7,7 +7,7 @@ namespace IndustrialPark
 {
     public class AssetDSTR : EntityAsset
     {
-        protected const string categoryName = "Destructable";
+        protected const string categoryName = "Destructible Object";
 
         [Category(categoryName)]
         public int AnimationSpeed { get; set; }
@@ -40,7 +40,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID DestroyModel_AssetID { get; set; }
 
-        public AssetDSTR(string assetName, Vector3 position) : base(assetName, AssetType.DSTR, BaseAssetType.DestructObj, position)
+        public AssetDSTR(string assetName, Vector3 position) : base(assetName, AssetType.DestructibleObject, BaseAssetType.DestructObj, position)
         {
             CollType = 2;
             BlastRadius = 4f;

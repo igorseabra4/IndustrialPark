@@ -44,7 +44,7 @@ namespace IndustrialPark
         [Category("Collision Table")]
         public EntryCOLL[] CollisionTable_Entries { get; set; }
 
-        public AssetCOLL(string assetName) : base(assetName, AssetType.COLL)
+        public AssetCOLL(string assetName) : base(assetName, AssetType.CollisionTable)
         {
             CollisionTable_Entries = new EntryCOLL[0];
         }

@@ -222,7 +222,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public MinfParam[] MinfParams { get; set; }
 
-        public AssetMINF(string assetName) : base(assetName, AssetType.MINF)
+        public AssetMINF(string assetName) : base(assetName, AssetType.ModelInfo)
         {
             MinfReferences = new MinfReference[0];
             MinfParams = new MinfParam[0];

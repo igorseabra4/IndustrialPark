@@ -52,7 +52,7 @@ namespace IndustrialPark
 
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
-            if (destinationType == typeof(string))
+            if (destinationType == typeof(string) && value != null)
             {
                 if (Legacy)
                     return ((AssetID)value).ToString("X8");

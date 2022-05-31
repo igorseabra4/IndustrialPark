@@ -7,7 +7,7 @@ namespace IndustrialPark
     {
         public string Text { get; set; }
 
-        public AssetTEXT(string assetName) : base(assetName, AssetType.TEXT)
+        public AssetTEXT(string assetName) : base(assetName, AssetType.Text)
         {
             Text = "";
         }

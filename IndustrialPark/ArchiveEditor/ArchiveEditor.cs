@@ -459,7 +459,7 @@ namespace IndustrialPark
 
             comboBoxAssetTypes.Items.Clear();
             comboBoxAssetTypes.Items.Add("All");
-            comboBoxAssetTypes.Items.AddRange(archive.AssetTypesOnLayer(comboBoxLayers.SelectedIndex).Cast<object>().ToArray());
+            comboBoxAssetTypes.Items.AddRange(archive.AssetTypesOnLayer(comboBoxLayers.SelectedIndex).Cast<object>().OrderBy(f => f.ToString()).ToArray());
 
             comboBoxAssetTypes.SelectedIndex = 0;
             PopulateAssetList();
@@ -1264,7 +1264,7 @@ namespace IndustrialPark
 
         private void exportAudioToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!archive.ContainsAssetWithType(AssetType.SND) && !archive.ContainsAssetWithType(AssetType.SNDS))
+            if (!archive.ContainsAssetWithType(AssetType.Sound) && !archive.ContainsAssetWithType(AssetType.StreamingSound))
                 return;
 
             CommonOpenFileDialog saveFileDialog = new CommonOpenFileDialog()
@@ -1274,7 +1274,7 @@ namespace IndustrialPark
             if (saveFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
 
-                foreach (var asset in archive.GetAllAssets().OfType<AssetWithData>().Where(asset => asset.assetType == AssetType.SND || asset.assetType == AssetType.SNDS))
+                foreach (var asset in archive.GetAllAssets().OfType<AssetWithData>().Where(asset => asset.assetType == AssetType.Sound || asset.assetType == AssetType.StreamingSound))
                     try
                     {
                         string extension =

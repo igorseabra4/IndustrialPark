@@ -21,7 +21,7 @@ namespace IndustrialPark
         [Category("Surface Mapper")]
         public EntryMAPR[] MAPR_Entries { get; set; }
 
-        public AssetMAPR(string assetName) : base(assetName, AssetType.MAPR)
+        public AssetMAPR(string assetName) : base(assetName, AssetType.SurfaceMapper)
         {
             MAPR_Entries = new EntryMAPR[0];
         }

@@ -47,25 +47,25 @@ namespace IndustrialPark.Randomizer
                     shuffled = true;
                 }
 
-            if (settings.Disco_Floors && ContainsAssetWithType(AssetType.DSCO))
+            if (settings.Disco_Floors && ContainsAssetWithType(AssetType.DiscoFloor))
                 shuffled |= RandomizeDisco();
 
-            if (settings.Textures && ContainsAssetWithType(AssetType.RWTX))
+            if (settings.Textures && ContainsAssetWithType(AssetType.Texture))
                 shuffled |= RandomizeTextures(settings.Textures_Special);
 
-            if (settings.BoulderSettings && ContainsAssetWithType(AssetType.BOUL))
+            if (settings.BoulderSettings && ContainsAssetWithType(AssetType.Boulder))
                 shuffled |= RandomizeBoulderSettings(settings);
 
-            if (settings.Sounds && ContainsAssetWithType(AssetType.SNDI))
+            if (settings.Sounds && ContainsAssetWithType(AssetType.SoundInfo))
                 shuffled |= RandomizeSounds(settings.Mix_Sound_Types);
 
-            if (settings.Pickups && ContainsAssetWithType(AssetType.PKUP))
+            if (settings.Pickups && ContainsAssetWithType(AssetType.Pickup))
                 shuffled |= RandomizePickupPositions();
 
-            if (settings.Shiny_Object_Gates && game == Game.Scooby && ContainsAssetWithType(AssetType.PKUP))
+            if (settings.Shiny_Object_Gates && game == Game.Scooby && ContainsAssetWithType(AssetType.Pickup))
                 shuffled |= RandomizeSnackGates(settings.shinyReqMin, settings.shinyReqMax);
 
-            if (settings.MovePoint_Radius && ContainsAssetWithType(AssetType.MVPT))
+            if (settings.MovePoint_Radius && ContainsAssetWithType(AssetType.MovePoint))
                 shuffled |= RandomizeMovePointRadius(settings);
 
             if (game == Game.BFBB)
@@ -104,7 +104,7 @@ namespace IndustrialPark.Randomizer
             }
             else if (game == Game.Incredibles)
             {
-                if (settings.Tiki_Types && ContainsAssetWithType(AssetType.DYNA))
+                if (settings.Tiki_Types && ContainsAssetWithType(AssetType.Crate))
                 {
                     List<EnemySupplyCrateType> chooseFrom = new List<EnemySupplyCrateType>();
                     if (settings.TikiProbabilities.WoodenTiki >= 0)
@@ -199,7 +199,7 @@ namespace IndustrialPark.Randomizer
             }
             else if (game == Game.Incredibles)
             {
-                if (settings.Enemy_Types && ContainsAssetWithType(AssetType.DYNA))
+                if (settings.Enemy_Types && ContainsAssetWithType(AssetType.Enemy))
                 {
                     List<EnemyStandardType> chooseFrom = new List<EnemyStandardType>(24);
 
@@ -310,23 +310,23 @@ namespace IndustrialPark.Randomizer
                     settings.Teleport_Box_Positions,
                     settings.Taxi_Trigger_Positions);
 
-            if (settings.PlatformSpeed && ContainsAssetWithType(AssetType.PLAT))
+            if (settings.PlatformSpeed && ContainsAssetWithType(AssetType.Platform))
                 shuffled |= ShufflePlatSpeeds(settings);
 
-            if (settings.Cameras && ContainsAssetWithType(AssetType.CAM))
+            if (settings.Cameras && ContainsAssetWithType(AssetType.Camera))
                 shuffled |= ShuffleCameras();
 
             bool shinyNumbers = false;
             bool spatNumbers = false;
 
-            if (game == Game.BFBB && settings.Shiny_Object_Gates && ContainsAssetWithType(AssetType.COND))
+            if (game == Game.BFBB && settings.Shiny_Object_Gates && ContainsAssetWithType(AssetType.Conditional))
                 shuffled |= ShuffleShinyGates(settings, out shinyNumbers);
 
             if (game == Game.BFBB)
-                if ((settings.spatReqChum != 75 || settings.Spatula_Gates) && ContainsAssetWithType(AssetType.COND))
+                if ((settings.spatReqChum != 75 || settings.Spatula_Gates) && ContainsAssetWithType(AssetType.Conditional))
                     shuffled |= ShuffleSpatulaGates(settings.Spatula_Gates, settings, out spatNumbers);
 
-            if (game == Game.Incredibles && settings.CombatArenaCounts && ContainsAssetWithType(AssetType.CNTR))
+            if (game == Game.Incredibles && settings.CombatArenaCounts && ContainsAssetWithType(AssetType.Counter))
                 shuffled |= ShuffleCombatArenas(settings.combatMin, settings.combatMax);
 
             needToAddNumbers = shinyNumbers | spatNumbers;
@@ -334,10 +334,10 @@ namespace IndustrialPark.Randomizer
             if (settings.Scale_Of_Things)
                 shuffled |= ShuffleScales(settings);
 
-            if (settings.RingSizes && ContainsAssetWithType(AssetType.DYNA))
+            if (settings.RingSizes && ContainsAssetWithType(AssetType.Ring))
                 shuffled |= ShuffleRingScales(settings);
 
-            if (settings.FloatingBlockChallenge && game == Game.Incredibles && ContainsAssetWithType(AssetType.PLAT))
+            if (settings.FloatingBlockChallenge && game == Game.Incredibles && ContainsAssetWithType(AssetType.Platform))
                 shuffled |= ShuffleFloatingBlocks();
 
             if (settings.Colors)
@@ -346,7 +346,7 @@ namespace IndustrialPark.Randomizer
                     ShufflePlaceableDynaColors(settings.brightColors, settings.strongColors) |
                     ShuffleLevelModelColors(settings.brightColors, settings.strongColors);
 
-            if (game == Game.BFBB && settings.PlayerCharacters && ContainsAssetWithType(AssetType.DYNA))
+            if (game == Game.BFBB && settings.PlayerCharacters && ContainsAssetWithType(AssetType.BusStop))
                 shuffled |= ShuffleBusStops();
 
             if (settings.Music)
@@ -358,13 +358,13 @@ namespace IndustrialPark.Randomizer
             if (game == Game.Incredibles && settings.disableCutscenes)
                 shuffled |= DisableCutscenesMovie();
 
-            if (settings.openTeleportBoxes && ContainsAssetWithType(AssetType.DYNA))
+            if (settings.openTeleportBoxes && ContainsAssetWithType(AssetType.TeleportBox))
                 shuffled |= OpenTeleportBoxes();
 
             if (settings.invisibleLevel && ContainsAssetWithType(AssetType.JSP))
                 shuffled |= MakeLevelInvisible();
 
-            if (settings.invisibleObjects && ContainsAssetWithType(AssetType.SIMP))
+            if (settings.invisibleObjects && ContainsAssetWithType(AssetType.SimpleObject))
                 shuffled |= MakeObjectsInvisible();
 
             return shuffled;
@@ -405,7 +405,7 @@ namespace IndustrialPark.Randomizer
         private bool RandomizeTextures(bool hud)
         {
             var assets = (from asset in assetDictionary.Values
-                          where asset.assetType == AssetType.RWTX
+                          where asset.assetType == AssetType.Texture
                           && ((hud && asset.assetName.ToLower().Contains("rw3")) || (!hud))
                           select (AssetWithData)asset).ToList();
 
@@ -426,7 +426,7 @@ namespace IndustrialPark.Randomizer
 
         private bool RandomizeDisco()
         {
-            var assets = (from asset in assetDictionary.Values where asset.assetType == AssetType.DSCO select (AssetDSCO)asset).ToList();
+            var assets = (from asset in assetDictionary.Values where asset.assetType == AssetType.DiscoFloor select (AssetDSCO)asset).ToList();
 
             foreach (var dsco in assets)
             {
@@ -448,7 +448,7 @@ namespace IndustrialPark.Randomizer
 
         private bool RandomizePickupPositions()
         {
-            var assets = (from asset in assetDictionary.Values where asset.assetType == AssetType.PKUP select (AssetPKUP)asset).ToList();
+            var assets = (from asset in assetDictionary.Values where asset.assetType == AssetType.Pickup select (AssetPKUP)asset).ToList();
 
             if (assets.Count < 2)
                 return false;
@@ -636,7 +636,7 @@ namespace IndustrialPark.Randomizer
         private bool ShuffleCameras()
         {
             var assets = (from asset in assetDictionary.Values
-                          where asset.assetType == AssetType.CAM && asset.assetName != "STARTCAM"
+                          where asset.assetType == AssetType.Camera && asset.assetName != "STARTCAM"
                           select (AssetCAM)asset).ToList();
 
             if (assets.Count == 0)
@@ -696,7 +696,7 @@ namespace IndustrialPark.Randomizer
 
         private bool ShuffleScales(RandomizerSettings settings)
         {
-            var types = new AssetType[] { AssetType.BOUL, AssetType.BUTN, AssetType.DSTR, AssetType.PLAT, AssetType.SIMP };
+            var types = new AssetType[] { AssetType.Boulder, AssetType.Button, AssetType.DestructibleObject, AssetType.Platform, AssetType.SimpleObject };
 
             var assets = (from asset in assetDictionary.Values
                           where types.Contains(asset.assetType) && !asset.assetName.ToLower().Contains("track")
@@ -803,8 +803,8 @@ namespace IndustrialPark.Randomizer
         private bool ShufflePlaceableColors(bool brightColors, bool strongColors)
         {
             AssetType[] allowed = new AssetType[] {
-                            AssetType.BOUL, AssetType.BUTN, AssetType.DSTR, AssetType.HANG, AssetType.NPC, AssetType.PEND,
-                            AssetType.PKUP, AssetType.PLAT, AssetType.PLYR, AssetType.SIMP, AssetType.VIL };
+                            AssetType.Boulder, AssetType.Button, AssetType.DestructibleObject, AssetType.Hangable, AssetType.NPC, AssetType.Pendulum,
+                            AssetType.Pickup, AssetType.Platform, AssetType.Player, AssetType.SimpleObject, AssetType.VIL };
 
             List<EntityAsset> assets = (from asset in assetDictionary.Values
                                         where allowed.Contains(asset.assetType)
@@ -1697,7 +1697,7 @@ namespace IndustrialPark.Randomizer
             float min = settings.boulderMin;
             float max = settings.boulderMax;
 
-            List<AssetBOUL> assets = (from asset in assetDictionary.Values where asset.assetType == AssetType.BOUL select asset).Cast<AssetBOUL>().ToList();
+            List<AssetBOUL> assets = (from asset in assetDictionary.Values where asset.assetType == AssetType.Boulder select asset).Cast<AssetBOUL>().ToList();
 
             foreach (AssetBOUL boul in assets)
             {
@@ -2012,7 +2012,7 @@ namespace IndustrialPark.Randomizer
             float min = settings.mvptMin;
             float max = settings.mvptMax;
 
-            var assets = (from asset in assetDictionary.Values where asset.assetType == AssetType.MVPT select asset).Cast<AssetMVPT>().ToList();
+            var assets = (from asset in assetDictionary.Values where asset.assetType == AssetType.MovePoint select asset).Cast<AssetMVPT>().ToList();
 
             foreach (var mvpt in assets)
             {
@@ -2703,11 +2703,11 @@ namespace IndustrialPark.Randomizer
             {
                 switch (AHDR.assetType)
                 {
-                    case AssetType.COLL:
-                    case AssetType.JAW:
-                    case AssetType.LODT:
-                    case AssetType.SHDW:
-                    case AssetType.SNDI:
+                    case AssetType.CollisionTable:
+                    case AssetType.JawDataTable:
+                    case AssetType.LevelOfDetailTable:
+                    case AssetType.SimpleShadowTable:
+                    case AssetType.SoundInfo:
                         continue;
                 }
 
@@ -3185,7 +3185,7 @@ namespace IndustrialPark.Randomizer
                     break;
                 case "hb08":
                     {
-                        if (ContainsAssetWithType(AssetType.COND))
+                        if (ContainsAssetWithType(AssetType.Conditional))
                         {
                             int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
 

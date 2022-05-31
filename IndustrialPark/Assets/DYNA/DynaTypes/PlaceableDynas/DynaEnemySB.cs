@@ -288,11 +288,13 @@ namespace IndustrialPark
             boundingBox = BoundingBox.FromPoints(vertices);
         }
 
+        public abstract bool DontRender { get; }
+
         public bool ShouldDraw(SharpRenderer renderer)
         {
             if (isSelected)
                 return true;
-            if (dontRender)
+            if (DontRender)
                 return false;
             if (isInvisible)
                 return false;

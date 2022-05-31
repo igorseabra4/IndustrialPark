@@ -15,7 +15,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle Q3t { get; set; }
 
-        public AssetPEND(string assetName, Vector3 position) : base(assetName, AssetType.PEND, BaseAssetType.Pendulum, position)
+        public AssetPEND(string assetName, Vector3 position) : base(assetName, AssetType.Pendulum, BaseAssetType.Pendulum, position)
         {
             Motion = new Motion_Pendulum();
         }

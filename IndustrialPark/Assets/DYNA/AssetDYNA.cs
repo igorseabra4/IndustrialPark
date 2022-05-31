@@ -21,9 +21,7 @@ namespace IndustrialPark
 
         protected int dynaDataStartPosition => baseHeaderEndPosition + 8;
 
-        public static bool dontRender = false;
-
-        public AssetDYNA(string assetName, DynaType type, short version) : base(assetName, AssetType.DYNA, BaseAssetType.Unknown_Other)
+        public AssetDYNA(string assetName, DynaType type, short version) : base(assetName, type.ToAssetType(), BaseAssetType.Unknown_Other)
         {
             Type = type;
             Version = version;

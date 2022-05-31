@@ -44,7 +44,7 @@ namespace IndustrialPark
         [Category("Jaw Data")]
         public EntryJAW[] JAW_Entries { get; set; }
 
-        public AssetJAW(string assetName) : base(assetName, AssetType.JAW)
+        public AssetJAW(string assetName) : base(assetName, AssetType.JawDataTable)
         {
             JAW_Entries = new EntryJAW[0];
         }

@@ -45,7 +45,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public int MaxHeight { get; set; } // not in scooby
 
-        public AssetUIFT(string assetName, Vector3 position) : base(assetName, AssetType.UIFT, BaseAssetType.UIFont, position)
+        public AssetUIFT(string assetName, Vector3 position) : base(assetName, AssetType.UserInterfaceFont, BaseAssetType.UIFont, position)
         {
             BackgroundColor = new AssetColor(128, 128, 128, 128);
             FontColor = new AssetColor(255, 255, 255, 255);

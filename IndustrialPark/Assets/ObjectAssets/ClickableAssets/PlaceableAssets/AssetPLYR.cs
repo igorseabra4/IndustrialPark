@@ -11,7 +11,7 @@ namespace IndustrialPark
         [Category("Player References")]
         public AssetID LightKit_AssetID { get; set; }
 
-        public AssetPLYR(string assetName, Vector3 position, Game game) : base(assetName, AssetType.PLYR, BaseAssetType.Player, position)
+        public AssetPLYR(string assetName, Vector3 position, Game game) : base(assetName, AssetType.Player, BaseAssetType.Player, position)
         {
             BaseFlags = 0x0D;
             SolidityFlags.FlagValueByte = 0;

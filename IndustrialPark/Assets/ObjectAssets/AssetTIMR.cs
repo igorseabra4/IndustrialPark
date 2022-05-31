@@ -12,7 +12,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle RandomRange { get; set; }
 
-        public AssetTIMR(string assetName) : base(assetName, AssetType.TIMR, BaseAssetType.Timer)
+        public AssetTIMR(string assetName) : base(assetName, AssetType.Timer, BaseAssetType.Timer)
         {
             Time = 1;
         }

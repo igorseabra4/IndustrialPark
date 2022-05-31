@@ -78,5 +78,8 @@ namespace IndustrialPark
             Verify(TaskBox2_AssetID, ref result);
             Verify(TextBox_AssetID, ref result);
         }
+
+        public static bool dontRender = false;
+        public override bool DontRender { get => dontRender; }
     }
 }

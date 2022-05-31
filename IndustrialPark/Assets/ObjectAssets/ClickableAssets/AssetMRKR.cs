@@ -28,7 +28,7 @@ namespace IndustrialPark
             set { _position.Z = value; CreateTransformMatrix(); }
         }
 
-        public AssetMRKR(string assetName, Vector3 position) : base(assetName, AssetType.MRKR)
+        public AssetMRKR(string assetName, Vector3 position) : base(assetName, AssetType.Marker)
         {
             _position = position;
             CreateTransformMatrix();

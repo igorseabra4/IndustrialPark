@@ -89,7 +89,7 @@ namespace IndustrialPark
             game == Game.BFBB ? 0x90 :
             game == Game.Incredibles ? 0x8C : 0;
 
-        public AssetPLAT(Game game, string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.PLAT, BaseAssetType.Platform, position)
+        public AssetPLAT(Game game, string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.Platform, BaseAssetType.Platform, position)
         {
             this.game = game;
 

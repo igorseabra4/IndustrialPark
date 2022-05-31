@@ -90,7 +90,7 @@ namespace IndustrialPark
             }
         }
 
-        public AssetLODT(string assetName) : base(assetName, AssetType.LODT)
+        public AssetLODT(string assetName) : base(assetName, AssetType.LevelOfDetailTable)
         {
             LODT_Entries = new EntryLODT[0];
         }

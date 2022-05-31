@@ -95,5 +95,8 @@ namespace IndustrialPark
             Verify(Unknown5C, ref result);
             Verify(Unknown60, ref result);
         }
+
+        public static bool dontRender = false;
+        public override bool DontRender { get => dontRender; }
     }
 }

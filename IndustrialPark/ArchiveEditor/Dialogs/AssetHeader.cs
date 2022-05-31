@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace IndustrialPark
 {
@@ -13,7 +14,7 @@ namespace IndustrialPark
         {
             InitializeComponent();
 
-            foreach (AssetType o in Enum.GetValues(typeof(AssetType)))
+            foreach (AssetType o in Enum.GetValues(typeof(AssetType)).Cast<AssetType>().OrderBy(f => f.ToString()))
                 comboBoxAssetTypes.Items.Add(o);
 
             buttonOK.Enabled = false;
@@ -25,8 +26,7 @@ namespace IndustrialPark
         {
             InitializeComponent();
 
-            foreach (AssetType o in Enum.GetValues(typeof(AssetType)))
-                comboBoxAssetTypes.Items.Add(o);
+            comboBoxAssetTypes.Enabled = false;
 
             TopMost = true;
             defaultColor = textBoxAssetID.BackColor;
