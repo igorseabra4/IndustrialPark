@@ -251,6 +251,7 @@ namespace IndustrialPark
             currentProjectPath = null;
             ApplySettings(new ProjectJson());
             SetProjectToolStripStatusLabel();
+            SetAllAssetTypesVisible();
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1161,20 +1162,21 @@ namespace IndustrialPark
                     continue;
 
                 var text = assetType.ToString();
-                if (assetType == AssetType.JSP)
-                    text = "BSP/JSP";
-                else if (assetType == AssetType.VIL && assetTypes.Contains(AssetType.Duplicator))
+                if (assetType == AssetType.VIL && assetTypes.Contains(AssetType.Duplicator))
                     text = "VIL/Duplicator";
+
+                var field = assetViewTypes[assetType].GetField("dontRender");
+                var dontRender = (bool)field.GetValue(null);
+
                 ToolStripMenuItem item = new ToolStripMenuItem(text)
                 {
-                    Checked = true,
-                    CheckState = CheckState.Checked,
+                    Checked = !dontRender,
+                    CheckState = dontRender ? CheckState.Unchecked : CheckState.Checked,
                     Tag = assetType
                 };
                 item.Click += (object sender, EventArgs e) =>
                 {
                     item.Checked = !item.Checked;
-                    var field = assetViewTypes[assetType].GetField("dontRender");
                     field.SetValue(null, !item.Checked);
                     ShowDropDowns();
                 };
@@ -1182,6 +1184,15 @@ namespace IndustrialPark
             }
 
             assetViewToolStripMenuItems = items.ToArray();
+        }
+
+        private void SetAllAssetTypesVisible()
+        {
+            foreach (var assetType in assetViewTypes.Values)
+            {
+                var field = assetType.GetField("dontRender");
+                field.SetValue(null, false);
+            }
         }
 
         private void uIModeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1687,6 +1698,7 @@ namespace IndustrialPark
             }
 
             closeAllEditorsToolStripMenuItem.Enabled = false;
+            SetAllAssetTypesVisible();
         }
     }
 }
