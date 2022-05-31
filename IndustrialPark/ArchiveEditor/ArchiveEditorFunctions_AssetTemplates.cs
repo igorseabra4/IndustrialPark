@@ -286,9 +286,9 @@ namespace IndustrialPark
                 case AssetTemplate.MovePoint_Area:
                     return "MovePoint (Area)";
                 case AssetTemplate.SFX_OnEvent:
-                    return "SFX (On event)";
+                    return "SFX (on event)";
                 case AssetTemplate.SFX_OnRadius:
-                    return "SFX (On radius)";
+                    return "SFX (on radius)";
                 case AssetTemplate.ShinyBlue:
                     return "Shiny Object (Blue)";
                 case AssetTemplate.Shiny_Green:
@@ -398,9 +398,11 @@ namespace IndustrialPark
                 case AssetTemplate.Spawner_GG:
                     return "Spawner (GG, unused)";
                 case AssetTemplate.Button_Red:
-                    return "Spawner (Red Button)";
+                    return "Red Button";
                 case AssetTemplate.Texas_Hitch_Platform:
                     return "Texas Hitch (Platform)";
+                case AssetTemplate.Swinger_Platform:
+                    return "Swinger (Platform)";
                 case AssetTemplate.Checkpoint_Invisible:
                     return "Checkpoint (Invisible)";
                 case AssetTemplate.CollapsePlatform_Planktopolis:
