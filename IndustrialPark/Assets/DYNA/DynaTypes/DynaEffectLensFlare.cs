@@ -11,7 +11,7 @@ namespace IndustrialPark
         protected override short constVersion => 3;
 
         [Category(dynaCategoryName)]
-        public AssetID Texture_AssetID { get; set; }
+        public AssetID Texture { get; set; }
         [Category(dynaCategoryName)]
         public AssetID Unknown04 { get; set; }
         [Category(dynaCategoryName)]
@@ -39,7 +39,7 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
 
-                Texture_AssetID = reader.ReadUInt32();
+                Texture = reader.ReadUInt32();
                 Unknown04 = reader.ReadUInt32();
                 Unknown08 = reader.ReadSingle();
                 Unknown0C = reader.ReadSingle();
@@ -57,7 +57,7 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(Texture_AssetID);
+                writer.Write(Texture);
                 writer.Write(Unknown04);
                 writer.Write(Unknown08);
                 writer.Write(Unknown0C);
@@ -73,11 +73,9 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => Texture_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
-            Verify(Texture_AssetID, ref result);
+            Verify(Texture, ref result);
             base.Verify(ref result);
         }
     }

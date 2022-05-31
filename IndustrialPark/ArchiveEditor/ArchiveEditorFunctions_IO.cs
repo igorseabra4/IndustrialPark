@@ -74,7 +74,7 @@ namespace IndustrialPark
                     MergePIPT(new AssetPIPT(AHDR, hip.Item2, hip.Item3.Endianness()));
                     continue;
                 }
-                else if (AHDR.assetType == AssetType.SimpleShadowTable && ContainsAssetWithType(AssetType.SimpleShadowTable))
+                else if (AHDR.assetType == AssetType.ShadowTable && ContainsAssetWithType(AssetType.ShadowTable))
                 {
                     foreach (Section_LHDR LHDR in hip.Item1.DICT.LTOC.LHDRList)
                         LHDR.assetIDlist.Remove(AHDR.assetID);
@@ -112,7 +112,7 @@ namespace IndustrialPark
                 if (ContainsAsset(AHDR.assetID) && (missingAssets == null || missingAssets.Contains(AHDR.assetID)))
                 {
                     DialogResult result = forceOverwrite ? DialogResult.Yes :
-                    MessageBox.Show($"Asset [{AHDR.assetID.ToString("X8")}] {AHDR.ADBG.assetName} already present in archive. Do you wish to overwrite it?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    MessageBox.Show($"Asset [{AHDR.assetID:X8}] {AHDR.ADBG.assetName} already present in archive. Do you wish to overwrite it?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
                     if (result == DialogResult.Yes)
                     {

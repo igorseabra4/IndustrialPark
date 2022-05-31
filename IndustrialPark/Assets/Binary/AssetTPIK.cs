@@ -7,8 +7,8 @@ namespace IndustrialPark
     public class EntryTPIK
     {
         public AssetID PickupHash { get; set; }
-        public AssetID Model_AssetID { get; set; }
-        public AssetID RingModel_AssetID { get; set; }
+        public AssetID Model { get; set; }
+        public AssetID RingModel { get; set; }
         public AssetSingle UnknownFloat_0C { get; set; }
         public AssetSingle UnknownFloat_10 { get; set; }
         public AssetSingle UnknownFloat_14 { get; set; }
@@ -17,8 +17,8 @@ namespace IndustrialPark
         public AssetSingle RingColorB { get; set; }
         public AssetID Unknown_24 { get; set; }
         public AssetID Unknown_28 { get; set; }
-        public AssetID Pickup_SGRP { get; set; }
-        public AssetID Denied_SGRP { get; set; }
+        public AssetID PickupSoundGroup { get; set; }
+        public AssetID DeniedSoundGroup { get; set; }
         public byte HealthValue { get; set; }
         public byte PowerValue { get; set; }
         public byte BonusValue { get; set; }
@@ -28,8 +28,8 @@ namespace IndustrialPark
         public EntryTPIK(EndianBinaryReader reader)
         {
             PickupHash = reader.ReadUInt32();
-            Model_AssetID = reader.ReadUInt32();
-            RingModel_AssetID = reader.ReadUInt32();
+            Model = reader.ReadUInt32();
+            RingModel = reader.ReadUInt32();
             UnknownFloat_0C = reader.ReadSingle();
             UnknownFloat_10 = reader.ReadSingle();
             UnknownFloat_14 = reader.ReadSingle();
@@ -38,8 +38,8 @@ namespace IndustrialPark
             RingColorB = reader.ReadSingle();
             Unknown_24 = reader.ReadUInt32();
             Unknown_28 = reader.ReadUInt32();
-            Pickup_SGRP = reader.ReadUInt32();
-            Denied_SGRP = reader.ReadUInt32();
+            PickupSoundGroup = reader.ReadUInt32();
+            DeniedSoundGroup = reader.ReadUInt32();
             HealthValue = reader.ReadByte();
             PowerValue = reader.ReadByte();
             BonusValue = reader.ReadByte();
@@ -51,8 +51,8 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(PickupHash);
-                writer.Write(Model_AssetID);
-                writer.Write(RingModel_AssetID);
+                writer.Write(Model);
+                writer.Write(RingModel);
                 writer.Write(UnknownFloat_0C);
                 writer.Write(UnknownFloat_10);
                 writer.Write(UnknownFloat_14);
@@ -61,8 +61,8 @@ namespace IndustrialPark
                 writer.Write(RingColorB);
                 writer.Write(Unknown_24);
                 writer.Write(Unknown_28);
-                writer.Write(Pickup_SGRP);
-                writer.Write(Denied_SGRP);
+                writer.Write(PickupSoundGroup);
+                writer.Write(DeniedSoundGroup);
                 writer.Write(HealthValue);
                 writer.Write(PowerValue);
                 writer.Write(BonusValue);
@@ -77,12 +77,12 @@ namespace IndustrialPark
 
         public bool HasReference(uint assetID) =>
             PickupHash == assetID ||
-            Model_AssetID == assetID ||
-            RingModel_AssetID == assetID ||
+            Model == assetID ||
+            RingModel == assetID ||
             Unknown_24 == assetID ||
             Unknown_28 == assetID ||
-            Pickup_SGRP == assetID ||
-            Denied_SGRP == assetID;
+            PickupSoundGroup == assetID ||
+            DeniedSoundGroup == assetID;
     }
 
     public class AssetTPIK : Asset
@@ -152,26 +152,17 @@ namespace IndustrialPark
                 tpikEntries.Remove(entry.PickupHash);
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            foreach (EntryTPIK a in TPIK_Entries)
-                if (a.HasReference(assetID))
-                    return true;
-
-            return base.HasReference(assetID);
-        }
-
         public override void Verify(ref List<string> result)
         {
             foreach (EntryTPIK a in TPIK_Entries)
             {
                 Verify(a.PickupHash, ref result);
-                Verify(a.Model_AssetID, ref result);
-                Verify(a.RingModel_AssetID, ref result);
+                Verify(a.Model, ref result);
+                Verify(a.RingModel, ref result);
                 Verify(a.Unknown_24, ref result);
                 Verify(a.Unknown_28, ref result);
-                Verify(a.Pickup_SGRP, ref result);
-                Verify(a.Denied_SGRP, ref result);
+                Verify(a.PickupSoundGroup, ref result);
+                Verify(a.DeniedSoundGroup, ref result);
             }
         }
     }

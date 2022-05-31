@@ -14,112 +14,107 @@ namespace IndustrialPark
 {
     public partial class ArchiveEditorFunctions
     {
+        public static ToolStripMenuItem GetTemplateMenuItem(AssetTemplate template, EventHandler eventHandler)
+        {
+            var item = new ToolStripMenuItem(GetName(template).Replace('_', ' ')) { Tag = template };
+            item.Click += eventHandler;
+            return item;
+        }
+
         public static void PopulateTemplateMenusAt(ToolStripMenuItem menu, EventHandler eventHandler)
         {
             ToolStripMenuItem controllers = new ToolStripMenuItem("Stage Controllers");
             controllers.DropDownItems.AddRange(new ToolStripItem[]
             {
-                new ToolStripMenuItem(AssetTemplate.Counter.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Conditional.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Dispatcher.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Fog.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Flythrough.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Group.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Portal.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Script.ToString()),
-                new ToolStripMenuItem(AssetTemplate.SoundGroup.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Text.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Timer.ToString()),
+                GetTemplateMenuItem(AssetTemplate.Counter, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Conditional, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Dispatcher, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Fog, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Flythrough, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Group, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Portal, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Script, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Sound_Group, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Text, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Timer, eventHandler),
                 new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.CamTweak.ToString())
+                GetTemplateMenuItem(AssetTemplate.Cam_Tweak, eventHandler)
             });
-            foreach (ToolStripItem i in controllers.DropDownItems)
-                if (i is ToolStripMenuItem j)
-                    j.Click += eventHandler;
 
             // BFBB
             ToolStripMenuItem pickupsBFBB = new ToolStripMenuItem("Pickups and Tikis");
             pickupsBFBB.DropDownItems.AddRange(new ToolStripItem[]
             {
-                new ToolStripMenuItem(AssetTemplate.Shiny_Red.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Shiny_Yellow.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Shiny_Green.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Shiny_Blue.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Shiny_Purple.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Underwear.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Spongeball.ToString()),
+                GetTemplateMenuItem(AssetTemplate.Shiny_Red, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Shiny_Yellow, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Shiny_Green, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.ShinyBlue, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Shiny_Purple, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Underwear, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Spongeball, eventHandler),
                 new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.WoodenTiki.ToString()),
-                new ToolStripMenuItem(AssetTemplate.FloatingTiki.ToString()),
-                new ToolStripMenuItem(AssetTemplate.ThunderTiki.ToString()),
-                new ToolStripMenuItem(AssetTemplate.ShhhTiki.ToString()),
-                new ToolStripMenuItem(AssetTemplate.StoneTiki.ToString()),
+                GetTemplateMenuItem(AssetTemplate.Wooden_Tiki, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Floating_Tiki, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Thunder_Tiki, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Shhh_Tiki, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Stone_Tiki, eventHandler),
                 new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.Spatula.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Sock.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Golden_Underwear.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Smelly_Sundae.ToString()),
+                GetTemplateMenuItem(AssetTemplate.Spatula, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Sock, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Golden_Underwear, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Smelly_Sundae, eventHandler),
                 new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.SteeringWheel.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Artwork.ToString()),
-                new ToolStripMenuItem(AssetTemplate.PowerCrystal.ToString()),
+                GetTemplateMenuItem(AssetTemplate.Steering_Wheel, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Artwork, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Power_Crystal, eventHandler),
             });
-            foreach (ToolStripItem i in pickupsBFBB.DropDownItems)
-                if (i is ToolStripMenuItem j)
-                    j.Click += eventHandler;
 
             ToolStripMenuItem enemiesBFBB = new ToolStripMenuItem("Enemies");
             enemiesBFBB.DropDownItems.AddRange(new ToolStripItem[]
             {
-                new ToolStripMenuItem(AssetTemplate.Fodder.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Hammer.ToString()),
-                new ToolStripMenuItem(AssetTemplate.TarTar.ToString()),
-                new ToolStripMenuItem(AssetTemplate.ChompBot.ToString()),
-                new ToolStripMenuItem(AssetTemplate.GLove.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Chuck.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Chuck_Trigger.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Monsoon.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Monsoon_Trigger.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Sleepytime.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Sleepytime_Moving.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Arf.ToString()),
-                new ToolStripMenuItem(AssetTemplate.BombBot.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Tubelet.ToString()),
-                new ToolStripMenuItem(AssetTemplate.BzztBot.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Slick.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Slick_Trigger.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Jellyfish_Pink.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Jellyfish_Blue.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Duplicatotron.ToString()),
+                GetTemplateMenuItem(AssetTemplate.Fodder, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Hammer, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.TarTar, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.ChompBot, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.GLove, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Chuck, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Chuck_Trigger, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Monsoon, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Monsoon_Trigger, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Sleepytime, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Sleepytime_Moving, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Arf, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.BombBot, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Tubelet, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.BzztBot, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Slick, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Slick_Trigger, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Jellyfish_Pink, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Jellyfish_Blue, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Duplicatotron, eventHandler),
                 new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.DuplicatotronSettings.ToString())
+                GetTemplateMenuItem(AssetTemplate.Duplicatotron_Settings, eventHandler),
             });
-            foreach (ToolStripItem i in enemiesBFBB.DropDownItems)
-                if (i is ToolStripMenuItem j)
-                    j.Click += eventHandler;
 
             ToolStripMenuItem stageitemsBFBB = new ToolStripMenuItem("Stage Items");
             stageitemsBFBB.DropDownItems.AddRange(new ToolStripItem[]
             {
-                new ToolStripMenuItem(AssetTemplate.Button_Red.ToString()),
-                new ToolStripMenuItem(AssetTemplate.PressurePlate.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Checkpoint.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Checkpoint_Invisible.ToString()),
-                new ToolStripMenuItem(AssetTemplate.BusStop.ToString()),
-                new ToolStripMenuItem(AssetTemplate.TeleportBox.ToString()),
-                new ToolStripMenuItem(AssetTemplate.ThrowFruit.ToString()),
-                new ToolStripMenuItem(AssetTemplate.FreezyFruit.ToString()),
-                new ToolStripMenuItem(AssetTemplate.TexasHitch.ToString()),
-                new ToolStripMenuItem(AssetTemplate.TexasHitch_PLAT.ToString()),
-                new ToolStripMenuItem(AssetTemplate.BungeeHook.ToString()),
-                new ToolStripMenuItem(AssetTemplate.BungeeDrop.ToString()),
-                new ToolStripMenuItem(AssetTemplate.HoveringPlatform.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Springboard.ToString()),
-                new ToolStripMenuItem(AssetTemplate.TaxiStand.ToString()),
+                GetTemplateMenuItem(AssetTemplate.Button_Red, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.PressurePlate, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Checkpoint, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Checkpoint_Invisible, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Bus_Stop, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Teleport_Box, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Throw_Fruit, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Freezy_Fruit, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Texas_Hitch, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Texas_Hitch_Platform, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Bungee_Hook, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Bungee_Drop, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Hovering_Platform, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Springboard, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Taxi_Stand, eventHandler),
             });
-            foreach (ToolStripItem i in stageitemsBFBB.DropDownItems)
-                if (i is ToolStripMenuItem j)
-                    j.Click += eventHandler;
 
             ToolStripMenuItem bfbb = new ToolStripMenuItem("Battle For Bikini Bottom");
             bfbb.DropDownItems.AddRange(new ToolStripItem[]
@@ -133,102 +128,90 @@ namespace IndustrialPark
             ToolStripMenuItem pickupsTSSM = new ToolStripMenuItem("Pickups and Crates");
             pickupsTSSM.DropDownItems.AddRange(new ToolStripItem[]
             {
-                new ToolStripMenuItem(AssetTemplate.Manliness_Red.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Manliness_Yellow.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Manliness_Green.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Manliness_Blue.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Manliness_Purple.ToString()),
-                new ToolStripMenuItem(AssetTemplate.KrabbyPatty.ToString()),
-                new ToolStripMenuItem(AssetTemplate.GoofyGooberToken.ToString()),
-                new ToolStripMenuItem(AssetTemplate.TreasureChest.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Nitro.ToString()),
+                GetTemplateMenuItem(AssetTemplate.Manliness_Red, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Manliness_Yellow, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Manliness_Green, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Manliness_Blue, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Manliness_Purple, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Krabby_Patty, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Goofy_Goober_Token, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Treasure_Chest, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Nitro, eventHandler),
                 new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.Wood_Crate.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Hover_Crate.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Explode_Crate.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Shrink_Crate.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Steel_Crate.ToString()),
+                GetTemplateMenuItem(AssetTemplate.Wood_Crate, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Hover_Crate, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Explode_Crate, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Shrink_Crate, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Steel_Crate, eventHandler),
             });
-            foreach (ToolStripItem i in pickupsTSSM.DropDownItems)
-                if (i is ToolStripMenuItem j)
-                    j.Click += eventHandler;
 
             ToolStripMenuItem enemiesTSSM = new ToolStripMenuItem("Enemies");
             enemiesTSSM.DropDownItems.AddRange(new ToolStripItem[]
             {
-                new ToolStripMenuItem(AssetTemplate.Fogger_GoofyGoober.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Fogger_Desert.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Fogger_ThugTug.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Fogger_Trench.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Fogger_Junkyard.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Fogger_Planktopolis.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Fogger_v1.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Fogger_v2.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Fogger_v3.ToString()),
+                GetTemplateMenuItem(AssetTemplate.Fogger_GoofyGoober, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Fogger_Desert, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Fogger_ThugTug, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Fogger_Trench, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Fogger_Junkyard, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Fogger_Planktopolis, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Fogger_v1, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Fogger_v2, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Fogger_v3, eventHandler),
                 new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.Slammer_GoofyGoober.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Slammer_Desert.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Slammer_ThugTug.ToString()),
+                GetTemplateMenuItem(AssetTemplate.Slammer_GoofyGoober, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Slammer_Desert, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Slammer_ThugTug, eventHandler),
                 new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.Flinger_Desert.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Flinger_Trench.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Flinger_Junkyard.ToString()),
+                GetTemplateMenuItem(AssetTemplate.Flinger_Desert, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Flinger_Trench, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Flinger_Junkyard, eventHandler),
                 new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.Spinner_ThugTug.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Spinner_Junkyard.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Spinner_Planktopolis.ToString()),
+                GetTemplateMenuItem(AssetTemplate.Spinner_ThugTug, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Spinner_Junkyard, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Spinner_Planktopolis, eventHandler),
                 new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.Popper_Trench.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Popper_Planktopolis.ToString()),
+                GetTemplateMenuItem(AssetTemplate.Popper_Trench, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Popper_Planktopolis, eventHandler),
                 new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.Minimerv.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Mervyn.ToString()),
+                GetTemplateMenuItem(AssetTemplate.Minimerv, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Mervyn, eventHandler),
             });
-            foreach (ToolStripItem i in enemiesTSSM.DropDownItems)
-                if (i is ToolStripMenuItem j)
-                    j.Click += eventHandler;
 
             ToolStripMenuItem moreEnemiesTSSM = new ToolStripMenuItem("More Enemies");
             moreEnemiesTSSM.DropDownItems.AddRange(new ToolStripItem[]
             {
-                new ToolStripMenuItem(AssetTemplate.Jelly_Critter.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Jelly_Bucket.ToString()),
+                GetTemplateMenuItem(AssetTemplate.Jellyfish, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Jellyfish_Bucket, eventHandler),
                 new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.Turret_v1.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Turret_v2.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Turret_v3.ToString()),
+                GetTemplateMenuItem(AssetTemplate.Turret_v1, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Turret_v2, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Turret_v3, eventHandler),
                 new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.BucketOTron_BB.ToString()),
-                new ToolStripMenuItem(AssetTemplate.BucketOTron_DE.ToString()),
-                new ToolStripMenuItem(AssetTemplate.BucketOTron_GG.ToString()),
-                new ToolStripMenuItem(AssetTemplate.BucketOTron_TR.ToString()),
-                new ToolStripMenuItem(AssetTemplate.BucketOTron_JK.ToString()),
-                new ToolStripMenuItem(AssetTemplate.BucketOTron_PT.ToString())
+                GetTemplateMenuItem(AssetTemplate.Spawner_BB, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Spawner_DE, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Spawner_GG, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Spawner_TR, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Spawner_JK, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Spawner_PT, eventHandler),
             });
-            foreach (ToolStripItem i in moreEnemiesTSSM.DropDownItems)
-                if (i is ToolStripMenuItem j)
-                    j.Click += eventHandler;
 
             ToolStripMenuItem stageitemsTSSM = new ToolStripMenuItem("Stage Items");
             stageitemsTSSM.DropDownItems.AddRange(new ToolStripItem[]
             {
-                new ToolStripMenuItem(AssetTemplate.Button_Red.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Checkpoint.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Checkpoint_Invisible.ToString()),
-                new ToolStripMenuItem(AssetTemplate.TeleportBox.ToString()),
-                new ToolStripMenuItem(AssetTemplate.ThrowFruit.ToString()),
-                new ToolStripMenuItem(AssetTemplate.FreezyFruit.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Swinger.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Swinger_PLAT.ToString()),
-                new ToolStripMenuItem(AssetTemplate.CollapsePlatform_Planktopolis.ToString()),
-                new ToolStripMenuItem(AssetTemplate.CollapsePlatform_Spongeball.ToString()),
-                new ToolStripMenuItem(AssetTemplate.CollapsePlatform_ThugTug.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Ring.ToString()),
-                new ToolStripMenuItem(AssetTemplate.RingControl.ToString())
+                GetTemplateMenuItem(AssetTemplate.Button_Red, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Checkpoint, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Checkpoint_Invisible, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Teleport_Box, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Throw_Fruit, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Freezy_Fruit, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Swinger, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Swinger_Platform, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.CollapsePlatform_Planktopolis, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.CollapsePlatform_Spongeball, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.CollapsePlatform_ThugTug, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Ring, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Ring_Control, eventHandler),
             });
-            foreach (ToolStripItem i in stageitemsTSSM.DropDownItems)
-                if (i is ToolStripMenuItem j)
-                    j.Click += eventHandler;
 
             ToolStripMenuItem tssm = new ToolStripMenuItem("Movie Game");
             tssm.DropDownItems.AddRange(new ToolStripItem[]
@@ -242,65 +225,201 @@ namespace IndustrialPark
             ToolStripMenuItem placeable = new ToolStripMenuItem("Placeable");
             placeable.DropDownItems.AddRange(new ToolStripItem[]
             {
-                new ToolStripMenuItem(AssetTemplate.Camera.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Marker.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Point_MVPT.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Area_MVPT.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Box_Trigger.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Sphere_Trigger.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Cylinder_Trigger.ToString()),
-                new ToolStripMenuItem(AssetTemplate.SFX_OnEvent.ToString()),
-                new ToolStripMenuItem(AssetTemplate.SFX_OnRadius.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Dyna_Pointer.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Player.ToString()),
+                GetTemplateMenuItem(AssetTemplate.Box_Trigger, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Sphere_Trigger, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Cylinder_Trigger, eventHandler),
                 new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.Boulder_Generic.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Button_Generic.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Destructible_Generic.ToString()),
-                new ToolStripMenuItem(AssetTemplate.ElectricArc_Generic.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Hangable_Generic.ToString()),
-                new ToolStripMenuItem(AssetTemplate.NPC_Generic.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Pendulum_Generic.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Platform_Generic.ToString()),
-                new ToolStripMenuItem(AssetTemplate.SIMP_Generic.ToString()),
-                new ToolStripMenuItem(AssetTemplate.VIL_Generic.ToString()),
-                new ToolStripMenuItem(AssetTemplate.UI_Generic.ToString()),
-                new ToolStripMenuItem(AssetTemplate.UIFT_Generic.ToString()),
+                GetTemplateMenuItem(AssetTemplate.Camera, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Marker, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.MovePoint, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.MovePoint_Area, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Light, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Player, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Pointer, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.SDFX, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.SFX_OnEvent, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.SFX_OnRadius, eventHandler),
                 new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.SDFX.ToString()),
-                new ToolStripMenuItem(AssetTemplate.LightEmitter_Generic.ToString()),
+                GetTemplateMenuItem(AssetTemplate.Boulder, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Button, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Destructible_Object, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Electric_Arc_Generator, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Hangable, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.NPC, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Pendulum, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Platform, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Simple_Object, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.VIL, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.User_Interface, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.User_Interface_Font, eventHandler),
             });
-            foreach (ToolStripItem i in placeable.DropDownItems)
-                if (i is ToolStripMenuItem j)
-                    j.Click += eventHandler;
 
             ToolStripMenuItem others = new ToolStripMenuItem("Other");
             others.DropDownItems.AddRange(new ToolStripItem[]
             {
-                new ToolStripMenuItem(AssetTemplate.AnimationList.ToString()),
-                new ToolStripMenuItem(AssetTemplate.CollisionTable.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Default_Glow_Scene_Prop.ToString()),
-                new ToolStripMenuItem(AssetTemplate.Environment.ToString()),
-                new ToolStripMenuItem(AssetTemplate.JawData.ToString()),
-                new ToolStripMenuItem(AssetTemplate.LevelOfDetailTable.ToString()),
-                new ToolStripMenuItem(AssetTemplate.MaterialMap.ToString()),
-                new ToolStripMenuItem(AssetTemplate.MINF_Generic.ToString()),
-                new ToolStripMenuItem(AssetTemplate.PipeInfoTable.ToString()),
-                new ToolStripMenuItem(AssetTemplate.ShadowTable.ToString()),
-                new ToolStripMenuItem(AssetTemplate.SoundInfo.ToString()),
+                GetTemplateMenuItem(AssetTemplate.Animation_List, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Collision_Table, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.DefaultGlowSceneProp, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Environment, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Jaw_Data_Table, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Level_Of_Detail_Table, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Model_Info, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Pipe_Info_Table, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Shadow_Table, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Sound_Info, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Surface_Mapper, eventHandler),
                 new ToolStripSeparator(),
-                new ToolStripMenuItem(AssetTemplate.EmptyBSP.ToString()),
-                new ToolStripMenuItem(AssetTemplate.EmptySND.ToString()),
-                new ToolStripMenuItem(AssetTemplate.EmptySNDS.ToString()),
+                GetTemplateMenuItem(AssetTemplate.Empty_BSP, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Empty_Sound, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Empty_Streaming_Sound, eventHandler),
             });
-            foreach (ToolStripItem i in others.DropDownItems)
-                if (i is ToolStripMenuItem j)
-                    j.Click += eventHandler;
 
-            ToolStripMenuItem paste = new ToolStripMenuItem(AssetTemplate.PasteClipboard.ToString());
-            paste.Click += eventHandler;
+            var paste = GetTemplateMenuItem(AssetTemplate.PasteClipboard, eventHandler);
 
             menu.DropDownItems.AddRange(new ToolStripItem[] { controllers, placeable, bfbb, tssm, others, paste });
+        }
+
+        private static string GetName(AssetTemplate template)
+        {
+            switch (template)
+            {
+                case AssetTemplate.MovePoint_Area:
+                    return "MovePoint (Area)";
+                case AssetTemplate.SFX_OnEvent:
+                    return "SFX (On event)";
+                case AssetTemplate.SFX_OnRadius:
+                    return "SFX (On radius)";
+                case AssetTemplate.ShinyBlue:
+                    return "Shiny Object (Blue)";
+                case AssetTemplate.Shiny_Green:
+                    return "Shiny Object (Green)";
+                case AssetTemplate.Shiny_Purple:
+                    return "Shiny Object (Purple)";
+                case AssetTemplate.Shiny_Red:
+                    return "Shiny Object (Red)";
+                case AssetTemplate.Shiny_Yellow:
+                    return "Shiny Object (Yellow)";
+                case AssetTemplate.Manliness_Red:
+                    return "Manliness Point (Red)";
+                case AssetTemplate.Manliness_Yellow:
+                    return "Manliness Point (Yellow)";
+                case AssetTemplate.Manliness_Green:
+                    return "Manliness Point (Green)";
+                case AssetTemplate.Manliness_Blue:
+                    return "Manliness Point (Blue)";
+                case AssetTemplate.Manliness_Purple:
+                    return "Manliness Point (Purple)";
+                case AssetTemplate.Hammer:
+                    return "Ham-mer";
+                case AssetTemplate.TarTar:
+                    return "Tar-Tar";
+                case AssetTemplate.ChompBot:
+                    return "Chomp Bot";
+                case AssetTemplate.GLove:
+                    return "G-Love";
+                case AssetTemplate.Chuck_Trigger:
+                    return "Chuck (trigger)";
+                case AssetTemplate.Monsoon_Trigger:
+                    return "Monsoon (trigger)";
+                case AssetTemplate.Sleepytime:
+                    return "Sleepytime (stationary)";
+                case AssetTemplate.Sleepytime_Moving:
+                    return "Sleepytime (moving)";
+                case AssetTemplate.BombBot:
+                    return "Bomb Bot";
+                case AssetTemplate.BzztBot:
+                    return "Bzzt Bot";
+                case AssetTemplate.Slick_Trigger:
+                    return "Slick (trigger)";
+                case AssetTemplate.Jellyfish_Pink:
+                    return "Jellyfish (Pink)";
+                case AssetTemplate.Jellyfish_Blue:
+                    return "Jellyfish (Blue)";
+                case AssetTemplate.Jellyfish:
+                    return "Jellyfish";
+                case AssetTemplate.Jellyfish_Bucket:
+                    return "Jellyfish (Buckethead)";
+                case AssetTemplate.Fogger_GoofyGoober:
+                    return "Fogger (Goofy Goober)";
+                case AssetTemplate.Fogger_Desert:
+                    return "Fogger (Desert)";
+                case AssetTemplate.Fogger_ThugTug:
+                    return "Fogger (Thug Tug)";
+                case AssetTemplate.Fogger_Trench:
+                    return "Fogger (Trench)";
+                case AssetTemplate.Fogger_Junkyard:
+                    return "Fogger (Junkyard)";
+                case AssetTemplate.Fogger_Planktopolis:
+                    return "Fogger (Planktopolis)";
+                case AssetTemplate.Fogger_v1:
+                    return "Fogger (v1)";
+                case AssetTemplate.Fogger_v2:
+                    return "Fogger (v2)";
+                case AssetTemplate.Fogger_v3:
+                    return "Fogger (v3)";
+                case AssetTemplate.Slammer_GoofyGoober:
+                    return "Slammer (Goofy Goober)";
+                case AssetTemplate.Slammer_Desert:
+                    return "Slammer (Desert)";
+                case AssetTemplate.Slammer_ThugTug:
+                    return "Slammer (Thug Tug)";
+                case AssetTemplate.Flinger_Desert:
+                    return "Flinger (Desert)";
+                case AssetTemplate.Flinger_Trench:
+                    return "Flinger (Trench)";
+                case AssetTemplate.Flinger_Junkyard:
+                    return "Flinger (Junkyard)";
+                case AssetTemplate.Spinner_ThugTug:
+                    return "Spinner (Thug Tug)";
+                case AssetTemplate.Spinner_Junkyard:
+                    return "Spinner (Junkyard)";
+                case AssetTemplate.Spinner_Planktopolis:
+                    return "Spinner (Planktopolis)";
+                case AssetTemplate.Popper_Trench:
+                    return "Popper (Trench)";
+                case AssetTemplate.Popper_Planktopolis:
+                    return "Popper (Planktopolis)";
+                case AssetTemplate.Turret_v1:
+                    return "Turret (v1)";
+                case AssetTemplate.Turret_v2:
+                    return "Turret (v2)";
+                case AssetTemplate.Turret_v3:
+                    return "Turret (v3)";
+                case AssetTemplate.Spawner_BB:
+                    return "Spawner (Goofy Goober)";
+                case AssetTemplate.Spawner_DE:
+                    return "Spawner (Desert)";
+                case AssetTemplate.Spawner_TR:
+                    return "Spawner (Trench)";
+                case AssetTemplate.Spawner_JK:
+                    return "Spawner (Junkyard)";
+                case AssetTemplate.Spawner_PT:
+                    return "Spawner (Planktopolis)";
+                case AssetTemplate.Spawner_GG:
+                    return "Spawner (GG, unused)";
+                case AssetTemplate.Button_Red:
+                    return "Spawner (Red Button)";
+                case AssetTemplate.Texas_Hitch_Platform:
+                    return "Texas Hitch (Platform)";
+                case AssetTemplate.Checkpoint_Invisible:
+                    return "Checkpoint (Invisible)";
+                case AssetTemplate.CollapsePlatform_Planktopolis:
+                    return "Collapse Platform (Planktopolis)";
+                case AssetTemplate.CollapsePlatform_Spongeball:
+                    return "Collapse Platform (Spongeball)";
+                case AssetTemplate.CollapsePlatform_ThugTug:
+                    return "Collapse Platform (Thug Tug)";
+            }
+
+            var tstring = template.ToString().Replace('_', ' ');
+            var result = new List<char>();
+            for (int i = 0; i < tstring.Length; i++)
+            {
+                if (i > 0 && tstring[i] >= 'A' && tstring[i] <= 'Z' && tstring[i-1] != ' ')
+                    result.Add(' ');
+                result.Add(tstring[i]);
+            }
+            return template.ToString();
         }
 
         public void SetAssetPositionToView(uint assetID)
@@ -419,21 +538,21 @@ namespace IndustrialPark
 
             switch (template)
             {
-                case AssetTemplate.Default_Glow_Scene_Prop:
-                case AssetTemplate.EmptyBSP:
+                case AssetTemplate.DefaultGlowSceneProp:
+                case AssetTemplate.Empty_BSP:
                 case AssetTemplate.Environment:
                 case AssetTemplate.LKIT_lights:
                 case AssetTemplate.LKIT_JF_SB_lights:
                 case AssetTemplate.LKIT_jf01_light_kit:
-                case AssetTemplate.MINF_Generic:
+                case AssetTemplate.Model_Info:
                 case AssetTemplate.Flythrough_Widget:
                     ignoreNumber = true;
                     break;
-                case AssetTemplate.StartCamera:
+                case AssetTemplate.Start_Camera:
                     assetName = startCamName;
                     ignoreNumber = true;
                     break;
-                case AssetTemplate.SoundInfo:
+                case AssetTemplate.Sound_Info:
                     assetName = "sound_info";
                     ignoreNumber = true;
                     break;
@@ -481,7 +600,7 @@ namespace IndustrialPark
                 case AssetTemplate.Script:
                     asset = new AssetSCRP(assetName);
                     break;
-                case AssetTemplate.SoundGroup:
+                case AssetTemplate.Sound_Group:
                     asset = new AssetSGRP(assetName);
                     break;
                 case AssetTemplate.Text:
@@ -505,42 +624,42 @@ namespace IndustrialPark
                             new Link(game)
                             {
                                 FloatParameter1 = 2,
-                                TargetAssetID = checkpointSimp.assetID,
+                                TargetAsset = checkpointSimp.assetID,
                                 EventReceiveID = (ushort)EventBFBB.Run,
                                 EventSendID = (ushort)EventBFBB.AnimPlay
                             },
                             new Link(game)
                             {
                                 Parameter1 = "checkpoint_text",
-                                TargetAssetID = checkpointTalkbox,
+                                TargetAsset = checkpointTalkbox,
                                 EventReceiveID = (ushort)EventBFBB.Run,
                                 EventSendID = (ushort)EventBFBB.StartConversation
                             },
                             new Link(game)
                             {
                                 FloatParameter1 = 3,
-                                TargetAssetID = checkpointSimp.assetID,
+                                TargetAsset = checkpointSimp.assetID,
                                 EventReceiveID = (ushort)EventBFBB.Expired,
                                 EventSendID = (ushort)EventBFBB.AnimPlayLoop
                             },
                             new Link(game)
                             {
-                                TargetAssetID = asset.assetID,
+                                TargetAsset = asset.assetID,
                                 EventReceiveID = (ushort)EventBFBB.Expired,
                                 EventSendID = (ushort)EventBFBB.Disable
                             },
                         };
                     }
                     break;
-                case AssetTemplate.CamTweak:
+                case AssetTemplate.Cam_Tweak:
                     asset = new DynaGObjectCamTweak(assetName);
                     break;
-                case AssetTemplate.DuplicatotronSettings:
+                case AssetTemplate.Duplicatotron_Settings:
                     asset = new DynaGObjectNPCSettings(assetName);
                     break;
                 case AssetTemplate.Camera:
-                case AssetTemplate.StartCamera:
-                case AssetTemplate.BusStop_Camera:
+                case AssetTemplate.Start_Camera:
+                case AssetTemplate.Bus_Stop_Camera:
                     asset = new AssetCAM(assetName, position, template);
                     break;
                 case AssetTemplate.Marker:
@@ -563,10 +682,10 @@ namespace IndustrialPark
                         {
                             new Link(game)
                             {
-                                ArgumentAssetID = game == Game.Incredibles ?
-                                PlaceTemplate(position, layerIndex, ref assetIDs, "CHECKPOINT_POINTER", AssetTemplate.Dyna_Pointer).assetID :
+                                ArgumentAsset = game == Game.Incredibles ?
+                                PlaceTemplate(position, layerIndex, ref assetIDs, "CHECKPOINT_POINTER", AssetTemplate.Pointer).assetID :
                                 PlaceTemplate(position, layerIndex, ref assetIDs, "CHECKPOINT_MRKR", AssetTemplate.Marker).assetID,
-                                TargetAssetID = checkpointDisp,
+                                TargetAsset = checkpointDisp,
                                 EventReceiveID = (ushort)EventBFBB.EnterPlayer,
                                 EventSendID = (ushort)EventBFBB.SetCheckPoint
                             }
@@ -575,7 +694,7 @@ namespace IndustrialPark
                         if (template == AssetTemplate.Checkpoint && game == Game.BFBB)
                             links.Add(new Link(game)
                             {
-                                TargetAssetID = PlaceTemplate(position, layerIndex, ref assetIDs, "CHECKPOINT_TIMER", AssetTemplate.Checkpoint_Timer).assetID,
+                                TargetAsset = PlaceTemplate(position, layerIndex, ref assetIDs, "CHECKPOINT_TIMER", AssetTemplate.Checkpoint_Timer).assetID,
                                 EventReceiveID = (ushort)EventBFBB.EnterPlayer,
                                 EventSendID = (ushort)EventBFBB.Run
                             });
@@ -584,13 +703,13 @@ namespace IndustrialPark
                         {
                             links.Add(new Link(game)
                             {
-                                TargetAssetID = PlaceTemplate(position, layerIndex, ref assetIDs, "CHECKPOINT_SCRIPT", AssetTemplate.Checkpoint_Script).assetID,
+                                TargetAsset = PlaceTemplate(position, layerIndex, ref assetIDs, "CHECKPOINT_SCRIPT", AssetTemplate.Checkpoint_Script).assetID,
                                 EventReceiveID = (ushort)EventBFBB.EnterPlayer,
                                 EventSendID = (ushort)EventBFBB.Run
                             });
                             links.Add(new Link(game)
                             {
-                                TargetAssetID = asset.assetID,
+                                TargetAsset = asset.assetID,
                                 EventReceiveID = (ushort)EventBFBB.EnterPlayer,
                                 EventSendID = (ushort)EventBFBB.Disable
                             });
@@ -599,117 +718,117 @@ namespace IndustrialPark
                         ((AssetTRIG)asset).Links = links.ToArray();
                     }
                     break;
-                case AssetTemplate.BusStop_Trigger:
+                case AssetTemplate.Bus_Stop_Trigger:
                     {
                         asset = new AssetTRIG(assetName, position, template);
-                        var lightsSimp = PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper().Replace("TRIGGER", "LIGHTS").Replace("TRIG", "LIGHTS"), AssetTemplate.BusStop_Lights);
+                        var lightsSimp = PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper().Replace("TRIGGER", "LIGHTS").Replace("TRIG", "LIGHTS"), AssetTemplate.Bus_Stop_Lights);
 
                         ((AssetTRIG)asset).Links = new Link[] {
                             new Link(game)
                             {
-                                TargetAssetID = lightsSimp.assetID,
+                                TargetAsset = lightsSimp.assetID,
                                 EventReceiveID = (ushort)EventBFBB.EnterPlayer,
                                 EventSendID = (ushort)EventBFBB.Visible
                             },
                             new Link(game)
                             {
-                                TargetAssetID = lightsSimp.assetID,
+                                TargetAsset = lightsSimp.assetID,
                                 EventReceiveID = (ushort)EventBFBB.ExitPlayer,
                                 EventSendID = (ushort)EventBFBB.Invisible
                             }
                         };
                     }
                     break;
-                case AssetTemplate.Area_MVPT:
-                case AssetTemplate.Point_MVPT:
+                case AssetTemplate.MovePoint_Area:
+                case AssetTemplate.MovePoint:
                     asset = new AssetMVPT(assetName, position, game, template);
-                    if (template == AssetTemplate.Point_MVPT && chainPointMVPTs && ContainsAsset(chainPointMVPTlast))
+                    if (template == AssetTemplate.MovePoint && chainPointMVPTs && ContainsAsset(chainPointMVPTlast))
                     {
                         var prev = (AssetMVPT)GetFromAssetID(chainPointMVPTlast);
-                        var prevNexts = prev.NextMVPTs.ToList();
+                        var prevNexts = prev.NextMovePoints.ToList();
                         prevNexts.Add(asset.assetID);
-                        prev.NextMVPTs = prevNexts.ToArray();
+                        prev.NextMovePoints = prevNexts.ToArray();
                     }
                     chainPointMVPTlast = asset.assetID;
                     break;
-                case AssetTemplate.Dyna_Pointer:
+                case AssetTemplate.Pointer:
                     asset = new DynaPointer(assetName, position);
                     break;
                 case AssetTemplate.Player:
                     asset = new AssetPLYR(assetName, position, game);
                     break;
-                case AssetTemplate.Boulder_Generic:
+                case AssetTemplate.Boulder:
                     asset = new AssetBOUL(assetName, position);
                     break;
-                case AssetTemplate.Button_Generic:
+                case AssetTemplate.Button:
                 case AssetTemplate.Button_Red:
                 case AssetTemplate.PressurePlate:
                     asset = new AssetBUTN(game, assetName, position, template);
                     if (template == AssetTemplate.PressurePlate)
-                        PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_BASE", AssetTemplate.PressurePlateBase);
+                        PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_BASE", AssetTemplate.Pressure_Plate_Base);
                     break;
-                case AssetTemplate.Destructible_Generic:
+                case AssetTemplate.Destructible_Object:
                     asset = new AssetDSTR(assetName, position);
                     break;
-                case AssetTemplate.ElectricArc_Generic:
+                case AssetTemplate.Electric_Arc_Generator:
                     asset = new AssetEGEN(assetName, position);
                     break;
-                case AssetTemplate.Hangable_Generic:
+                case AssetTemplate.Hangable:
                     asset = new AssetHANG(assetName, position);
                     break;
-                case AssetTemplate.NPC_Generic:
+                case AssetTemplate.NPC:
                     asset = new AssetNPC(assetName, position);
                     break;
-                case AssetTemplate.Pendulum_Generic:
+                case AssetTemplate.Pendulum:
                     asset = new AssetPEND(assetName, position);
                     break;
-                case AssetTemplate.Platform_Generic:
-                case AssetTemplate.TexasHitch_PLAT:
-                case AssetTemplate.Swinger_PLAT:
+                case AssetTemplate.Platform:
+                case AssetTemplate.Texas_Hitch_Platform:
+                case AssetTemplate.Swinger_Platform:
                 case AssetTemplate.Springboard:
-                case AssetTemplate.HoveringPlatform:
+                case AssetTemplate.Hovering_Platform:
                 case AssetTemplate.CollapsePlatform_Planktopolis:
                 case AssetTemplate.CollapsePlatform_ThugTug:
                 case AssetTemplate.CollapsePlatform_Spongeball:
                     asset = new AssetPLAT(game, assetName, position, template);
                     break;
-                case AssetTemplate.SIMP_Generic:
-                case AssetTemplate.TaxiStand:
-                case AssetTemplate.TexasHitch:
+                case AssetTemplate.Simple_Object:
+                case AssetTemplate.Taxi_Stand:
+                case AssetTemplate.Texas_Hitch:
                 case AssetTemplate.Swinger:
-                case AssetTemplate.BusStop:
-                case AssetTemplate.ThrowFruit:
-                case AssetTemplate.FreezyFruit:
-                case AssetTemplate.PressurePlateBase:
-                case AssetTemplate.ThrowFruitBase:
-                case AssetTemplate.BusStop_BusSimp:
-                case AssetTemplate.BusStop_Lights:
+                case AssetTemplate.Bus_Stop:
+                case AssetTemplate.Throw_Fruit:
+                case AssetTemplate.Freezy_Fruit:
+                case AssetTemplate.Pressure_Plate_Base:
+                case AssetTemplate.Throw_Fruit_Base:
+                case AssetTemplate.Bus_Stop_BusSimp:
+                case AssetTemplate.Bus_Stop_Lights:
                 case AssetTemplate.Checkpoint_SIMP:
                 case AssetTemplate.Checkpoint_SIMP_TSSM:
-                case AssetTemplate.BungeeHook_SIMP:
+                case AssetTemplate.Bungee_Hook_SIMP:
                     asset = new AssetSIMP(assetName, position, template);
                     switch (template)
                     {
-                        case AssetTemplate.BusStop:
-                            PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_TRIG", AssetTemplate.BusStop_Trigger);
+                        case AssetTemplate.Bus_Stop:
+                            PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_TRIG", AssetTemplate.Bus_Stop_Trigger);
                             position.Y += 0.1f;
-                            PlaceTemplate(position, layerIndex, ref assetIDs, template: AssetTemplate.BusStop_DYNA);
+                            PlaceTemplate(position, layerIndex, ref assetIDs, template: AssetTemplate.Bus_Stop_DYNA);
                             break;
-                        case AssetTemplate.ThrowFruit:
-                            PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "BASE", AssetTemplate.ThrowFruitBase);
+                        case AssetTemplate.Throw_Fruit:
+                            PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "BASE", AssetTemplate.Throw_Fruit_Base);
                             break;
-                        case AssetTemplate.FreezyFruit:
-                            PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "BASE", AssetTemplate.ThrowFruitBase);
+                        case AssetTemplate.Freezy_Fruit:
+                            PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "BASE", AssetTemplate.Throw_Fruit_Base);
                             break;
                     }
                     break;
-                case AssetTemplate.VIL_Generic:
+                case AssetTemplate.VIL:
                     asset = new AssetVIL(assetName, position, template, 0);
                     break;
-                case AssetTemplate.UI_Generic:
+                case AssetTemplate.User_Interface:
                     asset = new AssetUI(assetName, position);
                     break;
-                case AssetTemplate.UIFT_Generic:
+                case AssetTemplate.User_Interface_Font:
                     asset = new AssetUIFT(assetName, position);
                     break;
                 case AssetTemplate.SFX_OnEvent:
@@ -719,13 +838,13 @@ namespace IndustrialPark
                 case AssetTemplate.SDFX:
                     asset = new AssetSDFX(assetName, position);
                     break;
-                case AssetTemplate.LightEmitter_Generic:
+                case AssetTemplate.Light:
                     asset = new AssetLITE(assetName, position);
                     break;
-                case AssetTemplate.AnimationList:
+                case AssetTemplate.Animation_List:
                     asset = new AssetALST(assetName);
                     break;
-                case AssetTemplate.CollisionTable:
+                case AssetTemplate.Collision_Table:
                     asset = new AssetCOLL(assetName);
                     break;
                 case AssetTemplate.Environment:
@@ -734,30 +853,30 @@ namespace IndustrialPark
                 case AssetTemplate.Flythrough:
                     asset = new AssetFLY(assetName);
                     var flyWidget = (DynaGObjectFlythrough)PlaceTemplate(position, layerIndex, ref assetIDs, asset.assetName + "_WIDGET", AssetTemplate.Flythrough_Widget);
-                    flyWidget.FLY_ID = asset.assetID;
+                    flyWidget.Flythrough = asset.assetID;
                     break;
                 case AssetTemplate.Flythrough_Widget:
                     asset = new DynaGObjectFlythrough(assetName);
                     break;
-                case AssetTemplate.JawData:
+                case AssetTemplate.Jaw_Data_Table:
                     asset = new AssetJAW(assetName);
                     break;
-                case AssetTemplate.LevelOfDetailTable:
+                case AssetTemplate.Level_Of_Detail_Table:
                     asset = new AssetLODT(assetName);
                     break;
-                case AssetTemplate.MaterialMap:
+                case AssetTemplate.Surface_Mapper:
                     asset = new AssetMAPR(assetName);
                     break;
-                case AssetTemplate.MINF_Generic:
+                case AssetTemplate.Model_Info:
                     asset = new AssetMINF(assetName);
                     break;
-                case AssetTemplate.PipeInfoTable:
+                case AssetTemplate.Pipe_Info_Table:
                     asset = new AssetPIPT(assetName);
                     break;
-                case AssetTemplate.ShadowTable:
+                case AssetTemplate.Shadow_Table:
                     asset = new AssetSHDW(assetName);
                     break;
-                case AssetTemplate.SoundInfo:
+                case AssetTemplate.Sound_Info:
                     if (platform == Platform.Xbox)
                         asset = new AssetSNDI_XBOX(assetName);
                     else if (platform == Platform.PS2)
@@ -771,17 +890,17 @@ namespace IndustrialPark
                     }
                     else asset = null;
                     break;
-                case AssetTemplate.EmptySND:
-                case AssetTemplate.EmptySNDS:
-                    asset = new AssetSound(assetName, template == AssetTemplate.EmptySND ? AssetType.Sound : AssetType.StreamingSound, game, platform, new byte[0]);
+                case AssetTemplate.Empty_Sound:
+                case AssetTemplate.Empty_Streaming_Sound:
+                    asset = new AssetSound(assetName, template == AssetTemplate.Empty_Sound ? AssetType.Sound : AssetType.StreamingSound, game, platform, new byte[0]);
                     break;
-                case AssetTemplate.EmptyBSP:
+                case AssetTemplate.Empty_BSP:
                     asset = new AssetJSP(assetName, AssetType.BSP, GenerateBlankBSP(), standalone ? Program.MainForm.renderer : null);
                     break;
                 case AssetTemplate.Shiny_Red:
                 case AssetTemplate.Shiny_Yellow:
                 case AssetTemplate.Shiny_Green:
-                case AssetTemplate.Shiny_Blue:
+                case AssetTemplate.ShinyBlue:
                 case AssetTemplate.Shiny_Purple:
                 case AssetTemplate.Underwear:
                 case AssetTemplate.Spatula:
@@ -789,25 +908,25 @@ namespace IndustrialPark
                 case AssetTemplate.Spongeball:
                 case AssetTemplate.Golden_Underwear:
                 case AssetTemplate.Artwork:
-                case AssetTemplate.SteeringWheel:
-                case AssetTemplate.PowerCrystal:
+                case AssetTemplate.Steering_Wheel:
+                case AssetTemplate.Power_Crystal:
                 case AssetTemplate.Smelly_Sundae:
                 case AssetTemplate.Manliness_Red:
                 case AssetTemplate.Manliness_Yellow:
                 case AssetTemplate.Manliness_Green:
                 case AssetTemplate.Manliness_Blue:
                 case AssetTemplate.Manliness_Purple:
-                case AssetTemplate.KrabbyPatty:
-                case AssetTemplate.GoofyGooberToken:
-                case AssetTemplate.TreasureChest:
+                case AssetTemplate.Krabby_Patty:
+                case AssetTemplate.Goofy_Goober_Token:
+                case AssetTemplate.Treasure_Chest:
                 case AssetTemplate.Nitro:
                     asset = new AssetPKUP(assetName, game, position, template);
                     break;
-                case AssetTemplate.WoodenTiki:
-                case AssetTemplate.FloatingTiki:
-                case AssetTemplate.ThunderTiki:
-                case AssetTemplate.ShhhTiki:
-                case AssetTemplate.StoneTiki:
+                case AssetTemplate.Wooden_Tiki:
+                case AssetTemplate.Floating_Tiki:
+                case AssetTemplate.Thunder_Tiki:
+                case AssetTemplate.Shhh_Tiki:
+                case AssetTemplate.Stone_Tiki:
                 case AssetTemplate.ArfDog:
                 case AssetTemplate.TubeletSlave:
                 case AssetTemplate.Duplicatotron:
@@ -816,11 +935,11 @@ namespace IndustrialPark
                         if (template == AssetTemplate.Duplicatotron)
                         {
                             var vil = (AssetVIL)asset;
-                            vil.NPCSettings_AssetID = PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_SETTINGS", AssetTemplate.DuplicatotronSettings).assetID;
+                            vil.NPCSettingsObject = PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_SETTINGS", AssetTemplate.Duplicatotron_Settings).assetID;
                             vil.Links = new Link[] {
                                 new Link(game)
                                 {
-                                    TargetAssetID = PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_GROUP", AssetTemplate.Group).assetID,
+                                    TargetAsset = PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_GROUP", AssetTemplate.Group).assetID,
                                     EventReceiveID = (ushort)EventBFBB.ScenePrepare,
                                     EventSendID = (ushort)EventBFBB.Connect_IOwnYou
                                 }
@@ -848,7 +967,7 @@ namespace IndustrialPark
                 case AssetTemplate.Jellyfish_Pink:
                 case AssetTemplate.Jellyfish_Blue:
                     {
-                        var movePoint = (AssetMVPT)PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.Area_MVPT);
+                        var movePoint = (AssetMVPT)PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.MovePoint_Area);
                         var vil = new AssetVIL(assetName, position, template, movePoint.assetID);
                         asset = vil;
                         if (template == AssetTemplate.Chuck_Trigger || template == AssetTemplate.Monsoon_Trigger || template == AssetTemplate.Slick_Trigger)
@@ -856,7 +975,7 @@ namespace IndustrialPark
                             vil.Links = new Link[] {
                             new Link(game)
                             {
-                                TargetAssetID = asset.assetID,
+                                TargetAsset = asset.assetID,
                                 EventReceiveID = (ushort)EventBFBB.ScenePrepare,
                                 EventSendID = (ushort)EventBFBB.DetectPlayerOff
                             }
@@ -867,13 +986,13 @@ namespace IndustrialPark
                             trigger.Links = new Link[] {
                             new Link(game)
                             {
-                                TargetAssetID = asset.assetID,
+                                TargetAsset = asset.assetID,
                                 EventReceiveID = (ushort)EventBFBB.EnterPlayer,
                                 EventSendID = (ushort)EventBFBB.DetectPlayerOn
                             },
                             new Link(game)
                             {
-                                TargetAssetID = asset.assetID,
+                                TargetAsset = asset.assetID,
                                 EventReceiveID = (ushort)EventBFBB.ExitPlayer,
                                 EventSendID = (ushort)EventBFBB.DetectPlayerOff
                             }
@@ -891,7 +1010,7 @@ namespace IndustrialPark
                                 var dog = PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_DOG_" + i, AssetTemplate.ArfDog);
                                 links.Add(new Link(game)
                                 {
-                                    TargetAssetID = dog.assetID,
+                                    TargetAsset = dog.assetID,
                                     EventReceiveID = (ushort)EventBFBB.ScenePrepare,
                                     EventSendID = (ushort)EventBFBB.Connect_IOwnYou
                                 });
@@ -906,7 +1025,7 @@ namespace IndustrialPark
                                 var slave = PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_SLAVE_" + i, AssetTemplate.TubeletSlave);
                                 links.Add(new Link(game)
                                 {
-                                    TargetAssetID = slave.assetID,
+                                    TargetAsset = slave.assetID,
                                     EventReceiveID = (ushort)EventBFBB.ScenePrepare,
                                     EventSendID = (ushort)EventBFBB.Connect_IOwnYou
                                 });
@@ -922,10 +1041,10 @@ namespace IndustrialPark
                 case AssetTemplate.Steel_Crate:
                     asset = new DynaEnemySupplyCrate(assetName, template, position);
                     break;
-                case AssetTemplate.Jelly_Critter:
-                case AssetTemplate.Jelly_Bucket:
+                case AssetTemplate.Jellyfish:
+                case AssetTemplate.Jellyfish_Bucket:
                     {
-                        var mvpt = PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.Point_MVPT);
+                        var mvpt = PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.MovePoint);
                         asset = new DynaEnemyCritter(assetName, template, position, mvpt.assetID);
                     }
                     break;
@@ -954,7 +1073,7 @@ namespace IndustrialPark
                     {
                         var mvpt = PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_MP",
                             (template.ToString().Contains("Flinger") || template.ToString().Contains("Popper")) ?
-                            AssetTemplate.Point_MVPT : AssetTemplate.Area_MVPT);
+                            AssetTemplate.MovePoint : AssetTemplate.MovePoint_Area);
                         asset = new DynaEnemyStandard(assetName, template, position, mvpt.assetID);
                     }
                     break;
@@ -963,40 +1082,40 @@ namespace IndustrialPark
                 case AssetTemplate.Turret_v3:
                     asset = new DynaEnemyTurret(assetName, template, position);
                     break;
-                case AssetTemplate.BucketOTron_BB:
-                case AssetTemplate.BucketOTron_DE:
-                case AssetTemplate.BucketOTron_GG:
-                case AssetTemplate.BucketOTron_JK:
-                case AssetTemplate.BucketOTron_TR:
-                case AssetTemplate.BucketOTron_PT:
+                case AssetTemplate.Spawner_BB:
+                case AssetTemplate.Spawner_DE:
+                case AssetTemplate.Spawner_GG:
+                case AssetTemplate.Spawner_JK:
+                case AssetTemplate.Spawner_TR:
+                case AssetTemplate.Spawner_PT:
                     {
                         var group = PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_GROUP", AssetTemplate.Group);
                         asset = new DynaEnemyBucketOTron(assetName, template, position, group.assetID);
                     }
                     break;
-                case AssetTemplate.TeleportBox:
+                case AssetTemplate.Teleport_Box:
                     {
                         var mrkr = PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_MRKR", AssetTemplate.Marker);
                         asset = new DynaGObjectTeleport(assetName, mrkr.assetID, GetMRKR);
                     }
                     break;
-                case AssetTemplate.BungeeHook:
+                case AssetTemplate.Bungee_Hook:
                     {
-                        var simp = PlaceTemplate(position, layerIndex, ref assetIDs, "BUNGEE_SIMP", AssetTemplate.BungeeHook_SIMP);
+                        var simp = PlaceTemplate(position, layerIndex, ref assetIDs, "BUNGEE_SIMP", AssetTemplate.Bungee_Hook_SIMP);
                         asset = new DynaGObjectBungeeHook(assetName, simp.assetID);
                     }
                     break;
-                case AssetTemplate.BungeeDrop:
+                case AssetTemplate.Bungee_Drop:
                     {
                         var mrkr = PlaceTemplate(position, layerIndex, ref assetIDs, "BUNGEE_MRKR", AssetTemplate.Marker);
                         asset = new DynaGObjectBungeeDrop(assetName, mrkr.assetID);
                     }
                     break;
-                case AssetTemplate.BusStop_DYNA:
+                case AssetTemplate.Bus_Stop_DYNA:
                     {
                         var mrkr = PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper().Replace("DYNA", "MRKR"), AssetTemplate.Marker);
-                        var cam = PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper().Replace("DYNA", "CAM"), AssetTemplate.BusStop_Camera);
-                        var simp = PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper().Replace("DYNA", "SIMP"), AssetTemplate.BusStop_BusSimp);
+                        var cam = PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper().Replace("DYNA", "CAM"), AssetTemplate.Bus_Stop_Camera);
+                        var simp = PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper().Replace("DYNA", "SIMP"), AssetTemplate.Bus_Stop_BusSimp);
 
                         asset = new DynaGObjectBusStop(assetName, mrkr.assetID, cam.assetID, simp.assetID);
                     }
@@ -1015,41 +1134,41 @@ namespace IndustrialPark
                         scrp.TimedLinks = new Link[] {
                             new Link(game)
                             {
-                                TargetAssetID = checkpointSdfx.assetID,
+                                TargetAsset = checkpointSdfx.assetID,
                                 EventSendID = (ushort)EventTSSM.Play
                             },
                             new Link(game)
                             {
                                 FloatParameter4 = 10f,
-                                TargetAssetID = checkpointSimp.assetID,
+                                TargetAsset = checkpointSimp.assetID,
                                 EventSendID = (ushort)EventTSSM.LaunchFireWorks
                             },
                             new Link(game)
                             {
                                 FloatParameter1 = 2f,
-                                TargetAssetID = checkpointSimp.assetID,
+                                TargetAsset = checkpointSimp.assetID,
                                 EventSendID = (ushort)EventTSSM.AnimPlay
                             },
                             new Link(game)
                             {
                                 Time = 0.5f,
                                 FloatParameter1 = 3f,
-                                TargetAssetID = checkpointSimp.assetID,
+                                TargetAsset = checkpointSimp.assetID,
                                 EventSendID = (ushort)EventTSSM.AnimPlayLoop
                             },
                         };
 
-                        checkpointSdfx.SoundGroup_AssetID = "CHECKPOINT_SGRP";
-                        checkpointSdfx.Emitter_AssetID = checkpointSimp.assetID;
+                        checkpointSdfx.SoundGroup = "CHECKPOINT_SGRP";
+                        checkpointSdfx.Emitter = checkpointSimp.assetID;
                         break;
                     }
                 case AssetTemplate.Ring:
                     asset = new DynaGObjectRing(assetName, position);
                     break;
-                case AssetTemplate.RingControl:
+                case AssetTemplate.Ring_Control:
                     asset = new DynaGObjectRingControl(assetName);
                     break;
-                case AssetTemplate.Default_Glow_Scene_Prop:
+                case AssetTemplate.DefaultGlowSceneProp:
                     asset = new DynaSceneProperties(assetName);
                     break;
                 case AssetTemplate.LKIT_lights:
@@ -1166,26 +1285,26 @@ namespace IndustrialPark
 
             AssetENV env = (AssetENV)PlaceTemplate(new Vector3(), defaultLayer, customName: environmentName, template: AssetTemplate.Environment);
 
-            env.StartCameraAssetID = PlaceTemplate(new Vector3(0, 100, 100), defaultLayer, customName: startCamName, template: AssetTemplate.StartCamera).assetID;
+            env.StartCamera = PlaceTemplate(new Vector3(0, 100, 100), defaultLayer, customName: startCamName, template: AssetTemplate.Start_Camera).assetID;
 
             if (game != Game.Incredibles)
             {
-                env.BSP_AssetID = PlaceTemplate(new Vector3(), 0, "empty_bsp", template: AssetTemplate.EmptyBSP).assetID;
-                PlaceTemplate(new Vector3(), defaultLayer, pkupsMinfName, template: AssetTemplate.MINF_Generic);
+                env.BSP = PlaceTemplate(new Vector3(), 0, "empty_bsp", template: AssetTemplate.Empty_BSP).assetID;
+                PlaceTemplate(new Vector3(), defaultLayer, pkupsMinfName, template: AssetTemplate.Model_Info);
             }
 
             if (game == Game.BFBB)
             {
-                env.Object_LKIT_AssetID = PlaceTemplate(new Vector3(), defaultLayer, customName: "lights", template: AssetTemplate.LKIT_lights).assetID;
-                player.LightKit_AssetID = PlaceTemplate(new Vector3(), defaultLayer, customName: "JF_SB_lights", template: AssetTemplate.LKIT_JF_SB_lights).assetID;
+                env.Object_LightKit = PlaceTemplate(new Vector3(), defaultLayer, customName: "lights", template: AssetTemplate.LKIT_lights).assetID;
+                player.LightKit = PlaceTemplate(new Vector3(), defaultLayer, customName: "JF_SB_lights", template: AssetTemplate.LKIT_JF_SB_lights).assetID;
             }
             else if (game == Game.Incredibles)
             {
                 var light_kit = (AssetLKIT)PlaceTemplate(new Vector3(), defaultLayer, customName: "jf01_light_kit", template: AssetTemplate.LKIT_lights);
-                player.LightKit_AssetID = light_kit.assetID;
-                env.Object_LKIT_AssetID = light_kit.assetID;
+                player.LightKit = light_kit.assetID;
+                env.Object_LightKit = light_kit.assetID;
 
-                PlaceTemplate(new Vector3(), defaultLayer, customName: "DEFAULT_GLOW_SCENE_PROP", template: AssetTemplate.Default_Glow_Scene_Prop);
+                PlaceTemplate(new Vector3(), defaultLayer, customName: "DEFAULT_GLOW_SCENE_PROP", template: AssetTemplate.DefaultGlowSceneProp);
             }
         }
     }

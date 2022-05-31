@@ -9,13 +9,13 @@ namespace IndustrialPark
         private const string categoryName = "Particle System";
 
         [Category(categoryName)]
-        public int PARS_Type { get; set; }
+        public int Type { get; set; }
         [Category(categoryName)]
-        public AssetID PARS_AssetID { get; set; }
+        public AssetID ParticleSystem { get; set; }
         [Category(categoryName)]
-        public AssetID TextureAssetID { get; set; }
+        public AssetID Texture { get; set; }
         [Category(categoryName)]
-        public FlagBitmask ParsFlags { get; set; } = ByteFlagsDescriptor();
+        public FlagBitmask Flags { get; set; } = ByteFlagsDescriptor();
         [Category(categoryName)]
         public byte Priority { get; set; }
         [Category(categoryName)]
@@ -45,10 +45,10 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = baseHeaderEndPosition;
 
-                PARS_Type = reader.ReadInt32();
-                PARS_AssetID = reader.ReadUInt32();
-                TextureAssetID = reader.ReadUInt32();
-                ParsFlags.FlagValueByte = reader.ReadByte();
+                Type = reader.ReadInt32();
+                ParticleSystem = reader.ReadUInt32();
+                Texture = reader.ReadUInt32();
+                Flags.FlagValueByte = reader.ReadByte();
                 Priority = reader.ReadByte();
                 MaxParticles = reader.ReadInt16();
                 RenderFunction = reader.ReadByte();
@@ -74,10 +74,10 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeBase(endianness));
-                writer.Write(PARS_Type);
-                writer.Write(PARS_AssetID);
-                writer.Write(TextureAssetID);
-                writer.Write(ParsFlags.FlagValueByte);
+                writer.Write(Type);
+                writer.Write(ParticleSystem);
+                writer.Write(Texture);
+                writer.Write(Flags.FlagValueByte);
                 writer.Write(Priority);
                 writer.Write(MaxParticles);
                 writer.Write(RenderFunction);
@@ -100,14 +100,12 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => TextureAssetID == assetID || PARS_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
-            Verify(TextureAssetID, ref result);
-            Verify(PARS_AssetID, ref result);
+            Verify(Texture, ref result);
+            Verify(ParticleSystem, ref result);
         }
     }
 }

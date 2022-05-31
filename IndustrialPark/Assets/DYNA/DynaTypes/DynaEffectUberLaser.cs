@@ -11,9 +11,9 @@ namespace IndustrialPark
         protected override short constVersion => 1;
 
         [Category(dynaCategoryName)]
-        public AssetID Marker1_AssetID { get; set; }
+        public AssetID Marker1 { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID Marker2_AssetID { get; set; }
+        public AssetID Marker2 { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle UnknownFloat { get; set; }
 
@@ -23,8 +23,8 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
 
-                Marker1_AssetID = reader.ReadUInt32();
-                Marker2_AssetID = reader.ReadUInt32();
+                Marker1 = reader.ReadUInt32();
+                Marker2 = reader.ReadUInt32();
                 UnknownFloat = reader.ReadSingle();
             }
         }
@@ -33,8 +33,8 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(Marker1_AssetID);
-                writer.Write(Marker2_AssetID);
+                writer.Write(Marker1);
+                writer.Write(Marker2);
                 writer.Write(UnknownFloat);
 
                 return writer.ToArray();
@@ -43,11 +43,9 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
-            Verify(Marker1_AssetID, ref result);
-            Verify(Marker2_AssetID, ref result);
+            Verify(Marker1, ref result);
+            Verify(Marker2, ref result);
             base.Verify(ref result);
         }
-
-        public override bool HasReference(uint assetID) => Marker1_AssetID == assetID || Marker2_AssetID == assetID || base.HasReference(assetID);
     }
 }

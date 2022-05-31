@@ -16,10 +16,10 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public FlagBitmask CameraPresetFlags { get; set; } = IntFlagsDescriptor();
         [Category(dynaCategoryName)]
-        public AssetID Checkpoint_AssetID { get; set; }
+        public AssetID Checkpoint { get; set; }
 
         public static bool dontRender = false;
-        public override bool DontRender => dontRender;
+        protected override bool DontRender => dontRender;
 
         public DynaCameraPreset(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.camera__preset, game, endianness)
         {
@@ -28,7 +28,7 @@ namespace IndustrialPark
                 reader.BaseStream.Position = dynaDataStartPosition;
 
                 CameraPresetFlags.FlagValueInt = reader.ReadUInt32();
-                Checkpoint_AssetID = reader.ReadUInt32();
+                Checkpoint = reader.ReadUInt32();
 
                 _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
                 _yaw = reader.ReadSingle();
@@ -45,7 +45,7 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(CameraPresetFlags.FlagValueInt);
-                writer.Write(Checkpoint_AssetID);
+                writer.Write(Checkpoint);
                 writer.Write(_position.X);
                 writer.Write(_position.Y);
                 writer.Write(_position.Z);
@@ -57,11 +57,9 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => Checkpoint_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
-            Verify(Checkpoint_AssetID, ref result);
+            Verify(Checkpoint, ref result);
 
             base.Verify(ref result);
         }

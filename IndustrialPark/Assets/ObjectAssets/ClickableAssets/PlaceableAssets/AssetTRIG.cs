@@ -141,14 +141,14 @@ namespace IndustrialPark
                 case AssetTemplate.Sphere_Trigger:
                 case AssetTemplate.Checkpoint:
                 case AssetTemplate.Checkpoint_Invisible:
-                case AssetTemplate.BusStop_Trigger:
+                case AssetTemplate.Bus_Stop_Trigger:
                     Shape = TriggerShape.Sphere;
                     MinimumX = position.X;
                     MinimumY = position.Y;
                     MinimumZ = position.Z;
                     if (template == AssetTemplate.Sphere_Trigger)
                         Radius = 10f;
-                    else if (template == AssetTemplate.BusStop_Trigger)
+                    else if (template == AssetTemplate.Bus_Stop_Trigger)
                         Radius = 2.5f;
                     else
                         Radius = 6f;

@@ -97,6 +97,7 @@ namespace IndustrialPark
                 PopulateLayerTypeComboBox();
                 PopulateLayerComboBox();
                 PopulateAssetList();
+                SetupAssetVisibilityButtons();
             }
         }
 
@@ -144,7 +145,6 @@ namespace IndustrialPark
                 {
                     OpenFile(openFile.FileName);
                 }
-                
             }
         }
 
@@ -174,11 +174,19 @@ namespace IndustrialPark
             PopulateLayerComboBox();
             PopulateAssetList();
 
+            SetupAssetVisibilityButtons();
+
             if (!standalone)
             {
                 Program.MainForm.SetToolStripItemName(this, Text);
                 Show();
             }
+        }
+
+        private void SetupAssetVisibilityButtons()
+        {
+            if (!standalone)
+                Program.MainForm.SetupAssetVisibilityButtons();
         }
 
         private void EnableToolStripMenuItems()
@@ -203,11 +211,9 @@ namespace IndustrialPark
 
             comboBoxLayerTypes.Items.Clear();
             if (archive.game == Game.Incredibles)
-                foreach (var t in Enum.GetValues(typeof(LayerType_TSSM)))
-                    comboBoxLayerTypes.Items.Add(t);
+                comboBoxLayerTypes.Items.AddRange(Enum.GetValues(typeof(LayerType_TSSM)).Cast<object>().ToArray());
             else
-                foreach (var t in Enum.GetValues(typeof(LayerType_BFBB)))
-                    comboBoxLayerTypes.Items.Add(t);
+                comboBoxLayerTypes.Items.AddRange(Enum.GetValues(typeof(LayerType_BFBB)).Cast<object>().ToArray());
 
             programIsChangingStuff = false;
         }
@@ -435,6 +441,7 @@ namespace IndustrialPark
                 buttonInternalEdit.Enabled = false;
                 buttonMultiEdit.Enabled = false;
             }
+            SetupAssetVisibilityButtons();
         }
 
         private void buttonArrowUp_Click(object sender, EventArgs e)
@@ -599,6 +606,7 @@ namespace IndustrialPark
             {
                 comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
                 SetSelectedIndices(new List<uint>() { assetID.Value }, true);
+                SetupAssetVisibilityButtons();
             }
         }
 
@@ -612,6 +620,7 @@ namespace IndustrialPark
                 comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
                 Program.MainForm.RefreshTexturesAndModels();
                 SetSelectedIndices(assetIDs, true);
+                SetupAssetVisibilityButtons();
             }
         }
 
@@ -628,6 +637,7 @@ namespace IndustrialPark
                     assetIDs.AddRange(archive.MakeSimps(assetIDs, solidSimps, ledgeGrabSimps));
                 PopulateLayerComboBox();
                 Program.MainForm.RefreshTexturesAndModels();
+                SetupAssetVisibilityButtons();
                 SetSelectedIndices(assetIDs, true);
             }
         }
@@ -641,6 +651,7 @@ namespace IndustrialPark
                 List<uint> assetIDs = archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, overwrite);
                 comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
                 Program.MainForm.RefreshTexturesAndModels();
+                SetupAssetVisibilityButtons();
                 SetSelectedIndices(assetIDs, true);
             }
         }
@@ -669,6 +680,7 @@ namespace IndustrialPark
             comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
 
             SetSelectedIndices(finalIndices, true);
+            SetupAssetVisibilityButtons();
         }
 
         private void ButtonRemoveAsset_Click(object sender, EventArgs e)
@@ -711,6 +723,7 @@ namespace IndustrialPark
 
             if (listViewAssets.Items.Count == 0)
                 PopulateAssetListAndComboBox();
+            SetupAssetVisibilityButtons();
         }
 
         private void buttonView_Click(object sender, EventArgs e)
@@ -986,6 +999,7 @@ namespace IndustrialPark
                 PopulateLayerComboBox();
                 PopulateAssetList();
                 archive.SetupTextureDisplay();
+                SetupAssetVisibilityButtons();
             }
         }
 
@@ -1052,7 +1066,10 @@ namespace IndustrialPark
             };
 
             if (openFile.ShowDialog() == DialogResult.OK)
+            {
                 archive.ImportHip(openFile.FileNames, false);
+                SetupAssetVisibilityButtons();
+            }
             PopulateLayerComboBox();
         }
 
@@ -1126,18 +1143,10 @@ namespace IndustrialPark
 
         private void TemplateToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string text = ((ToolStripItem)sender).Text;
-            foreach (AssetTemplate template in Enum.GetValues(typeof(AssetTemplate)))
-            {
-                if (text == template.ToString())
-                {
-                    Vector3 Position = standalone ? new Vector3() : (Program.MainForm.renderer.Camera.Position + 3 * Program.MainForm.renderer.Camera.Forward);
-                    PlaceTemplate(Position, template);
-                    return;
-                }
-            }
-
-            MessageBox.Show("There was a problem setting your template for placement");
+            var template = (AssetTemplate)((ToolStripItem)sender).Tag;
+            Vector3 Position = standalone ? new Vector3() : (Program.MainForm.renderer.Camera.Position + 3 * Program.MainForm.renderer.Camera.Forward);
+            PlaceTemplate(Position, template);
+            SetupAssetVisibilityButtons();
         }
 
         public List<uint> PlaceTemplate(Vector3 position, AssetTemplate template = AssetTemplate.Null)
@@ -1168,6 +1177,7 @@ namespace IndustrialPark
             var assetIDs = PlaceTemplate(new Vector3(), AssetTemplate.Group);
             if (assetIDs != null && assetIDs.Count > 0)
                 ((AssetGRUP)archive.GetFromAssetID(assetIDs[0])).GroupItems = items;
+            SetupAssetVisibilityButtons();
         }
 
         public bool TemplateFocus => checkBoxTemplateFocus.Checked;
@@ -1244,6 +1254,7 @@ namespace IndustrialPark
                 archive.ImportTextureDictionary(openTXD.FileName, RW3);
                 Program.MainForm.RefreshTexturesAndModels();
                 PopulateLayerComboBox();
+                SetupAssetVisibilityButtons();
             }
         }
 

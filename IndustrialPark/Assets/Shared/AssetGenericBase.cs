@@ -28,15 +28,6 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            foreach (var u in Data_AsHex)
-                if (u == assetID)
-                    return true;
-
-            return false;
-        }
-
         [Category(categoryName)]
         public AssetID[] Data_AsHex
         {

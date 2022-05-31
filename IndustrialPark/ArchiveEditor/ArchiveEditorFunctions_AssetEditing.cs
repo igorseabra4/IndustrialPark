@@ -268,7 +268,7 @@ namespace IndustrialPark
             for (int i = 1; i < PIPTs.Count; i++)
                 MergePIPT(PIPTs[i]);
 
-            var SHDWs = (from asset in assetDictionary.Values where asset.assetType == AssetType.SimpleShadowTable select (AssetSHDW)asset).ToList();
+            var SHDWs = (from asset in assetDictionary.Values where asset.assetType == AssetType.ShadowTable select (AssetSHDW)asset).ToList();
             for (int i = 1; i < SHDWs.Count; i++)
                 RemoveAsset(SHDWs[i].assetID);
             for (int i = 1; i < SHDWs.Count; i++)
@@ -421,7 +421,7 @@ namespace IndustrialPark
                 return AHDRFlags.SOURCE_VIRTUAL;
             switch (assetType)
             {
-                case AssetType.AnimList:
+                case AssetType.AnimationList:
                 case AssetType.Boulder:
                 case AssetType.Button:
                 case AssetType.Camera:
@@ -455,7 +455,7 @@ namespace IndustrialPark
                 case AssetType.Player:
                 case AssetType.Portal:
                 case AssetType.SFX:
-                case AssetType.SimpleShadowTable:
+                case AssetType.ShadowTable:
                 case AssetType.Shrapnel:
                 case AssetType.SimpleObject:
                 case AssetType.SoundInfo:
@@ -480,7 +480,7 @@ namespace IndustrialPark
                 case AssetType.BSP:
                 case AssetType.Model:
                     return AHDRFlags.SOURCE_FILE | AHDRFlags.READ_TRANSFORM;
-                case AssetType.AnimTable:
+                case AssetType.AnimationTable:
                 case AssetType.JSP:
                 case AssetType.Texture:
                     return AHDRFlags.SOURCE_VIRTUAL | AHDRFlags.READ_TRANSFORM;
@@ -671,8 +671,8 @@ namespace IndustrialPark
                 if (GetFromAssetID(i) is AssetMODL MODL)
                 {
                     string simpName = "SIMP_" + MODL.assetName.Replace(".dff", "").ToUpper();
-                    AssetSIMP simp = (AssetSIMP)PlaceTemplate(new Vector3(), layerIndex, ref outAssetIDs, simpName, AssetTemplate.SIMP_Generic);
-                    simp.Model_AssetID = i;
+                    AssetSIMP simp = (AssetSIMP)PlaceTemplate(new Vector3(), layerIndex, ref outAssetIDs, simpName, AssetTemplate.Simple_Object);
+                    simp.Model = i;
                     if (!solid)
                     {
                         simp.SolidityFlags.FlagValueByte = 0;
@@ -718,7 +718,7 @@ namespace IndustrialPark
                     break;
                 }
             if (pipt == null)
-                pipt = (AssetPIPT)PlaceTemplate(new Vector3(), IndexOfLayerOfType((int)LayerType_BFBB.DEFAULT), template: AssetTemplate.PipeInfoTable);
+                pipt = (AssetPIPT)PlaceTemplate(new Vector3(), IndexOfLayerOfType((int)LayerType_BFBB.DEFAULT), template: AssetTemplate.Pipe_Info_Table);
 
             List<EntryPIPT> entries = pipt.PIPT_Entries.ToList();
 
@@ -726,7 +726,7 @@ namespace IndustrialPark
                 if (GetFromAssetID(u) is AssetMODL)
                     entries.Add(new EntryPIPT()
                     {
-                        ModelAssetID = u,
+                        Model = u,
                         LightingMode = 1
                     });
 
@@ -785,7 +785,7 @@ namespace IndustrialPark
                                 else continue;
                             }
                             else
-                                modelAsset = (Asset)renderingDictionary[entity.Model_AssetID];
+                                modelAsset = (Asset)renderingDictionary[entity.Model];
 
                             assetName = entity.assetName;
                             world = entity.world;
@@ -804,14 +804,14 @@ namespace IndustrialPark
                             if (enemySb.isInvisible || enemySb.DontRender)
                                 continue;
 
-                            modelAsset = (Asset)renderingDictionary[enemySb.Model_AssetID];
+                            modelAsset = (Asset)renderingDictionary[enemySb.Model];
                             world = enemySb.world;
                             assetName = enemySb.assetName;
                         }
                         else continue;
 
                         if (modelAsset is AssetMINF minf)
-                            modelAsset = (Asset)renderingDictionary[minf.MinfReferences[0].Model_AssetID];
+                            modelAsset = (Asset)renderingDictionary[minf.References[0].Model];
 
                         if (modelAsset is AssetMODL modl)
                             textureNamesList.AddRange(modl.Textures);

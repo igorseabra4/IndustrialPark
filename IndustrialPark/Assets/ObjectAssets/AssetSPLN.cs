@@ -143,8 +143,6 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => UnknownHash_14 == assetID || UnknownHash_18 == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);

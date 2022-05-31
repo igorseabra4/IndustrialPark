@@ -19,8 +19,8 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public EnemyDennisType DennisType
         {
-            get => (EnemyDennisType)(uint)Model_AssetID;
-            set => Model_AssetID = (uint)value;
+            get => (EnemyDennisType)(uint)Model;
+            set => Model = (uint)value;
         }
         [Category(dynaCategoryName)]
         public AssetID Unknown50 { get; set; }
@@ -58,19 +58,6 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (Unknown50 == assetID)
-                return true;
-            if (Unknown54 == assetID)
-                return true;
-            if (Unknown58 == assetID)
-                return true;
-            if (Unknown5C == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
 
         public override void Verify(ref List<string> result)
         {
@@ -83,6 +70,6 @@ namespace IndustrialPark
         }
 
         public static bool dontRender = false;
-        public override bool DontRender { get => dontRender; }
+        public override bool DontRender => dontRender;
     }
 }

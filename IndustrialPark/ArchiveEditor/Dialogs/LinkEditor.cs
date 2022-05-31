@@ -178,13 +178,13 @@ namespace IndustrialPark
                     comboRecieveEvent.SelectedIndex = assetEvent.EventReceiveID;
                     comboSendEvent.SelectedIndex = assetEvent.EventSendID;
 
-                    textBoxTargetAsset.Text = GetAssetName(assetEvent.TargetAssetID);
-                    textBoxArgumentAsset.Text = GetAssetName(assetEvent.ArgumentAssetID);
+                    textBoxTargetAsset.Text = GetAssetName(assetEvent.TargetAsset);
+                    textBoxArgumentAsset.Text = GetAssetName(assetEvent.ArgumentAsset);
 
                     if (groupBoxSourceCheckOrFlags.Text == "Flags")
                         textBoxSourceCheckOrFlags.Text = assetEvent.Flags.ToString();
                     else
-                        textBoxSourceCheckOrFlags.Text = GetAssetName(assetEvent.SourceCheckAssetID);
+                        textBoxSourceCheckOrFlags.Text = GetAssetName(assetEvent.SourceCheckAsset);
 
                     numericUpDownTime.Value = (decimal)assetEvent.Time;
 
@@ -285,7 +285,7 @@ namespace IndustrialPark
                 try
                 {
                     foreach (int i in listBoxLinks.SelectedIndices)
-                        ((Link)listBoxLinks.Items[i]).TargetAssetID = GetAssetID(textBoxTargetAsset.Text);
+                        ((Link)listBoxLinks.Items[i]).TargetAsset = GetAssetID(textBoxTargetAsset.Text);
                     SetListBoxUpdate();
                 }
                 catch
@@ -304,7 +304,7 @@ namespace IndustrialPark
                 try
                 {
                     foreach (int i in listBoxLinks.SelectedIndices)
-                        ((Link)listBoxLinks.Items[i]).ArgumentAssetID = GetAssetID(textBoxArgumentAsset.Text);
+                        ((Link)listBoxLinks.Items[i]).ArgumentAsset = GetAssetID(textBoxArgumentAsset.Text);
                 }
                 catch
                 {
@@ -326,7 +326,7 @@ namespace IndustrialPark
                             ((Link)listBoxLinks.Items[i]).Flags = Convert.ToInt32(textBoxSourceCheckOrFlags.Text);
                     else
                         foreach (int i in listBoxLinks.SelectedIndices)
-                            ((Link)listBoxLinks.Items[i]).SourceCheckAssetID = GetAssetID(textBoxSourceCheckOrFlags.Text);
+                            ((Link)listBoxLinks.Items[i]).SourceCheckAsset = GetAssetID(textBoxSourceCheckOrFlags.Text);
                 }
                 catch
                 {
@@ -379,7 +379,7 @@ namespace IndustrialPark
             if (listBoxLinks.SelectedItems.Count == 1)
             {
                 ProgramIsChangingStuff = true;
-                textBoxTargetAsset.Text = GetAssetName(((Link)listBoxLinks.Items[listBoxLinks.SelectedIndex]).TargetAssetID);
+                textBoxTargetAsset.Text = GetAssetName(((Link)listBoxLinks.Items[listBoxLinks.SelectedIndex]).TargetAsset);
                 ProgramIsChangingStuff = false;
             }
         }
@@ -389,7 +389,7 @@ namespace IndustrialPark
             if (listBoxLinks.SelectedItems.Count == 1)
             {
                 ProgramIsChangingStuff = true;
-                textBoxArgumentAsset.Text = GetAssetName(((Link)listBoxLinks.Items[listBoxLinks.SelectedIndex]).ArgumentAssetID);
+                textBoxArgumentAsset.Text = GetAssetName(((Link)listBoxLinks.Items[listBoxLinks.SelectedIndex]).ArgumentAsset);
                 ProgramIsChangingStuff = false;
             }
         }
@@ -399,7 +399,7 @@ namespace IndustrialPark
             if (listBoxLinks.SelectedItems.Count == 1)
             {
                 ProgramIsChangingStuff = true;
-                textBoxSourceCheckOrFlags.Text = GetAssetName(((Link)listBoxLinks.Items[listBoxLinks.SelectedIndex]).SourceCheckAssetID);
+                textBoxSourceCheckOrFlags.Text = GetAssetName(((Link)listBoxLinks.Items[listBoxLinks.SelectedIndex]).SourceCheckAsset);
                 ProgramIsChangingStuff = false;
             }
         }

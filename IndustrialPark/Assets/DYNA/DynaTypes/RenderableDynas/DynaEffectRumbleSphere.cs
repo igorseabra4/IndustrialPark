@@ -14,7 +14,7 @@ namespace IndustrialPark
         protected override short constVersion => 1;
 
         [Category(dynaCategoryName)]
-        public AssetID Rumble_AssetID { get; set; }
+        public AssetID Rumble { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle Radius { get; set; }
         [Category(dynaCategoryName)]
@@ -25,7 +25,7 @@ namespace IndustrialPark
         public AssetByte OnlyOnFloor { get; set; }
 
         public static bool dontRender = false;
-        public override bool DontRender => dontRender;
+        protected override bool DontRender => dontRender;
 
         public DynaEffectRumbleSphere(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__RumbleSphericalEmitter, game, endianness)
         {
@@ -33,7 +33,7 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
 
-                Rumble_AssetID = reader.ReadUInt32();
+                Rumble = reader.ReadUInt32();
                 Radius = reader.ReadSingle();
                 _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
                 OnlyRumbleOnY = reader.ReadByte();
@@ -49,7 +49,7 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(Rumble_AssetID);
+                writer.Write(Rumble);
                 writer.Write(Radius);
                 writer.Write(PositionX);
                 writer.Write(PositionY);
@@ -63,11 +63,9 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => Rumble_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
-            Verify(Rumble_AssetID, ref result);
+            Verify(Rumble, ref result);
             base.Verify(ref result);
         }
 

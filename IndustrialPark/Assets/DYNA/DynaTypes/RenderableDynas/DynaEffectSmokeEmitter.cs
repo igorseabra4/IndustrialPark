@@ -24,7 +24,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle ScaleZ { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID Texture_AssetID { get; set; }
+        public AssetID Texture { get; set; }
         [Category(dynaCategoryName), TypeConverter(typeof(HexUShortTypeConverter))]
         public ushort TextureRows { get; set; }
         [Category(dynaCategoryName), TypeConverter(typeof(HexUShortTypeConverter))]
@@ -79,7 +79,7 @@ namespace IndustrialPark
                 ScaleX = reader.ReadSingle();
                 ScaleY = reader.ReadSingle();
                 ScaleZ = reader.ReadSingle();
-                Texture_AssetID = reader.ReadUInt32();
+                Texture = reader.ReadUInt32();
                 TextureRows = reader.ReadUInt16();
                 TextureColumns = reader.ReadUInt16();
                 Rate = reader.ReadSingle();
@@ -120,7 +120,7 @@ namespace IndustrialPark
                 writer.Write(ScaleX);
                 writer.Write(ScaleY);
                 writer.Write(ScaleZ);
-                writer.Write(Texture_AssetID);
+                writer.Write(Texture);
                 writer.Write(TextureRows);
                 writer.Write(TextureColumns);
                 writer.Write(Rate);
@@ -145,11 +145,9 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => Texture_AssetID == assetID || AttachTo == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
-            Verify(Texture_AssetID, ref result);
+            Verify(Texture, ref result);
             Verify(AttachTo, ref result);
 
             base.Verify(ref result);
@@ -162,6 +160,6 @@ namespace IndustrialPark
         public override void Draw(SharpRenderer renderer) => renderer.DrawPyramid(world, isSelected);
 
         public static bool dontRender = false;
-        public override bool DontRender => dontRender;
+        protected override bool DontRender => dontRender;
     }
 }

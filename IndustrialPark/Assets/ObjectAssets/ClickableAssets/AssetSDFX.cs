@@ -7,18 +7,18 @@ namespace IndustrialPark
 {
     public class AssetSDFX : BaseAsset, IRenderableAsset, IClickableAsset
     {
-        private const string categoryName = "Sound Effect";
+        private const string categoryName = "SDFX";
 
-        private uint _soundGroup_AssetID;
+        private uint _soundGroup;
         [Category(categoryName)]
-        public AssetID SoundGroup_AssetID
+        public AssetID SoundGroup
         {
-            get => _soundGroup_AssetID;
-            set { _soundGroup_AssetID = value; CreateTransformMatrix(); }
+            get => _soundGroup;
+            set { _soundGroup = value; CreateTransformMatrix(); }
         }
 
         [Category(categoryName)]
-        public AssetID Emitter_AssetID { get; set; }
+        public AssetID Emitter { get; set; }
         private Vector3 _position;
         [Category(categoryName)]
         public AssetSingle PositionX
@@ -40,7 +40,7 @@ namespace IndustrialPark
         }
 
         [Category(categoryName)]
-        public FlagBitmask SoundEffectFlags { get; set; } = IntFlagsDescriptor(
+        public FlagBitmask SDFXFlags { get; set; } = IntFlagsDescriptor(
             null,
             null,
             "Play from Entity");
@@ -59,10 +59,10 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = baseHeaderEndPosition;
 
-                _soundGroup_AssetID = reader.ReadUInt32();
-                Emitter_AssetID = reader.ReadUInt32();
+                _soundGroup = reader.ReadUInt32();
+                Emitter = reader.ReadUInt32();
                 _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                SoundEffectFlags.FlagValueInt = reader.ReadUInt32();
+                SDFXFlags.FlagValueInt = reader.ReadUInt32();
 
                 CreateTransformMatrix();
                 ArchiveEditorFunctions.AddToRenderableAssets(this);
@@ -74,12 +74,12 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeBase(endianness));
-                writer.Write(_soundGroup_AssetID);
-                writer.Write(Emitter_AssetID);
+                writer.Write(_soundGroup);
+                writer.Write(Emitter);
                 writer.Write(_position.X);
                 writer.Write(_position.Y);
                 writer.Write(_position.Z);
-                writer.Write(SoundEffectFlags.FlagValueInt);
+                writer.Write(SDFXFlags.FlagValueInt);
                 writer.Write(SerializeLinks(endianness));
                 return writer.ToArray();
             }
@@ -91,19 +91,14 @@ namespace IndustrialPark
 
         public static bool dontRender = false;
 
-        public override bool HasReference(uint assetID) =>
-            SoundGroup_AssetID == assetID ||
-            Emitter_AssetID == assetID ||
-            base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
-            if (SoundGroup_AssetID == 0)
-                result.Add("SDFX with SoundGroup_AssetID set to 0");
-            Verify(SoundGroup_AssetID, ref result);
-            Verify(Emitter_AssetID, ref result);
+            if (SoundGroup == 0)
+                result.Add("SDFX with SoundGroup set to 0");
+            Verify(SoundGroup, ref result);
+            Verify(Emitter, ref result);
         }
 
         public void CreateTransformMatrix()
@@ -164,8 +159,8 @@ namespace IndustrialPark
             {
                 if (Program.MainForm != null)
                     foreach (var ae in Program.MainForm.archiveEditors)
-                        if (ae.archive.ContainsAsset(SoundGroup_AssetID))
-                            if (ae.archive.GetFromAssetID(SoundGroup_AssetID) is AssetSGRP sgrp)
+                        if (ae.archive.ContainsAsset(SoundGroup))
+                            if (ae.archive.GetFromAssetID(SoundGroup) is AssetSGRP sgrp)
                                 return sgrp;
                 return null;
             }
@@ -176,9 +171,7 @@ namespace IndustrialPark
             get
             {
                 var sg = soundGroup;
-                if (sg != null)
-                    return sg.InnerRadius;
-                return 1f;
+                return sg == null ? 1f : (float)sg.InnerRadius;
             }
         }
 
@@ -187,9 +180,7 @@ namespace IndustrialPark
             get
             {
                 var sg = soundGroup;
-                if (sg != null)
-                    return sg.OuterRadius;
-                return 1f;
+                return sg == null ? 1f : (float)sg.OuterRadius;
             }
         }
     }

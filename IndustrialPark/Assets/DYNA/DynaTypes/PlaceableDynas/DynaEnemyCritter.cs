@@ -20,11 +20,11 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public EnemyCritterType CritterType
         {
-            get => (EnemyCritterType)(uint)Model_AssetID;
-            set => Model_AssetID = (uint)value;
+            get => (EnemyCritterType)(uint)Model;
+            set => Model = (uint)value;
         }
         [Category(dynaCategoryName)]
-        public AssetID MVPT_AssetID { get; set; }
+        public AssetID MovePoint { get; set; }
         [Category(dynaCategoryName)]
         public AssetID Unknown54 { get; set; }
 
@@ -33,10 +33,10 @@ namespace IndustrialPark
             BaseFlags = 0x0D;
 
             CritterType =
-            template == AssetTemplate.Jelly_Critter ? EnemyCritterType.jellyfish_v1_bind :
-            template == AssetTemplate.Jelly_Bucket ? EnemyCritterType.jellybucket_v1_bind : 0;
+            template == AssetTemplate.Jellyfish ? EnemyCritterType.jellyfish_v1_bind :
+            template == AssetTemplate.Jellyfish_Bucket ? EnemyCritterType.jellybucket_v1_bind : 0;
 
-            MVPT_AssetID = mvptAssetID;
+            MovePoint = mvptAssetID;
         }
 
         public DynaEnemyCritter(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__Critter, game, endianness)
@@ -45,7 +45,7 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = entityDynaEndPosition;
 
-                MVPT_AssetID = reader.ReadUInt32();
+                MovePoint = reader.ReadUInt32();
                 Unknown54 = reader.ReadUInt32();
             }
         }
@@ -55,34 +55,25 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeEntityDyna(endianness));
-                writer.Write(MVPT_AssetID);
+                writer.Write(MovePoint);
                 writer.Write(Unknown54);
                 return writer.ToArray();
             }
-        }
-
-        public override bool HasReference(uint assetID)
-        {
-            if (MVPT_AssetID == assetID)
-                return true;
-            if (Unknown54 == assetID)
-                return true;
-
-            return base.HasReference(assetID);
         }
 
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
-            if (MVPT_AssetID == 0)
+            if (MovePoint == 0)
                 result.Add("DYNA Critter with MVPT Asset ID set to 0");
 
-            Verify(MVPT_AssetID, ref result);
+            Verify(MovePoint, ref result);
             Verify(Unknown54, ref result);
         }
 
         public static bool dontRender = false;
-        public override bool DontRender { get => dontRender; }
+        [Browsable(false)]
+        public override bool DontRender => dontRender;
     }
 }

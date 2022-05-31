@@ -8,7 +8,7 @@ namespace IndustrialPark
 {
     public class UIBoxPart : GenericAssetDataContainer
     {
-        public AssetID Texture_AssetID { get; set; }
+        public AssetID Texture { get; set; }
         public AssetColor Color { get; set; }
         public AssetSingle uv1u { get; set; }
         public AssetSingle uv1v { get; set; }
@@ -24,7 +24,7 @@ namespace IndustrialPark
         public UIBoxPart() { }
         public UIBoxPart(EndianBinaryReader reader)
         {
-            Texture_AssetID = reader.ReadUInt32();
+            Texture = reader.ReadUInt32();
             Color = reader.ReadColor();
             uv1u = reader.ReadSingle();
             uv1v = reader.ReadSingle();
@@ -45,7 +45,7 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(Texture_AssetID);
+                writer.Write(Texture);
                 writer.Write(Color);
                 writer.Write(uv1u);
                 writer.Write(uv1v);
@@ -64,8 +64,6 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override bool HasReference(uint assetID) => Texture_AssetID == assetID;
     }
 
     public class DynaUIBox : DynaUI
@@ -162,7 +160,5 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override bool HasReference(uint assetID) => _parts.Any(p => p.HasReference(assetID)) || base.HasReference(assetID);
     }
 }

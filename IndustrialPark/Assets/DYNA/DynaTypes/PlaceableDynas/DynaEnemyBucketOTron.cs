@@ -24,11 +24,11 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public EnemyBucketOTronType BucketOTronType
         {
-            get => (EnemyBucketOTronType)(uint)Model_AssetID;
-            set => Model_AssetID = (uint)value;
+            get => (EnemyBucketOTronType)(uint)Model;
+            set => Model = (uint)value;
         }
         [Category(dynaCategoryName)]
-        public AssetID Group_AssetID { get; set; }
+        public AssetID Group { get; set; }
         [Category(dynaCategoryName)]
         public int UnknownInt54 { get; set; }
         [Category(dynaCategoryName)]
@@ -41,14 +41,14 @@ namespace IndustrialPark
         public DynaEnemyBucketOTron(string assetName, AssetTemplate template, Vector3 position, uint groupAssetID) : base(assetName, DynaType.Enemy__SB__BucketOTron, 4, position)
         {
             BucketOTronType =
-                        template == AssetTemplate.BucketOTron_BB ? EnemyBucketOTronType.buckotron_bb_bind :
-                        template == AssetTemplate.BucketOTron_DE ? EnemyBucketOTronType.buckotron_de_bind :
-                        template == AssetTemplate.BucketOTron_GG ? EnemyBucketOTronType.buckotron_gg_bind :
-                        template == AssetTemplate.BucketOTron_TR ? EnemyBucketOTronType.buckotron_tr_bind :
-                        template == AssetTemplate.BucketOTron_JK ? EnemyBucketOTronType.buckotron_jk_bind :
-                        template == AssetTemplate.BucketOTron_PT ? EnemyBucketOTronType.buckotron_pt_bind : 0;
+                        template == AssetTemplate.Spawner_BB ? EnemyBucketOTronType.buckotron_bb_bind :
+                        template == AssetTemplate.Spawner_DE ? EnemyBucketOTronType.buckotron_de_bind :
+                        template == AssetTemplate.Spawner_GG ? EnemyBucketOTronType.buckotron_gg_bind :
+                        template == AssetTemplate.Spawner_TR ? EnemyBucketOTronType.buckotron_tr_bind :
+                        template == AssetTemplate.Spawner_JK ? EnemyBucketOTronType.buckotron_jk_bind :
+                        template == AssetTemplate.Spawner_PT ? EnemyBucketOTronType.buckotron_pt_bind : 0;
 
-            Group_AssetID = groupAssetID;
+            Group = groupAssetID;
         }
 
         public DynaEnemyBucketOTron(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__BucketOTron, game, endianness)
@@ -57,7 +57,7 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = entityDynaEndPosition;
 
-                Group_AssetID = reader.ReadUInt32();
+                Group = reader.ReadUInt32();
                 UnknownInt54 = reader.ReadInt32();
                 SpawnSpeed = reader.ReadSingle();
                 UnknownInt5C = reader.ReadInt32();
@@ -70,7 +70,7 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeEntityDyna(endianness));
-                writer.Write(Group_AssetID);
+                writer.Write(Group);
                 writer.Write(UnknownInt54);
                 writer.Write(SpawnSpeed);
                 writer.Write(UnknownInt5C);
@@ -80,25 +80,17 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (Group_AssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
-            if (Group_AssetID == 0)
+            if (Group == 0)
                 result.Add("DYNA BucketOTron with GRUP Asset ID set to 0");
 
-            Verify(Group_AssetID, ref result);
+            Verify(Group, ref result);
         }
 
         public static bool dontRender = false;
-        public override bool DontRender { get => dontRender; }
+        public override bool DontRender => dontRender;
     }
 }

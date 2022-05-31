@@ -58,24 +58,24 @@ namespace IndustrialPark
         }
 
         [Category(categoryName)]
-        public AssetID[] NextMVPTs { get; set; }
+        public AssetID[] NextMovePoints { get; set; }
 
         public AssetMVPT(string assetName, Vector3 position, Game game, AssetTemplate template) : base(assetName, AssetType.MovePoint, BaseAssetType.MovePoint)
         {
             _position = position;
             Wt = 0x2710;
             BezIndex = 0x00;
-            NextMVPTs = new AssetID[0];
+            NextMovePoints = new AssetID[0];
 
             switch (template)
             {
-                case AssetTemplate.Area_MVPT:
+                case AssetTemplate.MovePoint_Area:
                     IsZone = 0x00;
                     Delay = 360;
                     ZoneRadius = 4;
                     ArenaRadius = 8;
                     break;
-                case AssetTemplate.Point_MVPT:
+                case AssetTemplate.MovePoint:
                     IsZone = 0x01;
                     Delay = game == Game.Incredibles ? 2 : 0;
                     ZoneRadius = -1;
@@ -107,9 +107,9 @@ namespace IndustrialPark
                 if (game != Game.Scooby)
                     _arenaRadius = reader.ReadSingle();
 
-                NextMVPTs = new AssetID[pointCount];
-                for (int i = 0; i < NextMVPTs.Length; i++)
-                    NextMVPTs[i] = reader.ReadUInt32();
+                NextMovePoints = new AssetID[pointCount];
+                for (int i = 0; i < NextMovePoints.Length; i++)
+                    NextMovePoints[i] = reader.ReadUInt32();
 
                 CreateTransformMatrix();
                 ArchiveEditorFunctions.AddToRenderableAssets(this);
@@ -130,13 +130,13 @@ namespace IndustrialPark
                 writer.Write(BezIndex);
                 writer.Write(Flg_Props);
                 writer.Write((byte)0);
-                writer.Write((ushort)NextMVPTs.Length);
+                writer.Write((ushort)NextMovePoints.Length);
                 if (game != Game.Scooby)
                     writer.Write(Delay);
                 writer.Write(_zoneRadius);
                 if (game != Game.Scooby)
                     writer.Write(_arenaRadius);
-                foreach (var i in NextMVPTs)
+                foreach (var i in NextMovePoints)
                     writer.Write(i);
 
                 writer.Write(SerializeLinks(endianness));
@@ -152,20 +152,11 @@ namespace IndustrialPark
         [Browsable(false)]
         public bool SpecialBlendMode => true;
 
-        public override bool HasReference(uint assetID)
-        {
-            foreach (AssetID a in NextMVPTs)
-                if (a == assetID)
-                    return true;
-
-            return base.HasReference(assetID);
-        }
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
-            foreach (AssetID a in NextMVPTs)
+            foreach (AssetID a in NextMovePoints)
                 Verify(a, ref result);
         }
 

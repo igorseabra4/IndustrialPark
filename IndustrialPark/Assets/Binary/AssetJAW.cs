@@ -6,9 +6,9 @@ using System.Linq;
 
 namespace IndustrialPark
 {
-    public class EntryJAW
+    public class EntryJAW : GenericAssetDataContainer
     {
-        public AssetID SoundAssetID { get; set; }
+        public AssetID Sound { get; set; }
         public byte[] JawData { get; set; }
 
         public EntryJAW()
@@ -17,25 +17,25 @@ namespace IndustrialPark
         }
         public EntryJAW(AssetID soundAssetID, byte[] jawData)
         {
-            SoundAssetID = soundAssetID;
+            Sound = soundAssetID;
             JawData = jawData;
         }
 
         public override string ToString()
         {
-            return $"[{Program.MainForm.GetAssetNameFromID(SoundAssetID)}] - [{JawData.Length}]";
+            return $"[{Program.MainForm.GetAssetNameFromID(Sound)}] - [{JawData.Length}]";
         }
 
         public override bool Equals(object obj)
         {
             if (obj != null && obj is EntryJAW entryJAW)
-                return SoundAssetID.Equals(entryJAW.SoundAssetID);
+                return Sound.Equals(entryJAW.Sound);
             return false;
         }
 
         public override int GetHashCode()
         {
-            return SoundAssetID.GetHashCode();
+            return Sound.GetHashCode();
         }
     }
 
@@ -81,7 +81,7 @@ namespace IndustrialPark
 
                 foreach (var i in JAW_Entries)
                 {
-                    writer.Write(i.SoundAssetID);
+                    writer.Write(i.Sound);
                     writer.Write(newJawData.Count);
                     writer.Write(i.JawData.Length + 4);
 
@@ -98,22 +98,13 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            foreach (var a in JAW_Entries)
-                if (a.SoundAssetID == assetID)
-                    return true;
-
-            return false;
-        }
-
         public override void Verify(ref List<string> result)
         {
             foreach (EntryJAW a in JAW_Entries)
             {
-                if (a.SoundAssetID == 0)
+                if (a.Sound == 0)
                     result.Add("JAW entry with SoundAssetID set to 0");
-                Verify(a.SoundAssetID, ref result);
+                Verify(a.Sound, ref result);
             }
         }
 
@@ -122,7 +113,7 @@ namespace IndustrialPark
             List<EntryJAW> entries = JAW_Entries.ToList();
 
             for (int i = 0; i < entries.Count; i++)
-                if (entries[i].SoundAssetID.Equals(assetID))
+                if (entries[i].Sound.Equals(assetID))
                     entries.RemoveAt(i--);
 
             entries.Add(new EntryJAW(assetID, jawData));

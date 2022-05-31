@@ -86,27 +86,6 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            try
-            {
-                foreach (EntrySHRP a in SHRPEntries)
-                    if (a.HasReference(assetID))
-                        return true;
-            }
-#if DEBUG
-            catch (Exception e)
-            {
-                MessageBox.Show("Error searching for references: " + e.Message + ". It will be skipped on the search.");
-            }
-#else
-            catch
-            {
-            }
-#endif
-            return false;
-        }
-
         public override void Verify(ref List<string> result)
         {
             foreach (EntrySHRP a in SHRPEntries)
@@ -114,27 +93,27 @@ namespace IndustrialPark
                 {
                     case 3:
                         if (game == Game.BFBB)
-                            Verify(((EntrySHRP_Type3_BFBB)a).PARE_AssetID, ref result);
+                            Verify(((EntrySHRP_Type3_BFBB)a).ParticleEmitter, ref result);
                         else if (game == Game.Incredibles)
                             Verify(((EntrySHRP_Type3_TSSM)a).Unknown1F0, ref result);
                         break;
                     case 4:
                         if (game == Game.BFBB)
                         {
-                            Verify(((EntrySHRP_Type4_BFBB)a).ModelAssetID, ref result);
-                            Verify(((EntrySHRP_Type4_BFBB)a).UnknownAssetID74, ref result);
+                            Verify(((EntrySHRP_Type4_BFBB)a).Model, ref result);
+                            Verify(((EntrySHRP_Type4_BFBB)a).Unknown74, ref result);
                         }
                         else if (game == Game.Incredibles)
-                            Verify(((EntrySHRP_Type4_TSSM)a).ModelAssetID, ref result);
+                            Verify(((EntrySHRP_Type4_TSSM)a).Model, ref result);
                         break;
                     case 6:
                         if (game == Game.BFBB)
-                            Verify(((EntrySHRP_Type6_BFBB)a).SoundAssetID, ref result);
+                            Verify(((EntrySHRP_Type6_BFBB)a).Sound, ref result);
                         else if (game == Game.Incredibles)
-                            Verify(((EntrySHRP_Type6_TSSM)a).SoundAssetID, ref result);
+                            Verify(((EntrySHRP_Type6_TSSM)a).Sound, ref result);
                         break;
                     case 9:
-                        Verify(((EntrySHRP_Type9)a).UnknownAssetID18, ref result);
+                        Verify(((EntrySHRP_Type9)a).Unknown18, ref result);
                         break;
                 }
         }
@@ -221,18 +200,6 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (Unknown04 == assetID)
-                return true;
-            if (Unknown08 == assetID)
-                return true;
-            if (Unknown0C == assetID)
-                return true;
-
-            return false;
-        }
-
         private const byte padB = 0xCD;
 
         protected void ReadPad(EndianBinaryReader reader, int count)
@@ -264,7 +231,7 @@ namespace IndustrialPark
         public byte Unknown64 { get; set; }
         public short Unknown198 { get; set; }
         public short Unknown19A { get; set; }
-        public AssetID PARE_AssetID { get; set; }
+        public AssetID ParticleEmitter { get; set; }
         public int Unknown1D0 { get; set; }
 
         public EntrySHRP_Type3_BFBB() : base(3) { }
@@ -287,7 +254,7 @@ namespace IndustrialPark
             Unknown198 = reader.ReadInt16();
             Unknown19A = reader.ReadInt16();
             ReadPad(reader, 0x30);
-            PARE_AssetID = reader.ReadUInt32();
+            ParticleEmitter = reader.ReadUInt32();
             Unknown1D0 = reader.ReadInt32();
         }
 
@@ -314,14 +281,12 @@ namespace IndustrialPark
                 writer.Write(Unknown198);
                 writer.Write(Unknown19A);
                 WritePad(writer, 0x30);
-                writer.Write(PARE_AssetID);
+                writer.Write(ParticleEmitter);
                 writer.Write(Unknown1D0);
 
                 return writer.ToArray();
             }
         }
-
-        public override bool HasReference(uint assetID) => PARE_AssetID == assetID || base.HasReference(assetID);
     }
 
     public class EntrySHRP_Type3_TSSM : EntrySHRP
@@ -415,15 +380,13 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override bool HasReference(uint assetID) => Unknown1F0 == assetID || base.HasReference(assetID);
     }
 
     public class EntrySHRP_Type4_BFBB : EntrySHRP
     {
         public static int SizeOfEntry => 0x90;
 
-        public AssetID ModelAssetID { get; set; }
+        public AssetID Model { get; set; }
         public int Unknown1C { get; set; }
         public int Unknown20 { get; set; }
         public int Unknown24 { get; set; }
@@ -438,7 +401,7 @@ namespace IndustrialPark
         public AssetSingle Unknown68 { get; set; }
         public int Unknown6C { get; set; }
         public int Unknown70 { get; set; }
-        public AssetID UnknownAssetID74 { get; set; }
+        public AssetID Unknown74 { get; set; }
         public AssetSingle Unknown78 { get; set; }
         public AssetSingle Unknown7C { get; set; }
         public AssetSingle Unknown80 { get; set; }
@@ -449,7 +412,7 @@ namespace IndustrialPark
         public EntrySHRP_Type4_BFBB() : base(4) { }
         public EntrySHRP_Type4_BFBB(EndianBinaryReader reader) : base(4, reader)
         {
-            ModelAssetID = reader.ReadUInt32();
+            Model = reader.ReadUInt32();
             Unknown1C = reader.ReadInt32();
             Unknown20 = reader.ReadInt32();
             Unknown24 = reader.ReadInt32();
@@ -466,7 +429,7 @@ namespace IndustrialPark
             Unknown68 = reader.ReadSingle();
             Unknown6C = reader.ReadInt32();
             Unknown70 = reader.ReadInt32();
-            UnknownAssetID74 = reader.ReadUInt32();
+            Unknown74 = reader.ReadUInt32();
             Unknown78 = reader.ReadSingle();
             Unknown7C = reader.ReadSingle();
             Unknown80 = reader.ReadSingle();
@@ -481,7 +444,7 @@ namespace IndustrialPark
             {
                 writer.Write(SerializeEntryShrpBase(endianness));
 
-                writer.Write(ModelAssetID);
+                writer.Write(Model);
                 writer.Write(Unknown1C);
                 writer.Write(Unknown20);
                 writer.Write(Unknown24);
@@ -498,7 +461,7 @@ namespace IndustrialPark
                 writer.Write(Unknown68);
                 writer.Write(Unknown6C);
                 writer.Write(Unknown70);
-                writer.Write(UnknownAssetID74);
+                writer.Write(Unknown74);
                 writer.Write(Unknown78);
                 writer.Write(Unknown7C);
                 writer.Write(Unknown80);
@@ -509,21 +472,11 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override bool HasReference(uint assetID)
-        {
-            if (ModelAssetID == assetID)
-                return true;
-            if (UnknownAssetID74 == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
     }
 
     public class EntrySHRP_Type4_TSSM : EntrySHRP
     {
-        public AssetID ModelAssetID { get; set; }
+        public AssetID Model { get; set; }
         public int Unknown1C { get; set; }
         public int Unknown20 { get; set; }
         public int Unknown24 { get; set; }
@@ -575,7 +528,7 @@ namespace IndustrialPark
         public EntrySHRP_Type4_TSSM() : base(4) { }
         public EntrySHRP_Type4_TSSM(EndianBinaryReader reader) : base(4, reader)
         {
-            ModelAssetID = reader.ReadUInt32();
+            Model = reader.ReadUInt32();
             Unknown1C = reader.ReadInt32();
             Unknown20 = reader.ReadInt32();
             Unknown24 = reader.ReadInt32();
@@ -636,7 +589,7 @@ namespace IndustrialPark
             {
                 writer.Write(SerializeEntryShrpBase(endianness));
 
-                writer.Write(ModelAssetID);
+                writer.Write(Model);
                 writer.Write(Unknown1C);
                 writer.Write(Unknown20);
                 writer.Write(Unknown24);
@@ -693,14 +646,6 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override bool HasReference(uint assetID)
-        {
-            if (ModelAssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
     }
 
     public class EntrySHRP_Type5_BFBB : EntrySHRP
@@ -754,23 +699,6 @@ namespace IndustrialPark
 
                 return writer.ToArray();
             }
-        }
-
-        public override bool HasReference(uint assetID)
-        {
-            if (Unknown1C == assetID)
-                return true;
-            if (Unknown24 == assetID)
-                return true;
-            if (Unknown28 == assetID)
-                return true;
-            if (Unknown40 == assetID)
-                return true;
-            if (Unknown48 == assetID)
-                return true;
-            if (Unknown4C == assetID)
-                return true;
-            return base.HasReference(assetID);
         }
     }
 
@@ -834,28 +762,11 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override bool HasReference(uint assetID)
-        {
-            if (Unknown1C == assetID)
-                return true;
-            if (Unknown24 == assetID)
-                return true;
-            if (Unknown28 == assetID)
-                return true;
-            if (Unknown40 == assetID)
-                return true;
-            if (Unknown48 == assetID)
-                return true;
-            if (Unknown4C == assetID)
-                return true;
-            return base.HasReference(assetID);
-        }
     }
 
     public class EntrySHRP_Type6_BFBB : EntrySHRP
     {
-        public AssetID SoundAssetID { get; set; }
+        public AssetID Sound { get; set; }
         public int Unknown1C { get; set; }
         public int Unknown20 { get; set; }
         public int Unknown24 { get; set; }
@@ -868,7 +779,7 @@ namespace IndustrialPark
         public EntrySHRP_Type6_BFBB() : base(6) { }
         public EntrySHRP_Type6_BFBB(EndianBinaryReader reader) : base(6, reader)
         {
-            SoundAssetID = reader.ReadUInt32();
+            Sound = reader.ReadUInt32();
             Unknown1C = reader.ReadInt32();
             Unknown20 = reader.ReadInt32();
             Unknown24 = reader.ReadInt32();
@@ -886,7 +797,7 @@ namespace IndustrialPark
             {
                 writer.Write(SerializeEntryShrpBase(endianness));
 
-                writer.Write(SoundAssetID);
+                writer.Write(Sound);
                 writer.Write(Unknown1C);
                 writer.Write(Unknown20);
                 writer.Write(Unknown24);
@@ -900,19 +811,11 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override bool HasReference(uint assetID)
-        {
-            if (SoundAssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
     }
 
     public class EntrySHRP_Type6_TSSM : EntrySHRP
     {
-        public AssetID SoundAssetID { get; set; }
+        public AssetID Sound { get; set; }
         public int Unknown1C { get; set; }
         public int Unknown20 { get; set; }
         public int Unknown24 { get; set; }
@@ -923,7 +826,7 @@ namespace IndustrialPark
         public EntrySHRP_Type6_TSSM() : base(6) { }
         public EntrySHRP_Type6_TSSM(EndianBinaryReader reader) : base(6, reader)
         {
-            SoundAssetID = reader.ReadUInt32();
+            Sound = reader.ReadUInt32();
             Unknown1C = reader.ReadInt32();
             Unknown20 = reader.ReadInt32();
             Unknown24 = reader.ReadInt32();
@@ -939,7 +842,7 @@ namespace IndustrialPark
             {
                 writer.Write(SerializeEntryShrpBase(endianness));
 
-                writer.Write(SoundAssetID);
+                writer.Write(Sound);
                 writer.Write(Unknown1C);
                 writer.Write(Unknown20);
                 writer.Write(Unknown24);
@@ -951,38 +854,30 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override bool HasReference(uint assetID)
-        {
-            if (SoundAssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
     }
 
     public class EntrySHRP_Type8 : EntrySHRP
     {
         public static int SizeOfEntry => 0x48;
 
-        public AssetID UnknownAssetID18 { get; set; }
+        public AssetID Unknown18 { get; set; }
         public int Unknown1C { get; set; }
         public int Unknown20 { get; set; }
-        public AssetID UnknownAssetID24 { get; set; }
-        public AssetID UnknownAssetID28 { get; set; }
-        public AssetID UnknownAssetID2C { get; set; }
+        public AssetID Unknown24 { get; set; }
+        public AssetID Unknown28 { get; set; }
+        public AssetID Unknown2C { get; set; }
         public AssetSingle Unknown40 { get; set; }
         public AssetSingle Unknown44 { get; set; }
 
         public EntrySHRP_Type8() : base(8) { }
         public EntrySHRP_Type8(EndianBinaryReader reader) : base(8, reader)
         {
-            UnknownAssetID18 = reader.ReadUInt32();
+            Unknown18 = reader.ReadUInt32();
             Unknown1C = reader.ReadInt32();
             Unknown20 = reader.ReadInt32();
-            UnknownAssetID24 = reader.ReadUInt32();
-            UnknownAssetID28 = reader.ReadUInt32();
-            UnknownAssetID2C = reader.ReadUInt32();
+            Unknown24 = reader.ReadUInt32();
+            Unknown28 = reader.ReadUInt32();
+            Unknown2C = reader.ReadUInt32();
             ReadPad(reader, 0x10);
             Unknown40 = reader.ReadSingle();
             Unknown44 = reader.ReadSingle();
@@ -994,12 +889,12 @@ namespace IndustrialPark
             {
                 writer.Write(SerializeEntryShrpBase(endianness));
 
-                writer.Write(UnknownAssetID18);
+                writer.Write(Unknown18);
                 writer.Write(Unknown1C);
                 writer.Write(Unknown20);
-                writer.Write(UnknownAssetID24);
-                writer.Write(UnknownAssetID28);
-                writer.Write(UnknownAssetID2C);
+                writer.Write(Unknown24);
+                writer.Write(Unknown28);
+                writer.Write(Unknown2C);
                 WritePad(writer, 0x10);
                 writer.Write(Unknown40);
                 writer.Write(Unknown44);
@@ -1007,19 +902,11 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override bool HasReference(uint assetID)
-        {
-            if (UnknownAssetID18 == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
     }
 
     public class EntrySHRP_Type9 : EntrySHRP
     {
-        public AssetID UnknownAssetID18 { get; set; }
+        public AssetID Unknown18 { get; set; }
         public int Unknown1C { get; set; }
         public int Unknown20 { get; set; }
         public int Unknown24 { get; set; }
@@ -1036,7 +923,7 @@ namespace IndustrialPark
         public EntrySHRP_Type9() : base(9) { }
         public EntrySHRP_Type9(EndianBinaryReader reader) : base(9, reader)
         {
-            UnknownAssetID18 = reader.ReadUInt32();
+            Unknown18 = reader.ReadUInt32();
             Unknown1C = reader.ReadInt32();
             Unknown20 = reader.ReadInt32();
             Unknown24 = reader.ReadInt32();
@@ -1058,7 +945,7 @@ namespace IndustrialPark
             {
                 writer.Write(SerializeEntryShrpBase(endianness));
 
-                writer.Write(UnknownAssetID18);
+                writer.Write(Unknown18);
                 writer.Write(Unknown1C);
                 writer.Write(Unknown20);
                 writer.Write(Unknown24);
@@ -1075,14 +962,6 @@ namespace IndustrialPark
 
                 return writer.ToArray();
             }
-        }
-
-        public override bool HasReference(uint assetID)
-        {
-            if (UnknownAssetID18 == assetID)
-                return true;
-
-            return base.HasReference(assetID);
         }
     }
 }

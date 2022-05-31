@@ -121,6 +121,9 @@ namespace IndustrialPark
             this.toolStripMenuItem_Templates = new System.Windows.Forms.ToolStripMenuItem();
             this.userTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripComboBoxUserTemplate = new System.Windows.Forms.ToolStripComboBox();
+            this.enableAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.disableAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparatorAssetTypes = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStripMain.SuspendLayout();
@@ -158,7 +161,7 @@ namespace IndustrialPark
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.newToolStripMenuItem.Text = "&New Editor";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
@@ -166,7 +169,7 @@ namespace IndustrialPark
             // 
             this.importLevelToolStripMenuItem.Name = "importLevelToolStripMenuItem";
             this.importLevelToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
-            this.importLevelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.importLevelToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.importLevelToolStripMenuItem.Text = "&Open Level...";
             this.importLevelToolStripMenuItem.Click += new System.EventHandler(this.importLevelToolStripMenuItem_Click);
             // 
@@ -174,14 +177,14 @@ namespace IndustrialPark
             // 
             this.closeAllEditorsToolStripMenuItem.Enabled = false;
             this.closeAllEditorsToolStripMenuItem.Name = "closeAllEditorsToolStripMenuItem";
-            this.closeAllEditorsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.closeAllEditorsToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.closeAllEditorsToolStripMenuItem.Text = "&Close All Editors";
             this.closeAllEditorsToolStripMenuItem.Click += new System.EventHandler(this.closeAllEditorsToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(176, 6);
             // 
             // projectToolStripMenuItem
             // 
@@ -506,6 +509,10 @@ namespace IndustrialPark
             // 
             // assetTypesToolStripMenuItem
             // 
+            this.assetTypesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.enableAllToolStripMenuItem,
+            this.disableAllToolStripMenuItem,
+            this.toolStripSeparatorAssetTypes});
             this.assetTypesToolStripMenuItem.Name = "assetTypesToolStripMenuItem";
             this.assetTypesToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.assetTypesToolStripMenuItem.Text = "Asset Types";
@@ -843,6 +850,25 @@ namespace IndustrialPark
             this.toolStripComboBoxUserTemplate.Size = new System.Drawing.Size(160, 23);
             this.toolStripComboBoxUserTemplate.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxUserTemplate_SelectedIndexChanged);
             // 
+            // enableAllToolStripMenuItem
+            // 
+            this.enableAllToolStripMenuItem.Name = "enableAllToolStripMenuItem";
+            this.enableAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.enableAllToolStripMenuItem.Text = "Enable All";
+            this.enableAllToolStripMenuItem.Click += new System.EventHandler(this.enableAllToolStripMenuItem_Click);
+            // 
+            // disableAllToolStripMenuItem
+            // 
+            this.disableAllToolStripMenuItem.Name = "disableAllToolStripMenuItem";
+            this.disableAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.disableAllToolStripMenuItem.Text = "Disable All";
+            this.disableAllToolStripMenuItem.Click += new System.EventHandler(this.disableAllToolStripMenuItem_Click);
+            // 
+            // toolStripSeparatorAssetTypes
+            // 
+            this.toolStripSeparatorAssetTypes.Name = "toolStripSeparatorAssetTypes";
+            this.toolStripSeparatorAssetTypes.Size = new System.Drawing.Size(177, 6);
+            // 
             // MainForm
             // 
             this.AllowDrop = true;
@@ -968,6 +994,9 @@ namespace IndustrialPark
         private ToolStripMenuItem dynaNameSearcherToolStripMenuItem;
         private ToolStripMenuItem importLevelToolStripMenuItem;
         private ToolStripMenuItem closeAllEditorsToolStripMenuItem;
+        private ToolStripMenuItem enableAllToolStripMenuItem;
+        private ToolStripMenuItem disableAllToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparatorAssetTypes;
     }
 }
 

@@ -55,7 +55,5 @@ namespace IndustrialPark
             Verify(Unknown10, ref result);
             base.Verify(ref result);
         }
-
-        public override bool HasReference(uint assetID) => Unknown0C == assetID || Unknown10 == assetID || base.HasReference(assetID);
     }
 }

@@ -11,7 +11,7 @@ namespace IndustrialPark
         protected override short constVersion => 1;
 
         [Category(dynaCategoryName)]
-        public AssetID Texture_AssetID { get; set; }
+        public AssetID Texture { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle uv1u { get; set; }
         [Category(dynaCategoryName)]
@@ -56,7 +56,7 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaUIEnd;
 
-                Texture_AssetID = reader.ReadUInt32();
+                Texture = reader.ReadUInt32();
                 uv1u = reader.ReadSingle();
                 uv1v = reader.ReadSingle();
                 uv2u = reader.ReadSingle();
@@ -87,7 +87,7 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeDynaUI(endianness));
-                writer.Write(Texture_AssetID);
+                writer.Write(Texture);
                 writer.Write(uv1u);
                 writer.Write(uv1v);
                 writer.Write(uv2u);
@@ -111,7 +111,5 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override bool HasReference(uint assetID) => Texture_AssetID == assetID || base.HasReference(assetID);
     }
 }

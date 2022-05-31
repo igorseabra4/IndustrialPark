@@ -23,7 +23,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetByte hdrDarken { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID BackgroundMusic_SoundAssetID { get; set; }
+        public AssetID BackgroundMusic { get; set; }
         [Category(dynaCategoryName)]
         public int scenePropertiesFlags { get; set; }
         [Category(dynaCategoryName)]
@@ -70,7 +70,7 @@ namespace IndustrialPark
             extraIdleDelay = 0x05;
             hdrGlow = 0x03;
             hdrDarken = 0x1E;
-            BackgroundMusic_SoundAssetID = 0;
+            BackgroundMusic = 0;
             scenePropertiesFlags = 1;
             waterTileWidth = 0;
             lodFadeDistance = 4;
@@ -95,7 +95,7 @@ namespace IndustrialPark
                 extraIdleDelay = reader.ReadByte();
                 hdrGlow = reader.ReadByte();
                 hdrDarken = reader.ReadByte();
-                BackgroundMusic_SoundAssetID = reader.ReadUInt32();
+                BackgroundMusic = reader.ReadUInt32();
                 scenePropertiesFlags = reader.ReadInt32();
                 waterTileWidth = reader.ReadSingle();
                 lodFadeDistance = reader.ReadSingle();
@@ -140,7 +140,7 @@ namespace IndustrialPark
                 writer.Write(extraIdleDelay);
                 writer.Write(hdrGlow);
                 writer.Write(hdrDarken);
-                writer.Write(BackgroundMusic_SoundAssetID);
+                writer.Write(BackgroundMusic);
                 writer.Write(scenePropertiesFlags);
                 writer.Write(waterTileWidth);
                 writer.Write(lodFadeDistance);
@@ -180,13 +180,11 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => BackgroundMusic_SoundAssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
-            if (BackgroundMusic_SoundAssetID == 0)
+            if (BackgroundMusic == 0)
                 result.Add("Scene Properties with no song reference");
-            Verify(BackgroundMusic_SoundAssetID, ref result);
+            Verify(BackgroundMusic, ref result);
             base.Verify(ref result);
         }
 

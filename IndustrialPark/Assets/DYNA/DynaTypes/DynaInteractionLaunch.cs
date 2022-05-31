@@ -13,9 +13,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public int LaunchType { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID LaunchObject_AssetID { get; set; }
+        public AssetID LaunchObject { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID Target_AssetID { get; set; }
+        public AssetID Target { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle Gravity { get; set; }
         [Category(dynaCategoryName)]
@@ -32,8 +32,8 @@ namespace IndustrialPark
                 reader.BaseStream.Position = dynaDataStartPosition;
 
                 LaunchType = reader.ReadInt32();
-                LaunchObject_AssetID = reader.ReadUInt32();
-                Target_AssetID = reader.ReadUInt32();
+                LaunchObject = reader.ReadUInt32();
+                Target = reader.ReadUInt32();
                 Gravity = reader.ReadSingle();
                 Height = reader.ReadSingle();
                 LeavesBone = reader.ReadInt32();
@@ -46,8 +46,8 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(LaunchType);
-                writer.Write(LaunchObject_AssetID);
-                writer.Write(Target_AssetID);
+                writer.Write(LaunchObject);
+                writer.Write(Target);
                 writer.Write(Gravity);
                 writer.Write(Height);
                 writer.Write(LeavesBone);
@@ -57,13 +57,10 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) =>
-            LaunchObject_AssetID == assetID || Target_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
-            Verify(LaunchObject_AssetID, ref result);
-            Verify(Target_AssetID, ref result);
+            Verify(LaunchObject, ref result);
+            Verify(Target, ref result);
             base.Verify(ref result);
         }
 

@@ -45,48 +45,48 @@ namespace IndustrialPark
                     case EmitterType.Circle:
                     case EmitterType.OCircleEdge:
                     case EmitterType.OCircle:
-                        PareSpecific = new PareSpecific_xPECircle();
+                        ParticleEmitterSettings = new PareSpecific_xPECircle();
                         break;
                     case EmitterType.RectEdge:
                     case EmitterType.Rect:
-                        PareSpecific = new PareSpecific_tagEmitRect();
+                        ParticleEmitterSettings = new PareSpecific_tagEmitRect();
                         break;
                     case EmitterType.Line:
-                        PareSpecific = new PareSpecific_tagEmitLine();
+                        ParticleEmitterSettings = new PareSpecific_tagEmitLine();
                         break;
                     case EmitterType.Volume:
-                        PareSpecific = new PareSpecific_tagEmitVolume();
+                        ParticleEmitterSettings = new PareSpecific_tagEmitVolume();
                         break;
                     case EmitterType.SphereEdge:
                     case EmitterType.Sphere:
                     case EmitterType.SphereEdge10:
                     case EmitterType.SphereEdge11:
-                        PareSpecific = new PareSpecific_tagEmitSphere();
+                        ParticleEmitterSettings = new PareSpecific_tagEmitSphere();
                         break;
                     case EmitterType.OffsetPoint:
-                        PareSpecific = new PareSpecific_tagEmitOffsetPoint();
+                        ParticleEmitterSettings = new PareSpecific_tagEmitOffsetPoint();
                         break;
                     case EmitterType.VCylEdge:
-                        PareSpecific = new PareSpecific_xPEVCyl();
+                        ParticleEmitterSettings = new PareSpecific_xPEVCyl();
                         break;
                     case EmitterType.EntityBone:
-                        PareSpecific = new PareSpecific_xPEEntBone();
+                        ParticleEmitterSettings = new PareSpecific_xPEEntBone();
                         break;
                     case EmitterType.EntityBound:
-                        PareSpecific = new PareSpecific_xPEEntBound();
+                        ParticleEmitterSettings = new PareSpecific_xPEEntBound();
                         break;
                     default:
-                        PareSpecific = new PareSpecific_Generic();
+                        ParticleEmitterSettings = new PareSpecific_Generic();
                         break;
                 }
             }
         }
         [Category(categoryName)]
-        public AssetID PARP_AssetID { get; set; }
+        public AssetID ParticleProperties { get; set; }
         [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter))]
-        public PareSpecific_Generic PareSpecific { get; set; }
+        public PareSpecific_Generic ParticleEmitterSettings { get; set; }
         [Category(categoryName)]
-        public AssetID Emitter_AssetID { get; set; }
+        public AssetID Emitter { get; set; }
         [Category(categoryName)]
         public AssetSingle Emitter_PosX { get; set; }
         [Category(categoryName)]
@@ -115,7 +115,7 @@ namespace IndustrialPark
                 EmitterFlags.FlagValueByte = reader.ReadByte();
                 _emitterType = (EmitterType)reader.ReadByte();
                 reader.BaseStream.Position += 2;
-                PARP_AssetID = reader.ReadUInt32();
+                ParticleProperties = reader.ReadUInt32();
 
                 // should be at 0x10 now
                 switch (_emitterType)
@@ -124,43 +124,43 @@ namespace IndustrialPark
                     case EmitterType.Circle:
                     case EmitterType.OCircleEdge:
                     case EmitterType.OCircle:
-                        PareSpecific = new PareSpecific_xPECircle(reader);
+                        ParticleEmitterSettings = new PareSpecific_xPECircle(reader);
                         break;
                     case EmitterType.RectEdge:
                     case EmitterType.Rect:
-                        PareSpecific = new PareSpecific_tagEmitRect(reader);
+                        ParticleEmitterSettings = new PareSpecific_tagEmitRect(reader);
                         break;
                     case EmitterType.Line:
-                        PareSpecific = new PareSpecific_tagEmitLine(reader);
+                        ParticleEmitterSettings = new PareSpecific_tagEmitLine(reader);
                         break;
                     case EmitterType.Volume:
-                        PareSpecific = new PareSpecific_tagEmitVolume(reader);
+                        ParticleEmitterSettings = new PareSpecific_tagEmitVolume(reader);
                         break;
                     case EmitterType.SphereEdge:
                     case EmitterType.Sphere:
                     case EmitterType.SphereEdge10:
                     case EmitterType.SphereEdge11:
-                        PareSpecific = new PareSpecific_tagEmitSphere(reader);
+                        ParticleEmitterSettings = new PareSpecific_tagEmitSphere(reader);
                         break;
                     case EmitterType.OffsetPoint:
-                        PareSpecific = new PareSpecific_tagEmitOffsetPoint(reader);
+                        ParticleEmitterSettings = new PareSpecific_tagEmitOffsetPoint(reader);
                         break;
                     case EmitterType.VCylEdge:
-                        PareSpecific = new PareSpecific_xPEVCyl(reader);
+                        ParticleEmitterSettings = new PareSpecific_xPEVCyl(reader);
                         break;
                     case EmitterType.EntityBone:
-                        PareSpecific = new PareSpecific_xPEEntBone(reader);
+                        ParticleEmitterSettings = new PareSpecific_xPEEntBone(reader);
                         break;
                     case EmitterType.EntityBound:
-                        PareSpecific = new PareSpecific_xPEEntBound(reader);
+                        ParticleEmitterSettings = new PareSpecific_xPEEntBound(reader);
                         break;
                     default:
-                        PareSpecific = new PareSpecific_Generic();
+                        ParticleEmitterSettings = new PareSpecific_Generic();
                         break;
                 } // 0x1C in size
 
                 reader.BaseStream.Position = 0x2C;
-                Emitter_AssetID = reader.ReadUInt32();
+                Emitter = reader.ReadUInt32();
                 Emitter_PosX = reader.ReadSingle();
                 Emitter_PosY = reader.ReadSingle();
                 Emitter_PosZ = reader.ReadSingle();
@@ -182,11 +182,11 @@ namespace IndustrialPark
                 writer.Write((byte)_emitterType);
                 writer.Write((byte)0);
                 writer.Write((byte)0);
-                writer.Write(PARP_AssetID);
-                writer.Write(PareSpecific.Serialize(game, endianness));
+                writer.Write(ParticleProperties);
+                writer.Write(ParticleEmitterSettings.Serialize(game, endianness));
                 while (writer.BaseStream.Length < 0x2C)
                     writer.Write((byte)0);
-                writer.Write(Emitter_AssetID);
+                writer.Write(Emitter);
                 writer.Write(Emitter_PosX);
                 writer.Write(Emitter_PosY);
                 writer.Write(Emitter_PosZ);
@@ -201,18 +201,15 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) =>
-            PareSpecific.HasReference(assetID) || PARP_AssetID == assetID || Emitter_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
-            PareSpecific.Verify(ref result);
+            ParticleEmitterSettings.Verify(ref result);
 
-            if (PARP_AssetID == 0)
-                result.Add("PARE with PARP_AssetID set to 0");
-            Verify(PARP_AssetID, ref result);
-            Verify(Emitter_AssetID, ref result);
+            if (ParticleProperties == 0)
+                result.Add("Particle Emitter with ParticleProperties set to 0");
+            Verify(ParticleProperties, ref result);
+            Verify(Emitter, ref result);
         }
     }
 }

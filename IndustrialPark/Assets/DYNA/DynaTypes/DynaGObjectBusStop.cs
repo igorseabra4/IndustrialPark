@@ -17,21 +17,21 @@ namespace IndustrialPark
         protected override short constVersion => 2;
 
         [Category(dynaCategoryName)]
-        public AssetID MRKR_ID { get; set; }
+        public AssetID Marker { get; set; }
         [Category(dynaCategoryName)]
         public PlayerEnum Player { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID CAM_ID { get; set; }
+        public AssetID Camera { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID SIMP_ID { get; set; }
+        public AssetID SimpleObject { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle Delay { get; set; }
 
         public DynaGObjectBusStop(string assetName, uint mrkrAssetId, uint camAssetId, uint simpAssetId) : base(assetName, DynaType.game_object__BusStop, 2)
         {
-            MRKR_ID = mrkrAssetId;
-            CAM_ID = camAssetId;
-            SIMP_ID = simpAssetId;
+            Marker = mrkrAssetId;
+            Camera = camAssetId;
+            SimpleObject = simpAssetId;
 
             Delay = 1.5f;
         }
@@ -42,10 +42,10 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
 
-                MRKR_ID = reader.ReadUInt32();
+                Marker = reader.ReadUInt32();
                 Player = (PlayerEnum)reader.ReadInt32();
-                CAM_ID = reader.ReadUInt32();
-                SIMP_ID = reader.ReadUInt32();
+                Camera = reader.ReadUInt32();
+                SimpleObject = reader.ReadUInt32();
                 Delay = reader.ReadSingle();
             }
         }
@@ -54,39 +54,27 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(MRKR_ID);
+                writer.Write(Marker);
                 writer.Write((int)Player);
-                writer.Write(CAM_ID);
-                writer.Write(SIMP_ID);
+                writer.Write(Camera);
+                writer.Write(SimpleObject);
                 writer.Write(Delay);
 
                 return writer.ToArray();
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (MRKR_ID == assetID)
-                return true;
-            if (CAM_ID == assetID)
-                return true;
-            if (SIMP_ID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
         public override void Verify(ref List<string> result)
         {
-            if (MRKR_ID == 0)
+            if (Marker == 0)
                 result.Add("Bus stop with no MRKR reference");
-            Verify(MRKR_ID, ref result);
-            if (CAM_ID == 0)
+            Verify(Marker, ref result);
+            if (Camera == 0)
                 result.Add("Bus stop with no CAM reference");
-            Verify(CAM_ID, ref result);
-            if (SIMP_ID == 0)
+            Verify(Camera, ref result);
+            if (SimpleObject == 0)
                 result.Add("Bus stop with no SIMP reference");
-            Verify(SIMP_ID, ref result);
+            Verify(SimpleObject, ref result);
 
             base.Verify(ref result);
         }

@@ -11,7 +11,7 @@ namespace IndustrialPark
         protected override short constVersion => 3;
 
         [Category(dynaCategoryName)]
-        public AssetID EmptyModel_AssetID { get; set; }
+        public AssetID EmptyModel { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle EmptyOffset_X { get; set; }
         [Category(dynaCategoryName)]
@@ -25,7 +25,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle EmptyScale_Z { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID FullModel_AssetID { get; set; }
+        public AssetID FullModel { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle FullOffset_X { get; set; }
         [Category(dynaCategoryName)]
@@ -53,14 +53,14 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaHudMeterEnd;
 
-                EmptyModel_AssetID = reader.ReadUInt32();
+                EmptyModel = reader.ReadUInt32();
                 EmptyOffset_X = reader.ReadSingle();
                 EmptyOffset_Y = reader.ReadSingle();
                 EmptyOffset_Z = reader.ReadSingle();
                 EmptyScale_X = reader.ReadSingle();
                 EmptyScale_Y = reader.ReadSingle();
                 EmptyScale_Z = reader.ReadSingle();
-                FullModel_AssetID = reader.ReadUInt32();
+                FullModel = reader.ReadUInt32();
                 FullOffset_X = reader.ReadSingle();
                 FullOffset_Y = reader.ReadSingle();
                 FullOffset_Z = reader.ReadSingle();
@@ -79,14 +79,14 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeDynaHudMeter(endianness));
-                writer.Write(EmptyModel_AssetID);
+                writer.Write(EmptyModel);
                 writer.Write(EmptyOffset_X);
                 writer.Write(EmptyOffset_Y);
                 writer.Write(EmptyOffset_Z);
                 writer.Write(EmptyScale_X);
                 writer.Write(EmptyScale_Y);
                 writer.Write(EmptyScale_Z);
-                writer.Write(FullModel_AssetID);
+                writer.Write(FullModel);
                 writer.Write(FullOffset_X);
                 writer.Write(FullOffset_Y);
                 writer.Write(FullOffset_Z);
@@ -102,20 +102,10 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (EmptyModel_AssetID == assetID)
-                return true;
-            if (FullModel_AssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
         public override void Verify(ref List<string> result)
         {
-            Verify(EmptyModel_AssetID, ref result);
-            Verify(FullModel_AssetID, ref result);
+            Verify(EmptyModel, ref result);
+            Verify(FullModel, ref result);
             base.Verify(ref result);
         }
     }

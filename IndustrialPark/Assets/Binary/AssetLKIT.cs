@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class EntryLKIT
+    public class EntryLKIT : GenericAssetDataContainer
     {
         public int Type { get; set; }
         public AssetSingle ColorR { get; set; }
@@ -97,7 +97,7 @@ namespace IndustrialPark
     {
         private const string categoryName = "Light Kit";
         [Category(categoryName)]
-        public AssetID Group_AssetID { get; set; }
+        public AssetID Group { get; set; }
         [Category(categoryName)]
         public EntryLKIT[] Lights { get; set; }
 
@@ -119,7 +119,7 @@ namespace IndustrialPark
             using (var reader = new EndianBinaryReader(data, endianness))
             {
                 reader.BaseStream.Position = 0x04;
-                Group_AssetID = reader.ReadUInt32();
+                Group = reader.ReadUInt32();
                 int lightCount = reader.ReadInt32();
                 Lights = new EntryLKIT[lightCount];
 
@@ -138,7 +138,7 @@ namespace IndustrialPark
             {
                 writer.WriteMagic("LKIT");
 
-                writer.Write(Group_AssetID);
+                writer.Write(Group);
                 writer.Write(Lights.Length);
                 writer.Write(0);
 
@@ -148,7 +148,5 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override bool HasReference(uint assetID) => Group_AssetID == assetID;
     }
 }

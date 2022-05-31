@@ -11,7 +11,7 @@ namespace IndustrialPark
         protected override short constVersion => 13;
 
         [Category(dynaCategoryName)]
-        public AssetID Entity_AssetID { get; set; }
+        public AssetID Entity { get; set; }
         [Category(dynaCategoryName)]
         public int EnterX { get; set; }
         [Category(dynaCategoryName)]
@@ -75,7 +75,7 @@ namespace IndustrialPark
 
         public DynaGObjectBungeeHook(string assetName, uint entityAssetID) : base(assetName, DynaType.game_object__bungee_hook, 13)
         {
-            Entity_AssetID = entityAssetID;
+            Entity = entityAssetID;
 
             AttachDist = 3;
             AttachTravelTime = 0.5f;
@@ -112,7 +112,7 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
 
-                Entity_AssetID = reader.ReadUInt32();
+                Entity = reader.ReadUInt32();
                 EnterX = reader.ReadInt32();
                 EnterY = reader.ReadInt32();
                 EnterZ = reader.ReadInt32();
@@ -150,7 +150,7 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(Entity_AssetID);
+                writer.Write(Entity);
                 writer.Write(EnterX);
                 writer.Write(EnterY);
                 writer.Write(EnterZ);
@@ -185,12 +185,10 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override bool HasReference(uint assetID) => Entity_AssetID == assetID || base.HasReference(assetID);
-
+        
         public override void Verify(ref List<string> result)
         {
-            Verify(Entity_AssetID, ref result);
+            Verify(Entity, ref result);
 
             base.Verify(ref result);
         }

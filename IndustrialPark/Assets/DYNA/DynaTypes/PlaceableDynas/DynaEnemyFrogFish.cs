@@ -18,8 +18,8 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public EnemyFrogFishType FrogFishType
         {
-            get => (EnemyFrogFishType)(uint)Model_AssetID;
-            set => Model_AssetID = (uint)value;
+            get => (EnemyFrogFishType)(uint)Model;
+            set => Model = (uint)value;
         }
         [Category(dynaCategoryName)]
         public AssetID Unknown { get; set; }
@@ -44,14 +44,6 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (Unknown == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
@@ -60,6 +52,6 @@ namespace IndustrialPark
         }
 
         public static bool dontRender = false;
-        public override bool DontRender { get => dontRender; }
+        public override bool DontRender => dontRender;
     }
 }

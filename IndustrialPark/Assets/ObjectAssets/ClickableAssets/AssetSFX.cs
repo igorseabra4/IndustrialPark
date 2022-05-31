@@ -7,7 +7,7 @@ namespace IndustrialPark
 {
     public class AssetSFX : BaseAsset, IRenderableAsset, IClickableAsset, IScalableAsset
     {
-        private const string categoryName = "Sound Effect";
+        private const string categoryName = "SFX";
 
         [Category(categoryName)]
         public FlagBitmask Flags08 { get; set; } = ByteFlagsDescriptor();
@@ -18,9 +18,9 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle MinFrequency { get; set; }
         [Category(categoryName)]
-        public AssetID Sound_AssetID { get; set; }
+        public AssetID Sound { get; set; }
         [Category(categoryName)]
-        public AssetID AttachAssetID { get; set; }
+        public AssetID Attach { get; set; }
         [Category(categoryName)]
         public byte LoopCount { get; set; }
         [Category(categoryName)]
@@ -73,7 +73,7 @@ namespace IndustrialPark
                 {
                     new Link(game)
                     {
-                        TargetAssetID = assetID,
+                        TargetAsset = assetID,
                         EventReceiveID = (ushort)EventBFBB.ScenePrepare,
                         EventSendID = (ushort)EventBFBB.Play
                     }
@@ -105,8 +105,8 @@ namespace IndustrialPark
                 Flags09.FlagValueByte = reader.ReadByte();
                 Frequency = reader.ReadInt16();
                 MinFrequency = reader.ReadSingle();
-                Sound_AssetID = reader.ReadUInt32();
-                AttachAssetID = reader.ReadUInt32();
+                Sound = reader.ReadUInt32();
+                Attach = reader.ReadUInt32();
                 LoopCount = reader.ReadByte();
                 Priority = reader.ReadByte();
                 Volume = reader.ReadByte();
@@ -129,8 +129,8 @@ namespace IndustrialPark
                 writer.Write(Flags09.FlagValueByte);
                 writer.Write(Frequency);
                 writer.Write(MinFrequency);
-                writer.Write(Sound_AssetID);
-                writer.Write(AttachAssetID);
+                writer.Write(Sound);
+                writer.Write(Attach);
                 writer.Write(LoopCount);
                 writer.Write(Priority);
                 writer.Write(Volume);
@@ -145,15 +145,13 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => Sound_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
-            if (Sound_AssetID == 0)
-                result.Add("SFX with Sound_AssetID set to 0");
-            Verify(Sound_AssetID, ref result);
+            if (Sound == 0)
+                result.Add("SFX with Sound set to 0");
+            Verify(Sound, ref result);
         }
 
         private Matrix world;

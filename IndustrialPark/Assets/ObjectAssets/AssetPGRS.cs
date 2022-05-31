@@ -56,7 +56,6 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => _progressLinks.Any(link => link.HasReference(assetID)) || base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {
@@ -64,8 +63,8 @@ namespace IndustrialPark
 
             foreach (Link link in _progressLinks)
             {
-                Verify(link.TargetAssetID, ref result);
-                Verify(link.ArgumentAssetID, ref result);
+                Verify(link.TargetAsset, ref result);
+                Verify(link.ArgumentAsset, ref result);
 
                 if (link.EventSendID == 0 || link.EventSendID.ToString() == ((int)link.EventSendID).ToString())
                     result.Add("Progress link sends event of unknown type for TSSM: " + link.EventSendID.ToString());

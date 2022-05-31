@@ -14,13 +14,13 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public FlagBitmask LaserBeamFlags { get; set; } = IntFlagsDescriptor();
         [Category(dynaCategoryName)]
-        public AssetID Attach_AssetID { get; set; }
+        public AssetID Attach { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID Target_AssetID { get; set; }
+        public AssetID Target { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID OriginEmitter_AssetID { get; set; }
+        public AssetID OriginEmitter { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID StrikeEmitter_AssetID { get; set; }
+        public AssetID StrikeEmitter { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle OriginX { get; set; }
         [Category(dynaCategoryName)]
@@ -56,7 +56,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle DamageOther { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID BeamTexture_AssetID { get; set; }
+        public AssetID BeamTexture { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle BeamThickness { get; set; }
         [Category(dynaCategoryName)]
@@ -72,7 +72,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetColor BeamColor { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID RibbonTexture_AssetID { get; set; }
+        public AssetID RibbonTexture { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle RibbonLifeTime { get; set; }
         [Category(dynaCategoryName)]
@@ -105,10 +105,10 @@ namespace IndustrialPark
                 reader.BaseStream.Position = dynaDataStartPosition;
 
                 LaserBeamFlags.FlagValueInt = reader.ReadUInt32();
-                Attach_AssetID = reader.ReadUInt32();
-                Target_AssetID = reader.ReadUInt32();
-                OriginEmitter_AssetID = reader.ReadUInt32();
-                StrikeEmitter_AssetID = reader.ReadUInt32();
+                Attach = reader.ReadUInt32();
+                Target = reader.ReadUInt32();
+                OriginEmitter = reader.ReadUInt32();
+                StrikeEmitter = reader.ReadUInt32();
                 OriginX = reader.ReadSingle();
                 OriginY = reader.ReadSingle();
                 OriginZ = reader.ReadSingle();
@@ -127,7 +127,7 @@ namespace IndustrialPark
                 DamagePlayer = reader.ReadSingle();
                 DamageNPC = reader.ReadSingle();
                 DamageOther = reader.ReadSingle();
-                BeamTexture_AssetID = reader.ReadUInt32();
+                BeamTexture = reader.ReadUInt32();
                 BeamThickness = reader.ReadSingle();
                 BeamFadeDist = reader.ReadSingle();
                 BeamMaxDist = reader.ReadSingle();
@@ -136,7 +136,7 @@ namespace IndustrialPark
                 BeamBlendMode = reader.ReadByte();
                 reader.ReadInt16();
                 BeamColor = reader.ReadColor();
-                RibbonTexture_AssetID = reader.ReadUInt32();
+                RibbonTexture = reader.ReadUInt32();
                 RibbonLifeTime = reader.ReadSingle();
                 RibbonScale = reader.ReadSingle();
                 RibbonOrient = reader.ReadByte();
@@ -156,10 +156,10 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(LaserBeamFlags.FlagValueInt);
-                writer.Write(Attach_AssetID);
-                writer.Write(Target_AssetID);
-                writer.Write(OriginEmitter_AssetID);
-                writer.Write(StrikeEmitter_AssetID);
+                writer.Write(Attach);
+                writer.Write(Target);
+                writer.Write(OriginEmitter);
+                writer.Write(StrikeEmitter);
                 writer.Write(OriginX);
                 writer.Write(OriginY);
                 writer.Write(OriginZ);
@@ -178,7 +178,7 @@ namespace IndustrialPark
                 writer.Write(DamagePlayer);
                 writer.Write(DamageNPC);
                 writer.Write(DamageOther);
-                writer.Write(BeamTexture_AssetID);
+                writer.Write(BeamTexture);
                 writer.Write(BeamThickness);
                 writer.Write(BeamFadeDist);
                 writer.Write(BeamMaxDist);
@@ -187,7 +187,7 @@ namespace IndustrialPark
                 writer.Write(BeamBlendMode);
                 writer.Write((short)0);
                 writer.Write(BeamColor);
-                writer.Write(RibbonTexture_AssetID);
+                writer.Write(RibbonTexture);
                 writer.Write(RibbonLifeTime);
                 writer.Write(RibbonScale);
                 writer.Write(RibbonOrient);
@@ -204,18 +204,14 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => Attach_AssetID == assetID || Target_AssetID == assetID ||
-            OriginEmitter_AssetID == assetID || StrikeEmitter_AssetID == assetID || BeamTexture_AssetID == assetID ||
-            RibbonTexture_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
-            Verify(Attach_AssetID, ref result);
-            Verify(Target_AssetID, ref result);
-            Verify(OriginEmitter_AssetID, ref result);
-            Verify(StrikeEmitter_AssetID, ref result);
-            Verify(BeamTexture_AssetID, ref result);
-            Verify(RibbonTexture_AssetID, ref result);
+            Verify(Attach, ref result);
+            Verify(Target, ref result);
+            Verify(OriginEmitter, ref result);
+            Verify(StrikeEmitter, ref result);
+            Verify(BeamTexture, ref result);
+            Verify(RibbonTexture, ref result);
             base.Verify(ref result);
         }
     }

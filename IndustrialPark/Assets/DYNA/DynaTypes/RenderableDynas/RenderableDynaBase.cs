@@ -103,7 +103,7 @@ namespace IndustrialPark
         [Browsable(false)]
         public bool SpecialBlendMode => true;
 
-        public abstract bool DontRender { get; }
+        protected abstract bool DontRender { get; }
 
         public virtual bool ShouldDraw(SharpRenderer renderer)
         {

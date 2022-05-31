@@ -77,24 +77,14 @@ namespace IndustrialPark
             return AHDR.data;
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            foreach (FSB3_File a in Entries)
-                foreach (EntrySoundInfo_GCN_V2 e in a.soundEntries)
-                    if (e.SoundAssetID == assetID)
-                        return true;
-
-            return base.HasReference(assetID);
-        }
-
         public override void Verify(ref List<string> result)
         {
             foreach (FSB3_File a in Entries)
                 foreach (EntrySoundInfo_GCN_V2 e in a.soundEntries)
                 {
-                    if (e.SoundAssetID == 0)
+                    if (e.Sound == 0)
                         result.Add("SNDI entry with SoundAssetID set to 0");
-                    Verify(e.SoundAssetID, ref result);
+                    Verify(e.Sound, ref result);
                 }
         }
 
@@ -246,7 +236,7 @@ namespace IndustrialPark
                 newEntries.Add(new FSB3_File());
 
             FSB3_File temp = new FSB3_File(new BinaryReader(new MemoryStream(soundData)));
-            temp.soundEntries[0].SoundAssetID = assetID;
+            temp.soundEntries[0].Sound = assetID;
             newEntries[0].Merge(temp);
             //newEntries.Add(temp);
 
@@ -262,7 +252,7 @@ namespace IndustrialPark
                 List<EntrySoundInfo_GCN_V2> soundEntries = entries[i].soundEntries.ToList();
 
                 for (int j = 0; j < soundEntries.Count; j++)
-                    if (soundEntries[j].SoundAssetID == assetID)
+                    if (soundEntries[j].Sound == assetID)
                     {
                         soundEntries.RemoveAt(j);
                         j--;
@@ -284,7 +274,7 @@ namespace IndustrialPark
         {
             foreach (FSB3_File f in Entries)
                 for (int i = 0; i < f.numSamples; i++)
-                    if (f.soundEntries[i].SoundAssetID == assetID)
+                    if (f.soundEntries[i].Sound == assetID)
                     {
                         var r = f;
                         r.soundEntries = new EntrySoundInfo_GCN_V2[] { f.soundEntries[i] };
@@ -304,7 +294,7 @@ namespace IndustrialPark
             {
                 var entries = fsb3s[i].soundEntries.ToList();
                 for (int j = 0; i < entries.Count; j++)
-                    if (!assetIDs.Contains(entries[j].SoundAssetID))
+                    if (!assetIDs.Contains(entries[j].Sound))
                         entries.RemoveAt(j--);
                 if (entries.Count == 0)
                     fsb3s.RemoveAt(i--);

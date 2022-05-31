@@ -10,11 +10,11 @@ namespace IndustrialPark
         protected override short constVersion => 2;
 
         [Category(dynaCategoryName)]
-        public AssetID Model_AssetID { get; set; }
+        public AssetID Model { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID AnimList_AssetID { get; set; }
+        public AssetID AnimationList { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID Surface_AssetID { get; set; }
+        public AssetID Surface { get; set; }
 
         public DynaUIModel(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.ui__model, game, endianness)
         {
@@ -22,9 +22,9 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaUIEnd;
 
-                Model_AssetID = reader.ReadUInt32();
-                AnimList_AssetID = reader.ReadUInt32();
-                Surface_AssetID = reader.ReadUInt32();
+                Model = reader.ReadUInt32();
+                AnimationList = reader.ReadUInt32();
+                Surface = reader.ReadUInt32();
             }
         }
 
@@ -33,18 +33,12 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeDynaUI(endianness));
-                writer.Write(Model_AssetID);
-                writer.Write(AnimList_AssetID);
-                writer.Write(Surface_AssetID);
+                writer.Write(Model);
+                writer.Write(AnimationList);
+                writer.Write(Surface);
 
                 return writer.ToArray();
             }
         }
-
-        public override bool HasReference(uint assetID) =>
-            Model_AssetID == assetID ||
-            AnimList_AssetID == assetID ||
-            Surface_AssetID == assetID ||
-            base.HasReference(assetID);
     }
 }

@@ -100,14 +100,14 @@ namespace IndustrialPark
 
     public class CamSpecific_Path : CamSpecific_Generic
     {
-        public AssetID Unknown_AssetID { get; set; }
+        public AssetID Unknown { get; set; }
         public AssetSingle TimeEnd { get; set; }
         public AssetSingle TimeDelay { get; set; }
 
         public CamSpecific_Path() { }
         public CamSpecific_Path(EndianBinaryReader reader)
         {
-            Unknown_AssetID = reader.ReadUInt32();
+            Unknown = reader.ReadUInt32();
             TimeEnd = reader.ReadSingle();
             TimeDelay = reader.ReadSingle();
         }
@@ -116,15 +116,14 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(Unknown_AssetID);
+                writer.Write(Unknown);
                 writer.Write(TimeEnd);
                 writer.Write(TimeDelay);
                 return writer.ToArray();
             }
         }
 
-        public override bool HasReference(uint assetID) => Unknown_AssetID == assetID;
-        public override void Verify(ref List<string> result) => Asset.Verify(Unknown_AssetID, ref result);
+        public override void Verify(ref List<string> result) => Asset.Verify(Unknown, ref result);
     }
 
     public class CamSpecific_StaticFollow : CamSpecific_Generic

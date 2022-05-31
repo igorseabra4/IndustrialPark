@@ -96,9 +96,9 @@ namespace IndustrialPark
         [Category(categoryName)]
         public int LobSalvo { get; set; }
         [Category(categoryName)]
-        public AssetID ProjectileType_AssetID { get; set; }
+        public AssetID ProjectileType { get; set; }
         [Category(categoryName)]
-        public AssetID Bullseye_MovePoint_AssetID { get; set; }
+        public AssetID Bullseye_MovePoint { get; set; }
         [Category(categoryName)]
         public AssetSingle LobArcness { get; set; }
         [Category(categoryName)]
@@ -114,9 +114,9 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle ExtenderReloadTime { get; set; }
         [Category(categoryName)]
-        public AssetID MovePoint_AssetID { get; set; }
+        public AssetID MovePoint { get; set; }
         [Category(categoryName)]
-        public AssetID Path_AssetID { get; set; }
+        public AssetID Path { get; set; }
         [Category(categoryName)]
         public int MinPlayerPowerups { get; set; }
         [Category(categoryName)]
@@ -151,8 +151,8 @@ namespace IndustrialPark
                 LobDurReload = reader.ReadSingle();
                 LobRange = reader.ReadSingle();
                 LobSalvo = reader.ReadInt32();
-                ProjectileType_AssetID = reader.ReadUInt32();
-                Bullseye_MovePoint_AssetID = reader.ReadUInt32();
+                ProjectileType = reader.ReadUInt32();
+                Bullseye_MovePoint = reader.ReadUInt32();
                 LobArcness = reader.ReadSingle();
                 LobHeavy = reader.ReadSingle();
                 ExtenderRange = reader.ReadSingle();
@@ -160,8 +160,8 @@ namespace IndustrialPark
                 ExtenderDuration = reader.ReadSingle();
                 ExtenderRate = reader.ReadSingle();
                 ExtenderReloadTime = reader.ReadSingle();
-                MovePoint_AssetID = reader.ReadUInt32();
-                Path_AssetID = reader.ReadUInt32();
+                MovePoint = reader.ReadUInt32();
+                Path = reader.ReadUInt32();
                 MinPlayerPowerups = reader.ReadInt32();
                 MinGameDifficulty = reader.ReadInt32();
             }
@@ -192,8 +192,8 @@ namespace IndustrialPark
                 writer.Write(LobDurReload);
                 writer.Write(LobRange);
                 writer.Write(LobSalvo);
-                writer.Write(ProjectileType_AssetID);
-                writer.Write(Bullseye_MovePoint_AssetID);
+                writer.Write(ProjectileType);
+                writer.Write(Bullseye_MovePoint);
                 writer.Write(LobArcness);
                 writer.Write(LobHeavy);
                 writer.Write(ExtenderRange);
@@ -201,8 +201,8 @@ namespace IndustrialPark
                 writer.Write(ExtenderDuration);
                 writer.Write(ExtenderRate);
                 writer.Write(ExtenderReloadTime);
-                writer.Write(MovePoint_AssetID);
-                writer.Write(Path_AssetID);
+                writer.Write(MovePoint);
+                writer.Write(Path);
                 writer.Write(MinPlayerPowerups);
                 writer.Write(MinGameDifficulty);
                 writer.Write(SerializeLinks(endianness));
@@ -213,22 +213,15 @@ namespace IndustrialPark
         public static bool dontRender = false;
 
         public override bool DontRender => dontRender;
-
-        public override bool HasReference(uint assetID) =>
-            ProjectileType_AssetID == assetID ||
-            Bullseye_MovePoint_AssetID == assetID ||
-            MovePoint_AssetID == assetID ||
-            Path_AssetID == assetID ||
-            base.HasReference(assetID);
-     
+             
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
-            Verify(ProjectileType_AssetID, ref result);
-            Verify(Bullseye_MovePoint_AssetID, ref result);
-            Verify(MovePoint_AssetID, ref result);
-            Verify(Path_AssetID, ref result);
+            Verify(ProjectileType, ref result);
+            Verify(Bullseye_MovePoint, ref result);
+            Verify(MovePoint, ref result);
+            Verify(Path, ref result);
         }
 
         public override void Draw(SharpRenderer renderer)
@@ -236,8 +229,8 @@ namespace IndustrialPark
             Vector4 Color = _color;
             Color.W = Color.W == 0f ? 1f : Color.W;
 
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
-                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * Color : Color, UvAnimOffset);
+            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_model))
+                ArchiveEditorFunctions.renderingDictionary[_model].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * Color : Color, UvAnimOffset);
             else
                 renderer.DrawCube(LocalWorld(), isSelected);
         }

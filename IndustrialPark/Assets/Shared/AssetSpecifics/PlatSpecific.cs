@@ -33,16 +33,16 @@ namespace IndustrialPark
     public class PlatSpecific_FallingPlatform : PlatSpecific_Generic
     {
         public AssetSingle Speed { get; set; }
-        public AssetID BustModel_AssetID { get; set; }
+        public AssetID BustModel { get; set; }
 
         public PlatSpecific_FallingPlatform()
         {
-            BustModel_AssetID = 0;
+            BustModel = 0;
         }
         public PlatSpecific_FallingPlatform(EndianBinaryReader reader)
         {
             Speed = reader.ReadSingle();
-            BustModel_AssetID = reader.ReadUInt32();
+            BustModel = reader.ReadUInt32();
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
@@ -50,13 +50,12 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(Speed);
-                writer.Write(BustModel_AssetID);
+                writer.Write(BustModel);
                 return writer.ToArray();
             }
         }
 
-        public override bool HasReference(uint assetID) => BustModel_AssetID == assetID;
-        public override void Verify(ref List<string> result) => Verify(BustModel_AssetID, ref result);
+        public override void Verify(ref List<string> result) => Verify(BustModel, ref result);
     }
 
     public class PlatSpecific_FR : PlatSpecific_Generic
@@ -92,7 +91,7 @@ namespace IndustrialPark
     {
         public AssetSingle BreakawayDelay { get; set; }
         [Description("Not present in Movie")]
-        public AssetID BustModel_AssetID { get; set; }
+        public AssetID BustModel { get; set; }
         public AssetSingle ResetDelay { get; set; }
         public FlagBitmask Settings { get; set; } = IntFlagsDescriptor("Allow sneak");
         [Description("Incredibles only")]
@@ -100,7 +99,7 @@ namespace IndustrialPark
 
         public PlatSpecific_BreakawayPlatform()
         {
-            BustModel_AssetID = 0;
+            BustModel = 0;
         }
 
         public PlatSpecific_BreakawayPlatform(AssetTemplate template)
@@ -118,7 +117,7 @@ namespace IndustrialPark
         {
             BreakawayDelay = reader.ReadSingle();
             if (game != Game.Incredibles)
-                BustModel_AssetID = reader.ReadUInt32();
+                BustModel = reader.ReadUInt32();
             ResetDelay = reader.ReadSingle();
             Settings.FlagValueInt = reader.ReadUInt32();
             if (game == Game.Incredibles)
@@ -131,7 +130,7 @@ namespace IndustrialPark
             {
                 writer.Write(BreakawayDelay);
                 if (game != Game.Incredibles)
-                    writer.Write(BustModel_AssetID);
+                    writer.Write(BustModel);
                 writer.Write(ResetDelay);
                 writer.Write(Settings.FlagValueInt);
                 if (game == Game.Incredibles)
@@ -148,9 +147,9 @@ namespace IndustrialPark
         public AssetSingle Height3 { get; set; }
         [Description("Not present in Scooby")]
         public AssetSingle HeightBubbleBounce { get; set; }
-        public AssetID Anim1_AssetID { get; set; }
-        public AssetID Anim2_AssetID { get; set; }
-        public AssetID Anim3_AssetID { get; set; }
+        public AssetID Animation1 { get; set; }
+        public AssetID Animation2 { get; set; }
+        public AssetID Animation3 { get; set; }
         public AssetSingle DirectionX { get; set; }
         public AssetSingle DirectionY { get; set; }
         public AssetSingle DirectionZ { get; set; }
@@ -162,9 +161,9 @@ namespace IndustrialPark
 
         public PlatSpecific_Springboard()
         {
-            Anim1_AssetID = 0;
-            Anim2_AssetID = 0;
-            Anim3_AssetID = 0;
+            Animation1 = 0;
+            Animation2 = 0;
+            Animation3 = 0;
         }
 
         public PlatSpecific_Springboard(EndianBinaryReader reader, Game game) : this()
@@ -174,9 +173,9 @@ namespace IndustrialPark
             Height3 = reader.ReadSingle();
             if (game != Game.Scooby)
                 HeightBubbleBounce = reader.ReadSingle();
-            Anim1_AssetID = reader.ReadUInt32();
-            Anim2_AssetID = reader.ReadUInt32();
-            Anim3_AssetID = reader.ReadUInt32();
+            Animation1 = reader.ReadUInt32();
+            Animation2 = reader.ReadUInt32();
+            Animation3 = reader.ReadUInt32();
             DirectionX = reader.ReadSingle();
             DirectionY = reader.ReadSingle();
             DirectionZ = reader.ReadSingle();
@@ -193,9 +192,9 @@ namespace IndustrialPark
                 writer.Write(Height3);
                 if (game != Game.Scooby)
                     writer.Write(HeightBubbleBounce);
-                writer.Write(Anim1_AssetID);
-                writer.Write(Anim2_AssetID);
-                writer.Write(Anim3_AssetID);
+                writer.Write(Animation1);
+                writer.Write(Animation2);
+                writer.Write(Animation3);
                 writer.Write(DirectionX);
                 writer.Write(DirectionY);
                 writer.Write(DirectionZ);
@@ -206,13 +205,11 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => Anim1_AssetID == assetID || Anim2_AssetID == assetID || Anim3_AssetID == assetID;
-
         public override void Verify(ref List<string> result)
         {
-            Verify(Anim1_AssetID, ref result);
-            Verify(Anim2_AssetID, ref result);
-            Verify(Anim3_AssetID, ref result);
+            Verify(Animation1, ref result);
+            Verify(Animation2, ref result);
+            Verify(Animation3, ref result);
         }
     }
 

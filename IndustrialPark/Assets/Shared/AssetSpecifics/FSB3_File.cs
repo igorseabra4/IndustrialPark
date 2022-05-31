@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace IndustrialPark
 {
-    public class FSB3_File
+    public class FSB3_File : GenericAssetDataContainer
     {
         // header
         // char4
@@ -205,17 +205,17 @@ namespace IndustrialPark
 
             List<uint> existingSounds = new List<uint>(soundEntries.Length);
             foreach (EntrySoundInfo_GCN_V2 s in soundEntries)
-                existingSounds.Add(s.SoundAssetID);
+                existingSounds.Add(s.Sound);
 
             foreach (EntrySoundInfo_GCN_V2 s in file.soundEntries)
-                if (!existingSounds.Contains(s.SoundAssetID))
+                if (!existingSounds.Contains(s.Sound))
                     list.Add(s);
 
             soundEntries = list.ToArray();
         }
     }
 
-    public class EntrySoundInfo_GCN_V2
+    public class EntrySoundInfo_GCN_V2 : GenericAssetDataContainer
     {
         public int templengthcompressedbytes;
 
@@ -329,7 +329,7 @@ namespace IndustrialPark
         }
 
         public uint _assetID;
-        public AssetID SoundAssetID { get => _assetID; set => _assetID = value; }
+        public AssetID Sound { get => _assetID; set => _assetID = value; }
         public byte loop { get; set; }
         public byte index { get; set; }
         public byte fileIndex { get; set; }
@@ -337,7 +337,7 @@ namespace IndustrialPark
 
         public void SetEntryPartTwo(BinaryReader binaryReader)
         {
-            SoundAssetID = BitConverter.ToUInt32(BitConverter.GetBytes(binaryReader.ReadUInt32()).Reverse().ToArray(), 0);
+            Sound = BitConverter.ToUInt32(BitConverter.GetBytes(binaryReader.ReadUInt32()).Reverse().ToArray(), 0);
             loop = binaryReader.ReadByte();
             index = binaryReader.ReadByte();
             fileIndex = binaryReader.ReadByte();
@@ -346,7 +346,7 @@ namespace IndustrialPark
 
         public void SetEntryPartTwo(EntrySoundInfo_GCN_V2 tempEntry)
         {
-            SoundAssetID = tempEntry.SoundAssetID;
+            Sound = tempEntry.Sound;
             loop = tempEntry.loop;
             index = tempEntry.index;
             fileIndex = tempEntry.fileIndex;
@@ -357,7 +357,7 @@ namespace IndustrialPark
         {
             List<byte> list = new List<byte>(8);
 
-            list.AddRange(BitConverter.GetBytes(SoundAssetID).Reverse());
+            list.AddRange(BitConverter.GetBytes(Sound).Reverse());
             list.Add(loop);
             list.Add(index);
             list.Add(fileIndex);
@@ -392,7 +392,7 @@ namespace IndustrialPark
 
         public override string ToString()
         {
-            return Program.MainForm.GetAssetNameFromID(SoundAssetID);
+            return Program.MainForm.GetAssetNameFromID(Sound);
         }
     }
 }

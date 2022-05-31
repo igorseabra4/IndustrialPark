@@ -136,8 +136,8 @@ namespace IndustrialPark
                                 continue;
 
                             Asset targetAsset = null;
-                            if (archive.ContainsAsset(assetEvent.TargetAssetID))
-                                targetAsset = archive.GetFromAssetID(assetEvent.TargetAssetID);
+                            if (archive.ContainsAsset(assetEvent.TargetAsset))
+                                targetAsset = archive.GetFromAssetID(assetEvent.TargetAsset);
 
                             if (recieverAssetType != AssetType.Null)
                             {
@@ -150,25 +150,25 @@ namespace IndustrialPark
                             string eventName = $"{objectAsset.assetName} ({assetEvent.EventReceiveID}) => {assetEvent.EventSendID} => ";
 
                             if (targetAsset == null)
-                                eventName += $"0x{assetEvent.TargetAssetID.ToString("X8")}";
+                                eventName += $"0x{assetEvent.TargetAsset.ToString("X8")}";
                             else
                                 eventName += $"{targetAsset.assetName}";
 
                             eventName += $" [{assetEvent.FloatParameter1}, {assetEvent.FloatParameter2}, {assetEvent.FloatParameter3}, {assetEvent.FloatParameter4}";
 
-                            if (assetEvent.ArgumentAssetID != 0)
+                            if (assetEvent.ArgumentAsset != 0)
                             {
-                                if (archive.ContainsAsset(assetEvent.ArgumentAssetID))
-                                    eventName += $", {archive.GetFromAssetID(assetEvent.ArgumentAssetID).assetName}";
+                                if (archive.ContainsAsset(assetEvent.ArgumentAsset))
+                                    eventName += $", {archive.GetFromAssetID(assetEvent.ArgumentAsset).assetName}";
                                 else
-                                    eventName += $", 0x{assetEvent.ArgumentAssetID.ToString("X8")}";
+                                    eventName += $", 0x{assetEvent.ArgumentAsset.ToString("X8")}";
                             }
-                            if (assetEvent.SourceCheckAssetID != 0)
+                            if (assetEvent.SourceCheckAsset != 0)
                             {
-                                if (archive.ContainsAsset(assetEvent.SourceCheckAssetID))
-                                    eventName += $", {archive.GetFromAssetID(assetEvent.SourceCheckAssetID).assetName}";
+                                if (archive.ContainsAsset(assetEvent.SourceCheckAsset))
+                                    eventName += $", {archive.GetFromAssetID(assetEvent.SourceCheckAsset).assetName}";
                                 else
-                                    eventName += $", 0x{assetEvent.SourceCheckAssetID.ToString("X8")}";
+                                    eventName += $", 0x{assetEvent.SourceCheckAsset.ToString("X8")}";
                             }
 
                             eventName += "]";

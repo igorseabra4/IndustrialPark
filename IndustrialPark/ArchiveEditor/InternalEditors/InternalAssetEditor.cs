@@ -173,8 +173,7 @@ namespace IndustrialPark
             buttonSetVertexColors.Enabled = !asset.IsNativeData;
             tableLayoutPanel1.Controls.Add(buttonSetVertexColors, 0, 1);
 
-            CheckBox ignoreMeshColors = new CheckBox() { Dock = DockStyle.Fill, Text = "Ignore Mesh Colors", AutoSize = true };
-            ignoreMeshColors.Checked = true;
+            CheckBox ignoreMeshColors = new CheckBox() { Dock = DockStyle.Fill, Text = "Ignore Mesh Colors", AutoSize = true, Checked = true };
             tableLayoutPanel1.Controls.Add(ignoreMeshColors, 0, 2);
             CheckBox flipUVs = new CheckBox() { Dock = DockStyle.Fill, Text = "Flip UVs", AutoSize = true };
             tableLayoutPanel1.Controls.Add(flipUVs, 0, 3);

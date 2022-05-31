@@ -11,7 +11,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public int UnknownInt08 { get; set; }
         [Category(categoryName)]
-        public AssetID Model_AssetID { get; set; }
+        public AssetID Model { get; set; }
         [Category(categoryName)]
         public int UnknownInt10 { get; set; }
         [Category(categoryName)]
@@ -46,7 +46,7 @@ namespace IndustrialPark
                 reader.BaseStream.Position = baseHeaderEndPosition;
 
                 UnknownInt08 = reader.ReadInt32();
-                Model_AssetID = reader.ReadUInt32();
+                Model = reader.ReadUInt32();
                 UnknownInt10 = reader.ReadInt32();
                 UnknownInt14 = reader.ReadInt32();
                 UnknownInt18 = reader.ReadInt32();
@@ -69,7 +69,7 @@ namespace IndustrialPark
             {
                 writer.Write(SerializeBase(endianness));
                 writer.Write(UnknownInt08);
-                writer.Write(Model_AssetID);
+                writer.Write(Model);
                 writer.Write(UnknownInt10);
                 writer.Write(UnknownInt14);
                 writer.Write(UnknownInt18);
@@ -88,15 +88,13 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => Model_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
-            if (Model_AssetID == 0)
-                result.Add("PRJT with Model_AssetID set to 0");
-            Verify(Model_AssetID, ref result);
+            if (Model == 0)
+                result.Add("Projectile with Model set to 0");
+            Verify(Model, ref result);
         }
     }
 }

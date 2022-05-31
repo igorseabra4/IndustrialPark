@@ -11,9 +11,9 @@ namespace IndustrialPark
         private const string categoryName = "Portal";
 
         [Category(categoryName)]
-        public AssetID Camera_AssetID { get; set; }
+        public AssetID Camera { get; set; }
         [Category(categoryName)]
-        public AssetID Destination_MRKR_AssetID { get; set; }
+        public AssetID DestinationMarker { get; set; }
         [Category(categoryName)]
         public AssetSingle Rotation { get; set; }
         [Category(categoryName)]
@@ -32,7 +32,7 @@ namespace IndustrialPark
 
         public AssetPORT(string assetName) : base(assetName, AssetType.Portal, BaseAssetType.Portal)
         {
-            Camera_AssetID = "STARTCAM";
+            Camera = "STARTCAM";
             DestinationLevel = "AA00";
         }
 
@@ -42,8 +42,8 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = baseHeaderEndPosition;
 
-                Camera_AssetID = reader.ReadUInt32();
-                Destination_MRKR_AssetID = reader.ReadUInt32();
+                Camera = reader.ReadUInt32();
+                DestinationMarker = reader.ReadUInt32();
                 Rotation = reader.ReadSingle();
 
                 var chars = reader.ReadChars(4);
@@ -56,8 +56,8 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeBase(endianness));
-                writer.Write(Camera_AssetID);
-                writer.Write(Destination_MRKR_AssetID);
+                writer.Write(Camera);
+                writer.Write(DestinationMarker);
                 writer.Write(Rotation);
                 writer.WriteMagic(new string(_destinationLevel.ToArray()));
                 writer.Write(SerializeLinks(endianness));
@@ -65,16 +65,14 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => Camera_AssetID == assetID || Destination_MRKR_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
-            if (Camera_AssetID == 0)
-                result.Add("PORT with Camera_AssetID set to 0");
-            if (Destination_MRKR_AssetID == 0)
-                result.Add("PORT with Destination_MRKR_AssetID set to 0");
+            if (Camera == 0)
+                result.Add("Portal with Camera set to 0");
+            if (DestinationMarker == 0)
+                result.Add("Portal with DestinationMarker set to 0");
         }
     }
 }

@@ -44,7 +44,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public int Hitpoints { get; set; }
         [Category(categoryName)]
-        public AssetID Sound_AssetID { get; set; }
+        public AssetID Sound { get; set; }
         [Category(categoryName)] // bfbb only
         public AssetSingle Volume { get; set; }
         [Category(categoryName)]
@@ -82,7 +82,7 @@ namespace IndustrialPark
                 BoulderFlags.FlagValueInt = reader.ReadUInt32();
                 KillTimer = reader.ReadSingle();
                 Hitpoints = reader.ReadInt32();
-                Sound_AssetID = reader.ReadUInt32();
+                Sound = reader.ReadUInt32();
                 if (game == Game.BFBB)
                     Volume = reader.ReadSingle();
                 MinSoundVel = reader.ReadSingle();
@@ -110,7 +110,7 @@ namespace IndustrialPark
                 writer.Write(BoulderFlags.FlagValueInt);
                 writer.Write(KillTimer);
                 writer.Write(Hitpoints);
-                writer.Write(Sound_AssetID);
+                writer.Write(Sound);
                 if (game == Game.BFBB)
                     writer.Write(Volume);
                 writer.Write(MinSoundVel);
@@ -126,13 +126,11 @@ namespace IndustrialPark
 
         public override bool DontRender => dontRender;
 
-        public override bool HasReference(uint assetID) => Sound_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
-            Verify(Sound_AssetID, ref result);
+            Verify(Sound, ref result);
         }
 
         public override void Draw(SharpRenderer renderer)
@@ -140,8 +138,8 @@ namespace IndustrialPark
             Vector4 Color = _color;
             Color.W = Color.W == 0f ? 1f : Color.W;
 
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
-                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * Color : Color, UvAnimOffset);
+            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_model))
+                ArchiveEditorFunctions.renderingDictionary[_model].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * Color : Color, UvAnimOffset);
             else
                 renderer.DrawCube(LocalWorld(), isSelected);
         }

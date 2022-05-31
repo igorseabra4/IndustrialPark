@@ -45,118 +45,118 @@ namespace IndustrialPark
         }
 
         [Category(categoryName)]
-        public AssetID NPCSettings_AssetID { get; set; }
+        public AssetID NPCSettingsObject { get; set; }
         [Category(categoryName)]
-        public AssetID MovePoint_AssetID { get; set; }
+        public AssetID MovePoint { get; set; }
         [Category(categoryName)]
-        public AssetID TaskDYNA1_AssetID { get; set; }
+        public AssetID TaskBox1 { get; set; }
         [Category(categoryName)]
-        public AssetID TaskDYNA2_AssetID { get; set; }
+        public AssetID TaskBox2 { get; set; }
         [Category(categoryName)]
-        public AssetID NavMesh2_AssetID { get; set; }
+        public AssetID NavMesh2 { get; set; }
         [Category(categoryName)]
-        public AssetID Settings_AssetID { get; set; }
+        public AssetID NPCSettings { get; set; }
 
         public AssetVIL(string assetName, Vector3 position, AssetTemplate template, uint mvptAssetID) : base(assetName, AssetType.VIL, BaseAssetType.NPC, position)
         {
-            MovePoint_AssetID = mvptAssetID;
+            MovePoint = mvptAssetID;
 
             switch (template)
             {
-                case AssetTemplate.WoodenTiki:
-                    Model_AssetID = "tiki_wooden_bind.MINF";
+                case AssetTemplate.Wooden_Tiki:
+                    Model = "tiki_wooden_bind.MINF";
                     VilType_BFBB = VilType_BFBB.tiki_wooden_bind;
                     break;
-                case AssetTemplate.FloatingTiki:
-                    Model_AssetID = "tiki_lovey_dovey_bind.MINF";
+                case AssetTemplate.Floating_Tiki:
+                    Model = "tiki_lovey_dovey_bind.MINF";
                     VilType_BFBB = VilType_BFBB.tiki_lovey_dovey_bind;
                     break;
-                case AssetTemplate.ThunderTiki:
-                    Model_AssetID = "tiki_thunder_bind.MINF";
+                case AssetTemplate.Thunder_Tiki:
+                    Model = "tiki_thunder_bind.MINF";
                     VilType_BFBB = VilType_BFBB.tiki_thunder_bind;
                     break;
-                case AssetTemplate.ShhhTiki:
-                    Model_AssetID = "tiki_shhhh_bind.MINF";
+                case AssetTemplate.Shhh_Tiki:
+                    Model = "tiki_shhhh_bind.MINF";
                     VilType_BFBB = VilType_BFBB.tiki_shhhh_bind;
                     break;
-                case AssetTemplate.StoneTiki:
-                    Model_AssetID = "tiki_stone_bind.MINF";
+                case AssetTemplate.Stone_Tiki:
+                    Model = "tiki_stone_bind.MINF";
                     VilType_BFBB = VilType_BFBB.tiki_stone_bind;
                     break;
                 case AssetTemplate.Fodder:
-                    Model_AssetID = "robot_0a_fodder_bind.MINF";
+                    Model = "robot_0a_fodder_bind.MINF";
                     VilType_BFBB = VilType_BFBB.robot_0a_fodder_bind;
                     break;
                 case AssetTemplate.Hammer:
-                    Model_AssetID = "ham_bind.MINF";
+                    Model = "ham_bind.MINF";
                     VilType_BFBB = VilType_BFBB.ham_bind;
                     break;
                 case AssetTemplate.TarTar:
-                    Model_AssetID = "robot_tar_bind.MINF";
+                    Model = "robot_tar_bind.MINF";
                     VilType_BFBB = VilType_BFBB.robot_tar_bind;
                     break;
                 case AssetTemplate.ChompBot:
-                    Model_AssetID = "robot_0a_chomper_bind.MINF";
+                    Model = "robot_0a_chomper_bind.MINF";
                     VilType_BFBB = VilType_BFBB.robot_0a_chomper_bind;
                     break;
                 case AssetTemplate.GLove:
-                    Model_AssetID = "g_love_bind.MINF";
+                    Model = "g_love_bind.MINF";
                     VilType_BFBB = VilType_BFBB.g_love_bind;
                     break;
                 case AssetTemplate.Chuck:
                 case AssetTemplate.Chuck_Trigger:
-                    Model_AssetID = "robot_chuck_bind.MINF";
+                    Model = "robot_chuck_bind.MINF";
                     VilType_BFBB = VilType_BFBB.robot_chuck_bind;
                     break;
                 case AssetTemplate.Monsoon:
                 case AssetTemplate.Monsoon_Trigger:
-                    Model_AssetID = "robot_4a_monsoon_bind.MINF";
+                    Model = "robot_4a_monsoon_bind.MINF";
                     VilType_BFBB = VilType_BFBB.robot_4a_monsoon_bind;
                     break;
                 case AssetTemplate.Sleepytime:
                 case AssetTemplate.Sleepytime_Moving:
-                    Model_AssetID = "robot_sleepy-time_bind.MINF";
+                    Model = "robot_sleepy-time_bind.MINF";
                     VilType_BFBB = VilType_BFBB.robot_sleepytime_bind;
                     break;
                 case AssetTemplate.Arf:
-                    Model_AssetID = "robot_arf_bind.MINF";
+                    Model = "robot_arf_bind.MINF";
                     VilType_BFBB = VilType_BFBB.robot_arf_bind;
                     break;
                 case AssetTemplate.ArfDog:
-                    Model_AssetID = "robot_arf_dog_bind.MINF";
+                    Model = "robot_arf_dog_bind.MINF";
                     VilType_BFBB = VilType_BFBB.robot_arf_dog_bind;
                     break;
                 case AssetTemplate.BombBot:
-                    Model_AssetID = "robot_0a_bomb_bind.MINF";
+                    Model = "robot_0a_bomb_bind.MINF";
                     VilType_BFBB = VilType_BFBB.robot_0a_bomb_bind;
                     break;
                 case AssetTemplate.Tubelet:
-                    Model_AssetID = "tubelet_bind.MINF";
+                    Model = "tubelet_bind.MINF";
                     VilType_BFBB = VilType_BFBB.tubelet_bind;
                     break;
                 case AssetTemplate.TubeletSlave:
-                    Model_AssetID = "tubelet_slave_bind.MINF";
+                    Model = "tubelet_slave_bind.MINF";
                     VilType_BFBB = VilType_BFBB.tubelet_slave_bind;
                     break;
                 case AssetTemplate.BzztBot:
-                    Model_AssetID = "robot_0a_bzzt_bind.MINF";
+                    Model = "robot_0a_bzzt_bind.MINF";
                     VilType_BFBB = VilType_BFBB.robot_0a_bzzt_bind;
                     break;
                 case AssetTemplate.Slick:
                 case AssetTemplate.Slick_Trigger:
-                    Model_AssetID = "robot_9a_bind.MINF";
+                    Model = "robot_9a_bind.MINF";
                     VilType_BFBB = VilType_BFBB.robot_9a_bind;
                     break;
                 case AssetTemplate.Jellyfish_Pink:
-                    Model_AssetID = "jellyfish_pink_bind.MINF";
+                    Model = "jellyfish_pink_bind.MINF";
                     VilType_BFBB = VilType_BFBB.jellyfish_pink_bind;
                     break;
                 case AssetTemplate.Jellyfish_Blue:
-                    Model_AssetID = "jellyfish_blue_bind.MINF";
+                    Model = "jellyfish_blue_bind.MINF";
                     VilType_BFBB = VilType_BFBB.jellyfish_blue_bind;
                     break;
                 case AssetTemplate.Duplicatotron:
-                    Model_AssetID = "duplicatotron1000_bind.MINF";
+                    Model = "duplicatotron1000_bind.MINF";
                     VilType_BFBB = VilType_BFBB.duplicatotron1000_bind;
                     break;
             }
@@ -170,15 +170,15 @@ namespace IndustrialPark
 
                 VilFlags.FlagValueInt = reader.ReadUInt32();
                 VilType = reader.ReadUInt32();
-                NPCSettings_AssetID = reader.ReadUInt32();
-                MovePoint_AssetID = reader.ReadUInt32();
-                TaskDYNA1_AssetID = reader.ReadUInt32();
-                TaskDYNA2_AssetID = reader.ReadUInt32();
+                NPCSettingsObject = reader.ReadUInt32();
+                MovePoint = reader.ReadUInt32();
+                TaskBox1 = reader.ReadUInt32();
+                TaskBox2 = reader.ReadUInt32();
 
                 if (game == Game.Incredibles)
                 {
-                    NavMesh2_AssetID = reader.ReadUInt32();
-                    Settings_AssetID = reader.ReadUInt32();
+                    NavMesh2 = reader.ReadUInt32();
+                    NPCSettings = reader.ReadUInt32();
                 }
             }
         }
@@ -188,12 +188,12 @@ namespace IndustrialPark
         {
             VilFlags.FlagValueInt = reader.ReadUInt32();
             VilType = reader.ReadUInt32();
-            NPCSettings_AssetID = reader.ReadUInt32();
-            MovePoint_AssetID = reader.ReadUInt32();
-            TaskDYNA1_AssetID = reader.ReadUInt32();
-            TaskDYNA2_AssetID = reader.ReadUInt32();
-            NavMesh2_AssetID = reader.ReadUInt32();
-            Settings_AssetID = reader.ReadUInt32();
+            NPCSettingsObject = reader.ReadUInt32();
+            MovePoint = reader.ReadUInt32();
+            TaskBox1 = reader.ReadUInt32();
+            TaskBox2 = reader.ReadUInt32();
+            NavMesh2 = reader.ReadUInt32();
+            NPCSettings = reader.ReadUInt32();
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
@@ -203,23 +203,19 @@ namespace IndustrialPark
                 writer.Write(SerializeEntity(game, endianness));
                 writer.Write(VilFlags.FlagValueInt);
                 writer.Write(VilType);
-                writer.Write(NPCSettings_AssetID);
-                writer.Write(MovePoint_AssetID);
-                writer.Write(TaskDYNA1_AssetID);
-                writer.Write(TaskDYNA2_AssetID);
+                writer.Write(NPCSettingsObject);
+                writer.Write(MovePoint);
+                writer.Write(TaskBox1);
+                writer.Write(TaskBox2);
                 if (game == Game.Incredibles)
                 {
-                    writer.Write(NavMesh2_AssetID);
-                    writer.Write(Settings_AssetID);
+                    writer.Write(NavMesh2);
+                    writer.Write(NPCSettings);
                 }
                 writer.Write(SerializeLinks(endianness));
                 return writer.ToArray();
             }
         }
-
-        public override bool HasReference(uint assetID) => VilType == assetID || NPCSettings_AssetID == assetID ||
-            MovePoint_AssetID == assetID || TaskDYNA1_AssetID == assetID || TaskDYNA2_AssetID == assetID ||
-            NavMesh2_AssetID == assetID || Settings_AssetID == assetID || base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {
@@ -228,14 +224,14 @@ namespace IndustrialPark
             if (game == Game.BFBB && VilType_BFBB.ToString() == VilType.ToString())
                 result.Add("VIL with unknown VilType 0x" + VilType.ToString("X8"));
 
-            Verify(NPCSettings_AssetID, ref result);
-            Verify(MovePoint_AssetID, ref result);
-            Verify(TaskDYNA1_AssetID, ref result);
-            Verify(TaskDYNA2_AssetID, ref result);
+            Verify(NPCSettingsObject, ref result);
+            Verify(MovePoint, ref result);
+            Verify(TaskBox1, ref result);
+            Verify(TaskBox2, ref result);
             if (game == Game.Incredibles)
             {
-                Verify(NavMesh2_AssetID, ref result);
-                Verify(Settings_AssetID, ref result);
+                Verify(NavMesh2, ref result);
+                Verify(NPCSettings, ref result);
             }
         }
 
@@ -244,8 +240,8 @@ namespace IndustrialPark
             if (game == Game.BFBB)
             {
                 dt.RemoveProperty("VilType");
-                dt.RemoveProperty("NavMesh2_AssetID");
-                dt.RemoveProperty("Settings_AssetID");
+                dt.RemoveProperty("NavMesh2");
+                dt.RemoveProperty("NPCSettings");
             }
             else if (game == Game.Incredibles)
             {
@@ -269,15 +265,15 @@ namespace IndustrialPark
                     localFrameCounter = 0;
             }
 
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
-                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * _color : _color, UvAnimOffset);
+            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_model))
+                ArchiveEditorFunctions.renderingDictionary[_model].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * _color : _color, UvAnimOffset);
             else
                 renderer.DrawCube(LocalWorld(), isSelected);
         }
 
         public override Matrix LocalWorld()
         {
-            if (movementPreview && MovePoint_AssetID != 0)
+            if (movementPreview && MovePoint != 0)
             {
                 AssetMVPT driver = FindMVPT(out bool found);
 
@@ -295,11 +291,11 @@ namespace IndustrialPark
         private AssetMVPT FindMVPT(out bool found)
         {
             foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                if (ae.archive.ContainsAsset(MovePoint_AssetID))
+                if (ae.archive.ContainsAsset(MovePoint))
                 {
-                    Asset asset = ae.archive.GetFromAssetID(MovePoint_AssetID);
+                    Asset asset = ae.archive.GetFromAssetID(MovePoint);
                     if (asset is AssetMVPT MVPT)
-                        return FindMVPTWithRadius(MVPT, out found, new List<uint>() { MovePoint_AssetID });
+                        return FindMVPTWithRadius(MVPT, out found, new List<uint>() { MovePoint });
                 }
 
             found = false;
@@ -315,7 +311,7 @@ namespace IndustrialPark
                     found = true;
                     return MVPT;
                 }
-                foreach (AssetID assetID in MVPT.NextMVPTs)
+                foreach (AssetID assetID in MVPT.NextMovePoints)
                     foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
                         if (ae.archive.ContainsAsset(assetID))
                         {

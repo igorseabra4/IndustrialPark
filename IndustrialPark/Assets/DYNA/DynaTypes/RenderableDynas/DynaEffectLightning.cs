@@ -14,15 +14,12 @@ namespace IndustrialPark
 
         protected override short constVersion => 2;
 
-        public override bool HasReference(uint assetID) =>
-            LightningTexture_AssetID == assetID || GlowTexture_AssetID == assetID || SIMP1_AssetID == assetID || SIMP2_AssetID == assetID;
-
         public override void Verify(ref List<string> result)
         {
-            Verify(LightningTexture_AssetID, ref result);
-            Verify(GlowTexture_AssetID, ref result);
-            Verify(SIMP1_AssetID, ref result);
-            Verify(SIMP2_AssetID, ref result);
+            Verify(LightningTexture, ref result);
+            Verify(GlowTexture, ref result);
+            Verify(SimpleObject1, ref result);
+            Verify(SimpleObject2, ref result);
             base.Verify(ref result);
         }
 
@@ -53,23 +50,23 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle BranchSpeed { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID LightningTexture_AssetID { get; set; }
+        public AssetID LightningTexture { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID GlowTexture_AssetID { get; set; }
+        public AssetID GlowTexture { get; set; }
         [Category(dynaCategoryName)]
         public int Damage { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle KnockbackSpeed { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID SoundGroupID_AssetID { get; set; }
+        public AssetID SoundGroup { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID SoundHit1_AssetID { get; set; }
+        public AssetID SoundHit1 { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID SoundHit2_AssetID { get; set; }
+        public AssetID SoundHit2 { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID SIMP1_AssetID { get; set; }
+        public AssetID SimpleObject1 { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID SIMP2_AssetID { get; set; }
+        public AssetID SimpleObject2 { get; set; }
         [Category(dynaCategoryName)]
         public bool DamagePlayer { get; set; }
 
@@ -84,15 +81,15 @@ namespace IndustrialPark
                 Color = reader.ReadColor();
                 Width = reader.ReadSingle();
                 BranchSpeed = reader.ReadSingle();
-                LightningTexture_AssetID = reader.ReadUInt32();
-                GlowTexture_AssetID = reader.ReadUInt32();
+                LightningTexture = reader.ReadUInt32();
+                GlowTexture = reader.ReadUInt32();
                 Damage = reader.ReadInt32();
                 KnockbackSpeed = reader.ReadSingle();
-                SoundGroupID_AssetID = reader.ReadUInt32();
-                SoundHit1_AssetID = reader.ReadUInt32();
-                SoundHit2_AssetID = reader.ReadUInt32();
-                SIMP1_AssetID = reader.ReadUInt32();
-                SIMP2_AssetID = reader.ReadUInt32();
+                SoundGroup = reader.ReadUInt32();
+                SoundHit1 = reader.ReadUInt32();
+                SoundHit2 = reader.ReadUInt32();
+                SimpleObject1 = reader.ReadUInt32();
+                SimpleObject2 = reader.ReadUInt32();
                 DamagePlayer = reader.ReadInt32Bool();
 
                 CreateTransformMatrix();
@@ -113,15 +110,15 @@ namespace IndustrialPark
                 writer.Write(Color);
                 writer.Write(Width);
                 writer.Write(BranchSpeed);
-                writer.Write(LightningTexture_AssetID);
-                writer.Write(GlowTexture_AssetID);
+                writer.Write(LightningTexture);
+                writer.Write(GlowTexture);
                 writer.Write(Damage);
                 writer.Write(KnockbackSpeed);
-                writer.Write(SoundGroupID_AssetID);
-                writer.Write(SoundHit1_AssetID);
-                writer.Write(SoundHit2_AssetID);
-                writer.Write(SIMP1_AssetID);
-                writer.Write(SIMP2_AssetID);
+                writer.Write(SoundGroup);
+                writer.Write(SoundHit1);
+                writer.Write(SoundHit2);
+                writer.Write(SimpleObject1);
+                writer.Write(SimpleObject2);
                 writer.Write(DamagePlayer ? 1 : 0);
 
                 return writer.ToArray();
@@ -147,6 +144,6 @@ namespace IndustrialPark
         }
 
         public static bool dontRender = false;
-        public override bool DontRender => dontRender;
+        protected override bool DontRender => dontRender;
     }
 }

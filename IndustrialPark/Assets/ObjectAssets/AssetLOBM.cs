@@ -11,7 +11,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID LobMasterType { get; set; }
         [Category(categoryName)]
-        public AssetID PRJT_AssetID { get; set; }
+        public AssetID Projectile { get; set; }
         [Category(categoryName)]
         public AssetSingle PositionX { get; set; }
         [Category(categoryName)]
@@ -41,7 +41,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle MaxDistance { get; set; }
         [Category(categoryName)]
-        public AssetID Aid_MovePoint_AssetID { get; set; }
+        public AssetID Aid_MovePoint { get; set; }
         [Category(categoryName)]
         public int SalvoCount { get; set; }
         [Category(categoryName)]
@@ -76,7 +76,7 @@ namespace IndustrialPark
                 reader.BaseStream.Position = baseHeaderEndPosition;
 
                 LobMasterType = reader.ReadUInt32();
-                PRJT_AssetID = reader.ReadUInt32();
+                Projectile = reader.ReadUInt32();
                 PositionX = reader.ReadSingle();
                 PositionY = reader.ReadSingle();
                 PositionZ = reader.ReadSingle();
@@ -91,7 +91,7 @@ namespace IndustrialPark
                 Flags.FlagValueInt = reader.ReadUInt32();
                 MaxLifetime = reader.ReadSingle();
                 MaxDistance = reader.ReadSingle();
-                Aid_MovePoint_AssetID = reader.ReadUInt32();
+                Aid_MovePoint = reader.ReadUInt32();
                 SalvoCount = reader.ReadInt32();
                 AmmoCount = reader.ReadInt32();
                 ArcCoeffFactor = reader.ReadSingle();
@@ -114,7 +114,7 @@ namespace IndustrialPark
             {
                 writer.Write(SerializeBase(endianness));
                 writer.Write(LobMasterType);
-                writer.Write(PRJT_AssetID);
+                writer.Write(Projectile);
                 writer.Write(PositionX);
                 writer.Write(PositionY);
                 writer.Write(PositionZ);
@@ -129,7 +129,7 @@ namespace IndustrialPark
                 writer.Write(Flags.FlagValueInt);
                 writer.Write(MaxLifetime);
                 writer.Write(MaxDistance);
-                writer.Write(Aid_MovePoint_AssetID);
+                writer.Write(Aid_MovePoint);
                 writer.Write(SalvoCount);
                 writer.Write(AmmoCount);
                 writer.Write(ArcCoeffFactor);
@@ -150,17 +150,13 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) =>
-            LobMasterType == assetID || PRJT_AssetID == assetID ||
-            Aid_MovePoint_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
-            if (PRJT_AssetID == 0)
-                result.Add("LOBM with PRJT_AssetID set to 0");
-            Verify(PRJT_AssetID, ref result);
+            if (Projectile == 0)
+                result.Add("LobMaster with Projectile set to 0");
+            Verify(Projectile, ref result);
         }
     }
 }

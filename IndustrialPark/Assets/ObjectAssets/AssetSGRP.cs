@@ -6,9 +6,9 @@ using System.Linq;
 
 namespace IndustrialPark
 {
-    public class EntrySGRP
+    public class EntrySGRP : GenericAssetDataContainer
     {
-        public AssetID Sound_AssetID { get; set; }
+        public AssetID Sound { get; set; }
         [DisplayName("Volume (0-1)")]
         public AssetSingle Volume { get; set; }
         public AssetSingle MinPitchMult { get; set; }
@@ -21,7 +21,7 @@ namespace IndustrialPark
 
         public EntrySGRP(EndianBinaryReader reader)
         {
-            Sound_AssetID = reader.ReadUInt32();
+            Sound = reader.ReadUInt32();
             Volume = reader.ReadSingle();
             MinPitchMult = reader.ReadSingle();
             MaxPitchMult = reader.ReadSingle();
@@ -31,7 +31,7 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(Sound_AssetID);
+                writer.Write(Sound);
                 writer.Write(Volume);
                 writer.Write(MinPitchMult);
                 writer.Write(MaxPitchMult);
@@ -39,7 +39,7 @@ namespace IndustrialPark
             }
         }
 
-        public override string ToString() => $"[{Program.MainForm.GetAssetNameFromID(Sound_AssetID)}] - [{Volume}]";
+        public override string ToString() => $"[{Program.MainForm.GetAssetNameFromID(Sound)}] - [{Volume}]";
     }
 
     public class AssetSGRP : BaseAsset
@@ -148,24 +148,15 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            foreach (var i in SGRP_Entries)
-                if (i.Sound_AssetID == assetID)
-                    return true;
-
-            return base.HasReference(assetID);
-        }
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
             foreach (var i in SGRP_Entries)
             {
-                if (i.Sound_AssetID == 0)
-                    result.Add("SGRP entry with Sound_AssetID set to 0");
-                Verify(i.Sound_AssetID, ref result);
+                if (i.Sound == 0)
+                    result.Add("Sound Group entry with Sound set to 0");
+                Verify(i.Sound, ref result);
             }
         }
     }

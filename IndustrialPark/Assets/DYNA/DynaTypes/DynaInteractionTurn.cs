@@ -11,11 +11,11 @@ namespace IndustrialPark
         protected override short constVersion => 1;
 
         [Category(dynaCategoryName)]
-        public AssetID ForwardScript_AssetID { get; set; }
+        public AssetID ForwardScript { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID BackwardScript_AssetID { get; set; }
+        public AssetID BackwardScript { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID TurnObject_AssetID { get; set; }
+        public AssetID TurnObject { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle Increment { get; set; }
         [Category(dynaCategoryName)]
@@ -37,9 +37,9 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
 
-                ForwardScript_AssetID = reader.ReadUInt32();
-                BackwardScript_AssetID = reader.ReadUInt32();
-                TurnObject_AssetID = reader.ReadUInt32();
+                ForwardScript = reader.ReadUInt32();
+                BackwardScript = reader.ReadUInt32();
+                TurnObject = reader.ReadUInt32();
                 Increment = reader.ReadSingle();
                 TurnRate = reader.ReadSingle();
                 RestoreRate = reader.ReadSingle();
@@ -54,9 +54,9 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(ForwardScript_AssetID);
-                writer.Write(BackwardScript_AssetID);
-                writer.Write(TurnObject_AssetID);
+                writer.Write(ForwardScript);
+                writer.Write(BackwardScript);
+                writer.Write(TurnObject);
                 writer.Write(Increment);
                 writer.Write(TurnRate);
                 writer.Write(RestoreRate);
@@ -69,14 +69,11 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => ForwardScript_AssetID == assetID || BackwardScript_AssetID == assetID ||
-            TurnObject_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
-            Verify(ForwardScript_AssetID, ref result);
-            Verify(BackwardScript_AssetID, ref result);
-            Verify(TurnObject_AssetID, ref result);
+            Verify(ForwardScript, ref result);
+            Verify(BackwardScript, ref result);
+            Verify(TurnObject, ref result);
             base.Verify(ref result);
         }
     }

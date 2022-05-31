@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace IndustrialPark
 {
@@ -36,14 +37,9 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            foreach (string s in AssetNamesInText)
-                if (Functions.BKDRHash(s) == assetID || Functions.BKDRHash(s + ".RW3") == assetID)
-                    return true;
-
-            return base.HasReference(assetID);
-        }
+        public override bool HasReference(uint assetID) =>
+            AssetNamesInText.Any(s => Functions.BKDRHash(s) == assetID || Functions.BKDRHash(s + ".RW3") == assetID) ||
+            base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {

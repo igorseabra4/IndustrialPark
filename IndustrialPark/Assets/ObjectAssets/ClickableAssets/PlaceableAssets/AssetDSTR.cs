@@ -16,7 +16,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public int Health { get; set; }
         [Category(categoryName)]
-        public AssetID SpawnItem_AssetID { get; set; }
+        public AssetID SpawnItem { get; set; }
         [Category(categoryName)]
         public FlagBitmask HitMask { get; set; } = IntFlagsDescriptor();
         [Category(categoryName)]
@@ -28,17 +28,17 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle BlastStrength { get; set; }
         [Category(categoryName)]
-        public AssetID DestroyShrapnel_AssetID { get; set; }
+        public AssetID DestroyShrapnel { get; set; }
         [Category(categoryName)]
-        public AssetID HitShrapnel_AssetID { get; set; }
+        public AssetID HitShrapnel { get; set; }
         [Category(categoryName)]
-        public AssetID DestroySFX_AssetID { get; set; }
+        public AssetID DestroySFX { get; set; }
         [Category(categoryName)]
-        public AssetID HitSFX_AssetID { get; set; }
+        public AssetID HitSFX { get; set; }
         [Category(categoryName)]
-        public AssetID HitModel_AssetID { get; set; }
+        public AssetID HitModel { get; set; }
         [Category(categoryName)]
-        public AssetID DestroyModel_AssetID { get; set; }
+        public AssetID DestroyModel { get; set; }
 
         public AssetDSTR(string assetName, Vector3 position) : base(assetName, AssetType.DestructibleObject, BaseAssetType.DestructObj, position)
         {
@@ -56,7 +56,7 @@ namespace IndustrialPark
                 AnimationSpeed = reader.ReadInt32();
                 InitialAnimationState = reader.ReadInt32();
                 Health = reader.ReadInt32();
-                SpawnItem_AssetID = reader.ReadUInt32();
+                SpawnItem = reader.ReadUInt32();
                 HitMask.FlagValueInt = reader.ReadUInt32();
                 CollType = reader.ReadByte();
                 FxType = reader.ReadByte();
@@ -65,12 +65,12 @@ namespace IndustrialPark
                 BlastStrength = reader.ReadSingle();
                 if (game != Game.Scooby)
                 {
-                    DestroyShrapnel_AssetID = reader.ReadUInt32();
-                    HitShrapnel_AssetID = reader.ReadUInt32();
-                    DestroySFX_AssetID = reader.ReadUInt32();
-                    HitSFX_AssetID = reader.ReadUInt32();
-                    HitModel_AssetID = reader.ReadUInt32();
-                    DestroyModel_AssetID = reader.ReadUInt32();
+                    DestroyShrapnel = reader.ReadUInt32();
+                    HitShrapnel = reader.ReadUInt32();
+                    DestroySFX = reader.ReadUInt32();
+                    HitSFX = reader.ReadUInt32();
+                    HitModel = reader.ReadUInt32();
+                    DestroyModel = reader.ReadUInt32();
                 }
             }
         }
@@ -83,7 +83,7 @@ namespace IndustrialPark
                 writer.Write(AnimationSpeed);
                 writer.Write(InitialAnimationState);
                 writer.Write(Health);
-                writer.Write(SpawnItem_AssetID);
+                writer.Write(SpawnItem);
                 writer.Write(HitMask.FlagValueInt);
                 writer.Write(CollType);
                 writer.Write(FxType);
@@ -93,12 +93,12 @@ namespace IndustrialPark
 
                 if (game != Game.Scooby)
                 {
-                    writer.Write(DestroyShrapnel_AssetID);
-                    writer.Write(HitShrapnel_AssetID);
-                    writer.Write(DestroySFX_AssetID);
-                    writer.Write(HitSFX_AssetID);
-                    writer.Write(HitModel_AssetID);
-                    writer.Write(DestroyModel_AssetID);
+                    writer.Write(DestroyShrapnel);
+                    writer.Write(HitShrapnel);
+                    writer.Write(DestroySFX);
+                    writer.Write(HitSFX);
+                    writer.Write(HitModel);
+                    writer.Write(DestroyModel);
                 }
                 writer.Write(SerializeLinks(endianness));
                 return writer.ToArray();
@@ -109,23 +109,19 @@ namespace IndustrialPark
 
         public override bool DontRender => dontRender;
 
-        public override bool HasReference(uint assetID) => SpawnItem_AssetID == assetID || DestroyShrapnel_AssetID == assetID ||
-            HitShrapnel_AssetID == assetID || DestroySFX_AssetID == assetID || HitSFX_AssetID == assetID ||
-            HitModel_AssetID == assetID || DestroyModel_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
-            Verify(SpawnItem_AssetID, ref result);
+            Verify(SpawnItem, ref result);
 
             if (game != Game.Scooby)
             {
-                Verify(DestroyShrapnel_AssetID, ref result);
-                Verify(HitShrapnel_AssetID, ref result);
-                Verify(DestroySFX_AssetID, ref result);
-                Verify(HitSFX_AssetID, ref result);
-                Verify(HitModel_AssetID, ref result);
-                Verify(DestroyModel_AssetID, ref result);
+                Verify(DestroyShrapnel, ref result);
+                Verify(HitShrapnel, ref result);
+                Verify(DestroySFX, ref result);
+                Verify(HitSFX, ref result);
+                Verify(HitModel, ref result);
+                Verify(DestroyModel, ref result);
             }
         }
 
@@ -133,12 +129,12 @@ namespace IndustrialPark
         {
             if (game == Game.Scooby)
             {
-                dt.RemoveProperty("DestroyShrapnel_AssetID");
-                dt.RemoveProperty("HitShrapnel_AssetID");
-                dt.RemoveProperty("DestroySFX_AssetID");
-                dt.RemoveProperty("HitSFX_AssetID");
-                dt.RemoveProperty("HitModel_AssetID");
-                dt.RemoveProperty("DestroyModel_AssetID");
+                dt.RemoveProperty("DestroyShrapnel");
+                dt.RemoveProperty("HitShrapnel");
+                dt.RemoveProperty("DestroySFX");
+                dt.RemoveProperty("HitSFX");
+                dt.RemoveProperty("HitModel");
+                dt.RemoveProperty("DestroyModel");
             }
 
             base.SetDynamicProperties(dt);

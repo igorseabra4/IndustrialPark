@@ -123,8 +123,6 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => AssetUnderEvaluation == assetID || Conditional_Scooby == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);

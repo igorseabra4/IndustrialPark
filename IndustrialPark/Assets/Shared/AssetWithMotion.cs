@@ -11,8 +11,6 @@ namespace IndustrialPark
 
         public AssetWithMotion(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness) { }
 
-        public override bool HasReference(uint assetID) => Motion.HasReference(assetID) || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             Motion.Verify(ref result);
@@ -26,8 +24,8 @@ namespace IndustrialPark
 
             Matrix localW = LocalWorld();
 
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_modelAssetID))
-                ArchiveEditorFunctions.renderingDictionary[_modelAssetID].Draw(renderer, localW, isSelected ? renderer.selectedObjectColor * _color : _color, UvAnimOffset);
+            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_model))
+                ArchiveEditorFunctions.renderingDictionary[_model].Draw(renderer, localW, isSelected ? renderer.selectedObjectColor * _color : _color, UvAnimOffset);
             else
                 renderer.DrawCube(localW, isSelected);
         }

@@ -86,6 +86,6 @@ namespace IndustrialPark
         public override void Draw(SharpRenderer renderer) => renderer.DrawPyramid(world, isSelected);
 
         public static bool dontRender = false;
-        public override bool DontRender => dontRender;
+        protected override bool DontRender => dontRender;
     }
 }

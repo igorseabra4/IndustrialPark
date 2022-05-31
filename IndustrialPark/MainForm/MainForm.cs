@@ -29,8 +29,6 @@ namespace IndustrialPark
             dynaNameSearcherToolStripMenuItem.Visible = false;
 #endif
 
-            SetupAssetVisibilityButtons();
-
             SetUiAssetsVisibility(false);
 
             ArchiveEditorFunctions.PopulateTemplateMenusAt(toolStripMenuItem_Templates, TemplateToolStripItemClick);
@@ -353,7 +351,7 @@ namespace IndustrialPark
         public ProjectJson FromCurrentInstance()
         {
             List<string> hips = new List<string>();
-            List<HipHopFile.Platform> platforms = new List<HipHopFile.Platform>();
+            List<Platform> platforms = new List<HipHopFile.Platform>();
             List<uint> hiddenAssets = new List<uint>();
 
             foreach (ArchiveEditor ae in archiveEditors)
@@ -363,6 +361,14 @@ namespace IndustrialPark
                     platforms.Add(ae.archive.platform);
                     hiddenAssets.AddRange(ae.archive.GetHiddenAssets());
                 }
+
+            var dontRender = new Dictionary<string, bool>();
+            foreach (var assetType in assetViewTypes.Keys)
+            {
+                var type = assetViewTypes[assetType];
+                var prop = type.GetField("dontRender");
+                dontRender[assetType.ToString()] = (bool)prop.GetValue(null);
+            }
 
             return new ProjectJson()
             {
@@ -386,34 +392,8 @@ namespace IndustrialPark
                 UseLegacyAssetIDFormat = useLegacyAssetIDFormatToolStripMenuItem.Checked,
                 hiddenAssets = hiddenAssets,
                 isDrawingUI = renderer.isDrawingUI,
-                dontRenderJSP = AssetJSP.dontRender,
-                dontRenderBOUL = AssetBOUL.dontRender,
-                dontRenderBUTN = AssetBUTN.dontRender,
-                dontRenderCAM = AssetCAM.dontRender,
-                dontRenderDSTR = AssetDSTR.dontRender,
-                dontRenderDTRK = AssetDTRK.dontRender,
-                //dontRenderDYNA = AssetDYNA.dontRender,
-                dontRenderEGEN = AssetEGEN.dontRender,
-                dontRenderGRSM = AssetGRSM.dontRender,
-                dontRenderHANG = AssetHANG.dontRender,
-                dontRenderLITE = AssetLITE.dontRender,
-                dontRenderMRKR = AssetMRKR.dontRender,
-                dontRenderMVPT = AssetMVPT.dontRender,
-                dontRenderNPC = AssetNPC.dontRender,
-                dontRenderPEND = AssetPEND.dontRender,
-                dontRenderPKUP = AssetPKUP.dontRender,
-                dontRenderPLAT = AssetPLAT.dontRender,
-                dontRenderPLYR = AssetPLYR.dontRender,
-                dontRenderSDFX = AssetSDFX.dontRender,
-                dontRenderSFX = AssetSFX.dontRender,
-                dontRenderSIMP = AssetSIMP.dontRender,
-                dontRenderSPLN = AssetSPLN.dontRender,
-                dontRenderTRIG = AssetTRIG.dontRender,
-                dontRenderUI = AssetUI.dontRender,
-                dontRenderUIFT = AssetUIFT.dontRender,
-                dontRenderVIL = AssetVIL.dontRender,
-                dontRenderVOLU = AssetVOLU.dontRender,
                 Grid = ArchiveEditorFunctions.Grid,
+                dontRender = dontRender,
             };
         }
 
@@ -488,13 +468,15 @@ namespace IndustrialPark
             uIModeToolStripMenuItem.Checked = ipSettings.isDrawingUI;
             renderer.isDrawingUI = ipSettings.isDrawingUI;
 
-            for (int i = 0; i < assetViewToolStripMenuItems.Length; i++)
-            {
-                AssetType type = (AssetType)assetViewToolStripMenuItems[i].Tag;
-                bool value = (bool)typeof(ProjectJson).GetField("dontRender" + type.GetCode()).GetValue(ipSettings);
-                assetViewToolStripMenuItems[i].Checked = !value;
-                assetViewTypes[type].GetField("dontRender").SetValue(null, value);
-            }
+            if (assetViewToolStripMenuItems != null)
+                for (int i = 0; i < assetViewToolStripMenuItems.Length; i++)
+                {
+                    AssetType type = (AssetType)assetViewToolStripMenuItems[i].Tag;
+                    var code = type.ToString();
+                    bool value = ipSettings.dontRender.ContainsKey(code) ? ipSettings.dontRender[code] : true;
+                    assetViewToolStripMenuItems[i].Checked = !value;
+                    assetViewTypes[type].GetField("dontRender").SetValue(null, value);
+                }
         }
 
         public void SetToolStripStatusLabel(string Text)
@@ -736,7 +718,7 @@ namespace IndustrialPark
             archiveEditors.Last().Show();
         }
 
-        public void AddArchiveEditor(string filePath = null, HipHopFile.Platform scoobyPlatform = HipHopFile.Platform.Unknown)
+        public void AddArchiveEditor(string filePath = null, Platform scoobyPlatform = Platform.Unknown)
         {
             ArchiveEditor ae = new ArchiveEditor();
             ae.Show();
@@ -755,12 +737,14 @@ namespace IndustrialPark
             ae.archive.ChangesMade += UpdateTitleBar;
             ae.EditorClosed += UpdateCloseAllArchiveMenuItem;
             UpdateTitleBar();
+            SetupAssetVisibilityButtons();
             closeAllEditorsToolStripMenuItem.Enabled = true;
         }
 
         public void UpdateCloseAllArchiveMenuItem()
         {
             closeAllEditorsToolStripMenuItem.Enabled = archiveEditors.Count > 0;
+            SetupAssetVisibilityButtons();
         }
 
         public void SetToolStripItemName(ArchiveEditor sender, string newName)
@@ -1057,6 +1041,28 @@ namespace IndustrialPark
             HexUIntTypeConverter.Legacy = useLegacyAssetIDFormatToolStripMenuItem.Checked;
         }
 
+        private void enableAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            autoShowDropDowns = false;
+            if (assetViewToolStripMenuItems != null)
+                foreach (var item in assetViewToolStripMenuItems)
+                    if (!item.Checked)
+                        item.PerformClick();
+            autoShowDropDowns = true;
+            ShowDropDowns();
+        }
+
+        private void disableAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            autoShowDropDowns = false;
+            if (assetViewToolStripMenuItems != null)
+                foreach (var item in assetViewToolStripMenuItems)
+                    if (item.Checked)
+                        item.PerformClick();
+            autoShowDropDowns = true;
+            ShowDropDowns();
+        }
+
         private bool autoShowDropDowns = true;
 
         private void ShowDropDowns()
@@ -1068,47 +1074,28 @@ namespace IndustrialPark
             }
         }
 
-        private void SetupAssetVisibilityButtons()
+        public void SetupAssetVisibilityButtons()
         {
-            var enableAll = new ToolStripMenuItem("Enable All");
-            enableAll.Click += (object sender, EventArgs e) =>
-            {
-                autoShowDropDowns = false;
-                foreach (var item in assetViewToolStripMenuItems)
-                {
-                    if (!item.Checked)
-                        item.PerformClick();
-                }
-                autoShowDropDowns = true;
-                ShowDropDowns();
-            };
-
-            var disableAll = new ToolStripMenuItem("Disable All");
-            disableAll.Click += (object sender, EventArgs e) =>
-            {
-                autoShowDropDowns = false;
-                foreach (var item in assetViewToolStripMenuItems)
-                {
-                    if (item.Checked)
-                        item.PerformClick();
-                }
-                autoShowDropDowns = true;
-                ShowDropDowns();
-            };
-
             assetTypesToolStripMenuItem.DropDownItems.Clear();
             assetTypesToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] {
-                enableAll,
-                disableAll,
-                new ToolStripSeparator()
+                enableAllToolStripMenuItem,
+                disableAllToolStripMenuItem,
+                toolStripSeparatorAssetTypes
             });
-            SetAssetViewToolStripMenuItems();
+
+            var assetTypes = new HashSet<AssetType>();
+            foreach (var ae in archiveEditors)
+                foreach (var assetType in ae.archive.AssetTypesOnArchive())
+                    assetTypes.Add(assetType);
+
+            SetAssetViewToolStripMenuItems(assetTypes);
             assetTypesToolStripMenuItem.DropDownItems.AddRange(assetViewToolStripMenuItems);
         }
 
         private Dictionary<AssetType, Type> assetViewTypes = new Dictionary<AssetType, Type>
         {
             { AssetType.JSP, typeof(AssetJSP) },
+            { AssetType.BSP, typeof(AssetJSP) },
             { AssetType.Button, typeof(AssetBUTN) },
             { AssetType.Boulder, typeof(AssetBOUL) },
             { AssetType.Camera, typeof(AssetCAM) },
@@ -1128,6 +1115,7 @@ namespace IndustrialPark
             { AssetType.SFX, typeof(AssetSFX) },
             { AssetType.SDFX, typeof(AssetSDFX) },
             { AssetType.SimpleObject, typeof(AssetSIMP) },
+            { AssetType.Track, typeof(AssetSIMP) },
             { AssetType.Spline, typeof(AssetSPLN) },
             { AssetType.Trigger, typeof(AssetTRIG) },
             { AssetType.UserInterface, typeof(AssetUI) },
@@ -1147,9 +1135,9 @@ namespace IndustrialPark
             { AssetType.RumbleSphericalEmitter, typeof(DynaEffectRumbleSphere) },
             { AssetType.SmokeEmitter, typeof(DynaEffectSmokeEmitter) },
             { AssetType.TeleportBox, typeof(DynaGObjectTeleport) },
-            { AssetType.TrainCar, typeof(DynaGObjectTrainCar) },
+            { AssetType.Vent, typeof(DynaGObjectVent) },
 
-            { AssetType.BucketOTron, typeof(DynaEnemyBucketOTron) },
+            { AssetType.Spawner, typeof(DynaEnemyBucketOTron) },
             { AssetType.CastNCrew, typeof(DynaEnemyCastNCrew) },
             { AssetType.Critter, typeof(DynaEnemyCritter) },
             { AssetType.Dennis, typeof(DynaEnemyDennis) },
@@ -1159,19 +1147,23 @@ namespace IndustrialPark
             { AssetType.Enemy, typeof(DynaEnemyStandard) },
             { AssetType.Crate, typeof(DynaEnemySupplyCrate) },
             { AssetType.Turret, typeof(DynaEnemyTurret) },
+            { AssetType.TrainCar, typeof(DynaGObjectTrainCar) },
         };
 
         private ToolStripMenuItem[] assetViewToolStripMenuItems;
 
-        private void SetAssetViewToolStripMenuItems()
+        private void SetAssetViewToolStripMenuItems(IEnumerable<AssetType> assetTypes)
         {
             var items = new List<ToolStripMenuItem>();
-            foreach (var assetType in assetViewTypes.Keys.OrderBy(f => f.ToString()))
+            foreach (var assetType in assetTypes.OrderBy(f => f.ToString()))
             {
+                if (!assetViewTypes.ContainsKey(assetType))
+                    continue;
+
                 var text = assetType.ToString();
                 if (assetType == AssetType.JSP)
                     text = "BSP/JSP";
-                else if (assetType == AssetType.VIL)
+                else if (assetType == AssetType.VIL && assetTypes.Contains(AssetType.Duplicator))
                     text = "VIL/Duplicator";
                 ToolStripMenuItem item = new ToolStripMenuItem(text)
                 {
@@ -1205,11 +1197,12 @@ namespace IndustrialPark
         {
             autoShowDropDowns = false;
             var clickThis = new string[] { "UI", "UIFT" };
-            foreach (var item in assetViewToolStripMenuItems)
-                if (clickThis.Contains(item.Name) && item.Checked != value)
-                    item.PerformClick();
-                else if (item.Checked == value)
-                    item.PerformClick();
+            if (assetViewToolStripMenuItems != null)
+                foreach (var item in assetViewToolStripMenuItems)
+                    if (clickThis.Contains(item.Name) && item.Checked != value)
+                        item.PerformClick();
+                    else if (item.Checked == value)
+                        item.PerformClick();
             autoShowDropDowns = true;
         }
 
@@ -1292,22 +1285,14 @@ namespace IndustrialPark
 
         private void TemplateToolStripItemClick(object sender, EventArgs e)
         {
+            var template = (AssetTemplate)((ToolStripItem)sender).Tag;
+
             UnselectTemplateButtonRecursive(toolStripMenuItem_Templates);
 
-            string text = ((ToolStripItem)sender).Text;
-            foreach (AssetTemplate template in Enum.GetValues(typeof(AssetTemplate)))
-            {
-                if (text == template.ToString())
-                {
-                    ArchiveEditorFunctions.CurrentAssetTemplate = template;
-                    toolStripStatusLabelTemplate.Text = "Template: " + ArchiveEditorFunctions.CurrentAssetTemplate.ToString();
-                    toolStripComboBoxUserTemplate.SelectedItem = null;
-                    ((ToolStripMenuItem)sender).Checked = true;
-                    return;
-                }
-            }
-
-            MessageBox.Show("There was a problem setting your template for placement");
+            ArchiveEditorFunctions.CurrentAssetTemplate = template;
+            toolStripStatusLabelTemplate.Text = "Template: " + ArchiveEditorFunctions.CurrentAssetTemplate.ToString();
+            toolStripComboBoxUserTemplate.SelectedItem = null;
+            ((ToolStripMenuItem)sender).Checked = true;
         }
 
         private void userTemplateToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1600,7 +1585,7 @@ namespace IndustrialPark
                             hipList.Add(ss);
                     }
 
-                var scoobyPlat = HipHopFile.Platform.Unknown;
+                var scoobyPlat = Platform.Unknown;
 
                 var p = new ProgressBar("Opening files...");
                 p.SetProgressBar(0, hipList.Count, 1);
@@ -1666,22 +1651,12 @@ namespace IndustrialPark
                 while (!reader.EndOfStream)
                 {
                     var str = ReadZeroTerminatedString(reader);
-                    var hash = HipHopFile.Functions.BKDRHash(str);
+                    var hash = Functions.BKDRHash(str);
                     if (unkDtypes.Contains(hash))
                         MessageBox.Show("Found: [" + str + "] " + hash.ToString("X8"));
                 }
                 MessageBox.Show("Finished");
             }
-        }
-
-        private void closeAllArchivesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void closeAllArchivesToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void importLevelToolStripMenuItem_Click(object sender, EventArgs e)

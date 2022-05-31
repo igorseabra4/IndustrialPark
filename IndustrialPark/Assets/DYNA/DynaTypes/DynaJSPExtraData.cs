@@ -11,9 +11,9 @@ namespace IndustrialPark
         protected override short constVersion => 1;
 
         [Category(dynaCategoryName)]
-        public AssetID JSPInfo_AssetID { get; set; }
+        public AssetID JSPInfo { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID Group_AssetID { get; set; }
+        public AssetID Group { get; set; }
 
         public DynaJSPExtraData(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.JSPExtraData, game, endianness)
         {
@@ -21,8 +21,8 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
 
-                JSPInfo_AssetID = reader.ReadUInt32();
-                Group_AssetID = reader.ReadUInt32();
+                JSPInfo = reader.ReadUInt32();
+                Group = reader.ReadUInt32();
             }
         }
 
@@ -30,23 +30,21 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(JSPInfo_AssetID);
-                writer.Write(Group_AssetID);
+                writer.Write(JSPInfo);
+                writer.Write(Group);
 
                 return writer.ToArray();
             }
         }
 
-        public override bool HasReference(uint assetID) => JSPInfo_AssetID == assetID || Group_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
-            if (JSPInfo_AssetID == 0)
+            if (JSPInfo == 0)
                 result.Add("JSP Extra Data with no JSPInfo reference");
-            Verify(JSPInfo_AssetID, ref result);
-            if (Group_AssetID == 0)
+            Verify(JSPInfo, ref result);
+            if (Group == 0)
                 result.Add("JSP Extra Data with no GRUP reference");
-            Verify(Group_AssetID, ref result);
+            Verify(Group, ref result);
             base.Verify(ref result);
         }
     }

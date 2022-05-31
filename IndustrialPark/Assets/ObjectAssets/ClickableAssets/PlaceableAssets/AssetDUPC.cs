@@ -33,7 +33,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public int UnknownInt_28 { get; set; }
         [Category(categoryName)]
-        public AssetID NavMesh1_AssetID { get; set; }
+        public AssetID NavMesh1 { get; set; }
         [Category(categoryName)]
         public int UnknownInt_30 { get; set; }
 
@@ -57,7 +57,7 @@ namespace IndustrialPark
                 UnknownInt_20 = reader.ReadInt32();
                 UnknownInt_24 = reader.ReadInt32();
                 UnknownInt_28 = reader.ReadInt32();
-                NavMesh1_AssetID = reader.ReadUInt32();
+                NavMesh1 = reader.ReadUInt32();
                 UnknownInt_30 = reader.ReadInt32();
                 VIL = new AssetVIL(reader);
 
@@ -83,7 +83,7 @@ namespace IndustrialPark
                 writer.Write(UnknownInt_20);
                 writer.Write(UnknownInt_24);
                 writer.Write(UnknownInt_28);
-                writer.Write(NavMesh1_AssetID);
+                writer.Write(NavMesh1);
                 writer.Write(UnknownInt_30);
 
                 writer.Write(assetID);
@@ -96,12 +96,9 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => NavMesh1_AssetID == assetID ||
-            VIL.HasReference(assetID) || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
-            Verify(NavMesh1_AssetID, ref result);
+            Verify(NavMesh1, ref result);
 
             VIL.Verify(ref result);
 

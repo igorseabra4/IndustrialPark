@@ -11,17 +11,17 @@ namespace IndustrialPark
         protected override short constVersion => 1;
 
         [Category(dynaCategoryName)]
-        public AssetID MRKR_ID { get; set; }
+        public AssetID Marker { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID CAM_ID { get; set; }
+        public AssetID Camera { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID PORT_ID { get; set; }
+        public AssetID Portal { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID DYNA_Talkbox_ID { get; set; }
+        public AssetID TalkBox { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID TEXT_ID { get; set; }
+        public AssetID Text { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID SIMP_ID { get; set; }
+        public AssetID SimpleObject { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle InvisibleTimer { get; set; }
         [Category(dynaCategoryName)]
@@ -33,12 +33,12 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
 
-                MRKR_ID = reader.ReadUInt32();
-                CAM_ID = reader.ReadUInt32();
-                PORT_ID = reader.ReadUInt32();
-                DYNA_Talkbox_ID = reader.ReadUInt32();
-                TEXT_ID = reader.ReadUInt32();
-                SIMP_ID = reader.ReadUInt32();
+                Marker = reader.ReadUInt32();
+                Camera = reader.ReadUInt32();
+                Portal = reader.ReadUInt32();
+                TalkBox = reader.ReadUInt32();
+                Text = reader.ReadUInt32();
+                SimpleObject = reader.ReadUInt32();
                 InvisibleTimer = reader.ReadSingle();
                 TeleportTimer = reader.ReadSingle();
             }
@@ -48,12 +48,12 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(MRKR_ID);
-                writer.Write(CAM_ID);
-                writer.Write(PORT_ID);
-                writer.Write(DYNA_Talkbox_ID);
-                writer.Write(TEXT_ID);
-                writer.Write(SIMP_ID);
+                writer.Write(Marker);
+                writer.Write(Camera);
+                writer.Write(Portal);
+                writer.Write(TalkBox);
+                writer.Write(Text);
+                writer.Write(SimpleObject);
                 writer.Write(InvisibleTimer);
                 writer.Write(TeleportTimer);
 
@@ -61,32 +61,14 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (MRKR_ID == assetID)
-                return true;
-            if (CAM_ID == assetID)
-                return true;
-            if (PORT_ID == assetID)
-                return true;
-            if (DYNA_Talkbox_ID == assetID)
-                return true;
-            if (TEXT_ID == assetID)
-                return true;
-            if (SIMP_ID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
         public override void Verify(ref List<string> result)
         {
-            Verify(MRKR_ID, ref result);
-            Verify(CAM_ID, ref result);
-            Verify(PORT_ID, ref result);
-            Verify(DYNA_Talkbox_ID, ref result);
-            Verify(TEXT_ID, ref result);
-            Verify(SIMP_ID, ref result);
+            Verify(Marker, ref result);
+            Verify(Camera, ref result);
+            Verify(Portal, ref result);
+            Verify(TalkBox, ref result);
+            Verify(Text, ref result);
+            Verify(SimpleObject, ref result);
             base.Verify(ref result);
         }
     }

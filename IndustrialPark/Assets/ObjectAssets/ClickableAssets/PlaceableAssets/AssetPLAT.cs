@@ -98,9 +98,9 @@ namespace IndustrialPark
 
             switch (template)
             {
-                case AssetTemplate.HoveringPlatform:
-                    Model_AssetID = 0x335EE0C8;
-                    Animation_AssetID = 0x730847B6;
+                case AssetTemplate.Hovering_Platform:
+                    Model = 0x335EE0C8;
+                    Animation = 0x730847B6;
                     Motion = new Motion_Mechanism()
                     {
                         Type = MotionType.Other,
@@ -109,13 +109,13 @@ namespace IndustrialPark
                         SlideDecelTime = 0.4f
                     };
                     break;
-                case AssetTemplate.TexasHitch_PLAT:
+                case AssetTemplate.Texas_Hitch_Platform:
                 case AssetTemplate.Swinger:
-                    Model_AssetID = "trailer_hitch";
+                    Model = "trailer_hitch";
                     break;
                 case AssetTemplate.Springboard:
-                    Model_AssetID = 0x55E9EAB5;
-                    Animation_AssetID = 0x7AAA99BB;
+                    Model = 0x55E9EAB5;
+                    Animation = 0x7AAA99BB;
                     PlatformType = PlatType.Springboard;
                     PlatSpecific = new PlatSpecific_Springboard()
                     {
@@ -123,8 +123,8 @@ namespace IndustrialPark
                         Height2 = 10,
                         Height3 = 10,
                         HeightBubbleBounce = 10,
-                        Anim1_AssetID = 0x6DAE0759,
-                        Anim2_AssetID = 0xBC4A9A5F,
+                        Animation1 = 0x6DAE0759,
+                        Animation2 = 0xBC4A9A5F,
                         DirectionY = 1f,
                     };
                     break;
@@ -132,19 +132,19 @@ namespace IndustrialPark
                 case AssetTemplate.CollapsePlatform_ThugTug:
                 case AssetTemplate.CollapsePlatform_Spongeball:
                     PlatformType = PlatType.BreakawayPlatform;
-                    Animation_AssetID = 0x7A9BF321;
+                    Animation = 0x7A9BF321;
                     if (template == AssetTemplate.CollapsePlatform_Planktopolis)
                     {
-                        Model_AssetID = 0x6F462432;
+                        Model = 0x6F462432;
                     }
                     else if (template == AssetTemplate.CollapsePlatform_ThugTug)
                     {
-                        Animation_AssetID = 0x62C6520F;
-                        Model_AssetID = 0xED7F1021;
+                        Animation = 0x62C6520F;
+                        Model = 0xED7F1021;
                     }
                     else if (template == AssetTemplate.CollapsePlatform_Spongeball)
                     {
-                        Model_AssetID = 0x1A38B9AB;
+                        Model = 0x1A38B9AB;
                     }
                     PlatSpecific = new PlatSpecific_BreakawayPlatform(template);
                     Motion = new Motion_Mechanism(MotionType.Other);
@@ -249,8 +249,6 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => PlatSpecific.HasReference(assetID) || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             PlatSpecific.Verify(ref result);
@@ -332,7 +330,7 @@ namespace IndustrialPark
             isSkyBox = false;
             skyBoxUseY = false;
             foreach (Link link in _links)
-                if ((EventBFBB)link.EventSendID == EventBFBB.SetasSkydome && link.TargetAssetID.Equals(assetID))
+                if ((EventBFBB)link.EventSendID == EventBFBB.SetasSkydome && link.TargetAsset.Equals(assetID))
                 {
                     isSkyBox = true;
                     if (link.FloatParameter2 == 1f)

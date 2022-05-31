@@ -18,7 +18,7 @@ namespace IndustrialPark
         private const string categoryName = "Button";
 
         [Category(categoryName)]
-        public AssetID PressedModel_AssetID { get; set; }
+        public AssetID PressedModel { get; set; }
         [Category(categoryName)]
         public ButnActMethod ActMethod { get; set; }
         [Category(categoryName)]
@@ -54,8 +54,8 @@ namespace IndustrialPark
 
             if (template == AssetTemplate.Button_Red)
             {
-                Model_AssetID = "button";
-                PressedModel_AssetID = "button_grn";
+                Model = "button";
+                PressedModel = "button_grn";
                 HitMask.FlagValueInt =
                     2 << 0 |
                     2 << 3 |
@@ -78,8 +78,8 @@ namespace IndustrialPark
             else if (template == AssetTemplate.PressurePlate)
             {
                 ActMethod = ButnActMethod.PressurePlate;
-                Model_AssetID = "plate_pressure";
-                PressedModel_AssetID = 0xCE7F8131;
+                Model = "plate_pressure";
+                PressedModel = 0xCE7F8131;
                 HitMask.FlagValueInt =
                     2 << 10 |
                     2 << 12 |
@@ -106,7 +106,7 @@ namespace IndustrialPark
                 reader.BaseStream.Position = entityHeaderEndPosition;
 
                 if (game != Game.Scooby)
-                    PressedModel_AssetID = reader.ReadUInt32();
+                    PressedModel = reader.ReadUInt32();
                 ActMethod = (ButnActMethod)reader.ReadInt32();
                 InitialButtonState = reader.ReadInt32();
                 ResetAfterDelay = reader.ReadInt32Bool();
@@ -123,7 +123,7 @@ namespace IndustrialPark
                 writer.Write(SerializeEntity(game, endianness));
 
                 if (game != Game.Scooby)
-                    writer.Write(PressedModel_AssetID);
+                    writer.Write(PressedModel);
                 writer.Write((int)ActMethod);
                 writer.Write(InitialButtonState);
                 writer.Write(ResetAfterDelay ? 1 : 0);
@@ -147,19 +147,17 @@ namespace IndustrialPark
 
         public override bool DontRender => dontRender;
 
-        public override bool HasReference(uint assetID) => PressedModel_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
-            Verify(PressedModel_AssetID, ref result);
+            Verify(PressedModel, ref result);
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
             if (game == Game.Scooby)
-                dt.RemoveProperty("PressedModel_AssetID");
+                dt.RemoveProperty("PressedModel");
             base.SetDynamicProperties(dt);
         }
     }

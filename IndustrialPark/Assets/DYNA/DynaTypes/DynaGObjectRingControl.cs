@@ -24,14 +24,14 @@ namespace IndustrialPark
 
         [Category(dynaCategoryName)]
         public DynaRingControlPlayerType PlayerType { get; set; }
-        private uint _ringModelAssetID;
+        private uint _ringModel;
         [Category(dynaCategoryName)]
-        public AssetID RingModel_AssetID
+        public AssetID RingModel
         {
-            get => _ringModelAssetID;
+            get => _ringModel;
             set
             {
-                _ringModelAssetID = value;
+                _ringModel = value;
                 RingModelAssetID = value;
             }
         }
@@ -40,28 +40,28 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public int UnusedOffset { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID RingSoundGroup_AssetID1 { get; set; }
+        public AssetID RingSoundGroup1 { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID RingSoundGroup_AssetID2 { get; set; }
+        public AssetID RingSoundGroup2 { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID RingSoundGroup_AssetID3 { get; set; }
+        public AssetID RingSoundGroup3 { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID RingSoundGroup_AssetID4 { get; set; }
+        public AssetID RingSoundGroup4 { get; set; }
         [Category(dynaCategoryName)]
         public int NumNextRingsToShow { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID[] Ring_AssetIDs { get; set; }
+        public AssetID[] Rings { get; set; }
 
         public DynaGObjectRingControl(string assetName) : base(assetName, DynaType.game_object__RingControl, 3)
         {
-            RingModel_AssetID = "test_ring";
+            RingModel = "test_ring";
             UnusedOffset = 40;
-            RingSoundGroup_AssetID1 = "RING_SGRP";
-            RingSoundGroup_AssetID2 = 0;
-            RingSoundGroup_AssetID3 = 0;
-            RingSoundGroup_AssetID4 = 0;
+            RingSoundGroup1 = "RING_SGRP";
+            RingSoundGroup2 = 0;
+            RingSoundGroup3 = 0;
+            RingSoundGroup4 = 0;
             NumNextRingsToShow = 1;
-            Ring_AssetIDs = new AssetID[0];
+            Rings = new AssetID[0];
         }
 
         public DynaGObjectRingControl(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__RingControl, game, endianness)
@@ -71,18 +71,18 @@ namespace IndustrialPark
                 reader.BaseStream.Position = dynaDataStartPosition;
 
                 PlayerType = (DynaRingControlPlayerType)reader.ReadInt32();
-                RingModel_AssetID = reader.ReadUInt32();
+                RingModel = reader.ReadUInt32();
                 DefaultWarningTime = reader.ReadSingle();
                 int ringCount = reader.ReadInt32();
                 UnusedOffset = reader.ReadInt32();
-                RingSoundGroup_AssetID1 = reader.ReadUInt32();
-                RingSoundGroup_AssetID2 = reader.ReadUInt32();
-                RingSoundGroup_AssetID3 = reader.ReadUInt32();
-                RingSoundGroup_AssetID4 = reader.ReadUInt32();
+                RingSoundGroup1 = reader.ReadUInt32();
+                RingSoundGroup2 = reader.ReadUInt32();
+                RingSoundGroup3 = reader.ReadUInt32();
+                RingSoundGroup4 = reader.ReadUInt32();
                 NumNextRingsToShow = reader.ReadInt32();
-                Ring_AssetIDs = new AssetID[ringCount];
-                for (int i = 0; i < Ring_AssetIDs.Length; i++)
-                    Ring_AssetIDs[i] = reader.ReadUInt32();
+                Rings = new AssetID[ringCount];
+                for (int i = 0; i < Rings.Length; i++)
+                    Rings[i] = reader.ReadUInt32();
             }
         }
 
@@ -91,52 +91,33 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write((int)PlayerType);
-                writer.Write(RingModel_AssetID);
+                writer.Write(RingModel);
                 writer.Write(DefaultWarningTime);
-                writer.Write(Ring_AssetIDs.Length);
+                writer.Write(Rings.Length);
                 writer.Write(UnusedOffset);
-                writer.Write(RingSoundGroup_AssetID1);
-                writer.Write(RingSoundGroup_AssetID2);
-                writer.Write(RingSoundGroup_AssetID3);
-                writer.Write(RingSoundGroup_AssetID4);
+                writer.Write(RingSoundGroup1);
+                writer.Write(RingSoundGroup2);
+                writer.Write(RingSoundGroup3);
+                writer.Write(RingSoundGroup4);
                 writer.Write(NumNextRingsToShow);
-                foreach (var i in Ring_AssetIDs)
+                foreach (var i in Rings)
                     writer.Write(i);
 
                 return writer.ToArray();
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (RingModel_AssetID == assetID)
-                return true;
-            if (RingSoundGroup_AssetID1 == assetID)
-                return true;
-            if (RingSoundGroup_AssetID2 == assetID)
-                return true;
-            if (RingSoundGroup_AssetID3 == assetID)
-                return true;
-            if (RingSoundGroup_AssetID4 == assetID)
-                return true;
-            foreach (var ring in Ring_AssetIDs)
-                if (ring == assetID)
-                    return true;
-
-            return base.HasReference(assetID);
-        }
-
         public override void Verify(ref List<string> result)
         {
-            if (RingModel_AssetID == 0)
+            if (RingModel == 0)
                 result.Add("Ring Control with no Ring Model reference");
-            Verify(RingModel_AssetID, ref result);
+            Verify(RingModel, ref result);
 
-            if (RingSoundGroup_AssetID1 == 0)
+            if (RingSoundGroup1 == 0)
                 result.Add("Ring Control with no SGRP reference");
-            Verify(RingSoundGroup_AssetID1, ref result);
+            Verify(RingSoundGroup1, ref result);
 
-            foreach (var ring in Ring_AssetIDs)
+            foreach (var ring in Rings)
                 Verify(ring, ref result);
 
             base.Verify(ref result);

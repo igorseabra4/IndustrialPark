@@ -59,7 +59,5 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override bool HasReference(uint assetID) => Unknown_00 == assetID || base.HasReference(assetID);
     }
 }

@@ -156,16 +156,6 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (DefaultTextID == assetID)
-                return true;
-            if (BackgroundTextureID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
         public override void Verify(ref List<string> result)
         {
             Verify(DefaultTextID, ref result);

@@ -89,7 +89,7 @@ namespace IndustrialPark
         private const string categoryName = "Particle Properties";
 
         [Category(categoryName)]
-        public AssetID PARS_AssetID { get; set; }
+        public AssetID ParticleSystem { get; set; }
         [Category(categoryName)]
         private StructPARP[] _structs { get; set; }
         [Category(categoryName), Description("Each of the 14 structs has a different function. Check wiki page for more info.")]
@@ -126,7 +126,7 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = baseHeaderEndPosition;
 
-                PARS_AssetID = reader.ReadUInt32();
+                ParticleSystem = reader.ReadUInt32();
 
                 _structs = new StructPARP[14];
 
@@ -146,7 +146,7 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeBase(endianness));
-                writer.Write(PARS_AssetID);
+                writer.Write(ParticleSystem);
 
                 if (_structs.Length != 14)
                     throw new Exception("PARS structs must be exactly 14 entries.");
@@ -162,15 +162,13 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => PARS_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
-            if (PARS_AssetID == 0)
-                result.Add("PARP with PARS_AssetID set to 0");
-            Verify(PARS_AssetID, ref result);
+            if (ParticleSystem == 0)
+                result.Add("Particle Properties with ParticleSystem set to 0");
+            Verify(ParticleSystem, ref result);
         }
     }
 }

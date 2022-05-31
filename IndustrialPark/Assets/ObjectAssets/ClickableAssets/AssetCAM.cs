@@ -102,9 +102,9 @@ namespace IndustrialPark
         [Category(categoryName)]
         public FlagBitmask Flags4 { get; set; } = ByteFlagsDescriptor();
         [Category(categoryName)]
-        public AssetID Marker1AssetID { get; set; }
+        public AssetID Marker1 { get; set; }
         [Category(categoryName)]
-        public AssetID Marker2AssetID { get; set; }
+        public AssetID Marker2 { get; set; }
         private CamType _camType;
         [Category(categoryName)]
         public CamType CamType
@@ -151,7 +151,7 @@ namespace IndustrialPark
 
             CamType = CamType.Static;
 
-            if (template == AssetTemplate.StartCamera)
+            if (template == AssetTemplate.Start_Camera)
             {
                 NormalizedForwardZ = 1;
                 NormalizedUpY = 1;
@@ -164,7 +164,7 @@ namespace IndustrialPark
                 camSpecific.Height = 1;
                 camSpecific.RubberBand = 1;
             }
-            else if (template == AssetTemplate.BusStop_Camera)
+            else if (template == AssetTemplate.Bus_Stop_Camera)
             {
                 PositionX -= 7f;
                 PositionY += 2f;
@@ -222,8 +222,8 @@ namespace IndustrialPark
                 Flags2.FlagValueByte = reader.ReadByte();
                 Flags3.FlagValueByte = reader.ReadByte();
                 Flags4.FlagValueByte = reader.ReadByte();
-                Marker1AssetID = reader.ReadUInt32();
-                Marker2AssetID = reader.ReadUInt32();
+                Marker1 = reader.ReadUInt32();
+                Marker2 = reader.ReadUInt32();
                 _camType = (CamType)reader.ReadByte();
 
                 reader.BaseStream.Position = 0x60;
@@ -290,8 +290,8 @@ namespace IndustrialPark
                 writer.Write(Flags2.FlagValueByte);
                 writer.Write(Flags3.FlagValueByte);
                 writer.Write(Flags4.FlagValueByte);
-                writer.Write(Marker1AssetID);
-                writer.Write(Marker2AssetID);
+                writer.Write(Marker1);
+                writer.Write(Marker2);
                 writer.Write((byte)_camType);
                 while (writer.BaseStream.Length < 0x88)
                     writer.Write((byte)0);
@@ -309,15 +309,12 @@ namespace IndustrialPark
         [Browsable(false)]
         public bool SpecialBlendMode => true;
 
-        public override bool HasReference(uint assetID) => Marker1AssetID == assetID || Marker2AssetID == assetID ||
-            CamSpecific.HasReference(assetID) || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
-            Verify(Marker1AssetID, ref result);
-            Verify(Marker2AssetID, ref result);
+            Verify(Marker1, ref result);
+            Verify(Marker2, ref result);
 
             CamSpecific.Verify(ref result);
 

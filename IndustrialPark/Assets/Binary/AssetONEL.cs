@@ -82,10 +82,6 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override bool HasReference(uint assetID) =>
-            SoundGroupNameHash == assetID ||
-            pData == assetID;
     }
 
     public class AssetONEL : Asset
@@ -118,14 +114,6 @@ namespace IndustrialPark
 
                 return writer.ToArray();
             }
-        }
-
-        public override bool HasReference(uint assetID)
-        {
-            foreach (var s in OneLiners)
-                if (s.HasReference(assetID))
-                    return true;
-            return false;
         }
     }
 }

@@ -155,26 +155,26 @@ namespace IndustrialPark
         [Category(dynaCategoryName + " Entity Color")]
         public AssetSingle PseudoColorAlphaSpeed { get; set; }
 
-        protected uint _modelAssetID;
+        protected uint _model;
         [Category(dynaCategoryName + " Entity References")]
-        public AssetID Model_AssetID
+        public AssetID Model
         {
-            get => _modelAssetID;
-            set { _modelAssetID = value; CreateTransformMatrix(); }
+            get => _model;
+            set { _model = value; CreateTransformMatrix(); }
         }
 
         [Category(dynaCategoryName + " Entity References")]
-        public AssetID PseudoAnimation_AssetID { get; set; }
+        public AssetID Animation { get; set; }
 
         [Category(dynaCategoryName + " Entity References")]
-        public AssetID Surface_AssetID { get; set; }
+        public AssetID Surface { get; set; }
 
         protected int entityDynaEndPosition => dynaDataStartPosition + 0x50;
 
         [Category(dynaCategoryName)]
-        public AssetID ParentCar_AssetID { get; set; }
+        public AssetID ParentCar { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID StartSpline_AssetID { get; set; }
+        public AssetID StartSpline { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle InitialU { get; set; }
         [Category(dynaCategoryName)]
@@ -192,7 +192,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetByte IsDestructible { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID NavMesh_AssetID { get; set; }
+        public AssetID NavMesh { get; set; }
         [Category(dynaCategoryName)]
         public AssetByte NavMeshGroupIndex { get; set; }
 
@@ -212,7 +212,7 @@ namespace IndustrialPark
                 PseudoTypeFlag = reader.ReadByte();
                 PseudoFlag0A.FlagValueByte = reader.ReadByte();
                 PseudoSolidityFlags.FlagValueByte = reader.ReadByte();
-                Surface_AssetID = reader.ReadUInt32();
+                Surface = reader.ReadUInt32();
                 _yaw = reader.ReadSingle();
                 _pitch = reader.ReadSingle();
                 _roll = reader.ReadSingle();
@@ -220,11 +220,11 @@ namespace IndustrialPark
                 _scale = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
                 _color = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
                 PseudoColorAlphaSpeed = reader.ReadSingle();
-                _modelAssetID = reader.ReadUInt32();
-                PseudoAnimation_AssetID = reader.ReadUInt32();
+                _model = reader.ReadUInt32();
+                Animation = reader.ReadUInt32();
 
-                ParentCar_AssetID = reader.ReadUInt32();
-                StartSpline_AssetID = reader.ReadUInt32();
+                ParentCar = reader.ReadUInt32();
+                StartSpline = reader.ReadUInt32();
                 InitialU = reader.ReadSingle();
                 FrontAxleDist = reader.ReadSingle();
                 RearAxleDist = reader.ReadSingle();
@@ -235,7 +235,7 @@ namespace IndustrialPark
                 IsDestructible = reader.ReadByte();
                 reader.ReadByte();
                 reader.ReadByte();
-                NavMesh_AssetID = reader.ReadUInt32();
+                NavMesh = reader.ReadUInt32();
                 NavMeshGroupIndex = reader.ReadByte();
 
                 CreateTransformMatrix();
@@ -255,7 +255,7 @@ namespace IndustrialPark
                 writer.Write(PseudoTypeFlag);
                 writer.Write(PseudoFlag0A.FlagValueByte);
                 writer.Write(PseudoSolidityFlags.FlagValueByte);
-                writer.Write(Surface_AssetID);
+                writer.Write(Surface);
                 writer.Write(_yaw);
                 writer.Write(_pitch);
                 writer.Write(_roll);
@@ -270,11 +270,11 @@ namespace IndustrialPark
                 writer.Write(_color.Z);
                 writer.Write(_color.W);
                 writer.Write(PseudoColorAlphaSpeed);
-                writer.Write(_modelAssetID);
-                writer.Write(PseudoAnimation_AssetID);
+                writer.Write(_model);
+                writer.Write(Animation);
 
-                writer.Write(ParentCar_AssetID);
-                writer.Write(StartSpline_AssetID);
+                writer.Write(ParentCar);
+                writer.Write(StartSpline);
                 writer.Write(InitialU);
                 writer.Write(FrontAxleDist);
                 writer.Write(RearAxleDist);
@@ -284,7 +284,7 @@ namespace IndustrialPark
                 writer.Write(HaveSparks);
                 writer.Write(IsDestructible);
                 writer.Write((short)0);
-                writer.Write(NavMesh_AssetID);
+                writer.Write(NavMesh);
                 writer.Write(NavMeshGroupIndex);
                 writer.Write((byte)0);
                 writer.Write((short)0);
@@ -308,7 +308,7 @@ namespace IndustrialPark
 
         protected void CreateBoundingBox()
         {
-            var model = GetFromRenderingDictionary(Model_AssetID);
+            var model = GetFromRenderingDictionary(Model);
             if (model != null)
             {
                 triangles = model.triangleList.ToArray();
@@ -342,20 +342,20 @@ namespace IndustrialPark
                 return false;
             if (isInvisible)
                 return false;
-            if (AssetMODL.renderBasedOnLodt && GetDistanceFrom(renderer.Camera.Position) > AssetLODT.MaxDistanceTo(_modelAssetID))
+            if (AssetMODL.renderBasedOnLodt && GetDistanceFrom(renderer.Camera.Position) > AssetLODT.MaxDistanceTo(_model))
                 return false;
 
             return renderer.frustum.Intersects(ref boundingBox);
         }
 
         [Browsable(false)]
-        public bool SpecialBlendMode => !renderingDictionary.ContainsKey(_modelAssetID) || renderingDictionary[_modelAssetID].SpecialBlendMode;
+        public bool SpecialBlendMode => !renderingDictionary.ContainsKey(_model) || renderingDictionary[_model].SpecialBlendMode;
 
         public void Draw(SharpRenderer renderer)
         {
             Vector4 Color = new Vector4(ColorRed, ColorGreen, ColorBlue, ColorAlpha);
-            if (renderingDictionary.ContainsKey(_modelAssetID))
-                renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * Color : Color, Vector3.Zero);
+            if (renderingDictionary.ContainsKey(_model))
+                renderingDictionary[_model].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * Color : Color, Vector3.Zero);
             else
                 renderer.DrawCube(world, isSelected);
         }
@@ -389,32 +389,14 @@ namespace IndustrialPark
             return Vector3.Distance(cameraPosition, _position);
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (Surface_AssetID == assetID)
-                return true;
-            if (Model_AssetID == assetID)
-                return true;
-            if (PseudoAnimation_AssetID == assetID)
-                return true;
-            if (ParentCar_AssetID == assetID)
-                return true;
-            if (StartSpline_AssetID == assetID)
-                return true;
-            if (NavMesh_AssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
         public override void Verify(ref List<string> result)
         {
-            Verify(Surface_AssetID, ref result);
-            Verify(Model_AssetID, ref result);
-            Verify(PseudoAnimation_AssetID, ref result);
-            Verify(ParentCar_AssetID, ref result);
-            Verify(StartSpline_AssetID, ref result);
-            Verify(NavMesh_AssetID, ref result);
+            Verify(Surface, ref result);
+            Verify(Model, ref result);
+            Verify(Animation, ref result);
+            Verify(ParentCar, ref result);
+            Verify(StartSpline, ref result);
+            Verify(NavMesh, ref result);
 
             base.Verify(ref result);
         }

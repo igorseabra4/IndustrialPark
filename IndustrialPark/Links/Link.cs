@@ -11,13 +11,13 @@ namespace IndustrialPark
         Progress
     }
 
-    public class Link
+    public class Link : GenericAssetDataContainer
     {
         public static int sizeOfStruct => 32;
 
         private Game game;
 
-        public AssetID TargetAssetID { get; set; }
+        public AssetID TargetAsset { get; set; }
         public ushort EventReceiveID;
         public ushort EventSendID;
         public AssetID Parameter1 { get; set; }
@@ -48,8 +48,8 @@ namespace IndustrialPark
             get => BitConverter.ToSingle(BitConverter.GetBytes(Parameter4), 0);
             set => Parameter4 = BitConverter.ToUInt32(BitConverter.GetBytes(value), 0);
         }
-        public AssetID ArgumentAssetID { get; set; }
-        public AssetID SourceCheckAssetID { get; set; }
+        public AssetID ArgumentAsset { get; set; }
+        public AssetID SourceCheckAsset { get; set; }
 
         public float Time { get; set; } // only for timed
         public int Flags { get; set; } // only for progress
@@ -71,26 +71,26 @@ namespace IndustrialPark
             {
                 EventReceiveID = reader.ReadUInt16();
                 EventSendID = reader.ReadUInt16();
-                TargetAssetID = reader.ReadUInt32();
+                TargetAsset = reader.ReadUInt32();
                 Parameter1 = reader.ReadUInt32();
                 Parameter2 = reader.ReadUInt32();
                 Parameter3 = reader.ReadUInt32();
                 Parameter4 = reader.ReadUInt32();
-                ArgumentAssetID = reader.ReadUInt32();
-                SourceCheckAssetID = reader.ReadUInt32();
+                ArgumentAsset = reader.ReadUInt32();
+                SourceCheckAsset = reader.ReadUInt32();
             }
             else
             {
                 Time = reader.ReadSingle();
                 if (type == LinkType.Progress)
                     Flags = reader.ReadInt32();
-                TargetAssetID = reader.ReadUInt32();
+                TargetAsset = reader.ReadUInt32();
                 EventSendID = (ushort)reader.ReadUInt32();
                 Parameter1 = reader.ReadUInt32();
                 Parameter2 = reader.ReadUInt32();
                 Parameter3 = reader.ReadUInt32();
                 Parameter4 = reader.ReadUInt32();
-                ArgumentAssetID = reader.ReadUInt32();
+                ArgumentAsset = reader.ReadUInt32();
             }
         }
 
@@ -102,34 +102,31 @@ namespace IndustrialPark
                 {
                     writer.Write(EventReceiveID);
                     writer.Write(EventSendID);
-                    writer.Write(TargetAssetID);
+                    writer.Write(TargetAsset);
                     writer.Write(Parameter1);
                     writer.Write(Parameter2);
                     writer.Write(Parameter3);
                     writer.Write(Parameter4);
-                    writer.Write(ArgumentAssetID);
-                    writer.Write(SourceCheckAssetID);
+                    writer.Write(ArgumentAsset);
+                    writer.Write(SourceCheckAsset);
                 }
                 else
                 {
                     writer.Write(Time);
                     if (type == LinkType.Progress)
                         writer.Write(Flags);
-                    writer.Write(TargetAssetID);
+                    writer.Write(TargetAsset);
                     writer.Write((int)EventSendID);
                     writer.Write(Parameter1);
                     writer.Write(Parameter2);
                     writer.Write(Parameter3);
                     writer.Write(Parameter4);
-                    writer.Write(ArgumentAssetID);
+                    writer.Write(ArgumentAsset);
                 }
 
                 return writer.ToArray();
             }
         }
-
-        public bool HasReference(uint assetID) => TargetAssetID == assetID || ArgumentAssetID == assetID || SourceCheckAssetID == assetID
-            || Parameter1 == assetID || Parameter2 == assetID || Parameter3 == assetID || Parameter4 == assetID;
 
         public override string ToString()
         {
@@ -140,7 +137,7 @@ namespace IndustrialPark
 
             result += EventReceiveID != 0 ? recEvent.ToString() : Time.ToString();
             result += $" => {sndEvent} => ";
-            result += HexUIntTypeConverter.Legacy ? TargetAssetID.ToString("X8") : Program.MainForm.GetAssetNameFromID(TargetAssetID);
+            result += HexUIntTypeConverter.Legacy ? TargetAsset.ToString("X8") : Program.MainForm.GetAssetNameFromID(TargetAsset);
 
             return result;
         }

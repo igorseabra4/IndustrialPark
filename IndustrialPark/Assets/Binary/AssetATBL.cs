@@ -55,7 +55,7 @@ namespace IndustrialPark
         zEntPlayer_TreeDomeSBAnimTable = 46
     }
 
-    public class AnimationFile
+    public class AnimationFile : GenericAssetDataContainer
     {
         public int FileFlags { get; set; }
         public AssetSingle Duration { get; set; }
@@ -112,7 +112,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AnimationState
+    public class AnimationState : GenericAssetDataContainer
     {
         public AssetID StateID { get; set; }
         public int AnimFileIndex { get; set; }
@@ -168,7 +168,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AnimationEffect
+    public class AnimationEffect : GenericAssetDataContainer
     {
         public int StateID { get; set; }
         public AssetSingle StartTime { get; set; }
@@ -348,18 +348,6 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            foreach (var a in Animations)
-                if (a == assetID)
-                    return true;
-
-            foreach (var a in AnimationStates)
-                if (a.StateID == assetID)
-                    return true;
-
-            return false;
-        }
 
         public override void Verify(ref List<string> result)
         {

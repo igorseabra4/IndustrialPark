@@ -11,7 +11,7 @@ namespace IndustrialPark
         protected override short constVersion => 1;
 
         [Category(dynaCategoryName)]
-        public AssetID MRKR_ID { get; set; }
+        public AssetID Marker { get; set; }
         [Category(dynaCategoryName)]
         public int SetViewAngle { get; set; }
         [Category(dynaCategoryName)]
@@ -19,7 +19,7 @@ namespace IndustrialPark
 
         public DynaGObjectBungeeDrop(string assetName, uint mrkrAssetId) : base(assetName, DynaType.game_object__bungee_drop, 1)
         {
-            MRKR_ID = mrkrAssetId;
+            Marker = mrkrAssetId;
             SetViewAngle = 1;
         }
 
@@ -29,7 +29,7 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
 
-                MRKR_ID = reader.ReadUInt32();
+                Marker = reader.ReadUInt32();
                 SetViewAngle = reader.ReadInt32();
                 ViewAngle = reader.ReadSingle();
             }
@@ -39,7 +39,7 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(MRKR_ID);
+                writer.Write(Marker);
                 writer.Write(SetViewAngle);
                 writer.Write(ViewAngle);
 
@@ -47,11 +47,9 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => MRKR_ID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
-            Verify(MRKR_ID, ref result);
+            Verify(Marker, ref result);
 
             base.Verify(ref result);
         }

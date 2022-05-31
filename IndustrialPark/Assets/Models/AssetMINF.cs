@@ -3,6 +3,7 @@ using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
@@ -85,7 +86,7 @@ namespace IndustrialPark
     public class MinfReference : GenericAssetDataContainer
     {
         public static int Size => 56;
-        public AssetID Model_AssetID { get; set; }
+        public AssetID Model { get; set; }
         public ushort Flags { get; set; }
         public byte Parent { get; set; }
         public byte Bone { get; set; }
@@ -105,7 +106,7 @@ namespace IndustrialPark
         public MinfReference() { }
         public MinfReference(EndianBinaryReader reader)
         {
-            Model_AssetID = reader.ReadUInt32();
+            Model = reader.ReadUInt32();
             Flags = reader.ReadUInt16();
             Parent = reader.ReadByte();
             Bone = reader.ReadByte();
@@ -127,7 +128,7 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(Model_AssetID);
+                writer.Write(Model);
                 writer.Write(Flags);
                 writer.Write(Parent);
                 writer.Write(Bone);
@@ -154,13 +155,7 @@ namespace IndustrialPark
         public AssetID Type_Hex { get; set; }
         public MinfAssetParam Type_Enum
         {
-            get
-            {
-                foreach (MinfAssetParam map in Enum.GetValues(typeof(MinfAssetParam)))
-                    if ((uint)map == Type_Hex)
-                        return map;
-                return MinfAssetParam.Unknown;
-            }
+            get => Enum.GetValues(typeof(MinfAssetParam)).Cast<MinfAssetParam>().DefaultIfEmpty(MinfAssetParam.Unknown).FirstOrDefault(p => Type_Hex.Equals((uint)p));
             set
             {
                 Type_Hex = (uint)value;
@@ -212,20 +207,20 @@ namespace IndustrialPark
         private const string categoryName = "Model Info";
 
         [Category(categoryName)]
-        public AssetID ATBL_AssetID { get; set; }
+        public AssetID AnimationTable { get; set; }
         [Category(categoryName)]
         public AssetID CombatID { get; set; }
         [Category(categoryName)]
         public AssetID BrainID { get; set; }
         [Category(categoryName)]
-        public MinfReference[] MinfReferences { get; set; }
+        public MinfReference[] References { get; set; }
         [Category(categoryName)]
-        public MinfParam[] MinfParams { get; set; }
+        public MinfParam[] Parameters { get; set; }
 
         public AssetMINF(string assetName) : base(assetName, AssetType.ModelInfo)
         {
-            MinfReferences = new MinfReference[0];
-            MinfParams = new MinfParam[0];
+            References = new MinfReference[0];
+            Parameters = new MinfParam[0];
         }
 
         public AssetMINF(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
@@ -234,27 +229,27 @@ namespace IndustrialPark
             {
                 reader.ReadInt32();
                 int amountOfReferences = reader.ReadInt32();
-                ATBL_AssetID = reader.ReadUInt32();
+                AnimationTable = reader.ReadUInt32();
                 if (game != Game.Scooby)
                 {
                     CombatID = reader.ReadUInt32();
                     BrainID = reader.ReadUInt32();
                 }
 
-                MinfReferences = new MinfReference[amountOfReferences];
-                for (int i = 0; i < MinfReferences.Length; i++)
-                    MinfReferences[i] = new MinfReference(reader);
+                References = new MinfReference[amountOfReferences];
+                for (int i = 0; i < References.Length; i++)
+                    References[i] = new MinfReference(reader);
 
                 var mParams = new List<MinfParam>();
                 while (!reader.EndOfStream)
                     mParams.Add(new MinfParam(reader));
-                MinfParams = mParams.ToArray();
+                Parameters = mParams.ToArray();
 
-                if (MinfReferences.Length > 0)
-                    _modelAssetID = MinfReferences[0].Model_AssetID;
-                else _modelAssetID = 0;
+                if (References.Length > 0)
+                    _model = References[0].Model;
+                else _model = 0;
 
-                if (_modelAssetID != 0)
+                if (_model != 0)
                 {
                     AddToRenderingDictionary(AHDR.assetID, this);
 
@@ -272,8 +267,8 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.WriteMagic("MINF");
-                writer.Write(MinfReferences.Length);
-                writer.Write(ATBL_AssetID);
+                writer.Write(References.Length);
+                writer.Write(AnimationTable);
 
                 if (game != Game.Scooby)
                 {
@@ -281,9 +276,9 @@ namespace IndustrialPark
                     writer.Write(BrainID);
                 }
 
-                foreach (var r in MinfReferences)
+                foreach (var r in References)
                     writer.Write(r.Serialize(game, endianness));
-                foreach (var b in MinfParams)
+                foreach (var b in Parameters)
                     writer.Write(b.Serialize(endianness));
 
                 return writer.ToArray();
@@ -292,7 +287,7 @@ namespace IndustrialPark
 
         private string newName => assetName.Replace(".MINF", "");
 
-        private uint _modelAssetID;
+        private uint _model;
 
         public void MovieRemoveFromDictionary()
         {
@@ -300,41 +295,29 @@ namespace IndustrialPark
             RemoveFromNameDictionary(Functions.BKDRHash(newName));
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (ATBL_AssetID == assetID)
-                return true;
-
-            foreach (MinfReference m in MinfReferences)
-                if (m.Model_AssetID == assetID)
-                    return true;
-
-            return base.HasReference(assetID);
-        }
-
         public override void Verify(ref List<string> result)
         {
-            Verify(ATBL_AssetID, ref result);
-            foreach (MinfReference m in MinfReferences)
+            Verify(AnimationTable, ref result);
+            foreach (MinfReference m in References)
             {
-                if (m.Model_AssetID == 0)
-                    result.Add("MINF model reference with Model_AssetID set to 0");
-                Verify(m.Model_AssetID, ref result);
+                if (m.Model == 0)
+                    result.Add("ModelInfo model reference with Model set to 0");
+                Verify(m.Model, ref result);
             }
         }
 
         public void Draw(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset)
         {
-            if (renderingDictionary.ContainsKey(_modelAssetID))
-                renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, uvAnimOffset);
+            if (renderingDictionary.ContainsKey(_model))
+                renderingDictionary[_model].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, uvAnimOffset);
             else
                 renderer.DrawCube(world, isSelected | isSelected);
         }
 
         [Browsable(false)]
-        public bool SpecialBlendMode => renderingDictionary.ContainsKey(_modelAssetID) ? renderingDictionary[_modelAssetID].SpecialBlendMode : true;
+        public bool SpecialBlendMode => renderingDictionary.ContainsKey(_model) ? renderingDictionary[_model].SpecialBlendMode : true;
 
-        public RenderWareModelFile GetRenderWareModelFile() => GetFromRenderingDictionary(_modelAssetID);
+        public RenderWareModelFile GetRenderWareModelFile() => GetFromRenderingDictionary(_model);
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {

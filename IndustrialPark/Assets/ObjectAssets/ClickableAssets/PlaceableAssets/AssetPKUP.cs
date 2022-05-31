@@ -33,9 +33,9 @@ namespace IndustrialPark
         public AssetPKUP(string assetName, Game game, Vector3 position, AssetTemplate template) : base(assetName, AssetType.Pickup, BaseAssetType.Pickup, position)
         {
             if (game == Game.BFBB)
-                Model_AssetID = pkupsMinfName;
+                Model = pkupsMinfName;
             else if (game == Game.Incredibles)
-                Model_AssetID = 0x94E25463;
+                Model = 0x94E25463;
 
             if (template.ToString().Contains("Shiny") || template.ToString().Contains("Manliness"))
                 if (persistentShinies)
@@ -59,7 +59,7 @@ namespace IndustrialPark
                     Shape = 0x34;
                     PickReferenceID = 0x079A0734;
                     break;
-                case AssetTemplate.Shiny_Blue:
+                case AssetTemplate.ShinyBlue:
                     Shape = 0x81;
                     PickReferenceID = 0x6D4A4181;
                     break;
@@ -96,12 +96,12 @@ namespace IndustrialPark
                     Shape = 0x10;
                     PickReferenceID = 0x18140B10;
                     break;
-                case AssetTemplate.SteeringWheel:
+                case AssetTemplate.Steering_Wheel:
                     StateIsPersistent = true;
                     Shape = 0x32;
                     PickReferenceID = 0x4C67C832;
                     break;
-                case AssetTemplate.PowerCrystal:
+                case AssetTemplate.Power_Crystal:
                     StateIsPersistent = true;
                     Shape = 0xBB;
                     PickReferenceID = 0xFE7A89BB;
@@ -130,16 +130,16 @@ namespace IndustrialPark
                     Shape = 0x8A;
                     PickReferenceID = 0x3C48E68A;
                     break;
-                case AssetTemplate.KrabbyPatty:
+                case AssetTemplate.Krabby_Patty:
                     Shape = 0xD1;
                     PickReferenceID = 0xACC4FBD1;
                     break;
-                case AssetTemplate.GoofyGooberToken:
+                case AssetTemplate.Goofy_Goober_Token:
                     StateIsPersistent = true;
                     Shape = 0xB7;
                     PickReferenceID = 0x60F808B7;
                     break;
-                case AssetTemplate.TreasureChest:
+                case AssetTemplate.Treasure_Chest:
                     StateIsPersistent = true;
                     Shape = 0x8A;
                     PickReferenceID = 0xA613E48A;
@@ -182,8 +182,6 @@ namespace IndustrialPark
         public static bool dontRender = false;
 
         public override bool DontRender => dontRender;
-
-        public override bool HasReference(uint assetID) => PickReferenceID == assetID || base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {

@@ -89,13 +89,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle DirectionZ { get; set; }
         [Category(categoryName)]
-        public AssetSingle LightConeAngleRad { get; set; }
-        [Category(categoryName)]
-        public AssetSingle LightConeAngleDeg 
-        {
-            get => MathUtil.RadiansToDegrees(LightConeAngleRad); 
-            set => LightConeAngleRad = MathUtil.DegreesToRadians(value);
-        }
+        public AssetSingle LightConeAngle { get; set; }
         private Vector3 _position;
         [Category(categoryName)]
         public AssetSingle PositionX
@@ -118,11 +112,13 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle Radius { get; set; }
         [Category(categoryName)]
-        public AssetID Attach_AssetID { get; set; }
+        public AssetID Attach { get; set; }
 
         public AssetLITE(string assetName, Vector3 position) : base(assetName, AssetType.Light, BaseAssetType.Light)
         {
             _position = position;
+            _color = Vector4.One;
+            Radius = 10f;
 
             CreateTransformMatrix();
             ArchiveEditorFunctions.AddToRenderableAssets(this);
@@ -142,10 +138,10 @@ namespace IndustrialPark
                 DirectionX = reader.ReadSingle();
                 DirectionY = reader.ReadSingle();
                 DirectionZ = reader.ReadSingle();
-                LightConeAngleRad = reader.ReadSingle();
+                LightConeAngle = reader.ReadSingle();
                 _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
                 Radius = reader.ReadSingle();
-                Attach_AssetID = reader.ReadUInt32();
+                Attach = reader.ReadUInt32();
 
                 CreateTransformMatrix();
                 ArchiveEditorFunctions.AddToRenderableAssets(this);
@@ -169,12 +165,12 @@ namespace IndustrialPark
                 writer.Write(DirectionX);
                 writer.Write(DirectionY);
                 writer.Write(DirectionZ);
-                writer.Write(LightConeAngleRad);
+                writer.Write(LightConeAngle);
                 writer.Write(_position.X);
                 writer.Write(_position.Y);
                 writer.Write(_position.Z);
                 writer.Write(Radius);
-                writer.Write(Attach_AssetID);
+                writer.Write(Attach);
 
                 writer.Write(SerializeLinks(endianness));
                 return writer.ToArray();

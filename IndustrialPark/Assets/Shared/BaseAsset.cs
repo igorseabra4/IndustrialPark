@@ -167,17 +167,15 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => _links.Any(link => link.HasReference(assetID));
-
         public override void Verify(ref List<string> result)
         {
             foreach (Link link in _links)
             {
-                if (link.TargetAssetID == 0)
+                if (link.TargetAsset == 0)
                     result.Add("Link with Target Asset set to 0");
-                Verify(link.TargetAssetID, ref result);
-                Verify(link.ArgumentAssetID, ref result);
-                Verify(link.SourceCheckAssetID, ref result);
+                Verify(link.TargetAsset, ref result);
+                Verify(link.ArgumentAsset, ref result);
+                Verify(link.SourceCheckAsset, ref result);
 
                 if (link.EventReceiveID == 0 || link.EventReceiveID > Enum.GetValues(game == Game.Incredibles ? typeof(EventTSSM) : typeof(EventBFBB)).Length)
                     result.Add("Link receives event of unknown type: " + link.EventReceiveID.ToString());

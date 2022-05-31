@@ -23,11 +23,11 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public EnemySupplyCrateType CrateType
         {
-            get => (EnemySupplyCrateType)(uint)Model_AssetID;
-            set => Model_AssetID = (uint)value;
+            get => (EnemySupplyCrateType)(uint)Model;
+            set => Model = (uint)value;
         }
         [Category(dynaCategoryName)]
-        public AssetID MVPT_AssetID { get; set; }
+        public AssetID MovePoint { get; set; }
 
         public DynaEnemySupplyCrate(string assetName, AssetTemplate template, Vector3 position) : base(assetName, DynaType.Enemy__SB__SupplyCrate, 2, position)
         {
@@ -45,7 +45,7 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = entityDynaEndPosition;
 
-                MVPT_AssetID = reader.ReadUInt32();
+                MovePoint = reader.ReadUInt32();
             }
         }
 
@@ -54,27 +54,19 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeEntityDyna(endianness));
-                writer.Write(MVPT_AssetID);
+                writer.Write(MovePoint);
 
                 return writer.ToArray();
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (MVPT_AssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
-            Verify(MVPT_AssetID, ref result);
+            Verify(MovePoint, ref result);
         }
 
         public static bool dontRender = false;
-        public override bool DontRender { get => dontRender; }
+        public override bool DontRender => dontRender;
     }
 }

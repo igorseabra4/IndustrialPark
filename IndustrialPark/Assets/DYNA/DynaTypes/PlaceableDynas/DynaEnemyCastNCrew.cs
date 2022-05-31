@@ -16,8 +16,8 @@ namespace IndustrialPark
         [Category("Enemy:SB:CastNCrew")]
         public EnemyCastNCrewType CastNCrewType
         {
-            get => (EnemyCastNCrewType)(uint)Model_AssetID;
-            set => Model_AssetID = (uint)value;
+            get => (EnemyCastNCrewType)(uint)Model;
+            set => Model = (uint)value;
         }
 
         public DynaEnemyCastNCrew(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__CastNCrew, game, endianness) { }
@@ -32,6 +32,6 @@ namespace IndustrialPark
         }
 
         public static bool dontRender = false;
-        public override bool DontRender { get => dontRender; }
+        public override bool DontRender => dontRender;
     }
 }

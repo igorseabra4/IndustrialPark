@@ -11,7 +11,7 @@ namespace IndustrialPark
         protected override short constVersion => 2;
 
         [Category(dynaCategoryName)]
-        public AssetID Text_AssetID { get; set; }
+        public AssetID Text { get; set; }
         [Category(dynaCategoryName)]
         public byte font { get; set; }
         [Category(dynaCategoryName)]
@@ -57,7 +57,7 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaUIEnd;
 
-                Text_AssetID = reader.ReadUInt32();
+                Text = reader.ReadUInt32();
                 font = reader.ReadByte();
                 fontSizeW = reader.ReadByte();
                 fontSizeH = reader.ReadByte();
@@ -83,7 +83,7 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeDynaUI(endianness));
-                writer.Write(Text_AssetID);
+                writer.Write(Text);
                 writer.Write(font);
                 writer.Write(fontSizeW);
                 writer.Write(fontSizeH);
@@ -105,7 +105,5 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override bool HasReference(uint assetID) => Text_AssetID == assetID || base.HasReference(assetID);
     }
 }

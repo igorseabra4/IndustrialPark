@@ -11,10 +11,10 @@ namespace IndustrialPark
         private const string categoryName = "User Interface";
 
         [Category("Entity References")]
-        public AssetID Sound_AssetID
+        public AssetID Sound
         {
-            get => Animation_AssetID;
-            set => Animation_AssetID = value;
+            get => Animation;
+            set => Animation = value;
         }
 
         [Category(categoryName)]
@@ -51,7 +51,7 @@ namespace IndustrialPark
         }
 
         [Category(categoryName)]
-        public AssetID TextureAssetID { get; set; }
+        public AssetID Texture { get; set; }
         [Category(categoryName)]
         public AssetSingle TextCoordTopLeftX { get; set; }
         [Category(categoryName)]
@@ -93,7 +93,7 @@ namespace IndustrialPark
                 _width = reader.ReadInt16();
                 Height = reader.ReadInt16();
 
-                TextureAssetID = reader.ReadUInt32();
+                Texture = reader.ReadUInt32();
                 TextCoordTopLeftX = reader.ReadSingle();
                 TextCoordTopLeftY = reader.ReadSingle();
                 TextCoordTopRightX = reader.ReadSingle();
@@ -123,7 +123,7 @@ namespace IndustrialPark
                 writer.Write(UIFlags.FlagValueInt);
                 writer.Write(Width);
                 writer.Write(Height);
-                writer.Write(TextureAssetID);
+                writer.Write(Texture);
                 writer.Write(TextCoordTopLeftX);
                 writer.Write(TextCoordTopLeftY);
                 writer.Write(TextCoordTopRightX);
@@ -141,18 +141,16 @@ namespace IndustrialPark
 
         public override bool DontRender => dontRender;
 
-        public override bool HasReference(uint assetID) => TextureAssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
-            Verify(TextureAssetID, ref result);
+            Verify(Texture, ref result);
         }
 
         public override void CreateTransformMatrix()
         {
-            if (this is AssetUI && TextureAssetID == 0)
+            if (this is AssetUI && Texture == 0)
             {
                 world = Matrix.Scaling(_scale) * Matrix.Scaling(Width, Height, 1f)
                     * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
@@ -169,21 +167,21 @@ namespace IndustrialPark
 
         protected override void CreateBoundingBox()
         {
-            if (this is AssetUI && TextureAssetID == 0)
+            if (this is AssetUI && Texture == 0)
                 base.CreateBoundingBox();
             else
             {
-                var model = GetFromRenderingDictionary(_modelAssetID);
+                var model = GetFromRenderingDictionary(_model);
                 CreateBoundingBox(model != null ? model.vertexListG : SharpRenderer.planeVertices);
             }
         }
 
         public override void Draw(SharpRenderer renderer)
         {
-            if (this is AssetUI && TextureAssetID == 0)
+            if (this is AssetUI && Texture == 0)
                 base.Draw(renderer);
             else
-                renderer.DrawPlane(world, isSelected, TextureAssetID, UvAnimOffset);
+                renderer.DrawPlane(world, isSelected, Texture, UvAnimOffset);
         }
 
         public override bool ShouldDraw(SharpRenderer renderer)
@@ -205,7 +203,7 @@ namespace IndustrialPark
 
         protected override float? TriangleIntersection(Ray r)
         {
-            if (TextureAssetID == 0)
+            if (Texture == 0)
                 return base.TriangleIntersection(r);
 
             bool hasIntersected = false;

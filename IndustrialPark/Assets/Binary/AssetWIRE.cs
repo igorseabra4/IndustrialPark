@@ -105,8 +105,6 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => hashID0 == assetID || hashID1 == assetID || base.HasReference(assetID);
-
         public void ToObj(string fileName)
         {
             using (var objFile = new StreamWriter(new FileStream(fileName, FileMode.Create)))

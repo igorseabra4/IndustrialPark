@@ -15,7 +15,7 @@ namespace IndustrialPark
         public AssetID PickupHash { get; set; }
 
         public static bool dontRender = false;
-        public override bool DontRender => dontRender;
+        protected override bool DontRender => dontRender;
 
         public DynaGObjectInPickup(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__IN_Pickup, game, endianness)
         {
@@ -44,8 +44,6 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => PickupHash == assetID;
-
         protected override List<Vector3> vertexSource => null;
 
         protected override List<Triangle> triangleSource => null;
@@ -56,7 +54,7 @@ namespace IndustrialPark
 
             if (AssetTPIK.tpikEntries.ContainsKey(PickupHash))
             {
-                var model = GetFromRenderingDictionary(AssetTPIK.tpikEntries[PickupHash].Model_AssetID);
+                var model = GetFromRenderingDictionary(AssetTPIK.tpikEntries[PickupHash].Model);
                 if (model != null)
                 {
                     var vertexList = model.vertexListG;
@@ -84,7 +82,7 @@ namespace IndustrialPark
             {
                 if (AssetTPIK.tpikEntries.ContainsKey(PickupHash))
                 {
-                    var tpikEntry = AssetTPIK.tpikEntries[PickupHash].Model_AssetID;
+                    var tpikEntry = AssetTPIK.tpikEntries[PickupHash].Model;
                     if (GetDistanceFrom(renderer.Camera.Position) < AssetLODT.MaxDistanceTo(tpikEntry))
                         return renderer.frustum.Intersects(ref boundingBox);
                 }
@@ -101,15 +99,15 @@ namespace IndustrialPark
             if (AssetTPIK.tpikEntries.ContainsKey(PickupHash))
             {
                 var tpikEntry = AssetTPIK.tpikEntries[PickupHash];
-                if (renderingDictionary.ContainsKey(tpikEntry.Model_AssetID))
+                if (renderingDictionary.ContainsKey(tpikEntry.Model))
                 {
-                    renderingDictionary[tpikEntry.Model_AssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor : Vector4.One, Vector3.Zero);
+                    renderingDictionary[tpikEntry.Model].Draw(renderer, world, isSelected ? renderer.selectedObjectColor : Vector4.One, Vector3.Zero);
                     drew = true;
                 }
-                if (renderingDictionary.ContainsKey(tpikEntry.RingModel_AssetID))
+                if (renderingDictionary.ContainsKey(tpikEntry.RingModel))
                 {
                     var color = new Vector4(tpikEntry.RingColorR, tpikEntry.RingColorG, tpikEntry.RingColorB, 1f);
-                    renderingDictionary[tpikEntry.RingModel_AssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, Vector3.Zero);
+                    renderingDictionary[tpikEntry.RingModel].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, Vector3.Zero);
                     drew = true;
                 }
             }

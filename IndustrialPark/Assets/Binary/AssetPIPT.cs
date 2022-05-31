@@ -38,7 +38,7 @@ namespace IndustrialPark
         private const string categoryName = "PIPT Entry";
 
         [Category(categoryName)]
-        public AssetID ModelAssetID { get; set; }
+        public AssetID Model { get; set; }
         [Category(categoryName)]
         public FlagBitmask SubObjectBits { get; set; } = IntFlagsDescriptor();
         [Category(categoryName)]
@@ -213,7 +213,7 @@ namespace IndustrialPark
 
         public EntryPIPT()
         {
-            ModelAssetID = 0;
+            Model = 0;
             SubObjectBits.FlagValueInt = 0xFFFFFFFF;
             UnknownFlagB = 9;
             UnknownFlagC = 4;
@@ -222,24 +222,24 @@ namespace IndustrialPark
 
         public override string ToString()
         {
-            return $"{Program.MainForm.GetAssetNameFromID(ModelAssetID)} - {SubObjectBits}";
+            return $"{Program.MainForm.GetAssetNameFromID(Model)} - {SubObjectBits}";
         }
 
         public override bool Equals(object obj)
         {
             if (obj != null && obj is EntryPIPT entry)
-                return ModelAssetID.Equals(entry.ModelAssetID);
+                return Model.Equals(entry.Model);
             return false;
         }
 
         public override int GetHashCode()
         {
-            return ModelAssetID.GetHashCode();
+            return Model.GetHashCode();
         }
 
         public EntryPIPT(EndianBinaryReader reader, Game game)
         {
-            ModelAssetID = reader.ReadUInt32();
+            Model = reader.ReadUInt32();
             SubObjectBits.FlagValueInt = reader.ReadUInt32();
             PipeFlags = reader.ReadInt32();
             if (game == Game.Incredibles)
@@ -250,7 +250,7 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(ModelAssetID);
+                writer.Write(Model);
                 writer.Write(SubObjectBits.FlagValueInt);
                 writer.Write(PipeFlags);
 
@@ -264,14 +264,14 @@ namespace IndustrialPark
 
     public class AssetPIPT : Asset
     {
-        private EntryPIPT[] _pipt_Entries { get; set; }
+        private EntryPIPT[] _piptEntries { get; set; }
         [Category("Pipe Info Table")]
         public EntryPIPT[] PIPT_Entries
         {
-            get => _pipt_Entries;
+            get => _piptEntries;
             set
             {
-                _pipt_Entries = value;
+                _piptEntries = value;
                 UpdateDictionary();
             }
         }
@@ -285,10 +285,10 @@ namespace IndustrialPark
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                _pipt_Entries = new EntryPIPT[reader.ReadInt32()];
+                _piptEntries = new EntryPIPT[reader.ReadInt32()];
 
-                for (int i = 0; i < _pipt_Entries.Length; i++)
-                    _pipt_Entries[i] = new EntryPIPT(reader, game);
+                for (int i = 0; i < _piptEntries.Length; i++)
+                    _piptEntries[i] = new EntryPIPT(reader, game);
 
                 UpdateDictionary();
             }
@@ -298,9 +298,9 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(_pipt_Entries.Length);
+                writer.Write(_piptEntries.Length);
 
-                foreach (var l in _pipt_Entries)
+                foreach (var l in _piptEntries)
                     writer.Write(l.Serialize(game, endianness));
 
                 return writer.ToArray();
@@ -315,22 +315,16 @@ namespace IndustrialPark
         public delegate void OnPipeInfoTableEdited(Dictionary<uint, (uint, BlendFactorType, BlendFactorType)[]> blendModes);
         private readonly OnPipeInfoTableEdited onPipeInfoTableEdited;
 
-        public override bool HasReference(uint assetID)
-        {
-            foreach (EntryPIPT a in PIPT_Entries)
-                if (a.ModelAssetID == assetID)
-                    return true;
-
-            return base.HasReference(assetID);
-        }
+        //public override bool HasReference(uint assetID) =>
+        //    PIPT_Entries.Any(p => p.Model == assetID) || base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {
             foreach (EntryPIPT a in PIPT_Entries)
             {
-                if (a.ModelAssetID == 0)
+                if (a.Model == 0)
                     result.Add("PIPT entry with ModelAssetID set to 0");
-                Verify(a.ModelAssetID, ref result);
+                Verify(a.Model, ref result);
             }
         }
 
@@ -342,16 +336,16 @@ namespace IndustrialPark
 
             foreach (EntryPIPT entry in PIPT_Entries)
             {
-                if (!BlendModes.ContainsKey(entry.ModelAssetID))
-                    BlendModes[entry.ModelAssetID] = new (uint, BlendFactorType, BlendFactorType)[0];
+                if (!BlendModes.ContainsKey(entry.Model))
+                    BlendModes[entry.Model] = new (uint, BlendFactorType, BlendFactorType)[0];
 
-                var entries = BlendModes[entry.ModelAssetID].ToList();
+                var entries = BlendModes[entry.Model].ToList();
                 for (int i = 0; i < entries.Count; i++)
                     if (entries[i].Item1 == entry.SubObjectBits.FlagValueInt)
                         entries.RemoveAt(i--);
 
                 entries.Add((entry.SubObjectBits.FlagValueInt, entry.SourceBlend, entry.DestinationBlend));
-                BlendModes[entry.ModelAssetID] = entries.ToArray();
+                BlendModes[entry.Model] = entries.ToArray();
             }
 
             onPipeInfoTableEdited?.Invoke(BlendModes);

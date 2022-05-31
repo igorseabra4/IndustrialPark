@@ -20,7 +20,7 @@ namespace IndustrialPark
         public AssetByte Flag3 { get; set; }
         [Category(categoryName)]
         public AssetByte Flag4 { get; set; }
-        public Link[] _timedLinks;
+        private Link[] _timedLinks;
         [Category(categoryName), Editor(typeof(LinkListEditor), typeof(UITypeEditor))]
         public Link[] TimedLinks
         {
@@ -90,16 +90,14 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => _timedLinks.Any(link => link.HasReference(assetID)) || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
             foreach (Link link in _timedLinks)
             {
-                Verify(link.TargetAssetID, ref result);
-                Verify(link.ArgumentAssetID, ref result);
+                Verify(link.TargetAsset, ref result);
+                Verify(link.ArgumentAsset, ref result);
 
                 if (link.EventSendID == 0 || link.EventSendID.ToString() == ((int)link.EventSendID).ToString())
                     result.Add("Timed link sends event of unknown type for TSSM: " + link.EventSendID.ToString());

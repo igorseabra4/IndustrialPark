@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace IndustrialPark
 {
-    public class EntrySoundInfo_XBOX
+    public class EntrySoundInfo_XBOX : GenericAssetDataContainer
     {
         public short fmtId { get; set; }
         public short fmtChannels { get; set; }
@@ -17,7 +17,7 @@ namespace IndustrialPark
         public short fmtExtBytes { get; set; }
         public short fmtExtData { get; set; }
         public int dataSize { get; set; }
-        public AssetID SoundAssetID { get; set; }
+        public AssetID Sound { get; set; }
         public int unknown { get; set; }
 
         public static int StructSize = 0x2C;
@@ -39,7 +39,7 @@ namespace IndustrialPark
             fmtExtBytes = reader.ReadInt16();
             fmtExtData = reader.ReadInt16();
             dataSize = reader.ReadInt32();
-            SoundAssetID = reader.ReadUInt32();
+            Sound = reader.ReadUInt32();
             unknown = reader.ReadInt32();
 
             reader.BaseStream.Position += 12;
@@ -58,7 +58,7 @@ namespace IndustrialPark
             array.AddRange(BitConverter.GetBytes(fmtExtBytes));
             array.AddRange(BitConverter.GetBytes(fmtExtData));
             array.AddRange(BitConverter.GetBytes(dataSize));
-            array.AddRange(BitConverter.GetBytes(SoundAssetID));
+            array.AddRange(BitConverter.GetBytes(Sound));
             array.AddRange(BitConverter.GetBytes(unknown));
             array.AddRange(new byte[12]);
 
@@ -73,7 +73,7 @@ namespace IndustrialPark
 
         public override string ToString()
         {
-            return Program.MainForm.GetAssetNameFromID(SoundAssetID);
+            return Program.MainForm.GetAssetNameFromID(Sound);
         }
     }
 
@@ -139,44 +139,27 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            foreach (EntrySoundInfo_XBOX a in Entries_SND)
-                if (a.SoundAssetID == assetID)
-                    return true;
-
-            foreach (EntrySoundInfo_XBOX a in Entries_SNDS)
-                if (a.SoundAssetID == assetID)
-                    return true;
-
-            foreach (EntrySoundInfo_XBOX a in Entries_Sound_CIN)
-                if (a.SoundAssetID == assetID)
-                    return true;
-
-            return base.HasReference(assetID);
-        }
-
         public override void Verify(ref List<string> result)
         {
             foreach (EntrySoundInfo_XBOX a in Entries_SND)
             {
-                if (a.SoundAssetID == 0)
-                    result.Add("SNDI entry with SoundAssetID set to 0");
-                Verify(a.SoundAssetID, ref result);
+                if (a.Sound == 0)
+                    result.Add("Sound Info entry with Sound set to 0");
+                Verify(a.Sound, ref result);
             }
 
             foreach (EntrySoundInfo_XBOX a in Entries_SNDS)
             {
-                if (a.SoundAssetID == 0)
-                    result.Add("SNDI entry with SoundAssetID set to 0");
-                Verify(a.SoundAssetID, ref result);
+                if (a.Sound == 0)
+                    result.Add("Sound Info entry with Sound set to 0");
+                Verify(a.Sound, ref result);
             }
 
             foreach (EntrySoundInfo_XBOX a in Entries_Sound_CIN)
             {
-                if (a.SoundAssetID == 0)
-                    result.Add("SNDI entry with SoundAssetID set to 0");
-                Verify(a.SoundAssetID, ref result);
+                if (a.Sound == 0)
+                    result.Add("Sound Info entry with Sound set to 0");
+                Verify(a.Sound, ref result);
             }
         }
 
@@ -193,7 +176,7 @@ namespace IndustrialPark
             var reader = new EndianBinaryReader(soundData, Endianness.Little);
             reader.BaseStream.Position = 0x14;
 
-            entries.Add(new EntrySoundInfo_XBOX(reader) { SoundAssetID = assetID });
+            entries.Add(new EntrySoundInfo_XBOX(reader) { Sound = assetID });
 
             finalData = soundData.Skip(0x30).ToArray();
 
@@ -212,7 +195,7 @@ namespace IndustrialPark
                 entries = Entries_SNDS.ToList();
 
             for (int i = 0; i < entries.Count; i++)
-                if (entries[i].SoundAssetID == assetID)
+                if (entries[i].Sound == assetID)
                     entries.Remove(entries[i]);
 
             if (assetType == AssetType.Sound)
@@ -232,7 +215,7 @@ namespace IndustrialPark
             EntrySoundInfo_XBOX entry = null;
 
             for (int i = 0; i < entries.Count; i++)
-                if (entries[i].SoundAssetID == assetID)
+                if (entries[i].Sound == assetID)
                     entry = entries[i];
 
             if (entry == null)
@@ -240,12 +223,12 @@ namespace IndustrialPark
                 entries = Entries_Sound_CIN.ToList();
 
                 for (int i = 0; i < entries.Count; i++)
-                    if (entries[i].SoundAssetID == assetID)
+                    if (entries[i].Sound == assetID)
                         entry = entries[i];
             }
 
             if (entry == null)
-                throw new Exception($"Error: SNDI asset does not contain {assetType} sound header for asset [{assetID:X8}]");
+                throw new Exception($"Error: Sound Info asset does not contain {assetType} sound header for asset [{assetID:X8}]");
 
             List<byte> bytes = new List<byte>
                 {
@@ -295,9 +278,9 @@ namespace IndustrialPark
                 List<EntrySoundInfo_XBOX> entriesSND = Entries_SND.ToList();
                 List<uint> assetIDsAlreadyPresentSND = new List<uint>();
                 foreach (EntrySoundInfo_XBOX entrySND in entriesSND)
-                    assetIDsAlreadyPresentSND.Add(entrySND.SoundAssetID);
+                    assetIDsAlreadyPresentSND.Add(entrySND.Sound);
                 foreach (EntrySoundInfo_XBOX entrySND in assetSNDI.Entries_SND)
-                    if (!assetIDsAlreadyPresentSND.Contains(entrySND.SoundAssetID))
+                    if (!assetIDsAlreadyPresentSND.Contains(entrySND.Sound))
                         entriesSND.Add(entrySND);
                 Entries_SND = entriesSND.ToArray();
             }
@@ -306,9 +289,9 @@ namespace IndustrialPark
                 List<EntrySoundInfo_XBOX> entriesSNDS = Entries_SNDS.ToList();
                 List<uint> assetIDsAlreadyPresentSNDS = new List<uint>();
                 foreach (EntrySoundInfo_XBOX entrySNDS in entriesSNDS)
-                    assetIDsAlreadyPresentSNDS.Add(entrySNDS.SoundAssetID);
+                    assetIDsAlreadyPresentSNDS.Add(entrySNDS.Sound);
                 foreach (EntrySoundInfo_XBOX entrySNDS in assetSNDI.Entries_SNDS)
-                    if (!assetIDsAlreadyPresentSNDS.Contains(entrySNDS.SoundAssetID))
+                    if (!assetIDsAlreadyPresentSNDS.Contains(entrySNDS.Sound))
                         entriesSNDS.Add(entrySNDS);
                 Entries_SNDS = entriesSNDS.ToArray();
             }
@@ -317,9 +300,9 @@ namespace IndustrialPark
                 List<EntrySoundInfo_XBOX> entriesSound_CIN = Entries_Sound_CIN.ToList();
                 List<uint> assetIDsAlreadyPresentSound_CIN = new List<uint>();
                 foreach (EntrySoundInfo_XBOX entrySound_CIN in entriesSound_CIN)
-                    assetIDsAlreadyPresentSound_CIN.Add(entrySound_CIN.SoundAssetID);
+                    assetIDsAlreadyPresentSound_CIN.Add(entrySound_CIN.Sound);
                 foreach (EntrySoundInfo_XBOX entrySound_CIN in assetSNDI.Entries_Sound_CIN)
-                    if (!assetIDsAlreadyPresentSound_CIN.Contains(entrySound_CIN.SoundAssetID))
+                    if (!assetIDsAlreadyPresentSound_CIN.Contains(entrySound_CIN.Sound))
                         entriesSound_CIN.Add(entrySound_CIN);
                 Entries_Sound_CIN = entriesSound_CIN.ToArray();
             }
@@ -331,7 +314,7 @@ namespace IndustrialPark
                 // SND
                 var entriesSND = Entries_SND.ToList();
                 for (int i = 0; i < entriesSND.Count; i++)
-                    if (!assetIDs.Contains(entriesSND[i].SoundAssetID))
+                    if (!assetIDs.Contains(entriesSND[i].Sound))
                         entriesSND.RemoveAt(i--);
                 Entries_SND = entriesSND.ToArray();
             }
@@ -339,7 +322,7 @@ namespace IndustrialPark
                 // SNDS
                 var entriesSNDS = Entries_SNDS.ToList();
                 for (int i = 0; i < entriesSNDS.Count; i++)
-                    if (!assetIDs.Contains(entriesSNDS[i].SoundAssetID))
+                    if (!assetIDs.Contains(entriesSNDS[i].Sound))
                         entriesSNDS.RemoveAt(i--);
                 Entries_SNDS = entriesSNDS.ToArray();
             }
@@ -347,7 +330,7 @@ namespace IndustrialPark
                 // Sound_CIN
                 var entriesSNDS_CIN = Entries_Sound_CIN.ToList();
                 for (int i = 0; i < entriesSNDS_CIN.Count; i++)
-                    if (!assetIDs.Contains(entriesSNDS_CIN[i].SoundAssetID))
+                    if (!assetIDs.Contains(entriesSNDS_CIN[i].Sound))
                         entriesSNDS_CIN.RemoveAt(i--);
                 Entries_Sound_CIN = entriesSNDS_CIN.ToArray();
             }

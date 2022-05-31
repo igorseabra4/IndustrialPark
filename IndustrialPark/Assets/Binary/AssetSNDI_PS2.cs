@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace IndustrialPark
 {
-    public class EntrySoundInfo_PS2
+    public class EntrySoundInfo_PS2 : GenericAssetDataContainer
     {
         public byte[] SoundHeader { get; set; }
 
@@ -88,19 +88,6 @@ namespace IndustrialPark
 
                 return writer.ToArray();
             }
-        }
-
-        public override bool HasReference(uint assetID)
-        {
-            foreach (EntrySoundInfo_PS2 a in Entries_SND)
-                if (a.SoundAssetID == assetID)
-                    return true;
-
-            foreach (EntrySoundInfo_PS2 a in Entries_SNDS)
-                if (a.SoundAssetID == assetID)
-                    return true;
-
-            return base.HasReference(assetID);
         }
 
         public override void Verify(ref List<string> result)

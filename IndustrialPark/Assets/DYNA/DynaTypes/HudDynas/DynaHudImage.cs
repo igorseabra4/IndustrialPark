@@ -9,14 +9,14 @@ namespace IndustrialPark
         protected override short constVersion => 1;
 
         [Category("hud:image")]
-        public AssetID Texture_AssetID { get; set; }
+        public AssetID Texture { get; set; }
 
         public DynaHudImage(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.hud__image, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
                 reader.BaseStream.Position = dynaHudEnd;
-                Texture_AssetID = reader.ReadUInt32();
+                Texture = reader.ReadUInt32();
             }
         }
 
@@ -25,17 +25,15 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeDynaHud(endianness));
-                writer.Write(Texture_AssetID);
+                writer.Write(Texture);
 
                 return writer.ToArray();
             }
         }
 
-        public override bool HasReference(uint assetID) => Texture_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
-            Verify(Texture_AssetID, ref result);
+            Verify(Texture, ref result);
             base.Verify(ref result);
         }
     }

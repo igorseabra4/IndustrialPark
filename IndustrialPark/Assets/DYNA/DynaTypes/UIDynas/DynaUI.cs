@@ -23,9 +23,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetColor Color { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID UIMotion_Selected_AssetID { get; set; }
+        public AssetID UIMotion_Selected { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID UIMotion_Unselected_AssetID { get; set; }
+        public AssetID UIMotion_Unselected { get; set; }
         [Category(dynaCategoryName)]
         public byte Brightness { get; set; }
         [Category(dynaCategoryName)]
@@ -56,8 +56,8 @@ namespace IndustrialPark
                 Height = reader.ReadSingle();
                 Flags.FlagValueInt = reader.ReadUInt32();
                 Color = reader.ReadColor();
-                UIMotion_Selected_AssetID = reader.ReadUInt32();
-                UIMotion_Unselected_AssetID = reader.ReadUInt32();
+                UIMotion_Selected = reader.ReadUInt32();
+                UIMotion_Unselected = reader.ReadUInt32();
                 Brightness = reader.ReadByte();
                 reader.ReadByte();
                 reader.ReadByte();
@@ -82,8 +82,8 @@ namespace IndustrialPark
                 writer.Write(Height);
                 writer.Write(Flags.FlagValueInt);
                 writer.Write(Color);
-                writer.Write(UIMotion_Selected_AssetID);
-                writer.Write(UIMotion_Unselected_AssetID);
+                writer.Write(UIMotion_Selected);
+                writer.Write(UIMotion_Unselected);
                 writer.Write(Brightness);
                 writer.Write((byte)0);
                 writer.Write((byte)0);
@@ -98,8 +98,5 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override bool HasReference(uint assetID) =>
-            UIMotion_Selected_AssetID == assetID || UIMotion_Unselected_AssetID == assetID || base.HasReference(assetID);
     }
 }

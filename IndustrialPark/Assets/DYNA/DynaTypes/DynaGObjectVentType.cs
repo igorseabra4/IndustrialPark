@@ -53,24 +53,6 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (Constant_PARE == assetID)
-                return true;
-            if (Constant_SGRP == assetID)
-                return true;
-            if (Warning_PARE == assetID)
-                return true;
-            if (Warning_SGRP == assetID)
-                return true;
-            if (Emit_PARE == assetID)
-                return true;
-            if (Emit_SGRP == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
         public override void Verify(ref List<string> result)
         {
             Verify(Constant_PARE, ref result);

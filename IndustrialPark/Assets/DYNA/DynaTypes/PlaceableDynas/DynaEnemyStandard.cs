@@ -40,13 +40,13 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public EnemyStandardType EnemyType
         {
-            get => (EnemyStandardType)(uint)Model_AssetID;
-            set => Model_AssetID = (uint)value;
+            get => (EnemyStandardType)(uint)Model;
+            set => Model = (uint)value;
         }
         [Category(dynaCategoryName)]
-        public AssetID MVPT_AssetID { get; set; }
+        public AssetID MovePoint { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID MVPT_Group_AssetID { get; set; }
+        public AssetID MovePointGroup { get; set; }
         [Category(dynaCategoryName)]
         public FlagBitmask EnemyFlags { get; set; } = IntFlagsDescriptor(
             "Prepare for Scare",
@@ -89,7 +89,7 @@ namespace IndustrialPark
                 case AssetTemplate.Popper_Trench: EnemyType = EnemyStandardType.popper_v1_bind; break;
                 case AssetTemplate.Popper_Planktopolis: EnemyType = EnemyStandardType.popper_v3_bind; break;
             }
-            MVPT_AssetID = mvptAssetID;
+            MovePoint = mvptAssetID;
         }
 
         public DynaEnemyStandard(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__Standard, game, endianness)
@@ -98,8 +98,8 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = entityDynaEndPosition;
 
-                MVPT_AssetID = reader.ReadUInt32();
-                MVPT_Group_AssetID = reader.ReadUInt32();
+                MovePoint = reader.ReadUInt32();
+                MovePointGroup = reader.ReadUInt32();
                 EnemyFlags.FlagValueInt = reader.ReadUInt32();
                 Unknown5C = reader.ReadUInt32();
                 Unknown60 = reader.ReadUInt32();
@@ -113,8 +113,8 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeEntityDyna(endianness));
-                writer.Write(MVPT_AssetID);
-                writer.Write(MVPT_Group_AssetID);
+                writer.Write(MovePoint);
+                writer.Write(MovePointGroup);
                 writer.Write(EnemyFlags.FlagValueInt);
                 writer.Write(Unknown5C);
                 writer.Write(Unknown60);
@@ -125,33 +125,15 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (MVPT_AssetID == assetID)
-                return true;
-            if (MVPT_Group_AssetID == assetID)
-                return true;
-            if (Unknown5C == assetID)
-                return true;
-            if (Unknown60 == assetID)
-                return true;
-            if (Unknown64 == assetID)
-                return true;
-            if (Unknown68 == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
-            if (MVPT_AssetID == 0 && MVPT_Group_AssetID == 0)
+            if (MovePoint == 0 && MovePointGroup == 0)
                 result.Add("DYNA Enemy Standard without set MVPT");
 
-            Verify(MVPT_AssetID, ref result);
-            Verify(MVPT_Group_AssetID, ref result);
+            Verify(MovePoint, ref result);
+            Verify(MovePointGroup, ref result);
             Verify(Unknown5C, ref result);
             Verify(Unknown60, ref result);
             Verify(Unknown64, ref result);
@@ -159,6 +141,6 @@ namespace IndustrialPark
         }
 
         public static bool dontRender = false;
-        public override bool DontRender { get => dontRender; }
+        public override bool DontRender => dontRender;
     }
 }

@@ -22,11 +22,11 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle ActiveTimeSeconds { get; set; }
         [Category(categoryName)]
-        public AssetID OnAnim_AssetID { get; set; }
+        public AssetID OnAnimation { get; set; }
 
         public AssetEGEN(string assetName, Vector3 position) : base(assetName, AssetType.ElectricArcGenerator, BaseAssetType.EGenerator, position)
         {
-            OnAnim_AssetID = 0xCE7F8131;
+            OnAnimation = 0xCE7F8131;
         }
 
         public AssetEGEN(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
@@ -43,7 +43,7 @@ namespace IndustrialPark
                 reader.ReadByte();
                 reader.ReadByte();
                 ActiveTimeSeconds = reader.ReadSingle();
-                OnAnim_AssetID = reader.ReadUInt32();
+                OnAnimation = reader.ReadUInt32();
             }
         }
 
@@ -60,7 +60,7 @@ namespace IndustrialPark
                 writer.Write(EgenFlags.FlagValueByte);
                 writer.Write((short)0);
                 writer.Write(ActiveTimeSeconds);
-                writer.Write(OnAnim_AssetID);
+                writer.Write(OnAnimation);
 
                 writer.Write(SerializeLinks(endianness));
                 return writer.ToArray();
@@ -71,13 +71,11 @@ namespace IndustrialPark
 
         public override bool DontRender => dontRender;
 
-        public override bool HasReference(uint assetID) => OnAnim_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
-            Verify(OnAnim_AssetID, ref result);
+            Verify(OnAnimation, ref result);
         }
     }
 }

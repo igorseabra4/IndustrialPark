@@ -19,9 +19,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetByte Unknown03 { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID GRSM_AssetID { get; set; }
+        public AssetID GrassMesh { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID MODL_AssetID { get; set; }
+        public AssetID Model { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle UnknownFloat01 { get; set; }
         [Category(dynaCategoryName)]
@@ -45,8 +45,8 @@ namespace IndustrialPark
                 Unknown01 = reader.ReadByte();
                 Unknown02 = reader.ReadByte();
                 Unknown03 = reader.ReadByte();
-                GRSM_AssetID = reader.ReadUInt32();
-                MODL_AssetID = reader.ReadUInt32();
+                GrassMesh = reader.ReadUInt32();
+                Model = reader.ReadUInt32();
                 UnknownFloat01 = reader.ReadSingle();
                 UnknownFloat02 = reader.ReadSingle();
                 UnknownFloat03 = reader.ReadSingle();
@@ -64,8 +64,8 @@ namespace IndustrialPark
                 writer.Write(Unknown01);
                 writer.Write(Unknown02);
                 writer.Write(Unknown03);
-                writer.Write(GRSM_AssetID);
-                writer.Write(MODL_AssetID);
+                writer.Write(GrassMesh);
+                writer.Write(Model);
                 writer.Write(UnknownFloat01);
                 writer.Write(UnknownFloat02);
                 writer.Write(UnknownFloat03);
@@ -77,12 +77,10 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => GRSM_AssetID == assetID || MODL_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
-            Verify(GRSM_AssetID, ref result);
-            Verify(MODL_AssetID, ref result);
+            Verify(GrassMesh, ref result);
+            Verify(Model, ref result);
 
             base.Verify(ref result);
         }

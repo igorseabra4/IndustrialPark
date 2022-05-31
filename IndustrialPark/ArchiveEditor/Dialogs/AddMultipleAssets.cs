@@ -12,9 +12,8 @@ namespace IndustrialPark
         public AddMultipleAssets()
         {
             InitializeComponent();
-
-            foreach (AssetType o in Enum.GetValues(typeof(AssetType)).Cast<AssetType>().OrderBy(f => f.ToString()))
-                comboBoxAssetTypes.Items.Add(o);
+            
+            comboBoxAssetTypes.Items.AddRange(Enum.GetValues(typeof(AssetType)).Cast<AssetType>().OrderBy(f => f.ToString()).Cast<object>().ToArray());
 
             buttonOK.Enabled = false;
             TopMost = true;

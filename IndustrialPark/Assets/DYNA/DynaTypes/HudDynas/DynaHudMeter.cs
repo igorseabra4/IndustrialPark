@@ -19,13 +19,13 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle DecrementTime { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID StartIncrement_SoundAssetID { get; set; }
+        public AssetID StartIncrementSound { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID Increment_SoundAssetID { get; set; }
+        public AssetID IncrementSound { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID StartDecrement_SoundAssetID { get; set; }
+        public AssetID StartDecrementSound { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID Decrement_SoundAssetID { get; set; }
+        public AssetID DecrementSound { get; set; }
 
         protected int dynaHudMeterEnd => dynaHudEnd + 36;
 
@@ -40,10 +40,10 @@ namespace IndustrialPark
                 MaxValue = reader.ReadSingle();
                 IncrementTime = reader.ReadSingle();
                 DecrementTime = reader.ReadSingle();
-                StartIncrement_SoundAssetID = reader.ReadUInt32();
-                Increment_SoundAssetID = reader.ReadUInt32();
-                StartDecrement_SoundAssetID = reader.ReadUInt32();
-                Decrement_SoundAssetID = reader.ReadUInt32();
+                StartIncrementSound = reader.ReadUInt32();
+                IncrementSound = reader.ReadUInt32();
+                StartDecrementSound = reader.ReadUInt32();
+                DecrementSound = reader.ReadUInt32();
             }
         }
 
@@ -57,35 +57,21 @@ namespace IndustrialPark
                 writer.Write(MaxValue);
                 writer.Write(IncrementTime);
                 writer.Write(DecrementTime);
-                writer.Write(StartIncrement_SoundAssetID);
-                writer.Write(Increment_SoundAssetID);
-                writer.Write(StartDecrement_SoundAssetID);
-                writer.Write(Decrement_SoundAssetID);
+                writer.Write(StartIncrementSound);
+                writer.Write(IncrementSound);
+                writer.Write(StartDecrementSound);
+                writer.Write(DecrementSound);
 
                 return writer.ToArray();
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (StartIncrement_SoundAssetID == assetID)
-                return true;
-            if (Increment_SoundAssetID == assetID)
-                return true;
-            if (StartDecrement_SoundAssetID == assetID)
-                return true;
-            if (Decrement_SoundAssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
         public override void Verify(ref List<string> result)
         {
-            Verify(StartIncrement_SoundAssetID, ref result);
-            Verify(Increment_SoundAssetID, ref result);
-            Verify(StartDecrement_SoundAssetID, ref result);
-            Verify(Decrement_SoundAssetID, ref result);
+            Verify(StartIncrementSound, ref result);
+            Verify(IncrementSound, ref result);
+            Verify(StartDecrementSound, ref result);
+            Verify(DecrementSound, ref result);
             base.Verify(ref result);
         }
     }

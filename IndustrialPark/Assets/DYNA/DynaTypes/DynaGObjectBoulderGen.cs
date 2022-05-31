@@ -11,7 +11,7 @@ namespace IndustrialPark
         protected override short constVersion => 1;
 
         [Category(dynaCategoryName)]
-        public AssetID ObjectAssetID { get; set; }
+        public AssetID Object { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle OffsetX { get; set; }
         [Category(dynaCategoryName)]
@@ -45,7 +45,7 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
 
-                ObjectAssetID = reader.ReadUInt32();
+                Object = reader.ReadUInt32();
                 OffsetX = reader.ReadSingle();
                 OffsetY = reader.ReadSingle();
                 OffsetZ = reader.ReadSingle();
@@ -66,7 +66,7 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(ObjectAssetID);
+                writer.Write(Object);
                 writer.Write(OffsetX);
                 writer.Write(OffsetY);
                 writer.Write(OffsetZ);
@@ -85,11 +85,9 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => ObjectAssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
-            Verify(ObjectAssetID, ref result);
+            Verify(Object, ref result);
             base.Verify(ref result);
         }
     }

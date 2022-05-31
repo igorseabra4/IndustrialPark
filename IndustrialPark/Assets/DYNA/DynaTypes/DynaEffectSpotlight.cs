@@ -15,9 +15,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public FlagBitmask Flags { get; set; } = IntFlagsDescriptor();
         [Category(dynaCategoryName)]
-        public AssetID Origin_Entity_AssetID { get; set; }
+        public AssetID OriginEntity { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID Target_Entity_AssetID { get; set; }
+        public AssetID TargetEntity { get; set; }
         [Category(dynaCategoryName)]
         public AssetByte AttachBone { get; set; }
         [Category(dynaCategoryName)]
@@ -58,8 +58,8 @@ namespace IndustrialPark
                 reader.BaseStream.Position = dynaDataStartPosition;
 
                 Flags.FlagValueInt = reader.ReadUInt32();
-                Origin_Entity_AssetID = reader.ReadUInt32();
-                Target_Entity_AssetID = reader.ReadUInt32();
+                OriginEntity = reader.ReadUInt32();
+                TargetEntity = reader.ReadUInt32();
                 AttachBone = reader.ReadByte();
                 TargetBone = reader.ReadByte();
                 reader.ReadInt16();
@@ -83,8 +83,8 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(Flags.FlagValueInt);
-                writer.Write(Origin_Entity_AssetID);
-                writer.Write(Target_Entity_AssetID);
+                writer.Write(OriginEntity);
+                writer.Write(TargetEntity);
                 writer.Write(AttachBone);
                 writer.Write(TargetBone);
                 writer.Write((short)0);
@@ -105,13 +105,10 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) =>
-            Origin_Entity_AssetID == assetID || Target_Entity_AssetID == assetID || FlareTexture == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
-            Verify(Origin_Entity_AssetID, ref result);
-            Verify(Target_Entity_AssetID, ref result);
+            Verify(OriginEntity, ref result);
+            Verify(TargetEntity, ref result);
             Verify(FlareTexture, ref result);
 
             base.Verify(ref result);

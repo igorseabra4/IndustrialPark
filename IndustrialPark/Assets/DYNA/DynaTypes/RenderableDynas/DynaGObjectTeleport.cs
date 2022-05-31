@@ -14,13 +14,13 @@ namespace IndustrialPark
         public override string Note => "Version is always 1 or 2. Version 1 does not use CameraAngle.";
 
         [Category(dynaCategoryName)]
-        private uint _mRKR_ID;
-        public AssetID MRKR_ID
+        private uint _mrkr;
+        public AssetID Marker
         {
-            get => _mRKR_ID;
+            get => _mrkr;
             set
             {
-                _mRKR_ID = value;
+                _mrkr = value;
                 CreateTransformMatrix();
             }
         }
@@ -44,15 +44,15 @@ namespace IndustrialPark
         public int CameraAngle { get; set; }
 
         [Category(dynaCategoryName)]
-        public AssetID TargetDYNATeleportID { get; set; }
+        public AssetID TargetTeleportBox { get; set; }
 
         public DynaGObjectTeleport(string assetName, uint mrkrId, DynaGObjectTeleportGetMRKR getMRKR) : base(assetName, DynaType.game_object__Teleport, 2)
         {
-            _mRKR_ID = mrkrId;
+            _mrkr = mrkrId;
             this.GetMRKR = getMRKR;
         }
 
-        public delegate AssetMRKR DynaGObjectTeleportGetMRKR(uint MRKR_ID);
+        public delegate AssetMRKR DynaGObjectTeleportGetMRKR(uint mrkr);
         private DynaGObjectTeleportGetMRKR GetMRKR;
 
         public DynaGObjectTeleport(Section_AHDR AHDR, Game game, Endianness endianness, DynaGObjectTeleportGetMRKR getMRKR) : base(AHDR, DynaType.game_object__Teleport, game, endianness)
@@ -63,12 +63,12 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
 
-                _mRKR_ID = reader.ReadUInt32();
+                _mrkr = reader.ReadUInt32();
                 Opened = reader.ReadInt32Bool();
                 _launchAngle = reader.ReadInt32();
                 if (game != Game.Incredibles && Version > 1)
                     CameraAngle = reader.ReadInt32();
-                TargetDYNATeleportID = reader.ReadUInt32();
+                TargetTeleportBox = reader.ReadUInt32();
 
                 CreateTransformMatrix();
                 AddToRenderableAssets(this);
@@ -79,41 +79,31 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(_mRKR_ID);
+                writer.Write(_mrkr);
                 writer.Write(Opened ? 1 : 0);
                 writer.Write(_launchAngle);
                 if (game != Game.Incredibles && Version > 1)
                     writer.Write(CameraAngle);
-                writer.Write(TargetDYNATeleportID);
+                writer.Write(TargetTeleportBox);
 
                 return writer.ToArray();
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (_mRKR_ID == assetID)
-                return true;
-            if (TargetDYNATeleportID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
         public override void Verify(ref List<string> result)
         {
-            if (_mRKR_ID == 0)
+            if (_mrkr == 0)
                 result.Add("Teleport with no MRKR reference");
-            Verify(_mRKR_ID, ref result);
-            if (TargetDYNATeleportID == 0)
+            Verify(_mrkr, ref result);
+            if (TargetTeleportBox == 0)
                 result.Add("Teleport with no target reference");
-            Verify(TargetDYNATeleportID, ref result);
+            Verify(TargetTeleportBox, ref result);
             base.Verify(ref result);
         }
 
         private void ValidateMRKR()
         {
-            MRKR = GetMRKR(_mRKR_ID);
+            MRKR = GetMRKR(_mrkr);
         }
 
         public override AssetSingle PositionX
@@ -198,6 +188,6 @@ namespace IndustrialPark
         }
 
         public static bool dontRender = false;
-        public override bool DontRender => dontRender;
+        protected override bool DontRender => dontRender;
     }
 }

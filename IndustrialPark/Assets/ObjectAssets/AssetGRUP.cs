@@ -56,8 +56,6 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => GroupItems.Any(a => a == assetID) || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
@@ -65,7 +63,7 @@ namespace IndustrialPark
             foreach (AssetID a in GroupItems)
             {
                 if (a == 0)
-                    result.Add("GRUP with group item set to 0");
+                    result.Add("Group with item set to 0");
                 Verify(a, ref result);
             }
         }

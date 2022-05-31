@@ -2,6 +2,7 @@
 using System;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Linq;
 
 namespace IndustrialPark
 {
@@ -28,9 +29,8 @@ namespace IndustrialPark
             numericUpDownY.Maximum = decimal.MaxValue;
             numericUpDownZ.Maximum = decimal.MaxValue;
             numericUpDownW.Maximum = decimal.MaxValue;
-
-            foreach (var v in Enum.GetValues(typeof(Operation)))
-                comboBoxOperation.Items.Add(v);
+            
+            comboBoxOperation.Items.AddRange(Enum.GetValues(typeof(Operation)).Cast<object>().ToArray());
 
             comboBoxOperation.SelectedIndex = 0;
 

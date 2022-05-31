@@ -279,14 +279,14 @@ namespace IndustrialPark
     public class Motion_MovePoint : Motion
     {
         public FlagBitmask MovePointFlags { get; set; } = IntFlagsDescriptor();
-        public AssetID MVPT_AssetID { get; set; }
+        public AssetID MovePoint { get; set; }
         public AssetSingle Speed { get; set; }
 
         public Motion_MovePoint(Vector3 initialPosition) : base(MotionType.MovePoint)
         {
             this.initialPosition = initialPosition;
 
-            MVPT_AssetID = 0;
+            MovePoint = 0;
         }
 
         public Motion_MovePoint(EndianBinaryReader reader, Vector3 initialPosition) : base(reader)
@@ -294,7 +294,7 @@ namespace IndustrialPark
             this.initialPosition = initialPosition;
 
             MovePointFlags.FlagValueInt = reader.ReadUInt32();
-            MVPT_AssetID = reader.ReadUInt32();
+            MovePoint = reader.ReadUInt32();
             Speed = reader.ReadSingle();
         }
 
@@ -304,23 +304,18 @@ namespace IndustrialPark
             {
                 writer.Write(base.Serialize(game, endianness));
                 writer.Write(MovePointFlags.FlagValueInt);
-                writer.Write(MVPT_AssetID);
+                writer.Write(MovePoint);
                 writer.Write(Speed);
 
                 return writer.ToArray();
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            return MVPT_AssetID == assetID;
-        }
-
         public override void Verify(ref List<string> result)
         {
-            if (MVPT_AssetID == 0)
-                result.Add("MovePoint PLAT with MVPT_AssetID set to 0");
-            Verify(MVPT_AssetID, ref result);
+            if (MovePoint == 0)
+                result.Add("MovePoint PLAT with MovePoint set to 0");
+            Verify(MovePoint, ref result);
         }
 
         private AssetMVPT currentMVPT;
@@ -330,7 +325,7 @@ namespace IndustrialPark
 
         public override void Reset()
         {
-            currentMVPT = FindMVPT(MVPT_AssetID);
+            currentMVPT = FindMVPT(MovePoint);
             if (currentMVPT != null)
             {
                 targetPosition = new Vector3(currentMVPT.PositionX, currentMVPT.PositionY, currentMVPT.PositionZ);
@@ -366,9 +361,9 @@ namespace IndustrialPark
                     LocalFrameCounter = 0;
                     oldPosition = targetPosition;
 
-                    if (currentMVPT.NextMVPTs.Length > 0)
+                    if (currentMVPT.NextMovePoints.Length > 0)
                     {
-                        currentMVPT = FindMVPT(currentMVPT.NextMVPTs[0]);
+                        currentMVPT = FindMVPT(currentMVPT.NextMovePoints[0]);
                         targetPosition = new Vector3(currentMVPT.PositionX, currentMVPT.PositionY, currentMVPT.PositionZ);
                     }
                     else

@@ -131,30 +131,6 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (Dialog_TextBoxID == assetID)
-                return true;
-            if (Prompt_TextBoxID == assetID)
-                return true;
-            if (Quit_TextBoxID == assetID)
-                return true;
-            if (TeleportPointerID == assetID)
-                return true;
-            if (PromptSkip_TextID == assetID)
-                return true;
-            if (PromptNoSkip_TextID == assetID)
-                return true;
-            if (PromptQuitTextID == assetID)
-                return true;
-            if (PromptNoQuitTextID == assetID)
-                return true;
-            if (PromptYesNoTextID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
         public override void Verify(ref List<string> result)
         {
             Verify(Dialog_TextBoxID, ref result);

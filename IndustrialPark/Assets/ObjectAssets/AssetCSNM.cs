@@ -9,9 +9,9 @@ namespace IndustrialPark
         private const string categoryName = "Cutscene Manager";
 
         [Category(categoryName)]
-        public AssetID CSN_AssetID { get; set; }
+        public AssetID Cutscene { get; set; }
         [Category(categoryName)]
-        public FlagBitmask CsnmFlags { get; set; } = IntFlagsDescriptor();
+        public FlagBitmask Flags { get; set; } = IntFlagsDescriptor();
         [Category(categoryName)]
         public int InterpSpeed { get; set; }
         [Category(categoryName)]
@@ -113,8 +113,8 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = baseHeaderEndPosition;
 
-                CSN_AssetID = reader.ReadUInt32();
-                CsnmFlags.FlagValueInt = reader.ReadUInt32();
+                Cutscene = reader.ReadUInt32();
+                Flags.FlagValueInt = reader.ReadUInt32();
                 InterpSpeed = reader.ReadInt32();
                 UnknownInt14 = reader.ReadInt32();
                 UnknownInt18 = reader.ReadInt32();
@@ -171,8 +171,8 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeBase(endianness));
-                writer.Write(CSN_AssetID);
-                writer.Write(CsnmFlags.FlagValueInt);
+                writer.Write(Cutscene);
+                writer.Write(Flags.FlagValueInt);
                 writer.Write(InterpSpeed);
                 writer.Write(UnknownInt14);
                 writer.Write(UnknownInt18);
@@ -226,15 +226,13 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => CSN_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
-            if (CSN_AssetID == 0)
-                result.Add("CNSM with CSN_AssetID set to 0");
-            Verify(CSN_AssetID, ref result);
+            if (Cutscene == 0)
+                result.Add("Cutscene Manager with Cutscene set to 0");
+            Verify(Cutscene, ref result);
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)

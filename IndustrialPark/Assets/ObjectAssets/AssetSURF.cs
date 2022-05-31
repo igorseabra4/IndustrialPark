@@ -8,21 +8,21 @@ namespace IndustrialPark
     public class zSurfMatFX : GenericAssetDataContainer
     {
         public FlagBitmask Flags { get; set; } = IntFlagsDescriptor();
-        public AssetID BumpMapTexture_AssetID { get; set; }
-        public AssetID EnvMapTexture_AssetID { get; set; }
+        public AssetID BumpMapTexture { get; set; }
+        public AssetID EnvMapTexture { get; set; }
         public AssetSingle Shininess { get; set; }
         public AssetSingle Bumpiness { get; set; }
-        public AssetID DualMapTexture_AssetID { get; set; }
+        public AssetID DualMapTexture { get; set; }
 
         public zSurfMatFX() { }
         public zSurfMatFX(EndianBinaryReader reader)
         {
             Flags.FlagValueInt = reader.ReadUInt32();
-            BumpMapTexture_AssetID = reader.ReadUInt32();
-            EnvMapTexture_AssetID = reader.ReadUInt32();
+            BumpMapTexture = reader.ReadUInt32();
+            EnvMapTexture = reader.ReadUInt32();
             Shininess = reader.ReadSingle();
             Bumpiness = reader.ReadSingle();
-            DualMapTexture_AssetID = reader.ReadUInt32();
+            DualMapTexture = reader.ReadUInt32();
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
@@ -30,25 +30,20 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(Flags.FlagValueInt);
-                writer.Write(BumpMapTexture_AssetID);
-                writer.Write(EnvMapTexture_AssetID);
+                writer.Write(BumpMapTexture);
+                writer.Write(EnvMapTexture);
                 writer.Write(Shininess);
                 writer.Write(Bumpiness);
-                writer.Write(DualMapTexture_AssetID);
+                writer.Write(DualMapTexture);
                 return writer.ToArray();
             }
         }
 
-        public override bool HasReference(uint assetID) =>
-            BumpMapTexture_AssetID == assetID ||
-            EnvMapTexture_AssetID == assetID ||
-            DualMapTexture_AssetID == assetID;
-
         public override void Verify(ref List<string> result)
         {
-            Verify(BumpMapTexture_AssetID, ref result);
-            Verify(EnvMapTexture_AssetID, ref result);
-            Verify(DualMapTexture_AssetID, ref result);
+            Verify(BumpMapTexture, ref result);
+            Verify(EnvMapTexture, ref result);
+            Verify(DualMapTexture, ref result);
         }
     }
 
@@ -84,7 +79,7 @@ namespace IndustrialPark
     {
         public short Padding { get; set; }
         public short Mode { get; set; }
-        public AssetID Group_AssetID { get; set; }
+        public AssetID Group { get; set; }
         public AssetSingle Speed { get; set; }
 
         public zSurfTextureAnim() { }
@@ -92,7 +87,7 @@ namespace IndustrialPark
         {
             Padding = reader.ReadInt16();
             Mode = reader.ReadInt16();
-            Group_AssetID = reader.ReadUInt32();
+            Group = reader.ReadUInt32();
             Speed = reader.ReadSingle();
         }
 
@@ -102,14 +97,13 @@ namespace IndustrialPark
             {
                 writer.Write(Padding);
                 writer.Write(Mode);
-                writer.Write(Group_AssetID);
+                writer.Write(Group);
                 writer.Write(Speed);
                 return writer.ToArray();
             }
         }
 
-        public override bool HasReference(uint assetID) => Group_AssetID == assetID;
-        public override void Verify(ref List<string> result) => Verify(Group_AssetID, ref result);
+        public override void Verify(ref List<string> result) => Verify(Group, ref result);
     }
 
     [TypeConverter(typeof(ExpandableObjectConverter))]
@@ -205,17 +199,17 @@ namespace IndustrialPark
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public class zFootstepsData : GenericAssetDataContainer
     {
-        public AssetID PARE_AssetID;
-        public AssetID Sound_AssetID;
-        public AssetID Texture_AssetID;
+        public AssetID ParticleEmitter;
+        public AssetID Sound;
+        public AssetID Texture;
         public AssetSingle Duration;
 
         public zFootstepsData() { }
         public zFootstepsData(EndianBinaryReader reader)
         {
-            PARE_AssetID = reader.ReadUInt32();
-            Sound_AssetID = reader.ReadUInt32();
-            Texture_AssetID = reader.ReadUInt32();
+            ParticleEmitter = reader.ReadUInt32();
+            Sound = reader.ReadUInt32();
+            Texture = reader.ReadUInt32();
             Duration = reader.ReadSingle();
         }
 
@@ -223,9 +217,9 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(PARE_AssetID);
-                writer.Write(Sound_AssetID);
-                writer.Write(Texture_AssetID);
+                writer.Write(ParticleEmitter);
+                writer.Write(Sound);
+                writer.Write(Texture);
                 writer.Write(Duration);
 
                 return writer.ToArray();
@@ -236,14 +230,14 @@ namespace IndustrialPark
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public class zHitDecalData : GenericAssetDataContainer
     {
-        public AssetID Texture_AssetID;
+        public AssetID Texture;
         public AssetSingle SizeX;
         public AssetSingle SizeY;
 
         public zHitDecalData() { }
         public zHitDecalData(EndianBinaryReader reader)
         {
-            Texture_AssetID = reader.ReadUInt32();
+            Texture = reader.ReadUInt32();
             SizeX = reader.ReadSingle();
             SizeY = reader.ReadSingle();
         }
@@ -252,7 +246,7 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(Texture_AssetID);
+                writer.Write(Texture);
                 writer.Write(SizeX);
                 writer.Write(SizeY);
 
@@ -350,7 +344,7 @@ namespace IndustrialPark
 
         // TSSM/Incredibles Only
         [Category(categoryName)]
-        public AssetID ImpactSound_AssetID { get; set; }
+        public AssetID ImpactSound { get; set; }
         [Category(categoryName)]
         public byte DashImpactType { get; set; }
         [Category(categoryName)]
@@ -372,7 +366,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public float DashRampMaxHeight { get; set; }
         [Category(categoryName)]
-        public AssetID DashRampTarget_MovePoint_AssetID { get; set; }
+        public AssetID DashRampTarget_MovePoint { get; set; }
         [Category(categoryName)]
         public int DamageAmount { get; set; }
         [Category(categoryName)]
@@ -467,7 +461,7 @@ namespace IndustrialPark
 
                 if (game == Game.Incredibles)
                 {
-                    ImpactSound_AssetID = reader.ReadUInt32();
+                    ImpactSound = reader.ReadUInt32();
                     DashImpactType = reader.ReadByte();
                     reader.ReadByte();
                     reader.ReadByte();
@@ -481,7 +475,7 @@ namespace IndustrialPark
                     DashRampMinDistance = reader.ReadSingle();
                     DashRampKeySpeed = reader.ReadSingle();
                     DashRampMaxHeight = reader.ReadSingle();
-                    DashRampTarget_MovePoint_AssetID = reader.ReadUInt32();
+                    DashRampTarget_MovePoint = reader.ReadUInt32();
                     DamageAmount = reader.ReadInt32();
                     HitSourceDamageType = (zHitSource)reader.ReadInt32();
                     OffSurface = new zFootstepsData(reader);
@@ -547,7 +541,7 @@ namespace IndustrialPark
                 }
                 if (game == Game.Incredibles)
                 {
-                    writer.Write(ImpactSound_AssetID);
+                    writer.Write(ImpactSound);
                     writer.Write(DashImpactType);
                     writer.Write((byte)0);
                     writer.Write((byte)0);
@@ -561,7 +555,7 @@ namespace IndustrialPark
                     writer.Write(DashRampMinDistance);
                     writer.Write(DashRampKeySpeed);
                     writer.Write(DashRampMaxHeight);
-                    writer.Write(DashRampTarget_MovePoint_AssetID);
+                    writer.Write(DashRampTarget_MovePoint);
                     writer.Write(DamageAmount);
                     writer.Write((int)HitSourceDamageType);
                     writer.Write(OffSurface.Serialize(game, endianness));
@@ -585,13 +579,6 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) =>
-            zSurfMatFX.HasReference(assetID) ||
-            zSurfColorFX.HasReference(assetID) ||
-            zSurfTextureAnim1.HasReference(assetID) ||
-            zSurfTextureAnim2.HasReference(assetID) ||
-            base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
@@ -610,7 +597,7 @@ namespace IndustrialPark
 
             if (game != Game.Incredibles)
             {
-                dt.RemoveProperty("ImpactSound_AssetID");
+                dt.RemoveProperty("ImpactSound");
                 dt.RemoveProperty("DashImpactType");
                 dt.RemoveProperty("DashImpactThrowBack");
                 dt.RemoveProperty("DashSprayMagnitude");
@@ -621,7 +608,7 @@ namespace IndustrialPark
                 dt.RemoveProperty("DashRampMinDistance");
                 dt.RemoveProperty("DashRampKeySpeed");
                 dt.RemoveProperty("DashRampMaxHeight");
-                dt.RemoveProperty("DashRampTarget_MovePoint_AssetID");
+                dt.RemoveProperty("DashRampTarget_MovePoint");
                 dt.RemoveProperty("DamageAmount");
                 dt.RemoveProperty("HitSourceDamageType");
                 dt.RemoveProperty("OffSurface");

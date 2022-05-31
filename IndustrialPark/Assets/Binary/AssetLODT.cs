@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace IndustrialPark
 {
-    public class EntryLODT
+    public class EntryLODT : GenericAssetDataContainer
     {
-        public AssetID BaseModelAssetID { get; set; }
+        public AssetID BaseModel { get; set; }
         public AssetSingle MaxDistance { get; set; }
         public AssetID LOD1_Model { get; set; }
         public AssetSingle LOD1_MinDistance { get; set; }
@@ -21,7 +21,7 @@ namespace IndustrialPark
         public EntryLODT() { }
         public EntryLODT(EndianBinaryReader reader, Game game)
         {
-            BaseModelAssetID = reader.ReadUInt32();
+            BaseModel = reader.ReadUInt32();
             MaxDistance = reader.ReadSingle();
             LOD1_Model = reader.ReadUInt32();
             LOD2_Model = reader.ReadUInt32();
@@ -34,11 +34,11 @@ namespace IndustrialPark
                 Unknown = reader.ReadSingle();
         }
 
-        public byte[] Serialize(Game game, Endianness endianness)
+        public override byte[] Serialize(Game game, Endianness endianness)
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(BaseModelAssetID);
+                writer.Write(BaseModel);
                 writer.Write(MaxDistance);
                 writer.Write(LOD1_Model);
                 writer.Write(LOD2_Model);
@@ -56,27 +56,27 @@ namespace IndustrialPark
 
         public override string ToString()
         {
-            return $"[{Program.MainForm.GetAssetNameFromID(BaseModelAssetID)}] - {MaxDistance}";
+            return $"[{Program.MainForm.GetAssetNameFromID(BaseModel)}] - {MaxDistance}";
         }
 
         public override bool Equals(object obj)
         {
             if (obj != null && obj is EntryLODT entry)
-                return BaseModelAssetID.Equals(entry.BaseModelAssetID);
+                return BaseModel.Equals(entry.BaseModel);
             return false;
         }
 
         public override int GetHashCode()
         {
-            return BaseModelAssetID.GetHashCode();
+            return BaseModel.GetHashCode();
         }
     }
 
     public class AssetLODT : Asset
     {
-        private static Dictionary<uint, float> maxDistances = new Dictionary<uint, float>();
+        private static readonly Dictionary<uint, float> maxDistances = new Dictionary<uint, float>();
 
-        public static float MaxDistanceTo(uint _modelAssetID) => maxDistances.ContainsKey(_modelAssetID) ? maxDistances[_modelAssetID] : SharpRenderer.DefaultLODTDistance;
+        public static float MaxDistanceTo(uint _model) => maxDistances.ContainsKey(_model) ? maxDistances[_model] : SharpRenderer.DefaultLODTDistance;
 
         private EntryLODT[] _lodt_Entries;
         [Category("Level Of Detail Table")]
@@ -121,23 +121,14 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            foreach (var a in LODT_Entries)
-                if (a.BaseModelAssetID == assetID || a.LOD1_Model == assetID || a.LOD2_Model == assetID || a.LOD3_Model == assetID)
-                    return true;
-
-            return false;
-        }
-
         public override void Verify(ref List<string> result)
         {
             foreach (var a in LODT_Entries)
             {
-                if (a.BaseModelAssetID == 0)
-                    result.Add("LODT entry with ModelAssetID set to 0");
+                if (a.BaseModel == 0)
+                    result.Add("LOD table entry with Model set to 0");
 
-                Verify(a.BaseModelAssetID, ref result);
+                Verify(a.BaseModel, ref result);
                 Verify(a.LOD1_Model, ref result);
                 Verify(a.LOD2_Model, ref result);
                 Verify(a.LOD3_Model, ref result);
@@ -147,13 +138,13 @@ namespace IndustrialPark
         public void UpdateDictionary()
         {
             foreach (var entry in LODT_Entries)
-                maxDistances[entry.BaseModelAssetID] = entry.MaxDistance;
+                maxDistances[entry.BaseModel] = entry.MaxDistance;
         }
 
         public void ClearDictionary()
         {
             foreach (var entry in LODT_Entries)
-                maxDistances.Remove(entry.BaseModelAssetID);
+                maxDistances.Remove(entry.BaseModel);
         }
 
         public void Merge(AssetLODT asset)

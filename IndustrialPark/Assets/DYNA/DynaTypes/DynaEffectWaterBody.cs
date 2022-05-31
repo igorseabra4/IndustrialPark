@@ -53,9 +53,6 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) =>
-            MotionType == assetID || Body == assetID || FacadeRefract == assetID || FacadeReflect == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             Verify(MotionType, ref result);

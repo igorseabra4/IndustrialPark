@@ -21,8 +21,8 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public EnemyTurretType TurretType
         {
-            get => (EnemyTurretType)(uint)Model_AssetID;
-            set => Model_AssetID = (uint)value;
+            get => (EnemyTurretType)(uint)Model;
+            set => Model = (uint)value;
         }
         [Category(dynaCategoryName)]
         public AssetSingle Rotation { get; set; }
@@ -75,18 +75,6 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (Unknown54 == assetID)
-                return true;
-            if (Unknown5C == assetID)
-                return true;
-            if (Unknown60 == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
@@ -97,6 +85,6 @@ namespace IndustrialPark
         }
 
         public static bool dontRender = false;
-        public override bool DontRender { get => dontRender; }
+        public override bool DontRender => dontRender;
     }
 }

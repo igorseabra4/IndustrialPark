@@ -6,34 +6,34 @@ namespace IndustrialPark
 {
     public class DestState : GenericAssetDataContainer
     {
-        public int percent { get; set; }
-        public AssetID Model_AssetID { get; set; }
-        public AssetID Shrapnel_Destroy_AssetID { get; set; }
-        public AssetID Shrapnel_Hit_AssetID { get; set; }
-        public AssetID SoundGroup_Idle_AssetID { get; set; }
-        public AssetID SoundGroup_Fx_AssetID { get; set; }
-        public AssetID SoundGroup_Hit_AssetID { get; set; }
-        public AssetID SoundGroup_Fx_Switch_AssetID { get; set; }
-        public AssetID SoundGroup_Hit_Switch_AssetID { get; set; }
-        public AssetID Rumble_Hit_AssetID { get; set; }
-        public AssetID Rumble_Switch_AssetID { get; set; }
+        public int Percent { get; set; }
+        public AssetID Model { get; set; }
+        public AssetID Shrapnel_Destroy { get; set; }
+        public AssetID Shrapnel_Hit { get; set; }
+        public AssetID SoundGroup_Idle { get; set; }
+        public AssetID SoundGroup_Fx { get; set; }
+        public AssetID SoundGroup_Hit { get; set; }
+        public AssetID SoundGroup_Fx_Switch { get; set; }
+        public AssetID SoundGroup_Hit_Switch { get; set; }
+        public AssetID Rumble_Hit { get; set; }
+        public AssetID Rumble_Switch { get; set; }
         public int FxFlags { get; set; }
         public int nAnimations { get; set; }
 
         public DestState() { }
         public DestState(EndianBinaryReader reader)
         {
-            percent = reader.ReadInt32();
-            Model_AssetID = reader.ReadUInt32();
-            Shrapnel_Destroy_AssetID = reader.ReadUInt32();
-            Shrapnel_Hit_AssetID = reader.ReadUInt32();
-            SoundGroup_Idle_AssetID = reader.ReadUInt32();
-            SoundGroup_Fx_AssetID = reader.ReadUInt32();
-            SoundGroup_Hit_AssetID = reader.ReadUInt32();
-            SoundGroup_Fx_Switch_AssetID = reader.ReadUInt32();
-            SoundGroup_Hit_Switch_AssetID = reader.ReadUInt32();
-            Rumble_Hit_AssetID = reader.ReadUInt32();
-            Rumble_Switch_AssetID = reader.ReadUInt32();
+            Percent = reader.ReadInt32();
+            Model = reader.ReadUInt32();
+            Shrapnel_Destroy = reader.ReadUInt32();
+            Shrapnel_Hit = reader.ReadUInt32();
+            SoundGroup_Idle = reader.ReadUInt32();
+            SoundGroup_Fx = reader.ReadUInt32();
+            SoundGroup_Hit = reader.ReadUInt32();
+            SoundGroup_Fx_Switch = reader.ReadUInt32();
+            SoundGroup_Hit_Switch = reader.ReadUInt32();
+            Rumble_Hit = reader.ReadUInt32();
+            Rumble_Switch = reader.ReadUInt32();
             FxFlags = reader.ReadInt32();
             nAnimations = reader.ReadInt32();
         }
@@ -42,35 +42,23 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(percent);
-                writer.Write(Model_AssetID);
-                writer.Write(Shrapnel_Destroy_AssetID);
-                writer.Write(Shrapnel_Hit_AssetID);
-                writer.Write(SoundGroup_Idle_AssetID);
-                writer.Write(SoundGroup_Fx_AssetID);
-                writer.Write(SoundGroup_Hit_AssetID);
-                writer.Write(SoundGroup_Fx_Switch_AssetID);
-                writer.Write(SoundGroup_Hit_Switch_AssetID);
-                writer.Write(Rumble_Hit_AssetID);
-                writer.Write(Rumble_Switch_AssetID);
+                writer.Write(Percent);
+                writer.Write(Model);
+                writer.Write(Shrapnel_Destroy);
+                writer.Write(Shrapnel_Hit);
+                writer.Write(SoundGroup_Idle);
+                writer.Write(SoundGroup_Fx);
+                writer.Write(SoundGroup_Hit);
+                writer.Write(SoundGroup_Fx_Switch);
+                writer.Write(SoundGroup_Hit_Switch);
+                writer.Write(Rumble_Hit);
+                writer.Write(Rumble_Switch);
                 writer.Write(FxFlags);
                 writer.Write(nAnimations);
 
                 return writer.ToArray();
             }
         }
-
-        public override bool HasReference(uint assetID) =>
-            Model_AssetID == assetID ||
-            Shrapnel_Destroy_AssetID == assetID ||
-            Shrapnel_Hit_AssetID == assetID ||
-            SoundGroup_Idle_AssetID == assetID ||
-            SoundGroup_Fx_AssetID == assetID ||
-            SoundGroup_Hit_AssetID == assetID ||
-            SoundGroup_Fx_Switch_AssetID == assetID ||
-            SoundGroup_Hit_Switch_AssetID == assetID ||
-            Rumble_Hit_AssetID == assetID ||
-            Rumble_Switch_AssetID == assetID;
     }
 
     public class AssetDEST : Asset
@@ -78,7 +66,7 @@ namespace IndustrialPark
         private const string categoryName = "Destructible";
 
         [Category(categoryName)]
-        public AssetID MINF_AssetID { get; set; }
+        public AssetID ModelInfo { get; set; }
         [Category(categoryName)]
         public int HitPoints { get; set; }
         [Category(categoryName)]
@@ -90,7 +78,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public FlagBitmask Flags { get; set; } = IntFlagsDescriptor();
         [Category(categoryName)]
-        public AssetID SoundGroup_Idle_AssetID { get; set; }
+        public AssetID SoundGroup_Idle { get; set; }
         [Category(categoryName)]
         public AssetSingle Respawn { get; set; }
         [Category(categoryName)]
@@ -106,14 +94,14 @@ namespace IndustrialPark
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                MINF_AssetID = reader.ReadUInt32();
+                ModelInfo = reader.ReadUInt32();
                 int numStates = reader.ReadInt32();
                 HitPoints = reader.ReadInt32();
                 HitFilter = reader.ReadInt32();
                 LaunchFlag = reader.ReadInt32();
                 Behavior = reader.ReadInt32();
                 Flags.FlagValueInt = reader.ReadUInt32();
-                SoundGroup_Idle_AssetID = reader.ReadUInt32();
+                SoundGroup_Idle = reader.ReadUInt32();
                 Respawn = reader.ReadSingle();
                 TargetPriority = reader.ReadByte();
                 reader.ReadByte();
@@ -134,14 +122,14 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(MINF_AssetID);
+                writer.Write(ModelInfo);
                 writer.Write(States.Length);
                 writer.Write(HitPoints);
                 writer.Write(HitFilter);
                 writer.Write(LaunchFlag);
                 writer.Write(Behavior);
                 writer.Write(Flags.FlagValueInt);
-                writer.Write(SoundGroup_Idle_AssetID);
+                writer.Write(SoundGroup_Idle);
                 writer.Write(Respawn);
                 writer.Write(TargetPriority);
                 writer.Write((byte)0);
@@ -157,23 +145,12 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (MINF_AssetID == assetID)
-                return true;
-            foreach (var s in States)
-                if (s.HasReference(assetID))
-                    return true;
-
-            return false;
-        }
-
         public override void Verify(ref List<string> result)
         {
-            Verify(MINF_AssetID, ref result);
+            Verify(ModelInfo, ref result);
 
-            if (MINF_AssetID == 0)
-                result.Add("DEST with MINF_AssetID set to 0");
+            if (ModelInfo == 0)
+                result.Add("DEST with MINF set to 0");
         }
     }
 }

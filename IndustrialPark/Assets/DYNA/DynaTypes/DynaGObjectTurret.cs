@@ -12,9 +12,9 @@ namespace IndustrialPark
         protected override short constVersion => 7;
 
         [Category(dynaCategoryName)]
-        public AssetID BaseObject_AssetID { get; set; }
+        public AssetID BaseObject { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID GunObject_AssetID { get; set; }
+        public AssetID GunObject { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle YawRange { get; set; }
         [Category(dynaCategoryName)]
@@ -42,7 +42,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle CameraOffsetZ { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID FinalPointer_AssetID { get; set; }
+        public AssetID FinalPointer { get; set; }
         [Category(dynaCategoryName)]
         public AssetColor LaserColor { get; set; }
         [Category(dynaCategoryName)]
@@ -64,9 +64,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle LaserSpeed { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID LaserSoundGroup_AssetID { get; set; }
+        public AssetID LaserSoundGroup { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID TargetTexture_AssetID { get; set; }
+        public AssetID TargetTexture { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle TargetTextureSizeX { get; set; }
         [Category(dynaCategoryName)]
@@ -78,8 +78,8 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
 
-                BaseObject_AssetID = reader.ReadUInt32();
-                GunObject_AssetID = reader.ReadUInt32();
+                BaseObject = reader.ReadUInt32();
+                GunObject = reader.ReadUInt32();
                 YawRange = reader.ReadSingle();
                 YawSpeed = reader.ReadSingle();
                 PitchRange = reader.ReadSingle();
@@ -93,7 +93,7 @@ namespace IndustrialPark
                 CameraOffsetX = reader.ReadSingle();
                 CameraOffsetY = reader.ReadSingle();
                 CameraOffsetZ = reader.ReadSingle();
-                FinalPointer_AssetID = reader.ReadUInt32();
+                FinalPointer = reader.ReadUInt32();
                 LaserColor = reader.ReadColor();
                 Offset1X = reader.ReadSingle();
                 Offset1Y = reader.ReadSingle();
@@ -104,8 +104,8 @@ namespace IndustrialPark
                 LaserLength = reader.ReadSingle();
                 LaserThickness = reader.ReadSingle();
                 LaserSpeed = reader.ReadSingle();
-                LaserSoundGroup_AssetID = reader.ReadUInt32();
-                TargetTexture_AssetID = reader.ReadUInt32();
+                LaserSoundGroup = reader.ReadUInt32();
+                TargetTexture = reader.ReadUInt32();
                 TargetTextureSizeX = reader.ReadSingle();
                 TargetTextureSizeY = reader.ReadSingle();
             }
@@ -115,8 +115,8 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(BaseObject_AssetID);
-                writer.Write(GunObject_AssetID);
+                writer.Write(BaseObject);
+                writer.Write(GunObject);
                 writer.Write(YawRange);
                 writer.Write(YawSpeed);
                 writer.Write(PitchRange);
@@ -130,7 +130,7 @@ namespace IndustrialPark
                 writer.Write(CameraOffsetX);
                 writer.Write(CameraOffsetY);
                 writer.Write(CameraOffsetZ);
-                writer.Write(FinalPointer_AssetID);
+                writer.Write(FinalPointer);
                 writer.Write(LaserColor);
                 writer.Write(Offset1X);
                 writer.Write(Offset1Y);
@@ -141,8 +141,8 @@ namespace IndustrialPark
                 writer.Write(LaserLength);
                 writer.Write(LaserThickness);
                 writer.Write(LaserSpeed);
-                writer.Write(LaserSoundGroup_AssetID);
-                writer.Write(TargetTexture_AssetID);
+                writer.Write(LaserSoundGroup);
+                writer.Write(TargetTexture);
                 writer.Write(TargetTextureSizeX);
                 writer.Write(TargetTextureSizeY);
 
@@ -150,21 +150,13 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) =>
-            BaseObject_AssetID == assetID ||
-            GunObject_AssetID == assetID ||
-            FinalPointer_AssetID == assetID ||
-            LaserSoundGroup_AssetID == assetID ||
-            TargetTexture_AssetID == assetID ||
-            base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
-            Verify(BaseObject_AssetID, ref result);
-            Verify(GunObject_AssetID, ref result);
-            Verify(FinalPointer_AssetID, ref result);
-            Verify(LaserSoundGroup_AssetID, ref result);
-            Verify(TargetTexture_AssetID, ref result);
+            Verify(BaseObject, ref result);
+            Verify(GunObject, ref result);
+            Verify(FinalPointer, ref result);
+            Verify(LaserSoundGroup, ref result);
+            Verify(TargetTexture, ref result);
             base.Verify(ref result);
         }
     }

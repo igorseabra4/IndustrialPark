@@ -11,9 +11,9 @@ namespace IndustrialPark
         [Category(catName)]
         public FlagBitmask GustFlags { get; set; } = IntFlagsDescriptor("Start on", "No leaves");
         [Category(catName)]
-        public AssetID Volume_AssetID { get; set; }
+        public AssetID Volume { get; set; }
         [Category(catName)]
-        public AssetID Effect_AssetID { get; set; }
+        public AssetID Effect { get; set; }
         [Category(catName)]
         public AssetSingle StrengthX { get; set; }
         [Category(catName)]
@@ -32,8 +32,8 @@ namespace IndustrialPark
                 reader.BaseStream.Position = baseHeaderEndPosition;
 
                 GustFlags.FlagValueInt = reader.ReadUInt32();
-                Volume_AssetID = reader.ReadUInt32();
-                Effect_AssetID = reader.ReadUInt32();
+                Volume = reader.ReadUInt32();
+                Effect = reader.ReadUInt32();
                 StrengthX = reader.ReadSingle();
                 StrengthY = reader.ReadSingle();
                 StrengthZ = reader.ReadSingle();
@@ -48,8 +48,8 @@ namespace IndustrialPark
             {
                 writer.Write(SerializeBase(endianness));
                 writer.Write(GustFlags.FlagValueInt);
-                writer.Write(Volume_AssetID);
-                writer.Write(Effect_AssetID);
+                writer.Write(Volume);
+                writer.Write(Effect);
                 writer.Write(StrengthX);
                 writer.Write(StrengthY);
                 writer.Write(StrengthZ);
@@ -61,16 +61,14 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => Volume_AssetID == assetID || Effect_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
-            if (Volume_AssetID == 0)
-                result.Add("GUST with Volume_AssetID set to 0");
-            Verify(Volume_AssetID, ref result);
-            Verify(Effect_AssetID, ref result);
+            if (Volume == 0)
+                result.Add("Gust with Volume set to 0");
+            Verify(Volume, ref result);
+            Verify(Effect, ref result);
         }
     }
 }

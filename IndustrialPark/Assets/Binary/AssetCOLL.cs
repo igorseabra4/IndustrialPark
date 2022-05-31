@@ -5,37 +5,37 @@ using System.Linq;
 
 namespace IndustrialPark
 {
-    public class EntryCOLL
+    public class EntryCOLL : GenericAssetDataContainer
     {
-        public AssetID ModelAssetID { get; set; }
-        public AssetID Collision_ModelAssetID { get; set; }
-        public AssetID CameraCollision_ModelAssetID { get; set; }
+        public AssetID Model { get; set; }
+        public AssetID CollisionModel { get; set; }
+        public AssetID CameraCollisionModel { get; set; }
 
         public EntryCOLL() { }
         public EntryCOLL(EndianBinaryReader reader)
         {
-            ModelAssetID = reader.ReadUInt32();
-            Collision_ModelAssetID = reader.ReadUInt32();
-            CameraCollision_ModelAssetID = reader.ReadUInt32();
+            Model = reader.ReadUInt32();
+            CollisionModel = reader.ReadUInt32();
+            CameraCollisionModel = reader.ReadUInt32();
         }
 
         public override string ToString()
         {
-            if (Collision_ModelAssetID != 0)
-                return $"[{Program.MainForm.GetAssetNameFromID(ModelAssetID)}] - [{Program.MainForm.GetAssetNameFromID(Collision_ModelAssetID)}]";
-            return $"[{Program.MainForm.GetAssetNameFromID(ModelAssetID)}] - [{Program.MainForm.GetAssetNameFromID(CameraCollision_ModelAssetID)}]";
+            if (CollisionModel != 0)
+                return $"[{Program.MainForm.GetAssetNameFromID(Model)}] - [{Program.MainForm.GetAssetNameFromID(CollisionModel)}]";
+            return $"[{Program.MainForm.GetAssetNameFromID(Model)}] - [{Program.MainForm.GetAssetNameFromID(CameraCollisionModel)}]";
         }
 
         public override bool Equals(object obj)
         {
             if (obj != null && obj is EntryCOLL entryCOLL)
-                return ModelAssetID.Equals(entryCOLL.ModelAssetID);
+                return Model.Equals(entryCOLL.Model);
             return false;
         }
 
         public override int GetHashCode()
         {
-            return ModelAssetID.GetHashCode();
+            return Model.GetHashCode();
         }
     }
 
@@ -70,34 +70,25 @@ namespace IndustrialPark
 
                 foreach (var entry in CollisionTable_Entries)
                 {
-                    writer.Write(entry.ModelAssetID);
-                    writer.Write(entry.Collision_ModelAssetID);
-                    writer.Write(entry.CameraCollision_ModelAssetID);
+                    writer.Write(entry.Model);
+                    writer.Write(entry.CollisionModel);
+                    writer.Write(entry.CameraCollisionModel);
                 }
 
                 return writer.ToArray();
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            foreach (var a in CollisionTable_Entries)
-                if (a.ModelAssetID == assetID || a.Collision_ModelAssetID == assetID || a.CameraCollision_ModelAssetID == assetID)
-                    return true;
-
-            return false;
-        }
-
         public override void Verify(ref List<string> result)
         {
             foreach (var a in CollisionTable_Entries)
             {
-                if (a.ModelAssetID == 0)
-                    result.Add("COLL entry with ModelAssetID set to 0");
+                if (a.Model == 0)
+                    result.Add("CollisionTable entry with Model set to 0");
 
-                Verify(a.ModelAssetID, ref result);
-                Verify(a.Collision_ModelAssetID, ref result);
-                Verify(a.CameraCollision_ModelAssetID, ref result);
+                Verify(a.Model, ref result);
+                Verify(a.CollisionModel, ref result);
+                Verify(a.CameraCollisionModel, ref result);
             }
         }
 

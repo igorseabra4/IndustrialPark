@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class EntryPICK
+    public class EntryPICK : GenericAssetDataContainer
     {
         public AssetID PickupHash { get; set; }
         public AssetByte PickupType { get; set; }
@@ -12,8 +12,8 @@ namespace IndustrialPark
         [TypeConverter(typeof(HexUShortTypeConverter))]
         public ushort PickupFlags { get; set; }
         public uint Quantity { get; set; }
-        public AssetID ModelAssetID { get; set; }
-        public AssetID AnimAssetID { get; set; }
+        public AssetID Model { get; set; }
+        public AssetID Animation { get; set; }
 
         public EntryPICK() { }
         public EntryPICK(EndianBinaryReader reader)
@@ -23,8 +23,8 @@ namespace IndustrialPark
             PickupIndex = reader.ReadByte();
             PickupFlags = reader.ReadUInt16();
             Quantity = reader.ReadUInt32();
-            ModelAssetID = reader.ReadUInt32();
-            AnimAssetID = reader.ReadUInt32();
+            Model = reader.ReadUInt32();
+            Animation = reader.ReadUInt32();
         }
 
         public byte[] Serialize(Endianness endianness)
@@ -36,15 +36,15 @@ namespace IndustrialPark
                 writer.Write(PickupIndex);
                 writer.Write(PickupFlags);
                 writer.Write(Quantity);
-                writer.Write(ModelAssetID);
-                writer.Write(AnimAssetID);
+                writer.Write(Model);
+                writer.Write(Animation);
 
                 return writer.ToArray();
             }
         }
 
         public override string ToString() =>
-            $"[{Program.MainForm.GetAssetNameFromID(PickupHash)}] - [{Program.MainForm.GetAssetNameFromID(ModelAssetID)}]";
+            $"[{Program.MainForm.GetAssetNameFromID(PickupHash)}] - [{Program.MainForm.GetAssetNameFromID(Model)}]";
     }
 
     public class AssetPICK : Asset
@@ -89,22 +89,13 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            foreach (EntryPICK a in _pick_Entries)
-                if (a.ModelAssetID == assetID)
-                    return true;
-
-            return false;
-        }
-
         public override void Verify(ref List<string> result)
         {
             foreach (EntryPICK a in _pick_Entries)
             {
-                if (a.ModelAssetID == 0)
-                    result.Add("PICK entry with ModelAssetID set to 0");
-                Verify(a.ModelAssetID, ref result);
+                if (a.Model == 0)
+                    result.Add("Pickup table entry with Model set to 0");
+                Verify(a.Model, ref result);
             }
         }
 
@@ -113,7 +104,7 @@ namespace IndustrialPark
             pickEntries.Clear();
 
             foreach (EntryPICK entry in _pick_Entries)
-                pickEntries[entry.PickupHash] = entry.ModelAssetID;
+                pickEntries[entry.PickupHash] = entry.Model;
         }
 
         public void ClearDictionary()

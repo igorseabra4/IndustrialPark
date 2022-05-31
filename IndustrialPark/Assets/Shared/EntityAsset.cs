@@ -135,19 +135,19 @@ namespace IndustrialPark
         [Category(categoryName + " Color")]
         public AssetSingle ColorAlphaSpeed { get; set; }
 
-        protected uint _modelAssetID;
-        [Category(categoryName + " References")]
-        public AssetID Model_AssetID
+        protected uint _model;
+        [Category(categoryName + " References"), Description("Model or ModelInfo asset")]
+        public AssetID Model
         {
-            get => _modelAssetID;
-            set { _modelAssetID = value; CreateTransformMatrix(); }
+            get => _model;
+            set { _model = value; CreateTransformMatrix(); }
         }
 
         [Category(categoryName + " References")]
-        public virtual AssetID Animation_AssetID { get; set; }
+        public virtual AssetID Animation { get; set; }
 
         [Category(categoryName + " References")]
-        public AssetID Surface_AssetID { get; set; }
+        public AssetID Surface { get; set; }
 
         protected int entityHeaderEndPosition => game == Game.BFBB ? 0x54 : 0x50;
 
@@ -176,7 +176,7 @@ namespace IndustrialPark
                 SolidityFlags.FlagValueByte = reader.ReadByte();
                 if (game == Game.BFBB)
                     reader.ReadInt32();
-                Surface_AssetID = reader.ReadUInt32();
+                Surface = reader.ReadUInt32();
                 _yaw = reader.ReadSingle();
                 _pitch = reader.ReadSingle();
                 _roll = reader.ReadSingle();
@@ -184,8 +184,8 @@ namespace IndustrialPark
                 _scale = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
                 _color = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
                 ColorAlphaSpeed = reader.ReadSingle();
-                _modelAssetID = reader.ReadUInt32();
-                Animation_AssetID = reader.ReadUInt32();
+                _model = reader.ReadUInt32();
+                Animation = reader.ReadUInt32();
 
                 CreateTransformMatrix();
                 AddToRenderableAssets(this);
@@ -201,7 +201,7 @@ namespace IndustrialPark
             SolidityFlags.FlagValueByte = reader.ReadByte();
             if (game == Game.BFBB)
                 reader.ReadInt32();
-            Surface_AssetID = reader.ReadUInt32();
+            Surface = reader.ReadUInt32();
             _yaw = reader.ReadSingle();
             _pitch = reader.ReadSingle();
             _roll = reader.ReadSingle();
@@ -209,8 +209,8 @@ namespace IndustrialPark
             _scale = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
             _color = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
             ColorAlphaSpeed = reader.ReadSingle();
-            _modelAssetID = reader.ReadUInt32();
-            Animation_AssetID = reader.ReadUInt32();
+            _model = reader.ReadUInt32();
+            Animation = reader.ReadUInt32();
         }
 
         protected byte[] SerializeEntity(Game game, Endianness endianness)
@@ -225,7 +225,7 @@ namespace IndustrialPark
                 writer.Write(SolidityFlags.FlagValueByte);
                 if (game == Game.BFBB)
                     writer.Write(0);
-                writer.Write(Surface_AssetID);
+                writer.Write(Surface);
                 writer.Write(_yaw);
                 writer.Write(_pitch);
                 writer.Write(_roll);
@@ -240,8 +240,8 @@ namespace IndustrialPark
                 writer.Write(_color.Z);
                 writer.Write(_color.W);
                 writer.Write(ColorAlphaSpeed);
-                writer.Write(_modelAssetID);
-                writer.Write(Animation_AssetID);
+                writer.Write(_model);
+                writer.Write(Animation);
 
                 return writer.ToArray();
             }
@@ -266,7 +266,7 @@ namespace IndustrialPark
 
         protected virtual void CreateBoundingBox()
         {
-            var model = GetFromRenderingDictionary(_modelAssetID);
+            var model = GetFromRenderingDictionary(_model);
             if (model != null)
                 CreateBoundingBox(model.vertexListG);
             else
@@ -282,7 +282,7 @@ namespace IndustrialPark
             for (int i = 0; i < vertexList.Count; i++)
                 vertices[i] = (Vector3)Vector3.Transform(vertexList[i] * multiplier, world);
             boundingBox = BoundingBox.FromPoints(vertices);
-            triangles = GetFromRenderingDictionary(_modelAssetID)?.triangleList.ToArray();
+            triangles = GetFromRenderingDictionary(_model)?.triangleList.ToArray();
         }
 
         public virtual bool ShouldDraw(SharpRenderer renderer)
@@ -295,7 +295,7 @@ namespace IndustrialPark
                 return false;
             if (movementPreview)
                 return true;
-            if (AssetMODL.renderBasedOnLodt && GetDistanceFrom(renderer.Camera.Position) > AssetLODT.MaxDistanceTo(_modelAssetID))
+            if (AssetMODL.renderBasedOnLodt && GetDistanceFrom(renderer.Camera.Position) > AssetLODT.MaxDistanceTo(_model))
                 return false;
 
             return renderer.frustum.Intersects(ref boundingBox);
@@ -303,14 +303,14 @@ namespace IndustrialPark
 
         public virtual void Draw(SharpRenderer renderer)
         {
-            if (renderingDictionary.ContainsKey(_modelAssetID))
-                renderingDictionary[_modelAssetID].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * _color : _color, UvAnimOffset);
+            if (renderingDictionary.ContainsKey(_model))
+                renderingDictionary[_model].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * _color : _color, UvAnimOffset);
             else
                 renderer.DrawCube(LocalWorld(), isSelected);
         }
 
         [Browsable(false)]
-        public virtual bool SpecialBlendMode => !renderingDictionary.ContainsKey(_modelAssetID) || renderingDictionary[_modelAssetID].SpecialBlendMode;
+        public virtual bool SpecialBlendMode => !renderingDictionary.ContainsKey(_model) || renderingDictionary[_model].SpecialBlendMode;
 
         public virtual float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
@@ -348,19 +348,16 @@ namespace IndustrialPark
             return min;
         }
 
-        public override bool HasReference(uint assetID) => Surface_AssetID == assetID || Model_AssetID == assetID || Animation_AssetID == assetID ||
-            base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
-            Verify(Surface_AssetID, ref result);
-            if (Model_AssetID == 0)
-                result.Add(GetType().ToString().Replace("Asset", "") + " with Model_AssetID set to 0");
+            Verify(Surface, ref result);
+            if (Model == 0)
+                result.Add(GetType().ToString().Replace("Asset", "") + " with Model set to 0");
             if (!(this is AssetTRIG))
-                Verify(Model_AssetID, ref result);
-            Verify(Animation_AssetID, ref result);
+                Verify(Model, ref result);
+            Verify(Animation, ref result);
         }
 
         public static bool movementPreview = false;
@@ -372,9 +369,9 @@ namespace IndustrialPark
                 uint PlatID = 0;
 
                 if ((EventBFBB)link.EventSendID == EventBFBB.Drivenby)
-                    PlatID = link.TargetAssetID;
+                    PlatID = link.TargetAsset;
                 else if ((EventBFBB)link.EventSendID == EventBFBB.Mount)
-                    PlatID = link.ArgumentAssetID;
+                    PlatID = link.ArgumentAsset;
                 else continue;
 
                 foreach (var ae in Program.MainForm.archiveEditors)
@@ -428,10 +425,10 @@ namespace IndustrialPark
 
         private void FindSurf()
         {
-            if (Program.MainForm != null && Surface_AssetID != 0)
+            if (Program.MainForm != null && Surface != 0)
                 foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                    if (ae.archive.ContainsAsset(Surface_AssetID))
-                        if (ae.archive.GetFromAssetID(Surface_AssetID) is AssetSURF SURF)
+                    if (ae.archive.ContainsAsset(Surface))
+                        if (ae.archive.GetFromAssetID(Surface) is AssetSURF SURF)
                         {
                             uvTransSpeed = new Vector3(SURF.zSurfUVFX.TransSpeed_X, SURF.zSurfUVFX.TransSpeed_Y, SURF.zSurfUVFX.TransSpeed_Z);
                             return;

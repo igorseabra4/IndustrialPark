@@ -5,17 +5,17 @@ using System.Linq;
 
 namespace IndustrialPark
 {
-    public class EntrySHDW
+    public class EntrySHDW : GenericAssetDataContainer
     {
-        public AssetID ModelAssetID { get; set; }
-        public AssetID ShadowModelAssetID { get; set; }
+        public AssetID Model { get; set; }
+        public AssetID ShadowModel { get; set; }
         public int Unknown { get; set; }
 
         public EntrySHDW() { }
         public EntrySHDW(EndianBinaryReader reader)
         {
-            ModelAssetID = reader.ReadUInt32();
-            ShadowModelAssetID = reader.ReadUInt32();
+            Model = reader.ReadUInt32();
+            ShadowModel = reader.ReadUInt32();
             Unknown = reader.ReadInt32();
         }
 
@@ -23,8 +23,8 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(ModelAssetID);
-                writer.Write(ShadowModelAssetID);
+                writer.Write(Model);
+                writer.Write(ShadowModel);
                 writer.Write(Unknown);
 
                 return writer.ToArray();
@@ -33,18 +33,18 @@ namespace IndustrialPark
 
         public override string ToString()
         {
-            return $"[{Program.MainForm.GetAssetNameFromID(ModelAssetID)}] - [{Program.MainForm.GetAssetNameFromID(ShadowModelAssetID)}]";
+            return $"[{Program.MainForm.GetAssetNameFromID(Model)}] - [{Program.MainForm.GetAssetNameFromID(ShadowModel)}]";
         }
 
         public override int GetHashCode()
         {
-            return ModelAssetID.GetHashCode();
+            return Model.GetHashCode();
         }
 
         public override bool Equals(object obj)
         {
             if (obj != null && obj is EntrySHDW entrySHDW)
-                return ModelAssetID.Equals(entrySHDW.ModelAssetID);
+                return Model.Equals(entrySHDW.Model);
             return false;
         }
     }
@@ -54,7 +54,7 @@ namespace IndustrialPark
         [Category("Shadow Map")]
         public EntrySHDW[] SHDW_Entries { get; set; }
 
-        public AssetSHDW(string assetName) : base(assetName, AssetType.SimpleShadowTable)
+        public AssetSHDW(string assetName) : base(assetName, AssetType.ShadowTable)
         {
             SHDW_Entries = new EntrySHDW[0];
         }
@@ -83,25 +83,16 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            foreach (EntrySHDW a in SHDW_Entries)
-                if (a.ModelAssetID == assetID || a.ShadowModelAssetID == assetID)
-                    return true;
-
-            return false;
-        }
-
         public override void Verify(ref List<string> result)
         {
             foreach (EntrySHDW a in SHDW_Entries)
             {
-                if (a.ModelAssetID == 0)
-                    result.Add("SHDW entry with ModelAssetID set to 0");
-                Verify(a.ModelAssetID, ref result);
-                if (a.ShadowModelAssetID == 0)
-                    result.Add("SHDW entry with ShadowModelAssetID set to 0");
-                Verify(a.ShadowModelAssetID, ref result);
+                if (a.Model == 0)
+                    result.Add("Shadow table entry with Model set to 0");
+                Verify(a.Model, ref result);
+                if (a.ShadowModel == 0)
+                    result.Add("Shadow table entry with ShadowModel set to 0");
+                Verify(a.ShadowModel, ref result);
             }
         }
 

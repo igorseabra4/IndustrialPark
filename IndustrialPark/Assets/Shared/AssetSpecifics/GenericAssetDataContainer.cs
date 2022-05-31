@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using SharpDX;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace IndustrialPark
 {
@@ -8,7 +9,13 @@ namespace IndustrialPark
     {
         public virtual byte[] Serialize(Game game, Endianness endianness) => new byte[0];
 
-        public virtual bool HasReference(uint assetID) => false;
+        public virtual bool HasReference(uint assetID) =>
+            GetType().GetProperties().Any(prop =>
+                (prop.GetValue(this) is AssetID aid && aid.Equals(assetID)) ||
+                (prop.GetValue(this) is IEnumerable<AssetID> ia && ia.Any(a => a.Equals(assetID))) ||
+                (prop.GetValue(this) is GenericAssetDataContainer gadc && gadc.HasReference(assetID)) ||
+                (prop.GetValue(this) is IEnumerable<GenericAssetDataContainer> igadc && igadc.Any(a => a.HasReference(assetID)))
+            );
 
         public virtual void Verify(ref List<string> result) { }
 

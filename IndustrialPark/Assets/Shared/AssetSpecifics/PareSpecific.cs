@@ -123,29 +123,28 @@ namespace IndustrialPark
 
     public class PareSpecific_tagEmitVolume : PareSpecific_Generic
     {
-        public AssetID VolumeAssetID { get; set; }
+        public AssetID Volume { get; set; }
 
         public PareSpecific_tagEmitVolume()
         {
-            VolumeAssetID = 0;
+            Volume = 0;
         }
 
         public PareSpecific_tagEmitVolume(EndianBinaryReader reader)
         {
-            VolumeAssetID = reader.ReadUInt32();
+            Volume = reader.ReadUInt32();
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(VolumeAssetID);
+                writer.Write(Volume);
                 return writer.ToArray();
             }
         }
 
-        public override bool HasReference(uint assetID) => VolumeAssetID == assetID;
-        public override void Verify(ref List<string> result) => Asset.Verify(VolumeAssetID, ref result);
+        public override void Verify(ref List<string> result) => Asset.Verify(Volume, ref result);
     }
 
     public class PareSpecific_tagEmitOffsetPoint : PareSpecific_Generic

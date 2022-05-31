@@ -39,7 +39,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle Rate { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID Texture_AssetID { get; set; }
+        public AssetID Texture { get; set; }
         [Category(dynaCategoryName)]
         public AssetByte SystemType { get; set; }
 
@@ -50,7 +50,7 @@ namespace IndustrialPark
         [Category(dynaCategoryNameAttach)]
         public FlagBitmask AttachFlags { get; set; } = ByteFlagsDescriptor();
         [Category(dynaCategoryNameAttach), Description("attach_entity and attach_entity_tag only")]
-        public AssetID Entity_AssetID { get; set; }
+        public AssetID Entity { get; set; }
         [Category(dynaCategoryNameAttach), Description("attach_entity only")]
         public byte Bone { get; set; }
         [Category(dynaCategoryNameAttach), Description("attach_entity_tag only")]
@@ -155,7 +155,7 @@ namespace IndustrialPark
                 MotionFlags.FlagValueByte = reader.ReadByte();
                 VolumeFlags.FlagValueByte = reader.ReadByte();
                 Rate = reader.ReadSingle();
-                Texture_AssetID = reader.ReadUInt32();
+                Texture = reader.ReadUInt32();
                 AttachType = (DynaEffectParticleGeneratorAttachType)reader.ReadByte();
                 MotionType = (DynaEffectParticleGeneratorMotionType)reader.ReadByte();
                 VolumeType = (DynaEffectParticleGeneratorVolumeType)reader.ReadByte();
@@ -165,7 +165,7 @@ namespace IndustrialPark
                 _pitch = reader.ReadSingle();
                 _roll = reader.ReadSingle();
 
-                Entity_AssetID = reader.ReadUInt32();
+                Entity = reader.ReadUInt32();
                 if (AttachType == DynaEffectParticleGeneratorAttachType.attach_entity_tag)
                 {
                     AttachEntityTagX = reader.ReadSingle();
@@ -247,7 +247,7 @@ namespace IndustrialPark
                 writer.Write(MotionFlags.FlagValueByte);
                 writer.Write(VolumeFlags.FlagValueByte);
                 writer.Write(Rate);
-                writer.Write(Texture_AssetID);
+                writer.Write(Texture);
                 writer.Write((byte)AttachType);
                 writer.Write((byte)MotionType);
                 writer.Write((byte)VolumeType);
@@ -258,7 +258,7 @@ namespace IndustrialPark
                 writer.Write(_yaw);
                 writer.Write(_pitch);
                 writer.Write(_roll);
-                writer.Write(Entity_AssetID);
+                writer.Write(Entity);
 
                 if (AttachType == DynaEffectParticleGeneratorAttachType.attach_entity_tag)
                 {
@@ -330,11 +330,9 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => Texture_AssetID == assetID || Entity_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
-            Verify(Texture_AssetID, ref result);
+            Verify(Texture, ref result);
             base.Verify(ref result);
         }
 
@@ -357,6 +355,6 @@ namespace IndustrialPark
         }
 
         public static bool dontRender = false;
-        public override bool DontRender => dontRender;
+        protected override bool DontRender => dontRender;
     }
 }

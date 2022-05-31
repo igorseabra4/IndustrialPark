@@ -9,11 +9,11 @@ namespace IndustrialPark
         protected override short constVersion => 1;
 
         [Category("game_object:Flythrough")]
-        public AssetID FLY_ID { get; set; }
+        public AssetID Flythrough { get; set; }
 
         public DynaGObjectFlythrough(string assetName) : base(assetName, DynaType.game_object__Flythrough, 1)
         {
-            FLY_ID = 0;
+            Flythrough = 0;
         }
 
         public DynaGObjectFlythrough(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__Flythrough, game, endianness)
@@ -21,7 +21,7 @@ namespace IndustrialPark
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
-                FLY_ID = reader.ReadUInt32();
+                Flythrough = reader.ReadUInt32();
             }
         }
 
@@ -29,18 +29,16 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(FLY_ID);
+                writer.Write(Flythrough);
                 return writer.ToArray();
             }
         }
 
-        public override bool HasReference(uint assetID) => FLY_ID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
-            if (FLY_ID == 0)
+            if (Flythrough == 0)
                 result.Add("Flythrough with no FLY reference");
-            Verify(FLY_ID, ref result);
+            Verify(Flythrough, ref result);
 
             base.Verify(ref result);
         }

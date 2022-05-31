@@ -48,7 +48,7 @@ namespace IndustrialPark
                 return renderingDictionary.ContainsKey(assetID) ? renderingDictionary[assetID].GetRenderWareModelFile() : null;
         }
 
-        private static Dictionary<uint, string> nameDictionary = new Dictionary<uint, string>();
+        private static readonly Dictionary<uint, string> nameDictionary = new Dictionary<uint, string>();
         public static void AddToNameDictionary(uint assetID, string value)
         {
             lock (nameDictionary)
@@ -449,16 +449,14 @@ namespace IndustrialPark
             return assetDictionary.ContainsKey(key);
         }
 
+        public IEnumerable<AssetType> AssetTypesOnArchive() =>
+            (from Asset asset in assetDictionary.Values select asset.assetType);
+
         public List<AssetType> AssetTypesOnLayer(int index) =>
             (from uint i in DICT.LTOC.LHDRList[index].assetIDlist select assetDictionary[i].assetType).Distinct().OrderBy(f => f).ToList();
 
-        public bool ContainsAssetWithType(AssetType assetType)
-        {
-            foreach (Asset a in assetDictionary.Values)
-                if (a.assetType.Equals(assetType))
-                    return true;
-            return false;
-        }
+        public bool ContainsAssetWithType(AssetType assetType) =>
+            assetDictionary.Values.Any(a => a.assetType.Equals(assetType));
 
         public Asset GetFromAssetID(uint key)
         {
@@ -597,8 +595,8 @@ namespace IndustrialPark
                         if (skipTexturesAndModels)
                             return new AssetGeneric(AHDR, game, endianness);
                         return new AssetWIRE(AHDR, game, endianness, Program.MainForm.renderer);
-                    case AssetType.AnimList: return new AssetALST(AHDR, game, endianness);
-                    case AssetType.AnimTable: return new AssetATBL(AHDR, game, endianness);
+                    case AssetType.AnimationList: return new AssetALST(AHDR, game, endianness);
+                    case AssetType.AnimationTable: return new AssetATBL(AHDR, game, endianness);
                     case AssetType.Boulder: return new AssetBOUL(AHDR, game, endianness);
                     case AssetType.Button: return new AssetBUTN(AHDR, game, endianness);
                     case AssetType.Camera: return new AssetCAM(AHDR, game, endianness);
@@ -657,7 +655,7 @@ namespace IndustrialPark
                     case AssetType.SoundGroup: return new AssetSGRP(AHDR, game, endianness);
                     case AssetType.Track:
                     case AssetType.SimpleObject: return new AssetSIMP(AHDR, game, endianness);
-                    case AssetType.SimpleShadowTable: return new AssetSHDW(AHDR, game, endianness);
+                    case AssetType.ShadowTable: return new AssetSHDW(AHDR, game, endianness);
                     case AssetType.Shrapnel: return new AssetSHRP(AHDR, game, endianness);
                     case AssetType.Surface: return new AssetSURF(AHDR, game, endianness);
                     case AssetType.Text: return new AssetTEXT(AHDR, game, endianness);
@@ -1233,9 +1231,9 @@ namespace IndustrialPark
             }
         }
 
-        public AssetMRKR GetMRKR(uint MRKR_ID)
+        public AssetMRKR GetMRKR(uint mrkr)
         {
-            if (ContainsAsset(MRKR_ID) && GetFromAssetID(MRKR_ID) is AssetMRKR MRKR)
+            if (ContainsAsset(mrkr) && GetFromAssetID(mrkr) is AssetMRKR MRKR)
                 return MRKR;
             return null;
         }

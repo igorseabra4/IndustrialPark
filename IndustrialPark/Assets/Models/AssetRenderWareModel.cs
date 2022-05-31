@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
+using System.Linq;
 
 namespace IndustrialPark
 {
@@ -82,14 +83,9 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            foreach (string s in Textures)
-                if (Functions.BKDRHash(s + ".RW3") == assetID || Functions.BKDRHash(s) == assetID)
-                    return true;
-
-            return base.HasReference(assetID);
-        }
+        public override bool HasReference(uint assetID) =>
+            Textures.Any(s => Functions.BKDRHash(s + ".RW3") == assetID || Functions.BKDRHash(s) == assetID) ||
+            base.HasReference(assetID);
 
         public override void Verify(ref List<string> result)
         {

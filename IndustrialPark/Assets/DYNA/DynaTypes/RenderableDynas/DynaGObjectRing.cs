@@ -52,10 +52,10 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle RedTimer { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID DriverPLAT_AssetID { get; set; }
+        public AssetID DriverPlatform { get; set; }
 
         public static bool dontRender = false;
-        public override bool DontRender => dontRender;
+        protected override bool DontRender => dontRender;
 
         public DynaGObjectRing(string assetName, Vector3 position) : base(assetName, DynaType.game_object__Ring, 2, position)
         {
@@ -93,7 +93,7 @@ namespace IndustrialPark
                 Height = reader.ReadSingle();
                 NormalTimer = reader.ReadSingle();
                 RedTimer = reader.ReadSingle();
-                DriverPLAT_AssetID = reader.ReadUInt32();
+                DriverPlatform = reader.ReadUInt32();
 
                 CreateTransformMatrix();
                 AddToRenderableAssets(this);
@@ -122,17 +122,15 @@ namespace IndustrialPark
                 writer.Write(Height);
                 writer.Write(NormalTimer);
                 writer.Write(RedTimer);
-                writer.Write(DriverPLAT_AssetID);
+                writer.Write(DriverPlatform);
 
                 return writer.ToArray();
             }
         }
 
-        public override bool HasReference(uint assetID) => DriverPLAT_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
-            Verify(DriverPLAT_AssetID, ref result);
+            Verify(DriverPlatform, ref result);
             base.Verify(ref result);
         }
 

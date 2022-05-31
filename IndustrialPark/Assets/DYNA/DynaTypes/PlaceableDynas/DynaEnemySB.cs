@@ -155,19 +155,19 @@ namespace IndustrialPark
         [Category(dynaCategoryName + " Entity Color")]
         public AssetSingle PseudoColorAlphaSpeed { get; set; }
 
-        protected uint _modelAssetID;
+        protected uint _model;
         [Category(dynaCategoryName + " Entity References")]
-        public AssetID Model_AssetID
+        public AssetID Model
         {
-            get => _modelAssetID;
-            set { _modelAssetID = value; CreateTransformMatrix(); }
+            get => _model;
+            set { _model = value; CreateTransformMatrix(); }
         }
 
         [Category(dynaCategoryName + " Entity References")]
-        public AssetID PseudoAnimation_AssetID { get; set; }
+        public AssetID Animation { get; set; }
 
         [Category(dynaCategoryName + " Entity References")]
-        public AssetID Surface_AssetID { get; set; }
+        public AssetID Surface { get; set; }
 
         protected int entityDynaEndPosition => dynaDataStartPosition + 0x50;
 
@@ -199,7 +199,7 @@ namespace IndustrialPark
                 PseudoTypeFlag = reader.ReadByte();
                 PseudoFlag0A.FlagValueByte = reader.ReadByte();
                 PseudoSolidityFlags.FlagValueByte = reader.ReadByte();
-                Surface_AssetID = reader.ReadUInt32();
+                Surface = reader.ReadUInt32();
                 _yaw = reader.ReadSingle();
                 _pitch = reader.ReadSingle();
                 _roll = reader.ReadSingle();
@@ -207,8 +207,8 @@ namespace IndustrialPark
                 _scale = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
                 _color = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
                 PseudoColorAlphaSpeed = reader.ReadSingle();
-                _modelAssetID = reader.ReadUInt32();
-                PseudoAnimation_AssetID = reader.ReadUInt32();
+                _model = reader.ReadUInt32();
+                Animation = reader.ReadUInt32();
 
                 CreateTransformMatrix();
                 AddToRenderableAssets(this);
@@ -227,7 +227,7 @@ namespace IndustrialPark
                 writer.Write(PseudoTypeFlag);
                 writer.Write(PseudoFlag0A.FlagValueByte);
                 writer.Write(PseudoSolidityFlags.FlagValueByte);
-                writer.Write(Surface_AssetID);
+                writer.Write(Surface);
                 writer.Write(_yaw);
                 writer.Write(_pitch);
                 writer.Write(_roll);
@@ -242,8 +242,8 @@ namespace IndustrialPark
                 writer.Write(_color.Z);
                 writer.Write(_color.W);
                 writer.Write(PseudoColorAlphaSpeed);
-                writer.Write(_modelAssetID);
-                writer.Write(PseudoAnimation_AssetID);
+                writer.Write(_model);
+                writer.Write(Animation);
 
                 return writer.ToArray();
             }
@@ -264,7 +264,7 @@ namespace IndustrialPark
 
         protected void CreateBoundingBox()
         {
-            var model = GetFromRenderingDictionary(Model_AssetID);
+            var model = GetFromRenderingDictionary(Model);
             if (model != null)
             {
                 triangles = model.triangleList.ToArray();
@@ -288,6 +288,7 @@ namespace IndustrialPark
             boundingBox = BoundingBox.FromPoints(vertices);
         }
 
+        [Browsable(false)]
         public abstract bool DontRender { get; }
 
         public bool ShouldDraw(SharpRenderer renderer)
@@ -298,20 +299,20 @@ namespace IndustrialPark
                 return false;
             if (isInvisible)
                 return false;
-            if (AssetMODL.renderBasedOnLodt && GetDistanceFrom(renderer.Camera.Position) > AssetLODT.MaxDistanceTo(_modelAssetID))
+            if (AssetMODL.renderBasedOnLodt && GetDistanceFrom(renderer.Camera.Position) > AssetLODT.MaxDistanceTo(_model))
                 return false;
 
             return renderer.frustum.Intersects(ref boundingBox);
         }
 
         [Browsable(false)]
-        public bool SpecialBlendMode => !renderingDictionary.ContainsKey(_modelAssetID) || renderingDictionary[_modelAssetID].SpecialBlendMode;
+        public bool SpecialBlendMode => !renderingDictionary.ContainsKey(_model) || renderingDictionary[_model].SpecialBlendMode;
 
         public void Draw(SharpRenderer renderer)
         {
             Vector4 Color = new Vector4(ColorRed, ColorGreen, ColorBlue, ColorAlpha);
-            if (renderingDictionary.ContainsKey(_modelAssetID))
-                renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * Color : Color, Vector3.Zero);
+            if (renderingDictionary.ContainsKey(_model))
+                renderingDictionary[_model].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * Color : Color, Vector3.Zero);
             else
                 renderer.DrawCube(world, isSelected);
         }
@@ -345,23 +346,11 @@ namespace IndustrialPark
             return Vector3.Distance(cameraPosition, new Vector3(PositionX, PositionY, PositionZ));
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (Surface_AssetID == assetID)
-                return true;
-            if (Model_AssetID == assetID)
-                return true;
-            if (PseudoAnimation_AssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
         public override void Verify(ref List<string> result)
         {
-            Verify(Surface_AssetID, ref result);
-            Verify(Model_AssetID, ref result);
-            Verify(PseudoAnimation_AssetID, ref result);
+            Verify(Surface, ref result);
+            Verify(Model, ref result);
+            Verify(Animation, ref result);
 
             base.Verify(ref result);
         }

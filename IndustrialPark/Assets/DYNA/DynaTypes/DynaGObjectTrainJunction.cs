@@ -11,15 +11,15 @@ namespace IndustrialPark
         protected override short constVersion => 1;
 
         [Category(dynaCategoryName)]
-        public AssetID InSpline_AssetID { get; set; }
+        public AssetID InSpline { get; set; }
         [Category(dynaCategoryName)]
         public AssetByte IsInFromForward { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID Out1Spline_AssetID { get; set; }
+        public AssetID OutSpline1 { get; set; }
         [Category(dynaCategoryName)]
         public AssetByte Out1IsForward { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID Out2Spline_AssetID { get; set; }
+        public AssetID OutSpline2 { get; set; }
         [Category(dynaCategoryName)]
         public AssetByte Out2IsForward { get; set; }
 
@@ -29,13 +29,13 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
 
-                InSpline_AssetID = reader.ReadUInt32();
+                InSpline = reader.ReadUInt32();
                 IsInFromForward = reader.ReadByte();
                 reader.BaseStream.Position += 3;
-                Out1Spline_AssetID = reader.ReadUInt32();
+                OutSpline1 = reader.ReadUInt32();
                 Out1IsForward = reader.ReadByte();
                 reader.BaseStream.Position += 3;
-                Out2Spline_AssetID = reader.ReadUInt32();
+                OutSpline2 = reader.ReadUInt32();
                 Out2IsForward = reader.ReadByte();
             }
         }
@@ -44,13 +44,13 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(InSpline_AssetID);
+                writer.Write(InSpline);
                 writer.Write(IsInFromForward);
                 writer.Write(new byte[3]);
-                writer.Write(Out1Spline_AssetID);
+                writer.Write(OutSpline1);
                 writer.Write(Out1IsForward);
                 writer.Write(new byte[3]);
-                writer.Write(Out2Spline_AssetID);
+                writer.Write(OutSpline2);
                 writer.Write(Out2IsForward);
                 writer.Write(new byte[3]);
 
@@ -58,23 +58,11 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID)
-        {
-            if (InSpline_AssetID == assetID)
-                return true;
-            if (Out1Spline_AssetID == assetID)
-                return true;
-            if (Out2Spline_AssetID == assetID)
-                return true;
-
-            return base.HasReference(assetID);
-        }
-
         public override void Verify(ref List<string> result)
         {
-            Verify(InSpline_AssetID, ref result);
-            Verify(Out1Spline_AssetID, ref result);
-            Verify(Out2Spline_AssetID, ref result);
+            Verify(InSpline, ref result);
+            Verify(OutSpline1, ref result);
+            Verify(OutSpline2, ref result);
             base.Verify(ref result);
         }
     }

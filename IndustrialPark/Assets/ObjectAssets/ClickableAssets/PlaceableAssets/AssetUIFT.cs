@@ -21,7 +21,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public FontEnum FontID { get; set; }
         [Category(categoryName)]
-        public AssetID TextAssetID { get; set; }
+        public AssetID Text { get; set; }
         [Category(categoryName)]
         public AssetColor BackgroundColor { get; set; }
         [Category(categoryName)]
@@ -68,7 +68,7 @@ namespace IndustrialPark
                 UIFontFlags.FlagValueShort = reader.ReadUInt16();
                 UIFontMode = reader.ReadByte();
                 FontID = (FontEnum)reader.ReadByte();
-                TextAssetID = reader.ReadUInt32();
+                Text = reader.ReadUInt32();
                 BackgroundColor = reader.ReadColor();
                 FontColor = reader.ReadColor();
                 Padding_Top = reader.ReadInt16();
@@ -93,7 +93,7 @@ namespace IndustrialPark
                 writer.Write(UIFontFlags.FlagValueShort);
                 writer.Write(UIFontMode);
                 writer.Write((byte)FontID);
-                writer.Write(TextAssetID);
+                writer.Write(Text);
                 writer.Write(BackgroundColor);
                 writer.Write(FontColor);
                 writer.Write(Padding_Top);
@@ -115,13 +115,11 @@ namespace IndustrialPark
 
         public override bool DontRender => dontRender;
 
-        public override bool HasReference(uint assetID) => TextAssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
-            Verify(TextAssetID, ref result);
+            Verify(Text, ref result);
         }
     }
 }

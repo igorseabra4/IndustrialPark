@@ -14,7 +14,7 @@ namespace IndustrialPark
         protected override short constVersion => 1;
 
         [Category(dynaCategoryName)]
-        public AssetID VentType_AssetID { get; set; }
+        public AssetID VentType { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle DamageBoxLowerCornerX { get; set; }
         [Category(dynaCategoryName)]
@@ -44,7 +44,7 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
 
-                VentType_AssetID = reader.ReadUInt32();
+                VentType = reader.ReadUInt32();
                 _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
                 _yaw = reader.ReadSingle();
                 _pitch = reader.ReadSingle();
@@ -70,7 +70,7 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(VentType_AssetID);
+                writer.Write(VentType);
                 writer.Write(_position.X);
                 writer.Write(_position.Y);
                 writer.Write(_position.Z);
@@ -93,11 +93,9 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => VentType_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
-            Verify(VentType_AssetID, ref result);
+            Verify(VentType, ref result);
             base.Verify(ref result);
         }
 
@@ -120,6 +118,6 @@ namespace IndustrialPark
         }
 
         public static bool dontRender = false;
-        public override bool DontRender => dontRender;
+        protected override bool DontRender => dontRender;
     }
 }

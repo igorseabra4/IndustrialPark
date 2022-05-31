@@ -6,7 +6,7 @@ namespace IndustrialPark
 {
     public class ProjectJson
     {
-        public static int getCurrentVersion => 3;
+        public static int getCurrentVersion => 4;
         public int version;
 
         public List<string> hipPaths;
@@ -36,34 +36,7 @@ namespace IndustrialPark
         public bool UseLegacyAssetIDFormat;
         public bool isDrawingUI;
 
-        public bool dontRenderJSP;
-
-        public bool dontRenderBOUL;
-        public bool dontRenderBUTN;
-        public bool dontRenderCAM;
-        public bool dontRenderDSTR;
-        public bool dontRenderDTRK;
-        public bool dontRenderDYNA;
-        public bool dontRenderEGEN;
-        public bool dontRenderGRSM;
-        public bool dontRenderHANG;
-        public bool dontRenderLITE;
-        public bool dontRenderMRKR;
-        public bool dontRenderMVPT;
-        public bool dontRenderNPC;
-        public bool dontRenderPEND;
-        public bool dontRenderPKUP;
-        public bool dontRenderPLAT;
-        public bool dontRenderPLYR;
-        public bool dontRenderSDFX;
-        public bool dontRenderSFX;
-        public bool dontRenderSIMP;
-        public bool dontRenderSPLN;
-        public bool dontRenderTRIG;
-        public bool dontRenderUI;
-        public bool dontRenderUIFT;
-        public bool dontRenderVIL;
-        public bool dontRenderVOLU;
+        public Dictionary<string, bool> dontRender;
 
         public ProjectJson()
         {
@@ -97,33 +70,7 @@ namespace IndustrialPark
             UseLegacyAssetIDFormat = false;
             isDrawingUI = false;
 
-            dontRenderJSP = false;
-            dontRenderBOUL = false;
-            dontRenderBUTN = false;
-            dontRenderCAM = false;
-            dontRenderDSTR = false;
-            dontRenderDTRK = false;
-            dontRenderDYNA = false;
-            dontRenderEGEN = false;
-            dontRenderHANG = false;
-            dontRenderGRSM = false;
-            dontRenderLITE = false;
-            dontRenderMRKR = false;
-            dontRenderMVPT = false;
-            dontRenderNPC = false;
-            dontRenderPEND = false;
-            dontRenderPKUP = false;
-            dontRenderPLAT = false;
-            dontRenderPLYR = false;
-            dontRenderSDFX = false;
-            dontRenderSFX = false;
-            dontRenderSIMP = false;
-            dontRenderSPLN = false;
-            dontRenderTRIG = false;
-            dontRenderUI = true;
-            dontRenderUIFT = true;
-            dontRenderVIL = false;
-            dontRenderVOLU = false;
+            dontRender = new Dictionary<string, bool>();
         }
     }
 }

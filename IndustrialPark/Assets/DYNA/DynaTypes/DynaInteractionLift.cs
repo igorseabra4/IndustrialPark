@@ -11,13 +11,13 @@ namespace IndustrialPark
         protected override short constVersion => 1;
 
         [Category(dynaCategoryName)]
-        public AssetID ForwardScript_AssetID { get; set; }
+        public AssetID ForwardScript { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID BackwardScript_AssetID { get; set; }
+        public AssetID BackwardScript { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID LiftObject_AssetID { get; set; }
+        public AssetID LiftObject { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID StandPointer_AssetID { get; set; }
+        public AssetID StandPointer { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle ButtonFreq { get; set; }
         [Category(dynaCategoryName)]
@@ -39,10 +39,10 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
 
-                ForwardScript_AssetID = reader.ReadUInt32();
-                BackwardScript_AssetID = reader.ReadUInt32();
-                LiftObject_AssetID = reader.ReadUInt32();
-                StandPointer_AssetID = reader.ReadUInt32();
+                ForwardScript = reader.ReadUInt32();
+                BackwardScript = reader.ReadUInt32();
+                LiftObject = reader.ReadUInt32();
+                StandPointer = reader.ReadUInt32();
                 ButtonFreq = reader.ReadSingle();
                 ProgressSpeed = reader.ReadSingle();
                 SlipSpeed = reader.ReadSingle();
@@ -57,10 +57,10 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(ForwardScript_AssetID);
-                writer.Write(BackwardScript_AssetID);
-                writer.Write(LiftObject_AssetID);
-                writer.Write(StandPointer_AssetID);
+                writer.Write(ForwardScript);
+                writer.Write(BackwardScript);
+                writer.Write(LiftObject);
+                writer.Write(StandPointer);
                 writer.Write(ButtonFreq);
                 writer.Write(ProgressSpeed);
                 writer.Write(SlipSpeed);
@@ -73,15 +73,12 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => ForwardScript_AssetID == assetID || BackwardScript_AssetID == assetID ||
-            LiftObject_AssetID == assetID || StandPointer_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
-            Verify(ForwardScript_AssetID, ref result);
-            Verify(BackwardScript_AssetID, ref result);
-            Verify(LiftObject_AssetID, ref result);
-            Verify(StandPointer_AssetID, ref result);
+            Verify(ForwardScript, ref result);
+            Verify(BackwardScript, ref result);
+            Verify(LiftObject, ref result);
+            Verify(StandPointer, ref result);
             base.Verify(ref result);
         }
     }

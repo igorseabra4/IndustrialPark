@@ -20,21 +20,21 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public EnemyMindyType MindyType
         {
-            get => (EnemyMindyType)(uint)Model_AssetID;
-            set => Model_AssetID = (uint)value;
+            get => (EnemyMindyType)(uint)Model;
+            set => Model = (uint)value;
         }
         [Category(dynaCategoryName)]
-        public AssetID TaskBox1_AssetID { get; set; }
+        public AssetID TaskBox1 { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle ClamOpenDistance { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle ClamCloseDistance { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID TextBox_AssetID { get; set; }
+        public AssetID TextBox { get; set; }
         [Category(dynaCategoryName)]
         public int UnknownInt60 { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID TaskBox2_AssetID { get; set; }
+        public AssetID TaskBox2 { get; set; }
 
         public DynaEnemyMindy(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__Mindy, game, endianness)
         {
@@ -42,12 +42,12 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = entityDynaEndPosition;
 
-                TaskBox1_AssetID = reader.ReadUInt32();
+                TaskBox1 = reader.ReadUInt32();
                 ClamOpenDistance = reader.ReadSingle();
                 ClamCloseDistance = reader.ReadSingle();
-                TextBox_AssetID = reader.ReadUInt32();
+                TextBox = reader.ReadUInt32();
                 UnknownInt60 = reader.ReadInt32();
-                TaskBox2_AssetID = reader.ReadUInt32();
+                TaskBox2 = reader.ReadUInt32();
             }
         }
 
@@ -56,30 +56,27 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeEntityDyna(endianness));
-                writer.Write(TaskBox1_AssetID);
+                writer.Write(TaskBox1);
                 writer.Write(ClamOpenDistance);
                 writer.Write(ClamCloseDistance);
-                writer.Write(TextBox_AssetID);
+                writer.Write(TextBox);
                 writer.Write(UnknownInt60);
-                writer.Write(TaskBox2_AssetID);
+                writer.Write(TaskBox2);
 
                 return writer.ToArray();
             }
         }
 
-        public override bool HasReference(uint assetID) =>
-            TaskBox1_AssetID == assetID || TaskBox2_AssetID == assetID || TextBox_AssetID == assetID || base.HasReference(assetID);
-
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
-            Verify(TaskBox1_AssetID, ref result);
-            Verify(TaskBox2_AssetID, ref result);
-            Verify(TextBox_AssetID, ref result);
+            Verify(TaskBox1, ref result);
+            Verify(TaskBox2, ref result);
+            Verify(TextBox, ref result);
         }
 
         public static bool dontRender = false;
-        public override bool DontRender { get => dontRender; }
+        public override bool DontRender => dontRender;
     }
 }
