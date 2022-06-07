@@ -19,6 +19,18 @@ namespace IndustrialPark
             InitializeComponent();
         }
 
+        private string _getLocalizationImageKeyFromFilename(string filename)
+        {
+            if (filename.Length < 2)
+            {
+                return "";
+            }
+
+            string filenameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
+
+            return filenameWithoutExtension.Substring(filenameWithoutExtension.Length - 2) + ".png";
+        }
+
         private void btnImport_Click(object sender, EventArgs e)
         {
             // Check for duplicates and warn as necessary
@@ -26,9 +38,9 @@ namespace IndustrialPark
             files.Add(txtHIP.Text);
             files.Add(txtHOP.Text);
             files.Add(txtBOOT.Text);
-            foreach (var item in lstLocalization.CheckedItems)
+            foreach (var item in lvwLocalization.CheckedItems)
             {
-                files.Add(item.ToString());
+                files.Add(((ListViewItem)item).Text);
             }
 
             if (files.Count != files.Distinct().Count())
@@ -85,13 +97,13 @@ namespace IndustrialPark
                 }
             }
 
-            if (lstLocalization.CheckedItems.Count > 0)
+            if (lvwLocalization.CheckedItems.Count > 0)
             {
-                foreach (var item in lstLocalization.CheckedItems)
+                foreach (var item in lvwLocalization.CheckedItems)
                 {
                     try
                     {
-                        Program.MainForm.AddArchiveEditor(item.ToString());
+                        Program.MainForm.AddArchiveEditor(((ListViewItem)item).Text);
                     }
                     catch (Exception ex)
                     {
@@ -152,7 +164,13 @@ namespace IndustrialPark
             {
                 if (regex.IsMatch(fileName))
                 {
-                    lstLocalization.Items.Add(fileName, true);
+                    var item = new ListViewItem()
+                    {
+                        Text = fileName,
+                        Checked = true,
+                        ImageKey = _getLocalizationImageKeyFromFilename(fileName)
+                    };
+                    lvwLocalization.Items.Add(item);
                 }
             }
 
@@ -169,7 +187,7 @@ namespace IndustrialPark
             {
                 txtHIP.Text = dialog.FileName;
                 chkHIP.Checked = true;
-                Text = $"Import Level - {Path.GetFileNameWithoutExtension(dialog.FileName)}";
+                Text = $"Open Level - {Path.GetFileNameWithoutExtension(dialog.FileName)}";
                 txtHIP.SelectionStart = txtHIP.Text.Length;
                 txtHIP.SelectionLength = 0;
 
@@ -187,7 +205,7 @@ namespace IndustrialPark
             {
                 txtHOP.Text = dialog.FileName;
                 chkHOP.Checked = true;
-                Text = $"Import Level - {Path.GetFileNameWithoutExtension(dialog.FileName)}";
+                Text = $"Open Level - {Path.GetFileNameWithoutExtension(dialog.FileName)}";
                 txtHOP.SelectionStart = txtHOP.Text.Length;
                 txtHOP.SelectionLength = 0;
 
@@ -215,7 +233,7 @@ namespace IndustrialPark
             btnImport.Enabled = chkHIP.Checked && txtHIP.Text.Length > 0
                 || chkHOP.Checked && txtHOP.Text.Length > 0
                 || chkBOOT.Checked && txtBOOT.Text.Length > 0 
-                || lstLocalization.CheckedItems.Count > 0;
+                || lvwLocalization.CheckedItems.Count > 0;
         }
 
         private void checkBoxUpdatedInList(object sender, ItemCheckEventArgs e)
@@ -227,7 +245,7 @@ namespace IndustrialPark
                 || chkHOP.Checked && txtHOP.Text.Length > 0
                 || chkBOOT.Checked && txtBOOT.Text.Length > 0
                 || (e.NewValue == CheckState.Checked)
-                || (e.NewValue == CheckState.Unchecked && lstLocalization.CheckedItems.Count > 1);
+                || (e.NewValue == CheckState.Unchecked && lvwLocalization.CheckedItems.Count > 1);
         }
 
         private void btnAddLocalizationFile_Click(object sender, EventArgs e)
@@ -241,40 +259,55 @@ namespace IndustrialPark
             {
                 foreach (string file in dialog.FileNames)
                 {
-                    lstLocalization.Items.Add(file, true);
+                    var item = new ListViewItem()
+                    {
+                        Text = file,
+                        Checked = true,
+                        ImageKey = _getLocalizationImageKeyFromFilename(file)
+                    };
+                    lvwLocalization.Items.Add(item);
                 }
-            }
-        }
-
-        private void lstLocalization_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Delete && lstLocalization.SelectedIndex >= 0)
-            {
-                lstLocalization.Items.RemoveAt(lstLocalization.SelectedIndex);
             }
         }
 
         private void copyPathToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText(lstLocalization.Items[lstLocalization.SelectedIndex].ToString());
+            Clipboard.SetText(lvwLocalization.Items[lvwLocalization.SelectedIndices[0]].Text);
         }
 
         private void pastePathToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            lstLocalization.Items.Add(Clipboard.GetText(), true);
+            string clipboardText = Clipboard.GetText();
+
+            var item = new ListViewItem()
+            {
+                Text = clipboardText,
+                Checked = true,
+                ImageKey = _getLocalizationImageKeyFromFilename(clipboardText)
+            };
+            lvwLocalization.Items.Add(item);
         }
 
         private void ctxLocalization_Opening(object sender, CancelEventArgs e)
         {
-            copyPathToolStripMenuItem.Enabled = lstLocalization.SelectedIndex >= 0 && lstLocalization.Items.Count > 0;
+            copyPathToolStripMenuItem.Enabled = lvwLocalization.SelectedIndices.Count > 0
+                                                && lvwLocalization.Items.Count > 0;
         }
 
         private void btnResetAll_Click(object sender, EventArgs e)
         {
             txtHOP.Text = txtHIP.Text = txtBOOT.Text = string.Empty;
-            lstLocalization.Items.Clear();
+            lvwLocalization.Items.Clear();
             checkBoxUpdated(sender, e);
-            Text = "Import Level";
+            Text = "Open Level";
+        }
+
+        private void lvwLocalization_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete && lvwLocalization.SelectedIndices.Count > 0)
+            {
+                lvwLocalization.Items.RemoveAt(lvwLocalization.SelectedIndices[0]);
+            }
         }
     }
 }
