@@ -195,7 +195,9 @@ namespace IndustrialPark
                 MessageBox.Show("There was an error loading the following assets and editing has been disabled for them:\n" + assetsWithError);
 
             if (!(skipTexturesAndModels || standalone) && ContainsAssetWithType(AssetType.Texture))
+            {
                 SetupTextureDisplay();
+            }
 
             RecalculateAllMatrices();
 
