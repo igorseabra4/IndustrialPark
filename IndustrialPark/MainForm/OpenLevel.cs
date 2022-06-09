@@ -162,7 +162,7 @@ namespace IndustrialPark
             // Find localization files
             foreach (string fileName in Directory.GetFiles(Path.GetDirectoryName(filePath)))
             {
-                if (regex.IsMatch(fileName))
+                if (regex.IsMatch(fileName) && !fileName.EndsWith(".txt"))
                 {
                     var item = new ListViewItem()
                     {
