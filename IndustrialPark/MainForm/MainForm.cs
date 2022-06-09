@@ -567,7 +567,17 @@ namespace IndustrialPark
                 PressedKeys.Add(e.KeyCode);
 
             if (e.KeyCode == Keys.Z)
+            {
                 MouseModeToggle();
+               
+                if (mouseMode)
+                {
+                    Cursor.Hide();
+                } else
+                {
+                    Cursor.Show();
+                }
+            }
             else if (e.KeyCode == Keys.Q)
                 renderer.Camera.IncreaseCameraSpeed(-1);
             else if (e.KeyCode == Keys.E)
