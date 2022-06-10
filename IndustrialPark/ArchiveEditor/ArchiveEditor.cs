@@ -148,6 +148,7 @@ namespace IndustrialPark
                 {
                     OpenFile(openFile.FileName);
                 }
+                _updateFilesizeStatusBarItem();
             }
         }
 
@@ -236,6 +237,11 @@ namespace IndustrialPark
         /// </summary>
         private void _updateFilesizeStatusBarItem()
         {
+            if (GetCurrentlyOpenFileName() == "Empty")
+            {
+                return;
+            }
+
             long filesizeBytes = new FileInfo(GetCurrentlyOpenFileName()).Length;
 
             if (filesizeBytes < 1000) // 1 B - 999 B
