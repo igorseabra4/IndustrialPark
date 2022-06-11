@@ -33,6 +33,7 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.Flythrough, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Group, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Portal, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Progress_Script, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Script, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Sound_Group, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Text, eventHandler),
@@ -48,7 +49,7 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.Shiny_Red, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Shiny_Yellow, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Shiny_Green, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.ShinyBlue, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Shiny_Blue, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Shiny_Purple, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Underwear, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Spongeball, eventHandler),
@@ -100,7 +101,7 @@ namespace IndustrialPark
             stageitemsBFBB.DropDownItems.AddRange(new ToolStripItem[]
             {
                 GetTemplateMenuItem(AssetTemplate.Button_Red, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.PressurePlate, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Pressure_Plate, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Checkpoint, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Checkpoint_Invisible, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Bus_Stop, eventHandler),
@@ -222,6 +223,122 @@ namespace IndustrialPark
                 stageitemsTSSM
             });
 
+            ToolStripMenuItem scoobyPickups = new ToolStripMenuItem("Pickups");
+            scoobyPickups.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                GetTemplateMenuItem(AssetTemplate.Scooby_Snack, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Snack_Box, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Warp_Gate, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Snack_Gate, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Save_Point, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Clue, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Key, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Gum, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Gum_Pack, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Soap, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Soap_Pack, eventHandler),
+                new ToolStripSeparator(),
+                GetTemplateMenuItem(AssetTemplate.Cake, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Hamburger, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Ice_Cream, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Sandwich, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Turkey, eventHandler),
+                new ToolStripSeparator(),
+                GetTemplateMenuItem(AssetTemplate.Shovel, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Springs, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Slippers, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Lampshade, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Helmet, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Knight_Helmet, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Boots, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Super_Smash, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Plungers, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Super_Sonic_Smash, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Umbrella, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Gum_Machine, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Soap_Bubble, eventHandler),
+            });
+
+            ToolStripMenuItem scoobyEnemies = new ToolStripMenuItem("Enemies");
+            scoobyEnemies.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                GetTemplateMenuItem(AssetTemplate.Caveman, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Creeper, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Funland_Robot, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Gargoyle, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Geronimo, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Ghost, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Ghost_Diver, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Ghost_of_Captain_Moody, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Headless_Specter, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Sea_Creature, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Scarecrow, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Space_Kook, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Tar_Monster, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Witch, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Witch_Doctor, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Wolfman, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Zombie, eventHandler),
+                new ToolStripSeparator(),
+                GetTemplateMenuItem(AssetTemplate.Bat, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Crab, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Flying_Fish, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Rat, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Shark, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Spider, eventHandler),
+                //new ToolStripSeparator(),
+                //GetTemplateMenuItem(AssetTemplate.Black_Knight, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Green_Ghost, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Redbeard, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Mastermind, eventHandler),
+                //new ToolStripSeparator(),
+                //GetTemplateMenuItem(AssetTemplate.Killer_Plant, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Holly, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Groundskeeper, eventHandler),
+
+                //GetTemplateMenuItem(AssetTemplate.Shaggy0, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Shaggy1, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Shaggy4, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Shaggy5, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Shaggy8, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Fred, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Daphne, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Velma, eventHandler),
+            });
+
+            ToolStripMenuItem stageitemsScooby = new ToolStripMenuItem("Stage Items");
+            stageitemsScooby.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                //GetTemplateMenuItem(AssetTemplate.Red_Button, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Floor_Button, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Crate, eventHandler),
+            });
+
+            ToolStripMenuItem scooby = new ToolStripMenuItem("Scooby");
+            scooby.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                scoobyPickups,
+                scoobyEnemies,
+                stageitemsScooby
+            });
+
+            ToolStripMenuItem incrediblesPickups = new ToolStripMenuItem("Pickups");
+            incrediblesPickups.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                GetTemplateMenuItem(AssetTemplate.Health_10, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Health_25, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Health_50, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Power_25, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Power_50, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Bonus, eventHandler),
+            });
+
+            ToolStripMenuItem incredibles = new ToolStripMenuItem("Incredibles");
+            incredibles.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                incrediblesPickups
+            });
+
             ToolStripMenuItem placeable = new ToolStripMenuItem("Placeable");
             placeable.DropDownItems.AddRange(new ToolStripItem[]
             {
@@ -276,7 +393,7 @@ namespace IndustrialPark
 
             var paste = GetTemplateMenuItem(AssetTemplate.PasteClipboard, eventHandler);
 
-            menu.DropDownItems.AddRange(new ToolStripItem[] { controllers, placeable, bfbb, tssm, others, paste });
+            menu.DropDownItems.AddRange(new ToolStripItem[] { controllers, placeable, bfbb, tssm, scooby, incredibles, others, paste });
         }
 
         private static string GetName(AssetTemplate template)
@@ -289,7 +406,7 @@ namespace IndustrialPark
                     return "SFX (on event)";
                 case AssetTemplate.SFX_OnRadius:
                     return "SFX (on radius)";
-                case AssetTemplate.ShinyBlue:
+                case AssetTemplate.Shiny_Blue:
                     return "Shiny Object (Blue)";
                 case AssetTemplate.Shiny_Green:
                     return "Shiny Object (Green)";
@@ -411,6 +528,18 @@ namespace IndustrialPark
                     return "Collapse Platform (Spongeball)";
                 case AssetTemplate.CollapsePlatform_ThugTug:
                     return "Collapse Platform (Thug Tug)";
+                case AssetTemplate.Health_10:
+                    return "Health (10)";
+                case AssetTemplate.Health_25:
+                    return "Health (25)";
+                case AssetTemplate.Health_50:
+                    return "Health (50)";
+                case AssetTemplate.Power_25:
+                    return "Power (25)";
+                case AssetTemplate.Power_50:
+                    return "Power (50)";
+                case AssetTemplate.Bonus:
+                    return "Bonus Item";
             }
 
             var tstring = template.ToString().Replace('_', ' ');
@@ -599,6 +728,9 @@ namespace IndustrialPark
                 case AssetTemplate.Portal:
                     asset = new AssetPORT(assetName);
                     break;
+                case AssetTemplate.Progress_Script:
+                    asset = new AssetPGRS(assetName);
+                    break;
                 case AssetTemplate.Script:
                     asset = new AssetSCRP(assetName);
                     break;
@@ -764,13 +896,16 @@ namespace IndustrialPark
                     break;
                 case AssetTemplate.Button:
                 case AssetTemplate.Button_Red:
-                case AssetTemplate.PressurePlate:
-                    asset = new AssetBUTN(game, assetName, position, template);
-                    if (template == AssetTemplate.PressurePlate)
+                case AssetTemplate.Pressure_Plate:
+                case AssetTemplate.Red_Button:
+                case AssetTemplate.Floor_Button:
+                    asset = new AssetBUTN(assetName, position, template);
+                    if (template == AssetTemplate.Pressure_Plate)
                         PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_BASE", AssetTemplate.Pressure_Plate_Base);
                     break;
                 case AssetTemplate.Destructible_Object:
-                    asset = new AssetDSTR(assetName, position);
+                case AssetTemplate.Crate:
+                    asset = new AssetDSTR(assetName, position, template);
                     break;
                 case AssetTemplate.Electric_Arc_Generator:
                     asset = new AssetEGEN(assetName, position);
@@ -779,7 +914,37 @@ namespace IndustrialPark
                     asset = new AssetHANG(assetName, position);
                     break;
                 case AssetTemplate.NPC:
-                    asset = new AssetNPC(assetName, position);
+                case AssetTemplate.Caveman:
+                case AssetTemplate.Creeper:
+                case AssetTemplate.Gargoyle:
+                case AssetTemplate.Geronimo:
+                case AssetTemplate.Ghost:
+                case AssetTemplate.Ghost_of_Captain_Moody:
+                case AssetTemplate.Ghost_Diver:
+                case AssetTemplate.Flying_Fish:
+                case AssetTemplate.Funland_Robot:
+                case AssetTemplate.Headless_Specter:
+                case AssetTemplate.Sea_Creature:
+                case AssetTemplate.Scarecrow:
+                case AssetTemplate.Space_Kook:
+                case AssetTemplate.Tar_Monster:
+                case AssetTemplate.Witch:
+                case AssetTemplate.Witch_Doctor:
+                case AssetTemplate.Wolfman:
+                case AssetTemplate.Zombie:
+                case AssetTemplate.Bat:
+                case AssetTemplate.Crab:
+                case AssetTemplate.Rat:
+                case AssetTemplate.Shark:
+                case AssetTemplate.Spider:
+                case AssetTemplate.Black_Knight:
+                case AssetTemplate.Green_Ghost:
+                case AssetTemplate.Redbeard:
+                case AssetTemplate.Mastermind:
+                case AssetTemplate.Killer_Plant:
+                case AssetTemplate.Holly:
+                case AssetTemplate.Groundskeeper:
+                    asset = new AssetNPC(assetName, position, template);
                     break;
                 case AssetTemplate.Pendulum:
                     asset = new AssetPEND(assetName, position);
@@ -792,7 +957,7 @@ namespace IndustrialPark
                 case AssetTemplate.CollapsePlatform_Planktopolis:
                 case AssetTemplate.CollapsePlatform_ThugTug:
                 case AssetTemplate.CollapsePlatform_Spongeball:
-                    asset = new AssetPLAT(game, assetName, position, template);
+                    asset = new AssetPLAT(assetName, position, template);
                     break;
                 case AssetTemplate.Simple_Object:
                 case AssetTemplate.Taxi_Stand:
@@ -902,7 +1067,7 @@ namespace IndustrialPark
                 case AssetTemplate.Shiny_Red:
                 case AssetTemplate.Shiny_Yellow:
                 case AssetTemplate.Shiny_Green:
-                case AssetTemplate.ShinyBlue:
+                case AssetTemplate.Shiny_Blue:
                 case AssetTemplate.Shiny_Purple:
                 case AssetTemplate.Underwear:
                 case AssetTemplate.Spatula:
@@ -922,6 +1087,35 @@ namespace IndustrialPark
                 case AssetTemplate.Goofy_Goober_Token:
                 case AssetTemplate.Treasure_Chest:
                 case AssetTemplate.Nitro:
+                case AssetTemplate.Scooby_Snack:
+                case AssetTemplate.Snack_Box:
+                case AssetTemplate.Save_Point:
+                case AssetTemplate.Warp_Gate:
+                case AssetTemplate.Snack_Gate:
+                case AssetTemplate.Clue:
+                case AssetTemplate.Key:
+                case AssetTemplate.Gum:
+                case AssetTemplate.Gum_Pack:
+                case AssetTemplate.Soap:
+                case AssetTemplate.Soap_Pack:
+                case AssetTemplate.Turkey:
+                case AssetTemplate.Cake:
+                case AssetTemplate.Hamburger:
+                case AssetTemplate.Ice_Cream:
+                case AssetTemplate.Sandwich:
+                case AssetTemplate.Shovel:
+                case AssetTemplate.Springs:
+                case AssetTemplate.Slippers:
+                case AssetTemplate.Lampshade:
+                case AssetTemplate.Helmet:
+                case AssetTemplate.Knight_Helmet:
+                case AssetTemplate.Boots:
+                case AssetTemplate.Super_Smash:
+                case AssetTemplate.Plungers:
+                case AssetTemplate.Super_Sonic_Smash:
+                case AssetTemplate.Umbrella:
+                case AssetTemplate.Gum_Machine:
+                case AssetTemplate.Soap_Bubble:
                     asset = new AssetPKUP(assetName, game, position, template);
                     break;
                 case AssetTemplate.Wooden_Tiki:
@@ -1185,10 +1379,21 @@ namespace IndustrialPark
                         asset = new AssetLKIT(assetName, data, Endianness.Big);
                     }
                     break;
+                case AssetTemplate.Health_10:
+                case AssetTemplate.Health_25:
+                case AssetTemplate.Health_50:
+                case AssetTemplate.Power_25:
+                case AssetTemplate.Power_50:
+                case AssetTemplate.Bonus:
+                    asset = new DynaGObjectInPickup(assetName, position, template);
+                    break;
                 default:
                     MessageBox.Show("Unsupported template");
                     return null;
             }
+
+            asset.game = game;
+            asset.endianness = platform.Endianness();
 
             AddAsset(layerIndex, asset, false);
 

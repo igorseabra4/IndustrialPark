@@ -1176,7 +1176,7 @@ namespace IndustrialPark
             var items = (from a in CurrentlySelectedAssetIDs() select new AssetID(a)).ToArray();
             var assetIDs = PlaceTemplate(new Vector3(), AssetTemplate.Group);
             if (assetIDs != null && assetIDs.Count > 0)
-                ((AssetGRUP)archive.GetFromAssetID(assetIDs[0])).GroupItems = items;
+                ((AssetGRUP)archive.GetFromAssetID(assetIDs[0])).Items = items;
             SetupAssetVisibilityButtons();
         }
 

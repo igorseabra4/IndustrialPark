@@ -348,7 +348,6 @@ namespace IndustrialPark
             }
         }
 
-
         public override void Verify(ref List<string> result)
         {
             foreach (var a in Animations)

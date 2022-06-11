@@ -49,6 +49,8 @@ namespace IndustrialPark
         private NewArchive(Platform previousPlatform, Game previousGame, int previousDate, string previousDateString) : this()
         {
             checkBoxDefaultAssets.Visible = false;
+            Text = "Convert Archive";
+            buttonOK.Text = "Convert";
 
             switch (previousGame)
             {

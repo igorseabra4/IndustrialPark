@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using SharpDX;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -57,8 +58,13 @@ namespace IndustrialPark
             get => (NPCType)(byte)TypeFlag;
             set => TypeFlag = (byte)value;
         }
+        private float _activateRadius;
         [Category(categoryName)]
-        public AssetSingle ActivateRadius { get; set; }
+        public AssetSingle ActivateRadius
+        {
+            get => _activateRadius; 
+            set { _activateRadius = value; CreateRadiusTransformMatrix(); }
+        }
         [Category(categoryName)]
         public AssetSingle ActivateFOV { get; set; }
         [Category(categoryName)]
@@ -122,9 +128,98 @@ namespace IndustrialPark
         [Category(categoryName)]
         public int MinGameDifficulty { get; set; }
 
-        public AssetNPC(string assetName, Vector3 position) : base(assetName, AssetType.NPC, BaseAssetType.NPC, position)
+        public AssetNPC(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.NPC, BaseAssetType.NPC, position)
         {
+            ActivateRadius = 5f;
+            ActivateFOV = 90f;
+            DetectHeight = 2f;
+            DetectHeightOffset = 0f;
+            SpeedMovement = 2f;
+            SpeedPursue = 4f;
+            SpeedTurn = 300f;
+            PursuitRange = 10f;
+            DurDazedState = 5;
+            DurGloatState = 3;
+            DurGummedState = 5;
+            DurBubbleState = 5;
+            Hitpoints = 1;
+            BehaviorState = 0;
+            Flags.FlagValueInt = (1 << 0) & (1 << 1) & (1 << 2) & (1 << 3) & (1 << 4) & (1 << 5) & (1 << 6) & (1 << 31);
+            LobSpeed = 2f;
+            LobDurReload = 1f;
+            LobRange = 4f;
+            LobSalvo = 1;
+            LobArcness = -1f;
+            LobHeavy = -1f;
+            ExtenderRange = 5f;
+            ExtenderWidth = 1f;
+            ExtenderDuration = 10f;
+            ExtenderRate = 2.5f;
+            ExtenderReloadTime = 10f;
+            Path = 0xCDCDCDCD;
+
+            switch (template)
+            {
+                case AssetTemplate.Caveman:
+                    Model = "cv.MINF";
+                    NPCCType = NPCType.Caveman;
+                    break;
+                case AssetTemplate.Creeper:
+                    Model = "cr.MINF";
+                    NPCCType = NPCType.Creeper;
+                    break;
+                case AssetTemplate.Ghost:
+                    Model = "gz.MINF";
+                    NPCCType = NPCType.Ghost;
+                    break;
+                case AssetTemplate.Ghost_Diver:
+                    Model = "gd.MINF";
+                    NPCCType = NPCType.GhostDiver;
+                    break;
+                case AssetTemplate.Sea_Creature:
+                    Model = "sc.MINF";
+                    NPCCType = NPCType.SeaCreature;
+                    break;
+                case AssetTemplate.Space_Kook:
+                    Model = "gs.MINF";
+                    NPCCType = NPCType.SpaceKook;
+                    break;
+                case AssetTemplate.Tar_Monster:
+                    Model = "tm.MINF";
+                    NPCCType = NPCType.TarMonster;
+                    ProjectileType = "TARBALL_PROJ";
+                    LobSpeed = 10f;
+                    LobDurReload = 1f;
+                    LobRange = 10f;
+                    LobSalvo = 1;
+                    LobArcness = 0.5f;
+                    LobHeavy = -4f;
+                    break;
+                case AssetTemplate.Crab:
+                    Model = "cb.MINF";
+                    NPCCType = NPCType.Crab;
+                    ActivateRadius = 1f;
+                    SpeedMovement = 2.5f;
+                    break;
+                case AssetTemplate.Flying_Fish:
+                    Model = "ff.MINF";
+                    NPCCType = NPCType.FlyingFish;
+                    ActivateRadius = 1f;
+                    SpeedMovement = 2.5f;
+                    break;
+            }
+            //    GetTemplateMenuItem(AssetTemplate.Funland_Robot, eventHandler),
+            //    GetTemplateMenuItem(AssetTemplate.Gargoyle, eventHandler),
+            //    GetTemplateMenuItem(AssetTemplate.Geronimo, eventHandler),
+            //    GetTemplateMenuItem(AssetTemplate.Ghost_of_Captain_Moody, eventHandler),
+            //    GetTemplateMenuItem(AssetTemplate.Headless_Specter, eventHandler),
+            //    GetTemplateMenuItem(AssetTemplate.Scarecrow, eventHandler),
+            //    GetTemplateMenuItem(AssetTemplate.Witch, eventHandler),
+            //    GetTemplateMenuItem(AssetTemplate.Witch_Doctor, eventHandler),
+            //    GetTemplateMenuItem(AssetTemplate.Wolfman, eventHandler),
+            //    GetTemplateMenuItem(AssetTemplate.Zombie, eventHandler),
         }
+
         public AssetNPC(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
@@ -233,6 +328,13 @@ namespace IndustrialPark
                 ArchiveEditorFunctions.renderingDictionary[_model].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * Color : Color, UvAnimOffset);
             else
                 renderer.DrawCube(LocalWorld(), isSelected);
+
+            if (isSelected)
+                renderer.DrawSphere(radiusMatrix, false, renderer.mvptColor);
         }
+
+        private Matrix radiusMatrix;
+        private void CreateRadiusTransformMatrix() =>
+            radiusMatrix = Matrix.Scaling(ActivateRadius) * Matrix.Translation(_position);
     }
 }

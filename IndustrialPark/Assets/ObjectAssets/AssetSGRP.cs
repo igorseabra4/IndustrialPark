@@ -19,6 +19,11 @@ namespace IndustrialPark
             Volume = 0.8f;
         }
 
+        public EntrySGRP(AssetID sound) : this()
+        {
+            Sound = sound;
+        }
+
         public EntrySGRP(EndianBinaryReader reader)
         {
             Sound = reader.ReadUInt32();
@@ -42,7 +47,7 @@ namespace IndustrialPark
         public override string ToString() => $"[{Program.MainForm.GetAssetNameFromID(Sound)}] - [{Volume}]";
     }
 
-    public class AssetSGRP : BaseAsset
+    public class AssetSGRP : BaseAsset, IAssetAddSelected
     {
         private const string categoryName = "Sound Group";
 
@@ -81,16 +86,16 @@ namespace IndustrialPark
         }
 
         [Category(categoryName)]
-        public EntrySGRP[] SGRP_Entries { get; set; }
+        public EntrySGRP[] Entries { get; set; }
 
-        public AssetSGRP(string assetName) : base(assetName, AssetType.SoundGroup, BaseAssetType.SGRP)
+        public AssetSGRP(string assetName) : base(assetName, AssetType.SoundGroup, BaseAssetType.SoundGroup)
         {
             nMaxPlays = 0x30;
             uPriority = 0x80;
             uInfoPad0 = 0x42;
             InnerRadius = 8f;
             OuterRadius = 25f;
-            SGRP_Entries = new EntrySGRP[] { new EntrySGRP() };
+            Entries = new EntrySGRP[] { new EntrySGRP() };
         }
 
         public AssetSGRP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
@@ -117,9 +122,9 @@ namespace IndustrialPark
                 _pszGroupName = reader.ReadString(4).ToCharArray();
                 _pszGroupName = reader.endianness == Endianness.Little ? _pszGroupName : _pszGroupName.Reverse().ToArray();
 
-                SGRP_Entries = new EntrySGRP[entryCount];
-                for (int i = 0; i < SGRP_Entries.Length; i++)
-                    SGRP_Entries[i] = new EntrySGRP(reader);
+                Entries = new EntrySGRP[entryCount];
+                for (int i = 0; i < Entries.Length; i++)
+                    Entries[i] = new EntrySGRP(reader);
             }
         }
 
@@ -129,7 +134,7 @@ namespace IndustrialPark
             {
                 writer.Write(SerializeBase(endianness));
                 writer.Write(uPlayedMask);
-                writer.Write((byte)SGRP_Entries.Length);
+                writer.Write((byte)Entries.Length);
                 writer.Write(uSetBits);
                 writer.Write(nMaxPlays);
                 writer.Write(uPriority);
@@ -141,7 +146,7 @@ namespace IndustrialPark
                 writer.Write(OuterRadius);
                 writer.Write(new string(endianness == Endianness.Little ? _pszGroupName : _pszGroupName.Reverse().ToArray()));
 
-                foreach (var i in SGRP_Entries)
+                foreach (var i in Entries)
                     writer.Write(i.Serialize(endianness));
                 writer.Write(SerializeLinks(endianness));
                 return writer.ToArray();
@@ -152,12 +157,23 @@ namespace IndustrialPark
         {
             base.Verify(ref result);
 
-            foreach (var i in SGRP_Entries)
+            foreach (var i in Entries)
             {
                 if (i.Sound == 0)
                     result.Add("Sound Group entry with Sound set to 0");
                 Verify(i.Sound, ref result);
             }
+        }
+
+        public string GetItemsText => "entries";
+
+        public void AddItems(List<uint> newItems)
+        {
+            var entries = Entries.ToList();
+            foreach (uint i in newItems)
+                if (!entries.Any(e => e.Sound == i))
+                    entries.Add(new EntrySGRP(i));
+            Entries = entries.ToArray();
         }
     }
 }

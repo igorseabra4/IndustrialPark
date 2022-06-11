@@ -624,11 +624,11 @@ namespace IndustrialPark.Randomizer
             foreach (Asset a in assetDictionary.Values)
                 if (a is AssetGRUP grup && grup.assetName.ToLower().Contains("volume"))
                 {
-                    var items = (from value in grup.GroupItems select (uint)value).ToList();
+                    var items = (from value in grup.Items select (uint)value).ToList();
                     if (items.Contains(assetID))
                     {
                         items.Remove(assetID);
-                        grup.GroupItems = (from value in items select new AssetID(value)).ToArray();
+                        grup.Items = (from value in items select new AssetID(value)).ToArray();
                     }
                 }
         }
@@ -1076,7 +1076,7 @@ namespace IndustrialPark.Randomizer
             var assetIDs = new List<AssetID>();
             foreach (uint i in outAssetIDs)
                 assetIDs.Add(new AssetID(i));
-            group.GroupItems = assetIDs.ToArray();
+            group.Items = assetIDs.ToArray();
 
             return true;
         }
@@ -2357,11 +2357,11 @@ namespace IndustrialPark.Randomizer
                 }
                 else if (GetFromAssetID(a) is AssetGRUP grup)
                 {
-                    List<AssetID> assetIDs = grup.GroupItems.ToList();
+                    List<AssetID> assetIDs = grup.Items.ToList();
                     for (int i = 0; i < assetIDs.Count; i++)
                         if (assetIDs[i] == oldAssetID)
                             assetIDs[i] = newAssetID;
-                    grup.GroupItems = assetIDs.ToArray();
+                    grup.Items = assetIDs.ToArray();
                 }
             }
         }
@@ -3028,7 +3028,7 @@ namespace IndustrialPark.Randomizer
             List<AssetID> assetIDs = new List<AssetID>();
             foreach (uint i in outAssetIDs)
                 assetIDs.Add(new AssetID(i));
-            group.GroupItems = assetIDs.ToArray();
+            group.Items = assetIDs.ToArray();
 
             return true;
         }

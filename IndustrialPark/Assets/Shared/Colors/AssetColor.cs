@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpDX;
+using System;
 using System.ComponentModel;
 using System.Drawing.Design;
 
@@ -55,5 +56,7 @@ namespace AssetEditorColors
         {
             return $"{R:X2}{G:X2}{B:X2}{A:X2}";
         }
+
+        public Vector4 ToVector4() => new Vector4(R / 255f, G / 255f, B / 255f, A / 255f);
     }
 }

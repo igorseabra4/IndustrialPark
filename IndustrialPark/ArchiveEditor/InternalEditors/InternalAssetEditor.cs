@@ -2,12 +2,12 @@
 using RenderWareFile;
 using SharpDX;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using static IndustrialPark.Models.Assimp_IO;
 using static IndustrialPark.Models.BSP_IO;
 using static IndustrialPark.Models.BSP_IO_Shared;
+using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -29,7 +29,7 @@ namespace IndustrialPark
 
             if (asset is AssetCAM cam) SetupForCam(cam);
             //else if (asset is AssetCSN csn) SetupForCsn(csn);
-            else if (asset is AssetGRUP grup) SetupForGrup(grup);
+            else if (asset is IAssetAddSelected aas) SetupForGrup(aas);
             else if (asset is AssetRenderWareModel arwm) SetupForModel(arwm);
             else if (asset is AssetSHRP shrp) SetupForShrp(shrp);
             else if (asset is AssetWIRE wire) SetupForWire(wire);
@@ -38,7 +38,7 @@ namespace IndustrialPark
 
             Button buttonHelp = new Button() { Dock = DockStyle.Fill, Text = "Open Wiki Page", AutoSize = true };
             buttonHelp.Click += (object sender, EventArgs e) =>
-                System.Diagnostics.Process.Start(AboutBox.WikiLink + asset.assetType.ToString());
+                System.Diagnostics.Process.Start(AboutBox.WikiLink + asset.assetType.GetCode().ToString());
             tableLayoutPanel1.Controls.Add(buttonHelp, 0, tableLayoutPanel1.RowCount - 1);
 
             Button buttonFindCallers = new Button() { Dock = DockStyle.Fill, Text = "Find Who Targets Me", AutoSize = true };
@@ -111,21 +111,14 @@ namespace IndustrialPark
             tableLayoutPanel1.Controls.Add(buttonGetDir);
         }
 
-        private void SetupForGrup(AssetGRUP asset)
+        private void SetupForGrup(IAssetAddSelected asset)
         {
             AddRow();
 
-            Button buttonAddSelected = new Button() { Dock = DockStyle.Fill, Text = "Add Selected To Group", AutoSize = true };
+            Button buttonAddSelected = new Button() { Dock = DockStyle.Fill, Text = "Add selected to " + asset.GetItemsText, AutoSize = true };
             buttonAddSelected.Click += (object sender, EventArgs e) =>
             {
-                List<AssetID> items = new List<AssetID>();
-                foreach (uint i in asset.GroupItems)
-                    items.Add(i);
-                foreach (uint i in archive.GetCurrentlySelectedAssetIDs())
-                    if (!items.Contains(i))
-                        items.Add(i);
-                asset.GroupItems = items.ToArray();
-
+                asset.AddItems(archive.GetCurrentlySelectedAssetIDs());
                 propertyGridAsset.Refresh();
                 archive.UnsavedChanges = true;
             };

@@ -1,6 +1,6 @@
 ﻿namespace IndustrialPark
 {
-    partial class DynaSearch
+    partial class PickupSearch
     {
         /// <summary>
         /// Required designer variable.
@@ -84,7 +84,7 @@
             this.richTextBox1.TabIndex = 11;
             this.richTextBox1.Text = "";
             // 
-            // DynaSearch
+            // PickupSearch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -95,9 +95,9 @@
             this.Controls.Add(this.labelRootDir);
             this.Controls.Add(this.buttonChooseRoot);
             this.MaximizeBox = false;
-            this.Name = "DynaSearch";
+            this.Name = "PickupSearch";
             this.ShowIcon = false;
-            this.Text = "Dyna Search";
+            this.Text = "Pickup Search";
             this.ResumeLayout(false);
             this.PerformLayout();
 

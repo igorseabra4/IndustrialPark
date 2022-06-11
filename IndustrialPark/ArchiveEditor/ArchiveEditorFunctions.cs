@@ -444,11 +444,8 @@ namespace IndustrialPark
                 TextureManager.RemoveTexture(rwtx.Name, this, rwtx.assetID);
         }
 
-        public bool ContainsAsset(uint key)
-        {
-            return assetDictionary.ContainsKey(key);
-        }
-
+        public bool ContainsAsset(uint key) => assetDictionary.ContainsKey(key);
+        
         public IEnumerable<AssetType> AssetTypesOnArchive() =>
             (from Asset asset in assetDictionary.Values select asset.assetType);
 

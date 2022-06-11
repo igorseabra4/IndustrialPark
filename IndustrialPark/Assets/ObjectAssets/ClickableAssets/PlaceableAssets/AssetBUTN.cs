@@ -48,10 +48,8 @@ namespace IndustrialPark
                "(Pressure Plate) Throw Fruit",
                "Patrick Cartwheel");
 
-        public AssetBUTN(Game game, string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.Button, BaseAssetType.Button, position)
+        public AssetBUTN(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.Button, BaseAssetType.Button, position)
         {
-            this.game = game;
-
             if (template == AssetTemplate.Button_Red)
             {
                 Model = "button";
@@ -75,7 +73,7 @@ namespace IndustrialPark
                 };
                 Motion.MotionFlags.FlagValueInt = 4;
             }
-            else if (template == AssetTemplate.PressurePlate)
+            else if (template == AssetTemplate.Pressure_Plate)
             {
                 ActMethod = ButnActMethod.PressurePlate;
                 Model = "plate_pressure";

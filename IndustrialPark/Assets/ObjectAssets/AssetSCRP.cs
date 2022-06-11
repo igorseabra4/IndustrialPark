@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
-using System.Linq;
 
 namespace IndustrialPark
 {
     public class AssetSCRP : BaseAsset
     {
-        private const string categoryName = "Scripted Event";
+        private const string categoryName = "Timed Script";
 
         [Category(categoryName)]
         public AssetSingle ScriptStartTime { get; set; }

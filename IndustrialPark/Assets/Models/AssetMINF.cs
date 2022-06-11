@@ -150,7 +150,7 @@ namespace IndustrialPark
         }
     }
 
-    public class MinfParam
+    public class MinfParam : GenericAssetDataContainer
     {
         public AssetID Type_Hex { get; set; }
         public MinfAssetParam Type_Enum

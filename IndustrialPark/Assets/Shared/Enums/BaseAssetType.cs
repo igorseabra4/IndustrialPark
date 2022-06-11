@@ -74,12 +74,12 @@
         CameraTweak = 0x45,
         SlideProps = 0x46,
         HUD_text = 0x47,
-        SGRP = 0x4A,
+        SoundGroup = 0x4A,
         SDFX = 0x4B,
         UIM = 0x53,
         SSET = 0x54,
-        PGRS = 0x75,
-        CCRV = 0x8D,
+        ProgressScript = 0x75,
+        CameraCurve = 0x8D,
         RotuNGMS = 0x9A,
         DTRK_GRSM_IncNGMS = 0xCD
     }

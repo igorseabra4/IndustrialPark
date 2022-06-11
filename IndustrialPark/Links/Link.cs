@@ -15,6 +15,7 @@ namespace IndustrialPark
     {
         public static int sizeOfStruct => 32;
 
+        [JsonProperty]
         private Game game;
 
         public AssetID TargetAsset { get; set; }
@@ -54,6 +55,7 @@ namespace IndustrialPark
         public float Time { get; set; } // only for timed
         public int Flags { get; set; } // only for progress
 
+        [JsonConstructor]
         private Link()
         {
         }
@@ -130,16 +132,30 @@ namespace IndustrialPark
 
         public override string ToString()
         {
-            var recEvent = Enum.GetName(game == Game.Incredibles ? typeof(EventTSSM) : typeof(EventBFBB), EventReceiveID);
-            var sndEvent = Enum.GetName(game == Game.Incredibles ? typeof(EventTSSM) : typeof(EventBFBB), EventSendID);
+            string recEvent;            
+            string sndEvent;
+            switch (game)
+            {
+                case Game.Scooby:
+                    recEvent = ((EventScooby)EventReceiveID).ToString();
+                    sndEvent = ((EventScooby)EventSendID).ToString();
+                    break;
+                case Game.BFBB:
+                    recEvent = ((EventBFBB)EventReceiveID).ToString();
+                    sndEvent = ((EventBFBB)EventSendID).ToString();
+                    break;
+                case Game.Incredibles:
+                    recEvent = ((EventTSSM)EventReceiveID).ToString();
+                    sndEvent = ((EventTSSM)EventSendID).ToString();
+                    break;
+                default:
+                    recEvent = "?";
+                    sndEvent = "?";
+                    break;
+            }
 
-            string result = "";
-
-            result += EventReceiveID != 0 ? recEvent.ToString() : Time.ToString();
-            result += $" => {sndEvent} => ";
-            result += HexUIntTypeConverter.Legacy ? TargetAsset.ToString("X8") : Program.MainForm.GetAssetNameFromID(TargetAsset);
-
-            return result;
+            string assetName = HexUIntTypeConverter.Legacy ? TargetAsset.ToString("X8") : Program.MainForm.GetAssetNameFromID(TargetAsset);
+            return $"{(LinkListEditor.LinkType == LinkType.Normal ? recEvent : Time.ToString())} => {sndEvent} => {assetName}";
         }
     }
 }

@@ -211,7 +211,7 @@ namespace IndustrialPark
         {
             float smallerDistance = 3 * farPlane;
             uint assetID = 0;
-
+            
             foreach (Asset ra in from IRenderableAsset asset in renderableAssets
                                  where asset is AssetUI || asset is AssetUIFT
                                  select asset)

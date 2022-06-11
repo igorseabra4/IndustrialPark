@@ -17,6 +17,34 @@ namespace IndustrialPark
         public static bool dontRender = false;
         protected override bool DontRender => dontRender;
 
+        public DynaGObjectInPickup(string assetName, Vector3 position, AssetTemplate template) : base(assetName, DynaType.game_object__IN_Pickup, 1, position)
+        {
+            switch (template)
+            {
+                case AssetTemplate.Health_10:
+                    PickupHash = 0x66BFB77B;
+                    break;
+                case AssetTemplate.Health_25:
+                    PickupHash = 0x66BFB803;
+                    break;
+                case AssetTemplate.Health_50:
+                    PickupHash = 0x66BFB987;
+                    break;
+                case AssetTemplate.Power_25:
+                    PickupHash = 0xD4F7394A;
+                    break;
+                case AssetTemplate.Power_50:
+                    PickupHash = 0xD4F73ACE;
+                    break; 
+                case AssetTemplate.Bonus:
+                    PickupHash = 0x91338C47;
+                    break;
+            }
+
+            CreateTransformMatrix();
+            AddToRenderableAssets(this);
+        }
+
         public DynaGObjectInPickup(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__IN_Pickup, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))

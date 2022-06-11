@@ -38,6 +38,9 @@ namespace IndustrialPark
 
         public void UpdateTitleBar()
         {
+            if (IsDisposed)
+                return;
+
             char startOfArchiveList = '[';
             char endOfArchiveList = ']';
             char archiveDelimiter = ',';
@@ -77,7 +80,8 @@ namespace IndustrialPark
             {
                 Action<string> updateTitleSafe = (string s) => Text = s;
                 Invoke(updateTitleSafe, builder.ToString());
-            } else
+            }
+            else
             {
                 Text = builder.ToString();
             }
@@ -1207,11 +1211,15 @@ namespace IndustrialPark
         private void SetUiAssetsVisibility(bool value)
         {
             autoShowDropDowns = false;
-            var clickThis = new string[] { "UI", "UIFT" };
+
+            AssetUI.dontRender = !value;
+            AssetUIFT.dontRender = !value;
+
+            var clickThis = new AssetType[] { AssetType.UserInterface, AssetType.UserInterfaceFont };
             if (assetViewToolStripMenuItems != null)
                 foreach (var item in assetViewToolStripMenuItems)
-                    if (clickThis.Contains(item.Name) && item.Checked != value)
-                        item.PerformClick();
+                    if (clickThis.Contains((AssetType)item.Tag))
+                        item.Checked = !(bool)assetViewTypes[(AssetType)item.Tag].GetField("dontRender").GetValue(null);
                     else if (item.Checked == value)
                         item.PerformClick();
             autoShowDropDowns = true;
@@ -1384,17 +1392,30 @@ namespace IndustrialPark
 
         private void eventSearchToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (Program.EventSearch == null)
+                Program.EventSearch = new EventSearch();
             Program.EventSearch.Show();
         }
 
         private void assetIDGeneratorToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (Program.AssetIDGenerator == null)
+                Program.AssetIDGenerator = new AssetIDGenerator();
             Program.AssetIDGenerator.Show();
         }
 
         private void dYNASearchToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (Program.DynaSearch == null)
+                Program.DynaSearch = new DynaSearch();
             Program.DynaSearch.Show();
+        }
+
+        private void pickupSearcherToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Program.PickupSearch == null)
+                Program.PickupSearch = new PickupSearch();
+            Program.PickupSearch.Show();
         }
 
         private void MainForm_Resize(object sender, EventArgs e)
@@ -1423,8 +1444,14 @@ namespace IndustrialPark
             Program.ViewConfig.TopMost = value;
             Program.UserTemplateManager.TopMost = value;
 
-            Program.EventSearch.TopMost = value;
-            Program.AssetIDGenerator.TopMost = value;
+            if (Program.EventSearch != null)
+                Program.EventSearch.TopMost = value;
+            if (Program.AssetIDGenerator != null)
+                Program.AssetIDGenerator.TopMost = value;
+            if (Program.DynaSearch != null)
+                Program.DynaSearch.TopMost = value;
+            if (Program.PickupSearch != null)
+                Program.PickupSearch.TopMost = value;
 
             foreach (ArchiveEditor ae in archiveEditors)
                 ae.SetAllTopMost(value);
