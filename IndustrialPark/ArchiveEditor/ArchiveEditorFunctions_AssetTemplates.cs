@@ -284,18 +284,13 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.Crab, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Flying_Fish, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Rat, eventHandler),
-                //GetTemplateMenuItem(AssetTemplate.Shark, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Spider, eventHandler),
-                //new ToolStripSeparator(),
-                //GetTemplateMenuItem(AssetTemplate.Black_Knight, eventHandler),
-                //GetTemplateMenuItem(AssetTemplate.Green_Ghost, eventHandler),
-                //GetTemplateMenuItem(AssetTemplate.Redbeard, eventHandler),
-                //GetTemplateMenuItem(AssetTemplate.Mastermind, eventHandler),
                 new ToolStripSeparator(),
                 GetTemplateMenuItem(AssetTemplate.Groundskeeper, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Holly, eventHandler),
                 new ToolStripSeparator(),
                 GetTemplateMenuItem(AssetTemplate.Killer_Plant, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Shark, eventHandler),
 
                 //GetTemplateMenuItem(AssetTemplate.Shaggy0, eventHandler),
                 //GetTemplateMenuItem(AssetTemplate.Shaggy1, eventHandler),
@@ -305,6 +300,10 @@ namespace IndustrialPark
                 //GetTemplateMenuItem(AssetTemplate.Fred, eventHandler),
                 //GetTemplateMenuItem(AssetTemplate.Daphne, eventHandler),
                 //GetTemplateMenuItem(AssetTemplate.Velma, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Black_Knight, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Green_Ghost, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Redbeard, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Mastermind, eventHandler),
             });
 
             ToolStripMenuItem stageitemsScooby = new ToolStripMenuItem("Stage Items");
@@ -922,7 +921,6 @@ namespace IndustrialPark
                 case AssetTemplate.Ghost:
                 case AssetTemplate.Ghost_of_Captain_Moody:
                 case AssetTemplate.Ghost_Diver:
-                case AssetTemplate.Flying_Fish:
                 case AssetTemplate.Funland_Robot:
                 case AssetTemplate.Headless_Specter:
                 case AssetTemplate.Sea_Creature:
@@ -935,13 +933,9 @@ namespace IndustrialPark
                 case AssetTemplate.Zombie:
                 case AssetTemplate.Bat:
                 case AssetTemplate.Crab:
+                case AssetTemplate.Flying_Fish:
                 case AssetTemplate.Rat:
-                case AssetTemplate.Shark:
                 case AssetTemplate.Spider:
-                case AssetTemplate.Black_Knight:
-                case AssetTemplate.Green_Ghost:
-                case AssetTemplate.Redbeard:
-                case AssetTemplate.Mastermind:
                 case AssetTemplate.Killer_Plant:
                 case AssetTemplate.Holly:
                 case AssetTemplate.Groundskeeper:

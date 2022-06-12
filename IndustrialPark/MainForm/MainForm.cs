@@ -135,6 +135,9 @@ namespace IndustrialPark
             autoLoadOnStartupToolStripMenuItem.Checked = settings.AutoloadOnStartup;
             checkForUpdatesOnStartupToolStripMenuItem.Checked = settings.CheckForUpdatesOnStartup;
 
+            drawOnlyFirstMINFReferenceToolStripMenuItem.Checked = settings.drawOnlyFirstMinf;
+            AssetMINF.drawOnlyFirst = settings.drawOnlyFirstMinf;
+
             useLODTForRenderingToolStripMenuItem.Checked = settings.renderBasedOnLodt;
             AssetMODL.renderBasedOnLodt = settings.renderBasedOnLodt;
 
@@ -203,6 +206,7 @@ namespace IndustrialPark
                 AutoloadOnStartup = autoLoadOnStartupToolStripMenuItem.Checked,
                 LastProjectPath = currentProjectPath,
                 CheckForUpdatesOnStartup = checkForUpdatesOnStartupToolStripMenuItem.Checked,
+                drawOnlyFirstMinf = AssetMINF.drawOnlyFirst,
                 renderBasedOnLodt = AssetMODL.renderBasedOnLodt,
                 renderBasedOnPipt = AssetMODL.renderBasedOnPipt,
                 discordRichPresence = discordRichPresenceToolStripMenuItem.Checked,
@@ -1014,6 +1018,12 @@ namespace IndustrialPark
                 foreach (Asset a in ae.archive.GetAllAssets())
                     if (a is EntityAsset p)
                         p.Reset();
+        }
+
+        private void drawOnlyFirstMINFReferenceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            drawOnlyFirstMINFReferenceToolStripMenuItem.Checked = !drawOnlyFirstMINFReferenceToolStripMenuItem.Checked;
+            AssetMINF.drawOnlyFirst = drawOnlyFirstMINFReferenceToolStripMenuItem.Checked;
         }
 
         private void useMaxRenderDistanceToolStripMenuItem_Click(object sender, EventArgs e)

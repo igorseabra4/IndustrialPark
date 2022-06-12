@@ -221,6 +221,8 @@ namespace IndustrialPark
         {
             References = new MinfReference[0];
             Parameters = new MinfParam[0];
+
+            AddToDictionary();
         }
 
         public AssetMINF(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
@@ -245,20 +247,7 @@ namespace IndustrialPark
                     mParams.Add(new MinfParam(reader));
                 Parameters = mParams.ToArray();
 
-                if (References.Length > 0)
-                    _model = References[0].Model;
-                else _model = 0;
-
-                if (_model != 0)
-                {
-                    AddToRenderingDictionary(AHDR.assetID, this);
-
-                    if (game == Game.Incredibles)
-                    {
-                        AddToRenderingDictionary(Functions.BKDRHash(newName), this);
-                        AddToNameDictionary(Functions.BKDRHash(newName), newName);
-                    }
-                }
+                AddToDictionary();
             }
         }
 
@@ -287,9 +276,17 @@ namespace IndustrialPark
 
         private string newName => assetName.Replace(".MINF", "");
 
-        private uint _model;
+        public void AddToDictionary()
+        {
+            AddToRenderingDictionary(assetID, this);
+            if (game == Game.Incredibles)
+            {
+                AddToRenderingDictionary(Functions.BKDRHash(newName), this);
+                AddToNameDictionary(Functions.BKDRHash(newName), newName);
+            }
+        }
 
-        public void MovieRemoveFromDictionary()
+        public void RemoveFromDictionary()
         {
             RemoveFromRenderingDictionary(Functions.BKDRHash(newName));
             RemoveFromNameDictionary(Functions.BKDRHash(newName));
@@ -306,13 +303,27 @@ namespace IndustrialPark
             }
         }
 
+        public static bool drawOnlyFirst = false;
+
         public void Draw(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset)
         {
-            if (renderingDictionary.ContainsKey(_model))
-                renderingDictionary[_model].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, uvAnimOffset);
-            else
+            bool noneDrawn = true;
+            foreach (var reference in References)
+            {
+                uint _model = reference.Model;
+                if (renderingDictionary.ContainsKey(_model))
+                {
+                    renderingDictionary[_model].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, uvAnimOffset);
+                    noneDrawn = false;
+                }
+                if (drawOnlyFirst)
+                    break;
+            }
+            if (noneDrawn)
                 renderer.DrawCube(world, isSelected | isSelected);
         }
+
+        private uint _model => References.Length > 0 ? References[0].Model : 0;
 
         [Browsable(false)]
         public bool SpecialBlendMode => renderingDictionary.ContainsKey(_model) ? renderingDictionary[_model].SpecialBlendMode : true;

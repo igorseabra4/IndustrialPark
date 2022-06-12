@@ -423,7 +423,7 @@ namespace IndustrialPark
             if (asset is AssetRenderWareModel jsp)
                 jsp.GetRenderWareModelFile()?.Dispose();
             else if (asset is IAssetWithModel iawm)
-                iawm.MovieRemoveFromDictionary();
+                iawm.RemoveFromDictionary();
             else if (asset is AssetPICK pick)
                 pick.ClearDictionary();
             else if (asset is AssetTPIK tpik)

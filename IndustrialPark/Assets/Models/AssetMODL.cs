@@ -28,7 +28,7 @@ namespace IndustrialPark
 
         private string newName => assetName.Replace(".dff", "");
 
-        public void MovieRemoveFromDictionary()
+        public void RemoveFromDictionary()
         {
             RemoveFromRenderingDictionary(Functions.BKDRHash(newName));
             RemoveFromNameDictionary(Functions.BKDRHash(newName));
