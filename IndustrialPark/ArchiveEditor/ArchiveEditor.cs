@@ -1390,8 +1390,56 @@ namespace IndustrialPark
         }
 
         /// <summary>
+        /// Given the filepath to a hip file, returns an integer representing the game the file is for, 
+        /// based on the filename of the configuration ini.
+        /// <para>
+        /// This method checks the same directory, and then the parent directory. This assumes 
+        /// the filename has not been changed. Note this cannot guarantee which game the file is for.
+        /// </para>
+        /// </summary>
+        /// <param name="filepath">The filepath of the HIP file</param>
+        /// <returns>0: Unknown, 1: Scooby, 2: BFBB , 3: TSSM, 4: Incredibles, 5: ROTU, 6: Ratatouille Prototype</returns>
+        public static int GetGameFromGameConfigIni(string filepath)
+        {
+            const string scoobyIniFilename = "sd2.ini";
+            const string bfbbIniFilename = "sb.ini";
+            const string tssmIniFilename = "sb04.ini";
+            const string incrediblesIniFilename = "in.ini";
+            const string rotuIniFilename = "in2.ini";
+            const string ratProtoIniFilename = "rats.ini";
+
+            // Checks in same directory for a specific ini and then checks the parent directory
+            if (File.Exists(Path.Combine(Path.GetDirectoryName(filepath), scoobyIniFilename))
+                || File.Exists(Path.Combine(Directory.GetParent(Path.GetDirectoryName(filepath)).FullName, scoobyIniFilename)))
+                return 1;
+
+            if (File.Exists(Path.Combine(Path.GetDirectoryName(filepath), bfbbIniFilename))
+                || File.Exists(Path.Combine(Directory.GetParent(Path.GetDirectoryName(filepath)).FullName, bfbbIniFilename)))
+                return 2;
+
+            if (File.Exists(Path.Combine(Path.GetDirectoryName(filepath), tssmIniFilename))
+                || File.Exists(Path.Combine(Directory.GetParent(Path.GetDirectoryName(filepath)).FullName, tssmIniFilename)))
+                return 3;
+
+            if (File.Exists(Path.Combine(Path.GetDirectoryName(filepath), incrediblesIniFilename))
+                || File.Exists(Path.Combine(Directory.GetParent(Path.GetDirectoryName(filepath)).FullName, incrediblesIniFilename)))
+                return 4;
+
+            if (File.Exists(Path.Combine(Path.GetDirectoryName(filepath), rotuIniFilename))
+                || File.Exists(Path.Combine(Directory.GetParent(Path.GetDirectoryName(filepath)).FullName, rotuIniFilename)))
+                return 5;
+
+            if (File.Exists(Path.Combine(Path.GetDirectoryName(filepath), ratProtoIniFilename))
+                || File.Exists(Path.Combine(Directory.GetParent(Path.GetDirectoryName(filepath)).FullName, ratProtoIniFilename)))
+                return 6;
+
+            return 0;
+        }
+
+        /// <summary>
         /// Generates a report for the HIP/HOP archive to a .txt in the same directory.
         /// </summary>
+        /// 
         private void _generateReportTxt()
         {
             bool generationWasSuccessful = true;
@@ -1496,6 +1544,74 @@ namespace IndustrialPark
                 output.WriteLine($"Number of invisible assets: {numOfInvisibleAssets}");
                 output.WriteLine("");
 
+                output.WriteLine("\nASSET LINKING INFO");
+                output.WriteLine("-------------");
+
+
+                foreach (var asset in allAssets)
+                {
+                    // If Base asset, get list of links.
+                    if (asset is BaseAsset)
+                    {
+                        Link[] links = ((BaseAsset)asset).Links;
+                        if (links.Length > 0)
+                        {
+                            output.WriteLine($"{asset.assetName}: {links.Length} links");
+
+                            foreach (var link in links) 
+                            {
+                                string eventSendIDName = "";
+                                string eventReceiveIDName = "";
+
+                                if (archive.game == Game.BFBB) // BFBB
+                                {
+                                    eventSendIDName = ((EventBFBB)link.EventSendID).ToString();
+                                    eventReceiveIDName = ((EventBFBB)link.EventReceiveID).ToString();
+                                } else if (archive.game == Game.Scooby) // Scooby
+                                {
+                                    // TODO: Scooby events
+                                }
+                                else if (archive.game == Game.Incredibles) // TSSM/Incredibles/ROTU
+                                {
+                                    switch (GetGameFromGameConfigIni(GetCurrentlyOpenFileName()))
+                                    {
+                                        case 3: // TSSM
+                                            eventSendIDName = ((EventTSSM)link.EventSendID).ToString();
+                                            eventReceiveIDName = ((EventTSSM)link.EventReceiveID).ToString();
+                                            break;
+                                        case 4: // Incredibles
+                                            // TODO: Incredibles events
+                                            break;
+                                        case 5: // ROTU
+                                            // TODO: ROTU events
+                                            break;
+                                    }
+                                }
+                                
+                                // If event name not supplied, event ID used instead.
+                                eventSendIDName = eventSendIDName == "" ? link.EventSendID.ToString() : eventSendIDName;
+                                eventReceiveIDName = eventReceiveIDName == "" ? link.EventReceiveID.ToString() : eventReceiveIDName;
+
+
+                                string targetAssetName = "";
+                                try
+                                {
+                                    // FIXME: Only searches current archive
+                                    targetAssetName = archive.GetFromAssetID(link.TargetAsset).assetName;
+                                }
+                                catch
+                                {
+                                    targetAssetName = link.TargetAsset.ToString();
+                                }
+
+                                output.WriteLine($"  {eventSendIDName} => {eventReceiveIDName} => {targetAssetName}");
+                            }
+                        }
+                    }
+                }
+
+
+
                 output.WriteLine("\nUNUSED MODELS");
                 output.WriteLine("-------------");
 
@@ -1522,6 +1638,7 @@ namespace IndustrialPark
 
                 output.WriteLine("* Not yet implemented");
                 output.WriteLine();
+                // Find who Targets Me throws an exception sometimes :(
 
 
                 output.WriteLine("\n#### END OF REPORT ####");
