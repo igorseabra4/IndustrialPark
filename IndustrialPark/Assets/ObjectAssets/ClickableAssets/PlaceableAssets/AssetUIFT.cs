@@ -124,16 +124,17 @@ namespace IndustrialPark
             Verify(Text, ref result);
         }
 
-        protected override void CreateBoundingBox()
-        {
-            CreateBoundingBox(SharpRenderer.planeVertices);
-        }
-
         public override float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
             if (ShouldDraw(renderer) && ray.Intersects(ref boundingBox))
                 return TriangleIntersection(ray, SharpRenderer.planeTriangles, SharpRenderer.planeVertices, world);
             return null;
+        }
+
+#if DEBUG
+        protected override void CreateBoundingBox()
+        {
+            CreateBoundingBox(SharpRenderer.planeVertices);
         }
 
         public override void Draw(SharpRenderer renderer)
@@ -201,5 +202,6 @@ namespace IndustrialPark
 
             return img;
         }
+#endif
     }
 }

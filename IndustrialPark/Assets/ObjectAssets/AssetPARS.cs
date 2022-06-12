@@ -110,10 +110,13 @@ namespace IndustrialPark
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
-            dt.RemoveProperty("Unknown01");
-            dt.RemoveProperty("Unknown02");
-            dt.RemoveProperty("Unknown03");
-            dt.RemoveProperty("Unknown04");
+            if (game != Game.Incredibles)
+            {
+                dt.RemoveProperty("Unknown01");
+                dt.RemoveProperty("Unknown02");
+                dt.RemoveProperty("Unknown03");
+                dt.RemoveProperty("Unknown04");
+            }
         }
     }
 }

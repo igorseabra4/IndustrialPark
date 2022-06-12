@@ -690,6 +690,7 @@ namespace IndustrialPark
                     case AssetType.Subtitles:
                     case AssetType.TEXS:
                     case AssetType.UIFN:
+                    case AssetType.Null:
                         return new AssetGeneric(AHDR, game, endianness);
                     case AssetType.Cutscene:
                         return new AssetGeneric(AHDR, game, endianness);

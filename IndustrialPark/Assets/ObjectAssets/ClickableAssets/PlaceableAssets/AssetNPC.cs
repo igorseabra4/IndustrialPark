@@ -53,7 +53,7 @@ namespace IndustrialPark
         private const string categoryName = "NPC";
 
         [Category(categoryName)]
-        public NPCType NPCCType
+        public NPCType NPCType
         {
             get => (NPCType)(byte)TypeFlag;
             set => TypeFlag = (byte)value;
@@ -162,31 +162,57 @@ namespace IndustrialPark
             {
                 case AssetTemplate.Caveman:
                     Model = "cv.MINF";
-                    NPCCType = NPCType.Caveman;
+                    NPCType = NPCType.Caveman;
                     break;
                 case AssetTemplate.Creeper:
                     Model = "cr.MINF";
-                    NPCCType = NPCType.Creeper;
+                    NPCType = NPCType.Creeper;
+                    break;
+                case AssetTemplate.Funland_Robot:
+                    Model = "ar.MINF";
+                    NPCType = NPCType.FunlandRobot;
+                    break;
+                case AssetTemplate.Gargoyle:
+                    Model = "ga.MINF";
+                    NPCType = NPCType.Gargoyle;
+                    ProjectileType = "FIREBALL";
+                    LobHeavy = 9f;
+                    break;
+                case AssetTemplate.Geronimo:
+                    Model = "bm.MINF";
+                    NPCType = NPCType.Geronimo;
                     break;
                 case AssetTemplate.Ghost:
                     Model = "gz.MINF";
-                    NPCCType = NPCType.Ghost;
+                    NPCType = NPCType.Ghost;
                     break;
                 case AssetTemplate.Ghost_Diver:
                     Model = "gd.MINF";
-                    NPCCType = NPCType.GhostDiver;
+                    NPCType = NPCType.GhostDiver;
+                    break;
+                case AssetTemplate.Ghost_of_Captain_Moody:
+                    Model = "cm.MINF";
+                    NPCType = NPCType.GhostOfCaptainMoody;
+                    break;
+                case AssetTemplate.Headless_Specter:
+                    Model = "hs.MINF";
+                    NPCType = NPCType.HeadlessSpecter;
+                    break;
+                case AssetTemplate.Scarecrow:
+                    Model = "sw.MINF";
+                    NPCType = NPCType.Scarecrow;
                     break;
                 case AssetTemplate.Sea_Creature:
                     Model = "sc.MINF";
-                    NPCCType = NPCType.SeaCreature;
+                    NPCType = NPCType.SeaCreature;
                     break;
                 case AssetTemplate.Space_Kook:
                     Model = "gs.MINF";
-                    NPCCType = NPCType.SpaceKook;
+                    NPCType = NPCType.SpaceKook;
                     break;
                 case AssetTemplate.Tar_Monster:
                     Model = "tm.MINF";
-                    NPCCType = NPCType.TarMonster;
+                    NPCType = NPCType.TarMonster;
                     ProjectileType = "TARBALL_PROJ";
                     LobSpeed = 10f;
                     LobDurReload = 1f;
@@ -195,29 +221,67 @@ namespace IndustrialPark
                     LobArcness = 0.5f;
                     LobHeavy = -4f;
                     break;
+                case AssetTemplate.Witch:
+                    Model = "wc.MINF";
+                    NPCType = NPCType.Witch;
+                    break;
+                case AssetTemplate.Witch_Doctor:
+                    Model = "wd.MINF";
+                    NPCType = NPCType.Witch;
+                    ProjectileType = "FIREBALL";
+                    LobSpeed = 5f;
+                    LobDurReload = 2f;
+                    LobRange = 10f;
+                    LobHeavy = 7f;
+                    break;
+                case AssetTemplate.Wolfman:
+                    Model = "wm.MINF";
+                    NPCType = NPCType.Wolfman;
+                    break;
+                case AssetTemplate.Zombie:
+                    Model = "zz.MINF";
+                    NPCType = NPCType.Zombie;
+                    break;
+                case AssetTemplate.Bat:
+                    Model = "ba.MINF";
+                    NPCType = NPCType.Bat;
+                    break;
                 case AssetTemplate.Crab:
                     Model = "cb.MINF";
-                    NPCCType = NPCType.Crab;
-                    ActivateRadius = 1f;
-                    SpeedMovement = 2.5f;
+                    NPCType = NPCType.Crab;
                     break;
                 case AssetTemplate.Flying_Fish:
                     Model = "ff.MINF";
-                    NPCCType = NPCType.FlyingFish;
-                    ActivateRadius = 1f;
-                    SpeedMovement = 2.5f;
+                    NPCType = NPCType.FlyingFish;
+                    break;
+                case AssetTemplate.Rat:
+                    Model = "rt.MINF";
+                    NPCType = NPCType.Rat;
+                    break;
+                case AssetTemplate.Spider:
+                    Model = "sp.MINF";
+                    NPCType = NPCType.Spider;
+                    break;
+                case AssetTemplate.Killer_Plant:
+                    Model = "kp.MINF";
+                    NPCType = NPCType.KillerPlant;
+                    ActivateRadius = 10f;
+                    ActivateFOV = 360f;
+                    ExtenderRange = 7f;
+                    ExtenderWidth = 1.5f;
+                    ExtenderDuration = 3f;
+                    ExtenderRate = 5f;
+                    ExtenderReloadTime = 3f;
+                    break;
+                case AssetTemplate.Groundskeeper:
+                    Model = "gr.MINF";
+                    NPCType = NPCType.Groundskeeper;
+                    break;
+                case AssetTemplate.Holly:
+                    Model = "ho.MINF";
+                    NPCType = NPCType.Holly;
                     break;
             }
-            //    GetTemplateMenuItem(AssetTemplate.Funland_Robot, eventHandler),
-            //    GetTemplateMenuItem(AssetTemplate.Gargoyle, eventHandler),
-            //    GetTemplateMenuItem(AssetTemplate.Geronimo, eventHandler),
-            //    GetTemplateMenuItem(AssetTemplate.Ghost_of_Captain_Moody, eventHandler),
-            //    GetTemplateMenuItem(AssetTemplate.Headless_Specter, eventHandler),
-            //    GetTemplateMenuItem(AssetTemplate.Scarecrow, eventHandler),
-            //    GetTemplateMenuItem(AssetTemplate.Witch, eventHandler),
-            //    GetTemplateMenuItem(AssetTemplate.Witch_Doctor, eventHandler),
-            //    GetTemplateMenuItem(AssetTemplate.Wolfman, eventHandler),
-            //    GetTemplateMenuItem(AssetTemplate.Zombie, eventHandler),
         }
 
         public AssetNPC(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
