@@ -43,6 +43,7 @@ namespace IndustrialPark
             public HashSet<string> names;
             public HashSet<string> values;
             public HashSet<string> flags;
+            public HashSet<string> files;
             public uint model;
             public string modelName;
 
@@ -51,12 +52,13 @@ namespace IndustrialPark
                 names = new HashSet<string>();
                 values = new HashSet<string>();
                 flags = new HashSet<string>();
+                files = new HashSet<string>();
                 modelName = "";
             }
 
             public override string ToString()
             {
-                return $"{modelName}, F: [{string.Join(", ", flags.OrderBy(f => f))}], V: [{string.Join(", ", values.OrderBy(f => f))}], N: [{string.Join(", ", names.OrderBy(f => f))}]";
+                return $"{modelName}, F: [{string.Join(", ", flags.OrderBy(f => f))}], V: [{string.Join(", ", values.OrderBy(f => f))}], N: [{string.Join(", ", names.OrderBy(f => f))}], FI: [{string.Join(", ", files.OrderBy(f => f))}]";
             }
         }
 
@@ -87,8 +89,8 @@ namespace IndustrialPark
 
             List<string> output = new List<string>();
 
-            foreach (var v in result.Keys)
-                output.Add($"0x{v.ToString("X8")} - v{result[v]}\n");
+            foreach (var kvp in result.OrderBy(kvp => kvp.Value.names.FirstOrDefault()))
+                output.Add($"0x{kvp.Key:X8} - v{kvp.Value}\n");
 
             richTextBox1.Clear();
             foreach (var s in output.OrderBy(f => f))
@@ -118,8 +120,11 @@ namespace IndustrialPark
                         ptr.names.Add(pickup.assetName);
                         ptr.values.Add(pickup.PickupValue.ToString());
                         ptr.flags.Add(pickup.PickupFlags.ToString());
+                        ptr.files.Add(Path.GetFileNameWithoutExtension(archive.currentlyOpenFilePath));
                         ptr.model = AssetPICK.pickEntries[pickup.PickReferenceID];
-                        ptr.modelName = Program.MainForm.GetAssetNameFromID(AssetPICK.pickEntries[pickup.PickReferenceID]);
+                        var nmm = Program.MainForm.GetAssetNameFromID(AssetPICK.pickEntries[pickup.PickReferenceID]);
+                        if (!string.IsNullOrEmpty(nmm))
+                            ptr.modelName = nmm;
                     }
                     catch
                     {

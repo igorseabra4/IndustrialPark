@@ -289,7 +289,19 @@
         // Scooby items
         Red_Button,
         Floor_Button,
+        Red_Button_Smash,
+        Floor_Button_Smash,
         Crate,
+        Cauldron,
+
+        // ...but not for user
+        Red_Button_Base,
+        Floor_Button_Base,
+        Red_Button_Smash_Base,
+        Floor_Button_Smash_Base,
+        Cauldron_Sfx,
+        Cauldron_Light,
+        Cauldron_Emitter,
 
         // Incredibles Pickups
         Health_10,

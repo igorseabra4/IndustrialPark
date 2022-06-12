@@ -309,9 +309,12 @@ namespace IndustrialPark
             ToolStripMenuItem stageitemsScooby = new ToolStripMenuItem("Stage Items");
             stageitemsScooby.DropDownItems.AddRange(new ToolStripItem[]
             {
-                //GetTemplateMenuItem(AssetTemplate.Red_Button, eventHandler),
-                //GetTemplateMenuItem(AssetTemplate.Floor_Button, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Red_Button, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Red_Button_Smash, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Floor_Button, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Floor_Button_Smash, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Crate, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Cauldron, eventHandler),
             });
 
             ToolStripMenuItem scooby = new ToolStripMenuItem("Scooby");
@@ -540,6 +543,14 @@ namespace IndustrialPark
                     return "Power (50)";
                 case AssetTemplate.Bonus:
                     return "Bonus Item";
+                case AssetTemplate.Red_Button:
+                    return "Red Button (Helmet)";
+                case AssetTemplate.Red_Button_Smash:
+                    return "Red Button (Super Smash)";
+                case AssetTemplate.Floor_Button:
+                    return "Floor Button (Step)";
+                case AssetTemplate.Floor_Button_Smash:
+                    return "Floor Button (Super Smash)";
             }
 
             var tstring = template.ToString().Replace('_', ' ');
@@ -898,10 +909,20 @@ namespace IndustrialPark
                 case AssetTemplate.Button_Red:
                 case AssetTemplate.Pressure_Plate:
                 case AssetTemplate.Red_Button:
+                case AssetTemplate.Red_Button_Smash:
                 case AssetTemplate.Floor_Button:
+                case AssetTemplate.Floor_Button_Smash:
                     asset = new AssetBUTN(assetName, position, template);
                     if (template == AssetTemplate.Pressure_Plate)
                         PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_BASE", AssetTemplate.Pressure_Plate_Base);
+                    else if (template == AssetTemplate.Red_Button)
+                        PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_BASE", AssetTemplate.Red_Button_Base);
+                    else if (template == AssetTemplate.Red_Button_Smash)
+                        PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_BASE", AssetTemplate.Red_Button_Smash_Base);
+                    else if (template == AssetTemplate.Floor_Button)
+                        PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_BASE", AssetTemplate.Floor_Button_Base);
+                    else if (template == AssetTemplate.Floor_Button_Smash)
+                        PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_BASE", AssetTemplate.Floor_Button_Smash_Base);
                     break;
                 case AssetTemplate.Destructible_Object:
                 case AssetTemplate.Crate:
@@ -968,6 +989,11 @@ namespace IndustrialPark
                 case AssetTemplate.Checkpoint_SIMP:
                 case AssetTemplate.Checkpoint_SIMP_TSSM:
                 case AssetTemplate.Bungee_Hook_SIMP:
+                case AssetTemplate.Red_Button_Base:
+                case AssetTemplate.Red_Button_Smash_Base:
+                case AssetTemplate.Floor_Button_Base:
+                case AssetTemplate.Floor_Button_Smash_Base:
+                case AssetTemplate.Cauldron:
                     asset = new AssetSIMP(assetName, position, template);
                     switch (template)
                     {
@@ -977,10 +1003,18 @@ namespace IndustrialPark
                             PlaceTemplate(position, layerIndex, ref assetIDs, template: AssetTemplate.Bus_Stop_DYNA);
                             break;
                         case AssetTemplate.Throw_Fruit:
-                            PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "BASE", AssetTemplate.Throw_Fruit_Base);
+                            PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_BASE", AssetTemplate.Throw_Fruit_Base);
                             break;
                         case AssetTemplate.Freezy_Fruit:
-                            PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "BASE", AssetTemplate.Throw_Fruit_Base);
+                            PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_BASE", AssetTemplate.Throw_Fruit_Base);
+                            break;
+                        case AssetTemplate.Cauldron:
+                            var sfx = (AssetSFX)PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_SFX", AssetTemplate.Cauldron_Sfx);
+                            sfx.Attach = asset.assetID;
+                            var lite = (AssetLITE)PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_LIGHT", AssetTemplate.Cauldron_Light);
+                            lite.Attach = asset.assetID;
+                            position.Y += 1f;
+                            PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_EMITTER", AssetTemplate.Cauldron_Emitter);
                             break;
                     }
                     break;
@@ -995,13 +1029,15 @@ namespace IndustrialPark
                     break;
                 case AssetTemplate.SFX_OnEvent:
                 case AssetTemplate.SFX_OnRadius:
-                    asset = new AssetSFX(assetName, position, game, template == AssetTemplate.SFX_OnRadius);
+                case AssetTemplate.Cauldron_Sfx:
+                    asset = new AssetSFX(assetName, position, game, template);
                     break;
                 case AssetTemplate.SDFX:
                     asset = new AssetSDFX(assetName, position);
                     break;
                 case AssetTemplate.Light:
-                    asset = new AssetLITE(assetName, position);
+                case AssetTemplate.Cauldron_Light:
+                    asset = new AssetLITE(assetName, position, template);
                     break;
                 case AssetTemplate.Animation_List:
                     asset = new AssetALST(assetName);
@@ -1381,6 +1417,9 @@ namespace IndustrialPark
                 case AssetTemplate.Power_50:
                 case AssetTemplate.Bonus:
                     asset = new DynaGObjectInPickup(assetName, position, template);
+                    break;
+                case AssetTemplate.Cauldron_Emitter:
+                    asset = new AssetPARE_Scooby(assetName, position, template);
                     break;
                 default:
                     MessageBox.Show("Unsupported template");

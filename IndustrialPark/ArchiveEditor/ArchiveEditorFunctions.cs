@@ -495,7 +495,7 @@ namespace IndustrialPark
                 var built = newAsset.BuildAHDR().data;
                 if (!Enumerable.SequenceEqual(AHDR.data, built))
                 {
-                    error = $"[{ AHDR.assetID:X8}] { AHDR.ADBG.assetName} (unsupported format)";
+                    error = $"[{ AHDR.assetID:X8}] {AHDR.ADBG.assetName} (unsupported format)";
                     if (showMessageBox)
                         MessageBox.Show($"There was an error loading asset " + error + " and editing has been disabled for it.");
 
@@ -632,9 +632,9 @@ namespace IndustrialPark
                     case AssetType.NPC: return new AssetNPC(AHDR, game, endianness);
                     case AssetType.OneLiner: return new AssetONEL(AHDR, game, endianness);
                     case AssetType.ParticleEmitter:
-                        if (game != Game.Scooby)
-                            return new AssetPARE(AHDR, game, endianness);
-                        return new AssetGeneric(AHDR, game, endianness); // unsupported pare for scooby
+                        if (game == Game.Scooby)
+                            return new AssetPARE_Scooby(AHDR, game, endianness);
+                        return new AssetPARE(AHDR, game, endianness);
                     case AssetType.ParticleProperties: return new AssetPARP(AHDR, game, endianness);
                     case AssetType.ParticleSystem: return new AssetPARS(AHDR, game, endianness);
                     case AssetType.Pendulum: return new AssetPEND(AHDR, game, endianness);
@@ -700,7 +700,7 @@ namespace IndustrialPark
             }
             catch (Exception ex)
             {
-                error = $"[{ AHDR.assetID:X8}] {AHDR.ADBG.assetName} ({ex.Message})";
+                error = $"[{AHDR.assetID:X8}] {AHDR.ADBG.assetName} ({ex.Message})";
 
                 if (showMessageBox)
                     MessageBox.Show($"There was an error loading asset {error}:" + ex.Message + " and editing has been disabled for it.");
