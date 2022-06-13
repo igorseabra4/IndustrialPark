@@ -315,6 +315,7 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.Floor_Button_Smash, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Crate, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Cauldron, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Flower, eventHandler),
             });
 
             ToolStripMenuItem scooby = new ToolStripMenuItem("Scooby");
@@ -973,6 +974,7 @@ namespace IndustrialPark
                 case AssetTemplate.CollapsePlatform_Planktopolis:
                 case AssetTemplate.CollapsePlatform_ThugTug:
                 case AssetTemplate.CollapsePlatform_Spongeball:
+                case AssetTemplate.Flower_Dig:
                     asset = new AssetPLAT(assetName, position, template);
                     break;
                 case AssetTemplate.Simple_Object:
@@ -994,6 +996,7 @@ namespace IndustrialPark
                 case AssetTemplate.Floor_Button_Base:
                 case AssetTemplate.Floor_Button_Smash_Base:
                 case AssetTemplate.Cauldron:
+                case AssetTemplate.Flower:
                     asset = new AssetSIMP(assetName, position, template);
                     switch (template)
                     {
@@ -1015,6 +1018,19 @@ namespace IndustrialPark
                             lite.Attach = asset.assetID;
                             position.Y += 1f;
                             PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_EMITTER", AssetTemplate.Cauldron_Emitter);
+                            break;
+                        case AssetTemplate.Flower:
+                            position.X += 4f;
+                            var dig = PlaceTemplate(position, layerIndex, ref assetIDs, template.ToString().ToUpper() + "_DIG", AssetTemplate.Flower_Dig);
+                            ((AssetSIMP)asset).Links = new Link[]
+                            {
+                                new Link(game)
+                                {
+                                    EventReceiveID = (ushort)EventScooby.Digup,
+                                    EventSendID = (ushort)EventScooby.CollisionVisibleOn,
+                                    TargetAsset = dig.assetID,
+                                }
+                            };
                             break;
                     }
                     break;
@@ -1419,7 +1435,7 @@ namespace IndustrialPark
                     asset = new DynaGObjectInPickup(assetName, position, template);
                     break;
                 case AssetTemplate.Cauldron_Emitter:
-                    asset = new AssetPARE_Scooby(assetName, position, template);
+                    asset = new AssetPARE(assetName, position, template);
                     break;
                 default:
                     MessageBox.Show("Unsupported template");

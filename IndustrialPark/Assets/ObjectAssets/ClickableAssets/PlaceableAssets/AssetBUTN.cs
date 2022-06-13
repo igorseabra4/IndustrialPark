@@ -71,7 +71,7 @@ namespace IndustrialPark
                     SlideTime = 0.5f,
                     SlideDecelTime = 0.2f
                 };
-                Motion.MotionFlags.FlagValueInt = 4;
+                Motion.MotionFlags.FlagValueShort = 4;
             }
             else if (template == AssetTemplate.Pressure_Plate)
             {
@@ -91,7 +91,7 @@ namespace IndustrialPark
                     SlideDistance = -0.15f,
                     SlideTime = 0.15f,
                 };
-                Motion.MotionFlags.FlagValueInt = 4;
+                Motion.MotionFlags.FlagValueShort = 4;
             }
             else if (template == AssetTemplate.Red_Button)
             {
@@ -106,7 +106,7 @@ namespace IndustrialPark
                     SlideDistance = -0.5f,
                     SlideTime = 0.15f
                 };
-                Motion.MotionFlags.FlagValueInt = 4;
+                Motion.MotionFlags.FlagValueShort = 4;
             }
             else if (template == AssetTemplate.Red_Button_Smash)
             {
@@ -120,7 +120,7 @@ namespace IndustrialPark
                     SlideDistance = -0.5f,
                     SlideTime = 0.15f
                 };
-                Motion.MotionFlags.FlagValueInt = 4;
+                Motion.MotionFlags.FlagValueShort = 4;
             }
             else if (template == AssetTemplate.Floor_Button)
             {
@@ -134,7 +134,7 @@ namespace IndustrialPark
                     SlideDistance = -0.3f,
                     SlideTime = 0.15f
                 };
-                Motion.MotionFlags.FlagValueInt = 4;
+                Motion.MotionFlags.FlagValueShort = 4;
             }
             else if (template == AssetTemplate.Floor_Button_Smash)
             {
@@ -148,7 +148,7 @@ namespace IndustrialPark
                     SlideDistance = -0.3f,
                     SlideTime = 0.15f
                 };
-                Motion.MotionFlags.FlagValueInt = 4;
+                Motion.MotionFlags.FlagValueShort = 4;
             }
             else
                 Motion = new Motion_Mechanism();

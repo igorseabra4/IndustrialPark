@@ -293,6 +293,7 @@
         Floor_Button_Smash,
         Crate,
         Cauldron,
+        Flower,
 
         // ...but not for user
         Red_Button_Base,
@@ -302,6 +303,7 @@
         Cauldron_Sfx,
         Cauldron_Light,
         Cauldron_Emitter,
+        Flower_Dig,
 
         // Incredibles Pickups
         Health_10,

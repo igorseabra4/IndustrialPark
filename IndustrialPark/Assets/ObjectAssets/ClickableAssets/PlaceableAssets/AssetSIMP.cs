@@ -106,6 +106,12 @@ namespace IndustrialPark
                     Model = "rcue0001";
                     Surface = "SCARE";
                     break;
+                case AssetTemplate.Flower:
+                    Model = "dig_flower_bind";
+                    Animation = "DIG_ANIM_TABLE";
+                    SolidityFlags.FlagValueByte = 0x03;
+                    CollType.FlagValueByte = 0;
+                    break;
             }
         }
 

@@ -147,6 +147,16 @@ namespace IndustrialPark
                     PlatSpecific = new PlatSpecific_BreakawayPlatform(template);
                     Motion = new Motion_Mechanism(MotionType.Other);
                     break;
+                case AssetTemplate.Flower_Dig:
+                    VisibilityFlags.FlagValueByte = 0;
+                    Model = "path_dig_C.MINF";
+                    PlatformType = PlatType.ExtendRetract;
+                    var m = (Motion_ExtendRetract)Motion;
+                    m.MotionFlags.FlagValueShort = 0x4;
+                    m.RetractPositionX = _position.X;
+                    m.RetractPositionY = _position.Y;
+                    m.RetractPositionZ = _position.Z;
+                    break;
             }
         }
 

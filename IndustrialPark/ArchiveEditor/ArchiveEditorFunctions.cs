@@ -631,10 +631,7 @@ namespace IndustrialPark
                     case AssetType.MovePoint: return new AssetMVPT(AHDR, game, endianness);
                     case AssetType.NPC: return new AssetNPC(AHDR, game, endianness);
                     case AssetType.OneLiner: return new AssetONEL(AHDR, game, endianness);
-                    case AssetType.ParticleEmitter:
-                        if (game == Game.Scooby)
-                            return new AssetPARE_Scooby(AHDR, game, endianness);
-                        return new AssetPARE(AHDR, game, endianness);
+                    case AssetType.ParticleEmitter: return new AssetPARE(AHDR, game, endianness);
                     case AssetType.ParticleProperties: return new AssetPARP(AHDR, game, endianness);
                     case AssetType.ParticleSystem: return new AssetPARS(AHDR, game, endianness);
                     case AssetType.Pendulum: return new AssetPEND(AHDR, game, endianness);
