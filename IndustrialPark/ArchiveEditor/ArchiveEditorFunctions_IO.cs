@@ -37,6 +37,9 @@ namespace IndustrialPark
 
         public void ImportHip((HipFile, Game, Platform) hip, bool forceOverwrite, List<uint> missingAssets)
         {
+            if (hip.Item3 == Platform.Unknown)
+                hip.Item3 = platform;
+
             UnsavedChanges = true;
             forceOverwrite |= missingAssets != null;
 

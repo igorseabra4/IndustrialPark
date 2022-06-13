@@ -52,6 +52,21 @@ namespace IndustrialPark
                 HitMask.FlagValueInt = 459;
                 Model = "destruct_crate_bind";
                 Animation = "CRATE WOBBLE";
+                _links = new Link[]
+                {
+                    new Link(Game.Scooby)
+                    {
+                        EventReceiveID = (ushort)EventScooby.Destroy,
+                        EventSendID = (ushort)EventScooby.LobMasterShootFromWidget,
+                        TargetAsset = "CRATESHARDLOB"
+                    },
+                    new Link(Game.Scooby)
+                    {
+                        EventReceiveID = (ushort)EventScooby.Destroy,
+                        EventSendID = (ushort)EventScooby.Play,
+                        TargetAsset = "SMASH"
+                    }
+                };
             }
         }
 

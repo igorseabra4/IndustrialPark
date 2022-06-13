@@ -63,7 +63,7 @@ namespace IndustrialPark
         public AssetSingle ActivateRadius
         {
             get => _activateRadius; 
-            set { _activateRadius = value; CreateRadiusTransformMatrix(); }
+            set { _activateRadius = value; CreateTransformMatrix(); }
         }
         [Category(categoryName)]
         public AssetSingle ActivateFOV { get; set; }
@@ -128,8 +128,11 @@ namespace IndustrialPark
         [Category(categoryName)]
         public int MinGameDifficulty { get; set; }
 
-        public AssetNPC(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.NPC, BaseAssetType.NPC, position)
+        public AssetNPC(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.NPC, BaseAssetType.Villain, position)
         {
+            ColorAlpha = 0f;
+            ColorAlphaSpeed = 0f;
+
             ActivateRadius = 5f;
             ActivateFOV = 90f;
             DetectHeight = 2f;
@@ -143,8 +146,11 @@ namespace IndustrialPark
             DurGummedState = 5;
             DurBubbleState = 5;
             Hitpoints = 1;
-            BehaviorState = 0;
-            Flags.FlagValueInt = (1 << 0) & (1 << 1) & (1 << 2) & (1 << 3) & (1 << 4) & (1 << 5) & (1 << 6) & (1 << 31);
+            BehaviorState = 1;
+            unchecked
+            {
+                Flags.FlagValueInt = (uint)((1 << 0) | (1 << 1) | (1 << 2) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6) | (1 << 31));
+            }
             LobSpeed = 2f;
             LobDurReload = 1f;
             LobRange = 4f;
@@ -398,7 +404,10 @@ namespace IndustrialPark
         }
 
         private Matrix radiusMatrix;
-        private void CreateRadiusTransformMatrix() =>
+        public override void CreateTransformMatrix()
+        {
             radiusMatrix = Matrix.Scaling(ActivateRadius) * Matrix.Translation(_position);
+            base.CreateTransformMatrix();
+        }
     }
 }
