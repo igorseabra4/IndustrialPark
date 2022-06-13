@@ -72,7 +72,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetLODT : Asset
+    public class AssetLODT : Asset, IAssetAddSelected
     {
         private static readonly Dictionary<uint, float> maxDistances = new Dictionary<uint, float>();
 
@@ -157,6 +157,17 @@ namespace IndustrialPark
                 entries.Add(entry);
             }
 
+            LODT_Entries = entries.ToArray();
+        }
+
+        public string GetItemsText => "entries";
+
+        public void AddItems(List<uint> items)
+        {
+            var entries = LODT_Entries.ToList();
+            foreach (var i in items)
+                if (!entries.Any(e => e.BaseModel == i))
+                    entries.Add(new EntryLODT() { BaseModel = i, MaxDistance = 100f });
             LODT_Entries = entries.ToArray();
         }
     }

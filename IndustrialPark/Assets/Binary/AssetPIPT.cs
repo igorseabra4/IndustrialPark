@@ -262,7 +262,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetPIPT : Asset
+    public class AssetPIPT : Asset, IAssetAddSelected
     {
         private EntryPIPT[] _piptEntries { get; set; }
         [Category("Pipe Info Table")]
@@ -366,6 +366,17 @@ namespace IndustrialPark
                 entries.Add(entry);
             }
 
+            PIPT_Entries = entries.ToArray();
+        }
+
+        public string GetItemsText => "entries";
+
+        public void AddItems(List<uint> items)
+        {
+            var entries = PIPT_Entries.ToList();
+            foreach (var i in items)
+                if (!entries.Any(e => e.Model == i))
+                    entries.Add(new EntryPIPT() { Model = i, PipeFlags_Preset = PiptPreset.AlphaBlend });
             PIPT_Entries = entries.ToArray();
         }
     }

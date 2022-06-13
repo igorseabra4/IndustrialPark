@@ -506,6 +506,9 @@ namespace IndustrialPark
 
         private void MouseMoveControl(object sender, MouseEventArgs e)
         {
+            if (e.Button == MouseButtons.None)
+                ArchiveEditorFunctions.ScreenUnclicked();
+
             if (renderer.isDrawingUI)
             {
                 float x = ((e.X - renderPanel.ClientRectangle.X) * 640f / renderPanel.ClientRectangle.Width);
@@ -943,7 +946,7 @@ namespace IndustrialPark
 
         public void ScreenClicked(SharpDX.Rectangle viewRectangle, int X, int Y, bool isMouseDown)
         {
-            if (ArchiveEditorFunctions.FinishedMovingGizmo)
+            if (ArchiveEditorFunctions.FinishedMovingGizmo && !isMouseDown)
                 ArchiveEditorFunctions.FinishedMovingGizmo = false;
             else
             {

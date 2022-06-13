@@ -39,7 +39,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetCOLL : Asset
+    public class AssetCOLL : Asset, IAssetAddSelected
     {
         [Category("Collision Table")]
         public EntryCOLL[] CollisionTable_Entries { get; set; }
@@ -102,6 +102,17 @@ namespace IndustrialPark
                 entries.Add(entry);
             }
 
+            CollisionTable_Entries = entries.ToArray();
+        }
+
+        public string GetItemsText => "entries";
+
+        public void AddItems(List<uint> items)
+        {
+            var entries = CollisionTable_Entries.ToList();
+            foreach (var i in items)
+                if (!entries.Any(e => e.Model == i))
+                    entries.Add(new EntryCOLL() { Model = i });
             CollisionTable_Entries = entries.ToArray();
         }
     }
