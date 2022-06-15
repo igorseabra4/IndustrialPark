@@ -21,7 +21,7 @@ namespace IndustrialPark
             return item;
         }
 
-        public static void PopulateTemplateMenusAt(ToolStripMenuItem menu, EventHandler eventHandler)
+        public static List<ToolStripMenuItem> PopulateTemplateMenusAt(ToolStripMenuItem menu, EventHandler eventHandler)
         {
             ToolStripMenuItem controllers = new ToolStripMenuItem("Stage Controllers");
             controllers.DropDownItems.AddRange(new ToolStripItem[]
@@ -395,12 +395,34 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.Empty_Streaming_Sound, eventHandler),
             });
 
-            var paste = GetTemplateMenuItem(AssetTemplate.PasteClipboard, eventHandler);
+            var paste = GetTemplateMenuItem(AssetTemplate.Paste_Clipboard, eventHandler);
 
-            menu.DropDownItems.AddRange(new ToolStripItem[] { controllers, placeable, bfbb, tssm, scooby, incredibles, others, paste });
+            var items = new ToolStripItem[] { controllers, placeable, bfbb, tssm, scooby, incredibles, others, paste };
+            menu.DropDownItems.AddRange(items);
+
+            var result = new List<ToolStripMenuItem>();
+            foreach (var i in items)
+                if (i is ToolStripMenuItem item)
+                    result.AddRange(GetAllItems(item));
+            return result;
         }
 
-        private static string GetName(AssetTemplate template)
+        private static List<ToolStripMenuItem> GetAllItems(ToolStripMenuItem item)
+        {
+            var result = new List<ToolStripMenuItem>();
+            if (item is ToolStripMenuItem tsmi)
+            {
+                if (tsmi.Tag is AssetTemplate)
+                    result.Add(tsmi);
+                if (tsmi.HasDropDownItems)
+                    foreach (var i in tsmi.DropDownItems)
+                        if (i is ToolStripMenuItem tsmi2)
+                            result.AddRange(GetAllItems(tsmi2));
+            }
+            return result;
+        }
+
+        public static string GetName(AssetTemplate template)
         {
             switch (template)
             {
@@ -554,15 +576,7 @@ namespace IndustrialPark
                     return "Floor Button (Super Smash)";
             }
 
-            var tstring = template.ToString().Replace('_', ' ');
-            var result = new List<char>();
-            for (int i = 0; i < tstring.Length; i++)
-            {
-                if (i > 0 && tstring[i] >= 'A' && tstring[i] <= 'Z' && tstring[i-1] != ' ')
-                    result.Add(' ');
-                result.Add(tstring[i]);
-            }
-            return template.ToString();
+            return template.ToString().Replace('_', ' ');
         }
 
         public void SetAssetPositionToView(uint assetID)
@@ -603,7 +617,7 @@ namespace IndustrialPark
 
         private Asset PlaceUserTemplate(Vector3 position, int layerIndex, ref List<uint> assetIDs, AssetTemplate template)
         {
-            if (template == AssetTemplate.PasteClipboard)
+            if (template == AssetTemplate.Paste_Clipboard)
                 PasteAssetsFromClipboard(layerIndex, out assetIDs, dontReplace: true);
             else
             {
@@ -669,7 +683,7 @@ namespace IndustrialPark
         {
             if (template == AssetTemplate.Null)
                 template = CurrentAssetTemplate;
-            if (template == AssetTemplate.UserTemplate || template == AssetTemplate.PasteClipboard)
+            if (template == AssetTemplate.User_Template || template == AssetTemplate.Paste_Clipboard)
                 return PlaceUserTemplate(position, layerIndex, ref assetIDs, template);
 
             bool ignoreNumber = false;

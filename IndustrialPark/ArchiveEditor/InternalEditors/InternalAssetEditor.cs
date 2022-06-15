@@ -29,7 +29,7 @@ namespace IndustrialPark
 
             if (asset is AssetCAM cam) SetupForCam(cam);
             //else if (asset is AssetCSN csn) SetupForCsn(csn);
-            else if (asset is IAssetAddSelected aas) SetupForGrup(aas);
+            else if (asset is IAssetAddSelected aas) SetupForAddSelected(aas);
             else if (asset is AssetRenderWareModel arwm) SetupForModel(arwm);
             else if (asset is AssetSHRP shrp) SetupForShrp(shrp);
             else if (asset is AssetWIRE wire) SetupForWire(wire);
@@ -111,7 +111,7 @@ namespace IndustrialPark
             tableLayoutPanel1.Controls.Add(buttonGetDir);
         }
 
-        private void SetupForGrup(IAssetAddSelected asset)
+        private void SetupForAddSelected(IAssetAddSelected asset)
         {
             AddRow();
 

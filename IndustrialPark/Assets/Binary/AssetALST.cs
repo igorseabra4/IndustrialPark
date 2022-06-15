@@ -44,6 +44,7 @@ namespace IndustrialPark
                 Verify(assetID, ref result);
         }
 
+        [Browsable(false)]
         public string GetItemsText => "entries";
 
         public void AddItems(List<uint> items)

@@ -105,6 +105,7 @@ namespace IndustrialPark
             CollisionTable_Entries = entries.ToArray();
         }
 
+        [Browsable(false)]
         public string GetItemsText => "entries";
 
         public void AddItems(List<uint> items)

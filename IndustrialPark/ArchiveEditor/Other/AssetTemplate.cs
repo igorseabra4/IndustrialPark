@@ -3,8 +3,8 @@
     public enum AssetTemplate
     {
         Null,
-        PasteClipboard,
-        UserTemplate,
+        Paste_Clipboard,
+        User_Template,
 
         // Controllers
         Counter,

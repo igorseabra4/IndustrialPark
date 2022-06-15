@@ -160,6 +160,7 @@ namespace IndustrialPark
             LODT_Entries = entries.ToArray();
         }
 
+        [Browsable(false)]
         public string GetItemsText => "entries";
 
         public void AddItems(List<uint> items)
