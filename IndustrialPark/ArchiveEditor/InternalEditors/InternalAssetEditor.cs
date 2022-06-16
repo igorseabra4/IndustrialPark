@@ -32,6 +32,7 @@ namespace IndustrialPark
             else if (asset is IAssetAddSelected aas) SetupForAddSelected(aas);
             else if (asset is AssetRenderWareModel arwm) SetupForModel(arwm);
             else if (asset is AssetSHRP shrp) SetupForShrp(shrp);
+            else if (asset is AssetUIM uim) SetupForUim(uim);
             else if (asset is AssetWIRE wire) SetupForWire(wire);
 
             AddRow();
@@ -249,6 +250,26 @@ namespace IndustrialPark
                 buttonAdd.Click += (object sender, EventArgs e) =>
                 {
                     asset.AddEntry(i);
+                    propertyGridAsset.Refresh();
+                    archive.UnsavedChanges = true;
+                };
+                tableLayoutPanel1.Controls.Add(buttonAdd);
+            }
+        }
+
+        private void SetupForUim(AssetUIM asset)
+        {
+            AddRow();
+            AddRow();
+            AddRow();
+            AddRow();
+
+            foreach (UIMCommandType uimct in Enum.GetValues(typeof(UIMCommandType)))
+            {
+                Button buttonAdd = new Button() { Dock = DockStyle.Fill, Text = $"Add command: {uimct}", AutoSize = true };
+                buttonAdd.Click += (object sender, EventArgs e) =>
+                {
+                    asset.AddEntry(uimct);
                     propertyGridAsset.Refresh();
                     archive.UnsavedChanges = true;
                 };

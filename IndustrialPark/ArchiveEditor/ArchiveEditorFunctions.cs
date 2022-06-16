@@ -658,6 +658,7 @@ namespace IndustrialPark
                     case AssetType.PickupTypes: return new AssetTPIK(AHDR, game, endianness);
                     case AssetType.UserInterface: return new AssetUI(AHDR, game, endianness);
                     case AssetType.UserInterfaceFont: return new AssetUIFT(AHDR, game, endianness);
+                    case AssetType.UserInterfaceMotion: return new AssetUIM(AHDR, game, endianness);
                     case AssetType.VIL: return new AssetVIL(AHDR, game, endianness);
                     case AssetType.VILProperties: return new AssetVILP(AHDR, game, endianness);
                     case AssetType.Volume: return new AssetVOLU(AHDR, game, endianness);
@@ -672,7 +673,6 @@ namespace IndustrialPark
                     case AssetType.SlideProperty:
                     case AssetType.SceneSettings:
                     case AssetType.ThrowableTable:
-                    case AssetType.UserInterfaceMotion:
                     case AssetType.ZipLine:
                         return new AssetGenericBase(AHDR, game, endianness);
 

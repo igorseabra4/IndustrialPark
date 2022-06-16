@@ -599,9 +599,9 @@ namespace IndustrialPark
                 DeleteSelectedAssets();
             else if (e.KeyCode == Keys.U)
                 uIModeToolStripMenuItem_Click(null, null);
-            else if (e.KeyCode == Keys.B)
+            else if (!PressedKeys.Contains(Keys.ControlKey) && e.KeyCode == Keys.B)
                 SelectPreviousTemplate();
-            else if (e.KeyCode == Keys.N)
+            else if (!PressedKeys.Contains(Keys.ControlKey) && e.KeyCode == Keys.N)
                 SelectNextTemplate();
 
             if (e.KeyCode == Keys.F1)
