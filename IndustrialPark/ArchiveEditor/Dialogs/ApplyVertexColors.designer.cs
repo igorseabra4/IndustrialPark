@@ -40,6 +40,7 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.comboBoxOperation = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.pnlColorPreview = new System.Windows.Forms.Panel();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownW)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownZ)).BeginInit();
@@ -195,6 +196,14 @@
             this.label1.TabIndex = 9;
             this.label1.Text = resources.GetString("label1.Text");
             // 
+            // pnlColorPreview
+            // 
+            this.pnlColorPreview.BackColor = System.Drawing.Color.White;
+            this.pnlColorPreview.Location = new System.Drawing.Point(380, 15);
+            this.pnlColorPreview.Name = "pnlColorPreview";
+            this.pnlColorPreview.Size = new System.Drawing.Size(50, 50);
+            this.pnlColorPreview.TabIndex = 10;
+            // 
             // ApplyVertexColors
             // 
             this.AcceptButton = this.button1;
@@ -202,6 +211,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.button2;
             this.ClientSize = new System.Drawing.Size(442, 180);
+            this.Controls.Add(this.pnlColorPreview);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.groupBox2);
@@ -239,5 +249,6 @@
         private System.Windows.Forms.ComboBox comboBoxOperation;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button colorPickerBtn;
+        private System.Windows.Forms.Panel pnlColorPreview;
     }
 }
