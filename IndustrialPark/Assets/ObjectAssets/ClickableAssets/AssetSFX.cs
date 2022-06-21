@@ -61,11 +61,11 @@ namespace IndustrialPark
             set { _radius2 = value; CreateTransformMatrix(); }
         }
 
-        public AssetSFX(string assetName, Vector3 position, Game game, bool onRadius) : base(assetName, AssetType.SFX, BaseAssetType.SFX)
+        public AssetSFX(string assetName, Vector3 position, Game game, AssetTemplate template) : base(assetName, AssetType.SFX, BaseAssetType.SFX)
         {
             _position = position;
 
-            if (onRadius)
+            if (template == AssetTemplate.SFX_OnRadius)
             {
                 Flags08.FlagValueByte = 0x03;
                 Flags09.FlagValueByte = 0xE6;
@@ -79,7 +79,7 @@ namespace IndustrialPark
                     }
                 };
             }
-            else
+            else if (template == AssetTemplate.SFX_OnEvent)
             {
                 Flags08.FlagValueByte = 0x01;
                 Flags09.FlagValueByte = 0xC0;
@@ -90,6 +90,25 @@ namespace IndustrialPark
             Volume = 91;
             InnerRadius = 5f;
             OuterRadius = 10f;
+
+            if (template == AssetTemplate.Cauldron_Sfx)
+            {
+                Flags08.FlagValueByte = 0x01;
+                Flags09.FlagValueByte = 0xCA;
+                Sound = "cauldron_loop1";
+                Volume = 100;
+                InnerRadius = 20f;
+                OuterRadius = 0f;
+                _links = new Link[]
+                {
+                    new Link(game)
+                    {
+                        TargetAsset = assetID,
+                        EventReceiveID = (ushort)EventScooby.ScenePrepare,
+                        EventSendID = (ushort)EventScooby.Play
+                    }
+                };
+            }
 
             CreateTransformMatrix();
             ArchiveEditorFunctions.AddToRenderableAssets(this);

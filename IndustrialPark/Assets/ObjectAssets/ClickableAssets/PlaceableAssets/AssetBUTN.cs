@@ -48,10 +48,8 @@ namespace IndustrialPark
                "(Pressure Plate) Throw Fruit",
                "Patrick Cartwheel");
 
-        public AssetBUTN(Game game, string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.Button, BaseAssetType.Button, position)
+        public AssetBUTN(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.Button, BaseAssetType.Button, position)
         {
-            this.game = game;
-
             if (template == AssetTemplate.Button_Red)
             {
                 Model = "button";
@@ -73,9 +71,9 @@ namespace IndustrialPark
                     SlideTime = 0.5f,
                     SlideDecelTime = 0.2f
                 };
-                Motion.MotionFlags.FlagValueInt = 4;
+                Motion.MotionFlags.FlagValueShort = 4;
             }
-            else if (template == AssetTemplate.PressurePlate)
+            else if (template == AssetTemplate.Pressure_Plate)
             {
                 ActMethod = ButnActMethod.PressurePlate;
                 Model = "plate_pressure";
@@ -93,7 +91,64 @@ namespace IndustrialPark
                     SlideDistance = -0.15f,
                     SlideTime = 0.15f,
                 };
-                Motion.MotionFlags.FlagValueInt = 4;
+                Motion.MotionFlags.FlagValueShort = 4;
+            }
+            else if (template == AssetTemplate.Red_Button)
+            {
+                Pitch -= 90f;
+                ActMethod = ButnActMethod.Other;
+                Model = "rbsi0001";
+                Motion = new Motion_Mechanism()
+                {
+                    MovementType = EMovementType.SlideAndRotate,
+                    MovementLoopMode = EMechanismFlags.ReturnToStart,
+                    SlideAxis = Axis.Y,
+                    SlideDistance = -0.5f,
+                    SlideTime = 0.15f
+                };
+                Motion.MotionFlags.FlagValueShort = 4;
+            }
+            else if (template == AssetTemplate.Red_Button_Smash)
+            {
+                ActMethod = ButnActMethod.PressurePlate;
+                Model = "rbsl0001";
+                Motion = new Motion_Mechanism()
+                {
+                    MovementType = EMovementType.SlideAndRotate,
+                    MovementLoopMode = EMechanismFlags.ReturnToStart,
+                    SlideAxis = Axis.Y,
+                    SlideDistance = -0.5f,
+                    SlideTime = 0.15f
+                };
+                Motion.MotionFlags.FlagValueShort = 4;
+            }
+            else if (template == AssetTemplate.Floor_Button)
+            {
+                ActMethod = ButnActMethod.Button;
+                Model = "rbus0001";
+                Motion = new Motion_Mechanism()
+                {
+                    MovementType = EMovementType.SlideAndRotate,
+                    MovementLoopMode = EMechanismFlags.ReturnToStart,
+                    SlideAxis = Axis.Y,
+                    SlideDistance = -0.3f,
+                    SlideTime = 0.15f
+                };
+                Motion.MotionFlags.FlagValueShort = 4;
+            }
+            else if (template == AssetTemplate.Floor_Button_Smash)
+            {
+                ActMethod = ButnActMethod.PressurePlate;
+                Model = "rbue0001";
+                Motion = new Motion_Mechanism()
+                {
+                    MovementType = EMovementType.SlideAndRotate,
+                    MovementLoopMode = EMechanismFlags.ReturnToStart,
+                    SlideAxis = Axis.Y,
+                    SlideDistance = -0.3f,
+                    SlideTime = 0.15f
+                };
+                Motion.MotionFlags.FlagValueShort = 4;
             }
             else
                 Motion = new Motion_Mechanism();

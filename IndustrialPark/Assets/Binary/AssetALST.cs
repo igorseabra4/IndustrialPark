@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class AssetALST : Asset
+    public class AssetALST : Asset, IAssetAddSelected
     {
         [Category("Animation List")]
         public AssetID[] Animations { get; set; }
@@ -42,6 +42,19 @@ namespace IndustrialPark
 
             foreach (AssetID assetID in Animations)
                 Verify(assetID, ref result);
+        }
+
+        [Browsable(false)]
+        public string GetItemsText => "entries";
+
+        public void AddItems(List<uint> items)
+        {
+            var j = 0;
+            for (int i = 0; i < Animations.Length && j < items.Count; i++)
+            {
+                if (Animations[i] == 0)
+                    Animations[i] = items[j++];
+            }
         }
     }
 }

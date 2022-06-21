@@ -107,5 +107,16 @@ namespace IndustrialPark
             Verify(Texture, ref result);
             Verify(ParticleSystem, ref result);
         }
+
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game != Game.Incredibles)
+            {
+                dt.RemoveProperty("Unknown01");
+                dt.RemoveProperty("Unknown02");
+                dt.RemoveProperty("Unknown03");
+                dt.RemoveProperty("Unknown04");
+            }
+        }
     }
 }

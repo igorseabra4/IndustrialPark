@@ -425,7 +425,7 @@ namespace IndustrialPark
             if (asset is AssetRenderWareModel jsp)
                 jsp.GetRenderWareModelFile()?.Dispose();
             else if (asset is IAssetWithModel iawm)
-                iawm.MovieRemoveFromDictionary();
+                iawm.RemoveFromDictionary();
             else if (asset is AssetPICK pick)
                 pick.ClearDictionary();
             else if (asset is AssetTPIK tpik)
@@ -446,11 +446,8 @@ namespace IndustrialPark
                 TextureManager.RemoveTexture(rwtx.Name, this, rwtx.assetID);
         }
 
-        public bool ContainsAsset(uint key)
-        {
-            return assetDictionary.ContainsKey(key);
-        }
-
+        public bool ContainsAsset(uint key) => assetDictionary.ContainsKey(key);
+        
         public IEnumerable<AssetType> AssetTypesOnArchive() =>
             (from Asset asset in assetDictionary.Values select asset.assetType);
 
@@ -500,7 +497,7 @@ namespace IndustrialPark
                 var built = newAsset.BuildAHDR().data;
                 if (!Enumerable.SequenceEqual(AHDR.data, built))
                 {
-                    error = $"[{ AHDR.assetID:X8}] { AHDR.ADBG.assetName} (unsupported format)";
+                    error = $"[{ AHDR.assetID:X8}] {AHDR.ADBG.assetName} (unsupported format)";
                     if (showMessageBox)
                         MessageBox.Show($"There was an error loading asset " + error + " and editing has been disabled for it.");
 
@@ -636,10 +633,7 @@ namespace IndustrialPark
                     case AssetType.MovePoint: return new AssetMVPT(AHDR, game, endianness);
                     case AssetType.NPC: return new AssetNPC(AHDR, game, endianness);
                     case AssetType.OneLiner: return new AssetONEL(AHDR, game, endianness);
-                    case AssetType.ParticleEmitter:
-                        if (game != Game.Scooby)
-                            return new AssetPARE(AHDR, game, endianness);
-                        return new AssetGeneric(AHDR, game, endianness); // unsupported pare for scooby
+                    case AssetType.ParticleEmitter: return new AssetPARE(AHDR, game, endianness);
                     case AssetType.ParticleProperties: return new AssetPARP(AHDR, game, endianness);
                     case AssetType.ParticleSystem: return new AssetPARS(AHDR, game, endianness);
                     case AssetType.Pendulum: return new AssetPEND(AHDR, game, endianness);
@@ -666,6 +660,7 @@ namespace IndustrialPark
                     case AssetType.PickupTypes: return new AssetTPIK(AHDR, game, endianness);
                     case AssetType.UserInterface: return new AssetUI(AHDR, game, endianness);
                     case AssetType.UserInterfaceFont: return new AssetUIFT(AHDR, game, endianness);
+                    case AssetType.UserInterfaceMotion: return new AssetUIM(AHDR, game, endianness);
                     case AssetType.VIL: return new AssetVIL(AHDR, game, endianness);
                     case AssetType.VILProperties: return new AssetVILP(AHDR, game, endianness);
                     case AssetType.Volume: return new AssetVOLU(AHDR, game, endianness);
@@ -680,7 +675,6 @@ namespace IndustrialPark
                     case AssetType.SlideProperty:
                     case AssetType.SceneSettings:
                     case AssetType.ThrowableTable:
-                    case AssetType.UserInterfaceMotion:
                     case AssetType.ZipLine:
                         return new AssetGenericBase(AHDR, game, endianness);
 
@@ -695,6 +689,7 @@ namespace IndustrialPark
                     case AssetType.Subtitles:
                     case AssetType.TEXS:
                     case AssetType.UIFN:
+                    case AssetType.Null:
                         return new AssetGeneric(AHDR, game, endianness);
                     case AssetType.Cutscene:
                         return new AssetGeneric(AHDR, game, endianness);
@@ -704,7 +699,7 @@ namespace IndustrialPark
             }
             catch (Exception ex)
             {
-                error = $"[{ AHDR.assetID:X8}] {AHDR.ADBG.assetName} ({ex.Message})";
+                error = $"[{AHDR.assetID:X8}] {AHDR.ADBG.assetName} ({ex.Message})";
 
                 if (showMessageBox)
                     MessageBox.Show($"There was an error loading asset {error}:" + ex.Message + " and editing has been disabled for it.");

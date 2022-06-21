@@ -31,13 +31,16 @@ namespace IndustrialPark
 
             SetUiAssetsVisibility(false);
 
-            ArchiveEditorFunctions.PopulateTemplateMenusAt(toolStripMenuItem_Templates, TemplateToolStripItemClick);
+            templateButtons = ArchiveEditorFunctions.PopulateTemplateMenusAt(toolStripMenuItem_Templates, TemplateToolStripItemClick);
 
             renderer = new SharpRenderer(renderPanel);
         }
 
         public void UpdateTitleBar()
         {
+            if (IsDisposed)
+                return;
+
             char startOfArchiveList = '[';
             char endOfArchiveList = ']';
             char archiveDelimiter = ',';
@@ -77,7 +80,8 @@ namespace IndustrialPark
             {
                 Action<string> updateTitleSafe = (string s) => Text = s;
                 Invoke(updateTitleSafe, builder.ToString());
-            } else
+            }
+            else
             {
                 Text = builder.ToString();
             }
@@ -130,6 +134,9 @@ namespace IndustrialPark
             autoSaveOnClosingToolStripMenuItem.Checked = settings.AutosaveOnClose;
             autoLoadOnStartupToolStripMenuItem.Checked = settings.AutoloadOnStartup;
             checkForUpdatesOnStartupToolStripMenuItem.Checked = settings.CheckForUpdatesOnStartup;
+
+            drawOnlyFirstMINFReferenceToolStripMenuItem.Checked = settings.drawOnlyFirstMinf;
+            AssetMINF.drawOnlyFirst = settings.drawOnlyFirstMinf;
 
             useLODTForRenderingToolStripMenuItem.Checked = settings.renderBasedOnLodt;
             AssetMODL.renderBasedOnLodt = settings.renderBasedOnLodt;
@@ -199,6 +206,7 @@ namespace IndustrialPark
                 AutoloadOnStartup = autoLoadOnStartupToolStripMenuItem.Checked,
                 LastProjectPath = currentProjectPath,
                 CheckForUpdatesOnStartup = checkForUpdatesOnStartupToolStripMenuItem.Checked,
+                drawOnlyFirstMinf = AssetMINF.drawOnlyFirst,
                 renderBasedOnLodt = AssetMODL.renderBasedOnLodt,
                 renderBasedOnPipt = AssetMODL.renderBasedOnPipt,
                 discordRichPresence = discordRichPresenceToolStripMenuItem.Checked,
@@ -498,6 +506,9 @@ namespace IndustrialPark
 
         private void MouseMoveControl(object sender, MouseEventArgs e)
         {
+            if (e.Button == MouseButtons.None)
+                ArchiveEditorFunctions.ScreenUnclicked();
+
             if (renderer.isDrawingUI)
             {
                 float x = ((e.X - renderPanel.ClientRectangle.X) * 640f / renderPanel.ClientRectangle.Width);
@@ -598,6 +609,10 @@ namespace IndustrialPark
                 DeleteSelectedAssets();
             else if (e.KeyCode == Keys.U)
                 uIModeToolStripMenuItem_Click(null, null);
+            else if (!PressedKeys.Contains(Keys.ControlKey) && e.KeyCode == Keys.B)
+                SelectPreviousTemplate();
+            else if (!PressedKeys.Contains(Keys.ControlKey) && e.KeyCode == Keys.N)
+                SelectNextTemplate();
 
             if (e.KeyCode == Keys.F1)
                 Program.ViewConfig.Show();
@@ -882,6 +897,8 @@ namespace IndustrialPark
                 "Ctrl + (W, A, S, D): rotate view up, left, down, right\n" +
                 "Q, E: decrease interval, increase interval (view move speed)\n" +
                 "1, 3: decrease rotation interval, increase rotation interval (view rotation speed)\n" +
+                "B: select previous template\n" +
+                "N: select next template\n" +
                 "C: toggles backface culling\n" +
                 "F: toggles wireframe mode\n" +
                 "G: open Asset Data Editor for selected assets\n" +
@@ -927,9 +944,15 @@ namespace IndustrialPark
             {
                 Vector3 Position = GetScreenClickedPosition(ViewRectangle, e.X, e.Y);
 
+                bool placed = false;
                 foreach (ArchiveEditor archiveEditor in archiveEditors)
                     if (archiveEditor.TemplateFocus)
+                    {
                         archiveEditor.PlaceTemplate(Position);
+                        placed = true;
+                    }
+                if (!placed)
+                    MessageBox.Show($"Your template has not been placed as no Archive Editors have Template Focus on.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             else if (e.Button == MouseButtons.Right)
             {
@@ -945,7 +968,7 @@ namespace IndustrialPark
 
         public void ScreenClicked(SharpDX.Rectangle viewRectangle, int X, int Y, bool isMouseDown)
         {
-            if (ArchiveEditorFunctions.FinishedMovingGizmo)
+            if (ArchiveEditorFunctions.FinishedMovingGizmo && !isMouseDown)
                 ArchiveEditorFunctions.FinishedMovingGizmo = false;
             else
             {
@@ -1020,6 +1043,12 @@ namespace IndustrialPark
                 foreach (Asset a in ae.archive.GetAllAssets())
                     if (a is EntityAsset p)
                         p.Reset();
+        }
+
+        private void drawOnlyFirstMINFReferenceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            drawOnlyFirstMINFReferenceToolStripMenuItem.Checked = !drawOnlyFirstMINFReferenceToolStripMenuItem.Checked;
+            AssetMINF.drawOnlyFirst = drawOnlyFirstMINFReferenceToolStripMenuItem.Checked;
         }
 
         private void useMaxRenderDistanceToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1217,11 +1246,15 @@ namespace IndustrialPark
         private void SetUiAssetsVisibility(bool value)
         {
             autoShowDropDowns = false;
-            var clickThis = new string[] { "UI", "UIFT" };
+
+            AssetUI.dontRender = !value;
+            AssetUIFT.dontRender = !value;
+
+            var clickThis = new AssetType[] { AssetType.UserInterface, AssetType.UserInterfaceFont };
             if (assetViewToolStripMenuItems != null)
                 foreach (var item in assetViewToolStripMenuItems)
-                    if (clickThis.Contains(item.Name) && item.Checked != value)
-                        item.PerformClick();
+                    if (clickThis.Contains((AssetType)item.Tag))
+                        item.Checked = !(bool)assetViewTypes[(AssetType)item.Tag].GetField("dontRender").GetValue(null);
                     else if (item.Checked == value)
                         item.PerformClick();
             autoShowDropDowns = true;
@@ -1292,28 +1325,71 @@ namespace IndustrialPark
                 FileAssociations.FileAssociations.EnsureAssociationsSet();
         }
 
-        private void UnselectTemplateButtonRecursive(ToolStripItem t)
+        private void UnselectTemplateButtons()
         {
-            if (t is ToolStripMenuItem toolStripMenuItem)
+            foreach (var i in templateButtons)
+                i.Checked = false;
+        }
+
+        private void SelectPreviousTemplate()
+        {
+            if (ArchiveEditorFunctions.CurrentAssetTemplate == AssetTemplate.User_Template)
             {
-                if (toolStripMenuItem.HasDropDownItems)
-                    foreach (ToolStripItem ti in toolStripMenuItem.DropDownItems)
-                        UnselectTemplateButtonRecursive(ti);
+                if (toolStripComboBoxUserTemplate.SelectedIndex == 0)
+                    toolStripComboBoxUserTemplate.SelectedIndex = toolStripComboBoxUserTemplate.Items.Count - 1;
                 else
-                    toolStripMenuItem.Checked = false;
+                    toolStripComboBoxUserTemplate.SelectedIndex -= 1;
+            }
+            else
+            {
+                for (int i = 1; i < templateButtons.Count; i++)
+                {
+                    if (templateButtons[i].Checked)
+                    {
+                        templateButtons[i - 1].PerformClick();
+                        return;
+                    }
+                }
+                templateButtons.Last().PerformClick();
             }
         }
 
+        private void SelectNextTemplate()
+        {
+            if (ArchiveEditorFunctions.CurrentAssetTemplate == AssetTemplate.User_Template)
+            {
+                if (toolStripComboBoxUserTemplate.SelectedIndex == toolStripComboBoxUserTemplate.Items.Count - 1)
+                    toolStripComboBoxUserTemplate.SelectedIndex = 0;
+                else
+                    toolStripComboBoxUserTemplate.SelectedIndex += 1;
+            }
+            else
+            {
+                for (int i = 0; i < templateButtons.Count - 1; i++)
+                {
+                    if (templateButtons[i].Checked)
+                    {
+                        templateButtons[i + 1].PerformClick();
+                        return;
+                    }
+                }
+                templateButtons[0].PerformClick();
+            }
+        }
+
+        private List<ToolStripMenuItem> templateButtons;
+
         private void TemplateToolStripItemClick(object sender, EventArgs e)
         {
-            var template = (AssetTemplate)((ToolStripItem)sender).Tag;
+            var item = (ToolStripMenuItem)sender;
+            var template = (AssetTemplate)item.Tag;
 
-            UnselectTemplateButtonRecursive(toolStripMenuItem_Templates);
+            UnselectTemplateButtons();
 
             ArchiveEditorFunctions.CurrentAssetTemplate = template;
-            toolStripStatusLabelTemplate.Text = "Template: " + ArchiveEditorFunctions.CurrentAssetTemplate.ToString();
+            toolStripStatusLabelTemplate.Text = "Template: " + item.Text;
             toolStripComboBoxUserTemplate.SelectedItem = null;
-            ((ToolStripMenuItem)sender).Checked = true;
+            item.Checked = true;
         }
 
         private void userTemplateToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1338,8 +1414,8 @@ namespace IndustrialPark
         {
             if (toolStripComboBoxUserTemplate.SelectedIndex != -1)
             {
-                UnselectTemplateButtonRecursive(toolStripMenuItem_Templates);
-                ArchiveEditorFunctions.CurrentAssetTemplate = AssetTemplate.UserTemplate;
+                UnselectTemplateButtons();
+                ArchiveEditorFunctions.CurrentAssetTemplate = AssetTemplate.User_Template;
                 ArchiveEditorFunctions.CurrentUserTemplate = toolStripComboBoxUserTemplate.SelectedItem.ToString();
                 toolStripStatusLabelTemplate.Text = $"Template: {toolStripComboBoxUserTemplate.SelectedItem} (User)";
             }
@@ -1394,17 +1470,30 @@ namespace IndustrialPark
 
         private void eventSearchToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (Program.EventSearch == null)
+                Program.EventSearch = new EventSearch();
             Program.EventSearch.Show();
         }
 
         private void assetIDGeneratorToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (Program.AssetIDGenerator == null)
+                Program.AssetIDGenerator = new AssetIDGenerator();
             Program.AssetIDGenerator.Show();
         }
 
         private void dYNASearchToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (Program.DynaSearch == null)
+                Program.DynaSearch = new DynaSearch();
             Program.DynaSearch.Show();
+        }
+
+        private void pickupSearcherToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Program.PickupSearch == null)
+                Program.PickupSearch = new PickupSearch();
+            Program.PickupSearch.Show();
         }
 
         private void MainForm_Resize(object sender, EventArgs e)
@@ -1433,8 +1522,14 @@ namespace IndustrialPark
             Program.ViewConfig.TopMost = value;
             Program.UserTemplateManager.TopMost = value;
 
-            Program.EventSearch.TopMost = value;
-            Program.AssetIDGenerator.TopMost = value;
+            if (Program.EventSearch != null)
+                Program.EventSearch.TopMost = value;
+            if (Program.AssetIDGenerator != null)
+                Program.AssetIDGenerator.TopMost = value;
+            if (Program.DynaSearch != null)
+                Program.DynaSearch.TopMost = value;
+            if (Program.PickupSearch != null)
+                Program.PickupSearch.TopMost = value;
 
             foreach (ArchiveEditor ae in archiveEditors)
                 ae.SetAllTopMost(value);

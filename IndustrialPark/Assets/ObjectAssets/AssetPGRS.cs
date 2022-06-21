@@ -8,7 +8,7 @@ namespace IndustrialPark
 {
     public class AssetPGRS : BaseAsset
     {
-        private const string categoryName = "Scripted Event";
+        private const string categoryName = "Progress Script";
 
         public Link[] _progressLinks;
         [Category(categoryName), Editor(typeof(LinkListEditor), typeof(UITypeEditor))]
@@ -26,6 +26,11 @@ namespace IndustrialPark
             {
                 _progressLinks = value;
             }
+        }
+
+        public AssetPGRS(string assetName) : base(assetName, AssetType.ProgressScript, BaseAssetType.ProgressScript)
+        {
+            _progressLinks = new Link[0];
         }
 
         public AssetPGRS(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
@@ -66,7 +71,7 @@ namespace IndustrialPark
                 Verify(link.TargetAsset, ref result);
                 Verify(link.ArgumentAsset, ref result);
 
-                if (link.EventSendID == 0 || link.EventSendID.ToString() == ((int)link.EventSendID).ToString())
+                if (link.EventSendID == 0 || ((EventTSSM)link.EventSendID).ToString() == link.EventSendID.ToString())
                     result.Add("Progress link sends event of unknown type for TSSM: " + link.EventSendID.ToString());
             }
         }

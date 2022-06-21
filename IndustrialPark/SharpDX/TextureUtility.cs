@@ -885,8 +885,11 @@ namespace IndustrialPark
 
         private static ShaderResourceView CreateTextureFromBitmap(Device device, string filename)
         {
-            System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(filename);
+            return CreateTextureFromBitmap(device, new System.Drawing.Bitmap(filename));
+        }
 
+        public static ShaderResourceView CreateTextureFromBitmap(Device device, System.Drawing.Bitmap bitmap)
+        {
             // Describe and create a Texture2D.
             Texture2DDescription textureDesc = new Texture2DDescription()
             {

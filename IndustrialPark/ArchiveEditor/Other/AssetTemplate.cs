@@ -3,8 +3,8 @@
     public enum AssetTemplate
     {
         Null,
-        PasteClipboard,
-        UserTemplate,
+        Paste_Clipboard,
+        User_Template,
 
         // Controllers
         Counter,
@@ -13,6 +13,7 @@
         Fog,
         Group,
         Portal,
+        Progress_Script,
         Script,
         Sound_Group,
         Text,
@@ -69,7 +70,7 @@
         Shiny_Red,
         Shiny_Yellow,
         Shiny_Green,
-        ShinyBlue,
+        Shiny_Blue,
         Shiny_Purple,
         Underwear,
         Spatula,
@@ -165,7 +166,7 @@
 
         // Stage Items
         Button_Red,
-        PressurePlate,
+        Pressure_Plate,
         Taxi_Stand,
         Texas_Hitch,
         Texas_Hitch_Platform,
@@ -207,5 +208,109 @@
         LKIT_lights,
         LKIT_JF_SB_lights,
         LKIT_jf01_light_kit,
+
+        // Scooby Pickups
+        Scooby_Snack,
+        Snack_Box,
+        Warp_Gate,
+        Snack_Gate,
+        Save_Point,
+        Clue,
+        Key,
+        Gum,
+        Gum_Pack,
+        Soap,
+        Soap_Pack,
+
+        Cake,
+        Hamburger,
+        Ice_Cream,
+        Sandwich,
+        Turkey,
+
+        Shovel,
+        Springs,
+        Slippers,
+        Lampshade,
+        Helmet,
+        Knight_Helmet,
+        Boots,
+        Super_Smash,
+        Plungers,
+        Super_Sonic_Smash,
+        Umbrella,
+        Gum_Machine,
+        Soap_Bubble,
+
+        // Scooby Enemies
+        Caveman,
+        Creeper,
+        Funland_Robot,
+        Gargoyle,
+        Geronimo,
+        Ghost,
+        Ghost_Diver,
+        Ghost_of_Captain_Moody,
+        Headless_Specter,
+        Scarecrow,
+        Sea_Creature,
+        Space_Kook,
+        Tar_Monster,
+        Witch,
+        Witch_Doctor,
+        Wolfman,
+        Zombie,
+
+        Bat,
+        Crab,
+        Flying_Fish,
+        Rat,
+        Spider,
+        Killer_Plant,
+
+        Groundskeeper,
+        Holly,
+
+        //Shaggy0,
+        //Shaggy1,
+        //Shaggy4,
+        //Shaggy5,
+        //Shaggy8,
+        //Fred,
+        //Daphne,
+        //Velma,
+
+        //Black_Knight,
+        //Green_Ghost,
+        //Redbeard,
+        //Mastermind,
+        //Shark,
+
+        // Scooby items
+        Red_Button,
+        Floor_Button,
+        Red_Button_Smash,
+        Floor_Button_Smash,
+        Crate,
+        Cauldron,
+        Flower,
+
+        // ...but not for user
+        Red_Button_Base,
+        Floor_Button_Base,
+        Red_Button_Smash_Base,
+        Floor_Button_Smash_Base,
+        Cauldron_Sfx,
+        Cauldron_Light,
+        Cauldron_Emitter,
+        Flower_Dig,
+
+        // Incredibles Pickups
+        Health_10,
+        Health_25,
+        Health_50,
+        Power_25,
+        Power_50,
+        Bonus,
     }
 }

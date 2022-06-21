@@ -114,11 +114,25 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID Attach { get; set; }
 
-        public AssetLITE(string assetName, Vector3 position) : base(assetName, AssetType.Light, BaseAssetType.Light)
+        public AssetLITE(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.Light, BaseAssetType.Light)
         {
             _position = position;
             _color = Vector4.One;
             Radius = 10f;
+
+            if (template == AssetTemplate.Cauldron_Light)
+            {
+                LightType = LightType.Point3;
+                LightEffect = LightEffect.Cauldron;
+                Flags.FlagValueInt = 55;
+                DirectionY = 1f;
+                LightConeAngle = 45f;
+                Radius = 5f;
+                ColorRed = 0.250980f;
+                ColorGreen = 0.917647f;
+                ColorBlue = 0.082353f;
+                ColorAlpha = 1f;
+            }
 
             CreateTransformMatrix();
             ArchiveEditorFunctions.AddToRenderableAssets(this);

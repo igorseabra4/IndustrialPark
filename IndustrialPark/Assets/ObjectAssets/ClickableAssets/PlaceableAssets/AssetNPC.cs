@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using SharpDX;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -52,13 +53,18 @@ namespace IndustrialPark
         private const string categoryName = "NPC";
 
         [Category(categoryName)]
-        public NPCType NPCCType
+        public NPCType NPCType
         {
             get => (NPCType)(byte)TypeFlag;
             set => TypeFlag = (byte)value;
         }
+        private float _activateRadius;
         [Category(categoryName)]
-        public AssetSingle ActivateRadius { get; set; }
+        public AssetSingle ActivateRadius
+        {
+            get => _activateRadius; 
+            set { _activateRadius = value; CreateTransformMatrix(); }
+        }
         [Category(categoryName)]
         public AssetSingle ActivateFOV { get; set; }
         [Category(categoryName)]
@@ -122,9 +128,168 @@ namespace IndustrialPark
         [Category(categoryName)]
         public int MinGameDifficulty { get; set; }
 
-        public AssetNPC(string assetName, Vector3 position) : base(assetName, AssetType.NPC, BaseAssetType.NPC, position)
+        public AssetNPC(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.NPC, BaseAssetType.Villain, position)
         {
+            ColorAlpha = 0f;
+            ColorAlphaSpeed = 0f;
+
+            ActivateRadius = 5f;
+            ActivateFOV = 90f;
+            DetectHeight = 2f;
+            DetectHeightOffset = 0f;
+            SpeedMovement = 2f;
+            SpeedPursue = 4f;
+            SpeedTurn = 300f;
+            PursuitRange = 10f;
+            DurDazedState = 5;
+            DurGloatState = 3;
+            DurGummedState = 5;
+            DurBubbleState = 5;
+            Hitpoints = 1;
+            BehaviorState = 1;
+            unchecked
+            {
+                Flags.FlagValueInt = (uint)((1 << 0) | (1 << 1) | (1 << 2) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6) | (1 << 31));
+            }
+            LobSpeed = 2f;
+            LobDurReload = 1f;
+            LobRange = 4f;
+            LobSalvo = 1;
+            LobArcness = -1f;
+            LobHeavy = -1f;
+            ExtenderRange = 5f;
+            ExtenderWidth = 1f;
+            ExtenderDuration = 10f;
+            ExtenderRate = 2.5f;
+            ExtenderReloadTime = 10f;
+            Path = 0xCDCDCDCD;
+
+            switch (template)
+            {
+                case AssetTemplate.Caveman:
+                    Model = "cv.MINF";
+                    NPCType = NPCType.Caveman;
+                    break;
+                case AssetTemplate.Creeper:
+                    Model = "cr.MINF";
+                    NPCType = NPCType.Creeper;
+                    break;
+                case AssetTemplate.Funland_Robot:
+                    Model = "ar.MINF";
+                    NPCType = NPCType.FunlandRobot;
+                    break;
+                case AssetTemplate.Gargoyle:
+                    Model = "ga.MINF";
+                    NPCType = NPCType.Gargoyle;
+                    ProjectileType = "FIREBALL";
+                    LobHeavy = 9f;
+                    break;
+                case AssetTemplate.Geronimo:
+                    Model = "bm.MINF";
+                    NPCType = NPCType.Geronimo;
+                    break;
+                case AssetTemplate.Ghost:
+                    Model = "gz.MINF";
+                    NPCType = NPCType.Ghost;
+                    break;
+                case AssetTemplate.Ghost_Diver:
+                    Model = "gd.MINF";
+                    NPCType = NPCType.GhostDiver;
+                    break;
+                case AssetTemplate.Ghost_of_Captain_Moody:
+                    Model = "cm.MINF";
+                    NPCType = NPCType.GhostOfCaptainMoody;
+                    break;
+                case AssetTemplate.Headless_Specter:
+                    Model = "hs.MINF";
+                    NPCType = NPCType.HeadlessSpecter;
+                    break;
+                case AssetTemplate.Scarecrow:
+                    Model = "sw.MINF";
+                    NPCType = NPCType.Scarecrow;
+                    break;
+                case AssetTemplate.Sea_Creature:
+                    Model = "sc.MINF";
+                    NPCType = NPCType.SeaCreature;
+                    break;
+                case AssetTemplate.Space_Kook:
+                    Model = "gs.MINF";
+                    NPCType = NPCType.SpaceKook;
+                    break;
+                case AssetTemplate.Tar_Monster:
+                    Model = "tm.MINF";
+                    NPCType = NPCType.TarMonster;
+                    ProjectileType = "TARBALL_PROJ";
+                    LobSpeed = 10f;
+                    LobDurReload = 1f;
+                    LobRange = 10f;
+                    LobSalvo = 1;
+                    LobArcness = 0.5f;
+                    LobHeavy = -4f;
+                    break;
+                case AssetTemplate.Witch:
+                    Model = "wc.MINF";
+                    NPCType = NPCType.Witch;
+                    break;
+                case AssetTemplate.Witch_Doctor:
+                    Model = "wd.MINF";
+                    NPCType = NPCType.Witch;
+                    ProjectileType = "FIREBALL";
+                    LobSpeed = 5f;
+                    LobDurReload = 2f;
+                    LobRange = 10f;
+                    LobHeavy = 7f;
+                    break;
+                case AssetTemplate.Wolfman:
+                    Model = "wm.MINF";
+                    NPCType = NPCType.Wolfman;
+                    break;
+                case AssetTemplate.Zombie:
+                    Model = "zz.MINF";
+                    NPCType = NPCType.Zombie;
+                    break;
+                case AssetTemplate.Bat:
+                    Model = "ba.MINF";
+                    NPCType = NPCType.Bat;
+                    break;
+                case AssetTemplate.Crab:
+                    Model = "cb.MINF";
+                    NPCType = NPCType.Crab;
+                    break;
+                case AssetTemplate.Flying_Fish:
+                    Model = "ff.MINF";
+                    NPCType = NPCType.FlyingFish;
+                    break;
+                case AssetTemplate.Rat:
+                    Model = "rt.MINF";
+                    NPCType = NPCType.Rat;
+                    break;
+                case AssetTemplate.Spider:
+                    Model = "sp.MINF";
+                    NPCType = NPCType.Spider;
+                    break;
+                case AssetTemplate.Killer_Plant:
+                    Model = "kp.MINF";
+                    NPCType = NPCType.KillerPlant;
+                    ActivateRadius = 10f;
+                    ActivateFOV = 360f;
+                    ExtenderRange = 7f;
+                    ExtenderWidth = 1.5f;
+                    ExtenderDuration = 3f;
+                    ExtenderRate = 5f;
+                    ExtenderReloadTime = 3f;
+                    break;
+                case AssetTemplate.Groundskeeper:
+                    Model = "gr.MINF";
+                    NPCType = NPCType.Groundskeeper;
+                    break;
+                case AssetTemplate.Holly:
+                    Model = "ho.MINF";
+                    NPCType = NPCType.Holly;
+                    break;
+            }
         }
+
         public AssetNPC(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
@@ -233,6 +398,16 @@ namespace IndustrialPark
                 ArchiveEditorFunctions.renderingDictionary[_model].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * Color : Color, UvAnimOffset);
             else
                 renderer.DrawCube(LocalWorld(), isSelected);
+
+            if (isSelected)
+                renderer.DrawSphere(radiusMatrix, false, renderer.mvptColor);
+        }
+
+        private Matrix radiusMatrix;
+        public override void CreateTransformMatrix()
+        {
+            radiusMatrix = Matrix.Scaling(ActivateRadius) * Matrix.Translation(_position);
+            base.CreateTransformMatrix();
         }
     }
 }

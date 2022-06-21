@@ -12,8 +12,9 @@ namespace IndustrialPark
         public static UserTemplateManager UserTemplateManager;
 
         public static EventSearch EventSearch;
-        public static AssetIDGenerator AssetIDGenerator;
         public static DynaSearch DynaSearch;
+        public static AssetIDGenerator AssetIDGenerator;
+        public static PickupSearch PickupSearch;
 
         [STAThread]
         static void Main()
@@ -37,10 +38,6 @@ namespace IndustrialPark
             ViewConfig = new ViewConfig();
             AboutBox = new AboutBox();
             UserTemplateManager = new UserTemplateManager();
-
-            EventSearch = new EventSearch();
-            AssetIDGenerator = new AssetIDGenerator();
-            DynaSearch = new DynaSearch();
 
             Application.Run(MainForm);
         }

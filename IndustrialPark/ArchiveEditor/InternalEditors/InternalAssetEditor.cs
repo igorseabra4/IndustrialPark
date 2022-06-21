@@ -2,12 +2,12 @@
 using RenderWareFile;
 using SharpDX;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using static IndustrialPark.Models.Assimp_IO;
 using static IndustrialPark.Models.BSP_IO;
 using static IndustrialPark.Models.BSP_IO_Shared;
+using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -29,16 +29,17 @@ namespace IndustrialPark
 
             if (asset is AssetCAM cam) SetupForCam(cam);
             //else if (asset is AssetCSN csn) SetupForCsn(csn);
-            else if (asset is AssetGRUP grup) SetupForGrup(grup);
+            else if (asset is IAssetAddSelected aas) SetupForAddSelected(aas);
             else if (asset is AssetRenderWareModel arwm) SetupForModel(arwm);
             else if (asset is AssetSHRP shrp) SetupForShrp(shrp);
+            else if (asset is AssetUIM uim) SetupForUim(uim);
             else if (asset is AssetWIRE wire) SetupForWire(wire);
 
             AddRow();
 
             Button buttonHelp = new Button() { Dock = DockStyle.Fill, Text = "Open Wiki Page", AutoSize = true };
             buttonHelp.Click += (object sender, EventArgs e) =>
-                System.Diagnostics.Process.Start(AboutBox.WikiLink + HipHopFile.Functions.GetCode(asset.assetType));
+                System.Diagnostics.Process.Start(AboutBox.WikiLink + asset.assetType.GetCode().ToString());
             tableLayoutPanel1.Controls.Add(buttonHelp, 0, tableLayoutPanel1.RowCount - 1);
 
             Button buttonFindCallers = new Button() { Dock = DockStyle.Fill, Text = "Find Who Targets Me", AutoSize = true };
@@ -111,21 +112,14 @@ namespace IndustrialPark
             tableLayoutPanel1.Controls.Add(buttonGetDir);
         }
 
-        private void SetupForGrup(AssetGRUP asset)
+        private void SetupForAddSelected(IAssetAddSelected asset)
         {
             AddRow();
 
-            Button buttonAddSelected = new Button() { Dock = DockStyle.Fill, Text = "Add Selected To Group", AutoSize = true };
+            Button buttonAddSelected = new Button() { Dock = DockStyle.Fill, Text = "Add selected to " + asset.GetItemsText, AutoSize = true };
             buttonAddSelected.Click += (object sender, EventArgs e) =>
             {
-                List<AssetID> items = new List<AssetID>();
-                foreach (uint i in asset.GroupItems)
-                    items.Add(i);
-                foreach (uint i in archive.GetCurrentlySelectedAssetIDs())
-                    if (!items.Contains(i))
-                        items.Add(i);
-                asset.GroupItems = items.ToArray();
-
+                asset.AddItems(archive.GetCurrentlySelectedAssetIDs());
                 propertyGridAsset.Refresh();
                 archive.UnsavedChanges = true;
             };
@@ -256,6 +250,26 @@ namespace IndustrialPark
                 buttonAdd.Click += (object sender, EventArgs e) =>
                 {
                     asset.AddEntry(i);
+                    propertyGridAsset.Refresh();
+                    archive.UnsavedChanges = true;
+                };
+                tableLayoutPanel1.Controls.Add(buttonAdd);
+            }
+        }
+
+        private void SetupForUim(AssetUIM asset)
+        {
+            AddRow();
+            AddRow();
+            AddRow();
+            AddRow();
+
+            foreach (UIMCommandType uimct in Enum.GetValues(typeof(UIMCommandType)))
+            {
+                Button buttonAdd = new Button() { Dock = DockStyle.Fill, Text = $"Add command: {uimct}", AutoSize = true };
+                buttonAdd.Click += (object sender, EventArgs e) =>
+                {
+                    asset.AddEntry(uimct);
                     propertyGridAsset.Refresh();
                     archive.UnsavedChanges = true;
                 };

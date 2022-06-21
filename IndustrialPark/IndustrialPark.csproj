@@ -159,8 +159,10 @@
     <Compile Include="Assets\DYNA\DynaTypes\HudDynas\DynaHudImage.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaEffectFlamethrower.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaGObjectVent.cs" />
+    <Compile Include="Assets\ObjectAssets\AssetUIM.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetGRSM.cs" />
     <Compile Include="Assets\Shared\AssetSound.cs" />
+    <Compile Include="Assets\Shared\AssetSpecifics\UIMCommand.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\VolumeSpecific.cs" />
     <Compile Include="Assets\Shared\DataTypes\WireVector.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\RenderableRotatableDynaBase.cs" />
@@ -315,8 +317,10 @@
     <Compile Include="Assets\Shared\AssetSpecifics\PlatSpecific.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\CamSpecific.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\FlagField.cs" />
+    <Compile Include="Assets\Shared\Interfaces\IAssetAddSelected.cs" />
     <Compile Include="Assets\Shared\Interfaces\IVolumeAsset.cs" />
     <Compile Include="Assets\Shared\TypeConverter\SingleTypeConverter.cs" />
+    <Compile Include="Links\Enums\EventScooby.cs" />
     <Compile Include="Links\Enums\EventBFBB.cs" />
     <Compile Include="Assets\Shared\Enums\PlatType.cs" />
     <Compile Include="Assets\Shared\Interfaces\IRotatableAsset.cs" />
@@ -546,6 +550,9 @@
     <EmbeddedResource Include="Research\AssetIDGenerator.resx">
       <DependentUpon>AssetIDGenerator.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Research\PickupSearch.resx">
+      <DependentUpon>PickupSearch.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Research\DynaSearch.resx">
       <DependentUpon>DynaSearch.cs</DependentUpon>
     </EmbeddedResource>
@@ -557,6 +564,12 @@
     </Compile>
     <Compile Include="Research\AssetIDGenerator.Designer.cs">
       <DependentUpon>AssetIDGenerator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Research\PickupSearch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Research\PickupSearch.Designer.cs">
+      <DependentUpon>PickupSearch.cs</DependentUpon>
     </Compile>
     <Compile Include="Research\DynaSearch.cs">
       <SubType>Form</SubType>

@@ -7,6 +7,7 @@
         public string LastProjectPath;
         public bool CheckForUpdatesOnStartup;
 
+        public bool drawOnlyFirstMinf = false;
         public bool renderBasedOnLodt = false;
         public bool renderBasedOnPipt = true;
         public bool discordRichPresence = true;

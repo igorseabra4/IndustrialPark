@@ -10,12 +10,17 @@ namespace IndustrialPark
         public virtual byte[] Serialize(Game game, Endianness endianness) => new byte[0];
 
         public virtual bool HasReference(uint assetID) =>
-            GetType().GetProperties().Any(prop =>
-                (prop.GetValue(this) is AssetID aid && aid.Equals(assetID)) ||
-                (prop.GetValue(this) is IEnumerable<AssetID> ia && ia.Any(a => a.Equals(assetID))) ||
-                (prop.GetValue(this) is GenericAssetDataContainer gadc && gadc.HasReference(assetID)) ||
-                (prop.GetValue(this) is IEnumerable<GenericAssetDataContainer> igadc && igadc.Any(a => a.HasReference(assetID)))
-            );
+            GetType().GetProperties().Any(prop => (
+                prop.PropertyType.Equals(typeof(AssetID)) &&
+                    ((AssetID)prop.GetValue(this)).Equals(assetID)) ||
+                (typeof(GenericAssetDataContainer).IsAssignableFrom(prop.PropertyType) &&
+                    ((GenericAssetDataContainer)prop.GetValue(this)).HasReference(assetID)) ||
+                prop.PropertyType.GetInterfaces().Any(i => i.IsGenericType &&
+                    i.GetGenericTypeDefinition().Equals(typeof(IEnumerable<>)) &&
+                        ((i.GenericTypeArguments[0].Equals(typeof(AssetID)) &&
+                            ((IEnumerable<AssetID>)prop.GetValue(this)).Any(a => a.Equals(assetID))) ||
+                        (typeof(GenericAssetDataContainer).IsAssignableFrom(i.GenericTypeArguments[0]) &&
+                            ((IEnumerable<GenericAssetDataContainer>)prop.GetValue(this)).Any(a => a.HasReference(assetID))))));
 
         public virtual void Verify(ref List<string> result) { }
 

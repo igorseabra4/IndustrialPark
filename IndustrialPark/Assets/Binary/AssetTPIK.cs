@@ -1,4 +1,5 @@
-﻿using HipHopFile;
+﻿using AssetEditorColors;
+using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -15,6 +16,17 @@ namespace IndustrialPark
         public AssetSingle RingColorR { get; set; }
         public AssetSingle RingColorG { get; set; }
         public AssetSingle RingColorB { get; set; }
+        public AssetColor RingColorRGB
+        {
+            get => new AssetColor((byte)(RingColorR * 255), (byte)(RingColorG * 255), (byte)(RingColorB * 255), 255);
+            set
+            {
+                var val = value.ToVector4();
+                RingColorR = val.X;
+                RingColorG = val.Y;
+                RingColorB = val.Z;
+            }
+        }
         public AssetID Unknown_24 { get; set; }
         public AssetID Unknown_28 { get; set; }
         public AssetID PickupSoundGroup { get; set; }

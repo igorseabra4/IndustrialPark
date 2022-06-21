@@ -391,6 +391,25 @@ namespace IndustrialPark
             Plane.Draw(device);
         }
 
+        public void DrawPlaneText(Matrix world, bool isSelected, Vector3 uvAnimOffset, ShaderResourceView texture = null)
+        {
+            UvAnimRenderData renderData;
+            renderData.worldViewProjection = world * viewProjection;
+            renderData.Color = isSelected ? selectedColor : Vector4.One;
+            renderData.UvAnimOffset = (Vector4)uvAnimOffset;
+
+            device.UpdateData(tintedBuffer, renderData);
+            device.DeviceContext.VertexShader.SetConstantBuffer(0, tintedBuffer);
+            tintedShader.Apply();
+
+            if (texture == null)
+                texture = whiteDefault;
+
+            device.DeviceContext.PixelShader.SetShaderResource(0, texture);
+
+            Plane.Draw(device);
+        }
+
         public List<SharpDX.Direct3D11.Buffer> completeVertexBufferList = new List<SharpDX.Direct3D11.Buffer>();
 
         public void DrawSpline(SharpDX.Direct3D11.Buffer VertexBuffer, int vertexCount, Matrix world, Vector4 color, bool lineList)

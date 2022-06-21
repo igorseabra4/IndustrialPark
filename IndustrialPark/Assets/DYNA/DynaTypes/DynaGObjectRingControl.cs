@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace IndustrialPark
 {
@@ -14,7 +15,7 @@ namespace IndustrialPark
         SonicWaveGuitar = 5
     }
 
-    public class DynaGObjectRingControl : AssetDYNA
+    public class DynaGObjectRingControl : AssetDYNA, IAssetAddSelected
     {
         private const string dynaCategoryName = "game_object:RingControl";
 
@@ -121,6 +122,18 @@ namespace IndustrialPark
                 Verify(ring, ref result);
 
             base.Verify(ref result);
+        }
+
+        [Browsable(false)]
+        public string GetItemsText => "rings";
+
+        public void AddItems(List<uint> items)
+        {
+            var rings = Rings.ToList();
+            foreach (var u in items)
+                if (!rings.Contains(u))
+                    rings.Add(u);
+            Rings = rings.ToArray();
         }
     }
 }

@@ -40,11 +40,34 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID DestroyModel { get; set; }
 
-        public AssetDSTR(string assetName, Vector3 position) : base(assetName, AssetType.DestructibleObject, BaseAssetType.DestructObj, position)
+        public AssetDSTR(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.DestructibleObject, BaseAssetType.DestructObj, position)
         {
             CollType = 2;
             BlastRadius = 4f;
             BlastStrength = 1f;
+
+            if (template == AssetTemplate.Crate)
+            {
+                Health = 1;
+                HitMask.FlagValueInt = 459;
+                Model = "destruct_crate_bind";
+                Animation = "CRATE WOBBLE";
+                _links = new Link[]
+                {
+                    new Link(Game.Scooby)
+                    {
+                        EventReceiveID = (ushort)EventScooby.Destroy,
+                        EventSendID = (ushort)EventScooby.LobMasterShootFromWidget,
+                        TargetAsset = "CRATESHARDLOB"
+                    },
+                    new Link(Game.Scooby)
+                    {
+                        EventReceiveID = (ushort)EventScooby.Destroy,
+                        EventSendID = (ushort)EventScooby.Play,
+                        TargetAsset = "SMASH"
+                    }
+                };
+            }
         }
 
         public AssetDSTR(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)

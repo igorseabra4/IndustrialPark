@@ -62,13 +62,11 @@ namespace IndustrialPark
 
                 numericUpDownTime.Visible = true;
                 comboRecieveEvent.Visible = false;
-
-                textBoxSourceCheckOrFlags.Visible = false;
             }
 
             this.game = game;
 
-            foreach (var o in Enum.GetValues(game == Game.Incredibles ? typeof(EventTSSM) : typeof(EventBFBB)))
+            foreach (var o in Enum.GetValues(game == Game.Scooby ? typeof(EventScooby) : game == Game.BFBB ? typeof(EventBFBB) : typeof(EventTSSM)))
             {
                 comboRecieveEvent.Items.Add(o);
                 comboSendEvent.Items.Add(o);
@@ -153,8 +151,19 @@ namespace IndustrialPark
                 listBoxLinks.SelectedIndices.Clear();
                 foreach (var link in links)
                 {
-                    listBoxLinks.Items.Add(link);
+                    if (LinkListEditor.LinkType == LinkType.Normal)
+                    {
+                        link.Time = 0;
+                        link.Flags = 0;
+                    }
+                    else
+                    {
+                        link.EventReceiveID = 0;
+                        if (LinkListEditor.LinkType == LinkType.Timed)
+                            link.Flags = 0;
+                    }
 
+                    listBoxLinks.Items.Add(link);
                     listBoxLinks.SetSelected(listBoxLinks.Items.Count - 1, true);
                 }
             }

@@ -89,6 +89,29 @@ namespace IndustrialPark
                     Model = "fruit_throw_base";
                     CollType.FlagValueByte = 0;
                     break;
+                case AssetTemplate.Red_Button_Base:
+                    Model = "rbsi0002";
+                    Pitch -= 90f;
+                    break;
+                case AssetTemplate.Floor_Button_Base:
+                    Model = "rbus0002";
+                    break;
+                case AssetTemplate.Red_Button_Smash_Base:
+                    Model = "rbsl0002";
+                    break;
+                case AssetTemplate.Floor_Button_Smash_Base:
+                    Model = "rbue0002";
+                    break;
+                case AssetTemplate.Cauldron:
+                    Model = "rcue0001";
+                    Surface = "SCARE";
+                    break;
+                case AssetTemplate.Flower:
+                    Model = "dig_flower_bind";
+                    Animation = "DIG_ANIM_TABLE";
+                    SolidityFlags.FlagValueByte = 0x03;
+                    CollType.FlagValueByte = 0;
+                    break;
             }
         }
 

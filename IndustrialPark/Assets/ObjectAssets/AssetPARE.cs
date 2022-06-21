@@ -1,4 +1,6 @@
-﻿using HipHopFile;
+﻿using AssetEditorColors;
+using HipHopFile;
+using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -30,7 +32,7 @@ namespace IndustrialPark
         private const string categoryName = "Particle Emitter";
 
         [Category(categoryName)]
-        public FlagBitmask EmitterFlags { get; set; } = ByteFlagsDescriptor();
+        public FlagBitmask EmitterFlags { get; set; } = ByteFlagsDescriptor("On");
         private EmitterType _emitterType;
         [Category(categoryName)]
         public EmitterType EmitterType
@@ -82,11 +84,19 @@ namespace IndustrialPark
             }
         }
         [Category(categoryName)]
+        public AssetByte Count { get; set; }
+        [Category(categoryName)]
+        public AssetByte CountVariation { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Interval { get; set; }
+        [Category(categoryName)]
         public AssetID ParticleProperties { get; set; }
         [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter))]
         public PareSpecific_Generic ParticleEmitterSettings { get; set; }
         [Category(categoryName)]
         public AssetID Emitter { get; set; }
+        [Category(categoryName)]
+        public AssetID ParticleSystem { get; set; }
         [Category(categoryName)]
         public AssetSingle Emitter_PosX { get; set; }
         [Category(categoryName)]
@@ -100,11 +110,65 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle Velocity_Z { get; set; }
         [Category(categoryName)]
-        public AssetSingle Velocity_AngleVariation { get; set; }
+        public AssetSingle Velocity_AngleVariation_Rad { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Velocity_AngleVariation_Deg 
+        { 
+            get => MathUtil.RadiansToDegrees(Velocity_AngleVariation_Rad);
+            set => Velocity_AngleVariation_Rad = MathUtil.DegreesToRadians(value);
+        }
+        [Category(categoryName)]
+        public AssetColor StartColor { get; set; }
+        [Category(categoryName)]
+        public AssetColor EndColor { get; set; }
+        [Category(categoryName)]
+        public AssetSingle SizeBirth { get; set; }
+        [Category(categoryName)]
+        public AssetSingle SizeBirthVariation { get; set; }
+        [Category(categoryName)]
+        public AssetSingle SizeDeath { get; set; }
+        [Category(categoryName)]
+        public AssetSingle Life { get; set; }
+        [Category(categoryName)]
+        public AssetSingle LifeVariation { get; set; }
         [Category(categoryName)]
         public int CullMode { get; set; }
         [Category(categoryName)]
-        public AssetSingle CullDistanceSqr { get; set; }
+        public AssetSingle CullDistanceSquared { get; set; }
+        [Category(categoryName)]
+        public AssetByte MaxEmit { get; set; }
+
+        public AssetPARE(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.ParticleEmitter, BaseAssetType.ParticleEmitter)
+        {
+            Emitter_PosX = position.X;
+            Emitter_PosY = position.Y;
+            Emitter_PosZ = position.Z;
+
+            if (template == AssetTemplate.Cauldron_Emitter)
+            {
+                EmitterFlags.FlagValueByte = 0x01;
+                EmitterType = EmitterType.Circle;
+                Count = 0x03;
+                CountVariation = 0x01;
+                Interval = 0.1f;
+                ParticleEmitterSettings = new PareSpecific_xPECircle() 
+                { 
+                    Radius = 0.5f
+                };
+                ParticleSystem = "CAULDRON SYSTEM";
+                Velocity_Y = 1f;
+                Velocity_AngleVariation_Rad = 5.2359879e-002f;
+                StartColor = new AssetColor(0x20, 0xC8, 0x40, 0xFF);
+                EndColor = new AssetColor(0x00, 0x96, 0x40, 0x00);
+                SizeBirth = 0.15f;
+                SizeBirthVariation = 0.05f;
+                SizeDeath = 0.05f;
+                Life = 1.5f;
+                LifeVariation = 0.5f;
+                CullMode = 0x03;
+                CullDistanceSquared = 100f;
+            }
+        }
 
         public AssetPARE(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
@@ -114,10 +178,19 @@ namespace IndustrialPark
 
                 EmitterFlags.FlagValueByte = reader.ReadByte();
                 _emitterType = (EmitterType)reader.ReadByte();
-                reader.BaseStream.Position += 2;
-                ParticleProperties = reader.ReadUInt32();
 
-                // should be at 0x10 now
+                if (game == Game.Scooby)
+                {
+                    Count = reader.ReadByte();
+                    CountVariation = reader.ReadByte();
+                    Interval = reader.ReadSingle();
+                }
+                else
+                {
+                    reader.BaseStream.Position += 2;
+                    ParticleProperties = reader.ReadUInt32();
+                }
+
                 switch (_emitterType)
                 {
                     case EmitterType.CircleEdge:
@@ -161,15 +234,36 @@ namespace IndustrialPark
 
                 reader.BaseStream.Position = 0x2C;
                 Emitter = reader.ReadUInt32();
+                if (game == Game.Scooby)
+                    ParticleSystem = reader.ReadUInt32();
                 Emitter_PosX = reader.ReadSingle();
                 Emitter_PosY = reader.ReadSingle();
                 Emitter_PosZ = reader.ReadSingle();
                 Velocity_X = reader.ReadSingle();
                 Velocity_Y = reader.ReadSingle();
                 Velocity_Z = reader.ReadSingle();
-                Velocity_AngleVariation = reader.ReadSingle();
-                CullMode = reader.ReadInt32();
-                CullDistanceSqr = reader.ReadSingle();
+                Velocity_AngleVariation_Rad = reader.ReadSingle();
+                if (game == Game.Scooby)
+                {
+                    StartColor = reader.ReadColor();
+                    EndColor = reader.ReadColor();
+                    SizeBirth = reader.ReadSingle();
+                    SizeBirthVariation = reader.ReadSingle();
+                    SizeDeath = reader.ReadSingle();
+                    Life = reader.ReadSingle();
+                    LifeVariation = reader.ReadSingle();
+                    reader.ReadByte();
+                    reader.ReadByte();
+                    CullMode = reader.ReadByte();
+                    reader.ReadByte();
+                    CullDistanceSquared = reader.ReadSingle();
+                    MaxEmit = reader.ReadByte();
+                }
+                else
+                {
+                    CullMode = reader.ReadInt32();
+                    CullDistanceSquared = reader.ReadSingle();
+                }
             }
         }
 
@@ -180,22 +274,56 @@ namespace IndustrialPark
                 writer.Write(SerializeBase(endianness));
                 writer.Write(EmitterFlags.FlagValueByte);
                 writer.Write((byte)_emitterType);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-                writer.Write(ParticleProperties);
+
+                if (game == Game.Scooby)
+                {
+                    writer.Write(Count);
+                    writer.Write(CountVariation);
+                    writer.Write(Interval);
+                }
+                else
+                {
+                    writer.Write((byte)0);
+                    writer.Write((byte)0);
+                    writer.Write(ParticleProperties);
+                }
                 writer.Write(ParticleEmitterSettings.Serialize(game, endianness));
                 while (writer.BaseStream.Length < 0x2C)
                     writer.Write((byte)0);
                 writer.Write(Emitter);
+                if (game == Game.Scooby)
+                    writer.Write(ParticleSystem);
                 writer.Write(Emitter_PosX);
                 writer.Write(Emitter_PosY);
                 writer.Write(Emitter_PosZ);
                 writer.Write(Velocity_X);
                 writer.Write(Velocity_Y);
                 writer.Write(Velocity_Z);
-                writer.Write(Velocity_AngleVariation);
-                writer.Write(CullMode);
-                writer.Write(CullDistanceSqr);
+                writer.Write(Velocity_AngleVariation_Rad);
+                if (game == Game.Scooby)
+                {
+                    writer.Write(StartColor);
+                    writer.Write(EndColor);
+                    writer.Write(SizeBirth);
+                    writer.Write(SizeBirthVariation);
+                    writer.Write(SizeDeath);
+                    writer.Write(Life);
+                    writer.Write(LifeVariation);
+                    writer.Write((byte)0);
+                    writer.Write((byte)0);
+                    writer.Write((byte)CullMode);
+                    writer.Write((byte)0);
+                    writer.Write(CullDistanceSquared);
+                    writer.Write(MaxEmit);
+                    writer.Write((byte)0);
+                    writer.Write((byte)0);
+                    writer.Write((byte)0);
+                }
+                else
+                {
+                    writer.Write(CullMode);
+                    writer.Write(CullDistanceSquared);
+                }
                 writer.Write(SerializeLinks(endianness));
                 return writer.ToArray();
             }
@@ -203,13 +331,45 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
-            base.Verify(ref result);
             ParticleEmitterSettings.Verify(ref result);
-
-            if (ParticleProperties == 0)
-                result.Add("Particle Emitter with ParticleProperties set to 0");
-            Verify(ParticleProperties, ref result);
+            if (game == Game.Scooby)
+            {
+                if (ParticleSystem == 0)
+                    result.Add("Particle Emitter with ParticleSystem set to 0");
+                Verify(ParticleSystem, ref result);
+            }
+            else
+            {
+                if (ParticleProperties == 0)
+                    result.Add("Particle Emitter with ParticleProperties set to 0");
+                Verify(ParticleProperties, ref result);
+            }
             Verify(Emitter, ref result);
+            base.Verify(ref result);
+        }
+
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game == Game.Scooby)
+            {
+                dt.RemoveProperty("ParticleProperties");
+            }
+            else
+            {
+                dt.RemoveProperty("Count");
+                dt.RemoveProperty("CountVariation");
+                dt.RemoveProperty("Interval");
+                dt.RemoveProperty("ParticleSystem");
+                dt.RemoveProperty("StartColor");
+                dt.RemoveProperty("EndColor");
+                dt.RemoveProperty("SizeBirth");
+                dt.RemoveProperty("SizeBirthVariation");
+                dt.RemoveProperty("SizeDeath");
+                dt.RemoveProperty("Life");
+                dt.RemoveProperty("LifeVariation");
+                dt.RemoveProperty("MaxEmit");
+            }
+            base.SetDynamicProperties(dt);
         }
     }
 }

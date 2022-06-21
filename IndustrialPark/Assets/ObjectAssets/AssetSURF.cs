@@ -442,7 +442,8 @@ namespace IndustrialPark
                     reader.ReadByte();
                     reader.ReadByte();
                 }
-                else zSurfUVFX2 = null;
+                else
+                    zSurfUVFX2 = new zSurfUVFX();
 
                 OutOfBoundsDelay = reader.ReadSingle();
                 WalljumpScaleXZ = reader.ReadSingle();
@@ -493,6 +494,14 @@ namespace IndustrialPark
                     DrivingSurfaceType = reader.ReadByte();
                     reader.ReadByte();
                     reader.ReadByte();
+                }
+                else
+                {
+                    OffSurface = new zFootstepsData();
+                    OnSurface = new zFootstepsData();
+                    HitDecalData0 = new zHitDecalData();
+                    HitDecalData1 = new zHitDecalData();
+                    HitDecalData2 = new zHitDecalData();
                 }
             }
         }

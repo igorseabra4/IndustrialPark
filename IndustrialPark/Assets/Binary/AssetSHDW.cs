@@ -49,7 +49,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetSHDW : Asset
+    public class AssetSHDW : Asset, IAssetAddSelected
     {
         [Category("Shadow Map")]
         public EntrySHDW[] SHDW_Entries { get; set; }
@@ -106,6 +106,18 @@ namespace IndustrialPark
                 entries.Add(entry);
             }
 
+            SHDW_Entries = entries.ToArray();
+        }
+
+        [Browsable(false)]
+        public string GetItemsText => "entries";
+
+        public void AddItems(List<uint> items)
+        {
+            var entries = SHDW_Entries.ToList();
+            foreach (var i in items)
+                if (!entries.Any(e => e.Model == i))
+                    entries.Add(new EntrySHDW() { Model = i });
             SHDW_Entries = entries.ToArray();
         }
     }

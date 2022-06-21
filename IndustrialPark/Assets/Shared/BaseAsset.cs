@@ -177,9 +177,11 @@ namespace IndustrialPark
                 Verify(link.ArgumentAsset, ref result);
                 Verify(link.SourceCheckAsset, ref result);
 
-                if (link.EventReceiveID == 0 || link.EventReceiveID > Enum.GetValues(game == Game.Incredibles ? typeof(EventTSSM) : typeof(EventBFBB)).Length)
+                var eventCount = Enum.GetValues(game == Game.Scooby ? typeof(EventScooby) : game == Game.BFBB ? typeof(EventBFBB) : typeof(EventTSSM)).Length;
+
+                if (link.EventReceiveID == 0 || link.EventReceiveID > eventCount)
                     result.Add("Link receives event of unknown type: " + link.EventReceiveID.ToString());
-                if (link.EventSendID == 0 || link.EventSendID > Enum.GetValues(game == Game.Incredibles ? typeof(EventTSSM) : typeof(EventBFBB)).Length)
+                if (link.EventSendID == 0 || link.EventSendID > eventCount)
                     result.Add("Link sends event of unknown type: " + link.EventSendID.ToString());
             }
         }

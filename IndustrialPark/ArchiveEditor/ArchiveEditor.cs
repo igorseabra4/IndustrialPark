@@ -1212,10 +1212,9 @@ namespace IndustrialPark
 
         private void ToolStripMenuItem_CreateGroup_Click(object sender, EventArgs e)
         {
-            var items = (from a in CurrentlySelectedAssetIDs() select new AssetID(a)).ToArray();
             var assetIDs = PlaceTemplate(new Vector3(), AssetTemplate.Group);
             if (assetIDs != null && assetIDs.Count > 0)
-                ((AssetGRUP)archive.GetFromAssetID(assetIDs[0])).GroupItems = items;
+                ((AssetGRUP)archive.GetFromAssetID(assetIDs[0])).AddItems(CurrentlySelectedAssetIDs());
             SetupAssetVisibilityButtons();
         }
 

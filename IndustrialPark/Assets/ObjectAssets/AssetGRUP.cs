@@ -12,18 +12,18 @@ namespace IndustrialPark
         InOrder = 2
     }
 
-    public class AssetGRUP : BaseAsset
+    public class AssetGRUP : BaseAsset, IAssetAddSelected
     {
         private const string catName = "Group";
 
         [Category(catName)]
         public Delegation ReceiveEventDelegation { get; set; }
         [Category(catName)]
-        public AssetID[] GroupItems { get; set; }
+        public AssetID[] Items { get; set; }
 
         public AssetGRUP(string assetName) : base(assetName, AssetType.Group, BaseAssetType.Group)
         {
-            GroupItems = new AssetID[0];
+            Items = new AssetID[0];
         }
 
         public AssetGRUP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
@@ -35,9 +35,9 @@ namespace IndustrialPark
                 var itemCount = reader.ReadUInt16();
                 ReceiveEventDelegation = (Delegation)reader.ReadInt16();
 
-                GroupItems = new AssetID[itemCount];
-                for (int i = 0; i < GroupItems.Length; i++)
-                    GroupItems[i] = reader.ReadUInt32();
+                Items = new AssetID[itemCount];
+                for (int i = 0; i < Items.Length; i++)
+                    Items[i] = reader.ReadUInt32();
             }
         }
 
@@ -46,9 +46,9 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeBase(endianness));
-                writer.Write((short)GroupItems.Length);
+                writer.Write((short)Items.Length);
                 writer.Write((short)ReceiveEventDelegation);
-                foreach (var a in GroupItems)
+                foreach (var a in Items)
                     writer.Write(a);
                 writer.Write(SerializeLinks(endianness));
 
@@ -60,12 +60,24 @@ namespace IndustrialPark
         {
             base.Verify(ref result);
 
-            foreach (AssetID a in GroupItems)
+            foreach (AssetID a in Items)
             {
                 if (a == 0)
                     result.Add("Group with item set to 0");
                 Verify(a, ref result);
             }
+        }
+
+        [Browsable(false)]
+        public string GetItemsText => "group";
+
+        public void AddItems(List<uint> newItems)
+        {
+            var items = Items.ToList();
+            foreach (uint i in newItems)
+                if (!items.Contains(i))
+                    items.Add(i);
+            Items = items.ToArray();
         }
     }
 }

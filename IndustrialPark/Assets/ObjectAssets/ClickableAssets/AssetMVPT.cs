@@ -2,10 +2,11 @@
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace IndustrialPark
 {
-    public class AssetMVPT : BaseAsset, IRenderableAsset, IClickableAsset, IScalableAsset
+    public class AssetMVPT : BaseAsset, IRenderableAsset, IClickableAsset, IScalableAsset, IAssetAddSelected
     {
         private const string categoryName = "Move Point";
 
@@ -270,6 +271,18 @@ namespace IndustrialPark
         {
             if (IsZone == 0x00)
                 ArenaRadius = scale;
+        }
+
+        [Browsable(false)]
+        public string GetItemsText => "next";
+
+        public void AddItems(List<uint> newItems)
+        {
+            var items = NextMovePoints.ToList();
+            foreach (uint i in newItems)
+                if (!items.Contains(i))
+                    items.Add(i);
+            NextMovePoints = items.ToArray();
         }
     }
 }
