@@ -1498,6 +1498,11 @@ namespace IndustrialPark
 
         private void MainForm_Resize(object sender, EventArgs e)
         {
+            if (renderer == null)
+            {
+                return;
+            }
+
             try
             {
                 if (WindowState == FormWindowState.Minimized)
