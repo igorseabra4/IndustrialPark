@@ -546,5 +546,10 @@ namespace IndustrialPark
                 MessageBox.Show("Unable to find sequence number in asset name");
             }
         }
+
+        private void cmbGameSelection_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
