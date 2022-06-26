@@ -121,7 +121,7 @@
   <data name="logoPictureBox.InitialImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAIMAAAEDCAIAAACZOCBdAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        vwAADr8BOAVTJAAA/7JJREFUeF6U/QV0JFmSJQx71XRPVyVKSjEmSQmCAIWYmSlTzMzMUoqZmSEUChYz
+        vgAADr4B6kKxwAAA/7JJREFUeF6U/QV0JFmSJQx71XRPVyVKSjEmSQmCAIWYmSlTzMzMUoqZmSEUChYz
         K6GSmbOwu6uxuKq7d2d2Zr7Znfrv88jKzqnZ/b79z7HjxyPk7vHcrtm1a89fhKhwU7U4O71Ym1NBxkeC
         OUdDTOTDTJWibXViHfXinGG6cU56xJz14h114+1PRVtrRZqpRVpqhuBgzlHsRNrohHGU4mxPR1tpBhkf
         CDR+/z/bgUD2+0HM90MY7wezD0dYqkdZaQUzjwQzD+PNYJMj0TbHw8yVgjmHsR/MORRpoZropB9upZHs
@@ -1444,6 +1444,7 @@ by Heavy Iron Studios for GameCube, Xbox, PlayStation 2, PC.
 Additional credits go to:
 - actualchatterteeth
 - Dark
+- EnergyDrink
 - MinecraftFreak73
 - Pepperpot
 - Seil

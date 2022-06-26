@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace IndustrialPark
 {
-    public class EntrySGRP : GenericAssetDataContainer
+    public class SoundGroupInfo : GenericAssetDataContainer
     {
         public AssetID Sound { get; set; }
         [DisplayName("Volume (0-1)")]
@@ -14,17 +14,17 @@ namespace IndustrialPark
         public AssetSingle MinPitchMult { get; set; }
         public AssetSingle MaxPitchMult { get; set; }
 
-        public EntrySGRP()
+        public SoundGroupInfo()
         {
             Volume = 0.8f;
         }
 
-        public EntrySGRP(AssetID sound) : this()
+        public SoundGroupInfo(AssetID sound) : this()
         {
             Sound = sound;
         }
 
-        public EntrySGRP(EndianBinaryReader reader)
+        public SoundGroupInfo(EndianBinaryReader reader)
         {
             Sound = reader.ReadUInt32();
             Volume = reader.ReadSingle();
@@ -86,7 +86,7 @@ namespace IndustrialPark
         }
 
         [Category(categoryName)]
-        public EntrySGRP[] Entries { get; set; }
+        public SoundGroupInfo[] Entries { get; set; }
 
         public AssetSGRP(string assetName) : base(assetName, AssetType.SoundGroup, BaseAssetType.SoundGroup)
         {
@@ -95,7 +95,7 @@ namespace IndustrialPark
             uInfoPad0 = 0x42;
             InnerRadius = 8f;
             OuterRadius = 25f;
-            Entries = new EntrySGRP[] { new EntrySGRP() };
+            Entries = new SoundGroupInfo[] { new SoundGroupInfo() };
         }
 
         public AssetSGRP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
@@ -122,9 +122,9 @@ namespace IndustrialPark
                 _pszGroupName = reader.ReadString(4).ToCharArray();
                 _pszGroupName = reader.endianness == Endianness.Little ? _pszGroupName : _pszGroupName.Reverse().ToArray();
 
-                Entries = new EntrySGRP[entryCount];
+                Entries = new SoundGroupInfo[entryCount];
                 for (int i = 0; i < Entries.Length; i++)
-                    Entries[i] = new EntrySGRP(reader);
+                    Entries[i] = new SoundGroupInfo(reader);
             }
         }
 
@@ -173,7 +173,7 @@ namespace IndustrialPark
             var entries = Entries.ToList();
             foreach (uint i in newItems)
                 if (!entries.Any(e => e.Sound == i))
-                    entries.Add(new EntrySGRP(i));
+                    entries.Add(new SoundGroupInfo(i));
             Entries = entries.ToArray();
         }
     }

@@ -60,18 +60,19 @@ namespace IndustrialPark
 
         public AssetSNDI_PS2(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, Endianness.Little);
+            using (var reader = new EndianBinaryReader(AHDR.data, Endianness.Little))
+            {
+                int entriesSndAmount = reader.ReadInt32();
+                int entriesSndsAmount = reader.ReadInt32();
 
-            int entriesSndAmount = reader.ReadInt32();
-            int entriesSndsAmount = reader.ReadInt32();
+                Entries_SND = new EntrySoundInfo_PS2[entriesSndAmount];
+                for (int i = 0; i < Entries_SND.Length; i++)
+                    Entries_SND[i] = new EntrySoundInfo_PS2(reader.ReadBytes(EntrySoundInfo_PS2.StructSize));
 
-            Entries_SND = new EntrySoundInfo_PS2[entriesSndAmount];
-            for (int i = 0; i < Entries_SND.Length; i++)
-                Entries_SND[i] = new EntrySoundInfo_PS2(reader.ReadBytes(EntrySoundInfo_PS2.StructSize));
-
-            Entries_SNDS = new EntrySoundInfo_PS2[entriesSndsAmount];
-            for (int i = 0; i < Entries_SNDS.Length; i++)
-                Entries_SNDS[i] = new EntrySoundInfo_PS2(reader.ReadBytes(EntrySoundInfo_PS2.StructSize));
+                Entries_SNDS = new EntrySoundInfo_PS2[entriesSndsAmount];
+                for (int i = 0; i < Entries_SNDS.Length; i++)
+                    Entries_SNDS[i] = new EntrySoundInfo_PS2(reader.ReadBytes(EntrySoundInfo_PS2.StructSize));
+            }
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)

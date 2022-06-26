@@ -1,62 +1,75 @@
-﻿using HipHopFile;
+﻿using AssetEditorColors;
+using HipHopFile;
 using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class EntryLKIT : GenericAssetDataContainer
+    public class LightKitLight : GenericAssetDataContainer
     {
         public int Type { get; set; }
         public AssetSingle ColorR { get; set; }
         public AssetSingle ColorG { get; set; }
         public AssetSingle ColorB { get; set; }
-        public AssetSingle Unknown04 { get; set; }
-        public AssetSingle Unknown05_X { get; set; }
-        public AssetSingle Unknown06_Y { get; set; }
-        public AssetSingle Unknown07_Z { get; set; }
-        public AssetSingle Unknown08 { get; set; }
-        public AssetSingle Unknown09_X { get; set; }
-        public AssetSingle Unknown10_Y { get; set; }
-        public AssetSingle Unknown11_Z { get; set; }
-        public AssetSingle Unknown12 { get; set; }
+        public AssetSingle ColorAlpha { get; set; }
+        public AssetColor ColorRGBA
+        {
+            get => new AssetColor((byte)(ColorR * 255), (byte)(ColorG * 255), (byte)(ColorB * 255), (byte)(ColorAlpha * 255));
+            set
+            {
+                var val = value.ToVector4();
+                ColorR = val.X;
+                ColorG = val.Y;
+                ColorB = val.Z;
+                ColorAlpha = val.W;
+            }
+        }
+        public AssetSingle Unknown02_X { get; set; }
+        public AssetSingle Unknown02_Y { get; set; }
+        public AssetSingle Unknown02_Z { get; set; }
+        public AssetSingle Unknown02_W { get; set; }
+        public AssetSingle Unknown03_X { get; set; }
+        public AssetSingle Unknown03_Y { get; set; }
+        public AssetSingle Unknown03_Z { get; set; }
+        public AssetSingle Unknown03_W { get; set; }
         public AssetSingle Direction_X { get; set; }
         public AssetSingle Direction_Y { get; set; }
         public AssetSingle Direction_Z { get; set; }
-        public AssetSingle Unknown16 { get; set; }
-        public AssetSingle Unknown17_X { get; set; }
-        public AssetSingle Unknown18_Y { get; set; }
-        public AssetSingle Unknown19_Z { get; set; }
-        public AssetSingle Unknown20 { get; set; }
-        public AssetSingle Unknown21_X { get; set; }
-        public AssetSingle Unknown22_Y { get; set; }
-        public AssetSingle Unknown23_Z { get; set; }
+        public AssetSingle Direction_W { get; set; }
+        public AssetSingle Unknown05_X { get; set; }
+        public AssetSingle Unknown05_Y { get; set; }
+        public AssetSingle Unknown05_Z { get; set; }
+        public AssetSingle Unknown05_W { get; set; }
+        public AssetSingle Radius { get; set; }
+        public AssetSingle Angle { get; set; }
+        public AssetSingle PlatLight { get; set; }
 
-        public EntryLKIT() { }
-        public EntryLKIT(EndianBinaryReader reader)
+        public LightKitLight() { }
+        public LightKitLight(EndianBinaryReader reader)
         {
             Type = reader.ReadInt32();
             ColorR = reader.ReadSingle();
             ColorG = reader.ReadSingle();
             ColorB = reader.ReadSingle();
-            Unknown04 = reader.ReadSingle();
-            Unknown05_X = reader.ReadSingle();
-            Unknown06_Y = reader.ReadSingle();
-            Unknown07_Z = reader.ReadSingle();
-            Unknown08 = reader.ReadSingle();
-            Unknown09_X = reader.ReadSingle();
-            Unknown10_Y = reader.ReadSingle();
-            Unknown11_Z = reader.ReadSingle();
-            Unknown12 = reader.ReadSingle();
+            ColorAlpha = reader.ReadSingle();
+            Unknown02_X = reader.ReadSingle();
+            Unknown02_Y = reader.ReadSingle();
+            Unknown02_Z = reader.ReadSingle();
+            Unknown02_W = reader.ReadSingle();
+            Unknown03_X = reader.ReadSingle();
+            Unknown03_Y = reader.ReadSingle();
+            Unknown03_Z = reader.ReadSingle();
+            Unknown03_W = reader.ReadSingle();
             Direction_X = reader.ReadSingle();
             Direction_Y = reader.ReadSingle();
             Direction_Z = reader.ReadSingle();
-            Unknown16 = reader.ReadSingle();
-            Unknown17_X = reader.ReadSingle();
-            Unknown18_Y = reader.ReadSingle();
-            Unknown19_Z = reader.ReadSingle();
-            Unknown20 = reader.ReadSingle();
-            Unknown21_X = reader.ReadSingle();
-            Unknown22_Y = reader.ReadSingle();
-            Unknown23_Z = reader.ReadSingle();
+            Direction_W = reader.ReadSingle();
+            Unknown05_X = reader.ReadSingle();
+            Unknown05_Y = reader.ReadSingle();
+            Unknown05_Z = reader.ReadSingle();
+            Unknown05_W = reader.ReadSingle();
+            Radius = reader.ReadSingle();
+            Angle = reader.ReadSingle();
+            PlatLight = reader.ReadSingle();
         }
 
         public byte[] Serialize(Endianness endianness)
@@ -67,26 +80,26 @@ namespace IndustrialPark
                 writer.Write(ColorR);
                 writer.Write(ColorG);
                 writer.Write(ColorB);
-                writer.Write(Unknown04);
-                writer.Write(Unknown05_X);
-                writer.Write(Unknown06_Y);
-                writer.Write(Unknown07_Z);
-                writer.Write(Unknown08);
-                writer.Write(Unknown09_X);
-                writer.Write(Unknown10_Y);
-                writer.Write(Unknown11_Z);
-                writer.Write(Unknown12);
+                writer.Write(ColorAlpha);
+                writer.Write(Unknown02_X);
+                writer.Write(Unknown02_Y);
+                writer.Write(Unknown02_Z);
+                writer.Write(Unknown02_W);
+                writer.Write(Unknown03_X);
+                writer.Write(Unknown03_Y);
+                writer.Write(Unknown03_Z);
+                writer.Write(Unknown03_W);
                 writer.Write(Direction_X);
                 writer.Write(Direction_Y);
                 writer.Write(Direction_Z);
-                writer.Write(Unknown16);
-                writer.Write(Unknown17_X);
-                writer.Write(Unknown18_Y);
-                writer.Write(Unknown19_Z);
-                writer.Write(Unknown20);
-                writer.Write(Unknown21_X);
-                writer.Write(Unknown22_Y);
-                writer.Write(Unknown23_Z);
+                writer.Write(Direction_W);
+                writer.Write(Unknown05_X);
+                writer.Write(Unknown05_Y);
+                writer.Write(Unknown05_Z);
+                writer.Write(Unknown05_W);
+                writer.Write(Radius);
+                writer.Write(Angle);
+                writer.Write(PlatLight);
 
                 return writer.ToArray();
             }
@@ -99,7 +112,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID Group { get; set; }
         [Category(categoryName)]
-        public EntryLKIT[] Lights { get; set; }
+        public LightKitLight[] Lights { get; set; }
 
         public AssetLKIT(string assetName, byte[] data, Endianness endianness) : base(assetName, AssetType.LightKit)
         {
@@ -121,11 +134,11 @@ namespace IndustrialPark
                 reader.BaseStream.Position = 0x04;
                 Group = reader.ReadUInt32();
                 int lightCount = reader.ReadInt32();
-                Lights = new EntryLKIT[lightCount];
+                Lights = new LightKitLight[lightCount];
 
                 reader.BaseStream.Position = 0x10;
                 for (int i = 0; i < lightCount; i++)
-                    Lights[i] = new EntryLKIT(reader);
+                    Lights[i] = new LightKitLight(reader);
             }
         }
 

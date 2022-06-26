@@ -28,7 +28,7 @@
 
 //    [TypeConverter(typeof(ExpandableObjectConverter))]
 //    public class Section_Type3_Entry
-//    {   
+//    {
 //        public int Unknown01 { get; set; }
 //        public AssetSingle UnknownFloat01 { get; set; }
 //        public AssetSingle UnknownFloat02 { get; set; }
@@ -226,9 +226,9 @@
 //        }
 //    }
 
-//    public class AssetCSN : Asset
+//    public class AssetCSN_old : Asset
 //    {
-//        public AssetCSN(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness) { }
+//        public AssetCSN_old(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness) { }
 
 //        public override bool HasReference(uint assetID)
 //        {
@@ -429,7 +429,7 @@
 //                        {
 //                            File.WriteAllBytes(
 //                                Path.Combine(folderName,
-//                                $"skb1_s{j}_a{k}_" + 
+//                                $"skb1_s{j}_a{k}_" +
 //                                Path.GetFileNameWithoutExtension(Program.MainForm.GetAssetNameFromID(animEntry.AssetID))),
 //                                animEntry.fileData);
 //                            k++;

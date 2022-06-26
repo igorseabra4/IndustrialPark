@@ -133,14 +133,23 @@ namespace IndustrialPark
             base.CreateTransformMatrix();
         }
 
-        protected override List<Vector3> vertexSource => SharpRenderer.cubeVertices;
+        protected override List<Vector3> vertexSource => SimpleObject1 == 0 ? SharpRenderer.cubeVertices : new List<Vector3>();
 
-        protected override List<Triangle> triangleSource => SharpRenderer.cubeTriangles;
+        protected override List<Triangle> triangleSource => SimpleObject1 == 0 ? SharpRenderer.cubeTriangles : new List<Triangle>();
 
         public override void Draw(SharpRenderer renderer)
         {
-            renderer.DrawCube(world, isSelected);
-            renderer.DrawCube(world2, isSelected);
+            if (SimpleObject1 == 0)
+                renderer.DrawCube(world, isSelected);
+            if (isSelected && SimpleObject2 == 0)
+                renderer.DrawCube(world2, true);
+        }
+
+        public override bool ShouldDraw(SharpRenderer renderer)
+        {
+            if (SimpleObject1 == 0)
+                return base.ShouldDraw(renderer);
+            return false;
         }
 
         public static bool dontRender = false;

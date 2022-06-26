@@ -13,99 +13,103 @@ namespace IndustrialPark
         [Category(categoryName)]
         public FlagBitmask Flags { get; set; } = IntFlagsDescriptor();
         [Category(categoryName)]
-        public int InterpSpeed { get; set; }
+        public AssetSingle InterpSpeed { get; set; }
+
         [Category(categoryName)]
-        public int UnknownInt14 { get; set; }
+        public AssetID Subtitles { get; set; }
+
         [Category(categoryName)]
-        public int UnknownInt18 { get; set; }
+        public AssetSingle StartTime1 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt1C { get; set; }
+        public AssetSingle StartTime2 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt20 { get; set; }
+        public AssetSingle StartTime3 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt24 { get; set; }
+        public AssetSingle StartTime4 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt28 { get; set; }
+        public AssetSingle StartTime5 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt2C { get; set; }
+        public AssetSingle StartTime6 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt30 { get; set; }
+        public AssetSingle StartTime7 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt34 { get; set; }
+        public AssetSingle StartTime8 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt38 { get; set; }
+        public AssetSingle StartTime9 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt3C { get; set; }
+        public AssetSingle StartTime10 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt40 { get; set; }
+        public AssetSingle StartTime11 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt44 { get; set; }
+        public AssetSingle StartTime12 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt48 { get; set; }
+        public AssetSingle StartTime13 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt4C { get; set; }
+        public AssetSingle StartTime14 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt50 { get; set; }
+        public AssetSingle StartTime15 { get; set; }
+
         [Category(categoryName)]
-        public int UnknownInt54 { get; set; }
+        public AssetSingle EndTime1 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt58 { get; set; }
+        public AssetSingle EndTime2 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt5C { get; set; }
+        public AssetSingle EndTime3 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt60 { get; set; }
+        public AssetSingle EndTime4 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt64 { get; set; }
+        public AssetSingle EndTime5 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt68 { get; set; }
+        public AssetSingle EndTime6 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt6C { get; set; }
+        public AssetSingle EndTime7 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt70 { get; set; }
+        public AssetSingle EndTime8 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt74 { get; set; }
+        public AssetSingle EndTime9 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt78 { get; set; }
+        public AssetSingle EndTime10 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt7C { get; set; }
+        public AssetSingle EndTime11 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt80 { get; set; }
+        public AssetSingle EndTime12 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt84 { get; set; }
+        public AssetSingle EndTime13 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt88 { get; set; }
+        public AssetSingle EndTime14 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt8C { get; set; }
+        public AssetSingle EndTime15 { get; set; }
+
         [Category(categoryName)]
-        public int UnknownInt90 { get; set; }
+        public AssetID Emitter1 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt94 { get; set; }
+        public AssetID Emitter2 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt98 { get; set; }
+        public AssetID Emitter3 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt9C { get; set; }
+        public AssetID Emitter4 { get; set; }
         [Category(categoryName)]
-        public int UnknownIntA0 { get; set; }
+        public AssetID Emitter5 { get; set; }
         [Category(categoryName)]
-        public int UnknownIntA4 { get; set; }
+        public AssetID Emitter6 { get; set; }
         [Category(categoryName)]
-        public int UnknownIntA8 { get; set; }
+        public AssetID Emitter7 { get; set; }
         [Category(categoryName)]
-        public int UnknownIntAC { get; set; }
+        public AssetID Emitter8 { get; set; }
         [Category(categoryName)]
-        public int UnknownIntB0 { get; set; }
+        public AssetID Emitter9 { get; set; }
         [Category(categoryName)]
-        public int UnknownIntB4 { get; set; }
+        public AssetID Emitter10 { get; set; }
         [Category(categoryName)]
-        public int UnknownIntB8 { get; set; }
+        public AssetID Emitter11 { get; set; }
         [Category(categoryName)]
-        public int UnknownIntBC { get; set; }
+        public AssetID Emitter12 { get; set; }
         [Category(categoryName)]
-        public int UnknownIntC0 { get; set; }
+        public AssetID Emitter13 { get; set; }
         [Category(categoryName)]
-        public int UnknownIntC4 { get; set; }
-        [Category(categoryName)] // incredibles only
-        public int UnknownIntC8 { get; set; }
+        public AssetID Emitter14 { get; set; }
+        [Category(categoryName)]
+        public AssetID Emitter15 { get; set; }
 
         public AssetCSNM(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
@@ -115,54 +119,57 @@ namespace IndustrialPark
 
                 Cutscene = reader.ReadUInt32();
                 Flags.FlagValueInt = reader.ReadUInt32();
-                InterpSpeed = reader.ReadInt32();
-                UnknownInt14 = reader.ReadInt32();
-                UnknownInt18 = reader.ReadInt32();
-                UnknownInt1C = reader.ReadInt32();
-                UnknownInt20 = reader.ReadInt32();
-                UnknownInt24 = reader.ReadInt32();
-                UnknownInt28 = reader.ReadInt32();
-                UnknownInt2C = reader.ReadInt32();
-                UnknownInt30 = reader.ReadInt32();
-                UnknownInt34 = reader.ReadInt32();
-                UnknownInt38 = reader.ReadInt32();
-                UnknownInt3C = reader.ReadInt32();
-                UnknownInt40 = reader.ReadInt32();
-                UnknownInt44 = reader.ReadInt32();
-                UnknownInt48 = reader.ReadInt32();
-                UnknownInt4C = reader.ReadInt32();
-                UnknownInt50 = reader.ReadInt32();
-                UnknownInt54 = reader.ReadInt32();
-                UnknownInt58 = reader.ReadInt32();
-                UnknownInt5C = reader.ReadInt32();
-                UnknownInt60 = reader.ReadInt32();
-                UnknownInt64 = reader.ReadInt32();
-                UnknownInt68 = reader.ReadInt32();
-                UnknownInt6C = reader.ReadInt32();
-                UnknownInt70 = reader.ReadInt32();
-                UnknownInt74 = reader.ReadInt32();
-                UnknownInt78 = reader.ReadInt32();
-                UnknownInt7C = reader.ReadInt32();
-                UnknownInt80 = reader.ReadInt32();
-                UnknownInt84 = reader.ReadInt32();
-                UnknownInt88 = reader.ReadInt32();
-                UnknownInt8C = reader.ReadInt32();
-                UnknownInt90 = reader.ReadInt32();
-                UnknownInt94 = reader.ReadInt32();
-                UnknownInt98 = reader.ReadInt32();
-                UnknownInt9C = reader.ReadInt32();
-                UnknownIntA0 = reader.ReadInt32();
-                UnknownIntA4 = reader.ReadInt32();
-                UnknownIntA8 = reader.ReadInt32();
-                UnknownIntAC = reader.ReadInt32();
-                UnknownIntB0 = reader.ReadInt32();
-                UnknownIntB4 = reader.ReadInt32();
-                UnknownIntB8 = reader.ReadInt32();
-                UnknownIntBC = reader.ReadInt32();
-                UnknownIntC0 = reader.ReadInt32();
-                UnknownIntC4 = reader.ReadInt32();
+                InterpSpeed = reader.ReadSingle();
                 if (game == Game.Incredibles)
-                    UnknownIntC8 = reader.ReadInt32();
+                    Subtitles = reader.ReadUInt32();
+
+                StartTime1 = reader.ReadSingle();
+                StartTime2 = reader.ReadSingle();
+                StartTime3 = reader.ReadSingle();
+                StartTime4 = reader.ReadSingle();
+                StartTime5 = reader.ReadSingle();
+                StartTime6 = reader.ReadSingle();
+                StartTime7 = reader.ReadSingle();
+                StartTime8 = reader.ReadSingle();
+                StartTime9 = reader.ReadSingle();
+                StartTime10 = reader.ReadSingle();
+                StartTime11 = reader.ReadSingle();
+                StartTime12 = reader.ReadSingle();
+                StartTime13 = reader.ReadSingle();
+                StartTime14 = reader.ReadSingle();
+                StartTime15 = reader.ReadSingle();
+
+                EndTime1 = reader.ReadSingle();
+                EndTime2 = reader.ReadSingle();
+                EndTime3 = reader.ReadSingle();
+                EndTime4 = reader.ReadSingle();
+                EndTime5 = reader.ReadSingle();
+                EndTime6 = reader.ReadSingle();
+                EndTime7 = reader.ReadSingle();
+                EndTime8 = reader.ReadSingle();
+                EndTime9 = reader.ReadSingle();
+                EndTime10 = reader.ReadSingle();
+                EndTime11 = reader.ReadSingle();
+                EndTime12 = reader.ReadSingle();
+                EndTime13 = reader.ReadSingle();
+                EndTime14 = reader.ReadSingle();
+                EndTime15 = reader.ReadSingle();
+
+                Emitter1 = reader.ReadUInt32();
+                Emitter2 = reader.ReadUInt32();
+                Emitter3 = reader.ReadUInt32();
+                Emitter4 = reader.ReadUInt32();
+                Emitter5 = reader.ReadUInt32();
+                Emitter6 = reader.ReadUInt32();
+                Emitter7 = reader.ReadUInt32();
+                Emitter8 = reader.ReadUInt32();
+                Emitter9 = reader.ReadUInt32();
+                Emitter10 = reader.ReadUInt32();
+                Emitter11 = reader.ReadUInt32();
+                Emitter12 = reader.ReadUInt32();
+                Emitter13 = reader.ReadUInt32();
+                Emitter14 = reader.ReadUInt32();
+                Emitter15 = reader.ReadUInt32();
             }
         }
 
@@ -174,53 +181,56 @@ namespace IndustrialPark
                 writer.Write(Cutscene);
                 writer.Write(Flags.FlagValueInt);
                 writer.Write(InterpSpeed);
-                writer.Write(UnknownInt14);
-                writer.Write(UnknownInt18);
-                writer.Write(UnknownInt1C);
-                writer.Write(UnknownInt20);
-                writer.Write(UnknownInt24);
-                writer.Write(UnknownInt28);
-                writer.Write(UnknownInt2C);
-                writer.Write(UnknownInt30);
-                writer.Write(UnknownInt34);
-                writer.Write(UnknownInt38);
-                writer.Write(UnknownInt3C);
-                writer.Write(UnknownInt40);
-                writer.Write(UnknownInt44);
-                writer.Write(UnknownInt48);
-                writer.Write(UnknownInt4C);
-                writer.Write(UnknownInt50);
-                writer.Write(UnknownInt54);
-                writer.Write(UnknownInt58);
-                writer.Write(UnknownInt5C);
-                writer.Write(UnknownInt60);
-                writer.Write(UnknownInt64);
-                writer.Write(UnknownInt68);
-                writer.Write(UnknownInt6C);
-                writer.Write(UnknownInt70);
-                writer.Write(UnknownInt74);
-                writer.Write(UnknownInt78);
-                writer.Write(UnknownInt7C);
-                writer.Write(UnknownInt80);
-                writer.Write(UnknownInt84);
-                writer.Write(UnknownInt88);
-                writer.Write(UnknownInt8C);
-                writer.Write(UnknownInt90);
-                writer.Write(UnknownInt94);
-                writer.Write(UnknownInt98);
-                writer.Write(UnknownInt9C);
-                writer.Write(UnknownIntA0);
-                writer.Write(UnknownIntA4);
-                writer.Write(UnknownIntA8);
-                writer.Write(UnknownIntAC);
-                writer.Write(UnknownIntB0);
-                writer.Write(UnknownIntB4);
-                writer.Write(UnknownIntB8);
-                writer.Write(UnknownIntBC);
-                writer.Write(UnknownIntC0);
-                writer.Write(UnknownIntC4);
                 if (game == Game.Incredibles)
-                    writer.Write(UnknownIntC8);
+                    writer.Write(Subtitles);
+
+                writer.Write(StartTime1);
+                writer.Write(StartTime2);
+                writer.Write(StartTime3);
+                writer.Write(StartTime4);
+                writer.Write(StartTime5);
+                writer.Write(StartTime6);
+                writer.Write(StartTime7);
+                writer.Write(StartTime8);
+                writer.Write(StartTime9);
+                writer.Write(StartTime10);
+                writer.Write(StartTime11);
+                writer.Write(StartTime12);
+                writer.Write(StartTime13);
+                writer.Write(StartTime14);
+                writer.Write(StartTime15);
+
+                writer.Write(EndTime1);
+                writer.Write(EndTime2);
+                writer.Write(EndTime3);
+                writer.Write(EndTime4);
+                writer.Write(EndTime5);
+                writer.Write(EndTime6);
+                writer.Write(EndTime7);
+                writer.Write(EndTime8);
+                writer.Write(EndTime9);
+                writer.Write(EndTime10);
+                writer.Write(EndTime11);
+                writer.Write(EndTime12);
+                writer.Write(EndTime13);
+                writer.Write(EndTime14);
+                writer.Write(EndTime15);
+
+                writer.Write(Emitter1);
+                writer.Write(Emitter2);
+                writer.Write(Emitter3);
+                writer.Write(Emitter4);
+                writer.Write(Emitter5);
+                writer.Write(Emitter6);
+                writer.Write(Emitter7);
+                writer.Write(Emitter8);
+                writer.Write(Emitter9);
+                writer.Write(Emitter10);
+                writer.Write(Emitter11);
+                writer.Write(Emitter12);
+                writer.Write(Emitter13);
+                writer.Write(Emitter14);
+                writer.Write(Emitter15);
                 writer.Write(SerializeLinks(endianness));
                 return writer.ToArray();
             }
@@ -238,7 +248,7 @@ namespace IndustrialPark
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
             if (game != Game.Incredibles)
-                dt.RemoveProperty("UnknownIntC8");
+                dt.RemoveProperty("Subtitles");
             base.SetDynamicProperties(dt);
         }
     }

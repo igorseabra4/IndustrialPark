@@ -720,14 +720,14 @@ namespace IndustrialPark
             if (pipt == null)
                 pipt = (AssetPIPT)PlaceTemplate(new Vector3(), IndexOfLayerOfType((int)LayerType_BFBB.DEFAULT), template: AssetTemplate.Pipe_Info_Table);
 
-            List<EntryPIPT> entries = pipt.PIPT_Entries.ToList();
+            List<PipeInfo> entries = pipt.PIPT_Entries.ToList();
 
             foreach (uint u in assetIDs)
                 if (GetFromAssetID(u) is AssetMODL)
-                    entries.Add(new EntryPIPT()
+                    entries.Add(new PipeInfo()
                     {
                         Model = u,
-                        LightingMode = 1
+                        LightingMode = LightingMode.Prelight
                     });
 
             pipt.PIPT_Entries = entries.ToArray();

@@ -33,9 +33,33 @@ namespace IndustrialPark
         AdditiveAlphaVertexColors = 10036550,
     }
 
-    public class EntryPIPT : GenericAssetDataContainer
+    public enum LightingMode
     {
-        private const string categoryName = "PIPT Entry";
+        LightKit = 0,
+        Prelight = 1,
+        Both = 2,
+        Unknown = 3
+    }
+
+    public enum PiptCullMode
+    {
+        Unknown = 0,
+        None = 1,
+        Back = 2,
+        Dual = 3
+    }
+
+    public enum ZWriteMode
+    {
+        Enabled = 0,
+        Disabled = 1,
+        Dual = 2,
+        Unknown = 3
+    }
+    
+    public class PipeInfo : GenericAssetDataContainer
+    {
+        private const string categoryName = "Pipe Info";
 
         [Category(categoryName)]
         public AssetID Model { get; set; }
@@ -59,9 +83,9 @@ namespace IndustrialPark
             }
         }
 
-        private const string categoryNameFlags = "PIPT Pipe Flags";
+        private const string categoryNameFlags = "Pipe Info Flags";
 
-        [Category(categoryNameFlags)]
+        [Category(categoryNameFlags), Description("0 - 255")]
         public byte AlphaCompareValue
         {
             get => (byte)((PipeFlags & 0xFF000000) >> 24);
@@ -73,7 +97,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category(categoryNameFlags)]
+        [Category(categoryNameFlags), Description("0 - 15")]
         public byte UnknownFlagB
         {
             get => (byte)((PipeFlags & 0x00F00000) >> 20);
@@ -88,7 +112,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category(categoryNameFlags)]
+        [Category(categoryNameFlags), Description("0 - 7")]
         public byte UnknownFlagC
         {
             get => (byte)((PipeFlags & 0x000E0000) >> 17);
@@ -149,51 +173,51 @@ namespace IndustrialPark
         }
 
         [Category(categoryNameFlags)]
-        public byte LightingMode
+        public LightingMode LightingMode
         {
-            get => (byte)((PipeFlags & 0x000000C0) >> 6);
+            get => (LightingMode)((PipeFlags & 0x000000C0) >> 6);
 
             set
             {
                 unchecked
                 {
                     PipeFlags &= (int)0xFFFFFF3F;
-                    PipeFlags |= value << 6;
+                    PipeFlags |= (byte)value << 6;
                 }
             }
         }
 
         [Category(categoryNameFlags)]
-        public byte CullMode
+        public PiptCullMode CullMode
         {
-            get => (byte)((PipeFlags & 0x00000030) >> 4);
+            get => (PiptCullMode)((PipeFlags & 0x00000030) >> 4);
 
             set
             {
                 unchecked
                 {
                     PipeFlags &= (int)0xFFFFFFCF;
-                    PipeFlags |= value << 4;
+                    PipeFlags |= (byte)value << 4;
                 }
             }
         }
 
         [Category(categoryNameFlags)]
-        public byte ZWriteMode
+        public ZWriteMode ZWriteMode
         {
-            get => (byte)((PipeFlags & 0x000000C) >> 2);
+            get => (ZWriteMode)((PipeFlags & 0x000000C) >> 2);
 
             set
             {
                 unchecked
                 {
                     PipeFlags &= (int)0xFFFFFFF3;
-                    PipeFlags |= value << 2;
+                    PipeFlags |= (byte)value << 2;
                 }
             }
         }
 
-        [Category(categoryNameFlags)]
+        [Category(categoryNameFlags), Description("0 - 3")]
         public byte UnknownFlagJ
         {
             get => (byte)(PipeFlags & 0x00000003);
@@ -208,10 +232,10 @@ namespace IndustrialPark
             }
         }
 
-        [Category("PIPT Entry (Incredibles only)")]
+        [Category(categoryName + " (Incredibles only)")]
         public int Unknown { get; set; }
 
-        public EntryPIPT()
+        public PipeInfo()
         {
             Model = 0;
             SubObjectBits.FlagValueInt = 0xFFFFFFFF;
@@ -227,7 +251,7 @@ namespace IndustrialPark
 
         public override bool Equals(object obj)
         {
-            if (obj != null && obj is EntryPIPT entry)
+            if (obj != null && obj is PipeInfo entry)
                 return Model.Equals(entry.Model);
             return false;
         }
@@ -237,7 +261,7 @@ namespace IndustrialPark
             return Model.GetHashCode();
         }
 
-        public EntryPIPT(EndianBinaryReader reader, Game game)
+        public PipeInfo(EndianBinaryReader reader, Game game)
         {
             Model = reader.ReadUInt32();
             SubObjectBits.FlagValueInt = reader.ReadUInt32();
@@ -264,9 +288,9 @@ namespace IndustrialPark
 
     public class AssetPIPT : Asset, IAssetAddSelected
     {
-        private EntryPIPT[] _piptEntries { get; set; }
+        private PipeInfo[] _piptEntries { get; set; }
         [Category("Pipe Info Table")]
-        public EntryPIPT[] PIPT_Entries
+        public PipeInfo[] PIPT_Entries
         {
             get => _piptEntries;
             set
@@ -278,17 +302,17 @@ namespace IndustrialPark
 
         public AssetPIPT(string assetName) : base(assetName, AssetType.PipeInfoTable)
         {
-            PIPT_Entries = new EntryPIPT[0];
+            PIPT_Entries = new PipeInfo[0];
         }
 
         public AssetPIPT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                _piptEntries = new EntryPIPT[reader.ReadInt32()];
+                _piptEntries = new PipeInfo[reader.ReadInt32()];
 
                 for (int i = 0; i < _piptEntries.Length; i++)
-                    _piptEntries[i] = new EntryPIPT(reader, game);
+                    _piptEntries[i] = new PipeInfo(reader, game);
 
                 UpdateDictionary();
             }
@@ -320,7 +344,7 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
-            foreach (EntryPIPT a in PIPT_Entries)
+            foreach (PipeInfo a in PIPT_Entries)
             {
                 if (a.Model == 0)
                     result.Add("PIPT entry with ModelAssetID set to 0");
@@ -334,7 +358,7 @@ namespace IndustrialPark
 
             Dictionary<uint, (uint, BlendFactorType, BlendFactorType)[]> BlendModes = new Dictionary<uint, (uint, BlendFactorType, BlendFactorType)[]>();
 
-            foreach (EntryPIPT entry in PIPT_Entries)
+            foreach (PipeInfo entry in PIPT_Entries)
             {
                 if (!BlendModes.ContainsKey(entry.Model))
                     BlendModes[entry.Model] = new (uint, BlendFactorType, BlendFactorType)[0];
@@ -377,7 +401,7 @@ namespace IndustrialPark
             var entries = PIPT_Entries.ToList();
             foreach (var i in items)
                 if (!entries.Any(e => e.Model == i))
-                    entries.Add(new EntryPIPT() { Model = i, PipeFlags_Preset = PiptPreset.AlphaBlend });
+                    entries.Add(new PipeInfo() { Model = i, PipeFlags_Preset = PiptPreset.AlphaBlend });
             PIPT_Entries = entries.ToArray();
         }
     }

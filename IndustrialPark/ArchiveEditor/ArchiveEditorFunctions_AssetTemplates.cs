@@ -389,6 +389,7 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.Shadow_Table, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Sound_Info, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Surface_Mapper, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Throwable_Table, eventHandler),
                 new ToolStripSeparator(),
                 GetTemplateMenuItem(AssetTemplate.Empty_BSP, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Empty_Sound, eventHandler),
@@ -1094,6 +1095,9 @@ namespace IndustrialPark
                     break;
                 case AssetTemplate.Surface_Mapper:
                     asset = new AssetMAPR(assetName);
+                    break;
+                case AssetTemplate.Throwable_Table:
+                    asset = new AssetTRWT(assetName);
                     break;
                 case AssetTemplate.Model_Info:
                     asset = new AssetMINF(assetName);

@@ -23,11 +23,15 @@ namespace IndustrialPark
         {
             get
             {
-                var values = new List<AssetID>();
-                var reader = new EndianBinaryReader(Data, endianness);
-                while (!reader.EndOfStream)
-                    values.Add(reader.ReadUInt32());
-                return values.ToArray();
+                try
+                {
+                    var values = new List<AssetID>();
+                    var reader = new EndianBinaryReader(Data, endianness);
+                    while (!reader.EndOfStream)
+                        values.Add(reader.ReadUInt32());
+                    return values.ToArray();
+                }
+                catch { return new AssetID[0]; }
             }
             set
             {
@@ -45,11 +49,15 @@ namespace IndustrialPark
         {
             get
             {
-                var values = new List<AssetSingle>();
-                var reader = new EndianBinaryReader(Data, endianness);
-                while (!reader.EndOfStream)
-                    values.Add(reader.ReadSingle());
-                return values.ToArray();
+                try
+                {
+                    var values = new List<AssetSingle>();
+                    var reader = new EndianBinaryReader(Data, endianness);
+                    while (!reader.EndOfStream)
+                        values.Add(reader.ReadSingle());
+                    return values.ToArray();
+                }
+                catch { return new AssetSingle[0]; }
             }
             set
             {

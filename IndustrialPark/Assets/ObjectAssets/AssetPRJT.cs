@@ -9,35 +9,35 @@ namespace IndustrialPark
         private const string categoryName = "Projectile";
 
         [Category(categoryName)]
-        public int UnknownInt08 { get; set; }
+        public int EffectType { get; set; }
         [Category(categoryName)]
         public AssetID Model { get; set; }
         [Category(categoryName)]
-        public int UnknownInt10 { get; set; }
+        public AssetID Animation { get; set; }
         [Category(categoryName)]
-        public int UnknownInt14 { get; set; }
+        public AssetID AtRestModel { get; set; }
         [Category(categoryName)]
-        public int UnknownInt18 { get; set; }
+        public AssetID AtRestAnimation { get; set; }
         [Category(categoryName)]
-        public int UnknownInt1C { get; set; }
+        public int DestructEnabled { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat20 { get; set; }
+        public AssetSingle DestructTime { get; set; }
         [Category(categoryName)]
-        public AssetSingle UnknownFloat24 { get; set; }
+        public AssetSingle DestructDist { get; set; }
         [Category(categoryName)]
-        public int UnknownInt28 { get; set; }
+        public int Oriented { get; set; }
         [Category(categoryName)]
-        public int UnknownInt2C { get; set; }
+        public int ExtraSpace1 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt30 { get; set; }
+        public int ExtraSpace2 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt34 { get; set; }
+        public int ExtraSpace3 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt38 { get; set; }
+        public int ExtraSpace4 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt3C { get; set; }
+        public int ExtraSpace5 { get; set; }
         [Category(categoryName)]
-        public int UnknownInt40 { get; set; }
+        public int ExtraSpace6 { get; set; }
 
         public AssetPRJT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
@@ -45,21 +45,21 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = baseHeaderEndPosition;
 
-                UnknownInt08 = reader.ReadInt32();
+                EffectType = reader.ReadInt32();
                 Model = reader.ReadUInt32();
-                UnknownInt10 = reader.ReadInt32();
-                UnknownInt14 = reader.ReadInt32();
-                UnknownInt18 = reader.ReadInt32();
-                UnknownInt1C = reader.ReadInt32();
-                UnknownFloat20 = reader.ReadSingle();
-                UnknownFloat24 = reader.ReadSingle();
-                UnknownInt28 = reader.ReadInt32();
-                UnknownInt2C = reader.ReadInt32();
-                UnknownInt30 = reader.ReadInt32();
-                UnknownInt34 = reader.ReadInt32();
-                UnknownInt38 = reader.ReadInt32();
-                UnknownInt3C = reader.ReadInt32();
-                UnknownInt40 = reader.ReadInt32();
+                Animation = reader.ReadUInt32();
+                AtRestModel = reader.ReadUInt32();
+                AtRestAnimation = reader.ReadUInt32();
+                DestructEnabled = reader.ReadInt32();
+                DestructTime = reader.ReadSingle();
+                DestructDist = reader.ReadSingle();
+                Oriented = reader.ReadInt32();
+                ExtraSpace1 = reader.ReadInt32();
+                ExtraSpace2 = reader.ReadInt32();
+                ExtraSpace3 = reader.ReadInt32();
+                ExtraSpace4 = reader.ReadInt32();
+                ExtraSpace5 = reader.ReadInt32();
+                ExtraSpace6 = reader.ReadInt32();
             }
         }
 
@@ -68,21 +68,21 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeBase(endianness));
-                writer.Write(UnknownInt08);
+                writer.Write(EffectType);
                 writer.Write(Model);
-                writer.Write(UnknownInt10);
-                writer.Write(UnknownInt14);
-                writer.Write(UnknownInt18);
-                writer.Write(UnknownInt1C);
-                writer.Write(UnknownFloat20);
-                writer.Write(UnknownFloat24);
-                writer.Write(UnknownInt28);
-                writer.Write(UnknownInt2C);
-                writer.Write(UnknownInt30);
-                writer.Write(UnknownInt34);
-                writer.Write(UnknownInt38);
-                writer.Write(UnknownInt3C);
-                writer.Write(UnknownInt40);
+                writer.Write(Animation);
+                writer.Write(AtRestModel);
+                writer.Write(AtRestAnimation);
+                writer.Write(DestructEnabled);
+                writer.Write(DestructTime);
+                writer.Write(DestructDist);
+                writer.Write(Oriented);
+                writer.Write(ExtraSpace1);
+                writer.Write(ExtraSpace2);
+                writer.Write(ExtraSpace3);
+                writer.Write(ExtraSpace4);
+                writer.Write(ExtraSpace5);
+                writer.Write(ExtraSpace6);
                 writer.Write(SerializeLinks(endianness));
                 return writer.ToArray();
             }

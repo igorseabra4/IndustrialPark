@@ -604,7 +604,6 @@ namespace IndustrialPark
                         if (game == Game.BFBB)
                             return new AssetCRDT(AHDR, game, endianness);
                         return new AssetGeneric(AHDR, game, endianness); // unsupported CRDT for non bfbb
-                    // case AssetType.CSN: return new AssetCSN(AHDR, game, platform);
                     case AssetType.CutsceneManager: return new AssetCSNM(AHDR, game, endianness);
                     case AssetType.Destructible: return new AssetDEST(AHDR, game, endianness);
                     case AssetType.Dispatcher: return new AssetDPAT(AHDR, game, endianness);
@@ -643,6 +642,7 @@ namespace IndustrialPark
                     case AssetType.Player: return new AssetPLYR(AHDR, game, endianness);
                     case AssetType.Portal: return new AssetPORT(AHDR, game, endianness);
                     case AssetType.Projectile: return new AssetPRJT(AHDR, game, endianness);
+                    case AssetType.ReactiveAnimation: return new AssetRANM(AHDR, game, endianness);
                     case AssetType.Script: return new AssetSCRP(AHDR, game, endianness);
                     case AssetType.SDFX: return new AssetSDFX(AHDR, game, endianness);
                     case AssetType.SFX: return new AssetSFX(AHDR, game, endianness);
@@ -655,6 +655,7 @@ namespace IndustrialPark
                     case AssetType.Text: return new AssetTEXT(AHDR, game, endianness);
                     case AssetType.Trigger: return new AssetTRIG(AHDR, game, endianness);
                     case AssetType.Timer: return new AssetTIMR(AHDR, game, endianness);
+                    case AssetType.ThrowableTable: return new AssetTRWT(AHDR, game, endianness);
                     case AssetType.PickupTypes: return new AssetTPIK(AHDR, game, endianness);
                     case AssetType.UserInterface: return new AssetUI(AHDR, game, endianness);
                     case AssetType.UserInterfaceFont: return new AssetUIFT(AHDR, game, endianness);
@@ -669,17 +670,14 @@ namespace IndustrialPark
 
                     case AssetType.CameraCurve:
                     case AssetType.NavigationMesh:
-                    case AssetType.ReactiveAnimation:
                     case AssetType.SlideProperty:
                     case AssetType.SceneSettings:
-                    case AssetType.ThrowableTable:
                     case AssetType.ZipLine:
                         return new AssetGenericBase(AHDR, game, endianness);
 
                     case AssetType.AttackTable:
                     case AssetType.BinkVideo:
                     case AssetType.CutsceneStreamingSound:
-                    case AssetType.CutsceneTableOfContents:
                     case AssetType.MorphTarget:
                     case AssetType.NPCSettings:
                     case AssetType.RawImage:
@@ -687,9 +685,12 @@ namespace IndustrialPark
                     case AssetType.Subtitles:
                     case AssetType.TEXS:
                     case AssetType.UIFN:
+
                     case AssetType.Null:
-                        return new AssetGeneric(AHDR, game, endianness);
+
                     case AssetType.Cutscene:
+                    case AssetType.CutsceneTableOfContents:
+
                         return new AssetGeneric(AHDR, game, endianness);
                     default:
                         throw new Exception($"Unknown asset type ({AHDR.assetType})");
@@ -730,7 +731,7 @@ namespace IndustrialPark
                 case DynaType.SceneProperties: return new DynaSceneProperties(AHDR, game, endianness);
                 case DynaType.effect__Flamethrower: return new DynaEffectFlamethrower(AHDR, game, endianness);
                 case DynaType.effect__LensFlareElement: return new DynaEffectLensFlare(AHDR, game, endianness);
-                case DynaType.Unknown_LensFlareSomething: return new DynaEffectLensFlareSomething(AHDR, game, endianness);
+                case DynaType.effect__LensFlareSource: return new DynaEffectLensFlareSomething(AHDR, game, endianness);
                 case DynaType.effect__Lightning: return new DynaEffectLightning(AHDR, game, endianness);
                 case DynaType.effect__Rumble: return new DynaEffectRumble(AHDR, game, endianness);
                 case DynaType.effect__RumbleSphericalEmitter: return new DynaEffectRumbleSphere(AHDR, game, endianness);
@@ -803,10 +804,10 @@ namespace IndustrialPark
                 case DynaType.effect__light:
                 case DynaType.effect__spark_emitter:
                 case DynaType.game_object__FreezableObject:
-                case DynaType.game_object__RubbleGenerator: // incredibles
-                case DynaType.game_object__bullet_mark: // incredibles
-                case DynaType.game_object__bullet_time: // incredibles
-                case DynaType.game_object__rband_camera_asset: // incredibles
+                case DynaType.game_object__RubbleGenerator:
+                case DynaType.game_object__bullet_mark:
+                case DynaType.game_object__bullet_time:
+                case DynaType.game_object__rband_camera_asset:
                 case DynaType.interaction__IceBridge:
                 case DynaType.interaction__SwitchLever:
                 case DynaType.npc__CoverPoint:
@@ -822,7 +823,34 @@ namespace IndustrialPark
                 case DynaType.Enemy__IN2__Enforcer:
                 case DynaType.Enemy__IN2__Scientist:
                 case DynaType.Enemy__IN2__Shooter:
-                case DynaType.Unknown_EBC04E7B: // incredibles
+                case DynaType.Unknown_EBC04E7B: // incredibles and rotu
+
+                // rat proto
+                case DynaType.AnalogDeflection:
+                case DynaType.AnalogDirection:
+                case DynaType.Enemy__NPC_Gate:
+                case DynaType.Enemy__NPC_Walls:
+                case DynaType.HUD_Compass_Object:
+                case DynaType.HUD_Compass_System:
+                case DynaType.logic__Mission:
+                case DynaType.logic__Task:
+                case DynaType.Pour_Widget:
+                case DynaType.Twiddler:
+                case DynaType.Unknown_0A21FFAD:
+                case DynaType.Unknown_105DFF22:
+                case DynaType.Unknown_1E175B3F:
+                case DynaType.Unknown_284375FD:
+                case DynaType.Unknown_2D0D198B:
+                case DynaType.Unknown_35F3B22A:
+                case DynaType.Unknown_45F261C6:
+                case DynaType.Unknown_544AA34C:
+                case DynaType.Unknown_544E0BCC:
+                case DynaType.Unknown_89F5441A:
+                case DynaType.Unknown_B34B0083:
+                case DynaType.Unknown_D9CA96BC:
+                case DynaType.Unknown_EF5FD10C:
+                case DynaType.Unknown_F5B8CC9C:
+
                 case DynaType.Null:
                     return new DynaGeneric(AHDR, type, game, endianness);
                 default:

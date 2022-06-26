@@ -26,7 +26,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID Unknown1C { get; set; }
 
-        public DynaEffectLensFlareSomething(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Unknown_LensFlareSomething, game, endianness)
+        public DynaEffectLensFlareSomething(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__LensFlareSource, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {

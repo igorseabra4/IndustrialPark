@@ -68,29 +68,30 @@ namespace IndustrialPark
 
         public AssetSNDI_GCN_V1(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            var reader = new EndianBinaryReader(AHDR.data, Endianness.Big);
-
-            int entriesSndAmount = reader.ReadInt32();
-            reader.ReadInt32();
-            int entriesSndsAmount = reader.ReadInt32();
-            int entriesCinAmount = game == Game.BFBB ? reader.ReadInt32() : 0;
-
-            Entries_SND = new EntrySoundInfo_GCN_V1[entriesSndAmount];
-            for (int i = 0; i < Entries_SND.Length; i++)
-                Entries_SND[i] = new EntrySoundInfo_GCN_V1(reader);
-
-            Entries_SNDS = new EntrySoundInfo_GCN_V1[entriesSndsAmount];
-            for (int i = 0; i < Entries_SNDS.Length; i++)
-                Entries_SNDS[i] = new EntrySoundInfo_GCN_V1(reader);
-
-            if (game == Game.BFBB)
+            using (var reader = new EndianBinaryReader(AHDR.data, Endianness.Big))
             {
-                Entries_Sound_CIN = new EntrySoundInfo_GCN_V1[entriesCinAmount];
-                for (int i = 0; i < Entries_Sound_CIN.Length; i++)
-                    Entries_Sound_CIN[i] = new EntrySoundInfo_GCN_V1(reader);
+                int entriesSndAmount = reader.ReadInt32();
+                reader.ReadInt32();
+                int entriesSndsAmount = reader.ReadInt32();
+                int entriesCinAmount = game == Game.BFBB ? reader.ReadInt32() : 0;
+
+                Entries_SND = new EntrySoundInfo_GCN_V1[entriesSndAmount];
+                for (int i = 0; i < Entries_SND.Length; i++)
+                    Entries_SND[i] = new EntrySoundInfo_GCN_V1(reader);
+
+                Entries_SNDS = new EntrySoundInfo_GCN_V1[entriesSndsAmount];
+                for (int i = 0; i < Entries_SNDS.Length; i++)
+                    Entries_SNDS[i] = new EntrySoundInfo_GCN_V1(reader);
+
+                if (game == Game.BFBB)
+                {
+                    Entries_Sound_CIN = new EntrySoundInfo_GCN_V1[entriesCinAmount];
+                    for (int i = 0; i < Entries_Sound_CIN.Length; i++)
+                        Entries_Sound_CIN[i] = new EntrySoundInfo_GCN_V1(reader);
+                }
+                else
+                    Entries_Sound_CIN = new EntrySoundInfo_GCN_V1[0];
             }
-            else
-                Entries_Sound_CIN = new EntrySoundInfo_GCN_V1[0];
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
