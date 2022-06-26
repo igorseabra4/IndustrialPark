@@ -44,12 +44,13 @@ namespace IndustrialPark
             }
         }
 
-        public override string ToString() => $"[{Program.MainForm.GetAssetNameFromID(Sound)}] - [{Volume}]";
+        public override string ToString() => $"[{HexUIntTypeConverter.StringFromAssetID(Sound)}] - [{Volume}]";
     }
 
     public class AssetSGRP : BaseAsset, IAssetAddSelected
     {
         private const string categoryName = "Sound Group";
+        public override string AssetInfo => $"{Entries.Length} entries";
 
         [Category(categoryName)]
         public int uPlayedMask { get; set; }

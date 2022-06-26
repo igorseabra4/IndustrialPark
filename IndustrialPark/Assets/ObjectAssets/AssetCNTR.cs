@@ -5,6 +5,8 @@ namespace IndustrialPark
 {
     public class AssetCNTR : BaseAsset
     {
+        public override string AssetInfo => $"Count: {Count}";
+
         [Category("Counter")]
         public short Count { get; set; }
 

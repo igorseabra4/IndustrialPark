@@ -9,6 +9,7 @@ namespace IndustrialPark
     public class AssetUIM : BaseAsset
     {
         private const string categoryName = "User Interface Motion";
+        public override string AssetInfo => $"{Commands.Length} commands";
 
         [Category(categoryName)]
         public AssetByte In { get; set; }

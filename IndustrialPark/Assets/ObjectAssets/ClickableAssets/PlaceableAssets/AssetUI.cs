@@ -10,6 +10,16 @@ namespace IndustrialPark
     {
         private const string categoryName = "User Interface";
 
+        public override string AssetInfo
+        {
+            get
+            {
+                if (this is AssetUI && Texture == 0)
+                    return base.AssetInfo;
+                return HexUIntTypeConverter.StringFromAssetID(Texture);
+            }
+        }
+
         [Category("Entity References")]
         public AssetID Sound
         {

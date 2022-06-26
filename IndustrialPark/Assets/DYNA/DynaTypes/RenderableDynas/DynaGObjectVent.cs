@@ -10,6 +10,8 @@ namespace IndustrialPark
     public class DynaGObjectVent : RenderableRotatableDynaBase
     {
         private const string dynaCategoryName = "game_object:Vent";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(VentType);
 
         protected override short constVersion => 1;
 

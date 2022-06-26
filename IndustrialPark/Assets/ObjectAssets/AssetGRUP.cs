@@ -14,6 +14,8 @@ namespace IndustrialPark
 
     public class AssetGRUP : BaseAsset, IAssetAddSelected
     {
+        public override string AssetInfo => $"{Items.Length} items";
+
         private const string catName = "Group";
 
         [Category(catName)]

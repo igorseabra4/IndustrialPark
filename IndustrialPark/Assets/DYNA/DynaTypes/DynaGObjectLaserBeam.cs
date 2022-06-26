@@ -8,6 +8,7 @@ namespace IndustrialPark
     public class DynaGObjectLaserBeam : AssetDYNA
     {
         private const string dynaCategoryName = "game_object:laser_beam";
+        public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 2;
 

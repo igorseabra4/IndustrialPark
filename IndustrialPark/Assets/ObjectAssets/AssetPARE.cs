@@ -30,6 +30,7 @@ namespace IndustrialPark
     public class AssetPARE : BaseAsset
     {
         private const string categoryName = "Particle Emitter";
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(ParticleProperties == 0 ? ParticleSystem : ParticleProperties);
 
         [Category(categoryName)]
         public FlagBitmask EmitterFlags { get; set; } = ByteFlagsDescriptor("On");

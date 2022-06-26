@@ -86,6 +86,8 @@ namespace IndustrialPark
 
     public class AssetONEL : Asset
     {
+        public override string AssetInfo => $"{OneLiners.Length} entries";
+
         [Category("One Liner")]
         public xOneLiner[] OneLiners { get; set; }
 

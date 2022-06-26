@@ -7,6 +7,7 @@ namespace IndustrialPark
     public class DynaHudMeterFont : DynaHudMeter
     {
         private const string dynaCategoryName = "hud:meter:font";
+        public override string TypeString => dynaCategoryName;
 
         public override string Note => "Version is always 2 or 3. Version 2 does not use CounterModeFlag.";
 

@@ -7,6 +7,8 @@ namespace IndustrialPark
     public class DynaLogicReference : AssetDYNA
     {
         private const string dynaCategoryName = "logic:reference";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Initial);
 
         protected override short constVersion => 1;
 

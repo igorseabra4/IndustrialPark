@@ -147,7 +147,7 @@ namespace IndustrialPark
             RaiseCameraChangedEvent();
         }
 
-        public void SetPositionFlyEntry(EntryFLY cam)
+        public void SetPositionFlyEntry(FlyFrame cam)
         {
             Position = cam.CameraPosition;
             Forward = -cam.CameraNormalizedBackward;

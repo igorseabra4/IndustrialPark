@@ -10,6 +10,8 @@ namespace IndustrialPark
     public class DynaGObjectTeleport : RenderableDynaBase
     {
         private const string dynaCategoryName = "game_object:Teleport";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => $"{HexUIntTypeConverter.StringFromAssetID(Marker)} {HexUIntTypeConverter.StringFromAssetID(TargetTeleportBox)}";
 
         public override string Note => "Version is always 1 or 2. Version 1 does not use CameraAngle.";
 

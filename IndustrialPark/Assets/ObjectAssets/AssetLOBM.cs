@@ -7,6 +7,7 @@ namespace IndustrialPark
     public class AssetLOBM : BaseAsset
     {
         private const string categoryName = "LobMaster";
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Projectile);
 
         [Category(categoryName)]
         public AssetID LobMasterType { get; set; }

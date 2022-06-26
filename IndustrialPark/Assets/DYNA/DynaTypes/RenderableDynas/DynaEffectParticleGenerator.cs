@@ -31,6 +31,8 @@ namespace IndustrialPark
     public class DynaEffectParticleGenerator : RenderableRotatableDynaBase
     {
         private const string dynaCategoryName = "effect:particle generator";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Texture);
 
         protected override short constVersion => 1;
 

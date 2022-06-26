@@ -7,6 +7,7 @@ namespace IndustrialPark
     public class DynaEffectScreenFade : AssetDYNA
     {
         private const string dynaCategoryName = "effect:ScreenFade";
+        public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 1;
 

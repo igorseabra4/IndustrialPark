@@ -122,7 +122,7 @@ namespace IndustrialPark
                         ptr.flags.Add(pickup.PickupFlags.ToString());
                         ptr.files.Add(Path.GetFileNameWithoutExtension(archive.currentlyOpenFilePath));
                         ptr.model = AssetPICK.pickEntries[pickup.PickReferenceID];
-                        var nmm = Program.MainForm.GetAssetNameFromID(AssetPICK.pickEntries[pickup.PickReferenceID]);
+                        var nmm = HexUIntTypeConverter.StringFromAssetID(AssetPICK.pickEntries[pickup.PickReferenceID]);
                         if (!string.IsNullOrEmpty(nmm))
                             ptr.modelName = nmm;
                     }

@@ -205,6 +205,7 @@ namespace IndustrialPark
     public class AssetMINF : Asset, IAssetWithModel
     {
         private const string categoryName = "Model Info";
+        public override string AssetInfo => string.Join(", ", References.Select(r => HexUIntTypeConverter.StringFromAssetID(r.Model)));
 
         [Category(categoryName)]
         public AssetID AnimationTable { get; set; }

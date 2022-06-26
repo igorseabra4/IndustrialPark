@@ -23,7 +23,7 @@ namespace IndustrialPark
 
         public override string ToString()
         {
-            return $"[{Program.MainForm.GetAssetNameFromID(Sound)}] - [{JawData.Length}]";
+            return $"[{HexUIntTypeConverter.StringFromAssetID(Sound)}] - [{JawData.Length}]";
         }
 
         public override bool Equals(object obj)
@@ -41,6 +41,8 @@ namespace IndustrialPark
 
     public class AssetJAW : Asset
     {
+        public override string AssetInfo => $"{JAW_Entries.Length} entries";
+
         [Category("Jaw Data")]
         public EntryJAW[] JAW_Entries { get; set; }
 

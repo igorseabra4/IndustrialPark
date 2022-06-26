@@ -7,6 +7,7 @@ namespace IndustrialPark
     public class DynaGObjectTrainJunction : AssetDYNA
     {
         private const string dynaCategoryName = "game_object:train_junction";
+        public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 1;
 

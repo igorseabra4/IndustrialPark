@@ -9,9 +9,21 @@ namespace IndustrialPark
 {
     public class DynaGObjectInPickup : RenderableDynaBase
     {
+        private const string dynaCategoryName = "game_object:IN_pickup";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo
+        {
+            get
+            {
+                if (AssetTPIK.tpikEntries.ContainsKey(PickupHash))
+                    return $"{dynaCategoryName} {HexUIntTypeConverter.StringFromAssetID(AssetTPIK.tpikEntries[PickupHash].Model)}";
+                return $"{dynaCategoryName} {HexUIntTypeConverter.StringFromAssetID(PickupHash)}";
+            }
+        }
+
         protected override short constVersion => 1;
 
-        [Category("game_object:IN_pickup")]
+        [Category(dynaCategoryName)]
         public AssetID PickupHash { get; set; }
 
         public static bool dontRender = false;

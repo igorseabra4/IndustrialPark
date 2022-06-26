@@ -11,6 +11,7 @@ namespace IndustrialPark
     public class DynaEffectLightning : RenderableDynaBase
     {
         private const string dynaCategoryName = "effect:Lightning";
+        public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 2;
 

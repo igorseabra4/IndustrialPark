@@ -8,6 +8,9 @@ namespace IndustrialPark
 {
     public class DynaPointer : RenderableRotatableDynaBase
     {
+        private const string dynaCategoryName = "pointer";
+        public override string TypeString => dynaCategoryName;
+
         protected override short constVersion => 1;
 
         public DynaPointer(string assetName, Vector3 position) : base(assetName, DynaType.pointer, 1, position)

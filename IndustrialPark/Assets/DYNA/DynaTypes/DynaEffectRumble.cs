@@ -6,6 +6,7 @@ namespace IndustrialPark
     public class DynaEffectRumble : AssetDYNA
     {
         private const string dynaCategoryName = "effect:Rumble";
+        public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 3;
 

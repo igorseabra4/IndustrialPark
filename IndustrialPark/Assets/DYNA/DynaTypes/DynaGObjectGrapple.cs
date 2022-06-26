@@ -7,6 +7,8 @@ namespace IndustrialPark
     public class DynaGObjectGrapple : AssetDYNA
     {
         private const string dynaCategoryName = "game_object:Grapple";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Object);
 
         protected override short constVersion => 1;
 

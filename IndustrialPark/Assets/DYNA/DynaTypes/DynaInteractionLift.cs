@@ -7,6 +7,7 @@ namespace IndustrialPark
     public class DynaInteractionLift : AssetDYNA
     {
         private const string dynaCategoryName = "interaction:Lift";
+        public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 1;
 

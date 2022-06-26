@@ -9,6 +9,8 @@ namespace IndustrialPark
 {
     public class AssetDUPC : BaseAsset, IRenderableAsset, IClickableAsset, IRotatableAsset, IScalableAsset
     {
+        public override string AssetInfo => VIL.assetName;
+
         private const string categoryName = "Duplicator";
         private const string categoryName2 = "Duplicator VIL";
 

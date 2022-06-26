@@ -8,6 +8,7 @@ namespace IndustrialPark
     public class AssetPLAT : AssetWithMotion
     {
         private const string categoryName = "Platform";
+        public override string AssetInfo => $"{PlatformType} {HexUIntTypeConverter.StringFromAssetID(Model)}";
 
         private PlatType _platformType;
         [Category(categoryName)]

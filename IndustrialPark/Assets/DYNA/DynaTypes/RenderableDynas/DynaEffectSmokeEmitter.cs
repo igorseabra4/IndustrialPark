@@ -10,6 +10,7 @@ namespace IndustrialPark
     public class DynaEffectSmokeEmitter : RenderableRotatableDynaBase
     {
         private const string dynaCategoryName = "effect:smoke_emitter";
+        public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 1;
 

@@ -6,6 +6,7 @@ namespace IndustrialPark
     public class AssetTIMR : BaseAsset
     {
         private const string categoryName = "Timer";
+        public override string AssetInfo => $"Time: {Time}";
 
         [Category(categoryName)]
         public AssetSingle Time { get; set; }

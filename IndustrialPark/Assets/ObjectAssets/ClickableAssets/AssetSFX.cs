@@ -8,6 +8,7 @@ namespace IndustrialPark
     public class AssetSFX : BaseAsset, IRenderableAsset, IClickableAsset, IScalableAsset
     {
         private const string categoryName = "SFX";
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Sound);
 
         [Category(categoryName)]
         public FlagBitmask Flags08 { get; set; } = ByteFlagsDescriptor();

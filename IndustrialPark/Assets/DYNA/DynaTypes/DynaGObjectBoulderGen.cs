@@ -7,6 +7,8 @@ namespace IndustrialPark
     public class DynaGObjectBoulderGen : AssetDYNA
     {
         private const string dynaCategoryName = "game_object:BoulderGenerator";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Object);
 
         protected override short constVersion => 1;
 

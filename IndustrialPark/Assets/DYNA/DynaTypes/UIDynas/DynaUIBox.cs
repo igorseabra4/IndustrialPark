@@ -69,6 +69,7 @@ namespace IndustrialPark
     public class DynaUIBox : DynaUI
     {
         private const string dynaCategoryName = "ui:box";
+        public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 2;
 

@@ -6,6 +6,7 @@ namespace IndustrialPark
     public abstract class AssetDYNA : BaseAsset
     {
         protected const string categoryName = "Dynamic";
+        public override string TypeString => Type.ToString();
 
         [Category(categoryName)]
         public DynaType Type { get; private set; }
@@ -16,8 +17,6 @@ namespace IndustrialPark
         [Category(categoryName)]
         public virtual string Note => $"Version is {(constVersion == -1 ? "unknown" : $"always {constVersion}")}";
         protected virtual short constVersion => -1;
-
-        public override string AssetInfo => Type.ToString() + " " + base.AssetInfo;
 
         protected int dynaDataStartPosition => baseHeaderEndPosition + 8;
 

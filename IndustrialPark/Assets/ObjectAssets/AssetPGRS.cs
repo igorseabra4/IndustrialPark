@@ -9,6 +9,7 @@ namespace IndustrialPark
     public class AssetPGRS : BaseAsset
     {
         private const string categoryName = "Progress Script";
+        public override string AssetInfo => ItemsString(_progressLinks.Length, "progress link");
 
         public Link[] _progressLinks;
         [Category(categoryName), Editor(typeof(LinkListEditor), typeof(UITypeEditor))]

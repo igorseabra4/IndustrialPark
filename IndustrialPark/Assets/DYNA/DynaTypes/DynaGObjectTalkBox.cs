@@ -7,6 +7,7 @@ namespace IndustrialPark
     public class DynaGObjectTalkBox : AssetDYNA
     {
         private const string dynaCategoryName = "game_object:talk_box";
+        public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 11;
 

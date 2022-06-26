@@ -7,6 +7,7 @@ namespace IndustrialPark
     public class DynaEffectSplash : AssetDYNA
     {
         private const string dynaCategoryName = "effect:Splash";
+        public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 2;
 

@@ -8,6 +8,8 @@ namespace IndustrialPark
     public class DynaGObjectTextBox : AssetDYNA
     {
         private const string dynaCategoryName = "game_object:text_box";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(DefaultTextID);
 
         public override string Note => "Version is always 1 for BFBB or 3 for Movie/Incredibles.";
 

@@ -6,6 +6,7 @@ namespace IndustrialPark
     public class DynaGObjectCameraParamAsset : AssetDYNA
     {
         private const string dynaCategoryName = "game_object:camera_param_asset";
+        public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 1;
 

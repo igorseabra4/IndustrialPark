@@ -8,7 +8,7 @@ namespace IndustrialPark
 {
     public class AssetRWTX : AssetWithData
     {
-        public override string AssetInfo => $"{RwVersion(renderWareVersion)} {platformFormat} {base.AssetInfo}";
+        public override string AssetInfo => $"{platformFormat} {RwVersion(renderWareVersion)} {base.AssetInfo}";
 
         private string platformFormat;
 

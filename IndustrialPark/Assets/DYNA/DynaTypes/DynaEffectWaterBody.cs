@@ -7,6 +7,7 @@ namespace IndustrialPark
     public class DynaEffectWaterBody : AssetDYNA
     {
         private const string dynaCategoryName = "effect:water_body";
+        public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 1;
 

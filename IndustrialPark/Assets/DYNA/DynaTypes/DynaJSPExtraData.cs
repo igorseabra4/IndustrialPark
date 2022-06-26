@@ -7,6 +7,8 @@ namespace IndustrialPark
     public class DynaJSPExtraData : AssetDYNA
     {
         private const string dynaCategoryName = "JSP Extra Data";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => $"{HexUIntTypeConverter.StringFromAssetID(JSPInfo)} {HexUIntTypeConverter.StringFromAssetID(Group)}";
 
         protected override short constVersion => 1;
 

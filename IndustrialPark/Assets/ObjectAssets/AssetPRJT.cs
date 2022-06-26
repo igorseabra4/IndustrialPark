@@ -7,6 +7,7 @@ namespace IndustrialPark
     public class AssetPRJT : BaseAsset
     {
         private const string categoryName = "Projectile";
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Model);
 
         [Category(categoryName)]
         public int EffectType { get; set; }

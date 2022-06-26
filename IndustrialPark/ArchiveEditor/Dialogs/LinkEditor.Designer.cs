@@ -65,8 +65,6 @@
             this.numericUpDownTime = new System.Windows.Forms.NumericUpDown();
             this.buttonHelp = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.cmbGameSelection = new System.Windows.Forms.ComboBox();
-            this.grpGame = new System.Windows.Forms.GroupBox();
             this.groupBox1.SuspendLayout();
             this.groupBoxEventData.SuspendLayout();
             this.groupBoxSourceCheckOrFlags.SuspendLayout();
@@ -76,7 +74,6 @@
             this.groupBox4.SuspendLayout();
             this.groupBoxSourceEvent.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTime)).BeginInit();
-            this.grpGame.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -85,9 +82,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.listBoxLinks);
-            this.groupBox1.Location = new System.Drawing.Point(12, 66);
+            this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(310, 279);
+            this.groupBox1.Size = new System.Drawing.Size(310, 333);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Links";
@@ -101,7 +98,7 @@
             this.listBoxLinks.Location = new System.Drawing.Point(6, 19);
             this.listBoxLinks.Name = "listBoxLinks";
             this.listBoxLinks.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBoxLinks.Size = new System.Drawing.Size(298, 238);
+            this.listBoxLinks.Size = new System.Drawing.Size(298, 303);
             this.listBoxLinks.TabIndex = 1;
             this.listBoxLinks.SelectedIndexChanged += new System.EventHandler(this.listBoxEvents_SelectedIndexChanged);
             // 
@@ -466,32 +463,6 @@
             this.buttonHelp.UseVisualStyleBackColor = true;
             this.buttonHelp.Click += new System.EventHandler(this.button1_Click);
             // 
-            // cmbGameSelection
-            // 
-            this.cmbGameSelection.FormattingEnabled = true;
-            this.cmbGameSelection.Items.AddRange(new object[] {
-            "None",
-            "Scooby-Doo: Night of 100 Frights",
-            "Battle for Bikini Bottom",
-            "The SpongeBob SquarePants Movie",
-            "The Incredibles",
-            "The Incredibles: Rise of the Underminer"});
-            this.cmbGameSelection.Location = new System.Drawing.Point(6, 19);
-            this.cmbGameSelection.Name = "cmbGameSelection";
-            this.cmbGameSelection.Size = new System.Drawing.Size(298, 21);
-            this.cmbGameSelection.TabIndex = 2;
-            this.cmbGameSelection.SelectedIndexChanged += new System.EventHandler(this.cmbGameSelection_SelectedIndexChanged);
-            // 
-            // grpGame
-            // 
-            this.grpGame.Controls.Add(this.cmbGameSelection);
-            this.grpGame.Location = new System.Drawing.Point(12, 12);
-            this.grpGame.Name = "grpGame";
-            this.grpGame.Size = new System.Drawing.Size(310, 48);
-            this.grpGame.TabIndex = 21;
-            this.grpGame.TabStop = false;
-            this.grpGame.Text = "Game";
-            // 
             // LinkEditor
             // 
             this.AcceptButton = this.buttonOK;
@@ -499,7 +470,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(584, 412);
-            this.Controls.Add(this.grpGame);
             this.Controls.Add(this.buttonHelp);
             this.Controls.Add(this.groupBoxEventData);
             this.Controls.Add(this.buttonOK);
@@ -530,7 +500,6 @@
             this.groupBox4.ResumeLayout(false);
             this.groupBoxSourceEvent.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTime)).EndInit();
-            this.grpGame.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -573,7 +542,5 @@
         private System.Windows.Forms.GroupBox groupBoxSourceEvent;
         private System.Windows.Forms.ComboBox comboRecieveEvent;
         private System.Windows.Forms.NumericUpDown numericUpDownTime;
-        private System.Windows.Forms.ComboBox cmbGameSelection;
-        private System.Windows.Forms.GroupBox grpGame;
     }
 }

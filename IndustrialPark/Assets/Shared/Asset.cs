@@ -20,7 +20,11 @@ namespace IndustrialPark
         public int checksum;
 
         [Browsable(false)]
-        public virtual string AssetInfo => game.ToString() + " " + endianness.ToString() + " Endian";
+        public virtual string AssetInfo => "";
+        [Browsable(false)]
+        public virtual int AssetInfoLinks => 0;
+        [Browsable(false)]
+        public virtual string TypeString => assetType.ToString();
 
         public Asset(string assetName, AssetType assetType)
         {

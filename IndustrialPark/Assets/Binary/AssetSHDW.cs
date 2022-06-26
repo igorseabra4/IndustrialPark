@@ -33,7 +33,7 @@ namespace IndustrialPark
 
         public override string ToString()
         {
-            return $"[{Program.MainForm.GetAssetNameFromID(Model)}] - [{Program.MainForm.GetAssetNameFromID(ShadowModel)}]";
+            return $"[{HexUIntTypeConverter.StringFromAssetID(Model)}] - [{HexUIntTypeConverter.StringFromAssetID(ShadowModel)}]";
         }
 
         public override int GetHashCode()
@@ -51,22 +51,24 @@ namespace IndustrialPark
 
     public class AssetSHDW : Asset, IAssetAddSelected
     {
+        public override string AssetInfo => $"{Entries.Length} entries";
+
         [Category("Shadow Map")]
-        public EntrySHDW[] SHDW_Entries { get; set; }
+        public EntrySHDW[] Entries { get; set; }
 
         public AssetSHDW(string assetName) : base(assetName, AssetType.ShadowTable)
         {
-            SHDW_Entries = new EntrySHDW[0];
+            Entries = new EntrySHDW[0];
         }
 
         public AssetSHDW(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                SHDW_Entries = new EntrySHDW[reader.ReadInt32()];
+                Entries = new EntrySHDW[reader.ReadInt32()];
 
-                for (int i = 0; i < SHDW_Entries.Length; i++)
-                    SHDW_Entries[i] = new EntrySHDW(reader);
+                for (int i = 0; i < Entries.Length; i++)
+                    Entries[i] = new EntrySHDW(reader);
             }
         }
 
@@ -74,9 +76,9 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(SHDW_Entries.Length);
+                writer.Write(Entries.Length);
 
-                foreach (var l in SHDW_Entries)
+                foreach (var l in Entries)
                     writer.Write(l.Serialize(endianness));
 
                 return writer.ToArray();
@@ -85,7 +87,7 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
-            foreach (EntrySHDW a in SHDW_Entries)
+            foreach (EntrySHDW a in Entries)
             {
                 if (a.Model == 0)
                     result.Add("Shadow table entry with Model set to 0");
@@ -98,15 +100,15 @@ namespace IndustrialPark
 
         public void Merge(AssetSHDW asset)
         {
-            var entries = SHDW_Entries.ToList();
+            var entries = Entries.ToList();
 
-            foreach (var entry in asset.SHDW_Entries)
+            foreach (var entry in asset.Entries)
             {
                 entries.Remove(entry);
                 entries.Add(entry);
             }
 
-            SHDW_Entries = entries.ToArray();
+            Entries = entries.ToArray();
         }
 
         [Browsable(false)]
@@ -114,11 +116,11 @@ namespace IndustrialPark
 
         public void AddItems(List<uint> items)
         {
-            var entries = SHDW_Entries.ToList();
+            var entries = Entries.ToList();
             foreach (var i in items)
                 if (!entries.Any(e => e.Model == i))
                     entries.Add(new EntrySHDW() { Model = i });
-            SHDW_Entries = entries.ToArray();
+            Entries = entries.ToArray();
         }
     }
 }

@@ -99,20 +99,22 @@ namespace IndustrialPark
 
     public class AssetTPIK : Asset
     {
+        public override string AssetInfo => $"{Entries.Length} entries";
+
         private const string categoryName = "Pickup Types";
 
         [Category(categoryName)]
         public int Unknown04 { get; set; }
         [Category(categoryName)]
         public int Unknown08 { get; set; }
-        private EntryTPIK[] _tpik_Entries;
+        private EntryTPIK[] _entries;
         [Category(categoryName)]
-        public EntryTPIK[] TPIK_Entries
+        public EntryTPIK[] Entries
         {
-            get => _tpik_Entries;
+            get => _entries;
             set
             {
-                _tpik_Entries = value;
+                _entries = value;
                 UpdateDictionary();
             }
         }
@@ -126,9 +128,9 @@ namespace IndustrialPark
                 Unknown04 = reader.ReadInt32();
                 Unknown08 = reader.ReadInt32();
                 int amountOfEntries = reader.ReadInt32();
-                _tpik_Entries = new EntryTPIK[amountOfEntries];
-                for (int i = 0; i < _tpik_Entries.Length; i++)
-                    _tpik_Entries[i] = new EntryTPIK(reader);
+                _entries = new EntryTPIK[amountOfEntries];
+                for (int i = 0; i < _entries.Length; i++)
+                    _entries[i] = new EntryTPIK(reader);
 
                 UpdateDictionary();
             }
@@ -141,8 +143,8 @@ namespace IndustrialPark
                 writer.Write(assetID);
                 writer.Write(Unknown04);
                 writer.Write(Unknown08);
-                writer.Write(TPIK_Entries.Length);
-                foreach (var t in TPIK_Entries)
+                writer.Write(Entries.Length);
+                foreach (var t in Entries)
                     writer.Write(t.Serialize(endianness));
                 return writer.ToArray();
             }
@@ -154,19 +156,19 @@ namespace IndustrialPark
         {
             tpikEntries.Clear();
 
-            foreach (EntryTPIK entry in TPIK_Entries)
+            foreach (EntryTPIK entry in Entries)
                 tpikEntries[entry.PickupHash] = entry;
         }
 
         public void ClearDictionary()
         {
-            foreach (EntryTPIK entry in TPIK_Entries)
+            foreach (EntryTPIK entry in Entries)
                 tpikEntries.Remove(entry.PickupHash);
         }
 
         public override void Verify(ref List<string> result)
         {
-            foreach (EntryTPIK a in TPIK_Entries)
+            foreach (EntryTPIK a in Entries)
             {
                 Verify(a.PickupHash, ref result);
                 Verify(a.Model, ref result);

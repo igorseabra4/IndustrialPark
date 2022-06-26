@@ -14,6 +14,8 @@ namespace IndustrialPark
     public class DynaEnemyCritter : DynaEnemySB
     {
         private const string dynaCategoryName = "Enemy:SB:Critter";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => CritterType.ToString();
 
         protected override short constVersion => 2;
 

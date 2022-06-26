@@ -87,6 +87,7 @@ namespace IndustrialPark
     public class AssetPARP : BaseAsset
     {
         private const string categoryName = "Particle Properties";
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(ParticleSystem);
 
         [Category(categoryName)]
         public AssetID ParticleSystem { get; set; }

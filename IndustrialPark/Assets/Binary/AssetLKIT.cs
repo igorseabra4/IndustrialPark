@@ -108,6 +108,8 @@ namespace IndustrialPark
 
     public class AssetLKIT : Asset
     {
+        public override string AssetInfo => $"{Lights.Length} entries";
+
         private const string categoryName = "Light Kit";
         [Category(categoryName)]
         public AssetID Group { get; set; }

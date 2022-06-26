@@ -6,6 +6,7 @@ namespace IndustrialPark
     public class DynaGObjectRaceTimer : AssetDYNA
     {
         private const string dynaCategoryName = "game_object:RaceTimer";
+        public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 2;
 

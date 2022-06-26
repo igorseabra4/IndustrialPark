@@ -18,6 +18,8 @@ namespace IndustrialPark
     public class DynaEnemyBucketOTron : DynaEnemySB
     {
         private const string dynaCategoryName = "Enemy:SB:BucketOTron";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => BucketOTronType.ToString();
 
         protected override short constVersion => 4;
 

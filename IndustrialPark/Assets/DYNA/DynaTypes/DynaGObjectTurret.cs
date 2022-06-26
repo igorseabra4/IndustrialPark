@@ -8,6 +8,8 @@ namespace IndustrialPark
     public class DynaGObjectTurret : AssetDYNA
     {
         private const string dynaCategoryName = "game_object:Turret";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(BaseObject);
 
         protected override short constVersion => 7;
 

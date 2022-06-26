@@ -10,6 +10,8 @@ namespace IndustrialPark
     public class DynaEffectRumbleSphere : RenderableDynaBase
     {
         private const string dynaCategoryName = "effect:Rumble Spherical Emitter";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Rumble);
 
         protected override short constVersion => 1;
 

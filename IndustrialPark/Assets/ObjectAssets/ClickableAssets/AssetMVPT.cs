@@ -9,6 +9,7 @@ namespace IndustrialPark
     public class AssetMVPT : BaseAsset, IRenderableAsset, IClickableAsset, IScalableAsset, IAssetAddSelected
     {
         private const string categoryName = "Move Point";
+        public override string AssetInfo => IsZone == 0 ? "Arena" : "Zone";
 
         private Vector3 _position;
         [Category(categoryName)]

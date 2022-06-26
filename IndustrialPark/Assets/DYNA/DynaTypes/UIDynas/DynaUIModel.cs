@@ -6,6 +6,8 @@ namespace IndustrialPark
     public class DynaUIModel : DynaUI
     {
         private const string dynaCategoryName = "ui:model";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Model);
 
         protected override short constVersion => 2;
 

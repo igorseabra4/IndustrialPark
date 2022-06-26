@@ -7,6 +7,8 @@ namespace IndustrialPark
     public class DynaUIImage : DynaUI
     {
         private const string dynaCategoryName = "ui:image";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Texture);
 
         protected override short constVersion => 1;
 

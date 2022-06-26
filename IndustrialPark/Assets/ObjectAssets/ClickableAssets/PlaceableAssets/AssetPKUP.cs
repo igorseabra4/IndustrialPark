@@ -19,6 +19,16 @@ namespace IndustrialPark
     {
         private const string categoryName = "Pickup";
 
+        public override string AssetInfo
+        {
+            get
+            {
+                if (AssetPICK.pickEntries.ContainsKey(PickReferenceID))
+                    return HexUIntTypeConverter.StringFromAssetID(AssetPICK.pickEntries[PickReferenceID]);
+                return HexUIntTypeConverter.StringFromAssetID(PickReferenceID);
+            }
+        }
+
         [Category(categoryName)]
         public AssetByte Shape { get => TypeFlag; set => TypeFlag = value; }
 

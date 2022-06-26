@@ -13,12 +13,14 @@ namespace IndustrialPark
         public EntryMAPR() { }
         public override string ToString()
         {
-            return $"[{Program.MainForm.GetAssetNameFromID(Surface)}] - [{Program.MainForm.GetAssetNameFromID(Unknown)}]";
+            return $"[{HexUIntTypeConverter.StringFromAssetID(Surface)}] - [{HexUIntTypeConverter.StringFromAssetID(Unknown)}]";
         }
     }
 
     public class AssetMAPR : Asset
     {
+        public override string AssetInfo => $"{Entries.Length} entries";
+
         [Category("Surface Mapper")]
         public EntryMAPR[] Entries { get; set; }
 

@@ -154,7 +154,7 @@ namespace IndustrialPark
                     break;
             }
 
-            string assetName = HexUIntTypeConverter.Legacy ? TargetAsset.ToString("X8") : Program.MainForm.GetAssetNameFromID(TargetAsset);
+            string assetName = HexUIntTypeConverter.StringFromAssetID(TargetAsset);
             return $"{(LinkListEditor.LinkType == LinkType.Normal ? recEvent : Time.ToString())} => {sndEvent} => {assetName}";
         }
     }

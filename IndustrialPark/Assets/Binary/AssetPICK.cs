@@ -44,21 +44,23 @@ namespace IndustrialPark
         }
 
         public override string ToString() =>
-            $"[{Program.MainForm.GetAssetNameFromID(PickupHash)}] - [{Program.MainForm.GetAssetNameFromID(Model)}]";
+            $"[{HexUIntTypeConverter.StringFromAssetID(PickupHash)}] - [{HexUIntTypeConverter.StringFromAssetID(Model)}]";
     }
 
     public class AssetPICK : Asset
     {
+        public override string AssetInfo => $"{Entries.Length} entries";
+
         public static Dictionary<uint, uint> pickEntries = new Dictionary<uint, uint>();
 
-        private EntryPICK[] _pick_Entries;
+        private EntryPICK[] _entries;
         [Category("Pickup Table")]
-        public EntryPICK[] PICK_Entries
+        public EntryPICK[] Entries
         {
-            get => _pick_Entries;
+            get => _entries;
             set
             {
-                _pick_Entries = value;
+                _entries = value;
                 UpdateDictionary();
             }
         }
@@ -68,9 +70,9 @@ namespace IndustrialPark
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
                 reader.ReadInt32();
-                _pick_Entries = new EntryPICK[reader.ReadInt32()];
-                for (int i = 0; i < _pick_Entries.Length; i++)
-                    _pick_Entries[i] = new EntryPICK(reader);
+                _entries = new EntryPICK[reader.ReadInt32()];
+                for (int i = 0; i < _entries.Length; i++)
+                    _entries[i] = new EntryPICK(reader);
 
                 UpdateDictionary();
             }
@@ -81,8 +83,8 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.WriteMagic("PICK");
-                writer.Write(_pick_Entries.Length);
-                foreach (var l in _pick_Entries)
+                writer.Write(_entries.Length);
+                foreach (var l in _entries)
                     writer.Write(l.Serialize(endianness));
 
                 return writer.ToArray();
@@ -91,7 +93,7 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
-            foreach (EntryPICK a in _pick_Entries)
+            foreach (EntryPICK a in _entries)
             {
                 if (a.Model == 0)
                     result.Add("Pickup table entry with Model set to 0");
@@ -103,13 +105,13 @@ namespace IndustrialPark
         {
             pickEntries.Clear();
 
-            foreach (EntryPICK entry in _pick_Entries)
+            foreach (EntryPICK entry in _entries)
                 pickEntries[entry.PickupHash] = entry.Model;
         }
 
         public void ClearDictionary()
         {
-            foreach (EntryPICK entry in _pick_Entries)
+            foreach (EntryPICK entry in _entries)
                 pickEntries.Remove(entry.PickupHash);
         }
     }

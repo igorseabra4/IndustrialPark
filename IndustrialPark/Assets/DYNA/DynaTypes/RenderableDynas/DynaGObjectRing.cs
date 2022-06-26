@@ -11,6 +11,7 @@ namespace IndustrialPark
     public class DynaGObjectRing : RenderableRotatableDynaBase
     {
         private const string dynaCategoryName = "game_object:Ring";
+        public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 2;
 

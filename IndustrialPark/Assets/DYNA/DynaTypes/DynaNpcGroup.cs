@@ -6,6 +6,7 @@ namespace IndustrialPark
     public class DynaNPCGroup : AssetDYNA
     {
         private const string dynaCategoryName = "npc:group";
+        public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 1;
 

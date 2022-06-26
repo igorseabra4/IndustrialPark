@@ -6,9 +6,13 @@ namespace IndustrialPark
 {
     public class DynaGObjectFlythrough : AssetDYNA
     {
+        private const string dynaCategoryName = "game_object:Flythrough";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Flythrough);
+
         protected override short constVersion => 1;
 
-        [Category("game_object:Flythrough")]
+        [Category(dynaCategoryName)]
         public AssetID Flythrough { get; set; }
 
         public DynaGObjectFlythrough(string assetName) : base(assetName, DynaType.game_object__Flythrough, 1)

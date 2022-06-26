@@ -7,7 +7,7 @@ using System.IO;
 
 namespace IndustrialPark
 {
-    public class EntryFLY
+    public class FlyFrame
     {
         public int FrameNumer { get; set; }
         public WireVector CameraNormalizedRight { get; set; }
@@ -18,7 +18,7 @@ namespace IndustrialPark
         public AssetSingle ApertureY { get; set; }
         public AssetSingle Focal { get; set; }
 
-        public EntryFLY()
+        public FlyFrame()
         {
             CameraNormalizedRight = new WireVector();
             CameraNormalizedUp = new WireVector();
@@ -26,7 +26,7 @@ namespace IndustrialPark
             CameraPosition = new WireVector();
         }
 
-        public EntryFLY(BinaryReader binaryReader)
+        public FlyFrame(BinaryReader binaryReader)
         {
             FrameNumer = binaryReader.ReadInt32();
             CameraNormalizedRight = new WireVector(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle());
@@ -67,7 +67,7 @@ namespace IndustrialPark
             return $"[{FrameNumer}] - [{CameraPosition}]";
         }
 
-        public bool NearlySimilar(EntryFLY other)
+        public bool NearlySimilar(FlyFrame other)
         {
             return CameraPosition.NearEqual(other.CameraPosition) &&
                 CameraNormalizedRight.NearEqual(other.CameraNormalizedRight) &&
@@ -78,29 +78,31 @@ namespace IndustrialPark
 
     public class AssetFLY : Asset
     {
+        public override string AssetInfo => $"{Frames.Length} frames";
+
         [Category("Flythrough")]
-        public EntryFLY[] FLY_Entries { get; set; }
+        public FlyFrame[] Frames { get; set; }
 
         public AssetFLY(string assetName) : base(assetName, AssetType.Flythrough)
         {
-            FLY_Entries = new EntryFLY[0];
+            Frames = new FlyFrame[0];
         }
 
         public AssetFLY(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            List<EntryFLY> entries = new List<EntryFLY>();
+            List<FlyFrame> entries = new List<FlyFrame>();
 
             using (var reader = new BinaryReader(new MemoryStream(AHDR.data)))
                 while (reader.BaseStream.Position < reader.BaseStream.Length)
-                    entries.Add(new EntryFLY(reader));
+                    entries.Add(new FlyFrame(reader));
 
-            FLY_Entries = entries.ToArray();
+            Frames = entries.ToArray();
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
         {
             List<byte> newData = new List<byte>();
-            foreach (var i in FLY_Entries)
+            foreach (var i in Frames)
                 newData.AddRange(i.Serialize());
             return newData.ToArray();
         }

@@ -7,6 +7,7 @@ namespace IndustrialPark
     public class DynaHudMeterUnit : DynaHudMeter
     {
         private const string dynaCategoryName = "hud:meter:unit";
+        public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 3;
 

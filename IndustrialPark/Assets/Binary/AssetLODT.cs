@@ -56,7 +56,7 @@ namespace IndustrialPark
 
         public override string ToString()
         {
-            return $"[{Program.MainForm.GetAssetNameFromID(BaseModel)}] - {MaxDistance}";
+            return $"[{HexUIntTypeConverter.StringFromAssetID(BaseModel)}] - {MaxDistance}";
         }
 
         public override bool Equals(object obj)
@@ -74,35 +74,37 @@ namespace IndustrialPark
 
     public class AssetLODT : Asset, IAssetAddSelected
     {
+        public override string AssetInfo => $"{Entries.Length} entries";
+
         private static readonly Dictionary<uint, float> maxDistances = new Dictionary<uint, float>();
 
         public static float MaxDistanceTo(uint _model) => maxDistances.ContainsKey(_model) ? maxDistances[_model] : SharpRenderer.DefaultLODTDistance;
 
-        private EntryLODT[] _lodt_Entries;
+        private EntryLODT[] _entries;
         [Category("Level Of Detail Table")]
-        public EntryLODT[] LODT_Entries
+        public EntryLODT[] Entries
         {
-            get => _lodt_Entries;
+            get => _entries;
             set
             {
-                _lodt_Entries = value;
+                _entries = value;
                 UpdateDictionary();
             }
         }
 
         public AssetLODT(string assetName) : base(assetName, AssetType.LevelOfDetailTable)
         {
-            LODT_Entries = new EntryLODT[0];
+            Entries = new EntryLODT[0];
         }
 
         public AssetLODT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                _lodt_Entries = new EntryLODT[reader.ReadInt32()];
+                _entries = new EntryLODT[reader.ReadInt32()];
 
-                for (int i = 0; i < _lodt_Entries.Length; i++)
-                    _lodt_Entries[i] = new EntryLODT(reader, game);
+                for (int i = 0; i < _entries.Length; i++)
+                    _entries[i] = new EntryLODT(reader, game);
 
                 UpdateDictionary();
             }
@@ -112,9 +114,9 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(LODT_Entries.Length);
+                writer.Write(Entries.Length);
 
-                foreach (var l in LODT_Entries)
+                foreach (var l in Entries)
                     writer.Write(l.Serialize(game, endianness));
 
                 return writer.ToArray();
@@ -123,7 +125,7 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
-            foreach (var a in LODT_Entries)
+            foreach (var a in Entries)
             {
                 if (a.BaseModel == 0)
                     result.Add("LOD table entry with Model set to 0");
@@ -137,27 +139,27 @@ namespace IndustrialPark
 
         public void UpdateDictionary()
         {
-            foreach (var entry in LODT_Entries)
+            foreach (var entry in Entries)
                 maxDistances[entry.BaseModel] = entry.MaxDistance;
         }
 
         public void ClearDictionary()
         {
-            foreach (var entry in LODT_Entries)
+            foreach (var entry in Entries)
                 maxDistances.Remove(entry.BaseModel);
         }
 
         public void Merge(AssetLODT asset)
         {
-            var entries = LODT_Entries.ToList();
+            var entries = Entries.ToList();
 
-            foreach (var entry in asset.LODT_Entries)
+            foreach (var entry in asset.Entries)
             {
                 entries.Remove(entry);
                 entries.Add(entry);
             }
 
-            LODT_Entries = entries.ToArray();
+            Entries = entries.ToArray();
         }
 
         [Browsable(false)]
@@ -165,11 +167,11 @@ namespace IndustrialPark
 
         public void AddItems(List<uint> items)
         {
-            var entries = LODT_Entries.ToList();
+            var entries = Entries.ToList();
             foreach (var i in items)
                 if (!entries.Any(e => e.BaseModel == i))
                     entries.Add(new EntryLODT() { BaseModel = i, MaxDistance = 100f });
-            LODT_Entries = entries.ToArray();
+            Entries = entries.ToArray();
         }
     }
 }

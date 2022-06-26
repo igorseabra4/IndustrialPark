@@ -10,6 +10,7 @@ namespace IndustrialPark
     public abstract class EntityAsset : BaseAsset, IRenderableAsset, IClickableAsset, IRotatableAsset, IScalableAsset
     {
         private const string categoryName = "Entity";
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Model);
 
         [Category(categoryName)]
         public FlagBitmask VisibilityFlags { get; set; } = ByteFlagsDescriptor(

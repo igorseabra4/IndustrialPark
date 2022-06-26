@@ -8,6 +8,7 @@ namespace IndustrialPark
     public class AssetSCRP : BaseAsset
     {
         private const string categoryName = "Timed Script";
+        public override string AssetInfo => ItemsString(_timedLinks.Length, "timed link");
 
         [Category(categoryName)]
         public AssetSingle ScriptStartTime { get; set; }

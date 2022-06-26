@@ -14,6 +14,8 @@ namespace IndustrialPark
     public class DynaEnemyMindy : DynaEnemySB
     {
         private const string dynaCategoryName = "Enemy:SB:Mindy";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => MindyType.ToString();
 
         protected override short constVersion => 3;
 

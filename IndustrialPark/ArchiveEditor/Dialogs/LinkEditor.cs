@@ -99,13 +99,8 @@ namespace IndustrialPark
         private bool ProgramIsChangingStuff = false;
         private bool ListBoxShouldUpdate = true;
 
-        private string GetAssetName(AssetID assetID)
-        {
-            if (HexUIntTypeConverter.Legacy)
-                return assetID.ToString("X8");
-            return Program.MainForm.GetAssetNameFromID(assetID);
-        }
-
+        private string GetAssetName(AssetID assetID) => HexUIntTypeConverter.StringFromAssetID(assetID);
+        
         private AssetID GetAssetID(string assetName)
         {
             if (HexUIntTypeConverter.Legacy)
@@ -554,11 +549,6 @@ namespace IndustrialPark
             {
                 MessageBox.Show("Unable to find sequence number in asset name");
             }
-        }
-
-        private void cmbGameSelection_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }

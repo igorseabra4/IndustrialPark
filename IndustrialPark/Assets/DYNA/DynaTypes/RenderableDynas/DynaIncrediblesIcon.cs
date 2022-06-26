@@ -10,6 +10,7 @@ namespace IndustrialPark
     public class DynaIncrediblesIcon : RenderableRotatableDynaBase
     {
         private const string dynaCategoryName = "Incredibles:Icon";
+        public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 1;
 

@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -278,7 +279,53 @@ namespace IndustrialPark
 
     public class AssetCOND : BaseAsset
     {
+        private static string OperationShort(ConditionalOperation op)
+        {
+            switch (op)
+            {
+                case ConditionalOperation.EQUAL_TO:
+                    return "=";
+                case ConditionalOperation.GREATER_THAN:
+                    return ">";
+                case ConditionalOperation.LESS_THAN:
+                    return "<";
+                case ConditionalOperation.GREATER_THAN_OR_EQUAL_TO:
+                    return ">=";
+                case ConditionalOperation.LESS_THAN_OR_EQUAL_TO:
+                    return "<=";
+                case ConditionalOperation.NOT_EQUAL_TO:
+                    return "!=";
+            }
+            return "";
+        }
+
         private const string catName = "Conditional";
+
+        public override string AssetInfo
+        {
+            get
+            {
+                string result;
+                if (game == Game.Scooby)
+                    result = Conditional_Scooby.ToString();
+                else if (game == Game.BFBB)
+                    result = Conditional_BFBB.ToString();
+                else if (Enum.IsDefined(typeof(ConditionalVariableTSSM), (uint)ConditionalVariable_Hash))
+                    result = Conditional_TSSM.ToString();
+                else if (Enum.IsDefined(typeof(ConditionalVariableIncredibles), (uint)ConditionalVariable_Hash))
+                    result = Conditional_Incredibles.ToString();
+                else if (Enum.IsDefined(typeof(ConditionalVariableROTU), (uint)ConditionalVariable_Hash))
+                    result = Conditional_ROTU.ToString();
+                else
+                    result = ConditionalVariable_Hash.ToString();
+                result += " " + OperationShort(Operation) + " " + EvaluationAmount.ToString();
+
+                if (game != Game.Scooby && AssetUnderEvaluation != 0)
+                    result += " on " + HexUIntTypeConverter.StringFromAssetID(AssetUnderEvaluation);
+
+                return result;
+            }
+        }
 
         [Category(catName), DisplayName(catName)]
         public AssetID ConditionalVariable_Hash { get; set; }

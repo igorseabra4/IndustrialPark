@@ -3,13 +3,23 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
-using System.Linq;
 
 namespace IndustrialPark
 {
     public abstract class BaseAsset : Asset
     {
         private const string categoryName = "Base";
+
+        public override int AssetInfoLinks => _links.Length;
+                
+        protected string ItemsString(int count, string name)
+        {
+            if (count == 0)
+                return "";
+            if (count == 1)
+                return $"1 {name}";
+            return $"{count} {name}s";
+        }
 
         [Category(categoryName)]
         public BaseAssetType BaseAssetType { get; set; }

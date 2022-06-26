@@ -4,7 +4,7 @@ namespace IndustrialPark
 {
     public class AssetSound : AssetWithData
     {
-        public override string AssetInfo => fileType + base.AssetInfo;
+        public override string AssetInfo => $"{fileType} {base.AssetInfo}";
 
         private string fileType;
 

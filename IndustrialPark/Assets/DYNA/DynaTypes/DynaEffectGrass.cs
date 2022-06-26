@@ -7,6 +7,7 @@ namespace IndustrialPark
     public class DynaEffectGrass : AssetDYNA
     {
         private const string dynaCategoryName = "effect:Grass";
+        public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 2;
 

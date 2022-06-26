@@ -499,13 +499,29 @@ namespace IndustrialPark
             comboBoxLayers.SelectedIndex = Math.Min(previndex + 1, comboBoxLayers.Items.Count - 1);
         }
 
+        public static bool LegacyAssetNameFormat = false;
+
+        public static string AssetTypeToString(AssetType assetType)
+        {
+            if (assetType == AssetType.Null)
+                return "All";
+
+            if (LegacyAssetNameFormat)
+            {
+                if (assetType.IsDyna())
+                    return $"{Functions.GetCode(assetType)} ({assetType})";
+                return Functions.GetCode(assetType);
+            }
+            return assetType.ToString();
+        }
+
         private void PopulateAssetListAndComboBox()
         {
             programIsChangingStuff = true;
 
             comboBoxAssetTypes.Items.Clear();
-            comboBoxAssetTypes.Items.Add("All");
-            comboBoxAssetTypes.Items.AddRange(archive.AssetTypesOnLayer(comboBoxLayers.SelectedIndex).Cast<object>().OrderBy(f => f.ToString()).ToArray());
+            comboBoxAssetTypes.Items.Add(new AssetTypeContainer(AssetType.Null));
+            comboBoxAssetTypes.Items.AddRange(archive.AssetTypesOnLayer(comboBoxLayers.SelectedIndex).Select(f => new AssetTypeContainer(f)).OrderBy(f => f.ToString()).ToArray());
 
             comboBoxAssetTypes.SelectedIndex = 0;
             PopulateAssetList();
@@ -513,7 +529,22 @@ namespace IndustrialPark
             programIsChangingStuff = false;
         }
 
-        AssetType curType = AssetType.Null;
+        public class AssetTypeContainer
+        {
+            public AssetType assetType;
+
+            public AssetTypeContainer(AssetType assetType)
+            {
+                this.assetType = assetType;
+            }
+
+            public override string ToString()
+            {
+                return AssetTypeToString(assetType);
+            }
+        }
+
+        private AssetType curType = AssetType.Null;
 
         private void PopulateAssetList(AssetType type = AssetType.Null, List<uint> assetIDs = null, bool select = false, List<uint> selectionAssetIDs = null)
         {
@@ -566,11 +597,17 @@ namespace IndustrialPark
                 Checked = !asset.isInvisible,
                 Selected = selected
             };
+
+            var info = asset.AssetInfo;
+            if (info.Length > 50)
+                info = info.Substring(0, 47) + "...";
+
             item.SubItems.AddRange(new ListViewItem.ListViewSubItem[]
             {
                 new ListViewItem.ListViewSubItem(item, asset.assetID.ToString("X8")),
-                new ListViewItem.ListViewSubItem(item, asset.assetType.ToString()),
-                new ListViewItem.ListViewSubItem(item, asset.AssetInfo)
+                new ListViewItem.ListViewSubItem(item, asset.TypeString),
+                new ListViewItem.ListViewSubItem(item, info),
+                new ListViewItem.ListViewSubItem(item, asset.AssetInfoLinks.ToString()),
             });
             return item;
         }
@@ -634,7 +671,7 @@ namespace IndustrialPark
         private void comboBoxAssetTypes_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (!programIsChangingStuff)
-                PopulateAssetList(comboBoxAssetTypes.SelectedIndex == 0 ? AssetType.Null : (AssetType)comboBoxAssetTypes.SelectedItem);
+                PopulateAssetList(((AssetTypeContainer)comboBoxAssetTypes.SelectedItem).assetType);
         }
 
         private void buttonAddAsset_Click(object sender, EventArgs e)
@@ -730,7 +767,7 @@ namespace IndustrialPark
 
             AssetType a = AssetType.Null;
             if (comboBoxAssetTypes.SelectedIndex > 0)
-                a = (AssetType)comboBoxAssetTypes.SelectedItem;
+                a = ((AssetTypeContainer)comboBoxAssetTypes.SelectedItem).assetType;
             var prevIndex = listViewAssets.SelectedIndices[0];
 
             archive.RemoveAsset(CurrentlySelectedAssetIDs());
@@ -745,7 +782,7 @@ namespace IndustrialPark
             programIsChangingStuff = false;
 
             if (a != curType)
-                comboBoxAssetTypes.SelectedItem = a;
+                SelectAssetTypeOnBox(a);
             else
             {
                 for (int i = 0; i < listViewAssets.Items.Count; i++)
@@ -975,7 +1012,7 @@ namespace IndustrialPark
                 if (assetType == AssetType.Null)
                     comboBoxAssetTypes.SelectedIndex = 0;
                 else
-                    comboBoxAssetTypes.SelectedItem = assetType;
+                    SelectAssetTypeOnBox(assetType);
 
                 PopulateAssetList(assetType, null, true, assetIDs);
                 return;
@@ -992,6 +1029,16 @@ namespace IndustrialPark
                     }
                 listViewAssets.EnsureVisible(last);
             }
+        }
+
+        private void SelectAssetTypeOnBox(AssetType assetType)
+        {
+            foreach (var v in comboBoxAssetTypes.Items)
+                if (((AssetTypeContainer)v).assetType == assetType)
+                {
+                    comboBoxAssetTypes.SelectedItem = v;
+                    break;
+                }
         }
 
         readonly System.Drawing.Color defaultColor;
@@ -1212,9 +1259,10 @@ namespace IndustrialPark
 
         private void ToolStripMenuItem_CreateGroup_Click(object sender, EventArgs e)
         {
+            var ids = CurrentlySelectedAssetIDs();
             var assetIDs = PlaceTemplate(new Vector3(), AssetTemplate.Group);
             if (assetIDs != null && assetIDs.Count > 0)
-                ((AssetGRUP)archive.GetFromAssetID(assetIDs[0])).AddItems(CurrentlySelectedAssetIDs());
+                ((AssetGRUP)archive.GetFromAssetID(assetIDs[0])).AddItems(ids);
             SetupAssetVisibilityButtons();
         }
 
@@ -1617,26 +1665,24 @@ namespace IndustrialPark
                 int numOfModels = 0;
                 int numOfUnusedModels = 0;
 
-                //foreach(var asset in allAssets)
-                //{
-                //    if (asset.assetType == AssetType.Model)
-                //    {
-                //        numOfModels++;
+                foreach (var asset in allAssets)
+                {
+                    if (asset.assetType == AssetType.Model)
+                    {
+                        numOfModels++;
 
-                //        List<uint> whoTargets = archive.FindWhoTargets(asset.assetID);
-                //        if (whoTargets.Count == 0)
-                //        {
-                //            output.WriteLine($"  {Convert.ToString(asset.assetID, 16)}: {asset.assetName}");
-                //            numOfUnusedModels++;
-                //        }
+                        List<uint> whoTargets = archive.FindWhoTargets(asset.assetID);
+                        if (whoTargets.Count == 0)
+                        {
+                            output.WriteLine($"  {Convert.ToString(asset.assetID, 16)}: {asset.assetName}");
+                            numOfUnusedModels++;
+                        }
 
-                //    }
-                //}
+                    }
+                }
 
-                //output.WriteLine($"{numOfUnusedModels} unused models out of {numOfModels} total.");
+                output.WriteLine($"{numOfUnusedModels} unused models out of {numOfModels} total.");
 
-                output.WriteLine("* Not yet implemented");
-                output.WriteLine();
                 // Find who Targets Me throws an exception sometimes :(
 
 

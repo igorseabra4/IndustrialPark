@@ -7,6 +7,7 @@ namespace IndustrialPark
     public class DynaSceneProperties : AssetDYNA
     {
         private const string dynaCategoryName = "Scene Properties";
+        public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 1;
 

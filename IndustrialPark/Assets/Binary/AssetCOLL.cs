@@ -22,8 +22,8 @@ namespace IndustrialPark
         public override string ToString()
         {
             if (CollisionModel != 0)
-                return $"[{Program.MainForm.GetAssetNameFromID(Model)}] - [{Program.MainForm.GetAssetNameFromID(CollisionModel)}]";
-            return $"[{Program.MainForm.GetAssetNameFromID(Model)}] - [{Program.MainForm.GetAssetNameFromID(CameraCollisionModel)}]";
+                return $"[{HexUIntTypeConverter.StringFromAssetID(Model)}] - [{HexUIntTypeConverter.StringFromAssetID(CollisionModel)}]";
+            return $"[{HexUIntTypeConverter.StringFromAssetID(Model)}] - [{HexUIntTypeConverter.StringFromAssetID(CameraCollisionModel)}]";
         }
 
         public override bool Equals(object obj)
@@ -41,6 +41,8 @@ namespace IndustrialPark
 
     public class AssetCOLL : Asset, IAssetAddSelected
     {
+        public override string AssetInfo => $"{CollisionTable_Entries.Length} entries";
+
         [Category("Collision Table")]
         public EntryCOLL[] CollisionTable_Entries { get; set; }
 

@@ -17,6 +17,8 @@ namespace IndustrialPark
     public class DynaEnemySupplyCrate : DynaEnemySB
     {
         private const string dynaCategoryName = "Enemy:SB:SupplyCrate";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => CrateType.ToString();
 
         protected override short constVersion => 2;
 

@@ -7,6 +7,8 @@ namespace IndustrialPark
     public class DynaGObjectTaxi : AssetDYNA
     {
         private const string dynaCategoryName = "game_object:Taxi";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => $"{HexUIntTypeConverter.StringFromAssetID(Marker)} {HexUIntTypeConverter.StringFromAssetID(Portal)}";
 
         protected override short constVersion => 1;
 

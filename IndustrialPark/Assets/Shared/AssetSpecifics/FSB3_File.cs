@@ -392,7 +392,7 @@ namespace IndustrialPark
 
         public override string ToString()
         {
-            return Program.MainForm.GetAssetNameFromID(Sound);
+            return HexUIntTypeConverter.StringFromAssetID(Sound);
         }
     }
 }

@@ -10,6 +10,8 @@ namespace IndustrialPark
     public class DynaCameraPreset : RenderableRotatableDynaBase
     {
         private const string dynaCategoryName = "camera:preset";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Checkpoint);
 
         protected override short constVersion => 1;
 

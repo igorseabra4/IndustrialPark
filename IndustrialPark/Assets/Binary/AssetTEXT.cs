@@ -6,6 +6,8 @@ namespace IndustrialPark
 {
     public class AssetTEXT : Asset
     {
+        public override string AssetInfo => $"Length: {Text.Length}";
+
         public string Text { get; set; }
 
         public AssetTEXT(string assetName) : base(assetName, AssetType.Text)

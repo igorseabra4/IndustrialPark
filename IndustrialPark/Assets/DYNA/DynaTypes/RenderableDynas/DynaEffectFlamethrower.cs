@@ -11,6 +11,7 @@ namespace IndustrialPark
     public class DynaEffectFlamethrower : RenderableRotatableDynaBase
     {
         private const string dynaCategoryName = "effect:Flamethrower";
+        public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 3;
 

@@ -6,6 +6,7 @@ namespace IndustrialPark
     public class DynaLogicFunctionGenerator : AssetDYNA
     {
         private const string dynaCategoryName = "logic:Function Generator";
+        public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 1;
 

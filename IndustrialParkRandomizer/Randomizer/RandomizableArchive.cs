@@ -41,9 +41,9 @@ namespace IndustrialPark.Randomizer
 
                     shuffled = true;
                 }
-                else if (a is AssetFLY fly && settings.disableFlythroughs && fly.FLY_Entries.Length > 1)
+                else if (a is AssetFLY fly && settings.disableFlythroughs && fly.Frames.Length > 1)
                 {
-                    fly.FLY_Entries = new EntryFLY[] { fly.FLY_Entries[0] };
+                    fly.Frames = new FlyFrame[] { fly.Frames[0] };
                     shuffled = true;
                 }
 
@@ -386,7 +386,7 @@ namespace IndustrialPark.Randomizer
             if (dynaTeleportAssetIDs.Count == 0)
                 return false;
 
-            AssetDPAT dispatcher = (AssetDPAT)PlaceTemplate(new Vector3(), layerIndex, "IP_TELEBOX", AssetTemplate.Dispatcher);
+            AssetDPAT dispatcher = (AssetDPAT)PlaceTemplate(layerIndex, "IP_TELEBOX", AssetTemplate.Dispatcher);
 
             var links = new List<Link>();
             foreach (uint u in dynaTeleportAssetIDs)
@@ -1038,7 +1038,7 @@ namespace IndustrialPark.Randomizer
                     break;
                 }
 
-            var group = (AssetGRUP)PlaceTemplate(new Vector3(), defaultLayerIndex, "IP_RANDO_PLAYER_GRUP", template: AssetTemplate.Group);
+            var group = (AssetGRUP)PlaceTemplate(defaultLayerIndex, "IP_RANDO_PLAYER_GRUP", template: AssetTemplate.Group);
             group.ReceiveEventDelegation = Delegation.RandomItem;
             group.Links = new Link[]
             {
@@ -1053,7 +1053,7 @@ namespace IndustrialPark.Randomizer
             var outAssetIDs = new List<uint>();
             for (int i = 0; i < 3; i++)
             {
-                var timer = (AssetTIMR)PlaceTemplate(new Vector3(), defaultLayerIndex, ref outAssetIDs, "IP_RANDO_PLAYER_TIMR", template: AssetTemplate.Timer);
+                var timer = (AssetTIMR)PlaceTemplate( defaultLayerIndex, ref outAssetIDs, "IP_RANDO_PLAYER_TIMR", template: AssetTemplate.Timer);
                 timer.Time = 0.1f;
                 timer.Links = new Link[]
                 {
@@ -2230,7 +2230,7 @@ namespace IndustrialPark.Randomizer
                     {
                         dispatcher.EnabledOnStart = false;
                         int defaultLayer = GetLayerFromAssetID(dpat);
-                        AssetTIMR timer = (AssetTIMR)PlaceTemplate(new Vector3(), defaultLayer, template: AssetTemplate.Timer);
+                        AssetTIMR timer = (AssetTIMR)PlaceTemplate(defaultLayer, template: AssetTemplate.Timer);
                         timer.Time = 1f;
                         uint boss = new AssetID("BOSS_NPC");
                         if (ContainsAsset(boss) && GetFromAssetID(boss) is AssetVIL spongebot)
@@ -2983,9 +2983,9 @@ namespace IndustrialPark.Randomizer
                     break;
                 }
 
-            var dpat = PlaceTemplate(new Vector3(), defaultLayerIndex, musicDispAssetName, template: AssetTemplate.Dispatcher);
+            var dpat = PlaceTemplate(defaultLayerIndex, musicDispAssetName, template: AssetTemplate.Dispatcher);
 
-            var group = (AssetGRUP)PlaceTemplate(new Vector3(), defaultLayerIndex, musicGroupAssetName, template: AssetTemplate.Group);
+            var group = (AssetGRUP)PlaceTemplate(defaultLayerIndex, musicGroupAssetName, template: AssetTemplate.Group);
             group.ReceiveEventDelegation = Delegation.RandomItem;
             group.Links = new Link[]
             {
@@ -3040,7 +3040,7 @@ namespace IndustrialPark.Randomizer
                 {
                     lodt.assetFileName = "lodt_doubled";
 
-                    EntryLODT[] lodtEntries = lodt.LODT_Entries;
+                    EntryLODT[] lodtEntries = lodt.Entries;
                     foreach (var t in lodtEntries)
                     {
                         t.MaxDistance *= value;
@@ -3049,7 +3049,7 @@ namespace IndustrialPark.Randomizer
                         t.LOD3_MinDistance *= value;
                     }
 
-                    lodt.LODT_Entries = lodtEntries;
+                    lodt.Entries = lodtEntries;
                 }
 
             return true;

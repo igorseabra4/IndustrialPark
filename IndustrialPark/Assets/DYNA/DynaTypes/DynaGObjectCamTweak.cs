@@ -6,6 +6,7 @@ namespace IndustrialPark
     public class DynaGObjectCamTweak : AssetDYNA
     {
         private const string dynaCategoryName = "game_object:Camera_Tweak";
+        public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 1;
 

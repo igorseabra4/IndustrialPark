@@ -7,6 +7,8 @@ namespace IndustrialPark
     public class DynaInteractionLaunch : AssetDYNA
     {
         private const string dynaCategoryName = "interaction:Launch";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(LaunchObject);
 
         protected override short constVersion => 2;
 

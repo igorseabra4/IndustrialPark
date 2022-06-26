@@ -10,6 +10,8 @@ namespace IndustrialPark
     public class DynaGObjectTrainCar : AssetDYNA, IRenderableAsset, IClickableAsset, IRotatableAsset, IScalableAsset
     {
         private const string dynaCategoryName = "game_object:train_car";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Model);
 
         [Category(dynaCategoryName + " Base")]
         public AssetID PseudoAssetID { get; set; }

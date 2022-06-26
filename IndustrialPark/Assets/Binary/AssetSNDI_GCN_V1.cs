@@ -42,13 +42,13 @@ namespace IndustrialPark
 
         public override string ToString()
         {
-            return Program.MainForm.GetAssetNameFromID(Sound);
+            return HexUIntTypeConverter.StringFromAssetID(Sound);
         }
     }
 
     public class AssetSNDI_GCN_V1 : Asset
     {
-        public override string AssetInfo => "GameCube " + game.ToString() + " SNDI";
+        public override string AssetInfo => $"GameCube {game}, {Entries_SND.Length + Entries_SNDS.Length + Entries_Sound_CIN.Length} entries";
 
         private const string categoryName = "Sound Info: GCN V1";
 

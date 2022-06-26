@@ -7,6 +7,8 @@ namespace IndustrialPark
     public class DynaGObjectDashCameraSpline : AssetDYNA
     {
         private const string dynaCategoryName = "game_object:dash_camera_spline";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Spline);
 
         protected override short constVersion => 2;
 

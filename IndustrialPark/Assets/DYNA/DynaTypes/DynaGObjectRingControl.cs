@@ -18,6 +18,8 @@ namespace IndustrialPark
     public class DynaGObjectRingControl : AssetDYNA, IAssetAddSelected
     {
         private const string dynaCategoryName = "game_object:RingControl";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => $"{Rings.Length} rings";
 
         protected override short constVersion => 3;
 

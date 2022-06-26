@@ -9,11 +9,13 @@ namespace IndustrialPark
         protected override short constVersion => 1;
 
         private const string dynaCategoryName = "hud:text";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => $"{HexUIntTypeConverter.StringFromAssetID(TextBox)} {HexUIntTypeConverter.StringFromAssetID(Text)}";
 
         [Category(dynaCategoryName)]
-        public AssetID TextBoxID { get; set; }
+        public AssetID TextBox { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID TextID { get; set; }
+        public AssetID Text { get; set; }
 
         public DynaHudText(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.hud__text, game, endianness)
         {
@@ -21,8 +23,8 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaHudEnd;
 
-                TextBoxID = reader.ReadUInt32();
-                TextID = reader.ReadUInt32();
+                TextBox = reader.ReadUInt32();
+                Text = reader.ReadUInt32();
             }
         }
 
@@ -31,8 +33,8 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeDynaHud(endianness));
-                writer.Write(TextBoxID);
-                writer.Write(TextID);
+                writer.Write(TextBox);
+                writer.Write(Text);
 
                 return writer.ToArray();
             }
@@ -40,8 +42,8 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
-            Verify(TextBoxID, ref result);
-            Verify(TextID, ref result);
+            Verify(TextBox, ref result);
+            Verify(Text, ref result);
             base.Verify(ref result);
         }
     }

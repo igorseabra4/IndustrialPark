@@ -7,6 +7,8 @@ namespace IndustrialPark
     public class DynaEffectUberLaser : AssetDYNA
     {
         private const string dynaCategoryName = "effect:uber_laser";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Marker1);
 
         protected override short constVersion => 1;
 

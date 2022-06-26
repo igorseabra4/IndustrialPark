@@ -33,7 +33,6 @@ namespace IndustrialPark
 
         public Vector3 Grid;
 
-        public bool UseLegacyAssetIDFormat;
         public bool isDrawingUI;
 
         public Dictionary<string, bool> dontRender;
@@ -67,7 +66,6 @@ namespace IndustrialPark
 
             Grid = new Vector3(1f, 1f, 1f);
 
-            UseLegacyAssetIDFormat = false;
             isDrawingUI = false;
 
             dontRender = new Dictionary<string, bool>();

@@ -11,9 +11,13 @@ namespace IndustrialPark
 
     public class DynaEnemyCastNCrew : DynaEnemySB
     {
+        private const string dynaCategoryName = "Enemy:SB:CastNCrew";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => CastNCrewType.ToString();
+
         protected override short constVersion => 1;
 
-        [Category("Enemy:SB:CastNCrew")]
+        [Category(dynaCategoryName)]
         public EnemyCastNCrewType CastNCrewType
         {
             get => (EnemyCastNCrewType)(uint)Model;

@@ -7,6 +7,8 @@ namespace IndustrialPark
     public class DynaGObjectTaskBox : AssetDYNA
     {
         private const string dynaCategoryName = "game_object:task_box";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(TalkBox);
 
         protected override short constVersion => 2;
 

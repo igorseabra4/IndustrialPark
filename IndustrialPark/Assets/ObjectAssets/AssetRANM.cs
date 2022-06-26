@@ -84,6 +84,7 @@ namespace IndustrialPark
     public class AssetRANM : BaseAsset
     {
         private const string categoryName = "Reactive Animation";
+        public override string AssetInfo => ItemsString(ReactiveAnimations.Length, "animation");
 
         [Category(categoryName)]
         public int Version { get; set; }

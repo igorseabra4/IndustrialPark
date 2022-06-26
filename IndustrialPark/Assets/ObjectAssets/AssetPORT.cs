@@ -9,6 +9,7 @@ namespace IndustrialPark
     public class AssetPORT : BaseAsset
     {
         private const string categoryName = "Portal";
+        public override string AssetInfo => DestinationLevel;
 
         [Category(categoryName)]
         public AssetID Camera { get; set; }

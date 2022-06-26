@@ -246,7 +246,7 @@ namespace IndustrialPark
 
         public override string ToString()
         {
-            return $"{Program.MainForm.GetAssetNameFromID(Model)} - {SubObjectBits}";
+            return $"{HexUIntTypeConverter.StringFromAssetID(Model)} - {SubObjectBits}";
         }
 
         public override bool Equals(object obj)
@@ -288,31 +288,33 @@ namespace IndustrialPark
 
     public class AssetPIPT : Asset, IAssetAddSelected
     {
-        private PipeInfo[] _piptEntries { get; set; }
+        public override string AssetInfo => $"{Entries.Length} entries";
+
+        private PipeInfo[] _entries { get; set; }
         [Category("Pipe Info Table")]
-        public PipeInfo[] PIPT_Entries
+        public PipeInfo[] Entries
         {
-            get => _piptEntries;
+            get => _entries;
             set
             {
-                _piptEntries = value;
+                _entries = value;
                 UpdateDictionary();
             }
         }
 
         public AssetPIPT(string assetName) : base(assetName, AssetType.PipeInfoTable)
         {
-            PIPT_Entries = new PipeInfo[0];
+            Entries = new PipeInfo[0];
         }
 
         public AssetPIPT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                _piptEntries = new PipeInfo[reader.ReadInt32()];
+                _entries = new PipeInfo[reader.ReadInt32()];
 
-                for (int i = 0; i < _piptEntries.Length; i++)
-                    _piptEntries[i] = new PipeInfo(reader, game);
+                for (int i = 0; i < _entries.Length; i++)
+                    _entries[i] = new PipeInfo(reader, game);
 
                 UpdateDictionary();
             }
@@ -322,9 +324,9 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(_piptEntries.Length);
+                writer.Write(_entries.Length);
 
-                foreach (var l in _piptEntries)
+                foreach (var l in _entries)
                     writer.Write(l.Serialize(game, endianness));
 
                 return writer.ToArray();
@@ -344,7 +346,7 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
-            foreach (PipeInfo a in PIPT_Entries)
+            foreach (PipeInfo a in Entries)
             {
                 if (a.Model == 0)
                     result.Add("PIPT entry with ModelAssetID set to 0");
@@ -358,7 +360,7 @@ namespace IndustrialPark
 
             Dictionary<uint, (uint, BlendFactorType, BlendFactorType)[]> BlendModes = new Dictionary<uint, (uint, BlendFactorType, BlendFactorType)[]>();
 
-            foreach (PipeInfo entry in PIPT_Entries)
+            foreach (PipeInfo entry in Entries)
             {
                 if (!BlendModes.ContainsKey(entry.Model))
                     BlendModes[entry.Model] = new (uint, BlendFactorType, BlendFactorType)[0];
@@ -382,15 +384,15 @@ namespace IndustrialPark
 
         public void Merge(AssetPIPT asset)
         {
-            var entries = PIPT_Entries.ToList();
+            var entries = Entries.ToList();
 
-            foreach (var entry in asset.PIPT_Entries)
+            foreach (var entry in asset.Entries)
             {
                 entries.Remove(entry);
                 entries.Add(entry);
             }
 
-            PIPT_Entries = entries.ToArray();
+            Entries = entries.ToArray();
         }
 
         [Browsable(false)]
@@ -398,11 +400,11 @@ namespace IndustrialPark
 
         public void AddItems(List<uint> items)
         {
-            var entries = PIPT_Entries.ToList();
+            var entries = Entries.ToList();
             foreach (var i in items)
                 if (!entries.Any(e => e.Model == i))
                     entries.Add(new PipeInfo() { Model = i, PipeFlags_Preset = PiptPreset.AlphaBlend });
-            PIPT_Entries = entries.ToArray();
+            Entries = entries.ToArray();
         }
     }
 }

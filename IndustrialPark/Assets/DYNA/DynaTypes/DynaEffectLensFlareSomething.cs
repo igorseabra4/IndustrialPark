@@ -3,9 +3,10 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class DynaEffectLensFlareSomething : AssetDYNA
+    public class DynaEffectLensFlareSource : AssetDYNA
     {
-        private const string dynaCategoryName = "Unknown - related to Lens Flare";
+        private const string dynaCategoryName = "effect:Lens Flare Source";
+        public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 3;
 
@@ -26,7 +27,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID Unknown1C { get; set; }
 
-        public DynaEffectLensFlareSomething(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__LensFlareSource, game, endianness)
+        public DynaEffectLensFlareSource(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__LensFlareSource, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {

@@ -15,6 +15,8 @@ namespace IndustrialPark
     public class DynaEnemyTurret : DynaEnemySB
     {
         private const string dynaCategoryName = "Enemy:SB:Turret";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => TurretType.ToString();
 
         protected override short constVersion => 4;
 

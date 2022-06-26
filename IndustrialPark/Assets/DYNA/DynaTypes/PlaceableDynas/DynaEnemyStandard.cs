@@ -34,6 +34,8 @@ namespace IndustrialPark
     public class DynaEnemyStandard : DynaEnemySB
     {
         private const string dynaCategoryName = "Enemy:SB:Standard";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => EnemyType.ToString();
 
         protected override short constVersion => 7;
 

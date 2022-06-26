@@ -7,6 +7,8 @@ namespace IndustrialPark
     public class DynaEffectLensFlare : AssetDYNA
     {
         private const string dynaCategoryName = "effect:Lens Flare Element";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Texture);
 
         protected override short constVersion => 3;
 

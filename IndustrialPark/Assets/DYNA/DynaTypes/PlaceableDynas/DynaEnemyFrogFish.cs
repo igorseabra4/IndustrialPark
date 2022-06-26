@@ -12,6 +12,8 @@ namespace IndustrialPark
     public class DynaEnemyFrogFish : DynaEnemySB
     {
         private const string dynaCategoryName = "Enemy:SB:FrogFish";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => FrogFishType.ToString();
 
         protected override short constVersion => 2;
 

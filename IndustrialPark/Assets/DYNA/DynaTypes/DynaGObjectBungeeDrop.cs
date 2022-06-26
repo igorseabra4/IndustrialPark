@@ -7,6 +7,8 @@ namespace IndustrialPark
     public class DynaGObjectBungeeDrop : AssetDYNA
     {
         private const string dynaCategoryName = "game_object:bungee_drop";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Marker);
 
         protected override short constVersion => 1;
 

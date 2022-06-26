@@ -8,6 +8,7 @@ namespace IndustrialPark
     public class AssetSDFX : BaseAsset, IRenderableAsset, IClickableAsset
     {
         private const string categoryName = "SDFX";
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(SoundGroup);
 
         private uint _soundGroup;
         [Category(categoryName)]

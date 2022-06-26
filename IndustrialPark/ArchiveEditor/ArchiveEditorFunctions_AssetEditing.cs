@@ -718,9 +718,9 @@ namespace IndustrialPark
                     break;
                 }
             if (pipt == null)
-                pipt = (AssetPIPT)PlaceTemplate(new Vector3(), IndexOfLayerOfType((int)LayerType_BFBB.DEFAULT), template: AssetTemplate.Pipe_Info_Table);
+                pipt = (AssetPIPT)PlaceTemplate(IndexOfLayerOfType((int)LayerType_BFBB.DEFAULT), template: AssetTemplate.Pipe_Info_Table);
 
-            List<PipeInfo> entries = pipt.PIPT_Entries.ToList();
+            List<PipeInfo> entries = pipt.Entries.ToList();
 
             foreach (uint u in assetIDs)
                 if (GetFromAssetID(u) is AssetMODL)
@@ -730,7 +730,7 @@ namespace IndustrialPark
                         LightingMode = LightingMode.Prelight
                     });
 
-            pipt.PIPT_Entries = entries.ToArray();
+            pipt.Entries = entries.ToArray();
         }
 
         private byte[] ReplaceReferences(byte[] data, Dictionary<uint, uint> referenceUpdate)

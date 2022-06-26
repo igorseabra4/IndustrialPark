@@ -14,5 +14,8 @@
         public bool dontDrawInvisible = false;
 
         public bool persistentShinies = true;
+
+        public bool LegacyAssetIDFormat = false;
+        public bool LegacyAssetTypeFormat = false;
     }
 }

@@ -38,7 +38,7 @@ namespace IndustrialPark
 
         public override string ToString()
         {
-            return $"[{Program.MainForm.GetAssetNameFromID(Model)}]";
+            return $"[{HexUIntTypeConverter.StringFromAssetID(Model)}]";
         }
 
         public override bool Equals(object obj)
@@ -65,6 +65,7 @@ namespace IndustrialPark
     public class AssetTRWT : BaseAsset
     {
         private const string categoryName = "Throwable Table";
+        public override string AssetInfo => $"{Entries.Length} entries";
 
         [Category(categoryName)]
         public int Version { get; set; }

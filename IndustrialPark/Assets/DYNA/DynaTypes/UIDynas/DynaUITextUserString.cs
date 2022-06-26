@@ -6,6 +6,7 @@ namespace IndustrialPark
     public class DynaUITextUserString : DynaUIText
     {
         private const string dynaCategoryName = "ui:text:user string";
+        public override string TypeString => dynaCategoryName;
 
         [Category(dynaCategoryName)]
         public byte hardMaxChars { get; set; }

@@ -55,7 +55,7 @@ namespace IndustrialPark
         private void UpdateListbox()
         {
             listBoxFlyEntries.Items.Clear();
-            foreach (EntryFLY entry in asset.FLY_Entries)
+            foreach (FlyFrame entry in asset.Frames)
             {
                 listBoxFlyEntries.Items.Add(entry);
                 maxFrame = entry.FrameNumer > maxFrame ? entry.FrameNumer : maxFrame;
@@ -66,17 +66,17 @@ namespace IndustrialPark
         {
             int selectedIndex = listBoxFlyEntries.SelectedIndex;
 
-            List<EntryFLY> entries = new List<EntryFLY>();
+            List<FlyFrame> entries = new List<FlyFrame>();
             var count = 0;
             maxFrame = 0;
-            foreach (EntryFLY entry in listBoxFlyEntries.Items)
+            foreach (FlyFrame entry in listBoxFlyEntries.Items)
             {
                 entry.FrameNumer = count++;
                 entries.Add(entry);
                 if (entry.FrameNumer > maxFrame)
                     maxFrame = entry.FrameNumer;
             }
-            asset.FLY_Entries = entries.ToArray();
+            asset.Frames = entries.ToArray();
             archive.UnsavedChanges = true;
 
             UpdateListbox();
@@ -97,12 +97,12 @@ namespace IndustrialPark
 
         private void listBoxFlyEntries_SelectedIndexChanged(object sender, EventArgs e)
         {
-            propertyGridSpecific.SelectedObject = (EntryFLY)listBoxFlyEntries.SelectedItem;
+            propertyGridSpecific.SelectedObject = (FlyFrame)listBoxFlyEntries.SelectedItem;
         }
 
         private void buttonAdd_Click(object sender, EventArgs e)
         {
-            var entry = new EntryFLY() { FrameNumer = listBoxFlyEntries.Items.Count };
+            var entry = new FlyFrame() { FrameNumer = listBoxFlyEntries.Items.Count };
             SetViewToFly(entry);
             listBoxFlyEntries.Items.Add(entry);
         }
@@ -124,11 +124,11 @@ namespace IndustrialPark
         private void buttonGetView_Click(object sender, EventArgs e)
         {
             if (listBoxFlyEntries.SelectedIndex != -1)
-                SetViewToFly((EntryFLY)propertyGridSpecific.SelectedObject);
+                SetViewToFly((FlyFrame)propertyGridSpecific.SelectedObject);
             RefreshPropertyGrid();
         }
 
-        private void SetViewToFly(EntryFLY entry)
+        private void SetViewToFly(FlyFrame entry)
         {
             entry.CameraPosition = Program.MainForm.renderer.Camera.Position;
             entry.CameraNormalizedRight = Program.MainForm.renderer.Camera.Right;
@@ -138,7 +138,7 @@ namespace IndustrialPark
 
         private void buttonView_Click(object sender, EventArgs e)
         {
-            if (propertyGridSpecific.SelectedObject is EntryFLY flyEntry)
+            if (propertyGridSpecific.SelectedObject is FlyFrame flyEntry)
                 Program.MainForm.renderer.Camera.SetPositionFlyEntry(flyEntry);
         }
 
@@ -219,7 +219,7 @@ namespace IndustrialPark
 
         public void Play()
         {
-            foreach (EntryFLY entry in listBoxFlyEntries.Items)
+            foreach (FlyFrame entry in listBoxFlyEntries.Items)
             {
                 if (entry.FrameNumer == currentFrame)
                 {
@@ -240,7 +240,7 @@ namespace IndustrialPark
 
         public void Record()
         {
-            var newFly = new EntryFLY
+            var newFly = new FlyFrame
             {
                 FrameNumer = listBoxFlyEntries.Items.Count,
                 ApertureX = 0.98f,
@@ -251,7 +251,7 @@ namespace IndustrialPark
 
             var lastIndex = listBoxFlyEntries.Items.Count - 1;
 
-            if (lastIndex < 0 || !((EntryFLY)listBoxFlyEntries.Items[lastIndex]).NearlySimilar(newFly))
+            if (lastIndex < 0 || !((FlyFrame)listBoxFlyEntries.Items[lastIndex]).NearlySimilar(newFly))
             {
                 switcher = !switcher;
                 if (switcher)

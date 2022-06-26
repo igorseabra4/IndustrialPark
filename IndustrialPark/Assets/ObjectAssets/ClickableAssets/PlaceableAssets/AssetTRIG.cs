@@ -15,6 +15,7 @@ namespace IndustrialPark
     public class AssetTRIG : EntityAsset, IVolumeAsset
     {
         private const string categoryName = "Trigger";
+        public override string AssetInfo => Shape.ToString();
 
         [Category(categoryName)]
         public TriggerShape Shape

@@ -9,6 +9,8 @@ namespace IndustrialPark
     public class DynaEffectSpotlight : AssetDYNA
     {
         private const string dynaCategoryName = "effect:spotlight";
+        public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(OriginEntity);
 
         protected override short constVersion => 2;
 

@@ -14,7 +14,7 @@ namespace IndustrialPark
     {
         protected RenderWareModelFile model;
 
-        public override string AssetInfo => RwVersion(renderWareVersion) + " " + base.AssetInfo;
+        public override string AssetInfo => $"{RwVersion(renderWareVersion)} {(IsNativeData ? "native" : "")} {base.AssetInfo}";
 
         public AssetRenderWareModel(string assetName, AssetType assetType, byte[] data, SharpRenderer renderer) : base(assetName, assetType, data)
         {

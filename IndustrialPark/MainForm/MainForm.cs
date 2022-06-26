@@ -117,7 +117,7 @@ namespace IndustrialPark
                     return;
                 }
                 MessageBox.Show(
-                    "It appears this is your first time using Industrial Park.\nPlease consult the documentation on the Heavy Iron Modding Wiki to understand how to use the tool if you haven't already.\nAlso, be sure to check individual asset pages if you're not sure what one of them or their settings do.",
+                    "It appears this is your first time using Industrial Park.\nPlease consult the documentation and user guide on the Heavy Iron Modding Wiki to understand how to use the tool if you haven't already.",
                     "Welcome!",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
@@ -150,6 +150,12 @@ namespace IndustrialPark
             templatesPersistentShiniesToolStripMenuItem.Checked = settings.persistentShinies;
             ArchiveEditorFunctions.persistentShinies = settings.persistentShinies;
 
+            useLegacyAssetIDFormatToolStripMenuItem.Checked = settings.LegacyAssetIDFormat;
+            HexUIntTypeConverter.Legacy = settings.LegacyAssetIDFormat;
+
+            useLegacyAssetTypeFormatToolStripMenuItem.Checked = settings.LegacyAssetTypeFormat;
+            ArchiveEditor.LegacyAssetNameFormat = settings.LegacyAssetTypeFormat;
+
             discordRichPresenceToolStripMenuItem.Checked = settings.discordRichPresence;
             DiscordRPCController.ToggleDiscordRichPresence(discordRichPresenceToolStripMenuItem.Checked);
 
@@ -171,7 +177,7 @@ namespace IndustrialPark
             }
 
             if (settings.AutoloadOnStartup && !string.IsNullOrEmpty(settings.LastProjectPath) && File.Exists(settings.LastProjectPath))
-                ApplySettings(settings.LastProjectPath);
+                ApplyProject(settings.LastProjectPath);
         }
 
         private delegate void StartLoop(Panel renderPanel);
@@ -211,7 +217,9 @@ namespace IndustrialPark
                 renderBasedOnPipt = AssetMODL.renderBasedOnPipt,
                 discordRichPresence = discordRichPresenceToolStripMenuItem.Checked,
                 dontDrawInvisible = RenderWareModelFile.dontDrawInvisible,
-                persistentShinies = ArchiveEditorFunctions.persistentShinies
+                persistentShinies = ArchiveEditorFunctions.persistentShinies,
+                LegacyAssetIDFormat = HexUIntTypeConverter.Legacy,
+                LegacyAssetTypeFormat = ArchiveEditor.LegacyAssetNameFormat,
             };
 
             File.WriteAllText(pathToSettings, JsonConvert.SerializeObject(settings, Formatting.Indented));
@@ -257,7 +265,7 @@ namespace IndustrialPark
             DiscordRPCController.setPresence("a project");
 
             currentProjectPath = null;
-            ApplySettings(new ProjectJson());
+            ApplyProject(new ProjectJson());
             SetProjectToolStripStatusLabel();
             SetAllAssetTypesVisible();
         }
@@ -281,7 +289,7 @@ namespace IndustrialPark
             { Filter = "JSON files|*.json" };
 
             if (openFile.ShowDialog() == DialogResult.OK)
-                ApplySettings(openFile.FileName);
+                ApplyProject(openFile.FileName);
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -398,7 +406,6 @@ namespace IndustrialPark
                 TrigColor = renderer.trigColor,
                 MvptColor = renderer.mvptColor,
                 SfxColor = renderer.sfxColor,
-                UseLegacyAssetIDFormat = useLegacyAssetIDFormatToolStripMenuItem.Checked,
                 hiddenAssets = hiddenAssets,
                 isDrawingUI = renderer.isDrawingUI,
                 Grid = ArchiveEditorFunctions.Grid,
@@ -406,14 +413,14 @@ namespace IndustrialPark
             };
         }
 
-        private void ApplySettings(string ipSettingsPath)
+        private void ApplyProject(string projectPath)
         {
-            currentProjectPath = ipSettingsPath;
+            currentProjectPath = projectPath;
             SetProjectToolStripStatusLabel();
-            ApplySettings(JsonConvert.DeserializeObject<ProjectJson>(File.ReadAllText(ipSettingsPath)));
+            ApplyProject(JsonConvert.DeserializeObject<ProjectJson>(File.ReadAllText(projectPath)));
         }
 
-        private void ApplySettings(ProjectJson ipSettings)
+        private void ApplyProject(ProjectJson ipSettings)
         {
             if (ipSettings.version != ProjectJson.getCurrentVersion)
                 MessageBox.Show("You are trying to open a project file made with a different version of Industrial Park. The program will attempt to load the project, but there is a chance it will not load properly.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -470,9 +477,6 @@ namespace IndustrialPark
             renderer.SetMvptColor(ipSettings.MvptColor);
             renderer.SetTrigColor(ipSettings.TrigColor);
             renderer.SetSfxColor(ipSettings.SfxColor);
-
-            useLegacyAssetIDFormatToolStripMenuItem.Checked = ipSettings.UseLegacyAssetIDFormat;
-            HexUIntTypeConverter.Legacy = ipSettings.UseLegacyAssetIDFormat;
 
             uIModeToolStripMenuItem.Checked = ipSettings.isDrawingUI;
             renderer.isDrawingUI = ipSettings.isDrawingUI;
@@ -578,17 +582,7 @@ namespace IndustrialPark
                 PressedKeys.Add(e.KeyCode);
 
             if (e.KeyCode == Keys.Z)
-            {
                 MouseModeToggle();
-               
-                if (mouseMode)
-                {
-                    Cursor.Hide();
-                } else
-                {
-                    Cursor.Show();
-                }
-            }
             else if (e.KeyCode == Keys.Q)
                 renderer.Camera.IncreaseCameraSpeed(-1);
             else if (e.KeyCode == Keys.E)
@@ -1081,6 +1075,12 @@ namespace IndustrialPark
             HexUIntTypeConverter.Legacy = useLegacyAssetIDFormatToolStripMenuItem.Checked;
         }
 
+        private void useLegacyAssetTypeFormatToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            useLegacyAssetTypeFormatToolStripMenuItem.Checked = !useLegacyAssetTypeFormatToolStripMenuItem.Checked;
+            ArchiveEditor.LegacyAssetNameFormat = useLegacyAssetTypeFormatToolStripMenuItem.Checked;
+        }
+
         private void enableAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             autoShowDropDowns = false;
@@ -1195,23 +1195,30 @@ namespace IndustrialPark
         private void SetAssetViewToolStripMenuItems(IEnumerable<AssetType> assetTypes)
         {
             var items = new List<ToolStripMenuItem>();
-            foreach (var assetType in assetTypes.OrderBy(f => f.ToString()))
+            var names = new Dictionary<AssetType, string>();
+
+            foreach (var assetType in assetTypes)
             {
                 if (!assetViewTypes.ContainsKey(assetType))
                     continue;
 
-                var text = assetType.ToString();
+                var text = ArchiveEditor.AssetTypeToString(assetType);
                 if (assetType == AssetType.VIL && assetTypes.Contains(AssetType.Duplicator))
-                    text = "VIL/Duplicator";
+                    text = $"{ArchiveEditor.AssetTypeToString(AssetType.VIL)}/{ArchiveEditor.AssetTypeToString(AssetType.Duplicator)}";
 
-                var field = assetViewTypes[assetType].GetField("dontRender");
+                names.Add(assetType, text);
+            }
+            
+            foreach (var entry in names.OrderBy(f => f.Value.ToString()))
+            {
+                var field = assetViewTypes[entry.Key].GetField("dontRender");
                 var dontRender = (bool)field.GetValue(null);
 
-                ToolStripMenuItem item = new ToolStripMenuItem(text)
+                ToolStripMenuItem item = new ToolStripMenuItem(entry.Value)
                 {
                     Checked = !dontRender,
                     CheckState = dontRender ? CheckState.Unchecked : CheckState.Checked,
-                    Tag = assetType
+                    Tag = entry.Key
                 };
                 item.Click += (object sender, EventArgs e) =>
                 {
@@ -1499,9 +1506,7 @@ namespace IndustrialPark
         private void MainForm_Resize(object sender, EventArgs e)
         {
             if (renderer == null)
-            {
                 return;
-            }
 
             try
             {

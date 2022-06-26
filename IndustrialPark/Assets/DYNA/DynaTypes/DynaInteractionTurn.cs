@@ -7,6 +7,7 @@ namespace IndustrialPark
     public class DynaInteractionTurn : AssetDYNA
     {
         private const string dynaCategoryName = "interaction:Turn";
+        public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 1;
 

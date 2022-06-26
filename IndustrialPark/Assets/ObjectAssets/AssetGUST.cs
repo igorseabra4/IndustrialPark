@@ -6,6 +6,8 @@ namespace IndustrialPark
 {
     public class AssetGUST : BaseAsset
     {
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Volume);
+
         private const string catName = "Gust";
 
         [Category(catName)]

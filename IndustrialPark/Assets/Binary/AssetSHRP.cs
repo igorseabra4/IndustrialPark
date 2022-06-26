@@ -8,6 +8,8 @@ namespace IndustrialPark
 {
     public class AssetSHRP : Asset
     {
+        public override string AssetInfo => $"{Entries.Length} entries";
+
         private const string categoryName = "Shrapnel";
 
         [Category(categoryName)]
@@ -15,7 +17,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID AssetID_Internal { get; set; }
         [Category(categoryName)]
-        public EntrySHRP[] SHRPEntries { get; set; }
+        public EntrySHRP[] Entries { get; set; }
 
         public AssetSHRP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
@@ -24,9 +26,9 @@ namespace IndustrialPark
                 int amountOfEntries = reader.ReadInt32();
                 AssetID_Internal = reader.ReadUInt32();
                 Unknown = reader.ReadInt32();
-                SHRPEntries = new EntrySHRP[amountOfEntries];
+                Entries = new EntrySHRP[amountOfEntries];
 
-                for (int i = 0; i < SHRPEntries.Length; i++)
+                for (int i = 0; i < Entries.Length; i++)
                 {
                     int entryType = reader.ReadInt32();
 
@@ -67,7 +69,7 @@ namespace IndustrialPark
                     else
                         throw new Exception("Unknown SHRP entry type " + entryType.ToString() + " found in asset " + ToString() + ". This SHRP asset cannot be edited by Industrial Park.");
 
-                    SHRPEntries[i] = entry;
+                    Entries[i] = entry;
                 }
             }
         }
@@ -76,10 +78,10 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(SHRPEntries.Length);
+                writer.Write(Entries.Length);
                 writer.Write(AssetID_Internal);
                 writer.Write(Unknown);
-                foreach (var e in SHRPEntries)
+                foreach (var e in Entries)
                     writer.Write(e.Serialize(game, endianness));
 
                 return writer.ToArray();
@@ -88,7 +90,7 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
-            foreach (EntrySHRP a in SHRPEntries)
+            foreach (EntrySHRP a in Entries)
                 switch (a.Type)
                 {
                     case 3:
@@ -120,7 +122,7 @@ namespace IndustrialPark
 
         public void AddEntry(int type)
         {
-            List<EntrySHRP> list = SHRPEntries.ToList();
+            List<EntrySHRP> list = Entries.ToList();
 
             switch (type)
             {
@@ -156,7 +158,7 @@ namespace IndustrialPark
                     break;
             }
 
-            SHRPEntries = list.ToArray();
+            Entries = list.ToArray();
         }
     }
 

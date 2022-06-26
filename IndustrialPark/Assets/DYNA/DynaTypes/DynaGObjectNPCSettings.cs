@@ -21,6 +21,7 @@ namespace IndustrialPark
     public class DynaGObjectNPCSettings : AssetDYNA
     {
         private const string dynaCategoryName = "game_object:NPCSettings";
+        public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 2;
 

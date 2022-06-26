@@ -80,7 +80,8 @@
             this.AssetNameCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.AssetIDCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.AssetTypeCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.AssetSizeCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.AssetInfoCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.AssetLinksCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.buttonCopy = new System.Windows.Forms.Button();
             this.buttonPaste = new System.Windows.Forms.Button();
             this.textBoxFindAsset = new System.Windows.Forms.TextBox();
@@ -146,7 +147,7 @@
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.newToolStripMenuItem.Text = "&New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
@@ -154,7 +155,7 @@
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.openToolStripMenuItem.Text = "&Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
@@ -163,7 +164,7 @@
             this.saveToolStripMenuItem.Enabled = false;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.saveToolStripMenuItem.Text = "&Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -171,20 +172,20 @@
             // 
             this.saveAsToolStripMenuItem.Enabled = false;
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.saveAsToolStripMenuItem.Text = "Save &As...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(145, 6);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
             this.closeToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.closeToolStripMenuItem.Text = "&Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
@@ -352,7 +353,7 @@
             // generateToolStripMenuItem
             // 
             this.generateToolStripMenuItem.Name = "generateToolStripMenuItem";
-            this.generateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.generateToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
             this.generateToolStripMenuItem.Text = "&Generate Report";
             this.generateToolStripMenuItem.Click += new System.EventHandler(this.generateToolStripMenuItem_Click);
             // 
@@ -367,7 +368,7 @@
             // hideButtonsToolStripMenuItem
             // 
             this.hideButtonsToolStripMenuItem.Name = "hideButtonsToolStripMenuItem";
-            this.hideButtonsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.hideButtonsToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.hideButtonsToolStripMenuItem.Text = "&Hide Buttons";
             this.hideButtonsToolStripMenuItem.Click += new System.EventHandler(this.hideButtonsToolStripMenuItem_Click);
             // 
@@ -575,7 +576,8 @@
             this.AssetNameCol,
             this.AssetIDCol,
             this.AssetTypeCol,
-            this.AssetSizeCol});
+            this.AssetInfoCol,
+            this.AssetLinksCol});
             this.listViewAssets.HideSelection = false;
             this.listViewAssets.Location = new System.Drawing.Point(9, 40);
             this.listViewAssets.Name = "listViewAssets";
@@ -592,24 +594,28 @@
             // 
             // AssetNameCol
             // 
-            this.AssetNameCol.DisplayIndex = 1;
             this.AssetNameCol.Text = "Name";
-            this.AssetNameCol.Width = 288;
+            this.AssetNameCol.Width = 240;
             // 
             // AssetIDCol
             // 
-            this.AssetIDCol.DisplayIndex = 0;
             this.AssetIDCol.Text = "Asset ID";
-            this.AssetIDCol.Width = 77;
+            this.AssetIDCol.Width = 69;
             // 
             // AssetTypeCol
             // 
             this.AssetTypeCol.Text = "Type";
+            this.AssetTypeCol.Width = 59;
             // 
-            // AssetSizeCol
+            // AssetInfoCol
             // 
-            this.AssetSizeCol.Text = "Info";
-            this.AssetSizeCol.Width = 66;
+            this.AssetInfoCol.Text = "Info";
+            this.AssetInfoCol.Width = 96;
+            // 
+            // AssetLinksCol
+            // 
+            this.AssetLinksCol.Text = "Links";
+            this.AssetLinksCol.Width = 37;
             // 
             // buttonCopy
             // 
@@ -972,8 +978,7 @@
         private System.Windows.Forms.ToolStripMenuItem editPACKToolStripMenuItem;
         private System.Windows.Forms.ColumnHeader AssetNameCol;
         private System.Windows.Forms.ColumnHeader AssetIDCol;
-        private System.Windows.Forms.ColumnHeader AssetTypeCol;
-        private System.Windows.Forms.ColumnHeader AssetSizeCol;
+        private System.Windows.Forms.ColumnHeader AssetInfoCol;
         private System.Windows.Forms.CheckBox checkBoxTemplateFocus;
         private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItem_CreateGroup;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
@@ -986,5 +991,7 @@
         private System.Windows.Forms.ToolStripMenuItem generateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem hideButtonsToolStripMenuItem;
+        private System.Windows.Forms.ColumnHeader AssetTypeCol;
+        private System.Windows.Forms.ColumnHeader AssetLinksCol;
     }
 }

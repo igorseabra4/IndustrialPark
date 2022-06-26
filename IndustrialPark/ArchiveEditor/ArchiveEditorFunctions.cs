@@ -733,7 +733,7 @@ namespace IndustrialPark
                 case DynaType.SceneProperties: return new DynaSceneProperties(AHDR, game, endianness);
                 case DynaType.effect__Flamethrower: return new DynaEffectFlamethrower(AHDR, game, endianness);
                 case DynaType.effect__LensFlareElement: return new DynaEffectLensFlare(AHDR, game, endianness);
-                case DynaType.effect__LensFlareSource: return new DynaEffectLensFlareSomething(AHDR, game, endianness);
+                case DynaType.effect__LensFlareSource: return new DynaEffectLensFlareSource(AHDR, game, endianness);
                 case DynaType.effect__Lightning: return new DynaEffectLightning(AHDR, game, endianness);
                 case DynaType.effect__Rumble: return new DynaEffectRumble(AHDR, game, endianness);
                 case DynaType.effect__RumbleSphericalEmitter: return new DynaEffectRumbleSphere(AHDR, game, endianness);

@@ -674,6 +674,11 @@ namespace IndustrialPark
             return null;
         }
 
+        public Asset PlaceTemplate(int layerIndex, string customName = "", AssetTemplate template = AssetTemplate.Null)
+        {
+            return PlaceTemplate(new Vector3(), layerIndex, customName, template);
+        }
+
         public Asset PlaceTemplate(Vector3 position, int layerIndex, string customName = "", AssetTemplate template = AssetTemplate.Null)
         {
             var assetIDs = new List<uint>();
@@ -1556,30 +1561,30 @@ namespace IndustrialPark
 
             int defaultLayer = game == Game.Incredibles ? 0 : 1;
 
-            AssetPLYR player = (AssetPLYR)PlaceTemplate(new Vector3(), defaultLayer, template: AssetTemplate.Player);
+            AssetPLYR player = (AssetPLYR)PlaceTemplate(defaultLayer, template: AssetTemplate.Player);
 
-            AssetENV env = (AssetENV)PlaceTemplate(new Vector3(), defaultLayer, customName: environmentName, template: AssetTemplate.Environment);
+            AssetENV env = (AssetENV)PlaceTemplate(defaultLayer, customName: environmentName, template: AssetTemplate.Environment);
 
             env.StartCamera = PlaceTemplate(new Vector3(0, 100, 100), defaultLayer, customName: startCamName, template: AssetTemplate.Start_Camera).assetID;
 
             if (game != Game.Incredibles)
             {
-                env.BSP = PlaceTemplate(new Vector3(), 0, "empty_bsp", template: AssetTemplate.Empty_BSP).assetID;
-                PlaceTemplate(new Vector3(), defaultLayer, pkupsMinfName, template: AssetTemplate.Model_Info);
+                env.BSP = PlaceTemplate(0, "empty_bsp", template: AssetTemplate.Empty_BSP).assetID;
+                PlaceTemplate(defaultLayer, pkupsMinfName, template: AssetTemplate.Model_Info);
             }
 
             if (game == Game.BFBB)
             {
-                env.Object_LightKit = PlaceTemplate(new Vector3(), defaultLayer, customName: "lights", template: AssetTemplate.LKIT_lights).assetID;
-                player.LightKit = PlaceTemplate(new Vector3(), defaultLayer, customName: "JF_SB_lights", template: AssetTemplate.LKIT_JF_SB_lights).assetID;
+                env.Object_LightKit = PlaceTemplate(defaultLayer, customName: "lights", template: AssetTemplate.LKIT_lights).assetID;
+                player.LightKit = PlaceTemplate(defaultLayer, customName: "JF_SB_lights", template: AssetTemplate.LKIT_JF_SB_lights).assetID;
             }
             else if (game == Game.Incredibles)
             {
-                var light_kit = (AssetLKIT)PlaceTemplate(new Vector3(), defaultLayer, customName: "jf01_light_kit", template: AssetTemplate.LKIT_lights);
+                var light_kit = (AssetLKIT)PlaceTemplate( defaultLayer, customName: "jf01_light_kit", template: AssetTemplate.LKIT_lights);
                 player.LightKit = light_kit.assetID;
                 env.Object_LightKit = light_kit.assetID;
 
-                PlaceTemplate(new Vector3(), defaultLayer, customName: "DEFAULT_GLOW_SCENE_PROP", template: AssetTemplate.DefaultGlowSceneProp);
+                PlaceTemplate(defaultLayer, customName: "DEFAULT_GLOW_SCENE_PROP", template: AssetTemplate.DefaultGlowSceneProp);
             }
         }
     }

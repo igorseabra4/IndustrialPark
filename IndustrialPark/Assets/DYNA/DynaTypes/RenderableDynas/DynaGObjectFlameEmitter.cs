@@ -10,6 +10,7 @@ namespace IndustrialPark
     public class DynaGObjectFlameEmitter : RenderableDynaBase
     {
         private const string dynaCategoryName = "game_object:flame_emitter";
+        public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 4;
 
