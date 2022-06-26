@@ -9,11 +9,6 @@ namespace IndustrialPark
     public partial class ApplyVertexColors : Form
     {
         SolidBrush colorPreview;
-        readonly Graphics previewGraphics;
-        private const int COLOR_PREVIEW_X_POS = 380;
-        private const int COLOR_PREVIEW_Y_POS = 15;
-        private const int COLOR_PREVIEW_SIZE = 50;
-        private const int COLOR_PREVIEW_BORDER_WIDTH = 1;
 
         public ApplyVertexColors()
         {
@@ -40,7 +35,6 @@ namespace IndustrialPark
                 ClampToByteRange((int)(numericUpDownY.Value * 255)),
                 ClampToByteRange((int)(numericUpDownZ.Value * 255))));
 
-            previewGraphics = CreateGraphics();
             UpdateColorPreview();
         }
 
@@ -60,18 +54,7 @@ namespace IndustrialPark
 
             // TODO: Fix scaling on non-100% display scale for the color preview
 
-            // Draw preview outline
-            previewGraphics.FillRectangle(new SolidBrush(System.Drawing.Color.FromArgb(222, 0, 0, 0)),
-                COLOR_PREVIEW_X_POS - COLOR_PREVIEW_BORDER_WIDTH,
-                COLOR_PREVIEW_Y_POS - COLOR_PREVIEW_BORDER_WIDTH,
-                COLOR_PREVIEW_SIZE + (2 * COLOR_PREVIEW_BORDER_WIDTH),
-                COLOR_PREVIEW_SIZE + (2 * COLOR_PREVIEW_BORDER_WIDTH));
-            // Draw preview
-            previewGraphics.FillRectangle(colorPreview, new System.Drawing.Rectangle(
-                COLOR_PREVIEW_X_POS,
-                COLOR_PREVIEW_Y_POS,
-                COLOR_PREVIEW_SIZE,
-                COLOR_PREVIEW_SIZE));
+            pnlColorPreview.BackColor = colorPreview.Color;
         }
 
         public static (Vector4?, Operation) GetColor()
@@ -111,7 +94,6 @@ namespace IndustrialPark
         private void ApplyVertexColors_FormClosing(object sender, FormClosingEventArgs e)
         {
             colorPreview.Dispose();
-            previewGraphics.Dispose();
         }
 
         private void colorPickerBtn_Click(object sender, EventArgs e)

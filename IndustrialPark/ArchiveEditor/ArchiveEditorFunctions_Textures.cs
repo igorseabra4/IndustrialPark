@@ -3,6 +3,7 @@ using RenderWareFile;
 using RenderWareFile.Sections;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -76,7 +77,34 @@ namespace IndustrialPark
                                 foreach (TextureNative_0015 tn in td.textureNativeList)
                                 {
                                     fileVersion = tn.renderWareVersion;
-                                    tn.textureNativeStruct.textureName = asset.assetName.Replace(".RW3", "");
+
+                                    // Fix for trimmed texture file names
+                                    // For example, track textures in SpongeBall challenges
+                                    // Length indicates that the file may have been trimmed (TODO: check if trim length is always 31?)
+                                    int trimLength = 31;
+
+                                    if (asset.assetName.Length == trimLength && !asset.assetName.EndsWith(".RW3")) 
+                                    {
+                                        // FIXME: Using Replace() might mess up texture names
+
+                                        if (asset.assetName.EndsWith(".RW"))
+                                        {
+                                            tn.textureNativeStruct.textureName = asset.assetName.Replace(".RW", "");
+                                        }
+                                        else if (asset.assetName.EndsWith(".R"))
+                                        {
+                                            tn.textureNativeStruct.textureName = asset.assetName.Replace(".R", "");
+                                        }
+                                        else if (asset.assetName.EndsWith("."))
+                                        {
+                                            
+                                            tn.textureNativeStruct.textureName = asset.assetName.Replace(".", "");
+                                        }
+                                    }
+                                    else // If length does not match, falls back to default behaviour
+                                    {
+                                        tn.textureNativeStruct.textureName = asset.assetName.Replace(".RW3", "");
+                                    }
                                     textNativeList.Add(tn);
                                 }
                     }

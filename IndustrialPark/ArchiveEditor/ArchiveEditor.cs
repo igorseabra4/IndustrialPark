@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace IndustrialPark
 {
@@ -63,6 +64,8 @@ namespace IndustrialPark
 
             if (!string.IsNullOrWhiteSpace(filePath))
                 OpenFile(filePath, scoobyPlatform);
+
+            _updateFilesizeStatusBarItem();
         }
 
         private readonly bool standalone = false;
@@ -145,9 +148,15 @@ namespace IndustrialPark
                 {
                     OpenFile(openFile.FileName);
                 }
+                _updateFilesizeStatusBarItem();
             }
         }
 
+        /// <summary>
+        /// Opens a HIP file from the specified path.
+        /// </summary>
+        /// <param name="fileName">The HIP file to open</param>
+        /// <param name="scoobyPlatform">The </param>
         private void OpenFile(string fileName, Platform scoobyPlatform = Platform.Unknown)
         {
             archive.autoCompleteSource.Clear();
@@ -223,6 +232,31 @@ namespace IndustrialPark
             Save();
         }
 
+        /// <summary>
+        /// Updates the status bar to display the archive's filsize.
+        /// </summary>
+        private void _updateFilesizeStatusBarItem()
+        {
+            if (GetCurrentlyOpenFileName() == "Empty")
+            {
+                return;
+            }
+
+            long filesizeBytes = new FileInfo(GetCurrentlyOpenFileName()).Length;
+
+            if (filesizeBytes < 1000) // 1 B - 999 B
+            {
+                toolStripStatusLabelFileSize.Text = filesizeBytes + " B";
+            } else if (filesizeBytes < 1_000_000) // 1 kB - 999 kB
+            {
+                toolStripStatusLabelFileSize.Text = Math.Round(filesizeBytes / 1000.0, 2) + " kB";
+            }
+            else // 1+ MB
+            {
+                toolStripStatusLabelFileSize.Text = Math.Round(filesizeBytes / 1_000_000.0, 2) + " MB";
+            }
+        }
+
         public void Save()
         {
             Program.StopSound();
@@ -231,8 +265,11 @@ namespace IndustrialPark
                 saveAsToolStripMenuItem_Click(null, null);
             else
                 new Thread(archive.Save).Start();
+
+            _updateFilesizeStatusBarItem();
         }
 
+        
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog()
@@ -251,6 +288,8 @@ namespace IndustrialPark
                 toolStripStatusLabelCurrentFilename.Text = "File: " + saveFileDialog.FileName;
                 archive.UnsavedChanges = false;
             }
+
+            _updateFilesizeStatusBarItem();
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1347,6 +1386,285 @@ namespace IndustrialPark
         private void ArchiveEditor_Deactivate(object sender, EventArgs e)
         {
             PressedKeys.Clear();
+        }
+
+        /// <summary>
+        /// Given the filepath to a hip file, returns an integer representing the game the file is for, 
+        /// based on the filename of the configuration ini.
+        /// <para>
+        /// This method checks the same directory, and then the parent directory. This assumes 
+        /// the filename has not been changed. Note this cannot guarantee which game the file is for.
+        /// </para>
+        /// </summary>
+        /// <param name="filepath">The filepath of the HIP file</param>
+        /// <returns>0: Unknown, 1: Scooby, 2: BFBB , 3: TSSM, 4: Incredibles, 5: ROTU, 6: Ratatouille Prototype</returns>
+        public static int GetGameFromGameConfigIni(string filepath)
+        {
+            const string scoobyIniFilename = "sd2.ini";
+            const string bfbbIniFilename = "sb.ini";
+            const string tssmIniFilename = "sb04.ini";
+            const string incrediblesIniFilename = "in.ini";
+            const string rotuIniFilename = "in2.ini";
+            const string ratProtoIniFilename = "rats.ini";
+
+            // Checks in same directory for a specific ini and then checks the parent directory
+            if (File.Exists(Path.Combine(Path.GetDirectoryName(filepath), scoobyIniFilename))
+                || File.Exists(Path.Combine(Directory.GetParent(Path.GetDirectoryName(filepath)).FullName, scoobyIniFilename)))
+                return 1;
+
+            if (File.Exists(Path.Combine(Path.GetDirectoryName(filepath), bfbbIniFilename))
+                || File.Exists(Path.Combine(Directory.GetParent(Path.GetDirectoryName(filepath)).FullName, bfbbIniFilename)))
+                return 2;
+
+            if (File.Exists(Path.Combine(Path.GetDirectoryName(filepath), tssmIniFilename))
+                || File.Exists(Path.Combine(Directory.GetParent(Path.GetDirectoryName(filepath)).FullName, tssmIniFilename)))
+                return 3;
+
+            if (File.Exists(Path.Combine(Path.GetDirectoryName(filepath), incrediblesIniFilename))
+                || File.Exists(Path.Combine(Directory.GetParent(Path.GetDirectoryName(filepath)).FullName, incrediblesIniFilename)))
+                return 4;
+
+            if (File.Exists(Path.Combine(Path.GetDirectoryName(filepath), rotuIniFilename))
+                || File.Exists(Path.Combine(Directory.GetParent(Path.GetDirectoryName(filepath)).FullName, rotuIniFilename)))
+                return 5;
+
+            if (File.Exists(Path.Combine(Path.GetDirectoryName(filepath), ratProtoIniFilename))
+                || File.Exists(Path.Combine(Directory.GetParent(Path.GetDirectoryName(filepath)).FullName, ratProtoIniFilename)))
+                return 6;
+
+            return 0;
+        }
+
+        /// <summary>
+        /// Generates a report for the HIP/HOP archive to a .txt in the same directory.
+        /// </summary>
+        /// 
+        private void _generateReportTxt()
+        {
+            bool generationWasSuccessful = true;
+            bool isDebug;
+            var timeOfGeneration = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss zzz");
+            string currentFilepath = GetCurrentlyOpenFileName();
+            var stopwatch = new Stopwatch();
+
+            // TODO: Change filetype to LIP or LOP
+            string filepath = Path.Combine(
+                Path.GetDirectoryName(currentFilepath),
+                Path.GetFileName(currentFilepath) + "_IP_Report.txt");
+
+            using (StreamWriter output = new StreamWriter(filepath))
+            {
+                stopwatch.Start();
+                output.WriteLine("This report file was generated by Industrial Park.");
+                output.WriteLine("Please visit https://github.com/igorseabra4/IndustrialPark for more information.");
+                output.WriteLine("---------------------------");
+                output.WriteLine("#### START OF REPORT ####\n");
+                output.WriteLine($"Industrial Park Version: {new IPversion().version}");
+#if DEBUG
+                isDebug = true;
+#else
+                isDebug = false;
+#endif
+                output.WriteLine($"Is Debug Build: {isDebug}");
+                output.WriteLine($"Time of Report Generation: {timeOfGeneration}");
+
+                output.WriteLine("\nFILE INFORMATION");
+                output.WriteLine("----------------");
+                output.WriteLine($"File path: {currentFilepath}");
+                output.WriteLine($"File size: {new FileInfo(currentFilepath).Length} Bytes");
+                output.WriteLine($"Platform: {archive.platform}");
+                string game = archive.game == Game.Incredibles ? "Incredible/TSSM/ROTU" : archive.game.ToString();
+                output.WriteLine($"Game: {game}");
+                output.WriteLine($"Number of Layers: {archive.LayerCount}");
+                output.WriteLine($"Number of Assets: {archive.AssetCount}");
+                output.WriteLine($"Has unsaved changes: {archive.UnsavedChanges}");
+                output.WriteLine($"Environment Name: {archive.environmentName}");
+
+                Dictionary<uint, Asset>.ValueCollection allAssets = archive.GetAllAssets();
+                Dictionary<AssetType, int> assetCount = new Dictionary<AssetType, int>();
+
+                output.WriteLine("\nTYPE TOTALS");
+                output.WriteLine("-------------");
+
+                foreach (AssetType assetType in Enum.GetValues(typeof(AssetType)))
+                {
+                    assetCount[assetType] = 0;
+                }
+
+                foreach (var asset in allAssets)
+                {
+                    assetCount[asset.assetType] += 1;
+                }
+
+                foreach (KeyValuePair<AssetType, int> entry in assetCount)
+                {
+                    if (entry.Value != 0)
+                    {
+                        output.WriteLine($"{entry.Key.ToString().PadRight(30, '.')}{entry.Value}");
+                    }
+                }
+
+                output.WriteLine("\nLAYER INFORMATION");
+                output.WriteLine("-------------");
+
+                List<uint> assetIDsOnLayer;
+                List<AssetType> assetTypesOnLayer;
+                int numOfInvisibleAssets = 0;
+
+
+                for (int i = 0; i < archive.LayerCount; i++)
+                {
+                    assetTypesOnLayer = archive.AssetTypesOnLayer(i);
+                    output.WriteLine($"{archive.LayerToString(i)}");
+                    output.Write($"{assetTypesOnLayer.Count} asset type(s) [");
+                    foreach (var assetType in assetTypesOnLayer)
+                    {
+                        output.Write($"{assetType} ");
+                    }
+                    output.WriteLine("]");
+
+                    assetIDsOnLayer = archive.GetAssetIDsOnLayer(i);
+
+
+                    for (int j = 0; j < assetIDsOnLayer.Count(); j++)
+                    {
+                        Asset asset = archive.GetFromAssetID(assetIDsOnLayer[j]);
+
+                        output.WriteLine($"    {Convert.ToString(asset.assetID, 16)}: {asset.assetName}");
+                        if (asset.isInvisible)
+                        {
+                            numOfInvisibleAssets++;
+                        }
+                    }
+                    output.WriteLine("");
+                    
+
+                }
+                output.WriteLine($"Number of invisible assets: {numOfInvisibleAssets}");
+                output.WriteLine("");
+
+                output.WriteLine("\nASSET LINKING INFO");
+                output.WriteLine("-------------");
+
+
+                foreach (var asset in allAssets)
+                {
+                    // If Base asset, get list of links.
+                    if (asset is BaseAsset)
+                    {
+                        Link[] links = ((BaseAsset)asset).Links;
+                        if (links.Length > 0)
+                        {
+                            output.WriteLine($"{asset.assetName}: {links.Length} links");
+
+                            foreach (var link in links) 
+                            {
+                                string eventSendIDName = "";
+                                string eventReceiveIDName = "";
+
+                                if (archive.game == Game.BFBB) // BFBB
+                                {
+                                    eventSendIDName = ((EventBFBB)link.EventSendID).ToString();
+                                    eventReceiveIDName = ((EventBFBB)link.EventReceiveID).ToString();
+                                } else if (archive.game == Game.Scooby) // Scooby
+                                {
+                                    // TODO: Scooby events
+                                }
+                                else if (archive.game == Game.Incredibles) // TSSM/Incredibles/ROTU
+                                {
+                                    switch (GetGameFromGameConfigIni(GetCurrentlyOpenFileName()))
+                                    {
+                                        case 3: // TSSM
+                                            eventSendIDName = ((EventTSSM)link.EventSendID).ToString();
+                                            eventReceiveIDName = ((EventTSSM)link.EventReceiveID).ToString();
+                                            break;
+                                        case 4: // Incredibles
+                                            // TODO: Incredibles events
+                                            break;
+                                        case 5: // ROTU
+                                            // TODO: ROTU events
+                                            break;
+                                    }
+                                }
+                                
+                                // If event name not supplied, event ID used instead.
+                                eventSendIDName = eventSendIDName == "" ? link.EventSendID.ToString() : eventSendIDName;
+                                eventReceiveIDName = eventReceiveIDName == "" ? link.EventReceiveID.ToString() : eventReceiveIDName;
+
+
+                                string targetAssetName = "";
+                                try
+                                {
+                                    // FIXME: Only searches current archive
+                                    targetAssetName = archive.GetFromAssetID(link.TargetAsset).assetName;
+                                }
+                                catch
+                                {
+                                    targetAssetName = link.TargetAsset.ToString();
+                                }
+
+                                output.WriteLine($"  {eventSendIDName} => {eventReceiveIDName} => {targetAssetName}");
+                            }
+                        }
+                    }
+                }
+
+
+
+                output.WriteLine("\nUNUSED MODELS");
+                output.WriteLine("-------------");
+
+                int numOfModels = 0;
+                int numOfUnusedModels = 0;
+
+                //foreach(var asset in allAssets)
+                //{
+                //    if (asset.assetType == AssetType.Model)
+                //    {
+                //        numOfModels++;
+
+                //        List<uint> whoTargets = archive.FindWhoTargets(asset.assetID);
+                //        if (whoTargets.Count == 0)
+                //        {
+                //            output.WriteLine($"  {Convert.ToString(asset.assetID, 16)}: {asset.assetName}");
+                //            numOfUnusedModels++;
+                //        }
+
+                //    }
+                //}
+
+                //output.WriteLine($"{numOfUnusedModels} unused models out of {numOfModels} total.");
+
+                output.WriteLine("* Not yet implemented");
+                output.WriteLine();
+                // Find who Targets Me throws an exception sometimes :(
+
+
+                output.WriteLine("\n#### END OF REPORT ####");
+                stopwatch.Stop();
+                output.WriteLine($"Report generated in {Math.Round(stopwatch.Elapsed.TotalMilliseconds,2)} ms.");
+            }
+
+
+            if (generationWasSuccessful)
+            {
+                if (MessageBox.Show($"Report \"{Path.GetFileName(filepath)}\" generated. Open file?",
+                    "Report generated",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Information) == DialogResult.Yes)
+                {
+                    System.Diagnostics.Process.Start(filepath);
+                }
+            }
+            else
+            {
+                MessageBox.Show("File could not be generated successfully.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void generateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _generateReportTxt();
         }
     }
 }

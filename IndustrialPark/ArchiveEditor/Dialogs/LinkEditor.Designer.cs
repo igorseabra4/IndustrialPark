@@ -58,13 +58,15 @@
             this.buttonTargetSelf = new System.Windows.Forms.Button();
             this.buttonTargetPlus1 = new System.Windows.Forms.Button();
             this.textBoxTargetAsset = new System.Windows.Forms.TextBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.comboSendEvent = new System.Windows.Forms.ComboBox();
+            this.groupBoxSourceEvent = new System.Windows.Forms.GroupBox();
+            this.comboRecieveEvent = new System.Windows.Forms.ComboBox();
+            this.numericUpDownTime = new System.Windows.Forms.NumericUpDown();
             this.buttonHelp = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.comboSendEvent = new System.Windows.Forms.ComboBox();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.numericUpDownTime = new System.Windows.Forms.NumericUpDown();
-            this.comboRecieveEvent = new System.Windows.Forms.ComboBox();
-            this.groupBoxSourceEvent = new System.Windows.Forms.GroupBox();
+            this.cmbGameSelection = new System.Windows.Forms.ComboBox();
+            this.grpGame = new System.Windows.Forms.GroupBox();
             this.groupBox1.SuspendLayout();
             this.groupBoxEventData.SuspendLayout();
             this.groupBoxSourceCheckOrFlags.SuspendLayout();
@@ -72,8 +74,9 @@
             this.groupBox6.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.groupBox4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTime)).BeginInit();
             this.groupBoxSourceEvent.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTime)).BeginInit();
+            this.grpGame.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -82,9 +85,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.listBoxLinks);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Location = new System.Drawing.Point(12, 66);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(310, 333);
+            this.groupBox1.Size = new System.Drawing.Size(310, 279);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Links";
@@ -98,7 +101,7 @@
             this.listBoxLinks.Location = new System.Drawing.Point(6, 19);
             this.listBoxLinks.Name = "listBoxLinks";
             this.listBoxLinks.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBoxLinks.Size = new System.Drawing.Size(298, 303);
+            this.listBoxLinks.Size = new System.Drawing.Size(298, 238);
             this.listBoxLinks.TabIndex = 1;
             this.listBoxLinks.SelectedIndexChanged += new System.EventHandler(this.listBoxEvents_SelectedIndexChanged);
             // 
@@ -207,22 +210,22 @@
             this.groupBoxEventData.TabStop = false;
             this.groupBoxEventData.Text = "Event Data";
             // 
-            // groupBox7
+            // groupBoxSourceCheckOrFlags
             // 
             this.groupBoxSourceCheckOrFlags.Controls.Add(this.textBoxSourceCheckOrFlags);
             this.groupBoxSourceCheckOrFlags.Location = new System.Drawing.Point(8, 231);
-            this.groupBoxSourceCheckOrFlags.Name = "groupBox7";
+            this.groupBoxSourceCheckOrFlags.Name = "groupBoxSourceCheckOrFlags";
             this.groupBoxSourceCheckOrFlags.Size = new System.Drawing.Size(230, 47);
             this.groupBoxSourceCheckOrFlags.TabIndex = 11;
             this.groupBoxSourceCheckOrFlags.TabStop = false;
             this.groupBoxSourceCheckOrFlags.Text = "Source Check";
             this.toolTip1.SetToolTip(this.groupBoxSourceCheckOrFlags, "Link will only be activated if the sender asset matches this one. Optional.");
             // 
-            // textBoxSourceCheck
+            // textBoxSourceCheckOrFlags
             // 
             this.textBoxSourceCheckOrFlags.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
             this.textBoxSourceCheckOrFlags.Location = new System.Drawing.Point(6, 19);
-            this.textBoxSourceCheckOrFlags.Name = "textBoxSourceCheck";
+            this.textBoxSourceCheckOrFlags.Name = "textBoxSourceCheckOrFlags";
             this.textBoxSourceCheckOrFlags.Size = new System.Drawing.Size(218, 20);
             this.textBoxSourceCheckOrFlags.TabIndex = 17;
             this.toolTip1.SetToolTip(this.textBoxSourceCheckOrFlags, "Link will only be activated if the sender asset matches this one. Optional.");
@@ -399,27 +402,6 @@
             this.textBoxTargetAsset.TextChanged += new System.EventHandler(this.textBoxTargetAsset_TextChanged);
             this.textBoxTargetAsset.Leave += new System.EventHandler(this.textBoxTargetAsset_Leave);
             // 
-            // buttonHelp
-            // 
-            this.buttonHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonHelp.Location = new System.Drawing.Point(211, 351);
-            this.buttonHelp.Name = "buttonHelp";
-            this.buttonHelp.Size = new System.Drawing.Size(105, 23);
-            this.buttonHelp.TabIndex = 20;
-            this.buttonHelp.Text = "Help!";
-            this.buttonHelp.UseVisualStyleBackColor = true;
-            this.buttonHelp.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // comboSendEvent
-            // 
-            this.comboSendEvent.FormattingEnabled = true;
-            this.comboSendEvent.Location = new System.Drawing.Point(6, 19);
-            this.comboSendEvent.Name = "comboSendEvent";
-            this.comboSendEvent.Size = new System.Drawing.Size(218, 21);
-            this.comboSendEvent.TabIndex = 9;
-            this.toolTip1.SetToolTip(this.comboSendEvent, "Event sent by this link.");
-            this.comboSendEvent.SelectedIndexChanged += new System.EventHandler(this.comboSendEvent_SelectedIndexChanged);
-            // 
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.comboSendEvent);
@@ -431,15 +413,27 @@
             this.groupBox4.Text = "Target Event";
             this.toolTip1.SetToolTip(this.groupBox4, "Event sent by this link.");
             // 
-            // numericUpDownTime
+            // comboSendEvent
             // 
-            this.numericUpDownTime.DecimalPlaces = 4;
-            this.numericUpDownTime.Location = new System.Drawing.Point(8, 19);
-            this.numericUpDownTime.Name = "numericUpDownTime";
-            this.numericUpDownTime.Size = new System.Drawing.Size(218, 20);
-            this.numericUpDownTime.TabIndex = 18;
-            this.numericUpDownTime.Visible = false;
-            this.numericUpDownTime.ValueChanged += new System.EventHandler(this.numericUpDownTime_ValueChanged);
+            this.comboSendEvent.FormattingEnabled = true;
+            this.comboSendEvent.Location = new System.Drawing.Point(6, 19);
+            this.comboSendEvent.Name = "comboSendEvent";
+            this.comboSendEvent.Size = new System.Drawing.Size(218, 21);
+            this.comboSendEvent.TabIndex = 9;
+            this.toolTip1.SetToolTip(this.comboSendEvent, "Event sent by this link.");
+            this.comboSendEvent.SelectedIndexChanged += new System.EventHandler(this.comboSendEvent_SelectedIndexChanged);
+            // 
+            // groupBoxSourceEvent
+            // 
+            this.groupBoxSourceEvent.Controls.Add(this.comboRecieveEvent);
+            this.groupBoxSourceEvent.Controls.Add(this.numericUpDownTime);
+            this.groupBoxSourceEvent.Location = new System.Drawing.Point(6, 19);
+            this.groupBoxSourceEvent.Name = "groupBoxSourceEvent";
+            this.groupBoxSourceEvent.Size = new System.Drawing.Size(232, 47);
+            this.groupBoxSourceEvent.TabIndex = 1;
+            this.groupBoxSourceEvent.TabStop = false;
+            this.groupBoxSourceEvent.Text = "Source Event";
+            this.toolTip1.SetToolTip(this.groupBoxSourceEvent, "Event which activates this link.");
             // 
             // comboRecieveEvent
             // 
@@ -451,17 +445,52 @@
             this.toolTip1.SetToolTip(this.comboRecieveEvent, "Event which activates this link.");
             this.comboRecieveEvent.SelectedIndexChanged += new System.EventHandler(this.comboReceiveEvent_SelectedIndexChanged);
             // 
-            // groupBox3
+            // numericUpDownTime
             // 
-            this.groupBoxSourceEvent.Controls.Add(this.comboRecieveEvent);
-            this.groupBoxSourceEvent.Controls.Add(this.numericUpDownTime);
-            this.groupBoxSourceEvent.Location = new System.Drawing.Point(6, 19);
-            this.groupBoxSourceEvent.Name = "groupBox3";
-            this.groupBoxSourceEvent.Size = new System.Drawing.Size(232, 47);
-            this.groupBoxSourceEvent.TabIndex = 1;
-            this.groupBoxSourceEvent.TabStop = false;
-            this.groupBoxSourceEvent.Text = "Source Event";
-            this.toolTip1.SetToolTip(this.groupBoxSourceEvent, "Event which activates this link.");
+            this.numericUpDownTime.DecimalPlaces = 4;
+            this.numericUpDownTime.Location = new System.Drawing.Point(8, 19);
+            this.numericUpDownTime.Name = "numericUpDownTime";
+            this.numericUpDownTime.Size = new System.Drawing.Size(218, 20);
+            this.numericUpDownTime.TabIndex = 18;
+            this.numericUpDownTime.Visible = false;
+            this.numericUpDownTime.ValueChanged += new System.EventHandler(this.numericUpDownTime_ValueChanged);
+            // 
+            // buttonHelp
+            // 
+            this.buttonHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonHelp.Location = new System.Drawing.Point(211, 351);
+            this.buttonHelp.Name = "buttonHelp";
+            this.buttonHelp.Size = new System.Drawing.Size(105, 23);
+            this.buttonHelp.TabIndex = 20;
+            this.buttonHelp.Text = "Help!";
+            this.buttonHelp.UseVisualStyleBackColor = true;
+            this.buttonHelp.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // cmbGameSelection
+            // 
+            this.cmbGameSelection.FormattingEnabled = true;
+            this.cmbGameSelection.Items.AddRange(new object[] {
+            "None",
+            "Scooby-Doo: Night of 100 Frights",
+            "Battle for Bikini Bottom",
+            "The SpongeBob SquarePants Movie",
+            "The Incredibles",
+            "The Incredibles: Rise of the Underminer"});
+            this.cmbGameSelection.Location = new System.Drawing.Point(6, 19);
+            this.cmbGameSelection.Name = "cmbGameSelection";
+            this.cmbGameSelection.Size = new System.Drawing.Size(298, 21);
+            this.cmbGameSelection.TabIndex = 2;
+            this.cmbGameSelection.SelectedIndexChanged += new System.EventHandler(this.cmbGameSelection_SelectedIndexChanged);
+            // 
+            // grpGame
+            // 
+            this.grpGame.Controls.Add(this.cmbGameSelection);
+            this.grpGame.Location = new System.Drawing.Point(12, 12);
+            this.grpGame.Name = "grpGame";
+            this.grpGame.Size = new System.Drawing.Size(310, 48);
+            this.grpGame.TabIndex = 21;
+            this.grpGame.TabStop = false;
+            this.grpGame.Text = "Game";
             // 
             // LinkEditor
             // 
@@ -470,6 +499,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(584, 412);
+            this.Controls.Add(this.grpGame);
             this.Controls.Add(this.buttonHelp);
             this.Controls.Add(this.groupBoxEventData);
             this.Controls.Add(this.buttonOK);
@@ -498,8 +528,9 @@
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             this.groupBox4.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTime)).EndInit();
             this.groupBoxSourceEvent.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTime)).EndInit();
+            this.grpGame.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -542,5 +573,7 @@
         private System.Windows.Forms.GroupBox groupBoxSourceEvent;
         private System.Windows.Forms.ComboBox comboRecieveEvent;
         private System.Windows.Forms.NumericUpDown numericUpDownTime;
+        private System.Windows.Forms.ComboBox cmbGameSelection;
+        private System.Windows.Forms.GroupBox grpGame;
     }
 }

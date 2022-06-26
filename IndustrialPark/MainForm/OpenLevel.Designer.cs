@@ -29,9 +29,12 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OpenLevel));
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnImport = new System.Windows.Forms.Button();
             this.grpImportSettings = new System.Windows.Forms.GroupBox();
+            this.lvwLocalization = new System.Windows.Forms.ListView();
+            this.imgFlagIcons = new System.Windows.Forms.ImageList(this.components);
             this.btnResetAll = new System.Windows.Forms.Button();
             this.btnAddLocalizationFile = new System.Windows.Forms.Button();
             this.btnBOOTSelect = new System.Windows.Forms.Button();
@@ -41,13 +44,12 @@
             this.txtHOP = new System.Windows.Forms.TextBox();
             this.txtHIP = new System.Windows.Forms.TextBox();
             this.lblLocalization = new System.Windows.Forms.Label();
-            this.lstLocalization = new System.Windows.Forms.CheckedListBox();
-            this.ctxLocalization = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.copyPathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pastePathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chkHIP = new System.Windows.Forms.CheckBox();
             this.chkHOP = new System.Windows.Forms.CheckBox();
             this.chkBOOT = new System.Windows.Forms.CheckBox();
+            this.ctxLocalization = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.copyPathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pastePathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.grpImportSettings.SuspendLayout();
             this.ctxLocalization.SuspendLayout();
             this.SuspendLayout();
@@ -81,6 +83,7 @@
             this.grpImportSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpImportSettings.Controls.Add(this.lvwLocalization);
             this.grpImportSettings.Controls.Add(this.btnResetAll);
             this.grpImportSettings.Controls.Add(this.btnAddLocalizationFile);
             this.grpImportSettings.Controls.Add(this.btnBOOTSelect);
@@ -90,7 +93,6 @@
             this.grpImportSettings.Controls.Add(this.txtHOP);
             this.grpImportSettings.Controls.Add(this.txtHIP);
             this.grpImportSettings.Controls.Add(this.lblLocalization);
-            this.grpImportSettings.Controls.Add(this.lstLocalization);
             this.grpImportSettings.Controls.Add(this.chkHIP);
             this.grpImportSettings.Controls.Add(this.chkHOP);
             this.grpImportSettings.Controls.Add(this.chkBOOT);
@@ -100,6 +102,50 @@
             this.grpImportSettings.TabIndex = 0;
             this.grpImportSettings.TabStop = false;
             this.grpImportSettings.Text = "Select Files";
+            // 
+            // lvwLocalization
+            // 
+            this.lvwLocalization.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lvwLocalization.CheckBoxes = true;
+            this.lvwLocalization.ContextMenuStrip = this.ctxLocalization;
+            this.lvwLocalization.HideSelection = false;
+            this.lvwLocalization.Location = new System.Drawing.Point(28, 129);
+            this.lvwLocalization.Name = "lvwLocalization";
+            this.lvwLocalization.Size = new System.Drawing.Size(357, 81);
+            this.lvwLocalization.SmallImageList = this.imgFlagIcons;
+            this.lvwLocalization.TabIndex = 16;
+            this.lvwLocalization.UseCompatibleStateImageBehavior = false;
+            this.lvwLocalization.View = System.Windows.Forms.View.List;
+            this.lvwLocalization.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.checkBoxUpdatedInList);
+            this.lvwLocalization.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lvwLocalization_KeyDown);
+            // 
+            // imgFlagIcons
+            // 
+            this.imgFlagIcons.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imgFlagIcons.ImageStream")));
+            this.imgFlagIcons.TransparentColor = System.Drawing.Color.Transparent;
+            this.imgFlagIcons.Images.SetKeyName(0, "be.png");
+            this.imgFlagIcons.Images.SetKeyName(1, "ch.png");
+            this.imgFlagIcons.Images.SetKeyName(2, "cz.png");
+            this.imgFlagIcons.Images.SetKeyName(3, "de.png");
+            this.imgFlagIcons.Images.SetKeyName(4, "dk.png");
+            this.imgFlagIcons.Images.SetKeyName(5, "es.png");
+            this.imgFlagIcons.Images.SetKeyName(6, "fi.png");
+            this.imgFlagIcons.Images.SetKeyName(7, "fr.png");
+            this.imgFlagIcons.Images.SetKeyName(8, "it.png");
+            this.imgFlagIcons.Images.SetKeyName(9, "jp.png");
+            this.imgFlagIcons.Images.SetKeyName(10, "kr.png");
+            this.imgFlagIcons.Images.SetKeyName(11, "nl.png");
+            this.imgFlagIcons.Images.SetKeyName(12, "no.png");
+            this.imgFlagIcons.Images.SetKeyName(13, "pl.png");
+            this.imgFlagIcons.Images.SetKeyName(14, "pt.png");
+            this.imgFlagIcons.Images.SetKeyName(15, "ru.png");
+            this.imgFlagIcons.Images.SetKeyName(16, "se.png");
+            this.imgFlagIcons.Images.SetKeyName(17, "sk.png");
+            this.imgFlagIcons.Images.SetKeyName(18, "tw.png");
+            this.imgFlagIcons.Images.SetKeyName(19, "uk.png");
+            this.imgFlagIcons.Images.SetKeyName(20, "us.png");
             // 
             // btnResetAll
             // 
@@ -192,43 +238,6 @@
             this.lblLocalization.TabIndex = 10;
             this.lblLocalization.Text = "Localization Files";
             // 
-            // lstLocalization
-            // 
-            this.lstLocalization.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lstLocalization.ContextMenuStrip = this.ctxLocalization;
-            this.lstLocalization.FormattingEnabled = true;
-            this.lstLocalization.Location = new System.Drawing.Point(28, 129);
-            this.lstLocalization.Name = "lstLocalization";
-            this.lstLocalization.Size = new System.Drawing.Size(357, 79);
-            this.lstLocalization.TabIndex = 11;
-            this.lstLocalization.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.checkBoxUpdatedInList);
-            this.lstLocalization.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lstLocalization_KeyDown);
-            // 
-            // ctxLocalization
-            // 
-            this.ctxLocalization.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.copyPathToolStripMenuItem,
-            this.pastePathToolStripMenuItem});
-            this.ctxLocalization.Name = "ctxLocalization";
-            this.ctxLocalization.Size = new System.Drawing.Size(130, 48);
-            this.ctxLocalization.Opening += new System.ComponentModel.CancelEventHandler(this.ctxLocalization_Opening);
-            // 
-            // copyPathToolStripMenuItem
-            // 
-            this.copyPathToolStripMenuItem.Name = "copyPathToolStripMenuItem";
-            this.copyPathToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
-            this.copyPathToolStripMenuItem.Text = "Copy Path";
-            this.copyPathToolStripMenuItem.Click += new System.EventHandler(this.copyPathToolStripMenuItem_Click);
-            // 
-            // pastePathToolStripMenuItem
-            // 
-            this.pastePathToolStripMenuItem.Name = "pastePathToolStripMenuItem";
-            this.pastePathToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
-            this.pastePathToolStripMenuItem.Text = "Paste Path";
-            this.pastePathToolStripMenuItem.Click += new System.EventHandler(this.pastePathToolStripMenuItem_Click);
-            // 
             // chkHIP
             // 
             this.chkHIP.AutoSize = true;
@@ -261,6 +270,29 @@
             this.chkBOOT.Text = "BOOT";
             this.chkBOOT.UseVisualStyleBackColor = true;
             this.chkBOOT.CheckedChanged += new System.EventHandler(this.checkBoxUpdated);
+            // 
+            // ctxLocalization
+            // 
+            this.ctxLocalization.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.copyPathToolStripMenuItem,
+            this.pastePathToolStripMenuItem});
+            this.ctxLocalization.Name = "ctxLocalization";
+            this.ctxLocalization.Size = new System.Drawing.Size(130, 48);
+            this.ctxLocalization.Opening += new System.ComponentModel.CancelEventHandler(this.ctxLocalization_Opening);
+            // 
+            // copyPathToolStripMenuItem
+            // 
+            this.copyPathToolStripMenuItem.Name = "copyPathToolStripMenuItem";
+            this.copyPathToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
+            this.copyPathToolStripMenuItem.Text = "Copy Path";
+            this.copyPathToolStripMenuItem.Click += new System.EventHandler(this.copyPathToolStripMenuItem_Click);
+            // 
+            // pastePathToolStripMenuItem
+            // 
+            this.pastePathToolStripMenuItem.Name = "pastePathToolStripMenuItem";
+            this.pastePathToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
+            this.pastePathToolStripMenuItem.Text = "Paste Path";
+            this.pastePathToolStripMenuItem.Click += new System.EventHandler(this.pastePathToolStripMenuItem_Click);
             // 
             // OpenLevel
             // 
@@ -296,7 +328,6 @@
         private System.Windows.Forms.CheckBox chkBOOT;
         private System.Windows.Forms.CheckBox chkHIP;
         private System.Windows.Forms.CheckBox chkHOP;
-        private System.Windows.Forms.CheckedListBox lstLocalization;
         private System.Windows.Forms.Label lblLocalization;
         private System.Windows.Forms.TextBox txtHIP;
         private System.Windows.Forms.TextBox txtBOOT;
@@ -309,5 +340,7 @@
         private System.Windows.Forms.ToolStripMenuItem copyPathToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pastePathToolStripMenuItem;
         private System.Windows.Forms.Button btnResetAll;
+        private System.Windows.Forms.ListView lvwLocalization;
+        private System.Windows.Forms.ImageList imgFlagIcons;
     }
 }

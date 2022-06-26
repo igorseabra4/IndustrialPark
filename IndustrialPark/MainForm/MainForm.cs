@@ -578,7 +578,17 @@ namespace IndustrialPark
                 PressedKeys.Add(e.KeyCode);
 
             if (e.KeyCode == Keys.Z)
+            {
                 MouseModeToggle();
+               
+                if (mouseMode)
+                {
+                    Cursor.Hide();
+                } else
+                {
+                    Cursor.Show();
+                }
+            }
             else if (e.KeyCode == Keys.Q)
                 renderer.Camera.IncreaseCameraSpeed(-1);
             else if (e.KeyCode == Keys.E)
@@ -1488,6 +1498,11 @@ namespace IndustrialPark
 
         private void MainForm_Resize(object sender, EventArgs e)
         {
+            if (renderer == null)
+            {
+                return;
+            }
+
             try
             {
                 if (WindowState == FormWindowState.Minimized)
