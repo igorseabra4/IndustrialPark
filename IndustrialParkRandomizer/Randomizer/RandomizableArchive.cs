@@ -1053,7 +1053,7 @@ namespace IndustrialPark.Randomizer
             var outAssetIDs = new List<uint>();
             for (int i = 0; i < 3; i++)
             {
-                var timer = (AssetTIMR)PlaceTemplate( defaultLayerIndex, ref outAssetIDs, "IP_RANDO_PLAYER_TIMR", template: AssetTemplate.Timer);
+                var timer = (AssetTIMR)PlaceTemplate(new Vector3(), defaultLayerIndex, ref outAssetIDs, "IP_RANDO_PLAYER_TIMR", template: AssetTemplate.Timer);
                 timer.Time = 0.1f;
                 timer.Links = new Link[]
                 {
