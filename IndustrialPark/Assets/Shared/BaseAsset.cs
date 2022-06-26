@@ -10,12 +10,10 @@ namespace IndustrialPark
     {
         private const string categoryName = "Base";
 
-        public override int AssetInfoLinks => _links.Length;
-                
+        public override string AssetInfoLinks => _links.Length.ToString();
+
         protected string ItemsString(int count, string name)
         {
-            if (count == 0)
-                return "";
             if (count == 1)
                 return $"1 {name}";
             return $"{count} {name}s";

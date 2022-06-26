@@ -90,6 +90,11 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID? Unknown2 { get; set; }
 
+        public AssetDEST(string assetName) : base(assetName, AssetType.Destructible)
+        {
+            States = new DestState[0];
+        }
+
         public AssetDEST(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))

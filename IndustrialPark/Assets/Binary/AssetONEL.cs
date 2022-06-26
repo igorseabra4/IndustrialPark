@@ -12,7 +12,7 @@ namespace IndustrialPark
         ePLAYER_TYPE_SIZE
     }
 
-    public class xOneLiner : GenericAssetDataContainer
+    public class OneLiner : GenericAssetDataContainer
     {
         public AssetID SoundGroupNameHash { get; set; }
         public AssetSingle SoundStartDelay { get; set; }
@@ -33,8 +33,8 @@ namespace IndustrialPark
         public int TesterDataFirstParam { get; set; }
         public AssetSingle TesterDataSecondParam { get; set; }
 
-        public xOneLiner() { }
-        public xOneLiner(EndianBinaryReader reader)
+        public OneLiner() { }
+        public OneLiner(EndianBinaryReader reader)
         {
             SoundGroupNameHash = reader.ReadUInt32();
             SoundStartDelay = reader.ReadSingle();
@@ -89,18 +89,23 @@ namespace IndustrialPark
         public override string AssetInfo => $"{OneLiners.Length} entries";
 
         [Category("One Liner")]
-        public xOneLiner[] OneLiners { get; set; }
+        public OneLiner[] OneLiners { get; set; }
 
         private const int unkByteCount = 0x43;
+
+        public AssetONEL(string assetName) : base(assetName, AssetType.OneLiner)
+        {
+            OneLiners = new OneLiner[0];
+        }
 
         public AssetONEL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
                 int num = reader.ReadInt32();
-                OneLiners = new xOneLiner[num];
+                OneLiners = new OneLiner[num];
                 for (int i = 0; i < OneLiners.Length; i++)
-                    OneLiners[i] = new xOneLiner(reader);
+                    OneLiners[i] = new OneLiner(reader);
                 reader.ReadBytes(unkByteCount);
             }
         }

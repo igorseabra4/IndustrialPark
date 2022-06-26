@@ -22,7 +22,7 @@ namespace IndustrialPark
         [Browsable(false)]
         public virtual string AssetInfo => "";
         [Browsable(false)]
-        public virtual int AssetInfoLinks => 0;
+        public virtual string AssetInfoLinks => "-";
         [Browsable(false)]
         public virtual string TypeString => assetType.ToString();
 

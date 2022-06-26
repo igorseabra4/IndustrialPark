@@ -594,11 +594,13 @@
             // 
             // AssetNameCol
             // 
+            this.AssetNameCol.DisplayIndex = 1;
             this.AssetNameCol.Text = "Name";
             this.AssetNameCol.Width = 240;
             // 
             // AssetIDCol
             // 
+            this.AssetIDCol.DisplayIndex = 0;
             this.AssetIDCol.Text = "Asset ID";
             this.AssetIDCol.Width = 69;
             // 

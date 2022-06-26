@@ -19,6 +19,7 @@
         Text,
         Timer,
         Cam_Tweak,
+        Disco_Floor,
         Duplicatotron_Settings,
 
         // Placeable
@@ -51,6 +52,7 @@
         // Other
         Animation_List,
         DefaultGlowSceneProp,
+        Destructible,
         Collision_Table,
         Environment,
         Flythrough,
@@ -58,8 +60,10 @@
         Jaw_Data_Table,
         Level_Of_Detail_Table,
         Model_Info,
+        One_Liner,
         Pipe_Info_Table,
         Shadow_Table,
+        Shrapnel,
         Sound_Info,
         Surface_Mapper,
         Throwable_Table,
@@ -288,6 +292,10 @@
         //Shark,
 
         // Scooby items
+        Gust,
+        Volume_Box,
+        Volume_Sphere,
+
         Red_Button,
         Floor_Button,
         Red_Button_Smash,

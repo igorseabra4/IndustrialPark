@@ -19,6 +19,12 @@ namespace IndustrialPark
         [Category(categoryName)]
         public EntrySHRP[] Entries { get; set; }
 
+        public AssetSHRP(string assetName) : base(assetName, AssetType.Shrapnel)
+        {
+            AssetID_Internal = assetID;
+            Entries = new EntrySHRP[0];
+        }
+
         public AssetSHRP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))

@@ -607,7 +607,7 @@ namespace IndustrialPark
                 new ListViewItem.ListViewSubItem(item, asset.assetID.ToString("X8")),
                 new ListViewItem.ListViewSubItem(item, asset.TypeString),
                 new ListViewItem.ListViewSubItem(item, info),
-                new ListViewItem.ListViewSubItem(item, asset.AssetInfoLinks.ToString()),
+                new ListViewItem.ListViewSubItem(item, asset.AssetInfoLinks),
             });
             return item;
         }

@@ -14,7 +14,7 @@ namespace IndustrialPark
         {
             get
             {
-                if (this is AssetUI && Texture == 0)
+                if (!(this is AssetUIFT) && Texture == 0)
                     return base.AssetInfo;
                 return HexUIntTypeConverter.StringFromAssetID(Texture);
             }
@@ -160,7 +160,7 @@ namespace IndustrialPark
 
         public override void CreateTransformMatrix()
         {
-            if (this is AssetUI && Texture == 0)
+            if (!(this is AssetUIFT) && Texture == 0)
             {
                 world = Matrix.Scaling(_scale) * Matrix.Scaling(Width, Height, 1f)
                     * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
@@ -177,7 +177,7 @@ namespace IndustrialPark
 
         protected override void CreateBoundingBox()
         {
-            if (this is AssetUI && Texture == 0)
+            if (!(this is AssetUIFT) && Texture == 0)
                 base.CreateBoundingBox();
             else
             {
@@ -188,7 +188,7 @@ namespace IndustrialPark
 
         public override void Draw(SharpRenderer renderer)
         {
-            if (this is AssetUI && Texture == 0)
+            if (!(this is AssetUIFT) && Texture == 0)
                 base.Draw(renderer);
             else
                 renderer.DrawPlane(world, isSelected, Texture, UvAnimOffset);

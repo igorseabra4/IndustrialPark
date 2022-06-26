@@ -1079,6 +1079,7 @@ namespace IndustrialPark
         {
             useLegacyAssetTypeFormatToolStripMenuItem.Checked = !useLegacyAssetTypeFormatToolStripMenuItem.Checked;
             ArchiveEditor.LegacyAssetNameFormat = useLegacyAssetTypeFormatToolStripMenuItem.Checked;
+            SetupAssetVisibilityButtons();
         }
 
         private void enableAllToolStripMenuItem_Click(object sender, EventArgs e)

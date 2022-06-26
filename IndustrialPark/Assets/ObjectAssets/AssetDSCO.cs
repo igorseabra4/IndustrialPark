@@ -62,6 +62,17 @@ namespace IndustrialPark
         [Category(categoryName), Description(discoDesc)]
         public DiscoPattern[] Patterns { get; set; }
 
+        public AssetDSCO(string assetName) : base(assetName, AssetType.DiscoFloor, BaseAssetType.DiscoFloor)
+        {
+            Flags.FlagValueInt = 3;
+            TimeYellow = 1f;
+            TimeRed = 1f;
+            TileName_FirstWhite = "";
+            TileName_FirstYellow = "";
+            TileName_FirstRed = "";
+            Patterns = new DiscoPattern[0];
+        }
+
         public AssetDSCO(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
@@ -209,5 +220,11 @@ namespace IndustrialPark
             while (writer.BaseStream.Length % 4 != 0)
                 writer.Write(fillerByte);
         }
+
+        public override bool HasReference(uint assetID) =>
+            TileName_FirstWhite == HexUIntTypeConverter.StringFromAssetID(assetID) ||
+            TileName_FirstYellow == HexUIntTypeConverter.StringFromAssetID(assetID) ||
+            TileName_FirstRed == HexUIntTypeConverter.StringFromAssetID(assetID) ||
+            base.HasReference(assetID);
     }
 }

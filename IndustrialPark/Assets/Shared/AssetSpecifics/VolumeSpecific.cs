@@ -204,6 +204,17 @@ namespace IndustrialPark
             return null;
         }
 
+        public void SetPositions(float x0, float y0, float z0, float x1, float y1, float z1)
+        {
+            _trigPos0.X = x0;
+            _trigPos0.Y = y0;
+            _trigPos0.Z = z0;
+            _trigPos1.X = x1;
+            _trigPos1.Y = y1;
+            _trigPos1.Z = z1;
+            FixPosition();
+        }
+
         public override void FixPosition()
         {
             if (_trigPos0.X > _trigPos1.X)

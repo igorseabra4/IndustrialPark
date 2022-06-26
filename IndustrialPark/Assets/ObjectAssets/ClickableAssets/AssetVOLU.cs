@@ -63,6 +63,39 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle PivotZ { get; set; }
 
+        public AssetVOLU(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.Volume, BaseAssetType.Volume)
+        {
+            PivotX = position.X;
+            PivotZ = position.Z;
+
+            switch (template)
+            {
+                case AssetTemplate.Volume_Box:
+                    {
+                        Shape = VolumeType.Box;
+                        var shape = (VolumeBox)VolumeShape;
+                        shape.CenterX = position.X;
+                        shape.CenterY = position.Y;
+                        shape.CenterZ = position.Z;
+                        shape.SetPositions(position.X + 5f, position.Y + 5f, position.Z + 5f, position.X - 5f, position.Y - 5f, position.Z - 5f);
+                    }
+                    break;
+                case AssetTemplate.Volume_Sphere:
+                    {
+                        Shape = VolumeType.Sphere;
+                        var shape = (VolumeSphere)VolumeShape;
+                        shape.CenterX = position.X;
+                        shape.CenterY = position.Y;
+                        shape.CenterZ = position.Z;
+                        shape.Radius = 5f;
+                    }
+                    break;
+            }
+
+            CreateTransformMatrix();
+            ArchiveEditorFunctions.AddToRenderableAssets(this);
+        }
+
         public AssetVOLU(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))

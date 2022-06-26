@@ -27,6 +27,14 @@ namespace IndustrialPark
         [Category(catName)]
         public AssetSingle PartMod { get; set; }
 
+        public AssetGUST(string assetName) : base(assetName, AssetType.Gust, BaseAssetType.Gust)
+        {
+            GustFlags.FlagValueInt = 1;
+            StrengthY = 1f;
+            Fade = 0.5f;
+            PartMod = 1f;
+        }
+
         public AssetGUST(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))

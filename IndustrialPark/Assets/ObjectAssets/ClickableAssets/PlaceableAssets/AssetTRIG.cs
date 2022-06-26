@@ -407,7 +407,7 @@ namespace IndustrialPark
             }
         }
 
-        public void SetPositions(float x0, AssetSingle y0, AssetSingle z0, AssetSingle x1, AssetSingle y1, AssetSingle z1)
+        public void SetPositions(float x0, float y0, float z0, float x1, float y1, float z1)
         {
             _minimum.X = x0;
             _minimum.Y = y0;

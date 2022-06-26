@@ -39,7 +39,8 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.Text, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Timer, eventHandler),
                 new ToolStripSeparator(),
-                GetTemplateMenuItem(AssetTemplate.Cam_Tweak, eventHandler)
+                GetTemplateMenuItem(AssetTemplate.Cam_Tweak, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Disco_Floor, eventHandler),
             });
 
             // BFBB
@@ -309,6 +310,10 @@ namespace IndustrialPark
             ToolStripMenuItem stageitemsScooby = new ToolStripMenuItem("Stage Items");
             stageitemsScooby.DropDownItems.AddRange(new ToolStripItem[]
             {
+                GetTemplateMenuItem(AssetTemplate.Gust, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Volume_Box, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Volume_Sphere, eventHandler),
+                new ToolStripSeparator(),
                 GetTemplateMenuItem(AssetTemplate.Red_Button, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Red_Button_Smash, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Floor_Button, eventHandler),
@@ -381,12 +386,15 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.Animation_List, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Collision_Table, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.DefaultGlowSceneProp, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Destructible, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Environment, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Jaw_Data_Table, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Level_Of_Detail_Table, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Model_Info, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.One_Liner, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Pipe_Info_Table, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Shadow_Table, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Shrapnel, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Sound_Info, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Surface_Mapper, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Throwable_Table, eventHandler),
@@ -575,6 +583,10 @@ namespace IndustrialPark
                     return "Floor Button (Step)";
                 case AssetTemplate.Floor_Button_Smash:
                     return "Floor Button (Super Smash)";
+                case AssetTemplate.Volume_Box:
+                    return "Volume (Box)";
+                case AssetTemplate.Volume_Sphere:
+                    return "Volume (Sphere)";
             }
 
             return template.ToString().Replace('_', ' ');
@@ -822,6 +834,9 @@ namespace IndustrialPark
                     break;
                 case AssetTemplate.Duplicatotron_Settings:
                     asset = new DynaGObjectNPCSettings(assetName);
+                    break;
+                case AssetTemplate.Disco_Floor:
+                    asset = new AssetDSCO(assetName);
                     break;
                 case AssetTemplate.Camera:
                 case AssetTemplate.Start_Camera:
@@ -1107,11 +1122,17 @@ namespace IndustrialPark
                 case AssetTemplate.Model_Info:
                     asset = new AssetMINF(assetName);
                     break;
+                case AssetTemplate.One_Liner:
+                    asset = new AssetONEL(assetName);
+                    break;
                 case AssetTemplate.Pipe_Info_Table:
                     asset = new AssetPIPT(assetName);
                     break;
                 case AssetTemplate.Shadow_Table:
                     asset = new AssetSHDW(assetName);
+                    break;
+                case AssetTemplate.Shrapnel:
+                    asset = new AssetSHRP(assetName);
                     break;
                 case AssetTemplate.Sound_Info:
                     if (platform == Platform.Xbox)
@@ -1459,6 +1480,16 @@ namespace IndustrialPark
                     break;
                 case AssetTemplate.Cauldron_Emitter:
                     asset = new AssetPARE(assetName, position, template);
+                    break;
+                case AssetTemplate.Destructible:
+                    asset = new AssetDEST(assetName);
+                    break;
+                case AssetTemplate.Gust:
+                    asset = new AssetGUST(assetName);
+                    break;
+                case AssetTemplate.Volume_Box:
+                case AssetTemplate.Volume_Sphere:
+                    asset = new AssetVOLU(assetName, position, template);
                     break;
                 default:
                     MessageBox.Show("Unsupported template");
