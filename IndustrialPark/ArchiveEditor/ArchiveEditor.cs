@@ -681,7 +681,7 @@ namespace IndustrialPark
             if (assetID.HasValue)
             {
                 comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
-                SetSelectedIndices(new List<uint>() { assetID.Value }, true);
+                SetSelectedIndex(assetID.Value, true);
                 SetupAssetVisibilityButtons();
             }
         }
@@ -833,7 +833,7 @@ namespace IndustrialPark
 
                     archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR, asset.game, asset.endianness, true);
 
-                    SetSelectedIndices(new List<uint>() { AHDR.assetID }, true);
+                    SetSelectedIndex(AHDR.assetID, true);
                 }
             }
             catch (Exception ex)
@@ -971,24 +971,24 @@ namespace IndustrialPark
             archive.MouseMoveForPositionLocal(viewProjection, deltaX, deltaY, grid);
         }
 
-        public void SetSelectedIndices(List<uint> assetIDs, bool newlyAddedObjects, bool add = false)
+        public void SetSelectedIndex(uint assetID, bool newlyAddedObject, bool addToSelected = false)
         {
-            if (assetIDs.Contains(0) && !add)
-            {
-                listViewAssets.SelectedIndices.Clear();
-                return;
-            }
+            var assetIDs = new List<uint> { assetID };
+            if (addToSelected)
+                assetIDs.AddRange(CurrentlySelectedAssetIDs());
+            SetSelectedIndices(assetIDs, newlyAddedObject);
+        }
 
+        public void SetSelectedIndices(List<uint> assetIDs, bool newlyAddedObjects)
+        {
             foreach (uint u in assetIDs)
                 if (!archive.ContainsAsset(u))
                 {
+                    archive.ClearSelectedAssets();
                     listViewAssets.SelectedIndices.Clear();
                     listViewAssets.EndUpdate();
                     return;
                 }
-
-            if (add)
-                assetIDs.AddRange(CurrentlySelectedAssetIDs());
 
             AssetType assetType = AssetType.Null;
 
@@ -1015,7 +1015,6 @@ namespace IndustrialPark
                     SelectAssetTypeOnBox(assetType);
 
                 PopulateAssetList(assetType, null, true, assetIDs);
-                return;
             }
             else
             {

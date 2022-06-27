@@ -991,10 +991,13 @@ namespace IndustrialPark
             ArchiveEditorFunctions.ScreenUnclicked();
         }
 
-        public void SetSelectedIndex(uint assetID)
+        public void SetSelectedIndex(uint? assetID)
         {
+            bool add = PressedKeys.Contains(Keys.ControlKey) || PressedKeys.Contains(Keys.Control);
+            if (add && assetID == null)
+                return;
             foreach (ArchiveEditor ae in archiveEditors)
-                ae.SetSelectedIndices(new List<uint>() { assetID }, false, PressedKeys.Contains(Keys.ControlKey) || PressedKeys.Contains(Keys.Control));
+                ae.SetSelectedIndex(assetID ?? 0, false, add);
         }
 
         private void OpenInternalEditors()

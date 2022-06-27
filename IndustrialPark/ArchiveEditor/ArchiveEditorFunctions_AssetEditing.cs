@@ -186,10 +186,10 @@ namespace IndustrialPark
             return ray.Position + Vector3.Normalize(ray.Direction) * (smallerDistance ?? 2f);
         }
 
-        public static uint GetClickedAssetID(SharpRenderer renderer, Ray ray)
+        public static uint? GetClickedAssetID(SharpRenderer renderer, Ray ray)
         {
             float smallerDistance = 1000f;
-            uint assetID = 0;
+            uint? assetID = null;
 
             foreach (Asset ra in renderableAssets)
             {
@@ -207,10 +207,10 @@ namespace IndustrialPark
             return assetID;
         }
 
-        public static uint GetClickedAssetID2D(SharpRenderer renderer, Ray ray, float farPlane)
+        public static uint? GetClickedAssetID2D(SharpRenderer renderer, Ray ray, float farPlane)
         {
             float smallerDistance = 3 * farPlane;
-            uint assetID = 0;
+            uint? assetID = null;
             
             foreach (Asset ra in from IRenderableAsset asset in renderableAssets
                                  where asset is AssetUI || asset is AssetUIFT

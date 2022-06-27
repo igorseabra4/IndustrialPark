@@ -123,9 +123,6 @@ namespace IndustrialPark
 
         public AssetLKIT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            if (AHDR.data.Length == 0)
-                return;
-
             Read(AHDR.data, endianness);
         }
 

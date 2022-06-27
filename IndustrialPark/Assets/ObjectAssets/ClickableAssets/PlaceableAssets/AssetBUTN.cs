@@ -55,13 +55,13 @@ namespace IndustrialPark
                 Model = "button";
                 PressedModel = "button_grn";
                 HitMask.FlagValueInt =
-                    2 << 0 |
-                    2 << 3 |
-                    2 << 4 |
-                    2 << 6 |
-                    2 << 7 |
-                    2 << 14 |
-                    2 << 15;
+                    1 << 0 |
+                    1 << 3 |
+                    1 << 4 |
+                    1 << 6 |
+                    1 << 7 |
+                    1 << 14 |
+                    1 << 15;
                 Motion = new Motion_Mechanism()
                 {
                     MovementType = EMovementType.SlideAndRotate,
@@ -79,10 +79,10 @@ namespace IndustrialPark
                 Model = "plate_pressure";
                 PressedModel = 0xCE7F8131;
                 HitMask.FlagValueInt =
-                    2 << 10 |
-                    2 << 12 |
-                    2 << 13 |
-                    2 << 16;
+                    1 << 10 |
+                    1 << 12 |
+                    1 << 13 |
+                    1 << 16;
                 Motion = new Motion_Mechanism()
                 {
                     MovementType = EMovementType.SlideAndRotate,

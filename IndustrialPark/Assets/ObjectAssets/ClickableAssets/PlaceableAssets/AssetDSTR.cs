@@ -18,7 +18,39 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID SpawnItem { get; set; }
         [Category(categoryName)]
-        public FlagBitmask HitMask { get; set; } = IntFlagsDescriptor();
+        public FlagBitmask HitMask { get; set; } = IntFlagsDescriptor(
+            null, // 0
+            null, // 1
+            null, // 2
+            null, // 3
+            null, // 4
+            null, // 5
+            null, // 6
+            null, // 7
+            null, // 8
+            null, // 9
+            null, // 10
+            null, // 11
+            "Bubble Spin", // 12
+            "Bubble Bounce", // 13
+            "Bubble Bash", // 14
+            "Bubble Bowl", // 15
+            "Cruise Bubble", // 16
+            null, // 17 bungee
+            null, // 18 Thrown Enemy/Tiki
+            null, // 19 Throw Fruit
+            null, // 20 Patrick Slam
+            null, // 21 null
+            null, // 22 (Pressure Plate) Player Stand
+            null, // 23 (Pressure Plate) Enemy Stand
+            null, // 24 (Pressure Plate) Boulder/Bubble Bowl
+            null, // 25 (Pressure Plate) Stone Tiki
+            null, // 26 Sandy Melee/Sliding
+            null, // 27 Patrick Melee/Sliding
+            null, // 28 (Pressure Plate) Throw Fruit
+            null // 29  Patrick Cartwheel
+            );
+
         [Category(categoryName)]
         public byte CollType { get; set; }
         [Category(categoryName)]

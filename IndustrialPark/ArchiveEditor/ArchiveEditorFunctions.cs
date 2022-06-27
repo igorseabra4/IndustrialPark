@@ -623,7 +623,10 @@ namespace IndustrialPark
                     case AssetType.Hangable: return new AssetHANG(AHDR, game, endianness);
                     case AssetType.JawDataTable: return new AssetJAW(AHDR, game, endianness);
                     case AssetType.Light: return new AssetLITE(AHDR, game, endianness);
-                    case AssetType.LightKit: return new AssetLKIT(AHDR, game, endianness);
+                    case AssetType.LightKit:
+                        if (AHDR.data.Length == 0)
+                            return new AssetGeneric(AHDR, game, endianness);
+                        return new AssetLKIT(AHDR, game, endianness);
                     case AssetType.LobMaster: return new AssetLOBM(AHDR, game, endianness);
                     case AssetType.LevelOfDetailTable: return new AssetLODT(AHDR, game, endianness);
                     case AssetType.SurfaceMapper: return new AssetMAPR(AHDR, game, endianness);
