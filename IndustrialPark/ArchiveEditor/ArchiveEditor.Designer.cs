@@ -601,7 +601,7 @@
             // AssetIDCol
             // 
             this.AssetIDCol.DisplayIndex = 0;
-            this.AssetIDCol.Text = "Asset ID";
+            this.AssetIDCol.Text = "ID";
             this.AssetIDCol.Width = 69;
             // 
             // AssetTypeCol

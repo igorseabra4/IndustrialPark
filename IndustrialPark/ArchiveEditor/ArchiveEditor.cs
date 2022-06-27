@@ -662,12 +662,15 @@ namespace IndustrialPark
 
             public int Compare(object x, object y)
             {
-                return Compare((ListViewItem)x, (ListViewItem)y) * (reverseSorting ? -1 : 1);
+                var comp = Compare((ListViewItem)x, (ListViewItem)y);
+                if (reverseSorting)
+                    return -comp;
+                return comp;
             }
         }
 
         private bool reverseSorting = false;
-        private int prevColumn = 0;
+        private int prevColumn = -1;
 
         private void listViewAssets_ColumnClick(object sender, ColumnClickEventArgs e)
         {
@@ -676,9 +679,20 @@ namespace IndustrialPark
             else
                 reverseSorting = false;
             prevColumn = e.Column;
-
+            
             listViewAssets.ListViewItemSorter = new AssetListViewSorter(e.Column, reverseSorting);
             listViewAssets.Sort();
+
+            foreach (ColumnHeader col in listViewAssets.Columns)
+                col.Text = TreatColumnName(col.Text);
+            listViewAssets.Columns[prevColumn].Text = TreatColumnName(listViewAssets.Columns[prevColumn].Text) + (reverseSorting ? " ▼" : " ▲");
+        }
+
+        private string TreatColumnName(string name)
+        {
+            if (name.EndsWith("▲") || name.EndsWith("▼"))
+                return name.Substring(0, name.Length - 2);
+            return name;
         }
 
         private void comboBoxAssetTypes_SelectedIndexChanged(object sender, EventArgs e)
