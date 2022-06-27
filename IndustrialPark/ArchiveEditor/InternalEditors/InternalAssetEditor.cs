@@ -13,13 +13,14 @@ namespace IndustrialPark
 {
     public partial class InternalAssetEditor : Form, IInternalEditor
     {
-        public InternalAssetEditor(Asset asset, ArchiveEditorFunctions archive)
+        public InternalAssetEditor(Asset asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
         {
             InitializeComponent();
             TopMost = true;
 
             this.asset = asset;
             this.archive = archive;
+            this.updateListView = updateListView;
 
             DynamicTypeDescriptor dt = new DynamicTypeDescriptor(asset.GetType());
             asset.SetDynamicProperties(dt);
@@ -63,6 +64,7 @@ namespace IndustrialPark
 
         private readonly Asset asset;
         private readonly ArchiveEditorFunctions archive;
+        private readonly Action<Asset> updateListView;
 
         public uint GetAssetID()
         {
@@ -72,12 +74,13 @@ namespace IndustrialPark
         public void RefreshPropertyGrid()
         {
             propertyGridAsset.Refresh();
+            updateListView(asset);
         }
 
         private void propertyGridAsset_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             archive.UnsavedChanges = true;
-            propertyGridAsset.Refresh();
+            RefreshPropertyGrid();
         }
 
         private void AddRow()
@@ -94,7 +97,7 @@ namespace IndustrialPark
             {
                 asset.SetPosition(Program.MainForm.renderer.Camera.Position);
 
-                propertyGridAsset.Refresh();
+                RefreshPropertyGrid();
                 archive.UnsavedChanges = true;
             };
             tableLayoutPanel1.Controls.Add(buttonGetPos);
@@ -106,7 +109,7 @@ namespace IndustrialPark
                 asset.SetNormalizedUp(Program.MainForm.renderer.Camera.Up);
                 asset.SetNormalizedLeft(Program.MainForm.renderer.Camera.Right);
 
-                propertyGridAsset.Refresh();
+                RefreshPropertyGrid();
                 archive.UnsavedChanges = true;
             };
             tableLayoutPanel1.Controls.Add(buttonGetDir);
@@ -120,7 +123,7 @@ namespace IndustrialPark
             buttonAddSelected.Click += (object sender, EventArgs e) =>
             {
                 asset.AddItems(archive.GetCurrentlySelectedAssetIDs());
-                propertyGridAsset.Refresh();
+                RefreshPropertyGrid();
                 archive.UnsavedChanges = true;
             };
             tableLayoutPanel1.Controls.Add(buttonAddSelected);
@@ -250,7 +253,7 @@ namespace IndustrialPark
                 buttonAdd.Click += (object sender, EventArgs e) =>
                 {
                     asset.AddEntry(i);
-                    propertyGridAsset.Refresh();
+                    RefreshPropertyGrid();
                     archive.UnsavedChanges = true;
                 };
                 tableLayoutPanel1.Controls.Add(buttonAdd);
@@ -270,7 +273,7 @@ namespace IndustrialPark
                 buttonAdd.Click += (object sender, EventArgs e) =>
                 {
                     asset.AddEntry(uimct);
-                    propertyGridAsset.Refresh();
+                    RefreshPropertyGrid();
                     archive.UnsavedChanges = true;
                 };
                 tableLayoutPanel1.Controls.Add(buttonAdd);

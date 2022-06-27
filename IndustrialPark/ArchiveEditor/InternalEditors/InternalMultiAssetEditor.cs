@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -6,13 +7,14 @@ namespace IndustrialPark
 {
     public partial class InternalMultiAssetEditor : Form
     {
-        public InternalMultiAssetEditor(Asset[] assets, ArchiveEditorFunctions archive)
+        public InternalMultiAssetEditor(Asset[] assets, ArchiveEditorFunctions archive, Action<Asset> updateListView)
         {
             InitializeComponent();
             TopMost = true;
 
-            assetIDs = (from Asset a in assets select a.assetID).ToArray();
+            this.assets = assets; 
             this.archive = archive;
+            this.updateListView = updateListView;
 
             var typeDescriptors = new List<DynamicTypeDescriptor>();
 
@@ -30,11 +32,15 @@ namespace IndustrialPark
         }
 
         private ArchiveEditorFunctions archive;
-        public uint[] assetIDs { get; private set; }
+        private readonly Action<Asset> updateListView;
+        private readonly Asset[] assets;
+        public uint[] AssetIDs => (from Asset a in assets select a.assetID).ToArray();
 
         private void propertyGridAsset_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             archive.UnsavedChanges = true;
+            foreach (var a in assets)
+                updateListView(a);
             propertyGridAsset.Refresh();
         }
     }

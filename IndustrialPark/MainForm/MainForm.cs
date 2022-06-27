@@ -1307,7 +1307,7 @@ namespace IndustrialPark
 
             if (willOpen)
                 foreach (ArchiveEditor archiveEditor in archiveEditors)
-                    archiveEditor.archive.OpenInternalEditor(whoTargets, true);
+                    archiveEditor.OpenInternalEditors(whoTargets, true);
         }
 
         public List<uint> WhoTargets(uint assetID)

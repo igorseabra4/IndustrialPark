@@ -91,7 +91,7 @@ namespace IndustrialPark
                     internalEditors[i].Close();
         }
 
-        public void OpenInternalEditor(List<uint> list, bool openAnyway)
+        public void OpenInternalEditor(List<uint> list, bool openAnyway, Action<Asset> updateListView)
         {
             bool willOpen = true;
             if (list.Count > 15 && !openAnyway)
@@ -102,10 +102,10 @@ namespace IndustrialPark
             if (willOpen)
                 foreach (uint u in list)
                     if (assetDictionary.ContainsKey(u))
-                        OpenInternalEditor(assetDictionary[u]);
+                        OpenInternalEditor(assetDictionary[u], updateListView);
         }
 
-        private void OpenInternalEditor(Asset asset)
+        private void OpenInternalEditor(Asset asset, Action<Asset> updateListView)
         {
             CloseInternalEditor(asset.assetID);
 
@@ -118,7 +118,7 @@ namespace IndustrialPark
                     if (asset is AssetRWTX rwtx)
                         internalEditors.Add(new InternalTextureEditor(rwtx, this));
                     else
-                        internalEditors.Add(new InternalAssetEditor(asset, this));
+                        internalEditors.Add(new InternalAssetEditor(asset, this, updateListView));
                     break;
                 case AssetType.Sound:
                 case AssetType.StreamingSound:
@@ -128,7 +128,7 @@ namespace IndustrialPark
                     internalEditors.Add(new InternalTextEditor((AssetTEXT)asset, this));
                     break;
                 default:
-                    internalEditors.Add(new InternalAssetEditor(asset, this));
+                    internalEditors.Add(new InternalAssetEditor(asset, this, updateListView));
                     break;
             }
 
@@ -137,21 +137,21 @@ namespace IndustrialPark
 
         private List<InternalMultiAssetEditor> multiInternalEditors = new List<InternalMultiAssetEditor>();
 
-        public void OpenInternalEditorMulti(List<uint> list)
+        public void OpenInternalEditorMulti(List<uint> list, Action<Asset> updateListView)
         {
             var assets = new List<Asset>();
             foreach (var u in list)
                 if (assetDictionary.ContainsKey(u))
                     assets.Add(assetDictionary[u]);
 
-            multiInternalEditors.Add(new InternalMultiAssetEditor(assets.ToArray(), this));
+            multiInternalEditors.Add(new InternalMultiAssetEditor(assets.ToArray(), this, updateListView));
             multiInternalEditors.Last().Show();
         }
 
         public void CloseInternalEditorMulti(uint assetID)
         {
             for (int i = 0; i < multiInternalEditors.Count; i++)
-                if (multiInternalEditors[i].assetIDs.Contains(assetID))
+                if (multiInternalEditors[i].AssetIDs.Contains(assetID))
                 {
                     multiInternalEditors[i].Close();
                     multiInternalEditors.RemoveAt(i--);

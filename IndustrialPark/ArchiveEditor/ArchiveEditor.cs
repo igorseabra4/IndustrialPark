@@ -595,26 +595,43 @@ namespace IndustrialPark
             ListViewItem item = new ListViewItem(asset.assetName)
             {
                 Checked = !asset.isInvisible,
-                Selected = selected
+                Selected = selected,
+                Tag = asset.assetID
             };
-
-            var info = asset.AssetInfo;
-            if (info.Length > 50)
-                info = info.Substring(0, 47) + "...";
 
             item.SubItems.AddRange(new ListViewItem.ListViewSubItem[]
             {
                 new ListViewItem.ListViewSubItem(item, asset.assetID.ToString("X8")),
                 new ListViewItem.ListViewSubItem(item, asset.TypeString),
-                new ListViewItem.ListViewSubItem(item, info),
+                new ListViewItem.ListViewSubItem(item, TreatInfo(asset.AssetInfo)),
                 new ListViewItem.ListViewSubItem(item, asset.AssetInfoLinks),
             });
             return item;
         }
 
+        private string TreatInfo(string info)
+        {
+            if (info.Length > 50)
+                info = info.Substring(0, 47) + "...";
+            return info;
+        }
+
+        private void UpdateCurrentListView(Asset asset)
+        {
+            foreach (ListViewItem item in listViewAssets.Items)
+            {
+                if ((uint)item.Tag == asset.assetID)
+                {
+                    item.SubItems[3].Text = TreatInfo(asset.AssetInfo);
+                    item.SubItems[4].Text = asset.AssetInfoLinks;
+                    return;
+                }
+            }
+        }
+
         private void checkedListBoxAssets_ItemCheck(object sender, ItemCheckEventArgs e)
         {
-            archive.GetFromAssetID(GetAssetIDFromName(listViewAssets.Items[e.Index])).isInvisible = e.NewValue != CheckState.Checked;
+            archive.GetFromAssetID((uint)listViewAssets.Items[e.Index].Tag).isInvisible = e.NewValue != CheckState.Checked;
         }
 
         private class AssetListViewSorter : System.Collections.IComparer
@@ -631,17 +648,13 @@ namespace IndustrialPark
             public int Compare(ListViewItem x, ListViewItem y)
             {
                 if (Column == 1)
-                    return GetAssetIDFromName(x).CompareTo(GetAssetIDFromName(y));
+                    return ((uint)x.Tag).CompareTo((uint)y.Tag);
 
-                if (Column == 3)
+                if (Column == 4)
                 {
-                    if (x.SubItems[Column].Text.EndsWith(" bytes") && y.SubItems[Column].Text.EndsWith(" bytes"))
-                    {
-                        int bytes1 = Convert.ToInt32(x.SubItems[Column].Text.Replace(" bytes", ""));
-                        int bytes2 = Convert.ToInt32(y.SubItems[Column].Text.Replace(" bytes", ""));
-
-                        return bytes1.CompareTo(bytes2);
-                    }
+                    int links1 = (x.SubItems[Column].Text == "-") ? -1 : Convert.ToInt32(x.SubItems[Column].Text);
+                    int links2 = (y.SubItems[Column].Text == "-") ? -1 : Convert.ToInt32(y.SubItems[Column].Text);
+                    return links1.CompareTo(links2);
                 }
 
                 return x.SubItems[Column].Text.CompareTo(y.SubItems[Column].Text);
@@ -849,12 +862,17 @@ namespace IndustrialPark
 
         private void buttonMultiEdit_Click(object sender, EventArgs e)
         {
-            archive.OpenInternalEditorMulti(archive.GetCurrentlySelectedAssetIDs());
+            archive.OpenInternalEditorMulti(archive.GetCurrentlySelectedAssetIDs(), UpdateCurrentListView);
         }
 
         public void OpenInternalEditors()
         {
-            archive.OpenInternalEditor(archive.GetCurrentlySelectedAssetIDs(), false);
+            archive.OpenInternalEditor(archive.GetCurrentlySelectedAssetIDs(), false, UpdateCurrentListView);
+        }
+
+        public void OpenInternalEditors(List<uint> whoTargets, bool openAnyway)
+        {
+            archive.OpenInternalEditor(whoTargets, openAnyway, UpdateCurrentListView);
         }
 
         public void DeleteSelectedAssets()
@@ -1019,14 +1037,15 @@ namespace IndustrialPark
             else
             {
                 listViewAssets.SelectedIndices.Clear();
-                int last = 0;
+                int first = -1;
                 for (int i = 0; i < listViewAssets.Items.Count; i++)
-                    if (assetIDs.Contains(GetAssetIDFromName(listViewAssets.Items[i])))
+                    if (assetIDs.Contains((uint)listViewAssets.Items[i].Tag))
                     {
                         listViewAssets.SelectedIndices.Add(i);
-                        last = i;
+                        if (first == -1)
+                            first = i;
                     }
-                listViewAssets.EnsureVisible(last);
+                listViewAssets.EnsureVisible(first);
             }
         }
 
