@@ -369,6 +369,7 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.Boulder, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Button, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Destructible_Object, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Duplicator, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Electric_Arc_Generator, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Hangable, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.NPC, eventHandler),
@@ -1490,6 +1491,9 @@ namespace IndustrialPark
                 case AssetTemplate.Volume_Box:
                 case AssetTemplate.Volume_Sphere:
                     asset = new AssetVOLU(assetName, position, template);
+                    break;
+                case AssetTemplate.Duplicator:
+                    asset = new AssetDUPC(assetName, position);
                     break;
                 default:
                     MessageBox.Show("Unsupported template");

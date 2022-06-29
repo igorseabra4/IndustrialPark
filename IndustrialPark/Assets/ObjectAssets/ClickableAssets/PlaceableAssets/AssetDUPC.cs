@@ -44,6 +44,10 @@ namespace IndustrialPark
 
         public AssetDUPC(string assetName, Vector3 position) : base(assetName, AssetType.Duplicator, BaseAssetType.Duplicator)
         {
+            InitialSpawn = 1;
+            MaximumInGame = 1;
+            MaximumToSpawn = 1;
+            SpawnRate = 1f;
             VIL = new AssetVIL(assetName, position, AssetTemplate.VIL, 0);
             renderableAssets.Remove(VIL);
             AddToRenderableAssets(this);

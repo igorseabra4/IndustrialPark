@@ -35,6 +35,7 @@
         Boulder,
         Button,
         Destructible_Object,
+        Duplicator,
         Electric_Arc_Generator,
         Hangable,
         NPC,

@@ -599,9 +599,6 @@ namespace IndustrialPark
                 Tag = asset.assetID
             };
 
-            if (asset.AssetInfo == null)
-                MessageBox.Show(asset.ToString());
-
             item.SubItems.AddRange(new ListViewItem.ListViewSubItem[]
             {
                 new ListViewItem.ListViewSubItem(item, asset.assetID.ToString("X8")),
