@@ -9,7 +9,7 @@ namespace IndustrialPark
 {
     public class AssetDUPC : BaseAsset, IRenderableAsset, IClickableAsset, IRotatableAsset, IScalableAsset
     {
-        public override string AssetInfo => VIL.assetName;
+        public override string AssetInfo => VIL.AssetInfo;
 
         private const string categoryName = "Duplicator";
         private const string categoryName2 = "Duplicator VIL";
@@ -42,6 +42,13 @@ namespace IndustrialPark
         [Category(categoryName2), TypeConverter(typeof(ExpandableObjectConverter))]
         public AssetVIL VIL { get; set; }
 
+        public AssetDUPC(string assetName, Vector3 position) : base(assetName, AssetType.Duplicator, BaseAssetType.Duplicator)
+        {
+            VIL = new AssetVIL(assetName, position, AssetTemplate.VIL, 0);
+            renderableAssets.Remove(VIL);
+            AddToRenderableAssets(this);
+        }
+
         public AssetDUPC(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
@@ -62,10 +69,10 @@ namespace IndustrialPark
                 NavMesh1 = reader.ReadUInt32();
                 UnknownInt_30 = reader.ReadInt32();
                 VIL = new AssetVIL(reader);
-
-                CreateTransformMatrix();
-                AddToRenderableAssets(this);
             }
+
+            CreateTransformMatrix();
+            AddToRenderableAssets(this);
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)

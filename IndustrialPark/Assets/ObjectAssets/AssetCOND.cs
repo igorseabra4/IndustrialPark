@@ -327,33 +327,33 @@ namespace IndustrialPark
             }
         }
 
-        [Category(catName), DisplayName(catName)]
+        [Category(catName), DisplayName("Conditional (Hash)")]
         public AssetID ConditionalVariable_Hash { get; set; }
-        [Category(catName), DisplayName(catName)]
+        [Category(catName), DisplayName("Conditional (Scooby)")]
         public ConditionalVariableScooby Conditional_Scooby
         {
             get => (ConditionalVariableScooby)(uint)ConditionalVariable_Hash;
             set => ConditionalVariable_Hash = (uint)value;
         }
-        [Category(catName), DisplayName(catName)]
+        [Category(catName), DisplayName("Conditional (BFBB)")]
         public ConditionalVariableBFBB Conditional_BFBB
         {
             get => (ConditionalVariableBFBB)(uint)ConditionalVariable_Hash;
             set => ConditionalVariable_Hash = (uint)value;
         }
-        [Category(catName), DisplayName(catName)]
+        [Category(catName), DisplayName("Conditional (TSSM)")]
         public ConditionalVariableTSSM Conditional_TSSM
         {
             get => (ConditionalVariableTSSM)(uint)ConditionalVariable_Hash;
             set => ConditionalVariable_Hash = (uint)value;
         }
-        [Category(catName), DisplayName(catName)]
+        [Category(catName), DisplayName("Conditional (Incredibles)")]
         public ConditionalVariableIncredibles Conditional_Incredibles
         {
             get => (ConditionalVariableIncredibles)(uint)ConditionalVariable_Hash;
             set => ConditionalVariable_Hash = (uint)value;
         }
-        [Category(catName), DisplayName(catName)]
+        [Category(catName), DisplayName("Conditional (ROTU)")]
         public ConditionalVariableROTU Conditional_ROTU
         {
             get => (ConditionalVariableROTU)(uint)ConditionalVariable_Hash;

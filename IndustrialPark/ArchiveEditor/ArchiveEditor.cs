@@ -305,11 +305,11 @@ namespace IndustrialPark
             CloseArchiveEditor();
         }
 
-        public event Action EditorClosed;
+        public event Action EditorUpdate;
 
-        protected virtual void OnEditorClosed()
+        protected virtual void OnEditorUpdate()
         {
-            EditorClosed?.Invoke();
+            EditorUpdate?.Invoke();
         }
 
         public void CloseArchiveEditor()
@@ -327,7 +327,7 @@ namespace IndustrialPark
                 Program.MainForm.UpdateTitleBar();
             }
             Close();
-            OnEditorClosed();
+            OnEditorUpdate();
         }
 
         private bool programIsChangingStuff = false;
@@ -599,6 +599,9 @@ namespace IndustrialPark
                 Tag = asset.assetID
             };
 
+            if (asset.AssetInfo == null)
+                MessageBox.Show(asset.ToString());
+
             item.SubItems.AddRange(new ListViewItem.ListViewSubItem[]
             {
                 new ListViewItem.ListViewSubItem(item, asset.assetID.ToString("X8")),
@@ -721,9 +724,8 @@ namespace IndustrialPark
             {
                 List<uint> assetIDs = archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, overwrite);
                 comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
-                Program.MainForm.RefreshTexturesAndModels();
+                OnEditorUpdate();
                 SetSelectedIndices(assetIDs, true);
-                SetupAssetVisibilityButtons();
             }
         }
 
@@ -739,8 +741,7 @@ namespace IndustrialPark
                 if (makeSimps)
                     assetIDs.AddRange(archive.MakeSimps(assetIDs, solidSimps, ledgeGrabSimps));
                 PopulateLayerComboBox();
-                Program.MainForm.RefreshTexturesAndModels();
-                SetupAssetVisibilityButtons();
+                OnEditorUpdate();
                 SetSelectedIndices(assetIDs, true);
             }
         }
@@ -753,8 +754,7 @@ namespace IndustrialPark
             {
                 List<uint> assetIDs = archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, overwrite);
                 comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
-                Program.MainForm.RefreshTexturesAndModels();
-                SetupAssetVisibilityButtons();
+                OnEditorUpdate();
                 SetSelectedIndices(assetIDs, true);
             }
         }
@@ -1116,8 +1116,7 @@ namespace IndustrialPark
                 PopulateLayerTypeComboBox();
                 PopulateLayerComboBox();
                 PopulateAssetList();
-                archive.SetupTextureDisplay();
-                SetupAssetVisibilityButtons();
+                OnEditorUpdate();
             }
         }
 
@@ -1186,7 +1185,7 @@ namespace IndustrialPark
             if (openFile.ShowDialog() == DialogResult.OK)
             {
                 archive.ImportHip(openFile.FileNames, false);
-                SetupAssetVisibilityButtons();
+                OnEditorUpdate();
             }
             PopulateLayerComboBox();
         }
@@ -1370,9 +1369,8 @@ namespace IndustrialPark
             if (openTXD.ShowDialog() == DialogResult.OK)
             {
                 archive.ImportTextureDictionary(openTXD.FileName, RW3);
-                Program.MainForm.RefreshTexturesAndModels();
                 PopulateLayerComboBox();
-                SetupAssetVisibilityButtons();
+                OnEditorUpdate();
             }
         }
 

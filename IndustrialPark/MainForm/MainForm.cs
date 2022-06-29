@@ -755,15 +755,16 @@ namespace IndustrialPark
             archiveEditorToolStripMenuItem.DropDownItems.Add(tempMenuItem);
 
             ae.archive.ChangesMade += UpdateTitleBar;
-            ae.EditorClosed += UpdateCloseAllArchiveMenuItem;
+            ae.EditorUpdate += EditorUpdate;
             UpdateTitleBar();
             SetupAssetVisibilityButtons();
             closeAllEditorsToolStripMenuItem.Enabled = true;
         }
 
-        public void UpdateCloseAllArchiveMenuItem()
+        public void EditorUpdate()
         {
             closeAllEditorsToolStripMenuItem.Enabled = archiveEditors.Count > 0;
+            RefreshTexturesAndModels();
             SetupAssetVisibilityButtons();
         }
 
