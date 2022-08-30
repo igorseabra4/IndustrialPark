@@ -2,14 +2,49 @@
 using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
+using System.ComponentModel;
 using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
-    public class DynaPointer : RenderableRotatableDynaBase
+    public class DynaPointer : RenderableDynaBase, IRotatableAsset
     {
-        private const string dynaCategoryName = "pointer";
-        public override string TypeString => dynaCategoryName;
+        private const string dynaCategoryName1 = "DYNA Placement";
+
+        protected float _yaw;
+        [Category(dynaCategoryName1)]
+        public AssetSingle Yaw
+        {
+            get => _yaw;
+            set { _yaw = value; CreateTransformMatrix(); }
+        }
+
+        protected float _pitch;
+        [Category(dynaCategoryName1)]
+        public AssetSingle Pitch
+        {
+            get => _pitch;
+            set { _pitch = value; CreateTransformMatrix(); }
+        }
+
+        protected float _roll;
+        [Category(dynaCategoryName1)]
+        public AssetSingle Roll
+        {
+            get => _roll;
+            set { _roll = value; CreateTransformMatrix(); }
+        }
+
+        public override void CreateTransformMatrix()
+        {
+            world = Matrix.RotationYawPitchRoll(
+                MathUtil.DegreesToRadians(_yaw),
+                MathUtil.DegreesToRadians(_pitch),
+                MathUtil.DegreesToRadians(_roll)) * Matrix.Translation(_position);
+            CreateBoundingBox();
+        }
+
+        public override string TypeString => "pointer";
 
         protected override short constVersion => 1;
 

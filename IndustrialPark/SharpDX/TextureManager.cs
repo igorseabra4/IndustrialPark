@@ -39,7 +39,6 @@ namespace IndustrialPark
             foreach (string s in Textures.Keys)
                 if (Functions.BKDRHash(s) == assetID)
                     return Textures[s];
-
             return SharpRenderer.whiteDefault;
         }
 

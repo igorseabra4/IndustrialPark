@@ -51,7 +51,7 @@ namespace IndustrialPark
             set { _position.Z = value; CreateTransformMatrix(); }
         }
 
-        protected AssetSingle _yaw;
+        protected float _yaw;
         [Category(categoryName)]
         public AssetSingle Yaw
         {
@@ -59,7 +59,7 @@ namespace IndustrialPark
             set { _yaw = MathUtil.DegreesToRadians(value); CreateTransformMatrix(); }
         }
 
-        protected AssetSingle _pitch;
+        protected float _pitch;
         [Category(categoryName)]
         public AssetSingle Pitch
         {
@@ -67,7 +67,7 @@ namespace IndustrialPark
             set { _pitch = MathUtil.DegreesToRadians(value); CreateTransformMatrix(); }
         }
 
-        protected AssetSingle _roll;
+        protected float _roll;
         [Category(categoryName)]
         public AssetSingle Roll
         {

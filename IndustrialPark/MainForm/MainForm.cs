@@ -1214,7 +1214,7 @@ namespace IndustrialPark
                 names.Add(assetType, text);
             }
             
-            foreach (var entry in names.OrderBy(f => f.Value.ToString()))
+            foreach (var entry in names.OrderBy(f => f.Value))
             {
                 var field = assetViewTypes[entry.Key].GetField("dontRender");
                 var dontRender = (bool)field.GetValue(null);

@@ -58,7 +58,7 @@ namespace IndustrialPark
 
         public RenderWareModelFile GetRenderWareModelFile() => model;
 
-        [Category("Model Data"), Description("If IsNativeData is true, you cannot use the Export function.")]
+        [Browsable(false)]
         public bool IsNativeData => model != null && model.isNativeData;
 
         [Browsable(false)]
@@ -70,6 +70,7 @@ namespace IndustrialPark
 
                 foreach (RWSection rws in ModelAsRWSections)
                     if (rws is Clump_0010 clump)
+                    {
                         foreach (Geometry_000F geo in clump.geometryList.geometryList)
                             if (geo.materialList != null)
                                 if (geo.materialList.materialList != null)
@@ -78,6 +79,17 @@ namespace IndustrialPark
                                             if (mat.texture.diffuseTextureName != null)
                                                 if (!names.Contains(mat.texture.diffuseTextureName.stringString))
                                                     names.Add(mat.texture.diffuseTextureName.stringString);
+                    }
+                    else if (rws is World_000B world)
+                    {
+                        if (world.materialList != null)
+                            if (world.materialList.materialList != null)
+                                foreach (Material_0007 mat in world.materialList.materialList)
+                                    if (mat.texture != null)
+                                        if (mat.texture.diffuseTextureName != null)
+                                            if (!names.Contains(mat.texture.diffuseTextureName.stringString))
+                                                names.Add(mat.texture.diffuseTextureName.stringString);
+                    }
 
                 return names.ToArray();
             }
