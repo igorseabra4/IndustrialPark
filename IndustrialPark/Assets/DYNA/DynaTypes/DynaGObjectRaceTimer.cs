@@ -11,7 +11,7 @@ namespace IndustrialPark
         protected override short constVersion => 2;
 
         [Category(dynaCategoryName)]
-        public int CountDown { get; set; }
+        public bool CountDown { get; set; }
         [Category(dynaCategoryName)]
         public int StartTime { get; set; }
         [Category(dynaCategoryName)]
@@ -29,7 +29,8 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
 
-                CountDown = reader.ReadInt32();
+                CountDown = reader.ReadByteBool();
+                reader.BaseStream.Position += 3;
                 StartTime = reader.ReadInt32();
                 VictoryTime = reader.ReadInt32();
                 WarnTime1 = reader.ReadSingle();
@@ -42,7 +43,8 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(CountDown);
+                writer.Write((byte)(CountDown ? 1 : 0));
+                writer.Write(new byte[3]);
                 writer.Write(StartTime);
                 writer.Write(VictoryTime);
                 writer.Write(WarnTime1);

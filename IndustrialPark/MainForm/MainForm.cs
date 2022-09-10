@@ -892,8 +892,7 @@ namespace IndustrialPark
                 "Ctrl + (W, A, S, D): rotate view up, left, down, right\n" +
                 "Q, E: decrease interval, increase interval (view move speed)\n" +
                 "1, 3: decrease rotation interval, increase rotation interval (view rotation speed)\n" +
-                "B: select previous template\n" +
-                "N: select next template\n" +
+                "B and N: select previous/next template\n" +
                 "C: toggles backface culling\n" +
                 "F: toggles wireframe mode\n" +
                 "G: open Asset Data Editor for selected assets\n" +
@@ -901,26 +900,25 @@ namespace IndustrialPark
                 "T: snap gizmos to grid\n" +
                 "U: toggle UI Mode\n" +
                 "V: cycle between gizmos\n" +
-                "Z: toggle mouse mode\n" +
+                "Z: toggle mouse mode: similar to a first person camera. The view rotates automatically as you move the mouse. Use the keyboard to move around\n" +
                 "F1: displays the View Config box\n" +
+                "Ctrl + Shift + S or F4: save all open Archive Editors\n" +
                 "F5: attempt to run game\n" +
                 "Delete: delete selected assets\n" +
+                "Ctrl + Shift + H: closes all windows which are not Archive Editors\n" +
+                "Ctrl + 1 to 9: Open the corresponding Archive Editor window\n" +
                 "\n" +
                 "Mouse controls:\n" +
                 "Left click on an asset to select it\n" +
                 "Ctrl + Left click to select multiple\n" +
                 "Middle click and drag to rotate view\n" +
                 "Mouse wheel to move forward/backward\n" +
-                "Right click on screen to choose a template\n" +
+                "Right click on screen to choose a gizmo or template\n" +
                 "Shift + Right click to place a template\n" +
                 "Ctrl + Right click and drag to pan (move view up, left, down, right)\n" +
-                "Mouse mode (Z): similar to a first person camera. The view rotates automatically as you move the mouse. Use the keyboard to move around.\n" +
                 "\n" +
-                "Ctrl + Shift + S or F4: Save all open editors\n" +
-                "Ctrl + Shift + H: Close all windows excluding archive editors\n" +
-                "Ctrl + 1 to 9: Open the corresponding archive editor's window\n" +
-                "\n" +
-                "Please consult the Industrial Park user guide on Heavy Iron Modding for more information");
+                "Please consult the Industrial Park user guide on Heavy Iron Modding for more information"
+                );
         }
 
         private SharpDX.Rectangle ViewRectangle => new SharpDX.Rectangle(
@@ -1722,8 +1720,6 @@ namespace IndustrialPark
                 p.SetProgressBar(0, hipList.Count, 1);
                 p.Show();
 
-                List<(MinfAssetParam, int, string)> minfParamsByteCount = new List<(MinfAssetParam, int, string)>();
-
                 foreach (var hip in hipList)
                 {
                     p.Text = Path.GetFileName(hip);
@@ -1733,10 +1729,6 @@ namespace IndustrialPark
                     archive.Dispose();
                     p.PerformStep();
                 }
-
-                using (var writer = new StreamWriter(new FileStream("minfs.txt", FileMode.Create)))
-                    foreach (var v in minfParamsByteCount)
-                        writer.WriteLine($"{v.Item1} {v.Item2} {v.Item3}");
 
                 p.Close();
             }

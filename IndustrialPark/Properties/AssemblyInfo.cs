@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCompany("Heavy Iron Modding")]
 [assembly: AssemblyProduct("IndustrialPark")]
 [assembly: AssemblyCopyright("Copyright ©  2022 igorseabra4")]
-[assembly: AssemblyTrademark("Heavy Iron Modding Modding")]
+[assembly: AssemblyTrademark("Heavy Iron Modding")]
 [assembly: AssemblyCulture("")]
 
 // Definir ComVisible como false torna os tipos neste assembly invisíveis
