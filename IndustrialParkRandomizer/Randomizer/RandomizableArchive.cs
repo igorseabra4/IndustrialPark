@@ -47,6 +47,12 @@ namespace IndustrialPark.Randomizer
                     shuffled = true;
                 }
 
+            if (settings.Set_Scale)
+            {
+                shuffled |= true;
+                ApplyScale(new Vector3(settings.scaleFactor, settings.scaleFactor, settings.scaleFactor));
+            }
+
             if (settings.Disco_Floors && ContainsAssetWithType(AssetType.DiscoFloor))
                 shuffled |= RandomizeDisco();
 
@@ -344,7 +350,7 @@ namespace IndustrialPark.Randomizer
                 shuffled |=
                     ShufflePlaceableColors(settings.brightColors, settings.strongColors) |
                     ShufflePlaceableDynaColors(settings.brightColors, settings.strongColors) |
-                    ShuffleLevelModelColors(settings.brightColors, settings.strongColors);
+                    ShuffleLevelModelColors(settings.brightColors, settings.strongColors, settings.VertexColors);
 
             if (game == Game.BFBB && settings.PlayerCharacters && ContainsAssetWithType(AssetType.BusStop))
                 shuffled |= ShuffleBusStops();
@@ -838,11 +844,11 @@ namespace IndustrialPark.Randomizer
             return assets.Count != 0;
         }
 
-        private bool ShuffleLevelModelColors(bool brightColors, bool strongColors)
+        private bool ShuffleLevelModelColors(bool brightColors, bool strongColors, bool vertexColors)
         {
             var assets = (from asset in assetDictionary.Values
-                          where new AssetType[] { AssetType.JSP, AssetType.BSP }.Contains(asset.assetType)
-                          select (AssetWithData)asset).ToList();
+                          where asset is AssetJSP assetJsp
+                          select (AssetJSP)asset).ToList();
 
             float max = 255f;
             bool colored = false;
@@ -851,23 +857,30 @@ namespace IndustrialPark.Randomizer
             {
                 try
                 {
-                    var colors = GetColors(a.Data);
-
-                    if (colors.Length == 0)
-                        continue;
-
-                    for (int i = 0; i < colors.Length; i++)
+                    if (vertexColors)
                     {
-                        Vector3 color = GetRandomColor(brightColors, strongColors);
-
-                        colors[i] = System.Drawing.Color.FromArgb(colors[i].A,
-                            (byte)(color.X * max),
-                            (byte)(color.Y * max),
-                            (byte)(color.Z * max));
+                        a.SetVertexColors(new Vector4(), Operation.Randomize, () => GetRandomColor(brightColors, strongColors));
                     }
+                    else
+                    {
+                        var colors = GetColors(a.Data);
 
-                    a.Data = SetColors(a.Data, colors);
-                    colored = true;
+                        if (colors.Length == 0)
+                            continue;
+
+                        for (int i = 0; i < colors.Length; i++)
+                        {
+                            Vector3 color = GetRandomColor(brightColors, strongColors);
+
+                            colors[i] = System.Drawing.Color.FromArgb(colors[i].A,
+                                (byte)(color.X * max),
+                                (byte)(color.Y * max),
+                                (byte)(color.Z * max));
+                        }
+
+                        a.Data = SetColors(a.Data, colors);
+                        colored = true;
+                    }
                 }
                 catch { }
             }

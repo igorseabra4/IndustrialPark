@@ -581,51 +581,19 @@ namespace IndustrialPark
             return result;
         }
 
-        public void ApplyScale(Vector3 factor)
+        public bool ApplyScale(Vector3 factor)
         {
+            bool applied = false;
             float singleFactor = (factor.X + factor.Y + factor.Z) / 3;
 
             foreach (Asset a in assetDictionary.Values)
             {
                 if (a is AssetTRIG TRIG)
                 {
-                    if (TRIG.Shape != TriggerShape.Box)
-                    {
-                        TRIG.MinimumX *= factor.X;
-                        TRIG.MinimumY *= factor.Y;
-                        TRIG.MinimumZ *= factor.Z;
-                        TRIG.Radius *= singleFactor;
-                        TRIG.Height *= singleFactor;
-                    }
-                    else
-                    {
-                        Vector3 TrigCenter = new Vector3(TRIG.MinimumX + TRIG.Radius, TRIG.MinimumY + TRIG.MaximumY, TRIG.MinimumZ + TRIG.MaximumZ) / 2f;
-
-                        TRIG.MinimumX -= TrigCenter.X;
-                        TRIG.MinimumY -= TrigCenter.Y;
-                        TRIG.MinimumZ -= TrigCenter.Z;
-                        TRIG.MinimumX -= TrigCenter.X;
-                        TRIG.MaximumY -= TrigCenter.Y;
-                        TRIG.MaximumZ -= TrigCenter.Z;
-
-                        TRIG.MinimumX *= factor.X;
-                        TRIG.MinimumY *= factor.Y;
-                        TRIG.MinimumZ *= factor.Z;
-                        TRIG.MinimumX *= factor.X;
-                        TRIG.MaximumY *= factor.Y;
-                        TRIG.MaximumZ *= factor.Z;
-
-                        TRIG.MinimumX += TrigCenter.X * factor.X;
-                        TRIG.MinimumY += TrigCenter.Y * factor.Y;
-                        TRIG.MinimumZ += TrigCenter.Z * factor.Z;
-                        TRIG.MinimumX += TrigCenter.X * factor.X;
-                        TRIG.MaximumY += TrigCenter.Y * factor.Y;
-                        TRIG.MaximumZ += TrigCenter.Z * factor.Z;
-                    }
-
-                    TRIG.FixPosition();
+                    TRIG.ApplyScale(factor, singleFactor);
+                    applied = true;
                 }
-                else if (a is IClickableAsset ica)
+                else if (a is IClickableAsset ica && !(a is DynaGObjectTeleport))
                 {
                     ica.PositionX *= factor.X;
                     ica.PositionY *= factor.Y;
@@ -654,11 +622,48 @@ namespace IndustrialPark
                         placeable.ScaleY *= factor.Y;
                         placeable.ScaleZ *= factor.Z;
                     }
+                    applied = true;
+                }
+                else if (a is AssetJSP jsp)
+                {
+                    jsp.ApplyScale(factor);
+                    applied = true;
+                }
+                else if (a is AssetJSP_INFO jspinfo)
+                {
+                    jspinfo.ApplyScale(factor);
+                    applied = true;
+                }
+                else if (a is AssetLODT lodt && singleFactor > 1.0)
+                {
+                    var entries = lodt.Entries;
+                    for (int i = 0; i < entries.Length; i++)
+                    {
+                        entries[i].MaxDistance *= singleFactor;
+                        entries[i].LOD1_MinDistance *= singleFactor;
+                        entries[i].LOD2_MinDistance *= singleFactor;
+                        entries[i].LOD3_MinDistance *= singleFactor;
+                    }
+                    lodt.Entries = entries;
+                    applied = true;
+                }
+                else if (a is AssetFLY fly)
+                {
+                    var entries = fly.Frames;
+                    for (int i = 0; i < entries.Length; i++)
+                    {
+                        entries[i].CameraPosition.X *= factor.X;
+                        entries[i].CameraPosition.Y *= factor.Y;
+                        entries[i].CameraPosition.Z *= factor.Z;
+                    }
+                    fly.Frames = entries;
+                    applied = true;
                 }
             }
 
             UnsavedChanges = true;
             RecalculateAllMatrices();
+            return applied;
         }
 
         public List<uint> MakeSimps(List<uint> assetIDs, bool solid, bool ledgeGrabSimps)

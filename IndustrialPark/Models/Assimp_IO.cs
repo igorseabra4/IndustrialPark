@@ -715,20 +715,35 @@ namespace IndustrialPark.Models
         private static void GetNativeTriangleList(Scene scene, NativeDataGC n, int totalMaterials = 0)
         {
             List<Vertex3> vertexList_init = new List<Vertex3>();
+            List<Vertex3> normalList_init = new List<Vertex3>();
             List<RenderWareFile.Color> colorList_init = new List<RenderWareFile.Color>();
             List<Vertex2> textCoordList_init = new List<Vertex2>();
 
             foreach (Declaration d in n.declarations)
             {
-                foreach (object o in d.entryList)
+                if (d.declarationType == Declarations.Vertex)
                 {
-                    if (o is Vertex3 v)
+                    var dec = (Vertex3Declaration)d;
+                    foreach (var v in dec.entryList)
                         vertexList_init.Add(v);
-                    else if (o is RenderWareFile.Color c)
+                }
+                else if (d.declarationType == Declarations.Normal)
+                {
+                    var dec = (Vertex3Declaration)d;
+                    foreach (var v in dec.entryList)
+                        normalList_init.Add(v);
+                }
+                else if (d.declarationType == Declarations.Color)
+                {
+                    var dec = (ColorDeclaration)d;
+                    foreach (var c in dec.entryList)
                         colorList_init.Add(c);
-                    else if (o is Vertex2 t)
-                        textCoordList_init.Add(t);
-                    else throw new Exception();
+                }
+                else if (d.declarationType == Declarations.TextCoord)
+                {
+                    var dec = (Vertex2Declaration)d;
+                    foreach (var v in dec.entryList)
+                        textCoordList_init.Add(v);
                 }
             }
 
@@ -754,6 +769,11 @@ namespace IndustrialPark.Models
                                 var v = vertexList_init[objectList[j]];
                                 mesh.Vertices.Add(new Vector3D(v.X, v.Y, v.Z));
                                 vcount++;
+                            }
+                            else if (n.declarations[j].declarationType == Declarations.Normal)
+                            {
+                                var v = normalList_init[objectList[j]];
+                                mesh.Normals.Add(new Vector3D(v.X, v.Y, v.Z));
                             }
                             else if (n.declarations[j].declarationType == Declarations.Color)
                             {

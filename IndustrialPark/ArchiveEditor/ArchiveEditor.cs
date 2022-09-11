@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using System.Diagnostics;
+using RenderWareFile;
 
 namespace IndustrialPark
 {
@@ -907,8 +908,16 @@ namespace IndustrialPark
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                     try
                     {
-                        var AHDR = archive.GetAHDRFromAssetID(CurrentlySelectedAssetIDs()[0]);
-                        File.WriteAllBytes(saveFileDialog.FileName, AHDR.data);
+                        var asset = archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]);
+                        if (asset is AssetJSP_INFO jspinfo)
+                        {
+                            File.WriteAllBytes(saveFileDialog.FileName, ReadFileMethods.ExportRenderWareFile(jspinfo.File, jspinfo.renderWareVersion));
+                        }
+                        else
+                        {
+                            var AHDR = archive.GetAHDRFromAssetID(CurrentlySelectedAssetIDs()[0]);
+                            File.WriteAllBytes(saveFileDialog.FileName, AHDR.data);
+                        }
                     }
                     catch (Exception ex)
                     {

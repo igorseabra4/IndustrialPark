@@ -24,7 +24,8 @@ namespace IndustrialPark
 
         public AssetRenderWareModel(Section_AHDR AHDR, Game game, Endianness endianness, SharpRenderer renderer) : base(AHDR, game, endianness)
         {
-            Setup(renderer);
+            if (renderer != null)
+                Setup(renderer);
         }
 
         public override byte[] Serialize(Game game, Endianness endianness) => Data;
@@ -266,7 +267,7 @@ namespace IndustrialPark
             }
         }
 
-        public void SetVertexColors(Vector4 color, Operation operation)
+        public void SetVertexColors(Vector4 color, Operation operation, Func<Vector3> GetRandomColor)
         {
             RWSection[] sections = ReadFileMethods.ReadRenderWareFile(Data);
             renderWareVersion = sections[0].renderWareVersion;
@@ -274,6 +275,7 @@ namespace IndustrialPark
             foreach (RWSection rws in sections)
                 if (rws is Clump_0010 clump)
                     for (int i = 0; i < clump.geometryList.geometryList.Count; i++)
+                    {
                         if (clump.geometryList.geometryList[i].geometryStruct.vertexColors != null)
                             for (int j = 0; j < clump.geometryList.geometryList[i].geometryStruct.vertexColors.Length; j++)
                             {
@@ -281,7 +283,7 @@ namespace IndustrialPark
 
                                 var newColor = PerformOperationAndClamp(
                                     new Vector4((float)oldColor.R / 255, (float)oldColor.G / 255, (float)oldColor.B / 255, (float)oldColor.A / 255),
-                                    color, operation);
+                                    color, operation, GetRandomColor);
 
                                 clump.geometryList.geometryList[i].geometryStruct.vertexColors[j] = new RenderWareFile.Color(
                                         (byte)(newColor.X * 255),
@@ -289,13 +291,40 @@ namespace IndustrialPark
                                         (byte)(newColor.Z * 255),
                                         (byte)(newColor.W * 255));
                             }
+                        else
+                            foreach (var ex in clump.geometryList.geometryList[i].geometryExtension.extensionSectionList)
+                                if (ex is NativeDataPLG_0510 nativeData)
+                                    if (nativeData.nativeDataStruct.nativeDataType == NativeDataType.GameCube)
+                                        for (int j = 0; j < nativeData.nativeDataStruct.nativeData.declarations.Length; j++)
+                                            if (nativeData.nativeDataStruct.nativeData.declarations[j].declarationType == Declarations.Color)
+                                            {
+                                                var vd = (ColorDeclaration)nativeData.nativeDataStruct.nativeData.declarations[j];
+                                                for (int k = 0; k < vd.entryList.Count; k++)
+                                                {
+                                                    var oldColor = vd.entryList[k];
+                                                    
+                                                    var newColor = PerformOperationAndClamp(
+                                                        new Vector4((float)oldColor.R / 255, (float)oldColor.G / 255, (float)oldColor.B / 255, (float)oldColor.A / 255),
+                                                        color, operation, GetRandomColor);
+                                                    
+                                                    vd.entryList[k] = new RenderWareFile.Color(
+                                                        (byte)(newColor.X * 255),
+                                                        (byte)(newColor.Y * 255),
+                                                        (byte)(newColor.Z * 255),
+                                                        (byte)(newColor.W * 255));
+                                                }
+                                            }
+                    }
 
             Data = ReadFileMethods.ExportRenderWareFile(sections, renderWareVersion);
-            Setup(Program.MainForm.renderer);
+            if (Program.MainForm != null)
+                Setup(Program.MainForm.renderer);
         }
 
-        private Vector4 PerformOperationAndClamp(Vector4 v1, Vector4 v2, Operation op)
+        private Vector4 PerformOperationAndClamp(Vector4 v1, Vector4 v2, Operation op, Func<Vector3> GetRandomColor)
         {
+            if (op == Operation.Randomize)
+                return (Vector4)GetRandomColor();
             return new Vector4(
                 PerformOperationAndClamp(v1.X, v2.X, op),
                 PerformOperationAndClamp(v1.Y, v2.Y, op),

@@ -334,17 +334,29 @@ namespace IndustrialPark
 
             foreach (Declaration d in n.declarations)
             {
-                foreach (object o in d.entryList)
+                if (d.declarationType == Declarations.Vertex)
                 {
-                    if (d.declarationType == Declarations.Vertex)
-                        vertexList1.Add((Vertex3)o);
-                    else if (d.declarationType == Declarations.Color)
-                        colorList.Add((RenderWareFile.Color)o);
-                    else if (d.declarationType == Declarations.TextCoord)
-                        textCoordList.Add((Vertex2)o);
-                    else if (d.declarationType == Declarations.Normal)
-                        normalList.Add((Vertex3)o);
-                    else throw new Exception();
+                    var dec = (Vertex3Declaration)d;
+                    foreach (var v in dec.entryList)
+                        vertexList1.Add(v);
+                }
+                else if (d.declarationType == Declarations.Normal)
+                {
+                    var dec = (Vertex3Declaration)d;
+                    foreach (var v in dec.entryList)
+                        normalList.Add(v);
+                }
+                else if (d.declarationType == Declarations.Color)
+                {
+                    var dec = (ColorDeclaration)d;
+                    foreach (var c in dec.entryList)
+                        colorList.Add(c);
+                }
+                else if (d.declarationType == Declarations.TextCoord)
+                {
+                    var dec = (Vertex2Declaration)d;
+                    foreach (var v in dec.entryList)
+                        textCoordList.Add(v);
                 }
             }
 

@@ -163,11 +163,10 @@ namespace IndustrialPark
 
                 if (color.HasValue)
                 {
-                    asset.SetVertexColors(color.Value, operation);
+                    asset.SetVertexColors(color.Value, operation, null);
                     archive.UnsavedChanges = true;
                 }
             };
-            buttonSetVertexColors.Enabled = !asset.IsNativeData;
             tableLayoutPanel1.Controls.Add(buttonSetVertexColors, 0, 1);
 
             CheckBox ignoreMeshColors = new CheckBox() { Dock = DockStyle.Fill, Text = "Ignore Mesh Colors", AutoSize = true, Checked = true };

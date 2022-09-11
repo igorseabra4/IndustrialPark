@@ -10,6 +10,7 @@
         Divide,
         RightHandDivide,
         Minimum,
-        Maximum
+        Maximum,
+        Randomize
     }
 }

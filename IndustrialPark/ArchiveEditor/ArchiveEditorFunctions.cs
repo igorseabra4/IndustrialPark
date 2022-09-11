@@ -565,9 +565,7 @@ namespace IndustrialPark
                     case AssetType.JSP:
                         if (DICT.LTOC.LHDRList[GetLayerFromAssetID(AHDR.assetID)].layerType > 9)
                             return new AssetJSP_INFO(AHDR, game, endianness);
-                        if (skipTexturesAndModels)
-                            return new AssetWithData(AHDR, game, endianness);
-                        return new AssetJSP(AHDR, game, endianness, Program.MainForm.renderer);
+                        return new AssetJSP(AHDR, game, endianness, skipTexturesAndModels ? null : Program.MainForm.renderer);
                     case AssetType.Model:
                         if (skipTexturesAndModels)
                             return new AssetWithData(AHDR, game, endianness);

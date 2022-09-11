@@ -102,6 +102,11 @@ namespace IndustrialPark.Randomizer
         public float timerMax { get; set; }
 
 
+        [Category("Scales"), DisplayName("Set Scales"), Description("Applies a fixed scale (size) to assets.")]
+        public bool Set_Scale { get; set; }
+        [Category("Scales"), DisplayName("Scale Factor"), Description("Factor to scale the assets."), TypeConverter(typeof(SingleTypeConverter))]
+        public float scaleFactor { get; set; }
+
         [Category("Scales (Not recommended)"), DisplayName("Scales"), Description("NOT RECOMMENDED\nRandomizes scale (size) of Entity assets.")]
         public bool Scale_Of_Things { get; set; }
         [Category("Scales (Not recommended)"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
@@ -160,6 +165,8 @@ namespace IndustrialPark.Randomizer
 
         [Category("Colors"), Description("Randomizes colors of stuff.")]
         public bool Colors { get; set; }
+        [Category("Colors"), DisplayName("Vertex Colors"), Description("Randomizes vertex colors of level models instead of mesh colors (basically, it's more chaotic)")]
+        public bool VertexColors { get; set; }
         [Category("Colors"), DisplayName("Bright Colors"), Description("Colors randomizer results in lighter colors")]
         public bool brightColors { get; set; }
         [Category("Colors"), DisplayName("Strong Colors"), Description("Colors randomizer results in very saturated colors")]
@@ -279,6 +286,7 @@ namespace IndustrialPark.Randomizer
             Bus_Stop_Trigger_Positions = false;
             openTeleportBoxes = false;
             widescreenMenu = false;
+            Set_Scale = false;
 
             boulderMin = 0.5f;
             boulderMax = 2f;
@@ -302,6 +310,7 @@ namespace IndustrialPark.Randomizer
             lodtValue = 2f;
             combatMin = 5;
             combatMax = 100;
+            scaleFactor = 1f;
 
             skipFiles = new string[] { "font", "boot", "plat", "mn", "sp", "pl", "hb10", "db05", "b301", "s006", "b402" };
             skipFilesWarps = new string[] { "hb00", "gy04", "b3", "pg", "s005" };
@@ -437,6 +446,7 @@ namespace IndustrialPark.Randomizer
             invisibleLevel = false;
             invisibleObjects = false;
             CombatArenaCounts = false;
+            Set_Scale = false;
         }
 
         public void SetDynamicProperties(DynamicTypeDescriptor dt, int game)

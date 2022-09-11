@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using SharpDX;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -331,21 +332,15 @@ namespace IndustrialPark
             {
                 if (_minimum.X > _maximum.X)
                 {
-                    var temp = _maximum.X;
-                    _maximum.X = _minimum.X;
-                    _minimum.X = temp;
+                    (_minimum.X, _maximum.X) = (_maximum.X, _minimum.X);
                 }
                 if (_minimum.Y > _maximum.Y)
                 {
-                    var temp = _maximum.Y;
-                    _maximum.Y = _minimum.Y;
-                    _minimum.Y = temp;
+                    (_minimum.Y, _maximum.Y) = (_maximum.Y, _minimum.Y);
                 }
                 if (_minimum.Z > _maximum.Z)
                 {
-                    var temp = _maximum.Z;
-                    _maximum.Z = _minimum.Z;
-                    _minimum.Z = temp;
+                    (_minimum.Z, _maximum.Z) = (_maximum.Z, _minimum.Z);
                 }
             }
 
@@ -415,6 +410,50 @@ namespace IndustrialPark
             _maximum.X = x1;
             _maximum.Y = y1;
             _maximum.Z = z1;
+            FixPosition();
+        }
+
+        public void ApplyScale(Vector3 factor, float singleFactor)
+        {
+            if (Shape != TriggerShape.Box)
+            {
+                _minimum.X *= factor.X;
+                _minimum.Y *= factor.Y;
+                _minimum.Z *= factor.Z;
+                _maximum.X *= singleFactor;
+                _maximum.Y *= singleFactor;
+            }
+            else
+            {
+                //Vector3 TrigCenter = new Vector3(TRIG.MinimumX + TRIG.MaximumX, TRIG.MinimumY + TRIG.MaximumY, TRIG.MinimumZ + TRIG.MaximumZ) / 2f;
+
+                //TRIG.MinimumX -= TrigCenter.X;
+                //TRIG.MinimumY -= TrigCenter.Y;
+                //TRIG.MinimumZ -= TrigCenter.Z;
+                //TRIG.MinimumX -= TrigCenter.X;
+                //TRIG.MaximumY -= TrigCenter.Y;
+                //TRIG.MaximumZ -= TrigCenter.Z;
+
+                _minimum.X *= factor.X;
+                _minimum.Y *= factor.Y;
+                _minimum.Z *= factor.Z;
+
+                _maximum.X *= factor.X;
+                _maximum.Y *= factor.Y;
+                _maximum.Z *= factor.Z;
+
+                //TRIG.MinimumX += TrigCenter.X * factor.X;
+                //TRIG.MinimumY += TrigCenter.Y * factor.Y;
+                //TRIG.MinimumZ += TrigCenter.Z * factor.Z;
+                //TRIG.MinimumX += TrigCenter.X * factor.X;
+                //TRIG.MaximumY += TrigCenter.Y * factor.Y;
+                //TRIG.MaximumZ += TrigCenter.Z * factor.Z;
+
+                _position.X *= factor.X;
+                _position.Y *= factor.Y;
+                _position.Z *= factor.Z;
+            }
+
             FixPosition();
         }
     }
