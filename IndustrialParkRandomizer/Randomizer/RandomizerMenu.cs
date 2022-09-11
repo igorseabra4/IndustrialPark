@@ -176,12 +176,12 @@ namespace IndustrialPark.Randomizer
 
         private void ThreadDone(ProgressBar progressBar)
         {
-            progressBar.Close();
             Invoke(new Action(() =>
             {
+                progressBar.Close();
                 Enabled = true;
+                UpdateInterfaceFromRandomizer();
             }));
-            UpdateInterfaceFromRandomizer();
         }
 
         private void ButtonHelp_Click(object sender, EventArgs e)
@@ -244,10 +244,7 @@ namespace IndustrialPark.Randomizer
 
             comboBoxGame.SelectedIndex = randomizer.game;
 
-            if (string.IsNullOrEmpty(backupDir))
-                labelBackupDir.Text = "Backup Directory: None";
-            else
-                labelBackupDir.Text = "Backup Directory: " + backupDir;
+            labelBackupDir.Text = "Backup Directory: " + (string.IsNullOrEmpty(backupDir) ? "None" : backupDir);
 
             if (!string.IsNullOrEmpty(randomizer.rootDir))
             {

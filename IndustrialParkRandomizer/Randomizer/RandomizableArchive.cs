@@ -710,11 +710,29 @@ namespace IndustrialPark.Randomizer
 
             foreach (EntityAsset a in assets)
             {
+                bool isSkydome = false;
+                foreach (var l in a.Links)
+                    if ((EventBFBB)l.EventSendID == EventBFBB.SetasSkydome && l.TargetAsset.Equals(a.assetID))
+                    {
+                        isSkydome = true;
+                        break;
+                    }
+                if (isSkydome)
+                    continue;
+
                 float scale = random.NextFloat(settings.scaleMin, settings.scaleMax);
 
                 a.ScaleX *= scale;
                 a.ScaleY *= scale;
                 a.ScaleZ *= scale;
+
+                if (a is AssetPLAT plat && plat.PlatSpecific is PlatSpecific_Springboard springboard)
+                {
+                    springboard.Height1 *= scale;
+                    springboard.Height2 *= scale;
+                    springboard.Height3 *= scale;
+                    springboard.HeightBubbleBounce *= scale;
+                }
             }
 
             return assets.Count != 0;
@@ -859,7 +877,8 @@ namespace IndustrialPark.Randomizer
                 {
                     if (vertexColors)
                     {
-                        a.SetVertexColors(new Vector4(), Operation.Randomize, () => GetRandomColor(brightColors, strongColors));
+                        a.SetVertexColors(new Vector4(), Operation.Randomize, () => (Vector4)GetRandomColor(brightColors, strongColors));
+                        colored = true;
                     }
                     else
                     {

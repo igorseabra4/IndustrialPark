@@ -267,7 +267,7 @@ namespace IndustrialPark
             }
         }
 
-        public void SetVertexColors(Vector4 color, Operation operation, Func<Vector3> GetRandomColor)
+        public void SetVertexColors(Vector4 color, Operation operation, Func<Vector4> GetRandomColor)
         {
             RWSection[] sections = ReadFileMethods.ReadRenderWareFile(Data);
             renderWareVersion = sections[0].renderWareVersion;
@@ -321,10 +321,14 @@ namespace IndustrialPark
                 Setup(Program.MainForm.renderer);
         }
 
-        private Vector4 PerformOperationAndClamp(Vector4 v1, Vector4 v2, Operation op, Func<Vector3> GetRandomColor)
+        private Vector4 PerformOperationAndClamp(Vector4 v1, Vector4 v2, Operation op, Func<Vector4> GetRandomColor)
         {
             if (op == Operation.Randomize)
-                return (Vector4)GetRandomColor();
+            {
+                var v = GetRandomColor();
+                v.W = v1.W;
+                return v;
+            }
             return new Vector4(
                 PerformOperationAndClamp(v1.X, v2.X, op),
                 PerformOperationAndClamp(v1.Y, v2.Y, op),

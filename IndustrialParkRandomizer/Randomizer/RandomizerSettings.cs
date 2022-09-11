@@ -106,6 +106,8 @@ namespace IndustrialPark.Randomizer
         public bool Set_Scale { get; set; }
         [Category("Scales"), DisplayName("Scale Factor"), Description("Factor to scale the assets."), TypeConverter(typeof(SingleTypeConverter))]
         public float scaleFactor { get; set; }
+        [Category("Scales"), DisplayName("Scale Physics"), Description("Applies the scale to the player's movement (experimental).")]
+        public bool Set_Scale_Physics { get; set; }
 
         [Category("Scales (Not recommended)"), DisplayName("Scales"), Description("NOT RECOMMENDED\nRandomizes scale (size) of Entity assets.")]
         public bool Scale_Of_Things { get; set; }

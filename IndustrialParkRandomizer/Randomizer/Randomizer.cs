@@ -490,6 +490,42 @@ namespace IndustrialPark.Randomizer
                 }
             }
 
+            var replacements = new Dictionary<string, string>
+            {
+                ["ShowMenuOnBoot"] = settings.dontShowMenuOnBoot ? "0" : "1",
+                ["G.TakeDamage"] = settings.cheatInvincible ? "0" : "1",
+                ["TakeDamage"] = settings.cheatInvincible ? "0" : "1",
+                ["G.CheatPlayerSwitch"] = settings.PowerupCheatsBFBB.PlayerSwitch ? "1" : "0",
+                ["G.BubbleBowl"] = settings.PowerupCheatsBFBB.BubbleBowl ? "1" : "0",
+                ["G.CruiseBubble"] = settings.PowerupCheatsBFBB.CruiseBubble ? "1" : "0",
+                ["eSPECIAL_Spring"] = settings.PowerupCheatsScooby.Spring ? "1" : "0",
+                ["eSPECIAL_FootballHelmet"] = settings.PowerupCheatsScooby.Helmet ? "1" : "0",
+                ["eSPECIAL_LightningBolt"] = settings.PowerupCheatsScooby.Smash ? "1" : "0",
+                ["eSPECIAL_Umbrella"] = settings.PowerupCheatsScooby.Umbrella ? "1" : "0",
+                ["G.KarateSpin"] = GetLine(settings.PowerupCheatsMovie.SB_KarateSpin),
+                ["G.Bash"] = GetLine(settings.PowerupCheatsMovie.SB_Bash),
+                ["G.MachoBowl"] = GetLine(settings.PowerupCheatsMovie.SB_Bowl),
+                ["G.WaveGuitar"] = GetLine(settings.PowerupCheatsMovie.SB_Guitar),
+                ["G.BellyBump"] = GetLine(settings.PowerupCheatsMovie.Pat_StarSpin),
+                ["G.Cartwheel"] = GetLine(settings.PowerupCheatsMovie.Pat_Cartwheel),
+                ["G.BellyFlop"] = GetLine(settings.PowerupCheatsMovie.Pat_BellyFlop),
+                ["G.Throw"] = GetLine(settings.PowerupCheatsMovie.Pat_Throw),
+                ["G.HealthSB"] = GetLine(settings.PowerupCheatsMovie.SB_Health),
+                ["G.HealthPat"] = GetLine(settings.PowerupCheatsMovie.Pat_Health),
+                ["G.BBashHeight"] = (0.315 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)).ToString(),
+                ["G.Gravity"] = (30.0 / (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)).ToString(),
+                ["Carry.ThrowMaxDist"] = (12.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)).ToString(),
+                ["SB.MoveSpeed"] = $"{0.6 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{4.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{5.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},  {0.1 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{0.8 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{1.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)}",
+                ["Patrick.MoveSpeed"] = $"{0.6 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{2.5 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{5.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},  {0.1 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{0.6 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{1.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)}",
+                ["Sandy.MoveSpeed"] = $"{0.6 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{2.5 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{5.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},  {0.1 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{0.6 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{1.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)}",
+                ["SB.cb.fly.live_time"] = (6.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)).ToString(),
+            };
+
+            for (int i = 0; i < ini.Length; i++)
+                foreach (var entry in replacements)
+                    if (ini[i].ToLower().StartsWith(entry.Key.ToLower()))
+                        ini[i] = $"{entry.Key}={entry.Value}";
+
             for (int i = 0; i < ini.Length; i++)
             {
                 if (ini[i].StartsWith("BOOT=HB00") && settings.bootLevelMode == BootLevelMode.Default && settings.UnlockCharacters)
@@ -508,48 +544,8 @@ namespace IndustrialPark.Randomizer
                     if (!(settings.BootLevel == "HB01" && game != Game.BFBB))
                         ini[i] = "BOOT=" + settings.BootLevel;
                 }
-                else if (ini[i].StartsWith("ShowMenuOnBoot") && settings.dontShowMenuOnBoot)
-                    ini[i] = "ShowMenuOnBoot=0";
                 else if (ini[i].StartsWith("Menu") && settings.allMenuWarpsHB01 && game == Game.BFBB)
                     ini[i] = ini[i].Substring(0, 9) + "HB 01 01 01 01 01 01 01 01";
-                else if (ini[i].StartsWith("G.TakeDamage") && settings.cheatInvincible)
-                    ini[i] = "G.TakeDamage=0";
-                else if (ini[i].StartsWith("TakeDamage") && settings.cheatInvincible)
-                    ini[i] = "TakeDamage=0";
-                else if (ini[i].StartsWith("G.CheatPlayerSwitch") && settings.PowerupCheatsBFBB.PlayerSwitch)
-                    ini[i] = "G.CheatPlayerSwitch=1";
-                else if (ini[i].StartsWith("G.BubbleBowl") && settings.PowerupCheatsBFBB.BubbleBowl)
-                    ini[i] = "G.BubbleBowl=1";
-                else if (ini[i].StartsWith("G.CruiseBubble") && settings.PowerupCheatsBFBB.CruiseBubble)
-                    ini[i] = "G.CruiseBubble=1";
-                else if (ini[i].StartsWith("eSPECIAL_Spring") && game == Game.Scooby && settings.PowerupCheatsScooby.Spring)
-                    ini[i] = "eSPECIAL_Spring=1";
-                else if (ini[i].StartsWith("eSPECIAL_FootballHelmet") && game == Game.Scooby && settings.PowerupCheatsScooby.Helmet)
-                    ini[i] = "eSPECIAL_FootballHelmet=1";
-                else if (ini[i].StartsWith("eSPECIAL_LightningBolt") && game == Game.Scooby && settings.PowerupCheatsScooby.Smash)
-                    ini[i] = "eSPECIAL_LightningBolt=1";
-                else if (ini[i].StartsWith("eSPECIAL_Umbrella") && game == Game.Scooby && settings.PowerupCheatsScooby.Umbrella)
-                    ini[i] = "eSPECIAL_Umbrella=1";
-                else if (ini[i].StartsWith("G.KarateSpin") && game == Game.Incredibles)
-                    SetLine(ini, i, "G.KarateSpin", settings.PowerupCheatsMovie.SB_KarateSpin);
-                else if (ini[i].StartsWith("G.Bash") && game == Game.Incredibles)
-                    SetLine(ini, i, "G.Bash", settings.PowerupCheatsMovie.SB_Bash);
-                else if (ini[i].StartsWith("G.MachoBowl") && game == Game.Incredibles)
-                    SetLine(ini, i, "G.MachoBowl", settings.PowerupCheatsMovie.SB_Bowl);
-                else if (ini[i].StartsWith("G.WaveGuitar") && game == Game.Incredibles)
-                    SetLine(ini, i, "G.WaveGuitar", settings.PowerupCheatsMovie.SB_Guitar);
-                else if (ini[i].StartsWith("G.BellyBump") && game == Game.Incredibles)
-                    SetLine(ini, i, "G.BellyBump", settings.PowerupCheatsMovie.Pat_StarSpin);
-                else if (ini[i].StartsWith("G.Cartwheel") && game == Game.Incredibles)
-                    SetLine(ini, i, "G.Cartwheel", settings.PowerupCheatsMovie.Pat_Cartwheel);
-                else if (ini[i].StartsWith("G.BellyFlop") && game == Game.Incredibles)
-                    SetLine(ini, i, "G.BellyFlop", settings.PowerupCheatsMovie.Pat_BellyFlop);
-                else if (ini[i].StartsWith("G.Throw") && game == Game.Incredibles)
-                    SetLine(ini, i, "G.Throw", settings.PowerupCheatsMovie.Pat_Throw);
-                else if (ini[i].StartsWith("G.HealthSB") && game == Game.Incredibles)
-                    SetLine(ini, i, "G.HealthSB", settings.PowerupCheatsMovie.SB_Health);
-                else if (ini[i].StartsWith("G.HealthPat") && game == Game.Incredibles)
-                    SetLine(ini, i, "G.HealthPat", settings.PowerupCheatsMovie.Pat_Health);
             }
 
             File.WriteAllLines(string.IsNullOrEmpty(backupDir) ? filePath : filePath.Replace(backupDir, rootDir), ini);
@@ -557,9 +553,9 @@ namespace IndustrialPark.Randomizer
             return true;
         }
 
-        private void SetLine<T>(string[] ini, int i, string name, T status) where T : struct, IConvertible
+        private string GetLine<T>(T status) where T : struct, IConvertible
         {
-            ini[i] = name + " = " + Convert.ToInt32(Enum.Parse(typeof(T), status.ToString()) as Enum);
+            return Convert.ToInt32(Enum.Parse(typeof(T), status.ToString()) as Enum).ToString();
         }
 
         private void WriteLog(List<(string, string, string)> warpRandomizerOutput)
