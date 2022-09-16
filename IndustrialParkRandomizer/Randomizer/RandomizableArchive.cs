@@ -70,32 +70,32 @@ namespace IndustrialPark.Randomizer
             {
                 if (settings.Tiki_Types && ContainsAssetWithType(AssetType.NPC))
                 {
-                    List<VilType_BFBB> chooseFrom = new List<VilType_BFBB>();
+                    List<NpcType_BFBB> chooseFrom = new List<NpcType_BFBB>();
                     if (settings.TikiProbabilities.WoodenTiki >= 0)
-                        chooseFrom.Add(VilType_BFBB.tiki_wooden_bind);
+                        chooseFrom.Add(NpcType_BFBB.tiki_wooden_bind);
                     if (settings.TikiProbabilities.FloatingTiki >= 0)
-                        chooseFrom.Add(VilType_BFBB.tiki_lovey_dovey_bind);
+                        chooseFrom.Add(NpcType_BFBB.tiki_lovey_dovey_bind);
                     if (settings.TikiProbabilities.ThunderTiki >= 0)
-                        chooseFrom.Add(VilType_BFBB.tiki_thunder_bind);
+                        chooseFrom.Add(NpcType_BFBB.tiki_thunder_bind);
                     if (settings.TikiProbabilities.ShhhTiki >= 0)
-                        chooseFrom.Add(VilType_BFBB.tiki_shhhh_bind);
+                        chooseFrom.Add(NpcType_BFBB.tiki_shhhh_bind);
                     if (settings.TikiProbabilities.StoneTiki >= 0)
-                        chooseFrom.Add(VilType_BFBB.tiki_stone_bind);
+                        chooseFrom.Add(NpcType_BFBB.tiki_stone_bind);
 
-                    List<VilType_BFBB> setTo = new List<VilType_BFBB>();
+                    List<NpcType_BFBB> setTo = new List<NpcType_BFBB>();
                     for (int i = 0; i < settings.TikiProbabilities.WoodenTiki; i++)
-                        setTo.Add(VilType_BFBB.tiki_wooden_bind);
+                        setTo.Add(NpcType_BFBB.tiki_wooden_bind);
                     for (int i = 0; i < settings.TikiProbabilities.FloatingTiki; i++)
-                        setTo.Add(VilType_BFBB.tiki_lovey_dovey_bind);
+                        setTo.Add(NpcType_BFBB.tiki_lovey_dovey_bind);
                     for (int i = 0; i < settings.TikiProbabilities.ThunderTiki; i++)
-                        setTo.Add(VilType_BFBB.tiki_thunder_bind);
+                        setTo.Add(NpcType_BFBB.tiki_thunder_bind);
                     for (int i = 0; i < settings.TikiProbabilities.ShhhTiki; i++)
-                        setTo.Add(VilType_BFBB.tiki_shhhh_bind);
+                        setTo.Add(NpcType_BFBB.tiki_shhhh_bind);
                     for (int i = 0; i < settings.TikiProbabilities.StoneTiki; i++)
-                        setTo.Add(VilType_BFBB.tiki_stone_bind);
+                        setTo.Add(NpcType_BFBB.tiki_stone_bind);
 
                     if (LevelName == "kf04")
-                        chooseFrom.Remove(VilType_BFBB.tiki_stone_bind);
+                        chooseFrom.Remove(NpcType_BFBB.tiki_stone_bind);
 
                     shuffled |= ShuffleVilTypes(chooseFrom, setTo, settings.Tiki_Models, settings.Tiki_Allow_Any_Type, false);
                 }
@@ -136,61 +136,61 @@ namespace IndustrialPark.Randomizer
             {
                 if (settings.Enemy_Types && ContainsAssetWithType(AssetType.NPC))
                 {
-                    List<VilType_BFBB> chooseFrom = new List<VilType_BFBB>(16);
+                    List<NpcType_BFBB> chooseFrom = new List<NpcType_BFBB>(16);
                     if (settings.EnemyProbabilities.Fodder >= 0)
-                        chooseFrom.Add(VilType_BFBB.robot_0a_fodder_bind);
+                        chooseFrom.Add(NpcType_BFBB.robot_0a_fodder_bind);
                     if (settings.EnemyProbabilities.Hammer >= 0)
-                        chooseFrom.Add(VilType_BFBB.ham_bind);
+                        chooseFrom.Add(NpcType_BFBB.ham_bind);
                     if (settings.EnemyProbabilities.Tartar >= 0)
-                        chooseFrom.Add(VilType_BFBB.robot_tar_bind);
+                        chooseFrom.Add(NpcType_BFBB.robot_tar_bind);
                     if (settings.EnemyProbabilities.GLove >= 0)
-                        chooseFrom.Add(VilType_BFBB.g_love_bind);
+                        chooseFrom.Add(NpcType_BFBB.g_love_bind);
                     if (settings.EnemyProbabilities.Chuck >= 0)
-                        chooseFrom.Add(VilType_BFBB.robot_chuck_bind);
+                        chooseFrom.Add(NpcType_BFBB.robot_chuck_bind);
                     if (settings.EnemyProbabilities.Monsoon >= 0)
-                        chooseFrom.Add(VilType_BFBB.robot_4a_monsoon_bind);
+                        chooseFrom.Add(NpcType_BFBB.robot_4a_monsoon_bind);
                     if (settings.EnemyProbabilities.Sleepytime >= 0)
-                        chooseFrom.Add(VilType_BFBB.robot_sleepytime_bind);
+                        chooseFrom.Add(NpcType_BFBB.robot_sleepytime_bind);
                     if (settings.EnemyProbabilities.Arf >= 0)
-                        chooseFrom.Add(VilType_BFBB.robot_arf_bind);
+                        chooseFrom.Add(NpcType_BFBB.robot_arf_bind);
                     if (settings.EnemyProbabilities.Tubelets >= 0)
-                        chooseFrom.Add(VilType_BFBB.tubelet_bind);
+                        chooseFrom.Add(NpcType_BFBB.tubelet_bind);
                     if (settings.EnemyProbabilities.Slick >= 0)
-                        chooseFrom.Add(VilType_BFBB.robot_9a_bind);
+                        chooseFrom.Add(NpcType_BFBB.robot_9a_bind);
                     if (settings.EnemyProbabilities.BombBot >= 0)
-                        chooseFrom.Add(VilType_BFBB.robot_0a_bomb_bind);
+                        chooseFrom.Add(NpcType_BFBB.robot_0a_bomb_bind);
                     if (settings.EnemyProbabilities.BzztBot >= 0)
-                        chooseFrom.Add(VilType_BFBB.robot_0a_bzzt_bind);
+                        chooseFrom.Add(NpcType_BFBB.robot_0a_bzzt_bind);
                     if (settings.EnemyProbabilities.ChompBot >= 0)
-                        chooseFrom.Add(VilType_BFBB.robot_0a_chomper_bind);
+                        chooseFrom.Add(NpcType_BFBB.robot_0a_chomper_bind);
 
-                    List<VilType_BFBB> setTo = new List<VilType_BFBB>();
+                    List<NpcType_BFBB> setTo = new List<NpcType_BFBB>();
                     for (int i = 0; i < settings.EnemyProbabilities.Fodder; i++)
-                        setTo.Add(VilType_BFBB.robot_0a_fodder_bind);
+                        setTo.Add(NpcType_BFBB.robot_0a_fodder_bind);
                     for (int i = 0; i < settings.EnemyProbabilities.Hammer; i++)
-                        setTo.Add(VilType_BFBB.ham_bind);
+                        setTo.Add(NpcType_BFBB.ham_bind);
                     for (int i = 0; i < settings.EnemyProbabilities.Tartar; i++)
-                        setTo.Add(VilType_BFBB.robot_tar_bind);
+                        setTo.Add(NpcType_BFBB.robot_tar_bind);
                     for (int i = 0; i < settings.EnemyProbabilities.GLove; i++)
-                        setTo.Add(VilType_BFBB.g_love_bind);
+                        setTo.Add(NpcType_BFBB.g_love_bind);
                     for (int i = 0; i < settings.EnemyProbabilities.Chuck; i++)
-                        setTo.Add(VilType_BFBB.robot_chuck_bind);
+                        setTo.Add(NpcType_BFBB.robot_chuck_bind);
                     for (int i = 0; i < settings.EnemyProbabilities.Monsoon; i++)
-                        setTo.Add(VilType_BFBB.robot_4a_monsoon_bind);
+                        setTo.Add(NpcType_BFBB.robot_4a_monsoon_bind);
                     for (int i = 0; i < settings.EnemyProbabilities.Sleepytime; i++)
-                        setTo.Add(VilType_BFBB.robot_sleepytime_bind);
+                        setTo.Add(NpcType_BFBB.robot_sleepytime_bind);
                     for (int i = 0; i < settings.EnemyProbabilities.Arf; i++)
-                        setTo.Add(VilType_BFBB.robot_arf_bind);
+                        setTo.Add(NpcType_BFBB.robot_arf_bind);
                     for (int i = 0; i < settings.EnemyProbabilities.Tubelets; i++)
-                        setTo.Add(VilType_BFBB.tubelet_bind);
+                        setTo.Add(NpcType_BFBB.tubelet_bind);
                     for (int i = 0; i < settings.EnemyProbabilities.Slick; i++)
-                        setTo.Add(VilType_BFBB.robot_9a_bind);
+                        setTo.Add(NpcType_BFBB.robot_9a_bind);
                     for (int i = 0; i < settings.EnemyProbabilities.BombBot; i++)
-                        setTo.Add(VilType_BFBB.robot_0a_bomb_bind);
+                        setTo.Add(NpcType_BFBB.robot_0a_bomb_bind);
                     for (int i = 0; i < settings.EnemyProbabilities.BzztBot; i++)
-                        setTo.Add(VilType_BFBB.robot_0a_bzzt_bind);
+                        setTo.Add(NpcType_BFBB.robot_0a_bzzt_bind);
                     for (int i = 0; i < settings.EnemyProbabilities.ChompBot; i++)
-                        setTo.Add(VilType_BFBB.robot_0a_chomper_bind);
+                        setTo.Add(NpcType_BFBB.robot_0a_chomper_bind);
 
                     shuffled |= ShuffleVilTypes(chooseFrom, setTo, false, settings.Enemies_Allow_Any_Type, true);
                 }
@@ -1116,17 +1116,17 @@ namespace IndustrialPark.Randomizer
             return true;
         }
 
-        private bool ShuffleVilTypes(List<VilType_BFBB> chooseFrom, List<VilType_BFBB> setTo, bool mixModels, bool veryRandom, bool enemies)
+        private bool ShuffleVilTypes(List<NpcType_BFBB> chooseFrom, List<NpcType_BFBB> setTo, bool mixModels, bool veryRandom, bool enemies)
         {
             if (veryRandom && (LevelName == "sm01" || LevelName == "gl01"))
             {
-                HashSet<VilType_BFBB> uniqueSetTo = new HashSet<VilType_BFBB>();
-                foreach (VilType_BFBB v in setTo)
+                HashSet<NpcType_BFBB> uniqueSetTo = new HashSet<NpcType_BFBB>();
+                foreach (NpcType_BFBB v in setTo)
                     uniqueSetTo.Add(v);
 
                 while (uniqueSetTo.Count > 5)
                 {
-                    VilType_BFBB randomRemove = setTo[random.Next(0, setTo.Count)];
+                    NpcType_BFBB randomRemove = setTo[random.Next(0, setTo.Count)];
                     while (setTo.Contains(randomRemove))
                         setTo.Remove(randomRemove);
                     uniqueSetTo.Remove(randomRemove);
@@ -1136,32 +1136,32 @@ namespace IndustrialPark.Randomizer
             if (setTo.Count == 0)
                 return false;
 
-            List<AssetVIL> assets = (from asset in assetDictionary.Values where asset is AssetVIL vil && chooseFrom.Contains(vil.VilType_BFBB) select asset).Cast<AssetVIL>().ToList();
-            List<VilType_BFBB> viltypes = (from asset in assets select asset.VilType_BFBB).ToList();
+            List<AssetVIL> assets = (from asset in assetDictionary.Values where asset is AssetVIL vil && chooseFrom.Contains(vil.NpcType_BFBB) select asset).Cast<AssetVIL>().ToList();
+            List<NpcType_BFBB> viltypes = (from asset in assets select asset.NpcType_BFBB).ToList();
             List<AssetID> models = (from asset in assets select asset.Model).ToList();
 
             foreach (AssetVIL a in assets)
             {
-                if (a.VilType_BFBB == VilType_BFBB.robot_arf_bind || a.VilType_BFBB == VilType_BFBB.tubelet_bind)
+                if (a.NpcType_BFBB == NpcType_BFBB.robot_arf_bind || a.NpcType_BFBB == NpcType_BFBB.tubelet_bind)
                     KillKids(a);
 
                 int viltypes_value = random.Next(0, viltypes.Count);
                 int model_value = mixModels ? random.Next(0, viltypes.Count) : viltypes_value;
 
-                a.VilType_BFBB = veryRandom ? setTo[random.Next(0, setTo.Count)] : viltypes[viltypes_value];
+                a.NpcType_BFBB = veryRandom ? setTo[random.Next(0, setTo.Count)] : viltypes[viltypes_value];
 
                 if (enemies && veryRandom)
                     a.Model =
-                        a.VilType_BFBB == VilType_BFBB.robot_sleepytime_bind ?
+                        a.NpcType_BFBB == NpcType_BFBB.robot_sleepytime_bind ?
                         "robot_sleepy-time_bind.MINF" :
-                        a.VilType_BFBB.ToString() + ".MINF";
+                        a.NpcType_BFBB.ToString() + ".MINF";
 
                 else a.Model = models[model_value];
 
                 viltypes.RemoveAt(viltypes_value);
                 models.RemoveAt(model_value);
 
-                if (a.VilType_BFBB == VilType_BFBB.robot_arf_bind || a.VilType_BFBB == VilType_BFBB.tubelet_bind)
+                if (a.NpcType_BFBB == NpcType_BFBB.robot_arf_bind || a.NpcType_BFBB == NpcType_BFBB.tubelet_bind)
                     CreateKids(a);
             }
 
@@ -1175,7 +1175,7 @@ namespace IndustrialPark.Randomizer
                 if (links[i].EventSendID == (ushort)EventBFBB.Connect_IOwnYou &&
                     ContainsAsset(links[i].TargetAsset) &&
                     GetFromAssetID(links[i].TargetAsset) is AssetVIL child &&
-                    (child.VilType_BFBB == VilType_BFBB.tubelet_slave_bind || child.VilType_BFBB == VilType_BFBB.robot_arf_dog_bind))
+                    (child.NpcType_BFBB == NpcType_BFBB.tubelet_slave_bind || child.NpcType_BFBB == NpcType_BFBB.robot_arf_dog_bind))
                 {
                     RemoveAsset(links[i].TargetAsset);
                     links.RemoveAt(i);
@@ -1189,7 +1189,7 @@ namespace IndustrialPark.Randomizer
             var position = new Vector3(vil.PositionX, vil.PositionY, vil.PositionZ);
             var links = new List<Link>(); // vil.Links.ToList();
 
-            if (vil.VilType_BFBB == VilType_BFBB.robot_arf_bind)
+            if (vil.NpcType_BFBB == NpcType_BFBB.robot_arf_bind)
             {
                 var dogCount = 3;
                 for (int i = 0; i < dogCount; i++)
@@ -1215,7 +1215,7 @@ namespace IndustrialPark.Randomizer
                     });
                 }
             }
-            else if (vil.VilType_BFBB == VilType_BFBB.tubelet_bind)
+            else if (vil.NpcType_BFBB == NpcType_BFBB.tubelet_bind)
             {
                 for (int i = 0; i < 2; i++)
                 {
@@ -2321,48 +2321,48 @@ namespace IndustrialPark.Randomizer
                 RemoveAsset(assetID);
         }
 
-        public bool UnimportEnemies(HashSet<VilType_BFBB> enemyVils)
+        public bool UnimportEnemies(HashSet<NpcType_BFBB> enemyVils)
         {
-            foreach (VilType_BFBB v in enemyVils)
+            foreach (NpcType_BFBB v in enemyVils)
             {
                 string hipFileName;
                 switch (v)
                 {
-                    case VilType_BFBB.g_love_bind:
+                    case NpcType_BFBB.g_love_bind:
                         hipFileName = "g-love.HIP"; break;
-                    case VilType_BFBB.ham_bind:
+                    case NpcType_BFBB.ham_bind:
                         hipFileName = "ham-mer.HIP"; break;
-                    case VilType_BFBB.robot_0a_bomb_bind:
+                    case NpcType_BFBB.robot_0a_bomb_bind:
                         hipFileName = "bomb-bot.HIP"; break;
-                    case VilType_BFBB.robot_0a_bzzt_bind:
+                    case NpcType_BFBB.robot_0a_bzzt_bind:
                         hipFileName = "bzzt-bot.HIP"; break;
-                    case VilType_BFBB.robot_0a_chomper_bind:
+                    case NpcType_BFBB.robot_0a_chomper_bind:
                         hipFileName = "chomp-bot.HIP"; break;
-                    case VilType_BFBB.robot_0a_fodder_bind:
+                    case NpcType_BFBB.robot_0a_fodder_bind:
                         hipFileName = "fodder.HIP"; break;
-                    case VilType_BFBB.robot_4a_monsoon_bind:
+                    case NpcType_BFBB.robot_4a_monsoon_bind:
                         hipFileName = "monsoon.HIP"; break;
-                    case VilType_BFBB.robot_9a_bind:
+                    case NpcType_BFBB.robot_9a_bind:
                         hipFileName = "slick.HIP"; break;
-                    case VilType_BFBB.robot_chuck_bind:
+                    case NpcType_BFBB.robot_chuck_bind:
                         hipFileName = "chuck.HIP"; break;
-                    case VilType_BFBB.robot_sleepytime_bind:
+                    case NpcType_BFBB.robot_sleepytime_bind:
                         hipFileName = "sleepytime.HIP"; break;
-                    case VilType_BFBB.robot_tar_bind:
+                    case NpcType_BFBB.robot_tar_bind:
                         hipFileName = "tar-tar.HIP"; break;
-                    case VilType_BFBB.robot_arf_bind:
+                    case NpcType_BFBB.robot_arf_bind:
                         hipFileName = "arf_arf-dawg.HIP"; break;
-                    case VilType_BFBB.tubelet_bind:
+                    case NpcType_BFBB.tubelet_bind:
                         hipFileName = "tubelet.HIP"; break;
-                    case VilType_BFBB.tiki_wooden_bind:
+                    case NpcType_BFBB.tiki_wooden_bind:
                         hipFileName = "tiki_wooden.HIP"; break;
-                    case VilType_BFBB.tiki_lovey_dovey_bind:
+                    case NpcType_BFBB.tiki_lovey_dovey_bind:
                         hipFileName = "tiki_floating.HIP"; break;
-                    case VilType_BFBB.tiki_thunder_bind:
+                    case NpcType_BFBB.tiki_thunder_bind:
                         hipFileName = "tiki_thunder.HIP"; break;
-                    case VilType_BFBB.tiki_stone_bind:
+                    case NpcType_BFBB.tiki_stone_bind:
                         hipFileName = "tiki_stone.HIP"; break;
-                    case VilType_BFBB.tiki_shhhh_bind:
+                    case NpcType_BFBB.tiki_shhhh_bind:
                         hipFileName = "tiki_shhh.HIP"; break;
                     default:
                         throw new Exception("Invalid VilType");
@@ -2398,48 +2398,48 @@ namespace IndustrialPark.Randomizer
             }
         }
 
-        private HashSet<VilType_BFBB> GetVilTypesInLevel(List<VilType_BFBB> chooseFrom)
+        private HashSet<NpcType_BFBB> GetVilTypesInLevel(List<NpcType_BFBB> chooseFrom)
         {
-            HashSet<VilType_BFBB> viltypes = new HashSet<VilType_BFBB>();
+            HashSet<NpcType_BFBB> viltypes = new HashSet<NpcType_BFBB>();
 
             foreach (AssetVIL a in (from asset in assetDictionary.Values
-                                    where asset is AssetVIL vil && chooseFrom.Contains(vil.VilType_BFBB)
+                                    where asset is AssetVIL vil && chooseFrom.Contains(vil.NpcType_BFBB)
                                     select asset).Cast<AssetVIL>())
-                viltypes.Add(a.VilType_BFBB);
+                viltypes.Add(a.NpcType_BFBB);
 
             return viltypes;
         }
 
-        private static VilType_BFBB[] importVilTypes = new VilType_BFBB[] {
-            VilType_BFBB.g_love_bind,
-            VilType_BFBB.ham_bind,
-            VilType_BFBB.robot_0a_bomb_bind,
-            VilType_BFBB.robot_0a_bzzt_bind,
-            VilType_BFBB.robot_0a_chomper_bind,
-            VilType_BFBB.robot_0a_fodder_bind,
-            VilType_BFBB.robot_4a_monsoon_bind,
-            VilType_BFBB.robot_9a_bind,
-            VilType_BFBB.robot_chuck_bind,
-            VilType_BFBB.robot_sleepytime_bind,
-            VilType_BFBB.robot_tar_bind,
-            VilType_BFBB.robot_arf_bind,
-            VilType_BFBB.tubelet_bind,
-            VilType_BFBB.tiki_lovey_dovey_bind,
-            VilType_BFBB.tiki_shhhh_bind,
-            VilType_BFBB.tiki_stone_bind,
-            VilType_BFBB.tiki_thunder_bind,
-            VilType_BFBB.tiki_wooden_bind
+        private static NpcType_BFBB[] importVilTypes = new NpcType_BFBB[] {
+            NpcType_BFBB.g_love_bind,
+            NpcType_BFBB.ham_bind,
+            NpcType_BFBB.robot_0a_bomb_bind,
+            NpcType_BFBB.robot_0a_bzzt_bind,
+            NpcType_BFBB.robot_0a_chomper_bind,
+            NpcType_BFBB.robot_0a_fodder_bind,
+            NpcType_BFBB.robot_4a_monsoon_bind,
+            NpcType_BFBB.robot_9a_bind,
+            NpcType_BFBB.robot_chuck_bind,
+            NpcType_BFBB.robot_sleepytime_bind,
+            NpcType_BFBB.robot_tar_bind,
+            NpcType_BFBB.robot_arf_bind,
+            NpcType_BFBB.tubelet_bind,
+            NpcType_BFBB.tiki_lovey_dovey_bind,
+            NpcType_BFBB.tiki_shhhh_bind,
+            NpcType_BFBB.tiki_stone_bind,
+            NpcType_BFBB.tiki_thunder_bind,
+            NpcType_BFBB.tiki_wooden_bind
         };
 
-        public HashSet<VilType_BFBB> GetEnemyTypes()
+        public HashSet<NpcType_BFBB> GetEnemyTypes()
         {
-            HashSet<VilType_BFBB> outSet = new HashSet<VilType_BFBB>();
+            HashSet<NpcType_BFBB> outSet = new HashSet<NpcType_BFBB>();
             foreach (AssetVIL a in (from asset in assetDictionary.Values
-                                    where asset is AssetVIL vil && importVilTypes.Contains(vil.VilType_BFBB)
+                                    where asset is AssetVIL vil && importVilTypes.Contains(vil.NpcType_BFBB)
                                     select asset).Cast<AssetVIL>())
             {
                 if (!ContainsAsset(a.Model))
-                    outSet.Add(a.VilType_BFBB);
+                    outSet.Add(a.NpcType_BFBB);
             }
             return outSet;
         }
@@ -2505,11 +2505,11 @@ namespace IndustrialPark.Randomizer
             return outSet;
         }
 
-        public bool ImportEnemyTypes(HashSet<VilType_BFBB> inSet)
+        public bool ImportEnemyTypes(HashSet<NpcType_BFBB> inSet)
         {
             bool imported = false;
 
-            foreach (VilType_BFBB v in inSet)
+            foreach (NpcType_BFBB v in inSet)
             {
                 if (ContainsAsset(new AssetID(v.ToString().Replace("sleepytime", "sleepy-time") + ".MINF")))
                     continue;
@@ -2517,41 +2517,41 @@ namespace IndustrialPark.Randomizer
                 string hipFileName = null;
                 switch (v)
                 {
-                    case VilType_BFBB.g_love_bind:
+                    case NpcType_BFBB.g_love_bind:
                         hipFileName = "g-love.HIP"; break;
-                    case VilType_BFBB.ham_bind:
+                    case NpcType_BFBB.ham_bind:
                         hipFileName = "ham-mer.HIP"; break;
-                    case VilType_BFBB.robot_0a_bomb_bind:
+                    case NpcType_BFBB.robot_0a_bomb_bind:
                         hipFileName = "bomb-bot.HIP"; break;
-                    case VilType_BFBB.robot_0a_bzzt_bind:
+                    case NpcType_BFBB.robot_0a_bzzt_bind:
                         hipFileName = "bzzt-bot.HIP"; break;
-                    case VilType_BFBB.robot_0a_chomper_bind:
+                    case NpcType_BFBB.robot_0a_chomper_bind:
                         hipFileName = "chomp-bot.HIP"; break;
-                    case VilType_BFBB.robot_0a_fodder_bind:
+                    case NpcType_BFBB.robot_0a_fodder_bind:
                         hipFileName = "fodder.HIP"; break;
-                    case VilType_BFBB.robot_4a_monsoon_bind:
+                    case NpcType_BFBB.robot_4a_monsoon_bind:
                         hipFileName = "monsoon.HIP"; break;
-                    case VilType_BFBB.robot_9a_bind:
+                    case NpcType_BFBB.robot_9a_bind:
                         hipFileName = "slick.HIP"; break;
-                    case VilType_BFBB.robot_chuck_bind:
+                    case NpcType_BFBB.robot_chuck_bind:
                         hipFileName = "chuck.HIP"; break;
-                    case VilType_BFBB.robot_sleepytime_bind:
+                    case NpcType_BFBB.robot_sleepytime_bind:
                         hipFileName = "sleepytime.HIP"; break;
-                    case VilType_BFBB.robot_tar_bind:
+                    case NpcType_BFBB.robot_tar_bind:
                         hipFileName = "tar-tar.HIP"; break;
-                    case VilType_BFBB.robot_arf_bind:
+                    case NpcType_BFBB.robot_arf_bind:
                         hipFileName = "arf_arf-dawg.HIP"; break;
-                    case VilType_BFBB.tubelet_bind:
+                    case NpcType_BFBB.tubelet_bind:
                         hipFileName = "tubelet.HIP"; break;
-                    case VilType_BFBB.tiki_wooden_bind:
+                    case NpcType_BFBB.tiki_wooden_bind:
                         hipFileName = "tiki_wooden.HIP"; break;
-                    case VilType_BFBB.tiki_lovey_dovey_bind:
+                    case NpcType_BFBB.tiki_lovey_dovey_bind:
                         hipFileName = "tiki_floating.HIP"; break;
-                    case VilType_BFBB.tiki_thunder_bind:
+                    case NpcType_BFBB.tiki_thunder_bind:
                         hipFileName = "tiki_thunder.HIP"; break;
-                    case VilType_BFBB.tiki_stone_bind:
+                    case NpcType_BFBB.tiki_stone_bind:
                         hipFileName = "tiki_stone.HIP"; break;
-                    case VilType_BFBB.tiki_shhhh_bind:
+                    case NpcType_BFBB.tiki_shhhh_bind:
                         hipFileName = "tiki_shhh.HIP"; break;
                     default:
                         throw new Exception("Invalid VilType");

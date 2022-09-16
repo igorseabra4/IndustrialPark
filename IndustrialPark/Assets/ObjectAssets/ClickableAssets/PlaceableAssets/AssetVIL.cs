@@ -8,39 +8,39 @@ namespace IndustrialPark
 {
     public class AssetVIL : EntityAsset
     {
-        protected const string categoryName = "VIL";
+        protected const string categoryName = "NPC";
 
         [Category(categoryName)]
-        public FlagBitmask VilFlags { get; set; } = IntFlagsDescriptor();
-        [Category(categoryName), DisplayName("VilType (Incredibles)")]
-        public AssetID VilType { get; set; }
-        [Category(categoryName), DisplayName("VilType (BFBB)")]
-        public VilType_BFBB VilType_BFBB
+        public FlagBitmask NpcFlags { get; set; } = IntFlagsDescriptor();
+        [Category(categoryName), DisplayName("NPC Type (Incredibles)")]
+        public AssetID NpcType { get; set; }
+        [Category(categoryName), DisplayName("NPC Type (BFBB)")]
+        public NpcType_BFBB NpcType_BFBB
         {
-            get => (VilType_BFBB)(uint)VilType;
-            set => VilType = (uint)value;
+            get => (NpcType_BFBB)(uint)NpcType;
+            set => NpcType = (uint)value;
         }
-        [Category(categoryName), DisplayName("VilType (BFBB, Alphabetical)")]
-        public VilType_Alphabetical VilType_Alphabetical
+        [Category(categoryName), DisplayName("NPC Type (BFBB, Alphabetical)")]
+        public NpcType_Alphabetical NpcType_Alphabetical
         {
             get
             {
-                foreach (VilType_Alphabetical o in Enum.GetValues(typeof(VilType_Alphabetical)))
-                    if (o.ToString() == VilType_BFBB.ToString())
+                foreach (NpcType_Alphabetical o in Enum.GetValues(typeof(NpcType_Alphabetical)))
+                    if (o.ToString() == NpcType_BFBB.ToString())
                         return o;
 
-                return VilType_Alphabetical.Null;
+                return NpcType_Alphabetical.Null;
             }
             set
             {
-                foreach (VilType_BFBB o in Enum.GetValues(typeof(VilType_BFBB)))
+                foreach (NpcType_BFBB o in Enum.GetValues(typeof(NpcType_BFBB)))
                     if (o.ToString() == value.ToString())
                     {
-                        VilType_BFBB = o;
+                        NpcType_BFBB = o;
                         return;
                     }
 
-                throw new ArgumentException("Invalid VilType");
+                throw new ArgumentException("Invalid NpcType");
             }
         }
 
@@ -65,99 +65,99 @@ namespace IndustrialPark
             {
                 case AssetTemplate.Wooden_Tiki:
                     Model = "tiki_wooden_bind.MINF";
-                    VilType_BFBB = VilType_BFBB.tiki_wooden_bind;
+                    NpcType_BFBB = NpcType_BFBB.tiki_wooden_bind;
                     break;
                 case AssetTemplate.Floating_Tiki:
                     Model = "tiki_lovey_dovey_bind.MINF";
-                    VilType_BFBB = VilType_BFBB.tiki_lovey_dovey_bind;
+                    NpcType_BFBB = NpcType_BFBB.tiki_lovey_dovey_bind;
                     break;
                 case AssetTemplate.Thunder_Tiki:
                     Model = "tiki_thunder_bind.MINF";
-                    VilType_BFBB = VilType_BFBB.tiki_thunder_bind;
+                    NpcType_BFBB = NpcType_BFBB.tiki_thunder_bind;
                     break;
                 case AssetTemplate.Shhh_Tiki:
                     Model = "tiki_shhhh_bind.MINF";
-                    VilType_BFBB = VilType_BFBB.tiki_shhhh_bind;
+                    NpcType_BFBB = NpcType_BFBB.tiki_shhhh_bind;
                     break;
                 case AssetTemplate.Stone_Tiki:
                     Model = "tiki_stone_bind.MINF";
-                    VilType_BFBB = VilType_BFBB.tiki_stone_bind;
+                    NpcType_BFBB = NpcType_BFBB.tiki_stone_bind;
                     break;
                 case AssetTemplate.Fodder:
                     Model = "robot_0a_fodder_bind.MINF";
-                    VilType_BFBB = VilType_BFBB.robot_0a_fodder_bind;
+                    NpcType_BFBB = NpcType_BFBB.robot_0a_fodder_bind;
                     break;
                 case AssetTemplate.Hammer:
                     Model = "ham_bind.MINF";
-                    VilType_BFBB = VilType_BFBB.ham_bind;
+                    NpcType_BFBB = NpcType_BFBB.ham_bind;
                     break;
                 case AssetTemplate.TarTar:
                     Model = "robot_tar_bind.MINF";
-                    VilType_BFBB = VilType_BFBB.robot_tar_bind;
+                    NpcType_BFBB = NpcType_BFBB.robot_tar_bind;
                     break;
                 case AssetTemplate.ChompBot:
                     Model = "robot_0a_chomper_bind.MINF";
-                    VilType_BFBB = VilType_BFBB.robot_0a_chomper_bind;
+                    NpcType_BFBB = NpcType_BFBB.robot_0a_chomper_bind;
                     break;
                 case AssetTemplate.GLove:
                     Model = "g_love_bind.MINF";
-                    VilType_BFBB = VilType_BFBB.g_love_bind;
+                    NpcType_BFBB = NpcType_BFBB.g_love_bind;
                     break;
                 case AssetTemplate.Chuck:
                 case AssetTemplate.Chuck_Trigger:
                     Model = "robot_chuck_bind.MINF";
-                    VilType_BFBB = VilType_BFBB.robot_chuck_bind;
+                    NpcType_BFBB = NpcType_BFBB.robot_chuck_bind;
                     break;
                 case AssetTemplate.Monsoon:
                 case AssetTemplate.Monsoon_Trigger:
                     Model = "robot_4a_monsoon_bind.MINF";
-                    VilType_BFBB = VilType_BFBB.robot_4a_monsoon_bind;
+                    NpcType_BFBB = NpcType_BFBB.robot_4a_monsoon_bind;
                     break;
                 case AssetTemplate.Sleepytime:
                 case AssetTemplate.Sleepytime_Moving:
                     Model = "robot_sleepy-time_bind.MINF";
-                    VilType_BFBB = VilType_BFBB.robot_sleepytime_bind;
+                    NpcType_BFBB = NpcType_BFBB.robot_sleepytime_bind;
                     break;
                 case AssetTemplate.Arf:
                     Model = "robot_arf_bind.MINF";
-                    VilType_BFBB = VilType_BFBB.robot_arf_bind;
+                    NpcType_BFBB = NpcType_BFBB.robot_arf_bind;
                     break;
                 case AssetTemplate.ArfDog:
                     Model = "robot_arf_dog_bind.MINF";
-                    VilType_BFBB = VilType_BFBB.robot_arf_dog_bind;
+                    NpcType_BFBB = NpcType_BFBB.robot_arf_dog_bind;
                     break;
                 case AssetTemplate.BombBot:
                     Model = "robot_0a_bomb_bind.MINF";
-                    VilType_BFBB = VilType_BFBB.robot_0a_bomb_bind;
+                    NpcType_BFBB = NpcType_BFBB.robot_0a_bomb_bind;
                     break;
                 case AssetTemplate.Tubelet:
                     Model = "tubelet_bind.MINF";
-                    VilType_BFBB = VilType_BFBB.tubelet_bind;
+                    NpcType_BFBB = NpcType_BFBB.tubelet_bind;
                     break;
                 case AssetTemplate.TubeletSlave:
                     Model = "tubelet_slave_bind.MINF";
-                    VilType_BFBB = VilType_BFBB.tubelet_slave_bind;
+                    NpcType_BFBB = NpcType_BFBB.tubelet_slave_bind;
                     break;
                 case AssetTemplate.BzztBot:
                     Model = "robot_0a_bzzt_bind.MINF";
-                    VilType_BFBB = VilType_BFBB.robot_0a_bzzt_bind;
+                    NpcType_BFBB = NpcType_BFBB.robot_0a_bzzt_bind;
                     break;
                 case AssetTemplate.Slick:
                 case AssetTemplate.Slick_Trigger:
                     Model = "robot_9a_bind.MINF";
-                    VilType_BFBB = VilType_BFBB.robot_9a_bind;
+                    NpcType_BFBB = NpcType_BFBB.robot_9a_bind;
                     break;
                 case AssetTemplate.Jellyfish_Pink:
                     Model = "jellyfish_pink_bind.MINF";
-                    VilType_BFBB = VilType_BFBB.jellyfish_pink_bind;
+                    NpcType_BFBB = NpcType_BFBB.jellyfish_pink_bind;
                     break;
                 case AssetTemplate.Jellyfish_Blue:
                     Model = "jellyfish_blue_bind.MINF";
-                    VilType_BFBB = VilType_BFBB.jellyfish_blue_bind;
+                    NpcType_BFBB = NpcType_BFBB.jellyfish_blue_bind;
                     break;
                 case AssetTemplate.Duplicatotron:
                     Model = "duplicatotron1000_bind.MINF";
-                    VilType_BFBB = VilType_BFBB.duplicatotron1000_bind;
+                    NpcType_BFBB = NpcType_BFBB.duplicatotron1000_bind;
                     break;
             }
         }
@@ -168,8 +168,8 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = entityHeaderEndPosition;
 
-                VilFlags.FlagValueInt = reader.ReadUInt32();
-                VilType = reader.ReadUInt32();
+                NpcFlags.FlagValueInt = reader.ReadUInt32();
+                NpcType = reader.ReadUInt32();
                 NPCSettingsObject = reader.ReadUInt32();
                 MovePoint = reader.ReadUInt32();
                 TaskBox1 = reader.ReadUInt32();
@@ -186,8 +186,8 @@ namespace IndustrialPark
         // meant for use with DUPC VIL only
         public AssetVIL(EndianBinaryReader reader) : base(reader)
         {
-            VilFlags.FlagValueInt = reader.ReadUInt32();
-            VilType = reader.ReadUInt32();
+            NpcFlags.FlagValueInt = reader.ReadUInt32();
+            NpcType = reader.ReadUInt32();
             NPCSettingsObject = reader.ReadUInt32();
             MovePoint = reader.ReadUInt32();
             TaskBox1 = reader.ReadUInt32();
@@ -201,8 +201,8 @@ namespace IndustrialPark
             using (var writer = new EndianBinaryWriter(endianness))
             {
                 writer.Write(SerializeEntity(game, endianness));
-                writer.Write(VilFlags.FlagValueInt);
-                writer.Write(VilType);
+                writer.Write(NpcFlags.FlagValueInt);
+                writer.Write(NpcType);
                 writer.Write(NPCSettingsObject);
                 writer.Write(MovePoint);
                 writer.Write(TaskBox1);
@@ -221,8 +221,8 @@ namespace IndustrialPark
         {
             base.Verify(ref result);
 
-            if (game == Game.BFBB && VilType_BFBB.ToString() == VilType.ToString())
-                result.Add("VIL with unknown VilType 0x" + VilType.ToString("X8"));
+            if (game == Game.BFBB && NpcType_BFBB.ToString() == NpcType.ToString())
+                result.Add("NPC with unknown NpcType 0x" + NpcType.ToString("X8"));
 
             Verify(NPCSettingsObject, ref result);
             Verify(MovePoint, ref result);
@@ -239,14 +239,14 @@ namespace IndustrialPark
         {
             if (game == Game.BFBB)
             {
-                dt.RemoveProperty("VilType");
+                dt.RemoveProperty("NpcType");
                 dt.RemoveProperty("NavMesh2");
                 dt.RemoveProperty("NPCSettings");
             }
             else if (game == Game.Incredibles)
             {
-                dt.RemoveProperty("VilType_BFBB");
-                dt.RemoveProperty("VilType_Alphabetical");
+                dt.RemoveProperty("NpcType_BFBB");
+                dt.RemoveProperty("NpcType_Alphabetical");
             }
 
             base.SetDynamicProperties(dt);

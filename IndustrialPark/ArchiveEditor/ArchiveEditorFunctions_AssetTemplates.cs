@@ -376,7 +376,7 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.Pendulum, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Platform, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Simple_Object, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.VIL, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Villain, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.User_Interface, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.User_Interface_Font, eventHandler),
             });
@@ -436,6 +436,10 @@ namespace IndustrialPark
         {
             switch (template)
             {
+                case AssetTemplate.NPC:
+                    return "NPC (BFBB/Incredibles)";
+                case AssetTemplate.Villain:
+                    return "Villain (Scooby)";
                 case AssetTemplate.MovePoint_Area:
                     return "MovePoint (Area)";
                 case AssetTemplate.SFX_OnEvent:
@@ -971,7 +975,7 @@ namespace IndustrialPark
                 case AssetTemplate.Hangable:
                     asset = new AssetHANG(assetName, position);
                     break;
-                case AssetTemplate.NPC:
+                case AssetTemplate.Villain:
                 case AssetTemplate.Caveman:
                 case AssetTemplate.Creeper:
                 case AssetTemplate.Gargoyle:
@@ -1070,7 +1074,7 @@ namespace IndustrialPark
                             break;
                     }
                     break;
-                case AssetTemplate.VIL:
+                case AssetTemplate.NPC:
                     asset = new AssetVIL(assetName, position, template, 0);
                     break;
                 case AssetTemplate.User_Interface:

@@ -31,6 +31,8 @@ namespace IndustrialPark
             {
                 label2.Visible = false;
                 checkedListBoxAssetTypes.Visible = false;
+                checkBoxBakeNpcScales.Visible = false;
+                checkBoxBakeScales.Visible = false;
                 Height -= DecreaseHeight;
                 button1.Location = SubHeight(button1.Location);
                 button2.Location = SubHeight(button2.Location);
@@ -43,7 +45,7 @@ namespace IndustrialPark
             SetInverseLabel();
         }
 
-        private const int DecreaseHeight = 189;
+        private const int DecreaseHeight = 223;
 
         private ApplyScale(IEnumerable<AssetTypeContainer> assetTypes) : this(true)
         {

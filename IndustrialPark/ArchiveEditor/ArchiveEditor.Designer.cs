@@ -231,14 +231,14 @@
             // hideLayersToolStripMenuItem
             // 
             this.hideLayersToolStripMenuItem.Name = "hideLayersToolStripMenuItem";
-            this.hideLayersToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
-            this.hideLayersToolStripMenuItem.Text = "Hide";
+            this.hideLayersToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.hideLayersToolStripMenuItem.Text = "No Layers";
             this.hideLayersToolStripMenuItem.Click += new System.EventHandler(this.hideToolStripMenuItem_Click);
             // 
             // organizeLayersToolStripMenuItem
             // 
             this.organizeLayersToolStripMenuItem.Name = "organizeLayersToolStripMenuItem";
-            this.organizeLayersToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
+            this.organizeLayersToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.organizeLayersToolStripMenuItem.Text = "Organize";
             this.organizeLayersToolStripMenuItem.Click += new System.EventHandler(this.organizeLayersToolStripMenuItem_Click);
             // 
@@ -370,7 +370,7 @@
             // generateToolStripMenuItem
             // 
             this.generateToolStripMenuItem.Name = "generateToolStripMenuItem";
-            this.generateToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.generateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.generateToolStripMenuItem.Text = "&Generate Report";
             this.generateToolStripMenuItem.Click += new System.EventHandler(this.generateToolStripMenuItem_Click);
             // 

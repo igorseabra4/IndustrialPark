@@ -1,12 +1,11 @@
 ﻿using HipHopFile;
 using SharpDX;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public enum NPCType
+    public enum VillainType
     {
         Bat = 0x00,
         Geronimo = 0x02,
@@ -50,12 +49,12 @@ namespace IndustrialPark
 
     public class AssetNPC : EntityAsset
     {
-        private const string categoryName = "NPC";
+        private const string categoryName = "Villain";
 
         [Category(categoryName)]
-        public NPCType NPCType
+        public VillainType VillainType
         {
-            get => (NPCType)(byte)TypeFlag;
+            get => (VillainType)(byte)TypeFlag;
             set => TypeFlag = (byte)value;
         }
         private float _activateRadius;
@@ -168,57 +167,57 @@ namespace IndustrialPark
             {
                 case AssetTemplate.Caveman:
                     Model = "cv.MINF";
-                    NPCType = NPCType.Caveman;
+                    VillainType = VillainType.Caveman;
                     break;
                 case AssetTemplate.Creeper:
                     Model = "cr.MINF";
-                    NPCType = NPCType.Creeper;
+                    VillainType = VillainType.Creeper;
                     break;
                 case AssetTemplate.Funland_Robot:
                     Model = "ar.MINF";
-                    NPCType = NPCType.FunlandRobot;
+                    VillainType = VillainType.FunlandRobot;
                     break;
                 case AssetTemplate.Gargoyle:
                     Model = "ga.MINF";
-                    NPCType = NPCType.Gargoyle;
+                    VillainType = VillainType.Gargoyle;
                     ProjectileType = "FIREBALL";
                     LobHeavy = 9f;
                     break;
                 case AssetTemplate.Geronimo:
                     Model = "bm.MINF";
-                    NPCType = NPCType.Geronimo;
+                    VillainType = VillainType.Geronimo;
                     break;
                 case AssetTemplate.Ghost:
                     Model = "gz.MINF";
-                    NPCType = NPCType.Ghost;
+                    VillainType = VillainType.Ghost;
                     break;
                 case AssetTemplate.Ghost_Diver:
                     Model = "gd.MINF";
-                    NPCType = NPCType.GhostDiver;
+                    VillainType = VillainType.GhostDiver;
                     break;
                 case AssetTemplate.Ghost_of_Captain_Moody:
                     Model = "cm.MINF";
-                    NPCType = NPCType.GhostOfCaptainMoody;
+                    VillainType = VillainType.GhostOfCaptainMoody;
                     break;
                 case AssetTemplate.Headless_Specter:
                     Model = "hs.MINF";
-                    NPCType = NPCType.HeadlessSpecter;
+                    VillainType = VillainType.HeadlessSpecter;
                     break;
                 case AssetTemplate.Scarecrow:
                     Model = "sw.MINF";
-                    NPCType = NPCType.Scarecrow;
+                    VillainType = VillainType.Scarecrow;
                     break;
                 case AssetTemplate.Sea_Creature:
                     Model = "sc.MINF";
-                    NPCType = NPCType.SeaCreature;
+                    VillainType = VillainType.SeaCreature;
                     break;
                 case AssetTemplate.Space_Kook:
                     Model = "gs.MINF";
-                    NPCType = NPCType.SpaceKook;
+                    VillainType = VillainType.SpaceKook;
                     break;
                 case AssetTemplate.Tar_Monster:
                     Model = "tm.MINF";
-                    NPCType = NPCType.TarMonster;
+                    VillainType = VillainType.TarMonster;
                     ProjectileType = "TARBALL_PROJ";
                     LobSpeed = 10f;
                     LobDurReload = 1f;
@@ -229,11 +228,11 @@ namespace IndustrialPark
                     break;
                 case AssetTemplate.Witch:
                     Model = "wc.MINF";
-                    NPCType = NPCType.Witch;
+                    VillainType = VillainType.Witch;
                     break;
                 case AssetTemplate.Witch_Doctor:
                     Model = "wd.MINF";
-                    NPCType = NPCType.Witch;
+                    VillainType = VillainType.Witch;
                     ProjectileType = "FIREBALL";
                     LobSpeed = 5f;
                     LobDurReload = 2f;
@@ -242,35 +241,35 @@ namespace IndustrialPark
                     break;
                 case AssetTemplate.Wolfman:
                     Model = "wm.MINF";
-                    NPCType = NPCType.Wolfman;
+                    VillainType = VillainType.Wolfman;
                     break;
                 case AssetTemplate.Zombie:
                     Model = "zz.MINF";
-                    NPCType = NPCType.Zombie;
+                    VillainType = VillainType.Zombie;
                     break;
                 case AssetTemplate.Bat:
                     Model = "ba.MINF";
-                    NPCType = NPCType.Bat;
+                    VillainType = VillainType.Bat;
                     break;
                 case AssetTemplate.Crab:
                     Model = "cb.MINF";
-                    NPCType = NPCType.Crab;
+                    VillainType = VillainType.Crab;
                     break;
                 case AssetTemplate.Flying_Fish:
                     Model = "ff.MINF";
-                    NPCType = NPCType.FlyingFish;
+                    VillainType = VillainType.FlyingFish;
                     break;
                 case AssetTemplate.Rat:
                     Model = "rt.MINF";
-                    NPCType = NPCType.Rat;
+                    VillainType = VillainType.Rat;
                     break;
                 case AssetTemplate.Spider:
                     Model = "sp.MINF";
-                    NPCType = NPCType.Spider;
+                    VillainType = VillainType.Spider;
                     break;
                 case AssetTemplate.Killer_Plant:
                     Model = "kp.MINF";
-                    NPCType = NPCType.KillerPlant;
+                    VillainType = VillainType.KillerPlant;
                     ActivateRadius = 10f;
                     ActivateFOV = 360f;
                     ExtenderRange = 7f;
@@ -281,11 +280,11 @@ namespace IndustrialPark
                     break;
                 case AssetTemplate.Groundskeeper:
                     Model = "gr.MINF";
-                    NPCType = NPCType.Groundskeeper;
+                    VillainType = VillainType.Groundskeeper;
                     break;
                 case AssetTemplate.Holly:
                     Model = "ho.MINF";
-                    NPCType = NPCType.Holly;
+                    VillainType = VillainType.Holly;
                     break;
             }
         }

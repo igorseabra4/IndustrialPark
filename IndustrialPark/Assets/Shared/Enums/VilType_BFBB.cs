@@ -1,6 +1,6 @@
 ﻿namespace IndustrialPark
 {
-    public enum VilType_BFBB : uint
+    public enum NpcType_BFBB : uint
     {
         barnacle_boy_bind = 0xE8A70701,
         boss_patrick_bind = 0xCF3BCEA4,
@@ -254,7 +254,7 @@
         Null = 0,
     }
 
-    public enum VilType_Alphabetical : uint
+    public enum NpcType_Alphabetical : uint
     {
         Null,
         barnacle_boy_bind,

@@ -889,16 +889,8 @@ namespace IndustrialPark
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                     try
                     {
-                        var asset = archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]);
-                        if (asset is AssetJSP_INFO jspinfo)
-                        {
-                            File.WriteAllBytes(saveFileDialog.FileName, ReadFileMethods.ExportRenderWareFile(jspinfo.File, jspinfo.renderWareVersion));
-                        }
-                        else
-                        {
-                            var AHDR = archive.GetAHDRFromAssetID(CurrentlySelectedAssetIDs()[0]);
-                            File.WriteAllBytes(saveFileDialog.FileName, AHDR.data);
-                        }
+                        var AHDR = archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]).BuildAHDR();
+                        File.WriteAllBytes(saveFileDialog.FileName, AHDR.data);
                     }
                     catch (Exception ex)
                     {
@@ -915,7 +907,7 @@ namespace IndustrialPark
                     foreach (uint u in CurrentlySelectedAssetIDs())
                         try
                         {
-                            var AHDR = archive.GetAHDRFromAssetID(u);
+                            var AHDR = archive.GetFromAssetID(u).BuildAHDR();
                             File.WriteAllBytes(saveFileDialog.FileName + "/" + AHDR.ADBG.assetName, AHDR.data);
                         }
                         catch (Exception ex)
@@ -1089,7 +1081,7 @@ namespace IndustrialPark
 
             if (comboBoxAssetTypes.Items.Count > 0)
                 comboBoxAssetTypes.SelectedIndex = 0;
-            PopulateAssetList(AssetType.Null, assetIDs);
+            PopulateAssetList(AssetType.Null, assetIDs, assetIDs.Count == 1, assetIDs);
         }
 
         private void EditPACKToolStripMenuItem_Click(object sender, EventArgs e)

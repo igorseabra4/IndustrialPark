@@ -178,9 +178,9 @@ namespace IndustrialPark
             return assetID;
         }
 
-        public static void DropSelectedAssets(SharpRenderer renderer)
+        public void DropSelectedAssets(SharpRenderer renderer)
         {
-            foreach (var a in from Asset a in allCurrentlySelectedAssets where a is IClickableAsset select (IClickableAsset)a)
+            foreach (var a in from Asset a in currentlySelectedAssets where a is IClickableAsset select (IClickableAsset)a)
             {
                 if ((a is AssetTRIG trig && trig.Shape == TriggerShape.Box) || (a is AssetVOLU volu && volu.Shape == VolumeType.Box))
                     continue;
@@ -192,6 +192,8 @@ namespace IndustrialPark
                 a.PositionX = position.X;
                 a.PositionY = position.Y;
                 a.PositionZ = position.Z;
+
+                UnsavedChanges = true;
             }
         }
 

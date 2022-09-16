@@ -48,7 +48,7 @@ namespace IndustrialPark
             MaximumInGame = 1;
             MaximumToSpawn = 1;
             SpawnRate = 1f;
-            NPC = new AssetVIL(assetName, position, AssetTemplate.VIL, 0);
+            NPC = new AssetVIL(assetName, position, AssetTemplate.NPC, 0);
             renderableAssets.Remove(NPC);
             AddToRenderableAssets(this);
         }

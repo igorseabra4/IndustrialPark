@@ -293,6 +293,7 @@ namespace IndustrialPark.Randomizer
             openTeleportBoxes = false;
             widescreenMenu = false;
             Set_Scale = false;
+            VertexColors = false;
 
             boulderMin = 0.5f;
             boulderMax = 2f;

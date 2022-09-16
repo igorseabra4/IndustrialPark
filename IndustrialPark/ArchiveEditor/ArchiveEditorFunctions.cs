@@ -564,13 +564,6 @@ namespace IndustrialPark
             throw new KeyNotFoundException("Asset not present in dictionary.");
         }
 
-        public Section_AHDR GetAHDRFromAssetID(uint key)
-        {
-            if (ContainsAsset(key))
-                return assetDictionary[key].BuildAHDR();
-            throw new KeyNotFoundException("Asset not present in dictionary.");
-        }
-
         public Dictionary<uint, Asset>.ValueCollection GetAllAssets()
         {
             return assetDictionary.Values;

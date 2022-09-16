@@ -1820,7 +1820,8 @@ namespace IndustrialPark
 
         private void DropSelectedAssets()
         {
-            ArchiveEditorFunctions.DropSelectedAssets(renderer);
+            foreach (var ae in archiveEditors)
+                ae.archive.DropSelectedAssets(renderer);
         }
     }
 }

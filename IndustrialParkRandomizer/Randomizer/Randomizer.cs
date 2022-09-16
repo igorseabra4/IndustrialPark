@@ -93,13 +93,13 @@ namespace IndustrialPark.Randomizer
 
                 if (settings.Enemies_Allow_Any_Type)
                 {
-                    HashSet<VilType_BFBB> vilTypes = archive.GetEnemyTypes();
+                    HashSet<NpcType_BFBB> vilTypes = archive.GetEnemyTypes();
 
                     if (vilTypes.Count > 0)
                     {
                         string vils = "";
 
-                        foreach (VilType_BFBB v in vilTypes)
+                        foreach (NpcType_BFBB v in vilTypes)
                             vils += "\n** " + v.ToString();
 
                         message += "\n* Due to Enemies_Allow_Any_Type, you need to import the following enemy HIPs to the HOP:" + vils;
@@ -344,7 +344,7 @@ namespace IndustrialPark.Randomizer
 
                 progressBar.PerformStep();
 
-                HashSet<VilType_BFBB> enemyVils = levelPairs[0].Item1.GetEnemyTypes();
+                HashSet<NpcType_BFBB> enemyVils = levelPairs[0].Item1.GetEnemyTypes();
                 HashSet<EnemySupplyCrateType> crateTypes = levelPairs[0].Item1.GetDynaCrateTypes();
                 HashSet<EnemyStandardType> enemyTypes = levelPairs[0].Item1.GetDynaEnemyTypes();
 
