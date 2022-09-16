@@ -425,15 +425,6 @@ namespace IndustrialPark
             }
             else
             {
-                //Vector3 TrigCenter = new Vector3(TRIG.MinimumX + TRIG.MaximumX, TRIG.MinimumY + TRIG.MaximumY, TRIG.MinimumZ + TRIG.MaximumZ) / 2f;
-
-                //TRIG.MinimumX -= TrigCenter.X;
-                //TRIG.MinimumY -= TrigCenter.Y;
-                //TRIG.MinimumZ -= TrigCenter.Z;
-                //TRIG.MinimumX -= TrigCenter.X;
-                //TRIG.MaximumY -= TrigCenter.Y;
-                //TRIG.MaximumZ -= TrigCenter.Z;
-
                 _minimum.X *= factor.X;
                 _minimum.Y *= factor.Y;
                 _minimum.Z *= factor.Z;
@@ -441,13 +432,6 @@ namespace IndustrialPark
                 _maximum.X *= factor.X;
                 _maximum.Y *= factor.Y;
                 _maximum.Z *= factor.Z;
-
-                //TRIG.MinimumX += TrigCenter.X * factor.X;
-                //TRIG.MinimumY += TrigCenter.Y * factor.Y;
-                //TRIG.MinimumZ += TrigCenter.Z * factor.Z;
-                //TRIG.MinimumX += TrigCenter.X * factor.X;
-                //TRIG.MaximumY += TrigCenter.Y * factor.Y;
-                //TRIG.MaximumZ += TrigCenter.Z * factor.Z;
 
                 _position.X *= factor.X;
                 _position.Y *= factor.Y;

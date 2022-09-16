@@ -97,10 +97,7 @@ namespace IndustrialPark
             {
                 archive.autoCompleteSource.Clear();
                 EnableToolStripMenuItems();
-
-                PopulateLayerTypeComboBox();
-                PopulateLayerComboBox();
-                PopulateAssetList();
+                SetNoLayers();
                 SetupAssetVisibilityButtons();
             }
         }
@@ -180,7 +177,7 @@ namespace IndustrialPark
             
             EnableToolStripMenuItems();
 
-            SetNoLayers(true);
+            SetNoLayers();
 
             SetupAssetVisibilityButtons();
 
@@ -1140,7 +1137,7 @@ namespace IndustrialPark
         {
             var applyScale = ApplyScale.GetScaleWithAssets(archive.ScalableAssetTypesOnArchive().Select(a => new AssetTypeContainer(a)).OrderBy(t => t.ToString()));
             if (applyScale.HasValue)
-                archive.ApplyScale(applyScale.Value.Item1, applyScale.Value.Item2);
+                archive.ApplyScale(applyScale.Value.Item1, applyScale.Value.Item2, applyScale.Value.Item3, applyScale.Value.Item4);
         }
 
         private void MergeSimilarAssetsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1723,19 +1720,36 @@ namespace IndustrialPark
 
         private void hideToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            archive.NoLayers = hideLayersToolStripMenuItem.Checked;
-            SetNoLayers(false);
+            var newNoLayers = !hideLayersToolStripMenuItem.Checked;
+            if (newNoLayers)
+            {
+                var dr = MessageBox.Show("This will convert the HIP/HOP archive into a format in which layers are virtually gone: " +
+                    "assets will be placed automatically by Industrial Park in the correct layers upon saving and you do not have to worry about them anymore. " +
+                    "Enabling this will erase your current layers. Proceed?",
+                    "No Layers", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                if (dr != DialogResult.Yes)
+                    return;
+            }
+            archive.NoLayers = newNoLayers;
+            SetNoLayers();
         }
 
-        private void SetNoLayers(bool startup)
+        private bool noLayersForGroupBox = false;
+
+        private void SetNoLayers()
         {
             if (archive.NoLayers)
             {
                 hideLayersToolStripMenuItem.Checked = true;
 
                 groupBoxLayers.Visible = false;
-                groupBoxAssets.Location = new System.Drawing.Point(groupBoxAssets.Location.X, groupBoxAssets.Location.Y - 53);
-                groupBoxAssets.Size = new System.Drawing.Size(groupBoxAssets.Size.Width, groupBoxAssets.Size.Height + 53);
+
+                if (!noLayersForGroupBox)
+                {
+                    groupBoxAssets.Location = new System.Drawing.Point(groupBoxAssets.Location.X, groupBoxAssets.Location.Y - 53);
+                    groupBoxAssets.Size = new System.Drawing.Size(groupBoxAssets.Size.Width, groupBoxAssets.Size.Height + 53);
+                    noLayersForGroupBox = true;
+                }
 
                 buttonAddAsset.Enabled = true;
                 buttonPaste.Enabled = true;
@@ -1751,10 +1765,12 @@ namespace IndustrialPark
                 hideLayersToolStripMenuItem.Checked = false;
 
                 groupBoxLayers.Visible = true;
-                if (!startup)
+
+                if (noLayersForGroupBox)
                 {
                     groupBoxAssets.Location = new System.Drawing.Point(groupBoxAssets.Location.X, groupBoxAssets.Location.Y + 53);
                     groupBoxAssets.Size = new System.Drawing.Size(groupBoxAssets.Size.Width, groupBoxAssets.Size.Height - 53);
+                    noLayersForGroupBox = false;
                 }
 
                 PopulateLayerTypeComboBox();

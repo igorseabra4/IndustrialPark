@@ -183,5 +183,10 @@ namespace IndustrialPark
         public float GetDistanceFrom(Vector3 position) => VolumeShape.GetDistanceFrom(position);
         public bool ShouldDraw(SharpRenderer renderer) => VolumeShape.ShouldDraw(renderer, isSelected, dontRender, isInvisible);
         public void Draw(SharpRenderer renderer) => VolumeShape.Draw(renderer, isSelected);
+
+        public void ApplyScale(Vector3 factor, float singleFactor)
+        {
+            VolumeShape.ApplyScale(factor, singleFactor);
+        }
     }
 }

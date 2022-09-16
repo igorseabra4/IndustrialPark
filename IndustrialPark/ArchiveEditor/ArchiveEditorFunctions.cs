@@ -109,9 +109,9 @@ namespace IndustrialPark
 
         public bool New()
         {
-            var (PACK, platform, game, addDefaultAssets) = NewArchive.GetNewArchive();
+            var getNewArchive = NewArchive.GetNewArchive();
 
-            if (PACK != null)
+            if (getNewArchive.HasValue)
             {
                 Dispose();
 
@@ -119,14 +119,17 @@ namespace IndustrialPark
                 currentlyOpenFilePath = null;
                 assetDictionary.Clear();
 
-                this.PACK = PACK;
+                PACK = getNewArchive.Value.PACK;
 
                 Layers = new List<Layer>();
-                this.platform = platform;
-                this.game = game;
+                platform = getNewArchive.Value.platform;
+                game = getNewArchive.Value.game;
 
-                if (addDefaultAssets)
+                if (getNewArchive.Value.addDefaultAssets)
                     PlaceDefaultAssets();
+
+                if (getNewArchive.Value.noLayers)
+                    NoLayers = true;
 
                 UnsavedChanges = true;
                 RecalculateAllMatrices();
@@ -233,9 +236,9 @@ namespace IndustrialPark
 #endif
         }
 
-        private static Layer LHDRToLayer(Section_LHDR LHDR)
+        private Layer LHDRToLayer(Section_LHDR LHDR)
         {
-            var layer = new Layer(LHDR.layerType);
+            var layer = new Layer(LayerTypeSpecificToGeneric(LHDR.layerType));
             foreach (var u in LHDR.assetIDlist)
                 layer.AssetIDs.Add(u);
             return layer;
@@ -305,7 +308,7 @@ namespace IndustrialPark
             foreach (var layer in NoLayers ? BuildLayers() : Layers)
                 DICT.LTOC.LHDRList.Add(new Section_LHDR()
                 {
-                    layerType = layer.Type,
+                    layerType = LayerTypeGenericToSpecific(layer.Type),
                     assetIDlist = layer.AssetIDs,
                     LDBG = new Section_LDBG(-1)
                 });
@@ -314,6 +317,20 @@ namespace IndustrialPark
             {
                 HIPB = NoLayers ? new Section_HIPB() { HasNoLayers = 1 } : null
             };
+        }
+
+        private int LayerTypeGenericToSpecific(LayerType layerType)
+        {
+            if (game == Game.Incredibles || layerType < LayerType.BSP)
+                return (int)layerType;
+            return (int)layerType - 1;
+        }
+
+        private LayerType LayerTypeSpecificToGeneric(int layerType)
+        {
+            if (game == Game.Incredibles || layerType < 2)
+                return (LayerType)layerType;
+            return (LayerType)(layerType + 1);
         }
 
         public bool EditPack()
@@ -367,23 +384,21 @@ namespace IndustrialPark
 
         public int LayerCount => Layers.Count;
 
-        public int GetLayerType() => Layers[SelectedLayerIndex].Type;
+        public int GetLayerType() => LayerTypeGenericToSpecific(Layers[SelectedLayerIndex].Type);
 
-        public void SetLayerType(int type) => Layers[SelectedLayerIndex].Type = type;
+        public void SetLayerType(int type) => Layers[SelectedLayerIndex].Type = LayerTypeSpecificToGeneric(type);
 
         public string LayerToString() => LayerToString(SelectedLayerIndex);
 
         public string LayerToString(int index) => "Layer " + index.ToString("D2") + ": "
-            + (game == Game.Incredibles ?
-            ((LayerType_TSSM)Layers[index].Type).ToString() :
-            ((LayerType_BFBB)Layers[index].Type).ToString())
+            + Layers[index].Type.ToString()
             + " [" + Layers[index].AssetIDs.Count() + "]";
 
         public List<uint> GetAssetIDsOnLayer() => NoLayers ?
             (from Asset a in assetDictionary.Values select a.assetID).ToList() :
             Layers[SelectedLayerIndex].AssetIDs;
 
-        public void AddLayer(int layerType = 0)
+        public void AddLayer(LayerType layerType = LayerType.DEFAULT)
         {
             if (NoLayers)
                 return;

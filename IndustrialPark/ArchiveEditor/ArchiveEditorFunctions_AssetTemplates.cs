@@ -1595,7 +1595,7 @@ namespace IndustrialPark
             {
                 SelectedLayerIndex = 0;
                 bsp = PlaceTemplate("empty_bsp", AssetTemplate.Empty_BSP);
-                AddLayer((int)LayerType_BFBB.BSP);
+                AddLayer(LayerType.BSP);
             }
             AddLayer();
 

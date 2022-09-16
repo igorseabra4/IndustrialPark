@@ -1,4 +1,6 @@
-﻿namespace IndustrialPark
+﻿using SharpDX;
+
+namespace IndustrialPark
 {
     public interface IVolumeAsset
     {
@@ -8,5 +10,7 @@
         AssetSingle MaximumX { get; set; }
         AssetSingle MaximumY { get; set; }
         AssetSingle MaximumZ { get; set; }
+
+        void ApplyScale(Vector3 scale, float singleFactor);
     }
 }

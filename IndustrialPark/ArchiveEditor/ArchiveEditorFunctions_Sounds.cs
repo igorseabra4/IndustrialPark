@@ -13,7 +13,7 @@ namespace IndustrialPark
                 var prevIndex = SelectedLayerIndex;
                 
                 if (!NoLayers)
-                    SelectedLayerIndex = IndexOfLayerOfType(GetLayerTypeOfAsset(AssetType.SoundInfo));
+                    SelectedLayerIndex = IndexOfLayerOfType(LayerType.SNDTOC);
 
                 var list = new List<uint>();
                 PlaceTemplate(new SharpDX.Vector3(), ref list, "sound_info", AssetTemplate.Sound_Info);

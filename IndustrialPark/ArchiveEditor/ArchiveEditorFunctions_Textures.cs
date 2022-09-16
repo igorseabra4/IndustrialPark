@@ -133,7 +133,7 @@ namespace IndustrialPark
             {
                 var layers = new List<Layer>
                 {
-                    new Layer(1)
+                    new Layer(LayerType.TEXTURE)
                 };
                 layers.AddRange(Layers);
                 Layers = layers;

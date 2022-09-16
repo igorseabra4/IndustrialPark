@@ -37,6 +37,8 @@
             this.checkedListBoxAssetTypes = new System.Windows.Forms.CheckedListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.checkBoxBakeScales = new System.Windows.Forms.CheckBox();
+            this.checkBoxBakeNpcScales = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownZ)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownY)).BeginInit();
@@ -45,7 +47,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(168, 270);
+            this.button1.Location = new System.Drawing.Point(168, 303);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 1;
@@ -56,7 +58,7 @@
             // button2
             // 
             this.button2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button2.Location = new System.Drawing.Point(249, 270);
+            this.button2.Location = new System.Drawing.Point(249, 303);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 2;
@@ -148,13 +150,37 @@
             this.label2.TabIndex = 6;
             this.label2.Text = "Asset types to scale:";
             // 
+            // checkBoxBakeScales
+            // 
+            this.checkBoxBakeScales.AutoSize = true;
+            this.checkBoxBakeScales.Checked = true;
+            this.checkBoxBakeScales.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxBakeScales.Location = new System.Drawing.Point(18, 267);
+            this.checkBoxBakeScales.Name = "checkBoxBakeScales";
+            this.checkBoxBakeScales.Size = new System.Drawing.Size(132, 30);
+            this.checkBoxBakeScales.TabIndex = 7;
+            this.checkBoxBakeScales.Text = "Bake unproportional\r\nscales on entity assets";
+            this.checkBoxBakeScales.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxBakeNpcScales
+            // 
+            this.checkBoxBakeNpcScales.AutoSize = true;
+            this.checkBoxBakeNpcScales.Location = new System.Drawing.Point(18, 300);
+            this.checkBoxBakeNpcScales.Name = "checkBoxBakeNpcScales";
+            this.checkBoxBakeNpcScales.Size = new System.Drawing.Size(128, 30);
+            this.checkBoxBakeNpcScales.TabIndex = 8;
+            this.checkBoxBakeNpcScales.Text = "Apply and bake scale\r\nto NPCs";
+            this.checkBoxBakeNpcScales.UseVisualStyleBackColor = true;
+            // 
             // ApplyScale
             // 
             this.AcceptButton = this.button1;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.button2;
-            this.ClientSize = new System.Drawing.Size(336, 300);
+            this.ClientSize = new System.Drawing.Size(336, 337);
+            this.Controls.Add(this.checkBoxBakeNpcScales);
+            this.Controls.Add(this.checkBoxBakeScales);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.checkedListBoxAssetTypes);
@@ -187,5 +213,7 @@
         private System.Windows.Forms.CheckedListBox checkedListBoxAssetTypes;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.CheckBox checkBoxBakeScales;
+        private System.Windows.Forms.CheckBox checkBoxBakeNpcScales;
     }
 }

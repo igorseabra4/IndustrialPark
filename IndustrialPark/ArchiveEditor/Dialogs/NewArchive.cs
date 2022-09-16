@@ -6,14 +6,14 @@ namespace IndustrialPark
 {
     public partial class NewArchive : Form
     {
-        public static (Section_PACK PACK, Platform platform, Game game, bool addDefaultAssets) GetNewArchive()
+        public static (Section_PACK PACK, Platform platform, Game game, bool addDefaultAssets, bool noLayers)? GetNewArchive()
         {
             NewArchive newArchive = new NewArchive();
             newArchive.ShowDialog();
 
             if (newArchive.result != null)
-                return (newArchive.result, newArchive.platform, newArchive.game, newArchive.checkBoxDefaultAssets.Checked);
-            return (null, Platform.Unknown, Game.Unknown, false);
+                return (newArchive.result, newArchive.platform, newArchive.game, newArchive.checkBoxDefaultAssets.Checked, newArchive.checkBoxNoLayers.Checked);
+            return null;
         }
 
         public static (Section_PACK PACK, Platform newPlatform, Game newGame) GetExistingArchive(Platform previousPlatform, Game previousGame, int previousDate, string previousDateString)
@@ -49,6 +49,8 @@ namespace IndustrialPark
         private NewArchive(Platform previousPlatform, Game previousGame, int previousDate, string previousDateString) : this()
         {
             checkBoxDefaultAssets.Visible = false;
+            checkBoxNoLayers.Visible = false;
+
             Text = "Convert Archive";
             buttonOK.Text = "Convert";
 

@@ -38,6 +38,7 @@
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.textBoxPCRT = new System.Windows.Forms.TextBox();
             this.checkBoxDefaultAssets = new System.Windows.Forms.CheckBox();
+            this.checkBoxNoLayers = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -140,6 +141,18 @@
             this.checkBoxDefaultAssets.Text = "Add Default Assets";
             this.checkBoxDefaultAssets.UseVisualStyleBackColor = true;
             // 
+            // checkBox1
+            // 
+            this.checkBoxNoLayers.AutoSize = true;
+            this.checkBoxNoLayers.Checked = true;
+            this.checkBoxNoLayers.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxNoLayers.Location = new System.Drawing.Point(140, 200);
+            this.checkBoxNoLayers.Name = "checkBox1";
+            this.checkBoxNoLayers.Size = new System.Drawing.Size(74, 17);
+            this.checkBoxNoLayers.TabIndex = 17;
+            this.checkBoxNoLayers.Text = "No Layers";
+            this.checkBoxNoLayers.UseVisualStyleBackColor = true;
+            // 
             // NewArchive
             // 
             this.AcceptButton = this.buttonOK;
@@ -147,6 +160,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(317, 255);
+            this.Controls.Add(this.checkBoxNoLayers);
             this.Controls.Add(this.checkBoxDefaultAssets);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.buttonOK);
@@ -178,5 +192,6 @@
         private System.Windows.Forms.TextBox textBoxPCRT;
         private System.Windows.Forms.DateTimePicker dateTimePicker1;
         private System.Windows.Forms.CheckBox checkBoxDefaultAssets;
+        private System.Windows.Forms.CheckBox checkBoxNoLayers;
     }
 }

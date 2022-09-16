@@ -69,7 +69,7 @@ namespace IndustrialPark
             SavedValue = GetValue();
         }
 
-        public static (Vector3, IEnumerable<AssetType>)? GetScaleWithAssets(IEnumerable<AssetTypeContainer> assetTypes)
+        public static (Vector3, IEnumerable<AssetType>, bool, bool)? GetScaleWithAssets(IEnumerable<AssetTypeContainer> assetTypes)
         {
             ApplyScale edit = new ApplyScale(assetTypes);
             edit.ShowDialog();
@@ -77,14 +77,14 @@ namespace IndustrialPark
             if (edit.OK)
             {
                 edit.SaveValues();
-                return (SavedValue, edit.GetAssetTypes());
+                return (SavedValue, edit.GetAssetTypes(), edit.checkBoxBakeScales.Checked, edit.checkBoxBakeNpcScales.Checked);
             }
             return null;
         }
 
         private Vector3 GetValue() => new Vector3((float)numericUpDownX.Value, (float)numericUpDownY.Value, (float)numericUpDownZ.Value);
         
-        private IEnumerable<AssetType> GetAssetTypes() => checkedListBoxAssetTypes.Items.Cast<AssetTypeContainer>().Select(a => a.assetType);
+        private IEnumerable<AssetType> GetAssetTypes() => checkedListBoxAssetTypes.CheckedItems.Cast<AssetTypeContainer>().Select(a => a.assetType);
         
         private bool OK = false;
 

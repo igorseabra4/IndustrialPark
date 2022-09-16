@@ -595,6 +595,8 @@ namespace IndustrialPark
                 ToggleCulling();
             else if (e.KeyCode == Keys.F)
                 ToggleWireFrame();
+            else if (e.KeyCode == Keys.H)
+                DropSelectedAssets();
             else if (e.KeyCode == Keys.G)
                 OpenInternalEditors();
             else if (e.KeyCode == Keys.V)
@@ -896,6 +898,7 @@ namespace IndustrialPark
                 "C: toggles backface culling\n" +
                 "F: toggles wireframe mode\n" +
                 "G: open Asset Data Editor for selected assets\n" +
+                "H: drop selected assets\n" +
                 "R: reset view\n" +
                 "T: snap gizmos to grid\n" +
                 "U: toggle UI Mode\n" +
@@ -1813,6 +1816,11 @@ namespace IndustrialPark
 
             closeAllEditorsToolStripMenuItem.Enabled = false;
             SetAllAssetTypesVisible();
+        }
+
+        private void DropSelectedAssets()
+        {
+            ArchiveEditorFunctions.DropSelectedAssets(renderer);
         }
     }
 }

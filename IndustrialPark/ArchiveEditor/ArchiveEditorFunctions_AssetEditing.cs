@@ -1,4 +1,5 @@
-﻿using HipHopFile;
+﻿using Assimp;
+using HipHopFile;
 using IndustrialPark.Models;
 using Newtonsoft.Json;
 using RenderWareFile;
@@ -8,12 +9,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Ray = SharpDX.Ray;
 
 namespace IndustrialPark
 {
     public partial class ArchiveEditorFunctions
     {
-
         public static List<uint> hiddenAssets = new List<uint>();
 
         public List<uint> GetHiddenAssets()
@@ -21,7 +22,7 @@ namespace IndustrialPark
             return (from asset in assetDictionary.Values where asset.isInvisible select asset.assetID).ToList();
         }
 
-        private List<IInternalEditor> internalEditors = new List<IInternalEditor>();
+        private readonly List<IInternalEditor> internalEditors = new List<IInternalEditor>();
 
         public void CloseInternalEditor(IInternalEditor i)
         {
@@ -79,7 +80,7 @@ namespace IndustrialPark
             internalEditors.Last().Show();
         }
 
-        private List<InternalMultiAssetEditor> multiInternalEditors = new List<InternalMultiAssetEditor>();
+        private readonly List<InternalMultiAssetEditor> multiInternalEditors = new List<InternalMultiAssetEditor>();
 
         public void OpenInternalEditorMulti(IEnumerable<uint> list, Action<Asset> updateListView)
         {
@@ -108,7 +109,7 @@ namespace IndustrialPark
                 ie.TopMost = value;
         }
 
-        public static Vector3 GetRayInterserctionPosition(SharpRenderer renderer, Ray ray)
+        public static Vector3 GetRayInterserctionPosition(SharpRenderer renderer, Ray ray, uint assetIdSkip = 0)
         {
             List<IRenderableAsset> l = new List<IRenderableAsset>();
             try
@@ -122,6 +123,9 @@ namespace IndustrialPark
 
             foreach (IRenderableAsset ra in l)
             {
+                if (((Asset)ra).assetID == assetIdSkip)
+                    continue;
+
                 float? distance = ra.GetIntersectionPosition(renderer, ray);
                 if (distance != null && (smallerDistance == null || distance < smallerDistance))
                     smallerDistance = distance;
@@ -135,7 +139,7 @@ namespace IndustrialPark
             float smallerDistance = 1000f;
             uint? assetID = null;
 
-            foreach (Asset ra in renderableAssets)
+            foreach (Asset ra in renderableAssets.Cast<Asset>())
             {
                 if (!ra.isSelected && ra is IClickableAsset ica)
                 {
@@ -156,9 +160,9 @@ namespace IndustrialPark
             float smallerDistance = 3 * farPlane;
             uint? assetID = null;
             
-            foreach (Asset ra in from IRenderableAsset asset in renderableAssets
+            foreach (Asset ra in (from IRenderableAsset asset in renderableAssets
                                  where asset is AssetUI || asset is AssetUIFT
-                                 select asset)
+                                 select asset).Cast<Asset>())
             {
                 if (!ra.isSelected)
                 {
@@ -172,6 +176,23 @@ namespace IndustrialPark
             }
 
             return assetID;
+        }
+
+        public static void DropSelectedAssets(SharpRenderer renderer)
+        {
+            foreach (var a in from Asset a in allCurrentlySelectedAssets where a is IClickableAsset select (IClickableAsset)a)
+            {
+                if ((a is AssetTRIG trig && trig.Shape == TriggerShape.Box) || (a is AssetVOLU volu && volu.Shape == VolumeType.Box))
+                    continue;
+
+                var position = GetRayInterserctionPosition(renderer,
+                    new Ray(new Vector3(a.PositionX, a.PositionY, a.PositionZ), new Vector3(0f, -1f, 0f)),
+                    ((Asset)a).assetID);
+
+                a.PositionX = position.X;
+                a.PositionY = position.Y;
+                a.PositionZ = position.Z;
+            }
         }
 
         public List<uint> FindWhoTargets(uint assetID)
@@ -431,50 +452,155 @@ namespace IndustrialPark
 
         private List<Layer> BuildLayers()
         {
-            Dictionary<int, Layer> layers = new Dictionary<int, Layer>();
+            Layer textureLayer0 = new Layer(LayerType.TEXTURE);
+            Layer textureLayer1 = new Layer(LayerType.TEXTURE);
+            Layer textureLayer2 = new Layer(LayerType.TEXTURE);
+            Dictionary<string, (Layer, Layer, Layer, Layer)> jspLayers = new Dictionary<string, (Layer, Layer, Layer, Layer)>();
+            Layer modelLayer0 = new Layer(LayerType.MODEL);
+            Layer modelLayer1 = new Layer(LayerType.MODEL);
+            Layer modelLayer2 = new Layer(LayerType.MODEL);
+            Layer animationLayer = new Layer(LayerType.ANIMATION);
+            Layer defaultLayer = new Layer(LayerType.DEFAULT);
+            Layer cutsceneLayer = new Layer(LayerType.CUTSCENE);
+            Layer sramLayer = new Layer(LayerType.SRAM);
+            Layer sndtocLayer = new Layer(LayerType.SNDTOC);
+            Layer cutscenetocLayer = new Layer(LayerType.CUTSCENETOC);
 
-            void AddToLayerOfType(uint assetId, int type)
-            {
-                if (!layers.ContainsKey(type))
-                    layers[type] = new Layer(type);
-                layers[type].AssetIDs.Add(assetId);
-            }
+            Dictionary<int, List<Layer>> layers = new Dictionary<int, List<Layer>>();
+
+            int textureIndex = 0;
+            int modelIndex = 0;
 
             foreach (Asset a in assetDictionary.Values)
-                AddToLayerOfType(a.assetID, GetLayerTypeOfAsset(a.assetType));
-
-            return layers.Values.OrderBy(f => f.Type, new LayerComparer(game)).ToList();
-        }
-
-        private int GetLayerTypeOfAsset(AssetType assetType)
-        {
-            switch (assetType)
             {
-                case AssetType.Texture:
-                    return game == Game.Incredibles ? (int)LayerType_TSSM.TEXTURE : (int)LayerType_BFBB.TEXTURE;
-                case AssetType.BSP:
-                case AssetType.JSP:
-                    return game == Game.Incredibles ? (int)LayerType_TSSM.BSP : (int)LayerType_BFBB.BSP;
-                case AssetType.JSPInfo:
-                    return game == Game.Incredibles ? (int)LayerType_TSSM.JSPINFO : (int)LayerType_BFBB.JSPINFO;
-                case AssetType.Model:
-                    return game == Game.Incredibles ? (int)LayerType_TSSM.MODEL : (int)LayerType_BFBB.MODEL;
-                case AssetType.Animation:
-                    if (game == Game.BFBB)
-                        return (int)LayerType_BFBB.ANIMATION;
-                    break;
-                case AssetType.Cutscene:
-                case AssetType.CutsceneStreamingSound:
-                    return game == Game.Incredibles ? (int)LayerType_TSSM.CUTSCENE : (int)LayerType_BFBB.CUTSCENE;
-                case AssetType.Sound:
-                case AssetType.StreamingSound:
-                    return game == Game.Incredibles ? (int)LayerType_TSSM.SRAM : (int)LayerType_BFBB.SRAM;
-                case AssetType.SoundInfo:
-                    return game == Game.Incredibles ? (int)LayerType_TSSM.SNDTOC : (int)LayerType_BFBB.SNDTOC;
-                case AssetType.CutsceneTableOfContents:
-                    return game == Game.Incredibles ? (int)LayerType_TSSM.CUTSCENETOC : (int)LayerType_BFBB.SNDTOC;
+                switch (a.assetType)
+                {
+                    case AssetType.Texture:
+                    {
+                        switch (textureIndex)
+                        {
+                            case 0:
+                                textureLayer0.AssetIDs.Add(a.assetID);
+                                break;
+                            case 1:
+                                textureLayer1.AssetIDs.Add(a.assetID);
+                                break;
+                            case 2:
+                                textureLayer2.AssetIDs.Add(a.assetID);
+                                break;
+                        }
+                        textureIndex = (textureIndex + 1) % 3;
+                        break;
+                    }
+                    case AssetType.BSP:
+                    case AssetType.JSP:
+                    {
+                        var key = a.assetName.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
+                        if (!jspLayers.ContainsKey(key))
+                            jspLayers[key] = (new Layer(LayerType.BSP), new Layer(LayerType.BSP), new Layer(LayerType.BSP), new Layer(LayerType.JSPINFO));
+
+                        if (jspLayers[key].Item1.AssetIDs.Count == 0)
+                            jspLayers[key].Item1.AssetIDs.Add(a.assetID);
+                        else if (jspLayers[key].Item2.AssetIDs.Count == 0)
+                            jspLayers[key].Item2.AssetIDs.Add(a.assetID);
+                        else if (jspLayers[key].Item3.AssetIDs.Count == 0)
+                            jspLayers[key].Item3.AssetIDs.Add(a.assetID);
+                        break;
+                    }
+                    case AssetType.JSPInfo:
+                    {
+                        var key = a.assetName;
+                        if (!jspLayers.ContainsKey(key))
+                            jspLayers[key] = (new Layer(LayerType.BSP), new Layer(LayerType.BSP), new Layer(LayerType.BSP), new Layer(LayerType.JSPINFO));
+                        jspLayers[key].Item4.AssetIDs.Add(a.assetID);
+                        break;
+                    }
+                    case AssetType.Model:
+                    {
+                        switch (modelIndex)
+                        {
+                            case 0:
+                                modelLayer0.AssetIDs.Add(a.assetID);
+                                break;
+                            case 1:
+                                modelLayer1.AssetIDs.Add(a.assetID);
+                                break;
+                            case 2:
+                                modelLayer2.AssetIDs.Add(a.assetID);
+                                break;
+                        }
+                        modelIndex = (modelIndex + 1) % 3;
+                        break;
+                    }
+                    case AssetType.Animation:
+                    {
+                        if (game == Game.BFBB)
+                            animationLayer.AssetIDs.Add(a.assetID);
+                        else
+                            defaultLayer.AssetIDs.Add(a.assetID);
+                        break;
+                    }
+                    case AssetType.Cutscene:
+                    case AssetType.CutsceneStreamingSound:
+                    {
+                        cutsceneLayer.AssetIDs.Add(a.assetID);
+                        break;
+                    }
+                    case AssetType.Sound:
+                    case AssetType.StreamingSound:
+                    {
+                        sramLayer.AssetIDs.Add(a.assetID);
+                        break;
+                    }
+                    case AssetType.SoundInfo:
+                    {
+                        sndtocLayer.AssetIDs.Add(a.assetID);
+                        break;
+                    }
+                    case AssetType.CutsceneTableOfContents:
+                    {
+                        if (game == Game.Incredibles)
+                            cutscenetocLayer.AssetIDs.Add(a.assetID);
+                        else
+                            sndtocLayer.AssetIDs.Add(a.assetID);
+                        break;
+                    }
+                    default:
+                    {
+                        defaultLayer.AssetIDs.Add(a.assetID);
+                        break;
+                    }
+                }
             }
-            return game == Game.Incredibles ? (int)LayerType_TSSM.DEFAULT : (int)LayerType_BFBB.DEFAULT;
+
+            var list = new List<Layer>();
+            void AddIfNotEmpty(Layer l)
+            {
+                if (l.AssetIDs.Count > 0)
+                    list.Add(l);
+            }
+
+            AddIfNotEmpty(textureLayer0);
+            AddIfNotEmpty(textureLayer1);
+            AddIfNotEmpty(textureLayer2);
+            foreach (var js in jspLayers.Values)
+            {
+                list.Add(js.Item1);
+                list.Add(js.Item2);
+                list.Add(js.Item3);
+                list.Add(js.Item4);
+            }
+            AddIfNotEmpty(modelLayer0);
+            AddIfNotEmpty(modelLayer1);
+            AddIfNotEmpty(modelLayer2);
+            AddIfNotEmpty(animationLayer);
+            AddIfNotEmpty(defaultLayer);
+            AddIfNotEmpty(cutsceneLayer);
+            AddIfNotEmpty(sramLayer);
+            AddIfNotEmpty(sndtocLayer);
+            AddIfNotEmpty(cutscenetocLayer);
+
+            return list;
         }
 
         public string VerifyArchive()
@@ -501,8 +627,6 @@ namespace IndustrialPark
 
             foreach (Asset asset in ordered)
             {
-                bool found = false;
-
                 List<string> resultParam = new List<string>();
                 try
                 {
@@ -524,61 +648,120 @@ namespace IndustrialPark
             return result;
         }
 
-        public bool ApplyScale(Vector3 factor, IEnumerable<AssetType> assetTypes = null)
+        public void ApplyScale(Vector3 factor, IEnumerable<AssetType> assetTypes = null, bool bakeEntityUnproportionalScales = true, bool bakeNpcsVilScales = false)
         {
-            bool applied = false;
+            if (factor.X == 1f && factor.Y == 1f && factor.Z == 1f)
+            {
+                MessageBox.Show("Scale not applied as the scale vector is (1, 1, 1).");
+                return;
+            }
+
             float singleFactor = (factor.X + factor.Y + factor.Z) / 3;
 
-            foreach (Asset a in assetDictionary.Values)
+            foreach (Asset a in assetDictionary.Values.Where(a => assetTypes == null || assetTypes.Contains(a.assetType)).ToList())
             {
-                if (assetTypes != null && !assetTypes.Contains(a.assetType))
-                    continue;
-
-                if (a is AssetTRIG TRIG)
+                if (a is IVolumeAsset volume)
                 {
-                    TRIG.ApplyScale(factor, singleFactor);
-                    applied = true;
+                    volume.ApplyScale(factor, singleFactor);
+                }
+                else if (a is AssetMVPT MVPT)
+                {
+                    MVPT.PositionX *= factor.X;
+                    MVPT.PositionY *= factor.Y;
+                    MVPT.PositionZ *= factor.Z;
+
+                    if (MVPT.ZoneRadius != -1)
+                        MVPT.ZoneRadius *= singleFactor;
+                    if (MVPT.ArenaRadius != -1)
+                        MVPT.ArenaRadius *= singleFactor;
+                }
+                else if (a is AssetSFX SFX)
+                {
+                    SFX.PositionX *= factor.X;
+                    SFX.PositionY *= factor.Y;
+                    SFX.PositionZ *= factor.Z;
+
+                    SFX.OuterRadius *= singleFactor;
+                    SFX.InnerRadius *= singleFactor;
+                }
+                else if (a is AssetBOUL BOUL)
+                {
+                    BOUL.PositionX *= factor.X;
+                    BOUL.PositionY *= factor.Y;
+                    BOUL.PositionZ *= factor.Z;
+
+                    BOUL.ScaleX *= factor.X;
+                    BOUL.ScaleY *= factor.Y;
+                    BOUL.ScaleZ *= factor.Z;
+
+                    BOUL.OuterRadius *= singleFactor;
+                    BOUL.InnerRadius *= singleFactor;
+                }
+                else if (a is AssetSGRP SGRP)
+                {
+                    SGRP.OuterRadius *= singleFactor;
+                    SGRP.InnerRadius *= singleFactor;
+                }
+                else if (a is AssetPKUP PKUP)
+                {
+                    PKUP.PositionX *= factor.X;
+                    PKUP.PositionY *= factor.Y;
+                    PKUP.PositionZ *= factor.Z;
+                }
+                else if (a is EntityAsset placeable && !(a is AssetPLYR || a is AssetUI || a is AssetUIFT))
+                {
+                    placeable.PositionX *= factor.X;
+                    placeable.PositionY *= factor.Y;
+                    placeable.PositionZ *= factor.Z;
+
+                    if (placeable is AssetNPC || placeable is AssetVIL)
+                    {
+                        if (bakeNpcsVilScales)
+                            placeable.Model = ApplyBakeScale(placeable.Model, factor);
+                    }
+                    else if (factor.X != factor.Y || factor.X != factor.Z || factor.Y != factor.Z)
+                    {
+                        if (bakeEntityUnproportionalScales)
+                            placeable.Model = ApplyBakeScale(placeable.Model, factor);
+                    }
+                    else
+                    {
+                        placeable.ScaleX *= factor.X;
+                        placeable.ScaleY *= factor.Y;
+                        placeable.ScaleZ *= factor.Z;
+                    }
+                }
+                else if (a is DynaEnemySB enemysb)
+                {
+                    enemysb.PositionX *= factor.X;
+                    enemysb.PositionY *= factor.Y;
+                    enemysb.PositionZ *= factor.Z;
+
+                    if (bakeNpcsVilScales)
+                        enemysb.Model = ApplyBakeScale(enemysb.Model, factor);
+                }
+                else if (a is DynaGObjectTrainCar tcar)
+                {
+                    tcar.PositionX *= factor.X;
+                    tcar.PositionY *= factor.Y;
+                    tcar.PositionZ *= factor.Z;
+
+                    if (bakeEntityUnproportionalScales)
+                        tcar.Model = ApplyBakeScale(tcar.Model, factor);
                 }
                 else if (a is IClickableAsset ica && !(a is DynaGObjectTeleport))
                 {
                     ica.PositionX *= factor.X;
                     ica.PositionY *= factor.Y;
                     ica.PositionZ *= factor.Z;
-
-                    if (a is AssetMVPT MVPT)
-                    {
-                        if (MVPT.ZoneRadius != -1)
-                            MVPT.ZoneRadius *= singleFactor;
-                        if (MVPT.ArenaRadius != -1)
-                            MVPT.ArenaRadius *= singleFactor;
-                    }
-                    else if (a is AssetSFX SFX)
-                    {
-                        SFX.OuterRadius *= singleFactor;
-                        SFX.InnerRadius *= singleFactor;
-                    }
-                    else if (a is AssetSGRP SGRP)
-                    {
-                        SGRP.OuterRadius *= singleFactor;
-                        SGRP.InnerRadius *= singleFactor;
-                    }
-                    else if (a is EntityAsset placeable && !(a is AssetPLYR || a is AssetPKUP || a is AssetUI || a is AssetUIFT || a is AssetVIL || (a is AssetDYNA DYNA && DYNA.Type == DynaType.game_object__Teleport)))
-                    {
-                        placeable.ScaleX *= factor.X;
-                        placeable.ScaleY *= factor.Y;
-                        placeable.ScaleZ *= factor.Z;
-                    }
-                    applied = true;
                 }
                 else if (a is AssetJSP jsp)
                 {
                     jsp.ApplyScale(factor);
-                    applied = true;
                 }
                 else if (a is AssetJSP_INFO jspinfo)
                 {
                     jspinfo.ApplyScale(factor);
-                    applied = true;
                 }
                 else if (a is AssetLODT lodt && singleFactor > 1.0)
                 {
@@ -591,7 +774,6 @@ namespace IndustrialPark
                         entries[i].LOD3_MinDistance *= singleFactor;
                     }
                     lodt.Entries = entries;
-                    applied = true;
                 }
                 else if (a is AssetFLY fly)
                 {
@@ -603,13 +785,11 @@ namespace IndustrialPark
                         entries[i].CameraPosition.Z *= factor.Z;
                     }
                     fly.Frames = entries;
-                    applied = true;
                 }
             }
 
             UnsavedChanges = true;
             RecalculateAllMatrices();
-            return applied;
         }
 
         public List<uint> MakeSimps(List<uint> assetIDs, bool solid, bool ledgeGrabSimps)
@@ -642,7 +822,7 @@ namespace IndustrialPark
             return outAssetIDs;
         }
 
-        public int IndexOfLayerOfType(int layerType)
+        public int IndexOfLayerOfType(LayerType layerType)
         {
             int layerIndex = -1;
 
@@ -674,7 +854,7 @@ namespace IndustrialPark
             {
                 var prevLayerType = SelectedLayerIndex;
 
-                if (!NoLayers) SelectedLayerIndex = IndexOfLayerOfType((int)LayerType_BFBB.DEFAULT);
+                if (!NoLayers) SelectedLayerIndex = IndexOfLayerOfType(LayerType.DEFAULT);
                 
                 pipt = (AssetPIPT)PlaceTemplate(template: AssetTemplate.Pipe_Info_Table);
 
@@ -767,7 +947,7 @@ namespace IndustrialPark
 
                     var prevLayerType = SelectedLayerIndex;
                     if (!NoLayers)
-                        SelectedLayerIndex = IndexOfLayerOfType((int)LayerType_BFBB.DEFAULT);
+                        SelectedLayerIndex = GetLayerFromAssetID(modelAssetId);
 
                     newAssetId = AddAsset(AHDR, game, platform.Endianness(), setTextureDisplay: false);
 
@@ -792,7 +972,7 @@ namespace IndustrialPark
 
                     var prevLayerType = SelectedLayerIndex;
                     if (!NoLayers)
-                        SelectedLayerIndex = IndexOfLayerOfType((int)LayerType_BFBB.DEFAULT);
+                        SelectedLayerIndex = GetLayerFromAssetID(modelAssetId);
 
                     var assetId = AddAsset(AHDR, game, platform.Endianness(), setTextureDisplay: false);
 

@@ -1,5 +1,7 @@
 ﻿using HipHopFile;
 using SharpDX;
+using SharpDX.Direct3D11;
+using System;
 using System.Collections.Generic;
 
 namespace IndustrialPark
@@ -92,67 +94,69 @@ namespace IndustrialPark
 
             return renderer.frustum.Intersects(ref boundingBox);
         }
+
+        public abstract void ApplyScale(Vector3 factor, float singleFactor);
     }
 
     public class VolumeBox : VolumeSpecific_Generic, IVolumeAsset
     {
-        private Vector3 _trigPos1;
+        private Vector3 _maximum;
 
         public AssetSingle MaximumX
         {
-            get => _trigPos1.X;
+            get => _maximum.X;
             set
             {
-                _trigPos1.X = value;
+                _maximum.X = value;
                 FixPosition();
             }
         }
 
         public AssetSingle MaximumY
         {
-            get => _trigPos1.Y;
+            get => _maximum.Y;
             set
             {
-                _trigPos1.Y = value;
+                _maximum.Y = value;
                 FixPosition();
             }
         }
         public AssetSingle MaximumZ
         {
-            get => _trigPos1.Z;
+            get => _maximum.Z;
             set
             {
-                _trigPos1.Z = value;
+                _maximum.Z = value;
                 FixPosition();
             }
         }
 
-        private Vector3 _trigPos0;
+        private Vector3 _minimum;
 
         public AssetSingle MinimumX
         {
-            get => _trigPos0.X;
+            get => _minimum.X;
             set
             {
-                _trigPos0.X = value;
+                _minimum.X = value;
                 FixPosition();
             }
         }
         public AssetSingle MinimumY
         {
-            get => _trigPos0.Y;
+            get => _minimum.Y;
             set
             {
-                _trigPos0.Y = value;
+                _minimum.Y = value;
                 FixPosition();
             }
         }
         public AssetSingle MinimumZ
         {
-            get => _trigPos0.Z;
+            get => _minimum.Z;
             set
             {
-                _trigPos0.Z = value;
+                _minimum.Z = value;
                 FixPosition();
             }
         }
@@ -160,12 +164,12 @@ namespace IndustrialPark
         public VolumeBox() { }
         public VolumeBox(EndianBinaryReader reader) : base(reader)
         {
-            _trigPos1.X = reader.ReadSingle();
-            _trigPos1.Y = reader.ReadSingle();
-            _trigPos1.Z = reader.ReadSingle();
-            _trigPos0.X = reader.ReadSingle();
-            _trigPos0.Y = reader.ReadSingle();
-            _trigPos0.Z = reader.ReadSingle();
+            _maximum.X = reader.ReadSingle();
+            _maximum.Y = reader.ReadSingle();
+            _maximum.Z = reader.ReadSingle();
+            _minimum.X = reader.ReadSingle();
+            _minimum.Y = reader.ReadSingle();
+            _minimum.Z = reader.ReadSingle();
         }
 
         public override byte[] Serialize(Game game, Endianness endianness)
@@ -185,8 +189,8 @@ namespace IndustrialPark
 
         public override void CreateTransformMatrix()
         {
-            Vector3 boxSize = _trigPos1 - _trigPos0;
-            Vector3 midPos = (_trigPos0 + _trigPos1) / 2f;
+            Vector3 boxSize = _maximum - _minimum;
+            Vector3 midPos = (_minimum + _maximum) / 2f;
 
             world = Matrix.Scaling(boxSize) * Matrix.Translation(midPos);
 
@@ -206,40 +210,57 @@ namespace IndustrialPark
 
         public void SetPositions(float x0, float y0, float z0, float x1, float y1, float z1)
         {
-            _trigPos0.X = x0;
-            _trigPos0.Y = y0;
-            _trigPos0.Z = z0;
-            _trigPos1.X = x1;
-            _trigPos1.Y = y1;
-            _trigPos1.Z = z1;
+            _minimum.X = x0;
+            _minimum.Y = y0;
+            _minimum.Z = z0;
+            _maximum.X = x1;
+            _maximum.Y = y1;
+            _maximum.Z = z1;
             FixPosition();
         }
 
         public override void FixPosition()
         {
-            if (_trigPos0.X > _trigPos1.X)
+            if (_minimum.X > _maximum.X)
             {
-                var temp = _trigPos1.X;
-                _trigPos1.X = _trigPos0.X;
-                _trigPos0.X = temp;
+                var temp = _maximum.X;
+                _maximum.X = _minimum.X;
+                _minimum.X = temp;
             }
-            if (_trigPos0.Y > _trigPos1.Y)
+            if (_minimum.Y > _maximum.Y)
             {
-                var temp = _trigPos1.Y;
-                _trigPos1.Y = _trigPos0.Y;
-                _trigPos0.Y = temp;
+                var temp = _maximum.Y;
+                _maximum.Y = _minimum.Y;
+                _minimum.Y = temp;
             }
-            if (_trigPos0.Z > _trigPos1.Z)
+            if (_minimum.Z > _maximum.Z)
             {
-                var temp = _trigPos1.Z;
-                _trigPos1.Z = _trigPos0.Z;
-                _trigPos0.Z = temp;
+                var temp = _maximum.Z;
+                _maximum.Z = _minimum.Z;
+                _minimum.Z = temp;
             }
 
             base.FixPosition();
         }
 
         public override void Draw(SharpRenderer renderer, bool isSelected) => renderer.DrawCube(world, isSelected, 1f);
+
+        public override void ApplyScale(Vector3 factor, float singleFactor)
+        {
+            _minimum.X *= factor.X;
+            _minimum.Y *= factor.Y;
+            _minimum.Z *= factor.Z;
+            
+            _maximum.X *= factor.X;
+            _maximum.Y *= factor.Y;
+            _maximum.Z *= factor.Z;
+            
+            _position.X *= factor.X;
+            _position.Y *= factor.Y;
+            _position.Z *= factor.Z;
+            
+            FixPosition();
+        }
     }
 
     public class VolumeSphere : VolumeSpecific_Generic
@@ -288,6 +309,15 @@ namespace IndustrialPark
         }
 
         public override void Draw(SharpRenderer renderer, bool isSelected) => renderer.DrawSphere(world, isSelected, renderer.trigColor);
+
+        public override void ApplyScale(Vector3 factor, float singleFactor)
+        {
+            _position.X *= factor.X;
+            _position.Y *= factor.Y;
+            _position.Z *= factor.Z;
+            _radius *= singleFactor;
+            FixPosition();
+        }
     }
 
     public class VolumeCylinder : VolumeSphere
@@ -338,5 +368,11 @@ namespace IndustrialPark
         }
 
         public override void Draw(SharpRenderer renderer, bool isSelected) => renderer.DrawCylinder(world, isSelected, renderer.trigColor);
+
+        public override void ApplyScale(Vector3 factor, float singleFactor)
+        {
+            _height *= factor.Y;
+            base.ApplyScale(factor, singleFactor);
+        }
     }
 }
