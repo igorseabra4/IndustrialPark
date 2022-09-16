@@ -124,6 +124,7 @@
             // 
             // textBoxPCRT
             // 
+            this.textBoxPCRT.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBoxPCRT.Location = new System.Drawing.Point(6, 45);
             this.textBoxPCRT.Name = "textBoxPCRT";
             this.textBoxPCRT.Size = new System.Drawing.Size(275, 20);

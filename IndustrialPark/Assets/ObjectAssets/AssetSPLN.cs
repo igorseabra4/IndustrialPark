@@ -73,7 +73,7 @@ namespace IndustrialPark
             set
             {
                 _points = value;
-                Setup(Program.MainForm.renderer);
+                Setup(Program.Renderer);
             }
         }
         private AssetSingle[] _points2;
@@ -160,6 +160,9 @@ namespace IndustrialPark
 
         public void Setup(SharpRenderer renderer)
         {
+            if (renderer == null)
+                return;
+
             renderer.completeVertexBufferList.Remove(vertexBuffer);
             if (vertexBuffer != null)
                 vertexBuffer.Dispose();

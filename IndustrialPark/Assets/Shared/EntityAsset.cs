@@ -1,8 +1,10 @@
 ﻿using AssetEditorColors;
 using HipHopFile;
 using SharpDX;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
@@ -93,6 +95,31 @@ namespace IndustrialPark
         {
             get => _scale.Z;
             set { _scale.Z = value; CreateTransformMatrix(); }
+        }
+
+        [Category(categoryName),
+            Description("A copy of the model with the scale baked into will be created. " +
+            "The asset will then use the new scaled model and the scale values will be set to (1, 1, 1). " +
+            "Use this to prevent collision glitches. " +
+            "It's only needed when the scale axes are not equal to each other or when scaling models with MINFs (Model Infos)."),
+            Editor(typeof(BakeScaleEditor), typeof(UITypeEditor))]
+        public virtual string BakeScale
+        {
+            get
+            {
+                BakeScaleEditor.modelAssetId = Model;
+                BakeScaleEditor.scale = _scale;
+                return "Click here ->";
+            }
+            set
+            {
+                if (value != "unchanged")
+                {
+                    Model = Convert.ToUInt32(value);
+                    _scale = new Vector3(1f, 1f, 1f);
+                    CreateTransformMatrix();
+                }
+            }
         }
 
         protected Vector4 _color;
@@ -257,7 +284,8 @@ namespace IndustrialPark
 
         public virtual void CreateTransformMatrix()
         {
-            world = Matrix.Scaling(_scale)
+            world = (renderingDictionary.ContainsKey(_model) ? renderingDictionary[_model].TransformMatrix : Matrix.Identity)
+                * Matrix.Scaling(_scale)
                 * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                 * Matrix.Translation(_position);
 

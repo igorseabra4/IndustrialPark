@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
@@ -215,13 +216,23 @@ namespace IndustrialPark
         public AssetID BrainID { get; set; }
         [Category(categoryName)]
         public MinfReference[] References { get; set; }
+
+        private MinfParam[] _parameters;
         [Category(categoryName)]
-        public MinfParam[] Parameters { get; set; }
+        public MinfParam[] Parameters
+        {
+            get => _parameters;
+            set
+            {
+                _parameters = value;
+                CreateTransformMatrix();
+            }
+        }
 
         public AssetMINF(string assetName) : base(assetName, AssetType.ModelInfo)
         {
             References = new MinfReference[0];
-            Parameters = new MinfParam[0];
+            _parameters = new MinfParam[0];
 
             AddToDictionary();
         }
@@ -246,9 +257,10 @@ namespace IndustrialPark
                 var mParams = new List<MinfParam>();
                 while (!reader.EndOfStream)
                     mParams.Add(new MinfParam(reader));
-                Parameters = mParams.ToArray();
+                _parameters = mParams.ToArray();
 
                 AddToDictionary();
+                CreateTransformMatrix();
             }
         }
 
@@ -268,7 +280,7 @@ namespace IndustrialPark
 
                 foreach (var r in References)
                     writer.Write(r.Serialize(game, endianness));
-                foreach (var b in Parameters)
+                foreach (var b in _parameters)
                     writer.Write(b.Serialize(endianness));
 
                 return writer.ToArray();
@@ -331,6 +343,29 @@ namespace IndustrialPark
 
         public RenderWareModelFile GetRenderWareModelFile() => GetFromRenderingDictionary(_model);
 
+        [Browsable(false)]
+        public Matrix TransformMatrix { get; private set; }
+
+        public void CreateTransformMatrix()
+        {
+            TransformMatrix = Matrix.Scaling(GetScaleParameter());
+        }
+
+        private Vector3 GetScaleParameter()
+        {
+            foreach (var param in _parameters)
+                if (param.Type_Enum == MinfAssetParam.ScaleModel)
+                    return ParamToVector(param.Value);
+            return Vector3.One;
+        }
+
+        private static Vector3 ParamToVector(string paramValue)
+        {
+            var tokens = Regex.Replace(paramValue, @"\s+", " ").Split(' ');
+            var prevScale = new Vector3(Convert.ToSingle(tokens[1].Trim(',')), Convert.ToSingle(tokens[2].Trim(',')), Convert.ToSingle(tokens[3].Trim(',')));
+            return prevScale;
+        }
+
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
             if (game == Game.Scooby)
@@ -340,6 +375,34 @@ namespace IndustrialPark
             }
 
             base.SetDynamicProperties(dt);
+        }
+
+        public void ApplyScale(Vector3 scale)
+        {
+            string VectorToParam(Vector3 v) => $"{{ {v.X:.0###########}, {v.Y:.0###########}, {v.Z:.0###########} }}";
+            
+            var mparams = _parameters.ToList();
+
+            var sparamIndex = -1;
+            for (int i = 0; i < mparams.Count; i++)
+                if (mparams[i].Type_Enum == MinfAssetParam.ScaleModel)
+                {
+                    sparamIndex = i;
+                    break;
+                }
+
+            if (sparamIndex == -1)
+            {
+                mparams.Add(new MinfParam() { Type_Enum = MinfAssetParam.ScaleModel, Value = VectorToParam(scale) });
+            }
+            else
+            {
+                var scaleParam = mparams[sparamIndex];
+                Vector3 prevScale = ParamToVector(scaleParam.Value);
+                mparams[sparamIndex].Value = VectorToParam(new Vector3(prevScale.X * scale.X, prevScale.Y * scale.Y, prevScale.Z * scale.Z));
+            }
+
+            Parameters = mparams.ToArray();
         }
     }
 }

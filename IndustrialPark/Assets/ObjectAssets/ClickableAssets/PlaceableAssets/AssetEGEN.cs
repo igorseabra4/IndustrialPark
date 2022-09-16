@@ -18,7 +18,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public byte DamageType { get; set; }
         [Category(categoryName)]
-        public FlagBitmask EgenFlags { get; set; } = ByteFlagsDescriptor();
+        public FlagBitmask EgenFlags { get; set; } = ByteFlagsDescriptor("Start on");
         [Category(categoryName)]
         public AssetSingle ActiveTimeSeconds { get; set; }
         [Category(categoryName)]

@@ -86,7 +86,7 @@ namespace IndustrialPark.Randomizer
             {
                 RandomizableArchive archive = new RandomizableArchive();
                 archive.OpenFile(rootDir, false, Platform.Unknown, out _, true);
-                archive.Randomize(settings, out bool needToAddNumbers);
+                archive.Randomize(settings);
                 archive.Save();
 
                 string message = "Randomization complete!";
@@ -106,7 +106,7 @@ namespace IndustrialPark.Randomizer
                     }
                 }
 
-                if (needToAddNumbers)
+                if (archive.needToAddNumbers)
                     message += "\n* Due to Shiny_Object_Gates or Spatula_Gates, you need to import the numbers.HIP file to the HOP";
 
                 MessageBox.Show(message);
@@ -340,7 +340,7 @@ namespace IndustrialPark.Randomizer
                 if (settings.Warps && !FileInSecondBox(levelPairs[0].Item1.currentlyOpenFilePath))
                     item1shuffled |= levelPairs[0].Item1.SetWarpNames(ref warpNames, ref warpRandomizerOutput, uinqueWarpNames);
 
-                item1shuffled |= levelPairs[0].Item1.Randomize(settings, out bool needToAddNumbers);
+                item1shuffled |= levelPairs[0].Item1.Randomize(settings);
 
                 progressBar.PerformStep();
 
@@ -366,20 +366,20 @@ namespace IndustrialPark.Randomizer
                         item2shuffled |= levelPairs[0].Item2.ImportDynaEnemyTypes(enemyTypes, false);
                     }
 
-                    if (needToAddNumbers)
+                    if (levelPairs[0].Item1.needToAddNumbers)
                         item2shuffled |= levelPairs[0].Item2.ImportNumbers();
 
                     if (settings.UnlockCharacters)
                         item2shuffled = levelPairs[0].Item2.UnimportCharacters();
 
-                    item2shuffled |= levelPairs[0].Item2.Randomize(settings, out _);
+                    item2shuffled |= levelPairs[0].Item2.Randomize(settings);
                 }
 
                 progressBar.PerformStep();
 
-                levelPairs[0].Item1.CollapseLayers();
+                levelPairs[0].Item1.OrganizeLayers();
                 if (levelPairs[0].Item2 != null)
-                    levelPairs[0].Item2.CollapseLayers();
+                    levelPairs[0].Item2.OrganizeLayers();
 
                 // Save to a random different path (level files randomizer)
                 if (settings.Level_Files && !FileInSecondBox(levelPairs[0].Item1.currentlyOpenFilePath))
@@ -512,13 +512,13 @@ namespace IndustrialPark.Randomizer
                 ["G.Throw"] = GetLine(settings.PowerupCheatsMovie.Pat_Throw),
                 ["G.HealthSB"] = GetLine(settings.PowerupCheatsMovie.SB_Health),
                 ["G.HealthPat"] = GetLine(settings.PowerupCheatsMovie.Pat_Health),
-                ["G.BBashHeight"] = (0.315 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)).ToString(),
-                ["G.Gravity"] = (30.0 / (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)).ToString(),
-                ["Carry.ThrowMaxDist"] = (12.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)).ToString(),
-                ["SB.MoveSpeed"] = $"{0.6 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{4.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{5.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},  {0.1 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{0.8 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{1.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)}",
-                ["Patrick.MoveSpeed"] = $"{0.6 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{2.5 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{5.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},  {0.1 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{0.6 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{1.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)}",
-                ["Sandy.MoveSpeed"] = $"{0.6 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{2.5 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{5.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},  {0.1 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{0.6 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{1.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)}",
-                ["SB.cb.fly.live_time"] = (6.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)).ToString(),
+                //["G.BBashHeight"] = (0.315 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)).ToString(),
+                //["G.Gravity"] = (30.0 / (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)).ToString(),
+                //["Carry.ThrowMaxDist"] = (12.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)).ToString(),
+                //["SB.MoveSpeed"] = $"{0.6 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{4.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{5.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},  {0.1 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{0.8 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{1.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)}",
+                //["Patrick.MoveSpeed"] = $"{0.6 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{2.5 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{5.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},  {0.1 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{0.6 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{1.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)}",
+                //["Sandy.MoveSpeed"] = $"{0.6 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{2.5 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{5.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},  {0.1 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{0.6 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{1.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)}",
+                //["SB.cb.fly.live_time"] = (6.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)).ToString(),
             };
 
             for (int i = 0; i < ini.Length; i++)

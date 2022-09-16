@@ -96,6 +96,7 @@
             // 
             // numericUpDownW
             // 
+            this.numericUpDownW.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.numericUpDownW.DecimalPlaces = 6;
             this.numericUpDownW.Increment = new decimal(new int[] {
             1,
@@ -114,6 +115,7 @@
             // 
             // numericUpDownZ
             // 
+            this.numericUpDownZ.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.numericUpDownZ.DecimalPlaces = 6;
             this.numericUpDownZ.Increment = new decimal(new int[] {
             1,
@@ -133,6 +135,7 @@
             // 
             // numericUpDownY
             // 
+            this.numericUpDownY.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.numericUpDownY.DecimalPlaces = 6;
             this.numericUpDownY.Increment = new decimal(new int[] {
             1,
@@ -152,6 +155,7 @@
             // 
             // numericUpDownX
             // 
+            this.numericUpDownX.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.numericUpDownX.DecimalPlaces = 6;
             this.numericUpDownX.Increment = new decimal(new int[] {
             1,

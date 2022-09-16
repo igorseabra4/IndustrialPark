@@ -128,7 +128,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public int MinGameDifficulty { get; set; }
 
-        public AssetNPC(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.NPC, BaseAssetType.Villain, position)
+        public AssetNPC(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.Villain, BaseAssetType.Villain, position)
         {
             ColorAlpha = 0f;
             ColorAlphaSpeed = 0f;

@@ -6,7 +6,7 @@ namespace IndustrialPark
 {
     public partial class NewArchive : Form
     {
-        public static (HipFile hipFile, Platform platform, Game game, bool addDefaultAssets) GetNewArchive()
+        public static (Section_PACK PACK, Platform platform, Game game, bool addDefaultAssets) GetNewArchive()
         {
             NewArchive newArchive = new NewArchive();
             newArchive.ShowDialog();
@@ -23,7 +23,7 @@ namespace IndustrialPark
             newArchive.ShowDialog();
 
             if (newArchive.OK)
-                return (newArchive.result.PACK, newArchive.platform, newArchive.game);
+                return (newArchive.result, newArchive.platform, newArchive.game);
             return (null, 0, 0);
         }
 
@@ -91,7 +91,7 @@ namespace IndustrialPark
         }
 
         private bool OK = false;
-        private HipFile result = null;
+        private Section_PACK result = null;
         private Game game;
         private Platform platform;
 
@@ -99,20 +99,7 @@ namespace IndustrialPark
         {
             OK = true;
 
-            Section_HIPA HIPA = new Section_HIPA();
             Section_PACK PACK = new Section_PACK();
-            Section_DICT DICT = new Section_DICT
-            {
-                ATOC = new Section_ATOC()
-                { AINF = new Section_AINF(0) },
-                LTOC = new Section_LTOC()
-                { LINF = new Section_LINF(0) },
-            };
-            Section_STRM STRM = new Section_STRM
-            {
-                DHDR = new Section_DHDR(-1),
-                DPAK = new Section_DPAK()
-            };
 
             PACK.PMOD = new Section_PMOD((int)dateTimePicker1.Value.ToBinary());
             PACK.PCRT = new Section_PCRT((int)dateTimePicker1.Value.ToBinary(), textBoxPCRT.Text);
@@ -171,7 +158,7 @@ namespace IndustrialPark
                     break;
             }
 
-            result = new HipFile(HIPA, PACK, DICT, STRM);
+            result = PACK;
 
             Close();
         }

@@ -25,7 +25,7 @@ namespace IndustrialPark
             numericUpDownZ.Maximum = decimal.MaxValue;
             numericUpDownW.Maximum = decimal.MaxValue;
 
-            comboBoxOperation.Items.AddRange(Enum.GetValues(typeof(Operation)).Cast<object>().Take(9).ToArray());
+            comboBoxOperation.Items.AddRange(Enum.GetValues(typeof(Operation)).Cast<object>().ToArray());
 
             comboBoxOperation.SelectedIndex = 0;
 

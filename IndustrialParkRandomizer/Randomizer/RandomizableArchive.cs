@@ -14,10 +14,14 @@ namespace IndustrialPark.Randomizer
     {
         public static Random random;
 
-        public bool Randomize(RandomizerSettings settings, out bool needToAddNumbers)
+        public bool needToAddNumbers = false;
+
+        public bool Randomize(RandomizerSettings settings)
         {
             if (LevelName == "hb09")
-                return needToAddNumbers = false;
+                return false;
+
+            NoLayers = true;
 
             bool shuffled = false;
 
@@ -28,19 +32,7 @@ namespace IndustrialPark.Randomizer
                     shuffled = true;
                 }
                 else if (a is AssetSURF surf && settings.Texture_Animations)
-                {
-                    if (surf.zSurfUVFX.TransSpeed_X == 0)
-                        surf.zSurfUVFX.TransSpeed_X = random.NextFloat(settings.surfMin, settings.surfMax);
-                    else
-                        surf.zSurfUVFX.TransSpeed_X *= random.NextFloat(settings.surfMin, settings.surfMax);
-
-                    if (surf.zSurfUVFX.TransSpeed_Y == 0)
-                        surf.zSurfUVFX.TransSpeed_Y = random.NextFloat(settings.surfMin, settings.surfMax);
-                    else
-                        surf.zSurfUVFX.TransSpeed_Y *= random.NextFloat(settings.surfMin, settings.surfMax);
-
-                    shuffled = true;
-                }
+                    shuffled |= RandomizeSurf(surf, settings.surfMin, settings.surfMax);
                 else if (a is AssetFLY fly && settings.disableFlythroughs && fly.Frames.Length > 1)
                 {
                     fly.Frames = new FlyFrame[] { fly.Frames[0] };
@@ -50,7 +42,7 @@ namespace IndustrialPark.Randomizer
             if (settings.Set_Scale)
             {
                 shuffled |= true;
-                ApplyScale(new Vector3(settings.scaleFactor, settings.scaleFactor, settings.scaleFactor));
+                ApplyScale(new Vector3(settings.scaleFactorX, settings.scaleFactorY, settings.scaleFactorZ));
             }
 
             if (settings.Disco_Floors && ContainsAssetWithType(AssetType.DiscoFloor))
@@ -76,7 +68,7 @@ namespace IndustrialPark.Randomizer
 
             if (game == Game.BFBB)
             {
-                if (settings.Tiki_Types && ContainsAssetWithType(AssetType.VIL))
+                if (settings.Tiki_Types && ContainsAssetWithType(AssetType.NPC))
                 {
                     List<VilType_BFBB> chooseFrom = new List<VilType_BFBB>();
                     if (settings.TikiProbabilities.WoodenTiki >= 0)
@@ -142,7 +134,7 @@ namespace IndustrialPark.Randomizer
 
             if (game == Game.BFBB)
             {
-                if (settings.Enemy_Types && ContainsAssetWithType(AssetType.VIL))
+                if (settings.Enemy_Types && ContainsAssetWithType(AssetType.NPC))
                 {
                     List<VilType_BFBB> chooseFrom = new List<VilType_BFBB>(16);
                     if (settings.EnemyProbabilities.Fodder >= 0)
@@ -335,7 +327,7 @@ namespace IndustrialPark.Randomizer
             if (game == Game.Incredibles && settings.CombatArenaCounts && ContainsAssetWithType(AssetType.Counter))
                 shuffled |= ShuffleCombatArenas(settings.combatMin, settings.combatMax);
 
-            needToAddNumbers = shinyNumbers | spatNumbers;
+            needToAddNumbers = shinyNumbers || spatNumbers;
 
             if (settings.Scale_Of_Things)
                 shuffled |= ShuffleScales(settings);
@@ -376,23 +368,36 @@ namespace IndustrialPark.Randomizer
             return shuffled;
         }
 
+        private static bool RandomizeSurf(AssetSURF surf, float surfMin, float surfMax)
+        {
+            if (surf.zSurfUVFX.TransSpeed_X == 0)
+                surf.zSurfUVFX.TransSpeed_X = random.NextFloat(surfMin, surfMax);
+            else
+                surf.zSurfUVFX.TransSpeed_X *= random.NextFloat(surfMin, surfMax);
+
+            if (surf.zSurfUVFX.TransSpeed_Y == 0)
+                surf.zSurfUVFX.TransSpeed_Y = random.NextFloat(surfMin, surfMax);
+            else
+                surf.zSurfUVFX.TransSpeed_Y *= random.NextFloat(surfMin, surfMax);
+
+            return true;
+        }
+
         private bool OpenTeleportBoxes()
         {
             List<uint> dynaTeleportAssetIDs = new List<uint>();
-            int layerIndex = -1;
 
             foreach (AssetDYNA dyna in (from asset in assetDictionary.Values
                                         where asset is AssetDYNA dyna && dyna.Type == DynaType.game_object__Teleport
                                         select asset).Cast<AssetDYNA>())
             {
                 dynaTeleportAssetIDs.Add(dyna.assetID);
-                layerIndex = GetLayerFromAssetID(dyna.assetID);
             }
 
             if (dynaTeleportAssetIDs.Count == 0)
                 return false;
 
-            AssetDPAT dispatcher = (AssetDPAT)PlaceTemplate(layerIndex, "IP_TELEBOX", AssetTemplate.Dispatcher);
+            AssetDPAT dispatcher = (AssetDPAT)PlaceTemplate("IP_TELEBOX", AssetTemplate.Dispatcher);
 
             var links = new List<Link>();
             foreach (uint u in dynaTeleportAssetIDs)
@@ -827,8 +832,8 @@ namespace IndustrialPark.Randomizer
         private bool ShufflePlaceableColors(bool brightColors, bool strongColors)
         {
             AssetType[] allowed = new AssetType[] {
-                            AssetType.Boulder, AssetType.Button, AssetType.DestructibleObject, AssetType.Hangable, AssetType.NPC, AssetType.Pendulum,
-                            AssetType.Pickup, AssetType.Platform, AssetType.Player, AssetType.SimpleObject, AssetType.VIL };
+                            AssetType.Boulder, AssetType.Button, AssetType.DestructibleObject, AssetType.Hangable, AssetType.Villain, AssetType.Pendulum,
+                            AssetType.Pickup, AssetType.Platform, AssetType.Player, AssetType.SimpleObject, AssetType.NPC };
 
             List<EntityAsset> assets = (from asset in assetDictionary.Values
                                         where allowed.Contains(asset.assetType)
@@ -877,7 +882,13 @@ namespace IndustrialPark.Randomizer
                 {
                     if (vertexColors)
                     {
-                        a.SetVertexColors(new Vector4(), Operation.Randomize, () => (Vector4)GetRandomColor(brightColors, strongColors));
+                        var performOperation = new Func<Vector4, Vector4>((Vector4 oldColor) => {
+                            var v = (Vector4)GetRandomColor(brightColors, strongColors);
+                            v.W = oldColor.W;
+                            return v;
+                        });
+
+                        a.ApplyVertexColors(performOperation);
                         colored = true;
                     }
                     else
@@ -1062,15 +1073,7 @@ namespace IndustrialPark.Randomizer
 
         public bool RandomizePlayerOnSpawn()
         {
-            int defaultLayerIndex = -1;
-            for (int i = 0; i < DICT.LTOC.LHDRList.Count; i++)
-                if (DICT.LTOC.LHDRList[i].layerType == (int)LayerType_BFBB.DEFAULT)
-                {
-                    defaultLayerIndex = i;
-                    break;
-                }
-
-            var group = (AssetGRUP)PlaceTemplate(defaultLayerIndex, "IP_RANDO_PLAYER_GRUP", template: AssetTemplate.Group);
+            var group = (AssetGRUP)PlaceTemplate("IP_RANDO_PLAYER_GRUP", template: AssetTemplate.Group);
             group.ReceiveEventDelegation = Delegation.RandomItem;
             group.Links = new Link[]
             {
@@ -1085,7 +1088,7 @@ namespace IndustrialPark.Randomizer
             var outAssetIDs = new List<uint>();
             for (int i = 0; i < 3; i++)
             {
-                var timer = (AssetTIMR)PlaceTemplate(new Vector3(), defaultLayerIndex, ref outAssetIDs, "IP_RANDO_PLAYER_TIMR", template: AssetTemplate.Timer);
+                var timer = (AssetTIMR)PlaceTemplate(new Vector3(), ref outAssetIDs, "IP_RANDO_PLAYER_TIMR", template: AssetTemplate.Timer);
                 timer.Time = 0.1f;
                 timer.Links = new Link[]
                 {
@@ -1183,7 +1186,6 @@ namespace IndustrialPark.Randomizer
 
         private void CreateKids(AssetVIL vil)
         {
-            int layerIndex = GetLayerFromAssetID(vil.assetID);
             var position = new Vector3(vil.PositionX, vil.PositionY, vil.PositionZ);
             var links = new List<Link>(); // vil.Links.ToList();
 
@@ -1192,7 +1194,7 @@ namespace IndustrialPark.Randomizer
                 var dogCount = 3;
                 for (int i = 0; i < dogCount; i++)
                 {
-                    var dog = PlaceTemplate(position, layerIndex, vil.assetName + "_DOG" + i.ToString(), AssetTemplate.ArfDog);
+                    var dog = PlaceTemplate(position, vil.assetName + "_DOG" + i.ToString(), AssetTemplate.ArfDog);
                     links.Add(new Link(game)
                     {
                         TargetAsset = dog.assetID,
@@ -1217,7 +1219,7 @@ namespace IndustrialPark.Randomizer
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    var slave = PlaceTemplate(position, layerIndex, vil.assetName + "_SLAVE" + i.ToString(), AssetTemplate.TubeletSlave);
+                    var slave = PlaceTemplate(position, vil.assetName + "_SLAVE" + i.ToString(), AssetTemplate.TubeletSlave);
                     links.Add(new Link(game)
                     {
                         TargetAsset = slave.assetID,
@@ -2064,7 +2066,7 @@ namespace IndustrialPark.Randomizer
 
         private bool MakeLevelInvisible()
         {
-            var assets = (from asset in assetDictionary.Values where asset.assetType == AssetType.JSP select (AssetWithData)asset).ToList();
+            var assets = (from asset in assetDictionary.Values where asset.assetType == AssetType.JSP select (AssetJSP)asset).ToList();
 
             foreach (var a in assets)
             {
@@ -2232,8 +2234,7 @@ namespace IndustrialPark.Randomizer
         {
             if (LevelName == "hb01")
             {
-                int defaultLayer = GetLayerFromAssetID(new AssetID("EXIT_TO_HB05"));
-                AssetPKUP spatula = (AssetPKUP)PlaceTemplate(new Vector3(8.774022f, 5.877692f, -23.492590f), defaultLayer, template: AssetTemplate.Spatula);
+                AssetPKUP spatula = (AssetPKUP)PlaceTemplate(new Vector3(8.774022f, 5.877692f, -23.492590f), template: AssetTemplate.Spatula);
                 spatula.Links = new Link[]
                 {
                     new Link(game)
@@ -2261,8 +2262,7 @@ namespace IndustrialPark.Randomizer
                     if (ContainsAsset(dpat) && GetFromAssetID(dpat) is AssetDPAT dispatcher)
                     {
                         dispatcher.EnabledOnStart = false;
-                        int defaultLayer = GetLayerFromAssetID(dpat);
-                        AssetTIMR timer = (AssetTIMR)PlaceTemplate(defaultLayer, template: AssetTemplate.Timer);
+                        AssetTIMR timer = (AssetTIMR)PlaceTemplate(template: AssetTemplate.Timer);
                         timer.Time = 1f;
                         uint boss = new AssetID("BOSS_NPC");
                         if (ContainsAsset(boss) && GetFromAssetID(boss) is AssetVIL spongebot)
@@ -2683,8 +2683,6 @@ namespace IndustrialPark.Randomizer
             uint assetID = new AssetID("RSB_laugh_8");
             RemoveAsset(assetID);
             ProgImportHip("Utility", "robot_laugh.HIP");
-            DICT.LTOC.LHDRList.RemoveAt(14);
-            DICT.LTOC.LHDRList[13].assetIDlist.Add(assetID);
             return true;
         }
 
@@ -3007,17 +3005,9 @@ namespace IndustrialPark.Randomizer
             if (ContainsAsset(new AssetID(musicDispAssetName + "_01")) && ContainsAsset(new AssetID(musicGroupAssetName + "_01")))
                 return false;
 
-            int defaultLayerIndex = -1;
-            for (int i = 0; i < DICT.LTOC.LHDRList.Count; i++)
-                if (DICT.LTOC.LHDRList[i].layerType == (int)LayerType_BFBB.DEFAULT)
-                {
-                    defaultLayerIndex = i;
-                    break;
-                }
+            var dpat = PlaceTemplate( musicDispAssetName, template: AssetTemplate.Dispatcher);
 
-            var dpat = PlaceTemplate(defaultLayerIndex, musicDispAssetName, template: AssetTemplate.Dispatcher);
-
-            var group = (AssetGRUP)PlaceTemplate(defaultLayerIndex, musicGroupAssetName, template: AssetTemplate.Group);
+            var group = (AssetGRUP)PlaceTemplate(musicGroupAssetName, template: AssetTemplate.Group);
             group.ReceiveEventDelegation = Delegation.RandomItem;
             group.Links = new Link[]
             {
@@ -3035,7 +3025,7 @@ namespace IndustrialPark.Randomizer
                 if (i == 7 || i == 14)
                     continue;
 
-                var timer = (AssetTIMR)PlaceTemplate(new Vector3(), defaultLayerIndex, ref outAssetIDs, "IP_RANDO_TIMR", template: AssetTemplate.Timer);
+                var timer = (AssetTIMR)PlaceTemplate(new Vector3(), ref outAssetIDs, "IP_RANDO_TIMR", template: AssetTemplate.Timer);
                 timer.Time = 0.1f;
                 var links = new List<Link>()
                 {
@@ -3118,7 +3108,7 @@ namespace IndustrialPark.Randomizer
                                 string serializedObject = JsonConvert.SerializeObject(plat.BuildAHDR());
                                 Section_AHDR AHDR = JsonConvert.DeserializeObject<Section_AHDR>(serializedObject);
 
-                                uint newAssetID = AddAssetWithUniqueID(GetLayerFromAssetID(numRightAssetID), AHDR, game, platform.Endianness());
+                                uint newAssetID = AddAssetWithUniqueID(AHDR, game, platform.Endianness());
 
                                 var plat2 = (AssetPLAT)GetFromAssetID(newAssetID);
 

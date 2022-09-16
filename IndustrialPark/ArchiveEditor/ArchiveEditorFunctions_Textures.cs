@@ -128,21 +128,23 @@ namespace IndustrialPark
         {
             UnsavedChanges = true;
 
-            List<Section_LHDR> LHDRs = new List<Section_LHDR>
+            int prev = SelectedLayerIndex;
+            if (!NoLayers)
             {
-                new Section_LHDR()
+                var layers = new List<Layer>
                 {
-                    layerType = 1,
-                    assetIDlist = new List<uint>(),
-                    LDBG = new Section_LDBG(-1)
-                }
-            };
-            LHDRs.AddRange(DICT.LTOC.LHDRList);
-            DICT.LTOC.LHDRList = LHDRs;
+                    new Layer(1)
+                };
+                layers.AddRange(Layers);
+                Layers = layers;
+                SelectedLayerIndex = 0;
+            }
 
             List<Section_AHDR> AHDRs = GetAssetsFromTextureDictionary(fileName, RW3);
+            ImportMultipleAssets(AHDRs, true);
 
-            ImportMultipleAssets(0, AHDRs, true);
+            if (!NoLayers)
+                SelectedLayerIndex = prev;
         }
 
         public List<Section_AHDR> GetAssetsFromTextureDictionary(string fileName, bool RW3)

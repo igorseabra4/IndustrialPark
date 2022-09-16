@@ -104,10 +104,14 @@ namespace IndustrialPark.Randomizer
 
         [Category("Scales"), DisplayName("Set Scales"), Description("Applies a fixed scale (size) to assets.")]
         public bool Set_Scale { get; set; }
-        [Category("Scales"), DisplayName("Scale Factor"), Description("Factor to scale the assets."), TypeConverter(typeof(SingleTypeConverter))]
-        public float scaleFactor { get; set; }
-        [Category("Scales"), DisplayName("Scale Physics"), Description("Applies the scale to the player's movement (experimental).")]
-        public bool Set_Scale_Physics { get; set; }
+        [Category("Scales"), DisplayName("Scale Factor X"), Description("Factor to scale the assets."), TypeConverter(typeof(SingleTypeConverter))]
+        public float scaleFactorX { get; set; }
+        [Category("Scales"), DisplayName("Scale Factor Y"), Description("Factor to scale the assets."), TypeConverter(typeof(SingleTypeConverter))]
+        public float scaleFactorY { get; set; }
+        [Category("Scales"), DisplayName("Scale Factor Z"), Description("Factor to scale the assets."), TypeConverter(typeof(SingleTypeConverter))]
+        public float scaleFactorZ { get; set; }
+        //[Category("Scales"), DisplayName("Scale Physics"), Description("Applies the scale to the player's movement (experimental).")]
+        //public bool Set_Scale_Physics { get; set; }
 
         [Category("Scales (Not recommended)"), DisplayName("Scales"), Description("NOT RECOMMENDED\nRandomizes scale (size) of Entity assets.")]
         public bool Scale_Of_Things { get; set; }
@@ -312,7 +316,9 @@ namespace IndustrialPark.Randomizer
             lodtValue = 2f;
             combatMin = 5;
             combatMax = 100;
-            scaleFactor = 1f;
+            scaleFactorX = 1f;
+            scaleFactorY = 1f;
+            scaleFactorZ = 1f;
 
             skipFiles = new string[] { "font", "boot", "plat", "mn", "sp", "pl", "hb10", "db05", "b301", "s006", "b402" };
             skipFilesWarps = new string[] { "hb00", "gy04", "b3", "pg", "s005" };

@@ -1,13 +1,15 @@
 ﻿using RenderWareFile.Sections;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace IndustrialPark
 {
     public partial class MaterialEffectEditor : Form
-    {
+    {        
         private MaterialEffectEditor(Material_0007[] materials)
         {
             InitializeComponent();
@@ -26,13 +28,13 @@ namespace IndustrialPark
 
         public static Material_0007[] GetMaterials(Material_0007[] materials)
         {
-            MaterialEffectEditor eventEditor = new MaterialEffectEditor(materials);
-            eventEditor.ShowDialog();
+            MaterialEffectEditor materialEffectEditor = new MaterialEffectEditor(materials);
+            materialEffectEditor.ShowDialog();
 
-            if (eventEditor.OK)
+            if (materialEffectEditor.OK)
             {
                 List<Material_0007> outMaterials = new List<Material_0007>();
-                foreach (Material_0007 material in eventEditor.listBoxMaterials.Items)
+                foreach (Material_0007 material in materialEffectEditor.listBoxMaterials.Items)
                     outMaterials.Add(material);
 
                 return outMaterials.ToArray();
@@ -52,36 +54,49 @@ namespace IndustrialPark
             Close();
         }
 
-        private Material_0007 currentMaterial => (Material_0007)listBoxMaterials.SelectedItem;
+        private Material_0007[] currentMaterials => listBoxMaterials.SelectedItems.Cast<Material_0007>().ToArray();
 
         private bool programIsChangingStuff = false;
 
         private void listBoxMaterials_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (currentMaterial == null)
+            if (currentMaterials.Count() == 0)
                 return;
 
             programIsChangingStuff = true;
 
             panelColor.BackColor = Color.FromArgb(
-                currentMaterial.materialStruct.color.A,
-                currentMaterial.materialStruct.color.R,
-                currentMaterial.materialStruct.color.G,
-                currentMaterial.materialStruct.color.B);
+                currentMaterials[0].materialStruct.color.A,
+                currentMaterials[0].materialStruct.color.R,
+                currentMaterials[0].materialStruct.color.G,
+                currentMaterials[0].materialStruct.color.B);
 
-            propertyGridTextureInfo.SelectedObject = currentMaterial.texture;
-
-            bool foundMatEffect = false;
-            foreach (var rws in currentMaterial.materialExtension.extensionSectionList)
-                if (rws is MaterialEffectsPLG_0120 matEffects)
-                {
-                    comboBoxMatEffects.SelectedItem = matEffects.MaterialEffectType;
-                    propertyGridMatEffects.SelectedObject = matEffects.materialEffect1;
-                    foundMatEffect = true;
-                    break;
-                }
-            if (!foundMatEffect)
+            propertyGridTextureInfo.SelectedObjects = (from Material_0007 mat in currentMaterials select mat.texture).ToArray();
+            
+            if (currentMaterials.Count() == 1)
             {
+                comboBoxMatEffects.Enabled = true;
+                propertyGridMatEffects.Enabled = true;
+
+                bool foundMatEffect = false;
+                foreach (var rws in currentMaterials[0].materialExtension.extensionSectionList)
+                    if (rws is MaterialEffectsPLG_0120 matEffects)
+                    {
+                        comboBoxMatEffects.SelectedItem = matEffects.MaterialEffectType;
+                        propertyGridMatEffects.SelectedObject = matEffects.materialEffect1;
+                        foundMatEffect = true;
+                        break;
+                    }
+                if (!foundMatEffect)
+                {
+                    comboBoxMatEffects.SelectedItem = null;
+                    propertyGridMatEffects.SelectedObject = null;
+                }
+            }
+            else
+            {
+                comboBoxMatEffects.Enabled = false;
+                propertyGridMatEffects.Enabled = false;
                 comboBoxMatEffects.SelectedItem = null;
                 propertyGridMatEffects.SelectedObject = null;
             }
@@ -91,38 +106,39 @@ namespace IndustrialPark
 
         private void panelColor_Click(object sender, EventArgs e)
         {
-            if (currentMaterial == null)
+            if (currentMaterials.Count() == 0)
                 return;
 
             ColorDialog dialog = new ColorDialog()
             {
                 Color = Color.FromArgb(
-                currentMaterial.materialStruct.color.A,
-                currentMaterial.materialStruct.color.R,
-                currentMaterial.materialStruct.color.G,
-                currentMaterial.materialStruct.color.B)
+                currentMaterials[0].materialStruct.color.A,
+                currentMaterials[0].materialStruct.color.R,
+                currentMaterials[0].materialStruct.color.G,
+                currentMaterials[0].materialStruct.color.B)
             };
 
             if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                currentMaterial.materialStruct.color = new RenderWareFile.Color(
-                    dialog.Color.R,
-                    dialog.Color.G,
-                    dialog.Color.B,
-                    dialog.Color.A);
-                panelColor.BackColor = dialog.Color;
-            }
+                foreach (var currentMaterial in currentMaterials)
+                {
+                    currentMaterial.materialStruct.color = new RenderWareFile.Color(
+                        dialog.Color.R,
+                        dialog.Color.G,
+                        dialog.Color.B,
+                        dialog.Color.A);
+                    panelColor.BackColor = dialog.Color;
+                }
         }
 
         private void comboBoxMatEffects_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (programIsChangingStuff || currentMaterial == null)
+            if (programIsChangingStuff || currentMaterials.Count() != 1)
                 return;
-
+            
             bool foundMatEffect = false;
 
-            for (int i = 0; i < currentMaterial.materialExtension.extensionSectionList.Count; i++)
-                if (currentMaterial.materialExtension.extensionSectionList[i] is MaterialEffectsPLG_0120 matEffects)
+            for (int j = 0; j < currentMaterials[0].materialExtension.extensionSectionList.Count; j++)
+                if (currentMaterials[0].materialExtension.extensionSectionList[j] is MaterialEffectsPLG_0120 matEffects)
                 {
                     matEffects.MaterialEffectType = (MaterialEffectType)comboBoxMatEffects.SelectedItem;
                     propertyGridMatEffects.SelectedObject = matEffects.materialEffect1;
@@ -137,7 +153,17 @@ namespace IndustrialPark
                     MaterialEffectType = (MaterialEffectType)comboBoxMatEffects.SelectedItem
                 };
                 propertyGridMatEffects.SelectedObject = matEffects.materialEffect1;
-                currentMaterial.materialExtension.extensionSectionList.Add(matEffects);
+                currentMaterials[0].materialExtension.extensionSectionList.Add(matEffects);
+            }
+        }
+
+        private void propertyGridTextureInfo_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            var selectedIndices = (from int i in listBoxMaterials.SelectedIndices select i).ToHashSet();
+            for (int i = 0; i < listBoxMaterials.Items.Count; i++)
+            {
+                listBoxMaterials.Items[i] = listBoxMaterials.Items[i];
+                listBoxMaterials.SetSelected(i, selectedIndices.Contains(i));
             }
         }
     }

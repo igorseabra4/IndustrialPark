@@ -177,12 +177,10 @@ namespace IndustrialPark
             toolStripStatusLabelCurrentFilename.Text = "File: " + fileName;
             Text = Path.GetFileName(fileName);
             archive.UnsavedChanges = false;
-
+            
             EnableToolStripMenuItems();
 
-            PopulateLayerTypeComboBox();
-            PopulateLayerComboBox();
-            PopulateAssetList();
+            SetNoLayers(true);
 
             SetupAssetVisibilityButtons();
 
@@ -209,7 +207,7 @@ namespace IndustrialPark
             tXDArchiveToolStripMenuItem.Enabled = true;
             buttonAddLayer.Enabled = true;
             editPACKToolStripMenuItem.Enabled = true;
-            collapseLayersToolStripMenuItem.Enabled = true;
+            organizeLayersToolStripMenuItem.Enabled = true;
             mergeSimilarAssetsToolStripMenuItem.Enabled = true;
             verifyArchiveToolStripMenuItem.Enabled = true;
             applyScaleToolStripMenuItem.Enabled = true;
@@ -217,6 +215,9 @@ namespace IndustrialPark
 
         private void PopulateLayerTypeComboBox()
         {
+            if (archive.NoLayers)
+                return;
+
             programIsChangingStuff = true;
 
             comboBoxLayerTypes.Items.Clear();
@@ -347,12 +348,14 @@ namespace IndustrialPark
         {
             if (string.IsNullOrWhiteSpace(archive.currentlyOpenFilePath))
                 return "Empty";
-            else
-                return archive.currentlyOpenFilePath;
+            return archive.currentlyOpenFilePath;
         }
 
         private void PopulateLayerComboBox()
         {
+            if (archive.NoLayers)
+                return;
+
             programIsChangingStuff = true;
 
             comboBoxLayers.Items.Clear();
@@ -364,12 +367,14 @@ namespace IndustrialPark
 
         private void comboBoxLayers_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (programIsChangingStuff)
+            if (programIsChangingStuff || archive.NoLayers)
                 return;
 
             programIsChangingStuff = true;
 
-            if (comboBoxLayers.SelectedIndex == -1)
+            archive.SelectedLayerIndex = comboBoxLayers.SelectedIndex;
+
+            if (archive.SelectedLayerIndex == -1 && !archive.NoLayers)
             {
                 comboBoxLayerTypes.SelectedItem = null;
 
@@ -389,10 +394,13 @@ namespace IndustrialPark
             }
             else
             {
-                if (archive.game == Game.Incredibles)
-                    comboBoxLayerTypes.SelectedItem = (LayerType_TSSM)archive.GetLayerType(comboBoxLayers.SelectedIndex);
-                else
-                    comboBoxLayerTypes.SelectedItem = (LayerType_BFBB)archive.GetLayerType(comboBoxLayers.SelectedIndex);
+                if (!archive.NoLayers)
+                {
+                    if (archive.game == Game.Incredibles)
+                        comboBoxLayerTypes.SelectedItem = (LayerType_TSSM)archive.GetLayerType();
+                    else
+                        comboBoxLayerTypes.SelectedItem = (LayerType_BFBB)archive.GetLayerType();
+                }
 
                 PopulateAssetListAndComboBox();
 
@@ -412,11 +420,11 @@ namespace IndustrialPark
 
         private void comboBoxLayerTypes_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (programIsChangingStuff || comboBoxLayers.SelectedItem == null)
+            if (programIsChangingStuff || archive.SelectedLayerIndex == -1)
                 return;
 
-            archive.SetLayerType(comboBoxLayers.SelectedIndex, (int)comboBoxLayerTypes.SelectedItem);
-            comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
+            archive.SetLayerType((int)comboBoxLayerTypes.SelectedItem);
+            comboBoxLayers.Items[archive.SelectedLayerIndex] = archive.LayerToString();
             archive.UnsavedChanges = true;
         }
 
@@ -425,8 +433,8 @@ namespace IndustrialPark
             try
             {
                 archive.AddLayer();
-                comboBoxLayers.Items.Add(archive.LayerToString(archive.LayerCount - 1));
-                comboBoxLayers.SelectedIndex = comboBoxLayers.Items.Count - 1;
+                comboBoxLayers.Items.Add(archive.LayerToString());
+                comboBoxLayers.SelectedIndex = archive.SelectedLayerIndex;
                 PopulateAssetListAndComboBox();
                 archive.UnsavedChanges = true;
             }
@@ -438,15 +446,15 @@ namespace IndustrialPark
 
         private void buttonRemoveLayer_Click(object sender, EventArgs e)
         {
-            int cnt = archive.GetAssetIDsOnLayer(comboBoxLayers.SelectedIndex).Count;
+            int cnt = archive.GetAssetIDsOnLayer().Count;
             if (cnt > 0 &&
                 MessageBox.Show($"Are you sure you want to delete this layer with {cnt} assets?", "Warning",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
                 return;
 
-            int previndex = comboBoxLayers.SelectedIndex;
+            int previndex = archive.SelectedLayerIndex;
 
-            archive.RemoveLayer(comboBoxLayers.SelectedIndex);
+            archive.RemoveLayer();
 
             PopulateLayerComboBox();
 
@@ -463,7 +471,7 @@ namespace IndustrialPark
                 buttonAddAsset.Enabled = false;
                 buttonPaste.Enabled = false;
                 buttonRemoveLayer.Enabled = false;
-                collapseLayersToolStripMenuItem.Enabled = false;
+                organizeLayersToolStripMenuItem.Enabled = false;
                 mergeSimilarAssetsToolStripMenuItem.Enabled = false;
                 verifyArchiveToolStripMenuItem.Enabled = false;
                 applyScaleToolStripMenuItem.Enabled = false;
@@ -486,63 +494,37 @@ namespace IndustrialPark
 
         private void buttonArrowUp_Click(object sender, EventArgs e)
         {
-            int previndex = comboBoxLayers.SelectedIndex;
-            archive.MoveLayerUp(comboBoxLayers.SelectedIndex);
+            int previndex = archive.SelectedLayerIndex;
+            archive.MoveLayerUp();
             PopulateLayerComboBox();
             comboBoxLayers.SelectedIndex = Math.Max(previndex - 1, 0);
         }
 
         private void buttonArrowDown_Click(object sender, EventArgs e)
         {
-            int previndex = comboBoxLayers.SelectedIndex;
-            archive.MoveLayerDown(comboBoxLayers.SelectedIndex);
+            int previndex = archive.SelectedLayerIndex;
+            archive.MoveLayerDown();
             PopulateLayerComboBox();
             comboBoxLayers.SelectedIndex = Math.Min(previndex + 1, comboBoxLayers.Items.Count - 1);
         }
 
-        public static bool LegacyAssetNameFormat = false;
-
-        public static string AssetTypeToString(AssetType assetType)
-        {
-            if (assetType == AssetType.Null)
-                return "All";
-
-            if (LegacyAssetNameFormat)
-            {
-                if (assetType.IsDyna())
-                    return $"{Functions.GetCode(assetType)} ({assetType})";
-                return Functions.GetCode(assetType);
-            }
-            return assetType.ToString();
-        }
-
-        private void PopulateAssetListAndComboBox()
+        public void PopulateAssetListAndComboBox()
         {
             programIsChangingStuff = true;
 
             comboBoxAssetTypes.Items.Clear();
-            comboBoxAssetTypes.Items.Add(new AssetTypeContainer(AssetType.Null));
-            comboBoxAssetTypes.Items.AddRange(archive.AssetTypesOnLayer(comboBoxLayers.SelectedIndex).Select(f => new AssetTypeContainer(f)).OrderBy(f => f.ToString()).ToArray());
+            if (archive.NoLayers || archive.SelectedLayerIndex != -1)
+            {
+                comboBoxAssetTypes.Items.Add(new AssetTypeContainer(AssetType.Null));
+                comboBoxAssetTypes.Items.AddRange(archive.AssetTypesOnLayer().Select(f => new AssetTypeContainer(f)).OrderBy(f => f.ToString()).ToArray());
+                comboBoxAssetTypes.SelectedIndex = 0;
+            }
+            else
+                comboBoxAssetTypes.SelectedIndex = -1;
 
-            comboBoxAssetTypes.SelectedIndex = 0;
             PopulateAssetList();
 
             programIsChangingStuff = false;
-        }
-
-        public class AssetTypeContainer
-        {
-            public AssetType assetType;
-
-            public AssetTypeContainer(AssetType assetType)
-            {
-                this.assetType = assetType;
-            }
-
-            public override string ToString()
-            {
-                return AssetTypeToString(assetType);
-            }
         }
 
         private AssetType curType = AssetType.Null;
@@ -553,13 +535,11 @@ namespace IndustrialPark
             listViewAssets.BeginUpdate();
             listViewAssets.Items.Clear();
 
-            if (comboBoxLayers.SelectedItem != null)
+            if (archive.NoLayers || comboBoxLayers.SelectedItem != null)
             {
                 if (assetIDs == null)
-                {
-                    assetIDs = archive.GetAssetIDsOnLayer(comboBoxLayers.SelectedIndex);
-                }
-
+                    assetIDs = archive.GetAssetIDsOnLayer();
+                
                 List<ListViewItem> items = new List<ListViewItem>(assetIDs.Count());
 
                 for (int i = 0; i < assetIDs.Count(); i++)
@@ -675,10 +655,8 @@ namespace IndustrialPark
 
         private void listViewAssets_ColumnClick(object sender, ColumnClickEventArgs e)
         {
-            if (e.Column == prevColumn)
-                reverseSorting = !reverseSorting;
-            else
-                reverseSorting = false;
+            reverseSorting = (e.Column == prevColumn) && !reverseSorting;
+
             prevColumn = e.Column;
             
             listViewAssets.ListViewItemSorter = new AssetListViewSorter(e.Column, reverseSorting);
@@ -704,11 +682,12 @@ namespace IndustrialPark
 
         private void buttonAddAsset_Click(object sender, EventArgs e)
         {
-            uint? assetID = archive.CreateNewAsset(comboBoxLayers.SelectedIndex);
+            uint? assetID = archive.CreateNewAsset();
 
             if (assetID.HasValue)
             {
-                comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
+                if (!archive.NoLayers)
+                    comboBoxLayers.Items[archive.SelectedLayerIndex] = archive.LayerToString();
                 SetSelectedIndex(assetID.Value, true);
                 SetupAssetVisibilityButtons();
             }
@@ -720,8 +699,9 @@ namespace IndustrialPark
 
             if (AHDRs != null)
             {
-                List<uint> assetIDs = archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, overwrite);
-                comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
+                List<uint> assetIDs = archive.ImportMultipleAssets(AHDRs, overwrite);
+                if (!archive.NoLayers)
+                    comboBoxLayers.Items[archive.SelectedLayerIndex] = archive.LayerToString();
                 OnEditorUpdate();
                 SetSelectedIndices(assetIDs, true);
             }
@@ -733,7 +713,7 @@ namespace IndustrialPark
 
             if (AHDRs != null)
             {
-                List<uint> assetIDs = archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, overwrite);
+                List<uint> assetIDs = archive.ImportMultipleAssets(AHDRs, overwrite);
                 if (piptVcolors)
                     archive.MakePiptVcolors(assetIDs);
                 if (makeSimps)
@@ -750,8 +730,9 @@ namespace IndustrialPark
 
             if (AHDRs != null)
             {
-                List<uint> assetIDs = archive.ImportMultipleAssets(comboBoxLayers.SelectedIndex, AHDRs, overwrite);
-                comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
+                List<uint> assetIDs = archive.ImportMultipleAssets(AHDRs, overwrite);
+                if (!archive.NoLayers)
+                    comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString();
                 OnEditorUpdate();
                 SetSelectedIndices(assetIDs, true);
             }
@@ -761,10 +742,11 @@ namespace IndustrialPark
         {
             if (listViewAssets.SelectedItems.Count == 0) return;
 
-            archive.DuplicateSelectedAssets(comboBoxLayers.SelectedIndex, out List<uint> finalIndices);
+            archive.DuplicateSelectedAssets(out List<uint> finalIndices);
 
-            comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
-            SetSelectedIndices(finalIndices, false);
+            if (!archive.NoLayers)
+                comboBoxLayers.Items[archive.SelectedLayerIndex] = archive.LayerToString();
+            SetSelectedIndices(finalIndices, true);
         }
 
         private void buttonCopy_Click(object sender, EventArgs e)
@@ -776,9 +758,10 @@ namespace IndustrialPark
 
         private void buttonPaste_Click(object sender, EventArgs e)
         {
-            archive.PasteAssetsFromClipboard(comboBoxLayers.SelectedIndex, out List<uint> finalIndices);
+            archive.PasteAssetsFromClipboard(out List<uint> finalIndices);
 
-            comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
+            if (!archive.NoLayers)
+                comboBoxLayers.Items[archive.SelectedLayerIndex] = archive.LayerToString();
 
             SetSelectedIndices(finalIndices, true);
             SetupAssetVisibilityButtons();
@@ -797,7 +780,8 @@ namespace IndustrialPark
 
             archive.RemoveAsset(CurrentlySelectedAssetIDs());
 
-            comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
+            if (!archive.NoLayers)
+                comboBoxLayers.Items[archive.SelectedLayerIndex] = archive.LayerToString();
 
             archive.UnsavedChanges = true;
             listViewAssets.BeginUpdate();
@@ -856,7 +840,7 @@ namespace IndustrialPark
                     while (archive.ContainsAsset(AHDR.assetID))
                         MessageBox.Show($"Archive already contains asset id [{AHDR.assetID:X8}]. Will change it to [{++AHDR.assetID:X8}].");
 
-                    archive.AddAsset(comboBoxLayers.SelectedIndex, AHDR, asset.game, asset.endianness, true);
+                    archive.AddAsset(AHDR, asset.game, asset.endianness, true);
 
                     SetSelectedIndex(AHDR.assetID, true);
                 }
@@ -1028,15 +1012,11 @@ namespace IndustrialPark
                     return;
                 }
 
-            AssetType assetType = AssetType.Null;
+            var firstOrDefault = assetIDs.FirstOrDefault();
+            AssetType assetType = archive.GetFromAssetID(firstOrDefault).assetType;
 
-            foreach (uint u in assetIDs)
-            {
-                assetType = archive.GetFromAssetID(u).assetType;
-                if (archive.GetLayerFromAssetID(u) != comboBoxLayers.SelectedIndex)
-                    comboBoxLayers.SelectedIndex = archive.GetLayerFromAssetID(u);
-                break;
-            }
+            if (!archive.NoLayers && archive.GetLayerFromAssetID(firstOrDefault) != archive.SelectedLayerIndex)
+                comboBoxLayers.SelectedIndex = archive.GetLayerFromAssetID(firstOrDefault);
 
             foreach (uint u in assetIDs)
                 if (archive.GetFromAssetID(u).assetType != assetType)
@@ -1071,15 +1051,15 @@ namespace IndustrialPark
 
         private void SelectAssetTypeOnBox(AssetType assetType)
         {
-            foreach (var v in comboBoxAssetTypes.Items)
-                if (((AssetTypeContainer)v).assetType == assetType)
+            foreach (AssetTypeContainer atc in comboBoxAssetTypes.Items)
+                if (atc.assetType == assetType)
                 {
-                    comboBoxAssetTypes.SelectedItem = v;
+                    comboBoxAssetTypes.SelectedItem = atc;
                     break;
                 }
         }
 
-        readonly System.Drawing.Color defaultColor;
+        private readonly System.Drawing.Color defaultColor;
 
         private void textBoxFindAsset_TextChanged(object sender, EventArgs e)
         {
@@ -1103,11 +1083,11 @@ namespace IndustrialPark
                     if (a.assetName.ToLower().Contains(textBoxFindAsset.Text.ToLower()))
                         assetIDs.Add(a.assetID);
 
-            foreach (uint u in assetIDs)
+            if (!archive.NoLayers)
             {
-                if (archive.GetLayerFromAssetID(u) != comboBoxLayers.SelectedIndex || comboBoxLayers.SelectedIndex == -1)
-                    comboBoxLayers.SelectedIndex = archive.GetLayerFromAssetID(u);
-                break;
+                var firstOrDef = assetIDs.FirstOrDefault();
+                if (archive.GetLayerFromAssetID(firstOrDef) != comboBoxLayers.SelectedIndex || comboBoxLayers.SelectedIndex == -1)
+                    comboBoxLayers.SelectedIndex = archive.GetLayerFromAssetID(firstOrDef);
             }
 
             if (comboBoxAssetTypes.Items.Count > 0)
@@ -1126,9 +1106,12 @@ namespace IndustrialPark
             }
         }
 
-        private void collapseLayersToolStripMenuItem_Click(object sender, EventArgs e)
+        private void organizeLayersToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            archive.CollapseLayers();
+            if (archive.NoLayers)
+                return;
+
+            archive.OrganizeLayers();
             PopulateLayerComboBox();
             comboBoxLayers.SelectedIndex = -1;
             comboBoxLayers_SelectedIndexChanged(sender, e);
@@ -1155,16 +1138,9 @@ namespace IndustrialPark
 
         private void applyScaleToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var scale = ApplyScale.GetScale();
-
-            if (scale.HasValue)
-            {
-                string question = $"Are you sure you want to scale all assets by a factor of [{scale.Value.X}, {scale.Value.Y}, {scale.Value.Z}]? " +
-                    $"To undo this, you must scale it by a factor of [{1 / scale.Value.X}, {1 / scale.Value.Y}, {1 / scale.Value.Z}], and precision might be lost in the process, resulting in some objects slighly off from their intented placement.";
-                DialogResult dialogResult = MessageBox.Show(question, "Apply Scale", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (dialogResult == DialogResult.Yes)
-                    archive.ApplyScale(scale.Value);
-            }
+            var applyScale = ApplyScale.GetScaleWithAssets(archive.ScalableAssetTypesOnArchive().Select(a => new AssetTypeContainer(a)).OrderBy(t => t.ToString()));
+            if (applyScale.HasValue)
+                archive.ApplyScale(applyScale.Value.Item1, applyScale.Value.Item2);
         }
 
         private void MergeSimilarAssetsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1274,7 +1250,7 @@ namespace IndustrialPark
 
         public List<uint> PlaceTemplate(Vector3 position, AssetTemplate template = AssetTemplate.Null)
         {
-            if (comboBoxLayers.SelectedIndex == -1)
+            if (!archive.NoLayers && comboBoxLayers.SelectedIndex == -1)
             {
                 MessageBox.Show("Please select a layer to place your asset in!");
                 return null;
@@ -1282,12 +1258,13 @@ namespace IndustrialPark
 
             List<uint> assetIDs = new List<uint>();
 
-            archive.PlaceTemplate(position, comboBoxLayers.SelectedIndex, ref assetIDs, template: template);
+            archive.PlaceTemplate(position, ref assetIDs, template: template);
 
             if (assetIDs.Count != 0)
             {
                 archive.UnsavedChanges = true;
-                comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(comboBoxLayers.SelectedIndex);
+                if (!archive.NoLayers)
+                    comboBoxLayers.Items[archive.SelectedLayerIndex] = archive.LayerToString();
                 SetSelectedIndices(assetIDs, true);
             }
 
@@ -1299,8 +1276,12 @@ namespace IndustrialPark
             var ids = CurrentlySelectedAssetIDs();
             var assetIDs = PlaceTemplate(new Vector3(), AssetTemplate.Group);
             if (assetIDs != null && assetIDs.Count > 0)
-                ((AssetGRUP)archive.GetFromAssetID(assetIDs[0])).AddItems(ids);
-            SetupAssetVisibilityButtons();
+            {
+                var asset = (AssetGRUP)archive.GetFromAssetID(assetIDs[0]);
+                asset.AddItems(ids);
+                PopulateAssetListAndComboBox();
+                SetSelectedIndex(asset.assetID, true);
+            }
         }
 
         public bool TemplateFocus => checkBoxTemplateFocus.Checked;
@@ -1598,8 +1579,10 @@ namespace IndustrialPark
 
                 for (int i = 0; i < archive.LayerCount; i++)
                 {
-                    assetTypesOnLayer = archive.AssetTypesOnLayer(i);
-                    output.WriteLine($"{archive.LayerToString(i)}");
+                    archive.SelectedLayerIndex = i;
+
+                    assetTypesOnLayer = archive.AssetTypesOnLayer();
+                    output.WriteLine($"{archive.LayerToString()}");
                     output.Write($"{assetTypesOnLayer.Count} asset type(s) [");
                     foreach (var assetType in assetTypesOnLayer)
                     {
@@ -1607,8 +1590,7 @@ namespace IndustrialPark
                     }
                     output.WriteLine("]");
 
-                    assetIDsOnLayer = archive.GetAssetIDsOnLayer(i);
-
+                    assetIDsOnLayer = archive.GetAssetIDsOnLayer();
 
                     for (int j = 0; j < assetIDsOnLayer.Count(); j++)
                     {
@@ -1616,13 +1598,9 @@ namespace IndustrialPark
 
                         output.WriteLine($"    {Convert.ToString(asset.assetID, 16)}: {asset.assetName}");
                         if (asset.isInvisible)
-                        {
                             numOfInvisibleAssets++;
-                        }
                     }
                     output.WriteLine("");
-                    
-
                 }
                 output.WriteLine($"Number of invisible assets: {numOfInvisibleAssets}");
                 output.WriteLine("");
@@ -1634,9 +1612,9 @@ namespace IndustrialPark
                 foreach (var asset in allAssets)
                 {
                     // If Base asset, get list of links.
-                    if (asset is BaseAsset)
+                    if (asset is BaseAsset baseAsset)
                     {
-                        Link[] links = ((BaseAsset)asset).Links;
+                        Link[] links = baseAsset.Links;
                         if (links.Length > 0)
                         {
                             output.WriteLine($"{asset.assetName}: {links.Length} links");
@@ -1646,13 +1624,13 @@ namespace IndustrialPark
                                 string eventSendIDName = "";
                                 string eventReceiveIDName = "";
 
-                                if (archive.game == Game.BFBB) // BFBB
+                                if (archive.game == Game.BFBB || archive.game == Game.Scooby) // BFBB
                                 {
                                     eventSendIDName = ((EventBFBB)link.EventSendID).ToString();
                                     eventReceiveIDName = ((EventBFBB)link.EventReceiveID).ToString();
-                                } else if (archive.game == Game.Scooby) // Scooby
+                                }
+                                else if (archive.game == Game.Scooby) // Scooby
                                 {
-                                    // TODO: Scooby events
                                 }
                                 else if (archive.game == Game.Incredibles) // TSSM/Incredibles/ROTU
                                 {
@@ -1675,7 +1653,6 @@ namespace IndustrialPark
                                 eventSendIDName = eventSendIDName == "" ? link.EventSendID.ToString() : eventSendIDName;
                                 eventReceiveIDName = eventReceiveIDName == "" ? link.EventReceiveID.ToString() : eventReceiveIDName;
 
-
                                 string targetAssetName = "";
                                 try
                                 {
@@ -1692,8 +1669,6 @@ namespace IndustrialPark
                         }
                     }
                 }
-
-
 
                 output.WriteLine("\nUNUSED MODELS");
                 output.WriteLine("-------------");
@@ -1713,7 +1688,6 @@ namespace IndustrialPark
                             output.WriteLine($"  {Convert.ToString(asset.assetID, 16)}: {asset.assetName}");
                             numOfUnusedModels++;
                         }
-
                     }
                 }
 
@@ -1721,12 +1695,10 @@ namespace IndustrialPark
 
                 // Find who Targets Me throws an exception sometimes :(
 
-
                 output.WriteLine("\n#### END OF REPORT ####");
                 stopwatch.Stop();
                 output.WriteLine($"Report generated in {Math.Round(stopwatch.Elapsed.TotalMilliseconds,2)} ms.");
             }
-
 
             if (generationWasSuccessful)
             {
@@ -1735,7 +1707,7 @@ namespace IndustrialPark
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Information) == DialogResult.Yes)
                 {
-                    System.Diagnostics.Process.Start(filepath);
+                    Process.Start(filepath);
                 }
             }
             else
@@ -1747,6 +1719,61 @@ namespace IndustrialPark
         private void generateToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _generateReportTxt();
+        }
+
+        private void hideToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            archive.NoLayers = hideLayersToolStripMenuItem.Checked;
+            SetNoLayers(false);
+        }
+
+        private void SetNoLayers(bool startup)
+        {
+            if (archive.NoLayers)
+            {
+                hideLayersToolStripMenuItem.Checked = true;
+
+                groupBoxLayers.Visible = false;
+                groupBoxAssets.Location = new System.Drawing.Point(groupBoxAssets.Location.X, groupBoxAssets.Location.Y - 53);
+                groupBoxAssets.Size = new System.Drawing.Size(groupBoxAssets.Size.Width, groupBoxAssets.Size.Height + 53);
+
+                buttonAddAsset.Enabled = true;
+                buttonPaste.Enabled = true;
+                importMultipleAssetsToolStripMenuItem.Enabled = true;
+                importModelsToolStripMenuItem.Enabled = true;
+                importTexturesToolStripMenuItem.Enabled = true;
+                addTemplateToolStripMenuItem.Enabled = true;
+
+                organizeLayersToolStripMenuItem.Enabled = false;
+            }
+            else
+            {
+                hideLayersToolStripMenuItem.Checked = false;
+
+                groupBoxLayers.Visible = true;
+                if (!startup)
+                {
+                    groupBoxAssets.Location = new System.Drawing.Point(groupBoxAssets.Location.X, groupBoxAssets.Location.Y + 53);
+                    groupBoxAssets.Size = new System.Drawing.Size(groupBoxAssets.Size.Width, groupBoxAssets.Size.Height - 53);
+                }
+
+                PopulateLayerTypeComboBox();
+                PopulateLayerComboBox();
+
+                buttonAddAsset.Enabled = false;
+                buttonPaste.Enabled = false;
+                buttonRemoveLayer.Enabled = false;
+                buttonArrowUp.Enabled = false;
+                buttonArrowDown.Enabled = false;
+                importMultipleAssetsToolStripMenuItem.Enabled = false;
+                importModelsToolStripMenuItem.Enabled = false;
+                importTexturesToolStripMenuItem.Enabled = false;
+                addTemplateToolStripMenuItem.Enabled = false;
+
+                organizeLayersToolStripMenuItem.Enabled = true;
+            }
+
+            PopulateAssetListAndComboBox();
         }
     }
 }

@@ -137,7 +137,9 @@ namespace IndustrialPark
 
         public override void CreateTransformMatrix()
         {
-            world = Matrix.Scaling(_scale)
+            world = (renderingDictionary.ContainsKey(DynaGObjectRingControl.RingModelAssetID) ?
+                renderingDictionary[DynaGObjectRingControl.RingModelAssetID].TransformMatrix : Matrix.Identity)
+                * Matrix.Scaling(_scale)
                 * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                 * Matrix.Translation(_position);
 

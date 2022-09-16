@@ -8,6 +8,8 @@ using static IndustrialPark.Models.Assimp_IO;
 using static IndustrialPark.Models.BSP_IO;
 using static IndustrialPark.Models.BSP_IO_Shared;
 using HipHopFile;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace IndustrialPark
 {
@@ -36,7 +38,7 @@ namespace IndustrialPark
             else if (asset is AssetUIM uim) SetupForUim(uim);
             else if (asset is AssetWIRE wire) SetupForWire(wire);
 
-            AddRow();
+            AddRow(ButtonSize);
 
             Button buttonHelp = new Button() { Dock = DockStyle.Fill, Text = "Open Wiki Page", AutoSize = true };
             buttonHelp.Click += (object sender, EventArgs e) =>
@@ -50,10 +52,11 @@ namespace IndustrialPark
 
             for (int i = 1; i < tableLayoutPanel1.RowCount; i++)
             {
+                var rs = new RowStyle(SizeType.Absolute, RowSizes[i]);
                 if (i < tableLayoutPanel1.RowStyles.Count)
-                    tableLayoutPanel1.RowStyles[i] = (new RowStyle(SizeType.Absolute, 28));
+                    tableLayoutPanel1.RowStyles[i] = rs;
                 else
-                    tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 28));
+                    tableLayoutPanel1.RowStyles.Add(rs);
             }
         }
 
@@ -83,14 +86,20 @@ namespace IndustrialPark
             RefreshPropertyGrid();
         }
 
-        private void AddRow()
+        private List<int> RowSizes = new List<int>() { -1 };
+        private const int ButtonSize = 28;
+        private const int CheckboxLabelSize = 22;
+
+        private int AddRow(int size)
         {
             tableLayoutPanel1.RowCount += 1;
+            RowSizes.Add(size);
+            return tableLayoutPanel1.RowCount - 1;
         }
 
         private void SetupForCam(AssetCAM asset)
         {
-            AddRow();
+            var rowIndex = AddRow(ButtonSize);
 
             Button buttonGetPos = new Button() { Dock = DockStyle.Fill, Text = "Get View Position", AutoSize = true };
             buttonGetPos.Click += (object sender, EventArgs e) =>
@@ -100,7 +109,7 @@ namespace IndustrialPark
                 RefreshPropertyGrid();
                 archive.UnsavedChanges = true;
             };
-            tableLayoutPanel1.Controls.Add(buttonGetPos);
+            tableLayoutPanel1.Controls.Add(buttonGetPos, 0, rowIndex);
 
             Button buttonGetDir = new Button() { Dock = DockStyle.Fill, Text = "Get View Direction", AutoSize = true };
             buttonGetDir.Click += (object sender, EventArgs e) =>
@@ -112,21 +121,21 @@ namespace IndustrialPark
                 RefreshPropertyGrid();
                 archive.UnsavedChanges = true;
             };
-            tableLayoutPanel1.Controls.Add(buttonGetDir);
+            tableLayoutPanel1.Controls.Add(buttonGetDir, 1, rowIndex);
         }
 
         private void SetupForAddSelected(IAssetAddSelected asset)
         {
-            AddRow();
+            var rowIndex = AddRow(ButtonSize);
 
             Button buttonAddSelected = new Button() { Dock = DockStyle.Fill, Text = "Add selected to " + asset.GetItemsText, AutoSize = true };
             buttonAddSelected.Click += (object sender, EventArgs e) =>
             {
-                asset.AddItems(archive.GetCurrentlySelectedAssetIDs());
+                asset.AddItems(archive.GetCurrentlySelectedAssetIDs().ToList());
                 RefreshPropertyGrid();
                 archive.UnsavedChanges = true;
             };
-            tableLayoutPanel1.Controls.Add(buttonAddSelected);
+            tableLayoutPanel1.Controls.Add(buttonAddSelected, 0, rowIndex);
             tableLayoutPanel1.SetColumnSpan(buttonAddSelected, 2);
         }
 
@@ -151,28 +160,60 @@ namespace IndustrialPark
 
         private void SetupForModel(AssetRenderWareModel asset)
         {
-            AddRow();
-            AddRow();
-            AddRow();
-            AddRow();
+            var rowIndex = AddRow(ButtonSize);
 
-            Button buttonSetVertexColors = new Button() { Dock = DockStyle.Fill, Text = "Set Vertex Colors", AutoSize = true };
-            buttonSetVertexColors.Click += (object sender, EventArgs e) =>
+            Button buttonApplyVertexColors = new Button() { Dock = DockStyle.Fill, Text = "Apply Vertex Colors", AutoSize = true };
+            buttonApplyVertexColors.Click += (object sender, EventArgs e) =>
             {
                 var (color, operation) = ApplyVertexColors.GetColor();
-
                 if (color.HasValue)
                 {
-                    asset.SetVertexColors(color.Value, operation, null);
+                    var performOperation = new Func<Vector4, Vector4>((Vector4 oldColor) => new Vector4(
+                        operation.PerformAndClamp(oldColor.X, color.Value.X),
+                        operation.PerformAndClamp(oldColor.Y, color.Value.Y),
+                        operation.PerformAndClamp(oldColor.Z, color.Value.Z),
+                        operation.PerformAndClamp(oldColor.W, color.Value.W)));
+
+                    asset.ApplyVertexColors(performOperation);
                     archive.UnsavedChanges = true;
                 }
             };
-            tableLayoutPanel1.Controls.Add(buttonSetVertexColors, 0, 1);
+            tableLayoutPanel1.Controls.Add(buttonApplyVertexColors, 0, rowIndex);
+
+            Button buttonApplyScale = new Button() { Dock = DockStyle.Fill, Text = "Apply Scale", AutoSize = true };
+            buttonApplyScale.Click += (object sender, EventArgs e) =>
+            {
+                var factor = ApplyScale.GetVector();
+                if (factor.HasValue)
+                {
+                    asset.ApplyScale(factor.Value);
+                    archive.UnsavedChanges = true;
+                }
+            };
+            tableLayoutPanel1.Controls.Add(buttonApplyScale, 1, rowIndex);
+
+            rowIndex = AddRow(CheckboxLabelSize);
+
+            Label importSettings = new Label() { Dock = DockStyle.Fill, Text = "Import settings:", AutoSize = true };
+            tableLayoutPanel1.Controls.Add(importSettings, 0, rowIndex);
+
+            Label exportSettings = new Label() { Dock = DockStyle.Fill, Text = "Export settings:", AutoSize = true };
+            tableLayoutPanel1.Controls.Add(exportSettings, 1, rowIndex);
+
+            rowIndex = AddRow(CheckboxLabelSize);
+
+            CheckBox flipUVs = new CheckBox() { Dock = DockStyle.Fill, Text = "Flip UVs", AutoSize = true };
+            tableLayoutPanel1.Controls.Add(flipUVs, 0, rowIndex);
+
+            CheckBox exportTextures = new CheckBox() { Dock = DockStyle.Fill, Text = "Export Textures", AutoSize = true };
+            tableLayoutPanel1.Controls.Add(exportTextures, 1, rowIndex);
+
+            rowIndex = AddRow(CheckboxLabelSize);
 
             CheckBox ignoreMeshColors = new CheckBox() { Dock = DockStyle.Fill, Text = "Ignore Mesh Colors", AutoSize = true, Checked = true };
-            tableLayoutPanel1.Controls.Add(ignoreMeshColors, 0, 2);
-            CheckBox flipUVs = new CheckBox() { Dock = DockStyle.Fill, Text = "Flip UVs", AutoSize = true };
-            tableLayoutPanel1.Controls.Add(flipUVs, 0, 3);
+            tableLayoutPanel1.Controls.Add(ignoreMeshColors, 0, rowIndex);
+
+            rowIndex = AddRow(ButtonSize);
 
             Button buttonImport = new Button() { Dock = DockStyle.Fill, Text = "Import", AutoSize = true };
             buttonImport.Click += (object sender, EventArgs e) =>
@@ -184,12 +225,12 @@ namespace IndustrialPark
 
                 if (openFile.ShowDialog() == DialogResult.OK)
                 {
-                    if (asset.assetType == HipHopFile.AssetType.Model)
+                    if (asset.assetType == AssetType.Model)
                         asset.Data = Path.GetExtension(openFile.FileName).ToLower().Equals(".dff") ?
                         File.ReadAllBytes(openFile.FileName) :
                         ReadFileMethods.ExportRenderWareFile(CreateDFFFromAssimp(openFile.FileName, flipUVs.Checked, ignoreMeshColors.Checked), modelRenderWareVersion(asset.game));
 
-                    if (asset.assetType == HipHopFile.AssetType.BSP)
+                    if (asset.assetType == AssetType.BSP)
                         asset.Data = Path.GetExtension(openFile.FileName).ToLower().Equals(".bsp") ?
                         File.ReadAllBytes(openFile.FileName) :
                         ReadFileMethods.ExportRenderWareFile(CreateBSPFromAssimp(openFile.FileName, flipUVs.Checked, ignoreMeshColors.Checked), modelRenderWareVersion(asset.game));
@@ -199,10 +240,7 @@ namespace IndustrialPark
                     archive.UnsavedChanges = true;
                 }
             };
-            tableLayoutPanel1.Controls.Add(buttonImport, 0, 4);
-
-            CheckBox exportTextures = new CheckBox() { Dock = DockStyle.Fill, Text = "Export Textures", AutoSize = true };
-            tableLayoutPanel1.Controls.Add(exportTextures, 1, 3);
+            tableLayoutPanel1.Controls.Add(buttonImport, 0, rowIndex);
 
             Button buttonExport = new Button() { Dock = DockStyle.Fill, Text = "Export", AutoSize = true };
             buttonExport.Click += (object sender, EventArgs e) =>
@@ -220,7 +258,7 @@ namespace IndustrialPark
                     {
                         if (format == null)
                             File.WriteAllBytes(a.FileName, asset.Data);
-                        else if (format.FileExtension.ToLower().Equals("obj") && asset.assetType == HipHopFile.AssetType.BSP)
+                        else if (format.FileExtension.ToLower().Equals("obj") && asset.assetType == AssetType.BSP)
                             ConvertBSPtoOBJ(a.FileName, ReadFileMethods.ReadRenderWareFile(asset.Data), true);
                         else
                             ExportAssimp(Path.ChangeExtension(a.FileName, format.FileExtension), ReadFileMethods.ReadRenderWareFile(asset.Data), true, format, textureExtension, Matrix.Identity);
@@ -237,14 +275,14 @@ namespace IndustrialPark
                 }
             };
 
-            tableLayoutPanel1.Controls.Add(buttonExport, 1, 4);
+            tableLayoutPanel1.Controls.Add(buttonExport, 1, rowIndex);
         }
 
         private void SetupForShrp(AssetSHRP asset)
         {
-            AddRow();
-            AddRow();
-            AddRow();
+            AddRow(ButtonSize);
+            AddRow(ButtonSize);
+            AddRow(ButtonSize);
 
             foreach (var i in new int[] { 3, 4, 5, 6, 8, 9 })
             {
@@ -261,10 +299,10 @@ namespace IndustrialPark
 
         private void SetupForUim(AssetUIM asset)
         {
-            AddRow();
-            AddRow();
-            AddRow();
-            AddRow();
+            AddRow(ButtonSize);
+            AddRow(ButtonSize);
+            AddRow(ButtonSize);
+            AddRow(ButtonSize);
 
             foreach (UIMCommandType uimct in Enum.GetValues(typeof(UIMCommandType)))
             {
@@ -281,7 +319,7 @@ namespace IndustrialPark
 
         private void SetupForWire(AssetWIRE asset)
         {
-            AddRow();
+            var rowIndex = AddRow(ButtonSize);
 
             Button buttonImport = new Button() { Dock = DockStyle.Fill, Text = "Import", AutoSize = true };
             buttonImport.Click += (object sender, EventArgs e) =>
@@ -297,7 +335,7 @@ namespace IndustrialPark
                     archive.UnsavedChanges = true;
                 }
             };
-            tableLayoutPanel1.Controls.Add(buttonImport);
+            tableLayoutPanel1.Controls.Add(buttonImport, 0, rowIndex);
 
             Button buttonExport = new Button() { Dock = DockStyle.Fill, Text = "Export", AutoSize = true };
             buttonExport.Click += (object sender, EventArgs e) =>
@@ -310,7 +348,7 @@ namespace IndustrialPark
                 if (saveFile.ShowDialog() == DialogResult.OK)
                     asset.ToObj(saveFile.FileName);
             };
-            tableLayoutPanel1.Controls.Add(buttonExport);
+            tableLayoutPanel1.Controls.Add(buttonExport, 1, rowIndex);
         }
     }
 }

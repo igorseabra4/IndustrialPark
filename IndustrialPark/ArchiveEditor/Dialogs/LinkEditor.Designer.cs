@@ -94,11 +94,12 @@
             this.listBoxLinks.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.listBoxLinks.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.listBoxLinks.FormattingEnabled = true;
             this.listBoxLinks.Location = new System.Drawing.Point(6, 19);
             this.listBoxLinks.Name = "listBoxLinks";
             this.listBoxLinks.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBoxLinks.Size = new System.Drawing.Size(298, 303);
+            this.listBoxLinks.Size = new System.Drawing.Size(298, 301);
             this.listBoxLinks.TabIndex = 1;
             this.listBoxLinks.SelectedIndexChanged += new System.EventHandler(this.listBoxEvents_SelectedIndexChanged);
             // 
@@ -221,6 +222,7 @@
             // textBoxSourceCheckOrFlags
             // 
             this.textBoxSourceCheckOrFlags.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.textBoxSourceCheckOrFlags.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBoxSourceCheckOrFlags.Location = new System.Drawing.Point(6, 19);
             this.textBoxSourceCheckOrFlags.Name = "textBoxSourceCheckOrFlags";
             this.textBoxSourceCheckOrFlags.Size = new System.Drawing.Size(218, 20);
@@ -244,6 +246,7 @@
             // textBoxArgumentAsset
             // 
             this.textBoxArgumentAsset.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.textBoxArgumentAsset.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBoxArgumentAsset.Location = new System.Drawing.Point(6, 19);
             this.textBoxArgumentAsset.Name = "textBoxArgumentAsset";
             this.textBoxArgumentAsset.Size = new System.Drawing.Size(218, 20);
@@ -321,6 +324,7 @@
             // 
             // textBox3
             // 
+            this.textBox3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBox3.Location = new System.Drawing.Point(25, 45);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(86, 20);
@@ -330,6 +334,7 @@
             // 
             // textBox4
             // 
+            this.textBox4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBox4.Location = new System.Drawing.Point(136, 46);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(85, 20);
@@ -339,6 +344,7 @@
             // 
             // textBox2
             // 
+            this.textBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBox2.Location = new System.Drawing.Point(136, 19);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(85, 20);
@@ -348,6 +354,7 @@
             // 
             // textBox1
             // 
+            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBox1.Location = new System.Drawing.Point(25, 19);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(86, 20);
@@ -391,6 +398,7 @@
             // textBoxTargetAsset
             // 
             this.textBoxTargetAsset.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.textBoxTargetAsset.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBoxTargetAsset.Location = new System.Drawing.Point(6, 19);
             this.textBoxTargetAsset.Name = "textBoxTargetAsset";
             this.textBoxTargetAsset.Size = new System.Drawing.Size(218, 20);

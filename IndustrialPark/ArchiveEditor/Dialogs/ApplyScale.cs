@@ -1,12 +1,18 @@
-﻿using SharpDX;
+﻿using HipHopFile;
+using SharpDX;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
+using static IndustrialPark.ArchiveEditor;
 
 namespace IndustrialPark
 {
     public partial class ApplyScale : Form
     {
-        public ApplyScale()
+        private static Vector3 SavedValue = new Vector3(1f, 1f, 1f);
+
+        private ApplyScale(bool hasAssets)
         {
             InitializeComponent();
             TopMost = true;
@@ -17,18 +23,69 @@ namespace IndustrialPark
             numericUpDownX.Maximum = decimal.MaxValue;
             numericUpDownY.Maximum = decimal.MaxValue;
             numericUpDownZ.Maximum = decimal.MaxValue;
+
+            System.Drawing.Point SubHeight(System.Drawing.Point prevLocation) =>
+                new System.Drawing.Point(prevLocation.X, prevLocation.Y - DecreaseHeight);
+
+            if (!hasAssets)
+            {
+                label2.Visible = false;
+                checkedListBoxAssetTypes.Visible = false;
+                Height -= DecreaseHeight;
+                button1.Location = SubHeight(button1.Location);
+                button2.Location = SubHeight(button2.Location);
+            }
+
+            numericUpDownX.Value = (decimal)SavedValue.X;
+            numericUpDownY.Value = (decimal)SavedValue.Y;
+            numericUpDownZ.Value = (decimal)SavedValue.Z;
+
+            SetInverseLabel();
         }
 
-        public static Vector3? GetScale()
+        private const int DecreaseHeight = 189;
+
+        private ApplyScale(IEnumerable<AssetTypeContainer> assetTypes) : this(true)
         {
-            ApplyScale edit = new ApplyScale();
+            foreach (var assetType in assetTypes)
+                checkedListBoxAssetTypes.Items.Add(assetType, true);
+        }
+
+        public static Vector3? GetVector()
+        {
+            ApplyScale edit = new ApplyScale(false);
             edit.ShowDialog();
 
             if (edit.OK)
-                return new Vector3((float)edit.numericUpDownX.Value, (float)edit.numericUpDownY.Value, (float)edit.numericUpDownZ.Value);
+            {
+                edit.SaveValues();
+                return SavedValue;
+            }
             return null;
         }
 
+        private void SaveValues()
+        {
+            SavedValue = GetValue();
+        }
+
+        public static (Vector3, IEnumerable<AssetType>)? GetScaleWithAssets(IEnumerable<AssetTypeContainer> assetTypes)
+        {
+            ApplyScale edit = new ApplyScale(assetTypes);
+            edit.ShowDialog();
+
+            if (edit.OK)
+            {
+                edit.SaveValues();
+                return (SavedValue, edit.GetAssetTypes());
+            }
+            return null;
+        }
+
+        private Vector3 GetValue() => new Vector3((float)numericUpDownX.Value, (float)numericUpDownY.Value, (float)numericUpDownZ.Value);
+        
+        private IEnumerable<AssetType> GetAssetTypes() => checkedListBoxAssetTypes.Items.Cast<AssetTypeContainer>().Select(a => a.assetType);
+        
         private bool OK = false;
 
         private void button1_Click(object sender, EventArgs e)
@@ -40,6 +97,17 @@ namespace IndustrialPark
         private void button2_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void numericUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            SetInverseLabel();
+        }
+
+        private void SetInverseLabel()
+        {
+            var val = GetValue();
+            label1.Text = $"To inverse: [{1.0 / val.X}, {1.0 / val.Y}, {1.0 / val.Z}]";
         }
     }
 }

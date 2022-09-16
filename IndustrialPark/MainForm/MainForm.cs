@@ -154,7 +154,7 @@ namespace IndustrialPark
             HexUIntTypeConverter.Legacy = settings.LegacyAssetIDFormat;
 
             useLegacyAssetTypeFormatToolStripMenuItem.Checked = settings.LegacyAssetTypeFormat;
-            ArchiveEditor.LegacyAssetNameFormat = settings.LegacyAssetTypeFormat;
+            AssetTypeContainer.LegacyAssetNameFormat = settings.LegacyAssetTypeFormat;
 
             discordRichPresenceToolStripMenuItem.Checked = settings.discordRichPresence;
             DiscordRPCController.ToggleDiscordRichPresence(discordRichPresenceToolStripMenuItem.Checked);
@@ -219,7 +219,7 @@ namespace IndustrialPark
                 dontDrawInvisible = RenderWareModelFile.dontDrawInvisible,
                 persistentShinies = ArchiveEditorFunctions.persistentShinies,
                 LegacyAssetIDFormat = HexUIntTypeConverter.Legacy,
-                LegacyAssetTypeFormat = ArchiveEditor.LegacyAssetNameFormat,
+                LegacyAssetTypeFormat = AssetTypeContainer.LegacyAssetNameFormat,
             };
 
             File.WriteAllText(pathToSettings, JsonConvert.SerializeObject(settings, Formatting.Indented));
@@ -372,7 +372,7 @@ namespace IndustrialPark
             List<uint> hiddenAssets = new List<uint>();
 
             foreach (ArchiveEditor ae in archiveEditors)
-                if (!ae.archive.IsNull)
+                if (ae.archive != null && !string.IsNullOrEmpty(ae.GetCurrentlyOpenFileName()))
                 {
                     hips.Add(ae.GetCurrentlyOpenFileName());
                     platforms.Add(ae.archive.platform);
@@ -1080,8 +1080,10 @@ namespace IndustrialPark
         private void useLegacyAssetTypeFormatToolStripMenuItem_Click(object sender, EventArgs e)
         {
             useLegacyAssetTypeFormatToolStripMenuItem.Checked = !useLegacyAssetTypeFormatToolStripMenuItem.Checked;
-            ArchiveEditor.LegacyAssetNameFormat = useLegacyAssetTypeFormatToolStripMenuItem.Checked;
+            AssetTypeContainer.LegacyAssetNameFormat = useLegacyAssetTypeFormatToolStripMenuItem.Checked;
             SetupAssetVisibilityButtons();
+            foreach (var ae in archiveEditors)
+                ae.PopulateAssetListAndComboBox();
         }
 
         private void enableAllToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1150,7 +1152,7 @@ namespace IndustrialPark
             { AssetType.Light, typeof(AssetLITE) },
             { AssetType.Marker, typeof(AssetMRKR) },
             { AssetType.MovePoint, typeof(AssetMVPT) },
-            { AssetType.NPC, typeof(AssetNPC) },
+            { AssetType.Villain, typeof(AssetNPC) },
             { AssetType.Pendulum, typeof(AssetPEND) },
             { AssetType.Pickup, typeof(AssetPKUP) },
             { AssetType.Platform, typeof(AssetPLAT) },
@@ -1163,7 +1165,7 @@ namespace IndustrialPark
             { AssetType.Trigger, typeof(AssetTRIG) },
             { AssetType.UserInterface, typeof(AssetUI) },
             { AssetType.UserInterfaceFont, typeof(AssetUIFT) },
-            { AssetType.VIL, typeof(AssetVIL) },
+            { AssetType.NPC, typeof(AssetVIL) },
             { AssetType.Volume, typeof(AssetVOLU) },
 
             { AssetType.CameraPreset, typeof(DynaCameraPreset) },
@@ -1205,9 +1207,9 @@ namespace IndustrialPark
                 if (!assetViewTypes.ContainsKey(assetType))
                     continue;
 
-                var text = ArchiveEditor.AssetTypeToString(assetType);
-                if (assetType == AssetType.VIL && assetTypes.Contains(AssetType.Duplicator))
-                    text = $"{ArchiveEditor.AssetTypeToString(AssetType.VIL)}/{ArchiveEditor.AssetTypeToString(AssetType.Duplicator)}";
+                var text = AssetTypeContainer.AssetTypeToString(assetType);
+                if (assetType == AssetType.NPC && assetTypes.Contains(AssetType.Duplicator))
+                    text = $"{AssetTypeContainer.AssetTypeToString(AssetType.NPC)}/{AssetTypeContainer.AssetTypeToString(AssetType.Duplicator)}";
 
                 names.Add(assetType, text);
             }

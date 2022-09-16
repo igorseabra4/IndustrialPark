@@ -5,13 +5,9 @@ using SharpDX;
 
 namespace IndustrialPark
 {
-    public class AssetJSP_INFO : AssetWithData, IRenderableAsset
+    public class AssetJSP_INFO : AssetWithData
     {
-        public AssetJSP_INFO(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
-        {
-            CreateTransformMatrix();
-            ArchiveEditorFunctions.AddToRenderableAssets(this);
-        }
+        public AssetJSP_INFO(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness) { }
 
         public override byte[] Serialize(Game game, Endianness endianness) => Data;
 
@@ -65,47 +61,6 @@ namespace IndustrialPark
                 }
             }
             File = sections;
-        }
-
-        public static bool dontRender = false;
-
-        private BoundingBox boundingBox;
-
-        public bool SpecialBlendMode => true;
-
-        public void CreateTransformMatrix()
-        {
-            
-        }
-
-        public float GetDistanceFrom(Vector3 position)
-        {
-            return 0;
-        }
-
-        public bool ShouldDraw(SharpRenderer renderer)
-        {
-            if (isSelected)
-                return true;
-            if (dontRender)
-                return false;
-            if (isInvisible)
-                return false;
-
-            return renderer.frustum.Intersects(ref boundingBox);
-        }
-
-        public void Draw(SharpRenderer renderer)
-        {
-
-        }
-
-        public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
-        {
-            if (!ShouldDraw(renderer))
-                return null;
-
-            return null;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using IndustrialPark.Models;
+using Newtonsoft.Json;
 using RenderWareFile;
 using SharpDX;
 using System;
@@ -12,63 +13,6 @@ namespace IndustrialPark
 {
     public partial class ArchiveEditorFunctions
     {
-        private class LHDRComparer : IComparer<int>
-        {
-            private Game game;
-
-            public LHDRComparer(Game game)
-            {
-                this.game = game;
-            }
-
-            private static readonly List<int> layerOrderBFBB = new List<int> {
-                (int)LayerType_BFBB.TEXTURE,
-                (int)LayerType_BFBB.BSP,
-                (int)LayerType_BFBB.JSPINFO,
-                (int)LayerType_BFBB.MODEL,
-                (int)LayerType_BFBB.ANIMATION,
-                (int)LayerType_BFBB.DEFAULT,
-                (int)LayerType_BFBB.CUTSCENE,
-                (int)LayerType_BFBB.SRAM,
-                (int)LayerType_BFBB.SNDTOC
-            };
-            private static readonly List<int> layerOrderTSSM = new List<int> {
-                (int)LayerType_TSSM.TEXTURE,
-                (int)LayerType_TSSM.TEXTURE_STRM,
-                (int)LayerType_TSSM.BSP,
-                (int)LayerType_TSSM.JSPINFO,
-                (int)LayerType_TSSM.MODEL,
-                (int)LayerType_TSSM.ANIMATION,
-                (int)LayerType_TSSM.DEFAULT,
-                (int)LayerType_TSSM.CUTSCENE,
-                (int)LayerType_TSSM.SRAM,
-                (int)LayerType_TSSM.SNDTOC,
-                (int)LayerType_TSSM.CUTSCENETOC
-            };
-
-            public int Compare(int l1, int l2)
-            {
-                if (l1 == l2)
-                    return 0;
-
-                if (game == Game.Scooby && layerOrderBFBB.Contains(l1) && layerOrderBFBB.Contains(l2))
-                    return layerOrderBFBB.IndexOf(l1) > layerOrderBFBB.IndexOf(l2) ? 1 : -1;
-
-                if (game == Game.BFBB && layerOrderBFBB.Contains(l1) && layerOrderBFBB.Contains(l2))
-                    return layerOrderBFBB.IndexOf(l1) > layerOrderBFBB.IndexOf(l2) ? 1 : -1;
-
-                if (game == Game.Incredibles)
-                {
-                    if ((l1 == 3 && l2 == 11) || (l1 == 11 && l2 == 3))
-                        return 0;
-
-                    if (layerOrderTSSM.Contains(l1) && layerOrderTSSM.Contains(l2))
-                        return layerOrderTSSM.IndexOf(l1) > layerOrderTSSM.IndexOf(l2) ? 1 : -1;
-                }
-
-                return 0;
-            }
-        }
 
         public static List<uint> hiddenAssets = new List<uint>();
 
@@ -91,12 +35,12 @@ namespace IndustrialPark
                     internalEditors[i].Close();
         }
 
-        public void OpenInternalEditor(List<uint> list, bool openAnyway, Action<Asset> updateListView)
+        public void OpenInternalEditor(IEnumerable<uint> list, bool openAnyway, Action<Asset> updateListView)
         {
             bool willOpen = true;
-            if (list.Count > 15 && !openAnyway)
+            if (list.Count() > 15 && !openAnyway)
             {
-                willOpen = MessageBox.Show($"Warning: you're going to open {list.Count} Asset Data Editor windows. Are you sure you want to do that?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
+                willOpen = MessageBox.Show($"Warning: you're going to open {list.Count()} Asset Data Editor windows. Are you sure you want to do that?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
             }
 
             if (willOpen)
@@ -137,7 +81,7 @@ namespace IndustrialPark
 
         private List<InternalMultiAssetEditor> multiInternalEditors = new List<InternalMultiAssetEditor>();
 
-        public void OpenInternalEditorMulti(List<uint> list, Action<Asset> updateListView)
+        public void OpenInternalEditorMulti(IEnumerable<uint> list, Action<Asset> updateListView)
         {
             var assets = new List<Asset>();
             foreach (var u in list)
@@ -402,19 +346,6 @@ namespace IndustrialPark
                 }
         }
 
-        private void CleanSNDI()
-        {
-            foreach (Asset a in assetDictionary.Values)
-                if (a is AssetSNDI_GCN_V1 SNDI_G1)
-                    SNDI_G1.Clean(from Asset a1 in assetDictionary.Values select a1.assetID);
-                else if (a is AssetSNDI_GCN_V2 SNDI_G2)
-                    SNDI_G2.Clean(from Asset a2 in assetDictionary.Values select a2.assetID);
-                else if (a is AssetSNDI_XBOX SNDI_X)
-                    SNDI_X.Clean(from Asset a3 in assetDictionary.Values select a3.assetID);
-                else if (a is AssetSNDI_PS2 SNDI_P)
-                    SNDI_P.Clean(from Asset a4 in assetDictionary.Values select a4.assetID);
-        }
-
         public static AHDRFlags AHDRFlagsFromAssetType(AssetType assetType)
         {
             if (assetType.IsDyna())
@@ -465,8 +396,8 @@ namespace IndustrialPark
                 case AssetType.Trigger:
                 case AssetType.UserInterface:
                 case AssetType.UserInterfaceFont:
-                case AssetType.VIL:
-                case AssetType.VILProperties:
+                case AssetType.NPC:
+                case AssetType.NPCProperties:
                     return AHDRFlags.SOURCE_VIRTUAL;
                 case AssetType.Cutscene:
                 case AssetType.Flythrough:
@@ -482,6 +413,7 @@ namespace IndustrialPark
                     return AHDRFlags.SOURCE_FILE | AHDRFlags.READ_TRANSFORM;
                 case AssetType.AnimationTable:
                 case AssetType.JSP:
+                case AssetType.JSPInfo:
                 case AssetType.Texture:
                     return AHDRFlags.SOURCE_VIRTUAL | AHDRFlags.READ_TRANSFORM;
                 case AssetType.LightKit:
@@ -491,34 +423,58 @@ namespace IndustrialPark
             }
         }
 
-        public void CollapseLayers()
+        public void OrganizeLayers()
         {
-            Dictionary<int, Section_LHDR> layers = new Dictionary<int, Section_LHDR>();
-            List<Section_LHDR> bspLayers = new List<Section_LHDR>();
+            Layers = BuildLayers();
+            UnsavedChanges = true;
+        }
 
-            foreach (Section_LHDR LHDR in DICT.LTOC.LHDRList)
+        private List<Layer> BuildLayers()
+        {
+            Dictionary<int, Layer> layers = new Dictionary<int, Layer>();
+
+            void AddToLayerOfType(uint assetId, int type)
             {
-                if (game == Game.Incredibles && (LHDR.layerType == (int)LayerType_TSSM.BSP || LHDR.layerType == (int)LayerType_TSSM.JSPINFO))
-                {
-                    if (LHDR.assetIDlist.Count != 0)
-                        bspLayers.Add(LHDR);
-                }
-                else if (layers.ContainsKey(LHDR.layerType))
-                {
-                    layers[LHDR.layerType].assetIDlist.AddRange(LHDR.assetIDlist);
-                }
-                else if (LHDR.assetIDlist.Count != 0)
-                {
-                    layers[LHDR.layerType] = LHDR;
-                }
+                if (!layers.ContainsKey(type))
+                    layers[type] = new Layer(type);
+                layers[type].AssetIDs.Add(assetId);
             }
 
-            UnsavedChanges = true;
+            foreach (Asset a in assetDictionary.Values)
+                AddToLayerOfType(a.assetID, GetLayerTypeOfAsset(a.assetType));
 
-            DICT.LTOC.LHDRList = new List<Section_LHDR>();
-            DICT.LTOC.LHDRList.AddRange(layers.Values.ToList());
-            DICT.LTOC.LHDRList.AddRange(bspLayers);
-            DICT.LTOC.LHDRList = DICT.LTOC.LHDRList.OrderBy(f => f.layerType, new LHDRComparer(game)).ToList();
+            return layers.Values.OrderBy(f => f.Type, new LayerComparer(game)).ToList();
+        }
+
+        private int GetLayerTypeOfAsset(AssetType assetType)
+        {
+            switch (assetType)
+            {
+                case AssetType.Texture:
+                    return game == Game.Incredibles ? (int)LayerType_TSSM.TEXTURE : (int)LayerType_BFBB.TEXTURE;
+                case AssetType.BSP:
+                case AssetType.JSP:
+                    return game == Game.Incredibles ? (int)LayerType_TSSM.BSP : (int)LayerType_BFBB.BSP;
+                case AssetType.JSPInfo:
+                    return game == Game.Incredibles ? (int)LayerType_TSSM.JSPINFO : (int)LayerType_BFBB.JSPINFO;
+                case AssetType.Model:
+                    return game == Game.Incredibles ? (int)LayerType_TSSM.MODEL : (int)LayerType_BFBB.MODEL;
+                case AssetType.Animation:
+                    if (game == Game.BFBB)
+                        return (int)LayerType_BFBB.ANIMATION;
+                    break;
+                case AssetType.Cutscene:
+                case AssetType.CutsceneStreamingSound:
+                    return game == Game.Incredibles ? (int)LayerType_TSSM.CUTSCENE : (int)LayerType_BFBB.CUTSCENE;
+                case AssetType.Sound:
+                case AssetType.StreamingSound:
+                    return game == Game.Incredibles ? (int)LayerType_TSSM.SRAM : (int)LayerType_BFBB.SRAM;
+                case AssetType.SoundInfo:
+                    return game == Game.Incredibles ? (int)LayerType_TSSM.SNDTOC : (int)LayerType_BFBB.SNDTOC;
+                case AssetType.CutsceneTableOfContents:
+                    return game == Game.Incredibles ? (int)LayerType_TSSM.CUTSCENETOC : (int)LayerType_BFBB.SNDTOC;
+            }
+            return game == Game.Incredibles ? (int)LayerType_TSSM.DEFAULT : (int)LayerType_BFBB.DEFAULT;
         }
 
         public string VerifyArchive()
@@ -547,19 +503,6 @@ namespace IndustrialPark
             {
                 bool found = false;
 
-                foreach (Section_LHDR LHDR in DICT.LTOC.LHDRList)
-                    foreach (uint assetID in LHDR.assetIDlist)
-                        if (assetID == asset.assetID)
-                        {
-                            if (found == false)
-                                found = true;
-                            else
-                                result += $"Archive: Asset {asset} is present in more than one layer. This is unexpected." + endl;
-                        }
-
-                if (found == false)
-                    result += $"Archive: Asset {asset} appears to not be present in the AHDR dictionary, but it's not in any layer. This archive is likely unusable." + endl;
-
                 List<string> resultParam = new List<string>();
                 try
                 {
@@ -581,13 +524,16 @@ namespace IndustrialPark
             return result;
         }
 
-        public bool ApplyScale(Vector3 factor)
+        public bool ApplyScale(Vector3 factor, IEnumerable<AssetType> assetTypes = null)
         {
             bool applied = false;
             float singleFactor = (factor.X + factor.Y + factor.Z) / 3;
 
             foreach (Asset a in assetDictionary.Values)
             {
+                if (assetTypes != null && !assetTypes.Contains(a.assetType))
+                    continue;
+
                 if (a is AssetTRIG TRIG)
                 {
                     TRIG.ApplyScale(factor, singleFactor);
@@ -668,15 +614,19 @@ namespace IndustrialPark
 
         public List<uint> MakeSimps(List<uint> assetIDs, bool solid, bool ledgeGrabSimps)
         {
-            int layerIndex = DICT.LTOC.LHDRList.Count;
-            AddLayer();
+            if (!NoLayers)
+            {
+                AddLayer();
+                SelectedLayerIndex = Layers.Count - 1;
+            }
+
             List<uint> outAssetIDs = new List<uint>();
 
             foreach (uint i in assetIDs)
                 if (GetFromAssetID(i) is AssetMODL MODL)
                 {
                     string simpName = "SIMP_" + MODL.assetName.Replace(".dff", "").ToUpper();
-                    AssetSIMP simp = (AssetSIMP)PlaceTemplate(new Vector3(), layerIndex, ref outAssetIDs, simpName, AssetTemplate.Simple_Object);
+                    AssetSIMP simp = (AssetSIMP)PlaceTemplate(new Vector3(), ref outAssetIDs, simpName, AssetTemplate.Simple_Object);
                     simp.Model = i;
                     if (!solid)
                     {
@@ -695,18 +645,16 @@ namespace IndustrialPark
         public int IndexOfLayerOfType(int layerType)
         {
             int layerIndex = -1;
-            for (int i = 0; i < DICT.LTOC.LHDRList.Count; i++)
-                if (DICT.LTOC.LHDRList[i].layerType == layerType)
-                {
-                    layerIndex = i;
-                    break;
-                }
 
-            if (layerIndex == -1)
+            if (!NoLayers)
             {
-                AddLayer();
-                DICT.LTOC.LHDRList.Last().layerType = layerType;
-                layerIndex = DICT.LTOC.LHDRList.Count - 1;
+                layerIndex = Layers.FindIndex(l => l.Type == layerType);
+                if (layerIndex == -1)
+                {
+                    AddLayer();
+                    Layers.Last().Type = layerType;
+                    layerIndex = LayerCount - 1;
+                }
             }
 
             return layerIndex;
@@ -723,7 +671,15 @@ namespace IndustrialPark
                     break;
                 }
             if (pipt == null)
-                pipt = (AssetPIPT)PlaceTemplate(IndexOfLayerOfType((int)LayerType_BFBB.DEFAULT), template: AssetTemplate.Pipe_Info_Table);
+            {
+                var prevLayerType = SelectedLayerIndex;
+
+                if (!NoLayers) SelectedLayerIndex = IndexOfLayerOfType((int)LayerType_BFBB.DEFAULT);
+                
+                pipt = (AssetPIPT)PlaceTemplate(template: AssetTemplate.Pipe_Info_Table);
+
+                if (!NoLayers) SelectedLayerIndex = prevLayerType;
+            }
 
             List<PipeInfo> entries = pipt.Entries.ToList();
 
@@ -750,6 +706,106 @@ namespace IndustrialPark
                     }
 
             return data;
+        }
+
+        public static uint ApplyBakeScale(uint modelAssetId, Vector3 scale)
+        {
+            if (scale.X == 1f && scale.Y == 1f && scale.Z == 1f)
+            {
+                MessageBox.Show("Bake scale not applied as the scale vector is (1, 1, 1).");
+                return modelAssetId;
+            }
+
+            if (Program.MainForm == null)
+            {
+                MessageBox.Show("Cannot bake scale on standalone Archive Editor.\nPlease do it manually by manually creating a copy of the model and changing the scale there.");
+                return modelAssetId;
+            }
+
+            var bsmcs = new List<BakeScaleModelContainer>();
+            foreach (var ae in Program.MainForm.archiveEditors)
+                if (ae.archive.ContainsAsset(modelAssetId) && ae.archive.GetFromAssetID(modelAssetId) is IAssetWithModel model)
+                {
+                    bsmcs.Add(new BakeScaleModelContainer()
+                    {
+                        archive = ae.archive,
+                        model = model
+                    });
+                }
+
+            if (bsmcs.Count == 0)
+            {
+                MessageBox.Show("Unable to find model in open archives.");
+            }
+            else if (bsmcs.Count == 1)
+            {
+                return bsmcs[0].archive.ApplyBakeScaleLocal(modelAssetId, scale);
+            }
+            else
+            {
+                BakeScale bs = new BakeScale(bsmcs);
+                bs.ShowDialog();
+                if (bs.OK)
+                    bs.GetSelectedArchive().ApplyBakeScaleLocal(modelAssetId, scale);
+            }
+
+            return modelAssetId;
+        }
+
+        public uint ApplyBakeScaleLocal(uint modelAssetId, Vector3 scale)
+        {
+            if (ContainsAsset(modelAssetId) && GetFromAssetID(modelAssetId) is AssetMODL modl)
+            {
+                var AHDR = modl.BuildAHDR();
+                var newAssetName = AHDR.ADBG.assetName + $"_{scale.X:.0###########}_{scale.Y:.0###########}_{scale.Z:.0###########}";
+                var newAssetId = Functions.BKDRHash(newAssetName);
+
+                if (!ContainsAsset(newAssetId))
+                {
+                    AHDR.ADBG.assetName = newAssetName;
+                    AHDR.assetID = newAssetId;
+
+                    var prevLayerType = SelectedLayerIndex;
+                    if (!NoLayers)
+                        SelectedLayerIndex = IndexOfLayerOfType((int)LayerType_BFBB.DEFAULT);
+
+                    newAssetId = AddAsset(AHDR, game, platform.Endianness(), setTextureDisplay: false);
+
+                    if (!NoLayers)
+                        SelectedLayerIndex = prevLayerType;
+                    ((AssetMODL)GetFromAssetID(newAssetId)).ApplyScale(scale);
+                    UnsavedChanges = true;
+                }
+
+                return newAssetId;
+            }
+            else if (ContainsAsset(modelAssetId) && GetFromAssetID(modelAssetId) is AssetMINF minf)
+            {
+                var AHDR = minf.BuildAHDR();
+                var newAssetName = AHDR.ADBG.assetName + $"_{scale.X:.0###########}_{scale.Y:.0###########}_{scale.Z:.0###########}";
+                var newAssetId = Functions.BKDRHash(newAssetName);
+
+                if (!ContainsAsset(newAssetId))
+                {
+                    AHDR.ADBG.assetName = newAssetName;
+                    AHDR.assetID = newAssetId;
+
+                    var prevLayerType = SelectedLayerIndex;
+                    if (!NoLayers)
+                        SelectedLayerIndex = IndexOfLayerOfType((int)LayerType_BFBB.DEFAULT);
+
+                    var assetId = AddAsset(AHDR, game, platform.Endianness(), setTextureDisplay: false);
+
+                    if (!NoLayers)
+                        SelectedLayerIndex = prevLayerType;
+
+                    ((AssetMINF)GetFromAssetID(assetId)).ApplyScale(scale);
+                    UnsavedChanges = true;
+                }
+
+                return newAssetId;
+            }
+            return modelAssetId;
         }
 
         public static void ExportScene(string folderName, Assimp.ExportFormatDescription format, string textureExtension, out string[] textureNames)

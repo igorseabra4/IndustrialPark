@@ -301,7 +301,8 @@ namespace IndustrialPark
 
         public void CreateTransformMatrix()
         {
-            world = Matrix.Scaling(_scale)
+            world = (renderingDictionary.ContainsKey(_model) ? renderingDictionary[_model].TransformMatrix : Matrix.Identity)
+                * Matrix.Scaling(_scale)
                 * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                 * Matrix.Translation(_position);
 

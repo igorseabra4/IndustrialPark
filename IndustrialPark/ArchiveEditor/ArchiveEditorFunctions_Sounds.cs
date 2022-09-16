@@ -10,12 +10,16 @@ namespace IndustrialPark
         {
             if (!ContainsAssetWithType(AssetType.SoundInfo))
             {
-                int layerType = (int)LayerType_BFBB.SNDTOC;
-                if (game == Game.Incredibles)
-                    layerType = (int)LayerType_TSSM.SNDTOC;
+                var prevIndex = SelectedLayerIndex;
+                
+                if (!NoLayers)
+                    SelectedLayerIndex = IndexOfLayerOfType(GetLayerTypeOfAsset(AssetType.SoundInfo));
 
                 var list = new List<uint>();
-                PlaceTemplate(new SharpDX.Vector3(), IndexOfLayerOfType(layerType), ref list, "sound_info", AssetTemplate.Sound_Info);
+                PlaceTemplate(new SharpDX.Vector3(), ref list, "sound_info", AssetTemplate.Sound_Info);
+
+                if (!NoLayers)
+                    SelectedLayerIndex = prevIndex;
             }
 
             foreach (Asset a in assetDictionary.Values)
@@ -123,16 +127,12 @@ namespace IndustrialPark
         public void AddJawDataToJAW(byte[] jawData, uint assetID)
         {
             foreach (Asset a in assetDictionary.Values)
-            {
                 if (a is AssetJAW JAW)
                 {
                     JAW.AddEntry(jawData, assetID);
                     return;
                 }
-            }
-
             throw new Exception("Unable to add jaw data: JAW asset not found");
         }
-
     }
 }

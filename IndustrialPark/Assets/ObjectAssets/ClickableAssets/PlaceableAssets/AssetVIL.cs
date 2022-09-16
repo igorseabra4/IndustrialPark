@@ -57,7 +57,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID NPCSettings { get; set; }
 
-        public AssetVIL(string assetName, Vector3 position, AssetTemplate template, uint mvptAssetID) : base(assetName, AssetType.VIL, BaseAssetType.NPC, position)
+        public AssetVIL(string assetName, Vector3 position, AssetTemplate template, uint mvptAssetID) : base(assetName, AssetType.NPC, BaseAssetType.NPC, position)
         {
             MovePoint = mvptAssetID;
 

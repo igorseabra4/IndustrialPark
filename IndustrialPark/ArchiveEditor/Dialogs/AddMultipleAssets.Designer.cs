@@ -114,10 +114,11 @@
             // 
             // listBox1
             // 
+            this.listBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.listBox1.FormattingEnabled = true;
             this.listBox1.Location = new System.Drawing.Point(6, 19);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(190, 134);
+            this.listBox1.Size = new System.Drawing.Size(190, 132);
             this.listBox1.TabIndex = 9;
             this.listBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listBox1_KeyDown);
             // 

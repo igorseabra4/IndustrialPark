@@ -180,6 +180,7 @@
             // 
             // textBoxAssetID
             // 
+            this.textBoxAssetID.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBoxAssetID.Location = new System.Drawing.Point(6, 19);
             this.textBoxAssetID.Name = "textBoxAssetID";
             this.textBoxAssetID.Size = new System.Drawing.Size(146, 20);
@@ -198,6 +199,7 @@
             // 
             // textBoxAssetName
             // 
+            this.textBoxAssetName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBoxAssetName.Location = new System.Drawing.Point(6, 19);
             this.textBoxAssetName.Name = "textBoxAssetName";
             this.textBoxAssetName.Size = new System.Drawing.Size(172, 20);
@@ -216,6 +218,7 @@
             // 
             // textBoxAssetFileName
             // 
+            this.textBoxAssetFileName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBoxAssetFileName.Location = new System.Drawing.Point(6, 19);
             this.textBoxAssetFileName.Name = "textBoxAssetFileName";
             this.textBoxAssetFileName.Size = new System.Drawing.Size(172, 20);
@@ -234,6 +237,7 @@
             // 
             // textBoxChecksum
             // 
+            this.textBoxChecksum.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBoxChecksum.Location = new System.Drawing.Point(6, 19);
             this.textBoxChecksum.Name = "textBoxChecksum";
             this.textBoxChecksum.Size = new System.Drawing.Size(172, 20);

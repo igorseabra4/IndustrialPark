@@ -9,10 +9,10 @@ namespace IndustrialPark
 {
     public class AssetDUPC : BaseAsset, IRenderableAsset, IClickableAsset, IRotatableAsset, IScalableAsset
     {
-        public override string AssetInfo => VIL.AssetInfo;
+        public override string AssetInfo => NPC.AssetInfo;
 
         private const string categoryName = "Duplicator";
-        private const string categoryName2 = "Duplicator VIL";
+        private const string categoryName2 = "Duplicator NPC";
 
         [Category(categoryName)]
         public short InitialSpawn { get; set; }
@@ -40,7 +40,7 @@ namespace IndustrialPark
         public int UnknownInt_30 { get; set; }
 
         [Category(categoryName2), TypeConverter(typeof(ExpandableObjectConverter))]
-        public AssetVIL VIL { get; set; }
+        public AssetVIL NPC { get; set; }
 
         public AssetDUPC(string assetName, Vector3 position) : base(assetName, AssetType.Duplicator, BaseAssetType.Duplicator)
         {
@@ -48,8 +48,8 @@ namespace IndustrialPark
             MaximumInGame = 1;
             MaximumToSpawn = 1;
             SpawnRate = 1f;
-            VIL = new AssetVIL(assetName, position, AssetTemplate.VIL, 0);
-            renderableAssets.Remove(VIL);
+            NPC = new AssetVIL(assetName, position, AssetTemplate.VIL, 0);
+            renderableAssets.Remove(NPC);
             AddToRenderableAssets(this);
         }
 
@@ -72,7 +72,7 @@ namespace IndustrialPark
                 UnknownInt_28 = reader.ReadInt32();
                 NavMesh1 = reader.ReadUInt32();
                 UnknownInt_30 = reader.ReadInt32();
-                VIL = new AssetVIL(reader);
+                NPC = new AssetVIL(reader);
             }
 
             CreateTransformMatrix();
@@ -102,7 +102,7 @@ namespace IndustrialPark
                 writer.Write(assetID);
                 writer.Write((byte)BaseAssetType.NPC);
                 writer.Write((byte)_links.Length);
-                writer.Write(VIL.Serialize(game, endianness).Skip(6).ToArray());
+                writer.Write(NPC.Serialize(game, endianness).Skip(6).ToArray());
 
                 writer.Write(SerializeLinks(endianness));
                 return writer.ToArray();
@@ -113,47 +113,47 @@ namespace IndustrialPark
         {
             Verify(NavMesh1, ref result);
 
-            VIL.Verify(ref result);
+            NPC.Verify(ref result);
 
             base.Verify(ref result);
         }
 
-        public void CreateTransformMatrix() => VIL.CreateTransformMatrix();
-        public float GetDistanceFrom(Vector3 position) => VIL.GetDistanceFrom(position);
+        public void CreateTransformMatrix() => NPC.CreateTransformMatrix();
+        public float GetDistanceFrom(Vector3 position) => NPC.GetDistanceFrom(position);
         public bool ShouldDraw(SharpRenderer renderer)
         {
-            VIL.isInvisible = isInvisible;
-            VIL.isSelected = isSelected;
-            return VIL.ShouldDraw(renderer);
+            NPC.isInvisible = isInvisible;
+            NPC.isSelected = isSelected;
+            return NPC.ShouldDraw(renderer);
         }
         public void Draw(SharpRenderer renderer)
         {
-            VIL.isInvisible = isInvisible;
-            VIL.isSelected = isSelected;
-            VIL.Draw(renderer);
+            NPC.isInvisible = isInvisible;
+            NPC.isSelected = isSelected;
+            NPC.Draw(renderer);
         }
-        public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray) => VIL.GetIntersectionPosition(renderer, ray);
-        public BoundingBox GetBoundingBox() => VIL.GetBoundingBox();
+        public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray) => NPC.GetIntersectionPosition(renderer, ray);
+        public BoundingBox GetBoundingBox() => NPC.GetBoundingBox();
         [Browsable(false)]
-        public bool SpecialBlendMode => VIL.SpecialBlendMode;
+        public bool SpecialBlendMode => NPC.SpecialBlendMode;
 
         [Category(categoryName2), ReadOnly(true)]
-        public AssetSingle PositionX { get => VIL.PositionX; set => VIL.PositionX = value; }
+        public AssetSingle PositionX { get => NPC.PositionX; set => NPC.PositionX = value; }
         [Category(categoryName2), ReadOnly(true)]
-        public AssetSingle PositionY { get => VIL.PositionY; set => VIL.PositionY = value; }
+        public AssetSingle PositionY { get => NPC.PositionY; set => NPC.PositionY = value; }
         [Category(categoryName2), ReadOnly(true)]
-        public AssetSingle PositionZ { get => VIL.PositionZ; set => VIL.PositionZ = value; }
+        public AssetSingle PositionZ { get => NPC.PositionZ; set => NPC.PositionZ = value; }
         [Category(categoryName2), ReadOnly(true)]
-        public AssetSingle Yaw { get => VIL.Yaw; set => VIL.Yaw = value; }
+        public AssetSingle Yaw { get => NPC.Yaw; set => NPC.Yaw = value; }
         [Category(categoryName2), ReadOnly(true)]
-        public AssetSingle Pitch { get => VIL.Pitch; set => VIL.Pitch = value; }
+        public AssetSingle Pitch { get => NPC.Pitch; set => NPC.Pitch = value; }
         [Category(categoryName2), ReadOnly(true)]
-        public AssetSingle Roll { get => VIL.Roll; set => VIL.Roll = value; }
+        public AssetSingle Roll { get => NPC.Roll; set => NPC.Roll = value; }
         [Category(categoryName2), ReadOnly(true)]
-        public AssetSingle ScaleX { get => VIL.ScaleX; set => VIL.ScaleX = value; }
+        public AssetSingle ScaleX { get => NPC.ScaleX; set => NPC.ScaleX = value; }
         [Category(categoryName2), ReadOnly(true)]
-        public AssetSingle ScaleY { get => VIL.ScaleY; set => VIL.ScaleY = value; }
+        public AssetSingle ScaleY { get => NPC.ScaleY; set => NPC.ScaleY = value; }
         [Category(categoryName2), ReadOnly(true)]
-        public AssetSingle ScaleZ { get => VIL.ScaleZ; set => VIL.ScaleZ = value; }
+        public AssetSingle ScaleZ { get => NPC.ScaleZ; set => NPC.ScaleZ = value; }
     }
 }

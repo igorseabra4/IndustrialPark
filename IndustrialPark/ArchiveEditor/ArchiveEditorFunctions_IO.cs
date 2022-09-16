@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -13,35 +12,31 @@ namespace IndustrialPark
 
         public void ExportHip(string fileName)
         {
-            foreach (var asset in assetDictionary.Values)
-                DICT.ATOC.AHDRList.Add(asset.BuildAHDR(game, platform.Endianness(), false));
-            hipFile.ToIni(game, fileName, true, true);
-            DICT.ATOC.AHDRList.Clear();
+            BuildHipFile().ToIni(game, fileName, true, true);
         }
 
-        public void ImportHip(string[] fileNames, bool forceOverwrite, List<uint> assetIDs = null)
+        public void ImportHip(string[] fileNames, bool forceOverwrite)
         {
             foreach (string fileName in fileNames)
-                ImportHip(fileName, forceOverwrite, assetIDs);
+                ImportHip(fileName, forceOverwrite);
         }
 
-        public void ImportHip(string fileName, bool forceOverwrite, List<uint> assetIDs = null)
+        public void ImportHip(string fileName, bool forceOverwrite)
         {
             if (Path.GetExtension(fileName).ToLower() == ".hip" || Path.GetExtension(fileName).ToLower() == ".hop")
-                ImportHip(HipFile.FromPath(fileName), forceOverwrite, assetIDs);
+                ImportHip(HipFile.FromPath(fileName), forceOverwrite);
             else if (Path.GetExtension(fileName).ToLower() == ".ini")
-                ImportHip(HipFile.FromINI(fileName), forceOverwrite, assetIDs);
+                ImportHip(HipFile.FromINI(fileName), forceOverwrite);
             else
                 MessageBox.Show("Invalid file: " + fileName);
         }
 
-        public void ImportHip((HipFile, Game, Platform) hip, bool forceOverwrite, List<uint> missingAssets)
+        public void ImportHip((HipFile, Game, Platform) hip, bool forceOverwrite)
         {
             if (hip.Item3 == Platform.Unknown)
                 hip.Item3 = platform;
 
             UnsavedChanges = true;
-            forceOverwrite |= missingAssets != null;
 
             foreach (Section_AHDR AHDR in hip.Item1.DICT.ATOC.AHDRList)
             {
@@ -105,14 +100,7 @@ namespace IndustrialPark
                     continue;
                 }
 
-                if (missingAssets != null && !missingAssets.Contains(AHDR.assetID))
-                {
-                    foreach (Section_LHDR LHDR in hip.Item1.DICT.LTOC.LHDRList)
-                        LHDR.assetIDlist.Remove(AHDR.assetID);
-                    continue;
-                }
-
-                if (ContainsAsset(AHDR.assetID) && (missingAssets == null || missingAssets.Contains(AHDR.assetID)))
+                if (ContainsAsset(AHDR.assetID))
                 {
                     DialogResult result = forceOverwrite ? DialogResult.Yes :
                     MessageBox.Show($"Asset [{AHDR.assetID:X8}] {AHDR.ADBG.assetName} already present in archive. Do you wish to overwrite it?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -120,52 +108,28 @@ namespace IndustrialPark
                     if (result == DialogResult.Yes)
                     {
                         RemoveAsset(AHDR.assetID, false);
-                        AddAssetToDictionary(AHDR, hip.Item2, hip.Item3.Endianness(), forceOverwrite, forceOverwrite);
+                        AddAssetToDictionary(AHDR, hip.Item2, hip.Item3.Endianness(), forceOverwrite, true);
                     }
                     else
                         foreach (Section_LHDR LHDR in hip.Item1.DICT.LTOC.LHDRList)
                             LHDR.assetIDlist.Remove(AHDR.assetID);
-                    if (missingAssets != null)
-                        missingAssets.Remove(AHDR.assetID);
                 }
-                else if (missingAssets == null)
+                else
                 {
-                    AddAssetToDictionary(AHDR, hip.Item2, hip.Item3.Endianness(), forceOverwrite, forceOverwrite);
+                    AddAssetToDictionary(AHDR, hip.Item2, hip.Item3.Endianness(), forceOverwrite, true);
                 }
             }
 
-            foreach (Section_LHDR LHDR in hip.Item1.DICT.LTOC.LHDRList)
-                if (LHDR.assetIDlist.Count != 0)
-                    DICT.LTOC.LHDRList.Add(LHDR);
-
-            DICT.LTOC.LHDRList = DICT.LTOC.LHDRList.OrderBy(f => f.layerType, new LHDRComparer(game)).ToList();
+            if (!NoLayers)
+            {
+                foreach (Section_LHDR LHDR in hip.Item1.DICT.LTOC.LHDRList)
+                    if (LHDR.assetIDlist.Count != 0)
+                        Layers.Add(LHDRToLayer(LHDR));
+                Layers = Layers.OrderBy(f => f.Type, new LayerComparer(game)).ToList();
+            }
 
             if (!forceOverwrite)
                 RecalculateAllMatrices();
-        }
-
-        public void ReplaceUnconvertableAssets(string fileName, ref List<uint> missing)
-        {
-            var hipHops = new List<string>();
-            SearchOnFolder(fileName, ref hipHops);
-
-            foreach (string s in hipHops)
-            {
-                ImportHip(s, true, missing);
-                if (missing.Count == 0)
-                    break;
-            }
-
-            CleanSNDI();
-        }
-
-        private void SearchOnFolder(string folderPath, ref List<string> hipHops)
-        {
-            foreach (string s in Directory.GetFiles(folderPath))
-                if (Path.GetExtension(s).ToLower() == ".hip" || Path.GetExtension(s).ToLower() == ".hop")
-                    hipHops.Add(s);
-            foreach (string s in Directory.GetDirectories(folderPath))
-                SearchOnFolder(s, ref hipHops);
         }
     }
 }

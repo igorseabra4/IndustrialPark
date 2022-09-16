@@ -123,6 +123,15 @@
   <ItemGroup>
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_IO.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Sounds.cs" />
+    <Compile Include="ArchiveEditor\Other\LayerComparer.cs" />
+    <Compile Include="ArchiveEditor\Other\AssetTypeContainer.cs" />
+    <Compile Include="ArchiveEditor\Other\BakeScaleModelContainer.cs" />
+    <Compile Include="ArchiveEditor\Dialogs\BakeScale.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\Dialogs\BakeScale.designer.cs">
+      <DependentUpon>BakeScale.cs</DependentUpon>
+    </Compile>
     <Compile Include="ArchiveEditor\Dialogs\ApplyVertexColors.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -136,6 +145,7 @@
       <DependentUpon>MaterialEffectEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="ArchiveEditor\Gizmos\BoxTrigPositionGizmo.cs" />
+    <Compile Include="ArchiveEditor\Other\Layer.cs" />
     <Compile Include="Assets\Binary\AssetONEL.cs" />
     <Compile Include="Assets\Binary\AssetCTOC.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaEffectUberLaser.cs" />
@@ -167,6 +177,7 @@
     <Compile Include="Assets\Shared\AssetSound.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\UIMCommand.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\VolumeSpecific.cs" />
+    <Compile Include="Assets\Shared\Colors\BakeScaleEditor.cs" />
     <Compile Include="Assets\Shared\DataTypes\WireVector.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\RenderableRotatableDynaBase.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\RenderableDynaBase.cs" />
@@ -399,7 +410,7 @@
     <Compile Include="ArchiveEditor\InternalEditors\InternalSoundEditor.Designer.cs">
       <DependentUpon>InternalSoundEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="ArchiveEditor\Other\IInternalEditor.cs" />
+    <Compile Include="ArchiveEditor\InternalEditors\IInternalEditor.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\InternalTextEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -517,6 +528,9 @@
     <Compile Include="Models\Vertex.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="ArchiveEditor\Dialogs\BakeScale.resx">
+      <DependentUpon>BakeScale.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\Dialogs\ApplyVertexColors.resx">
       <DependentUpon>ApplyVertexColors.cs</DependentUpon>
     </EmbeddedResource>

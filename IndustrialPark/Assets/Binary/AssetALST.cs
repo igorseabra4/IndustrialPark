@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace IndustrialPark
 {
@@ -50,7 +51,7 @@ namespace IndustrialPark
         public void AddItems(List<uint> items)
         {
             var j = 0;
-            for (int i = 0; i < Animations.Length && j < items.Count; i++)
+            for (int i = 0; i < Animations.Length && j < items.Count(); i++)
             {
                 if (Animations[i] == 0)
                     Animations[i] = items[j++];

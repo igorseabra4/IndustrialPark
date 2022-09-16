@@ -160,15 +160,17 @@ namespace IndustrialPark
 
         public override void CreateTransformMatrix()
         {
+            world = renderingDictionary.ContainsKey(_model) ? renderingDictionary[_model].TransformMatrix : Matrix.Identity;
+
             if (!(this is AssetUIFT) && Texture == 0)
             {
-                world = Matrix.Scaling(_scale) * Matrix.Scaling(Width, Height, 1f)
+                world *= Matrix.Scaling(_scale) * Matrix.Scaling(Width, Height, 1f)
                     * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                     * Matrix.Translation(PositionX, -PositionY, -PositionZ);
             }
             else
             {
-                world = Matrix.Scaling(Width, Height, 1f)
+                world *= Matrix.Scaling(Width, Height, 1f)
                     * Matrix.Translation(PositionX, -PositionY, -PositionZ);
             }
 

@@ -56,11 +56,12 @@
             // 
             // listBoxMaterials
             // 
+            this.listBoxMaterials.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.listBoxMaterials.FormattingEnabled = true;
             this.listBoxMaterials.Location = new System.Drawing.Point(6, 19);
             this.listBoxMaterials.Name = "listBoxMaterials";
             this.listBoxMaterials.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBoxMaterials.Size = new System.Drawing.Size(158, 355);
+            this.listBoxMaterials.Size = new System.Drawing.Size(158, 353);
             this.listBoxMaterials.TabIndex = 1;
             this.listBoxMaterials.SelectedIndexChanged += new System.EventHandler(this.listBoxMaterials_SelectedIndexChanged);
             // 
@@ -121,6 +122,7 @@
             this.propertyGridTextureInfo.Size = new System.Drawing.Size(312, 100);
             this.propertyGridTextureInfo.TabIndex = 22;
             this.propertyGridTextureInfo.ToolbarVisible = false;
+            this.propertyGridTextureInfo.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGridTextureInfo_PropertyValueChanged);
             // 
             // groupBox3
             // 

@@ -3,6 +3,7 @@ using SharpDX;
 using SharpDX.Direct3D11;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
@@ -36,6 +37,9 @@ namespace IndustrialPark
 
         private Dictionary<uint, (BlendOption, BlendOption)> blendModes;
         public bool SpecialBlendMode { get; private set; }
+
+        [Browsable(false)]
+        public Matrix TransformMatrix => Matrix.Identity;
 
         public void SetBlendModes((uint, BlendFactorType, BlendFactorType)[] sourceDest)
         {

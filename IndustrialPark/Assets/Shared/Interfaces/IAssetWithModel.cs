@@ -11,5 +11,7 @@ namespace IndustrialPark
         void RemoveFromDictionary();
 
         bool SpecialBlendMode { get; }
+
+        Matrix TransformMatrix { get; }
     }
 }

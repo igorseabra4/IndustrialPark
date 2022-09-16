@@ -18,22 +18,20 @@ namespace IndustrialPark
 
         public AssetRenderWareModel(string assetName, AssetType assetType, byte[] data, SharpRenderer renderer) : base(assetName, assetType, data)
         {
-            if (renderer != null)
-                Setup(renderer);
+            Setup(renderer);
         }
 
         public AssetRenderWareModel(Section_AHDR AHDR, Game game, Endianness endianness, SharpRenderer renderer) : base(AHDR, game, endianness)
         {
-            if (renderer != null)
-                Setup(renderer);
+            Setup(renderer);
         }
-
-        public override byte[] Serialize(Game game, Endianness endianness) => Data;
 
         public virtual void Setup(SharpRenderer renderer)
         {
             if (model != null)
                 model.Dispose();
+            if (renderer == null)
+                return;
 
 #if !DEBUG
             try
@@ -267,7 +265,7 @@ namespace IndustrialPark
             }
         }
 
-        public void SetVertexColors(Vector4 color, Operation operation, Func<Vector4> GetRandomColor)
+        public void ApplyVertexColors(Func<Vector4, Vector4> getColor)
         {
             RWSection[] sections = ReadFileMethods.ReadRenderWareFile(Data);
             renderWareVersion = sections[0].renderWareVersion;
@@ -275,109 +273,163 @@ namespace IndustrialPark
             foreach (RWSection rws in sections)
                 if (rws is Clump_0010 clump)
                     for (int i = 0; i < clump.geometryList.geometryList.Count; i++)
-                    {
                         if (clump.geometryList.geometryList[i].geometryStruct.vertexColors != null)
-                            for (int j = 0; j < clump.geometryList.geometryList[i].geometryStruct.vertexColors.Length; j++)
-                            {
-                                var oldColor = clump.geometryList.geometryList[i].geometryStruct.vertexColors[j];
-
-                                var newColor = PerformOperationAndClamp(
-                                    new Vector4((float)oldColor.R / 255, (float)oldColor.G / 255, (float)oldColor.B / 255, (float)oldColor.A / 255),
-                                    color, operation, GetRandomColor);
-
-                                clump.geometryList.geometryList[i].geometryStruct.vertexColors[j] = new RenderWareFile.Color(
-                                        (byte)(newColor.X * 255),
-                                        (byte)(newColor.Y * 255),
-                                        (byte)(newColor.Z * 255),
-                                        (byte)(newColor.W * 255));
-                            }
+                            ApplyVertexColors(clump.geometryList.geometryList[i], getColor);
                         else
                             foreach (var ex in clump.geometryList.geometryList[i].geometryExtension.extensionSectionList)
                                 if (ex is NativeDataPLG_0510 nativeData)
                                     if (nativeData.nativeDataStruct.nativeDataType == NativeDataType.GameCube)
-                                        for (int j = 0; j < nativeData.nativeDataStruct.nativeData.declarations.Length; j++)
-                                            if (nativeData.nativeDataStruct.nativeData.declarations[j].declarationType == Declarations.Color)
-                                            {
-                                                var vd = (ColorDeclaration)nativeData.nativeDataStruct.nativeData.declarations[j];
-                                                for (int k = 0; k < vd.entryList.Count; k++)
-                                                {
-                                                    var oldColor = vd.entryList[k];
-                                                    
-                                                    var newColor = PerformOperationAndClamp(
-                                                        new Vector4((float)oldColor.R / 255, (float)oldColor.G / 255, (float)oldColor.B / 255, (float)oldColor.A / 255),
-                                                        color, operation, GetRandomColor);
-                                                    
-                                                    vd.entryList[k] = new RenderWareFile.Color(
-                                                        (byte)(newColor.X * 255),
-                                                        (byte)(newColor.Y * 255),
-                                                        (byte)(newColor.Z * 255),
-                                                        (byte)(newColor.W * 255));
-                                                }
-                                            }
-                    }
+                                        ApplyVertexColors(nativeData.nativeDataStruct.nativeData, getColor);
 
             Data = ReadFileMethods.ExportRenderWareFile(sections, renderWareVersion);
             if (Program.MainForm != null)
                 Setup(Program.MainForm.renderer);
         }
 
-        private Vector4 PerformOperationAndClamp(Vector4 v1, Vector4 v2, Operation op, Func<Vector4> GetRandomColor)
+        private void ApplyVertexColors(NativeDataGC nativeData, Func<Vector4, Vector4> getColor)
         {
-            if (op == Operation.Randomize)
-            {
-                var v = GetRandomColor();
-                v.W = v1.W;
-                return v;
-            }
-            return new Vector4(
-                PerformOperationAndClamp(v1.X, v2.X, op),
-                PerformOperationAndClamp(v1.Y, v2.Y, op),
-                PerformOperationAndClamp(v1.Z, v2.Z, op),
-                PerformOperationAndClamp(v1.W, v2.W, op));
+            for (int j = 0; j < nativeData.declarations.Length; j++)
+                if (nativeData.declarations[j].declarationType == Declarations.Color)
+                {
+                    var vd = (ColorDeclaration)nativeData.declarations[j];
+                    for (int k = 0; k < vd.entryList.Count; k++)
+                    {
+                        var oldColor = vd.entryList[k];
+
+                        var newColor = getColor(
+                            new Vector4(oldColor.R / 255f, oldColor.G / 255f, oldColor.B / 255f, oldColor.A / 255f));
+
+                        vd.entryList[k] = new RenderWareFile.Color(
+                            (byte)(newColor.X * 255),
+                            (byte)(newColor.Y * 255),
+                            (byte)(newColor.Z * 255),
+                            (byte)(newColor.W * 255));
+                    }
+                }
         }
 
-        private float PerformOperationAndClamp(float v1, float v2, Operation op)
+        private void ApplyVertexColors(Geometry_000F geometry, Func<Vector4, Vector4> getColor)
         {
-            float value;
-            switch (op)
+            for (int i = 0; i < geometry.geometryStruct.vertexColors.Length; i++)
             {
-                case Operation.Replace:
-                    value = v2;
-                    break;
-                case Operation.Add:
-                    value = v1 + v2;
-                    break;
-                case Operation.Subtract:
-                    value = v1 - v2;
-                    break;
-                case Operation.Multiply:
-                    value = v1 * v2;
-                    break;
-                case Operation.Divide:
-                    value = v1 / v2;
-                    break;
-                case Operation.RightHandSubtract:
-                    value = v2 - v1;
-                    break;
-                case Operation.RightHandDivide:
-                    value = v2 / v1;
-                    break;
-                case Operation.Minimum:
-                    value = Math.Min(v1, v2);
-                    break;
-                case Operation.Maximum:
-                    value = Math.Max(v1, v2);
-                    break;
-                default:
-                    throw new Exception("Unsupported operation");
+                var oldColor = geometry.geometryStruct.vertexColors[i];
+                var newColor = getColor(new Vector4(oldColor.R / 255.0f, oldColor.G / 255.0f, oldColor.B / 255.0f, oldColor.A / 255.0f));
+                geometry.geometryStruct.vertexColors[i] = new RenderWareFile.Color(
+                    (byte)(newColor.X * 255f),
+                    (byte)(newColor.Y * 255f),
+                    (byte)(newColor.Z * 255f),
+                    (byte)(newColor.W * 255f));
             }
+        }
 
-            if (value < 0)
-                return 0;
-            if (value > 1)
-                return 1;
+        public virtual void ApplyScale(Vector3 factor)
+        {
+            RWSection[] sections = ReadFileMethods.ReadRenderWareFile(Data);
+            var renderWareVersion = sections[0].renderWareVersion;
+            foreach (RWSection rws in sections)
+                if (rws is Clump_0010 clump)
+                    foreach (Geometry_000F geo in clump.geometryList.geometryList)
+                        ApplyScale(factor, geo);
+                else if (rws is World_000B world)
+                {
+                    if (world.firstWorldChunk is AtomicSector_0009 atomic)
+                        ApplyScale(factor, atomic);
+                    else if (world.firstWorldChunk is PlaneSector_000A plane)
+                        ApplyScale(factor, plane);
+                }
 
-            return value;
+            Data = ReadFileMethods.ExportRenderWareFile(sections, renderWareVersion);
+            Setup(Program.Renderer);
+        }
+
+        private static void ApplyScale(Vector3 factor, Geometry_000F geo)
+        {
+            var singleFactor = Math.Max(factor.X, Math.Max(factor.Y, factor.Z));
+            geo.geometryStruct.sphereCenterX *= factor.X;
+            geo.geometryStruct.sphereCenterY *= factor.Y;
+            geo.geometryStruct.sphereCenterZ *= factor.Z;
+            geo.geometryStruct.sphereRadius *= singleFactor;
+
+            if ((geo.geometryStruct.geometryFlags2 & GeometryFlags2.isNativeGeometry) == 0)
+                ApplyScale(factor, geo.geometryStruct, singleFactor);
+            else
+                foreach (var ex in geo.geometryExtension.extensionSectionList)
+                    if (ex is NativeDataPLG_0510 nativeData)
+                        if (nativeData.nativeDataStruct.nativeDataType == NativeDataType.GameCube)
+                            ApplyScale(factor, nativeData);
+        }
+
+        private static void ApplyScale(Vector3 factor, GeometryStruct_0001 geometryStruct, float singleFactor)
+        {
+            for (int i = 0; i < geometryStruct.morphTargets.Length; i++)
+            {
+                geometryStruct.morphTargets[i].sphereCenter.X *= factor.X;
+                geometryStruct.morphTargets[i].sphereCenter.Y *= factor.X;
+                geometryStruct.morphTargets[i].sphereCenter.X *= factor.X;
+                geometryStruct.morphTargets[i].radius *= singleFactor;
+
+                if (geometryStruct.morphTargets[i].hasVertices != 0)
+                    for (int j = 0; j < geometryStruct.morphTargets[i].vertices.Length; j++)
+                    {
+                        geometryStruct.morphTargets[i].vertices[j].X *= factor.X;
+                        geometryStruct.morphTargets[i].vertices[j].Y *= factor.Y;
+                        geometryStruct.morphTargets[i].vertices[j].Z *= factor.Z;
+                    }
+            }
+        }
+
+        private static void ApplyScale(Vector3 factor, NativeDataPLG_0510 nativeData)
+        {
+            for (int i = 0; i < nativeData.nativeDataStruct.nativeData.declarations.Length; i++)
+                if (nativeData.nativeDataStruct.nativeData.declarations[i].declarationType == Declarations.Vertex)
+                {
+                    var vd = (Vertex3Declaration)nativeData.nativeDataStruct.nativeData.declarations[i];
+                    for (int j = 0; j < vd.entryList.Count; j++)
+                        vd.entryList[j] = new Vertex3(
+                            vd.entryList[j].X * factor.X,
+                            vd.entryList[j].Y * factor.Y,
+                            vd.entryList[j].Z * factor.Z);
+                }
+        }
+
+        private static void ApplyScale(Vector3 factor, AtomicSector_0009 atomic)
+        {
+            if (atomic.atomicSectorStruct.isNativeData)
+            {
+                foreach (var ex in atomic.atomicSectorExtension.extensionSectionList)
+                    if (ex is NativeDataPLG_0510 nativeData)
+                        if (nativeData.nativeDataStruct.nativeDataType == NativeDataType.GameCube)
+                            ApplyScale(factor, nativeData);
+            }
+            else
+            {
+                atomic.atomicSectorStruct.boxMaximum.X *= factor.X;
+                atomic.atomicSectorStruct.boxMaximum.Y *= factor.Y;
+                atomic.atomicSectorStruct.boxMaximum.Z *= factor.Z;
+
+                atomic.atomicSectorStruct.boxMinimum.X *= factor.X;
+                atomic.atomicSectorStruct.boxMinimum.Y *= factor.Y;
+                atomic.atomicSectorStruct.boxMinimum.Z *= factor.Z;
+
+                for (int i = 0; i < atomic.atomicSectorStruct.vertexArray.Length; i++)
+                {
+                    atomic.atomicSectorStruct.vertexArray[i].X *= factor.X;
+                    atomic.atomicSectorStruct.vertexArray[i].Y *= factor.Y;
+                    atomic.atomicSectorStruct.vertexArray[i].Z *= factor.Z;
+                }
+            }
+        }
+
+        private static void ApplyScale(Vector3 factor, PlaneSector_000A plane)
+        {
+            if (plane.leftSection is AtomicSector_0009 atomicL)
+                ApplyScale(factor, atomicL);
+            else if (plane.leftSection is PlaneSector_000A planeL)
+                ApplyScale(factor, planeL);
+            if (plane.rightSection is AtomicSector_0009 atomicR)
+                ApplyScale(factor, atomicR);
+            else if (plane.rightSection is PlaneSector_000A planeR)
+                ApplyScale(factor, planeR);
         }
     }
 }

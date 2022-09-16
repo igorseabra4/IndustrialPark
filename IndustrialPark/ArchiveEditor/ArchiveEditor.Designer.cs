@@ -39,7 +39,9 @@
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editPACKToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.collapseLayersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.layersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hideLayersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.organizeLayersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mergeSimilarAssetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.applyScaleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.verifyArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,7 +67,7 @@
             this.toolStripStatusLabelSelectionCount = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabelFileSize = new System.Windows.Forms.ToolStripStatusLabel();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBoxLayers = new System.Windows.Forms.GroupBox();
             this.buttonArrowDown = new System.Windows.Forms.Button();
             this.buttonArrowUp = new System.Windows.Forms.Button();
             this.comboBoxLayerTypes = new System.Windows.Forms.ComboBox();
@@ -73,7 +75,7 @@
             this.buttonRemoveLayer = new System.Windows.Forms.Button();
             this.buttonAddLayer = new System.Windows.Forms.Button();
             this.comboBoxLayers = new System.Windows.Forms.ComboBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.groupBoxAssets = new System.Windows.Forms.GroupBox();
             this.buttonMultiEdit = new System.Windows.Forms.Button();
             this.checkBoxTemplateFocus = new System.Windows.Forms.CheckBox();
             this.listViewAssets = new System.Windows.Forms.ListView();
@@ -112,8 +114,8 @@
             this.toolStripMenuItem_MultiEdit = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
-            this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
+            this.groupBoxLayers.SuspendLayout();
+            this.groupBoxAssets.SuspendLayout();
             this.contextMenuStrip_ListBoxAssets.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -147,7 +149,7 @@
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.newToolStripMenuItem.Text = "&New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
@@ -155,7 +157,7 @@
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openToolStripMenuItem.Text = "&Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
@@ -164,7 +166,7 @@
             this.saveToolStripMenuItem.Enabled = false;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveToolStripMenuItem.Text = "&Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -172,20 +174,20 @@
             // 
             this.saveAsToolStripMenuItem.Enabled = false;
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveAsToolStripMenuItem.Text = "Save &As...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(145, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
             this.closeToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.closeToolStripMenuItem.Text = "&Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
@@ -193,7 +195,7 @@
             // 
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.editPACKToolStripMenuItem,
-            this.collapseLayersToolStripMenuItem,
+            this.layersToolStripMenuItem,
             this.mergeSimilarAssetsToolStripMenuItem,
             this.applyScaleToolStripMenuItem,
             this.verifyArchiveToolStripMenuItem,
@@ -217,13 +219,28 @@
             this.editPACKToolStripMenuItem.Text = "Convert Archive";
             this.editPACKToolStripMenuItem.Click += new System.EventHandler(this.EditPACKToolStripMenuItem_Click);
             // 
-            // collapseLayersToolStripMenuItem
+            // layersToolStripMenuItem
             // 
-            this.collapseLayersToolStripMenuItem.Enabled = false;
-            this.collapseLayersToolStripMenuItem.Name = "collapseLayersToolStripMenuItem";
-            this.collapseLayersToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
-            this.collapseLayersToolStripMenuItem.Text = "Organize Layers";
-            this.collapseLayersToolStripMenuItem.Click += new System.EventHandler(this.collapseLayersToolStripMenuItem_Click);
+            this.layersToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.hideLayersToolStripMenuItem,
+            this.organizeLayersToolStripMenuItem});
+            this.layersToolStripMenuItem.Name = "layersToolStripMenuItem";
+            this.layersToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.layersToolStripMenuItem.Text = "Layers";
+            // 
+            // hideLayersToolStripMenuItem
+            // 
+            this.hideLayersToolStripMenuItem.Name = "hideLayersToolStripMenuItem";
+            this.hideLayersToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
+            this.hideLayersToolStripMenuItem.Text = "Hide";
+            this.hideLayersToolStripMenuItem.Click += new System.EventHandler(this.hideToolStripMenuItem_Click);
+            // 
+            // organizeLayersToolStripMenuItem
+            // 
+            this.organizeLayersToolStripMenuItem.Name = "organizeLayersToolStripMenuItem";
+            this.organizeLayersToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
+            this.organizeLayersToolStripMenuItem.Text = "Organize";
+            this.organizeLayersToolStripMenuItem.Click += new System.EventHandler(this.organizeLayersToolStripMenuItem_Click);
             // 
             // mergeSimilarAssetsToolStripMenuItem
             // 
@@ -413,23 +430,23 @@
             this.toolStripStatusLabelFileSize.Name = "toolStripStatusLabelFileSize";
             this.toolStripStatusLabelFileSize.Size = new System.Drawing.Size(0, 17);
             // 
-            // groupBox1
+            // groupBoxLayers
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.groupBoxLayers.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.buttonArrowDown);
-            this.groupBox1.Controls.Add(this.buttonArrowUp);
-            this.groupBox1.Controls.Add(this.comboBoxLayerTypes);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.buttonRemoveLayer);
-            this.groupBox1.Controls.Add(this.buttonAddLayer);
-            this.groupBox1.Controls.Add(this.comboBoxLayers);
-            this.groupBox1.Location = new System.Drawing.Point(12, 27);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(600, 47);
-            this.groupBox1.TabIndex = 2;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Layer";
+            this.groupBoxLayers.Controls.Add(this.buttonArrowDown);
+            this.groupBoxLayers.Controls.Add(this.buttonArrowUp);
+            this.groupBoxLayers.Controls.Add(this.comboBoxLayerTypes);
+            this.groupBoxLayers.Controls.Add(this.label1);
+            this.groupBoxLayers.Controls.Add(this.buttonRemoveLayer);
+            this.groupBoxLayers.Controls.Add(this.buttonAddLayer);
+            this.groupBoxLayers.Controls.Add(this.comboBoxLayers);
+            this.groupBoxLayers.Location = new System.Drawing.Point(12, 27);
+            this.groupBoxLayers.Name = "groupBoxLayers";
+            this.groupBoxLayers.Size = new System.Drawing.Size(600, 47);
+            this.groupBoxLayers.TabIndex = 2;
+            this.groupBoxLayers.TabStop = false;
+            this.groupBoxLayers.Text = "Layer";
             // 
             // buttonArrowDown
             // 
@@ -509,33 +526,33 @@
             this.comboBoxLayers.TabIndex = 3;
             this.comboBoxLayers.SelectedIndexChanged += new System.EventHandler(this.comboBoxLayers_SelectedIndexChanged);
             // 
-            // groupBox2
+            // groupBoxAssets
             // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.groupBoxAssets.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox2.Controls.Add(this.buttonMultiEdit);
-            this.groupBox2.Controls.Add(this.checkBoxTemplateFocus);
-            this.groupBox2.Controls.Add(this.listViewAssets);
-            this.groupBox2.Controls.Add(this.buttonCopy);
-            this.groupBox2.Controls.Add(this.buttonPaste);
-            this.groupBox2.Controls.Add(this.textBoxFindAsset);
-            this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Controls.Add(this.buttonInternalEdit);
-            this.groupBox2.Controls.Add(this.buttonView);
-            this.groupBox2.Controls.Add(this.buttonExportRaw);
-            this.groupBox2.Controls.Add(this.buttonEditAsset);
-            this.groupBox2.Controls.Add(this.buttonDuplicate);
-            this.groupBox2.Controls.Add(this.buttonRemoveAsset);
-            this.groupBox2.Controls.Add(this.buttonAddAsset);
-            this.groupBox2.Controls.Add(this.comboBoxAssetTypes);
-            this.groupBox2.Controls.Add(this.label2);
-            this.groupBox2.Location = new System.Drawing.Point(12, 80);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(600, 348);
-            this.groupBox2.TabIndex = 4;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Assets";
+            this.groupBoxAssets.Controls.Add(this.buttonMultiEdit);
+            this.groupBoxAssets.Controls.Add(this.checkBoxTemplateFocus);
+            this.groupBoxAssets.Controls.Add(this.listViewAssets);
+            this.groupBoxAssets.Controls.Add(this.buttonCopy);
+            this.groupBoxAssets.Controls.Add(this.buttonPaste);
+            this.groupBoxAssets.Controls.Add(this.textBoxFindAsset);
+            this.groupBoxAssets.Controls.Add(this.label3);
+            this.groupBoxAssets.Controls.Add(this.buttonInternalEdit);
+            this.groupBoxAssets.Controls.Add(this.buttonView);
+            this.groupBoxAssets.Controls.Add(this.buttonExportRaw);
+            this.groupBoxAssets.Controls.Add(this.buttonEditAsset);
+            this.groupBoxAssets.Controls.Add(this.buttonDuplicate);
+            this.groupBoxAssets.Controls.Add(this.buttonRemoveAsset);
+            this.groupBoxAssets.Controls.Add(this.buttonAddAsset);
+            this.groupBoxAssets.Controls.Add(this.comboBoxAssetTypes);
+            this.groupBoxAssets.Controls.Add(this.label2);
+            this.groupBoxAssets.Location = new System.Drawing.Point(12, 80);
+            this.groupBoxAssets.Name = "groupBoxAssets";
+            this.groupBoxAssets.Size = new System.Drawing.Size(600, 348);
+            this.groupBoxAssets.TabIndex = 4;
+            this.groupBoxAssets.TabStop = false;
+            this.groupBoxAssets.Text = "Assets";
             // 
             // buttonMultiEdit
             // 
@@ -596,18 +613,18 @@
             // 
             this.AssetNameCol.DisplayIndex = 1;
             this.AssetNameCol.Text = "Name";
-            this.AssetNameCol.Width = 240;
+            this.AssetNameCol.Width = 232;
             // 
             // AssetIDCol
             // 
             this.AssetIDCol.DisplayIndex = 0;
             this.AssetIDCol.Text = "ID";
-            this.AssetIDCol.Width = 69;
+            this.AssetIDCol.Width = 66;
             // 
             // AssetTypeCol
             // 
             this.AssetTypeCol.Text = "Type";
-            this.AssetTypeCol.Width = 59;
+            this.AssetTypeCol.Width = 57;
             // 
             // AssetInfoCol
             // 
@@ -648,6 +665,7 @@
             this.textBoxFindAsset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxFindAsset.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.textBoxFindAsset.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBoxFindAsset.Location = new System.Drawing.Point(296, 13);
             this.textBoxFindAsset.Name = "textBoxFindAsset";
             this.textBoxFindAsset.Size = new System.Drawing.Size(217, 20);
@@ -883,8 +901,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(624, 453);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.groupBoxAssets);
+            this.Controls.Add(this.groupBoxLayers);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
             this.KeyPreview = true;
@@ -902,10 +920,10 @@
             this.menuStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
+            this.groupBoxLayers.ResumeLayout(false);
+            this.groupBoxLayers.PerformLayout();
+            this.groupBoxAssets.ResumeLayout(false);
+            this.groupBoxAssets.PerformLayout();
             this.contextMenuStrip_ListBoxAssets.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -922,13 +940,13 @@
         private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelCurrentFilename;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBoxLayers;
         private System.Windows.Forms.Button buttonRemoveLayer;
         private System.Windows.Forms.Button buttonAddLayer;
         private System.Windows.Forms.ComboBox comboBoxLayers;
         private System.Windows.Forms.ComboBox comboBoxLayerTypes;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.GroupBox groupBoxAssets;
         private System.Windows.Forms.Button buttonAddAsset;
         private System.Windows.Forms.ComboBox comboBoxAssetTypes;
         private System.Windows.Forms.Label label2;
@@ -965,7 +983,6 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelSelectionCount;
         private System.Windows.Forms.ToolStripMenuItem addTemplateToolStripMenuItem;
         private System.Windows.Forms.ListView listViewAssets;
-        private System.Windows.Forms.ToolStripMenuItem collapseLayersToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem applyScaleToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem tXDArchiveToolStripMenuItem;
@@ -995,5 +1012,8 @@
         private System.Windows.Forms.ToolStripMenuItem hideButtonsToolStripMenuItem;
         private System.Windows.Forms.ColumnHeader AssetTypeCol;
         private System.Windows.Forms.ColumnHeader AssetLinksCol;
+        private System.Windows.Forms.ToolStripMenuItem layersToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hideLayersToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem organizeLayersToolStripMenuItem;
     }
 }
