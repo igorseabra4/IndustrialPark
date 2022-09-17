@@ -1,4 +1,5 @@
-﻿using HipHopFile;
+﻿using DiscordRPC;
+using HipHopFile;
 using Newtonsoft.Json;
 using RenderWareFile;
 using RenderWareFile.Sections;
@@ -342,10 +343,17 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.Bonus, eventHandler),
             });
 
+            ToolStripMenuItem incrediblesObjects = new ToolStripMenuItem("Stage Items");
+            incrediblesObjects.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                GetTemplateMenuItem(AssetTemplate.Zip_Line, eventHandler)
+            });
+
             ToolStripMenuItem incredibles = new ToolStripMenuItem("Incredibles");
             incredibles.DropDownItems.AddRange(new ToolStripItem[]
             {
-                incrediblesPickups
+                incrediblesPickups,
+                incrediblesObjects
             });
 
             ToolStripMenuItem placeable = new ToolStripMenuItem("Placeable");
@@ -736,7 +744,6 @@ namespace IndustrialPark
                     assetName = "sound_info";
                     ignoreNumber = true;
                     break;
-
                 case AssetTemplate.Player:
                     assetName = playerName;
                     giveIdRegardless = true;
@@ -755,55 +762,58 @@ namespace IndustrialPark
 
             assetName = GetUniqueAssetName(assetName, BKDRHash(assetName), giveIdRegardless, ignoreNumber);
 
-            Asset asset;
+            Asset asset = CreateFromTemplate(template, assetName, position, ref assetIDs);
 
+            if (asset == null)
+                return null;
+
+            asset.game = game;
+            asset.endianness = platform.Endianness();
+
+            AddAsset(asset, false);
+
+            assetIDs.Add(asset.assetID);
+
+            return asset;
+        }
+
+        private Asset CreateFromTemplate(AssetTemplate template, string assetName, Vector3 position, ref List<uint> assetIDs)
+        {
             switch (template)
             {
                 case AssetTemplate.Counter:
-                    asset = new AssetCNTR(assetName);
-                    break;
+                    return new AssetCNTR(assetName);
                 case AssetTemplate.Conditional:
-                    asset = new AssetCOND(assetName);
-                    break;
+                    return new AssetCOND(assetName);
                 case AssetTemplate.Dispatcher:
-                    asset = new AssetDPAT(assetName);
-                    break;
+                    return new AssetDPAT(assetName);
                 case AssetTemplate.Fog:
-                    asset = new AssetFOG(assetName);
-                    break;
+                    return new AssetFOG(assetName);
                 case AssetTemplate.Group:
-                    asset = new AssetGRUP(assetName);
-                    break;
+                    return new AssetGRUP(assetName);
                 case AssetTemplate.Portal:
-                    asset = new AssetPORT(assetName);
-                    break;
+                    return new AssetPORT(assetName);
                 case AssetTemplate.Progress_Script:
-                    asset = new AssetPGRS(assetName);
-                    break;
+                    return new AssetPGRS(assetName);
                 case AssetTemplate.Script:
-                    asset = new AssetSCRP(assetName);
-                    break;
+                    return new AssetSCRP(assetName);
                 case AssetTemplate.Sound_Group:
-                    asset = new AssetSGRP(assetName);
-                    break;
+                    return new AssetSGRP(assetName);
                 case AssetTemplate.Text:
-                    asset = new AssetTEXT(assetName);
-                    break;
+                    return new AssetTEXT(assetName);
                 case AssetTemplate.Timer:
-                    asset = new AssetTIMR(assetName);
-                    break;
+                    return new AssetTIMR(assetName);
                 case AssetTemplate.Checkpoint_Timer:
-                    {
-                        var timer = new AssetTIMR(assetName);
-                        asset = timer;
+                {
+                    var timer = new AssetTIMR(assetName);
 
-                        timer.Time = 0.5f;
-                        var checkpointSimp = PlaceTemplate(new Vector3(position.X + 2f, position.Y, position.Z), ref assetIDs, "CHECKPOINT_SIMP", AssetTemplate.Checkpoint_SIMP);
-                        var checkpointTalkbox = BKDRHash("CHECKPOINT_TALKBOX_00");
-                        if (!ContainsAsset(checkpointTalkbox))
-                            checkpointTalkbox = PlaceTemplate(position, ref assetIDs, "CHECKPOINT_TALKBOX", AssetTemplate.Checkpoint_Talkbox).assetID;
+                    timer.Time = 0.5f;
+                    var checkpointSimp = PlaceTemplate(new Vector3(position.X + 2f, position.Y, position.Z), ref assetIDs, "CHECKPOINT_SIMP", AssetTemplate.Checkpoint_SIMP);
+                    var checkpointTalkbox = BKDRHash("CHECKPOINT_TALKBOX_00");
+                    if (!ContainsAsset(checkpointTalkbox))
+                        checkpointTalkbox = PlaceTemplate(position, ref assetIDs, "CHECKPOINT_TALKBOX", AssetTemplate.Checkpoint_Talkbox).assetID;
 
-                        timer.Links = new Link[] {
+                    timer.Links = new Link[] {
                             new Link(game)
                             {
                                 FloatParameter1 = 2,
@@ -827,89 +837,83 @@ namespace IndustrialPark
                             },
                             new Link(game)
                             {
-                                TargetAsset = asset.assetID,
+                                TargetAsset = timer.assetID,
                                 EventReceiveID = (ushort)EventBFBB.Expired,
                                 EventSendID = (ushort)EventBFBB.Disable
                             },
                         };
-                    }
-                    break;
+                    return timer;
+                }
                 case AssetTemplate.Cam_Tweak:
-                    asset = new DynaGObjectCamTweak(assetName);
-                    break;
+                    return new DynaGObjectCamTweak(assetName);
                 case AssetTemplate.Duplicatotron_Settings:
-                    asset = new DynaGObjectNPCSettings(assetName);
-                    break;
+                    return new DynaGObjectNPCSettings(assetName);
                 case AssetTemplate.Disco_Floor:
-                    asset = new AssetDSCO(assetName);
-                    break;
+                    return new AssetDSCO(assetName);
                 case AssetTemplate.Camera:
                 case AssetTemplate.Start_Camera:
                 case AssetTemplate.Bus_Stop_Camera:
-                    asset = new AssetCAM(assetName, position, template);
-                    break;
+                    return new AssetCAM(assetName, position, template);
                 case AssetTemplate.Marker:
-                    asset = new AssetMRKR(assetName, position);
-                    break;
+                    return new AssetMRKR(assetName, position);
                 case AssetTemplate.Box_Trigger:
                 case AssetTemplate.Sphere_Trigger:
                 case AssetTemplate.Cylinder_Trigger:
-                    asset = new AssetTRIG(assetName, position, template);
-                    break;
+                    return new AssetTRIG(assetName, position, template);
                 case AssetTemplate.Checkpoint:
                 case AssetTemplate.Checkpoint_Invisible:
-                    asset = new AssetTRIG(assetName, position, template);
+                {
+                    var trigger = new AssetTRIG(assetName, position, template);
+                    AssetID checkpointDisp = "CHECKPOINT_DISP_01";
+                    if (!ContainsAsset(checkpointDisp))
+                        checkpointDisp = PlaceTemplate(position, ref assetIDs, "CHECKPOINT_DISP", AssetTemplate.Dispatcher).assetID;
+
+                    var links = new List<Link>
                     {
-                        AssetID checkpointDisp = "CHECKPOINT_DISP_01";
-                        if (!ContainsAsset(checkpointDisp))
-                            checkpointDisp = PlaceTemplate(position, ref assetIDs, "CHECKPOINT_DISP", AssetTemplate.Dispatcher).assetID;
-
-                        var links = new List<Link>
+                        new Link(game)
                         {
-                            new Link(game)
-                            {
-                                ArgumentAsset = game == Game.Incredibles ?
-                                PlaceTemplate(position, ref assetIDs, "CHECKPOINT_POINTER", AssetTemplate.Pointer).assetID :
-                                PlaceTemplate(position, ref assetIDs, "CHECKPOINT_MRKR", AssetTemplate.Marker).assetID,
-                                TargetAsset = checkpointDisp,
-                                EventReceiveID = (ushort)EventBFBB.EnterPlayer,
-                                EventSendID = (ushort)EventBFBB.SetCheckPoint
-                            }
-                        };
-
-                        if (template == AssetTemplate.Checkpoint && game == Game.BFBB)
-                            links.Add(new Link(game)
-                            {
-                                TargetAsset = PlaceTemplate(position, ref assetIDs, "CHECKPOINT_TIMER", AssetTemplate.Checkpoint_Timer).assetID,
-                                EventReceiveID = (ushort)EventBFBB.EnterPlayer,
-                                EventSendID = (ushort)EventBFBB.Run
-                            });
-
-                        if (template == AssetTemplate.Checkpoint && game == Game.Incredibles)
-                        {
-                            links.Add(new Link(game)
-                            {
-                                TargetAsset = PlaceTemplate(position, ref assetIDs, "CHECKPOINT_SCRIPT", AssetTemplate.Checkpoint_Script).assetID,
-                                EventReceiveID = (ushort)EventBFBB.EnterPlayer,
-                                EventSendID = (ushort)EventBFBB.Run
-                            });
-                            links.Add(new Link(game)
-                            {
-                                TargetAsset = asset.assetID,
-                                EventReceiveID = (ushort)EventBFBB.EnterPlayer,
-                                EventSendID = (ushort)EventBFBB.Disable
-                            });
+                            ArgumentAsset = game == Game.Incredibles ?
+                            PlaceTemplate(position, ref assetIDs, "CHECKPOINT_POINTER", AssetTemplate.Pointer).assetID :
+                            PlaceTemplate(position, ref assetIDs, "CHECKPOINT_MRKR", AssetTemplate.Marker).assetID,
+                            TargetAsset = checkpointDisp,
+                            EventReceiveID = (ushort)EventBFBB.EnterPlayer,
+                            EventSendID = (ushort)EventBFBB.SetCheckPoint
                         }
+                    };
 
-                        ((AssetTRIG)asset).Links = links.ToArray();
-                    }
-                    break;
-                case AssetTemplate.Bus_Stop_Trigger:
+                    if (template == AssetTemplate.Checkpoint && game == Game.BFBB)
+                        links.Add(new Link(game)
+                        {
+                            TargetAsset = PlaceTemplate(position, ref assetIDs, "CHECKPOINT_TIMER", AssetTemplate.Checkpoint_Timer).assetID,
+                            EventReceiveID = (ushort)EventBFBB.EnterPlayer,
+                            EventSendID = (ushort)EventBFBB.Run
+                        });
+
+                    if (template == AssetTemplate.Checkpoint && game == Game.Incredibles)
                     {
-                        asset = new AssetTRIG(assetName, position, template);
-                        var lightsSimp = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper().Replace("TRIGGER", "LIGHTS").Replace("TRIG", "LIGHTS"), AssetTemplate.Bus_Stop_Lights);
+                        links.Add(new Link(game)
+                        {
+                            TargetAsset = PlaceTemplate(position, ref assetIDs, "CHECKPOINT_SCRIPT", AssetTemplate.Checkpoint_Script).assetID,
+                            EventReceiveID = (ushort)EventBFBB.EnterPlayer,
+                            EventSendID = (ushort)EventBFBB.Run
+                        });
+                        links.Add(new Link(game)
+                        {
+                            TargetAsset = trigger.assetID,
+                            EventReceiveID = (ushort)EventBFBB.EnterPlayer,
+                            EventSendID = (ushort)EventBFBB.Disable
+                        });
+                    }
 
-                        ((AssetTRIG)asset).Links = new Link[] {
+                    trigger.Links = links.ToArray();
+                    return trigger;
+                }
+                case AssetTemplate.Bus_Stop_Trigger:
+                {
+                    var trigger = new AssetTRIG(assetName, position, template);
+                    var lightsSimp = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper().Replace("TRIGGER", "LIGHTS").Replace("TRIG", "LIGHTS"), AssetTemplate.Bus_Stop_Lights);
+
+                    trigger.Links = new Link[] {
                             new Link(game)
                             {
                                 TargetAsset = lightsSimp.assetID,
@@ -923,29 +927,28 @@ namespace IndustrialPark
                                 EventSendID = (ushort)EventBFBB.Invisible
                             }
                         };
-                    }
-                    break;
+                    return trigger;
+                }
                 case AssetTemplate.MovePoint_Area:
                 case AssetTemplate.MovePoint:
-                    asset = new AssetMVPT(assetName, position, game, template);
+                {
+                    var mvpt = new AssetMVPT(assetName, position, game, template);
                     if (template == AssetTemplate.MovePoint && chainPointMVPTs && ContainsAsset(chainPointMVPTlast))
                     {
                         var prev = (AssetMVPT)GetFromAssetID(chainPointMVPTlast);
                         var prevNexts = prev.NextMovePoints.ToList();
-                        prevNexts.Add(asset.assetID);
+                        prevNexts.Add(mvpt.assetID);
                         prev.NextMovePoints = prevNexts.ToArray();
                     }
-                    chainPointMVPTlast = asset.assetID;
-                    break;
+                    chainPointMVPTlast = mvpt.assetID;
+                    return mvpt;
+                }
                 case AssetTemplate.Pointer:
-                    asset = new DynaPointer(assetName, position);
-                    break;
+                    return new DynaPointer(assetName, position);
                 case AssetTemplate.Player:
-                    asset = new AssetPLYR(assetName, position, game);
-                    break;
+                    return new AssetPLYR(assetName, position, game);
                 case AssetTemplate.Boulder:
-                    asset = new AssetBOUL(assetName, position);
-                    break;
+                    return new AssetBOUL(assetName, position);
                 case AssetTemplate.Button:
                 case AssetTemplate.Button_Red:
                 case AssetTemplate.Pressure_Plate:
@@ -953,7 +956,8 @@ namespace IndustrialPark
                 case AssetTemplate.Red_Button_Smash:
                 case AssetTemplate.Floor_Button:
                 case AssetTemplate.Floor_Button_Smash:
-                    asset = new AssetBUTN(assetName, position, template);
+                {
+                    var button = new AssetBUTN(assetName, position, template);
                     if (template == AssetTemplate.Pressure_Plate)
                         PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_BASE", AssetTemplate.Pressure_Plate_Base);
                     else if (template == AssetTemplate.Red_Button)
@@ -964,17 +968,15 @@ namespace IndustrialPark
                         PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_BASE", AssetTemplate.Floor_Button_Base);
                     else if (template == AssetTemplate.Floor_Button_Smash)
                         PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_BASE", AssetTemplate.Floor_Button_Smash_Base);
-                    break;
+                    return button;
+                }
                 case AssetTemplate.Destructible_Object:
                 case AssetTemplate.Crate:
-                    asset = new AssetDSTR(assetName, position, template);
-                    break;
+                    return new AssetDSTR(assetName, position, template);
                 case AssetTemplate.Electric_Arc_Generator:
-                    asset = new AssetEGEN(assetName, position);
-                    break;
+                    return new AssetEGEN(assetName, position);
                 case AssetTemplate.Hangable:
-                    asset = new AssetHANG(assetName, position);
-                    break;
+                    return new AssetHANG(assetName, position);
                 case AssetTemplate.Villain:
                 case AssetTemplate.Caveman:
                 case AssetTemplate.Creeper:
@@ -1001,11 +1003,9 @@ namespace IndustrialPark
                 case AssetTemplate.Killer_Plant:
                 case AssetTemplate.Holly:
                 case AssetTemplate.Groundskeeper:
-                    asset = new AssetNPC(assetName, position, template);
-                    break;
+                    return new AssetNPC(assetName, position, template);
                 case AssetTemplate.Pendulum:
-                    asset = new AssetPEND(assetName, position);
-                    break;
+                    return new AssetPEND(assetName, position);
                 case AssetTemplate.Platform:
                 case AssetTemplate.Texas_Hitch_Platform:
                 case AssetTemplate.Swinger_Platform:
@@ -1015,8 +1015,7 @@ namespace IndustrialPark
                 case AssetTemplate.CollapsePlatform_ThugTug:
                 case AssetTemplate.CollapsePlatform_Spongeball:
                 case AssetTemplate.Flower_Dig:
-                    asset = new AssetPLAT(assetName, position, template);
-                    break;
+                    return new AssetPLAT(assetName, position, template);
                 case AssetTemplate.Simple_Object:
                 case AssetTemplate.Taxi_Stand:
                 case AssetTemplate.Texas_Hitch:
@@ -1037,7 +1036,8 @@ namespace IndustrialPark
                 case AssetTemplate.Floor_Button_Smash_Base:
                 case AssetTemplate.Cauldron:
                 case AssetTemplate.Flower:
-                    asset = new AssetSIMP(assetName, position, template);
+                {
+                    var simp = new AssetSIMP(assetName, position, template);
                     switch (template)
                     {
                         case AssetTemplate.Bus_Stop:
@@ -1053,16 +1053,16 @@ namespace IndustrialPark
                             break;
                         case AssetTemplate.Cauldron:
                             var sfx = (AssetSFX)PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_SFX", AssetTemplate.Cauldron_Sfx);
-                            sfx.Attach = asset.assetID;
+                            sfx.Attach = simp.assetID;
                             var lite = (AssetLITE)PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_LIGHT", AssetTemplate.Cauldron_Light);
-                            lite.Attach = asset.assetID;
+                            lite.Attach = simp.assetID;
                             position.Y += 1f;
                             PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_EMITTER", AssetTemplate.Cauldron_Emitter);
                             break;
                         case AssetTemplate.Flower:
                             position.X += 4f;
                             var dig = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_DIG", AssetTemplate.Flower_Dig);
-                            ((AssetSIMP)asset).Links = new Link[]
+                            simp.Links = new Link[]
                             {
                                 new Link(game)
                                 {
@@ -1073,93 +1073,71 @@ namespace IndustrialPark
                             };
                             break;
                     }
-                    break;
+                    return simp;
+                }
                 case AssetTemplate.NPC:
-                    asset = new AssetVIL(assetName, position, template, 0);
-                    break;
+                    return new AssetVIL(assetName, position, template, 0);
                 case AssetTemplate.User_Interface:
-                    asset = new AssetUI(assetName, position);
-                    break;
+                    return new AssetUI(assetName, position);
                 case AssetTemplate.User_Interface_Font:
-                    asset = new AssetUIFT(assetName, position);
-                    break;
+                    return new AssetUIFT(assetName, position);
                 case AssetTemplate.SFX_OnEvent:
                 case AssetTemplate.SFX_OnRadius:
                 case AssetTemplate.Cauldron_Sfx:
-                    asset = new AssetSFX(assetName, position, game, template);
-                    break;
+                    return new AssetSFX(assetName, position, game, template);
                 case AssetTemplate.SDFX:
-                    asset = new AssetSDFX(assetName, position);
-                    break;
+                    return new AssetSDFX(assetName, position);
                 case AssetTemplate.Light:
                 case AssetTemplate.Cauldron_Light:
-                    asset = new AssetLITE(assetName, position, template);
-                    break;
+                    return new AssetLITE(assetName, position, template);
                 case AssetTemplate.Animation_List:
-                    asset = new AssetALST(assetName);
-                    break;
+                    return new AssetALST(assetName);
                 case AssetTemplate.Collision_Table:
-                    asset = new AssetCOLL(assetName);
-                    break;
+                    return new AssetCOLL(assetName);
                 case AssetTemplate.Environment:
-                    asset = new AssetENV(assetName, startCamName);
-                    break;
+                    return new AssetENV(assetName, startCamName);
                 case AssetTemplate.Flythrough:
-                    asset = new AssetFLY(assetName);
-                    var flyWidget = (DynaGObjectFlythrough)PlaceTemplate(position, ref assetIDs, asset.assetName + "_WIDGET", AssetTemplate.Flythrough_Widget);
-                    flyWidget.Flythrough = asset.assetID;
-                    break;
+                {
+                    var fly = new AssetFLY(assetName);
+                    var flyWidget = (DynaGObjectFlythrough)PlaceTemplate(position, ref assetIDs, fly.assetName + "_WIDGET", AssetTemplate.Flythrough_Widget);
+                    flyWidget.Flythrough = fly.assetID;
+                    return fly;
+                }
                 case AssetTemplate.Flythrough_Widget:
-                    asset = new DynaGObjectFlythrough(assetName);
-                    break;
+                    return new DynaGObjectFlythrough(assetName);
                 case AssetTemplate.Jaw_Data_Table:
-                    asset = new AssetJAW(assetName);
-                    break;
+                    return new AssetJAW(assetName);
                 case AssetTemplate.Level_Of_Detail_Table:
-                    asset = new AssetLODT(assetName);
-                    break;
+                    return new AssetLODT(assetName);
                 case AssetTemplate.Surface_Mapper:
-                    asset = new AssetMAPR(assetName);
-                    break;
+                    return new AssetMAPR(assetName);
                 case AssetTemplate.Throwable_Table:
-                    asset = new AssetTRWT(assetName);
-                    break;
+                    return new AssetTRWT(assetName);
                 case AssetTemplate.Model_Info:
-                    asset = new AssetMINF(assetName);
-                    break;
+                    return new AssetMINF(assetName);
                 case AssetTemplate.One_Liner:
-                    asset = new AssetONEL(assetName);
-                    break;
+                    return new AssetONEL(assetName);
                 case AssetTemplate.Pipe_Info_Table:
-                    asset = new AssetPIPT(assetName);
-                    break;
+                    return new AssetPIPT(assetName);
                 case AssetTemplate.Shadow_Table:
-                    asset = new AssetSHDW(assetName);
-                    break;
+                    return new AssetSHDW(assetName);
                 case AssetTemplate.Shrapnel:
-                    asset = new AssetSHRP(assetName);
-                    break;
+                    return new AssetSHRP(assetName);
                 case AssetTemplate.Sound_Info:
+                {
                     if (platform == Platform.Xbox)
-                        asset = new AssetSNDI_XBOX(assetName);
-                    else if (platform == Platform.PS2)
-                        asset = new AssetSNDI_PS2(assetName);
-                    else if (platform == Platform.GameCube)
-                    {
-                        if (game == Game.Incredibles)
-                            asset = new AssetSNDI_GCN_V2(assetName);
-                        else
-                            asset = new AssetSNDI_GCN_V1(assetName);
-                    }
-                    else asset = null;
-                    break;
+                        return new AssetSNDI_XBOX(assetName);
+                    if (platform == Platform.PS2)
+                        return new AssetSNDI_PS2(assetName);
+                    if (game == Game.Incredibles)
+                        return new AssetSNDI_GCN_V2(assetName);
+                    return new AssetSNDI_GCN_V1(assetName);
+                }
                 case AssetTemplate.Empty_Sound:
                 case AssetTemplate.Empty_Streaming_Sound:
-                    asset = new AssetSound(assetName, template == AssetTemplate.Empty_Sound ? AssetType.Sound : AssetType.StreamingSound, game, platform, new byte[0]);
-                    break;
+                    return new AssetSound(assetName, template == AssetTemplate.Empty_Sound ? AssetType.Sound : AssetType.StreamingSound, game, platform, new byte[0]);
                 case AssetTemplate.Empty_BSP:
-                    asset = new AssetJSP(assetName, AssetType.BSP, GenerateBlankBSP(), standalone ? Program.MainForm.renderer : null);
-                    break;
+                    return new AssetJSP(assetName, AssetType.BSP, GenerateBlankBSP(), standalone ? Program.MainForm.renderer : null);
                 case AssetTemplate.Shiny_Red:
                 case AssetTemplate.Shiny_Yellow:
                 case AssetTemplate.Shiny_Green:
@@ -1212,8 +1190,7 @@ namespace IndustrialPark
                 case AssetTemplate.Umbrella:
                 case AssetTemplate.Gum_Machine:
                 case AssetTemplate.Soap_Bubble:
-                    asset = new AssetPKUP(assetName, game, position, template);
-                    break;
+                    return new AssetPKUP(assetName, game, position, template);
                 case AssetTemplate.Wooden_Tiki:
                 case AssetTemplate.Floating_Tiki:
                 case AssetTemplate.Thunder_Tiki:
@@ -1222,13 +1199,12 @@ namespace IndustrialPark
                 case AssetTemplate.ArfDog:
                 case AssetTemplate.TubeletSlave:
                 case AssetTemplate.Duplicatotron:
+                {
+                    var vil = new AssetVIL(assetName, position, template, 0);
+                    if (template == AssetTemplate.Duplicatotron)
                     {
-                        asset = new AssetVIL(assetName, position, template, 0);
-                        if (template == AssetTemplate.Duplicatotron)
-                        {
-                            var vil = (AssetVIL)asset;
-                            vil.NPCSettingsObject = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_SETTINGS", AssetTemplate.Duplicatotron_Settings).assetID;
-                            vil.Links = new Link[] {
+                        vil.NPCSettingsObject = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_SETTINGS", AssetTemplate.Duplicatotron_Settings).assetID;
+                        vil.Links = new Link[] {
                                 new Link(game)
                                 {
                                     TargetAsset = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_GROUP", AssetTemplate.Group).assetID,
@@ -1236,9 +1212,9 @@ namespace IndustrialPark
                                     EventSendID = (ushort)EventBFBB.Connect_IOwnYou
                                 }
                             };
-                        }
                     }
-                    break;
+                    return vil;
+                }
                 case AssetTemplate.Fodder:
                 case AssetTemplate.Hammer:
                 case AssetTemplate.TarTar:
@@ -1258,88 +1234,85 @@ namespace IndustrialPark
                 case AssetTemplate.Slick_Trigger:
                 case AssetTemplate.Jellyfish_Pink:
                 case AssetTemplate.Jellyfish_Blue:
+                {
+                    var movePoint = (AssetMVPT)PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.MovePoint_Area);
+                    var vil = new AssetVIL(assetName, position, template, movePoint.assetID);
+                    if (template == AssetTemplate.Chuck_Trigger || template == AssetTemplate.Monsoon_Trigger || template == AssetTemplate.Slick_Trigger)
                     {
-                        var movePoint = (AssetMVPT)PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.MovePoint_Area);
-                        var vil = new AssetVIL(assetName, position, template, movePoint.assetID);
-                        asset = vil;
-                        if (template == AssetTemplate.Chuck_Trigger || template == AssetTemplate.Monsoon_Trigger || template == AssetTemplate.Slick_Trigger)
-                        {
-                            vil.Links = new Link[] {
+                        vil.Links = new Link[] {
                             new Link(game)
                             {
-                                TargetAsset = asset.assetID,
+                                TargetAsset = vil.assetID,
                                 EventReceiveID = (ushort)EventBFBB.ScenePrepare,
                                 EventSendID = (ushort)EventBFBB.DetectPlayerOff
                             }
                         };
 
-                            var trigger = (AssetTRIG)PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_TRIG", AssetTemplate.Sphere_Trigger);
-                            trigger.Radius = 15f;
-                            trigger.Links = new Link[] {
+                        var trigger = (AssetTRIG)PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_TRIG", AssetTemplate.Sphere_Trigger);
+                        trigger.Radius = 15f;
+                        trigger.Links = new Link[] {
                             new Link(game)
                             {
-                                TargetAsset = asset.assetID,
+                                TargetAsset = vil.assetID,
                                 EventReceiveID = (ushort)EventBFBB.EnterPlayer,
                                 EventSendID = (ushort)EventBFBB.DetectPlayerOn
                             },
                             new Link(game)
                             {
-                                TargetAsset = asset.assetID,
+                                TargetAsset = vil.assetID,
                                 EventReceiveID = (ushort)EventBFBB.ExitPlayer,
                                 EventSendID = (ushort)EventBFBB.DetectPlayerOff
                             }
                         };
-                        }
-                        else if (template == AssetTemplate.Sleepytime)
-                        {
-                            movePoint.ZoneRadius = -1;
-                        }
-                        else if (template == AssetTemplate.Arf)
-                        {
-                            var links = new List<Link>();
-                            foreach (string i in new string[] { "A", "B", "C" })
-                            {
-                                var dog = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_DOG_" + i, AssetTemplate.ArfDog);
-                                links.Add(new Link(game)
-                                {
-                                    TargetAsset = dog.assetID,
-                                    EventReceiveID = (ushort)EventBFBB.ScenePrepare,
-                                    EventSendID = (ushort)EventBFBB.Connect_IOwnYou
-                                });
-                            }
-                            vil.Links = links.ToArray();
-                        }
-                        else if (template == AssetTemplate.Tubelet)
-                        {
-                            var links = new List<Link>();
-                            foreach (string i in new string[] { "A", "B" })
-                            {
-                                var slave = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_SLAVE_" + i, AssetTemplate.TubeletSlave);
-                                links.Add(new Link(game)
-                                {
-                                    TargetAsset = slave.assetID,
-                                    EventReceiveID = (ushort)EventBFBB.ScenePrepare,
-                                    EventSendID = (ushort)EventBFBB.Connect_IOwnYou
-                                });
-                            }
-                            vil.Links = links.ToArray();
-                        }
                     }
-                    break;
+                    else if (template == AssetTemplate.Sleepytime)
+                    {
+                        movePoint.ZoneRadius = -1;
+                    }
+                    else if (template == AssetTemplate.Arf)
+                    {
+                        var links = new List<Link>();
+                        foreach (string i in new string[] { "A", "B", "C" })
+                        {
+                            var dog = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_DOG_" + i, AssetTemplate.ArfDog);
+                            links.Add(new Link(game)
+                            {
+                                TargetAsset = dog.assetID,
+                                EventReceiveID = (ushort)EventBFBB.ScenePrepare,
+                                EventSendID = (ushort)EventBFBB.Connect_IOwnYou
+                            });
+                        }
+                        vil.Links = links.ToArray();
+                    }
+                    else if (template == AssetTemplate.Tubelet)
+                    {
+                        var links = new List<Link>();
+                        foreach (string i in new string[] { "A", "B" })
+                        {
+                            var slave = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_SLAVE_" + i, AssetTemplate.TubeletSlave);
+                            links.Add(new Link(game)
+                            {
+                                TargetAsset = slave.assetID,
+                                EventReceiveID = (ushort)EventBFBB.ScenePrepare,
+                                EventSendID = (ushort)EventBFBB.Connect_IOwnYou
+                            });
+                        }
+                        vil.Links = links.ToArray();
+                    }
+                    return vil;
+                }
                 case AssetTemplate.Wood_Crate:
                 case AssetTemplate.Hover_Crate:
                 case AssetTemplate.Explode_Crate:
                 case AssetTemplate.Shrink_Crate:
                 case AssetTemplate.Steel_Crate:
-                    asset = new DynaEnemySupplyCrate(assetName, template, position);
-                    break;
+                    return new DynaEnemySupplyCrate(assetName, template, position);
                 case AssetTemplate.Jellyfish:
                 case AssetTemplate.Jellyfish_Bucket:
-                    {
-                        var mvpt = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.MovePoint);
-                        asset = new DynaEnemyCritter(assetName, template, position, mvpt.assetID);
-                    }
-                    break;
+                {
+                    var mvpt = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.MovePoint);
+                    return new DynaEnemyCritter(assetName, template, position, mvpt.assetID);
+                }
                 case AssetTemplate.Fogger_GoofyGoober:
                 case AssetTemplate.Fogger_Desert:
                 case AssetTemplate.Fogger_ThugTug:
@@ -1362,68 +1335,59 @@ namespace IndustrialPark
                 case AssetTemplate.Flinger_Junkyard:
                 case AssetTemplate.Popper_Trench:
                 case AssetTemplate.Popper_Planktopolis:
-                    {
-                        var mvpt = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_MP",
-                            (template.ToString().Contains("Flinger") || template.ToString().Contains("Popper")) ?
-                            AssetTemplate.MovePoint : AssetTemplate.MovePoint_Area);
-                        asset = new DynaEnemyStandard(assetName, template, position, mvpt.assetID);
-                    }
-                    break;
+                {
+                    var mvpt = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_MP",
+                        (template.ToString().Contains("Flinger") || template.ToString().Contains("Popper")) ?
+                        AssetTemplate.MovePoint : AssetTemplate.MovePoint_Area);
+                    return new DynaEnemyStandard(assetName, template, position, mvpt.assetID);
+                }
                 case AssetTemplate.Turret_v1:
                 case AssetTemplate.Turret_v2:
                 case AssetTemplate.Turret_v3:
-                    asset = new DynaEnemyTurret(assetName, template, position);
-                    break;
+                    return new DynaEnemyTurret(assetName, template, position);
                 case AssetTemplate.Spawner_BB:
                 case AssetTemplate.Spawner_DE:
                 case AssetTemplate.Spawner_GG:
                 case AssetTemplate.Spawner_JK:
                 case AssetTemplate.Spawner_TR:
                 case AssetTemplate.Spawner_PT:
-                    {
-                        var group = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_GROUP", AssetTemplate.Group);
-                        asset = new DynaEnemyBucketOTron(assetName, template, position, group.assetID);
-                    }
-                    break;
+                {
+                    var group = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_GROUP", AssetTemplate.Group);
+                    return new DynaEnemyBucketOTron(assetName, template, position, group.assetID);
+                }
                 case AssetTemplate.Teleport_Box:
-                    {
-                        var mrkr = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_MRKR", AssetTemplate.Marker);
-                        asset = new DynaGObjectTeleport(assetName, mrkr.assetID, GetMRKR);
-                    }
-                    break;
+                {
+                    var mrkr = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_MRKR", AssetTemplate.Marker);
+                    return new DynaGObjectTeleport(assetName, mrkr.assetID, GetMRKR);
+                }
                 case AssetTemplate.Bungee_Hook:
-                    {
-                        var simp = PlaceTemplate(position, ref assetIDs, "BUNGEE_SIMP", AssetTemplate.Bungee_Hook_SIMP);
-                        asset = new DynaGObjectBungeeHook(assetName, simp.assetID);
-                    }
-                    break;
+                {
+                    var simp = PlaceTemplate(position, ref assetIDs, "BUNGEE_SIMP", AssetTemplate.Bungee_Hook_SIMP);
+                    return new DynaGObjectBungeeHook(assetName, simp.assetID);
+                }
                 case AssetTemplate.Bungee_Drop:
-                    {
-                        var mrkr = PlaceTemplate(position, ref assetIDs, "BUNGEE_MRKR", AssetTemplate.Marker);
-                        asset = new DynaGObjectBungeeDrop(assetName, mrkr.assetID);
-                    }
-                    break;
+                {
+                    var mrkr = PlaceTemplate(position, ref assetIDs, "BUNGEE_MRKR", AssetTemplate.Marker);
+                    return new DynaGObjectBungeeDrop(assetName, mrkr.assetID);
+                }
                 case AssetTemplate.Bus_Stop_DYNA:
-                    {
-                        var mrkr = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper().Replace("DYNA", "MRKR"), AssetTemplate.Marker);
-                        var cam = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper().Replace("DYNA", "CAM"), AssetTemplate.Bus_Stop_Camera);
-                        var simp = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper().Replace("DYNA", "SIMP"), AssetTemplate.Bus_Stop_BusSimp);
+                {
+                    var mrkr = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper().Replace("DYNA", "MRKR"), AssetTemplate.Marker);
+                    var cam = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper().Replace("DYNA", "CAM"), AssetTemplate.Bus_Stop_Camera);
+                    var simp = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper().Replace("DYNA", "SIMP"), AssetTemplate.Bus_Stop_BusSimp);
 
-                        asset = new DynaGObjectBusStop(assetName, mrkr.assetID, cam.assetID, simp.assetID);
-                    }
-                    break;
+                    return new DynaGObjectBusStop(assetName, mrkr.assetID, cam.assetID, simp.assetID);
+                }
                 case AssetTemplate.Checkpoint_Talkbox:
-                    asset = new DynaGObjectTalkBox(assetName, true);
-                    break;
+                    return new DynaGObjectTalkBox(assetName, true);
                 case AssetTemplate.Checkpoint_Script:
-                    {
-                        var scrp = new AssetSCRP(assetName);
-                        asset = scrp;
+                {
+                    var scrp = new AssetSCRP(assetName);
 
-                        var checkpointSdfx = (AssetSDFX)PlaceTemplate(new Vector3(position.X + 2f, position.Y, position.Z), ref assetIDs, "CHECKPOINT_SFX", AssetTemplate.SDFX);
-                        var checkpointSimp = PlaceTemplate(new Vector3(position.X + 2f, position.Y, position.Z), ref assetIDs, "CHECKPOINT_SIMP", AssetTemplate.Checkpoint_SIMP_TSSM);
+                    var checkpointSdfx = (AssetSDFX)PlaceTemplate(new Vector3(position.X + 2f, position.Y, position.Z), ref assetIDs, "CHECKPOINT_SFX", AssetTemplate.SDFX);
+                    var checkpointSimp = PlaceTemplate(new Vector3(position.X + 2f, position.Y, position.Z), ref assetIDs, "CHECKPOINT_SIMP", AssetTemplate.Checkpoint_SIMP_TSSM);
 
-                        scrp.TimedLinks = new Link[] {
+                    scrp.TimedLinks = new Link[] {
                             new Link(game)
                             {
                                 TargetAsset = checkpointSdfx.assetID,
@@ -1450,68 +1414,50 @@ namespace IndustrialPark
                             },
                         };
 
-                        checkpointSdfx.SoundGroup = "CHECKPOINT_SGRP";
-                        checkpointSdfx.Emitter = checkpointSimp.assetID;
-                        break;
-                    }
+                    checkpointSdfx.SoundGroup = "CHECKPOINT_SGRP";
+                    checkpointSdfx.Emitter = checkpointSimp.assetID;
+                    return scrp;
+                }
                 case AssetTemplate.Ring:
-                    asset = new DynaGObjectRing(assetName, position);
-                    break;
+                    return new DynaGObjectRing(assetName, position);
                 case AssetTemplate.Ring_Control:
-                    asset = new DynaGObjectRingControl(assetName);
-                    break;
+                    return new DynaGObjectRingControl(assetName);
                 case AssetTemplate.DefaultGlowSceneProp:
-                    asset = new DynaSceneProperties(assetName);
-                    break;
+                    return new DynaSceneProperties(assetName);
                 case AssetTemplate.LKIT_lights:
                 case AssetTemplate.LKIT_JF_SB_lights:
                 case AssetTemplate.LKIT_jf01_light_kit:
-                    {
-                        var fileName =
-                            template == AssetTemplate.LKIT_lights ? "lights" :
-                            template == AssetTemplate.LKIT_JF_SB_lights ? "JF_SB_lights" :
-                            template == AssetTemplate.LKIT_jf01_light_kit ? "jf01_light_kit" : "";
-                        var data = File.ReadAllBytes(Path.Combine(Application.StartupPath, "Resources", fileName));
-                        asset = new AssetLKIT(assetName, data, Endianness.Big);
-                    }
-                    break;
+                {
+                    var fileName =
+                        template == AssetTemplate.LKIT_lights ? "lights" :
+                        template == AssetTemplate.LKIT_JF_SB_lights ? "JF_SB_lights" :
+                        template == AssetTemplate.LKIT_jf01_light_kit ? "jf01_light_kit" : "";
+                    var data = File.ReadAllBytes(Path.Combine(Application.StartupPath, "Resources", fileName));
+                    return new AssetLKIT(assetName, data, Endianness.Big);
+                }
                 case AssetTemplate.Health_10:
                 case AssetTemplate.Health_25:
                 case AssetTemplate.Health_50:
                 case AssetTemplate.Power_25:
                 case AssetTemplate.Power_50:
                 case AssetTemplate.Bonus:
-                    asset = new DynaGObjectInPickup(assetName, position, template);
-                    break;
+                    return new DynaGObjectInPickup(assetName, position, template);
                 case AssetTemplate.Cauldron_Emitter:
-                    asset = new AssetPARE(assetName, position, template);
-                    break;
+                    return new AssetPARE(assetName, position, template);
                 case AssetTemplate.Destructible:
-                    asset = new AssetDEST(assetName);
-                    break;
+                    return new AssetDEST(assetName);
                 case AssetTemplate.Gust:
-                    asset = new AssetGUST(assetName);
-                    break;
+                    return new AssetGUST(assetName);
                 case AssetTemplate.Volume_Box:
                 case AssetTemplate.Volume_Sphere:
-                    asset = new AssetVOLU(assetName, position, template);
-                    break;
+                    return new AssetVOLU(assetName, position, template);
                 case AssetTemplate.Duplicator:
-                    asset = new AssetDUPC(assetName, position);
-                    break;
-                default:
-                    MessageBox.Show("Unsupported template");
-                    return null;
+                    return new AssetDUPC(assetName, position);
+                case AssetTemplate.Zip_Line:
+                    return new AssetZLIN(assetName, position);
             }
-
-            asset.game = game;
-            asset.endianness = platform.Endianness();
-
-            AddAsset(asset, false);
-
-            assetIDs.Add(asset.assetID);
-
-            return asset;
+            MessageBox.Show("Unsupported template");
+            return null;
         }
 
         public static int MaximumBoundary => 1000;

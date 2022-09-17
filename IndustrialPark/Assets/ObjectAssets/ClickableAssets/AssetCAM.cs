@@ -319,15 +319,15 @@ namespace IndustrialPark
             CamSpecific.Verify(ref result);
 
             Vector3 nForward = new Vector3(NormalizedForwardX, NormalizedForwardY, NormalizedForwardZ);
-            if (nForward != Vector3.Normalize(nForward))
+            if (!MathUtil.IsOne(nForward.Length()))
                 result.Add("Camera forward vector seems to not be normalized.");
 
             Vector3 nUp = new Vector3(NormalizedUpX, NormalizedUpY, NormalizedUpZ);
-            if (nUp != Vector3.Normalize(nUp))
+            if (!MathUtil.IsOne(nUp.Length()))
                 result.Add("Camera up vector seems to not be normalized.");
 
             Vector3 nLeft = new Vector3(NormalizedLeftX, NormalizedLeftY, NormalizedLeftZ);
-            if (nLeft != Vector3.Normalize(nLeft))
+            if (!MathUtil.IsOne(nLeft.Length()))
                 result.Add("Camera left vector seems to not be normalized.");
         }
 

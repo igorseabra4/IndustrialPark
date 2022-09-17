@@ -1072,7 +1072,7 @@ namespace IndustrialPark
                     if (a.assetName.ToLower().Contains(textBoxFindAsset.Text.ToLower()))
                         assetIDs.Add(a.assetID);
 
-            if (!archive.NoLayers)
+            if (!archive.NoLayers && assetIDs.Any())
             {
                 var firstOrDef = assetIDs.FirstOrDefault();
                 if (archive.GetLayerFromAssetID(firstOrDef) != comboBoxLayers.SelectedIndex || comboBoxLayers.SelectedIndex == -1)

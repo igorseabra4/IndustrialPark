@@ -173,6 +173,7 @@
     <Compile Include="Assets\ObjectAssets\AssetRANM.cs" />
     <Compile Include="Assets\ObjectAssets\AssetTRWT.cs" />
     <Compile Include="Assets\ObjectAssets\AssetUIM.cs" />
+    <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetZLIN.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetGRSM.cs" />
     <Compile Include="Assets\Shared\AssetSound.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\UIMCommand.cs" />

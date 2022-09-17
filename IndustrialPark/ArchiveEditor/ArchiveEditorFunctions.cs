@@ -751,6 +751,7 @@ namespace IndustrialPark
                     case AssetType.NPC: return new AssetVIL(AHDR, game, endianness);
                     case AssetType.NPCProperties: return new AssetVILP(AHDR, game, endianness);
                     case AssetType.Volume: return new AssetVOLU(AHDR, game, endianness);
+                    case AssetType.ZipLine: return new AssetZLIN(AHDR, game, endianness);
 
                     case AssetType.Sound:
                     case AssetType.StreamingSound:
@@ -760,7 +761,6 @@ namespace IndustrialPark
                     case AssetType.NavigationMesh:
                     case AssetType.SlideProperty:
                     case AssetType.SceneSettings:
-                    case AssetType.ZipLine:
                         return new AssetGenericBase(AHDR, game, endianness);
 
                     case AssetType.AttackTable:

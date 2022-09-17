@@ -322,5 +322,8 @@
         Power_25,
         Power_50,
         Bonus,
+
+        // Incredibles objects
+        Zip_Line,
     }
 }
