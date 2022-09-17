@@ -8,7 +8,6 @@ namespace IndustrialPark
 {
     public partial class AssetHeader : Form
     {
-        static bool replaceReferencesOnRename = false;
         System.Drawing.Color defaultColor;
 
         public AssetHeader()
@@ -21,7 +20,6 @@ namespace IndustrialPark
             buttonOK.Enabled = false;
             TopMost = true;
             defaultColor = textBoxAssetID.BackColor;
-            checkBoxReplaceReferences.Visible = false;
         }
 
         public AssetHeader(Section_AHDR AHDR)
@@ -50,8 +48,6 @@ namespace IndustrialPark
             textBoxAssetFileName.Text = AHDR.ADBG.assetFileName;
             labelRawDataSize.Text = "Raw Data Size: " + AHDR.data.Length.ToString();
             textBoxChecksum.Text = "0x" + AHDR.ADBG.checksum.ToString("X8");
-
-            checkBoxReplaceReferences.Checked = replaceReferencesOnRename;
         }
 
         private static Section_AHDR GetAsset(AssetHeader a)
@@ -169,7 +165,6 @@ namespace IndustrialPark
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            replaceReferencesOnRename = checkBoxReplaceReferences.Checked;
             Close();
         }
     }
