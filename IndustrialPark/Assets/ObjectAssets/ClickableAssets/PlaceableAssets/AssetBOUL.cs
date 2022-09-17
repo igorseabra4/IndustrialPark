@@ -30,15 +30,15 @@ namespace IndustrialPark
         [Category(categoryName)]
         public FlagBitmask BoulderFlags { get; set; } = IntFlagsDescriptor(
             "Can Hit Walls",
-                "Damage Player",
-                "Something related to destructibles",
-                "Damage NPCs",
-                null,
-                "Die on OOB surfaces",
-                null,
-                null,
-                "Die on player attack",
-                "Die after kill timer");
+            "Damage Player",
+            "Something related to destructibles",
+            "Damage NPCs",
+            null,
+            "Die on OOB surfaces",
+            null,
+            null,
+            "Die on player attack",
+            "Die after kill timer");
         [Category(categoryName)]
         public AssetSingle KillTimer { get; set; }
         [Category(categoryName)]

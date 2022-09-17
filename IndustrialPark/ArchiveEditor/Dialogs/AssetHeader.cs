@@ -8,6 +8,7 @@ namespace IndustrialPark
 {
     public partial class AssetHeader : Form
     {
+        static bool replaceReferencesOnRename = false;
         System.Drawing.Color defaultColor;
 
         public AssetHeader()
@@ -20,6 +21,7 @@ namespace IndustrialPark
             buttonOK.Enabled = false;
             TopMost = true;
             defaultColor = textBoxAssetID.BackColor;
+            checkBoxReplaceReferences.Visible = false;
         }
 
         public AssetHeader(Section_AHDR AHDR)
@@ -31,7 +33,6 @@ namespace IndustrialPark
             TopMost = true;
             defaultColor = textBoxAssetID.BackColor;
 
-            comboBoxAssetTypes.SelectedItem = AHDR.assetType;
             textBoxAssetID.Text = "0x" + AHDR.assetID.ToString("X8");
             checkSourceFile.Checked = (AHDR.flags & AHDRFlags.SOURCE_FILE) != 0;
             checkSourceVirtual.Checked = (AHDR.flags & AHDRFlags.SOURCE_VIRTUAL) != 0;
@@ -49,9 +50,11 @@ namespace IndustrialPark
             textBoxAssetFileName.Text = AHDR.ADBG.assetFileName;
             labelRawDataSize.Text = "Raw Data Size: " + AHDR.data.Length.ToString();
             textBoxChecksum.Text = "0x" + AHDR.ADBG.checksum.ToString("X8");
+
+            checkBoxReplaceReferences.Checked = replaceReferencesOnRename;
         }
 
-        public static Section_AHDR GetAsset(AssetHeader a)
+        private static Section_AHDR GetAsset(AssetHeader a)
         {
             if (a.ShowDialog() == DialogResult.OK)
             {
@@ -77,6 +80,11 @@ namespace IndustrialPark
         public static Section_AHDR GetAsset(Section_AHDR AHDR)
         {
             return GetAsset(new AssetHeader(AHDR));
+        }
+
+        public static Section_AHDR GetAsset()
+        {
+            return GetAsset(new AssetHeader());
         }
 
         uint assetID = 0;
@@ -161,6 +169,7 @@ namespace IndustrialPark
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
+            replaceReferencesOnRename = checkBoxReplaceReferences.Checked;
             Close();
         }
     }

@@ -454,7 +454,7 @@
     <Compile Include="Assets\ObjectAssets\AssetTIMR.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetBOUL.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaGObjectTeleport.cs" />
-    <Compile Include="Assets\Shared\Enums\VilType_BFBB.cs" />
+    <Compile Include="Assets\Shared\Enums\NpcType_BFBB.cs" />
     <Compile Include="Other\IPSettings.cs" />
     <Compile Include="Other\ProjectJson.cs" />
     <Compile Include="Models\BSP_IO.cs" />

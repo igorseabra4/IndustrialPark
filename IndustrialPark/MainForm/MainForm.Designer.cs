@@ -57,9 +57,8 @@ namespace IndustrialPark
             this.templatesPersistentShiniesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.templatesChainPointMVPTsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
-            this.updateReferencesOnCopyPasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.replaceAssetsOnPasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.useLegacyAssetIDFormatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.useLegacyAssetTypeFormatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAllOpenHIPsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runGameF5ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -126,7 +125,8 @@ namespace IndustrialPark
             this.toolStripMenuItem_Templates = new System.Windows.Forms.ToolStripMenuItem();
             this.userTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripComboBoxUserTemplate = new System.Windows.Forms.ToolStripComboBox();
-            this.useLegacyAssetTypeFormatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.replaceAssetsOnPasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.updateReferencesOnCopyPasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStripMain.SuspendLayout();
@@ -344,28 +344,19 @@ namespace IndustrialPark
             this.toolStripSeparator7.Name = "toolStripSeparator7";
             this.toolStripSeparator7.Size = new System.Drawing.Size(250, 6);
             // 
-            // updateReferencesOnCopyPasteToolStripMenuItem
-            // 
-            this.updateReferencesOnCopyPasteToolStripMenuItem.Checked = true;
-            this.updateReferencesOnCopyPasteToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.updateReferencesOnCopyPasteToolStripMenuItem.Name = "updateReferencesOnCopyPasteToolStripMenuItem";
-            this.updateReferencesOnCopyPasteToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
-            this.updateReferencesOnCopyPasteToolStripMenuItem.Text = "Update References on Copy/Paste";
-            this.updateReferencesOnCopyPasteToolStripMenuItem.Click += new System.EventHandler(this.updateReferencesOnCopyPasteToolStripMenuItem_Click);
-            // 
-            // replaceAssetsOnPasteToolStripMenuItem
-            // 
-            this.replaceAssetsOnPasteToolStripMenuItem.Name = "replaceAssetsOnPasteToolStripMenuItem";
-            this.replaceAssetsOnPasteToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
-            this.replaceAssetsOnPasteToolStripMenuItem.Text = "Replace Assets on Paste";
-            this.replaceAssetsOnPasteToolStripMenuItem.Click += new System.EventHandler(this.replaceAssetsOnPasteToolStripMenuItem_Click);
-            // 
             // useLegacyAssetIDFormatToolStripMenuItem
             // 
             this.useLegacyAssetIDFormatToolStripMenuItem.Name = "useLegacyAssetIDFormatToolStripMenuItem";
             this.useLegacyAssetIDFormatToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
             this.useLegacyAssetIDFormatToolStripMenuItem.Text = "Use Legacy Asset ID Format";
             this.useLegacyAssetIDFormatToolStripMenuItem.Click += new System.EventHandler(this.useLegacyAssetIDFormatToolStripMenuItem_Click);
+            // 
+            // useLegacyAssetTypeFormatToolStripMenuItem
+            // 
+            this.useLegacyAssetTypeFormatToolStripMenuItem.Name = "useLegacyAssetTypeFormatToolStripMenuItem";
+            this.useLegacyAssetTypeFormatToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
+            this.useLegacyAssetTypeFormatToolStripMenuItem.Text = "Use Legacy Asset Type Format";
+            this.useLegacyAssetTypeFormatToolStripMenuItem.Click += new System.EventHandler(this.useLegacyAssetTypeFormatToolStripMenuItem_Click);
             // 
             // toolsToolStripMenuItem
             // 
@@ -889,12 +880,21 @@ namespace IndustrialPark
             this.toolStripComboBoxUserTemplate.Size = new System.Drawing.Size(160, 23);
             this.toolStripComboBoxUserTemplate.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxUserTemplate_SelectedIndexChanged);
             // 
-            // useLegacyAssetTypeFormatToolStripMenuItem
+            // replaceAssetsOnPasteToolStripMenuItem
             // 
-            this.useLegacyAssetTypeFormatToolStripMenuItem.Name = "useLegacyAssetTypeFormatToolStripMenuItem";
-            this.useLegacyAssetTypeFormatToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
-            this.useLegacyAssetTypeFormatToolStripMenuItem.Text = "Use Legacy Asset Type Format";
-            this.useLegacyAssetTypeFormatToolStripMenuItem.Click += new System.EventHandler(this.useLegacyAssetTypeFormatToolStripMenuItem_Click);
+            this.replaceAssetsOnPasteToolStripMenuItem.Name = "replaceAssetsOnPasteToolStripMenuItem";
+            this.replaceAssetsOnPasteToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
+            this.replaceAssetsOnPasteToolStripMenuItem.Text = "Replace Assets on Paste";
+            this.replaceAssetsOnPasteToolStripMenuItem.Click += new System.EventHandler(this.replaceAssetsOnPasteToolStripMenuItem_Click);
+            // 
+            // updateReferencesOnCopyPasteToolStripMenuItem
+            // 
+            this.updateReferencesOnCopyPasteToolStripMenuItem.Checked = true;
+            this.updateReferencesOnCopyPasteToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.updateReferencesOnCopyPasteToolStripMenuItem.Name = "updateReferencesOnCopyPasteToolStripMenuItem";
+            this.updateReferencesOnCopyPasteToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
+            this.updateReferencesOnCopyPasteToolStripMenuItem.Text = "Update References on Copy/Paste";
+            this.updateReferencesOnCopyPasteToolStripMenuItem.Click += new System.EventHandler(this.updateReferencesOnCopyPasteToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -998,7 +998,6 @@ namespace IndustrialPark
         private ToolStripMenuItem ensureAssociationsToolStripMenuItem;
         private ToolStripMenuItem aboutToolStripMenuItem;
         private ToolStripMenuItem hideInvisibleMeshesToolStripMenuItem;
-        private ToolStripMenuItem updateReferencesOnCopyPasteToolStripMenuItem;
         private ToolStripMenuItem refreshTexturesToolStripMenuItem;
         private ToolStripMenuItem downloadVgmstreamToolStripMenuItem;
         private ToolStripMenuItem stopSoundToolStripMenuItem;
@@ -1014,7 +1013,6 @@ namespace IndustrialPark
         private ToolStripSeparator toolStripSeparator6;
         private ToolStripSeparator toolStripSeparator9;
         private ToolStripSeparator toolStripSeparator7;
-        private ToolStripMenuItem replaceAssetsOnPasteToolStripMenuItem;
         private ToolStripMenuItem viewControlsToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator11;
         private ToolStripMenuItem openFolderToolStripMenuItem;
@@ -1027,6 +1025,8 @@ namespace IndustrialPark
         private ToolStripMenuItem pickupSearcherToolStripMenuItem;
         private ToolStripMenuItem drawOnlyFirstMINFReferenceToolStripMenuItem;
         private ToolStripMenuItem useLegacyAssetTypeFormatToolStripMenuItem;
+        private ToolStripMenuItem updateReferencesOnCopyPasteToolStripMenuItem;
+        private ToolStripMenuItem replaceAssetsOnPasteToolStripMenuItem;
     }
 }
 

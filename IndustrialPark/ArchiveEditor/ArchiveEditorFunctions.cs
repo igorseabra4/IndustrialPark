@@ -948,7 +948,7 @@ namespace IndustrialPark
 
         public uint? CreateNewAsset()
         {
-            Section_AHDR AHDR = AssetHeader.GetAsset(new AssetHeader());
+            Section_AHDR AHDR = AssetHeader.GetAsset();
 
             if (AHDR != null)
             {

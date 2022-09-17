@@ -113,9 +113,12 @@ namespace IndustrialPark
             }
             set
             {
-                if (value != "unchanged")
+                if (value == "unchanged")
+                    return;
+                var newValue = Convert.ToUInt32(value);
+                if (newValue != _model)
                 {
-                    Model = Convert.ToUInt32(value);
+                    _model = newValue;
                     _scale = new Vector3(1f, 1f, 1f);
                     CreateTransformMatrix();
                 }
