@@ -75,7 +75,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle CollisionHitVelocity { get; set; }
 
-        public DynaGObjectBungeeHook(string assetName, uint entityAssetID) : base(assetName, DynaType.game_object__bungee_hook, 13)
+        public DynaGObjectBungeeHook(string assetName, uint entityAssetID) : base(assetName, DynaType.game_object__bungee_hook)
         {
             Entity = entityAssetID;
 

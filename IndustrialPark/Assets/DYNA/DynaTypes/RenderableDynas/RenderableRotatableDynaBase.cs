@@ -32,9 +32,7 @@ namespace IndustrialPark
             set { _roll = MathUtil.DegreesToRadians(value); CreateTransformMatrix(); }
         }
 
-        public RenderableRotatableDynaBase(string assetName, DynaType dynaType, short version, Vector3 position) :
-            base(assetName, dynaType, version, position)
-        { }
+        public RenderableRotatableDynaBase(string assetName, DynaType dynaType, Vector3 position) : base(assetName, dynaType, position) { }
         public RenderableRotatableDynaBase(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness) { }
 
         public override void CreateTransformMatrix()

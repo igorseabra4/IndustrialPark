@@ -171,7 +171,7 @@ namespace IndustrialPark
 
         protected int entityDynaEndPosition => dynaDataStartPosition + 0x50;
 
-        public DynaEnemySB(string assetName, DynaType type, short version, Vector3 position) : base(assetName, type, version)
+        public DynaEnemySB(string assetName, DynaType type, Vector3 position) : base(assetName, type)
         {
             PseudoBaseFlags.FlagValueShort = 0x1D;
             PseudoVisibilityFlags.FlagValueByte = 1;

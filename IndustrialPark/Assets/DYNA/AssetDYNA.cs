@@ -20,10 +20,10 @@ namespace IndustrialPark
 
         protected int dynaDataStartPosition => baseHeaderEndPosition + 8;
 
-        public AssetDYNA(string assetName, DynaType type, short version) : base(assetName, type.ToAssetType(), BaseAssetType.Unknown_Other)
+        public AssetDYNA(string assetName, DynaType type, short version = -1) : base(assetName, type.ToAssetType(), BaseAssetType.Unknown_Other)
         {
             Type = type;
-            Version = version;
+            Version = (version == -1 && constVersion != -1) ? constVersion : version;
         }
 
         public AssetDYNA(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, game, endianness)

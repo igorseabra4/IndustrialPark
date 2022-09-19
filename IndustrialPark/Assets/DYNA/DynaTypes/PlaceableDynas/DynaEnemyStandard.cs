@@ -64,7 +64,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID Unknown68 { get; set; }
 
-        public DynaEnemyStandard(string assetName, AssetTemplate template, Vector3 position, uint mvptAssetID) : base(assetName, DynaType.Enemy__SB__Standard, 7, position)
+        public DynaEnemyStandard(string assetName, AssetTemplate template, Vector3 position, uint mvptAssetID) : base(assetName, DynaType.Enemy__SB__Standard, position)
         {
             switch (template)
             {

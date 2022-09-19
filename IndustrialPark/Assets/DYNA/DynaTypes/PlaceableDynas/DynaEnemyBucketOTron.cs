@@ -40,7 +40,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public int UnknownInt60 { get; set; }
 
-        public DynaEnemyBucketOTron(string assetName, AssetTemplate template, Vector3 position, uint groupAssetID) : base(assetName, DynaType.Enemy__SB__BucketOTron, 4, position)
+        public DynaEnemyBucketOTron(string assetName, AssetTemplate template, Vector3 position, uint groupAssetID) : base(assetName, DynaType.Enemy__SB__BucketOTron, position)
         {
             BucketOTronType =
                         template == AssetTemplate.Spawner_BB ? EnemyBucketOTronType.buckotron_bb_bind :

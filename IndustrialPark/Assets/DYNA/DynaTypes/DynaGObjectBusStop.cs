@@ -29,7 +29,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle Delay { get; set; }
 
-        public DynaGObjectBusStop(string assetName, uint mrkrAssetId, uint camAssetId, uint simpAssetId) : base(assetName, DynaType.game_object__BusStop, 2)
+        public DynaGObjectBusStop(string assetName, uint mrkrAssetId, uint camAssetId, uint simpAssetId) : base(assetName, DynaType.game_object__BusStop)
         {
             Marker = mrkrAssetId;
             Camera = camAssetId;

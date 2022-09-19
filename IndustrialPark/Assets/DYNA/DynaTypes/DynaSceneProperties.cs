@@ -63,7 +63,7 @@ namespace IndustrialPark
 
         private bool inc = false;
 
-        public DynaSceneProperties(string assetName) : base(assetName, DynaType.SceneProperties, 1)
+        public DynaSceneProperties(string assetName) : base(assetName, DynaType.SceneProperties)
         {
             idle03Extras = new AssetID[0];
             idle04Extras = new AssetID[0];

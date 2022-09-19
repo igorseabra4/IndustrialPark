@@ -29,7 +29,7 @@ namespace IndustrialPark
         public static bool dontRender = false;
         protected override bool DontRender => dontRender;
 
-        public DynaGObjectInPickup(string assetName, Vector3 position, AssetTemplate template) : base(assetName, DynaType.game_object__IN_Pickup, 1, position)
+        public DynaGObjectInPickup(string assetName, Vector3 position, AssetTemplate template) : base(assetName, DynaType.game_object__IN_Pickup, position)
         {
             switch (template)
             {

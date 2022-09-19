@@ -55,7 +55,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID[] Rings { get; set; }
 
-        public DynaGObjectRingControl(string assetName) : base(assetName, DynaType.game_object__RingControl, 3)
+        public DynaGObjectRingControl(string assetName) : base(assetName, DynaType.game_object__RingControl)
         {
             RingModel = "test_ring";
             UnusedOffset = 40;

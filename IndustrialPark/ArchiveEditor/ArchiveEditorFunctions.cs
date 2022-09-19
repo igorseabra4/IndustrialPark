@@ -919,6 +919,7 @@ namespace IndustrialPark
                 case DynaType.game_object__RaceTimer: return new DynaGObjectRaceTimer(AHDR, game, endianness);
                 case DynaType.game_object__Ring: return new DynaGObjectRing(AHDR, game, endianness);
                 case DynaType.game_object__RingControl: return new DynaGObjectRingControl(AHDR, game, endianness);
+                case DynaType.game_object__RubbleGenerator: return new DynaGObjectRubbleGenerator(AHDR, game, endianness);
                 case DynaType.game_object__Taxi: return new DynaGObjectTaxi(AHDR, game, endianness);
                 case DynaType.game_object__Teleport: return new DynaGObjectTeleport(AHDR, game, endianness, GetMRKR);
                 case DynaType.game_object__Turret: return new DynaGObjectTurret(AHDR, game, endianness);
@@ -969,7 +970,6 @@ namespace IndustrialPark
                 case DynaType.effect__light:
                 case DynaType.effect__spark_emitter:
                 case DynaType.game_object__FreezableObject:
-                case DynaType.game_object__RubbleGenerator:
                 case DynaType.game_object__bullet_mark:
                 case DynaType.game_object__bullet_time:
                 case DynaType.game_object__rband_camera_asset:

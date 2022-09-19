@@ -29,11 +29,7 @@ namespace IndustrialPark
             set { _position.Z = value; CreateTransformMatrix(); }
         }
 
-        public RenderableDynaBase(string assetName, DynaType dynaType, short version) : base(assetName, dynaType, version)
-        {
-        }
-
-        public RenderableDynaBase(string assetName, DynaType dynaType, short version, Vector3 position) : base(assetName, dynaType, version)
+        public RenderableDynaBase(string assetName, DynaType dynaType, Vector3 position) : base(assetName, dynaType)
         {
             _position = position;
         }

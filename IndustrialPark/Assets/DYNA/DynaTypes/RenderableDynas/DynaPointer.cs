@@ -48,7 +48,7 @@ namespace IndustrialPark
 
         protected override short constVersion => 1;
 
-        public DynaPointer(string assetName, Vector3 position) : base(assetName, DynaType.pointer, 1, position)
+        public DynaPointer(string assetName, Vector3 position) : base(assetName, DynaType.pointer, position)
         {
             CreateTransformMatrix();
             AddToRenderableAssets(this);

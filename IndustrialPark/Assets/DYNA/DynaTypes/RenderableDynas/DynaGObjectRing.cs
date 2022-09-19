@@ -58,7 +58,7 @@ namespace IndustrialPark
         public static bool dontRender = false;
         protected override bool DontRender => dontRender;
 
-        public DynaGObjectRing(string assetName, Vector3 position) : base(assetName, DynaType.game_object__Ring, 2, position)
+        public DynaGObjectRing(string assetName, Vector3 position) : base(assetName, DynaType.game_object__Ring, position)
         {
             ScaleX = 1f;
             ScaleY = 1f;

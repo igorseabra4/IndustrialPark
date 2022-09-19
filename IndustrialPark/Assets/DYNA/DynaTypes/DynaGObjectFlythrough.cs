@@ -15,7 +15,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID Flythrough { get; set; }
 
-        public DynaGObjectFlythrough(string assetName) : base(assetName, DynaType.game_object__Flythrough, 1)
+        public DynaGObjectFlythrough(string assetName) : base(assetName, DynaType.game_object__Flythrough)
         {
             Flythrough = 0;
         }

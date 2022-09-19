@@ -52,7 +52,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public int DuploSpawnLifeMax { get; set; }
 
-        public DynaGObjectNPCSettings(string assetName) : base(assetName, DynaType.game_object__NPCSettings, 2)
+        public DynaGObjectNPCSettings(string assetName) : base(assetName, DynaType.game_object__NPCSettings)
         {
             AllowDetect = true;
             ReduceCollide = true;

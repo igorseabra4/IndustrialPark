@@ -58,7 +58,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID PromptYesNoTextID { get; set; }
 
-        public DynaGObjectTalkBox(string assetName, bool checkpointTalkbox) : base(assetName, DynaType.game_object__talk_box, 11)
+        public DynaGObjectTalkBox(string assetName, bool checkpointTalkbox) : base(assetName, DynaType.game_object__talk_box)
         {
             if (checkpointTalkbox)
             {

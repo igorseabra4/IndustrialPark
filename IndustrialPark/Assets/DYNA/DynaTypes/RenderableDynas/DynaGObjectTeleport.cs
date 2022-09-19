@@ -13,7 +13,7 @@ namespace IndustrialPark
         public override string TypeString => dynaCategoryName;
         public override string AssetInfo => $"{HexUIntTypeConverter.StringFromAssetID(Marker)} {HexUIntTypeConverter.StringFromAssetID(TargetTeleportBox)}";
 
-        public override string Note => "Version is always 1 or 2. Version 1 does not use CameraAngle.";
+        public override string Note => "Version is always 1 or 2. CameraAngle is not present in version 1, or in Movie/Incredibles regardless of version.";
 
         [Category(dynaCategoryName)]
         private uint _mrkr;
@@ -42,16 +42,17 @@ namespace IndustrialPark
             }
         }
 
-        [Category(dynaCategoryName), Description("Not used in version 1 or Movie.")]
+        [Category(dynaCategoryName), Description("Not used in version 1 or Movie/Incredibles.")]
         public int CameraAngle { get; set; }
 
         [Category(dynaCategoryName)]
         public AssetID TargetTeleportBox { get; set; }
 
-        public DynaGObjectTeleport(string assetName, uint mrkrId, DynaGObjectTeleportGetMRKR getMRKR) : base(assetName, DynaType.game_object__Teleport, 2)
+        public DynaGObjectTeleport(string assetName, uint mrkrId, DynaGObjectTeleportGetMRKR getMRKR) : base(assetName, DynaType.game_object__Teleport, Vector3.Zero)
         {
             _mrkr = mrkrId;
-            this.GetMRKR = getMRKR;
+            GetMRKR = getMRKR;
+            Version = 2;
         }
 
         public delegate AssetMRKR DynaGObjectTeleportGetMRKR(uint mrkr);
@@ -59,7 +60,7 @@ namespace IndustrialPark
 
         public DynaGObjectTeleport(Section_AHDR AHDR, Game game, Endianness endianness, DynaGObjectTeleportGetMRKR getMRKR) : base(AHDR, DynaType.game_object__Teleport, game, endianness)
         {
-            this.GetMRKR = getMRKR;
+            GetMRKR = getMRKR;
 
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {

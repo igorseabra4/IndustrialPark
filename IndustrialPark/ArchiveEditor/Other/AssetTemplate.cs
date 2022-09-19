@@ -325,5 +325,6 @@
 
         // Incredibles objects
         Zip_Line,
+        Rubble_Generator,
     }
 }

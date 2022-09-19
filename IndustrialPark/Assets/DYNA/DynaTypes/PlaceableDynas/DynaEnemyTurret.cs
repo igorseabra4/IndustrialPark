@@ -37,7 +37,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID Unknown60 { get; set; }
 
-        public DynaEnemyTurret(string assetName, AssetTemplate template, Vector3 position) : base(assetName, DynaType.Enemy__SB__Turret, 4, position)
+        public DynaEnemyTurret(string assetName, AssetTemplate template, Vector3 position) : base(assetName, DynaType.Enemy__SB__Turret, position)
         {
             Rotation = 30f;
             TargetPlayer = 1;

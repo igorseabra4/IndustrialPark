@@ -30,7 +30,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID Unknown54 { get; set; }
 
-        public DynaEnemyCritter(string assetName, AssetTemplate template, Vector3 position, uint mvptAssetID) : base(assetName, DynaType.Enemy__SB__Critter, 2, position)
+        public DynaEnemyCritter(string assetName, AssetTemplate template, Vector3 position, uint mvptAssetID) : base(assetName, DynaType.Enemy__SB__Critter, position)
         {
             BaseFlags = 0x0D;
 

@@ -19,7 +19,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle DistAdjust { get; set; }
 
-        public DynaGObjectCamTweak(string assetName) : base(assetName, DynaType.game_object__Camera_Tweak, 1)
+        public DynaGObjectCamTweak(string assetName) : base(assetName, DynaType.game_object__Camera_Tweak)
         {
         }
         public DynaGObjectCamTweak(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__Camera_Tweak, game, endianness)

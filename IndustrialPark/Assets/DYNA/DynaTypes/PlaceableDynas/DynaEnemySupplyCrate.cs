@@ -31,7 +31,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID MovePoint { get; set; }
 
-        public DynaEnemySupplyCrate(string assetName, AssetTemplate template, Vector3 position) : base(assetName, DynaType.Enemy__SB__SupplyCrate, 2, position)
+        public DynaEnemySupplyCrate(string assetName, AssetTemplate template, Vector3 position) : base(assetName, DynaType.Enemy__SB__SupplyCrate, position)
         {
             CrateType =
                 template == AssetTemplate.Wood_Crate ? EnemySupplyCrateType.crate_wood_bind :

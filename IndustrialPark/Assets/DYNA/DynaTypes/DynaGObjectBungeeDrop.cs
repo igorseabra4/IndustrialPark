@@ -19,7 +19,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle ViewAngle { get; set; }
 
-        public DynaGObjectBungeeDrop(string assetName, uint mrkrAssetId) : base(assetName, DynaType.game_object__bungee_drop, 1)
+        public DynaGObjectBungeeDrop(string assetName, uint mrkrAssetId) : base(assetName, DynaType.game_object__bungee_drop)
         {
             Marker = mrkrAssetId;
             SetViewAngle = 1;

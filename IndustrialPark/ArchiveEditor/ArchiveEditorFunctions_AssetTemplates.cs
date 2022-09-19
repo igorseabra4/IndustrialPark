@@ -346,7 +346,8 @@ namespace IndustrialPark
             ToolStripMenuItem incrediblesObjects = new ToolStripMenuItem("Stage Items");
             incrediblesObjects.DropDownItems.AddRange(new ToolStripItem[]
             {
-                GetTemplateMenuItem(AssetTemplate.Zip_Line, eventHandler)
+                GetTemplateMenuItem(AssetTemplate.Rubble_Generator, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Zip_Line, eventHandler),
             });
 
             ToolStripMenuItem incredibles = new ToolStripMenuItem("Incredibles");
@@ -1455,6 +1456,8 @@ namespace IndustrialPark
                     return new AssetDUPC(assetName, position);
                 case AssetTemplate.Zip_Line:
                     return new AssetZLIN(assetName, position);
+                case AssetTemplate.Rubble_Generator:
+                    return new DynaGObjectRubbleGenerator(assetName);
             }
             MessageBox.Show("Unsupported template");
             return null;
