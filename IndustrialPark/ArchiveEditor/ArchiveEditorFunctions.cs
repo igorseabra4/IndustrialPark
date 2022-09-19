@@ -880,6 +880,7 @@ namespace IndustrialPark
 
             switch (type)
             {
+                case DynaType.Checkpoint: return new DynaCheckpoint(AHDR, game, endianness);
                 case DynaType.camera__preset: return new DynaCameraPreset(AHDR, game, endianness);
                 case DynaType.Enemy__SB__BucketOTron: return new DynaEnemyBucketOTron(AHDR, game, endianness);
                 case DynaType.Enemy__SB__CastNCrew: return new DynaEnemyCastNCrew(AHDR, game, endianness);
@@ -954,7 +955,6 @@ namespace IndustrialPark
                 case DynaType.ui__model: return new DynaUIModel(AHDR, game, endianness);
                 case DynaType.ui__text: return new DynaUIText(AHDR, game, endianness);
                 case DynaType.ui__text__userstring: return new DynaUITextUserString(AHDR, game, endianness);
-                case DynaType.Checkpoint:
                 case DynaType.Enemy__SB:
                 case DynaType.Interest_Pointer:
                 case DynaType.audio__conversation:

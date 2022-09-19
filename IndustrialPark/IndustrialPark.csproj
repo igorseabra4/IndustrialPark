@@ -150,6 +150,7 @@
     <Compile Include="Assets\Binary\AssetONEL.cs" />
     <Compile Include="Assets\Binary\AssetCTOC.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaEffectUberLaser.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\DynaCheckpoint.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectRubbleGenerator.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectTrainJunction.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\DynaGObjectTrainCar.cs" />
